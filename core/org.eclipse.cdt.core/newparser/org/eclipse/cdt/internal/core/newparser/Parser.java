@@ -286,17 +286,23 @@ c, quick);
 	 * - Handle unqualifiedId
 	 */
 	public boolean name() throws Exception {
+		Token last = null;
+		
+		callback.nameBegin(LA(1));
+		
 		if (LT(1) == Token.tCOLONCOLON)
-			consume();
+			last = consume();
 
-		consume(Token.tIDENTIFIER);
+		last = consume(Token.tIDENTIFIER);
 
 		while (LT(1) == Token.tCOLONCOLON) {
-			consume();
+			last = consume();
 			
-			consume(Token.tIDENTIFIER);
+			last = consume(Token.tIDENTIFIER);
 		}
-		
+
+		callback.nameEnd(last);
+
 		return true;
 	}
 
@@ -359,8 +365,8 @@ c, quick);
 			return;
 		}
 		
-		callback.declaratorId(LA(1));
 		name();
+		callback.declaratorId();
 		
 		for (;;) {
 			switch (LT(1)) {

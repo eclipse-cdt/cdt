@@ -46,7 +46,7 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorId(Token)
 	 */
-	public void declaratorId(Token id) {
+	public void declaratorId() {
 	}
 
 	/**
@@ -113,6 +113,18 @@ public class NullParserCallback implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#macro(String)
 	 */
 	public void macro(String macroName) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void nameBegin(Token firstToken) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void nameEnd(Token lastToken) {
 	}
 
 }

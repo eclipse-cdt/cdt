@@ -1,7 +1,6 @@
 package org.eclipse.cdt.internal.core.dom;
 
-import java.util.LinkedList;
-import java.util.List;
+import org.eclipse.cdt.internal.core.newparser.Token;
 
 /**
  * @author dschaefe
@@ -13,14 +12,24 @@ import java.util.List;
  */
 public class Name {
 
-	private List names = new LinkedList();
+	private Token nameStart, nameEnd;
 	
-	public void addName(String name) {
-		names.add(name);
+	public Name(Token nameStart) {
+		this.nameStart = nameStart;
 	}
 	
-	public List getNames() {
-		return names;
+	public void setEnd(Token nameEnd) {
+		this.nameEnd = nameEnd;
 	}
-	
+
+	public String getName() {
+		String name = nameStart.getImage();
+		
+		for (Token t = nameStart; nameStart != nameEnd;) {
+			t = nameStart.getNext();
+			name += t.getImage();
+		}
+		
+		return name;
+	}
 }

@@ -3,6 +3,8 @@ package org.eclipse.cdt.core.parser.tests;
 import java.util.List;
 
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
+import org.eclipse.cdt.internal.core.dom.Declarator;
+import org.eclipse.cdt.internal.core.dom.Name;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.newparser.Parser;
@@ -24,5 +26,10 @@ public class DOMTests extends TestCase {
 		assertEquals(1, declarations.size());
 		SimpleDeclaration declaration = (SimpleDeclaration)declarations.get(0);
 		assertEquals(SimpleDeclaration.t_int, declaration.getDeclSpecifierSeq());
+		List declarators = declaration.getDeclarators();
+		assertEquals(1, declarators.size());
+		Declarator declarator = (Declarator)declarators.get(0);
+		Name name = declarator.getName();
+		assertEquals("x", name.getName());
 	}
 }

@@ -46,18 +46,24 @@ public class DOMBuilder implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorBegin()
 	 */
 	public void declaratorBegin() {
+		SimpleDeclaration decl = (SimpleDeclaration)stack.peek();
+		Declarator declarator = new Declarator(decl);
+		decl.addDeclarator(declarator);
+		stack.push(declarator);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorEnd()
 	 */
 	public void declaratorEnd() {
+		stack.pop();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorId(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void declaratorId(Token id) {
+	public void declaratorId() {
+		((Declarator)stack.peek()).setName(currName);
 	}
 
 	/**
@@ -210,6 +216,22 @@ public class DOMBuilder implements IParserCallback {
 	 */
 	public void translationUnitEnd() {
 		stack.pop();
+	}
+
+	private Name currName;
+	
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void nameBegin(Token firstToken) {
+		currName = new Name(firstToken);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void nameEnd(Token lastToken) {
+		currName.setEnd(lastToken);
 	}
 
 }

@@ -126,7 +126,7 @@ public class TestCallback extends Assert implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorId(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void declaratorId(Token id) {
+	public void declaratorId() {
 		fail();
 	}
 
@@ -200,6 +200,18 @@ public class TestCallback extends Assert implements IParserCallback {
 	 */
 	public void expressionTerminal(Token terminal) throws Exception {
 		validate(expressionTerminal, terminal.getImage());
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void nameBegin(Token firstToken) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void nameEnd(Token lastToken) {
 	}
 
 }

@@ -1,3 +1,10 @@
+2004-06-22 Alain Magloire
+	Part of PR 68246.
+	Close the inputstream to release resource handle
+	when we done with it, we can not rely on the GC to do it for us.
+
+	* browser/org/eclipse/cdt/internal/core/browser/cache/TypeParser.java
+
 2004-06-21 Chris Wiebe
 
 	- fix for bug #66108 (C++ browser cannot show members of class)

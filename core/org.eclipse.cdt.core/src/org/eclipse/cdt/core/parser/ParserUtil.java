@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.model.IWorkingCopy;
@@ -65,7 +66,17 @@ public class ParserUtil
 					if( buffer != null )
 						return new CodeReader(finalPath, buffer); 
 				}
-				return new CodeReader(finalPath, ((IFile)resultingResource).getContents());
+				InputStream in = null;
+				try
+				{
+					in = ((IFile)resultingResource).getContents();
+					return new CodeReader(finalPath, in);
+				} finally {
+					if (in != null)
+					{
+						in.close();
+					}
+				}
 			}
 		}
 		catch( CoreException ce )

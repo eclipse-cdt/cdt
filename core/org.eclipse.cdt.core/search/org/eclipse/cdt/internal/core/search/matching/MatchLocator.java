@@ -14,6 +14,7 @@
 package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -404,12 +405,14 @@ public class MatchLocator implements IMatchLocator{
 					}
 				} else {
 					currentResource = workspaceRoot.findMember( pathString, true );
-					
+
+					InputStream contents = null;
 					try{
 						if( currentResource != null ){
 							if (currentResource.isAccessible() && currentResource instanceof IFile) {
 								IFile file = (IFile) currentResource;
-								reader = new CodeReader(currentResource.getLocation().toOSString(),  file.getContents());
+								contents = file.getContents();
+								reader = new CodeReader(currentResource.getLocation().toOSString(), contents);
 								realPath = currentResource.getLocation();
 								project = file.getProject();
 							} else {
@@ -420,6 +423,14 @@ public class MatchLocator implements IMatchLocator{
 						continue;
 					} catch ( IOException e ) {
 						continue;
+					} finally {
+						if (contents != null) {
+							try {
+								contents.close();
+							} catch (IOException io) {
+								// ignore.
+							}
+						}
 					}
 				}
 			}

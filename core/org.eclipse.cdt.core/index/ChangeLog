@@ -1,3 +1,11 @@
+2004-06-22 Alain Magloire
+
+	Part of PR 68246.
+	Close the inputstream to release resource handle
+	when we done with it, we can not rely on the GC to do it for us.
+
+	* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexer.java
+
 2004-06-21 Andrew Niefer
 	enable reporting of semantic problems:
 		* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java

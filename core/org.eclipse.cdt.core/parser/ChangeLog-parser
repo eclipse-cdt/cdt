@@ -1,3 +1,11 @@
+2004-06-22 Alain Magloire
+
+	Part of PR 68246.
+	Close the inputstream to release resource handle
+	when we done with it, we can not rely on the GC to do it for us.
+
+	* parser/org/eclipse/cdt/core/parser/CodeReader.java
+
 2004-04-23 Andrew Niefer
 	- fixed up CompleteParseASTFactory.lookupQualifiedName in the case where the 
 	  tokenDuple has 1 segement

@@ -1,4 +1,11 @@
 2004-06-22 Alain Magloire
+	Part of PR 68246.
+	Close the inputstream to release resource handle
+	when we done with it, we can not rely on the GC to do it for us.
+
+	* src/org/eclipse/cdt/core/parsre/ParserUtil.java
+
+2004-06-22 Alain Magloire
 
 	Fix the exclusion scheme in IPathEntry.
 

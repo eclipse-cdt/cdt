@@ -47,7 +47,11 @@ public class CodeReader {
 		this.filename = filename;
 		
 		FileInputStream stream = new FileInputStream(filename);
-		buffer = load(stream);
+		try {
+			buffer = load(stream);
+		} finally {
+			stream.close();
+		}
 	}
 	
 	// If you have a handle on a stream to the file, e.g. IFile.getContents()
@@ -58,7 +62,15 @@ public class CodeReader {
 			(stream instanceof FileInputStream)
 				? (FileInputStream)stream
 				: new FileInputStream(filename);
-		buffer = load(fstream);
+		try {
+			buffer = load(fstream);
+		} finally {
+			// If we create the FileInputStream we need close to it when done,
+			// if not we figure the above layer will do it.
+			if (!(stream instanceof FileInputStream)) {
+				fstream.close();
+			}
+		}
 	}
 	
 	private char[] load(FileInputStream stream) throws IOException {

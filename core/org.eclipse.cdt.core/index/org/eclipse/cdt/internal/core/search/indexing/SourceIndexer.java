@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.search.indexing;
 */
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -98,16 +99,20 @@ public class SourceIndexer extends AbstractIndexer {
 		ParserLanguage language = CoreModel.hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
 		
 		IParser parser = null;
-		
-		try
-		{
-			CodeReader reader = new CodeReader(resourceFile.getLocation().toOSString(), resourceFile.getContents());
+
+		InputStream contents = null;
+		try {
+			contents = resourceFile.getContents();
+			CodeReader reader = new CodeReader(resourceFile.getLocation().toOSString(), contents);
 			parser = ParserFactory.createParser( 
 							ParserFactory.createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getScannerLogService(), null ), 
 							requestor, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
-		} catch( ParserFactoryError pfe )
-		{
+		} catch( ParserFactoryError pfe ){
 		} catch (CoreException e) {
+		} finally {
+			if (contents != null) {
+				contents.close();
+			}
 		}
 		
 		try{

@@ -1,3 +1,6 @@
+2003-11-17 Doug Schaefer
+	Nothing just testing the commit logs
+
 2003-11-13 David Inglis
 	Fixed #46431
 	* utils/org/eclipse/cdt/utils/spawner/EnvironmentReader.java

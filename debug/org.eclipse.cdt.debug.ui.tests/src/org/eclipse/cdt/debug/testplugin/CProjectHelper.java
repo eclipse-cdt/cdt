@@ -1,5 +1,6 @@
 package org.eclipse.cdt.debug.testplugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.zip.ZipFile;
@@ -35,7 +36,7 @@ public class CProjectHelper {
 	/**
 	 * Creates a ICProject.
 	 */	
-	public static ICProject createCProjectWithImport(String projectName, String zipFile) throws CoreException, InvocationTargetException, IOException {
+	public static ICProject createCProjectWithImport(String projectName, IPath zipFile) throws CoreException, InvocationTargetException, IOException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		IProject project= root.getProject(projectName);
 		if (!project.exists()) {
@@ -47,7 +48,8 @@ public class CProjectHelper {
 		if (!project.isOpen()) {
 			project.open(null);
 		}
-		importFilesFromZip(new ZipFile(zipFile),project.getFullPath(),null);
+		File zip = CTestPlugin.getDefault().getFileInPlugin(zipFile);
+		importFilesFromZip(new ZipFile(zip),project.getFullPath(),null);
 		
 		if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
 			addNatureToProject(project, CProjectNature.C_NATURE_ID, null);

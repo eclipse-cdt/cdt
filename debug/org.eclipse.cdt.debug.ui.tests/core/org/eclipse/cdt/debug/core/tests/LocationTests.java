@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -79,9 +80,8 @@ public class LocationTests extends TestCase {
 		/***
 		 * Create a new project and import the test source.
 		 */
-		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.debug.ui.tests").find(new Path("/")).getFile();
-		pluginRoot=pluginRoot+"resources/debugTest.zip";
-		testProject=CProjectHelper.createCProjectWithImport("filetest", pluginRoot);
+		IPath importFile = new Path("resources/debugTest.zip");
+		testProject=CProjectHelper.createCProjectWithImport("filetest", importFile);
 		if (testProject==null)
 			fail("Unable to create project");
 		/* Build the test project.. */

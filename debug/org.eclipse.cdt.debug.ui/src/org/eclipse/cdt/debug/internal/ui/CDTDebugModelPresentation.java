@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.ICDISignalExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
@@ -354,7 +355,13 @@ public class CDTDebugModelPresentation extends LabelProvider
 				{
 					Object info = state.getCurrentStateInfo();
 					String label = target.getName() + " (Exited";
-					if ( info != null && info instanceof ICDIExitInfo )
+					if ( info != null && info instanceof ICDISignalExitInfo)
+					{
+						ICDISignalExitInfo sigInfo = (ICDISignalExitInfo)info;
+						label += MessageFormat.format( " (Signal ''{0}'' received. Meaning: {1})", 
+											  new String[] { sigInfo.getName(), sigInfo.getDescription() } );						
+					}
+					else if ( info != null && info instanceof ICDIExitInfo )
 					{
 						label += ". Exit code = " + ((ICDIExitInfo)info).getCode();
 					}

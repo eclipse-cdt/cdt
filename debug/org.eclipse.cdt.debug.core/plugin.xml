@@ -138,5 +138,9 @@
             id="cWatchpoint">
       </breakpoint>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.debug.internal.core.CDebugCorePreferenceInitializer"/>
+   </extension>
 
 </plugin>

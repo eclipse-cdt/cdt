@@ -148,12 +148,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 	
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject, boolean generateMarkers) throws CModelException {
-		ArrayList listEntries = (ArrayList)resolvedMap.get(cproject);
-		IPathEntry[] resolvedEntries;
-		if (listEntries == null) {
+		ArrayList resolvedEntries = (ArrayList)resolvedMap.get(cproject);
+		if (resolvedEntries == null) {
 			IPath projectPath = cproject.getPath();
 			IPathEntry[] rawEntries = getRawPathEntries(cproject);
-			listEntries = new ArrayList();
+			resolvedEntries = new ArrayList();
 			for (int i = 0; i < rawEntries.length; i++) {
 				IPathEntry entry = rawEntries[i];
 				// Expand the containers.
@@ -165,7 +164,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						if (containerEntries != null) {
 							for (int j = 0; j < containerEntries.length; j++) {
 								IPathEntry newEntry = cloneEntry(projectPath, containerEntries[j]);
-								listEntries.add(newEntry);
+								resolvedEntries.add(newEntry);
 							}
 						}
 					}
@@ -173,33 +172,15 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 					IPathEntry clone = cloneEntry(projectPath, entry);
 					IPathEntry e = getExpandedPathEntry(clone, cproject);
 					if (e != null) {
-						listEntries.add(e);
+						resolvedEntries.add(e);
 					}
 				}
 			}
-			listEntries.trimToSize();
+			resolvedEntries.trimToSize();
 			
-			resolvedEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
-
-			// Check for duplication in the sources
-			List dups = checkForSourceDuplication(resolvedEntries);
-			if (dups.size() > 0) {
-				List newList = new ArrayList(Arrays.asList(resolvedEntries));
-				newList.removeAll(dups);
-				resolvedEntries = (IPathEntry[]) newList.toArray(new IPathEntry[newList.size()]);
-			}
-
-			// Check for duplication in the outputs
-			dups = checkForOutputDuplication(resolvedEntries);
-			if (dups.size() > 0) {
-				List newList = new ArrayList(Arrays.asList(resolvedEntries));
-				newList.removeAll(dups);
-				resolvedEntries = (IPathEntry[]) newList.toArray(new IPathEntry[newList.size()]);
-			}
-
 			if (generateMarkers) {
 				final ICProject finalCProject = cproject;
-				final IPathEntry[] finalEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES); 
+				final IPathEntry[] finalEntries = (IPathEntry[])resolvedEntries.toArray(NO_PATHENTRIES); 
 				Job markerTask = new Job("PathEntry Marker Job") { //$NON-NLS-1$
 					/* (non-Javadoc)
 					 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
@@ -222,11 +203,22 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				};
 				markerTask.schedule();
 			}
-			resolvedMap.put(cproject, listEntries);
-		} else {
-			resolvedEntries = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
+
+			// Check for duplication in the sources
+			List dups = checkForDuplication(resolvedEntries, IPathEntry.CDT_SOURCE);
+			if (dups.size() > 0) {
+				resolvedEntries.removeAll(dups);
+			}
+
+			// Check for duplication in the outputs
+			dups = checkForDuplication(resolvedEntries, IPathEntry.CDT_OUTPUT);
+			if (dups.size() > 0) {
+				resolvedEntries.removeAll(dups);
+			}
+
+			resolvedMap.put(cproject, resolvedEntries);
 		}
-		return resolvedEntries;
+		return (IPathEntry[])resolvedEntries.toArray(NO_PATHENTRIES);
 	}
 
 	private IPathEntry getExpandedPathEntry(IPathEntry entry, ICProject cproject) throws CModelException {
@@ -1182,7 +1174,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 
 		// check duplication of sources
-		List dups = checkForSourceDuplication(entries);
+		List dups = checkForDuplication(Arrays.asList(entries), IPathEntry.CDT_SOURCE);
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
 			for (int i = 0; i < dups.size(); ++i) {
@@ -1194,7 +1186,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 	
 		// check duplication of Outputs
-		dups = checkForOutputDuplication(entries);
+		dups = checkForDuplication(Arrays.asList(entries), IPathEntry.CDT_OUTPUT);
 		if (dups.size() > 0) {
 			ICModelStatus[] cmodelStatus = new ICModelStatus[dups.size()];
 			for (int i = 0; i < dups.size(); ++i) {
@@ -1378,19 +1370,19 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return false;
 	}
 
-	private List checkForSourceDuplication(IPathEntry[] pathEntries) {
-		List duplicate = new ArrayList(pathEntries.length);
-		for (int i = 0; i < pathEntries.length; ++i) {
-			if (pathEntries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
-				ISourceEntry sourceEntry = (ISourceEntry)pathEntries[i];
-				for (int j = 0; j < pathEntries.length; ++j) {
-					if (pathEntries[j].getEntryKind() == IPathEntry.CDT_SOURCE) {
-						ISourceEntry otherSource = (ISourceEntry)pathEntries[j];
-						if (!sourceEntry.equals(otherSource)) {
-							if (!duplicate.contains(sourceEntry)) {
-								if (sourceEntry.getPath().equals(otherSource.getPath())) {
+	private List checkForDuplication(List pathEntries, int type) {
+		List duplicate = new ArrayList(pathEntries.size());
+		for (int i = 0; i < pathEntries.size(); ++i) {
+			IPathEntry pathEntry = (IPathEntry)pathEntries.get(i);
+			if (pathEntry.getEntryKind() == type) {
+				for (int j = 0; j < pathEntries.size(); ++j) {
+					IPathEntry otherEntry = (IPathEntry)pathEntries.get(j);
+					if (otherEntry.getEntryKind() == type) {
+						if (!pathEntry.equals(otherEntry)) {
+							if (!duplicate.contains(pathEntry)) {
+								if (pathEntry.getPath().equals(otherEntry.getPath())) {
 									// duplication of sources
-									duplicate.add(otherSource);
+									duplicate.add(otherEntry);
 								}
 							}
 						}
@@ -1400,30 +1392,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 		return duplicate;
 	}
-	
-	private List checkForOutputDuplication(IPathEntry[] pathEntries) {
-		List duplicate = new ArrayList(pathEntries.length);
-		for (int i = 0; i < pathEntries.length; ++i) {
-			if (pathEntries[i].getEntryKind() == IPathEntry.CDT_OUTPUT) {
-				IOutputEntry outputEntry = (IOutputEntry)pathEntries[i];
-				for (int j = 0; j < pathEntries.length; ++j) {
-					if (pathEntries[j].getEntryKind() == IPathEntry.CDT_OUTPUT) {
-						IOutputEntry otherOutput = (IOutputEntry)pathEntries[j];
-						if (!outputEntry.equals(otherOutput)) {
-							if (!duplicate.contains(outputEntry)) {
-								if (outputEntry.getPath().equals(otherOutput.getPath())) {
-									// duplication of outputs
-									duplicate.add(otherOutput);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return duplicate;
-	}
-	
+
 	/**
 	 * Record a new marker denoting a classpath problem
 	 */

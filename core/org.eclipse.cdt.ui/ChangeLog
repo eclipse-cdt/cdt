@@ -1,3 +1,6 @@
+2003-09-30 Hoda Amer
+	- Fix for bug#43524 : Removing a define from a .c file causes issues in the outline
+	
 2003-09-29 Hoda Amer
 	- Fixed Help IDs for C_Editor preference tabs.
 	

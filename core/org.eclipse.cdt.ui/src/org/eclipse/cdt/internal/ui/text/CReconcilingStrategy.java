@@ -25,7 +25,6 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 
 
 	private CContentOutlinePage fOutliner;
-	private int fLastRegionOffset;
 	private ITextEditor fEditor;	
 	private IWorkingCopyManager fManager;
 	private IDocumentProvider fDocumentProvider;
@@ -34,7 +33,6 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 
 	public CReconcilingStrategy(CEditor editor) {
 		fOutliner= editor.getOutlinePage();
-		fLastRegionOffset = Integer.MAX_VALUE;
 		fEditor= editor;
 		fManager= CUIPlugin.getDefault().getWorkingCopyManager();
 		fDocumentProvider= CUIPlugin.getDefault().getDocumentProvider();
@@ -58,14 +56,7 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 	 * @see IReconcilingStrategy#reconcile(region)
 	 */
 	public void reconcile(IRegion region) {
-		// We use a trick to avoid running the reconciler multiple times
-		// on a file when it gets changed. This is because this gets called
-		// multiple times with different regions of the file, we do a 
-		// complete parse on the first region.
-		if(region.getOffset() <= fLastRegionOffset) {
-			reconcile();
-		}
-		fLastRegionOffset = region.getOffset();
+		reconcile();
 	}
 
 

@@ -1,4 +1,8 @@
 2002-10-10 Mikhail Khodjaiants
+	* CDebugTarget.java:  Implementing the disassembly mode.
+	* CThread.java:  Implementing the disassembly mode.
+
+2002-10-10 Mikhail Khodjaiants
 	* CSourceManager.java: Implementing the disassembly mode.
 	* DisassemblyManager.java: Implementing the disassembly mode.
 	* DisassemblyStorage.java: Implementing the disassembly mode.

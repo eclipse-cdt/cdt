@@ -32,6 +32,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -543,7 +544,14 @@ public class CThread extends CDebugElement
 			return;
 		try
 		{
-			getCDIThread().stepInto();
+			if ( getRealSourceMode() == ISourceMode.MODE_SOURCE )
+			{
+				getCDIThread().stepInto();
+			}
+			else
+			{
+				getCDIThread().stepIntoInstruction();
+			}
 		}		
 		catch( CDIException e )
 		{
@@ -560,7 +568,14 @@ public class CThread extends CDebugElement
 			return;
 		try
 		{
-			getCDIThread().stepOver();
+			if ( getRealSourceMode() == ISourceMode.MODE_SOURCE )
+			{
+				getCDIThread().stepOver();
+			}
+			else
+			{
+				getCDIThread().stepOverInstruction();
+			}
 		}		
 		catch( CDIException e )
 		{
@@ -972,5 +987,10 @@ public class CThread extends CDebugElement
 		{
 			targetRequestFailed( e.getMessage(), null );
 		}
+	}
+	
+	private int getRealSourceMode()
+	{
+		return ((CDebugTarget)getDebugTarget()).getRealSourceMode();
 	}
 }

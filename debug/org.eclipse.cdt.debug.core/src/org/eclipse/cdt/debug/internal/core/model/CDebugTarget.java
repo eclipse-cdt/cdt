@@ -58,6 +58,7 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
+import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
@@ -1860,5 +1861,15 @@ public class CDebugTarget extends CDebugElement
 	protected boolean isCoreDumpTarget()
 	{
 		return ( getTargetType() == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP );
+	}
+	
+	protected int getRealSourceMode()
+	{
+		ISourceLocator sl = getSourceLocator();
+		if ( sl != null && sl instanceof CSourceManager )
+		{
+			return ((CSourceManager)sl).getRealMode();
+		}
+		return ISourceMode.MODE_SOURCE;
 	}
 }

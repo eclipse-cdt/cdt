@@ -1,3 +1,8 @@
+2003-10-20 Mikhail Khodjaiants
+	Implementation of the "Search subfolders" option for directory source locations.
+	* AddDirectorySourceLocationBlock.java
+	* SourceLookupBlock.java
+
 2003-10-17 Mikhail Khodjaiants
 	UI support of the 'Search for duplicate source files' option.
 	* icons/full/obj16/prj_file_obj.gif: new

@@ -1,4 +1,10 @@
 2003-10-20 Mikhail Khodjaiants
+	Core support of the "Search subfolders" option for directory source locations.
+	* IDirectorySourceLocation.java
+	* SourceLocationFactory.java
+	* CDirectorySourceLocation.java
+
+2003-10-20 Mikhail Khodjaiants
 	Do not interrupt the initialization of all additional source locations 
 	if the initialization of one fails.
 	* CSourceLocator.java

@@ -269,8 +269,7 @@ public class MISession extends Observable {
 	}
 
 	public boolean useExecConsole() {
-		return false;
-		//return useInterpreterExecConsole;
+		return useInterpreterExecConsole;
 	}
 
 	public boolean inPrimaryPrompt() {

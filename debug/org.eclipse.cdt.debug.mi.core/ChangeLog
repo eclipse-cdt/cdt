@@ -1,3 +1,14 @@
+2003-03-19 Alain Magloire
+
+	Base on PR/patch from Chris Songer.
+	Assigning a value to a register may have side-effects
+	on other registers.  When assigning, the action is now
+	to upate again the values.  The same for the variables.
+	
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java:
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java:
+	Method setValue() calls manager.update() after the assignment.
+
 2003-03-17 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/StackFrame.java:

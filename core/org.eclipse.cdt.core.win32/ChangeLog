@@ -1,3 +1,14 @@
+2003-04-30 Alex Chapiro
+
+	* library/listtasks: new Folder
+	* library/listtasks/listtasks.cpp: New file.
+	* library/listtasks/listtasks.dsp: New file.
+	* library/listtasks/listtasks.dsw: New file.
+	* library/listtasks/listtasks.h: New file.
+	* library/listtasks/StdAfx.cpp: New file.
+	* library/listtasks/StdAfx.h: New file.
+	* os/win32/x86/listtasks.exe: Rebuild
+
 2003-04-30 Alain Magloire
 
 	* src/org/eclipse/cdt/internal/core/win32/ProcessList.java (parseTaskList):

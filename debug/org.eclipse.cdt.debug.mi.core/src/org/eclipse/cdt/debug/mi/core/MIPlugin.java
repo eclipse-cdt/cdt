@@ -5,15 +5,13 @@
 package org.eclipse.cdt.debug.mi.core;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CSession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIBreakInsert;
 import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
@@ -44,12 +42,21 @@ public class MIPlugin extends Plugin {
 
 	/**
 	 * Method createMISession.
-	 * @param in
-	 * @param out
+	 * @param Process
 	 * @return MISession
 	 */
 	public MISession createMISession(Process process) throws MIException {
 		return new MISession(process);
+	}
+
+	/**
+	 * Method createMISession.
+	 * @param Process
+	 * @param PTY
+	 * @return MISession
+	 */
+	public MISession createMISession(Process process, PTY pty) throws MIException {
+		return new MISession(process, pty);
 	}
 
 	/**
@@ -59,9 +66,20 @@ public class MIPlugin extends Plugin {
 	 * @throws IOException
 	 */
 	public ICDISession createCSession(String program) throws IOException, MIException {
-		String[]args = new String[]{"gdb", "-q", "-nw", "-i", "mi", program};
+ 		String[] args;
+		PTY pty = null;
+		try {
+			pty = new PTY();
+			String ttyName = pty.getSlaveName();
+			args = new String[]{"gdb", "-q", "-nw", "-tty", ttyName, "-i", "mi", program};
+		} catch (IOException e) {
+			e.printStackTrace();
+			pty = null;
+			args = new String[]{"gdb", "-q", "-nw", "-i", "mi", program};
+		}
+
 		Process gdb = ProcessFactory.getFactory().exec(args);
-		MISession session = createMISession(gdb);
+		MISession session = createMISession(gdb, pty);
 		/*
 		try {
 			CommandFactory factory = session.getCommandFactory();

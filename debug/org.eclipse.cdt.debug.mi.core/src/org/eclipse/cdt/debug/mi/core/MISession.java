@@ -22,6 +22,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIParser;
+import org.eclipse.cdt.utils.pty.PTY;
 
 /**
  * Represents a GDB/MI session.
@@ -56,10 +57,19 @@ public class MISession extends Observable {
 	/**
 	 * Create the gdb session.
 	 *
-	 * @param i the gdb input channel.
-	 * @param o gdb output channel.
+	 * @param Process gdb Process.
 	 */
 	public MISession(Process process) throws MIException {
+		this(process, null);
+	}
+
+	/**
+	 * Create the gdb session.
+	 *
+	 * @param Process gdb Process.
+	 * @param pty Terminal to use for the inferior.
+	 */
+	public MISession(Process process, PTY pty) throws MIException {
 		miProcess = process;
 		inChannel = process.getInputStream();
 		outChannel = process.getOutputStream();
@@ -69,7 +79,7 @@ public class MISession extends Observable {
 		parser = new MIParser();
 
 		// Do this first.
-		inferior = new MIInferior(this);
+		inferior = new MIInferior(this, pty);
 
 		txQueue = new CommandQueue();
 		rxQueue = new CommandQueue();

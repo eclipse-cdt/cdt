@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIGDBShowExitCode;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.cdt.utils.spawner.Spawner;
 
 /**
@@ -35,15 +36,19 @@ public class MIInferior extends Process {
 	MISession session;
 
 	OutputStream out;
-
-	PipedInputStream in;
+	InputStream in;
+	
 	PipedOutputStream inPiped;
 
 	PipedInputStream err;
 	PipedOutputStream errPiped;
 
-	MIInferior(MISession mi) {
+	MIInferior(MISession mi, PTY pty) {
 		session = mi;
+		if (pty != null) {
+			out = pty.getOutputStream();
+			in = pty.getInputStream();
+		}
 	}
 
 	/**

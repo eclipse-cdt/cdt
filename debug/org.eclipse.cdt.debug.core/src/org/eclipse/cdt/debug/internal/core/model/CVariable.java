@@ -152,13 +152,18 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 		CType getType() throws DebugException {
 			if ( fType == null ) {
 				ICDIVariableObject varObject = getCDIVariableObject();
-				if ( varObject != null )
-					try {
-						fType = new CType( varObject.getType() );
+				if ( varObject != null ) {
+					synchronized( this ) {
+						if ( fType == null ) {
+							try {
+								fType = new CType( varObject.getType() );
+							}
+							catch( CDIException e ) {
+								requestFailed( e.getMessage(), null );
+							}
+						}
 					}
-					catch( CDIException e ) {
-						requestFailed( e.getMessage(), null );
-					}
+				}
 			}
 			return fType;
 		}

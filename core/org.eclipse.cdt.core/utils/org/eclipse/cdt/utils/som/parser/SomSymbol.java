@@ -11,7 +11,9 @@
 package org.eclipse.cdt.utils.som.parser;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.Symbol;
@@ -34,7 +36,7 @@ public class SomSymbol extends Symbol {
 	 * @param startLine
 	 * @param endLine
 	 */
-	public SomSymbol(BinaryObjectAdapter binary, String name, int type, long addr, long size, IPath sourceFile, int startLine, int endLine) {
+	public SomSymbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size, IPath sourceFile, int startLine, int endLine) {
 		super(binary, name, type, addr, size, sourceFile, startLine, endLine);
 		// TODO Auto-generated constructor stub
 	}
@@ -46,7 +48,7 @@ public class SomSymbol extends Symbol {
 	 * @param addr
 	 * @param size
 	 */
-	public SomSymbol(BinaryObjectAdapter binary, String name, int type, long addr, long size) {
+	public SomSymbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size) {
 		super(binary, name, type, addr, size);
 		// TODO Auto-generated constructor stub
 	}
@@ -59,7 +61,7 @@ public class SomSymbol extends Symbol {
 		Addr2line addr2line = ((SOMBinaryObject)binary).getAddr2line(true);
 		if (addr2line != null) {
 			try {
-				return addr2line.getLineNumber(getAddress() + offset);
+				return addr2line.getLineNumber(getAddress().add(BigInteger.valueOf(offset)));
 			} catch (IOException e) {
 				// ignore
 			}

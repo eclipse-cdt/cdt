@@ -59,6 +59,40 @@ public class ERandomAccessFile extends RandomAccessFile {
 		return ((val[0] << 24) + (val[1] << 16) + (val[2] << 8) + val[3]);
 	}
 
+	public final long readLongE() throws IOException
+	{
+		byte [] bytes = new byte[8];
+		long result = 0;
+		super.readFully(bytes);
+		int shift = 0;		
+		if ( isle ) 
+			for(int i=7; i >= 0; i-- )
+			{
+				shift = i*8;
+				result += ( ((long)bytes[i]) << shift ) & ( 0xffL << shift );
+			}
+	    else
+			for(int i=0; i <= 7; i++ )
+			{
+				shift = (7-i)*8;
+				result += ( ((long)bytes[i]) << shift ) & ( 0xffL << shift );
+			}
+		return result;
+	}
+	
+	public final void readFullyE(byte [] bytes) throws IOException
+	{
+		super.readFully(bytes);
+		byte tmp = 0;
+		if( isle )
+			for(int i=0; i <= bytes.length / 2; i++)
+			{
+				tmp = bytes[i];
+				bytes[i] = bytes[bytes.length - i -1];
+				bytes[bytes.length - i -1] = tmp; 
+			}
+	}
+
     public void setFileOffset( long offset ) throws IOException {
         ptr_offset = offset;
         super.seek( offset );

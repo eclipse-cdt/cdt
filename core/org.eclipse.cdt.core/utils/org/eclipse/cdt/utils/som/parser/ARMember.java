@@ -18,12 +18,12 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
-import org.eclipse.core.runtime.IPath;
-
+import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.som.AR;
 import org.eclipse.cdt.utils.som.SOM;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * A member of a SOM archive
@@ -61,7 +61,7 @@ public class ARMember extends SOMBinaryObject {
 						cppfilt = null;
 					}
 				}
-				Symbol sym = new Symbol(this, name, peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE, peSyms[i].symbol_value, 1);
+				Symbol sym = new Symbol(this, name, peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE, new Addr32(peSyms[i].symbol_value), 1);
 
 				list.add(sym);
 			}

@@ -11,10 +11,13 @@ package org.eclipse.cdt.utils.coff.parser;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.Addr2line;
+import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.cdt.utils.Objdump;
@@ -147,7 +150,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 					continue;
 				}
 				int type = peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
-				int addr = peSyms[i].n_value;
+				IAddress addr = new Addr32(peSyms[i].n_value);
 				int size = 4;
 				if (cppfilt != null) {
 					try {
@@ -172,7 +175,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 						}
 						IPath file = filename != null ? new Path(filename) : Path.EMPTY;
 						int startLine = addr2line.getLineNumber(addr);
-						int endLine = addr2line.getLineNumber(addr + size - 1);
+						int endLine = addr2line.getLineNumber(addr.add(BigInteger.valueOf(size - 1)));
 						list.add(new CygwinSymbol(this, name, type, addr, size, file, startLine, endLine));
 					} catch (IOException e) {
 						addr2line = null;

@@ -1,3 +1,9 @@
+2004-09-15 Alain Magloire
+
+	Jumbo patch from Artyom Kuanbekov
+	PR 69908
+	Support for 64 bits
+
 2004-09-14 Alain Magloire
 	Try to find the function in the header.
 	* model/org/eclipse/cdt/internal/core/model/BinaryElement.java

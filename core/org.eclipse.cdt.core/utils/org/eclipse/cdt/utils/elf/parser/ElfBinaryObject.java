@@ -120,6 +120,7 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 		info.isLittleEndian = attribute.isLittleEndian();
 		info.hasDebug = attribute.hasDebug();
 		info.cpu = attribute.getCPU();
+		info.addressFactory = attribute.getAddressFactory(); 
 	}
 
 	protected void loadSymbols(ElfHelper helper) throws IOException {

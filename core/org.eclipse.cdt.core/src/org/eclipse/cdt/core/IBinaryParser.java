@@ -121,7 +121,7 @@ public interface IBinaryParser extends IAdaptable {
 		 * @param addr
 		 * @return ISymbol
 		 */
-		ISymbol getSymbol(long addr);
+		ISymbol getSymbol(IAddress addr);
 
 		/**
 		 * The name of the object
@@ -129,6 +129,7 @@ public interface IBinaryParser extends IAdaptable {
 		 */
 		String getName();
 
+		IAddressFactory getAddressFactory();
 	}
 
 	/**
@@ -176,7 +177,7 @@ public interface IBinaryParser extends IAdaptable {
 		 * Address of the symbol
 		 * @return
 		 */
-		long getAddress();
+		IAddress getAddress();
 
 		/**
 		 * Size of the symbol.

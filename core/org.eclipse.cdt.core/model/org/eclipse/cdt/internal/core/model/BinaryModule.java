@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryElement;
@@ -47,8 +48,8 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IBinaryElement#getAddress()
 	 */
-	public long getAddress() throws CModelException {
-		return 0;
+	public IAddress getAddress() throws CModelException {
+		return null; 
 	}
 
 	/* (non-Javadoc)

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IVariable;
 
@@ -18,7 +19,7 @@ import org.eclipse.cdt.core.model.IVariable;
  */
 public class BinaryVariable extends BinaryElement implements IVariable {
 
-	public BinaryVariable(ICElement parent, String name, long a) {
+	public BinaryVariable(ICElement parent, String name, IAddress a) {
 		super(parent, name, ICElement.C_VARIABLE, a);
 	}
 

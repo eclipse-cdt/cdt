@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.core.runtime.IPath;
@@ -19,14 +20,14 @@ public class Symbol implements ISymbol, Comparable {
 	protected final BinaryObjectAdapter binary;
 	private final String name;
 
-	private final long addr;
+	private final IAddress addr;
 	private final int type;
 	private final long size;
 	private final int startLine;
 	private final int endLine;
 	private final IPath sourceFile;
 
-	public Symbol(BinaryObjectAdapter binary, String name, int type, long addr, long size, IPath sourceFile, int startLine, int endLine) {
+	public Symbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size, IPath sourceFile, int startLine, int endLine) {
 		this.binary = binary;
 		this.name = name;
 		this.type = type;
@@ -37,7 +38,7 @@ public class Symbol implements ISymbol, Comparable {
 		this.sourceFile = sourceFile;
 	}
 
-	public Symbol(BinaryObjectAdapter binary, String name, int type, long addr, long size) {
+	public Symbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size) {
 		this.binary = binary;
 		this.name = name;
 		this.type = type;
@@ -81,7 +82,7 @@ public class Symbol implements ISymbol, Comparable {
 	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getAdress()
 	 */
-	public long getAddress() {
+	public IAddress getAddress() {
 		return addr;
 	}
 
@@ -122,17 +123,13 @@ public class Symbol implements ISymbol, Comparable {
 	}
 
 	public int compareTo(Object obj) {
-		long thisVal = 0;
-		long anotherVal = 0;
+		IAddress thisVal = this.addr;
+		IAddress anotherVal = null;
 		if (obj instanceof Symbol) {
-			Symbol sym = (Symbol) obj;
-			thisVal = this.addr;
-			anotherVal = sym.addr;
-		} else if (obj instanceof Long) {
-			Long val = (Long) obj;
-			anotherVal = val.longValue();
-			thisVal = this.addr;
+			anotherVal = ((Symbol) obj).addr;
+		} else if (obj instanceof IAddress) {
+			anotherVal = (IAddress) obj;
 		}
-		return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
+		return thisVal.compareTo(anotherVal);
 	}
 }

@@ -7,6 +7,7 @@ package org.eclipse.cdt.internal.core.model;
 import java.io.IOException;
 import java.util.Map;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryElement;
@@ -27,9 +28,9 @@ import org.eclipse.core.runtime.Path;
  */
 public class BinaryElement extends CElement implements IBinaryElement, ISourceManipulation, ISourceReference {
 
-	long addr;
+	IAddress addr;
 
-	public BinaryElement(ICElement parent, String name, int type, long a) {
+	public BinaryElement(ICElement parent, String name, int type, IAddress a) {
 		super(parent, name, type);
 		addr = a;
 	}
@@ -153,7 +154,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IBinaryElement#getAddress()
 	 */
-	public long getAddress() throws CModelException {
+	public IAddress getAddress() throws CModelException {
 		return addr;
 	}
 

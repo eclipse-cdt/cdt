@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
@@ -43,6 +44,7 @@ public class Binary extends Openable implements IBinary {
 	private long longBSS;
 	private String endian;
 	private String soname;
+	private IAddressFactory addressFactory;
 	
 	private long fLastModification;
 
@@ -172,6 +174,15 @@ public class Binary extends Openable implements IBinary {
 		return binaryObject;
 	}
 	
+	public IAddressFactory getAddressFactory() {
+		if (isObject() || isExecutable() || isSharedLib() || isCore()) {
+			if (addressFactory == null || hasChanged()) {
+				addressFactory = getBinaryObject().getAddressFactory();
+			}
+		}
+		return addressFactory;
+	}
+	
 	protected int getType() {
 		IBinaryObject obj = getBinaryObject();
 		if (obj != null && (fBinType == 0 || hasChanged())) {
@@ -193,6 +204,7 @@ public class Binary extends Openable implements IBinary {
 			longData = -1;
 			longText = -1;
 			soname = null;
+			addressFactory = null;
 		}
 		return changed;
 	}

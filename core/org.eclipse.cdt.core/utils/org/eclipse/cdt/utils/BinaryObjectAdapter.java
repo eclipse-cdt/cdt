@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
@@ -35,6 +38,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 		public String soname;
 		public String[] needed;
 		public String cpu;
+		public IAddressFactory addressFactory;
 
 		public BinaryObjectInfo() {
 			cpu = soname = ""; //$NON-NLS-1$
@@ -49,9 +53,9 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbol(long)
 	 */
-	public ISymbol getSymbol(long addr) {
+	public ISymbol getSymbol(IAddress addr) {
 		ISymbol[] syms = getSymbols();
-		int insertion = Arrays.binarySearch(syms, new Long(addr));
+		int insertion = Arrays.binarySearch(syms, addr);
 		if (insertion >= 0) {
 			return syms[insertion];
 		}
@@ -60,7 +64,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 		}
 		insertion = -insertion - 1;
 		ISymbol symbol =  syms[insertion - 1];
-		if (addr < (symbol.getAddress() + symbol.getSize())) {
+		if (addr.compareTo(symbol.getAddress().add(BigInteger.valueOf(symbol.getSize()))) < 0) {
 			return syms[insertion - 1];
 		}
 		return null;
@@ -153,7 +157,14 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 		}
 		return ""; //$NON-NLS-1$
 	}
-
+	public IAddressFactory getAddressFactory()
+	{
+		BinaryObjectInfo info = getBinaryObjectInfo();
+		if (info != null) {
+			return info.addressFactory;
+		}
+		return null; //$NON-NLS-1$
+	}
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getName()
 	 */

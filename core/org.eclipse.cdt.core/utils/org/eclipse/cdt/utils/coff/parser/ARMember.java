@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
+import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.coff.Coff;
 import org.eclipse.cdt.utils.coff.PE;
@@ -77,7 +78,7 @@ public class ARMember extends PEBinaryObject {
 					continue;
 				}
 				int type = peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
-				list.add(new Symbol(this, name, type, peSyms[i].n_value, 1));
+				list.add(new Symbol(this, name, type, new Addr32(peSyms[i].n_value), 1));
 			}
 		}
 	}

@@ -7,7 +7,9 @@
 package org.eclipse.cdt.utils.xcoff.parser;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.Symbol;
@@ -32,7 +34,7 @@ public class XCoffSymbol extends Symbol {
 	 * @param startLine
 	 * @param endLine
 	 */
-	public XCoffSymbol(BinaryObjectAdapter binary, String name, int type, long addr, long size, IPath sourceFile, int startLine,
+	public XCoffSymbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size, IPath sourceFile, int startLine,
 			int endLine) {
 		super(binary, name, type, addr, size, sourceFile, startLine, endLine);
 		// TODO Auto-generated constructor stub
@@ -45,7 +47,7 @@ public class XCoffSymbol extends Symbol {
 	 * @param addr
 	 * @param size
 	 */
-	public XCoffSymbol(BinaryObjectAdapter binary, String name, int type, long addr, long size) {
+	public XCoffSymbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size) {
 		super(binary, name, type, addr, size);
 		// TODO Auto-generated constructor stub
 	}
@@ -58,7 +60,7 @@ public class XCoffSymbol extends Symbol {
 		Addr2line addr2line = ((XCOFFBinaryObject)binary).getAddr2line(true);
 		if (addr2line != null) {
 			try {
-				return addr2line.getLineNumber(getAddress() + offset);
+				return addr2line.getLineNumber(getAddress().add(BigInteger.valueOf(offset)));
 			} catch (IOException e) {
 				// ignore
 			}

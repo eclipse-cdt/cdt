@@ -11,8 +11,10 @@ package org.eclipse.cdt.utils.elf.parser;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.List;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.Objdump;
@@ -124,7 +126,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 					cppfilt = null;
 				}
 			}
-			long addr = array[i].st_value;
+			IAddress addr = array[i].st_value;
 			long size = array[i].st_size;
 			if (addr2line != null) {
 				try {
@@ -133,7 +135,7 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 					// the file.
 					IPath file = (filename != null && !filename.equals("??")) ? new Path(filename) : Path.EMPTY; //$NON-NLS-1$
 					int startLine = addr2line.getLineNumber(addr);
-					int endLine = addr2line.getLineNumber(addr + size - 1);
+					int endLine = addr2line.getLineNumber(addr.add(BigInteger.valueOf(size - 1)));
 					list.add(new GNUSymbol(this, name, type, addr, size, file, startLine, endLine));
 				} catch (IOException e) {
 					addr2line = null;

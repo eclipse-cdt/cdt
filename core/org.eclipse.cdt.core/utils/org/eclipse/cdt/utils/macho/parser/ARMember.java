@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.Addr2line;
+import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.macho.AR;
@@ -72,7 +73,7 @@ public class ARMember extends MachOBinaryObject {
 
 	protected void addSymbols(MachO.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt, List list) {
 		for (int i = 0; i < array.length; i++) {
-			list.add(new Symbol(this, array[i].toString(), type, array[i].n_value, 4));
+			list.add(new Symbol(this, array[i].toString(), type, new Addr32(array[i].n_value), 4));
 		}
 	}
 

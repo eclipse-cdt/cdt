@@ -11,6 +11,7 @@
 
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.model.IBinaryFunction;
 import org.eclipse.cdt.core.model.ICElement;
 
@@ -18,7 +19,7 @@ import org.eclipse.cdt.core.model.ICElement;
  */
 public class BinaryFunction extends BinaryElement implements IBinaryFunction {
 
-	public BinaryFunction(ICElement parent, String name, long a) {
+	public BinaryFunction(ICElement parent, String name, IAddress a) {
 		super(parent, name, ICElement.C_FUNCTION, a);
 	}
 

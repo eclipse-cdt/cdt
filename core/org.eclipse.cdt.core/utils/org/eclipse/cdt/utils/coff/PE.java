@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IAddressFactory;
+import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.coff.Coff.FileHeader;
 import org.eclipse.cdt.utils.coff.Coff.OptionalHeader;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
@@ -84,6 +86,7 @@ public class PE {
 		int word;
 		boolean bDebug;
 		boolean isle;
+		IAddressFactory addrFactory;
 
 		public String getCPU() {
 			return cpu;
@@ -104,6 +107,11 @@ public class PE {
 		public int getWord() {
 			return word;
 		}
+		
+		public IAddressFactory getAddressFactory(){
+			return addrFactory;
+		}
+		
 	}
 
 	/**
@@ -462,6 +470,8 @@ public class PE {
 		if ((filhdr.f_flags & PEConstants.IMAGE_FILE_32BIT_MACHINE) != 0) {
 			attrib.word = 32;
 		}
+		
+		attrib.addrFactory = new Addr32Factory(); 
 		return attrib;
 	}
 

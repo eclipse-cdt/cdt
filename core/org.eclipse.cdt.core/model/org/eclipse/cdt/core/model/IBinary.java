@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
+import org.eclipse.cdt.core.IAddressFactory;
+
 
 /**
  * Represents a Binary file, for example an ELF excutable.
@@ -42,5 +44,7 @@ public interface IBinary extends ICElement, IParent, IOpenable {
 	public long getBSS();
 	
 	public boolean isLittleEndian();
+
+	public IAddressFactory getAddressFactory();
 
 }

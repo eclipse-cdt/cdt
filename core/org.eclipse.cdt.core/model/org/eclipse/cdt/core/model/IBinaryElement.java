@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
 
+import org.eclipse.cdt.core.IAddress;
+
 
 /**
  */
@@ -22,7 +24,7 @@ public interface IBinaryElement extends ICElement {
  	 * @exception CModelException if this element does not have address
  	 * information.
  	 */
- 	long getAddress() throws CModelException;
+ 	IAddress getAddress() throws CModelException;
 
 	/**
  	 * Returns the binary object the element belongs to.

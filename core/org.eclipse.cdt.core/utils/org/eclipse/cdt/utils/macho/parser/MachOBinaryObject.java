@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
+import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.Symbol;
@@ -161,7 +162,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 			int size = 0;
 			String filename = array[i].getFilename();
 			IPath filePath = (filename != null) ? new Path(filename) : null; //$NON-NLS-1$
-			list.add(new Symbol(this, name, type, array[i].n_value, size, filePath, array[i].getLineNumber(addr), array[i].getLineNumber(addr + size - 1)));
+			list.add(new Symbol(this, name, type, new Addr32(array[i].n_value), size, filePath, array[i].getLineNumber(addr), array[i].getLineNumber(addr + size - 1)));
 		}
 	}
 

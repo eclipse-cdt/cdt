@@ -15,7 +15,9 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.math.BigInteger;
 
+import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 
 public class Addr2line {
@@ -61,13 +63,13 @@ public class Addr2line {
 		}
 	}
 
-	public String getLine(long address) throws IOException {
-		getOutput(Integer.toHexString((int)address));
+	public String getLine(IAddress address) throws IOException {
+		getOutput(address.toString(16));
 		return lastline;
 	}
 
-	public String getFunction(long address) throws IOException {
-		getOutput(Integer.toHexString((int)address));
+	public String getFunction(IAddress address) throws IOException {
+		getOutput(address.toString(16));
 		return lastsymbol;
 	}	
 
@@ -78,7 +80,7 @@ public class Addr2line {
 	 *  main
 	 *  hello.c:39
 	 */
-	public String getFileName(long address) throws IOException {
+	public String getFileName(IAddress address) throws IOException {
 		String filename = null;
 		String line = getLine(address);
 		int index1, index2;
@@ -103,12 +105,14 @@ public class Addr2line {
 	 *  main
 	 *  hello.c:39
 	 */
-	public int getLineNumber(long address) throws IOException {
+	public int getLineNumber(IAddress address) throws IOException {
 		// We try to get the nearest match
 		// since the symbol may not exactly align with debug info.
 		// In C line number 0 is invalid, line starts at 1 for file, we use
 		// this for validation.
-		for (int i = 0; i <= 20; i += 4, address += i) {
+		
+		//IPF_TODO: check 
+		for (int i = 0; i <= 20; i += 4, address = address.add(BigInteger.valueOf(i))) {
 			String line = getLine(address);
 			if (line != null) {
 				int colon = line.lastIndexOf(':');

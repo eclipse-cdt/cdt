@@ -18,9 +18,20 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IAddressFactory;
+import org.eclipse.cdt.utils.Addr32;
+import org.eclipse.cdt.utils.Addr32Factory;
+import org.eclipse.cdt.utils.Addr64;
+import org.eclipse.cdt.utils.Addr64Factory;
 
 // test checkin
 public class Elf {
+	public final static int ELF32_ADDR_SIZE = 4;
+	public final static int ELF32_OFF_SIZE = 4;
+	public final static int ELF64_ADDR_SIZE = 8;
+	public final static int ELF64_OFF_SIZE = 8;
+	
 	protected ERandomAccessFile efile;		
 
 	protected ELFhdr ehdr;
@@ -52,7 +63,7 @@ public class Elf {
 
 		/* e_ident[EI_CLASS] */
 		public final static int ELFCLASSNONE = 0;
-		public final static int ELCLASS32 = 1;
+		public final static int ELFCLASS32 = 1;
 		public final static int ELFCLASS64 = 2;
 
 		/* e_ident[EI_DATA] */
@@ -117,7 +128,7 @@ public class Elf {
 		public int 	e_type; 				/* file type (Elf32_Half) */
 		public int 	e_machine;				/* machine type (Elf32_Half) */
 		public long		e_version;				/* version number (Elf32_Word) */
-		public long		e_entry;        		/* entry point (Elf32_Addr)*/
+		public IAddress		e_entry;        		/* entry point (Elf32_Addr)*/
 	    public long		e_phoff;				/* Program hdr offset (Elf32_Off)*/
 		public long		e_shoff;				/* Section hdr offset (Elf32_Off)*/
 	    public long		e_flags;				/* Processor flags (Elf32_Word)*/
@@ -138,9 +149,30 @@ public class Elf {
 			e_type = efile.readShortE();
 			e_machine = efile.readShortE();
 			e_version = efile.readIntE();
-			e_entry = efile.readIntE();
+			switch (e_ident[ELFhdr.EI_CLASS])
+			{
+				case ELFhdr.ELFCLASS32:
+				{
+					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+					efile.readFullyE(addrArray);
+					e_entry = new Addr32(addrArray);
 			e_phoff = efile.readIntE();
 			e_shoff = efile.readIntE();
+				}
+				break; 
+				case ELFhdr.ELFCLASS64:
+				{
+					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+					efile.readFullyE(addrArray);
+					e_entry = new Addr64(addrArray);
+					e_phoff = readUnsignedLong(efile);
+					e_shoff = readUnsignedLong(efile);
+				}
+				break; 
+				case ELFhdr.ELFCLASSNONE:
+				default: 
+					throw new IOException("Unknown ELF class " + e_ident[ELFhdr.EI_CLASS]);
+			}
 			e_flags = efile.readIntE();
 			e_ehsize = efile.readShortE();
 			e_phentsize = efile.readShortE();
@@ -163,9 +195,30 @@ public class Elf {
 			e_type = makeShort(bytes, offset, isle); offset += 2;
 			e_machine = makeShort(bytes, offset, isle); offset += 2;
 			e_version = makeInt(bytes, offset, isle); offset += 4;
-			e_entry = makeInt(bytes, offset, isle); offset += 4;
-			e_phoff = makeInt(bytes, offset, isle); offset += 4;
-			e_shoff = makeInt(bytes, offset, isle); offset += 4;
+			switch (e_ident[ELFhdr.EI_CLASS])
+			{
+				case ELFhdr.ELFCLASS32:
+				{
+					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+					System.arraycopy(bytes, offset, addrArray, 0, ELF32_ADDR_SIZE); offset += ELF32_ADDR_SIZE;
+					e_entry = new Addr32(addrArray);
+					e_phoff = makeInt(bytes, offset, isle); offset += ELF32_OFF_SIZE;
+					e_shoff = makeInt(bytes, offset, isle); offset += ELF32_OFF_SIZE;
+				}
+				break; 
+				case ELFhdr.ELFCLASS64:
+				{
+					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+					System.arraycopy(bytes, offset, addrArray, 0, ELF64_ADDR_SIZE); offset += ELF64_ADDR_SIZE;
+					e_entry = new Addr64(addrArray);
+					e_phoff = makeUnsignedLong(bytes, offset, isle); offset += ELF64_OFF_SIZE;
+					e_shoff = makeUnsignedLong(bytes, offset, isle); offset += ELF64_OFF_SIZE;
+				}
+				break; 
+				case ELFhdr.ELFCLASSNONE:
+				default: 
+					throw new IOException("Unknown ELF class " + e_ident[ELFhdr.EI_CLASS]);
+			}
 			e_flags = makeInt(bytes, offset, isle); offset += 4;
 			e_ehsize = makeShort(bytes, offset, isle); offset += 2;
 			e_phentsize = makeShort(bytes, offset, isle); offset += 2;
@@ -194,6 +247,38 @@ public class Elf {
 			return ((val[offset + 0] << 24) + (val[offset + 1] << 16) + (val[offset + 2] << 8) + val[offset + 3]);
 		}
 
+		private final long makeLong(byte [] val, int offset, boolean isle) throws IOException
+		{
+			long result = 0;
+			int shift = 0;
+			if ( isle ) 
+				for(int i=7; i >= 0; i-- )
+				{
+					shift = i*8;
+					result += ( ((long)val[offset + i]) << shift ) & ( 0xffL << shift );
+				}
+			else
+				for(int i=0; i <= 7; i++ )
+				{
+					shift = (7-i)*8;
+					result += ( ((long)val[offset + i]) << shift ) & ( 0xffL << shift );
+				}
+			return result;
+		}
+		
+		private final long makeUnsignedLong(byte [] val, int offset, boolean isle) throws IOException
+		{
+			long result = makeLong(val,offset,isle);
+	    	if(result < 0)
+	    	{
+	    		throw new IOException( "Maximal file offset is " + Long.toHexString(Long.MAX_VALUE) +
+	    				               " given offset is " + Long.toHexString(result));
+	    	}
+	    	return result;
+
+		}
+		
+		
 		
 	}
 
@@ -222,7 +307,7 @@ public class Elf {
 		public long sh_name;
 		public long sh_type;
 		public long sh_flags;
-		public long sh_addr;
+		public IAddress sh_addr;
 		public long sh_offset;
 		public long sh_size;
 		public long sh_link;
@@ -301,9 +386,9 @@ public class Elf {
         public final static int SHN_XINDEX = 0xffffffff; 
         public final static int SHN_HIRESERVE = 0xffffffff; 
 
-
+		/*NOTE: 64 bit and 32 bit ELF sections has different order*/
 		public long st_name;
-		public long st_value;
+		public IAddress st_value;
 		public long st_size;
 		public short st_info;
 		public short st_other;
@@ -326,6 +411,7 @@ public class Elf {
 		}
 						
 		public int compareTo(Object obj) {
+			/*
 			long thisVal = 0;
 			long anotherVal = 0;
 			if ( obj instanceof Symbol ) {
@@ -338,6 +424,8 @@ public class Elf {
 				thisVal = this.st_value;
 			}
 			return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+			*/
+			return this.st_value.compareTo(((Symbol)obj).st_value);
 		}
 
 		public String toString() {	
@@ -362,27 +450,27 @@ public class Elf {
 	 * and the Long doesn't know how to compare against a Symbol so if
 	 * we compare Symbol vs Long it is ok, but not if we do Long vs Symbol.
 	 */
+	
 	class SymbolComparator implements Comparator {
-		long val1, val2;
+		IAddress val1, val2;
 		public int compare(Object o1, Object o2) {
 
-			if(o1 instanceof Long) {
-				val1 = ((Long)o1).longValue();
+			if(o1 instanceof IAddress) {
+				val1 = (IAddress)o1;
 			} else if(o1 instanceof Symbol) {
 				val1 = ((Symbol)o1).st_value;
 			} else {
 				return -1;
 			}
 			
-			if(o2 instanceof Long) {
-				val2 = ((Long)o2).longValue();
+			if(o2 instanceof IAddress) {
+				val2 = (IAddress)o2;
 			} else if(o2 instanceof Symbol) {
 				val2 = ((Symbol)o2).st_value;
 			} else {
 				return -1;
 			}
-			return (val1 == val2) ? 0 
-								  : ((val1 < val2) ? -1 : 1);
+			return val1.compareTo(val2);
 		}
 	}
 
@@ -399,11 +487,11 @@ public class Elf {
 		public final static int PF_X = 1;
 		public final static int PF_W = 2;
 		public final static int PF_R = 4;
-		
+		/*NOTE: 64 bit and 32 bit ELF have different order and size of elements */
 		public long p_type;
 		public long p_offset;
-		public long p_vaddr;
-		public long p_paddr;
+		public IAddress p_vaddr;
+		public IAddress p_paddr;
 		public long p_filesz;
 		public long p_memsz;
 		public long p_flags;
@@ -418,20 +506,52 @@ public class Elf {
 		PHdr phdrs[] = new PHdr[ehdr.e_phnum];
 		for( int i = 0; i < ehdr.e_phnum; i++ ) {
 			phdrs[i] = new PHdr();
+			switch (ehdr.e_ident[ELFhdr.EI_CLASS])
+			{
+				case ELFhdr.ELFCLASS32:
+				{
+					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+
 			phdrs[i].p_type = efile.readIntE();
 			phdrs[i].p_offset = efile.readIntE();
-			phdrs[i].p_vaddr = efile.readIntE();
-			phdrs[i].p_paddr = efile.readIntE();
+					efile.readFullyE(addrArray);
+					phdrs[i].p_vaddr = new Addr32(addrArray);
+					efile.readFullyE(addrArray);
+					phdrs[i].p_paddr = new Addr32(addrArray);
 			phdrs[i].p_filesz = efile.readIntE();
 			phdrs[i].p_memsz = efile.readIntE();
 			phdrs[i].p_flags = efile.readIntE();
 			phdrs[i].p_align = efile.readIntE();
 		}
+				break; 
+				case ELFhdr.ELFCLASS64:
+				{
+					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+					
+					phdrs[i].p_type = efile.readIntE();
+					phdrs[i].p_flags = efile.readIntE();
+					phdrs[i].p_offset = readUnsignedLong(efile);
+					efile.readFullyE(addrArray);
+					phdrs[i].p_vaddr = new Addr64(addrArray);
+					efile.readFullyE(addrArray);
+					phdrs[i].p_paddr = new Addr64(addrArray);
+					phdrs[i].p_filesz = readUnsignedLong(efile);
+					phdrs[i].p_memsz = readUnsignedLong(efile);
+					phdrs[i].p_align = readUnsignedLong(efile);
+				}
+				break; 
+				case ELFhdr.ELFCLASSNONE:
+				default: 
+					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]);
+			}
+
+		}
 		return phdrs;
 	}
 		
 	public class Dynamic {
-		public final static int DYN_ENT_SIZE = 8;
+		public final static int DYN_ENT_SIZE_32 = 8;
+		public final static int DYN_ENT_SIZE_64 = 16;
 
 		public final static int DT_NULL 		= 0;
 		public final static int DT_NEEDED 		= 1;
@@ -454,10 +574,8 @@ public class Elf {
 		private Section section;
 		private String name;
 						
-		protected Dynamic(Section section, long tag, long val) {
+		protected Dynamic(Section section) {
 			this.section = section;
-			d_tag = tag;
-			d_val = val;
 		}						
 		
 		public String toString() {
@@ -491,11 +609,30 @@ public class Elf {
 		// We must assume the section is a table ignoring the sh_entsize as it is not
 		// set for MIPS.
 		while( off < section.sh_size ) {
-			Dynamic dynEnt = new Dynamic(section, efile.readIntE(), efile.readIntE());
-			if ( dynEnt.d_tag == Dynamic.DT_NULL ) 
+			Dynamic dynEnt = new Dynamic(section);
+			switch (ehdr.e_ident[ELFhdr.EI_CLASS])
+			{
+				case ELFhdr.ELFCLASS32:
+				{
+					dynEnt.d_tag = efile.readIntE();
+					dynEnt.d_val = efile.readIntE();
+					off+= Dynamic.DYN_ENT_SIZE_32;
+				}
 				break;
+				case ELFhdr.ELFCLASS64:
+				{
+					dynEnt.d_tag = efile.readLongE();
+					dynEnt.d_val = efile.readLongE();
+					off+= Dynamic.DYN_ENT_SIZE_64;
+				}
+				break; 
+				case ELFhdr.ELFCLASSNONE:
+				default: 
+					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]);
+			}
+			
+			if ( dynEnt.d_tag != Dynamic.DT_NULL ) 
 			dynList.add(dynEnt);
-			off+= Dynamic.DYN_ENT_SIZE;
 		}
 		return (Dynamic[])dynList.toArray(new Dynamic[0]);
 	}
@@ -546,6 +683,7 @@ public class Elf {
 		int debugType;
 		boolean bDebug;
 		boolean isle;
+		IAddressFactory addressFactory;
 
 		public String getCPU() {
 			return cpu;
@@ -565,6 +703,10 @@ public class Elf {
 	
 		public boolean isLittleEndian() {
 			return isle;
+		}
+
+		public IAddressFactory getAddressFactory() {
+			return addressFactory;
 		}
 	}
 
@@ -679,6 +821,18 @@ public class Elf {
 				attrib.isle = false;
 				break;
 		}
+		switch (ehdr.e_ident[ELFhdr.EI_CLASS])
+		{
+			case ELFhdr.ELFCLASS32:
+				attrib.addressFactory = new Addr32Factory();
+			break; 
+			case ELFhdr.ELFCLASS64:
+				attrib.addressFactory = new Addr64Factory();
+			break; 
+			case ELFhdr.ELFCLASSNONE:
+			default:
+				attrib.addressFactory = null;  
+		}
 		// getSections
 		// find .debug using toString
 		Section [] sec = getSections();
@@ -777,14 +931,53 @@ public class Elf {
 				sections[i] = new Section();
 				sections[i].sh_name = efile.readIntE();
 				sections[i].sh_type = efile.readIntE();
+				switch (ehdr.e_ident[ELFhdr.EI_CLASS])
+				{
+					case ELFhdr.ELFCLASS32:
+					{
+						byte[] addrArray = new byte[ELF32_ADDR_SIZE];
 				sections[i].sh_flags = efile.readIntE();
-				sections[i].sh_addr = efile.readIntE();
+						efile.readFullyE(addrArray);
+						sections[i].sh_addr = new Addr32(addrArray);
 				sections[i].sh_offset = efile.readIntE();
 				sections[i].sh_size = efile.readIntE();
+					}
+					break; 
+					case ELFhdr.ELFCLASS64:
+					{
+						byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+						sections[i].sh_flags = efile.readLongE();
+						efile.readFullyE(addrArray);
+						sections[i].sh_addr = new Addr64(addrArray);
+						sections[i].sh_offset = readUnsignedLong(efile);
+						sections[i].sh_size = readUnsignedLong(efile);
+					}
+					break; 
+					case ELFhdr.ELFCLASSNONE:
+					default: 
+						throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]);
+				}
+				
 				sections[i].sh_link = efile.readIntE();
 				sections[i].sh_info = efile.readIntE();
+				switch (ehdr.e_ident[ELFhdr.EI_CLASS])
+				{
+					case ELFhdr.ELFCLASS32:
+					{
 				sections[i].sh_addralign = efile.readIntE();
 				sections[i].sh_entsize = efile.readIntE();
+					}
+					break; 
+					case ELFhdr.ELFCLASS64:
+					{
+						sections[i].sh_addralign = efile.readLongE();
+						sections[i].sh_entsize = readUnsignedLong(efile);
+					}
+					break; 
+					case ELFhdr.ELFCLASSNONE:
+					default: 
+						throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]);
+				}
 				if ( sections[i].sh_type == Section.SHT_SYMTAB )
 					syms = i;
 				if ( syms == 0 && sections[i].sh_type == Section.SHT_DYNSYM )
@@ -804,12 +997,38 @@ public class Elf {
         for( int c = 0; c < numSyms; c++) {
 	        efile.seek(section.sh_offset + (section.sh_entsize * c));
             Symbol symbol = new Symbol( section );
+			switch (ehdr.e_ident[ELFhdr.EI_CLASS])
+			{
+				case ELFhdr.ELFCLASS32:
+				{
+					byte[] addrArray = new byte[ELF32_ADDR_SIZE];
+
             symbol.st_name = efile.readIntE();
-            symbol.st_value = efile.readIntE();
+					efile.readFullyE(addrArray);
+					symbol.st_value = new Addr32(addrArray);
             symbol.st_size = efile.readIntE();
             symbol.st_info = efile.readByte();
             symbol.st_other = efile.readByte();
             symbol.st_shndx = efile.readShortE();
+				}
+				break; 
+				case ELFhdr.ELFCLASS64:
+				{
+					byte[] addrArray = new byte[ELF64_ADDR_SIZE];
+					
+					symbol.st_name = efile.readIntE();
+					symbol.st_info = efile.readByte();
+					symbol.st_other = efile.readByte();
+					symbol.st_shndx = efile.readShortE();
+					efile.readFullyE(addrArray);
+					symbol.st_value = new Addr64(addrArray);
+					symbol.st_size = readUnsignedLong(efile);
+				}
+				break; 
+				case ELFhdr.ELFCLASSNONE:
+				default: 
+					throw new IOException("Unknown ELF class " + ehdr.e_ident[ELFhdr.EI_CLASS]);
+			}
             if ( symbol.st_info == 0 )
                 continue;
             symList.add(symbol);
@@ -865,7 +1084,7 @@ public class Elf {
 
 	
 	/* return the address of the function that address is in */
-	public Symbol getSymbol( long vma ) {
+	public Symbol getSymbol( IAddress vma ) {
 		if ( symbols == null ) {
 			return null;
 		}
@@ -873,7 +1092,7 @@ public class Elf {
 		//@@@ If this works, move it to a single instance in this class.
 		SymbolComparator symbol_comparator = new SymbolComparator();
 		
-		int ndx = Arrays.binarySearch(symbols, new Long(vma), symbol_comparator);
+		int ndx = Arrays.binarySearch(symbols, vma, symbol_comparator);
 		if ( ndx > 0 )
 			return symbols[ndx];
 		if ( ndx == -1 ) {
@@ -882,7 +1101,7 @@ public class Elf {
 		ndx = -ndx - 1;
 		return symbols[ndx-1];
 	}
-		
+	/*
 	public long swapInt( long val ) {
 		if ( ehdr.e_ident[ELFhdr.EI_DATA] == ELFhdr.ELFDATA2LSB ) {
 			short tmp[] = new short[4];
@@ -904,8 +1123,19 @@ public class Elf {
 		}
 		return val;
 	}
-
+*/
     public String getFilename() {
         return file;
+    }
+    
+    private final long readUnsignedLong(ERandomAccessFile file) throws IOException
+    {
+    	long result = file.readLongE();
+    	if(result < 0)
+    	{
+    		throw new IOException( "Maximal file offset is " + Long.toHexString(Long.MAX_VALUE) +
+    				               " given offset is " + Long.toHexString(result));
+    	}
+    	return result;
     }
 }

@@ -1,0 +1,4 @@
+exec_unix.o
+io.o
+pfind.o
+spawner.o

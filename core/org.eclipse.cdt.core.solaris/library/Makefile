@@ -1,8 +1,8 @@
 # makefile for libspawner.so
 
 #set JDK_INCLUDES
-JDK_INCLUDES=/usr/local/jdk/include
-JDK_OS_INCLUDES=/usr/local/jdk/include/linux
+JDK_INCLUDES=/usr/java/include
+JDK_OS_INCLUDES=/usr/java/include/solaris
 
 CC=gcc
 LIB_NAME = libspawner.so

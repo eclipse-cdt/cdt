@@ -20,6 +20,8 @@ import org.eclipse.cdt.core.build.managed.IOptionCategory;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * 
@@ -31,11 +33,25 @@ public class ToolReference implements ITool {
 	private List optionReferences;
 	private Map optionRefMap;
 	
-	public ToolReference(ITool parent, IConfiguration owner) {
-		this.parent = parent;
+	/**
+	 * Created on the fly.
+	 * 
+	 * @param owner
+	 * @param parent
+	 */
+	public ToolReference(Configuration owner, ITool parent) {
 		this.owner = owner;
+		this.parent = parent;
+		
+		owner.addToolReference(this);
 	}
 	
+	/**
+	 * Created from extension.
+	 * 
+	 * @param owner
+	 * @param element
+	 */
 	public ToolReference(Configuration owner, IConfigurationElement element) {
 		this.owner = owner;
 		
@@ -50,6 +66,24 @@ public class ToolReference implements ITool {
 				new OptionReference(this, toolElement);
 			}
 		}
+	}
+
+	public ToolReference(Configuration owner, Element element) {
+	}
+
+	public void serealize(Document doc, Element element) {
+		element.setAttribute("id", parent.getId());
+		
+		if (optionReferences != null)
+			for (int i = 0; i < optionReferences.size(); ++i) {
+				OptionReference optionRef = (OptionReference)optionReferences.get(i);
+				Element optionRefElement = doc.createElement("optionRef");
+				optionRef.serealize(doc, optionRefElement);
+			}
+	}
+
+	public IConfiguration getConfiguration() {
+		return owner;
 	}
 	
 	public ITool getTool() {
@@ -144,6 +178,10 @@ public class ToolReference implements ITool {
 		return null;
 	}
 	
+	public OptionReference createOptionReference(IOption option) {
+		return new OptionReference(this, option);
+	}
+	
 	public void addOptionReference(OptionReference optionRef) {
 		if (optionReferences == null)
 			optionReferences = new ArrayList();
@@ -154,14 +192,6 @@ public class ToolReference implements ITool {
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
 	 */
 	public IOption getOption(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#createOption(org.eclipse.cdt.core.build.managed.IConfiguration)
-	 */
-	public IOption createOption(IConfiguration config) {
 		// TODO Auto-generated method stub
 		return null;
 	}

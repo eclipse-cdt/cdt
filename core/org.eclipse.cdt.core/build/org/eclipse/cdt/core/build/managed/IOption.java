@@ -34,13 +34,6 @@ public interface IOption extends IBuildObject {
 	public IOptionCategory getCategory();
 	
 	/**
-	 * Set the option category for this option.
-	 * 
-	 * @param category
-	 */
-	public void setCategory(IOptionCategory category);
-	
-	/**
 	 * Returns the name of this option.
 	 * 
 	 * @return
@@ -68,35 +61,13 @@ public interface IOption extends IBuildObject {
 	 * 
 	 * @return
 	 */
-	public String getStringValue();
+	public String getStringValue() throws BuildException;
 	
 	/**
 	 * Returns the current value for this option if it is a List of Strings.
 	 * 
 	 * @return
 	 */
-	public String [] getStringListValue();
+	public String [] getStringListValue() throws BuildException;
 	
-	/**
-	 * Sets the value for this option in a given configuration.
-	 * A new instance of the option for the configuration may be created.
-	 * The appropriate new option is returned.
-	 * 
-	 * @param config
-	 * @param value
-	 */
-	public IOption setValue(IConfiguration config, String value)
-		throws BuildException;
-
-	/**
-	 * Sets the value for this option in a given configuration.
-	 * A new instance of the option for the configuration may be created.
-	 * The appropriate new option is returned.
-	 * 
-	 * @param config
-	 * @param value
-	 */
-	public IOption setValue(IConfiguration config, String[] value)
-		throws BuildException;
-
 }

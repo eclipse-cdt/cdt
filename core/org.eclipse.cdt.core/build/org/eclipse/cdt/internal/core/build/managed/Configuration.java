@@ -13,11 +13,15 @@ package org.eclipse.cdt.internal.core.build.managed;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
+import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * 
@@ -27,17 +31,29 @@ public class Configuration extends BuildObject implements IConfiguration {
 	private ITarget target;
 	private IConfiguration parent;
 	private List toolReferences;
-	
-	public Configuration(Target target) {
+
+	/**
+	 * A fresh new configuration for a target.
+	 * @param target
+	 * @param id
+	 */	
+	public Configuration(Target target, String id) {
+		this.id = id;
 		this.target = target;
+		
+		target.addConfiguration(this);
 	}
 
-	public Configuration(IConfiguration parent) {
+	public Configuration(Target target, IConfiguration parent, String id) {
+		this.id = id;
+		this.target = target;
 		this.parent = parent;
+		
+		target.addConfiguration(this);
 	}
 
 	public Configuration(Target target, IConfigurationElement element) {
-		this(target);
+		this.target = target;
 		
 		// id
 		setId(element.getAttribute("id"));
@@ -55,6 +71,20 @@ public class Configuration extends BuildObject implements IConfiguration {
 				new ToolReference(this, configElement);
 			}
 		}
+	}
+	
+	public void serealize(Document doc, Element element) {
+		element.setAttribute("id", id);
+		element.setAttribute("name", name);
+		if (parent != null)
+			element.setAttribute("parent", parent.getId());
+		
+		if (toolReferences != null)
+			for (int i = 0; i < toolReferences.size(); ++i) {
+				ToolReference toolRef = (ToolReference)toolReferences.get(i);
+				Element toolRefElement = doc.createElement("toolRef");
+				toolRef.serealize(doc, toolRefElement);
+			}
 	}
 	
 	/* (non-Javadoc)
@@ -124,4 +154,37 @@ public class Configuration extends BuildObject implements IConfiguration {
 			toolReferences = new ArrayList();
 		toolReferences.add(toolRef);
 	}
+	
+	public OptionReference createOptionReference(IOption option) {
+		if (option instanceof OptionReference) {
+			OptionReference optionRef = (OptionReference)option;
+			ToolReference toolRef = optionRef.getToolReference();
+			if (toolRef.getConfiguration().equals(this))
+				return optionRef;
+			else {
+				toolRef = new ToolReference(this, toolRef);
+				return toolRef.createOptionReference(option);
+			}
+		} else {
+			ToolReference toolRef = getToolReference(option.getTool());
+			if (toolRef == null)
+				toolRef = new ToolReference(this, option.getTool());
+			return toolRef.createOptionReference(option);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String)
+	 */
+	public void setOption(IOption option, String value) throws BuildException {
+		createOptionReference(option).setValue(value);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setOption(org.eclipse.cdt.core.build.managed.IOption, java.lang.String[])
+	 */
+	public void setOption(IOption option, String[] value) throws BuildException {
+		createOptionReference(option).setValue(value);
+	}
+
 }

@@ -15,12 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
@@ -45,14 +43,14 @@ public class Target extends BuildObject implements ITarget {
 	}
 	
 	/**
-	 * Create a target owned by a resource based on a parent target 
+	 * Create a target owned by a resource based on a parent target
+	 * 
+	 * @param owner 
 	 * @param parent
 	 */
 	public Target(IResource owner, ITarget parent) {
 		this(owner);
 		this.parent = parent;
-
-		inheritConfigs();
 
 		// Copy the parent's identity
 		setId(parent.getId());		
@@ -80,12 +78,8 @@ public class Target extends BuildObject implements ITarget {
 
 		// parent
 		String parentId = element.getAttribute("parent");
-		if (parentId != null) {
+		if (parentId != null)
 			parent = ManagedBuildManager.getTarget(null, parentId);
-
-			// Inherit the configs from the parent
-			inheritConfigs();
-		}
 
 		// isAbstract
 		if ("true".equals(element.getAttribute("isAbstract")))
@@ -103,6 +97,12 @@ public class Target extends BuildObject implements ITarget {
 
 	}
 
+	/**
+	 * Create target from project file
+	 * 
+	 * @param buildInfo
+	 * @param element
+	 */
 	public Target(ResourceBuildInfo buildInfo, Element element) {
 		this(buildInfo.getOwner());
 		
@@ -117,27 +117,30 @@ public class Target extends BuildObject implements ITarget {
 
 		// parent
 		String parentId = element.getAttribute("parent");
-		if (parentId != null) {
+		if (parentId != null)
 			parent = ManagedBuildManager.getTarget(null, parentId);
-
-			// Inherit the configs from the parent
-			inheritConfigs();
-		}
 
 		// isAbstract
 		if ("true".equals(element.getAttribute("isAbstract")))
 			isAbstract = true;
 
 	}
-	private void inheritConfigs() {
-		IConfiguration[] parentConfigs = parent.getConfigurations();
-		if (parentConfigs.length > 0)
-			configurations = new ArrayList(parentConfigs.length);
-		for (int i = 0; i < parentConfigs.length; ++i)
-			configurations.add(new Configuration(parentConfigs[i]));
-		
-	}
 	
+	public void serialize(Document doc, Element element) {
+		element.setAttribute("id", getId());
+		element.setAttribute("name", getName());
+		if (parent != null)
+			element.setAttribute("parent", parent.getId());
+		element.setAttribute("isAbstract", isAbstract ? "true" : "false");
+		
+		if (configurations != null)
+			for (int i = 0; i < configurations.size(); ++i) {
+				Configuration config = (Configuration)configurations.get(i);
+				Element configElement = doc.createElement("configuration");
+				config.serealize(doc, configElement);
+			}
+	}
+
 	public String getName() {
 		return (name == null && parent != null) ? parent.getName() : name;
 	}
@@ -209,47 +212,25 @@ public class Target extends BuildObject implements ITarget {
 		configurations.add(configuration);
 	}
 	
-	public IConfiguration createConfiguration()
-		throws BuildException
-	{
-		IConfiguration config = new Configuration(this);
-		addLocalConfiguration(config);
-		return config;
-	}
-
-	public IConfiguration createConfiguration(IConfiguration parentConfig)
-		throws BuildException
-	{
-		IResource parentOwner = parentConfig.getOwner();
-		
-		if (owner instanceof IProject) {
-			// parent must be owned by the same project
-			if (!owner.equals(parentOwner))
-				throw new BuildException("addConfiguration: parent must be in same project");
-		} else {
-			// parent must be owned by the project
-			if (!owner.getProject().equals(parentOwner))
-				throw new BuildException("addConfiguration: parent must be in owning project");
-		}
-
-		// Validation passed
-		IConfiguration config = new Configuration(parentConfig);
-		addLocalConfiguration(config);
-		return config;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#isAbstract()
 	 */
 	public boolean isAbstract() {
 		return isAbstract;
 	}
-	
-	public void serialize(Document doc, Element element) {
-		element.setAttribute("id", getId());
-		element.setAttribute("name", getName());
-		if (parent != null)
-			element.setAttribute("parent", parent.getId());
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#createConfiguration()
+	 */
+	public IConfiguration createConfiguration(String id) {
+		return new Configuration(this, id);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#createConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
+	 */
+	public IConfiguration createConfiguration(IConfiguration parent, String id) {
+		return new Configuration(this, parent, id);
 	}
 
 }

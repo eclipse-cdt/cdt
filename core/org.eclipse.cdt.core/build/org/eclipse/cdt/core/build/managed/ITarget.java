@@ -45,4 +45,24 @@ public interface ITarget extends IBuildObject {
 	 */
 	public IConfiguration[] getConfigurations();
 
+	/**
+	 * Creates a new configuration for the target.  It is populated with
+	 * the tools defined for that target and options set at their defaults.
+	 * 
+	 * @param id id for this configuration.
+	 * @return
+	 */
+	public IConfiguration createConfiguration(String id);
+	
+	/**
+	 * Creates a configuration for the target populated with the tools and
+	 * options settings from the parent configuration.  As options and tools
+	 * change in the parent, unoverridden values are updated in the child
+	 * config as well.
+	 * 
+	 * @param parent
+	 * @param id
+	 * @return
+	 */
+	public IConfiguration createConfiguration(IConfiguration parent, String id);
 }

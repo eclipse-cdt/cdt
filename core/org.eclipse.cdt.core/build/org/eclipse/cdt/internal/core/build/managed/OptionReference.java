@@ -10,11 +10,13 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.build.managed;
 
-import org.eclipse.cdt.core.build.managed.IConfiguration;
+import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
 import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  * 
@@ -22,121 +24,127 @@ import org.eclipse.core.runtime.IConfigurationElement;
 public class OptionReference implements IOption {
 
 	private IOption option;
-	private ITool tool;
+	private ToolReference owner;
+	private Object value;
 
-	public OptionReference(IOption option, ITool tool) {
+	/**
+	 * Created internally.
+	 * 
+	 * @param owner
+	 * @param option
+	 */
+	public OptionReference(ToolReference owner, IOption option) {
+		this.owner = owner;
 		this.option = option;
-		this.tool = tool;
-	}
-
-	public OptionReference(ToolReference owner, IConfigurationElement element) {
-		this.tool = owner;
 		
-		option = tool.getOption(element.getAttribute("id"));
+		owner.addOptionReference(this);
 	}
 
+	/**
+	 * Created from extension.
+	 * 
+	 * @param owner
+	 * @param element
+	 */
+	public OptionReference(ToolReference owner, IConfigurationElement element) {
+		this.owner = owner;
+		option = owner.getOption(element.getAttribute("id"));
+		
+		owner.addOptionReference(this);
+	}
+
+	/**
+	 * Created from project file.
+	 * 
+	 * @param owner
+	 * @param element
+	 */
+	public OptionReference(ToolReference owner, Element element) {
+		this.owner = owner;	
+		option = owner.getOption(element.getAttribute("id"));
+		
+		owner.addOptionReference(this);
+	}
+	
+	/**
+	 * Write out to project file.
+	 * 
+	 * @param doc
+	 * @param element
+	 */
+	public void serealize(Document doc, Element element) {
+		element.setAttribute("id", option.getId());
+		option = owner.getOption(element.getAttribute("id"));
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getApplicableValues()
 	 */
 	public String[] getApplicableValues() {
-		// TODO Auto-generated method stub
-		return null;
+		return option.getApplicableValues();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getCategory()
 	 */
 	public IOptionCategory getCategory() {
-		// TODO Auto-generated method stub
-		return null;
+		return option.getCategory();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getName()
 	 */
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return option.getName();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getStringListValue()
 	 */
-	public String[] getStringListValue() {
-		// TODO Auto-generated method stub
-		return null;
+	public String[] getStringListValue() throws BuildException {
+		if (value == null)
+			return option.getStringListValue();
+		else if (getValueType() == IOption.STRING_LIST)
+			return (String[])value;
+		else
+			throw new BuildException("bad value type");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getStringValue()
 	 */
-	public String getStringValue() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getStringValue() throws BuildException {
+		if (value == null)
+			return option.getStringValue();
+		else if (getValueType() == IOption.STRING)
+			return (String)value;
+		else
+			throw new BuildException("bad value type");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getTool()
 	 */
 	public ITool getTool() {
-		// TODO Auto-generated method stub
-		return null;
+		return owner;
 	}
 
+	public ToolReference getToolReference() {
+		return owner;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getValueType()
 	 */
 	public int getValueType() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setCategory(org.eclipse.cdt.core.build.managed.IOptionCategory)
-	 */
-	public void setCategory(IOptionCategory category) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setStringValue(org.eclipse.cdt.core.build.managed.IConfiguration, java.lang.String)
-	 */
-	public IOption setValue(IConfiguration config, String value) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IOption#setStringValue(org.eclipse.cdt.core.build.managed.IConfiguration, java.lang.String[])
-	 */
-	public IOption setValue(IConfiguration config, String[] value) {
-		// TODO Auto-generated method stub
-		return null;
+		return option.getValueType();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getId()
 	 */
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#setId(java.lang.String)
-	 */
-	public void setId(String id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#setName(java.lang.String)
-	 */
-	public void setName(String name) {
-		// TODO Auto-generated method stub
-
+		return option.getId();
 	}
 
 	public boolean references(IOption target) {
@@ -151,4 +159,17 @@ public class OptionReference implements IOption {
 			return option.equals(target);
 	}
 
+	public void setValue(String value) throws BuildException {
+		if (getValueType() == IOption.STRING)
+			this.value = value;
+		else
+			throw new BuildException("bad value type");
+	}
+	
+	public void setValue(String [] value) throws BuildException {
+		if (getValueType() == IOption.STRING_LIST)
+			this.value = value;
+		else
+			throw new BuildException("bad value type");
+	}
 }

@@ -123,7 +123,7 @@ public class ManagedBuildManager {
 	}
 
 	/**
-	 * Adds a new target to the resource based on the parentTarget.
+	 * Creates a new target for the resource based on the parentTarget.
 	 * 
 	 * @param resource
 	 * @param parentTarget
@@ -155,6 +155,26 @@ public class ManagedBuildManager {
 		return new Target(resource, parentTarget);
 	}
 	
+	/**
+	 * Set the string value for an option for a given config.
+	 * 
+	 * @param config
+	 * @param option
+	 * @param value
+	 */
+	public static void setOption(IConfiguration config, IOption option, String value) {
+	}
+	
+	/**
+	 * Set the string array value for an option for a given config.
+	 * 
+	 * @param config
+	 * @param option
+	 * @param value
+	 */
+	public static void setOption(IConfiguration config, IOption option, String[] value) {
+		
+	}
 	/**
 	 * Saves the build information associated with a project and all resources
 	 * in the project to the build info file.

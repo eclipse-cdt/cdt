@@ -37,4 +37,19 @@ public interface IConfiguration extends IBuildObject {
 	 */
 	public ITool[] getTools();
 	
+	/**
+	 * Sets an option value for this configuration.
+	 * 
+	 * @param option
+	 * @param value
+	 */
+	public void setOption(IOption option, String value)
+		throws BuildException;
+	
+	/**
+	 * Sets an option value for this configuration.
+	 * @param option
+	 */
+	public void setOption(IOption option, String[] value)
+		throws BuildException;
 }

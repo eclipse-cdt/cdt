@@ -1,9 +1,16 @@
 package org.eclipse.cdt.ui;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/***********************************************************************
+ * Copyright (c) 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * QNX Software Systems - Initial API and implementation
+ * IBM Corp. - Rational Software 
+***********************************************************************/
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -35,6 +42,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -134,7 +142,39 @@ public class CUIPlugin extends AbstractUIPlugin {
 	}
 
 	public void log(IStatus status) {
-		getDefault().getLog().log(status);
+		getLog().log(status);
+	}
+
+	/**
+	* Utility method with conventions
+	*/
+	public static void errorDialog(Shell shell, String title, String message, IStatus s) {
+		getDefault().log(s);
+		// if the 'message' resource string and the IStatus' message are the same,
+		// don't show both in the dialog
+		if (s != null && message.equals(s.getMessage())) {
+			message = null;
+		}
+		ErrorDialog.openError(shell, title, message, s);
+	}
+
+	/**
+	* Utility method with conventions
+	*/
+	public static void errorDialog(Shell shell, String title, String message, Throwable t) {
+		getDefault().log(t);
+		IStatus status;
+		if (t instanceof CoreException) {
+			status = ((CoreException) t).getStatus();
+			// if the 'message' resource string and the IStatus' message are the same,
+			// don't show both in the dialog
+			if (status != null && message.equals(status.getMessage())) {
+				message = null;
+			}
+		} else {
+			status = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, -1, "Internal Error: ", t); //$NON-NLS-1$	
+		}
+		ErrorDialog.openError(shell, title, message, status);
 	}
 
 	// ------ CUIPlugin

@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFunctionType;
@@ -57,7 +56,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	 * @param obj
 	 */
 	public VariableObject(VariableObject obj) {
-		super(obj.getTarget());
+		super((Target)obj.getTarget());
 		name = obj.getName();
 		fullName = obj.fullName;
 		sizeof = obj.sizeof;
@@ -73,11 +72,11 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 		castingType = obj.getCastingType();
 	}
 
-	public VariableObject(ICDITarget target, String n, ICDIStackFrame stack, int pos, int depth) {
+	public VariableObject(Target target, String n, ICDIStackFrame stack, int pos, int depth) {
 		this(target, n, null, stack, pos, depth);
 	}
 
-	public VariableObject(ICDITarget target, String n, String fn, ICDIStackFrame stack, int pos, int depth) {
+	public VariableObject(Target target, String n, String fn, ICDIStackFrame stack, int pos, int depth) {
 		super(target);
 		name = n;
 		fullName = fn;
@@ -161,23 +160,23 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	 */
 	public ICDIType getType() throws CDIException {
 		if (type == null) {
-			ICDITarget target = getTarget();
+			Target target = (Target)getTarget();
 			Session session = (Session) (target.getSession());
 			SourceManager sourceMgr = (SourceManager) session.getSourceManager();
-			String nametype = sourceMgr.getTypeName(getQualifiedName());
+			String nametype = sourceMgr.getTypeName(target, getQualifiedName());
 			try {
 				type = sourceMgr.getType(target, nametype);
 			} catch (CDIException e) {
 				// Try with ptype.
 				try {
-					String ptype = sourceMgr.getDetailTypeName(nametype);
+					String ptype = sourceMgr.getDetailTypeName(target, nametype);
 					type = sourceMgr.getType(target, ptype);
 				} catch (CDIException ex) {
 					// Some version of gdb does not work woth the name of the class
 					// ex: class data foo --> ptype data --> fails
 					// ex: class data foo --> ptype foo --> succeed
 					try {
-						String ptype = sourceMgr.getDetailTypeName(getQualifiedName());
+						String ptype = sourceMgr.getDetailTypeName(target, getQualifiedName());
 						type = sourceMgr.getType(target, ptype);
 					} catch (CDIException e2) {
 						// give up.
@@ -196,9 +195,9 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	 */
 	public int sizeof() throws CDIException {
 		if (sizeof == null) {
-			ICDITarget target = getTarget();
+			Target target = (Target) getTarget();
 			Session session = (Session) (target.getSession());
-			MISession mi = session.getMISession();
+			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			String exp = "sizeof(" + getTypeName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			MIDataEvaluateExpression evaluate = factory.createMIDataEvaluateExpression(exp);

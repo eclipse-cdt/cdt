@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentCD;
 import org.eclipse.cdt.debug.mi.core.command.MIExecArguments;
@@ -37,10 +38,14 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions#setArguments(String)
 	 */
 	public void setArguments(String[] args) throws CDIException {
+		Target target = (Target)session.getCurrentTarget();
+		setArguments(target, args);
+	}
+	public void setArguments(Target target, String[] args) throws CDIException {
 		if (args == null || args.length == 0) {
 			return;
 		}
-		MISession mi = session.getMISession();
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIExecArguments arguments =  factory.createMIExecArguments(args);
 		try {
@@ -58,10 +63,14 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions#setEnvironment(Properties)
 	 */
 	public void setEnvironment(Properties props) throws CDIException {
+		Target target = (Target)session.getCurrentTarget();
+		setEnvironment(target, props);
+	}
+	public void setEnvironment(Target target, Properties props) throws CDIException {
 		if (props == null) {
 			return;
 		}
-		MISession mi = session.getMISession();
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		Iterator iterator = props.keySet().iterator();
 		while (iterator.hasNext()) {
@@ -90,10 +99,13 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions#setWorkingDirectory(String)
 	 */
 	public void setWorkingDirectory(String wd) throws CDIException {
+		Target target = (Target)session.getCurrentTarget();
+	}
+	public void setWorkingDirectory(Target target, String wd) throws CDIException {
 		if (wd == null || wd.length() == 0) {
 			return;
 		}
-		MISession mi = session.getMISession();
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIEnvironmentCD cd =  factory.createMIEnvironmentCD(wd);
 		try {

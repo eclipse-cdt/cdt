@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
 
@@ -20,13 +21,13 @@ import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
  */
 public class MISharedLibEvent extends MIStoppedEvent {
 
-	public MISharedLibEvent(MIExecAsyncOutput async) {
-		super(async);
+	public MISharedLibEvent(MISession source, MIExecAsyncOutput async) {
+		super(source, async);
 		parse();
 	}
  
-	public MISharedLibEvent(MIResultRecord record) {
-		super(record);
+	public MISharedLibEvent(MISession source, MIResultRecord record) {
+		super(source, record);
 		parse();
 	}
 

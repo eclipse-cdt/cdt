@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 /**
  * This can not be detected yet by gdb/mi.
@@ -19,12 +21,12 @@ public class MIThreadExitEvent extends MIDestroyedEvent {
 
 	int tid;
 
-	public MIThreadExitEvent(int id) {
-		this(0, id);
+	public MIThreadExitEvent(MISession source, int id) {
+		this(source, 0, id);
 	}
 
-	public MIThreadExitEvent(int token, int id) {
-		super(token);
+	public MIThreadExitEvent(MISession source, int token, int id) {
+		super(source, token);
 		tid = id;
 	}
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.output.MIConst;
 import org.eclipse.cdt.debug.mi.core.output.MILogStreamOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIOOBRecord;
@@ -32,8 +33,8 @@ public class MIErrorEvent extends MIStoppedEvent {
 	String log = ""; //$NON-NLS-1$
 	MIOOBRecord[] oobs;
 
-	public MIErrorEvent(MIResultRecord rr, MIOOBRecord[] o) {
-		super(rr);
+	public MIErrorEvent(MISession source, MIResultRecord rr, MIOOBRecord[] o) {
+		super(source, rr);
 		oobs = o;
 		parse();
 	}

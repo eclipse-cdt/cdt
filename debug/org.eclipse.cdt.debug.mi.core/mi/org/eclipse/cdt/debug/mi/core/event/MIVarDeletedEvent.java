@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -20,12 +22,12 @@ public class MIVarDeletedEvent extends MIDestroyedEvent {
 
 	String varName;
 
-	public MIVarDeletedEvent(String var) {
-		this(0, var);
+	public MIVarDeletedEvent(MISession source, String var) {
+		this(source, 0, var);
 	}
 
-	public MIVarDeletedEvent(int token, String var) {
-		super(token);
+	public MIVarDeletedEvent(MISession source, int token, String var) {
+		super(source, token);
 		varName = var;
 	}
 

@@ -19,18 +19,11 @@ import java.util.Observer;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
-import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
-import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -119,7 +112,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				// We need to fire an event for all the register blocks
 				// that may contain the modified addresses.
 				MemoryManager mgr = (MemoryManager)session.getMemoryManager();
-				MemoryBlock[] blocks = mgr.listMemoryBlocks();
+				MemoryBlock[] blocks = mgr.getMemoryBlocks(miEvent.getMISession());
 				MIMemoryChangedEvent miMem = (MIMemoryChangedEvent)miEvent;
 				Long[] addresses = miMem.getAddresses();
 				for (int i = 0; i < blocks.length; i++) {
@@ -254,7 +247,13 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	 */
 	boolean processSuspendedEvent(MIStoppedEvent stopped) {
 		Session session = (Session)getSession();
-		ICDITarget currentTarget = session.getCurrentTarget();
+		MISession miSession = stopped.getMISession();
+		Target currentTarget = session.getTarget(miSession);
+		try {
+			session.setCurrentTarget(currentTarget);
+		} catch (CDIException e) {
+			//TODO: Should not ignore this.
+		}
 
 		if (processSharedLibEvent(stopped)) {
 			// Event was consumed by the shared lib processing bailout
@@ -262,56 +261,53 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		}
 	
 		int threadId = threadId = stopped.getThreadId();
-		if (currentTarget instanceof Target) {
-			Target cTarget = (Target)currentTarget;
-			cTarget.updateState(threadId);
-			try {
-				ICDIThread cthread = cTarget.getCurrentThread();
-					if (cthread != null) {
-						cthread.getCurrentStackFrame();
-					} else {
-						return true;
-					}
-			} catch (CDIException e1) {
-				//e1.printStackTrace();
+		currentTarget.updateState(threadId);
+		try {
+			ICDIThread cthread = currentTarget.getCurrentThread();
+			if (cthread != null) {
+				cthread.getCurrentStackFrame();
+			} else {
 				return true;
 			}
+		} catch (CDIException e1) {
+			//e1.printStackTrace();
+			return true;
 		}
 
 		// Update the managers.
 		// For the Variable/Expression Managers call only the updateManager.
-		ICDIVariableManager varMgr = session.getVariableManager();
-		ICDIExpressionManager expMgr  = session.getExpressionManager();		
-		ICDIRegisterManager regMgr = session.getRegisterManager();
-		ICDIMemoryManager memMgr = session.getMemoryManager();
-		ICDIBreakpointManager bpMgr = session.getBreakpointManager();
-		ICDISignalManager sigMgr = session.getSignalManager();
-		ICDISourceManager srcMgr = session.getSourceManager();
-		ICDISharedLibraryManager libMgr = session.getSharedLibraryManager();
+		VariableManager varMgr = (VariableManager)session.getVariableManager();
+		ExpressionManager expMgr  = (ExpressionManager)session.getExpressionManager();		
+		RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
+		MemoryManager memMgr = (MemoryManager)session.getMemoryManager();
+		BreakpointManager bpMgr = (BreakpointManager)session.getBreakpointManager();
+		SignalManager sigMgr = (SignalManager)session.getSignalManager();
+		SourceManager srcMgr = (SourceManager)session.getSourceManager();
+		SharedLibraryManager libMgr = (SharedLibraryManager)session.getSharedLibraryManager();
 		try {
 			if (varMgr.isAutoUpdate()) {
-				varMgr.update();
+				varMgr.update(currentTarget);
 			}
 			if (expMgr.isAutoUpdate()) { 
-				expMgr.update();
+				expMgr.update(currentTarget);
 			}
 			if (regMgr.isAutoUpdate()) {
-				regMgr.update();
+				regMgr.update(currentTarget);
 			}
 			if (memMgr.isAutoUpdate()) {
-				memMgr.update();
+				memMgr.update(currentTarget);
 			}
 			if (bpMgr.isAutoUpdate()) {
-				bpMgr.update();
+				bpMgr.update(currentTarget);
 			}
 			if (sigMgr.isAutoUpdate()) {
-				sigMgr.update();
+				sigMgr.update(currentTarget);
 			}
 			if (libMgr.isAutoUpdate()) {
-				   libMgr.update();
+				libMgr.update(currentTarget);
 			}
 			if (srcMgr.isAutoUpdate()) {
-				srcMgr.update();
+				srcMgr.update(currentTarget);
 			}
 		} catch (CDIException e) {
 			//System.out.println(e);
@@ -329,9 +325,9 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 	 */
 	boolean processSharedLibEvent(MIStoppedEvent stopped) {
 		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		MISession miSession = stopped.getMISession();
 
-		ICDITarget currentTarget = session.getCurrentTarget();
+		Target currentTarget = session.getTarget(miSession);
 		ICDISharedLibraryManager libMgr = session.getSharedLibraryManager();
 		SharedLibraryManager mgr = null;
 
@@ -344,7 +340,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				// Check if we have a new library loaded
 				List eventList = null;
 				try {
-					eventList = mgr.updateState();
+					eventList = mgr.updateState(currentTarget);
 				} catch (CDIException e3) {
 					eventList = Collections.EMPTY_LIST;
 				}
@@ -355,7 +351,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 						BreakpointManager bpMgr = (BreakpointManager)manager;
 						ICDIBreakpoint bpoints[] = null;
 						try {
-							bpoints = bpMgr.getDeferredBreakpoints();
+							bpoints = bpMgr.getDeferredBreakpoints(currentTarget);
 						} catch (CDIException e) {
 							bpoints = new ICDIBreakpoint[0];
 						}
@@ -372,7 +368,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 									if (!enable) {
 										bpMgr.disableBreakpoint(bkpt);
 									}
-									eventList.add(new MIBreakpointCreatedEvent(bkpt.getMIBreakpoint().getNumber()));
+									eventList.add(new MIBreakpointCreatedEvent(miSession, bkpt.getMIBreakpoint().getNumber()));
 								} catch (CDIException e) {
 									// ignore
 								}
@@ -380,9 +376,9 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 						}
 					}
 					MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
-					mi.fireEvents(events);
+					miSession.fireEvents(events);
 				}
-				CommandFactory factory = mi.getCommandFactory();
+				CommandFactory factory = miSession.getCommandFactory();
 				int type = (lastRunningEvent == null) ? MIRunningEvent.CONTINUE : lastRunningEvent.getType();
 				if (lastUserCommand == null) {
 					switch (type) {
@@ -407,7 +403,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 						case MIRunningEvent.CONTINUE: {
 							MIExecContinue cont = factory.createMIExecContinue();
 							try {
-								mi.postCommand(cont);
+								miSession.postCommand(cont);
 								MIInfo info = cont.getMIInfo();
 								if (info == null) {
 									// throw new CDIException("Target is not responding");
@@ -434,7 +430,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				if (tid > 0) {
 					MIThreadSelect selectThread = factory.createMIThreadSelect(tid);
 					try {
-						mi.postCommand(selectThread);
+						miSession.postCommand(selectThread);
 					} catch (MIException e) {
 						// ignore
 					}
@@ -447,7 +443,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				int count = 0;
 				try {
 					MIStackInfoDepth depth = factory.createMIStackInfoDepth();
-					mi.postCommand(depth);
+					miSession.postCommand(depth);
 					MIStackInfoDepthInfo info = depth.getMIStackInfoDepthInfo();
 					if (info == null) {
 						//throw new CDIException("No answer");
@@ -469,8 +465,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					MIStackSelectFrame selectFrame = factory.createMIStackSelectFrame(miLevel);
 					MIExecFinish finish = factory.createMIExecFinish();
 					try {
-						mi.postCommand(selectFrame);
-						mi.postCommand(finish);
+						miSession.postCommand(selectFrame);
+						miSession.postCommand(finish);
 					} catch (MIException e) {
 						// ignore
 					}
@@ -481,7 +477,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					Command cmd = lastUserCommand;
 					lastUserCommand = null;
 					try {
-						mi.postCommand(cmd);
+						miSession.postCommand(cmd);
 					} catch (MIException e) {
 						// ignore
 					}					
@@ -491,7 +487,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				Command cmd = lastUserCommand;
 				lastUserCommand = null;
 				try {
-					mi.postCommand(cmd);
+					miSession.postCommand(cmd);
 				} catch (MIException e) {
 				}
 				return true;

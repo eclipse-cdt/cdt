@@ -11,15 +11,15 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
  */
 public class PointerType extends DerivedType implements ICDIPointerType {
 
-	public PointerType(ICDITarget target, String typename) {
+	public PointerType(Target target, String typename) {
 		super(target, typename);
 	}
 

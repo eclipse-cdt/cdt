@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -19,12 +21,12 @@ public class MIBreakpointCreatedEvent extends MICreatedEvent {
 
 	int no;
 
-	public MIBreakpointCreatedEvent(int number) {
-		this(0, number);
+	public MIBreakpointCreatedEvent(MISession source, int number) {
+		this(source, 0, number);
 	}
 
-	public MIBreakpointCreatedEvent(int id, int number) {
-		super(id);
+	public MIBreakpointCreatedEvent(MISession source, int id, int number) {
+		super(source, id);
 		no = number;
 	}
 

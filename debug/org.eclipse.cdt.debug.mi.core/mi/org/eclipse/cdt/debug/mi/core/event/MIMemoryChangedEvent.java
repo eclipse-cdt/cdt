@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -20,12 +22,12 @@ public class MIMemoryChangedEvent extends MIChangedEvent {
 
 	Long[] addresses;
 
-	public MIMemoryChangedEvent(Long[] addrs) {
-		this(0, addrs);
+	public MIMemoryChangedEvent(MISession source, Long[] addrs) {
+		this(source, 0, addrs);
 	}
 
-	public MIMemoryChangedEvent(int token, Long[] addrs) {
-		super(token);
+	public MIMemoryChangedEvent(MISession source, int token, Long[] addrs) {
+		super(source, token);
 		addresses = addrs;
 	}
 

@@ -16,7 +16,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
-import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.output.MIVarEvaluateExpressionInfo;
@@ -28,7 +27,7 @@ public class Value extends CObject implements ICDIValue {
 	protected Variable variable;
 
 	public Value(Variable v) {
-		super(v.getTarget());
+		super((Target)v.getTarget());
 		variable = v;
 	}
 	
@@ -44,7 +43,7 @@ public class Value extends CObject implements ICDIValue {
 	 */
 	public String getValueString() throws CDIException {
 		String result = ""; //$NON-NLS-1$
-		MISession mi = ((Session)(getTarget().getSession())).getMISession();
+		MISession mi = ((Target)getTarget()).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarEvaluateExpression var =
 			factory.createMIVarEvaluateExpression(variable.getMIVar().getVarName());

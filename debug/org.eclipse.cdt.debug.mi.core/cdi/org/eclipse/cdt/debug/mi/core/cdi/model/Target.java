@@ -14,13 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
@@ -57,22 +62,24 @@ import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 public class Target  implements ICDITarget {
 
 	Session session;
+	MISession miSession;
 	Thread[] noThreads = new Thread[0];
 	Thread[] currentThreads;
 	int currentThreadId;
 	Command lastExecutionCommand;
 	
-	public Target(Session s) {
+	public Target(Session s, MISession mi) {
 		session = s;
+		miSession = mi;
 		currentThreads = noThreads;
-	}
-	
-	public Session getCSession() {
-		return session;
 	}
 
 	public Command getLastExecutionCommand() {
 		return lastExecutionCommand;
+	}
+
+	public MISession getMISession() {
+		return miSession;
 	}
 
 	/**
@@ -121,11 +128,10 @@ public class Target  implements ICDITarget {
 		}
 		// already the current thread?
 		if (currentThreadId != id) {
-			MISession mi = session.getMISession();
-			CommandFactory factory = mi.getCommandFactory();
+			CommandFactory factory = miSession.getCommandFactory();
 			MIThreadSelect select = factory.createMIThreadSelect(id);
 			try {
-				mi.postCommand(select);
+				miSession.postCommand(select);
 				MIThreadSelectInfo info = select.getMIThreadSelectInfo();
 				if (info == null) {
 					throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -148,13 +154,15 @@ public class Target  implements ICDITarget {
 			// some variables like Register.  Call an update()
 			// To generate changeEvents.
 			if (doUpdate) {
+				// TODO: only our Process
 				RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
 				if (regMgr.isAutoUpdate()) {
-					regMgr.update();
+					regMgr.update(this);
 				}
+				// TODO: only our Process
 				VariableManager varMgr = (VariableManager)session.getVariableManager();
 				if (varMgr.isAutoUpdate()) {
-					varMgr.update();
+					varMgr.update(this);
 				}
 			}
 		}
@@ -162,8 +170,7 @@ public class Target  implements ICDITarget {
 		// We should be allright now.
 		if (currentThreadId != id) {
 			// thread is gone.  Generate a Thread destroyed.
-			MISession mi = session.getMISession();
-			mi.fireEvent(new MIThreadExitEvent(id));
+			miSession.fireEvent(new MIThreadExitEvent(miSession, id));
 			throw new CDIException(CdiResources.getString("cdi.model.Target.Cannot_switch_to_thread") + id); //$NON-NLS-1$
 		}
 	}
@@ -208,9 +215,8 @@ public class Target  implements ICDITarget {
 			MIThreadCreatedEvent[] events = new MIThreadCreatedEvent[cList.size()];
 			for (int j = 0; j < events.length; j++) {
 				int id = ((Integer)cList.get(j)).intValue();
-				events[j] = new MIThreadCreatedEvent(id);
+				events[j] = new MIThreadCreatedEvent(miSession, id);
 			}
-			MISession miSession = session.getMISession();
 			miSession.fireEvents(events);
 		}
 
@@ -232,9 +238,8 @@ public class Target  implements ICDITarget {
 			MIThreadExitEvent[] events = new MIThreadExitEvent[dList.size()];
 			for (int j = 0; j < events.length; j++) {
 				int id = ((Integer)dList.get(j)).intValue();
-				events[j] = new MIThreadExitEvent(id);
+				events[j] = new MIThreadExitEvent(miSession, id);
 			}
-			MISession miSession = session.getMISession();
 			miSession.fireEvents(events);
 		}
 	}
@@ -244,8 +249,7 @@ public class Target  implements ICDITarget {
 	 */
 	public Thread[] getCThreads() throws CDIException {
 		Thread[] cthreads = noThreads;
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIInfoThreads tids = factory.createMIInfoThreads();
 		try {
 			// HACK/FIXME: gdb/mi thread-list-ids does not
@@ -253,7 +257,7 @@ public class Target  implements ICDITarget {
 			// issuing "info threads" instead.
 			//MIThreadListIds tids = factory.createMIThreadListIds();
 			//MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
-			mi.postCommand(tids);
+			miSession.postCommand(tids);
 			MIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
 			int [] ids;
 			String[] names;
@@ -335,12 +339,11 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#restart()
 	 */
 	public void restart() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIExecRun run = factory.createMIExecRun(new String[0]);
 		lastExecutionCommand = run;
 		try {
-			mi.postCommand(run);
+			miSession.postCommand(run);
 			MIInfo info = run.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -354,15 +357,14 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#resume()
 	 */
 	public void resume() throws CDIException {
-		MISession mi = session.getMISession();
-		if (mi.getMIInferior().isRunning()) {
+		if (miSession.getMIInferior().isRunning()) {
 			throw new CDIException(CdiResources.getString("cdi.model.Target.Inferior_already_running")); //$NON-NLS-1$
-		} else if (mi.getMIInferior().isSuspended()) {
-			CommandFactory factory = mi.getCommandFactory();
+		} else if (miSession.getMIInferior().isSuspended()) {
+			CommandFactory factory = miSession.getCommandFactory();
 			MIExecContinue cont = factory.createMIExecContinue();
 			lastExecutionCommand = cont;
 			try {
-				mi.postCommand(cont);
+				miSession.postCommand(cont);
 				MIInfo info = cont.getMIInfo();
 				if (info == null) {
 					throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -370,7 +372,7 @@ public class Target  implements ICDITarget {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			}
-		} else if (mi.getMIInferior().isTerminated()) {
+		} else if (miSession.getMIInferior().isTerminated()) {
 			restart();
 		} else {
 			restart();
@@ -381,12 +383,11 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepInto()
 	 */
 	public void stepInto() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIExecStep step = factory.createMIExecStep();
 		lastExecutionCommand = step;
 		try {
-			mi.postCommand(step);
+			miSession.postCommand(step);
 			MIInfo info = step.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -400,12 +401,11 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepIntoInstruction()
 	 */
 	public void stepIntoInstruction() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIExecStepInstruction stepi = factory.createMIExecStepInstruction();
 		lastExecutionCommand = stepi;
 		try {
-			mi.postCommand(stepi);
+			miSession.postCommand(stepi);
 			MIInfo info = stepi.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -419,12 +419,11 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepOver()
 	 */
 	public void stepOver() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIExecNext next = factory.createMIExecNext();
 		lastExecutionCommand = next;
 		try {
-			mi.postCommand(next);
+			miSession.postCommand(next);
 			MIInfo info = next.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -438,12 +437,11 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepOverInstruction()
 	 */
 	public void stepOverInstruction() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIExecNextInstruction nexti = factory.createMIExecNextInstruction();
 		lastExecutionCommand = nexti;
 		try {
-			mi.postCommand(nexti);
+			miSession.postCommand(nexti);
 			MIInfo info = nexti.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -474,12 +472,11 @@ public class Target  implements ICDITarget {
 	/**
 	 */
 	protected void finish() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIExecFinish finish = factory.createMIExecFinish();
 		lastExecutionCommand = finish;
 		try {
-			mi.postCommand(finish);
+			miSession.postCommand(finish);
 			MIInfo info = finish.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -492,12 +489,11 @@ public class Target  implements ICDITarget {
 	/**
 	 */
 	protected void execReturn() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIExecReturn ret = factory.createMIExecReturn();
 		lastExecutionCommand = ret;
 		try {
-			mi.postCommand(ret);
+			miSession.postCommand(ret);
 			MIInfo info = ret.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -511,9 +507,8 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#suspend()
 	 */
 	public void suspend() throws CDIException {
-		MISession mi = session.getMISession();
 		try {
-			mi.getMIInferior().interrupt();
+			miSession.getMIInferior().interrupt();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
@@ -523,11 +518,10 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#disconnect()
 	 */
 	public void disconnect() throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MITargetDetach detach = factory.createMITargetDetach();
 		try {
-			mi.postCommand(detach);
+			miSession.postCommand(detach);
 			MIInfo info = detach.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -537,17 +531,15 @@ public class Target  implements ICDITarget {
 		}
 		// Unfortunately -target-detach does not generate an
 		// event so we do it here.
-		MISession miSession = session.getMISession();
-		miSession.fireEvent(new MIDetachedEvent(detach.getToken()));
-		session.getMISession().getMIInferior().setDisconnected();
+		miSession.fireEvent(new MIDetachedEvent(miSession, detach.getToken()));
+		miSession.getMIInferior().setDisconnected();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#runUntil(ICDILocation)
 	 */
 	public void runUntil(ICDILocation location) throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		String loc = ""; //$NON-NLS-1$
 		if (location.getFile() != null && location.getFile().length() > 0) {
 			loc = location.getFile() + ":" + location.getLineNumber(); //$NON-NLS-1$
@@ -559,7 +551,7 @@ public class Target  implements ICDITarget {
 		MIExecUntil until = factory.createMIExecUntil(loc);
 		lastExecutionCommand = until;
 		try {
-			mi.postCommand(until);
+			miSession.postCommand(until);
 			MIInfo info = until.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -574,8 +566,7 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#jump(ICDILocation)
 	 */
 	public void jump(ICDILocation location) throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		String loc = ""; //$NON-NLS-1$
 		if (location.getFile() != null && location.getFile().length() > 0) {
 			loc = location.getFile() + ":" + location.getLineNumber(); //$NON-NLS-1$
@@ -587,7 +578,7 @@ public class Target  implements ICDITarget {
 		MIJump jump = factory.createMIJump(loc);
 		lastExecutionCommand = jump;
 		try {
-			mi.postCommand(jump);
+			miSession.postCommand(jump);
 			MIInfo info = jump.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -602,12 +593,11 @@ public class Target  implements ICDITarget {
 	 */
 	public String evaluateExpressionToString(String expressionText)
 		throws CDIException {
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIDataEvaluateExpression evaluate = 
 			factory.createMIDataEvaluateExpression(expressionText);
 		try {
-			mi.postCommand(evaluate);
+			miSession.postCommand(evaluate);
 			MIDataEvaluateExpressionInfo info =
 				evaluate.getMIDataEvaluateExpressionInfo();
 			if (info == null) {
@@ -624,9 +614,11 @@ public class Target  implements ICDITarget {
 	 */
 	public void terminate() throws CDIException {
 		try {
-			session.getMISession().getMIInferior().terminate();
+			miSession.getMIInferior().terminate();
 		} catch (MIException e) {
-			session.terminate();
+			throw new MI2CDIException(e);
+		} finally {
+			miSession.terminate();
 		}
 	}
 
@@ -634,44 +626,42 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isTerminated()
 	 */
 	public boolean isTerminated() {
-		return session.getMISession().getMIInferior().isTerminated();
+		return miSession.getMIInferior().isTerminated();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isDisconnected()
 	 */
 	public boolean isDisconnected() {
-		return !session.getMISession().getMIInferior().isConnected();
+		return !miSession.getMIInferior().isConnected();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isSuspended()
 	 */
 	public boolean isSuspended() {
-		return session.getMISession().getMIInferior().isSuspended();
+		return miSession.getMIInferior().isSuspended();
 	}
 
 	public boolean isRunning() {
-		return session.getMISession().getMIInferior().isRunning();
+		return miSession.getMIInferior().isRunning();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getProcess()
 	 */
 	public Process getProcess() {
-		return session.getMISession().getMIInferior();
+		return miSession.getMIInferior();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#signal()
 	 */
 	public void signal() throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MISignal signal = factory.createMISignal("0"); //$NON-NLS-1$
 		try {
-			mi.postCommand(signal);
+			miSession.postCommand(signal);
 			MIInfo info = signal.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -685,12 +675,10 @@ public class Target  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#signal(ICDISignal)
 	 */
 	public void signal(ICDISignal signal) throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MISignal sig = factory.createMISignal(signal.getName());
 		try {
-			mi.postCommand(sig);
+			miSession.postCommand(sig);
 			MIInfo info = sig.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.model.Target.Target_not_responding")); //$NON-NLS-1$
@@ -700,4 +688,38 @@ public class Target  implements ICDITarget {
 		}
 	}
 
+	// Implementaton of ICDIBreapointManagement.
+
+	
+	public ICDIBreakpoint[] getBreakpoints() throws CDIException {
+		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		return bMgr.getBreakpoints(this);
+	}
+
+	public ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
+			ICDICondition condition, String threadId, boolean deferred) throws CDIException {		
+		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		return bMgr.setLocationBreakpoint(this, type, location, condition, threadId, deferred);
+	}
+
+	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
+			ICDICondition condition) throws CDIException {
+		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		return bMgr.setWatchpoint(this, type, watchType, expression, condition);
+	}
+
+	public void deleteBreakpoints(ICDIBreakpoint[] breakpoints) throws CDIException {
+		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		bMgr.deleteBreakpoints(this, breakpoints);
+	}
+
+	public void deleteAllBreakpoints() throws CDIException {
+		BreakpointManager bMgr = (BreakpointManager)getSession().getBreakpointManager();
+		bMgr.deleteAllBreakpoints(this);		
+	}
+
+//	public ICDIExceptionBreakpoint setExceptionBreakpoint(String clazz, boolean stopOnThrow, boolean stopOnCatch)
+//		throws CDIException {
+//		throw new CDIException("Not Implemented"); //$NON-NLS-1$
+//	}
 }

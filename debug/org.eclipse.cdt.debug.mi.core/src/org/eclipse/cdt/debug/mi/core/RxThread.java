@@ -161,7 +161,7 @@ public class RxThread extends Thread {
 						type = MIRunningEvent.CONTINUE;
 					}
 					session.getMIInferior().setRunning();
-					MIEvent event = new MIRunningEvent(id, type);
+					MIEvent event = new MIRunningEvent(session, id, type);
 					list.add(event);
 				} else if ("exit".equals(state)) { //$NON-NLS-1$
 					// No need to do anything, terminate() will.
@@ -171,7 +171,7 @@ public class RxThread extends Thread {
 				} else if ("error".equals(state)) { //$NON-NLS-1$
 					if (session.getMIInferior().isRunning()) {
 						session.getMIInferior().setSuspended();
-						MIEvent event = new MIErrorEvent(rr, oobRecords);
+						MIEvent event = new MIErrorEvent(session, rr, oobRecords);
 						list.add(event);
 					}
 				} else if ("done".equals(state)) { //$NON-NLS-1$
@@ -255,7 +255,7 @@ public class RxThread extends Thread {
 					for (int i = 0; i < logs.length; i++) {
 						if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) { //$NON-NLS-1$
 							session.getMIInferior().setSuspended();
-							MIEvent e = new MISharedLibEvent(exec);
+							MIEvent e = new MISharedLibEvent(session, exec);
 							list.add(e);
 						}
 					}
@@ -266,7 +266,7 @@ public class RxThread extends Thread {
 				// "reason" ??? still fire a stopped event.
 				if (list.isEmpty()) {
 					session.getMIInferior().setSuspended();
-					MIEvent e = new MIStoppedEvent(exec);
+					MIEvent e = new MIStoppedEvent(session, exec);
 					list.add(e);
 				}
 			}
@@ -358,7 +358,7 @@ public class RxThread extends Thread {
 			for (int i = 0; i < logs.length; i++) {
 				if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) { //$NON-NLS-1$
 					session.getMIInferior().setSuspended();
-					MIEvent e = new MISharedLibEvent(rr);
+					MIEvent e = new MISharedLibEvent(session, rr);
 					list.add(e);
 				}
 			}
@@ -369,7 +369,7 @@ public class RxThread extends Thread {
 		if (list.isEmpty()) {
 			if (session.getMIInferior().isRunning()) {
 				session.getMIInferior().setSuspended();
-				MIEvent event = new MIStoppedEvent(rr);
+				MIEvent event = new MIStoppedEvent(session, rr);
 				session.fireEvent(event);
 			}
 		}
@@ -387,9 +387,9 @@ public class RxThread extends Thread {
 		MIEvent event = null;
 		if ("breakpoint-hit".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
-				event = new MIBreakpointHitEvent(exec);
+				event = new MIBreakpointHitEvent(session, exec);
 			} else if (rr != null) {
-				event = new MIBreakpointHitEvent(rr);
+				event = new MIBreakpointHitEvent(session, rr);
 			}
 			session.getMIInferior().setSuspended();
 		} else if (
@@ -397,58 +397,58 @@ public class RxThread extends Thread {
 				|| "read-watchpoint-trigger".equals(reason) //$NON-NLS-1$
 				|| "access-watchpoint-trigger".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
-				event = new MIWatchpointTriggerEvent(exec);
+				event = new MIWatchpointTriggerEvent(session, exec);
 			} else if (rr != null) {
-				event = new MIWatchpointTriggerEvent(rr);
+				event = new MIWatchpointTriggerEvent(session, rr);
 			}
 			session.getMIInferior().setSuspended();
 		} else if ("watchpoint-scope".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
-				event = new MIWatchpointScopeEvent(exec);
+				event = new MIWatchpointScopeEvent(session, exec);
 			} else if (rr != null) {
-				event = new MIWatchpointScopeEvent(rr);
+				event = new MIWatchpointScopeEvent(session, rr);
 			}
 			session.getMIInferior().setSuspended();
 		} else if ("end-stepping-range".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
-				event = new MISteppingRangeEvent(exec);
+				event = new MISteppingRangeEvent(session, exec);
 			} else if (rr != null) {
-				event = new MISteppingRangeEvent(rr);
+				event = new MISteppingRangeEvent(session, rr);
 			}
 			session.getMIInferior().setSuspended();
 		} else if ("signal-received".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
-				event = new MISignalEvent(exec);
+				event = new MISignalEvent(session, exec);
 			} else if (rr != null) {
-				event = new MISignalEvent(rr);
+				event = new MISignalEvent(session, rr);
 			}
 			session.getMIInferior().setSuspended();
 		} else if ("location-reached".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
-				event = new MILocationReachedEvent(exec);
+				event = new MILocationReachedEvent(session, exec);
 			} else if (rr != null) {
-				event = new MILocationReachedEvent(rr);
+				event = new MILocationReachedEvent(session, rr);
 			}
 			session.getMIInferior().setSuspended();
 		} else if ("function-finished".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
-				event = new MIFunctionFinishedEvent(exec);
+				event = new MIFunctionFinishedEvent(session, exec);
 			} else if (rr != null) {
-				event = new MIFunctionFinishedEvent(rr);
+				event = new MIFunctionFinishedEvent(session, rr);
 			}
 			session.getMIInferior().setSuspended();
 		} else if ("exited-normally".equals(reason) || "exited".equals(reason)) { //$NON-NLS-1$ //$NON-NLS-2$
 			if (exec != null) {
-				event = new MIInferiorExitEvent(exec);
+				event = new MIInferiorExitEvent(session, exec);
 			} else if (rr != null) {
-				event = new MIInferiorExitEvent(rr);
+				event = new MIInferiorExitEvent(session, rr);
 			}
 			session.getMIInferior().setTerminated();
 		} else if ("exited-signalled".equals(reason)) { //$NON-NLS-1$
 			if (exec != null) {
-				event = new MIInferiorSignalExitEvent(exec);
+				event = new MIInferiorSignalExitEvent(session, exec);
 			} else if (rr != null) {
-				event = new MIInferiorSignalExitEvent(rr);
+				event = new MIInferiorSignalExitEvent(session, rr);
 			}
 			session.getMIInferior().setTerminated();
 		}

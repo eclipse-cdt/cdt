@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Condition;
 import org.eclipse.cdt.debug.mi.core.cdi.Location;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 /**
@@ -27,14 +28,14 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	ICDILocation location;
 	ICDICondition condition;
 	MIBreakpoint miBreakpoint;
-	BreakpointManager mgr;
+	//BreakpointManager mgr;
 	int type;
 	String tid;
 	boolean enable;
 
-	public Breakpoint(BreakpointManager m, int kind, ICDILocation loc, ICDICondition cond, String threadId) {
-		super(m.getSession().getCurrentTarget());
-		mgr = m;
+	public Breakpoint(Target target, int kind, ICDILocation loc, ICDICondition cond, String threadId) {
+		super(target);
+		//mgr = m;
 		type = kind;
 		location = loc;
 		condition = cond;
@@ -42,10 +43,10 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 		enable = true;
 	}
 
-	public Breakpoint(BreakpointManager m, MIBreakpoint miBreak) {
-		super(m.getSession().getCurrentTarget());
+	public Breakpoint(Target target, MIBreakpoint miBreak) {
+		super(target);
 		miBreakpoint = miBreak;
-		mgr = m;
+		//mgr = m;
 	}
 
 	public MIBreakpoint getMIBreakpoint() {
@@ -119,6 +120,8 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#setCondition(ICDICondition)
 	 */
 	public void setCondition(ICDICondition condition) throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
 		if (isEnabled()) {
 			mgr.setCondition(this, condition);
 		}
@@ -129,6 +132,8 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean on) throws CDIException {
+		Session session = (Session)getTarget().getSession();
+		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
 		if (miBreakpoint != null) {
 			if (on == false && isEnabled() == true) { 
 				mgr.disableBreakpoint(this);

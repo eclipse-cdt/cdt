@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -20,13 +22,13 @@ public class MIVarCreatedEvent extends MICreatedEvent {
 
 	String varName;
 
-	public MIVarCreatedEvent(String var) {
-		super(0);
+	public MIVarCreatedEvent(MISession source, String var) {
+		super(source, 0);
 		varName = var;
 	}
 
-	public MIVarCreatedEvent(int token, String var) {
-		super(token);
+	public MIVarCreatedEvent(MISession source, int token, String var) {
+		super(source, token);
 		varName = var;
 	}
 

@@ -13,10 +13,10 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoThreads;
@@ -54,7 +54,7 @@ public class ThreadManager extends Manager { //implements ICDIThreadManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIThreadManager#getThreads()
 	 */
-	public ICDIThread[] getThreads(ICDITarget process) throws CDIException {
+	public ICDIThread[] getThreads(Target process) throws CDIException {
 		ThreadSet set =  (ThreadSet)threadMap.get(process);
 		if (set == null) {
 			set = getCThreads(process);
@@ -63,10 +63,10 @@ public class ThreadManager extends Manager { //implements ICDIThreadManager {
 		return set.currentThreads;
 	}
 
-	public ThreadSet getCThreads(ICDITarget process) throws CDIException {
+	public ThreadSet getCThreads(Target process) throws CDIException {
 		Thread[] cthreads = noThreads;
 		int currentThreadId = 0;
-		MISession mi = ((Session)getSession()).getMISession();
+		MISession mi = process.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		try {
 			// HACK/FIXME: gdb/mi thread-list-ids does not
@@ -107,6 +107,7 @@ public class ThreadManager extends Manager { //implements ICDIThreadManager {
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.derug.core.cdi.ICDIThreadManager#update()
 	 */
 	public void update() throws CDIException {

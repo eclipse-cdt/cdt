@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.output.MIConst;
 import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
@@ -31,14 +32,14 @@ public class MIStoppedEvent extends MIEvent {
 	private MIExecAsyncOutput exec;
 	private MIResultRecord rr;
 
-	public MIStoppedEvent(MIExecAsyncOutput record) {
-		super(record.getToken());
+	public MIStoppedEvent(MISession source, MIExecAsyncOutput record) {
+		super(source, record.getToken());
 		exec = record;
 		parse();
 	}
 
-	public MIStoppedEvent(MIResultRecord record) {
-		super(record.getToken());
+	public MIStoppedEvent(MISession source, MIResultRecord record) {
+		super(source, record.getToken());
 		rr = record;
 		parse();
 	}

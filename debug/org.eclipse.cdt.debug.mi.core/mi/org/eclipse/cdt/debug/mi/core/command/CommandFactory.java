@@ -36,9 +36,14 @@ public class CommandFactory {
 		return new MIBreakEnable(brknum);
 	}
 
+//	public MIBreakInsert createMIBreakInsert(boolean isTemporary, boolean isHardware,
+//						 String condition, int ignoreCount, String line) {
+//		return new MIBreakInsert(isTemporary, isHardware, condition, ignoreCount, line, 0);
+//	}
+
 	public MIBreakInsert createMIBreakInsert(boolean isTemporary, boolean isHardware,
-						 String condition, int ignoreCount, String line) {
-		return new MIBreakInsert(isTemporary, isHardware, condition, ignoreCount, line);
+			 String condition, int ignoreCount, String line, int tid) {
+		return new MIBreakInsert(isTemporary, isHardware, condition, ignoreCount, line, tid);
 	}
 
 	public MIBreakInsert createMIBreakInsert(String func) {

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -21,8 +23,8 @@ public class MIRegisterChangedEvent extends MIChangedEvent {
 	String regName;
 	int regno;
 
-	public MIRegisterChangedEvent(int token, String name, int no) {
-		super(token);
+	public MIRegisterChangedEvent(MISession source, int token, String name, int no) {
+		super(source, token);
 		regName = name;
 		regno = no;
 	}

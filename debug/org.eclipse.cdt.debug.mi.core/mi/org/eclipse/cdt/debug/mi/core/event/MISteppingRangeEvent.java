@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.output.MIConst;
 import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
@@ -24,13 +25,13 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  */
 public class MISteppingRangeEvent extends MIStoppedEvent {
 
-	public MISteppingRangeEvent(MIExecAsyncOutput async) {
-		super(async);
+	public MISteppingRangeEvent(MISession source, MIExecAsyncOutput async) {
+		super(source, async);
 		parse();
 	}
 
-	public MISteppingRangeEvent(MIResultRecord record) {
-		super(record);
+	public MISteppingRangeEvent(MISession source, MIResultRecord record) {
+		super(source, record);
 		parse();
 	}
 

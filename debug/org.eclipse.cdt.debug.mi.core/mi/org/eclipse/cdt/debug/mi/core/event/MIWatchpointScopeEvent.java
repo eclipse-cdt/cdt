@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.output.MIConst;
 import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
@@ -26,13 +27,13 @@ public class MIWatchpointScopeEvent extends MIStoppedEvent {
 
 	int number;
 
-	public MIWatchpointScopeEvent(MIExecAsyncOutput async) {
-		super(async);
+	public MIWatchpointScopeEvent(MISession source, MIExecAsyncOutput async) {
+		super(source, async);
 		parse();
 	}
 
-	public MIWatchpointScopeEvent(MIResultRecord record) {
-		super(record);
+	public MIWatchpointScopeEvent(MISession source, MIResultRecord record) {
+		super(source, record);
 		parse();
 	}
 

@@ -57,7 +57,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	    	   frame={level="1 ",addr="0x42017499",func="__libc_start_main",from="/lib/i686/libc.so.6"}]
 	*/
 	public StackFrame(Thread thread, MIFrame f, int l) {
-		super(thread.getTarget());
+		super((Target)thread.getTarget());
 		cthread = thread;
 		frame = f;
 		level = l;

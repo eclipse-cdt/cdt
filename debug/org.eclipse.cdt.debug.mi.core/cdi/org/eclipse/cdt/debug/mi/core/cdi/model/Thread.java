@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -48,11 +50,11 @@ public class Thread extends CObject implements ICDIThread {
 
 	final static int STACKFRAME_DEFAULT_DEPTH = 200;
 
-	public Thread(ICDITarget target, int threadId) {
+	public Thread(Target target, int threadId) {
 		this(target, threadId, null);
 	}
 
-	public Thread(ICDITarget target, int threadId, String threadName) {
+	public Thread(Target target, int threadId, String threadName) {
 		super(target);
 		id = threadId;
 		name = threadName;
@@ -104,12 +106,13 @@ public class Thread extends CObject implements ICDIThread {
 		// refresh if we have nothing or if we have just a subset get everything.
 		if (currentFrames == null || currentFrames.size() < depth) {
 			currentFrames = new ArrayList();
-			Session session = (Session) getTarget().getSession();
+			Target target = (Target)getTarget();
+			Session session = (Session) target.getSession();
 			Target currentTarget = (Target) session.getCurrentTarget();
 			ICDIThread currentThread = currentTarget.getCurrentThread();
 			currentTarget.setCurrentThread(this, false);
 			try {
-				MISession mi = session.getMISession();
+				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
 				MIStackListFrames frames = factory.createMIStackListFrames();
 				mi.postCommand(frames);
@@ -148,12 +151,13 @@ public class Thread extends CObject implements ICDIThread {
 	 */
 	public int getStackFrameCount() throws CDIException {
 		if (stackdepth == 0) {
-			Session session = (Session) (getTarget().getSession());
+			Target target = (Target)getTarget();
+			Session session = (Session) (target.getSession());
 			Target currentTarget = (Target) session.getCurrentTarget();
 			ICDIThread currentThread = currentTarget.getCurrentThread();
 			currentTarget.setCurrentThread(this, false);
 			try {
-				MISession mi = session.getMISession();
+				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
 				MIStackInfoDepth depth = factory.createMIStackInfoDepth();
 				mi.postCommand(depth);
@@ -193,7 +197,8 @@ public class Thread extends CObject implements ICDIThread {
 	public ICDIStackFrame[] getStackFrames(int low, int high) throws CDIException {
 		if (currentFrames == null || currentFrames.size() < high) {
 			currentFrames = new ArrayList();
-			Session session = (Session) getTarget().getSession();
+			Target target = (Target) getTarget();
+			Session session = (Session) target.getSession();
 			Target currentTarget = (Target) session.getCurrentTarget();
 			ICDIThread currentThread = currentTarget.getCurrentThread();
 			currentTarget.setCurrentThread(this, false);
@@ -209,7 +214,7 @@ public class Thread extends CObject implements ICDIThread {
 				} else {
 					upperBound = depth;
 				}
-				MISession mi = session.getMISession();
+				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
 				MIStackListFrames frames = factory.createMIStackListFrames(0, upperBound);
 				mi.postCommand(frames);
@@ -268,8 +273,9 @@ public class Thread extends CObject implements ICDIThread {
 		}
 
 		try {
-			Session session = (Session) getTarget().getSession();
-			MISession mi = session.getMISession();
+			Target target = (Target)getTarget();
+			Session session = (Session) target.getSession();
+			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			// Need the GDB/MI view of level which is the reverse, i.e. the highest level is 0
 			// See comment in StackFrame constructor.
@@ -289,11 +295,11 @@ public class Thread extends CObject implements ICDIThread {
 			if (doUpdate) {
 				RegisterManager regMgr = (RegisterManager) session.getRegisterManager();
 				if (regMgr.isAutoUpdate()) {
-					regMgr.update();
+					regMgr.update(target);
 				}
 				VariableManager varMgr = (VariableManager) session.getVariableManager();
 				if (varMgr.isAutoUpdate()) {
-					varMgr.update();
+					varMgr.update(target);
 				}
 			}
 		} catch (MIException e) {
@@ -413,6 +419,32 @@ public class Thread extends CObject implements ICDIThread {
 			return id == cthread.getId();
 		}
 		return super.equals(thread);
+	}
+
+	public ICDIBreakpoint[] getBreakpoints() throws CDIException {
+		Target target = (Target)getTarget();
+		ICDIBreakpoint[] bps = target.getBreakpoints();
+		ArrayList list = new ArrayList(bps.length);
+		for (int i = 0; i < bps.length; i++) {
+			String threadId = bps[i].getThreadId();
+			int tid = 0;
+			try {
+				tid = Integer.parseInt(threadId);
+			} catch (NumberFormatException e) {
+				//
+			}
+			if (tid == getId()) {
+				list.add(bps[i]);
+			}
+		}
+		return (ICDIBreakpoint[]) list.toArray(new ICDIBreakpoint[list.size()]);
+	}
+
+	public ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
+			ICDICondition condition, boolean deferred) throws CDIException {
+		Target target = (Target)getTarget();
+		String threadId = Integer.toString(getId());
+		return target.setLocationBreakpoint(type, location, condition, threadId, deferred);
 	}
 
 }

@@ -481,7 +481,7 @@ public class MISession extends Observable {
 		}		
 
 		// Tell the observers that the session is terminated
-		notifyObservers(new MIGDBExitEvent(0));
+		notifyObservers(new MIGDBExitEvent(this, 0));
 	}
 
 	/**

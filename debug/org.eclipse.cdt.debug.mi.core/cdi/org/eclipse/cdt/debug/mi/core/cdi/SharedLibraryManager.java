@@ -13,7 +13,9 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
@@ -22,6 +24,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetAutoSolib;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSetSolibSearchPath;
@@ -45,21 +48,30 @@ import org.eclipse.cdt.debug.mi.core.output.MIShared;
  */
 public class SharedLibraryManager extends Manager implements ICDISharedLibraryManager {
 
-	List sharedList;
+	ICDISharedLibrary[] EMPTY_SHAREDLIB = {};
+	Map sharedMap;
 	boolean isDeferred;
 
 	public SharedLibraryManager (Session session) {
 		super(session, true);
-		sharedList = new ArrayList(1);
+		sharedMap = new Hashtable();
 	}
 
-	MIShared[] getMIShareds() throws CDIException {
+	synchronized List getSharedList(Target target) {
+		List sharedList = (List)sharedMap.get(target);
+		if (sharedList == null) {
+			sharedList = Collections.synchronizedList(new ArrayList());
+			sharedMap.put(target, sharedList);
+		}
+		return sharedList;
+	}
+
+	MIShared[] getMIShareds(MISession miSession) throws CDIException {
 		MIShared[] miLibs = new MIShared[0];
-		Session session = (Session)getSession();
-		CommandFactory factory = session.getMISession().getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIInfoSharedLibrary infoShared = factory.createMIInfoSharedLibrary();
 		try {
-			session.getMISession().postCommand(infoShared);
+			miSession.postCommand(infoShared);
 			MIInfoSharedLibraryInfo info = infoShared.getMIInfoSharedLibraryInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
@@ -72,52 +84,61 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#update()
 	 */
 	public void update() throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
-		List eventList = updateState();
+		Target target = (Target)getSession().getCurrentTarget();
+		update(target);
+	}
+	public void update(Target target) throws CDIException {
+		MISession mi = target.getMISession();
+		List eventList = updateState(target);
 		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
 		mi.fireEvents(events);
 	}
 
-	public List updateState() throws CDIException {
+	public List updateState(Target target) throws CDIException {
+		MISession miSession = target.getMISession();
 		Session session = (Session)getSession();
 		ICDIConfiguration conf = session.getConfiguration();
 		if (!conf.supportsSharedLibrary()) {
 			return Collections.EMPTY_LIST; // Bail out early;
 		}
 
-		MIShared[] miLibs = getMIShareds();
+		MIShared[] miLibs = getMIShareds(miSession);
 		ArrayList eventList = new ArrayList(miLibs.length);
 		for (int i = 0; i < miLibs.length; i++) {
-			ICDISharedLibrary sharedlib = getSharedLibrary(miLibs[i].getName());
+			ICDISharedLibrary sharedlib = getSharedLibrary(target, miLibs[i].getName());
 			if (sharedlib != null) {
 				if (hasSharedLibChanged(sharedlib, miLibs[i])) {
 					// Fire ChangedEvent
 					((SharedLibrary)sharedlib).setMIShared(miLibs[i]);
-					eventList.add(new MISharedLibChangedEvent(miLibs[i].getName())); 
+					eventList.add(new MISharedLibChangedEvent(miSession, miLibs[i].getName())); 
 				}
 			} else {
 				// add the new breakpoint and fire CreatedEvent
-				sharedList.add(new SharedLibrary(this, miLibs[i]));
-				eventList.add(new MISharedLibCreatedEvent(miLibs[i].getName())); 
+				List sharedList = getSharedList(target);
+				sharedList.add(new SharedLibrary(target, miLibs[i]));
+				eventList.add(new MISharedLibCreatedEvent(miSession, miLibs[i].getName())); 
 			}
 		}
 		// Check if any libraries was unloaded.
-		ICDISharedLibrary[] oldlibs = (ICDISharedLibrary[])sharedList.toArray(new ICDISharedLibrary[0]);
-		for (int i = 0; i < oldlibs.length; i++) {
-			boolean found = false;
-			for (int j = 0; j < miLibs.length; j++) {
-				if (miLibs[j].getName().equals(oldlibs[i].getFileName())) {
-					found = true;
-					break;
+		List sharedList = (List)sharedMap.get(target);
+		if (sharedList != null) {
+			ICDISharedLibrary[] oldlibs = (ICDISharedLibrary[]) sharedList.toArray(new ICDISharedLibrary[sharedList.size()]);
+			for (int i = 0; i < oldlibs.length; i++) {
+				boolean found = false;
+				for (int j = 0; j < miLibs.length; j++) {
+					if (miLibs[j].getName().equals(oldlibs[i].getFileName())) {
+						found = true;
+						break;
+					}
 				}
-			}
-			if (!found) {
-				// Fire destroyed Events.
-				eventList.add(new MISharedLibUnloadedEvent(oldlibs[i].getFileName())); 
+				if (!found) {
+					// Fire destroyed Events.
+					eventList.add(new MISharedLibUnloadedEvent(miSession, oldlibs[i].getFileName())); 
+				}
 			}
 		}
 		return eventList;
@@ -130,15 +151,29 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 			miLib.isRead() != lib.areSymbolsLoaded();
 	}
 
-	public void deleteSharedLibrary(ICDISharedLibrary lib) {
-		sharedList.remove(lib);
+	/*
+	 * this for the events
+	 */
+	public void deleteSharedLibrary(MISession miSession, ICDISharedLibrary lib) {
+		Target target = ((Session)getSession()).getTarget(miSession);
+		List sharedList = (List)sharedMap.get(target);
+		if (sharedList != null) {
+			sharedList.remove(lib);
+		}
 	}
 
-	public ICDISharedLibrary getSharedLibrary(String name) {
-		ICDISharedLibrary[] libs = (ICDISharedLibrary[])sharedList.toArray(new ICDISharedLibrary[0]);
-		for (int i = 0; i < libs.length; i++) {
-			if (name.equals(libs[i].getFileName())) {
+	public ICDISharedLibrary getSharedLibrary(MISession miSession, String name) {
+		Target target = ((Session)getSession()).getTarget(miSession);
+		return getSharedLibrary(target, name);
+	}
+	public ICDISharedLibrary getSharedLibrary(Target target, String name) {
+		List sharedList = (List)sharedMap.get(target);
+		if (sharedList != null) {
+			ICDISharedLibrary[] libs = (ICDISharedLibrary[]) sharedList.toArray(new ICDISharedLibrary[sharedList.size()]);
+			for (int i = 0; i < libs.length; i++) {
+				if (name.equals(libs[i].getFileName())) {
 					return libs[i];
+				}
 			}
 		}
 		return null;
@@ -156,8 +191,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#setSharedLibraryPaths(String[])
 	 */
 	public void setAutoLoadSymbols(boolean set) throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		setAutoLoadSymbols(target, set);
+	}
+	public void setAutoLoadSymbols(Target target, boolean set) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBSetAutoSolib solib = factory.createMIGDBSetAutoSolib(set);
 		try {
@@ -171,8 +209,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	/**
 	 */
 	public boolean isAutoLoadSymbols() throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		return isAutoLoadSymbols(target);
+	}
+	public boolean isAutoLoadSymbols(Target target) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBShow show = factory.createMIGDBShow(new String[]{"auto-solib-add"}); //$NON-NLS-1$
 		try {
@@ -189,8 +230,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	public void setStopOnSolibEvents(boolean set) throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		setStopOnSolibEvents(target, set);
+	}
+	public void setStopOnSolibEvents(Target target, boolean set) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBSetStopOnSolibEvents stop = factory.createMIGDBSetStopOnSolibEvents(set);
 		try {
@@ -202,8 +246,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	}
 
 	public boolean isStopOnSolibEvents() throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		return isStopOnSolibEvents(target);
+	}
+	public boolean isStopOnSolibEvents(Target target) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBShow show = factory.createMIGDBShow(new String[]{"stop-on-solib-events"}); //$NON-NLS-1$
 		try {
@@ -223,8 +270,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#setSharedLibraryPaths(String[])
 	 */
 	public void setSharedLibraryPaths(String[] libPaths) throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		setSharedLibraryPaths(target, libPaths);
+	}
+	public void setSharedLibraryPaths(Target target, String[] libPaths) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBSetSolibSearchPath solib = factory.createMIGDBSetSolibSearchPath(libPaths);
 		try {
@@ -239,8 +289,11 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#getSharedLibraryPaths()
 	 */
 	public String[] getSharedLibraryPaths() throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		return getSharedLibraryPaths(target);
+	}
+	public String[] getSharedLibraryPaths(Target target) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBShowSolibSearchPath dir = factory.createMIGDBShowSolibSearchPath();
 		try {
@@ -256,15 +309,26 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#getSharedLibraries()
 	 */
 	public ICDISharedLibrary[] getSharedLibraries() throws CDIException {
-		return (ICDISharedLibrary[])sharedList.toArray(new ICDISharedLibrary[0]);
+		Target target = (Target)getSession().getCurrentTarget();
+		return getSharedLibraries(target);
+	}
+	public ICDISharedLibrary[] getSharedLibraries(Target target) throws CDIException {
+		List sharedList = (List)sharedMap.get(target);
+		if (sharedList != null) {
+			return (ICDISharedLibrary[]) sharedList.toArray(new ICDISharedLibrary[sharedList.size()]);
+		}
+		return EMPTY_SHAREDLIB;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#loadSymbols()
 	 */
 	public void loadSymbols() throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		loadSymbols(target);
+	}
+	public void loadSymbols(Target target) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MISharedLibrary sharedlibrary = factory.createMISharedLibrary();
 		try {
@@ -283,16 +347,19 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#loadSymbols(ICDISharedLibrary[])
 	 */
 	public void loadSymbols(ICDISharedLibrary[] libs) throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		Target target = (Target)getSession().getCurrentTarget();
+		loadSymbols(target, libs);
+	}
+	public void loadSymbols(Target target, ICDISharedLibrary[] libs) throws CDIException {
+		MISession miSession = target.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
 		for (int i = 0; i < libs.length; i++) {
 			if (libs[i].areSymbolsLoaded()) {
 				continue;
 			}
 			MISharedLibrary sharedlibrary = factory.createMISharedLibrary(libs[i].getFileName());
 			try {
-				session.getMISession().postCommand(sharedlibrary);
+				miSession.postCommand(sharedlibrary);
 				MIInfo info = sharedlibrary.getMIInfo();
 				if (info == null) {
 					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
@@ -304,23 +371,21 @@ public class SharedLibraryManager extends Manager implements ICDISharedLibraryMa
 			// So we have to manually recheck all the shared with "info shared"
 			//((SharedLibrary)libs[i]).getMIShared().setSymbolsRead(true);
 			//mi.fireEvent(new MISharedLibChangedEvent(libs[i].getFileName()));
-			update();
+			update(target);
 		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#supportsAutoLoadSymbols()
 	 */
-	public boolean supportsAutoLoadSymbols()
-	{
+	public boolean supportsAutoLoadSymbols() {
 		return true;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager#supportsStopOnSolibEvents()
 	 */
-	public boolean supportsStopOnSolibEvents()
-	{
+	public boolean supportsStopOnSolibEvents() {
 		return true;
 	}
 }

@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibChangedEvent;
@@ -42,23 +43,23 @@ public class ChangedEvent implements ICDIChangedEvent {
 		// Try the Variable manager.
 		VariableManager mgr = (VariableManager)session.getVariableManager();
 		String varName = var.getVarName();
-		source = mgr.getVariable(varName);
+		source = mgr.getVariable(var.getMISession(), varName);
 
 		// Try the Expression manager
 		if (source == null) {
 			ExpressionManager expMgr = (ExpressionManager)session.getExpressionManager();
-			source = expMgr.getExpression(varName);
+			source = expMgr.getExpression(var.getMISession(), varName);
 		}
 
 		// Try the Register manager
 		if (source == null) {
 			RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
-			source = regMgr.getRegister(varName);
+			source = regMgr.getRegister(var.getMISession(), varName);
 		}
 
 		// Fall back
 		if (source == null) {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 
@@ -66,9 +67,9 @@ public class ChangedEvent implements ICDIChangedEvent {
 		session = s;
 		RegisterManager mgr = (RegisterManager)session.getRegisterManager();
 		int regno = var.getNumber();
-		source = mgr.getRegister(regno);
+		source = mgr.getRegister(var.getMISession(), regno);
 		if (source == null) {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 
@@ -76,11 +77,11 @@ public class ChangedEvent implements ICDIChangedEvent {
 		session = s;
 		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
 		int number = bpoint.getNumber();
-		ICDIBreakpoint breakpoint = mgr.getBreakpoint(number);
+		ICDIBreakpoint breakpoint = mgr.getBreakpoint(bpoint.getMISession(), number);
 		if (breakpoint != null) {
 			source = breakpoint;
 		} else {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 
@@ -88,11 +89,11 @@ public class ChangedEvent implements ICDIChangedEvent {
 		session = s;
 		SharedLibraryManager mgr = (SharedLibraryManager)session.getSharedLibraryManager();
 		String name = slib.getName();
-		ICDISharedLibrary lib = mgr.getSharedLibrary(name);
+		ICDISharedLibrary lib = mgr.getSharedLibrary(slib.getMISession(), name);
 		if (lib != null) {
 			source = lib;
 		} else {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 
@@ -100,11 +101,11 @@ public class ChangedEvent implements ICDIChangedEvent {
 		session = s;
 		SignalManager mgr = (SignalManager)session.getSignalManager();
 		String name = sig.getName();
-		ICDISignal signal = mgr.getSignal(name);
+		ICDISignal signal = mgr.getSignal(sig.getMISession(), name);
 		if (signal != null) {
 			source = signal;
 		} else {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 

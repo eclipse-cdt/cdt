@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
-import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 
 /**
@@ -23,14 +22,14 @@ public class Watchpoint extends Breakpoint implements ICDIWatchpoint {
 	int watchType;
 	String what;
 
-	public Watchpoint(BreakpointManager m, String expression, int type, int wType, ICDICondition cond) {
-		super(m, type, null, cond, ""); //$NON-NLS-1$
+	public Watchpoint(Target target, String expression, int type, int wType, ICDICondition cond) {
+		super(target, type, null, cond, ""); //$NON-NLS-1$
 		watchType = wType;
 		what = expression;
 	}
 
-	public Watchpoint(BreakpointManager m, MIBreakpoint miBreak) {
-		super(m, miBreak);
+	public Watchpoint(Target target, MIBreakpoint miBreak) {
+		super(target, miBreak);
 	}
 
 	/**

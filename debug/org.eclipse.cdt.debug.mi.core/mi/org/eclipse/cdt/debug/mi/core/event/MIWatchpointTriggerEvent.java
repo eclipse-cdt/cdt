@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.output.MIConst;
 import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
@@ -29,13 +30,13 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 	String oldValue = ""; //$NON-NLS-1$
 	String newValue = ""; //$NON-NLS-1$
 
-	public MIWatchpointTriggerEvent(MIExecAsyncOutput async) {
-		super(async);
+	public MIWatchpointTriggerEvent(MISession source, MIExecAsyncOutput async) {
+		super(source, async);
 		parse();
 	}
 
-	public MIWatchpointTriggerEvent(MIResultRecord record) {
-		super(record);
+	public MIWatchpointTriggerEvent(MISession source, MIResultRecord record) {
+		super(source, record);
 		parse();
 	}
 

@@ -1,3 +1,17 @@
+2004-09-06 Alain Magloire
+
+	The changes is move the MISession as part
+	of Target.  The rationale; we want to have
+	        Session
+	   ---------------
+	   |             |
+	  Target(gdb)   Target(gdb)
+	To be able to do this we need to untie the MISession
+	from Session.
+
+	Also we are moving toward retiring the ICDIXXXXManager
+	and move the methods in the the proper methods.
+
 2004-09-01 Alain Magloire
 
 	Fix for 72974

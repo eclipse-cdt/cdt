@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -18,8 +20,8 @@ package org.eclipse.cdt.debug.mi.core.event;
  */
 public class MIDetachedEvent extends MIDestroyedEvent {
 
-	public MIDetachedEvent(int token) {
-		super(token);
+	public MIDetachedEvent(MISession source, int token) {
+		super(source, token);
 	}
 
 	public String toString() {

@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
  */
@@ -21,11 +21,11 @@ public class CharType extends IntegralType implements ICDICharType {
 	/**
 	 * @param typename
 	 */
-	public CharType(ICDITarget target, String typename) {
+	public CharType(Target target, String typename) {
 		this(target, typename, false);
 	}
 
-	public CharType(ICDITarget target, String typename, boolean usigned) {
+	public CharType(Target target, String typename, boolean usigned) {
 		super(target, typename, usigned);
 	}
 }

@@ -50,7 +50,7 @@ public class CLIProcessor {
 		if (type != -1) {
 			// if it was a step instruction set state running
 			session.getMIInferior().setRunning();
-			MIEvent event = new MIRunningEvent(cmd.getToken(), type);
+			MIEvent event = new MIRunningEvent(session, cmd.getToken(), type);
 			session.fireEvent(event);
 		} else if (isSettingBreakpoint(operation) ||
 				   isSettingWatchpoint(operation) ||
@@ -58,14 +58,14 @@ public class CLIProcessor {
 				   isDeletingBreakpoint(operation)) {
 			// We know something change, we just do not know what.
 			// So the easiest way is to let the top layer handle it. 
-			session.fireEvent(new MIBreakpointChangedEvent(0));
+			session.fireEvent(new MIBreakpointChangedEvent(session, 0));
 		} else if (isSettingSignal(operation)) {
 			// We do no know which signal let the upper layer find it.
-			session.fireEvent(new MISignalChangedEvent("")); //$NON-NLS-1$
+			session.fireEvent(new MISignalChangedEvent(session, "")); //$NON-NLS-1$
 		} else if (isDetach(operation)) {
 			// if it was a "detach" command change the state.
 			session.getMIInferior().setDisconnected();
-			MIEvent event = new MIDetachedEvent(cmd.getToken());
+			MIEvent event = new MIDetachedEvent(session, cmd.getToken());
 			session.fireEvent(event);
 		}
 	}

@@ -10,17 +10,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import java.util.EventObject;
+
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 /**
  */
-public abstract class MIEvent {
+public abstract class MIEvent extends EventObject {
 
 	int token;
 
-	public MIEvent(int token) {
+	public MIEvent(MISession session, int token) {
+		super(session);
 		this.token = token;
 	}
 
 	public int getToken() {
 		return token;
+	}
+
+	public MISession getMISession() {
+		return (MISession)getSource();
 	}
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -19,12 +21,12 @@ public class MISharedLibChangedEvent extends MIChangedEvent {
 
 	String filename;
 
-	public MISharedLibChangedEvent(String name) {
-		this(0, name);
+	public MISharedLibChangedEvent(MISession source, String name) {
+		this(source, 0, name);
 	}
 
-	public MISharedLibChangedEvent(int id, String name) {
-		super(id);
+	public MISharedLibChangedEvent(MISession source, int id, String name) {
+		super(source, id);
 		filename = name;
 	}
 

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -20,12 +22,12 @@ public class MIVarChangedEvent extends MIChangedEvent {
 
 	String varName;
 
-	public MIVarChangedEvent(String var) {
-		this(0, var);
+	public MIVarChangedEvent(MISession source, String var) {
+		this(source, 0, var);
 	}
 
-	public MIVarChangedEvent(int token, String var) {
-		super(token);
+	public MIVarChangedEvent(MISession source, int token, String var) {
+		super(source, token);
 		varName = var;
 	}
 

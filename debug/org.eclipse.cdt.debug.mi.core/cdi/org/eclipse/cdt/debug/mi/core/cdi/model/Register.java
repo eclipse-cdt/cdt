@@ -18,7 +18,6 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
-import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
@@ -46,40 +45,39 @@ public class Register extends Variable implements ICDIRegister {
 	}
 
 	public ICDIVariable[] getChildren() throws CDIException {
-			Session session = (Session)(getTarget().getSession());
-			MISession mi = session.getMISession();
-			RegisterManager mgr = (RegisterManager)session.getRegisterManager();
-			CommandFactory factory = mi.getCommandFactory();
-			MIVarListChildren var = 
+		Target target = (Target)getTarget();
+		MISession miSession = target.getMISession();
+		RegisterManager mgr = (RegisterManager)target.getSession().getRegisterManager();
+		CommandFactory factory = miSession.getCommandFactory();
+		MIVarListChildren var = 
 			factory.createMIVarListChildren(getMIVar().getVarName());
-			try {
-				mi.postCommand(var);
-				MIVarListChildrenInfo info = var.getMIVarListChildrenInfo();
-				if (info == null) {
-					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
-				}
-				MIVar[] vars = info.getMIVars();
-				children = new Register[vars.length];
-				for (int i = 0; i < vars.length; i++) {
-					String fn;
-					String exp = vars[i].getExp();
-					if (isCPPLanguage()) {
-						if ((exp.equals("private") || exp.equals("public") || exp.equals("protected"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							fn = getFullName();
-						} else {
-							fn = getFullName() + "." + exp; //$NON-NLS-1$
-						}
+		try {
+			miSession.postCommand(var);
+			MIVarListChildrenInfo info = var.getMIVarListChildrenInfo();
+			if (info == null) {
+				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+			}
+			MIVar[] vars = info.getMIVars();
+			children = new Register[vars.length];
+			for (int i = 0; i < vars.length; i++) {
+				String fn;
+				String exp = vars[i].getExp();
+				if (isCPPLanguage()) {
+					if ((exp.equals("private") || exp.equals("public") || exp.equals("protected"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						fn = getFullName();
 					} else {
 						fn = getFullName() + "." + exp; //$NON-NLS-1$
 					}
-					RegisterObject regObj = new RegisterObject(getTarget(),
-					 exp, fn, getPosition());
-					children[i] = mgr.createRegister(regObj, vars[i]);
+				} else {
+					fn = getFullName() + "." + exp; //$NON-NLS-1$
 				}
-			} catch (MIException e) {
-				throw new MI2CDIException(e);
+				RegisterObject regObj = new RegisterObject(target, exp, fn, getPosition());
+				children[i] = mgr.createRegister(regObj, vars[i]);
 			}
-			return children;
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+		return children;
 	}
 
 }

@@ -17,17 +17,17 @@ import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
  */
 public class SessionObject implements ICDISessionObject {
 
-	private Session session;
+	private Session fSession;
 
 	public SessionObject (Session session) {
-		this.session = session;
+		fSession = session;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISessionObject#getSession()
 	 */
 	public ICDISession getSession() {
-		return session;
+		return fSession;
 	}
 	
 }

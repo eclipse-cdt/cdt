@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -17,7 +19,7 @@ package org.eclipse.cdt.debug.mi.core.event;
  *
  */
 public abstract class MICreatedEvent extends MIEvent {
-	public MICreatedEvent(int id) {
-		super(id);
+	public MICreatedEvent(MISession source, int id) {
+		super(source, id);
 	}
 }

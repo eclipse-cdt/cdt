@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 /**
  * This can not be detected yet by gdb/mi.
@@ -19,12 +21,12 @@ public class MIThreadCreatedEvent extends MICreatedEvent {
 
 	int tid;
 
-	public MIThreadCreatedEvent(int id) {
-		this(0, id);
+	public MIThreadCreatedEvent(MISession source, int id) {
+		this(source, 0, id);
 	}
 
-	public MIThreadCreatedEvent(int token, int id) {
-		super(token);
+	public MIThreadCreatedEvent(MISession source, int token, int id) {
+		super(source, token);
 		tid = id;
 	}
 

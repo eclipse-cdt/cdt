@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
  */
@@ -21,7 +21,7 @@ public class StructType extends AggregateType implements ICDIStructType {
 	/**
 	 * @param typename
 	 */
-	public StructType(ICDITarget target, String typename) {
+	public StructType(Target target, String typename) {
 		super(target, typename);
 	}
 

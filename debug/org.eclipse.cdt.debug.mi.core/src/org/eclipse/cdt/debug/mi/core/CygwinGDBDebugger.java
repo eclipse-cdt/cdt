@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.mi.core;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.CygwinCommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
@@ -33,14 +34,15 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		boolean failed = false;
 		try {
 			session = (Session) super.createLaunchSession(config, exe);
-			session.getMISession().setCommandFactory(commandFactory);
+			Target target = (Target)session.getCurrentTarget();
+			MISession miSession = target.getMISession();
+			miSession.setCommandFactory(commandFactory);
 			// For windows we need to start the inferior in a new console window
 			// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
-			MISession mi = session.getMISession();
 			try {
-				CommandFactory factory = mi.getCommandFactory();
+				CommandFactory factory = miSession.getCommandFactory();
 				MIGDBSet set = factory.createMIGDBSet(new String[] { "new-console" }); //$NON-NLS-1$
-				mi.postCommand(set);
+				miSession.postCommand(set);
 				MIInfo info = set.getMIInfo();
 				if (info == null) {
 					throw new MIException(MIPlugin.getResourceString("src.common.No_answer")); //$NON-NLS-1$
@@ -71,7 +73,8 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		boolean failed = false;
 		try {
 			session = (Session) super.createAttachSession(config, exe, pid);
-			session.getMISession().setCommandFactory(commandFactory);
+			Target target = (Target)session.getCurrentTarget();
+			target.getMISession().setCommandFactory(commandFactory);
 			initializeLibraries(config, session);
 			return session;
 		} catch (CDIException e) {
@@ -95,7 +98,8 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		boolean failed = false;
 		try {
 			session = (Session) super.createCoreSession(config, exe, corefile);
-			session.getMISession().setCommandFactory(commandFactory);
+			Target target = (Target)session.getCurrentTarget();
+			target.getMISession().setCommandFactory(commandFactory);
 			initializeLibraries(config, session);
 			return session;
 		} catch (CDIException e) {

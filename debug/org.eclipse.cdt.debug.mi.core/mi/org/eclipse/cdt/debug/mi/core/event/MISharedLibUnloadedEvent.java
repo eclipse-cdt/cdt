@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 /**
  *
  */
@@ -17,12 +19,12 @@ public class MISharedLibUnloadedEvent extends MIDestroyedEvent {
 
 	String filename;
 
-	public MISharedLibUnloadedEvent(String name) {
-		this(0, name);
+	public MISharedLibUnloadedEvent(MISession source, String name) {
+		this(source, 0, name);
 	}
 
-	public MISharedLibUnloadedEvent(int id, String name) {
-		super(id);
+	public MISharedLibUnloadedEvent(MISession source, int id, String name) {
+		super(source, id);
 		filename = name;
 	}
 

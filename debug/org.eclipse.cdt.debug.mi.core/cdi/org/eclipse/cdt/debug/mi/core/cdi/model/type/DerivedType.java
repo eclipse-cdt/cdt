@@ -12,11 +12,11 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
  */
@@ -24,7 +24,7 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 
 	ICDIType derivedType;
 
-	public DerivedType(ICDITarget target, String typename) {
+	public DerivedType(Target target, String typename) {
 		super(target, typename);
 	}
 
@@ -33,7 +33,7 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 	}
 
 	public void setComponentType(String name) {
-		ICDITarget target = getTarget();
+		Target target = (Target)getTarget();
 		Session session = (Session)(target.getSession());
 		SourceManager sourceMgr = (SourceManager)session.getSourceManager();
 		try {
@@ -41,13 +41,13 @@ public abstract class DerivedType extends Type implements ICDIDerivedType {
 		} catch (CDIException e) {
 			// Try after ptype.
 			try {
-				String ptype = sourceMgr.getDetailTypeName(name);
+				String ptype = sourceMgr.getDetailTypeName(target, name);
 				derivedType = sourceMgr.getType(target, ptype);
 			} catch (CDIException ex) {
 			}
 		}
 		if (derivedType == null) {
-			derivedType = new IncompleteType(getTarget(), name);
+			derivedType = new IncompleteType(target, name);
 		}
 	}
 }

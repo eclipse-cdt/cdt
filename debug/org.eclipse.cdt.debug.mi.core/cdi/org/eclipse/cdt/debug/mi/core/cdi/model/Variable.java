@@ -15,7 +15,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
@@ -39,7 +38,6 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.Format;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
-import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ArrayValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.CharValue;
@@ -84,7 +82,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 		miVar = v;
 	}
 
-	public Variable(ICDITarget target, String n, String q, ICDIStackFrame stack, int pos, int depth, MIVar v) {
+	public Variable(Target target, String n, String q, ICDIStackFrame stack, int pos, int depth, MIVar v) {
 		super(target, n, q, stack, pos, depth);
 		miVar = v;
 	}
@@ -110,8 +108,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 
 	String getLanguage() throws CDIException {
 		if (language == null) {
-			Session session = (Session) (getTarget().getSession());
-			MISession mi = session.getMISession();
+			MISession mi = ((Target)getTarget()).getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIVarInfoExpression var = factory.createMIVarInfoExpression(getMIVar().getVarName());
 			try {
@@ -150,8 +147,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 	 * allow the override of the timeout.
 	 */
 	public ICDIVariable[] getChildren(int timeout) throws CDIException {
-		Session session = (Session) (getTarget().getSession());
-		MISession mi = session.getMISession();
+		MISession mi = ((Target)getTarget()).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarListChildren var = factory.createMIVarListChildren(getMIVar().getVarName());
 		try {
@@ -223,7 +219,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 						fn = "(" + fn + ")." + vars[i].getExp(); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
-				Variable v = new Variable(getTarget(), childName, fn, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
+				Variable v = new Variable((Target)getTarget(), childName, fn, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
 				if (childType != null) {
 					// Hack to reset the typename to a known value
 					v.type = childType;
@@ -295,12 +291,12 @@ public class Variable extends VariableObject implements ICDIVariable {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
 	public void setValue(String expression) throws CDIException {
-		Session session = (Session) (getTarget().getSession());
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		Target target = (Target)getTarget();
+		MISession miSession = target.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIVarAssign var = factory.createMIVarAssign(miVar.getVarName(), expression);
 		try {
-			mi.postCommand(var);
+			miSession.postCommand(var);
 			MIInfo info = var.getMIInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
@@ -311,8 +307,8 @@ public class Variable extends VariableObject implements ICDIVariable {
 
 		// If the assign was succesfull fire a MIVarChangedEvent() for the variable
 		// Note GDB will not fire an event for the changed variable we have to do it manually.
-		MIVarChangedEvent change = new MIVarChangedEvent(var.getToken(), miVar.getVarName());
-		mi.fireEvent(change);
+		MIVarChangedEvent change = new MIVarChangedEvent(miSession, var.getToken(), miVar.getVarName());
+		miSession.fireEvent(change);
 
 		// Changing values may have side effects i.e. affecting other variables
 		// if the manager is on autoupdate check all the other variables.
@@ -320,20 +316,20 @@ public class Variable extends VariableObject implements ICDIVariable {
 		if (this instanceof Register) {
 			// If register was on autoupdate, update all the other registers
 			// assigning may have side effects i.e. affecting other registers.
-			ICDIRegisterManager mgr = session.getRegisterManager();
+			ICDIRegisterManager mgr = target.getSession().getRegisterManager();
 			if (mgr.isAutoUpdate()) {
 				mgr.update();
 			}
 		} else if (this instanceof Expression) {
 			// If expression was on autoupdate, update all the other expression
 			// assigning may have side effects i.e. affecting other expressions.
-			ICDIExpressionManager mgr = session.getExpressionManager();
+			ICDIExpressionManager mgr = target.getSession().getExpressionManager();
 			if (mgr.isAutoUpdate()) {
 				mgr.update();
 			}
 		} else {
 			// FIXME: Should we always call the Variable Manager ?
-			ICDIVariableManager mgr = session.getVariableManager();
+			ICDIVariableManager mgr = target.getSession().getVariableManager();
 			if (mgr.isAutoUpdate()) {
 				mgr.update();
 			}
@@ -347,7 +343,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 	 */
 	public boolean isEditable() throws CDIException {
 		if (editable == null) {
-			MISession mi = ((Session) (getTarget().getSession())).getMISession();
+			MISession mi = ((Target) getTarget()).getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIVarShowAttributes var = factory.createMIVarShowAttributes(miVar.getVarName());
 			try {
@@ -369,7 +365,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 	 */
 	public void setFormat(int format) throws CDIException {
 		int fmt = Format.toMIFormat(format);
-		MISession mi = ((Session) (getTarget().getSession())).getMISession();
+		MISession mi = ((Target) getTarget()).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarSetFormat var = factory.createMIVarSetFormat(miVar.getVarName(), fmt);
 		try {

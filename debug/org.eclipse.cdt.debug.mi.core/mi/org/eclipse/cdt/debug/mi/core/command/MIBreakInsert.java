@@ -61,11 +61,11 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 public class MIBreakInsert extends MICommand 
 {
 	public MIBreakInsert(String func) {
-		this(false, false, null, 0, func);
+		this(false, false, null, 0, func, 0);
 	}
 
 	public MIBreakInsert(boolean isTemporary, boolean isHardware,
-			 String condition, int ignoreCount, String line) {
+			 String condition, int ignoreCount, String line, int tid) {
 		super("-break-insert"); //$NON-NLS-1$
 
 		int i = 0;
@@ -78,7 +78,9 @@ public class MIBreakInsert extends MICommand
 		if (ignoreCount > 0) {
 			i += 2;
 		}
-
+		if (tid > 0) {
+			i += 2;
+		}
 		String[] opts = new String[i];
 		
 		i = 0;
@@ -100,6 +102,11 @@ public class MIBreakInsert extends MICommand
 			i++;
 			opts[i] = Integer.toString(ignoreCount);
 			i++;
+		}
+		if (tid > 0) {
+			opts[i] = "-p"; //$NON-NLS-1$
+			i++;
+			opts[i] = Integer.toString(tid);
 		}
 
 		if (opts.length > 0) {

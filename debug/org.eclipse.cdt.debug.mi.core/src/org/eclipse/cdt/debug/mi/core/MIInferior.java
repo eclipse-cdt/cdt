@@ -307,7 +307,7 @@ public class MIInferior extends Process {
 			}
 		}
 		if (fireEvent) {
-			session.fireEvent(new MIInferiorExitEvent(token));
+			session.fireEvent(new MIInferiorExitEvent(session, token));
 		}
 		notifyAll();
 	}

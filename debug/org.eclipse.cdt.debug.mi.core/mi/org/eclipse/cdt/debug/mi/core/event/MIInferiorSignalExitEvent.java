@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.output.MIConst;
 import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIResult;
@@ -30,14 +31,14 @@ public class MIInferiorSignalExitEvent extends MIDestroyedEvent {
 	MIExecAsyncOutput exec = null;
 	MIResultRecord rr = null;
 
-	public MIInferiorSignalExitEvent(MIExecAsyncOutput async) {
-		super(async.getToken());
+	public MIInferiorSignalExitEvent(MISession source, MIExecAsyncOutput async) {
+		super(source, async.getToken());
 		exec = async;
 		parse();
 	}
 
-	public MIInferiorSignalExitEvent(MIResultRecord record) {
-		super(record.getToken());
+	public MIInferiorSignalExitEvent(MISession source, MIResultRecord record) {
+		super(source, record.getToken());
 		rr = record;
 		parse();
 	}

@@ -12,7 +12,9 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalManager;
@@ -20,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Signal;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIHandle;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSignals;
@@ -32,21 +35,30 @@ import org.eclipse.cdt.debug.mi.core.output.MISigHandle;
  */
 public class SignalManager extends Manager implements ICDISignalManager {
 
+	ICDISignal[] EMPTY_SIGNALS = {};
 	MISigHandle[] noSigs =  new MISigHandle[0];
-	List signalsList = null;
+	Map signalsMap;
 
 	public SignalManager(Session session) {
 		super(session, false);
+		signalsMap = new Hashtable();
 	}
-	
-	MISigHandle[] getMISignals() throws CDIException {
-		MISigHandle[] miSigs = noSigs;
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+
+	synchronized List getSignalsList(Target target) {
+		List signalsList = (List)signalsMap.get(target);
+		if (signalsList == null) {
+			signalsList = Collections.synchronizedList(new ArrayList());
+			signalsMap.put(target, signalsList);
+		}
+		return signalsList;
+	}
+
+	MISigHandle[] getMISignals(MISession miSession) throws CDIException {
+		MISigHandle[] miSigs;
+		CommandFactory factory = miSession.getCommandFactory();
 		MIInfoSignals sigs = factory.createMIInfoSignals();
 		try {
-			mi.postCommand(sigs);
+			miSession.postCommand(sigs);
 			MIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
@@ -58,14 +70,12 @@ public class SignalManager extends Manager implements ICDISignalManager {
 		return miSigs;
 	}
 
-	MISigHandle getMISignal(String name) throws CDIException {
+	MISigHandle getMISignal(MISession miSession, String name) throws CDIException {
 		MISigHandle sig = null;
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIInfoSignals sigs = factory.createMIInfoSignals(name);
 		try {
-			mi.postCommand(sigs);
+			miSession.postCommand(sigs);
 			MIInfoSignalsInfo info = sigs.getMIInfoSignalsInfo();
 			if (info == null) {
 				throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
@@ -92,8 +102,9 @@ public class SignalManager extends Manager implements ICDISignalManager {
 			sig.isIgnore() != !miSignal.isPass();
 	}
 
-	public ICDISignal findSignal(String name) {
+	protected ICDISignal findSignal(Target target, String name) {
 		ICDISignal sig = null;
+		List signalsList = (List) signalsMap.get(target);
 		if (signalsList != null) {
 			ICDISignal[] sigs = (ICDISignal[])signalsList.toArray(new ICDISignal[0]);
 			for (int i = 0; i < sigs.length; i++) {
@@ -106,29 +117,33 @@ public class SignalManager extends Manager implements ICDISignalManager {
 		return sig;
 	}
 
-	public ICDISignal getSignal(String name) {
-		ICDISignal sig = findSignal(name);
+	public ICDISignal getSignal(MISession miSession, String name) {
+		Session session = (Session)getSession();
+		Target target = session.getTarget(miSession);
+		return getSignal(target, name);
+	}
+	public ICDISignal getSignal(Target target, String name) {
+		ICDISignal sig = findSignal(target, name);
 		if (sig == null) {
 			MISigHandle miSig = null;
 			try {
-				miSig = getMISignal(name);
-				sig = new Signal(this, miSig);
-				if (signalsList != null) {
-					signalsList.add(sig);
-				}
+				miSig = getMISignal(target.getMISession(), name);
+				sig = new Signal(target, miSig);
+				List signalsList = getSignalsList(target);
+				signalsList.add(sig);
 			} catch (CDIException e) {
 				// The session maybe terminated because of the signal.
 				miSig = new MISigHandle(name, false, false, false, name);
-				sig = new Signal(this, miSig);
+				sig = new Signal(target, miSig);
 			}
 		}
 		return sig;
 	}
 
-	public void handle(ICDISignal sig, boolean isIgnore, boolean isStop) throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
-		CommandFactory factory = mi.getCommandFactory();
+	public void handle(Signal sig, boolean isIgnore, boolean isStop) throws CDIException {
+		Target target = (Target)sig.getTarget();
+		MISession miSession = target.getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
 		StringBuffer buffer = new StringBuffer(sig.getName());
 		buffer.append(" "); //$NON-NLS-1$
 		if (isIgnore) {
@@ -144,51 +159,63 @@ public class SignalManager extends Manager implements ICDISignalManager {
 		}
 		MIHandle handle = factory.createMIHandle(buffer.toString());
 		try {
-			mi.postCommand(handle);
+			miSession.postCommand(handle);
 			handle.getMIInfo();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		}
-		((Signal)sig).getMISignal().handle(isIgnore, isStop);
-		mi.fireEvent(new MISignalChangedEvent(sig.getName()));
+		sig.getMISignal().handle(isIgnore, isStop);
+		miSession.fireEvent(new MISignalChangedEvent(miSession, sig.getName()));
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#getSignals()
 	 */
 	public ICDISignal[] getSignals() throws CDIException {
-		if (signalsList == null) {
-			update();
-		}
-		return (ICDISignal[])signalsList.toArray(new ICDISignal[0]);
+		Target target = (Target)getSession().getCurrentTarget();
+		return getSignals(target);
 	}
 
+	public ICDISignal[] getSignals(Target target) throws CDIException {
+		List signalsList = (List)signalsMap.get(target);
+		if (signalsList == null) {
+			update(target);
+		}
+		signalsList = (List)signalsMap.get(target);
+		if (signalsList != null) {
+			return (ICDISignal[])signalsList.toArray(new ICDISignal[0]);
+		}
+		return EMPTY_SIGNALS;
+	}
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISignalManager#update()
 	 */
 	public void update() throws CDIException {
-		Session session = (Session)getSession();
-		MISigHandle[] miSigs = getMISignals();
+		Target target = (Target)getSession().getCurrentTarget();
+		update(target);
+	}
+	public void update(Target target) throws CDIException {
+		MISession miSession = target.getMISession();
+		MISigHandle[] miSigs = getMISignals(miSession);
 		List eventList = new ArrayList(miSigs.length);
-		if (signalsList == null) {
-			signalsList = Collections.synchronizedList(new ArrayList(5));
-		}
+		List signalsList = getSignalsList(target);
 		for (int i = 0; i < miSigs.length; i++) {
-			ICDISignal sig = findSignal(miSigs[i].getName());
+			ICDISignal sig = findSignal(target, miSigs[i].getName());
 			if (sig != null) {
 				if (hasSignalChanged(sig, miSigs[i])) {
 					// Fire ChangedEvent
 					((Signal)sig).setMISignal(miSigs[i]);
-					eventList.add(new MISignalChangedEvent(miSigs[i].getName())); 
+					eventList.add(new MISignalChangedEvent(miSession, miSigs[i].getName())); 
 				}
 			} else {
 				// add the new breakpoint and fire CreatedEvent
-				signalsList.add(new Signal(this, miSigs[i]));
+				signalsList.add(new Signal(target, miSigs[i]));
+				//eventList.add(new MISignCreatedEvent(miSession, miSigs[i].getName()));
 			}
 		}
-		MISession mi = session.getMISession();
 		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
-		mi.fireEvents(events);
+		miSession.fireEvents(events);
 	}
 
 } 

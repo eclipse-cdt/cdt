@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.output.MIConst;
 import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
@@ -23,13 +24,13 @@ import org.eclipse.cdt.debug.mi.core.output.MIValue;
  */
 public class MILocationReachedEvent extends MIStoppedEvent {
 
-	public MILocationReachedEvent(MIExecAsyncOutput async) {
-		super(async);
+	public MILocationReachedEvent(MISession source, MIExecAsyncOutput async) {
+		super(source, async);
 		parse();
 	}
 
-	public MILocationReachedEvent(MIResultRecord record) {
-		super(record);
+	public MILocationReachedEvent(MISession source, MIResultRecord record) {
+		super(source, record);
 		parse();
 	}
 

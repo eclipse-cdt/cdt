@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -17,7 +19,7 @@ package org.eclipse.cdt.debug.mi.core.event;
  */
 public class MIGDBExitEvent extends MIDestroyedEvent {
 
-	public MIGDBExitEvent(int token) {
-		super(token);
+	public MIGDBExitEvent(MISession source, int token) {
+		super(source, token);
 	}
 }

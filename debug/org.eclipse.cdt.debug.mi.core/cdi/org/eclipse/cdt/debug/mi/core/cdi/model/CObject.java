@@ -17,17 +17,17 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
  */
 public class CObject implements ICDIObject {
 
-	ICDITarget target;
+	private Target fTarget;
 	
-	public CObject(ICDITarget t) {
-		target = t;
+	public CObject(Target t) {
+		fTarget = t;
 	}
 	
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getTarget()
 	 */
 	public ICDITarget getTarget() {
-		return target;
+		return fTarget;
 	}
 
 }

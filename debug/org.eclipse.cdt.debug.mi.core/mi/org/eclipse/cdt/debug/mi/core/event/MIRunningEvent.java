@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -29,8 +31,8 @@ public class MIRunningEvent extends MIEvent {
 
 	int type;
 
-	public MIRunningEvent(int token, int t) {
-		super(token);
+	public MIRunningEvent(MISession source, int token, int t) {
+		super(source, token);
 		type = t;
 	}
 

@@ -8,22 +8,20 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
  */
-public class ProcessManager extends Manager { //implements ICDIProcessManager {
+public class ProcessManager extends Manager {
 
-	static final ICDITarget[] noProcess = new Target[0];
+	static final Target[] noProcess = new Target[0];
 
 	HashMap processMap;
 
 	class ProcessSet {
-		ICDITarget[] currentProcs;
+		Target[] currentProcs;
 		int currentProcessId;
-		ProcessSet(ICDITarget[] procs, int id) {
+		ProcessSet(Target[] procs, int id) {
 			currentProcs = procs;
 			currentProcessId = id;
 		}
@@ -37,21 +35,23 @@ public class ProcessManager extends Manager { //implements ICDIProcessManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIProcessManager#getProcesses()
 	 */
-	public ICDITarget[] getProcesses(ICDISession session) throws CDIException {
+	public Target[] getProcesses(Session session) throws CDIException {
 		ProcessSet set =  (ProcessSet)processMap.get(session);
 		if (set == null) {
-			set = getCProcesses(session);
+			set = getProcessSet(session);
 			processMap.put(session, set);
 		}
 		return set.currentProcs;
 	}
 
-	public ProcessSet getCProcesses(ICDISession session) throws CDIException {
-		ICDITarget[] cprocs = new Target[] {new Target((Session)session)};
-		return new ProcessSet(cprocs, 0);
+	protected ProcessSet getProcessSet(Session session) throws CDIException {
+		//Target[] cprocs = new Target[] {new Target((Session)session)};
+		//return new ProcessSet(cprocs, 0);
+		return null;
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.derug.core.cdi.ICDIManager#update()
 	 */
 	public void update() throws CDIException {

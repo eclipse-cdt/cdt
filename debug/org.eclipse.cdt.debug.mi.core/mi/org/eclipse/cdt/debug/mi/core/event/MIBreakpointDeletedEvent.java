@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -19,12 +21,12 @@ public class MIBreakpointDeletedEvent extends MIDestroyedEvent {
 
 	int no;
 
-	public MIBreakpointDeletedEvent(int number) {
-		this(0, number);
+	public MIBreakpointDeletedEvent(MISession source, int number) {
+		this(source, 0, number);
 	}
 
-	public MIBreakpointDeletedEvent(int id, int number) {
-		super(id);
+	public MIBreakpointDeletedEvent(MISession source, int id, int number) {
+		super(source, id);
 		no = number;
 	}
 

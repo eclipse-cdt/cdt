@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.output.MIConst;
 import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
@@ -27,13 +28,13 @@ public class MIBreakpointHitEvent extends MIStoppedEvent {
 	int bkptno;
 	MIFrame frame;
 
-	public MIBreakpointHitEvent(MIExecAsyncOutput record) {
-		super(record);
+	public MIBreakpointHitEvent(MISession source, MIExecAsyncOutput record) {
+		super(source, record);
 		parse();
 	}
 
-	public MIBreakpointHitEvent(MIResultRecord record) {
-		super(record);
+	public MIBreakpointHitEvent(MISession source, MIResultRecord record) {
+		super(source, record);
 		parse();
 	}
 

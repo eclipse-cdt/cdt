@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.event;
 
+import org.eclipse.cdt.debug.mi.core.MISession;
+
 
 
 /**
@@ -21,12 +23,12 @@ public class MIRegisterCreatedEvent extends MICreatedEvent {
 	String regName;
 	int regno;
 
-	public MIRegisterCreatedEvent(String name, int number) {
-		this(0, name, number);
+	public MIRegisterCreatedEvent(MISession source, String name, int number) {
+		this(source, 0, name, number);
 	}
 
-	public MIRegisterCreatedEvent(int token, String name, int number) {
-		super(token);
+	public MIRegisterCreatedEvent(MISession source, int token, String name, int number) {
+		super(source, token);
 		regName = name;
 		regno = number;
 	}

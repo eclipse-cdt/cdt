@@ -40,7 +40,6 @@ import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 public class Session implements ICDISession, ICDISessionObject {
 
 	Properties props;
-	MISession session;
 	EventManager eventManager;
 	BreakpointManager breakpointManager;
 	ExpressionManager expressionManager;
@@ -51,7 +50,8 @@ public class Session implements ICDISession, ICDISessionObject {
 	SignalManager signalManager;
 	SourceManager sourceManager;
 	ICDIConfiguration configuration;
-	Target ctarget;
+	Target[] debugTargets;
+	Target currentTarget;
 
 	public Session(MISession s, boolean attach) {
 		commonSetup(s);
@@ -63,14 +63,12 @@ public class Session implements ICDISession, ICDISessionObject {
 		configuration = new CoreFileConfiguration();
 	}
 	
-	private void commonSetup(MISession s) {
-		session = s;
+	private void commonSetup(MISession miSession) {
 		props = new Properties();
 
 		breakpointManager = new BreakpointManager(this);
 
 		eventManager = new EventManager(this);
-		s.addObserver(eventManager);
 
 		expressionManager = new ExpressionManager(this);
 		variableManager = new VariableManager(this);
@@ -79,11 +77,20 @@ public class Session implements ICDISession, ICDISessionObject {
 		signalManager = new SignalManager(this);
 		sourceManager = new SourceManager(this);
 		sharedLibraryManager = new SharedLibraryManager(this);
-		ctarget = new Target(this);
+		currentTarget = new Target(this, miSession);
+		debugTargets = new Target[] { currentTarget };
+		miSession.addObserver(eventManager);
 	}
 
-	public MISession getMISession() {
-		return session;
+	public Target getTarget(MISession miSession) {
+		for (int i = 0; i < debugTargets.length; ++i) {
+			MISession mi = debugTargets[i].getMISession();
+			if (mi.equals(miSession)) {
+				return debugTargets[i];
+			}
+		}
+		// ASSERT: it should not happen.
+		return null;
 	}
 
 	/**
@@ -160,14 +167,14 @@ public class Session implements ICDISession, ICDISessionObject {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getTargets()
 	 */
 	public ICDITarget[] getTargets() {
-		return new ICDITarget[]{ctarget};
+		return debugTargets;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getCurrentTarget()
 	 */
 	public ICDITarget getCurrentTarget() {
-		return ctarget;
+		return currentTarget;
 	}
 
 	/**
@@ -175,7 +182,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	 */
 	public void setCurrentTarget(ICDITarget target) throws CDIException {
 		if (target instanceof Target) {
-			ctarget = (Target)target;
+			currentTarget = (Target)target;
 		} else {
 			throw new CDIException(CdiResources.getString("cdi.Session.Unknown_target")); //$NON-NLS-1$
 		}
@@ -186,13 +193,6 @@ public class Session implements ICDISession, ICDISessionObject {
 	 */
 	public void setAttribute(String key, String value) {
 		props.setProperty(key, value);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#terminate()
-	 */
-	public void terminate() throws CDIException {
-		session.terminate();
 	}
 
 	/**
@@ -221,13 +221,39 @@ public class Session implements ICDISession, ICDISessionObject {
 	}
 
 	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#terminate(ICDITarget)
+	 */
+	public void terminate() throws CDIException {
+		for (int i = 0; i < debugTargets.length; ++i) {
+			debugTargets[i].terminate();
+		}
+		//TODO: the ExitEvent is sent by MISession.terminate()
+		// We nee move it here.
+	}
+	/**
+	 * @deprecated
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#terminate(ICDITarget)
+	 */
+	public void terminate(ICDITarget target) throws CDIException {
+		((Target)target).getMISession().terminate();
+	}
+
+	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#addSearchPaths(String[])
 	 */
 	public void addSearchPaths(String[] dirs) throws CDIException {
-		CommandFactory factory = session.getCommandFactory();
+		addSearchPaths(currentTarget, dirs);
+	}
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#addSearchPaths(String[])
+	 */
+	public void addSearchPaths(ICDITarget target, String[] dirs) throws CDIException {
+		MISession miSession = ((Target)target).getMISession();
+		CommandFactory factory = miSession.getCommandFactory();
 		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(dirs);
 		try {
-			session.postCommand(dir);
+			miSession.postCommand(dir);
 		 	dir.getMIInfo();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -235,10 +261,19 @@ public class Session implements ICDISession, ICDISessionObject {
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSessionProcess()
 	 */
 	public Process getSessionProcess() throws CDIException {
-		return session.getSessionProcess();
+		return getSessionProcess(currentTarget);
+	}
+	
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSessionProcess()
+	 */
+	public Process getSessionProcess(ICDITarget target) throws CDIException {
+		MISession miSession = ((Target)target).getMISession();
+		return miSession.getSessionProcess();
 	}
 
 }

@@ -16,7 +16,6 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.GDBTypeParser;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -24,6 +23,7 @@ import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBDerivedType;
 import org.eclipse.cdt.debug.mi.core.GDBTypeParser.GDBType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Instruction;
 import org.eclipse.cdt.debug.mi.core.cdi.model.MixedInstruction;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ArrayType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.CharType;
@@ -71,8 +71,12 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#addSourcePaths(String[])
 	 */
 	public void addSourcePaths(String[] dirs) throws CDIException {
+		Target target = (Target)getSession().getCurrentTarget();
+		addSourcePaths(target, dirs);
+	}
+	public void addSourcePaths(Target target, String[] dirs) throws CDIException {
 		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIEnvironmentDirectory dir = factory.createMIEnvironmentDirectory(dirs);
 		try {
@@ -87,8 +91,11 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getSourcePaths()
 	 */
 	public String[] getSourcePaths() throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		return getSourcePaths(target);
+	}
+	public String[] getSourcePaths(Target target) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIGDBShowDirectories dir = factory.createMIGDBShowDirectories();
 		try {
@@ -104,8 +111,11 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(String, int, int)
 	 */
 	public ICDIInstruction[] getInstructions(String filename, int linenum, int lines) throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		return getInstructions(target, filename, linenum, lines);
+	}
+	public ICDIInstruction[] getInstructions(Target target, String filename, int linenum, int lines) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataDisassemble dis = factory.createMIDataDisassemble(filename, linenum, lines, false);
 		try {
@@ -114,7 +124,7 @@ public class SourceManager extends Manager implements ICDISourceManager {
 			MIAsm[] asm = info.getMIAsms();
 			Instruction[] instructions = new Instruction[asm.length];
 			for (int i = 0; i < instructions.length; i++) {
-				instructions[i] = new Instruction(session.getCurrentTarget(), asm[i]);
+				instructions[i] = new Instruction(target, asm[i]);
 			}
 			return instructions;
 		} catch (MIException e) {
@@ -133,8 +143,11 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(long, long)
 	 */
 	public ICDIInstruction[] getInstructions(long start, long end) throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		return getInstructions(target, start, end);
+	}
+	public ICDIInstruction[] getInstructions(Target target, long start, long end) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		String hex = "0x"; //$NON-NLS-1$
 		String sa = hex + Long.toHexString(start);
@@ -146,7 +159,7 @@ public class SourceManager extends Manager implements ICDISourceManager {
 			MIAsm[] asm = info.getMIAsms();
 			Instruction[] instructions = new Instruction[asm.length];
 			for (int i = 0; i < instructions.length; i++) {
-				instructions[i] = new Instruction(session.getCurrentTarget(), asm[i]);
+				instructions[i] = new Instruction(target, asm[i]);
 			}
 			return instructions;
 		} catch (MIException e) {
@@ -158,8 +171,11 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getMixedInstructions(String, int, int)
 	 */
 	public ICDIMixedInstruction[] getMixedInstructions(String filename, int linenum, int lines) throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+		Target target = (Target)getSession().getCurrentTarget();
+		return getMixedInstructions(target, filename, linenum, lines);
+	}
+	public ICDIMixedInstruction[] getMixedInstructions(Target target, String filename, int linenum, int lines) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataDisassemble dis = factory.createMIDataDisassemble(filename, linenum, lines, true);
 		try {
@@ -168,7 +184,7 @@ public class SourceManager extends Manager implements ICDISourceManager {
 			MISrcAsm[] srcAsm = info.getMISrcAsms();
 			ICDIMixedInstruction[] mixed = new ICDIMixedInstruction[srcAsm.length];
 			for (int i = 0; i < mixed.length; i++) {
-				mixed[i] = new MixedInstruction(session.getCurrentTarget(), srcAsm[i]);
+				mixed[i] = new MixedInstruction(target, srcAsm[i]);
 			}
 			return mixed;
 		} catch (MIException e) {
@@ -186,9 +202,12 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getMixedInstructions(long, long)
 	 */
-	public ICDIMixedInstruction[] getMixedInstructions(long start, long end) throws CDIException {
-		Session session = (Session)getSession();
-		MISession mi = session.getMISession();
+	public ICDIMixedInstruction[] getMixedInstructions(long start, long end) throws CDIException {	
+		Target target = (Target)getSession().getCurrentTarget();
+		return getMixedInstructions(target, start, end);
+	}
+	public ICDIMixedInstruction[] getMixedInstructions(Target target, long start, long end) throws CDIException {
+		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		String hex = "0x"; //$NON-NLS-1$
 		String sa = hex + Long.toHexString(start);
@@ -200,7 +219,7 @@ public class SourceManager extends Manager implements ICDISourceManager {
 			MISrcAsm[] srcAsm = info.getMISrcAsms();
 			ICDIMixedInstruction[] mixed = new ICDIMixedInstruction[srcAsm.length];
 			for (int i = 0; i < mixed.length; i++) {
-				mixed[i] = new MixedInstruction(session.getCurrentTarget(), srcAsm[i]);
+				mixed[i] = new MixedInstruction(target, srcAsm[i]);
 			}
 			return mixed;
 		} catch (MIException e) {
@@ -209,13 +228,16 @@ public class SourceManager extends Manager implements ICDISourceManager {
 	}
 
 	/**
+	 * @deprecated
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#update()
 	 */
 	public void update() throws CDIException {
 	}
 
+	public void update(Target target) throws CDIException {
+	}
 
-	public Type getType(ICDITarget target, String name) throws CDIException {
+	public Type getType(Target target, String name) throws CDIException {
 		if (name == null) {
 			name = new String();
 		}
@@ -265,7 +287,7 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		throw new CDIException(CdiResources.getString("cdi.SourceManager.Unknown_type")); //$NON-NLS-1$
 	}
 	
-	Type toCDIType(ICDITarget target, String name) throws CDIException {
+	Type toCDIType(Target target, String name) throws CDIException {
 		// Check the derived types and agregate types
 		if (name == null) {
 			name = new String();
@@ -430,10 +452,9 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		throw new CDIException(CdiResources.getString("cdi.SourceManager.Unknown_type")); //$NON-NLS-1$
 	}
 
-	public String getDetailTypeName(String typename) throws CDIException {
+	public String getDetailTypeName(Target target, String typename) throws CDIException {
 		try {
-			Session session = (Session)getSession();
-			MISession mi = session.getMISession();
+			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIPType ptype = factory.createMIPType(typename);
 			mi.postCommand(ptype);
@@ -447,10 +468,9 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		}
 	}
 
-	public String getTypeName(String variable) throws CDIException {
+	public String getTypeName(Target target, String variable) throws CDIException {
 		try {
-			Session session = (Session) getSession();
-			MISession mi = session.getMISession();
+			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIWhatis whatis = factory.createMIWhatis(variable);
 			mi.postCommand(whatis);

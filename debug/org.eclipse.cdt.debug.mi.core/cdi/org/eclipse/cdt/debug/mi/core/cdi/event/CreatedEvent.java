@@ -39,9 +39,9 @@ public class CreatedEvent implements ICDICreatedEvent {
 		session = s;
 		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
 		int number = bpoint.getNumber();
-		source = mgr.getBreakpoint(number);
+		source = mgr.getBreakpoint(bpoint.getMISession(), number);
 		if (source == null) {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 
@@ -49,9 +49,9 @@ public class CreatedEvent implements ICDICreatedEvent {
 		session = s;
 		VariableManager mgr = (VariableManager)session.getVariableManager();
 		String varName = var.getVarName();
-		source = mgr.getVariable(varName);
+		source = mgr.getVariable(var.getMISession(), varName);
 		if (source == null) {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 
@@ -59,9 +59,9 @@ public class CreatedEvent implements ICDICreatedEvent {
 		session = s;
 		RegisterManager mgr = (RegisterManager)session.getRegisterManager();
 		int regno = var.getNumber();
-		source = mgr.getRegister(regno);
+		source = mgr.getRegister(var.getMISession(), regno);
 		if (source == null) {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 
@@ -70,14 +70,14 @@ public class CreatedEvent implements ICDICreatedEvent {
 		Target target = (Target)session.getCurrentTarget();
 		source = target.getThread(ethread.getId());
 		if (source == null) {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 
 	public CreatedEvent(Session s, MIMemoryCreatedEvent mblock) {
 		session = s;
 		MemoryManager mgr = (MemoryManager)session.getMemoryManager();
-		ICDIMemoryBlock[] blocks = mgr.listMemoryBlocks();
+		ICDIMemoryBlock[] blocks = mgr.getMemoryBlocks(mblock.getMISession());
 		for (int i = 0; i < blocks.length; i++) {
 			if (blocks[i].getStartAddress() == mblock.getAddress() &&
 			    blocks[i].getLength() == mblock.getLength()) {
@@ -86,7 +86,7 @@ public class CreatedEvent implements ICDICreatedEvent {
 			}
 		}
 		if (source == null) {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 
@@ -94,9 +94,9 @@ public class CreatedEvent implements ICDICreatedEvent {
 		session = s;
 		SharedLibraryManager mgr = (SharedLibraryManager)session.getSharedLibraryManager();
 		String name = slib.getName();
-		source = mgr.getSharedLibrary(name);
+		source = mgr.getSharedLibrary(slib.getMISession(), name);
 		if (source == null) {
-			source = new CObject(session.getCurrentTarget());
+			source = new CObject((Target)session.getCurrentTarget());
 		}
 	}
 

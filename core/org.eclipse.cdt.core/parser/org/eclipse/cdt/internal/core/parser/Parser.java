@@ -2584,34 +2584,110 @@ c, quickParse);
 		
 		consume (Token.t_new);
 		
-		// TODO: We are still not handling placement new right 
-		// there are some ambiguities here that make it difficult to look ahead on 
-		// we will need a better strategy in order to not do 3 or 4 backtracks 
-		// every new expression
-		
-		boolean typeIdInBrackets = false;
+		boolean typeIdInParen = false;
+        boolean placementParseFailure = true;
+        Token beforeSecondParen = null;
+        Token backtrackMarker = null;
+        
 		if( LT(1) == Token.tLPAREN )
 		{
 			consume( Token.tLPAREN );
-			typeIdInBrackets = true;
+            
+            try {
+                // Try to consume placement list
+                // Note: since expressionList and expression are the same...
+                backtrackMarker = mark();
+                expression(expression);
+                consume( Token.tRPAREN );
+                
+                placementParseFailure = false;
+                
+                if( LT(1) == Token.tLPAREN ) {
+                    beforeSecondParen = mark();
+                    consume( Token.tLPAREN );
+                    typeIdInParen = true;
+                }
+            } catch (Backtrack e) {
+                backup(backtrackMarker);
+            }
+            
+            if (placementParseFailure) {
+                // CASE: new (typeid-not-looking-as-placement) ...
+                // the first expression in () is not a placement
+                // - then it has to be typeId
+                typeId();
+                consume(Token.tRPAREN);
+            } else {
+                if (!typeIdInParen) {
+                    if (LT(1) == Token.tLBRACKET) {
+                        // CASE: new (typeid-looking-as-placement) [expr]...
+                        // the first expression in () has been parsed as a placement;
+                        // however, we assume that it was in fact typeId, and this 
+                        // new statement creates an array.
+                        // Do nothing, fallback to array/initializer processing
+                    } else {
+                        // CASE: new (placement) typeid ...
+                        // the first expression in () is parsed as a placement,
+                        // and the next expression doesn't start with '(' or '['
+                        // - then it has to be typeId
+                        try { backtrackMarker = mark(); typeId(); } catch (Backtrack e) {
+                            // Hmmm, so it wasn't typeId after all... Then it is
+                            // CASE: new (typeid-looking-as-placement)
+                            backup(backtrackMarker);
+                            return;
+                        }
+                    }
+                } else {
+                    // Tricky cases: first expression in () is parsed as a placement,
+                    // and the next expression starts with '('.
+                    // The problem is, the first expression might as well be a typeid
+                    try { 
+                        typeId();
+                        consume(Token.tRPAREN);
+                         
+                        if (LT(1) == Token.tLPAREN || LT(1) == Token.tLBRACKET) {
+                            // CASE: new (placement)(typeid)(initializer)
+                            // CASE: new (placement)(typeid)[] ...
+                            // Great, so far all our assumptions have been correct
+                            // Do nothing, fallback to array/initializer processing
+                        } else {
+                            // CASE: new (placement)(typeid)
+                            // CASE: new (typeid-looking-as-placement)(initializer-looking-as-typeid)
+                            // Worst-case scenario - this cannot be resolved w/o more semantic information.
+                            // Luckily, we don't need to know what was that - we only know that 
+                            // new-expression ends here.
+                            return;
+                        }
+                    } catch (Backtrack e) {
+                        // CASE: new (typeid-looking-as-placement)(initializer-not-looking-as-typeid)
+                        // Fallback to initializer processing
+                        backup(beforeSecondParen);                        
+                    }
+                }
+            }
+		} else {
+            // CASE: new typeid ...
+            // new parameters do not start with '('
+            // i.e it has to be a plain typeId
+            typeId();
 		}
-		
-		typeId();
-		
-		if( typeIdInBrackets )
-		{
-			consume( Token.tRPAREN ); 
-		}
-		
+               
+        while (LT(1) == Token.tLBRACKET) {
+            // array new
+            consume();
+            assignmentExpression(expression);
+            consume(Token.tRBRACKET);
+        }
+        		
 		// newinitializer
 		if( LT(1) == Token.tLPAREN ) 
 		{
 			consume( Token.tLPAREN ); 
 			if( LT(1) != Token.tRPAREN )
-				assignmentExpression( expression );
-			consume( Token.tRPAREN );  
+				expression( expression );
+			consume( Token.tRPAREN );
+              
 		}
-		
 	}
 	
 	/**

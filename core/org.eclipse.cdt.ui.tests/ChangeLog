@@ -1,12 +1,16 @@
-2003-06-07 Victor Mozgin
-	Moved testBug36766A(), testBug36766B() & testBug36766C() from STLFailedTests.java to DOMTests.java.
-	Renamed them to testBug36766and36769x(), as they cover both PRs.
-	Added testBug36766and36769D() - test for templated destructor.
+2003-06-09 Victor Mozgin
+	Moved testBug36932() from DOMFailedTest.java to DOMTests.java.
+	Added DOMTests.testBug36932B() and DOMTests.testBug36932C(). 
 
 2003-06-09 Victor Mozgin
 	Moved testBug36701() from ScannerFailedTests.java to ScannerTestCase.java.
 	Renamed it to testBug36701A() and fixed it.
 	Added ScannerTestCase.testBug36701B().
+
+2003-06-07 Victor Mozgin
+	Moved testBug36766A(), testBug36766B() & testBug36766C() from STLFailedTests.java to DOMTests.java.
+	Renamed them to testBug36766and36769x(), as they cover both PRs.
+	Added testBug36766and36769D() - test for templated destructor.
 
 2003-06-05 John Camelon
 	Moved testBug23478A() & testBug23478B() from failed tests to TranslationUnitTests.java.

@@ -35,19 +35,4 @@ public interface IParent {
 	 */
 	boolean hasChildren();
 	
-	/**
-	 * Adds a child to the current element.
-	 * Implementations override this method to support children
-	 */
-	void addChild(ICElement member);
-	/**
-	 * Removes a child from the current element children list.
-	 * @param member
-	 */
-	void removeChild(ICElement member);
-	/**
-	 * Clears the element's children list.
-	 *
-	 */
-	void removeChildren ();
 }

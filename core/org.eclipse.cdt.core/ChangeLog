@@ -1,3 +1,6 @@
+2004-04-16 Hoda Amer
+	Reveresed a change in IParent caused by my previous patch.
+	 
 2004-04-16 Alain Magloire
 
 	Patch from Sam Robb to cover PR 52864

@@ -57,45 +57,47 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  */
 public class CElementSorter extends ViewerSorter { 
 
-	private static final int CMODEL = 0;
-	private static final int PROJECTS = 10;
-	//private static final int OUTPUTREFCONTAINER = 11;
-	private static final int BINARYCONTAINER = 12;
-	private static final int ARCHIVECONTAINER = 13;
-	private static final int INCLUDEREFCONTAINER = 14;
-	private static final int LIBRARYREFCONTAINER = 15;
-	private static final int SOURCEROOTS = 16;
-	private static final int CCONTAINERS = 17;
-	private static final int LIBRARYREFERENCES = 18;
-	private static final int INCLUDEREFERENCES = 19;
-	private static final int TRANSLATIONUNIT_HEADERS = 20;
-	private static final int TRANSLATIONUNIT_SOURCE = 21;
-	private static final int TRANSLATIONUNITS = 22;
-	private static final int BINARIES = 23;
-	private static final int ARCHIVES = 24;
+    protected static final int CMODEL = 0;
+	protected static final int PROJECTS = 10;
+	//protected static final int OUTPUTREFCONTAINER = 11;
+	protected static final int BINARYCONTAINER = 12;
+	protected static final int ARCHIVECONTAINER = 13;
+	protected static final int INCLUDEREFCONTAINER = 14;
+	protected static final int LIBRARYREFCONTAINER = 15;
+	protected static final int SOURCEROOTS = 16;
+	protected static final int CCONTAINERS = 17;
+	protected static final int LIBRARYREFERENCES = 18;
+	protected static final int INCLUDEREFERENCES = 19;
+	protected static final int TRANSLATIONUNIT_HEADERS = 20;
+	protected static final int TRANSLATIONUNIT_SOURCE = 21;
+	protected static final int TRANSLATIONUNITS = 22;
+	protected static final int BINARIES = 23;
+	protected static final int ARCHIVES = 24;
 	
-	private static final int INCLUDES = 30;
-	private static final int MACROS = 31;
-	private static final int NAMESPACES = 32;
-	private static final int USINGS = 33;
-	private static final int VARIABLEDECLARATIONS = 34;
-	private static final int FUNCTIONDECLARATIONS = 35;
-	private static final int VARIABLES = 36;
-	private static final int VARIABLES_RESERVED = 37;
-	private static final int VARIABLES_SYSTEM = 38;
-	private static final int FUNCTIONS = 39;
-	private static final int FUNCTIONS_RESERVED = 40;
-	private static final int FUNCTIONS_SYSTEM = 41;
-	private static final int METHODDECLARATIONS = 42;
+	protected static final int INCLUDES = 30;
+	protected static final int MACROS = 31;
+	protected static final int NAMESPACES = 32;
+	protected static final int NAMESPACES_RESERVED = 33;
+	protected static final int NAMESPACES_SYSTEM = 34;
+	protected static final int USINGS = 35;
+	protected static final int VARIABLEDECLARATIONS = 36;
+	protected static final int FUNCTIONDECLARATIONS = 37;
+	protected static final int VARIABLES = 38;
+	protected static final int VARIABLES_RESERVED = 39;
+	protected static final int VARIABLES_SYSTEM = 40;
+	protected static final int FUNCTIONS = 41;
+	protected static final int FUNCTIONS_RESERVED = 42;
+	protected static final int FUNCTIONS_SYSTEM = 43;
+	protected static final int METHODDECLARATIONS = 44;
 
-	private static final int CELEMENTS = 100;
-	private static final int CELEMENTS_RESERVED = 101;
-	private static final int CELEMENTS_SYSTEM = 102;
+	protected static final int CELEMENTS = 100;
+	protected static final int CELEMENTS_RESERVED = 101;
+	protected static final int CELEMENTS_SYSTEM = 102;
 
-	private static final int RESOURCEFOLDERS= 200;
-	private static final int RESOURCES= 201;
-	private static final int STORAGE= 202;
-	private static final int OTHERS= 500;
+	protected static final int RESOURCEFOLDERS= 200;
+	protected static final int RESOURCES= 201;
+	protected static final int STORAGE= 202;
+	protected static final int OTHERS= 500;
 
 	public int category (Object element) {
 		if (element instanceof ICModel) {
@@ -124,6 +126,13 @@ public class CElementSorter extends ViewerSorter {
 		} else if (element instanceof IMacro) {
 			return MACROS;
 		} else if (element instanceof INamespace) {
+			String name = ((ICElement)element).getElementName();
+			if (name.startsWith("__")) { //$NON-NLS-1$
+				return NAMESPACES_SYSTEM;
+			}
+			if (name.charAt(0) == '_') {
+				return NAMESPACES_RESERVED;
+			}
 			return NAMESPACES;
 		} else if (element instanceof IUsing) {
 			return USINGS;

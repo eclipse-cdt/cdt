@@ -1,5 +1,11 @@
 2004-09-15 Chris Wiebe
 
+	Allow sorting categories to be accessed from subclass.
+	Namespaces with reserved names should be sorted the same as celements.
+	* src/org/eclipse/cdt/ui/CElementSorter.java
+
+2004-09-15 Chris Wiebe
+
 	refactoring generic stuff out of browser/ and typeinfo-specific stuff back in
 	* src/org/eclipse/cdt/internal/ui/CUIMessages.properties
 	* src/org/eclipse/cdt/internal/ui/viewsupport/CUILabelProvider.java

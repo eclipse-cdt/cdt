@@ -267,7 +267,7 @@ public class Problem implements IProblem {
 	 * @see org.eclipse.cdt.core.parser.IProblem#getArguments()
 	 */
 	public String getArguments() {
-		return String.valueOf(arg);
+		return arg != null ? String.valueOf(arg) : ""; //$NON-NLS-1$
 	}
 
 }

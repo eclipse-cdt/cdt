@@ -2000,8 +2000,8 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     
     public void testBug69662() throws Exception{
         Writer writer = new StringWriter();
-        writer.write( "class A { operator float * (); };  \n" );
-        writer.write( "A::operator float * () { }         \n" );
+        writer.write( "class A { operator float * (); };  \n" ); //$NON-NLS-1$
+        writer.write( "A::operator float * () { }         \n" ); //$NON-NLS-1$
         
         parse( writer.toString() );
     }
@@ -2010,27 +2010,27 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     public void testBug68528() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "namespace N526026\n" );
-    	writer.write( "{\n" );
-    	writer.write( "template <typename T>\n" );
-    	writer.write( "class T526026\n" );
-    	writer.write( "{\n" );
-    	writer.write( "typedef int diff;\n" );
-    	writer.write( "};\n" );
-    	writer.write( "\n" );
-    	writer.write( "template<typename T>\n" );
-    	writer.write( "inline T526026< T >\n" ); 
-    	writer.write( "operator+(typename T526026<T>::diff d, const T526026<T> & x )\n" ); 
-    	writer.write( "{ return T526026< T >(); }\n" );
-    	writer.write( "}\n" );
+    	writer.write( "namespace N526026\n" ); //$NON-NLS-1$
+    	writer.write( "{\n" ); //$NON-NLS-1$
+    	writer.write( "template <typename T>\n" ); //$NON-NLS-1$
+    	writer.write( "class T526026\n" ); //$NON-NLS-1$
+    	writer.write( "{\n" ); //$NON-NLS-1$
+    	writer.write( "typedef int diff;\n" ); //$NON-NLS-1$
+    	writer.write( "};\n" ); //$NON-NLS-1$
+    	writer.write( "\n" ); //$NON-NLS-1$
+    	writer.write( "template<typename T>\n" ); //$NON-NLS-1$
+    	writer.write( "inline T526026< T >\n" );  //$NON-NLS-1$
+    	writer.write( "operator+(typename T526026<T>::diff d, const T526026<T> & x )\n" );  //$NON-NLS-1$
+    	writer.write( "{ return T526026< T >(); }\n" ); //$NON-NLS-1$
+    	writer.write( "}\n" ); //$NON-NLS-1$
     	parse( writer.toString(), false );
 	}
     
     public void testBug71094() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "using namespace DOESNOTEXIST;\n" ); 
-    	writer.write( "class A { int x; };\n" );
+    	writer.write( "using namespace DOESNOTEXIST;\n" );  //$NON-NLS-1$
+    	writer.write( "class A { int x; };\n" ); //$NON-NLS-1$
     	Iterator i = parse( writer.toString(), false ).getDeclarations();
     	assertTrue( i.hasNext() );
     	assertTrue( i.next() instanceof IASTAbstractTypeSpecifierDeclaration );
@@ -2075,8 +2075,8 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	{
     		StringWriter writer = new StringWriter();
     		if( i == 0 )
-    			writer.write( "class B;\n");
-    		writer.write( "class A { A( B * ); };\n");
+    			writer.write( "class B;\n"); //$NON-NLS-1$
+    		writer.write( "class A { A( B * ); };\n"); //$NON-NLS-1$
     		if( i == 0 )
     			parse( writer.toString() );
     		else
@@ -2086,15 +2086,15 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     
     public void testBug74180() throws Exception
     {
-        parse( "enum DHCPFOBoolean { false, true } additionalHB, more_payload; \n", true, ParserLanguage.C );
+        parse( "enum DHCPFOBoolean { false, true } additionalHB, more_payload; \n", true, ParserLanguage.C ); //$NON-NLS-1$
         assertTrue( callback.problems.isEmpty() );
     }
     
     public void testBug72691() throws Exception{
         StringWriter writer = new StringWriter();
-        writer.write( "typedef int * PINT; \n" );
-        writer.write( "typedef int * PINT; \n" );
-        writer.write( "PINT pint;          \n" );
+        writer.write( "typedef int * PINT; \n" ); //$NON-NLS-1$
+        writer.write( "typedef int * PINT; \n" ); //$NON-NLS-1$
+        writer.write( "PINT pint;          \n" ); //$NON-NLS-1$
         Iterator i = parse( writer.toString() ).getDeclarations();
         assertTrue( i.next() instanceof IASTTypedefDeclaration );
         assertTrue( i.next() instanceof IASTTypedefDeclaration );
@@ -2105,35 +2105,35 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     
     public void testBug72691_2() throws Exception{
         StringWriter writer = new StringWriter();
-        writer.write( "typedef int * PINT;    \n" );
-        writer.write( "namespace N {          \n" );
-        writer.write( "   typedef int * PINT; \n" );
-        writer.write( "}                      \n" );
-        writer.write( "using namespace N;     \n" );
-        writer.write( "PINT pint;             \n" );
+        writer.write( "typedef int * PINT;    \n" ); //$NON-NLS-1$
+        writer.write( "namespace N {          \n" ); //$NON-NLS-1$
+        writer.write( "   typedef int * PINT; \n" ); //$NON-NLS-1$
+        writer.write( "}                      \n" ); //$NON-NLS-1$
+        writer.write( "using namespace N;     \n" ); //$NON-NLS-1$
+        writer.write( "PINT pint;             \n" ); //$NON-NLS-1$
         parse( writer.toString() );
     }
     
     public void testBug74328() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "int\n" ); 
-    	writer.write( "main(int argc, char **argv) {\n" );
-    	writer.write( "	char *sign;\n" );
-    	writer.write( "sign = \"\"; // IProblem generated here, syntax error\n" );
-    	writer.write( "return argc;\n" );
-    	writer.write( "}\n" );
+    	writer.write( "int\n" );  //$NON-NLS-1$
+    	writer.write( "main(int argc, char **argv) {\n" ); //$NON-NLS-1$
+    	writer.write( "	char *sign;\n" ); //$NON-NLS-1$
+    	writer.write( "sign = \"\"; // IProblem generated here, syntax error\n" ); //$NON-NLS-1$
+    	writer.write( "return argc;\n" ); //$NON-NLS-1$
+    	writer.write( "}\n" ); //$NON-NLS-1$
     	parse( writer.toString() );
 	}
     
     public void testBug71733() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "void foo( int );\n");
-    	writer.write( "#define BLAH() \\\n");
-    	writer.write( "  foo ( /*  slash / is misinterpreted as end of comment */ \\\n");
-    	writer.write( "    4 );\n");
-    	writer.write( "int f() { BLAH() }\n");
+    	writer.write( "void foo( int );\n"); //$NON-NLS-1$
+    	writer.write( "#define BLAH() \\\n"); //$NON-NLS-1$
+    	writer.write( "  foo ( /*  slash / is misinterpreted as end of comment */ \\\n"); //$NON-NLS-1$
+    	writer.write( "    4 );\n"); //$NON-NLS-1$
+    	writer.write( "int f() { BLAH() }\n"); //$NON-NLS-1$
     	parse( writer.toString() );
     	assertEquals( callback.getReferences().size(), 1 );
 	}
@@ -2141,27 +2141,27 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     public void testBug69526() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "unsigned inkernel;\n" );
-    	writer.write( "#define lock_kernel() (inkernel |= 0x01)" );
-    	writer.write( "int main(int argc, char **argv) {" );
-    	writer.write( "lock_kernel();" );
-    	writer.write( "}" );
+    	writer.write( "unsigned inkernel;\n" ); //$NON-NLS-1$
+    	writer.write( "#define lock_kernel() (inkernel |= 0x01)" ); //$NON-NLS-1$
+    	writer.write( "int main(int argc, char **argv) {" ); //$NON-NLS-1$
+    	writer.write( "lock_kernel();" ); //$NON-NLS-1$
+    	writer.write( "}" ); //$NON-NLS-1$
     	parse( writer.toString() );
 	}
     
     public void testBug69454() throws Exception
     {
         Writer writer = new StringWriter();
-        writer.write( "#define CATCH_ALL_EXCEPTIONS()                         \\\n" );
-        writer.write( "   catch( Exception &ex ) { handleException( ex ); }   \\\n" );
-        writer.write( "   catch( ... )           { handleException();    }      \n" );
-        writer.write( "class Exception;                                         \n" );
-        writer.write( "void handleException( Exception & ex ) {}                \n" );
-        writer.write( "void handleException() {}                                \n" );
-        writer.write( "void f() {                                               \n" );
-        writer.write( "   try { int i; }                                        \n" );
-        writer.write( "   CATCH_ALL_EXCEPTIONS();                               \n" );
-        writer.write( "}                                                        \n" );
+        writer.write( "#define CATCH_ALL_EXCEPTIONS()                         \\\n" ); //$NON-NLS-1$
+        writer.write( "   catch( Exception &ex ) { handleException( ex ); }   \\\n" ); //$NON-NLS-1$
+        writer.write( "   catch( ... )           { handleException();    }      \n" ); //$NON-NLS-1$
+        writer.write( "class Exception;                                         \n" ); //$NON-NLS-1$
+        writer.write( "void handleException( Exception & ex ) {}                \n" ); //$NON-NLS-1$
+        writer.write( "void handleException() {}                                \n" ); //$NON-NLS-1$
+        writer.write( "void f() {                                               \n" ); //$NON-NLS-1$
+        writer.write( "   try { int i; }                                        \n" ); //$NON-NLS-1$
+        writer.write( "   CATCH_ALL_EXCEPTIONS();                               \n" ); //$NON-NLS-1$
+        writer.write( "}                                                        \n" ); //$NON-NLS-1$
 
         parse( writer.toString() );
         assertFalse( callback.getProblems().hasNext() );
@@ -2171,39 +2171,39 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     public void testBug72692A() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "extern double pow(double, double);\n");
-    	writer.write( "extern double pow2(double, double){}\n");
-    	writer.write( "namespace DS {\n");
-    	writer.write( "using ::pow;\n");
-    	writer.write( "using ::pow2;\n");
-    	writer.write( "}\n");
-    	writer.write( "using DS::pow;\n");
-    	writer.write( "using DS::pow2;\n");
+    	writer.write( "extern double pow(double, double);\n"); //$NON-NLS-1$
+    	writer.write( "extern double pow2(double, double){}\n"); //$NON-NLS-1$
+    	writer.write( "namespace DS {\n"); //$NON-NLS-1$
+    	writer.write( "using ::pow;\n"); //$NON-NLS-1$
+    	writer.write( "using ::pow2;\n"); //$NON-NLS-1$
+    	writer.write( "}\n"); //$NON-NLS-1$
+    	writer.write( "using DS::pow;\n"); //$NON-NLS-1$
+    	writer.write( "using DS::pow2;\n"); //$NON-NLS-1$
     	parse( writer.toString() );
 	}
     
     public void testBug72692B() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "extern double pow(double, double);\n");
-    	writer.write( "namespace DS {\n");
-    	writer.write( "using ::pow;\n");
-    	writer.write( "inline float pow(float __x, float __y)\n" );
-    	writer.write( "{ return ::pow(static_cast<double>(__x), static_cast<double>(__y)); }\n" );
-    	writer.write( "}\n");
-    	writer.write( "using namespace DS;\n");
-    	writer.write( "float foo() { double d1 = 3.0, d2 = 4.0; return pow(d1, d2); }");
+    	writer.write( "extern double pow(double, double);\n"); //$NON-NLS-1$
+    	writer.write( "namespace DS {\n"); //$NON-NLS-1$
+    	writer.write( "using ::pow;\n"); //$NON-NLS-1$
+    	writer.write( "inline float pow(float __x, float __y)\n" ); //$NON-NLS-1$
+    	writer.write( "{ return ::pow(static_cast<double>(__x), static_cast<double>(__y)); }\n" ); //$NON-NLS-1$
+    	writer.write( "}\n"); //$NON-NLS-1$
+    	writer.write( "using namespace DS;\n"); //$NON-NLS-1$
+    	writer.write( "float foo() { double d1 = 3.0, d2 = 4.0; return pow(d1, d2); }"); //$NON-NLS-1$
     	parse( writer.toString() );
 	}
 
     public void testBug72692C() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "extern double pow(double, double){}\n");
-    	writer.write( "namespace DS {\n");
-    	writer.write( "using ::pow;\n");
-    	writer.write( "}\n");
-    	writer.write( "using DS::pow;\n");
+    	writer.write( "extern double pow(double, double){}\n"); //$NON-NLS-1$
+    	writer.write( "namespace DS {\n"); //$NON-NLS-1$
+    	writer.write( "using ::pow;\n"); //$NON-NLS-1$
+    	writer.write( "}\n"); //$NON-NLS-1$
+    	writer.write( "using DS::pow;\n"); //$NON-NLS-1$
     	parse( writer.toString() );
 	}
 
@@ -2211,15 +2211,15 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     public void testBug74575A() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "double pow(double, double);\n");
-    	writer.write( "float pow(float __x, float __y)\n" );
-    	writer.write( "{ return 0; }\n");
+    	writer.write( "double pow(double, double);\n"); //$NON-NLS-1$
+    	writer.write( "float pow(float __x, float __y)\n" ); //$NON-NLS-1$
+    	writer.write( "{ return 0; }\n"); //$NON-NLS-1$
     	Iterator i = parse( writer.toString() ).getDeclarations();
     	IASTFunction doublePow = (IASTFunction) i.next();
     	IASTFunction floatPow = (IASTFunction) i.next();
     	assertFalse( i.hasNext() );
-    	assertEquals( floatPow.getName(), "pow" );
-    	assertEquals( doublePow.getName(), "pow");
+    	assertEquals( floatPow.getName(), "pow" ); //$NON-NLS-1$
+    	assertEquals( doublePow.getName(), "pow"); //$NON-NLS-1$
     	assertEquals( ((IASTSimpleTypeSpecifier)doublePow.getReturnType().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.DOUBLE );
     	assertEquals( ((IASTSimpleTypeSpecifier)floatPow.getReturnType().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.FLOAT );
     	assertFalse( doublePow.hasFunctionBody() );
@@ -2229,8 +2229,8 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     public void testBug75338() throws Exception
 	{
     	Writer writer = new StringWriter();
-    	writer.write( "class Thrown { };\n");
-    	writer.write( "void foo() throw( Thrown );");
+    	writer.write( "class Thrown { };\n"); //$NON-NLS-1$
+    	writer.write( "void foo() throw( Thrown );"); //$NON-NLS-1$
     	Iterator i = (Iterator) parse( writer.toString() ).getDeclarations();
     	assertTrue( i.next() instanceof IASTAbstractTypeSpecifierDeclaration );
     	IASTFunction foo = (IASTFunction) i.next();
@@ -2240,19 +2240,19 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	Iterator typeIds = exSpec.getTypeIds();
     	assertTrue( typeIds.hasNext() );
     	IASTTypeId typeId = (IASTTypeId) typeIds.next();
-    	assertEquals( typeId.getTypeOrClassName(), "Thrown" );
+    	assertEquals( typeId.getTypeOrClassName(), "Thrown" ); //$NON-NLS-1$
 	}
     
     public void testBug75532() throws Exception
 	{
     	try {
         	Writer writer = new StringWriter();
-        	writer.write( "#if 2147483647 == 0x7fffffff\n"); // check reported hex problem
-        	writer.write( "#error This was equal, but not for the eclipse.\n");
-        	writer.write( "#endif\n");
-        	writer.write( "#if 010 == 8\n"); // check octal
-        	writer.write( "#error octal test\n");
-        	writer.write( "#endif\n");
+        	writer.write( "#if 2147483647 == 0x7fffffff\n"); // check reported hex problem //$NON-NLS-1$
+        	writer.write( "#error This was equal, but not for the eclipse.\n"); //$NON-NLS-1$
+        	writer.write( "#endif\n"); //$NON-NLS-1$
+        	writer.write( "#if 010 == 8\n"); // check octal //$NON-NLS-1$
+        	writer.write( "#error octal test\n"); //$NON-NLS-1$
+        	writer.write( "#endif\n"); //$NON-NLS-1$
         	
         	parse( writer.toString() );
 
@@ -2265,25 +2265,40 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         	Object ipo = probs.next();
         	assertTrue( ipo instanceof IProblem );
         	IProblem ip = (IProblem)ipo;
-        	assertTrue(ip.getArguments().indexOf("This was equal, but not for the eclipse") > 0);
+        	assertTrue(ip.getArguments().indexOf("This was equal, but not for the eclipse") > 0); //$NON-NLS-1$
         	assertTrue( probs.hasNext() );
         	ipo = probs.next();
         	assertTrue( ipo instanceof IProblem );
         	ip = (IProblem)ipo;
-        	assertTrue(ip.getArguments().indexOf("octal test") > 0);
+        	assertTrue(ip.getArguments().indexOf("octal test") > 0); //$NON-NLS-1$
     	}
 	}
     
     public void testBug74847() throws Exception {
-        String code = "class A : public FOO {};";
+        String code = "class A : public FOO {};"; //$NON-NLS-1$
         Iterator i = parse( code, false ).getDeclarations();
         IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
         assertFalse( A.getBaseClauses().hasNext() );
         i = callback.getProblems();
         IProblem problem = (IProblem) i.next();
         assertEquals( problem.getID(), IProblem.SEMANTIC_NAME_NOT_FOUND );
-        assertEquals( problem.getSourceStart(), code.indexOf( "FOO" ) );
+        assertEquals( problem.getSourceStart(), code.indexOf( "FOO" ) ); //$NON-NLS-1$
         assertFalse( i.hasNext() );
+    }
+    
+    public void testBug76696() throws Exception{
+        Writer writer = new StringWriter();
+		writer.write(" void f(){       \n"); //$NON-NLS-1$
+		writer.write("    if( A a) {   \n"); //$NON-NLS-1$
+		writer.write("    } else {     \n"); //$NON-NLS-1$
+		writer.write("    }	           \n"); //$NON-NLS-1$
+		writer.write(" }               \n"); //$NON-NLS-1$
+		
+		parse( writer.toString(), false );
+		Iterator i = callback.getProblems();
+		IProblem problem = (IProblem) i.next();
+		assertEquals( IProblem.SYNTAX_ERROR, problem.getID() );
+		assertFalse( i.hasNext() );
     }
 }
 

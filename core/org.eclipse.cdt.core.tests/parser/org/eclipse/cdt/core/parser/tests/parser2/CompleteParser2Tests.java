@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -36,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
@@ -660,43 +662,123 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testParameterExpressions() throws Exception
 	{
-		parse( "int x = 5; void foo( int sub = x ) { }"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "int x = 5; void foo( int sub = x ) { }"); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 4 );
+ 		IVariable x = (IVariable) col.getName(0).resolveBinding();
+ 		assertInstances( col, x, 2 );
 	}
 	
 	public void testNestedNamespaceExpression() throws Exception
 	{
-		parse( "namespace A { int x = 666; } int y  = A::x;"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "namespace A { int x = 666; } int y  = A::x;"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 6 );
+ 		ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
+ 		IVariable x = (IVariable) col.getName(1).resolveBinding();
+ 		assertInstances( col, A, 2 );
+ 		assertInstances( col, x, 3 );
 	}
 	
 	public void testConstructorChain() throws Exception
 	{
-		parse( "int x = 5;\n class A \n{ public : \n int a; \n A() : a( x ) { } };");  //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "int x = 5;\n class A \n{ public : \n int a; \n A() : a( x ) { } };");  //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 6 );
+ 		IVariable x = (IVariable) col.getName(0).resolveBinding();
+ 		ICPPField a = (ICPPField) col.getName(2).resolveBinding();
+ 		ICPPConstructor A = (ICPPConstructor) col.getName(3).resolveBinding();
+ 		assertNotNull( A );
+ 		assertInstances( col, x, 2 );
+ 		assertInstances( col, a, 2 );
 	}
 	
 	public void testArrayModExpression() throws Exception
 	{
-		parse( "const int x = 5; int y [ x ]; "); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "const int x = 5; int y [ x ]; "); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		IVariable x = (IVariable) col.getName(0).resolveBinding();
+ 		IVariable y = (IVariable) col.getName(1).resolveBinding();
+ 		assertInstances( col, x, 2 );
+ 		assertTrue( y.getType() instanceof IArrayType );
+ 		assertTrue( ((IArrayType)y.getType()).getType() instanceof IBasicType );
 	}
 
 
 	public void testPointerVariable() throws Exception
 	{
-		parse( "class A { }; A * anA;"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class A { }; A * anA;"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		IVariable anA = (IVariable) col.getName(2).resolveBinding();
+ 		assertInstances( col, A, 2 );
+ 		assertTrue( anA.getType() instanceof IPointerType );
+ 		assertSame( ((IPointerType) anA.getType()).getType(), A );
 	}	
 	
 	public void testExceptionSpecification() throws Exception
 	{
-		parse( "class A { }; void foo( void ) throw ( A );"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class A { }; void foo( void ) throw ( A );"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 4 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		assertInstances( col, A, 2 );
 	}
 	 
 	public void testNewExpressions() throws Exception
 	{
-		parse( "int A; int B; int C; int D; int P; int*p = new  (P) (A)[B][C][D];" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "int A; int B; int C; int D; int P; int*p = new  (P) (A)[B][C][D];" ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 11 );
+ 		IVariable A = (IVariable) col.getName(0).resolveBinding();
+ 		IVariable B = (IVariable) col.getName(1).resolveBinding();
+ 		IVariable C = (IVariable) col.getName(2).resolveBinding();
+ 		IVariable D = (IVariable) col.getName(3).resolveBinding();
+ 		IVariable P = (IVariable) col.getName(4).resolveBinding();
+ 		IVariable p = (IVariable) col.getName(5).resolveBinding();
+ 		
+ 		assertInstances( col, A, 2 );
+ 		assertInstances( col, B, 2 );
+ 		assertInstances( col, C, 2 );
+ 		assertInstances( col, D, 2 );
+ 		assertInstances( col, P, 2 );
+ 		
+ 		assertTrue( p.getType() instanceof IPointerType );
 	}
 
 	public void testBug41520() throws Exception 
 	{
-		parse( "const int x = 666; const int y( x );"); //$NON-NLS-1$
+		/*IASTTranslationUnit tu =*/ parse( "const int x = 666; const int y( x );"); //$NON-NLS-1$
+		
+//		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+//		IASTDeclarator dtor = decl.getDeclarators()[0];
+//		assertFalse( dtor instanceof IASTFunctionDeclarator );
+//		assertNotNull( dtor.getInitializer() );
+//		
+//		CPPNameCollector col = new CPPNameCollector();
+// 		CPPVisitor.visitTranslationUnit( tu, col );
+// 		
+// 		assertEquals( col.size(), 3 );
+// 		IVariable x = (IVariable) col.getName(0).resolveBinding();
+// 		IVariable y = (IVariable) col.getName(1).resolveBinding();
+// 		assertNotNull(y);
+// 		assertInstances( col, x, 2 );
 	}
 	
 	public void testNewXReferences() throws Exception

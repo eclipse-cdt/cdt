@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
@@ -122,7 +123,8 @@ public class CPPVisitor {
 		IASTNode parent = name.getParent();
 		if( parent instanceof IASTNamedTypeSpecifier  ||
 		    parent instanceof ICPPASTQualifiedName    ||
-			parent instanceof ICPPASTBaseSpecifier ) 
+			parent instanceof ICPPASTBaseSpecifier 	  ||
+			parent instanceof ICPPASTConstructorChainInitializer ) 
 		{
 			IBinding binding = CPPSemantics.resolveBinding( name ); 
 			if( binding == null && parent instanceof ICPPASTQualifiedName ){
@@ -151,12 +153,12 @@ public class CPPVisitor {
 	
     private static IBinding createBinding( IASTEnumerator enumerator ) {
         ICPPScope scope = (ICPPScope) getContainingScope( enumerator );
-        IBinding enumeration = scope.getBinding( enumerator.getName() );
-        if( enumeration == null ){
-            enumeration = new CPPEnumerator( enumerator );
-            scope.addBinding( enumeration );
+        IBinding enumtor = scope.getBinding( enumerator.getName() );
+        if( enumtor == null ){
+            enumtor = new CPPEnumerator( enumerator );
+            scope.addBinding( enumtor );
         }
-        return enumeration;
+        return enumtor;
     }
 
 
@@ -259,9 +261,19 @@ public class CPPVisitor {
 			        return function;
 			    }
 			} 
-			if( scope instanceof ICPPClassScope )
-				binding = new CPPMethod( (ICPPASTFunctionDeclarator) declarator );
-			else {
+			if( scope instanceof ICPPClassScope ){
+				IASTDeclSpecifier decl = null;
+				if( parent instanceof IASTSimpleDeclaration )
+					decl = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
+				else if( parent instanceof IASTFunctionDefinition )
+					decl = ((IASTFunctionDefinition)parent).getDeclSpecifier();
+				if( decl != null && decl instanceof IASTSimpleDeclSpecifier && 
+					((IASTSimpleDeclSpecifier) decl).getType() == 0 )
+				{
+					binding = new CPPConstructor( (ICPPASTFunctionDeclarator) declarator );
+				} else 
+					binding = new CPPMethod( (ICPPASTFunctionDeclarator) declarator );
+			} else {
 				binding = new CPPFunction( (ICPPASTFunctionDeclarator) declarator );
 			}
 		} else if( parent instanceof IASTParameterDeclaration ){
@@ -617,7 +629,9 @@ public class CPPVisitor {
 		if( action.processDeclarators )
 			if( !action.processDeclarator( declarator ) ) return false;
 			
-		if( !visitName( declarator.getName(), action ) ) return false;
+		if( declarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR ){
+			if( !visitName( declarator.getName(), action ) ) return false;
+		}
 		
 		if( declarator.getNestedDeclarator() != null )
 			if( !visitDeclarator( declarator.getNestedDeclarator(), action ) ) return false;
@@ -647,6 +661,12 @@ public class CPPVisitor {
 				}
 			}
 			
+		}
+		if( declarator instanceof IASTArrayDeclarator ){
+			IASTArrayModifier [] mods = ((IASTArrayDeclarator) declarator).getArrayModifiers();
+			for( int i = 0; i < mods.length; i++ ){
+				if( !visitExpression( mods[i].getConstantExpression(), action ) ) return false;
+			}
 		}
 		
 		if( declarator.getInitializer() != null )
@@ -791,8 +811,8 @@ public class CPPVisitor {
 	public static boolean visitTypeId(IASTTypeId typeId, CPPBaseVisitorAction action) {
 		if( action.processTypeIds )
 			if( !action.processTypeId( typeId ) ) return false;
-		if( !visitDeclarator( typeId.getAbstractDeclarator(), action ) ) return false;
 		if( !visitDeclSpecifier( typeId.getDeclSpecifier(), action ) ) return false;
+		if( !visitDeclarator( typeId.getAbstractDeclarator(), action ) ) return false;
 		return true;
 	}
 

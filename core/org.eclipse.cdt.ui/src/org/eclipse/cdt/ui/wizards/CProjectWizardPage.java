@@ -7,7 +7,7 @@ package org.eclipse.cdt.ui.wizards;
  
 import java.io.File;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -114,7 +114,7 @@ public class CProjectWizardPage extends WizardPage {
 		projectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		final Button useDefaultsButton = new Button(projectGroup, SWT.CHECK | SWT.RIGHT);
-		useDefaultsButton.setText(CPlugin.getResourceString("CProjectWizardPage.useDefaultLabel")); //$NON-NLS-1$
+		useDefaultsButton.setText(CUIPlugin.getResourceString("CProjectWizardPage.useDefaultLabel")); //$NON-NLS-1$
 		useDefaultsButton.setSelection(this.useDefaults);
 
 		GridData buttonData = new GridData();
@@ -152,7 +152,7 @@ public class CProjectWizardPage extends WizardPage {
 
 		// new project label
 		Label projectLabel = new Label(projectGroup,SWT.NONE);
-		projectLabel.setText(CPlugin.getResourceString("CProjectWizardPage.nameLabel")); //$NON-NLS-1$
+		projectLabel.setText(CUIPlugin.getResourceString("CProjectWizardPage.nameLabel")); //$NON-NLS-1$
 
 		// new project name entry field
 		projectNameField = new Text(projectGroup, SWT.BORDER);
@@ -178,7 +178,7 @@ public class CProjectWizardPage extends WizardPage {
 
 		// location label
 		locationLabel = new Label(projectGroup,SWT.NONE);
-		locationLabel.setText(CPlugin.getResourceString("CProjectWizardPage.locationLabel")); //$NON-NLS-1$
+		locationLabel.setText(CUIPlugin.getResourceString("CProjectWizardPage.locationLabel")); //$NON-NLS-1$
 		locationLabel.setEnabled(enabled);
 
 		// project location entry field
@@ -190,7 +190,7 @@ public class CProjectWizardPage extends WizardPage {
 
 		// browse button
 		browseButton = new Button(projectGroup, SWT.PUSH);
-		browseButton.setText(CPlugin.getResourceString("CProjectWizardPage.browseLabel")); //$NON-NLS-1$
+		browseButton.setText(CUIPlugin.getResourceString("CProjectWizardPage.browseLabel")); //$NON-NLS-1$
 		browseButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				handleLocationBrowseButtonPressed();
@@ -252,7 +252,7 @@ public class CProjectWizardPage extends WizardPage {
 	 */
 	protected void handleLocationBrowseButtonPressed() {
 		DirectoryDialog dialog = new DirectoryDialog(locationPathField.getShell());
-		dialog.setMessage(CPlugin.getResourceString("CProjectWizardPage.directoryLabel")); //$NON-NLS-1$
+		dialog.setMessage(CUIPlugin.getResourceString("CProjectWizardPage.directoryLabel")); //$NON-NLS-1$
 	
 		String dirName = locationPathField.getText();
 		if (!dirName.equals("")) {//$NON-NLS-1$
@@ -300,12 +300,12 @@ public class CProjectWizardPage extends WizardPage {
 		String projectFieldContents = projectNameField.getText();
 		if (projectFieldContents.equals("")) { //$NON-NLS-1$
 			setErrorMessage(null);
-			setMessage(CPlugin.getResourceString("CProjectWizardPage.projectNameEmpty")); //$NON-NLS-1$
+			setMessage(CUIPlugin.getResourceString("CProjectWizardPage.projectNameEmpty")); //$NON-NLS-1$
 			return false;
 		}
 
 		if (projectFieldContents.indexOf(' ') != -1) {
-			setErrorMessage(CPlugin.getResourceString("CProjectWizardPage.projectContainsSpace")); //$NON-NLS-1$
+			setErrorMessage(CUIPlugin.getResourceString("CProjectWizardPage.projectContainsSpace")); //$NON-NLS-1$
 			return false;
 		}
 
@@ -321,17 +321,17 @@ public class CProjectWizardPage extends WizardPage {
 		if (!locationFieldContents.equals("")) {//$NON-NLS-1$
 			IPath path = new Path("");//$NON-NLS-1$
 			if (!path.isValidPath(locationFieldContents)) {
-				setErrorMessage(CPlugin.getResourceString("CProjectWizardPage.locationError")); //$NON-NLS-1$
+				setErrorMessage(CUIPlugin.getResourceString("CProjectWizardPage.locationError")); //$NON-NLS-1$
 				return false;
 			}
 			if (!useDefaults && Platform.getLocation().isPrefixOf(new Path(locationFieldContents))) {
-				setErrorMessage(CPlugin.getResourceString("CProjectWizardPage.defaultLocationError")); //$NON-NLS-1$
+				setErrorMessage(CUIPlugin.getResourceString("CProjectWizardPage.defaultLocationError")); //$NON-NLS-1$
 				return false;
 			}
 		}
 
 		if (getProjectHandle().exists()) {
-			setErrorMessage(CPlugin.getResourceString("CProjectWizardPage.projectExistsMessage")); //$NON-NLS-1$
+			setErrorMessage(CUIPlugin.getResourceString("CProjectWizardPage.projectExistsMessage")); //$NON-NLS-1$
 			return false;
 		}
 

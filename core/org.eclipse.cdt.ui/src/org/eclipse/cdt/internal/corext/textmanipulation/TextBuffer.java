@@ -13,8 +13,8 @@ import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.Assert;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CStatusConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -262,7 +262,7 @@ public class TextBuffer {
 		try {
 			fDocument.replace(offset, length, text);
 		} catch (BadLocationException e) {
-			IStatus s= new Status(IStatus.ERROR, CPlugin.PLUGIN_ID, CStatusConstants.INTERNAL_ERROR, 
+			IStatus s= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, CStatusConstants.INTERNAL_ERROR, 
 				TextManipulationMessages.getFormattedString(
 					"TextBuffer.wrongRange",  //$NON-NLS-1$
 					new Object[] {new Integer(offset), new Integer(length) } ), e);

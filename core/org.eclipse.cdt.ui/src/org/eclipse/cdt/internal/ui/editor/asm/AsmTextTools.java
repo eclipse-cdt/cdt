@@ -5,10 +5,10 @@ package org.eclipse.cdt.internal.ui.editor.asm;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
@@ -55,7 +55,7 @@ public class AsmTextTools {
 	 */
 	public AsmTextTools(IPreferenceStore store) {
 		if(store == null) {
-			store = CPlugin.getDefault().getPreferenceStore();
+			store = CUIPlugin.getDefault().getPreferenceStore();
 		}
 		store.addPropertyChangeListener(fPreferenceListener);
 		fPreferenceStore = store;

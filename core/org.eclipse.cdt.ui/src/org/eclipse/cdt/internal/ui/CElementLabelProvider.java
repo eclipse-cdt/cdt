@@ -15,6 +15,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.ui.*;
 
 /**
  * The label provider for the c model elements.
@@ -40,7 +41,7 @@ public class CElementLabelProvider extends LabelProvider {
 	 * @param imageFlags Flags defined in <code>JavaElementImageProvider</code>.
 	 */
 	public CElementLabelProvider(int textFlags, int imageFlags, IAdornmentProvider[] adormentProviders) {
-		fImageRegistry= CPlugin.getDefault().getImageRegistry();
+		fImageRegistry= CUIPlugin.getDefault().getImageRegistry();
 		fWorkbenchLabelProvider= new WorkbenchLabelProvider();
 		
 		fImageLabelProvider= new CElementImageProvider();

@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * The FiltersContent provides the elements for use by the list dialog
@@ -45,7 +45,7 @@ public class CElementFilters {
 	public static List getDefinedFilters() {
 		if (definedFilters == null) {
 			// Overide the default by the user preference
-			CPlugin plugin = CPlugin.getDefault();
+			CUIPlugin plugin = CUIPlugin.getDefault();
 			String storedPatterns= plugin.getPluginPreferences().getString(FILTERS_TAG);
 
 			if (storedPatterns.length() > 0) {
@@ -110,7 +110,7 @@ public class CElementFilters {
 	static void readFilters() {
 		definedFilters = new ArrayList();
 		defaultFilters = new ArrayList();
-		CPlugin plugin = CPlugin.getDefault();
+		CUIPlugin plugin = CUIPlugin.getDefault();
 		if (plugin != null) {
 			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(FILTERS_TAG);
 			if (extension != null) {

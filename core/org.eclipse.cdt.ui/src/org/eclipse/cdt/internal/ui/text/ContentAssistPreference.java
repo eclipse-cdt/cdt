@@ -8,7 +8,7 @@ package org.eclipse.cdt.internal.ui.text;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.IDocument;
@@ -53,7 +53,7 @@ public class ContentAssistPreference {
 	}
 	
 	private static Color getColor(IPreferenceStore store, String key) {
-		CTextTools textTools= CPlugin.getDefault().getTextTools();
+		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
 		return getColor(store, key, textTools.getColorManager());
 	}
 	
@@ -92,7 +92,7 @@ public class ContentAssistPreference {
 	 */
 	public static void configure(ContentAssistant assistant, IPreferenceStore store) {
 		
-		CTextTools textTools= CPlugin.getDefault().getTextTools();
+		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
 		IColorManager manager= textTools.getColorManager();		
 		
 		

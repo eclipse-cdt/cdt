@@ -6,7 +6,7 @@ package org.eclipse.cdt.ui.wizards;
  */
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -31,24 +31,24 @@ public abstract class CCProjectWizard extends CProjectWizard {
 
 	public CCProjectWizard() {
 		super();
-		setDialogSettings(CPlugin.getDefault().getDialogSettings());
-		wz_title = CPlugin.getResourceString(WZ_TITLE);
-		wz_desc = CPlugin.getResourceString(WZ_DESC);
-		op_error = CPlugin.getResourceString(OP_ERROR);
+		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
+		wz_title = CUIPlugin.getResourceString(WZ_TITLE);
+		wz_desc = CUIPlugin.getResourceString(WZ_DESC);
+		op_error = CUIPlugin.getResourceString(OP_ERROR);
 	}
 
 	public CCProjectWizard(String title, String description) {
 		super();
-		setDialogSettings(CPlugin.getDefault().getDialogSettings());
+		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
 		wz_title = title;
 		wz_desc = description;
-		op_error = CPlugin.getResourceString(OP_ERROR);
+		op_error = CUIPlugin.getResourceString(OP_ERROR);
 	}
 
 
 	public CCProjectWizard(String title, String description, String error) {
 		super();
-		setDialogSettings(CPlugin.getDefault().getDialogSettings());
+		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
 		wz_title = title;
 		wz_desc = description;
 		op_error = error;

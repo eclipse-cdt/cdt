@@ -11,7 +11,7 @@ import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
 
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Auto indent strategy sensitive to brackets.
@@ -161,7 +161,7 @@ public class CAutoIndentStrategy extends DefaultAutoIndentStrategy {
 				}
 			}
 		} catch (BadLocationException excp) {
-			CPlugin.log(excp);
+			CUIPlugin.log(excp);
 		}
 	}
 
@@ -194,7 +194,7 @@ public class CAutoIndentStrategy extends DefaultAutoIndentStrategy {
 
 
 		} catch (BadLocationException excp) {
-			CPlugin.log(excp);
+			CUIPlugin.log(excp);
 		}
 	}
 	

@@ -6,8 +6,9 @@ package org.eclipse.cdt.internal.ui.editor;
  */
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.eclipse.jface.action.Action;
@@ -42,9 +43,9 @@ public class SearchForReferencesAction extends Action {
 
 
 	public SearchForReferencesAction(ISelectionProvider provider) {
-		super(CPlugin.getResourceString(PREFIX + "label"));
-		setDescription(CPlugin.getResourceString(PREFIX + "description"));
-		setToolTipText(CPlugin.getResourceString(PREFIX + "tooltip"));
+		super(CUIPlugin.getResourceString(PREFIX + "label"));
+		setDescription(CUIPlugin.getResourceString(PREFIX + "description"));
+		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip"));
 		
 		if(provider instanceof CContentOutlinePage) {
 			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_OPEN_INCLUDE);
@@ -90,14 +91,14 @@ public class SearchForReferencesAction extends Action {
 			scope.addExtension("hh");
 			
 			TextSearchOperation op= new TextSearchOperation(
-				CPlugin.getWorkspace(),
+				CUIPlugin.getWorkspace(),
 				search_name,
 				"",
 				scope,
 				col);
 
 
-			//engine.search(CPlugin.getWorkspace(), element.getName(),
+			//engine.search(CUIPlugin.getWorkspace(), element.getName(),
 			//	null, scope, col);
 			IRunnableContext context=  null;
 			//context= getContainer().getRunnableContext();

@@ -8,7 +8,7 @@ package org.eclipse.cdt.internal.ui.cview;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionProviderAction;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * The ShowLibrariesAction is the class that adds the filter views to a PackagesView.
@@ -53,7 +53,7 @@ class ShowLibrariesAction extends SelectionProviderAction {
 	 * They are saved in the format patern,pattern,.
 	 */
 	private void saveInPreferences() {
-		CPlugin plugin = CPlugin.getDefault();
+		CUIPlugin plugin = CUIPlugin.getDefault();
 		Boolean b = new Boolean (cview.getLibraryFilter().getShowLibraries());
 	
 		plugin.getPreferenceStore().putValue(cview.TAG_SHOWLIBRARIES, b.toString());

@@ -28,7 +28,7 @@ public class CFormattingStrategy implements IFormattingStrategy {
 	 * @see IFormattingStrategy#format(String, boolean, String, int[])
 	 */
 	public String format(String content, boolean isLineStart, String indentation, int[] positions) {
-		//ConfigurableOption[] options= CPlugin.getDefault().getCodeFormatterOptions();
+		//ConfigurableOption[] options= CUIPlugin.getDefault().getCodeFormatterOptions();
 		CCodeFormatter formatter= new CCodeFormatter(/* null options */);
 		
 		//IDocument doc= fViewer.getDocument();

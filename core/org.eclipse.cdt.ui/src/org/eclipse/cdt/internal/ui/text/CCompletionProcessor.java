@@ -12,10 +12,10 @@ import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.CElementLabelProvider;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,7 +66,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		fComparator= new CCompletionProposalComparator();
 		
 		fElementLabelProvider = new CElementLabelProvider();
-		//fImageRegistry= CPlugin.getDefault().getImageRegistry();
+		//fImageRegistry= CUIPlugin.getDefault().getImageRegistry();
 	}
 	
 	/**
@@ -169,7 +169,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 				results= evalProposals(document, offset, length);
 			}
 		} catch (Exception e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 		}
 		
 		if(results == null) 
@@ -181,7 +181,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 				fTemplateEngine.complete(viewer, documentOffset, null);
 			} catch (Exception x) {
 				System.out.println("Template Exception");
-				CPlugin.log(x);
+				CUIPlugin.log(x);
 			}				
 			
 			ICCompletionProposal[] templateResults= fTemplateEngine.getResults();
@@ -201,7 +201,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		 * applies to all proposals and not just those of the compilation unit. 
 		 */
 		order(results);
-		if((results.length == 1) && (CPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.AUTOINSERT))) {
+		if((results.length == 1) && (CUIPlugin.getDefault().getPreferenceStore().getBoolean(ContentAssistPreference.AUTOINSERT))) {
 			results[0].apply(document);
 			// Trick the content assistant into thinking we have no proposals
 			return new ICCompletionProposal[0];

@@ -39,8 +39,8 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
 
 
@@ -71,17 +71,17 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 	List tabItemsList = new ArrayList();
 
 	public CProjectWizard() {
-		this(CPlugin.getResourceString(WZ_TITLE), CPlugin.getResourceString(WZ_DESC), 
-			CPlugin.getResourceString(OP_ERROR));
+		this(CUIPlugin.getResourceString(WZ_TITLE), CUIPlugin.getResourceString(WZ_DESC), 
+			CUIPlugin.getResourceString(OP_ERROR));
 	}
 
 	public CProjectWizard(String title, String description) {
-		this(title, description, CPlugin.getResourceString(OP_ERROR));
+		this(title, description, CUIPlugin.getResourceString(OP_ERROR));
 	}
 
 	public CProjectWizard(String title, String description, String error) {
 		super();
-		setDialogSettings(CPlugin.getDefault().getDialogSettings());
+		setDialogSettings(CUIPlugin.getDefault().getDialogSettings());
 		setNeedsProgressMonitor(true);
 		wz_title = title;
 		wz_desc = description;
@@ -92,7 +92,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 	 * @see Wizard#createPages
 	 */		
 	public void addPages() {
-		fMainPage= new CProjectWizardPage(CPlugin.getResourceString(PREFIX));
+		fMainPage= new CProjectWizardPage(CUIPlugin.getResourceString(PREFIX));
 		fMainPage.setTitle(wz_title);
 		fMainPage.setDescription(wz_desc);
 		addPage(fMainPage);
@@ -171,7 +171,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 						page.openEditor(file);
 				} catch (PartInitException e) {
 					MessageDialog.openError(dw.getShell(),
-						CPlugin.getResourceString(OP_ERROR), e.getMessage());
+						CUIPlugin.getResourceString(OP_ERROR), e.getMessage());
 				}
 			}
 		}
@@ -200,7 +200,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		super.init(workbench, currentSelection);
-		setWindowTitle(CPlugin.getResourceString(WINDOW_TITLE));
+		setWindowTitle(CUIPlugin.getResourceString(WINDOW_TITLE));
 	}
 
 	public IRunnableWithProgress getRunnable() {
@@ -209,7 +209,7 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 				if (monitor == null) {
 					monitor= new NullProgressMonitor();
 				}
-				monitor.beginTask(CPlugin.getResourceString(OP_DESC), 3);
+				monitor.beginTask(CUIPlugin.getResourceString(OP_DESC), 3);
 
 				doRunPrologue(new SubProgressMonitor(monitor, 1));
 				try {
@@ -234,20 +234,20 @@ public abstract class CProjectWizard extends BasicNewResourceWizard implements I
 			getContainer().run(false, true, op);
 		} catch (InvocationTargetException e) {
 			Shell shell= getShell();
-			String title= CPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$
-			String message= CPlugin.getResourceString(OP_ERROR + ".message"); //$NON-NLS-1$
+			String title= CUIPlugin.getResourceString(OP_ERROR + ".title"); //$NON-NLS-1$
+			String message= CUIPlugin.getResourceString(OP_ERROR + ".message"); //$NON-NLS-1$
                        
 			Throwable th= e.getTargetException();
 			if (th instanceof CoreException) {
 				IStatus status= ((CoreException)th).getStatus();
 				if (status != null) {
 					ErrorDialog.openError(shell, title, message, status);
-					CPlugin.log(status);
+					CUIPlugin.log(status);
 					return false;
 				}
 			}
 			MessageDialog.openError(shell, title, message);
-			CPlugin.log(th);
+			CUIPlugin.log(th);
 			try {
 				getProjectHandle().delete(false, false, null);
 			}

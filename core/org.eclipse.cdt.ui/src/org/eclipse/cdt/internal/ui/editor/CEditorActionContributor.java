@@ -7,9 +7,9 @@ package org.eclipse.cdt.internal.ui.editor;
   
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -36,7 +36,7 @@ public class CEditorActionContributor extends BasicTextEditorActionContributor {
 		
 		
 		public SelectionAction(String prefix, int operation) {
-			super(CPlugin.getDefault().getResourceBundle(), prefix, null);
+			super(CUIPlugin.getDefault().getResourceBundle(), prefix, null);
 			fOperationCode= operation;
 			setEnabled(false);
 		}

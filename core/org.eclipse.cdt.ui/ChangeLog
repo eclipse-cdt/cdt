@@ -1,3 +1,119 @@
+2002-10-29 David Inglis
+
+	Refactor ui.internal.CPlugin to ui.CUIPlugin with method to get the new 
+	IBuildConsoleManager interface.
+	New BuildConsoleView which shows console on selected IProject plus tracks console
+	of active build.
+	
+	org.eclipse.cdt.ui/plugin.xml
+	src/org/eclipse/cdt/internal/corext/template/Templates.java
+	src/org/eclipse/cdt/internal/corext/template/c/CContext.java
+	src/org/eclipse/cdt/internal/corext/textmanipulation/TextBuffer.java
+	src/org/eclipse/cdt/internal/corext/textmanipulation/TextBufferEditor.java
+	src/org/eclipse/cdt/internal/corext/textmanipulation/TextBufferFactory.java
+	src/org/eclipse/cdt/internal/ui/BinaryPropertySource.java
+	src/org/eclipse/cdt/internal/ui/CCompletionContributorManager.java
+	src/org/eclipse/cdt/internal/ui/CContentProvider.java
+	src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	src/org/eclipse/cdt/internal/ui/CElementLabelProvider.java
+	src/org/eclipse/cdt/internal/ui/CElementProperties.java
+	src/org/eclipse/cdt/internal/ui/CElementPropertySource.java
+	src/org/eclipse/cdt/internal/ui/CPerspectiveFactory.java
+	src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	src/org/eclipse/cdt/internal/ui/CUIStatus.java
+	src/org/eclipse/cdt/internal/ui/ErrorTickAdornmentProvider.java
+	src/org/eclipse/cdt/internal/ui/ICHelpContextIds.java
+	src/org/eclipse/cdt/internal/ui/ResourceAdapterFactory.java
+	src/org/eclipse/cdt/internal/ui/StandardCElementLabelProvider.java
+	src/org/eclipse/cdt/internal/ui/compare/CMergeViewer.java
+	src/org/eclipse/cdt/internal/ui/compare/CStructureCreator.java
+	src/org/eclipse/cdt/internal/ui/cview/CElementFilters.java
+	src/org/eclipse/cdt/internal/ui/cview/CPatternFilter.java
+	src/org/eclipse/cdt/internal/ui/cview/CView.java
+	src/org/eclipse/cdt/internal/ui/cview/CViewDropAdapter.java
+	src/org/eclipse/cdt/internal/ui/cview/FilterSelectionAction.java
+	src/org/eclipse/cdt/internal/ui/cview/FiltersContentProvider.java
+	src/org/eclipse/cdt/internal/ui/cview/ShowLibrariesAction.java
+	src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java
+	src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
+	src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	src/org/eclipse/cdt/internal/ui/editor/CEditorActionContributor.java
+	src/org/eclipse/cdt/internal/ui/editor/GotoErrorAction.java
+	src/org/eclipse/cdt/internal/ui/editor/LexicalSortingAction.java
+	src/org/eclipse/cdt/internal/ui/editor/OpenIncludeAction.java
+	src/org/eclipse/cdt/internal/ui/editor/OpenOnSelectionAction.java
+	src/org/eclipse/cdt/internal/ui/editor/OverviewRuler.java
+	src/org/eclipse/cdt/internal/ui/editor/SearchForReferencesAction.java
+	src/org/eclipse/cdt/internal/ui/editor/asm/AsmTextEditor.java
+	src/org/eclipse/cdt/internal/ui/editor/asm/AsmTextTools.java
+	src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+	src/org/eclipse/cdt/internal/ui/preferences/CLaunchingPropertyPage.java
+	src/org/eclipse/cdt/internal/ui/preferences/CPluginPreferencePage.java
+	src/org/eclipse/cdt/internal/ui/preferences/CProjectPropertyPage.java
+	src/org/eclipse/cdt/internal/ui/preferences/EditTemplateDialog.java
+	src/org/eclipse/cdt/internal/ui/preferences/TemplatePreferencePage.java
+	src/org/eclipse/cdt/internal/ui/text/CAnnotationHover.java
+	src/org/eclipse/cdt/internal/ui/text/CAutoIndentStrategy.java
+	src/org/eclipse/cdt/internal/ui/text/CCompletionProcessor.java
+	src/org/eclipse/cdt/internal/ui/text/CFormattingStrategy.java
+	src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+	src/org/eclipse/cdt/internal/ui/text/CTextTools.java
+	src/org/eclipse/cdt/internal/ui/text/ContentAssistPreference.java
+	src/org/eclipse/cdt/internal/ui/text/link/LinkedPositionManager.java
+	src/org/eclipse/cdt/internal/ui/text/link/LinkedPositionUI.java
+	src/org/eclipse/cdt/internal/ui/text/template/TemplateProposal.java
+	src/org/eclipse/cdt/internal/ui/text/template/TemplateVariableProposal.java
+	src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+	src/org/eclipse/cdt/internal/ui/util/ProblemMarkerManager.java
+	src/org/eclipse/cdt/internal/ui/wizards/OpenNewFileWizardAction.java
+	src/org/eclipse/cdt/internal/ui/wizards/OpenNewFolderWizardAction.java
+	src/org/eclipse/cdt/ui/wizards/CCProjectWizard.java
+	src/org/eclipse/cdt/ui/wizards/CProjectWizard.java
+	src/org/eclipse/cdt/ui/wizards/CProjectWizardPage.java
+	src/org/eclipse/cdt/ui/wizards/ReferenceBlock.java
+	src/org/eclipse/cdt/ui/wizards/SettingsBlock.java
+	src/org/eclipse/cdt/ui/wizards/StdCCWizard.java
+	src/org/eclipse/cdt/ui/wizards/StdCWizard.java
+	src/org/eclipse/cdt/ui/wizards/StdMakeProjectWizard.java
+	src/org/eclipse/cdt/ui/wizards/conversion/ConversionWizard.java
+	src/org/eclipse/cdt/ui/wizards/conversion/ConvertCtoCCStdMakeProjectWizardPage.java
+	src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java
+	src/org/eclipse/cdt/ui/wizards/conversion/ConvertSimpleToCCStdMakeProjectWizardPage.java
+	src/org/eclipse/cdt/ui/wizards/conversion/ConvertSimpleToCStdMakeProjectWizardPage.java
+	src/org/eclipse/cdt/ui/wizards/conversion/CtoCCConversionWizard.java
+	src/org/eclipse/cdt/ui/wizards/conversion/SimpleToCCStdMakeConversionWizard.java
+	src/org/eclipse/cdt/ui/wizards/conversion/SimpleToCStdMakeConversionWizard.java
+	
+		- do to refactor (import changes and CPlugin to CUIPlugin).
+	
+	src/org/eclipse/cdt/internal/ui/makeview/MakeAction.java
+		- no longer use console session attributes here.
+	
+	src/org/eclipse/cdt/internal/ui/CPlugin.java
+		- moved from internal and renamed  to CUIPlugin.java
+
+	src/org/eclipse/cdt/internal/ui/BuildConsoleAction.java
+	src/org/eclipse/cdt/internal/ui/BuildConsoleView.java
+	src/org/eclipse/cdt/internal/ui/ClearConsoleAction.java
+		- new Build console
+			- shows console on selected project.
+			- shows console of active build.
+
+	src/org/eclipse/cdt/ui/CUIPlugin.java
+		- added method getBuildManager()
+		- refactored BuildConsole management into manager class
+	
+	src/org/eclipse/cdt/ui/IBuildConsoleEvent.java
+	src/org/eclipse/cdt/ui/IBuildConsoleListener.java
+	src/org/eclipse/cdt/ui/IBuildConsoleManager.java
+	src/org/eclipse/cdt/internal/ui/BuildConsole.java
+	src/org/eclipse/cdt/internal/ui/CConsole.java
+	src/org/eclipse/cdt/internal/ui/ConsoleEvent.java
+	src/org/eclipse/cdt/internal/ui/BuildConsoleManager.java
+		- new build manager and interfaces for managing and tracking console activity.	
+
+
 2002-10-28 David Inglis	
 	
 	* /src/.../ui/cview/CView.java

@@ -16,13 +16,13 @@ import org.eclipse.cdt.internal.corext.template.Template;
 import org.eclipse.cdt.internal.corext.template.TemplateMessages;
 import org.eclipse.cdt.internal.corext.template.TemplateSet;
 import org.eclipse.cdt.internal.corext.template.Templates;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.template.TemplateContentProvider;
 import org.eclipse.cdt.internal.ui.text.template.TemplateLabelProvider;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -65,7 +65,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class TemplatePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	// preference store keys
-	private static final String PREF_FORMAT_TEMPLATES= CPlugin.PLUGIN_ID + ".template.format"; //$NON-NLS-1$
+	private static final String PREF_FORMAT_TEMPLATES= CUIPlugin.PLUGIN_ID + ".template.format"; //$NON-NLS-1$
 
 	private Templates fTemplates;
 
@@ -85,7 +85,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	public TemplatePreferencePage() {
 		super();
 		
-		setPreferenceStore(CPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		setDescription(TemplateMessages.getString("TemplatePreferencePage.message")); //$NON-NLS-1$
 
 		fTemplates= Templates.getInstance();
@@ -263,7 +263,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		fTableViewer.setAllChecked(false);
 		fTableViewer.setCheckedElements(getEnabledTemplates());		
 
-		//IPreferenceStore prefs= CPlugin.getDefault().getPreferenceStore();
+		//IPreferenceStore prefs= CUIPlugin.getDefault().getPreferenceStore();
 		//fFormatButton.setSelection(prefs.getBoolean(PREF_FORMAT_TEMPLATES));
 
 		updateButtons();
@@ -293,7 +293,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		label.setLayoutData(data);
 		
 		SourceViewer viewer= new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		CTextTools tools= CPlugin.getDefault().getTextTools();
+		CTextTools tools= CUIPlugin.getDefault().getTextTools();
 		viewer.configure(new CSourceViewerConfiguration(tools, null));
 		viewer.setEditable(false);
 		viewer.setDocument(new Document());
@@ -464,7 +464,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 			try {
 				templateSet.saveToFile(file);			
 			} catch (CoreException e) {			
-				CPlugin.log(e);
+				CUIPlugin.log(e);
 				openWriteErrorDialog(e);
 			}		
 		}
@@ -514,13 +514,13 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	 * @see PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
-		//IPreferenceStore prefs= CPlugin.getDefault().getPreferenceStore();
+		//IPreferenceStore prefs= CUIPlugin.getDefault().getPreferenceStore();
 		//fFormatButton.setSelection(prefs.getDefaultBoolean(PREF_FORMAT_TEMPLATES));
 
 		try {
 			fTemplates.restoreDefaults();
 		} catch (CoreException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			openReadErrorDialog(e);
 		}
 		
@@ -534,13 +534,13 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	 * @see PreferencePage#performOk()
 	 */	
 	public boolean performOk() {
-		//IPreferenceStore prefs= CPlugin.getDefault().getPreferenceStore();
+		//IPreferenceStore prefs= CUIPlugin.getDefault().getPreferenceStore();
 		//prefs.setValue(PREF_FORMAT_TEMPLATES, fFormatButton.getSelection());
 
 		try {
 			fTemplates.save();
 		} catch (CoreException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			openWriteErrorDialog(e);
 		}
 		
@@ -554,7 +554,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		try {
 			fTemplates.reset();			
 		} catch (CoreException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			openReadErrorDialog(e);
 		}
 
@@ -570,7 +570,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 	}
 
 	public static boolean useCodeFormatter() {
-		IPreferenceStore prefs= CPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore prefs= CUIPlugin.getDefault().getPreferenceStore();
 		return prefs.getBoolean(PREF_FORMAT_TEMPLATES);
 	}
 

@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 //import org.eclipse.cdt.core.model.CElementFilters;
 
 /**
@@ -74,7 +74,7 @@ class FilterSelectionAction extends SelectionProviderAction {
 	 * They are saved in the format patern,pattern,.
 	 */
 	private void saveInPreferences(String[] patterns) {
-		CPlugin plugin= CPlugin.getDefault();
+		CUIPlugin plugin= CUIPlugin.getDefault();
 		StringWriter writer= new StringWriter();
 	
 		for (int i = 0; i < patterns.length; i++) {

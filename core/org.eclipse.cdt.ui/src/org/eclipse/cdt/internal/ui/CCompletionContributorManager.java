@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.ui;
  */
 
 
+import org.eclipse.cdt.ui.*;
 import org.eclipse.cdt.ui.ICCompletionContributor;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import java.util.ArrayList;
@@ -87,7 +88,7 @@ public class CCompletionContributorManager {
  		fCompletionContributors= new ArrayList(2);
  		
 		// populate list
-		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(CPlugin.PLUGIN_ID, "CCompletionContributor"); //$NON-NLS-1$
+		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "CCompletionContributor"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();
 			for (int i= 0; i < elements.length; i++) {

@@ -15,11 +15,11 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.IColorManager;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -187,11 +187,11 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	 */
 	public CEditor() {
 		super();
-		CTextTools textTools= CPlugin.getDefault().getTextTools();
+		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
 		setSourceViewerConfiguration(new CSourceViewerConfiguration(textTools, this));
-		setDocumentProvider(CPlugin.getDefault().getDocumentProvider());
+		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
 		setRangeIndicator(new DefaultRangeIndicator());
-		setPreferenceStore(CPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		
 		setEditorContextMenuId("#CEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#CEditorRulerContext"); //$NON-NLS-1$
@@ -221,7 +221,7 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	 */
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		//if (!(input instanceof IFileEditorInput)) {
-		//	throw new PartInitException(CPlugin.getResourceString("Editor.error.invalid_input"));
+		//	throw new PartInitException(CUIPlugin.getResourceString("Editor.error.invalid_input"));
 		//}
 		super.init(site, input);
 	}
@@ -725,7 +725,7 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	}
 	
 	private Color getColor(RGB rgb) {
-		CTextTools textTools= CPlugin.getDefault().getTextTools();
+		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
 		return textTools.getColorManager().getColor(rgb);
 	}
 	
@@ -1432,7 +1432,7 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		boolean affects=MATCHING_BRACKETS_COLOR.equals(p) || 
 									CURRENT_LINE_COLOR.equals(p) ||
 									PROBLEM_INDICATION_COLOR.equals(p);
-		CTextTools textTools= CPlugin.getDefault().getTextTools();
+		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
 		affects |= textTools.affectsBehavior(event);
 									
 		return affects ? affects : super.affectsTextPresentation(event);
@@ -1463,7 +1463,7 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	 * @param rulerColumn the ruler column to be initialized
 	 */
 	protected void initializeLineNumberRulerColumn(LineNumberRulerColumn rulerColumn) {
-		CTextTools textTools= CPlugin.getDefault().getTextTools();
+		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
 		IColorManager manager= textTools.getColorManager();	
 		
 		IPreferenceStore store= getPreferenceStore();

@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.cdt.internal.corext.textmanipulation.TextEditNode.RootNode;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CStatusConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 /**
  * A <code>TextBufferEditor</code> manages a set of <code>TextEdit</code>s and applies
  * them as a whole to a <code>TextBuffer</code>. Added <code>TextEdit</code>s must 
@@ -164,7 +164,7 @@ public class TextBufferEditor {
 		if (fRootNode == null) {
 			fRootNode= buildTree();
 			if (fRootNode == null || !fRootNode.validate(fBuffer.getLength())) {
-				IStatus s= new Status(IStatus.ERROR, CPlugin.PLUGIN_ID, CStatusConstants.INTERNAL_ERROR, 
+				IStatus s= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, CStatusConstants.INTERNAL_ERROR, 
 				"RootNode empty", null);
 				throw new CoreException(s);
 			}

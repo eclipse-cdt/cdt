@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.cdt.internal.corext.template.TemplateMessages;
 import org.eclipse.cdt.internal.corext.template.TemplateVariable;
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -59,7 +59,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 			fSelection= new Point(fOffset + variable.length(), 0);
 
 		} catch (BadLocationException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 
 			Shell shell= fViewer.getTextWidget().getShell();
 			MessageDialog.openError(shell, TemplateMessages.getString("TemplateVariableProposal.error.title"), e.getMessage()); //$NON-NLS-1$

@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.ui.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -28,7 +29,7 @@ public class StandardCElementLabelProvider extends CElementLabelProvider impleme
 	public StandardCElementLabelProvider(int textFlags, int imageFlags, IAdornmentProvider[] adormentProviders) {
 		super(textFlags, imageFlags, adormentProviders);
 		initMasks();
-		CPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
 
 	/**
@@ -69,7 +70,7 @@ public class StandardCElementLabelProvider extends CElementLabelProvider impleme
 	 * @see IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
-		CPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		super.dispose();
 	}
 

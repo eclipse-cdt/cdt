@@ -47,7 +47,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.texteditor.WorkbenchChainedTextFontFieldEditor;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
@@ -56,6 +55,7 @@ import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.IStatus;
 
@@ -196,8 +196,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	protected ColorEditor fAppearanceForegroundColorEditor;
 	
 	public CEditorPreferencePage() {
-		setDescription(CPlugin.getResourceString("CEditorPreferencePage.description"));
-		setPreferenceStore(CPlugin.getDefault().getPreferenceStore());
+		setDescription(CUIPlugin.getResourceString("CEditorPreferencePage.description"));
+		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 		fOverlayStore= new OverlayPreferenceStore(getPreferenceStore(), fKeys);
 	}
 	
@@ -986,7 +986,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 				buffer.append(separator);
 			}
 		} catch (IOException io) {
-			CPlugin.log(io);
+			CUIPlugin.log(io);
 		} finally {
 			if (reader != null) {
 				try { reader.close(); } catch (IOException e) {}

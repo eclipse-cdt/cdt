@@ -7,8 +7,8 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludeOperation;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
 import java.lang.reflect.InvocationTargetException;
@@ -75,10 +75,10 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				else if (editorInput instanceof IStorageEditorInput)
 					unit = new CFileElementWorkingCopy((IStorageEditorInput)editorInput, provider);
 				else
-					throw new CoreException(new Status(IStatus.ERROR, CPlugin.PLUGIN_ID, 0, "no Editor Input", null));
+					throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "no Editor Input", null));
 
 			} catch (CoreException e) {
-				CPlugin.log(e.getStatus());
+				CUIPlugin.log(e.getStatus());
 			}
 		}
 		return unit;

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
+import org.eclipse.cdt.ui.*;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 
@@ -70,7 +71,7 @@ public class CElementImageProvider {
 	private static ImageDescriptor DESC_OBJ_PROJECT;	
 	private static ImageDescriptor DESC_OBJ_FOLDER;
 	{
-		ISharedImages images= CPlugin.getDefault().getWorkbench().getSharedImages(); 
+		ISharedImages images= CUIPlugin.getDefault().getWorkbench().getSharedImages(); 
 		DESC_OBJ_PROJECT_CLOSED= images.getImageDescriptor(ISharedImages.IMG_OBJ_PROJECT_CLOSED);
 		DESC_OBJ_PROJECT= 		 images.getImageDescriptor(ISharedImages.IMG_OBJ_PROJECT);
 		DESC_OBJ_FOLDER= 		 images.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
@@ -79,7 +80,7 @@ public class CElementImageProvider {
 	private ImageDescriptorRegistry fRegistry;
 		
 	public CElementImageProvider() {
-		fRegistry= CPlugin.getImageDescriptorRegistry();
+		fRegistry= CUIPlugin.getImageDescriptorRegistry();
 	}	
 		
 	/**

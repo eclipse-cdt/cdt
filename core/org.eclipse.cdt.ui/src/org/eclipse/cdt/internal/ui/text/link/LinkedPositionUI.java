@@ -21,8 +21,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -63,7 +63,7 @@ public class LinkedPositionUI implements LinkedPositionListener,
 
 	private static final String CARET_POSITION= "LinkedPositionUI.caret.position";
 	private static final IPositionUpdater fgUpdater= new DefaultPositionUpdater(CARET_POSITION);
-	private static final IPreferenceStore fgStore= CPlugin.getDefault().getPreferenceStore();
+	private static final IPreferenceStore fgStore= CUIPlugin.getDefault().getPreferenceStore();
 	
 	private final ITextViewer fViewer;
 	private final LinkedPositionManager fManager;	
@@ -184,7 +184,7 @@ public class LinkedPositionUI implements LinkedPositionListener,
 			openErrorDialog(fViewer.getTextWidget().getShell(), e);
 
 		} catch (BadPositionCategoryException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			Assert.isTrue(false);
 		}
 
@@ -272,7 +272,7 @@ public class LinkedPositionUI implements LinkedPositionListener,
 					((flags & DOCUMENT_CHANGED) != 0));
 
 		} catch (BadPositionCategoryException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			Assert.isTrue(false);
 		}
 

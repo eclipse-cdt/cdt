@@ -30,8 +30,8 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 
 public class EditorUtility {
@@ -40,7 +40,7 @@ public class EditorUtility {
 	}
 
 	public static IEditorPart openInEditor (IFile file) throws PartInitException {
-		IWorkbenchWindow window= CPlugin.getActiveWorkbenchWindow();
+		IWorkbenchWindow window= CUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage p= window.getActivePage();
 			if (p != null) {
@@ -88,7 +88,7 @@ public class EditorUtility {
 
 	public static IEditorPart openInEditor (IStorage store, String name) throws PartInitException {
 		IEditorInput ei = new ExternalEditorInput(store);
-		IWorkbenchWindow window= CPlugin.getActiveWorkbenchWindow();
+		IWorkbenchWindow window= CUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
 			IWorkbenchPage p = window.getActivePage();
 			if (p != null) {

@@ -8,8 +8,8 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -49,11 +49,11 @@ public class AsmTextEditor extends StatusTextEditor {
 	 * Initializes this editor.
 	 */
 	protected void initializeEditor() {
-		AsmTextTools textTools= CPlugin.getDefault().getAsmTextTools();
+		AsmTextTools textTools= CUIPlugin.getDefault().getAsmTextTools();
 		setSourceViewerConfiguration(new AsmSourceViewerConfiguration(textTools, this));
-		setDocumentProvider(CPlugin.getDefault().getDocumentProvider());
+		setDocumentProvider(CUIPlugin.getDefault().getDocumentProvider());
 		setRangeIndicator(new DefaultRangeIndicator());
-		setPreferenceStore(CPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
 	/**
 	 * The <code>TextEditor</code> implementation of this 
@@ -131,7 +131,7 @@ public class AsmTextEditor extends StatusTextEditor {
 		// String p= event.getProperty();
 		
 		boolean affects= false;
-		AsmTextTools textTools= CPlugin.getDefault().getAsmTextTools();
+		AsmTextTools textTools= CUIPlugin.getDefault().getAsmTextTools();
 		affects |= textTools.affectsBehavior(event);
 									
 		return affects ? affects : super.affectsTextPresentation(event);

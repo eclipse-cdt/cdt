@@ -49,7 +49,7 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 					return celementFactory.create((IResource)element);
 				}
 			//} catch (CoreException e) {
-			//	CPlugin.getDefault().getLog().log(e.getStatus());
+			//	CUIPlugin.getDefault().getLog().log(e.getStatus());
 			//}
 		}
 		return null;

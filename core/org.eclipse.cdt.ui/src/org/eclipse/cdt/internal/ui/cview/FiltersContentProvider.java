@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * The FiltersContentProvider provides the elements for use by the list dialog
@@ -82,7 +82,7 @@ class FiltersContentProvider implements IStructuredContentProvider {
 	private static void readFilters() {
 		fgDefinedFilters = new ArrayList();
 		fgDefaultFilters = new ArrayList();
-		CPlugin plugin = CPlugin.getDefault();
+		CUIPlugin plugin = CUIPlugin.getDefault();
 		if (plugin != null) {
 			IExtensionPoint extension = plugin.getDescriptor().getExtensionPoint(CPatternFilter.FILTERS_TAG);
 			if (extension != null) {

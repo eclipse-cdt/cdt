@@ -5,8 +5,8 @@ package org.eclipse.cdt.internal.ui.text;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
@@ -56,7 +56,7 @@ public class CTextTools {
 	 */
 	public CTextTools(IPreferenceStore store) {
 		if(store == null) {
-			store = CPlugin.getDefault().getPreferenceStore();
+			store = CUIPlugin.getDefault().getPreferenceStore();
 		}
 		fPreferenceStore = store;
 		fPreferenceStore.addPropertyChangeListener(fPreferenceListener);

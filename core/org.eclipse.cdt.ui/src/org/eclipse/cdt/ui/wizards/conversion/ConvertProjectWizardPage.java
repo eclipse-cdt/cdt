@@ -7,8 +7,8 @@ package org.eclipse.cdt.ui.wizards.conversion;
  */
 import java.util.Vector;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -143,7 +143,7 @@ public abstract class ConvertProjectWizardPage
 
         // Add a label
         Label label = new Label(parent, SWT.LEFT);
-        label.setText(CPlugin.getResourceString(PROJECT_LIST));
+        label.setText(CUIPlugin.getResourceString(PROJECT_LIST));
         
         Composite  container = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
@@ -345,7 +345,7 @@ public abstract class ConvertProjectWizardPage
      */
     protected Object[] getElements() {
 
-        IWorkspace workspace = CPlugin.getWorkspace();
+        IWorkspace workspace = CUIPlugin.getWorkspace();
         IProject[] projects = workspace.getRoot().getProjects();
         Vector     candidates = new Vector(projects.length);
         IProject   next = null;
@@ -395,7 +395,7 @@ public abstract class ConvertProjectWizardPage
             if (monitor == null) {
                 monitor = new NullProgressMonitor();
             }
-            monitor.beginTask(CPlugin.getResourceString(KEY_TITLE), 1);
+            monitor.beginTask(CUIPlugin.getResourceString(KEY_TITLE), 1);
             convertProjects(selection, monitor, projectID);
         }
     }
@@ -411,7 +411,7 @@ public abstract class ConvertProjectWizardPage
      */
     private void convertProjects(Object[] selected, IProgressMonitor monitor, String projectID)
                           throws CoreException {
-        monitor.beginTask(CPlugin.getResourceString(KEY_CONVERTING), 
+        monitor.beginTask(CUIPlugin.getResourceString(KEY_CONVERTING), 
                           selected.length);
 
         for (int i = 0; i < selected.length; i++) {

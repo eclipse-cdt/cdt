@@ -5,7 +5,8 @@ package org.eclipse.cdt.internal.ui.text.link;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -74,7 +75,7 @@ public class LinkedPositionManager implements IDocumentListener, IPositionUpdate
 			try {
 				document.replace(fReplacePosition.getOffset() + fReplaceDeltaOffset, fReplaceLength, fReplaceText);
 			} catch (BadLocationException e) {
-				CPlugin.log(e);
+				CUIPlugin.log(e);
 				// TBD
 			}
 			document.addDocumentListener(owner);
@@ -139,7 +140,7 @@ public class LinkedPositionManager implements IDocumentListener, IPositionUpdate
 		try {
 			fDocument.addPosition(LINKED_POSITION, new TypedPosition(offset, length, type));
 		} catch (BadPositionCategoryException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			Assert.isTrue(false);
 		}
 	}
@@ -183,11 +184,11 @@ public class LinkedPositionManager implements IDocumentListener, IPositionUpdate
 			fDocument.removePositionCategory(LINKED_POSITION);
 
 		} catch (BadLocationException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			Assert.isTrue(false);
 
 		} catch (BadPositionCategoryException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			Assert.isTrue(false);
 
 		} finally {
@@ -263,7 +264,7 @@ public class LinkedPositionManager implements IDocumentListener, IPositionUpdate
 			return positions;
 
 		} catch (BadPositionCategoryException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			Assert.isTrue(false);
 		}
 		

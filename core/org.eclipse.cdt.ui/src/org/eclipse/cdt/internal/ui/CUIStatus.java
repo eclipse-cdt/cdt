@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.ui.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -14,7 +15,7 @@ import org.eclipse.core.runtime.Status;
 public class CUIStatus extends Status {
 
 	public CUIStatus(int code, String message, Throwable throwable) {
-		super(IStatus.ERROR, CPlugin.getPluginId(), code, message, throwable);
+		super(IStatus.ERROR, CUIPlugin.getPluginId(), code, message, throwable);
 	}
 
 }

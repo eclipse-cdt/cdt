@@ -12,8 +12,8 @@ import org.eclipse.cdt.internal.corext.template.TemplateBuffer;
 import org.eclipse.cdt.internal.corext.template.TemplateTranslator;
 import org.eclipse.cdt.internal.corext.textmanipulation.TextBuffer;
 import org.eclipse.cdt.internal.corext.textmanipulation.TextUtil;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 
@@ -64,7 +64,7 @@ public class CContext extends CompilationUnitContext {
 	        TextBuffer textBuffer= TextBuffer.create(string);
 	        String lineContent= textBuffer.getLineContentOfOffset(start);
 
-			return TextUtil.getIndent(lineContent, CPlugin.getDefault().getPreferenceStore().getInt(CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
+			return TextUtil.getIndent(lineContent, CUIPlugin.getDefault().getPreferenceStore().getInt(CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH));
 
 	    } catch (CoreException e) {
 	     	return 0;   

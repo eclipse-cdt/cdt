@@ -7,9 +7,9 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.HashMap;
 import java.util.Vector;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorTextHoverDispatcher;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICDTConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -276,7 +276,7 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		HashMap textHovers = new HashMap( 3 );
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IExtensionPoint point = pluginRegistry.getExtensionPoint( CPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
+		IExtensionPoint point = pluginRegistry.getExtensionPoint( CUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
 																  ICDTConstants.EP_TEXT_HOVERS );
 		if ( point != null ) 
 		{
@@ -340,7 +340,7 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	}
 	
 	protected IPreferenceStore getPreferenceStore() {
-		return CPlugin.getDefault().getPreferenceStore();
+		return CUIPlugin.getDefault().getPreferenceStore();
 	}
 	
 }

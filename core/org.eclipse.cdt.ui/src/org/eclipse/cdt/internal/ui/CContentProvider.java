@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.ui.*;
 
 public class CContentProvider extends BaseCElementContentProvider implements ITreeContentProvider, IElementChangedListener {
 
@@ -77,7 +78,7 @@ public class CContentProvider extends BaseCElementContentProvider implements ITr
 		try {
 			processDelta(event.getDelta());
 		} catch(CModelException e) {
-			CPlugin.getDefault().log(e);
+			CUIPlugin.getDefault().log(e);
 			e.printStackTrace();
 		}
 	}

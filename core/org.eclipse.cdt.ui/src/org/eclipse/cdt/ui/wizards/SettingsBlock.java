@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.controls.RadioButtonsArea;
 
@@ -90,7 +90,7 @@ public class SettingsBlock implements IWizardTab {
 	}
 
 	public String getLabel() {
-		return CPlugin.getResourceString(LABEL);
+		return CUIPlugin.getResourceString(LABEL);
 	}
 
 	public Image getImage() {
@@ -101,21 +101,21 @@ public class SettingsBlock implements IWizardTab {
 		Composite composite = ControlFactory.createComposite(parent, 1);
 
 		String[][] radios =
-			new String[][] { { CPlugin.getResourceString(STOP_ERROR), STOP_ARG }, {
-				CPlugin.getResourceString(KEEP_GOING), KEEP_ARG }
+			new String[][] { { CUIPlugin.getResourceString(STOP_ERROR), STOP_ARG }, {
+				CUIPlugin.getResourceString(KEEP_GOING), KEEP_ARG }
 		};
 		radioButtons =
-			new RadioButtonsArea(composite, CPlugin.getResourceString(LABEL), 1, radios);
+			new RadioButtonsArea(composite, CUIPlugin.getResourceString(LABEL), 1, radios);
 		
 		Group mgroup =
 			ControlFactory.createGroup(
 				composite,
-				CPlugin.getResourceString(MAKE_OPTION),
+				CUIPlugin.getResourceString(MAKE_OPTION),
 				1);
 		defButton =
 			ControlFactory.createCheckBox(
 				mgroup,
-				CPlugin.getResourceString(MAKE_USE_DEFAULT));
+				CUIPlugin.getResourceString(MAKE_USE_DEFAULT));
 		defButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (defButton.getSelection() == true) {
@@ -142,7 +142,7 @@ public class SettingsBlock implements IWizardTab {
 		cmdComp.setLayout(layout);
 		cmdComp.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		Label label =
-			ControlFactory.createLabel(cmdComp, CPlugin.getResourceString(MAKE_BUILD_CMD));
+			ControlFactory.createLabel(cmdComp, CUIPlugin.getResourceString(MAKE_BUILD_CMD));
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
 		((GridData) (label.getLayoutData())).grabExcessHorizontalSpace = false;
 		cmdText = ControlFactory.createTextField(cmdComp, SWT.SINGLE | SWT.BORDER);

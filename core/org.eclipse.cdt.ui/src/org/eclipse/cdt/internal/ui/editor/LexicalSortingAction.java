@@ -11,8 +11,8 @@ import org.eclipse.jface.viewers.ViewerSorter;
 
 
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 
 public class LexicalSortingAction extends Action {
@@ -24,17 +24,17 @@ public class LexicalSortingAction extends Action {
 	private TreeViewer fTreeViewer;
 	
 	public LexicalSortingAction(TreeViewer treeViewer) {
-		super(CPlugin.getResourceString(ACTION_NAME + ".label"));
+		super(CUIPlugin.getResourceString(ACTION_NAME + ".label"));
 		
-		setDescription(CPlugin.getResourceString(ACTION_NAME + ".description"));
-		setToolTipText(CPlugin.getResourceString(ACTION_NAME + ".tooltip"));
+		setDescription(CUIPlugin.getResourceString(ACTION_NAME + ".description"));
+		setToolTipText(CUIPlugin.getResourceString(ACTION_NAME + ".tooltip"));
 	
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_ALPHA_SORTING);
 	
 		fTreeViewer= treeViewer;
 		fSorter= new LexicalCSorter();
 		
-		boolean checked= CPlugin.getDefault().getDialogSettings().getBoolean(DIALOG_STORE_KEY);
+		boolean checked= CUIPlugin.getDefault().getDialogSettings().getBoolean(DIALOG_STORE_KEY);
 		valueChanged(checked, false);
 	}
 	
@@ -47,10 +47,10 @@ public class LexicalSortingAction extends Action {
 		fTreeViewer.setSorter(on ? fSorter : null);
 		
 		String key= ACTION_NAME + ".tooltip" + (on ? ".on" : ".off");
-		setToolTipText(CPlugin.getResourceString(key));
+		setToolTipText(CUIPlugin.getResourceString(key));
 		
 		if (store) {
-			CPlugin.getDefault().getDialogSettings().put(DIALOG_STORE_KEY, on);
+			CUIPlugin.getDefault().getDialogSettings().put(DIALOG_STORE_KEY, on);
 		}
 	}
 	

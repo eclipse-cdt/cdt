@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui;
+package org.eclipse.cdt.internal.ui.buildconsole;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.

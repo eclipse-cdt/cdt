@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.ui.*;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -26,24 +27,24 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
  		String editorArea = layout.getEditorArea();
 		
 		IFolderLayout folder1= layout.createFolder("topLeft", IPageLayout.LEFT, (float)0.25, editorArea);
-		folder1.addView(CPlugin.CVIEW_ID);
+		folder1.addView(CUIPlugin.CVIEW_ID);
 		folder1.addView(IPageLayout.ID_RES_NAV);
 		folder1.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 
 		IFolderLayout folder2= layout.createFolder("bottom", IPageLayout.BOTTOM, (float)0.75, editorArea);
 		folder2.addView(IPageLayout.ID_TASK_LIST);
-		folder2.addView(CPlugin.CONSOLE_ID);
+		folder2.addView(CUIPlugin.CONSOLE_ID);
 		folder2.addView(IPageLayout.ID_PROP_SHEET);
 		
 		IFolderLayout folder3= layout.createFolder("topRight", IPageLayout.RIGHT,(float)0.75, editorArea);
 		folder3.addView(IPageLayout.ID_OUTLINE);
-		folder3.addView(CPlugin.MAKEVIEW_ID);
+		folder3.addView(CUIPlugin.MAKEVIEW_ID);
 
-//		layout.addActionSet(CPlugin.WIZARD_ACTION_SET_ID);
-		layout.addActionSet(CPlugin.FOLDER_ACTION_SET_ID);
+//		layout.addActionSet(CUIPlugin.WIZARD_ACTION_SET_ID);
+		layout.addActionSet(CUIPlugin.FOLDER_ACTION_SET_ID);
 		
 		// views - build console
-		layout.addShowViewShortcut(CPlugin.CONSOLE_ID);
+		layout.addShowViewShortcut(CUIPlugin.CONSOLE_ID);
 		
 		// views - searching
 		layout.addShowViewShortcut(SearchUI.SEARCH_RESULT_VIEW_ID);
@@ -51,12 +52,12 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		// views - standard workbench
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
 		layout.addShowViewShortcut(IPageLayout.ID_TASK_LIST);
-		layout.addShowViewShortcut(CPlugin.CVIEW_ID);
+		layout.addShowViewShortcut(CUIPlugin.CVIEW_ID);
 		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
 		layout.addShowViewShortcut(IPageLayout.ID_PROP_SHEET);
 
 		// new actions - C project creation wizard
-		layout.addNewWizardShortcut(CPlugin.FILE_WIZARD_ID);
-		layout.addNewWizardShortcut(CPlugin.FOLDER_WIZARD_ID);
+		layout.addNewWizardShortcut(CUIPlugin.FILE_WIZARD_ID);
+		layout.addNewWizardShortcut(CUIPlugin.FOLDER_WIZARD_ID);
 	}
 }

@@ -31,10 +31,9 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 
 
-import org.eclipse.cdt.internal.ui.text.LineBreakingReader;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 
 
 public class CAnnotationHover implements IAnnotationHover {
@@ -140,7 +139,7 @@ public class CAnnotationHover implements IAnnotationHover {
 			}
 			return buf.toString();
 		} catch (IOException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 		} finally {
 			gc.dispose();
 		}

@@ -30,8 +30,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.DocumentInputStream;
 import org.eclipse.cdt.internal.parser.CStructurizer;
 import org.eclipse.cdt.internal.parser.IStructurizerCallback;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 /**
  * 
  */
@@ -46,7 +46,7 @@ public class CStructureCreator implements IStructureCreator {
 	 * @see IStructureCreator#getTitle
 	 */		
 	public String getName() {
-		return CPlugin.getResourceString(NAME);
+		return CUIPlugin.getResourceString(NAME);
 	}
 	
 	/**

@@ -90,12 +90,10 @@ public class MakeAction extends Action  {
 			IRunnableWithProgress op = new IRunnableWithProgress () {
 				public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
-					boolean bCleanConsole = true;
 					for (int i = 0; i < targets.length; ++i ) {
 						MakeTarget target = targets[i];
 						IResource res = target.getResource();
 						IProject project = res.getProject();
-						MakeUtil.setSessionConsoleMode(project, bCleanConsole);
 
 						try {
 							if (! project.equals(res) || target.isLeaf()) {
@@ -113,9 +111,6 @@ public class MakeAction extends Action  {
 
 						MakeUtil.removeSessionBuildDir(project);
 						MakeUtil.removeSessionTarget(project);
-						// Clean console only before the first target
-						MakeUtil.setSessionConsoleMode(project, true);
-						bCleanConsole = false;
 					}
 				}
 			};

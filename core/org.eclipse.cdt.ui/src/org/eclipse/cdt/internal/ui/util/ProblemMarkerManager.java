@@ -7,7 +7,8 @@ package org.eclipse.cdt.internal.ui.util;
 
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,7 +54,7 @@ public class ProblemMarkerManager implements IResourceChangeListener {
 						return false;
 					}
 				} catch (CoreException e) {
-					CPlugin.log(e.getStatus());
+					CUIPlugin.log(e.getStatus());
 					return false;
 				}
 			}
@@ -109,7 +110,7 @@ public class ProblemMarkerManager implements IResourceChangeListener {
 			if (delta != null)
 				delta.accept(new ProjectErrorVisitor(changedElements));
 		} catch (CoreException e) {
-			CPlugin.log(e.getStatus());
+			CUIPlugin.log(e.getStatus());
 		}
 
 		if (changedElements.size() > 0) {
@@ -122,7 +123,7 @@ public class ProblemMarkerManager implements IResourceChangeListener {
 	 */
 	public void addListener(IProblemChangedListener listener) {
 		if (fListeners.isEmpty()) { 
-			CPlugin.getWorkspace().addResourceChangeListener(this);
+			CUIPlugin.getWorkspace().addResourceChangeListener(this);
 		}
 		fListeners.add(listener);
 	}
@@ -133,7 +134,7 @@ public class ProblemMarkerManager implements IResourceChangeListener {
 	public void removeListener(IProblemChangedListener listener) {
 		fListeners.remove(listener);
 		if (fListeners.isEmpty()) {
-			CPlugin.getWorkspace().removeResourceChangeListener(this);
+			CUIPlugin.getWorkspace().removeResourceChangeListener(this);
 		}
 	}
 	

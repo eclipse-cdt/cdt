@@ -5,9 +5,9 @@ package org.eclipse.cdt.internal.ui.compare;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 
 import org.eclipse.swt.widgets.Composite;
@@ -32,7 +32,7 @@ public class CMergeViewer extends TextMergeViewer {
 	}
 	
 	public String getTitle() {
-		return CPlugin.getResourceString(TITLE);
+		return CUIPlugin.getResourceString(TITLE);
 	}
 
 
@@ -41,12 +41,12 @@ public class CMergeViewer extends TextMergeViewer {
 	}
 	
 	protected IDocumentPartitioner getDocumentPartitioner() {
-		return CPlugin.getDefault().getTextTools().createDocumentPartitioner();
+		return CUIPlugin.getDefault().getTextTools().createDocumentPartitioner();
 	}
 		
 	protected void configureTextViewer(TextViewer textViewer) {
 		if (textViewer instanceof SourceViewer) {
-			CTextTools tools= CPlugin.getDefault().getTextTools();
+			CTextTools tools= CUIPlugin.getDefault().getTextTools();
 			((SourceViewer)textViewer).configure(new CSourceViewerConfiguration(tools, null));
 		}
 	}

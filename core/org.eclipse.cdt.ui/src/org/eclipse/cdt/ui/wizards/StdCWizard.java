@@ -5,7 +5,7 @@ package org.eclipse.cdt.ui.wizards;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.swt.widgets.TabFolder;
 
 /**
@@ -18,7 +18,7 @@ public class StdCWizard extends StdMakeProjectWizard {
 	private static final String SETTINGS_DESC= "StdCWizardSettings.description"; //$NON-NLS-1$
 
 	public StdCWizard() {
-		this(CPlugin.getResourceString(WZ_TITLE), CPlugin.getResourceString(WZ_DESC));
+		this(CUIPlugin.getResourceString(WZ_TITLE), CUIPlugin.getResourceString(WZ_DESC));
 	}
 
 	public StdCWizard(String title, String desc) {
@@ -27,7 +27,7 @@ public class StdCWizard extends StdMakeProjectWizard {
 	
 	public void addTabItems(TabFolder folder) {
 		super.addTabItems(folder);
-		fTabFolderPage.setTitle(CPlugin.getResourceString(SETTINGS_TITLE));
-		fTabFolderPage.setDescription(CPlugin.getResourceString(SETTINGS_DESC));
+		fTabFolderPage.setTitle(CUIPlugin.getResourceString(SETTINGS_TITLE));
+		fTabFolderPage.setDescription(CUIPlugin.getResourceString(SETTINGS_DESC));
 	}
 }

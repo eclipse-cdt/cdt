@@ -6,7 +6,7 @@ package org.eclipse.cdt.ui.wizards;
  */
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -31,7 +31,7 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 	private SettingsBlock settingsBlock;
 
 	public StdMakeProjectWizard() {
-		this(CPlugin.getResourceString(WZ_TITLE), CPlugin.getResourceString(WZ_DESC));
+		this(CUIPlugin.getResourceString(WZ_TITLE), CUIPlugin.getResourceString(WZ_DESC));
 	}
 	
 	public StdMakeProjectWizard(String title, String desc) {
@@ -39,8 +39,8 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 	}
 
 	public void addTabItems(TabFolder folder) {
-		fTabFolderPage.setTitle(CPlugin.getResourceString(SETTINGS_TITLE));
-		fTabFolderPage.setDescription(CPlugin.getResourceString(SETTINGS_DESC));
+		fTabFolderPage.setTitle(CUIPlugin.getResourceString(SETTINGS_TITLE));
+		fTabFolderPage.setDescription(CUIPlugin.getResourceString(SETTINGS_DESC));
 
 		referenceBlock = new ReferenceBlock(getValidation());
 		TabItem item = new TabItem(folder, SWT.NONE);

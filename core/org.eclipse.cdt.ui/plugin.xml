@@ -4,7 +4,7 @@
    name="%pluginName"
    version="1.0.0"
    provider-name="%providerName"
-   class="org.eclipse.cdt.internal.ui.CPlugin">
+   class="org.eclipse.cdt.ui.CUIPlugin">
 
    <runtime>
       <library name="cdtui.jar">
@@ -29,9 +29,9 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
 <!-- =========================================================================== -->
-<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
 
@@ -121,7 +121,7 @@
             name="%BuildConsoleView.name"
             icon="icons/full/cview16/buildconsole.gif"
             category="org.eclipse.cdt.ui.views"
-            class="org.eclipse.cdt.internal.ui.BuildConsoleView"
+            class="org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleView"
             id="org.eclipse.cdt.ui.BuildConsoleView">
       </view>
       <view
@@ -131,9 +131,16 @@
             class="org.eclipse.cdt.internal.ui.cview.CView"
             id="org.eclipse.cdt.ui.CView">
       </view>
+      <view
+            name="%MakeView.name"
+            icon="icons/full/obj16/build_menu.gif"
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.internal.ui.makeview.MakeView"
+            id="org.eclipse.cdt.ui.MakeView">
+      </view>
    </extension>
-<!-- The wizards -->
 <!-- For C Wizards -->
+<!-- The wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -281,28 +288,6 @@
          </action>
       </editorContribution>
    </extension>
-<!--
-   <page
-         objectClass="org.eclipse.core.resources.IFile"
-         name="%CLaunchingPropertyPage.executionArguments.name"
-         class="org.eclipse.cdt.internal.ui.preferences.CLaunchingPropertyPage"
-         id="org.eclipse.cdt.ui.preferences.CLaunchingPropertyPage">
-   </page>
--->
-<!--
-<extension
-      point="org.eclipse.debug.core.launchers">
-   <launcher
-         label="%CApplicationLauncher.label"
-         description="%CApplicationLauncher.description"
-         wizard="org.eclipse.cdt.internal.ui.wizards.CLaunchWizard"
-         modes="run"
-         class="org.eclipse.cdt.internal.core.CApplicationLauncher"
-         labelProvider="org.eclipse.cdt.internal.ui.CElementLabelProvider"
-         id="org.eclipse.cdt.core.CApplicationLauncher">
-   </launcher>
-</extension>
--->
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
@@ -429,17 +414,6 @@
          </action>
       </actionSet>
    </extension>
-<!-- Wizards ToolBar buttons -->
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            name="%MakeView.name"
-            icon="icons/full/obj16/build_menu.gif"
-            category="org.eclipse.cdt.ui.views"
-            class="org.eclipse.cdt.internal.ui.makeview.MakeView"
-            id="org.eclipse.cdt.ui.MakeView">
-      </view>
-   </extension>
    <extension
          point="org.eclipse.ui.projectNatureImages">
       <image
@@ -461,7 +435,7 @@
    <extension
          point="org.eclipse.cdt.core.CBuildConsole">
       <CBuildConsole
-            class="org.eclipse.cdt.internal.ui.CConsole">
+            class="org.eclipse.cdt.internal.ui.BuildConsole">
       </CBuildConsole>
    </extension>
 

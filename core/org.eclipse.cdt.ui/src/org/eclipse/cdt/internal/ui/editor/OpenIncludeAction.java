@@ -30,7 +30,7 @@ import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -51,9 +51,9 @@ public class OpenIncludeAction extends Action {
 
 
 	public OpenIncludeAction(ISelectionProvider provider) {
-		super(CPlugin.getResourceString(PREFIX + "label"));
-		setDescription(CPlugin.getResourceString(PREFIX + "description"));
-		setToolTipText(CPlugin.getResourceString(PREFIX + "tooltip"));
+		super(CUIPlugin.getResourceString(PREFIX + "label"));
+		setDescription(CUIPlugin.getResourceString(PREFIX + "description"));
+		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip"));
 		
 		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_OPEN_INCLUDE);
 		
@@ -111,9 +111,9 @@ public class OpenIncludeAction extends Action {
 				}
 			}
 		} catch (CModelException e) {
-			CPlugin.log(e.getStatus());
+			CUIPlugin.log(e.getStatus());
 		} catch (CoreException e) {
-			CPlugin.log(e.getStatus());
+			CUIPlugin.log(e.getStatus());
 		}
 	}
 	
@@ -142,9 +142,9 @@ public class OpenIncludeAction extends Action {
 			}
 		};
 		
-		ElementListSelectionDialog dialog= new ElementListSelectionDialog(CPlugin.getActiveWorkbenchShell(), renderer, false, false);
-		dialog.setTitle(CPlugin.getResourceString(DIALOG_TITLE));
-		dialog.setMessage(CPlugin.getResourceString(DIALOG_MESSAGE));
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(CUIPlugin.getActiveWorkbenchShell(), renderer, false, false);
+		dialog.setTitle(CUIPlugin.getResourceString(DIALOG_TITLE));
+		dialog.setMessage(CUIPlugin.getResourceString(DIALOG_MESSAGE));
 		dialog.setElements(filesFound);
 		
 		if (dialog.open() == dialog.OK) {

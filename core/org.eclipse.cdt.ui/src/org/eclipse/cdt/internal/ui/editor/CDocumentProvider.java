@@ -5,7 +5,7 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.AbstractDocument;
@@ -77,7 +77,7 @@ public class CDocumentProvider extends FileDocumentProvider {
 		}
 		//IDocument document= super.createDocument(element);
 		if (document != null) {
-			IDocumentPartitioner partitioner= CPlugin.getDefault().getTextTools().createDocumentPartitioner();
+			IDocumentPartitioner partitioner= CUIPlugin.getDefault().getTextTools().createDocumentPartitioner();
 			partitioner.connect(document);
 			document.setDocumentPartitioner(partitioner);
 		}

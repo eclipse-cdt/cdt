@@ -15,24 +15,24 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 public class OpenNewFolderWizardAction extends Action implements IWorkbenchWindowActionDelegate {
 
 	public void run() {
 		BasicNewFolderResourceWizard wizard= new BasicNewFolderResourceWizard();
-		wizard.init(CPlugin.getDefault().getWorkbench(), getCurrentSelection());
+		wizard.init(CUIPlugin.getDefault().getWorkbench(), getCurrentSelection());
 		wizard.setNeedsProgressMonitor(true);
 		WizardDialog dialog=
-			new WizardDialog(CPlugin.getActiveWorkbenchShell(), wizard);
+			new WizardDialog(CUIPlugin.getActiveWorkbenchShell(), wizard);
 		dialog.create();
 		dialog.getShell().setText(
-			CPlugin.getResourceString("OpenNewFolderWizardAction.title")); //$NON-NLS-1$
+			CUIPlugin.getResourceString("OpenNewFolderWizardAction.title")); //$NON-NLS-1$
 		dialog.open();
 	}
 
 	protected IStructuredSelection getCurrentSelection() {
-		IWorkbenchWindow window= CPlugin.getActiveWorkbenchWindow();
+		IWorkbenchWindow window= CUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
 			ISelection selection= window.getSelectionService().getSelection();
 			if (selection instanceof IStructuredSelection) {

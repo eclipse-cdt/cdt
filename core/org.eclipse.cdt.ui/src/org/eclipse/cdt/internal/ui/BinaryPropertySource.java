@@ -10,6 +10,7 @@ import org.eclipse.ui.views.properties.FilePropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.ui.*;
 
 public class BinaryPropertySource extends FilePropertySource {
 	
@@ -33,42 +34,42 @@ public class BinaryPropertySource extends FilePropertySource {
 	 */
 	private static IPropertyDescriptor[] getInitialPropertyDescriptor() {
 		// cpu name
-		String cpuName= CPlugin.getResourceString(ELF_CPU);
+		String cpuName= CUIPlugin.getResourceString(ELF_CPU);
 		PropertyDescriptor cpuDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_CPU, cpuName);
 		cpuDescriptor.setAlwaysIncompatible(true);
 
 		// elf text
-		String textName = CPlugin.getResourceString(ELF_TEXT);
+		String textName = CUIPlugin.getResourceString(ELF_TEXT);
 		PropertyDescriptor textDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_TEXT, textName);
 		textDescriptor.setAlwaysIncompatible(true);
 		
 		// elf data
-		String dataName = CPlugin.getResourceString(ELF_DATA);
+		String dataName = CUIPlugin.getResourceString(ELF_DATA);
 		PropertyDescriptor dataDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_DATA, dataName);
 		dataDescriptor.setAlwaysIncompatible(true);
 
 		// elf bss
-		String bssName = CPlugin.getResourceString(ELF_BSS);
+		String bssName = CUIPlugin.getResourceString(ELF_BSS);
 		PropertyDescriptor bssDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_BSS, bssName);
 		bssDescriptor.setAlwaysIncompatible(true);
 
 		// elf type
-		String typeName = CPlugin.getResourceString(ELF_TYPE);
+		String typeName = CUIPlugin.getResourceString(ELF_TYPE);
 		PropertyDescriptor typeDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_TYPE, typeName);
 		bssDescriptor.setAlwaysIncompatible(true);
 
 		// elf needed
-		String neededName = CPlugin.getResourceString(ELF_NEEDED);
+		String neededName = CUIPlugin.getResourceString(ELF_NEEDED);
 		PropertyDescriptor neededDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_NEEDED, neededName);
 		bssDescriptor.setAlwaysIncompatible(true);
 
 		// elf soname
-		String sonameName = CPlugin.getResourceString(ELF_SONAME);
+		String sonameName = CUIPlugin.getResourceString(ELF_SONAME);
 		PropertyDescriptor sonameDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_SONAME, sonameName);
 		bssDescriptor.setAlwaysIncompatible(true);
 
 		// elf debug
-		String debugName = CPlugin.getResourceString(ELF_HAS_DEBUG);
+		String debugName = CUIPlugin.getResourceString(ELF_HAS_DEBUG);
 		PropertyDescriptor debugDescriptor= new PropertyDescriptor(ICElementPropertyConstants.P_ELF_HAS_DEBUG, debugName);
 		bssDescriptor.setAlwaysIncompatible(true);
 

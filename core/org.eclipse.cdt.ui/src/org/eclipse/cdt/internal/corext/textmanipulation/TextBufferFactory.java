@@ -5,8 +5,9 @@ package org.eclipse.cdt.internal.corext.textmanipulation;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CStatusConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -53,7 +54,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 	public TextBufferFactory() {
 		// XXX http://dev.eclipse.org/bugs/show_bug.cgi?id=5170
 		// Need way to map a file to a document without knowing any kind of document provider.
-		this(CPlugin.getDefault().getDocumentProvider());
+		this(CUIPlugin.getDefault().getDocumentProvider());
 	}
 	
 	public TextBufferFactory(IDocumentProvider provider) {
@@ -145,7 +146,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 			document.set(buffer.toString());
 			return new TextBuffer(document);
 		} catch (IOException x) {
-			IStatus s= new Status(IStatus.ERROR, CPlugin.PLUGIN_ID, CStatusConstants.INTERNAL_ERROR, x.getMessage(), x);
+			IStatus s= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, CStatusConstants.INTERNAL_ERROR, x.getMessage(), x);
 			throw new CoreException(s);
 		} finally {
 			if (in != null) {
@@ -183,7 +184,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 	}
 	
 	private void throwNotManaged() throws CoreException {
-		IStatus s= new Status(IStatus.ERROR, CPlugin.PLUGIN_ID, 
+		IStatus s= new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 
 			CStatusConstants.INTERNAL_ERROR, "TextBufferFactory.bufferNotManaged", null); //$NON-NLS-1$
 		throw new CoreException(s);
 	}

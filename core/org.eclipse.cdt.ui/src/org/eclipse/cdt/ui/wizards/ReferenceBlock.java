@@ -29,8 +29,8 @@ import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.swt.IValidation;
 
@@ -55,7 +55,7 @@ public class ReferenceBlock implements IWizardTab {
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		Label label = new Label(composite, SWT.LEFT);
-		label.setText(CPlugin.getResourceString(DESC));
+		label.setText(CUIPlugin.getResourceString(DESC));
 		GridData lbldata = new GridData(GridData.FILL_HORIZONTAL);
 		lbldata.horizontalSpan = 1;
 		label.setLayoutData(lbldata);
@@ -77,7 +77,7 @@ public class ReferenceBlock implements IWizardTab {
 	}
 
 	public String getLabel() {
-		return CPlugin.getResourceString(LABEL);
+		return CUIPlugin.getResourceString(LABEL);
 	}
 
 	/**

@@ -7,6 +7,8 @@ package org.eclipse.cdt.internal.ui;
  
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.eclipse.cdt.ui.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -24,12 +26,12 @@ public class CPluginImages {
 	private static URL fgIconBaseURL;
 	static {
 		try {
-			fgIconBaseURL= new URL(CPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" );
+			fgIconBaseURL= new URL(CUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" );
 		} catch (MalformedURLException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 		}
 	}	
-	private static final String NAME_PREFIX= CPlugin.PLUGIN_ID + '.';
+	private static final String NAME_PREFIX= CUIPlugin.PLUGIN_ID + '.';
 	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
 	private static final String T= "full/";
 
@@ -151,7 +153,7 @@ public class CPluginImages {
 		try {
 			return new URL(fgIconBaseURL, buffer.toString());
 		} catch (MalformedURLException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			return null;
 		}
 	}

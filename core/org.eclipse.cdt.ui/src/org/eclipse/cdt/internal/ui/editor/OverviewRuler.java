@@ -30,8 +30,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -313,7 +313,7 @@ public class OverviewRuler {
 	}
 	
 	private Color getColor(RGB rgb) {
-		CTextTools textTools= CPlugin.getDefault().getTextTools();
+		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
 		return textTools.getColorManager().getColor(rgb);
 	}
 	

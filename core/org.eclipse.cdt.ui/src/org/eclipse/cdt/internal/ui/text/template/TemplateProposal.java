@@ -10,10 +10,10 @@ import org.eclipse.cdt.internal.corext.template.TemplateBuffer;
 import org.eclipse.cdt.internal.corext.template.TemplateContext;
 import org.eclipse.cdt.internal.corext.template.TemplateMessages;
 import org.eclipse.cdt.internal.corext.template.TemplatePosition;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.link.LinkedPositionManager;
 import org.eclipse.cdt.internal.ui.text.link.LinkedPositionUI;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.swt.graphics.Image;
@@ -100,11 +100,11 @@ public class TemplateProposal implements ICCompletionProposal {
 			fSelectedRegion= editor.getSelectedRegion();
 			
 		} catch (BadLocationException e) {
-			CPlugin.log(e);	
+			CUIPlugin.log(e);	
 			openErrorDialog(e);		    	    
 
 	    } catch (CoreException e) {
-	       	CPlugin.log(e);	
+	       	CUIPlugin.log(e);	
 			openErrorDialog(e);		    
 	    }	    
 	}
@@ -139,7 +139,7 @@ public class TemplateProposal implements ICCompletionProposal {
 			return textToHTML(fTemplateBuffer.getString());
 
 	    } catch (CoreException e) {
-	       	CPlugin.log(e);	
+	       	CUIPlugin.log(e);	
 			openErrorDialog(e);		    
 
 			return null;

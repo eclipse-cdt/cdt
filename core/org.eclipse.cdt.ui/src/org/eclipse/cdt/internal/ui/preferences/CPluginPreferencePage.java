@@ -5,8 +5,8 @@ package org.eclipse.cdt.internal.ui.preferences;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FontFieldEditor;
@@ -47,7 +47,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 
 	public CPluginPreferencePage() {
 		super(GRID);
-		setPreferenceStore(CPlugin.getDefault().getPreferenceStore());
+		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
 	}
 	
 	/**
@@ -68,31 +68,31 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan= 3;
 		buildText.setLayoutData(gd);
-		buildText.setText(CPlugin.getResourceString(PAGE_DESC));
-		FileFieldEditor editor= new FileFieldEditor(PREF_BUILD_LOCATION, CPlugin.getResourceString(BUILD_LOC_LABEL), true, parent) {
+		buildText.setText(CUIPlugin.getResourceString(PAGE_DESC));
+		FileFieldEditor editor= new FileFieldEditor(PREF_BUILD_LOCATION, CUIPlugin.getResourceString(BUILD_LOC_LABEL), true, parent) {
 			protected boolean checkState() {
 				return true;
 			}
 		};
 		addField(editor);
 */		
-		BooleanFieldEditor clearConsole= new BooleanFieldEditor(PREF_CLEAR_CONSOLE, CPlugin.getResourceString(CLEAR_CONSOLE_LABEL), parent);
+		BooleanFieldEditor clearConsole= new BooleanFieldEditor(PREF_CLEAR_CONSOLE, CUIPlugin.getResourceString(CLEAR_CONSOLE_LABEL), parent);
 		addField(clearConsole);
 
-		BooleanFieldEditor autoOpenConsole = new BooleanFieldEditor(PREF_AUTO_OPEN_CONSOLE, CPlugin.getResourceString(AUTO_OPEN_CONSOLE_LABEL), parent);
+		BooleanFieldEditor autoOpenConsole = new BooleanFieldEditor(PREF_AUTO_OPEN_CONSOLE, CUIPlugin.getResourceString(AUTO_OPEN_CONSOLE_LABEL), parent);
 		addField(autoOpenConsole);
-		BooleanFieldEditor consoleOnTop= new BooleanFieldEditor(PREF_CONSOLE_ON_TOP, CPlugin.getResourceString(CONSOLE_ON_TOP_LABEL), parent);
+		BooleanFieldEditor consoleOnTop= new BooleanFieldEditor(PREF_CONSOLE_ON_TOP, CUIPlugin.getResourceString(CONSOLE_ON_TOP_LABEL), parent);
 		addField(consoleOnTop);
 
-		BooleanFieldEditor linkEditor= new BooleanFieldEditor(PREF_LINK_TO_EDITOR, CPlugin.getResourceString(LINK_TO_EDITOR_LABEL), parent);
+		BooleanFieldEditor linkEditor= new BooleanFieldEditor(PREF_LINK_TO_EDITOR, CUIPlugin.getResourceString(LINK_TO_EDITOR_LABEL), parent);
 		addField(linkEditor);
 
-		BooleanFieldEditor showCUChildrenEditor= new BooleanFieldEditor(SHOW_CU_CHILDREN, CPlugin.getResourceString(SHOW_CU_CHILDREN_LABEL), parent);
+		BooleanFieldEditor showCUChildrenEditor= new BooleanFieldEditor(SHOW_CU_CHILDREN, CUIPlugin.getResourceString(SHOW_CU_CHILDREN_LABEL), parent);
 		addField(showCUChildrenEditor);
 
-		addField(new FontFieldEditor(PREF_CONSOLE_FONT, CPlugin.getResourceString(CONSOLE_FONT_LABEL), parent));
+		addField(new FontFieldEditor(PREF_CONSOLE_FONT, CUIPlugin.getResourceString(CONSOLE_FONT_LABEL), parent));
 		
-		//addField(new FontFieldEditor(AbstractTextEditor.PREFERENCE_FONT, CPlugin.getResourceString(EDITOR_FONT_LABEL), parent));
+		//addField(new FontFieldEditor(AbstractTextEditor.PREFERENCE_FONT, CUIPlugin.getResourceString(EDITOR_FONT_LABEL), parent));
 		
 	}
 	
@@ -101,33 +101,33 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	 * be cleared before each build.
 	 */
 	public static boolean isClearBuildConsole() {
-		return CPlugin.getDefault().getPreferenceStore().getBoolean(PREF_CLEAR_CONSOLE);
+		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_CLEAR_CONSOLE);
 	}
 	public static boolean isAutoOpenConsole() {
-		return CPlugin.getDefault().getPreferenceStore().getBoolean(PREF_AUTO_OPEN_CONSOLE);
+		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_AUTO_OPEN_CONSOLE);
 	}
 
 	public static boolean isConsoleOnTop() {
-		return CPlugin.getDefault().getPreferenceStore().getBoolean(PREF_CONSOLE_ON_TOP);
+		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_CONSOLE_ON_TOP);
 	}
 
 	public static boolean isLinkToEditor() {
-		return CPlugin.getDefault().getPreferenceStore().getBoolean(PREF_LINK_TO_EDITOR);
+		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_LINK_TO_EDITOR);
 	}
 
 	public static boolean showCompilationUnitChildren() {
-		return CPlugin.getDefault().getPreferenceStore().getBoolean(SHOW_CU_CHILDREN);
+		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(SHOW_CU_CHILDREN);
 	}
 	
 	/**
 	 * Returns the current preference setting of the build command location.
 	 */	
 //	public static String getBuildLocation() {
-//		return CPlugin.getDefault().getPreferenceStore().getString(PREF_BUILD_LOCATION);
+//		return CUIPlugin.getDefault().getPreferenceStore().getString(PREF_BUILD_LOCATION);
 //	}
 	
 //	public static boolean isStopOnError() {
-//		return CPlugin.getDefault().getPreferenceStore().getBoolean(PREF_STOP_ON_ERROR);
+//		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PREF_STOP_ON_ERROR);
 //	}
 	/**
 	 * @see IWorkbenchPreferencePage#init

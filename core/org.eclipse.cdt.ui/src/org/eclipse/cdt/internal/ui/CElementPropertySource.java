@@ -11,6 +11,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.*;
 
 public class CElementPropertySource implements IPropertySource {
 	
@@ -23,7 +24,7 @@ public class CElementPropertySource implements IPropertySource {
 	
 	static {
 		// resource name
-		String displayName= CPlugin.getResourceString(LABEL);
+		String displayName= CUIPlugin.getResourceString(LABEL);
 		PropertyDescriptor descriptor= new PropertyDescriptor(IBasicPropertyConstants.P_TEXT, displayName);
 		descriptor.setAlwaysIncompatible(true);
 		

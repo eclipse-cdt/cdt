@@ -6,37 +6,36 @@ package org.eclipse.cdt.internal.ui;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.MakeUtil;
-import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
+import org.eclipse.cdt.ui.*;
 import org.eclipse.core.resources.IProject;
 
-public class CConsole implements IConsole {
-
+public class BuildConsole implements IConsole {
+	IProject project;
+	IBuildConsoleManager fConsoleManager;
+	
 	/**
-	 * Constructor for CConsole.
+	 * Constructor for BuildConsole.
 	 */
-	public CConsole() {
-		super();
+	public BuildConsole() {
+		fConsoleManager = CUIPlugin.getDefault().getConsoleManager();
 	}
 
 	public void start(IProject project ) {
-		if (CPluginPreferencePage.isClearBuildConsole()
-			&& MakeUtil.getSessionConsoleMode(project)) {
-			clear();
-		}
+		this.project = project;
+		fConsoleManager.getConsole(project).start(project);
 	}
 	
 	/**
 	 * @see org.eclipse.cdt.core.resources.IConsole#clear()
 	 */
 	public void clear() {
-		CPlugin.getDefault().getConsole().clear();
+		fConsoleManager.getConsole(project).clear();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.resources.IConsole#getOutputStream()
 	 */
 	public ConsoleOutputStream getOutputStream() {
-		return CPlugin.getDefault().getConsole().getOutputStream();
+		return fConsoleManager.getConsole(project).getOutputStream();
 	}
 }

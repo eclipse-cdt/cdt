@@ -8,7 +8,7 @@ package org.eclipse.cdt.ui.wizards.conversion;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -48,7 +48,7 @@ public class ConvertCtoCCStdMakeProjectWizardPage extends ConvertProjectWizardPa
      * overriding the default in the superclass.
      */
     protected String getWzTitleResource(){
-        return CPlugin.getResourceString(WZ_TITLE);
+        return CUIPlugin.getResourceString(WZ_TITLE);
     }
     
     /**
@@ -56,7 +56,7 @@ public class ConvertCtoCCStdMakeProjectWizardPage extends ConvertProjectWizardPa
      * Label for this class overriding the default in the superclass.
      */
     protected String getWzDescriptionResource(){
-        return CPlugin.getResourceString(WZ_DESC);
+        return CUIPlugin.getResourceString(WZ_DESC);
     }
   
     /**
@@ -72,7 +72,7 @@ public class ConvertCtoCCStdMakeProjectWizardPage extends ConvertProjectWizardPa
                     && !project.hasNature(CCProjectNature.CC_NATURE_ID))
                 return true;
         } catch (CoreException e) {
-           CPlugin.log(e);
+           CUIPlugin.log(e);
         }
         return false;
     }

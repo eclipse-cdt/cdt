@@ -5,10 +5,10 @@ package org.eclipse.cdt.internal.ui.preferences;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.dialogs.StatusTool;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.wizards.ReferenceBlock;
 import org.eclipse.cdt.ui.wizards.SettingsBlock;
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
@@ -76,7 +76,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 	
 	private void contentForClosedProject(Composite parent) {
 		Label label= new Label(parent, SWT.LEFT);
-		label.setText(CPlugin.getResourceString(MSG_CLOSEDPROJECT));
+		label.setText(CUIPlugin.getResourceString(MSG_CLOSEDPROJECT));
 		label.setFont(parent.getFont());
 		
 		noDefaultAndApplyButton();

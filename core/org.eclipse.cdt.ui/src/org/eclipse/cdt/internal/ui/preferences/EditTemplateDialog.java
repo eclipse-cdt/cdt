@@ -9,7 +9,6 @@ import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
 import org.eclipse.cdt.internal.corext.template.Template;
 import org.eclipse.cdt.internal.corext.template.TemplateMessages;
 import org.eclipse.cdt.internal.corext.template.TemplateTranslator;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.dialogs.StatusDialog;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
@@ -19,6 +18,8 @@ import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.text.ContentAssistPreference;
 import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -101,7 +102,7 @@ public class EditTemplateDialog extends StatusDialog {
 		 */
 		public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 
-			IPreferenceStore store= CPlugin.getDefault().getPreferenceStore();
+			IPreferenceStore store= CUIPlugin.getDefault().getPreferenceStore();
 
 			ContentAssistant assistant= new ContentAssistant();
 			assistant.setContentAssistProcessor(fProcessor, IDocument.DEFAULT_CONTENT_TYPE);
@@ -329,7 +330,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 	private SourceViewer createEditor(Composite parent) {
 		SourceViewer viewer= new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		CTextTools tools= CPlugin.getDefault().getTextTools();
+		CTextTools tools= CUIPlugin.getDefault().getTextTools();
 		viewer.configure(new SimpleCSourceViewerConfiguration(tools, null, fProcessor));
 		viewer.setEditable(true);
 		viewer.setDocument(new Document(fTemplate.getPattern()));
@@ -348,7 +349,7 @@ public class EditTemplateDialog extends StatusDialog {
 			    try {
 					fTranslator.translate(event.getDocumentEvent().getDocument().get());
 			    } catch (CoreException e) {
-			     	CPlugin.log(e);
+			     	CUIPlugin.log(e);
 			     	// XXX dialog   
 			    }
 				

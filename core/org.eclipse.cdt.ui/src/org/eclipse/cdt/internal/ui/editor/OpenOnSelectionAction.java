@@ -10,10 +10,11 @@ import org.eclipse.cdt.core.index.ITagEntry;
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.index.TagFlags;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,11 +179,11 @@ public class OpenOnSelectionAction extends Action {
 					}
 				}
 			} catch	 (CModelException x) {
-				CPlugin.log(x.getStatus());
+				CUIPlugin.log(x.getStatus());
 			} catch (PartInitException x) {
-				CPlugin.log(x);
+				CUIPlugin.log(x);
 			} catch (CoreException x) {
-				CPlugin.log(x);
+				CUIPlugin.log(x);
 			}
 		}
 		

@@ -6,7 +6,7 @@ package org.eclipse.cdt.ui.wizards;
  */
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -22,7 +22,7 @@ public class StdCCWizard extends StdMakeProjectWizard {
 	private static final String SETTINGS_DESC= "StdCCWizardSettings.description"; //$NON-NLS-1$
 
 	public StdCCWizard() {
-		this(CPlugin.getResourceString(WZ_TITLE), CPlugin.getResourceString(WZ_DESC));
+		this(CUIPlugin.getResourceString(WZ_TITLE), CUIPlugin.getResourceString(WZ_DESC));
 	}
 
 	public StdCCWizard(String title, String desc) {
@@ -31,8 +31,8 @@ public class StdCCWizard extends StdMakeProjectWizard {
 
 	public void addTabItems(TabFolder folder) {
 		super.addTabItems(folder);
-		fTabFolderPage.setTitle(CPlugin.getResourceString(SETTINGS_TITLE));
-		fTabFolderPage.setDescription(CPlugin.getResourceString(SETTINGS_DESC));
+		fTabFolderPage.setTitle(CUIPlugin.getResourceString(SETTINGS_TITLE));
+		fTabFolderPage.setDescription(CUIPlugin.getResourceString(SETTINGS_DESC));
 	}
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		super.doRun(monitor);

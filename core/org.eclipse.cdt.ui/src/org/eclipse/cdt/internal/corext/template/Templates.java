@@ -5,7 +5,8 @@ package org.eclipse.cdt.internal.corext.template;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -48,7 +49,7 @@ public class Templates extends TemplateSet {
 			}
 
 		} catch (CoreException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 			ErrorDialog.openError(null,
 				TemplateMessages.getString("Templates.error.title"), //$NON-NLS-1$
 				e.getMessage(), e.getStatus());
@@ -87,7 +88,7 @@ public class Templates extends TemplateSet {
 	}
 
 	private static File getTemplateFile() {
-		IPath path= CPlugin.getDefault().getStateLocation();
+		IPath path= CUIPlugin.getDefault().getStateLocation();
 		path= path.append(TEMPLATE_FILE);
 		
 		return path.toFile();

@@ -6,7 +6,7 @@ package org.eclipse.cdt.ui.wizards.conversion;
  */
  
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.wizards.CProjectWizard;
 
 import org.eclipse.core.runtime.CoreException;
@@ -73,7 +73,7 @@ public abstract class ConversionWizard
      */
     protected static String getWindowTitleResource() {
 
-        return CPlugin.getResourceString(WINDOW_TITLE);
+        return CUIPlugin.getResourceString(WINDOW_TITLE);
     }
 
     /**
@@ -84,7 +84,7 @@ public abstract class ConversionWizard
      */
     protected static String getWzDescriptionResource() {
 
-        return CPlugin.getResourceString(WZ_DESC);
+        return CUIPlugin.getResourceString(WZ_DESC);
     }
     
     /**
@@ -95,7 +95,7 @@ public abstract class ConversionWizard
      */
     protected static String getWzTitleResource() {
 
-        return CPlugin.getResourceString(WZ_TITLE);
+        return CUIPlugin.getResourceString(WZ_TITLE);
     }
 
     /**

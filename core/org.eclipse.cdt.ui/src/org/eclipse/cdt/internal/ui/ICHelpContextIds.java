@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.cdt.ui.*;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -14,7 +16,7 @@ package org.eclipse.cdt.internal.ui;
  * 
  */
 public interface ICHelpContextIds {
-	public static final String PREFIX= CPlugin.PLUGIN_ID + ".";
+	public static final String PREFIX= CUIPlugin.PLUGIN_ID + ".";
 
 	// Wizard pages
 	public static final String NEW_CPROJECT_WIZARD_PAGE= PREFIX + "new_cproject_wizard_page_context";

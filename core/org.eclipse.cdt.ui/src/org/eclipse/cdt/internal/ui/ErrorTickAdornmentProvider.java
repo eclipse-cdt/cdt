@@ -11,6 +11,7 @@ import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.*;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -62,7 +63,7 @@ public class ErrorTickAdornmentProvider implements IAdornmentProvider {
 				return getErrorTicksFromMarkers((IResource) obj, IResource.DEPTH_INFINITE, null);
 			}
 		} catch (CoreException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 		}
 		return 0;
 	}

@@ -6,7 +6,6 @@ package org.eclipse.cdt.internal.ui.preferences;
  */
  
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusTool;
@@ -16,6 +15,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 import org.eclipse.cdt.internal.ui.wizards.swt.MGridLayout;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -54,18 +54,18 @@ public class CLaunchingPropertyPage extends PropertyPage {
 		LaunchingDialogFieldsAdapter adapter= new LaunchingDialogFieldsAdapter();
 				
 		fArgumentField= new StringDialogField();
-		fArgumentField.setLabelText(CPlugin.getResourceString(ARGUMENTS + ".label"));
+		fArgumentField.setLabelText(CUIPlugin.getResourceString(ARGUMENTS + ".label"));
 		fArgumentField.setDialogFieldListener(adapter);
 		
 		fWorkingDirField= new StringButtonDialogField(adapter);		
-		fWorkingDirField.setLabelText(CPlugin.getResourceString(WORKINGDIR + ".label"));
-		fWorkingDirField.setButtonLabel(CPlugin.getResourceString(WORKINGDIR + ".browse"));
+		fWorkingDirField.setLabelText(CUIPlugin.getResourceString(WORKINGDIR + ".label"));
+		fWorkingDirField.setButtonLabel(CUIPlugin.getResourceString(WORKINGDIR + ".browse"));
 		fWorkingDirField.setDialogFieldListener(adapter);
 		
 		fWorkingDirStatus= new StatusInfo();
 		
-		fArgumentsPropertyName= new QualifiedName(CPlugin.PLUGIN_ID, "arguments");
-		fWorkingDirPropertyName= new QualifiedName(CPlugin.PLUGIN_ID, "workingdir");
+		fArgumentsPropertyName= new QualifiedName(CUIPlugin.PLUGIN_ID, "arguments");
+		fWorkingDirPropertyName= new QualifiedName(CUIPlugin.PLUGIN_ID, "workingdir");
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 			IFile file= getInputFile();
 			isCProject= (file.getProject().hasNature(CProjectNature.C_NATURE_ID));
 		} catch (CoreException e) {
-			CPlugin.log(e);
+			CUIPlugin.log(e);
 		}
 		
 		if (isCProject) {
@@ -97,7 +97,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 			initialize();
 		} else {
 			DialogField labelField= new DialogField();
-			labelField.setLabelText(CPlugin.getResourceString(NO_CPROJECT));
+			labelField.setLabelText(CUIPlugin.getResourceString(NO_CPROJECT));
 			labelField.doFillIntoGrid(composite, 3);
 		}
 		WorkbenchHelp.setHelp(parent, ICHelpContextIds.LAUNCH_PROPERTY_PAGE);
@@ -122,7 +122,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 					fWorkingDirField.setText(file.getParent().getLocation().toOSString());
 				}
 			} catch (CoreException e) {
-				CPlugin.log(e.getStatus());
+				CUIPlugin.log(e.getStatus());
 			}
 		}	
 	}
@@ -138,7 +138,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 				file.setPersistentProperty(fWorkingDirPropertyName, fWorkingDirField.getText());
 			} catch (CoreException e) {
 				ErrorDialog.openError(fShell, "Error", null, e.getStatus());
-				CPlugin.log(e.getStatus());
+				CUIPlugin.log(e.getStatus());
 				return false;
 			}
 		}
@@ -181,7 +181,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 		if (!"".equals(str)) {
 			IPath path= new Path(str);
 			if (!path.toFile().isDirectory()) {
-				fWorkingDirStatus.setError(CPlugin.getResourceString(ERROR_WORKINGDIR_NOTEXISTS));
+				fWorkingDirStatus.setError(CUIPlugin.getResourceString(ERROR_WORKINGDIR_NOTEXISTS));
 				return;
 			}
 		}

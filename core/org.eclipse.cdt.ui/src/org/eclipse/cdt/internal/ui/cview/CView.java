@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.resources.MakeUtil;
 import org.eclipse.cdt.internal.ui.CContentProvider;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
@@ -29,6 +28,7 @@ import org.eclipse.cdt.internal.ui.makeview.MakeTargetAction;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -329,7 +329,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	}
 
 	void initFilterFromPreferences() {
-		CPlugin plugin = CPlugin.getDefault();
+		CUIPlugin plugin = CUIPlugin.getDefault();
 		boolean show = plugin.getPreferenceStore().getBoolean(TAG_SHOWLIBRARIES);
 		getLibraryFilter().setShowLibraries(show);
 	}
@@ -375,8 +375,8 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		viewer.setUseHashlookup (true);
 		viewer.setContentProvider(new CContentProvider (showCUChildren, true));
 		viewer.setLabelProvider (new StandardCElementLabelProvider ());
-		CPlugin.getDefault().getProblemMarkerManager().addListener(viewer);
-		CPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		CUIPlugin.getDefault().getProblemMarkerManager().addListener(viewer);
+		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 
 		// FIXME: Add Drag and Drop support.
 		initFrameList();
@@ -442,12 +442,12 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	 */
 	public void dispose() {
 		getSite().getPage().removePartListener(partListener);
-		CPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		CUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		if (viewer != null) {
 			viewer.removeTreeListener(expansionListener);
-			CPlugin.getDefault().getProblemMarkerManager().removeListener(viewer);
+			CUIPlugin.getDefault().getProblemMarkerManager().removeListener(viewer);
 		}
-		IWorkspace workspace = CPlugin.getWorkspace();
+		IWorkspace workspace = CUIPlugin.getWorkspace();
 		workspace.removeResourceChangeListener(closeProjectAction);
 		workspace.removeResourceChangeListener(openProjectAction);
 		super.dispose();
@@ -515,17 +515,17 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		
 		createFileAction = new CreateFileAction(shell);
 		// overwrite the default name
-		String fileLabel = CPlugin.getDefault().getResourceBundle().getString("CreateFileAction.text");
+		String fileLabel = CUIPlugin.getDefault().getResourceBundle().getString("CreateFileAction.text");
 		createFileAction.setText(fileLabel);
 		
 		createFolderAction = new CreateFolderAction(shell);
 		// overwrite the default name
-		String folderLabel = CPlugin.getDefault().getResourceBundle().getString("CreateFolderAction.text");
+		String folderLabel = CUIPlugin.getDefault().getResourceBundle().getString("CreateFolderAction.text");
 		createFolderAction.setText(folderLabel);
 		
 		
 		newWizardAction = new NewWizardAction();
-		IWorkspace workspace = CPlugin.getWorkspace();
+		IWorkspace workspace = CUIPlugin.getWorkspace();
 
 		openProjectAction = new OpenResourceAction(shell);
 		workspace.addResourceChangeListener(openProjectAction, IResourceChangeEvent.POST_CHANGE);

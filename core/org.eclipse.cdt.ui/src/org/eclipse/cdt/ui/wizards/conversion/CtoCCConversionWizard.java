@@ -5,7 +5,7 @@ package org.eclipse.cdt.ui.wizards.conversion;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This wizard provides a method by which the user can 
@@ -42,7 +42,7 @@ public class CtoCCConversionWizard extends ConversionWizard {
      * @return String
      */
     protected static String getWzDescriptionResource() {
-        return CPlugin.getResourceString(WZ_DESC);
+        return CUIPlugin.getResourceString(WZ_DESC);
     }
 
     /**
@@ -52,7 +52,7 @@ public class CtoCCConversionWizard extends ConversionWizard {
      * @return String
      */
     protected static String getWzTitleResource() {
-        return CPlugin.getResourceString(WZ_TITLE);
+        return CUIPlugin.getResourceString(WZ_TITLE);
     }
     
     /**
@@ -63,7 +63,7 @@ public class CtoCCConversionWizard extends ConversionWizard {
      */
     protected static String getWindowTitleResource() {
 
-        return CPlugin.getResourceString(WINDOW_TITLE);
+        return CUIPlugin.getResourceString(WINDOW_TITLE);
     }
     
    /**

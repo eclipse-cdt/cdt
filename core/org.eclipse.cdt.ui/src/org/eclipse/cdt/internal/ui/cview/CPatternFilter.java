@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
-import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 import org.eclipse.cdt.core.model.ICFolder;
 import org.eclipse.cdt.core.model.ICProject;
@@ -28,7 +28,7 @@ public class CPatternFilter extends ViewerFilter {
 	static String FILTERS_TAG= "CElementFilters"; //$NON-NLS-1$
 
 	private void initializeFromPreferences() {
-		CPlugin plugin= CPlugin.getDefault();
+		CUIPlugin plugin= CUIPlugin.getDefault();
 		String storedPatterns= plugin.getPreferenceStore().getString(FILTERS_TAG);
 
 		if (storedPatterns.length() == 0) {

@@ -41,8 +41,8 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.CContentProvider;
-import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
 	private CEditor fEditor;
@@ -74,7 +74,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			try {
 				fInput.update();
 			} catch (CoreException e) {
-				CPlugin.log(e.getStatus());
+				CUIPlugin.log(e.getStatus());
 				fInput= null;
 				return;
 			}
@@ -136,7 +136,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		treeViewer.setAutoExpandLevel(treeViewer.ALL_LEVELS);
 		treeViewer.addSelectionChangedListener(this);
 		
-		CPlugin.getDefault().getProblemMarkerManager().addListener(treeViewer);
+		CUIPlugin.getDefault().getProblemMarkerManager().addListener(treeViewer);
 				
 		MenuManager manager= new MenuManager("#PopUp");
 		manager.setRemoveAllWhenShown(true);
@@ -154,23 +154,23 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		IDocumentProvider provider= fEditor.getDocumentProvider();
 		try {
 			if (editorInput instanceof IFileEditorInput)
-				//fInput = ((CPlugin.ElementFactory)plugin.getCCore()).createWorkingCopy((IFileEditorInput)editorInput, provider);
+				//fInput = ((CUIPlugin.ElementFactory)plugin.getCCore()).createWorkingCopy((IFileEditorInput)editorInput, provider);
 				fInput = new CFileElementWorkingCopy((IFileEditorInput)editorInput, provider);
 			else if (editorInput instanceof IStorageEditorInput)
-				//fInput = ((CPlugin.ElementFactory)plugin.getCCore()).createWorkingCopy((IStorageEditorInput)editorInput, provider);
+				//fInput = ((CUIPlugin.ElementFactory)plugin.getCCore()).createWorkingCopy((IStorageEditorInput)editorInput, provider);
 				fInput = new CFileElementWorkingCopy((IStorageEditorInput)editorInput, provider);
 			else
-				throw new CoreException(new Status(IStatus.ERROR, CPlugin.PLUGIN_ID, 0, "no Editor Input", null));
+				throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0, "no Editor Input", null));
 
 			treeViewer.setInput(fInput);
 		} catch (CoreException e) {
-			CPlugin.log(e.getStatus());
+			CUIPlugin.log(e.getStatus());
 			fInput= null;
 		}
 	}
 	
 	public void dispose() {
-		CPlugin.getDefault().getProblemMarkerManager().removeListener(treeViewer);
+		CUIPlugin.getDefault().getProblemMarkerManager().removeListener(treeViewer);
 		super.dispose();
 	}
 

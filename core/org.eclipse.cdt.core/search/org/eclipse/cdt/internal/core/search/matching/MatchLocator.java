@@ -27,11 +27,33 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ast.*;
+import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTClassReference;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTMacro;
+import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypedef;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -73,7 +95,7 @@ public class MatchLocator implements ISourceElementRequestor {
 	public void acceptTypedef(IASTTypedef typedef) 								{	}
 	public void acceptEnumerator(IASTEnumerator enumerator) 					{	}
 	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){	}
-	public void acceptClassReference(IASTClassSpecifier classSpecifier, int referenceOffset) {	}
+	public void acceptClassReference(IASTClassReference reference) {	}
 	public void acceptElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier elaboratedTypeSpec){  }
 	public void acceptMethodDeclaration(IASTMethod method) 						{	}
 	public void acceptField(IASTField field) 									{	}
@@ -212,7 +234,7 @@ public class MatchLocator implements ISourceElementRequestor {
 				}
 			}
 			
-			IScanner scanner = ParserFactory.createScanner( reader, pathString, null, null, ParserMode.QUICK_PARSE );
+			IScanner scanner = ParserFactory.createScanner( reader, pathString, new ScannerInfo(), ParserMode.QUICK_PARSE );
 			IParser  parser  = ParserFactory.createParser( scanner, null, ParserMode.QUICK_PARSE );
 			parser.setRequestor( this );
 			

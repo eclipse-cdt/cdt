@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
+import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 
 /**
  * @author jcamelon
@@ -72,7 +73,7 @@ public class PreprocessorTest extends TestCase {
 	
 	public IPreprocessor setupPreprocessor( String text, List includePaths, Map defns, ISourceElementRequestor rq )
 	{
-		IPreprocessor p = ParserFactory.createPreprocessor( new StringReader( text ), "test", defns, includePaths, ParserMode.COMPLETE_PARSE );
+		IPreprocessor p = ParserFactory.createPreprocessor( new StringReader( text ), "test", new ScannerInfo(), ParserMode.COMPLETE_PARSE );
 		p.setRequestor( rq );
 		return p; 
 	}

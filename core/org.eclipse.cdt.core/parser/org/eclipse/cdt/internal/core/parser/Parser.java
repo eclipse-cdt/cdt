@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
@@ -951,7 +953,7 @@ public class Parser implements IParser
         throws Backtrack
     {
         Object simpleDecl = null;
-        DeclarationWrapper sdw = new DeclarationWrapper(scope);
+        DeclarationWrapper sdw = new DeclarationWrapper(scope, LA(1).getOffset(), null);
         try
         {
             simpleDecl = callback.simpleDeclarationBegin(container, LA(1));
@@ -960,6 +962,9 @@ public class Parser implements IParser
         {
         }
         declSpecifierSeq(simpleDecl, false, tryConstructor, sdw);
+        if( sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.SimpleType.UNSPECIFIED )
+           	sdw.setTypeSpecifier( astFactory.createSimpleTypeSpecifier( sdw.getSimpleType(), sdw.getName(), sdw.isShort(), sdw.isLong(), sdw.isSigned(), sdw.isUnsigned(), sdw.isTypeNamed() ) );        
+        
         Object declarator = null;
         DeclaratorDuple d = null; 
         if (LT(1) != IToken.tSEMI)
@@ -1009,7 +1014,7 @@ public class Parser implements IParser
                 throw backtrack;
         }
         
-        List l = sdw.createAndCallbackASTNodes();
+        List l = sdw.createASTNodes(astFactory);
         
 		if( hasFunctionBody )
 		{
@@ -1188,13 +1193,17 @@ public class Parser implements IParser
         {
         }
         
-        DeclarationWrapper sdw = new DeclarationWrapper( null ); 
+        DeclarationWrapper sdw = new DeclarationWrapper( null, current.getOffset(), null ); 
         declSpecifierSeq(
             parameterDecl,
             true,
             false,
             sdw
         );
+		if( sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.SimpleType.UNSPECIFIED )
+			sdw.setTypeSpecifier( astFactory.createSimpleTypeSpecifier( sdw.getSimpleType(), sdw.getName(), sdw.isShort(), sdw.isLong(), sdw.isSigned(), sdw.isUnsigned(), sdw.isTypeNamed() ) );        
+
+        
         if (LT(1) != IToken.tSEMI)
             try
             {
@@ -1362,6 +1371,19 @@ public class Parser implements IParser
                 || (LT(3) != IToken.tLPAREN && LT(3) != IToken.tASSIGN))
                 && !LA(2).isPointer());
     }
+    
+    private void callbackSimpleDeclToken( Object decl, Flags flags )
+    {
+		flags.setEncounteredRawType(true);
+		try
+		{
+			callback.simpleDeclSpecifier(decl, consume());
+		}
+		catch (Exception e)
+		{
+		}
+
+    }
     /**
      * This function parses a declaration specifier sequence, as according to the ANSI C++ spec. 
      * 
@@ -1394,6 +1416,8 @@ public class Parser implements IParser
         throws Backtrack
     {
         Flags flags = new Flags(parm, tryConstructor);
+        IToken typeNameBegin = null; 
+        IToken typeNameEnd = null; 
         declSpecifiers : for (;;)
         {
             switch (LT(1))
@@ -1519,26 +1543,97 @@ public class Parser implements IParser
                     }
                     break;
                 case IToken.t_signed :
+                	sdw.setSigned(true);
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1); 
+					callbackSimpleDeclToken(decl, flags);
+                	break;
                 case IToken.t_unsigned :
+                	sdw.setUnsigned( true );
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1); 
+					callbackSimpleDeclToken(decl, flags);
+				   	break;
                 case IToken.t_short :
+                	sdw.setShort( true );
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1);                 	
+					callbackSimpleDeclToken(decl, flags);
+				   	break;
+				case IToken.t_long :
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1); 
+				
+					callbackSimpleDeclToken(decl, flags);
+					sdw.setLong( true ); 
+					break;
+                
                 case IToken.t_char :
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1); 
+                
+					callbackSimpleDeclToken(decl, flags);
+					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.CHAR );
+					break;
                 case IToken.t_wchar_t :
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1); 
+                
+					callbackSimpleDeclToken(decl, flags);
+					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.WCHAR_T);
+					break;
+					
                 case IToken.t_bool :
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1); 
+                
+					callbackSimpleDeclToken(decl, flags);
+					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.BOOL);
+					break;
+
                 case IToken.t_int :
-                case IToken.t_long :
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1); 
+                
+					callbackSimpleDeclToken(decl, flags);
+					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.INT);
+					break;
+
                 case IToken.t_float :
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1); 
+                
+					callbackSimpleDeclToken(decl, flags);
+					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.FLOAT);
+					break;
+
                 case IToken.t_double :
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1); 
+                                
+					callbackSimpleDeclToken(decl, flags);
+					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.DOUBLE );
+					break;
+
                 case IToken.t_void :
-                    sdw.setType(LT(1));
-                    flags.setEncounteredRawType(true);
-                    try
-                    {
-                        callback.simpleDeclSpecifier(decl, consume());
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                    break;
+					if( typeNameBegin == null )
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1); 
+                
+					callbackSimpleDeclToken(decl, flags);
+					sdw.setSimpleType( IASTSimpleTypeSpecifier.SimpleType.VOID );
+					break;
+
                 case IToken.t_typename :
                     sdw.setTypenamed(true);
                     try
@@ -1567,7 +1662,7 @@ public class Parser implements IParser
                         }
                     }
                     ITokenDuple duple = new TokenDuple(first, last);
-                    sdw.setTypeName(duple.toString());
+                    sdw.setTypeName(duple);
                     try
                     {
                         callback.simpleDeclSpecifierName(decl);
@@ -1583,13 +1678,29 @@ public class Parser implements IParser
                     // TODO - Kludgy way to handle constructors/destructors
                     // handle nested later:
                     if (flags.haveEncounteredRawType())
+                    {
+                    	if( typeNameBegin != null )
+                    		sdw.setTypeName(  new TokenDuple( typeNameBegin, typeNameEnd ));
                         return;
+                    }
                     if (parm && flags.haveEncounteredTypename())
-                        return;
+					{
+						if( typeNameBegin != null )
+							sdw.setTypeName(  new TokenDuple( typeNameBegin, typeNameEnd ));
+						return;
+					}
                     if (lookAheadForConstructorOrConversion(flags))
-                        return;
+					{
+						if( typeNameBegin != null )
+							sdw.setTypeName(  new TokenDuple( typeNameBegin, typeNameEnd ));
+						return;
+					}
                     if (lookAheadForDeclarator(flags))
-                        return;
+					{
+						if( typeNameBegin != null )
+							sdw.setTypeName(  new TokenDuple( typeNameBegin, typeNameEnd ));
+						return;
+					}
                     try
                     {
                         callback.simpleDeclSpecifier(decl, LA(1));
@@ -1598,7 +1709,7 @@ public class Parser implements IParser
                     {
                     }
                     ITokenDuple d = name();
-                    sdw.setTypeName(d.toString());
+                    sdw.setTypeName(d);
                     try
                     {
                         callback.simpleDeclSpecifierName(decl);
@@ -1657,6 +1768,9 @@ public class Parser implements IParser
                     break declSpecifiers;
             }
         }
+		if( typeNameBegin != null )
+			sdw.setTypeName(  new TokenDuple( typeNameBegin, typeNameEnd ));
+
     }
     /**
      * Parse an elaborated type specifier.  
@@ -1882,7 +1996,7 @@ public class Parser implements IParser
      * @return			Returns the same object sent in.
      * @throws Backtrack
      */
-    protected Object cvQualifier(Object ptrOp, PointerOperator po) throws Backtrack
+    protected Object cvQualifier(Object ptrOp, boolean hasName, Declarator declarator) throws Backtrack
     {
         switch (LT(1))
         {
@@ -1894,7 +2008,11 @@ public class Parser implements IParser
 				catch (Exception e)
 				{
 				}
-				po.setConst(true);
+				
+				if( hasName )
+					declarator.addPtrOp( ASTPointerOperator.CONST_POINTER_TO_FUNCTION );
+				else
+					declarator.addPtrOp( ASTPointerOperator.CONST_POINTER  );
 				return ptrOp;
 
             case IToken.t_volatile :
@@ -1905,7 +2023,10 @@ public class Parser implements IParser
                 catch (Exception e)
                 {
                 }
-                po.setVolatile( true );
+				if( hasName )
+					declarator.addPtrOp( ASTPointerOperator.VOLATILE_POINTER_TO_FUNCTION );
+				else
+					declarator.addPtrOp( ASTPointerOperator.VOLATILE_POINTER  );
                 return ptrOp;
             default :
                 throw backtrack;
@@ -2594,7 +2715,7 @@ public class Parser implements IParser
             catch (Exception e)
             {
             }
-			d.addPtrOp( new PointerOperator( PointerOperator.Type.REFERENCE ) );
+			d.addPtrOp( ASTPointerOperator.REFERENCE );
             return;
         }
         IToken mark = mark();
@@ -2609,9 +2730,9 @@ public class Parser implements IParser
             hasName = true;
             t = LT(1);
         }
+        
         if (t == IToken.tSTAR)
         {
-        	PointerOperator po = null; 
             if (hasName)
             {
                 try
@@ -2622,15 +2743,11 @@ public class Parser implements IParser
                 catch (Exception e)
                 {
                 }
-                // just consume "*", so tokenType is left as "::" or Id
-                po = new PointerOperator( PointerOperator.Type.NAMED );
-                po.setName( nameDuple.toString() );
                 consume(Token.tSTAR);
             }
             else
             {
                 tokenType = consume(Token.tSTAR); // tokenType = "*"
-                po = new PointerOperator( PointerOperator.Type.POINTER );
             }
             
             try
@@ -2644,7 +2761,7 @@ public class Parser implements IParser
             {
                 try
                 {
-                    ptrOp = cvQualifier(ptrOp, po);
+                    ptrOp = cvQualifier(ptrOp, hasName, d);
                 }
                 catch (Backtrack b)
                 {
@@ -2659,7 +2776,6 @@ public class Parser implements IParser
             catch (Exception e)
             {
             }
-            d.addPtrOp(po);
             return;
         }
         backup(mark);
@@ -2754,6 +2870,7 @@ public class Parser implements IParser
                     }
                     throw backtrack;
                 }
+                IASTExpression initialValue = null;
                 if (LT(1) == IToken.tASSIGN)
                 {
                     consume(IToken.tASSIGN);
@@ -2765,7 +2882,7 @@ public class Parser implements IParser
                     catch (Exception e)
                     {
                     }
-                    constantExpression(expression);
+                    initialValue = constantExpression(expression);
                     try
                     {
                         callback.expressionEnd(expression);
@@ -2773,6 +2890,7 @@ public class Parser implements IParser
                     catch (Exception e)
                     {
                     }
+                    
                 }
                 try
                 {
@@ -2783,7 +2901,7 @@ public class Parser implements IParser
                 }
                 if (LT(1) == IToken.tRBRACE)
                 {
-                	astFactory.addEnumerator( enumeration, enumeratorIdentifier.toString(), enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset() ); 
+                	astFactory.addEnumerator( enumeration, enumeratorIdentifier.toString(), enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset(), initialValue); 
                     break;
                 }
                 if (LT(1) != IToken.tCOMMA)
@@ -2797,7 +2915,7 @@ public class Parser implements IParser
                     }
                     throw backtrack;
                 }
-				astFactory.addEnumerator( enumeration, enumeratorIdentifier.toString(), enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset() ); 
+				astFactory.addEnumerator( enumeration, enumeratorIdentifier.toString(), enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset(), initialValue ); 
                 consume(IToken.tCOMMA);
             }
             

@@ -1,3 +1,6 @@
+2003-07-08 John Camelon
+	Updated IScanner, clients & implementations to use IScannerInfo.  
+
 2003-07-03 Sean Evoy
 	Changed property/wizard tab to use the new StandardBuildManager and 
 	the improved IStandardBuildInfo interface to set and retrieve 

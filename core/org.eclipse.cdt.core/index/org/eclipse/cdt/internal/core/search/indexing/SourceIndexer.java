@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.index.IDocument;
+import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 
 /**
  * A SourceIndexer indexes source files using the parser. The following items are indexed:
@@ -58,7 +59,7 @@ public class SourceIndexer extends AbstractIndexer {
 		// Create a new Parser
 		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, document);
 		IParser parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( new StringReader( document.getStringContent() ), document.getName(), null, null, ParserMode.QUICK_PARSE ), 
+							ParserFactory.createScanner( new StringReader( document.getStringContent() ), document.getName(), new ScannerInfo(), ParserMode.QUICK_PARSE ), 
 							requestor, ParserMode.QUICK_PARSE);
 		try{
 			parser.parse();

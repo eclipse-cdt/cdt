@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
+import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.search.CharOperation;
 
 /**
@@ -122,7 +123,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createClassPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", null, null, ParserMode.QUICK_PARSE );
+		IScanner scanner = ParserFactory.createScanner( new StringReader( patternString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE );
 		
 		LinkedList list  = new LinkedList();
 		IToken 	   token = null;

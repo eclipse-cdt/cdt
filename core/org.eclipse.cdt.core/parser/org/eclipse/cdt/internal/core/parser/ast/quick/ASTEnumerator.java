@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
@@ -22,7 +23,8 @@ import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 public class ASTEnumerator
     implements IASTEnumerator, IASTOffsetableNamedElement
 {
-	private final String name; 
+	private final IASTExpression initialValue;
+    private final String name; 
 	private final IASTEnumerationSpecifier enumeration;
 	private final NamedOffsets offsets = new NamedOffsets(); 
     /**
@@ -31,7 +33,7 @@ public class ASTEnumerator
      * @param startingOffset
      * @param endingOffset
      */
-    public ASTEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int endingOffset)
+    public ASTEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int endingOffset, IASTExpression initialValue)
     {
     	this.enumeration = enumeration; 
         name = string;
@@ -39,6 +41,7 @@ public class ASTEnumerator
 		offsets.setNameOffset( startingOffset );
 		offsets.setEndingOffset( endingOffset );
 		enumeration.addEnumerator(this);
+		this.initialValue = initialValue;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
@@ -95,5 +98,12 @@ public class ASTEnumerator
     public IASTEnumerationSpecifier getOwnerEnumerationSpecifier()
     {
         return enumeration;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTEnumerator#getInitialValue()
+     */
+    public IASTExpression getInitialValue()
+    {
+        return initialValue;
     }
 }

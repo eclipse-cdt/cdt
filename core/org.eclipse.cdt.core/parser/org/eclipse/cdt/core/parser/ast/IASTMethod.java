@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTMethod extends IASTFunction {
+public interface IASTMethod extends IASTFunction, IASTMember {
 
 	public boolean isVirtual();
 	public boolean isExplicit(); 
@@ -22,4 +22,9 @@ public interface IASTMethod extends IASTFunction {
 	public boolean isConstructor(); 
 	public boolean isDestructor(); 
 	
+	public boolean isConst(); 
+	public boolean isVolatile(); 
+	public boolean isPureVirtual(); 
+	
+
 }

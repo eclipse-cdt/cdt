@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 
 /**
  * @author jcamelon
@@ -40,7 +41,7 @@ public class BaseDOMTest extends TestCase {
 	public TranslationUnit parse(String code, boolean quickParse, boolean throwOnError ) throws Exception {
 		DOMBuilder domBuilder = new DOMBuilder(); 
 		ParserMode mode = quickParse ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
-		IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, null, null, mode ), domBuilder, mode );
+		IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), mode ), domBuilder, mode );
 		if( ! parser.parse() )
 			if( throwOnError ) throw new ParserException( "Parse failure" );
 			else domBuilder.getTranslationUnit().setParseSuccessful( false ); 

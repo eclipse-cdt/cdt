@@ -35,6 +35,7 @@ import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.Name;
+import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.parser.IStructurizerCallback;
 
 /**
@@ -57,7 +58,7 @@ public class ComparatorModelBuilder {
 	public void parse() {
 		DOMBuilder domBuilder = new DOMBuilder(); 
 		try {
-			IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, null, null, ParserMode.QUICK_PARSE ), domBuilder, ParserMode.QUICK_PARSE);
+			IParser parser = ParserFactory.createParser(ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), ParserMode.QUICK_PARSE ), domBuilder, ParserMode.QUICK_PARSE);
 			parser.parse();
 		} catch (Exception e) {
 			callback.reportError(e);

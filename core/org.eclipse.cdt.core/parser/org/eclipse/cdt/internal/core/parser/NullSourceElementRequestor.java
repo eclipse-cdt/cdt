@@ -6,6 +6,7 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
@@ -876,7 +877,7 @@ public class NullSourceElementRequestor implements ISourceElementRequestor, IPar
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptClassReference(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier, int)
 	 */
-	public void acceptClassReference(IASTClassSpecifier classSpecifier, int referenceOffset) {
+	public void acceptClassReference(IASTClassReference reference) {
 		// TODO Auto-generated method stub
 		
 	}

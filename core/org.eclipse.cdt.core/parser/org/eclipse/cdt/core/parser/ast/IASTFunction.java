@@ -10,16 +10,22 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import java.util.Iterator;
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTFunction {
+public interface IASTFunction extends IASTScope, IASTOffsetableNamedElement, IASTTemplatedDeclaration, IASTDeclaration {
 	
 	public boolean isInline(); 
 	public boolean isFriend();
 	public boolean isStatic();
 
-	public IASTAbstractDeclarator getReturnType();   
+	public String getName();
+
+	public IASTAbstractDeclaration getReturnType();   
+	public Iterator getParameters();
+	public IASTExceptionSpecification getExceptionSpec();  
 
 }

@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTVariable {
+public interface IASTVariable extends IASTDeclaration {
 
 	public boolean isAuto(); 
 	public boolean isRegister(); 
@@ -22,7 +22,10 @@ public interface IASTVariable {
 	public boolean isExtern(); 
 	public boolean isMutable(); 
 	
-	public IASTAbstractDeclarator getAbstractDeclaration(); 
+	public IASTAbstractDeclaration getAbstractDeclaration(); 
 	public String getName(); 
 	public IASTInitializerClause getInitializerClause(); 
+	
+	public boolean isBitfield(); 
+	public IASTExpression getBitfieldExpression(); 
 }

@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.dom.IOffsetable;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
+import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -53,7 +54,7 @@ public class LineNumberTest extends TestCase {
 	public void testDOMLineNos() throws Exception
 	{
 		DOMBuilder domBuilder = new DOMBuilder();
-		IParser parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader( fileIn ), null, null, null, ParserMode.QUICK_PARSE ), domBuilder, ParserMode.QUICK_PARSE ); 
+		IParser parser = ParserFactory.createParser( ParserFactory.createScanner( new InputStreamReader( fileIn ), null, new ScannerInfo(), ParserMode.QUICK_PARSE ), domBuilder, ParserMode.QUICK_PARSE ); 
 		//parser.mapLineNumbers(true); 
 		if( ! parser.parse() ) fail( "Parse of file failed");
 		

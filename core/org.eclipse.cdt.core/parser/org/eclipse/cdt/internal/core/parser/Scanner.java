@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -32,6 +31,7 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserCallback;
 import org.eclipse.cdt.core.parser.IProblemReporter;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITranslationOptions;
@@ -53,7 +53,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMacro;
 
 public class Scanner implements IScanner {
    
-	public Scanner(Reader reader, String filename, Map defns, IProblemReporter problemReporter, ITranslationResult unitResult) {
+	public Scanner(Reader reader, String filename, IScannerInfo info, IProblemReporter problemReporter, ITranslationResult unitResult) {
 		try {
 			//this is a hack to get around a sudden EOF experience
 			contextStack.push(
@@ -69,10 +69,14 @@ public class Scanner implements IScanner {
 		} catch( ScannerException se ) {
 			//won't happen since we aren't adding an include or a macro
 		} 
-		if( defns != null )
-			definitions.putAll( defns );
+		
+		originalConfig = info;
+		if( info.getDefinedSymbols() != null )
+			definitions.putAll( info.getDefinedSymbols() );
+			
+		if( info.getIncludePaths() != null )
+			overwriteIncludePath( info.getIncludePaths() );
             
-        
         this.problemReporter = problemReporter;
         this.translationResult = unitResult;
         
@@ -88,13 +92,15 @@ public class Scanner implements IScanner {
 		includePaths.add( new File( includePath ) );
 	}
 
-	public void overwriteIncludePath(List newIncludePaths) {
+	public void overwriteIncludePath(String [] newIncludePaths) {
 		if( newIncludePaths == null ) return;
 		includePathNames = null;
 		includePaths = null; 
 		includePathNames = new ArrayList();
-		includePaths = new ArrayList(); 
-		includePathNames.addAll(newIncludePaths);
+		includePaths = new ArrayList();
+		
+		for( int i = 0; i < newIncludePaths.length; ++i ) 
+			includePathNames.add( newIncludePaths[i] );
 		
 		Iterator i = includePathNames.iterator(); 
 		while( i.hasNext() )
@@ -118,8 +124,8 @@ public class Scanner implements IScanner {
 		return definitions.get(key);
 	}
 
-	public final Object[] getIncludePaths() {
-		return includePathNames.toArray();
+	public final String[] getIncludePaths() {
+		return (String[])includePathNames.toArray();
 	}
 
 	protected boolean skipOverWhitespace() throws ScannerException {
@@ -342,6 +348,7 @@ public class Scanner implements IScanner {
 	private ContextStack contextStack = new ContextStack();
 	private IScannerContext lastContext = null;
 	
+	private IScannerInfo originalConfig; 
 	private List includePathNames = new ArrayList();
 	private List includePaths = new ArrayList();
 	private Hashtable definitions = new Hashtable();
@@ -1658,8 +1665,8 @@ public class Scanner implements IScanner {
 				ParserFactory.createScanner(
 					new StringReader(expression + ";"),
 						EXPRESSION,
-						definitions, 
-						null, ParserMode.QUICK_PARSE );
+						new ScannerInfo( definitions, originalConfig.getIncludePaths()), 
+						ParserMode.QUICK_PARSE );
 			IParser parser = ParserFactory.createParser(trial, new NullSourceElementRequestor(), ParserMode.QUICK_PARSE );
  
 			try {
@@ -1897,7 +1904,7 @@ public class Scanner implements IScanner {
 			
 			if( ! replacementString.equals( "" ) )
 			{
-				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, null, null, mode, problemReporter, translationResult );
+				IScanner helperScanner = ParserFactory.createScanner( new StringReader(replacementString), null, new ScannerInfo( ), mode, problemReporter, translationResult );
 				helperScanner.setTokenizingMacroReplacementList( true );
 				IToken t = helperScanner.nextToken(false);
 	
@@ -1995,7 +2002,7 @@ public class Scanner implements IScanner {
     
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        IScanner tokenizer  = ParserFactory.createScanner(new StringReader(params), TEXT, definitions, null, mode, problemReporter, translationResult );
+        IScanner tokenizer  = ParserFactory.createScanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), mode, problemReporter, translationResult );
         Vector parameterValues = new Vector();
         Token t = null;
         String str = new String();

@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Declaration;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Mark;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo;

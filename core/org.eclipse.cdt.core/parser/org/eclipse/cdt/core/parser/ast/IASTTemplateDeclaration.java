@@ -16,9 +16,10 @@ import java.util.Iterator;
  * @author jcamelon
  *
  */
-public interface IASTTemplateDeclaration {
+public interface IASTTemplateDeclaration extends IASTDeclaration {
 
 	public ASTTemplateDeclarationType getTemplateDeclarationType(); 
 	public Iterator getTemplateParameters(); 
+	public IASTDeclaration getOwnedDeclaration();
 
 }

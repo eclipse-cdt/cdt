@@ -97,7 +97,7 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
 			if (isSigned())
 				type.append("signed ");
 		}
-		this.typeName = typeName.toString();
+		this.typeName = type.toString();
     }
 
     /* (non-Javadoc)

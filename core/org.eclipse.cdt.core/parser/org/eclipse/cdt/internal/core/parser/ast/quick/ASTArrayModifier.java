@@ -8,15 +8,31 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTArrayModifier
+public class ASTArrayModifier implements IASTArrayModifier
 {
-	public IASTExpression getExpression(); 
+	private final IASTExpression expression;
+    /**
+     * @param exp
+     */
+    public ASTArrayModifier(IASTExpression exp)
+    {
+        expression = exp; 
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier#getExpression()
+     */
+    public IASTExpression getExpression()
+    {
+        return expression;
+    }
 }

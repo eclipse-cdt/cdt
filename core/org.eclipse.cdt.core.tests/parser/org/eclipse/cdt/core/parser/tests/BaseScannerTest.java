@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ScannerException;
+import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 
 /**
  * @author jcamelon
@@ -36,7 +37,7 @@ public class BaseScannerTest extends TestCase {
 
 	protected void initializeScanner(String input)
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", null, null, null );
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), null );
 	}
 
 	public int fullyTokenize() throws Exception

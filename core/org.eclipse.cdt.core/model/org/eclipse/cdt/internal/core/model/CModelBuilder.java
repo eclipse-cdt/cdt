@@ -56,6 +56,7 @@ import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.Name;
+import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.core.resources.IProject;
 
 
@@ -93,9 +94,9 @@ public class CModelBuilder {
                         new StringReader( 
                                 translationUnit.getBuffer().getContents() 
                             ), 
-                        null, null, null, 
-                        ParserMode.QUICK_PARSE, 
-                        problemReporter, unitResult 
+                        null, new ScannerInfo(), ParserMode.QUICK_PARSE, 
+                        problemReporter, 
+                        unitResult 
                 ), 
                 domBuilder, 
                 ParserMode.QUICK_PARSE, 

@@ -11,11 +11,11 @@
 package org.eclipse.cdt.internal.core.parser;
 
 import java.io.Reader;
-import java.util.Map;
 
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IPreprocessor;
 import org.eclipse.cdt.core.parser.IProblemReporter;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ITranslationResult;
 import org.eclipse.cdt.core.parser.ScannerException;
 
@@ -31,8 +31,8 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 	 * @param filename
 	 * @param defns
 	 */
-	public Preprocessor(Reader reader, String filename, Map defns, IProblemReporter problemReporter, ITranslationResult unitResult) {
-        super(reader, filename, defns, problemReporter, unitResult);
+	public Preprocessor(Reader reader, String filename, IScannerInfo info, IProblemReporter problemReporter, ITranslationResult unitResult) {
+        super(reader, filename, info, problemReporter, unitResult);
     }
 
 	public void process()

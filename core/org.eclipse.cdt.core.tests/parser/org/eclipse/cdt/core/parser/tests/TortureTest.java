@@ -18,6 +18,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
+import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 import org.eclipse.core.runtime.Path;
 
 
@@ -269,7 +271,7 @@ public class TortureTest extends FractionalAutomatedTest {
 			try {           
 				DOMBuilder domBuilder = new DOMBuilder(); 
 				parser = ParserFactory.createParser( 
-						ParserFactory.createScanner( new StringReader( code ), null, null, null, ParserMode.QUICK_PARSE ), nullCallback, ParserMode.QUICK_PARSE);
+						ParserFactory.createScanner( new StringReader( code ), null, new ScannerInfo(), ParserMode.QUICK_PARSE ), nullCallback, ParserMode.QUICK_PARSE);
 		
 				parser.setCppNature(cppNature);
 				mapping = ParserFactory.createLineOffsetReconciler( new StringReader( code ) );

@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
-import java.util.List;
+import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.Enum;
 
@@ -34,7 +34,7 @@ public interface IASTInitializerClause {
 	}
 	
 	public Kind getKind(); 
-	public List getInitializerList(); 
+	public Iterator getInitializers(); 
 	public IASTExpression getAssigmentExpression(); 
 	
 }

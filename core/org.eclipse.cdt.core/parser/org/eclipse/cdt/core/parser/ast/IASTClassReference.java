@@ -8,15 +8,14 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
-
-import org.eclipse.cdt.core.parser.ast.IASTExpression;
+package org.eclipse.cdt.core.parser.ast;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTArrayModifier
+public interface IASTClassReference
 {
-	public IASTExpression getExpression(); 
+	public IASTClassSpecifier getClassSpecifier(); 
+	public int                getOffset();
 }

@@ -38,8 +38,8 @@ public class ASTExceptionSpecification implements IASTExceptionSpecification
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification#getTypeIds()
      */
-    public List getTypeIds()
+    public Iterator getTypeIds()
     {
-        return typeIds;
+        return typeIds.iterator();
     }
 }

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
@@ -44,8 +45,8 @@ public class ASTInitializerClause implements IASTInitializerClause {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#getInitializerList()
 	 */
-	public List getInitializerList() {
-		return initializerClauses;
+	public Iterator getInitializers() {
+		return initializerClauses.iterator();
 	}
 
 	/* (non-Javadoc)

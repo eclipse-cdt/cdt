@@ -17,5 +17,5 @@ package org.eclipse.cdt.core.parser.ast;
 public interface IASTEnumerator extends IASTOffsetableNamedElement {
 
 	public IASTEnumerationSpecifier getOwnerEnumerationSpecifier(); 
-	// public IASTExpression getInitialValue(); 
+	public IASTExpression getInitialValue(); 
 }

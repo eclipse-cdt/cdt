@@ -10,7 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * @author jcamelon
@@ -18,5 +18,5 @@ import java.util.List;
  */
 public interface IASTExceptionSpecification
 {
-	public List getTypeIds(); 
+	public Iterator getTypeIds(); 
 }

@@ -1,3 +1,8 @@
+2003-07-08 John Camelon
+	Filled out IASTMethod & IASTFunction & added implementations.
+	Updated IScanner, clients & implementations to use IScannerInfo.  
+	Finished SimpleDeclaration porting to new architecture, only thing left is templates.  
+
 2003-07-07 John Camelon
 	Bug 39652 - AST: Nested Classes incorrectly report null qualified Names 
 	Fuller specification of Field/Method interfaces.

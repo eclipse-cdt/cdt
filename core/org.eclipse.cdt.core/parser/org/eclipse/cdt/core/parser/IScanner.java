@@ -1,7 +1,5 @@
 package org.eclipse.cdt.core.parser;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 
 /**
@@ -18,9 +16,9 @@ public interface IScanner  {
 	public void addDefinition(String key, String value); 
 	public Object getDefinition(String key);
 
-	public Object[] getIncludePaths();
+	public String[] getIncludePaths();
 	public void addIncludePath(String includePath); 
-	public void overwriteIncludePath( List newIncludePaths );
+	public void overwriteIncludePath( String [] newIncludePaths );
 	public void setRequestor( ISourceElementRequestor r );
 	
 	public IToken nextToken() throws ScannerException, EndOfFile;

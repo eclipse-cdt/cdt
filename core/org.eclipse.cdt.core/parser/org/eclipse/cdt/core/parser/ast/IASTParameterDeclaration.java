@@ -10,14 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
-import java.util.List;
-
 /**
  * @author jcamelon
  *
  */
-public interface IASTAbstractDeclarator
+public interface IASTParameterDeclaration extends IASTAbstractDeclaration
 {
-	public IASTTypeSpecifier getTypeSpecifier(); 
-	public List getPointerOperators(); 
+	public String getName(); 
+	public IASTInitializerClause getDefaultValue(); 
+	
 }

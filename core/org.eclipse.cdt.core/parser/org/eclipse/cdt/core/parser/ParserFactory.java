@@ -11,10 +11,8 @@
 package org.eclipse.cdt.core.parser;
 
 import java.io.Reader;
-import java.util.List;
 import java.util.Map;
 
-//import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.internal.core.parser.DefaultErrorHandlingPolicies;
 import org.eclipse.cdt.internal.core.parser.LineOffsetReconciler;
@@ -56,31 +54,29 @@ public class ParserFactory {
 		return new Parser( scanner, ourCallback, ourMode, problemReporter, unitResult );
 	}
  	
-    public static IScanner createScanner( Reader input, String fileName, Map defns, List inclusions, ParserMode mode )
+    public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode )
     {
-        return createScanner(input, fileName, defns, inclusions, mode, null, null);
+        return createScanner(input, fileName, config, mode, null, null);
     }
     
-	public static IScanner createScanner( Reader input, String fileName, Map defns, List inclusions, ParserMode mode, IProblemReporter problemReporter, ITranslationResult unitResult ) 
+	public static IScanner createScanner( Reader input, String fileName, IScannerInfo config, ParserMode mode, IProblemReporter problemReporter, ITranslationResult unitResult ) 
 	{
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
-		IScanner s = new Scanner( input, fileName, defns, problemReporter, unitResult );
+		IScanner s = new Scanner( input, fileName, config, problemReporter, unitResult );
 		s.setMode( ourMode ); 
-		s.overwriteIncludePath(inclusions);
 		return s; 
 	}
     
-    public static IPreprocessor createPreprocessor( Reader input, String fileName, Map defns, List inclusions, ParserMode mode )
+    public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode )
     {
-        return createPreprocessor(input, fileName, defns, inclusions, mode, null, null);
+        return createPreprocessor(input, fileName, info, mode, null, null);
     }
  	
-	public static IPreprocessor createPreprocessor( Reader input, String fileName, Map defns, List inclusions, ParserMode mode, IProblemReporter problemReporter, ITranslationResult unitResult )
+	public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode, IProblemReporter problemReporter, ITranslationResult unitResult )
 	{
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
-		IPreprocessor s = new Preprocessor( input, fileName, defns, problemReporter, unitResult );
+		IPreprocessor s = new Preprocessor( input, fileName, info, problemReporter, unitResult );
 		s.setMode( ourMode );
-		s.overwriteIncludePath(inclusions); 
 		return s;
 	} 
 	

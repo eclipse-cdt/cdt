@@ -16,11 +16,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
-import org.eclipse.cdt.internal.core.parser.ast.*;
+import org.eclipse.cdt.internal.core.parser.ast.IASTArrayModifier;
 
 /**
  * @author jcamelon
@@ -118,7 +119,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner
         return Collections.unmodifiableList( ptrOps );
     }
 
-	public void addPtrOp( PointerOperator ptrOp )
+	public void addPtrOp( ASTPointerOperator ptrOp )
 	{
 		ptrOps.add( ptrOp ); 
 	}

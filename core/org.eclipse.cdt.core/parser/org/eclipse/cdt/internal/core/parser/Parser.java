@@ -466,6 +466,16 @@ c, quick);
 				}
 			}
 		}
+		else if( LT(1) == Token.tLPAREN )
+		{
+			consume();  // EAT IT!
+			
+			constantExpression();
+			
+			if( LT(1) == Token.tRPAREN )
+				consume();
+		
+		}
 		
 		callback.declaratorEnd( declarator );
 	}
@@ -511,26 +521,30 @@ c, quick);
 			for (;;) {
 				switch (LT(1)) {
 					case Token.tLPAREN:
-						// parameterDeclarationClause
-						Object clause = callback.argumentsBegin(declarator);
-						consume();
-						parameterDeclarationLoop:
-						for (;;) {
-							switch (LT(1)) {
-								case Token.tRPAREN:
-									consume();
-									break parameterDeclarationLoop;
-								case Token.tELIPSE:
-									consume();
-									break;
-								case Token.tCOMMA:
-									consume();
-									break;
-								default:
-									parameterDeclaration( clause );  
+						// temporary fix for initializer/function declaration ambiguity
+						if( LT(2) != Token.tINTEGER )
+						{
+							// parameterDeclarationClause
+							Object clause = callback.argumentsBegin(declarator);
+							consume();
+							parameterDeclarationLoop:
+							for (;;) {
+								switch (LT(1)) {
+									case Token.tRPAREN:
+										consume();
+										break parameterDeclarationLoop;
+									case Token.tELIPSE:
+										consume();
+										break;
+									case Token.tCOMMA:
+										consume();
+										break;
+									default:
+										parameterDeclaration( clause );  
+								}
 							}
+							callback.argumentsEnd(clause);
 						}
-						callback.argumentsEnd(clause);
 						break;
 					case Token.tLBRACKET:
 						consume();

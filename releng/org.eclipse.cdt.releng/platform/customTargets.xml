@@ -23,43 +23,55 @@
 <!-- Add one target for each root element and each configuration -->
 <!-- ===================================================================== -->
 
-<target name="assemble.org.eclipse.cdt.aix.*.ppc">
+<target name="assemble.org.eclipse.cdt.aix.motif.ppc">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-aix.ppc.zip"/>
 	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.hpux.*.PA_RISC">
+<target name="assemble.org.eclipse.cdt.hpux.motif.PA_RISC">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-hpux.PA_RISC.zip"/>
 	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.linux.*.x86">
+<target name="assemble.org.eclipse.cdt.linux.gtk.x86">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-linux.x86.zip"/>
 	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.macosx.*.ppc">
+<target name="assemble.org.eclipse.cdt.linux.gtk.ppc">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-linux.ppc.zip"/>
+	</ant>
+</target>
+
+<target name="assemble.org.eclipse.cdt.linux.gtk.ia64">
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-linux.ia64.zip"/>
+	</ant>
+</target>
+
+<target name="assemble.org.eclipse.cdt.macosx.carbon.ppc">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-macosx.ppc.tar.gz"/>
 	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.qnx.*.x86">
+<target name="assemble.org.eclipse.cdt.qnx.photon.x86">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-qnx.x86.zip"/>
 	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.solaris.*.sparc">
+<target name="assemble.org.eclipse.cdt.solaris.motif.sparc">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-solaris.sparc.zip"/>
 	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.win32.*.x86">
+<target name="assemble.org.eclipse.cdt.win32.win32.x86">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-win32.x86.zip"/>
 	</ant>

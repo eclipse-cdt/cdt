@@ -1,3 +1,7 @@
+2004-12-23 Mikhail Khodjaiants
+	The "ascii" renedering is removed from the default renderings.
+	* plugin.xml
+ 
 2004-12-21 Mikhail Khodjaiants
 	Fix for bug 73168: Use memory view provided by Eclipse platform in CDT.
 	Added rendering bindings and default renderings for CDT memory blocks.

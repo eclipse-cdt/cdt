@@ -1195,7 +1195,7 @@
             <instanceof value="org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension"/>
          </enablement>
       </renderingBinding>
-      <defaultRenderings renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii">
+      <defaultRenderings renderingIds="org.eclipse.debug.ui.rendering.raw_memory">
          <enablement>
             <instanceof value="org.eclipse.cdt.debug.internal.core.model.CMemoryBlockExtension"/>
          </enablement>

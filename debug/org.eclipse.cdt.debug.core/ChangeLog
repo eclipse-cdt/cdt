@@ -1,3 +1,7 @@
+2004-10-25 Mikhail Khodjaiants
+	NPE in "CVlaue.isUnsigned". Check if the type of the parent variable is null.
+	* CValue.java
+
 2004-10-25 David Inglis
 	Deprecated environment launch constent in favor of the constant provided by the debug.core.
 	* src/org/eclipse/cdt/debug/core/ICDTLaunchConfigurationConstants.java

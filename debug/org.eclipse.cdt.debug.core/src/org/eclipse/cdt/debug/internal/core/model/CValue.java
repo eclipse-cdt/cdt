@@ -418,7 +418,8 @@ public class CValue extends AbstractCValue {
 		boolean result = false;
 		try {
 			ICType type = getParentVariable().getType();
-			result = type.isUnsigned();
+			if ( type != null )
+				result = type.isUnsigned();
 		}
 		catch( DebugException e ) {
 		}

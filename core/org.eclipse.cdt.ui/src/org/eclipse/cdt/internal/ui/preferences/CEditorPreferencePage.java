@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.eclipse.cdt.internal.ui.CPluginImages;
+
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
@@ -416,7 +416,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		foregroundColorButton.setLayoutData(gd);
 
 		fBoldCheckBox = new Button(stylesComposite, SWT.CHECK);
-		fBoldCheckBox.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.bold"));
+		fBoldCheckBox.setText(PreferencesMessages.getString("CEditorPreferencePage.colorPage.bold")); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan=2;
 		gd.horizontalAlignment = GridData.BEGINNING;
@@ -839,22 +839,18 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		TabItem item = new TabItem(folder, SWT.NONE);
 		item.setText(PreferencesMessages.getString("CEditorPreferencePage.generalTabTitle")); //$NON-NLS-1$
-		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createBehaviorPage(folder));
 
 		item = new TabItem(folder, SWT.NONE);
 		item.setText(PreferencesMessages.getString("CEditorPreferencePage.colorsTabTitle")); //$NON-NLS-1$
-		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createColorPage(folder));
 
 		item = new TabItem(folder, SWT.NONE);
 		item.setText(PreferencesMessages.getString("CEditorPreferencePage.contentAssistTabTitle")); //$NON-NLS-1$
-		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createContentAssistPage(folder));
 
 		item= new TabItem(folder, SWT.NONE);
 		item.setText(PreferencesMessages.getString("CEditorPreferencePage.hoverTab.title")); //$NON-NLS-1$
-		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(fCEditorHoverConfigurationBlock.createControl(folder));
 
 		item= new TabItem(folder, SWT.NONE);
@@ -863,7 +859,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		item = new TabItem(folder, SWT.NONE);
 		item.setText(PreferencesMessages.getString("CEditorPreferencePage.Navigation")); //$NON-NLS-1$
-		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createNavPage(folder));
 		
 		initialize();

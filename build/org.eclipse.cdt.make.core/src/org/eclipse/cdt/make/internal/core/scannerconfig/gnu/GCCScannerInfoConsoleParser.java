@@ -94,7 +94,7 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 			return false;
 		Iterator I = allTokens.iterator();
 		String token = ((String) I.next()).toLowerCase();
-		if (token.indexOf("gcc") != -1 || token.indexOf("g++") != -1 || token.indexOf("gcc") != -1) {//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (token.indexOf("gcc") != -1 || token.indexOf("g++") != -1) {//$NON-NLS-1$ //$NON-NLS-2$
 			// Recognized gcc or g++ compiler invocation
 			List includes = new ArrayList();
 			List symbols = new ArrayList();
@@ -121,8 +121,11 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 				}
 				else if (fileName == null) {
 					String possibleFileName = token.toLowerCase();
-					if ((possibleFileName.startsWith("\"") && possibleFileName.endsWith("\"")) || 
-						(possibleFileName.startsWith("\'") && possibleFileName.endsWith("\'"))) {
+					if ((possibleFileName.startsWith(DOUBLE_QUOTE_STRING) && 
+						 possibleFileName.endsWith(DOUBLE_QUOTE_STRING)) || 
+						(possibleFileName.startsWith(SINGLE_QUOTE_STRING) && 
+						 possibleFileName.endsWith(SINGLE_QUOTE_STRING))) {
+						
 						possibleFileName = possibleFileName.substring(1, possibleFileName.length()-1).trim();
 					}
 					if (possibleFileName.endsWith(".c") || 		//$NON-NLS-1$

@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
@@ -87,6 +89,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 public class NewClassWizardPage extends WizardPage implements Listener {
 	// the page name
 	private final static String PAGE_NAME= "NewClassWizardPage";
+	private final String HEADER_EXT = ".h";
+	private final String BODY_EXT = ".cpp";
 	
 	// the current resource selection
 	private	IStructuredSelection currentSelection;
@@ -96,6 +100,10 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	// cache of newly-created files
 	private ITranslationUnit parentHeaderTU = null;
 	private ITranslationUnit parentBodyTU = null;
+	// the created class element
+	private IStructure createdClass = null;
+	
+	private ArrayList elementsOfTypeClassInProject = null;
 	
 	// Controls
 	private StringDialogField fClassNameDialogField;
@@ -115,7 +123,6 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	public NewClassWizardPage(IStructuredSelection selection) {
 		super(PAGE_NAME);	
 		currentSelection = selection;
-		eSelection = getSelectionCElement(currentSelection);
 
 		TypeFieldsAdapter adapter= new TypeFieldsAdapter();
 
@@ -160,7 +167,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	public void init() {
 		fAccessButtons.setEnabled(false);
 		setPageComplete(false);
-		
+		eSelection = getSelectionCElement(currentSelection);						
 	}	
 	
 	// ----------------- Creating Controls -------------------- 			
@@ -308,14 +315,14 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			String text = fClassNameDialogField.getText();
 			if(!linkedResourceGroupForHeader.linkCreated()){
 				if (text.length() > 0) {
-					linkedResourceGroupForHeader.setText(text + ".h");
+					linkedResourceGroupForHeader.setText(text + HEADER_EXT);
 				} else {
 					linkedResourceGroupForHeader.setText(text);
 				}				
 			}
 			if(!linkedResourceGroupForBody.linkCreated()){
 				if (text.length() > 0) {			
-					linkedResourceGroupForBody.setText(text + ".cpp");
+					linkedResourceGroupForBody.setText(text + BODY_EXT);
 				} else{				
 					linkedResourceGroupForBody.setText(text);
 				}
@@ -337,7 +344,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}		
 	
 	// --------------- Helper methods for creating controls -----
-	private static ICElement getSelectionCElement(IStructuredSelection sel) {
+	private ICElement getSelectionCElement(IStructuredSelection sel) {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			List list= ((IStructuredSelection)sel).toList();
 			if (list.size() == 1) {
@@ -368,35 +375,39 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		}
 	}
 	
+	private ArrayList getClassElementsInProject(){
+		return elementsOfTypeClassInProject;
+	}
+	
 	private ArrayList findClassElementsInProject(){		
-		final ArrayList elementsOfTypeClassInProject = new ArrayList();
-
-		IRunnableWithProgress runnable= new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				if (monitor == null) {
-					monitor= new NullProgressMonitor();
-				}				
-				monitor.beginTask("", 5); //$NON-NLS-1$
-				try{
-					if(eSelection != null){
-						ICProject cProject = eSelection.getCProject();
-						getChildrenOfTypeClass((IParent)cProject, elementsOfTypeClassInProject, monitor, 1);
+		if(	elementsOfTypeClassInProject == null ){
+			elementsOfTypeClassInProject = new ArrayList();		
+			IRunnableWithProgress runnable= new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					if (monitor == null) {
+						monitor= new NullProgressMonitor();
+					}				
+					monitor.beginTask("", 5); //$NON-NLS-1$
+					try{
+						if(eSelection != null){
+							ICProject cProject = eSelection.getCProject();
+							getChildrenOfTypeClass((IParent)cProject, elementsOfTypeClassInProject, monitor, 1);
+						}
+						monitor.worked(5);
+					} finally{
+						monitor.done();
 					}
-					monitor.worked(5);
-				} finally{
-					monitor.done();
 				}
+			};
+			
+			try {
+				getWizard().getContainer().run(false, true, runnable);
+			} catch (InvocationTargetException e) {				
+			} catch (InterruptedException e) {
+			} 
+			finally {
 			}
-		};
-		
-		try {
-			getWizard().getContainer().run(false, true, runnable);
-		} catch (InvocationTargetException e) {				
-		} catch (InterruptedException e) {
-		} 
-		finally {
-		}
-							 
+		}							 
 		return elementsOfTypeClassInProject;
 	}
 	
@@ -418,24 +429,22 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	}
 	
 	// ------------- getter methods for dialog controls ------------- 			
-	public String getHeaderFileName(){
-		return linkedResourceGroupForHeader.getText();
-	}
-	public String getBodyFileName(){
-		return linkedResourceGroupForBody.getText();
-	}
 	public String getNewClassName(){
 		return fClassNameDialogField.getText();		
 	}
+	
 	public String getBaseClassName(){
 		return fBaseClassDialogField.getText();
 	}
+	
 	public boolean isVirtualDestructor(){
 		return fConstDestButtons.isSelected(1);
 	}
+	
 	public boolean isInline(){
 		return fConstDestButtons.isSelected(0);
 	}
+	
 	public String getAccess(){
 		if(fAccessButtons.isSelected(0))
 			return "public";
@@ -454,7 +463,14 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		return parentBodyTU;
 	}
 
-
+	public IStructure getCreatedClassElement(){
+		return createdClass;
+	}
+	
+	public IStructure getBaseClassElement(){
+		
+		return null;
+	}
 	// -------------- Create a new Class  ----------------------	
 	
 	public void createClass(IProgressMonitor monitor){
@@ -465,10 +481,10 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		try{
 			
 			String lineDelimiter= null;	
-			lineDelimiter= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			lineDelimiter= System.getProperty("line.separator", "\n"); 
 			
-			parentHeaderTU = createTranslationUnit(linkedResourceGroupForHeader, getHeaderFileName());		
-			parentBodyTU = createTranslationUnit(linkedResourceGroupForBody, getBodyFileName());		
+			parentHeaderTU = createTranslationUnit(linkedResourceGroupForHeader);		
+			parentBodyTU = createTranslationUnit(linkedResourceGroupForBody);		
 			monitor.worked(1);
 	
 			if(parentHeaderTU != null){
@@ -479,6 +495,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 					headerWC.reconcile();	
 					headerWC.commit(true, monitor);
 				}
+				createdClass= (IStructure)headerWC.getElement(getNewClassName());				
 			}
 			if(parentBodyTU != null){
 				String body = constructBodyFileContent(lineDelimiter);
@@ -498,7 +515,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 				
 	}
 	
-	protected ITranslationUnit createTranslationUnit(LinkToFileGroup linkedGroup, String fileName){
+	protected ITranslationUnit createTranslationUnit(LinkToFileGroup linkedGroup){
 		ITranslationUnit createdUnit = null;
 		IFile createdFile = null;
 		createdFile= createNewFile(linkedGroup);
@@ -681,103 +698,108 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 
 	// ------------ Constructing File Contents -----------------
 	protected String constructHeaderFileContent(String lineDelimiter){
-	   StringBuffer text = new StringBuffer();
-	   boolean extendingBase = false;
-	   String baseClassName = getBaseClassName();
-	   if((baseClassName != null) && (baseClassName.length() > 0))
-	   {
-		   extendingBase = true;
-	   }
+		StringBuffer text = new StringBuffer();
+		boolean extendingBase = false;
+		String baseClassName = getBaseClassName();
+		String baseClassFileName = "";
+		if((baseClassName != null) && (baseClassName.length() > 0))
+		{
+			extendingBase = true;
+			ArrayList classElements = findClassElementsInProject();
+			ICElement baseClass = findInList(baseClassName, classElements);
+
+			if(baseClass != null){
+				baseClassFileName = baseClass.getUnderlyingResource().getName();
+			} else {
+				baseClassFileName = baseClassName + HEADER_EXT;
+			}
+		}
 		
-	   if(extendingBase){
-		   text.append("#include \"");
-	   text.append(baseClassName);
-	   text.append('\"');
-		   text.append(lineDelimiter);			
-		   text.append(lineDelimiter);			
-	   }
-	   text.append("class ");
-	   text.append(getNewClassName());
-	   if(extendingBase){
-		   text.append(" : ");
-	   text.append(getAccess());
-	   text.append(" ");
-		   text.append(baseClassName);
-	   }
-	   text.append("{");
-	   text.append(lineDelimiter);			
-	
-	   text.append("public:");
-	   text.append(lineDelimiter);			
-	   text.append(lineDelimiter);			
+		if(extendingBase){
+			text.append("#include \"");
+			text.append(baseClassFileName);
+			text.append('\"');
+			text.append(lineDelimiter);			
+			text.append(lineDelimiter);			
+		}
+		text.append("class ");
+		text.append(getNewClassName());
+		if(extendingBase){
+			text.append(" : ");
+			text.append(getAccess());
+			text.append(" ");
+			text.append(baseClassName);
+		}
+		text.append("{");
+		text.append(lineDelimiter);			
 		
-	   // constructor
-	   text.append('\t');
-	   text.append(getNewClassName());
-	   text.append("()");
-	   if(isInline()){
-		   text.append(" {};");
-		   text.append(lineDelimiter);						
-	   }else {
-		   text.append(";");
-		   text.append(lineDelimiter);						
-	   }
+		text.append("public:");
+		text.append(lineDelimiter);			
+		text.append(lineDelimiter);			
 		
+		// constructor
+		text.append('\t');
+		text.append(getNewClassName());
+		text.append("()");
+		if(isInline()){
+			text.append(" {};");
+			text.append(lineDelimiter);						
+		}else {
+			text.append(";");
+			text.append(lineDelimiter);						
+		}
 		
-	   // destructor
-	   text.append('\t');		
-	   if(isVirtualDestructor()){
-		   text.append("virtual ");
-	   }
-	   text.append("~");
-	   text.append(getNewClassName());
-	   text.append("()");
-	   if(isInline()){
-		   text.append(" {};");
-		   text.append(lineDelimiter);						
-	   }else {
-		   text.append(";");
-		   text.append(lineDelimiter);						
-	   }
-	   text.append("};");
-	   text.append(lineDelimiter);			
-		
+		// destructor
+		text.append('\t');		
+		if(isVirtualDestructor()){
+			text.append("virtual ");
+		}
+		text.append("~");
+		text.append(getNewClassName());
+		text.append("()");
+		if(isInline()){
+			text.append(" {};");
+			text.append(lineDelimiter);						
+		}else {
+			text.append(";");
+			text.append(lineDelimiter);						
+		}
+		text.append("};");
+		text.append(lineDelimiter);		
 				
-	   return text.toString();
-			 		
-	   }
+		return text.toString();	 		
+	}
 		
-	   protected String constructBodyFileContent(String lineDelimiter){
-		   StringBuffer text = new StringBuffer();
-		   text.append("#include \"");
-	   text.append(getNewClassName());
-	   text.append("\"");
-	   text.append(lineDelimiter);			
-	   text.append(lineDelimiter);			
+	protected String constructBodyFileContent(String lineDelimiter){
+		StringBuffer text = new StringBuffer();
+		text.append("#include \"");
+		text.append(getCreatedClassHeaderFile().getElementName());
+		text.append("\"");
+		text.append(lineDelimiter);			
+		text.append(lineDelimiter);			
 		
-	   if(isInline())
-		   return text.toString();
-	
-	   // constructor
-	   text.append(getNewClassName());
-	   text.append("::"); 
-	   text.append(getNewClassName());
-	   text.append("()");
-	   text.append(lineDelimiter);			
-	   text.append("{};");
-		   text.append(lineDelimiter);			
-	 
-		   // destructor
-	   text.append(getNewClassName());
-	   text.append("::~"); 
-	   text.append(getNewClassName());
-	   text.append("()"); 
-	   text.append(lineDelimiter);			
-	   text.append("{};"); 
-		   text.append(lineDelimiter);
-						
-		   return text.toString();
-	   }
+		if(isInline())
+			return text.toString();
+			
+		// constructor
+		text.append(getNewClassName());
+		text.append("::"); 
+		text.append(getNewClassName());
+		text.append("()");
+		text.append(lineDelimiter);			
+		text.append("{};");
+		text.append(lineDelimiter);			
+		
+		// destructor
+		text.append(getNewClassName());
+		text.append("::~"); 
+		text.append(getNewClassName());
+		text.append("()"); 
+		text.append(lineDelimiter);			
+		text.append("{};"); 
+		text.append(lineDelimiter);				
+		return text.toString();
+	}
 	
 
 	// ------ validation --------
@@ -855,15 +877,29 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		// class name must follow the C/CPP convensions
 
 		// if class does not exist, give warning 
-//		ArrayList elementsFound = findClassElementsInProject();
-//		if(!foundInList(getBaseClassName(), elementsFound)){
-//			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.warning.BaseClassNotExists")); //$NON-NLS-1$
-//		}
+		ArrayList elementsFound = findClassElementsInProject();
+		if(!foundInList(getBaseClassName(), elementsFound)){
+			status.setWarning(NewWizardMessages.getString("NewClassWizardPage.warning.BaseClassNotExists")); //$NON-NLS-1$
+		}
 		return status;
 		
 	}
+	
+	private ICElement findInList(String name, ArrayList elements){
+		Iterator i = elements.iterator();
+		while (i.hasNext()){
+			ICElement element = (ICElement)i.next();
+			if (name.equals(element.getElementName()))
+				return element;
+		}
+		return null;
+	}
+	
 	private boolean foundInList(String name, ArrayList elements){
-		return false;
+		if(findInList(name, elements) != null)
+			return true;
+		else
+			return false;
 	}
 
 }

@@ -40,12 +40,7 @@ public class CModel extends CContainer implements ICModel {
 	}
 
 	public IWorkspace getWorkspace() {
-		try {
-			return getUnderlyingResource().getWorkspace();
-		} catch (CModelException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return getUnderlyingResource().getWorkspace();
 	}
 
 	public void copy(ICElement[] elements, ICElement[] containers, ICElement[] siblings,

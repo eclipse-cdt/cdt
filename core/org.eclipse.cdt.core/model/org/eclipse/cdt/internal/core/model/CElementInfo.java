@@ -7,10 +7,8 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IResource;
-
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.core.resources.IResource;
 
 /**
  * Holds cached structure and properties for a C element.
@@ -140,11 +138,7 @@ class CElementInfo {
 	protected boolean hasChanged () {
 		IResource r = null;
 		boolean b = false;
-		try {
-			r = getElement().getUnderlyingResource();
-		} catch (CModelException e) {
-			e.printStackTrace();
-		}
+		r = getElement().getUnderlyingResource();
 		if (r != null && r.exists()) {
 			long modif = 0;
 			switch(r.getType()) {

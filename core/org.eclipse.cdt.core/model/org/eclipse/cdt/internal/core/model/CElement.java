@@ -69,13 +69,9 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	public IPath getPath() {
-		try {
-			IResource res = getUnderlyingResource();
-			if (res != null)
-				return res.getFullPath();
-		} catch (CModelException e) {
-			e.printStackTrace();
-		}
+		IResource res = getUnderlyingResource();
+		if (res != null)
+			return res.getFullPath();
 		return new Path(getElementName());
 	}
 
@@ -84,13 +80,10 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 	
 	public boolean isReadOnly () {
-		try {
-			IResource r = getUnderlyingResource();
-			if (r != null) {
-				return r.isReadOnly();
-			}			
-		} catch (CModelException e) {
-		}
+		IResource r = getUnderlyingResource();
+		if (r != null) {
+			return r.isReadOnly();
+		}			
 		return false;
 	}
 
@@ -156,7 +149,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		fEndLine = endLine;
 	}
 
-	public IResource getUnderlyingResource() throws CModelException {
+	public IResource getUnderlyingResource() {
 		IResource res = getResource();
 		if (res == null) {
 			ICElement p = getParent();

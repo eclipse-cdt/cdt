@@ -274,7 +274,7 @@ public interface ICElement extends IAdaptable {
 	 * @exception CModelException if this element does not exist or if an
 	 *		exception occurs while accessing its underlying resource
 	 */
-	IResource getUnderlyingResource() throws CModelException;
+	IResource getUnderlyingResource();
 
 	/**
 	 * Returns the Corresponding resource for

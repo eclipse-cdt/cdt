@@ -5,7 +5,6 @@ package org.eclipse.cdt.internal.ui.cview;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
@@ -54,10 +53,7 @@ public class CViewSorter extends ViewerSorter {
 			return 40;
 		} else if (element instanceof ITranslationUnit) {
 			IResource res = null;
-			try {
-				res = ((ITranslationUnit)element).getUnderlyingResource();
-			} catch (CModelException e) {
-			}
+			res = ((ITranslationUnit)element).getUnderlyingResource();
 			if (res != null) {
 				String ext = res.getFileExtension();
 				if (ext != null) {

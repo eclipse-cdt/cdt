@@ -137,7 +137,7 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 	/**
 	 * @see ICElement
 	 */
-	public IResource getUnderlyingResource() throws CModelException {
+	public IResource getUnderlyingResource() {
 		return getParent().getUnderlyingResource();
 	}
 

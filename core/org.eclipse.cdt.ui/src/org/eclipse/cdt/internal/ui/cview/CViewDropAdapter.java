@@ -10,7 +10,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
@@ -42,7 +41,8 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+;
 
 /**
  * Implements drop behaviour for drag and drop operations
@@ -368,10 +368,7 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 		Object obj = getCurrentTarget();
 		IResource res = null;
 		if (obj instanceof ICElement) {
-			try {
-				res = ((ICElement)obj).getUnderlyingResource();
-			} catch (CModelException e) {
-			}
+			res = ((ICElement)obj).getUnderlyingResource();
 		}
 		IContainer targetResource = getActualTarget(res);
 		String[] names = (String[]) data;
@@ -392,10 +389,7 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 		Object obj = getCurrentTarget();
 		IResource res = null;
 		if (obj instanceof ICElement) {
-			try {
-				res = ((ICElement)obj).getUnderlyingResource();
-			} catch (CModelException e) {
-			}
+			res = ((ICElement)obj).getUnderlyingResource();
 		}
 		IContainer targetResource = getActualTarget(res);
 		IResource[] sources = (IResource[]) data;
@@ -443,13 +437,10 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	 */
 	protected IStatus validateTarget(Object target) {
 		if (target instanceof ICElement) {
-			try {
-				IResource r = ((ICElement)target).getUnderlyingResource();
-				if (r == null)
-					return info("Target Must Be Resource"); //$NON-NLS-1$
-				target = r;
-			} catch (CModelException e) {
-			}
+			IResource r = ((ICElement)target).getUnderlyingResource();
+			if (r == null)
+				return info("Target Must Be Resource"); //$NON-NLS-1$
+			target = r;
 		}
 		if (!(target instanceof IResource)) {
 			return info("Target Must Be Resource"); //$NON-NLS-1$

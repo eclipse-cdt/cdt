@@ -5,7 +5,6 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IFile;
@@ -47,36 +46,33 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		ICElement celem = (ICElement) element;
 		IResource res = null;
 		
-		try {
-			if (IPropertySource.class.equals(key)) {
-				if (celem instanceof IBinary) {
-					return new BinaryPropertySource((IBinary)celem);				
-				} else if (celem.getElementType() == ICElement.C_UNIT) {
-					IResource file = celem.getResource();
-					if (file != null && file instanceof IFile) {
-						return new FilePropertySource((IFile)file);
-					}
-				} else {
-					res = celem.getResource();
-					if (res != null) {
-						return new ResourcePropertySource(res);
-					}
+		if (IPropertySource.class.equals(key)) {
+			if (celem instanceof IBinary) {
+				return new BinaryPropertySource((IBinary)celem);				
+			} else if (celem.getElementType() == ICElement.C_UNIT) {
+				IResource file = celem.getResource();
+				if (file != null && file instanceof IFile) {
+					return new FilePropertySource((IFile)file);
 				}
-				return new CElementPropertySource(celem);
-			} else if (IWorkspaceRoot.class.equals(key)) {
-				 res = celem.getUnderlyingResource();
-				if (res != null)
-					return res.getWorkspace().getRoot();
-			} else if (IProject.class.equals(key)) {
+			} else {
 				res = celem.getResource();
-				if (res != null)
-					return res.getProject();
-			} else if (IResource.class.equals(key)) {
-				return celem.getResource();
-			} else if (IWorkbenchAdapter.class.equals(key)) {
-				return fgCWorkbenchAdapter;
+				if (res != null) {
+					return new ResourcePropertySource(res);
+				}
 			}
-		} catch (CModelException e) {
+			return new CElementPropertySource(celem);
+		} else if (IWorkspaceRoot.class.equals(key)) {
+			 res = celem.getUnderlyingResource();
+			if (res != null)
+				return res.getWorkspace().getRoot();
+		} else if (IProject.class.equals(key)) {
+			res = celem.getResource();
+			if (res != null)
+				return res.getProject();
+		} else if (IResource.class.equals(key)) {
+			return celem.getResource();
+		} else if (IWorkbenchAdapter.class.equals(key)) {
+			return fgCWorkbenchAdapter;
 		}
 		return null; 
 	}

@@ -37,12 +37,7 @@ public class CProject extends CContainer implements ICProject {
 	}
 
 	public IProject getProject() {
-		try {
-			return getUnderlyingResource().getProject();
-		} catch (CModelException e) {
-			e.printStackTrace();
-		}
-		return null;
+		return getUnderlyingResource().getProject();
 	}
 
 	public ICElement findElement(IPath path) throws CModelException {

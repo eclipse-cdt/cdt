@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
@@ -453,17 +454,17 @@ public class AST2Tests extends TestCase {
     
     public void testStructureTagScoping_1() throws Exception{
     	StringBuffer buffer = new StringBuffer();
-    	buffer.append( "struct A;             \n" );
-    	buffer.append( "void f(){             \n" );
-    	buffer.append( "   struct A;          \n" );
-    	buffer.append( "   struct A * a;      \n" );
-    	buffer.append( "}                     \n" );
+    	buffer.append( "struct A;             \n" ); //$NON-NLS-1$
+    	buffer.append( "void f(){             \n" ); //$NON-NLS-1$
+    	buffer.append( "   struct A;          \n" ); //$NON-NLS-1$
+    	buffer.append( "   struct A * a;      \n" ); //$NON-NLS-1$
+    	buffer.append( "}                     \n" ); //$NON-NLS-1$
     	
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
     	//struct A;
     	IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
-    	IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) decl1.getDeclSpecifier();
+    	IASTElaboratedTypeSpecifier compTypeSpec = (IASTElaboratedTypeSpecifier) decl1.getDeclSpecifier();
     	assertEquals( 0, decl1.getDeclarators().size() );
     	IASTName nameA1 = compTypeSpec.getName();
     	
@@ -478,14 +479,14 @@ public class AST2Tests extends TestCase {
     	//   struct A;
     	IASTDeclarationStatement declStatement = (IASTDeclarationStatement) compoundStatement.getStatements().get( 0 );
     	IASTSimpleDeclaration decl2 = (IASTSimpleDeclaration) declStatement.getDeclaration();
-    	compTypeSpec = (IASTCompositeTypeSpecifier) decl2.getDeclSpecifier();
+    	compTypeSpec = (IASTElaboratedTypeSpecifier) decl2.getDeclSpecifier();
     	assertEquals( 0, decl2.getDeclarators().size() );
     	IASTName nameA2 = compTypeSpec.getName();
     	
     	//   struct A * a;
     	declStatement = (IASTDeclarationStatement) compoundStatement.getStatements().get(1);
     	IASTSimpleDeclaration decl3 = (IASTSimpleDeclaration) declStatement.getDeclaration();
-    	compTypeSpec = (IASTCompositeTypeSpecifier) decl3.getDeclSpecifier();
+    	compTypeSpec = (IASTElaboratedTypeSpecifier) decl3.getDeclSpecifier();
     	IASTName nameA3 = compTypeSpec.getName();
     	IASTDeclarator dtor = (IASTDeclarator) decl3.getDeclarators().get(0);
     	IASTName namea = dtor.getName();

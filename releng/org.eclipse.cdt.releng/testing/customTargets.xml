@@ -24,7 +24,9 @@
 <!-- ===================================================================== -->
 
 <target name="assemble.org.eclipse.cdt.testing">
-	<ant antfile="${assembleScriptName}" dir="${buildDirectory}"/>
+	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
+		<property name="archiveName" value="org.eclipse.cdt.testing-${branchVersion}-${buildId}.zip"/>
+	</ant>
 </target>
 
 <!-- ===================================================================== -->

@@ -88,7 +88,7 @@
 		</ant>
 		<antcall target="tunzip"/>
 		<antcall target="tuntar"/>
-		<unzip src="${zipsdir}/org.eclipse.cdt.testing-${buildId}.zip" dest="${buildDirectory}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.testing-${branchVersion}-${buildId}.zip" dest="${buildDirectory}"/>
 		<copy todir="${buildDirectory}/eclipse/plugins/org.eclipse.test">
 			<fileset dir="../org.eclipse.test"/>
 		</copy>

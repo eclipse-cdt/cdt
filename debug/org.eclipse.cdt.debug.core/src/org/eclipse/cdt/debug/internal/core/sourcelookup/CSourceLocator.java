@@ -141,7 +141,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			if ( resource instanceof IProject )
 			{
 				if ( locations[i] instanceof CProjectSourceLocation && 
-					 ((CProjectSourceLocation)locations[i]).equals( resource ) )
+					 ((CProjectSourceLocation)locations[i]).getProject().equals( resource ) )
 				{
 					return true;
 				}

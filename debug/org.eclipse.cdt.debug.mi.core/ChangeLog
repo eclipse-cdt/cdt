@@ -1,4 +1,8 @@
 2004-11-19 Alain Magloire
+	Fix for 78816
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
+2004-11-19 Alain Magloire
 
 	Clear the confusion about sublist of stackframes.
 	PR 78611

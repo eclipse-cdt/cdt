@@ -5,10 +5,9 @@ package org.eclipse.cdt.internal.ui.cview;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
-import org.eclipse.cdt.core.model.ILibraryReference;
 
 public class CLibFilter extends ViewerFilter {
         private boolean showlib = true;

@@ -8,13 +8,12 @@ package org.eclipse.cdt.internal.ui.cview;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * The FiltersContentProvider provides the elements for use by the list dialog

@@ -8,7 +8,7 @@ package org.eclipse.cdt.internal.ui;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;

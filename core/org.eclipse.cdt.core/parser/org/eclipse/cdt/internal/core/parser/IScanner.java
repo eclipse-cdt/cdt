@@ -3,6 +3,8 @@ package org.eclipse.cdt.internal.core.parser;
 import java.io.Reader;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+
 /**
  * @author jcamelon
  *
@@ -33,4 +35,5 @@ public interface IScanner {
 	public void mapLineNumbers( boolean value );
 	public void setQuickScan(boolean qs);
 	public void setCallback(IParserCallback c);
+	public void setRequestor( ISourceElementRequestor r );
 }

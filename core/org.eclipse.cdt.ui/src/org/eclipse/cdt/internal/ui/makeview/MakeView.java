@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.ui.makeview;
  */
 
 
+import org.eclipse.cdt.core.resources.MakeUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
@@ -22,8 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.part.ViewPart;
-
-import org.eclipse.cdt.core.resources.MakeUtil;
 
 
 public class MakeView extends ViewPart {

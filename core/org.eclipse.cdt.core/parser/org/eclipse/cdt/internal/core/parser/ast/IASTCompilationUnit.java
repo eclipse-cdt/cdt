@@ -8,18 +8,15 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.dom;
+package org.eclipse.cdt.internal.core.parser.ast;
 
 /**
  * @author jcamelon
+ *
  */
-public class DOMFactory {
+public interface IASTCompilationUnit
+	extends
+		org.eclipse.cdt.core.parser.ast.IASTCompilationUnit,
+		IASTScope {
 
-	public static DOMBuilder createDOMBuilder( boolean lineNumbers )
-	{ 
-		if( lineNumbers )
-			return new LineNumberedDOMBuilder(); 
-		else
-			return new DOMBuilder(); 
-	}
 }

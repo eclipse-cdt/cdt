@@ -20,10 +20,12 @@ package org.eclipse.cdt.ui.actions;
  * state of the buttons changes.
  * <p>
  */
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.cdt.internal.ui.viewsupport.MemberFilter;
 import org.eclipse.cdt.internal.ui.viewsupport.MemberFilterAction;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -33,8 +35,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class MemberFilterActionGroup extends ActionGroup {
 	public static final int FILTER_NONPUBLIC= MemberFilter.FILTER_NONPUBLIC;

@@ -5,7 +5,7 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 

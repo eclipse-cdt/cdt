@@ -14,12 +14,12 @@
  * To change the template for this generated file go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-package org.eclipse.cdt.internal.core.pst;
-
-import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TypeInfo;
+package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo;
 
 /**
  * @author aniefer

@@ -9,12 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.ui.util.StringMatcher;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-
-import org.eclipse.cdt.internal.ui.util.StringMatcher;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * The FiltersContent provides the elements for use by the list dialog

@@ -5,7 +5,7 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;

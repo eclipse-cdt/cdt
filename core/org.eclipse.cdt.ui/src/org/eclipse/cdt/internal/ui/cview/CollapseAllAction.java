@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.help.WorkbenchHelp;
 

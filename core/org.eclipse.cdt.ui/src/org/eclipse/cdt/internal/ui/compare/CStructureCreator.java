@@ -10,8 +10,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.eclipse.swt.graphics.Image;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.parser.CStructurizer;
+import org.eclipse.cdt.internal.parser.IStructurizerCallback;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.DocumentInputStream;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.IStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
@@ -21,18 +26,10 @@ import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.compare.structuremergeviewer.IStructureCreator;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.parser.CStructurizer;
-import org.eclipse.cdt.internal.parser.IStructurizerCallback;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.DocumentInputStream;
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.swt.graphics.Image;
 /**
  * 
  */

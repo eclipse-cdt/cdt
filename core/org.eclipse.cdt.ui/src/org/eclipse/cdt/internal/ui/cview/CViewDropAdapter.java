@@ -42,7 +42,8 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+;
 
 /**
  * Implements drop behaviour for drag and drop operations

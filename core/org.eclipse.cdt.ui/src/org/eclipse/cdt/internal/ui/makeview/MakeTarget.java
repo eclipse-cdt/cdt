@@ -7,18 +7,17 @@ package org.eclipse.cdt.internal.ui.makeview;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.resources.MakeUtil;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.resources.MakeUtil;
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 
 /**

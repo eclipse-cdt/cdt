@@ -11,7 +11,7 @@
 ***********************************************************************/
 
 
-package org.eclipse.cdt.internal.core.pst;
+package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+
+import org.eclipse.cdt.internal.core.parser.ast.IPSTSymbolExtension;
 
 /**
  * @author aniefer
@@ -2032,7 +2034,7 @@ public class ParserSymbolTable {
 			_typeInfo = new TypeInfo();
 		}
 		
-		public BasicSymbol( String name, Object obj ){
+		public BasicSymbol( String name, IPSTSymbolExtension obj ){
 			super();
 			_name   = name;
 			_object = obj;
@@ -2065,8 +2067,8 @@ public class ParserSymbolTable {
 		public String getName() { return _name; }
 		public void setName(String name) { _name = name; }
 
-		public Object getCallbackExtension() { return _object; }
-		public void setCallbackExtension( Object obj ) { _object = obj; }
+		public IPSTSymbolExtension getASTNode() { return _object; }
+		public void setASTNode( IPSTSymbolExtension obj ) { _object = obj; }
 			
 		public IContainerSymbol getContainingSymbol() { return _containingScope; }
 		public void setContainingSymbol( IContainerSymbol scope ){ 
@@ -2162,7 +2164,7 @@ public class ParserSymbolTable {
 			return null;
 		}
 		private 	String 		_name;					//our name
-		private		Object 		_object;				//the object associated with us
+		private		IPSTSymbolExtension	_object;	//the object associated with us
 		private		TypeInfo	_typeInfo;				//our type info
 		private		Declaration	_containingScope;		//the scope that contains us
 		private		int 		_depth;					//how far down the scope stack we are
@@ -2297,7 +2299,7 @@ public class ParserSymbolTable {
 			super( name );
 		}
 	
-		public Declaration( String name, Object obj ){
+		public Declaration( String name, IPSTSymbolExtension obj ){
 			super( name, obj );
 		}
 		
@@ -3217,6 +3219,8 @@ public class ParserSymbolTable {
 		public static final eType t_enumerator  = new eType( 15 );
 		public static final eType t_block       = new eType( 16 );
 		public static final eType t_template    = new eType( 17 );
+		public static final eType t_asm         = new eType( 18 );
+		public static final eType t_linkage     = new eType( 19 );
 		//public static final eType t_templateParameter = new eType( 18 );
 		
 		public static class eType implements Comparable{

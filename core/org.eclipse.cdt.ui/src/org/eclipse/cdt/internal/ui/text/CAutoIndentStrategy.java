@@ -5,13 +5,11 @@ package org.eclipse.cdt.internal.ui.text;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultAutoIndentStrategy;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
-
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Auto indent strategy sensitive to brackets.

@@ -15,16 +15,12 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.jface.text.Assert;
-
-import org.eclipse.ui.IEditorInput;
-
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.IWorkingCopyManagerExtension;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.Assert;
+import org.eclipse.ui.IEditorInput;
 
 
 /**

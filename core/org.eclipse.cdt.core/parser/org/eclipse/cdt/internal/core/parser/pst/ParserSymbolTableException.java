@@ -9,7 +9,7 @@
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
-package org.eclipse.cdt.internal.core.pst;
+package org.eclipse.cdt.internal.core.parser.pst;
 
 /**
  * @author aniefer

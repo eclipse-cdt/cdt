@@ -1,7 +1,29 @@
 package org.eclipse.cdt.internal.core.dom;
 
 
-import org.eclipse.cdt.internal.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTConstructor;
+import org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
+import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTMacro;
+import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypedef;
+import org.eclipse.cdt.core.parser.ast.IASTUsageDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsageDirective;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Name;
 import org.eclipse.cdt.internal.core.parser.Token;
@@ -9,9 +31,9 @@ import org.eclipse.cdt.internal.core.parser.Token;
 /**
  * This is the parser callback that creates objects in the DOM.
  */
-public class DOMBuilder implements IParserCallback 
+public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 {
-	protected DOMBuilder()
+	public DOMBuilder()
 	{
 	}
 	
@@ -163,14 +185,15 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#inclusionBegin(java.lang.String)
 	 */
 	public Object inclusionBegin(String includeFile, int offset, int inclusionBeginOffset, boolean local) {
-		Inclusion inclusion = new Inclusion( 
-			includeFile, 
-			offset, 
-			inclusionBeginOffset, 
-			offset - inclusionBeginOffset + includeFile.length() + 1, 
-			local );
-		translationUnit.addInclusion( inclusion );
-		return inclusion;
+//		Inclusion inclusion = new Inclusion( 
+//			includeFile, 
+//			offset, 
+//			inclusionBeginOffset, 
+//			offset - inclusionBeginOffset + includeFile.length() + 1, 
+//			local );
+//		translationUnit.addInclusion( inclusion );
+//		return inclusion;
+		return null;
 	}
 
 	/**
@@ -183,18 +206,18 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#macro(java.lang.String)
 	 */
 	public Object macro(String macroName, int offset, int macroBeginOffset, int macroEndOffset) {
-		Macro macro = new Macro(  macroName, offset, macroBeginOffset, macroEndOffset - macroBeginOffset);
-		translationUnit.addMacro( macro );
-		return macro; 
+//		Macro macro = new Macro(  macroName, offset, macroBeginOffset, macroEndOffset - macroBeginOffset);
+//		translationUnit.addMacro( macro );
+		return null; 
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationBegin(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
 	public Object simpleDeclarationBegin(Object container, Token firstToken) {
-		SimpleDeclaration decl = new SimpleDeclaration((IScope)container);
+		SimpleDeclaration decl = new SimpleDeclaration( getCurrentDOMScope() );
 		if( container instanceof IAccessable )
-			decl.setAccessSpecifier(new AccessSpecifier( ((IAccessable)container).getVisibility() ));
+			decl.setAccessSpecifier(new AccessSpecifier( ((IAccessable)getCurrentDOMScope()).getVisibility() ));
 		((IOffsetable)decl).setStartingOffset( firstToken.getOffset() );
 		return decl;
 	}
@@ -206,7 +229,7 @@ public class DOMBuilder implements IParserCallback
 		SimpleDeclaration decl = (SimpleDeclaration)declaration;
 		IOffsetable offsetable = (IOffsetable)decl;
 		offsetable.setTotalLength( lastToken.getOffset() + lastToken.getLength() - offsetable.getStartingOffset());
-		decl.getOwnerScope().addDeclaration(decl);
+		getCurrentDOMScope().addDeclaration(decl);
 	}
 
 	/**
@@ -519,20 +542,20 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationBegin(java.lang.Object)
 	 */
 	public Object namespaceDefinitionBegin(Object container, Token namespace) {
-		IScope ownerScope = (IScope)container;
-		NamespaceDefinition namespaceDef = new NamespaceDefinition(ownerScope);
-		namespaceDef.setStartToken(namespace);
-		((IOffsetable)namespaceDef).setStartingOffset( namespace.getOffset() );
-		return namespaceDef;
-		
+//		IScope ownerScope = (IScope)container;
+//		NamespaceDefinition namespaceDef = new NamespaceDefinition(ownerScope);
+//		namespaceDef.setStartToken(namespace);
+//		((IOffsetable)namespaceDef).setStartingOffset( namespace.getOffset() );
+//		return namespaceDef;
+		return null;	
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationId(java.lang.Object)
 	 */
 	public void namespaceDefinitionId(Object namespace) {
-		NamespaceDefinition ns = (NamespaceDefinition)namespace;
-		ns.setName( currName );
+//		NamespaceDefinition ns = (NamespaceDefinition)namespace;
+//		ns.setName( currName );
 	}
 
 	/* (non-Javadoc)
@@ -545,26 +568,27 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#namespaceDeclarationEnd(java.lang.Object)
 	 */
 	public void namespaceDefinitionEnd(Object namespace, Token closingBrace) {
-		NamespaceDefinition ns = (NamespaceDefinition)namespace; 
-		ns.setTotalLength( closingBrace.getOffset() + closingBrace.getLength() - ns.getStartingOffset() );
-		ns.getOwnerScope().addDeclaration(ns);
+//		NamespaceDefinition ns = (NamespaceDefinition)namespace; 
+//		ns.setTotalLength( closingBrace.getOffset() + closingBrace.getLength() - ns.getStartingOffset() );
+//		ns.getOwnerScope().addDeclaration(ns);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#linkageSpecificationBegin(java.lang.Object, java.lang.String)
 	 */
 	public Object linkageSpecificationBegin(Object container, String literal) {
-		IScope scope = (IScope)container; 
-		LinkageSpecification linkage = new LinkageSpecification( scope, literal );
-		return linkage; 
+//		IScope scope = (IScope)container; 
+//		LinkageSpecification linkage = new LinkageSpecification( scope, literal );
+//		domScopes.push( linkage );
+		return null; 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#linkageSpecificationEnd(java.lang.Object)
 	 */
 	public void linkageSpecificationEnd(Object linkageSpec) {
-		LinkageSpecification linkage = (LinkageSpecification)linkageSpec;
-		linkage.getOwnerScope().addDeclaration(linkage );
+//		LinkageSpecification linkage = (LinkageSpecification)domScopes.pop();
+//		linkage.getOwnerScope().addDeclaration(linkage );
 	}
 
 	/* (non-Javadoc)
@@ -697,9 +721,9 @@ public class DOMBuilder implements IParserCallback
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#asmDefinition(java.lang.String)
 	 */
 	public void asmDefinition(Object container, String assemblyCode) {
-		IScope scope = (IScope)container;
-		ASMDefinition definition = new ASMDefinition( scope, assemblyCode );
-		scope.addDeclaration( definition );
+//		IScope scope = (IScope)container;
+//		ASMDefinition definition = new ASMDefinition( scope, assemblyCode );
+//		scope.addDeclaration( definition );
 	}
 
 	/* (non-Javadoc)
@@ -951,5 +975,292 @@ public class DOMBuilder implements IParserCallback
 //			System.out.println( "Told you so!");
 //		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
+	 */
+	public void acceptProblem(IProblem problem) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMacro(org.eclipse.cdt.core.parser.ast.IASTMacro)
+	 */
+	public void acceptMacro(IASTMacro macro) {
+		Macro m = new Macro(  macro.getName(), macro.getElementNameOffset(), macro.getElementStartingOffset(), 
+			macro.getElementEndingOffset() - macro.getElementStartingOffset());
+		translationUnit.addMacro( m );		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptVariable(org.eclipse.cdt.core.parser.ast.IASTVariable)
+	 */
+	public void acceptVariable(IASTVariable variable) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFunctionDeclaration(org.eclipse.cdt.core.parser.ast.IASTFunction)
+	 */
+	public void acceptFunctionDeclaration(IASTFunction function) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptUsageDirective(org.eclipse.cdt.core.parser.ast.IASTUsageDirective)
+	 */
+	public void acceptUsageDirective(IASTUsageDirective usageDirective) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptUsageDeclaration(org.eclipse.cdt.core.parser.ast.IASTUsageDeclaration)
+	 */
+	public void acceptUsageDeclaration(IASTUsageDeclaration usageDeclaration) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptASMDefinition(org.eclipse.cdt.core.parser.ast.IASTASMDefinition)
+	 */
+	public void acceptASMDefinition(IASTASMDefinition asmDefinition) {
+		IScope scope = getCurrentDOMScope();
+		ASMDefinition definition = new ASMDefinition( scope, asmDefinition.getBody() );
+		scope.addDeclaration( definition );		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTypedef(org.eclipse.cdt.core.parser.ast.IASTTypedef)
+	 */
+	public void acceptTypedef(IASTTypedef typedef) {
+		// TODO Auto-generated method stub
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterEnumSpecifier(org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier)
+	 */
+	public void enterEnumSpecifier(IASTEnumSpecifier enumSpec) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerator(org.eclipse.cdt.core.parser.ast.IASTEnumerator)
+	 */
+	public void acceptEnumerator(IASTEnumerator enumerator) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitEnumSpecifier(org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier)
+	 */
+	public void exitEnumSpecifier(IASTEnumSpecifier enumSpec) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterFunctionBody(org.eclipse.cdt.core.parser.ast.IASTFunction)
+	 */
+	public void enterFunctionBody(IASTFunction function) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitFunctionBody(org.eclipse.cdt.core.parser.ast.IASTFunction)
+	 */
+	public void exitFunctionBody(IASTFunction function) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCompilationUnit(org.eclipse.cdt.core.parser.ast.IASTCompilationUnit)
+	 */
+	public void enterCompilationUnit(IASTCompilationUnit compilationUnit) {
+		domScopes.push( translationUnit );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterInclusion(org.eclipse.cdt.core.parser.ast.IASTInclusion)
+	 */
+	public void enterInclusion(IASTInclusion inclusion) {
+		Inclusion i = new Inclusion( 
+			inclusion.getName(), 
+			inclusion.getElementNameOffset(), 
+			inclusion.getElementStartingOffset(), 
+			inclusion.getElementEndingOffset(), 
+			inclusion.isLocal() );
+		translationUnit.addInclusion( i );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterNamespaceDefinition(org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition)
+	 */
+	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
+		NamespaceDefinition namespaceDef = new NamespaceDefinition(getCurrentDOMScope());
+		namespaceDef.setName( namespaceDefinition.getName() ); 
+		((IOffsetable)namespaceDef).setStartingOffset( namespaceDefinition.getElementStartingOffset() );
+		if( ! namespaceDefinition.getName().equals( "" ))
+			namespaceDef.setNameOffset( namespaceDefinition.getElementNameOffset() );
+		this.domScopes.push( namespaceDef ); 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecification)
+	 */
+	public void enterClassSpecifier(IASTClassSpecification classSpecification) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterLinkageSpecification(org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification)
+	 */
+	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {
+		LinkageSpecification linkage = new LinkageSpecification( getCurrentDOMScope(), linkageSpec.getLinkageString() );
+		domScopes.push( linkage );		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterTemplateDeclaration(org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
+	 */
+	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterTemplateSpecialization(org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization)
+	 */
+	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterTemplateExplicitInstantiation(org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation)
+	 */
+	public void enterTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMethodDeclaration(org.eclipse.cdt.core.parser.ast.IASTMethod)
+	 */
+	public void acceptMethodDeclaration(IASTMethod method) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterMethodBody(org.eclipse.cdt.core.parser.ast.IASTMethod)
+	 */
+	public void enterMethodBody(IASTMethod method) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitMethodBody(org.eclipse.cdt.core.parser.ast.IASTMethod)
+	 */
+	public void exitMethodBody(IASTMethod method) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptField(org.eclipse.cdt.core.parser.ast.IASTField)
+	 */
+	public void acceptField(IASTField field) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptConstructor(org.eclipse.cdt.core.parser.ast.IASTConstructor)
+	 */
+	public void acceptConstructor(IASTConstructor constructor) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitTemplateDeclaration(org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
+	 */
+	public void exitTemplateDeclaration(IASTTemplateDeclaration declaration) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitTemplateSpecialization(org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization)
+	 */
+	public void exitTemplateSpecialization(IASTTemplateSpecialization specialization) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitTemplateExplicitInstantiation(org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation)
+	 */
+	public void exitTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitLinkageSpecification(org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification)
+	 */
+	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec) {
+		LinkageSpecification linkage = (LinkageSpecification)domScopes.pop();
+		linkage.getOwnerScope().addDeclaration(linkage );	
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecification)
+	 */
+	public void exitClassSpecifier(IASTClassSpecification classSpecification) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitNamespaceDefinition(org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition)
+	 */
+	public void exitNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
+		NamespaceDefinition definition = (NamespaceDefinition)domScopes.pop(); 
+		definition.setTotalLength( namespaceDefinition.getElementEndingOffset() - namespaceDefinition.getElementStartingOffset());
+		getCurrentDOMScope().addDeclaration( definition );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitInclusion(org.eclipse.cdt.core.parser.ast.IASTInclusion)
+	 */
+	public void exitInclusion(IASTInclusion inclusion) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitCompilationUnit(org.eclipse.cdt.core.parser.ast.IASTCompilationUnit)
+	 */
+	public void exitCompilationUnit(IASTCompilationUnit compilationUnit) {
+		domScopes.pop(); 
+	}
  
+	private ScopeStack domScopes = new ScopeStack(); 
+	
+	private IScope getCurrentDOMScope()
+	{
+		return domScopes.peek(); 
+	}
 }

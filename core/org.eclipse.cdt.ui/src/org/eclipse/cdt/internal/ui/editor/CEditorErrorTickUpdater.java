@@ -5,16 +5,14 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.util.Assert;
-
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 
 /**

@@ -5,6 +5,8 @@ package org.eclipse.cdt.internal.ui.codemanipulation;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IParent;
@@ -14,11 +16,9 @@ import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.ui.IRequiredInclude;
-import java.util.ArrayList;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;

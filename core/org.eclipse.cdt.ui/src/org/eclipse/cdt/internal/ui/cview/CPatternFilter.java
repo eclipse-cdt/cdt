@@ -6,19 +6,17 @@ package org.eclipse.cdt.internal.ui.cview;
  */
 
 import java.util.List;
-import java.util.Vector;
 import java.util.StringTokenizer;
-
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.cdt.internal.ui.util.StringMatcher;
-import org.eclipse.cdt.ui.CUIPlugin;
+import java.util.Vector;
 
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.util.StringMatcher;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 
 public class CPatternFilter extends ViewerFilter {
 	private String[] patterns;

@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui.util;
  * All Rights Reserved.
  */
 
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DropTarget;
@@ -17,8 +18,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.util.Assert;
 
 /**
  * Utility class to simplify access to some SWT resources. 

@@ -9,16 +9,15 @@ package org.eclipse.cdt.internal.ui.text;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-
 import java.util.Iterator;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.widgets.Display;
 
 
 public class HTMLTextPresenter implements DefaultInformationControl.IInformationPresenter {

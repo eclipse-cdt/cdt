@@ -5,6 +5,13 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.index.ITagEntry;
+import org.eclipse.cdt.core.index.IndexModel;
+import org.eclipse.cdt.core.index.TagFlags;
+import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
+import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Status;
@@ -17,14 +24,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-
-import org.eclipse.cdt.core.index.ITagEntry;
-import org.eclipse.cdt.core.index.IndexModel;
-import org.eclipse.cdt.core.index.TagFlags;
-import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
-import org.eclipse.cdt.ui.IFunctionSummary;
 
 public class DefaultCEditorTextHover implements ITextHover 
 {

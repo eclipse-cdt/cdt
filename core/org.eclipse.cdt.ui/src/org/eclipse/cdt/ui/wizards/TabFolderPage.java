@@ -5,15 +5,14 @@ package org.eclipse.cdt.ui.wizards;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.internal.ui.wizards.swt.MGridData;
+import org.eclipse.cdt.internal.ui.wizards.swt.MGridLayout;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
+import org.eclipse.cdt.utils.ui.swt.IValidation;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
-
-import org.eclipse.cdt.internal.ui.wizards.swt.MGridData;
-import org.eclipse.cdt.internal.ui.wizards.swt.MGridLayout;
-import org.eclipse.cdt.utils.ui.swt.IValidation;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 
 /**
  * Standard main page for a wizard that is creates a project resource.

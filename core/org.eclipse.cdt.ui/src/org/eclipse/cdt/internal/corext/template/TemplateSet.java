@@ -5,9 +5,6 @@ package org.eclipse.cdt.internal.corext.template;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.CStatusConstants;
-import org.eclipse.cdt.internal.ui.CUIException;
-import org.eclipse.cdt.internal.ui.CUIStatus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,9 +24,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
+import org.eclipse.cdt.internal.ui.CStatusConstants;
+import org.eclipse.cdt.internal.ui.CUIException;
+import org.eclipse.cdt.internal.ui.CUIStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;

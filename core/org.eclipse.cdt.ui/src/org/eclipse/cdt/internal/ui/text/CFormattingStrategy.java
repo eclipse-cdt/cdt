@@ -5,13 +5,11 @@ package org.eclipse.cdt.internal.ui.text;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.internal.formatter.CCodeFormatter;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.formatter.IFormattingStrategy;
 import org.eclipse.jface.text.source.ISourceViewer;
-
-
-import org.eclipse.cdt.internal.formatter.CCodeFormatter;
 
 
 public class CFormattingStrategy implements IFormattingStrategy {

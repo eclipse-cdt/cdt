@@ -8,19 +8,14 @@ package org.eclipse.cdt.internal.ui.compare;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.contentmergeviewer.ITokenComparator;
 import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 import org.eclipse.compare.internal.TokenComparator;
-
-
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.swt.widgets.Composite;
 
 public class CMergeViewer extends TextMergeViewer {
 	

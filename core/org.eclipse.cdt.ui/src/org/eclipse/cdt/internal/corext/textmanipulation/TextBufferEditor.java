@@ -9,16 +9,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.internal.corext.textmanipulation.TextEditNode.RootNode;
+import org.eclipse.cdt.internal.ui.CStatusConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.Assert;
-
-import org.eclipse.cdt.internal.corext.textmanipulation.TextEditNode.RootNode;
-import org.eclipse.cdt.internal.ui.CStatusConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
 /**
  * A <code>TextBufferEditor</code> manages a set of <code>TextEdit</code>s and applies
  * them as a whole to a <code>TextBuffer</code>. Added <code>TextEdit</code>s must 

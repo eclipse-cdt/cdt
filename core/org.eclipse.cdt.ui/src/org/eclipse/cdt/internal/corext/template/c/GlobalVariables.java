@@ -5,9 +5,10 @@ package org.eclipse.cdt.internal.corext.template.c;
  * All Rights Reserved.
  */
 
+import java.text.DateFormat;
+
 import org.eclipse.cdt.internal.corext.template.SimpleTemplateVariable;
 import org.eclipse.cdt.internal.corext.template.TemplateContext;
-import java.text.DateFormat;
 
 
 /**

@@ -5,13 +5,12 @@ package org.eclipse.cdt.internal.ui.util;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
@@ -22,7 +21,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.jface.util.ListenerList;
 
 

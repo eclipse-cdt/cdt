@@ -5,15 +5,14 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IAdapterFactory;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.CoreModel;
 
 public class ResourceAdapterFactory implements IAdapterFactory {
 

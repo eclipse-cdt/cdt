@@ -8,11 +8,9 @@ package org.eclipse.cdt.ui.wizards.conversion;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.wizards.CProjectWizard;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.IWorkbench;
 

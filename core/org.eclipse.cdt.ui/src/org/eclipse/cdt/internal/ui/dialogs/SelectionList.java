@@ -8,6 +8,9 @@ package org.eclipse.cdt.internal.ui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.util.StringMatcher;
+import org.eclipse.cdt.internal.ui.util.TwoArrayQuickSort;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -22,11 +25,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.jface.viewers.ILabelProvider;
-
-import org.eclipse.cdt.internal.ui.util.StringMatcher;
-import org.eclipse.cdt.internal.ui.util.TwoArrayQuickSort;
 
 /**
  * A selection widget that consists of a list and a text entry field. The list

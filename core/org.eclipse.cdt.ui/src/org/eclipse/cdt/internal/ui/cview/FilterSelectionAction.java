@@ -7,14 +7,13 @@ package org.eclipse.cdt.internal.ui.cview;
  
 import java.io.StringWriter;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 //import org.eclipse.cdt.core.model.CElementFilters;
 
 /**

@@ -5,18 +5,15 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
 import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludeOperation;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
-import java.lang.reflect.InvocationTargetException;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
@@ -26,7 +23,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;

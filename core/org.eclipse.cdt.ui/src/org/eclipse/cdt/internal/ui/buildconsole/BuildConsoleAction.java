@@ -8,11 +8,8 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.util.ResourceBundle;
 
-
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.TextViewer;
-
-
 import org.eclipse.ui.texteditor.TextEditorAction;
 
 

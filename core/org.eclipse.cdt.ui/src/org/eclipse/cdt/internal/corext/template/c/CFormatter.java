@@ -5,6 +5,10 @@ package org.eclipse.cdt.internal.corext.template.c;
  * All Rights Reserved.
  */
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Vector;
+
 import org.eclipse.cdt.internal.corext.template.ITemplateEditor;
 import org.eclipse.cdt.internal.corext.template.TemplateBuffer;
 import org.eclipse.cdt.internal.corext.template.TemplateContext;
@@ -17,10 +21,6 @@ import org.eclipse.cdt.internal.corext.textmanipulation.TextBufferEditor;
 import org.eclipse.cdt.internal.corext.textmanipulation.TextEdit;
 import org.eclipse.cdt.internal.corext.textmanipulation.TextRegion;
 import org.eclipse.cdt.internal.corext.textmanipulation.TextUtil;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Vector;
-
 import org.eclipse.core.runtime.CoreException;
 
 

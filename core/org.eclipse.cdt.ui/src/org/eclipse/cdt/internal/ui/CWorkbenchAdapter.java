@@ -5,12 +5,11 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * An imlementation of the IWorkbenchAdapter for CElements.

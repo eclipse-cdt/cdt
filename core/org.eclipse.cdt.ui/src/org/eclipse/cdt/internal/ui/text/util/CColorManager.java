@@ -5,12 +5,12 @@ package org.eclipse.cdt.internal.ui.text.util;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.internal.ui.text.IColorManager;
-import org.eclipse.cdt.internal.ui.text.IColorManagerExtension;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.text.IColorManager;
+import org.eclipse.cdt.internal.ui.text.IColorManagerExtension;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;

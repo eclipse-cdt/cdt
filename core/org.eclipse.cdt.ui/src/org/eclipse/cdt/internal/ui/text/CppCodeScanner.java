@@ -5,12 +5,12 @@ package org.eclipse.cdt.internal.ui.text;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import java.util.Map;
+
+import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;

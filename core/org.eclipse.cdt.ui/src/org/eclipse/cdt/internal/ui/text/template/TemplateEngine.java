@@ -6,6 +6,8 @@ package org.eclipse.cdt.internal.ui.text.template;
  */
 
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.Template;
 import org.eclipse.cdt.internal.corext.template.Templates;
@@ -14,8 +16,6 @@ import org.eclipse.cdt.internal.corext.template.c.CompilationUnitContextType;
 import org.eclipse.cdt.internal.corext.template.c.ICompilationUnit;
 import org.eclipse.cdt.internal.ui.text.ICCompletionProposal;
 import org.eclipse.cdt.internal.ui.text.link.LinkedPositionManager;
-import java.util.ArrayList;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;

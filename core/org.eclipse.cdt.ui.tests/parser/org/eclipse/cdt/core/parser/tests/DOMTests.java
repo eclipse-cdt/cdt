@@ -66,7 +66,7 @@ public class DOMTests extends BaseDOMTest {
 			if( i == 0 )
 				assertEquals( namespace.getName().toString(), "KingJohn" );
 			else
-				assertNull( namespace.getName() );
+				assertEquals( namespace.getName(), "" );
 			List namespaceDeclarations = namespace.getDeclarations();
 			assertEquals( namespaceDeclarations.size(), 1 );
 			SimpleDeclaration simpleDec = (SimpleDeclaration)namespaceDeclarations.get(0);

@@ -4,8 +4,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.ExpressionEvaluator;
-import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.Parser;
 
 public class ExprEvalTest extends TestCase {

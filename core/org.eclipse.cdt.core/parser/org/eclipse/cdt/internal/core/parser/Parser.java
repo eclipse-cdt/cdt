@@ -15,7 +15,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 
+import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.internal.core.model.Util;
+import org.eclipse.cdt.internal.core.parser.ast.ASTASMDefinition;
+import org.eclipse.cdt.internal.core.parser.ast.ASTCompilationUnit;
+import org.eclipse.cdt.internal.core.parser.ast.ASTLinkageSpecification;
+import org.eclipse.cdt.internal.core.parser.ast.ASTNamespaceDefinition;
+import org.eclipse.cdt.internal.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.internal.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.internal.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.internal.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.internal.core.parser.ast.IASTScope;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
 
 /**
  * This is our first implementation of the IParser interface, serving as a parser for
@@ -33,6 +48,8 @@ public class Parser implements IParser {
 	private boolean quickParse = false;				// are we doing the high-level parse, or an in depth parse? 
 	private boolean parsePassed = true;				// did the parse pass?
 	private boolean cppNature = true;				// true for C++, false for C
+	private ISourceElementRequestor requestor = null; // new callback mechanism
+	private ParserSymbolTable pst = new ParserSymbolTable(); // symbol table 
 	
 	/**
 	 * This is the single entry point for setting parsePassed to 
@@ -59,6 +76,8 @@ public class Parser implements IParser {
 	public Parser(IScanner s, IParserCallback c, boolean quick) {
 		callback = c;
 		scanner = s;
+		if( c instanceof ISourceElementRequestor )
+			setRequestor( (ISourceElementRequestor)c );
 		quickParse = quick;
 		scanner.setQuickScan(quick);
 		scanner.setCallback(c);
@@ -159,13 +178,17 @@ c, quickParse);
 	protected void translationUnit()  {
 		try { callback.setParser( this ); } catch( Exception e) {}
 		Object translationUnit = null;
-		try{ translationUnit = callback.translationUnitBegin();} catch( Exception e ) {}
+		try{ translationUnit = callback.translationUnitBegin();} catch( Exception e ) {}		
+		
+		IASTCompilationUnit compilationUnit = new ASTCompilationUnit( pst.getCompilationUnit() );  
+		requestor.enterCompilationUnit( compilationUnit );
+		
 		Token lastBacktrack = null;
 		Token checkToken;
 		while (true) {
 			try {
 				checkToken = LA(1);
-				declaration( translationUnit );
+				declaration( translationUnit, compilationUnit );
 				if( LA(1) == checkToken )
 					errorHandling();
 			} catch (EndOfFile e) {
@@ -195,6 +218,7 @@ c, quickParse);
 			}
 		}
 		try{ callback.translationUnitEnd(translationUnit);} catch( Exception e ) {}
+		requestor.exitCompilationUnit( compilationUnit );
 	}
 
 	/**
@@ -325,12 +349,19 @@ c, quickParse);
 		if( LT(1) != Token.tSTRING )
 			throw backtrack;
 
-		Object linkageSpec = null; 
-		try{ linkageSpec = callback.linkageSpecificationBegin( container, consume( Token.tSTRING ).getImage() );} catch( Exception e ) {}
-
+		Object linkageSpec = null;
+		Token spec = consume( Token.tSTRING ); 
+		try{ linkageSpec = callback.linkageSpecificationBegin( container, spec.getImage() );} catch( Exception e ) {}
+		
 		if( LT(1) == Token.tLBRACE )
-		{
-			consume(Token.tLBRACE); 
+		{	
+			consume(Token.tLBRACE);
+		
+			IContainerSymbol symbol = pst.newContainerSymbol("", ParserSymbolTable.TypeInfo.t_linkage );
+			IASTLinkageSpecification linkage = new ASTLinkageSpecification( symbol, spec.getImage() );
+		
+			requestor.enterLinkageSpecification( linkage );
+			 
 			linkageDeclarationLoop:
 			while (LT(1) != Token.tRBRACE) {
 				Token checkToken = LA(1);
@@ -341,7 +372,7 @@ c, quickParse);
 					default:
 						try
 						{
-							declaration(linkageSpec);
+							declaration(linkageSpec, linkage);
 						}
 						catch( Backtrack bt )
 						{
@@ -356,6 +387,7 @@ c, quickParse);
 			// consume the }
 			consume();
 			try{ callback.linkageSpecificationEnd( linkageSpec );} catch( Exception e ) {}
+			requestor.exitLinkageSpecification( linkage );
 		}
 		else // single declaration
 		{
@@ -525,6 +557,11 @@ c, quickParse);
 		}
 	}
 	
+	
+	protected void declaration( Object container ) throws Backtrack
+	{
+		declaration( container, null );
+	}
 	/**
 	 * The most abstract construct within a translationUnit : a declaration.  
 	 * 
@@ -548,20 +585,38 @@ c, quickParse);
 	 * @param container		IParserCallback object which serves as the owner scope for this declaration.  
 	 * @throws Backtrack	request a backtrack
 	 */
-	protected void declaration( Object container ) throws Backtrack {
+	protected void declaration( Object container, IASTScope scope ) throws Backtrack {
 		switch (LT(1)) {
 			case Token.t_asm:
-				consume( Token.t_asm );
+				Token first = consume( Token.t_asm );
 				consume( Token.tLPAREN );
 				String assembly = consume( Token.tSTRING ).getImage();
 				consume( Token.tRPAREN ); 
-				consume( Token.tSEMI );
+				Token last = consume( Token.tSEMI );
+				
+				IContainerSymbol containerSymbol = (IContainerSymbol)scope.getSymbol();
+				
+				ISymbol asmSymbol = pst.newSymbol( "", ParserSymbolTable.TypeInfo.t_asm );
+				IASTASMDefinition asmDefinition = new ASTASMDefinition( asmSymbol, assembly );
+				asmSymbol.setASTNode( asmDefinition );
+				
+				try {
+					containerSymbol.addSymbol(asmSymbol);
+				} catch (ParserSymbolTableException e1) {
+					//?
+				}
+				
+				asmDefinition.setStartingOffset( first.getOffset() );
+				asmDefinition.setEndingOffset( last.getOffset() + 1 );
+				
 				// if we made it this far, then we have all we need 
 				// do the callback
 				try{ callback.asmDefinition( container, assembly );} catch( Exception e ) {}
-				return; 
+				
+				requestor.acceptASMDefinition( asmDefinition );
+				return;
 			case Token.t_namespace:
-				namespaceDefinition( container );
+				namespaceDefinition( container, scope);
 				return; 
 			case Token.t_using:
 				usingClause( container );
@@ -602,32 +657,46 @@ c, quickParse);
 	 * @throws Backtrack	request a backtrack
 
 	 */	
-	protected void namespaceDefinition( Object container ) throws Backtrack
+	protected void namespaceDefinition( Object container, IASTScope scope ) throws Backtrack
 	{
 		Object namespace = null;
-		try{ namespace = callback.namespaceDefinitionBegin( container, consume( Token.t_namespace) );} catch( Exception e ) {}
+		Token first = consume( Token.t_namespace );
+		try{ namespace = callback.namespaceDefinitionBegin( container, first );} catch( Exception e ) {}
 
+		Token identifier = null; 
 		// optional name 		
 		if( LT(1) == Token.tIDENTIFIER )
 		{
-			name();
+			identifier = identifier();
 			try{ callback.namespaceDefinitionId( namespace );} catch( Exception e ) {}
 		}
 	
 		if( LT(1) == Token.tLBRACE )
 		{
 			consume(); 
+			
+			IContainerSymbol namespaceSymbol = null; 
+			
+			String name = identifier == null ? "" : identifier.getImage();
+			pst.newContainerSymbol( name, ParserSymbolTable.TypeInfo.t_namespace );
+			IASTNamespaceDefinition namespaceDefinition = new ASTNamespaceDefinition( namespaceSymbol, name );
+			namespaceDefinition.setStartingOffset( first.getOffset() ); 
+			if( identifier != null )
+				namespaceDefinition.setNameOffset( identifier.getOffset() );
+			
+			requestor.enterNamespaceDefinition( namespaceDefinition );
+			
 			namepsaceDeclarationLoop:
 			while (LT(1) != Token.tRBRACE) {
 				Token checkToken = LA(1);
 				switch (LT(1)) {
 					case Token.tRBRACE:
-						consume(Token.tRBRACE);
+						//consume(Token.tRBRACE);
 						break namepsaceDeclarationLoop;
 					default:
 						try
 						{
-							declaration(namespace);
+							declaration(namespace, namespaceDefinition);
 						}
 						catch( Backtrack bt )
 						{
@@ -641,7 +710,11 @@ c, quickParse);
 			}
 			// consume the }
 			
-			try{ callback.namespaceDefinitionEnd( namespace, consume( Token.tRBRACE ));} catch( Exception e ) {}
+			Token last = consume( Token.tRBRACE ); 
+			try{ callback.namespaceDefinitionEnd( namespace, last);} catch( Exception e ) {}
+			
+			namespaceDefinition.setEndingOffset( last.getOffset() + last.getLength());
+			requestor.exitNamespaceDefinition( namespaceDefinition );
 		}
 		else
 		{
@@ -1150,13 +1223,14 @@ c, quickParse);
 	 * 
 	 * @throws Backtrack	request a backtrack
 	 */
-	protected void identifier() throws Backtrack {
+	protected Token identifier() throws Backtrack {
 		Token first = consume(Token.tIDENTIFIER); // throws backtrack if its not that
 		try
 		{ 
 			callback.nameBegin(first);
 			callback.nameEnd(first);
 		} catch( Exception e ) {}
+		return first;
 	}
 
 	/**
@@ -3048,4 +3122,13 @@ c, quickParse);
 		return firstErrorOffset;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IParser#setRequestor(org.eclipse.cdt.core.parser.ISourceElementRequestor)
+	 */
+	public void setRequestor(ISourceElementRequestor r) {
+		requestor = r;
+		if( scanner != null )
+			scanner.setRequestor(r);
+	}
 }

@@ -5,10 +5,9 @@ package org.eclipse.cdt.internal.ui.cview;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionProviderAction;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * The ShowLibrariesAction is the class that adds the filter views to a PackagesView.

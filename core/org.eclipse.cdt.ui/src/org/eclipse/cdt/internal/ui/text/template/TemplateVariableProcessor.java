@@ -6,14 +6,14 @@ package org.eclipse.cdt.internal.ui.text.template;
  */
 
 
-import org.eclipse.cdt.internal.corext.template.ContextType;
-import org.eclipse.cdt.internal.corext.template.TemplateVariable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.corext.template.ContextType;
+import org.eclipse.cdt.internal.corext.template.TemplateVariable;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;

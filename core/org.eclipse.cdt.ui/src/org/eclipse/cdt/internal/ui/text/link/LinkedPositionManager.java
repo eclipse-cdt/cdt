@@ -5,13 +5,12 @@ package org.eclipse.cdt.internal.ui.text.link;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;

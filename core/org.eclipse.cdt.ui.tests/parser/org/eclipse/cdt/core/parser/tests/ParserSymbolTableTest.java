@@ -17,17 +17,18 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.internal.core.pst.IContainerSymbol;
-import org.eclipse.cdt.internal.core.pst.IDerivableContainerSymbol;
-import org.eclipse.cdt.internal.core.pst.IParameterizedSymbol;
-import org.eclipse.cdt.internal.core.pst.ISymbol;
-import org.eclipse.cdt.internal.core.pst.ParserSymbolTable;
-import org.eclipse.cdt.internal.core.pst.ParserSymbolTableException;
-//import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.Declaration;
-import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.Mark;
-import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TypeInfo;
-import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TypeInfo.PtrOp;
-import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TemplateInstance;
+import org.eclipse.cdt.internal.core.parser.ast.ASTCompilationUnit;
+import org.eclipse.cdt.internal.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Mark;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo.PtrOp;
 
 
 /**
@@ -102,16 +103,16 @@ public class ParserSymbolTableTest extends TestCase {
 	public void testSimpleSetGetObject() throws Exception{
 		newTable();
 		
-		ISymbol x = table.new Declaration("x");
+		IContainerSymbol x = table.new Declaration("x");
 		
-		Object obj = new Object();
-		x.setCallbackExtension( obj );
+		IASTCompilationUnit obj = new ASTCompilationUnit( x );
+		x.setASTNode( obj );
 				
 		table.getCompilationUnit().addSymbol( x );
 		
 		ISymbol look = table.getCompilationUnit().Lookup( "x" );
 		
-		assertEquals( look.getCallbackExtension(), obj );
+		assertEquals( look.getASTNode(), obj );
 	}
 	
 	/**

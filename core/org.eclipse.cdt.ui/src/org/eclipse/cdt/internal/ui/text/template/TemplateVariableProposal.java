@@ -6,10 +6,6 @@ package org.eclipse.cdt.internal.ui.text.template;
  */
 
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.cdt.internal.corext.template.TemplateMessages;
 import org.eclipse.cdt.internal.corext.template.TemplateVariable;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -19,6 +15,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Shell;
 
 
 /**

@@ -5,15 +5,13 @@ package org.eclipse.cdt.internal.ui.wizards.dialogfields;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.internal.ui.wizards.swt.MGridData;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.jface.util.Assert;
-
-import org.eclipse.cdt.internal.ui.wizards.swt.MGridData;
 
 public class DialogField {
 

@@ -5,6 +5,11 @@ package org.eclipse.cdt.ui.wizards;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.cdt.utils.ui.controls.RadioButtonsArea;
+import org.eclipse.cdt.utils.ui.swt.IValidation;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -25,12 +30,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.utils.ui.swt.IValidation;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.cdt.utils.ui.controls.RadioButtonsArea;
 
 
 public class SettingsBlock implements IWizardTab {

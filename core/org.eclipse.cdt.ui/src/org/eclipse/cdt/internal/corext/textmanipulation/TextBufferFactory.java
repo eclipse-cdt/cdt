@@ -5,20 +5,14 @@ package org.eclipse.cdt.internal.corext.textmanipulation;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.internal.ui.CStatusConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.util.Assert;
-
+import org.eclipse.cdt.internal.ui.CStatusConstants;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,7 +20,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 

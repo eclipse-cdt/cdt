@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui.wizards;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -14,8 +15,6 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 public class OpenNewFolderWizardAction extends Action implements IWorkbenchWindowActionDelegate {
 

@@ -5,7 +5,6 @@ package org.eclipse.cdt.internal.ui.util;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.core.model.ICElement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,13 +12,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Item;
-
-import org.eclipse.jface.viewers.ILabelProvider;
 
 
 /**

@@ -7,7 +7,6 @@ package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;

@@ -5,7 +5,8 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 

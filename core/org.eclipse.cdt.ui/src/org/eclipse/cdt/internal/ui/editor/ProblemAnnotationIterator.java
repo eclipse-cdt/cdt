@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.ui.editor;
  */
 
 import java.util.Iterator;
+
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 

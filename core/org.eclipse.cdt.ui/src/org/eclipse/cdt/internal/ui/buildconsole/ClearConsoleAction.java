@@ -9,7 +9,6 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.Action;
-
 import org.eclipse.ui.help.WorkbenchHelp;
 
 

@@ -24,11 +24,11 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
 import org.eclipse.cdt.internal.core.dom.ClassKey;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
-import org.eclipse.cdt.internal.core.dom.DOMFactory;
 import org.eclipse.cdt.internal.core.dom.DeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.Declaration;
 import org.eclipse.cdt.internal.core.dom.Declarator;
@@ -48,7 +48,6 @@ import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
-import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.Name;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.core.resources.IProject;
@@ -66,7 +65,7 @@ public class CModelBuilder {
 	public Map parse(boolean requiresLineNumbers) throws Exception {
 		// Note - if a CModel client wishes to have a CModel with valid line numbers
 		// DOMFactory.createDOMBuilder should be given the parameter 'true'
-		DOMBuilder domBuilder = DOMFactory.createDOMBuilder( requiresLineNumbers ); 
+		DOMBuilder domBuilder = new DOMBuilder();  
 		String code = translationUnit.getBuffer().getContents();
 		IParser parser = new Parser(code, domBuilder, true);
 		parser.mapLineNumbers(requiresLineNumbers);
@@ -283,12 +282,12 @@ public class CModelBuilder {
 		parent.addChild((ICElement)element);
 		// set element position
 		if(nsDef.getName() != null){
-			element.setIdPos(nsDef.getName().getStartOffset(), nsDef.getName().length());
+			element.setIdPos(nsDef.getNameOffset(), nsDef.getName().length());
 		}else{
-			element.setIdPos(nsDef.getStartToken().getOffset(), nsDef.getStartToken().getLength());
+			element.setIdPos(nsDef.getStartingOffset(), new String( "namespace").length());
 		}
 		element.setPos(nsDef.getStartingOffset(), nsDef.getTotalLength());
-		element.setTypeName(nsDef.getStartToken().getImage());
+		element.setTypeName(new String( "namespace"));
 		// set the element lines
 		element.setLines(nsDef.getTopLine(), nsDef.getBottomLine());
 		

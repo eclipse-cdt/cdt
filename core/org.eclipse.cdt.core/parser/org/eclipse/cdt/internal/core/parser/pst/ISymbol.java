@@ -8,13 +8,14 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.pst;
+package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TypeInfo;
-import org.eclipse.cdt.internal.core.pst.ParserSymbolTable.TemplateInstance;
+import org.eclipse.cdt.internal.core.parser.ast.IPSTSymbolExtension;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo;
 /**
  * @author jcamelon
  *
@@ -25,8 +26,8 @@ public interface ISymbol {
 	
 	public Object clone();
 		
-	public Object getCallbackExtension(); 
-	public void setCallbackExtension( Object obj );
+	public IPSTSymbolExtension getASTNode(); 
+	public void setASTNode( IPSTSymbolExtension obj );
 
 	public String getName();
 	

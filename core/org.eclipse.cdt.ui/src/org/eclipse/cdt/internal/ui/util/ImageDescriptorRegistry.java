@@ -8,11 +8,10 @@ package org.eclipse.cdt.internal.ui.util;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * A registry that maps <code>ImageDescriptors</code> to <code>Image</code>.

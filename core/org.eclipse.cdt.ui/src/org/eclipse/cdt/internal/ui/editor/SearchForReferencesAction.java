@@ -5,13 +5,13 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -19,7 +19,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-//import org.eclipse.search.internal.core.text.TextSearchEngine;
 import org.eclipse.search.internal.core.text.TextSearchScope;
 import org.eclipse.search.internal.ui.text.TextSearchOperation;
 import org.eclipse.search.internal.ui.text.TextSearchResultCollector;

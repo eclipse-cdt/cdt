@@ -6,6 +6,9 @@ package org.eclipse.cdt.internal.ui.editor;
  */
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.index.ITagEntry;
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.index.TagFlags;
@@ -14,13 +17,6 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -31,6 +27,8 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 

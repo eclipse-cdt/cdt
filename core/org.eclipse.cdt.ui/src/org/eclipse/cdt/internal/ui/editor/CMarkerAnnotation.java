@@ -8,6 +8,7 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -18,8 +19,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
-
-import org.eclipse.cdt.core.model.ICModelMarker;
 
 
 public class CMarkerAnnotation extends MarkerAnnotation implements IProblemAnnotation {		

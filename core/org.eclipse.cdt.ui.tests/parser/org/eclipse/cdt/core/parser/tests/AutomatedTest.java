@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 
-import org.eclipse.cdt.internal.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.core.runtime.Path;
 

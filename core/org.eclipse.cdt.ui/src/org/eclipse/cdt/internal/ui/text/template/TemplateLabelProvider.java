@@ -5,12 +5,11 @@ package org.eclipse.cdt.internal.ui.text.template;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.cdt.internal.corext.template.Template;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.swt.graphics.Image;
 
 
 public class TemplateLabelProvider implements ITableLabelProvider {

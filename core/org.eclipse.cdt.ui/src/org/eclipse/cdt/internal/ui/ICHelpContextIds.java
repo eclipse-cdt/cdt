@@ -1,6 +1,6 @@
 package org.eclipse.cdt.internal.ui;
 
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.

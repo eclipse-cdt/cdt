@@ -5,17 +5,17 @@ package org.eclipse.cdt.internal.corext.template;
  * All Rights Reserved.
  */
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
+
 import org.eclipse.cdt.internal.corext.textmanipulation.MultiTextEdit;
 import org.eclipse.cdt.internal.corext.textmanipulation.NopTextEdit;
 import org.eclipse.cdt.internal.corext.textmanipulation.SimpleTextEdit;
 import org.eclipse.cdt.internal.corext.textmanipulation.TextBuffer;
 import org.eclipse.cdt.internal.corext.textmanipulation.TextBufferEditor;
 import org.eclipse.cdt.internal.corext.textmanipulation.TextEdit;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 
 

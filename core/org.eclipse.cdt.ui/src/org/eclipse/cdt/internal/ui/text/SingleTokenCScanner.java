@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.ui.text;
  */
 
 import java.util.List;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.IToken;

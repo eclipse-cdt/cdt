@@ -5,14 +5,12 @@ package org.eclipse.cdt.internal.corext.template;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import java.io.File;
 import java.io.InputStream;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.jface.dialogs.ErrorDialog;
 
 /**

@@ -7,6 +7,7 @@ package org.eclipse.cdt.internal.ui.makeview;
 
 import java.util.Hashtable;
 import java.util.Map;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;

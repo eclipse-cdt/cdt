@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import org.eclipse.cdt.core.parser.IParser;
+
 public interface IParserCallback {
 
 	public void setParser( IParser parser );

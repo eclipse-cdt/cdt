@@ -5,15 +5,14 @@ package org.eclipse.cdt.internal.ui.makeview;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.resources.MakeUtil;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.core.resources.MakeUtil;
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 
 public class MakeTargetAction extends Action  {

@@ -32,7 +32,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
-import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTObjectMacro;
 
 /**
  * @author dsteffle
@@ -170,28 +169,28 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	private void mergeNode(ASTNode node) {
 		addRoot(node);
 		
-		if (node instanceof ASTObjectMacro)
-			addRoot(((ASTObjectMacro)node).getName());
+		if (node instanceof IASTPreprocessorMacroDefinition )
+			addRoot(((IASTPreprocessorMacroDefinition)node).getName());
 	}
 	
 	private void mergeMacros(IASTPreprocessorMacroDefinition[] macros) {
 		for(int i=0; i<macros.length; i++) {
 			if (macros[i] instanceof ASTNode)
-			mergeNode((ASTNode)macros[i]);
+			   mergeNode((ASTNode)macros[i]);
 		}
 	}
 	
 	private void mergePreprocessorProblems(IASTProblem[] problems) {
 		for(int i=0; i<problems.length; i++) {
 			if (problems[i] instanceof ASTNode)
-			mergeNode((ASTNode)problems[i]);
+			   mergeNode((ASTNode)problems[i]);
 		}
 	}
 
 	private void mergeIncludeDirectives(IASTPreprocessorIncludeStatement[] includes) {
 		for(int i=0; i<includes.length; i++) {
 			if (includes[i] instanceof ASTNode)
-			mergeNode((ASTNode)includes[i]);
+			   mergeNode((ASTNode)includes[i]);
 		}
 	}
 	

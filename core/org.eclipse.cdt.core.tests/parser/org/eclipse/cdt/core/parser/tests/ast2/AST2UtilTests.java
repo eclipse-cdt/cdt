@@ -132,7 +132,7 @@ public class AST2UtilTests extends AST2BaseTest {
 		
 		// verify types
 		isTypeEqual( ((IASTTypeIdExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)d[0]).getDeclarators()[0].getInitializer()).getExpression()).getTypeId(), "int"); //$NON-NLS-1$
-		isTypeEqual( ((IASTTypeIdExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)d[2]).getBody()).getStatements()[0]).getReturnValue()).getTypeId(), "union"); //$NON-NLS-1$
+		isTypeEqual( ((IASTTypeIdExpression)((IASTReturnStatement)((IASTCompoundStatement)((IASTFunctionDefinition)d[2]).getBody()).getStatements()[0]).getReturnValue()).getTypeId(), "union Squaw"); //$NON-NLS-1$
 		isTypeEqual( ((IASTCastExpression)((IASTInitializerExpression)((IASTSimpleDeclaration)d[6]).getDeclarators()[0].getInitializer()).getExpression()).getTypeId() , "short"); //$NON-NLS-1$
 	}
 	

@@ -29,8 +29,10 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTTypeId;
 import org.eclipse.cdt.internal.core.dom.parser.c.CExternalFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CExternalVariable;
+import org.eclipse.cdt.internal.core.dom.parser.c.CStructure;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
 
 /**
@@ -202,6 +204,14 @@ public class ASTTypeUtil {
 				}
 			} catch (DOMException e) {}
 			
+			if (type instanceof CStructure) {
+				result.append(SPACE);
+				result.append(((CStructure)type).getName());
+			}
+			if (type instanceof CPPClassType) {
+				result.append(SPACE);
+				result.append(((CPPClassType)type).getName());
+			}
 		} else if (type instanceof ICPPReferenceType) {
 			result.append(Keywords.cpAMPER);
 		} else if (type instanceof ICPPTemplateTypeParameter) {

@@ -6,14 +6,11 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
-
-
 /**
  * 
  * Represents a MI command.
  */
-public class MICommand extends Command
-{
+public class MICommand extends Command {
 	final String[] empty = new String[0];
 	String[] options = empty;
 	String[] parameters = empty;
@@ -42,7 +39,7 @@ public class MICommand extends Command
 	public String getOperation() {
 		return operation;
 	}
-	
+
 	/**
 	 * Returns an array of command's options. An empty collection is 
 	 * returned if there are no options.
@@ -56,7 +53,7 @@ public class MICommand extends Command
 	public void setOptions(String[] opt) {
 		options = opt;
 	}
-	
+
 	/**
 	 * Returns an array of command's parameters. An empty collection is 
 	 * returned if there are no parameters.
@@ -71,24 +68,31 @@ public class MICommand extends Command
 		parameters = p;
 	}
 
-	public String toString() {
-		String command =  getToken() + getOperation(); 
+	protected String optionsToString() {
+		StringBuffer sb = new StringBuffer();
 		if (options != null && options.length > 0) {
 			for (int i = 0; i < options.length; i++) {
-				if (options[i].indexOf('\t') != -1 ||
-					options[i].indexOf(' ') != -1) {
-					command += " \"" + options[i] + "\"";
+				// If the option contains a space according to
+				// GDB/MI spec we must surround it with double quotes.
+				if (options[i].indexOf('\t') != -1 || options[i].indexOf(' ') != -1) {
+					sb.append(' ').append('"').append(options[i]).append('"');
 				} else {
-					command += " " + options[i];
+					sb.append(' ').append(options[i]);
 				}
 			}
 		}
+		return sb.toString().trim();
+	}
+
+	protected String parametersToString() {
+		StringBuffer buffer = new StringBuffer();
 		if (parameters != null && parameters.length > 0) {
-			// Add a "--" separator if a parameter starts with "-"
+			// According to GDB/MI spec
+			// Add a "--" separator if any parameters start with "-"
 			if (options != null && options.length > 0) {
 				for (int i = 0; i < parameters.length; i++) {
 					if (parameters[i].startsWith("-")) {
-						command += " --";
+						buffer.append('-').append('-');
 						break;
 					}
 				}
@@ -106,19 +110,33 @@ public class MICommand extends Command
 					}
 					sb.append(c);
 				}
-				
+
 				// If the string contains spaces instead of escaping
 				// surround the parameter with double quotes.
 				if (containsWhitespace(param)) {
 					sb.insert(0, '"');
 					sb.append('"');
 				}
-				command += " " + sb.toString();
+				buffer.append(' ').append(sb);
 			}
 		}
-		return command + "\n";
+		return buffer.toString().trim();
 	}
-	
+
+	public String toString() {
+		StringBuffer command = new StringBuffer(getToken() + getOperation());
+		String opt = optionsToString();
+		if (opt.length() > 0) {
+			command.append(' ').append(opt);
+		}
+		String p = parametersToString();
+		if (p.length() > 0) {
+			command.append(' ').append(p);
+		}
+		command.append('\n');
+		return command.toString();
+	}
+
 	boolean containsWhitespace(String s) {
 		for (int i = 0; i < s.length(); i++) {
 			if (Character.isWhitespace(s.charAt(i))) {

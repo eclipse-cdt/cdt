@@ -1,3 +1,9 @@
+2005-03-23 Vladimir Hirsl
+	Moved ConsoleOutputSniffer from make.core plugin. 
+	Added minimal console parser interface.
+	+ src/org/eclipse/cdt/core/IConsoleParser.java
+	+ src/org/eclipse/cdt/internal/core/ConsoleOutputSniffer.java
+	
 2005-03-19 Alain Magloire
 	PR 87336: Did not check if the resource exists.
 	* model/org/eclipse/cdt/internal/core/model/Archive.java

@@ -13,6 +13,7 @@ package org.eclipse.cdt.make.internal.core.scannerconfig;
 import java.io.OutputStream;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
+import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;

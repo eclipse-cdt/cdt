@@ -8,15 +8,16 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.make.internal.core.scannerconfig;
+package org.eclipse.cdt.internal.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.eclipse.cdt.make.core.scannerconfig.*;
+import org.eclipse.cdt.core.IConsoleParser;
+
 
 /**
- * Intercepts an output to console and forwards it to line parsers for processing
+ * Intercepts an output to console and forwards it to console parsers for processing
  * 
  * @author vhirsl
  */
@@ -117,13 +118,13 @@ public class ConsoleOutputSniffer {
 	private int nOpens = 0;
 	private OutputStream consoleOutputStream;
 	private OutputStream consoleErrorStream;
-	private IScannerInfoConsoleParser[] parsers;
+	private IConsoleParser[] parsers;
 	
-	public ConsoleOutputSniffer(IScannerInfoConsoleParser[] parsers) {
+	public ConsoleOutputSniffer(IConsoleParser[] parsers) {
 		this.parsers = parsers;
 	}
 	
-	public ConsoleOutputSniffer(OutputStream outputStream, OutputStream errorStream, IScannerInfoConsoleParser[] parsers) {
+	public ConsoleOutputSniffer(OutputStream outputStream, OutputStream errorStream, IConsoleParser[] parsers) {
 		this(parsers);
 		this.consoleOutputStream = outputStream;
 		this.consoleErrorStream = errorStream;

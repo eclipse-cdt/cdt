@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
+import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -19,7 +20,7 @@ import org.eclipse.core.runtime.IPath;
  * 
  * @author vhirsl
  */
-public interface IScannerInfoConsoleParser {
+public interface IScannerInfoConsoleParser extends IConsoleParser {
 	/**
 	 * One time initialization of a console parser.
 	 * 
@@ -30,17 +31,5 @@ public interface IScannerInfoConsoleParser {
 	 */
 	public void startup(IProject project, IPath workingDirectory,
             			IScannerInfoCollector collector, IMarkerGenerator markerGenerator);
-	
-	/**
-	 * Parse one line of output.
-	 * 
-	 * @param line
-	 * @return true if scanner info entry was found in the line
-	 */
-	public boolean processLine(String line);
-	
-	/**
-	 * Optional finalization of a console parser.
-	 */
-	public void shutdown();
+
 }

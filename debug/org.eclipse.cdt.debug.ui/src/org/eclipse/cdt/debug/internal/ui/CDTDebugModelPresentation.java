@@ -574,7 +574,9 @@ public class CDTDebugModelPresentation extends LabelProvider
 			}
 			if ( !((ICVariable)var).isEnabled() )
 				label.append( "<disabled> " );
-			label.append( var.getName() );
+			String name = var.getName();
+			if ( name != null )
+				label.append( name.trim() );
 			IValue value = var.getValue();
 			if ( value instanceof ICValue && value.getValueString() != null )
 			{

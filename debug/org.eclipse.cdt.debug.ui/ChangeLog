@@ -1,3 +1,7 @@
+2003-07-22 Mikhail Khodjaiants
+	Check if the value that getName returns is not null.
+	* CDTDebugModelPresentation.java
+
 2003-07-17 Mikhail Khodjaiants
 	Automatically update the list of source locations when the list of the referenced 
 	projects is modified.

@@ -1,3 +1,6 @@
+2003-04-06 Andrew Niefer
+	Added ParserSymbolTableTest::testOverloadRanking()
+
 2003-04-04 Alain Magloire
 	* src/org/eclipse/cdt/testplugin/util/VerifyDialog.java:
 	Remove some warnings.

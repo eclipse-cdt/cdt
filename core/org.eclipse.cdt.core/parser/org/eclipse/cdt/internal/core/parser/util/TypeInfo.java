@@ -96,9 +96,9 @@ public class TypeInfo{
 	// none		< const volatile
 	// const	< const volatile
 	// volatile < const volatile
-	public static final int cvConst 			= 1;
-	public static final int cvVolatile 		= 2;
-	public static final int cvConstVolatile 	= 4;
+	public static final int cvConst 			= 2;
+	public static final int cvVolatile 		= 3;
+	public static final int cvConstVolatile 	= 5;
 	
 		// Convenience methods
 	public void setBit(boolean b, int mask){
@@ -128,6 +128,14 @@ public class TypeInfo{
 	
 	public boolean isType( int type ){
 		return isType( type, 0 ); 
+	}
+	
+	public int getTypeInfo(){
+		return _typeInfo;
+	}
+	
+	public void setTypeInfo( int typeInfo ){
+		_typeInfo = typeInfo;
 	}
 	
 	/**
@@ -306,6 +314,24 @@ public class TypeInfo{
 	 */
 	public boolean canHold( TypeInfo type ){
 		return getType() >= type.getType();	
+	}
+	
+	public boolean equals( Object t ){
+		if( t == null || !(t instanceof TypeInfo) ){
+			return false;
+		}
+		
+		TypeInfo type = (TypeInfo)t;
+		
+		boolean result = ( _typeInfo == type._typeInfo );
+		result &= ( _typeDeclaration == type._typeDeclaration );
+		result &= ( _cvQualifier == type._cvQualifier );
+		
+		String op1 = ( _ptrOperator != null && _ptrOperator.equals("") ) ? null : _ptrOperator;
+		String op2 = ( type._ptrOperator != null && type._ptrOperator.equals("") ) ? null : type._ptrOperator;
+		result &= (( op1 != null && op2 != null && op1.equals( op2 ) ) || op1 == op2 );
+		
+		return result;
 	}
 	
 	private int 		 _typeInfo = 0;

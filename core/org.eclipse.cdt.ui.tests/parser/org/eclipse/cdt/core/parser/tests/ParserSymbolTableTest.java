@@ -349,7 +349,7 @@ public class ParserSymbolTableTest extends TestCase {
 			assertTrue( false );
 		}
 		catch( ParserSymbolTableException e){
-			assertEquals( e.reason, ParserSymbolTableException.r_AmbiguousName );
+			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
 	}
 	
@@ -426,7 +426,7 @@ public class ParserSymbolTableTest extends TestCase {
 			assertTrue( false );	
 		}
 		catch ( ParserSymbolTableException e){
-			assertEquals( e.reason, ParserSymbolTableException.r_AmbiguousName );
+			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
 	}
 	
@@ -645,7 +645,7 @@ public class ParserSymbolTableTest extends TestCase {
 		catch ( ParserSymbolTableException e )
 		{
 			//ambiguous B::C::i and A::i
-			assertEquals( e.reason, ParserSymbolTableException.r_AmbiguousName );
+			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
 		table.pop(); //end f2
 		table.pop(); //end nsD
@@ -729,7 +729,7 @@ public class ParserSymbolTableTest extends TestCase {
 		catch ( ParserSymbolTableException e )
 		{
 			//ambiguous, both M::i and N::i are visible.
-			assertEquals( e.reason, ParserSymbolTableException.r_AmbiguousName );
+			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
 		
 		look = table.LookupNestedNameSpecifier("N");
@@ -1023,7 +1023,7 @@ public class ParserSymbolTableTest extends TestCase {
 			look = table.QualifiedLookup( "y" );
 			assertTrue(false);
 		} catch ( ParserSymbolTableException e ) {
-			assertEquals( e.reason, ParserSymbolTableException.r_AmbiguousName );
+			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
 	}
 	
@@ -1812,6 +1812,95 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		Declaration look = table.UnqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f );	
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 *
+	 * void f( const int *, short );
+	 * void f( int *, int );
+	 * 
+	 * int i;
+	 * short s;
+	 *
+	 * void main() {
+	 * 	  f( &i, s );		//ambiguous because &i->int* is better than &i->const int *
+	 * 	  					//but s-> short is better than s->int
+	 * 	  f( &i, 1L );		//calls f(int *, int) because &i->int* is better than &i->const int *
+	 * 	  					//and 1L->short and 1L->int are indistinguishable
+	 * 	  f( &i, 'c' );		//calls f( int*, int) because &i->int * is better than &i->const int *
+	 * 	  					//and c->int is better than c->short
+	 * 	  f( (const)&i, 1L ); //calls f(const int *, short ) because const &i->int* is better than &i->int *
+	 * 	  					   //and 1L->short and 1L->int are indistinguishable
+	 * }
+	 */
+	public void testOverloadRanking() throws Exception{
+		newTable();
+		
+		Declaration f1 = new Declaration( "f" );
+		f1.setType( TypeInfo.t_function );
+		f1.addParameter( TypeInfo.t_int, TypeInfo.cvConst, "*", false );
+		f1.addParameter( TypeInfo.t_int | TypeInfo.isShort, 0, null, false );
+		
+		table.addDeclaration( f1 );
+		
+		Declaration f2 = new Declaration( "f" );
+		f2.setType( TypeInfo.t_function );
+		f2.addParameter( TypeInfo.t_int, 0, "*", false );
+		f2.addParameter( TypeInfo.t_int, 0, null, false );
+		table.addDeclaration( f2 );
+		
+		Declaration i = new Declaration( "i" );
+		i.setType( TypeInfo.t_int );
+		table.addDeclaration( i );
+		
+		Declaration s = new Declaration( "s" );
+		s.setType( TypeInfo.t_int );
+		s.getTypeInfo().setBit( true, TypeInfo.isShort );
+		table.addDeclaration( s );
+		
+		Declaration main = new Declaration( "main" );
+		main.setType( TypeInfo.t_function );
+		table.addDeclaration( main );
+		table.push( main );
+		
+		LinkedList params = new LinkedList();
+		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, i, 0, "&", false );
+		TypeInfo p2 = new TypeInfo( TypeInfo.t_type, s, 0, null, false );
+		params.add( p1 );
+		params.add( p2 );
+		
+		Declaration look = null;
+		
+		try{
+			look = table.UnqualifiedFunctionLookup( "f", params );
+			assertTrue( false );
+		} catch ( ParserSymbolTableException e ){
+			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
+		}
+		
+		params.clear();
+		TypeInfo p3 = new TypeInfo( TypeInfo.t_int | TypeInfo.isLong, null, 0, null, false );
+		params.add( p1 );
+		params.add( p3 );
+		look = table.UnqualifiedFunctionLookup( "f", params );
+		assertEquals( look, f2 );
+		
+		params.clear();
+		TypeInfo p4 = new TypeInfo( TypeInfo.t_char, null, 0, null, false );
+		params.add( p1 );
+		params.add( p4 );
+		look = table.UnqualifiedFunctionLookup( "f", params );
+		assertEquals( look, f2 );
+		
+		params.clear();
+		p1.setCVQualifier( TypeInfo.cvConst );
+		params.add( p1 );
+		params.add( p3 );
+		look = table.UnqualifiedFunctionLookup( "f", params );
+		assertEquals( look, f1 );
+		
 	}
 }
 

@@ -810,7 +810,7 @@ public class ParserSymbolTable {
 					if( decl == temp && ( type.checkBit( TypeInfo.isStatic ) || type.isType( TypeInfo.t_enumerator ) ) ){
 						temp = null;
 					} else {
-						throw( new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName ) );
+						throw( new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous ) );
 					}
 	
 				}
@@ -969,14 +969,14 @@ public class ParserSymbolTable {
 					if( cls == null ) {
 						cls = decl;
 					} else {
-						throw new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName ); 
+						throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous ); 
 					}
 				} else {
 					//an object, can only have one of these
 					if( obj == null ){
 						obj = decl;	
 					} else {
-						throw new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName ); 
+						throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous ); 
 					}
 				}
 			}
@@ -1030,7 +1030,7 @@ public class ParserSymbolTable {
 		}
 		
 		if( ambiguous ){
-			throw new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName );
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 		} else {
 			return cls;
 		}
@@ -1051,14 +1051,14 @@ public class ParserSymbolTable {
 			} else if ( numFns == 1 ){
 				return (Declaration)functions.getFirst();
 			} else{
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName );
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 			}
 		}
 		
 		Declaration bestFn = null;				//the best function
 		Declaration currFn = null;				//the function currently under consideration
-		int [] bestFnCost = null;				//the cost of the best function
-		int [] currFnCost = null;				//the cost for the current function
+		Cost [] bestFnCost = null;				//the cost of the best function
+		Cost [] currFnCost = null;				//the cost for the current function
 				
 		Iterator iterFns = functions.iterator();
 		Iterator sourceParams = null;
@@ -1066,11 +1066,17 @@ public class ParserSymbolTable {
 		
 		int numTargetParams = 0;
 		int numParams = 0;
-		int cost, temp, comparison;
+		int comparison;
+		Cost cost = null;
+		Cost temp = null;
 		
 		TypeInfo source = null;
 		TypeInfo target = null;
 		 
+		boolean hasWorse;
+		boolean hasBetter;
+		boolean ambiguous = false;
+		
 		for( int i = numFns; i > 0; i-- ){
 			currFn = (Declaration) iterFns.next();
 			
@@ -1086,7 +1092,7 @@ public class ParserSymbolTable {
 			numParams = ( numTargetParams < numSourceParams ) ? numTargetParams : numSourceParams;
 			
 			if( currFnCost == null ){
-				currFnCost = new int [ numParams ];	
+				currFnCost = new Cost [ numParams ];	
 			}
 			
 			comparison = 0;
@@ -1095,47 +1101,58 @@ public class ParserSymbolTable {
 				source = ( TypeInfo )sourceParams.next();
 				target = ( TypeInfo )targetParams.next();
 				if( source.equals( target ) ){
-					cost = 0;	//exact match, no cost
+					cost = new Cost( source, target );
+					cost.rank = 0;	//exact match, no cost
 				} else {
 					cost = checkStandardConversionSequence( source, target );
 					
-					if( cost == -1){
-						cost = checkUserDefinedConversionSequence( source, target );
+					if( cost.rank == -1){
+						temp = checkUserDefinedConversionSequence( source, target );
+						if( temp != null ){
+							cost = temp;
+						}
 					}
 				}
 				
 				currFnCost[ j ] = cost;
-				
-				//compare successes against the best function
-				//comparison = (-1 = worse, 0 = same, 1 = better ) 
-				if( cost >= 0 ){
-					if( bestFnCost != null ){
-						if( cost < bestFnCost[ j ] ){
-							comparison = 1;		//better
-						} else if ( cost > bestFnCost[ j ] ){
-							comparison = -1;	//worse
-							break;				//don't bother continuing if worse
-						}
-						
-					} else {
-						comparison = 1;
-					}
-				} else {
-					comparison = -1;
-				}
 			}
 			
-			if( comparison > 0){
-				//the current function is better than the previous best
-				bestFnCost = currFnCost;
-				currFnCost = null;
-				bestFn = currFn;
-			} else if( comparison == 0 ){
-				//this is just as good as the best one, which means the best one isn't the best
-				bestFn = null;
+			
+			hasWorse = false;
+			hasBetter = false;
+			
+			for( int j = 0; j < numParams; j++ ){ 
+				if( currFnCost[ j ].rank < 0 ){
+					hasWorse = true;
+					hasBetter = false;
+					break;
+				}
+				
+				if( bestFnCost != null ){
+					comparison = currFnCost[ j ].compare( bestFnCost[ j ] );
+					hasWorse |= ( comparison < 0 );
+					hasBetter |= ( comparison > 0 );
+				} else {
+					hasBetter = true;
+				}
+			}
+				
+			ambiguous |= ( hasWorse && hasBetter ) || ( !hasWorse && !hasBetter );
+			
+			if( !hasWorse ){
+				if( hasBetter ){
+					ambiguous = false;
+					bestFnCost = currFnCost;
+					currFnCost = null;
+					bestFn = currFn;
+				}				
 			}
 		}
-				
+
+		if( ambiguous ){
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+		}
+						
 		return bestFn;
 	}
 	
@@ -1363,7 +1380,29 @@ public class ParserSymbolTable {
 		
 		return okToAdd;
 	}
+
+	static private Cost lvalue_to_rvalue( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException{
+		//lvalues will have type t_type
+		if( source.isType( TypeInfo.t_type ) ){
+			source = getFlatTypeInfo( source );
+		}
 	
+		Cost cost = new Cost( source, target );
+	
+		return cost;
+	}
+	
+	static private void qualificationConversion( Cost cost ){
+		if(  cost.source.getCVQualifier() == cost.target.getCVQualifier() || 
+			( cost.target.getCVQualifier() - cost.source.getCVQualifier()) > 1 )
+		{
+			cost.qualification = cost.target.getCVQualifier() + 1;
+			cost.rank = 0;
+		} else {
+			cost.qualification = 0;
+		}
+	}
+		
 	/**
 	 * 
 	 * @param source
@@ -1378,27 +1417,31 @@ public class ParserSymbolTable {
 	 * 4.5-4 bool can be promoted to int 
 	 * 4.6 float can be promoted to double
 	 */
-	static private int canPromote( TypeInfo source, TypeInfo target ){
-
-		//if they are the same, no promotion is necessary
-		if( ( source.isType( TypeInfo.t_bool, TypeInfo.t_double ) || 
-		      source.isType( TypeInfo.t_enumeration ) ) 		   && 
-			  source.getType() == target.getType() )
+	static private void promotion( Cost cost ){
+		TypeInfo src = cost.source;
+		TypeInfo trg = cost.target;
+		 
+		int mask = TypeInfo.isShort | TypeInfo.isLong | TypeInfo.isUnsigned;
+		
+		if( (src.isType( TypeInfo.t_bool, TypeInfo.t_float ) || src.isType( TypeInfo.t_enumeration )) &&
+			(trg.isType( TypeInfo.t_int ) || trg.isType( TypeInfo.t_double )) )
 		{
-			return 0;
-		}
-	   
-		if( source.isType( TypeInfo.t_enumeration ) || source.isType( TypeInfo.t_bool, TypeInfo.t_int ) ){
-			if( target.isType( TypeInfo.t_int ) && target.canHold( source ) ){
-				return 1;
+			if( src.getType() == trg.getType() && (( src.getTypeInfo() & mask) == (trg.getTypeInfo() & mask)) ){
+				//same, no promotion needed
+				return;	
 			}
-		} else if( source.isType( TypeInfo.t_float ) ){
-			if( target.isType( TypeInfo.t_double ) ){
-				return 1; 
+			
+			if( src.isType( TypeInfo.t_float ) ){ 
+				cost.promotion = trg.isType( TypeInfo.t_double ) ? 1 : 0;
+			} else {
+				cost.promotion = ( trg.isType( TypeInfo.t_int ) && trg.canHold( src ) ) ? 1 : 0;
 			}
+			
+		} else {
+			cost.promotion = 0;
 		}
 		
-		return -1;
+		cost.rank = (cost.promotion > 0 ) ? 1 : -1;
 	}
 	
 	/**
@@ -1408,104 +1451,106 @@ public class ParserSymbolTable {
 	 * @return int
 	 * 
 	 */
-	static private int canConvert(TypeInfo source, TypeInfo target ) throws ParserSymbolTableException{
-		int temp = 0;
+	static private void conversion( Cost cost ){
+		TypeInfo src = cost.source;
+		TypeInfo trg = cost.target;
 		
-		source = getFlatTypeInfo( source );
+		int temp;
 		
-		String sourcePtr = source.getPtrOperator();
-		String targetPtr = target.getPtrOperator();
+		String tempStr = src.getPtrOperator();
+		String srcPtr = ( tempStr == null ) ? new String("") : tempStr;
 		
-		if( sourcePtr != null && sourcePtr.equals("") ){
-			sourcePtr = null;
-		}
-		if( targetPtr != null && targetPtr.equals("") ){
-			targetPtr = null;
-		}
+		tempStr = trg.getPtrOperator();
+		String trgPtr = ( tempStr == null ) ? new String("") : tempStr;
 		
-		boolean samePtrOp = ( ( sourcePtr == targetPtr ) ||
-							  ( sourcePtr != null && targetPtr != null && sourcePtr.equals( targetPtr ) ) );
-		//are they the same?
-		if( source.getType() == target.getType() &&
-			source.getTypeDeclaration() == target.getTypeDeclaration() &&
-			samePtrOp  )
-		{
-			return 0;
-		}
+		cost.conversion = 0;
+		cost.detail = 0;
 		
-		//no go if they have different pointer qualification
-		if( !samePtrOp )
-		{					
-			return -1;
-		}
-		
-		//TBD, do a better check on the kind of ptrOperator
-		if( sourcePtr == null || !sourcePtr.equals("*") ){
-			//4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
-			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
-			if( source.isType( TypeInfo.t_bool, TypeInfo.t_int ) ||
-				source.isType( TypeInfo.t_float, TypeInfo.t_double ) ||
-				source.isType( TypeInfo.t_enumeration ) )
-			{
-				if( target.isType( TypeInfo.t_bool, TypeInfo.t_int ) ||
-					target.isType( TypeInfo.t_float, TypeInfo.t_double ) )
-				{
-					return 2;	
-				}
-			}
-		} else /*pointers*/ {
-			Declaration sourceDecl = source.getTypeDeclaration();
-			Declaration targetDecl = target.getTypeDeclaration();
+		if( !srcPtr.equals( trgPtr ) ){
+			return;
+		} 
+		if( srcPtr.equals("*") ){
+			Declaration srcDecl = src.isType( TypeInfo.t_type ) ? src.getTypeDeclaration() : null;
+			Declaration trgDecl = trg.isType( TypeInfo.t_type ) ? trg.getTypeDeclaration() : null;
 
+			if( srcDecl == null || (trgDecl == null && !trg.isType( TypeInfo.t_void )) ){
+				return;	
+			}
+			
 			//4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 			//converted to an rvalue of type "pointer to cv void"
-			if( source.isType( TypeInfo.t_type ) && target.isType( TypeInfo.t_void ) ){
-				//use cost of MAX_VALUE since conversion to any base class, no matter how
-				//far away, would be better than conversion to void
-				return Integer.MAX_VALUE;	
-			}			
+			if( trg.isType( TypeInfo.t_void ) ){
+				cost.rank = 2;
+				cost.conversion = 1;
+				cost.detail = 2;
+				return;	
+			}
+			
+			cost.detail = 1;
+			
 			//4.10-3 An rvalue of type "pointer to cv D", where D is a class type can be converted
 			// to an rvalue of type "pointer to cv B", where B is a base class of D.
-			else if( source.isType( TypeInfo.t_type ) && sourceDecl.isType( TypeInfo.t_class ) &&
-					  target.isType( TypeInfo.t_type ) && targetDecl.isType( TypeInfo.t_class ) )
-			{
-				temp = hasBaseClass( sourceDecl, targetDecl );
-				return ( temp > -1 ) ? 1 + temp : -1;
+			if( srcDecl.isType( TypeInfo.t_class ) && trgDecl.isType( TypeInfo.t_class ) ){
+				temp = hasBaseClass( srcDecl, trgDecl );
+				cost.rank = 2;
+				cost.conversion = ( temp > -1 ) ? temp : 0;
+				cost.detail = 1;
+				return;
 			}
+			
 			//4.11-2 An rvalue of type "pointer to member of B of type cv T", where B is a class type, 
 			//can be converted to an rvalue of type "pointer to member of D of type cv T" where D is a
 			//derived class of B
-			else if( (	source.isType( TypeInfo.t_type ) && sourceDecl._containingScope.isType( TypeInfo.t_class ) ) || 
-			 		  (	target.isType( TypeInfo.t_type ) && targetDecl._containingScope.isType( TypeInfo.t_class ) ) )
+			if( srcDecl._containingScope.isType( TypeInfo.t_class ) && trgDecl._containingScope.isType( TypeInfo.t_class ) ){
+				temp = hasBaseClass( trgDecl._containingScope, srcDecl._containingScope );
+				cost.rank = 2;
+				cost.conversion = ( temp > -1 ) ? temp : 0;
+				return;
+			}
+		} else {
+			//4.7 An rvalue of an integer type can be converted to an rvalue of another integer type.  
+			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
+			if( src.isType( TypeInfo.t_bool, TypeInfo.t_int ) ||
+				src.isType( TypeInfo.t_float, TypeInfo.t_double ) ||
+				src.isType( TypeInfo.t_enumeration ) )
 			{
-				temp = hasBaseClass( targetDecl._containingScope, sourceDecl._containingScope );
-				return ( temp > -1 ) ? 1 + temp : -1; 	
+				if( trg.isType( TypeInfo.t_bool, TypeInfo.t_int ) ||
+					trg.isType( TypeInfo.t_float, TypeInfo.t_double ) )
+				{
+					cost.rank = 2;
+					cost.conversion = 1;	
+				}
 			}
 		}
-		
-		return -1;
 	}
 	
-	static private int checkStandardConversionSequence( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException {
-		int cost = -1;
-		int temp = 0;
+	static private Cost checkStandardConversionSequence( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException {
+		Cost cost = lvalue_to_rvalue( source, target );
 		
-		if( !canDoQualificationConversion( source, target ) ){
-			//matching qualification is at no cost, but not matching is a failure 
-			cost = -1;	
-		} else if( (temp = canPromote( source, target )) >= 0 ){
-			cost = temp;	
-		} else if( (temp = canConvert( source, target )) >= 0 ){
-			cost = temp;	//cost for conversion has to do with "distance" between source and target
-		} else {
-			cost = -1;		//failure
+		if( cost.source.equals( cost.target ) ){
+			cost.rank = 1;
+			return cost;
 		}
+	
+		qualificationConversion( cost );
+		
+		//if we can't convert the qualifications, then we can't do anything
+		if( cost.qualification == 0 ){
+			return cost;
+		}
+		
+		promotion( cost );
+		if( cost.promotion > 0 || cost.rank > -1 ){
+			return cost;
+		}
+		
+		conversion( cost );
 		
 		return cost;	
 	}
 	
-	static private int checkUserDefinedConversionSequence( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException {
-		int cost = -1;
+	static private Cost checkUserDefinedConversionSequence( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException {
+		Cost cost = null;
 		Declaration targetDecl = null;
 		Declaration constructor = null;
 		
@@ -1520,21 +1565,13 @@ public class ParserSymbolTable {
 				constructor = ResolveAmbiguities( data );
 				if( constructor != null ){
 					cost = checkStandardConversionSequence( new TypeInfo( TypeInfo.t_type, constructor._containingScope ), target );
-					if( cost != -1 ){
-						cost++;	
-					}
 				}
 			}
 			
 		}
 		return cost;
 	}
-	
-	static private boolean canDoQualificationConversion( TypeInfo source, TypeInfo target ){
-		return (  source.getCVQualifier() == source.getCVQualifier() ||
-		 		  (source.getCVQualifier() - source.getCVQualifier()) > 1 );	
-	}
-	
+
 	/**
 	 * 
 	 * @param decl
@@ -1563,8 +1600,13 @@ public class ParserSymbolTable {
 				info = info.getTypeDeclaration().getTypeInfo();
 			}
 			
-			returnInfo.setType( TypeInfo.t_type );
-			returnInfo.setTypeDeclaration( typeDecl );
+			if( info.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) ){
+				returnInfo.setType( TypeInfo.t_type );
+				returnInfo.setTypeDeclaration( typeDecl );
+			} else {
+				returnInfo.setTypeInfo( info.getTypeInfo() );
+				returnInfo.setTypeDeclaration( null );
+			}
 			
 			String ptrOp = returnInfo.getPtrOperator();
 			returnInfo.setPtrOperator( topInfo.getInvertedPtrOperator() );
@@ -1572,11 +1614,16 @@ public class ParserSymbolTable {
 			if( ptrOp != null ){
 				returnInfo.addPtrOperator( ptrOp );
 			}
+			
+			returnInfo.setCVQualifier( info.getCVQualifier() );
+			returnInfo.addCVQualifier( topInfo.getCVQualifier() );
 		}
 		
 		return returnInfo;	
 	}
+
 	
+		
 	private Stack _contextStack = new Stack();
 	private Declaration _compilationUnit;
 	
@@ -1605,4 +1652,47 @@ public class ParserSymbolTable {
 			type = t;
 		}
 	}
+	
+	static private class Cost
+	{
+		public Cost( TypeInfo s, TypeInfo t ){
+			source = s;
+			target = t;
+		}
+		
+		public TypeInfo source;
+		public TypeInfo target;
+		
+		public int lvalue;
+		public int promotion;
+		public int conversion;
+		public int qualification;
+		
+		public int rank = -1;
+		public int detail;
+		
+		public int compare( Cost cost ){
+			int result = 0;
+			
+			if( promotion > 0 || cost.promotion > 0 ){
+				result = cost.promotion - promotion;
+			}
+			if( conversion > 0 || cost.conversion > 0 ){
+				if( detail == cost.detail ){
+					result = cost.conversion - conversion;
+				} else {
+					result = cost.detail - detail;
+				}
+			}
+			
+			if( result == 0 ){
+				result = cost.qualification - qualification;
+			}
+			 
+			return result;
+		}
+		
+		
+	}
+	
 }

@@ -1,3 +1,6 @@
+2003-04-06 Andrew Niefer
+	Added ParserSymbolTable::Cost and used it to fix up the conversion sequence ranking
+
 2003-04-04 John Camelon
 	Fixed defect 36073.
 	Fixed error handling for unterminated strings in Scanner.

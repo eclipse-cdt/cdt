@@ -15,8 +15,8 @@ import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 
 public class NewManagedCProjectWizard extends NewManagedProjectWizard {
 	// String constants
-	private static final String WZ_TITLE = "MngCWizard.title";
-	private static final String WZ_DESC = "MngCWizard.description";
+	private static final String WZ_TITLE = "MngCWizard.title"; //$NON-NLS-1$
+	private static final String WZ_DESC = "MngCWizard.description"; //$NON-NLS-1$
 	private static final String SETTINGS_TITLE= "MngCWizardSettings.title"; //$NON-NLS-1$
 	private static final String SETTINGS_DESC= "MngCWizardSettings.description"; //$NON-NLS-1$
 

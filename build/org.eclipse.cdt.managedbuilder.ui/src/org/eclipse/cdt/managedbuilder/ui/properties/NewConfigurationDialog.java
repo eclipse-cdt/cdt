@@ -53,7 +53,7 @@ public class NewConfigurationDialog extends Dialog {
 	private ITarget target;
 	private String newName;
 	private String [] allNames;
-	private String title = "";
+	private String title = ""; //$NON-NLS-1$
 
 	
 	/**

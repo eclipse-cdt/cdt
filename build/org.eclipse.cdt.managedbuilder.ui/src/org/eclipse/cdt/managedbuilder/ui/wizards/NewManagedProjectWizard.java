@@ -121,7 +121,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 					if (id < 0) {
 						id *= -1;
 					}
-					newTarget.createConfiguration(config, config.getId() + "." + id);
+					newTarget.createConfiguration(config, config.getId() + "." + id); //$NON-NLS-1$
 				}
 				// Now add the first config in the list as the default
 				IConfiguration[] newConfigs = newTarget.getConfigurations();
@@ -172,7 +172,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#getProjectID()
 	 */
 	public String getProjectID() {
-		return "org.eclipse.cdt.make.core.make";
+		return "org.eclipse.cdt.make.core.make"; //$NON-NLS-1$
 //		return ManagedBuilderCorePlugin.getUniqueIdentifier() + ".make"; //$NON-NLS-1$
 	}
 

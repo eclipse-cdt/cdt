@@ -553,7 +553,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 					if (id < 0) {
 						id *= -1;
 					}
-					String newId = parent.getId() + "." + id;
+					String newId = parent.getId() + "." + id; //$NON-NLS-1$
 					IConfiguration newConfig = selectedTarget.createConfiguration(parent, newId);
 					newConfig.setName(name);
 					// Update the config lists
@@ -627,7 +627,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			return result.toString().trim();
 		}
 
-		String[] tokens = arguments.trim().split("\\s");
+		String[] tokens = arguments.trim().split("\\s"); //$NON-NLS-1$
 		/*
 		 * Cases to consider
 		 * --<flag>					Sensible, modern single flag. Add to result and continue.
@@ -637,15 +637,15 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		 * -<flag_with_arg>ARG		Corrupt case where next token should be arg but isn't
 		 * -<flags> [target]..		Flags with no args, another token, add flags and stop.
 		 */
-		Pattern flagPattern = Pattern.compile("C|f|I|j|l|O|W");
+		Pattern flagPattern = Pattern.compile("C|f|I|j|l|O|W"); //$NON-NLS-1$
 		// Look for a '-' followed by 1 or more flags with no args and exactly 1 that expects args
-		Pattern mixedFlagWithArg = Pattern.compile("-[^CfIjloW]*[CfIjloW]{1}.+");
+		Pattern mixedFlagWithArg = Pattern.compile("-[^CfIjloW]*[CfIjloW]{1}.+"); //$NON-NLS-1$
 		for (int i = 0; i < tokens.length; ++i) {
 			String currentToken = tokens[i];
-			if (currentToken.startsWith("--")) {
+			if (currentToken.startsWith("--")) { //$NON-NLS-1$
 				result.append(currentToken);
-				result.append(" ");
-			} else if (currentToken.startsWith("-")) {
+				result.append(" "); //$NON-NLS-1$
+			} else if (currentToken.startsWith("-")) { //$NON-NLS-1$
 				// Is there another token
 				if (i + 1 >= tokens.length) {
 					//We are done
@@ -657,19 +657,19 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 					if (!flagMatcher.find()) {
 						// Evalutate whether the next token should be added normally
 						result.append(currentToken);
-						result.append(" ");
+						result.append(" "); //$NON-NLS-1$
 					} else {
 						// Look for the case where there is no space between flag and arg
 						if (mixedFlagWithArg.matcher(currentToken).matches()) {
 							// Add this single token and keep going
 							result.append(currentToken);
-							result.append(" ");							
+							result.append(" ");							 //$NON-NLS-1$
 						} else {
 							// Add this token and the next one right now
 							result.append(currentToken);
-							result.append(" ");
+							result.append(" "); //$NON-NLS-1$
 							result.append(nextToken);
-							result.append(" ");
+							result.append(" "); //$NON-NLS-1$
 							// Skip the next token the next time through, though
 							++i;
 						}
@@ -691,7 +691,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		boolean hasSpace = false;
 		
 		// Try to separate out the command from the arguments 
-		String[] result = rawCommand.split("\\s");
+		String[] result = rawCommand.split("\\s"); //$NON-NLS-1$
 		
 		/*
 		 * Here are the cases to consider:
@@ -709,14 +709,14 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			} else {
 				// See if the next segment is the start of the flags
 				String nextSegment = result[i + 1];
-				if (nextSegment.startsWith("-")) {
+				if (nextSegment.startsWith("-")) { //$NON-NLS-1$
 					// we have found the end of the command
 					command.append(cmdSegment);
 					break;
 				} else {
 					command.append(cmdSegment);
 					// Add the whitespace back
-					command.append(" ");
+					command.append(" "); //$NON-NLS-1$
 					hasSpace = true;
 				}
 			}

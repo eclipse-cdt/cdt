@@ -71,7 +71,7 @@ public class ManageConfigDialog extends Dialog {
 	// Map of new configurations chosen by the user
 	private SortedMap newConfigs;
 	// The title of the dialog.
-	private String title = "";
+	private String title = ""; //$NON-NLS-1$
 	// State of the check box on exit
 	private boolean useDefaultMake;
 	
@@ -178,7 +178,7 @@ public class ManageConfigDialog extends Dialog {
 		
 		final Label dotLabel = new Label(outputGroup, SWT.CENTER);
 		dotLabel.setFont(outputGroup.getFont());
-		dotLabel.setText(new String("."));
+		dotLabel.setText(new String(".")); //$NON-NLS-1$
 		dotLabel.setLayoutData(new GridData());
 
 		buildArtifactExt = new Text(outputGroup, SWT.SINGLE | SWT.BORDER);
@@ -581,7 +581,7 @@ public class ManageConfigDialog extends Dialog {
 		makeCommand = managedTarget.getMakeCommand();
 		String makeArgs = managedTarget.getMakeArguments();
 		if (makeArgs.length() > 0) {
-			makeCommand += " " + makeArgs;
+			makeCommand += " " + makeArgs; //$NON-NLS-1$
 		}
 	}
 

@@ -27,7 +27,7 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 public class BuildToolsSettingsStore implements IPreferenceStore {
-	public static final String DEFAULT_SEPERATOR = ";";
+	public static final String DEFAULT_SEPERATOR = ";"; //$NON-NLS-1$
 
 	// List of listeners on the property store
 	private ListenerList listenerList;

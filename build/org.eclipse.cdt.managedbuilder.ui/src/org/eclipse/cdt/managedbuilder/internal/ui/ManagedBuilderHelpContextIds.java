@@ -14,9 +14,9 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * **********************************************************************/
 
 public interface ManagedBuilderHelpContextIds {
-	public static final String PREFIX= CUIPlugin.PLUGIN_ID + ".";
+	public static final String PREFIX= CUIPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
 	// Wizard pages
-	public static final String MAN_PROJ_PLATFORM_HELP = PREFIX + "man_proj_platform_help";
+	public static final String MAN_PROJ_PLATFORM_HELP = PREFIX + "man_proj_platform_help"; //$NON-NLS-1$
 
 }

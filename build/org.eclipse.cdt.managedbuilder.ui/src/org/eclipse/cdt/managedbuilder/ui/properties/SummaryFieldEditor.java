@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class SummaryFieldEditor extends FieldEditor {
 	// Whitespace character
-	private static final String WHITESPACE = " ";
+	private static final String WHITESPACE = " "; //$NON-NLS-1$
 
 	// The top level composite
 	protected Composite parent;

@@ -51,21 +51,22 @@ public class BrowseEntryDialog extends SelectionStatusDialog {
 	private static final String HIDE = "hideAdvanced"; //$NON-NLS-1$
 	private static final String SHOW = "showAdvanced"; //$NON-NLS-1$
 	private static final String EMPTY = "NewFolderDialog.folderNameEmpty"; //$NON-NLS-1$
+	private static final String ERROR_FOLDER_NAME_INVALID = PREFIX + ".error.Folder_name_invalid"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * The title of the dialog.
 	 */
-	private String title = "";
+	private String title = ""; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * The message to display, or <code>null</code> if none.
 	 */
-	private String message = "";
+	private String message = ""; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * The input value; the empty string by default.
 	 */
-	private String folderName = "";
+	private String folderName = ""; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * 
@@ -320,14 +321,14 @@ public class BrowseEntryDialog extends SelectionStatusDialog {
 	protected void validateLocation() {
 		folderName = text.getText();
 		// Empty or null string is invalid
-		if (folderName == null || folderName.equals("")) {
+		if (folderName == null || folderName.equals("")) { //$NON-NLS-1$
 			updateStatus(IStatus.ERROR, IDEWorkbenchMessages.getString(EMPTY));
 			return;
 		} else {
 			// Make sure that the specified location exists
 			IPath path = new Path(folderName);
 			if (!path.isValidPath(folderName)) {
-				updateStatus(IStatus.ERROR, "Folder name invalid");
+				updateStatus(IStatus.ERROR, ManagedBuilderUIPlugin.getResourceString(ERROR_FOLDER_NAME_INVALID)); //$NON-NLS-1$
 				return;
 			}
 		}

@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
 
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIImages;
+import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
  
@@ -20,6 +21,7 @@ class ToolListLabelProvider extends LabelProvider {
 	private final Image IMG_TOOL = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_TOOL);
 	private final Image IMG_CAT = ManagedBuilderUIImages.get(ManagedBuilderUIImages.IMG_BUILD_CAT);
 	private static final String TREE_LABEL = "BuildPropertyPage.label.ToolTree";	//$NON-NLS-1$
+	private static final String ERROR_UNKNOWN_ELEMENT = "BuildPropertyPage.error.Unknown_tree_element";	//$NON-NLS-1$
 
 	public Image getImage(Object element) {
 		// If the element is a configuration, return the folder image
@@ -51,6 +53,6 @@ class ToolListLabelProvider extends LabelProvider {
 	}
 
 	protected RuntimeException unknownElement(Object element) {
-		return new RuntimeException("Unknown type of element in tree of type " + element.getClass().getName());
+		return new RuntimeException(ManagedBuilderUIPlugin.getFormattedString(ERROR_UNKNOWN_ELEMENT, element.getClass().getName()));
 	}
 }

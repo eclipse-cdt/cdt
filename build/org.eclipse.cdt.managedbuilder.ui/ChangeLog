@@ -1,3 +1,20 @@
+2004-03-03 James Ciesielski
+	Marked those strings that are non-translatable as such and externalized 
+	those strings that can be translated.
+
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/ManagedBuilderHelpContextIds.java
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/ManagedBuilderUIPlugin.java
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/PluginResources.properties
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BrowseEntryDialog.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildPropertyPage.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildToolsSettingsStore.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/ManagedConfigDialog.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/NewConfigurationDialog.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/SummaryFieldEditor.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/ToolListLabelProvider.java
+	* src/org/eclipse/cdt/managedbuilder/ui/wizards/NewManagedCProjectWizard.java
+	* src/org/eclipse/cdt/managedbuilder/ui/wizards/NewManagedProjectWizard.java
+
 2004-03-02 Sean Evoy
 	Work to support new feature C1, "Set Tool Command in Project". 
 	Created a new preference page that has a single string field editor 

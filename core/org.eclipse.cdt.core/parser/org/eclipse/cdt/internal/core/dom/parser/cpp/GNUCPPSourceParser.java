@@ -3233,7 +3233,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          return classSpec;
       }
       if (duple != null) {
-         ICPPASTNamedTypeSpecifier nameSpec = createNamedTypeSpecifier();
+         ICPPASTNamedTypeSpecifier nameSpec = (ICPPASTNamedTypeSpecifier)createNamedTypeSpecifier();
          nameSpec.setIsTypename(isTypename);
          IASTName name = createName(duple);
          nameSpec.setName(name);
@@ -3307,7 +3307,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
    /**
     * @return
     */
-   protected ICPPASTNamedTypeSpecifier createNamedTypeSpecifier() {
+   protected IASTNamedTypeSpecifier createNamedTypeSpecifier() {
       return new CPPASTNamedTypeSpecifier();
    }
 

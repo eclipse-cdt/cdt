@@ -196,7 +196,7 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		else
 			scannerExtensionConfiguration = C_GNU_SCANNER_EXTENSION;
 
-		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
+		IScanner scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETION_PARSE,
 				l, ParserFactory.createDefaultLogService(),
 				scannerExtensionConfiguration, fileCreator);
 		scanner.setContentAssistMode(offset);
@@ -204,11 +204,11 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		// assume GCC
 		ISourceCodeParser parser = null;
 		if (l == ParserLanguage.C)
-			parser = new GNUCSourceParser(scanner, ParserMode.COMPLETE_PARSE,
+			parser = new GNUCSourceParser(scanner, ParserMode.COMPLETION_PARSE,
 					ParserUtil.getParserLogService(),
 					new GCCParserExtensionConfiguration());
 		else
-			parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE,
+			parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETION_PARSE,
 					ParserUtil.getParserLogService(),
 					new GPPParserExtensionConfiguration());
 		

@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -64,7 +65,6 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 
 /**
  * @author jcamelon
@@ -511,7 +511,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          		IASTExpressionStatement exprStmt = createExpressionStatement();
          		exprStmt.setParent(result);
                 exprStmt.setPropertyInParent(IASTCompoundStatement.NESTED_STATEMENT);
-         		IASTIdExpression expr = new CPPASTIdExpression(); // Obviously need a factory
+         		IASTIdExpression expr = createIdExpression();
          		exprStmt.setExpression(expr);
          		expr.setParent(exprStmt);
          		expr.setPropertyInParent(IASTExpressionStatement.EXPFRESSION);
@@ -523,6 +523,24 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
          		if (completionNode == null)
          			completionNode = new ASTCompletionNode(token);
          		completionNode.addName(exprName);
+         		
+         		// Now the declaration statement
+         		IASTDeclarationStatement declStmt = createDeclarationStatement();
+         		declStmt.setParent(result);
+         		declStmt.setPropertyInParent(IASTCompoundStatement.NESTED_STATEMENT);
+         		IASTSimpleDeclaration decl = createSimpleDeclaration();
+         		declStmt.setDeclaration(decl);
+         		decl.setParent(declStmt);
+         		decl.setPropertyInParent(IASTDeclarationStatement.DECLARATION);
+         		IASTNamedTypeSpecifier declSpec = createNamedTypeSpecifier();
+         		decl.setDeclSpecifier(declSpec);
+         		declSpec.setParent(decl);
+         		declSpec.setPropertyInParent(IASTSimpleDeclaration.DECL_SPECIFIER);
+         		IASTName declSpecName = createName(token);
+         		declSpec.setName(declSpecName);
+         		declSpecName.setParent(declSpec);
+         		declSpecName.setPropertyInParent(IASTNamedTypeSpecifier.NAME);
+         		completionNode.addName(declSpecName);
          	}
         }
         
@@ -1268,6 +1286,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         return !parsePassed;
     }
 
+    protected abstract IASTSimpleDeclaration createSimpleDeclaration();
+    
+    protected abstract IASTNamedTypeSpecifier createNamedTypeSpecifier();
+    
     /**
      * @return
      */
@@ -1333,6 +1355,11 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      */
     protected abstract IASTIfStatement createIfStatement();
 
+    /**
+     * @return
+     */
+    protected abstract IASTIdExpression createIdExpression();
+    
     /**
      * @return
      */

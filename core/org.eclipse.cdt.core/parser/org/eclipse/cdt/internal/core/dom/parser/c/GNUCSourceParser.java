@@ -527,7 +527,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    protected CASTSimpleDeclaration createSimpleDeclaration() {
+    protected IASTSimpleDeclaration createSimpleDeclaration() {
         return new CASTSimpleDeclaration();
     }
 
@@ -1501,7 +1501,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             return elabSpec;
         }
         if (isIdentifier) {
-            ICASTTypedefNameSpecifier declSpec = createNamedTypeSpecifier();
+            ICASTTypedefNameSpecifier declSpec = (ICASTTypedefNameSpecifier)createNamedTypeSpecifier();
             declSpec.setConst(isConst);
             declSpec.setRestrict(isRestrict);
             declSpec.setVolatile(isVolatile);
@@ -1545,7 +1545,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     /**
      * @return
      */
-    protected ICASTTypedefNameSpecifier createNamedTypeSpecifier() {
+    protected IASTNamedTypeSpecifier createNamedTypeSpecifier() {
         return new CASTTypedefNameSpecifier();
     }
 

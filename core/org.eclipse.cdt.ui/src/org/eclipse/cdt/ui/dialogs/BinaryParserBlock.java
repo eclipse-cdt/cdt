@@ -91,7 +91,7 @@ public class BinaryParserBlock extends AbstractCOptionPage {
 			if (selected != null) {
 				if (initial == null || !selected.equals(initial)) {
 					desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-					desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, (String) idMap.get(initial));
+					desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, (String) idMap.get(selected));
 					CCorePlugin.getDefault().getCoreModel().resetBinaryParser(getContainer().getProject());
 					initial = selected;
 				}

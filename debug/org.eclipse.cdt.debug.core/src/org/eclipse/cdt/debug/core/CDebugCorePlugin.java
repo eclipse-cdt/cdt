@@ -6,14 +6,21 @@
 
 package org.eclipse.cdt.debug.core;
 
-import org.eclipse.cdt.debug.internal.core.CDebuggerManager;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -28,7 +35,7 @@ public class CDebugCorePlugin extends Plugin
 	//The shared instance.
 	private static CDebugCorePlugin plugin;
 
-	private CDebuggerManager debuggerManager;
+	private HashMap fDebugConfigurations;
 
 	/**
 	 * The constructor.
@@ -108,10 +115,29 @@ public class CDebugCorePlugin extends Plugin
 		getDefault().getLog().log( status );
 	}
 	
-	public ICDebuggerManager getDebuggerManager() {
-		if ( debuggerManager == null ) {
-			debuggerManager = new CDebuggerManager();
-		} 
-		return debuggerManager;
+	private void initializeDebugConfiguration() {
+		IPluginDescriptor descriptor= getDefault().getDescriptor();
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint("CDebugger");
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		fDebugConfigurations = new HashMap(infos.length);
+		for (int i= 0; i < infos.length; i++) {
+			IConfigurationElement configurationElement = infos[i];
+			DebugConfiguration configType = new DebugConfiguration(configurationElement); 			
+			fDebugConfigurations.put(configType.getID(), configType);
+		}		
+	}
+
+	public ICDebugConfiguration[] getDebugConfigurations() {
+		if (fDebugConfigurations == null) {
+			initializeDebugConfiguration();
+		}
+		return (ICDebugConfiguration[]) fDebugConfigurations.values().toArray(new ICDebugConfiguration[0]);
+	}
+	
+	public ICDebugConfiguration getDebugConfiguration(String id) {
+		if (fDebugConfigurations == null) {
+			initializeDebugConfiguration();
+		}
+		return (ICDebugConfiguration) fDebugConfigurations.get(id);
 	}
 }

@@ -365,7 +365,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		}
 		
 		if(field == fBaseClassDialogField){
-			if(fBaseClassDialogField.getText().length() > 0)
+			if(fBaseClassDialogField.getText().length() >= 0)
 			{
 				fAccessButtons.setEnabled(true);
 				fBaseClassStatus = baseClassNameChanged();

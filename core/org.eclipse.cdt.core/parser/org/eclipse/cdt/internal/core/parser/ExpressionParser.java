@@ -158,8 +158,8 @@ public class ExpressionParser implements IExpressionParser {
 	 * 
 	 * @throws BacktrackException	request a backtrack
 	 */
-	protected IToken templateId(IASTScope scope) throws EndOfFileException, BacktrackException {
-	    ITokenDuple duple = name(scope);
+	protected IToken templateId(IASTScope scope, CompletionKind kind) throws EndOfFileException, BacktrackException {
+	    ITokenDuple duple = name(scope, kind );
 	    IToken last = consumeTemplateParameters(duple.getLastToken());
 	    return last;
 	}
@@ -175,7 +175,7 @@ public class ExpressionParser implements IExpressionParser {
 	 * 
 	 * @throws BacktrackException	request a backtrack
 	 */
-	protected TokenDuple name(IASTScope scope) throws BacktrackException, EndOfFileException {
+	protected TokenDuple name(IASTScope scope, IASTCompletionNode.CompletionKind kind) throws BacktrackException, EndOfFileException {
 	    IToken first = LA(1);
 	    IToken last = null;
 	    IToken mark = mark();
@@ -373,7 +373,7 @@ public class ExpressionParser implements IExpressionParser {
 	        {
 	        	try
 	        	{
-		            nameDuple = name(d.getScope());
+		            nameDuple = name(d.getScope(), CompletionKind.NO_SUCH_KIND );
 	        	}
 	        	catch( BacktrackException bt )
 	        	{
@@ -1125,7 +1125,7 @@ public class ExpressionParser implements IExpressionParser {
 		{
 	        try
 	        {
-	            name  = name(scope);
+	            name  = name(scope, CompletionKind.TYPE_REFERENCE );
 	            kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
 	            break;
 	        }
@@ -1172,7 +1172,7 @@ public class ExpressionParser implements IExpressionParser {
 	                case IToken.tIDENTIFIER :
 	                	if( encounteredType ) break simpleMods;
 	                	encounteredType = true;
-	                    name = name(scope);
+	                    name = name(scope, CompletionKind.TYPE_REFERENCE);
 						kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
 	                    break;
 	                    
@@ -1256,7 +1256,7 @@ public class ExpressionParser implements IExpressionParser {
 	            consume();
 	            try
 	            {
-	            	name = name(scope);
+	            	name = name(scope, CompletionKind.TYPE_REFERENCE );
 	            	kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
 	            } catch( BacktrackException b )
 	            {
@@ -1661,7 +1661,7 @@ public class ExpressionParser implements IExpressionParser {
 	    {
 	        case IToken.t_typename :
 	            consume(IToken.t_typename);
-	            ITokenDuple nestedName = name(scope);
+	            ITokenDuple nestedName = name(scope, CompletionKind.TYPE_REFERENCE);
 				boolean templateTokenConsumed = false;
 				if( LT(1) == IToken.t_template )
 				{
@@ -1672,7 +1672,8 @@ public class ExpressionParser implements IExpressionParser {
 				ITokenDuple templateId = null;
 				try
 				{
-					templateId = new TokenDuple( current, templateId(scope) ); 
+					templateId = new TokenDuple( current, templateId(scope, CompletionKind.SINGLE_NAME_REFERENCE
+							) ); 
 				}
 				catch( BacktrackException bt )
 				{
@@ -2215,7 +2216,7 @@ public class ExpressionParser implements IExpressionParser {
 	            IToken mark = mark();
 	            try
 	            {
-					duple = name(scope);
+					duple = name(scope, CompletionKind.SINGLE_NAME_REFERENCE);
 	            }
 	            catch( BacktrackException bt )
 	            {

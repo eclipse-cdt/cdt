@@ -235,7 +235,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             // optional :: and nested classes handled in name
             TokenDuple duple = null;
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
-                duple = name(scope);
+                duple = name(scope, CompletionKind.NAMESPACE_REFERENCE);
             else
                 throw backtrack;
             if (LT(1) == IToken.tSEMI)
@@ -276,7 +276,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
             {
                 //	optional :: and nested classes handled in name
-                name = name(scope);
+                name = name(scope, CompletionKind.TYPE_REFERENCE);
             }
             else
             {
@@ -876,7 +876,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			if( identifier == null )
 				throw backtrack;
 
-        	ITokenDuple duple = name(scope);
+        	ITokenDuple duple = name(scope, CompletionKind.NAMESPACE_REFERENCE);
         	consume( IToken.tSEMI );
         	setCompletionValues(scope, kind, Key.DECLARATION );
         	try
@@ -1111,7 +1111,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     break;
 
                 
-                ITokenDuple duple = name(scope);
+                ITokenDuple duple = name(scope, CompletionKind.SINGLE_NAME_REFERENCE );
 
                 consume(IToken.tLPAREN);
                 IASTExpression expressionList = null;
@@ -1529,11 +1529,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                     consume(IToken.t_typename ); 
                     IToken first = LA(1);
                     IToken last = null;
-                    last = name(sdw.getScope()).getLastToken();
+                    last = name(sdw.getScope(), CompletionKind.TYPE_REFERENCE).getLastToken();
                     if (LT(1) == IToken.t_template)
                     {
                         consume(IToken.t_template);
-                        last = templateId(sdw.getScope());
+                        last = templateId(sdw.getScope(), CompletionKind.SINGLE_NAME_REFERENCE );
                     }
                     ITokenDuple duple = new TokenDuple(first, last);
                     sdw.setTypeName(duple);
@@ -1573,7 +1573,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                         return;
                     }
  
-                    ITokenDuple d = name(sdw.getScope());
+                    ITokenDuple d = name(sdw.getScope(), CompletionKind.TYPE_REFERENCE );
                     sdw.setTypeName(d);
                     sdw.setSimpleType( IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME ); 
                     flags.setEncounteredTypename(true);
@@ -1644,7 +1644,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 break;
         }
  
-        ITokenDuple d = name(sdw.getScope());
+        ITokenDuple d = name(sdw.getScope(), CompletionKind.TYPE_REFERENCE);
 		IASTTypeSpecifier elaboratedTypeSpec = null;
 		final boolean isForewardDecl = ( LT(1) == IToken.tSEMI );
 		
@@ -1691,7 +1691,7 @@ public abstract class Parser extends ExpressionParser implements IParser
      */
     protected ITokenDuple className(IASTScope scope) throws EndOfFileException, BacktrackException
     {
-		ITokenDuple duple = name(scope);
+		ITokenDuple duple = name(scope, CompletionKind.USER_SPECIFIED_NAME );
 		IToken last = duple.getLastToken(); 
         if (LT(1) == IToken.tLT) {
 			last = consumeTemplateParameters(duple.getLastToken());
@@ -2007,7 +2007,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	                        	{
 	                        		try
                                     {
-                                        if( ! astFactory.queryIsTypeName( scope, name(scope) ) )
+                                        if( ! astFactory.queryIsTypeName( scope, name(scope, CompletionKind.TYPE_REFERENCE ) ) )
                                         	failed = true;
                                     }
                                     catch (Exception e)
@@ -2189,7 +2189,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         {
             try
             {
-                ITokenDuple duple = name(d.getDeclarationWrapper().getScope());
+                ITokenDuple duple = name(d.getDeclarationWrapper().getScope(), CompletionKind.SINGLE_NAME_REFERENCE );
                 d.setName(duple);
         
             }
@@ -2542,7 +2542,7 @@ public abstract class Parser extends ExpressionParser implements IParser
            			break;
                 case IToken.tCOLONCOLON :
                 case IToken.tIDENTIFIER :
-                    nameDuple = name(astClassSpec);
+                    nameDuple = name(astClassSpec, CompletionKind.CLASS_REFERENCE );
                     break;
                 case IToken.tCOMMA :
                     try

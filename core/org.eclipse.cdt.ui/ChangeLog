@@ -1,3 +1,6 @@
+2004-02-12 John Camelon
+	Updated Content Assist feature to not use IASTCompletionKind.SCOPED_REFERENCE
+
 2004-02-11 Alain Magloire
 
 	* src/org/eclipse/cdt/internal/ui/cview/CView.java

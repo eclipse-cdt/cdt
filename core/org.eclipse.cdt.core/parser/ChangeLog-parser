@@ -1,3 +1,7 @@
+2004-02-12 John Camelon
+	Removed IASTCompletionKind.SCOPED_REFERENCE as it was obsolete.  
+	Did preliminary work to support content assist within qualified names.
+
 2004-02-11 John Camelon
 	Restructured Parser implementation to allow for better support of Selection Search.
 	Restructured Parser implementation to allow for separation between parsing expressions (Scanner) and complete C/C++ source.  

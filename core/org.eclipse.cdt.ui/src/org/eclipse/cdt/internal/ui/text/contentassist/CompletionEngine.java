@@ -435,22 +435,23 @@ public class CompletionEngine implements RelevanceConstants {
 		result = lookup (searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions (result);
 	}	
-	private void completionOnScopedReference(IASTCompletionNode completionNode){
-		// 1. Get the search scope node
-		// the search node is the name before the qualification 
-		IASTScope searchNode = completionNode.getCompletionScope();
-		// here we have to look for anything that could be referenced within this scope
-		// 1. lookup local variables, global variables, functions, methods, structures, enums, and namespaces
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[4];
-		kinds[0] = IASTNode.LookupKind.VARIABLES; 
-		kinds[1] = IASTNode.LookupKind.STRUCTURES; 
-		kinds[2] = IASTNode.LookupKind.ENUMERATIONS; 
-		kinds[3] = IASTNode.LookupKind.NAMESPACES; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
-		addToCompletions(result);
-		// TODO
-		// lookup static members (field / methods) in type
-}
+
+//	private void completionOnScopedReference(IASTCompletionNode completionNode){
+//		// 1. Get the search scope node
+//		// the search node is the name before the qualification 
+//		IASTScope searchNode = completionNode.getCompletionScope();
+//		// here we have to look for anything that could be referenced within this scope
+//		// 1. lookup local variables, global variables, functions, methods, structures, enums, and namespaces
+//		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[4];
+//		kinds[0] = IASTNode.LookupKind.VARIABLES; 
+//		kinds[1] = IASTNode.LookupKind.STRUCTURES; 
+//		kinds[2] = IASTNode.LookupKind.ENUMERATIONS; 
+//		kinds[3] = IASTNode.LookupKind.NAMESPACES; 
+//		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+//		addToCompletions(result);
+//		// TODO
+//		// lookup static members (field / methods) in type
+//	}
 	private void completionOnTypeReference(IASTCompletionNode completionNode){
 		// completing on a type
 		// 1. Get the search scope node
@@ -632,10 +633,10 @@ public class CompletionEngine implements RelevanceConstants {
 			// completionOnMemberReference
 			completionOnMemberReference(completionNode);
 		}
-		else if(kind == CompletionKind.SCOPED_REFERENCE){
-			// completionOnMemberReference
-			completionOnScopedReference(completionNode);
-		}
+//		else if(kind == CompletionKind.SCOPED_REFERENCE){
+//			// completionOnMemberReference
+//			completionOnScopedReference(completionNode);
+//		}
 		else if(kind == CompletionKind.FIELD_TYPE){
 			// CompletionOnFieldType
 			completionOnFieldType(completionNode);
@@ -686,7 +687,9 @@ public class CompletionEngine implements RelevanceConstants {
 		}
 	
 		// add keywords in all cases except for member and scoped reference cases. 
-		if((kind != CompletionKind.MEMBER_REFERENCE) &&(kind != CompletionKind.SCOPED_REFERENCE)){
+		if((kind != CompletionKind.MEMBER_REFERENCE) 
+//				&&(kind != CompletionKind.SCOPED_REFERENCE)
+				){
 			addKeywordsToCompletions( completionNode.getKeywords());
 		}
 		
@@ -701,8 +704,8 @@ public class CompletionEngine implements RelevanceConstants {
 		String kindStr = "";
 		if(kind == IASTCompletionNode.CompletionKind.MEMBER_REFERENCE)
 			kindStr = "MEMBER_REFERENCE";
-		else if(kind == IASTCompletionNode.CompletionKind.SCOPED_REFERENCE)
-			kindStr = "SCOPED_REFERENCE";
+//		else if(kind == IASTCompletionNode.CompletionKind.SCOPED_REFERENCE)
+//			kindStr = "SCOPED_REFERENCE";
 		else if(kind == IASTCompletionNode.CompletionKind.FIELD_TYPE)
 			kindStr = "FIELD_TYPE Class Scope";
 		else if(kind == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)

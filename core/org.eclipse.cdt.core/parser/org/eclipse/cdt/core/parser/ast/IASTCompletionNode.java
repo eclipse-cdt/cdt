@@ -24,9 +24,6 @@ public interface IASTCompletionNode {
 	{
 		// x.[ ] x->[ ]
 		public static final CompletionKind MEMBER_REFERENCE = new CompletionKind( 0 );
-
-		// x::[ ]
-		public static final CompletionKind SCOPED_REFERENCE = new CompletionKind( 1 );
 		
 		// class member declaration type reference
 		public static final CompletionKind FIELD_TYPE = new CompletionKind( 2 );

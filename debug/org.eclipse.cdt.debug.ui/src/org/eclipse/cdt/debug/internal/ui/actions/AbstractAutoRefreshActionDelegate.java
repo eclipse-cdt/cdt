@@ -10,15 +10,19 @@
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.ui.actions; 
 
+import java.util.Observable;
+import java.util.Observer;
 import org.eclipse.cdt.debug.core.ICUpdateManager;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * The superclass for all "Auto-Refresh" action delegates.
  */
-public abstract class AbstractAutoRefreshActionDelegate extends AbstractRefreshActionDelegate {
+public abstract class AbstractAutoRefreshActionDelegate extends AbstractRefreshActionDelegate implements Observer{
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractRefreshActionDelegate#doAction()
@@ -54,5 +58,47 @@ public abstract class AbstractAutoRefreshActionDelegate extends AbstractRefreshA
 			action.setEnabled( enabled );
 			action.setChecked( checked );
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
+		IStructuredSelection ss = getSelection();
+		if ( !ss.isEmpty() ) {
+			ICUpdateManager um = getUpdateManager( ss.getFirstElement() );
+			if ( um instanceof Observable ) {
+				((Observable)um).deleteObserver( this );
+			}
+		}
+		super.selectionChanged( part, selection );
+		ss = getSelection();
+		if ( !ss.isEmpty() ) {
+			ICUpdateManager um = getUpdateManager( ss.getFirstElement() );
+			if ( um instanceof Observable ) {
+				((Observable)um).addObserver( this );
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate2#dispose()
+	 */
+	public void dispose() {
+		IStructuredSelection ss = getSelection();
+		if ( !ss.isEmpty() ) {
+			ICUpdateManager um = getUpdateManager( ss.getFirstElement() );
+			if ( um instanceof Observable ) {
+				((Observable)um).deleteObserver( this );
+			}
+		}
+		super.dispose();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+	 */
+	public void update( Observable o, Object arg ) {
+		update();
 	}
 }

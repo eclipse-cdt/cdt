@@ -15,7 +15,7 @@ import org.eclipse.cdt.debug.core.ICUpdateManager;
 import org.eclipse.debug.core.model.IDebugElement;
  
 /**
- * A delegate for the "Refresh" action of the Shared Libraries view.
+ * The delegate for the "Refresh" action of the Shared Libraries view.
  */
 public class RefreshSharedLibrariesAction extends AbstractRefreshActionDelegate {
 

@@ -1,3 +1,16 @@
+2004-06-12 Mikhail Khodjaiants
+	Added the superclass for action delegates of views different than the Debug view and 
+	driven by the selection in the Debug view.
+	All "Auto-refresh" actions implement "Observer" to be notified of changes 
+	by the corresponding update managers.
+	* ActionMessages.properties
+	* AbstractAutoRefreshActionDelegate.java
+	* AbstractRefreshActionDelegate.java
+	* AbstractViewActionDelegate.java: new
+	* LoadSymbolsForAllActionDelegate.java
+	* RefreshRegistersAction.java
+	* RefreshSharedLibrariesAction.java
+
 2004-06-11 Mikhail Khodjaiants
 	New implementation of the "Load Symbols For All" action of the Shared Libraries view.
 	Fixes for the "Auto-Refresh" and "refresh" actions.

@@ -1,81 +1,54 @@
 /**********************************************************************
  * Copyright (c) 2004 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials
+ * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v10.html
- *
- * Contributors:
+ * 
+ * Contributors: 
  * QNX Software Systems - Initial API and implementation
- ***********************************************************************/ 
-package org.eclipse.cdt.debug.internal.ui.actions; 
+***********************************************************************/
+package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.actions.ActionDelegate;
-import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * A delegate for the "Load Symbols For All" action of the Shared Libraries view.
+ * The delegate for the "Load Symbols For All" action of the Shared Libraries view.
  */
-public class LoadSymbolsForAllActionDelegate extends ActionDelegate implements IViewActionDelegate, IUpdate {
-
-	private IAction fAction;
-	private IDebugView fView;
+public class LoadSymbolsForAllActionDelegate extends AbstractViewActionDelegate {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#getErrorDialogTitle()
 	 */
-	public void init( IViewPart view ) {
-		setView( view );
-		if ( getView() != null ) {
-			getView().add( this );
+	protected String getErrorDialogTitle() {
+		return ActionMessages.getString( "LoadSymbolsForAllActionDelegate.Error_1" ); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#getErrorDialogMessage()
+	 */
+	protected String getErrorDialogMessage() {
+		return ActionMessages.getString( "LoadSymbolsForAllActionDelegate.Error(s)_occurred_loading_the_symbols_1" ); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#doAction()
+	 */
+	protected void doAction() throws DebugException {
+		ICDebugTarget target = getDebugTarget( getView().getViewer().getInput() );
+		if ( target != null ) {
+			target.loadSymbols();
 		}
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionDelegate#init(org.eclipse.jface.action.IAction)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#update()
 	 */
-	public void init( IAction action ) {
-		setAction( action );
-		super.init( action );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionDelegate#dispose()
-	 */
-	public void dispose() {
-		if ( getView() != null )
-			getView().remove( this );
-		super.dispose();
-	}
-
-	protected IDebugView getView() {
-		return fView;
-	}
-
-	private void setView( IViewPart view ) {
-		fView = ( view instanceof IDebugView ) ? (IDebugView)view : null;
-	}
-
-	protected IAction getAction() {
-		return fAction;
-	}
-
-	private void setAction( IAction action ) {
-		fAction = action;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
-	public void update() {
+	protected void update() {
 		IAction action = getAction();
 		if ( getView() != null && action != null ) {
 			ICDebugTarget target = getDebugTarget( getView().getViewer().getInput() );
@@ -83,22 +56,16 @@ public class LoadSymbolsForAllActionDelegate extends ActionDelegate implements I
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractViewActionDelegate#doHandleDebugEvent(org.eclipse.debug.core.DebugEvent)
+	 */
+	protected void doHandleDebugEvent( DebugEvent event ) {
+	}
+
 	private ICDebugTarget getDebugTarget( Object element ) {
 		if ( element instanceof IDebugElement ) {
 			return (ICDebugTarget)((IDebugElement)element).getDebugTarget().getAdapter( ICDebugTarget.class );
 		}
 		return null;
-	}
-
-	public void run( IAction action ) {
-		ICDebugTarget target = getDebugTarget( getView().getViewer().getInput() );
-		if ( target != null ) {
-			try {
-				target.loadSymbols();
-			}
-			catch( DebugException e ) {
-				DebugUIPlugin.errorDialog( getView().getSite().getShell(), "Error", "Operation failed.", e.getStatus() );
-			}
-		}
 	}
 }

@@ -2539,6 +2539,56 @@ public class AST2Tests extends AST2BaseTest {
       assertEquals( ((IASTBinaryExpression)second_if_statement.getCondition()).getOperator(), IASTBinaryExpression.op_lessThan );
       IASTIfStatement third_if_statement = (IASTIfStatement) second_if_statement.getElseClause();
       assertEquals( ((IASTBinaryExpression)third_if_statement.getCondition()).getOperator(), IASTBinaryExpression.op_greaterThan );
+    }
+   
+   public void testBug84090_LabelReferences() throws Exception {
+   		StringBuffer buffer = new StringBuffer();
+   		buffer.append( "void f() {                    \n"); //$NON-NLS-1$
+   		buffer.append( "   while(1){                  \n"); //$NON-NLS-1$
+   		buffer.append( "      if( 1 ) goto end;       \n"); //$NON-NLS-1$
+   		buffer.append( "   }                          \n"); //$NON-NLS-1$
+   		buffer.append( "   end: ;                     \n"); //$NON-NLS-1$
+   		buffer.append( "}                             \n"); //$NON-NLS-1$
+		
+   		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+        CNameCollector col = new CNameCollector();
+        CVisitor.visitTranslationUnit(tu, col);
+
+        assertEquals(col.size(), 3);
+        ILabel end = (ILabel) col.getName(1).resolveBinding();
+        
+        IASTName [] refs = tu.getReferences( end );
+        assertEquals( refs.length, 1 );
+        assertSame( refs[0].resolveBinding(), end );
+   }
+   
+   public void testBug84092_EnumReferences() throws Exception {
+      StringBuffer buffer = new StringBuffer();
+      buffer.append("enum col { red, blue };    \n"); //$NON-NLS-1$
+      buffer.append("enum col c;                \n"); //$NON-NLS-1$
+
+      IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+      CNameCollector collector = new CNameCollector();
+      CVisitor.visitTranslationUnit(tu, collector);
+
+      assertEquals(collector.size(), 5);
+      IEnumeration col = (IEnumeration) collector.getName(0).resolveBinding();
       
+      IASTName [] refs = tu.getReferences( col );
+      assertEquals( refs.length, 1 );
+      assertSame( refs[0].resolveBinding(), col );
+   }
+   
+   public void testBug84096_FieldDesignatorRef() throws Exception {
+	   	IASTTranslationUnit tu = parse("struct s { int a; } ss = { .a = 1 }; \n", ParserLanguage.C); //$NON-NLS-1$
+	    CNameCollector collector = new CNameCollector();
+	    CVisitor.visitTranslationUnit(tu, collector);
+	
+	    assertEquals(collector.size(), 4);
+	    IField a = (IField) collector.getName(1).resolveBinding();
+	    
+	    IASTName [] refs = tu.getReferences( a );
+	    assertEquals( refs.length, 1 );
+	    assertSame( refs[0].resolveBinding(), a );
    }
 }

@@ -406,9 +406,12 @@ public class CVisitor {
 			processNames = true;
 			if( binding instanceof ILabel )
 				kind = KIND_LABEL;
-			else if( binding instanceof ICompositeType || binding instanceof ITypedef )
+			else if( binding instanceof ICompositeType || 
+					 binding instanceof ITypedef || 
+					 binding instanceof IEnumeration )
+			{
 				kind = KIND_TYPE;
-			else 
+			} else 
 				kind = KIND_OBJ_FN;
 		}
 		
@@ -416,7 +419,7 @@ public class CVisitor {
 			ASTNodeProperty prop = name.getPropertyInParent();
 			switch( kind ){
 				case KIND_LABEL:
-					if( prop == IASTGotoStatement.NAME || prop == IASTLabelStatement.NAME )
+					if( prop == IASTGotoStatement.NAME )
 						break;
 					return PROCESS_CONTINUE;
 				case KIND_TYPE:
@@ -432,8 +435,12 @@ public class CVisitor {
 					}
 					return PROCESS_CONTINUE;
 				case KIND_OBJ_FN:
-					if( prop == IASTIdExpression.ID_NAME || prop == IASTFieldReference.FIELD_NAME )
+					if( prop == IASTIdExpression.ID_NAME || 
+						prop == IASTFieldReference.FIELD_NAME || 
+						prop == ICASTFieldDesignator.FIELD_NAME )
+					{
 						break;
+					}
 					return PROCESS_CONTINUE;
 			}
 			

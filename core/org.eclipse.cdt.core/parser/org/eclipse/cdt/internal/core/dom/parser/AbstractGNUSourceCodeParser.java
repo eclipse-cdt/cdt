@@ -1461,7 +1461,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         BacktrackException savedBt = null;
         try {
             IASTExpression expression = expression();
-            lastTokenOfExpression = consume(); // SEMI or EOC
+            if( LT(1) == IToken.tEOC )
+            	lastTokenOfExpression = consume();
+            else
+            	lastTokenOfExpression = consume( IToken.tSEMI );
             expressionStatement = createExpressionStatement();
             expressionStatement.setExpression(expression);
             ((ASTNode) expressionStatement).setOffsetAndLength(

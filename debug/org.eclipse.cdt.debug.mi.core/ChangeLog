@@ -1,3 +1,36 @@
+2002-12-05 Alain Magloire
+
+	GDB/MI provides error messages in its log stream, one problem
+	is that it is not consistent, for example doing:
+	 (gdb) info threads
+         & "info threads\n"
+	which is obviously not an error.
+	So we put the error stream output par of the exception so when
+	it is relevant it shows in the Exception.
+	MI2CDIException is the bridge class.
+
+	* src/.../mi/core/cdi/BreakpoinManager.java:
+	* src/.../mi/core/cdi/CSession.java:
+	* src/.../mi/core/cdi/CTarget.java:
+	* src/.../mi/core/cdi/CThread.java:
+	* src/.../mi/core/cdi/MemoryBlock.java:
+	* src/.../mi/core/cdi/MemoryManager.java:
+	* src/.../mi/core/cdi/Register.java:
+	* src/.../mi/core/cdi/RegisterManager.java:
+	* src/.../mi/core/cdi/SourceManager.java:
+	* src/.../mi/core/cdi/Value.java:
+	* src/.../mi/core/cdi/Variable.java:
+	* src/.../mi/core/cdi/VariableManager.java:
+
+	* src/.../mi/core/command/Command.java (getMIInfo):
+	When error get the log stream and put it in the MIException.
+	* src/.../mi/core/event/MIErrorEvent.java:
+	Get the log stream error also.
+	* src/.../mi/core/MIException.java (getLogMessage): New method
+	contains buffer output.
+	* src/.../mi/core/RxThread.java (processMIOutput): get the
+	oob arrays up so it can be use in MIErrorEvent.
+
 2002-12-02 Alain Magloire
 
 	* src/.../mi/core/cdi/CTarget.java (updateState): If we

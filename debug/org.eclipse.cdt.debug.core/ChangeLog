@@ -1,3 +1,12 @@
+2002-12-05 Alain Magloire
+
+	Some debuggers like gdb/mi can provide detail information, for example
+	gdb/mi dumps errors in mi "log stream" output.
+
+	* src/.../cdi/CDIException.java (getDetailMessage): New method to provide
+	more information it need be.
+	* src/.../cdi/ICDIErrorInfo.java (getDetailMessage: New method.
+
 2002-12-04 Mikhail Khodjaiants
 	Added the 'setChanged' method to ICValue. This method should common for CValue and 
 	CArrayPartitionValue to implement 'setChanged' of CVariable correctly.

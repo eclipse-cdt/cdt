@@ -1,3 +1,10 @@
+2004-01-07 Alain Magloire
+
+	Fix for bug 49595
+	The error parser order were not save correctly.
+
+	* src/org/eclipse/cdt/ui/dialogs/AbstractErrorParserBlock.java
+
 2003-12-30 Alain Magloire
 
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java:  Fix in the setSelection().

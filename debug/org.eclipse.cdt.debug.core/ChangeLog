@@ -1,4 +1,9 @@
 2002-12-17 Mikhail Khodjaiants
+	The 'getLineNumber' method of CStackFrame should return the line number associated with the stack frame if the current source locator 
+	does not implement 'ICSourceLocator'.
+	* CStackFrame.java
+
+2002-12-17 Mikhail Khodjaiants
 	Changed the implementation of the 'refresh' method of CVariable.
 	* CVariable.java
 

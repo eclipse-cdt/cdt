@@ -180,6 +180,8 @@ public class CStackFrame extends CDebugElement
 			ISourceLocator locator = ((CDebugTarget)getDebugTarget()).getSourceLocator();
 			if ( locator != null && locator instanceof ICSourceLocator )
 				return ((ICSourceLocator)locator).getLineNumber( this );
+			if ( getCDIStackFrame() != null && getCDIStackFrame().getLocation() != null )
+				return getCDIStackFrame().getLocation().getLineNumber();
 		}
 		return -1;
 	}

@@ -1,3 +1,7 @@
+2003-11-03 Mikhail Khodjaiants
+	Fix for PR 45957: Memory view: last column does not show updates.
+	* MemoryPresentation.java
+
 2003-09-30 Mikhail Khodjaiants
 	Fix for PR 39737: Tooltip in debug mode over long strings is not handled properly.
 	Added an internal constant to limit the hover text size.

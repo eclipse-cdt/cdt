@@ -5,7 +5,7 @@
    version="1.1.0"
    provider-name="%providerName"
    plugin-id="org.eclipse.cdt.core"
-   plugin-version="1.0.1">
+   plugin-version="1.1.0">
 
    <runtime>
       <library name="cdt_win32.jar"/>

@@ -154,8 +154,7 @@ public class CDebugTarget extends CDebugElement
 						 String name,
 						 IProcess process,
 						 boolean allowsTerminate,
-						 boolean allowsDisconnect, 
-						 boolean resume )
+						 boolean allowsDisconnect )
 	{
 		super( null );
 		setLaunch( launch );
@@ -402,12 +401,10 @@ public class CDebugTarget extends CDebugElement
 			setSuspended( false );
 			getCDITarget().resume();
 			resumeThreads();
-			fireResumeEvent( DebugEvent.CLIENT_REQUEST );
 		} 
 		catch( CDIException e ) 
 		{
 			setSuspended( true );
-			fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
 			targetRequestFailed( MessageFormat.format( "{0} occurred resuming target.", new String[] { e.toString() } ), e );
 		}	
 	}
@@ -424,14 +421,12 @@ public class CDebugTarget extends CDebugElement
 		try
 		{
 			setSuspended( true );
-			fireSuspendEvent( DebugEvent.CLIENT_REQUEST );
 			getCDITarget().suspend();
 			suspendThreads();
 		}
 		catch( CDIException e )
 		{
 			setSuspended( false );
-			fireResumeEvent( DebugEvent.CLIENT_REQUEST );
 			targetRequestFailed( MessageFormat.format( "{0} occurred suspending target.", new String[] { e.toString()} ), e );
 		}
 	}

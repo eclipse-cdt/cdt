@@ -6,12 +6,14 @@
 
 package org.eclipse.cdt.debug.core;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.internal.core.CDebugTarget;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -74,7 +76,7 @@ public class CDebugModel
 											   final IProcess process,
 											   final boolean allowTerminate,
 											   final boolean allowDisconnect,
-											   final boolean resume )
+											   final boolean stopInMain ) throws DebugException
 	{
 		final IDebugTarget[] target = new IDebugTarget[1];
 		IWorkspaceRunnable r = new IWorkspaceRunnable()
@@ -86,8 +88,7 @@ public class CDebugModel
 											  name,
 											  process,
 											  allowTerminate,
-											  allowDisconnect,
-											  resume );
+											  allowDisconnect );
 			}
 		};
 		try
@@ -98,6 +99,15 @@ public class CDebugModel
 		{
 			CDebugCorePlugin.log( e );
 		}
+
+		if ( stopInMain )
+			breakInMain( cdiTarget );
+		target[0].resume();
+
 		return target[0];
+	}
+	
+	private static void breakInMain( ICDITarget cdiTarget ) throws DebugException
+	{
 	}
 }

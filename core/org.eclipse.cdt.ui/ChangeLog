@@ -1,3 +1,17 @@
+2003-02-01 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java:
+	Remove CreateFileAction, CreateFolderAction and OpenPerspectiveMenu,
+	deprecated classes.  Instead use NewWizardMenu class.
+	* src/org/eclipse/cdt/internal/ui/BuildConsoleManager.java:
+	Make fDocument protected scope.
+	* src/org/eclipse/cdt/ui/CUIPlugin.java:
+	Wrong definitions of FILE_WIZARD_ID and FOLDER_WIZARD_ID.
+	* plugin.properties:
+	New entries for file and folder wizards.
+	* plugin.plugin.xml:
+	New entries for file and folder wizards.
+
 2003-01-28 Alain Magloire
 
 	With the help of the 2.1 compiler, fix the warnings when accessiong static

@@ -1,3 +1,10 @@
+2003-08-20 Alain Magloire
+
+	When doing the IPlugin.shutdown().  We have to make
+	sure that the binarySearch threads are terminated.
+	
+	* src/org/eclipse/cdt/internal/core/model/BinaryRunner.java
+
 2003-08-19 Sean Evoy
 	In order to properly support the indexing feature, the scanner has to 
 	function as well as the version that ships with the toolset if possible. 

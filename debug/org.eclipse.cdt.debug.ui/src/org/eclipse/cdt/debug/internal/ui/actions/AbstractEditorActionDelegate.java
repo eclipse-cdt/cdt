@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.actions.ActionDelegate;
 
 /**
  * 
@@ -27,7 +28,8 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * 
  * @since Sep 19, 2002
  */
-public abstract class AbstractEditorActionDelegate implements IWorkbenchWindowActionDelegate,
+public abstract class AbstractEditorActionDelegate extends ActionDelegate 
+												   implements IWorkbenchWindowActionDelegate,
 															  IEditorActionDelegate,
 															  IPartListener,
 															  ISelectionListener,
@@ -36,7 +38,6 @@ public abstract class AbstractEditorActionDelegate implements IWorkbenchWindowAc
 	private IAction fAction;
 	private IWorkbenchWindow fWorkbenchWindow;
 	private IWorkbenchPart fTargetPart;
-	private IEditorPart fTargetEditor;
 	private IDebugTarget fDebugTarget = null;
 
 	/**

@@ -32,6 +32,7 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
 /**
@@ -39,7 +40,8 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
  * 
  * @since: Nov 4, 2002
  */
-public class AddGlobalsActionDelegate implements IViewActionDelegate, 
+public class AddGlobalsActionDelegate extends ActionDelegate
+									  implements IViewActionDelegate, 
 												 ISelectionListener,
 												 IPartListener
 {
@@ -251,7 +253,7 @@ public class AddGlobalsActionDelegate implements IViewActionDelegate,
 		return fSelection;
 	}
 
-	protected void dispose()
+	public void dispose()
 	{
 		if ( getView() != null ) 
 		{

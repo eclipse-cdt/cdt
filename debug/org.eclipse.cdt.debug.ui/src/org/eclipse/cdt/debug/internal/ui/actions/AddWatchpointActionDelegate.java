@@ -24,6 +24,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
@@ -33,7 +34,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  * @since Sep 4, 2002
  */
-public class AddWatchpointActionDelegate implements IWorkbenchWindowActionDelegate,
+public class AddWatchpointActionDelegate extends ActionDelegate
+										 implements IWorkbenchWindowActionDelegate,
 													IPartListener
 {
 	private boolean fInitialized = false;

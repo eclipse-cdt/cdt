@@ -29,7 +29,6 @@ public class CygwinDebuggerPage extends AbstractLaunchConfigurationTab {
 
 	protected Text fGDBCommandText;
 	protected Text fGDBInitText;
-	private Button fGDBButton;
 
 	public void createControl(Composite parent) {
 		GridData gd;

@@ -5,10 +5,13 @@
  */
 package org.eclipse.cdt.debug.ui.sourcelookup;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -66,7 +69,8 @@ public class SourcePropertyPage extends PropertyPage
 
 	protected Control createActiveContents( Composite parent )
 	{
-		fBlock.initialize( getSourceLocations() );
+		fBlock.setProject( getProject() );
+		fBlock.initialize( getSourceLocator() );
 		fBlock.createControl( parent );
 		return fBlock.getControl();
 	}
@@ -81,21 +85,17 @@ public class SourcePropertyPage extends PropertyPage
 		return null;
 	}
 	
-	private ICSourceLocation[] getSourceLocations()
+	private ICSourceLocator getSourceLocator()
 	{
 		ICDebugTarget target = getDebugTarget();
 		if ( target != null )
 		{
 			if ( target.getLaunch().getSourceLocator() instanceof IAdaptable )
 			{
-				ICSourceLocator locator = (ICSourceLocator)((IAdaptable)target.getLaunch().getSourceLocator()).getAdapter( ICSourceLocator.class );
-				if ( locator != null )
-				{
-					return locator.getSourceLocations();
-				}
+				return (ICSourceLocator)((IAdaptable)target.getLaunch().getSourceLocator()).getAdapter( ICSourceLocator.class );
 			}
 		}
-		return new ICSourceLocation[0];
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -151,5 +151,25 @@ public class SourcePropertyPage extends PropertyPage
 		{
 			CDebugUIPlugin.errorDialog( e.getMessage(), (IStatus)null );
 		}
+	}
+
+	private IProject getProject()
+	{
+		IProject project = null;
+		ICDebugTarget target = getDebugTarget();
+		if ( target != null )
+		{
+			ILaunchConfiguration configuration = target.getLaunch().getLaunchConfiguration();
+			try
+			{
+				String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "" );
+				if ( projectName != null && projectName.length() > 0 )
+					project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
+			}
+			catch( CoreException e )
+			{
+			}
+		}
+		return project;
 	}
 }

@@ -5,9 +5,14 @@
  */
 package org.eclipse.cdt.debug.ui.sourcelookup;
 
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CDirectorySourceLocation;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
@@ -15,10 +20,19 @@ import org.eclipse.cdt.debug.internal.ui.dialogfields.IListAdapter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField;
 import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -28,6 +42,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * 
@@ -49,6 +65,34 @@ public class SourceLookupBlock
 			super.managedButtonPressed( index );
 			return false;
 		}
+
+		protected TableViewer createTableViewer( Composite parent )
+		{
+			TableViewer viewer = super.createTableViewer( parent );
+			Table table = viewer.getTable();
+
+			TableLayout tableLayout = new TableLayout();
+			table.setLayout( tableLayout );
+
+			GridData gd = new GridData( GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL );
+			gd.grabExcessVerticalSpace = true;
+			gd.grabExcessHorizontalSpace = true;
+			table.setLayoutData( gd );
+			
+			table.setLinesVisible( true );
+			table.setHeaderVisible( true );		
+
+			new TableColumn( table, SWT.NULL );
+			tableLayout.addColumnData( new ColumnWeightData( 1, true ) );
+			new TableColumn( table, SWT.NULL );
+			tableLayout.addColumnData( new ColumnWeightData( 1, true ) );
+
+			TableColumn[] columns = table.getColumns();
+			columns[0].setText( "Location" );
+			columns[1].setText( "Association" );
+			
+			return viewer;
+		}
 	}
 
 	private class SourceLookupAdapter implements IListAdapter
@@ -63,41 +107,60 @@ public class SourceLookupBlock
 			doSelectionChanged();
 		}
 	}
-
-	private static class SourceLookupLabelProvider extends LabelProvider
+	
+	private static class SourceLookupLabelProvider extends LabelProvider implements ITableLabelProvider
 	{
-		public String getText( Object element )
+		public Image getColumnImage( Object element, int columnIndex )
 		{
-			if ( element instanceof IProjectSourceLocation )
+			if ( columnIndex == 0 )
 			{
-				return ((IProjectSourceLocation)element).getProject().getName();
-			}
-			if ( element instanceof IDirectorySourceLocation )
-			{
-				return ((IDirectorySourceLocation)element).getDirectory().toOSString();
+				if ( element instanceof IProjectSourceLocation )
+				{
+					return CDebugImages.get( CDebugImages.IMG_OBJS_PROJECT );
+				}
+				if ( element instanceof IDirectorySourceLocation )
+				{
+					return CDebugImages.get( CDebugImages.IMG_OBJS_FOLDER );
+				}
 			}
 			return null;
 		}
 
-		public Image getImage( Object element )
+		public String getColumnText( Object element, int columnIndex )
 		{
-			if ( element instanceof IProjectSourceLocation )
+			if ( columnIndex == 0 )
 			{
-				return CDebugImages.get( CDebugImages.IMG_OBJS_PROJECT );
+				if ( element instanceof IProjectSourceLocation )
+				{
+					return ((IProjectSourceLocation)element).getProject().getName();
+				}
+				if ( element instanceof IDirectorySourceLocation )
+				{
+					return ((IDirectorySourceLocation)element).getDirectory().toOSString();
+				}
 			}
-			if ( element instanceof IDirectorySourceLocation )
+			else if ( columnIndex == 1 )
 			{
-				return CDebugImages.get( CDebugImages.IMG_OBJS_FOLDER );
+				if ( element instanceof IDirectorySourceLocation && ((IDirectorySourceLocation)element).getAssociation() != null )
+				{
+					return ((IDirectorySourceLocation)element).getAssociation().toOSString();
+				}
 			}
-			return null;
+			return "";
 		}
 	}
+
+	// Column properties
+	private static final String CP_LOCATION = "location";
+	private static final String CP_ASSOCIATION = "association";
 
 	private Composite fControl = null;
 	private Shell fShell = null;
 	private SourceListDialogField fSourceListField;
 	private ILaunchConfigurationDialog fLaunchConfigurationDialog = null;
 	private boolean fIsDirty = false;
+	private ICSourceLocator fLocator = null;
+	private IProject fProject = null;
 
 	/**
 	 * Constructor for SourceLookupBlock.
@@ -112,6 +175,8 @@ public class SourceLookupBlock
 			/* 3 */ "Down",
 			/* 4 */ null,
 			/* 5 */ "Remove",
+			/* 6 */ null,
+			/* 7 */ "Restore Defaults",
 		};
 
 		SourceLookupAdapter adapter = new SourceLookupAdapter();
@@ -134,13 +199,58 @@ public class SourceLookupBlock
 		fControl.setLayout( layout );
 		fControl.setLayoutData( new GridData( GridData.FILL_BOTH ) );
 		fControl.setFont( JFaceResources.getDialogFont() );
-		
+
 		PixelConverter converter = new PixelConverter( fControl );
 		
 		fSourceListField.doFillIntoGrid( fControl, 3 );
 		LayoutUtil.setHorizontalSpan( fSourceListField.getLabelControl( null ), 2 );
 		LayoutUtil.setWidthHint( fSourceListField.getLabelControl( null ), converter.convertWidthInCharsToPixels( 40 ) );
 		LayoutUtil.setHorizontalGrabbing( fSourceListField.getListControl( null ) );
+
+		TableViewer viewer = fSourceListField.getTableViewer();
+		Table table = viewer.getTable();
+		CellEditor cellEditor = new TextCellEditor( table );
+		viewer.setCellEditors( new CellEditor[]{ null, cellEditor } );
+		viewer.setColumnProperties( new String[]{ CP_LOCATION, CP_ASSOCIATION } );
+		viewer.setCellModifier( createCellModifier() );
+	}
+
+	private ICellModifier createCellModifier()
+	{
+		return new ICellModifier()
+					{
+						public boolean canModify( Object element, String property )
+						{
+							return ( element instanceof CDirectorySourceLocation && property.equals( CP_ASSOCIATION ) );
+						}
+
+						public Object getValue( Object element, String property )
+						{
+							if ( element instanceof CDirectorySourceLocation && property.equals( CP_ASSOCIATION ) )
+							{
+								return ( ((CDirectorySourceLocation)element).getAssociation() != null ) ? 
+												((CDirectorySourceLocation)element).getAssociation().toOSString() : "";
+							}
+							return null;
+						}
+
+						public void modify( Object element, String property, Object value )
+						{
+							Object entry = getSelection();
+							if ( entry instanceof CDirectorySourceLocation && 
+								 property.equals( CP_ASSOCIATION ) && 
+								 value instanceof String )
+							{
+								Path association = new Path( (String)value );
+								if ( association.isValidPath( (String)value ) )
+								{
+									((CDirectorySourceLocation)entry).setAssociation( association );
+									fSourceListField.refresh();
+									updateLaunchConfigurationDialog();
+								}
+							}
+						}
+					};
 	}
 
 	public Control getControl()
@@ -148,7 +258,16 @@ public class SourceLookupBlock
 		return fControl;
 	}
 	
-	public void initialize( ICSourceLocation[] locations )
+	public void initialize( ICSourceLocator locator )
+	{
+		fLocator = locator;
+		ICSourceLocation[] locations = new ICSourceLocation[0];
+		if ( fLocator != null )
+			locations = fLocator.getSourceLocations();
+		resetLocations( locations );
+	}
+
+	private void resetLocations( ICSourceLocation[] locations )
 	{
 		fSourceListField.removeAllElements();
 		for ( int i = 0; i < locations.length; ++i )
@@ -165,6 +284,8 @@ public class SourceLookupBlock
 				if ( addSourceLocation() )
 					fIsDirty = true;
 				break;
+			case 7:
+				restoreDefaults();
 			case 2:
 			case 3:
 			case 5:
@@ -203,6 +324,7 @@ public class SourceLookupBlock
 			getLaunchConfigurationDialog().updateMessage();
 			getLaunchConfigurationDialog().updateButtons();
 		}
+		fIsDirty = false;
 	}
 
 	public ILaunchConfigurationDialog getLaunchConfigurationDialog()
@@ -218,5 +340,29 @@ public class SourceLookupBlock
 	public boolean isDirty()
 	{
 		return fIsDirty;
+	}
+	
+	protected Object getSelection()
+	{
+		List list = fSourceListField.getSelectedElements();
+		return ( list.size() > 0 ) ? list.get( 0 ) : null;
+	}
+	
+	protected void restoreDefaults()
+	{
+		ICSourceLocation[] locations = new ICSourceLocation[0];
+		if ( getProject() != null )
+			locations = CSourceLocator.getDefaultSourceLocations( getProject() );
+		resetLocations( locations );
+	}
+
+	public IProject getProject()
+	{
+		return fProject;
+	}
+
+	public void setProject( IProject project )
+	{
+		fProject = project;
 	}
 }

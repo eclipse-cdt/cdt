@@ -27,7 +27,7 @@ public interface ICPPClassType extends ICompositeType {
 	 * 
 	 * @return List of ICPPBase
 	 */
-	public List getBases();
+	public ICPPBase [] getBases();
 
 	/**
 	 * Get fields is restated here just to point out that this method returns

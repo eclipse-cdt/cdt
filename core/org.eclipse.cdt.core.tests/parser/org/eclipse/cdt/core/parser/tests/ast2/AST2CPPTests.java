@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -393,4 +394,68 @@ public class AST2CPPTests extends AST2BaseTest {
 	    assertInstances( collector, b, 1 );
 	    assertInstances( collector, B2, 1 );
 	}
+	
+	public void testFunctionResolution() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "void f( int i );                      \n"); //$NON-NLS-1$
+		buffer.append( "void f( char c );                     \n"); //$NON-NLS-1$
+		buffer.append( "void main() {                         \n"); //$NON-NLS-1$
+		buffer.append( "   f( 1 );		//calls f( int );     \n"); //$NON-NLS-1$
+		buffer.append( "   f( 'b' );                          \n"); //$NON-NLS-1$
+		buffer.append( "}                                     \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		IFunction f1 = (IFunction) collector.getName( 0 ).resolveBinding();
+		IFunction f2 = (IFunction) collector.getName( 2 ).resolveBinding();
+		
+		assertInstances( collector, f1, 2 );
+		assertInstances( collector, f2, 2 );
+	}
+	
+	public void testSimpleStruct() throws Exception {
+		StringBuffer buff = new StringBuffer();
+		buff.append("typedef struct {  \n"); //$NON-NLS-1$
+		buff.append("    int x;        \n"); //$NON-NLS-1$
+		buff.append("} S;              \n"); //$NON-NLS-1$
+		buff.append("void f() {        \n"); //$NON-NLS-1$
+		buff.append("    S myS;        \n"); //$NON-NLS-1$
+		buff.append("    myS.x = 5;    \n"); //$NON-NLS-1$
+		buff.append("}                 \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buff.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		ICPPClassType anonStruct = (ICPPClassType) collector.getName( 0 ).resolveBinding();
+		ICPPField x = (ICPPField) collector.getName(1).resolveBinding();
+		ITypedef S = (ITypedef) collector.getName(2).resolveBinding();
+		IFunction f = (IFunction) collector.getName(3).resolveBinding();
+		IVariable myS = (IVariable) collector.getName(5).resolveBinding();
+
+		assertInstances( collector, anonStruct, 1 );
+		assertInstances( collector, x, 2 );
+		assertInstances( collector, S, 2 );
+		assertInstances( collector, f, 1 );
+		assertInstances( collector, myS, 2 );
+	}
+	public void _testStructureTags() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+    	buffer.append( "struct A;             \n" ); //$NON-NLS-1$
+    	buffer.append( "void f(){             \n" ); //$NON-NLS-1$
+    	buffer.append( "   struct A;          \n" ); //$NON-NLS-1$
+    	buffer.append( "   struct A * a;      \n" ); //$NON-NLS-1$
+    	buffer.append( "}                     \n" ); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+    	CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+		
+		ICPPClassType A = (ICPPClassType) collector.getName( 0 ).resolveBinding();
+		IVariable a = (IVariable) collector.getName( 4 ).resolveBinding();
+
+		assertInstances( collector, A, 3 );
+		assertInstances( collector, a, 1 );
+	}
 }
+

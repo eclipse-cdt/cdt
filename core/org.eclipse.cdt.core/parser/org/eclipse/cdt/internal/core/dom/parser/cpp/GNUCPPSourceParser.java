@@ -1462,7 +1462,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 firstExpression.setPropertyInParent( IASTFunctionCallExpression.FUNCTION_NAME );
                 if( secondExpression != null )
                 {
-                    fce.setFunctionNameExpression( secondExpression );
+                    fce.setParameterExpression( secondExpression );
                     secondExpression.setParent( fce );
                     secondExpression.setPropertyInParent( IASTFunctionCallExpression.PARAMETERS );
                 }

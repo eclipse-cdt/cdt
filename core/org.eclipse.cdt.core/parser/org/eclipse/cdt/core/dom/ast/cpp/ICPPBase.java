@@ -16,7 +16,8 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @author Doug Schaefer
  */
 public interface ICPPBase {
-
+	public static final ICPPBase [] EMPTY_BASE_ARRAY = new ICPPBase[0];
+	
 	/**
 	 * The base class.
 	 * 

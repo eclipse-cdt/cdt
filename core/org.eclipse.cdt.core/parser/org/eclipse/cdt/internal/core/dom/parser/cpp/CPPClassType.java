@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 
 /**
@@ -119,9 +120,9 @@ public class CPPClassType implements ICPPClassType {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType#getBases()
 	 */
-	public List getBases() {
+	public ICPPBase [] getBases() {
 		// TODO Auto-generated method stub
-		return null;
+		return ICPPBase.EMPTY_BASE_ARRAY;
 	}
 
 	/* (non-Javadoc)

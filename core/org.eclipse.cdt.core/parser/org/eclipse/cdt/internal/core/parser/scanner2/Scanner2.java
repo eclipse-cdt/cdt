@@ -245,6 +245,14 @@ public class Scanner2 implements IScanner, IScannerData {
 				nextToken = null;
 				return nextToken();
 			}
+		} else if (token.getType() == IToken.tSTRING) {
+			while (nextToken != null && nextToken.getType() == IToken.tSTRING) {
+				// Concatenate the adjacent strings
+				String t1 = token.getImage();
+				String t2 = nextToken.getImage();
+				token = new ImagedToken(IToken.tSTRING, t1 + t2);
+				nextToken = fetchToken();
+			}
 		}
 		
 		// TODO Check if token is ## and proceed with pasting
@@ -286,6 +294,9 @@ public class Scanner2 implements IScanner, IScannerData {
 				
 				case '"':
 					return scanString();
+					
+				case '\'':
+					return scanCharLiteral();
 
 				case 'a':
 				case 'b':
@@ -660,22 +671,19 @@ public class Scanner2 implements IScanner, IScannerData {
 		boolean escaped = false;
 		loop:
 		while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
-			switch (buffer[bufferPos[bufferStackPos]]) {
-				case '\\':
-					++stringLen;
-					escaped = !escaped;
-					continue;
-				case '"':
-					if (escaped) {
-						escaped = false;
-						continue;
-					}
-					break loop;
-				default:
-					++stringLen;
-					escaped = false;
+			++stringLen;
+			char c = buffer[bufferPos[bufferStackPos]];
+			if (c == '"') {
+				if (!escaped)
+					break;
+				}
+			else if (c == '\\') {
+				escaped = !escaped;
+				continue;
 			}
+			escaped = false;
 		}
+		--stringLen;
 
 		// We should really throw an exception if we didn't get the terminating
 		// quote before the end of buffer
@@ -683,6 +691,38 @@ public class Scanner2 implements IScanner, IScannerData {
 		return new ImagedToken(tokenType, new String(buffer, stringStart, stringLen));
 	}
 
+	private IToken scanCharLiteral() {
+		char[] buffer = bufferStack[bufferStackPos];
+		int start = bufferPos[bufferStackPos] + 1;
+		int limit = bufferLimit[bufferStackPos];
+
+		if (start >= limit) {
+			return new ImagedToken(IToken.tCHAR, new String(emptyCharArray));
+		}
+
+		int length = 0;
+		boolean escaped = false;
+		while (++bufferPos[bufferStackPos] < limit) {
+			++length;
+			int pos = bufferPos[bufferStackPos];
+			if (buffer[pos] == '\'') {
+				if (!escaped)
+					break;
+			} else if (buffer[pos] == '\\') {
+				escaped = !escaped;
+				continue;
+			}
+			escaped = false;
+		}
+		--length;
+		
+		char[] image = length > 0
+			? CharArrayUtils.extract(buffer, start, length)
+			: emptyCharArray;
+
+		return new ImagedToken(IToken.tCHAR, new String(image));
+	}
+	
 	private IToken scanNumber() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int start = bufferPos[bufferStackPos];

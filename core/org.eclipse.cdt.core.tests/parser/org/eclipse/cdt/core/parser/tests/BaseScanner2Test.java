@@ -203,8 +203,6 @@ public class BaseScanner2Test extends TestCase {
 	public void validateDefinition(String name, String value)
 	{
 		Object expObject = scanner.getRealDefinitions().get(name.toCharArray());
-		if (expObject == null)
-			System.out.println("Hi");
 		assertNotNull(expObject);
 		assertTrue(expObject instanceof ObjectStyleMacro);
 		assertTrue(CharArrayUtils.equals(value.toCharArray(), ((ObjectStyleMacro)expObject).expansion));

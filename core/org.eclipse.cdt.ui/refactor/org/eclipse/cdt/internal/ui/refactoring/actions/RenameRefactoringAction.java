@@ -63,11 +63,12 @@ public class RenameRefactoringAction extends SelectionDispatchAction {
 		}
 		if((element == null) || (element instanceof ITranslationUnit)){
 			enable = false;
-		}
-		ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();			
-		if( (((CElement)element).getIdStartPos() != textSelection.getOffset()) 
-		|| (((CElement)element).getIdLength() != textSelection.getLength())) {
-			enable = false;
+		} else {
+			ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();			
+			if( (((CElement)element).getIdStartPos() != textSelection.getOffset()) 
+					|| (((CElement)element).getIdLength() != textSelection.getLength())) {
+				enable = false;
+			}
 		}
 		setEnabled(enable);
 	}

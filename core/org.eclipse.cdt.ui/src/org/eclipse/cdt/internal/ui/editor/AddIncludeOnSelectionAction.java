@@ -12,10 +12,16 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
+import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.ICElement;
@@ -39,16 +45,10 @@ import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.cdt.ui.text.ICCompletionInvocationContext;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
@@ -56,7 +56,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
@@ -73,9 +73,16 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 
 	class RequiredIncludes implements IRequiredInclude {
 		String name;
+		boolean isStandard;
 
 		RequiredIncludes(String n) {
 			name = n;
+			isStandard = true;
+		}
+
+		RequiredIncludes(String n, boolean isStandard) {
+			name = n;
+			this.isStandard = isStandard;
 		}
 
 		/* (non-Javadoc)
@@ -89,7 +96,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		 * @see org.eclipse.cdt.ui.IRequiredInclude#isStandard()
 		 */
 		public boolean isStandard() {
-			return true;
+			return isStandard;
 		}
 
 	}
@@ -148,10 +155,9 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	 * @see IAction#actionPerformed
 	 */
 	public void run() {
-		extractIncludes(fEditor);		
-
 		ITranslationUnit tu= getTranslationUnit();
 		if (tu != null) {
+			extractIncludes(fEditor);
 			addInclude(tu);
 		}
 		fUsings = null;
@@ -265,7 +271,19 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				if (!AllTypesCache.isCacheUpToDate(scope)) {
 					AllTypesCache.updateCache(scope, monitor);
 				}
-				infos[0] = AllTypesCache.getTypes(scope, new QualifiedTypeName(name), types);				
+				ITypeInfo[] results = null;
+			    if (!monitor.isCanceled()) {
+					results = AllTypesCache.getTypes(scope, new QualifiedTypeName(name), types);
+				    if (!monitor.isCanceled()) {
+						for (int i = 0; i < results.length; ++i) {
+						    ITypeInfo info = results[i];
+						    AllTypesCache.resolveTypeLocation(info, monitor);
+						    if (monitor.isCanceled())
+						        break;
+						}
+				    }
+			    }
+				infos[0] = results;
 			}
 		};
 		try {
@@ -322,7 +340,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 
 	private void selectResult(ITypeInfo[] results, String name, Shell shell) {
 		int nResults= results.length;
-		IProject project = getTranslationUnit().getCProject().getProject();
+		ITranslationUnit unit = getTranslationUnit();
 		if (nResults == 0) {
 			return; // bail out
 		}
@@ -339,9 +357,9 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		// if only one
 		if (occurences == 1 || results.length == 1) {
 			ITypeInfo curr= results[index];
-			ITypeReference ref = curr.getResolvedReference();
-			if (ref != null) {
-				fRequiredIncludes = new IRequiredInclude[]{new RequiredIncludes(ref.getRelativeIncludePath(project).toString())};
+			IRequiredInclude include = getRequiredInclude(curr, unit);
+			if (include != null) {
+		    	fRequiredIncludes = new IRequiredInclude[] { include };
 			}
 			if (curr.hasEnclosedTypes()) {
 				ITypeInfo[] ns = curr.getEnclosedTypes();
@@ -362,16 +380,15 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			fRequiredIncludes = new IRequiredInclude[selects.length];
 			List usings = new ArrayList(selects.length);
 			for (int i = 0; i < fRequiredIncludes.length; i++) {
-				ITypeReference ref = selects[i].getResolvedReference();
-				if (ref != null) {
-					fRequiredIncludes[i] = new RequiredIncludes(ref.getRelativeIncludePath(project).toString());
+				IRequiredInclude include = getRequiredInclude(selects[i], unit);
+				if (include != null) {
+					fRequiredIncludes[i] = include;
 					if (selects[i].hasEnclosedTypes()) {
 						ITypeInfo[] ns = results[0].getEnclosedTypes();
 						for (int j = 0; j < ns.length; j++) {
 							usings.add(ns[j].getName());
 						}
 					}
-
 				} else {
 					fRequiredIncludes[i] = new RequiredIncludes(""); //$NON-NLS-1$
 				}
@@ -383,7 +400,30 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		}
 	}
 	
-	private void selectResult(IMatch[] results, String name, Shell shell) {
+	private IRequiredInclude getRequiredInclude(ITypeInfo curr, ITranslationUnit tu) {
+        ITypeReference ref = curr.getResolvedReference();
+        if (ref != null) {
+            IPath typeLocation = ref.getLocation();
+    		IProject project = tu.getCProject().getProject();
+            IPath projectLocation = project.getLocation();
+        	IPath headerLocation = tu.getResource().getLocation();
+            boolean isSystemIncludePath = false;
+
+            IPath includePath = PathUtil.makeRelativePathToProjectIncludes(typeLocation, project);
+            if (includePath != null && !projectLocation.isPrefixOf(typeLocation)) {
+                isSystemIncludePath = true;
+            } else if (projectLocation.isPrefixOf(typeLocation)
+                    && projectLocation.isPrefixOf(headerLocation)) {
+                includePath = PathUtil.makeRelativePath(typeLocation, headerLocation);
+            }
+            if (includePath == null)
+                includePath = typeLocation;
+        	return new RequiredIncludes(includePath.toString(), isSystemIncludePath);
+        }
+        return null;
+    }
+
+    private void selectResult(IMatch[] results, String name, Shell shell) {
 		int nResults = results.length;
 		if (nResults == 0) {
 			return;

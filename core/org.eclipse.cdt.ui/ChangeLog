@@ -1,3 +1,8 @@
+2004-08-25 Chris Wiebe
+
+	Fix AddInclude action to resolve paths correctly
+	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java
+
 2004-08-24 Alain Magloire
 
 	Implementation for PR 69118: Folding.

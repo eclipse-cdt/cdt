@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.ui.editor;
  */
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.AbstractDocument;
@@ -91,6 +92,13 @@ public class CDocumentProvider extends FileDocumentProvider {
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			return new CMarkerAnnotationModel(input.getFile());
+		} else if (element instanceof IStorageEditorInput) {
+			// Fall back on the adapter.
+			IStorageEditorInput input = (IStorageEditorInput) element;
+			IResource res = (IResource)input.getAdapter(IResource.class);
+			if (res != null && res.exists()) {
+				return new CMarkerAnnotationModel(res);
+			}
 		}
 		
 		return super.createAnnotationModel(element);

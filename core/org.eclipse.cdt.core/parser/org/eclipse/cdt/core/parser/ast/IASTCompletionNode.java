@@ -59,7 +59,7 @@ public interface IASTCompletionNode {
 		public static final CompletionKind PREPROCESSOR_DIRECTIVE = new CompletionKind( 13 );
 		
 		// any place where a type or variable name is expected to be introduced
-		public static final CompletionKind USER_SPECIFIED_NAME = new CompletionKind( 14 );
+		public static final CompletionKind NESTED_NAME_REFERENCE = new CompletionKind( 14 );
 
 		// any place where function parameters are expected 
 		public static final CompletionKind FUNCTION_REFERENCE = new CompletionKind( 15 );

@@ -1669,11 +1669,11 @@ public abstract class Parser extends ExpressionParser implements IParser
                     if (lookAheadForDeclarator(flags))
                     {
                         setTypeName(sdw, typeNameBegin, typeNameEnd);
- 
                         return;
                     }
-                    setCompletionValues(sdw.getScope(), kind, key );
-                    ITokenDuple d = name(sdw.getScope(), kind, key );
+                    IASTCompletionNode.CompletionKind ourKind = determineDeclSpecCompletionKind(sdw, kind);
+                    setCompletionValues(sdw.getScope(), ourKind, key );
+                    ITokenDuple d = name(sdw.getScope(), ourKind, key );
                     sdw.setTypeName(d);
                     sdw.setSimpleType( IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME ); 
                     flags.setEncounteredTypename(true);
@@ -1728,6 +1728,19 @@ public abstract class Parser extends ExpressionParser implements IParser
         return;
     }
     /**
+	 * @param sdw
+	 * @param kind
+	 * @return
+	 */
+	protected CompletionKind determineDeclSpecCompletionKind(DeclarationWrapper sdw, CompletionKind kind) {
+		if( kind == CompletionKind.ARGUMENT_TYPE ) return kind;
+		if( sdw.getScope() instanceof IASTCompilationUnit || sdw.getScope() instanceof IASTNamespaceDefinition )
+			return sdw.consumedRawType() ? CompletionKind.NESTED_NAME_REFERENCE: kind;
+		return kind;
+	}
+
+
+	/**
 	 * @param sdw
 	 * @param typeNameBegin
 	 * @param typeNameEnd

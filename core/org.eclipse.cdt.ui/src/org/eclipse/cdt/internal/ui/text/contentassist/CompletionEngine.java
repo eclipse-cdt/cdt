@@ -885,8 +885,8 @@ public class CompletionEngine implements RelevanceConstants {
 			kindStr = "NEW_TYPE_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.PREPROCESSOR_DIRECTIVE)
 			kindStr = "PREPROCESSOR_DIRECTIVE"; //$NON-NLS-1$
-		else if(kind == IASTCompletionNode.CompletionKind.USER_SPECIFIED_NAME)
-			kindStr = "USER_SPECIFIED_NAME"; //$NON-NLS-1$
+		else if(kind == IASTCompletionNode.CompletionKind.NESTED_NAME_REFERENCE)
+			kindStr = "NESTED_NAME_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.STRUCT_REFERENCE)
 			kindStr = "STRUCT_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.UNION_REFERENCE)

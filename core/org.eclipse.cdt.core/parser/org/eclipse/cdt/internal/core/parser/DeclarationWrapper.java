@@ -806,4 +806,10 @@ public class DeclarationWrapper implements IDeclaratorOwner
 	{
 		return extensionParameters;
 	}
+	/**
+	 * @return
+	 */
+	public boolean consumedRawType() {
+		return( getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED );
+	}
 }

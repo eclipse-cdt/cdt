@@ -56,7 +56,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.wizards.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 
 /**
   */

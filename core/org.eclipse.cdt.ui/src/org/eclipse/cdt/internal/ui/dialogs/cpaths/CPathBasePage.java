@@ -8,43 +8,22 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public abstract class CPathBasePage extends AbstractCOptionPage {
 
-	public abstract List getSelection();
-
-	public abstract void setSelection(List selection);
-
-	public abstract boolean isEntryKind(int kind);
-
 	public CPathBasePage(String title) {
 		super(title);
 	}
 	public CPathBasePage(String title, ImageDescriptor image) {
 		super(title, image);
-	}
-
-	protected void filterAndSetSelection(List list) {
-		ArrayList res = new ArrayList(list.size());
-		for (int i = list.size() - 1; i >= 0; i--) {
-			Object curr = list.get(i);
-			if (curr instanceof CPListElement) {
-				CPListElement elem = (CPListElement) curr;
-				if (elem.getParentContainer() == null && isEntryKind(elem.getEntryKind())) {
-					res.add(curr);
-				}
-			}
-		}
-		setSelection(res);
 	}
 
 	protected void fixNestingConflicts(List newEntries, List existing, Set modifiedSourceEntries) {
@@ -74,4 +53,10 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 			}
 		}
 	}
+	public abstract List getSelection();
+
+	public abstract void setSelection(List selection);
+
+	public abstract boolean isEntryKind(int kind);
+
 }

@@ -52,7 +52,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class CPathSourceEntryPage extends CPathBasePage {
 
-	private ListDialogField fClassPathList;
+	private ListDialogField fCPathList;
 	private ICProject fCurrCProject;
 	private IPath fProjPath;
 
@@ -72,7 +72,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		setDescription(CPathEntryMessages.getString("SourcePathEntryPage.description")); //$NON-NLS-1$
 
 		fWorkspaceRoot = CUIPlugin.getWorkspace().getRoot();
-		fClassPathList = classPathList;
+		fCPathList = classPathList;
 
 		SourceContainerAdapter adapter = new SourceContainerAdapter();
 
@@ -106,7 +106,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	private void updateFoldersList() {
 		ArrayList folders = new ArrayList();
 
-		List cpelements = fClassPathList.getElements();
+		List cpelements = fCPathList.getElements();
 		for (int i = 0; i < cpelements.size(); i++) {
 			CPListElement cpe = (CPListElement) cpelements.get(i);
 			if (cpe.getEntryKind() == IPathEntry.CDT_SOURCE) {
@@ -306,7 +306,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 			if (dialog.open() == Window.OK) {
 				selElement.setAttribute(CPListElement.EXCLUSION, dialog.getExclusionPattern());
 				fFoldersList.refresh();
-				fClassPathList.dialogFieldChanged(); // validate
+				fCPathList.dialogFieldChanged(); // validate
 			}
 		}
 	}
@@ -331,7 +331,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 		if (selElements.isEmpty()) {
 			fFoldersList.refresh();
-			fClassPathList.dialogFieldChanged(); // validate
+			fCPathList.dialogFieldChanged(); // validate
 		} else {
 			fFoldersList.removeElements(selElements);
 		}
@@ -390,7 +390,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 	private void updateClasspathList() {
 		List srcelements = fFoldersList.getElements();
 
-		List cpelements = fClassPathList.getElements();
+		List cpelements = fCPathList.getElements();
 		int nEntries = cpelements.size();
 		// backwards, as entries will be deleted
 		int lastRemovePos = nEntries;
@@ -414,7 +414,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 
 		if (lastRemovePos != nEntries || !srcelements.isEmpty()) {
-			fClassPathList.setElements(cpelements);
+			fCPathList.setElements(cpelements);
 		}
 	}
 

@@ -12,56 +12,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionContainer {
+public class CPathTabBlock extends AbstractPathOptionBlock {
 
 	private CheckedListDialogField fCPathList;
-
-	private StatusInfo fCPathStatus;
-	private StatusInfo fBuildPathStatus;
-
-	private ICProject fCurrCProject;
-
-	private String fUserSettingsTimeStamp;
-	private long fFileTimeStamp;
-
-	private int fPageIndex, fPageCount;
 
 	private CPathSourceEntryPage fSourcePage;
 	private CPathProjectsEntryPage fProjectsPage;
 	private CPathOutputEntryPage fOutputPage;
 	//private LibrariesWorkbookPage fLibrariesPage;
-
-	private CPathBasePage fCurrPage;
-
-	private IStatusChangeListener fContext;
 
 	private CPathOrderExportPage fOrderExportPage;
 
@@ -75,15 +50,13 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 
 	void buildPathDialogFieldChanged(DialogField field) {
 		if (field == fCPathList) {
-			updateClassPathStatus();
+			updateCPathStatus();
 		}
 		doStatusLineUpdate();
 	}
 
 	public CPathTabBlock(IStatusChangeListener context, int pageToShow) {
-		super(true);
-		fContext = context;
-		fPageIndex = pageToShow;
+		super(context, pageToShow);
 
 		String[] buttonLabels = new String[] { /* 0 */CPathEntryMessages.getString("CPathsBlock.path.up.button"), //$NON-NLS-1$
 				/* 1 */CPathEntryMessages.getString("CPathsBlock.path.down.button"), //$NON-NLS-1$
@@ -101,11 +74,10 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 		fCPathList.setCheckAllButtonIndex(3);
 		fCPathList.setUncheckAllButtonIndex(4);
 
-		fCPathStatus = new StatusInfo();
-		fBuildPathStatus = new StatusInfo();
+	}
 
-		fCurrCProject = null;
-		setOptionContainer(this);
+	protected List getCPaths() {
+		return fCPathList.getElements();
 	}
 
 	protected void addTabs() {
@@ -119,26 +91,6 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 		addPage(fOrderExportPage);
 	}
 
-	private void addPage(CPathBasePage page) {
-		addTab(page);
-		if (fPageIndex == fPageCount) {
-			fCurrPage = page;
-		}
-		fPageCount++;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock#getStartPage()
-	 */
-	protected ICOptionPage getStartPage() {
-		if (fCurrPage == null) {
-			return super.getStartPage();
-		}
-		return fCurrPage;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -146,10 +98,10 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 	 */
 	public Control createContents(Composite parent) {
 		Control control = super.createContents(parent);
-		if (fCurrCProject != null) {
-			fSourcePage.init(fCurrCProject);
-			fOutputPage.init(fCurrCProject);
-			fProjectsPage.init(fCurrCProject);
+		if (getCProject() != null) {
+			fSourcePage.init(getCProject());
+			fOutputPage.init(getCProject());
+			fProjectsPage.init(getCProject());
 			//fLibrariesPage.init(fCurrCProject);
 		}
 		Dialog.applyDialogFont(control);
@@ -175,18 +127,15 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 	 *        project
 	 */
 	public void init(ICProject cproject, IPathEntry[] cpathEntries) {
-		fCurrCProject = cproject;
+		setCProject(cproject);
 		boolean projectExists = false;
 		List newClassPath = null;
 
-		IProject project = fCurrCProject.getProject();
-		projectExists = (project.exists() && project.getFile(".cdtproject").exists()); //$NON-NLS-1$
-		if (projectExists) {
-			if (cpathEntries == null) {
-				try {
-					cpathEntries = fCurrCProject.getRawPathEntries();
-				} catch (CModelException e) {
-				}
+		IProject project = getProject();
+		if (cpathEntries == null) {
+			try {
+				cpathEntries = getCProject().getRawPathEntries();
+			} catch (CModelException e) {
 			}
 		}
 		if (cpathEntries != null) {
@@ -208,51 +157,14 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 		fCPathList.setCheckedElements(exportedEntries);
 
 		if (fProjectsPage != null) {
-			fSourcePage.init(fCurrCProject);
-			fOutputPage.init(fCurrCProject);
-			fProjectsPage.init(fCurrCProject);
+			fSourcePage.init(getCProject());
+			fOutputPage.init(getCProject());
+			fProjectsPage.init(getCProject());
 			//			fLibrariesPage.init(fCurrCProject);
 		}
 
 		doStatusLineUpdate();
 		initializeTimeStamps();
-	}
-
-	private ArrayList getExistingEntries(IPathEntry[] cPathEntries) {
-		ArrayList newCPath = new ArrayList();
-		for (int i = 0; i < cPathEntries.length; i++) {
-			IPathEntry curr = cPathEntries[i];
-			newCPath.add(CPListElement.createFromExisting(curr, fCurrCProject));
-		}
-		return newCPath;
-	}
-
-	private String getEncodedSettings() {
-		StringBuffer buf = new StringBuffer();
-
-		int nElements = fCPathList.getSize();
-		buf.append('[').append(nElements).append(']');
-		for (int i = 0; i < nElements; i++) {
-			CPListElement elem = (CPListElement) fCPathList.getElement(i);
-			elem.appendEncodedSettings(buf);
-		}
-		return buf.toString();
-	}
-
-	public boolean hasChangesInDialog() {
-		String currSettings = getEncodedSettings();
-		return !currSettings.equals(fUserSettingsTimeStamp);
-	}
-
-	public boolean hasChangesInCPathFile() {
-		IFile file = fCurrCProject.getProject().getFile(".cdtproject"); //$NON-NLS-1$
-		return fFileTimeStamp != file.getModificationStamp();
-	}
-
-	public void initializeTimeStamps() {
-		IFile file = fCurrCProject.getProject().getFile(".cdtproject"); //$NON-NLS-1$
-		fFileTimeStamp = file.getModificationStamp();
-		fUserSettingsTimeStamp = getEncodedSettings();
 	}
 
 	private List getDefaultCPath(ICProject cproj) {
@@ -275,33 +187,6 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 		// PreferenceConstants.getDefaultJRELibrary();
 		//		list.addAll(getExistingEntries(jreEntries));
 		return list;
-	}
-
-	// -------- public api --------
-
-	/**
-	 * @return Returns the Java project. Can return
-	 *         <code>null<code> if the page has not
-	 * been initialized.
-	 */
-	public ICProject getCProject() {
-		return fCurrCProject;
-	}
-
-	/**
-	 * @return Returns the current class path (raw). Note that the entries
-	 *         returned must not be valid.
-	 */
-	public IPathEntry[] getRawCPath() {
-		List elements = fCPathList.getElements();
-		int nElements = elements.size();
-		IPathEntry[] entries = new IPathEntry[elements.size()];
-
-		for (int i = 0; i < nElements; i++) {
-			CPListElement currElement = (CPListElement) elements.get(i);
-			entries[i] = currElement.getPathEntry();
-		}
-		return entries;
 	}
 
 	// -------- evaluate default settings --------
@@ -328,20 +213,11 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 	//	}
 	//	
 
-	private void doStatusLineUpdate() {
-		IStatus res = findMostSevereStatus();
-		fContext.statusChanged(res);
-	}
-
-	private IStatus findMostSevereStatus() {
-		return StatusUtil.getMostSevere(new IStatus[] { fCPathStatus, fBuildPathStatus});
-	}
-
 	/**
 	 * Validates the build path.
 	 */
-	public void updateClassPathStatus() {
-		fCPathStatus.setOK();
+	public void updateCPathStatus() {
+		getPathStatus().setOK();
 
 		List elements = fCPathList.getElements();
 
@@ -352,14 +228,14 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 		for (int i = elements.size() - 1; i >= 0; i--) {
 			CPListElement currElement = (CPListElement) elements.get(i);
 			boolean isChecked = fCPathList.isChecked(currElement);
-			if ( currElement.getEntryKind() == IPathEntry.CDT_SOURCE) {
+			if (currElement.getEntryKind() == IPathEntry.CDT_SOURCE) {
 				if (isChecked) {
 					fCPathList.setCheckedWithoutUpdate(currElement, false);
 				}
 			} else {
 				currElement.setExported(isChecked);
 			}
-			
+
 			entries[i] = currElement.getPathEntry();
 			if (currElement.isMissing()) {
 				nEntriesMissing++;
@@ -371,10 +247,10 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 
 		if (nEntriesMissing > 0) {
 			if (nEntriesMissing == 1) {
-				fCPathStatus.setWarning(CPathEntryMessages.getFormattedString("BuildPathsBlock.warning.EntryMissing", //$NON-NLS-1$
+				getPathStatus().setWarning(CPathEntryMessages.getFormattedString("CPathsBlock.warning.EntryMissing", //$NON-NLS-1$
 						entryMissing.getPath().toString()));
 			} else {
-				fCPathStatus.setWarning(CPathEntryMessages.getFormattedString("BuildPathsBlock.warning.EntriesMissing", //$NON-NLS-1$
+				getPathStatus().setWarning(CPathEntryMessages.getFormattedString("CPathsBlock.warning.EntriesMissing", //$NON-NLS-1$
 						String.valueOf(nEntriesMissing)));
 			}
 		}
@@ -387,44 +263,12 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 		updateBuildPathStatus();
 	}
 
-	private void updateBuildPathStatus() {
-		List elements = fCPathList.getElements();
-		IPathEntry[] entries = new IPathEntry[elements.size()];
-
-		for (int i = elements.size() - 1; i >= 0; i--) {
-			CPListElement currElement = (CPListElement) elements.get(i);
-			entries[i] = currElement.getPathEntry();
-		}
-
-		ICModelStatus status = CModelStatus.VERIFIED_OK; // CoreModelUtil.validateCPathEntries(fCurrCProject, entries);
-		if (!status.isOK()) {
-			fBuildPathStatus.setError(status.getMessage());
-			return;
-		}
-		fBuildPathStatus.setOK();
-	}
-
-	// -------- creation -------------------------------
-
-	public void configureCProject(IProgressMonitor monitor) throws CoreException, InterruptedException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		monitor.setTaskName(CPathEntryMessages.getString("CPathsBlock.operationdesc_c")); //$NON-NLS-1$
-		monitor.beginTask("", 10); //$NON-NLS-1$
-
-		try {
-			internalConfigureCProject(fCPathList.getElements(), monitor);
-		} finally {
-			monitor.done();
-		}
-	}
 
 	/*
 	 * Creates the Java project and sets the configured build path and output
 	 * location. If the project already exists only build paths are updated.
 	 */
-	private void internalConfigureCProject(List cPathEntries, IProgressMonitor monitor) throws CoreException, InterruptedException {
+	protected void internalConfigureCProject(List cPathEntries, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		// 10 monitor steps to go
 
 		monitor.worked(2);
@@ -444,8 +288,7 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 
 		monitor.worked(1);
 
-		fCurrCProject.setRawPathEntries(classpath, new SubProgressMonitor(monitor, 7));
-		initializeTimeStamps();
+		getCProject().setRawPathEntries(classpath, new SubProgressMonitor(monitor, 7));
 	}
 
 	/**
@@ -461,51 +304,5 @@ public class CPathTabBlock extends TabFolderOptionBlock implements ICOptionConta
 			}
 			folder.create(force, local, monitor);
 		}
-	}
-
-
-	// -------- tab switching ----------
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock#setCurrentPage(org.eclipse.cdt.ui.dialogs.ICOptionPage)
-	 */
-	public void setCurrentPage(ICOptionPage page) {
-		super.setCurrentPage(page);
-		CPathBasePage newPage = (CPathBasePage) page;
-		if (fCurrPage != null) {
-			List selection = fCurrPage.getSelection();
-			if (!selection.isEmpty()) {
-				newPage.setSelection(selection);
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#updateContainer()
-	 */
-	public void updateContainer() {
-		update();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getProject()
-	 */
-	public IProject getProject() {
-		return fCurrCProject.getProject();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreferences()
-	 */
-	public Preferences getPreferences() {
-		return null;
 	}
 }

@@ -25,7 +25,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.wizards.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 
 /*
  * The page to configure the compiler options.

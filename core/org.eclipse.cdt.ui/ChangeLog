@@ -1,3 +1,13 @@
+2004-04-07 David Inglis
+	
+	Begining of new Include/Symbols UI pages.
+	
+	* src/org/eclipse/cdt/internal/dialogs/cpaths/*.java
+	
+	Changes here due to refactor
+	
+	* src/org/eclipse/cdt/internal/ui/preferences/
+	
 2004-04-05 Alain Magloire
 	From Chris Wiebe
 	This patch cleans up the layout of the checkboxes on the Open Type dialog.

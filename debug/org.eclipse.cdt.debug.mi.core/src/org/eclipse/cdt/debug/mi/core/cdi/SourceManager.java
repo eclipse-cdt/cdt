@@ -8,8 +8,6 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import java.io.File;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDILocation;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 
 /**
@@ -43,13 +41,6 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#set(File[])
 	 */
 	public void set(File[] directories) throws CDIException {
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#createLocation(String, String, int)
-	 */
-	public ICDILocation createLocation(String file, String function, int line) {
-		return new Location(file, function, line);
 	}
 
 }

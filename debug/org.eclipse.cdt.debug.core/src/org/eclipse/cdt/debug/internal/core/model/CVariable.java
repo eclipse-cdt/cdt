@@ -517,11 +517,11 @@ public abstract class CVariable extends CDebugElement
 		return null;
 	}
 	
-	private ICDIVariable createShadow( ICDIStackFrame cdiFrame, String type, int start, int end ) throws DebugException
+	private ICDIVariable createShadow( ICDIStackFrame cdiFrame, String type, int start, int length ) throws DebugException
 	{
 		try
 		{
-			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObjectAsArray( getOriginalCDIVariable(), type, start, end );
+			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObjectAsArray( getOriginalCDIVariable(), type, start, length );
 			return getCDISession().getVariableManager().createVariable( varObject );
 		}
 		catch( CDIException e )
@@ -554,11 +554,11 @@ public abstract class CVariable extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICastToArray#castToArray(java.lang.String, int, int)
 	 */
-	public void castToArray( String type, int startIndex, int endIndex ) throws DebugException
+	public void castToArray( String type, int startIndex, int length ) throws DebugException
 	{
 		try
 		{
-			ICDIVariable newVar = createShadow( getOriginalCDIVariable().getStackFrame(), type, startIndex, endIndex );
+			ICDIVariable newVar = createShadow( getOriginalCDIVariable().getStackFrame(), type, startIndex, length );
 			ICDIVariable oldVar = getShadow();
 			setShadow( newVar );
 			if ( oldVar != null )

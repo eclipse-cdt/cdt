@@ -46,21 +46,21 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 	{
 		private String fType = "";
 		private int fFirstIndex = 0;
-		private int fLastIndex = 0;
+		private int fLength = 0;
 
 		private Button fOkButton;
 		private Label fErrorMessageLabel;
 
 		private Text fTypeText;
 		private Text fFirstIndexText;
-		private Text fLastIndexText;
+		private Text fLengthText;
 
-		public CastToArrayDialog( Shell parentShell, String initialType, int initialStart, int initialEnd )
+		public CastToArrayDialog( Shell parentShell, String initialType, int initialStart, int initialLength )
 		{
 			super( parentShell );
 			fType = ( initialType == null ) ? "" : initialType;
 			fFirstIndex = initialStart;
-			fLastIndex = initialEnd;
+			fLength = initialLength;
 		}
 
 		protected String getType()
@@ -73,9 +73,9 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 			return fFirstIndex;
 		}
 
-		protected int getLastIndex()
+		protected int getLength()
 		{
-			return fLastIndex;
+			return fLength;
 		}
 
 		/* (non-Javadoc)
@@ -103,7 +103,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 				fTypeText.setText( fType );
 				fTypeText.selectAll();
 				fFirstIndexText.setText( String.valueOf( fFirstIndex ) );
-				fLastIndexText.setText( String.valueOf( fLastIndex ) );
+				fLengthText.setText( String.valueOf( fLength ) );
 			}
 		}
 
@@ -150,7 +150,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 										}
 									} );
 
-			Label label = ControlFactory.createLabel( composite, "First index:" );
+			Label label = ControlFactory.createLabel( composite, "Start index:" );
 			((GridData)label.getLayoutData()).horizontalSpan = 3;
 			fFirstIndexText = ControlFactory.createTextField( composite );
 			fFirstIndexText.addModifyListener(
@@ -162,10 +162,10 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 										}
 									} );
 
-			label = ControlFactory.createLabel( composite, "Last index:" );
+			label = ControlFactory.createLabel( composite, "Length:" );
 			((GridData)label.getLayoutData()).horizontalSpan = 3;
-			fLastIndexText = ControlFactory.createTextField( composite );
-			fLastIndexText.addModifyListener(
+			fLengthText = ControlFactory.createTextField( composite );
+			fLengthText.addModifyListener(
 								new ModifyListener()
 									{
 										public void modifyText( ModifyEvent e )
@@ -194,45 +194,38 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 				}
 				else
 				{
-					int first = -1;
 					try
 					{
-						first = Integer.parseInt( firstIndex );
+						Integer.parseInt( firstIndex );
 					}
 					catch( NumberFormatException e )
-					{
-					}
-					if ( first < 0 )
 					{
 						message = "Invalid first index.";
 						enabled = false;
 					}
-					else
+					if ( enabled )
 					{
-						String lastIndex = fLastIndexText.getText().trim();
-						if ( lastIndex.length() == 0 )
+						String lengthText = fLengthText.getText().trim();
+						if ( lengthText.length() == 0 )
 						{
 							message = "The 'Last index' field must not be empty.";
 							enabled = false;
 						}
 						else
 						{
-							int last = -1;
+							int length = -1;
 							try
 							{
-								last = Integer.parseInt( lastIndex );
+								length = Integer.parseInt( lengthText );
 							}
 							catch( NumberFormatException e )
-							{
-							}
-							if ( last < 0 )
 							{
 								message = "Invalid last index.";
 								enabled = false;
 							}
-							else if ( last < first )
+							if ( enabled && length < 1 )
 							{
-								message = "The first index must not be greater than the last index.";
+								message = "The length must be greater than 0.";
 								enabled = false;
 							}
 						}
@@ -252,16 +245,16 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 			{
 				fType = fTypeText.getText().trim();
 				String firstIndex = fFirstIndexText.getText().trim();
-				String lastIndex = fLastIndexText.getText().trim();
+				String lengthText = fLengthText.getText().trim();
 				try
 				{
 					fFirstIndex = Integer.parseInt( firstIndex );
-					fLastIndex = Integer.parseInt( lastIndex );
+					fLength = Integer.parseInt( lengthText );
 				}
 				catch( NumberFormatException e )
 				{
 					fFirstIndex = 0;
-					fLastIndex = 0;
+					fLength = 0;
 				}
 			}
 			else
@@ -370,12 +363,12 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 	protected void doAction( ICastToArray castToArray ) throws DebugException
 	{
 		String currentType = castToArray.getCurrentType().trim();
-		CastToArrayDialog dialog = new CastToArrayDialog( CDebugUIPlugin.getActiveWorkbenchShell(), currentType, 0, 0 );
+		CastToArrayDialog dialog = new CastToArrayDialog( CDebugUIPlugin.getActiveWorkbenchShell(), currentType, 0, 1 );
 		if ( dialog.open() == Window.OK )
 		{
 			String newType = dialog.getType().trim();
 			int firstIndex = dialog.getFirstIndex();
-			int lastIndex = dialog.getLastIndex();
+			int lastIndex = dialog.getLength();
 			castToArray.castToArray( newType, firstIndex, lastIndex );
 		}
 	}

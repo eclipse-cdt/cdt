@@ -1,3 +1,9 @@
+2003-03-17 Mikhail Khodjaiants
+	Replace range by start index and length in 'Display As Array' action.
+	* ICDIVariableManager.java
+	* ICastToArray.java
+	* CVariable.java
+
 2003-03-14 Mikhail Khodjaiants
 	Added the 'isEditable' and 'hasChildren' methods to the 'ICVariable' interface.
 	* ICVariable.java

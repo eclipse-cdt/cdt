@@ -52,13 +52,13 @@ public interface ICDIVariableManager extends ICDIManager {
 	ICDIVariableObject getVariableObject(ICDIStackFrame stack, String name) throws CDIException;
 
 	/**
-	 * Consider the variable object as an Array of type and range[start, end]
+	 * Consider the variable object as an Array of type and range[start, start + length - 1]
 	 * @param stack
 	 * @param name
 	 * @return ICDIVariableObject
 	 * @throws CDIException
 	 */
-	ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject var, String type, int start, int end) throws CDIException;
+	ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject var, String type, int start, int length) throws CDIException;
 
 	/**
 	 * Consider the variable object as type.

@@ -1,3 +1,7 @@
+2003-03-17 Mikhail Khodjaiants
+	Replace range by start index and length in 'Display As Array' action.
+	* CastToArrayActionDelegate.java
+
 2003-03-14 Mikhail Khodjaiants
 	Fix for the 'Restore Default Type' action.
 	* RestoreDefaultTypeActionDelegate.java

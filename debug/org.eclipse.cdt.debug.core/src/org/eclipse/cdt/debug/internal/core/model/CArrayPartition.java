@@ -91,7 +91,7 @@ public class CArrayPartition extends CVariable
 	{
 		if ( fArrayPartitionValue == null )
 		{
-			fArrayPartitionValue = new CArrayPartitionValue( (CDebugTarget)getDebugTarget(), fCDIVariables, getStart(), getEnd() );
+			fArrayPartitionValue = new CArrayPartitionValue( this, fCDIVariables, getStart(), getEnd() );
 		}
 		return fArrayPartitionValue;
 	}

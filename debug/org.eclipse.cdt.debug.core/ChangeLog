@@ -1,3 +1,10 @@
+2003-06-06 Mikhail Khodjaiants
+	Changed the implementation of the'getName' method of CVariable to return 
+	the actual names of array members.
+	* CArrayPartition.java
+	* CArrayPartitionValue.java
+	* CVariable.java
+ 
 2003-06-05 Mikhail Khodjaiants
 	Core support of infinite values of the floating point types.
 	* ICVariable.java

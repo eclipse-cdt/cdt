@@ -31,6 +31,11 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	private List fCDIVariables;
 
 	/**
+	 * Parent variable.
+	 */
+	private CVariable fParent = null;
+
+	/**
 	 * List of child variables.
 	 */
 	private List fVariables = Collections.EMPTY_LIST;
@@ -43,10 +48,11 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	 * Constructor for CArrayPartitionValue.
 	 * @param target
 	 */
-	public CArrayPartitionValue( CDebugTarget target, List cdiVariables, int start, int end )
+	public CArrayPartitionValue( CVariable parent, List cdiVariables, int start, int end )
 	{
-		super( target );
+		super( (CDebugTarget)parent.getDebugTarget() );
 		fCDIVariables = cdiVariables;
+		fParent = parent;
 		fStart = start;
 		fEnd = end;
 	}
@@ -151,5 +157,10 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	public String evaluateAsExpression()
 	{
 		return null;
+	}
+
+	public CVariable getParentVariable()
+	{
+		return fParent;
 	}
 }

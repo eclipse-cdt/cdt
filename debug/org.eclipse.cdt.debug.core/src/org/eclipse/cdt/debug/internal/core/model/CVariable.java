@@ -68,6 +68,11 @@ public abstract class CVariable extends CDebugElement
 	 */
 	protected ICValue fValue;
 
+	/**
+	 * The name of this variable.
+	 */
+	private String fName = null;
+
 	private Boolean fEditable = null;
 
 	/**
@@ -350,7 +355,27 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public String getName() throws DebugException
 	{
-		return ( getOriginalCDIVariable() != null ) ? getOriginalCDIVariable().getName() : null;
+		if ( fName == null )
+		{
+			String cdiName = ( getOriginalCDIVariable() != null ) ? getOriginalCDIVariable().getName() : null;
+			if ( cdiName != null && getParent() instanceof ICValue )
+			{
+				CVariable parent = getParentVariable();
+				while( parent instanceof CArrayPartition )
+				{
+					parent = parent.getParentVariable();
+				}
+				if ( parent instanceof CVariable && parent.getType() instanceof ICDIArrayType )
+				{
+					fName = parent.getName() + '[' + cdiName + ']';
+				}
+			}
+			else
+			{
+				fName = cdiName;
+			}
+		}
+		return fName;
 	}
 
 	/* (non-Javadoc)
@@ -758,16 +783,12 @@ public abstract class CVariable extends CDebugElement
 	{
 		LinkedList list = new LinkedList();
 		list.add( this );
-		CVariable var = null;
-		CDebugElement element = getParent();
-		while ( element instanceof CValue )
+		CVariable var = getParentVariable();
+		while( var != null )
 		{
-			var = ((CValue)element).getParentVariable();
-			if ( var == null )
-				break;
-			if ( !( var instanceof CArrayPartition ) && !var.isAccessSpecifier() )
+			if ( !( var.getType() instanceof ICDIArrayType ) && !( var instanceof CArrayPartition ) && !var.isAccessSpecifier() )
 				list.addFirst( var );
-			element = var.getParent();
+			var = var.getParentVariable();
 		}
 		StringBuffer sb = new StringBuffer();
 		CVariable[] vars = (CVariable[])list.toArray( new CVariable[list.size()] );
@@ -785,5 +806,14 @@ public abstract class CVariable extends CDebugElement
 	protected boolean isAccessSpecifier() throws DebugException
 	{
 		return ( "public".equals( getName() ) || "protected".equals( getName() ) || "private".equals( getName() ) );
+	}
+
+	private CVariable getParentVariable() throws DebugException
+	{
+		if ( getParent() instanceof CValue )
+			return ((CValue)getParent()).getParentVariable();
+		if ( getParent() instanceof CArrayPartitionValue )
+			return ((CArrayPartitionValue)getParent()).getParentVariable();
+		return null;
 	}
 }

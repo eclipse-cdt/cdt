@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Signal;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 
 /**
@@ -18,7 +17,8 @@ public class SignalReceived extends SessionObject implements ICDISignalReceived 
 	ICDISignal signal;
 	public SignalReceived(Session session, MISignalEvent event) {
 		super(session);
-		signal = new Signal(session.getCurrentTarget(), event);
+		SignalManager mgr = (SignalManager)session.getSignalManager();
+		signal = mgr.getSignal(event.getName());
 	}
 
 	/**

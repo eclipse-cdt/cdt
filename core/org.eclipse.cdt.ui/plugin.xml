@@ -1114,7 +1114,6 @@
    <extension
          point="org.eclipse.search.searchResultViewPages">
       <viewPage
-            targetClass="org.eclipse.cdt.internal.ui.search.CSearchResult"
             class="org.eclipse.cdt.internal.ui.search.CSearchResultPage"
             searchResultClass="org.eclipse.cdt.internal.ui.search.CSearchResult"
             id="org.eclipse.cdt.ui.CSearchResultPage">

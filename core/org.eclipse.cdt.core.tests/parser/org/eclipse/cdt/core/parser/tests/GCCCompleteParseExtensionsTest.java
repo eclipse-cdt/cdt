@@ -37,7 +37,6 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
 	 */
 	public GCCCompleteParseExtensionsTest() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -45,7 +44,6 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
 	 */
 	public GCCCompleteParseExtensionsTest(String name) {
 		super(name);
-		// TODO Auto-generated constructor stub
 	}
 
     public void testBug39695() throws Exception
@@ -188,5 +186,26 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
         code.write("  return square (a) + square (b);\n"); //$NON-NLS-1$
         code.write("}\n"); //$NON-NLS-1$
         parse(code.toString());
+    }
+    
+    public void testBug39677() throws Exception
+    {
+        parse("class B { public: B(); int a;}; B::B() : a(({ 1; })) {}"); //$NON-NLS-1$
+        Writer writer = new StringWriter();
+        writer.write( "B::B() : a(( { int y = foo (); int z;\n" ); //$NON-NLS-1$
+        writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
+        writer.write( "else z = - y;\n" );//$NON-NLS-1$
+        writer.write( "z; }))\n" );//$NON-NLS-1$
+        parse( writer.toString() );
+        writer = new StringWriter();
+        writer.write( "int x = ({ int y = foo (); int z;\n" ); //$NON-NLS-1$
+        writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
+        writer.write( "else z = - y;\n" );//$NON-NLS-1$
+        writer.write( "z; });\n" );//$NON-NLS-1$
+        writer = new StringWriter();
+        writer.write( "typeof({ int y = foo (); int z;\n" ); //$NON-NLS-1$
+        writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
+        writer.write( "else z = - y;\n" );//$NON-NLS-1$
+        writer.write( "z; }) zoot;\n" );//$NON-NLS-1$
     }
 }

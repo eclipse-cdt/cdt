@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCDesignator;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
@@ -446,6 +447,20 @@ public class GCCParserExtension implements IParserExtension {
 		parserData.backup( startingPoint );
 		return null;
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#supportsStatementsInExpressions()
+	 */
+	public boolean supportsStatementsInExpressions() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#getExpressionKindForStatement()
+	 */
+	public Kind getExpressionKindForStatement() {
+		return IASTGCCExpression.Kind.STATEMENT_EXPRESSION;
 	}
 
 }

@@ -38,10 +38,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("struct { int e1, e2; } v = { e2: 0 }");
     }
-    public void testBug39677() throws Exception
-    {
-        assertCodeFailsParse("B::B() : a(({ 1; })) {}");
-    }
+
 
     public void testBug39679() throws Exception
     {

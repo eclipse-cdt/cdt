@@ -804,6 +804,16 @@ public class Parser implements IParserData, IParser
 		int startingOffset = la.getOffset();
 		int ln = la.getLineNumber();
 		char [] fn = la.getFilename();
+		
+		IASTExpression resultExpression = null;
+		if( la.getType() == IToken.tLPAREN && LT(2) == IToken.tLBRACE && extension.supportsStatementsInExpressions() )
+		{
+			resultExpression = compoundStatementExpression(scope, la, resultExpression);
+		}
+		
+		if( resultExpression != null )
+			return resultExpression;
+		
 		IASTExpression assignmentExpression = assignmentExpression(scope, kind,
 				key);
 		while (LT(1) == IToken.tCOMMA) {
@@ -829,6 +839,52 @@ public class Parser implements IParserData, IParser
 	}
 
 	/**
+	 * @param scope
+	 * @param la
+	 * @param resultExpression
+	 * @return
+	 * @throws EndOfFileException
+	 * @throws BacktrackException
+	 */
+	private IASTExpression compoundStatementExpression(IASTScope scope, IToken la, IASTExpression resultExpression) throws EndOfFileException, BacktrackException {
+		int startingOffset = la.getOffset();
+		int ln = la.getLineNumber();
+		char [] fn = la.getFilename();
+		consume( IToken.tLPAREN );
+		try
+		{
+			if( mode == ParserMode.QUICK_PARSE || mode == ParserMode.STRUCTURAL_PARSE  )
+				skipOverCompoundStatement();
+			else if( mode == ParserMode.COMPLETION_PARSE || mode == ParserMode.SELECTION_PARSE )
+			{
+				if( scanner.isOnTopContext() )
+					compoundStatement(scope, true);
+				else
+					skipOverCompoundStatement();
+			}
+			else if( mode == ParserMode.COMPLETE_PARSE )
+				compoundStatement(scope, true);
+
+			consume( IToken.tRPAREN );
+			try
+			{
+				resultExpression = astFactory.createExpression( scope, extension.getExpressionKindForStatement(), null, null, null, null, null,EMPTY_STRING, null );
+			}
+			catch (ASTSemanticException e) {
+				throwBacktrack(e.getProblem());
+			} catch (Exception e) {
+				logException("expression::createExpression()", e); //$NON-NLS-1$
+				throwBacktrack(startingOffset, lastToken != null ? lastToken.getEndOffset() : 0 , ln, fn);
+			}
+		}
+		catch( BacktrackException bte )
+		{
+			backup( la );
+		}
+		return resultExpression;
+	}
+
+	/**
 	 * @param expression
 	 * @throws BacktrackException
 	 */
@@ -839,6 +895,7 @@ public class Parser implements IParserData, IParser
 		if (LT(1) == IToken.t_throw) {
 			return throwExpression(scope, key);
 		}
+		
 		IASTExpression conditionalExpression = conditionalExpression(scope,
 				kind, key);
 		// if the condition not taken, try assignment operators
@@ -935,8 +992,8 @@ public class Parser implements IParserData, IParser
 		IToken la = LA(1);
 		int startingOffset = la.getOffset();
 		int ln = la.getLineNumber();
-		char [] fn = la.getFilename();
-		la = null;
+		char [] fn = la.getFilename();		
+
 		IASTExpression firstExpression = logicalOrExpression(scope, kind, key);
 		if (LT(1) == IToken.tQUESTION) {
 			consume(IToken.tQUESTION);
@@ -4159,7 +4216,8 @@ public class Parser implements IParserData, IParser
             consume(IToken.tLPAREN);
             IASTExpression expressionList = null;
 
-            expressionList = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE, KeywordSetKey.EXPRESSION);
+            if( LT(1) != IToken.tRPAREN )
+            	expressionList = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE, KeywordSetKey.EXPRESSION);
 
             IToken rparen = consume(IToken.tRPAREN);
 

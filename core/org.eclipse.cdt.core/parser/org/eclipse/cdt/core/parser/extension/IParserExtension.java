@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.internal.core.parser.DeclarationWrapper;
 import org.eclipse.cdt.internal.core.parser.IParserData;
 import org.eclipse.cdt.internal.core.parser.Parser;
@@ -67,4 +68,12 @@ public interface IParserExtension {
 	 * @return
 	 */
 	public IASTDesignator parseDesignator(IParserData parserData, IASTScope scope);
+	/**
+	 * @return
+	 */
+	public boolean supportsStatementsInExpressions();
+	/**
+	 * @return
+	 */
+	public Kind getExpressionKindForStatement();
 }

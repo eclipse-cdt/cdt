@@ -1,4 +1,8 @@
 2003-03-28 Mikhail Khodjaiants
+	Added default format preference constants for variables, expressions and registers.
+	* ICDebugConstants.java
+ 
+2003-03-28 Mikhail Khodjaiants
 	Core support of the 'Run To C/C++ Line' and 'Resume At C/C++ Line' actions for external files.
 	* IJumpToLine.java
 	* IRunToLine.java

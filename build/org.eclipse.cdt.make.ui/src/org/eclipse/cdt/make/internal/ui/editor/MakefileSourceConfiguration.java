@@ -138,4 +138,11 @@ public class MakefileSourceConfiguration extends SourceViewerConfiguration {
 		return reconciler;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDefaultPrefixes(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
+	 */
+	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
+		return new String[]{"#"};
+	}
+
 }

@@ -1910,4 +1910,8 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	parse( writer.toString() );
     	assertEquals( callback.getReferences().size(), 2 );
 	}
+    public void testBug61972() throws Exception
+	{
+    	parse( "#define DEF1(A1) A1\n#define DEF2     DEF1(DEF2)\nDEF2;", false ); //$NON-NLS-1$
+	}
 }

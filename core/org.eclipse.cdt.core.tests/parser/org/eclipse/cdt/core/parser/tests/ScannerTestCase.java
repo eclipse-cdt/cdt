@@ -1623,4 +1623,12 @@ public class ScannerTestCase extends BaseScannerTest
     	fullyTokenize();
     	assertFalse( callback.problems.isEmpty() );
 	}
+    
+    public void testBug61972() throws Exception
+	{
+    	initializeScanner( "#define DEF1(A1) A1\n#define DEF2     DEF1(DEF2)\nDEF2;" ); //$NON-NLS-1$
+    	validateIdentifier( "DEF2"); //$NON-NLS-1$
+    	validateToken( IToken.tSEMI );
+    	validateEOF();
+	}
 }

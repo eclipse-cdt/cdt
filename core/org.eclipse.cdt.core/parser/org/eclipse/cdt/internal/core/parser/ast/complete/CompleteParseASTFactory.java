@@ -1080,9 +1080,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 //		assert expressionResult != null  : expressionResult; //throw new ASTSemanticException();
 			
 		// create the ASTExpression	
-		ASTExpression expression =  new ASTExpression( kind, lhs, rhs, thirdExpression, 
-										typeId,	idExpression, literal, newDescriptor, references);
-			
+		ASTExpression expression =  ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression, literal, newDescriptor, references );
 		// Assign the result to the created expression										
 		expression.setResultType (expressionResult);
 
@@ -1134,7 +1132,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		// If the expression is lookup symbol if it is in the scope of a type after a "." or an "->"
 		IContainerSymbol searchScope = getSearchScope(kind, lhs, startingScope);
 		if ( searchScope != null && !searchScope.equals(startingScope))
-			symbol = lookupQualifiedName(searchScope, ((ASTExpression)rhs).getIdExpressionTokenDuple(), references, false, LookupType.QUALIFIED );
+			symbol = lookupQualifiedName(searchScope, ((ASTIdExpression)rhs).getIdExpressionTokenDuple(), references, false, LookupType.QUALIFIED );
 			    			
 		// get symbol if it is the "this" pointer
 		// go up the scope until you hit a class
@@ -1175,10 +1173,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      * Returns the function ID token
      */
 	private ITokenDuple getFunctionId (IASTExpression expression){
-		if(expression.getExpressionKind().isPostfixMemberReference() ) 
-			return ((ASTExpression)expression.getRHSExpression()).getIdExpressionTokenDuple();
-		else 
-			return ((ASTExpression)expression).getIdExpressionTokenDuple();
+		if(expression.getExpressionKind().isPostfixMemberReference() && expression.getRHSExpression() instanceof ASTIdExpression ) 
+			return ((ASTIdExpression)expression.getRHSExpression()).getIdExpressionTokenDuple();
+		else if( expression instanceof ASTIdExpression ) 
+			return ((ASTIdExpression)expression).getIdExpressionTokenDuple();
+		return null;
 	}
 
     private IContainerSymbol getSearchScope (Kind kind, IASTExpression lhs, IContainerSymbol startingScope) throws ASTSemanticException{
@@ -3379,7 +3378,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( expression instanceof ASTExpression)
 			{
 				try {
-					return lookupSymbolInContext(scope, ((ASTExpression)expression).getIdExpressionTokenDuple(), null);
+					return lookupSymbolInContext(scope, ((ASTIdExpression)expression).getIdExpressionTokenDuple(), null);
 				} catch (ASTNotImplementedException e) {
 //	            	assert false : e;
 				}

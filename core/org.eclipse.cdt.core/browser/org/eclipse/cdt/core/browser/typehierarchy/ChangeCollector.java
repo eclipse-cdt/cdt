@@ -345,7 +345,7 @@ public class ChangeCollector {
 			case ICElement.C_CLASS:
 			case ICElement.C_STRUCT:
 //				types = ((ICElement)element).getTypes();
-			    types = TypeUtil.getTypes((ICElement)element);
+			    types = TypeUtil.getTypes(element);
 				for (int i = 0, length = types.length; i < length; i++) {
 					ICElement type = types[i];
 					allTypes.add(type);

@@ -47,13 +47,13 @@ public class TypeCache implements ITypeCache {
 
 	private static final int INITIAL_TYPE_COUNT = 100;
 	private final Map fTypeKeyMap = new HashMap(INITIAL_TYPE_COUNT);
-	private final IProject fProject;
+	final IProject fProject;
 	private final IWorkingCopyProvider fWorkingCopyProvider;
 	final Collection fDeltas = new ArrayList();
 	final ITypeInfo fGlobalNamespace;
 	private final Map fTypeToSubTypes = new HashMap();
 	private final Map fTypeToSuperTypes = new HashMap();
-	private ITypeCacheChangedListener fChangeListener = null;
+	ITypeCacheChangedListener fChangeListener = null;
 
 	private static final class SuperTypeEntry {
 		ITypeInfo superType;

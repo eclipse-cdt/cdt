@@ -20,6 +20,10 @@ import org.eclipse.core.resources.IProject;
  */
 public class PathEntryStoreChangedEvent extends EventObject {
 	
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 4051048549254706997L;
 	public static final int CONTENT_CHANGED = 1;
 	public static final int STORE_CLOSED = 2;
 

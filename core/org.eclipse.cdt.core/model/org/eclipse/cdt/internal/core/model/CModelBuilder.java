@@ -486,14 +486,14 @@ public class CModelBuilder {
 		return element;
 	}
 	
-	private Enumerator createEnumerator(Parent enum, IASTEnumerator enumDef) throws CModelException{
-		Enumerator element = new Enumerator (enum, enumDef.getName().toString());
+	private Enumerator createEnumerator(Parent enumarator, IASTEnumerator enumDef) throws CModelException{
+		Enumerator element = new Enumerator (enumarator, enumDef.getName().toString());
 		IASTExpression initialValue = enumDef.getInitialValue();
 		if(initialValue != null){
 			element.setConstantExpression( ASTUtil.getExpressionString( initialValue ) );
 		}
 		// add to parent
-		enum.addChild(element);
+		enumarator.addChild(element);
 		// set enumerator position
 		element.setIdPos(enumDef.getStartingOffset(), (enumDef.getNameEndOffset() - enumDef.getNameOffset()));
 		element.setPos(enumDef.getStartingOffset(), enumDef.getEndingOffset() - enumDef.getStartingOffset());

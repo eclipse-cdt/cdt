@@ -751,9 +751,8 @@ public static int getParameterCount(char[] methodSignature) throws IllegalArgume
 		int i = CharOperation.indexOf(C_PARAM_START, methodSignature);
 		if (i < 0) {
 			throw new IllegalArgumentException();
-		} else {
-			i++;
 		}
+		i++;
 		for (;;) {
 			if (methodSignature[i] == C_PARAM_END) {
 				return count;
@@ -761,9 +760,8 @@ public static int getParameterCount(char[] methodSignature) throws IllegalArgume
 			int e= scanTypeSignature(methodSignature, i);
 			if (e < 0) {
 				throw new IllegalArgumentException();
-			} else {
-				i = e + 1;
 			}
+			i = e + 1;
 			count++;
 		}
 	} catch (ArrayIndexOutOfBoundsException e) {
@@ -920,9 +918,8 @@ private static int scanBaseTypeSignature(char[] string, int start) {
 	char c = string[start];
 	if ("BCDFIJSVZ".indexOf(c) >= 0) { //$NON-NLS-1$
 		return start;
-	} else {
-		throw new IllegalArgumentException();
 	}
+	throw new IllegalArgumentException();
 }
 
 /**
@@ -978,9 +975,8 @@ private static int scanTypeVariableSignature(char[] string, int start) {
 	c = string[id + 1];
 	if (c == C_SEMICOLON) {
 		return id + 1;
-	} else {
-		throw new IllegalArgumentException();
 	}
+	throw new IllegalArgumentException();
 }
 
 /**
@@ -1131,9 +1127,8 @@ private static int scanTypeArgumentSignature(char[] string, int start) {
 	}
 	if (c == '+' || c == '-') {
 		return scanTypeSignature(string, start + 1);
-	} else {
-		return scanTypeSignature(string, start);
 	}
+	return scanTypeSignature(string, start);
 }
 
 /**
@@ -1168,9 +1163,8 @@ public static char[][] getParameterTypes(char[] methodSignature) throws IllegalA
 		int i = CharOperation.indexOf(C_PARAM_START, methodSignature);
 		if (i < 0) {
 			throw new IllegalArgumentException();
-		} else {
-			i++;
 		}
+		i++;
 		int t = 0;
 		for (;;) {
 			if (methodSignature[i] == C_PARAM_END) {

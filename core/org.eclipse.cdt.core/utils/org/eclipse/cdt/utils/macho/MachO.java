@@ -28,9 +28,9 @@ public class MachO {
     private Symbol[] symbols;			/* symbols from SymtabCommand */
     private Symbol[] local_symbols;		/* local symbols from DySymtabCommand */
     private boolean dynsym = false;		/* set if DynSymtabCommand is present */
-    private Line[] lines;				/* line table */
+    Line[] lines;				/* line table */
     private Section[] sections;			/* sections from SegmentCommand */
-    private SymtabCommand symtab;		/* SymtabCommand that contains the symbol table */
+    SymtabCommand symtab;		/* SymtabCommand that contains the symbol table */
     
 	protected String EMPTY_STRING = ""; //$NON-NLS-1$
 
@@ -185,9 +185,8 @@ public class MachO {
 				throw new IOException();
 			if ( isle ) {
 				return (short)(((val[offset + 1] & 0xff) << 8) + (val[offset + 0] & 0xff));
-			} else {
-				return (short)(((val[offset + 0] & 0xff) << 8) + (val[offset + 1] & 0xff));
 			}
+			return (short)(((val[offset + 0] & 0xff) << 8) + (val[offset + 1] & 0xff));
 		}
 	
 		private final int makeInt(byte [] val, int offset, boolean isle) throws IOException

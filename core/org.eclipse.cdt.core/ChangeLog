@@ -1,3 +1,8 @@
+2004-12-22 Alain Magloire
+
+	On going work to clean cdt.ui from misc. warnings
+	and removing the deprecated interfaces in Eclipse-3.1
+
 2004-12-21 Alain Magloire
         purpose: using charset from 'file' to encode in-memory String object into bytes
         modifer: Wu Zhi Qiang

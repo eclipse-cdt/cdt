@@ -48,6 +48,11 @@ import java.util.EventObject;
 
 public class BufferChangedEvent extends EventObject {
 	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 3979268036526355761L;
+
+	/**
 	 * The length of text that has been modified in the buffer.
 	 */
 	private int length;

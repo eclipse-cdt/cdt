@@ -76,9 +76,8 @@ public abstract class IndexerJob implements IJob {
 
 			if (progressMonitor.isCanceled()) {
 				throw new OperationCanceledException();
-			} else {
-				progressMonitor.worked(1);
 			}
+			progressMonitor.worked(1);
 
 			return success;
 		} catch (InterruptedException e) {

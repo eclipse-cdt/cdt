@@ -60,9 +60,9 @@ public class DebugType {
 			sb.append(type.toString());
 			sb.append(" (*())"); //$NON-NLS-1$
 		} else if (this instanceof DebugEnumType) {
-			DebugEnumType enum = (DebugEnumType)this;
-			DebugEnumField[] fields = enum.getDebugEnumFields();
-			sb.append("enum ").append(enum.getName()).append(" {"); //$NON-NLS-1$ //$NON-NLS-2$
+			DebugEnumType enumarator = (DebugEnumType)this;
+			DebugEnumField[] fields = enumarator.getDebugEnumFields();
+			sb.append("enum ").append(enumarator.getName()).append(" {"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int i = 0; i < fields.length; i++) {
 				if (i > 0) {
 					sb.append(',');

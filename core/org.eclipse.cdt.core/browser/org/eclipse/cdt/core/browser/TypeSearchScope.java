@@ -169,9 +169,8 @@ public class TypeSearchScope implements ITypeSearchScope {
 	public IProject[] getEnclosingProjects() {
 		if (isWorkspaceScope()) {
 			return getAllProjects();
-		} else {
-			return (IProject[]) fEnclosingProjectSet.toArray(new IProject[fEnclosingProjectSet.size()]);
 		}
+		return (IProject[]) fEnclosingProjectSet.toArray(new IProject[fEnclosingProjectSet.size()]);
 	}
 	
 	private static boolean projectContainsPath(IProject project, IPath path, boolean checkIncludePaths) {
@@ -247,11 +246,10 @@ public class TypeSearchScope implements ITypeSearchScope {
 			if (count > 0) {
 				if (count == allProjects.length) {
 					return cProjects;
-				} else {
-					IProject[] newProjects = new IProject[count];
-					System.arraycopy(cProjects, 0, newProjects, 0, count);
-					return newProjects;
 				}
+				IProject[] newProjects = new IProject[count];
+				System.arraycopy(cProjects, 0, newProjects, 0, count);
+				return newProjects;
 			}
 		}
 		return null;

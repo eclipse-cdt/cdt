@@ -83,9 +83,8 @@ public class TypeReference implements ITypeReference {
 			IResource resource = fWorkingCopy.getUnderlyingResource();
 			if (resource != null) {
 				return resource.getLocation();
-			} else {
-				return null;
 			}
+			return null;
 		} else if (fResource != null) {
 			return fResource.getLocation();
 		} else if (fPath != null) {
@@ -108,19 +107,17 @@ public class TypeReference implements ITypeReference {
 	public IProject getProject() {
 		if (fProject != null) {
 			return fProject;
-		} else {
-			if (fWorkingCopy != null) {
-				ICProject cProject = fWorkingCopy.getCProject();
-				if (cProject != null) {
-					return cProject.getProject();
-				} else {
-					return null;
-				}
-			} else if (fResource != null) {
-				return fResource.getProject();
-			} else {
-				return null;
+		}
+		if (fWorkingCopy != null) {
+			ICProject cProject = fWorkingCopy.getCProject();
+			if (cProject != null) {
+				return cProject.getProject();
 			}
+			return null;
+		} else if (fResource != null) {
+			return fResource.getProject();
+		} else {
+			return null;
 		}
 	}
 	
@@ -213,12 +210,10 @@ public class TypeReference implements ITypeReference {
 		if (path != null) {
 			if (fLength == 0 && fOffset == 0) {
 				return path.toString();
-			} else {
-				return path.toString() + ":" + fOffset + "-" + (fOffset + fLength);  //$NON-NLS-1$//$NON-NLS-2$
 			}
-		} else {
-			return ""; //$NON-NLS-1$
+			return path.toString() + ":" + fOffset + "-" + (fOffset + fLength);  //$NON-NLS-1$//$NON-NLS-2$
 		}
+		return ""; //$NON-NLS-1$
 	}
 
 	public int hashCode() {

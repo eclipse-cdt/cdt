@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -164,7 +165,8 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	public boolean isReadOnly () {
 		IResource r = getUnderlyingResource();
 		if (r != null) {
-			return r.isReadOnly();
+			ResourceAttributes attributes = r.getResourceAttributes();
+			return attributes.isReadOnly();
 		}			
 		return false;
 	}

@@ -16,6 +16,10 @@ import java.util.EventObject;
  */
 public class ElementChangedEvent extends EventObject {
 	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 3257572793326252855L;
+	/**
 	 * Event type constant (bit mask) indicating an after-the-fact 
 	 * report of creations, deletions, and modifications
 	 * to one or more C element(s) expressed as a hierarchical

@@ -18,6 +18,10 @@ import java.util.List;
 
 public class ResolverChangeEvent extends EventObject {
 
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 4121128156301178929L;
 	private List fDeltas = new ArrayList();
 	private ICFileTypeResolver fNewResolver;
 	private ICFileTypeResolver fOldResolver;

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -304,7 +305,15 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	 * @see org.eclipse.cdt.core.model.IOpenable#save(IProgressMonitor, boolean)
 	 */
 	public void save(IProgressMonitor pm, boolean force) throws CModelException {
-		if (isReadOnly() || this.getResource().isReadOnly()) {
+		IResource res = getResource();
+		if (res != null) {
+			ResourceAttributes attributes = res.getResourceAttributes();
+			if (attributes.isReadOnly()) {
+				throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
+			}
+		}
+		// check also the underlying resource
+		if (isReadOnly()) {
 			throw new CModelException(new CModelStatus(ICModelStatusConstants.READ_ONLY, this));
 		}
 		IBuffer buf = getBuffer();

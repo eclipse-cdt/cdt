@@ -12,7 +12,6 @@ package org.eclipse.cdt.core.formatter;
 
 import java.util.Map;
 
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
 
 /**

@@ -116,11 +116,10 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
 				if (unit.isWorkingCopy()) {
 					deltaCount += processWorkingCopyDelta(delta);
 					return deltaCount;
-				} else {
-					if (added || removed || pathEntryChanged || contentChanged) {
-						addCacheDelta(project, delta);
-						++deltaCount;
-					}
+				}
+				if (added || removed || pathEntryChanged || contentChanged) {
+					addCacheDelta(project, delta);
+					++deltaCount;
 				}
 			}
 			break;

@@ -14,6 +14,10 @@ import java.util.EventObject;
 
 public class CDescriptorEvent extends EventObject {
 
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 3257009869059143225L;
 	public static final int CDTPROJECT_CHANGED = 1;
 	public static final int CDTPROJECT_ADDED = 2;
 	public static final int CDTPROJECT_REMOVED = 3;

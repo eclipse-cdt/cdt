@@ -25,6 +25,11 @@ import org.eclipse.cdt.internal.core.model.CModelStatus;
  */
 public class CModelException extends CoreException {
 	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 3546638828312998451L;
+
+	/**
 	 * Creates a C model exception that wrappers the given <code>Throwable</code>.
 	 * The exception contains a C-specific status object with severity
 	 * <code>IStatus.ERROR</code> and the given status code.

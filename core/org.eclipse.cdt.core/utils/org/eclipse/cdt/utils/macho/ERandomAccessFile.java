@@ -35,9 +35,8 @@ public class ERandomAccessFile extends RandomAccessFile {
 		    throw new EOFException();
    		if ( isle ) {
 	 		return (short)((val[1] << 8) + val[0]);
-		} else {
-			return (short)((val[0] << 8) + val[1]);
 		}
+		return (short)((val[0] << 8) + val[1]);
 	}
 	
 	public final int readIntE() throws IOException
@@ -50,9 +49,8 @@ public class ERandomAccessFile extends RandomAccessFile {
 		    throw new EOFException();
 		if ( isle ) {
 			return ((val[3] << 24) + (val[2] << 16) + (val[1] << 8) + val[0]);
-		} else {
-			return ((val[0] << 24) + (val[1] << 16) + (val[2] << 8) + val[3]);
 		}
+		return ((val[0] << 24) + (val[1] << 16) + (val[2] << 8) + val[3]);
 	}
 
 	public final long readLongE() throws IOException

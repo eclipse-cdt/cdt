@@ -33,7 +33,7 @@ public class MIThreadSelectInfo extends MIInfo {
 				MIResult[] results =  rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("new-thread-ids")) {
+					if (var.equals("new-thread-id")) {
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							String str = ((MIConst)value).getCString();

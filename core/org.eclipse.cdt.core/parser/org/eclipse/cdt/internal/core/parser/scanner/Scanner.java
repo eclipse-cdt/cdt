@@ -144,6 +144,7 @@ public class Scanner implements IScanner {
 				Object value = m.get( symbolName );
 				if( value instanceof String )
 				{	
+					//TODO add in check here for '(' and ')'
 					addDefinition( symbolName, scannerExtension.initializeMacroValue(scannerData, (String) value));
 					TraceUtil.outputTrace(log,  "\t\tNAME = ", symbolName, " VALUE = ", value.toString() ); //$NON-NLS-1$ //$NON-NLS-2$
 					++numberOfSymbolsLogged;
@@ -327,9 +328,7 @@ public class Scanner implements IScanner {
 	}
 
 	public void addDefinition(String key, String value) {
-		addDefinition(key,
-				new ObjectMacroDescriptor( key, 
-						value ));
+		addDefinition(key, new ObjectMacroDescriptor( key, value ));
 	}
 
 	public final IMacroDescriptor getDefinition(String key) {
@@ -1520,7 +1519,7 @@ public class Scanner implements IScanner {
 			
 		IMacroDescriptor mapping = getDefinition(ident);
 
-		if (mapping != null && !isLimitReached())
+		if (mapping != null && !isLimitReached() && !mapping.isCircular() )
 			if( scannerData.getContextStack().shouldExpandDefinition( ident ) ) {					
 				expandDefinition(ident, mapping, baseOffset);
 				return null;

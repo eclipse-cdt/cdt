@@ -82,5 +82,11 @@ public class DynamicMacroDescriptor implements IMacroDescriptor {
 		if( !name.equals( descriptor.getName() )) return false;
 		return true;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#isCircular()
+	 */
+	public boolean isCircular() {
+		return false;
+	}
 
 }

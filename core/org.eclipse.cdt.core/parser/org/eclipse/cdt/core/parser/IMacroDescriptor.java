@@ -58,4 +58,9 @@ public interface IMacroDescriptor {
 	
 	// similar to equals() but according to the C99 & C++98 
 	public boolean compatible(IMacroDescriptor descriptor);
+
+	/**
+	 * @return
+	 */
+	public boolean isCircular();
 }

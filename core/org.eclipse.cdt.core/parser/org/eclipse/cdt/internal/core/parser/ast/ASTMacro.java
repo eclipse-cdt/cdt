@@ -180,4 +180,10 @@ public class ASTMacro implements IASTMacro {
 	public int getNameLineNumber() {
 		return nameLineNumber;
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#isCircular()
+	 */
+	public boolean isCircular() {
+		return innerMacro.isCircular();
+	}
 }

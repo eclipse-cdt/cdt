@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
@@ -25,6 +26,8 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	private final String expansionSignature;
 	private final String name;
 	private final IToken token;
+	private Boolean isCircular = null;
+	private List tokenizedExpansion = null;
 
 	public ObjectMacroDescriptor( String name, String expansionSignature )
 	{
@@ -58,9 +61,13 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getTokenizedExpansion()
 	 */
 	public List getTokenizedExpansion() {
-		ArrayList x = new ArrayList();
-		x.add(token);
-		return x;
+		if( token == null ) return EMPTY_LIST;
+		if( tokenizedExpansion == null )
+		{
+			tokenizedExpansion = new ArrayList(1);
+			tokenizedExpansion.add(token);
+		}
+		return tokenizedExpansion;
 	}
 
 	/* (non-Javadoc)
@@ -105,4 +112,26 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 		return expansionSignature;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#isCircular()
+	 */
+	public boolean isCircular() {
+		if( isCircular == null )
+			isCircular = new Boolean( checkIsCircular() );
+		return isCircular.booleanValue();
+	}
+
+	/**
+	 * @return
+	 */
+	protected boolean checkIsCircular() {
+		Iterator i = getTokenizedExpansion().iterator();
+		while( i.hasNext() )
+		{
+			IToken t = (IToken) i.next();
+			if( t.getType() == IToken.tIDENTIFIER && t.getImage().equals(getName()))
+				return true;
+		}
+		return false;
+	}
 }

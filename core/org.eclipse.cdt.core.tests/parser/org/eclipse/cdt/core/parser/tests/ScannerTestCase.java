@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
@@ -1541,5 +1542,14 @@ public class ScannerTestCase extends BaseScannerTest
     	validateToken( IGCCToken.tMIN );
     	validateToken( IGCCToken.tMAX );
     	validateEOF();
+	}
+    
+    public void testBug59768() throws Exception
+	{
+    	initializeScanner( "#define A A\nA");
+    	validateIdentifier( "A");
+    	validateEOF();
+    	IMacroDescriptor d = scanner.getDefinition( "A");
+    	assertTrue( d.isCircular() );
 	}
 }

@@ -38,7 +38,8 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 	private String name; 
 	private List identifierParameters; 
 	private List tokenizedExpansion; 
-	private String expansionSignature; 
+	private String expansionSignature;
+	private Boolean isCircular = null;
 	/**
 	 * Returns the identifiers.
 	 * @return List
@@ -145,6 +146,29 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 	 */
 	public String getExpansionSignature() {
 		return expansionSignature;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#isCircular()
+	 */
+	public boolean isCircular() {
+		if( isCircular == null )
+			isCircular = new Boolean( checkIsCircular() );
+		return isCircular.booleanValue();
+	}
+
+	/**
+	 * @return
+	 */
+	protected boolean checkIsCircular() {
+		Iterator i = getTokenizedExpansion().iterator();
+		while( i.hasNext() )
+		{
+			IToken t = (IToken) i.next();
+			if( t.getType() == IToken.tIDENTIFIER && t.getImage().equals(getName()))
+				return true;
+		}
+		return false;
 	}
 
 }

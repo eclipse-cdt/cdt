@@ -73,6 +73,15 @@ public class CommandLauncher {
 	}
 
 	/**
+	 * return the constructed Command line.
+	 * 
+	 * @return
+	 */
+	public String getCommandLine() {
+		return getCommandLine(getCommandArgs());
+	}
+
+	/**
 	 * Constructs a command array that will be passed to the process
 	 */
 	protected String[] constructCommandArray(String command, String[] commandArgs) {
@@ -103,7 +112,7 @@ public class CommandLauncher {
 	 */
 	public int waitAndRead(OutputStream out, OutputStream err) {
 		if (fShowCommand) {
-			printCommandLine(fCommandArgs, out);
+			printCommandLine(out);
 		}	
 
 		if (fProcess == null) {
@@ -123,7 +132,7 @@ public class CommandLauncher {
 	 */
 	public int waitAndRead(OutputStream output, OutputStream err, IProgressMonitor monitor) {
 		if (fShowCommand) {
-			printCommandLine(fCommandArgs, output);
+			printCommandLine(output);
 		}	
 
 		if (fProcess == null) {
@@ -207,20 +216,28 @@ public class CommandLauncher {
 		return state;
 	}	
 
-	protected void printCommandLine(String[] commandArgs, OutputStream os) {
+	protected void printCommandLine(OutputStream os) {
 		if (os != null) {
-			StringBuffer buf= new StringBuffer();
-			for (int i= 0; i < commandArgs.length; i++) {
-				buf.append(commandArgs[i]);
-				buf.append(' ');
-			}
-			buf.append(lineSeparator);
+			String cmd = getCommandLine(getCommandArgs());
 			try {
-				os.write(buf.toString().getBytes());
+				os.write(cmd.getBytes());
 				os.flush();				
 			} catch (IOException e) {
 				// ignore;
 			}
 		}
 	}
+	
+	protected String getCommandLine(String[] commandArgs) {
+		StringBuffer buf = new StringBuffer();
+		if (fCommandArgs != null) {
+			for (int i= 0; i < commandArgs.length; i++) {
+				buf.append(commandArgs[i]);
+				buf.append(' ');
+			}
+			buf.append(lineSeparator);
+		}
+		return buf.toString();
+	}
+
 }

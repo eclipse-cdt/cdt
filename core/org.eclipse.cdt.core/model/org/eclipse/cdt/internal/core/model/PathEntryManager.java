@@ -174,72 +174,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public IIncludeFileEntry[] getIncludeFileEntries(ITranslationUnit cunit) throws CModelException {
-		ArrayList includeFileList = new ArrayList();
-		ICProject cproject = cunit.getCProject();
-		IPath resPath = cunit.getPath();
-		// Do this first so the containers get inialized.
-		ArrayList resolvedListEntries = getResolvedPathEntries(cproject, false);
-		for (int i = 0; i < resolvedListEntries.size(); ++i) {
-			IPathEntry entry = (IPathEntry)resolvedListEntries.get(i);
-			if (entry.getEntryKind() == IPathEntry.CDT_INCLUDE_FILE) {
-				includeFileList.add(entry);
-			}
-		}
-		IPathEntryContainer[] containers = getPathEntryContainers(cproject);
-		for (int i = 0; i < containers.length; ++i) {
-			if (containers[i] instanceof IPathEntryContainerExtension) {
-				IPathEntryContainerExtension extension = (IPathEntryContainerExtension)containers[i];
-				IIncludeFileEntry[] incs = (IIncludeFileEntry[])extension.getPathEntries(resPath, IPathEntry.CDT_INCLUDE_FILE);
-				includeFileList.addAll(Arrays.asList(incs));
-			}
-		}
-
-		IIncludeFileEntry[] includeFiles = (IIncludeFileEntry[]) includeFileList.toArray(new IIncludeFileEntry[includeFileList.size()]);
-		// Clear the list since we are reusing it.
-		includeFileList.clear();
-
-		// We need to reorder the include/macros:
-		// includes with the closest match to the resource will come first
-		// /project/src/file.c  --> /usr/local/include
-		// /project             --> /usr/include
-		// 
-		//  /usr/local/include must come first.
-		//
-		int count = resPath.segmentCount();
-		for (int i = 0; i < count; i++) {
-			IPath newPath = resPath.removeLastSegments(i);
-			for (int j = 0; j < includeFiles.length; j++) {
-				IPath otherPath = includeFiles[j].getPath();
-				if (newPath.equals(otherPath)) {
-					includeFileList.add(includeFiles[j]);
-				}
-			}
-		}
-
-		// Since the include that comes from a project contribution are not
-		// tied to a resource they are added last.
-		for (int i = 0; i < resolvedListEntries.size(); i++) {
-			IPathEntry entry = (IPathEntry)resolvedListEntries.get(i);
-			if (entry != null && entry.getEntryKind() == IPathEntry.CDT_PROJECT) {
-				IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(entry.getPath());
-				if (res != null && res.getType() == IResource.PROJECT) {
-					ICProject refCProject = CoreModel.getDefault().create((IProject)res);
-					if (refCProject != null) {
-						IPathEntry[] projEntries = refCProject.getResolvedPathEntries();
-						for (int j = 0; j < projEntries.length; j++) {
-							IPathEntry projEntry = projEntries[j];
-							if (projEntry.isExported()) {
-								if (projEntry.getEntryKind() == IPathEntry.CDT_INCLUDE_FILE) {
-									IIncludeFileEntry includeFile = (IIncludeFileEntry)projEntry;
-									includeFileList.add(includeFile);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return (IIncludeFileEntry[])includeFileList.toArray(new IIncludeFileEntry[includeFileList.size()]);		
+		List list = getPathEntries(cunit, IPathEntry.CDT_INCLUDE_FILE);
+		IIncludeFileEntry[] incFiles = (IIncludeFileEntry[]) list.toArray(new IIncludeFileEntry[list.size()]);
+		return incFiles;
 	}
 
 	public IIncludeEntry[] getIncludeEntries(IPath resPath) throws CModelException {
@@ -251,72 +188,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public IIncludeEntry[] getIncludeEntries(ITranslationUnit cunit) throws CModelException {
-		ArrayList includeList = new ArrayList();
-		ICProject cproject = cunit.getCProject();
-		IPath resPath = cunit.getPath();
-		// Do this first so the containers get inialized.
-		ArrayList resolvedListEntries = getResolvedPathEntries(cproject, false);
-		for (int i = 0; i < resolvedListEntries.size(); ++i) {
-			IPathEntry entry = (IPathEntry)resolvedListEntries.get(i);
-			if (entry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
-				includeList.add(entry);
-			}
-		}
-		IPathEntryContainer[] containers = getPathEntryContainers(cproject);
-		for (int i = 0; i < containers.length; ++i) {
-			if (containers[i] instanceof IPathEntryContainerExtension) {
-				IPathEntryContainerExtension extension = (IPathEntryContainerExtension)containers[i];
-				IIncludeEntry[] incs = (IIncludeEntry[]) extension.getPathEntries(resPath, IPathEntry.CDT_INCLUDE_FILE);
-				includeList.addAll(Arrays.asList(incs));
-			}
-		}
-
-		IIncludeEntry[] includes = (IIncludeEntry[]) includeList.toArray(new IIncludeEntry[includeList.size()]);
-		// Clear the list since we are reusing it.
-		includeList.clear();
-
-		// We need to reorder the include/macros:
-		// includes with the closest match to the resource will come first
-		// /project/src/file.c  --> /usr/local/include
-		// /project             --> /usr/include
-		// 
-		//  /usr/local/include must come first.
-		//
-		int count = resPath.segmentCount();
-		for (int i = 0; i < count; i++) {
-			IPath newPath = resPath.removeLastSegments(i);
-			for (int j = 0; j < includes.length; j++) {
-				IPath otherPath = includes[j].getPath();
-				if (newPath.equals(otherPath)) {
-					includeList.add(includes[j]);
-				}
-			}
-		}
-
-		// Since the include that comes from a project contribution are not
-		// tied to a resource they are added last.
-		for (int i = 0; i < resolvedListEntries.size(); i++) {
-			IPathEntry entry = (IPathEntry)resolvedListEntries.get(i);
-			if (entry != null && entry.getEntryKind() == IPathEntry.CDT_PROJECT) {
-				IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(entry.getPath());
-				if (res != null && res.getType() == IResource.PROJECT) {
-					ICProject refCProject = CoreModel.getDefault().create((IProject)res);
-					if (refCProject != null) {
-						IPathEntry[] projEntries = refCProject.getResolvedPathEntries();
-						for (int j = 0; j < projEntries.length; j++) {
-							IPathEntry projEntry = projEntries[j];
-							if (projEntry.isExported()) {
-								if (projEntry.getEntryKind() == IPathEntry.CDT_INCLUDE) {
-									IIncludeEntry include = (IIncludeEntry)projEntry;
-									includeList.add(include);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return (IIncludeEntry[])includeList.toArray(new IIncludeEntry[includeList.size()]);		
+		List list = getPathEntries(cunit, IPathEntry.CDT_INCLUDE);
+		IIncludeEntry[] includes = (IIncludeEntry[]) list.toArray(new IIncludeEntry[list.size()]);
+		return includes;
 	}
 
 	public IMacroEntry[] getMacroEntries(IPath resPath)  throws CModelException {
@@ -327,7 +201,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return NO_MACRO_ENTRIES;
 	}
 
-	public IMacroEntry[] getMacroEntries(ITranslationUnit cunit) throws CModelException  {
+	private IMacroEntry[] getMacroEntries(ITranslationUnit cunit) throws CModelException  {
 		ArrayList macroList = new ArrayList();
 		ICProject cproject = cunit.getCProject();
 		IPath resPath = cunit.getPath();
@@ -410,48 +284,55 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public IMacroFileEntry[] getMacroFileEntries(ITranslationUnit cunit) throws CModelException  {
-		ArrayList macroFileList = new ArrayList();
+		List list = getPathEntries(cunit, IPathEntry.CDT_MACRO_FILE);
+		IMacroFileEntry[] macFiles = (IMacroFileEntry[]) list.toArray(new IMacroFileEntry[list.size()]);
+		return macFiles;
+	}
+
+	private List getPathEntries(ITranslationUnit cunit, int type) throws CModelException {
+		ArrayList entryList = new ArrayList();
 		ICProject cproject = cunit.getCProject();
 		IPath resPath = cunit.getPath();
 		// Do this first so the containers get inialized.
 		ArrayList resolvedListEntries = getResolvedPathEntries(cproject, false);
 		for (int i = 0; i < resolvedListEntries.size(); ++i) {
 			IPathEntry entry = (IPathEntry)resolvedListEntries.get(i);
-			if (entry.getEntryKind() == IPathEntry.CDT_MACRO_FILE) {
-				macroFileList.add(entry);
+			if ((entry.getEntryKind() & type) != 0) {
+				entryList.add(entry);
 			}
 		}
 		IPathEntryContainer[] containers = getPathEntryContainers(cproject);
 		for (int i = 0; i < containers.length; ++i) {
 			if (containers[i] instanceof IPathEntryContainerExtension) {
 				IPathEntryContainerExtension extension = (IPathEntryContainerExtension)containers[i];
-				IMacroFileEntry[] macFiles = (IMacroFileEntry[])extension.getPathEntries(resPath, IPathEntry.CDT_MACRO_FILE);
-				macroFileList.addAll(Arrays.asList(macFiles));
+				IPathEntry[] incs = extension.getPathEntries(resPath, type);
+				entryList.addAll(Arrays.asList(incs));
 			}
 		}
 
-		IMacroFileEntry[] macroFiles = (IMacroFileEntry[]) macroFileList.toArray(new IMacroFileEntry[macroFileList.size()]);
-		macroFileList.clear();
-		
-		// We need to reorder the macro files:
-		// with the closest match to the resource coming first
-		// /project/src/file.c  --> /usr/local/include/macrofile
-		// /project             --> /usr/include/macrofile
+		IPathEntry[] entries = (IPathEntry[]) entryList.toArray(new IPathEntry[entryList.size()]);
+		// Clear the list since we are reusing it.
+		entryList.clear();
+
+		// We need to reorder the include/macros:
+		// includes with the closest match to the resource will come first
+		// /project/src/file.c  --> /usr/local/include
+		// /project             --> /usr/include
 		// 
-		//  /usr/local/include/macrofile must come first.
+		//  /usr/local/include must come first.
 		//
 		int count = resPath.segmentCount();
 		for (int i = 0; i < count; i++) {
 			IPath newPath = resPath.removeLastSegments(i);
-			for (int j = 0; j < macroFiles.length; j++) {
-				IPath otherPath = macroFiles[j].getPath();
+			for (int j = 0; j < entries.length; j++) {
+				IPath otherPath = entries[j].getPath();
 				if (newPath.equals(otherPath)) {
-					macroFileList.add(macroFiles[j]);
+					entryList.add(entries[j]);
 				}
 			}
 		}
 
-		// Since the macroFile that comes from a project contribution are not
+		// Since the include that comes from a project contribution are not
 		// tied to a resource they are added last.
 		for (int i = 0; i < resolvedListEntries.size(); i++) {
 			IPathEntry entry = (IPathEntry)resolvedListEntries.get(i);
@@ -464,9 +345,8 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						for (int j = 0; j < projEntries.length; j++) {
 							IPathEntry projEntry = projEntries[j];
 							if (projEntry.isExported()) {
-								if (projEntry.getEntryKind() == IPathEntry.CDT_MACRO_FILE) {
-									IMacroFileEntry macroFile = (IMacroFileEntry)projEntry;
-									macroFileList.add(macroFile);
+								if ((projEntry.getEntryKind() & type) != 0) {
+									entryList.add(projEntry);
 								}
 							}
 						}
@@ -474,7 +354,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				}
 			}
 		}
-		return (IMacroFileEntry[])macroFileList.toArray(NO_MACRO_FILE_ENTRIES);
+		return entryList;		
 	}
 
 	/**

@@ -175,6 +175,12 @@ public class CModelBuilder {
 			if (typeSpec instanceof ClassSpecifier){
 				ClassSpecifier classSpecifier = (ClassSpecifier) typeSpec;
 				ITemplate classTemplate = (ClassTemplate)createClass(parent, simpleDeclaration, classSpecifier, true);
+				CElement element = (CElement) classTemplate;
+				// set the element position		
+				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getTotalLength());	
+				// set the element lines
+				element.setLines(templateDeclaration.getTopLine(), templateDeclaration.getBottomLine());
+				// set the template parameters				
 				String[] parameterTypes = getTemplateParameters(templateDeclaration);
 				classTemplate.setTemplateParameterTypes(parameterTypes);				
 
@@ -224,6 +230,12 @@ public class CModelBuilder {
 		if (pdc != null){
 			// template of function or method
 			ITemplate template = (ITemplate) createFunctionSpecification(parent, simpleDeclaration, declarator, pdc, true);
+			CElement element = (CElement)template;
+			// set the element position		
+			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getTotalLength());	
+			// set the element lines
+			element.setLines(templateDeclaration.getTopLine(), templateDeclaration.getBottomLine());
+			// set the template parameters
 			String[] parameterTypes = getTemplateParameters(templateDeclaration);	
 			template.setTemplateParameterTypes(parameterTypes);				
 		}
@@ -362,9 +374,12 @@ public class CModelBuilder {
 			
 		}
 		element.setTypeName( type );
-		element.setPos(classSpecifier.getStartingOffset(), classSpecifier.getTotalLength());
-		// set the element lines
-		element.setLines(classSpecifier.getTopLine(), classSpecifier.getBottomLine());
+		if(!isTemplate){
+			// set the element position
+			element.setPos(classSpecifier.getStartingOffset(), classSpecifier.getTotalLength());
+			// set the element lines
+			element.setLines(classSpecifier.getTopLine(), classSpecifier.getBottomLine());
+		}
 		
 		this.newElements.put(element, element.getElementInfo());
 		return element;
@@ -525,10 +540,13 @@ public class CModelBuilder {
 		parent.addChild( element ); 	
 
 		// hook up the offsets
-		element.setIdPos( domName.getStartOffset(), domName.length() );		
-		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
-		// set the element lines
-		element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
+		element.setIdPos( domName.getStartOffset(), domName.length() );
+		if(!isTemplate){
+			// set the element position		
+			element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
+			// set the element lines
+			element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
+		}
 
 		this.newElements.put(element, element.getElementInfo());
 		return element;

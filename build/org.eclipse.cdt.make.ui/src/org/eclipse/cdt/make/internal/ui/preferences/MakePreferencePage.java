@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.make.ui.preferences;
+package org.eclipse.cdt.make.internal.ui.preferences;
 
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;

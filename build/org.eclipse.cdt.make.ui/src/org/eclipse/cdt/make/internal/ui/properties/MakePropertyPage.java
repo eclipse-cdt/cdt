@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.make.ui.properties;
+package org.eclipse.cdt.make.internal.ui.properties;
 
 import java.lang.reflect.InvocationTargetException;
 

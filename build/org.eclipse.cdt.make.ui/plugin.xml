@@ -180,9 +180,9 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="%PreferenceMake.name"
+            name="%PreferenceMakeProject.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.make.ui.preferences.MakePreferencePage"
+            class="org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage"
             id="org.eclipse.cdt.make.ui.preferences.MakePreferencePage">
       </page>
    </extension>
@@ -192,7 +192,7 @@
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
             name="%PropertyMakeProject.name"
-            class="org.eclipse.cdt.make.ui.properties.MakePropertyPage"
+            class="org.eclipse.cdt.make.internal.ui.properties.MakePropertyPage"
             id="org.eclipse.cdt.make.ui.properties.MakePropertyPage">
          <filter
                name="nature"

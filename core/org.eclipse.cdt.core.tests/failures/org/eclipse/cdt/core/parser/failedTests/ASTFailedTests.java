@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.tests.BaseASTTest;
 /**
@@ -125,14 +123,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("register int *foo asm (\"a5\");");
     }
-    public void testBug39698A() throws Exception
-    {
-        assertCodeFailsParse("int c = a <? b;");
-    }
-    public void testBug39698B() throws Exception
-    {
-        assertCodeFailsParse("int c = a >? b;");
-    }
+
     public void testBug39701A() throws Exception
     {
         assertCodeFailsParse("extern template int max (int, int);");
@@ -159,24 +150,6 @@ public class ASTFailedTests extends BaseASTTest
         {
         }
         assertCodeFailsFullParse(code.toString());
-    }
-    public void testBug39703() throws Exception
-    {
-        Writer code = new StringWriter();
-        try
-        {
-            code.write(
-                "/* __extension__ enables GNU C mode for the duration of the declaration.  */\n");
-            code.write("__extension__ struct G {\n");
-            code.write("  struct { char z; };\n");
-            code.write("  char g;\n");
-            code.write("};\n");
-        }
-        catch (IOException ioe)
-        {
-        }
-       	IASTAbstractTypeSpecifierDeclaration abs = (IASTAbstractTypeSpecifierDeclaration)assertSoleDeclaration(code.toString());
-       	assertEquals( ((IASTClassSpecifier)abs.getTypeSpecifier()).getName(), "G" ); 
     }
 
     

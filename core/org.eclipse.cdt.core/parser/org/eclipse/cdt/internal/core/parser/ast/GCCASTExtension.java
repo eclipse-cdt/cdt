@@ -65,7 +65,7 @@ public class GCCASTExtension implements IASTFactoryExtension {
 			ITokenDuple idExpression, String literal,
 			IASTNewExpressionDescriptor newDescriptor)
 	{
-		return new ASTGCCExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor );
+		return new ASTGCCExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor );//$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#canHandleExpressionKind(org.eclipse.cdt.core.parser.ast.IASTExpression.Kind)
@@ -74,7 +74,9 @@ public class GCCASTExtension implements IASTFactoryExtension {
 		if( kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID ||
 			kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION ||
 			kind == IASTGCCExpression.Kind.UNARY_TYPEOF_UNARYEXPRESSION ||
-			kind == IASTGCCExpression.Kind.UNARY_TYPEOF_TYPEID )
+			kind == IASTGCCExpression.Kind.UNARY_TYPEOF_TYPEID || 
+			kind == IASTGCCExpression.Kind.RELATIONAL_MAX || 
+			kind == IASTGCCExpression.Kind.RELATIONAL_MIN )
 			return true;
 		return false;
 	}
@@ -84,7 +86,9 @@ public class GCCASTExtension implements IASTFactoryExtension {
 	public TypeInfo getExpressionResultType(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTTypeId typeId) {
 		TypeInfo info = null;
 		if( kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID ||
-				kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION )
+			kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION || 
+			kind == IASTGCCExpression.Kind.RELATIONAL_MAX || 
+			kind == IASTGCCExpression.Kind.RELATIONAL_MIN )
 		{
 			info = new TypeInfo();
 			info.setType(TypeInfo.t_int);
@@ -127,6 +131,4 @@ public class GCCASTExtension implements IASTFactoryExtension {
 		}
 		return null;
 	}
-	
-	
 }

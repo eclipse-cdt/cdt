@@ -67,6 +67,7 @@ public class CompletionParser extends ContextualParser implements IParser {
 	 */
 	private Set reconcileKeywords(Set keywords, String prefix) {
 		if( keywords == null ) return null;
+		if( prefix.equals( "")) return keywords; //$NON-NLS-1$
 		Set resultSet = new TreeSet(); 
 		Iterator i = keywords.iterator(); 
 		while( i.hasNext() )

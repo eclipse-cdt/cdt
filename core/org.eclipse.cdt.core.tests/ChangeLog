@@ -1,3 +1,9 @@
+2004-04-21 John Camelon
+	Moved testBug39703() from ASTFailedTests to QuickParseASTTest.
+	Added ScannerTestCase::testBug39698().
+	Moved testBug39698A() & testBug39698B() from ASTFailedTests to QuickParseASTTest.
+	Added testBug39698A() & testBug39698B() to CompleteParseASTTest.
+
 2004-04-21 Andrew Niefer
 	fox bugs 52695 & 45372
 	added parser/CompleteParseASTSymbolIteratorTest.testUsingDirectives()

@@ -32,7 +32,6 @@ public interface IScanner  extends IFilenameProvider {
 	public Map 				getDefinitions();
 
 	public String[] getIncludePaths();
-	public void addIncludePath(String includePath); 
 	public void overwriteIncludePath( String [] newIncludePaths );
 	
 	public IToken nextToken() throws ScannerException, EndOfFileException;

@@ -1598,4 +1598,14 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	assertEquals( B.getFriends().next(), N );
 	}
 	
+    
+    public void testBug39698A() throws Exception
+    {
+        parse("int c = a <? b;");
+    }
+    public void testBug39698B() throws Exception
+    {
+    	parse("int c = a >? b;");
+    }
+
 }

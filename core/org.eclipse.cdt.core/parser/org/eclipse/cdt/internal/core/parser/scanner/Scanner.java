@@ -177,7 +177,7 @@ public class Scanner implements IScanner {
 	 */
 	protected void setupBuiltInMacros() {
 		
-		scannerExtension.setupBuiltInMacros(scannerData, scannerData.getLanguage());
+		scannerExtension.setupBuiltInMacros(scannerData);
 		if( getDefinition(__STDC__) == null )
 			addDefinition( __STDC__, new ObjectMacroDescriptor( __STDC__,  "1") ); //$NON-NLS-1$
 		
@@ -1535,8 +1535,8 @@ public class Scanner implements IScanner {
 			return newConstantToken(((Integer) tokenTypeObject).intValue());
 		else
 		{
-			if( scannerExtension.isExtensionKeyword( ident ) )
-				return newExtensionToken( scannerExtension.createExtensionToken(ident, scannerData ));
+			if( scannerExtension.isExtensionKeyword( scannerData.getLanguage(), ident ) )
+				return newExtensionToken( scannerExtension.createExtensionToken(scannerData, ident ));
 			return newToken(IToken.tIDENTIFIER, ident);
 		}
 	}
@@ -1775,6 +1775,11 @@ public class Scanner implements IScanner {
 						case ':' : return newConstantToken(IToken.tLBRACKET); 
 								
 						default :
+							StringBuffer buff = new StringBuffer( "<"); //$NON-NLS-1$
+							buff.append( (char)c);
+							String query =buff.toString();
+							if( scannerExtension.isExtensionOperator( scannerData.getLanguage(), query ) )
+								return newExtensionToken( scannerExtension.createExtensionToken( scannerData, query ));
 							ungetChar(c);
 							if( forInclusion )
 								temporarilyReplaceDefinitionsMap();
@@ -1793,9 +1798,14 @@ public class Scanner implements IScanner {
 							}
 						case '=' : return newConstantToken(IToken.tGTEQUAL);
 						default :
+							StringBuffer buff = new StringBuffer( ">");  //$NON-NLS-1$
+							buff.append( (char)c);
+							String query =buff.toString();
+							if( scannerExtension.isExtensionOperator( scannerData.getLanguage(), query ) )
+								return newExtensionToken( scannerExtension.createExtensionToken( scannerData, query ));
 							ungetChar(c);
 							if( forInclusion )
-								restoreDefinitionsMap();
+								temporarilyReplaceDefinitionsMap();
 							return newConstantToken(IToken.tGT);
 					}
 				case '.' :
@@ -1884,7 +1894,7 @@ public class Scanner implements IScanner {
 					{
 						// This is not a wide literal -- it must be a token or keyword
 						ungetChar(c);
-						token = processKeywordOrIdentifier(new StringBuffer( "L"), pasting);
+						token = processKeywordOrIdentifier(new StringBuffer( "L"), pasting);//$NON-NLS-1$
 					}
 					if (token == null) 
 					{
@@ -1932,7 +1942,7 @@ public class Scanner implements IScanner {
 					else if( c == '\\' )
 					{
 						int next = getChar();
-						StringBuffer ucnBuffer = new StringBuffer( "\\");
+						StringBuffer ucnBuffer = new StringBuffer( "\\");//$NON-NLS-1$
 						ucnBuffer.append( (char) next );
 
 						if( next == 'u' || next =='U' )

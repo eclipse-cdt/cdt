@@ -16,6 +16,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -1531,6 +1532,14 @@ public class ScannerTestCase extends BaseScannerTest
     	validateIdentifier( "\\u001A01BC_ident");
     	validateIdentifier( "ident\\U01AF" );
     	validateIdentifier( "ident\\u01bc00AF" );
+    	validateEOF();
+	}
+    
+    public void testBug39698() throws Exception
+	{
+    	initializeScanner( "<? >?");
+    	validateToken( IGCCToken.tMIN );
+    	validateToken( IGCCToken.tMAX );
     	validateEOF();
 	}
 }

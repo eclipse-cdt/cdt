@@ -1,3 +1,8 @@
+2004-04-21 John Camelon
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39703
+	Removed method IScanner.addIncludePath() as it wasn't being used.  
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39698
+
 2004-04-21 Andrew Niefer
 	fixing 52695 & 45372
 	- updated CompleteParseASTFactory.createUsingDirective & createUsingDeclaration

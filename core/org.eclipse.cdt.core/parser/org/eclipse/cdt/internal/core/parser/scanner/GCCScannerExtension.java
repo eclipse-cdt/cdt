@@ -35,6 +35,7 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  * @author jcamelon
  */
 public class GCCScannerExtension implements IScannerExtension {
+	
 
 
 	protected static final String POUND_IDENT = "#ident"; //$NON-NLS-1$
@@ -59,7 +60,8 @@ public class GCCScannerExtension implements IScannerExtension {
 	private static final List simpleIdentifiersDeclSpec;
 	private static final List simpleIdentifiersAttribute;
 	
-	private ParserLanguage language;
+	private static final String __EXTENSION__ = "__extension__"; //$NON-NLS-1$
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
 	static
 	{
@@ -81,10 +83,9 @@ public class GCCScannerExtension implements IScannerExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#setupBuiltInMacros()
 	 */
-	public void setupBuiltInMacros(IScannerData scannerData, ParserLanguage language) {
-		this.language = language;
+	public void setupBuiltInMacros(IScannerData scannerData) {
 				
-		if( language == ParserLanguage.CPP )
+		if( scannerData.getLanguage() == ParserLanguage.CPP )
 			if( scannerData.getScanner().getDefinition( IScanner.__CPLUSPLUS ) == null )
 				scannerData.getScanner().addDefinition( IScanner.__CPLUSPLUS, new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1")); //$NON-NLS-1$
 		
@@ -101,6 +102,9 @@ public class GCCScannerExtension implements IScannerExtension {
 		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
 			scannerData.getScanner().addDefinition( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_LIST, "" )); //$NON-NLS-1$ $NON-NLS-2$
 
+		if( scannerData.getScanner().getDefinition( __EXTENSION__ ) == null )
+			scannerData.getScanner().addDefinition( __EXTENSION__, new ObjectMacroDescriptor( __EXTENSION__, EMPTY_STRING ));
+		
 		setupAlternativeKeyword(scannerData, __CONST__, Keywords.CONST);
 		setupAlternativeKeyword(scannerData, __CONST, Keywords.CONST);
 		setupAlternativeKeyword(scannerData, __INLINE__, Keywords.INLINE);
@@ -109,7 +113,7 @@ public class GCCScannerExtension implements IScannerExtension {
 		setupAlternativeKeyword( scannerData, __RESTRICT, Keywords.RESTRICT);
 		setupAlternativeKeyword( scannerData, __RESTRICT__, Keywords.RESTRICT);
 		setupAlternativeKeyword( scannerData, __TYPEOF__, GCCKeywords.TYPEOF );
-		if( language == ParserLanguage.CPP )
+		if( scannerData.getLanguage() == ParserLanguage.CPP )
 			setupAlternativeKeyword( scannerData, __ASM__, Keywords.ASM );
 		
 	}
@@ -225,6 +229,11 @@ public class GCCScannerExtension implements IScannerExtension {
 
 	private static final Map additionalCPPKeywords;
 	private static final Map additionalCKeywords;
+	private static final Map additionalCPPOperators;
+	private static final Map additionalCOperators;
+	private static final String MAX_OPERATOR = ">?"; //$NON-NLS-1$
+	private static final String MIN_OPERATOR = "<?"; //$NON-NLS-1$
+	
 	static
 	{
 		additionalCKeywords = new HashMap();
@@ -232,12 +241,18 @@ public class GCCScannerExtension implements IScannerExtension {
 		additionalCKeywords.put( GCCKeywords.TYPEOF, new Integer( IGCCToken.t_typeof ));
 		additionalCPPKeywords = new HashMap(additionalCKeywords);
 		additionalCPPKeywords.put( Keywords.RESTRICT, new Integer( IToken.t_restrict ));
+		
+		additionalCOperators = new HashMap();
+		
+		additionalCPPOperators = new HashMap();
+		additionalCPPOperators.put( MAX_OPERATOR, new Integer( IGCCToken.tMAX ) );
+		additionalCPPOperators.put( MIN_OPERATOR, new Integer( IGCCToken.tMIN ) );
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isExtensionKeyword()
 	 */
-	public boolean isExtensionKeyword(String tokenImage) {
+	public boolean isExtensionKeyword(ParserLanguage language, String tokenImage) {
 		if( language == ParserLanguage.CPP )
 			return ( additionalCPPKeywords.get( tokenImage ) != null );
 		else if( language == ParserLanguage.C )
@@ -248,14 +263,33 @@ public class GCCScannerExtension implements IScannerExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#createExtensionToken()
 	 */
-	public IToken createExtensionToken(String image, IScannerData scannerData) {
+	public IToken createExtensionToken(IScannerData scannerData, String image) {
 		Integer get = null;
-		if( language == ParserLanguage.CPP )
+		if( scannerData.getLanguage() == ParserLanguage.CPP )
+		{
 			get = (Integer) additionalCPPKeywords.get( image );
-		else if( language == ParserLanguage.C )
+			if( get == null )
+				get = (Integer) additionalCPPOperators.get( image );
+		}
+		else if( scannerData.getLanguage()  == ParserLanguage.C )
+		{
 			get = (Integer) additionalCKeywords.get( image );
+			if( get == null )
+				get = (Integer) additionalCOperators.get( image );
+		}
 		if( get == null ) return null;
-		return TokenFactory.createToken(get.intValue(),scannerData);
+		return TokenFactory.createToken(get.intValue(),image,scannerData);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isExtensionOperator(java.lang.String)
+	 */
+	public boolean isExtensionOperator(ParserLanguage language, String query) {
+		if( language == ParserLanguage.CPP )
+			return ( additionalCPPOperators.get( query ) != null );
+		else if (language == ParserLanguage.C )
+			return ( additionalCOperators.get( query ) != null );
+		return false;
 	}
 
 }

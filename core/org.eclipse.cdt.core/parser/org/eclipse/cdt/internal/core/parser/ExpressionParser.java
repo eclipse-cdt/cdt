@@ -1224,6 +1224,11 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                }
 	                break;
 	            default :
+	            	if( extension.isValidRelationalExpressionStart(language, LT(1)))
+	            	{
+	            		IASTExpression extensionExpression = extension.parseRelationalExpression(scope, this, kind, firstExpression );
+	            		if( extensionExpression != null ) return extensionExpression;
+	            	}
 	                return firstExpression;
 	        }
 	    }
@@ -1233,7 +1238,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression shiftExpression(IASTScope scope, CompletionKind kind) throws BacktrackException, EndOfFileException {
+	public IASTExpression shiftExpression(IASTScope scope, CompletionKind kind) throws BacktrackException, EndOfFileException {
 	    IASTExpression firstExpression = additiveExpression(scope,kind);
 	    for (;;)
 	    {
@@ -1649,7 +1654,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		
 		try
 	    {
-			String signature = "";
+			String signature = "";//$NON-NLS-1$
 			if( start != null && lastToken != null )
 				signature = new TokenDuple( start, lastToken ).toString();
 	        return astFactory.createTypeId( scope, kind, isConst, isVolatile, isShort, isLong, isSigned, isUnsigned, isTypename, name, id.getPointerOperators(), id.getArrayModifiers(), signature);
@@ -2884,5 +2889,11 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 */
 	public IToken getLastToken() {
 		return lastToken;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserData#getParserLanguage()
+	 */
+	public final ParserLanguage getParserLanguage() {
+		return language;
 	}
 }

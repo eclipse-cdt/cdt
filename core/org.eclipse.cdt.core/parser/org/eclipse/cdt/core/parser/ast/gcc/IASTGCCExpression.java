@@ -24,6 +24,8 @@ public interface IASTGCCExpression extends IASTExpression {
 		public static final Kind UNARY_ALIGNOF_TYPEID          = new Kind( LAST_KIND + 2 );
 		public static final Kind UNARY_TYPEOF_UNARYEXPRESSION  = new Kind( LAST_KIND + 3 );
 		public static final Kind UNARY_TYPEOF_TYPEID           = new Kind( LAST_KIND + 4 );
+		public static final Kind RELATIONAL_MAX 			   = new Kind( LAST_KIND + 5 );
+		public static final Kind RELATIONAL_MIN				   = new Kind( LAST_KIND + 6 );
 
 		protected Kind( int kind )
 		{

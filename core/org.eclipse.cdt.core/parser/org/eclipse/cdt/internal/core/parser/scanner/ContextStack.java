@@ -31,7 +31,7 @@ public class ContextStack {
 
 	private static class SentinelContext implements IScannerContext {
 		public int read() throws IOException { return '\n'; }
-		public String getFilename() { return ""; }
+		public String getFilename() { return ""; } //$NON-NLS-1$
 		public int getMacroOffset() { return -1; }
 		public int getMacroLength() { return -1; }
 		public int getOffset() { return 0; }

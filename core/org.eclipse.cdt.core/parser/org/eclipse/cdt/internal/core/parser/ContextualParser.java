@@ -72,7 +72,7 @@ public class ContextualParser extends CompleteParser {
 	protected IASTNode context;
 	protected IToken finalToken;
 	protected Set keywordSet;
-	protected String functionOrConstructorName = "";
+	protected String functionOrConstructorName = "";//$NON-NLS-1$
 
 	/**
 	 * @return

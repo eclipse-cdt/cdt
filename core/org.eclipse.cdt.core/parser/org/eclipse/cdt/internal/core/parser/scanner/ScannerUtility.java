@@ -70,7 +70,7 @@ public class ScannerUtility {
 	 * @return
 	 */
 	private static String removeQuotes(String originalPath) {
-		String [] segments = originalPath.split( "\"");
+		String [] segments = originalPath.split( "\""); //$NON-NLS-1$
 		if( segments.length == 1 ) return originalPath;
 		StringBuffer result = new StringBuffer();
 		for( int i = 0; i < segments.length; ++ i )

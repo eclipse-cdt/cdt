@@ -180,7 +180,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
             catch (Exception e)
             {
-            	log.traceLog( "Parser::translationUnit: Unexpected exception occurred : " + e.getMessage() );
+            	log.traceLog( "Parser::translationUnit: Unexpected exception occurred : " + e.getMessage() ); //$NON-NLS-1$
 				failParse();
             }
         }
@@ -2173,7 +2173,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                                         catch (BacktrackException e)
                                         {
                                             failParse();
-                                            TraceUtil.outputTrace( log, "Unexpected Token =", null, image, null, null );
+                                            TraceUtil.outputTrace( log, "Unexpected Token =", null, image, null, null ); //$NON-NLS-1$
                                             consume();
                                             // eat this token anyway
                                             continue;

@@ -12,6 +12,7 @@ import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -98,4 +99,14 @@ public interface IParserData {
 	 * @return
 	 */
 	public IToken getLastToken();
+	/**
+	 * @return
+	 */
+	public abstract ParserLanguage getParserLanguage();
+	/**
+	 * @param scope
+	 * @param kind
+	 * @return
+	 */
+	public IASTExpression shiftExpression(IASTScope scope, CompletionKind kind) throws BacktrackException, EndOfFileException;
 }

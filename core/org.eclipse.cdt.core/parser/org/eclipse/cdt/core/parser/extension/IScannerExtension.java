@@ -20,13 +20,13 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
 public interface IScannerExtension  {
 
 	public String initializeMacroValue( IScannerData scannerData, String original );
-	public void setupBuiltInMacros(IScannerData scannerData, ParserLanguage language);
+	public void setupBuiltInMacros(IScannerData scannerData);
 
 	public boolean canHandlePreprocessorDirective( String directive );
 	public void handlePreprocessorDirective( IScannerData scannerData, String directive, String restOfLine );
 	
-	public boolean isExtensionKeyword(String tokenImage);
-	public IToken  createExtensionToken(String image, IScannerData scannerData);
+	public boolean isExtensionKeyword(ParserLanguage language, String tokenImage);
+	public IToken  createExtensionToken(IScannerData scannerData, String image);
 
 	/**
 	 * @return
@@ -39,4 +39,10 @@ public interface IScannerExtension  {
 	 */
 	public boolean isValidIdentifierStartCharacter(int c);
 	public boolean isValidIdentifierCharacter( int c );
+	/**
+	 * @param language TODO
+	 * @param query
+	 * @return
+	 */
+	public boolean isExtensionOperator(ParserLanguage language, String query);
 }

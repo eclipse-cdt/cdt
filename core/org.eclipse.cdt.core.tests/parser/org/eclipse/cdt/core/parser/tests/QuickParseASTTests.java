@@ -2186,5 +2186,32 @@ public class QuickParseASTTests extends BaseASTTest
     {
         parse("typeof(foo(1)) bar () { return foo(1); }");
     }
+    
+    public void testBug39703() throws Exception
+    {
+        Writer code = new StringWriter();
+        code.write("/* __extension__ enables GNU C mode for the duration of the declaration.  */\n");
+        code.write("__extension__ struct G {\n");
+        code.write("  struct { char z; };\n");
+        code.write("  char g;\n");
+        code.write("};\n");
+       	IASTAbstractTypeSpecifierDeclaration abs = (IASTAbstractTypeSpecifierDeclaration)assertSoleDeclaration(code.toString());
+       	IASTClassSpecifier G = ((IASTClassSpecifier)abs.getTypeSpecifier());
+       	assertEquals( G.getName(), "G" );
+       	assertEquals( G.getClassKind(), ASTClassKind.STRUCT );
+       	Iterator i = G.getDeclarations();
+       	assertEquals( ((IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier()).getName(), "" );
+       	assertEquals( ((IASTField)i.next()).getName(), "g" );
+       	assertFalse( i.hasNext() );
+    }
+
+    public void testBug39698A() throws Exception
+    {
+        parse("int c = a <? b;");
+    }
+    public void testBug39698B() throws Exception
+    {
+    	parse("int c = a >? b;");
+    }
 	
 }

@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.core.parser.ast.complete.gcc.ASTGCCSimpleTypeSpe
  */
 public class GCCParserExtension implements IParserExtension {
 
-	private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = "";//$NON-NLS-1$
 	protected static BacktrackException backtrack = new BacktrackException();
 	
 	/* (non-Javadoc)
@@ -269,10 +269,6 @@ public class GCCParserExtension implements IParserExtension {
 					return null;
 			}
 		} 
-//		catch( BacktrackException bt )
-//		{
-//			
-//		}
 		catch( EndOfFileException eof )
 		{
 			data.backup( startingPoint );
@@ -317,6 +313,80 @@ public class GCCParserExtension implements IParserExtension {
 		public Flags getFlags() {
 			return flags;
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#isValidRelationalExpressionStart(int)
+	 */
+	public boolean isValidRelationalExpressionStart(ParserLanguage language, int tokenType) {
+		switch( tokenType )
+		{
+			case IGCCToken.tMAX:
+			case IGCCToken.tMIN:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#parseRelationalExpression(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.internal.core.parser.IParserData, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind)
+	 */
+	public IASTExpression parseRelationalExpression(IASTScope scope, IParserData data, CompletionKind kind, IASTExpression lhsExpression) {
+		if( data.getParserLanguage() == ParserLanguage.C ) return null;
+		IToken mark = null;
+		try {
+			mark = data.mark();
+		} catch (EndOfFileException e) {
+			return null;
+		}
+		IASTGCCExpression.Kind expressionKind = null;
+		try
+		{
+			switch( data.LT(1) )
+			{
+				case IGCCToken.tMAX:
+					data.consume( IGCCToken.tMAX );
+					expressionKind = IASTGCCExpression.Kind.RELATIONAL_MAX;
+					break;
+				case IGCCToken.tMIN:
+					data.consume( IGCCToken.tMIN );
+					expressionKind = IASTGCCExpression.Kind.RELATIONAL_MIN;
+					break;
+				default:
+					data.backup( mark );
+					return null;
+			}
+			
+            IToken next = data.LA(1);
+            IASTExpression secondExpression = data.shiftExpression(scope,kind);
+            if (next == data.LA(1))
+            {
+                // we did not consume anything
+                // this is most likely an error
+                data.backup(mark);
+                return null;
+            }
+
+            try {
+				IASTExpression resultExpression = data.getAstFactory().createExpression( 
+						scope, expressionKind, lhsExpression, secondExpression, null, null, null, EMPTY_STRING, null );
+				return resultExpression;
+			} catch (ASTSemanticException e1) {
+				data.backup( mark );
+				return null;
+			}
+            
+		} catch( EndOfFileException eof )
+		{
+			data.backup( mark );
+			return null;
+		} catch( BacktrackException backtrack )
+		{
+			data.backup( mark );
+			return null;			
+		}
+		
 	}
 
 }

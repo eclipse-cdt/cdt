@@ -30,12 +30,14 @@ public interface IParserExtension {
 	
 	public boolean isValidUnaryExpressionStart( int tokenType );
 	public IASTExpression parseUnaryExpression( IASTScope scope, IParserData data, CompletionKind kind );
+	
+	public boolean isValidRelationalExpressionStart( ParserLanguage language, int tokenType );
+	public IASTExpression parseRelationalExpression( IASTScope scope, IParserData data, CompletionKind kind, IASTExpression lhsExpression );
 	/**
 	 * @param i
 	 * @return
 	 */
 	public boolean canHandleDeclSpecifierSequence(int tokenType );
-	
 	public interface IDeclSpecifierExtensionResult
 	{
 		public IToken			  getFirstToken();

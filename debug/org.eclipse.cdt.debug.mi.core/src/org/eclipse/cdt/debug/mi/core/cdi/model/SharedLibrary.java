@@ -61,7 +61,7 @@ public class SharedLibrary extends CObject implements ICDISharedLibrary {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary#loadSymbols()
 	 */
 	public void loadSymbols() throws CDIException {
-		mgr.loadSymbols(this);
+		mgr.loadSymbols(new ICDISharedLibrary[] { this });
 	}
 
 }

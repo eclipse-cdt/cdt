@@ -13,11 +13,12 @@ package org.eclipse.cdt.make.internal.ui;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.ui.dialogs.AbstractErrorParserBlock;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 
-public class ErrorParserBlock extends org.eclipse.cdt.ui.dialogs.ErrorParserBlock {
+public class ErrorParserBlock extends AbstractErrorParserBlock {
 
 	public ErrorParserBlock(Preferences prefs) {
 		super(prefs);

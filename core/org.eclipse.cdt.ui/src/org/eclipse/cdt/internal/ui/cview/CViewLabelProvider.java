@@ -13,7 +13,9 @@ package org.eclipse.cdt.internal.ui.cview;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.swt.graphics.Image;
 
 /*
  * CViewLabelProvider 
@@ -51,7 +53,29 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 				}
 				return p.toString();
 			}
+			IPath location = ref.getPath();
+			IPath rootPath = ref.getCModel().getWorkspace().getRoot().getLocation();
+			if (rootPath.isPrefixOf(location)) {
+				location = location.setDevice(null);
+				location = location.removeFirstSegments(rootPath.segmentCount());
+				return location.toString();
+			}
 		}
 		return super.getText(element);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+	 */
+	public Image getImage(Object element) {
+		if (element instanceof IIncludeReference) {
+			IIncludeReference reference = (IIncludeReference)element;
+			IPath path = reference.getPath();
+			IContainer container = reference.getCModel().getWorkspace().getRoot().getContainerForLocation(path);
+			if (container != null && container.isAccessible()) {
+				return getImage(reference.getCProject());
+			}
+		}
+		return super.getImage(element);
 	}
 }

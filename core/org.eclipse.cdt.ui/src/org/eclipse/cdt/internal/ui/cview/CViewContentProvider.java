@@ -11,15 +11,19 @@
 
 package org.eclipse.cdt.internal.ui.cview;
 
+import java.util.ArrayList;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * CViewContentProvider
@@ -51,9 +55,13 @@ public class CViewContentProvider extends CElementContentProvider {
 			if (element instanceof ICProject) {
 				extras = getProjectChildren((ICProject)element);
 			} else if (element instanceof IBinaryContainer) {
-				extras = getBinaries((IBinaryContainer)element);
+				extras = getExecutables((IBinaryContainer)element);
 			} else if (element instanceof IArchiveContainer) {
 				extras = getArchives((IArchiveContainer)element);
+			} else if (element instanceof IIncludeReference) {
+				extras = getIncludeReferenceChildren((IIncludeReference)element);
+			} else if (element instanceof ILibraryReference) {
+				extras =  ((ILibraryReference)element).getChildren();
 			}
 		} catch (CModelException e) {
 			extras = null;
@@ -64,6 +72,15 @@ public class CViewContentProvider extends CElementContentProvider {
 		return objs;
 	}
 
+	public Object[] getIncludeReferenceChildren(IIncludeReference ref) throws CModelException {
+		IPath location = ref.getPath();
+		IPath rootPath = ref.getCModel().getWorkspace().getRoot().getLocation();
+		if (rootPath.isPrefixOf(location)) {
+			return NO_CHILDREN;
+		}
+		return ref.getChildren();
+	}
+	
 	/**
 	 * @return
 	 */
@@ -105,6 +122,23 @@ public class CViewContentProvider extends CElementContentProvider {
 		}
 		return extras;
 	}
+
+	protected IBinary[] getExecutables(IBinaryContainer container) throws CModelException {
+		ICElement[] celements = container.getChildren();
+		ArrayList list = new ArrayList(celements.length);
+		for (int i = 0; i < celements.length; i++) {
+			if (celements[i] instanceof IBinary) {
+				IBinary bin = (IBinary)celements[i];
+				if (bin.isExecutable() || bin.isSharedLib()) {
+					list.add(bin);
+				}
+			}
+		}
+		IBinary[] bins = new IBinary[list.size()];
+		list.toArray(bins);
+		return bins;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.BaseCElementContentProvider#internalGetParent(java.lang.Object)
 	 */
@@ -148,6 +182,13 @@ public class CViewContentProvider extends CElementContentProvider {
 			} catch (CModelException e) {
 				return false;
 			}			
+		} else if (element instanceof IIncludeReference) {
+			IIncludeReference ref = (IIncludeReference)element;
+			IPath location = ref.getPath();
+			IPath rootPath = ref.getCModel().getWorkspace().getRoot().getLocation();
+			if (rootPath.isPrefixOf(location)) {
+				return false;
+			}
 		}
 		return super.hasChildren(element);
 	}

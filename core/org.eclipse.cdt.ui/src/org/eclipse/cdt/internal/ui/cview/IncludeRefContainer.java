@@ -11,15 +11,12 @@
 
 package org.eclipse.cdt.internal.ui.cview;
 
-import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.ui.CElementGrouping;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -58,15 +55,7 @@ public class IncludeRefContainer extends CElementGrouping {
 	public Object[] getChildren(Object o) {
 		try {
 			IIncludeReference[] references = fCProject.getIncludeReferences();
-			ArrayList list = new ArrayList(references.length);
-			for (int i = 0; i < references.length; i++) {
-				IPath path = references[i].getPath();
-				IContainer container = references[i].getCModel().getWorkspace().getRoot().getContainerForLocation(path);
-				if (container == null || !container.isAccessible()) {
-					list.add(references[i]);
-				}
-			}
-			return list.toArray();
+			return references;
 		} catch (CModelException e) {
 		}
 		return EMPTY;

@@ -1,3 +1,12 @@
+2004-08-25 Alain Magloire
+
+	Fix for 65761: Show all the include paths in the includes container.
+
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewLabelProvider.java
+	* src/org/eclipse/cdt/internal/ui/cview/IncludeRefContainer.java
+
 2004-08-25 Chris Wiebe
 
 	Got rid of little 'C' icons on the editor preference pages

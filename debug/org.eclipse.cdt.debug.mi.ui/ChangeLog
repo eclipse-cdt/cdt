@@ -1,5 +1,9 @@
 2003-01-03 Alain Magloire
 
+	* build.properties: Patch from Judy Green.
+
+2003-01-03 Alain Magloire
+
 	* src/org/eclipse./cdt/debug/mi/internal/ui/CDebuggerPage.java (setDefaults):
 	Set autosolib  to true by default.
 

@@ -1,5 +1,9 @@
 2003-01-06 Alain Magloire
 
+	* build.properties: Patch from Judy Green.
+
+2003-01-06 Alain Magloire
+
 	* src/.../mi/core/cdi/BreapoinManager.java (createLocation): new method
 	to create a breakoint with an address.
 	* src/.../mi/core/cdi/Location.java (Location): New constructor takes

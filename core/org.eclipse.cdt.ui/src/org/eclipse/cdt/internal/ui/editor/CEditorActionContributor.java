@@ -24,6 +24,7 @@ import org.eclipse.ui.texteditor.BasicTextEditorActionContributor;
 import org.eclipse.ui.texteditor.IStatusField;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
+import org.eclipse.ui.texteditor.StatusLineContributionItem;
 import org.eclipse.ui.texteditor.TextEditorAction;
 import org.eclipse.ui.texteditor.TextOperationAction;
 
@@ -95,12 +96,6 @@ public class CEditorActionContributor extends BasicTextEditorActionContributor {
 	//private ToggleTextHoverAction fToggleTextHover;
 	private GotoErrorAction fPreviousError;
 	private GotoErrorAction fNextError;
-	private Map fStatusFields;
-	
-	private final static String[] STATUSFIELDS= {
-		CTextEditorActionConstants.STATUS_INPUT_MODE,
-		CTextEditorActionConstants.STATUS_CURSOR_POS,
-	};
 	
 	
 	public CEditorActionContributor() {
@@ -124,10 +119,6 @@ public class CEditorActionContributor extends BasicTextEditorActionContributor {
 		CPluginImages.setImageDescriptors(fPreviousError, CPluginImages.T_TOOL, CPluginImages.IMG_TOOL_GOTO_PREV_ERROR);
 		fNextError= new GotoErrorAction("Editor.NextError.", true); //$NON-NLS-1$
 		CPluginImages.setImageDescriptors(fNextError, CPluginImages.T_TOOL, CPluginImages.IMG_TOOL_GOTO_NEXT_ERROR);
-		
-		fStatusFields= new HashMap(3);
-		for (int i= 0; i < STATUSFIELDS.length; i++)
-			fStatusFields.put(STATUSFIELDS[i], new StatusLineContributionItem(STATUSFIELDS[i]));
 	}	
 
 
@@ -181,11 +172,7 @@ public class CEditorActionContributor extends BasicTextEditorActionContributor {
 		ITextEditor textEditor= null;
 		if (part instanceof ITextEditor)
 			textEditor= (ITextEditor) part;
-		
-		if (part instanceof CEditor) {
-			for (int i= 0; i < STATUSFIELDS.length; i++)
-				((CEditor)part).setStatusField(null, STATUSFIELDS[i]);
-		}	
+
 			
 		fShiftRight.setEditor(textEditor);
 		fShiftLeft.setEditor(textEditor);
@@ -197,12 +184,6 @@ public class CEditorActionContributor extends BasicTextEditorActionContributor {
 		fAddInclude.setAction(getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
 		fOpenOnSelection.setAction(getAction(textEditor, "OpenOnSelection")); //$NON-NLS-1$
 
-		
-		if (part instanceof CEditor) {
-			CEditor ed = (CEditor) part;
-			for (int i= 0; i < STATUSFIELDS.length; i++)
-				ed.setStatusField((IStatusField) fStatusFields.get(STATUSFIELDS[i]), STATUSFIELDS[i]);
-		}
 	}
 	
 	/*
@@ -210,9 +191,8 @@ public class CEditorActionContributor extends BasicTextEditorActionContributor {
 	 *
 	 * More code here only until we move to 2.0...
 	 */
-	public void contributeToStatusLine(IStatusLineManager statusLineManager) {
+	public void contributeeToStatusLine(IStatusLineManager statusLineManager) {
 		super.contributeToStatusLine(statusLineManager);
-		for (int i= 0; i < STATUSFIELDS.length; i++)
-			statusLineManager.add((IContributionItem) fStatusFields.get(STATUSFIELDS[i]));
+
 	}	
 }

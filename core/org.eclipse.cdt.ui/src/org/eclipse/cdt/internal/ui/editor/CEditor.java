@@ -805,38 +805,6 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		
 		getSelectionProvider().addSelectionChangedListener(sListener);
 		
-		ICursorListener fCursorListener = new ICursorListener() {
-				public void keyPressed(KeyEvent e) {
-					if (e.keyCode != 0) {
-						StyledText styledText= (StyledText) e.widget;
-						int action = styledText.getKeyBinding(e.keyCode | e.stateMask);
-						if (ST.TOGGLE_OVERWRITE == action) {
-							fInserting= !fInserting;
-							updateStatusField(CTextEditorActionConstants.STATUS_INPUT_MODE);
-						} else { //if(action == ST.LINE_UP || action == ST.LINE_DOWN || action == ST.COLUMN_NEXT || action == ST.COLUMN_PREVIOUS) {
-							updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
-						}
-					}
-				}
-				
-				public void keyReleased(KeyEvent e) {
-					updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
-				}
-				
-				public void mouseDoubleClick(MouseEvent e) {
-				}
-				
-				public void mouseDown(MouseEvent e) {
-				}
-				
-				public void mouseUp(MouseEvent e) {
-					updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);					
-				}
-			};
-			
-		StyledText styledText= getSourceViewer().getTextWidget();
-		styledText.addMouseListener(fCursorListener);
-		styledText.addKeyListener(fCursorListener);
 		
 		initializeViewerColors(getSourceViewer());
 		
@@ -852,91 +820,6 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 			startBracketHighlighting();
 
 
-	}
-	
-	/*
-	 * @see ITextEditorExtension#setStatusField(IStatusField, String)
-	 */
-	public void setStatusField(IStatusField field, String category) {
-		//Assert.isNotNull(category);
-		if (field != null) {
-			
-			if (fStatusFields == null)
-				fStatusFields= new HashMap(3);			
-			
-			fStatusFields.put(category, field);
-			updateStatusField(category);
-			
-		} else if (fStatusFields != null)
-			fStatusFields.remove(category);
-	}
-	
-	
-	/**
-	 * Updates the status fields for the given category.
-	 * 
-	 * @param category
-	 */
-	protected void updateStatusField(String category) {
-		if (CTextEditorActionConstants.STATUS_CURSOR_POS.equals(category)) {
-			
-			IStatusField field= getStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
-			if (field != null)
-				field.setText(getCursorPosition());
-		
-		} else if (CTextEditorActionConstants.STATUS_INPUT_MODE.equals(category)) {
-			
-			IStatusField field= getStatusField(CTextEditorActionConstants.STATUS_INPUT_MODE);
-			if (field != null)
-				field.setText(isInInsertMode() ? "Insert" : "Overwrite");
-		}	
-	}
-	
-	/**
-	 * Returns whether this editor is in overwrite or insert mode.
-	 * 
-	 * @return <code>true</code> if in insert mode,
-	 * 	<code>false</code> for overwrite mode
-	 */
-	protected boolean isInInsertMode() {
-		return fInserting;
-	}
-
-
-	
-	/**
-	 * Returns a description of the cursor position.
-	 * 
-	 * @return a description of the cursor position
-	 */
-	protected String getCursorPosition() {
-		ISourceViewer viewer = getSourceViewer();
-		if(viewer == null)
-			return "";
-		StyledText styledText= viewer.getTextWidget();
-		
-		int offset= viewer.getVisibleRegion().getOffset();
-		int caret= offset + styledText.getCaretOffset();
-		IDocument document= viewer.getDocument();
-		
-		try {
-			
-			int line=document.getLineOfOffset(caret);
-			
-			int lineOffset= document.getLineOffset(line);
-			int occurrences= 0;
-			for (int i= lineOffset; i < caret; i++)
-				if ('\t' == document.getChar(i))
-					++ occurrences;
-					
-			int tabWidth= styledText.getTabs();
-			int column= caret - lineOffset + (tabWidth -1) * occurrences;
-			
-			return ((line + 1) + " : " + (column + 1));
-			
-		} catch (BadLocationException x) {
-			return "??";
-		}
 	}
 	
 	private Color getColor(String key) {

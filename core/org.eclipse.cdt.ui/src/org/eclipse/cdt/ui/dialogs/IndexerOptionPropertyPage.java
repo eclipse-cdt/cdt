@@ -87,14 +87,14 @@ public class IndexerOptionPropertyPage extends PropertyPage {
 			IProject tempProject = getProject();
 			optionPage.persistIndexerValues(tempProject);
 		
+			if( problemsChanged && newIndexerProblemsValue == 0)
+				CCorePlugin.getDefault().getCoreModel().getIndexManager().removeIndexerProblems(tempProject);
+						
 			//if indexer is now on send a index all request 
 			if( indexChanged && newIndexerValue ) 
 				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexAll(tempProject);
 			else if( indexChanged && !newIndexerValue )
 				CCorePlugin.getDefault().getCoreModel().getIndexManager().discardJobs( tempProject.getName() );
-			else if( problemsChanged && newIndexerProblemsValue == 0){
-				CCorePlugin.getDefault().getCoreModel().getIndexManager().removeIndexerProblems(tempProject);
-			}
 		}
 		return true;
 	}

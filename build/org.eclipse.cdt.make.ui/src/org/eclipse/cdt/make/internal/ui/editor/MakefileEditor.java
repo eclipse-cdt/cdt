@@ -21,7 +21,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.FindReplaceDocumentAdapter;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -46,6 +48,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 */
 	protected MakefileContentOutlinePage page;
 	private IMakefile makefile;
+	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
 
 	public MakefileContentOutlinePage getOutlinePage() {
 		if (page == null) {
@@ -153,6 +156,19 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		return part != null && part.equals(this);
 	}
 
+	/**
+	 * Returns the find/replace document adapter.
+	 * 
+	 * @return the find/replace document adapter.
+	 */
+	private FindReplaceDocumentAdapter getFindRepalceDocumentAdapter() {
+		if (fFindReplaceDocumentAdapter == null) {
+			IDocument doc = getDocumentProvider().getDocument(getEditorInput());
+			fFindReplaceDocumentAdapter= new FindReplaceDocumentAdapter(doc);
+		}
+		return fFindReplaceDocumentAdapter;
+	}
+
 	private void setSelection(IDirective directive, boolean moveCursor) {
 		int startLine = directive.getStartLine() - 1;
 		int endLine = directive.getEndLine() - 1;
@@ -176,9 +192,11 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 				if (len > 0) {
 					var = var.substring(0, len);
 				}
-				len = doc.search(start, var, true, true, true);
-				length = var.length();
-				if (len > -1 && length > 0) {
+				IRegion region = getFindRepalceDocumentAdapter().search(start, var, true, true, true, false);
+
+				if (region != null) {
+					len = region.getOffset();
+					length = region.getLength();
 					getSourceViewer().revealRange(len, length);
 					// Selected region begins one index after offset
 					getSourceViewer().setSelectedRange(len, length);

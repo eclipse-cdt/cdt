@@ -1026,4 +1026,15 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		
 		assertEquals( result.getResultsSize(), 2 );
 	}
+	
+	public void testBug60298() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "class ABC { public: ABC(); int myInt(); };\n");
+		writer.write( "int ABC::" );
+		String code = writer.toString();
+		IASTCompletionNode node = parse( code, code.indexOf( "::") + 2 );
+		assertEquals( node.getCompletionKind(), CompletionKind.SINGLE_NAME_REFERENCE );
+		
+	}
 }

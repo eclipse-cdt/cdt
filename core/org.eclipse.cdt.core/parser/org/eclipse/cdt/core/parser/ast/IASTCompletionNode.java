@@ -34,7 +34,7 @@ public interface IASTCompletionNode {
 		// function/method argument type reference
 		public static final CompletionKind ARGUMENT_TYPE = new CompletionKind( 4 );
 		
-		// inside code body - name reference
+		// inside code body - name reference || int X::[ ]
 		public static final CompletionKind SINGLE_NAME_REFERENCE = new CompletionKind( 5 );
 		
 		// any place one can expect a type
@@ -58,9 +58,6 @@ public interface IASTCompletionNode {
 		// any place where exclusively a preprocessor directive is expected
 		public static final CompletionKind PREPROCESSOR_DIRECTIVE = new CompletionKind( 13 );
 		
-		// any place where a type or variable name is expected to be introduced
-		public static final CompletionKind NESTED_NAME_REFERENCE = new CompletionKind( 14 );
-
 		// any place where function parameters are expected 
 		public static final CompletionKind FUNCTION_REFERENCE = new CompletionKind( 15 );
 		

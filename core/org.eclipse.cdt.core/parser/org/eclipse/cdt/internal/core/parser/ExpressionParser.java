@@ -694,7 +694,15 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        {
 	        	try
 	        	{
-		            nameDuple = name(d.getScope(), CompletionKind.SINGLE_NAME_REFERENCE, Key.EMPTY );
+	        		try
+					{
+	        			nameDuple = name(d.getScope(), CompletionKind.SINGLE_NAME_REFERENCE, Key.EMPTY );
+					}
+	        		catch( OffsetLimitReachedException olre )
+					{
+	        			backup( mark );
+	        			return null;
+					}
 	        	}
 	        	catch( BacktrackException bt )
 	        	{

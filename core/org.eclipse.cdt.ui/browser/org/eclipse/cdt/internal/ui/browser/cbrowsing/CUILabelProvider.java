@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.search.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.core.resources.IStorage;
 

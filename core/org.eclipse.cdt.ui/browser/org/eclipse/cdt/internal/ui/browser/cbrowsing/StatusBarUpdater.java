@@ -14,7 +14,7 @@ package org.eclipse.cdt.internal.ui.browser.cbrowsing;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.search.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;

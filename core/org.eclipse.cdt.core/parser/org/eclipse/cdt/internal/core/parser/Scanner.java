@@ -318,7 +318,7 @@ public class Scanner implements IScanner {
 			}
 			
 			if (throwExceptionOnInclusionNotFound && inclusionReader == null )
-				throw new ScannerException("Cannot find inclusion " + fileName);
+				throw new ScannerException( ScannerException.ErrorCode.INCLUSION_NOT_FOUND, fileName );
 		}
 		else // local inclusion
 		{
@@ -721,8 +721,7 @@ public class Scanner implements IScanner {
 	
 				} else {
 					if (throwExceptionOnUnboundedString)
-						throw new ScannerException(
-							"Unbounded string" );
+						throw new ScannerException( ScannerException.ErrorCode.UNBOUNDED_STRING, getCurrentFile(), getCurrentOffset() );
 				}
 		
 			} else if (
@@ -830,7 +829,7 @@ public class Scanner implements IScanner {
 							if( getChar() == '.' )
 								return newToken( IToken.tELIPSE, "..." );
 							else
-								throw new ScannerException( "Invalid floating point @ offset " + contextStack.getCurrentContext().getOffset() ); 
+								throw new ScannerException( ScannerException.ErrorCode.BAD_FLOATING_POINT, getCurrentFile(), getCurrentOffset() ); 
 						} else {
 							ungetChar( c );
 							return newToken( IToken.tDOT, ".", contextStack.getCurrentContext() );
@@ -838,7 +837,7 @@ public class Scanner implements IScanner {
 					}
 				} else if (c == 'x') {
 					if( ! firstCharZero ) 
-						throw new ScannerException( "Invalid Hexidecimal @ offset " + contextStack.getCurrentContext().getOffset() );
+						throw new ScannerException( ScannerException.ErrorCode.BAD_HEXIDECIMAL_FORMAT, getCurrentFile(), getCurrentOffset() );
 					
 					hex = true;
 					c = getChar();
@@ -967,7 +966,7 @@ public class Scanner implements IScanner {
 				if( c == '#' )
 				{
 					if( skipped )
-						throw new ScannerException(BAD_PP + contextStack.getCurrentContext().getOffset()); 
+						throw new ScannerException(ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE,  getCurrentFile(), getCurrentOffset()); 
 					else 
 						return newToken( tPOUNDPOUND, "##" );
 				} else if( tokenizingMacroReplacementList ) {
@@ -987,8 +986,7 @@ public class Scanner implements IScanner {
 				Object directive = ppDirectives.get(token);
 				if (directive == null) {
 					if (throwExceptionOnBadPreprocessorSyntax)
-						throw new ScannerException(
-							BAD_PP + contextStack.getCurrentContext().getOffset());
+						throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE,  getCurrentFile(), getCurrentOffset());							
 				} else {
 					int type = ((Integer) directive).intValue();
 					switch (type) {
@@ -1026,7 +1024,7 @@ public class Scanner implements IScanner {
 							String toBeUndefined = getNextIdentifier();
 							
 							if( ( definitions.remove(toBeUndefined) == null ) && mode == ParserMode.COMPLETE_PARSE ) 
-								throw new ScannerException( "Attempt to #undef symbol " + toBeUndefined + " when it was never defined");
+								throw new ScannerException( ScannerException.ErrorCode.UNDEF_DEFINITION_NOT_FOUND, toBeUndefined, getCurrentFile(), getCurrentOffset() );
 							
 							skipOverTextUntilNewline();
 							c = getChar();
@@ -1064,7 +1062,7 @@ public class Scanner implements IScanner {
 						case PreprocessorDirectives.ENDIF :
 							String restOfLine = getRestOfPreprocessorLine().trim();
 							if( ! restOfLine.equals( "" ) && throwExceptionOnBadPreprocessorSyntax )
-								throw new ScannerException( BAD_PP + contextStack.getCurrentContext().getOffset() );
+								throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
 							passOnToClient = branches.poundendif(); 
 							c = getChar();
 							continue;
@@ -1086,7 +1084,14 @@ public class Scanner implements IScanner {
 							continue;
 
 						case PreprocessorDirectives.ELSE :
-							passOnToClient = branches.poundelse(); 
+							try
+							{
+								passOnToClient = branches.poundelse();
+							}
+							catch( ScannerException se )
+							{
+								repackageScannerExceptionAndThrow(se); 
+							}
 
 							skipOverTextUntilNewline();
 							c = getChar();
@@ -1098,14 +1103,23 @@ public class Scanner implements IScanner {
 
 							if (elsifExpression.equals(""))
 								if (throwExceptionOnBadPreprocessorSyntax)
-									throw new ScannerException("Malformed #elsif clause");
+									throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
 
 							boolean elsifResult = false;
 							try{
 								elsifResult = evaluateExpression(elsifExpression );
-							} catch( ScannerException e ){}
+							} catch( ScannerException e )
+							{
+							}
 
-							passOnToClient = branches.poundelif( elsifResult ); 
+							try
+							{
+								passOnToClient = branches.poundelif( elsifResult );
+							}
+							catch( ScannerException se )
+							{
+								repackageScannerExceptionAndThrow( se ); 
+							}
 							c = getChar();
 							continue;
 
@@ -1124,8 +1138,9 @@ public class Scanner implements IScanner {
 							String error = getRestOfPreprocessorLine();
 
 							if (mode == ParserMode.COMPLETE_PARSE) {
-								throw new ScannerException("#error " + error);
+								throw new ScannerException(ScannerException.ErrorCode.POUND_ERROR, error, getCurrentFile(), getCurrentOffset() );
 							}
+							
 							c = getChar();
 							continue;
 						case PreprocessorDirectives.PRAGMA :
@@ -1138,17 +1153,14 @@ public class Scanner implements IScanner {
 								getRestOfPreprocessorLine().trim();
 							if (!remainderOfLine.equals("")) {
 								if (throwExceptionOnBadPreprocessorSyntax)
-									throw new ScannerException(
-										BAD_PP + contextStack.getCurrentContext().getOffset());
+								throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
 							}
 
 							c = getChar();
 							continue;
 						default :
 							if (throwExceptionOnBadPreprocessorSyntax)
-								throw new ScannerException(
-									BAD_PP + contextStack.getCurrentContext().getOffset());
-
+						throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
 					}
 				}
 			} else {
@@ -1163,12 +1175,12 @@ public class Scanner implements IScanner {
 							if( next == '\'' )
 								return newToken( type, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
 							else if( throwExceptionOnBadCharacterRead )
-								throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
+								throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, getCurrentFile(), getCurrentOffset() );
 						} else if( next == '\'' )
 							return newToken( type, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
 						else
 							if( throwExceptionOnBadCharacterRead )
-								throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
+								throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, getCurrentFile(), getCurrentOffset() );
 					case ':' :
 						c = getChar();
 						switch (c) {
@@ -1482,7 +1494,7 @@ public class Scanner implements IScanner {
 					default :
 						// Bad character
 						if( throwExceptionOnBadCharacterRead )
-							throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
+							throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, getCurrentFile(), getCurrentOffset() );
 						else
 						{
 							c = ' ';
@@ -1497,12 +1509,36 @@ public class Scanner implements IScanner {
 		if (throwExceptionOnEOFWithoutBalancedEndifs && ( getDepth() != 0) && !atEOF )
 		{
 			atEOF = true;
-			throw new ScannerException("End of file encountered without terminating #endif");
+			throw new ScannerException(ScannerException.ErrorCode.UNBALANCED_CONDITIONALS, getCurrentFile(), getCurrentOffset() );
 		}
 
 		// we're done
 		throw Parser.endOfFile;
 	}
+
+
+
+    protected void repackageScannerExceptionAndThrow(ScannerException se)
+        throws ScannerException
+    {
+        throw new ScannerException( se.getErrorCode(), getCurrentFile(), getCurrentOffset() );
+    }
+
+
+	protected String getCurrentFile()
+	{
+		if( contextStack.getCurrentContext() != null )
+			return contextStack.getCurrentContext().getFilename();
+		return "";
+	}
+
+
+    protected int getCurrentOffset()
+    {
+		if( contextStack.getCurrentContext() != null )
+        	return contextStack.getCurrentContext().getOffset();
+        return -1;
+    }
 
 
     protected static class endOfMacroTokenException extends Exception {};
@@ -1549,8 +1585,7 @@ public class Scanner implements IScanner {
     
                 } else {
                     if (throwExceptionOnUnboundedString)
-                        throw new ScannerException(
-                            "Unbounded string" );
+                        throw new ScannerException( ScannerException.ErrorCode.UNBOUNDED_STRING, getCurrentFile(), getCurrentOffset() ); 
                 }
         
             } else {
@@ -1565,12 +1600,12 @@ public class Scanner implements IScanner {
                             if( next == '\'' )
                                 return newToken( IToken.tCHAR, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
                             else if( throwExceptionOnBadCharacterRead )
-                                throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
+                                throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, getCurrentFile(), getCurrentOffset());
                         } else if( next == '\'' )
                             return newToken( IToken.tCHAR, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
                         else
                             if( throwExceptionOnBadCharacterRead )
-                                throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
+                                throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, getCurrentFile(), getCurrentOffset());
                     case ',' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
                         return newToken(IToken.tCOMMA, ",", contextStack.getCurrentContext());
@@ -1806,15 +1841,11 @@ public class Scanner implements IScanner {
 				throwExpressionEvaluationError(expression);
 			}
 			return true; 
-	
 		}
 	}
 
 	protected void throwExpressionEvaluationError(String expression) throws ScannerException {
-		throw new ScannerException(
-				"Expression "
-					+ expression
-					+ " evaluates to an undefined value");			 					
+		throw new ScannerException( ScannerException.ErrorCode.EXPRESSION_EVALUATION_ERROR, expression, getCurrentFile(), getCurrentOffset());
 	}
 	
 	protected void skipOverSinglelineComment() throws ScannerException {
@@ -1875,7 +1906,7 @@ public class Scanner implements IScanner {
 
 		if (c == NOCHAR) {
 			if (throwExceptionOnEOFWithinMultilineComment)
-				throw new ScannerException("Encountered EOF while in multiline comment");
+				throw new ScannerException( ScannerException.ErrorCode.UNEXPECTED_EOF, getCurrentFile(), getCurrentOffset());
 		}
 
 		ungetChar(c);
@@ -1911,7 +1942,7 @@ public class Scanner implements IScanner {
 				t = helperScanner.nextToken(false);
 			} catch (EndOfFile eof) {
 				if (throwExceptionOnBadPreprocessorSyntax) {
-						 throw new ScannerException( "Encountered ill-formed #include" );
+					throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
 				}
 				
 				return;
@@ -1928,7 +1959,7 @@ public class Scanner implements IScanner {
 					t = helperScanner.nextToken(false);
 
 					if (throwExceptionOnBadPreprocessorSyntax) {
-						throw new ScannerException( "Encountered ill-formed #include" );
+						throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
 					}
 					
 					return;
@@ -1950,7 +1981,7 @@ public class Scanner implements IScanner {
 						
 					} catch (EndOfFile eof) {
 						if (throwExceptionOnBadPreprocessorSyntax) {
-								 throw new ScannerException( "Ill-formed #include: reached end of line before >" );
+							throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
 						}
 				
 						return;
@@ -1960,13 +1991,13 @@ public class Scanner implements IScanner {
 					 t = helperScanner.nextToken(false);
 
 					 if (throwExceptionOnBadPreprocessorSyntax) {
-						 throw new ScannerException( "Encountered ill-formed #include" );
+						throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
 					 }
 	
 					 return;
 					
 				} else if (throwExceptionOnBadPreprocessorSyntax) {
-					throw new ScannerException( "Encountered ill-formed #include" );
+					throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
 				}
 			}
 			catch( EndOfFile eof )
@@ -1975,7 +2006,7 @@ public class Scanner implements IScanner {
 			}
 			
 		} else if (throwExceptionOnBadPreprocessorSyntax) {
-			throw new ScannerException( "Encountered ill-formed #include" );
+			throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset());
 		}
 
 		String f = fileName.toString();
@@ -2003,12 +2034,7 @@ public class Scanner implements IScanner {
 		if (mode == ParserMode.COMPLETE_PARSE) {
 			String checkForRedefinition = (String) definitions.get(key);
 			if (checkForRedefinition != null) {
-				throw new ScannerException(
-					"Preprocessor symbol "
-						+ key
-						+ " has already been defined to "
-						+ checkForRedefinition
-						+ " cannot redefined.");
+				throw new ScannerException( ScannerException.ErrorCode.ATTEMPTED_REDEFINITION, key, getCurrentFile(), getCurrentOffset());
 			}
 		}
 
@@ -2032,16 +2058,16 @@ public class Scanner implements IScanner {
 					} else {
 						ungetChar( c );
 						if( throwExceptionOnBadPreprocessorSyntax )
-							throw new ScannerException( "Unexpected '\\' in macro formal parameter list." );
+							throw new ScannerException( ScannerException.ErrorCode.MALFORMED_MACRO_DEFN, getCurrentFile(), getCurrentOffset());
 						else return;
 					}
 				} else if( c == '\r' || c == '\n' ){
 					if( throwExceptionOnBadPreprocessorSyntax )
-						throw new ScannerException( "Unexpected newline in macro formal parameter list." );
+						throw new ScannerException( ScannerException.ErrorCode.MALFORMED_MACRO_DEFN, getCurrentFile(), getCurrentOffset());
 					else return;
 				} else if( c == NOCHAR ){
 					if( throwExceptionOnBadPreprocessorSyntax )
-						throw new ScannerException( "Unexpected EOF in macro formal parameter list." );
+						throw new ScannerException( ScannerException.ErrorCode.UNEXPECTED_EOF, getCurrentFile(), getCurrentOffset());
 					else return;
 				}
 				
@@ -2081,8 +2107,8 @@ public class Scanner implements IScanner {
 							if (index == -1 ) {
 								//not found
 								if (throwExceptionOnBadPreprocessorSyntax)
-									throw new ScannerException(
-										BAD_PP + contextStack.getCurrentContext().getOffset());
+									throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() ); 
+									
 								return;
 							}
 						}
@@ -2139,13 +2165,12 @@ public class Scanner implements IScanner {
 				// this is not a comment 
 				// it is a bad statement
 				if (throwExceptionOnBadPreprocessorSyntax)
-					throw new ScannerException(
-						BAD_PP + contextStack.getCurrentContext().getOffset());
+				throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
 			}
 		} else {
 			Util.debugLog("Scanner : Encountered unexpected character " + ((char) c), IDebugLogConstants.PARSER);
 			if (throwExceptionOnBadPreprocessorSyntax)
-				throw new ScannerException(BAD_PP + contextStack.getCurrentContext().getOffset());
+			throw new ScannerException( ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, getCurrentFile(), getCurrentOffset() );
 		}
 		
 		astFactory.createMacro( key, beginning, contextStack.getCurrentContext().getOffset(), offset ).acceptElement( requestor ); 
@@ -2245,8 +2270,7 @@ public class Scanner implements IScanner {
 
 				if (parameterNames.size() != parameterValues.size()) {
 					if (throwExceptionOnBadMacroExpansion)
-						throw new ScannerException(
-							"Improper use of macro " + symbol);
+						throw new ScannerException( ScannerException.ErrorCode.MACRO_USAGE_ERROR, symbol, getCurrentFile(), getCurrentOffset() ); 
 				}
 
 				int numberOfTokens = tokens.size();
@@ -2274,7 +2298,7 @@ public class Scanner implements IScanner {
 						int index = parameterNames.indexOf(t.image);
 						if( index == -1 ){
 							if (throwExceptionOnBadMacroExpansion)
-								throw new ScannerException(	"Improper use of the # preprocessing token." );	
+								throw new ScannerException(	ScannerException.ErrorCode.MACRO_PASTING_ERROR, getCurrentFile(), getCurrentOffset() );	
 						} else {
 							buffer.append('\"');
 							String value = (String)parameterValuesForStringizing.elementAt(index);
@@ -2331,8 +2355,7 @@ public class Scanner implements IScanner {
 					POUND_DEFINE + macro.getSignature(), ScannerContext.MACROEXPANSION, null, requestor, symbolOffset, endMacroOffset - symbolOffset + 1 );
 			} else 
 				if (throwExceptionOnBadMacroExpansion)
-					throw new ScannerException(
-						"Improper use of macro " + symbol);
+					throw new ScannerException( ScannerException.ErrorCode.MACRO_USAGE_ERROR, symbol, getCurrentFile(), getCurrentOffset() );
 
 		} else {
 			Util.debugLog(
@@ -2349,7 +2372,7 @@ public class Scanner implements IScanner {
 
 		if (c != '(') {
 			if (throwExceptionOnBadMacroExpansion)
-				throw new ScannerException("Improper use of macro defined()");
+				throw new ScannerException( ScannerException.ErrorCode.MACRO_USAGE_ERROR, "defined()", getCurrentFile(), getCurrentOffset() );
 		}
 
 		StringBuffer buffer = new StringBuffer();
@@ -2360,7 +2383,7 @@ public class Scanner implements IScanner {
 		}
 		if (c == NOCHAR) {
 			if (throwExceptionOnBadMacroExpansion)
-				throw new ScannerException("Improper use of macro defined()");
+			throw new ScannerException( ScannerException.ErrorCode.MACRO_USAGE_ERROR, "defined()", getCurrentFile(), getCurrentOffset() );
 		}
 
 		String definitionIdentifier = buffer.toString().trim();

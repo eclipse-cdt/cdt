@@ -4562,6 +4562,11 @@ public class Parser implements IParser
         catch (ScannerException e)
         {
             Util.debugLog( "ScannerException thrown : " + e.getMessage(), IDebugLogConstants.PARSER );
+            if( e.isSeriousError(mode) )
+            {
+            	failParse(); 
+            	throw endOfFile;
+            }
             return fetchToken();
         }
     }

@@ -67,13 +67,13 @@ public class ContextStack {
 		if( context.getKind() == IScannerContext.INCLUSION )
 		{
 			if( !inclusions.add( context.getFilename() ) )
-				throw new ScannerException( "Inclusion " + context.getFilename() + " already encountered." );
+				throw new ScannerException( ScannerException.ErrorCode.CIRCULAR_INCLUSION,  context.getFilename()  );
 			context.getExtension().enterScope( requestor );				
 
 		} else if( context.getKind() == IScannerContext.MACROEXPANSION )
 		{
 			if( !defines.add( context.getFilename() ) )
-				throw new ScannerException( "Define " + context.getFilename() + " already encountered." );
+				throw new ScannerException( ScannerException.ErrorCode.MALFORMED_MACRO_DEFN, context.getFilename() );
 		}
 		if( currentContext != null )
 			contextStack.push(currentContext);

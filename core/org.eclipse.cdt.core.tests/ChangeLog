@@ -1,3 +1,6 @@
+2003-09-09 John Camelon
+	Updated ScannerTestCase to keep up to date wrt ScannerException updates. 
+
 2003-09-09 Andrew Niefer
 	Modified resources/search/classDecl.cpp
 	 - to include more function declarations to test parameter matching

@@ -1270,33 +1270,33 @@ public class ScannerTestCase extends BaseScannerTest
 		try{
 			validateEOF();
 		} catch ( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Unbounded string" ));
+			assertTrue( e.getErrorCode() == ScannerException.ErrorCode.UNBOUNDED_STRING); 
 		}
 	
 		initializeScanner( "#include <foo.h" );
 		try{
 			validateEOF();
 		} catch ( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Ill-formed #include: reached end of line before >" ));
+			assertTrue( e.getErrorCode() == ScannerException.ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE);
 		}		
 		initializeScanner( "#define FOO(A" );
 		try{
 			validateEOF();
 		} catch( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Unexpected newline in macro formal parameter list."));
+			assertTrue( e.getErrorCode() == ScannerException.ErrorCode.MALFORMED_MACRO_DEFN );
 		}
 		initializeScanner( "#define FOO(A \\ B" );
 		try{
 			validateEOF();
 		} catch( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Unexpected '\\' in macro formal parameter list."));
+			assertTrue( e.getErrorCode() == ScannerException.ErrorCode.MALFORMED_MACRO_DEFN );
 		}
 		
 		initializeScanner( "#define FOO(A,\\\nB) 1\n FOO(foo" );
 		try{
 			validateInteger("1");
 		} catch( ScannerException e ){
-			assertTrue( e.getMessage().equals( "Improper use of macro FOO" ) );
+			assertTrue( e.getErrorCode() == ScannerException.ErrorCode.MACRO_USAGE_ERROR );
 		}
 	}
 	

@@ -21,5 +21,13 @@ public class Enum
 		this.enumValue = enumValue;
 	}
 	
-	private int enumValue;
+	private final int enumValue;
+    /**
+     * @return
+     */
+    public int getEnumValue()
+    {
+        return enumValue;
+    }
+
 }

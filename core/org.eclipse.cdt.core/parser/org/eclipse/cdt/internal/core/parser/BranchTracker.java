@@ -85,7 +85,7 @@ public class BranchTracker {
 		}
 		catch( EmptyStackException ese )
 		{
-			throw new ScannerException( "#elif without a #if "); 
+			throw new ScannerException( ScannerException.ErrorCode.UNBALANCED_CONDITIONALS ); 
 		}
 		
 		if( ignore == IGNORE_SENTINEL )
@@ -135,7 +135,7 @@ public class BranchTracker {
 		}
 		catch( EmptyStackException ese )
 		{
-			throw new ScannerException( "#else without a #if "); 
+			throw new ScannerException( ScannerException.ErrorCode.UNBALANCED_CONDITIONALS );
 		}
 		
 		if( ignore == IGNORE_SENTINEL )

@@ -1,3 +1,7 @@
+2003-09-09 John Camelon
+	Updated ScannerException to be more precise and include more information.  
+	Updated Parser to be more careful of how it handles particular Scanner errors in COMPLETE_PARSE mode.  
+
 2003-09-08 Bogdan Gheorghe
 	Added ScannerExceptions in Preprocessor.java to PDE Error 
 	Log

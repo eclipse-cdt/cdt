@@ -43,5 +43,5 @@ public interface ICStackFrame extends ICObject
 	 * @return a collection of arguments 
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	ICVariable[] getArguments() throws CDIException;
+	ICArgument[] getArguments() throws CDIException;
 }

@@ -283,5 +283,20 @@
       <startup>
       </startup>
    </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.cdt.ui.CPerspective">
+         <view
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="true"
+               relationship="stack"
+               id="org.eclipse.cdt.make.ui.views.MakeView">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.make.ui.views.MakeView">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
 
 </plugin>

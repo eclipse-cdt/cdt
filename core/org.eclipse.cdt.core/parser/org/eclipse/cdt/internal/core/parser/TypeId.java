@@ -30,17 +30,11 @@ public class TypeId implements IDeclarator
     private List arrayModifiers;
     private List pointerOperators;
 	private IASTScope scope;
-	private static TypeId instance = new TypeId();
-	
-	public static TypeId getInstance(IASTScope scope)
-	{
-		instance.reset(scope);
-		return instance;
-	}
+
     /**
 	 * @param scope2
 	 */
-	private void reset(IASTScope s) {
+	void reset(IASTScope s) {
 		this.scope = s;
 	    arrayModifiers = Collections.EMPTY_LIST;
 	    pointerOperators = Collections.EMPTY_LIST;
@@ -49,7 +43,7 @@ public class TypeId implements IDeclarator
 	/**
      * 
      */
-    private TypeId()
+    TypeId()
     {
     	reset( null );
     }

@@ -66,6 +66,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	protected IToken lastToken;
 	private boolean limitReached = false;
 	private Stack templateIdScopes = null;
+	private TypeId typeIdInstance = new TypeId();
 	
 	/**
 	 * @return Returns the astFactory.
@@ -1696,7 +1697,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		if( kind == null )
 			throw backtrack;
 		
-		TypeId id = TypeId.getInstance(scope); 
+		TypeId id = getTypeIdInstance(scope); 
 		IToken last = lastToken;
 		
 		//template parameters are consumed as part of name
@@ -1731,6 +1732,14 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    }
 	}
 
+	/**
+	 * @param scope
+	 * @return
+	 */
+	private TypeId getTypeIdInstance(IASTScope scope) {
+		typeIdInstance.reset(scope);
+		return typeIdInstance;
+	}
 	/**
 	 * @param expression
 	 * @throws BacktrackException

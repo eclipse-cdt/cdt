@@ -11,11 +11,12 @@
 package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.model.ILineBreakpoint;
 
 /**
  * A watchpoint specific to the C/C++ debug model.
  */
-public interface ICWatchpoint extends ICBreakpoint {
+public interface ICWatchpoint extends ICBreakpoint, ILineBreakpoint {
 
 	/**
 	 * Watchpoint attribute storing the expression associated with this 

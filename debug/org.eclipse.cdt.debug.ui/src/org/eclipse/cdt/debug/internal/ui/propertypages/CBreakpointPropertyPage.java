@@ -301,6 +301,29 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.5" ), address ) ); //$NON-NLS-1$
 			}
 		}
+		else if ( breakpoint instanceof ICWatchpoint ) {
+			ICWatchpoint watchpoint = (ICWatchpoint)breakpoint;
+			String type = ""; //$NON-NLS-1$
+			String expression = ""; //$NON-NLS-1$
+			try {
+				if ( watchpoint.isReadType() && !watchpoint.isWriteType() )
+					type = PropertyPageMessages.getString( "CBreakpointPropertyPage.11" ); //$NON-NLS-1$
+				else if ( !watchpoint.isReadType() && watchpoint.isWriteType() )
+					type = PropertyPageMessages.getString( "CBreakpointPropertyPage.12" ); //$NON-NLS-1$
+				else
+					type = PropertyPageMessages.getString( "CBreakpointPropertyPage.13" ); //$NON-NLS-1$
+				expression = watchpoint.getExpression();
+			}
+			catch( CoreException ce ) {
+				CDebugUIPlugin.log( ce );
+			}
+			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), type ) ); //$NON-NLS-1$
+			String projectName = breakpoint.getMarker().getResource().getLocation().toOSString();
+			if ( projectName != null ) {
+				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.10" ), projectName ) ); //$NON-NLS-1$
+			}
+			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.14" ), expression ) ); //$NON-NLS-1$
+		}
 		else if ( breakpoint instanceof ILineBreakpoint ) {
 			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), PropertyPageMessages.getString( "CBreakpointPropertyPage.8" ) ) );  //$NON-NLS-1$//$NON-NLS-2$
 			String fileName = null;
@@ -326,29 +349,6 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 			if ( lineNumber.length() > 0 ) {
 				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.9" ), lineNumber.toString() ) ); //$NON-NLS-1$
 			}
-		}
-		else if ( breakpoint instanceof ICWatchpoint ) {
-			ICWatchpoint watchpoint = (ICWatchpoint)breakpoint;
-			String type = ""; //$NON-NLS-1$
-			String expression = ""; //$NON-NLS-1$
-			try {
-				if ( watchpoint.isReadType() && !watchpoint.isWriteType() )
-					type = PropertyPageMessages.getString( "CBreakpointPropertyPage.11" ); //$NON-NLS-1$
-				else if ( !watchpoint.isReadType() && watchpoint.isWriteType() )
-					type = PropertyPageMessages.getString( "CBreakpointPropertyPage.12" ); //$NON-NLS-1$
-				else
-					type = PropertyPageMessages.getString( "CBreakpointPropertyPage.13" ); //$NON-NLS-1$
-				expression = watchpoint.getExpression();
-			}
-			catch( CoreException ce ) {
-				CDebugUIPlugin.log( ce );
-			}
-			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.18" ), type ) ); //$NON-NLS-1$
-			String projectName = breakpoint.getMarker().getResource().getLocation().toOSString();
-			if ( projectName != null ) {
-				addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.10" ), projectName ) ); //$NON-NLS-1$
-			}
-			addField( createLabelEditor( getFieldEditorParent(), PropertyPageMessages.getString( "CBreakpointPropertyPage.14" ), expression ) ); //$NON-NLS-1$
 		}
 	}
 

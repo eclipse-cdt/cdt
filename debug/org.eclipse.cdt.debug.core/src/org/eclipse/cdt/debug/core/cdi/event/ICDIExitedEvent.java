@@ -5,7 +5,7 @@
  */
 package org.eclipse.cdt.debug.core.cdi.event;
 
-import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 
 /**
  * 
@@ -17,12 +17,12 @@ import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
  * 
  * @since Jul 10, 2002
  */
-public interface ICDIExitedEvent extends ICDIEvent {
+public interface ICDIExitedEvent extends ICDIDestroyedEvent {
 	/**
 	 * Returns the information provided by the session when program 
 	 * is exited.
 	 * 
 	 * @return the exit information
 	 */
-	ICDIExitInfo getExitInfo();
+	ICDISessionObject getReason();
 }

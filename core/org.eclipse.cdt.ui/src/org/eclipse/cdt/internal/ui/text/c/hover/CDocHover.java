@@ -11,7 +11,6 @@ import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.graphics.Point;
@@ -24,8 +23,8 @@ public class CDocHover extends AbstractCEditorTextHover {
 	public CDocHover() {
 	}
 
-	/**
-	 * @see ITextHover#getHoverInfo(ITextViewer, IRegion)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
 	public String getHoverInfo(ITextViewer viewer, IRegion region) {
 		String expression = null;
@@ -66,8 +65,8 @@ public class CDocHover extends AbstractCEditorTextHover {
 		return null;
 	}
 
-	/**
-	 * @see ITextHover#getHoverRegion(ITextViewer, int)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
 	public IRegion getHoverRegion(ITextViewer viewer, int offset) {
 		Point selectedRange = viewer.getSelectedRange();

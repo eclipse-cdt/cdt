@@ -42,7 +42,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.ITextSelection;
@@ -130,8 +129,9 @@ public class OpenDeclarationsAction extends SelectionParseAction implements IUpd
 			this.element = element;
 		}
 	}
-	/**
-	 * @see IAction#actionPerformed
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 		final SelSearchNode selNode = getSelectedStringFromEditor();

@@ -14,12 +14,10 @@ import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.IUpdate;
 
 public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerAction {
 
@@ -34,8 +32,8 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 		setId( IInternalCDebugUIConstants.ACTION_ENABLE_DISABLE_BREAKPOINT );
 	}
 
-	/**
-	 * @see Action#run()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 		if ( getBreakpoint() != null ) {
@@ -50,8 +48,8 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 		}
 	}
 
-	/**
-	 * @see IUpdate#update()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
 	public void update() {
 		setBreakpoint( determineBreakpoint() );

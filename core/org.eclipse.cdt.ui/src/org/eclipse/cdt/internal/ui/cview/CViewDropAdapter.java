@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -326,11 +325,13 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
+	 */
 	/**
 	 * Invoked when an action occurs. 
 	 * Argument context is the Window which contains the UI from which this action was fired.
 	 * This default implementation prints the name of this class and its label.
-	 * @see IAction#run
 	 */
 	public boolean performDrop(final Object data) {
 		isCanceled = false;

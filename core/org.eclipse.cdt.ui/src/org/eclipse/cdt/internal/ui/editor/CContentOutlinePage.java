@@ -41,10 +41,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
-import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class CContentOutlinePage extends Page implements IContentOutlinePage, ISelectionChangedListener {
@@ -142,8 +140,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		fRefactoringActionGroup.fillContextMenu(menu);
 	}
 	
-	/**
-	 * @see ContentOutlinePage#createControl
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
 		treeViewer = new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -227,8 +225,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		super.dispose();
 	}
 
-	/**
-	 * @see IPage#setActionBars(IActionBars)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
 	 */
 	public void setActionBars(IActionBars actionBars) {
 		IToolBarManager toolBarManager= actionBars.getToolBarManager();

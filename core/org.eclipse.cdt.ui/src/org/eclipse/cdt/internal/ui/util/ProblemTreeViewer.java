@@ -11,7 +11,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -127,8 +126,8 @@ public class ProblemTreeViewer extends TreeViewer implements IProblemChangedList
 		return;
 	}
 	
-	/**
-	 * @see StructuredViewer#handleInvalidSelection(ISelection, ISelection)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#handleInvalidSelection(org.eclipse.jface.viewers.ISelection, org.eclipse.jface.viewers.ISelection)
 	 */
 	protected void handleInvalidSelection(ISelection invalidSelection, ISelection newSelection) {
 		super.handleInvalidSelection(invalidSelection, newSelection);

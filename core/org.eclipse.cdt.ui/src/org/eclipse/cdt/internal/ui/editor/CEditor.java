@@ -82,7 +82,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
@@ -161,7 +160,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		super();
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
 	 */
 	protected void initializeEditor() {
@@ -182,8 +181,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);          
 	}
 
-	/**
-	 * @see AbstractTextEditor#doSetInput(IEditorInput)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
@@ -228,8 +227,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		return fOutlinePage;
 	}
 
-	/**
-	 * @see AbstractTextEditor#getAdapter(Class)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class required) {
 		if (IContentOutlinePage.class.equals(required)) {
@@ -298,8 +297,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 	}
 
-	/**
-	 * @see ISelectionChangedListener#selectionChanged
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		ISelection sel = event.getSelection();
@@ -483,8 +482,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		super.dispose();
 	}
 
-	/*
-	 * @see AbstractTextEditor#canHandleMove(IEditorInput, IEditorInput)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#canHandleMove(org.eclipse.ui.IEditorInput, org.eclipse.ui.IEditorInput)
 	 */
 	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
 		String oldLanguage = ""; //$NON-NLS-1$

@@ -2571,8 +2571,6 @@ public class Scanner2 implements IScanner, IScannerData {
 				System.arraycopy(buffer, argstart, arg, 0, arglen);
 			}
 			
-			//16.3.1 completely macro replace the arguments before substituting them in
-			arg = replaceArgumentMacros( arg );
 			argmap.put(arglist[currarg], arg);
 		}
 		
@@ -2591,9 +2589,10 @@ public class Scanner2 implements IScanner, IScannerData {
 		if( macro instanceof DynamicFunctionStyleMacro ){
 		    result = ((DynamicFunctionStyleMacro)macro).execute( argmap );
 		} else {
-			int size = expandFunctionStyleMacro(macro.expansion, argmap, null);
+		    CharArrayObjectMap replacedArgs = new CharArrayObjectMap(  argmap.size() );
+			int size = expandFunctionStyleMacro(macro.expansion, argmap, replacedArgs, null);
 			result = new char[size];
-			expandFunctionStyleMacro(macro.expansion, argmap, result);
+			expandFunctionStyleMacro(macro.expansion, argmap, replacedArgs, result);
 		}
 		if( pushContext )
 			pushContext(result, new MacroData( start, bufferPos[bufferStackPos], macro ) );
@@ -2674,7 +2673,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	
 	private int expandFunctionStyleMacro(
 			char[] expansion,
-			CharArrayObjectMap argmap,
+			CharArrayObjectMap argmap, CharArrayObjectMap replacedArgs, 
 			char[] result) {
 
 		// The current position in the expansion string that we are looking at
@@ -2686,13 +2685,21 @@ public class Scanner2 implements IScanner, IScannerData {
 		// The first character in the current block of white space - there are times when we don't
 		// want to copy over the whitespace
 		int wsstart = -1;
+		//whether or not we are on the second half of the ## operator
+		boolean prevConcat = false;
+		//for handling ##
+		char[] prevArg = null;
+		int prevArgStart = -1;
+		int prevArgLength = -1;
+		int prevArgTarget = -1;
 		
 		int limit = expansion.length;
 		
 		while (++pos < limit) {
 			char c = expansion[pos];
 			
-			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Character.isUnicodeIdentifierPart(c)) {
+			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' ||
+			    (c >= '0' && c < '9') || Character.isUnicodeIdentifierPart(c)) {
 
 				wsstart = -1;
 				int idstart = pos;
@@ -2705,7 +2712,23 @@ public class Scanner2 implements IScanner, IScannerData {
 				}
 				--pos;
 				
-				Object repObject = argmap.get(expansion, idstart, pos - idstart + 1);
+				char[] repObject = (char[]) argmap.get(expansion, idstart, pos - idstart + 1);
+				
+				int next = indexOfNextNonWhiteSpace( expansion, pos, limit );
+				boolean nextIsPoundPound = ( next + 1 < limit && expansion[next] == '#' && expansion[ next + 1 ] == '#' );
+				
+				if( prevConcat && prevArgStart > -1 && prevArgLength > 0 ){
+				    int l1 = prevArg != null ? prevArg.length : prevArgLength;
+				    int l2 = repObject != null ? repObject.length : pos - idstart + 1;
+				    char [] newRep = new char[l1+l2];
+				    if( prevArg != null )	System.arraycopy( prevArg, 0, newRep, 0, l1 );
+				    else					System.arraycopy( expansion, prevArgStart, newRep, 0, l1 );
+				    
+				    if( repObject != null )	System.arraycopy( repObject, 0, newRep, l1, l2 );
+				    else					System.arraycopy( expansion, idstart, newRep, l1, l2 );
+				    
+				    repObject = newRep;
+				}
 				if (repObject != null) {
 					// copy what we haven't so far
 					if (++lastcopy < idstart) {
@@ -2715,27 +2738,34 @@ public class Scanner2 implements IScanner, IScannerData {
 						outpos += n;
 					}
 					
-					// copy the argument replacement value
-					char[] rep = (char[]) repObject;
+					if( prevConcat )
+					    outpos = prevArgTarget;
+
+					if( !nextIsPoundPound ){
+					    //16.3.1 completely macro replace the arguments before substituting them in
+					    char [] rep = (char[]) ( ( replacedArgs != null ) ? replacedArgs.get( repObject ) : null );
+					    if( rep != null )
+					        repObject = rep;
+					    else {
+					        rep = replaceArgumentMacros( repObject );
+					        if( replacedArgs != null )
+					            replacedArgs.put( repObject, rep );
+					        repObject = rep;
+					    }
+					} 
+					
 					if (result != null)
-						System.arraycopy(rep, 0, result, outpos, rep.length);
-					outpos += rep.length;
+						System.arraycopy(repObject, 0, result, outpos, repObject.length);
+					outpos += repObject.length;
 
 					lastcopy = pos;
 				}
 				
-			} else if (c >= '0' && c < '9') {
-				
-				// skip over numbers - note the expanded definition of a number
-				// to include alphanumeric characters - gcc seems to operate this way
-				wsstart = -1;
-				while (++pos < limit) {
-					c = expansion[pos];
-					if (!((c >= '0' && c <= '9') || c == '.' || c == '_') 
-							|| (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
-						break;
-				}
-
+				prevArg = repObject;
+				prevArgStart = idstart;
+				prevArgLength = pos - idstart + 1;
+				prevArgTarget = repObject != null ? outpos - repObject.length : outpos + idstart - lastcopy - 1;
+				prevConcat = false;
 			} else if (c == '"') {
 				
 				// skip over strings
@@ -2751,7 +2781,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					}
 					escaped = false;
 				}
-				
+				prevConcat = false;
 			} else if (c == '\'') {
 
 				// skip over character literals
@@ -2767,13 +2797,11 @@ public class Scanner2 implements IScanner, IScannerData {
 					}
 					escaped = false;
 				}
-				
+				prevConcat = false;
 			} else if (c == ' ' || c == '\t') {
-
 				// obvious whitespace
 				if (wsstart < 0)
 					wsstart = pos;
-				
 			} else if (c == '/' && pos + 1 < limit) {
 
 				// less than obvious, comments are whitespace
@@ -2813,6 +2841,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			} else if (c == '#') {
 				
 				if (pos + 1 < limit && expansion[pos + 1] == '#') {
+				    prevConcat = true;
 					++pos;
 					// skip whitespace
 					if (wsstart < 0)
@@ -2857,6 +2886,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					wsstart = -1;
 
 				} else {
+				    prevConcat = false;
 					// stringify
 					
 					// copy what we haven't so far
@@ -2940,9 +2970,10 @@ public class Scanner2 implements IScanner, IScannerData {
 						}
 					}
 					lastcopy = pos;
+					wsstart = -1;
 				}
 			} else {
-				
+			    prevConcat = false;
 				// not sure what it is but it sure ain't whitespace
 				wsstart = -1;
 			}

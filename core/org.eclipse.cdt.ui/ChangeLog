@@ -1,3 +1,18 @@
+2004-08-12 Alain Magloire
+
+	Fix for PR 71667.
+	Changes to the CCompletionContributor to pass
+	a context.
+
+	* src/org/eclipse/cdt/internal/ui/CCompletionContributorManager.java
+	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSlectionAction.java
+	* src/org/eclipse/cdt/internal/ui/text/CCompletionContributorDescriptor.java
+	* src/org/eclipse/cdt/internal/ui/text/hover/CDocHover.java
+	* src/org/eclipse/cdt/internal/ui/t4xt/CCompletionProcessor.java
+	* src/org/eclipse/cdt/ui/ICCompletionContributor.java
+	* src/org/eclipse/cdt/ui/text/ICCompletionInvocationContext.java
+	* plugin.xml
+
 2004-08-11 Alain Magloire
 
 	Duplication in the CView.

@@ -37,6 +37,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
 import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
+import org.eclipse.cdt.ui.text.ICCompletionInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -219,7 +220,22 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 		final IFunctionSummary[] fs = new IFunctionSummary[1];
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				fs[0] = CCompletionContributorManager.getDefault().getFunctionInfo(name);
+				ICCompletionInvocationContext context = new ICCompletionInvocationContext() {
+
+					public IProject getProject() {
+						ITranslationUnit u = getTranslationUnit();
+						if (u != null) {
+							return u.getCProject().getProject();
+						}
+						return null;
+					}
+
+					public ITranslationUnit getTranslationUnit() {
+						return AddIncludeOnSelectionAction.this.getTranslationUnit();
+					}	
+				};
+
+				fs[0] = CCompletionContributorManager.getDefault().getFunctionInfo(context, name);
 			}
 		};
 		try {

@@ -11,15 +11,20 @@
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.cdt.ui.text.ICCompletionInvocationContext;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.IEditorInput;
 
 public class CDocHover extends AbstractCEditorTextHover {
 	
@@ -35,7 +40,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 	public String getHoverInfo(ITextViewer viewer, IRegion region) {
 		String expression = null;
 		
-		if(getEditor() == null) 
+		if (getEditor() == null) 
 			return null;
 		try {
 			expression = viewer.getDocument().get(region.getOffset(), region.getLength());
@@ -45,9 +50,25 @@ public class CDocHover extends AbstractCEditorTextHover {
 
 			StringBuffer buffer = new StringBuffer();
 
-			// We are just doing some C, call the Help to get info
+			// call the Help to get info
 
-			IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(expression);
+			ICCompletionInvocationContext context = new ICCompletionInvocationContext() {
+
+				public IProject getProject() {
+					ITranslationUnit unit = getTranslationUnit();
+					if (unit != null) {
+						return unit.getCProject().getProject();
+					}
+					return null;
+				}
+
+				public ITranslationUnit getTranslationUnit() {
+					IEditorInput editorInput= getEditor().getEditorInput();
+					return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editorInput);
+				}	
+			};
+
+			IFunctionSummary fs = CCompletionContributorManager.getDefault().getFunctionInfo(context, expression);
 			if (fs != null) {
 				buffer.append(CEditorMessages.getString("DefaultCEditorTextHover.html.name")); //$NON-NLS-1$
 				buffer.append(HTMLPrinter.convertToHTMLContent(fs.getName()));

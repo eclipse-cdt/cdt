@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
@@ -31,13 +32,13 @@ import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
 import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
-import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.FunctionPrototypeSummary;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.text.ICCompletionInvocationContext;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -108,7 +109,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	private TemplateEngine[] fFunctionContextTemplateEngine;
 	private TemplateEngine[] fStructureContextTemplateEngine;
 	
-	private boolean fRestrictToMatchingCase;
+	//private boolean fRestrictToMatchingCase;
 	private boolean fAllowAddIncludes;
 
 	private BasicSearchResultCollector  searchResultCollector = null;
@@ -116,10 +117,11 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	private CompletionEngine completionEngine = null;
 	
 	private SearchEngine searchEngine = null;
-	private CSearchResultLabelProvider labelProvider = null;
+	//private CSearchResultLabelProvider labelProvider = null;
 	
+	IWorkingCopy fCurrentSourceUnit = null;
+
 	private int fCurrentOffset = 0;
-	private IWorkingCopy fCurrentSourceUnit = null;
 	private IASTCompletionNode fCurrentCompletionNode = null;
 	private int fNumberOfComputedResults= 0;
 	private ITextViewer fTextViewer;
@@ -128,7 +130,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		fEditor = (CEditor) editor;
 	
 		// Needed for search
-		labelProvider = new CSearchResultLabelProvider();
+		//labelProvider = new CSearchResultLabelProvider();
 		searchResultCollector = new BasicSearchResultCollector ();
 		resultCollector = new ResultCollector();
 		completionEngine = new CompletionEngine(resultCollector);
@@ -136,7 +138,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		searchEngine.setWaitingPolicy( ICSearchConstants.FORCE_IMMEDIATE_SEARCH );
 		setupTemplateEngine();
 		
-		fRestrictToMatchingCase = false;
+		//fRestrictToMatchingCase = false;
 		fAllowAddIncludes = true;
 
 		fComparator = new CCompletionProposalComparator();
@@ -163,10 +165,9 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			//Defer to the nature of the project
 			IFile file = fEditor.getInputFile();
 			if (file != null && CoreModel.hasCCNature(file.getProject())) {
-					return true;
-			} else {
-				return false;
+				return true;
 			}
+			return false;
 		}
 	}
 	
@@ -398,10 +399,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		
 			return order ( (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]) );
 		}
-		else{
-			return null;
-		}
-			
+		return null;			
 	}
 	
 	private void addProposalsFromTemplates(ITextViewer viewer, IASTCompletionNode completionNode, List completions){
@@ -453,7 +451,17 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		
 		IFunctionSummary[] summary;
 
-		summary = CCompletionContributorManager.getDefault().getMatchingFunctions(prefix);
+		ICCompletionInvocationContext context = new ICCompletionInvocationContext() {
+
+			public IProject getProject() {
+				return fCurrentSourceUnit.getCProject().getProject();
+			}
+
+			public ITranslationUnit getTranslationUnit() {
+				return fCurrentSourceUnit;
+			}	
+		};
+		summary = CCompletionContributorManager.getDefault().getMatchingFunctions(context, prefix);
 		if(summary == null) {
 			return;
 		}
@@ -485,19 +493,19 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		}
 	}
 	
-	private FunctionPrototypeSummary getPrototype (BasicSearchMatch match) {
-		switch(match.getElementType()){
-			case ICElement.C_FUNCTION:
-			case ICElement.C_FUNCTION_DECLARATION:
-			case ICElement.C_METHOD:
-			case ICElement.C_METHOD_DECLARATION:
-			{
-				return (new FunctionPrototypeSummary ( match.getReturnType() + " " + match.getName() )); //$NON-NLS-1$
-			}
-		default:
-			return null;						
-		}
-	}
+//	private FunctionPrototypeSummary getPrototype (BasicSearchMatch match) {
+//		switch(match.getElementType()){
+//			case ICElement.C_FUNCTION:
+//			case ICElement.C_FUNCTION_DECLARATION:
+//			case ICElement.C_METHOD:
+//			case ICElement.C_METHOD_DECLARATION:
+//			{
+//				return (new FunctionPrototypeSummary ( match.getReturnType() + " " + match.getName() )); //$NON-NLS-1$
+//			}
+//		default:
+//			return null;						
+//		}
+//	}
 	
 
 	private IASTCompletionNode addProposalsFromModel(List completions){
@@ -517,7 +525,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		
 		// figure out the search scope
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
-		boolean fileScope = store.getBoolean(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE);
+		//boolean fileScope = store.getBoolean(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE);
 		boolean projectScope = store.getBoolean(ContentAssistPreference.PROJECT_SEARCH_SCOPE);
 		ICSearchScope scope = null;
 	
@@ -530,7 +538,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			List elementsFound = new LinkedList();
 			
 			ICElement[] projectScopeElement = new ICElement[1];
-			projectScopeElement[0] = (ICElement)fCurrentSourceUnit.getCProject();
+			projectScopeElement[0] = fCurrentSourceUnit.getCProject();
 			scope = SearchEngine.createCSearchScope(projectScopeElement, true);
 			
 			// search for global variables, functions, classes, structs, unions, enums, macros, and namespaces

@@ -8,26 +8,25 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.ui;
 
-import org.eclipse.cdt.ui.text.ICCompletionInvocationContext;
+package org.eclipse.cdt.ui.text;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.resources.IProject;
 
-public interface ICCompletionContributor {
+/**
+ * Invocation context for the ICCompletionContributor
+ */
+public interface ICCompletionInvocationContext {
 	
 	/**
-	 * Initialize the completion contributor class
+	 * @return the project
 	 */
-	void initialize();
-	
+	IProject getProject();
+
 	/**
-	 * get the matching function of a given name
+	 * @return ITranslationUnit or null
 	 */
-	IFunctionSummary getFunctionInfo(ICCompletionInvocationContext context, String name);
-	
-	/**
-	 * Get array of matching functions starting with this prefix
-	 */
-	IFunctionSummary[] getMatchingFunctions(ICCompletionInvocationContext context, String prefix);
+	ITranslationUnit getTranslationUnit();
+
 }
-

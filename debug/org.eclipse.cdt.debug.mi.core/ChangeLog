@@ -4,6 +4,9 @@
 	Removed getRegisterObjects(), getRegisters(), getSharedLibraries().
 	Those actions are done via the managers.
 
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java (getChild):
+	Check the grand children also.
+
 2003-02-12 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java (isAutoLoadSymbols):

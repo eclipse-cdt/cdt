@@ -224,8 +224,8 @@ public class BasicTokenDuple implements ITokenDuple {
 		int length = getCharArrayLength( f, l );
 		
 		char[] buff = new char[ length ];
-		int i = 0; 
-		for( ; ; )
+
+		for( int i = 0; i < length; )
 		{
 			if( prev != null && 
 			    prev.getType() != IToken.tCOLONCOLON && 

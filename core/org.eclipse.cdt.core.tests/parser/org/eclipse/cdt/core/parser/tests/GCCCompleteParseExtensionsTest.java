@@ -200,16 +200,23 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
         writer.write( "else z = - y;\n" );//$NON-NLS-1$
         writer.write( "z; }))\n" );//$NON-NLS-1$
         parse( writer.toString() );
+        
         writer = new StringWriter();
         writer.write( "int x = ({ int y = foo (); int z;\n" ); //$NON-NLS-1$
         writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
         writer.write( "else z = - y;\n" );//$NON-NLS-1$
         writer.write( "z; });\n" );//$NON-NLS-1$
+        parse( writer.toString() );
+        
         writer = new StringWriter();
-        writer.write( "typeof({ int y = foo (); int z;\n" ); //$NON-NLS-1$
-        writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
-        writer.write( "else z = - y;\n" );//$NON-NLS-1$
-        writer.write( "z; }) zoot;\n" );//$NON-NLS-1$
+        writer.write( "int foo();                       \n" ); //$NON-NLS-1$
+        writer.write( "typeof({ int y = foo ();         \n" ); //$NON-NLS-1$
+        writer.write( "         int z;                  \n" ); //$NON-NLS-1$
+        writer.write( "         if (y > 0) z = y;       \n" ); //$NON-NLS-1$
+        writer.write( "         else z = - y;           \n" ); //$NON-NLS-1$
+        writer.write( "         z;                      \n" ); //$NON-NLS-1$
+        writer.write( "       }) zoot;                  \n" ); //$NON-NLS-1$
+        parse( writer.toString() );
     }
     
     public void testBug75401() throws Exception
@@ -247,4 +254,16 @@ public class GCCCompleteParseExtensionsTest extends CompleteParseBaseTest {
 		assertFalse(i.hasNext());
 	}
 
+	public void testBug74190_g_assert_1() throws Exception {
+	    Writer writer = new StringWriter();
+	    writer.write( "void log( int );               \n"); //$NON-NLS-1$
+	    writer.write( "void f() {                     \n"); //$NON-NLS-1$
+	    writer.write( "    int a = 1;                 \n"); //$NON-NLS-1$
+	    writer.write( "    (void)({ if( a ){ }        \n"); //$NON-NLS-1$
+	    writer.write( "             else{ log( a ); } \n"); //$NON-NLS-1$
+	    writer.write( "           });                 \n"); //$NON-NLS-1$
+	    writer.write( "}                              \n"); //$NON-NLS-1$
+	    
+	    parse( writer.toString() );
+	}
 }

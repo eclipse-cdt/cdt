@@ -37,4 +37,9 @@ public class MIShared {
 	public String getName() {
 		return name;
 	}
+
+	public void setSymbolsRead(boolean read) {
+		isread = read;
+	}
+
 }

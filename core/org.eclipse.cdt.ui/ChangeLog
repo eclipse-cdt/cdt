@@ -49,7 +49,7 @@
 	Header icon provide by  Mirza Hadzic PR 26486.  Thanks.
 
 	* icons/full/obj16/h_file_obj.gif
-	* src/org/eclipse/cdt/internal/ui/CElementImagerProvider.java
+	* src/org/eclipse/cdtzxinternal/ui/CElementImagerProvider.java
 	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
 	* plugin.xml
 

@@ -8,13 +8,12 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
+package org.eclipse.cdt.ui.tests.text.contentassist;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
@@ -23,28 +22,29 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
  * Bug#50711 : Wrong completion kind in a new expression
  *
  */
-public class CompletionFailedTest_NewTypeReference_NoPrefix_Bug50711  extends CompletionProposalsBaseTest{
+public class CompletionTest_NewTypeReference_NoPrefix  extends CompletionProposalsBaseTest{
 	
 	private final String fileName = "CompletionFailedTestStart12.cpp";
 	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "null"; // should be "ASTClassSpecifier"
-	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE; // sould be CompletionKind.NEW_TYPE_REFERENCE; 
+	private final String expectedContextName = "null"; 
+	private final CompletionKind expectedKind = CompletionKind.NEW_TYPE_REFERENCE; 
 	private final String expectedPrefix = ""; 
 	private final String[] expectedResults = {
+			//TODO - Hoda please look into why these results do not resolve
 	// should be
-	//		"aClass"
+//			"aClass"
 	};
 	
-	public CompletionFailedTest_NewTypeReference_NoPrefix_Bug50711(String name) {
+	public CompletionTest_NewTypeReference_NoPrefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionFailedTest_NewTypeReference_NoPrefix_Bug50711.class.getName());
-		suite.addTest(new CompletionFailedTest_NewTypeReference_NoPrefix_Bug50711("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_NewTypeReference_NoPrefix.class.getName());
+		suite.addTest(new CompletionTest_NewTypeReference_NoPrefix("testCompletionProposals"));
 		return suite;
 	}		
 	

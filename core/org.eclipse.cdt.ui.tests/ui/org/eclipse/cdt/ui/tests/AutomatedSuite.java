@@ -68,8 +68,8 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionTest_ClassReference_Prefix.suite());
 		addTest(CompletionTest_ExceptionReference_NoPrefix.suite());
 		addTest(CompletionTest_ExceptionReference_Prefix.suite());
-		addTest(CompletionFailedTest_NewTypeReference_NoPrefix_Bug50711.suite());
-		addTest(CompletionFailedTest_NewTypeReference_Prefix_Bug50711.suite());
+		addTest(CompletionTest_NewTypeReference_NoPrefix.suite());
+		addTest(CompletionTest_NewTypeReference_Prefix.suite());
 	}
 	
 }

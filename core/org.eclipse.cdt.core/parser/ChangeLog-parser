@@ -1,4 +1,7 @@
 2004-01-28 John Camelon
+	Fixed Bug 50711 - Wrong completion kind in a new expression
+
+2004-01-28 John Camelon
 	Updated Scanner to add ANSI built-in defined macros for C and C++.
 	Updated GCCScannerExtension to add GCC specific defined macros for C++.
 	Added factory infrastructure to allow for C/C++ dialect extensions to be added and contained.

@@ -179,7 +179,7 @@ public abstract class Parser implements IParser
             try
             {
                 checkToken = LA(1);
-                declaration(compilationUnit, null);
+                declaration(compilationUnit, null, null);
                 if (LA(1) == checkToken)
                     errorHandling();
             }
@@ -391,7 +391,7 @@ public abstract class Parser implements IParser
                     default :
                         try
                         {
-                            declaration(linkage, null);
+                            declaration(linkage, null, null);
                         }
                         catch (BacktrackException bt)
                         {
@@ -424,7 +424,7 @@ public abstract class Parser implements IParser
                 throw backtrack;
             }
 			linkage.enterScope( requestor );
-            declaration(linkage, null);
+            declaration(linkage, null, null);
 			linkage.exitScope( requestor );
         }
     }
@@ -469,7 +469,7 @@ public abstract class Parser implements IParser
                 throw backtrack;
             }
             templateInstantiation.enterScope( requestor );
-            declaration(scope, templateInstantiation);
+            declaration(scope, templateInstantiation, null);
             templateInstantiation.setEndingOffsetAndLineNumber(lastToken.getEndOffset(), lastToken.getLineNumber());
 			templateInstantiation.exitScope( requestor );
  
@@ -496,7 +496,7 @@ public abstract class Parser implements IParser
                     throw backtrack;
                 }
 				templateSpecialization.enterScope(requestor);
-                declaration(scope, templateSpecialization);
+                declaration(scope, templateSpecialization, null);
                 templateSpecialization.setEndingOffsetAndLineNumber(
                     lastToken.getEndOffset(), lastToken.getLineNumber());
                 templateSpecialization.exitScope(requestor);
@@ -523,7 +523,7 @@ public abstract class Parser implements IParser
                 throw backtrack;
             }
             templateDecl.enterScope( requestor );
-            declaration(scope, templateDecl );
+            declaration(scope, templateDecl, null );
 			templateDecl.setEndingOffsetAndLineNumber(
 				lastToken.getEndOffset(), lastToken.getLineNumber() );
 			templateDecl.exitScope( requestor );
@@ -713,10 +713,10 @@ public abstract class Parser implements IParser
      */
     protected void declaration(
         IASTScope scope,
-        IASTTemplate ownerTemplate)
+        IASTTemplate ownerTemplate, CompletionKind overideKind)
         throws EndOfFileException, BacktrackException
     {
-    	IASTCompletionNode.CompletionKind kind = getCompletionKindForDeclaration(scope);
+    	IASTCompletionNode.CompletionKind kind = getCompletionKindForDeclaration(scope, overideKind);
     	setCompletionValues(scope, kind, Key.DECLARATION );
 
     	switch (LT(1))
@@ -765,7 +765,7 @@ public abstract class Parser implements IParser
                     return;
                 }
             default :
-                simpleDeclarationStrategyUnion(scope, ownerTemplate);
+                simpleDeclarationStrategyUnion(scope, ownerTemplate, overideKind);
         }
     	setCompletionValues(scope, kind, Key.DECLARATION );        
     }
@@ -774,13 +774,13 @@ public abstract class Parser implements IParser
 	 * @param scope
 	 * @return
 	 */
-	protected IASTCompletionNode.CompletionKind getCompletionKindForDeclaration(IASTScope scope) {
+	protected IASTCompletionNode.CompletionKind getCompletionKindForDeclaration(IASTScope scope, CompletionKind overide) {
 		return null;
 	}
 	
 	protected void simpleDeclarationStrategyUnion(
         IASTScope scope,
-        IASTTemplate ownerTemplate)
+        IASTTemplate ownerTemplate, CompletionKind overide)
         throws EndOfFileException, BacktrackException
     {
         IToken mark = mark();
@@ -790,7 +790,7 @@ public abstract class Parser implements IParser
             simpleDeclaration(
                 SimpleDeclarationStrategy.TRY_CONSTRUCTOR,
                 scope,
-                ownerTemplate);
+                ownerTemplate, overide);
             // try it first with the original strategy
         }
         catch (BacktrackException bt)
@@ -803,7 +803,7 @@ public abstract class Parser implements IParser
             	simpleDeclaration(
                 	SimpleDeclarationStrategy.TRY_FUNCTION,
 	                scope,
-    	            ownerTemplate);
+    	            ownerTemplate, overide);
             }
             catch( BacktrackException bt2 )
             {
@@ -814,7 +814,7 @@ public abstract class Parser implements IParser
 					simpleDeclaration(
 						SimpleDeclarationStrategy.TRY_VARIABLE,
 						scope,
-						ownerTemplate);
+						ownerTemplate, overide);
 				}
 				catch( BacktrackException b3 )
 				{
@@ -879,7 +879,7 @@ public abstract class Parser implements IParser
                     default :
                         try
                         {
-                            declaration(namespaceDefinition, null);
+                            declaration(namespaceDefinition, null, null);
                         }
                         catch (BacktrackException bt)
                         {
@@ -945,14 +945,14 @@ public abstract class Parser implements IParser
     protected void simpleDeclaration(
         SimpleDeclarationStrategy strategy,
         IASTScope scope,
-        IASTTemplate ownerTemplate)
+        IASTTemplate ownerTemplate, CompletionKind overideKind)
         throws BacktrackException, EndOfFileException
     {
     	IToken firstToken = LA(1);
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, firstToken.getOffset(), firstToken.getLineNumber(), ownerTemplate);
 
-        setCompletionValues( scope, getCompletionKindForDeclaration(scope), Key.DECL_SPECIFIER_SEQUENCE );
+        setCompletionValues( scope, getCompletionKindForDeclaration(scope, overideKind), Key.DECL_SPECIFIER_SEQUENCE );
         declSpecifierSeq(sdw, false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR );
         if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED )
             try
@@ -2797,7 +2797,7 @@ public abstract class Parser implements IParser
                     default :
                         try
                         {
-                            declaration(astClassSpecifier, null);
+                            declaration(astClassSpecifier, null, null);
                         }
                         catch (BacktrackException bt)
                         {
@@ -3067,10 +3067,7 @@ public abstract class Parser implements IParser
                 try
                 {
                     IASTExpression thisExpression = expression(scope);
-//                    if( queryLookaheadCapability() )
-                    	consume(IToken.tSEMI);
-//                    else
-//                    	throw new EndOfFileException();
+                   	consume(IToken.tSEMI);
                     thisExpression.acceptElement( requestor );
                     return;
                 }
@@ -3084,7 +3081,7 @@ public abstract class Parser implements IParser
                 }
 
                 // declarationStatement
-                declaration(scope, null);
+                declaration(scope, null, null);
         }        
 
     }
@@ -3099,12 +3096,10 @@ public abstract class Parser implements IParser
             setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
             consume(IToken.tLPAREN);
             setCompletionValues(scope,CompletionKind.EXCEPTION_REFERENCE,Key.DECL_SPECIFIER_SEQUENCE );
-            if( ! queryLookaheadCapability(2))
-            	throw new EndOfFileException();
             if( LT(1) == IToken.tELLIPSIS )
             	consume( IToken.tELLIPSIS );
             else 
-            	declaration(scope, null); // was exceptionDeclaration
+            	declaration(scope, null, CompletionKind.EXCEPTION_REFERENCE); // was exceptionDeclaration
             consume(IToken.tRPAREN);
             
             catchBlockCompoundStatement(scope);
@@ -3152,7 +3147,7 @@ public abstract class Parser implements IParser
     {
     	try
     	{
-        	simpleDeclarationStrategyUnion(scope,null);
+        	simpleDeclarationStrategyUnion(scope,null, null);
     	}
     	catch( BacktrackException bt )
     	{
@@ -3196,7 +3191,6 @@ public abstract class Parser implements IParser
         		KeywordSets.Key.STATEMENT );
         
         while (LT(1) != IToken.tRBRACE)
-//        	while (queryLookaheadCapability() && LT(1) != IToken.tRBRACE)
         {
         	checkToken = LA(1);
         	try
@@ -3214,8 +3208,6 @@ public abstract class Parser implements IParser
         }
         
         consume(IToken.tRBRACE);
-//        if( queryLookaheadCapability() ) consume(IToken.tRBRACE);
-//        else throw new EndOfFileException();
         
         if( createNewScope )
         	newScope.exitScope( requestor );
@@ -3235,7 +3227,6 @@ public abstract class Parser implements IParser
     public IASTExpression expression(IASTScope scope) throws BacktrackException, EndOfFileException
     {
         IASTExpression assignmentExpression = assignmentExpression(scope);
-//        if( !queryLookaheadCapability() ) return assignmentExpression;
         while (LT(1) == IToken.tCOMMA)
         {
             consume();
@@ -3277,7 +3268,6 @@ public abstract class Parser implements IParser
 			&& conditionalExpression.getExpressionKind()
 				== IASTExpression.Kind.CONDITIONALEXPRESSION)
 			return conditionalExpression;
-//		if( !queryLookaheadCapability() ) return conditionalExpression;
 		switch (LT(1)) {
 			case IToken.tASSIGN :
 				return assignmentOperatorExpression(
@@ -3408,7 +3398,6 @@ public abstract class Parser implements IParser
         throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = logicalOrExpression(scope);
-//        if( !queryLookaheadCapability() ) return firstExpression;
         if (LT(1) == IToken.tQUESTION)
         {
             consume();
@@ -3445,7 +3434,6 @@ public abstract class Parser implements IParser
         throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = logicalAndExpression(scope);
-//        if( !queryLookaheadCapability() ) return firstExpression;
         while (LT(1) == IToken.tOR)
         {
             consume();
@@ -3481,7 +3469,6 @@ public abstract class Parser implements IParser
         throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = inclusiveOrExpression( scope );
-//        if( !queryLookaheadCapability() ) return firstExpression;
         while (LT(1) == IToken.tAND)
         {
             consume();
@@ -3516,7 +3503,6 @@ public abstract class Parser implements IParser
         throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = exclusiveOrExpression(scope);
-//        if( !queryLookaheadCapability() ) return firstExpression;
         while (LT(1) == IToken.tBITOR)
         {
             consume();
@@ -3552,7 +3538,6 @@ public abstract class Parser implements IParser
         throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = andExpression( scope );
-//        if( !queryLookaheadCapability() ) return firstExpression;
         while (LT(1) == IToken.tXOR)
         {
             consume();
@@ -3588,7 +3573,6 @@ public abstract class Parser implements IParser
     protected IASTExpression andExpression(IASTScope scope) throws EndOfFileException, BacktrackException
     {
         IASTExpression firstExpression = equalityExpression(scope);
-//        if( !queryLookaheadCapability() ) return firstExpression;
         while (LT(1) == IToken.tAMPER)
         {
             consume();
@@ -3626,7 +3610,6 @@ public abstract class Parser implements IParser
         IASTExpression firstExpression = relationalExpression(scope);
         for (;;)
         {
-//        	if( !queryLookaheadCapability() ) return firstExpression;
             switch (LT(1))
             {
                 case IToken.tEQUAL :
@@ -3672,7 +3655,6 @@ public abstract class Parser implements IParser
         IASTExpression firstExpression = shiftExpression(scope);
         for (;;)
         {
-//        	if( !queryLookaheadCapability() ) return firstExpression;
             switch (LT(1))
             {
                 case IToken.tGT :
@@ -3752,7 +3734,6 @@ public abstract class Parser implements IParser
         IASTExpression firstExpression = additiveExpression(scope);
         for (;;)
         {
-//        	if( !queryLookaheadCapability() ) return firstExpression;
             switch (LT(1))
             {
                 case IToken.tSHIFTL :
@@ -3797,7 +3778,6 @@ public abstract class Parser implements IParser
         IASTExpression firstExpression = multiplicativeExpression( scope );
         for (;;)
         {
-//        	if( !queryLookaheadCapability() ) return firstExpression;
             switch (LT(1))
             {
                 case IToken.tPLUS :
@@ -3842,7 +3822,6 @@ public abstract class Parser implements IParser
         IASTExpression firstExpression = pmExpression(scope);
         for (;;)
         {
-//        	if( !queryLookaheadCapability() ) return firstExpression;
             switch (LT(1))
             {
                 case IToken.tSTAR :
@@ -3897,7 +3876,6 @@ public abstract class Parser implements IParser
         IASTExpression firstExpression = castExpression(scope);
         for (;;)
         {
-//        	if( ! queryLookaheadCapability() ) return firstExpression; 
             switch (LT(1))
             {
                 case IToken.tDOTSTAR :
@@ -3940,7 +3918,6 @@ public abstract class Parser implements IParser
     protected IASTExpression castExpression( IASTScope scope ) throws EndOfFileException, BacktrackException
     {
         // TO DO: we need proper symbol checkint to ensure type name
-//    	if( ! queryLookaheadCapability() ) return unaryExpression(scope);
         if (LT(1) == IToken.tLPAREN)
         {
             IToken mark = mark();
@@ -4232,6 +4209,7 @@ public abstract class Parser implements IParser
      */
     protected IASTExpression newExpression( IASTScope scope ) throws BacktrackException, EndOfFileException
     {
+    	setCompletionValues(scope, CompletionKind.NEW_TYPE_REFERENCE, Key.EMPTY);
         if (LT(1) == IToken.tCOLONCOLON)
         {
             // global scope
@@ -4336,6 +4314,7 @@ public abstract class Parser implements IParser
                             // new-expression ends here.
 							try
 							{
+								setCompletionValues(scope, CompletionKind.NO_SUCH_KIND, Key.EMPTY);
 								return astFactory.createExpression(
 									scope, IASTExpression.Kind.NEW_TYPEID, 
 									null, null, null, typeId, null, 
@@ -4381,6 +4360,7 @@ public abstract class Parser implements IParser
 			newInitializerExpressions.add(expression(scope));
             consume(IToken.tRPAREN);
         }
+        setCompletionValues(scope, CompletionKind.NO_SUCH_KIND, Key.EMPTY);
 		try
 		{
         return astFactory.createExpression(
@@ -4395,6 +4375,7 @@ public abstract class Parser implements IParser
         {
             throw backtrack;
         }
+		
     }
     protected IASTExpression unaryOperatorCastExpression( IASTScope scope,
         IASTExpression.Kind kind)
@@ -4427,7 +4408,6 @@ public abstract class Parser implements IParser
     protected IASTExpression unaryExpression( IASTScope scope )
         throws EndOfFileException, BacktrackException
     {
-//    	if( ! queryLookaheadCapability() ) return postfixExpression( scope );
         switch (LT(1))
         {
             case IToken.tSTAR :
@@ -4553,7 +4533,6 @@ public abstract class Parser implements IParser
         IASTExpression firstExpression = null;
         boolean isTemplate = false;
         checkEndOfFile();
-//        if( ! queryLookaheadCapability() ) return primaryExpression(scope);
         switch (LT(1))
         {
             case IToken.t_typename :
@@ -4714,7 +4693,6 @@ public abstract class Parser implements IParser
         IASTExpression secondExpression = null;
         for (;;)
         {
-//        	if( ! queryLookaheadCapability() )return firstExpression;
             switch (LT(1))
             {
                 case IToken.tLBRACKET :
@@ -4827,16 +4805,10 @@ public abstract class Parser implements IParser
 	                    }
             
 		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, isTemplate );
-
-//		            if( ! queryLookaheadCapability() )
-//		            	throw new EndOfFileException();
                     															
                     secondExpression = primaryExpression(scope);
                     checkEndOfFile();
                     
-//		            if( ! queryLookaheadCapability() )
-//		            	throw new EndOfFileException();
-
                     setCompletionValues(scope, CompletionKind.NO_SUCH_KIND,	KeywordSets.Key.EMPTY );
                     
                     try
@@ -4874,15 +4846,9 @@ public abstract class Parser implements IParser
 	                    }
                     
 		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, isTemplate );
-
-//		            if( ! queryLookaheadCapability() )
-//		            	throw new EndOfFileException();
                     															
                     secondExpression = primaryExpression(scope);
-                    checkEndOfFile();
-                    
-//		            if( ! queryLookaheadCapability() )
-//		            	throw new EndOfFileException();
+                    checkEndOfFile();                    
 
                     setCompletionValues(scope, CompletionKind.NO_SUCH_KIND,	KeywordSets.Key.EMPTY );
                     try
@@ -5018,7 +4984,6 @@ public abstract class Parser implements IParser
         throws EndOfFileException, BacktrackException
     {
         IToken t = null;
-//		if( !queryLookaheadCapability() ) return emptyExpression;
         switch (LT(1))
         {
             // TO DO: we need more literals...

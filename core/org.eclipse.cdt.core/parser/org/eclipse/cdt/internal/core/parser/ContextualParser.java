@@ -249,9 +249,11 @@ public class ContextualParser extends Parser implements IParser {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#getCompletionKindForDeclaration(org.eclipse.cdt.core.parser.ast.IASTScope)
 	 */
-	protected CompletionKind getCompletionKindForDeclaration(IASTScope scope) {
+	protected CompletionKind getCompletionKindForDeclaration(IASTScope scope, CompletionKind overide) {
 		IASTCompletionNode.CompletionKind kind = null;
-		if( scope instanceof IASTClassSpecifier )
+		if( overide != null )
+			kind = overide;
+		else if( scope instanceof IASTClassSpecifier )
 			kind = CompletionKind.FIELD_TYPE;
 		else if (scope instanceof IASTCodeScope)
 //			kind = CompletionKind.STATEMENT_START;

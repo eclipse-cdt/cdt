@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.internal.ui.wizards.AddDirectorySourceLocationWizar
 import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -121,6 +122,8 @@ public class CUISourceLocator implements IAdaptable
 		{
 			if ( adapter.equals( ICSourceLocator.class ) )
 				return fSourceLocator;
+			if ( adapter.equals( IResourceChangeListener.class ) && fSourceLocator instanceof IAdaptable )
+				return ((IAdaptable)fSourceLocator).getAdapter( IResourceChangeListener.class );
 			if ( adapter.equals( ISourceMode.class ) )
 				return fSourceLocator;
 		}

@@ -5,6 +5,7 @@
  */
 package org.eclipse.cdt.debug.core.sourcelookup;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -18,6 +19,13 @@ import org.eclipse.debug.core.model.IStackFrame;
  */
 public interface ICSourceLocator extends ISourceLocator
 {
+	/**
+	 * Returns the project this source locator is associated with or <code>null</code>.
+	 * 
+	 * @return project this source locator is associated with or <code>null</code>
+	 */
+	IProject getProject();
+
 	/**
 	 * Returns the line number of the instruction pointer in the specified 
 	 * stack frame that corresponds to a line in an associated source element, 

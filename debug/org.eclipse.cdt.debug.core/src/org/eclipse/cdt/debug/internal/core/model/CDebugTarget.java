@@ -87,6 +87,7 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -303,6 +304,7 @@ public class CDebugTarget extends CDebugElement
 		initializeBreakpoints();
 		initializeRegisters();
 		initializeMemoryManager();
+		initializeSourceManager();
 		getLaunch().addDebugTarget( this );
 		fireCreationEvent();
 	}
@@ -396,6 +398,17 @@ public class CDebugTarget extends CDebugElement
 	protected void initializeMemoryManager()
 	{
 		fMemoryManager = new CMemoryManager( this );
+	}
+
+	protected void initializeSourceManager()
+	{
+		ISourceLocator locator = getLaunch().getSourceLocator();
+		if ( locator instanceof IAdaptable )
+		{
+			IResourceChangeListener listener = (IResourceChangeListener)((IAdaptable)locator).getAdapter( IResourceChangeListener.class );
+			if ( listener != null )
+				CCorePlugin.getWorkspace().addResourceChangeListener( listener );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1183,6 +1196,7 @@ public class CDebugTarget extends CDebugElement
 		disposeSignalManager();
 		disposeRegisterManager();
 		disposeDisassemblyManager();
+		disposeSourceManager();
 		removeAllExpressions();
 		try
 		{
@@ -2574,5 +2588,16 @@ public class CDebugTarget extends CDebugElement
 	public IRegisterGroup[] getRegisterGroups() throws DebugException
 	{
 		return getRegisterManager().getRegisterGroups();
+	}
+
+	protected void disposeSourceManager()
+	{
+		ISourceLocator locator = getSourceLocator();
+		if ( locator instanceof IAdaptable )
+		{
+			IResourceChangeListener listener = (IResourceChangeListener)((IAdaptable)locator).getAdapter( IResourceChangeListener.class );
+			if ( listener != null )
+				CCorePlugin.getWorkspace().removeResourceChangeListener( listener );
+		}
 	}
 }

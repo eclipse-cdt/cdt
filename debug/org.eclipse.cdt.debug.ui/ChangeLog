@@ -1,3 +1,12 @@
+2003-07-17 Mikhail Khodjaiants
+	Automatically update the list of source locations when the list of the referenced 
+	projects is modified.
+	* CheckedListDialogField.java
+	* AddDirectorySourceLocationBlock.java
+	* AddProjectSourceLocationBlock.java
+	* CUISourceLocator.java
+	* SourceLookupBlock.java
+
 2003-06-29 Mikhail Khodjaiants
 	Fix for PR 39101: No hilight when changing the value of register.
 	* RegistersView.java

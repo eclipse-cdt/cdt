@@ -307,4 +307,27 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	{
 		return string == null || string.length() == 0;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals( Object obj )
+	{
+		if ( obj instanceof IDirectorySourceLocation )
+		{
+			IPath dir = ((IDirectorySourceLocation)obj).getDirectory();
+			IPath association = ((IDirectorySourceLocation)obj).getAssociation();
+			if ( dir == null )
+				return false;
+			boolean result = dir.equals( getDirectory() );
+			if ( result )
+			{
+				if ( association == null && getAssociation() == null )
+					return true;
+				if ( association != null )
+					return association.equals( getAssociation() );
+			}
+		}
+		return false;
+	}
 }

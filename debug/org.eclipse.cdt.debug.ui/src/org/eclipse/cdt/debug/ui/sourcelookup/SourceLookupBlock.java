@@ -5,28 +5,39 @@
  */
 package org.eclipse.cdt.debug.ui.sourcelookup;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.SourceLocationFactory;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CDirectorySourceLocation;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
+import org.eclipse.cdt.debug.internal.ui.dialogfields.CheckedListDialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
+import org.eclipse.cdt.debug.internal.ui.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.IListAdapter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField;
+import org.eclipse.cdt.debug.internal.ui.dialogfields.Separator;
 import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -95,19 +106,6 @@ public class SourceLookupBlock
 		}
 	}
 
-	private class SourceLookupAdapter implements IListAdapter
-	{
-		public void customButtonPressed( DialogField field, int index )
-		{
-			doButtonPressed( index );
-		}
-
-		public void selectionChanged( DialogField field )
-		{
-			doSelectionChanged();
-		}
-	}
-	
 	private static class SourceLookupLabelProvider extends LabelProvider implements ITableLabelProvider
 	{
 		public Image getColumnImage( Object element, int columnIndex )
@@ -156,7 +154,9 @@ public class SourceLookupBlock
 
 	private Composite fControl = null;
 	private Shell fShell = null;
-	private SourceListDialogField fSourceListField;
+	private CheckedListDialogField fGeneratedSourceListField;
+	private SourceListDialogField fAddedSourceListField;
+//	private SelectionButtonDialogField fSearchForDuplicateFiles;
 	private ILaunchConfigurationDialog fLaunchConfigurationDialog = null;
 	private boolean fIsDirty = false;
 	private ICSourceLocator fLocator = null;
@@ -167,7 +167,13 @@ public class SourceLookupBlock
 	 */
 	public SourceLookupBlock()
 	{
-		String[] buttonLabels = new String[] 
+		String[] generatedSourceButtonLabels = new String[] 
+		{
+			/* 0 */ "Select All",
+			/* 1 */ "Deselect All",
+		};
+
+		String[] addedSourceButtonLabels = new String[] 
 		{
 			/* 0 */ "Add...",
 			/* 1 */ null,
@@ -175,17 +181,55 @@ public class SourceLookupBlock
 			/* 3 */ "Down",
 			/* 4 */ null,
 			/* 5 */ "Remove",
-			/* 6 */ null,
-			/* 7 */ "Restore Defaults",
 		};
 
-		SourceLookupAdapter adapter = new SourceLookupAdapter();
+		IListAdapter generatedSourceAdapter = new IListAdapter()
+													{
+														public void customButtonPressed( DialogField field, int index )
+														{
+															doGeneratedSourceButtonPressed( index );
+														}
+	
+														public void selectionChanged( DialogField field )
+														{
+															doGeneratedSourceSelectionChanged();
+														}
+													};
 
-		fSourceListField = new SourceListDialogField( adapter, buttonLabels, new SourceLookupLabelProvider() );
-		fSourceListField.setLabelText( "Source Locations" );
-		fSourceListField.setUpButtonIndex( 2 );
-		fSourceListField.setDownButtonIndex( 3 );
-		fSourceListField.setRemoveButtonIndex( 5 );
+		fGeneratedSourceListField = new CheckedListDialogField( generatedSourceAdapter, generatedSourceButtonLabels, new SourceLookupLabelProvider() );
+		fGeneratedSourceListField.setLabelText( "Generic Source Locations" );
+		fGeneratedSourceListField.setCheckAllButtonIndex( 0 );
+		fGeneratedSourceListField.setUncheckAllButtonIndex( 1 );
+		fGeneratedSourceListField.setDialogFieldListener( new IDialogFieldListener()
+																{
+																	public void dialogFieldChanged( DialogField field )
+																	{
+																		doCheckStateChanged();
+																	}
+
+																} );
+		IListAdapter addedSourceAdapter = new IListAdapter()
+												{
+													public void customButtonPressed( DialogField field, int index )
+													{
+														doAddedSourceButtonPressed( index );
+													}
+
+													public void selectionChanged( DialogField field )
+													{
+														doAddedSourceSelectionChanged();
+													}
+												};
+
+		fAddedSourceListField = new SourceListDialogField( addedSourceAdapter, addedSourceButtonLabels, new SourceLookupLabelProvider() );
+		fAddedSourceListField.setLabelText( "Additional Source Locations" );
+		fAddedSourceListField.setUpButtonIndex( 2 );
+		fAddedSourceListField.setDownButtonIndex( 3 );
+		fAddedSourceListField.setRemoveButtonIndex( 5 );
+/*
+		fSearchForDuplicateFiles = new SelectionButtonDialogField( SWT.CHECK );
+		fSearchForDuplicateFiles.setLabelText( "Search for duplicate files" );
+*/
 	}
 
 	public void createControl( Composite parent )
@@ -202,17 +246,38 @@ public class SourceLookupBlock
 
 		PixelConverter converter = new PixelConverter( fControl );
 		
-		fSourceListField.doFillIntoGrid( fControl, 3 );
-		LayoutUtil.setHorizontalSpan( fSourceListField.getLabelControl( null ), 2 );
-		LayoutUtil.setWidthHint( fSourceListField.getLabelControl( null ), converter.convertWidthInCharsToPixels( 40 ) );
-		LayoutUtil.setHorizontalGrabbing( fSourceListField.getListControl( null ) );
+		fGeneratedSourceListField.doFillIntoGrid( fControl, 3 );
+		LayoutUtil.setHorizontalSpan( fGeneratedSourceListField.getLabelControl( null ), 2 );
+		LayoutUtil.setWidthHint( fGeneratedSourceListField.getLabelControl( null ), converter.convertWidthInCharsToPixels( 40 ) );
+		LayoutUtil.setHorizontalGrabbing( fGeneratedSourceListField.getListControl( null ) );
+		((CheckboxTableViewer)fGeneratedSourceListField.getTableViewer()).
+								addCheckStateListener( new ICheckStateListener()
+															{
+																public void checkStateChanged( CheckStateChangedEvent event )
+																{
+																	if ( event.getElement() instanceof IProjectSourceLocation )
+																		doCheckStateChanged();
+																}
+	
+															} );
 
-		TableViewer viewer = fSourceListField.getTableViewer();
+		new Separator().doFillIntoGrid( fControl, 3, converter.convertHeightInCharsToPixels( 1 ) );
+
+		fAddedSourceListField.doFillIntoGrid( fControl, 3 );
+		LayoutUtil.setHorizontalSpan( fAddedSourceListField.getLabelControl( null ), 2 );
+		LayoutUtil.setWidthHint( fAddedSourceListField.getLabelControl( null ), converter.convertWidthInCharsToPixels( 40 ) );
+		LayoutUtil.setHorizontalGrabbing( fAddedSourceListField.getListControl( null ) );
+
+		TableViewer viewer = fAddedSourceListField.getTableViewer();
 		Table table = viewer.getTable();
 		CellEditor cellEditor = new TextCellEditor( table );
 		viewer.setCellEditors( new CellEditor[]{ null, cellEditor } );
 		viewer.setColumnProperties( new String[]{ CP_LOCATION, CP_ASSOCIATION } );
 		viewer.setCellModifier( createCellModifier() );
+		
+		new Separator().doFillIntoGrid( fControl, 3, converter.convertHeightInCharsToPixels( 1 ) );
+
+//		fSearchForDuplicateFiles.doFillIntoGrid( fControl, 3 );
 	}
 
 	private ICellModifier createCellModifier()
@@ -245,7 +310,7 @@ public class SourceLookupBlock
 								if ( association.isValidPath( (String)value ) )
 								{
 									((CDirectorySourceLocation)entry).setAssociation( association );
-									getSourceListField().refresh();
+									getAddedSourceListField().refresh();
 									updateLaunchConfigurationDialog();
 								}
 							}
@@ -261,22 +326,61 @@ public class SourceLookupBlock
 	public void initialize( ICSourceLocator locator )
 	{
 		fLocator = locator;
-		ICSourceLocation[] locations = new ICSourceLocation[0];
 		if ( fLocator != null )
-			locations = fLocator.getSourceLocations();
-		resetLocations( locations );
+		{
+			ICSourceLocation[] locations = fLocator.getSourceLocations();
+			initializeGeneratedLocations( fLocator.getProject(), locations );
+			resetAdditionalLocations( locations );
+		} 
 	}
 
-	private void resetLocations( ICSourceLocation[] locations )
+	private void initializeGeneratedLocations( IProject project, ICSourceLocation[] locations )
 	{
-		fSourceListField.removeAllElements();
-		for ( int i = 0; i < locations.length; ++i )
+		fGeneratedSourceListField.removeAllElements();
+		if ( project == null && project.exists() && project.isOpen() )
+			return;
+		List list = getReferencedProjects( project );
+		IProject[] refs = (IProject[])list.toArray( new IProject[list.size()] );
+		ICSourceLocation loc = getLocationForProject( project, locations );
+		boolean checked = ( loc != null );
+		if ( loc == null )
+			loc = SourceLocationFactory.createProjectSourceLocation( project, true );
+		fGeneratedSourceListField.addElement( loc );
+		fGeneratedSourceListField.setChecked( loc, checked );
+		
+		for ( int i = 0; i < refs.length; ++i )
 		{
-			fSourceListField.addElement( locations[i] );
+			loc = getLocationForProject( refs[i], locations );
+			checked = ( loc != null );
+			if ( loc == null )
+				loc = SourceLocationFactory.createProjectSourceLocation( refs[i], true );
+			fGeneratedSourceListField.addElement( loc );
+			fGeneratedSourceListField.setChecked( loc, checked );
 		}
 	}
 
-	protected void doButtonPressed( int index )
+	private void resetGeneratedLocations( ICSourceLocation[] locations )
+	{
+		fGeneratedSourceListField.checkAll( false );
+		for ( int i = 0; i < locations.length; ++i )
+		{
+			if ( locations[i] instanceof IProjectSourceLocation && 
+				 ((IProjectSourceLocation)locations[i]).isGeneric() )
+				fGeneratedSourceListField.setChecked( locations[i], true );
+		}
+	}
+
+	private void resetAdditionalLocations( ICSourceLocation[] locations )
+	{
+		fAddedSourceListField.removeAllElements();
+		for ( int i = 0; i < locations.length; ++i )
+		{
+			if ( !( locations[i] instanceof IProjectSourceLocation ) || !((IProjectSourceLocation)locations[i]).isGeneric() )
+				fAddedSourceListField.addElement( locations[i] );
+		}
+	}
+
+	protected void doAddedSourceButtonPressed( int index )
 	{
 		switch( index )
 		{
@@ -284,11 +388,9 @@ public class SourceLookupBlock
 				if ( addSourceLocation() )
 					fIsDirty = true;
 				break;
-			case 7:
-				restoreDefaults();
-			case 2:
-			case 3:
-			case 5:
+			case 2:		// Up
+			case 3:		// Down
+			case 5:		// Remove
 				fIsDirty = true;
 				break;
 		}
@@ -296,13 +398,45 @@ public class SourceLookupBlock
 			updateLaunchConfigurationDialog();
 	}
 	
-	protected void doSelectionChanged()
+	protected void doAddedSourceSelectionChanged()
+	{
+	}
+
+	protected void doCheckStateChanged()
+	{	
+		fIsDirty = true;
+		updateLaunchConfigurationDialog();
+	}
+
+	protected void doGeneratedSourceButtonPressed( int index )
+	{
+		switch( index )
+		{
+			case 0:		// Select All
+			case 1:		// Deselect All
+				fIsDirty = true;
+				break;
+		}
+		if ( isDirty() )
+			updateLaunchConfigurationDialog();
+	}
+	
+	protected void doGeneratedSourceSelectionChanged()
 	{
 	}
 	
 	public ICSourceLocation[] getSourceLocations()
 	{
-		return (ICSourceLocation[])fSourceListField.getElements().toArray( new ICSourceLocation[fSourceListField.getElements().size()] );
+		ArrayList list = new ArrayList( getGeneratedSourceListField().getElements().size() + getAddedSourceListField().getElements().size() );
+		Iterator it = getGeneratedSourceListField().getElements().iterator();
+		while( it.hasNext() )
+		{
+			IProjectSourceLocation location = (IProjectSourceLocation)it.next();
+			if ( getGeneratedSourceListField().isChecked( location ) )
+				list.add( location );
+		}
+		list.addAll( getAddedSourceListField().getElements() );
+		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
 	}
 	
 	private boolean addSourceLocation()
@@ -311,7 +445,7 @@ public class SourceLookupBlock
 		WizardDialog dialog = new WizardDialog( fControl.getShell(), wizard );
 		if ( dialog.open() == Window.OK )
 		{
-			fSourceListField.addElement( wizard.getSourceLocation() );
+			fAddedSourceListField.addElement( wizard.getSourceLocation() );
 			return true;
 		}
 		return false;
@@ -344,7 +478,7 @@ public class SourceLookupBlock
 	
 	protected Object getSelection()
 	{
-		List list = fSourceListField.getSelectedElements();
+		List list = fAddedSourceListField.getSelectedElements();
 		return ( list.size() > 0 ) ? list.get( 0 ) : null;
 	}
 	
@@ -353,7 +487,8 @@ public class SourceLookupBlock
 		ICSourceLocation[] locations = new ICSourceLocation[0];
 		if ( getProject() != null )
 			locations = CSourceLocator.getDefaultSourceLocations( getProject() );
-		resetLocations( locations );
+		resetGeneratedLocations( locations );
+		resetAdditionalLocations( locations );
 	}
 
 	public IProject getProject()
@@ -366,8 +501,42 @@ public class SourceLookupBlock
 		fProject = project;
 	}
 
-	public SourceListDialogField getSourceListField()
+	public SourceListDialogField getAddedSourceListField()
 	{
-		return fSourceListField;
+		return fAddedSourceListField;
+	}
+
+	public CheckedListDialogField getGeneratedSourceListField()
+	{
+		return fGeneratedSourceListField;
+	}
+
+	private ICSourceLocation getLocationForProject( IProject project, ICSourceLocation[] locations )
+	{
+		for ( int i = 0; i < locations.length; ++i )
+			if ( locations[i] instanceof IProjectSourceLocation &&
+				 project.equals( ((IProjectSourceLocation)locations[i]).getProject() ) )
+				return locations[i];
+		return null;
+	}
+
+	private List getReferencedProjects( IProject project )
+	{
+		ArrayList list = new ArrayList( 10 );
+		if ( project != null && project.exists() && project.isOpen() )
+		{
+			IProject[] refs = new IProject[0];
+			try
+			{
+				refs = project.getReferencedProjects();
+			}
+			catch( CoreException e )
+			{
+			}
+			list.addAll( Arrays.asList( refs ) );
+			for ( int i = 0; i < refs.length; ++i )
+				list.addAll( getReferencedProjects( refs[i] ) );
+		}
+		return list;
 	}
 }

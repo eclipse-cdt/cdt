@@ -6,7 +6,7 @@
 package org.eclipse.cdt.debug.internal.ui.wizards;
 
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CProjectSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.SourceLocationFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -92,7 +92,7 @@ public class AddProjectSourceLocationBlock
 		{
 			if ( !((IStructuredSelection)fViewer.getSelection()).isEmpty() )
 			{
-				return new CProjectSourceLocation( (IProject)((IStructuredSelection)fViewer.getSelection()).getFirstElement() );
+				return SourceLocationFactory.createProjectSourceLocation( (IProject)((IStructuredSelection)fViewer.getSelection()).getFirstElement(), false );
 			}
 		}
 		return null;

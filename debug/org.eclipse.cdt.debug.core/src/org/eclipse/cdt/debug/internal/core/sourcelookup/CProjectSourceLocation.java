@@ -47,6 +47,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 {
 	private static final String ELEMENT_NAME = "cProjectSourceLocation";
 	private static final String ATTR_PROJECT = "project";
+	private static final String ATTR_GENERIC = "generic";
 
 	/**
 	 * The project associated with this source location
@@ -56,6 +57,8 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	private HashMap fCache = new HashMap( 20 );
 	
 	private HashSet fNotFoundCache = new HashSet( 20 );
+
+	private boolean fGenerated = true;
 
 	/**
 	 * Constructor for CProjectSourceLocation.
@@ -70,6 +73,16 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	public CProjectSourceLocation( IProject project )
 	{
 		setProject( project );
+		fGenerated = true;
+	}
+
+	/**
+	 * Constructor for CProjectSourceLocation.
+	 */
+	public CProjectSourceLocation( IProject project, boolean generated )
+	{
+		setProject( project );
+		fGenerated = generated;
 	}
 
 	/* (non-Javadoc)
@@ -240,7 +253,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		Element node = doc.createElement( ELEMENT_NAME );
 		doc.appendChild( node );
 		node.setAttribute( ATTR_PROJECT, getProject().getName() );
-		
+		node.setAttribute( ATTR_GENERIC, new Boolean( isGeneric() ).toString() );
 		try
 		{
 			return CDebugUtils.serializeDocument( doc, " " );
@@ -277,6 +290,10 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( name );
 				setProject( project );
 			}
+			String isGeneric = root.getAttribute( ATTR_GENERIC );
+			if ( isGeneric == null || isGeneric.trim().length() == 0 )
+				isGeneric = Boolean.FALSE.toString();
+			setGenerated( isGeneric.equals( Boolean.TRUE.toString() ) );
 			return;
 		}
 		catch( ParserConfigurationException e )
@@ -310,5 +327,28 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	private boolean isEmpty( String string )
 	{
 		return string == null || string.length() == 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation#isGenerated()
+	 */
+	public boolean isGeneric()
+	{
+		return fGenerated;
+	}
+
+	public void setGenerated( boolean b )
+	{
+		fGenerated = b;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals( Object obj )
+	{
+		if ( obj instanceof IProjectSourceLocation )
+			return getProject().getName().equals( ((IProjectSourceLocation)obj).getProject().getName() );
+		return false;
 	}
 }

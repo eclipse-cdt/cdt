@@ -6,7 +6,7 @@
 package org.eclipse.cdt.debug.internal.ui.wizards;
 
 import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CDirectorySourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.SourceLocationFactory;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.SWTUtil;
 import org.eclipse.core.runtime.IPath;
@@ -177,7 +177,7 @@ public class AddDirectorySourceLocationBlock
 		if ( isLocationPathValid() )
 		{
 			Path association = ( isAssociationPathValid() ) ? new Path( getAssociationPath() ) : null;
-			return new CDirectorySourceLocation( new Path( getLocationPath() ), association );
+			return SourceLocationFactory.createDirectorySourceLocation( new Path( getLocationPath() ), association );
 		}			
 		return null;
 	}

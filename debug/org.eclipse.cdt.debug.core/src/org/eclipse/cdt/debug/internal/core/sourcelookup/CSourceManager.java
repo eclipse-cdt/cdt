@@ -15,7 +15,9 @@ import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
@@ -130,6 +132,9 @@ public class CSourceManager implements ICSourceLocator,
 	 */
 	public Object getAdapter( Class adapter )
 	{
+		if ( adapter.equals( IResourceChangeListener.class ) &&
+			 fSourceLocator instanceof IResourceChangeListener )
+			return fSourceLocator;
 		return null;
 	}
 
@@ -242,5 +247,13 @@ public class CSourceManager implements ICSourceLocator,
 		if ( fSourceLocator instanceof IPersistableSourceLocator )
 			return (IPersistableSourceLocator)fSourceLocator;
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getProject()
+	 */
+	public IProject getProject()
+	{
+		return ( getCSourceLocator() != null ) ? getCSourceLocator().getProject() :  null;
 	}
 }

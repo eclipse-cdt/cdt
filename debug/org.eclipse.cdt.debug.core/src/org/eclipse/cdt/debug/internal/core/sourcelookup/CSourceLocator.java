@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,14 +22,19 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
+import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.SourceLocationFactory;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -50,12 +57,20 @@ import org.xml.sax.SAXException;
  * @since Aug 19, 2002
  */
 
-public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocator
+public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocator, IResourceChangeListener
 {
-	private static final String ELEMENT_NAME = "cSourceLocator";
-	private static final String CHILD_NAME = "cSourceLocation";
+	private static final String SOURCE_LOCATOR_NAME = "cSourceLocator";
+	private static final String DISABLED_GENERIC_PROJECT_NAME = "disabledGenericProject";
+	private static final String ADDITIONAL_SOURCE_LOCATION_NAME = "additionalSourceLocation";
+	private static final String SOURCE_LOCATION_NAME = "cSourceLocation";
 	private static final String ATTR_CLASS = "class";
 	private static final String ATTR_MEMENTO = "memento";
+	private static final String ATTR_PROJECT_NAME = "projectName";
+
+	/**
+	 * The project associated with this locator.
+	 */
+	private IProject fProject = null;
 
 	/**
 	 * The array of source locations associated with this locator.
@@ -63,27 +78,17 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	private ICSourceLocation[] fSourceLocations;
 
 	/**
-	 * Constructor for CSourceLocator.
+	 * The array of projects referenced by main project.
 	 */
-	public CSourceLocator()
-	{
-		setSourceLocations( new ICSourceLocation[0] );
-	}
+	private List fReferencedProjects = new ArrayList( 10 );
 
 	/**
 	 * Constructor for CSourceLocator.
 	 */
 	public CSourceLocator( IProject project )
 	{
-		fSourceLocations = getDefaultSourceLocations( project );
-	}
-
-	/**
-	 * Constructor for CSourceLocator.
-	 */
-	public CSourceLocator( ICSourceLocation[] locations )
-	{
-		fSourceLocations = locations;
+		setProject( project );
+		setReferencedProjects();
 	}
 
 	/* (non-Javadoc)
@@ -200,7 +205,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		ArrayList list = new ArrayList();
 		if ( project != null && project.exists() )
 		{
-			list.add( new CProjectSourceLocation( project ) );
+			list.add( SourceLocationFactory.createProjectSourceLocation( project ) );
 			addReferencedSourceLocations( list, project );
 		}
 		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
@@ -217,7 +222,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 				{
 					if (  projects[i].exists() && !containsProject( list, projects[i] ) )
 					{
-						list.add( new CProjectSourceLocation( projects[i] ) );
+						list.add( SourceLocationFactory.createProjectSourceLocation( projects[i] ) );
 						addReferencedSourceLocations( list, projects[i] );
 					}
 				}
@@ -293,17 +298,13 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	public String getMemento() throws CoreException
 	{
 		Document doc = new DocumentImpl();
-		Element node = doc.createElement( ELEMENT_NAME );
+		Element node = doc.createElement( SOURCE_LOCATOR_NAME );
 		doc.appendChild( node );
 
 		ICSourceLocation[] locations = getSourceLocations();
-		for ( int i = 0; i < locations.length; i++ )
-		{
-			Element child = doc.createElement( CHILD_NAME );
-			child.setAttribute( ATTR_CLASS, locations[i].getClass().getName() );
-			child.setAttribute( ATTR_MEMENTO, locations[i].getMemento() );
-			node.appendChild( child );
-		}
+		saveDisabledGenericSourceLocations( locations, doc, node );
+		saveAdditionalSourceLocations( locations, doc, node );
+
 		try
 		{
 			return CDebugUtils.serializeDocument( doc, " " );
@@ -321,15 +322,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 */
 	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
 	{
-		IProject project = getProject( configuration );
-		if ( project != null )
-		{
-			setSourceLocations( getDefaultSourceLocations( project ) );
-		}
-		else
-		{
-			setSourceLocations( new ICSourceLocation[0] );
-		}
+		setSourceLocations( getDefaultSourceLocations() );
 	}
 
 	/* (non-Javadoc)
@@ -346,63 +339,22 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			InputSource source = new InputSource( reader );
 			root = parser.parse( source ).getDocumentElement();
 
-			if ( !root.getNodeName().equalsIgnoreCase( ELEMENT_NAME ) )
+			if ( !root.getNodeName().equalsIgnoreCase( SOURCE_LOCATOR_NAME ) )
 			{
 				abort( "Unable to restore C/C++ source locator - invalid format.", null );
 			}
 
 			List sourceLocations = new ArrayList();
-			ClassLoader classLoader = CDebugCorePlugin.getDefault() .getDescriptor().getPluginClassLoader();
+			
+			// Add locations based on referenced projects
+			IProject project = getProject();
+			if ( project != null && project.exists() && project.isOpen() )
+				sourceLocations.addAll( Arrays.asList( getDefaultSourceLocations() ) );
 
-			NodeList list = root.getChildNodes();
-			int length = list.getLength();
-			for ( int i = 0; i < length; ++i )
-			{
-				Node node = list.item( i );
-				short type = node.getNodeType();
-				if ( type == Node.ELEMENT_NODE )
-				{
-					Element entry = (Element)node;
-					if ( entry.getNodeName().equalsIgnoreCase( CHILD_NAME ) )
-					{
-						String className = entry.getAttribute( ATTR_CLASS );
-						String data = entry.getAttribute( ATTR_MEMENTO );
-						if ( isEmpty( className ) )
-						{
-							abort( "Unable to restore C/C++ source locator - invalid format.", null );
-						}
-						Class clazz = null;
-						try
-						{
-							clazz = classLoader.loadClass( className );
-						}
-						catch( ClassNotFoundException e )
-						{
-							abort( MessageFormat.format( "Unable to restore source location - class not found {0}", new String[] { className } ), e );
-						}
-
-						ICSourceLocation location = null;
-						try
-						{
-							location = (ICSourceLocation)clazz.newInstance();
-						}
-						catch( IllegalAccessException e )
-						{
-							abort( "Unable to restore source location.", e );
-						}
-						catch( InstantiationException e )
-						{
-							abort( "Unable to restore source location.", e );
-						}
-						location.initializeFrom( data );
-						sourceLocations.add( location );
-					}
-					else
-					{
-						abort( "Unable to restore C/C++ source locator - invalid format.", null );
-					}
-				}
-			}
+			removeDisabledLocations( root, sourceLocations );
+			addAdditionalLocations( root, sourceLocations );
+			// To support old launch configuration
+			addOldLocations( root, sourceLocations );
 			setSourceLocations( (ICSourceLocation[])sourceLocations.toArray( new ICSourceLocation[sourceLocations.size()] ) );
 			return;
 		}
@@ -421,6 +373,154 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		abort( "Exception occurred initializing source locator.", ex );
 	}
 
+	private void removeDisabledLocations( Element root, List sourceLocations ) throws CoreException
+	{
+		NodeList list = root.getChildNodes();
+		int length = list.getLength();
+		HashSet disabledProjects = new HashSet( length );
+		for ( int i = 0; i < length; ++i )
+		{
+			Node node = list.item( i );
+			short type = node.getNodeType();
+			if ( type == Node.ELEMENT_NODE )
+			{
+				Element entry = (Element)node;
+				if ( entry.getNodeName().equalsIgnoreCase( DISABLED_GENERIC_PROJECT_NAME ) )
+				{
+					String projectName = entry.getAttribute( ATTR_PROJECT_NAME );
+					if ( isEmpty( projectName ) )
+					{
+						CDebugCorePlugin.log( "Unable to restore C/C++ source locator - invalid format." );
+					}
+					disabledProjects.add( projectName.trim() );
+				}
+			}
+		}
+		Iterator it = sourceLocations.iterator();
+		while( it.hasNext() )
+		{
+			ICSourceLocation location = (ICSourceLocation)it.next();
+			if ( location instanceof IProjectSourceLocation && 
+				 disabledProjects.contains( ((IProjectSourceLocation)location).getProject().getName() ) )
+				 it.remove();
+		}
+	}
+
+	private void addAdditionalLocations( Element root, List sourceLocations ) throws CoreException
+	{
+		ClassLoader classLoader = CDebugCorePlugin.getDefault() .getDescriptor().getPluginClassLoader();
+
+		NodeList list = root.getChildNodes();
+		int length = list.getLength();
+		for ( int i = 0; i < length; ++i )
+		{
+			Node node = list.item( i );
+			short type = node.getNodeType();
+			if ( type == Node.ELEMENT_NODE )
+			{
+				Element entry = (Element)node;
+				if ( entry.getNodeName().equalsIgnoreCase( ADDITIONAL_SOURCE_LOCATION_NAME ) )
+				{
+					String className = entry.getAttribute( ATTR_CLASS );
+					String data = entry.getAttribute( ATTR_MEMENTO );
+					if ( isEmpty( className ) )
+					{
+						CDebugCorePlugin.log( "Unable to restore C/C++ source locator - invalid format." );
+						continue;
+					}
+					Class clazz = null;
+					try
+					{
+						clazz = classLoader.loadClass( className );
+					}
+					catch( ClassNotFoundException e )
+					{
+						CDebugCorePlugin.log( MessageFormat.format( "Unable to restore source location - class not found {0}", new String[] { className } ) );
+						continue;
+					}
+
+					ICSourceLocation location = null;
+					try
+					{
+						location = (ICSourceLocation)clazz.newInstance();
+					}
+					catch( IllegalAccessException e )
+					{
+						CDebugCorePlugin.log( "Unable to restore source location." );
+						continue;
+					}
+					catch( InstantiationException e )
+					{
+						CDebugCorePlugin.log( "Unable to restore source location." );
+						continue;
+					}
+					location.initializeFrom( data );
+					sourceLocations.add( location );
+				}
+			}
+		}
+	}
+
+	private void addOldLocations( Element root, List sourceLocations ) throws CoreException
+	{
+		ClassLoader classLoader = CDebugCorePlugin.getDefault() .getDescriptor().getPluginClassLoader();
+
+		NodeList list = root.getChildNodes();
+		int length = list.getLength();
+		for ( int i = 0; i < length; ++i )
+		{
+			Node node = list.item( i );
+			short type = node.getNodeType();
+			if ( type == Node.ELEMENT_NODE )
+			{
+				Element entry = (Element)node;
+				if ( entry.getNodeName().equalsIgnoreCase( SOURCE_LOCATION_NAME ) )
+				{
+					String className = entry.getAttribute( ATTR_CLASS );
+					String data = entry.getAttribute( ATTR_MEMENTO );
+					if ( isEmpty( className ) )
+					{
+						CDebugCorePlugin.log( "Unable to restore C/C++ source locator - invalid format." );
+						continue;
+					}
+					Class clazz = null;
+					try
+					{
+						clazz = classLoader.loadClass( className );
+					}
+					catch( ClassNotFoundException e )
+					{
+						CDebugCorePlugin.log( MessageFormat.format( "Unable to restore source location - class not found {0}", new String[] { className } ) );
+						continue;
+					}
+
+					ICSourceLocation location = null;
+					try
+					{
+						location = (ICSourceLocation)clazz.newInstance();
+					}
+					catch( IllegalAccessException e )
+					{
+						CDebugCorePlugin.log( "Unable to restore source location." );
+						continue;
+					}
+					catch( InstantiationException e )
+					{
+						CDebugCorePlugin.log( "Unable to restore source location." );
+						continue;
+					}
+					location.initializeFrom( data );
+					if ( !sourceLocations.contains( location ) )
+					{
+						if ( location instanceof CProjectSourceLocation )
+							((CProjectSourceLocation)location).setGenerated( isReferencedProject( ((CProjectSourceLocation)location).getProject() ) );
+						sourceLocations.add( location );
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Throws an internal error exception
 	 */
@@ -437,21 +537,209 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 
 	private boolean isEmpty( String string )
 	{
-		return string == null || string.length() == 0;
+		return string == null || string.trim().length() == 0;
 	}
 	
-	private IProject getProject( ILaunchConfiguration configuration )
+	public void resourceChanged( IResourceChangeEvent event )
 	{
-		IProject project = null;
-		try
+		if ( event.getSource() instanceof IWorkspace && event.getDelta() != null )
 		{
-			String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "" );
-			if ( !isEmpty( projectName ) )
-				project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
+			IResourceDelta[] deltas = event.getDelta().getAffectedChildren();
+			if ( deltas != null )
+			{
+				ArrayList list = new ArrayList( deltas.length );
+				for ( int i = 0; i < deltas.length; ++i )
+					if ( deltas[i].getResource() instanceof IProject )
+						list.add( deltas[i].getResource() );
+				resetSourceLocations( list );
+			}
 		}
-		catch( CoreException e )
+	}
+
+	private void saveDisabledGenericSourceLocations( ICSourceLocation[] locations, Document doc, Element node )
+	{
+		IProject project = getProject();
+		if ( project != null && project.exists() && project.isOpen() )
 		{
+			try
+			{
+				IProject[] refs = project.getReferencedProjects();
+				HashSet names = new HashSet( refs.length + 1 );
+				names.add( project.getName() );
+				for ( int i = 0; i < refs.length; ++i )
+				{
+					names.add( refs[i].getName() );
+				}
+				for ( int i = 0; i < locations.length; ++i )
+					if ( locations[i] instanceof IProjectSourceLocation && 
+						 ((IProjectSourceLocation)locations[i]).isGeneric() )
+						 names.remove( ((IProjectSourceLocation)locations[i]).getProject().getName() );
+				
+				Iterator it = names.iterator();
+				while ( it.hasNext() )
+				{
+					Element child = doc.createElement( DISABLED_GENERIC_PROJECT_NAME );
+					child.setAttribute( ATTR_PROJECT_NAME, (String)it.next() );
+					node.appendChild( child );
+				}
+			}
+			catch( CoreException e )
+			{
+				CDebugCorePlugin.log( e );
+			}
 		}
-		return project;
+	}
+
+	private void saveAdditionalSourceLocations( ICSourceLocation[] locations, Document doc, Element node )
+	{
+		for ( int i = 0; i < locations.length; i++ )
+		{
+			if ( locations[i] instanceof IProjectSourceLocation && 
+				 ((IProjectSourceLocation)locations[i]).isGeneric() )
+				continue;
+			Element child = doc.createElement( SOURCE_LOCATION_NAME );
+			child.setAttribute( ATTR_CLASS, locations[i].getClass().getName() );
+			try
+			{
+				child.setAttribute( ATTR_MEMENTO, locations[i].getMemento() );
+			}
+			catch( CoreException e )
+			{
+				CDebugCorePlugin.log( e );
+				continue;
+			}
+			node.appendChild( child );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getProject()
+	 */
+	public IProject getProject()
+	{
+		return fProject;
+	}
+
+	protected void setProject( IProject project )
+	{
+		fProject = project;
+	}
+
+	private boolean isReferencedProject( IProject ref )
+	{
+		if ( getProject() != null )
+		{
+			try
+			{
+				return Arrays.asList( getProject().getReferencedProjects() ).contains( ref );
+			}
+			catch( CoreException e )
+			{
+				CDebugCorePlugin.log( e );
+			}
+		}
+		return false;
+	}
+
+	private void setReferencedProjects()
+	{
+		fReferencedProjects.clear(); 
+		fReferencedProjects = getReferencedProjects( getProject() );
+	}
+	
+	private List getReferencedProjects( IProject project )
+	{
+		ArrayList list = new ArrayList( 10 );
+		if ( project != null && project.exists() && project.isOpen() )
+		{
+			IProject[] refs = new IProject[0];
+			try
+			{
+				refs = project.getReferencedProjects();
+			}
+			catch( CoreException e )
+			{
+			}
+			list.addAll( Arrays.asList( refs ) );
+			for ( int i = 0; i < refs.length; ++i )
+				list.addAll( getReferencedProjects( refs[i] ) );
+		}
+		return list;
+	}
+
+	protected ICSourceLocation[] getDefaultSourceLocations()
+	{
+		Iterator it = fReferencedProjects.iterator();
+		ArrayList list = new ArrayList( fReferencedProjects.size() );
+		if ( getProject() != null && getProject().exists() && getProject().isOpen() )
+			list.add( SourceLocationFactory.createProjectSourceLocation( getProject() ) );
+		while( it.hasNext() )
+		{
+			IProject project = (IProject)it.next();
+			if ( project != null && project.exists() && project.isOpen() )
+				list.add( SourceLocationFactory.createProjectSourceLocation( project ) );
+		}
+		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
+	}
+
+	private void resetSourceLocations( List affectedProjects )
+	{
+		if ( affectedProjects.size() != 0 && getProject() != null )
+		{
+			if ( !getProject().exists() || !getProject().isOpen() )
+			{
+				removeGenericSourceLocations();
+			}
+			else
+			{
+				updateGenericSourceLocations( affectedProjects );
+			}
+		}
+	}
+
+	private void removeGenericSourceLocations()
+	{
+		fReferencedProjects.clear();
+		ICSourceLocation[] locations = getSourceLocations();
+		ArrayList newLocations = new ArrayList( locations.length ); 
+		for ( int i = 0; i < locations.length; ++i )
+			if ( !(locations[i] instanceof IProjectSourceLocation) || !((IProjectSourceLocation)locations[i]).isGeneric() )
+				newLocations.add( locations[i] );
+		setSourceLocations( (ICSourceLocation[])newLocations.toArray( new ICSourceLocation[newLocations.size()] ) );
+	}
+
+	private void updateGenericSourceLocations( List affectedProjects )
+	{
+		List newRefs = getReferencedProjects( getProject() );
+		ICSourceLocation[] locations = getSourceLocations();
+		ArrayList newLocations = new ArrayList( locations.length ); 
+		for ( int i = 0; i < locations.length; ++i )
+		{
+			if ( !(locations[i] instanceof IProjectSourceLocation) || !((IProjectSourceLocation)locations[i]).isGeneric() )
+			{
+				newLocations.add( locations[i] );
+			}
+			else
+			{
+				IProject project = ((IProjectSourceLocation)locations[i]).getProject();
+				if ( project.exists() && project.isOpen() )
+				{
+					if ( newRefs.contains( project ) || project.equals( getProject() ) )
+					{
+						newLocations.add( locations[i] );
+						newRefs.remove( project );
+					}
+				}
+			}
+		}
+		Iterator it = newRefs.iterator();
+		while( it.hasNext() )
+		{
+			IProject project = (IProject)it.next();
+			if ( !fReferencedProjects.contains( project ) )
+				newLocations.add( SourceLocationFactory.createProjectSourceLocation( project ) );
+		}
+		fReferencedProjects = newRefs;
+		setSourceLocations( (ICSourceLocation[])newLocations.toArray( new ICSourceLocation[newLocations.size()] ) );
 	}
 }

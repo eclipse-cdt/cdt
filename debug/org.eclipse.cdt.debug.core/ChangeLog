@@ -1,3 +1,15 @@
+2003-07-17 Mikhail Khodjaiants
+	Automatically update the list of source locations when the list of the referenced 
+	projects is modified.
+	* ICSourceLocator.java: added new method - 'getProject'
+	* IProjectSourceLocation.java: added new method - 'isGeneric'
+	* SourceLocationFactory.java: new class factory for source locations.
+	* CSourceLocator.java
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+	* CSourceManager.java
+	* CDebugTarget.java
+	
 2003-06-30 Mikhail Khodjaiants
 	Fix for PR 39372: Breakpoints don't get activated when symbols are loaded.
 

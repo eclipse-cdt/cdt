@@ -141,8 +141,15 @@ public class CheckedListDialogField extends ListDialogField {
 	 * Sets the checked state of an element. no dialog changed listener informed
 	 */		
 	public void setCheckedWithoutUpdate(Object object, boolean state) {
-		if (!fCheckElements.contains(object)) {
-			fCheckElements.add(object);
+		if (state) {
+			if (!fCheckElements.contains(object)) {
+				fCheckElements.add(object);
+			}
+		}
+		else {
+			if (fCheckElements.contains(object)) {
+				fCheckElements.remove(object);
+			}
 		}
 		if (fTable != null) {
 			((CheckboxTableViewer)fTable).setChecked(object, state);

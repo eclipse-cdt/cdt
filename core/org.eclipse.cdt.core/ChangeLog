@@ -1,3 +1,12 @@
+2005-03-28 Bogdan Gheorghe
+	Modified DeltaProcessor to make use of ICDTIndexer elements when requesting an index for an element.
+	Added indextiming option to trace options in CCorePlugin.
+	Added new CTagsIndexer
+	
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* plugin.xml
+	
 2005-03-24 Eric ter Haar
 	Added some e_machine types and made section reading seek to each section
 	before reading encase section records are extended.

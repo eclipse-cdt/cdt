@@ -1,3 +1,10 @@
+2005-03-28 Bogdan Gheorghe
+	Added CTagsIndexer block - some more ironing of the indexer block.
+	* src/org/eclipse/cdt/ui/dialogs/IndexerBlock.java
+	* src/org/eclipse/cdt/ui/dialogs/NullIndexerBlock.java
+	* src/org/eclipse/cdt/ui/dialogs/CTagsIndexerBlock.java
+	* plugin.xml
+	
 2005-03-24 Vladimir Hirsl
 	Ironing of the Indexer property page block.
 	DOM AST based indexer property options page.

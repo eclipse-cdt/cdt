@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.internal.core.index.IDocument;
-import org.eclipse.cdt.internal.core.index.IIndexerOutput;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexEncodingConstants;
@@ -57,10 +56,6 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
         this.indexer = indexer;
     }
 
-    public IIndexerOutput getOutput() {
-        return output;
-    }
-    
     public IFile getResourceFile() {
         return resourceFile;
     }
@@ -87,9 +82,17 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                 ParserLanguage.CPP : ParserLanguage.C;
         
         try {
+            long startTime = 0, parseTime = 0, endTime = 0;
+            
+            if (AbstractIndexer.TIMING)
+                startTime = System.currentTimeMillis();
+            
             IASTTranslationUnit tu = CDOM.getInstance().getASTService().getTranslationUnit(
                     resourceFile,
                     CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES));
+            
+            if (AbstractIndexer.TIMING)
+                parseTime = System.currentTimeMillis();
             
             // TODO Use new method to get ordered include directives instead of
             // IASTTranslationUnit.getIncludeDirectives
@@ -102,10 +105,17 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             } else {
                 visitor = new CGenerateIndexVisitor(this, resourceFile);
             }
+           
             tu.accept(visitor);
     
+            if (AbstractIndexer.TIMING){
+                endTime = System.currentTimeMillis();
+                System.out.println("DOM Indexer - Total Parse Time for " + resourceFile.getName()  + ": " + (parseTime - startTime)); //$NON-NLS-1$ //$NON-NLS-2$
+                System.out.println("DOM Indexer - Total Visit Time for " + resourceFile.getName()  + ": " + (endTime - parseTime)); //$NON-NLS-1$  //$NON-NLS-2$
+                System.out.println("DOM Indexer - Total Index Time for " + resourceFile.getName()  + ": " + (endTime - startTime)); //$NON-NLS-1$  //$NON-NLS-2$
+            }
             if (AbstractIndexer.VERBOSE){
-                AbstractIndexer.verbose("DOM AST TRAVERSAL FINISHED " + resourceFile.getName().toString());             //$NON-NLS-1$
+                AbstractIndexer.verbose("DOM AST TRAVERSAL FINISHED " + resourceFile.getName().toString()); //$NON-NLS-1$
             }   
         }
         catch ( VirtualMachineError vmErr){

@@ -158,10 +158,12 @@ public class IndexerBlock extends AbstractCOptionPage {
                 page.setContainer(getContainer());
                 page.createControl(parentComposite);
                 parentComposite.layout(true);
-//                parentComposite.pack(true);
-            } if (currentPage != null) {
+            }
+            
+            if (currentPage != null){
                 currentPage.setVisible(false);
             }
+            
             page.setVisible(true);
         }
 		setCurrentPage(page);
@@ -360,6 +362,7 @@ public class IndexerBlock extends AbstractCOptionPage {
 					}
 				};
  				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, op, monitor);
+ 				CCorePlugin.getDefault().getCoreModel().getIndexManager().indexerChangeNotification(project);
 			} else {
 				if (initialSelected == null || !selected.equals(initialSelected)) {
 					if (container != null){

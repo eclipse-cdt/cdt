@@ -1,3 +1,6 @@
+2005-03-28 Bogdan Gheorghe
+	Modified IndexSelector and PatternSearchJob to work with all 3 indexers.
+	
 2005-03-12 Bogdan Gheorghe
 	Updated search to work with new index framework
 	

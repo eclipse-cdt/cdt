@@ -18,6 +18,9 @@ org.eclipse.cdt.core/debug/search=false
 # Reports encoded index entries
 org.eclipse.cdt.core/debug/indexer=false
 
+# Reports time taken for an index
+org.eclipse.cdt.core/debug/indextimes=false
+
 # Reports search matches
 org.eclipse.cdt.core/debug/matchlocator=false
 

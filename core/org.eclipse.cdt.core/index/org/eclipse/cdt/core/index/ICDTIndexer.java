@@ -10,9 +10,9 @@
  **********************************************************************/
 package org.eclipse.cdt.core.index;
 
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.search.processing.IIndexJob;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceDelta;
 
 /**
@@ -48,6 +48,13 @@ public interface ICDTIndexer extends IIndexer {
     static public final int _STATIC = 8;
     static public final int _DELAYUNTILBUILDINFO = 16;
     
+    /***
+     * Indexable units
+     */
+    static public final int PROJECT = 1;
+    static public final int FOLDER = 2;
+    static public final int COMPILATION_UNIT = 4;
+    
     
 	/**
 	 * Returns what features this <code>ICDTIndexer</code> provides.
@@ -59,14 +66,14 @@ public interface ICDTIndexer extends IIndexer {
 	 * The <code>IResourcDelta</code> and (TODO: <code>IResourceChangeEvent</code> are provided for indexers
 	 * to decide how to schedule this event). 
 	 */
-	public void addRequest(ICElement cElement, IResourceDelta delta/*, IResourceChangeEvent event*/);
+	public void addRequest(IProject project, IResourceDelta delta, int kind); 
 	
 	/**
 	 * The <code>IndexManager</code> calls addRequest when it receives an event from the <code>DeltaProcessor</code>.
 	 * The <code>IResourcDelta</code> and (TODO:<code>IResourceChangeEvent</code> are provided for the indexder
 	 * to decide how to schedule this event).
 	 */
-	public void removeRequest(ICElement cElement, IResourceDelta delta/*, IResourceChangeEvent event*/);
+	public void removeRequest(IProject project, IResourceDelta delta, int kind); 
 	
 	/**
 	 * The <code>IndexManager</code> will send out a jobFinishedEvent to the indexer that
@@ -87,5 +94,18 @@ public interface ICDTIndexer extends IIndexer {
 	 * @param idlingTime
 	 */
 	public void notifyIdle(long idlingTime);
+
+    /**
+     * Returns if this indexer is enabled
+     * @param p
+     * @return
+     */
+    public boolean isIndexEnabled(IProject p);
+
+    /**
+     * Returns the storage used by this indexer.
+     * @return
+     */
+    public IIndexStorage getIndexStorage();
 
 }

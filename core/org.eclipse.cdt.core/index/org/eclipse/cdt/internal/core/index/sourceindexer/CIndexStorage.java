@@ -72,15 +72,13 @@ public class CIndexStorage implements IIndexStorage {
 
 	public static boolean VERBOSE = false;
 	
-	private SourceIndexer indexer = null;
+	private ICDTIndexer indexer = null;
 	private IndexManager indexManager = null;
 	
 	public ReadWriteMonitor indexAccessMonitor = null;
 	
 	public CIndexStorage(ICDTIndexer indexer){
-		if (indexer instanceof SourceIndexer)
-			this.indexer = (SourceIndexer) indexer;
-		
+		this.indexer = indexer;
 		this.indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	}
 	
@@ -244,7 +242,8 @@ public class CIndexStorage implements IIndexStorage {
 		if (target instanceof IProject) {
 			IProject p = (IProject) target;
 			if( p.exists() && indexer.isIndexEnabled( p ) )
-				request = new IndexAllProject(p, indexer);
+				//request = new IndexAllProject(p, indexer);
+				indexer.addRequest(p, null, ICDTIndexer.PROJECT);
 		}
 	
 		if (request != null)

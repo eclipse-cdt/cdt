@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -100,6 +101,10 @@ public class IndexSelector {
 				if (indexer instanceof SourceIndexer){
 					SourceIndexer sourceIndexer = (SourceIndexer) indexer;
 					index =sourceIndexer.getIndex(indexKeys[i], true /*reuse index file*/, false /*do not create if none*/);
+				}
+				else if (indexer instanceof CTagsIndexer){
+				    CTagsIndexer ctagsIndexer = (CTagsIndexer) indexer;
+					index =ctagsIndexer.getIndex(indexKeys[i], true /*reuse index file*/, false /*do not create if none*/);
 				}
 			}
 			if (index != null) indexes[count++] = index; // only consider indexes which are ready yet

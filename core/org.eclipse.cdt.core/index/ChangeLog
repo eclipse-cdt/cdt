@@ -1,3 +1,31 @@
+2005-03-28 Bogdan Gheorghe
+
+	Initial CTags Indexer contribution
+	
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsEntry.java
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsAddCompilationUnitToIndex.java
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsAddFileToIndex.java
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsConsoleParser.java
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsFileReader.java
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsHeader.java
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsIndexAll.jav
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsIndexer.java
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsIndexeRequest.java
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsRemoveFromIndex.java				
+	* index/org/eclipse/cdt/internal/core/index/ctagsindexer/CTagsSaveIndex.java	
+	
+	Added timing option to all three indexers
+	
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexerRunner.java
+	
+	Modified event notification for all indexers to make use of ICDTIndexer constants as opposed to ICElements, in
+	order to allow indexers to request additional jobs without having to create or retrieve an ICElement
+	
+	* index/org/eclipse/cdt/internal/core/index/sourceindexer/SourceIndexer.java
+	* index/org/eclipse/cdt/core/index/ICDTIndexer.java
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java
+		
 2005-03-18 Alain Magloire
 	Move more code in the try/finally as a precaution.  Bad things
 	where happening (i.e. NPE) but the monitor was not decremented

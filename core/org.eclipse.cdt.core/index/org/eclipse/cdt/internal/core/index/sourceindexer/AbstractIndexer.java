@@ -57,11 +57,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSearchConstants {
-    protected static final String INDEXER_MARKER_PREFIX = Util.bind("indexerMarker.prefix" ) + " "; //$NON-NLS-1$ //$NON-NLS-2$
-    protected static final String INDEXER_MARKER_ORIGINATOR =  ICModelMarker.INDEXER_MARKER + ".originator";  //$NON-NLS-1$
-    private static final String INDEXER_MARKER_PROCESSING = Util.bind( "indexerMarker.processing" ); //$NON-NLS-1$
-
-	protected IIndexerOutput output;
+	
 	final static int CLASS = 1;
 	final static int STRUCT = 2;
 	final static int UNION = 3;
@@ -75,16 +71,24 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 	final static int FWD_UNION = 11;
 	
 	public static boolean VERBOSE = false;
+	public static boolean TIMING = false;
 	
-    // problem marker related
-    private int problemMarkersEnabled = 0;
-    private Map problemsMap = null;
+	protected IIndexerOutput output;
+
+	//Index Markers
+	private int problemMarkersEnabled = 0;
+	private Map problemsMap = null;
+	protected static final String INDEXER_MARKER_PREFIX = Util.bind("indexerMarker.prefix" ) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+    protected static final String INDEXER_MARKER_ORIGINATOR =  ICModelMarker.INDEXER_MARKER + ".originator";  //$NON-NLS-1$
+    private static final String INDEXER_MARKER_PROCESSING = Util.bind( "indexerMarker.processing" ); //$NON-NLS-1$
+
     
 	//IDs defined in plugin.xml for file types
 	private final static String C_SOURCE_ID = "org.eclipse.cdt.core.fileType.c_source"; //$NON-NLS-1$
 	private final static String C_HEADER_ID = "org.eclipse.cdt.core.fileType.c_header"; //$NON-NLS-1$
 	private final static String CPP_SOURCE_ID = "org.eclipse.cdt.core.fileType.cxx_source"; //$NON-NLS-1$
 	private final static String CPP_HEADER_ID = "org.eclipse.cdt.core.fileType.cxx_header"; //$NON-NLS-1$
+   
 	
 	public AbstractIndexer() {
 		super();
@@ -94,6 +98,11 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 	  System.out.println("(" + Thread.currentThread() + ") " + log); //$NON-NLS-1$//$NON-NLS-2$
 	}
 	
+	public IIndexerOutput getOutput() {
+	    return output;
+	}
+	    
+	  
 	public void addClassSpecifier(IASTClassSpecifier classSpecification, int indexFlag){
 
 		if (classSpecification.getClassKind().equals(ASTClassKind.CLASS))
@@ -862,6 +871,8 @@ public abstract class AbstractIndexer implements IIndexer,IIndexConstants, ICSea
 		int BOGUS_ENTRY = 1;
 		this.output.addRef(encodeEntry(incName, INCLUDE_REF, INCLUDE_REF_LENGTH),fileNumber);
 	}
+	
+	
 
     abstract private class Problem {
         public IFile file;

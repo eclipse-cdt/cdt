@@ -864,6 +864,7 @@ public class CCorePlugin extends Plugin {
 	private static final String MODEL = CCorePlugin.PLUGIN_ID + "/debug/model" ; //$NON-NLS-1$
 	private static final String INDEXER = CCorePlugin.PLUGIN_ID + "/debug/indexer"; //$NON-NLS-1$
 	private static final String INDEX_MANAGER = CCorePlugin.PLUGIN_ID + "/debug/indexmanager"; //$NON-NLS-1$
+	private static final String INDEXER_TIMES = CCorePlugin.PLUGIN_ID + "/debug/indextimes"; //$NON-NLS-1$
 	private static final String SEARCH  = CCorePlugin.PLUGIN_ID + "/debug/search" ; //$NON-NLS-1$
 	private static final String MATCH_LOCATOR  = CCorePlugin.PLUGIN_ID + "/debug/matchlocator" ; //$NON-NLS-1$
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
@@ -897,6 +898,9 @@ public class CCorePlugin extends Plugin {
 			option = Platform.getDebugOption(INDEXER);
 			if(option != null) AbstractIndexer.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		
+			option = Platform.getDebugOption(INDEXER_TIMES);
+			if (option != null) AbstractIndexer.TIMING =  option.equalsIgnoreCase("true"); //$NON-NLS-1$
+			    
 			option = Platform.getDebugOption(SEARCH);
 			if(option != null) SearchEngine.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 			

@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
 import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.index.IndexChangeEvent;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.Util;
@@ -105,7 +104,7 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	/**
 	 * @return
 	 */
-	private IIndexStorage getIndexStorage() {
+	public IIndexStorage getIndexStorage() {
 		return indexStorage;
 	}
 
@@ -459,21 +458,20 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index2.IIndexer#addRequest(org.eclipse.cdt.core.model.ICElement, org.eclipse.core.resources.IResourceDelta, org.eclipse.core.resources.IResourceChangeEvent)
 	 */
-	public void addRequest(ICElement element, IResourceDelta delta) {
+	public void addRequest(IProject project, IResourceDelta delta, int kind) {
 		    
-		switch (element.getElementType()) {
-			case ICElement.C_PROJECT :
-				this.indexAll(element.getCProject().getProject());
+		switch (kind) {
+			case ICDTIndexer.PROJECT :
+				this.indexAll(project);
 				break;
 	        
-			case ICElement.C_CCONTAINER:
-				this.indexSourceFolder(element.getCProject().getProject(),element.getPath(),null);
+			case ICDTIndexer.FOLDER : 
+				this.indexSourceFolder(project,project.getFullPath(),null);
 			break;
 			
-			case ICElement.C_UNIT:
+			case ICDTIndexer.COMPILATION_UNIT:
 				IFile file = (IFile) delta.getResource();
-				IProject filesProject = file.getProject();
-				this.addSource(file, filesProject.getFullPath());
+				this.addSource(file, project.getFullPath());
 				break;						
 		}
 		
@@ -483,10 +481,10 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.index2.IIndexer#removeRequest(org.eclipse.cdt.core.model.ICElement, org.eclipse.core.resources.IResourceDelta, org.eclipse.core.resources.IResourceChangeEvent)
 	 */
-	public void removeRequest(ICElement element, IResourceDelta delta) {
-		switch (element.getElementType()) {
-			case ICElement.C_PROJECT :
-				IPath fullPath = element.getCProject().getProject().getFullPath();
+	public void removeRequest(IProject project, IResourceDelta delta, int kind) {
+		switch (kind) {
+			case ICDTIndexer.PROJECT :
+				IPath fullPath = project.getFullPath();
 				if( delta.getKind() == IResourceDelta.CHANGED )
 					indexManager.discardJobs(fullPath.segment(0));
 				indexStorage.removeIndexFamily(fullPath);
@@ -495,11 +493,11 @@ public class SourceIndexer extends AbstractCExtension implements ICDTIndexer {
 				// NB: Update of index if project is opened, closed, or its c nature is added or removed
 				//     is done in updateCurrentDeltaAndIndex
 			
-			case ICElement.C_CCONTAINER:
-				this.removeSourceFolderFromIndex(element.getCProject().getProject(),element.getPath(),null);
+			case ICDTIndexer.FOLDER :
+				this.removeSourceFolderFromIndex(project,project.getFullPath(),null);
 				break;
 			
-			case ICElement.C_UNIT:
+			case ICDTIndexer.COMPILATION_UNIT:
 				IFile file = (IFile) delta.getResource();
 				this.remove(file.getFullPath().toString(), file.getProject().getFullPath());
 				break;				

@@ -112,8 +112,17 @@ public class SourceIndexerRunner extends AbstractIndexer {
 		}
 		
 		try{
+		    long startTime = 0;
+            
+            if (AbstractIndexer.TIMING)
+                startTime = System.currentTimeMillis();
+            
 			boolean retVal = parser.parse();
-	
+			
+	        if (AbstractIndexer.TIMING){
+	            System.out.println("Source Indexer - Total Index Time: " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
+	        }
+	        
 			if (AbstractIndexer.VERBOSE){
 				if (!retVal)
 					AbstractIndexer.verbose("PARSE FAILED " + resourceFile.getName().toString()); //$NON-NLS-1$

@@ -16,10 +16,12 @@ package org.eclipse.cdt.internal.core.search;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.index.ICDTIndexer;
+import org.eclipse.cdt.core.index.IIndexStorage;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.Index;
+import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.ReadWriteMonitor;
@@ -138,11 +140,12 @@ public class PatternSearchJob implements IIndexJob {
 			
 		ICDTIndexer indexer =((Index) index).getIndexer();
 		
-		if (!(indexer instanceof SourceIndexer))
+		IIndexStorage storage = indexer.getIndexStorage();
+		if (!(storage instanceof CIndexStorage))
 			return FAILED;
-				
-		SourceIndexer sourceIndexer = (SourceIndexer) indexer;
-		ReadWriteMonitor monitor = sourceIndexer.getMonitorFor(index);
+		
+		CIndexStorage cStorage = (CIndexStorage) storage;
+		ReadWriteMonitor monitor = cStorage.getMonitorFor(index);
 		if (monitor == null)
 			return COMPLETE; // index got deleted since acquired
 		try {
@@ -153,7 +156,7 @@ public class PatternSearchJob implements IIndexJob {
 				try {
 					monitor.exitRead(); // free read lock
 					monitor.enterWrite(); // ask permission to write
-					sourceIndexer.saveIndex(index);
+					cStorage.saveIndex(index);
 				} catch (IOException e) {
 					return FAILED;
 				} finally {

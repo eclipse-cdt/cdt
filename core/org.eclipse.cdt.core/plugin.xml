@@ -560,5 +560,15 @@
             description="%cdt_pathentry_var.description">
       </variable>
    </extension>
+   <extension
+         id="ctagsindexer"
+         name="CTags Indexer"
+         point="org.eclipse.cdt.core.CIndexer">
+      <cextension>
+         <run 
+               class="org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexer">
+         </run>
+      </cextension>
+   </extension>
 
 </plugin>

@@ -22,35 +22,15 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class NullIndexerBlock extends AbstractIndexerPage {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.index.AbstractIndexerPage#initialize(org.eclipse.core.resources.IProject)
-	 */
-	public void initialize(IProject currentProject) {
-		// TODO Auto-generated method stub
 
-	}
+	public void initialize(IProject currentProject) {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void performApply(IProgressMonitor monitor) throws CoreException {
-		// TODO Auto-generated method stub
+	public void performApply(IProgressMonitor monitor) throws CoreException {}
 
-	}
+	public void performDefaults() {}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
-	 */
-	public void performDefaults() {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	public void createControl(Composite parent) {
-        Composite comp = new Composite(parent, SWT.NULL);
+	    Composite comp = new Composite(parent, SWT.NULL);
         setControl(comp);
 	}
 

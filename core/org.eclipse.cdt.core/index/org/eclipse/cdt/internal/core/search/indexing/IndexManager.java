@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.index.IIndexStorage;
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.core.index.ctagsindexer.CTagsIndexRequest;
 import org.eclipse.cdt.internal.core.index.sourceindexer.CIndexStorage;
 import org.eclipse.cdt.internal.core.index.sourceindexer.IndexRequest;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
@@ -89,18 +89,29 @@ public class IndexManager extends JobManager{
 			if (indexer != null)
 				indexer.indexJobFinishedNotification(job);
 		}
+		
+		//TODO: Standardize on jobs
+		if (job instanceof CTagsIndexRequest){
+		    CTagsIndexRequest indexRequest = (CTagsIndexRequest) job;
+			IPath path = indexRequest.getIndexPath();
+			IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject(path.toOSString()); 
+			ICDTIndexer indexer = getIndexerForProject(project);
+			
+			if (indexer != null)
+				indexer.indexJobFinishedNotification(job);
+		}
 	}
 	/**
 	 * @param project
 	 * @param element
 	 * @param delta
 	 */
-	public void addResourceEvent(IProject project, ICElement element, IResourceDelta delta) {
+	public void addResourceEvent(IProject project, IResourceDelta delta, int kind) {
 		//Get indexer for this project
 		ICDTIndexer indexer = getIndexerForProject(project);	
 		
 		if (indexer != null)
-			indexer.addRequest(element, delta);
+			indexer.addRequest(project, delta, kind);
 	}
 
 	/**
@@ -108,13 +119,13 @@ public class IndexManager extends JobManager{
 	 * @param element
 	 * @param delta
 	 */
-	public void removeResourceEvent(IProject project, ICElement element, IResourceDelta delta) {
+	public void removeResourceEvent(IProject project, IResourceDelta delta, int kind) {
 		//Get the indexer for this project
 		ICDTIndexer indexer = null;
 		indexer = (ICDTIndexer) indexerMap.get(project);
 		
 		if (indexer != null)
-			indexer.removeRequest(element, delta);
+			indexer.removeRequest(project, delta, kind);
 	}
 	
 	
@@ -311,4 +322,20 @@ public class IndexManager extends JobManager{
    		monitor.exitRead();
    	}
    }
+   
+   /**
+	* The indexer previously associated with this project has been changed to a
+	* new value. Next time project gets asked for indexer, a new one will be created
+	* of the new type.
+	* 
+	* @param project
+	*/
+	public void indexerChangeNotification(IProject project) {
+	    monitor.enterWrite();
+	    try{
+	        Object e = indexerMap.remove(project);   
+	    } finally { 
+	        monitor.exitWrite();
+	    }
+	}
 }

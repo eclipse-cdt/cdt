@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.index.ICDTIndexer;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -607,7 +608,21 @@ public class DeltaProcessor {
 		if (indexManager == null)
 			return;
 	
-		indexManager.addResourceEvent(element.getCProject().getProject(),element,delta);
+		switch (element.getElementType()){
+		 	case ICElement.C_PROJECT:
+		 	indexManager.addResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.PROJECT);
+		    break;
+		 	
+		 	case ICElement.C_CCONTAINER:
+		 	indexManager.addResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.FOLDER);
+		 	break;
+		 	
+		 	case ICElement.C_UNIT:
+		 	indexManager.addResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.COMPILATION_UNIT);
+		 	break;
+		 	   
+		}
+		
 		
 	}
 
@@ -615,9 +630,21 @@ public class DeltaProcessor {
 		
 		if (indexManager == null)
 						return;
-
-		indexManager.removeResourceEvent(element.getCProject().getProject(),element,delta);
-	
+		
+		switch (element.getElementType()){
+		 	case ICElement.C_PROJECT:
+		 	indexManager.removeResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.PROJECT);
+		    break;
+		 	
+		 	case ICElement.C_CCONTAINER:
+		 	indexManager.removeResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.FOLDER);
+		 	break;
+		 	
+		 	case ICElement.C_UNIT:
+		 	indexManager.removeResourceEvent(element.getCProject().getProject(),delta, ICDTIndexer.COMPILATION_UNIT);
+		 	break;
+	 	   
+		}
 
 	}
 

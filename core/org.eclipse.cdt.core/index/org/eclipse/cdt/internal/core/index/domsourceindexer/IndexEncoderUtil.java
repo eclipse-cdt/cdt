@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
 
 public class IndexEncoderUtil {
-    static final char[] encodeEntry(char[][] elementName, EntryType entryType, LimitTo encodeType) {
+    public static final char[] encodeEntry(char[][] elementName, EntryType entryType, LimitTo encodeType) {
         int pos, nameLength = 0;
         for (int i=0; i < elementName.length; i++){
             char[] namePart = elementName[i];

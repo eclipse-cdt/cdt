@@ -147,18 +147,15 @@ public class CDirectorySourceLocation implements ICSourceLocation
 		IPath path = getDirectory();
 		if ( path != null )
 		{
-			path = path.append( fileName );
-	
-			// Try for a file in another workspace project
-			IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
-			if ( f != null ) 
-			{
-				return f;
-			} 
-	
+			path = path.append( fileName );	
 			File file = path.toFile();
 			if ( file.exists() )
 			{
+				IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
+				if ( f != null ) 
+				{
+					return f;
+				} 
 				return createExternalFileStorage( path );
 			}
 		}

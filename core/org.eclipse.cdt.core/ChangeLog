@@ -1,5 +1,15 @@
 2003-10-14 Alain Magloire
 
+	Change the scheme slightly to keep on looking for pattern
+	for exampel
+	/c/stuff/C:/filename:12 error
+	in Cygwin this error would never be found now we keep on
+	trying.
+
+	* src/org/eclipse/cdt/intenal/errorparsers/GCCErrorParser.java
+
+2003-10-14 Alain Magloire
+
 	Always fetch the addr2line/c++path in the .cdtproject
 
 	* utils/org/eclipse/cdt/utils/elf/BinaryFile.java

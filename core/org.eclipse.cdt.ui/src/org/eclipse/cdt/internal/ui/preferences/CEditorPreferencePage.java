@@ -920,8 +920,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationDelay"); //$NON-NLS-1$
 		addTextField(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
 
-		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-
+		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&		
 		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.completionProposalBackgroundColor"); //$NON-NLS-1$
 		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_BACKGROUND, 0);
 
@@ -1159,9 +1158,11 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		Group group = new Group(parent, SWT.NONE);
 		group.setText(label);
 		GridLayout layout = new GridLayout();
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
 		layout.numColumns = nColumns;
 		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		group.setLayoutData(gd);
 		return group;
 	}
 	

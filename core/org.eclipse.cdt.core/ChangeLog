@@ -1,5 +1,10 @@
 2003-02-24 Alain Magloire
 
+	* model/org/eclipse/cdt/internal/core/model/Marker.java:
+	Removed, this file was implementing IMarker.
+
+2003-02-24 Alain Magloire
+
 	* model/org/eclipse/cdt/internal/core/model/Resource.java:
 	Removed, this file was implementing IResource.
 

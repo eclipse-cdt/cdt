@@ -98,7 +98,7 @@ public class Variable extends CObject implements ICDIVariable {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getName()
 	 */
-	public String getName() throws CDIException {
+	public String getName() {
 		return varObj.getName();
 	}
 

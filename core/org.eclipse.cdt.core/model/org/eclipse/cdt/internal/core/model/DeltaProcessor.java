@@ -571,7 +571,7 @@ public class DeltaProcessor {
 							if (element != null) {
 								// note its resources are still visible as roots to other projects
 								if (isCProject) {
-									elementAdded(element, delta);
+									elementOpened(element, delta);
 									updateIndexAddResource(element, delta);
 								} else {
 									elementRemoved(element, delta);

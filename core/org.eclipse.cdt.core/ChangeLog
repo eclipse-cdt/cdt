@@ -1,4 +1,8 @@
 2005-01-19 Alain Magloire
+	PR 83152
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+
+2005-01-19 Alain Magloire
 	PR 83151
 	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
 

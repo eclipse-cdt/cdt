@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -73,10 +74,15 @@ public class CViewContentProvider extends CElementContentProvider {
 	}
 
 	public Object[] getIncludeReferenceChildren(IIncludeReference ref) throws CModelException {
+		// We do not want to show children for Include paths that are inside the workspace.
+		// no need to that since they can access elsewhere and that simplifies the
+		// CView code.
 		IPath location = ref.getPath();
-		IPath rootPath = ref.getCModel().getWorkspace().getRoot().getLocation();
-		if (rootPath.isPrefixOf(location)) {
-			return NO_CHILDREN;
+		IContainer[] containers = ref.getCModel().getWorkspace().getRoot().findContainersForLocation(location);
+		for (int i = 0; i < containers.length; ++i) {
+			if (containers[i].isAccessible()) {
+				return NO_CHILDREN;
+			}
 		}
 		return ref.getChildren();
 	}
@@ -185,10 +191,13 @@ public class CViewContentProvider extends CElementContentProvider {
 		} else if (element instanceof IIncludeReference) {
 			IIncludeReference ref = (IIncludeReference)element;
 			IPath location = ref.getPath();
-			IPath rootPath = ref.getCModel().getWorkspace().getRoot().getLocation();
-			if (rootPath.isPrefixOf(location)) {
-				return false;
+			IContainer[] containers = ref.getCModel().getWorkspace().getRoot().findContainersForLocation(location);
+			for (int i = 0; i < containers.length; ++i) {
+				if (containers[i].isAccessible()) {
+					return false;
+				}
 			}
+
 		}
 		return super.hasChildren(element);
 	}

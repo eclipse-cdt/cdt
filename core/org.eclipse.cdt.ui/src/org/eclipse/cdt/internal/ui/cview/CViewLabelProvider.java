@@ -54,11 +54,9 @@ public class CViewLabelProvider extends StandardCElementLabelProvider {
 				return p.toString();
 			}
 			IPath location = ref.getPath();
-			IPath rootPath = ref.getCModel().getWorkspace().getRoot().getLocation();
-			if (rootPath.isPrefixOf(location)) {
-				location = location.setDevice(null);
-				location = location.removeFirstSegments(rootPath.segmentCount());
-				return location.toString();
+			IContainer[] containers = ref.getCModel().getWorkspace().getRoot().findContainersForLocation(location);
+			if (containers.length > 0) {
+				return containers[0].getFullPath().makeRelative().toString();
 			}
 		}
 		return super.getText(element);

@@ -119,7 +119,7 @@ public class CStructure implements ICompositeType {
 				if( node instanceof IASTSimpleDeclaration ){
 					List declarators = ((IASTSimpleDeclaration)node).getDeclarators();
 					for( int j = 0; j < declarators.size(); j++ ){
-						IASTDeclarator declarator = (IASTDeclarator) declarators.get(i);
+						IASTDeclarator declarator = (IASTDeclarator) declarators.get(j);
 						if( name.equals( declarator.getName().toString() ) ){
 							IBinding binding = declarator.getName().resolveBinding();
 							if( binding instanceof IField )

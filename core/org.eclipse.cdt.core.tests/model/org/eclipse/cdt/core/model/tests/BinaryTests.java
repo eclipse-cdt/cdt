@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -101,6 +103,16 @@ public class BinaryTests extends TestCase {
          */
             
         testProject=CProjectHelper.createCProject("filetest", "none");
+        
+        // since our test require that we can read the debug info from the exe whne must set the GNU elf 
+        // binary parser since the default (generic elf binary parser) does not do this.
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(testProject.getProject());
+		desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+		desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, "org.eclipse.cdt.core.GNU_ELF");
+
+		// Reset the binary parser the paths may have change.
+		CCorePlugin.getDefault().getCoreModel().resetBinaryParser(testProject.getProject());
+
         if (testProject==null)
             fail("Unable to create project");
 

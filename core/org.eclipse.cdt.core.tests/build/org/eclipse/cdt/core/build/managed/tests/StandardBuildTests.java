@@ -266,7 +266,7 @@ public class StandardBuildTests extends TestCase {
 		try {
 			project = createProject(PROJECT_NAME); 
 			// Convert the new project to a standard make project
-			CCorePlugin.getDefault().convertProjectToCC(project, new NullProgressMonitor(), MakeCorePlugin.getUniqueIdentifier() + ".make");
+			CCorePlugin.getDefault().convertProjectToCC(project, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
 			MakeProjectNature.addNature(project, null);
 		} catch (CoreException e) {
 			fail("StandardBuildTest testProjectCreation failed creating project: " + e.getLocalizedMessage());

@@ -530,8 +530,8 @@ public class CoreModel {
 	 *            exclusion patterns in the resource if a container
 	 * @return IIincludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath, boolean isSystemInclude, IPath[] exclusionPathterns) {
-		return newIncludeEntry(resourcePath, basePath, includePath, isSystemInclude, exclusionPathterns, false);
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath, boolean isSystemInclude, IPath[] exclusionPatterns) {
+		return newIncludeEntry(resourcePath, basePath, includePath, isSystemInclude, exclusionPatterns, false);
 	}
 
 	/**

@@ -13,6 +13,8 @@ import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.cdt.utils.ui.controls.RadioButtonsArea;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -223,12 +225,17 @@ public class SettingsBlock extends AbstractCOptionPage {
 		browse.setText(MakeUIPlugin.getResourceString(MAKE_BUILD_DIR_BROWSE));
 		browse.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(), getContainer().getProject(),  true, "Selection Locations to build from.");
-				if ( dialog.open() == ContainerSelectionDialog.OK ) {
+				ContainerSelectionDialog dialog =
+					new ContainerSelectionDialog(
+						getShell(),
+						getContainer().getProject(),
+						true,
+						"Selection Locations to build from.");
+				if (dialog.open() == ContainerSelectionDialog.OK) {
 					Object[] selection = dialog.getResult();
 					if (selection.length > 0) {
-						buildLocation.setText(((IPath)selection[0]).toOSString());
-					}					
+						buildLocation.setText(((IPath) selection[0]).toOSString());
+					}
 				}
 			}
 		});
@@ -270,47 +277,54 @@ public class SettingsBlock extends AbstractCOptionPage {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask("Applying Settings...", 1);
-		IMakeBuilderInfo info;
-		if (getContainer().getProject() != null) {
-			info = MakeCorePlugin.createBuildInfo(getContainer().getProject(), fBuilderID);
-		} else {
-			info = MakeCorePlugin.createBuildInfo(fPrefs, fBuilderID, false);
-		}
-		info.setStopOnError(isStopOnError());
-		info.setUseDefaultBuildCmd(useDefaultBuildCmd());
-		if (!useDefaultBuildCmd()) {
-			String bldLine = getBuildLine();
-			int start = 0;
-			int end = -1;
-			if (!bldLine.startsWith("\"")) { //$NON-NLS-1$
-				end = bldLine.indexOf(' ');
-			} else {
-				start = 1;
-				end = bldLine.indexOf('"', 1);
+		IWorkspace workspace = MakeUIPlugin.getWorkspace();
+		// To avoid multi-build
+		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				monitor.beginTask("Applying Settings...", 1);
+				IMakeBuilderInfo info;
+				if (getContainer().getProject() != null) {
+					info = MakeCorePlugin.createBuildInfo(getContainer().getProject(), fBuilderID);
+				} else {
+					info = MakeCorePlugin.createBuildInfo(fPrefs, fBuilderID, false);
+				}
+				info.setStopOnError(isStopOnError());
+				info.setUseDefaultBuildCmd(useDefaultBuildCmd());
+				if (!useDefaultBuildCmd()) {
+					String bldLine = getBuildLine();
+					int start = 0;
+					int end = -1;
+					if (!bldLine.startsWith("\"")) { //$NON-NLS-1$
+						end = bldLine.indexOf(' ');
+					} else {
+						start = 1;
+						end = bldLine.indexOf('"', 1);
+					}
+					IPath path;
+					if (end == -1) {
+						path = new Path(bldLine);
+					} else {
+						path = new Path(bldLine.substring(start, end));
+					}
+					info.setBuildCommand(path);
+					String args = ""; //$NON-NLS-1$
+					if (end != -1) {
+						args = bldLine.substring(end + 1);
+					}
+					info.setBuildArguments(args);
+				}
+				info.setAutoBuildEnable(autoButton.getSelection());
+				info.setAutoBuildTarget(targetAuto.getText().trim());
+				info.setIncrementalBuildEnable(incrButton.getSelection());
+				info.setIncrementalBuildTarget(targetIncr.getText().trim());
+				info.setFullBuildEnable(fullButton.getSelection());
+				info.setFullBuildTarget(targetFull.getText().trim());
+				if (buildLocation != null) {
+					info.setBuildLocation(new Path(buildLocation.getText().trim()));
+				}
 			}
-			IPath path;
-			if (end == -1) {
-				path = new Path(bldLine);
-			} else {
-				path = new Path(bldLine.substring(start, end));
-			}
-			info.setBuildCommand(path);
-			String args = ""; //$NON-NLS-1$
-			if (end != -1) {
-				args = bldLine.substring(end + 1);
-			}
-			info.setBuildArguments(args);
-		}
-		info.setAutoBuildEnable(autoButton.getSelection());
-		info.setAutoBuildTarget(targetAuto.getText().trim());
-		info.setIncrementalBuildEnable(incrButton.getSelection());
-		info.setIncrementalBuildTarget(targetIncr.getText().trim());
-		info.setFullBuildEnable(fullButton.getSelection());
-		info.setFullBuildTarget(targetFull.getText().trim());
-		if (buildLocation != null) {
-			info.setBuildLocation(new Path(buildLocation.getText().trim()));
-		}
+		};
+		workspace.run(operation, monitor);
 	}
 
 	public void performDefaults() {

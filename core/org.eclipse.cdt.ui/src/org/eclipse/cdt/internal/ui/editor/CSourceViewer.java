@@ -101,7 +101,6 @@ public class CSourceViewer extends ProjectionViewer implements ITextViewerExtens
             }
             case SHOW_OUTLINE:
             {
-                System.out.println("Show outline operation called.");
                 fOutlinePresenter.showInformation();
                 return;
             }

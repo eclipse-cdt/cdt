@@ -1,5 +1,8 @@
 Release CDT-3.0
 
+	* Added keybinding next/previous(CTRL-SHIFT-UP/DOWN) to move from
+	  member to member in the CEditor(PR 84423).
+
 	* Drag && Drop support
 	  for ICElement classes , in the C/C++ project view and C Outliner.
 

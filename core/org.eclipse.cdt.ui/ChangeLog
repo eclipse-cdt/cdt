@@ -1,3 +1,16 @@
+2005-02-016 Alain Magloire
+	PR 84423, Patch from :  Tomaszewski Przemek
+	Added keybinding next/previous(CTRL-SHIFT-UP/DOWN) to from
+	member to member in the CEditor(PR 84423).
+
+	* NEWS
+	* plugin.properties
+	* plugin.xml
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+	* src/org/eclipse/cdt/internal/ui/editor/CSourceViewer.java
+	* src/org/eclipse/cdt/internal/ui/editor/ICEditorActionDefinitionIds.java
+	
 2005-02-02 Bogdan Gheorghe
 	Added a delete IProblem Markers action to context menu to allow users to manually
 	remove problems reported by the parser during an index.

@@ -969,6 +969,30 @@
             command="org.eclipse.cdt.ui.edit.open.outline"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            name="%ActionDefinition.GotoNextMember.name"
+            description="%ActionDefinition.GotoNextMember.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.goto.next.member">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+ARROW_DOWN"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.text.c.goto.next.member"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ActionDefinition.GotoPrevMember.name"
+            description="%ActionDefinition.GotoPrevMember.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.goto.prev.member">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+ARROW_UP"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.text.c.goto.prev.member"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          id="org.eclipse.cdt.ui.CSearchPage"

@@ -114,8 +114,20 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
 	public static final String OPEN_EDITOR= "org.eclipse.cdt.ui.edit.text.c.open.editor"; //$NON-NLS-1$
 
     /**
-     * Action definition ID of the open outline dialog.
+     * Action definition ID of the open quick outline.
      * (value <code>"org.eclipse.cdt.ui.edit.open.outline"</code>).
      */
     public static final String OPEN_OUTLINE= "org.eclipse.cdt.ui.edit.open.outline"; //$NON-NLS-1$
+
+    /**
+     * Action definition ID for go to next c member.
+     * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.next.memeber"</code>)
+     */
+    public static final String GOTO_NEXT_MEMBER = "org.eclipse.cdt.ui.edit.text.c.goto.next.member"; //$NON-NLS-1$
+
+    /**
+     * Action definition ID for go to previous c member.
+     * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.prev.memeber"</code>)
+     */
+    public static final String GOTO_PREVIOUS_MEMBER = "org.eclipse.cdt.ui.edit.text.c.goto.prev.member"; //$NON-NLS-1$
 }

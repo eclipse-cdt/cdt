@@ -1,9 +1,9 @@
-package org.eclipse.cdt.internal.ui.editor;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+package org.eclipse.cdt.internal.ui.editor;
+
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,6 +22,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
 import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
+import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
 import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
 import org.eclipse.cdt.internal.ui.browser.typehierarchy.OpenTypeHierarchyAction;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
@@ -119,7 +120,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	private class EditorSelectionChangedListener extends AbstractSelectionChangedListener {
 		
-		/*
+		/**
 		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 		 */
 		public void selectionChanged(SelectionChangedEvent event) {
@@ -141,7 +142,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	
 	/** Search actions **/
 	private ActionGroup fSelectionSearchGroup;
+    /** Groups refactoring actions. */
 	private ActionGroup fRefactoringActionGroup;
+    /** Action which shows selected element in CView. */
 	private ShowInCViewAction fShowInCViewAction;
 	
 	/** Activity Listeners **/
@@ -153,9 +156,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
     /** The mouse listener */
     private MouseClickListener fMouseListener;
 
-	protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
+	/** Pairs of brackets, used to match. */
+    protected final static char[] BRACKETS = { '{', '}', '(', ')', '[', ']', '<', '>' };
 
-	protected CPairMatcher fBracketMatcher = new CPairMatcher(BRACKETS);
+	/** Matches the brackets. */
+    protected CPairMatcher fBracketMatcher = new CPairMatcher(BRACKETS);
 
 	/** The editor's tab converter */
 	private TabConverter fTabConverter;
@@ -163,9 +168,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	/** Listener to annotation model changes that updates the error tick in the tab image */
 	private CEditorErrorTickUpdater fCEditorErrorTickUpdater;
 
-	/* Preference key for matching brackets */
+	/** Preference key for matching brackets */
 	public final static String MATCHING_BRACKETS = "matchingBrackets"; //$NON-NLS-1$
-	/* Preference key for matching brackets color */
+	/** Preference key for matching brackets color */
 	public final static String MATCHING_BRACKETS_COLOR = "matchingBracketsColor"; //$NON-NLS-1$
 	/** Preference key for inserting spaces rather than tabs */
 	public final static String SPACES_FOR_TABS = "spacesForTabs"; //$NON-NLS-1$
@@ -204,13 +209,19 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	private IMarker fLastMarkerTarget= null;
 
+	/**
+     * Handles property changes.
+	 */
     private class PropertyChangeListener implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener, org.eclipse.jface.util.IPropertyChangeListener {      
-        /*
-         * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
+        /**
+         * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
          */
         public void propertyChange(org.eclipse.jface.util.PropertyChangeEvent event) {
             handlePreferencePropertyChanged(event);
         }
+        /**
+         * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+         */
         public void propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent event) {
             handlePreferencePropertyChanged(new org.eclipse.jface.util.PropertyChangeEvent(event.getSource(), event.getProperty(), event.getOldValue(), event.getNewValue()));
         }
@@ -223,7 +234,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		super();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#initializeEditor()
 	 */
 	protected void initializeEditor() {
@@ -244,7 +255,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);          
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#doSetInput(org.eclipse.ui.IEditorInput)
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
@@ -257,7 +268,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	}
 
 	/**
-	 * Update the title image
+	 * Update the title image.
+     * @param image Title image.
 	 */
 	public void updatedTitleImage(Image image) {
 		setTitleImage(image);
@@ -265,6 +277,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 	/**
 	 * Gets the current input
+     * @return IFile Input file.
 	 */
 	public IFile getInputFile() {
 		IEditorInput editorInput = getEditorInput();
@@ -276,11 +289,15 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		return null;
 	}
 
-	public boolean isSaveAsAllowed() {
+	/**
+     * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+    public boolean isSaveAsAllowed() {
 		return true;
 	}
 	/**
-	 * Gets the outline page of the c-editor
+	 * Gets the outline page of the c-editor.
+     * @return Outline page.
 	 */
 	public CContentOutlinePage getOutlinePage() {
 		if (fOutlinePage == null) {
@@ -291,7 +308,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		return fOutlinePage;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class required) {
@@ -402,7 +419,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		updateStatusLine();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
@@ -417,12 +434,17 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 						setSelection(range, !isActivePart());
 					}
 				} catch (CModelException e) {
+                    // Selection change not applied.
 				}
 			}
 		}
 	}
 
-	public void setSelection(ICElement element) {
+	/**
+     * Sets selection for C element. 
+     * @param element Element to select.
+	 */
+    public void setSelection(ICElement element) {
 
 		if (element == null || element instanceof ITranslationUnit) {
 			/*
@@ -445,7 +467,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		}
 	}
 
-	public void setSelection(ISourceReference element, boolean moveCursor) {
+    /**
+     * Sets selection for source reference.
+     * @param element Source reference to set.
+     * @param moveCursor Should cursor be moved.
+     */
+    public void setSelection(ISourceReference element, boolean moveCursor) {
 		if (element != null) {
 			StyledText  textWidget= null;
 			
@@ -459,6 +486,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			try {
 				setSelection(element.getSourceRange(), moveCursor);
 			} catch (CModelException e) {
+                // Selection not applied.
 			}
 		}
 	}
@@ -524,20 +552,29 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			}
 			return;
 		} catch (IllegalArgumentException x) {
+            // No information to the user
 		} catch (BadLocationException e) {
+            // No information to the user
 		}
 
 		if (moveCursor)
 			resetHighlightRange();
 	}
 
-	private boolean isActivePart() {
+	/**
+     * Checks is the editor active part. 
+     * @return <code>true</code> if editor is the active part of the workbench.
+	 */
+    private boolean isActivePart() {
 		IWorkbenchWindow window = getSite().getWorkbenchWindow();
 		IPartService service = window.getPartService();
 		return (this == service.getActivePart());
 	}
 
-	public void dispose() {
+    /**
+     * @see org.eclipse.ui.IWorkbenchPart#dispose()
+     */
+    public void dispose() {
 
 		if (fProjectionModelUpdater != null) {
 			fProjectionModelUpdater.uninstall();
@@ -610,7 +647,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		super.dispose();
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#canHandleMove(org.eclipse.ui.IEditorInput, org.eclipse.ui.IEditorInput)
 	 */
 	protected boolean canHandleMove(IEditorInput originalElement, IEditorInput movedElement) {
@@ -640,6 +677,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		return oldLanguage.equals(newLanguage);
 	}
 
+	/**
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
+	 */
 	protected void createActions() {
 		super.createActions();
 
@@ -706,7 +746,15 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
         action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_OUTLINE);
         setAction("OpenOutline", action); //$NON-NLS-1$*/
         
-		//Assorted action groupings
+        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoNextMemeber.", this, true);
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_NEXT_MEMBER);
+        setAction("GotoNextMember", action); //$NON-NLS-1$*/
+
+        action = new GoToNextPreviousMemberAction(CEditorMessages.getResourceBundle(), "GotoPrevMemeber.", this, false);
+        action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_PREVIOUS_MEMBER);
+        setAction("GotoPrevMember", action); //$NON-NLS-1$*/
+
+        //Assorted action groupings
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
 		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
 		
@@ -716,6 +764,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	
 	}
 
+	/**
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#editorContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
+	 */
 	public void editorContextMenuAboutToShow(IMenuManager menu) {
 		super.editorContextMenuAboutToShow(menu);
 
@@ -732,6 +783,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenDeclarations"); //$NON-NLS-1$
 
 		addAction(menu, ITextEditorActionConstants.GROUP_FIND, "OpenTypeHierarchy"); //$NON-NLS-1$
+        addAction(menu, ITextEditorActionConstants.GROUP_FIND, "GotoNextMember"); //$NON-NLS-1$
+        addAction(menu, ITextEditorActionConstants.GROUP_FIND, "GotoPrevMember"); //$NON-NLS-1$
 
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "AddIncludeOnSelection"); //$NON-NLS-1$
@@ -744,13 +797,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	
 	}
 
-	public void setOutlinePageInput(CContentOutlinePage page, IEditorInput input) {
+	/**
+     * Sets an input for the outline page.
+	 * @param page Page to set the input.
+	 * @param input Input to set.
+	 */
+	public static void setOutlinePageInput(CContentOutlinePage page, IEditorInput input) {
 		if (page != null) {
 			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
 			page.setInput(manager.getWorkingCopy(input));
 		}
 	}
 
+	/**
+     * Determines is folding enabled.
+	 * @return <code>true</code> if folding is enabled, <code>false</code> otherwise.
+	 */
 	boolean isFoldingEnabled() {
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_FOLDING_ENABLED);
 	}
@@ -764,6 +826,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * We attach our own mouseDown listener on the menu bar, 
 	 * and our own listener for cursor/key/selection events to update cursor position in
 	 * status bar.
+
+     * @param parent Parent composite of the control.
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -804,6 +868,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		preferences.addPropertyChangeListener(fPropertyChangeListener);
 	}
 
+	/**
+     * Returns a next error in the editor.
+	 * @param offset Offset to start check.
+	 * @param forward Do check forward.
+	 * @return Found error marker or <code>null</code>.
+	 */
 	private IMarker getNextError(int offset, boolean forward) {
 
 		IMarker nextError = null;

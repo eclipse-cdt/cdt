@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+  <!-- Extension to the SDK Tutorials Page. -->
+  <extensionContent alt-style="css/swt.properties" style="css/overview.css" path="tutorials/page-content/endAnchor">
+    <group label="C/C++ Development" id="java" style-id="tutorials-group">
+ <!--
+     <link 
+			url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.platform.cheatsheet&amp;input=org.eclipse.cdt.helloworld" 
+			label="CheatSheet to Build a simple C/C++ application" 
+			id="hello-world-cdt" 
+			style-id="tutorials-link">
+            <text>Create a small C/C++ program that will print "Hello, World" on the console</text>
+      </link>
+  -->
+      <link 
+			label="CDT Tutorials" 
+			url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.cdt.doc.user/getting_started/cdt_o_tutorial.htm" 
+			id="hello-world-cdt"
+			style-id="tutorials-link">
+		    <text>Go to the online help to see the tutorials</text>
+       </link>
+    </group>
+  </extensionContent>
+</introContent>

@@ -1,0 +1,9 @@
+a#cdt img { background-image : url(graphics/obj_48/cdtdev_obj.gif); }
+a#cdt:hover img { background-image : url(graphics/obj_48/cdtdevhov_obj.gif); }
+
+a#hello-world-cdt img { background-image : url(graphics/obj_48/capp_obj.gif); }
+a#hello-world-cdt:hover img { background-image : url(graphics/obj_48/capphov_obj.gif); }
+
+body {
+	background-image : url(../../org.eclipse.platform/css/graphics/contentpage/overview_wtr.jpg);
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+  <!-- Extension to the SDK Overview Page. -->
+  <extensionContent alt-style="css/swt.properties" style="css/overview.css" path="overview/page-content/overview-links/endAnchor">
+<!--
+       <link label="CDT Overview" url="http://org.eclipse.ui.intro/showPage?id=cdtoverview" id="cdt">
+          <text>Find out what CDT is all about</text>
+        </link>
+-->
+        <link label="C/C++ Online Docs" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.cdt.doc.user/concepts/cdt_o_concepts.htm" id="cdt">
+      		<text>Open the online documentation for the CDT</text>
+    	  </link>   
+   </extensionContent>     
+<!--
+  <page alt-style="css/swt.properties" style="css/overview.css" id="cdtoverview" style-id="page">
+    <title style-id="intro-header">Welcome to CDT 2.0</title>
+    <group id="links-background">
+      <group id="page-links">
+          <link label="C/C++ development" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.cdt.doc.user/concepts/cdt_o_concepts.htm" id="cdt">
+      		<text>Get familiar with developing C++ programs using Eclipse</text>
+    	  </link>     
+      </group>
+    </group>
+    <group id="action-links">
+      <link url="http://org.eclipse.ui.intro/close" label="Workbench" id="workbench">
+        <text>Go to the workbench</text>
+      </link>
+    </group> 
+  </page>
+-->
+</introContent>

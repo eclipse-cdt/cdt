@@ -1,3 +1,8 @@
+2004-06-15 Bogdan Gheorghe
+	Disable background type cache on startup for now
+	
+	* src/org/eclipse/cdt/internal/ui/preferences/WorkInProgressPreferencePage.java
+	
 2004-06-14 Bogdan Gheorghe
 	Fix for Bug 66748: Fixed in head - we now add a _cdtsrchlink_ label to all 
 	imports brought in by search and ensure that we don't delete any local files.

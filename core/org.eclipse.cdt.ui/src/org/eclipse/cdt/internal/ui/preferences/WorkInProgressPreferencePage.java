@@ -181,6 +181,12 @@ public class WorkInProgressPreferencePage extends PreferencePage
 	 */
 	public static void initDefaults(IPreferenceStore store) {
 		store.setDefault(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, false);
+		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
+		
+		if (prefs != null){
+			prefs.setValue(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, store.getString(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE));
+			CCorePlugin.getDefault().savePluginPreferences();
+		}
 	}
 	
 	/*

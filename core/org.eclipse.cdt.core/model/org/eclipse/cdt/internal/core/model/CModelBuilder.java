@@ -65,6 +65,7 @@ import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
 import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 
 
 public class CModelBuilder {
@@ -144,7 +145,16 @@ public class CModelBuilder {
 			IScannerInfo scanInfo = new ScannerInfo();
 			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(currentProject);
 			if (provider != null){
-				IScannerInfo buildScanInfo = provider.getScannerInformation(currentProject);
+				IScannerInfo buildScanInfo = null;
+				IResource res = translationUnit.getResource();
+				if (res != null) {
+					buildScanInfo = provider.getScannerInformation(res);
+				}
+				// Technically we should not do this.  But the managed scanner providers
+				// may rely on this behaviour i.e. only provide scannerInfo for projects
+				if (buildScanInfo == null) {
+					buildScanInfo = provider.getScannerInformation(currentProject);
+				}
 				if (buildScanInfo != null){
 					scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
 				}

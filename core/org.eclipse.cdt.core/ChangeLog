@@ -1,5 +1,9 @@
 2004-05-25 Alain Magloire
 
+	Ask the IScannerInfo for the IResource.
+
+2004-05-25 Alain Magloire
+
 	Provide better orderin of the ScannerProvider.
 	The other of the include 
 	We need to reorder the include/macros:

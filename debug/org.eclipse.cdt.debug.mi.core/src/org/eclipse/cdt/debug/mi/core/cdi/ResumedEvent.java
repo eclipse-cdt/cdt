@@ -29,7 +29,39 @@ public class ResumedEvent implements ICDIResumedEvent {
 	 */
 	public int getType() {
 		MIRunningEvent running = (MIRunningEvent)event;
-		return running.getType();
+		int type = running.getType();
+		int cdiType = 0;
+		switch (type) {
+			case MIRunningEvent.CONTINUE:
+				cdiType = ICDIResumedEvent.CONTINUE;
+			break;
+
+			case MIRunningEvent.UNTIL:
+			case MIRunningEvent.NEXT:
+				cdiType = ICDIResumedEvent.STEP_OVER;
+			break;
+
+			case MIRunningEvent.NEXTI:
+				cdiType = ICDIResumedEvent.STEP_OVER_INSTRUCTION;
+			break;
+
+			case MIRunningEvent.STEP:
+				cdiType = ICDIResumedEvent.STEP_INTO;
+			break;
+
+			case MIRunningEvent.STEPI:
+				cdiType = ICDIResumedEvent.STEP_INTO_INSTRUCTION;
+			break;
+
+			case MIRunningEvent.FINISH:
+				cdiType = ICDIResumedEvent.STEP_RETURN;
+			break;
+
+			//MIRunningEvent.UNTIL:
+			//cdiType = ICDIResumedEvent.STEP_UNTIL;
+			//break;
+		}
+		return cdiType;
 	}
 
 }

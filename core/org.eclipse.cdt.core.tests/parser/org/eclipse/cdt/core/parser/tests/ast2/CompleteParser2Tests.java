@@ -1476,8 +1476,11 @@ public class CompleteParser2Tests extends TestCase {
 		
 		ICPPConstructor ctor = A.getConstructors()[0];
 		
+		IProblemBinding fp = (IProblemBinding) col.getName(12).resolveBinding();
+		assertEquals( fp.getID(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND );
+		
 		assertInstances( col, N, 3 );
-		assertInstances( col, f, 2 );
+		assertInstances( col, f, 1 );
 		assertInstances( col, A, 3 );
 		assertInstances( col, ctor, 2 );
 	}

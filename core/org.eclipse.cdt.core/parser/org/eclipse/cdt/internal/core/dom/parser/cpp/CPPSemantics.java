@@ -724,8 +724,12 @@ public class CPPSemantics {
 				return;
 			
 			//if still not found, loop and check our containing scope
-			if( data.qualified() && !data.usingDirectives.isEmpty() )
-				data.usingDirectivesOnly = true;
+			if( data.qualified() ) {
+				if( !data.usingDirectives.isEmpty() )
+					data.usingDirectivesOnly = true;
+				else
+					break;
+			}
 			
 			if( blockItem != null )
 				node = blockItem;

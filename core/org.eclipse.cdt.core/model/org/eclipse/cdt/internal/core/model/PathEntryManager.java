@@ -674,7 +674,7 @@ public class PathEntryManager implements ICDescriptorListener {
 		}
 
 		// check fo the base path
-		IPath basePath = null;
+		IPath basePath = new Path(""); //$NON-NLS-1$
 		if (element.hasAttribute(ATTRIBUTE_BASE_PATH)) {
 			basePath = new Path(element.getAttribute(ATTRIBUTE_BASE_PATH));
 		}

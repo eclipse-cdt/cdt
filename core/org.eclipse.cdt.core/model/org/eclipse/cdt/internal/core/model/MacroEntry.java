@@ -39,7 +39,7 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 	 * @return String
 	 */
 	public String getMacroValue() {
-		return macroName;
+		return macroValue;
 	}
 
 	public boolean equals(Object obj) {

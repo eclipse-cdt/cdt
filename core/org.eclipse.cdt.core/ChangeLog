@@ -1,4 +1,14 @@
 2004-04-20 David Inglis
+	
+	Fixed up some small bugs with the macro paths
+	
+	* model/org/eclipse/cdt/internal/core/model/MacroEntry.java
+
+	Initialize baseref to always be a Path("")
+
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java	
+	
+2004-04-20 David Inglis
 
 	Added more CModelException throwing in model essentially if the model fails to create
 	a info an exception is thrown, it we *not* return null.

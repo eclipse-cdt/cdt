@@ -256,7 +256,20 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	 * @return the selected binary or <code>null</code> if none.
 	 */
 	protected IBinary chooseBinary(List binList, String mode) {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new CElementLabelProvider());
+		ILabelProvider provider = new CElementLabelProvider() {
+			public String getText(Object element) {
+				if (element instanceof IBinary) {
+					IBinary bin = (IBinary)element;
+					StringBuffer name = new StringBuffer();
+					name.append(bin.getPath().toString());
+					name.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]");
+					return name.toString();
+				}
+				return super.getText(element);
+			}
+		};
+
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), provider);
 		dialog.setElements(binList.toArray());
 		dialog.setTitle("C Local Application"); //$NON-NLS-1$
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {

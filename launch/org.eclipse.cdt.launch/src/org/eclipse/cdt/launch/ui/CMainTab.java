@@ -198,7 +198,19 @@ public class CMainTab extends CLaunchConfigurationTab {
 				"Project must first be entered before searching for a program");
 			return;
 		}
-		ILabelProvider labelProvider = new CElementLabelProvider();
+		ILabelProvider labelProvider = new CElementLabelProvider() {
+			public String getText(Object element) {
+				if (element instanceof IBinary) {
+					IBinary bin = (IBinary)element;
+					StringBuffer name = new StringBuffer();
+					name.append(bin.getPath().toString());
+					name.append(" - [" + bin.getCPU() + (bin.isLittleEndian() ? "le" : "be") + "]");
+					return name.toString();
+				}
+				return super.getText(element);
+			}
+		};
+		
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(getBinaryFiles(getCProject()));
 		dialog.setMessage("Choose a &program to run");

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003,2004 IBM Corporation and others.
+ * Copyright (c) 2003,2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -220,7 +220,9 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	private static final String MOD_INCL = COMMENT + ".module.make.includes";	//$NON-NLS-1$	
 	private static final String MOD_LIST = COMMENT + ".module.list";	//$NON-NLS-1$	
 	private static final String MOD_RULES = COMMENT + ".build.rule";	//$NON-NLS-1$	
-	private static final String SRC_LISTS = COMMENT + ".source.list";	//$NON-NLS-1$	
+	private static final String SRC_LISTS = COMMENT + ".source.list";	//$NON-NLS-1$
+	
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	
 	// Local variables needed by generator
 	private String buildTargetName;
@@ -333,7 +335,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	 * @param resource
 	 */
 	private void addRule(String relativePath, StringBuffer buffer, IResource resource) {
-		String buildFlags = null;
 		String resourceName = getFileName(resource);
 		String inputExtension = resource.getFileExtension();
 		String cmd = info.getToolForSource(inputExtension);
@@ -403,34 +404,19 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 		buffer.append(TAB + AT + ECHO + WHITESPACE + SINGLE_QUOTE + MESSAGE_START_FILE + WHITESPACE + IN_MACRO + SINGLE_QUOTE + NEWLINE);
 		 
 		IManagedCommandLineInfo cmdLInfo = null;
-		String[] inputs = null;
+		String[] inputs;
 		if( resConfig != null) {
 			ITool[] tools = resConfig.getTools(); 
-			try {
-				buildFlags = tools[0].getToolFlags();
-			} catch (BuildException e) {
-				buildFlags = null;
-			}
 			outflag = tools[0].getOutputFlag();
 			outputPrefix = tools[0].getOutputPrefix();
 			cmd = tools[0].getToolCommand();
-			//	The command to build
-			
-			String fileName;
-			String rootDir = "../"; //$NON-NLS-1$
-			if (isItLinked) {
-				fileName = resourcePath;
-			} else {
-				fileName = rootDir + relativePath + resConfig.getName();
-			}
-			
-			inputs = new String[1]; inputs[0] = fileName;
+			inputs = new String[1]; inputs[0] = IN_MACRO;
 			String[] flags = null;
 			try { 
 				flags = tools[0].getCommandFlags();
 			} catch( BuildException ex ) {
 				// TODO add some routines to catch this
-				flags = null;
+				flags = EMPTY_STRING_ARRAY;
 			}
 			IManagedCommandLineGenerator cmdLGen = tools[0].getCommandLineGenerator();
 			cmdLInfo = cmdLGen.generateCommandLineInfo( tools[0], cmd, flags, outflag, outputPrefix,
@@ -440,7 +426,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 			buffer.append(TAB + AT + ECHO + WHITESPACE + buildCmd + NEWLINE);
 			buffer.append(TAB + AT + buildCmd);
 		} else {
-			buildFlags = info.getFlagsForSource(inputExtension);
+			String buildFlags = info.getFlagsForSource(inputExtension);
 			outflag = info.getOutputFlag(outputExtension);
 			outputPrefix = info.getOutputPrefix(outputExtension);
 			String[] flags = buildFlags.split( "\\s" ); //$NON-NLS-1$

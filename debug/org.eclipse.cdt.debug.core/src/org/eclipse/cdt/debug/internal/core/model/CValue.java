@@ -129,9 +129,8 @@ public class CValue extends CDebugElement implements ICValue
 			List vars = getCDIVariables();
 			if ( getType() == ICValue.TYPE_ARRAY )
 			{
-				int length = getNumberOfChildren();
-				if ( length > 0 )
-					fVariables = CArrayPartition.splitArray( (CDebugTarget)getDebugTarget(), vars, 0, length - 1 );
+				if ( vars.size() > 0 )
+					fVariables = CArrayPartition.splitArray( (CDebugTarget)getDebugTarget(), vars, 0, vars.size() - 1 );
 			}
 			else
 			{

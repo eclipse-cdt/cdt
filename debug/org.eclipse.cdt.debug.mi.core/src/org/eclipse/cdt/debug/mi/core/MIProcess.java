@@ -110,15 +110,17 @@ public class MIProcess extends Process {
 	 * @see java.lang.Process#destroy()
 	 */
 	public void destroy() {
-		CommandFactory factory = session.getCommandFactory();
-		MIExecAbort abort = factory.createMIExecAbort();
-		CLICommand yes = new CLICommand("yes") {
-			public void setToken() { }
-		};
-		try {
-			session.postCommand(abort);
-			session.postCommand(yes);
-		} catch (MIException e) {
+		if (!isTerminated()) {
+			CommandFactory factory = session.getCommandFactory();
+			MIExecAbort abort = factory.createMIExecAbort();
+			CLICommand yes = new CLICommand("yes") {
+				public void setToken() { }
+			};
+			try {
+				session.postCommand(abort);
+				session.postCommand(yes);
+			} catch (MIException e) {
+			}
 		}
 		// Do not wait for answer.
 	}

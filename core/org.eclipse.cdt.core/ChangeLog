@@ -1,3 +1,12 @@
+2002-11-06 Alain Magloire
+
+	* src/org/eclipse/cdt/ErrorParserManager.java (parse):
+	Unused code removed.
+	(checkLine): String.trim() the line to remove trailing
+	newline.
+	* src/org/eclipse/cdt/internal/errorparser/MakeErrorParser.java (processLine):
+	When there is no resources set the lineno to -1.
+
 2002-11-06 David Inglis
 	* index/org/eclipse/cdt/internal/core/index/CTagsRunner.java
 	fixed NPE when projects are deleted.

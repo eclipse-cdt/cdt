@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,8 @@ import org.eclipse.cdt.utils.debug.DebugType;
 import org.eclipse.cdt.utils.debug.DebugUnknownType;
 import org.eclipse.cdt.utils.debug.DebugVariableKind;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
+import org.eclipse.cdt.utils.debug.tools.DebugSym;
+import org.eclipse.cdt.utils.debug.tools.DebugSymsRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
 
 public class Stabs {
@@ -45,8 +46,6 @@ public class Stabs {
 	byte[] stabData;
 	byte[] stabstrData;
 	boolean isLe;
-
-	StabSym[] entries;
 
 	boolean inCompilationUnit;
 	boolean inFunction;
@@ -70,32 +69,6 @@ public class Stabs {
 
 	public Stabs(byte[] stab, byte[] stabstr, boolean le) {
 		init(stab, stabstr, le);
-	}
-
-	public StabSym[] getEntries() throws IOException {
-		if (entries == null) {
-			parse();
-		}
-		return entries;
-	}
-
-	public StabSym getEntry(long addr) throws IOException {
-		if (entries == null) {
-			parse();
-		}
-		int insertion = Arrays.binarySearch(entries, new Long(addr));
-		if (insertion >= 0) {
-			return entries[insertion];
-		}
-		if (insertion == -1) {
-			return null;
-		}
-		insertion = -insertion - 1;
-		StabSym entry = entries[insertion - 1];
-		if (addr < (entry.addr + entry.size)) {
-			return entries[insertion - 1];
-		}
-		return null;
 	}
 
 	void init(Elf exe) throws IOException {
@@ -155,12 +128,6 @@ public class Stabs {
 			return (short) (((bytes[offset + 1] & 0xff) << 8) + (bytes[offset] & 0xff));
 		}
 		return (short) (((bytes[offset] & 0xff) << 8) + (bytes[offset + 1] & 0xff));
-	}
-
-	void parse() {
-		StabSymsRequestor stabreq = new StabSymsRequestor();
-		parse(stabreq);
-		entries = stabreq.getSortedEntries();
 	}
 
 	public void parse(IDebugEntryRequestor requestor) {
@@ -1365,18 +1332,16 @@ public class Stabs {
 		return (DebugType) mapTypes.get(tn);
 	}
 
-	public void print() {
-		for (int i = 0; i < entries.length; i++) {
-			StabSym entry = entries[i];
-			System.out.println(entry);
-		}
-	}
-
 	public static void main(String[] args) {
 		try {
+			DebugSymsRequestor symreq = new DebugSymsRequestor();				
 			Stabs stabs = new Stabs(args[0]);
-			stabs.parse();
-			stabs.print();
+			stabs.parse(symreq);
+			DebugSym[] entries = symreq.getEntries();
+			for (int i = 0; i < entries.length; i++) {
+				DebugSym entry = entries[i];
+				System.out.println(entry);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

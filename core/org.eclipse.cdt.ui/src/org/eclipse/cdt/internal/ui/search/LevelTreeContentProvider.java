@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.search.ui.text.Match;
@@ -100,14 +101,26 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 					}
 				}
 			}
-		}
+		} 
 		
 		return possibleParent;
 	}
 
 	private Object internalGetParent(Object child) {
-		return fContentProvider.getParent(child);
+		Object parent = fContentProvider.getParent(child);
+		
+		if (parent == null){
+		//Could be an external file
+			if (child instanceof CSearchMatch){
+				BasicSearchMatch match = ((CSearchMatch) child).getSearchMatch();
+				IPath location=match.getLocation();
+				return location;
+			}
+		}
+		
+		return parent;
 	}
+
 
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);

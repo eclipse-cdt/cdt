@@ -23,6 +23,7 @@ import org.eclipse.cdt.internal.ui.search.NewSearchResultCollector;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.search.ui.ISearchResultViewEntry;
@@ -90,6 +91,9 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			
 			elementType = new Integer(elType).intValue();
 			visibility = new Integer(elViz).intValue();
+		} else if (element instanceof IPath){
+			//External File; use Translation Unit
+			elementType = ICElement.C_UNIT;
 		}
 		
 		
@@ -181,6 +185,9 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			String elPath = elString.substring(locationIndex+NewSearchResultCollector.LOCATION_LENGTH, elementIndex);
 			
 			return getCSearchSortElementText(elParent, elName, elPath);
+		}
+		else if (element instanceof IPath){
+			return ((IPath) element).toOSString();
 		}
 		
 		if( match == null )

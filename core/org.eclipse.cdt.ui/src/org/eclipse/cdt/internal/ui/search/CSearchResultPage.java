@@ -290,7 +290,10 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		
 		if (canonicalPath != null && (!(originalFile.isLinked()))){
 			IPath path = new Path(canonicalPath);
-			originalFile = CUIPlugin.getWorkspace().getRoot().getFileForLocation(path);
+			
+			IFile[] matches = CUIPlugin.getWorkspace().getRoot().findFilesForLocation(path);
+			if (matches.length > 0)
+				originalFile = matches[0];
 		}
 		return originalFile;
 	}

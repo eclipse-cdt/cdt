@@ -361,7 +361,7 @@ public class PE {
 				attrib.cpu = "arm64";
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_I386:
-				attrib.cpu = "i386";
+				attrib.cpu = "x86";
 			break;
 			case PEConstants.IMAGE_FILE_MACHINE_IA64:
 				attrib.cpu = "ia64";

@@ -487,7 +487,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 			public void run() {
 				try {
-					getCDITarget().resume();
+					getCDITarget().resume( false );
 				}
 				catch( CDIException e ) {
 					setState( oldState );
@@ -1350,7 +1350,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 		ICDILocation location = getCDITarget().createLocation( fileName, null, lineNumber );
 		try {
-			getCDITarget().runUntil( location );
+			getCDITarget().stepUntil( location );
 		}
 		catch( CDIException e ) {
 			if ( skipBreakpoints ) {
@@ -1537,7 +1537,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		}
 		ICDILocation location = getCDITarget().createLocation( address );
 		try {
-			getCDITarget().runUntil( location );
+			getCDITarget().stepUntil( location );
 		}
 		catch( CDIException e ) {
 			if ( skipBreakpoints ) {
@@ -1567,7 +1567,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 			public void run() {
 				try {
-					getCDITarget().signal();
+					getCDITarget().resume( false );
 				}
 				catch( CDIException e ) {
 					setState( oldState );
@@ -1615,7 +1615,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return;
 		ICDILocation location = getCDITarget().createLocation( fileName, null, lineNumber );
 		try {
-			getCDITarget().jump( location );
+			getCDITarget().resume( location );
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), e );
@@ -1638,7 +1638,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return;
 		ICDILocation location = getCDITarget().createLocation( address );
 		try {
-			getCDITarget().jump( location );
+			getCDITarget().resume( location );
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), e );

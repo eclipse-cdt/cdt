@@ -425,7 +425,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 
 			public void run() {
 				try {
-					getCDIThread().resume();
+					getCDIThread().resume( false );
 				}
 				catch( CDIException e ) {
 					setState( oldState );
@@ -521,10 +521,10 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			public void run() {
 				try {
 					if ( !isInstructionsteppingEnabled() ) {
-						getCDIThread().stepInto();
+						getCDIThread().stepInto( 1 );
 					}
 					else {
-						getCDIThread().stepIntoInstruction();
+						getCDIThread().stepIntoInstruction( 1 );
 					}
 				}
 				catch( CDIException e ) {
@@ -548,10 +548,10 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			public void run() {
 				try {
 					if ( !isInstructionsteppingEnabled() ) {
-						getCDIThread().stepOver();
+						getCDIThread().stepOver( 1 );
 					}
 					else {
-						getCDIThread().stepOverInstruction();
+						getCDIThread().stepOverInstruction( 1 );
 					}
 				}
 				catch( CDIException e ) {
@@ -568,15 +568,19 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	public void stepReturn() throws DebugException {
 		if ( !canStepReturn() )
 			return;
+		IStackFrame[] frames = getStackFrames();
+		if ( frames.length == 0 )
+			return;
+		final IStackFrame f = frames[0]; 
 		final CDebugElementState oldState = getState();
 		setState( CDebugElementState.STEPPING );
 		DebugPlugin.getDefault().asyncExec( new Runnable() {
 
 			public void run() {
 				try {
-					getCDIThread().stepReturn();
+					f.stepReturn();
 				}
-				catch( CDIException e ) {
+				catch( DebugException e ) {
 					setState( oldState );
 					failed( CoreModelMessages.getString( "CThread.6" ), e ); //$NON-NLS-1$
 				}
@@ -923,7 +927,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		return ((CDebugTarget)getDebugTarget()).isInstructionSteppingEnabled();
 	}
 
-	protected void failed( String message, CDIException e ) {
+	protected void failed( String message, Throwable e ) {
 		MultiStatus ms = new MultiStatus( CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, message, null );
 		ms.add( new Status( IStatus.ERROR, CDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
 		CDebugUtils.error( ms, this );

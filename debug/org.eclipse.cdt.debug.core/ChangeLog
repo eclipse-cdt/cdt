@@ -1,4 +1,11 @@
 2004-09-13 Mikhail Khodjaiants
+	Moved to the new CDI interfaces.
+	* CDebugTarget.java
+	* CSignal.java
+	* CStackFrame.java
+	* CThread.java
+
+2004-09-13 Mikhail Khodjaiants
 	Fix for bug 72555: "Toggle breakpoint" action doesn't remove function breakpoints from editor.
 	* CDIDebugModel.java
 

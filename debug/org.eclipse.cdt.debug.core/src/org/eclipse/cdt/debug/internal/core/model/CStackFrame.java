@@ -234,7 +234,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public boolean canStepInto() {
 		try {
-			return exists() && isTopStackFrame() && getThread().canStepInto();
+			return exists() /*&& isTopStackFrame()*/ && getThread().canStepInto();
 		}
 		catch( DebugException e ) {
 			logError( e );
@@ -295,15 +295,8 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
 	public void stepOver() throws DebugException {
-		if ( !canStepOver() ) {
-			return;
-		}
-		if ( isTopStackFrame() ) {
+		if ( canStepOver() ) {
 			getThread().stepOver();
-		}
-		else {
-			//			((CThread)getThread()).stepToFrame( this );
-			getThread().stepOver(); // for now
 		}
 	}
 
@@ -311,18 +304,13 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
 	public void stepReturn() throws DebugException {
-		if ( !canStepReturn() ) {
-			return;
-		}
-		if ( isTopStackFrame() ) {
-			getThread().stepReturn();
-		}
-		else {
-			/*
-			 * List frames = ((CThread)getThread()).computeStackFrames(); int index = frames.indexOf( this ); if ( index >= 0 && index < frames.size() - 1 ) {
-			 * IStackFrame nextFrame = (IStackFrame)frames.get( index + 1 ); ((CThread)getThread()).stepToFrame( nextFrame ); }
-			 */
-			getThread().stepReturn(); // for now
+		if ( canStepReturn() ) {
+			try {
+				getCDIStackFrame().stepReturn();
+			}
+			catch( CDIException e ) {
+				targetRequestFailed( e.getMessage(), null );
+			}
 		}
 	}
 

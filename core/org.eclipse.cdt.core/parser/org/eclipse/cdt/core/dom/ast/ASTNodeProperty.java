@@ -18,14 +18,34 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTNodeProperty {
+public class ASTNodeProperty {
 
-	/**
+	private String name;
+
+    /**
+     * @param n
+     */
+    public ASTNodeProperty(String n) {
+        this.name = n;
+    }
+
+
+    /**
 	 * Each property has a name to help distinguish it from other
 	 * properties of a node.
 	 * 
 	 * @return the name of the property
 	 */
-	public String getName();
+	public String getName()
+	{
+	    return name;
+	}
 	
+	
+    /**
+     * @param name The name to set.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 }

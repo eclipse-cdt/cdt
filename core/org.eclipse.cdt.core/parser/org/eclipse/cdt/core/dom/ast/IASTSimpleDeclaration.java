@@ -27,6 +27,8 @@ public interface IASTSimpleDeclaration extends IASTDeclaration, IASTNode {
 	 * @return the declSpecifier object
 	 */
 	public IASTDeclSpecifier getDeclSpecifier();
+	
+	public void setDeclSpecifier( IASTDeclSpecifier declSpec );
 
 	/**
 	 * This returns the list of declarators in this declaration.
@@ -34,5 +36,7 @@ public interface IASTSimpleDeclaration extends IASTDeclaration, IASTNode {
 	 * @return list of IASTDeclarator
 	 */
 	public List getDeclarators();
+	
+	public void addDeclarator( IASTDeclarator declarator );
 	
 }

@@ -20,4 +20,6 @@ public interface ICASTDeclSpecifier extends IASTDeclSpecifier {
 	// Extra type qualifier in C
 	public boolean isRestrict();
 	
+	public void setRestrict( boolean value );
+	
 }

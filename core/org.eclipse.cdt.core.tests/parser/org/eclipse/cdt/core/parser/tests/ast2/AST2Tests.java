@@ -10,14 +10,15 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.dom.ast.ASTFactory;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -40,6 +41,25 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.NullLogService;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.tests.parser2.QuickParser2Tests.ProblemCollector;
+import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser2.ISourceCodeParser;
+import org.eclipse.cdt.internal.core.parser2.c.ANSICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.c.GNUCSourceParser;
+import org.eclipse.cdt.internal.core.parser2.c.ICParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.cpp.ANSICPPParserExtensionConfiguration;
+import org.eclipse.cdt.internal.core.parser2.cpp.GNUCPPSourceParser;
+import org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration;
 
 /**
  * Test the new AST.
@@ -48,14 +68,56 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
  */
 public class AST2Tests extends TestCase {
 
-	public void testBasicFunction() {
-		StringBuffer buff = new StringBuffer();
-		buff.append("int x;\n");
-		buff.append("void f(int y) {\n");
-		buff.append("   int z = x + y;\n");
-		buff.append("}\n");
+	private static final ISourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
+    private static final IParserLogService NULL_LOG = new NullLogService();
+    
+	/**
+     * @param string
+     * @param c
+     * @return
+	 * @throws ParserException
+     */
+    protected IASTTranslationUnit parse(String code, ParserLanguage lang) throws ParserException {
+        ProblemCollector collector = new ProblemCollector();
+        IScanner scanner = ParserFactory.createScanner(new CodeReader(code
+                .toCharArray()), new ScannerInfo(), ParserMode.COMPLETE_PARSE,
+                lang, NULL_REQUESTOR,
+                NULL_LOG, Collections.EMPTY_LIST);
+        ISourceCodeParser parser2 = null;
+        if( lang == ParserLanguage.CPP )
+        {
+            ICPPParserExtensionConfiguration config = null;
+            config = new ANSICPPParserExtensionConfiguration();
+            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, collector,
+                NULL_LOG,
+                config );
+        }
+        else
+        {
+            ICParserExtensionConfiguration config = null;
+             config = new ANSICParserExtensionConfiguration();
+            
+            parser2 = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, collector, 
+                NULL_LOG, config );
+        }
+        IASTTranslationUnit tu = parser2.parse();
+        if( parser2.encounteredError() )
+            throw new ParserException( "FAILURE"); //$NON-NLS-1$
+        
+        assertTrue( collector.hasNoProblems() );
 
-		IASTTranslationUnit tu = ASTFactory.parseString(buff);
+        return tu;
+    }
+
+
+    public void testBasicFunction() throws ParserException {
+		StringBuffer buff = new StringBuffer();
+		buff.append("int x;\n"); //$NON-NLS-1$
+		buff.append("void f(int y) {\n"); //$NON-NLS-1$
+		buff.append("   int z = x + y;\n"); //$NON-NLS-1$
+		buff.append("}\n"); //$NON-NLS-1$
+
+		IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C );
 		IScope globalScope = tu.getScope();
 
 		List declarations = tu.getDeclarations();
@@ -69,10 +131,7 @@ public class AST2Tests extends TestCase {
 		IASTDeclarator declor_x = (IASTDeclarator) decl_x.getDeclarators().get(
 				0);
 		IASTName name_x = declor_x.getName();
-		assertEquals("x", name_x.toString());
-		// resolve the binding to get the variable object
-		IVariable var_x = (IVariable) name_x.resolveBinding();
-		assertEquals(globalScope, var_x.getScope());
+		assertEquals("x", name_x.toString()); //$NON-NLS-1$
 
 		// function - void f()
 		IASTFunctionDefinition funcdef_f = (IASTFunctionDefinition) declarations
@@ -80,12 +139,10 @@ public class AST2Tests extends TestCase {
 		IASTSimpleDeclSpecifier declspec_f = (IASTSimpleDeclSpecifier) funcdef_f
 				.getDeclSpecifier();
 		assertEquals(IASTSimpleDeclSpecifier.t_void, declspec_f.getType());
-		IASTFunctionDeclarator declor_f = (IASTFunctionDeclarator) funcdef_f
+		IASTFunctionDeclarator declor_f = funcdef_f
 				.getDeclarator();
 		IASTName name_f = declor_f.getName();
-		assertEquals("f", name_f.toString());
-		IFunction func_f = (IFunction) name_f.resolveBinding();
-		assertEquals(globalScope, func_f.getScope());
+		assertEquals("f", name_f.toString()); //$NON-NLS-1$
 
 		// parameter - int y
 		IASTParameterDeclaration decl_y = (IASTParameterDeclaration) declor_f
@@ -95,9 +152,7 @@ public class AST2Tests extends TestCase {
 		assertEquals(IASTSimpleDeclSpecifier.t_int, declspec_y.getType());
 		IASTDeclarator declor_y = decl_y.getDeclarator();
 		IASTName name_y = declor_y.getName();
-		assertEquals("y", name_y.toString());
-		IParameter var_y = (IParameter) name_y.resolveBinding();
-		assertEquals(func_f, var_y.getScope());
+		assertEquals("y", name_y.toString()); //$NON-NLS-1$
 
 		// int z
 		IASTCompoundStatement body_f = (IASTCompoundStatement) funcdef_f
@@ -112,9 +167,7 @@ public class AST2Tests extends TestCase {
 		IASTDeclarator declor_z = (IASTDeclarator) decl_z.getDeclarators().get(
 				0);
 		IASTName name_z = declor_z.getName();
-		assertEquals("z", name_z.toString());
-		IVariable var_z = (IVariable) name_z.resolveBinding();
-		assertEquals(func_f, var_z.getScope());
+		assertEquals("z", name_z.toString()); //$NON-NLS-1$
 
 		// = x + y
 		IASTBinaryExpression init_z = (IASTBinaryExpression) declor_z
@@ -122,36 +175,50 @@ public class AST2Tests extends TestCase {
 		assertEquals(IASTBinaryExpression.op_plus, init_z.getOperator());
 		IASTIdExpression ref_x = (IASTIdExpression) init_z.getOperand1();
 		IASTName name_ref_x = ref_x.getName();
-		assertEquals("x", name_ref_x.toString());
-		// make sure the variable referenced is the same one we declared above
-		assertEquals(var_x, (IVariable) name_ref_x.resolveBinding());
+		assertEquals("x", name_ref_x.toString()); //$NON-NLS-1$
 
 		IASTIdExpression ref_y = (IASTIdExpression) init_z.getOperand2();
 		IASTName name_ref_y = ref_y.getName();
-		assertEquals("y", name_ref_y.toString());
-		assertEquals(var_y, (IVariable) name_ref_y.resolveBinding());
+		assertEquals("y", name_ref_y.toString()); //$NON-NLS-1$
+		
+		//BINDINGS
+		// resolve the binding to get the variable object
+		IVariable var_x = (IVariable) name_x.resolveBinding();
+		assertEquals(globalScope, var_x.getScope());
+		IFunction func_f = (IFunction) name_f.resolveBinding();
+		assertEquals(globalScope, func_f.getScope());
+		IParameter var_y = (IParameter) name_y.resolveBinding();
+		assertEquals(func_f, var_y.getScope());
+
+		IVariable var_z = (IVariable) name_z.resolveBinding();
+		assertEquals(func_f, var_z.getScope());
+
+		// make sure the variable referenced is the same one we declared above
+		assertEquals(var_x, name_ref_x.resolveBinding());
+		assertEquals(var_y, name_ref_y.resolveBinding());
+
 	}
 
-	public void testSimpleStruct() {
+    public void testSimpleStruct() throws ParserException {
 		StringBuffer buff = new StringBuffer();
-		buff.append("typedef struct {\n");
-		buff.append("    int x;\n");
-		buff.append("} S;\n");
+		buff.append("typedef struct {\n"); //$NON-NLS-1$
+		buff.append("    int x;\n"); //$NON-NLS-1$
+		buff.append("} S;\n"); //$NON-NLS-1$
 
-		buff.append("void f() {\n");
-		buff.append("    S myS;\n");
-		buff.append("    myS.x = 5;");
-		buff.append("}");
+		buff.append("void f() {\n"); //$NON-NLS-1$
+		buff.append("    S myS;\n"); //$NON-NLS-1$
+		buff.append("    myS.x = 5;"); //$NON-NLS-1$
+		buff.append("}"); //$NON-NLS-1$
 
-		IASTTranslationUnit tu = ASTFactory.parseString(buff);
+		IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C );
 		IASTSimpleDeclaration decl = (IASTSimpleDeclaration)tu.getDeclarations().get(0);
 		IASTCompositeTypeSpecifier type = (IASTCompositeTypeSpecifier)decl.getDeclSpecifier();
 		
 		// it's a typedef
-		assertEquals(IASTSimpleDeclSpecifier.sc_typedef, type.getStorageClass());
+		assertEquals(IASTDeclSpecifier.sc_typedef, type.getStorageClass());
 		// this an anonymous struct
 		IASTName name_struct = type.getName();
-		assertNull("", name_struct.toString());
+		assertNull("", name_struct.toString()); //$NON-NLS-1$
 		ICompositeType type_struct = (ICompositeType) name_struct
 				.resolveBinding();
 		// member - x
@@ -164,12 +231,12 @@ public class AST2Tests extends TestCase {
 		IASTFieldDeclarator tor_x = (IASTFieldDeclarator) decl_x
 				.getDeclarators().get(0);
 		IASTName name_x = tor_x.getName();
-		assertEquals("x", name_x.toString());
+		assertEquals("x", name_x.toString()); //$NON-NLS-1$
 		IField field_x = (IField)name_x.resolveBinding();
 		// declarator S
 		IASTDeclarator tor_S = (IASTDeclarator) decl.getDeclarators().get(0);
 		IASTName name_S = tor_S.getName();
-		assertEquals("S", name_S.toString());
+		assertEquals("S", name_S.toString()); //$NON-NLS-1$
 		ITypedef typedef_S = (ITypedef) name_S.resolveBinding();
 		// make sure the typedef is hooked up correctly
 		assertEquals(type_struct, typedef_S.getType());
@@ -213,6 +280,6 @@ public class AST2Tests extends TestCase {
 		assertEquals(field_x, fieldref.getFieldName().resolveBinding());
 		// while we're at it make sure the literal is correct
 		IASTLiteralExpression lit_5 = (IASTLiteralExpression)assexpr.getOperand2();
-		assertEquals("5", lit_5.toString());
+		assertEquals("5", lit_5.toString()); //$NON-NLS-1$
 	}
 }

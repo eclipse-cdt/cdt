@@ -15,9 +15,19 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IGCCToken;
@@ -32,9 +42,7 @@ import org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.parser2.DeclarationWrapper;
 import org.eclipse.cdt.internal.core.parser2.Declarator;
 import org.eclipse.cdt.internal.core.parser2.IDeclarator;
-import org.eclipse.cdt.internal.core.parser2.IDeclaratorOwner;
 import org.eclipse.cdt.internal.core.parser2.IParameterCollection;
-import org.eclipse.cdt.internal.core.parser2.TypeId;
 import org.eclipse.cdt.internal.core.parser2.cpp.IProblemRequestor;
 
 /**
@@ -59,23 +67,30 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 .supportAlignOfUnaryExpression());
         supportGCCStyleDesignators = config.supportGCCStyleDesignators();
     }
+    
+    /**
+     * @param d
+     */
+    protected void throwAwayMarksForInitializerClause() {
+        simpleDeclarationMark = null;
+    }
 
-    protected void optionalCInitializer(Declarator d)
+
+    protected IASTInitializer optionalCInitializer()
             throws EndOfFileException, BacktrackException {
-        final Object scope = d.getDeclarationWrapper().getScope();
         if (LT(1) == IToken.tASSIGN) {
             consume(IToken.tASSIGN);
-            throwAwayMarksForInitializerClause(d);
-            d.setInitializerClause(cInitializerClause(scope,
-                    Collections.EMPTY_LIST));
+            throwAwayMarksForInitializerClause();
+            return cInitializerClause(Collections.EMPTY_LIST);
         }
+        return null;
     }
 
     /**
      * @param scope
      * @return
      */
-    protected Object cInitializerClause(Object scope, List designators)
+    protected IASTInitializer cInitializerClause(List designators)
             throws EndOfFileException, BacktrackException {
         IToken la = LA(1);
         int startingOffset = la.getOffset();
@@ -89,11 +104,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 int checkHashcode = LA(1).hashCode();
                 // required at least one initializer list
                 // get designator list
-                List newDesignators = designatorList(scope);
+                List newDesignators = designatorList();
                 if (newDesignators.size() != 0)
                     if (LT(1) == IToken.tASSIGN)
                         consume(IToken.tASSIGN);
-                Object initializer = cInitializerClause(scope, newDesignators);
+                Object initializer = cInitializerClause(newDesignators);
                 initializerList.add(initializer);
                 // can end with just a '}'
                 if (LT(1) == IToken.tRBRACE)
@@ -120,7 +135,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         // try this now instead
         // assignmentExpression
         try {
-            Object assignmentExpression = assignmentExpression(scope);
+            Object assignmentExpression = assignmentExpression(null);
             try {
                 return null;
             } catch (Exception e) {
@@ -137,7 +152,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return null;
     }
 
-    protected List designatorList(Object scope) throws EndOfFileException,
+    protected List designatorList() throws EndOfFileException,
             BacktrackException {
         List designatorList = Collections.EMPTY_LIST;
         // designated initializers for C
@@ -155,7 +170,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                     //        kind = IASTDesignator.DesignatorKind.FIELD;
                 } else if (LT(1) == IToken.tLBRACKET) {
                     IToken mark = consume(IToken.tLBRACKET);
-                    constantExpression = expression(scope);
+                    constantExpression = expression(null);
                     if (LT(1) != IToken.tRBRACKET) {
                         backup(mark);
                         if (supportGCCStyleDesignators
@@ -172,9 +187,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                                            */
                             } else if (LT(1) == IToken.tLBRACKET) {
                                 consume(IToken.tLBRACKET);
-                                Object constantExpression1 = expression(scope);
+                                Object constantExpression1 = expression(null);
                                 consume(IToken.tELLIPSIS);
-                                Object constantExpression2 = expression(scope);
+                                Object constantExpression2 = expression(null);
                                 consume(IToken.tRBRACKET);
                                 Map extensionParms = new Hashtable();
                                 extensionParms.put(null, //IASTGCCDesignator.SECOND_EXRESSION,
@@ -223,9 +238,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                                */
                 } else if (LT(1) == IToken.tLBRACKET) {
                     consume(IToken.tLBRACKET);
-                    Object constantExpression1 = expression(scope);
+                    Object constantExpression1 = expression(null);
                     consume(IToken.tELLIPSIS);
-                    Object constantExpression2 = expression(scope);
+                    Object constantExpression2 = expression(null);
                     consume(IToken.tRBRACKET);
                     Map extensionParms = new Hashtable();
                     extensionParms.put(null, //IASTGCCDesignator.SECOND_EXRESSION,
@@ -247,7 +262,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return designatorList;
     }
 
-    protected IASTDeclaration declaration(IASTNode parent)
+    protected IASTDeclaration declaration()
             throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.t_asm:
@@ -275,7 +290,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             cleanupLastToken();
             return null;
         default:
-            IASTDeclaration d = simpleDeclaration(parent);
+            IASTDeclaration d = simpleDeclaration();
             cleanupLastToken();
             return d;
         }
@@ -283,11 +298,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
     }
 
     /**
-     * @param parent
      * @throws BacktrackException
      * @throws EndOfFileException
      */
-    protected CASTSimpleDeclaration simpleDeclaration(IASTNode parent)
+    protected IASTSimpleDeclaration simpleDeclaration()
             throws BacktrackException, EndOfFileException {
         IToken firstToken = LA(1);
         int firstOffset = firstToken.getOffset();
@@ -297,49 +311,21 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             throwBacktrack(firstToken.getOffset(), firstToken.getEndOffset(),
                     firstToken.getLineNumber(), firstToken.getFilename());
 
-        DeclarationWrapper sdw = new DeclarationWrapper(parent, firstToken
-                .getOffset(), firstToken.getLineNumber(), null, fn);
-
-        CASTSimpleDeclaration simpleDeclaration = createSimpleDeclaration(
-                parent, firstToken);
+        IASTSimpleDeclaration simpleDeclaration = createSimpleDeclaration();
+        simpleDeclaration.setOffset( firstOffset );
         firstToken = null; // necessary for scalability
-        declSpecifierSeq(sdw, false);
-        Object simpleTypeSpecifier = null;
-        if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != null) //IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
-            try {
-                simpleTypeSpecifier = null; /*
-                                             * astFactory.createSimpleTypeSpecifier(
-                                             * scope, sdw.getSimpleType(),
-                                             * sdw.getName(), sdw.isShort(),
-                                             * sdw.isLong(), sdw.isSigned(),
-                                             * sdw.isUnsigned(),
-                                             * sdw.isTypeNamed(),
-                                             * sdw.isComplex(),
-                                             * sdw.isImaginary(),
-                                             * sdw.isGloballyQualified(),
-                                             * sdw.getExtensionParameters());
-                                             * sdw.setTypeSpecifier(
-                                             * simpleTypeSpecifier);
-                                             * sdw.setTypeName( null );
-                                             */
-            } catch (Exception e1) {
-                int endOffset = (lastToken != null) ? lastToken.getEndOffset()
-                        : 0;
-                logException("simpleDeclaration:createSimpleTypeSpecifier", e1); //$NON-NLS-1$
-                //                if (e1 instanceof ASTSemanticException
-                //                        && ((ASTSemanticException) e1).getProblem() != null)
-                //                    throwBacktrack(((ASTSemanticException) e1).getProblem());
-                //                else
-                throwBacktrack(firstOffset, endOffset, firstLine, fn);
-            }
+        IASTDeclSpecifier declSpec = declSpecifierSeq(false);
+        simpleDeclaration.setDeclSpecifier( declSpec );
 
-        Declarator declarator = null;
+        
         if (LT(1) != IToken.tSEMI) {
-            declarator = initDeclarator(sdw);
+            IASTDeclarator declarator = initDeclarator();
+            simpleDeclaration.addDeclarator( declarator );
 
             while (LT(1) == IToken.tCOMMA) {
-                consume();
-                initDeclarator(sdw);
+                consume( IToken.tCOMMA );
+                IASTDeclarator d = initDeclarator();
+                simpleDeclaration.addDeclarator( declarator );
             }
         }
 
@@ -361,7 +347,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         if (!consumedSemi) {
             if (LT(1) == IToken.tLBRACE) {
-                declarator.setHasFunctionBody(true);
                 hasFunctionBody = true;
             }
 
@@ -373,112 +358,24 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
         if (hasFunctionBody)
             handleFunctionBody(null /* Should be function object scope */);
-        //            try {
-        //                l = sdw.createASTNodes();
-        //// } catch (ASTSemanticException e) {
-        //// if (e.getProblem() == null) {
-        //// IProblem p = problemFactory.createProblem(
-        //// IProblem.SYNTAX_ERROR, sdw.startingOffset,
-        //// lastToken != null ? lastToken.getEndOffset() : 0,
-        //// sdw.startingLine, fn, EMPTY_STRING, false, true);
-        //// throwBacktrack(p);
-        //// } else {
-        //// throwBacktrack(e.getProblem());
-        //// }
-        //            } catch (Exception e) {
-        //                logException("simpleDecl", e); //$NON-NLS-1$
-        //                throwBacktrack(firstOffset, endOffset, firstLine, fn);
-        //            }
-
-        //            if (hasFunctionBody && l.size() != 1) {
-        //                throwBacktrack(firstOffset, endOffset, firstLine, fn); //TODO
-        // Should
-        // be an
-        // IProblem
-        //            }
-        //            if (!l.isEmpty()) // no need to do this unless we have a declarator
-        //            {
-        //                if (!hasFunctionBody || fromCatchHandler) {
-        //                    Object declaration = null;
-        //                    for (int i = 0; i < l.size(); ++i) {
-        //                        declaration = l.get(i);
-        //
-        //// ((IASTOffsetableElement) declaration)
-        //// .setEndingOffsetAndLineNumber(lastToken
-        //// .getEndOffset(), lastToken
-        //// .getLineNumber());
-        //                        // declaration.acceptElement( requestor );
-        //                    }
-        //                    return declaration;
-        //                }
-        //                Object declaration = l.get(0);
-        //                cleanupLastToken();
-        //                // declaration.enterScope( requestor );
-        //                try {
-        //                    // if ( !( declaration instanceof IASTScope ) )
-        //                    // throwBacktrack(firstOffset, endOffset, firstLine, fn);
-        //
-        //                    handleFunctionBody(declaration);
-        //
-        //// ((IASTOffsetableElement) declaration)
-        //// .setEndingOffsetAndLineNumber(lastToken
-        //// .getEndOffset(), lastToken
-        //// .getLineNumber());
-        //                } finally {
-        //                    // declaration.exitScope( requestor );
-        //                }
-        //
-        //                if (hasFunctionTryBlock)
-        //                    catchHandlerSequence(scope);
-        //
-        //                return declaration;
-        //
-        //            }
-        //
-        //            try {
-        //                if (sdw.getTypeSpecifier() != null) {
-        //                    Object declaration = null; /*
-        //                                                * astFactory.createTypeSpecDeclaration(
-        //                                                * sdw.getScope(),
-        //                                                * sdw.getTypeSpecifier(),
-        //                                                * ownerTemplate,
-        //                                                * sdw.startingOffset,
-        //                                                * sdw.startingLine,
-        //                                                * lastToken.getEndOffset(),
-        //                                                * lastToken.getLineNumber(),
-        //                                                * sdw.isFriend(),
-        //                                                * lastToken.getFilename());
-        //                                                */
-        //                    // declaration.acceptElement(requestor);
-        //                    return declaration;
-        //                }
-        //            } catch (Exception e1) {
-        //                logException("simpleDeclaration:createTypeSpecDeclaration", e1);
-        // //$NON-NLS-1$
-        //                throwBacktrack(firstOffset, endOffset, firstLine, fn);
-        //            }
-        //
-        //            return null;
-        //        } catch (BacktrackException be) {
-        //            throwBacktrack(be);
-        //            return null;
-        //        } catch (EndOfFileException eof) {
-        //            throw eof;
-        return null;
+        return simpleDeclaration;
     }
 
     /**
      * @return
      */
-    private CASTSimpleDeclaration createSimpleDeclaration(IASTNode parent,
-            IToken la) {
-        return new CASTSimpleDeclaration(parent, null, la.getOffset());
+    private CASTSimpleDeclaration createSimpleDeclaration() {
+        return new CASTSimpleDeclaration();
     }
 
     protected CASTTranslationUnit translationUnit;
 
     protected CASTTranslationUnit createTranslationUnit() {
-        return new CASTTranslationUnit(null, null, 0);
+        CASTTranslationUnit t = new CASTTranslationUnit();
+        t.setOffset( 0 );
+        t.setParent( null );
+        t.setPropertyInParent( null );
+        return t;
     }
 
     /**
@@ -486,7 +383,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * 
      * translationUnit : (declaration)*
      */
-protected void translationUnit() {
+    protected void translationUnit() {
         try {
             translationUnit = createTranslationUnit();
         } catch (Exception e2) {
@@ -498,7 +395,10 @@ protected void translationUnit() {
         while (true) {
             try {
                 int checkOffset = LA(1).hashCode();
-                declaration(translationUnit);
+                IASTDeclaration d = declaration();
+                d.setParent( translationUnit );
+                d.setPropertyInParent( IASTTranslationUnit.OWNED_DECLARATION );
+                translationUnit.addDeclaration(d);
                 if (LA(1).hashCode() == checkOffset)
                     failParseWithErrorHandling();
             } catch (EndOfFileException e) {
@@ -509,15 +409,13 @@ protected void translationUnit() {
                     // Mark as failure and try to reach a recovery point
                     failParse(b);
                     errorHandling();
-                    if (lastBacktrack != -1 && lastBacktrack == LA(1).hashCode())
-                    {
+                    if (lastBacktrack != -1
+                            && lastBacktrack == LA(1).hashCode()) {
                         // we haven't progressed from the
                         // last backtrack
                         // try and find tne next definition
                         failParseWithErrorHandling();
-                    }
-                    else
-                    {
+                    } else {
                         // start again from here
                         lastBacktrack = LA(1).hashCode();
                     }
@@ -547,6 +445,7 @@ protected void translationUnit() {
         }
         //        compilationUnit.exitScope( requestor );
     }
+
     /**
      * @param expression
      * @throws BacktrackException
@@ -887,8 +786,7 @@ protected void translationUnit() {
             // ( type-name ) { initializer-list , }
             consume(IToken.tLPAREN);
             /* Object typeId = */typeId(scope, false);
-            /* Object initializerClause = */cInitializerClause(scope,
-                    Collections.EMPTY_LIST);
+            /* Object initializerClause = */cInitializerClause(Collections.EMPTY_LIST);
             firstExpression = null; //createExpressionHere
         default:
             firstExpression = primaryExpression(scope);
@@ -1198,7 +1096,7 @@ protected void translationUnit() {
      * 
      * @see org.eclipse.cdt.internal.core.parser2.GNUBaseParser#statement(java.lang.Object)
      */
-    protected void statement(Object scope) throws EndOfFileException,
+    protected IASTStatement statement(Object scope) throws EndOfFileException,
             BacktrackException {
 
         switch (LT(1)) {
@@ -1210,18 +1108,18 @@ protected void translationUnit() {
             consume(IToken.tCOLON);
             statement(scope);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_default:
             consume(IToken.t_default);
             consume(IToken.tCOLON);
             statement(scope);
             cleanupLastToken();
-            return;
+            return null;
         // compound statement
         case IToken.tLBRACE:
             compoundStatement(scope, true);
             cleanupLastToken();
-            return;
+            return null;
         // selection statement
         case IToken.t_if:
             consume(IToken.t_if);
@@ -1238,14 +1136,14 @@ protected void translationUnit() {
                     //an else if, return and get the rest of the else if as
                     // the next statement instead of recursing
                     cleanupLastToken();
-                    return;
+                    return null;
                 } else if (LT(1) != IToken.tLBRACE)
                     singleStatementScope(scope);
                 else
                     statement(scope);
             }
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_switch:
             consume();
             consume(IToken.tLPAREN);
@@ -1253,7 +1151,7 @@ protected void translationUnit() {
             consume(IToken.tRPAREN);
             statement(scope);
             cleanupLastToken();
-            return;
+            return null;
         //iteration statements
         case IToken.t_while:
             consume(IToken.t_while);
@@ -1265,7 +1163,7 @@ protected void translationUnit() {
             else
                 statement(scope);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_do:
             consume(IToken.t_do);
             if (LT(1) != IToken.tLBRACE)
@@ -1277,7 +1175,7 @@ protected void translationUnit() {
             condition(scope);
             consume(IToken.tRPAREN);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_for:
             consume();
             consume(IToken.tLPAREN);
@@ -1292,19 +1190,19 @@ protected void translationUnit() {
             consume(IToken.tRPAREN);
             statement(scope);
             cleanupLastToken();
-            return;
+            return null;
 
         //jump statement
         case IToken.t_break:
             consume();
             consume(IToken.tSEMI);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_continue:
             consume();
             consume(IToken.tSEMI);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_return:
             consume();
             if (LT(1) != IToken.tSEMI) {
@@ -1313,17 +1211,17 @@ protected void translationUnit() {
             }
             consume(IToken.tSEMI);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_goto:
             consume();
             consume(IToken.tIDENTIFIER);
             consume(IToken.tSEMI);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.tSEMI:
             consume();
             cleanupLastToken();
-            return;
+            return null;
         default:
             // can be many things:
             // label
@@ -1332,7 +1230,7 @@ protected void translationUnit() {
                 consume(IToken.tCOLON);
                 statement(scope);
                 cleanupLastToken();
-                return;
+                return null;
             }
             // expressionStatement
             // Note: the function style cast ambiguity is handled in
@@ -1344,7 +1242,7 @@ protected void translationUnit() {
                 expressionStatement = expression(scope);
                 consume(IToken.tSEMI);
                 cleanupLastToken();
-                return;
+                return null;
             } catch (BacktrackException b) {
                 backup(mark);
                 //					if (expressionStatement != null)
@@ -1352,9 +1250,19 @@ protected void translationUnit() {
             }
 
             // declarationStatement
-            declaration((IASTNode) scope);
+            IASTDeclaration d = declaration();
+            IASTDeclarationStatement ds = createDeclarationStatement( );
+            ds.setDeclaration(d);
+            return ds;
         }
 
+    }
+
+    /**
+     * @return
+     */
+    protected IASTDeclarationStatement createDeclarationStatement() {
+        return new CASTDeclarationStatement();
     }
 
     protected Object typeId(Object scope, boolean skipArrayModifiers)
@@ -1526,7 +1434,7 @@ protected void translationUnit() {
             throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(),
                     mark.getFilename());
 
-        TypeId id = getTypeIdInstance(scope);
+//        TypeId id = getTypeIdInstance(scope);
         IToken last = lastToken;
         IToken temp = last;
 
@@ -1534,12 +1442,12 @@ protected void translationUnit() {
         //lastToken = consumeTemplateParameters( last );
         //if( lastToken == null ) lastToken = last;
 
-        temp = consumePointerOperators(id);
+        temp = consumePointerOperators(null);
         if (temp != null)
             last = temp;
 
         if (!skipArrayModifiers) {
-            temp = consumeArrayModifiers(id, scope);
+            temp = consumeArrayModifiers(null, scope);
             if (temp != null)
                 last = temp;
         }
@@ -1580,7 +1488,7 @@ protected void translationUnit() {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected IToken consumePointerOperators(IDeclarator d)
+    protected IToken consumePointerOperators(IASTDeclarator d)
             throws EndOfFileException, BacktrackException {
         IToken result = null;
         for (;;) {
@@ -1593,13 +1501,11 @@ protected void translationUnit() {
             }
 
             if (LT(1) == IToken.tSTAR) {
-                result = consume(IToken.tSTAR);
-
-                d.setPointerOperatorName(nameDuple);
+                result = consume(IToken.tSTAR);                
 
                 IToken successful = null;
                 for (;;) {
-                    IToken newSuccess = cvQualifier(d);
+                    IToken newSuccess = cvQualifier(d, nameDuple);
                     if (newSuccess != null)
                         successful = newSuccess;
                     else
@@ -1608,8 +1514,7 @@ protected void translationUnit() {
                 }
 
                 if (successful == null) {
-                    d
-                            .addPointerOperator(null /* ASTPointerOperator.POINTER */);
+                    d.addPointerOperator(null /* ASTPointerOperator.POINTER */);
                 }
                 continue;
             }
@@ -1632,7 +1537,7 @@ protected void translationUnit() {
      * @return Returns the same object sent in.
      * @throws BacktrackException
      */
-    protected IToken cvQualifier(IDeclarator declarator)
+    protected IToken cvQualifier(IASTDeclarator declarator, ITokenDuple name )
             throws EndOfFileException, BacktrackException {
         IToken result = null;
         int startingOffset = LA(1).getOffset();
@@ -1656,52 +1561,60 @@ protected void translationUnit() {
         return result;
     }
 
-    protected void declSpecifierSeq(DeclarationWrapper sdw, boolean parm)
+    protected IASTDeclSpecifier declSpecifierSeq(boolean parm)
             throws BacktrackException, EndOfFileException {
         Flags flags = new Flags(parm);
         IToken typeNameBegin = null;
         IToken typeNameEnd = null;
+        
+        int startingOffset = LA(1).getOffset();
+        int storageClass = IASTDeclSpecifier.sc_unspecified;
+        boolean isInline = false;
+        boolean isConst = false, isRestrict = false, isVolatile = false;
+        boolean isShort = false, isLong = false, isUnsigned = false, isIdentifier = false,  isSigned = false;
+        int simpleType = IASTSimpleDeclSpecifier.t_unspecified;
+        
         declSpecifiers: for (;;) {
             switch (LT(1)) {
             //Storage Class Specifiers
             case IToken.t_auto:
                 consume();
-                sdw.setAuto(true);
+                storageClass = IASTDeclSpecifier.sc_auto;
                 break;
             case IToken.t_register:
-                sdw.setRegister(true);
+                storageClass = IASTDeclSpecifier.sc_register;
                 consume();
                 break;
             case IToken.t_static:
-                sdw.setStatic(true);
+                storageClass = IASTDeclSpecifier.sc_static;
                 consume();
                 break;
             case IToken.t_extern:
-                sdw.setExtern(true);
+                storageClass = IASTDeclSpecifier.sc_extern;
                 consume();
                 break;
             case IToken.t_typedef:
-                sdw.setTypedef(true);
+                storageClass = IASTDeclSpecifier.sc_typedef;
                 consume();
                 break;
 
             //Function Specifier
             case IToken.t_inline:
+                isInline = true;
                 consume();
-                sdw.setInline(true);
                 break;
 
             //Type Qualifiers
             case IToken.t_const:
-                sdw.setConst(true);
+                isConst = true;
                 consume();
                 break;
             case IToken.t_volatile:
-                sdw.setVolatile(true);
+                isVolatile = true;
                 consume();
                 break;
             case IToken.t_restrict:
-                sdw.setRestrict(true);
+                isRestrict = true;
                 consume();
                 break;
 
@@ -1712,7 +1625,7 @@ protected void translationUnit() {
                 typeNameEnd = LA(1);
                 flags.setEncounteredRawType(true);
                 consume();
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type.VOID);
+                simpleType = IASTSimpleDeclSpecifier.t_void;
                 break;
             case IToken.t_char:
                 if (typeNameBegin == null)
@@ -1720,16 +1633,15 @@ protected void translationUnit() {
                 typeNameEnd = LA(1);
                 flags.setEncounteredRawType(true);
                 consume();
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type.CHAR);
+                simpleType = IASTSimpleDeclSpecifier.t_char;
                 break;
             case IToken.t_short:
-                sdw.setShort(true);
                 if (typeNameBegin == null)
                     typeNameBegin = LA(1);
                 typeNameEnd = LA(1);
                 flags.setEncounteredRawType(true);
                 consume();
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type.INT);
+                isShort = true;
                 break;
             case IToken.t_int:
                 if (typeNameBegin == null)
@@ -1737,7 +1649,7 @@ protected void translationUnit() {
                 typeNameEnd = LA(1);
                 flags.setEncounteredRawType(true);
                 consume();
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type.INT);
+                simpleType = IASTSimpleDeclSpecifier.t_int;
                 break;
             case IToken.t_long:
                 if (typeNameBegin == null)
@@ -1745,8 +1657,7 @@ protected void translationUnit() {
                 typeNameEnd = LA(1);
                 flags.setEncounteredRawType(true);
                 consume();
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type.INT);
-                sdw.setLong(true);
+                isLong = true;
                 break;
             case IToken.t_float:
                 if (typeNameBegin == null)
@@ -1754,7 +1665,7 @@ protected void translationUnit() {
                 typeNameEnd = LA(1);
                 flags.setEncounteredRawType(true);
                 consume();
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type.FLOAT);
+                simpleType = IASTSimpleDeclSpecifier.t_float;
                 break;
             case IToken.t_double:
                 if (typeNameBegin == null)
@@ -1762,25 +1673,23 @@ protected void translationUnit() {
                 typeNameEnd = LA(1);
                 flags.setEncounteredRawType(true);
                 consume();
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type.DOUBLE);
+                simpleType = IASTSimpleDeclSpecifier.t_double;
                 break;
             case IToken.t_signed:
-                sdw.setSigned(true);
                 if (typeNameBegin == null)
                     typeNameBegin = LA(1);
                 typeNameEnd = LA(1);
                 flags.setEncounteredRawType(true);
                 consume();
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type.INT);
+                isSigned = true;
                 break;
             case IToken.t_unsigned:
-                sdw.setUnsigned(true);
                 if (typeNameBegin == null)
                     typeNameBegin = LA(1);
                 typeNameEnd = LA(1);
                 flags.setEncounteredRawType(true);
                 consume();
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type.INT);
+                isUnsigned = true;
                 break;
             case IToken.t__Bool:
                 if (typeNameBegin == null)
@@ -1788,70 +1697,65 @@ protected void translationUnit() {
                 typeNameEnd = LA(1);
                 flags.setEncounteredRawType(true);
                 consume();
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type._BOOL);
+                simpleType = ICASTSimpleDeclSpecifier.t_Bool;
                 break;
             case IToken.t__Complex:
                 if (typeNameBegin == null)
                     typeNameBegin = LA(1);
                 typeNameEnd = LA(1);
                 consume(IToken.t__Complex);
-                sdw.setComplex(true);
+                simpleType = ICASTSimpleDeclSpecifier.t_Complex;
                 break;
             case IToken.t__Imaginary:
                 if (typeNameBegin == null)
                     typeNameBegin = LA(1);
                 typeNameEnd = LA(1);
                 consume(IToken.t__Imaginary);
-                sdw.setImaginary(true);
+                simpleType = ICASTSimpleDeclSpecifier.t_Imaginary;
                 break;
 
             case IToken.tIDENTIFIER:
                 // TODO - Kludgy way to handle constructors/destructors
                 if (flags.haveEncounteredRawType()) {
-                    setTypeName(sdw, typeNameBegin, typeNameEnd);
-                    return;
+                    break declSpecifiers;
                 }
                 if (parm && flags.haveEncounteredTypename()) {
-                    setTypeName(sdw, typeNameBegin, typeNameEnd);
-                    return;
+                    break declSpecifiers;
                 }
                 if (lookAheadForDeclarator(flags)) {
-                    setTypeName(sdw, typeNameBegin, typeNameEnd);
-                    return;
+                    break declSpecifiers;
                 }
 
-                IToken i = identifier();
-                ITokenDuple d = TokenFactory.createTokenDuple(i, i);
-                sdw.setTypeName(d);
-                sdw.setSimpleType(null);//IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME);
+                identifier();
+                isIdentifier = true;
                 flags.setEncounteredTypename(true);
                 break;
             case IToken.t_struct:
             case IToken.t_union:
                 try {
-                    structOrUnionSpecifier(sdw);
+                    structOrUnionSpecifier(null);
                     flags.setEncounteredTypename(true);
                     break;
                 } catch (BacktrackException bt) {
-                    elaboratedTypeSpecifier(sdw);
+                    elaboratedTypeSpecifier(null);
                     flags.setEncounteredTypename(true);
                     break;
                 }
             case IToken.t_enum:
                 try {
-                    enumSpecifier(sdw);
+                    enumSpecifier(null);
                     flags.setEncounteredTypename(true);
                     break;
                 } catch (BacktrackException bt) {
                     // this is an elaborated class specifier
-                    elaboratedTypeSpecifier(sdw);
+                    elaboratedTypeSpecifier(null);
                     flags.setEncounteredTypename(true);
                     break;
                 }
             default:
                 if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
                     IToken start = LA(1);
-                    Object expression = unaryTypeofExpression(sdw.getScope());
+                    Object expression = unaryTypeofExpression(null);
                     if (expression != null) {
                         flags.setEncounteredTypename(true);
                         if (typeNameBegin == null)
@@ -1862,8 +1766,25 @@ protected void translationUnit() {
                 break declSpecifiers;
             }
         }
-        setTypeName(sdw, typeNameBegin, typeNameEnd);
-        return;
+        if( isIdentifier )
+            return createNamedTypeSpecifier(  );
+        if( simpleType != IASTSimpleDeclSpecifier.t_unspecified || isLong || isShort || isUnsigned || isSigned )
+            return createSimpleTypeSpecifier( );
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    protected ICASTSimpleDeclSpecifier createSimpleTypeSpecifier() {
+        return new CASTSimpleDeclSpecifier();
+    }
+
+    /**
+     * @return
+     */
+    protected ICASTTypedefNameSpecifier createNamedTypeSpecifier() {
+        return new CASTTypedefNameSpecifier();
     }
 
     /**
@@ -1878,7 +1799,7 @@ protected void translationUnit() {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void structOrUnionSpecifier(DeclarationWrapper sdw)
+    protected void structOrUnionSpecifier(IASTNode parent)
             throws BacktrackException, EndOfFileException {
         Object nameType = null; //ClassNameType.IDENTIFIER;
         Object classKind = null;
@@ -1940,7 +1861,7 @@ protected void translationUnit() {
             throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(),
                     mark.getFilename());
         }
-        sdw.setTypeSpecifier(astClassSpecifier);
+//        parent.setTypeSpecifier(astClassSpecifier);
         // base clause
 
         if (LT(1) == IToken.tLBRACE) {
@@ -1957,7 +1878,7 @@ protected void translationUnit() {
                         break memberDeclarationLoop;
                     default:
                         try {
-                            declaration((IASTNode) astClassSpecifier);
+                            declaration();
                         } catch (BacktrackException bt) {
                             if (checkToken == LA(1).hashCode())
                                 failParseWithErrorHandling();
@@ -1986,7 +1907,7 @@ protected void translationUnit() {
         }
     }
 
-    protected void elaboratedTypeSpecifier(DeclarationWrapper sdw)
+    protected void elaboratedTypeSpecifier(IASTNode parent)
             throws BacktrackException, EndOfFileException {
         // this is an elaborated class specifier
         IToken t = consume();
@@ -2031,7 +1952,8 @@ protected void translationUnit() {
             throwBacktrack(t.getOffset(), endOffset, t.getLineNumber(), t
                     .getFilename());
         }
-        sdw.setTypeSpecifier(elaboratedTypeSpec);
+        if( parent instanceof IASTSimpleDeclaration )
+            ((IASTSimpleDeclaration)parent).setDeclSpecifier( null );
 
         if (isForewardDecl) {
             //			((IASTElaboratedTypeSpecifier) elaboratedTypeSpec).acceptElement(
@@ -2039,41 +1961,42 @@ protected void translationUnit() {
         }
     }
 
-    protected Declarator initDeclarator(DeclarationWrapper sdw)
+    protected IASTDeclarator initDeclarator()
             throws EndOfFileException, BacktrackException {
-        Declarator d = declarator(sdw);
+        IASTDeclarator d = declarator();
 
         try {
             //			astFactory.constructExpressions(constructInitializers);
-            optionalCInitializer(d);
-            sdw.addDeclarator(d);
+            IASTInitializer i = optionalCInitializer();
+            if( i != null )
+                d.setInitializer( i );
             return d;
         } finally {
             //			astFactory.constructExpressions(true);
         }
     }
 
-    protected Declarator declarator(IDeclaratorOwner owner)
+    protected IASTDeclarator declarator()
             throws EndOfFileException, BacktrackException {
-        Declarator d = null;
-        DeclarationWrapper sdw = owner.getDeclarationWrapper();
-        Object scope = sdw.getScope();
+        IASTDeclarator d = null;
         IToken la = LA(1);
         int startingOffset = la.getOffset();
         int line = la.getLineNumber();
         char[] fn = la.getFilename();
         la = null;
         overallLoop: do {
-            d = new Declarator(owner);
+            d = createDeclarator();
 
             consumePointerOperators(d);
 
             if (LT(1) == IToken.tLPAREN) {
                 consume();
-                declarator(d);
+                IASTDeclarator innerDeclarator = declarator();
                 consume(IToken.tRPAREN);
+                d.setNestedDeclarator(innerDeclarator);
             } else if (LT(1) == IToken.tIDENTIFIER) {
-                identifier();
+                IToken t = identifier();
+                d.setName( createName( t ));
             }
 
             for (;;) {
@@ -2120,7 +2043,7 @@ protected void translationUnit() {
                     }
                     if ((!LA(2).looksLikeExpression() && !failed)) {
                         // parameterDeclarationClause
-                        d.setIsFunction(true);
+//                        d.setIsFunction(true);
                         // TODO need to create a temporary scope object here
                         consume(IToken.tLPAREN);
                         boolean seenParameter = false;
@@ -2131,7 +2054,7 @@ protected void translationUnit() {
                                 break parameterDeclarationLoop;
                             case IToken.tELLIPSIS:
                                 consume();
-                                d.setIsVarArgs(true);
+//                                d.setIsVarArgs(true);
                                 break;
                             case IToken.tCOMMA:
                                 consume();
@@ -2143,19 +2066,19 @@ protected void translationUnit() {
                                 if (seenParameter)
                                     throwBacktrack(startingOffset, endOffset,
                                             line, fn);
-                                parameterDeclaration(d, parameterScope);
+                                parameterDeclaration(null, parameterScope);
                                 seenParameter = true;
                             }
                         }
                     }
                     break;
                 case IToken.tLBRACKET:
-                    consumeArrayModifiers(d, sdw.getScope());
+                    consumeArrayModifiers(null, null);
                     continue;
                 case IToken.tCOLON:
                     consume(IToken.tCOLON);
-                    Object exp = constantExpression(scope);
-                    d.setBitFieldExpression(exp);
+                    Object exp = constantExpression(null);
+//                    d.setBitFieldExpression(exp);
                 default:
                     break;
                 }
@@ -2165,9 +2088,25 @@ protected void translationUnit() {
                 break;
 
         } while (true);
-        if (d.getOwner() instanceof IDeclarator)
-            ((Declarator) d.getOwner()).setOwnedDeclarator(d);
+//        if (d.getOwner() instanceof IDeclarator)
+//            ((Declarator) d.getOwner()).setOwnedDeclarator(d);
         return d;
+    }
+
+    /**
+     * @param t
+     * @return
+     */
+    private IASTName createName(IToken t) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /**
+     * @return
+     */
+    protected IASTDeclarator createDeclarator() {
+        return new CASTDeclarator();
     }
 
     protected IToken consumeArrayModifiers(IDeclarator d, Object scope)
@@ -2223,7 +2162,7 @@ protected void translationUnit() {
         DeclarationWrapper sdw = new DeclarationWrapper(scope, current
                 .getOffset(), current.getLineNumber(), null, current
                 .getFilename());
-        declSpecifierSeq(sdw, true);
+        declSpecifierSeq(true);
         if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != null)//IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
             try {
                 sdw.setTypeSpecifier(null /*
@@ -2251,7 +2190,7 @@ protected void translationUnit() {
             }
 
         if (LT(1) != IToken.tSEMI)
-            initDeclarator(sdw);
+            initDeclarator();
 
         if (lastToken != null)
             sdw.setEndingOffsetAndLineNumber(lastToken.getEndOffset(),
@@ -2279,7 +2218,7 @@ protected void translationUnit() {
         } catch (BacktrackException bt) {
             backup(mark);
             try {
-                simpleDeclaration((IASTNode) scope);
+                simpleDeclaration();
             } catch (BacktrackException b) {
                 failParse(b);
                 throwBacktrack(b);

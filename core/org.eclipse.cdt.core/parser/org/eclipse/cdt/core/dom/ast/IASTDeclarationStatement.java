@@ -24,4 +24,6 @@ public interface IASTDeclarationStatement extends IASTStatement {
 	 */
 	public IASTDeclaration getDeclaration();
 	
+	public void setDeclaration( IASTDeclaration declaration );
+	
 }

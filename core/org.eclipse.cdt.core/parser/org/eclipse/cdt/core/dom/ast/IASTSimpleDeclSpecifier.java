@@ -25,6 +25,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	 * @return
 	 */
 	public int getType();
+	
 	public static final int t_unspecified = 0;
 	public static final int t_void = 1;
 	public static final int t_char = 2;
@@ -33,9 +34,16 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	public static final int t_double = 5;
 	public static final int t_last = t_double; // used only in subclasses
 	
+	public void setType( int type );
+	
 	public boolean isSigned();
 	public boolean isUnsigned();
 	public boolean isShort();
 	public boolean isLong();
+	
+	public void setSigned( boolean value );
+	public void setUnsigned( boolean value );
+	public void setLong( boolean value );
+	public void setShort( boolean value );
 	
 }

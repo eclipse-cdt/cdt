@@ -17,18 +17,24 @@ public interface IASTDeclSpecifier extends IASTNode {
 
 	// Storage class
 	public int getStorageClass();
-	public static final int sc_typedef = 0;
-	public static final int sc_extern = 1;
-	public static final int sc_static = 2;
-	public static final int sc_auto = 3;
-	public static final int sc_register = 4;
+	public static final int sc_unspecified = 0;
+	public static final int sc_typedef = 1;
+	public static final int sc_extern = 2;
+	public static final int sc_static = 3;
+	public static final int sc_auto = 4;
+	public static final int sc_register = 5;
 	public static final int sc_last = sc_register;
 
+	public void setStorageClass( int storageClass );
+	
 	// Type qualifier
 	public boolean isConst();
+	public void setConst( boolean value );
 	public boolean isVolatile();
+	public void setVolatile( boolean value );
 	
 	// Function specifier
 	public boolean isInline();
+	public void setInline( boolean value );
 	
 }

@@ -9,15 +9,12 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 
 /**
@@ -26,19 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 public class CASTSimpleDeclaration extends CASTNode implements
         IASTSimpleDeclaration {
 
-    private List declarators = Collections.EMPTY_LIST;
-    private static final int DEFAULT_DECLARATORS_LIST_SIZE = 4;
-    private IASTDeclSpecifier declSpecifier;
-
-    /**
-     * @param parent
-     * @param location
-     * @param offset
-     */
-    CASTSimpleDeclaration(IASTNode parent, IASTNodeLocation location, int offset) {
-        super(parent, location, offset);
-    }
-
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclSpecifier()
      */
@@ -46,26 +30,56 @@ public class CASTSimpleDeclaration extends CASTNode implements
         return declSpecifier;
     }
 
+    private int currentIndex = 0;
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration#getDeclarators()
      */
     public List getDeclarators() {
-        return declarators;
+        if( declarators == null ) return Collections.EMPTY_LIST;
+        removeNullDeclarators();
+        return Arrays.asList( declarators );
     }
     
-    void addDeclarator( IASTDeclarator d )
+    public void addDeclarator( IASTDeclarator d )
     {
-        if( declarators == Collections.EMPTY_LIST )
-            declarators = new ArrayList( DEFAULT_DECLARATORS_LIST_SIZE );
+        if( declarators == null )
+        {
+            declarators = new IASTDeclarator[ DEFAULT_DECLARATORS_LIST_SIZE ];
+            currentIndex = 0;
+        }
+        if( declarators.length == currentIndex )
+        {
+            IASTDeclarator [] old = declarators;
+            declarators = new IASTDeclarator[ old.length * 2 ];
+            for( int i = 0; i < old.length; ++i )
+                declarators[i] = old[i];
+        }
+        declarators[ currentIndex++ ] = d;
+
+    }
+    
+    /**
+     * @param decls2
+     */
+    private void removeNullDeclarators() {
+        int nullCount = 0; 
+        for( int i = 0; i < declarators.length; ++i )
+            if( declarators[i] == null )
+                ++nullCount;
+        if( nullCount == 0 ) return;
+        IASTDeclarator [] old = declarators;
+        int newSize = old.length - nullCount;
+        declarators = new IASTDeclarator[ newSize ];
+        for( int i = 0; i < newSize; ++i )
+            declarators[i] = old[i];
+        currentIndex = newSize;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTNode#getPropertyInParent()
-     */
-    public IASTNodeProperty getPropertyInParent() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    
+    private IASTDeclarator [] declarators = null;
+    private static final int DEFAULT_DECLARATORS_LIST_SIZE = 4;
+    private IASTDeclSpecifier declSpecifier;
 
     /**
      * @param declSpecifier The declSpecifier to set.

@@ -19,12 +19,16 @@ import java.util.List;
  */
 public interface IASTTranslationUnit extends IASTNode {
 
-	/**
+	ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty( "OWNED" ); //$NON-NLS-1$
+
+    /**
 	 * A translation unit contains an ordered sequence of declarations.
 	 * 
 	 * @return List of IASTDeclaration
 	 */
 	public List getDeclarations();
+	
+	public void addDeclaration( IASTDeclaration declaration );
 	
 	/**
 	 * This returns the global scope for the translation unit.

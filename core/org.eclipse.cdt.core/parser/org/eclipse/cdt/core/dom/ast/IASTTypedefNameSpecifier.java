@@ -22,4 +22,6 @@ public interface IASTTypedefNameSpecifier extends IASTDeclSpecifier {
 	 */
 	public IASTName getName();
 	
+	public void setName( IASTName name );
+	
 }

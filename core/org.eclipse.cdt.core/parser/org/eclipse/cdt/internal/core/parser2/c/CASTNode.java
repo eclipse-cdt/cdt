@@ -9,31 +9,19 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2.c;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 
 /**
  * @author jcamelon
  */
-class CASTNode {
+class CASTNode implements IASTNode {
 
-    /**
-     * 
-     */
-    CASTNode( IASTNode parent, IASTNodeLocation location, int offset ) {
-        this.parent = parent;
-        this.location = location;
-        this.offset = offset;
-    }
     
     private int length;
-    private final IASTNodeLocation location;
-    private final int offset;
-    private final IASTNode parent;
-
-    public IASTNodeLocation getLocation() {
-        return location;
-    }
+    private int offset;
+    private IASTNode parent;
+    private ASTNodeProperty property;
 
     public int getOffset() {
         return offset;
@@ -47,11 +35,40 @@ class CASTNode {
         return parent;
     }
 
-    /**
-     * @param length The length to set.
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTNode#getPropertyInParent()
      */
-    void setLength(int length) {
+    public ASTNodeProperty getPropertyInParent() {
+        return property;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTNode#setOffset(int)
+     */
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTNode#setLength()
+     */
+    public void setLength( int length ) {
         this.length = length;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTNode#setParent(org.eclipse.cdt.core.dom.ast.IASTNode)
+     */
+    public void setParent(IASTNode parent) {
+        this.parent = parent;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTNode#setPropertyInParent(org.eclipse.cdt.core.dom.ast.IASTNodeProperty)
+     */
+    public void setPropertyInParent(ASTNodeProperty property) {
+        this.property = property;
     }
 
 }

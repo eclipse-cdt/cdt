@@ -18,9 +18,9 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
  * @author Doug Schaefer
  */
 public interface ICPPASTSimpleDeclSpecifier extends IASTSimpleDeclSpecifier, ICPPASTDeclSpecifier {
-
 	// Extra types
 	public static final int t_bool = IASTSimpleDeclSpecifier.t_last + 1;
 	public static final int t_wchar_t = IASTSimpleDeclSpecifier.t_last + 2;
+	public static final int t_last = t_wchar_t;
 	
 }

@@ -17,7 +17,7 @@ import java.util.List;
  * 
  * @author Doug Schaefer
  */
-public interface IASTCompoundStatement {
+public interface IASTCompoundStatement extends IASTStatement {
 
 	/**
 	 * Gets the statements in this block.

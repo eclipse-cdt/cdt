@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser2.cpp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -4269,7 +4270,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void statement(Object scope) throws EndOfFileException,
+    protected IASTStatement statement(Object scope) throws EndOfFileException,
             BacktrackException {
 
         switch (LT(1)) {
@@ -4280,17 +4281,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tCOLON);
             statement(scope);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_default:
             consume(IToken.t_default);
             consume(IToken.tCOLON);
             statement(scope);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.tLBRACE:
             compoundStatement(scope, true);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_if:
             consume(IToken.t_if);
             consume(IToken.tLPAREN);
@@ -4306,14 +4307,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     //an else if, return and get the rest of the else if as
                     // the next statement instead of recursing
                     cleanupLastToken();
-                    return;
+                    return null;
                 } else if (LT(1) != IToken.tLBRACE)
                     singleStatementScope(scope);
                 else
                     statement(scope);
             }
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_switch:
             consume();
             consume(IToken.tLPAREN);
@@ -4321,7 +4322,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tRPAREN);
             statement(scope);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_while:
             consume(IToken.t_while);
             consume(IToken.tLPAREN);
@@ -4332,7 +4333,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             else
                 statement(scope);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_do:
             consume(IToken.t_do);
             if (LT(1) != IToken.tLBRACE)
@@ -4344,7 +4345,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             condition(scope);
             consume(IToken.tRPAREN);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_for:
             consume();
             consume(IToken.tLPAREN);
@@ -4359,17 +4360,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tRPAREN);
             statement(scope);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_break:
             consume();
             consume(IToken.tSEMI);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_continue:
             consume();
             consume(IToken.tSEMI);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_return:
             consume();
             if (LT(1) != IToken.tSEMI) {
@@ -4378,23 +4379,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             }
             consume(IToken.tSEMI);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_goto:
             consume();
             consume(IToken.tIDENTIFIER);
             consume(IToken.tSEMI);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.t_try:
             consume();
             compoundStatement(scope, true);
             catchHandlerSequence(scope);
             cleanupLastToken();
-            return;
+            return null;
         case IToken.tSEMI:
             consume();
             cleanupLastToken();
-            return;
+            return null;
         default:
             // can be many things:
             // label
@@ -4405,7 +4406,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 consume(IToken.tCOLON);
                 statement(scope);
                 cleanupLastToken();
-                return;
+                return null;
             }
             // expressionStatement
             // Note: the function style cast ambiguity is handled in
@@ -4417,7 +4418,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 expressionStatement = expression(scope);
                 consume(IToken.tSEMI);
                 cleanupLastToken();
-                return;
+                return null;
             } catch (BacktrackException b) {
                 backup(mark);
                 //					if (expressionStatement != null)
@@ -4426,6 +4427,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
             // declarationStatement
             declaration(scope, null);
+            return null;
         }
 
     }

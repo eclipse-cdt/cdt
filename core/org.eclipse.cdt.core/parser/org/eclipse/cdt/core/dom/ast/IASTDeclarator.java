@@ -24,6 +24,8 @@ public interface IASTDeclarator extends IASTNode {
 	 * @return List of IASTPointerOperator
 	 */
 	public List getPointerOperators();
+	
+	public void addPointerOperator( IASTPointerOperator operator );
 
 	/**
 	 * If the declarator is nested in parenthesis, this returns the
@@ -33,6 +35,8 @@ public interface IASTDeclarator extends IASTNode {
 	 */
 	public IASTDeclarator getNestedDeclarator();
 	
+	public void setNestedDeclarator( IASTDeclarator nested );
+	
 	/**
 	 * This returns the name of the declarator. If this is an abstract
 	 * declarator, this will return null.
@@ -41,11 +45,15 @@ public interface IASTDeclarator extends IASTNode {
 	 */
 	public IASTName getName();
 	
+	public void setName( IASTName name );
+	
 	/**
 	 * This is the optional initializer for this declarator.
 	 * 
 	 * @return the initializer expression or null
 	 */
-	public IASTExpression getInitializer();
+	public IASTInitializer getInitializer();
+	
+	public void setInitializer( IASTInitializer initializer );
 	
 }

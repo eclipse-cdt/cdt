@@ -9,6 +9,7 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2;
 
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -20,9 +21,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserProblemFactory;
-import org.eclipse.cdt.internal.core.parser.Parser.Flags;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser2.cpp.IProblemRequestor;
@@ -577,7 +576,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     throws BacktrackException, EndOfFileException;
 
     protected abstract void translationUnit();
-    protected abstract void statement(Object scope) throws EndOfFileException,
+    protected abstract IASTStatement statement(Object scope) throws EndOfFileException,
             BacktrackException;
     
     protected abstract IASTTranslationUnit getTranslationUnit(); 

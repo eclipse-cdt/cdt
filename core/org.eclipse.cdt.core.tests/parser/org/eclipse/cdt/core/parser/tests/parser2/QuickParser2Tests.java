@@ -48,7 +48,7 @@ public class QuickParser2Tests extends TestCase {
     /**
      * @author jcamelon
      */
-    public class ProblemCollector implements IProblemRequestor {
+    public static class ProblemCollector implements IProblemRequestor {
 
         List problems = new ArrayList();
         /* (non-Javadoc)

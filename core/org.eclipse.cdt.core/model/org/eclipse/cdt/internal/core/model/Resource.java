@@ -63,15 +63,15 @@ public abstract class Resource extends PlatformObject implements IResource {
 			throw new CoreException(new CModelStatus(ICModelStatus.ERROR));
 		}
 
-			// The INCLUDE_PHANTOMS flag is not specified and this resource is
+        	// The INCLUDE_PHANTOMS flag is not specified and this resource is
 		// a project that is not open. 
 		if (!includePhantoms && !getProject().isOpen()) {
 			throw new CoreException(new CModelStatus(ICModelStatus.ERROR));
 		}
 
 		if ((!isPhantom() && !isTeamPrivateMember()) ||
-			(includePhantoms && isPhantom()) ||
-			(includeTeamPrivateMember && isTeamPrivateMember())) {
+		    (includePhantoms && isPhantom()) ||
+		    (includeTeamPrivateMember && isTeamPrivateMember())) {
 			// If the visitor returns false, this resource's members are not visited. 
 			if (!visitor.visit(this)) {
 				return;
@@ -79,7 +79,7 @@ public abstract class Resource extends PlatformObject implements IResource {
 		}
 
 		// Full stop here.
-		if (depth == DEPTH_ZERO) {
+ 		if (depth == DEPTH_ZERO) {
 			return;
 		}
 

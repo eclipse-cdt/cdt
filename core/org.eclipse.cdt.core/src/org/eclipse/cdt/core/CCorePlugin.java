@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.core.builder.ICBuilder;
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -208,8 +207,12 @@ public class CCorePlugin extends Plugin {
 		return fDescriptorManager.getDescriptor(project);
 	}
 	
-	public void mapCProjectOwner(IProject project, String id) throws CoreException {
-		fDescriptorManager.configure(project, id);
+	public void mapCProjectOwner(IProject project, String id, boolean override) throws CoreException {
+		if ( !override ) {
+			fDescriptorManager.configure(project, id);
+		} else {
+			fDescriptorManager.convert(project, id);
+		}
 	}
         
     /**
@@ -243,7 +246,7 @@ public class CCorePlugin extends Plugin {
            
             // Add C Nature ... does not add duplicates
             CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
-            mapCProjectOwner(projectHandle, projectID);
+            mapCProjectOwner(projectHandle, projectID, false);
         } finally {
             //monitor.done();
         }
@@ -370,13 +373,14 @@ public class CCorePlugin extends Plugin {
     throws CoreException{
     	this.convertProjectToCC(projectHandle, monitor, projectID, true);
     }
-    
-	public ICBuilder[] getBuilders(IProject project) throws CoreException {
-		ICExtension extensions[] = fDescriptorManager.createExtensions(BUILDER_MODEL_ID, project);
-		ICBuilder builders[] = new ICBuilder[extensions.length];
-		System.arraycopy(extensions, 0, builders, 0, extensions.length);
-		return builders;
-	}
+ 
+// Extract the builder from the .cdtproject.  
+//	public ICBuilder[] getBuilders(IProject project) throws CoreException {
+//		ICExtension extensions[] = fDescriptorManager.createExtensions(BUILDER_MODEL_ID, project);
+//		ICBuilder builders[] = new ICBuilder[extensions.length];
+//		System.arraycopy(extensions, 0, builders, 0, extensions.length);
+//		return builders;
+//	}
 	
 	public IProcessList getProcessList() {
 		IExtensionPoint extension = getDescriptor().getExtensionPoint("ProcessList");

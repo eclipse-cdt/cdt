@@ -212,8 +212,8 @@ public class BinaryContainerAdapter extends Container implements IFolder {
 		for (int i = 0; i < children.size(); i++) {
 			IResource child = (IResource)children.get(i);
 			if (includeTeamPrivateMember && child.isTeamPrivateMember() || !child.isTeamPrivateMember()) {
-				aList.add(child);
-			}	    
+		    	aList.add(child);
+		    }	    
 		}
 
 		if (includePhantoms) {

@@ -31,6 +31,52 @@
    <extension-point id="ProcessList" name="%ProcessList.name" schema="schema/ProcessList.exsd"/>
    <extension-point id="BinaryParser" name="BinaryParser"/>
 
+   <extension-point id="CToolchain" name="C/C++ Toolchain Provider" schema="schema/CToolchain.exsd"/>
+   <extension-point id="CBuildConfiguration" name="C/C++ Build Configuration" schema="schema/CBuildConfiguration.exsd"/>
+   <extension-point id="CTool" name="C/C++ Tool" schema="schema/CTool.exsd"/>
+   <extension-point id="CBuildVariable" name="C/C++ Build Variable" schema="schema/CBuildVariable.exsd"/>
+   <extension-point id="CToolType" name="C/C++ Tool Type" schema="schema/CToolType.exsd"/>
+
+   <extension
+         point="org.eclipse.cdt.core.CToolType">
+      <type
+            name="C Compiler"
+            id="org.eclipse.cdt.core.tool.c_compiler">
+      </type>
+      <type
+            name="C++ Compiler"
+            id="org.eclipse.cdt.core.tool.c++_compiler">
+      </type>
+      <type
+            name="Preprocessor"
+            id="org.eclipse.cdt.core.tool.c_preprocessor">
+      </type>
+      <type
+            name="Assembler"
+            id="org.eclipse.cdt.core.tool.assembler">
+      </type>
+      <type
+            name="Linker"
+            id="org.eclipse.cdt.core.tool.linker">
+      </type>
+      <type
+            name="Archiver"
+            id="org.eclipse.cdt.core.tool.archiver">
+      </type>
+      <type
+            name="Debugger"
+            id="org.eclipse.cdt.core.tool.debugger">
+      </type>
+      <type
+            name="Profiler"
+            id="org.eclipse.cdt.core.tool.profiler">
+      </type>
+      <type
+            name="Symbol Stripper"
+            id="org.eclipse.cdt.core.tool.strip">
+      </type>
+   </extension>
+
    <extension
          point="org.eclipse.cdt.core.BinaryParser">
       <parser

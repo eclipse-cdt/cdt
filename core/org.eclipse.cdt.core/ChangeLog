@@ -112,6 +112,148 @@
 	* src/org/eclipse/cdt/internal/errorparsers/GCCErrorParser.java (processLine):
 	Ignore errors that does not match the pattern.
 
+2003-02-19 David Inglis
+
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/ICDescriptor.java
+	* src/org/eclipse/cdt/core/ICExtensionReference.java
+	* src/org/eclipse/cdt/core/ICOwner.java
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java
+	* src/org/eclipse/cdt/internal/core/CExtensionReference.java
+	* src/org/eclipse/cdt/internal/core/make/MakeProject.java
+	General cleanup of CDT extensions interfaces from review with Alain.
+
+2003-02-17 Doug Schaefer
+
+    Merged in Sam Robb's source for the build model.  The source can be
+    found in the build source folder.  There are new extension point schema
+    in the schema folder.  As well a number of extension points and extensions
+    have been added to the plugin.xml file.
+    
+2003-02-13 Alain Magloire
+
+	* src/org/eclipse/cdt/core/CCorePlugin.java:
+	* src/org/eclipse/cdt/internal/core/make/Makebuilder.java:
+	Comment out reference to the Builder, for now.
+
+	* builder/org/eclipse/cdt/core/builder/CIncrementalBuilder.java:
+	Comment reference to the CCorePlugin.
+
+2003-02-05 Doug Schaefer
+
+    * src/org/eclipse/cdt/internal/parser.generated:
+    Fix for hang on destructors in namespaces
+
+2003-02-01 Alain Magloire
+
+	Cleanups and suggestions for Hoda.
+
+	* mode/org/eclipse/cdt/core/model/ITemplate.java:
+	New File.
+	* model/org/eclipse/cdt/core/model/IField.java:
+	Now extedns IVariableDeclaration.
+	* model/org/eclipse/cdt/core/model/IMethodDeclaration.java:
+	Extends IFunctionDeclaration.
+	* model/org/eclipse/cdt/core/model/IVariableLocal.java:
+	Removed.
+
+2003-01-29 Alain Magloire
+
+	* index/org/eclipse/cdt/internal/core/index/IndexManager.java (shutdown):
+	Typo was calling Thread.interrupted() instead of Thread.interrupt().
+	(delay): No longer static.
+	* src/org/eclipse/cdt/core/ErrorParserManger.java (readPreferences):
+	Use Class.forName().
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java (resourceChanged):
+	Remove useless declarations.
+
+2003-01-29 Alain Magloire
+
+	* utils/org/eclipse/cdt/utils/elf/Elf.java:
+	* utils/org/eclipse/cdt/utils/coff/Coff.java
+	* utils/org/eclipse/cdt/utils/coff/PE.java
+	Cleanup some warnings when accessing static fields.
+	
+2003-01-29 Alain Magloire
+
+	* model/org/eclipse/cdt/core/model/CoreModel.java (addElementChangedListeners):
+	remove static qualifier.
+	(removeElementChangedListeners): remove static qualifier.
+
+2003-01-23 Alain Magloire
+
+	Cleanups proposed by Amer Hoda.
+
+	* model/org/eclipse/cdt/core/model/ICRoot.java: No need to extend ICElement
+	* model/org/eclipse/cdt/core/model/ICProject.java: No need to extend ICElement
+	* model/org/eclipse/cdt/core/model/ICFolder.java: No need to extend ICElement
+	* model/org/eclipse/cdt/core/model/ICFile.java: No need to extend ICElement
+	* model/org/eclipse/cdt/core/model/IMethod.java: Extends ICFunction.
+
+2003-01-23 Alain Magloire
+
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java (getHeaderExtensions):  Returns possible C/C++ header extensions name.
+	(getSourceExtensions): Returns possible C/C++ extension.
+	(getTranslationUnitExtensions): Returns possible C/C++ extension.
+	* model/org/eclipse/cdt/core/model/CoreModel.java:
+	(getHeaderExtensions): New method.
+	(getSourceExtensions): New method.
+	(getTranslationUnitExtensions): New method.
+
+2003-01-23 Alain Magloire
+
+	Changes proposed by Amer Hoda.
+
+	* model/org/eclipse/cdt/internal/core/model/Structure.java:
+	Extends IVariableDeclaration instead of IVariable.
+	* model/org/eclipse/cdt/core/model/IStructure.java:
+	Extends IVariableDeclaration instead of IVariable.
+
+2003-01-17 Alain Magloire
+
+	* model/org/eclipse/cdt/internal/core/model/parser/ElfBinaryFile.java (addSymbols):
+	The catch IOException was at the wrong place.
+
+2002-12-23 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/core/CBuilder.java (invokeMake):
+	NPE check the return of launcher.execute(), the executables
+	may not be found.
+
+2002-12-20 Alain Magloire
+
+	Bug fix, We use a feature of GNU make to help track the directories
+		Entering Directory '...'
+		Leaving Directory '...'
+	It looks like sometimes we loose track, or GNU make does not show
+	a "Leaving Directory" this may actually depend on how it was spawn,
+	you can suppress the message.  If you loose track we popDirectories()
+	and try to recover.
+
+	* src/org/eclipse/cdt/core/ErrorParserManager.java (popDirectory):
+	Is throwing NoSuchElement, check the size of the stack first.
+
+	* src/org/eclipse/cdt/internal/errorparsers/MakeErrorParser.java (processLine):
+	Recover when loosing track.
+
+2002-12-19 Alain Magloire
+
+	* model/org/eclipse/cdt/internal/core/model/parser/BinaryContainerAdapter.java (getFile):
+	Check getParent() it may return null.
+	(getFolder): Check getParent(), it may return null. 
+	
+2002-12-19 Alain Magloire
+
+	* src/org/eclipse/cdt/core/ErrorParserManager.java (findFilePath):
+	The workspace will throw an Exception if the file
+	is not within the workspace, catch it.
+	(getWorkingDirectory): fallback to the location
+	of the project if no working directory.
+
+	* src/org/eclipse/cdt/internal/errorparsers/GCCErrorParser.java (processLine):
+	Ignore errors that does not match the pattern.
+
 2002-12-13 Alain Magloire
 
 	* src/org/eclipse/cdt/core/CommandLauncher.java (waitAndRead):

@@ -1,3 +1,7 @@
+2004-04-29 Mikhail Khodjaiants
+	Fix for bug 59083: Two short cut keys in one sentence.
+	* MIUIPluginResources.properties
+
 2004-03-11 Tanya Wolff
 	Externalized strings and marked non translatable as such.
 	* CygwinDebuggerPage.java

@@ -133,6 +133,30 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return true;
 	}
 	
+	private ISymbol lookupElement (IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters) throws ParserSymbolTableException{
+		ISymbol result = null;
+		try {
+			if((type == TypeInfo.t_function) || (type == TypeInfo.t_constructor)){
+				// looking for a function
+				if(validParameterList(parameters))
+					if(type == TypeInfo.t_constructor){
+						IDerivableContainerSymbol startingDerivableScope = (IDerivableContainerSymbol) startingScope;
+						result = startingDerivableScope.lookupConstructor( new LinkedList(parameters));
+					}
+					else
+						result = startingScope.qualifiedFunctionLookup(name, new LinkedList(parameters));				
+				else
+					result = null;
+			}else{
+				// looking for something else
+				result = startingScope.qualifiedLookup(name, type);
+			}
+		} catch (ParserSymbolTableException e) {
+			throw e;    
+		}
+		return result;		
+	}
+	
 	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, int offset, List references, boolean throwOnError ) throws ASTSemanticException
 	{
 		ISymbol result = null;
@@ -141,16 +165,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( name == null ) throw new ASTSemanticException();
 			try
 			{
-				if(type == TypeInfo.t_function){
-					// looking for a function
-					if(validParameterList(parameters))
-						result = startingScope.qualifiedFunctionLookup(name, new LinkedList(parameters));
-					else
-						result = null;
-				}else{
-					// looking for something else
-					result = startingScope.qualifiedLookup(name, type);
-				}
+				result = lookupElement(startingScope, name, type, parameters);
 				if( result != null ) 
 					addReference(references, createReference( result, name, offset ));
 				else
@@ -176,82 +191,84 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return lookupQualifiedName(startingScope, name, TypeInfo.t_any, null, references, throwOnError);
 	}
 
-	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, TypeInfo.eType type, List parameters, List references, boolean throwOnError ) throws ASTSemanticException
-	{
-		ISymbol result = null;
-		IToken firstSymbol = null;
-		try
-		{	
-			if( name == null ) throw new ASTSemanticException();
-			
-			switch( name.length() )
-			{
-				case 0: 
-					if( throwOnError )
-						throw new ASTSemanticException();
-				case 1:
-					firstSymbol = name.getFirstToken();
-					try
-	                {
-	                	if(type == TypeInfo.t_function)
-	                		if (validParameterList(parameters))	                	
-								result = startingScope.unqualifiedFunctionLookup( firstSymbol.getImage(), new LinkedList(parameters));
-							else
-								result = null;
-						else
-	                    	result = startingScope.lookup( firstSymbol.getImage());
-	                    if( result != null ) 
-							addReference( references, createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
-						else
-							throw new ASTSemanticException();    
-	                }
-	                catch (ParserSymbolTableException e)
-	                {
-	                 	throw new ASTSemanticException();    
-	                }
-	                break;
-				default:
-					Iterator iter = name.iterator();
-					firstSymbol = name.getFirstToken();
-					result = startingScope;
-					if( firstSymbol.getType() == IToken.tCOLONCOLON )
-						result = pst.getCompilationUnit();
-					
-					while( iter.hasNext() )
-					{
-						IToken t = (IToken)iter.next();
-						if( t.getType() == IToken.tCOLONCOLON ) continue;
-						if( t.isPointer() ) break;
-						try
-						{
-							if( t == name.getLastToken() ) 
-								if(type == TypeInfo.t_function)
-									if (validParameterList(parameters))	                	
-										result = ((IContainerSymbol)result).qualifiedFunctionLookup( t.getImage(), new LinkedList(parameters) );
-									else
-										result = null;
-								else						
-									result = ((IContainerSymbol)result).qualifiedLookup( t.getImage() );
-							else
-								result = ((IContainerSymbol)result).lookupNestedNameSpecifier( t.getImage() );
-							addReference( references, createReference( result, t.getImage(), t.getOffset() ));
-						}
-						catch( ParserSymbolTableException pste )
-						{
-							throw new ASTSemanticException();						
-						}
-					}
-					 
-			}
-		}
-		catch( ASTSemanticException se )
+		protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, TypeInfo.eType type, List parameters, List references, boolean throwOnError ) throws ASTSemanticException
 		{
-			if( throwOnError )
-				throw se;
-			return null;
+			ISymbol result = null;
+			IToken firstSymbol = null;
+			try
+			{	
+				if( name == null ) throw new ASTSemanticException();
+				
+				switch( name.length() )
+				{
+					case 0: 
+						if( throwOnError )
+							throw new ASTSemanticException();
+					case 1:
+						firstSymbol = name.getFirstToken();
+						try
+		                {
+							result = lookupElement(startingScope, firstSymbol.getImage(), type, parameters);
+/*		                	if(type == TypeInfo.t_function)
+		                		if (validParameterList(parameters))	                	
+									result = startingScope.unqualifiedFunctionLookup( firstSymbol.getImage(), new LinkedList(parameters));
+								else
+									result = null;
+							else
+		                    	result = startingScope.lookup( firstSymbol.getImage());
+*/		                    if( result != null ) 
+								addReference( references, createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
+							else
+								throw new ASTSemanticException();    
+		                }
+		                catch (ParserSymbolTableException e)
+		                {
+		                 	throw new ASTSemanticException();    
+		                }
+		                break;
+					default:
+						Iterator iter = name.iterator();
+						firstSymbol = name.getFirstToken();
+						result = startingScope;
+						if( firstSymbol.getType() == IToken.tCOLONCOLON )
+							result = pst.getCompilationUnit();
+						
+						while( iter.hasNext() )
+						{
+							IToken t = (IToken)iter.next();
+							if( t.getType() == IToken.tCOLONCOLON ) continue;
+							if( t.isPointer() ) break;
+							try
+							{
+								if( t == name.getLastToken() ) 
+									result = lookupElement((IContainerSymbol)result, t.getImage(), type, parameters);
+/*									if((type == TypeInfo.t_function) || (type == TypeInfo.t_constructor))
+										if (validParameterList(parameters))	                	
+											result = ((IContainerSymbol)result).qualifiedFunctionLookup( t.getImage(), new LinkedList(parameters) );
+										else
+											result = null;
+									else						
+										result = ((IContainerSymbol)result).qualifiedLookup( t.getImage() );
+*/								else
+									result = ((IContainerSymbol)result).lookupNestedNameSpecifier( t.getImage() );
+								addReference( references, createReference( result, t.getImage(), t.getOffset() ));
+							}
+							catch( ParserSymbolTableException pste )
+							{
+								throw new ASTSemanticException();						
+							}
+						}
+						 
+				}
+			}
+			catch( ASTSemanticException se )
+			{
+				if( throwOnError )
+					throw se;
+				return null;
+			}
+			return result;
 		}
-		return result;
-	}
 
 
     /* (non-Javadoc)
@@ -623,7 +640,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			return new ASTEnumerationReference( offset, string,  (IASTEnumerationSpecifier)symbol.getASTExtension().getPrimaryDeclaration() );
 		else if( symbol.getType() == TypeInfo.t_enumerator )
 			return new ASTEnumeratorReference( offset, string, (IASTEnumerator)symbol.getASTExtension().getPrimaryDeclaration() );
-		else if( symbol.getType() == TypeInfo.t_function )
+		else if(( symbol.getType() == TypeInfo.t_function ) || (symbol.getType() == TypeInfo.t_constructor))
 		{
 			if( symbol.getContainingSymbol().getTypeInfo().isType( TypeInfo.t_class, TypeInfo.t_union ) )
 				return new ASTMethodReference( offset, string, (IASTMethod)symbol.getASTExtension().getPrimaryDeclaration() ); 
@@ -779,6 +796,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if(containingScope != null){
 				symbol = lookupQualifiedName((IContainerSymbol)containingScope, ((ASTExpression)rhs).getTypeId() , references, false);
 			}
+		}
+		
+		// go up the scope until you hit a class
+		if (kind == IASTExpression.Kind.PRIMARY_THIS){
+			ASTScope parentScope = (ASTScope)scope;
+			while (!(parentScope instanceof IASTClassSpecifier) )
+			{
+				parentScope = (ASTScope)((ASTScope)parentScope).getOwnerScope();
+			}
+			if(parentScope instanceof IASTClassSpecifier)
+				symbol = parentScope.getSymbol();
 		}
 		
 		if (kind == IASTExpression.Kind.POSTFIX_FUNCTIONCALL){        							
@@ -1009,6 +1037,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				return result;
 			}
 		}
+		// this
+		if (expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_THIS){
+			if(symbol != null)
+			{
+				info.setType(TypeInfo.t_type);
+				info.setTypeSymbol(symbol);	
+				info.addPtrOperator(new TypeInfo.PtrOp(TypeInfo.PtrOp.t_reference));		
+				result.add(info);
+				return result;
+			}
+		}		
 		// new 
 /*		if((expression.getExpressionKind() == IASTExpression.Kind.NEW_NEWTYPEID)
 		|| (expression.getExpressionKind() == IASTExpression.Kind.NEW_TYPEID)
@@ -1325,26 +1364,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 			
 			if((parentScope != null) && (parentScope.getType() == TypeInfo.t_class)){
-				// find out the visibility of the method's declaration
-				List functionReferences = new ArrayList();
-				List functionParameters = new LinkedList();
-				// the lookup requires a list of type infos
-				// instead of a list of IASTParameterDeclaration
-				Iterator p = parameters.iterator();
-				while (p.hasNext()){
-					ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
-					functionParameters.add(getParameterTypeInfo(param));
-				}
-				IParameterizedSymbol methodDeclaration = 
-					(IParameterizedSymbol) lookupQualifiedName(parentScope, functionName, TypeInfo.t_function, functionParameters, 0, functionReferences, false);
-				if(methodDeclaration != null){
-					ASTMethodReference reference = (ASTMethodReference) functionReferences.iterator().next();
-					visibility = ((IASTMethod)reference.getReferencedElement()).getVisiblity();		
-				}
-				return createMethod(scope, functionName, nameEndOffset, parameters, returnType,
+				IASTClassSpecifier methodParentScope = (IASTClassSpecifier)parentScope.getASTExtension().getPrimaryDeclaration();
+				return createMethod(methodParentScope, functionName,nameEndOffset, parameters, returnType,
 				exception, isInline, isFriend, isStatic, startOffset, offset,
 				ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
-				visibility, constructorChain,parentName, references, isFunctionDefinition);
+				visibility, constructorChain, references, isFunctionDefinition);
 			}
 		}
 	
@@ -1364,7 +1388,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			Iterator p = parameters.iterator();
 			while (p.hasNext()){
 				ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
-				functionParameters.add(getParameterTypeInfo(param));
+				functionParameters.add(param.getSymbol().getTypeInfo());
 			}
 			
 			IParameterizedSymbol functionDeclaration = null; 
@@ -1600,7 +1624,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return createMethod(scope, name, nameEndOffset, parameters, returnType,
 		exception, isInline, isFriend, isStatic, startOffset, nameOffset,
 		ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
-		visibility, constructorChain,scopeToSymbol(scope).getName(), null, isFunctionDefinition );
+		visibility, constructorChain, null, isFunctionDefinition );
 	}   
 	  
     public IASTMethod createMethod(
@@ -1623,7 +1647,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isPureVirtual,
         ASTAccessVisibility visibility, 
         List constructorChain,
-        String parentName, 
         List references, boolean isFunctionDefinition ) throws ASTSemanticException
     {
 		boolean isConstructor = false;
@@ -1639,6 +1662,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	if( returnType.getTypeSpecifier() != null )
 			setParameter( symbol, returnType, false, references );
 		setParameters( symbol, references, parameters.iterator() );
+		
+		String parentName = ((IASTClassSpecifier)scope).getName(); 
   
 		// check constructor / destructor if no return type
 		if ( returnType.getTypeSpecifier() == null ){
@@ -1649,6 +1674,33 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				isConstructor = true; 
 			} else if(name.startsWith(TELTA) && parentName.equals(name.substring(1))){
 				isDestructor = true;
+			}
+		}
+		symbol.setIsForwardDeclaration(!isFunctionDefinition);
+		
+		if( isFunctionDefinition )
+		{
+			List functionParameters = new LinkedList();
+			// the lookup requires a list of type infos
+			// instead of a list of IASTParameterDeclaration
+			Iterator p = parameters.iterator();
+			while (p.hasNext()){
+				ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
+				functionParameters.add(param.getSymbol().getTypeInfo());
+			}
+			
+			IParameterizedSymbol functionDeclaration = null; 
+
+			List functionReferences = new ArrayList();
+			functionDeclaration = 
+				(IParameterizedSymbol) lookupQualifiedName(ownerScope, name, isConstructor ? TypeInfo.t_constructor : TypeInfo.t_function, functionParameters, 0, functionReferences, false);                
+			
+			if( functionDeclaration != null )
+			{
+				functionDeclaration.setTypeSymbol( symbol );
+				// set the definition visibility = declaration visibility
+				ASTMethodReference reference = (ASTMethodReference) functionReferences.iterator().next();
+				visibility = ((IASTMethod)reference.getReferencedElement()).getVisiblity();		
 			}
 		}
 		

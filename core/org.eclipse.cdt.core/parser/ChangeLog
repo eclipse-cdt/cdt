@@ -1,3 +1,9 @@
+2003-09-16 Hoda Amer
+	In completeParseASTFactory.getExpressionResultType(): Added the support 
+	for expression type PRIMARY_THIS.
+	In createMethod(): changed the scope of a method definition to point to 
+	the parent class.
+	
 2003-09-15 John Camelon
 	Fixed Bug 39556 : 'restrict' qualifier is not supported (ANSI C99) 
 	Fixed Bug 43126 : ISourceElementRequestor.acceptParameterReference accesses internal class

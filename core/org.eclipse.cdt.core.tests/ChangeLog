@@ -1,3 +1,6 @@
+2003-09-16 Hoda Amer
+    Added CompleteParseASTExpressionTest.testPrimaryThis()
+    
 2003-09-15 John Camelon
 	Moved ASTFailedTests::testBug39556() to QuickParseASTTests.
 	Cleaned up some warnings in parser tests.  

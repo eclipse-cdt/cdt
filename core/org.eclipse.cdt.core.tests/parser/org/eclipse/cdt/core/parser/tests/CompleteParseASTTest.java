@@ -731,6 +731,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		Iterator subIterator = getDeclarations( classSpec );
 		IASTMethod fooMethodDeclaration = (IASTMethod)subIterator.next(); 
 		assertFalse( subIterator.hasNext());
+		Iterator references = callback.getReferences().iterator();
 		assertEquals( callback.getReferences().size(), 3 );
 		for( int j = 0; j < 3; ++j)
 			assertEquals( ((IASTReference)callback.getReferences().get( j )).getReferencedElement(), classSpec ); 

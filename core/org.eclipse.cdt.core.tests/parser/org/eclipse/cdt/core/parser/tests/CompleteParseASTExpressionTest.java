@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTFunctionReference;
+import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
@@ -107,8 +108,23 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertEquals( fr1.getReferencedElement(), f1 );
 		 
 	}
-	// Kind PRIMARY_THIS
-	
+	// Kind PRIMARY_THIS : type of inner most enclosing structure scope
+	public void testPrimaryThis() throws Exception
+	{
+		Iterator i = parse ("class A{ int m(); }; A a;  \n int f(void); \n int f(A * a); \n int A::m(){ int x = f(this); }").getDeclarations();
+		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		Iterator members = getDeclarations(cl);
+		IASTMethod method = (IASTMethod)members.next();
+		IASTVariable a  = (IASTVariable) i.next();
+		IASTFunction f1 = (IASTFunction) i.next();
+		IASTFunction f2 = (IASTFunction) i.next();
+		IASTMethod   m  = (IASTMethod) i.next();
+		Iterator references = callback.getReferences().iterator();
+		assertEquals( ((IASTClassReference) references.next()).getReferencedElement(), cl );
+		assertEquals( ((IASTClassReference) references.next()).getReferencedElement(), cl );
+		assertEquals( ((IASTClassReference) references.next()).getReferencedElement(), cl );
+		assertEquals( ((IASTFunctionReference) references.next()).getReferencedElement(), f2 );
+	}	
 	// Kind PRIMARY_BRACKETED_EXPRESSION : LHS
 	public void testPrimaryBracketedExpression() throws Exception
 	{

@@ -562,30 +562,31 @@ public class CVisitor {
 	}
 	private static IBinding createBinding( ICASTElaboratedTypeSpecifier elabTypeSpec ){
 		IASTNode parent = elabTypeSpec.getParent();
-		if( parent instanceof IASTSimpleDeclaration ){
-			IASTSimpleDeclaration declaration = (IASTSimpleDeclaration) parent;
-			if( declaration.getDeclarators().length == 0 ){
-				//forward declaration
-				IBinding binding = resolveBinding( elabTypeSpec, CURRENT_SCOPE | TAGS );
-				if( binding == null ){
-				    if( elabTypeSpec.getKind() == IASTElaboratedTypeSpecifier.k_enum ){
-				        binding = new CEnumeration( elabTypeSpec.getName() );
-				    } else {
-				        binding = new CStructure( elabTypeSpec );    
-				    }
-					
-					try {
-                        ((ICScope) binding.getScope()).addBinding( binding );
-                    } catch ( DOMException e ) {
-                    }
-				} else {
-				    if( binding instanceof CEnumeration ){
-				        ((CEnumeration)binding).addDeclaration( elabTypeSpec.getName() );
-				    }
-				}
-				return binding;
-			} 
-			return resolveBinding( elabTypeSpec, COMPLETE | TAGS );
+		if( parent instanceof IASTDeclaration ){
+			int bits = TAGS;
+			if( parent instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)parent).getDeclarators().length == 0 ){
+				bits |= CURRENT_SCOPE;
+			}
+			
+			IBinding binding = resolveBinding( elabTypeSpec, bits );
+			if( binding != null ){
+				if( binding instanceof CEnumeration ){
+			        ((CEnumeration)binding).addDeclaration( elabTypeSpec.getName() );
+			    }
+			} else {
+				if( elabTypeSpec.getKind() == IASTElaboratedTypeSpecifier.k_enum ){
+			        binding = new CEnumeration( elabTypeSpec.getName() );
+			    } else {
+			        binding = new CStructure( elabTypeSpec );    
+			    }
+				
+				try {
+                    ((ICScope) binding.getScope()).addBinding( binding );
+                } catch ( DOMException e ) {
+                }
+			}
+			
+			return binding;
 		} else if( parent instanceof IASTTypeId || parent instanceof IASTParameterDeclaration ){
 			IASTNode blockItem = getContainingBlockItem( parent );
 			return findBinding( blockItem, elabTypeSpec.getName(), COMPLETE | TAGS );
@@ -977,7 +978,7 @@ public class CVisitor {
 	
 	public static IScope getContainingScope( IASTDeclSpecifier compTypeSpec ){
 	    IASTNode parent = compTypeSpec.getParent();
-	    return getContainingScope( (IASTSimpleDeclaration) parent );
+	    return getContainingScope( parent );
 	}
 
 	/**

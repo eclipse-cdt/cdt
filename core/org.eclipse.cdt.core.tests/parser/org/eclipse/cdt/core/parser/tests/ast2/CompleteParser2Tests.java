@@ -1652,7 +1652,7 @@ public class CompleteParser2Tests extends TestCase {
 		
 		assertEquals( col.size(), 2 );
 		
-		IProblemBinding blah = (IProblemBinding) col.getName(0).resolveBinding();
+		ICPPClassType blah = (ICPPClassType) col.getName(0).resolveBinding();
 		ITypedef sb = (ITypedef) col.getName(1).resolveBinding();
 		assertSame( sb.getType(), blah );
 	}

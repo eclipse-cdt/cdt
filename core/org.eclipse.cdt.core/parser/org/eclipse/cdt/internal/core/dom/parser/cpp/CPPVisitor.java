@@ -241,19 +241,45 @@ public class CPPVisitor {
 
     private static IBinding createBinding( ICPPASTElaboratedTypeSpecifier elabType ){
 	    IASTNode parent = elabType.getParent();
+	    IBinding binding = null;
+	    boolean mustBeSimple = true;
 	    if( parent instanceof IASTSimpleDeclaration ){
 	        IASTDeclarator [] dtors = ((IASTSimpleDeclaration)parent).getDeclarators();
 	        if( dtors.length > 0 ){
-	        	return CPPSemantics.resolveBinding( elabType.getName() );
+	        	binding = CPPSemantics.resolveBinding( elabType.getName() );
+	        } else {
+	        	mustBeSimple = false;
 	        }
-	    } else if( parent instanceof IASTParameterDeclaration ){
-	    	return CPPSemantics.resolveBinding( elabType.getName() );
-	    } else if( parent instanceof IASTTypeId ){
-	        return CPPSemantics.resolveBinding( elabType.getName() );
+	    } else if( parent instanceof IASTParameterDeclaration || 
+	    		   parent instanceof IASTDeclaration ||
+				   parent instanceof IASTTypeId )
+	    {
+	    	binding = CPPSemantics.resolveBinding( elabType.getName() );
 	    }
 	    
+		if( binding != null && 
+		    (!(binding instanceof IProblemBinding) ||((IProblemBinding)binding).getID() != IProblemBinding.SEMANTIC_NAME_NOT_FOUND) )
+		{
+			return binding;
+    	}
+		
+		//7.1.5.3-2 ... If name lookup does not find a declaration for the name, the elaborated-type-specifier is ill-formed
+		//unless it is of the simple form class-key identifier
+	    if( mustBeSimple && elabType.getName() instanceof ICPPASTQualifiedName )
+	    	return binding;
+	    
 		ICPPScope scope = (ICPPScope) getContainingScope( elabType );
-		IBinding binding;
+		
+		if( mustBeSimple ){
+			//3.3.1-5 ... the identifier is declared in the smallest non-class non-function-prototype scope that contains
+			//the declaration
+			while( scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope ){
+				try {
+					scope = (ICPPScope) scope.getParent();
+				} catch (DOMException e1) {
+				}
+			}
+		}
         try {
             binding = scope.getBinding( elabType.getName() );
             if( binding == null ){

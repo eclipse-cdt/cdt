@@ -2672,6 +2672,49 @@ public class AST2Tests extends AST2BaseTest {
       parse( buffer.toString(), ParserLanguage.C );
    }
    
+   public void testBug84266() throws Exception {
+   		StringBuffer buffer = new StringBuffer();
+   		buffer.append( "struct s { double i; } f(void);  \n"); //$NON-NLS-1$
+   		buffer.append( "struct s f(void){}               \n"); //$NON-NLS-1$
+   		
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+	    CNameCollector col = new CNameCollector();
+	    CVisitor.visitTranslationUnit(tu, col);
+	
+	    assertEquals(col.size(), 7);
+	    
+	    ICompositeType s_ref = (ICompositeType) col.getName(4).resolveBinding();
+	    ICompositeType s_decl = (ICompositeType) col.getName(0).resolveBinding();
+	    
+	    assertSame( s_ref, s_decl );
+	    CVisitor.clearBindings( tu );
+	    
+	    s_decl = (ICompositeType) col.getName(0).resolveBinding();
+	    s_ref = (ICompositeType) col.getName(4).resolveBinding();
+	    
+	    assertSame( s_ref, s_decl );
+   }
+   
+   public void testBug84266_2() throws Exception {
+		IASTTranslationUnit tu = parse("struct s f(void);", ParserLanguage.C); //$NON-NLS-1$
+	    CNameCollector col = new CNameCollector();
+	    CVisitor.visitTranslationUnit(tu, col);
+	
+	    assertEquals(col.size(), 3);
+	    
+	    ICompositeType s = (ICompositeType) col.getName(0).resolveBinding();
+	    assertNotNull( s );
+	    
+		tu = parse("struct s f(void){}", ParserLanguage.C); //$NON-NLS-1$
+	    col = new CNameCollector();
+	    CVisitor.visitTranslationUnit(tu, col);
+	
+	    assertEquals(col.size(), 3);
+	    
+	    s = (ICompositeType) col.getName(0).resolveBinding();
+	    assertNotNull( s );
+   }
+   
    public void testBug84250() throws Exception {
       assertTrue( ((IASTDeclarationStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) parse( "void f() { int (*p) [2]; }", ParserLanguage.C ).getDeclarations()[0]).getBody()).getStatements()[0]).getDeclaration() instanceof IASTSimpleDeclaration ); //$NON-NLS-1$
    }

@@ -1018,5 +1018,41 @@ public class AST2CPPTests extends AST2BaseTest {
 	    assertSame( p_ref, p_decl );
 	}
 
+   public void testBug84266() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "struct s { double i; } f(void);  \n"); //$NON-NLS-1$
+		buffer.append( "struct s f(void){}               \n"); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+	    CPPNameCollector col = new CPPNameCollector();
+	    CPPVisitor.visitTranslationUnit(tu, col);
+	
+	    assertEquals(col.size(), 7);
+	    
+	    ICompositeType s_ref = (ICompositeType) col.getName(4).resolveBinding();
+	    ICompositeType s_decl = (ICompositeType) col.getName(0).resolveBinding();
+	    
+	    assertSame( s_ref, s_decl );
+	}
+	
+	public void testBug84266_2() throws Exception {
+		IASTTranslationUnit tu = parse("struct s f(void);", ParserLanguage.CPP); //$NON-NLS-1$
+	    CPPNameCollector col = new CPPNameCollector();
+	    CPPVisitor.visitTranslationUnit(tu, col);
+	
+	    assertEquals(col.size(), 3);
+	    
+	    ICompositeType s = (ICompositeType) col.getName(0).resolveBinding();
+	    assertNotNull( s );
+	    
+		tu = parse("struct s f(void){}", ParserLanguage.CPP); //$NON-NLS-1$
+	    col = new CPPNameCollector();
+	    CPPVisitor.visitTranslationUnit(tu, col);
+	
+	    assertEquals(col.size(), 3);
+	    
+	    s = (ICompositeType) col.getName(0).resolveBinding();
+	    assertNotNull( s );
+	}
 }
 

@@ -308,8 +308,9 @@
                name="nature"
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
-      </page>    
-      <page
+      </page> 
+      <!-- Comment this out for now, in the future do ICElementActionFilter to filter things out-->   
+      <!--page
             objectClass="org.eclipse.cdt.core.model.ICContainer"
             adaptable="true"
             name="%IncludeSymbolProperties.name"
@@ -319,7 +320,7 @@
                name="nature"
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
-      </page>
+      </page-->
       <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"

@@ -439,5 +439,18 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 	    assertTrue( node instanceof IASTFunction );
 	    assertEquals( ((IASTFunction)node).getName(), "f_SD" ); //$NON-NLS-1$
 	}
+	
+	public void testBug72713() throws Exception{
+	    Writer writer = new StringWriter();
+	    writer.write( "class Deck{ void initialize(); };   \n"); //$NON-NLS-1$
+	    writer.write( "void Deck::initialize(){}           \n"); //$NON-NLS-1$
+	    
+	    String code = writer.toString();
+	    int startIndex = code.indexOf( ":initialize" ); //$NON-NLS-1$
+	    IASTNode node = parse( code, startIndex + 1, startIndex + 11 );
+	    assertTrue( node instanceof IASTMethod );
+	    assertFalse( ((IASTMethod)node).previouslyDeclared() );
+	    assertEquals( ((IASTMethod) node).getNameOffset(), code.indexOf( " initialize();" ) + 1 ); //$NON-NLS-1$
+	}
 }
 

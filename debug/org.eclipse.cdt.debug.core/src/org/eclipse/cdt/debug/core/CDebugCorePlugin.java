@@ -13,6 +13,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -134,10 +135,15 @@ public class CDebugCorePlugin extends Plugin
 		return (ICDebugConfiguration[]) fDebugConfigurations.values().toArray(new ICDebugConfiguration[0]);
 	}
 	
-	public ICDebugConfiguration getDebugConfiguration(String id) {
+	public ICDebugConfiguration getDebugConfiguration(String id) throws CoreException {
 		if (fDebugConfigurations == null) {
 			initializeDebugConfiguration();
 		}
-		return (ICDebugConfiguration) fDebugConfigurations.get(id);
+		ICDebugConfiguration dbgCfg = (ICDebugConfiguration) fDebugConfigurations.get(id);
+		if ( dbgCfg == null ) {
+			IStatus status = new Status(IStatus.ERROR, getUniqueIdentifier(), 100, "No such debugger", null);
+			throw new CoreException(status);
+		}
+		return dbgCfg;
 	}
 }

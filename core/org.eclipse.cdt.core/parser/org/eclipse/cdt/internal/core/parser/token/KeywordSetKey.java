@@ -27,6 +27,7 @@ public class KeywordSetKey extends Enum
 	public static final KeywordSetKey PP_DIRECTIVE = new KeywordSetKey( 8 );
 	public static final KeywordSetKey EXPRESSION = new KeywordSetKey( 9 );
 	public static final KeywordSetKey MEMBER = new KeywordSetKey(10);
+	public static final KeywordSetKey ALL = new KeywordSetKey( 11 );
 	/**
 	 * @param enumValue
 	 */

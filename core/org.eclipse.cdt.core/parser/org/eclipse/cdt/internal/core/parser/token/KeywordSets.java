@@ -55,6 +55,8 @@ public class KeywordSets {
 			return PP_DIRECTIVES;
 		if( kind == KeywordSetKey.EXPRESSION )
 			return (Set) EXPRESSION_TABLE.get( language );
+		if( kind == KeywordSetKey.ALL )
+			return (Set) ALL_TABLE.get( language );
 		//TODO finish this
 		return null;
 	}
@@ -283,16 +285,13 @@ public class KeywordSets {
 		POST_USING_CPP.add(Keywords.TYPENAME);
 	}
 	
-	private static final Set FUNCTION_MODIFIER_C; 
-	static
-	{
-		FUNCTION_MODIFIER_C = new TreeSet();
-	}
+	private static final Set FUNCTION_MODIFIER_C = EMPTY_TABLE; 
+
 	private static final Set FUNCTION_MODIFIER_CPP;
 	static
 	{
 		FUNCTION_MODIFIER_CPP = new TreeSet( FUNCTION_MODIFIER_C );
-		FUNCTION_MODIFIER_CPP.add( Keywords.CONST );
+		
 		FUNCTION_MODIFIER_CPP.add( Keywords.THROW);
 		FUNCTION_MODIFIER_CPP.add( Keywords.TRY );
 		FUNCTION_MODIFIER_CPP.add( Keywords.VOLATILE );
@@ -301,7 +300,7 @@ public class KeywordSets {
 	private static final Hashtable FUNCTION_MODIFIER_TABLE;
 	static
 	{
-		FUNCTION_MODIFIER_TABLE= new Hashtable();
+		FUNCTION_MODIFIER_TABLE= new Hashtable(2);
 		FUNCTION_MODIFIER_TABLE.put( ParserLanguage.CPP, FUNCTION_MODIFIER_CPP );
 		FUNCTION_MODIFIER_TABLE.put( ParserLanguage.C, FUNCTION_MODIFIER_C );
 	}
@@ -323,6 +322,138 @@ public class KeywordSets {
 		PP_DIRECTIVES.add(Directives.POUND_ERROR);
 		PP_DIRECTIVES.add(Directives.POUND_PRAGMA);
 		PP_DIRECTIVES.add(Directives.POUND_ELIF); 
+	}
+	
+	private static final Set ALL_C;
+	static
+	{
+		ALL_C = new TreeSet();
+		ALL_C.add( Keywords.AUTO);
+		ALL_C.add( Keywords.BREAK);
+		ALL_C.add( Keywords.CASE);
+		ALL_C.add( Keywords.CHAR);
+		ALL_C.add( Keywords.CONST);
+		ALL_C.add( Keywords.CONTINUE);
+		ALL_C.add( Keywords.DEFAULT);
+		ALL_C.add( Keywords.DELETE);
+		ALL_C.add( Keywords.DO);
+		ALL_C.add( Keywords.DOUBLE);
+		ALL_C.add( Keywords.ELSE);
+		ALL_C.add( Keywords.ENUM);
+		ALL_C.add( Keywords.EXTERN);
+		ALL_C.add( Keywords.FLOAT);
+		ALL_C.add( Keywords.FOR);
+		ALL_C.add( Keywords.GOTO);
+		ALL_C.add( Keywords.IF);
+		ALL_C.add( Keywords.INLINE);
+		ALL_C.add( Keywords.INT);
+		ALL_C.add( Keywords.LONG);
+		ALL_C.add( Keywords.REGISTER);
+		ALL_C.add( Keywords.RESTRICT);
+		ALL_C.add( Keywords.RETURN);
+		ALL_C.add( Keywords.SHORT);
+		ALL_C.add( Keywords.SIGNED);
+		ALL_C.add( Keywords.SIZEOF);
+		ALL_C.add( Keywords.STATIC);
+		ALL_C.add( Keywords.STRUCT);
+		ALL_C.add( Keywords.SWITCH);
+		ALL_C.add( Keywords.TYPEDEF);
+		ALL_C.add( Keywords.UNION);
+		ALL_C.add( Keywords.UNSIGNED);
+		ALL_C.add( Keywords.VOID);
+		ALL_C.add( Keywords.VOLATILE);
+		ALL_C.add( Keywords.WHILE);
+		ALL_C.add( Keywords._BOOL);
+		ALL_C.add( Keywords._COMPLEX);
+		ALL_C.add( Keywords._IMAGINARY);
+	}
+	
+	private static final Set ALL_CPP;
+	static
+	{
+		ALL_CPP = new TreeSet();
+		ALL_CPP.add( Keywords.AND );
+		ALL_CPP.add( Keywords.AND_EQ);
+		ALL_CPP.add( Keywords.ASM);
+		ALL_CPP.add( Keywords.AUTO);
+		ALL_CPP.add( Keywords.BITAND);
+		ALL_CPP.add( Keywords.BITOR);
+		ALL_CPP.add( Keywords.BOOL);
+		ALL_CPP.add( Keywords.BREAK);
+		ALL_CPP.add( Keywords.CASE);
+		ALL_CPP.add( Keywords.CATCH);
+		ALL_CPP.add( Keywords.CHAR);
+		ALL_CPP.add( Keywords.CLASS);
+		ALL_CPP.add( Keywords.COMPL);
+		ALL_CPP.add( Keywords.CONST);
+		ALL_CPP.add( Keywords.CONST_CAST);
+		ALL_CPP.add( Keywords.CONTINUE);
+		ALL_CPP.add( Keywords.DEFAULT);
+		ALL_CPP.add( Keywords.DELETE);
+		ALL_CPP.add( Keywords.DO);
+		ALL_CPP.add( Keywords.DOUBLE);
+		ALL_CPP.add( Keywords.DYNAMIC_CAST);
+		ALL_CPP.add( Keywords.ELSE);
+		ALL_CPP.add( Keywords.ENUM);
+		ALL_CPP.add( Keywords.EXPLICIT);
+		ALL_CPP.add( Keywords.EXPORT);
+		ALL_CPP.add( Keywords.EXTERN);
+		ALL_CPP.add( Keywords.FALSE);
+		ALL_CPP.add( Keywords.FLOAT);
+		ALL_CPP.add( Keywords.FOR);
+		ALL_CPP.add( Keywords.FRIEND);
+		ALL_CPP.add( Keywords.GOTO);
+		ALL_CPP.add( Keywords.IF);
+		ALL_CPP.add( Keywords.INLINE);
+		ALL_CPP.add( Keywords.INT);
+		ALL_CPP.add( Keywords.LONG);
+		ALL_CPP.add( Keywords.MUTABLE);
+		ALL_CPP.add( Keywords.NAMESPACE);
+		ALL_CPP.add( Keywords.NEW);
+		ALL_CPP.add( Keywords.NOT);
+		ALL_CPP.add( Keywords.NOT_EQ);
+		ALL_CPP.add( Keywords.OPERATOR);
+		ALL_CPP.add( Keywords.OR);
+		ALL_CPP.add( Keywords.OR_EQ);
+		ALL_CPP.add( Keywords.PRIVATE);
+		ALL_CPP.add( Keywords.PROTECTED);
+		ALL_CPP.add( Keywords.PUBLIC);
+		ALL_CPP.add( Keywords.REGISTER);
+		ALL_CPP.add( Keywords.REINTERPRET_CAST);
+		ALL_CPP.add( Keywords.RETURN);
+		ALL_CPP.add( Keywords.SHORT);
+		ALL_CPP.add( Keywords.SIGNED);
+		ALL_CPP.add( Keywords.SIZEOF);
+		ALL_CPP.add( Keywords.STATIC);
+		ALL_CPP.add( Keywords.STATIC_CAST);
+		ALL_CPP.add( Keywords.STRUCT);
+		ALL_CPP.add( Keywords.SWITCH);
+		ALL_CPP.add( Keywords.TEMPLATE);
+		ALL_CPP.add( Keywords.THIS);
+		ALL_CPP.add( Keywords.THROW);
+		ALL_CPP.add( Keywords.TRUE);
+		ALL_CPP.add( Keywords.TRY);
+		ALL_CPP.add( Keywords.TYPEDEF);
+		ALL_CPP.add( Keywords.TYPEID);
+		ALL_CPP.add( Keywords.TYPENAME);
+		ALL_CPP.add( Keywords.UNION);
+		ALL_CPP.add( Keywords.UNSIGNED);
+		ALL_CPP.add( Keywords.USING);
+		ALL_CPP.add( Keywords.VIRTUAL);
+		ALL_CPP.add( Keywords.VOID);
+		ALL_CPP.add( Keywords.VOLATILE);
+		ALL_CPP.add( Keywords.WCHAR_T);
+		ALL_CPP.add( Keywords.WHILE);
+		ALL_CPP.add( Keywords.XOR);
+		ALL_CPP.add( Keywords.XOR_EQ);
+
+	}
+	private static final Hashtable ALL_TABLE;
+	static
+	{
+		ALL_TABLE = new Hashtable( 2 );
+		ALL_TABLE.put( ParserLanguage.C, ALL_C );
+		ALL_TABLE.put( ParserLanguage.CPP, ALL_CPP );
 	}
 
 }

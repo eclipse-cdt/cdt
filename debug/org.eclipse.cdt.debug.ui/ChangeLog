@@ -1,3 +1,9 @@
+2003-03-10 Mikhail Khodjaiants
+	Implementing the "Display As Array" action.
+	* plugin.xml
+	* plugin.propeties
+	* CastToArrayActionDelegate.java: new
+
 2003-03-09 Mikhail Khodjaiants
 	The implementation of the "Cast To Type" and "Restore Default Type" actions.
 	* plugin.xml

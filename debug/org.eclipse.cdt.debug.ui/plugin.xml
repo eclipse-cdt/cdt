@@ -816,8 +816,8 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.RestoreDefaultTypeActionDelegate">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -834,6 +834,22 @@
                <pluginState
                      value="activated"
                      id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               label="%CastToArrayAction.label"
+               icon="icons/full/clcl16/showasarray_co.gif"
+               helpContextId="cast_to_array_action_context"
+               tooltip="%CastToArrayAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.CastToArrayActionDelegate">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
                </pluginState>
             </enablement>
          </action>

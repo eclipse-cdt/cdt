@@ -25,6 +25,8 @@ import org.eclipse.cdt.core.resources.IPathEntryVariableManager;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -59,7 +61,7 @@ public class PathEntryVariablesGroup {
 	public static class PathEntryVariableElement {
 		public String name;
 		
-		public String value;
+		public IPath path;
 	}
 	
 	// sizing constants
@@ -159,7 +161,7 @@ public class PathEntryVariablesGroup {
 		// otherwise, adds the new variable (or updates an existing one) in the
 		// temporary collection of currently defined variables
 		String newVariableName = dialog.getVariableName();
-		String newVariableValue = dialog.getVariableValue();
+		IPath newVariableValue = new Path(dialog.getVariableValue());
 		tempPathVariables.put(newVariableName, newVariableValue);
 		
 		// the UI must be updated
@@ -250,13 +252,13 @@ public class PathEntryVariablesGroup {
 		TableItem item = variableTable.getItem(variableTable
 				.getSelectionIndex());
 		String variableName = (String) item.getData();
-		String variableValue = (String) tempPathVariables.get(variableName);
+		IPath variableValue = (IPath) tempPathVariables.get(variableName);
 		
 		// constructs a dialog for editing the variable's current name and value
 		PathEntryVariableDialog dialog = new PathEntryVariableDialog(shell,
 				PathEntryVariableDialog.EXISTING_VARIABLE, variableType, tempPathVariables.keySet());
 		dialog.setVariableName(variableName);
-		dialog.setVariableValue(variableValue);
+		dialog.setVariableValue(variableValue.toOSString());
 		
 		// opens the dialog - just returns if the user cancels it
 		if (dialog.open() == Window.CANCEL)
@@ -267,7 +269,7 @@ public class PathEntryVariablesGroup {
 		tempPathVariables.remove(variableName);
 		
 		String newVariableName = dialog.getVariableName();
-		String newVariableValue = dialog.getVariableValue();
+		IPath newVariableValue = new Path(dialog.getVariableValue());
 		
 		// and add it again (maybe with a different name)
 		tempPathVariables.put(newVariableName, newVariableValue);
@@ -310,7 +312,7 @@ public class PathEntryVariablesGroup {
 			String name = (String) items[i].getData();
 			selection[i] = new PathEntryVariableElement();
 			selection[i].name = name;
-			selection[i].value = (String)tempPathVariables.get(name);
+			selection[i].path = (IPath)tempPathVariables.get(name);
 		}
 		return selection;
 	}
@@ -393,11 +395,11 @@ public class PathEntryVariablesGroup {
 		
 		tempPathVariables.clear();
 		for (int i = 0; i < varNames.length; i++) {
-			String value = pathEntryVariableManager.getValue(varNames[i]);
+			IPath value = pathEntryVariableManager.getValue(varNames[i]);
 			
 			// the value may not exist any more
 			if (value != null) {
-				boolean isFile = new File(value).isFile();
+				boolean isFile = value.toFile().isFile();
 				if ((isFile && (variableType & IResource.FILE) != 0)
 						|| (isFile == false && (variableType & IResource.FOLDER) != 0)) {
 					
@@ -432,14 +434,13 @@ public class PathEntryVariablesGroup {
 	private void updateVariableTable(String selectedVarName) {
 		variableTable.removeAll();
 		int selectedVarIndex = 0;
-		for (Iterator varNames = tempPathVariables.keySet().iterator(); varNames
-		.hasNext();) {
+		for (Iterator varNames = tempPathVariables.keySet().iterator(); varNames.hasNext();) {
 			TableItem item = new TableItem(variableTable, SWT.NONE);
 			String varName = (String) varNames.next();
-			String value = (String) tempPathVariables.get(varName);
-			File file = new File(value);
+			IPath value = (IPath) tempPathVariables.get(varName);
+			File file = value.toFile();
 			
-			item.setText(varName + " - " + value); //$NON-NLS-1$ 
+			item.setText(varName + " - " + value.toOSString()); //$NON-NLS-1$ 
 			// the corresponding variable name is stored in each table widget item
 			item.setData(varName);
 			item.setImage(file.exists() ? (file.isFile() ? FILE_IMG
@@ -465,8 +466,7 @@ public class PathEntryVariablesGroup {
 	public boolean performOk() {
 		try {
 			// first process removed variables  
-			for (Iterator removed = removedVariableNames.iterator(); removed
-			.hasNext();) {
+			for (Iterator removed = removedVariableNames.iterator(); removed.hasNext();) {
 				String removedVariableName = (String) removed.next();
 				// only removes variables that have not been added again
 				if (!tempPathVariables.containsKey(removedVariableName))
@@ -474,11 +474,10 @@ public class PathEntryVariablesGroup {
 			}
 			
 			// then process the current collection of variables, adding/updating them
-			for (Iterator current = tempPathVariables.entrySet().iterator(); current
-			.hasNext();) {
+			for (Iterator current = tempPathVariables.entrySet().iterator(); current.hasNext();) {
 				Map.Entry entry = (Map.Entry) current.next();
 				String variableName = (String) entry.getKey();
-				String variableValue = (String) entry.getValue();
+				IPath variableValue = (IPath) entry.getValue();
 				pathEntryVariableManager.setValue(variableName, variableValue);
 			}
 			// re-initialize temporary state

@@ -1,3 +1,14 @@
+2002-11-22 Alain Magloire
+
+	* src/.../internal/ui/BinaryPropertySource.java (getPropertyValue):
+	Check for core.
+	* src/.../internal/ui/CElementImageProvider.java (getBaseImageDescriptor):
+	Check for Core files.
+	* src/.../internal/ui/CElementLabelProvider.java (getCelementImage):
+	Removed.
+	* src/.../internal/ui/CPluginImages.java:
+	DESC_OBJS_CORE, IMG_OBJS_CORE, new icon for core files.
+
 2002-11-22 Alex Chapiro
 
 	* src/.../wizards/conversion/ConversionWizard.java(doRun):

@@ -1,10 +1,26 @@
+2002-11-22 Alain Magloire
+
+	* src/.../cdt/core/model/IBinary.java (isCore):
+	New method.
+	* src/.../cdt/core/model/IBinaryParser.java (CORE):
+	New type core.
+	* src/.../internal/core/model/parser/ElfBinaryFile.java (getType):
+	case for CORE.
+	* src/.../internal/core/model/Binary.java (isCore):
+	New method.
+	* src/.../internal/core/model/BinaryInfo.java (isCore):
+	New method.
+	* src/.../internal/core/model/CModelManager.java (isBinary):
+	Check for core.
+	* util/.../utils/elf/Elf.java (getAttributes): Check for Core.
+
 2002-11-22 David Inglis
-	* src/.../cdt/core/CommandLauncher.java
+	* src/.../cdt/core/CommandLauncher.java:
 	Make CommandLauncher.waitAndRead do the stream writing, since ui components
 	process this stream, and this method may be call in a ui thread.
 	
 2002-11-20 David Inglis
-	* src/.../internal/core/CBuilder.java
+	* src/.../internal/core/CBuilder.java:
 	fix AUTO_BUILDs so that the builder only builds when the resources change
 	in the project.
 	

@@ -39,6 +39,8 @@ public class CDebugCorePlugin extends Plugin
 
 	private HashMap fDebugConfigurations;
 
+	private IAsyncExecutor fAsyncExecutor = null;
+
 	/**
 	 * The constructor.
 	 */
@@ -199,9 +201,15 @@ public class CDebugCorePlugin extends Plugin
 			}
 		}
 	}
-
+	
+	public void setAsyncExecutor( IAsyncExecutor executor )
+	{
+		fAsyncExecutor = executor;
+	}
+	
 	public void asyncExec( Runnable runnable )
 	{
-		DebugPlugin.getDefault().asyncExec( runnable );
+		if ( fAsyncExecutor != null )
+			fAsyncExecutor.asyncExec( runnable );
 	}
 }

@@ -1,4 +1,9 @@
 2003-02-13 Mikhail Khodjaiants
+	Undo changes because the 'asyncExec' method of the 'DebugPlugin' class has added since version 2.1.
+	* IAsyncExecutor.java: removed
+	* CDebugCorePlugin.java
+
+2003-02-13 Mikhail Khodjaiants
 	Use the 'asyncExec' method of the 'DebugPlugin' class.
 	* IAsyncExecutor.java: removed
 	* CDebugCorePlugin.java

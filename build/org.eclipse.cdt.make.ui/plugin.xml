@@ -24,6 +24,7 @@
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.make.core"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.debug.ui"/>
    </requires>
    <extension-point id="DiscoveryProfilePage" name="%discoveryProfilePage.name" schema="schema/DiscoveryProfilePage.exsd"/>
 
@@ -87,123 +88,8 @@
    <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
-            objectClass="org.eclipse.cdt.core.model.ICProject"
-            adaptable="false"
-            id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
-         <action
-               label="%ActionMakeCreateTarget.label"
-               class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
-               menubarPath="buildGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewCreateTargetAction">
-         </action>
-         <action
-               label="%ActionMakeBuildTarget.label"
-               class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
-               menubarPath="buildGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewBuildTargetAction">
-         </action>
-         <filter
-               name="projectNature"
-               value="org.eclipse.cdt.make.core.makeNature">
-         </filter>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.cdt.core.model.ICContainer"
-            adaptable="false"
-            id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
-         <action
-               label="%ActionMakeCreateTarget.label"
-               class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
-               menubarPath="buildGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewCreateTargetAction">
-         </action>
-         <action
-               label="%ActionMakeBuildTarget.label"
-               class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
-               menubarPath="buildGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewBuildTargetAction">
-         </action>
-         <filter
-               name="projectNature"
-               value="org.eclipse.cdt.make.core.makeNature">
-         </filter>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.cdt.core.model.ITranslationUnit"
-            adaptable="false"
-            id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
-         <action
-               label="%ActionMakeCreateTarget.label"
-               class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
-               menubarPath="buildGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewCreateTargetAction">
-         </action>
-         <action
-               label="%ActionMakeBuildTarget.label"
-               class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
-               menubarPath="buildGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewBuildTargetAction">
-         </action>
-         <filter
-               name="projectNature"
-               value="org.eclipse.cdt.make.core.makeNature">
-         </filter>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.cdt.core.model.IBinary"
-            adaptable="false"
-            id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
-         <action
-               label="%ActionMakeCreateTarget.label"
-               class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
-               menubarPath="buildGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewCreateTargetAction">
-         </action>
-         <action
-               label="%ActionMakeBuildTarget.label"
-               class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
-               menubarPath="buildGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewBuildTargetAction">
-         </action>
-         <filter
-               name="projectNature"
-               value="org.eclipse.cdt.make.core.makeNature">
-         </filter>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.cdt.core.model.IArchive"
-            adaptable="false"
-            id="org.eclipse.cdt.make.ui.popupMenu.CViewContribution">
-         <action
-               label="%ActionMakeCreateTarget.label"
-               class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
-               menubarPath="buildGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewCreateTargetAction">
-         </action>
-         <action
-               label="%ActionMakeBuildTarget.label"
-               class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
-               menubarPath="buildGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.make.ui.CViewBuildTargetAction">
-         </action>
-         <filter
-               name="projectNature"
-               value="org.eclipse.cdt.make.core.makeNature">
-         </filter>
-      </objectContribution>
-      <objectContribution
             objectClass="org.eclipse.core.resources.IResource"
-            adaptable="false"
+            adaptable="true"
             id="org.eclipse.cdt.make.ui.popupMenu.NavigatorContribution">
          <action
                label="%ActionMakeBuildTarget.label"
@@ -337,22 +223,30 @@
             class="org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathPropertyPage"
             id="org.eclipse.cdt.internal.ui.dialogs.cpath.CPathPropertyPage">
          <filter
-               name="nature"
+               name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </page> 
-      <!-- Comment this out for now, in the future do ICElementActionFilter to filter things out-->   
-      <!--page
+      <!-- page
             objectClass="org.eclipse.cdt.core.model.ICContainer"
-            adaptable="true"
             name="%IncludeSymbolProperties.name"
             class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
             id="org.eclipse.cdt.internal.ui.dialogs.cpath.IncludeSymbolsPropertyPage">
          <filter
-               name="nature"
+               name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
-      </page-->
+      </page>
+      <page
+            objectClass="org.eclipse.cdt.core.model.ITranslationUnit"
+            name="%IncludeSymbolProperties.name"
+            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
+            id="org.eclipse.cdt.internal.ui.dialogs.cpath.IncludeSymbolsPropertyPage">
+         <filter
+               name="projectNature"
+               value="org.eclipse.cdt.make.core.makeNature">
+         </filter>
+      </page -->
       <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
@@ -360,7 +254,7 @@
             class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
             id="org.eclipse.cdt.internal.ui.dialogs.cpath.IncludeSymbolsPropertyPage">
          <filter
-               name="nature"
+               name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </page>

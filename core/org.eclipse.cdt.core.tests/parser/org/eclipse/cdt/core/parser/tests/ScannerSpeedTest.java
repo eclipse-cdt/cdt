@@ -29,6 +29,13 @@ public class ScannerSpeedTest extends SpeedTest {
 	
 	private static final ISourceElementRequestor CALLBACK = new NullSourceElementRequestor();
 
+	public static void main(String[] args) {
+		try {
+			new ScannerSpeedTest().runTest(1);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+	}
 	public void test() throws Exception {
 		runTest(10);
 	}

@@ -1,3 +1,6 @@
+2004-08-16 Bogdan Gheorghe
+	Fix for 70113: Search for Template member declarations causes Assertion
+	
 2004-08-03 Tanya Wolff
 
 	Fix for 71033: English "Find Refs" in Workbench Key preferences.

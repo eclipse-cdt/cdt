@@ -1,3 +1,8 @@
+2002-10-22 Alain Magloire
+
+	* src/.../cdi/ICDISession.java (getSessionProcess):
+	New method to let user acess directly the debugger.
+
 2002-10-20 Mikhail Khodjaiants
 	Added a functionality needed to process ICDIMemoryChangedEvent.
 	* IFormattedMemoryBlock.java
@@ -5,10 +10,10 @@
  
 2002-10-20 Alain Magloire
 
-	* src/.../cdi/model/CTarget.java (getMemoryBlock): Remove
+	* src/.../cdi/model/ICDITarget.java (getMemoryBlock): Remove
 	we use the MemoryManager instead.
 	(evaluateExpressionToValue): Remove not used.
-	* src/.../cdi/model/SourceManager.java (getFile): Remove not use.
+	* src/.../cdi/model/ICDISourceManager.java (getFile): Remove not use.
 	(setFile): Remove not use.
 	(reset): Remove not use.
 

@@ -1,3 +1,9 @@
+2003-08-30 Alain Magloire
+
+	Unnecessary synchronization making deadlocks.  Should revisit this code.
+	
+	* src/org/eclipse/cdt/debug/mi/core/MIInferior.java
+
 2003-08-29 Mikhail Khodjaiants
 	
 	Added new command - 'set stop-on-solib-events'.

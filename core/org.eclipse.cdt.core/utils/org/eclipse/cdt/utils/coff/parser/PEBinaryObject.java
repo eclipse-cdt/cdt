@@ -71,7 +71,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 				info = new BinaryObjectInfo();
 			}
 		}
-		return null;
+		return info;
 	}
 
 	protected PE getPE() throws IOException {

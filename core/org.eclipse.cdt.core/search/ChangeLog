@@ -1,3 +1,20 @@
+2003-10-23 Bogdan Gheorghe
+
+	- Added AcceptMatchOperation to get around Bug 45324. The search
+	  operation is no longer a WorkspaceModifyOperation (which used to
+	  lock the workspace for the duration of search). Instead, we now
+	  lock the workspace only when we tag the resources with markers.
+	  	
+	- Modified SearchEngine : we now receive a list of matches
+	from the search that we pass into the AcceptMatchOperation.
+	
+	- Modified MatchLocator to add matches to passed in list instead
+	  of reporting them right away
+	  
+	- Modified JobManager: -added in jobToIgnore parm to unblock dependency
+	  jobs
+	  
+	  
 2003-10-06 Bogdan Gheorghe
 	- added createCFileSearchScope() to SearchEngine.java to improve
 	  code complete performance

@@ -123,6 +123,8 @@ public class WorkingCopyTests extends TestCase {
 		
 		// DestroyWorkingCopy
 		wc.destroy();
-		assertFalse(wc.exists());		
+		assertFalse(wc.exists());	
+		
+		Thread.sleep(1000);	
 	}
 }

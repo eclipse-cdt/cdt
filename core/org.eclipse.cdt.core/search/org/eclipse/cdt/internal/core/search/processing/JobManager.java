@@ -188,8 +188,9 @@ public abstract class JobManager implements Runnable {
 	public boolean performConcurrentJob(
 		IJob searchJob,
 		int waitingPolicy,
-		IProgressMonitor progress) {
-
+		IProgressMonitor progress, 
+		IJob jobToIgnore) {
+			
 		if (VERBOSE)
 			JobManager.verbose("STARTING  concurrent job - " + searchJob); //$NON-NLS-1$
 		if (!searchJob.isReadyToRun()) {
@@ -250,7 +251,8 @@ public abstract class JobManager implements Runnable {
 							}
 							this.awaitingClients++;
 						}
-						while ((awaitingWork = awaitingJobsCount()) > 0) {
+						while (((awaitingWork = awaitingJobsCount()) > 0)
+							    && (!jobShouldBeIgnored(jobToIgnore))) {
 							if (subProgress != null && subProgress.isCanceled())
 								throw new OperationCanceledException();
 							currentJob = currentJob();
@@ -295,6 +297,20 @@ public abstract class JobManager implements Runnable {
 		return status;
 	}
 	
+	/**
+	 * @param jobToIgnore
+	 * @return
+	 */
+	private boolean jobShouldBeIgnored(IJob jobToIgnore) {
+		if (jobToIgnore == null)
+			return false;
+		
+		if (currentJob() == jobToIgnore)
+			return true;
+		
+		return false;
+	}
+
 	public abstract String processName();
 	
 	public synchronized void request(IJob job) {

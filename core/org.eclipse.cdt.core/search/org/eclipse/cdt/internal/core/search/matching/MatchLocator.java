@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -97,6 +98,8 @@ import org.eclipse.core.runtime.Path;
  */
 public class MatchLocator implements ISourceElementRequestor, ICSearchConstants {
 
+
+	ArrayList matchStorage;
 	
 	public static boolean VERBOSE = false;
 	/**
@@ -328,8 +331,9 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		}
 	}
 		
-
-	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies ){
+   
+	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies,ArrayList matches ){
+		matchStorage = matches;
 		workspaceRoot = (workspace != null) ? workspace.getRoot() : null;
 		
 		HashMap wcPaths = new HashMap();
@@ -495,7 +499,9 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				match = resultCollector.createMatch( currentPath, offset, end, object );
 			}
 			if( match != null ){
-				resultCollector.acceptMatch( match );
+				//Save till later
+				//resultCollector.acceptMatch( match );
+				matchStorage.add(match);
 			}
 		
 		} catch (CoreException e) {

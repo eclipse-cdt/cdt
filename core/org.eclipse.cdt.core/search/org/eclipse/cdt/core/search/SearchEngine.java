@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.search.AcceptMatchOperation;
 import org.eclipse.cdt.internal.core.search.CSearchScope;
 import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
 import org.eclipse.cdt.internal.core.search.PathCollector;
@@ -32,6 +33,7 @@ import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -164,7 +166,7 @@ public class SearchEngine implements ICSearchConstants{
 		
 		/* search is starting */
 		collector.aboutToStart();
-		
+		ArrayList matches = new ArrayList();
 		try{
 			//initialize progress monitor
 			IProgressMonitor progressMonitor = collector.getProgressMonitor();
@@ -188,7 +190,8 @@ public class SearchEngine implements ICSearchConstants{
 					indexManager
 				),
 			    ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-				subMonitor );
+				subMonitor,
+				null );
 			
 			subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 95 );
 				
@@ -199,9 +202,12 @@ public class SearchEngine implements ICSearchConstants{
 				throw new OperationCanceledException();
 			
 			//TODO: BOG Filter Working Copies...
-			matchLocator.locateMatches( pathCollector.getPaths(), workspace, this.workingCopies);
+			matchLocator.locateMatches( pathCollector.getPaths(), workspace, this.workingCopies, matches);
 		} finally {
-			collector.done();
+			AcceptMatchOperation acceptMatchOp = new AcceptMatchOperation(collector, matches);
+			try {
+				CCorePlugin.getWorkspace().run(acceptMatchOp,null);
+			} catch (CoreException e) {}
 		}
 	}
 }

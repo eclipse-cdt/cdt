@@ -513,7 +513,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 				//Get file's dependencies
 				try {
 					IndexManager indexMan = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-					indexMan.performConcurrentJob(new DependencyQueryJob(project, (IFile)actualFile, indexMan, dependencies), ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+					indexMan.performConcurrentJob(new DependencyQueryJob(project, (IFile)actualFile, indexMan, dependencies), ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null, null);
 				} catch (Exception e) {
 				}
 			}

@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
-import junit.extensions.TestDecorator;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -143,7 +142,7 @@ import org.eclipse.core.runtime.Platform;
    String[] depTest2Model = {File.separator + "DepTestProject" + File.separator + "d.h", File.separator + "DepTestProject" + File.separator + "DepTest2.h"};
 	
    ArrayList includes = new ArrayList();
-   indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest,indexManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
+   indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest,indexManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null,null);
 
    String[] depTestModelLocal = convertToLocalPath(depTestModel);
    String[] depTestIncludes = new String[includes.size()];
@@ -166,7 +165,7 @@ import org.eclipse.core.runtime.Platform;
    }
 	
    ArrayList includes2 = new ArrayList();
-   indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest2,indexManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
+   indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest2,indexManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null,null);
    
    String[] depTest2ModelLocal = convertToLocalPath(depTest2Model);
    String[] depTest2Includes = new String[includes2.size()];
@@ -345,7 +344,7 @@ import org.eclipse.core.runtime.Platform;
 	 String[] preDepTestModel = {File.separator + "DepTestProject" + File.separator + "DepTest.h", File.separator + "DepTestProject" + File.separator + "Inc1.h", File.separator + "DepTestProject" + File.separator + "a.h", File.separator + "DepTestProject" + File.separator + "c.h", File.separator + "DepTestProject" + File.separator + "d.h"};
 	
 	 ArrayList includes = new ArrayList();
-	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTestC,indexManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
+	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTestC,indexManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
 
 	 String[] preDepTestModelLocal = convertToLocalPath(preDepTestModel);
 	 String[] preDepTestIncludes = new String[includes.size()];
@@ -374,7 +373,7 @@ import org.eclipse.core.runtime.Platform;
 
 	 testProject.refreshLocal(IResource.DEPTH_INFINITE,null);
 	
-	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTestC,indexManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
+	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTestC,indexManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
 	
 	
 	 String[] postDepTestModelLocal = convertToLocalPath(postDepTestModel);
@@ -412,7 +411,7 @@ import org.eclipse.core.runtime.Platform;
 	 String[] preDepTestModel = {File.separator + "DepTestProject" + File.separator + "DepTest3.h", File.separator + "DepTestProject" + File.separator + "a.h", File.separator + "DepTestProject" + File.separator + "c.h"};
 	
 	 ArrayList includes = new ArrayList();
-	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest3C,indexManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
+	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest3C,indexManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
 
 	 String[] preDepTestModelLocal = convertToLocalPath(preDepTestModel);
 	 String[] preDepTestIncludes = new String[includes.size()];
@@ -441,7 +440,7 @@ import org.eclipse.core.runtime.Platform;
 
 	 testProject.refreshLocal(IResource.DEPTH_INFINITE,null);
 	
-	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest3C,indexManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
+	 indexManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest3C,indexManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null, null);
 	
 	
 	 String[] postDepTestModelLocal = convertToLocalPath(postDepTestModel);
@@ -583,7 +582,7 @@ import org.eclipse.core.runtime.Platform;
 			   indexManager 
 		   ),
 		   ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-		   null );
+		   null, null );
    }
 	
    private void editCode(IFile tempFile, String beforeString, String afterString) throws IOException, CoreException, InterruptedException{

@@ -87,7 +87,8 @@ public class CValue extends CDebugElement implements ICValue
 		{
 			try
 			{
-				fValueString = processCDIValue( getUnderlyingValue().getValueString() );
+//				fValueString = processCDIValue( getUnderlyingValue().getValueString() );
+				fValueString = getUnderlyingValue().getValueString();
 			}
 			catch( CDIException e )
 			{
@@ -95,7 +96,7 @@ public class CValue extends CDebugElement implements ICValue
 				fValueString = e.getMessage();
 			}
 		}
-		return fValueString;
+		return ( fValueString != null ) ? processCDIValue( fValueString ) : null;
 	}
 
 	/* (non-Javadoc)
@@ -223,11 +224,17 @@ public class CValue extends CDebugElement implements ICValue
 					end = result.length();
 				result = result.substring( 0, end );
 			}
-			else if ( result.endsWith("'"))
+			else if ( result.endsWith( "\'" ) )
 			{
 				int start = result.indexOf( '\'' );
-				if ( start != -1 )
+				if ( start != -1 && result.length() - start == 3 )
+				{
 					result = result.substring( start );
+				}
+				else
+				{
+					result = null;
+				}
 			}
 		}
 		return result;
@@ -262,27 +269,37 @@ public class CValue extends CDebugElement implements ICValue
 
 	public String getUnderlyingValueString()
 	{
-		ICDIValue cdiValue = getUnderlyingValue();
-		String value = null;
-		if ( cdiValue != null )
+		if ( fValueString == null && getUnderlyingValue() != null )
 		{
 			try
 			{
-				value = cdiValue.getValueString();
+				fValueString = getUnderlyingValue().getValueString();
 			}
 			catch( CDIException e )
 			{
+				logError( e );
+				fValueString = e.getMessage();
 			}
 		}
-		return value;
+		return fValueString;
 	}
 	
 	public boolean isCharPointer()
 	{
-		String value = getUnderlyingValueString();
+		String value = getUnderlyingValueString().trim();
 		if ( value != null )
 		{
 			return ( value.startsWith( "0x" ) && value.indexOf( ' ' ) != -1 );
+		}
+		return false;
+	}
+
+	public boolean isCharacter()
+	{
+		String value = getUnderlyingValueString().trim();
+		if ( value != null )
+		{
+			return ( value.endsWith( "\'" ) );
 		}
 		return false;
 	}

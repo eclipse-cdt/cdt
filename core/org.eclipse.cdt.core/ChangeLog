@@ -1,3 +1,9 @@
+2003-08-28 Alain Magloire
+
+	Change the TranslationUnit to not always assume that it has a valid
+	IResource/IFile.
+	* model/org/eclipse/cdt/internal/core/model/TranslationUnit.java
+
 2003-08-28 Hoda Amer
 	- Added resolving references in a method's qualified name 
 	in Complete parse mode.

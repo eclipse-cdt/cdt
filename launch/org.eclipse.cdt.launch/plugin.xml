@@ -22,6 +22,7 @@
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.debug.ui"/>
+      <import plugin="org.eclipse.core.boot"/>
    </requires>
 
 
@@ -73,8 +74,8 @@
       <shortcut
             label="C Local Application"
             icon="icons/c_app.gif"
-            modes="run, debug"
             class="org.eclipse.cdt.launch.internal.CApplicationLaunchShortcut"
+            modes="run, debug"
             id="org.eclipse.cdt.debug.ui.localCShortcut">
          <perspective
                id="org.eclipse.cdt.ui.CPerspective">

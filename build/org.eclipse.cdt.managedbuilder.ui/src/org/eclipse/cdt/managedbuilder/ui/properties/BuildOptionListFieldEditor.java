@@ -54,7 +54,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		// Constants for externalized strings
 		private static final String BROWSE = "BuildPropertyCommon.label.browse"; //$NON-NLS-1$
 		private int type;
-		
+
 		/**
 		 * @param parentShell
 		 * @param dialogTitle
@@ -81,7 +81,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 						String result;
 						switch (type) {
 							case IOption.BROWSE_DIR :
-								DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
+								DirectoryDialog dialog = new DirectoryDialog(getParentShell(), SWT.OPEN);
 								currentName = getText().getText();
 								if(currentName != null && currentName.trim().length() != 0) {
 									dialog.setFilterPath(currentName);
@@ -92,7 +92,7 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 								}
 								break;
 							case IOption.BROWSE_FILE:
-								FileDialog browseDialog = new FileDialog(getShell());
+								FileDialog browseDialog = new FileDialog(getParentShell());
 								currentName = getText().getText();
 								if (currentName != null && currentName.trim().length() != 0) {
 									browseDialog.setFilterPath(currentName);
@@ -478,10 +478,11 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		// Prompt for value
 		SelectPathInputDialog dialog = new SelectPathInputDialog(getShell(), title, message, initVal, null, browseType);
 		if (dialog.open() == SelectPathInputDialog.OK) {
-			input = dialog.getValue().trim();
+			input = dialog.getValue();
+			if (input == null || input.length() == 0) return "";	//$NON-NLS-1$
 		}
 		
-		// Convert the value based on the type of input we expect
+		// Double-quote the spaces in paths (if any)
 		switch (browseType) {
 			case IOption.BROWSE_DIR:
 			case IOption.BROWSE_FILE:

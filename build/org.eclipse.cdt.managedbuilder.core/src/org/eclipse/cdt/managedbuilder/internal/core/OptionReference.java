@@ -28,7 +28,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * 
+ * An <code>OptionReference</code> plays two roles in the managed build model.
+ * It is used to store overridden option values in a toolchain specification at 
+ * the level of a <code>Configuration</code> and it stores user option settings 
+ * between sessions.
  */
 public class OptionReference implements IOption {
 

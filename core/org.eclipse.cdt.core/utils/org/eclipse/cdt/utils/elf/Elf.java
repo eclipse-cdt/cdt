@@ -305,11 +305,17 @@ public class Elf {
 					addr2line = new Addr2line(file);
 				long value = st_value;
 				// We try to get the nearest match
-				// since the symbol may not quite align with debug info.
+				// since the symbol may not exactly align with debug info.
+				// In C line number 0 is invalid, line starts at 1 for file, we use
+				// this for validation.
 				for (int i = 0; i <= 20; i += 4, value += i) {
 					line = addr2line.getLine(value);
-					if (!line.startsWith("??")) {
-						break; // bail out
+					if (line != null) {
+						int colon = line.lastIndexOf(':');
+						String number = line.substring(colon + 1);
+						if (!number.startsWith("0")) {
+							break; // bail out
+						}
 					}
 				}
 				func = addr2line.getFunction(value);

@@ -8,16 +8,14 @@ package org.eclipse.cdt.debug.core.tests;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.testplugin.CDebugHelper;
 import org.eclipse.cdt.debug.testplugin.CProjectHelper;
@@ -119,18 +117,18 @@ public class DebugTests extends TestCase {
      */
     public void testDebug() throws CoreException, MIException, IOException, CDIException {
         ICDISourceManager source;
-        ICDIBreakpointManager breaks;
+        ICDITarget cdiTarget;
         ICDILocation location;
 	
 		session=CDebugHelper.createSession("main",testProject);
         assertNotNull(session);
         source=session.getSourceManager();
         assertNotNull(source);
-		breaks=session.getBreakpointManager();
-		assertNotNull(breaks);
-		location=breaks.createLocation(null, "func1", 0);
+		cdiTarget=session.getCurrentTarget();
+		assertNotNull(cdiTarget);
+		location=cdiTarget.createLocation(null, "func1", 0);
 		assertNotNull(location);
-		breaks.setLocationBreakpoint(0, location, null, null);
+		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
 		session.getCurrentTarget().resume();
 		session.terminate();
 		session=null;

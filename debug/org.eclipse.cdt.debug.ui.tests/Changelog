@@ -1,3 +1,9 @@
+2004-09-07 Mikhail Khodjaiants
+	Moved to the new breakpoint management API.
+	* core/org/eclipse/cdt/debug/core/tests/BreakpointTests.java
+	* core/org/eclipse/cdt/debug/core/tests/DebugTests.java
+	* core/org/eclipse/cdt/debug/core/tests/LocationTests.java
+
 2003-07-03 Peter Graves
 
 	Major cleanup. Pulled all resouces out of the source tree, and fixed the  

@@ -1,3 +1,7 @@
+2004-09-07 Mikhail Khodjaiants
+	Moved to the new breakpoint management API.
+	* CBreakpointManager.java
+
 2004-09-07 Alain Magloire
 	New interfaces to Target.
 	* ICDITarget.java

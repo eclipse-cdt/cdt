@@ -67,7 +67,7 @@ public class CGlobalVariable extends CModificationVariable implements ICGlobalVa
 				}
 				int[] dims = getType().getArrayDimensions();
 				if ( dims.length > 0 && dims[0] > 0 )
-					fValue = CValueFactory.createArrayValue( this, var, 0, dims.length - 1 );
+					fValue = CValueFactory.createArrayValue( this, var, 0, dims[0] - 1 );
 			}
 			else
 				fValue = CValueFactory.createGlobalValue( this, getCurrentValue() );

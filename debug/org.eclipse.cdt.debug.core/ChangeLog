@@ -1,3 +1,7 @@
+2004-12-10 Mikhail Khodjaiants
+	Fix for bug 80716: Global arrays show only the first element in the Variable View.
+	* CGlobalVariable.java
+	
 2004-08-14 Alain Magloire
 	Fix for 71992.
 	* CType.java

@@ -1,3 +1,7 @@
+2003-09-30 Andrew Niefer
+	-fix bug43862 - Cannot find macro delcarations using all occurences.
+	  * modified CSearchPattern.createMacroPattern
+
 2003-09-29 Andrew Niefer
 	- fix bug 43062 outline is confused on operator methods containing spaces
 		- modify CSearchPattern.scanForNames to use same naming convention as TokenDuple.toString()

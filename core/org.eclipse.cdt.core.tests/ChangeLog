@@ -2,6 +2,9 @@
 	added testBug43503_AmbiguousUsing() and testBug43503_UnableToResolveFunction() to
 	ParserSymbolTableTest
 
+2003-09-30 Andrew Niefer
+	Updated OtherPatternTests::testMacroPattern() to test for bug43862
+
 2003-09-29 Andrew Niefer
 	added testBug43062 and testConstructorDestructor to FunctionMethodPatternTests
 	modified resources/search/classDecl.cpp & include.h to include more operators and a constructor

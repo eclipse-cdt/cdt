@@ -132,10 +132,11 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createMacroPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		if( limitTo != DECLARATIONS )
+		if( limitTo != DECLARATIONS && limitTo != ALL_OCCURRENCES )
 			return null;
 			
-		return new MacroDeclarationPattern( patternString.toCharArray(), matchMode, limitTo, caseSensitive );	}
+		return new MacroDeclarationPattern( patternString.toCharArray(), matchMode, DECLARATIONS, caseSensitive );	
+	}
 
 	/**
 	 * @param patternString

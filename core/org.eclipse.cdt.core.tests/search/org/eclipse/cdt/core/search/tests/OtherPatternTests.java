@@ -195,6 +195,11 @@ public class OtherPatternTests extends BaseSearchTest {
 		IMatch match = (IMatch) matches.iterator().next();
 		assertTrue( match.getName().equals( "FOO" ) );
 		assertTrue( match.getParentName().equals( "" ));
+		
+		pattern = SearchEngine.createSearchPattern( "FOO", MACRO, ALL_OCCURRENCES, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
 	}
 	
 	public void testEnumerators(){

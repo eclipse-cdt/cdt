@@ -4,7 +4,7 @@
  */
 package org.eclipse.cdt.core;
 
-public interface ICProjectOwnerInfo {
+public interface ICOwnerInfo {
 	public String getID();	
 	public String getName();
 	public String[] getPlatforms();

@@ -2,6 +2,7 @@ package org.eclipse.cdt.core.builder;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -26,6 +27,8 @@ public class CIncrementalBuilder extends IncrementalProjectBuilder {
 	Map args;
 	IProgressMonitor monitor;
 
+	private ICBuilder fCurrentBuilder;
+
 	public int getkind() {
 		return kind;
 	}
@@ -38,11 +41,9 @@ public class CIncrementalBuilder extends IncrementalProjectBuilder {
 		return monitor;
 	}
 
-	//FIXME: Not implemented
 	public IConsole getConsole() {
-		ICBuilder builder = getCBuilder();
-		String id = builder.getID();
-		return null;
+		String id = fCurrentBuilder.getID();
+		return CCorePlugin.getDefault().getConsole(id);
 	}
 
 	//FIXME: Not implemented
@@ -63,14 +64,15 @@ public class CIncrementalBuilder extends IncrementalProjectBuilder {
 		this.monitor = monitor;
 
 		// Get the ICBuilder
-		ICBuilder cbuilder = getCBuilder();
+		ICBuilder cbuilder[] = getCBuilder();
 
 		// FIXME: Check preference for non-modal builds
-		return cbuilder.build(this); 
+		fCurrentBuilder = cbuilder[0];
+		return fCurrentBuilder.build(this);
 	}
 
 	//FIXME: Not implemented
-	private ICBuilder getCBuilder () {
-		return null;
+	private ICBuilder[] getCBuilder () throws CoreException {
+		return CCorePlugin.getDefault().getBuilders(getProject());
 	}
 }

@@ -4,12 +4,18 @@
  */
 package org.eclipse.cdt.internal.core.make;
 
-import org.eclipse.cdt.core.ICProjectDescriptor;
-import org.eclipse.cdt.core.ICProjectOwner;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.cdt.core.ICOwner;
 
-public class MakeProject implements ICProjectOwner {
+public class MakeProject implements ICOwner {
 
-	public void configure(ICProjectDescriptor cproject) {
+	public void configure(ICDescriptor cproject) {
+		ICExtensionReference ext = cproject.create(CCorePlugin.BUILDER_MODEL_ID, CCorePlugin.getDefault().PLUGIN_ID + ".makeBuilder");
+		ext.setExtensionData("command", "make");
 	}
 
+	public void update(ICDescriptor cproject) {
+	}
 }

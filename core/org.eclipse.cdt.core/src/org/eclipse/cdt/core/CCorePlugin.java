@@ -9,10 +9,11 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.builder.ICBuilder;
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.internal.core.CProjectDescriptor;
+import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -34,12 +35,16 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 public class CCorePlugin extends Plugin {
 	
 	public static final int STATUS_CDTPROJECT_EXISTS = 1;
+	public static final int STATUS_CDTPROJECT_MISMATCH = 2;
 	
 	public static final String PLUGIN_ID= "org.eclipse.cdt.core";
-	public static final String BUILDER_ID= PLUGIN_ID + ".cbuilder";
-		
+
+	public static final String BUILDER_MODEL_ID= PLUGIN_ID + ".CBuildModel";
+
 	private static CCorePlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
+
+	private CDescriptorManager fDescriptorManager;
 
 	// -------- static methods --------
 	
@@ -101,6 +106,7 @@ public class CCorePlugin extends Plugin {
 	 */
 	public void shutdown() throws CoreException {
 		super.shutdown();
+		fDescriptorManager.shutdown();
 	}		
 	
 	/**
@@ -113,31 +119,43 @@ public class CCorePlugin extends Plugin {
 		getCoreModel();
 		// Fired up the indexer. It should delay itself for 10 seconds
 		getIndexModel();
+		fDescriptorManager = new CDescriptorManager();
+		fDescriptorManager.startup();
+	}
+
+	public IConsole getConsole(String id) {
+		IConsole consoleDocument = null;
+		
+		try {
+			IExtensionPoint extension = getDescriptor().getExtensionPoint("CBuildConsole");
+			if (extension != null) {
+				IExtension[] extensions =  extension.getExtensions();
+				for(int i = 0; i < extensions.length; i++){
+					IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
+					for( int j = 0; j < configElements.length; j++ ) {
+						String builderID = configElements[j].getAttribute("builderID");
+						if ( (id == null && builderID == null) || 
+							 ( id != null && builderID.equals(id))) {
+							return consoleDocument = (IConsole)configElements[j].createExecutableExtension("class");
+						 }
+					}
+				}
+			}	
+		} catch (CoreException e) {
+		} 
+		return new IConsole() {
+			public void clear() {
+			}
+			public void start(IProject project) {
+			}
+			public ConsoleOutputStream getOutputStream() {
+				return new ConsoleOutputStream();
+			}
+		};
 	}
 	
 	public IConsole getConsole() throws CoreException {
-		IConsole consoleDocument = null;
-
-		IExtensionPoint extension = getDescriptor().getExtensionPoint("CBuildConsole");
-		if (extension != null) {
-			IExtension[] extensions =  extension.getExtensions();
-			for(int i = 0; i < extensions.length; i++){
-				IConfigurationElement [] configElements = extensions[i].getConfigurationElements();
-				consoleDocument = (IConsole)configElements[0].createExecutableExtension("class");
-			}
-		}		
-		if ( consoleDocument == null ) {
-			return new IConsole() {
-				public void clear() {
-				}
-				public void start(IProject project) {
-				}
-				public ConsoleOutputStream getOutputStream() {
-					return new ConsoleOutputStream();
-				}
-			};
-		}
-		return consoleDocument;
+		return getConsole(null);
 	}
 	
 	public CoreModel getCoreModel() {
@@ -148,12 +166,12 @@ public class CCorePlugin extends Plugin {
 		return IndexModel.getDefault();
 	}	
 	
-	public ICProjectDescriptor getCProjectDescription(IProject project) throws CoreException {
-		return CProjectDescriptor.getDescription(project);
+	public ICDescriptor getCProjectDescription(IProject project) throws CoreException {
+		return fDescriptorManager.getDescriptor(project);
 	}
 	
 	public void mapCProjectOwner(IProject project, String id) throws CoreException {
-		CProjectDescriptor.configure(project, id);
+		fDescriptorManager.configure(project, id);
 	}
         
     /**
@@ -295,4 +313,11 @@ public class CCorePlugin extends Plugin {
         convertProjectFromCtoCC(projectHandle, monitor);
         addDefaultCBuilder(projectHandle, monitor);
     }
+    
+	public ICBuilder[] getBuilders(IProject project) throws CoreException {
+		ICExtension extensions[] = fDescriptorManager.createExtensions(BUILDER_MODEL_ID, project);
+		ICBuilder builders[] = new ICBuilder[extensions.length];
+		System.arraycopy(extensions, 0, builders, 0, extensions.length);
+		return builders;
+	}
 }

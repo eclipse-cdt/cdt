@@ -29,6 +29,7 @@
    <extension-point id="CBuildCommand" name="%CBuildCommand.name"/>
    <extension-point id="CBuildConsole" name="%CBuildConsole.name"/>
    <extension-point id="CProjectOwner" name="%CProjectOwner.name"/>
+   <extension-point id="CBuildModel" name="%CBuilder.name"/>
 
    <extension
          id="cbuilder"
@@ -37,6 +38,17 @@
       <builder>
          <run
                class="org.eclipse.cdt.internal.core.CBuilder">
+         </run>
+      </builder>
+   </extension>
+
+   <extension
+         id="newcbuilder"
+         name="C Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.cdt.core.builder.CIncrementalBuilder">
          </run>
       </builder>
    </extension>
@@ -78,13 +90,25 @@
       </buildcommand>
    </extension>
    <extension
-         point="org.eclipse.cdt.core.CProjectOwner"
-         name="%projectowner.name"
-         id="make">
-         <platform id="*"
-         	name="%genericmake.name" architecture="*"/>
-         <run 
-         	class = "org.eclipse.cdt.internal.core.make.MakeProject">
-         </run>
+         id="make"
+         name="%makeprojectowner.name"
+         point="org.eclipse.cdt.core.CProjectOwner">
+      <platform
+            architecture="*"
+            name="%genericmake.name"
+            id="*">
+      </platform>
+      <run
+            class="org.eclipse.cdt.internal.core.make.MakeProject">
+      </run>
    </extension>
+   <extension
+         id="makeBuilder"
+         name="%makebuildmodel.name"
+         point="org.eclipse.cdt.core.CBuildModel">
+      <run
+            class="org.eclipse.cdt.internal.core.make.MakeBuilder">
+      </run>
+   </extension>
+
 </plugin>

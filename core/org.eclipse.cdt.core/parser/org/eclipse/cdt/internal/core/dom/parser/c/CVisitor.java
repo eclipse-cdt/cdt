@@ -937,46 +937,44 @@ public class CVisitor {
 	}
 	
 	public static IScope getContainingScope( IASTNode node ){
-	    if( node instanceof IASTDeclaration )
-	        return getContainingScope( (IASTDeclaration) node );
-	    else if( node instanceof IASTStatement )
-	        return getContainingScope( (IASTStatement) node );
-	    else if( node instanceof IASTDeclSpecifier )
-	        return getContainingScope( (IASTDeclSpecifier) node );
-	    else if( node instanceof IASTParameterDeclaration )
-	        return getContainingScope( (IASTParameterDeclaration) node );
-	    else if( node instanceof IASTEnumerator ){
-	        //put the enumerators in the same scope as the enumeration
-	        return getContainingScope( (IASTEnumerationSpecifier) node.getParent() );
-	    }
-	    
-	    return null;
-	}
-	/**
-	 * @param declaration
-	 * @return
-	 */
-	public static IScope getContainingScope(IASTDeclaration declaration) {
-		IASTNode parent = declaration.getParent();
-		if( parent instanceof IASTTranslationUnit ){
-			return ((IASTTranslationUnit)parent).getScope();
-		} else if( parent instanceof IASTDeclarationStatement ){
-			return getContainingScope( (IASTStatement) parent );
-		} else if( parent instanceof IASTForStatement ){
-		    return ((IASTForStatement)parent).getScope();
-		} else if( parent instanceof IASTCompositeTypeSpecifier ){
-		    return ((IASTCompositeTypeSpecifier)parent).getScope();
-		} else if( parent instanceof ICASTKnRFunctionDeclarator ){
-			parent = declaration.getParent();
-			if( parent instanceof ICASTKnRFunctionDeclarator ){
-				parent = ((IASTDeclarator)parent).getParent();
-				if ( parent instanceof IASTFunctionDefinition ) {
-					return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+	    if( node == null )
+			return null;
+		while( node != null ){
+		    if( node instanceof IASTDeclaration ){
+				IASTNode parent = node.getParent();
+				if( parent instanceof IASTTranslationUnit ){
+					return ((IASTTranslationUnit)parent).getScope();
+				} else if( parent instanceof IASTDeclarationStatement ){
+					return getContainingScope( (IASTStatement) parent );
+				} else if( parent instanceof IASTForStatement ){
+				    return ((IASTForStatement)parent).getScope();
+				} else if( parent instanceof IASTCompositeTypeSpecifier ){
+				    return ((IASTCompositeTypeSpecifier)parent).getScope();
+				} else if( parent instanceof ICASTKnRFunctionDeclarator ){
+					parent = ((IASTDeclarator)parent).getParent();
+					if ( parent instanceof IASTFunctionDefinition ) {
+						return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+					}
 				}
-			}
+		    } else if( node instanceof IASTStatement )
+		        return getContainingScope( (IASTStatement) node );
+		    else if( node instanceof IASTParameterDeclaration ){
+				IASTNode parent = node.getParent();
+				if( parent instanceof IASTStandardFunctionDeclarator ){
+					parent = ((IASTDeclarator)parent).getParent();
+					if ( parent instanceof IASTFunctionDefinition ) {
+						return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
+					}
+				}
+		    }
+		    else if( node instanceof IASTEnumerator ){
+		        //put the enumerators in the same scope as the enumeration
+		        node = node.getParent();
+		    }
+		    
+		    node = node.getParent();
 		}
-		
-		return null;
+	    return null;
 	}
 	
 	public static IScope getContainingScope( IASTStatement statement ){
@@ -1009,27 +1007,6 @@ public class CVisitor {
 		}
 		
 		return scope;
-	}
-	
-	public static IScope getContainingScope( IASTDeclSpecifier compTypeSpec ){
-	    IASTNode parent = compTypeSpec.getParent();
-	    return getContainingScope( parent );
-	}
-
-	/**
-	 * @param parameterDeclaration
-	 * @return
-	 */
-	public static IScope getContainingScope(IASTParameterDeclaration parameterDeclaration) {
-		IASTNode parent = parameterDeclaration.getParent();
-		if( parent instanceof IASTStandardFunctionDeclarator ){
-			parent = ((IASTDeclarator)parent).getParent();
-			if ( parent instanceof IASTFunctionDefinition ) {
-				return ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
-			}
-		}
-		
-		return null;
 	}
 	
 	private static IASTNode getContainingBlockItem( IASTNode node ){

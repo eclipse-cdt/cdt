@@ -1,4 +1,12 @@
 2003-07-16 Alain Magloire
+
+	Patch from Alex Chapiro
+	Fix an evident bug in CProjectNature implementation of
+	removeFromBuildSpec method.
+	
+	* CProjectNature.java
+
+2003-07-16 Alain Magloire
 	
 	Patch from Thomas Fletcher.
 	Update the core MakeUtil class with a method to support inline replacement

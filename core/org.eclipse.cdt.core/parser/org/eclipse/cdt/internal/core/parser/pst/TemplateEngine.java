@@ -33,9 +33,10 @@ public final class TemplateEngine {
 		} else {
 			if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() instanceof IDeferredTemplateInstance ){
 				IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) info.getTypeSymbol();
-				
 				TypeInfo newInfo = new TypeInfo( info );
-				newInfo.setTypeSymbol( deferred.instantiate( template, argMap ) );
+				//newInfo.setTypeSymbol( deferred.instantiate( template, argMap ) );
+				template.registerDeferredInstatiation( newInfo, deferred, ITemplateSymbol.DeferredKind.TYPE_SYMBOL, argMap );
+				newInfo.setTypeSymbol( deferred );
 				return newInfo;
 			} else if( info.isType( TypeInfo.t_type ) && 
 					   info.getTypeSymbol().isType( TypeInfo.t_templateParameter ) &&
@@ -63,6 +64,10 @@ public final class TemplateEngine {
 			}
 			return info;
 		}
+	}
+	
+	static protected void instantiateDeferredTypeInfo( TypeInfo info, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException {
+		info.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
 	}
 	
 	static protected ITemplateSymbol matchTemplatePartialSpecialization( ITemplateSymbol template, List args ) throws ParserSymbolTableException{
@@ -736,6 +741,7 @@ public final class TemplateEngine {
 		
 		IParameterizedSymbol function = (IParameterizedSymbol)templatedSymbol;
 		function = (IParameterizedSymbol) function.instantiate( spec1, map );
+		((TemplateSymbol)spec1).processDeferredInstantiations();
 		
 		Map m1 = deduceTemplateArgumentsUsingParameterList( spec2, function);
 		
@@ -747,6 +753,7 @@ public final class TemplateEngine {
 		
 		function = (IParameterizedSymbol)templatedSymbol;
 		function = (IParameterizedSymbol) function.instantiate( spec2, map );
+		((TemplateSymbol)spec2).processDeferredInstantiations();
 		
 		Map m2 = deduceTemplateArgumentsUsingParameterList( spec1, function );
 		

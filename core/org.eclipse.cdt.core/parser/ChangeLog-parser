@@ -1,3 +1,8 @@
+2004-03-23 Andrew Niefer
+	-fix recursive loop leading to StackOverFlowException during template instantiation
+	-fix copy constructors for templated classes
+	-fix bug 55673
+	
 2004-03-22 Andrew Niefer
 	-handling of Typedefs
 	-handle unbalanced preprocessor condition in scanner

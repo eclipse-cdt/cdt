@@ -367,10 +367,11 @@ public class DeclarationWrapper implements IDeclaratorOwner
 
         	Declarator d = declarator.getOwnedDeclarator();
         	Iterator i = d.getPointerOperators().iterator();
+        	boolean isWithinClass = scope instanceof IASTClassSpecifier;
+			boolean isFunction = (declarator.getParameters().size() != 0); 
         	if( !i.hasNext() )
         	{
-                boolean isWithinClass = scope instanceof IASTClassSpecifier;
-				boolean isFunction = (declarator.getParameters().size() != 0); 
+                
 				if (isTypedef())
 					return createTypedef(declarator, true);
 
@@ -408,8 +409,12 @@ public class DeclarationWrapper implements IDeclaratorOwner
 						getStartingOffset(), getStartingLine(), d
 								.getNameStartOffset(), d.getNameEndOffset(), d
 								.getNameLine());
-        	else
-        		return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );
+        	else {
+        		if( isWithinClass )
+        			return astFactory.createField( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode() );
+        		else 
+        			return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );
+        	}
         	
         }
         else

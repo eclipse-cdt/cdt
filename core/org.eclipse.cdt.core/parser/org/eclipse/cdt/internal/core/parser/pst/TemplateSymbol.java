@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.core.parser.pst.DerivableContainerSymbol.ParentWrapper;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 
 /**
@@ -150,6 +151,9 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 				
 			instance = (IContainerSymbol) symbol.instantiate( template, map );
 			addInstantiation( instance, actualArgs );
+			
+			processDeferredInstantiations();
+			
 			return instance;
 		}
 	}
@@ -361,10 +365,45 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		}
 		return _explicitSpecializations;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol#registerDeferredInstatiation(org.eclipse.cdt.internal.core.parser.pst.ParameterizedSymbol, org.eclipse.cdt.internal.core.parser.pst.ISymbol, org.eclipse.cdt.internal.core.parser.pst.ITemplateSymbol.DeferredKind)
+	 */
+	public void registerDeferredInstatiation( Object obj0, Object obj1, DeferredKind kind, Map argMap ) {
+		if( _deferredInstantiations == null )
+			_deferredInstantiations = new LinkedList();
+		
+		_deferredInstantiations.add( new Object [] { obj0, obj1, kind, argMap } );
+	}
+
+	
+	protected void processDeferredInstantiations() throws ParserSymbolTableException{
+		if( _deferredInstantiations == null )
+			return;
+		
+		Iterator iter = _deferredInstantiations.iterator();
+		while( iter.hasNext() ){
+			Object [] objs = (Object [])iter.next();
+			
+			DeferredKind kind = (DeferredKind) objs[2];
+			
+			if( kind == DeferredKind.PARENT ){
+				DerivableContainerSymbol d = (DerivableContainerSymbol) objs[0];
+				d.instantiateDeferredParent( (ParentWrapper) objs[ 1 ], this, (Map) objs[3] );
+			} else if( kind == DeferredKind.RETURN_TYPE ){
+				ParameterizedSymbol p = (ParameterizedSymbol) objs[0];
+				p.instantiateDeferredReturnType( (ISymbol) objs[1], this, (Map) objs[3] );
+			} else if( kind == DeferredKind.TYPE_SYMBOL ){
+				TemplateEngine.instantiateDeferredTypeInfo( (TypeInfo) objs[0], this, (Map) objs[3] );
+			}
+		}
+	}
 	
 	private		LinkedList	_specializations;		  //template specializations
 	private     HashMap		_explicitSpecializations; //explicit specializations
 	private		HashMap		_defnParameterMap;		  //members could be defined with different template parameter names
-	private 	HashMap 	_instantiations;		
+	private 	HashMap 	_instantiations;
+	private     LinkedList  _deferredInstantiations;  //used to avoid recursive loop
+		
 	
 }

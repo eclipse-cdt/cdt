@@ -59,4 +59,26 @@ public interface ITemplateSymbol extends IParameterizedSymbol {
 	public IDeferredTemplateInstance deferredInstance( List args );
 	
 	public Map getExplicitSpecializations();
+
+	/**
+	 * @param symbol
+	 * @param type
+	 * @param kind
+	 */
+	public void registerDeferredInstatiation( Object obj0, Object obj1, DeferredKind kind, Map argMap );
+	
+	public static class DeferredKind{
+		private DeferredKind( int v ){
+			_val = v;
+		}
+		private int _val;
+		
+		public static final DeferredKind RETURN_TYPE = new DeferredKind( 1 );
+		public static final DeferredKind PARENT      = new DeferredKind( 2 );
+		public static final DeferredKind TYPE_SYMBOL = new DeferredKind( 3 );
+	}
+
+	
+	
+	
 }

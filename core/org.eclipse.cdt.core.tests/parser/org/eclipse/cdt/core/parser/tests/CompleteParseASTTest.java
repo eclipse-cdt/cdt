@@ -1771,6 +1771,59 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 											     new Task( f21, 1, false, false ) ) );
 	}
 	
+	public void testInstantiatingDeferredInstances() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write( "template < class T > struct A { A < T > next; };  \n" );
+		writer.write( "A< int > a; \n" );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+	}
+	
+	public void testTemplateArgumentDeduction() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write( "template< class T > struct B {};                   \n" );
+		writer.write( "template< class T > struct D : public B < T > {};  \n" );
+		writer.write( "struct D2 : public B< int > {};                    \n" );
+		writer.write( "template< class T > T f( B<T> & ) {}               \n" );
+		writer.write( "void test( int );                                  \n" );
+		writer.write( "void test( char );                                 \n" );
+		writer.write( "void main() {                                      \n" );
+		writer.write( "   D<int> d;                                       \n" );
+		writer.write( "   D2     d2;                                      \n" );
+		writer.write( "   test( f( d ) );                                 \n" );
+		writer.write( "   test( f( d2 ) );                                \n" );
+		writer.write( "}                                                  \n" );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration templateB = (IASTTemplateDeclaration) i.next();
+		IASTTemplateDeclaration templateD = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier D2 = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTTemplateDeclaration templateF = (IASTTemplateDeclaration) i.next();
+		IASTFunction test1 = (IASTFunction) i.next();
+		IASTFunction test2 = (IASTFunction) i.next();
+		IASTFunction main = (IASTFunction) i.next();
+		
+		assertFalse( i.hasNext() );		
+		assertReferenceTask( new Task( test1, 2, false, false ) );
+	}
+	public void testBug55673() throws Exception{
+		Writer writer = new StringWriter();
+		writer.write( "struct Example { int i;  int ( * pfi ) ( int ); }; ");
+		
+		Iterator iter = parse( writer.toString() ).getDeclarations();
+		
+		IASTClassSpecifier example = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)iter.next()).getTypeSpecifier();
+		assertFalse( iter.hasNext() );
+		
+		iter = getDeclarations( example ); 
+		
+		IASTField i = (IASTField) iter.next();
+		IASTField pfi = (IASTField) iter.next();
+		
+		assertFalse( iter.hasNext() );
+	}
+	
 	public void testBug54531() throws Exception
 	{
 		Iterator i = parse( "typedef enum _A {} A, *pA;" ).getDeclarations();

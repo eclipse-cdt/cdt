@@ -70,7 +70,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			newWrapper = new ParentWrapper( wrapper.getParent(), wrapper.isVirtual(), wrapper.getAccess(), wrapper.getOffset(), wrapper.getReferences() );
 			ISymbol parent = newWrapper.getParent();
 			if( parent instanceof IDeferredTemplateInstance ){
-				newWrapper.setParent( ((IDeferredTemplateInstance)parent).instantiate( template, argMap ) );
+				template.registerDeferredInstatiation( newSymbol, newWrapper, ITemplateSymbol.DeferredKind.PARENT, argMap );
 			} else 	if( parent.isType( TypeInfo.t_templateParameter ) && argMap.containsKey( parent ) ){
 				TypeInfo info = (TypeInfo) argMap.get( parent );
 				newWrapper.setParent( info.getTypeSymbol() );
@@ -79,17 +79,20 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			newSymbol.getParents().add( newWrapper );
 		}
 		
-//		Iterator constructors = getConstructors().iterator();
-//		newSymbol.getConstructors().clear();
-//		IParameterizedSymbol constructor = null;
-//		while( constructors.hasNext() ){
-//			constructor = (IParameterizedSymbol) constructors.next();
-//			newSymbol.getConstructors().add( constructor.instantiate( template, argMap ) );
-//		}
-		
 		//TODO: friends
 		
 		return newSymbol;	
+	}
+	
+	public void instantiateDeferredParent( ParentWrapper wrapper, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+		Iterator parents = getParents().iterator();
+		ParentWrapper w = null;
+		while( parents.hasNext() ) {
+			w = (ParentWrapper) parents.next();
+			if( w == wrapper ){
+				wrapper.setParent( wrapper.getParent().instantiate( template, argMap ) );
+			}
+		}
 	}
 	
 	public void addSymbol(ISymbol symbol) throws ParserSymbolTableException {
@@ -172,7 +175,12 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	public void addCopyConstructor() throws ParserSymbolTableException{
 		List parameters = new LinkedList();
 		
-		TypeInfo param = new TypeInfo( TypeInfo.t_type, TypeInfo.isConst, this, new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, false, false ), false ); 
+		ISymbol paramType = this;
+		if( getContainingSymbol() instanceof ITemplateSymbol ){
+			paramType = TemplateEngine.instantiateWithinTemplateScope( this, (ITemplateSymbol) getContainingSymbol() );
+		}
+		
+		TypeInfo param = new TypeInfo( TypeInfo.t_type, TypeInfo.isConst, paramType, new TypeInfo.PtrOp( TypeInfo.PtrOp.t_reference, false, false ), false ); 
 		parameters.add( param );
 		
 		IParameterizedSymbol constructor = null;

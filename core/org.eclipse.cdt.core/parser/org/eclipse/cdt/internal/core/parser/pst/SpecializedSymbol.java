@@ -113,6 +113,8 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 			
 			instance = (IContainerSymbol) symbol.instantiate( this, argMap );
 			addInstantiation( instance, actualArgs );
+			processDeferredInstantiations();
+			
 			return instance;
 		}
 	}

@@ -73,7 +73,10 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 					newParameterized.getReturnType().setInstantiatedSymbol( _returnType );
 				}
 			} else {
-				newParameterized.setReturnType( _returnType.instantiate( template, argMap ) );
+				if( _returnType instanceof IDeferredTemplateInstance )
+					template.registerDeferredInstatiation( newParameterized, _returnType, ITemplateSymbol.DeferredKind.RETURN_TYPE, argMap );
+				else
+					newParameterized.setReturnType( _returnType.instantiate( template, argMap ) );
 			}
 		}
 		
@@ -95,6 +98,10 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		}
 		
 		return newParameterized;	
+	}
+	
+	public void instantiateDeferredReturnType( ISymbol returnType, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{
+		setReturnType( returnType.instantiate( template, argMap ) );
 	}
 	
 	/* (non-Javadoc)

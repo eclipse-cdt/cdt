@@ -500,4 +500,11 @@ public abstract class Resource extends PlatformObject implements IResource {
 	public abstract String getPersistentProperty(QualifiedName key) throws CoreException;
 
 
+	/**
+	 * @see org.eclipse.core.resources.IResource#isLinked()
+	 */
+	public boolean isLinked() {
+		return false;
+	}
+
 }

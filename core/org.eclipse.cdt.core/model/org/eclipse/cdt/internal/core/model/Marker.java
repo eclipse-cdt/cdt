@@ -122,4 +122,11 @@ public class Marker extends PlatformObject implements IMarker {
 		id = i;
 	}
 
+	/**
+	 * @see org.eclipse.core.resources.IMarker#getCreationTime()
+	 */
+	public long getCreationTime() throws CoreException {
+		return id;
+	}
+
 }

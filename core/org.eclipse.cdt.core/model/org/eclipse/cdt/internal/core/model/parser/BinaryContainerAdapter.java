@@ -262,4 +262,14 @@ public class BinaryContainerAdapter extends Container implements IFolder {
 		timestamp = modif;
 		return changed;
 	}
+	/**
+	 * @see org.eclipse.core.resources.IFolder#createLink(org.eclipse.core.runtime.IPath, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void createLink(
+		IPath localLocation,
+		int updateFlags,
+		IProgressMonitor monitor)
+		throws CoreException {
+	}
+
 }

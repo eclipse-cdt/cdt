@@ -1,3 +1,12 @@
+2002-12-13 David Inglis
+	Update cdt to be eclipse 2.1 ready.
+
+	* model/.../internal/core/model/Marker.java: added getCreationTime()
+	* model/.../internal/core/model/Resource.java: added isLinked()
+	* model/.../internal/core/model/parser/BinaryContainerAdapter.java: added createLink()
+	* model/.../internal/core/model/parser/BinaryFileAdapter.java: added createLink()
+	
+
 2002-12-10 Alain Magloire
 
 	* src/org/eclipse/cdt/core/CCommandLauncher.java (waitAndRead):

@@ -228,4 +228,14 @@ public class BinaryFileAdapter extends Resource implements IFile {
 		return parent.exists(new Path(getName()));
 	}
 
+	/**
+	 * @see org.eclipse.core.resources.IFile#createLink(org.eclipse.core.runtime.IPath, int, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void createLink(
+		IPath localLocation,
+		int updateFlags,
+		IProgressMonitor monitor)
+		throws CoreException {
+	}
+
 }

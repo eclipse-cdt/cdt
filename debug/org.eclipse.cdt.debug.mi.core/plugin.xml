@@ -22,6 +22,7 @@
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
             name="%GDBDebugger.name"
+            modes="run"
             class="org.eclipse.cdt.debug.mi.core.GDBDebugger"
             id="org.eclipse.cdt.debug.mi.core.CDebugger">
       </debugger>

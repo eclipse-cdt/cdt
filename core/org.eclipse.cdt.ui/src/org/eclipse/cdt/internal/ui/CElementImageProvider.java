@@ -97,9 +97,6 @@ public class CElementImageProvider {
 		if (element instanceof ICElement) {
 			descriptor= getCImageDescriptor((ICElement) element, flags);
 		}
-//		if (descriptor == null && element instanceof ICFile) {
-//			element = ((ICFile)element).getFile();
-//		}
 		if (descriptor == null && element instanceof IAdaptable) {
 			descriptor= getWorkbenchImageDescriptor((IAdaptable) element, flags);
 		}
@@ -113,9 +110,9 @@ public class CElementImageProvider {
 		return (flags & OVERLAY_ICONS) != 0;
 	}
 	
-	private boolean useLightIcons(int flags) {
-		return (flags & LIGHT_TYPE_ICONS) != 0;
-	}
+//	private boolean useLightIcons(int flags) {
+//		return (flags & LIGHT_TYPE_ICONS) != 0;
+//	}
 	
 	private boolean useSmallSize(int flags) {
 		return (flags & SMALL_ICONS) != 0;
@@ -313,4 +310,3 @@ public class CElementImageProvider {
 	}
 	
 }
-

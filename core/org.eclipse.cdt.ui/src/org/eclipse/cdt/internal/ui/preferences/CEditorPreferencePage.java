@@ -579,7 +579,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		
 		
 		String label= "Text &font:";
-		addTextFontEditor(behaviorComposite, label, CEditor.PREFERENCE_FONT);
+		addTextFontEditor(behaviorComposite, label, JFaceResources.TEXT_FONT);
 		
 		label= "Displayed &tab width:";
 		addTextField(behaviorComposite, label, CSourceViewerConfiguration.PREFERENCE_TAB_WIDTH, 2, 0, true);

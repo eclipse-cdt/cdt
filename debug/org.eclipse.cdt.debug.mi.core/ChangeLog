@@ -1,3 +1,9 @@
+2003-04-23 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SignalManager.java (update):
+	Move the creation of the list after the call to "info signals".
+	The call may fail.
+
 2003-04-21 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/Target.java (suspend):

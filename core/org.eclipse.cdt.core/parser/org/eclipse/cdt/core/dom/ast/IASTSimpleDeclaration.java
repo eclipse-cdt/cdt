@@ -20,7 +20,10 @@ import java.util.List;
  */
 public interface IASTSimpleDeclaration extends IASTDeclaration, IASTNode {
 
-	/**
+	ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty( "Decl Specifier"); //$NON-NLS-1$
+    ASTNodeProperty DECLARATOR = new ASTNodeProperty( "Declarator"); //$NON-NLS-1$
+
+    /**
 	 * This returns the object representing the declSpecifiers for this
 	 * declaration.
 	 * 

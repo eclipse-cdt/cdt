@@ -22,10 +22,12 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.parser.BacktrackException;
@@ -314,13 +316,17 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IASTSimpleDeclaration simpleDeclaration = createSimpleDeclaration();
         simpleDeclaration.setOffset( firstOffset );
         firstToken = null; // necessary for scalability
+        
         IASTDeclSpecifier declSpec = declSpecifierSeq(false);
         simpleDeclaration.setDeclSpecifier( declSpec );
-
+        declSpec.setParent( simpleDeclaration );
+        declSpec.setPropertyInParent( IASTSimpleDeclaration.DECL_SPECIFIER );
         
         if (LT(1) != IToken.tSEMI) {
             IASTDeclarator declarator = initDeclarator();
             simpleDeclaration.addDeclarator( declarator );
+            declarator.setParent( simpleDeclaration );
+            declarator.setPropertyInParent( IASTSimpleDeclaration.DECLARATOR );
 
             while (LT(1) == IToken.tCOMMA) {
                 consume( IToken.tCOMMA );
@@ -1495,70 +1501,72 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IToken mark = mark();
 
             ITokenDuple nameDuple = null;
+            boolean isConst = false, isVolatile = false, isRestrict = false;
             if (LT(1) == IToken.tIDENTIFIER) {
                 IToken t = identifier();
                 nameDuple = TokenFactory.createTokenDuple(t, t);
             }
 
             if (LT(1) == IToken.tSTAR) {
+                
                 result = consume(IToken.tSTAR);                
-
-                IToken successful = null;
+                int startOffset = result.getOffset();
+                
                 for (;;) {
-                    IToken newSuccess = cvQualifier(d, nameDuple);
-                    if (newSuccess != null)
-                        successful = newSuccess;
-                    else
+                    IToken t = LA(1); 
+                    switch (LT(1)) {
+                    case IToken.t_const:
+                        result = consume(IToken.t_const);
+                        isConst = true;
                         break;
-
+                    case IToken.t_volatile:
+                        result = consume(IToken.t_volatile);
+                    	isVolatile = true;
+                        break;
+                    case IToken.t_restrict:
+                        result = consume(IToken.t_restrict);
+                    	isRestrict = true;
+                        break;
+                    }
+                    
+                    if( t == LA(1) )
+                        break;
                 }
 
-                if (successful == null) {
-                    d.addPointerOperator(null /* ASTPointerOperator.POINTER */);
+                
+                IASTPointerOperator po = null;
+                if( nameDuple != null )
+                {
+                    
+                    
+                    
+                    nameDuple.freeReferences();
                 }
-                continue;
+                else
+                {
+                    po = createPointer();
+                    ((ICASTPointer)po).setConst(isConst);
+                    ((ICASTPointer)po).setVolatile( isVolatile );
+                    ((ICASTPointer)po).setRestrict(isRestrict);
+                }
+                if( po != null )
+                {
+                    d.addPointerOperator(po);
+                    po.setParent(d);
+                    po.setPropertyInParent( IASTDeclarator.POINTER_OPERATOR );
+                    po.setOffset( startOffset );
+                }
             }
-            if (nameDuple != null)
-                nameDuple.freeReferences();
             backup(mark);
             return result;
         }
     }
 
     /**
-     * Parse a const-volatile qualifier.
-     * 
-     * cvQualifier : "const" | "volatile"
-     * 
-     * TODO: fix this
-     * 
-     * @param ptrOp
-     *            Pointer Operator that const-volatile applies to.
-     * @return Returns the same object sent in.
-     * @throws BacktrackException
+     * @return
      */
-    protected IToken cvQualifier(IASTDeclarator declarator, ITokenDuple name )
-            throws EndOfFileException, BacktrackException {
-        IToken result = null;
-        int startingOffset = LA(1).getOffset();
-        switch (LT(1)) {
-        case IToken.t_const:
-            result = consume(IToken.t_const);
-            declarator
-                    .addPointerOperator(null /* ASTPointerOperator.CONST_POINTER */);
-            break;
-        case IToken.t_volatile:
-            result = consume(IToken.t_volatile);
-            declarator
-                    .addPointerOperator(null/* ASTPointerOperator.VOLATILE_POINTER */);
-            break;
-        case IToken.t_restrict:
-            result = consume(IToken.t_restrict);
-            declarator
-                    .addPointerOperator(null/* ASTPointerOperator.RESTRICT_POINTER */);
-            break;
-        }
-        return result;
+    private ICASTPointer createPointer() {
+        return new CASTPointer();
     }
 
     protected IASTDeclSpecifier declSpecifierSeq(boolean parm)
@@ -1767,9 +1775,35 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             }
         }
         if( isIdentifier )
-            return createNamedTypeSpecifier(  );
+        {
+            ICASTTypedefNameSpecifier declSpec = createNamedTypeSpecifier();
+            declSpec.setConst( isConst );
+            declSpec.setRestrict( isRestrict );
+            declSpec.setVolatile( isVolatile );
+            declSpec.setInline( isInline );
+            declSpec.setStorageClass( storageClass );
+            
+            declSpec.setOffset( startingOffset );
+            return declSpec;
+        }
         if( simpleType != IASTSimpleDeclSpecifier.t_unspecified || isLong || isShort || isUnsigned || isSigned )
-            return createSimpleTypeSpecifier( );
+        {
+            ICASTSimpleDeclSpecifier declSpec = createSimpleTypeSpecifier();
+            declSpec.setConst( isConst );
+            declSpec.setRestrict( isRestrict );
+            declSpec.setVolatile( isVolatile );
+            declSpec.setInline( isInline );
+            declSpec.setStorageClass( storageClass );
+            
+            declSpec.setType( simpleType );
+            declSpec.setLong( isLong );
+            declSpec.setUnsigned( isUnsigned );
+            declSpec.setSigned( isSigned );
+            declSpec.setShort( isShort );
+            
+            declSpec.setOffset( startingOffset );
+            return declSpec;
+        }
         return null;
     }
 
@@ -1969,7 +2003,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             //			astFactory.constructExpressions(constructInitializers);
             IASTInitializer i = optionalCInitializer();
             if( i != null )
+            {
                 d.setInitializer( i );
+                i.setParent( d );
+                i.setPropertyInParent( IASTDeclarator.INITIALIZER );
+            }
             return d;
         } finally {
             //			astFactory.constructExpressions(true);
@@ -1994,15 +2032,18 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
                 IASTDeclarator innerDeclarator = declarator();
                 consume(IToken.tRPAREN);
                 d.setNestedDeclarator(innerDeclarator);
+                innerDeclarator.setParent( d );
+                innerDeclarator.setPropertyInParent( IASTDeclarator.NESTED_DECLARATOR );
             } else if (LT(1) == IToken.tIDENTIFIER) {
-                IToken t = identifier();
-                d.setName( createName( t ));
+                IASTName name = createName( identifier() );
+                d.setName( name );
+                name.setParent( d );
+                name.setPropertyInParent( IASTDeclarator.DECLARATOR_NAME );                
             }
 
             for (;;) {
                 switch (LT(1)) {
                 case IToken.tLPAREN:
-
                     boolean failed = false;
                     Object parameterScope = null; /*
                                                    * astFactory
@@ -2098,8 +2139,9 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     private IASTName createName(IToken t) {
-        // TODO Auto-generated method stub
-        return null;
+        IASTName n = new CASTName( t.getCharImage() );
+        n.setOffset( t.getOffset() );
+        return n;
     }
 
     /**

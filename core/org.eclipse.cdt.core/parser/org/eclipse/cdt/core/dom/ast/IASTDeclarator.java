@@ -17,7 +17,12 @@ import java.util.List;
  */
 public interface IASTDeclarator extends IASTNode {
 
-	/**
+	ASTNodeProperty POINTER_OPERATOR = new ASTNodeProperty( "Pointer Operator"); //$NON-NLS-1$
+    ASTNodeProperty INITIALIZER = new ASTNodeProperty( "Initializer"); //$NON-NLS-1$
+    ASTNodeProperty NESTED_DECLARATOR = new ASTNodeProperty( "Nested Declarator"); //$NON-NLS-1$
+    ASTNodeProperty DECLARATOR_NAME = new ASTNodeProperty( "Declarator Name"); //$NON-NLS-1$
+
+    /**
 	 * This is the list of pointer operators applied to the type for
 	 * the declarator.
 	 * 

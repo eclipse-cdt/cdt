@@ -20,5 +20,8 @@ public interface IASTPointer extends IASTPointerOperator {
 	// Qualifiers applied to the pointer type
 	public boolean isConst();
 	public boolean isVolatile();
+	
+	public void setConst( boolean value );
+	public void setVolatile( boolean value );
 
 }

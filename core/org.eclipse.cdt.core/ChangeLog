@@ -1,3 +1,32 @@
+2002-10-23 Alain Magloire
+
+	* src/.../core/resource/ACBuilder.java (mapMarkerSeverity):
+	New method to convert IMarkerGenerator to IMarker.
+	* src/.../core/ErrorParserManager.java: New file.
+	* src/.../core/IErrorParser.java: New file.
+	* src/.../core/IMarkerGenerator.java: Define a set of new fields:
+	 IMarkerGenerator.SEVERITY_INFO
+	 IMarkerGenerator.SEVERITY_WARNING
+	 IMarkerGenerator.SEVERITY_ERROR_RESOURCE
+	 IMarkerGenerator.SEVERITY_ERROR_BUILD
+	 IMarkerGenerator.SEVERITY_INFO
+	* src/.../core/erroparsers: Removed
+	* src/.../core/erroparsers/ErrorParserManager.java: Removed
+	* src/.../core/erroparsers/IErrorParser.java: Removed
+	* src/.../internal/core/CBuilder.java (invokeMake): new field
+	fatalBuild to check return of ErrorParserManager.reporProblems().
+	* src/.../internal/core/ProcessClosure.java (isAlive): the test
+	shoule be an || the errorstream __or__ the outputstream thread
+	is alive.
+	* src/.../internal/errorparsers/GASErrorParser.java (processLine):
+	* src/.../internal/errorparsers/GCCErrorParser.java (processLine):
+	* src/.../internal/errorparsers/GLDErrorParser.java (processLine):
+	* src/.../internal/errorparsers/VCErrorParser.java (processLine):
+	Use the IMarkerGenerator fields.
+	* src/.../internal/errorparsers/MakeErrorParser.java (processLine):
+	Catch GNU Make build errors, something like:
+	"make: *** No targets specified and no makefile found.  Stop."
+	
 2002-10-23 David Inglis
 
 	Error parsing is now done as the streams from the commands

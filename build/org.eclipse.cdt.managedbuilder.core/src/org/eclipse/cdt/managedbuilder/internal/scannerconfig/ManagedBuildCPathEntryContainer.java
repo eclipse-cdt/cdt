@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004,2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -211,23 +211,25 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 		
 		// See if we can load a dynamic resolver
 		IManagedScannerInfoCollector collector = ManagedBuildManager.getScannerInfoCollector(defaultConfig); 
-		if (collector != null) {
-			ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries collected dynamically");	//$NON-NLS-1$
-			collector.setProject(info.getOwner().getProject());
-			calculateEntriesDynamically((IProject)info.getOwner(), collector);
-			addIncludePaths(collector.getIncludePaths());
-			addDefinedSymbols(collector.getDefinedSymbols());
-		} else {
-			// If none supplied, use the built-ins
-			if (defaultConfig != null) {
-				calculateBuiltIns(defaultTarget, defaultConfig);
-				ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries set using built-in definitions from " + defaultConfig.getName());	//$NON-NLS-1$
+		synchronized (this) {
+			if (collector != null) {
+				ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries collected dynamically");	//$NON-NLS-1$
+				collector.setProject(info.getOwner().getProject());
+				calculateEntriesDynamically((IProject)info.getOwner(), collector);
+				addIncludePaths(collector.getIncludePaths());
+				addDefinedSymbols(collector.getDefinedSymbols());
 			} else {
-				ManagedBuildCPathEntryContainer.outputError(project.getName(), "Configuration is null");	//$NON-NLS-1$
-				return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+				// If none supplied, use the built-ins
+				if (defaultConfig != null) {
+					calculateBuiltIns(defaultTarget, defaultConfig);
+					ManagedBuildCPathEntryContainer.outputTrace(project.getName(), "Path entries set using built-in definitions from " + defaultConfig.getName());	//$NON-NLS-1$
+				} else {
+					ManagedBuildCPathEntryContainer.outputError(project.getName(), "Configuration is null");	//$NON-NLS-1$
+					return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+				}
 			}
-		}
-		return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+			return (IPathEntry[])entries.toArray(new IPathEntry[entries.size()]);
+		}	// end synchronized
 	}
 	
 	/* (non-Javadoc)

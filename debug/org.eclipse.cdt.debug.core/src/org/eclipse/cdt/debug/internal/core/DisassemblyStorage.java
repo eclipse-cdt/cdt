@@ -11,7 +11,9 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
+import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -129,6 +131,8 @@ public class DisassemblyStorage implements IDisassemblyStorage
 			return this;
 		if ( adapter.equals( DisassemblyStorage.class ) )
 			return this;
+		if ( adapter.equals( IResource.class ) )
+			return getBinary();
 		return null;
 	}
 
@@ -205,5 +209,18 @@ public class DisassemblyStorage implements IDisassemblyStorage
 	private int calculateInstructionPosition( int maxFunctionName, long maxOffset )
 	{
 		return ( 16 + maxFunctionName + Long.toString( maxOffset ).length() );
+	}
+	
+	private IResource getBinary()
+	{
+		if ( getDebugTarget() != null )
+		{
+			IExecFileInfo info = (IExecFileInfo)getDebugTarget().getAdapter( IExecFileInfo.class );
+			if ( info != null )
+			{
+				return info.getExecFile();
+			}
+		}
+		return null;
 	}
 }

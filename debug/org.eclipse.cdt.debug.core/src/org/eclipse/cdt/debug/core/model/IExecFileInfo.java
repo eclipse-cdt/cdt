@@ -6,6 +6,8 @@
 
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.core.resources.IFile;
+
 /**
  * Provides access to executable file information.
  * 
@@ -13,7 +15,9 @@ package org.eclipse.cdt.debug.core.model;
  */
 public interface IExecFileInfo
 {
+	public IFile getExecFile();
+
 	public boolean isLittleEndian();
 	
-	public IGlobalVariable[] getGlobals();
+	public IGlobalVariable[] getGlobals();	
 }

@@ -1957,7 +1957,7 @@ public class CDebugTarget extends CDebugElement
 		return true;
 	}
 	
-	protected IFile getExecFile()
+	public IFile getExecFile()
 	{
 		return fExecFile;
 	}

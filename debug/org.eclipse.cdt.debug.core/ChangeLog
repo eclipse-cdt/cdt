@@ -1,4 +1,10 @@
 2003-01-02 Mikhail Khodjaiants
+	The 'DisassemblyStorage' class implements an adapter for the 'IResource' class and returns the executable file.
+	* IExecFileInfo.java: added a new method: 'getExecFile'
+	* CDebugTarget.java
+	* DisassemblyStorage.java
+
+2003-01-02 Mikhail Khodjaiants
 	If breakpoint or watchpoint has been disabled before launching the debugger doesn't disable it.
 	* CDebugTarget.java
 

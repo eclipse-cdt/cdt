@@ -60,6 +60,7 @@ public class CThread extends CObject implements ICDIThread {
 		CommandFactory factory = mi.getCommandFactory();
 		MIStackListFrames frames = factory.createMIStackListFrames();
 		try {
+			ICDIThread oldThread = getCTarget().getCurrentThread();
 			getCTarget().setCurrentThread(this);
 			mi.postCommand(frames);
 			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
@@ -71,6 +72,7 @@ public class CThread extends CObject implements ICDIThread {
 			for (int i = 0; i < stack.length; i++) {
 				stack[i] = new StackFrame(this, miFrames[i]);
 			}
+			getCTarget().setCurrentThread(oldThread);
 			return stack;
 		} catch (MIException e) {
 			//throw new CDIException(e.getMessage());

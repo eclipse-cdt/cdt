@@ -222,4 +222,11 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return getSymbol().getName();
+    }
 }

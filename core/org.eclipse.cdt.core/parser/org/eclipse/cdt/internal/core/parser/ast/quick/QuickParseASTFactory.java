@@ -87,7 +87,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createASMDefinition(org.eclipse.cdt.internal.core.parser.ast.IASTScope, java.lang.String, int, int)
 	 */
-	public IASTASMDefinition createASMDefinition(IASTScope scope, String assembly, int startingOffset, int startingLine, int endingOffset, int endingLine, char[] fn) {		
+	public IASTASMDefinition createASMDefinition(IASTScope scope, char[] assembly, int startingOffset, int startingLine, int endingOffset, int endingLine, char[] fn) {		
 		IASTASMDefinition definition = new ASTASMDefinition( scope, assembly, fn ); 
 		definition.setStartingOffsetAndLineNumber( startingOffset, startingLine ); 
 		definition.setEndingOffsetAndLineNumber( endingOffset, endingLine );
@@ -97,7 +97,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createNamespaceDefinition(int, java.lang.String, int)
 	 */
-	public IASTNamespaceDefinition createNamespaceDefinition(IASTScope scope, String identifier, int first, int startingLine, int nameOffset, int nameEndOffset, int nameLineNumber, char[] fn) {
+	public IASTNamespaceDefinition createNamespaceDefinition(IASTScope scope, char[] identifier, int first, int startingLine, int nameOffset, int nameEndOffset, int nameLineNumber, char[] fn) {
 		IASTNamespaceDefinition definition = new ASTNamespaceDefinition( scope, identifier, first, startingLine, nameOffset, nameEndOffset, nameLineNumber, fn );
 		return definition;
 	}
@@ -112,7 +112,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createLinkageSpecification(java.lang.String)
 	 */
-	public IASTLinkageSpecification createLinkageSpecification(IASTScope scope, String spec, int startingOffset, int startingLine, char[] fn) {
+	public IASTLinkageSpecification createLinkageSpecification(IASTScope scope, char[] spec, int startingOffset, int startingLine, char[] fn) {
 		return new ASTLinkageSpecification( scope, spec, startingOffset, startingLine, fn );
 	}
 
@@ -127,7 +127,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ast.ClassKind, org.eclipse.cdt.core.parser.ast.ClassNameType, org.eclipse.cdt.core.parser.ast.AccessVisibility, org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration)
 	 */
 	public IASTClassSpecifier createClassSpecifier(IASTScope scope, ITokenDuple name, ASTClassKind kind, ClassNameType type, ASTAccessVisibility access, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] fn ) {
-		return new ASTClassSpecifier( scope, name == null ? "" : name.toString() , kind, type, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, access, fn );  //$NON-NLS-1$
+		return new ASTClassSpecifier( scope, name == null ? EMPTY_STRING : name.toCharArray() , kind, type, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, access, fn );  //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -141,7 +141,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createEnumerationSpecifier(java.lang.String, int)
      */
-    public IASTEnumerationSpecifier createEnumerationSpecifier(IASTScope scope, String name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] fn)
+    public IASTEnumerationSpecifier createEnumerationSpecifier(IASTScope scope, char[] name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] fn)
     {
         return new ASTEnumerationSpecifier( scope, name, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, fn );
     }
@@ -149,7 +149,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#addEnumerator(org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier, java.lang.String, int, int)
      */
-    public IASTEnumerator addEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endLine, IASTExpression initialValue, char[] fn)
+    public IASTEnumerator addEnumerator(IASTEnumerationSpecifier enumeration, char[] string, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endLine, IASTExpression initialValue, char[] fn)
     {
      	IASTEnumerator enumerator = new ASTEnumerator( enumeration, string, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endLine, initialValue, fn );
      	((ASTEnumerationSpecifier)enumeration).addEnumerator( enumerator );
@@ -159,8 +159,8 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.ExpressionKind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {
-		return temporarilyDisableNodeConstruction ? ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor ) : null;  //$NON-NLS-1$
+	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor) {
+		return temporarilyDisableNodeConstruction ? ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? EMPTY_STRING : idExpression.toCharArray(), literal, newDescriptor ) : null;  //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -200,7 +200,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      */
     public IASTFunction createFunction(IASTScope scope, ITokenDuple name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, IASTTemplate ownerTemplate, boolean isConst, boolean isVolatile, boolean isVirtual, boolean isExplicit, boolean isPureVirtual, List constructorChain, boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments )
     {
-    	ASTFunction function = new ASTFunction(scope, name.toString(), parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, startLine, nameOffset, nameEndOffset, ownerTemplate, hasFunctionTryBlock, hasVariableArguments, nameLine, name.getFilename() ); 
+    	ASTFunction function = new ASTFunction(scope, name.toCharArray(), parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, startLine, nameOffset, nameEndOffset, ownerTemplate, hasFunctionTryBlock, hasVariableArguments, nameLine, name.getFilename() ); 
     	if( isFriend && scope instanceof IASTQClassSpecifier ){
     		((IASTQClassSpecifier)scope).addFriendDeclaration( function );
     	}
@@ -212,7 +212,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      */
 	public IASTMethod createMethod(IASTScope scope, ITokenDuple name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, boolean isFriend, boolean isStatic, int startOffset, int startLine, int nameOffset, int nameEndOffset, int nameLine, IASTTemplate ownerTemplate, boolean isConst, boolean isVolatile, boolean isVirtual, boolean isExplicit, boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments )
 	{
-		ASTMethod method = new ASTMethod(scope, name.toString(), parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, startLine, nameOffset, nameEndOffset, nameLine, ownerTemplate, isConst, isVolatile, false, false, isVirtual, isExplicit, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock, hasVariableArguments, name.getFilename());
+		ASTMethod method = new ASTMethod(scope, name.toCharArray(), parameters, returnType, exception, isInline, isFriend, isStatic, startOffset, startLine, nameOffset, nameEndOffset, nameLine, ownerTemplate, isConst, isVolatile, false, false, isVirtual, isExplicit, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock, hasVariableArguments, name.getFilename());
     	if( isFriend && scope instanceof IASTQClassSpecifier ){
     		((IASTQClassSpecifier)scope).addFriendDeclaration( method );
     	}
@@ -224,7 +224,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      */
     public IASTVariable createVariable(IASTScope scope, ITokenDuple name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, IASTExpression constructorExpression, char[] fn)
     {
-        return new ASTVariable(scope, ( name != null ? name.toString() : "" ), isAuto, initializerClause, bitfieldExpression, abstractDeclaration, isMutable, isExtern, isRegister, isStatic, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, constructorExpression, fn); //$NON-NLS-1$
+        return new ASTVariable(scope, ( name != null ? name.toCharArray() : EMPTY_STRING ), isAuto, initializerClause, bitfieldExpression, abstractDeclaration, isMutable, isExtern, isRegister, isStatic, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, constructorExpression, fn); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -232,7 +232,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      */
     public IASTField createField(IASTScope scope, ITokenDuple name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, IASTExpression constructorExpression, ASTAccessVisibility visibility, char[] fn)
     {
-        return new ASTField(scope, ( name != null ? name.toString() : "" ), isAuto, initializerClause, bitfieldExpression, abstractDeclaration, isMutable, isExtern, isRegister, isStatic, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, constructorExpression, visibility, fn);  //$NON-NLS-1$
+        return new ASTField(scope, ( name != null ? name.toCharArray() : EMPTY_STRING ), isAuto, initializerClause, bitfieldExpression, abstractDeclaration, isMutable, isExtern, isRegister, isStatic, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, constructorExpression, visibility, fn);  //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -246,9 +246,9 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTemplateParameter(org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParameterKind, org.eclipse.cdt.core.parser.IToken, java.lang.String, org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration)
      */
-    public IASTTemplateParameter createTemplateParameter(IASTTemplateParameter.ParamKind kind, String identifier, IASTTypeId defaultValue, IASTParameterDeclaration parameter, List parms, IASTCodeScope parameterScope, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn)
+    public IASTTemplateParameter createTemplateParameter(IASTTemplateParameter.ParamKind kind, char[] identifier, IASTTypeId defaultValue, IASTParameterDeclaration parameter, List parms, IASTCodeScope parameterScope, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn)
     {
-        return new ASTTemplateParameter( kind, identifier, defaultValue != null ? defaultValue.getTypeOrClassName() : "", parameter, parms, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn ); //$NON-NLS-1$
+        return new ASTTemplateParameter( kind, identifier, defaultValue != null ? defaultValue.getTypeOrClassName().toCharArray() : EMPTY_STRING, parameter, parms, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn ); //$NON-NLS-1$
     }
 
     /* (non-Javadoc)
@@ -270,7 +270,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTypedef(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration)
      */
-    public IASTTypedefDeclaration createTypedef(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] fn)
+    public IASTTypedefDeclaration createTypedef(IASTScope scope, char[] name, IASTAbstractDeclaration mapping, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] fn)
     {
         return new ASTTypedefDeclaration( scope, name, mapping, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, fn);
     }
@@ -289,15 +289,15 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, ITokenDuple typeName, int startingOffset, int startingLine, int endOffset, int endingLine, boolean isForewardDecl, boolean isFriend)
     {
-        return new ASTElaboratedTypeSpecifier( scope, elaboratedClassKind, typeName.toString(), startingOffset, startingLine, typeName.getFirstToken().getOffset(), typeName.getLastToken().getEndOffset(), typeName.getLastToken().getLineNumber(), endOffset, endingLine, typeName.getFilename() );
+        return new ASTElaboratedTypeSpecifier( scope, elaboratedClassKind, typeName.toCharArray(), startingOffset, startingLine, typeName.getFirstToken().getOffset(), typeName.getLastToken().getEndOffset(), typeName.getLastToken().getLineNumber(), endOffset, endingLine, typeName.getFilename() );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNamespaceAlias(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ITokenDuple, int, int, int)
      */
-    public IASTNamespaceAlias createNamespaceAlias(IASTScope scope, String identifier, ITokenDuple alias, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine)
+    public IASTNamespaceAlias createNamespaceAlias(IASTScope scope, char[] identifier, ITokenDuple alias, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine)
     {
-    	return new ASTNamespaceAlias( scope, identifier, alias.toString(), startingOffset, nameOffset, nameEndOffset, endOffset, startingLine, nameLine, endingLine, alias.getFilename());
+    	return new ASTNamespaceAlias( scope, identifier, alias.toCharArray(), startingOffset, nameOffset, nameEndOffset, endOffset, startingLine, nameLine, endingLine, alias.getFilename());
     }
 
 	/* (non-Javadoc)
@@ -314,7 +314,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 		return true;  // we have no information to say that it is not
 	}
 
-    public IASTParameterDeclaration createParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn)
+    public IASTParameterDeclaration createParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, char[] parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn)
     {
         return new ASTParameterDeclaration( isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp, parameterName, initializerClause, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, endingOffset, endingLine, fn );
     }
@@ -323,9 +323,9 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTypeId(org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type, org.eclipse.cdt.core.parser.ITokenDuple, java.util.List, java.util.List)
      */
     public IASTTypeId createTypeId(IASTScope scope, Type kind, boolean isConst, boolean isVolatile, boolean isShort, 
-	boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods, String completeSignature)
+	boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods, char[] completeSignature)
     {
-        return ( temporarilyDisableNodeConstruction ?  new ASTTypeId( kind, name == null ? "" : name.toString(), pointerOps, arrayMods, isConst,  //$NON-NLS-1$
+        return ( temporarilyDisableNodeConstruction ?  new ASTTypeId( kind, name == null ? EMPTY_STRING : name.toCharArray(), pointerOps, arrayMods, isConst,  //$NON-NLS-1$
         	isVolatile, isUnsigned, isSigned, isShort, isLong, isTypename, completeSignature ) : null );
     }
 

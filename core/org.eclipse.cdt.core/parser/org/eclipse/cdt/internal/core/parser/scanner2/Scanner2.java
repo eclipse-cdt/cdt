@@ -270,6 +270,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private boolean finished = false;
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	private static final char[] EMPTY_STRING_CHAR_ARRAY = new char[0];
 
 	
 
@@ -1183,7 +1184,7 @@ public class Scanner2 implements IScanner, IScannerData {
 
 		if( parserMode == ParserMode.QUICK_PARSE )
 		{
-			IASTInclusion inclusion = getASTFactory().createInclusion( new String( filename ), EMPTY_STRING, local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+			IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), EMPTY_STRING_CHAR_ARRAY, local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 			requestor.enterInclusion( inclusion );
 			requestor.exitInclusion( inclusion );
 		}
@@ -1201,7 +1202,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (reader.filename != null)
 						fileCache.put(reader.filename, reader);
 					if (dlog != null) dlog.println("#include \"" + finalPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-					IASTInclusion inclusion = getASTFactory().createInclusion( new String( filename ), new String( reader.filename ), local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+					IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), reader.filename, local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 					pushContext(reader.buffer, new InclusionData( reader, inclusion ));
 					return;
 				}
@@ -1227,7 +1228,7 @@ public class Scanner2 implements IScanner, IScannerData {
 							if (reader.filename != null)
 								fileCache.put(reader.filename, reader);
 							if (dlog != null) dlog.println("#include <" + finalPath + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-							IASTInclusion inclusion = getASTFactory().createInclusion( new String( filename ), new String( reader.filename ), local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+							IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), reader.filename, local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 							pushContext(reader.buffer, new InclusionData( reader, inclusion ));
 							return;
 						}
@@ -1349,7 +1350,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				? new ObjectStyleMacro(name, text)
 						: new FunctionStyleMacro(name, text, arglist) );
 		
-		requestor.acceptMacro( getASTFactory().createMacro( new String( name ), startingOffset, startingLine, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, null, getCurrentFilename() )); //TODO - IMacroDescriptor? 
+		requestor.acceptMacro( getASTFactory().createMacro( name, startingOffset, startingLine, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, null, getCurrentFilename() )); //TODO - IMacroDescriptor? 
 		
 	}
 	

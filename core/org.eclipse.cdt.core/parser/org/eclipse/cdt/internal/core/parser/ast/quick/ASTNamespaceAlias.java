@@ -24,8 +24,8 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAlias
 {
 
-	private final String alias;
-    private final String identifier;
+	private final char[] alias;
+    private final char[] identifier;
     private final char [] fn;
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
@@ -43,7 +43,7 @@ public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAl
      * @param endOffset
      * @param filename
      */
-    public ASTNamespaceAlias(IASTScope scope, String identifier, String string, int startingOffset, int nameOffset, int nameEndOffset, int endOffset, int startingLine, int nameLine, int endingLine, char[] filename)
+    public ASTNamespaceAlias(IASTScope scope, char[] identifier, char[] string, int startingOffset, int nameOffset, int nameEndOffset, int endOffset, int startingLine, int nameLine, int endingLine, char[] filename)
     {
         super( scope );
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
@@ -80,7 +80,7 @@ public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAl
      */
     public String getAlias()
     {
-        return alias;
+        return String.valueOf(alias);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias#getNamespace()
@@ -94,7 +94,7 @@ public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAl
      */
     public String getName()
     {
-        return identifier;
+        return String.valueOf(identifier);
     }
     
 	private int startingLineNumber, startingOffset, endingLineNumber, endingOffset, nameStartOffset, nameEndOffset, nameLineNumber;
@@ -178,5 +178,12 @@ public class ASTNamespaceAlias extends ASTDeclaration implements IASTNamespaceAl
     {
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return identifier;
     }
 }

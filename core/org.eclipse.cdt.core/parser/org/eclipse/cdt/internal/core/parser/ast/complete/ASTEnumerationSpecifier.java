@@ -112,6 +112,12 @@ public class ASTEnumerationSpecifier
         return String.valueOf(getSymbol().getName());
     }
     /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */    
+    public char[] getNameCharArray(){
+        return getSymbol().getName();
+    }
+    /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
      */
     public String[] getFullyQualifiedName()

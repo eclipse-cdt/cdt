@@ -45,6 +45,10 @@ public class ImagedToken extends SimpleToken {
 		if( image == null ) return null;
 		return new String( image );
 	}
+	
+	public char[] getCharImage() {
+		return image;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IToken#setImage(java.lang.String)
 	 */

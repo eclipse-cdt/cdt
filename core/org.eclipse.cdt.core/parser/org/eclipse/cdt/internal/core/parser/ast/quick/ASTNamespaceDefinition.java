@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
  */
 public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamespaceDefinition, IASTQScope {
 
-	private final String name;
+	private final char[] name;
 	private final ASTQualifiedNamedElement qualifiedNameElement; 
     private final char [] fn;
 	/* (non-Javadoc)
@@ -37,10 +37,10 @@ public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamesp
 		return fn;
 	}
 
-	public ASTNamespaceDefinition( IASTScope scope, String name, int startOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
+	public ASTNamespaceDefinition( IASTScope scope, char[] name, int startOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
 	{
 		super( scope );
-		qualifiedNameElement = new ASTQualifiedNamedElement( scope, name.toCharArray() );
+		qualifiedNameElement = new ASTQualifiedNamedElement( scope, name );
 		this.name = name; 
 		setStartingOffsetAndLineNumber(startOffset, startingLine);
 		setNameOffset(nameOffset);
@@ -51,7 +51,7 @@ public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamesp
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
 	 */
 	public String getName() {
-		return name;
+		return String.valueOf(name);
 	}
 
 	private List declarations = new ArrayList(); 
@@ -190,5 +190,12 @@ public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamesp
     {
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return name;
     }
 }

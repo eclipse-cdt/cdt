@@ -125,7 +125,7 @@ public final class Scanner implements IScanner, IScannerData {
 				getCurrentOffset(), 
 				contextStack.getCurrentLineNumber(), 
 				getCurrentFile().toCharArray(), 
-				argument, 
+				argument != null ? argument.toCharArray() : EMPTY_STRING_CHAR_ARRAY, 
 				warning, 
 				error );
 		
@@ -630,8 +630,8 @@ public final class Scanner implements IScanner, IScannerData {
             {
                 inclusion =
                 	getASTFactory().createInclusion(
-                        fileName,
-                        new String( duple.filename ),
+                        fileName.toCharArray(),
+                        duple.filename,
                         !useIncludePaths,
                         beginOffset,
                         startLine,
@@ -769,6 +769,7 @@ public final class Scanner implements IScanner, IScannerData {
 
 	private boolean tokenizingMacroReplacementList = false;
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final char[] EMPTY_STRING_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 	private Map tempMap = new HashMap(); //$NON-NLS-1$
 	public void setTokenizingMacroReplacementList( boolean mr ){
 		tokenizingMacroReplacementList = mr;
@@ -2780,8 +2781,8 @@ public final class Scanner implements IScanner, IScannerData {
                 try
                 {
                     i = getASTFactory().createInclusion(
-                            directive.getFilename(),
-                            "", //$NON-NLS-1$
+                            directive.getFilename().toCharArray(),
+                            EMPTY_STRING_CHAR_ARRAY, //$NON-NLS-1$
                             !directive.useIncludePaths(),
                             beginningOffset,
                             startLine,
@@ -3090,7 +3091,7 @@ public final class Scanner implements IScanner, IScannerData {
 		
 		try
         {
-			getASTFactory().createMacro( key, beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), contextStack.getCurrentLineNumber(), descriptor, getCurrentFilename() ).acceptElement( requestor, null );
+			getASTFactory().createMacro( key.toCharArray(), beginning, beginningLine, offset, offset + key.length(), nameLine, currentContext.getOffset(), contextStack.getCurrentLineNumber(), descriptor, getCurrentFilename() ).acceptElement( requestor, null );
         }
         catch (Exception e)
         {

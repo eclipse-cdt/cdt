@@ -388,4 +388,11 @@ public class ASTFunction extends ASTScope implements IASTFunction
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return symbol.getName();
+    }
 }

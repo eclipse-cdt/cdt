@@ -56,7 +56,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
      */
     public ASTMethod(
         IASTScope scope,
-        String name,
+        char[] name,
         List parameters,
         IASTAbstractDeclaration returnType,
         IASTExceptionSpecification exception,
@@ -98,7 +98,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         this.isVolatile = isVolatile;
         this.visibility = visibility;
         this.constructorChainElements = constructorChainElements;
-        qualifiedName = new ASTQualifiedNamedElement( scope, name.toCharArray() );
+        qualifiedName = new ASTQualifiedNamedElement( scope, name );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isVirtual()

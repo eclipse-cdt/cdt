@@ -276,4 +276,11 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return getSymbol().getName();
+    }
 }

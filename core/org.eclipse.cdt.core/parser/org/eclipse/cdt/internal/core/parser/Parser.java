@@ -409,7 +409,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 linkage =
                     astFactory.createLinkageSpecification(
                         scope,
-                        spec.getImage(),
+                        spec.getCharImage(),
                         firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename());
             }
             catch (Exception e)
@@ -457,7 +457,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             linkage =
                 astFactory.createLinkageSpecification(
                     scope,
-                    spec.getImage(),
+                    spec.getCharImage(),
                     firstToken.getOffset(), firstToken.getLineNumber(), firstToken.getFilename());
         }
         catch (Exception e)
@@ -667,7 +667,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     returnValue.add(
                     	astFactory.createTemplateParameter(
                     		kind,
-                    		( id == null )? "" : id.getImage(), //$NON-NLS-1$
+                    		( id == null )? EMPTY_STRING : id.getCharImage(), //$NON-NLS-1$
                     		typeId,
                     		null,
                     		null,
@@ -717,7 +717,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     returnValue.add(
                         astFactory.createTemplateParameter(
                             IASTTemplateParameter.ParamKind.TEMPLATE_LIST,
-                            ( optionalId == null )? "" : optionalId.getImage(), //$NON-NLS-1$
+                            ( optionalId == null )? EMPTY_STRING : optionalId.getCharImage(), //$NON-NLS-1$
                             optionalTypeId,
                             null,
                             subResult, 
@@ -825,7 +825,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 IToken first = consume(IToken.t_asm);
                 setCompletionValues( scope, CompletionKind.NO_SUCH_KIND, KeywordSetKey.EMPTY );
                 consume(IToken.tLPAREN);
-                String assembly = consume(IToken.tSTRING).getImage();
+                char[] assembly = consume(IToken.tSTRING).getCharImage();
                 consume(IToken.tRPAREN);
                 IToken last = consume(IToken.tSEMI);
                 
@@ -982,7 +982,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 namespaceDefinition = 
                     astFactory.createNamespaceDefinition(
                         scope,
-                        (identifier == null ? "" : identifier.getImage()), //$NON-NLS-1$
+                        (identifier == null ? EMPTY_STRING: identifier.getCharImage()), //$NON-NLS-1$
                         first.getOffset(),
                         first.getLineNumber(), 
                         (identifier == null ? first.getOffset() : identifier.getOffset()), 
@@ -1050,7 +1050,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         	try
             {
                 alias = astFactory.createNamespaceAlias( 
-                	scope, identifier.getImage(), duple, first.getOffset(), 
+                	scope, identifier.getCharImage(), duple, first.getOffset(), 
                 	first.getLineNumber(), identifier.getOffset(), identifier.getEndOffset(), identifier.getLineNumber(), duple.getLastToken().getEndOffset(), duple.getLastToken().getLineNumber() );
             }
             catch (Exception e1)
@@ -2613,7 +2613,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			try {
 				enumeration = astFactory.createEnumerationSpecifier(sdw
 						.getScope(), ((identifier == null)
-						? "" : identifier.getImage()), //$NON-NLS-1$
+						? EMPTY_STRING : identifier.getCharImage()), //$NON-NLS-1$
 						mark.getOffset(), mark.getLineNumber(),
 						((identifier == null) ? mark.getOffset() : identifier
 								.getOffset()), ((identifier == null) ? mark
@@ -2649,7 +2649,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 				if (LT(1) == IToken.tRBRACE) {
 					try {
 						enumerator = astFactory.addEnumerator(enumeration,
-								enumeratorIdentifier.getImage(),
+								enumeratorIdentifier.getCharImage(),
 								enumeratorIdentifier.getOffset(),
 								enumeratorIdentifier.getLineNumber(),
 								enumeratorIdentifier.getOffset(),
@@ -2678,7 +2678,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 				}
 				try {
 					enumerator = astFactory.addEnumerator(enumeration,
-							enumeratorIdentifier.getImage(),
+							enumeratorIdentifier.getCharImage(),
 							enumeratorIdentifier.getOffset(),
 							enumeratorIdentifier.getLineNumber(),
 							enumeratorIdentifier.getOffset(),

@@ -31,8 +31,8 @@ public class ASTTemplateParameter implements IASTTemplateParameter, IASTOffsetab
     private final List templateParms;
     private final IASTParameterDeclaration parameter;
     private final ParamKind kind;
-    private final String identifier;
-    private final String defaultValue;
+    private final char[] identifier;
+    private final char[] defaultValue;
     private final char [] fn;
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
@@ -48,7 +48,7 @@ public class ASTTemplateParameter implements IASTTemplateParameter, IASTOffsetab
      * @param parameter
      * @param filename
      */
-    public ASTTemplateParameter(ParamKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List templateParms, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] filename )
+    public ASTTemplateParameter(ParamKind kind, char[] identifier, char[] defaultValue, IASTParameterDeclaration parameter, List templateParms, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] filename )
     {
         this.kind = kind; 
         this.identifier = identifier; 
@@ -74,14 +74,14 @@ public class ASTTemplateParameter implements IASTTemplateParameter, IASTOffsetab
      */
     public String getIdentifier()
     {
-        return identifier;
+        return String.valueOf(identifier);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameter#getDefaultValueIdExpression()
      */
     public String getDefaultValueIdExpression()
     {
-        return defaultValue;
+        return String.valueOf(defaultValue);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameterList#getTemplateParameters()
@@ -125,7 +125,7 @@ public class ASTTemplateParameter implements IASTTemplateParameter, IASTOffsetab
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
 	 */
 	public String getName() {
-		return identifier;
+		return String.valueOf(identifier);
 	}
 	
 	private int startingLineNumber, startingOffset, endingLineNumber, endingOffset, nameStartOffset, nameEndOffset, nameLineNumber;
@@ -209,5 +209,12 @@ public class ASTTemplateParameter implements IASTTemplateParameter, IASTOffsetab
     {
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return identifier;
     }
 }

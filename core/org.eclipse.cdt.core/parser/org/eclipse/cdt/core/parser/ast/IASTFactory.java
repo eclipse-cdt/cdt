@@ -25,14 +25,14 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescripto
 public interface IASTFactory
 {
     public IASTMacro createMacro(
-        String name,
+        char[] name,
         int startingOffset,
         int startingLine,
         int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, IMacroDescriptor info, char[] fn);
         
     public IASTInclusion createInclusion(
-        String name,
-        String fileName,
+        char[] name,
+        char[] fileName,
         boolean local,
         int startingOffset,
         int startingLine,
@@ -50,19 +50,19 @@ public interface IASTFactory
         
     public IASTASMDefinition createASMDefinition(
         IASTScope scope,
-        String assembly,
+        char[] assembly,
         int startingOffset,
         int startingLine, int endingOffset, int endingLine, char[] fn);
 
     public IASTNamespaceDefinition createNamespaceDefinition(
         IASTScope scope,
-        String identifier,
+        char[] identifier,
         int startingOffset,
         int startingLine, int nameOffset, int nameEndOffset, int nameLineNumber, char[] fn) throws ASTSemanticException;
         
     public IASTNamespaceAlias    createNamespaceAlias( 
     	IASTScope scope, 
-    	String identifier, 
+    	char[] identifier, 
     	ITokenDuple alias, 
     	int startingOffset, 
     	int startingLine, 
@@ -72,7 +72,7 @@ public interface IASTFactory
 
     public IASTLinkageSpecification createLinkageSpecification(
         IASTScope scope,
-        String spec, int startingOffset, int startingLine, char[] fn) ;
+        char[] spec, int startingOffset, int startingLine, char[] fn) ;
 
     public IASTClassSpecifier createClassSpecifier(
         IASTScope scope,
@@ -103,12 +103,12 @@ public interface IASTFactory
 
     public IASTEnumerationSpecifier createEnumerationSpecifier(
         IASTScope scope,
-        String name,
+        char[] name,
         int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] fn) throws ASTSemanticException;
 
     public IASTEnumerator addEnumerator(
         IASTEnumerationSpecifier enumeration,
-        String string,
+        char[] string,
         int startingOffset,
         int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endLine, IASTExpression initialValue, char[] fn)throws ASTSemanticException;
 
@@ -119,7 +119,7 @@ public interface IASTFactory
         IASTExpression rhs,
         IASTExpression thirdExpression,
         IASTTypeId typeId,
-        ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException;
+        ITokenDuple idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException;
     
     public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor(List newPlacementExpressions,List newTypeIdExpressions,List newInitializerExpressions);
 
@@ -207,24 +207,24 @@ public interface IASTFactory
 
 	public IASTDesignator createDesignator( IASTDesignator.DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier, Map extensionParms );
 	
-	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, boolean isVolatile, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn ) ;
+	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, boolean isVolatile, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, char[] parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn ) ;
 	
 	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters, boolean exported, int startingOffset, int startingLine, char[] fn ) throws ASTSemanticException; 
 
-	public IASTTemplateParameter createTemplateParameter( IASTTemplateParameter.ParamKind kind, String identifier, IASTTypeId defaultValue, IASTParameterDeclaration parameter, List parms, IASTCodeScope parameterScope, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn ) throws ASTSemanticException; 
+	public IASTTemplateParameter createTemplateParameter( IASTTemplateParameter.ParamKind kind, char[] identifier, IASTTypeId defaultValue, IASTParameterDeclaration parameter, List parms, IASTCodeScope parameterScope, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] fn ) throws ASTSemanticException; 
 
 	public IASTTemplateInstantiation createTemplateInstantiation(IASTScope scope, int startingOffset, int startingLine, char[] fn); 
 	
 	public IASTTemplateSpecialization createTemplateSpecialization(IASTScope scope, int startingOffset, int startingLine, char[] fn); 
 	
-	public IASTTypedefDeclaration createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] fn ) throws ASTSemanticException;
+	public IASTTypedefDeclaration createTypedef( IASTScope scope, char[] name, IASTAbstractDeclaration mapping, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] fn ) throws ASTSemanticException;
 
 	public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration( IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int startingLine, int endingOffset, int endingLine, boolean isFriend, char[] fn );
 	
 	public boolean queryIsTypeName( IASTScope scope, ITokenDuple nameInQuestion ) ;
 
-	static final String DOUBLE_COLON = "::"; //$NON-NLS-1$
-	static final String TELTA = "~"; //$NON-NLS-1$
+	static final char[] DOUBLE_COLON = new char[] { ':', ':' };
+	static final char[] TELTA = new char[] { '~' };
 	/**
 	 * @param scope
 	 * @return
@@ -232,7 +232,7 @@ public interface IASTFactory
 	public IASTCodeScope createNewCodeBlock(IASTScope scope);
 	
 	public IASTTypeId    createTypeId( IASTScope scope, IASTSimpleTypeSpecifier.Type kind, boolean isConst, boolean isVolatile, boolean isShort, 
-			boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods, String completeSignature ) throws ASTSemanticException;
+			boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods, char[] completeSignature ) throws ASTSemanticException;
     /**
      * @param astClassSpecifier
      */

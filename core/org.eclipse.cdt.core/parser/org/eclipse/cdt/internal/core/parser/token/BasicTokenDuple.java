@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 
 /**
  * @author jcamelon
@@ -147,8 +148,8 @@ public class BasicTokenDuple implements ITokenDuple {
 		return numSegments;
 	}	
 	
-	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private String stringRepresentation = null;
+	private static final char[] EMPTY_STRING = "".toCharArray(); //$NON-NLS-1$
+	private char[] stringRepresentation = null;
 	
 	private class TokenIterator implements Iterator
 	{
@@ -184,12 +185,38 @@ public class BasicTokenDuple implements ITokenDuple {
 		
 	}
 
-	public static String createStringRepresentation( IToken f, IToken l)
+	public static char[] createCharArrayRepresentation( IToken f, IToken l)
 	{
-		if( f == l ) return f.getImage();
-		StringBuffer buff = new StringBuffer(); 
+		if( f == l ) return f.getCharImage();
+		
 		IToken prev = null;
-		IToken iter = f; 
+		IToken iter = f;
+		
+		//first figure out how long the array should be
+		int length = 0;
+		for( ; ; ){
+			if( prev != null && 
+			    prev.getType() != IToken.tCOLONCOLON && 
+				prev.getType() != IToken.tIDENTIFIER && 
+				prev.getType() != IToken.tLT &&
+				prev.getType() != IToken.tCOMPL &&
+				iter.getType() != IToken.tGT && 
+				prev.getType() != IToken.tLBRACKET && 
+				iter.getType() != IToken.tRBRACKET && 
+				iter.getType() != IToken.tCOLONCOLON )
+			{
+				length++;
+			}
+			if( iter == null ) return EMPTY_STRING;
+			length += iter.getCharImage().length;
+			if( iter == l ) break;
+			prev = iter;
+			iter = iter.getNext();
+		}
+		prev = null;
+		iter = f;
+		char[] buff = new char[ length ];
+		int i = 0; 
 		for( ; ; )
 		{
 			if( prev != null && 
@@ -201,23 +228,24 @@ public class BasicTokenDuple implements ITokenDuple {
 				prev.getType() != IToken.tLBRACKET && 
 				iter.getType() != IToken.tRBRACKET && 
 				iter.getType() != IToken.tCOLONCOLON )
-				buff.append( ' ');
+				buff[i++] = ' ';
 			
 			if( iter == null ) return EMPTY_STRING;
-			buff.append( iter.getImage() );
+			CharArrayUtils.overWrite( buff, i, iter.getCharImage() );
+			i+= iter.getCharImage().length;
 			if( iter == l ) break;
 			prev = iter;
 			iter = iter.getNext();
 		}
-		return buff.toString();
+		return buff;
 		
 	}
 	
 	public String toString() 
 	{
 		if( stringRepresentation == null )
-			stringRepresentation = createStringRepresentation(firstToken, lastToken);
-		return stringRepresentation;
+			stringRepresentation = createCharArrayRepresentation(firstToken, lastToken);
+		return String.valueOf(stringRepresentation);
 	}
 	
 	public boolean isIdentifier()
@@ -351,12 +379,12 @@ public class BasicTokenDuple implements ITokenDuple {
 		return false;
 	}
 	
-	 public String extractNameFromTemplateId(){
+	 public char[] extractNameFromTemplateId(){
 	 	ITokenDuple nameDuple = getLastSegment(); 
 	 	
 	    List [] argLists = getTemplateIdArgLists(); 
 	    if( argLists == null || argLists[ argLists.length - 1 ] == null )
-	        return nameDuple.toString();
+	        return nameDuple.toCharArray();
 	 	
     	Iterator i = nameDuple.iterator();
     	
@@ -368,7 +396,7 @@ public class BasicTokenDuple implements ITokenDuple {
     	nameBuffer.append( token.getImage() );
     	
     	if( !i.hasNext() )
-    		return nameBuffer.toString();
+    		return nameBuffer.toString().toCharArray();
 		
     	//appending of spaces needs to be the same as in toString()
     	    	
@@ -391,10 +419,10 @@ public class BasicTokenDuple implements ITokenDuple {
 		        else
 		            break;
 		    }
-	        nameBuffer.append( createStringRepresentation( first, token ) );
+	        nameBuffer.append( createCharArrayRepresentation( first, token ) );
     	}
     	
-    	return nameBuffer.toString();
+    	return nameBuffer.toString().toCharArray();
     }
 
 	/* (non-Javadoc)

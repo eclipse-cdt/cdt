@@ -39,11 +39,11 @@ public class ExpressionFactory {
 	 * @param newDescriptor
 	 * @return
 	 */
-	public static IASTExpression createExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, String idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {
-		if( !literal.equals( EMPTY_STRING ) && idExpression.equals( EMPTY_STRING )) //$NON-NLS-1$
+	public static IASTExpression createExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, char[] idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor) {
+		if( literal.length != 0 && idExpression.length == 0 ) //$NON-NLS-1$
 			return new ASTLiteralExpression( kind, literal );
 		
-		if( !idExpression.equals( EMPTY_STRING ) && lhs == null )
+		if( idExpression.length != 0 && lhs == null )
 			return new ASTIdExpression( kind, idExpression );
 		
 		if( thirdExpression != null )
@@ -58,7 +58,7 @@ public class ExpressionFactory {
 		if( lhs != null && typeId != null )
 			return new ASTUnaryTypeIdExpression( kind, lhs, typeId );
 		
-		if( lhs != null && !idExpression.equals( EMPTY_STRING ) )
+		if( lhs != null && idExpression.length != 0 )
 			return new ASTUnaryIdExpression( kind, lhs, idExpression );
 		
 		if( lhs != null )

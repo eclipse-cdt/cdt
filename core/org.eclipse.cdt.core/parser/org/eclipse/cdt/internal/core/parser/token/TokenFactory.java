@@ -243,7 +243,7 @@ public class TokenFactory {
 	 * @param last
 	 * @return
 	 */
-	public static String createStringRepresentation(IToken first, IToken last) {
-		return BasicTokenDuple.createStringRepresentation(first, last);
+	public static char[] createCharArrayRepresentation(IToken first, IToken last) {
+		return BasicTokenDuple.createCharArrayRepresentation(first, last);
 	}
 }

@@ -28,7 +28,7 @@ public class ASTLinkageSpecification
 	extends ASTDeclaration
 	implements IASTDeclaration, IASTLinkageSpecification, IASTQScope {
 
-	private final String linkage; 
+	private final char[] linkage; 
     private final char [] fn;
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
@@ -37,7 +37,7 @@ public class ASTLinkageSpecification
 		return fn;
 	}
 
-	public ASTLinkageSpecification( IASTScope scope, String linkage, int startingOffset, int startingLine, char[] filename )
+	public ASTLinkageSpecification( IASTScope scope, char[] linkage, int startingOffset, int startingLine, char[] filename )
 	{
 		super( scope );
 		this.linkage = linkage;
@@ -49,7 +49,7 @@ public class ASTLinkageSpecification
 	 * @see org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification#getLinkageString()
 	 */
 	public String getLinkageString() {
-		return linkage;
+		return String.valueOf(linkage);
 	}
 
 	private List declarations = new ArrayList(); 

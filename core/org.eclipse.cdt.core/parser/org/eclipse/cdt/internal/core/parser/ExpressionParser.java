@@ -50,7 +50,7 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  */
 public class ExpressionParser implements IExpressionParser, IParserData {
 
-	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final char[] EMPTY_STRING = "".toCharArray(); //$NON-NLS-1$
 	private static int FIRST_ERROR_UNSET = -1;
 	protected boolean parsePassed = true;
 	protected int firstErrorOffset = FIRST_ERROR_UNSET;
@@ -1707,13 +1707,12 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 
 		endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
-			String signature = "";//$NON-NLS-1$
+			char[] signature = EMPTY_STRING;
 			if (last != null)
 			{
 				if( lastToken == null )
 					lastToken = last;
-				signature = TokenFactory.createStringRepresentation(mark,
-						last);
+				signature = TokenFactory.createCharArrayRepresentation(mark, last);
 			}
 			return astFactory.createTypeId(scope, kind, isConst, isVolatile,
 					isShort, isLong, isSigned, isUnsigned, isTypename, name, id
@@ -1957,7 +1956,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		if (LT(1) == IToken.tLPAREN) {
 			consume(IToken.tLPAREN);
 			setCurrentFunctionName(((typeId != null) ? typeId
-					.getFullSignature() : EMPTY_STRING));
+					.getFullSignature() : String.valueOf(EMPTY_STRING)));
 			setCompletionValues(scope, CompletionKind.CONSTRUCTOR_REFERENCE);
 			if (templateIdScopes != null) {
 				templateIdScopes.push(new Integer(IToken.tLPAREN));
@@ -1968,7 +1967,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			newInitializerExpressions.add(expression(scope,
 					CompletionKind.CONSTRUCTOR_REFERENCE, key));
 
-			setCurrentFunctionName(EMPTY_STRING);
+			setCurrentFunctionName(String.valueOf(EMPTY_STRING));
 			consume(IToken.tRPAREN);
 			if (templateIdScopes != null) {
 				templateIdScopes.pop();
@@ -2317,7 +2316,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 							CompletionKind.FUNCTION_REFERENCE, context);
 					secondExpression = expression(scope,
 							CompletionKind.FUNCTION_REFERENCE, key);
-					setCurrentFunctionName(EMPTY_STRING);
+					setCurrentFunctionName(String.valueOf(EMPTY_STRING));
 					endOffset = consume(IToken.tRPAREN).getEndOffset();
 					if (templateIdScopes != null) {
 						templateIdScopes.pop();
@@ -2483,7 +2482,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		setCurrentFunctionName(typeName);
 		IASTExpression inside = expression(scope,
 				CompletionKind.CONSTRUCTOR_REFERENCE, key);
-		setCurrentFunctionName(EMPTY_STRING);
+		setCurrentFunctionName(String.valueOf(EMPTY_STRING));
 		int endOffset = consume(IToken.tRPAREN).getEndOffset();
 		try {
 			return astFactory.createExpression(scope, type, inside, null, null,
@@ -2513,7 +2512,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_INTEGER_LITERAL, null,
-							null, null, null, null, t.getImage(), null);
+							null, null, null, null, t.getCharImage(), null);
 				} catch (ASTSemanticException e1) {
 					throwBacktrack(e1.getProblem());
 				} catch (Exception e) {
@@ -2525,7 +2524,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_FLOAT_LITERAL, null,
-							null, null, null, null, t.getImage(), null);
+							null, null, null, null, t.getCharImage(), null);
 				} catch (ASTSemanticException e2) {
 					throwBacktrack(e2.getProblem());
 				} catch (Exception e) {
@@ -2538,7 +2537,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_STRING_LITERAL, null,
-							null, null, null, null, t.getImage(), null);
+							null, null, null, null, t.getCharImage(), null);
 				} catch (ASTSemanticException e5) {
 					throwBacktrack(e5.getProblem());
 				} catch (Exception e) {
@@ -2552,7 +2551,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL, null,
-							null, null, null, null, t.getImage(), null);
+							null, null, null, null, t.getCharImage(), null);
 				} catch (ASTSemanticException e3) {
 					throwBacktrack(e3.getProblem());
 				} catch (Exception e) {
@@ -2567,7 +2566,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_CHAR_LITERAL, null,
-							null, null, null, null, t.getImage(), null);
+							null, null, null, null, t.getCharImage(), null);
 				} catch (ASTSemanticException e4) {
 					throwBacktrack(e4.getProblem());
 				} catch (Exception e) {

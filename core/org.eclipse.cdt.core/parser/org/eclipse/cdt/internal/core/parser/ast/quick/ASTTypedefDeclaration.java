@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedefDeclaration
 {
     protected static final ASTNotImplementedException NOT_IMPLEMENTED = new ASTNotImplementedException();
-	private final String name;
+	private final char[] name;
     private final IASTAbstractDeclaration mapping;
     private final ASTQualifiedNamedElement qualifiedName; 
     private final char [] fn;
@@ -43,7 +43,7 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
      * @param mapping
      * @param filename
      */
-    public ASTTypedefDeclaration(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
+    public ASTTypedefDeclaration(IASTScope scope, char[] name, IASTAbstractDeclaration mapping, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
     {
         super( scope );
         this.name = name; 
@@ -51,7 +51,7 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setNameOffset(nameOffset);
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
-        qualifiedName = new ASTQualifiedNamedElement( scope, name.toCharArray() );
+        qualifiedName = new ASTQualifiedNamedElement( scope, name );
         fn = filename;
     }
     /* (non-Javadoc)
@@ -59,7 +59,7 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
      */
     public String getName()
     {
-        return name;
+        return String.valueOf(name);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypedef#getAbstractDeclarator()
@@ -190,5 +190,12 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
     {
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return name;
     }
 }

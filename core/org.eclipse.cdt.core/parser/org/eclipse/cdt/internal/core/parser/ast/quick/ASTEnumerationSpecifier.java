@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
     implements IASTEnumerationSpecifier, IASTOffsetableNamedElement
 {
-	private final String name; 
+	private final char[] name; 
     private final char [] fn;
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
@@ -43,7 +43,7 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
      * @param startingOffset
      * @param filename
      */
-    public ASTEnumerationSpecifier(IASTScope scope, String name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
+    public ASTEnumerationSpecifier(IASTScope scope, char[] name, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
     {
     	super( scope, name );
         this.name = name;
@@ -57,7 +57,7 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
      */
     public String getName()
     {
-        return name;
+        return String.valueOf(name);
     }
     private List enumerators = new ArrayList(); 
     /* (non-Javadoc)
@@ -186,5 +186,13 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
     {
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return name;
     }
 }

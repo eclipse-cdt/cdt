@@ -78,7 +78,7 @@ public class ContextualParser extends CompleteParser {
 	 * @return
 	 */
 	protected String getCompletionPrefix() {
-		return ( finalToken == null ? EMPTY_STRING : finalToken.getImage() ); 
+		return ( finalToken == null ? String.valueOf(EMPTY_STRING) : finalToken.getImage() ); 
 	}
 
 	/**
@@ -162,7 +162,7 @@ public class ContextualParser extends CompleteParser {
 		setCompletionFunctionName();
 	}
 
-	private String currentFunctionName = EMPTY_STRING;
+	private String currentFunctionName = String.valueOf(EMPTY_STRING);
 	protected IASTExpression parameterListExpression;
 	
 	

@@ -29,7 +29,7 @@ public class ScannerProblemFactory extends BaseProblemFactory implements IProble
 		int end,
 		int line,
 		char[] file,
-		String arg,
+		char[] arg,
 		boolean warn,
 		boolean error)
 	{

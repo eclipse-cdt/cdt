@@ -25,7 +25,7 @@ public class ASTUnaryIdExpression extends ASTIdExpression {
 	 * @param kind
 	 * @param idExpression
 	 */
-	public ASTUnaryIdExpression(Kind kind, IASTExpression lhs, String idExpression) {
+	public ASTUnaryIdExpression(Kind kind, IASTExpression lhs, char[] idExpression) {
 		super(kind, idExpression);
 		this.lhs = lhs;
 	}

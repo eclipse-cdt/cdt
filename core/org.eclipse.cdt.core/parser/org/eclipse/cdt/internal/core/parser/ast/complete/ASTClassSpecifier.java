@@ -148,7 +148,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     {
         return String.valueOf(symbol.getName());
     }
-    public char[] getNameArray(){
+    public char[] getNameCharArray(){
         return symbol.getName();
     }
     

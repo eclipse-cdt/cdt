@@ -244,4 +244,17 @@ public class CharArrayUtils {
 			return array;
 		return subarray(array, pos + separator.length, array.length);
 	}
+
+    /**
+     * @param buff
+     * @param i
+     * @param charImage
+     */
+    public static void overWrite( char[] buff, int i, char[] charImage ) {
+        if( buff.length < i + charImage.length )
+            return;
+        for( int j = 0; j < charImage.length; j++ ){
+            buff[ i + j ] = charImage[j];
+        }
+    }
 }

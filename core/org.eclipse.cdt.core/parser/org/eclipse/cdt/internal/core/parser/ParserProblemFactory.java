@@ -32,7 +32,7 @@ public class ParserProblemFactory extends BaseProblemFactory
 		int end,
 		int line,
 		char[] file,
-		String arg,
+		char[] arg,
 		boolean warn,
 		boolean error)
 	{

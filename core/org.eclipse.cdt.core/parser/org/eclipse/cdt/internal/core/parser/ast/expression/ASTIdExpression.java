@@ -19,14 +19,14 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
  */
 public class ASTIdExpression extends ASTExpression implements IASTExpression {
 
-	private final String idExpression;
+	private final char[] idExpression;
 
 
 	/**
 	 * @param kind
 	 * @param idExpression
 	 */
-	public ASTIdExpression(Kind kind, String idExpression) {
+	public ASTIdExpression(Kind kind, char[] idExpression) {
 		super(kind);
 		this.idExpression = idExpression;
 	}
@@ -36,7 +36,7 @@ public class ASTIdExpression extends ASTExpression implements IASTExpression {
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getIdExpression()
 	 */
 	public String getIdExpression() {
-		return idExpression;
+		return String.valueOf(idExpression);
 	}
 	
 	public String toString(){

@@ -18,6 +18,7 @@ package org.eclipse.cdt.core.parser.ast;
 public interface IASTOffsetableNamedElement extends IASTOffsetableElement {
 
 	public String getName(); 
+	public char[] getNameCharArray();
 	public int getNameOffset(); 
 	public void setNameOffset( int o );
 	public int  getNameEndOffset(); 

@@ -57,7 +57,7 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
     {
         return String.valueOf(getSymbol().getName());
     }
-    public char[] getNameArray(){
+    public char[] getNameCharArray(){
         return getSymbol().getName();
     }
     /* (non-Javadoc)

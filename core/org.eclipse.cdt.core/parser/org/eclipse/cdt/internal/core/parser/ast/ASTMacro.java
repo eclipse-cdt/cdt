@@ -24,11 +24,11 @@ import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 public class ASTMacro implements IASTMacro {
 
 	private int nameEndOffset = 0;
-    private final String name;
+    private final char[] name;
     private final IMacroDescriptor innerMacro;
 	private final char[] fn;
     
-	public ASTMacro( String name, IMacroDescriptor info, int start, int startLine, int nameBeg, int nameEnd, int nameLine, int end, int endLine, char[] fn )
+	public ASTMacro( char[] name, IMacroDescriptor info, int start, int startLine, int nameBeg, int nameEnd, int nameLine, int end, int endLine, char[] fn )
 	{
 		this.name =name; 
 		setStartingOffsetAndLineNumber(start, startLine);
@@ -45,7 +45,11 @@ public class ASTMacro implements IASTMacro {
 	 * @see org.eclipse.cdt.core.parser.ast.IASTMacro#getName()
 	 */
 	public String getName() {
-		return name;
+		return String.valueOf(name);
+	}
+	public char[] getNameCharArray(){
+	    return name;
+	    
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IOffsetableElementRW#setStartingOffset(int)

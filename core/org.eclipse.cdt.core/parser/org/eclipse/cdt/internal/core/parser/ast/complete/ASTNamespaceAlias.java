@@ -181,4 +181,11 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return getSymbol().getName();
+    }
 }

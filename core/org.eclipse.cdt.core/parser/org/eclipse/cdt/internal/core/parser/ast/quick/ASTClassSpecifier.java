@@ -29,7 +29,7 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
     
     public ASTClassSpecifier(
         IASTScope scope,
-        String name,
+        char[] name,
         ASTClassKind kind,
         ClassNameType type,
         int startingOffset, 
@@ -48,7 +48,7 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
         fn = filename;
     }
     
-    private final String name;
+    private final char[] name;
     private List declarations = new ArrayList();
     private List baseClauses = new ArrayList();
     private List friends = new ArrayList();
@@ -103,7 +103,7 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
      */
     public String getName()
     {
-        return name;
+        return String.valueOf(name);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.ast.quick.IASTQScope#addDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
@@ -256,5 +256,12 @@ public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQCl
     {
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return name;
     }
 }

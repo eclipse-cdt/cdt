@@ -41,7 +41,7 @@ public interface IASTFactoryExtension {
             IASTExpression thirdExpression,
             IASTTypeId typeId,
             ITokenDuple idExpression, 
-			String literal, 
+			char[] literal, 
 			IASTNewExpressionDescriptor newDescriptor, 
 			List references);
     

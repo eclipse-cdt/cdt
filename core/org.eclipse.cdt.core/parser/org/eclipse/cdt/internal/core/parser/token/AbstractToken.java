@@ -193,8 +193,8 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#extractNameFromTemplateId()
 	 */
-	public String extractNameFromTemplateId(){
-		return getImage();
+	public char[] extractNameFromTemplateId(){
+		return getCharImage();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#findLastTokenType(int)

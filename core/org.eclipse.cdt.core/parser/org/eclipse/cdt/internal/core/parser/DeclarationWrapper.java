@@ -432,7 +432,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         	ITokenDuple nameDuple = ( d.getPointerOperatorNameDuple() != null ) ? TokenFactory.createTokenDuple( d.getPointerOperatorNameDuple(), d.getNameDuple() ) : d.getNameDuple(); 
         	
         	if( isTypedef() )
-				return astFactory.createTypedef(scope, nameDuple.toString(), abs,
+				return astFactory.createTypedef(scope, nameDuple.toCharArray(), abs,
 						getStartingOffset(), getStartingLine(), d
 								.getNameStartOffset(), d.getNameEndOffset(), d
 								.getNameLine(), fn);

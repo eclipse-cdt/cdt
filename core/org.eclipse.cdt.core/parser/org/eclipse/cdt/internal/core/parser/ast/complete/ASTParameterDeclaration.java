@@ -70,7 +70,7 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
     {
         return String.valueOf(parameterName);
     }
-    public char[] getNameArray(){
+    public char[] getNameCharArray(){
         return parameterName;
     }
     /* (non-Javadoc)

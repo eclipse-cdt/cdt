@@ -26,7 +26,7 @@ public class ASTEnumerator extends ASTNode
     implements IASTEnumerator, IASTOffsetableNamedElement
 {
 	private final IASTExpression initialValue;
-    private final String name; 
+    private final char[] name; 
 	private final IASTEnumerationSpecifier enumeration;
     private final char [] fn;
 	/* (non-Javadoc)
@@ -44,7 +44,7 @@ public class ASTEnumerator extends ASTNode
      * @param endingOffset
      * @param filename
      */
-    public ASTEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endLine, IASTExpression initialValue, char[] filename)
+    public ASTEnumerator(IASTEnumerationSpecifier enumeration, char[] string, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endLine, IASTExpression initialValue, char[] filename)
     {
     	this.enumeration = enumeration; 
         name = string;
@@ -60,7 +60,7 @@ public class ASTEnumerator extends ASTNode
      */
     public String getName()
     {
-        return name;
+        return String.valueOf(name);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTEnumerator#getOwnerEnumerationSpecifier()
@@ -181,5 +181,13 @@ public class ASTEnumerator extends ASTNode
     public void setNameEndOffsetAndLineNumber(int offset, int lineNumber)
     {
     	nameEndOffset = offset;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return name;
     }
 }

@@ -26,7 +26,7 @@ import org.eclipse.cdt.internal.core.parser.ast.ASTAbstractDeclaration;
  */
 public class ASTParameterDeclaration extends ASTAbstractDeclaration implements IASTParameterDeclaration
 {
-	private final String parameterName; 
+	private final char[] parameterName; 
 	private final IASTInitializerClause initializerClause;
     private final char [] fn;
 	/* (non-Javadoc)
@@ -45,7 +45,7 @@ public class ASTParameterDeclaration extends ASTAbstractDeclaration implements I
      * @param initializerClause
      * @param filename
      */
-    public ASTParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] filename )
+    public ASTParameterDeclaration(boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, char[] parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] filename )
     {
     	super( isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp );
 		this.parameterName = parameterName;
@@ -61,7 +61,7 @@ public class ASTParameterDeclaration extends ASTAbstractDeclaration implements I
      */
     public String getName()
     {
-        return parameterName;
+        return String.valueOf(parameterName);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration#getDefaultValue()
@@ -159,5 +159,12 @@ public class ASTParameterDeclaration extends ASTAbstractDeclaration implements I
     {
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return parameterName;
     }
 }

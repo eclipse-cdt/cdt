@@ -26,7 +26,7 @@ public class ASTProblemFactory extends BaseProblemFactory implements IProblemFac
 	 * @see org.eclipse.cdt.internal.core.parser.problem.IProblemFactory#createProblem(int, int, int, int, char[], java.util.Map, boolean, boolean)
 	 */
 	public IProblem createProblem(int id, int start, int end, int line,
-			char[] file, String arg, boolean warn, boolean error) {
+			char[] file, char[] arg, boolean warn, boolean error) {
 
 		if( checkBitmask( id, IProblem.INTERNAL_RELATED ) )  
 			return createInternalProblem( id, start, end, line, file, arg, warn, error );		

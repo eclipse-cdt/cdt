@@ -179,4 +179,11 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
     {
     	nameEndOffset = offset;
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return symbol.getName();
+    }
 }

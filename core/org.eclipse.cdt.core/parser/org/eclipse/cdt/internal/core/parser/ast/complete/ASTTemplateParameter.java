@@ -136,7 +136,7 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 	public String getName() {
 		return String.valueOf(symbol.getName());
 	}
-	public char[] getNameArray(){
+	public char[] getNameCharArray(){
 	    return symbol.getName();
 	}
 	

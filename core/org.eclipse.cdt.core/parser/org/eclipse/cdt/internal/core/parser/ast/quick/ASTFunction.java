@@ -35,7 +35,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
      * @param scope
 	 * @param filename
      */
-    public ASTFunction(IASTScope scope, String name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, 
+    public ASTFunction(IASTScope scope, char[] name, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, boolean isInline, 
     			boolean isFriend, boolean isStatic, int startOffset, int startLine, int nameOffset, int nameEndOffset, IASTTemplate ownerTemplate, boolean hasFunctionTryBlock, boolean hasVarArgs, int nameLine, char[] filename )
     {
         super(ownerTemplate != null ? null : scope  );
@@ -51,7 +51,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 			ownerTemplate.setOwnedDeclaration( this );
         setStartingOffsetAndLineNumber( startOffset, startLine );
         setNameOffset( nameOffset );
-        qualifiedName = new ASTQualifiedNamedElement( scope, name.toCharArray() );
+        qualifiedName = new ASTQualifiedNamedElement( scope, name );
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
         this.hasFunctionTryBlock = hasFunctionTryBlock;
         this.varArgs = hasVarArgs;
@@ -64,7 +64,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     private final IASTTemplate ownerTemplateDeclaration;
     private List  declarations = new ArrayList(); 
     private final IASTExceptionSpecification exceptionSpec;
-    private final String name;
+    private final char[] name;
     private final List parms;
     private final IASTAbstractDeclaration returnType;
     private final boolean isInline, isFriend, isStatic; 
@@ -103,7 +103,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
      */
     public String getName()
     {
-        return name;
+        return String.valueOf(name);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFunction#getReturnType()
@@ -333,5 +333,13 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     {
     	nameEndOffset = offset;
     	nameLineNumber = lineNumber;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameCharArray()
+     */
+    public char[] getNameCharArray() {
+        return name;
     }
 }

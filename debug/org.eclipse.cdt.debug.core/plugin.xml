@@ -7,14 +7,13 @@
    class="org.eclipse.cdt.debug.core.CDebugCorePlugin">
 
    <runtime>
-      <library name="cdebugcore.jar">
+      <library name="cdtdebugcore.jar">
          <export name="*"/>
       </library>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.cdt.core"/>
    </requires>
 
 

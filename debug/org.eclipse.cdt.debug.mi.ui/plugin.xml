@@ -7,7 +7,7 @@
    class="org.eclipse.cdt.debug.mi.internal.ui.MIUIPlugin">
 
    <runtime>
-      <library name="miui.jar">
+      <library name="cdtmiui.jar">
          <export name="*"/>
       </library>
    </runtime>

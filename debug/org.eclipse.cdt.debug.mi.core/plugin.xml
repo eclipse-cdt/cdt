@@ -7,7 +7,7 @@
    class="org.eclipse.cdt.debug.mi.core.MIPlugin">
 
    <runtime>
-      <library name="micore.jar">
+      <library name="cdtmicore.jar">
          <export name="*"/>
       </library>
    </runtime>

@@ -78,7 +78,7 @@ public class CElementAdapterFactory implements IAdapterFactory {
 				if (res != null)
 					return res.getProject();
 			} else if (IResource.class.equals(key)) {
-				return celem.getUnderlyingResource();
+				return celem.getResource();
 			} else if (IWorkbenchAdapter.class.equals(key)) {
 				return fgCWorkbenchAdapter;
 			}

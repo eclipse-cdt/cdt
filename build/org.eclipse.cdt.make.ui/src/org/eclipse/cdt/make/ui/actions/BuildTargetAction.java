@@ -15,6 +15,8 @@ import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.dialogs.BuildTargetDialog;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -34,21 +36,34 @@ public class BuildTargetAction extends ActionDelegate implements IObjectActionDe
 	public void run(IAction action) {
 		if (fContainer != null) {
 			BuildTargetDialog dialog = new BuildTargetDialog(fPart.getSite().getShell(), fContainer);
-			String name;
+			String name = null;
 			try {
 				name = (String) fContainer.getSessionProperty(new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"));
-				IMakeTarget target = MakeCorePlugin.getDefault().getTargetManager().findTarget(fContainer, name);
-				if (target != null)
-					dialog.setTarget(new IMakeTarget[] { target });
 			} catch (CoreException e) {
+			}
+			if ( name != null) {
+				IPath path = new Path(name);
+				name = path.segment(path.segmentCount() - 1);
+				IContainer container;
+				if ( path.segmentCount() > 1) {
+					path = path.removeLastSegments(1);
+					container = (IContainer) fContainer.findMember(path);
+				} else {
+					container = fContainer;
+				}
+				IMakeTarget target = MakeCorePlugin.getDefault().getTargetManager().findTarget(container, name);
+				if (target != null)
+					dialog.setTarget(target);
 			}
 			if (dialog.open() == Window.OK) {
 				IMakeTarget target = dialog.getTarget();
 				if (target != null) {
 					try {
+						IPath path = target.getContainer().getProjectRelativePath().removeFirstSegments(fContainer.getProjectRelativePath().segmentCount());
+						path = path.append(target.getName());
 						fContainer.setSessionProperty(
 							new QualifiedName(MakeUIPlugin.getUniqueIdentifier(), "lastTarget"),
-							target.getName());
+							path.toString());
 					} catch (CoreException e1) {
 					}
 				}

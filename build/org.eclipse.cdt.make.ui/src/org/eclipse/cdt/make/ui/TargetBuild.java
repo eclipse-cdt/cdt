@@ -1,4 +1,4 @@
-package org.eclipse.cdt.make.ui.actions;
+package org.eclipse.cdt.make.ui;
 
 /*
  * (c) Copyright QNX Software Systems Ltd. 2002.

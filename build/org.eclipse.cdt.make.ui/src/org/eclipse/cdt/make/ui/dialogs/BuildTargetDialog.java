@@ -4,11 +4,13 @@ import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.internal.ui.part.ListViewerPart;
 import org.eclipse.cdt.make.ui.MakeContentProvider;
 import org.eclipse.cdt.make.ui.MakeLabelProvider;
+import org.eclipse.cdt.make.ui.TargetBuild;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -23,7 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 
 public class BuildTargetDialog extends Dialog {
 
-	private IMakeTarget[] selected;
+	private IMakeTarget fSelected;
 	private StructuredViewer listViewer;
 	private IContainer fContainer;
 
@@ -32,12 +34,12 @@ public class BuildTargetDialog extends Dialog {
 		fContainer = container;
 	}
 
-	public void setTarget(IMakeTarget[] targets) {
-		selected = targets;
+	public void setTarget(IMakeTarget targets) {
+		fSelected = targets;
 	}
 
 	public IMakeTarget getTarget() {
-		return null;
+		return fSelected;
 	}
 
 	protected void configureShell(Shell newShell) {
@@ -53,7 +55,7 @@ public class BuildTargetDialog extends Dialog {
 
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = (Composite) super.createDialogArea(parent);
-		((GridLayout)composite.getLayout()).numColumns = 2;
+		((GridLayout) composite.getLayout()).numColumns = 2;
 		Label title = new Label(composite, SWT.NONE);
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
@@ -73,21 +75,25 @@ public class BuildTargetDialog extends Dialog {
 			public void doubleClick(DoubleClickEvent event) {
 				okPressed();
 			}
-		});		
+		});
 
 		gd = (GridData) part.getControl().getLayoutData();
 		gd.heightHint = convertHeightInCharsToPixels(15);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		part.getControl().setLayoutData(gd);
-		
+
 		listViewer.setInput(fContainer);
-		if (selected != null)
-			listViewer.setSelection(new StructuredSelection(selected), true);
+		if (fSelected != null)
+			listViewer.setSelection(new StructuredSelection(fSelected), true);
 
 		return composite;
 	}
-	
+
 	protected void okPressed() {
+		fSelected = (IMakeTarget) ((IStructuredSelection) listViewer.getSelection()).getFirstElement();
+		if (fSelected != null) {
+			TargetBuild.runWithProgressDialog(getShell(), new IMakeTarget[] { fSelected });
+		}
 		super.okPressed();
 	}
 

@@ -309,7 +309,7 @@ public class CFileTypesPreferenceBlock {
 			ICFileTypeAssociation[] add = (ICFileTypeAssociation[]) fAddAssoc.toArray(new ICFileTypeAssociation[fAddAssoc.size()]);
 			ICFileTypeAssociation[] rem = (ICFileTypeAssociation[]) fRemoveAssoc.toArray(new ICFileTypeAssociation[fRemoveAssoc.size()]);
 			
-			changed = fResolverWorkingCopy.adjustAssociations(add, rem);
+			fResolverWorkingCopy.adjustAssociations(add, rem);
 	
 			fAddAssoc.clear();
 			fRemoveAssoc.clear();

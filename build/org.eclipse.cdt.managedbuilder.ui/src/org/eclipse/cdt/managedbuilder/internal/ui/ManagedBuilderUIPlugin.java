@@ -30,7 +30,19 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 	private static ManagedBuilderUIPlugin plugin;
 	// Unique ID of the plugin
 	private static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.ui"; //$NON-NLS-1$
+
+	/**
+	 * The constructor
+	 */
+	public ManagedBuilderUIPlugin() {
+		super();
+		plugin = this;
+	}
 	
+
+	/**
+	 * @return
+	 */
 	public static Shell getActiveWorkbenchShell() {
 		IWorkbenchWindow window = getActiveWorkbenchWindow();
 		if (window != null) {
@@ -47,26 +59,12 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the shared instance.
+	 * Returns the singleton instance of the plugin
 	 */
 	public static ManagedBuilderUIPlugin getDefault() {
 		return plugin;
 	}
 
-	/**
-	 * Answers the <code>Shell</code> associated with the active workbench, or 
-	 * one of the windows associated with the workbench.
-	 * @return
-	 */
-	public Shell getShell() {
-		if (getActiveWorkbenchShell() != null) {
-			return getActiveWorkbenchShell();
-		} else {
-			IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
-			return windows[0].getShell();
-		}
-	}
-	
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
@@ -106,6 +104,14 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 			status = new Status(IStatus.ERROR, ManagedBuilderUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$	
 		}
 		ErrorDialog.openError(shell, title, message, status);
+	}
+
+
+	/**
+	 * @return
+	 */
+	public static IWorkspace getWorkspace() {
+		return ResourcesPlugin.getWorkspace();
 	}
 
 	/**
@@ -150,10 +156,18 @@ public class ManagedBuilderUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * Answers the <code>Shell</code> associated with the active workbench, or 
+	 * one of the windows associated with the workbench.
 	 * @return
 	 */
-	public static IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
+	public Shell getShell() {
+		if (getActiveWorkbenchShell() != null) {
+			return getActiveWorkbenchShell();
+		} else {
+			IWorkbenchWindow[] windows = getDefault().getWorkbench().getWorkbenchWindows();
+			return windows[0].getShell();
+		}
 	}
+	
 
 }

@@ -5,6 +5,7 @@
 <toc id="cdt" label="C/C++ Development User Guide" topic="cdt_o_home.htm">
      <topic label="Getting Started" href="cdt_o_getstart.htm">
           <topic label="Overview of the CDT" href="cdt_c_over_cdt.htm"/>
+          <topic label="Legacy code" href="cdt_c_legacy_code.htm"/>
           <topic label="What's new" href="cdt_c_whatsnew.htm"/>
           <topic label="Tutorial" href="cdt_o_tutorial.htm">
                <topic label="Setting build preferences" href="cdt_w_autobuild.htm"/>
@@ -16,10 +17,9 @@
           </topic>
      </topic>
      <topic label="Concepts" href="cdt_o_concepts.htm">
-          <topic label="C/C++ perspective" href="cdt_c_perspect.htm"/>
-          <topic label="Projects" href="cdt_o_projects.htm">
+          <topic label="C/C++ Development perspective" href="cdt_c_perspect.htm"/>
+          <topic label="CDT Projects" href="cdt_o_projects.htm">
                <topic label="CDT Projects" href="cdt_c_projects.htm"/>
-               <topic label="Import" href="cdt_c_import.htm"/>
                <topic label="Project file views" href="cdt_c_proj_file_views.htm"/>
           </topic>
           <topic label="Code entry" href="cdt_o_code_entry.htm">
@@ -51,8 +51,8 @@
                <topic label="Creating a Managed Make C or C++ Project" href="cdt_o_new_man_projects.htm">
                     <topic label="Creating a managed make C++ Project/Naming a project" href="cdt_t_man_proj_1.htm"/>
                     <topic label="Select a platform" href="cdt_t_man_proj_2.htm"/>
-                    <topic label="Referencing projects" href="cdt_t_man_proj_3.htm"/>
-                    <topic label="Selecting a parser" href="cdt_t_man_proj_4.htm"/>
+                    <topic label="Selecting referenced projects" href="cdt_t_new_proj_2.htm"/>
+                    <topic label="Selecting a binary parser" href="cdt_t_new_proj_4.htm"/>
                </topic>
           </topic>
           <topic label="Working with C/C++ project files" href="cdt_o_proj_files.htm">
@@ -65,7 +65,6 @@
           </topic>
           <topic label="Writing code" href="cdt_o_write_code.htm">
                <topic label="Customizing the C/C++ editor" href="cdt_t_cust_cpp_editor.htm"/>
-               <topic label="Commenting out code" href="cdt_t_commentoutcode.htm"/>
                <topic label="Adding #include directives" href="cdt_t_addincludedirectives.htm"/>
                <topic label="Working with content assist" href="cdt_o_con_assist.htm">
                     <topic label="Using Content Assist" href="cdt_t_contentassist.htm"/>
@@ -107,7 +106,6 @@
           </topic>
      </topic>
      <topic label="Reference" href="topic_under_dev.htm">
-          <topic label="Code template examples" href="topic_under_dev.htm"/>
           <topic label="User Interface Reference" href="topic_under_dev.htm">
                <topic label="New Project dialog box" href="topic_under_dev.htm">
                     <topic label="Standard Make C++ Project" href="topic_under_dev.htm">
@@ -158,7 +156,6 @@
                     <topic label="Window" href="topic_under_dev.htm"/>
                     <topic label="Help" href="topic_under_dev.htm"/>
                </topic>
-               <topic label="Toolbar" href="topic_under_dev.htm"/>
           </topic>
      </topic>
 </toc>

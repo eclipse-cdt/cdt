@@ -440,7 +440,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		if (treeViewer != null) {
 			treeViewer.setInput (fInput);
 		}
-		contentUpdated();		
 	}
 
 	private void initDragAndDrop() {

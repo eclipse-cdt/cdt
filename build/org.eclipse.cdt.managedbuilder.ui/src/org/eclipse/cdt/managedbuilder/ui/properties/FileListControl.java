@@ -491,19 +491,18 @@ public class FileListControl {
 			input = dialog.getValue();
 		}
 		
-		// Double-quote the spaces in paths (if any)
+		// Double-quote the spaces or backslashes in paths (if any)
 		if (input != null && input.length() > 0) {
-			switch (browseType) {
-				case IOption.BROWSE_DIR:
-				case IOption.BROWSE_FILE:
-					String[] segments = input.split("\\s"); //$NON-NLS-1$
-					if (segments.length > 1) {
-						// Double-quote paths with whitespaces
-						input = "\"" + input + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
-					}
-					break;
-				default:
-					break;
+			if (browseType == IOption.BROWSE_DIR ||
+					browseType == IOption.BROWSE_FILE) {
+				// Check for spaces 
+				int firstWhitespace = input.indexOf("\\s");	//$NON-NLS-1$
+				int firstBackslash = input.indexOf("\\");	//$NON-NLS-1$
+//				String[] segments = input.split("\\s"); //$NON-NLS-1$
+				if (firstWhitespace != -1 || firstBackslash != -1) {
+					// Double-quote paths with whitespaces
+					input = "\"" + input + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
+				}
 			}
 		}
 

@@ -19,48 +19,17 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTClassReference;
-import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
-import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
-import org.eclipse.cdt.core.parser.ast.IASTField;
-import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
-import org.eclipse.cdt.core.parser.ast.IASTFunction;
-import org.eclipse.cdt.core.parser.ast.IASTFunctionReference;
-import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
-import org.eclipse.cdt.core.parser.ast.IASTMacro;
-import org.eclipse.cdt.core.parser.ast.IASTMethod;
-import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
-import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
-import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
-import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
-import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
-import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
+import org.eclipse.cdt.core.parser.ast.*;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
@@ -86,7 +55,6 @@ import org.eclipse.core.runtime.Path;
  */
 public class MatchLocator implements ISourceElementRequestor, ICSearchConstants {
 
-	
 	/**
 	 * 
 	 */
@@ -100,45 +68,86 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 
 	public void acceptProblem(IProblem problem) 								{	}
 	public void acceptMacro(IASTMacro macro) 									{	}
-	public void acceptVariable(IASTVariable variable) 							{	}
-	public void acceptFunctionDeclaration(IASTFunction function) 				{	}
 	public void acceptUsingDirective(IASTUsingDirective usageDirective) 		{	}
 	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) 	{	}
 	public void acceptASMDefinition(IASTASMDefinition asmDefinition) 			{	}
-	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef) 								{	}
-	public void acceptEnumerator(IASTEnumerator enumerator) 					{	}
+	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef) 		{	}
+	
 	public void acceptAbstractTypeSpecDeclaration(IASTAbstractTypeSpecifierDeclaration abstractDeclaration) {}
 	public void acceptPointerToFunction(IASTPointerToFunction function) {}
 	public void acceptPointerToMethod(IASTPointerToMethod method)   { }
+	public void acceptTypedefReference( IASTTypedefReference reference )        {	}
 	
-	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){
-		if( searchPattern.getLimitTo() == DECLARATIONS || searchPattern.getLimitTo() == ALL_OCCURRENCES ){
-			if( searchPattern instanceof ClassDeclarationPattern ){
-				ClassDeclarationPattern classPattern = (ClassDeclarationPattern)searchPattern;
-				if( classPattern.getKind() == null || classPattern.getKind() == ASTClassKind.ENUM ){
-					int level = searchPattern.matchLevel( enumeration ); 
-					if(  level != ICSearchPattern.IMPOSSIBLE_MATCH ){
-						report( enumeration, level );				
-					}
-				}
-			}
-		}
-	}	
+	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {	}
+	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) 	{	}
+	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
+	public void enterTemplateInstantiation(IASTTemplateInstantiation instantiation) {	}
+
+	public void exitTemplateDeclaration(IASTTemplateDeclaration declaration) 	{}
+	public void exitTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
+	public void exitTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) 	{	}
+	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec) 	{	}
 	
-	public void acceptClassReference(IASTClassReference reference) {	}
-	public void acceptTypedefReference( IASTTypedefReference reference ){	}
-	public void acceptNamespaceReference( IASTNamespaceReference reference ){	}
-	public void acceptEnumerationReference( IASTEnumerationReference reference ){	}
-	public void acceptVariableReference( IASTVariableReference reference ){	}
-	public void acceptFunctionReference( IASTFunctionReference reference ){	}
-	public void acceptFieldReference( IASTFieldReference reference ){	}
-	public void acceptMethodReference( IASTMethodReference reference ) {	}
+	public void acceptVariable(IASTVariable variable){
+		check( DECLARATIONS, VariableDeclarationPattern.class, variable );   
+	}
 	
-	public void acceptMethodDeclaration(IASTMethod method) 						{	}
-	public void acceptField(IASTField field) 									{	}
+	public void acceptField(IASTField field){ 
+		check( DECLARATIONS, FieldDeclarationPattern.class, field ); 	   
+	}
+	
+	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){ 
+		check( DECLARATIONS, ClassDeclarationPattern.class, enumeration );
+		Iterator iter = enumeration.getEnumerators();
+		while( iter.hasNext() ){
+			check ( DECLARATIONS, FieldDeclarationPattern.class, (ISourceElementCallbackDelegate) iter.next() );
+		}  
+	}
+		
+	public void acceptFunctionDeclaration(IASTFunction function){
+		check( DECLARATIONS, FunctionDeclarationPattern.class, function );
+	}
+	
+	public void acceptMethodDeclaration(IASTMethod method){
+		check( DECLARATIONS, MethodDeclarationPattern.class, method );
+	}
+		
+	public void acceptClassReference(IASTClassReference reference) {
+		check( REFERENCES, ClassDeclarationPattern.class, reference );
+	}
+	
+	public void acceptNamespaceReference( IASTNamespaceReference reference ){
+		check( REFERENCES, NamespaceDeclarationPattern.class, reference );
+	}
+	
+	public void acceptVariableReference( IASTVariableReference reference ){
+		check( REFERENCES, VariableDeclarationPattern.class, reference );		
+	}
+	
+	public void acceptFieldReference( IASTFieldReference reference ){
+		check( REFERENCES, FieldDeclarationPattern.class, reference );
+	}
+	
+	public void acceptEnumerationReference( IASTEnumerationReference reference ){
+		check( REFERENCES, ClassDeclarationPattern.class, reference );
+	}
+	
+	public void acceptFunctionReference( IASTFunctionReference reference ){
+		check( REFERENCES, FunctionDeclarationPattern.class,  reference );
+	}
+	
+	public void acceptMethodReference( IASTMethodReference reference ){
+		check( REFERENCES, MethodDeclarationPattern.class, reference );	
+	}
 	
 	public void enterFunctionBody(IASTFunction function){
+		check( DEFINITIONS, FunctionDeclarationPattern.class, function );
 		pushScope( function );
+	}
+	
+	public void enterMethodBody(IASTMethod method) {
+		check( DEFINITIONS, MethodDeclarationPattern.class, method );
+		pushScope( method );
 	}
 	
 	public void enterCompilationUnit(IASTCompilationUnit compilationUnit) {
@@ -146,51 +155,35 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	}
 	
 	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
-		if( searchPattern.getLimitTo() == DECLARATIONS || searchPattern.getLimitTo() == ALL_OCCURRENCES ){
-			if( searchPattern instanceof NamespaceDeclarationPattern ){
-				int level = searchPattern.matchLevel( namespaceDefinition ); 
-				if(  level != ICSearchPattern.IMPOSSIBLE_MATCH ){
-					report( namespaceDefinition, level );				
-				}
-			}
-		}			
-				
+		check( DECLARATIONS, NamespaceDeclarationPattern.class, namespaceDefinition );			
 		pushScope( namespaceDefinition );
 	}
-	
-	public void enterLinkageSpecification(IASTLinkageSpecification linkageSpec) {	}
-	public void enterTemplateDeclaration(IASTTemplateDeclaration declaration) 	{	}
-	public void enterTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
-	public void enterTemplateInstantiation(IASTTemplateInstantiation instantiation) {	}
-	
-	public void enterMethodBody(IASTMethod method) {
-		pushScope( method );
+
+	public void enterClassSpecifier(IASTClassSpecifier classSpecification) {
+		check( DECLARATIONS, ClassDeclarationPattern.class, classSpecification );		
+		pushScope( classSpecification );
 	}
 	
 	public void exitFunctionBody(IASTFunction function) {
 		popScope();	
 	}
+
 	public void exitMethodBody(IASTMethod method) {
 		popScope();	
 	}
-	
-	public void exitTemplateDeclaration(IASTTemplateDeclaration declaration) 	{}
-	public void exitTemplateSpecialization(IASTTemplateSpecialization specialization) 		{	}
-	public void exitTemplateExplicitInstantiation(IASTTemplateInstantiation instantiation) 	{	}
-	public void exitLinkageSpecification(IASTLinkageSpecification linkageSpec) 	{	}
-	
+
 	public void exitClassSpecifier(IASTClassSpecifier classSpecification) {
 		popScope();
 	}
-	
+
 	public void exitNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
 		popScope();
 	}
-	
+
 	public void exitCompilationUnit(IASTCompilationUnit compilationUnit){
 		popScope();
 	}
-
+	
 	public void enterInclusion(IASTInclusion inclusion) {
 		String includePath = inclusion.getFullFileName();
 
@@ -227,17 +220,6 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		}
 	}
 		
-	public void enterClassSpecifier(IASTClassSpecifier classSpecification) {
-		if( searchPattern.getLimitTo() == DECLARATIONS || searchPattern.getLimitTo() == ALL_OCCURRENCES ){
-			if( searchPattern instanceof ClassDeclarationPattern ){
-				int level = searchPattern.matchLevel( classSpecification ); 
-				if(  level != ICSearchPattern.IMPOSSIBLE_MATCH ){
-					report( classSpecification, level );				
-				}
-			}
-		}			
-		pushScope( classSpecification );
-	}
 
 	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies ){
 		workspaceRoot = (workspace != null) ? workspace.getRoot() : null;
@@ -269,8 +251,12 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		}
 		
 		for( int i = 0; i < length; i++ ){
-			if( progressMonitor != null &&  progressMonitor.isCanceled() ){
-				throw new OperationCanceledException();
+			if( progressMonitor != null ) {
+				if( progressMonitor.isCanceled() ){
+					throw new OperationCanceledException();
+				} else {
+					progressMonitor.worked( 1 );
+				}
 			}
 			
 			String pathString = paths[ i ];
@@ -318,37 +304,59 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		}
 	}
 	
-	protected void report( IASTOffsetableNamedElement node, int accuracyLevel ){
+	protected void report( ISourceElementCallbackDelegate node, int accuracyLevel ){
 		try {
-			if( progressMonitor != null ) {
-				if( progressMonitor.isCanceled() ) {
-					throw new OperationCanceledException();
-				} else {
-					progressMonitor.worked( 1 );
-				}
-			}
+			int offset = 0;
+			int length = 0;
 			
-			int offset = node.getNameOffset();
-			if( offset == 0 )
-				offset = node.getStartingOffset();
-				
+			if( node instanceof IASTReference ){
+				IASTReference reference = (IASTReference) node;
+				offset = reference.getOffset();
+				length = reference.getName().length();
+			} else if( node instanceof IASTOffsetableNamedElement ){
+				IASTOffsetableNamedElement offsetableElement = (IASTOffsetableNamedElement) node;
+				offset = offsetableElement.getNameOffset() != 0 ? offsetableElement.getNameOffset() 
+															    : offsetableElement.getStartingOffset();
+				length = offsetableElement.getName().length();															  
+			}
+						
 			if( currentResource != null ){
 				
 				resultCollector.accept( currentResource, 
-								  offset, 
-								  offset + node.getName().length(), 
-								  resultCollector.createMatch( node, currentScope ), 
-								  accuracyLevel );
+									    offset, 
+									    offset + length, 
+									    resultCollector.createMatch( node, currentScope ), 
+									    accuracyLevel );
+									    
 			} else if( currentPath != null ){
+				
 				resultCollector.accept( currentPath, 
 										offset, 
-										offset + node.getName().length(), 
+										offset + length, 
 										resultCollector.createMatch( node, currentScope ), 
 										accuracyLevel );				
 			}
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}
+	}
+
+	private void check( LimitTo limit, Class patternClass, ISourceElementCallbackDelegate node ){
+		if( searchPattern.getLimitTo() != limit && searchPattern.getLimitTo() != ALL_OCCURRENCES )
+			return;
+			
+		if( searchPattern.getClass() == patternClass ){
+			int level = ICSearchPattern.IMPOSSIBLE_MATCH;
+			
+			if( node instanceof IASTReference ){
+				level = searchPattern.matchLevel( ((IASTReference)node).getReferencedElement() );
+			} else  {
+				level = searchPattern.matchLevel(  node );
+			} 
+			
+			if( level != ICSearchPattern.IMPOSSIBLE_MATCH )
+			{
+				report( node, level );
+			}
 		}
 	}
 	
@@ -375,5 +383,6 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	
 	private IASTScope				currentScope = null;
 	private LinkedList				scopeStack = new LinkedList();
+
 
 }

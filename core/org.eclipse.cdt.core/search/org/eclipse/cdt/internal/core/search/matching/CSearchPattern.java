@@ -114,8 +114,21 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createFunctionPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		// TODO Auto-generated method stub
-		return null;
+		int index = patternString.indexOf( '(' );
+		
+		String paramString = ( index == -1 ) ? "" : patternString.substring( index );
+		
+		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
+				
+		IScanner scanner = ParserFactory.createScanner( new StringReader( paramString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
+				
+		LinkedList params = scanForParameters( scanner );
+				
+		char [] name = nameString.toCharArray();
+		char [][] parameters = new char [0][];
+		parameters = (char[][])params.toArray( parameters );
+				
+		return new FunctionDeclarationPattern( name, parameters, matchMode, limitTo, caseSensitive );
 	}
 
 	/**
@@ -126,8 +139,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createVariablePattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		// TODO Auto-generated method stub
-		return null;
+		return new VariableDeclarationPattern( patternString.toCharArray(), matchMode, limitTo, caseSensitive );
 	}
 
 	/**
@@ -155,9 +167,27 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @return
 	 */
 	private static CSearchPattern createMethodPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		return null;
+		
+		int index = patternString.indexOf( '(' );
+		String paramString = ( index == -1 ) ? "" : patternString.substring( index );
+		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index - 1 );
+		
+		IScanner scanner = ParserFactory.createScanner( new StringReader( nameString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
+		
+		LinkedList names = scanForNames( scanner, null );
+		
+		scanner = ParserFactory.createScanner( new StringReader( paramString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
+		
+		LinkedList params = scanForParameters( scanner );
+		
+		char [] name = (char [])names.removeLast();
+		char [][] qualifications = new char[0][];
+		qualifications = (char[][])names.toArray( qualifications );
+		char [][] parameters = new char [0][];
+		parameters = (char[][])params.toArray( parameters );
+		
+		return new MethodDeclarationPattern( name, qualifications, parameters, matchMode, limitTo, caseSensitive );
 	}
-
 
 	/**
 	 * @param patternString
@@ -210,7 +240,61 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		return new ClassDeclarationPattern( name, (char[][])list.toArray( qualifications ), kind, matchMode, limitTo, caseSensitive );
 	}
-	
+
+
+
+	/**
+	 * @param scanner
+	 * @param object
+	 * @return
+	 */
+	private static LinkedList scanForParameters(IScanner scanner) {
+		LinkedList list = new LinkedList();
+		
+		String param = new String("");
+		
+		boolean lastTokenWasWild = false;
+		try{
+			IToken token = scanner.nextToken();
+			
+			tokenConsumption:
+			while( true ){
+				switch( token.getType() ){
+					case IToken.tCOMMA :
+						list.addLast( param.toCharArray() );
+						param = new String("");
+						break;
+						
+					case IToken.tLPAREN :
+						break;
+						
+					case IToken.tRPAREN :
+						list.addLast( param.toCharArray() );
+						break tokenConsumption;
+						
+					case IToken.tSTAR:
+					case IToken.tQUESTION:
+						lastTokenWasWild = true;
+						param += token.getImage();
+						break;
+						
+					default:
+						if( !lastTokenWasWild && param.length() > 0 )
+							param += " ";
+						param += token.getImage();
+						break;
+				}
+				
+				token = scanner.nextToken();
+			}
+		} catch ( EndOfFile e ){
+			list.addLast( param.toCharArray() );
+		} catch( ScannerException e ){
+		}
+		
+		return list;
+	}
+		
 	static private LinkedList scanForNames( IScanner scanner, IToken unusedToken ){
 		LinkedList list = new LinkedList();
 		
@@ -219,6 +303,8 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		try {
 			IToken token = ( unusedToken != null ) ? unusedToken : scanner.nextToken();
 			
+			boolean lastTokenWasWild = false;
+			
 			while( true ){
 				switch( token.getType() ){
 					case IToken.tCOLONCOLON :
@@ -226,12 +312,12 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 						name = new String("");
 						break;
 					default:
-						if( token.getType() != IToken.tSTAR &&
-							token.getType() != IToken.tQUESTION &&
-							name.length() > 0 )
-						{
+						if( token.getType() == IToken.tSTAR || token.getType() == IToken.tQUESTION ){
+							lastTokenWasWild = true;
+						} else if( !lastTokenWasWild && name.length() > 0 ) {
 							name += " ";
 						}
+						
 						name += token.getImage();
 						break;
 				}

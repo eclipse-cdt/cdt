@@ -13,6 +13,10 @@
  */
 package org.eclipse.cdt.internal.core.search.matching;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+import org.eclipse.cdt.core.parser.ast.*;
+import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
+
 /**
  * @author aniefer
  *
@@ -21,4 +25,38 @@ package org.eclipse.cdt.internal.core.search.matching;
  */
 public class MethodDeclarationPattern extends FunctionDeclarationPattern {
 
+	private char[][] qualifications;
+
+
+	public MethodDeclarationPattern(char[] name, char[][] qual, char [][] params, int matchMode, LimitTo limitTo, boolean caseSensitive) {
+		super( name, params, matchMode, limitTo, caseSensitive );
+		qualifications = qual;
+	}
+
+
+	public int matchLevel(ISourceElementCallbackDelegate node) {
+		if( !(node instanceof IASTMethod) ){
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		if( super.matchLevel( node ) == IMPOSSIBLE_MATCH ){
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		//check containing scopes
+		String [] fullyQualifiedName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
+		if( !matchQualifications( qualifications, fullyQualifiedName ) ){
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		return ACCURATE_MATCH;
+	}
+	
+	public char[] indexEntryPrefix() {
+		return AbstractIndexer.bestMethodPrefix( _limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
+	}
+	
+	protected boolean matchIndexEntry() {
+		return true;
+	}
 }

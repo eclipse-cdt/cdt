@@ -282,7 +282,7 @@ public class IndexManagerTests extends TestCase {
 		IIndex ind = indexManager.getIndex(testProjectPath,true,true);
 		assertTrue("Index exists for project",ind != null);
 	
-		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/C/container/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/E/test/Z/X/Y, refs={ 1 }","EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
+		String [] typeDeclEntryResultModel ={"EntryResult: word=typeDecl/C/Mail/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/Unknown/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/container/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/first_class/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/C/postcard/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/E/test/Y/X/Z, refs={ 1 }","EntryResult: word=typeDecl/V/x/Z, refs={ 1 }"};
 		IEntryResult[] typedeclresults =ind.queryEntries(IIndexConstants.TYPE_DECL);
 
 		if (typedeclresults.length != typeDeclEntryResultModel.length)
@@ -304,7 +304,7 @@ public class IndexManagerTests extends TestCase {
 		 assertEquals(typeDefEntryResultModel[i],typedefresults[i].toString());
 		}
 				
-		String [] namespaceResultModel = {"EntryResult: word=namespaceDecl/X/Z, refs={ 1 }", "EntryResult: word=namespaceDecl/Y/Z/X, refs={ 1 }", "EntryResult: word=namespaceDecl/Z, refs={ 1 }"};
+		String [] namespaceResultModel = {"EntryResult: word=namespaceDecl/X/Z, refs={ 1 }", "EntryResult: word=namespaceDecl/Y/X/Z, refs={ 1 }", "EntryResult: word=namespaceDecl/Z, refs={ 1 }"};
 		IEntryResult[] namespaceresults =ind.queryEntries(IIndexConstants.NAMESPACE_DECL);
 		
 		if (namespaceresults.length != namespaceResultModel.length)
@@ -315,7 +315,7 @@ public class IndexManagerTests extends TestCase {
 			assertEquals(namespaceResultModel[i],namespaceresults[i].toString());
 		}
 				
-		String [] fieldResultModel = {"EntryResult: word=fieldDecl/array/Z/X/Y/container, refs={ 1 }", "EntryResult: word=fieldDecl/bye/Z/X/Y/test, refs={ 1 }", "EntryResult: word=fieldDecl/cool/Z/X/Y/test, refs={ 1 }", "EntryResult: word=fieldDecl/hi/Z/X/Y/test, refs={ 1 }", "EntryResult: word=fieldDecl/index/Z/X/Y/container, refs={ 1 }", "EntryResult: word=fieldDecl/postage/Z/X/Y/Mail, refs={ 1 }", "EntryResult: word=fieldDecl/sz/Z/X/Y/container, refs={ 1 }", "EntryResult: word=fieldDecl/type/Z/X/Y/Mail, refs={ 1 }", "EntryResult: word=fieldDecl/why/Z/X/Y/test, refs={ 1 }"};
+		String [] fieldResultModel = {"EntryResult: word=fieldDecl/array/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/bye/test/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/cool/test/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/hi/test/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/index/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/postage/Mail/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/sz/container/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/type/Mail/Y/X/Z, refs={ 1 }", "EntryResult: word=fieldDecl/why/test/Y/X/Z, refs={ 1 }"};
 		IEntryResult[] fieldresults =ind.queryEntries(IIndexConstants.FIELD_DECL);
 	
 		if (fieldresults.length != fieldResultModel.length)
@@ -337,7 +337,7 @@ public class IndexManagerTests extends TestCase {
 			assertEquals(functionResultModel[i],functionresults[i].toString());
 		}
 		
-		String [] methodResultModel = {"EntryResult: word=methodDecl/operator<</Z/X/Y/Mail, refs={ 1 }","EntryResult: word=methodDecl/operator=/Z/X/Y/container, refs={ 1 }","EntryResult: word=methodDecl/operator[]/Z/X/Y/container, refs={ 1 }","EntryResult: word=methodDecl/print/Z/X/Y/Mail, refs={ 1 }"};	
+		String [] methodResultModel = {"EntryResult: word=methodDecl/operator<</Mail/Y/X/Z, refs={ 1 }","EntryResult: word=methodDecl/operator=/container/Y/X/Z, refs={ 1 }","EntryResult: word=methodDecl/operator[]/container/Y/X/Z, refs={ 1 }","EntryResult: word=methodDecl/print/Mail/Y/X/Z, refs={ 1 }"};	
 		IEntryResult[] methodresults =ind.queryEntries(IIndexConstants.METHOD_DECL);
 		
 		if (methodresults.length != methodResultModel.length)

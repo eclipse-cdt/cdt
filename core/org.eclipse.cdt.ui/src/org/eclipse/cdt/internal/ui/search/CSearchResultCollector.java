@@ -18,28 +18,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.cdt.core.parser.ast.ASTClassKind;
-import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
-import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
-import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+import org.eclipse.cdt.core.parser.ast.*;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
-//import org.eclipse.search.ui.IActionGroupFactory;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
-import org.eclipse.swt.graphics.Image;
-//import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.swt.graphics.Point;
 
 /**
  * @author aniefer
@@ -50,21 +43,28 @@ import org.eclipse.swt.graphics.Image;
 public class CSearchResultCollector implements ICSearchResultCollector {
 	
 	public static final String IMATCH = "IMatchObject";
+	private static final Point SMALL_SIZE= new Point(16, 16);
 	
 	/**
 	 * 
 	 */
 	public CSearchResultCollector() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+	
+	public CSearchResultCollector( boolean maintain ){
+		this();
+		_maintainOwnCollection = maintain;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.search.ICSearchResultCollector#aboutToStart()
 	 */
 	public void aboutToStart() {
-		_view = SearchUI.getSearchResultView();
 		_matchCount = 0;
+		
+		_view = SearchUI.getSearchResultView();
+		
 		if( _view != null ){
 			_view.searchStarted(
 				null,//new ActionGroupFactory(),
@@ -78,8 +78,13 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 				_operation
 			);
 		}
-		if( !getProgressMonitor().isCanceled() ){
+		
+		if( getProgressMonitor() != null && !getProgressMonitor().isCanceled() ){
 			getProgressMonitor().subTask( SEARCHING );
+		}
+		
+		if( _maintainOwnCollection ){
+			_matches = new HashSet();
 		}
 	}
 
@@ -109,7 +114,12 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		
 		marker.setAttributes( markerAttributes );
 		
-		_view.addMatch( match.name, groupKey, resource, marker );
+		if( _view != null )
+			_view.addMatch( match.name, groupKey, resource, marker );
+		
+		if( _maintainOwnCollection ){
+			_matches.add( enclosingObject );
+		}
 		_matchCount++;
 	}
 
@@ -121,21 +131,19 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		int accuracy)
 		throws CoreException 
 	{
-		if( _matches == null ){
-			_matches = new HashSet();
-		}
-		
-		_matches.add( match );
+		if( _maintainOwnCollection )
+			_matches.add( match );
 	}
 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.search.ICSearchResultCollector#createMatch(org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement)
 	 */
-	public IMatch createMatch(IASTOffsetableNamedElement node, IASTScope parent ) {
-		String name = node.getName();
-		
+	public IMatch createMatch(ISourceElementCallbackDelegate node, IASTScope parent ) {
+		String name = null;
 		String parentName = "";
+		IASTOffsetableNamedElement offsetable = null;
+		
 		if( parent instanceof IASTQualifiedNameElement ){
 			String [] names = ((IASTQualifiedNameElement)parent).getFullyQualifiedName();
 			for( int i = 0; i < names.length; i++ ){
@@ -146,6 +154,24 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 			}
 		}
 		
+		if( node instanceof IASTReference ){
+			offsetable = (IASTOffsetableNamedElement) ((IASTReference)node).getReferencedElement();
+			name = ((IASTReference)node).getName();
+		} else if( node instanceof IASTOffsetableNamedElement ){
+			offsetable = (IASTOffsetableNamedElement)node;
+			name = offsetable.getName(); 
+		} else {
+			return null;
+		}
+		
+		ImageDescriptor image = getImageDescriptor( offsetable );
+		int adornmentFlags = computeAdornmentFlags( offsetable );
+		IMatch match = new Match(name, parentName, image );//, node.getNameOffset(), name.length() );
+		
+		return match;
+	}
+	
+	private ImageDescriptor getImageDescriptor( IASTOffsetableElement node ){
 		ImageDescriptor imageDescriptor = null;
 		if( node instanceof IASTClassSpecifier ){
 			ASTClassKind kind = ((IASTClassSpecifier)node).getClassKind();
@@ -160,12 +186,55 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 			imageDescriptor = CPluginImages.DESC_OBJS_CONTAINER;
 		} else if ( node instanceof IASTEnumerationSpecifier ){
 			imageDescriptor = CPluginImages.DESC_OBJS_ENUMERATION;
+		} else if ( node instanceof IASTField ){
+			IASTField  field = (IASTField)node;
+			ASTAccessVisibility visibility = field.getVisiblity();
+			if( visibility == ASTAccessVisibility.PUBLIC ){
+				imageDescriptor = CPluginImages.DESC_OBJS_PUBLIC_FIELD;
+			} else if ( visibility == ASTAccessVisibility.PROTECTED) {
+				imageDescriptor = CPluginImages.DESC_OBJS_PROTECTED_FIELD;
+			} else if ( visibility == ASTAccessVisibility.PRIVATE ) {
+				imageDescriptor = CPluginImages.DESC_OBJS_PRIVATE_FIELD;
+			}
+		} else if ( node instanceof IASTVariable ){
+			imageDescriptor = CPluginImages.DESC_OBJS_FIELD;
+		} else if ( node instanceof IASTEnumerator ){
+			imageDescriptor = CPluginImages.DESC_OBJS_ENUMERATOR;
+		} else if ( node instanceof IASTMethod ){
+			IASTMethod method = (IASTMethod) node;
+			ASTAccessVisibility visibility = method.getVisiblity();
+			if( visibility == ASTAccessVisibility.PUBLIC ){
+				imageDescriptor = CPluginImages.DESC_OBJS_PUBLIC_METHOD;
+			} else if ( visibility == ASTAccessVisibility.PROTECTED) {
+				imageDescriptor = CPluginImages.DESC_OBJS_PROTECTED_METHOD;
+			} else if ( visibility == ASTAccessVisibility.PRIVATE ) {
+				imageDescriptor = CPluginImages.DESC_OBJS_PRIVATE_METHOD;
+			}
+		} else if ( node instanceof IASTFunction ){
+			imageDescriptor = CPluginImages.DESC_OBJS_FUNCTION;
 		}
 		
-		Image image = CUIPlugin.getImageDescriptorRegistry().get( imageDescriptor );
-		IMatch match = new Match(name, parentName, image, node.getNameOffset(), name.length() );
+		if( imageDescriptor != null) {
+			int adornmentFlags = computeAdornmentFlags( node );
+			return new CElementImageDescriptor( imageDescriptor, adornmentFlags, SMALL_SIZE );
+		}
+		return imageDescriptor;		
+	}
+	
+	private int computeAdornmentFlags(IASTOffsetableElement element ) {
+		int flags = 0;
+			
+		if( element instanceof IASTVariable ){
+			flags |= ((IASTVariable) element).isStatic() ? 0 : CElementImageDescriptor.STATIC;
+		} else if ( element instanceof IASTMethod ){
+			flags |= ((IASTMethod) element).isStatic()   ? 0 : CElementImageDescriptor.STATIC;
+			flags |= ((IASTMethod) element).isConst()    ? 0 : CElementImageDescriptor.CONSTANT;
+			flags |= ((IASTMethod) element).isVolatile() ? 0 : CElementImageDescriptor.VOLATILE;
+		} else if( element instanceof IASTFunction ){
+			flags |= ((IASTFunction) element).isStatic() ? 0 : CElementImageDescriptor.STATIC;
+		}
 		
-		return match;
+		return flags;
 	}
 		
 	/* (non-Javadoc)
@@ -210,34 +279,15 @@ public class CSearchResultCollector implements ICSearchResultCollector {
 		return _matches;
 	}
 	
-	//private class ActionGroupFactory implements IActionGroupFactory {
-	//	public ActionGroup createActionGroup( ISearchResultView part ){
-	//		return new CSearchViewActionGroup( part );
-	//	}
-	//}
-	
-	/*public static class Match impl{
-		public Match( String path, int start, int end ){
-			this.path = path;
-			this.start = start;
-			this.end = end;
-		}
-	
-		public String path;
-		public int start;
-		public int end;
-	}
-	*/	
 	private static final String SEARCHING = CSearchMessages.getString("CSearchResultCollector.searching"); //$NON-NLS-1$
 	private static final String MATCH     = CSearchMessages.getString("CSearchResultCollector.match"); //$NON-NLS-1$
 	private static final String MATCHES   = CSearchMessages.getString("CSearchResultCollector.matches"); //$NON-NLS-1$
 	private static final String DONE      = CSearchMessages.getString("CSearchResultCollector.done"); //$NON-NLS-1$
-
-		
 	
 	private IProgressMonitor 	_monitor;
 	private CSearchOperation 	_operation;
 	private ISearchResultView 	_view;
 	private int					_matchCount;
 	private Set					_matches;
+	private boolean 			_maintainOwnCollection = false;
 }

@@ -13,7 +13,7 @@
  */
 package org.eclipse.cdt.core.search;
 
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 
 /**
  * @author aniefer
@@ -32,7 +32,7 @@ public interface ICSearchPattern extends ICSearchConstants{
 	 * @param node
 	 * @return
 	 */
-	int matchLevel( IASTOffsetableElement node );
+	int matchLevel( ISourceElementCallbackDelegate node );
 	
 	LimitTo   getLimitTo();
 }

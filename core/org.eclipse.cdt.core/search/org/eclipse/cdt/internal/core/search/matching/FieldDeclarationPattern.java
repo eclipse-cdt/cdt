@@ -13,6 +13,11 @@
  */
 package org.eclipse.cdt.internal.core.search.matching;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
+import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
+
 
 /**
  * @author aniefer
@@ -29,9 +34,37 @@ public class FieldDeclarationPattern extends VariableDeclarationPattern {
 	 * @param limitTo
 	 * @param caseSensitive
 	 */
-	public FieldDeclarationPattern(char[] name, char[][] cs, int matchMode, LimitTo limitTo, boolean caseSensitive) {
+	public FieldDeclarationPattern(char[] name, char[][] qual, int matchMode, LimitTo limitTo, boolean caseSensitive) {
 		super( name, matchMode, limitTo, caseSensitive );
-		// TODO Auto-generated constructor stub
+		qualifications = qual;
 	}
 
+
+	public int matchLevel(ISourceElementCallbackDelegate node) {
+		if( !(node instanceof IASTField) ){
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		if( super.matchLevel( node ) == IMPOSSIBLE_MATCH ){
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		//check containing scopes
+		String [] fullyQualifiedName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
+		if( !matchQualifications( qualifications, fullyQualifiedName ) ){
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		return ACCURATE_MATCH;
+	}
+	
+	public char[] indexEntryPrefix() {
+		return AbstractIndexer.bestFieldPrefix( _limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
+	}
+	
+	protected boolean matchIndexEntry() {
+		return true;
+	}
+	
+	private char [][] qualifications;
 }

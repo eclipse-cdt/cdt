@@ -1,3 +1,15 @@
+2003-07-24 Andrew Niefer
+	Modified 
+	*index/org/eclipse/cdt/internal/core/search/indexing/AbstractIndexer.java
+		-changed so that the index prefixes contain the qualified names of the 
+		 elements in reverse order.
+		-Added functions:
+			bestVariablePrefix
+			bestNamespacePrefix
+			bestFieldPrefix
+			bestFunctionPrefix
+			bestMethodPrefix
+
 2003-07-21 Bogdan Gheorghe
 	Added additional declarations to index: enums, enumerators, namespace,
 	functions, vars, methods, fields, typedefs.

@@ -1,6 +1,14 @@
 2003-07-24 John Camelon
 	Updated CompleteParseASTTests.
 
+2003-07-23 Andrew Niefer
+	-Created search/BaseSearchTest to handle creating projects and setting them up to use the indexer
+	-removed ClassSpecifierSearchTests, its functionality is now in BaseSearchTest
+	-modified ClassDeclarationPatternTests to extend BaseSearchTest
+	-added FunctionMethodPatternTests
+	-added OtherPatternTests
+	-modified indexer/IndexManagerTests.testIndexContents
+
 2003-07-22 John Camelon
 	Updated CompleteParseASTTests.
 

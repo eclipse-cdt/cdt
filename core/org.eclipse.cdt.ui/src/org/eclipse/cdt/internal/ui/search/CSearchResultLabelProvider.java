@@ -15,9 +15,11 @@ package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.search.ui.ISearchResultViewEntry;
 import org.eclipse.swt.graphics.Image;
@@ -61,7 +63,11 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			return null;
 		}
 	
-		return match.image;
+		ImageDescriptor imageDescriptor = match.imageDesc;
+			
+		Image image = CUIPlugin.getImageDescriptorRegistry().get( imageDescriptor );
+				
+		return image;
 	}
 	
 	public String getText( Object element ) {

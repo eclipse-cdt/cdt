@@ -177,7 +177,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			pos += tempName.length;
 		}
 		//Extract the qualifiers
-		for (int i=0; i<(fullTypeName.length - 1); i++){
+		for (int i=fullTypeName.length - 2; i >= 0; i--){
 			result[pos++] = SEPARATOR;
 			char [] tempName = fullTypeName[i].toCharArray();
 			System.arraycopy(tempName, 0, result, pos, tempName.length);
@@ -205,7 +205,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			pos += tempName.length;
 		}
 		//Extract the qualifiers
-		for (int i=0; i<(elementName.length - 1); i++){
+		for (int i=elementName.length - 2; i>=0; i--){
 			result[pos++] = SEPARATOR;
 			char [] tempName = elementName[i].toCharArray();
 			System.arraycopy(tempName, 0, result, pos, tempName.length);
@@ -243,12 +243,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	 * Type entries are encoded as follow: 'typeDecl/' ('C' | 'S' | 'U' ) '/'  TypeName '/' 
 	 * Current encoding is optimized for queries: all classes
 	 */
-	 public static final char[] bestTypeDeclarationPrefix(char[] typeName, char[][] containingTypes, ASTClassKind classKind, int matchMode, boolean isCaseSensitive) {
-		// index is case sensitive, thus in case attempting case insensitive search, cannot consider
-		// type name.
-		if (!isCaseSensitive){
-			typeName = null;
-		}
+	public static final char[] bestTypePrefix( LimitTo limitTo, char[] typeName, char[][] containingTypes, ASTClassKind classKind, int matchMode, boolean isCaseSensitive) {
 		//Class kind not provided, best we can do
 		if (classKind == null){
 			return TYPE_DECL;
@@ -261,107 +256,162 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		else if (classKind == ASTClassKind.UNION){
 			classType = UNION_SUFFIX;
 		}
+		else if (classKind == ASTClassKind.ENUM){
+			classType = ENUM_SUFFIX;
+		}
 		
-		switch(matchMode){
-			case EXACT_MATCH :
-			case PREFIX_MATCH :
-				break;
-			case PATTERN_MATCH :
-				if (typeName != null){
-					int starPos = CharOperation.indexOf('*', typeName);
-					switch(starPos) {
-						case -1 :
-							break;
-						case 0 :
-							typeName = null;
-							break;
-						default : 
-							typeName = CharOperation.subarray(typeName, 0, starPos);
+		char [] prefix = null;
+		if( limitTo == DECLARATIONS ){
+			prefix = TYPE_DECL;
+		} else if( limitTo == REFERENCES ){
+			prefix = TYPE_REF;
+		}
+		
+		return bestPrefix( prefix, classType, typeName, containingTypes, matchMode, isCaseSensitive );
+	}
+	public static final char[] bestNamespacePrefix(LimitTo limitTo, char[] namespaceName, char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = NAMESPACE_REF;
+		} else {
+			prefix = NAMESPACE_DECL;
+		}
+		return bestPrefix( prefix, (char) 0, namespaceName, containingTypes, matchMode, isCaseSensitive );
+	}	
+		
+	public static final char[] bestVariablePrefix( LimitTo limitTo, char[] varName, int matchMode, boolean isCaseSenstive ){
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = TYPE_REF;
+		} else {
+			prefix = TYPE_DECL;
+		}
+		
+		return bestPrefix( prefix, VAR_SUFFIX, varName, null, matchMode, isCaseSenstive );	
+	}
+
+	public static final char[] bestFieldPrefix( LimitTo limitTo, char[] fieldName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = FIELD_REF;
+		} else {
+			prefix = FIELD_DECL;
+		}		
+		return bestPrefix( prefix, (char)0, fieldName, containingTypes, matchMode, isCaseSensitive );
+	}  
+
+	public static final char[] bestMethodPrefix( LimitTo limitTo, char[] methodName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = METHOD_REF;
+		} else {
+			prefix = METHOD_DECL;
+		}		
+		return bestPrefix( prefix, (char)0, methodName, containingTypes, matchMode, isCaseSensitive );
+	}  
+	
+	public static final char[] bestFunctionPrefix( LimitTo limitTo, char[] functionName, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = FUNCTION_REF;
+		} else {
+			prefix = FUNCTION_DECL;
+		}		
+		return bestPrefix( prefix, (char)0, functionName, null, matchMode, isCaseSensitive );
+	}  
+		
+	public static final char[] bestPrefix( char [] prefix, char optionalType, char[] name, char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char[] 	result = null;
+		int 	pos    = 0;
+		
+		//length of prefix + separator
+		int length = prefix.length;
+		
+		//add length for optional type + another separator
+		if( optionalType != 0 )
+			length += 2;
+		
+		if (!isCaseSensitive){
+			//index is case sensitive, thus in case attempting case insensitive search, cannot consider
+			//type name.
+			name = null;
+		} else if( matchMode == PATTERN_MATCH && name != null ){
+			int starPos = CharOperation.indexOf( '*', name );
+			switch( starPos ){
+				case -1 : break;
+				case 0  : name = null;
+				default : name = CharOperation.subarray( name, 0, starPos );
+			}
+		}
+		//add length for name
+		if( name != null ){
+			length += name.length;
+		} else {
+			//name is null, don't even consider qualifications.
+			result = new char [ length ];
+			System.arraycopy( prefix, 0, result, 0, pos = prefix.length );
+			if( optionalType != 0){
+				result[ pos++ ] = optionalType;
+				result[ pos++ ] = SEPARATOR; 
+			}
+			return result;
+		}
+		 		
+		//add the total length of the qualifiers
+		//we don't want to mess with the contents of this array (treat it as constant)
+		//so check for wild cards later.
+		if( containingTypes != null ){
+			for( int i = 0; i < containingTypes.length; i++ ){
+				if( containingTypes[i].length > 0 ){
+					length += containingTypes[ i ].length;
+					length++; //separator
+				}
+			}
+		}
+		
+		//because we haven't checked qualifier wild cards yet, this array might turn out
+		//to be too long. So fill a temp array, then check the length after
+		char [] temp = new char [ length ];
+		
+		System.arraycopy( prefix, 0, temp, 0, pos = prefix.length );
+		
+		if( optionalType != 0 ){
+			temp[ pos++ ] = optionalType;
+			temp[ pos++ ] = SEPARATOR;
+		}
+		
+		System.arraycopy( name, 0, temp, pos, name.length );
+		pos += name.length;
+		
+		if( containingTypes != null ){
+			for( int i = containingTypes.length - 1; i >= 0; i-- ){
+				if( matchMode == PATTERN_MATCH ){
+					int starPos = CharOperation.indexOf( '*', containingTypes[i] );
+					if( starPos >= 0 ){
+						temp[ pos++ ] = SEPARATOR;
+						System.arraycopy( containingTypes[i], 0, temp, pos, starPos );
+						pos += starPos;
+						break;
 					}
 				}
-		}
-		
-		int containingTypesLength=0; 
-		int typeLength = typeName == null ? 0 : typeName.length;
-		int pos;
-		//figure out the total length of the qualifiers
-		for (int i=0; i<containingTypes.length; i++){
-			containingTypesLength+= containingTypes[i].length;
-		}
-		//typed decl length + length of qualifiers + qualifier separators + name length + 2 (1 for name separator, 1 for letter)
-		char[] result = new char[TYPE_DECL_LENGTH + containingTypesLength + containingTypes.length + typeLength + 2 ];
-		System.arraycopy(TYPE_DECL, 0, result, 0, pos = TYPE_DECL_LENGTH);
-		result[pos++] = classType;
-		result[pos++] = SEPARATOR;
-		
-		if (typeLength > 0){
-			System.arraycopy(typeName, 0, result, pos, typeName.length);
-			pos += typeName.length;
-		}
 				
-		for (int i=0; i<containingTypes.length; i++){
-			result[pos++] = SEPARATOR;
-			char[] tempName = containingTypes[i];
-			System.arraycopy(tempName, 0, result, pos, tempName.length);
-			pos += tempName.length;
+				if( containingTypes[i].length > 0 ){
+					temp[ pos++ ] = SEPARATOR;
+					System.arraycopy( containingTypes[i], 0, temp, pos, containingTypes[i].length );
+					pos += containingTypes[i].length;
+				}
+			}
+		}
+	
+		if( pos < length ){
+			result = new char[ pos ];
+			System.arraycopy( temp, 0, result, 0, pos );	
+		} else {
+			result = temp;
 		}
 		
 		return result;
-	}
-	
-	public static final char[] bestNamespacePrefix(char[] namespaceName, char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
-		   // index is case sensitive, thus in case attempting case insensitive search, cannot consider
-		   // type name.
-		   if (!isCaseSensitive){
-			   namespaceName = null;
-		   }
-		
-		   switch(matchMode){
-			   case EXACT_MATCH :
-			   case PREFIX_MATCH :
-				   break;
-			   case PATTERN_MATCH :
-				   if (namespaceName != null){
-					   int starPos = CharOperation.indexOf('*', namespaceName);
-					   switch(starPos) {
-						   case -1 :
-							   break;
-						   case 0 :
-							   namespaceName = null;
-							   break;
-						   default : 
-							   namespaceName = CharOperation.subarray(namespaceName, 0, starPos);
-					   }
-				   }
-		   }
-		
-		   int containingTypesLength=0; 
-		   int typeLength = namespaceName == null ? 0 : namespaceName.length;
-		   int pos;
-		   //figure out the total length of the qualifiers
-		   for (int i=0; i<containingTypes.length; i++){
-			   containingTypesLength+= containingTypes[i].length;
-		   }
-		   //typed decl length + length of qualifiers + qualifier separators + name length + 2 (1 for name separator, 1 for letter)
-		   char[] result = new char[TYPE_DECL_LENGTH + containingTypesLength + containingTypes.length + typeLength + 2 ];
-		   System.arraycopy(TYPE_DECL, 0, result, 0, pos = TYPE_DECL_LENGTH);
-		   //result[pos++] = classType;
-		   result[pos++] = SEPARATOR;
-		
-		   if (typeLength > 0){
-			   System.arraycopy(namespaceName, 0, result, pos, namespaceName.length);
-			   pos += namespaceName.length;
-		   }
-				
-		   for (int i=0; i<containingTypes.length; i++){
-			   result[pos++] = SEPARATOR;
-			   char[] tempName = containingTypes[i];
-			   System.arraycopy(tempName, 0, result, pos, tempName.length);
-			   pos += tempName.length;
-		   }
-		
-		   return result;
-	   }
+	}   
 
 }
 

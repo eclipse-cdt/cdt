@@ -22,11 +22,8 @@ import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.search.matching.ClassDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
-import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.cdt.internal.ui.search.Match;
-import org.eclipse.core.runtime.Path;
 
-import junit.framework.TestCase;
 
 /**
  * @author aniefer
@@ -34,32 +31,22 @@ import junit.framework.TestCase;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class ClassDeclarationPatternTests extends TestCase implements ICSearchConstants {
+public class ClassDeclarationPatternTests extends BaseSearchTest implements ICSearchConstants {
 
 	private MatchLocator matchLocator;
-	private CSearchResultCollector resultCollector;
+	
 	private String cppPath;
 	
 	public ClassDeclarationPatternTests(String name) {
 		super(name);
 	}
 	
-	private void initialize( ICSearchPattern pattern ){
-		cppPath = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
-		cppPath += "resources/search/classDecl.cpp";
-		
-		resultCollector = new CSearchResultCollector();
-		matchLocator = new MatchLocator( pattern, resultCollector, null, null );
-	}
-	
 	public void testMatchSimpleDeclaration(){
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", TYPE, DECLARATIONS, true );
-
+		
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
-		initialize( pattern );
-		
-		matchLocator.locateMatches( new String [] { cppPath }, null, null );		
+		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getMatches();
 		assertEquals( matches.size(), 2 );
@@ -76,9 +63,7 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 		assertTrue( clsPattern.getContainingTypes().length == 1 );
 		assertTrue( CharOperation.equals( new char[] { 'N', 'S' }, clsPattern.getContainingTypes()[0] ) );
 		
-		initialize( pattern );
-		
-		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getMatches();
 		assertEquals( matches.size(), 1 );
@@ -87,22 +72,22 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 	public void testBug39652() {
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B", TYPE, DECLARATIONS, true );
 		
-		initialize( pattern );
-		matchLocator.locateMatches( new String[] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
 		Set matches = resultCollector.getMatches();
+		
 		/* Test should find 1 match */
 		assertTrue( matches != null );
 		assertTrue( matches.size() == 1 );
 				
 		pattern = SearchEngine.createSearchPattern( "NS::NS2::a", TYPE, DECLARATIONS, true );
-		initialize( pattern );
-		matchLocator.locateMatches( new String[] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
+
 		matches = resultCollector.getMatches();
 		assertTrue( matches != null );
 		
 		pattern = SearchEngine.createSearchPattern( "NS::B::A", TYPE, DECLARATIONS, true );
-		initialize( pattern );
-		matchLocator.locateMatches( new String[] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
+
 		matches = resultCollector.getMatches();
 		assertTrue( matches != null );
 	}
@@ -112,19 +97,13 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 		
 		assertTrue( pattern instanceof ClassDeclarationPattern );
 		
-		ClassDeclarationPattern clsPattern = (ClassDeclarationPattern) pattern;
-		
-		initialize( pattern );
-		
-		matchLocator.locateMatches( new String[] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getMatches();
 		assertEquals( matches.size(), 1 );
 		
 		pattern = SearchEngine.createSearchPattern( "NS::B::A", TYPE, DECLARATIONS, true );
-		
-		initialize( pattern );
-		matchLocator.locateMatches( new String[] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches2 = resultCollector.getMatches();
 		assertTrue( matches2 != null );
@@ -143,15 +122,13 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 	
 	public void testWildcardQualification() {
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "::*::A", TYPE, DECLARATIONS, true );
-		initialize( pattern );
-		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
 		
 		Set matches = resultCollector.getMatches();
-		assertEquals( matches, null );
+		assertEquals( matches.size(), 0 );
 		
 		pattern = SearchEngine.createSearchPattern( "NS::*::A", TYPE, DECLARATIONS, false );
-		initialize( pattern );
-		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
 		
 		matches = resultCollector.getMatches();
 		assertEquals( matches.size(), 2 );
@@ -159,22 +136,39 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 	
 	public void testElaboratedType(){
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "struct A", TYPE, DECLARATIONS, true );
-		initialize( pattern );
-		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
+
 		Set matches = resultCollector.getMatches();
 		assertEquals( matches.size(), 1 );
 		
 		pattern = SearchEngine.createSearchPattern( "union u", TYPE, DECLARATIONS, true );
-		initialize( pattern );
-		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
+
 		matches = resultCollector.getMatches();
 		assertEquals( matches.size(), 2 );
 
 		pattern = SearchEngine.createSearchPattern( "union ::*::u", TYPE, DECLARATIONS, true );
-		initialize( pattern );
-		matchLocator.locateMatches( new String [] { cppPath }, null, null );
+		search( workspace, pattern, scope, resultCollector );
+
 		matches = resultCollector.getMatches();
 		assertEquals( matches.size(), 1 );
+	}
+	
+	public void testClassIndexPrefix(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "struct A::B::*::c", TYPE, DECLARATIONS, true );
+		assertTrue( pattern instanceof ClassDeclarationPattern );
+		
+		ClassDeclarationPattern clsPattern = (ClassDeclarationPattern)pattern;
+		assertEquals( CharOperation.compareWith( "typeDecl/S/c/".toCharArray(), clsPattern.indexEntryPrefix() ), 0);
+		
+		clsPattern = (ClassDeclarationPattern) SearchEngine.createSearchPattern( "class ::*::A::B::c", TYPE, DECLARATIONS, true );
+		assertEquals( CharOperation.compareWith( "typeDecl/C/c/B/A/".toCharArray(), clsPattern.indexEntryPrefix() ), 0);
+				
+		clsPattern = (ClassDeclarationPattern) SearchEngine.createSearchPattern( "enum ::RT*::c", TYPE, REFERENCES, true );
+		assertEquals( CharOperation.compareWith( "typeRef/E/c/RT".toCharArray(), clsPattern.indexEntryPrefix() ), 0);
+				
+		clsPattern = (ClassDeclarationPattern) SearchEngine.createSearchPattern( "union A::B::c", TYPE, REFERENCES, false );
+		assertEquals( CharOperation.compareWith( "typeRef/U/".toCharArray(), clsPattern.indexEntryPrefix() ), 0);
 	}
 	
 }

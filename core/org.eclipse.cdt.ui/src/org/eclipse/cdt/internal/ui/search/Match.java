@@ -14,7 +14,7 @@
 package org.eclipse.cdt.internal.ui.search;
 
 import org.eclipse.cdt.core.search.IMatch;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * @author aniefer
@@ -26,14 +26,18 @@ public class Match implements IMatch{
 
 	public String name;
 	public String parent;
-	public Image  image;
+	public ImageDescriptor imageDesc;
 	public int 	  start;
 	public int    end;
 	
-	public Match( String name, String parent, Image image, int start, int end ){
+	public Match( String name, String parent, ImageDescriptor image ){
 		this.name = name;
 		this.parent = parent;
-		this.image = image;
+		this.imageDesc = image;
+	}
+	
+	public Match( String name, String parent, ImageDescriptor image, int start, int end ){
+		this( name, parent, image );
 		this.start = start;
 		this.end = end;
 	}

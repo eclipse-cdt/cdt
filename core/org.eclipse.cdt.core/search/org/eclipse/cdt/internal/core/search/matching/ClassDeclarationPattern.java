@@ -15,11 +15,12 @@ package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
@@ -57,7 +58,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		limitTo = limit;
 	}
 	
-	public int matchLevel( IASTOffsetableElement node ){
+	public int matchLevel( ISourceElementCallbackDelegate node ){
 		
 		if( !( node instanceof IASTClassSpecifier ) && !( node instanceof IASTEnumerationSpecifier ) )
 			return IMPOSSIBLE_MATCH;
@@ -69,14 +70,7 @@ public class ClassDeclarationPattern extends CSearchPattern {
 			return IMPOSSIBLE_MATCH;
 		}
 
-		String [] fullyQualifiedName = null;
-		
-		if( node instanceof IASTClassSpecifier ){
-			IASTClassSpecifier clsSpec = (IASTClassSpecifier) node;
-			fullyQualifiedName = clsSpec.getFullyQualifiedName();		
-		} else {
-			//TODO fully qualified names for enums
-		}
+		String [] fullyQualifiedName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
 		
 		//check containing scopes
 		if( !matchQualifications( containingTypes, fullyQualifiedName ) ){
@@ -151,7 +145,8 @@ public class ClassDeclarationPattern extends CSearchPattern {
 	}
 
 	public char[] indexEntryPrefix() {
-		return AbstractIndexer.bestTypeDeclarationPrefix(
+		return AbstractIndexer.bestTypePrefix(
+				limitTo,
 				simpleName,
 				containingTypes,
 				classKind,

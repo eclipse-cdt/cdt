@@ -15,11 +15,14 @@ package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
+import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 
 /**
  * @author aniefer
@@ -38,14 +41,25 @@ public class VariableDeclarationPattern extends CSearchPattern {
 	public VariableDeclarationPattern(char[] name, int matchMode, LimitTo limitTo, boolean caseSensitive) {
 		super( matchMode, caseSensitive, limitTo );
 		
+		simpleName = name;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.search.ICSearchPattern#matchLevel(org.eclipse.cdt.core.parser.ast.IASTOffsetableElement)
 	 */
-	public int matchLevel(IASTOffsetableElement node) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int matchLevel(ISourceElementCallbackDelegate node) {
+		if( !(node instanceof IASTVariable) ){
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		String nodeName = ((IASTOffsetableNamedElement)node).getName();
+		
+		//check name, if simpleName == null, its treated the same as "*"	
+		if( simpleName != null && !matchesName( simpleName, nodeName.toCharArray() ) ){
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		return ACCURATE_MATCH;
 	}
 
 	/* (non-Javadoc)
@@ -68,16 +82,20 @@ public class VariableDeclarationPattern extends CSearchPattern {
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#indexEntryPrefix()
 	 */
 	public char[] indexEntryPrefix() {
-		// TODO Auto-generated method stub
-		return null;
+		return AbstractIndexer.bestVariablePrefix(
+						_limitTo,
+						simpleName,
+						_matchMode, _caseSensitive
+		);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#matchIndexEntry()
 	 */
 	protected boolean matchIndexEntry() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
+	
+	protected char [] simpleName;
 
 }

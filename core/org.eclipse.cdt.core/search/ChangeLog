@@ -1,3 +1,14 @@
+2003-07-23 Andrew Niefer
+	-Changed ICSearchPattern.matchLevel to take a ISourceElementCallbackDelegate
+	-Changed ICSearchResultCollector.createMatch to take a ISourceElementCallbackDelegate
+	-first implementations of:
+		-CSearchPattern.createFunctionPattern
+		-CSearchPattern.createVariablePattern
+		-CSearchPattern.createMethodPattern
+	-preliminary matching for remaining patterns
+	-handling of remaining parser callbacks
+	-generating index Prefixes for the patterns
+
 2003-07-14 Andrew Niefer
 	-Modified SearchFor instances in ICSearchConstants to more closely match what we are searching for
 	-added IMatch interface, it represents matches found by the search engine, implementors can store

@@ -15,12 +15,13 @@ package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.impl.IndexInput;
 import org.eclipse.cdt.internal.core.search.IIndexSearchRequestor;
+import org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer;
 
 /**
  * @author aniefer
@@ -48,7 +49,7 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.search.ICSearchPattern#matchLevel(org.eclipse.cdt.core.parser.ast.IASTOffsetableElement)
 	 */
-	public int matchLevel(IASTOffsetableElement node) {
+	public int matchLevel(ISourceElementCallbackDelegate node) {
 		if( !( node instanceof IASTNamespaceDefinition ) )
 			return IMPOSSIBLE_MATCH;
 			
@@ -87,16 +88,19 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#indexEntryPrefix()
 	 */
 	public char[] indexEntryPrefix() {
-		// TODO Auto-generated method stub
-		return null;
+		return AbstractIndexer.bestNamespacePrefix(
+				_limitTo,
+				_name,
+				_qualifications,
+				_matchMode, _caseSensitive
+		);
 	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.search.matching.CSearchPattern#matchIndexEntry()
 	 */
 	protected boolean matchIndexEntry() {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }

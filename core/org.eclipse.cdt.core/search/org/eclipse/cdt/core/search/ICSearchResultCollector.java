@@ -13,8 +13,7 @@
  */
 package org.eclipse.cdt.core.search;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -98,5 +97,5 @@ public interface ICSearchResultCollector {
 	 * @param node
 	 * @return
 	 */
-	public IMatch createMatch(IASTOffsetableNamedElement node, IASTScope parent );
+	public IMatch createMatch(ISourceElementCallbackDelegate node, IASTScope parent );
 }

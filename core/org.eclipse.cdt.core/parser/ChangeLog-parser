@@ -1,3 +1,8 @@
+2004-03-09 Andrew Niefer
+	bug 52948
+	modified CompleteParseASTFactory.createTypedef() to set the typeSymbol of the typedef symbol
+	modified TypeFilter to handle LookupKind.TYPES and LookupKind.TYPEDEFS
+
 2004-03-09 John Camelon
 	Put back the work to reconcile relative paths w/IResource readers which was lost upon merge.  
 

@@ -2480,7 +2480,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	IContainerSymbol containerSymbol = scopeToSymbol(scope);
     	ISymbol newSymbol = pst.newSymbol( name, TypeInfo.t_type);
     	newSymbol.getTypeInfo().setBit( true,TypeInfo.isTypedef );
-    	
+    
+		ISymbol typeSymbol = cloneSimpleTypeSymbol( "", mapping, new ArrayList() );
+		setPointerOperators( typeSymbol, mapping.getPointerOperators(), mapping.getArrayModifiers() );
+		
+		newSymbol.setTypeSymbol( typeSymbol );
+		
     	List references = new ArrayList();
 		if( mapping.getTypeSpecifier() instanceof ASTSimpleTypeSpecifier ) 
 	    {

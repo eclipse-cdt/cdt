@@ -1,4 +1,8 @@
 2004-11-26 Alain Magloire
+	Make the deferred breakpoint on by default.
+	* cdi/org/eclipose/cdt/debug/mi/core/cdi/SharedLibraryManager.java
+
+2004-11-26 Alain Magloire
 	Final fix for PR 79583
 	* cdi/org/eclipose/cdt/debug/mi/core/cdi/EventManager.java
 	* cdi/org/eclipose/cdt/debug/mi/core/cdi/SharedLibraryManager.java

@@ -56,7 +56,7 @@ public class SharedLibraryManager extends Manager {
 
 	ICDISharedLibrary[] EMPTY_SHAREDLIB = {};
 	Map sharedMap;
-	boolean isDeferred;
+	boolean isDeferred = true;
 
 	public SharedLibraryManager (Session session) {
 		super(session, true);

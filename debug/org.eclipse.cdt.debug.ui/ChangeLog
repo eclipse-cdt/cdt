@@ -1,3 +1,9 @@
+2004-07-20 Mikhail Khodjaiants
+	Cleanup.
+	* ErrorStatusHandler.java
+	* InfoStatusHandler.java
+	* QuestionStatusHandler.java
+
 2004-07-16 Mikhail Khodjaiants
 	Cleanup.
 	* CDTDebugModelPresentation.java

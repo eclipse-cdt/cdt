@@ -18,30 +18,24 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
- * 
- * Enter type comment.
- * 
- * @since Sep 25, 2002
+ * Displays the confirmation dialog.
  */
 public class QuestionStatusHandler implements IStatusHandler {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(IStatus, Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	public Object handleStatus( IStatus status, Object source ) throws CoreException {
-
 		final boolean result[] = new boolean[1];
 		if ( status != null && source != null && source instanceof IDebugTarget ) {
 			final String title = ((IDebugTarget)source).getName();
 			final String message = status.getMessage();
-			CDebugUIPlugin.getStandardDisplay().syncExec(
-					new Runnable() {
-						public void run() {
-							result[0] = MessageDialog.openQuestion( CDebugUIPlugin.getActiveWorkbenchShell(), title, message );
-						}
-					} );
+			CDebugUIPlugin.getStandardDisplay().syncExec( new Runnable() {
+
+				public void run() {
+					result[0] = MessageDialog.openQuestion( CDebugUIPlugin.getActiveWorkbenchShell(), title, message );
+				}
+			} );
 		}
 		return new Boolean( result[0] );
 	}

@@ -351,6 +351,18 @@ public class Coff {
 	public static class Symbol {
 		public final static int SYMSZ = 18;
 		public final static int SYMNMLEN = 8;
+
+		/* Derived types, in n_type.  */
+		public final static int DT_NON = 0;     /* no derived type */
+		public final static int DT_PTR = 1;     /* pointer */
+		public final static int DT_FCN = 2;     /* function */
+		public final static int DT_ARY = 3;     /* array */
+
+		public final static int N_TMASK  = 0x30;
+		public final static int N_BTSHFT = 4;
+		public final static int N_TSHIFT = 2;
+
+
 		public byte[] _n_name = new byte[SYMNMLEN]; /* Symbol name, or pointer into
 								string table if symbol name
 								is greater than SYMNMLEN.  */
@@ -378,11 +390,51 @@ public class Coff {
 			n_numaux = memory.getByte();
 		}
 
-		public String toString() {
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("SYMBOL VALUES");
-			return buffer.toString();
+		public boolean isLongName() {
+			return (_n_name[0] == 0);
 		}
+
+		public String getName() {
+			for (int i = 0; i < _n_name.length; i++) {
+				if (_n_name[i] == 0) {
+					return new String(_n_name, 0, i);
+				}
+			}
+			return "";
+		}
+
+		public String getName(byte[] table) {
+			if (table.length > 0 && isLongName()) {
+				ReadMemoryAccess memory = new ReadMemoryAccess(_n_name, true);
+				memory.getInt();
+				int offset = memory.getInt();
+				if (offset > 0) {
+					for (int i = offset; i < table.length; i++) {
+						if (table[i] == 0) {
+							return new String(table, offset, i - offset);
+						}
+					}
+				}
+			}
+			return getName();
+		}
+
+		public boolean isPointer() {
+			return (n_type & N_TMASK) == (DT_PTR << N_BTSHFT);
+		}
+
+		public boolean isFunction() {
+			return (n_type & N_TMASK) == (DT_FCN << N_BTSHFT);
+		}
+
+		public boolean isArray() {
+			return (n_type & N_TMASK) == (DT_ARY << N_BTSHFT);
+		}
+
+		public String toString() {
+			return getName();
+		}
+
 	}
 
 	public FileHeader getFileHeader() throws IOException {
@@ -467,19 +519,19 @@ public class Coff {
 		try {
 			Symbol[] table = getSymbols();
 			for (int i = 0; i < table.length; i++) {
-				buffer.append(table[i]);
+				buffer.append(table[i].getName(getStringTable())).append(NL);
 			}
 		} catch (IOException e) {
 		}
 
-		try {
-			String[] strings = getStringTable(getStringTable());
-			for (int i = 0; i < strings.length; i++) {
-				buffer.append(strings[i]);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			String[] strings = getStringTable(getStringTable());
+//			for (int i = 0; i < strings.length; i++) {
+//				buffer.append(strings[i]);
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		return buffer.toString();
 	}
 
@@ -487,9 +539,9 @@ public class Coff {
 		List aList = new ArrayList();
 		int offset = 0;
 		for (int i = 0; i < bytes.length; i++) {
-			if (bytes[i] == '\0') {
-				aList.add(new String(bytes, offset, (i + 1) - offset));
-				offset = i;
+			if (bytes[i] == 0) {
+				aList.add(new String(bytes, offset, i - offset));
+				offset = i + 1;
 			}
 		}
 		return (String[])aList.toArray(new String[0]);

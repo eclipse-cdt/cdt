@@ -55,6 +55,7 @@ public class PE {
 
 	public static final String NL = System.getProperty("line.separator", "\n");
 	RandomAccessFile rfile;
+	String filename;
 	ExeHeader exeHeader;
 	DOSHeader dosHeader;
 	FileHeader fileHeader;
@@ -64,6 +65,39 @@ public class PE {
 	SectionHeader[] scnhdrs;
 	Symbol[] symbolTable;
 	byte[] stringTable;
+
+	public class Attribute {
+		public static final int PE_TYPE_EXE   = 1;
+		public static final int PE_TYPE_SHLIB = 2;
+		public static final int PE_TYPE_OBJ   = 3;
+		public static final int PE_TYPE_CORE  = 4;
+
+		String cpu;
+		int type;
+		int word;
+		boolean bDebug;
+		boolean isle;
+
+		public String getCPU() {
+			return cpu;
+		}
+                
+		public int getType() {
+			return type;
+		}
+                
+		public boolean hasDebug() {
+			return bDebug;
+		}
+
+		public boolean isLittleEndian() {
+			return isle;
+		}
+
+		public int getWord() {
+			return word;
+		}
+	}
 
 	/**
 	 */
@@ -239,32 +273,186 @@ public class PE {
 		}
 	}
 
-
 	public PE (String filename) throws IOException {
-
-		rfile = new RandomAccessFile(filename, "r");
-
-		exeHeader = new ExeHeader(rfile);
-
-		dosHeader = new DOSHeader(rfile);
-
-		// Jump the Coff header, and Check the sig.
-		rfile.seek(dosHeader.e_lfanew);
-		byte[] sig = new byte[4]; 
-		rfile.readFully(sig);
-		if (!((sig[0] == 'P') && (sig[1] == 'E')
-		   && (sig[2] == '\0') && (sig[3] == '\0'))) {
-			throw new IOException("Not a PE format");
-		}
-
-		fileHeader = new Coff.FileHeader(rfile, rfile.getFilePointer());
-
-		optionalHeader = new Coff.OptionalHeader(rfile, rfile.getFilePointer());
-
-		ntHeader = new NTOptionalHeader(rfile, rfile.getFilePointer());
-
+		this(filename, 0);
 	}
 
+	public PE(String filename, long pos) throws IOException {
+		this(filename, pos, true);
+	}
+
+	public PE (String filename, long pos, boolean filter) throws IOException {
+		try {
+			rfile = new RandomAccessFile(filename, "r");
+			this.filename = filename;
+			rfile.seek(pos);
+		
+			// Object files do not have exe/dos header.
+			try {
+				exeHeader = new ExeHeader(rfile);
+				dosHeader = new DOSHeader(rfile);
+				// Jump the Coff header, and Check the sig.
+				rfile.seek(dosHeader.e_lfanew);
+				byte[] sig = new byte[4]; 
+				rfile.readFully(sig);
+				if (!((sig[0] == 'P') && (sig[1] == 'E')
+				   && (sig[2] == '\0') && (sig[3] == '\0'))) {
+					throw new IOException("Not a PE format");
+				}
+			} catch (IOException e) {
+				rfile.seek(pos);
+			}
+
+			fileHeader = new Coff.FileHeader(rfile, rfile.getFilePointer());
+
+			// Check if this a valid machine.
+			switch (fileHeader.f_magic) {
+				case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
+				case PEConstants.IMAGE_FILE_MACHINE_ARM:
+				case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
+				case PEConstants.IMAGE_FILE_MACHINE_I386:
+				case PEConstants.IMAGE_FILE_MACHINE_IA64:
+				case PEConstants.IMAGE_FILE_MACHINE_M68K:
+				case PEConstants.IMAGE_FILE_MACHINE_MIPS16:
+				case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU:
+				case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU16:
+				case PEConstants.IMAGE_FILE_MACHINE_POWERPC:
+				case PEConstants.IMAGE_FILE_MACHINE_R3000:
+				case PEConstants.IMAGE_FILE_MACHINE_R4000:
+				case PEConstants.IMAGE_FILE_MACHINE_R10000:
+				case PEConstants.IMAGE_FILE_MACHINE_SH3:
+				case PEConstants.IMAGE_FILE_MACHINE_SH4:
+				case PEConstants.IMAGE_FILE_MACHINE_THUMB:
+					// Ok;
+				break;
+
+				default:
+					throw new IOException("Unknow machine/format");
+			}
+
+			if (fileHeader.f_opthdr > 0) {
+				optionalHeader = new Coff.OptionalHeader(rfile, rfile.getFilePointer());
+				ntHeader = new NTOptionalHeader(rfile, rfile.getFilePointer());
+			}
+		} finally {
+			if (rfile != null) {
+				rfile.close();
+				rfile = null;
+			}
+		}
+	}
+
+	public Attribute getAttribute() {
+		Attribute attrib = new Attribute();
+		FileHeader filhdr = getFileHeader();
+
+		// Machine type.
+		switch (filhdr.f_magic) {
+			case PEConstants.IMAGE_FILE_MACHINE_UNKNOWN:
+				attrib.cpu = "none";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_ALPHA:
+				attrib.cpu = "alpha";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_ARM:
+				attrib.cpu = "arm";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_ALPHA64:
+				attrib.cpu = "arm64";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_I386:
+				attrib.cpu = "i386";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_IA64:
+				attrib.cpu = "ia64";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_M68K:
+				attrib.cpu = "m68k";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_MIPS16:
+				attrib.cpu = "mips16";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU:
+				attrib.cpu = "mipsfpu";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_MIPSFPU16:
+				attrib.cpu = "mipsfpu16";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_POWERPC:
+				attrib.cpu = "powerpc";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_R3000:
+				attrib.cpu = "r3000";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_R4000:
+				attrib.cpu = "r4000";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_R10000:
+				attrib.cpu = "r10000";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_SH3:
+				attrib.cpu = "sh3";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_SH4:
+				attrib.cpu = "sh4";
+			break;
+			case PEConstants.IMAGE_FILE_MACHINE_THUMB:
+				attrib.cpu = "thumb";
+			break;
+		}
+
+		/* PE characteristics, FileHeader.f_flags.  */
+		if ((filhdr.f_flags & PEConstants.IMAGE_FILE_DLL) != 0) {
+			attrib.type = attrib.PE_TYPE_SHLIB;
+		} else if ((filhdr.f_flags & PEConstants.IMAGE_FILE_EXECUTABLE_IMAGE) != 0) {
+			attrib.type = attrib.PE_TYPE_EXE;
+		} else {
+			attrib.type = attrib.PE_TYPE_OBJ;
+		}
+
+		// For PE always assume little endian unless otherwise.
+		attrib.isle = true;
+		// Little Endian.
+		if ((filhdr.f_flags & PEConstants.IMAGE_FILE_BYTES_REVERSED_LO) != 0) {
+			attrib.isle = true;
+		}
+		// Big Endian.
+		if ((filhdr.f_flags & PEConstants.IMAGE_FILE_BYTES_REVERSED_HI) != 0) {
+			attrib.isle = false;
+		}
+
+		// No debug information.
+		if ((filhdr.f_flags & PEConstants.IMAGE_FILE_DEBUG_STRIPPED) != 0) {
+			attrib.bDebug = false;
+		} else {
+			attrib.bDebug = true;
+		}
+		
+		// sizeof word.
+		if ((filhdr.f_flags & PEConstants.IMAGE_FILE_16BIT_MACHINE) != 0) {
+			attrib.word = 16;
+		}
+		if ((filhdr.f_flags & PEConstants.IMAGE_FILE_32BIT_MACHINE) != 0) {
+			attrib.word = 32;
+		}
+		return attrib;
+	}
+
+	public void dispose() throws IOException {
+		if (rfile != null) {
+			rfile.close();
+			rfile = null;
+		}
+	}
+
+	protected void finalize() throws Throwable {
+		try {
+			dispose();
+		} finally {
+			super.finalize();
+		}
+	}
+	
 	public ExeHeader getExeHeader() {
 		return exeHeader;
 	}
@@ -287,40 +475,52 @@ public class PE {
 
 	public ImageDataDirectory[] getImageDataDirectories() throws IOException {
 		if (dataDirectories == null) {
-			long offset = dosHeader.e_lfanew + FileHeader.FILHSZ +
-				OptionalHeader.AOUTHDRSZ + NTOptionalHeader.NTHDRSZ + 4/*NT SIG*/;
-			rfile.seek(offset);
+			RandomAccessFile accessFile = getRandomAccessFile();
+			long offset = 0;
+			if (dosHeader != null) {
+				offset = dosHeader.e_lfanew + 4/*NT SIG*/;
+			}
+			offset += FileHeader.FILHSZ + OptionalHeader.AOUTHDRSZ + NTOptionalHeader.NTHDRSZ;
+			accessFile.seek(offset);
 			dataDirectories = new ImageDataDirectory[PEConstants.IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 			byte[] data = new byte[dataDirectories.length * (4 + 4)];
-			rfile.readFully(data);
+			accessFile.readFully(data);
 			ReadMemoryAccess memory = new ReadMemoryAccess(data, true);
 			for (int i = 0; i < dataDirectories.length; i++) {
 				int rva = memory.getInt();
 				int size = memory.getInt();
 				dataDirectories[i] = new ImageDataDirectory(rva, size);
 			}
+			dispose();
 		}
 		return dataDirectories;
 	}
 	public SectionHeader[] getSectionHeaders() throws IOException {
 		if (scnhdrs == null) {
+			RandomAccessFile accessFile = getRandomAccessFile();
 			scnhdrs = new SectionHeader[fileHeader.f_nscns];
-			long offset = dosHeader.e_lfanew +
-				FileHeader.FILHSZ + fileHeader.f_opthdr + 4 /* NT SIG */;
-			for (int i = 0; i < scnhdrs.length; i++, offset += SectionHeader.SCNHSZ) {
-				scnhdrs[i] = new SectionHeader(rfile, offset);
+			long offset = 0;
+			if (dosHeader != null) {
+				offset = dosHeader.e_lfanew + 4 /* NT SIG */;
 			}
+			offset += FileHeader.FILHSZ + fileHeader.f_opthdr;
+			for (int i = 0; i < scnhdrs.length; i++, offset += SectionHeader.SCNHSZ) {
+				scnhdrs[i] = new SectionHeader(accessFile, offset);
+			}
+			dispose();
 		}
 		return scnhdrs;
 	}
 
 	public Symbol[] getSymbols() throws IOException {
 		if (symbolTable == null) {
+			RandomAccessFile accessFile = getRandomAccessFile();
 			long offset = fileHeader.f_symptr;
 			symbolTable = new Symbol[fileHeader.f_nsyms];
 			for (int i = 0; i < symbolTable.length; i++, offset += Symbol.SYMSZ) {
-				symbolTable[i] = new Symbol(rfile, offset);
+				symbolTable[i] = new Symbol(accessFile, offset);
 			}
+			dispose();
 		}
 		return symbolTable;
 	}
@@ -328,20 +528,22 @@ public class PE {
 	public byte[] getStringTable() throws IOException {
 		if (stringTable == null) {
 			if (fileHeader.f_nsyms > 0) {
+				RandomAccessFile accessFile = getRandomAccessFile();
 				long symbolsize = Symbol.SYMSZ * fileHeader.f_nsyms;
 				long offset = fileHeader.f_symptr + symbolsize;
-				rfile.seek(offset);
+				accessFile.seek(offset);
 				byte[] bytes = new byte[4];
-				rfile.readFully(bytes);
+				accessFile.readFully(bytes);
 				int str_len = ReadMemoryAccess.getIntLE(bytes);
 				if (str_len > 4) {
 					str_len -= 4;
 					stringTable = new byte[str_len];
-					rfile.seek(offset + 4);
-					rfile.readFully(stringTable);
+					accessFile.seek(offset + 4);
+					accessFile.readFully(stringTable);
 				} else {
 					stringTable = new byte[0];
 				}
+				dispose();
 			} else {
 				stringTable = new byte[0];
 			}
@@ -351,11 +553,19 @@ public class PE {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(exeHeader);
-		buffer.append(dosHeader);
+		if (exeHeader != null) {
+			buffer.append(exeHeader);
+		}
+		if (dosHeader != null) {
+			buffer.append(dosHeader);
+		}
 		buffer.append(fileHeader);
-		buffer.append(optionalHeader);
-		buffer.append(ntHeader);
+		if (optionalHeader != null) {
+			buffer.append(optionalHeader);
+		}
+		if (ntHeader != null) {
+			buffer.append(ntHeader);
+		}
 		try {
 			ImageDataDirectory[] dirs = getImageDataDirectories();
 			for (int i = 0; i < dirs.length; i++) {
@@ -396,6 +606,12 @@ public class PE {
 		return buffer.toString();
 	}
 
+	RandomAccessFile getRandomAccessFile () throws IOException {
+		if (rfile == null) {
+			rfile = new RandomAccessFile(filename, "r");
+		}
+		return rfile;
+	}
 	public static void main(String[] args) {
 		try {
 			PE pe = new PE(args[0]);

@@ -1,5 +1,10 @@
 2002-10-24 Alain Magloire
 
+	* src/.../core/RxThread.java (processMIOutput): Fire a
+	suspended event when seeing an error.
+
+2002-10-24 Alain Magloire
+
 	* src/.../core/output/MIConst.java (isoC): Change to return
 	a string instead '\n' is platform dependent and has to be
 	translate to "\r\n" for SWT widgets to work correctly on windows.

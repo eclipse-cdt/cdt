@@ -20,9 +20,15 @@ public class BreakpointLocationVerifier
 	 * valid location for a breakpoint in the given document, or -1 if a valid location
 	 * cannot be found.
 	 */
-	public int getValidBreakpointLocation( IDocument doc, int lineNumber ) 
+	public int getValidLineBreakpointLocation( IDocument doc, int lineNumber ) 
 	{
 		// for now
 		return lineNumber + 1;
+	}
+
+	public int getValidAddressBreakpointLocation( IDocument doc, int lineNumber ) 
+	{
+		// for now
+		return lineNumber;
 	}
 }

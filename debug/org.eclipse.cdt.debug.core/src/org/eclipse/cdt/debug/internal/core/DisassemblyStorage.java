@@ -223,4 +223,16 @@ public class DisassemblyStorage implements IDisassemblyStorage
 		}
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage#getAddress(int)
+	 */
+	public long getAddress( int lineNumber )
+	{
+		if ( fInstructions.length > lineNumber && lineNumber >= 0 )
+		{
+			return fInstructions[lineNumber].getAdress();
+		}
+		return 0;
+	}
 }

@@ -21,7 +21,7 @@ import org.eclipse.debug.core.DebugException;
  */
 public class CFunctionBreakpoint extends CBreakpoint implements ICFunctionBreakpoint
 {
-	private static final String C_FUNCTION_BREAKPOINT = "org.eclipse.jdt.debug.cFunctionBreakpointMarker"; //$NON-NLS-1$
+	private static final String C_FUNCTION_BREAKPOINT = "org.eclipse.cdt.debug.core.cFunctionBreakpointMarker"; //$NON-NLS-1$
 
 	/**
 	 * Breakpoint attribute storing the function this breakpoint suspends 

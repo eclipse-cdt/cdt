@@ -5,6 +5,7 @@
  */
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.cdt.debug.core.ICBreakpointManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 
 /**
@@ -20,6 +21,7 @@ public interface ICDebugTarget extends IDebugTarget,
 									   IRestart,
 									   IRunToLine,
 									   IState,
-									   ISwitchToThread
+									   ISwitchToThread,
+									   ICBreakpointManager
 {
 }

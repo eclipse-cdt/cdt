@@ -21,14 +21,7 @@ import org.eclipse.debug.core.DebugException;
  */
 public class CAddressBreakpoint extends CBreakpoint	implements ICAddressBreakpoint
 {
-	private static final String C_ADDRESS_BREAKPOINT = "org.eclipse.jdt.debug.cAddressBreakpointMarker"; //$NON-NLS-1$
-
-	/**
-	 * Breakpoint attribute storing the address this breakpoint suspends 
-	 * execution at (value <code>"org.eclipse.cdt.debug.core.address"</code>).
-	 * This attribute is a <code>String</code>.
-	 */
-	protected static final String ADDRESS = "org.eclipse.cdt.debug.core.address"; //$NON-NLS-1$	
+	private static final String C_ADDRESS_BREAKPOINT = "org.eclipse.cdt.debug.core.cAddressBreakpointMarker"; //$NON-NLS-1$
 
 	/**
 	 * Constructor for CAddressBreakpoint.

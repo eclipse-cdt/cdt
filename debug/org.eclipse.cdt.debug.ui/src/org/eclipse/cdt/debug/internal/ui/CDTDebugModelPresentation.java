@@ -25,9 +25,12 @@ import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
+import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
@@ -126,19 +129,24 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 */
 	public IEditorInput getEditorInput( Object element )
 	{
-		IFile file = null;
 		if ( element instanceof IMarker )
 		{
 			IResource resource = ((IMarker)element).getResource();
 			if ( resource instanceof IFile )
-				file = (IFile)resource; 
+				return new FileEditorInput( (IFile)resource ); 
 		}
 		if ( element instanceof IFile )
-			file = (IFile)element;
+		{
+			return new FileEditorInput( (IFile)element );
+		}
+		if ( element instanceof ICAddressBreakpoint )
+		{
+			return getDisassemblyEditorInput( (ICAddressBreakpoint)element );
+		}
 		if ( element instanceof ICLineBreakpoint )
-			file = (IFile)((ICLineBreakpoint)element).getMarker().getResource().getAdapter( IFile.class );
-		if ( file != null ) 
-			return new FileEditorInput( file );
+		{
+			return new FileEditorInput( (IFile)((ICLineBreakpoint)element).getMarker().getResource().getAdapter( IFile.class ) );
+		}
 		if ( element instanceof FileStorage )
 		{
 			return new ExternalEditorInput( (IStorage)element );
@@ -491,6 +499,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 
 	protected Image getBreakpointImage( ICBreakpoint breakpoint ) throws CoreException
 	{
+		if ( breakpoint instanceof ICAddressBreakpoint )
+		{
+			return getAddressBreakpointImage( (ICAddressBreakpoint)breakpoint );
+		}
 		if ( breakpoint instanceof ICLineBreakpoint )
 		{
 			return getLineBreakpointImage( (ICLineBreakpoint)breakpoint );
@@ -513,6 +525,21 @@ public class CDTDebugModelPresentation extends LabelProvider
 		else
 		{
 			descriptor = new CImageDescriptor( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_BREAKPOINT_DISABLED ),  flags );
+		}
+		return fDebugImageRegistry.get( descriptor );
+	}
+
+	protected Image getAddressBreakpointImage( ICAddressBreakpoint breakpoint ) throws CoreException
+	{
+		int flags = computeBreakpointAdornmentFlags( breakpoint );
+		CImageDescriptor descriptor = null;
+		if ( breakpoint.isEnabled() )
+		{
+			descriptor = new CImageDescriptor( CDebugImages.DESC_OBJS_ADDRESS_BREAKPOINT_ENABLED,  flags );
+		}
+		else
+		{
+			descriptor = new CImageDescriptor( CDebugImages.DESC_OBJS_ADDRESS_BREAKPOINT_DISABLED,  flags );
 		}
 		return fDebugImageRegistry.get( descriptor );
 	}
@@ -549,14 +576,13 @@ public class CDTDebugModelPresentation extends LabelProvider
 
 	protected String getBreakpointText( IBreakpoint breakpoint, boolean qualified ) throws CoreException
 	{
-
-		if ( breakpoint instanceof ICLineBreakpoint )
-		{
-			return getLineBreakpointText( (ICLineBreakpoint)breakpoint, qualified );
-		}
 		if ( breakpoint instanceof ICAddressBreakpoint )
 		{
 			return getAddressBreakpointText( (ICAddressBreakpoint)breakpoint, qualified );
+		}
+		if ( breakpoint instanceof ICLineBreakpoint )
+		{
+			return getLineBreakpointText( (ICLineBreakpoint)breakpoint, qualified );
 		}
 		if ( breakpoint instanceof ICFunctionBreakpoint )
 		{
@@ -591,7 +617,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 
 	protected String getAddressBreakpointText( ICAddressBreakpoint breakpoint, boolean qualified ) throws CoreException
 	{
-		return null;
+		StringBuffer label = new StringBuffer();
+		appendResourceName( breakpoint, label, qualified );
+		appendAddress( breakpoint, label );
+		appendIgnoreCount( breakpoint, label );
+		appendCondition( breakpoint, label );
+		return label.toString();
 	}
 
 	protected String getFunctionBreakpointText( ICFunctionBreakpoint breakpoint, boolean qualified ) throws CoreException
@@ -605,7 +636,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		if ( !path.isEmpty() )
 			label.append( qualified ? path.toOSString() : path.lastSegment() );
 		return label;
-}
+	}
 	
 	protected StringBuffer appendLineNumber( ICLineBreakpoint breakpoint, StringBuffer label ) throws CoreException
 	{
@@ -617,6 +648,21 @@ public class CDTDebugModelPresentation extends LabelProvider
 			label.append( ' ' );
 			label.append( lineNumber );
 			label.append( ']' );
+		}
+		return label;
+	}
+
+	protected StringBuffer appendAddress( ICAddressBreakpoint breakpoint, StringBuffer label ) throws CoreException
+	{
+		try
+		{
+			long address = Long.parseLong( breakpoint.getAddress() );
+			label.append( " [address: " );
+			label.append( CDebugUtils.toHexAddressString( address ) );
+			label.append( ']' );
+		}
+		catch( NumberFormatException e )
+		{
 		}
 		return label;
 	}
@@ -722,5 +768,34 @@ public class CDTDebugModelPresentation extends LabelProvider
 	protected Image getExpressionImage( IExpression element ) throws DebugException
 	{
 		return fDebugImageRegistry.get( new CImageDescriptor( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_EXPRESSION ),  0 ) );
+	}
+
+	protected DisassemblyEditorInput getDisassemblyEditorInput( ICAddressBreakpoint breakpoint )
+	{
+		IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
+		for ( int i = 0; i < targets.length; ++i )
+		{
+			IResource resource = breakpoint.getMarker().getResource();
+			if ( resource != null && resource instanceof IFile && 
+				 targets[i].getAdapter( IExecFileInfo.class )!= null &&
+				 ((IFile)resource).getLocation().toOSString().equals( ((IExecFileInfo)targets[i].getAdapter( IExecFileInfo.class )).getExecFile().getLocation().toOSString() ) )
+			{
+				if ( targets[i].getAdapter( DisassemblyManager.class ) != null )
+				{
+					try
+					{
+						long address = Long.parseLong( breakpoint.getAddress() );
+						return new DisassemblyEditorInput( (IStorage)(((DisassemblyManager)targets[i].getAdapter( DisassemblyManager.class )).getSourceElement( address ) ) );
+					}
+					catch( NumberFormatException e )
+					{
+					}
+					catch( CoreException e )
+					{
+					}
+				}
+			}
+		}
+		return null;
 	}
 }

@@ -37,4 +37,11 @@ public interface IDisassemblyStorage extends IStorage
 	 * @return the line number for given address
 	 */
 	int getLineNumber( long address ) ;
+
+	/**
+	 * Returns the address of instruction at given line.
+	 * @param lineNumber - a line number 
+	 * @return the address of instruction at given line
+	 */
+	long getAddress( int lineNumber ) ;
 }

@@ -22,6 +22,7 @@ public class ManageBreakpointRulerActionDelegate extends AbstractRulerActionDele
 {
 	static final private String C_EDITOR_ID = "org.eclipse.cdt.ui.editor.CEditor"; //$NON-NLS-1$
 	static final private String ASM_EDITOR_ID = "org.eclipse.cdt.ui.editor.asm.AsmEditor"; //$NON-NLS-1$
+	static final private String DISASSEMBLY_EDITOR_ID = "org.eclipse.cdt.debug.ui.DisassemblyEditor"; //$NON-NLS-1$
 
 	/**
 	 * @see IEditorActionDelegate#setActiveEditor(IAction, IEditorPart)
@@ -31,7 +32,7 @@ public class ManageBreakpointRulerActionDelegate extends AbstractRulerActionDele
 		if ( targetEditor != null )
 		{
 			String id = targetEditor.getSite().getId();
-			if ( !id.equals( C_EDITOR_ID ) && !id.equals( ASM_EDITOR_ID ) )
+			if ( !id.equals( C_EDITOR_ID ) && !id.equals( ASM_EDITOR_ID ) && !id.equals( DISASSEMBLY_EDITOR_ID ) )
 				targetEditor = null;
 		}
 		super.setActiveEditor( callerAction, targetEditor );

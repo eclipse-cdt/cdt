@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
+import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyDocumentProvider;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
@@ -64,6 +65,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	protected Map fDebuggerPageMap;
 
 	private CDebugImageDescriptorRegistry fImageDescriptorRegistry;
+
+	// Document provider for disassembly editor	
+	private DisassemblyDocumentProvider fDisassemblyDocumentProvider = null;
 
 	/**
 	 * The constructor.
@@ -461,5 +465,15 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the document provider used for the disassembly editor
+	 */
+	public DisassemblyDocumentProvider getDisassemblyDocumentProvider() 
+	{
+		if ( fDisassemblyDocumentProvider == null )
+			fDisassemblyDocumentProvider = new DisassemblyDocumentProvider();
+		return fDisassemblyDocumentProvider;
 	}
 }

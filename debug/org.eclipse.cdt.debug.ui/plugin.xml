@@ -720,5 +720,16 @@
             id="org.eclipse.cdt.debug.ui.sourcelookup.SourcePropertyPage">
       </page>
    </extension>
+   <extension
+         id="org.eclipse.cdt.debug.ui.editors"
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%DisassemblyEditor.name"
+            extensions="dasm"
+            icon="icons/full/obj16/disassembly_obj.gif"
+            class="org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditor"
+            id="org.eclipse.cdt.debug.ui.DisassemblyEditor">
+      </editor>
+   </extension>
 
 </plugin>

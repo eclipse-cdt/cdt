@@ -5,8 +5,10 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILineBreakpoint;
@@ -287,7 +289,27 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 	 */
 	private void createTypeSpecificLabelFieldEditors( ICBreakpoint breakpoint )
 	{
-		if ( breakpoint instanceof ILineBreakpoint )
+		if ( breakpoint instanceof ICAddressBreakpoint )
+		{
+			ICAddressBreakpoint abrkpt = (ICAddressBreakpoint)breakpoint;
+			String address = "Not available";
+			try
+			{
+				address = CDebugUtils.toHexAddressString( Long.parseLong( abrkpt.getAddress() ) );
+			}
+			catch( CoreException e )
+			{
+			}
+			catch( NumberFormatException e )
+			{
+			}
+			if ( address != null )
+			{
+				addField( createLabelEditor( getFieldEditorParent(), "Address: ", address ) );
+			}
+			setTitle( "C/C++ Address Breakpoint Properties" );
+		}
+		else if ( breakpoint instanceof ILineBreakpoint )
 		{
 			String fileName = breakpoint.getMarker().getResource().getLocation().toOSString();
 			if ( fileName != null )

@@ -21,7 +21,7 @@ import org.eclipse.ui.IStorageEditorInput;
  */
 public class DisassemblyEditorInput implements IStorageEditorInput
 {
-	private final static String FILE_NAME_EXTENSION = ".s";
+	private final static String FILE_NAME_EXTENSION = ".dasm";
 	protected IStorage fStorage;
 
 	/**
@@ -110,6 +110,10 @@ public class DisassemblyEditorInput implements IStorageEditorInput
 			{
 				// ignore
 			}
+		}
+		if ( adapter.equals( DisassemblyEditorInput.class ) )
+		{
+			return this;
 		}
 		return null;
 	}

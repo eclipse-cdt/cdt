@@ -61,6 +61,20 @@ public class DisassemblyManager
 		}
 		return null;
 	}
+
+	public Object getSourceElement( long address )
+	{
+		DisassemblyStorage storage = null;
+		if ( getDisassemblyStorage() != null && getDisassemblyStorage().containsAddress( address ) )
+		{
+			storage = getDisassemblyStorage();
+		}
+		else
+		{
+			storage = loadDisassemblyStorage( address );
+		}			
+		return storage;
+	}
 	
 	private void setDebugTarget( CDebugTarget target )
 	{
@@ -124,6 +138,38 @@ public class DisassemblyManager
 				if ( instructions.length == 0 )
 				{
 					long address = frameInfo.getAddress();
+					if ( address >= 0 )
+					{
+						try
+						{
+							instructions = getFunctionInstructions( sm.getInstructions( address, address + DISASSEMBLY_BLOCK_SIZE ) );
+						}
+						catch( CDIException e )
+						{
+							CDebugCorePlugin.log( e );
+						}
+					}
+				}
+				if ( instructions.length > 0 )
+				{
+					setDisassemblyStorage( new DisassemblyStorage( getDebugTarget(), instructions ) );
+				}
+			}
+		}
+		return getDisassemblyStorage();
+	}
+
+	private DisassemblyStorage loadDisassemblyStorage( long address )
+	{
+		setDisassemblyStorage( null );
+		if ( getDebugTarget() != null && getDebugTarget().isSuspended() )
+		{
+			ICDISourceManager sm = getDebugTarget().getCDISession().getSourceManager();
+			if ( sm != null )
+			{
+				ICDIInstruction[] instructions = new ICDIInstruction[0];
+				if ( instructions.length == 0 )
+				{
 					if ( address >= 0 )
 					{
 						try

@@ -195,7 +195,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 				return;
 			IDocument document = getTextEditor().getDocumentProvider().getDocument( editorInput );
 			BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
-			int lineNumber = bv.getValidBreakpointLocation( document, ((ITextSelection)selection).getStartLine());
+			int lineNumber = bv.getValidLineBreakpointLocation( document, ((ITextSelection)selection).getStartLine());
 			if ( lineNumber > -1 )
 			{
 				try

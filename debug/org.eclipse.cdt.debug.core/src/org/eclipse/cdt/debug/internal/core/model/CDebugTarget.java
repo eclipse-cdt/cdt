@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.ICBreakpointManager;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
@@ -46,10 +47,12 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIRestartedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
+import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
@@ -385,9 +388,9 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean supportsBreakpoint( IBreakpoint breakpoint )
 	{
-/*
 		if ( !getConfiguration().supportsBreakpoints() )
 			return false;
+/*
 		if ( breakpoint instanceof ICBreakpoint )
 		{
 			ISourceLocator sl =  getSourceLocator();
@@ -399,7 +402,17 @@ public class CDebugTarget extends CDebugElement
 		}
 		return false;
 */
-		return getConfiguration().supportsBreakpoints();
+		if ( breakpoint instanceof ICAddressBreakpoint )
+		{
+			return supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
+		}
+		return true;
+	}
+
+	private boolean supportsAddressBreakpoint( ICAddressBreakpoint breakpoint )
+	{
+		return ( getExecFile() != null && 
+				 getExecFile().getLocation().toOSString().equals( breakpoint.getMarker().getResource().getLocation().toOSString() ) );		
 	}
 
 	/* (non-Javadoc)
@@ -628,7 +641,11 @@ public class CDebugTarget extends CDebugElement
 		{
 			try
 			{
-				if ( breakpoint instanceof ICLineBreakpoint )
+				if ( breakpoint instanceof ICAddressBreakpoint )
+				{
+					setAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
+				}
+				else if ( breakpoint instanceof ICLineBreakpoint )
 				{
 					setLineBreakpoint( (ICLineBreakpoint)breakpoint );
 				}
@@ -843,6 +860,8 @@ public class CDebugTarget extends CDebugElement
 		if ( adapter.equals( IExecFileInfo.class ) )
 			return this;
 		if ( adapter.equals( IRunToLine.class ) )
+			return this;
+		if ( adapter.equals( ICBreakpointManager.class ) )
 			return this;
 		if ( adapter.equals( DisassemblyManager.class ) )
 			return fDisassemblyManager;
@@ -1614,6 +1633,38 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 	
+	private void setAddressBreakpoint( ICAddressBreakpoint breakpoint ) throws DebugException
+	{
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		try
+		{
+			ICDILocation location = bm.createLocation( Long.parseLong( breakpoint.getAddress() ) );
+			ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
+			ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
+			if ( !getBreakpoints().containsKey( breakpoint ) )
+			{
+				getBreakpoints().put( breakpoint, cdiBreakpoint );
+				((CBreakpoint)breakpoint).incrementInstallCount();
+				if ( !breakpoint.isEnabled() )
+				{
+					cdiBreakpoint.setEnabled( false );
+				}
+			}
+		}
+		catch( CoreException ce )
+		{
+			requestFailed( "Operation failed. Reason: ", ce );
+		}
+		catch( CDIException e )
+		{
+			requestFailed( "Operation failed. Reason: ", e );
+		}
+		catch( NumberFormatException e )
+		{
+			requestFailed( "Operation failed. Reason: ", e );
+		}
+	}
+	
 	private void setWatchpoint( ICWatchpoint watchpoint ) throws DebugException
 	{
 		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
@@ -1900,9 +1951,12 @@ public class CDebugTarget extends CDebugElement
 	protected int getRealSourceMode()
 	{
 		ISourceLocator sl = getSourceLocator();
-		if ( sl != null && sl instanceof CSourceManager )
+		if ( sl != null && 
+			 sl instanceof IAdaptable && 
+			 ((IAdaptable)sl).getAdapter( ICSourceLocator.class ) != null &&
+			 ((IAdaptable)sl).getAdapter( ICSourceLocator.class ) instanceof CSourceManager )
 		{
-			return ((CSourceManager)sl).getRealMode();
+			return ((CSourceManager)((IAdaptable)sl).getAdapter( ICSourceLocator.class )).getRealMode();
 		}
 		return ISourceMode.MODE_SOURCE;
 	}
@@ -2034,5 +2088,28 @@ public class CDebugTarget extends CDebugElement
 	protected DisassemblyManager getDisassemblyManager()
 	{
 		return fDisassemblyManager;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICBreakpointManager#getBreakpointAddress(IBreakpoint)
+	 */
+	public long getBreakpointAddress( IBreakpoint breakpoint )
+	{
+		ICDIBreakpoint cdiBreakpoint = findCDIBreakpoint( breakpoint );
+		if ( cdiBreakpoint != null && cdiBreakpoint instanceof ICDILocationBreakpoint )
+		{
+			try
+			{
+				ICDILocation location = ((ICDILocationBreakpoint)cdiBreakpoint).getLocation();
+				if ( location != null )
+				{
+					return location.getAddress();
+				}
+			}
+			catch( CDIException e )
+			{
+			}
+		}
+		return 0;
 	}
 }

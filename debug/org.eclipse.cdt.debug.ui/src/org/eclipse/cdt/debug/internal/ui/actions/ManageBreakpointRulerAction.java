@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
+import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -102,7 +104,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 			try
 			{
 				IMarker[] markers = null;
-				if ( resource instanceof IFile )
+				if ( resource instanceof IFile && !(getTextEditor().getEditorInput() instanceof DisassemblyEditorInput) )
 				{
 					markers = resource.findMarkers( IBreakpoint.BREAKPOINT_MARKER,
 													true,
@@ -229,31 +231,16 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 	protected void addMarker()
 	{
 		IEditorInput editorInput = getTextEditor().getEditorInput();
-		IDocument document = getDocument();
 		int rulerLine = getVerticalRulerInfo().getLineOfLastMouseButtonActivity();
 		try
 		{
-			BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
-			int lineNumber = bv.getValidBreakpointLocation( document, rulerLine );
-			if ( lineNumber > 0 )
+			if ( editorInput instanceof IFileEditorInput )
 			{
-				String fileName = null;
-				if ( editorInput instanceof IFileEditorInput )
-				{
-					fileName = ((IFileEditorInput)editorInput).getFile().getLocation().toString();
-				}
-				if ( fileName != null )
-				{
-					if ( CDebugModel.lineBreakpointExists( fileName, lineNumber ) == null )
-					{
-						CDebugModel.createLineBreakpoint( ((IFileEditorInput)editorInput).getFile(),
-														  lineNumber,
-														  true,
-														  0,
-														  "",
-														  true );
-					}
-				}
+				createLineBreakpoint( (IFileEditorInput)editorInput, rulerLine );
+			}
+			else if ( editorInput.getAdapter( DisassemblyEditorInput.class ) != null )
+			{
+				createAddressBreakpoint( (DisassemblyEditorInput)editorInput.getAdapter( DisassemblyEditorInput.class ), rulerLine );
 			}
 		}
 		catch( DebugException e )
@@ -263,6 +250,46 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 		catch( CoreException e )
 		{
 			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
+		}
+	}
+
+	private void createLineBreakpoint( IFileEditorInput editorInput, int rulerLine ) throws CoreException
+	{
+		IDocument document = getDocument();
+		BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
+		int lineNumber = bv.getValidLineBreakpointLocation( document, rulerLine );
+		if ( lineNumber > -1 )
+		{
+			String fileName = editorInput.getFile().getLocation().toString();
+			if ( fileName != null )
+			{
+				if ( CDebugModel.lineBreakpointExists( fileName, lineNumber ) == null )
+				{
+					CDebugModel.createLineBreakpoint( editorInput.getFile(), lineNumber, true, 0, "", true );
+				}
+			}
+		}
+	}
+
+	private void createAddressBreakpoint( DisassemblyEditorInput editorInput, int rulerLine ) throws CoreException
+	{
+		IDocument document = getDocument();
+		BreakpointLocationVerifier bv = new BreakpointLocationVerifier();
+		int lineNumber = bv.getValidAddressBreakpointLocation( document, rulerLine );
+		if ( lineNumber > -1 )
+		{
+			IResource resource = (IResource)editorInput.getAdapter( IResource.class );
+			if ( resource != null )
+			{
+				if ( editorInput.getStorage() != null )
+				{
+					long address = ((IDisassemblyStorage)editorInput.getStorage()).getAddress( lineNumber );
+					if ( address != 0 && CDebugModel.addressBreakpointExists( resource, address ) == null )
+					{
+						CDebugModel.createAddressBreakpoint( resource, lineNumber, address, true, 0, "", true );
+					}
+				}
+			}
 		}
 	}
 

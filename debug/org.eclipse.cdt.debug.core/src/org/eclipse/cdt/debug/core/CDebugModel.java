@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
@@ -303,6 +305,60 @@ public class CDebugModel
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		return new CLineBreakpoint( resource, attributes, add );
+	}
+
+	public static ICAddressBreakpoint addressBreakpointExists( IResource resource, long address ) throws CoreException
+	{
+		String modelId = getPluginIdentifier();
+		String markerType = CAddressBreakpoint.getMarkerType();
+		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints = manager.getBreakpoints( modelId );
+		for ( int i = 0; i < breakpoints.length; i++ )
+		{
+			if ( !( breakpoints[i] instanceof ICAddressBreakpoint ) )
+			{
+				continue;
+			}
+			ICAddressBreakpoint breakpoint = (ICAddressBreakpoint)breakpoints[i];
+			if ( breakpoint.getMarker().getType().equals( markerType ) )
+			{
+				if ( breakpoint.getMarker().getResource().getLocation().toOSString().equals( resource.getLocation().toOSString() ) )
+				{
+					try
+					{
+						if ( Long.parseLong( breakpoint.getAddress() ) == address )
+						{
+							return breakpoint;
+						}
+					}
+					catch( NumberFormatException e )
+					{
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	public static ICAddressBreakpoint createAddressBreakpoint( IResource resource,
+															   int lineNumber, 
+															   long address, 
+															   boolean enabled,
+															   int ignoreCount, 
+															   String condition, 
+															   boolean add ) throws DebugException
+	{
+		HashMap attributes = new HashMap( 10 );
+		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
+//		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
+		attributes.put( IMarker.CHAR_START, new Integer( 0 ) );
+		attributes.put( IMarker.CHAR_END, new Integer( 0 ) );
+		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
+		attributes.put( ICAddressBreakpoint.ADDRESS, Long.toString( address ) );
+		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
+		attributes.put( ICBreakpoint.CONDITION, condition );
+		return new CAddressBreakpoint( resource, attributes, add );
 	}
 
 	public static ICWatchpoint watchpointExists( IResource resource, boolean write, boolean read, String expression ) throws CoreException

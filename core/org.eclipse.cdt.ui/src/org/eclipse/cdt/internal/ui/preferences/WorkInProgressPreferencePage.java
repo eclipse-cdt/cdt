@@ -267,7 +267,7 @@ public class WorkInProgressPreferencePage extends PreferencePage
 		store.setDefault(CSearchPage.EXTERNALMATCH_ENABLED, false);
 		store.setDefault(CSearchPage.EXTERNALMATCH_VISIBLE, 0);
 		store.setDefault(SourceIndexer.CDT_INDEXER_TIMEOUT,TIMEOUT_VALUE);
-		store.setDefault(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, true);
+		store.setDefault(AllTypesCache.ENABLE_BACKGROUND_TYPE_CACHE, false);
 	}
 	
 	/*

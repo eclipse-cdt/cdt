@@ -1,3 +1,11 @@
+2002-11-28 Alain Magloire
+
+	* plugin.xml: Make a targetID for AsmEditor to allow the debug
+	plugin to contributes breakpoint menus in the ruller.
+	
+	* src/.../internal/ui/editor/asm/AsmTextEditor.java (AsmTextEditor):
+	set the context id.
+
 2002-11-27 David Inglis
  
 	* plugin.properties:

@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @author Doug Schaefer
  */
-public interface ICASTClassSpecifier extends ICASTTypeSpecifier {
+public interface ICASTClassSpecifier extends ICASTDeclSpecifier {
 
 	/**
 	 * Is this a class, struct, or union.

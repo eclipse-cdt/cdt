@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.parser.ast2.c;
 /**
  * @author Doug Schaefer
  */
-public interface ICASTNamedTypeSpecifier extends ICASTTypeSpecifier {
+public interface ICASTNamedTypeSpecifier extends ICASTDeclSpecifier {
 
 	/**
 	 * @return the name of the type.

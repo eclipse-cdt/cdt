@@ -18,7 +18,7 @@ public interface ICASTParameterDeclaration extends ICASTNode {
 	/**
 	 * @return the decl specifiers for this parameter
 	 */
-	public ICASTDeclSpecifiers getDeclSpecifiers();
+	public ICASTDeclSpecifier getDeclSpecifiers();
 
 	/**
 	 * @return the declarator for this parameter

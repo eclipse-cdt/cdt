@@ -13,28 +13,25 @@ package org.eclipse.cdt.core.parser.ast2.c;
 /**
  * @author Doug Schaefer
  */
-public interface ICASTSimpleTypeSpecifier extends ICASTTypeSpecifier {
-
-	/**
-	 * Which simple type is this?
-	 * 
-	 * @return an enum value for the type
-	 */
+public interface ICASTFundamentalTypeSpecifier extends ICASTDeclSpecifier {
+	
 	public int getType();
 	public static final int t_void = 1;
 	public static final int t_char = 2;
-	public static final int t_short = 3;
-	public static final int t_int = 4;
-	public static final int t_long = 5;
-	public static final int t_float = 6;
-	public static final int t_double = 7;
-	public static final int t_signed = 8;
-	public static final int t_unsigned = 9;
+	public static final int t_int = 3;
+	public static final int t_float = 4;
+	public static final int t_double = 5;
 	// C ones
-	public static final int t__Bool = 10;
-	public static final int t__Complex = 11;
-	public static final int t__Imaginary = 12;
+	public static final int t__Bool = 6;
+	public static final int t__Complex = 7;
+	public static final int t__Imaginary = 8;
 	// C++ ones
-	public static final int t_wchar_t = 13;
-	public static final int t_bool = 14;
+	public static final int t_wchar_t = 9;
+	public static final int t_bool = 10;
+	
+	// Qualifiers
+	public boolean isSigned();
+	public boolean isUnsigned();
+	public boolean isLong();
+	public boolean isShort();
 }

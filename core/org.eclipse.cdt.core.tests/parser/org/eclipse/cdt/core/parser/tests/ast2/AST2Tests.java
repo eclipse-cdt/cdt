@@ -21,10 +21,10 @@ import org.eclipse.cdt.core.parser.ast2.c.ICASTDeclarationStatement;
 import org.eclipse.cdt.core.parser.ast2.c.ICASTDeclarator;
 import org.eclipse.cdt.core.parser.ast2.c.ICASTFunctionDeclarator;
 import org.eclipse.cdt.core.parser.ast2.c.ICASTFunctionDefinition;
+import org.eclipse.cdt.core.parser.ast2.c.ICASTFundamentalTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast2.c.ICASTIdExpression;
 import org.eclipse.cdt.core.parser.ast2.c.ICASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast2.c.ICASTSimpleDeclaration;
-import org.eclipse.cdt.core.parser.ast2.c.ICASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast2.c.ICASTTranslationUnit;
 
 /**
@@ -45,32 +45,32 @@ public class AST2Tests extends TestCase {
 		List declarations = tu.getDeclarations();
 		// int x;
 		ICASTSimpleDeclaration decl_x = (ICASTSimpleDeclaration)declarations.get(0);
-		ICASTSimpleTypeSpecifier type_x
-			= (ICASTSimpleTypeSpecifier)decl_x.getDeclSpecifiers().getTypeSpecifiers();
-		assertEquals(ICASTSimpleTypeSpecifier.t_int, type_x.getType());
+		ICASTFundamentalTypeSpecifier type_x
+			= (ICASTFundamentalTypeSpecifier)decl_x.getDeclSpecifier();
+		assertEquals(ICASTFundamentalTypeSpecifier.t_int, type_x.getType());
 		ICASTDeclarator dclr_x = (ICASTDeclarator)decl_x.getDeclarators().get(0);
 		assertEquals("x", dclr_x.getName().toString());
 		// void f(...)
 		ICASTFunctionDefinition def_f = (ICASTFunctionDefinition)declarations.get(1);
-		ICASTSimpleTypeSpecifier ret_f
-			= (ICASTSimpleTypeSpecifier)def_f.getReturnDeclSpecifiers().getTypeSpecifiers();
-		assertEquals(ICASTSimpleTypeSpecifier.t_void, ret_f.getType());
+		ICASTFundamentalTypeSpecifier ret_f
+			= (ICASTFundamentalTypeSpecifier)def_f.getReturnDeclSpecifiers();
+		assertEquals(ICASTFundamentalTypeSpecifier.t_void, ret_f.getType());
 		ICASTFunctionDeclarator dclr_f = (ICASTFunctionDeclarator)def_f.getDeclarator();
 		assertEquals("f", dclr_f.getName().toString());
 		// parameter - int y
 		ICASTParameterDeclaration decl_y = (ICASTParameterDeclaration)dclr_f.getParameters().get(0);
-		ICASTSimpleTypeSpecifier type_y
-			= (ICASTSimpleTypeSpecifier)decl_y.getDeclSpecifiers().getTypeSpecifiers().get(0);
-		assertEquals(ICASTSimpleTypeSpecifier.t_int, type_y.getType());
+		ICASTFundamentalTypeSpecifier type_y
+			= (ICASTFundamentalTypeSpecifier)decl_y.getDeclSpecifiers().getTypeSpecifiers().get(0);
+		assertEquals(ICASTFundamentalTypeSpecifier.t_int, type_y.getType());
 		ICASTDeclarator dclr_y = decl_y.getDeclarator();
 		assertEquals("y", dclr_y.getName().toString());
 		// int z
 		ICASTCompoundStatement body_f = (ICASTCompoundStatement)def_f.getBody();
 		ICASTDeclarationStatement dstmt_z = (ICASTDeclarationStatement)body_f.getStatements().get(0);
 		ICASTSimpleDeclaration decl_z = (ICASTSimpleDeclaration)dstmt_z.getDeclaration();
-		ICASTSimpleTypeSpecifier type_z
-			= (ICASTSimpleTypeSpecifier)decl_z.getDeclSpecifiers().getTypeSpecifiers().get(0);
-		assertEquals(ICASTSimpleTypeSpecifier.t_int, type_z.getType());
+		ICASTFundamentalTypeSpecifier type_z
+			= (ICASTFundamentalTypeSpecifier)decl_z.getDeclSpecifier().getTypeSpecifiers().get(0);
+		assertEquals(ICASTFundamentalTypeSpecifier.t_int, type_z.getType());
 		ICASTDeclarator dclr_z = (ICASTDeclarator)decl_z.getDeclarators().get(0);
 		assertEquals("z", dclr_z.getName().toString());
 		// = x + y

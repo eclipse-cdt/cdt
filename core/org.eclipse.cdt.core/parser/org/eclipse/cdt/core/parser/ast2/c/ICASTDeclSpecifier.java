@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @author Doug Schaefer
  */
-public interface ICASTDeclSpecifiers extends ICASTNode {
+public interface ICASTDeclSpecifier extends ICASTNode {
 
 	/**
 	 * This is the storage class for the declaration. At most one storage

@@ -20,7 +20,7 @@ public interface ICASTSimpleDeclaration extends ICASTDeclaration {
 	/**
 	 * @return the decl-specifiers for this declaration
 	 */
-	public ICASTDeclSpecifiers getDeclSpecifiers();
+	public ICASTDeclSpecifier getDeclSpecifier();
 	
 	/**
 	 * @return List of ICASTDeclarator

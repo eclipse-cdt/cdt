@@ -18,7 +18,7 @@ public interface ICASTFunctionDefinition extends ICASTDeclaration {
 	/**
 	 * @return the decl-specifiers for the return type of this function
 	 */
-	public ICASTDeclSpecifiers getReturnDeclSpecifiers();
+	public ICASTDeclSpecifier getReturnDeclSpecifiers();
 	
 	/**
 	 * @return the declarator for this function

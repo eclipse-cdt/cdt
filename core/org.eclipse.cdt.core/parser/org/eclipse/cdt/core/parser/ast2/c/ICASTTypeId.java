@@ -10,9 +10,25 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2.c;
 
+import java.util.List;
+
 /**
  * @author Doug Schaefer
  */
-public interface ICASTTypeSpecifier extends ICASTNode {
+public interface ICASTTypeId extends ICASTNode {
 
+	/**
+	 * @return List of ICASTTypeSpecifier
+	 */
+	public List getTypeSpecifiers();
+
+	/**
+	 * This is the abstract-declarator for this type id. Abstract declarators
+	 * are declarators without a name. Expect the name field fo the declarator
+	 * to be null.
+	 * 
+	 * @return
+	 */
+	public ICASTDeclarator getDeclarator();
+	
 }

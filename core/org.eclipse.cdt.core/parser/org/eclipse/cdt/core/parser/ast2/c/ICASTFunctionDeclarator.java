@@ -21,5 +21,9 @@ public interface ICASTFunctionDeclarator extends ICASTDeclarator {
 	 * @return list of ICASTParameterDeclaration
 	 */
 	public List getParameters();
+
+	public boolean isConst();
+	public boolean isVolatile();
 	
+	// TODO exception-specfication
 }

@@ -25,10 +25,12 @@ import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterValues;
 import org.eclipse.cdt.debug.mi.core.command.MIDataWriteRegisterValues;
+import org.eclipse.cdt.debug.mi.core.command.MIWhatis;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterValuesInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIRegisterValue;
+import org.eclipse.cdt.debug.mi.core.output.MIWhatisInfo;
 
 /**
  */
@@ -38,6 +40,9 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	int format = MIFormat.HEXADECIMAL;
 	Register parent;
 	String lastname;
+	String typename = null;
+	int childrenNumber = -1;
+	ICDIVariable[] variables = null;
 	
 	/**
 	 * A container class to hold the values of the registers and sub values
@@ -133,12 +138,24 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getTypeName()
 	 */
 	public String getTypeName() throws CDIException {
-		String v = getValueString();
-		if (v.startsWith("{")) {
-			// Use ptype?
-			return "struct ";
+		if (typename == null) {
+			Session session = (Session)getTarget().getSession();
+			MISession mi = session.getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			String var = "$" + getUniqName();
+			MIWhatis whatis = factory.createMIWhatis(var);
+			try {
+				mi.postCommand(whatis);
+				MIWhatisInfo info = whatis.getMIWhatisInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+				typename = info.getType();
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
+			}
 		}
-		return "int";
+		return typename;
 	}
 
 	/**
@@ -241,40 +258,46 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getChildrenNumber()
 	 */
 	public int getChildrenNumber() throws CDIException {
-		return getVariables().length;
+		if (childrenNumber == -1) {
+			childrenNumber = getVariables().length;
+		}
+		return childrenNumber;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */
 	public ICDIVariable[] getVariables() throws CDIException {
-		List aList = new ArrayList(1);
-		String v = getValueString();
-		Argument[] args = parse(getUniqName(), v);
-		/* The idea here s to get the first level
-		 * 
-	 	 * Argument[0] = { "xmm0", "{f = {0x0, 0x0, 0x0, 0x0}}"
-	 	 * Argument[1] = { "xmm0.f", "{0x0, 0x0, 0x0, 0x0}"}
-	 	 * Argument[2] = { "xmm0.f.0", "0x0"}
-	 	 * Argument[3] = { "xmm0.f.1", "0x0"}
-	 	 * Argument[4] = { "xmm0.f.2", "0x0"}
-	 	 * Argument[5] = { "xmm0.f.3", "0x0"}
-		 *
-		 * For example the children or xmm0.f are xmm0.f.{0,1,2,3,}
-		 *  
-		 */
-		for (int i = 0; i < args.length; i++) {
-			String n = args[i].getKey();
-			String u = getUniqName();
-			if (n.startsWith(u) && n.length() > u.length()) {
-				String p = n.substring(u.length());
-				StringTokenizer st = new StringTokenizer(p, ".");
-				if (st.countTokens() == 1) {
-					aList.add(new Register(this, (String)st.nextElement()));
+		if (variables == null) {
+			List aList = new ArrayList(1);
+			String v = getValueString();
+			Argument[] args = parse(getUniqName(), v);
+			/* The idea here is to get the first level
+			 * 
+	 		 * Argument[0] = { "xmm0", "{f = {0x0, 0x1, 0x2, 0x3}}"
+		 	 * Argument[1] = { "xmm0.f", "{0x0, 0x1, 0x2, 0x3}"}
+		 	 * Argument[2] = { "xmm0.f.0", "0x0"}
+	 		 * Argument[3] = { "xmm0.f.1", "0x1"}
+		 	 * Argument[4] = { "xmm0.f.2", "0x2"}
+		 	 * Argument[5] = { "xmm0.f.3", "0x3"}
+			 *
+			 * For example the children or xmm0.f are xmm0.f.{0,1,2,3,}
+			 *  
+			 */
+			for (int i = 0; i < args.length; i++) {
+				String n = args[i].getKey();
+				String u = getUniqName();
+				if (n.startsWith(u) && n.length() > u.length()) {
+					String p = n.substring(u.length());
+					StringTokenizer st = new StringTokenizer(p, ".");
+					if (st.countTokens() == 1) {
+						aList.add(new Register(this, (String)st.nextElement()));
+					}
 				}
 			}
-		}
-		return (ICDIVariable[])aList.toArray(new ICDIVariable[0]);
+	 		variables = (ICDIVariable[])aList.toArray(new ICDIVariable[0]);
+	 	}	
+		return variables;
 	}
 
 	/**
@@ -288,12 +311,12 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	 * We are parsing this:
 	 * "{f = {0x0, 0x0, 0x0, 0x0}}"
 	 * into:
-	 * Argument[0] = { "xmm0", "{f = {0x0, 0x0, 0x0, 0x0}}"
-	 * Argument[1] = { "xmm0.f", "{0x0, 0x0, 0x0, 0x0}"}
+	 * Argument[0] = { "xmm0", "{f = {0x0, 0x1, 0x2, 0x3}}"
+	 * Argument[1] = { "xmm0.f", "{0x0, 0x1, 0x2, 0x3}"}
 	 * Argument[2] = { "xmm0.f.0", "0x0"}
-	 * Argument[3] = { "xmm0.f.1", "0x0"}
-	 * Argument[4] = { "xmm0.f.2", "0x0"}
-	 * Argument[5] = { "xmm0.f.3", "0x0"}
+	 * Argument[3] = { "xmm0.f.1", "0x1"}
+	 * Argument[4] = { "xmm0.f.2", "0x2"}
+	 * Argument[5] = { "xmm0.f.3", "0x3"}
 	 */
 	Argument[] parse(String base, String v) throws CDIException {
 		List aList = new ArrayList(1);

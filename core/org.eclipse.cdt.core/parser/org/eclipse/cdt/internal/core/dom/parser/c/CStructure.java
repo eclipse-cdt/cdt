@@ -11,6 +11,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 
 /**
  * Created on Nov 8, 2004
@@ -75,9 +77,13 @@ public class CStructure implements ICompositeType, ICBinding {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
-	public IScope getScope() {
+	public IScope getScope() throws DOMException {
 	    IASTDeclSpecifier declSpec = (IASTDeclSpecifier) ( ( definition != null ) ? (IASTNode)definition : declarations[0] );
-		return CVisitor.getContainingScope( declSpec );
+		IScope scope = CVisitor.getContainingScope( declSpec );
+		while( scope instanceof ICCompositeTypeScope ){
+			scope = scope.getParent();
+		}
+		return scope;
 	}
 
 	/* (non-Javadoc)
@@ -168,4 +174,12 @@ public class CStructure implements ICompositeType, ICBinding {
         }
         return t;
     }
+
+	/**
+	 * @param compositeTypeSpec
+	 */
+	public void addDefinition(ICASTCompositeTypeSpecifier compositeTypeSpec) {
+		definition = compositeTypeSpec;
+		((CASTName)compositeTypeSpec.getName()).setBinding( this );
+	}
 }

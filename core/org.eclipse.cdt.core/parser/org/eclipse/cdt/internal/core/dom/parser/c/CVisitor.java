@@ -92,6 +92,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
@@ -770,8 +771,23 @@ public class CVisitor {
 
 	
 	private static IBinding createBinding( ICASTCompositeTypeSpecifier compositeTypeSpec ){
-	    ICompositeType binding = new CStructure( compositeTypeSpec );
-	    ICScope scope;
+		ICScope scope = null;
+		IBinding binding = null;
+		try {
+			scope = (ICScope) getContainingScope( compositeTypeSpec );
+			while( scope instanceof ICCompositeTypeScope )
+				scope = (ICScope) scope.getParent();
+				
+			binding = scope.getBinding( ICScope.NAMESPACE_TYPE_TAG, compositeTypeSpec.getName().toCharArray() );
+			if( binding != null ){
+				((CStructure)binding).addDefinition( compositeTypeSpec );
+				return binding;
+			}
+		} catch (DOMException e2) {
+		}
+		
+	    binding = new CStructure( compositeTypeSpec );
+	    
         try {
             scope = (ICScope) binding.getScope();
             scope.addBinding( binding );

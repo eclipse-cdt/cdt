@@ -2718,4 +2718,27 @@ public class AST2Tests extends AST2BaseTest {
    public void testBug84250() throws Exception {
       assertTrue( ((IASTDeclarationStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) parse( "void f() { int (*p) [2]; }", ParserLanguage.C ).getDeclarations()[0]).getBody()).getStatements()[0]).getDeclaration() instanceof IASTSimpleDeclaration ); //$NON-NLS-1$
    }
+  
+   public void testBug84186() throws Exception { 
+	   StringBuffer buffer = new StringBuffer();
+	   buffer.append( "struct s1 { struct s2 *s2p; /* ... */ }; // D1 \n"); //$NON-NLS-1$
+	   buffer.append( "struct s2 { struct s1 *s1p; /* ... */ }; // D2 \n"); //$NON-NLS-1$
+	   
+	   IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+	    CNameCollector col = new CNameCollector();
+	    CVisitor.visitTranslationUnit(tu, col);
+	
+	    assertEquals(col.size(), 6);
+	    
+	    ICompositeType s_ref = (ICompositeType) col.getName(1).resolveBinding();
+	    ICompositeType s_decl = (ICompositeType) col.getName(3).resolveBinding();
+	    
+	    assertSame( s_ref, s_decl );
+	    CVisitor.clearBindings( tu );
+	    
+	    s_decl = (ICompositeType) col.getName(3).resolveBinding();
+	    s_ref = (ICompositeType) col.getName(1).resolveBinding();
+	    
+	    assertSame( s_ref, s_decl );
+   }
 }

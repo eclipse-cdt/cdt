@@ -9,7 +9,6 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 
 /**
- * @author hamer
  *
  * This class is the source element requestor used by the completion engine.
  */

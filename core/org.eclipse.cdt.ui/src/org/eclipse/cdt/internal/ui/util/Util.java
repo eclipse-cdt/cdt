@@ -12,10 +12,6 @@ package org.eclipse.cdt.internal.ui.util;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 
-/**
- * @author hamer
- *
- */
 public class Util implements IDebugLogConstants{
 	public static boolean VERBOSE_CONTENTASSIST = false;
 	private Util() {

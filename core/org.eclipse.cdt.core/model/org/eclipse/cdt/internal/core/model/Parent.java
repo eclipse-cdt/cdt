@@ -44,7 +44,11 @@ public abstract class Parent extends CElement implements IParent {
 	 * Implementations override this method to support children
 	 */		
 	public ICElement[] getChildren() {
-		return getElementInfo().getChildren();
+		CElementInfo info = getElementInfo();
+		if (info != null)
+			return getElementInfo().getChildren();
+		else 
+			return new ICElement[]{};
 	}
 
 	/**

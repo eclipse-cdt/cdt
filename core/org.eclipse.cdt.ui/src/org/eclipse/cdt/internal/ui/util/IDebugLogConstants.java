@@ -10,12 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
-/**
- * @author hamer
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public interface IDebugLogConstants {
 	public class DebugLogConstant {
 		private DebugLogConstant( int value )

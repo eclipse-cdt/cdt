@@ -1,3 +1,6 @@
+2004-03-03 Hoda Amer
+	Added a couple of APIs to CUIPlugin + some cleanup
+	
 2004-03-03 John Camelon
 	Cleaned up usage of Enum.getValue() wrt encapsulation of enumerator value.  
 

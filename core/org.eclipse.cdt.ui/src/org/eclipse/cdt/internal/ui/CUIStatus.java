@@ -17,7 +17,23 @@ public class CUIStatus extends Status {
 	public CUIStatus(int code, String message, Throwable throwable) {
 		super(IStatus.ERROR, CUIPlugin.getPluginId(), code, message, throwable);
 	}
+	
+	private CUIStatus(int severity, int code, String message, Throwable throwable) {
+		super(severity, CUIPlugin.getPluginId(), code, message, throwable);
+	}
+	
+	public static IStatus createError(int code, String message, Throwable throwable) {
+		return new CUIStatus(IStatus.ERROR, code, message, throwable);
+	}
+	
+	public static IStatus createWarning(int code, String message, Throwable throwable) {
+		return new CUIStatus(IStatus.WARNING, code, message, throwable);
+	}
 
+	public static IStatus createInfo(int code, String message, Throwable throwable) {
+		return new CUIStatus(IStatus.INFO, code, message, throwable);
+	}
+	
 }
 
 

@@ -54,10 +54,31 @@ public class CElementLabelProvider extends LabelProvider {
 	public final static int SHOW_OVERLAY_ICONS = 0x010;
 
 	/**
-	 * Constant indicating the default label rendering.
-	 * Currently the default is equivalent to
-	 * <code>SHOW_PARAMETERS | SHOW_OVERLAY_ICONS</code>.
+	 * Flag (bit mask) indicating that Complation Units, Class Files, Types, Declarations and Members
+	 * should be rendered qualified.
+	 * Examples: java.lang.String, java.util.Vector.size()
+	 * 
+	 * @since 2.0
 	 */
+	public final static int SHOW_QUALIFIED=				0x400;
+
+	/**
+	 * Flag (bit mask) indicating that Complation Units, Class Files, Types, Declarations and Members
+	 * should be rendered qualified. The qualifcation is appended
+	 * Examples: String - java.lang, size() - java.util.Vector
+	 * 
+	 * @since 2.0
+	 */
+	public final static int SHOW_POST_QUALIFIED=	0x800;	
+	
+	
+	/**
+	 * Constant (value <code>0</code>) indicating that the label should show 
+	 * the basic images only.
+	 */
+	public final static int SHOW_BASICS= 0x000;
+	
+	
 	public final static int SHOW_DEFAULT= new Integer(SHOW_PARAMETERS | SHOW_OVERLAY_ICONS).intValue();
 	
 	private ImageRegistry fImageRegistry;

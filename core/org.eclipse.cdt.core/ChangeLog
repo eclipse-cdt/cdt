@@ -1,3 +1,6 @@
+2004-03-03 Hoda Amer
+	A fix for getChildren() to check if the getElementInfo() is null
+	
 2004-03-03 Alain Magloire
 
 	Note from Brent Nicolle PR 53520.

@@ -10,10 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
-/**
- * @author hamer
- *
- */
 public interface RelevanceConstants {
 	final int CASE_MATCH_RELEVANCE = 150;
 	final int EXACT_NAME_MATCH_RELEVANCE = 40;

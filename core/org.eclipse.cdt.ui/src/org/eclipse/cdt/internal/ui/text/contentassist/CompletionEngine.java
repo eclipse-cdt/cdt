@@ -66,7 +66,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
- * @author hamer
  *
  * This class is the entry point for code completions.
  * It contains a public API used to call ContentAssist on a given working copy 

@@ -9,12 +9,6 @@ package org.eclipse.cdt.internal.corext.template.c;
 import org.eclipse.cdt.internal.corext.template.ITemplateEditor;
 import org.eclipse.cdt.internal.corext.template.TemplateContext;
 
-/**
- * @author hamer
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
 public class CppFunctionContextType extends CompilationUnitContextType {
 
 	public CppFunctionContextType() {

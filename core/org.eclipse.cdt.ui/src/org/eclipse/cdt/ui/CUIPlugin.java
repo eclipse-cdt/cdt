@@ -13,8 +13,12 @@ package org.eclipse.cdt.ui;
 ***********************************************************************/
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -51,6 +55,10 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -394,5 +402,53 @@ public class CUIPlugin extends AbstractUIPlugin {
 			if(option != null) Util.VERBOSE_CONTENTASSIST = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 		}
 	}
-			
+	/**
+	 * Returns an array of all editors that have an unsaved content. If the identical content is 
+	 * presented in more than one editor, only one of those editor parts is part of the result.
+	 * 
+	 * @return an array of all dirty editor parts.
+	 */
+	
+	public static IEditorPart[] getDirtyEditors() {
+		Set inputs= new HashSet();
+		List result= new ArrayList(0);
+		IWorkbench workbench= getDefault().getWorkbench();
+		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+		for (int i= 0; i < windows.length; i++) {
+			IWorkbenchPage[] pages= windows[i].getPages();
+			for (int x= 0; x < pages.length; x++) {
+				IEditorPart[] editors= pages[x].getDirtyEditors();
+				for (int z= 0; z < editors.length; z++) {
+					IEditorPart ep= editors[z];
+					IEditorInput input= ep.getEditorInput();
+					if (!inputs.contains(input)) {
+						inputs.add(input);
+						result.add(ep);
+					}
+				}
+			}
+		}
+		return (IEditorPart[])result.toArray(new IEditorPart[result.size()]);
+	}
+	/**
+	 * Returns an array of all instanciated editors. 
+	 */
+	public static IEditorPart[] getInstanciatedEditors() {
+		List result= new ArrayList(0);
+		IWorkbench workbench= getDefault().getWorkbench();
+		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
+		for (int windowIndex= 0; windowIndex < windows.length; windowIndex++) {
+			IWorkbenchPage[] pages= windows[windowIndex].getPages();
+			for (int pageIndex= 0; pageIndex < pages.length; pageIndex++) {
+				IEditorReference[] references= pages[pageIndex].getEditorReferences();
+				for (int refIndex= 0; refIndex < references.length; refIndex++) {
+					IEditorPart editor= references[refIndex].getEditor(false);
+					if (editor != null)
+						result.add(editor);
+				}
+			}
+		}
+		return (IEditorPart[])result.toArray(new IEditorPart[result.size()]);
+	}
+	
 }

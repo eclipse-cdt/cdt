@@ -211,14 +211,14 @@ public class EditorUtility {
 	 * @param cu the original compilation unit (or another working copy)
 	 * @return the working copy of the compilation unit, or null if not found
 	*/     
-//	public static ITranslationUnit getWorkingCopy(ITranslationUnit cu) {
-//		if (cu == null)
-//			return null;
-//		if (cu.isWorkingCopy())
-//			return cu;
-//
-//		return (ITranslationUnit)cu.findSharedWorkingCopy(CUIPlugin.getBufferFactory());
-//	}
+	public static ITranslationUnit getWorkingCopy(ITranslationUnit cu) {
+		if (cu == null)
+			return null;
+		if (cu.isWorkingCopy())
+			return cu;
+
+		return (ITranslationUnit)cu.findSharedWorkingCopy(CUIPlugin.getBufferFactory());
+	}
 
 
 	/**

@@ -43,6 +43,10 @@ public class TextBuffer {
 	
 	private IDocument fDocument;
 	
+	public IDocument getDocument() {
+		return fDocument;
+	}
+	
 	private static final TextBufferFactory fgFactory= new TextBufferFactory();
 	
 	TextBuffer(IDocument document) {

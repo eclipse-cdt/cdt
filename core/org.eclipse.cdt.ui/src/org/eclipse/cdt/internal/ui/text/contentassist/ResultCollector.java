@@ -26,7 +26,6 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * @author hamer
  *
  * The Result Collector class receives information from the completion engine
  * as a completion requestor. It might also receive information from others 

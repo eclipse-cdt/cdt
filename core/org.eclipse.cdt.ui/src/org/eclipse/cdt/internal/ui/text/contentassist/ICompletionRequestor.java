@@ -13,12 +13,6 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
-/**
- * @author hamer
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
- */
 public interface ICompletionRequestor {
 	void acceptField(String name, String returnType, ASTAccessVisibility visibility, int completionStart, int completionLength, int relevance);
 	void acceptVariable(String name, String returnType, int completionStart, int completionLength, int relevance);

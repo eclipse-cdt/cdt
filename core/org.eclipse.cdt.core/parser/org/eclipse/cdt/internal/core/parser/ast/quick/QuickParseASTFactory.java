@@ -17,6 +17,9 @@ import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -99,5 +102,29 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 		IASTBaseSpecifier baseSpecifier = new ASTBaseSpecifier( astClassSpec, isVirtual, visibility );
 		((IASTQClassSpecifier)astClassSpec).addBaseClass(baseSpecifier);
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createElaboratedTypeSpecifier(org.eclipse.cdt.core.parser.ast.ClassKind, java.lang.String, int, int)
+     */
+    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(ClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset)
+    {
+        return new ASTElaboratedTypeSpecifier( elaboratedClassKind, typeName, startingOffset, endOffset );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createEnumerationSpecifier(java.lang.String, int)
+     */
+    public IASTEnumerationSpecifier createEnumerationSpecifier(String name, int startingOffset, int nameOffset)
+    {
+        return new ASTEnumerationSpecifier( name, startingOffset, nameOffset );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#addEnumerator(org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier, java.lang.String, int, int)
+     */
+    public void addEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int endingOffset)
+    {
+     	IASTEnumerator enumerator = new ASTEnumerator( enumeration, string, startingOffset, endingOffset );
+    }
 
 }

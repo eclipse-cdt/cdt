@@ -1,3 +1,6 @@
+2003-06-24 John Camelon
+	Updates for ISourceElementRequestor - elaborated types & enumerations.  
+
 2003-06-23 John Camelon
 	Updating SimpleDeclarations to move towards new Callback structure.  
 

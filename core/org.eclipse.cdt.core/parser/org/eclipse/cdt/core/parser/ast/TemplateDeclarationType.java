@@ -16,11 +16,11 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public class TemplateDeclarationType {
 	
-	public static final TemplateDeclarationType t_class = new TemplateDeclarationType(1);
-	public static final TemplateDeclarationType t_function = new TemplateDeclarationType( 2 );
-	public static final TemplateDeclarationType t_memberClass = new TemplateDeclarationType( 3 );
-	public static final TemplateDeclarationType t_method = new TemplateDeclarationType( 4 );
-	public static final TemplateDeclarationType t_field = new TemplateDeclarationType( 5 ); 
+	public static final TemplateDeclarationType CLASS = new TemplateDeclarationType(1);
+	public static final TemplateDeclarationType FUNCTION = new TemplateDeclarationType( 2 );
+	public static final TemplateDeclarationType MEMBERCLASS = new TemplateDeclarationType( 3 );
+	public static final TemplateDeclarationType METHOD = new TemplateDeclarationType( 4 );
+	public static final TemplateDeclarationType FIELD = new TemplateDeclarationType( 5 ); 
 	
 	
 	private final int type; 

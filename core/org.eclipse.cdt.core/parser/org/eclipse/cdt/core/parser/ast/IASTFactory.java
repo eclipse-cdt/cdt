@@ -54,6 +54,7 @@ public interface IASTFactory {
 		ClassNameType type, 
 		AccessVisibility access, 
 		IASTTemplateDeclaration ownerTemplateDeclaration, int startingOffset, int nameOffset );
+
 	/**
 	 * @param astClassSpec
 	 * @param isVirtual
@@ -61,5 +62,9 @@ public interface IASTFactory {
 	 * @param string
 	 */
 	public void addBaseSpecifier(IASTClassSpecifier astClassSpec, boolean isVirtual, AccessVisibility visibility, String string);
+
+    public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(ClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset );
+    public IASTEnumerationSpecifier createEnumerationSpecifier(String name, int startingOffset, int nameOffset );
+    public void addEnumerator(IASTEnumerationSpecifier enumeration, String string, int startingOffset, int endingOffset);
 	
 }

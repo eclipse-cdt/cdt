@@ -2337,7 +2337,7 @@ public class ParserSymbolTable {
 		}
 	
 		public void addParent( ISymbol parent ){
-			addParent( parent, false, AccessVisibility.v_public );
+			addParent( parent, false, AccessVisibility.PUBLIC );
 		}
 		public void addParent( ISymbol parent, boolean virtual, AccessVisibility visibility ){
 			if( _parentScopes == null ){

@@ -16,11 +16,12 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public class ClassKind {
 
-	public final static ClassKind k_class = new ClassKind( 1 );
-	public final static ClassKind k_struct = new ClassKind( 2 );
-	public final static ClassKind k_union = new ClassKind( 3 );
+	public final static ClassKind CLASS = new ClassKind( 1 );
+	public final static ClassKind STRUCT = new ClassKind( 2 );
+	public final static ClassKind UNION = new ClassKind( 3 );
+	public final static ClassKind ENUM = new ClassKind( 4 );
 
-	private ClassKind( int value )
+	protected ClassKind( int value )
 	{
 		this.value = value; 
 	}

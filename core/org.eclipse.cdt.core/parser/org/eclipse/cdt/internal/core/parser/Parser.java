@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.parser.ast.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -1580,19 +1582,19 @@ public class Parser implements IParser
                     {
                         try
                         {
-                            classSpecifier(decl, sdw.getScope());
+                            classSpecifier(decl, sdw );
                             return;
                         }
                         catch (Backtrack bt)
                         {
-                            elaboratedTypeSpecifier(decl);
+                            elaboratedTypeSpecifier(decl, sdw);
                             flags.setEncounteredTypename(true);
                             break;
                         }
                     }
                     else
                     {
-                        elaboratedTypeSpecifier(decl);
+                        elaboratedTypeSpecifier(decl, sdw);
                         flags.setEncounteredTypename(true);
                         break;
                     }
@@ -1601,20 +1603,20 @@ public class Parser implements IParser
                     {
                         try
                         {
-                            enumSpecifier(decl);
+                            enumSpecifier(decl, sdw);
                             break;
                         }
                         catch (Backtrack bt)
                         {
                             // this is an elaborated class specifier
-                            elaboratedTypeSpecifier(decl);
+                            elaboratedTypeSpecifier(decl, sdw);
                             flags.setEncounteredTypename(true);
                             break;
                         }
                     }
                     else
                     {
-                        elaboratedTypeSpecifier(decl);
+                        elaboratedTypeSpecifier(decl, sdw);
                         flags.setEncounteredTypename(true);
                         break;
                     }
@@ -1629,18 +1631,47 @@ public class Parser implements IParser
      * @param decl			Declaration which owns the elaborated type 
      * @throws Backtrack	request a backtrack
      */
-    private void elaboratedTypeSpecifier(Object decl) throws Backtrack
+    protected void elaboratedTypeSpecifier(Object decl, DeclarationWrapper sdw) throws Backtrack
     {
         // this is an elaborated class specifier
         Object elab = null;
+        IToken t = consume();
+        ClassKind eck = null; 
+        
+        switch( t.getType() )
+        {
+        	case Token.t_class:
+				eck = ClassKind.CLASS;
+				break;
+        	case Token.t_struct:
+				eck = ClassKind.STRUCT;
+				break;
+        	case Token.t_union:
+				eck = ClassKind.UNION;
+				break;        	
+        	case Token.t_enum:
+        		eck = ClassKind.ENUM;
+        		break;
+        	default: 
+        		break;
+        }
         try
         {
-            elab = callback.elaboratedTypeSpecifierBegin(decl, consume());
+            elab = callback.elaboratedTypeSpecifierBegin(decl, t );
         }
         catch (Exception e)
         {
         }
-        name();
+        
+        TokenDuple d = name();
+        
+        IASTElaboratedTypeSpecifier elaboratedTypeSpec = astFactory.createElaboratedTypeSpecifier( eck, d.toString(), t.getOffset(), 
+        		d.getLastToken().getEndOffset() );
+        		
+        sdw.setTypeSpecifier( elaboratedTypeSpec );
+        
+        requestor.acceptElaboratedTypeSpecifier( elaboratedTypeSpec );
+        
         try
         {
             callback.elaboratedTypeSpecifierName(elab);
@@ -2563,10 +2594,11 @@ public class Parser implements IParser
      * @param	owner		IParserCallback object that represents the declaration that owns this type specifier. 
      * @throws	Backtrack	request a backtrack
      */
-    protected void enumSpecifier(Object owner) throws Backtrack
+    protected void enumSpecifier(Object owner, DeclarationWrapper sdw) throws Backtrack
     {
         Object enumSpecifier = null;
         IToken mark = mark();
+        IToken identifier = null; 
         try
         {
             enumSpecifier =
@@ -2577,7 +2609,7 @@ public class Parser implements IParser
         }
         if (LT(1) == IToken.tIDENTIFIER)
         {
-            identifier();
+            identifier = identifier();
             try
             {
                 callback.enumSpecifierId(enumSpecifier);
@@ -2588,12 +2620,18 @@ public class Parser implements IParser
         }
         if (LT(1) == IToken.tLBRACE)
         {
+        	IASTEnumerationSpecifier enumeration = astFactory.createEnumerationSpecifier( 
+        		( ( identifier == null ) ? "" : identifier.getImage()), 
+        		mark.getOffset(), 
+				( ( identifier == null ) ? mark.getOffset() : identifier.getOffset()) );
             consume(IToken.tLBRACE);
             while (LT(1) != IToken.tRBRACE)
             {
                 Object defn;
+				IToken enumeratorIdentifier = null;
                 if (LT(1) == IToken.tIDENTIFIER)
                 {
+                	
                     defn = null;
                     try
                     {
@@ -2602,7 +2640,7 @@ public class Parser implements IParser
                     catch (Exception e)
                     {
                     }
-                    identifier();
+					enumeratorIdentifier = identifier();
                     try
                     {
                         callback.enumeratorId(defn);
@@ -2650,7 +2688,10 @@ public class Parser implements IParser
                 {
                 }
                 if (LT(1) == IToken.tRBRACE)
+                {
+                	astFactory.addEnumerator( enumeration, enumeratorIdentifier.toString(), enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset() ); 
                     break;
+                }
                 if (LT(1) != IToken.tCOMMA)
                 {
                     try
@@ -2662,17 +2703,24 @@ public class Parser implements IParser
                     }
                     throw backtrack;
                 }
+				astFactory.addEnumerator( enumeration, enumeratorIdentifier.toString(), enumeratorIdentifier.getOffset(), enumeratorIdentifier.getEndOffset() ); 
                 consume(IToken.tCOMMA);
             }
+            
+			IToken t = consume(IToken.tRBRACE);
             try
             {
+            	
                 callback.enumSpecifierEnd(
                     enumSpecifier,
-                    consume(IToken.tRBRACE));
+                    t );
             }
             catch (Exception e)
             {
             }
+			enumeration.setEndingOffset( t.getEndOffset() );
+			requestor.acceptEnumerationSpecifier( enumeration );
+			sdw.setTypeSpecifier( enumeration );
         }
         else
         {
@@ -2690,12 +2738,12 @@ public class Parser implements IParser
      * @param	owner		IParserCallback object that represents the declaration that owns this classSpecifier
      * @throws	Backtrack	request a backtrack
      */
-    protected void classSpecifier(Object owner, IASTScope scope)
+    protected void classSpecifier(Object owner, DeclarationWrapper sdw )
         throws Backtrack
     {
-        ClassNameType nameType = ClassNameType.t_identifier;
+        ClassNameType nameType = ClassNameType.IDENTIFIER;
         ClassKind classKind = null;
-        AccessVisibility access = AccessVisibility.v_public;
+        AccessVisibility access = AccessVisibility.PUBLIC;
         IToken classKey = null;
         IToken mark = mark();
         // class key
@@ -2703,16 +2751,16 @@ public class Parser implements IParser
         {
             case IToken.t_class :
                 classKey = consume();
-                classKind = ClassKind.k_class;
-                access = AccessVisibility.v_private;
+                classKind = ClassKind.CLASS;
+                access = AccessVisibility.PRIVATE;
                 break;
             case IToken.t_struct :
                 classKey = consume();
-                classKind = ClassKind.k_struct;
+                classKind = ClassKind.STRUCT;
                 break;
             case IToken.t_union :
                 classKey = consume();
-                classKind = ClassKind.k_union;
+                classKind = ClassKind.UNION;
                 break;
             default :
                 throw backtrack;
@@ -2739,7 +2787,7 @@ public class Parser implements IParser
             }
         }
         if (duple != null && !duple.isIdentifier())
-            nameType = ClassNameType.t_template;
+            nameType = ClassNameType.TEMPLATE;
         if (LT(1) != IToken.tCOLON && LT(1) != IToken.tLBRACE)
         {
             // this is not a classSpecification
@@ -2757,14 +2805,15 @@ public class Parser implements IParser
         IASTClassSpecifier astClassSpecifier =
             astFactory
                 .createClassSpecifier(
-                    scope,
+                    sdw.getScope(),
                     duple == null ? "" : duple.toString(),
                     classKind,
                     nameType,
                     access,
                     null,            //TODO add TemplateDeclaration here
-    classKey.getOffset(),
-        duple == null ? 0 : duple.getFirstToken().getOffset());
+   					 classKey.getOffset(),
+ 			       duple == null ? 0 : duple.getFirstToken().getOffset());
+ 		sdw.setTypeSpecifier(astClassSpecifier);
         // base clause
         if (LT(1) == IToken.tCOLON)
         {
@@ -2852,7 +2901,7 @@ public class Parser implements IParser
         {
         }
         boolean isVirtual = false;
-        AccessVisibility visibility = AccessVisibility.v_public;
+        AccessVisibility visibility = AccessVisibility.PUBLIC;
         TokenDuple nameDuple = null;
         baseSpecifierLoop : for (;;)
         {
@@ -2890,10 +2939,10 @@ public class Parser implements IParser
                     catch (Exception e)
                     {
                     }
-                    visibility = AccessVisibility.v_protected;
+                    visibility = AccessVisibility.PROTECTED;
                     break;
                 case IToken.t_private :
-                    visibility = AccessVisibility.v_private;
+                    visibility = AccessVisibility.PRIVATE;
                     try
                     {
                         callback.baseSpecifierVisibility(
@@ -2924,7 +2973,7 @@ public class Parser implements IParser
                             visibility,
                             nameDuple.toString());
                         isVirtual = false;
-                        visibility = AccessVisibility.v_public;
+                        visibility = AccessVisibility.PUBLIC;
                         nameDuple = null;
                         callback.baseSpecifierEnd(baseSpecifier);
                         baseSpecifier =

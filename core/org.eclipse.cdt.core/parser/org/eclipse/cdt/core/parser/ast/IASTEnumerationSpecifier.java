@@ -10,10 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import java.util.Iterator;
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTEnumerationSpecifier extends IASTTypeSpecifier {
+public interface IASTEnumerationSpecifier extends IASTTypeSpecifier, IASTOffsetableNamedElement {
 
+	public void addEnumerator( IASTEnumerator enumerator );
+	public Iterator getEnumerators(); 
 }

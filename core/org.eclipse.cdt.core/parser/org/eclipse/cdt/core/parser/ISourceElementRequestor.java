@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructor;
+import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -77,4 +78,6 @@ public interface ISourceElementRequestor {
 	public void exitNamespaceDefinition( IASTNamespaceDefinition namespaceDefinition ); 
 	public void exitInclusion( IASTInclusion inclusion ); 
 	public void exitCompilationUnit( IASTCompilationUnit compilationUnit );
+
+    public void acceptElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier elaboratedTypeSpec);
 }

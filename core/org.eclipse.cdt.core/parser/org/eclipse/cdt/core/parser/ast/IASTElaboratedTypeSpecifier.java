@@ -10,10 +10,14 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+
 /**
  * @author jcamelon
  *
  */
-public interface IASTElaboratedTypeSpecifier extends IASTTypeSpecifier {
+public interface IASTElaboratedTypeSpecifier extends IASTTypeSpecifier, IASTOffsetableElement {
 
+	public String getTypeName(); 
+	public ClassKind getClassKind();  
+	
 }

@@ -321,4 +321,13 @@ public class MatchLocator implements ISourceElementRequestor {
 		
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptElaboratedTypeSpecifier(org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier)
+     */
+    public void acceptElaboratedTypeSpecifier(IASTElaboratedTypeSpecifier elaboratedTypeSpec)
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

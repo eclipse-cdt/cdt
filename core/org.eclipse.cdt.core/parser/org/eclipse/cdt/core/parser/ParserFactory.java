@@ -11,8 +11,8 @@
 package org.eclipse.cdt.core.parser;
 
 import java.io.Reader;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;

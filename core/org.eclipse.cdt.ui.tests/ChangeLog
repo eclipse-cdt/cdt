@@ -1,3 +1,6 @@
+2003-06-24 John Camelon
+	Updates for ISourceElementRequestor - elaborated types & enumerations.  
+
 2003-06-23 John Camelon
 	Updated Factory infrastructure, constructors, etc. 
 	Introduced Preprocessor class for transitive closure calc. client.  

@@ -16,9 +16,9 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public class AccessVisibility {
 
-	public static final AccessVisibility v_public = new AccessVisibility( 1 );
-	public static final AccessVisibility v_protected = new AccessVisibility( 2 );
-	public static final AccessVisibility v_private = new AccessVisibility( 3 );
+	public static final AccessVisibility PUBLIC = new AccessVisibility( 1 );
+	public static final AccessVisibility PROTECTED = new AccessVisibility( 2 );
+	public static final AccessVisibility PRIVATE = new AccessVisibility( 3 );
 
 	private AccessVisibility( int constant)
 	{

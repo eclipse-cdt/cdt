@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 
 /**
  * @author jcamelon
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 public class DeclarationWrapper
 {
 	private final IASTScope scope;
+	private IASTTypeSpecifier typeSpecifier;
 	private List declarators = new ArrayList(); 
 	private boolean typeNamed = false;
 	private String name = null;
@@ -281,6 +283,22 @@ public class DeclarationWrapper
 	{
 		return Collections.unmodifiableList( declarators );
 	}
-	
+
+    /**
+     * @return
+     */
+    public IASTTypeSpecifier getTypeSpecifier()
+    {
+        return typeSpecifier;
+    }
+
+    /**
+     * @param specifier
+     */
+    public void setTypeSpecifier(IASTTypeSpecifier specifier)
+    {
+        typeSpecifier = specifier;
+    }
+
 }
 

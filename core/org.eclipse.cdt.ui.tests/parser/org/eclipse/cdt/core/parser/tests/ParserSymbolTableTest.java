@@ -267,10 +267,10 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol c    = table.newDerivableContainerSymbol("C");
 		
 		IDerivableContainerSymbol a    = table.newDerivableContainerSymbol("A");
-		a.addParent( c, true, AccessVisibility.v_public );
+		a.addParent( c, true, AccessVisibility.PUBLIC );
 		
 		IDerivableContainerSymbol b    = table.newDerivableContainerSymbol("B");
-		b.addParent( c, true, AccessVisibility.v_public );
+		b.addParent( c, true, AccessVisibility.PUBLIC );
 		
 		decl.addParent( a );
 		decl.addParent( b );

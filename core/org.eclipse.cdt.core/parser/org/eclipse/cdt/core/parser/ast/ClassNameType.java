@@ -16,8 +16,8 @@ package org.eclipse.cdt.core.parser.ast;
  */
 public class ClassNameType {
 
-	public static final ClassNameType t_identifier = new ClassNameType( 1 );
-	public static final ClassNameType t_template   = new ClassNameType( 2 ); 
+	public static final ClassNameType IDENTIFIER = new ClassNameType( 1 );
+	public static final ClassNameType TEMPLATE   = new ClassNameType( 2 ); 
 
 	private final int type; 
 	private ClassNameType( int t )

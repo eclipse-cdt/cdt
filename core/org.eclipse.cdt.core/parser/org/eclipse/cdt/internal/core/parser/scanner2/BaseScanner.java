@@ -2738,18 +2738,20 @@ abstract class BaseScanner implements IScanner {
    private CodeReader createReader(String path, String fileName)
    {
    	String finalPath = ScannerUtility.createReconciledPath(path, fileName);
-   	CodeReader reader = (CodeReader) fileCache.get(finalPath.toCharArray());
-	if (reader != null) 
+   	char [] finalPathc = finalPath.toCharArray();
+   	CodeReader reader = (CodeReader) fileCache.get(finalPathc);
+	if (reader != null)
 		return reader;  // found the file in the cache
-
+	
 	// create a new reader on this file (if the file does not exist we will get null)
 	reader = createReaderDuple(finalPath);
 	if (reader == null) 
 		return null;  // the file was not found
 	
 	if (reader.filename != null)
-		fileCache.put(reader.filename, reader);
-	
+		// put the full requested path in the cache -- it is more likely 
+		// to match next time than the reader.filename
+		fileCache.put(finalPathc, reader);
 	return reader;
    }
 

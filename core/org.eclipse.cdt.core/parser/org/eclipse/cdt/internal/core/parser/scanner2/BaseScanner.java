@@ -55,7 +55,9 @@ abstract class BaseScanner implements IScanner {
 
     protected static final char[] VA_ARGS_CHARARRAY = "__VA_ARGS__".toCharArray(); //$NON-NLS-1$
 
-	protected final IToken eocToken = new SimpleToken(IToken.tEOC, 0, null, 0);
+	// The eocToken marks the end of a completion parse.
+	// The offset is set to the max so that it is properly considered at the end of the parse.
+	protected final IToken eocToken = new SimpleToken(IToken.tEOC, Integer.MAX_VALUE, null, Integer.MAX_VALUE);
 	
     /**
      * @author jcamelon

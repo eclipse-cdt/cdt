@@ -1,3 +1,75 @@
+2002-10-25 Alain Magloire
+
+	Automatically suspend/resume gdb when setting a breakpoint.
+	The workflow when debuggin which gdb command prompt is to
+	hit CTRL-C set the breakpoint and continue.  The UI debugger
+	should be smart enought to do this by itself.  So if the
+	inferior is running, when setting a breakpoint the program
+	is suspended(target.suspend()), the suspend event is ignore
+	the breakpoint is set (--break-insert) and the target is resume.
+	To ignore a specific event, we use a (mis)behaviour of gdb that
+	associate the suspend(*stopped) with the last execution command.
+	(gdb)
+	111-exec-continue
+	111^running
+	(gdb)
+	222-exec-interrupt
+	222^done
+	(gdb)
+	111*stopped,signal-name="SIGINT",signal-meaning="Interrupt",
+	frame={addr="0x00010140",func="foo",args=[],file="try.c",line="13"}
+	(gdb)
+	In the case above event 111 is ignore.
+
+	* src/.../core/command/CLICommand.java (toString): Always put
+	the identifying token.
+	* src/.../core/command/Command.java (setToken): Removed.
+	(getUniqToken): New method returns a global uniq token.
+	(getToken): Returns a uniq token for the command.
+	* src/.../core/MIInferior.java (setTerminated): New argument token,
+	since now all MIEvent has the corresponding command token.
+	* src/.../core/MISession.java (cmdCount): Removed.
+	(postCommand): the command getToken() will return a uniq token.
+	* src/.../core/RxThread.java (processMIOOBRecord): MIEvent take
+	the corresponding command token as argument.
+	* src/.../core/TxThrea.java (token): Field removed, token are no
+	longer created in this tread.
+	* src/.../core/event/MIBreakpointEvent.java:
+	* src/.../core/event/MIBreakpointEvent.java:
+	* src/.../core/event/MIChangedEvent.java:
+	* src/.../core/event/MIDetachedEvent.java:
+	* src/.../core/event/MIEvent.java:
+	* src/.../core/event/MIFunctionFinishedEvent.java:
+	* src/.../core/event/MIGDBExitEvent.java:
+	* src/.../core/event/MIInferiorExitEvent.java:
+	* src/.../core/event/MILocationReachedEvent.java:
+	* src/.../core/event/MIMemoryChangedEvent.java:
+	* src/.../core/event/MIRegisterChangedEvent.java:
+	* src/.../core/event/MIRunningEvent.java:
+	* src/.../core/event/MISignalEvent.java:
+	* src/.../core/event/MISteppingRangeEvent.java:
+	* src/.../core/event/MIStoppedEvent.java:
+	* src/.../core/event/MIThreadExitEvent.java:
+	* src/.../core/event/MIVarChangedEvent.java:
+	* src/.../core/event/MIWatchpointScopeEvent.java:
+	* src/.../core/event/MIWatchpointTriggerEvent.java:
+	Calls super with getToken().
+	* src/.../core/cdi/BreakpointManager.java (allowProgramInterruption):
+	New method to allow suspending the program to set a breakpoint.
+	(suspendInferior): get the last token execution an ignore the suspend
+	event.
+	* src/.../core/cdi/CTarget.java (getLastExecutionToken): New method
+	returns the token of the last execution command.
+	* src/.../core/cdi/EventManager.java (enableEventToken): New method.
+	(enableEventTokens): New method.
+	(disableEventToken): New method.
+	(disableEventTokens): New method.
+	(update): Ignore token in the disable list.
+	* src/.../core/cdi/RegisterManager.java (update): MIEvent takes
+	a token.
+	* src/.../core/cdi/Variable.java (setValue): MIEvent takes a token.
+	* src/.../core/cdi/VariableManager.java (update): MIEvent takes a token.
+
 2002-10-24 Alain Magloire
 
 	* src/.../core/RxThread.java (processMIOutput): Fire a

@@ -147,7 +147,10 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 				return deferredInstance( arguments );
 			} 
 			
-			IContainerSymbol symbol = template.getTemplatedSymbol();
+			IContainerSymbol symbol = template.getTemplatedSymbol(); 
+			ISymbol temp = TemplateEngine.checkForTemplateExplicitSpecialization( template, symbol, actualArgs );
+			symbol = (IContainerSymbol) ( temp != null ? temp : symbol);
+				
 			instance = (IContainerSymbol) symbol.instantiate( template, map );
 			addInstantiation( instance, actualArgs );
 			return instance;
@@ -227,6 +230,45 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	public boolean hasSpecializations(){
 		return ( _specializations != null && !_specializations.isEmpty() );
 	}
+	
+	public void addExplicitSpecialization( ISymbol symbol, List args ) throws ParserSymbolTableException{
+		
+		List actualArgs = TemplateEngine.verifyExplicitArguments( this, args, symbol );
+		
+		Map map = getExplicitSpecializations();
+		
+		Map specs = null;
+		if( map.containsKey( actualArgs ) ){
+			specs = (Map) map.get( actualArgs );
+		} else {
+			specs = new HashMap();
+			map.put( new LinkedList( actualArgs ), specs );
+		}
+		
+		ISymbol found = null;
+		try{
+			if( symbol.isType( TypeInfo.t_function ) || symbol.isType( TypeInfo.t_constructor ) ){
+				List fnArgs = new LinkedList();
+				Iterator iter = ((IParameterizedSymbol)symbol).getParameterList().iterator();
+				while( iter.hasNext() ){
+					fnArgs.add( ((ISymbol)iter.next()).getTypeInfo() );
+				}
+				found = getTemplatedSymbol().lookupMethodForDefinition( symbol.getName(), fnArgs );
+			} else {
+				found = getTemplatedSymbol().lookupMemberForDefinition( symbol.getName() );
+			}
+		} catch (ParserSymbolTableException e) {
+		}
+		if( found == null && getTemplatedSymbol().getName().equals( symbol.getName() ) ){
+			found = getTemplatedSymbol();
+		}
+		
+		if( found != null ){
+			symbol.setIsTemplateMember( true );
+			symbol.setContainingSymbol( found.getContainingSymbol() );
+			specs.put( found, symbol );
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol#addSpecialization(org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol)
@@ -304,15 +346,17 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	public IDeferredTemplateInstance deferredInstance( List args ){
 		return new DeferredTemplateInstance( getSymbolTable(), this, args );
 	}
-	
-	public ISpecializedSymbol findSpecialization(List parameters, List arguments) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+	public Map getExplicitSpecializations() {
+		if( _explicitSpecializations == null ){
+			_explicitSpecializations = new HashMap();
+		}
+		return _explicitSpecializations;
+	}
 	
-	private		LinkedList	_specializations;		//template specializations
-	private		HashMap		_defnParameterMap;		//members could be defined with different template parameter names
+	private		LinkedList	_specializations;		  //template specializations
+	private     HashMap		_explicitSpecializations; //explicit specializations
+	private		HashMap		_defnParameterMap;		  //members could be defined with different template parameter names
 	private 	HashMap 	_instantiations;		
 	
 }

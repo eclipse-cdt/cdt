@@ -24,17 +24,32 @@ import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.LookupData;
  */
 public class TemplateFactory implements ITemplateFactory {
 
-	protected TemplateFactory( ITemplateSymbol primary, List params ){
+	protected TemplateFactory( ITemplateSymbol primary, List params, List args ){
 		templatesList = new LinkedList();
 		templatesList.add( primary );
 		 
 		parametersList = new LinkedList();
 		parametersList.add( new LinkedList( params ) );
+		
+		argumentsList = new LinkedList();
+		argumentsList.add( args != null ? new LinkedList( args ) : new LinkedList() );
 	}
 	
-	protected TemplateFactory( List templates, List params ){
-		templatesList  = templates;
-		parametersList = params;
+	protected TemplateFactory( List templates, List params, List args ){
+		templatesList = templates;
+		parametersList =  params;
+		argumentsList = args;
+	}
+	
+	protected TemplateFactory( Set functions, List params, List args ){
+		templatesList = new LinkedList();
+		templateFunctions = functions;
+		
+		parametersList = new LinkedList();
+		parametersList.add( new LinkedList( params ) );
+		
+		argumentsList = new LinkedList();
+		argumentsList.add( args != null ? new LinkedList( args ) : new LinkedList() );
 	}
 	
 	public ITemplateFactory lookupTemplateForMemberDefinition( String name, List parameters, List arguments ) throws ParserSymbolTableException{
@@ -55,11 +70,13 @@ public class TemplateFactory implements ITemplateFactory {
 			if( template != null ){
 				List newTemplatesList = new LinkedList( templatesList  );
 				List newParamsList    = new LinkedList( parametersList );
+				List newArgsList      = new LinkedList( argumentsList );
 				
 				newTemplatesList.add( template );
 				newParamsList.add( new LinkedList( parameters ) );
+				newArgsList.add( arguments != null ? new LinkedList( arguments ) : new LinkedList() );
 				
-				return new TemplateFactory( newTemplatesList, newParamsList );
+				return new TemplateFactory( newTemplatesList, newParamsList, newArgsList );
 			}
 		}
 		
@@ -70,6 +87,11 @@ public class TemplateFactory implements ITemplateFactory {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ITemplateFactory#addSymbol(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */
 	public void addSymbol( ISymbol symbol ) throws ParserSymbolTableException {
+		if( ((List)getParametersList().get( 0 )).isEmpty() ){
+			addExplicitSpecialization( symbol );
+			return;
+		}
+		
 		Iterator templatesIter  = getTemplatesList().iterator();
 		Iterator parametersIter = getParametersList().iterator();
 		
@@ -106,10 +128,34 @@ public class TemplateFactory implements ITemplateFactory {
 		}
 	}
 
+	private void addExplicitSpecialization( ISymbol symbol ) throws ParserSymbolTableException {
+		Iterator templatesIter = getTemplatesList().iterator();
+		Iterator argsIter = getArgumentsList().iterator();
+		
+		while( templatesIter.hasNext() ){
+			ITemplateSymbol template = (ITemplateSymbol)templatesIter.next();
+			
+			template.addExplicitSpecialization( symbol, (List) argsIter.next() );
+		}
+		
+		if( getTemplateFunctions() != null && argsIter.hasNext() ){
+			List args = (List) argsIter.next();
+			ITemplateSymbol template = TemplateEngine.resolveTemplateFunctions( getTemplateFunctions(), args, symbol );
+			if( template != null ){
+				template.addExplicitSpecialization( symbol, args );
+			} else {
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
+			}
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ITemplateFactory#lookupMemberForDefinition(java.lang.String)
 	 */
 	public ISymbol lookupMemberForDefinition(String name) throws ParserSymbolTableException {
+		if( getTemplateFunctions() != null ){
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+		}
 		Set keys = getPrimaryTemplate().getContainedSymbols().keySet();
 		IContainerSymbol symbol = (IContainerSymbol) getPrimaryTemplate().getContainedSymbols().get( keys.iterator().next() );
 
@@ -120,6 +166,10 @@ public class TemplateFactory implements ITemplateFactory {
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ITemplateFactory#lookupMemberFunctionForDefinition(java.lang.String, java.util.List)
 	 */
 	public IParameterizedSymbol lookupMemberFunctionForDefinition( String name, List params) throws ParserSymbolTableException {
+		if( getTemplateFunctions() != null ){
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+		}
+		
 		Set keys = getPrimaryTemplate().getContainedSymbols().keySet();
 		IContainerSymbol symbol = (IContainerSymbol) getPrimaryTemplate().getContainedSymbols().get( keys.iterator().next() );
 
@@ -157,7 +207,15 @@ public class TemplateFactory implements ITemplateFactory {
 	protected List getParametersList() {
 		return parametersList;
 	}
+	protected List getArgumentsList(){
+		return argumentsList;
+	}
+	protected Set getTemplateFunctions(){
+		return templateFunctions;
+	}
 
+	private Set  templateFunctions;
 	private List templatesList;
 	private List parametersList;
+	private List argumentsList;
 }

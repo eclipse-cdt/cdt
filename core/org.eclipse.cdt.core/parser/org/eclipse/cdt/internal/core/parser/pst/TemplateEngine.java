@@ -627,7 +627,7 @@ public final class TemplateEngine {
 
 		List aList = function.getParameterList();
 		LinkedList args = new LinkedList();
-		
+		 
 		Iterator iter = aList.iterator();
 		while( iter.hasNext() ){
 			ISymbol symbol = (ISymbol) iter.next();
@@ -646,7 +646,7 @@ public final class TemplateEngine {
 	 * type (A), and an attempt is made to find template argument vaules that will make P, 
 	 * after substitution of the deduced values, compatible with A.
 	 */
-	static private Map deduceTemplateArguments( IParameterizedSymbol template, List arguments ){
+	static private Map deduceTemplateArguments( ITemplateSymbol template, List arguments ){
 		if( template.getContainedSymbols() == null || template.getContainedSymbols().size() != 1 ){
 			return null;
 		}
@@ -902,18 +902,18 @@ public final class TemplateEngine {
 			//primary definition or specialization?
 			boolean forPrimary = true;
 			
-			if( arguments != null ){
-				if( !parameters.isEmpty() ){
-					if( arguments.size() != parameters.size() ){
-						forPrimary = false;
-					} else {
-						Iterator pIter = parameters.iterator();
-						Iterator aIter = arguments.iterator();
-						while( pIter.hasNext() ){
-							if( pIter.next() != ((TypeInfo) aIter.next()).getTypeSymbol() ){
-								forPrimary = false;
-								break;
-							}
+			if( parameters.size() == 0 ){
+				forPrimary = false;
+			} else if( arguments != null ){
+				if( arguments.size() != parameters.size() ){
+					forPrimary = false;
+				} else if( !parameters.isEmpty() ){
+					Iterator pIter = parameters.iterator();
+					Iterator aIter = arguments.iterator();
+					while( pIter.hasNext() ){
+						if( pIter.next() != ((TypeInfo) aIter.next()).getTypeSymbol() ){
+							forPrimary = false;
+							break;
 						}
 					}
 				}
@@ -931,21 +931,8 @@ public final class TemplateEngine {
 			}
 			
 			//specialization 
-			if( parameters.isEmpty() && !arguments.isEmpty() ){
-				ISpecializedSymbol spec = primary.findSpecialization( parameters, arguments );
-
-				if( spec == null ){
-					spec = template.getSymbolTable().newSpecializedSymbol( primary.getName() );
-					
-					Iterator iter = arguments.iterator();
-					while( iter.hasNext() ){
-						spec.addArgument( (TypeInfo) iter.next() ); 
-					}
-					
-					primary.addSpecialization( spec );
-				}
-				
-				return spec;
+			if( parameters.isEmpty() ){
+				return primary;
 			}
 			
 			//partial specialization
@@ -1140,4 +1127,94 @@ public final class TemplateEngine {
 		return true;
 	}
 	
+	static protected List verifyExplicitArguments( ITemplateSymbol template, List arguments, ISymbol symbol ) throws ParserSymbolTableException{
+		List actualArgs = new LinkedList();
+		
+		Iterator params = template.getParameterList().iterator();
+		Iterator args   = arguments.iterator();
+		
+		while( params.hasNext() ){
+			ISymbol param = (ISymbol) params.next();
+			if( args.hasNext() ){
+				TypeInfo arg = (TypeInfo) args.next();
+				if( matchTemplateParameterAndArgument( param, arg ) ){
+					actualArgs.add( arg );
+				} else {
+					throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );
+				}
+			} else {
+				//14.7.3-11 a trailing template-argument can be left unspecified in the template-id naming an explicit
+				//function template specialization provided it can be deduced from the function argument type
+				if( template.getTemplatedSymbol() instanceof IParameterizedSymbol &&
+					symbol instanceof IParameterizedSymbol && template.getTemplatedSymbol().getName().equals( symbol.getName() ) )
+				{
+					Map map = deduceTemplateArgumentsUsingParameterList( template, (IParameterizedSymbol) symbol ); 
+					if( map != null && map.containsKey( param ) ){
+						actualArgs.add( map.get( param ) );
+					} else {
+						throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );
+					}
+				}
+			}
+		}
+		return actualArgs;
+	}
+	
+	static protected ITemplateSymbol resolveTemplateFunctions( Set functions, List args, ISymbol symbol ) throws ParserSymbolTableException{
+		ITemplateSymbol template = null;
+		
+		Iterator iter = functions.iterator();
+		
+		outer: while( iter.hasNext() ){
+			IParameterizedSymbol fn = (IParameterizedSymbol) iter.next();
+			ITemplateSymbol tmpl = (ITemplateSymbol) fn.getContainingSymbol();
+			
+			Map map = deduceTemplateArgumentsUsingParameterList( tmpl, (IParameterizedSymbol) symbol );
+			
+			if( map == null )
+				continue;
+			else {
+				Iterator pIter = tmpl.getParameterList().iterator();
+				Iterator aIter = args.iterator();
+				while( pIter.hasNext() && aIter.hasNext() ){
+					ISymbol param = (ISymbol) pIter.next();
+					TypeInfo arg = (TypeInfo) aIter.next();
+					if( map.containsKey( param ) ) {
+						if( !map.get( param ).equals( arg )){
+							continue outer;
+						}
+					} else if( !matchTemplateParameterAndArgument( param, arg )){
+						continue outer;
+					}
+				}
+				//made it this far, its a match
+				if( template != null ){
+					throw new ParserSymbolTableException(ParserSymbolTableException.r_Ambiguous );
+				} else {
+					template = tmpl;
+				}
+			}
+		}
+		
+		return template;
+	}
+	static protected ISymbol checkForTemplateExplicitSpecialization( ITemplateSymbol template, ISymbol symbol, List arguments ){
+		if( !template.getExplicitSpecializations().isEmpty() ){
+			//TODO: could optimize this if we had a TypeInfo.hashCode()
+			Iterator iter = template.getExplicitSpecializations().keySet().iterator();
+			List args = null;
+			while( iter.hasNext() ){
+				args = (List) iter.next();
+				
+				if( args.equals( arguments ) ){
+					Map explicitMap = (Map) template.getExplicitSpecializations().get( args );
+					if( explicitMap.containsKey( symbol ) ){
+						return (ISymbol) explicitMap.get( symbol );
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
 }

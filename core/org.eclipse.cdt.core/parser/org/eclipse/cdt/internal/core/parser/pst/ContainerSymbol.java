@@ -93,6 +93,18 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 						continue;
 					}
 					
+					if( !template.getExplicitSpecializations().isEmpty() ){
+						List argList = new LinkedList();
+						Iterator templateParams = template.getParameterList().iterator();
+						while( templateParams.hasNext() ){
+							argList.add( argMap.get( templateParams.next() ) );
+						}
+						
+						ISymbol temp = TemplateEngine.checkForTemplateExplicitSpecialization( template, symbol, argList );
+						if( temp != null )
+							containedSymbol = temp;
+					}
+					
 					Map instanceMap = argMap;
 					if( template.getDefinitionParameterMap() != null && 
 						template.getDefinitionParameterMap().containsKey( containedSymbol ) )
@@ -727,14 +739,41 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		LookupData data = new LookupData( name, TypeInfo.t_any );
 		
 		ParserSymbolTable.lookup( data, this );
-		ISymbol look = ParserSymbolTable.resolveAmbiguities( data );
 		
-		if( look instanceof ITemplateSymbol ){
-			ITemplateSymbol template = TemplateEngine.selectTemplateOrSpecialization( (ITemplateSymbol) look, parameters, arguments );
-			if( template != null ){
-				return new TemplateFactory( template, parameters );
+		Object look = null;
+		try{
+			look = ParserSymbolTable.resolveAmbiguities( data );
+		} catch ( ParserSymbolTableException e ){
+			if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction ){
+				throw e;
+			}
+			if( !data.foundItems.isEmpty() ){
+				look = data.foundItems.get( name );
+				if(!( look instanceof List ) ){
+					throw new ParserSymbolTableError();
+				}
 			}
 		}
+		
+		ITemplateSymbol template = (ITemplateSymbol) (( look instanceof ITemplateSymbol ) ? look : null);
+		if( template == null ){
+			if( look instanceof ISymbol ){
+				ISymbol symbol = (ISymbol) look;
+				if( symbol.isTemplateMember() && symbol.getContainingSymbol().isType( TypeInfo.t_template ) ){
+					template = (ITemplateSymbol) symbol.getContainingSymbol();
+				}	
+			}
+			
+		}
+		if( template != null ){
+			template = TemplateEngine.selectTemplateOrSpecialization( template, parameters, arguments );
+			if( template != null ){
+				return new TemplateFactory( template, parameters, arguments );
+			}
+		} else if ( look instanceof List ){
+			return new TemplateFactory( new HashSet( (List)look ), parameters, arguments );
+		}
+		
 		return null;
 	}
 	

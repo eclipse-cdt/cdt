@@ -38,11 +38,12 @@ public interface ITemplateSymbol extends IParameterizedSymbol {
 	
 	public Map getDefinitionParameterMap();
 	
-	public ISpecializedSymbol findSpecialization(List parameters, List arguments);
 	public IContainerSymbol findInstantiation( List arguments );
 	public List findArgumentsFor( IContainerSymbol instance );
 	
 	public void addInstantiation( IContainerSymbol instance, List args );
+	
+	public void addExplicitSpecialization( ISymbol symbol, List args ) throws ParserSymbolTableException;
 	
 	/**
 	 * 
@@ -56,5 +57,6 @@ public interface ITemplateSymbol extends IParameterizedSymbol {
 	public ISymbol instantiate( List args ) throws ParserSymbolTableException;
 	
 	public IDeferredTemplateInstance deferredInstance( List args );
-
+	
+	public Map getExplicitSpecializations();
 }

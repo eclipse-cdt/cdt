@@ -485,12 +485,10 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		IDerivableContainerSymbol S = table.newDerivableContainerSymbol( "S", TypeInfo.t_struct );
 		f.addSymbol( S );
 		
-		ISymbol look = null;
-		
 		List args = new LinkedList();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, S ) );
 		try{
-			look = f.lookupTemplate( "X", args );
+			f.lookupTemplate( "X", args );
 			assertTrue( false );
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplateArgument );
@@ -499,7 +497,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		args.clear();
 		args.add( new TypeInfo( TypeInfo.t_type, 0, S, new PtrOp( PtrOp.t_pointer ), false ) );
 		try{
-			look = f.lookupTemplate( "X", args );
+			f.lookupTemplate( "X", args );
 			assertTrue( false );
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplateArgument );
@@ -1620,7 +1618,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 		TypeInfo type = (TypeInfo) iter.next();
 		assertTrue( type.isType( TypeInfo.t_int ) );
 	}
-	
+
 	/**
 	 * A template-parameter shall not be redeclared within its scope.  A template-parameter shall
 	 * not have the same name as the template name.
@@ -1636,7 +1634,7 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 	 * 
 	 * @throws Exception
 	 */
-	  public void test_14_6_1__4_ParameterRedeclaration() throws Exception{
+	public void test_14_6_1__4_ParameterRedeclaration() throws Exception{
 		newTable();
 		
 		ITemplateSymbol template = table.newTemplateSymbol( "Y" );
@@ -1676,8 +1674,212 @@ public class ParserSymbolTableTemplateTests extends TestCase {
 			assertEquals( e.reason, ParserSymbolTableException.r_BadTemplateParameter );
 		}
 	}
+		
+		
+	  /**
+	   * A member of an explicitly specialized class shall be explicitly defined in the same
+	   * manner as members of normal classes
+	   * 
+	   * template< class T > struct A {
+	   *     void f( T ) {}
+	   * };
+	   * 
+	   * template <> struct A< int >{
+	   *    void f( int );
+	   * }
+	   * 
+	   * void A< int >::f( int ){ }
+	   * 
+	   * @throws Exception
+	   */
+	public void test_14_7_3__5_ExplicitSpecialization() throws Exception{
+		newTable();
+		
+		ITemplateSymbol template = table.newTemplateSymbol( "A" );
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		template.addTemplateParameter( T );
+		
+		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct );
+		template.addSymbol( A );
+		
+		table.getCompilationUnit().addSymbol( template );
+		
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f.addParameter( T, 0, null, false );
+		
+		A.addSymbol( f );
+		
+		LinkedList params = new LinkedList(), args = new LinkedList();
+		
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+		
+		ITemplateFactory factory = table.getCompilationUnit().lookupTemplateForMemberDefinition( "A", params, args );
+		
+		IDerivableContainerSymbol ASpec = table.newDerivableContainerSymbol( "A", TypeInfo.t_struct );
+		ASpec.setIsTemplateMember( true );
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f2.addParameter( TypeInfo.t_int, 0, null, false );
+		f2.setIsForwardDeclaration( true );
+		ASpec.addSymbol( f2 );
+		
+		factory.addSymbol( ASpec );
+		
+		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f3.addParameter( TypeInfo.t_int, 0, null, false );
+		
+		IDerivableContainerSymbol look = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplate( "A", args );
+		assertTrue( look.isTemplateInstance() );
+		assertEquals( look.getInstantiatedSymbol(), ASpec );
+		
+		
+		ISymbol flook = look.lookupMethodForDefinition( "f", args );
+		assertTrue( flook.isTemplateInstance() );
+		assertEquals( flook.getInstantiatedSymbol(), f2 );
+		flook.setTypeSymbol( f3 );
+		
+		look.addSymbol( f3 );
+		
+		
+		look = (IDerivableContainerSymbol) table.getCompilationUnit().lookupTemplate( "A", args );
+		flook = look.qualifiedFunctionLookup( "f", args );
+		
+		assertEquals( flook, f3 );
+		
+	}
 	
+	/**
+	 * template < class T > class Array { };
+	 * template < class T > void sort( Array< T > & );
+	 * 
+	 * template<> void sort( Array< int > & ){}  //T deduced as int
+	 * 
+	 * @throws Exception
+	 */
+	public void test_14_7_3__11_ExplicitSpecializationArgumentDeduction() throws Exception{
+		newTable();
+		
+		ITemplateSymbol templateArray = table.newTemplateSymbol( "Array" );
+		templateArray.addTemplateParameter( table.newSymbol( "T", TypeInfo.t_templateParameter ) );
+		
+		IDerivableContainerSymbol array = table.newDerivableContainerSymbol( "Array", TypeInfo.t_class );
+		templateArray.addSymbol( array );
+		
+		table.getCompilationUnit().addSymbol( templateArray );
+		
+		ITemplateSymbol templateSort = table.newTemplateSymbol( "sort" );
+		ISymbol T = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		templateSort.addTemplateParameter( T );
+		
+		IParameterizedSymbol sort = table.newParameterizedSymbol( "sort", TypeInfo.t_function );
+		
+		List args = new LinkedList();
+		args.add( new TypeInfo( TypeInfo.t_type, 0, T ) );
+		ISymbol arrayLook = table.getCompilationUnit().lookupTemplate( "Array", args );
+		
+		sort.addParameter( arrayLook, 0, new PtrOp( PtrOp.t_reference ), false );
+		
+		templateSort.addSymbol( sort );
+		
+		table.getCompilationUnit().addSymbol( templateSort );
+		
+		List params = new LinkedList();
+		ITemplateFactory factory = table.getCompilationUnit().lookupTemplateForMemberDefinition( "sort", params, null );
+		
+		IParameterizedSymbol newSort = table.newParameterizedSymbol( "sort", TypeInfo.t_function );
+		args.clear();
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+		arrayLook = table.getCompilationUnit().lookupTemplate( "Array", args );
+		newSort.addParameter( arrayLook, 0, new PtrOp( PtrOp.t_reference ), false );
+		
+		factory.addSymbol( newSort );
+		
+		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
+		a.setTypeSymbol( arrayLook );
+		
+		args.clear();
+		args.add( new TypeInfo( TypeInfo.t_type, 0, a ) );
+		
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "sort", args );
+		
+		assertTrue( look.isTemplateInstance() );
+		assertEquals( look.getInstantiatedSymbol(), newSort );
+	}
 	
+	/**
+	 * It is possible for a specialization with a given function signature to be instantiated from more 
+	 * than one function-template.  In such cases, explicit specification of the template arguments must be used
+	 * to uniquely identify the function template specialization being specialized
+	 * 
+	 * template< class T > void f( T );
+	 * template< class T > void f( T * );
+	 * 
+	 * template <> void f( int * );        //ambiguous
+	 * template <> void f< int >( int * ); //OK
+	 * template <> void f( char );         //OK
+	 * 
+	 * @throws Exception
+	 */
+	public void test_14_7_3__12_ExplicitSpecializationOverloadedFunction() throws Exception{
+		newTable();
+		
+		ITemplateSymbol template1 = table.newTemplateSymbol( "f" );
+		ISymbol T1 = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		template1.addTemplateParameter( T1 );
+		
+		IParameterizedSymbol f1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f1.addParameter( T1, 0, null, false );
+		
+		template1.addSymbol( f1 );
+		
+		table.getCompilationUnit().addSymbol( template1 );
+		
+		ITemplateSymbol template2 = table.newTemplateSymbol( "f" );
+		ISymbol T2 = table.newSymbol( "T", TypeInfo.t_templateParameter );
+		template2.addTemplateParameter( T2 );
+		
+		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f2.addParameter( T2, 0, new PtrOp( PtrOp.t_pointer ), false );
+		
+		template2.addSymbol( f2 );
+		table.getCompilationUnit().addSymbol( template2 );
+		
+		List params = new LinkedList();
+		
+		ITemplateFactory factory = table.getCompilationUnit().lookupTemplateForMemberDefinition( "f", params, null );
+		
+		IParameterizedSymbol f3 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f3.addParameter( TypeInfo.t_int, 0, new PtrOp( PtrOp.t_pointer ), false );
+		
+		try{
+			factory.addSymbol( f3 );
+			assertTrue( false );
+		} catch( ParserSymbolTableException e ){
+			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
+		}
+		
+		List args = new LinkedList();
+		args.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+		
+		factory = table.getCompilationUnit().lookupTemplateForMemberDefinition( "f", params, args );
+		IParameterizedSymbol f4 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f4.addParameter( TypeInfo.t_int, 0, new PtrOp( PtrOp.t_pointer ), false );
+		factory.addSymbol( f4 );
+
+		args.clear();
+		args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
+		
+		factory = table.getCompilationUnit().lookupTemplateForMemberDefinition( "f", params, args );
+		IParameterizedSymbol f5 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		f5.addParameter( TypeInfo.t_char, 0, null, false );
+		factory.addSymbol( f5 );
+
+		args.clear();
+		args.add( new TypeInfo( TypeInfo.t_char, 0, null ) );
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", args );
+		assertTrue( look.isTemplateInstance() );
+		assertEquals( look.getInstantiatedSymbol(), f5 );
+	}
+
 	
 	/**
 	 * template < class T > void f( T x, T y ) { }

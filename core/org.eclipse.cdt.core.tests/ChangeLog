@@ -1,3 +1,10 @@
+2004-02-24 Andrew Niefer
+	work for Bug 51485: Template Explicit Specializations
+	added ParserSymbolTableTemplateTests.test_14_7_3__5_ExplicitSpecialization
+	added ParserSymbolTableTemplateTests.test_14_7_3__11_ExplicitSpecializationArgumentDeduction
+	added ParserSymbolTableTemplateTests.test_14_7_3__12_ExplicitSpecializationOverloadedFunction
+	fixed a couple of warnings in ParserSymbolTableTemplateTests
+	
 2004-02-23 Alain Magloire
 
 	Adjust the test for IPathEntry deltas.

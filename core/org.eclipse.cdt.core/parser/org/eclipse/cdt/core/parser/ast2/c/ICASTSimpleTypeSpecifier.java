@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.parser.ast2.c;
 /**
  * @author Doug Schaefer
  */
-public interface ICASTSimpleTypeSpecifier {
+public interface ICASTSimpleTypeSpecifier extends ICASTTypeSpecifier {
 
 	/**
 	 * Which simple type is this?

@@ -1,0 +1,25 @@
+/**********************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * IBM - Initial API and implementation
+ **********************************************************************/
+package org.eclipse.cdt.core.parser.ast2.c;
+
+/**
+ * @author Doug Schaefer
+ */
+public interface ICASTMemberDeclaration extends ICASTNode {
+
+	public int getAccess();
+	public static final int a_private = 1;
+	public static final int a_protected = 2;
+	public static final int a_public = 3;
+	
+	public ICASTDeclaration getDeclaration();
+	
+}

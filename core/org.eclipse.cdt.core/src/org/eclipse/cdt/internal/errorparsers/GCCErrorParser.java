@@ -101,25 +101,25 @@ public class GCCErrorParser implements IErrorParser {
 					 	int p = desc.indexOf("`");
 					 	if (p != -1) {
 					 		varName = desc.substring(p+1, s);
-					 		System.out.println("undex varName "+ varName);
+					 		//System.out.println("undex varName "+ varName);
 					 	}
 					 } else if((s = desc.indexOf("\' defined but not used")) != -1) {
 					 	int p = desc.indexOf("`");
 					 	if (p != -1) {
 					 		varName = desc.substring(p+1, s);
-					 		System.out.println("unused varName "+ varName);
+					 		//System.out.println("unused varName "+ varName);
 					 	}
 					 } else if((s = desc.indexOf("conflicting types for `")) != -1) {
 					 	int p = desc.indexOf("\'", s);
 					 	if (p != -1) {
 					 		varName = desc.substring(desc.indexOf("`") + 1, p);
-					 		System.out.println("confl varName "+ varName);
+					 		//System.out.println("confl varName "+ varName);
 					 	}
 					 } else if((s = desc.indexOf("previous declaration of `")) != -1) {
 					 	int p = desc.indexOf("\'", s);
 					 	if (p != -1) {
 					 		varName = desc.substring(desc.indexOf("`") + 1, p);
-					 		System.out.println("prev varName "+ varName);
+					 		//System.out.println("prev varName "+ varName);
 					 	}
 					 }
 
@@ -139,6 +139,15 @@ public class GCCErrorParser implements IErrorParser {
 					
 					if (desc.startsWith("warning") || desc.startsWith("Warning")) {
 						severity = IMarkerGenerator.SEVERITY_WARNING;
+						// Remove the warning.
+						String d = desc.substring("warning".length()).trim();
+						if (d.startsWith(":")) {
+							d = d.substring(1).trim();
+						}
+
+						if (d.length() != 0) {
+							desc = d;
+						}
 					}
 					
 					// Display the fileName.

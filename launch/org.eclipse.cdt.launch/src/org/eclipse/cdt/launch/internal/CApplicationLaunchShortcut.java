@@ -170,7 +170,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	 * Method getCLaunchConfigType.
 	 * @return ILaunchConfigurationType
 	 */
-	private ILaunchConfigurationType getCLaunchConfigType() {
+	protected ILaunchConfigurationType getCLaunchConfigType() {
 		return getLaunchManager().getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);
 	}
 

@@ -26,7 +26,6 @@ import org.eclipse.debug.core.DebugException;
  */
 public class CSharedLibraryManager extends CUpdateManager implements ICSharedLibraryManager
 {
-	private CDebugTarget fDebugTarget = null;
 	private ArrayList fSharedLibraries;
 
 	/**
@@ -43,7 +42,7 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	 */
 	public synchronized void sharedLibraryLoaded( ICDISharedLibrary cdiLibrary )
 	{
-		CSharedLibrary library = new CSharedLibrary( fDebugTarget, cdiLibrary );
+		CSharedLibrary library = new CSharedLibrary( getDebugTarget(), cdiLibrary );
 		fSharedLibraries.add( library );
 		library.fireCreationEvent();
 	}

@@ -111,6 +111,21 @@
                </pluginState>
             </enablement>
          </action>
+         <action
+               label="%ManageWatchpointAction.label"
+               icon="icons/full/obj16/readwrite_obj.gif"
+               helpContextId="manage_watchpoint_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageWatchpointActionDelegate"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               disabledIcon="icons/full/obj16/readwrite_obj_disabled.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ManageWatchpointActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
       </actionSet>
    </extension>
    <extension

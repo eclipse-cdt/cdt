@@ -32,7 +32,7 @@ public interface ICBreakpoint extends IBreakpoint
 	public static final String INSTALL_COUNT = "org.eclipse.cdt.debug.core.installCount"; //$NON-NLS-1$	
 
 	/**
-	 * Breakpoint attribute storing the the conditional expression 
+	 * Breakpoint attribute storing the conditional expression 
 	 * associated with this breakpoint (value <code>"org.eclipse.cdt.debug.core.condition"</code>).
 	 * This attribute is a <code>String</code>.
 	 */

@@ -6,9 +6,7 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.registers;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
@@ -17,7 +15,6 @@ import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
@@ -48,7 +45,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	/**
 	 * The model presentation used as the label provider for the tree viewer.
 	 */
-	private DelegatingModelPresentation fModelPresentation;
+	private CDTDebugModelPresentation fModelPresentation;
 
 	protected static final String VARIABLES_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Registers"; //$NON-NLS-1$
 
@@ -57,7 +54,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	 */
 	protected Viewer createViewer( Composite parent )
 	{
-		fModelPresentation = new DelegatingModelPresentation();
+		fModelPresentation = new CDTDebugModelPresentation();
 		CDebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener( this );
 		
 		// add tree viewer
@@ -132,7 +129,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler#handleException(DebugException)
 	 */
-	public void handleException(DebugException e)
+	public void handleException( DebugException e )
 	{
 	}
 
@@ -165,7 +162,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	{
 		if ( fModelPresentation == null ) 
 		{
-			fModelPresentation = new DelegatingModelPresentation();
+			fModelPresentation = new CDTDebugModelPresentation();
 		}
 		return fModelPresentation;
 	}

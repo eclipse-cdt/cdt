@@ -68,6 +68,7 @@ public class CBreakpointPropertiesDialog extends Dialog
 				children[i].setSize( rect.width, rect.height );
 			}
 		}
+
 		public Point computeSize( Composite composite, int wHint, int hHint, boolean force )
 		{
 			if ( wHint != SWT.DEFAULT && hHint != SWT.DEFAULT )

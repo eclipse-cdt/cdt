@@ -1,3 +1,16 @@
+2002-12-02 Alain Magloire
+
+	* src/.../mi/core/cdi/CTarget.java (updateState): If we
+	have the current thread id set it before, getCThread() if
+	it is implemented with "info threads" can override it but
+	"-stack-list-thread" does not give this information.
+	* src/.../mi/core/cdi/ErrorInfo.java: New file
+	* src/.../mi/core/cdi/EventManager.java (getReason): Return
+	an ErrorInfo also.
+	* src/.../mi/core/event/MIErroEvent.java: New file
+	* src/.../mi/core/RxThread.java (processMIOutput):
+	Generated MIErrorEvent for "^error".
+
 2002-11-29 Alain Magloire
 
 	* src/.../mi/core/cdi/EventManager.java (processSuspended):

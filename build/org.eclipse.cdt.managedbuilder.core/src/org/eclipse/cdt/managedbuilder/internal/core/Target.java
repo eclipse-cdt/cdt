@@ -26,8 +26,8 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Platform;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -671,7 +671,7 @@ public class Target extends BuildObject implements ITarget {
 				return parent.getCleanCommand();
 			} else {
 				// User forgot to specify it. Guess based on OS.
-				if (BootLoader.getOS().equals("OS_WIN32")) { //$NON-NLS-1$
+				if (Platform.getOS().equals("OS_WIN32")) { //$NON-NLS-1$
 					return new String("del"); //$NON-NLS-1$
 				} else {
 					return new String("rm"); //$NON-NLS-1$

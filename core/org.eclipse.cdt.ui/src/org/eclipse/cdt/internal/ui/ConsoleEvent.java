@@ -3,14 +3,17 @@
  * All Rights Reserved.
  */package org.eclipse.cdt.internal.ui;
 
+import java.util.EventObject;
+
 import org.eclipse.cdt.ui.IBuildConsoleEvent;
 import org.eclipse.core.resources.IProject;
 
-public class ConsoleEvent implements IBuildConsoleEvent {
+public class ConsoleEvent extends EventObject implements IBuildConsoleEvent {
 	private IProject fProject;
 	private int fType;
 		
-	public ConsoleEvent(IProject project, int type) {
+	public ConsoleEvent(Object source, IProject project, int type) {
+		super(source);
 		fProject = project;
 		fType = type;
 	}

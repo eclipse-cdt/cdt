@@ -8,7 +8,7 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleEvent;
 import org.eclipse.cdt.ui.IBuildConsoleListener;
@@ -70,7 +70,7 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 		fFont = null;
 		fPropertyChangeListener = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				if (fTextViewer != null && event.getProperty().equals(CPluginPreferencePage.PREF_CONSOLE_FONT)) {
+				if (fTextViewer != null && event.getProperty().equals(BuildConsolePreferencePage.PREF_CONSOLE_FONT)) {
 					initializeWidgetFont(fTextViewer.getTextWidget());
 				}
 			}
@@ -137,10 +137,10 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 	protected IProject getProject() {
 		return selProject;
 	}
-	
+
 	protected IDocument setDocument() {
 		IProject project = getProject();
-		if (project != null ) {
+		if (project != null) {
 			fTextViewer.setDocument(fConsoleManager.getConsoleDocument(project));
 		}
 		return null;
@@ -149,20 +149,19 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 	protected void setTitle() {
 		String title = origTitle;
 		IProject project = getProject();
-		if (project != null ) {
+		if (project != null) {
 			title += " [" + project.getName() + "]";
 		}
 		setTitle(title);
 	}
-	
+
 	protected void initializeWidgetFont(StyledText styledText) {
 		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
-		String prefKey = CPluginPreferencePage.PREF_CONSOLE_FONT;
+		String prefKey = BuildConsolePreferencePage.PREF_CONSOLE_FONT;
 		FontData data = null;
 		if (store.contains(prefKey) && !store.isDefault(prefKey)) {
 			data = PreferenceConverter.getFontData(store, prefKey);
-		}
-		else {
+		} else {
 			data = PreferenceConverter.getDefaultFontData(store, prefKey);
 		}
 		if (data != null) {
@@ -173,8 +172,7 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 				fFont.dispose();
 
 			fFont = font;
-		}
-		else {
+		} else {
 			// if all the preferences failed
 			styledText.setFont(JFaceResources.getTextFont());
 		}
@@ -247,16 +245,15 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 		if (fFont != null) {
 			fFont.dispose();
 			fFont = null;
-		}		
+		}
 		getSite().getPage().removeSelectionListener(this);
 		fConsoleManager.removeConsoleListener(this);
 	}
-	
+
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		IProject newProject = convertSelectionToProject(selection);
 		IProject oldProject = getProject();
-		if (oldProject == null ||
-		    (newProject != null && !newProject.equals(oldProject))) { 
+		if (oldProject == null || (newProject != null && !newProject.equals(oldProject))) {
 			setProject(newProject);
 			setDocument();
 			setTitle();
@@ -264,9 +261,12 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 	}
 
 	public void consoleChange(IBuildConsoleEvent event) {
-		if ( event.getType() == IBuildConsoleEvent.CONSOLE_START ) {
+		if (event.getType() == IBuildConsoleEvent.CONSOLE_START || event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE) {
 			Display display = fTextViewer.getControl().getDisplay();
 			selProject = event.getProject();
+			if (event.getType() == IBuildConsoleEvent.CONSOLE_CLOSE && selProject != event.getProject()) {
+				return;
+			}
 			display.asyncExec(new Runnable() {
 				public void run() {
 					setDocument();
@@ -278,7 +278,7 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 
 	IProject convertSelectionToProject(ISelection selection) {
 		IProject project = null;
-		if ( selection == null ) {
+		if (selection == null) {
 			return project;
 		}
 		try {

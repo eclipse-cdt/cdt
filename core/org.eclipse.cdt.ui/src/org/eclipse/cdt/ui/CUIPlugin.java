@@ -18,6 +18,7 @@ import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
@@ -228,6 +229,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 				CPluginPreferencePage.initDefaults(store);
 				CEditorPreferencePage.initDefaults(store);
 				CView.initDefaults(store);
+				BuildConsolePreferencePage.initDefaults(store);
 			}
 		});
 	}

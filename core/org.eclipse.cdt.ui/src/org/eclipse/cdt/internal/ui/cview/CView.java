@@ -1012,7 +1012,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 
 		boolean refreshViewer= false;
 
-		if (event.getProperty() == CPluginPreferencePage.SHOW_CU_CHILDREN) {
+		if (event.getProperty() == CPluginPreferencePage.PREF_SHOW_CU_CHILDREN) {
 			boolean showCUChildren= CPluginPreferencePage.showCompilationUnitChildren();
 			((CContentProvider)viewer.getContentProvider()).setProvideMembers(showCUChildren);
 			refreshViewer= true;

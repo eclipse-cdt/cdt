@@ -1,4 +1,19 @@
 2002-11-27 David Inglis
+ 
+	* plugin.properties:
+	* plugin.xml:
+	* src/.../internal/ui/BuildConsoleManager.java:
+	* src/.../internal/ui/ConsoleEvent.java:
+	* src/.../internal/ui/buildconsole/BuildConsoleView.java:
+	* src/.../internal/ui/cview/CView.java:
+	* src/.../ui/preferences/BuildConsolePreferencePage.java:
+	* src/.../internal/ui/preferences/CPluginPreferencePage.java:
+	* src/.../ui/CUIPlugin.java:
+	* src/.../ui/IBuildConsoleEvent.java:
+	refactored CPluginPreferencePage into a BuildConsolePreferencePage.
+	added a configurable cap on the number of lines to keep in the build console.
+
+2002-11-27 David Inglis
 	* utils.ui/.../controls/ControlFactory.java:
 	removed unsed hyperlink stuff since it was leaking Cursors.
 

@@ -29,9 +29,9 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
 <!-- =========================================================================== -->
-<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
 
@@ -139,8 +139,8 @@
             id="org.eclipse.cdt.ui.MakeView">
       </view>
    </extension>
-<!-- The wizards -->
 <!-- For C Wizards -->
+<!-- The wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -248,6 +248,12 @@
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.internal.ui.preferences.TemplatePreferencePage"
             id="org.eclipse.cdt.ui.preferences.TemplatePreferencePage">
+      </page>
+      <page
+            name="%CPluginBuildConsolePreferencePage.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"
+            id="org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces">
       </page>
    </extension>
    <extension

@@ -10,16 +10,22 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2;
 
+
 /**
  * @author Doug Schaefer
  */
 public interface IASTType {
 
 	/**
-	 * @return the declaration that defines this type
+	 * @return the declarations that introduce this type
 	 */
-	public IASTTypeDeclaration getDeclaration();
-	
-	public void setDeclaration(IASTTypeDeclaration declaration);
+	public int numDeclarations();
+	public IASTTypeDeclaration getDeclaration(int i);
+
+	/**
+	 * @return the references to this type in this AST
+	 */
+	public int numReferences();
+	public IASTTypeReference getReference(int i);
 	
 }

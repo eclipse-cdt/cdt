@@ -18,28 +18,12 @@ package org.eclipse.cdt.core.parser.ast2;
  * @author Doug Schaefer
  */
 public interface IASTNode {
-	
-	/**
-	 * @return the name of the file (if any) containing the node.
-	 * If the node is not in a file (e.g. is a compiler built-in), this
-	 * method returns null.
-	 */
-	public String getFilename();
-	
-	public void setFilename(String filename);
-	
-	/**
-	 * @return the offset into the file to the beginning of the node
-	 */
-	public int getOffset();
-	
-	public void setOffset(int offset);
 
 	/**
-	 * @return the length of the node in the source file
+	 * This method is the entry point for visitors.
+	 *  
+	 * @param visitor
 	 */
-	public int getLength();
-	
-	public void setLength(int length);
+	public void visit(ASTVisitor visitor);
 
 }

@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2;
 
+
 /**
  * @author Doug Schaefer
  */
@@ -19,16 +20,19 @@ public interface IASTFunctionDeclaration extends IASTDeclaration {
 	 * @return the type of the return value of the function
 	 */
 	public IASTType getReturnType();
-	
+
+	/**
+	 * Set the return type in the function declaration.
+	 * 
+	 * @param returnType
+	 */
 	public void setReturnType(IASTType returnType);
 
 	/**
-	 * @return the first parameter to the function
+	 * @return the parameter declarations for this function
 	 */
-	public IASTParameterDeclaration getFirstParameterDeclaration();
+	public IASTParameterDeclaration[] getParameters();
 	
-	public void appendParameterDeclaration(IASTParameterDeclaration parameterDeclaration);
-
 	/**
 	 * @return the function this declaration is declaring,
 	 * if available in the current translation unit. Forward declarations

@@ -10,26 +10,17 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2;
 
-
 /**
  * @author Doug Schaefer
  */
-public interface IASTScope {
+public interface IASTDeclarationStatement extends IASTStatement {
 
 	/**
-	 * A scope contains a list of declarations. This list is ordered by
-	 * the order in which the declarations were parsed.
-	 *  
-	 * @return the declarations in this scope
+	 * @return the declaration begin introduced into scope by this
+	 * statement
 	 */
-	public int numMemberDeclarations();
-	public IASTDeclaration getMemberDeclaration(int i); 
+	public IASTDeclaration getDeclaration();
 
-	/**
-	 * @return the container scope of this scope
-	 */
-	public IASTScope getParentScope();
-
-	public void setParentScope(IASTScope parentScope);
+	public void setDeclaration(IASTDeclaration declaration);
 	
 }

@@ -11,9 +11,10 @@
 package org.eclipse.cdt.core.parser.ast2;
 
 /**
- * The tranlation unit represents a compilable unit of source.
- * 
+ * The translation unit represents a compilable unit of source. For all
+ * languages, a translation unit is expected to be the global scope.
+ *
  * @author Doug Schaefer
  */
-public interface IASTTranslationUnit extends IASTNode {
+public interface IASTTranslationUnit extends IASTScope, IASTNode {
 }

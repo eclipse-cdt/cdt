@@ -16,11 +16,4 @@ package org.eclipse.cdt.core.parser.ast2;
  * @author Doug Schaefer
  */
 public interface IASTStatement extends IASTNode {
-
-	/**
-	 * @return the next statement at the current level
-	 */
-	public IASTStatement getNextStatement();
-	
-	public void setNextStatement(IASTStatement statement);
 }

@@ -10,26 +10,13 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2;
 
-
 /**
+ * A NodeLocation represents some location that contains code. Most
+ * often this is a file but some languages may have alternative
+ * locations (e.g. macros in C).
+ * 
  * @author Doug Schaefer
  */
-public interface IASTScope {
+public interface IASTNodeLocation {
 
-	/**
-	 * A scope contains a list of declarations. This list is ordered by
-	 * the order in which the declarations were parsed.
-	 *  
-	 * @return the declarations in this scope
-	 */
-	public int numMemberDeclarations();
-	public IASTDeclaration getMemberDeclaration(int i); 
-
-	/**
-	 * @return the container scope of this scope
-	 */
-	public IASTScope getParentScope();
-
-	public void setParentScope(IASTScope parentScope);
-	
 }

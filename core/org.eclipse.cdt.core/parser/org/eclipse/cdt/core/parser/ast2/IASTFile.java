@@ -10,26 +10,13 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2;
 
-
 /**
+ * This represents a file that contains code.
+ * 
  * @author Doug Schaefer
  */
-public interface IASTScope {
+public interface IASTFile {
 
-	/**
-	 * A scope contains a list of declarations. This list is ordered by
-	 * the order in which the declarations were parsed.
-	 *  
-	 * @return the declarations in this scope
-	 */
-	public int numMemberDeclarations();
-	public IASTDeclaration getMemberDeclaration(int i); 
-
-	/**
-	 * @return the container scope of this scope
-	 */
-	public IASTScope getParentScope();
-
-	public void setParentScope(IASTScope parentScope);
+	public String getFileName();
 	
 }

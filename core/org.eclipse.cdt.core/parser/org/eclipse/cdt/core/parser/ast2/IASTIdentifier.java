@@ -16,12 +16,14 @@ package org.eclipse.cdt.core.parser.ast2;
  * 
  * This is an opaque type to allow for various representation techniques
  * for the actual name.
- * 
- * the toString method should produce a string representation of the
- * identifier.
- * 
+ *
+ * The toString method provided by any implementation of this interface
+ * must return a String representation of the underlying identifier.
+ *
+ * The equals method provided by any implementation of this interface
+ * must be able to compare this identifier to a String representation.
+ *  
  * @author Doug Schaefer
  */
 public interface IASTIdentifier extends IASTNode {
-
 }

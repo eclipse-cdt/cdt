@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2;
 
+
 /**
  * Represents a function definition. A function takes a number of
  * parameters and returns a (possibly void) value. Parameters are
@@ -23,15 +24,16 @@ package org.eclipse.cdt.core.parser.ast2;
 public interface IASTFunction extends IASTNode {
 
 	/**
-	 * @return the declaration that defines this function
+	 * @return the declarations that introduce this function
 	 */
-	public IASTFunctionDeclaration getDeclaration();
-	
-	void setDeclaration(IASTFunctionDeclaration declaration);
+	public int numDeclarations();
+	public IASTFunctionDeclaration getDeclaration(int i);
 	
 	/**
 	 * @return the first statement of the function
 	 */
 	public IASTStatement getBody();
+	
+	public void setBody(IASTStatement body);
 	
 }

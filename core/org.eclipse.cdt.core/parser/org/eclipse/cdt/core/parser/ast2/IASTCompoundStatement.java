@@ -10,21 +10,16 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2;
 
+
 /**
  * @author Doug Schaefer
  */
 public interface IASTCompoundStatement extends IASTStatement {
 
 	/**
-	 * @return the first statement in this compound statement
+	 * @return the statements that make up this compound statement.
 	 */
-	public IASTStatement getFirstStatement();
-	
-	/**
-	 * Append a statement to the list of statements in this compound statement
-	 * 
-	 * @param statement
-	 */
-	public void appendStatement(IASTStatement statement);
-	
+	public int numStatements();
+	public IASTStatement getStatement(int i);
+
 }

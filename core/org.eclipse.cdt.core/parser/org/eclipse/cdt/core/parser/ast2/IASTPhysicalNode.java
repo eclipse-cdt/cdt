@@ -10,32 +10,35 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2;
 
-
 /**
- * Represents a variable definition.
+ * A physical node represents a token (generally) in the code. Physical
+ * nodes have a location, either a file or a macro, and an offset and
+ * length.
  * 
  * @author Doug Schaefer
  */
-public interface IASTVariable {
+public interface IASTPhysicalNode extends IASTNode {
 
 	/**
-	 * @return the declarations that introduce this variable into a scope
+	 * @return the location of the node
 	 */
-	public int numDeclarations();
-	public IASTVariableDeclaration getDeclaration(int i);
+	public IASTNodeLocation getLocation();
+	
+	/**
+	 * @return the offset into the file to the beginning of the node
+	 */
+	public int getOffset();
+	
+	/**
+	 * @return the length of the node in the source file
+	 */
+	public int getLength();
 
 	/**
-	 * @return the references to this variable in this AST
+	 * @return the underlying text in the code
+	 * 
+	 * TODO should this be a char array or some kind of splice?
 	 */
-	public int numReferences();
-	public IASTVariableReference getReference(int i);
-	
-	/**
-	 * @return the expression that initializes the variable when it is
-	 * instantiated.
-	 */
-	public IASTExpression getInitialization();
-	
-	public void setInitialization(IASTExpression initialization);
+	public String getImage();
 
 }

@@ -32,17 +32,4 @@ public interface IASTDeclaration extends IASTNode {
 	
 	public void setName(IASTIdentifier name);
 
-	/**
-	 * @return the next declaration in this scope
-	 */
-	public IASTDeclaration getNextDeclaration();
-	
-	/**
-	 * @return is this a forward declaration, i.e., the thing
-	 * it is declaring is not defined at the same point.
-	 */
-	public boolean isForward();
-	
-	public void setIsForward(boolean isForward);
-	
 }

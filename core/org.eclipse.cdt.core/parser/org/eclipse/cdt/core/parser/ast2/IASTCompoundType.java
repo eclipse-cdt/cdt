@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2;
 
+
 /**
  * Represents a type that has a number of values as represented by
  * member variables. The type may also contain a number of functions
@@ -20,8 +21,8 @@ package org.eclipse.cdt.core.parser.ast2;
 public interface IASTCompoundType extends IASTType {
 
 	/**
-	 * @return returns the first member of this compound type.
+	 * @return the members of this compound type.
 	 */
-	public IASTDeclaration getFirstMember();
+	public IASTDeclaration[] getMembers();
 	
 }

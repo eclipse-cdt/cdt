@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.ast2;
 
+
 /**
  * An expression is some computation that produces a value of a given
  * type. The type can be a void type which implies that the result can
@@ -17,23 +18,27 @@ package org.eclipse.cdt.core.parser.ast2;
  * 
  * @author Doug Schaefer
  */
-public interface IASTExpression {
+public interface IASTExpression extends IASTNode {
 
 	/**
 	 * @return the type for the result value of the expression
 	 */
 	public IASTType getType();
 	
+	public void setType(IASTType type);
+
 	/**
-	 * @return the first operand in the expression.
-	 * returns null if none.
+	 * @return and identifier that represent the operator for this
+	 * expression
 	 */
-	public IASTExpression getFirstOperand();
+	public IASTIdentifier getOperator();
+	
+	public void setOperator(IASTIdentifier operator);
 	
 	/**
-	 * @return the next sibling operand in the parent expression.
-	 * returns null if none.
+	 * @return the operands for this expression
 	 */
-	public IASTExpression getNextOperand();
-
+	public int numOperands();
+	public IASTExpression getOperands(int i);
+	
 }

@@ -46,6 +46,7 @@ public class CCorePlugin extends Plugin {
 	public final static String PREF_BINARY_PARSER = "binaryparser";
 	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF";
 	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID;
+	public final static String PREF_USE_NEW_PARSER = "useNewParser";
 
 	private static CCorePlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
@@ -127,6 +128,9 @@ public class CCorePlugin extends Plugin {
 		getIndexModel();
 		fDescriptorManager = new CDescriptorManager();
 		fDescriptorManager.startup();
+		
+		// Set the default for using the new parser
+		getPluginPreferences().setDefault(PREF_USE_NEW_PARSER, true);
 	}
 
 	public IConsole getConsole(String id) {
@@ -404,15 +408,13 @@ public class CCorePlugin extends Plugin {
 	}
 
 	// Preference to turn on/off the new parser
-
-	private boolean useNewParser = false;
-
 	public void setUseNewParser(boolean useNewParser) {
-		this.useNewParser = useNewParser;
+		getPluginPreferences().setValue(PREF_USE_NEW_PARSER, useNewParser);
+		savePluginPreferences();
 	}
 
 	public boolean useNewParser() {
-		return useNewParser;
+		return getPluginPreferences().getBoolean(PREF_USE_NEW_PARSER);
 	}
 
 	/**

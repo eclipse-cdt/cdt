@@ -239,10 +239,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 				CPluginImages.initialize();
 			}
 		});
-		
-		// TODO - temporary kludge (maybe) to make sure the core preferences
-		// are kept in sync with the stored preferences
-		CCorePlugin.getDefault().setUseNewParser(CPluginPreferencePage.useNewParser());
 	}
 
 	/**

@@ -1,3 +1,9 @@
+2004-11-11 Alain Magloire
+	Fix for PR 75000, from PalmSource
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/Variable.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/VariableDescriptor.java
+	* mi/org/eclipse/cdt/debug/mi/core/command/MIVarInfoType.java
+
 2004-11-10 Alain Magloire
 	Fix for PR 51113 and PR 66268
 	It allow more flexibility in the GDB console, for example

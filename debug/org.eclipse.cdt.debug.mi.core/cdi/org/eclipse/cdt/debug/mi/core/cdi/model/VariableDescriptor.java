@@ -46,7 +46,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	String qualifiedName = null;
 	String fFullName = null;
 	ICDIType fType = null;
-	String typename = null;
+	String fTypename = null;
 	String sizeof = null;
 
 	/**
@@ -168,8 +168,8 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	 */
 	public ICDIType getType() throws CDIException {
 		if (fType == null) {
+			String nametype = getTypeName();
 			Target target = (Target)getTarget();
-			Session session = (Session) (target.getSession());
 			StackFrame frame = (StackFrame)getStackFrame();
 			if (frame == null) {
 				Thread thread = (Thread)getThread();
@@ -179,8 +179,8 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 					frame = ((Thread)target.getCurrentThread()).getCurrentStackFrame();
 				}
 			}
+			Session session = (Session) target.getSession();
 			SourceManager sourceMgr = session.getSourceManager();
-			String nametype = sourceMgr.getTypeName(frame, getQualifiedName());
 			try {
 				fType = sourceMgr.getType(frame, nametype);
 			} catch (CDIException e) {
@@ -271,11 +271,22 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getTypeName()
 	 */
 	public String getTypeName() throws CDIException {
-		if (typename == null) {
-			ICDIType theType = getType();
-			typename = theType.getTypeName();
+		if (fTypename == null) {
+			Target target = (Target)getTarget();
+			StackFrame frame = (StackFrame)getStackFrame();
+			if (frame == null) {
+				Thread thread = (Thread)getThread();
+				if (thread != null) {
+					frame = thread.getCurrentStackFrame();
+				} else {
+					frame = ((Thread)target.getCurrentThread()).getCurrentStackFrame();
+				}
+			}
+			Session session = (Session) target.getSession();
+			SourceManager sourceMgr = session.getSourceManager();
+			fTypename = sourceMgr.getTypeName(frame, getQualifiedName());
 		}
-		return typename;
+		return fTypename;
 	}
 
 	/**

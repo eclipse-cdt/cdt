@@ -11,6 +11,11 @@
 
 package org.eclipse.cdt.debug.mi.core.command;
 
+import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIVarInfoTypeInfo;
+
 /**
  * 
  *     -var-info-type NAME
@@ -26,4 +31,21 @@ public class MIVarInfoType extends MICommand
 	public MIVarInfoType(String name) {
 		super("-var-info-type", new String[]{name}); //$NON-NLS-1$
 	}
+
+	public MIVarInfoTypeInfo getMIVarInfoTypeInfo() throws MIException {
+		return (MIVarInfoTypeInfo)getMIInfo();
+	}
+
+	public MIInfo getMIInfo() throws MIException {
+		MIInfo info = null;
+		MIOutput out = getMIOutput();
+		if (out != null) {
+			info = new MIVarInfoTypeInfo(out);
+			if (info.isError()) {
+				throwMIException(info, out);
+			}
+		}
+		return info;
+	}
+
 }

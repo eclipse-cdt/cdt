@@ -57,6 +57,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.type.WCharValue;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
 import org.eclipse.cdt.debug.mi.core.command.MIVarInfoExpression;
+import org.eclipse.cdt.debug.mi.core.command.MIVarInfoType;
 import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
 import org.eclipse.cdt.debug.mi.core.command.MIVarSetFormat;
 import org.eclipse.cdt.debug.mi.core.command.MIVarShowAttributes;
@@ -64,6 +65,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarInfoExpressionInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIVarInfoTypeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarListChildrenInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
 
@@ -402,4 +404,25 @@ public abstract class Variable extends VariableDescriptor implements ICDIVariabl
 		varMgr.destroyVariable(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableDescriptor#getTypeName()
+	 */
+	public String getTypeName() throws CDIException {
+		if (fTypename == null) {
+			MISession mi = ((Target) getTarget()).getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			MIVarInfoType infoType = factory.createMIVarInfoType(fMiVar.getVarName());
+			try {
+				mi.postCommand(infoType);
+				MIVarInfoTypeInfo info = infoType.getMIVarInfoTypeInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}
+				fTypename = info.getType();
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
+			}
+		}
+		return fTypename;
+	}
 }

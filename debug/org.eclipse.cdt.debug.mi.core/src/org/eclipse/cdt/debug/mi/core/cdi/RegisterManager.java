@@ -56,7 +56,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 			String[] names = info.getRegisterNames();
 			RegisterObject[] regs = new RegisterObject[names.length];
 			for (int i = 0; i < names.length; i++) {
-				regs[i] = new RegisterObject(names[i], i);
+				regs[i] = new RegisterObject(session.getCurrentTarget(), names[i], i);
 			}
 			return regs;
 		} catch (MIException e) {

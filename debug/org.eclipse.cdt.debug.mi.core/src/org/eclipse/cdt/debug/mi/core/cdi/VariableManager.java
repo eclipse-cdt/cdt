@@ -77,12 +77,14 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		Variable[] vars = getVariables();
 		for (int i = 0; i < vars.length; i++) {
 			if (vars[i].getName().equals(name)) {
-				if (vars[i].getStackFrame().equals(stack)) {
+				if (stack != null && vars[i].getStackFrame().equals(stack)) {
 					if (vars[i].getVariableObject().getPosition() == position) {
 						if (vars[i].getVariableObject().getStackDepth() == depth) {
 							return vars[i];
 						}
 					}
+				} else {
+					return vars[i];
 				}
 			}
 		}
@@ -159,13 +161,17 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				argument = (Argument)variable;
 			}
 			if (argument == null) {
-				StackFrame stack = argObj.getStackFrame();
 				String name = argObj.getName();
+				StackFrame stack = argObj.getStackFrame();
 				Session session = (Session)getSession();
-				ICDITarget currentTarget = session.getCurrentTarget();
-				Thread currentThread = (Thread)currentTarget.getCurrentThread();
-				StackFrame currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
-				((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
+				Thread currentThread = null;
+				StackFrame currentFrame = null;
+				if (stack != null) {
+					ICDITarget currentTarget = session.getCurrentTarget();
+					currentThread = (Thread)currentTarget.getCurrentThread();
+					currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
+					((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
+				}
 				try {
 					MISession mi = session.getMISession();
 					CommandFactory factory = mi.getCommandFactory();
@@ -180,7 +186,9 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				} catch (MIException e) {
 					throw new MI2CDIException(e);
 				} finally {
-					currentThread.setCurrentStackFrame(currentFrame, false);
+					if (currentThread != null) {
+						currentThread.setCurrentStackFrame(currentFrame, false);
+					}
 				}
 			}
 			return argument;
@@ -233,8 +241,9 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				args = miFrames[0].getArgs();
 			}
 			if (args != null) {
+				ICDITarget target = frame.getThread().getTarget();
 				for (int i = 0; i < args.length; i++) {
-					ArgumentObject arg = new ArgumentObject(args[i].getName(),
+					ArgumentObject arg = new ArgumentObject(target, args[i].getName(),
 					 (StackFrame)frame, args.length - i, depth);
 					argObjects.add(arg);
 				}
@@ -281,7 +290,8 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			buffer.append(function).append("::");
 		}
 		buffer.append(name);
-		return new VariableObject(buffer.toString(), null, 0, 0);
+		ICDITarget target = getSession().getCurrentTarget();
+		return new VariableObject(target, buffer.toString(), null, 0, 0);
 	}
 
 	/**
@@ -310,8 +320,9 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			}
 			args = info.getLocals();
 			if (args != null) {
+				ICDITarget target = frame.getThread().getTarget();
 				for (int i = 0; i < args.length; i++) {
-					VariableObject varObj = new VariableObject(args[i].getName(),
+					VariableObject varObj = new VariableObject(target, args[i].getName(),
 						 (StackFrame)frame, args.length - i, depth);
 					varObjects.add(varObj);
 				}
@@ -332,13 +343,17 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			VariableObject varObj = (VariableObject)v;
 			Variable variable = findVariable(varObj);
 			if (variable == null) {
-				StackFrame stack = varObj.getStackFrame();
 				String name = varObj.getName();
 				Session session = (Session)getSession();
-				ICDITarget currentTarget = session.getCurrentTarget();
-				Thread currentThread = (Thread)currentTarget.getCurrentThread();
-				StackFrame currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
-				((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
+				StackFrame stack = varObj.getStackFrame();
+				Thread currentThread = null;
+				StackFrame currentFrame = null;
+				if (stack != null) {
+					ICDITarget currentTarget = session.getCurrentTarget();
+					currentThread = (Thread)currentTarget.getCurrentThread();
+					currentFrame = (StackFrame)currentThread.getCurrentStackFrame();
+					((Thread)stack.getThread()).setCurrentStackFrame(stack, false);
+				}
 				try {
 					MISession mi = session.getMISession();
 					CommandFactory factory = mi.getCommandFactory();
@@ -353,7 +368,9 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				} catch (MIException e) {
 					throw new MI2CDIException(e);
 				} finally {
-					currentThread.setCurrentStackFrame(currentFrame, false);
+					if (currentThread != null) {
+						currentThread.setCurrentStackFrame(currentFrame, false);
+					}
 				}
 			}
 			return variable;

@@ -33,7 +33,7 @@ public class Variable extends CObject implements ICDIVariable {
 	VariableObject varObj;
 
 	public Variable(VariableObject obj, MIVar v) {
-		super(obj.getStackFrame().getTarget());
+		super(obj.getTarget());
 		miVar = v;
 		varObj = obj;
 	}

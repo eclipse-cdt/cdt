@@ -2300,5 +2300,29 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertEquals( IProblem.SYNTAX_ERROR, problem.getID() );
 		assertFalse( i.hasNext() );
     }
+    
+    public void testBug74069() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "int f() {                \n"); //$NON-NLS-1$
+        writer.write( "   int a, b, c;          \n"); //$NON-NLS-1$
+        writer.write( "   if( a < b )           \n"); //$NON-NLS-1$
+        writer.write( "      if( b < c )        \n"); //$NON-NLS-1$
+        writer.write( "         return b;       \n"); //$NON-NLS-1$
+        writer.write( "      else if ( a < c )  \n"); //$NON-NLS-1$
+        writer.write( "         return c;       \n"); //$NON-NLS-1$
+        writer.write( "      else               \n"); //$NON-NLS-1$
+        writer.write( "         return a;       \n"); //$NON-NLS-1$
+        writer.write( "   else if( a < c )      \n"); //$NON-NLS-1$
+        writer.write( "      return a;          \n"); //$NON-NLS-1$
+        writer.write( "   else if( b < c )      \n"); //$NON-NLS-1$
+        writer.write( "      return c;          \n"); //$NON-NLS-1$
+        writer.write( "   else                  \n"); //$NON-NLS-1$
+        writer.write( "      return b;          \n"); //$NON-NLS-1$
+        writer.write( "}                        \n"); //$NON-NLS-1$
+        
+        parse( writer.toString() );
+        Iterator i = callback.getProblems();
+        assertFalse( i.hasNext() );
+    }
 }
 

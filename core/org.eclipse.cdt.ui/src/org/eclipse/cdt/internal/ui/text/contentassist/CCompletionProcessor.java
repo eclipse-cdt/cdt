@@ -331,10 +331,6 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		int pos = offset -1;
 		if(pos >= 0){
 			try{
-				//While we aren't on a space, then go back and look for :: or a ->
-				while ((pos >= 0) && (document.getChar(pos) == ' ')) {	
-					pos--;
-				}			
 				if ((document.getChar(pos) == ':') && (document.getChar(pos -1) != ':')) {
 					// ignore this request
 					return null;

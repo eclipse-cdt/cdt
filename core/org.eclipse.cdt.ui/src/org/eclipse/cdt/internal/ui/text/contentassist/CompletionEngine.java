@@ -543,18 +543,15 @@ public class CompletionEngine implements RelevanceConstants {
 		// 1. Get the search scope node
 		// the search node is the code scope inwhich completion is requested
 		IASTScope searchNode = completionNode.getCompletionScope();
+		String prefix = completionNode.getCompletionPrefix();
 		// here we have to look for any names that could be referenced within this scope
 		// 1. lookup all
 		ILookupResult result = null;
 		if (completionNode.getCompletionPrefix().length() > 0){
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.ALL; 
-			String prefix = completionNode.getCompletionPrefix();
 			result = lookup(searchNode, prefix, kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
-		
-			List macros = lookupMacros(completionNode.getCompletionPrefix());
-			addMacrosToCompletions(prefix, macros.iterator());
 		} 
 		else // prefix is empty
 		{
@@ -583,7 +580,11 @@ public class CompletionEngine implements RelevanceConstants {
 				result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 				addToCompletions(result);				
 			}
-		}		
+		}
+
+		List macros = lookupMacros(completionNode.getCompletionPrefix());
+		addMacrosToCompletions(prefix, macros.iterator());
+		
 	}
 
 	private void completionOnClassReference(IASTCompletionNode completionNode){
@@ -707,7 +708,7 @@ public class CompletionEngine implements RelevanceConstants {
 		log    ("Offset  = " + completionOffset); //$NON-NLS-1$
 		logNode("Scope   = " , completionNode.getCompletionScope()); //$NON-NLS-1$
 		logNode("Context = " , completionNode.getCompletionContext()); //$NON-NLS-1$
-		logKind("Kind    = ", completionNode.getCompletionKind());		 //$NON-NLS-1$
+		logKind("Kind    = " , completionNode.getCompletionKind());		 //$NON-NLS-1$
 		log	   ("Prefix  = " + completionNode.getCompletionPrefix()); //$NON-NLS-1$
 
 		if (completionNode.getCompletionScope() == null){

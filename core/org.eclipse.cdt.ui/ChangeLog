@@ -1,3 +1,7 @@
+2004-04-23 Hoda Amer
+	Fix for bug#59631 : Macros do not appear in the completion list when no prefix is provided
+	Fix for bug#59686 : [Content Assist] Class references are not completing
+	
 2004-04-22 Sean Evoy
 	This is the first part of the patch supplied by Leo at Intel 
 	to add error parsers to a managed build project, and to manipulate 

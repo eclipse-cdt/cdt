@@ -1,5 +1,11 @@
 2003-01-16 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIStringValue.java: Removed.
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIArrayValue.java: Removed.
+	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIStructureValue.java: Removed.
+
+2003-01-16 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/core/cdi/ICDISession.java (getSharedLibraryManager):
 	New method.
 	* src/org/eclipse/cdt/debug/core/cdi/model/ICDISharedLibrary.java (areSymbolsLoaded):

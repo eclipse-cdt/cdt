@@ -39,16 +39,11 @@ public class LevelTreeContentProvider extends CSearchContentProvider implements 
 			{IResource.ROOT}};
 	private static final int MAX_LEVEL= C_ELEMENT_TYPES.length - 1;
 	private int fCurrentLevel;
-	static class FastCElementProvider extends CElementContentProvider {
-		public Object getParent(Object element) {
-			return internalGetParent(element);
-		}
-	}
 
 	public LevelTreeContentProvider(AbstractTreeViewer viewer, int level) {
 		fTreeViewer= viewer;
 		fCurrentLevel= level;
-		fContentProvider= new FastCElementProvider();
+		fContentProvider= new CElementContentProvider();
 	}
 
 	public Object getParent(Object child) {

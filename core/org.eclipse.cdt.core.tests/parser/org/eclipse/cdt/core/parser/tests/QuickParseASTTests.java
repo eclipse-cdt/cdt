@@ -1815,5 +1815,31 @@ public class QuickParseASTTests extends BaseASTTest
 	{
 		parse("int *restrict ip_fn (void);", true, true, ParserLanguage.C).getDeclarations().next();
 	}		
-		
+	/**
+	 * Test code: struct Example { Example(); Example(int); ~Example();};
+	 * Purpose: tests a declaration in a class scope.
+	 */
+	public void testBug43371 () throws Exception
+	{
+		// Parse and get the translaton unit
+		Writer code = new StringWriter();
+		code.write("struct Example { Example(); Example(int); ~Example();};");
+		IASTCompilationUnit cu = parse(code.toString());
+		Iterator i = cu.getDeclarations();
+		assertTrue(i.hasNext());
+		IASTAbstractTypeSpecifierDeclaration declaration =
+			(IASTAbstractTypeSpecifierDeclaration)i.next();
+		assertFalse(i.hasNext());
+		assertTrue(	declaration.getTypeSpecifier() instanceof IASTClassSpecifier);
+		assertTrue(((IASTClassSpecifier)declaration.getTypeSpecifier()).getClassKind()== ASTClassKind.STRUCT);
+		Iterator j =((IASTClassSpecifier)declaration.getTypeSpecifier()).getDeclarations();
+		assertTrue(j.hasNext());
+		IASTMethod m1 = (IASTMethod)j.next();
+		IASTMethod m2 = (IASTMethod)j.next();
+		IASTMethod m3 = (IASTMethod)j.next();
+		assertFalse(j.hasNext());
+		assertTrue(m1.getVisiblity() == ASTAccessVisibility.PUBLIC);
+		assertTrue(m2.getVisiblity() == ASTAccessVisibility.PUBLIC);
+		assertTrue(m3.getVisiblity() == ASTAccessVisibility.PUBLIC);
+	}		
 }

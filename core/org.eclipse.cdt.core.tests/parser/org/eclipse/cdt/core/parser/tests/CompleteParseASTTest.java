@@ -773,5 +773,28 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		for( int j =0; j < 4; ++j )
 			assertFalse( classOp.getNameOffset() == ((IASTReference)callback.getReferences().get(j)).getOffset() ); 
 	}
+	/** 
+	 * class A { static int x; } int A::x = 5;
+	 */
+	public void testBug43373() throws Exception
+	{
+		try { // This is to prove that there are no exceptions
+			// Used to cause AST Semantic exception
+			Iterator i = parse( "class A { static int x; }; int A::x = 5;" ).getDeclarations();
+			IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+			Iterator j = getDeclarations(classA);
+			IASTField field1 = (IASTField) j.next();			
+			// Note : this used to be considered a variable, not a field
+			IASTField field2 = (IASTField)i.next(); 
+			
+			assertEquals( callback.getReferences().size(), 1 );
+			Iterator references = callback.getReferences().iterator();
+			assertEquals( ((IASTReference)references.next()).getReferencedElement(), classA );
+			assertTrue (field1.getVisiblity() == field2.getVisiblity());
+		}catch (Exception e){
+			fail();
+		}
+	}
 	
+
 }

@@ -29,6 +29,7 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
  */
 public class ASTVariable extends ASTSymbol implements IASTVariable
 {
+	private final boolean previouslyDeclared;
 	private final IASTExpression constructorExpression;
     protected final ASTReferenceStore referenceDelegate;
 	private final ASTQualifiedNamedElement qualifiedName;
@@ -45,7 +46,7 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
      * @param nameOffset
      * @param references
      */
-    public ASTVariable(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int nameOffset, List references, IASTExpression constructorExpression )
+    public ASTVariable(ISymbol newSymbol, IASTAbstractDeclaration abstractDeclaration, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, int startingOffset, int nameOffset, List references, IASTExpression constructorExpression, boolean previouslyDeclared  )
     {
     	super( newSymbol );
         this.abstractDeclaration = abstractDeclaration;
@@ -56,6 +57,7 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
 		setNameOffset( nameOffset );
 		referenceDelegate = new ASTReferenceStore( references );
 		qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), newSymbol.getName() );
+		this.previouslyDeclared =previouslyDeclared;		
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#isAuto()

@@ -950,7 +950,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		item.setControl(createColorPage(folder));
 
 		item = new TabItem(folder, SWT.NONE);
-		item.setText("Code A&ssist");
+		item.setText("Content A&ssist");
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createContentAssistPage(folder));
 

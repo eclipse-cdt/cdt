@@ -147,7 +147,7 @@ public interface IASTFactory
 		boolean isVolatile,
 		boolean isVirtual,
 		boolean isExplicit,
-		boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isDefinition ) throws ASTSemanticException;
+		boolean isPureVirtual, List constructorChain, boolean isDefinition ) throws ASTSemanticException;
     public IASTAbstractDeclaration createAbstractDeclaration(
         boolean isConst,
         boolean isVolatile,

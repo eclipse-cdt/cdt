@@ -468,7 +468,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
 		virtual,
 		explicit,
 		declarator.isPureVirtual(),
-		ASTAccessVisibility.PUBLIC, 
 		declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody() );
     }
     /**

@@ -521,6 +521,10 @@ public class CModelBuilder {
 				}
 				
 			}
+			methodElement.setParameterTypes(parameterTypes);
+			methodElement.setReturnType( ASTUtil.getType(functionDeclaration.getReturnType()) );
+			methodElement.setStatic(functionDeclaration.isStatic());
+
 			// Common settings for method declaration
 			methodElement.setVisibility(methodDeclaration.getVisiblity());
 			methodElement.setVolatile(methodDeclaration.isVolatile());
@@ -535,15 +539,16 @@ public class CModelBuilder {
 		}
 		else // instance of IASTFunction 
 		{
+			FunctionDeclaration functionElement = null;
 			if (functionDeclaration.hasFunctionBody())
 			{				
 				// function
 				if(!isTemplate){
 					Function newElement = new Function( parent, name );
-					element = newElement;				
+					functionElement = newElement;				
 				} else {
 					FunctionTemplate newElement = new FunctionTemplate( parent, name );
-					element = newElement;
+					functionElement = newElement;				
 				}
 			}
 			else
@@ -551,17 +556,17 @@ public class CModelBuilder {
 				// functionDeclaration
 				if(!isTemplate){
 					FunctionDeclaration newElement = new FunctionDeclaration( parent, name );
-					element = newElement;				
+					functionElement = newElement;				
 				} else {
 					FunctionTemplate newElement = new FunctionTemplate( parent, name );
-					element = newElement;
+					functionElement = newElement;				
 				}
 			}
+			functionElement.setParameterTypes(parameterTypes);
+			functionElement.setReturnType( ASTUtil.getType(functionDeclaration.getReturnType()) );
+			functionElement.setStatic(functionDeclaration.isStatic());
+			element = functionElement;
 		}						
-		element.setParameterTypes(parameterTypes);
-		element.setReturnType( ASTUtil.getType(functionDeclaration.getReturnType()) );
-		element.setStatic(functionDeclaration.isStatic());
-
 		// add to parent
 		parent.addChild( element ); 	
 

@@ -157,6 +157,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return result;		
 	}
 	
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, List references, boolean throwOnError ) throws ASTSemanticException{
+		return lookupQualifiedName(startingScope, name, TypeInfo.t_any, null, 0, references, throwOnError);
+	}
+
 	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, String name, TypeInfo.eType type, List parameters, int offset, List references, boolean throwOnError ) throws ASTSemanticException
 	{
 		ISymbol result = null;
@@ -1406,7 +1410,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isVirtual,
 		boolean isExplicit,
 		boolean isPureVirtual, 
-		ASTAccessVisibility visibility, List constructorChain, boolean isFunctionDefinition ) throws ASTSemanticException
+		List constructorChain, 
+		boolean isFunctionDefinition ) throws ASTSemanticException
 	{
 		List references = new ArrayList();
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
@@ -1437,7 +1442,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				if(parentSymbol == null){
 					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_namespace, null, offset, references, false);						
 				}
-				if(parentSymbol == null)
+				if(parentSymbol == null){
+					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_struct, null, offset, references, false);						
+				}
+				if(parentSymbol == null){
+					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_union, null, offset, references, false);						
+				}				if(parentSymbol == null)
 					break;
 				else {
 					parentScope = parentSymbol;
@@ -1445,12 +1455,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				}
 			}
 			
-			if((parentScope != null) && (parentScope.getType() == TypeInfo.t_class)){
-				IASTClassSpecifier methodParentScope = (IASTClassSpecifier)parentScope.getASTExtension().getPrimaryDeclaration();
+			if((parentScope != null) && 
+			( (parentScope.getType() == TypeInfo.t_class) 
+			|| (parentScope.getType() == TypeInfo.t_struct)
+			|| (parentScope.getType() == TypeInfo.t_union))
+			){
+				IASTScope methodParentScope = (IASTScope)parentScope.getASTExtension().getPrimaryDeclaration();
 				return createMethod(methodParentScope, functionName,nameEndOffset, parameters, returnType,
 				exception, isInline, isFriend, isStatic, startOffset, offset,
 				ownerTemplate, isConst, isVolatile, isVirtual, isExplicit, isPureVirtual,
-				visibility, constructorChain, references, isFunctionDefinition);
+				ASTAccessVisibility.PRIVATE, constructorChain, references, isFunctionDefinition);
 			}
 		}
 	
@@ -1852,6 +1866,59 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int nameOffset, IASTExpression constructorExpression) throws ASTSemanticException
     {
 		List references = new ArrayList(); 
+		IContainerSymbol ownerScope = scopeToSymbol( scope );		
+
+		// check if this is a scoped field, not a variable
+		StringTokenizer tokenizer = new StringTokenizer(name,DOUBLE_COLON);
+		int tokencount = tokenizer.countTokens();
+		if(tokencount > 1){
+			List tokens = new ArrayList();
+			String oneToken = "";
+			// This is NOT a function. This is a method definition
+			while (tokenizer.hasMoreTokens()){
+				oneToken = tokenizer.nextToken();
+				tokens.add(oneToken);
+			}
+				
+			String fieldName = oneToken;
+			String parentName = name.substring(0, name.lastIndexOf(DOUBLE_COLON));
+			
+			int numOfTokens = 1;
+			int offset = nameOffset;
+			IContainerSymbol parentScope = ownerScope;
+			Iterator i = tokens.iterator();
+			while (i.hasNext() && (numOfTokens++) < tokens.size()){
+				String token = (String) i.next();
+				IContainerSymbol parentSymbol =
+				(IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_class, null, offset, references, false);
+				if(parentSymbol == null){
+					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_namespace, null, offset, references, false);						
+				}
+				if(parentSymbol == null){
+					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_struct, null, offset, references, false);						
+				}
+				if(parentSymbol == null){
+					parentSymbol = (IContainerSymbol) lookupQualifiedName(parentScope, token, TypeInfo.t_union, null, offset, references, false);						
+				}
+				if(parentSymbol == null)
+					break;
+				else {
+					parentScope = parentSymbol;
+					offset += token.length()+ DOUBLE_COLON.length();
+				}
+			}
+			
+			if((parentScope != null) && 
+			( (parentScope.getType() == TypeInfo.t_class) 
+			|| (parentScope.getType() == TypeInfo.t_struct)
+			|| (parentScope.getType() == TypeInfo.t_union))
+			){
+				IASTScope fieldParentScope = (IASTScope)parentScope.getASTExtension().getPrimaryDeclaration();
+				return createField(fieldParentScope, fieldName,isAuto, initializerClause, bitfieldExpression, abstractDeclaration, isMutable, isExtern, 
+				isRegister, isStatic, startingOffset, offset, constructorExpression, ASTAccessVisibility.PRIVATE, references);
+			}
+		}
+		
         ISymbol newSymbol = cloneSimpleTypeSymbol(name, abstractDeclaration, references);
         setVariableTypeInfoBits(
             isAuto,
@@ -1862,16 +1929,28 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
             isStatic,
             newSymbol);
 		setPointerOperators( newSymbol, abstractDeclaration.getPointerOperators(), abstractDeclaration.getArrayModifiers() );
+		
+		newSymbol.setIsForwardDeclaration(isStatic);
+		boolean previouslyDeclared = false;
+		if(!isStatic){
+			ISymbol variableDeclaration = (ISymbol) lookupQualifiedName(ownerScope, name, new ArrayList(), false);                
+	
+			if( variableDeclaration != null )
+			{
+				variableDeclaration.setTypeSymbol( newSymbol );
+				previouslyDeclared = true;
+			}
+		}
 		try
 		{
-			scopeToSymbol(scope).addSymbol( newSymbol );
+			ownerScope.addSymbol( newSymbol );
 		}
 		catch (ParserSymbolTableException e)
 		{
 			// TODO Auto-generated catch block
 		}
         
-        ASTVariable variable = new ASTVariable( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, references, constructorExpression );
+        ASTVariable variable = new ASTVariable( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, references, constructorExpression, previouslyDeclared );
         try
         {
             attachSymbolExtension(newSymbol, variable );
@@ -1931,6 +2010,25 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createField(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, boolean, org.eclipse.cdt.core.parser.ast.IASTInitializerClause, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration, boolean, boolean, boolean, boolean, int, int, org.eclipse.cdt.core.parser.ast.ASTAccessVisibility)
      */
+	public IASTField createField(
+		IASTScope scope,
+		String name,
+		boolean isAuto,
+		IASTInitializerClause initializerClause,
+		IASTExpression bitfieldExpression,
+		IASTAbstractDeclaration abstractDeclaration,
+		boolean isMutable,
+		boolean isExtern,
+		boolean isRegister,
+		boolean isStatic,
+		int startingOffset,
+		int nameOffset,
+		IASTExpression constructorExpression, ASTAccessVisibility visibility) throws ASTSemanticException
+	{
+		return createField(scope, name,isAuto, initializerClause, bitfieldExpression, abstractDeclaration, isMutable, isExtern, 
+		isRegister, isStatic, startingOffset, nameOffset, constructorExpression, visibility, null);		
+	}
+	
     public IASTField createField(
         IASTScope scope,
         String name,
@@ -1944,9 +2042,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isStatic,
         int startingOffset,
         int nameOffset,
-        IASTExpression constructorExpression, ASTAccessVisibility visibility) throws ASTSemanticException
+        IASTExpression constructorExpression, 
+        ASTAccessVisibility visibility,
+        List references) throws ASTSemanticException
     {
-		List references = new ArrayList(); 
+		IContainerSymbol ownerScope = scopeToSymbol( scope );		
+
+		if(references == null)
+			references = new ArrayList();
 		ISymbol newSymbol = cloneSimpleTypeSymbol(name, abstractDeclaration, references);
 		setVariableTypeInfoBits(
 			isAuto,
@@ -1958,16 +2061,32 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			newSymbol);
 		setPointerOperators( newSymbol, abstractDeclaration.getPointerOperators(), abstractDeclaration.getArrayModifiers() );
 		
+		newSymbol.setIsForwardDeclaration(isStatic);
+		boolean previouslyDeclared = false;
+		if(!isStatic){
+			List fieldReferences = new ArrayList();		
+			ISymbol fieldDeclaration = lookupQualifiedName(ownerScope, name, fieldReferences, false);                
+				
+			if( fieldDeclaration != null )
+			{
+				previouslyDeclared = true;
+				fieldDeclaration.setTypeSymbol( newSymbol );
+				// set the definition visibility = declaration visibility
+				ASTReference reference = (ASTReference) fieldReferences.iterator().next();
+				visibility = ((IASTField)reference.getReferencedElement()).getVisiblity();		
+			}
+		}
+		
 		try
 		{
-			scopeToSymbol(scope).addSymbol( newSymbol );
+			ownerScope.addSymbol( newSymbol );
 		}
 		catch (ParserSymbolTableException e)
 		{
 			throw new ASTSemanticException();
 		}
 		
-		ASTField field = new ASTField( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, references, constructorExpression, visibility );
+		ASTField field = new ASTField( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, references, previouslyDeclared, constructorExpression, visibility );
 		try
 		{
 			attachSymbolExtension(newSymbol, field );

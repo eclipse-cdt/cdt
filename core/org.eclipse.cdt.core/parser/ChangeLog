@@ -1,3 +1,7 @@
+2003-09-23 Hoda Amer
+	Solution to bug#43373: No reference to static member in definition
+	Solution to bug#43371: constructor incorrectly marked private
+	
 2003-09-18 Andrew Niefer
 	- modified Symbol table interfaces to use Lists & Maps instead of LinkedList and HashMap
 	- fixed warnings in ParserSymbolTable

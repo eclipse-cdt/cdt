@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 
 public abstract class CElement extends PlatformObject implements ICElement {
@@ -75,7 +76,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		} catch (CModelException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return new Path(getElementName());
 	}
 
 	public boolean exists() {
@@ -155,8 +156,16 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		fEndLine = endLine;
 	}
 
-
-	public abstract IResource getUnderlyingResource() throws CModelException;
+	public IResource getUnderlyingResource() throws CModelException {
+		IResource res = getResource();
+		if (res == null) {
+			ICElement p = getParent();
+			if (p != null) {
+				res = p.getUnderlyingResource();
+			}
+		}
+		return res;
+	}
 
 	public abstract IResource getResource() ;
 
@@ -292,8 +301,10 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * <p>Subclasses that are not IOpenable's must override this method.
 	 */
 	public IOpenable getOpenableParent() {
-		
-		return (IOpenable)fParent;
+		if (fParent instanceof IOpenable) {		
+			return (IOpenable)fParent;
+		}
+		return null;
 	}
 
 

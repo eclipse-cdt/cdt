@@ -138,7 +138,7 @@ public class CContainer extends Openable implements ICContainer {
 		} catch (CoreException e) {
 			//System.out.println (e);
 			//CPlugin.log (e);
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		ICElement[] children = new ICElement[vChildren.size()];
 		vChildren.toArray(children);

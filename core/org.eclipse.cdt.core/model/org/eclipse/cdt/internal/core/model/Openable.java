@@ -23,7 +23,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 public abstract class Openable extends Parent implements IOpenable, IBufferChangedListener {
-	
+
+	protected IResource resource;	
+
 	public Openable (ICElement parent, IPath path, int type) {
 		// Check if the file is under the workspace.
 		this (parent, ResourcesPlugin.getWorkspace().getRoot().getFileForLocation (path),
@@ -34,26 +36,14 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 		this (parent, resource, resource.getName(), type);
 	}
 	
-	public Openable (ICElement parent, IResource resource, String name, int type) {
-		super (parent, resource, name, type);
-	}
-
-	public IResource getUnderlyingResource() throws CModelException {
-		IResource res = getResource();
-		if (res == null) {
-			ICElement p = getParent();
-			if (p != null) {
-				res = p.getUnderlyingResource();
-			}
-		}
-		return res;
+	public Openable (ICElement parent, IResource res, String name, int type) {
+		super (parent, name, type);
+		resource = res;
 	}
 
 	public IResource getResource()  {
 		return resource;
 	}
-	
-	protected abstract CElementInfo createElementInfo ();
 
 	/**
 	 * The buffer associated with this element has changed. Registers

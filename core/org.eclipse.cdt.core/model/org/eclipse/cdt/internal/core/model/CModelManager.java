@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -210,26 +211,11 @@ public class CModelManager implements IResourceChangeListener {
 				if (bin.getType() == IBinaryFile.ARCHIVE) {
 					cfile = new Archive(parent, file);
 				} else {
-					cfile = new Binary(parent, file);
+					cfile = new Binary(parent, file, bin);
 				}
 			} else if (isTranslationUnit(file)) {
 				cfile = new TranslationUnit(parent, file);
 			} 
-			//else {
-			//	cfile = new CFile(parent, file);
-			//}
-		} else {
-			// Probably it was deleted, find it
-			if (parent instanceof CElement) {
-				ICElement[] children = ((CElement)parent).getElementInfo().getChildren();
-				for (int i = 0; i < children.length; i++) {
-					IResource res = children[i].getResource();
-					if (res != null && res.equals(file)) {
-						cfile = children[i];
-						break;
-					}
-				}
-			}
 		}
 		// Added also to the Containers
 		if (cfile != null && (cfile instanceof IBinary || cfile instanceof IArchive)) {
@@ -305,26 +291,6 @@ public class CModelManager implements IResourceChangeListener {
 		}
 	}
 
-
-	public void releaseCElement(IResource resource) {
-		ICElement celement = getCElement(resource);
-		if (celement == null) {
-			if (resource.exists()) {
-				celement = create(resource);
-			} else {
-				// Make sure they are not in the Containers.
-				CProject cproj = (CProject)create(resource.getProject());
-				if (cproj != null) {
-					Parent container = (Parent)cproj.getArchiveContainer();
-					removeChildrenContainer(container, resource);
-					container = (Parent)cproj.getBinaryContainer();
-					removeChildrenContainer(container, resource);
-				}
-			}
-		}
-		releaseCElement(celement);
-	}
-
 	public void releaseCElement(ICElement celement) {
 
 		// Guard.
@@ -349,30 +315,25 @@ public class CModelManager implements IResourceChangeListener {
 			}
 		}
 
+		if (celement instanceof IParent) {
+			CElementInfo info = ((CElement)celement).getElementInfo();
+			if (info != null) {
+				ICElement[] children = info.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					releaseCElement(children[i]);
+				}
+			}
+		}
+
 		// Remove the child from the parent list.
 		Parent parent = (Parent)celement.getParent();
 		if (parent != null) {
 			parent.removeChild(celement);
 		}
 
-		if (celement instanceof CElement) {
-			CElementInfo info = ((CElement)celement).getElementInfo();
-			ICElement[] children = info.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				releaseCElement(children[i]);
-			}
-		}
 		removeInfo(celement);
 	}
 
-	public ICElement getCElement(IResource res) {
-		return create(res);
-	}
-
-	public ICElement getCElement(IPath path) {
-		return create(path);
-	}
-	
 	public IBinaryParser getBinaryParser(IProject project) {
 		try {
 			return CCorePlugin.getDefault().getBinaryParser(project);
@@ -396,12 +357,15 @@ public class CModelManager implements IResourceChangeListener {
 	 */
 	public void resetBinaryParser(IProject project) {
 		if (project != null) {
-			releaseCElement(project);
-			// Fired and ICElementDelta.PARSER_CHANGED
-			CElementDelta delta = new CElementDelta(getCModel());
-			delta.binaryParserChanged(create(project));
-			registerCModelDelta(delta);
-			fire();
+			ICElement celement = create(project);
+			if (celement != null) {
+				releaseCElement(celement);
+				// Fired and ICElementDelta.PARSER_CHANGED
+				CElementDelta delta = new CElementDelta(getCModel());
+				delta.binaryParserChanged(celement);
+				registerCModelDelta(delta);
+				fire();
+			}
 		}
 	}
 	

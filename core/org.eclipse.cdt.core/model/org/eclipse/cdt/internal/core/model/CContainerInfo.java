@@ -69,7 +69,7 @@ public class CContainerInfo extends OpenableInfo {
 		} catch (CoreException e) {
 			//System.out.println (e);
 			//CPlugin.log (e);
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		setNonCResources(notChildren.toArray());	
 		return nonCResources;

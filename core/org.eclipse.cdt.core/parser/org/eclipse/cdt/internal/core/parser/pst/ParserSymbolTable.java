@@ -51,6 +51,7 @@ public class ParserSymbolTable {
 		_compilationUnit = newContainerSymbol( EMPTY_NAME, ITypeInfo.t_namespace );
 		_language = language;
 		_mode = mode;
+		_typeInfoProvider = new TypeInfoProvider();
 	}
 
 	public IContainerSymbol getCompilationUnit(){

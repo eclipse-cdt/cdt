@@ -29,7 +29,7 @@ public class TypeInfoProvider
 	private final boolean   [][] free;
 	private final int       []   firstFreeHint;
 	
-	private TypeInfoProvider()
+	protected TypeInfoProvider()
 	{
 	    
 	    pool          = new ITypeInfo[POOL_SIZE][3];

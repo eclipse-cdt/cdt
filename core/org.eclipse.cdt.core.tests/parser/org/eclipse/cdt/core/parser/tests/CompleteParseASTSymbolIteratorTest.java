@@ -95,7 +95,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
     		compilationUnit.getDeclarations().next();
     		assertTrue( false );
     	} catch( NoSuchElementException e ){
-    		
+    	    //nothing
     	}
     }
     
@@ -111,6 +111,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
     		declarations.remove();
     		assertTrue( false );
     	} catch( UnsupportedOperationException e ){
+    	    //nothing
     	}
     }
 
@@ -271,8 +272,8 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 	public void testOverride() throws Exception
 	{
 		Iterator i = parse( "void foo();\n void foo( int );\n").getDeclarations(); //$NON-NLS-1$
-		IASTFunction f1 = (IASTFunction)i.next();
-		IASTFunction f2 = (IASTFunction)i.next();
+		assertTrue( i.next() instanceof IASTFunction );
+		assertTrue( i.next() instanceof IASTFunction );
 		assertFalse( i.hasNext() );
 	}	
 	
@@ -314,8 +315,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 		
 		i = classA.getDeclarations();
 		
-		IASTMethod f = (IASTMethod)i.next();
-		
+		assertTrue( i.next() instanceof IASTMethod );
 		assertFalse( i.hasNext() ); 
 	}
 	
@@ -342,17 +342,17 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
 	{
 		Iterator i = parse( "namespace NS { int i; }  using namespace NS;" ).getDeclarations(); //$NON-NLS-1$
 		
-		IASTNamespaceDefinition ns = (IASTNamespaceDefinition) i.next();
-		IASTUsingDirective using = (IASTUsingDirective) i.next();
+		assertTrue( i.next() instanceof IASTNamespaceDefinition );
+		assertTrue( i.next() instanceof IASTUsingDirective );
 		assertFalse( i.hasNext() );
 	}
 	
 	public void testUsingDeclaration() throws Exception
 	{
 		Iterator i = parse( "namespace NS{ void f(); void f( int ); };  using NS::f;" ).getDeclarations(); //$NON-NLS-1$
-		
-		IASTNamespaceDefinition ns = (IASTNamespaceDefinition) i.next();
-		IASTUsingDeclaration using = (IASTUsingDeclaration) i.next();
+
+		assertTrue( i.next() instanceof IASTNamespaceDefinition );
+		assertTrue( i.next() instanceof IASTUsingDeclaration );
 		assertFalse( i.hasNext() );
 	}
 	
@@ -363,7 +363,7 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
         IASTClassSpecifier A = (IASTClassSpecifier) i.next();
         IASTFunction helper = (IASTFunction) i.next();
         i = A.getDeclarations();
-        IASTElaboratedTypeSpecifier B = (IASTElaboratedTypeSpecifier) i.next(); 
+        assertTrue( i.next() instanceof IASTElaboratedTypeSpecifier );
         assertFalse( i.hasNext() );
         
         i = A.getFriends();
@@ -410,5 +410,19 @@ public class CompleteParseASTSymbolIteratorTest extends CompleteParseBaseTest {
         assertTrue( deref.isConst() );
         assertTrue( deref.isVolatile() );
         assertFalse( i.hasNext() );
+    }
+    
+    public void testBug76706() throws Exception {
+        Writer writer = new StringWriter();
+        writer.write( "struct Example { static int value; } ;    \n"); //$NON-NLS-1$
+        writer.write( "int Example::value = 0;                   \n"); //$NON-NLS-1$
+        
+        Iterator i = parse( writer.toString() ).getDeclarations();
+        
+        IASTClassSpecifier ex = (IASTClassSpecifier) i.next();
+        assertFalse( i.hasNext() );
+        
+        IASTField val = (IASTField) ex.getDeclarations().next();
+        assertTrue( val.isStatic() );
     }
 }

@@ -98,6 +98,10 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		_isForwardDeclaration = forward;
 	}
 	public void setForwardSymbol( ISymbol forward ){
+	    if( _typeInfo.checkBit( ITypeInfo.isStatic ) ){
+	        forward.getTypeInfo().setBit( true, ITypeInfo.isStatic );
+	    }
+	    
 		_symbolDef = forward;  
 	}
 	public ISymbol getForwardSymbol(){

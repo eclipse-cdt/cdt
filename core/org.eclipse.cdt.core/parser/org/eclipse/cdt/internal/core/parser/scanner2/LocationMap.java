@@ -53,6 +53,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorEndifStatement {
 
     }
+
     /**
      * @author jcamelon
      */
@@ -60,12 +61,16 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorElifStatement {
 
         private final boolean taken;
-        /* (non-Javadoc)
+
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement#taken()
          */
         public boolean taken() {
             return taken;
         }
+
         /**
          * @param taken
          */
@@ -74,13 +79,17 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
     }
+
     /**
      * @author jcamelon
      */
     static class ASTElse extends ScannerASTNode implements
             IASTPreprocessorElseStatement {
         private final boolean taken;
-        /* (non-Javadoc)
+
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement#taken()
          */
         public boolean taken() {
@@ -95,19 +104,23 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
     }
+
     /**
      * @author jcamelon
      */
-    static class ASTIfndef extends ScannerASTNode implements IASTPreprocessorIfndefStatement {
+    static class ASTIfndef extends ScannerASTNode implements
+            IASTPreprocessorIfndefStatement {
 
         private final boolean taken;
-        /* (non-Javadoc)
+
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement#taken()
          */
         public boolean taken() {
             return taken;
         }
-
 
         /**
          * @param taken
@@ -117,6 +130,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
     }
+
     /**
      * @author jcamelon
      */
@@ -124,7 +138,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorIfdefStatement {
 
         private final boolean taken;
-        /* (non-Javadoc)
+
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement#taken()
          */
         public boolean taken() {
@@ -139,6 +156,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
     }
+
     /**
      * @author jcamelon
      */
@@ -146,7 +164,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorIfStatement {
 
         private final boolean taken;
-        /* (non-Javadoc)
+
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement#taken()
          */
         public boolean taken() {
@@ -161,6 +182,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         }
 
     }
+
     /**
      * @author jcamelon
      */
@@ -168,6 +190,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorErrorStatement {
 
     }
+
     /**
      * @author jcamelon
      */
@@ -175,6 +198,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorPragmaStatement {
 
     }
+
     /**
      * @author jcamelon
      */
@@ -182,6 +206,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorUndefStatement {
 
     }
+
     /**
      * @author jcamelon
      */
@@ -886,9 +911,13 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     }
 
     private static final IASTProblem[] EMPTY_PROBLEMS_ARRAY = new IASTProblem[0];
+
     private static final IASTNodeLocation[] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
+
     private static final IASTPreprocessorMacroDefinition[] EMPTY_MACRO_DEFINITIONS_ARRAY = new IASTPreprocessorMacroDefinition[0];
+
     private static final IASTPreprocessorIncludeStatement[] EMPTY_INCLUDES_ARRAY = new IASTPreprocessorIncludeStatement[0];
+
     private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_ARRAY = new IASTPreprocessorStatement[0];
 
     /*
@@ -956,9 +985,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         _Context[] contexts = new _Context[size];
         collectContexts(V_INCLUSIONS, tu, contexts, 0);
         IASTPreprocessorIncludeStatement[] result = new IASTPreprocessorIncludeStatement[size];
-        for (int i = 0; i < size; ++i) 
+        for (int i = 0; i < size; ++i)
             result[i] = createASTInclusion(((_Inclusion) contexts[i]));
-        
+
         return result;
     }
 
@@ -969,8 +998,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     private IASTPreprocessorIncludeStatement createASTInclusion(_Inclusion inc) {
         IASTPreprocessorIncludeStatement result = new ASTInclusionStatement(
                 inc.reader.filename);
-        ((ScannerASTNode) result).setOffsetAndLength(inc.context_directive_start,
-                inc.context_directive_end - inc.context_directive_start);
+        ((ScannerASTNode) result).setOffsetAndLength(
+                inc.context_directive_start, inc.context_directive_end
+                        - inc.context_directive_start);
         ((ASTInclusionStatement) result).startOffset = inc.context_directive_end;
         ((ASTInclusionStatement) result).endOffset = inc.context_ends;
         return result;
@@ -988,32 +1018,31 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         _Context[] contexts = new _Context[size];
         collectContexts(V_PREPROCESSOR, tu, contexts, 0);
         IASTPreprocessorStatement[] result = new IASTPreprocessorStatement[size];
-        for (int i = 0; i < size; ++i) 
-        {
-            if( contexts[i] instanceof _Inclusion )
+        for (int i = 0; i < size; ++i) {
+            if (contexts[i] instanceof _Inclusion)
                 result[i] = createASTInclusion(((_Inclusion) contexts[i]));
-            else if( contexts[i] instanceof _MacroDefinition )
-                result[i] = createASTMacroDefinition( (_MacroDefinition) contexts[i] );
-            else if ( contexts[i] instanceof _Undef )
-                result[i] = createASTUndef( (_Undef)contexts[i] );
-            else if ( contexts[i] instanceof _Pragma )
-                result[i] = createASTPragma( (_Pragma)contexts[i]);
-            else if ( contexts[i] instanceof _Error )
-                result[i] = createASTError( (_Error)contexts[i] );
-            else if ( contexts[i] instanceof _If )
-                result[i] = createASTIf( (_If)contexts[i] );
-            else if( contexts[i] instanceof _Ifdef )
-                result[i] = createASTIfdef( (_Ifdef)contexts[i] );
-            else if( contexts[i] instanceof _Ifndef )
-                result[i] = createASTIfndef( (_Ifndef)contexts[i]);
-            else if( contexts[i] instanceof _Else )
-                result[i] = createASTElse( (_Else)contexts[i] );
-            else if ( contexts[i] instanceof _Elif )
-                result[i] = createASTElif( (_Elif)contexts[i] );
-            else if( contexts[i] instanceof _Endif )
-                result[i] = createASTEndif( (_Endif)contexts[i ]);
+            else if (contexts[i] instanceof _MacroDefinition)
+                result[i] = createASTMacroDefinition((_MacroDefinition) contexts[i]);
+            else if (contexts[i] instanceof _Undef)
+                result[i] = createASTUndef((_Undef) contexts[i]);
+            else if (contexts[i] instanceof _Pragma)
+                result[i] = createASTPragma((_Pragma) contexts[i]);
+            else if (contexts[i] instanceof _Error)
+                result[i] = createASTError((_Error) contexts[i]);
+            else if (contexts[i] instanceof _If)
+                result[i] = createASTIf((_If) contexts[i]);
+            else if (contexts[i] instanceof _Ifdef)
+                result[i] = createASTIfdef((_Ifdef) contexts[i]);
+            else if (contexts[i] instanceof _Ifndef)
+                result[i] = createASTIfndef((_Ifndef) contexts[i]);
+            else if (contexts[i] instanceof _Else)
+                result[i] = createASTElse((_Else) contexts[i]);
+            else if (contexts[i] instanceof _Elif)
+                result[i] = createASTElif((_Elif) contexts[i]);
+            else if (contexts[i] instanceof _Endif)
+                result[i] = createASTEndif((_Endif) contexts[i]);
         }
-        
+
         return result;
     }
 
@@ -1023,7 +1052,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTEndif(_Endif endif) {
         IASTPreprocessorEndifStatement result = new ASTEndif();
-        ((ASTNode)result).setOffsetAndLength( endif.context_directive_start, endif.context_directive_end - endif.context_directive_start );
+        ((ASTNode) result).setOffsetAndLength(endif.context_directive_start,
+                endif.context_directive_end - endif.context_directive_start);
         return result;
     }
 
@@ -1033,7 +1063,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTElif(_Elif elif) {
         IASTPreprocessorElifStatement result = new ASTElif(elif.taken);
-        ((ASTNode)result).setOffsetAndLength( elif.context_directive_start, elif.context_directive_end - elif.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(elif.context_directive_start,
+                elif.context_directive_end - elif.context_directive_start);
         return result;
     }
 
@@ -1043,7 +1074,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTElse(_Else e) {
         IASTPreprocessorElseStatement result = new ASTElse(e.taken);
-        ((ASTNode)result).setOffsetAndLength( e.context_directive_start, e.context_directive_end- e.context_directive_start );
+        ((ASTNode) result).setOffsetAndLength(e.context_directive_start,
+                e.context_directive_end - e.context_directive_start);
         return result;
     }
 
@@ -1053,7 +1085,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTIfndef(_Ifndef ifndef) {
         IASTPreprocessorIfndefStatement result = new ASTIfndef(ifndef.taken);
-        ((ASTNode)result).setOffsetAndLength( ifndef.context_directive_start, ifndef.context_directive_end - ifndef.context_directive_start );
+        ((ASTNode) result).setOffsetAndLength(ifndef.context_directive_start,
+                ifndef.context_directive_end - ifndef.context_directive_start);
         return result;
     }
 
@@ -1063,7 +1096,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTIfdef(_Ifdef ifdef) {
         IASTPreprocessorIfdefStatement result = new ASTIfdef(ifdef.taken);
-        ((ASTNode)result).setOffsetAndLength( ifdef.context_directive_start, ifdef.context_directive_end - ifdef.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(ifdef.context_directive_start,
+                ifdef.context_directive_end - ifdef.context_directive_start);
         return result;
     }
 
@@ -1071,9 +1105,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      * @param if1
      * @return
      */
-    private IASTPreprocessorStatement createASTIf(_If i ) {
+    private IASTPreprocessorStatement createASTIf(_If i) {
         IASTPreprocessorIfStatement result = new ASTIf(i.taken);
-        ((ASTNode)result).setOffsetAndLength( i.context_directive_start, i.context_directive_end - - i.context_directive_start );
+        ((ASTNode) result).setOffsetAndLength(i.context_directive_start,
+                i.context_directive_end - -i.context_directive_start);
         return result;
     }
 
@@ -1083,7 +1118,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTError(_Error error) {
         IASTPreprocessorErrorStatement result = new ASTError();
-        ((ASTNode)result).setOffsetAndLength( error.context_directive_start, error.context_directive_end - error.context_directive_start);
+        ((ASTNode) result).setOffsetAndLength(error.context_directive_start,
+                error.context_directive_end - error.context_directive_start);
         return result;
     }
 
@@ -1102,7 +1138,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
      */
     private IASTPreprocessorStatement createASTUndef(_Undef undef) {
         IASTPreprocessorUndefStatement result = new ASTUndef();
-        ((ASTNode)result).setOffsetAndLength( undef.context_directive_start, undef.context_directive_end - undef.context_directive_start );
+        ((ASTNode) result).setOffsetAndLength(undef.context_directive_start,
+                undef.context_directive_end - undef.context_directive_start);
         return result;
     }
 

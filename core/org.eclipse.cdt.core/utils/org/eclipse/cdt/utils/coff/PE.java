@@ -438,6 +438,14 @@ public class PE {
 		return attrib;
 	}
 
+	public static Attribute getAttributes(String file) throws IOException {
+		PE pe = new PE(file);
+		Attribute attrib = pe.getAttribute();
+		pe.dispose();
+		return attrib;
+	}
+
+
 	public void dispose() throws IOException {
 		if (rfile != null) {
 			rfile.close();

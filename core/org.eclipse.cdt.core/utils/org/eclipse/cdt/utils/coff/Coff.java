@@ -406,8 +406,10 @@ public class Coff {
 		public String getName(byte[] table) {
 			if (table.length > 0 && isLongName()) {
 				ReadMemoryAccess memory = new ReadMemoryAccess(_n_name, true);
-				memory.getInt();
-				int offset = memory.getInt();
+				memory.getInt(); // pass over the first 4 bytes.
+				// The first for bytes of the string table represent the
+				// number of bytes in the string table.
+				int offset = memory.getInt() - 4;
 				if (offset > 0) {
 					for (int i = offset; i < table.length; i++) {
 						if (table[i] == 0) {

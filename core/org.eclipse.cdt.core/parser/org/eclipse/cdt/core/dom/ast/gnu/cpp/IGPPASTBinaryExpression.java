@@ -9,14 +9,15 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 
 /**
  * @author jcamelon
  */
-public interface IGPPASTBinaryExpression extends IASTBinaryExpression {
+public interface IGPPASTBinaryExpression extends ICPPASTBinaryExpression {
     
-    public static final int op_max = IASTBinaryExpression.op_last + 1;
-    public static final int op_min = IASTBinaryExpression.op_last + 2;
+    public static final int op_max = ICPPASTBinaryExpression.op_last + 1;
+    public static final int op_min = ICPPASTBinaryExpression.op_last + 2;
+    public static final int op_last = op_min;
 
 }

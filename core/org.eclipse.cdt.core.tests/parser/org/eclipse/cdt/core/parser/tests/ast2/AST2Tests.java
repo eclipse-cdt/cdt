@@ -36,7 +36,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -243,7 +243,7 @@ public class AST2Tests extends AST2BaseTest {
         validateSimpleUnaryExpressionC( "&x", IASTUnaryExpression.op_amper ); //$NON-NLS-1$
         validateSimpleUnaryExpressionC( "sizeof x", IASTUnaryExpression.op_sizeof ); //$NON-NLS-1$
         validateSimpleTypeIdExpressionC( "sizeof( int )", IASTTypeIdExpression.op_sizeof ); //$NON-NLS-1$
-        validateSimpleUnaryTypeIdExpression( "(int)x", IASTUnaryTypeIdExpression.op_cast ); //$NON-NLS-1$
+        validateSimpleUnaryTypeIdExpression( "(int)x", IASTCastExpression.op_cast ); //$NON-NLS-1$
         validateSimplePostfixInitializerExpressionC( "(int) { 5 }"); //$NON-NLS-1$
         validateSimplePostfixInitializerExpressionC( "(int) { 5, }"); //$NON-NLS-1$
         validateSimpleBinaryExpressionC("x=y", IASTBinaryExpression.op_assign ); //$NON-NLS-1$

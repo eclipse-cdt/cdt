@@ -1,13 +1,14 @@
 /**********************************************************************
- * Copyright (c) 2002-2004 IBM Canada and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
- * IBM Rational Software - Initial API and implementation */
-package org.eclipse.cdt.internal.core.parser2.c;
+ * IBM - Initial API and implementation
+ **********************************************************************/
+package org.eclipse.cdt.internal.core.parser2.cpp;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 /**
  * @author jcamelon
  */
-public class CASTArrayDeclarator extends CASTDeclarator implements
+public class CPPASTArrayDeclarator extends CPPASTDeclarator implements
         IASTArrayDeclarator {
 
     private int currentIndex = 0;
@@ -64,5 +65,4 @@ public class CASTArrayDeclarator extends CASTDeclarator implements
         }
         arrayMods[ currentIndex++ ] = arrayModifier;
     }
-
 }

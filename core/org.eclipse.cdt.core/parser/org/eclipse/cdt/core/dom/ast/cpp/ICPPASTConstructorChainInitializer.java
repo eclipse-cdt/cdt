@@ -12,23 +12,20 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
- * This is an initializer that is a call to the constructor for the
- * declarator.
- * 
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface ICPPASTConstructorInitializer extends IASTInitializer {
+public interface ICPPASTConstructorChainInitializer extends IASTNode {
+    
+    public static final ASTNodeProperty MEMBER_ID = new ASTNodeProperty( "Member Initializer Id"); //$NON-NLS-1$
+    public IASTName getMemberInitializerId();
+    public void setMemberInitializerId( IASTName name );
+    
+    public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty( "Expression Initializer"); //$NON-NLS-1$
+    public IASTExpression getInitializerValue();
+    public void setInitializerValue( IASTExpression expression );
 
-	/**
-	 * Get the arguments to the constructor.
-	 * 
-	 * @return IASTExpression
-	 */
-    public static final ASTNodeProperty EXPRESSION = new ASTNodeProperty( "Expression"); //$NON-NLS-1$
-	public IASTExpression getExpression();
-	public void setExpression( IASTExpression expression );
-	
 }

@@ -21,6 +21,7 @@ public interface IASTLiteralExpression extends IASTExpression {
     public static final int lk_float_constant = 1;
     public static final int lk_char_constant = 2;
     public static final int lk_string_literal = 3;
+    public static final int lk_last = lk_string_literal;
  
     public int getKind();
     public void setKind( int value );

@@ -10,25 +10,18 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 
 /**
- * This is an initializer that is a call to the constructor for the
- * declarator.
- * 
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface ICPPASTConstructorInitializer extends IASTInitializer {
+public interface ICPPASTFunctionTryBlockDeclarator extends
+        ICPPASTFunctionDeclarator {
 
-	/**
-	 * Get the arguments to the constructor.
-	 * 
-	 * @return IASTExpression
-	 */
-    public static final ASTNodeProperty EXPRESSION = new ASTNodeProperty( "Expression"); //$NON-NLS-1$
-	public IASTExpression getExpression();
-	public void setExpression( IASTExpression expression );
-	
+    public static final ASTNodeProperty CATCH_HANDLER = new ASTNodeProperty( "Catch Handler"); //$NON-NLS-1$
+    public void addCatchHandler( IASTStatement statement );
+    public List getCatchHandlers();
 }

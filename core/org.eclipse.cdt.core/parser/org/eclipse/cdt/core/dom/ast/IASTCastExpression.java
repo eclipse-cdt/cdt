@@ -12,7 +12,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * @author jcamelon
  */
-public interface IASTUnaryTypeIdExpression extends IASTExpression {
+public interface IASTCastExpression extends IASTExpression {
 
     public static final int op_cast   = 0;
     public static final int op_last   = op_cast;

@@ -845,7 +845,6 @@ public class QuickParser2Tests extends TestCase {
         code.write("__a = __b;\n"); //$NON-NLS-1$
         code.write("__b = __tmp;\n"); //$NON-NLS-1$
         code.write("}\n"); //$NON-NLS-1$
-
         parse(code.toString());
     }
 

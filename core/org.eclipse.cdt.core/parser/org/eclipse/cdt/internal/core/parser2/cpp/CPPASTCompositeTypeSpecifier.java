@@ -45,7 +45,7 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
             baseSpecs = new ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[ DEFAULT_DECLARATIONS_LIST_SIZE ];
             currentIndex2 = 0;
         }
-        if( declarations.length == currentIndex )
+        if( baseSpecs.length == currentIndex )
         {
             ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier [] old = baseSpecs;
             baseSpecs = new ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier[ old.length * 2 ];

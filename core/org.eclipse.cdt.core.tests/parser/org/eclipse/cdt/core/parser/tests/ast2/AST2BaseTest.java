@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -116,7 +116,7 @@ public class AST2BaseTest extends TestCase {
      * @throws ParserException
      */
     protected void validateSimpleUnaryTypeIdExpression( String code, int op ) throws ParserException {
-        IASTUnaryTypeIdExpression e = (IASTUnaryTypeIdExpression) getExpressionFromStatementInCode( code, ParserLanguage.C );
+        IASTCastExpression e = (IASTCastExpression) getExpressionFromStatementInCode( code, ParserLanguage.C );
         assertNotNull( e );
         assertEquals( e.getOperator(), op );
         assertNotNull( e.getTypeId() );

@@ -49,7 +49,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -184,8 +184,8 @@ public class CVisitor {
 			}
 			if( binding instanceof ICompositeType )
 				compositeType = (ICompositeType) binding;
-		} else if( fieldOwner instanceof IASTUnaryTypeIdExpression ){
-			IASTTypeId id = ((IASTUnaryTypeIdExpression)fieldOwner).getTypeId();
+		} else if( fieldOwner instanceof IASTCastExpression ){
+			IASTTypeId id = ((IASTCastExpression)fieldOwner).getTypeId();
 			IBinding binding = resolveBinding( id );
 			if( binding != null && binding instanceof ICompositeType ){
 				compositeType = (ICompositeType) binding;
@@ -723,9 +723,9 @@ public class CVisitor {
 		    if( !visitTypeId( ((IASTTypeIdExpression)expression).getTypeId(), action ) ) return false;
 		} else if( expression instanceof IASTUnaryExpression ){
 		    if( !visitExpression( ((IASTUnaryExpression)expression).getOperand(), action ) ) return false;
-		} else if( expression instanceof IASTUnaryTypeIdExpression ){
-		    if( !visitExpression( ((IASTUnaryTypeIdExpression)expression).getOperand(), action ) ) return false;
-		    if( !visitTypeId( ((IASTUnaryTypeIdExpression)expression).getTypeId(), action ) ) return false;
+		} else if( expression instanceof IASTCastExpression ){
+		    if( !visitExpression( ((IASTCastExpression)expression).getOperand(), action ) ) return false;
+		    if( !visitTypeId( ((IASTCastExpression)expression).getTypeId(), action ) ) return false;
 		} else if( expression instanceof ICASTTypeIdInitializerExpression ){
 		    if( !visitTypeId( ((ICASTTypeIdInitializerExpression)expression).getTypeId(), action ) ) return false;
 		    if( !visitInitializer( ((ICASTTypeIdInitializerExpression)expression).getInitializer(), action ) ) return false;

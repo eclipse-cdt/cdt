@@ -10,13 +10,13 @@
 package org.eclipse.cdt.internal.core.parser2.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 
 /**
  * @author jcamelon
  */
-public class CASTUnaryTypeIdExpression extends CASTUnaryExpression implements
-        IASTUnaryTypeIdExpression {
+public class CASTCastExpression extends CASTUnaryExpression implements
+        IASTCastExpression {
 
     private IASTTypeId typeId;
 

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
@@ -43,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
@@ -62,6 +62,7 @@ import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser2.c.CASTASMDeclaration;
 import org.eclipse.cdt.internal.core.parser2.c.CASTBreakStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTCaseStatement;
+import org.eclipse.cdt.internal.core.parser2.c.CASTCastExpression;
 import org.eclipse.cdt.internal.core.parser2.c.CASTContinueStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTDeclarationStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTDefaultStatement;
@@ -468,14 +469,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     }
 
     /**
-     * @param d
      */
-    protected void throwAwayMarksForInitializerClause(Declarator d) {
+    protected void throwAwayMarksForInitializerClause() {
         simpleDeclarationMark = null;
-        if (d.getNameDuple() != null)
-            d.getNameDuple().getLastToken().setNext(null);
-        if (d.getPointerOperatorNameDuple() != null)
-            d.getPointerOperatorNameDuple().getLastToken().setNext(null);
     }
 
     /**
@@ -545,10 +541,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         consume(IToken.tRPAREN);
         IGNUASTCompoundStatementExpression resultExpression = createCompoundStatementExpression();
         ((ASTNode)resultExpression).setOffset( startingOffset );
-        resultExpression.setCompoundStatement(compoundStatement);
-        compoundStatement.setParent(resultExpression);
-        compoundStatement
-                .setPropertyInParent(IGNUASTCompoundStatementExpression.STATEMENT);
+        if( compoundStatement != null )
+        {
+	        resultExpression.setCompoundStatement(compoundStatement);
+	        compoundStatement.setParent(resultExpression);
+	        compoundStatement
+	                .setPropertyInParent(IGNUASTCompoundStatementExpression.STATEMENT);
+        }
 
         return resultExpression;
     }
@@ -1067,7 +1066,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected ICASTEnumerationSpecifier enumSpecifier()
+    protected IASTEnumerationSpecifier enumSpecifier()
             throws BacktrackException, EndOfFileException {
         IToken mark = mark();
         IASTName name = null;
@@ -1079,7 +1078,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
             name = createName();
         if (LT(1) == IToken.tLBRACE) {
             
-            ICASTEnumerationSpecifier result = (ICASTEnumerationSpecifier) createEnumerationSpecifier();
+            IASTEnumerationSpecifier result = createEnumerationSpecifier();
             ((ASTNode)result).setOffset( startOffset );
             result.setName( name );
             name.setParent( result );
@@ -1591,6 +1590,33 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
     protected IASTEnumerationSpecifier createEnumerationSpecifier() {
         return new CASTEnumerationSpecifier();
+    }
+
+    /**
+     * @param op
+     * @param typeId
+     * @param subExpression
+     * @param startingOffset
+     * @return
+     */
+    protected IASTExpression buildTypeIdUnaryExpression(int op, IASTTypeId typeId, IASTExpression subExpression, int startingOffset) {
+        IASTCastExpression result = createCastExpression();
+        result.setOperator( op );
+        ((ASTNode)result).setOffset( startingOffset );
+        result.setTypeId(typeId);
+        typeId.setParent( result );
+        typeId.setPropertyInParent( IASTCastExpression.TYPE_ID );
+        result.setOperand( subExpression );
+        subExpression.setParent( result );
+        subExpression.setPropertyInParent( IASTCastExpression.OPERAND );
+        return result;
+    }
+
+    /**
+     * @return
+     */
+    protected IASTCastExpression createCastExpression() {
+        return new CASTCastExpression();
     }
 
 }

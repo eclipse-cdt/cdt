@@ -12,23 +12,25 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 
 /**
- * This is an initializer that is a call to the constructor for the
- * declarator.
- * 
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface ICPPASTConstructorInitializer extends IASTInitializer {
+public interface ICPPASTDeleteExpression extends IASTExpression {
 
-	/**
-	 * Get the arguments to the constructor.
-	 * 
-	 * @return IASTExpression
-	 */
-    public static final ASTNodeProperty EXPRESSION = new ASTNodeProperty( "Expression"); //$NON-NLS-1$
-	public IASTExpression getExpression();
-	public void setExpression( IASTExpression expression );
-	
+    public static final ASTNodeProperty OPERAND = new ASTNodeProperty( "Operand"); //$NON-NLS-1$
+    public IASTExpression getOperand();
+    public void setOperand( IASTExpression expression );
+    /**
+     * @param global
+     */
+    public void setIsGlobal(boolean global);
+    public boolean isGlobal();
+
+    /**
+     * @param vectored
+     */
+    public void setIsVectored(boolean vectored);
+    public boolean isVectored();
+
 }

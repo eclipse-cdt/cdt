@@ -2325,5 +2325,12 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
         Iterator i = callback.getProblems();
         assertFalse( i.hasNext() );
     }
+    public void testBug77805() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("#if X // Do something only if X is true\n"); //$NON-NLS-1$
+    	writer.write("/* some statements */\n"); //$NON-NLS-1$
+    	writer.write("#endif\n"); //$NON-NLS-1$
+    	parse(writer.toString());
+    }
 }
 

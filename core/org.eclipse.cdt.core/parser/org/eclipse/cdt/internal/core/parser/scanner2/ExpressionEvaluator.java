@@ -798,9 +798,24 @@ public class ExpressionEvaluator {
 					if (p + 1 < limit) {
 						if (buffer[p + 1] == '/') {
 							// C++ comment, skip rest of line
-							return;
-						} else if (buffer[p + 1] == '*') {
-							// C comment, find closing */
+							for (bufferPos[bufferStackPos] += 2;
+								bufferPos[bufferStackPos] < limit;
+								++bufferPos[bufferStackPos]) {
+								p = bufferPos[bufferStackPos];
+								if (buffer[p] == '\\' && p + 1 < limit && buffer[p + 1] == '\n') {
+									bufferPos[bufferStackPos]+=2;
+									continue;
+								}
+								if (buffer[p] == '\\' && p + 1 < limit && buffer[p + 1] == '\r' && p + 2 < limit && buffer[p + 2] == '\n') {
+									bufferPos[bufferStackPos]+=3;
+									continue;
+								}
+								
+								if (buffer[p] == '\n')
+									break; // break when find non-escaped newline
+							}
+							continue;
+						} else if (buffer[p + 1] == '*') {							// C comment, find closing */
 							for (bufferPos[bufferStackPos] += 2;
 									bufferPos[bufferStackPos] < limit;
 									++bufferPos[bufferStackPos]) {

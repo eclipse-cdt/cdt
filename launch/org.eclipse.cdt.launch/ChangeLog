@@ -1,5 +1,11 @@
 2004-02-18 Alain Magloire
 
+	Remove dprecated Eclipse-2.0 calls;
+
+	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java
+
+2004-02-18 Alain Magloire
+
 	Added image to the label provider
 
 	* icons/obj16/exec_obj.gif

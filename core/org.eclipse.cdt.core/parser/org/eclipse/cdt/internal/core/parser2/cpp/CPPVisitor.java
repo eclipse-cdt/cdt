@@ -52,10 +52,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
 import org.eclipse.cdt.core.parser.util.ObjectSet;
-import org.eclipse.cdt.internal.core.parser2.c.CASTFunctionDeclarator;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 
 /**
  * @author aniefer
@@ -68,7 +70,8 @@ public class CPPVisitor {
 	public static IBinding createBinding(IASTName name) {
 		IASTNode parent = name.getParent();
 		if( parent instanceof IASTNamedTypeSpecifier  ||
-		    parent instanceof ICPPASTQualifiedName  ) 
+		    parent instanceof ICPPASTQualifiedName    ||
+			parent instanceof ICPPASTBaseSpecifier ) 
 		{
 			return resolveBinding( name );
 		} else if( parent instanceof IASTIdExpression ){
@@ -134,6 +137,8 @@ public class CPPVisitor {
 	}
 
 	public static IScope getContainingScope( IASTNode node ){
+		if( node == null )
+			return null;
 		if( node instanceof IASTName )
 			return getContainingScope( (IASTName) node );
 		else if( node instanceof IASTDeclaration )
@@ -323,6 +328,8 @@ public class CPPVisitor {
 			}
 		} else if( parent instanceof IASTDeclarator ){
 			data.forDefinition = true;
+		} else if ( parent instanceof ICPPASTBaseSpecifier ) {
+			//filter out non-type names
 		}
 		return data;
 	}
@@ -379,10 +386,14 @@ public class CPPVisitor {
 			}
 		} else if( declaration instanceof IASTFunctionDefinition ){
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
-			CASTFunctionDeclarator declarator = (CASTFunctionDeclarator) functionDef.getDeclarator();
+			IASTFunctionDeclarator declarator = functionDef.getDeclarator();
 			
 			//check the function itself
 			IASTName declName = declarator.getName();
+			if( declName instanceof ICPPASTQualifiedName ){
+				IASTName [] names = ((ICPPASTQualifiedName)declName).getNames(); 
+				declName = names[ names.length - 1 ];
+			}
 			if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
 				return declName;
 			}
@@ -408,8 +419,11 @@ public class CPPVisitor {
 		while( scope != null ){
 			IASTNode blockItem = getContainingBlockItem( node );
 			List directives = null;
-			if( !data.usingDirectivesOnly )
-				directives = lookupInScope( data, scope, blockItem );
+			if( !data.usingDirectivesOnly ){
+				directives = new ArrayList(2);
+				data.foundItems = lookupInScope( data, scope, blockItem, directives );
+			}
+				
 			
 			if( !data.ignoreUsingDirectives ) {
 				data.visited.clear();
@@ -434,7 +448,7 @@ public class CPPVisitor {
 				return;
 			
 			if( !data.usingDirectivesOnly && scope instanceof ICPPClassScope ){
-				//TODO : lookupInParents
+				data.foundItems = lookupInParents( data, (ICPPClassScope) scope );
 			}
 			
 			if( data.foundItems != null && !data.foundItems.isEmpty() )
@@ -443,11 +457,104 @@ public class CPPVisitor {
 			//if still not found, loop and check our containing scope
 			if( data.qualified && !data.usingDirectives.isEmpty() )
 				data.usingDirectivesOnly = true;
-			node = blockItem.getParent();
+			
+			if( blockItem != null )
+				node = blockItem.getParent();
 			scope = (ICPPScope) scope.getParent();
 		}
 	}
 	
+	private static List lookupInParents( LookupData data, ICPPClassScope lookIn ){
+		ICPPASTCompositeTypeSpecifier compositeTypeSpec = (ICPPASTCompositeTypeSpecifier) lookIn.getPhysicalNode();
+		ICPPASTBaseSpecifier [] bases = compositeTypeSpec.getBaseSpecifiers();
+
+		List inherited = null;
+		List result = null;
+		
+		if( bases.length == 0 )
+			return null;
+				
+		//use data to detect circular inheritance
+		if( data.inheritanceChain == null )
+			data.inheritanceChain = new ObjectSet( 2 );
+		
+		data.inheritanceChain.put( lookIn );
+			
+		int size = bases.length;
+		for( int i = 0; i < size; i++ )
+		{
+			ICPPClassType binding = (ICPPClassType) bases[i].getName().resolveBinding();
+			ICPPClassScope parent = (ICPPClassScope) binding.getCompositeScope();
+			
+			if( parent == null )
+				continue;
+
+			if( !bases[i].isVirtual() || !data.visited.containsKey( parent ) ){
+				if( bases[i].isVirtual() ){
+				    if( data.visited == ObjectSet.EMPTY_SET )
+				        data.visited = new ObjectSet(2);
+					data.visited.put( parent );
+				}
+
+				//if the inheritanceChain already contains the parent, then that 
+				//is circular inheritance
+				if( ! data.inheritanceChain.containsKey( parent ) ){
+					//is this name define in this scope?
+					inherited = lookupInScope( data, parent, null, null );
+					
+					if( inherited == null || inherited.isEmpty() ){
+						inherited = lookupInParents( data, parent );
+					}
+				} else {
+					//throw new ParserSymbolTableException( ParserSymbolTableException.r_CircularInheritance );
+				}
+			}	
+			
+			if( inherited != null && !inherited.isEmpty() ){
+				if( result == null || result.isEmpty() ){
+					result = inherited;
+				} else if ( inherited != null && !inherited.isEmpty() ) {
+					for( int j = 0; j < result.size(); j++ ) {
+						IASTName n = (IASTName) result.get(j);
+						if( !checkAmbiguity( n, inherited ) ){
+							//throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+							return null;
+						}
+					}
+				}
+			} else {
+				inherited = null;	//reset temp for next iteration
+			}
+		}
+	
+		data.inheritanceChain.remove( lookIn );
+
+		return result;	
+	}
+	
+	private static boolean checkAmbiguity( Object obj1, Object obj2 ){
+		//it is not ambiguous if they are the same thing and it is static or an enumerator
+		if( obj1 == obj2 ){
+			List objList = ( obj1 instanceof List ) ? (List) obj1 : null;
+			int objListSize = ( objList != null ) ? objList.size() : 0;
+			ISymbol symbol = ( objList != null ) ? (ISymbol) objList.get(0) : ( ISymbol )obj1;
+			int idx = 1;
+			while( symbol != null ) {
+				ITypeInfo type = ((ISymbol)obj1).getTypeInfo();
+				if( !type.checkBit( ITypeInfo.isStatic ) && !type.isType( ITypeInfo.t_enumerator ) ){
+					return false;
+				}
+				
+				if( objList != null && idx < objListSize ){
+					symbol = (ISymbol) objList.get( idx++ );
+				} else {
+					symbol = null;
+				}
+			}
+			return true;
+		} 
+		return false;
+	}
 	static private void processDirectives( LookupData data, IScope scope, List directives ){
 		if( directives == null || directives.size() == 0 )
 			return;
@@ -503,12 +610,12 @@ public class CPPVisitor {
 	 * @param scope
 	 * @return List of encountered using directives
 	 */
-	static private List lookupInScope( LookupData data, ICPPScope scope, IASTNode blockItem ) {
+	static private List lookupInScope( LookupData data, ICPPScope scope, IASTNode blockItem, List usingDirectives ) {
 		IASTName possible = null;
 		IASTNode [] nodes = null;
 		IASTNode parent = scope.getPhysicalNode();
 
-		List usingDirectives = null;
+		List found = null;
 		
 		if( parent instanceof IASTCompoundStatement ){
 			IASTCompoundStatement compound = (IASTCompoundStatement) parent;
@@ -529,16 +636,15 @@ public class CPPVisitor {
 				break;
 			
 			if( item instanceof ICPPASTUsingDirective && !data.ignoreUsingDirectives ) {
-				if( usingDirectives == null )
-					usingDirectives = new ArrayList(2);
-				usingDirectives.add( item );
+				if( usingDirectives != null )
+					usingDirectives.add( item );
 				continue;
 			}
 			possible = collectResult( data, item, (item == parent)  );
 			if( possible != null ){
-				if( data.foundItems == null )
-					data.foundItems = new ArrayList(2);
-				data.foundItems.add( possible );
+				if( found == null )
+					found = new ArrayList(2);
+				found.add( possible );
 			}
 			if( idx > -1 && ++idx < nodes.length ){
 				item = nodes[idx];
@@ -546,7 +652,7 @@ public class CPPVisitor {
 				item = null;
 			}
 		}
-		return usingDirectives;
+		return found;
 	}
 	
 	static private List lookupInNominated( LookupData data, ICPPScope scope, List transitives ){
@@ -567,13 +673,17 @@ public class CPPVisitor {
 					data.visited = new ObjectSet(2);
 				}
 				data.visited.put( temp );
-				int pre = ( data.foundItems != null ) ? 0 : data.foundItems.size();
-				List usings = lookupInScope( data, scope, null );
-				int post = ( data.foundItems != null ) ? 0 : data.foundItems.size();
+				List usings = new ArrayList(2);
+				List found = lookupInScope( data, scope, null, usings );
+				if( data.foundItems == null )
+					data.foundItems = found;
+				else if( found != null )
+					data.foundItems.addAll( found );
+				
 				
 				//only consider the transitive using directives if we are an unqualified
 				//lookup, or we didn't find the name in decl
-				if( usings != null && usings.size() > 0 && (!data.qualified || (pre == post)) ){
+				if( usings != null && usings.size() > 0 && (!data.qualified || found == null ) ){
 					transitives.addAll( usings );
 				}
 			}

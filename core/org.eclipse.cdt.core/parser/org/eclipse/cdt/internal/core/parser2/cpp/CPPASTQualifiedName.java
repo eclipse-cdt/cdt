@@ -109,8 +109,33 @@ public class CPPASTQualifiedName extends CPPASTNode implements ICPPASTQualifiedN
      * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
      */
     public char[] toCharArray() {
-        // TODO Auto-generated method stub
-        return null;
+        if( names == null ) return null;
+        removeNullNames();
+        
+        //count first
+        int len = 0;
+        for( int i = 0; i < names.length; ++i )
+        {
+            char [] n = names[i].toCharArray();
+            if( n == null ) 
+                return null;
+            len += n.length;
+            if( i != names.length - 1 )
+                len += 2;
+        }
+        
+        char [] nameArray = new char[ len ];
+        int pos = 0;
+        for( int i = 0; i < names.length; i++ ){
+        	char [] n = names[i].toCharArray();
+        	System.arraycopy( n, 0, nameArray, pos, n.length );
+        	pos += n.length;
+        	if( i != names.length - 1 ){
+        		nameArray[pos++] = ':';
+        		nameArray[pos++] = ':';
+        	}
+        }
+        return nameArray;    
     }
     
     

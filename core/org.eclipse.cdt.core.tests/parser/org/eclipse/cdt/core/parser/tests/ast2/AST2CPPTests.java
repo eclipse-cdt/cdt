@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
@@ -240,5 +241,86 @@ public class AST2CPPTests extends AST2BaseTest {
 		assertSame( i1, i2 );
 	}
 	
+	public void testBasicInheritance() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "class A { int i; };               \n" ); //$NON-NLS-1$
+		buffer.append( "class B : public A { void f(); }; \n" ); //$NON-NLS-1$
+		buffer.append( "void B::f() { i; }                \n" ); //$NON-NLS-1$
+		
+		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		
+		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+		ICPPASTCompositeTypeSpecifier comp = (ICPPASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+		IASTName name_A1 = comp.getName();
+		
+		decl = (IASTSimpleDeclaration) comp.getMembers()[0];
+		IASTName name_i1 = decl.getDeclarators()[0].getName();
+		
+		decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+		comp = (ICPPASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+		IASTName name_B1 = comp.getName();
+		
+		ICPPASTBaseSpecifier base = comp.getBaseSpecifiers()[0];
+		IASTName name_A2 = base.getName();
+		
+		decl = (IASTSimpleDeclaration) comp.getMembers()[0];
+		IASTName name_f1 = decl.getDeclarators()[0].getName();
+		
+		IASTFunctionDefinition def = (IASTFunctionDefinition) tu.getDeclarations()[2];
+		ICPPASTQualifiedName name_f2 = (ICPPASTQualifiedName) def.getDeclarator().getName();
+		IASTName name_B2 = name_f2.getNames()[0];
+		IASTName name_f3 = name_f2.getNames()[1];
+
+		IASTCompoundStatement compound = (IASTCompoundStatement) def.getBody();
+		IASTExpressionStatement statement = (IASTExpressionStatement) compound.getStatements()[0];
+		IASTIdExpression idExp = (IASTIdExpression) statement.getExpression();
+		IASTName name_i2 = idExp.getName();
+		
+		ICPPField i2 = (ICPPField) name_i2.resolveBinding();
+		ICPPField i1 = (ICPPField) name_i1.resolveBinding();
+		
+		ICPPClassType A2 = (ICPPClassType) name_A2.resolveBinding();
+		ICPPClassType A1 = (ICPPClassType) name_A1.resolveBinding();
+		ICPPClassType B2 = (ICPPClassType) name_B2.resolveBinding();
+		ICPPClassType B1 = (ICPPClassType) name_B1.resolveBinding();
+		
+		ICPPMethod f3 = (ICPPMethod) name_f3.resolveBinding();
+		ICPPMethod f2 = (ICPPMethod) name_f2.resolveBinding();
+		ICPPMethod f1 = (ICPPMethod) name_f1.resolveBinding();
+		assertNotNull( A1 );
+		assertNotNull( B1 );
+		assertNotNull( i1 );
+		assertNotNull( f1 );
+		assertSame( A1, A2 );
+		assertSame( B1, B2 );
+		assertSame( i1, i2 );
+		assertSame( f1, f2 );
+		assertSame( f2, f3 );
+	}
 	
+//	public void testNamespaces() throws Exception {
+//		StringBuffer buffer = new StringBuffer();
+//		buffer.append( "namespace A{            \n"); //$NON-NLS-1$
+//		buffer.append( "   int a;               \n"); //$NON-NLS-1$
+//		buffer.append( "}                       \n"); //$NON-NLS-1$
+//		buffer.append( "namespace B{            \n"); //$NON-NLS-1$
+//		buffer.append( "   using namespace A;   \n"); //$NON-NLS-1$
+//		buffer.append( "}                       \n"); //$NON-NLS-1$
+//		buffer.append( "namespace C{            \n"); //$NON-NLS-1$
+//		buffer.append( "   using namespace A;   \n"); //$NON-NLS-1$
+//		buffer.append( "}                       \n"); //$NON-NLS-1$
+//		buffer.append( "                        \n"); //$NON-NLS-1$
+//		buffer.append( "namespace BC{           \n"); //$NON-NLS-1$
+//		buffer.append( "   using namespace B;   \n"); //$NON-NLS-1$
+//		buffer.append( "   using namespace C;   \n"); //$NON-NLS-1$
+//		buffer.append( "}                       \n"); //$NON-NLS-1$
+//		buffer.append( "                        \n"); //$NON-NLS-1$
+//		buffer.append( "void f(){               \n"); //$NON-NLS-1$
+//		buffer.append( "   BC::a++; //ok        \n"); //$NON-NLS-1$
+//		buffer.append( "}                       \n"); //$NON-NLS-1$
+//		
+//		IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+//		
+//		//CPPVisitor.visitTranslationUnit( tu )
+//	}
 }

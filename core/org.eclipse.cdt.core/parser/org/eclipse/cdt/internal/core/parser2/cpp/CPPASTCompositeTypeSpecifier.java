@@ -10,10 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -32,10 +28,10 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier#getBaseSpecifiers()
      */
-    public List getBaseSpecifiers() {
-        if( baseSpecs == null ) return Collections.EMPTY_LIST;
+    public ICPPASTBaseSpecifier[] getBaseSpecifiers() {
+        if( baseSpecs == null ) return ICPPASTBaseSpecifier.EMPTY_BASESPECIFIER_ARRAY;
         removeNullBaseSpecs();
-        return Arrays.asList( baseSpecs );
+        return baseSpecs;
     }
 
     /* (non-Javadoc)

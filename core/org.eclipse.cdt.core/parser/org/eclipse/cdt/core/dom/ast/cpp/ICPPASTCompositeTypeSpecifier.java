@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -31,6 +29,8 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
     
     public static interface ICPPASTBaseSpecifier extends IASTNode
     {
+    	public static final ICPPASTBaseSpecifier[] EMPTY_BASESPECIFIER_ARRAY = new ICPPASTBaseSpecifier[0];
+    	
         public boolean isVirtual();
         public void setVirtual( boolean value );
         
@@ -46,7 +46,7 @@ public interface ICPPASTCompositeTypeSpecifier extends IASTCompositeTypeSpecifie
         public void setName( IASTName name );
     }
     
-    public List getBaseSpecifiers();
+    public ICPPASTBaseSpecifier[] getBaseSpecifiers();
     public void addBaseSpecifier( ICPPASTBaseSpecifier baseSpec );
     
 }

@@ -22,6 +22,10 @@ public interface ICHelpContextIds {
 	public static final String NEW_CPROJECT_WIZARD_PAGE= PREFIX + "new_cproject_wizard_page_context";
 	public static final String NEW_LAUNCH_WIZARD_PAGE= PREFIX + "new_launch_wizard_page_context";
 
+	// Actions
+	public static final String FILTER_PUBLIC_ACTION= PREFIX + "filter_public_action";
+	public static final String FILTER_FIELDS_ACTION= PREFIX + "filter_fields_action";
+	public static final String FILTER_STATIC_ACTION= PREFIX + "filter_static_action";
 
 	// Preference/property pages
 	public static final String C_PREF_PAGE= PREFIX + "new_c_pref_page_context";

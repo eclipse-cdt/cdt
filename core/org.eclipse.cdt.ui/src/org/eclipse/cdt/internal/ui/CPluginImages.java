@@ -121,6 +121,10 @@ public class CPluginImages {
 	public static final String IMG_TOOL_GOTO_NEXT_ERROR= NAME_PREFIX + "next_error_nav.gif";
 	public static final String IMG_EDIT_PROPERTIES= NAME_PREFIX + "prop_edt.gif";	
 
+	public static final String IMG_ACTION_SHOW_FIELDS= NAME_PREFIX + "fields_co.gif";
+	public static final String IMG_ACTION_SHOW_PUBLIC= NAME_PREFIX + "public_co.gif";
+	public static final String IMG_ACTION_SHOW_STATIC= NAME_PREFIX + "static_co.gif";
+
 	public static final ImageDescriptor DESC_OBJS_TEMPLATE= createManaged(T_OBJ, IMG_OBJS_TEMPLATE);
 	
 	public static final ImageDescriptor DESC_OVR_STATIC= create(T_OVR, "static_co.gif");

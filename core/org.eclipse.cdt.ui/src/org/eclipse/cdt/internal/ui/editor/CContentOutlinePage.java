@@ -17,6 +17,7 @@ import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -58,6 +59,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	
 	private OpenIncludeAction fOpenIncludeAction;
 	private SearchForReferencesAction fSearchForReferencesAction;
+
+	private MemberFilterActionGroup fMemberFilterActionGroup;
 
 	public CContentOutlinePage(CEditor editor) {
 		this("#TranslationUnitOutlinerContext", editor);
@@ -172,7 +175,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		site.setSelectionProvider(treeViewer);
 		IActionBars bars= site.getActionBars();		
 		bars.setGlobalActionHandler(ICEditorActionDefinitionIds.TOGGLE_PRESENTATION, fTogglePresentation);
-
+		
+		registerToolbarActions();
 		
 		//IFileEditorInput editorInput= (IFileEditorInput)fEditor.getEditorInput();
 		IEditorInput editorInput= (IEditorInput)fEditor.getEditorInput();
@@ -201,6 +205,10 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	
 	public void dispose() {
 		CUIPlugin.getDefault().getProblemMarkerManager().removeListener(treeViewer);
+		if (fMemberFilterActionGroup != null) {
+			fMemberFilterActionGroup.dispose();
+			fMemberFilterActionGroup= null;
+		}		
 		super.dispose();
 	}
 
@@ -298,4 +306,17 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		}
 		contentUpdated();		
 	}
+
+	private void registerToolbarActions() {
+		
+		IToolBarManager toolBarManager= getSite().getActionBars().getToolBarManager();
+		if (toolBarManager != null) {	
+			//toolBarManager.add(new ClassOnlyAction());		
+			//toolBarManager.add(new LexicalSortingAction());
+			
+			fMemberFilterActionGroup= new MemberFilterActionGroup(treeViewer, "COutlineViewer"); //$NON-NLS-1$
+			fMemberFilterActionGroup.contributeToToolBar(toolBarManager);
+		}
+	}
+
 }

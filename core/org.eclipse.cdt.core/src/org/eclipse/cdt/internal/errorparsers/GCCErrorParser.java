@@ -13,7 +13,7 @@ import org.eclipse.core.resources.IFile;
 public class GCCErrorParser implements IErrorParser {
 
 	public boolean processLine(String line, ErrorParserManager eoParser) {
-		// gcc: "filename:linenumber: error_desc"
+		// gcc: "filename:linenumber:column: error_desc"
 		int firstColon = line.indexOf(':');
 
 		/* Guard against drive in Windows platform.  */
@@ -41,14 +41,15 @@ public class GCCErrorParser implements IErrorParser {
 					String varName = null;
 					String desc = line.substring(secondColon + 1).trim();
 					int severity = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
-					int	num  = 0;
+					int	num  = -1;
+					int col = -1;
 
 					try {
 						num = Integer.parseInt(lineNumber);
 					} catch (NumberFormatException e) {
 					}
 
-					if (num == 0) {
+					if (num == -1) {
 						// Maybe a bad option error or cc1(plus) error
 						if (fileName.startsWith("cc") || fileName.startsWith("gcc")
 							|| fileName.startsWith("qcc") || fileName.startsWith("QCC")) {
@@ -58,6 +59,18 @@ public class GCCErrorParser implements IErrorParser {
 							}
 						} else {
 							return false;
+						}
+					} else {
+						/* Then check for the column  */
+						int thirdColon= line.indexOf(':', secondColon + 1);
+						if (thirdColon != -1) {
+							try {
+								col = Integer.parseInt(lineNumber);
+							} catch (NumberFormatException e) {
+							}
+						}
+						if (col != -1) {
+							desc = line.substring(thirdColon + 1).trim();
 						}
 					}
 

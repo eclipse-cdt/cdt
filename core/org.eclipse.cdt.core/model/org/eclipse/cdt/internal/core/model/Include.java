@@ -15,7 +15,7 @@ public class Include extends SourceManipulation implements IInclude {
 	}
 
 	public String getIncludeName() {
-		return "";
+		return getElementName();
 	}
 
 	public boolean isStandard() {

@@ -1,3 +1,18 @@
+2004-04-15 Alain Magloire
+
+	Fix for PR 58481
+	Since TypeInfo shares have some common code
+	with the Search the fix was put in the search to.
+	The fix is to check the accessibility of the project
+	before introspecting it, it may have been deleted.
+
+	* browser/org/eclipse/cdt/internal/core/browser/cache/TypeMatchLocator.java
+	* search/org/eclipse/cdt/internal/core/search/matching/MatchLocator.java
+
+	Remove the synchronized it is not necessary and causes
+	deadlocks.
+	* model/org/eclipse/cdt/internal/core/model/Openable.java
+
 2004-04-14 Alain Magloire
 
 	This is temporary 'till we get the fancy ICType scheme

@@ -397,19 +397,27 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				IWorkingCopy workingCopy = (IWorkingCopy)wcPaths.get( pathString );
 				
 				if( workingCopy != null ){
-					reader = new CharArrayReader( workingCopy.getContents() );
 					currentResource = workingCopy.getResource();
-					realPath = currentResource.getLocation();
-					project = currentResource.getProject();
+					if ( currentResource != null && currentResource.isAccessible() ) {
+						reader = new CharArrayReader( workingCopy.getContents() );
+						realPath = currentResource.getLocation();
+						project = currentResource.getProject();
+					} else {
+						continue;
+					}
 				} else {
 					currentResource = workspaceRoot.findMember( pathString, true );
 					
 					try{
-						if( currentResource != null && currentResource instanceof IFile ){
-							IFile file = (IFile) currentResource;
-							reader = new InputStreamReader( file.getContents() );
-							realPath = currentResource.getLocation();
-							project = file.getProject();
+						if( currentResource != null ){
+							if (currentResource.isAccessible() && currentResource instanceof IFile) {
+								IFile file = (IFile) currentResource;
+								reader = new InputStreamReader( file.getContents() );
+								realPath = currentResource.getLocation();
+								project = file.getProject();
+							} else {
+								continue;
+							}
 						}
 					} catch ( CoreException e ){
 						continue;

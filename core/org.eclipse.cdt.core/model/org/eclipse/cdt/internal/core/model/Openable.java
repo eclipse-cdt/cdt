@@ -198,9 +198,7 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	 * @see org.eclipse.cdt.core.model.IOpenable#isOpen()
 	 */	
 	public boolean isOpen() {
-		synchronized(CModelManager.getDefault()){
-			return CModelManager.getDefault().getInfo(this) != null;
-		}
+		return CModelManager.getDefault().getInfo(this) != null;
 	}
 
 	/**

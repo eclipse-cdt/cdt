@@ -432,14 +432,22 @@ public class TypeMatchLocator implements ISourceElementRequestor, ICSearchConsta
 					workingCopy= (IWorkingCopy) workingCopyMap.get(path);
 				if (workingCopy != null) {
 					currentResource= workingCopy.getResource();
-					reader= new CharArrayReader(workingCopy.getContents());
+					if (currentResource != null && currentResource.isAccessible()) {
+						reader= new CharArrayReader(workingCopy.getContents());
+					} else {
+						continue;
+					}
 				} else {
 					currentResource= workspaceRoot.findMember(path, true);
-					if (currentResource != null && currentResource instanceof IFile) {
-						IFile file= (IFile) currentResource;
-						try {
-							reader= new InputStreamReader(file.getContents());
-						} catch (CoreException ex) {
+					if (currentResource != null) {
+						if (currentResource.isAccessible() && currentResource instanceof IFile) {
+							IFile file= (IFile) currentResource;
+							try {
+								reader= new InputStreamReader(file.getContents());
+							} catch (CoreException ex) {
+								continue;
+							}
+						} else {
 							continue;
 						}
 					}

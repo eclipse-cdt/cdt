@@ -558,7 +558,7 @@ public class Scanner2Test extends BaseScanner2Test
 		}
 	}
 
-	public void testIfs()
+	public void testIfs() throws Exception
 	{
 		try
 		{
@@ -601,34 +601,24 @@ public class Scanner2Test extends BaseScanner2Test
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 
-		try
-		{
-			initializeScanner(
-					"#ifndef FIVE \n" + //$NON-NLS-1$
-					"#define FIVE 5\n" + //$NON-NLS-1$
-					"#endif \n" + //$NON-NLS-1$
-					"#ifndef TEN\n" + //$NON-NLS-1$
-					"#define TEN 2 * FIVE\n" + //$NON-NLS-1$
-					"#endif\n" + //$NON-NLS-1$
-					"#if TEN != 10\n" + //$NON-NLS-1$
-					"#define MISTAKE 1\n" + //$NON-NLS-1$
-					"#error Five does not equal 10\n" + //$NON-NLS-1$
-					"#endif\n"); //$NON-NLS-1$
-			scanner.addDefinition("FIVE", "55"); //$NON-NLS-1$ //$NON-NLS-2$
-			validateEOF();
-			fail(EXPECTED_FAILURE);
-		}
-		catch (ScannerException se)
-		{
-			validateBalance(1);
-			validateDefinition("FIVE", "55"); //$NON-NLS-1$ //$NON-NLS-2$
-			validateDefinition("TEN", "2 * FIVE"); //$NON-NLS-1$ //$NON-NLS-2$
-			validateDefinition("MISTAKE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		catch (Exception e)
-		{
-			fail(EXCEPTION_THROWN + e.toString());
-		}
+		Callback callback = new Callback( ParserMode.QUICK_PARSE );
+		initializeScanner(
+				"#ifndef FIVE \n" + //$NON-NLS-1$
+				"#define FIVE 5\n" + //$NON-NLS-1$
+				"#endif \n" + //$NON-NLS-1$
+				"#ifndef TEN\n" + //$NON-NLS-1$
+				"#define TEN 2 * FIVE\n" + //$NON-NLS-1$
+				"#endif\n" + //$NON-NLS-1$
+				"#if TEN != 10\n" + //$NON-NLS-1$
+				"#define MISTAKE 1\n" + //$NON-NLS-1$
+				"#error Five does not equal 10\n" + //$NON-NLS-1$
+				"#endif\n", ParserMode.QUICK_PARSE, callback); //$NON-NLS-1$
+		scanner.addDefinition("FIVE", "55"); //$NON-NLS-1$ //$NON-NLS-2$
+		validateEOF();
+		validateDefinition("FIVE", "55"); //$NON-NLS-1$ //$NON-NLS-2$
+		validateDefinition("TEN", "2 * FIVE"); //$NON-NLS-1$ //$NON-NLS-2$
+		validateDefinition("MISTAKE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+		assertFalse( callback.problems.isEmpty() ); 
 
 		try
 		{
@@ -669,22 +659,8 @@ public class Scanner2Test extends BaseScanner2Test
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 
-		try
-		{
-			initializeScanner("#if ! 0\n#error Correct!\n#endif"); //$NON-NLS-1$
-			scanner.nextToken();
-			fail(EXPECTED_FAILURE);
-		}
-		catch (ScannerException se)
-		{
-			validateBalance(1);
-			// TODO define problems
-			//assertEquals( se.getProblem().getID(), IProblem.PREPROCESSOR_POUND_ERROR);
-		}
-		catch (Exception e)
-		{
-			fail(EXCEPTION_THROWN + e.toString());
-		}
+		initializeScanner("#if ! 0\n#error Correct!\n#endif"); //$NON-NLS-1$
+		validateEOF();
 	}
 
 	public void testPreprocessorMacros()

@@ -112,20 +112,23 @@ public interface ICTarget extends ICObject
 
 	/**
 	 * Evaluates the expression specified by the given string.
+	 * Returns the evaluation result as an ICValue.
 	 * 
 	 * @param - expression string to be evaluated
-	 * @return an expression object
+	 * @return the result of the evaluation
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	ICExpression evaluateExpression( String expressionText ) throws CDIException; 
+	ICValue evaluateExpressionToValue( String expressionText ) throws CDIException; 
 
 	/**
-	 * Evaluates the given expression.
+	 * Evaluates the expression specified by the given string.
+	 * Returns the evaluation result as a String.
 	 * 
-	 * @param - expression to be evaluated
+	 * @param - expression string to be evaluated
+	 * @return the result of the evaluation
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	void evaluateExpression( ICExpression expression ) throws CDIException;
+	String evaluateExpressionToString( String expressionText ) throws CDIException; 
 	
 	/**
 	 * Returns whether this target is terminated.

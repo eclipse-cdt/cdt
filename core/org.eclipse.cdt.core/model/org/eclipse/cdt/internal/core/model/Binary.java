@@ -150,9 +150,16 @@ public class Binary extends Openable implements IBinary {
 		long modification = getModificationStamp();
 		boolean changed = modification != fLastModification;
 		fLastModification = modification;
-		hasDebug = null;
-		needed = null;
-		cpu = null;
+		if (changed) {
+			hasDebug = null;
+			needed = null;
+			cpu = null;
+			endian = null;
+			longBSS = -1;
+			longData = -1;
+			longText = -1;
+			soname = null;
+		}
 		return changed;
 	}
 

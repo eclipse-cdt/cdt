@@ -24,7 +24,7 @@
 #include <stdio.h>
 
 // #define DEBUG_MONITOR
-#define MAX_CMD_LINE_LENGTH (1024)
+#define MAX_CMD_LINE_LENGTH (2049)
 
 int copyTo(char * target, const char * source, int cpyLength, int availSpace);
 

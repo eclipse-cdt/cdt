@@ -25,7 +25,7 @@
 // #define DEBUG_MONITOR
 
 #define PIPE_SIZE 512
-#define MAX_CMD_SIZE 1024
+#define MAX_CMD_SIZE 2049
 #define MAX_ENV_SIZE 4096
 
 #define MAX_PROCS (100)
@@ -102,7 +102,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	if((HIBYTE(LOWORD(GetVersion()))) & 0x80)
 		{
-		ThrowByName(env, "java/lang/IOException", "Does not support Windows 3.1/95/98/Me");
+		ThrowByName(env, "java/io/IOException", "Does not support Windows 3.1/95/98/Me");
 		return 0;
 		}
 
@@ -166,7 +166,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			{
 			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
 				{
-				ThrowByName(env, "java/lang/Exception", "Too long command line");
+				ThrowByName(env, "java/io/IOException", "Too long command line");
 				return 0;
 				}
 			nPos += nCpyLen;
@@ -195,7 +195,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 					szEnvBlock = (char *)realloc(szEnvBlock, nBlkSize);
 					if(NULL == szEnvBlock) 
 						{
-						ThrowByName(env, "java/lang/Exception", "Not enough memory");
+						ThrowByName(env, "java/io/IOException", "Not enough memory");
 						return 0;
 						}
 #ifdef DEBUG_MONITOR
@@ -388,7 +388,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 			{
 			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
 				{
-				ThrowByName(env, "java/lang/Exception", "Too long command line");
+				ThrowByName(env, "java/io/IOException", "Too long command line");
 				return 0;
 				}
 			nPos += nCpyLen;
@@ -417,7 +417,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 					szEnvBlock = (char *)realloc(szEnvBlock, nBlkSize);
 					if(NULL == szEnvBlock) 
 						{
-						ThrowByName(env, "java/lang/Exception", "Not enough memory");
+						ThrowByName(env, "java/io/IOException", "Not enough memory");
 						return 0;
 						}
 					}

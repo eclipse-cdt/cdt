@@ -1,5 +1,14 @@
 2003-01-02 Alain Magloire
 
+	* src/org/eclipse/cdt/internal/ui/text/BufferedDocumentScanner.java (setRange):
+	Patch form Ed Burnette, email excerpt:
+	"There was an out of range exception happening when rescans
+	were done at a non-zero offset because the length being requested was
+	too large. This should work in 2.0 and 2.1 though I've only tested it on
+	2.0.1 so far."
+	
+2003-01-02 Alain Magloire
+
 	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java(createAnnotationModel):
 	Check for IStorageEditorInput and use the getAdapter() to find a resource for the
 	annotation model.

@@ -619,19 +619,23 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 				parent = parent.getParent();
 				level++;
 			}
+			// now we are at the first folder or project container
 			// get siblings at level = level
 			Set parentsSet = new HashSet();
 			Set childrenSet = new HashSet();
 			ICElement[] pr =((IParent)parent).getChildren();
+			// add all translation unit children but not subfolders
 			for (int i =0; i < pr.length; i++){
-				parentsSet.add(pr[i]);
+				if(!(pr[i] instanceof ICContainer))
+					parentsSet.add(pr[i]);
 			}
+			// compare to elements in added translation units. 
 			int currentLevel = 1;
 			while (currentLevel < level) {
 				Iterator itr = parentsSet.iterator();
 				while (itr.hasNext()){
 					Object o = itr.next();
-					if((o instanceof ISourceManipulation) || (o instanceof ICContainer)){
+					if(o instanceof ISourceManipulation) {
 						ICElement p = (ICElement)o;
 						if(p instanceof IParent){
 							ICElement[] ch = ((IParent)p).getChildren();

@@ -48,7 +48,7 @@
 				<topic label="Create a run or debug configuration" href="tasks/cdt_t_new_run_config.htm"/>
 				<topic label="Specify a project and application" href="tasks/cdt_t_run_main.htm"/>
 				<topic label="Specify the execution arguments and the working directory" href="tasks/cdt_t_run_arg.htm"/>
-				<topic label="Set the environment variables and values" href="tasks/tasks/cdt_t_run_env.htm"/>
+				<topic label="Set the environment variables and values" href="tasks/cdt_t_run_env.htm"/>
 				<topic label="Select a debugger" href="tasks/cdt_t_run_dbg.htm"/>
 				<topic label="Specify the location of source files" href="tasks/cdt_t_run_source.htm"/>
 				<topic label="Specifying the location of the run configuration" href="tasks/cdt_t_run_com.htm"/>

@@ -4,7 +4,7 @@
 
 
 <toc label="Reference">
-	<topic label="C/C++ Views and Editors" href="reference/reference/cdt_o_views.htm">
+	<topic label="C/C++ Views and Editors" href="reference/cdt_o_views.htm">
 		<topic label="Selecting Views and Editors" href="reference/cdt_u_views.htm"/>
 		<topic label="C/C++ Projects view" href="reference/cdt_u_cproj_view.htm"/>	
 		<topic label="Navigator view" href="reference/cdt_u_navigator_view.htm"/>

@@ -12,10 +12,15 @@ package org.eclipse.cdt.core.dom.ast;
 
 
 /**
+ * Expression statement.
+ * 
  * @author Doug Schaefer
  */
 public interface IASTExpressionStatement extends IASTStatement {
 
+    /**
+     * <code>EXPRESSION</code> is the relationship between an <code>IASTExpressionStatement</code> and an <code>IASTExpression</code>.
+     */
     public static final ASTNodeProperty EXPFRESSION = new ASTNodeProperty( "Expression");  //$NON-NLS-1$
 	/**
 	 * Get the expression in this statement.
@@ -24,5 +29,10 @@ public interface IASTExpressionStatement extends IASTStatement {
 	 */
 	public IASTExpression getExpression();
 	
+	/**
+	 * Set the expression statement.
+	 * 
+	 * @param expression
+	 */
 	public void setExpression( IASTExpression expression );
 }

@@ -188,7 +188,7 @@ public class CModelManager implements IResourceChangeListener {
 			case IResource.FOLDER :
 				return create(parent, (IFolder)resource);
 			case IResource.ROOT :
-				return create(parent, (IWorkspaceRoot)resource);
+				return create((IWorkspaceRoot)resource);
 			default :
 				return null;
 		}
@@ -373,6 +373,10 @@ public class CModelManager implements IResourceChangeListener {
 				// so we have to recall create again.
 				releaseCElement(celement);
 				celement = create(project);
+				Parent parent = (Parent)celement.getParent();
+				CElementInfo info = (CElementInfo)parent.getElementInfo();
+				info.addChild(celement);
+
 				// Fired and ICElementDelta.PARSER_CHANGED
 				CElementDelta delta = new CElementDelta(getCModel());
 				delta.binaryParserChanged(celement);
@@ -500,13 +504,14 @@ public class CModelManager implements IResourceChangeListener {
 		return ok;
 	}
 
-	public BinaryRunner getBinaryRunner(ICProject cProject) {
+	public BinaryRunner getBinaryRunner(ICProject project) {
 		BinaryRunner runner = null;
 		synchronized(binaryRunners) {
-			runner = (BinaryRunner)binaryRunners.get(cProject);
+			runner = (BinaryRunner)binaryRunners.get(project.getProject());
 			if (runner == null) {
-				runner = new BinaryRunner(cProject);
-				binaryRunners.put(cProject, runner);
+				runner = new BinaryRunner(project.getProject());
+				binaryRunners.put(project.getProject(), runner);
+				runner.start();
 			}
 		}
 		return runner;
@@ -725,8 +730,24 @@ public class CModelManager implements IResourceChangeListener {
 			}			
 			break;
 		case IResource.PROJECT :
-			// TO BE COMPLETED ...
-			break;
+			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
+				IProject project = (IProject) resource;
+				if (!project.isOpen()) {
+					// project closing... stop the runner.
+					BinaryRunner runner = (BinaryRunner)binaryRunners.get(project);
+					if (runner != null ) {
+						runner.stop();
+					}
+				} else {
+					if ( binaryRunners.get(project) == null ) { 
+						// project opening... lets add the runner to the 
+						// map but no need to start it since the deltas 
+						// will populate containers
+						binaryRunners.put(project, new BinaryRunner(project));
+					}
+				}
+			}
+		break;
 		}
 	}
 	/** 
@@ -784,9 +805,7 @@ public class CModelManager implements IResourceChangeListener {
 
 		BinaryRunner[] runners = (BinaryRunner[])binaryRunners.values().toArray(new BinaryRunner[0]);
 		for (int i = 0; i < runners.length; i++) {
-			if (runners[i].isAlive()) {
-				runners[i].interrupt();
-			}
+			runners[i].stop();
 		}
 	}
 	
@@ -797,5 +816,9 @@ public class CModelManager implements IResourceChangeListener {
 	public void deleting(IProject project){
 		//	discard all indexing jobs for this project
 		this.getIndexManager().discardJobs(project.getName());
+		BinaryRunner runner = (BinaryRunner) binaryRunners.remove(project);
+		if (runner != null) {
+			runner.stop();
+		}
 	}
 }

@@ -19,13 +19,16 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -39,9 +42,22 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		throws CoreException;
 
 	protected String[] getEnvironmentArray(ILaunchConfiguration config) {
-		//		Map env = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
-		// TODO create env array;
-		return null;
+		Map env = null;
+		try {
+			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
+		} catch (CoreException e) {
+		}
+		if (env == null) {
+			return new String[0];
+		}
+		String[] array = new String[env.size()];
+		Iterator entries = env.entrySet().iterator();
+		Entry entry;
+		for (int i = 0; entries.hasNext() && i < array.length; i++) {
+			entry = (Entry) entries.next();
+			array[i] = ((String) entry.getKey()) + ((String) entry.getValue());
+		}
+		return array;
 	}
 
 	protected Properties getEnvironmentProperty(ILaunchConfiguration config) {
@@ -63,19 +79,39 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		return prop;
 	}
 
-	protected File getWorkingDir(ILaunchConfiguration config) throws CoreException {
+	/**
+	 * Returns the working directory specified by
+	 * the given launch configuration, or <code>null</code> if none.
+	 * 
+	 * @deprecated Should use getWorkingDirectory()
+	 * @param configuration launch configuration
+	 * @return the working directory specified by the given 
+	 *  launch configuration, or <code>null</code> if none
+	 * @exception CoreException if unable to retrieve the attribute
+	 */
+	public File getWorkingDir(ILaunchConfiguration configuration) throws CoreException {
+		return getWorkingDirectory(configuration);
+	}
+
+	/**
+	 * Returns the working directory specified by
+	 * the given launch configuration, or <code>null</code> if none.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the working directory specified by the given 
+	 *  launch configuration, or <code>null</code> if none
+	 * @exception CoreException if unable to retrieve the attribute
+	 */
+	public File getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
+		return verifyWorkingDirectory(configuration);
+	}
+
+	protected IPath getWorkingDirectoryPath(ILaunchConfiguration config) throws CoreException {
 		String path = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, (String) null);
-		if (path == null) {
-			return null;
+		if (path != null) {
+			return new Path(path);
 		}
-		File dir = new File(path);
-		if (!dir.isDirectory()) {
-			abort(
-				"Specified working directory does not exist or is not a directory",
-				null,
-				ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
-		}
-		return dir;
+		return null;
 	}
 
 	/**
@@ -102,7 +138,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	abstract protected String getPluginID();
 
 
-	public ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
+	public static ICProject getCProject(ILaunchConfiguration configuration) throws CoreException {
 		String projectName = getProjectName(configuration);
 		if (projectName != null) {
 			projectName = projectName.trim();
@@ -117,7 +153,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		return null;
 	}
 
-	public String getProjectName(ILaunchConfiguration configuration) throws CoreException {
+	public static String getProjectName(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 	}
 
@@ -222,6 +258,45 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 			abort("Program file does not exist", null, ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 		return projectPath.getLocation();
+	}
+
+	/**
+	 * Verifies the working directory specified by the given 
+	 * launch configuration exists, and returns the working
+	 * directory, or <code>null</code> if none is specified.
+	 * 
+	 * @param configuration launch configuration
+	 * @return the working directory specified by the given 
+	 *  launch configuration, or <code>null</code> if none
+	 * @exception CoreException if unable to retrieve the attribute
+	 */	
+	public File verifyWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
+		IPath path = getWorkingDirectoryPath(configuration);
+		if (path == null) {
+			// default working dir is the project if this config has a project
+			ICProject cp = getCProject(configuration);
+			if (cp != null) {
+				IProject p = cp.getProject();
+				return p.getLocation().toFile();
+			}
+		} else {
+			if (path.isAbsolute()) {
+				File dir = new File(path.toOSString());
+				if (dir.isDirectory()) {
+					return dir;
+				} else {
+					abort("Working directory does not exist", null, ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+				}
+			} else {
+				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+				if (res instanceof IContainer && res.exists()) {
+					return res.getLocation().toFile();
+				} else {
+					abort("Working directory does not exist", null, ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
+				}
+			}
+		}
+		return null;		
 	}
 
 	private static class ArgumentParser {

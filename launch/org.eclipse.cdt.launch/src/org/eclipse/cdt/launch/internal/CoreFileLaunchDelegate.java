@@ -11,7 +11,7 @@
 package org.eclipse.cdt.launch.internal;
 
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -78,7 +78,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		// set the source locator
 		setSourceLocator(launch, config);
 
-		CDebugModel.newCoreFileDebugTarget(
+		CDIDebugModel.newCoreFileDebugTarget(
 			launch,
 			dsession.getCurrentTarget(),
 			renderTargetLabel(debugConfig),

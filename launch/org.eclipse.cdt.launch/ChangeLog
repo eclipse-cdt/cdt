@@ -1,3 +1,8 @@
+2004-07-21 Mikhail Khodjaiants
+	Replaced the decprecated target factory methods.
+	* CoreFileLaunchDelegate.java
+	* LocalCLaunchConfigurationDelegate.java
+
 2004-07-14 Mikhail Khodjaiants
 	Fix for bug 69977: TVT3.0: Non-externalized strings in Launching Debug.
 	Applied patch from Tanya Wollf.

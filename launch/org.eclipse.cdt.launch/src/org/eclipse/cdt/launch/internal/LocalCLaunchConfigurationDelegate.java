@@ -16,11 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Properties;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
-import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -103,7 +102,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
 					}
 					boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
-					CDebugModel.newDebugTarget(
+					CDIDebugModel.newDebugTarget(
 						launch,
 						dsession.getCurrentTarget(),
 						renderTargetLabel(debugConfig),
@@ -125,7 +124,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
 						launch.removeProcess(debuggerProcess);
 					}
-					CDebugModel.newAttachDebugTarget(
+					CDIDebugModel.newAttachDebugTarget(
 						launch,
 						dsession.getCurrentTarget(),
 						renderTargetLabel(debugConfig),

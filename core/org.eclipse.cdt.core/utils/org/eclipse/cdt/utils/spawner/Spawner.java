@@ -257,7 +257,7 @@ public class Spawner extends Process {
 			cmdarray = array;
 			envp = env;
 			dirpath = dir;
-			errMesg = new String();
+			errMesg = new String("Cannot run " + cmdarray[0]);
 		}
 
 		public void run() {

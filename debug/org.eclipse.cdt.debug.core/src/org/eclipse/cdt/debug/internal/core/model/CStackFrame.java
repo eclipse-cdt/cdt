@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
+import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.core.runtime.IAdaptable;
@@ -549,9 +550,8 @@ public class CStackFrame extends CDebugElement
 	 */
 	public Object getAdapter( Class adapter )
 	{
-		if ( adapter == CStackFrame.class )
-		{
-			return this;
+		if ( adapter == IRunToLine.class ) {
+			return getDebugTarget().getAdapter( adapter );
 		}
 		if ( adapter == IStackFrame.class )
 		{

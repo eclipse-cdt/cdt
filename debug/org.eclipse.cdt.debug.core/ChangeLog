@@ -1,3 +1,7 @@
+2004-04-11 Mikhail Khodjaiants
+	Stack frame should provide an adapter for IRunToLine.
+	* CStackFrame.java
+
 2004-04-08 Mikhail Khodjaiants
 	Implementing retargettable actions.
 	* IRunToAddress.java

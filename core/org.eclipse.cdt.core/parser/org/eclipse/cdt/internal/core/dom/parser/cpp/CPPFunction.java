@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,11 +160,21 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
         return definition;
     }
     
-	public void addDefinition( ICPPASTFunctionDeclarator dtor ){
+	public void addDefinition( IASTNode node ){
+		if( node instanceof IASTName )
+			node = node.getParent();
+		if( !(node instanceof ICPPASTFunctionDeclarator) )
+			return;
+		ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node;
 		updateParameterBindings( dtor );
 		definition = dtor;
 	}
-	public void addDeclaration( ICPPASTFunctionDeclarator dtor ){
+	public void addDeclaration( IASTNode node ){
+		if( node instanceof IASTName )
+			node = node.getParent();
+		if( !(node instanceof ICPPASTFunctionDeclarator) )
+			return;
+		ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) node;
 		updateParameterBindings( dtor );
 		if( declarations == null ){
 			declarations = new ICPPASTFunctionDeclarator [] { dtor };

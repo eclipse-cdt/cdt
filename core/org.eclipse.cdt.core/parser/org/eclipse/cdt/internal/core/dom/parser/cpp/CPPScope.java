@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,10 @@ abstract public class CPPScope implements ICPPScope{
 	public void addName(IASTName name) {
 		if( bindings == null )
 			bindings = new CharArrayObjectMap(1);
+		if( name instanceof ICPPASTQualifiedName ){
+			//name belongs to a different scope, don't add it here
+			return;
+		}
 		if( name instanceof ICPPASTTemplateId )
 			name = ((ICPPASTTemplateId)name).getTemplateName();
 		

@@ -16,16 +16,23 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 
 /**
  * @author aniefer
  */
-public interface ICPPInternalBinding {
+public interface ICPPInternalBinding extends IBinding {
     //methods required by the CPPVisitor but not meant for the public interface
     
     IASTNode [] getDeclarations();
     IASTNode getDefinition();
     
     ICPPDelegate createDelegate( IASTName name );
+    
+	/**
+	 * @param declarator
+	 */
+	void addDefinition( IASTNode node );
+	void addDeclaration( IASTNode node );
 }

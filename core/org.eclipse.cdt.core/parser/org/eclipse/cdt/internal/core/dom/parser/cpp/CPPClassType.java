@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -344,10 +344,14 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
 		return getElaboratedTypeSpecifier().getKind();
 	}
 
-	public void addDefinition( ICPPASTCompositeTypeSpecifier compSpec ){
-		definition = compSpec.getName();
+	public void addDefinition( IASTNode node ){
+		if( node instanceof ICPPASTCompositeTypeSpecifier )
+			definition = ((ICPPASTCompositeTypeSpecifier)node).getName();
 	}
-	public void addDeclaration( ICPPASTElaboratedTypeSpecifier elabSpec ) {
+	public void addDeclaration( IASTNode node ) {
+		if( !(node instanceof ICPPASTElaboratedTypeSpecifier) )
+			return;
+		ICPPASTElaboratedTypeSpecifier elabSpec = (ICPPASTElaboratedTypeSpecifier) node;
 		if( declarations == null ){
 			declarations = new IASTName[] { elabSpec.getName() };
 			return;

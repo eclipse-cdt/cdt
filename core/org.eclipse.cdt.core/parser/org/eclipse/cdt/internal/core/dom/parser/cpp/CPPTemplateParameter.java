@@ -124,4 +124,20 @@ public class CPPTemplateParameter implements ICPPTemplateParameter, IType, ICPPI
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
+	 */
+	public void addDefinition(IASTNode node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
+	 */
+	public void addDeclaration(IASTNode node) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -13,109 +13,128 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateSpecialization;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
  */
-public class CPPTemplateDefinition implements ICPPTemplateDefinition {
-	private IASTDeclaration primaryDecl;
-	private IASTName name;
+public abstract class CPPTemplateDefinition implements ICPPTemplateDefinition, ICPPInternalBinding {
+	//private IASTName templateName;
+	protected IASTName [] declarations = null;
+	protected IASTName definition = null;
 	
-	public CPPTemplateDefinition( IASTDeclaration decl ) {
-		primaryDecl = decl;
-		name = getTemplateName( decl );
+	private ICPPTemplateParameter [] templateParameters = null;
+	private ICPPTemplateSpecialization [] specializations = null;
+	
+	public CPPTemplateDefinition( IASTName name ) {
+		ASTNodeProperty prop = name.getPropertyInParent();
+		if( prop == IASTCompositeTypeSpecifier.TYPE_NAME ){
+			definition = name;
+		} else if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ) {
+			declarations = new IASTName [] { name };
+		} else {
+			IASTNode parent = name.getParent();
+			while( !(parent instanceof IASTDeclaration) )
+				parent = parent.getParent();
+			if( parent instanceof IASTFunctionDefinition )
+				definition = name;
+			else
+				declarations = new IASTName [] { name };
+		}
+	}
+
+	public abstract IBinding instantiate( ICPPASTTemplateId templateId  );
+	
+	public ICPPTemplateSpecialization [] getSpecializations() {
+		return (ICPPTemplateSpecialization[]) ArrayUtil.trim( ICPPTemplateSpecialization.class, specializations );
+	}
+	public void addSpecialization( ICPPTemplateSpecialization spec ){
+		specializations = (ICPPTemplateSpecialization[]) ArrayUtil.append( ICPPTemplateSpecialization.class, specializations, spec );
+		
 	}
 	
-	private IASTName getTemplateName( IASTDeclaration decl ){
-		if( decl instanceof IASTSimpleDeclaration ){
-			IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decl).getDeclarators();
-			if( dtors.length > 0 )
-				return dtors[0].getName();
-			
-			IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)decl).getDeclSpecifier();
-			if( declSpec instanceof ICPPASTCompositeTypeSpecifier )
-				return ((ICPPASTCompositeTypeSpecifier)declSpec).getName();
-		} else if( decl instanceof IASTFunctionDefinition ){
-			return ((IASTFunctionDefinition)decl).getDeclarator().getName();
+	public IBinding resolveTemplateParameter(ICPPASTTemplateParameter templateParameter) {
+	   	IASTName name = CPPTemplates.getTemplateParameterName( templateParameter );
+    	IBinding binding = name.getBinding();
+    	if( binding != null )
+    		return binding;
+		
+    	if( templateParameter.getParent() instanceof ICPPASTTemplatedTypeTemplateParameter ){
+    		
+    	}
+    	
+    	ICPPASTTemplateDeclaration templateDecl = (ICPPASTTemplateDeclaration) templateParameter.getParent();
+    	ICPPASTTemplateParameter [] ps = templateDecl.getTemplateParameters();
+
+    	int i = 0;
+    	for( ; i < ps.length; i++ ){
+    		if( templateParameter == ps[i] )
+    			break;
+    	}
+    	
+    	//create a new binding and set it for the corresponding parameter in all known decls
+    	binding = new CPPTemplateParameter( name );
+    	ICPPASTTemplateParameter temp = null;
+    	ICPPASTTemplateDeclaration template = null;
+    	int length = ( declarations != null ) ? declarations.length : 0;
+		int j = ( definition != null ) ? -1 : 0;
+		for( ; j < length; j++ ){
+			template = ( j == -1 ) ? CPPTemplates.getTemplateDeclaration( definition )
+								   : CPPTemplates.getTemplateDeclaration( declarations[j] );
+			temp = template.getTemplateParameters()[i];
+
+    		IASTName n = CPPTemplates.getTemplateParameterName( temp );
+    		if( n != name ) {
+    		    n.setBinding( binding );
+    		}
+
 		}
-		return null;
+    	return binding;
+	}
+	
+	public IASTName getTemplateName(){
+		return definition != null ? definition : declarations[0];
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return name.toString();
+		return getTemplateName().toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return name.toCharArray();
+		return getTemplateName().toCharArray();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( primaryDecl );
+		return CPPVisitor.getContainingScope( getTemplateName().getParent() );
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplate#instantiate(org.eclipse.cdt.core.dom.ast.IASTNode[])
-	 */
-	public IBinding instantiate(ICPPASTTemplateId templateId ) {//IASTNode[] arguments) {
-		IBinding decl = getTemplatedDeclaration();
-		ICPPTemplateParameter [] params = getParameters();
-		IASTNode [] arguments = templateId.getTemplateArguments();
-		
-		ObjectMap map = new ObjectMap(params.length);
-		if( arguments.length == params.length ){
-			for( int i = 0; i < arguments.length; i++ ){
-				IType t = CPPVisitor.createType( arguments[i] );
-				map.put( params[i], t );
-			}
-		}
-		
-		return CPPTemplates.createInstance( templateId, (ICPPScope) getScope(), decl, map );
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplate#getTemplatedDeclaration()
-	 */
-	public IBinding getTemplatedDeclaration() {
-		if( primaryDecl instanceof IASTSimpleDeclaration ){
-			IASTSimpleDeclaration simple = (IASTSimpleDeclaration) primaryDecl;
-			if( simple.getDeclarators().length == 0 && simple.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ){
-				IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) simple.getDeclSpecifier();
-				return compSpec.getName().resolveBinding();
-			}
-		} else if( primaryDecl instanceof IASTFunctionDefinition ){
-			
-		}
-		return null;
-	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding#getQualifiedName()
 	 */
@@ -143,25 +162,89 @@ public class CPPTemplateDefinition implements ICPPTemplateDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition#getParameters()
 	 */
-	public ICPPTemplateParameter[] getParameters() {
-		ICPPASTTemplateDeclaration template = (ICPPASTTemplateDeclaration) primaryDecl.getParent();
-		ICPPASTTemplateParameter [] params = template.getTemplateParameters();
-		ICPPTemplateParameter p = null;
-		ICPPTemplateParameter [] result = null;
-		for (int i = 0; i < params.length; i++) {
-			if( params[i] instanceof ICPPASTSimpleTypeTemplateParameter ){
-				p = (ICPPTemplateParameter) ((ICPPASTSimpleTypeTemplateParameter)params[i]).getName().resolveBinding();
-			} else if( params[i] instanceof ICPPASTParameterDeclaration ) {
-				p = (ICPPTemplateParameter) ((ICPPASTParameterDeclaration)params[i]).getDeclarator().getName().resolveBinding();
-			} else if( params[i] instanceof ICPPASTTemplatedTypeTemplateParameter ){
-				p = (ICPPTemplateParameter) ((ICPPASTTemplatedTypeTemplateParameter)params[i]).getName().resolveBinding();
+	public ICPPTemplateParameter[] getTemplateParameters() {
+		if( templateParameters == null ){
+			ICPPASTTemplateDeclaration template = CPPTemplates.getTemplateDeclaration( getTemplateName() );
+			ICPPASTTemplateParameter [] params = template.getTemplateParameters();
+			ICPPTemplateParameter p = null;
+			ICPPTemplateParameter [] result = null;
+			for (int i = 0; i < params.length; i++) {
+				if( params[i] instanceof ICPPASTSimpleTypeTemplateParameter ){
+					p = (ICPPTemplateParameter) ((ICPPASTSimpleTypeTemplateParameter)params[i]).getName().resolveBinding();
+				} else if( params[i] instanceof ICPPASTParameterDeclaration ) {
+					p = (ICPPTemplateParameter) ((ICPPASTParameterDeclaration)params[i]).getDeclarator().getName().resolveBinding();
+				} else if( params[i] instanceof ICPPASTTemplatedTypeTemplateParameter ){
+					p = (ICPPTemplateParameter) ((ICPPASTTemplatedTypeTemplateParameter)params[i]).getName().resolveBinding();
+				}
+				
+				if( p != null ){
+					result = (ICPPTemplateParameter[]) ArrayUtil.append( ICPPTemplateParameter.class, result, p );
+				}
 			}
-			
-			if( p != null ){
-				result = (ICPPTemplateParameter[]) ArrayUtil.append( ICPPTemplateParameter.class, result, p );
-			}
+			templateParameters = (ICPPTemplateParameter[]) ArrayUtil.trim( ICPPTemplateParameter.class, result );
 		}
-		return (ICPPTemplateParameter[]) ArrayUtil.trim( ICPPTemplateParameter.class, result );
+		return templateParameters;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDefinition(org.eclipse.cdt.core.dom.ast.IASTNode)
+	 */
+	public void addDefinition(IASTNode node) {
+		if( !(node instanceof IASTName) )
+			return;
+		updateTemplateParameterBindings( (IASTName) node );
+		definition = (IASTName) node;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#addDeclaration(org.eclipse.cdt.core.dom.ast.IASTNode)
+	 */
+	public void addDeclaration(IASTNode node) {
+		if( !(node instanceof IASTName) )
+			return;
+		IASTName declName = (IASTName) node;
+		updateTemplateParameterBindings( declName );
+		if( declarations == null ){
+			declarations = new IASTName [] { declName };
+			return;
+		}
+		declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, declName );
+	}	
+	
+	protected void updateTemplateParameterBindings( IASTName name ){
+    	IASTName orig = definition != null ? definition : declarations[0];
+    	ICPPASTTemplateDeclaration origTemplate = CPPTemplates.getTemplateDeclaration( orig );
+    	ICPPASTTemplateDeclaration newTemplate = CPPTemplates.getTemplateDeclaration( name );
+    	ICPPASTTemplateParameter [] ops = origTemplate.getTemplateParameters();
+    	ICPPASTTemplateParameter [] nps = newTemplate.getTemplateParameters();
+    	ICPPInternalBinding temp = null;
+    	for( int i = 0; i < nps.length; i++ ){
+    		temp = (ICPPInternalBinding) CPPTemplates.getTemplateParameterName( ops[i] ).getBinding();
+    		if( temp != null ){
+    		    IASTName n = CPPTemplates.getTemplateParameterName( nps[i] );
+    			n.setBinding( temp );
+    			temp.addDeclaration( name );
+    		}
+    	}
+    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
+	 */
+	public IASTNode[] getDeclarations() {
+		return declarations;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
+	 */
+	public IASTNode getDefinition() {
+		return definition;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+	 */
+	public ICPPDelegate createDelegate(IASTName name) {
+		return null;
+	}
 }

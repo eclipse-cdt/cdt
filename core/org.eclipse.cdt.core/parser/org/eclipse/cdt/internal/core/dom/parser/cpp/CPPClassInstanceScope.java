@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -35,7 +35,7 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	private CharArrayObjectMap bindings;
 	private ObjectMap instanceMap = ObjectMap.EMPTY_MAP;
 	
-	private ICPPInstance instance;
+	private ICPPTemplateInstance instance;
 	private boolean isFullyCached = false;
 	/**
 	 * @param instance
@@ -143,6 +143,9 @@ public class CPPClassInstanceScope implements ICPPClassScope {
 	}
 
 	public void addName(IASTName name) {
+		if( name instanceof ICPPASTQualifiedName )
+			return;
+		
 		if( bindings == null )
 			bindings = new CharArrayObjectMap(1);
 		char [] c = name.toCharArray();

@@ -106,7 +106,7 @@ public abstract class CharArrayMap {
 		}
 		
 		// nope, add it in
-		if (++currEntry >= keyTable.length){
+		if (currEntry + 1 >= keyTable.length){
 		    //need to recompute hash for this add, recurse
 			resize();
 			return add( buffer, start, len );

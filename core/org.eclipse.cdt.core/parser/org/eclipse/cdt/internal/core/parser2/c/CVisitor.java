@@ -672,6 +672,15 @@ public class CVisitor {
 		} else if( statement instanceof IASTWhileStatement ){
 		    if( !visitExpression( ((IASTWhileStatement) statement ).getCondition(), action ) ) return false;
 		    if( !visitStatement( ((IASTWhileStatement) statement ).getBody(), action ) ) return false;
+		} else if( statement instanceof IASTForStatement ){
+		    IASTForStatement s = (IASTForStatement) statement;
+		    if( s.getInitDeclaration() != null )
+		        if( !visitDeclaration( s.getInitDeclaration(), action ) ) return false;
+		    if( s.getInitExpression() != null )
+		        if( !visitExpression( s.getInitExpression(), action ) ) return false;
+		    if( !visitExpression( s.getCondition(), action ) ) return false;
+		    if( !visitExpression( s.getIterationExpression(), action ) ) return false;
+		    if( !visitStatement( s.getBody(), action ) ) return false;
 		}
 		return true;
 	}

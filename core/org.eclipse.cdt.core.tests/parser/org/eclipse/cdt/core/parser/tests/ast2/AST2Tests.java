@@ -10,21 +10,15 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
-import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
@@ -35,15 +29,14 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryTypeIdExpression;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -54,78 +47,18 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
-import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
-import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
-import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.tests.parser2.QuickParser2Tests.ProblemCollector;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.core.parser2.ISourceCodeParser;
-import org.eclipse.cdt.internal.core.parser2.c.ANSICParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser2.c.CVisitor;
-import org.eclipse.cdt.internal.core.parser2.c.GNUCSourceParser;
-import org.eclipse.cdt.internal.core.parser2.c.ICParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.cpp.ANSICPPParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser2.cpp.GNUCPPSourceParser;
-import org.eclipse.cdt.internal.core.parser2.cpp.ICPPParserExtensionConfiguration;
 
 /**
  * Test the new AST.
  * 
  * @author Doug Schaefer
  */
-public class AST2Tests extends TestCase {
+public class AST2Tests extends AST2BaseTest {
 
-	private static final ISourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
-    private static final IParserLogService NULL_LOG = new NullLogService();
-    
-	/**
-     * @param string
-     * @param c
-     * @return
-	 * @throws ParserException
-     */
-    protected IASTTranslationUnit parse(String code, ParserLanguage lang) throws ParserException {
-        ProblemCollector collector = new ProblemCollector();
-        IScanner scanner = ParserFactory.createScanner(new CodeReader(code
-                .toCharArray()), new ScannerInfo(), ParserMode.COMPLETE_PARSE,
-                lang, NULL_REQUESTOR,
-                NULL_LOG, Collections.EMPTY_LIST);
-        ISourceCodeParser parser2 = null;
-        if( lang == ParserLanguage.CPP )
-        {
-            ICPPParserExtensionConfiguration config = null;
-            config = new ANSICPPParserExtensionConfiguration();
-            parser2 = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, collector,
-                NULL_LOG,
-                config );
-        }
-        else
-        {
-            ICParserExtensionConfiguration config = null;
-             config = new ANSICParserExtensionConfiguration();
-            
-            parser2 = new GNUCSourceParser( scanner, ParserMode.COMPLETE_PARSE, collector, 
-                NULL_LOG, config );
-        }
-        IASTTranslationUnit tu = parser2.parse();
-        if( parser2.encounteredError() )
-            throw new ParserException( "FAILURE"); //$NON-NLS-1$
-        
-        assertTrue( collector.hasNoProblems() );
-
-        return tu;
-    }
-
-
-    public void testBasicFunction() throws ParserException {
+	public void testBasicFunction() throws ParserException {
 		StringBuffer buff = new StringBuffer();
 		buff.append("int x;\n"); //$NON-NLS-1$
 		buff.append("void f(int y) {\n"); //$NON-NLS-1$
@@ -344,103 +277,6 @@ public class AST2Tests extends TestCase {
         validateSimpleBinaryExpressionC("x||y", IASTBinaryExpression.op_logicalOr ); //$NON-NLS-1$
         validateConditionalExpressionC( "x ? y : x" ); //$NON-NLS-1$
     }
-    
-    /**
-     * @param string
-     */
-    protected void validateSimplePostfixInitializerExpressionC(String code ) throws ParserException  {
-        ICASTTypeIdInitializerExpression e = (ICASTTypeIdInitializerExpression) getExpressionFromStatementInCode(code, ParserLanguage.C );
-        assertNotNull( e );
-        assertNotNull( e.getTypeId() );
-        assertNotNull( e.getInitializer() );
-    }
-
-
-    /**
-     * @param string
-     * @throws ParserException
-     */
-    protected void validateSimpleUnaryTypeIdExpression(String code, int op ) throws ParserException {
-        IASTUnaryTypeIdExpression e = (IASTUnaryTypeIdExpression) getExpressionFromStatementInCode( code, ParserLanguage.C );
-        assertNotNull( e );
-        assertEquals( e.getOperator(), op );
-        assertNotNull( e.getTypeId() );
-        IASTIdExpression x = (IASTIdExpression) e.getOperand();
-        assertEquals( x.getName().toString(), "x"); //$NON-NLS-1$
-    }
-
-
-    /**
-     * @param code
-     * @param op
-     * @throws ParserException
-     */
-    protected void validateSimpleTypeIdExpressionC(String code, int op ) throws ParserException {
-        IASTTypeIdExpression e = (IASTTypeIdExpression) getExpressionFromStatementInCode( code, ParserLanguage.C );
-        assertNotNull( e );
-        assertEquals( e.getOperator(), op );
-        assertNotNull( e.getTypeId() );
-    }
-
-
-    /**
-     * @param string
-     * @param op_prefixIncr
-     * @throws ParserException
-     */
-    protected void validateSimpleUnaryExpressionC(String code , int operator ) throws ParserException {
-        IASTUnaryExpression e = (IASTUnaryExpression) getExpressionFromStatementInCode( code, ParserLanguage.C );
-        assertNotNull( e );
-        assertEquals( e.getOperator(), operator );
-        IASTIdExpression x = (IASTIdExpression) e.getOperand();
-        assertEquals( x.getName().toString(), "x"); //$NON-NLS-1$
-    }
-
-
-    /**
-     * @param code 
-     * @throws ParserException
-     */
-    protected void validateConditionalExpressionC(String code ) throws ParserException {
-        IASTConditionalExpression e = (IASTConditionalExpression) getExpressionFromStatementInCode( code , ParserLanguage.C );
-        assertNotNull( e );
-        IASTIdExpression x = (IASTIdExpression) e.getLogicalConditionExpression();
-        assertEquals( x.getName().toString(), "x" ); //$NON-NLS-1$
-        IASTIdExpression y = (IASTIdExpression) e.getPositiveResultExpression();
-        assertEquals( y.getName().toString(), "y"); //$NON-NLS-1$
-        IASTIdExpression x2 = (IASTIdExpression) e.getNegativeResultExpression();
-        assertEquals( x.getName().toString(), x2.getName().toString() );
-    }
-
-
-    /**
-     * @param operand
-     * @throws ParserException
-     */
-    protected void validateSimpleBinaryExpressionC( String code, int operand) throws ParserException {
-        IASTBinaryExpression e = (IASTBinaryExpression) getExpressionFromStatementInCode( code, ParserLanguage.C ); //$NON-NLS-1$
-        assertNotNull( e );
-        assertEquals( e.getOperator(), operand );
-        IASTIdExpression x = (IASTIdExpression) e.getOperand1();
-        assertEquals( x.getName().toString(), "x"); //$NON-NLS-1$
-        IASTIdExpression y = (IASTIdExpression) e.getOperand2();
-        assertEquals( y.getName().toString(), "y"); //$NON-NLS-1$
-    }
-
-
-    protected IASTExpression getExpressionFromStatementInCode( String code, ParserLanguage language  ) throws ParserException
-    {
-        StringBuffer buffer = new StringBuffer( "void f() { "); //$NON-NLS-1$
-        buffer.append( "int x, y;\n"); //$NON-NLS-1$
-        buffer.append( code );
-        buffer.append( ";\n}"); //$NON-NLS-1$
-        IASTTranslationUnit tu = parse( buffer.toString(), language );
-        IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations().get(0);
-        IASTCompoundStatement cs = (IASTCompoundStatement) f.getBody();
-        IASTExpressionStatement s = (IASTExpressionStatement) cs.getStatements().get( 1 );
-        return s.getExpression();
-    }
-    
     
     public void testMultipleDeclarators() throws Exception {
 		IASTTranslationUnit tu = parse( "int r, s;" , ParserLanguage.C ); //$NON-NLS-1$
@@ -852,22 +688,6 @@ public class AST2Tests extends TestCase {
     	assertSame( x1, x2 );
     }
     
-    static class NameCollector extends CVisitor.BaseVisitorAction {
-        {
-            processNames = true;
-        }
-        public List nameList = new ArrayList();
-        public boolean processName( IASTName name ){
-            nameList.add( name );
-            return true;
-        }
-        public IASTName getName( int idx ){
-            if( idx < 0 || idx >= nameList.size() )
-                return null;
-            return (IASTName) nameList.get( idx );
-        }
-        public int size() { return nameList.size(); } 
-    }
     public void testLabels() throws Exception {
         StringBuffer buffer = new StringBuffer();
         buffer.append("void f() {          \n"); //$NON-NLS-1$
@@ -892,118 +712,5 @@ public class AST2Tests extends TestCase {
         assertEquals( label_1, label_2 );
     }
     
-    private void assertInstances( NameCollector collector, IBinding binding, int num ) throws Exception {
-        int count = 0;
-        for( int i = 0; i < collector.size(); i++ )
-            if( collector.getName( i ).resolveBinding() == binding )
-                count++;
-        
-        assertEquals( count, num );
-    }
-    
-    public void testGCC20000113() throws Exception {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append( "struct x {                           \n" ); //$NON-NLS-1$
-        buffer.append( "   unsigned x1:1;                    \n" ); //$NON-NLS-1$
-        buffer.append( "   unsigned x2:2;                    \n" ); //$NON-NLS-1$
-        buffer.append( "   unsigned x3:3;                    \n" ); //$NON-NLS-1$
-        buffer.append( "};                                   \n" ); //$NON-NLS-1$
-        buffer.append( "foobar( int x, int y, int z ){       \n" ); //$NON-NLS-1$
-        buffer.append( "   struct x a = {x, y, z};           \n" ); //$NON-NLS-1$
-        buffer.append( "   struct x b = {x, y, z};           \n" ); //$NON-NLS-1$
-        buffer.append( "   struct x *c = &b;                 \n" ); //$NON-NLS-1$
-        buffer.append( "   c->x3 += ( a.x2 - a.x1) * c->x2;  \n" ); //$NON-NLS-1$
-        buffer.append( "   if( a.x1 != 1 || c->x3 != 5 )     \n" ); //$NON-NLS-1$
-        buffer.append( "      return -1;                     \n" ); //$NON-NLS-1$
-        buffer.append( "   return 0;                         \n" ); //$NON-NLS-1$
-        buffer.append( "}                                    \n" ); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
-        
-        NameCollector collector = new NameCollector();
-        CVisitor.visitTranslationUnit( tu, collector );
-        
-        assertEquals( collector.size(), 33 );
-        ICompositeType x = (ICompositeType) collector.getName( 0 ).resolveBinding();
-        IField    x1 = (IField)     collector.getName( 1 ).resolveBinding();
-        IField    x2 = (IField)     collector.getName( 2 ).resolveBinding();
-        IField    x3 = (IField)     collector.getName( 3 ).resolveBinding();
-        IVariable vx = (IVariable)  collector.getName( 5 ).resolveBinding();
-        IVariable vy = (IVariable)  collector.getName( 6 ).resolveBinding();
-        IVariable vz = (IVariable)  collector.getName( 7 ).resolveBinding();
-        IVariable a  = (IVariable)  collector.getName( 9 ).resolveBinding();
-        IVariable b  = (IVariable)  collector.getName( 14 ).resolveBinding();
-        IVariable c  = (IVariable)  collector.getName( 19 ).resolveBinding();
-        
-        assertInstances( collector, x, 4 );
-        assertInstances( collector, x1, 3);
-        assertInstances( collector, x2, 3);
-        assertInstances( collector, x3, 3);
-        assertInstances( collector, vx, 3);
-        assertInstances( collector, vy, 3);
-        assertInstances( collector, vz, 3);
-        assertInstances( collector, a, 4);
-        assertInstances( collector, b, 2);
-        assertInstances( collector, c, 4);
-    }
-    
-    public void testGCC20000205() throws Exception{
-        StringBuffer buffer = new StringBuffer();
-        buffer.append( "static int f( int a ) {           \n"); //$NON-NLS-1$
-        buffer.append( "   if( a == 0 )                   \n"); //$NON-NLS-1$
-        buffer.append( "      return 0;                   \n"); //$NON-NLS-1$
-        buffer.append( "   do                             \n"); //$NON-NLS-1$
-        buffer.append( "      if( a & 128 )               \n"); //$NON-NLS-1$
-        buffer.append( "         return 1;                \n"); //$NON-NLS-1$
-        buffer.append( "   while( f(0) );                 \n"); //$NON-NLS-1$
-        buffer.append( "   return 0;                      \n"); //$NON-NLS-1$
-        buffer.append( "}                                 \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
-        
-        NameCollector collector = new NameCollector();
-        CVisitor.visitTranslationUnit( tu, collector );
-        
-        assertEquals( collector.size(), 5 );
-        IFunction f = (IFunction) collector.getName( 0 ).resolveBinding();
-        IVariable a = (IVariable) collector.getName( 1 ).resolveBinding();
-        
-        assertInstances( collector, f, 2 );
-        assertInstances( collector, a, 3 );
-    }
-    
-    public void testGCC20000217() throws Exception{
-        StringBuffer buffer = new StringBuffer();
-        buffer.append( "unsigned short int showbug( unsigned short int * a,    \n"); //$NON-NLS-1$
-        buffer.append( "                            unsigned short int * b ) { \n"); //$NON-NLS-1$
-        buffer.append( "   *a += *b - 8;                                       \n"); //$NON-NLS-1$
-        buffer.append( "   return (*a >= 8 );                                  \n"); //$NON-NLS-1$
-        buffer.append( "}                                                      \n"); //$NON-NLS-1$
-        buffer.append( "int main(){                                            \n"); //$NON-NLS-1$
-        buffer.append( "   unsigned short int x = 0;                           \n"); //$NON-NLS-1$
-        buffer.append( "   unsigned short int y = 10;                          \n"); //$NON-NLS-1$
-        buffer.append( "   if( showbug( &x, &y ) != 0 )                        \n"); //$NON-NLS-1$
-        buffer.append( "      return -1;                                       \n"); //$NON-NLS-1$
-        buffer.append( "   return 0;                                           \n"); //$NON-NLS-1$
-        buffer.append( "}                                                      \n"); //$NON-NLS-1$
-        
-        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
-        NameCollector collector = new NameCollector();
-        CVisitor.visitTranslationUnit( tu, collector );
-        
-        assertEquals( collector.size(), 12 );
-        
-        IFunction showBug = (IFunction) collector.getName( 0 ).resolveBinding();
-        IVariable a = (IVariable) collector.getName( 1 ).resolveBinding();
-        IVariable b = (IVariable) collector.getName( 2 ).resolveBinding();
-        IVariable x = (IVariable) collector.getName( 7 ).resolveBinding();
-        IVariable y = (IVariable) collector.getName( 8 ).resolveBinding();
-        
-        assertInstances( collector, showBug, 2 );
-        assertInstances( collector, a, 3 );
-        assertInstances( collector, b, 2 );
-        assertInstances( collector, x, 2 );
-        assertInstances( collector, y, 2 );
-    }
 }
 

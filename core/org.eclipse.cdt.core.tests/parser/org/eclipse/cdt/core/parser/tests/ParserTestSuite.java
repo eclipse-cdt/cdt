@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.tests.CModelElementsTests;
 import org.eclipse.cdt.core.model.tests.StructuralCModelElementsTests;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2Tests;
+import org.eclipse.cdt.core.parser.tests.ast2.GCCTests;
 import org.eclipse.cdt.core.parser.tests.scanner2.ObjectMapTest;
 import org.eclipse.cdt.core.parser.tests.scanner2.Scanner2Test;
 
@@ -53,6 +54,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTest( ScannerParserLoopTest.suite() );
 		suite.addTest( GCCParserExtensionTestSuite.suite() );
 		suite.addTestSuite( AST2Tests.class );
+		suite.addTestSuite( GCCTests.class );
 		return suite;
 	}	
 }

@@ -116,6 +116,22 @@ public interface ITranslationUnit extends ICElement, IParent, IOpenable, ISource
 	 */
 	ICElement getElementAtOffset(int offset) throws CModelException;
 
+	/**
+	 * Returns the elements within this translation unit that 
+	 * includes the given source position (that is, a method, field, etc.), or
+	 * an empty array if there are no elements other than the translation
+	 * unit itself at the given position, or if the given position is not
+	 * within the source range of this translation unit.
+	 * You have this behavior when at expansion of a macro.
+	 *
+	 * @param position a source position inside the translation unit
+	 * @return the innermost C element enclosing a given source position or <code>null</code>
+	 *	if none (excluding the translation unit).
+	 * @exception CModelException if the translation unit does not exist or if an
+	 *		exception occurs while accessing its corresponding resource
+	 */
+	ICElement[] getElementsAtOffset(int offset) throws CModelException;
+
 	ICElement getElement(String name) throws CModelException;
 
 	/**

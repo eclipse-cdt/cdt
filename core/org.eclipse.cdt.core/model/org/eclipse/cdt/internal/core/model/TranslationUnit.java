@@ -88,6 +88,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return e;
 	}
 
+	public ICElement[] getElementsAtOffset(int pos) throws CModelException {
+		ICElement[] e= getSourceElementsAtOffset(pos);
+		if (e.length == 1 && e[0] == this) {
+			return CElement.NO_ELEMENTS;
+		}
+		return e;		
+	}
+
 	public ICElement getElement(String name ) {
 		try {
 			ICElement[] celements = getChildren();

@@ -1,5 +1,9 @@
 2004-06-18 Alain Magloire
 
+	Fix for PR 66108
+
+2004-06-18 Alain Magloire
+
 	This was heavy and lots of files were change.  The problem: to create the CElementInfo we use
 	to synchronize of the CModelManager singleton instance, this was handy and allowed us to serialize
 	the creation of the proxy info and save in the LRU cache.  Then came Eclipse-3.0 with job spawning

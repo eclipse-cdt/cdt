@@ -4,6 +4,8 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -125,6 +127,43 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return this;
 	}
 
+	/**
+	 * Returns the elements that are located at the given source offset
+	 * in this element.  This is a helper method for <code>ITranslationUnit#getElementAtOffset</code>,
+	 * and only works on compilation units and types. The offset given is
+	 * known to be within this element's source range already, and if no finer
+	 * grained element is found at the offset, this element is returned.
+	 */
+	protected ICElement[] getSourceElementsAtOffset(int offset) throws CModelException {
+		if (this instanceof ISourceReference && this instanceof Parent) {
+			ArrayList list = new ArrayList();
+			ICElement[] children = ((Parent)this).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				ICElement aChild = children[i];
+				if (aChild instanceof ISourceReference) {
+					ISourceReference child = (ISourceReference) children[i];
+					ISourceRange range = child.getSourceRange();
+					int startPos = range.getStartPos();
+					int endPos = startPos + range.getLength();
+					if (offset < endPos && offset >= startPos) {
+						if (child instanceof Parent) {
+							ICElement[] elements = ((Parent)child).getSourceElementsAtOffset(offset);
+							list.addAll(Arrays.asList(elements));
+						} else {
+							list.add(child);
+						}
+					}
+				}
+			}
+			children = new ICElement[list.size()];
+			list.toArray(children);
+			return children;
+		} else {
+			// should not happen
+			//Assert.isTrue(false);
+		}
+		return new ICElement[]{this};
+	}
 	
 	public boolean isReadOnly () {
 		IResource r = getUnderlyingResource();

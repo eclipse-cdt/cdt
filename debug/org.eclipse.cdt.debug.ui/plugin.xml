@@ -161,23 +161,6 @@
             </enablement>
          </action>
          <action
-               id="org.eclipse.cdt.debug.ui.internal.actions.RunToLineActionDelegate"
-               hoverIcon="icons/full/clcl16/runtoline_co.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
-               disabledIcon="icons/full/dlcl16/runtoline_co.gif"
-               enablesFor="1"
-               icon="icons/full/elcl16/runtoline_co.gif"
-               helpContextId="run_to_line_action_context"
-               label="%GlobalRunToLineAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
                id="org.eclipse.cdt.debug.ui.internal.actions.RestartActionDelegate"
                hoverIcon="icons/full/clcl16/restart.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
@@ -312,16 +295,6 @@
       <viewerContribution
             targetID="#CEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.CEditorRulerActions">
-<!--
-         <action
-               label="%RunToLineAction.label"
-               icon="icons/full/clcl16/runtoline_co.gif"
-               helpContextId="run_to_line_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate">
-         </action>
--->
          <action
                label="%BreakpointProperties.label"
                helpContextId="breakpoint_properties_action_context"
@@ -1121,9 +1094,6 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate">
          </action>
          <action
-               id="org.eclipse.cdt.debug.ui.internal.actions.RunToLineActionDelegate">
-         </action>
-         <action
                id="org.eclipse.cdt.debug.ui.internal.actions.ManageBreakpointActionDelegate">
          </action>
          <action
@@ -1241,8 +1211,8 @@
          </adapter>
       </factory>
       <factory
-            adaptableType="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"
-            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory">
+            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
+            adaptableType="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor">
          <adapter
                type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
          </adapter>

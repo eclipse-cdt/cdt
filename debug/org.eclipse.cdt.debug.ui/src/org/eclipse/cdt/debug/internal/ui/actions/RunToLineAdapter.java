@@ -11,10 +11,11 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -26,6 +27,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -45,18 +47,24 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		IEditorInput input = editorPart.getEditorInput();
 		String errorMessage = null;
 		if ( input == null ) {
-			errorMessage = "Empty editor";
+			errorMessage = ActionMessages.getString( "RunToLineAdapter.Empty_editor_1" ); //$NON-NLS-1$
 		}
 		else {
 			final ITextEditor textEditor = (ITextEditor)editorPart;
 			final IDocument document = textEditor.getDocumentProvider().getDocument( input );
 			if ( document == null ) {
-				errorMessage = "Missing document";
+				errorMessage = ActionMessages.getString( "RunToLineAdapter.Missing_document_1" ); //$NON-NLS-1$
 			}
 			else {
-				IFile file = getFile( input );
+				String fileName = getFileName( input );
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
+				if ( target instanceof IAdaptable ) {
+					IRunToLine runToLine = (IRunToLine)((IAdaptable)target).getAdapter( IRunToLine.class );
+					if ( runToLine != null && runToLine.canRunToLine( fileName, lineNumber ) )
+						runToLine.runToLine( fileName, lineNumber );
+				}
+				return;
 			}
 		}
 		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
@@ -72,9 +80,12 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		return target instanceof IDebugElement && ((IDebugElement)target).getModelIdentifier().equals( CDIDebugModel.getPluginIdentifier() );
 	}
 
-	private IFile getFile( IEditorInput input ) {
+	private String getFileName( IEditorInput input ) throws CoreException {
 		if ( input instanceof IFileEditorInput ) {
-			return ((IFileEditorInput)input).getFile();
+			return ((IFileEditorInput)input).getFile().getName();
+		}
+		if ( input instanceof IStorageEditorInput ) {
+			return ((IStorageEditorInput)input).getStorage().getName();
 		}
 		return null;
 	}

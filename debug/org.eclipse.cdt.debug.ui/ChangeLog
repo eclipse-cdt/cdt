@@ -1,4 +1,12 @@
 2004-03-11 Tanya Wolff
+	Externalized remaining strings
+	* debug.internal.ui
+	* debug.internal.ui.actions
+	* debug.internal.ui.editors
+	* debug.ui
+	* debug.ui.sourcelookup
+	
+2004-03-11 Tanya Wolff
 	Fix for missing resource in 
 	* LoadSymbolsForAllAction.java
 

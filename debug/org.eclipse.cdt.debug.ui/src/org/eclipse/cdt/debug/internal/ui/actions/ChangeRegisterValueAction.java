@@ -58,7 +58,7 @@ public class ChangeRegisterValueAction extends SelectionProviderAction
 	public ChangeRegisterValueAction( Viewer viewer )
 	{
 		super( viewer, CDebugUIPlugin.getResourceString("internal.ui.actions.ChangeRegisterValueAction.Change_Register_Value") ); //$NON-NLS-1$
-		setDescription( "Change Register Value" );
+		setDescription( CDebugUIPlugin.getResourceString("internal.ui.actions.ChangeRegisterValueAction.Change_Register_Value") ); //$NON-NLS-1$
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_CHANGE_REGISTER_VALUE );
 		fTree = ((TreeViewer)viewer).getTree();
 		fTreeEditor = new TreeEditor( fTree );
@@ -132,7 +132,7 @@ public class ChangeRegisterValueAction extends SelectionProviderAction
 		}
 		catch (DebugException de)
 		{
-			CDebugUIPlugin.errorDialog( "Setting the register value failed.", de );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ChangeRegisterValueAction.Setting_register_value_failed"), de ); //$NON-NLS-1$
 		}
 		fEditorLabel.setText( varName + "=" ); //$NON-NLS-1$
 
@@ -207,7 +207,7 @@ public class ChangeRegisterValueAction extends SelectionProviderAction
 		catch( DebugException de )
 		{
 			cleanup();
-			CDebugUIPlugin.errorDialog( "Setting the register value failed.", de );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ChangeRegisterValueAction.Setting_register_value_failed"), de ); //$NON-NLS-1$
 			return;
 		}
 		cleanup();

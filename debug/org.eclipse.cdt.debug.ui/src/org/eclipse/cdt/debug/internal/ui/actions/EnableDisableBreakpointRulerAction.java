@@ -54,7 +54,8 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 		try
 		{
 			boolean enabled = getBreakpoint().isEnabled();
-			setText( enabled ? CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Disable_breakpoint") : "&Enable Breakpoint" ); //$NON-NLS-1$
+			setText( enabled ? CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Disable_breakpoint") : //$NON-NLS-1$
+				CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Enable_Breakpoint") ); //$NON-NLS-1$
 		}
 		catch( CoreException ce )
 		{

@@ -58,7 +58,7 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 		if ( vars != null && vars.length > 0 )
 		{
 			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
-													DebugException.REQUEST_FAILED, "", null ); 
+													DebugException.REQUEST_FAILED, "", null );  //$NON-NLS-1$
 			BusyIndicator.showWhile( Display.getCurrent(), 
 									new Runnable()
 										{

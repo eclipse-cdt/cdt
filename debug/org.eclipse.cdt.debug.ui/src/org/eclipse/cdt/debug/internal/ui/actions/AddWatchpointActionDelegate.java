@@ -215,7 +215,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate
 											  expression,
 											  true,
 											  0,
-											  "",
+											  "", //$NON-NLS-1$
 											  true );
 			}
 			catch( CoreException ce )

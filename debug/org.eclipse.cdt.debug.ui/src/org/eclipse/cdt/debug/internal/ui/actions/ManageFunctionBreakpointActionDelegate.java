@@ -137,7 +137,7 @@ public class ManageFunctionBreakpointActionDelegate extends ActionDelegate
 		}
 		catch( CoreException e )
 		{
-			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageFunctionBreakpointActionDelegate.Cannot_add_breakpoint"), e ); //$NON-NLS-1$
 		}
 	}
 	

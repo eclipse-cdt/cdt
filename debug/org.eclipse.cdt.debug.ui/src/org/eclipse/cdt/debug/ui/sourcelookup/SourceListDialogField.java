@@ -128,7 +128,7 @@ public class SourceListDialogField extends ListDialogField
 							if ( element instanceof CDirectorySourceLocation && property.equals( CP_ASSOCIATION ) )
 							{
 								return ( ((CDirectorySourceLocation)element).getAssociation() != null ) ? 
-												((CDirectorySourceLocation)element).getAssociation().toOSString() : "";
+												((CDirectorySourceLocation)element).getAssociation().toOSString() : ""; //$NON-NLS-1$
 							}
 							if ( element instanceof CDirectorySourceLocation && property.equals( CP_SEARCH_SUBFOLDERS ) )
 							{

@@ -34,6 +34,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Position;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -60,7 +61,7 @@ public class DisassemblyMarkerAnnotationModel extends AbstractMarkerAnnotationMo
 			}
 			catch( CoreException x )
 			{
-				doHandleCoreException( x, "Resource Changed" ); 
+				doHandleCoreException( x, CDebugUIPlugin.getResourceString("internal.ui.editors.DisassemblyMarkerAnnotationModel.Resource_Changed") );  //$NON-NLS-1$
 			}
 		}
 	}

@@ -58,8 +58,8 @@ public class CastToTypeActionDelegate extends ActionDelegate
 		public CastToTypeDialog( Shell parentShell, String initialValue )
 		{
 			super( parentShell, 
-				   CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Cast_To_Type"), 
-				   CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Enter_type"), 
+				   CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Cast_To_Type"),  //$NON-NLS-1$
+				   CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Enter_type"),  //$NON-NLS-1$
 				   initialValue, new CastToTypeInputValidator() ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 

@@ -33,7 +33,7 @@ public class ExpressionDialog extends Dialog
 	private Button fBtnOk = null;
 	private Text fTextExpression;
 	
-	private String fExpression = "";
+	private String fExpression = ""; //$NON-NLS-1$
 
 	/**
 	 * Constructor for ExpressionDialog.

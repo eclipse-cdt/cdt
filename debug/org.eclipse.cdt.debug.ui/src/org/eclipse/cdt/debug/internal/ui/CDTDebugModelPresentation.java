@@ -386,7 +386,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 			{
 				if ( ((ITerminate)element).isTerminated() )
 				{
-					label.insert( 0, "<terminated>" );
+					label.insert( 0, CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.terminated") ); //$NON-NLS-1$
 					return label.toString();
 				}
 			}
@@ -394,7 +394,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 			{
 				if ( ((IDisconnect)element).isDisconnected() )
 				{
-					label.insert( 0, "<disconnected>" );
+					label.insert( 0, CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.disconnected") ); //$NON-NLS-1$
 					return label.toString();
 				}
 			}
@@ -406,7 +406,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		}
 		catch( DebugException e )
 		{		
-			return "<not_responding>";
+			return CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.not_responding"); //$NON-NLS-1$
 		}
 		catch( CoreException e )
 		{
@@ -440,21 +440,22 @@ public class CDTDebugModelPresentation extends LabelProvider
 				case IState.EXITED:
 				{
 					Object info = state.getCurrentStateInfo();
-					String label = target.getName() + " (Exited";
+					String label = target.getName() + CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Exited"); //$NON-NLS-1$
 					if ( info != null && info instanceof ICDISignalExitInfo)
 					{
 						ICDISignalExitInfo sigInfo = (ICDISignalExitInfo)info;
-						label += MessageFormat.format( ": Signal ''{0}'' received. Description: {1}.", 
+						label += CDebugUIPlugin.getFormattedString("CDTDebugModelPresentation.Signal_received_Description", //$NON-NLS-1$//$NON-NLS-2$
 											  new String[] { sigInfo.getName(), sigInfo.getDescription() } );						
 					}
 					else if ( info != null && info instanceof ICDIExitInfo )
 					{
-						label += ". Exit code = " + ((ICDIExitInfo)info).getCode();
+						label += CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Exit_code") + ((ICDIExitInfo)info).getCode(); //$NON-NLS-1$//$NON-NLS-2$
 					}
-					return label + ")"; //$NON-NLS-1$
+					return label + CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.closeBracket"); //$NON-NLS-1$
 				}
 				case IState.SUSPENDED:
-					return target.getName() + " (Suspended)";
+					return target.getName() + CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Suspended") + //$NON-NLS-1$
+				                            CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.closeBracket"); //$NON-NLS-1$
 			}
 		}
 		return target.getName();
@@ -462,7 +463,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 	
 	protected String getThreadText( IThread thread, boolean qualified ) throws DebugException
 	{
-		String threadName = getFormattedString( "Thread [{0}]", thread.getName() );
+		String threadName = getFormattedString( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Thread_name"), thread.getName() ); //$NON-NLS-1$
 		ICDebugTargetType targetType = (ICDebugTargetType)thread.getDebugTarget().getAdapter( ICDebugTargetType.class );
 		int type = ( targetType != null ) ? targetType.getTargetType() : ICDebugTargetType.TARGET_TYPE_UNKNOWN;
 		if ( type == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP )
@@ -471,15 +472,15 @@ public class CDTDebugModelPresentation extends LabelProvider
 		}
 		if ( thread.isTerminated() )
 		{
-			return getFormattedString( "{0} (Terminated)", threadName );
+			return CDebugUIPlugin.getFormattedString("internal.ui.CDTDebugModelPresentation.threadName_Terminated", threadName ); //$NON-NLS-1$
 		}
 		if ( thread.isStepping() )
 		{
-			return getFormattedString( "{0} (Stepping)", threadName );
+			return CDebugUIPlugin.getFormattedString("internal.ui.CDTDebugModelPresentation.threadName_Stepping", threadName ); //$NON-NLS-1$
 		}
 		if ( !thread.isSuspended() )
 		{
-			return getFormattedString( "{0} (Running)", threadName );
+			return CDebugUIPlugin.getFormattedString("internal.ui.CDTDebugModelPresentation.threadName_Running", threadName ); //$NON-NLS-1$
 		}
 		if ( thread.isSuspended() )
 		{
@@ -491,33 +492,34 @@ public class CDTDebugModelPresentation extends LabelProvider
 				{
 					ICDISignal signal = ((ICDISignalReceived)info).getSignal();
 					String label = threadName + 
-								   MessageFormat.format( " (Suspended: Signal ''{0}'' received. Description: {1})", 
+						CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Suspended") +  //$NON-NLS-1$
+						CDebugUIPlugin.getFormattedString("CDTDebugModelPresentation.Signal_received_Description",  //$NON-NLS-1$
 														 new String[] { signal.getName(), signal.getDescription() } );
 					return label;
 				}
 				if ( info != null && info instanceof ICDIWatchpointTrigger )
 				{
 					String label = threadName + 
-								   MessageFormat.format( " (Suspended: Watchpoint triggered. Old value: ''{0}''. New value: ''{1}'')", 
+								   CDebugUIPlugin.getFormattedString("CDTDebugModelPresentation.Suspended_Watchpoint_triggered_Old_New",  //$NON-NLS-1$
 														 new String[] { ((ICDIWatchpointTrigger)info).getOldValue(), 
 																		((ICDIWatchpointTrigger)info).getNewValue() } );
 					return label;
 				}
 				if ( info != null && info instanceof ICDIWatchpointScope )
 				{
-					return threadName + " (Suspended: Watchpoint is out of scope)";
+					return threadName + CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Suspended_Watchpoint_out_of_scope"); //$NON-NLS-1$
 				}
 				if ( info != null && info instanceof ICDIBreakpointHit )
 				{
-					return threadName + " (Suspended: Breakpoint hit)";
+					return threadName + CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Suspended_Breakpoint_hit"); //$NON-NLS-1$
 				}
 				if ( info != null && info instanceof ICDISharedLibraryEvent )
 				{
-					return threadName + " (Suspended: Shared library event)";
+					return threadName + CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Suspended_Shared_lib_event"); //$NON-NLS-1$
 				}
 			}
 		}
-		return getFormattedString( "Thread [{0}] (Suspended)", thread.getName() );
+		return getFormattedString( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Thread_threadName_suspended"), thread.getName() ); //$NON-NLS-1$
 	}
 
 	protected String getStackFrameText( IStackFrame stackFrame, boolean qualified ) throws DebugException 
@@ -536,15 +538,15 @@ public class CDTDebugModelPresentation extends LabelProvider
 				if ( function.length() > 0 )
 				{
 					label.append( function );
-					label.append( "() " );
+					label.append( "() " ); //$NON-NLS-1$
 					if ( info.getFile() != null )
 					{
 						IPath path = new Path( info.getFile() );
 						if ( !path.isEmpty() )
 						{
-							label.append( "at " );
+							label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.at")+" " ); //$NON-NLS-1$ //$NON-NLS-2$
 							label.append( ( qualified ? path.toOSString() : path.lastSegment() ) );
-							label.append( ":" );
+							label.append( ":" ); //$NON-NLS-1$
 							if ( info.getFrameLineNumber() != 0 )
 								label.append( info.getFrameLineNumber() );
 						}
@@ -552,7 +554,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 				}
 			}
 			if ( isEmpty( function ) )
-				label.append( "<symbol is not available>" );
+				label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Symbol_not_available") ); //$NON-NLS-1$
 			return label.toString();
 		}
 		return ( stackFrame.getAdapter( IDummyStackFrame.class ) != null ) ? 
@@ -598,7 +600,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 				}
 			}
 			if ( !((ICVariable)var).isEnabled() )
-				label.append( "<disabled> " );
+				label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.disabled") ); //$NON-NLS-1$
 			String name = var.getName();
 			if ( name != null )
 				label.append( name.trim() );
@@ -609,27 +611,27 @@ public class CDTDebugModelPresentation extends LabelProvider
 				if ( type != null && type.isCharacter() )
 				{
 					if ( valueString.length() == 0 )
-						valueString = ".";
-					label.append( "= " );
+						valueString = "."; //$NON-NLS-1$
+					label.append( "= " ); //$NON-NLS-1$
 					label.append( valueString );
 				}
 				else if ( type != null && type.isFloatingPointType() )
 				{
 					Number floatingPointValue = CDebugUtils.getFloatingPointValue( (ICValue)value );
 					if ( CDebugUtils.isNaN( floatingPointValue ) )
-						valueString = "NAN";
+						valueString = "NAN"; //$NON-NLS-1$
 					if ( CDebugUtils.isPositiveInfinity( floatingPointValue ) )
-						valueString = "Infinity";
+						valueString = CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Infinity"); //$NON-NLS-1$
 					if ( CDebugUtils.isNegativeInfinity( floatingPointValue ) )
-						valueString = "-Infinity";
-					label.append( "= " );
+						valueString = "-"+CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Infinity"); //$NON-NLS-1$ //$NON-NLS-2$
+					label.append( "= " ); //$NON-NLS-1$
 					label.append( valueString );
 				}
 				else if ( type == null || ( !type.isArray() && !type.isStructure() ) )
 				{
 					if ( valueString.length() > 0 )
 					{
-						label.append( "= " );
+						label.append( "= " ); //$NON-NLS-1$
 						label.append( valueString );
 					}
 				}
@@ -798,7 +800,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		if ( lineNumber > 0 )
 		{
 			label.append( " [" ); //$NON-NLS-1$
-			label.append( "line:" );
+			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.line") ); //$NON-NLS-1$
 			label.append( ' ' );
 			label.append( lineNumber );
 			label.append( ']' );
@@ -811,7 +813,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		try
 		{
 			long address = Long.parseLong( breakpoint.getAddress() );
-			label.append( " [address: " );
+			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.address") ); //$NON-NLS-1$
 			label.append( CDebugUtils.toHexAddressString( address ) );
 			label.append( ']' );
 		}
@@ -827,7 +829,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		if ( function != null && function.trim().length() > 0 )
 		{
 			label.append( " [" ); //$NON-NLS-1$
-			label.append( "function:" );
+			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.function") ); //$NON-NLS-1$
 			label.append( ' ' );
 			label.append( function.trim() );
 			label.append( ']' );
@@ -841,7 +843,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		if ( ignoreCount > 0 )
 		{
 			label.append( " [" ); //$NON-NLS-1$
-			label.append( "ignore count:" ); //$NON-NLS-1$
+			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.ignore_count") ); //$NON-NLS-1$
 			label.append( ' ' );
 			label.append( ignoreCount );
 			label.append( ']' );
@@ -854,7 +856,9 @@ public class CDTDebugModelPresentation extends LabelProvider
 		String condition = breakpoint.getCondition();
 		if ( condition != null && condition.length() > 0 )
 		{
-			buffer.append( " if " ); 
+			buffer.append(' ');
+			buffer.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.if") );  //$NON-NLS-1$
+			buffer.append(' ');
 			buffer.append( condition );
 		}
 	}
@@ -864,7 +868,9 @@ public class CDTDebugModelPresentation extends LabelProvider
 		String expression = watchpoint.getExpression();
 		if ( expression != null && expression.length() > 0 )
 		{
-			label.append( " at \'" ); 
+			label.append(' ');
+			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.at") );  //$NON-NLS-1$
+			label.append( '\'' );
 			label.append( expression );
 			label.append( '\'' );
 		}

@@ -184,7 +184,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 				}
 				catch( NumberFormatException e )
 				{
-					message = CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.7"); //$NON-NLS-1$
+					message = CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.Invalid_first_index"); //$NON-NLS-1$
 					enabled = false;
 				}
 				if ( enabled )
@@ -192,7 +192,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 					String lengthText = fLengthText.getText().trim();
 					if ( lengthText.length() == 0 )
 					{
-						message = CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.Invalid_first_index"); //$NON-NLS-1$
+						message = CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.Empty_last_index"); //$NON-NLS-1$
 						enabled = false;
 					}
 					else

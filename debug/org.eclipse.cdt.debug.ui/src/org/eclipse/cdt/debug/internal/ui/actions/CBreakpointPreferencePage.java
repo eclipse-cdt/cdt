@@ -312,7 +312,7 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 		else if ( breakpoint instanceof ICAddressBreakpoint )
 		{
 			ICAddressBreakpoint abrkpt = (ICAddressBreakpoint)breakpoint;
-			String address = "Not available";
+			String address = CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Not_available"); //$NON-NLS-1$
 			try
 			{
 				address = CDebugUtils.toHexAddressString( Long.parseLong( abrkpt.getAddress() ) );

@@ -211,7 +211,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 														  lineNumber,
 														  true,
 														  0,
-														  "",
+														  "", //$NON-NLS-1$
 														  true );
 					}
 				}

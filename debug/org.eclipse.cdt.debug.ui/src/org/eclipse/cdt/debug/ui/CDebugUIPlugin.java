@@ -58,6 +58,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -89,7 +90,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		try
 		{
 			resourceBundle =
-				ResourceBundle.getBundle( "org.eclipse.cdt.debug.ui.CDebugUIPluginResources" );
+				ResourceBundle.getBundle( "org.eclipse.cdt.debug.ui.CDebugUIPluginResources" ); //$NON-NLS-1$
 		}
 		catch( MissingResourceException x )
 		{
@@ -123,9 +124,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		try	{	
 			return bundle.getString( key );
 		} catch (MissingResourceException e) {
-			return "!" + key + "!";
+			return '!' + key + '!';
 		} catch (NullPointerException e) {
-			return "#" + key + "#";
+			return '#' + key + '#';
 		}
 	}
 	public static String getFormattedString(String key, String arg) {
@@ -206,7 +207,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	 */	
 	public static void log( Throwable e )
 	{
-		log( new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, "Internal Error", e ) );
+		log( new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, "Internal Error", e ) ); //$NON-NLS-1$
 	}
 	
 	/**
@@ -229,7 +230,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 			try {
 				tab = (ILaunchConfigurationTab) configElement.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch(CoreException ce) {			 
-				log(new Status(IStatus.ERROR, getUniqueIdentifier(), 100, "An error occurred retrieving a C Debugger page", ce));
+				log(new Status(IStatus.ERROR, getUniqueIdentifier(), 100, "An error occurred retrieving a C Debugger page", ce)); //$NON-NLS-1$
 			}
 		}
 		return tab;
@@ -239,7 +240,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		fDebuggerPageMap = new HashMap(10);
 
 		IPluginDescriptor descriptor= getDefault().getDescriptor();
-		IExtensionPoint extensionPoint= descriptor.getExtensionPoint("CDebuggerPage");
+		IExtensionPoint extensionPoint= descriptor.getExtensionPoint("CDebuggerPage"); //$NON-NLS-1$
 		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
 		for (int i = 0; i < infos.length; i++) {
 			String id = infos[i].getAttribute("debuggerID"); //$NON-NLS-1$
@@ -253,7 +254,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		Shell shell = getActiveWorkbenchShell();
 		if ( shell != null )
 		{
-			ErrorDialog.openError( shell, "Error", message, status );
+			ErrorDialog.openError( shell, CDebugUIPlugin.getResourceString("ui.CDebugUIPlugin.Error"), message, status ); //$NON-NLS-1$
 		}
 	}
 
@@ -264,7 +265,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		if ( shell != null )
 		{
 			IStatus status = new Status( IStatus.ERROR, getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, t.getMessage(), null ); //$NON-NLS-1$	
-			ErrorDialog.openError( shell, "Error", message, status );
+			ErrorDialog.openError( shell, CDebugUIPlugin.getResourceString("ui.CDebugUIPlugin.Error"), message, status ); //$NON-NLS-1$
 		}
 	}
 

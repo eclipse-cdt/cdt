@@ -63,7 +63,7 @@ public class CDebugImageDescriptorRegistry
 		if ( result != null )
 			return result;
 
-		Assert.isTrue( fDisplay == CDebugUIPlugin.getStandardDisplay(), "Allocating image for wrong display" );
+		Assert.isTrue( fDisplay == CDebugUIPlugin.getStandardDisplay(), CDebugUIPlugin.getResourceString("internal.ui.CDebugImageDescriptorRegistry.Allocating_image_for_wrong_display") ); //$NON-NLS-1$
 		result = descriptor.createImage();
 		if ( result != null )
 			fRegistry.put( descriptor, result );

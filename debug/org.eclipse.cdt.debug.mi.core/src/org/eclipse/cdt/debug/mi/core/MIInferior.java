@@ -179,6 +179,13 @@ public class MIInferior extends Process {
 		if (gdb instanceof Spawner) {
 			Spawner gdbSpawner = (Spawner)gdb;
 			gdbSpawner.interrupt();
+			// Allow (5 secs) for the interrupt to propagate.
+			for (int i = 0; isRunning() && i < 5; i++) {
+				try {
+					java.lang.Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
+			}
 		} else {
 			// Try the exec-interrupt; this will be for "gdb --async"
 			// CommandFactory factory = session.getCommandFactory();

@@ -186,18 +186,21 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 		{
 			if ( list.size() > 0 && !searchForDuplicateFiles() )
 				break;
-			IPath path = folders[i].getLocation().append( fileName );
-			File file = new File( path.toOSString() );
-			if ( file.exists() )
-			{
-				IFile[] wsFiles = CDebugCorePlugin.getWorkspace().getRoot().findFilesForLocation( path );
-				for ( int j = 0; j < wsFiles.length; ++j )
-					if ( wsFiles[j].exists() )
-					{
-						if ( !searchForDuplicateFiles() )
-							return wsFiles[j];
-						list.add( wsFiles[j] );
-					}
+			IPath path = folders[i].getLocation();
+			if ( path != null ) {
+				path = path.append( fileName );
+				File file = new File( path.toOSString() );
+				if ( file.exists() )
+				{
+					IFile[] wsFiles = CDebugCorePlugin.getWorkspace().getRoot().findFilesForLocation( path );
+					for ( int j = 0; j < wsFiles.length; ++j )
+						if ( wsFiles[j].exists() )
+						{
+							if ( !searchForDuplicateFiles() )
+								return wsFiles[j];
+							list.add( wsFiles[j] );
+						}
+				}
 			}
 		}
 		return ( list.size() > 0 ) ? ( ( list.size() == 1 ) ? list.getFirst() : list ) : null;
@@ -351,7 +354,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 	private void initializeFolders()
 	{
 		final LinkedList list = new LinkedList();
-		if ( getProject() != null )
+		if ( getProject() != null && getProject().exists() )
 		{
 			list.add( getProject() );
 			try
@@ -379,7 +382,13 @@ public class CProjectSourceLocation implements IProjectSourceLocation
 			{
 			}
 		}
-		fFolders = (IResource[])list.toArray( new IResource[list.size()] );
+		synchronized( this ) 
+		{
+			if ( fFolders == null ) 
+			{
+				fFolders = (IResource[])list.toArray( new IResource[list.size()] );
+			}
+		}
 	}
 
 	protected IResource[] getFolders()

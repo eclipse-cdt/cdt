@@ -1,3 +1,8 @@
+2005-02-24 Mikhail Khodjaiants
+	Applied patch from Tracy Miranda (bug 86540: NPE in CProjectSourceLocation).
+	Check for the project and synchronization are added to "initializeFolders".
+	* CProjectSourceLocation.java
+
 2005-02-22 Mikhail Khodjaiants
 	Bug 84799: Implement Memory View and renderings with new rendering APIs.
 	* CMemoryBlockExtensionRetrieval.java

@@ -270,6 +270,55 @@ public interface IProblem
 	 * Required attributes: none.  
 	 */
 	public final static int SCANNER_UNEXPECTED_EOF = SCANNER_RELATED | 0x006;
+	
+	/** 
+	 * Bad octal encountered by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_BAD_OCTAL_FORMAT = SCANNER_RELATED | 0x007;
+
+	/** 
+	 * Bad decimal encountered by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_BAD_DECIMAL_FORMAT = SCANNER_RELATED | 0x008;
+
+	/** 
+	 * Assignment '=' encountered in macro by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_ASSIGNMENT_NOT_ALLOWED = SCANNER_RELATED | 0x009;
+
+	/** 
+	 * Division by 0 encountered in macro by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_DIVIDE_BY_ZERO = SCANNER_RELATED | 0x00A;
+	
+	/** 
+	 * Missing ')' encountered in macro by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_MISSING_R_PAREN = SCANNER_RELATED | 0x00B;	
+
+	/** 
+	 * Expression syntax error encountered in macro by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_EXPRESSION_SYNTAX_ERROR = SCANNER_RELATED | 0x00C;
+	
+	/** 
+	 * Expression syntax error encountered in macro by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_ILLEGAL_IDENTIFIER = SCANNER_RELATED | 0x00D;
+
+	/** 
+	 * Division by 0 encountered in macro by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_BAD_CONDITIONAL_EXPRESSION = SCANNER_RELATED | 0x00E;
+	
 
 	/*
 	 * Preprocessor Problems

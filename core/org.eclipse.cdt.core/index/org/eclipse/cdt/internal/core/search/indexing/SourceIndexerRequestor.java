@@ -781,7 +781,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		boolean semantics = ( problemMarkersEnabled & IndexManager.SEMANTIC_PROBLEMS_BIT ) != 0;
 		boolean syntax = ( problemMarkersEnabled & IndexManager.SYNTACTIC_PROBLEMS_BIT ) != 0;
 		
-		if( problem.checkCategory( IProblem.PREPROCESSOR_RELATED ) )
+		if( problem.checkCategory( IProblem.PREPROCESSOR_RELATED ) || problem.checkCategory( IProblem.SCANNER_RELATED ) )
 			return preprocessor && problem.getID() != IProblem.PREPROCESSOR_CIRCULAR_INCLUSION;
 		else if( problem.checkCategory( IProblem.SEMANTICS_RELATED ) )
 			return semantics;

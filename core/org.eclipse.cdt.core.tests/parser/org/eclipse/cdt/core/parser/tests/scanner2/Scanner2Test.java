@@ -1927,4 +1927,50 @@ public class Scanner2Test extends BaseScanner2Test
         assertEquals( t.getEndOffset(), idx + 6 );
     }
     
+    // when fixing 75532 several IProblems were added to ExpressionEvaluator and one to Scanner2, this is to test them
+    public void testBug75532IProblems() throws Exception {
+    	Writer writer = new StringWriter();
+    	writer.write("#if 09 == 9\n#endif\n"); // malformed octal
+    	writer.write("#if 1A == 0x1A\n#endif\n"); // malformed decimal
+    	writer.write("#if 0x == 0x0\n#endif\n"); // malformed hex
+    	writer.write("#if 0xAX == 0xA\n#endif\n"); // malformed hex
+    	writer.write("#if 1/0 == 1\n#endif\n"); // division by zero 
+    	writer.write("#if defined ( sadf a\n#endif\n"); // missing ')' in defined 
+    	writer.write("#if defined ( sadf\n#endif\n"); // missing ')' in defined 
+    	writer.write("#if defined ( 2sadf )\n#endif\n"); // illegal identifier in defined 
+    	writer.write("#if ( 1 == 1 ? 1\n#endif\n"); // bad conditional expression  
+    	writer.write("#if (  \n#endif\n"); // expression syntax error 
+    	writer.write("#if @\n#endif\n"); // expression syntax error 
+    	writer.write("#if \n#endif\n"); // expression syntax error 
+    	writer.write("#if -\n#endif\n"); // expression syntax error 
+    	writer.write("#if ( 1 == 1\n#endif\n"); // missing ')' 
+    	writer.write("#if 1 = 1\n#endif\n"); // assignment not allowed
+    	
+    	writer.write("int main(int argc, char **argv) {\n");
+		writer.write("if ( 09 == 9 )\n"); // added while fixing this bug, IProblem on invalid octal number
+		writer.write("return 1;\nreturn 0;\n}\n");
+				
+    	Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
+    	initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+    	fullyTokenize();
+    	assertTrue( callback.problems.size() == 16 );
+    	Iterator probs = callback.problems.iterator();
+    	assertTrue( probs.hasNext() );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_BAD_OCTAL_FORMAT );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_BAD_DECIMAL_FORMAT );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_BAD_HEX_FORMAT );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_BAD_HEX_FORMAT );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_DIVIDE_BY_ZERO );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_MISSING_R_PAREN );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_MISSING_R_PAREN );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_ILLEGAL_IDENTIFIER );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_MISSING_R_PAREN );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED );
+    	assertTrue(((IProblem)probs.next()).getID() ==  IProblem.SCANNER_BAD_OCTAL_FORMAT );
+    }
 }

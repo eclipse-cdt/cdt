@@ -630,22 +630,34 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	 */
 	public void pathEntryStoreChanged(PathEntryStoreChangedEvent event) {
 		IProject project = event.getProject();
-		if (project != null && (CoreModel.hasCNature(project) || CoreModel.hasCCNature(project))) {
-			CModelManager manager = CModelManager.getDefault();
-			ICProject cproject = manager.create(project);
-			try {
-				IPathEntry[] oldResolvedEntries = getResolvedPathEntries(cproject);
-				resolvedMap.remove(cproject);
-				IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
-				ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
-				if (deltas.length > 0) {
-					cproject.close();
-					for (int i = 0; i < deltas.length; i++) {
-						manager.registerCModelDelta(deltas[i]);
+		
+		// sanity
+		if (project == null) {
+			return;
+		}
+
+		IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
+		if (store != null) {
+			if (event.hasClosed()) {
+				storeMap.remove(project);
+				store.removePathEntryStoreListener(this);
+			}
+			if (project.isAccessible()) {
+				CModelManager manager = CModelManager.getDefault();
+				ICProject cproject = manager.create(project);
+				try {
+					IPathEntry[] oldResolvedEntries = getResolvedPathEntries(cproject);
+					IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
+					ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
+					if (deltas.length > 0) {
+						cproject.close();
+						for (int i = 0; i < deltas.length; i++) {
+							manager.registerCModelDelta(deltas[i]);
+						}
+						manager.fire(ElementChangedEvent.POST_CHANGE);
 					}
-					manager.fire(ElementChangedEvent.POST_CHANGE);
+				} catch (CModelException e) {
 				}
-			} catch (CModelException e) {
 			}
 		}
 	}
@@ -671,9 +683,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if (((flags & ICElementDelta.F_CLOSED) != 0) || (kind == ICElementDelta.REMOVED)) {
 			if (element.getElementType() == ICElement.C_PROJECT) {
 				IProject project = element.getCProject().getProject();
-				IPathEntryStore store = (IPathEntryStore)storeMap.remove(project);
-				store.removePathEntryStoreListener(this);
-				resolvedMap.remove(project);
+				IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
+				if (store != null) {
+					store.fireClosedEvent(project);
+				}
 			}
 		}
 		ICElementDelta[] affectedChildren= delta.getAffectedChildren();

@@ -19,15 +19,35 @@ import org.eclipse.core.resources.IProject;
  * PathEntryChangedEvent
  */
 public class PathEntryStoreChangedEvent extends EventObject {
+	
+	public static final int CONTENT_CHANGED = 1;
+	public static final int STORE_CLOSED = 2;
+
+	private final int flags;
+	private final IProject project;
+
 	/**
 	 * 
 	 */
-	public PathEntryStoreChangedEvent(Object object) {
-		super(object);
+	public PathEntryStoreChangedEvent(IPathEntryStore store, IProject project, int flags) {
+		super(store);
+		this.project = project;
+		this.flags = flags;
+	}
+
+	public IPathEntryStore getPathEntryStore() {
+		return (IPathEntryStore)getSource();
 	}
 
 	public IProject getProject() {
-		return (IProject)getSource();
+		return project;
 	}
 
+	public boolean hasContentChanged() {
+		return (flags & CONTENT_CHANGED) != 0;
+	}
+
+	public boolean hasClosed() {
+		return (flags & STORE_CLOSED) != 0;
+	}
 }

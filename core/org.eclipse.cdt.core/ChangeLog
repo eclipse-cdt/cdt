@@ -1,5 +1,13 @@
 2004-04-26 Alain Magloire
 
+	Changes in the PathEntryStore API
+	* model/org/eclipse/cdt/internal/core/model/PathEntryManager.java
+	* model/org/eclipse/cdt/internal/core/model/PathEntryStore.java
+	* src/org/eclipse/cdt/core/resources/IPathEntryStore.java	
+	* src/org/eclipse/cdt/core/resources/PathEntryStoreChangedEvent.java	
+
+2004-04-26 Alain Magloire
+
 	Move the persistency of the IPathEntry in a differenct
 	class and provide an extension point for it.
 

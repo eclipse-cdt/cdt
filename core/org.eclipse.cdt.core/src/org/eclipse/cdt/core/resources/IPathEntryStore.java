@@ -19,9 +19,52 @@ import org.eclipse.core.runtime.CoreException;
  * IPathEntryStore
  */
 public interface IPathEntryStore {
-	
+
+	/**
+	 * Returns the path entries save on the project. 
+	 * @param project
+	 * @return
+	 * @throws CoreException
+	 */
 	IPathEntry[] getRawPathEntries(IProject project) throws CoreException;
-	void setRawPathEntries(IProject project, IPathEntry[] engries) throws CoreException;
+
+	/**
+	 * Save the entries on the project.
+	 * Setting paths should fire a CONTENT_CHANGED events to the listeners.
+	 * It is up to the listener to calculate the deltas.
+	 * 
+	 * @param project
+	 * @param entries
+	 * @throws CoreException
+	 */
+	void setRawPathEntries(IProject project, IPathEntry[] entries) throws CoreException;
+
+	/**
+	 * Add a listener to the store.
+	 * 
+	 * @param listener
+	 */
 	void addPathEntryStoreListener(IPathEntryStoreListener listener);
+
+	/**
+	 * Remove the listener form the list.
+	 * 
+	 * @param listener
+	 */
 	void removePathEntryStoreListener(IPathEntryStoreListener listener);
+
+	/**
+	 * Fire a CONTENT_CHANGED event to the listeners.
+	 * 
+	 * @param project
+	 */
+	void fireContentChangedEvent(IProject project);
+
+	/**
+	 * Fire a CLOSE_STORE event to the listeners.
+	 * 
+	 * @param project
+	 */
+	void fireClosedEvent(IProject project);
+
 }

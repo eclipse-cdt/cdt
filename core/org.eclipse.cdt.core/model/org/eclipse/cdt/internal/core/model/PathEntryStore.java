@@ -344,12 +344,7 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 				CModelManager manager = CModelManager.getDefault();
 				IProject project = cdesc.getProject();
 				// Call the listeners.
-				PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(project);
-				IPathEntryStoreListener[] observers = new IPathEntryStoreListener[listeners.size()];
-				listeners.toArray(observers);
-				for (int i = 0; i < observers.length; i++) {
-					observers[i].pathEntryStoreChanged(evt);
-				}
+				fireContentChangedEvent(project);
 			}
 		}
 	}
@@ -366,6 +361,30 @@ public class PathEntryStore extends AbstractCExtension implements IPathEntryStor
 	 */
 	public void removePathEntryStoreListener(IPathEntryStoreListener listener) {
 		listeners.remove(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#fireContentChangedEvent(IProject)
+	 */
+	public void fireContentChangedEvent(IProject project) {
+		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, project, PathEntryStoreChangedEvent.CONTENT_CHANGED);
+		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[listeners.size()];
+		listeners.toArray(observers);
+		for (int i = 0; i < observers.length; i++) {
+			observers[i].pathEntryStoreChanged(evt);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.resources.IPathEntryStore#fireClosedChangedEvent(IProject)
+	 */
+	public void fireClosedEvent(IProject project) {
+		PathEntryStoreChangedEvent evt = new PathEntryStoreChangedEvent(this, project, PathEntryStoreChangedEvent.STORE_CLOSED);
+		IPathEntryStoreListener[] observers = new IPathEntryStoreListener[listeners.size()];
+		listeners.toArray(observers);
+		for (int i = 0; i < observers.length; i++) {
+			observers[i].pathEntryStoreChanged(evt);
+		}		
 	}
 
 }

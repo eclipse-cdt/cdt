@@ -70,6 +70,15 @@ public interface IASTCompletionNode {
 		// inside something that does not reach the parser - (#ifdefed out/comment)
 		public static final CompletionKind UNREACHABLE_CODE = new CompletionKind( 17 );
 		
+		// structs only
+		public static final CompletionKind STRUCT_REFERENCE = new CompletionKind( 18 );
+		
+		// unions only
+		public static final CompletionKind UNION_REFERENCE = new CompletionKind( 19 );
+		
+		// enums only
+		public static final CompletionKind ENUM_REFERENCE = new CompletionKind( 20 );
+		
 		// error condition -- a place in the grammar where there is nothing to lookup
 		public static final CompletionKind NO_SUCH_KIND = new CompletionKind( 200 );
 		/**

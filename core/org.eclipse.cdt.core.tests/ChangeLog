@@ -1,4 +1,7 @@
 2004-04-20 John Camelon
+	Updated CompletionParseTest for CompletionKind updates.  
+
+2004-04-20 John Camelon
 	Moved testBug39684() & testBug39695() from ASTFailedTests to QuickParseASTTests.
 	Updated CompleteParseASTTest::testBug39697().
 	Added CompleteParseASTTest::testBug39684() & CompleteParseASTTest::testBug39695().

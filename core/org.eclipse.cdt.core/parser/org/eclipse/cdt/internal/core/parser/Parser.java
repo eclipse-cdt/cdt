@@ -1691,26 +1691,32 @@ public abstract class Parser extends ExpressionParser implements IParser
         // this is an elaborated class specifier
         IToken t = consume();
         ASTClassKind eck = null;
+        CompletionKind completionKind = null;
+        
         switch (t.getType())
         {
             case IToken.t_class :
                 eck = ASTClassKind.CLASS;
+            	completionKind = CompletionKind.CLASS_REFERENCE;
                 break;
             case IToken.t_struct :
                 eck = ASTClassKind.STRUCT;
+            	completionKind = CompletionKind.STRUCT_REFERENCE;
                 break;
             case IToken.t_union :
                 eck = ASTClassKind.UNION;
+            	completionKind = CompletionKind.UNION_REFERENCE;
                 break;
             case IToken.t_enum :
                 eck = ASTClassKind.ENUM;
+            	completionKind = CompletionKind.ENUM_REFERENCE;
                 break;
             default :
                 backup( t );
             	throw backtrack;
         }
  
-        ITokenDuple d = name(sdw.getScope(), CompletionKind.TYPE_REFERENCE);
+        ITokenDuple d = name(sdw.getScope(), completionKind);
 		IASTTypeSpecifier elaboratedTypeSpec = null;
 		final boolean isForewardDecl = ( LT(1) == IToken.tSEMI );
 		
@@ -1749,26 +1755,6 @@ public abstract class Parser extends ExpressionParser implements IParser
         IToken first = consume(IToken.tIDENTIFIER); // throws backtrack if its not that
         return first;
     }
-    /**
-     * Parses a className.  
-     * 
-     * class-name: identifier | template-id
-     * 
-     * @throws BacktrackException
-     */
-    protected ITokenDuple className(IASTScope scope) throws EndOfFileException, BacktrackException
-    {
-//		ITokenDuple duple = name(scope, CompletionKind.USER_SPECIFIED_NAME );
-//		IToken last = duple.getLastToken(); 
-//        if (LT(1) == IToken.tLT) {
-//			last = consumeTemplateParameters(duple.getLastToken());
-//        	//last = templateArgumentList( scope, duple.getLastToken() );
-//        }
-//        
-//		return new TokenDuple(duple.getFirstToken(), last);
-    	return name( scope, CompletionKind.USER_SPECIFIED_NAME );
-    }
-    
     /**
      * Parses the initDeclarator construct of the ANSI C++ spec.
      * 
@@ -2341,9 +2327,11 @@ public abstract class Parser extends ExpressionParser implements IParser
         IToken mark = mark();
         IToken identifier = null;
         consume( IToken.t_enum );
+        setCompletionValues( sdw.getScope(), CompletionKind.ENUM_REFERENCE );
         if (LT(1) == IToken.tIDENTIFIER)
         {
             identifier = identifier();
+            setCompletionValues( sdw.getScope(), CompletionKind.ENUM_REFERENCE );
         }
         if (LT(1) == IToken.tLBRACE)
         {
@@ -2463,6 +2451,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     {
         ClassNameType nameType = ClassNameType.IDENTIFIER;
         ASTClassKind classKind = null;
+        CompletionKind completionKind  = null;
         ASTAccessVisibility access = ASTAccessVisibility.PUBLIC;
         IToken classKey = null;
         IToken mark = mark();
@@ -2474,14 +2463,17 @@ public abstract class Parser extends ExpressionParser implements IParser
                 classKey = consume();
                 classKind = ASTClassKind.CLASS;
                 access = ASTAccessVisibility.PRIVATE;
+                completionKind = CompletionKind.CLASS_REFERENCE;
                 break;
             case IToken.t_struct :
                 classKey = consume();
                 classKind = ASTClassKind.STRUCT;
+                completionKind  = CompletionKind.STRUCT_REFERENCE;
                 break;
             case IToken.t_union :
                 classKey = consume();
                 classKind = ASTClassKind.UNION;
+                completionKind = CompletionKind.UNION_REFERENCE;
                 break;
             default :
                 throw backtrack;
@@ -2490,10 +2482,10 @@ public abstract class Parser extends ExpressionParser implements IParser
         
         ITokenDuple duple = null;
         
-        setCompletionValues(sdw.getScope(), CompletionKind.USER_SPECIFIED_NAME, Key.EMPTY );
+        setCompletionValues(sdw.getScope(), completionKind, Key.EMPTY );
         // class name
         if (LT(1) == IToken.tIDENTIFIER)
-            duple = className(sdw.getScope());
+            duple = name( sdw.getScope(), completionKind );
         if (duple != null && !duple.isIdentifier())
             nameType = ClassNameType.TEMPLATE;
         if (LT(1) != IToken.tCOLON && LT(1) != IToken.tLBRACE)

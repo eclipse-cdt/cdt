@@ -275,6 +275,7 @@ public class KeywordSets {
 		EXPRESSION_C.add( Keywords.UNSIGNED);
 		EXPRESSION_C.add( Keywords.FLOAT);
 		EXPRESSION_C.add( Keywords.DOUBLE);
+		EXPRESSION_C.add( Keywords.SIZEOF );
 		
 	}
 	

@@ -141,7 +141,7 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 		assertNotNull( node.getCompletionPrefix() );
 		assertEquals( node.getCompletionScope(), ((Scope)callback.getCompilationUnit()).getScope() );
 		assertEquals( node.getCompletionPrefix(), "");
-		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.USER_SPECIFIED_NAME );
+		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.CLASS_REFERENCE );
 		keywords = node.getKeywords(); 
 		assertFalse( keywords.hasNext() );
 	}

@@ -93,15 +93,11 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				}
 				ICElement ce = (ICElement) obj;
 				IProject project;
-				try {
-					project = (IProject) ce.getCProject().getResource();
-					IPath programFile = project.getFile(programName).getLocation();
-					ce = CCorePlugin.getDefault().getCoreModel().create(programFile);
-					if (ce != null && ce.exists()) {
-						return ce;
-					}
-				}
-				catch (CModelException e) {
+				project = (IProject) ce.getCProject().getResource();
+				IPath programFile = project.getFile(programName).getLocation();
+				ce = CCorePlugin.getDefault().getCoreModel().create(programFile);
+				if (ce != null && ce.exists()) {
+					return ce;
 				}
 				return (ICElement) obj;
 			}

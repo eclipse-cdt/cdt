@@ -204,11 +204,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		dialog.setTitle("Program Selection");
 		if (dialog.open() == ElementListSelectionDialog.OK) {
 			IBinary binary = (IBinary) dialog.getFirstResult();
-			try {
-				fProgText.setText(binary.getResource().getProjectRelativePath().toString());
-			}
-			catch (CModelException e) {
-			}
+			fProgText.setText(binary.getResource().getProjectRelativePath().toString());
 		}
 	}
 
@@ -369,20 +365,15 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		if (binary != null) {
 			String path;
-			try {
-				path = binary.getResource().getProjectRelativePath().toOSString();
-				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, path);
-				String name = binary.getElementName();
-				int index = name.lastIndexOf('.');
-				if (index > 0) {
-					name = name.substring(index + 1);
-				}
-				name = getLaunchConfigurationDialog().generateName(name);
-				config.rename(name);
+			path = binary.getResource().getProjectRelativePath().toOSString();
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, path);
+			String name = binary.getElementName();
+			int index = name.lastIndexOf('.');
+			if (index > 0) {
+				name = name.substring(index + 1);
 			}
-			catch (CModelException e) {
-			}
-
+			name = getLaunchConfigurationDialog().generateName(name);
+			config.rename(name);
 		}
 	}
 	/**

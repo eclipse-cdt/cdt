@@ -267,11 +267,8 @@ public class IndexManager implements IElementChangedListener {
 		}
 
 		if (kind == ICElementDelta.REMOVED) {
-			try {
-				IResource resource = element.getResource();
-				removeResource(resource);
-			} catch (CModelException e) {
-			}
+			IResource resource = element.getResource();
+			removeResource(resource);
 		}
 
 //		if (kind == ICElementDelta.ADDED) {

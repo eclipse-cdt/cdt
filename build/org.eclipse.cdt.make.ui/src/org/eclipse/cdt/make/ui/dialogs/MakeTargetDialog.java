@@ -263,17 +263,6 @@ public class MakeTargetDialog extends Dialog {
 				updateButtons();
 			}
 		});
-		if (buildCommand != null) {
-			StringBuffer cmd = new StringBuffer(buildCommand.toOSString());
-			if (!isDefaultCommand) {
-				String args = buildArguments;
-				if (args != null && !args.equals("")) { //$NON-NLS-1$
-					cmd.append(" "); //$NON-NLS-1$
-					cmd.append(args);
-				}
-			}
-			commandText.setText(cmd.toString());
-		}
 		if (isDefaultCommand) {
 			commandText.setEnabled(false);
 		} else {
@@ -322,6 +311,17 @@ public class MakeTargetDialog extends Dialog {
 			targetNameText.setText(generateUniqueName(targetString));
 		}
 		targetNameText.selectAll();
+		if (buildCommand != null) {
+			StringBuffer cmd = new StringBuffer(buildCommand.toOSString());
+			if (!isDefaultCommand) {
+				String args = buildArguments;
+				if (args != null && !args.equals("")) { //$NON-NLS-1$
+					cmd.append(" "); //$NON-NLS-1$
+					cmd.append(args);
+				}
+			}
+			commandText.setText(cmd.toString());
+		}
 	}
 
 	protected void updateButtons() {

@@ -1,3 +1,8 @@
+2004-07-27 Tanya Wolff
+
+	Fix for 70124 -- allow buttons to be expandable for translation
+	*org.eclipse.cdt.ui.wizards.conversion/ConvertProjectWizardPage.java
+	
 2004-07-24 Chris Wiebe
 
 	Major clean up patch on the wizards.

@@ -1,3 +1,8 @@
+2003-06-29 Mikhail Khodjaiants
+	Fix for PR 39101: No hilight when changing the value of register.
+	* RegistersView.java
+	* RegistersViewer.java
+
 2003-06-26 Mikhail Khodjaiants
 	New icon for shared libraries with loaded symbols.
 	* icons/full/ovr16/symbols_ovr.gif: new

@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.internal.ui.views.ViewerState;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -33,12 +34,17 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -56,6 +62,76 @@ public class RegistersView extends AbstractDebugEventHandlerView
 									  IPropertyChangeListener, 
 									  IDebugExceptionHandler
 {
+	/**
+	 * A label provider that delegates to a debug model
+	 * presentation and adds coloring to registers to
+	 * reflect their changed state
+	 */
+	class VariablesViewLabelProvider implements ILabelProvider, IColorProvider
+	{
+		private IDebugModelPresentation fPresentation;
+
+		public VariablesViewLabelProvider( IDebugModelPresentation presentation )
+		{
+			fPresentation = presentation;
+		}
+
+		public IDebugModelPresentation getPresentation()
+		{
+			return fPresentation;
+		}
+
+		public Image getImage( Object element )
+		{
+			return fPresentation.getImage( element );
+		}
+		public String getText( Object element )
+		{
+			return fPresentation.getText( element );
+		}
+		public void addListener( ILabelProviderListener listener )
+		{
+			fPresentation.addListener( listener );
+		}
+		public void dispose()
+		{
+			fPresentation.dispose();
+		}
+		public boolean isLabelProperty( Object element, String property )
+		{
+			return fPresentation.isLabelProperty( element, property );
+		}
+		public void removeListener( ILabelProviderListener listener )
+		{
+			fPresentation.removeListener( listener );
+		}
+
+		public Color getForeground( Object element )
+		{
+			if ( element instanceof IRegister )
+			{
+				IRegister register = (IRegister)element;
+				try
+				{
+					if ( register.hasValueChanged() )
+					{
+						return CDebugUIPlugin.getPreferenceColor( ICDebugPreferenceConstants.CHANGED_REGISTER_RGB );
+					}
+				}
+				catch( DebugException e )
+				{
+					CDebugUIPlugin.log( e );
+				}
+			}
+			return null;
+		}
+
+		public Color getBackground( Object element )
+		{
+			return null;
+		}
+	}
+
 	/**
 	 * The model presentation used as the label provider for the tree viewer.
 	 */
@@ -81,7 +157,7 @@ public class RegistersView extends AbstractDebugEventHandlerView
 		// add tree viewer
 		final TreeViewer vv = new RegistersViewer( parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
 		vv.setContentProvider( createContentProvider() );
-		vv.setLabelProvider( getModelPresentation() );
+		vv.setLabelProvider( new VariablesViewLabelProvider( getModelPresentation() ) );
 		vv.setUseHashlookup( true );
 		setAction( SELECT_ALL_ACTION, getAction( VARIABLES_SELECT_ALL_ACTION ) );
 		getViewSite().getActionBars().updateActionBars();

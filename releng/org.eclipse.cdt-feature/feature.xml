@@ -20,18 +20,20 @@
 
    <requires>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.search"/>
-      <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.core.boot"/>
    </requires>
 
    <plugin
@@ -90,42 +92,42 @@
 
    <plugin
          id="org.eclipse.cdt.core.aix"
+         os="aix"
          download-size="0"
          install-size="0"
          version="2.0.0"
-         fragment="true"
-         os="aix"/>
-         
+         fragment="true"/>
+
    <plugin
          id="org.eclipse.cdt.core.linux"
+         os="linux"
          download-size="0"
          install-size="0"
          version="2.0.0"
-         fragment="true"
-         os="linux"/>
+         fragment="true"/>
 
    <plugin
          id="org.eclipse.cdt.core.qnx"
+         os="qnx"
          download-size="0"
          install-size="0"
          version="2.0.0"
-         fragment="true"
-         os="qnx"/>
+         fragment="true"/>
 
    <plugin
          id="org.eclipse.cdt.core.solaris"
+         os="solaris"
          download-size="0"
          install-size="0"
          version="2.0.0"
-         fragment="true"
-         os="solaris"/>
+         fragment="true"/>
 
    <plugin
          id="org.eclipse.cdt.core.win32"
+         os="win32"
          download-size="0"
          install-size="0"
          version="2.0.0"
-         fragment="true"
-         os="win32"/>
+         fragment="true"/>
 
 </feature>

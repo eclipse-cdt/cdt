@@ -1,3 +1,8 @@
+2005-04-05 Alain Magloire
+	PR 90090
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/event/ExitedEvent.java
+
 2005-03-24 Alain Magloire
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/MemoryManager.java
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Memoryblock.java

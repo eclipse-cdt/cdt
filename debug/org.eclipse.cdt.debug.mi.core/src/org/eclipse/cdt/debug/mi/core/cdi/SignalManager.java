@@ -18,8 +18,10 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.Signal;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIHandle;
 import org.eclipse.cdt.debug.mi.core.command.MIInfoSignals;
+import org.eclipse.cdt.debug.mi.core.command.MISignal;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalChangedEvent;
+import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoSignalsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MISigHandle;
 
@@ -201,7 +203,20 @@ public class SignalManager extends SessionObject implements ICDISignalManager {
 	/**
 	 * Method signal.
 	 */
-	public void signal() {
+	public void signal(ICDISignal sig) throws CDIException {
+		Session session = (Session)getSession();
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MISignal signal = factory.createMISignal(sig.getName());
+		try {
+			mi.postCommand(signal);
+			MIInfo info = signal.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
 	}
 
 } 

@@ -1,3 +1,10 @@
+2003-12-18 Alain Magloire
+
+	Possible NPE, PR 49146
+
+	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java
+
+
 2003-12-17 Mikhail Khodjaiants
 	Fix for PR 49051: Launcher: Debugger tab: variable tracking.
 	* CDebuggerTab.java

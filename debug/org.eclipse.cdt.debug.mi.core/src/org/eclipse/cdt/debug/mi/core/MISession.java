@@ -74,7 +74,9 @@ public class MISession extends Observable {
 	long cmdTimeout;
 
 	MIInferior inferior;
-
+	
+	int cmdCount = 1;
+	
 	/**
 	 * Create the gdb session.
 	 *
@@ -232,10 +234,10 @@ public class MISession extends Observable {
 	/**
 	 * Sends a command to gdb, and wait(timeout) for a response.
 	 */
-	static int number = 1;
 	public synchronized void postCommand(Command cmd, long timeout) throws MIException {
 
-//MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
+		// TRACING: print the command;
+		MIPlugin.getDefault().debugLog(cmdCount++ + " " + cmd.toString());
 
 		// Test if we are in a sane state.
 		if (!txThread.isAlive() || !rxThread.isAlive()) {

@@ -1,3 +1,17 @@
+2004-03-10 Sean Evoy
+	Fix for critical bug 44163.
+	The managed build info would become confused when the project it was associated
+	with was renamed. The project still stored the build information in its session 
+	data, but the internal reference to the owner project was not updated in the 
+	build info. Now, when the build info is retrieved from a project, the manager 
+	asks the info to do a sanity test to check the identity of the true owner against 
+	the owner the it thinks it has. If they differ, the build information updates its 
+	owner and the owner of all the targets it maintains for the project.
+	* src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java	
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ManagedBuildInfo.java
+	* src/org/eclipse/cdt/managedbuilder/core/ITarget.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+
 2003-10-23 Bogdan Gheorghe
 	Updated the indexManager.perfomConcurrentJob call in MakefileGenerator
 	

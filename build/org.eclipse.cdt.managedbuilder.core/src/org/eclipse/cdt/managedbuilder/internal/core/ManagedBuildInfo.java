@@ -867,4 +867,25 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		this.isDirty = isDirty;
 	}
 
+	/**
+	 * Sets the owner of the receiver to be the <code>IResource</code> specified
+	 * in the argument.
+	 * 
+	 * @param resource
+	 */
+	public void updateOwner(IResource resource) {
+		// Check to see if the owner is the same as the argument
+		if (resource != null) {
+			if (!owner.equals(resource)) {
+				owner = resource;
+				// Do the same for the targets
+				Iterator iter = targets.listIterator();
+				while(iter.hasNext()) {
+					ITarget target = (ITarget) iter.next();
+					target.updateOwner(resource);
+				}
+			}
+		}
+	}
+
 }

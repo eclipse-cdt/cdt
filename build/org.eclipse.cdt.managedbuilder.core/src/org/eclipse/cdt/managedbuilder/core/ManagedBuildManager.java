@@ -459,6 +459,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		ManagedBuildInfo buildInfo = null;
 		try {
 			buildInfo = (ManagedBuildInfo)resource.getSessionProperty(buildInfoProperty);
+			// Make sure that if a project has build info, that the info is not corrupted
+			if (buildInfo != null) {
+				buildInfo.updateOwner(resource);
+			}			
 		} catch (CoreException e) {
 			return buildInfo;
 		}

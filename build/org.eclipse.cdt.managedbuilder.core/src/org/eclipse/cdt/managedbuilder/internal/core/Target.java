@@ -523,4 +523,14 @@ public class Target extends BuildObject implements ITarget {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#updateOwner(org.eclipse.core.resources.IResource)
+	 */
+	public void updateOwner(IResource resource) {
+		if (!resource.equals(owner)) {
+			// Set the owner correctly
+			owner = resource;
+		}
+	}
+
 }

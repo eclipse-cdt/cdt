@@ -182,4 +182,10 @@ public interface ITarget extends IBuildObject {
 	 */
 	public void setMakeCommand(String command);
 
+	/**
+	 * Sets the resource that owns the receiver.
+	 * 
+	 * @param resource
+	 */
+	public void updateOwner(IResource resource);
 }

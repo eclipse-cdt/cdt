@@ -97,6 +97,9 @@ public class CTarget  implements ICDITarget {
 			try {
 				mi.postCommand(select);
 				MIThreadSelectInfo info = select.getMIThreadSelectInfo();
+				if (info == null) {
+					throw new CDIException("No Answer");
+				}
 				currentThreadId = info.getNewThreadId();
 			} catch (MIException e) {
 				throw new CDIException(e.getMessage());
@@ -171,7 +174,12 @@ public class CTarget  implements ICDITarget {
 			//MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
 			mi.postCommand(tids);
 			MIInfoThreadsInfo info = tids.getMIInfoThreadsInfo();
-			int[] ids = info.getThreadIds();
+			int [] ids;
+			if (info == null) {
+				ids = new int[0];
+			} else {
+				ids = info.getThreadIds();
+			}
 			if (ids != null && ids.length > 0) {
 				cthreads = new CThread[ids.length];
 				// Ok that means it is a multiThreaded.

@@ -93,10 +93,10 @@ public class IndexManager implements IElementChangedListener {
 	/**
 	 * Before processing all jobs, need to ensure that the indexes are up to date.
 	 */
-	protected static void delay() {
+	protected void delay() {
 		try {
 			// wait 10 seconds so as not to interfere with plugin startup
-			Thread.currentThread().sleep(10000);
+			Thread.sleep(10000);
 		} catch (InterruptedException ie) {
 		}	
 	}
@@ -242,7 +242,7 @@ public class IndexManager implements IElementChangedListener {
 
 	public void shutdown() {
 		if (thread != null)
-			thread.interrupted();
+			thread.interrupt();
 		CoreModel.getDefault().removeElementChangedListener(this);	
 	}
 

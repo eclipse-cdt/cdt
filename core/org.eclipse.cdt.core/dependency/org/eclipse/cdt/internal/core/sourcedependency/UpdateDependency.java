@@ -58,7 +58,9 @@ public class UpdateDependency implements IJob {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.search.processing.IJob#execute(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public boolean execute(IProgressMonitor progress) {		
+	public boolean execute(IProgressMonitor progress) {	
+		if (resource == null) return false;	
+		  
 		PathCollector pathCollector = new PathCollector();
 			//SubProgressMonitor subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 5 );
 			ICSearchScope scope = SearchEngine.createWorkspaceScope();

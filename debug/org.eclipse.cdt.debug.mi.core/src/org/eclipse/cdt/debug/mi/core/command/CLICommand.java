@@ -20,6 +20,10 @@ public class CLICommand extends Command
 		operation = oper;
 	}
 
+	public String getOperation() {
+		return operation;
+	}
+
 	/**
 	 * Returns the text representation of this command.
 	 * 

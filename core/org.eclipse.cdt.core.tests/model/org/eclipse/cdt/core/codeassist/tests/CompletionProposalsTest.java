@@ -18,7 +18,6 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;

@@ -435,7 +435,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		ISymbol classSymbol = null;
         try
         {
-            classSymbol = currentScopeSymbol.qualifiedLookup(lastToken.getImage());
+            classSymbol = currentScopeSymbol.lookupMemberForDefinition(lastToken.getImage());
         }
         catch (ParserSymbolTableException e)
         {

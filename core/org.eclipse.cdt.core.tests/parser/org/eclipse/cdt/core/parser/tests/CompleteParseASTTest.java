@@ -557,4 +557,14 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTMethod method = (IASTMethod)i.next();
 		assertTrue (method.isDestructor()); 
 	}
+	
+	public void testBug41445() throws Exception
+	{
+		Iterator i = parse( "class A { }; namespace N { class B : public A { struct A {}; }; }").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTNamespaceDefinition namespaceN = (IASTNamespaceDefinition)i.next(); 
+		Iterator sub = getDeclarations( namespaceN );
+		IASTClassSpecifier classB = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)sub.next()).getTypeSpecifier();
+		IASTClassSpecifier structA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)( getDeclarations( classB ).next())).getTypeSpecifier();
+	}
 }

@@ -1,3 +1,6 @@
+2003-09-03 John Camelon
+	Fixed bug41445 - QualifiedLookup succeeds where it should fail.  
+
 2003-09-02 Andrew Niefer
 	bug41935 - Modifications to PST to allow for namespace aliases
 

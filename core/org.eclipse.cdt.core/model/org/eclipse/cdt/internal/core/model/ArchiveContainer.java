@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class ArchiveContainer extends Openable implements IArchiveContainer {
 
 	public ArchiveContainer (CProject cProject) {
-		super (cProject, null, "libraries", CElement.C_VCONTAINER);
+		super (cProject, null, "Archives", CElement.C_VCONTAINER);
 	}
 
 	public IArchive[] getArchives() {

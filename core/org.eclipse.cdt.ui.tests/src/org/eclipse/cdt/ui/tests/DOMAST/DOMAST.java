@@ -107,9 +107,9 @@ public class DOMAST extends ViewPart {
    private DrillDownAdapter    drillDownAdapter;
    private Action              action1;
    private Action              action2;
-   private Action              singleClickAction;
+   Action              singleClickAction;
    private Action              refreshAction;
-   private IFile               file              = null;
+   IFile               file              = null;
    private IEditorPart         part              = null;
    ParserLanguage              lang              = null;
 
@@ -389,7 +389,7 @@ public class DOMAST extends ViewPart {
 
       action1 = new Action() {
          public void run() {
-            showMessage("Action 1 executed"); // TODO open declarations action
+            showMessage("Action 1 executed"); // TODO open declarations action //$NON-NLS-1$
                                               // ... use annotations
          }
       };
@@ -399,7 +399,7 @@ public class DOMAST extends ViewPart {
 
       action2 = new Action() {
          public void run() {
-            showMessage("Action 2 executed"); // TODO open references action ...
+            showMessage("Action 2 executed"); // TODO open references action ... //$NON-NLS-1$
                                               // use annotations
          }
       };
@@ -521,7 +521,7 @@ public class DOMAST extends ViewPart {
       });
    }
 
-   private void showMessage(String message) {
+   void showMessage(String message) {
       MessageDialog.openInformation(viewer.getControl().getShell(), VIEW_NAME,
             message);
    }

@@ -53,7 +53,9 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
-import org.eclipse.cdt.debug.core.sourcelookup.CSourceLocator;
+import org.eclipse.cdt.debug.core.internal.sourcelookup.CSourceLocator;
+import org.eclipse.cdt.debug.core.internal.sourcelookup.CSourceManager;
+import org.eclipse.cdt.debug.core.internal.sourcelookup.DisassemblyManager;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
@@ -1802,7 +1804,8 @@ public class CDebugTarget extends CDebugElement
 	
 	protected ISourceLocator createSourceLocator( IProject project )
 	{
-		return ( getLaunch().getSourceLocator() != null ) ? getLaunch().getSourceLocator() : new CSourceLocator( project );
+		return new CSourceManager( ( getLaunch().getSourceLocator() != null ) ? getLaunch().getSourceLocator() : new CSourceLocator( project ), 
+									new DisassemblyManager() ) ;
 	}
 	
 	protected void setSourceSearchPath()

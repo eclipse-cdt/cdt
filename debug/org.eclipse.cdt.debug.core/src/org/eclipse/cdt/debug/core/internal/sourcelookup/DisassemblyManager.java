@@ -4,7 +4,7 @@
  * 
  */
 
-package org.eclipse.cdt.debug.core.sourcelookup;
+package org.eclipse.cdt.debug.core.internal.sourcelookup;
 
 /**
  * Enter type comment.

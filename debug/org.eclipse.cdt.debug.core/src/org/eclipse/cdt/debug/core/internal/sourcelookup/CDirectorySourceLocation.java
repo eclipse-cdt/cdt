@@ -3,11 +3,12 @@
  * All Rights Reserved.
  * 
  */
-package org.eclipse.cdt.debug.core.sourcelookup;
+package org.eclipse.cdt.debug.core.internal.sourcelookup;
 
 import java.io.File;
 
 import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;

@@ -4,30 +4,36 @@
  * 
  */
 
-package org.eclipse.cdt.debug.core.sourcelookup;
+package org.eclipse.cdt.debug.core.internal.sourcelookup;
 
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
+import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 
 /**
- * Enter type comment.
+ * Locates sources for a C/C++ debug session.
  * 
  * @since: Oct 8, 2002
  */
 public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 {
-	protected ISourceLocator fSourceLocator;
-	protected int fMode = ISourceMode.MODE_SOURCE;
+	private ISourceLocator fSourceLocator;
+	private DisassemblyManager fDisassemblyManager;
+	private int fMode = ISourceMode.MODE_SOURCE;
+	private int fRealMode = fMode;
 	
 	/**
 	 * Constructor for CSourceManager.
 	 */
-	public CSourceManager( ISourceLocator sourceLocator )
+	public CSourceManager( ISourceLocator sourceLocator, DisassemblyManager disassemblyManager )
 	{
 		fSourceLocator = sourceLocator;
+		fDisassemblyManager = disassemblyManager;
 	}
 
 	/* (non-Javadoc)
@@ -35,7 +41,7 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 	 */
 	public int getLineNumber( IStackFrameInfo frameInfo )
 	{
-		if ( getMode() == ISourceMode.MODE_SOURCE )
+		if ( getRealMode() == ISourceMode.MODE_SOURCE )
 		{
 			if ( getCSourceLocator() != null )
 			{
@@ -100,6 +106,16 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 		fMode = mode;
 	}
 
+	protected int getRealMode()
+	{
+		return fRealMode;
+	}
+
+	protected void setRealMode( int mode )
+	{
+		fRealMode = mode;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
@@ -113,7 +129,7 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 	 */
 	public Object getSourceElement( IStackFrame stackFrame )
 	{
-		return ( getSourceLocator() != null ) ? getSourceLocator() : null;
+		return ( getSourceLocator() != null ) ? getSourceLocator().getSourceElement( stackFrame ) : null;
 	}
 	
 	protected ICSourceLocator getCSourceLocator()

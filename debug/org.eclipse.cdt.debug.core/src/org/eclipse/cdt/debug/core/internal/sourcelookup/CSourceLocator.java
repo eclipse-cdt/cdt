@@ -4,11 +4,13 @@
  * 
  */
 
-package org.eclipse.cdt.debug.core.sourcelookup;
+package org.eclipse.cdt.debug.core.internal.sourcelookup;
 
 import java.util.ArrayList;
 
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -19,7 +21,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 
 /**
  * 
- * Locates source for a C/C++ debug session.
+ * Default source locator.
  * 
  * @since Aug 19, 2002
  */

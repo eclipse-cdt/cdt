@@ -79,6 +79,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -471,14 +473,31 @@ public class DOMAST extends ViewPart {
      loadActiveEditorAction.setImageDescriptor(DOMASTPluginImages.DESC_DEFAULT);
    	
      refreshAction = new Action() {
+     	private void expandTreeIfNecessary(TreeItem[] tree, Object[] expanded) {
+     		for( int i=0; i<tree.length; i++) {
+     			for( int j=0; j<expanded.length; j++) {
+	     			if (expanded[j] instanceof TreeObject &&
+	     					tree[i].getData() instanceof TreeObject &&
+	     					((TreeObject)expanded[j]).toString().equals(((TreeObject)tree[i].getData()).toString()) && 
+	     					((TreeObject)expanded[j]).getOffset() == (((TreeObject)tree[i].getData()).getOffset())) {
+	     				tree[i].setExpanded(true);
+	     				viewer.refresh();
+	     				expandTreeIfNecessary(tree[i].getItems(), expanded);
+	     			}
+     			}
+     		}
+     	}
+     	
          public void run() {
-            // TODO take a snapshot of the tree expansion
-         	
+            // take a snapshot of the tree expansion
+         	Object[] expanded = viewer.getExpandedElements();
          	
          	// set the new content provider
          	setContentProvider(new ViewContentProvider(file));
             
-         	// TODO set the expansion of the view based on the original snapshot (educated guess)
+         	// set the expansion of the view based on the original snapshot (educated guess)
+         	Tree tree = viewer.getTree();
+         	expandTreeIfNecessary(tree.getItems(), expanded);
          	
          }
       };

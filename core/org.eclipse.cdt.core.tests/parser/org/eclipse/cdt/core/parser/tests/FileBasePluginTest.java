@@ -185,7 +185,7 @@ public class FileBasePluginTest extends TestCase {
 		
 		return folder;
     }
-    protected IFile importFile(String fileName, String contents ) throws Exception{
+    public IFile importFile(String fileName, String contents ) throws Exception{
 		//Obtain file handle
 		IFile file = project.getProject().getFile(fileName);
 		

@@ -2619,4 +2619,17 @@ public class AST2Tests extends AST2BaseTest {
        
        assertInstances( col, e, 2 );
    }
+   
+   public void testBug84176() throws Exception {
+      StringBuffer buffer = new StringBuffer( "// example from: C99 6.5.2.5-16\n" ); //$NON-NLS-1$
+      buffer.append( "struct s { int i; };\n"); //$NON-NLS-1$
+      buffer.append("void f (void)\n"); //$NON-NLS-1$
+      buffer.append("{\n"); //$NON-NLS-1$
+      buffer.append("		 struct s *p = 0, *q;\n"); //$NON-NLS-1$
+      buffer.append("int j = 0;\n"); //$NON-NLS-1$
+      buffer.append("q = p;\n"); //$NON-NLS-1$
+      buffer.append("p = &((struct s){ j++ }); \n");  //$NON-NLS-1$
+      buffer.append("}\n"); //$NON-NLS-1$
+      parse( buffer.toString(), ParserLanguage.C );
+   }
 }

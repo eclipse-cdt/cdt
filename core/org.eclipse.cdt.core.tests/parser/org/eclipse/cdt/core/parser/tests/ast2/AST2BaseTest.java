@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
@@ -122,13 +121,13 @@ public class AST2BaseTest extends TestCase {
          
         if( lang == ParserLanguage.C && expectNoProblems )
         {
-        	IASTProblem [] problems = CVisitor.getProblems(tu);
-        	assertEquals( problems.length, 0 );
+        	assertEquals( CVisitor.getProblems(tu).length, 0 );
+        	assertEquals( tu.getPreprocesorProblems().length, 0 );
         }
         else if ( lang == ParserLanguage.CPP && expectNoProblems )
         {
-        	IASTProblem [] problems = CPPVisitor.getProblems(tu);
-        	assertEquals( problems.length, 0 );
+        	assertEquals( CPPVisitor.getProblems(tu).length, 0 );
+        	assertEquals( tu.getPreprocesorProblems().length, 0 );
         }
         
         return tu;

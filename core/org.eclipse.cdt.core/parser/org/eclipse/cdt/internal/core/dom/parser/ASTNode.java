@@ -32,16 +32,19 @@ public abstract class ASTNode implements IASTNode {
     public void setOffset( int offset )
     {
         this.offset = offset;
+        this.locations = null;
     }
     
     public void setLength( int length )
     {
         this.length = length;
+        this.locations = null;
     }
     
     public void setOffsetAndLength(int offset, int length) {
         this.offset = offset;
         this.length = length;
+        this.locations = null;
     }
     
     public void setOffsetAndLength( ASTNode node )
@@ -49,12 +52,15 @@ public abstract class ASTNode implements IASTNode {
        setOffsetAndLength( node.getOffset(), node.getLength() );
     }
     
+    private IASTNodeLocation [] locations = null;
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTNode#getNodeLocations()
      */
     public IASTNodeLocation[] getNodeLocations() {
+        if( locations != null ) return locations;
         if( length == 0 ) return EMPTY_LOCATION_ARRAY;
-        return getTranslationUnit().getLocationInfo( offset, length );
+        locations = getTranslationUnit().getLocationInfo( offset, length );
+        return locations;
     }
     
     /* (non-Javadoc)

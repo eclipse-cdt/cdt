@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
@@ -30,7 +31,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
-import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
 
@@ -59,9 +59,10 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	}
 	
 	private void addRoot(IASTNode node) {
-		if (!(node.getNodeLocations().length > 0 && 
-				node.getNodeLocations()[0].getNodeOffset() >= 0 &&
-				node.getNodeLocations()[0].getNodeLength() > 0))
+		IASTNodeLocation[] nodeLocations = node.getNodeLocations();
+        if (!(nodeLocations.length > 0 && 
+				nodeLocations[0].getNodeOffset() >= 0 &&
+				nodeLocations[0].getNodeLength() > 0))
 			return;
 		
 		TreeParent parent = root.findParentOfNode(node);

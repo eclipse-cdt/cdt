@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
@@ -1385,6 +1386,9 @@ public class CVisitor {
 		      if( mods[i].getConstantExpression() != null && 
 		            !visitExpression( mods[i].getConstantExpression(), action ) ) return false;
 		}
+		else if( declarator instanceof IASTFieldDeclarator )
+		   if( ! visitExpression( ((IASTFieldDeclarator) declarator).getBitFieldSize(), action ) ) return false;
+		
 		return true;
 	}
 	

@@ -1,4 +1,7 @@
 2004-02-10 John Camelon
+	Workaround for Bug 51502 - Parser spins on particular file (Scalability)
+	
+2004-02-10 John Camelon
 	Fixed Bug 51302 - Content Assist: No completion list available following namespace declaration. 
 
 2004-02-10 John Camelon

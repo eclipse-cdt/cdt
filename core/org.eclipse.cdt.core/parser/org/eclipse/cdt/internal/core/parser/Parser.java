@@ -956,8 +956,10 @@ public abstract class Parser implements IParser
         throws BacktrackException, EndOfFileException
     {
     	IToken firstToken = LA(1);
+    	if( firstToken.getType()  == IToken.tLBRACE ) throw backtrack;
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, firstToken.getOffset(), firstToken.getLineNumber(), ownerTemplate);
+        firstToken = null; // necessary for scalability
 
         setCompletionValues( scope, getCompletionKindForDeclaration(scope, overideKind), Key.DECL_SPECIFIER_SEQUENCE );
         declSpecifierSeq(sdw, false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR );
@@ -1025,8 +1027,6 @@ public abstract class Parser implements IParser
 		{        
 	        if( LT(1) == IToken.tLBRACE )
 	        {
-	        	if( firstToken == LA(1) )
-					throw backtrack;
 	            declarator.setHasFunctionBody(true);
 	            hasFunctionBody = true;
 	        }
@@ -1943,10 +1943,12 @@ public abstract class Parser implements IParser
         throws EndOfFileException, BacktrackException
     {
         // handle initializer
-        if (LT(1) == IToken.tASSIGN)
+        final IASTScope scope = d.getDeclarationWrapper().getScope();
+		if (LT(1) == IToken.tASSIGN)
         {
             consume(IToken.tASSIGN);
-            d.setInitializerClause(initializerClause(d.getDeclarationWrapper().getScope()));
+            IASTInitializerClause clause = initializerClause(scope);
+			d.setInitializerClause(clause);
         }
         else if (LT(1) == IToken.tLPAREN )
         {
@@ -1956,7 +1958,7 @@ public abstract class Parser implements IParser
             {
                 consume(IToken.tLPAREN); // EAT IT!
                 IASTExpression astExpression = null;
-                astExpression = expression(d.getDeclarationWrapper().getScope());
+                astExpression = expression(scope);
                 consume(IToken.tRPAREN);
                 d.setConstructorExpression(astExpression);
             } catch( BacktrackException bt )

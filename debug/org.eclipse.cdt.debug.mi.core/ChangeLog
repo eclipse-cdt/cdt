@@ -1,3 +1,9 @@
+2003-07-17 Alain Magloire
+
+	Catch the use of cli command "detach" and fire the appropriate events.
+
+	* src/org/eclipse/cdt/debug/mi/core/CLIProcessor.java
+
 2003-07-16 Alain Magloire
 
 	Provide FunctionValue, PointerValue and ArrayValue.

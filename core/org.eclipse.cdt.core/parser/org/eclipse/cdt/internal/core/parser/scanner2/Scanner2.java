@@ -44,6 +44,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionDirective;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
+import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
@@ -323,7 +324,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				int tokenType = IToken.tSTRING; 
 				if( lastToken.getType() == IToken.tLSTRING || nextToken.getType() == IToken.tLSTRING )
 					tokenType = IToken.tLSTRING;
-				lastToken = new ImagedToken(tokenType, CharArrayUtils.concat( lastToken.getCharImage(), nextToken.getCharImage() ), nextToken.getEndOffset(), getCurrentFilename() );
+				lastToken = newToken(tokenType, CharArrayUtils.concat( lastToken.getCharImage(), nextToken.getCharImage() ) );
 				if (oldToken != null)
 					oldToken.setNext(lastToken);
 				nextToken = fetchToken();
@@ -473,20 +474,20 @@ public class Scanner2 implements IScanner, IScannerData {
 								if (pos + 2 < limit) {
 									if (buffer[pos + 2] == '.') {
 										bufferPos[bufferStackPos] += 2;
-										return new SimpleToken(IToken.tELLIPSIS, bufferPos[bufferStackPos] + 1 , getCurrentFilename()  );
+										return newToken(IToken.tELLIPSIS );
 									}
 								}
 							case '*':
 								++bufferPos[bufferStackPos];
-								return new SimpleToken(IToken.tDOTSTAR, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+								return newToken(IToken.tDOTSTAR );
 						}
 					}
-					return new SimpleToken(IToken.tDOT, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tDOT);
 					
 				case '#':
 					if (pos + 1 < limit && buffer[pos + 1] == '#') {
 						++bufferPos[bufferStackPos];
-						return new SimpleToken(IToken.tPOUNDPOUND, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+						return newToken(IToken.tPOUNDPOUND);
 					}
 					
 					// Should really check to make sure this is the first
@@ -495,49 +496,49 @@ public class Scanner2 implements IScanner, IScannerData {
 					continue;
 				
 				case '{':
-					return new SimpleToken(IToken.tLBRACE, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tLBRACE );
 				
 				case '}':
-					return new SimpleToken(IToken.tRBRACE, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tRBRACE );
 				
 				case '[':
-					return new SimpleToken(IToken.tLBRACKET, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tLBRACKET );
 				
 				case ']':
-					return new SimpleToken(IToken.tRBRACKET, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tRBRACKET );
 				
 				case '(':
-					return new SimpleToken(IToken.tLPAREN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tLPAREN );
 				
 				case ')':
-					return new SimpleToken(IToken.tRPAREN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tRPAREN );
 
 				case ';':
-					return new SimpleToken(IToken.tSEMI, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tSEMI );
 				
 				case ':':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == ':') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tCOLONCOLON, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tCOLONCOLON );
 						}
 					}
-					return new SimpleToken(IToken.tCOLON, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tCOLON );
 					
 				case '?':
-					return new SimpleToken(IToken.tQUESTION, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tQUESTION );
 				
 				case '+':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '+') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tINCR, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tINCR);
 						} else if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tPLUSASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tPLUSASSIGN );
 						}
 					}
-					return new SimpleToken(IToken.tPLUS, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tPLUS );
 				
 				case '-':
 					if (pos + 1 < limit) {
@@ -545,140 +546,140 @@ public class Scanner2 implements IScanner, IScannerData {
 							if (pos + 2 < limit) {
 								if (buffer[pos + 2] == '*') {
 									bufferPos[bufferStackPos] += 2;
-									return new SimpleToken(IToken.tARROWSTAR, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+									return newToken(IToken.tARROWSTAR );
 								}
 							}
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tARROW, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tARROW);
 						} else if (buffer[pos + 1] == '-') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tDECR, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tDECR );
 						} else if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tMINUSASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tMINUSASSIGN );
 						}
 					}
-					return new SimpleToken(IToken.tMINUS, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tMINUS );
 				
 				case '*':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tSTARASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tSTARASSIGN );
 						}
 					}
-					return new SimpleToken(IToken.tSTAR, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tSTAR);
 				
 				case '/':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tDIVASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tDIVASSIGN );
 						}
 					}
-					return new SimpleToken(IToken.tDIV, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tDIV );
 				
 				case '%':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tMODASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tMODASSIGN );
 						}
 					}
-					return new SimpleToken(IToken.tMOD, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tMOD );
 				
 				case '^':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tXORASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tXORASSIGN );
 						}
 					}
-					return new SimpleToken(IToken.tXOR, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tXOR );
 				
 				case '&':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '&') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tAND, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tAND );
 						} else if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tAMPERASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tAMPERASSIGN );
 						}
 					}
-					return new SimpleToken(IToken.tAMPER, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tAMPER );
 				
 				case '|':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '|') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tOR, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tOR );
 						} else if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tBITORASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tBITORASSIGN );
 						}
 					}
-					return new SimpleToken(IToken.tBITOR, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tBITOR );
 				
 				case '~':
-					return new SimpleToken(IToken.tCOMPL, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tCOMPL );
 				
 				case '!':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tNOTEQUAL, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tNOTEQUAL );
 						}
 					}
-					return new SimpleToken(IToken.tNOT, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tNOT );
 				
 				case '=':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tEQUAL, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tEQUAL );
 						}
 					}
-					return new SimpleToken(IToken.tASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tASSIGN );
 				
 				case '<':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tLTEQUAL, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tLTEQUAL );
 						} else if (buffer[pos + 1] == '<') {
 							if (pos + 2 < limit) {
 								if (buffer[pos + 2] == '=') {
 									bufferPos[bufferStackPos] += 2;
-									return new SimpleToken(IToken.tSHIFTLASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+									return newToken(IToken.tSHIFTLASSIGN );
 								}
 							}
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tSHIFTL, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tSHIFTL );
 						}
 					}
-					return new SimpleToken(IToken.tLT, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tLT );
 				
 				case '>':
 					if (pos + 1 < limit) {
 						if (buffer[pos + 1] == '=') {
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tGTEQUAL, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tGTEQUAL  );
 						} else if (buffer[pos + 1] == '>') {
 							if (pos + 2 < limit) {
 								if (buffer[pos + 2] == '=') {
 									bufferPos[bufferStackPos] += 2;
-									return new SimpleToken(IToken.tSHIFTRASSIGN, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+									return newToken(IToken.tSHIFTRASSIGN );
 								}
 							}
 							++bufferPos[bufferStackPos];
-							return new SimpleToken(IToken.tSHIFTR, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+							return newToken(IToken.tSHIFTR);
 						}
 					}
-					return new SimpleToken(IToken.tGT, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tGT );
 				
 				case ',':
-					return new SimpleToken(IToken.tCOMMA, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+					return newToken(IToken.tCOMMA );
 
 				default:
 					// skip over anything we don't handle
@@ -689,6 +690,29 @@ public class Scanner2 implements IScanner, IScannerData {
 		return null;
 	}
 
+	/**
+	 * @return
+	 */
+	private IToken newToken( int signal ) {
+		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename()  );
+	}
+
+	private IToken newToken( int signal, char [] buffer )
+	{
+		if( bufferData[bufferStackPos] instanceof ObjectStyleMacro || 
+			bufferData[bufferStackPos] instanceof FunctionStyleMacro )
+		{
+			int mostRelevant;
+			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
+				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
+					break;
+			if( bufferData[bufferStackPos] instanceof ObjectStyleMacro )
+				return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((ObjectStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename() );
+			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((FunctionStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename() );
+		}
+		return new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename()  );
+	}
+	
 	private IToken scanIdentifier() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int start = bufferPos[bufferStackPos];
@@ -748,8 +772,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		int tokenType = keywords.get(buffer, start, len);
 		char [] result = removedEscapedNewline( CharArrayUtils.extract( buffer, start, len ) );
 		if (tokenType == keywords.undefined)
-			return new ImagedToken(IToken.tIDENTIFIER, result, bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
-		return new SimpleToken(tokenType, start + len, getCurrentFilename() );
+			return newToken(IToken.tIDENTIFIER, result );
+		return newToken(tokenType);
 	}
 	
 	private IToken scanString() {
@@ -783,7 +807,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		// We should really throw an exception if we didn't get the terminating
 		// quote before the end of buffer
 		
-		return new ImagedToken(tokenType, CharArrayUtils.extract(buffer, stringStart, stringLen), stringStart + stringLen+ 1, getCurrentFilename() );
+		return newToken(tokenType, CharArrayUtils.extract(buffer, stringStart, stringLen));
 	}
 
 	private IToken scanCharLiteral(boolean b) {
@@ -800,7 +824,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 
 		if (start >= limit) {
-			return new ImagedToken(tokenType, emptyCharArray, start, getCurrentFilename() );
+			return newToken(tokenType, emptyCharArray );
 		}
 
 		
@@ -823,7 +847,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			? CharArrayUtils.extract(buffer, start, length)
 			: emptyCharArray;
 
-		return new ImagedToken(tokenType, image, start + length+ 1 , getCurrentFilename() );
+		return newToken(tokenType, image );
 	}
 	
 	private IToken scanNumber() {
@@ -999,9 +1023,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		--bufferPos[bufferStackPos];
 		
-		return new ImagedToken(isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER,
+		return newToken( isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER,
 				CharArrayUtils.extract(buffer, start,
-						bufferPos[bufferStackPos] - start + 1), bufferPos[bufferStackPos]+ 1, getCurrentFilename() );
+						bufferPos[bufferStackPos] - start + 1) );
 	}
 	
 	private void handlePPDirective(int pos) throws ScannerException {

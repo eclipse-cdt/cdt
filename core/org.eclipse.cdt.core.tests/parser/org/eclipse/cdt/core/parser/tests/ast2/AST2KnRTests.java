@@ -10,8 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -457,9 +455,9 @@ public class AST2KnRTests extends AST2BaseTest {
     	assertEquals( A_struct_name1.toString(), "A_struct" ); //$NON-NLS-1$
     	ICompositeType A_struct_type1 = (ICompositeType)A_struct_name1.resolveBinding();
     	assertEquals( ((ICBinding)A_struct_type1).getPhysicalNode(), A_struct.getDeclSpecifier() );
-    	List fields = A_struct_type1.getFields();
-    	IField a1 = (IField)fields.get(0);
-    	IField c1 = (IField)fields.get(1);
+    	IField[] fields = A_struct_type1.getFields();
+    	IField a1 = fields[0];
+    	IField c1 = fields[1];
     	assertEquals( a1.getName().toString(), "a" ); //$NON-NLS-1$
     	assertEquals( c1.getName().toString(), "c" ); //$NON-NLS-1$
     	IBasicType a1_t = (IBasicType)a1.getType();

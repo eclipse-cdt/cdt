@@ -83,7 +83,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  */
 public class AST2Tests extends AST2BaseTest {
 
-   public void testBasicFunction() throws ParserException {
+   public void testBasicFunction() throws Exception {
       StringBuffer buff = new StringBuffer();
       buff.append("int x;\n"); //$NON-NLS-1$
       buff.append("void f(int y) {\n"); //$NON-NLS-1$
@@ -216,7 +216,7 @@ public class AST2Tests extends AST2BaseTest {
             ICScope.NAMESPACE_TYPE_OTHER, new String("y").toCharArray())); //$NON-NLS-1$
    }
 
-   public void testSimpleStruct() throws ParserException {
+   public void testSimpleStruct() throws Exception {
       StringBuffer buff = new StringBuffer();
       buff.append("typedef struct {\n"); //$NON-NLS-1$
       buff.append("    int x;\n"); //$NON-NLS-1$

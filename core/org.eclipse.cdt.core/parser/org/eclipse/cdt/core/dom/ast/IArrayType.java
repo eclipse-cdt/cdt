@@ -19,5 +19,5 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IArrayType extends IType {
 
-    IType getType();
+    IType getType() throws DOMException;
 }

@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.core.dom.ast.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
@@ -24,7 +25,7 @@ public interface ICScope extends IScope {
     public static final int NAMESPACE_TYPE_TAG = 0;
     public static final int NAMESPACE_TYPE_OTHER = 1;
     
-    void addBinding( IBinding binding );
-    void removeBinding( IBinding binding );
-    public IBinding getBinding( int namespaceType, char [] name );
+    void addBinding( IBinding binding ) throws DOMException;
+    void removeBinding( IBinding binding ) throws DOMException;
+    public IBinding getBinding( int namespaceType, char [] name ) throws DOMException;
 }

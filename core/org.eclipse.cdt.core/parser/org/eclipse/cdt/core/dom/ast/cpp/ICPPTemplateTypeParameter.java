@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
@@ -22,6 +23,6 @@ public interface ICPPTemplateTypeParameter extends ICPPTemplateParameter, IType 
 	 * 
 	 * @return
 	 */
-	public IType getDefault();
+	public IType getDefault() throws DOMException;
 	
 }

@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -47,7 +48,11 @@ public class CPPReferenceType implements ICPPReferenceType, ITypeContainer {
             return (obj == null);
         
         if( obj instanceof ICPPReferenceType ){
-            return type.equals( ((ICPPReferenceType) obj).getType() );
+            try {
+                return type.equals( ((ICPPReferenceType) obj).getType() );
+            } catch ( DOMException e ) {
+                return false;
+            }
         }
     	return false;
     }

@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IType;
 
@@ -36,16 +37,24 @@ public class CPPFunctionType implements IFunctionType {
     public boolean equals( Object o ){
         if( o instanceof IFunctionType ){
             IFunctionType ft = (IFunctionType) o;
-            IType [] fps = ft.getParameterTypes(); 
-            
+            IType [] fps;
+            try {
+                fps = ft.getParameterTypes();
+            } catch ( DOMException e ) {
+                return false;
+            }
             if( fps.length != parameters.length )
                 return false;
             
-            //constructors & destructors have null return type
-            if( ( returnType == null ) ^ ( ft.getReturnType() == null ) )
+            try {
+                //constructors & destructors have null return type
+                if( ( returnType == null ) ^ ( ft.getReturnType() == null ) )
+                    return false;
+                else if( returnType != null && ! returnType.equals( ft.getReturnType() ) )
+                    return false;
+            } catch ( DOMException e1 ) {
                 return false;
-            else if( returnType != null && ! returnType.equals( ft.getReturnType() ) )
-                return false;
+            }
             for( int i = 0; i < parameters.length; i++ )
                 if( ! parameters[i].equals( fps[i] ) )
                     return false;

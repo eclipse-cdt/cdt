@@ -13,11 +13,12 @@
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * @author aniefer
  */
 public interface ICPPCompositeBinding extends IBinding {
-	IBinding [] getBindings();
+	IBinding [] getBindings() throws DOMException;
 }

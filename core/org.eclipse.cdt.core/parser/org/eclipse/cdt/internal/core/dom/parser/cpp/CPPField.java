@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 
@@ -20,6 +21,23 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
  * @author aniefer
  */
 public class CPPField extends CPPVariable implements ICPPField, ICPPBinding {
+    public static class CPPFieldProblem extends CPPVariable.CPPVariableProblem implements ICPPField {
+        /**
+         * @param id
+         * @param arg
+         */
+        public CPPFieldProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
+         */
+        public int getVisibility() throws DOMException {
+            throw new DOMException( this );
+        }
+    }
+    
 	public CPPField( IASTDeclarator declarator ){
 		super( declarator );
 	}

@@ -12,7 +12,9 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IField;
 
 /**
  * Represents a C++ class.
@@ -28,13 +30,13 @@ public interface ICPPClassType extends ICompositeType {
 	 * 
 	 * @return List of ICPPBase
 	 */
-	public ICPPBase [] getBases();
+	public ICPPBase [] getBases() throws DOMException;
 
 	/**
 	 * Get fields is restated here just to point out that this method returns
 	 * a list of ICPPField objects representing all fields, declared or inherited.
 	 */
-	public List getFields();
+	public IField[] getFields() throws DOMException;
 	
 	/**
 	 * Returns a list of ICPPField objects representing fields declared in this
@@ -42,7 +44,7 @@ public interface ICPPClassType extends ICompositeType {
 	 * 
 	 * @return List of ICPPField
 	 */
-	public List getDeclaredFields();
+	public List getDeclaredFields() throws DOMException;
 	
 	/**
 	 * Returns a list of ICPPMethod objects representing all methods defined for
@@ -51,7 +53,7 @@ public interface ICPPClassType extends ICompositeType {
 	 * 
 	 * @return List of ICPPMethod
 	 */
-	public List getMethods();
+	public List getMethods() throws DOMException;
 
 	/**
 	 * Returns a list of ICPPMethod objects representing all method explicitly
@@ -60,7 +62,7 @@ public interface ICPPClassType extends ICompositeType {
 	 * 
 	 * @return List of ICPPMethod
 	 */
-	public List getAllDeclaredMethods();
+	public List getAllDeclaredMethods() throws DOMException;
 	
 	/**
 	 * Returns a list of ICPPMethod objects representing all methods explicitly
@@ -69,11 +71,11 @@ public interface ICPPClassType extends ICompositeType {
 	 * 
 	 * @return List of ICPPMethod
 	 */
-	public List getDeclaredMethods();
+	public List getDeclaredMethods() throws DOMException;
 
     /**
      * @return
      */
-    public ICPPConstructor[] getConstructors();
+    public ICPPConstructor[] getConstructors() throws DOMException;
 	
 }

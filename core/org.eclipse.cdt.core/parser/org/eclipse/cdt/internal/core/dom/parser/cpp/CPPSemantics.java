@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -199,7 +200,7 @@ public class CPPSemantics {
 		public static final int USERDEFINED_CONVERSION_RANK = 4;
 		public static final int ELLIPSIS_CONVERSION = 5;
 
-		public int compare( Cost cost ){
+		public int compare( Cost cost ) throws DOMException{
 			int result = 0;
 			
 			if( rank != cost.rank ){
@@ -243,18 +244,26 @@ public class CPPSemantics {
 						op1 = null;
 						op2 = null;
 						while( true ){
-							if( t1 instanceof ITypedef )	
-								t1 = ((ITypedef)t1).getType();
-							else {
+							if( t1 instanceof ITypedef )
+                                try {
+                                    t1 = ((ITypedef)t1).getType();
+                                } catch ( DOMException e ) {
+                                    t1 = e.getProblem();
+                                }
+                            else {
 								if( t1 instanceof IPointerType )		
 									op1 = (IPointerType) t1;	
 								break;
 							}
 						}
 						while( true ){
-							if( t2 instanceof ITypedef )	
-								t2 = ((ITypedef)t2).getType();
-							else {
+							if( t2 instanceof ITypedef )
+                                try {
+                                    t2 = ((ITypedef)t2).getType();
+                                } catch ( DOMException e ) {
+                                    t2 = e.getProblem();
+                                }
+                            else {
 								if( t2 instanceof IPointerType )		
 									op1 = (IPointerType) t2;	
 								break;
@@ -305,22 +314,35 @@ public class CPPSemantics {
 		//1: get some context info off of the name to figure out what kind of lookup we want
 		LookupData data = createLookupData( name );
 		
-		//2: lookup
-		lookup( data, name );
+		try {
+            //2: lookup
+            lookup( data, name );
+        } catch ( DOMException e1 ) {
+            data.problem = (ProblemBinding) e1.getProblem();
+        }
 		
 		if( data.problem != null )
 		    return data.problem;
 		
 		//3: resolve ambiguities
-		IBinding binding = resolveAmbiguities( data, name );
-		
-		//4: post processing
+		IBinding binding;
+        try {
+            binding = resolveAmbiguities( data, name );
+        } catch ( DOMException e2 ) {
+            binding = e2.getProblem();
+        }
+        //4: post processing
 		if( binding instanceof ICPPClassType && data.considerConstructors() ){
 		    ICPPClassType cls = (ICPPClassType) binding;
-		    //force resolution of constructor bindings
-		    cls.getConstructors();
-		    //then use the class scope to resolve which one.
-		    binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding( name );
+		    try {
+                //force resolution of constructor bindings
+                cls.getConstructors();
+                //then use the class scope to resolve which one.
+    		    binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding( name );
+            } catch ( DOMException e ) {
+                binding = e.getProblem();
+            }
+		    
 		}
 		if( binding != null && data.forDefinition() && !( binding instanceof IProblemBinding ) ){
 			addDefinition( binding, name );
@@ -380,7 +402,7 @@ public class CPPSemantics {
 		return data;
 	}
 
-	static private ICPPScope getLookupScope( IASTName name ){
+	static private ICPPScope getLookupScope( IASTName name ) throws DOMException{
 	    IASTNode parent = name.getParent();
 	    
     	if( parent instanceof ICPPASTBaseSpecifier ) {
@@ -395,7 +417,7 @@ public class CPPSemantics {
 	    return (ICPPScope) CPPVisitor.getContainingScope( name );
 	}
 	
-	static private void lookup( CPPSemantics.LookupData data, IASTName name ){
+	static private void lookup( CPPSemantics.LookupData data, IASTName name ) throws DOMException{
 		IASTNode node = name; 
 		
 		ICPPScope scope = getLookupScope( name );		
@@ -458,7 +480,7 @@ public class CPPSemantics {
 		}
 	}
 
-	private static List lookupInParents( CPPSemantics.LookupData data, ICPPClassScope lookIn ){
+	private static List lookupInParents( CPPSemantics.LookupData data, ICPPClassScope lookIn ) throws DOMException{
 		ICPPASTCompositeTypeSpecifier compositeTypeSpec = (ICPPASTCompositeTypeSpecifier) lookIn.getPhysicalNode();
 		ICPPASTBaseSpecifier [] bases = compositeTypeSpec.getBaseSpecifiers();
 	
@@ -559,7 +581,7 @@ public class CPPSemantics {
 		return false;
 	}
 
-	static private void processDirectives( CPPSemantics.LookupData data, IScope scope, List directives ){
+	static private void processDirectives( CPPSemantics.LookupData data, IScope scope, List directives ) throws DOMException{
 		if( directives == null || directives.size() == 0 )
 			return;
 		
@@ -596,7 +618,7 @@ public class CPPSemantics {
 		
 	}
 
-	static private ICPPScope getClosestEnclosingScope( IScope scope1, IScope scope2 ){
+	static private ICPPScope getClosestEnclosingScope( IScope scope1, IScope scope2 ) throws DOMException{
 		ObjectSet set = new ObjectSet( 2 );
 		IScope parent = scope1;
 		while( parent != null ){
@@ -614,8 +636,9 @@ public class CPPSemantics {
 	 * 
 	 * @param scope
 	 * @return List of encountered using directives
+	 * @throws DOMException
 	 */
-	static private List lookupInScope( CPPSemantics.LookupData data, ICPPScope scope, IASTNode blockItem, List usingDirectives ) {
+	static private List lookupInScope( CPPSemantics.LookupData data, ICPPScope scope, IASTNode blockItem, List usingDirectives ) throws DOMException {
 		IASTName possible = null;
 		IASTNode [] nodes = null;
 		IASTNode parent = scope.getPhysicalNode();
@@ -691,7 +714,7 @@ public class CPPSemantics {
 		return found;
 	}
 
-	static private List lookupInNominated( CPPSemantics.LookupData data, ICPPScope scope, List transitives ){
+	static private List lookupInNominated( CPPSemantics.LookupData data, ICPPScope scope, List transitives ) throws DOMException{
 		if( data.usingDirectives.isEmpty() )
 			return transitives;
 		
@@ -859,7 +882,11 @@ public class CPPSemantics {
 	    
 	    LookupData data = createLookupData( name );
 	    data.foundItems = bindings;
-	    return resolveAmbiguities( data, name );
+	    try {
+            return resolveAmbiguities( data, name );
+        } catch ( DOMException e ) {
+            return e.getProblem();
+        }
 	}
 	
 	static private boolean declaredBefore( IBinding binding, IASTNode node ){
@@ -876,7 +903,7 @@ public class CPPSemantics {
 	    return false;
 	}
 	
-	static private IBinding resolveAmbiguities( CPPSemantics.LookupData data, IASTName name ) {
+	static private IBinding resolveAmbiguities( CPPSemantics.LookupData data, IASTName name ) throws DOMException {
 	    if( data.foundItems == null || data.foundItems.size() == 0 )
 	        return null;
 	      
@@ -942,7 +969,7 @@ public class CPPSemantics {
 	    return obj;
 	}
 	
-	static private boolean functionHasParameters( IFunction function, IASTParameterDeclaration [] params ){
+	static private boolean functionHasParameters( IFunction function, IASTParameterDeclaration [] params ) throws DOMException{
 		IFunctionType ftype = function.getType();
 		if( params.length == 0 ){
 			return ftype.getParameterTypes().length == 0;
@@ -956,7 +983,7 @@ public class CPPSemantics {
 	 	return false;
 	}
 	
-	static private void reduceToViable( LookupData data, List functions ){
+	static private void reduceToViable( LookupData data, List functions ) throws DOMException{
 		Object [] fParams = data.functionParameters;
 		int numParameters = ( fParams != null ) ? fParams.length : 0;		
 		int num;	
@@ -1047,7 +1074,7 @@ public class CPPSemantics {
 			return VOID_TYPE;
 		return null;
 	}
-	static private IBinding resolveFunction( CPPSemantics.LookupData data, List fns ){
+	static private IBinding resolveFunction( CPPSemantics.LookupData data, List fns ) throws DOMException{
 		if( data.forUsingDeclaration() ){
 			if( fns.size() == 1 )
 				return (IBinding) fns.get( 0 );
@@ -1209,7 +1236,7 @@ public class CPPSemantics {
 		return bestFn;
 	}
 	
-	static private Cost checkStandardConversionSequence( IType source, IType target ) {
+	static private Cost checkStandardConversionSequence( IType source, IType target ) throws DOMException {
 		Cost cost = lvalue_to_rvalue( source, target );
 		
 		if( cost.source == null || cost.target == null ){
@@ -1250,7 +1277,7 @@ public class CPPSemantics {
 		return cost;	
 	}
 	
-	static private Cost checkUserDefinedConversionSequence( IType source, IType target ) {
+	static private Cost checkUserDefinedConversionSequence( IType source, IType target ) throws DOMException {
 		Cost cost = null;
 		Cost constructorCost = null;
 		Cost conversionCost = null;
@@ -1320,18 +1347,22 @@ public class CPPSemantics {
 	}
 
 	static protected IType getUltimateType( IType type ){
-		while( true ){
-			if( type instanceof ITypedef )
-				type = ((ITypedef)type).getType();
-			else if( type instanceof IQualifierType )
-				type = ((IQualifierType)type).getType();
-			else if( type instanceof IPointerType )
-				type = ((IPointerType) type).getType();
-			else if( type instanceof ICPPReferenceType )
-				type = ((ICPPReferenceType)type).getType();
-			else 
-				return type;
-		}
+	    try {
+	        while( true ){
+				if( type instanceof ITypedef )
+				    type = ((ITypedef)type).getType();
+	            else if( type instanceof IQualifierType )
+					type = ((IQualifierType)type).getType();
+				else if( type instanceof IPointerType )
+					type = ((IPointerType) type).getType();
+				else if( type instanceof ICPPReferenceType )
+					type = ((ICPPReferenceType)type).getType();
+				else 
+					return type;
+			}
+        } catch ( DOMException e ) {
+            return e.getProblem();
+        }
 	}
 	
 	static private boolean isCompleteType( IType type ){
@@ -1341,7 +1372,7 @@ public class CPPSemantics {
 		}
 		return true;
 	}
-	static private Cost lvalue_to_rvalue( IType source, IType target ){
+	static private Cost lvalue_to_rvalue( IType source, IType target ) throws DOMException{
 		Cost cost = new Cost( source, target );
 		
 		if( ! isCompleteType( source ) ){
@@ -1363,7 +1394,7 @@ public class CPPSemantics {
 		return cost;
 	}
 	
-	static private void qualificationConversion( Cost cost ){
+	static private void qualificationConversion( Cost cost ) throws DOMException{
 		boolean canConvert = true;
 
 		IPointerType op1, op2;
@@ -1441,8 +1472,9 @@ public class CPPSemantics {
 	 * following that can hold it: int, unsigned int, long unsigned long.
 	 * 4.5-4 bool can be promoted to int 
 	 * 4.6 float can be promoted to double
+	 * @throws DOMException
 	 */
-	static private void promotion( Cost cost ){
+	static private void promotion( Cost cost ) throws DOMException{
 		IType src = getUltimateType( cost.source );
 		IType trg = getUltimateType( cost.target );
 		 
@@ -1467,7 +1499,7 @@ public class CPPSemantics {
 		
 		cost.rank = (cost.promotion > 0 ) ? Cost.PROMOTION_RANK : Cost.NO_MATCH_RANK;
 	}
-	static private void conversion( Cost cost ){
+	static private void conversion( Cost cost ) throws DOMException{
 		IType src = cost.source;
 		IType trg = cost.target;
 		
@@ -1530,7 +1562,7 @@ public class CPPSemantics {
 		
 	}
 	
-	static private void derivedToBaseConversion( Cost cost ) {
+	static private void derivedToBaseConversion( Cost cost ) throws DOMException {
 		IType s = getUltimateType( cost.source );
 		IType t = getUltimateType( cost.target );
 		
@@ -1544,7 +1576,7 @@ public class CPPSemantics {
 		}
 	}
 
-	static private int hasBaseClass( ICPPClassType symbol, ICPPClassType base, boolean needVisibility ) {
+	static private int hasBaseClass( ICPPClassType symbol, ICPPClassType base, boolean needVisibility ) throws DOMException {
 		if( symbol == base ){
 			return 0;
 		}

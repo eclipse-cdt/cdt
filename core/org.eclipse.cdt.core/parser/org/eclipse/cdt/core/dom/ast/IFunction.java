@@ -23,16 +23,23 @@ public interface IFunction extends IBinding {
 	 * This gets the parameters to the function which are IVariables.
 	 * 
 	 * @return List of IParameter
+	 * @throws DOMException if this is a problem binding
 	 */
-	public IParameter [] getParameters();
+	public IParameter [] getParameters() throws DOMException;
 	
 	/**
 	 * Get the function scope
 	 * 
 	 * @return
+	 * @throws DOMException if this is a problem binding
 	 */
-	public IScope getFunctionScope();
+	public IScope getFunctionScope() throws DOMException;
 	
-	public IFunctionType getType();
+	/**
+	 * 
+	 * @return
+	 * @throws DOMException if this is a problem binding
+	 */
+	public IFunctionType getType() throws DOMException;
 	
 }

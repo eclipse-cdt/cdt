@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -53,9 +54,14 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	private void createImplicitMembers(){
 	    //create bindings for the implicit members, if the user declared them then those declarations
 	    //will resolve to these bindings.
-	    ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
-	    
-	    //default constructor: A()
+	    ICPPASTCompositeTypeSpecifier compTypeSpec;
+        try {
+            compTypeSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+        } catch ( DOMException e ) {
+            return;
+        }
+        
+        //default constructor: A()
 	    addBinding( new CPPImplicitConstructor( this, IParameter.EMPTY_PARAMETER_ARRAY ) );
 	    
 	    ICPPClassType clsType = (ICPPClassType) compTypeSpec.getName().resolveBinding();
@@ -119,7 +125,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPScope#getBinding(int, char[])
 	 */
-	public IBinding getBinding( IASTName name ) {
+	public IBinding getBinding( IASTName name ) throws DOMException {
 	    char [] c = name.toCharArray();
 	
 	    ICPPASTCompositeTypeSpecifier compType = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();

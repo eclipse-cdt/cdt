@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -69,7 +70,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 		return null;
 	}
 	
-	public IScope getParent() {
+	public IScope getParent() throws DOMException {
 		IASTFunctionDefinition fn = (IASTFunctionDefinition) getPhysicalNode();
 		IFunction function = (IFunction) fn.getDeclarator().getName().resolveBinding();
 		if( function instanceof ICPPMethod ){

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
@@ -88,21 +89,17 @@ public class CFunction implements IFunction, ICBinding {
 				}
 			}
 		} else if (dtor instanceof ICASTKnRFunctionDeclarator) {
-			IASTDeclaration[] params = ((ICASTKnRFunctionDeclarator)dtor).getParameterDeclarations();
 			IASTName[] names = ((ICASTKnRFunctionDeclarator)dtor).getParameterNames();
 			result = new IParameter[ names.length ];
 			if( names.length > 0 ){
 				// ensures that the List of parameters is created in the same order as the K&R C parameter names
 				for( int i=0; i<names.length; i++ ) {
-					for( int j=0; j<params.length; j++) {
-						if ( params[j] instanceof IASTSimpleDeclaration ) {
-							IASTDeclarator[] decltors = ((IASTSimpleDeclaration)params[j]).getDeclarators();
-							for (int k=0; k<decltors.length; k++) {
-								if ( CharArrayUtils.equals(names[i].toCharArray(), decltors[k].getName().toCharArray()) ) {
-									result[i] = (IParameter) decltors[k].getName().resolveBinding();
-								}
-							}						}
-					}
+				    IASTDeclarator decl = getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) dtor, names[i] );
+				    if( decl != null ) {
+				        result[i] = (IParameter) decl.getName().resolveBinding();
+				    } else {
+				        result[i] = new CParameter.CParameterProblem( IProblemBinding.SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND, names[i].toCharArray() );
+				    }
 				}
 			}
 		}

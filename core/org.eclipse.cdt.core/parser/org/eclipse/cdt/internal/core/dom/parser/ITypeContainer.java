@@ -14,12 +14,13 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * @author aniefer
  */
 public interface ITypeContainer extends IType{
-    IType getType();
+    IType getType() throws DOMException;
     void setType( IType type );
 }

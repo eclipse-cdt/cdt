@@ -18,5 +18,5 @@ public interface IVariable extends IBinding {
 	/**
 	 * @return the type of the variable
 	 */
-	public IType getType();
+	public IType getType() throws DOMException;
 }

@@ -10,15 +10,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 
 /**
  * @author dsteffle
  */
 public interface ICArrayType extends IArrayType {
-	public boolean isConst();
-	public boolean isRestrict();
-	public boolean isVolatile();
-	public boolean isStatic();
-	public boolean isVariableLength();
+	public boolean isConst() throws DOMException;
+	public boolean isRestrict() throws DOMException;
+	public boolean isVolatile() throws DOMException;
+	public boolean isStatic() throws DOMException;
+	public boolean isVariableLength() throws DOMException;
 }

@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.core.dom.ast.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
@@ -21,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @author aniefer
  */
 public interface ICFunctionScope extends ICScope {
-    public IScope getBodyScope();
-    public IBinding getBinding( char[] name );
+    public IScope getBodyScope() throws DOMException;
+    public IBinding getBinding( char[] name ) throws DOMException;
 
 }

@@ -24,7 +24,7 @@ public interface IScope {
 	 * 
 	 * @return
 	 */
-	public IScope getParent();
+	public IScope getParent() throws DOMException;
 
 	/**
 	 * This is the general lookup entry point. It returns the list of
@@ -33,5 +33,5 @@ public interface IScope {
 	 * @param searchString
 	 * @return List of IBinding
 	 */
-	public List find(String name);
+	public List find(String name) throws DOMException;
 }

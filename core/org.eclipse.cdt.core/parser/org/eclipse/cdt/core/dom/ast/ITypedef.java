@@ -20,6 +20,6 @@ public interface ITypedef extends IBinding, IType {
 	 * 
 	 * @return
 	 */
-	public IType getType();
+	public IType getType() throws DOMException;
 	
 }

@@ -14,16 +14,28 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
  */
 public class CLabel implements ILabel {
+    
+    public static class CLabelProblem extends ProblemBinding implements ILabel {
+        public CLabelProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
 
+        public IASTLabelStatement getLabelStatement() throws DOMException{
+            throw new DOMException( this );
+        }
+    }
+    
     private final IASTLabelStatement labelStatement;
     
     public CLabel( IASTLabelStatement statement ){

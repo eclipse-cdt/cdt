@@ -18,8 +18,8 @@ package org.eclipse.cdt.core.dom.ast;
  * @author aniefer
  */
 public interface IQualifierType extends IType {
-    public boolean isConst();
-    public boolean isVolatile();
+    public boolean isConst() throws DOMException;
+    public boolean isVolatile() throws DOMException;
     
-    public IType getType();
+    public IType getType() throws DOMException;
 }

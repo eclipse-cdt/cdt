@@ -19,7 +19,11 @@ import org.eclipse.cdt.core.dom.ast.IField;
  * @author aniefer
  */
 public class CField extends CVariable implements IField {
-
+    public static class CFieldProblem extends CVariable.CVariableProblem implements IField {
+        public CFieldProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
+    }
 	/**
 	 * @param name
 	 */

@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 
@@ -82,6 +83,19 @@ public class CPPEnumeration implements IEnumeration, ICPPBinding {
             //not going to happen
         }
         return t;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IEnumeration#getEnumerators()
+     */
+    public IEnumerator[] getEnumerators() {
+        IASTEnumerationSpecifier.IASTEnumerator[] enums = enumSpecifier.getEnumerators();
+        IEnumerator [] bindings = new IEnumerator [ enums.length ];
+        
+        for( int i = 0; i < enums.length; i++ ){
+            bindings[i] = (IEnumerator) enums[i].getName().resolveBinding();
+        }
+        return bindings;
     }
 
 }

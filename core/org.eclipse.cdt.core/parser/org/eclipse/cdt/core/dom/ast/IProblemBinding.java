@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * @author aniefer
  */
-public interface IProblemBinding extends IBinding {
+public interface IProblemBinding extends IBinding, IScope, IType {
 
     /**
      * Returns the problem id
@@ -106,5 +106,9 @@ public interface IProblemBinding extends IBinding {
     public static final int SEMANTIC_ILLFORMED_FRIEND = 0x011;
     
     public static final int SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION = 0x012;
-    public static final int LAST_PROBLEM = SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION;
+    
+    public static final int SEMANTIC_DEFINITION_NOT_FOUND = 0x013;
+    public static final int SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND = 0x014;
+    public static final int SEMANTIC_LABEL_STATEMENT_NOT_FOUND = 0x015;
+    public static final int LAST_PROBLEM = SEMANTIC_LABEL_STATEMENT_NOT_FOUND;
 }

@@ -14,11 +14,12 @@
  */
 package org.eclipse.cdt.core.dom.ast.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * @author aniefer
  */
 public interface ICCompositeTypeScope extends ICScope {
-    public IBinding getBinding( char[] name );
+    public IBinding getBinding( char[] name ) throws DOMException;
 }

@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -171,45 +172,69 @@ public class CPPVisitor {
 	private static IBinding createBinding( IASTGotoStatement gotoStatement ) {
 	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope( gotoStatement );
 	    IASTName name = gotoStatement.getName();
-	    IBinding binding = functionScope.getBinding( name );
-	    if( binding == null ){
-	        binding = new CPPLabel( gotoStatement );
-	        functionScope.addBinding( binding );
-	    }
+	    IBinding binding;
+        try {
+            binding = functionScope.getBinding( name );
+            if( binding == null ){
+    	        binding = new CPPLabel( gotoStatement );
+    	        functionScope.addBinding( binding );
+    	    }
+        } catch ( DOMException e ) {
+            binding = e.getProblem();
+        }
+        
 	    return binding;
 	}
 	
 	private static IBinding createBinding( IASTLabelStatement labelStatement ) {
 	    ICPPFunctionScope functionScope = (ICPPFunctionScope) getContainingScope( labelStatement );
 	    IASTName name = labelStatement.getName();
-	    IBinding binding = functionScope.getBinding( name );
-	    if( binding == null ){
-	        binding = new CPPLabel( labelStatement );
-	        functionScope.addBinding( binding );
-	    } else {
-	        ((CPPLabel)binding).setLabelStatement( labelStatement );
-	    }
+	    IBinding binding;
+        try {
+            binding = functionScope.getBinding( name );
+            if( binding == null ){
+    	        binding = new CPPLabel( labelStatement );
+    	        functionScope.addBinding( binding );
+    	    } else {
+    	        ((CPPLabel)binding).setLabelStatement( labelStatement );
+    	    }
+        } catch ( DOMException e ) {
+            binding = e.getProblem();
+        }
+        
 	    return binding;
 	}
 	
     private static IBinding createBinding( IASTEnumerator enumerator ) {
         ICPPScope scope = (ICPPScope) getContainingScope( enumerator );
-        IBinding enumtor = scope.getBinding( enumerator.getName() );
-        if( enumtor == null ){
-            enumtor = new CPPEnumerator( enumerator );
-            scope.addBinding( enumtor );
+        IBinding enumtor;
+        try {
+            enumtor = scope.getBinding( enumerator.getName() );
+            if( enumtor == null ){
+                enumtor = new CPPEnumerator( enumerator );
+                scope.addBinding( enumtor );
+            }
+        } catch ( DOMException e ) {
+            enumtor = e.getProblem();
         }
+        
         return enumtor;
     }
 
 
     private static IBinding createBinding( IASTEnumerationSpecifier specifier ) {
         ICPPScope scope = (ICPPScope) getContainingScope( specifier );
-        IBinding enumeration = scope.getBinding( specifier.getName() );
-        if( enumeration == null ){
-            enumeration = new CPPEnumeration( specifier );
-            scope.addBinding( enumeration );
+        IBinding enumeration;
+        try {
+            enumeration = scope.getBinding( specifier.getName() );
+            if( enumeration == null ){
+                enumeration = new CPPEnumeration( specifier );
+                scope.addBinding( enumeration );
+            }
+        } catch ( DOMException e ) {
+            enumeration = e.getProblem();
         }
+        
         return enumeration;
     }
 
@@ -227,14 +252,20 @@ public class CPPVisitor {
 	    }
 	    
 		ICPPScope scope = (ICPPScope) getContainingScope( elabType );
-		CPPClassType binding = (CPPClassType) scope.getBinding( elabType.getName() );
-		if( binding == null ){
-			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum )
-				binding = new CPPClassType( elabType );
-			scope.addBinding( binding );
-		} else {
-			binding.addDeclaration( elabType );
-		}
+		IBinding binding;
+        try {
+            binding = scope.getBinding( elabType.getName() );
+            if( binding == null ){
+    			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum )
+    				binding = new CPPClassType( elabType );
+    			scope.addBinding( binding );
+    		} else {
+    			((CPPClassType)binding).addDeclaration( elabType );
+    		}
+        } catch ( DOMException e ) {
+            binding = e.getProblem();
+        }
+        
 		return binding;
 	}
 	private static IBinding createBinding( ICPPASTCompositeTypeSpecifier compType ){
@@ -244,24 +275,35 @@ public class CPPVisitor {
 			name = ns[ ns.length - 1 ];
 		}
 		ICPPScope scope = (ICPPScope) getContainingScope( name );
-		IBinding binding = scope.getBinding( compType.getName() );
-		if( binding == null || !(binding instanceof ICPPClassType) ){
-			binding = new CPPClassType( compType );
-			scope.addBinding( binding );
-		} else {
-			((CPPClassType)binding).addDefinition( compType );
-		}
+		IBinding binding;
+        try {
+            binding = scope.getBinding( compType.getName() );
+            if( binding == null || !(binding instanceof ICPPClassType) ){
+    			binding = new CPPClassType( compType );
+    			scope.addBinding( binding );
+    		} else {
+    			((CPPClassType)binding).addDefinition( compType );
+    		}
+        } catch ( DOMException e ) {
+            binding = e.getProblem();
+        }
+        
 		return binding;
 	}
 	private static IBinding createBinding( IASTDeclaration declaration ){
 		if( declaration instanceof ICPPASTNamespaceDefinition ){
 			ICPPASTNamespaceDefinition namespaceDef = (ICPPASTNamespaceDefinition) declaration;
 			ICPPScope scope = (ICPPScope) getContainingScope( namespaceDef );
-			CPPNamespace binding = (CPPNamespace) scope.getBinding( namespaceDef.getName() );
-			if( binding == null ){
-				binding = new CPPNamespace( namespaceDef.getName() );
-				scope.addBinding( binding );
-			} 
+			IBinding binding;
+            try {
+                binding = scope.getBinding( namespaceDef.getName() );
+                if( binding == null ){
+    				binding = new CPPNamespace( namespaceDef.getName() );
+    				scope.addBinding( binding );
+    			}
+            } catch ( DOMException e ) {
+                binding = e.getProblem();
+            }
 			return binding;
 		} else if( declaration instanceof ICPPASTUsingDirective ){
 			return CPPSemantics.resolveBinding( ((ICPPASTUsingDirective) declaration).getQualifiedName() );
@@ -288,21 +330,30 @@ public class CPPVisitor {
 		}
 		
 		ICPPScope scope = (ICPPScope) getContainingScope( parent );
-		IBinding binding = ( scope != null ) ? scope.getBinding( declarator.getName() ) : null;
-		
-		if( declarator instanceof ICPPASTFunctionDeclarator ){
+		IBinding binding;
+        try {
+            binding = ( scope != null ) ? scope.getBinding( declarator.getName() ) : null;
+        } catch ( DOMException e ) {
+            binding = null;
+        }
+        
+        if( declarator instanceof ICPPASTFunctionDeclarator ){
 			if( binding != null && binding instanceof IFunction ){
 			    IFunction function = (IFunction) binding;
-			    IFunctionType ftype = function.getType();
-			    IType type = createType( declarator );
-			    if( ftype.equals( type ) ){
-			        if( parent instanceof IASTSimpleDeclaration )
-			            ((CPPFunction)function).addDeclaration( (ICPPASTFunctionDeclarator) declarator );
-			        else 
-			            ((CPPFunction)function).addDefinition( (ICPPASTFunctionDeclarator) declarator );
-			        
-			        return function;
-			    }
+			    IFunctionType ftype;
+                try {
+                    ftype = function.getType();
+                    IType type = createType( declarator );
+    			    if( ftype.equals( type ) ){
+    			        if( parent instanceof IASTSimpleDeclaration )
+    			            ((CPPFunction)function).addDeclaration( (ICPPASTFunctionDeclarator) declarator );
+    			        else 
+    			            ((CPPFunction)function).addDefinition( (ICPPASTFunctionDeclarator) declarator );
+    			        
+    			        return function;
+    			    }
+                } catch ( DOMException e1 ) {
+                }
 			} 
 			if( scope instanceof ICPPClassScope ){
 				if( isConstructor( scope, declarator) )
@@ -328,8 +379,13 @@ public class CPPVisitor {
 			}
 		} 
 
-		if( scope != null && binding != null )
-		    scope.addBinding( binding );
+		if( scope != null && binding != null ){
+            try {
+                scope.addBinding( binding );
+            } catch ( DOMException e1 ) {
+            }
+		}
+		
 		return binding;
 	}
 
@@ -337,8 +393,13 @@ public class CPPVisitor {
 	    if( containingScope == null || !(containingScope instanceof ICPPClassScope) )
 	        return false;
 	    
-	    ICPPASTCompositeTypeSpecifier clsTypeSpec = (ICPPASTCompositeTypeSpecifier) ((ICPPClassScope)containingScope).getPhysicalNode();
-	    return isConstructor( clsTypeSpec.getName(), declarator );
+	    ICPPASTCompositeTypeSpecifier clsTypeSpec;
+        try {
+            clsTypeSpec = (ICPPASTCompositeTypeSpecifier) ((ICPPClassScope)containingScope).getPhysicalNode();
+        } catch ( DOMException e ) {
+            return false;
+        }
+        return isConstructor( clsTypeSpec.getName(), declarator );
 	}
 	public static boolean isConstructor( IASTName parentName, IASTDeclarator declarator ){
 	    if( declarator == null      || !(declarator instanceof IASTFunctionDeclarator) )
@@ -407,26 +468,30 @@ public class CPPVisitor {
 	}
 	public static IScope getContainingScope( IASTName name ){
 		IASTNode parent = name.getParent();
-		if( parent instanceof ICPPASTQualifiedName ){
-			IASTName [] names = ((ICPPASTQualifiedName) parent).getNames();
-			int i = 0;
-			for( ; i < names.length; i++ ){
-				if( names[i] == name ) break;
-			}
-			if( i > 0 ){
-				IBinding binding = names[i - 1].resolveBinding();
-				if( binding instanceof ICPPClassType ){
-					return ((ICPPClassType)binding).getCompositeScope();
-				} else if( binding instanceof ICPPNamespace ){
-					return ((ICPPNamespace)binding).getNamespaceScope();
+		try {
+			if( parent instanceof ICPPASTQualifiedName ){
+				IASTName [] names = ((ICPPASTQualifiedName) parent).getNames();
+				int i = 0;
+				for( ; i < names.length; i++ ){
+					if( names[i] == name ) break;
+				}
+				if( i > 0 ){
+					IBinding binding = names[i - 1].resolveBinding();
+					if( binding instanceof ICPPClassType ){
+						return ((ICPPClassType)binding).getCompositeScope();
+					} else if( binding instanceof ICPPNamespace ){
+						return ((ICPPNamespace)binding).getNamespaceScope();
+					}
+				}
+			} else if( parent instanceof ICPPASTFieldReference ){
+				IASTExpression owner = ((ICPPASTFieldReference)parent).getFieldOwner();
+				IType type = CPPSemantics.getUltimateType( getExpressionType( owner ) );
+				if( type instanceof ICPPClassType ){
+					return ((ICPPClassType) type).getCompositeScope();
 				}
 			}
-		} else if( parent instanceof ICPPASTFieldReference ){
-			IASTExpression owner = ((ICPPASTFieldReference)parent).getFieldOwner();
-			IType type = CPPSemantics.getUltimateType( getExpressionType( owner ) );
-			if( type instanceof ICPPClassType ){
-				return ((ICPPClassType) type).getCompositeScope();
-			}
+		} catch( DOMException e ){
+		    return e.getProblem();
 		}
 		return getContainingScope( parent );
 	}
@@ -462,13 +527,21 @@ public class CPPVisitor {
 		} else if( parent instanceof IASTFunctionDefinition ){
 			IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent ).getDeclarator();
 			IFunction function = (IFunction) fnDeclarator.getName().resolveBinding();
-			scope = function.getFunctionScope();
+			try {
+                scope = function.getFunctionScope();
+            } catch ( DOMException e ) {
+                return e.getProblem();
+            }
 		}
 		
 		if( statement instanceof IASTGotoStatement || statement instanceof IASTLabelStatement ){
 		    //labels have function scope
 		    while( scope != null && !(scope instanceof ICPPFunctionScope) ){
-		        scope = scope.getParent();
+		        try {
+                    scope = scope.getParent();
+                } catch ( DOMException e ) {
+                    return e.getProblem();
+                }
 		    }
 		}
 		
@@ -1127,11 +1200,19 @@ public class CPPVisitor {
 	    
 	    ArrayList temp = new ArrayList();
 	    for( int i = 0; i < parameters.length; i++ ){
-	        pt = parameters[i].getType();
+	        try {
+                pt = parameters[i].getType();
+            } catch ( DOMException e ) {
+                pt = e.getProblem();
+            }
 	        
 	        temp.add( pt.clone() );
 	        while( pt instanceof ITypeContainer){
-	            pt = ((ITypeContainer)pt).getType();
+	            try {
+                    pt = ((ITypeContainer)pt).getType();
+                } catch ( DOMException e1 ) {
+                    pt = e1.getProblem();
+                }
 	            if( pt instanceof ITypeContainer && !(pt instanceof ITypedef) ){
 		            IType t = (IType) pt.clone();
 		            ((ITypeContainer) temp.get( temp.size() - 1 )).setType( t );
@@ -1152,7 +1233,11 @@ public class CPPVisitor {
 	        
 	        IType lastType = (IType) temp.get( lastIdx );
 	        if( lastType instanceof IArrayType ){
-	            lastType = new CPPPointerType( ((IArrayType) lastType).getType() );
+	            try {
+                    lastType = new CPPPointerType( ((IArrayType) lastType).getType() );
+                } catch ( DOMException e1 ) {
+                    lastType = e1.getProblem();
+                }
 	        } else if( lastType instanceof IFunctionType ){
 	            lastType = new CPPPointerType( lastType );
 	        }
@@ -1181,7 +1266,11 @@ public class CPPVisitor {
 	        //any parameter of type array of T is adjusted to be pointer to T
 	        if( pt instanceof IArrayType ){
 	            IArrayType at = (IArrayType) pt;
-	            pt = new CPPPointerType( at.getType() );
+	            try {
+                    pt = new CPPPointerType( at.getType() );
+                } catch ( DOMException e ) {
+                    pt = e.getProblem();
+                }
 	        }
 	        
 	        //any parameter to type function returning T is adjusted to be pointer to function
@@ -1316,7 +1405,11 @@ public class CPPVisitor {
 	    if( expression instanceof IASTIdExpression ){
 	        IBinding binding = resolveBinding( expression );
 			if( binding instanceof IVariable ){
-				return ((IVariable)binding).getType();
+				try {
+                    return ((IVariable)binding).getType();
+                } catch ( DOMException e ) {
+                    return e.getProblem();
+                }
 			}
 	    } else if( expression instanceof IASTCastExpression ){
 	        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();
@@ -1342,9 +1435,15 @@ public class CPPVisitor {
 	    } else if( expression instanceof IASTFunctionCallExpression ){
 	        IBinding binding = resolveBinding( expression );
 	        if( binding instanceof IFunction ){
-	            IFunctionType fType = ((IFunction)binding).getType();
-	            if( fType != null )
-	                return fType.getReturnType();
+	            IFunctionType fType;
+                try {
+                    fType = ((IFunction)binding).getType();
+                    if( fType != null )
+    	                return fType.getReturnType();
+                } catch ( DOMException e ) {
+                    return e.getProblem();
+                }
+                
 	        }
 	    }
 	    else if( expression instanceof IASTUnaryExpression )

@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -71,6 +72,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -142,9 +144,13 @@ public class CVisitor {
 		}
 		public int processName(IASTName name) {
 			if ( ((CASTName)name).hasBinding() ) {
-				 ICScope scope = (ICScope)name.resolveBinding().getScope();
-				 if ( scope != null )
-				 	scope.removeBinding(name.resolveBinding());
+				 ICScope scope;
+                try {
+                    scope = (ICScope)name.resolveBinding().getScope();
+                    if ( scope != null )
+    				 	scope.removeBinding(name.resolveBinding());
+                } catch ( DOMException e ) {
+                }
 				 ((CASTName) name ).setBinding( null );
 			}
 			
@@ -490,30 +496,42 @@ public class CVisitor {
 
 	private static IBinding createBinding( ICASTEnumerationSpecifier enumeration ){
 	    IEnumeration binding = new CEnumeration( enumeration );
-	    ((ICScope)binding.getScope()).addBinding( binding );
-	    return binding; 
+	    try {
+            ((ICScope)binding.getScope()).addBinding( binding );
+        } catch ( DOMException e ) {
+        }
+        return binding; 
 	}
 	private static IBinding createBinding( IASTEnumerator enumerator ){
 	    IEnumerator binding = new CEnumerator( enumerator ); 
-	    ((ICScope)binding.getScope()).addBinding( binding );
+	    try {
+            ((ICScope)binding.getScope()).addBinding( binding );
+        } catch ( DOMException e ) {
+        }
 	    return binding;
 	}
 	private static IBinding createBinding( IASTStatement statement ){
 	    if( statement instanceof IASTGotoStatement ){
+	        char [] gotoName = ((IASTGotoStatement)statement).getName().toCharArray();
 	        IScope scope = getContainingScope( statement );
 	        if( scope != null && scope instanceof ICFunctionScope ){
 	            CFunctionScope functionScope = (CFunctionScope) scope;
 	            List labels = functionScope.getLabels();
 	            for( int i = 0; i < labels.size(); i++ ){
 	                ILabel label = (ILabel) labels.get(i);
-	                if( label.getName().equals( ((IASTGotoStatement)statement).getName().toString() ) ){
+	                if( CharArrayUtils.equals( label.getNameCharArray(), gotoName) ){
 	                    return label;
 	                }
 	            }
+	            //label not found
+	            return new CLabel.CLabelProblem( IProblemBinding.SEMANTIC_LABEL_STATEMENT_NOT_FOUND, gotoName );
 	        }
 	    } else if( statement instanceof IASTLabelStatement ){
 	        IBinding binding = new CLabel( (IASTLabelStatement) statement );
-	        ((ICFunctionScope) binding.getScope()).addBinding( binding );
+	        try {
+                ((ICFunctionScope) binding.getScope()).addBinding( binding );
+            } catch ( DOMException e ) {
+            }
 	        return binding;
 	    }
 	    return null;
@@ -527,7 +545,10 @@ public class CVisitor {
 				IBinding binding = resolveBinding( elabTypeSpec, CURRENT_SCOPE | TAGS );
 				if( binding == null ){
 					binding = new CStructure( elabTypeSpec );
-					((ICScope) binding.getScope()).addBinding( binding );
+					try {
+                        ((ICScope) binding.getScope()).addBinding( binding );
+                    } catch ( DOMException e ) {
+                    }
 				}
 				return binding;
 			} 
@@ -547,38 +568,50 @@ public class CVisitor {
 		    type = getExpressionType( fieldOwner );
 		}
 	    while( type != null && type instanceof ITypeContainer) {
-    		type = ((ITypeContainer)type).getType();
+    		try {
+                type = ((ITypeContainer)type).getType();
+            } catch ( DOMException e ) {
+                return e.getProblem();
+            }
 	    }
 		
 		if( type != null && type instanceof ICompositeType ){
-			return ((ICompositeType) type).findField( fieldReference.getFieldName().toString() );
+			try {
+                return ((ICompositeType) type).findField( fieldReference.getFieldName().toString() );
+            } catch ( DOMException e ) {
+                return e.getProblem();
+            }
 		}
 		return null;
 	}
 	
 	private static IType getExpressionType( IASTExpression expression ) {
-	    if( expression instanceof IASTIdExpression ){
-	        IBinding binding = resolveBinding( expression );
-			if( binding instanceof IVariable ){
-				return ((IVariable)binding).getType();
-			}
-	    } else if( expression instanceof IASTCastExpression ){
-	        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();
-			IBinding binding = resolveBinding( id );
-			if( binding != null && binding instanceof IType ){
-				return (IType) binding;
-			}
-	    } else if( expression instanceof IASTFieldReference ){ 
-	        IBinding binding = ((IASTFieldReference)expression).getFieldName().resolveBinding();
-		        
-			if( binding instanceof IVariable ){
-				return ((IVariable)binding).getType();
-			}
-	    }
-	    else if( expression instanceof IASTUnaryExpression )
-	    {
-	       if( ((IASTUnaryExpression)expression).getOperator() == IASTUnaryExpression.op_bracketedPrimary )
-	           return getExpressionType(((IASTUnaryExpression)expression).getOperand() );
+	    try{ 
+		    if( expression instanceof IASTIdExpression ){
+		        IBinding binding = resolveBinding( expression );
+				if( binding instanceof IVariable ){
+					return ((IVariable)binding).getType();
+				}
+		    } else if( expression instanceof IASTCastExpression ){
+		        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();
+				IBinding binding = resolveBinding( id );
+				if( binding != null && binding instanceof IType ){
+					return (IType) binding;
+				}
+		    } else if( expression instanceof IASTFieldReference ){ 
+		        IBinding binding = ((IASTFieldReference)expression).getFieldName().resolveBinding();
+			        
+				if( binding instanceof IVariable ){
+					return ((IVariable)binding).getType();
+				}
+		    }
+		    else if( expression instanceof IASTUnaryExpression )
+		    {
+		       if( ((IASTUnaryExpression)expression).getOperator() == IASTUnaryExpression.op_bracketedPrimary )
+		           return getExpressionType(((IASTUnaryExpression)expression).getOperand() );
+		    }
+	    } catch( DOMException e ){
+	        return e.getProblem();
 	    }
 	    return null;
 	}
@@ -613,7 +646,10 @@ public class CVisitor {
 				if ( declarator.getParent() instanceof IASTFunctionDefinition ) {
 					ICScope scope = (ICScope) ((IASTCompoundStatement)((IASTFunctionDefinition)declarator.getParent()).getBody()).getScope();
 					if ( scope != null && binding != null )
-						scope.addBinding(binding);
+                        try {
+                            scope.addBinding(binding);
+                        } catch ( DOMException e ) {
+                        }
 				}
 			}
 		} else if( parent instanceof IASTSimpleDeclaration ){
@@ -628,7 +664,10 @@ public class CVisitor {
 		        if( parent instanceof IASTFunctionDefinition ){
 		            ICScope scope = (ICScope) ((IASTCompoundStatement)((IASTFunctionDefinition)parent).getBody()).getScope();
 					if ( scope != null && binding != null )
-						scope.addBinding(binding);
+                        try {
+                            scope.addBinding(binding);
+                        } catch ( DOMException e ) {
+                        }
 				}
 		    }
 		} else if ( parent instanceof IASTFunctionDeclarator ) {
@@ -650,18 +689,25 @@ public class CVisitor {
 		
 		ICScope scope = (ICScope) getContainingScope( parent );
 		IBinding binding = null;
-		binding = ( scope != null ) ? scope.getBinding( ICScope.NAMESPACE_TYPE_OTHER, declarator.getName().toCharArray() ) : null;  
+		try {
+            binding = ( scope != null ) ? scope.getBinding( ICScope.NAMESPACE_TYPE_OTHER, declarator.getName().toCharArray() ) : null;
+        } catch ( DOMException e1 ) {
+            binding = null;
+        }  
 		
 		if( declarator instanceof IASTFunctionDeclarator ){
 			if( binding != null && binding instanceof IFunction ){
-			    IFunction function = (IFunction) binding;
-			    IFunctionType ftype = function.getType();
-			    IType type = createType( declarator.getName() );
-			    if( ftype.equals( type ) ){
-			        if( parent instanceof IASTSimpleDeclaration )
-			            ((CFunction)function).addDeclarator( (IASTFunctionDeclarator) declarator );
-			        
-			        return function;
+			    try{ 
+			        IFunction function = (IFunction) binding;
+				    IFunctionType ftype = function.getType();
+				    IType type = createType( declarator.getName() );
+				    if( ftype.equals( type ) ){
+				        if( parent instanceof IASTSimpleDeclaration )
+				            ((CFunction)function).addDeclarator( (IASTFunctionDeclarator) declarator );
+				        
+				        return function;
+				    }
+			    } catch( DOMException e ){
 			    }
 			} 
 
@@ -681,15 +727,23 @@ public class CVisitor {
 		} 
 
 		if( scope != null && binding != null )
-		    scope.addBinding( binding );
+            try {
+                scope.addBinding( binding );
+            } catch ( DOMException e ) {
+            }
 		return binding;
 	}
 
 	
 	private static IBinding createBinding( ICASTCompositeTypeSpecifier compositeTypeSpec ){
 	    ICompositeType binding = new CStructure( compositeTypeSpec );
-	    ICScope scope = (ICScope) binding.getScope();
-	    scope.addBinding( binding );
+	    ICScope scope;
+        try {
+            scope = (ICScope) binding.getScope();
+            scope.addBinding( binding );
+        } catch ( DOMException e ) {
+        }
+        
 		return binding;
 	}
 	
@@ -702,10 +756,16 @@ public class CVisitor {
 		IBinding binding = null;
 		if( simpleDeclaration.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
 			binding = new CTypeDef( name );
-			((ICScope) binding.getScope()).addBinding( binding );
+			try {
+                ((ICScope) binding.getScope()).addBinding( binding );
+            } catch ( DOMException e ) {
+            }
 		} else if( simpleDeclaration.getParent() instanceof ICASTCompositeTypeSpecifier ){
 			binding = new CField( name );
-			((ICScope) binding.getScope()).addBinding( binding );
+			try {
+                ((ICScope) binding.getScope()).addBinding( binding );
+            } catch ( DOMException e ) {
+            }
 		} else {
 		    CScope scope = (CScope) CVisitor.getContainingScope( simpleDeclaration );
 		    binding = scope.getBinding( ICScope.NAMESPACE_TYPE_OTHER, name.toCharArray() );
@@ -787,10 +847,16 @@ public class CVisitor {
 					if ( struct instanceof CStructure ) {
 						return ((CStructure)struct).findField(((ICASTFieldDesignator)node).getName().toString());
 					} else if ( struct instanceof ITypeContainer ) {
-						IType type = ((ITypeContainer)struct).getType();
-						while ( type instanceof ITypeContainer && !(type instanceof CStructure) ) {
-							type = ((ITypeContainer)type).getType();
-						}
+						IType type;
+                        try {
+                            type = ((ITypeContainer)struct).getType();
+                            while ( type instanceof ITypeContainer && !(type instanceof CStructure) ) {
+    							type = ((ITypeContainer)type).getType();
+    						}
+                        } catch ( DOMException e ) {
+                            return e.getProblem();
+                        }
+                        
 						
 						if ( type instanceof CStructure )
 							return ((CStructure)type).findField(((ICASTFieldDesignator)node).getName().toString());
@@ -855,13 +921,21 @@ public class CVisitor {
 		} else if( parent instanceof IASTFunctionDefinition ){
 			IASTFunctionDeclarator fnDeclarator = ((IASTFunctionDefinition) parent ).getDeclarator();
 			IFunction function = (IFunction) fnDeclarator.getName().resolveBinding();
-			scope = function.getFunctionScope();
+			try {
+                scope = function.getFunctionScope();
+            } catch ( DOMException e ) {
+                return e.getProblem();
+            }
 		}
 		
 		if( statement instanceof IASTGotoStatement || statement instanceof IASTLabelStatement ){
 		    //labels have function scope
 		    while( scope != null && !(scope instanceof ICFunctionScope) ){
-		        scope = scope.getParent();
+		        try {
+                    scope = scope.getParent();
+                } catch ( DOMException e ) {
+                    scope = e.getProblem();
+                }
 		    }
 		}
 		
@@ -928,7 +1002,11 @@ public class CVisitor {
 			if( scope != null ){
 			    int namespaceType = (bits & TAGS) != 0 ? ICScope.NAMESPACE_TYPE_TAG 
 			            							   : ICScope.NAMESPACE_TYPE_OTHER;
-			    binding = scope.getBinding( namespaceType, name.toCharArray() );
+			    try {
+                    binding = scope.getBinding( namespaceType, name.toCharArray() );
+                } catch ( DOMException e ) {
+                    binding = null;
+                }
 			    if( binding != null )
 			        return binding;
 			}

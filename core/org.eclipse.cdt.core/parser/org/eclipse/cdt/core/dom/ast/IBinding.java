@@ -28,6 +28,6 @@ public interface IBinding {
 	 * 
 	 * @return the scope of this name
 	 */
-	public IScope getScope();
+	public IScope getScope() throws DOMException;
 
 }

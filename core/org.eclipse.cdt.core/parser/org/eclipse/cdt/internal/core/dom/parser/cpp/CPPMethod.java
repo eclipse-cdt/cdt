@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -32,11 +33,25 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
  */
 public class CPPMethod extends CPPFunction implements ICPPMethod {
 
+    public static class CPPMethodProblem extends CPPFunctionProblem implements ICPPMethod {
+        /**
+         * @param id
+         * @param arg
+         */
+        public CPPMethodProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
+
+        public int getVisibility() throws DOMException {
+            throw new DOMException( this );
+        }
+    }
+    
 	public CPPMethod( ICPPASTFunctionDeclarator declarator ){
 		super( declarator );
 	}
 	
-	public IASTDeclaration getPrimaryDeclaration(){
+	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
 		//first check if we already know it
 		if( declarations != null ){
 			for( int i = 0; i < declarations.length; i++ ){
@@ -76,7 +91,7 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPMember#getVisibility()
 	 */
-	public int getVisibility() {
+	public int getVisibility() throws DOMException {
 		IASTDeclaration decl = getPrimaryDeclaration();
 		IASTCompositeTypeSpecifier cls = (IASTCompositeTypeSpecifier) decl.getParent();
 		IASTDeclaration [] members = cls.getMembers();

@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
+
 /**
  * Represents a member of a class. Adds in the visibility attribute.
  * 
@@ -22,7 +24,7 @@ public interface ICPPMember {
 	 *  
 	 * @return
 	 */
-	public int getVisibility();
+	public int getVisibility() throws DOMException;
 	
 	public static final int v_private = ICPPASTVisiblityLabel.v_private;
 	public static final int v_protected = ICPPASTVisiblityLabel.v_protected;

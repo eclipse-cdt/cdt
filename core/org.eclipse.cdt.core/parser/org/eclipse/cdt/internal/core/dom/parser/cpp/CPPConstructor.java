@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 
@@ -21,6 +22,15 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
  */
 public class CPPConstructor extends CPPMethod implements ICPPConstructor {
 
+    static public class CPPConstructorProblem extends CPPMethod.CPPMethodProblem implements ICPPConstructor {
+        public CPPConstructorProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
+
+        public boolean isExplicit() throws DOMException{
+            throw new DOMException( this );
+        }
+    }
 	/**
 	 * @param declarator
 	 */

@@ -8,17 +8,28 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-/*
- * Created on Dec 1, 2004
- */
-package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IBinding;
+/*
+ * Created on Jan 31, 2005
+ */
+package org.eclipse.cdt.core.dom.ast;
+
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 
 /**
  * @author aniefer
  */
-public interface ICPPNamespace extends IBinding {
-	public ICPPNamespaceScope getNamespaceScope() throws DOMException;
+public class DOMException extends Exception {
+    IProblemBinding problemBinding;
+    /**
+     * 
+     */
+    public DOMException( IProblemBinding problem ) {
+        super( problem != null ? problem.getMessage() : CPPSemantics.EMPTY_NAME );
+        problemBinding = problem;
+    }
+
+    public IProblemBinding getProblem(){
+        return problemBinding;
+    }
 }

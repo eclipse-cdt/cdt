@@ -13,16 +13,28 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
  */
 public class CPPVariable implements IVariable, ICPPBinding {
+    public static class CPPVariableProblem extends ProblemBinding implements IVariable{
+        public CPPVariableProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
+
+        public IType getType() throws DOMException {
+            throw new DOMException( this );
+        }
+
+    }
 	private IASTDeclarator declarator = null;
 	private IType type = null;
 	

@@ -13,7 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -28,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
@@ -131,16 +131,16 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
-	public List getFields() {
+	public IField[] getFields() {
 	    if( definition == null ){
 	        checkForDefinition();
 	        if( definition == null )
-	            return null;  //TODO IProblem
+	            return new IField [] { new CPPField.CPPFieldProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
 	    }
 
 		IASTDeclaration[] members = definition.getMembers();
 		int size = members.length;
-		List fields = new ArrayList( size );
+		IField[] fields = new IField[ size ];
 		if( size > 0 ){
 
 			for( int i = 0; i < size; i++ ){
@@ -151,7 +151,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 						IASTDeclarator declarator = declarators[i];
 						IBinding binding = declarator.getName().resolveBinding();
 						if( binding != null && binding instanceof IField )
-							fields.add( binding );
+							fields[i] = (IField) binding;
 					}
 				}
 			}
@@ -303,7 +303,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
         if( definition == null ){
             checkForDefinition();
             if( definition == null ){
-                return null;  //TODO problem
+                return new ICPPConstructor [] { new CPPConstructor.CPPConstructorProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
             }
         }
         

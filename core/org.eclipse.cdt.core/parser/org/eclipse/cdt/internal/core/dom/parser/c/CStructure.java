@@ -11,9 +11,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -24,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -36,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 public class CStructure implements ICompositeType, ICBinding {
 	private IASTElaboratedTypeSpecifier[] declarations = null;
 	private ICASTCompositeTypeSpecifier definition;
-	//final private IASTDeclSpecifier declSpecifier;
 	
 	public CStructure( IASTDeclSpecifier declSpec ){
 	    if( declSpec instanceof IASTCompositeTypeSpecifier )
@@ -86,17 +83,17 @@ public class CStructure implements ICompositeType, ICBinding {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
-	public List getFields() {
+	public IField[] getFields() {
 	    if( definition == null ){
 	        ICASTCompositeTypeSpecifier temp = checkForDefinition( declarations[0] );
 	        if( temp == null )
-	            return null;
+	            return new IField [] { new CField.CFieldProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
 	        definition = temp;
 	    }
 
 		IASTDeclaration[] members = definition.getMembers();
 		int size = members.length;
-		List fields = new ArrayList( size );
+		IField[] fields = new IField[ size ];
 		if( size > 0 ){
 
 			for( int i = 0; i < size; i++ ){
@@ -107,7 +104,7 @@ public class CStructure implements ICompositeType, ICBinding {
 						IASTDeclarator declarator = declarators[j];
 						IBinding binding = declarator.getName().resolveBinding();
 						if( binding != null )
-							fields.add( binding );
+							fields[i] =  (IField) binding;
 					}
 				}
 			}
@@ -123,7 +120,7 @@ public class CStructure implements ICompositeType, ICBinding {
 	    if( definition == null ){
 	        ICASTCompositeTypeSpecifier temp = checkForDefinition( declarations[0] );
 	        if( temp == null )
-	            return null;
+	            return new CField.CFieldProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() );
 	        definition = temp;
 	    }
 

@@ -13,14 +13,18 @@
  */
 package org.eclipse.cdt.core.dom.ast.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
+
 /**
  * @author aniefer
  */
 public interface ICPPConstructor extends ICPPMethod {
 
     /**
+     * 
      * @return
+     * @throws DOMException
      */
-    boolean isExplicit();
+    boolean isExplicit() throws DOMException;
 
 }

@@ -18,7 +18,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @author aniefer
  */
 public interface IFunctionType extends IType {
-    public IType getReturnType();
+    public IType getReturnType() throws DOMException;
     
-    public IType [] getParameterTypes();
+    public IType [] getParameterTypes() throws DOMException;
 }

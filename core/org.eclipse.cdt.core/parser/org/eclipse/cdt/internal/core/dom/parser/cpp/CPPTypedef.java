@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -52,7 +53,11 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPBinding {
 
     public boolean equals( Object o ){
 	    if( o instanceof ITypedef )
-	        return getType().equals( ((ITypedef)o).getType());
+            try {
+                return getType().equals( ((ITypedef)o).getType());
+            } catch ( DOMException e ) {
+                return false;
+            }
 	    
 	    if( !( o instanceof IType ) ) 
 	        return false;

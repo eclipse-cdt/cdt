@@ -14,6 +14,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
@@ -38,7 +39,11 @@ public class CPPArrayType implements IArrayType, ITypeContainer {
     
     public boolean equals(Object obj) {
         if( obj instanceof IArrayType ){
-            return ((IArrayType) obj).getType().equals( type );
+            try {
+                return ((IArrayType) obj).getType().equals( type );
+            } catch ( DOMException e ) {
+                return false;
+            }
         }
     	return false;
     }

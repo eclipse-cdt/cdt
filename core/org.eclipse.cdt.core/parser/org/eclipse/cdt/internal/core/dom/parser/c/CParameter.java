@@ -11,6 +11,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -20,12 +21,23 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * Created on Nov 5, 2004
  * @author aniefer
  */
 public class CParameter implements IParameter {
+    public static class CParameterProblem extends ProblemBinding implements IParameter {
+        public CParameterProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
+
+        public IType getType() throws DOMException {
+            throw new DOMException( this );
+        }
+    }
+    
 	private IASTName [] declarations;
 	
 	public CParameter( IASTName parameterName ){

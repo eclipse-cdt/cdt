@@ -18,7 +18,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @author aniefer
  */
 public interface IPointerType extends IType {
-    public IType getType();
-    public boolean isConst();
-    public boolean isVolatile();
+    public IType getType() throws DOMException;
+    public boolean isConst() throws DOMException;
+    public boolean isVolatile() throws DOMException;
 }

@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
+import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
@@ -370,9 +371,9 @@ public class CompleteParser2Tests extends TestCase {
  		ICPPField x = (ICPPField) col.getName(1).resolveBinding();
  		
  		assertSame( x.getScope(), A.getCompositeScope() );
- 		List fields = A.getFields();
- 		assertEquals( fields.size(), 1 );
- 		assertSame( fields.get(0), x );
+ 		IField [] fields = A.getFields();
+ 		assertEquals( fields.length, 1 );
+ 		assertSame( fields[0], x );
  	}
 	
 	public void testUsingClauses() throws Exception

@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.core.dom.ast.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 
 /**
@@ -24,5 +25,5 @@ public interface ICBasicType extends IBasicType {
 	public static final int t_Complex = ICASTSimpleDeclSpecifier.t_Complex;
 	public static final int t_Imaginary = ICASTSimpleDeclSpecifier.t_Imaginary;
 	
-	public boolean isLongLong();
+	public boolean isLongLong() throws DOMException;
 }

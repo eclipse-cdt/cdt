@@ -23,6 +23,6 @@ public interface ILabel extends IBinding {
 	 * 
 	 * @return
 	 */
-	public IASTLabelStatement getLabelStatement();
+	public IASTLabelStatement getLabelStatement() throws DOMException;
 	
 }

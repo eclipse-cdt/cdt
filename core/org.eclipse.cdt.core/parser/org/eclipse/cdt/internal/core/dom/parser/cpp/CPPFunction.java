@@ -13,22 +13,48 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
  */
 public class CPPFunction implements IFunction, ICPPBinding {
+    
+    public static class CPPFunctionProblem extends ProblemBinding implements IFunction {
+
+        /**
+         * @param id
+         * @param arg
+         */
+        public CPPFunctionProblem( int id, char[] arg ) {
+            super( id, arg );
+        }
+
+        public IParameter[] getParameters() throws DOMException {
+            throw new DOMException( this );
+        }
+
+        public IScope getFunctionScope() throws DOMException {
+            throw new DOMException( this );
+        }
+
+        public IFunctionType getType() throws DOMException {
+            throw new DOMException( this );
+        }
+    }
+    
 	protected ICPPASTFunctionDeclarator [] declarations;
 	protected ICPPASTFunctionDeclarator definition;
 	protected IFunctionType type = null;

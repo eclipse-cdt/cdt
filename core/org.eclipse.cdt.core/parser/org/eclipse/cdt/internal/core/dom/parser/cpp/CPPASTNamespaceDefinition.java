@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -88,7 +89,11 @@ public class CPPASTNamespaceDefinition extends CPPASTNode implements
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition#getScope()
 	 */
 	public IScope getScope() {
-	    return ((ICPPNamespace) name.resolveBinding()).getNamespaceScope();
+	    try {
+            return ((ICPPNamespace) name.resolveBinding()).getNamespaceScope();
+        } catch ( DOMException e ) {
+            return e.getProblem();
+        }
 	}
 
 }

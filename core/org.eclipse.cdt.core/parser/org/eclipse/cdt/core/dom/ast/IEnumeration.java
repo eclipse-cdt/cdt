@@ -18,5 +18,5 @@ package org.eclipse.cdt.core.dom.ast;
  * @author aniefer
  */
 public interface IEnumeration extends IBinding, IType {
-
+    IEnumerator [] getEnumerators() throws DOMException;
 }

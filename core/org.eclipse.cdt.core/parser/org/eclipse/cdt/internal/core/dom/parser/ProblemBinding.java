@@ -15,7 +15,9 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.text.MessageFormat;
+import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -26,7 +28,7 @@ import org.eclipse.cdt.internal.core.parser.ParserMessages;
 /**
  * @author aniefer
  */
-public class ProblemBinding implements IProblemBinding, IType {
+public class ProblemBinding implements IProblemBinding, IType, IScope {
     private final int id;
     private final char [] arg;
     
@@ -101,19 +103,35 @@ public class ProblemBinding implements IProblemBinding, IType {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
-    public IScope getScope() {
-        return null;
+    public IScope getScope() throws DOMException {
+        throw new DOMException( this );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
      */
-    public IASTNode getPhysicalNode() {
-        return null;
+    public IASTNode getPhysicalNode() throws DOMException {
+        throw new DOMException( this );
     }
 
     public Object clone(){
     	//don't clone problems
         return this;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#getParent()
+     */
+    public IScope getParent() throws DOMException {
+        throw new DOMException( this );
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
+     */
+    public List find( String name ) throws DOMException {
+        throw new DOMException( this );
     }
 }

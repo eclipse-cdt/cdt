@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * @author Doug Schaefer
@@ -23,14 +22,14 @@ public interface ICompositeType extends IBinding, IType {
 	 *  what kind of composite type is this?
 	 * @return
 	 */
-	public int getKey();
+	public int getKey() throws DOMException;
 	
 	/**
 	 * Returns the fields for this type.
 	 * 
 	 * @return List of IField
 	 */
-	public List getFields();
+	public IField[] getFields() throws DOMException;
 	
 	/**
 	 * returns the field that matches name,
@@ -39,7 +38,7 @@ public interface ICompositeType extends IBinding, IType {
 	 * @param name
 	 * @return
 	 */
-	public IField findField( String name );
+	public IField findField( String name ) throws DOMException;
 	
-	public IScope getCompositeScope();
+	public IScope getCompositeScope() throws DOMException;
 }

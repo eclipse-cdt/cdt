@@ -37,14 +37,6 @@ public class GCCScannerExtension implements IScannerExtension {
 	}
 
 		
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IScannerExtension#initializeMacroValue(java.lang.String)
-	 */
-	public char[] initializeMacroValue(IScannerData scannerData, char[] original) {
-		if( original == null || original.length == 0 ) //$NON-NLS-1$
-			return "1".toCharArray(); //$NON-NLS-1$
-		return original;
-	}
 	private static final char [] emptyCharArray = "".toCharArray(); //$NON-NLS-1$
 	// gcc built-ins
 	private static final ObjectStyleMacro __inline__
@@ -125,56 +117,31 @@ public class GCCScannerExtension implements IScannerExtension {
 	 */
 	public void setupBuiltInMacros(IScannerData scannerData) {
 		// gcc extensions
-		scannerData.getRealDefinitions().put(__inline__.name, __inline__);
-		scannerData.getRealDefinitions().put(__cdecl.name, __cdecl );
-		scannerData.getRealDefinitions().put( __const__.name, __const__ );
-		scannerData.getRealDefinitions().put( __const.name, __const );
-		scannerData.getRealDefinitions().put(__extension__.name, __extension__);
-		scannerData.getRealDefinitions().put(__attribute__.name, __attribute__);
-		scannerData.getRealDefinitions().put( __declspec.name, __declspec );
-		scannerData.getRealDefinitions().put(__restrict__.name, __restrict__);
-		scannerData.getRealDefinitions().put(__restrict.name, __restrict);
-		scannerData.getRealDefinitions().put(__volatile__.name, __volatile__);
-		scannerData.getRealDefinitions().put(__signed__.name, __signed__ );
-		scannerData.getRealDefinitions().put(__complex__.name, __complex__ );
-		scannerData.getRealDefinitions().put(__imag__.name, __imag__ );
-		scannerData.getRealDefinitions().put(__real__.name, __real__ );
-		scannerData.getRealDefinitions().put( __builtin_va_arg.name, __builtin_va_arg );
-		scannerData.getRealDefinitions().put( __builtin_constant_p.name, __builtin_constant_p );
+		CharArrayObjectMap realDefinitions = scannerData.getRealDefinitions();
+        realDefinitions.put(__inline__.name, __inline__);
+		realDefinitions.put(__cdecl.name, __cdecl );
+		realDefinitions.put( __const__.name, __const__ );
+		realDefinitions.put( __const.name, __const );
+		realDefinitions.put(__extension__.name, __extension__);
+		realDefinitions.put(__attribute__.name, __attribute__);
+		realDefinitions.put( __declspec.name, __declspec );
+		realDefinitions.put(__restrict__.name, __restrict__);
+		realDefinitions.put(__restrict.name, __restrict);
+		realDefinitions.put(__volatile__.name, __volatile__);
+		realDefinitions.put(__signed__.name, __signed__ );
+		realDefinitions.put(__complex__.name, __complex__ );
+		realDefinitions.put(__imag__.name, __imag__ );
+		realDefinitions.put(__real__.name, __real__ );
+		realDefinitions.put( __builtin_va_arg.name, __builtin_va_arg );
+		realDefinitions.put( __builtin_constant_p.name, __builtin_constant_p );
 		if( scannerData.getLanguage() == ParserLanguage.CPP )
-			scannerData.getRealDefinitions().put(__asm__.name, __asm__);
+			realDefinitions.put(__asm__.name, __asm__);
 		else{
-			scannerData.getRealDefinitions().put(_Pragma.name, _Pragma );
-			scannerData.getRealDefinitions().put( __builtin_choose_expr.name, __builtin_choose_expr );
-		}
-				
+			realDefinitions.put(_Pragma.name, _Pragma );
+			realDefinitions.put( __builtin_choose_expr.name, __builtin_choose_expr );
+		}		
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#offersDifferentIdentifierCharacters()
-	 */
-	public boolean offersDifferentIdentifierCharacters() {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isValidIdentifierStartCharacter(int)
-	 */
-	public boolean isValidIdentifierStartCharacter(int c) {
-		return Character.isLetter((char)c) || ( c == '_') || ( c == '$' );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isValidIdentifierCharacter(int)
-	 */
-	public boolean isValidIdentifierCharacter(int c) {
-		return ((c >= 'a') && (c <= 'z'))
-		|| ((c >= 'A') && (c <= 'Z'))
-		|| ((c >= '0') && (c <= '9'))
-		|| (c == '_') || ( c== '$' ) || 
-		Character.isUnicodeIdentifierPart( (char)c);
-	}
-
 	private static final CharArrayIntMap additionalCPPKeywords;
 	private static final CharArrayIntMap additionalCKeywords;
 	private static final CharArrayIntMap additionalCPPOperators;
@@ -243,20 +210,6 @@ public class GCCScannerExtension implements IScannerExtension {
 		else if (language == ParserLanguage.C )
 			return ( additionalCOperators.containsKey( query ));
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isValidNumericLiteralSuffix(char)
-	 */
-	public boolean isValidNumericLiteralSuffix(char c) {
-		switch( c )
-		{
-			case 'i':
-			case 'j':
-				return true;
-			default:
-				return false;
-		}
 	}
 
 }

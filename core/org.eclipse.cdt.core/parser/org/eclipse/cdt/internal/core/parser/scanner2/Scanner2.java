@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -45,7 +44,6 @@ import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
-import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
@@ -58,7 +56,8 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
  */
 public class Scanner2 implements IScanner, IScannerData {
 
-	private static final char[] ELLIPSIS_CHARARRAY = "...".toString().toCharArray(); //$NON-NLS-1$
+	private static final char[] ONE = "1".toCharArray(); //$NON-NLS-1$
+    private static final char[] ELLIPSIS_CHARARRAY = "...".toString().toCharArray(); //$NON-NLS-1$
 	private static final char[] VA_ARGS_CHARARRAY = "__VA_ARGS__".toCharArray(); //$NON-NLS-1$
 	/**
 	 * @author jcamelon
@@ -128,25 +127,20 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 	
 	// Utility
-	private static String[] emptyStringArray = new String[0];
-	private static char[] emptyCharArray = new char[0];
+	private static String[] EMPTY_STRING_ARRAY = new String[0];
+	private static char[] EMPTY_CHAR_ARRAY = new char[0];
 	private static EndOfFileException EOF = new EndOfFileException();
 	
-	PrintStream dlog;
 
 	private ParserMode parserMode;
 
 	private List workingCopies;
 
 	private Iterator preIncludeFiles = EmptyIterator.EMPTY_ITERATOR;
-	private boolean isInitialized = false;  
+	private boolean isInitialized = false;
+	private final char [] suffixes; 
+	boolean support$Initializers = false;
 	
-	{
-//		try {
-//			dlog = new PrintStream(new FileOutputStream("C:/dlog.txt"));
-//		} catch (FileNotFoundException e) {
-//		}
-	}
 
 	public Scanner2(CodeReader reader,
 					IScannerInfo info,
@@ -155,7 +149,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					ParserLanguage language,
 					IParserLogService log,
 					IScannerExtension extension,
-					List workingCopies) {
+					List workingCopies, IScannerConfiguration configuration) {
 
 		this.scannerExtension = extension;
 		this.requestor = requestor;
@@ -165,7 +159,12 @@ public class Scanner2 implements IScanner, IScannerData {
 		this.workingCopies = workingCopies;
 		this.callbackManager = new ScannerCallbackManager( requestor );
 		this.expressionEvaluator = new ExpressionEvaluator(callbackManager, spf);
-
+		if( configuration.supportAdditionalNumericLiteralSuffixes() != null )
+		    suffixes = configuration.supportAdditionalNumericLiteralSuffixes();
+		else
+		    suffixes = EMPTY_CHAR_ARRAY;
+		support$Initializers = configuration.support$InIdentifiers();
+		
 		if( language == ParserLanguage.C )
 		    keywords = ckeywords;
 		else 
@@ -178,14 +177,16 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		if (info.getDefinedSymbols() != null) {
 			Map symbols = info.getDefinedSymbols();
-			String[] keys = (String[])symbols.keySet().toArray(emptyStringArray);
+			String[] keys = (String[])symbols.keySet().toArray(EMPTY_STRING_ARRAY);
 			for (int i = 0; i < keys.length; ++i) {
 				String symbolName = keys[i];
 				Object value = symbols.get(symbolName);
 
-				if( value instanceof String ) {	
-					//TODO add in check here for '(' and ')'
-					addDefinition( symbolName.toCharArray(), scannerExtension.initializeMacroValue(this, ((String)value).toCharArray()));
+				if( value instanceof String ) {
+				    if( configuration.initializeMacroValuesTo1() && ((String)value).trim().equals( EMPTY_STRING ))
+				        addDefinition( symbolName.toCharArray(), ONE );
+				    else
+				        addDefinition( symbolName.toCharArray(), ((String)value).toCharArray());
 				} 
 			}
 		}
@@ -230,7 +231,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 	}
 
-	private void pushContext(char[] buffer) {
+	protected void pushContext(char[] buffer) {
 		if (++bufferStackPos == bufferStack.length) {
 			int size = bufferStack.length * 2;
 			
@@ -268,7 +269,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		bufferLimit[bufferStackPos] = buffer.length;
 	}
 	
-	private void pushContext(char[] buffer, Object data) {
+	protected void pushContext(char[] buffer, Object data) {
 		if( data instanceof InclusionData )
 		{
 			boolean isCircular = false;
@@ -308,7 +309,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 	}
 	
-	private void popContext() {
+	protected void popContext() {
 		bufferStack[bufferStackPos] = null;
 		if( bufferData[bufferStackPos] instanceof InclusionData )
 		{
@@ -330,7 +331,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	/**
 	 * 
 	 */
-	private void pushForcedInclusion() {
+	protected void pushForcedInclusion() {
 		CodeReader r = null;
 		while( r == null )
 		{
@@ -526,14 +527,14 @@ public class Scanner2 implements IScanner, IScannerData {
 	/**
 	 * 
 	 */
-	private void throwOLRE() throws OffsetLimitReachedException {
+	protected void throwOLRE() throws OffsetLimitReachedException {
 		if( lastToken != null && lastToken.getEndOffset() != offsetBoundary )
 			throw new OffsetLimitReachedException( (IToken)null );
 		throw new OffsetLimitReachedException( lastToken );
 	}
 
 	// Return null to signify end of file
-	private IToken fetchToken() throws EndOfFileException{
+	protected IToken fetchToken() throws EndOfFileException{
 		++count;
 		contextLoop:
 		while (bufferStackPos >= 0) {
@@ -902,12 +903,13 @@ public class Scanner2 implements IScanner, IScannerData {
 					return newToken(IToken.tCOMMA );
 
 				default:
-				    if( Character.isLetter( buffer[pos] ) || scannerExtension.isValidIdentifierStartCharacter( buffer[pos ]) ){
+				    if( Character.isLetter( buffer[pos] ) || buffer[pos] == '_' || ( support$Initializers && buffer[pos] == '$' )) {
 				        t = scanIdentifier();
 						if (t instanceof MacroExpansionToken)
 							continue;
 						return t;
 				    }
+				        
 					// skip over anything we don't handle
 			}
 		}
@@ -919,7 +921,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	/**
 	 * @return
 	 */
-	private IToken newToken( int signal ) {
+	protected IToken newToken( int signal ) {
 	    if( bufferData[bufferStackPos] instanceof MacroData )
 		{
 			int mostRelevant;
@@ -932,7 +934,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1)  );
 	}
 
-	private IToken newToken( int signal, char [] buffer )
+	protected IToken newToken( int signal, char [] buffer )
 	{
 		if( bufferData[bufferStackPos] instanceof MacroData )
 		{
@@ -950,7 +952,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return i;
 	}
 	
-	private IToken scanIdentifier() {
+	protected IToken scanIdentifier() {
 		char[] buffer = bufferStack[bufferStackPos];
 		boolean escapedNewline = false;
 		int start = bufferPos[bufferStackPos];
@@ -981,7 +983,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					continue;
 				}
 			}
-			else if( scannerExtension.isValidIdentifierCharacter( c ))
+			else if( ( support$Initializers && c == '$' ) )
 			{
 				++len;
 				continue;
@@ -1043,7 +1045,7 @@ public class Scanner2 implements IScanner, IScannerData {
      * @param expObject
      * @return
      */
-    private boolean shouldExpandMacro( IMacro macro ) {
+    protected boolean shouldExpandMacro( IMacro macro ) {
         // but not if it has been expanded on the stack already
 		// i.e. recursion avoidance
 		if( macro != null && !isLimitReached() )
@@ -1059,7 +1061,7 @@ public class Scanner2 implements IScanner, IScannerData {
     /**
 	 * @return
 	 */
-	private final boolean isLimitReached() {
+    protected final boolean isLimitReached() {
 		if( offsetBoundary == -1 || bufferStackPos != 0 ) return false;
 		if( bufferPos[bufferStackPos] == offsetBoundary - 1 ) return true;
 		if( bufferPos[bufferStackPos] == offsetBoundary )
@@ -1071,7 +1073,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return false;
 	}
 
-	private IToken scanString() {
+	protected IToken scanString() {
 		char[] buffer = bufferStack[bufferStackPos];
 		
 		int tokenType = IToken.tSTRING;
@@ -1125,7 +1127,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return newToken(tokenType, result);
 	}
 
-	private IToken scanCharLiteral() {
+	protected IToken scanCharLiteral() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int start = bufferPos[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
@@ -1139,7 +1141,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 
 		if (start >= limit) {
-			return newToken(tokenType, emptyCharArray );
+			return newToken(tokenType, EMPTY_CHAR_ARRAY );
 		}
 
 		
@@ -1160,12 +1162,12 @@ public class Scanner2 implements IScanner, IScannerData {
 		if( bufferPos[ bufferStackPos ] == limit )
 		{
 			handleProblem( IProblem.SCANNER_BAD_CHARACTER, start,  CharArrayUtils.extract(buffer, start, length) );
-			return newToken( tokenType, emptyCharArray );
+			return newToken( tokenType, EMPTY_CHAR_ARRAY );
 		}
 		
 		char[] image = length > 0
 			? CharArrayUtils.extract(buffer, start, length)
-			: emptyCharArray;
+			: EMPTY_CHAR_ARRAY;
 
 		return newToken(tokenType, image );
 	}
@@ -1174,9 +1176,9 @@ public class Scanner2 implements IScanner, IScannerData {
 	/**
 	 * @param scanner_bad_character
 	 */
-	private void handleProblem(int id, int startOffset, char [] arg ) {
+	protected void handleProblem(int id, int startOffset, char [] arg ) {
 		if( parserMode == ParserMode.COMPLETION_PARSE ) return;
-		IProblem p = spf.createProblem( id, startOffset, bufferPos[bufferStackPos], getLineNumber( bufferPos[bufferStackPos] ), getCurrentFilename(), arg != null ? arg : emptyCharArray, false, true );
+		IProblem p = spf.createProblem( id, startOffset, bufferPos[bufferStackPos], getLineNumber( bufferPos[bufferStackPos] ), getCurrentFilename(), arg != null ? arg : EMPTY_CHAR_ARRAY, false, true );
 		callbackManager.pushCallback( p );
 	}
 
@@ -1206,7 +1208,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return lineNum;
 	}
 
-	private IToken scanNumber() throws EndOfFileException {
+	protected IToken scanNumber() throws EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int start = bufferPos[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
@@ -1394,9 +1396,14 @@ public class Scanner2 implements IScanner, IScannerData {
 					break;
 					
 				default:
-					if( scannerExtension.isValidNumericLiteralSuffix( buffer[pos] ))
-						continue;
-					// not part of our number
+				    boolean success = false;
+				    for( int iter = 0; iter < suffixes.length; iter++ )
+				        if( buffer[pos] == suffixes[iter] )
+				        {
+				            success = true;
+				            break;
+				        }
+					if( success ) continue;
 			}
 			
 			// If we didn't continue in the switch, we're done
@@ -1417,7 +1424,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return newToken( tokenType, result );
 	}
 	
-	private boolean branchState( int state ){
+	protected boolean branchState( int state ){
 	    if( state != BRANCH_IF && branchStackPos == -1 )
 	        return false;
 	    
@@ -1454,7 +1461,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	    return false;
 	}
 	
-	private void handlePPDirective(int pos) throws EndOfFileException {
+	protected void handlePPDirective(int pos) throws EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		int startingLineNumber = getLineNumber( pos );
@@ -1512,12 +1519,10 @@ public class Scanner2 implements IScanner, IScannerData {
 							handleCompletionOnExpression( CharArrayUtils.extract( buffer, start, len ) );
 						branchState( BRANCH_IF );
 						if (expressionEvaluator.evaluate(buffer, start, len, definitions, getLineNumber( bufferPos[bufferStackPos] ), getCurrentFilename()) == 0) {
-							if (dlog != null) dlog.println("#if <FALSE> " + new String(buffer,start+1,len-1)); //$NON-NLS-1$
 							skipOverConditionalCode(true);
 							if( isLimitReached() )
 								handleInvalidCompletion();
-						} else
-							if (dlog != null) dlog.println("#if <TRUE> " + new String(buffer,start+1,len-1)); //$NON-NLS-1$
+						}
 						return;
 					case ppElse:
 					case ppElif:
@@ -1564,7 +1569,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipToNewLine();
 	}		
 
-	private void handlePPInclude(int pos2, boolean next, int startingLineNumber) {
+	protected void handlePPInclude(int pos2, boolean next, int startingLineNumber) {
  		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
@@ -1711,7 +1716,6 @@ public class Scanner2 implements IScanner, IScannerData {
 							fileCache.put(reader.filename, reader);
 					}
 					if (reader != null) {
-						if (dlog != null) dlog.println("#include \"" + finalPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 						IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename(), false );
 						pushContext(reader.buffer, new InclusionData( reader, inclusion ));
 						return;
@@ -1739,7 +1743,6 @@ public class Scanner2 implements IScanner, IScannerData {
 								fileCache.put(reader.filename, reader);
 						}
 						if (reader != null) {
-							if (dlog != null) dlog.println("#include <" + finalPath + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 							IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename(), false );
 							pushContext(reader.buffer, new InclusionData( reader, inclusion ));
 							return;
@@ -1754,7 +1757,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 	}
 	
-	private void handlePPDefine(int pos2, int startingLineNumber) {
+	protected void handlePPDefine(int pos2, int startingLineNumber) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
@@ -1788,7 +1791,6 @@ public class Scanner2 implements IScanner, IScannerData {
 		nameLine = getLineNumber( bufferPos[ bufferStackPos ] );
 		char[] name = new char[idlen];
 		System.arraycopy(buffer, idstart, name, 0, idlen);
-		if (dlog != null) dlog.println("#define " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
 		
 		// Now check for function style macro to store the arguments
 		char[][] arglist = null;
@@ -1863,7 +1865,7 @@ public class Scanner2 implements IScanner, IScannerData {
 
 		int textlen = textend - textstart + 1;
 		endingLine = getLineNumber( bufferPos[ bufferStackPos ] );
-		char[] text = emptyCharArray;
+		char[] text = EMPTY_CHAR_ARRAY;
 		if (textlen > 0) {
 			text = new char[textlen];
 			System.arraycopy(buffer, textstart, text, 0, textlen);
@@ -1884,7 +1886,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		callbackManager.pushCallback( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, getCurrentFilename(), !isInitialized ) );
 	}
 	
-	private char[][] extractMacroParameters( int idstart, char[] name, boolean reportProblems ){
+	protected char[][] extractMacroParameters( int idstart, char[] name, boolean reportProblems ){
 	    char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
@@ -1936,7 +1938,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @param text
 	 * @return
 	 */
-	private char[] removedEscapedNewline(char[] text, int start, int len ) {
+	protected char[] removedEscapedNewline(char[] text, int start, int len ) {
 		if( CharArrayUtils.indexOf( '\n', text, start, len ) == -1 )
 			return text;
 		char [] result = new char[ text.length ];
@@ -1958,7 +1960,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @param text
 	 * @return
 	 */
-	private char[] removeMultilineCommentFromBuffer(char[] text) {
+	protected char[] removeMultilineCommentFromBuffer(char[] text) {
 		char [] result = new char[ text.length ];
 		Arrays.fill( result, ' ');
 		int resultCount = 0;
@@ -1978,7 +1980,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return CharArrayUtils.trim( result );
 	}
 
-	private void handlePPUndef() throws EndOfFileException {
+	protected void handlePPUndef() throws EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
@@ -2014,10 +2016,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipToNewLine();
 		
 		definitions.remove(buffer, idstart, idlen);
-		if (dlog != null) dlog.println("#undef " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
 	}
 	
-	private void handlePPIfdef(boolean positive) throws EndOfFileException {
+	protected void handlePPIfdef(boolean positive) throws EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 
@@ -2061,14 +2062,10 @@ public class Scanner2 implements IScanner, IScannerData {
 		branchState( BRANCH_IF );
 		
 		if ((definitions.get(buffer, idstart, idlen) != null) == positive) {
-			if (dlog != null) dlog.println((positive ? "#ifdef" : "#ifndef") //$NON-NLS-1$ //$NON-NLS-2$
-					+ " <TRUE> " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
 			// continue on
 			return;
 		}
 		
-		if (dlog != null) dlog.println((positive ? "#ifdef" : "#ifndef") //$NON-NLS-1$ //$NON-NLS-2$
-				+ " <FALSE> " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
 		// skip over this group
 		skipOverConditionalCode(true);
 		if( isLimitReached() )
@@ -2076,7 +2073,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	}
 
 	// checkelse - if potential for more, otherwise skip to endif
-	private void skipOverConditionalCode(boolean checkelse) {
+	protected void skipOverConditionalCode(boolean checkelse) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		int nesting = 0;
@@ -2169,7 +2166,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 	}
 	
-	private boolean skipOverWhiteSpace() {
+	protected boolean skipOverWhiteSpace() {
 		
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
@@ -2237,7 +2234,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return encounteredMultiLineComment;
 	}
 	
-	private int indexOfNextNonWhiteSpace( char[] buffer, int start, int limit ) {
+	protected int indexOfNextNonWhiteSpace( char[] buffer, int start, int limit ) {
 	    if( start < 0 || start >= buffer.length || limit > buffer.length )
 	        return -1;
 	    
@@ -2282,10 +2279,10 @@ public class Scanner2 implements IScanner, IScannerData {
 		return pos;
 	}
 	
-	private void skipOverNonWhiteSpace(){
+	protected void skipOverNonWhiteSpace(){
 	    skipOverNonWhiteSpace( false );
 	}
-	private boolean skipOverNonWhiteSpace( boolean stopAtPound ) {
+	protected boolean skipOverNonWhiteSpace( boolean stopAtPound ) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
@@ -2397,7 +2394,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return true;
 	}
 
-	private int skipOverMacroArg(){
+	protected int skipOverMacroArg(){
 	    char [] buffer = bufferStack[bufferStackPos];
 	    int limit = bufferLimit[bufferStackPos];
 	    int argEnd = bufferPos[bufferStackPos]--;
@@ -2447,7 +2444,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return argEnd;
 	}
 
-	private void skipOverIdentifier() {
+	protected void skipOverIdentifier() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
@@ -2506,7 +2503,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		--bufferPos[bufferStackPos];
 	}
 
-	private void skipToNewLine() {
+	protected void skipToNewLine() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		int pos = ++bufferPos[bufferStackPos];
@@ -2556,7 +2553,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 	}
 	
-	private char[] handleFunctionStyleMacro(FunctionStyleMacro macro, boolean pushContext) {
+	protected char[] handleFunctionStyleMacro(FunctionStyleMacro macro, boolean pushContext) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		int start = bufferPos[bufferStackPos] - macro.name.length + 1;
@@ -2578,7 +2575,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		        int stackpPos = bufferStackPos;
 		        while( bufferData[stackpPos] != null && bufferData[stackpPos] instanceof MacroData ){
 		            stackpPos--;
-		            if( stackpPos < 0 ) return emptyCharArray;
+		            if( stackpPos < 0 ) return EMPTY_CHAR_ARRAY;
 		            idx = indexOfNextNonWhiteSpace( bufferStack[stackpPos], bufferPos[stackpPos], bufferLimit[stackpPos] );
 		            if( idx >= bufferLimit[stackpPos] ) continue;
 		            if( idx > 0 && bufferStack[stackpPos][idx] == '(' ) break;
@@ -2653,7 +2650,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		    } else
 		    	argend = skipOverMacroArg(); 
 			
-			char[] arg = emptyCharArray;
+			char[] arg = EMPTY_CHAR_ARRAY;
 			int arglen = argend - argstart + 1;
 			if (arglen > 0) {
 				arg = new char[arglen];
@@ -2688,20 +2685,20 @@ public class Scanner2 implements IScanner, IScannerData {
 		return result;
 	}
 
-	private char[] replaceArgumentMacros( char [] arg ){
+	protected char[] replaceArgumentMacros( char [] arg ){
 		int limit = arg.length;
 		int start = -1, end = -1;
 		Object expObject = null;
 		for( int pos = 0; pos < limit; pos++ ){
 		    char c = arg[pos];
 		    if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || 
-		        Character.isLetter( c ) || scannerExtension.isValidIdentifierStartCharacter( c ) )
+		        Character.isLetter( c ) || ( support$Initializers && c == '$' ) )
 		    {
 		        start = pos;
 		        while (++pos < limit) {
 					c = arg[pos];
 					if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || 
-					    scannerExtension.isValidIdentifierCharacter(c) || Character.isUnicodeIdentifierPart(c) ) 
+					    ( support$Initializers && c == '$' )|| Character.isUnicodeIdentifierPart(c) ) 
 					{
 						continue;
 					} 
@@ -2753,14 +2750,14 @@ public class Scanner2 implements IScanner, IScannerData {
 			    System.arraycopy( arg, end + 1, result, start + expansion.length, limit - end - 1 );
 			
 			//we need to put the macro on the context stack in order to detect recursive macros
-			pushContext( emptyCharArray, new MacroData( start, start + ((IMacro)expObject).getName().length, (IMacro)expObject) );
+			pushContext( EMPTY_CHAR_ARRAY, new MacroData( start, start + ((IMacro)expObject).getName().length, (IMacro)expObject) );
 			arg = replaceArgumentMacros( result );  //rescan for more macros
 			popContext();
 		}
 		return arg;
 	}
 	
-	private int expandFunctionStyleMacro(
+	protected int expandFunctionStyleMacro(
 			char[] expansion,
 			CharArrayObjectMap argmap, CharArrayObjectMap replacedArgs, 
 			char[] result) {
@@ -3081,11 +3078,11 @@ public class Scanner2 implements IScanner, IScannerData {
 
 	// standard built-ins
 	private static final ObjectStyleMacro __cplusplus
-		= new ObjectStyleMacro("__cplusplus".toCharArray(), "1".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+		= new ObjectStyleMacro("__cplusplus".toCharArray(), ONE ); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __STDC__
-		= new ObjectStyleMacro("__STDC__".toCharArray(), "1".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+		= new ObjectStyleMacro("__STDC__".toCharArray(), ONE ); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __STDC_HOSTED__
-	= new ObjectStyleMacro("__STDC_HOSTED_".toCharArray(), "1".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	= new ObjectStyleMacro("__STDC_HOSTED_".toCharArray(), ONE ); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __STDC_VERSION__
 	= new ObjectStyleMacro("__STDC_VERSION_".toCharArray(), "199901L".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private final DynamicStyleMacro __FILE__ = 
@@ -3194,17 +3191,10 @@ public class Scanner2 implements IScanner, IScannerData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getASTFactory()
 	 */
-	public final IASTFactory getASTFactory() {
+	protected final IASTFactory getASTFactory() {
 		if( astFactory == null )
 			astFactory = ParserFactory.createASTFactory( parserMode, language );
 		return astFactory;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getClientRequestor()
-	 */
-	public ISourceElementRequestor getClientRequestor() {
-		return requestor;
 	}
 
 	/* (non-Javadoc)
@@ -3213,30 +3203,12 @@ public class Scanner2 implements IScanner, IScannerData {
 	public ParserLanguage getLanguage() {
 		return language;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getLogService()
-	 */
-	public IParserLogService getLogService() {
-		return log;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getParserMode()
-	 */
-	public ParserMode getParserMode() {
-		return parserMode;
-	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getProblemFactory()
-	 */
-	public IProblemFactory getProblemFactory() {
-		return spf;
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.scanner.IScannerData#getWorkingCopies()
 	 */
-	public Iterator getWorkingCopies() {
+	protected Iterator getWorkingCopies() {
 		if( workingCopies == null ) return EmptyIterator.EMPTY_ITERATOR;
 		return workingCopies.iterator();
 	}
@@ -3245,7 +3217,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		if( bufferData != null && bufferData[0] != null && bufferData[0] instanceof CodeReader )
 			return ((CodeReader)bufferData[0]).filename;
 
-		return emptyCharArray;
+		return EMPTY_CHAR_ARRAY;
 	}
 	
 	public final char[] getCurrentFilename() {
@@ -3256,10 +3228,10 @@ public class Scanner2 implements IScanner, IScannerData {
 			if( bufferData[i] instanceof CodeReader )
 				return ((CodeReader)bufferData[i]).filename;
 		}
-		return emptyCharArray;
+		return EMPTY_CHAR_ARRAY;
 	}
 
-	private final int getCurrentFileIndex() {
+	protected final int getCurrentFileIndex() {
 		for( int i = bufferStackPos; i >= 0; --i )
 		{
 			if( bufferData[i] instanceof InclusionData || bufferData[i] instanceof CodeReader ) 
@@ -3466,10 +3438,7 @@ public class Scanner2 implements IScanner, IScannerData {
      * @see org.eclipse.cdt.core.parser.IScanner#getLocationResolver()
      */
     public ILocationResolver getLocationResolver() {
-        if( locationMap instanceof ILocationResolver )
-            return (ILocationResolver) locationMap;
         return null;
     }
-    
-    final IScannerPreprocessorLog locationMap = new LocationMap();
+
 }

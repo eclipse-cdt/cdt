@@ -62,4 +62,11 @@ public class GCCScannerExtensionsTest extends BaseScanner2Test {
         validateToken( IToken.tRPAREN );
         validateInteger( "0" ); //$NON-NLS-1$
     }
+    
+    public void testImaginary() throws Exception
+    {
+        initializeScanner( "3i", ParserLanguage.C ); //$NON-NLS-1$
+        validateInteger( "3i" ); //$NON-NLS-1$
+        validateEOF();
+    }
 }

@@ -19,16 +19,11 @@ import org.eclipse.cdt.internal.core.parser.scanner2.IScannerData;
  */
 public interface IScannerExtension  {
 
-	public char[] initializeMacroValue( IScannerData scannerData, char[] original );
 	public void setupBuiltInMacros(IScannerData scannerData);
 	
 	public boolean isExtensionKeyword(ParserLanguage language, char[] tokenImage);
+	public boolean isExtensionOperator(ParserLanguage language, char[] query);
+	
 	public IToken  createExtensionToken(IScannerData scannerData, char[] image);
 
-	public boolean offersDifferentIdentifierCharacters();
-
-	public boolean isValidIdentifierStartCharacter(int c);
-	public boolean isValidIdentifierCharacter( int c );
-	public boolean isExtensionOperator(ParserLanguage language, char[] query);
-	public boolean isValidNumericLiteralSuffix(char c);
 }

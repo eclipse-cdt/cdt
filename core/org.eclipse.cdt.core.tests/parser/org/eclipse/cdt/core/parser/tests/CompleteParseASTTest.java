@@ -962,13 +962,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertTrue( ((IASTSimpleTypeSpecifier)function.getReturnType().getTypeSpecifier()).isComplex() );
 	}
 
-	public void testBug39551B() throws Exception
-	{
-	    //this used to be 99.99 * __I__, but I don't know where the __I__ came from, its not in C99, nor in GCC
-		IASTVariable variable = (IASTVariable)parse("_Imaginary double id = 99.99 * 1i;", true, ParserLanguage.C).getDeclarations().next(); //$NON-NLS-1$
-		assertEquals( variable.getName(), "id"); //$NON-NLS-1$
-		assertTrue( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).isImaginary() );
-	}
+
 	
 	public void testCBool() throws Exception
 	{

@@ -32,6 +32,9 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.ParserExtensionFactory;
+import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerConfiguration;
+import org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectStyleMacro;
 import org.eclipse.cdt.internal.core.parser.scanner2.Scanner2;
 
@@ -76,8 +79,13 @@ public class BaseScanner2Test extends TestCase {
     	if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
     	IParserLogService logService = ( log == null ) ? ParserFactory.createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
-		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-		return new Scanner2( code, config, ourRequestor, ourMode, language, logService, new ParserExtensionFactory( ExtensionDialect.GCC ).createScannerExtension(), workingCopies );
+		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor );
+		IScannerConfiguration configuration  = null;
+		if( language == ParserLanguage.C )
+		    configuration = new GCCScannerConfiguration();
+		else
+		    configuration = new GPPScannerConfiguration();
+		return new Scanner2( code, config, ourRequestor, ourMode, language, logService, new ParserExtensionFactory( ExtensionDialect.GCC ).createScannerExtension(), workingCopies, configuration );
     }
 
 	public int fullyTokenize() throws Exception

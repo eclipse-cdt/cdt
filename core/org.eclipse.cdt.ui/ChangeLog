@@ -1,4 +1,12 @@
 2004-09-09 David Inglis
+
+	Fix large gap between image and text in CView and ProjectView
+
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/ProjectsView.java
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewLabelProvider.java
+	
+2004-09-09 David Inglis
 	Fix for 36837 - CVS decoration updating
 
 	* src/org/eclipse/cdt/internal/ui/editor/CEditorErrorTickUpdater.java

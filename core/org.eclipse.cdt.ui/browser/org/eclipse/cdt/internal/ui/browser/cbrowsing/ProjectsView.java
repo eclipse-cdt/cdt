@@ -23,7 +23,8 @@ import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -55,8 +56,9 @@ public class ProjectsView extends CBrowsingPart {
 	}
 
 	protected LabelProvider createLabelProvider() {
-		return new CUILabelProvider();
-//		return new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_TYPE_ONLY);
+		return new AppearanceAwareLabelProvider(
+				AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS,
+				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | CElementImageProvider.SMALL_ICONS );
 	}
 	
 	/* (non-Javadoc)

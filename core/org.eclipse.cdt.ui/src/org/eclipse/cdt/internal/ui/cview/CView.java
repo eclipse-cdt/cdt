@@ -34,6 +34,8 @@ import org.eclipse.cdt.internal.ui.drag.TransferDragSourceListener;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 import org.eclipse.cdt.ui.CElementContentProvider;
@@ -565,7 +567,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	}
 
 	protected CUILabelProvider createLabelProvider() {
-		return new CViewLabelProvider();
+		return new CViewLabelProvider(AppearanceAwareLabelProvider.DEFAULT_TEXTFLAGS, AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | CElementImageProvider.SMALL_ICONS);
 	}
 
 	/*

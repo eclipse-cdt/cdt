@@ -28,13 +28,6 @@ import org.eclipse.swt.graphics.Image;
 public class CViewLabelProvider extends StandardCElementLabelProvider {
 	
 	/**
-	 * 
-	 */
-	public CViewLabelProvider() {
-		super();
-	}
-
-	/**
 	 * @param flags
 	 * @param adormentProviders
 	 */

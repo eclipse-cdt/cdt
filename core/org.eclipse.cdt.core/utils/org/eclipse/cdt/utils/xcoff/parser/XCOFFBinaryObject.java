@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 /**
- * TODO Provide description
+ * Binary file in AIX XCOFF32 format
  * 
  * @author vhirsl
  */

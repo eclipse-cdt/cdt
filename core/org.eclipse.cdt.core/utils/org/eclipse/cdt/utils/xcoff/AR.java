@@ -34,7 +34,7 @@ public class AR {
 	private MemberHeader[] memberHeaders;
 
 	/**
-	 * TODO Provide description
+	 * Content of an archive in AIX XCOFF32 format
 	 * 
 	 * @author vhirsl
 	 */
@@ -252,7 +252,7 @@ public class AR {
 		}
 
 		/**
-		 *  Create an new XCOFF32 object for the object file.
+		 *  Create a new XCOFF32 object for the object file.
 		 *
 		 * @throws IOException 
 		 *    Not a valid XCOFF32 object file.
@@ -370,7 +370,7 @@ public class AR {
 		try {
 			AR ar = new AR(args[0]);
 			ar.getHeaders();
-			ar.extractFiles(args[0]);
+			ar.extractFiles(args[1]);
 			System.out.println(ar);
 		} catch (IOException e) {
 			e.printStackTrace();

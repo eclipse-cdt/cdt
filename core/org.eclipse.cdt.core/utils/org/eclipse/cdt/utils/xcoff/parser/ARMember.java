@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IPath;
  * @author vhirsl
  */
 public class ARMember extends XCOFFBinaryObject {
-	AR.MemberHeader header;
+	private AR.MemberHeader header;
 
 	/**
 	 * @param parser

@@ -20,7 +20,9 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.core.runtime.IPath;
 
+import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.som.AR;
 import org.eclipse.cdt.utils.som.SOM;
@@ -45,8 +47,7 @@ public class ARMember extends SOMBinaryObject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.som.parser.SOMBinaryObject#addSymbols(org.eclipse.cdt.utils.som.SOM.Symbol[], byte[], org.eclipse.cdt.utils.Addr2line, org.eclipse.cdt.utils.CPPFilt, org.eclipse.cdt.utils.CygPath, java.util.List)
 	 */
-	protected void addSymbols(SOM.Symbol[] peSyms, byte[] table, List list) {
-		CPPFilt cppfilt = getCPPFilt();
+	protected void addSymbols(SOM.Symbol[] peSyms, byte[] table, Addr2line addr2line, CPPFilt cppfilt, CygPath cygpath, List list) {
 		for (int i = 0; i < peSyms.length; i++) {
 			if (peSyms[i].isFunction() || peSyms[i].isVariable()) {
 				String name = peSyms[i].getName(table);
@@ -54,14 +55,18 @@ public class ARMember extends SOMBinaryObject {
 				    !Character.isJavaIdentifierStart(name.charAt(0))) {
 					continue;
 				}
+				Symbol sym = new Symbol(this);
+				sym.type = peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
+				sym.addr = peSyms[i].symbol_value;
+
+				sym.name = name;
 				if (cppfilt != null) {
 					try {
-						name = cppfilt.getFunction(name);
+						sym.name = cppfilt.getFunction(sym.name);
 					} catch (IOException e1) {
 						cppfilt = null;
 					}
 				}
-				Symbol sym = new Symbol(this, name, peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE, peSyms[i].symbol_value, 1);
 
 				list.add(sym);
 			}

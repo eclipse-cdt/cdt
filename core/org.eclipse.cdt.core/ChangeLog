@@ -1,3 +1,9 @@
+2004-07-19 Vladimir Hirsl
+
+	Support for SOM/XCoff
+	* utils/org/eclipse/cdt/utils/som/*
+	* utils/org/eclipse/cdt/utils/xcoff/*
+
 2004-07-17 Brad Jarvinen.
 
 	Fix Pr 70252

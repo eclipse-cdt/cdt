@@ -16,13 +16,12 @@ import org.eclipse.core.resources.IResource;
 
 import org.eclipse.cdt.core.index.ITagEntry;
 
-public class CTagsRunner extends Thread {
+public class CTagsRunner implements Runnable {
 
 	IndexManager manager;
 
 	public CTagsRunner(IndexManager indexManager) {
 		manager = indexManager;
-		setDaemon(true);
 	}
 
 	public void run () {

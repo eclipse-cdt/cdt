@@ -60,19 +60,6 @@ public interface ICDITarget extends ICDIObject {
 	void setCurrentThread(ICDIThread current) throws CDIException;
 
 	/**
-	 * Returns a memory block that starts at the specified memory 
-	 * address, with the specified length.
-	 * 
-	 * @param - starting address
-	 * @param - length of the memory block in bytes 
-	 * @return a memory block that starts at the specified memory address, 
-	 * with the specified length 
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	ICDIMemoryBlock getCMemoryBlock(long startAddress, long length)
-		throws CDIException;
-
-	/**
 	 * Returns the register Object associated with this target.
 	 * 
 	 * @return a collection of register object.
@@ -95,17 +82,6 @@ public interface ICDITarget extends ICDIObject {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDIGlobalVariable[] getGlobalVariables() throws CDIException;
-
-	/**
-	 * Evaluates the expression specified by the given string.
-	 * Returns the evaluation result as an ICDIValue.
-	 * 
-	 * @param - expression string to be evaluated
-	 * @return the result of the evaluation
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	ICDIValue evaluateExpressionToValue(String expressionText)
-		throws CDIException;
 
 	/**
 	 * Evaluates the expression specified by the given string.

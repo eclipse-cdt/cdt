@@ -1,3 +1,8 @@
+2003-03-02 Alain Magloire
+
+	* src/org/eclipse/cdt/ui/wizards/BinaryParserBlock.java:
+	Check in the constructor if the project is null.
+
 2003-02-26 Alain Magloire
 
 	* src/org/eclipse/cdt/ui/wizards/BinaryParserBlock.java:

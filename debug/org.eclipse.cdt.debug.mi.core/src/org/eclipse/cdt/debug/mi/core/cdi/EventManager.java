@@ -59,6 +59,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIThreadCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarCreatedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
 
 /**
  */
@@ -85,14 +86,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			cdiList.add(new ResumedEvent(session, (MIRunningEvent)miEvent));
 		} else if (miEvent instanceof MIChangedEvent) {
 			if (miEvent instanceof MIVarChangedEvent) {
-				MIVarChangedEvent eventChanged = (MIVarChangedEvent)miEvent;
-				// We will receive a MIVarChangeEvent if the variable is
-				// no longer in scope in this case fire up a DestroyEvent
-				if (eventChanged.isInScope()) {
-					cdiList.add(new ChangedEvent(session, eventChanged));
-				} else {
-					cdiList.add(new DestroyedEvent(session, eventChanged));
-				}
+				cdiList.add(new ChangedEvent(session, (MIVarChangedEvent)miEvent));
 			} else if (miEvent instanceof MIRegisterChangedEvent) {
 				cdiList.add(new ChangedEvent(session, (MIRegisterChangedEvent)miEvent));
 			} else if (miEvent instanceof MIMemoryChangedEvent) {
@@ -162,6 +156,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				}
 			} else if (miEvent instanceof MISharedLibUnloadedEvent) {
 				cdiList.add(new DestroyedEvent(session, (MISharedLibUnloadedEvent)miEvent));
+			} else if (miEvent instanceof MIVarDeletedEvent) {
+				cdiList.add(new DestroyedEvent(session, (MIVarDeletedEvent)miEvent));
 			}
 		} else if (miEvent instanceof MICreatedEvent) {
 			if (miEvent instanceof MIBreakpointCreatedEvent) {

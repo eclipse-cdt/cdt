@@ -109,7 +109,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 			}
 			
 		});
-//		addControlAccessibleListener(fArgumentVariablesButton, fArgumentVariablesButton.getText()); // need to strip the mnemonic from buttons
+		addControlAccessibleListener(fArgumentVariablesButton, fArgumentVariablesButton.getText()); // need to strip the mnemonic from buttons
 	}
 
 	/**
@@ -133,6 +133,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		dialog.open();
 		return dialog.getVariableExpression();
 	}
+	
 	public void addControlAccessibleListener(Control control, String controlName) {
 		//strip mnemonic (&)
 		String[] strs = controlName.split("&"); //$NON-NLS-1$

@@ -1,3 +1,9 @@
+2003-04-25 Alain Magloire
+
+	* model/org/eclipse/cdt/internal/core/model/Binary.java (getNeededSharedLibs):
+	JUnit faileds tests.  getNeededSharedLibs() should also return for executable.
+	(isReadOnly): is always true for executable.
+
 2003-04-24 Alain Magloire
 
 	* utils/org/eclipse/cdt/utils/spawner/Spawner.java (raise):

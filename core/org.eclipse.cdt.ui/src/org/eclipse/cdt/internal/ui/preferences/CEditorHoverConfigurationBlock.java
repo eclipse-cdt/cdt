@@ -374,19 +374,17 @@ public class CEditorHoverConfigurationBlock {
 		CEditorTextHoverDescriptor[] hoverDescriptors= CUIPlugin.getDefault().getCEditorTextHoverDescriptors();
 
 		// Move Best Match hover to front
-		CEditorTextHoverDescriptor currentHover= hoverDescriptors[0];
+		
 		boolean done= false;
 		for (int i= 0; !done && i < hoverDescriptors.length; i++) {
 			if (PreferenceConstants.ID_BESTMATCH_HOVER.equals(hoverDescriptors[i].getId())) {
 				// Swap with first one
+				CEditorTextHoverDescriptor tmpHover= hoverDescriptors[0];
 				hoverDescriptors[0]= hoverDescriptors[i];
-				hoverDescriptors[i]= currentHover;
+				hoverDescriptors[i]= tmpHover;
 				return hoverDescriptors;
 			}
-			if (i > 0) {
-				currentHover= hoverDescriptors[i]; 
-				hoverDescriptors[i]= hoverDescriptors[i-1];
-			}
+			
 		}
 		
 		// return unchanged array if best match hover can't be found
@@ -451,8 +449,10 @@ public class CEditorHoverConfigurationBlock {
 	}
 
 	void performDefaults() {
+		fStatus= new StatusInfo();
 		restoreFromPreferences();
 		initializeFields();
+		updateStatus();
 	}
 
 	private void restoreFromPreferences() {

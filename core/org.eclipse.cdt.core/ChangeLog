@@ -1,3 +1,23 @@
+2004-01-20 Alain Magloire
+
+	To remove the hardcoded "objdump" we had to lay
+	down some infrastructure.  This is base on ideas/patch
+	from Chris Songer.  The idea is to define in the IToolsProvider
+	the Objdump class and reuse it to implement IBinaryFile.getContents().
+	Next step is to come up with ObjdumpEditor, to go this route
+	will be more flexible.
+
+	* model/org/eclipse/cdt/internal/core/model/Binary.java
+	* utils/org/eclipse/cdt/utils/CygwinToolsProvider.java
+	* utils/org/eclipse/cdt/utils/ToolsProvider.java
+	* utils/org/eclipse/cdt/utils/Objdump.java
+	* utils/org/eclipse/cdt/utils/IToolsProvider.java
+	* utils/org/eclipse/cdt/utils/coff/parser/CygwinPEParser.java
+	* utils/org/eclipse/cdt/utils/coff/parser/BinaryFile.java
+	* utils/org/eclipse/cdt/utils/elf/parser/BinaryFilejava
+	* utils/org/eclipse/cdt/utils/elf/parser/GNUElfParser.java
+	
+	
 2004-01-19 John Camelon
 		Updated CModelBuilder to access line number information from IASTOffsetableElement.
 

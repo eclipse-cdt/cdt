@@ -16,8 +16,24 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IToolsProvider {
 
+	/**
+	 * Return Addr2Line for this executable
+	 * @param path, the executable
+	 * @return
+	 */
 	Addr2line getAddr2Line(IPath path);
 
+	/**
+	 * Return CPPFilt to translate mangle names
+	 * @return
+	 */
 	CPPFilt getCPPFilt();
+
+	/**
+	 * Return Objdump for this executable
+	 * @param path, the executable
+	 * @return
+	 */
+	Objdump getObjdump(IPath path);
 
 }

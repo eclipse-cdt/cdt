@@ -13,13 +13,13 @@ package org.eclipse.cdt.utils.coff.parser;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.CygPath;
+import org.eclipse.cdt.utils.CygwinToolsProvider;
 import org.eclipse.cdt.utils.ICygwinToolsProvider;
+import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  */
@@ -43,66 +43,31 @@ public class CygwinPEParser extends PEParser implements IBinaryParser, ICygwinTo
 		return "Cygwin PE";
 	}
 
-	public IPath getAddr2LinePath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("addr2line"); //$NON-NLS-1
-		if (value == null || value.length() == 0) {
-			value = "addr2line"; //$NON-NLS-1
-		}
-		return new Path(value);
-	}
-
-	public IPath getCPPFiltPath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1
-		if (value == null || value.length() == 0) {
-			value = "c++filt"; //$NON-NLS-1
-		}
-		return new Path(value);
-	}
-
-	public IPath getCygPathPath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("cygpath"); //$NON-NLS-1
-		if (value == null || value.length() == 0) {
-			value = "cygpath"; //$NON-NLS-1
-		}
-		return new Path(value);
-	}
-
-	public Addr2line getAddr2Line(IPath execFile) {
-		IPath addr2LinePath = getAddr2LinePath();
-		Addr2line addr2line = null;
-		if (addr2LinePath != null && !addr2LinePath.isEmpty()) {
-			try {
-				addr2line = new Addr2line(addr2LinePath.toOSString(), execFile.toOSString());
-			} catch (IOException e1) {
-			}
-		}
-		return addr2line;
-	}
-
-	public CPPFilt getCPPFilt() {
-		IPath cppFiltPath = getCPPFiltPath();
-		CPPFilt cppfilt = null;
-		if (cppFiltPath != null && ! cppFiltPath.isEmpty()) {
-			try {
-				cppfilt = new CPPFilt(cppFiltPath.toOSString());
-			} catch (IOException e2) {
-			}
-		}
-		return cppfilt;
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.ICygwinToolsProvider#getCygPath()
+	 */
 	public CygPath getCygPath() {
-		IPath cygPathPath = getCygPathPath();
-		CygPath cygpath = null;
-		if (cygPathPath != null && !cygPathPath.isEmpty()) {
-			try {
-				cygpath = new CygPath(cygPathPath.toOSString());
-			} catch (IOException e1) {
-			}
-		}
-		return cygpath;
+		return new CygwinToolsProvider(this).getCygPath();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.IToolsProvider#getAddr2Line(org.eclipse.core.runtime.IPath)
+	 */
+	public Addr2line getAddr2Line(IPath path) {
+		return new CygwinToolsProvider(this).getAddr2Line(path);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.IToolsProvider#getCPPFilt()
+	 */
+	public CPPFilt getCPPFilt() {
+		return new CygwinToolsProvider(this).getCPPFilt();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.IToolsProvider#getObjdump(org.eclipse.core.runtime.IPath)
+	 */
+	public Objdump getObjdump(IPath path) {
+		return new CygwinToolsProvider(this).getObjdump(path);
 	}
 }

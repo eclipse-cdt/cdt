@@ -5,6 +5,9 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +18,7 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -269,6 +273,57 @@ public class Binary extends Openable implements IBinary {
 		//		variable.getVariableInfo().setAccessControl(IConstants.AccStatic);
 		//	}
 		//}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.Openable#openBuffer(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected IBuffer openBuffer(IProgressMonitor pm) throws CModelException {
+
+		// create buffer -  translation units only use default buffer factory
+		BufferManager bufManager = getBufferManager();		
+		IBuffer buffer = getBufferFactory().createBuffer(this);
+		if (buffer == null) 
+			return null;
+		
+		// set the buffer source
+		if (buffer.getCharacters() == null){
+			IBinaryFile bin = getBinaryFile();
+			if (bin != null) {
+				StringBuffer sb = new StringBuffer();
+				try {
+					BufferedReader stream = new BufferedReader(new InputStreamReader(bin.getContents()));
+					char[] buf = new char[512];
+					int len;
+					while ((len = stream.read(buf, 0, buf.length)) != -1) {
+						sb.append(buf, 0, len);
+					}
+				} catch (IOException e) {
+					// nothint.
+				}
+				buffer.setContents(sb.toString());
+			} else {
+				IResource file = this.getResource();
+				if (file != null && file.getType() == IResource.FILE) {
+					buffer.setContents(Util.getResourceContentsAsCharArray((IFile)file));
+				}
+			}
+		}
+
+		// add buffer to buffer cache
+		bufManager.addBuffer(buffer);
+		
+		// listen to buffer changes
+		// buffer.addBufferChangedListener(this);
+		
+		return buffer;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.Openable#hasBuffer()
+	 */
+	protected boolean hasBuffer() {
+		return true;
 	}
 
 }

@@ -20,6 +20,7 @@ import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.CygPath;
 import org.eclipse.cdt.utils.ICygwinToolsProvider;
+import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
@@ -59,6 +60,13 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 		return null;
 	}
 
+	public Objdump getObjdump() {
+		if (toolsProvider != null) {
+			return toolsProvider.getObjdump(path);
+		}
+		return null;
+	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getFile()
 	 */
@@ -77,9 +85,19 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 	public InputStream getContents() {
 		InputStream stream = null;
 		if (path != null) {
-			try {
-				stream = new FileInputStream(path.toFile());
-			} catch (IOException e) {
+			Objdump objdump = getObjdump();
+			if (objdump != null) {
+				try {
+					byte[] contents = objdump.getOutput();
+					stream = new ByteArrayInputStream(contents);
+				} catch (IOException e) {
+					// Nothing
+				}
+			} else {
+				try {
+					stream = new FileInputStream(path.toFile());
+				} catch (IOException e) {
+				}
 			}
 		}
 		if (stream == null) {

@@ -100,7 +100,7 @@ public class CTagsConsoleParser implements IConsoleParser {
     	    entryType = IIndexEncodingConstants.NAMESPACE;
     	} else if (kind.equals(PROTOTYPE)){
     	    entryType = IIndexEncodingConstants.FUNCTION;
-    	    type = ICSearchConstants.DEFINITIONS;
+    	    //type = ICSearchConstants.DEFINITIONS;
     	} else if (kind.equals(STRUCT)){
     	    entryType = IIndexEncodingConstants.STRUCT;
     	} else if (kind.equals(TYPEDEF)){

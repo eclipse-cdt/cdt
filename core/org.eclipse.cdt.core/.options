@@ -20,3 +20,6 @@ org.eclipse.cdt.core/debug/matchlocator=false
 
 # Reports background dependency tree activity
 org.eclipse.cdt.core/debug/dependency=false
+
+# Reports delta processor tree activity
+org.eclipse.cdt.core/debug/deltaprocessor=false

@@ -78,7 +78,8 @@ public class CCompletionContributorDescriptor {
 				CUIPlugin.getDefault().log(e);
 			}
 		}
-		return false;
+		// For backward compat. we have to return true in no enablement was specified.
+		return true;
 	}
 
 	public ICCompletionContributor getCCompletionContributor(ITranslationUnit cunit) throws CoreException {
@@ -123,7 +124,8 @@ public class CCompletionContributorDescriptor {
 				CUIPlugin.getDefault().log(e);
 			}
 		}
-		return false;
+		// For backward compat. we have to return true in no enablement was specified.
+		return true;
 	}
 
 	public ICCompletionContributor getCCompletionContributor(IProject project) throws CoreException {

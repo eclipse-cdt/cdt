@@ -1,3 +1,22 @@
+2003-01-31 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/DestroyedEvent.java:
+	Use deleteSharedLibrary from the manager.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/signal/Signal.java:
+	Construct a signal base on the MISignal response.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+	(suspendedInferior): Take ICDITarget as argument.
+	(resumeInferior): Take ICDITarget as argument.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java
+	(containsSharedLibrary): removed.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SignalManager.java
+	(update): implemented.
+	(getSignals): implemented.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SignalReceived.java:
+	Ask the manager for the signal.
+	* src/org/eclipse/cdt/debug/mi/core/event/MISignalEvent.java:
+	New file.
+
 2003-01-29 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java (getSharedLibraryPaths):

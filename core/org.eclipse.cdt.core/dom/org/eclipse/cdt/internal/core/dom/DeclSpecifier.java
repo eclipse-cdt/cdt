@@ -2,6 +2,7 @@ package org.eclipse.cdt.internal.core.dom;
 
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.parser.Name;
 import org.eclipse.cdt.internal.core.parser.Token;
 
 /**

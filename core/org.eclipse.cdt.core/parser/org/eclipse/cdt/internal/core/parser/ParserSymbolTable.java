@@ -39,7 +39,7 @@ public class ParserSymbolTable {
 	 */
 	public ParserSymbolTable() {
 		super();
-		_compilationUnit = new Declaration();
+		_compilationUnit = new Declaration("");
 		try{
 			_compilationUnit.setType( TypeInfo.t_namespace );
 		} catch ( ParserSymbolTableException e ){
@@ -1325,14 +1325,6 @@ public class ParserSymbolTable {
 
 	public class Declaration implements Cloneable, ISymbol {
 
-		/**
-		 * Constructor for Declaration.
-		 */
-		public Declaration(){
-			super();
-			_typeInfo = new TypeInfo();
-		}
-
 		public Declaration( String name ){
 			super();
 			_name = name;
@@ -1411,8 +1403,8 @@ public class ParserSymbolTable {
 		public String getName() { return _name; }
 		public void setName(String name) { _name = name; }
 	
-		public Object getObject() { return _object; }
-		public void setObject( Object obj ) { _object = obj; }
+		public Object getCallbackExtension() { return _object; }
+		public void setCallbackExtension( Object obj ) { _object = obj; }
 	
 		public Declaration	getContainingScope() { return _containingScope; }
 		protected void setContainingScope( Declaration scope ){ 

@@ -16,6 +16,6 @@ package org.eclipse.cdt.internal.core.parser;
  */
 public interface ISymbol {
 
-	public Object getObject(); 
+	public Object getCallbackExtension(); 
 
 }

@@ -13,7 +13,6 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-import org.eclipse.cdt.internal.core.dom.Name;
 
 public class ExpressionEvaluator implements IParserCallback {
 

@@ -39,7 +39,6 @@ import org.eclipse.cdt.internal.core.dom.IOffsetable;
 import org.eclipse.cdt.internal.core.dom.ITemplateParameterListOwner;
 import org.eclipse.cdt.internal.core.dom.Inclusion;
 import org.eclipse.cdt.internal.core.dom.Macro;
-import org.eclipse.cdt.internal.core.dom.Name;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
@@ -50,6 +49,7 @@ import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.IParser;
+import org.eclipse.cdt.internal.core.parser.Name;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.core.resources.IProject;
 

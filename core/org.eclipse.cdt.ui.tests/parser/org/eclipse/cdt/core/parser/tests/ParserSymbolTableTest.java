@@ -115,13 +115,13 @@ public class ParserSymbolTableTest extends TestCase {
 		ParserSymbolTable.Declaration x = table.new Declaration("x");
 		
 		Object obj = new Object();
-		x.setObject( obj );
+		x.setCallbackExtension( obj );
 				
 		table.getCompilationUnit().addDeclaration( x );
 		
 		ParserSymbolTable.Declaration look = table.getCompilationUnit().Lookup( "x" );
 		
-		assertEquals( look.getObject(), obj );
+		assertEquals( look.getCallbackExtension(), obj );
 	}
 	
 	/**

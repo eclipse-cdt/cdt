@@ -1,6 +1,5 @@
-package org.eclipse.cdt.internal.core.dom;
+package org.eclipse.cdt.internal.core.parser;
 
-import org.eclipse.cdt.internal.core.parser.Token;
 
 
 /**
@@ -18,6 +17,12 @@ public class Name {
 	public Name(Token nameStart) {
 		this.nameStart = nameStart;
 	}
+
+	public Name(Token nameStart, Token nameEnd) {
+		this( nameStart ); 
+		setEnd( nameEnd );
+	}
+
 	
 	public void setEnd(Token nameEnd) {
 		this.nameEnd = nameEnd;
@@ -58,6 +63,12 @@ public class Name {
 	 */
 	public Token getNameStart() {
 		return nameStart;
+	}
+	
+	public static String tokensToString( Token first, Token last )
+	{
+		Name n = new Name( first, last ); 
+		return n.toString(); 
 	}
 
 }

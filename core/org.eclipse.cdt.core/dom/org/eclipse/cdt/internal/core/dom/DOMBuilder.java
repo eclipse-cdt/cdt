@@ -3,6 +3,7 @@ package org.eclipse.cdt.internal.core.dom;
 
 import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
+import org.eclipse.cdt.internal.core.parser.Name;
 import org.eclipse.cdt.internal.core.parser.Token;
 
 /**

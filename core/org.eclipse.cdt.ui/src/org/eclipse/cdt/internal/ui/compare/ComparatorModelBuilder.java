@@ -25,13 +25,13 @@ import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
 import org.eclipse.cdt.internal.core.dom.IOffsetable;
 import org.eclipse.cdt.internal.core.dom.Inclusion;
 import org.eclipse.cdt.internal.core.dom.Macro;
-import org.eclipse.cdt.internal.core.dom.Name;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
+import org.eclipse.cdt.internal.core.parser.Name;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.parser.IStructurizerCallback;
 

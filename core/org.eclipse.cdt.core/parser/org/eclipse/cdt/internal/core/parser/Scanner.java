@@ -832,7 +832,11 @@ public class Scanner implements IScanner {
 							// get the rest of the line		
 							String expression = getRestOfPreprocessorLine();
 							
-							boolean expressionEvalResult =	evaluateExpression(expression);
+							boolean expressionEvalResult = false;
+							try{
+								expressionEvalResult = evaluateExpression(expression);
+							} catch( ScannerException e ){}
+							
 							passOnToClient = branches.poundif( expressionEvalResult ); 
 							c = getChar();
 							continue;
@@ -893,8 +897,10 @@ public class Scanner implements IScanner {
 								if (throwExceptionOnBadPreprocessorSyntax)
 									throw new ScannerException("Malformed #elsif clause");
 
-							boolean elsifResult =
-									evaluateExpression(elsifExpression );
+							boolean elsifResult = false;
+							try{
+								elsifResult = evaluateExpression(elsifExpression );
+							} catch( ScannerException e ){}
 
 							passOnToClient = branches.poundelif( elsifResult ); 
 							c = getChar();
@@ -1556,14 +1562,22 @@ public class Scanner implements IScanner {
 		boolean useIncludePath = true;
 		if (c == '<') {
 			c = getChar();
-			while ((c != '>')) {
+			while (c != '>') {
+				if( c == NOCHAR ){
+					//don't attempt an include if we hit the end of file before closing the brackets
+					return;
+				}
 				fileName.append((char) c);
 				c = getChar();
 			}
 		}
 		else if (c == '"') {
 			c = getChar();
-			while ((c != '"')) {
+			while (c != '"') {
+				if( c == NOCHAR ){
+					//don't attempt an include if we hit the end of file before closing the quotes
+					return;
+				}
 				fileName.append((char) c);
 				c = getChar();
 			}
@@ -1613,6 +1627,9 @@ public class Scanner implements IScanner {
 			StringBuffer buffer = new StringBuffer();
 			c = getChar();
 			while (c != ')') {
+				if( c == NOCHAR ){
+					return;	//don't attempt #define if we don't hit the closing bracket
+				}
 				buffer.append((char) c);
 				c = getChar();
 			}
@@ -1748,7 +1765,7 @@ public class Scanner implements IScanner {
 					else if (c == ')')
 						--bracketCount;
 
-					if (bracketCount == 0)
+					if(bracketCount == 0 || c == NOCHAR)
 						break;
 					buffer.append((char) c);
 					c = getChar( true );

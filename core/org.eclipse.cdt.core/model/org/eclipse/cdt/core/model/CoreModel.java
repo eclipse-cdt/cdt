@@ -188,7 +188,7 @@ public class CoreModel {
 		return cmodel;
 	}
 
-	public static void addElementChangedListener(IElementChangedListener listener) {
+	public void addElementChangedListener(IElementChangedListener listener) {
 		manager.addElementChangedListener(listener);
 	}
 
@@ -198,7 +198,7 @@ public class CoreModel {
 	 *
 	 * @param listener the listener
 	 */
-	public static void removeElementChangedListener(IElementChangedListener listener) {
+	public void removeElementChangedListener(IElementChangedListener listener) {
 		manager.removeElementChangedListener(listener);
 	}
 

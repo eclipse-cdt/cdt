@@ -15,6 +15,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CExpression;
+import org.eclipse.cdt.debug.internal.core.model.CFormattedMemoryBlock;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -355,7 +357,75 @@ public class CDebugModel
 		}
 		return null;
 	}
-	
+
+	public static IFormattedMemoryBlock createFormattedMemoryBlock( IDebugTarget target, 
+																	long startAddress,
+																    int format,
+																    int wordSize,
+																    int numberOfRows,
+																    int numberOfColumns, 
+																    char paddingChar ) throws DebugException
+	{
+		if ( target != null && target instanceof CDebugTarget )
+		{
+			try
+			{
+				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDISession()
+																	   .getMemoryManager()
+																	   .createMemoryBlock( startAddress, wordSize * numberOfRows * numberOfColumns );
+				return new CFormattedMemoryBlock( (CDebugTarget)target, 
+												  cdiMemoryBlock,
+												  format,
+												  wordSize,
+												  numberOfRows,
+												  numberOfColumns,
+												  paddingChar );
+			}
+			catch( CDIException e )
+			{
+				throw new DebugException( new Status( IStatus.ERROR, 
+													  getPluginIdentifier(),
+													  DebugException.TARGET_REQUEST_FAILED, 
+													  e.getMessage(), 
+													  null ) );
+			}
+		}
+		return null;
+	}
+
+	public static IFormattedMemoryBlock createFormattedMemoryBlock( IDebugTarget target, 
+																	long startAddress,
+																    int format,
+																    int wordSize,
+																    int numberOfRows,
+																    int numberOfColumns ) throws DebugException
+	{
+		if ( target != null && target instanceof CDebugTarget )
+		{
+			try
+			{
+				ICDIMemoryBlock cdiMemoryBlock = ((CDebugTarget)target).getCDISession()
+																	   .getMemoryManager()
+																	   .createMemoryBlock( startAddress, wordSize * numberOfRows * numberOfColumns );
+				return new CFormattedMemoryBlock( (CDebugTarget)target, 
+												  cdiMemoryBlock,
+												  format,
+												  wordSize,
+												  numberOfRows,
+												  numberOfColumns );
+			}
+			catch( CDIException e )
+			{
+				throw new DebugException( new Status( IStatus.ERROR, 
+													  getPluginIdentifier(),
+													  DebugException.TARGET_REQUEST_FAILED, 
+													  e.getMessage(), 
+													  null ) );
+			}
+		}
+		return null;
+	}
+
 	private static void stopInMain( CDebugTarget target ) throws DebugException
 	{
 		ICDILocation location = target.getCDISession().getBreakpointManager().createLocation( "", "main", 0 );

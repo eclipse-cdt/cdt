@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.ICBreakpoint;
 import org.eclipse.cdt.debug.core.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.ICWatchpoint;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
@@ -53,13 +54,14 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
+import org.eclipse.cdt.debug.internal.core.CMemoryManager;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -199,6 +201,11 @@ public class CDebugTarget extends CDebugElement
 	private List fTemporaryBreakpoints;
 
 	/**
+	 * A memory manager for this target.
+	 */
+	private CMemoryManager fMemoryManager;
+
+	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
 	 */
@@ -241,6 +248,7 @@ public class CDebugTarget extends CDebugElement
 		setSourceSearchPath();
 		initializeBreakpoints();
 		initializeRegisters();
+		initializeMemoryManager();
 		getLaunch().addDebugTarget( this );
 		fireCreationEvent();
 	}
@@ -287,6 +295,11 @@ public class CDebugTarget extends CDebugElement
 	{
 		fRegisterGroups = new ArrayList( 20 );
 		createMainRegisterGroup();
+	}
+
+	protected void initializeMemoryManager()
+	{
+		fMemoryManager = new CMemoryManager( this );
 	}
 
 	/* (non-Javadoc)
@@ -797,6 +810,8 @@ public class CDebugTarget extends CDebugElement
 				return getSourceLocator();
 			}
 		}
+		if ( adapter.equals( ICMemoryManager.class ) )
+			return getMemoryManager();
 		return super.getAdapter( adapter );
 	}
 	
@@ -1044,6 +1059,7 @@ public class CDebugTarget extends CDebugElement
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
 		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener( this );
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
+		disposeMemoryManager();
 		removeAllExpressions();
 		try
 		{
@@ -1893,5 +1909,15 @@ public class CDebugTarget extends CDebugElement
 			return ((CSourceManager)sl).getRealMode();
 		}
 		return ISourceMode.MODE_SOURCE;
+	}
+	
+	protected CMemoryManager getMemoryManager()
+	{
+		return fMemoryManager;
+	}
+	
+	private void disposeMemoryManager()
+	{
+		getMemoryManager().dispose();
 	}
 }

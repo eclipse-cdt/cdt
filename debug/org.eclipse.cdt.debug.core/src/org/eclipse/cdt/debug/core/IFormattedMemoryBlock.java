@@ -6,7 +6,7 @@
 package org.eclipse.cdt.debug.core;
 
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IMemoryBlock;
 
 /**
  * 
@@ -15,15 +15,8 @@ import org.eclipse.debug.core.model.IDebugElement;
  * 
  * @since Jul 31, 2002
  */
-public interface IFormattedMemoryBlock extends IDebugElement
+public interface IFormattedMemoryBlock extends IMemoryBlock
 {
-	/**
-	 * Returns the start address of this memory block.
-	 * 
-	 * @return the start address of this memory block
-	 */
-	long getStartAddress();
-
 	/**
 	 * Returns the format of the memory words of this block.
 	 * 
@@ -66,6 +59,8 @@ public interface IFormattedMemoryBlock extends IDebugElement
 	 */
 	IFormattedMemoryBlockRow[] getRows();
 
+	char getPaddingCharacter();
+
 	long nextRowAddress();
 	
 	long previousRowAddress();
@@ -74,14 +69,12 @@ public interface IFormattedMemoryBlock extends IDebugElement
 	
 	long previousPageAddress();
 
-	void reformat( long startAddress,
-				   int format,
+	void reformat( int format,
 				   int wordSize,
 				   int numberOfRows,
 				   int numberOfColumns ) throws DebugException;
 
-	void reformat( long startAddress,
-				   int format,
+	void reformat( int format,
 				   int wordSize,
 				   int numberOfRows,
 				   int numberOfColumns,

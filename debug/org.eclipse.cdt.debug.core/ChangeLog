@@ -1,4 +1,12 @@
 2002-10-15 Mikhail Khodjaiants
+	* CDebugModel.java: Implementing the memory view support.
+	* ICMemoryManager: Implementing the memory view support.
+	* IFormattedMemoryBlock.java: Implementing the memory view support.
+	* CDebugTarget.java: Implementing the memory view support.
+	* CFormattedMemoryBlock.java: Implementing the memory view support.
+	* CMemoryManager.java: Implementing the memory view support.
+
+2002-10-15 Mikhail Khodjaiants
 	* ICDebugConstants.java: New interface that contains the constant definitions for C/C++ debug plug-in.
 	* CSourceManager.java: Implementation of the 'Automatically switch to disassembly mode' preference.
 

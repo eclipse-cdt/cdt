@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.internal.core.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.CDebugTarget;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -77,6 +78,7 @@ public class CDebugModel
 											   final ICDITarget cdiTarget,
 											   final String name,
 											   final IProcess process,
+											   final IProject project,
 											   final boolean allowTerminate,
 											   final boolean allowDisconnect,
 											   final boolean stopInMain ) throws DebugException
@@ -90,6 +92,7 @@ public class CDebugModel
 											  cdiTarget, 
 											  name,
 											  process,
+											  project,
 											  allowTerminate,
 											  allowDisconnect );
 			}

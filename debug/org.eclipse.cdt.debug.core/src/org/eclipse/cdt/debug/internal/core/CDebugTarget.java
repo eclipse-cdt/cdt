@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.ICSourceLocator;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
 import org.eclipse.cdt.debug.core.IRestart;
@@ -24,6 +25,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDICreatedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDisconnectedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
@@ -31,13 +33,12 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDILoadedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIRestartedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
-//import org.eclipse.cdt.debug.core.cdi.event.ICDISteppingEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
-import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -48,6 +49,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
 
 /**
@@ -147,6 +149,11 @@ public class CDebugTarget extends CDebugElement
 	private int fSuspendCount = 0;
 
 	/**
+	 * The source locator for this target.
+	 */
+	private ICSourceLocator fSourceLocator = null;
+
+	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
 	 */
@@ -154,6 +161,7 @@ public class CDebugTarget extends CDebugElement
 						 ICDITarget cdiTarget, 
 						 String name,
 						 IProcess process,
+						 IProject project,
 						 boolean allowsTerminate,
 						 boolean allowsDisconnect )
 	{
@@ -166,6 +174,8 @@ public class CDebugTarget extends CDebugElement
 		fConfig = cdiTarget.getSession().getConfiguration();
 		fSupportsTerminate = allowsTerminate & fConfig.supportsTerminate();
 		fSupportsDisconnect = allowsDisconnect & fConfig.supportsDisconnect();
+		fSourceLocator = createSourceLocator( project );
+		launch.setSourceLocator( fSourceLocator );
 		setThreadList( new ArrayList( 5 ) );
 		initialize();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
@@ -341,7 +351,7 @@ public class CDebugTarget extends CDebugElement
 		try
 		{
 			setTerminating( true );
-			getCDITarget().terminate();
+			getCDISession().terminate();
 		}
 		catch( CDIException e )
 		{
@@ -453,9 +463,10 @@ public class CDebugTarget extends CDebugElement
 	 * Refreshes the thread list.
 	 * 
 	 */
-	protected synchronized void refreshThreads()
+	protected synchronized List refreshThreads()
 	{
 		ArrayList list = new ArrayList( 5 );
+		ArrayList newThreads = new ArrayList( 5 );
 		try
 		{
 			ICDIThread[] cdiThreads = getCDITarget().getThreads();
@@ -464,7 +475,8 @@ public class CDebugTarget extends CDebugElement
 				CThread thread = findThread( cdiThreads[i] ); 
 				if ( thread == null )
 				{
-					thread = createThread( cdiThreads[i] );
+					thread = new CThread( this, cdiThreads[i] );
+					newThreads.add( thread );
 				}
 				else
 				{
@@ -479,11 +491,17 @@ public class CDebugTarget extends CDebugElement
 			}
 			getThreadList().clear();
 			setThreadList( list );
+			it = newThreads.iterator();
+			while( it.hasNext() )
+			{
+				((CThread)it.next()).fireCreationEvent();
+			}
 		}
 		catch( CDIException e )
 		{
 			CDebugCorePlugin.log( e );
 		}
+		return newThreads;
 	}
 
 	/**
@@ -939,12 +957,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected CThread createThread( ICDIThread cdiThread )
 	{
-		CThread thread = null;
-		thread = new CThread( this, cdiThread );
-		if ( isDisconnected() )
-		{
-			return null;
-		}
+		CThread thread = new CThread( this, cdiThread );
 		getThreadList().add( thread );
 		thread.fireCreationEvent();
 		return thread;
@@ -958,12 +971,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected CThread createRunningThread( ICDIThread cdiThread )
 	{
-		CThread thread = null;
-		thread = new CThread( this, cdiThread );
-		if ( isDisconnected() )
-		{
-			return null;
-		}
+		CThread thread = new CThread( this, cdiThread );
 		thread.setRunning( true );
 		getThreadList().add( thread );
 		thread.fireCreationEvent();
@@ -996,12 +1004,14 @@ public class CDebugTarget extends CDebugElement
 		setCurrentStateId( IState.SUSPENDED );
 		ICDISessionObject reason = event.getReason();
 		setCurrentStateInfo( reason );
-		refreshThreads();
+		List newThreads = refreshThreads();
 		if ( event.getSource() instanceof ICDIThread )
 		{
 			CThread thread = findThread( (ICDIThread)event.getSource() );
-			if ( thread != null )
+			if ( thread != null && newThreads.contains( thread ) )
+			{
 				thread.handleDebugEvent( event );
+			}
 		}
 		if ( reason instanceof ICDIEndSteppingRange )
 		{
@@ -1215,5 +1225,20 @@ public class CDebugTarget extends CDebugElement
 	{
 		incrementSuspendCount();
 		super.fireSuspendEvent( detail );
+	}
+	
+	/**
+	 * Creates the source locator for this target.
+	 * 
+	 * @return the source locator for this target
+	 */
+	private ICSourceLocator createSourceLocator( IProject project )
+	{
+		return new CSourceLocator( this, project );
+	}
+	
+	protected ICSourceLocator getSourceLocator()
+	{
+		return fSourceLocator;
 	}
 }

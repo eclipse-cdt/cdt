@@ -170,11 +170,7 @@ public class CStackFrame extends CDebugElement
 	{
 		if ( isSuspended() )
 		{
-			ICDILocation location = getCDIStackFrame().getLocation();
-			if ( location != null )
-			{
-				return location.getLineNumber();
-			}
+			return ((CDebugTarget)getDebugTarget()).getSourceLocator().getLineNumber( this );
 		}
 		return -1;
 	}

@@ -11,6 +11,9 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
@@ -24,7 +27,11 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * 
@@ -87,6 +94,27 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 */
 	public IEditorInput getEditorInput( Object element )
 	{
+		IFile file = null;
+		if ( element instanceof IMarker )
+		{
+			IResource resource = ((IMarker)element).getResource();
+			if ( resource instanceof IFile )
+				file = (IFile)resource; 
+		}
+		if ( element instanceof IFile )
+			file = (IFile)element;
+		if ( file != null ) 
+			return new FileEditorInput( file );
+/*
+		if ( element instanceof IFileStorage )
+		{
+			return new FileStorageEditorInput( (IFileStorage)element );
+		}
+		if ( element instanceof IDisassemblyStorage )
+		{
+			return new DisassemblyEditorInput( (IStorage)element );
+		}
+*/
 		return null;
 	}
 
@@ -95,6 +123,13 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 */
 	public String getEditorId( IEditorInput input, Object element )
 	{
+		if ( input != null )
+		{
+			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+			IEditorDescriptor descriptor = registry.getDefaultEditor( input.getName() );
+			if ( descriptor != null )
+				return descriptor.getId();
+		}
 		return null;
 	}
 

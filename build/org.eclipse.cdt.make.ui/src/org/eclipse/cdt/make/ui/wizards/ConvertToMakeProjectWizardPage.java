@@ -89,6 +89,7 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
 		IStructuredSelection sel = ((BasicNewResourceWizard)getWizard()).getSelection();
 		if ( sel != null) {
 			tableViewer.setCheckedElements(sel.toArray());
+			setPageComplete(validatePage());
 		}
 	}
 

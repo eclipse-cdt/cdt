@@ -26,6 +26,15 @@ public class MIDataDisassembleInfo extends MIInfo {
 		return asms;
 	}
 
+	public String toString() {
+		MIAsm[] asms = getAsm();
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < asms.length; i++) {
+			buffer.append(asms[i].toString());
+		}
+		return buffer.toString();
+	}
+
 	void parse() {
 		List aList = new ArrayList();
 		if (isDone()) {
@@ -49,6 +58,8 @@ public class MIDataDisassembleInfo extends MIInfo {
 
 	void parse(MIList list, List aList) {
 		// src and assenbly is different
+		
+		// Mixed mode.
 		MIResult[] results = list.getMIResults();
 		if (results != null && results.length > 0) {
 			for (int i = 0; i < results.length; i++) {
@@ -62,6 +73,7 @@ public class MIDataDisassembleInfo extends MIInfo {
 			}
 		}
 
+		// Non Mixed with source
 		MIValue[] values = list.getMIValues();
 		if (values != null && values.length > 0) {
 			for (int i = 0; i < values.length; i++) {

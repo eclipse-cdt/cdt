@@ -70,16 +70,28 @@ public class MIAsm {
 			MIValue value = results[i].getMIValue();
 			String str = "";
 
+			// Recurse.
 			if (value instanceof MITuple) {
 				parse((MITuple)value);
 				continue;
 			}
+			
 
 			if (value != null && value instanceof MIConst) {
 				str = ((MIConst)value).getCString();
 			}
 
-			if (var.equals("address")) {
+			if (var.equals("line_asm_insn")) {
+				if (value instanceof MIList) {
+					MIList l = (MIList)value;
+					MIValue[] values = l.getMIValues();
+					for (int j = 0; j < values.length; j++) {
+						if (values[j] instanceof MITuple) {
+							parse((MITuple)values[j]);
+						}
+					}
+				}
+			} else if (var.equals("address")) {
 				try {
 					address = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {

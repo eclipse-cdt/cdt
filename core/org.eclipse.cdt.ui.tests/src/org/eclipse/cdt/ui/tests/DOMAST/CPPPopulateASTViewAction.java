@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -199,6 +200,13 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 		}
 	}
 	
+	private void mergeIncludeDirectives(IASTPreprocessorIncludeStatement[] includes) {
+		for(int i=0; i<includes.length; i++) {
+			if (includes[i] instanceof ASTNode)
+			mergeNode((ASTNode)includes[i]);
+		}
+	}
+	
 	public TreeParent getTree() {
 		if (root.getNode() instanceof IASTTranslationUnit) {
 			IASTTranslationUnit tu = (IASTTranslationUnit)root.getNode();
@@ -209,6 +217,8 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 			// merge preprocessor problems to the tree
 			mergePreprocessorProblems(tu.getPreprocesorProblems());
 			
+			// merge include directives
+			mergeIncludeDirectives(tu.getIncludeDirectives());
 		}
 		
 		return root;

@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -244,7 +245,10 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
          } else if (node instanceof IASTProblem) {
             imageKey = DOMASTPluginImages.IMG_IASTProblem;
          } else if (node instanceof IASTSimpleDeclaration) {
-            imageKey = DOMASTPluginImages.IMG_IASTSimpleDeclaration;
+         	if (node instanceof IASTProblemDeclaration)
+         		imageKey = DOMASTPluginImages.IMG_IASTProblem;
+         	else
+         		imageKey = DOMASTPluginImages.IMG_IASTSimpleDeclaration;
          } else if (node instanceof IASTStatement) {
             imageKey = DOMASTPluginImages.IMG_IASTStatement;
          } else if (node instanceof IASTTranslationUnit) {
@@ -311,7 +315,7 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
          viewer.setContentProvider(new ViewContentProvider(((CEditor) part)
                .getInputFile()));
       else
-         viewer.setContentProvider(new ViewContentProvider(file));
+         viewer.setContentProvider(new ViewContentProvider(null)); // don't attempt to create a view based on old file info
 
       viewer.setLabelProvider(new ViewLabelProvider());
       viewer.setInput(getViewSite());
@@ -496,42 +500,54 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
    }
 
    private class DisplayDeclarationsAction extends DisplaySearchResultAction {
-    public void run() {
+    private static final String STRING_QUOTE = "\""; //$NON-NLS-1$
+	public void run() {
      	ISelection selection = viewer.getSelection();
      	if (selection instanceof IStructuredSelection &&
      			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
      			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTName) {
+     		IASTName name = (IASTName)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode();
+     		StringBuffer pattern = new StringBuffer(STRING_QUOTE);
+     		if (name.toString() != null)
+     			pattern.append(name.toString());
+     		pattern.append(STRING_QUOTE);
      		
      		if (lang == ParserLanguage.CPP) {
      			// TODO Devin when implemented in CPPVisitor
      		} else {
-     			IASTName[] names = CVisitor.getDeclarations( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), ((IASTName)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()).resolveBinding() );
-     			displayNames(names, OPEN_DECLARATIONS);
+     			IASTName[] names = CVisitor.getDeclarations( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), name.resolveBinding() );
+     			displayNames(names, OPEN_DECLARATIONS, pattern.toString());
      		}
      	}
      }
    }
    
    private class DisplayReferencesAction extends DisplaySearchResultAction {
+   	private static final String STRING_QUOTE = "\""; //$NON-NLS-1$
     public void run() {
      	ISelection selection = viewer.getSelection();
      	if (selection instanceof IStructuredSelection &&
      			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
      			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTName) {
+     		IASTName name = (IASTName)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode();
+     		StringBuffer pattern = new StringBuffer(STRING_QUOTE);
+     		if (name.toString() != null)
+     			pattern.append(name.toString());
+     		pattern.append(STRING_QUOTE);
      		
      		if (lang == ParserLanguage.CPP) {
      			// TODO Devin when implemented in CPPVisitor
      		} else {
-     			IASTName[] names = CVisitor.getReferences( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), ((IASTName)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()).resolveBinding() );
-     			displayNames(names, OPEN_REFERENCES);
+     			IASTName[] names = CVisitor.getReferences( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), name.resolveBinding() );
+     			displayNames(names, OPEN_REFERENCES, pattern.toString());
      		}
      	}
      }
    }
    
    private class DisplaySearchResultAction extends Action {
-	   	protected void displayNames(IASTName[] names, String queryLabel) {
-	        DOMQuery job = new DOMQuery(names, queryLabel);
+	   	protected void displayNames(IASTName[] names, String queryLabel, String pattern) {
+	        DOMQuery job = new DOMQuery(names, queryLabel, pattern);
 	        NewSearchUI.activateSearchResultView();
 	        NewSearchUI.runQuery(job);
 	     }

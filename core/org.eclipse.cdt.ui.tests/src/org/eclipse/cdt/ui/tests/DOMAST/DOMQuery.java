@@ -47,8 +47,8 @@ public class DOMQuery extends CSearchQuery implements ISearchQuery {
 	/**
 	 * 
 	 */
-	public DOMQuery(IASTName[] names, String queryLabel) {
-		super(CTestPlugin.getWorkspace(), null, null, BLANK_STRING, null); //$NON-NLS-1$
+	public DOMQuery(IASTName[] names, String queryLabel, String pattern) {
+		super(CTestPlugin.getWorkspace(), pattern, false, null, null, null, queryLabel, null);
 		this.names = names;
 		this.queryLabel = queryLabel;
 	}

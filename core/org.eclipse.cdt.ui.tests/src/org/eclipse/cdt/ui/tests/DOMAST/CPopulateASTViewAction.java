@@ -21,12 +21,15 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
 import org.eclipse.cdt.internal.core.parser.scanner2.LocationMap.ASTObjectMacro;
@@ -121,6 +124,12 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 	 */
 	public int processInitializer(IASTInitializer initializer) {
 		addRoot(initializer);
+		if (initializer instanceof ICASTDesignatedInitializer) {
+			ICASTDesignator[] designators = ((ICASTDesignatedInitializer)initializer).getDesignators();
+			for (int i=0; i<designators.length; i++) {
+				addRoot(designators[i]);		
+			}
+		}
 		return PROCESS_CONTINUE;
 	}
 	
@@ -178,6 +187,13 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 			mergeNode((ASTNode)problems[i]);
 		}
 	}
+
+	private void mergeIncludeDirectives(IASTPreprocessorIncludeStatement[] includes) {
+		for(int i=0; i<includes.length; i++) {
+			if (includes[i] instanceof ASTNode)
+			mergeNode((ASTNode)includes[i]);
+		}
+	}
 	
 	public TreeParent getTree() {
 		if (root.getNode() instanceof IASTTranslationUnit) {
@@ -189,6 +205,8 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 			// merge preprocessor problems to the tree
 			mergePreprocessorProblems(tu.getPreprocesorProblems());
 			
+			// merge include directives
+			mergeIncludeDirectives(tu.getIncludeDirectives());
 		}
 		
 		return root;

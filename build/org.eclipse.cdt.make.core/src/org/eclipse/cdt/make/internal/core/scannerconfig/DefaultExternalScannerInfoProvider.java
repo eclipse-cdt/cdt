@@ -104,7 +104,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 			
 			OutputStream sniffer = ScannerInfoConsoleParserFactory.getESIProviderOutputSniffer(
 					cos, currentProject, buildInfo, collector);
-			TraceUtil.outputTrace("Default provider running command:", fCompileCommand.toString() + ca, ""); //$NON-NLS-1$ //$NON-NLS-2$
+			TraceUtil.outputTrace("Default provider is executing command:", fCompileCommand.toString() + ca, ""); //$NON-NLS-1$ //$NON-NLS-2$
 			Process p = launcher.execute(fCompileCommand, compileArguments, setEnvironment(launcher), fWorkingDirectory);
 			if (p != null) {
 				try {
@@ -168,7 +168,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 		}
 		fCompileCommand = buildInfo.getESIProviderCommand();
 		if (fCompileCommand != null) {
-			fCompileArguments = ScannerConfigUtil.tokenizeStringWithQuotes(buildInfo.getESIProviderArguments());
+			fCompileArguments = ScannerConfigUtil.tokenizeStringWithQuotes(buildInfo.getESIProviderArguments(), "\"");//$NON-NLS-1$
 			for (int i = 0; i < fCompileArguments.length; ++i) {
 				fCompileArguments[i] = fCompileArguments[i].replaceAll("\\$\\{plugin_state_location\\}",	//$NON-NLS-1$ 
 						MakeCorePlugin.getWorkingDirectory().toString());

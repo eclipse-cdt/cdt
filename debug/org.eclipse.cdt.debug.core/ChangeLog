@@ -1,4 +1,8 @@
 2003-11-10 Mikhail Khodjaiants
+	Ensure that all breakpoint creation and modification operations are running in the UI thread.
+	* CBreakpointManager.java
+
+2003-11-10 Mikhail Khodjaiants
 	Added synchronization to some of the 'CBreakpoint' methods.
 	* CBreakpoint.java
 

@@ -291,7 +291,25 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 		return 0;
 	}
 
-	public void setBreakpoint( ICBreakpoint breakpoint ) throws DebugException
+	public void setBreakpoint( final ICBreakpoint breakpoint ) throws DebugException
+	{
+		Runnable runnable = new Runnable()
+								{
+									public void run()
+									{
+										try
+										{
+											doSetBreakpoint( breakpoint );
+										}
+										catch( DebugException e )
+										{
+										}
+									}
+								};
+		CDebugCorePlugin.getDefault().asyncExec( runnable );
+	}
+
+	protected void doSetBreakpoint( ICBreakpoint breakpoint ) throws DebugException
 	{
 		try
 		{
@@ -327,7 +345,25 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 		}
 	}
 
-	public void removeBreakpoint( ICBreakpoint breakpoint ) throws DebugException
+	public void removeBreakpoint( final ICBreakpoint breakpoint ) throws DebugException
+	{
+		Runnable runnable = new Runnable()
+								{
+									public void run()
+									{
+										try
+										{
+											doRemoveBreakpoint( breakpoint );
+										}
+										catch( DebugException e )
+										{
+										}
+									}
+								};
+		CDebugCorePlugin.getDefault().asyncExec( runnable );
+	}
+
+	protected void doRemoveBreakpoint( ICBreakpoint breakpoint ) throws DebugException
 	{
 		ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
 		if ( cdiBreakpoint != null )
@@ -344,7 +380,25 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 		}
 	}
 
-	public void changeBreakpointProperties( ICBreakpoint breakpoint, IMarkerDelta delta ) throws DebugException
+	public void changeBreakpointProperties( final ICBreakpoint breakpoint, final IMarkerDelta delta ) throws DebugException
+	{
+		Runnable runnable = new Runnable()
+								{
+									public void run()
+									{
+										try
+										{
+											doChangeBreakpointProperties( breakpoint, delta );
+										}
+										catch( DebugException e )
+										{
+										}
+									}
+								};
+		CDebugCorePlugin.getDefault().asyncExec( runnable );
+	}
+
+	protected void doChangeBreakpointProperties( ICBreakpoint breakpoint, IMarkerDelta delta ) throws DebugException
 	{
 		ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( breakpoint );
 		if ( cdiBreakpoint == null )
@@ -481,7 +535,20 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 		}
 	}
 
-	private void handleBreakpointDestroyedEvent( ICDIBreakpoint cdiBreakpoint )
+	private void handleBreakpointDestroyedEvent( final ICDIBreakpoint cdiBreakpoint )
+	{
+		Runnable runnable = new Runnable()
+								{
+									public void run()
+									{
+										doHandleBreakpointDestroyedEvent( cdiBreakpoint );
+									}
+ 
+								};
+		CDebugCorePlugin.getDefault().asyncExec( runnable );
+	}
+
+	protected void doHandleBreakpointDestroyedEvent( ICDIBreakpoint cdiBreakpoint )
 	{
 		ICBreakpoint breakpoint = getBreakpointMap().getCBreakpoint( cdiBreakpoint );
 		if ( breakpoint != null )

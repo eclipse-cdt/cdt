@@ -93,25 +93,27 @@ public class CompleteParsePluginTest extends TestCase {
     static FileManager 				fileManager;
     
     {
-		(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
-		monitor = new NullProgressMonitor();
-		
-		workspace = ResourcesPlugin.getWorkspace();
-		
-		ICProject cPrj; 
-        try {
-            cPrj = CProjectHelper.createCCProject("ParserTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
-        
-            project = cPrj.getProject();
-            project.setSessionProperty(IndexManager.activationKey,new Boolean(false));
-        } catch ( CoreException e ) {
-            /*boo*/
-        }
-		if (project == null)
-			fail("Unable to create project"); //$NON-NLS-1$
-
-		//Create file manager
-		fileManager = new FileManager();
+    	if( CCorePlugin.getDefault() != null && CCorePlugin.getDefault().getCoreModel() != null){
+			(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
+			monitor = new NullProgressMonitor();
+			
+			workspace = ResourcesPlugin.getWorkspace();
+			
+			ICProject cPrj; 
+	        try {
+	            cPrj = CProjectHelper.createCCProject("ParserTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+	        
+	            project = cPrj.getProject();
+	            project.setSessionProperty(IndexManager.activationKey,new Boolean(false));
+	        } catch ( CoreException e ) {
+	            /*boo*/
+	        }
+			if (project == null)
+				fail("Unable to create project"); //$NON-NLS-1$
+	
+			//Create file manager
+			fileManager = new FileManager();
+    	}
 	}
     
     public CompleteParsePluginTest()

@@ -117,14 +117,19 @@ public class ProjectContainerPage extends WizardPage implements ICPathContainerP
 			current = Arrays.asList(fCProject.getRawPathEntries());
 			ICProject[] cProjects = CoreModel.getDefault().getCModel().getCProjects();
 			for (int i = 0; i < cProjects.length; i++) {
+				boolean added = false;
 				if (!cProjects[i].equals(fCProject) && !current.contains(CoreModel.newProjectEntry(cProjects[i].getPath()))) {
 					IPathEntry[] projEntries = cProjects[i].getRawPathEntries();
 					for (int j = 0; j < projEntries.length; j++) {
 						for (int k = 0; k < fFilterType.length; k++) {
 							if (projEntries[j].getEntryKind() == fFilterType[k] && projEntries[j].isExported()) {
 								list.add(cProjects[i]);
+								added = true;
 								break;
 							}
+						}
+						if (added) {
+							break;
 						}
 					}
 				}

@@ -1,3 +1,13 @@
+2003-02-18 Mikhail Khodjaiants
+	Added persistency to the source locator.
+	* plugin.xml: added dependency on the 'org.apache.xerces' plugin
+	* ICSourceLocation.java
+	* CDebugUtils.java
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+	* CSourceLocator.java
+	* CSourceManager.java
+
 2003-02-13 Mikhail Khodjaiants
 	Undo changes because the 'asyncExec' method of the 'DebugPlugin' class has added since version 2.1.
 	* IAsyncExecutor.java: removed

@@ -5,13 +5,21 @@
  */
 package org.eclipse.cdt.debug.internal.core;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
+import org.apache.xml.serialize.Method;
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.Serializer;
+import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStatusHandler;
+import org.w3c.dom.Document;
 
 /**
  * 
@@ -244,4 +252,41 @@ public class CDebugUtils
 		}
 		return false;
 	}   
+
+	/**
+	 * Serializes a XML document into a string - encoded in UTF8 format,
+	 * with given line separators.
+	 * 
+	 * @param doc document to serialize
+	 * @param lineSeparator line separator
+	 * @return the document as a string
+	 */
+	public static String serializeDocument( Document doc, String lineSeparator ) throws IOException
+	{
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting( true );
+		format.setLineSeparator( lineSeparator ); //$NON-NLS-1$
+		Serializer serializer = SerializerFactory.getSerializerFactory( Method.XML ).makeSerializer( new OutputStreamWriter( s, "UTF8" ), format );
+		serializer.asDOMSerializer().serialize( doc );
+		return s.toString( "UTF8" ); //$NON-NLS-1$		
+	}
+
+	/**
+	 * Serializes a XML document into a string - encoded in UTF8 format,
+	 * with platform line separators.
+	 * 
+	 * @param doc document to serialize
+	 * @return the document as a string
+	 */
+	public static String serializeDocument( Document doc) throws IOException
+	{
+		ByteArrayOutputStream s = new ByteArrayOutputStream();
+		OutputFormat format = new OutputFormat();
+		format.setIndenting( true );
+		format.setLineSeparator( System.getProperty( "line.separator" ) ); //$NON-NLS-1$
+		Serializer serializer = SerializerFactory.getSerializerFactory( Method.XML ).makeSerializer( new OutputStreamWriter( s, "UTF8" ), format );
+		serializer.asDOMSerializer().serialize( doc );
+		return s.toString( "UTF8" ); //$NON-NLS-1$		
+	}
 }

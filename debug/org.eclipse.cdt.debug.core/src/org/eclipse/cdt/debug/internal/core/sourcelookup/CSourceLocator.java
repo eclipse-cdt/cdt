@@ -6,20 +6,41 @@
 
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * 
@@ -27,8 +48,14 @@ import org.eclipse.debug.core.model.IStackFrame;
  * 
  * @since Aug 19, 2002
  */
-public class CSourceLocator implements ICSourceLocator
+
+public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocator
 {
+	private static final String ELEMENT_NAME = "cSourceLocator";
+	private static final String CHILD_NAME = "cSourceLocation";
+	private static final String ATTR_CLASS = "class";
+	private static final String ATTR_MEMENTO = "memento";
+
 	/**
 	 * The array of source locations associated with this locator.
 	 */
@@ -245,5 +272,173 @@ public class CSourceLocator implements ICSourceLocator
 			}
 		}
 		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
+	 */
+	public String getMemento() throws CoreException
+	{
+		Document doc = new DocumentImpl();
+		Element node = doc.createElement( ELEMENT_NAME );
+		doc.appendChild( node );
+
+		ICSourceLocation[] locations = getSourceLocations();
+		for ( int i = 0; i < locations.length; i++ )
+		{
+			Element child = doc.createElement( CHILD_NAME );
+			child.setAttribute( ATTR_CLASS, locations[i].getClass().getName() );
+			child.setAttribute( ATTR_MEMENTO, locations[i].getMemento() );
+			node.appendChild( child );
+		}
+		try
+		{
+			return CDebugUtils.serializeDocument( doc, " " );
+		}
+		catch( IOException e )
+		{
+			abort( "Unable to create memento for C/C++ source locator.", e );
+		}
+		// execution will not reach here
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
+	{
+		IProject project = getProject( configuration );
+		if ( project != null )
+		{
+			setSourceLocations( getDefaultSourceLocations( project ) );
+		}
+		else
+		{
+			setSourceLocations( new ICSourceLocation[0] );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
+	 */
+	public void initializeFromMemento( String memento ) throws CoreException
+	{
+		Exception ex = null;
+		try
+		{
+			Element root = null;
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			StringReader reader = new StringReader( memento );
+			InputSource source = new InputSource( reader );
+			root = parser.parse( source ).getDocumentElement();
+
+			if ( !root.getNodeName().equalsIgnoreCase( ELEMENT_NAME ) )
+			{
+				abort( "Unable to restore C/C++ source locator - invalid format.", null );
+			}
+
+			List sourceLocations = new ArrayList();
+			ClassLoader classLoader = CDebugCorePlugin.getDefault() .getDescriptor().getPluginClassLoader();
+
+			NodeList list = root.getChildNodes();
+			int length = list.getLength();
+			for ( int i = 0; i < length; ++i )
+			{
+				Node node = list.item( i );
+				short type = node.getNodeType();
+				if ( type == Node.ELEMENT_NODE )
+				{
+					Element entry = (Element)node;
+					if ( entry.getNodeName().equalsIgnoreCase( CHILD_NAME ) )
+					{
+						String className = entry.getAttribute( ATTR_CLASS );
+						String data = entry.getAttribute( ATTR_MEMENTO );
+						if ( isEmpty( className ) )
+						{
+							abort( "Unable to restore C/C++ source locator - invalid format.", null );
+						}
+						Class clazz = null;
+						try
+						{
+							clazz = classLoader.loadClass( className );
+						}
+						catch( ClassNotFoundException e )
+						{
+							abort( MessageFormat.format( "Unable to restore source location - class not found {0}", new String[] { className } ), e );
+						}
+
+						ICSourceLocation location = null;
+						try
+						{
+							location = (ICSourceLocation)clazz.newInstance();
+						}
+						catch( IllegalAccessException e )
+						{
+							abort( "Unable to restore source location.", e );
+						}
+						catch( InstantiationException e )
+						{
+							abort( "Unable to restore source location.", e );
+						}
+						location.initializeFrom( data );
+						sourceLocations.add( location );
+					}
+					else
+					{
+						abort( "Unable to restore C/C++ source locator - invalid format.", null );
+					}
+				}
+			}
+			setSourceLocations( (ICSourceLocation[])sourceLocations.toArray( new ICSourceLocation[sourceLocations.size()] ) );
+			return;
+		}
+		catch( ParserConfigurationException e )
+		{
+			ex = e;
+		}
+		catch( SAXException e )
+		{
+			ex = e;
+		}
+		catch( IOException e )
+		{
+			ex = e;
+		}
+		abort( "Exception occurred initializing source locator.", ex );
+	}
+
+	/**
+	 * Throws an internal error exception
+	 */
+	private void abort( String message, Throwable e ) throws CoreException
+	{
+		IStatus s = new Status( IStatus.ERROR,
+								CDebugCorePlugin.getUniqueIdentifier(),
+								CDebugCorePlugin.INTERNAL_ERROR,
+								message,
+								e );
+		throw new CoreException( s );
+	}
+
+
+	private boolean isEmpty( String string )
+	{
+		return string == null || string.length() == 0;
+	}
+	
+	private IProject getProject( ILaunchConfiguration configuration )
+	{
+		IProject project = null;
+		try
+		{
+			String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "" );
+			if ( !isEmpty( projectName ) )
+				project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
+		}
+		catch( CoreException e )
+		{
+		}
+		return project;
 	}
 }

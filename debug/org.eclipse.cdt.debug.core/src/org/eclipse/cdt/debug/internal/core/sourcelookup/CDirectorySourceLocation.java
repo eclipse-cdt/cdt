@@ -6,16 +6,32 @@
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.text.MessageFormat;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * 
@@ -26,6 +42,10 @@ import org.eclipse.core.runtime.Path;
  */
 public class CDirectorySourceLocation implements IDirectorySourceLocation
 {
+	private static final String ELEMENT_NAME = "cDirectorySourceLocation";
+	private static final String ATTR_DIRECTORY = "directory";
+	private static final String ATTR_ASSOCIATION = "association";
+
 	/**
 	 * The root directory of this source location
 	 */
@@ -35,6 +55,13 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	 * The associted path of this source location. 
 	 */
 	private IPath fAssociation = null;
+
+	/**
+	 * Constructor for CDirectorySourceLocation.
+	 */
+	public CDirectorySourceLocation()
+	{
+	}
 
 	/**
 	 * Constructor for CDirectorySourceLocation.
@@ -101,6 +128,11 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	public IPath getDirectory()
 	{
 		return fDirectory;
+	}
+
+	public void getDirectory( IPath path )
+	{
+		fDirectory = path;
 	}
 
 	private void setAssociation( IPath association )
@@ -176,5 +208,111 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 	public IPath[] getPaths()
 	{
 		return new IPath[] { fDirectory };
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#getMemento()
+	 */
+	public String getMemento() throws CoreException
+	{
+		Document doc = new DocumentImpl();
+		Element node = doc.createElement( ELEMENT_NAME );
+		doc.appendChild( node );
+		node.setAttribute( ATTR_DIRECTORY, getDirectory().toOSString() );
+		if ( getAssociation() != null )
+			node.setAttribute( ATTR_ASSOCIATION, getAssociation().toOSString() );
+		try
+		{
+			return CDebugUtils.serializeDocument( doc, " " );
+		}
+		catch( IOException e )
+		{
+			abort( MessageFormat.format( "Unable to create memento for C/C++ directory source location {0}", new String[] { getDirectory().toOSString() } ), e );
+		}
+		// execution will not reach here
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation#initializeFrom(java.lang.String)
+	 */
+	public void initializeFrom( String memento ) throws CoreException
+	{
+		Exception ex = null;
+		try
+		{
+			Element root = null;
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			StringReader reader = new StringReader( memento );
+			InputSource source = new InputSource( reader );
+			root = parser.parse( source ).getDocumentElement();
+
+			String dir = root.getAttribute( ATTR_DIRECTORY );
+			if ( isEmpty( dir ) )
+			{
+				abort( "Unable to initialize source location - missing directory path", null );
+			}
+			else
+			{
+				IPath path = new Path( dir );
+				if ( path.isValidPath( dir ) && path.toFile().isDirectory() )
+				{
+					setDirectory( path );
+				}
+				else
+				{
+					abort( MessageFormat.format( "Unable to initialize source location - invalid directory path {0}", new String[] { dir } ), null );
+				}
+			}
+			dir = root.getAttribute( ATTR_ASSOCIATION );
+			if ( isEmpty( dir ) )
+			{
+				setAssociation( null );
+			}
+			else
+			{
+				IPath path = new Path( dir );
+				if ( path.isValidPath( dir ) )
+				{
+					setAssociation( path );
+				}
+				else
+				{
+					setAssociation( null );
+				}
+			}
+			return;
+		}
+		catch( ParserConfigurationException e )
+		{
+			ex = e;
+		}
+		catch( SAXException e )
+		{
+			ex = e;
+		}
+		catch( IOException e )
+		{
+			ex = e;
+		}
+		abort( "Exception occurred initializing source location.", ex );
+	}
+
+	/**
+	 * Throws an internal error exception
+	 */
+	private void abort( String message, Throwable e ) throws CoreException
+	{
+		IStatus s = new Status( IStatus.ERROR,
+								CDebugCorePlugin.getUniqueIdentifier(),
+								CDebugCorePlugin.INTERNAL_ERROR,
+								message,
+								e );
+		throw new CoreException( s );
+	}
+
+	private boolean isEmpty( String string )
+	{
+		return string == null || string.length() == 0;
 	}
 }

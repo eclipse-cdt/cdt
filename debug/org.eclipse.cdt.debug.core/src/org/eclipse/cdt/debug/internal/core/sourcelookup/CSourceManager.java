@@ -16,8 +16,11 @@ import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 
@@ -26,7 +29,10 @@ import org.eclipse.debug.core.model.IStackFrame;
  * 
  * @since: Oct 8, 2002
  */
-public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
+public class CSourceManager implements ICSourceLocator, 
+									   IPersistableSourceLocator, 
+									   ISourceMode, 
+									   IAdaptable
 {
 	private ISourceLocator fSourceLocator = null;
 	private int fMode = ISourceMode.MODE_SOURCE;
@@ -200,6 +206,41 @@ public class CSourceManager implements ICSourceLocator, ISourceMode, IAdaptable
 		{
 			return getCSourceLocator().findSourceElement( fileName );
 		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
+	 */
+	public String getMemento() throws CoreException
+	{
+		if ( getPersistableSourceLocator() != null )
+			return getPersistableSourceLocator().getMemento();
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
+	{
+		if ( getPersistableSourceLocator() != null )
+			getPersistableSourceLocator().initializeDefaults( configuration );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
+	 */
+	public void initializeFromMemento( String memento ) throws CoreException
+	{
+		if ( getPersistableSourceLocator() != null )
+			getPersistableSourceLocator().initializeFromMemento( memento );
+	}
+
+	private IPersistableSourceLocator getPersistableSourceLocator()
+	{
+		if ( fSourceLocator instanceof IPersistableSourceLocator )
+			return (IPersistableSourceLocator)fSourceLocator;
 		return null;
 	}
 }

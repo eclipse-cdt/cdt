@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;

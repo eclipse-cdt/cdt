@@ -5,8 +5,6 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import java.text.MessageFormat;
-
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.MultiStatus;

@@ -44,7 +44,7 @@ public class ResourceAdapterFactory implements IAdapterFactory {
 				} else if (element instanceof IProject) {
 					return celementFactory.create((IProject)element);
 				} else if (element instanceof IWorkspaceRoot) {
-					return celementFactory.create((IWorkspaceRoot)element);
+					return CoreModel.create((IWorkspaceRoot)element);
 				} else if (element instanceof IResource) {
 					return celementFactory.create((IResource)element);
 				}

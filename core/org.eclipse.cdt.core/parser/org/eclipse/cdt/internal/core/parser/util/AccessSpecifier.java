@@ -21,9 +21,14 @@ public class AccessSpecifier {
 	public static final int v_private = 0;
 	public static final int v_protected = 1;
 	public static final int v_public = 2;
+	public static final int v_unknown = 3; 
 	
 	private int access;
 	public void setAccess(int access) { this.access = access; }
 	public int getAccess() { return access; }
 	
+	public AccessSpecifier( int value )
+	{
+		setAccess( value );
+	}
 }

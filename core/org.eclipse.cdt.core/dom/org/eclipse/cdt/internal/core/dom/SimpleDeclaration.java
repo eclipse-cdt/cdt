@@ -4,11 +4,15 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 
-public class SimpleDeclaration extends Declaration implements DeclSpecifier.Container {
+public class SimpleDeclaration extends Declaration implements DeclSpecifier.Container, IOffsettable, TypeSpecifier.IOwner {
 
+	private int startingOffset = 0, totalLength = 0;
+	private AccessSpecifier accessSpecifier = null;
 	private DeclSpecifier declSpec = null;
+	private boolean isFunctionDefinition = false;
 	 
 	public DeclSpecifier getDeclSpecifier()
 	{
@@ -61,4 +65,60 @@ public class SimpleDeclaration extends Declaration implements DeclSpecifier.Cont
 	public void removeDeclarator(Object declarator) {
 		declarators.remove( declarator );
 	}
+	/**
+	 * @return
+	 */
+	public AccessSpecifier getAccessSpecifier() {
+		return accessSpecifier;
+	}
+
+	/**
+	 * @param specifier
+	 */
+	public void setAccessSpecifier(AccessSpecifier specifier) {
+		accessSpecifier = specifier;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isFunctionDefinition() {
+		return isFunctionDefinition;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setFunctionDefinition(boolean b) {
+		isFunctionDefinition = b;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsettable#getStartingOffset()
+	 */
+	public int getStartingOffset() {
+		return startingOffset;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsettable#getTotalLength()
+	 */
+	public int getTotalLength() {
+		return totalLength;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsettable#setStartingOffset(int)
+	 */
+	public void setStartingOffset(int i) {
+		startingOffset = i;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsettable#setTotalLength(int)
+	 */
+	public void setTotalLength(int i) {
+		totalLength = i;
+	}
+
 }

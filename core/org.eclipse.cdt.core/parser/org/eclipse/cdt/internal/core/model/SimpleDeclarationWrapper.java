@@ -235,7 +235,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		this.functionDefinition = functionDefinition;
 	}
 
-	private AccessSpecifier currentVisibility = new AccessSpecifier(); 
+	private AccessSpecifier currentVisibility = new AccessSpecifier( AccessSpecifier.v_unknown ); 
 	/**
 	 * @return int
 	 */

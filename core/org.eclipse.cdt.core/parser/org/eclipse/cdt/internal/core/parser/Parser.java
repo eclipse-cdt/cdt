@@ -52,6 +52,13 @@ public class Parser {
 ), c, false);
 	}
 
+	public Parser(String code, IParserCallback c, boolean quickParse ) throws Exception {
+		this(new Scanner().initialize( new StringReader( code ), null
+), c, quickParse);
+	}
+
+
+
 	public Parser(InputStream stream, IParserCallback c, boolean quick) throws Exception {
 		this(new Scanner().initialize( new InputStreamReader(stream), null ), 
 c, quick);
@@ -1069,7 +1076,8 @@ c, quick);
 				switch (LT(1)) {
 					case Token.tLPAREN:
 						// temporary fix for initializer/function declaration ambiguity
-						if( LT(2) != Token.tINTEGER && LT(2) != Token.t_false && LT(2) != Token.t_true )
+						if( LT(2) != Token.tINTEGER && LT(2) != Token.t_false && LT(2) != Token.t_true && LT(2) != Token.tSTRING && 
+							LT(2) != Token.tLSTRING )
 						{
 							// parameterDeclarationClause
 							Object clause = null; 

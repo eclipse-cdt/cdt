@@ -37,7 +37,7 @@ public class BaseSpecifier {
 	public boolean isVirtual() { return isVirtual; }
 	
 
-	private AccessSpecifier access = new AccessSpecifier();
+	private AccessSpecifier access = new AccessSpecifier( AccessSpecifier.v_unknown );
 	public void setAccess(int access) { this.access.setAccess(access); }
 	public int getAccess() { return access.getAccess(); }
 	

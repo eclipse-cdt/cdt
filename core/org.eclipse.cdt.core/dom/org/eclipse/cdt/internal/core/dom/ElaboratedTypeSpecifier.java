@@ -21,23 +21,9 @@ public class ElaboratedTypeSpecifier extends TypeSpecifier {
 	{ 
 		this.classKey.setClassKey( classKey ); 
 	}
-
-	/**
-	 * @see org.eclipse.cdt.internal.core.dom.TypeSpecifier#getDeclaration()
-	 */
-	public SimpleDeclaration getDeclaration() {
-		return super.getDeclaration();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.internal.core.dom.TypeSpecifier#setDeclaration(org.eclipse.cdt.internal.core.dom.SimpleDeclaration)
-	 */
-	public void setDeclaration(SimpleDeclaration declaration) {
-		super.setDeclaration(declaration);
-	}
 	
-	public ElaboratedTypeSpecifier(int classKey, SimpleDeclaration declaration) {
-		super(declaration);
+	public ElaboratedTypeSpecifier(int classKey, TypeSpecifier.IOwner owner) {
+		super(owner);
 		this.classKey.setClassKey( classKey );
 	}
 

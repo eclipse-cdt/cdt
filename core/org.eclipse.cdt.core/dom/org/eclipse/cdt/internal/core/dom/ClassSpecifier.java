@@ -8,14 +8,15 @@ import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.ClassKey;
 import org.eclipse.cdt.internal.core.parser.util.Name;
 
-public class ClassSpecifier extends TypeSpecifier implements IScope {
+public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsettable {
 
-	AccessSpecifier access = new AccessSpecifier();
-	ClassKey key = new ClassKey();  
+	private AccessSpecifier access = new AccessSpecifier( AccessSpecifier.v_private );
+	private ClassKey key = new ClassKey();
+	private int startingOffset = 0, totalLength = 0;   
 
 	public int getClassKey() { return key.getClassKey(); }
 
-	public ClassSpecifier(int classKey, SimpleDeclaration declaration) {
+	public ClassSpecifier(int classKey, TypeSpecifier.IOwner declaration) {
 		super(declaration);
 		this.key.setClassKey(classKey);
 	}
@@ -52,6 +53,34 @@ public class ClassSpecifier extends TypeSpecifier implements IScope {
 	 */
 	public void setCurrentVisibility(int currentVisiblity) {
 		access.setAccess(currentVisiblity);
+	}
+
+	/**
+	 * @return
+	 */
+	public int getStartingOffset() {
+		return startingOffset;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getTotalLength() {
+		return totalLength;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setStartingOffset(int i) {
+		startingOffset = i;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setTotalLength(int i) {
+		totalLength = i;
 	}
 
 }

@@ -22,7 +22,7 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
  * @author jcamelon
  *
  */
-public class EnumerationSpecifier extends TypeSpecifier {
+public class EnumerationSpecifier extends TypeSpecifier implements IOffsettable {
 	
 	public EnumerationSpecifier(SimpleDeclaration declaration) {
 		super(declaration);
@@ -30,6 +30,7 @@ public class EnumerationSpecifier extends TypeSpecifier {
 	
 	private Name name = null;
 	private List enumeratorDefinitions = new ArrayList();
+	private int startingOffset = 0, totalLength = 0;
 	
 	public void addEnumeratorDefinition( EnumeratorDefinition def )
 	{
@@ -57,6 +58,34 @@ public class EnumerationSpecifier extends TypeSpecifier {
 	 */
 	public void setName(Name name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getStartingOffset() {
+		return startingOffset;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getTotalLength() {
+		return totalLength;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setStartingOffset(int i) {
+		startingOffset = i;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setTotalLength(int i) {
+		totalLength = i;
 	}
 
 }

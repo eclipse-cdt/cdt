@@ -15,10 +15,28 @@ import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ParameterDeclaration extends Declaration implements DeclSpecifier.Container {
+public class ParameterDeclaration extends Declaration implements DeclSpecifier.Container, TypeSpecifier.IOwner {
 
 	DeclSpecifier declSpec = null; 
+	private TypeSpecifier typeSpecifier;
+	
+	/**
+	 * Returns the typeSpecifier.
+	 * @return TypeSpecifier
+	 */
+	public TypeSpecifier getTypeSpecifier() {
+		return typeSpecifier;
+	}
 
+	/**
+	 * Sets the typeSpecifier.
+	 * @param typeSpecifier The typeSpecifier to set
+	 */
+	public void setTypeSpecifier(TypeSpecifier typeSpecifier) {
+		getDeclSpecifier().setType(DeclSpecifier.t_type);
+		this.typeSpecifier = typeSpecifier;
+	}
+	
 	/**
 	 * @see org.eclipse.cdt.internal.core.dom.DeclarationSpecifier.CElementWrapper#getDeclSpecifier()
 	 */

@@ -22,11 +22,12 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
  * @author jcamelon
  *
  */
-public class NamespaceDefinition extends Declaration implements IScope {
+public class NamespaceDefinition extends Declaration implements IScope, IOffsettable {
 
 	private List declarations = new LinkedList();
 	private IScope ownerScope;
 	private Name name = null;
+	private int startingOffset = 0, totalLength = 0;
 
 	public NamespaceDefinition( IScope owner )
 	{
@@ -69,6 +70,34 @@ public class NamespaceDefinition extends Declaration implements IScope {
 	 */
 	public void setName(Name name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getStartingOffset() {
+		return startingOffset;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getTotalLength() {
+		return totalLength;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setStartingOffset(int i) {
+		startingOffset = i;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setTotalLength(int i) {
+		totalLength = i;
 	}
 
 }

@@ -18,10 +18,11 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
  * @author jcamelon
  *
  */
-public class EnumeratorDefinition implements IExpressionOwner {
+public class EnumeratorDefinition implements IExpressionOwner, IOffsettable {
 
 	private Expression initialValue = null;
 	private Name name = null; 
+	private int startingOffset = 0, totalLength = 0;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#getExpression()
@@ -50,6 +51,34 @@ public class EnumeratorDefinition implements IExpressionOwner {
 	 */
 	public void setName(Name name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getStartingOffset() {
+		return startingOffset;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getTotalLength() {
+		return totalLength;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setStartingOffset(int i) {
+		startingOffset = i;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setTotalLength(int i) {
+		totalLength = i;
 	}
 
 }

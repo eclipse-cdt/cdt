@@ -718,7 +718,7 @@ public class Scanner implements IScanner {
 					currentContext);
 				
 			} else if (c == '#') {
-				int beginningOffset = currentContext.getOffset();
+				int beginningOffset = currentContext.getOffset() - 1;
 				// lets prepare for a preprocessor statement
 				StringBuffer buff = new StringBuffer();
 				buff.append((char) c);

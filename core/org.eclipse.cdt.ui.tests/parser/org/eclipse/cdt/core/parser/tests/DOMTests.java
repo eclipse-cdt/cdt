@@ -22,7 +22,9 @@ import org.eclipse.cdt.internal.core.dom.EnumeratorDefinition;
 import org.eclipse.cdt.internal.core.dom.ExceptionSpecifier;
 import org.eclipse.cdt.internal.core.dom.ExplicitTemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.Expression;
+import org.eclipse.cdt.internal.core.dom.Inclusion;
 import org.eclipse.cdt.internal.core.dom.LinkageSpecification;
+import org.eclipse.cdt.internal.core.dom.Macro;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
@@ -51,9 +53,14 @@ public class DOMTests extends TestCase {
 		super( arg );
 	}
 	
-	public TranslationUnit parse(String code) throws Exception {
+	public TranslationUnit parse( String code ) throws Exception
+	{
+		return parse( code, false );
+	}
+	
+	public TranslationUnit parse(String code, boolean quickParse ) throws Exception {
 		DOMBuilder domBuilder = new DOMBuilder();
-		Parser parser = new Parser(code, domBuilder);
+		Parser parser = new Parser(code, domBuilder, quickParse );
 		if( ! parser.parse() ) throw new ParserException( "Parse failure" ); 
 		
 		return domBuilder.getTranslationUnit();
@@ -689,6 +696,93 @@ public class DOMTests extends TestCase {
 		ArrayQualifier q2 =(ArrayQualifier)arrayQualifiers.get(1);  
 		assertNull( q2.getExpression() ); 
 	}		
+
+	public void testElaboratedParms() throws Exception
+	{
+		TranslationUnit tu = parse( "int x( struct A myA ) { /* junk */ }", true);
+		assertEquals( tu.getDeclarations().size(), 1 );
+		SimpleDeclaration declaration = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertEquals( declaration.getDeclSpecifier().getType(), DeclSpecifier.t_int );
+		assertEquals( declaration.getDeclarators().size(), 1 );
+		Declarator declarator = (Declarator)declaration.getDeclarators().get(0);
+		assertEquals( declarator.getName().toString(), "x" );
+		assertTrue( declaration.isFunctionDefinition() );
+		assertEquals( declarator.getParms().getDeclarations().size(), 1 );
+		ParameterDeclaration parm = (ParameterDeclaration)declarator.getParms().getDeclarations().get(0);
+		ElaboratedTypeSpecifier typeSpec = (ElaboratedTypeSpecifier)parm.getTypeSpecifier();
+		assertEquals( typeSpec.getClassKey(), ClassKey.t_struct );
+		assertEquals( typeSpec.getName().toString(), "A" );
+		assertEquals( parm.getDeclarators().size(), 1 );
+		Declarator subDeclarator = (Declarator)parm.getDeclarators().get(0);
+		assertEquals( subDeclarator.getName().toString(), "myA" );
+		
+	}
+
+	public void testPreprocessor() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "#include <stdio.h>\n#define DEF VALUE\n");
+		TranslationUnit tu = parse( code.toString(), true );
+		assertEquals( tu.getInclusions().size(), 1 ); 
+		Inclusion i = (Inclusion)tu.getInclusions().get(0);
+		assertEquals( i.getName(), "stdio.h");
+		assertEquals( i.getStartingOffset(), 0 ); 
+		assertEquals( i.getNameLength(), 7 ); 
+		assertEquals( i.getNameOffset(), 10 ); 
+		assertEquals( i.getTotalLength(), 18 );
+		
+		assertEquals( tu.getMacros().size(), 1 );
+		Macro m = (Macro)tu.getMacros().get(0);
+		assertEquals( m.getName(), "DEF" ); 
+		assertEquals( m.getStartingOffset(), 19 );
+		assertEquals( m.getNameLength(), 3 );
+		assertEquals( m.getNameOffset(), 27 );
+		assertEquals( m.getTotalLength(), 18 );
+	}
+
+	public void testMemberDeclarations() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "class A {\n" ); 
+		code.write( "public:\n");
+		code.write( " int isPublic;\n" );
+		code.write( "private:\n");
+		code.write( " int isPrivate;\n" );
+		code.write( "protected:\n");
+		code.write( " int isProtected;\n" );
+		code.write( "};");
+		TranslationUnit translationUnit = parse( code.toString() );
+		assertEquals( translationUnit.getDeclarations().size(), 1 );
+		SimpleDeclaration classDeclaration = (SimpleDeclaration)
+			translationUnit.getDeclarations().get(0);
+		assertEquals( classDeclaration.getDeclarators().size(), 0 );
+		ClassSpecifier classSpec = (ClassSpecifier)classDeclaration.getTypeSpecifier();
+		assertEquals( "A", classSpec.getName().toString() );
+		assertEquals( 3, classSpec.getDeclarations().size());
+		for( int i = 0; i < 3; ++i )
+		{
+			SimpleDeclaration subDecl = (SimpleDeclaration)classSpec.getDeclarations().get( i );
+			int visibility = AccessSpecifier.v_unknown;
+			
+			switch( i )
+			{
+				case 0:
+					visibility = AccessSpecifier.v_public;
+					break;
+				case 1:
+					visibility = AccessSpecifier.v_private;
+					break;
+				case 2:
+					visibility = AccessSpecifier.v_protected;
+					break;
+				default:
+					break;
+			}
+			
+			assertEquals( visibility, subDecl.getAccessSpecifier().getAccess() );
+		}
+				
+	}
 
 	public void testPointerOperators() throws Exception
 	{

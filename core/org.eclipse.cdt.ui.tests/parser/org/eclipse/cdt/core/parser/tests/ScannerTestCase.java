@@ -1,7 +1,6 @@
 package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.List;
 
 import junit.framework.Test;

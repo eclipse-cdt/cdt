@@ -1,4 +1,11 @@
 2003-02-28 Mikhail Khodjaiants
+	Check if part is not null when set the selection.
+	* AddExpressionActionDelegate.java
+	* AddGlobalsActionDelegate.java
+	* JumpToLineActionDelegate.java
+	* RunToLineActionDelegate.java
+
+2003-02-28 Mikhail Khodjaiants
 	Check if page exists before adding a listener.
 	* AbstractListenerActionDelegate.java
 

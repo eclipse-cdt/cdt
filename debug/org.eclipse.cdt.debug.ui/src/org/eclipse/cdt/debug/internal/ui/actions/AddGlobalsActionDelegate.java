@@ -110,7 +110,7 @@ public class AddGlobalsActionDelegate implements IViewActionDelegate,
 	 */
 	public void selectionChanged( IWorkbenchPart part, ISelection selection )
 	{
-		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
+		if ( part != null && part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
 		{
 			if ( selection instanceof IStructuredSelection )
 			{

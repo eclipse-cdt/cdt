@@ -50,9 +50,9 @@ public class JumpToLineActionDelegate extends AbstractEditorActionDelegate
 	public void selectionChanged( IWorkbenchPart part, ISelection selection )
 	{
 		IDebugTarget target = null;
-		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
+		if ( part != null && part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
 		{
-			if ( selection != null && selection instanceof IStructuredSelection )
+			if ( selection instanceof IStructuredSelection )
 			{
 				Object element = ((IStructuredSelection)selection).getFirstElement();
 				if ( element != null && element instanceof IDebugElement )

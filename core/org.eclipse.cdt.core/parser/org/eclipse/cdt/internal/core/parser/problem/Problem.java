@@ -252,7 +252,7 @@ public class Problem implements IProblem {
 		if (originatingFileName != null)
 			args = new Object []{ msg, new String( originatingFileName ), new Integer( lineNumber ) };
 		else
-			args = new Object []{ msg, new String(""), new Integer( lineNumber ) };
+			args = new Object []{ msg, new String(""), new Integer( lineNumber ) }; //$NON-NLS-1$
 		
 		message = ParserMessages.getFormattedString( PROBLEM_PATTERN, args ); 
 		

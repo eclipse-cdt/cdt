@@ -45,7 +45,7 @@ public class ElfBinaryArchive extends PlatformObject implements IBinaryArchive {
 					ar = new AR(location.toOSString());
 					AR.ARHeader[] headers = ar.getHeaders();
 					for (int i = 0; i < headers.length; i++) {
-						IBinaryObject bin = new ElfBinaryFile(file, headers[i].getObjectName());
+						IBinaryObject bin = new ElfBinaryFile(file, headers[i]);
 						children.add(bin);
 					}
 				} catch (IOException e) {

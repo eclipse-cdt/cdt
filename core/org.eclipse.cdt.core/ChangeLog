@@ -1,3 +1,14 @@
+2003-02-26 David Inglis
+	* model/org/eclipse/cdt/internal/core/model/ArchiveContainer.java
+	* model/org/eclipse/cdt/internal/core/model/BinaryContainer.java
+	Remove warning.
+	
+	* model/org/eclipse/cdt/internal/core/model/parser/ElfBinaryArchive.java
+	* model/org/eclipse/cdt/internal/core/model/parser/ElfBinaryFile.java
+	* utils/org/eclipse/cdt/utils/elf/AR.java
+	Improve IBinaryObject creation from IArchive (big speed improvment)
+	
+
 2003-02-24 Alain Magloire
 
 	* model/org/eclipse/cdt/internal/core/model/Marker.java:

@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.CoreException;
 public class BinaryContainer extends Parent implements IBinaryContainer {
 
 	CProject cProject;
-	private long modificationStamp;
 
 	public BinaryContainer (CProject cProject) {
 		this (cProject, "bin");

@@ -107,7 +107,7 @@ public class CDIDebugModel {
 		attributes.put( IMarker.CHAR_END, new Integer( 0 ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
-		attributes.put( ICAddressBreakpoint.ADDRESS, Long.toString( address ) );
+		attributes.put( ICLineBreakpoint.ADDRESS, Long.toString( address ) );
 		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
@@ -194,7 +194,7 @@ public class CDIDebugModel {
 		attributes.put( IMarker.CHAR_START, new Integer( charStart ) );
 		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
-		attributes.put( ICFunctionBreakpoint.FUNCTION, function );
+		attributes.put( ICLineBreakpoint.FUNCTION, function );
 		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );

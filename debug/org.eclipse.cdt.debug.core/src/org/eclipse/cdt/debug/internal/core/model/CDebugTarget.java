@@ -53,12 +53,14 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
+import org.eclipse.cdt.debug.core.model.IBreakpointTarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
@@ -996,6 +998,8 @@ public class CDebugTarget extends CDebugElement
 		if ( adapter.equals( IJumpToLine.class ) )
 			return this;
 		if ( adapter.equals( IJumpToAddress.class ) )
+			return this;
+		if ( adapter.equals( IBreakpointTarget.class ) )
 			return this;
 		if ( adapter.equals( CBreakpointManager.class ) )
 			return getBreakpointManager();
@@ -2451,5 +2455,19 @@ public class CDebugTarget extends CDebugElement
 		if ( fDisassembly != null )
 			fDisassembly.dispose();
 		fDisassembly = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IBreakpointTarget#getBreakpointAddress(org.eclipse.cdt.debug.core.model.ICLineBreakpoint)
+	 */
+	public long getBreakpointAddress( ICLineBreakpoint breakpoint ) throws DebugException {
+		return ( getBreakpointManager() != null ) ? getBreakpointManager().getBreakpointAddress( breakpoint ) : 0;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IBreakpointTarget#isTargetBreakpoint(org.eclipse.cdt.debug.core.model.ICBreakpoint)
+	 */
+	public boolean isTargetBreakpoint( ICBreakpoint breakpoint ) {
+		return ( getBreakpointManager() != null ) ? getBreakpointManager().isTargetBreakpoint( breakpoint ) : false;
 	}
 }

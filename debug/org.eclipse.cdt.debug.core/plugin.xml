@@ -69,6 +69,12 @@
       <persistent
             value="true">
       </persistent>
+      <attribute
+            name="org.eclipse.cdt.debug.core.function">
+      </attribute>
+      <attribute
+            name="org.eclipse.cdt.debug.core.address">
+      </attribute>
    </extension>
    <extension
          id="cAddressBreakpointMarker"
@@ -79,9 +85,6 @@
       <persistent
             value="true">
       </persistent>
-      <attribute
-            name="org.eclipse.cdt.debug.core.address">
-      </attribute>
    </extension>
    <extension
          id="cFunctionBreakpointMarker"
@@ -92,9 +95,6 @@
       <persistent
             value="true">
       </persistent>
-      <attribute
-            name="org.eclipse.cdt.debug.core.function">
-      </attribute>
    </extension>
    <extension
          id="cWatchpointMarker"

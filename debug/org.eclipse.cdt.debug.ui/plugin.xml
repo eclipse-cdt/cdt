@@ -864,6 +864,7 @@
             id="org.eclipse.cdt.debug.ui.FunctionBreakpointActions">
          <action
                label="%ManageFunctionBreakpointAction.label"
+               icon="icons/full/obj16/funbrkp_obj.gif"
                helpContextId="manage_function_breakpoint_action_context"
                tooltip="%ManageFunctionBreakpointAction.tooltip"
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageFunctionBreakpointActionDelegate"
@@ -904,8 +905,8 @@
          </action>
          <action
                style="toggle"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                toolbarPath="renderGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                hoverIcon="icons/full/clcl16/show_paths.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                disabledIcon="icons/full/dlcl16/show_paths.gif"
@@ -964,8 +965,8 @@
             id="org.eclipse.cdt.debug.ui.breakpointview.toolbar">
          <action
                style="toggle"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                toolbarPath="renderGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                hoverIcon="icons/full/clcl16/show_paths.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                disabledIcon="icons/full/dlcl16/show_paths.gif"
@@ -1008,8 +1009,8 @@
             id="org.eclipse.debug.ui.sharedLibrariesView.toolbar">
          <action
                style="toggle"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                toolbarPath="renderGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                hoverIcon="icons/full/clcl16/show_paths.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
                disabledIcon="icons/full/dlcl16/show_paths.gif"

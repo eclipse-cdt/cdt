@@ -1,4 +1,8 @@
 2003-04-14 Mikhail Khodjaiants
+	Added icon to the 'Add/Remove Breakpoint' action for functions and methods.
+	* plugin.xml
+
+2003-04-14 Mikhail Khodjaiants
 	Commented default format preferences.
 	* CDebugPreferencePage.java
 

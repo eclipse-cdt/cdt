@@ -1,3 +1,10 @@
+2003-11-06 David Inglis
+
+	Fix for 45737 & 45835
+
+	* model/org/eclipse/cdt/internal/core/DeltaProcessor.java
+	* model/org/eclipse/cdt/internal/core/CModelManager.java
+	
 2003-10-29 David Inglis
 	
 	Fix for 45734 & 45736, Though this only addresses a small part on the later.

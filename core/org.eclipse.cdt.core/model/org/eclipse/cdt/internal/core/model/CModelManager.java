@@ -373,6 +373,10 @@ public class CModelManager implements IResourceChangeListener {
 				// so we have to recall create again.
 				releaseCElement(celement);
 				celement = create(project);
+				Parent parent = (Parent)celement.getParent();
+				CElementInfo info = (CElementInfo)parent.getElementInfo();
+				info.addChild(celement);
+
 				// Fired and ICElementDelta.PARSER_CHANGED
 				CElementDelta delta = new CElementDelta(getCModel());
 				delta.binaryParserChanged(celement);

@@ -61,12 +61,15 @@ public class DeltaProcessor {
 			ICElement parent = manager.create(resource.getParent());
 			// Probably it was deleted, find it
 			if (parent instanceof IParent) {
-				ICElement[] children = ((CElement)parent).getElementInfo().getChildren();
-				for (int i = 0; i < children.length; i++) {
-					IResource res = children[i].getResource();
-					if (res != null && res.equals(resource)) {
-						celement = children[i];
-						break;
+				ICElement[] children;
+				if ( CModelManager.getDefault().peekAtInfo(parent) != null ) {
+					children = ((CElement)parent).getElementInfo().getChildren();
+					for (int i = 0; i < children.length; i++) {
+						IResource res = children[i].getResource();
+						if (res != null && res.equals(resource)) {
+							celement = children[i];
+							break;
+						}
 					}
 				}
 				// BUG 36424:
@@ -380,9 +383,12 @@ public class DeltaProcessor {
 			elementDelta.addResourceDelta(delta);
 		}
 		if (parent instanceof CContainer) {
-			CElementInfo info = ((CContainer)parent).getElementInfo();
-			if (info instanceof CContainerInfo) {
-				((CContainerInfo)info).setNonCResources(null);
+			// if info not created yet no need to null NonCResources...
+			if (CModelManager.getDefault().peekAtInfo(parent) != null) {
+				CElementInfo info = ((CContainer)parent).getElementInfo();
+				if (info instanceof CContainerInfo) {
+					((CContainerInfo)info).setNonCResources(null);
+				}
 			}
 		}
 	}

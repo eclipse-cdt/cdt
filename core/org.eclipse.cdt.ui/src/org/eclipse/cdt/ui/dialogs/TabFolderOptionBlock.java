@@ -6,9 +6,8 @@ package org.eclipse.cdt.ui.dialogs;
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v05.html
  * 
- * Contributors:
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,9 +45,20 @@ public abstract class TabFolderOptionBlock {
 
 	private TabFolder fFolder;
 
-	public TabFolderOptionBlock(ICOptionContainer parent, boolean showMessageArea) {
-		fParent = parent;
+	public TabFolderOptionBlock(boolean showMessageArea) {
 		bShowMessageArea = showMessageArea;
+	}
+
+	public TabFolderOptionBlock(ICOptionContainer parent, boolean showMessageArea) {
+		bShowMessageArea = showMessageArea;
+		setOptionContainer(parent);
+	}
+
+	/**
+	 * @param parent
+	 */
+	public void setOptionContainer(ICOptionContainer parent) {
+		fParent = parent;
 	}
 
 	public TabFolderOptionBlock(ICOptionContainer parent) {
@@ -92,6 +102,17 @@ public abstract class TabFolderOptionBlock {
 			messageLabel.setText(desc);
 		}
 		return composite;
+	}
+
+	/**
+	 * @return
+	 */
+	protected ICOptionPage getStartPage() {
+		return (ICOptionPage) pages.get(0);
+	}
+
+	public int getPageIndex() {
+		return pages.indexOf(getCurrentPage());
 	}
 
 	protected void createFolder(Composite parent) {
@@ -168,8 +189,9 @@ public abstract class TabFolderOptionBlock {
 		if (ok) {
 			setErrorMessage(null);
 			ICOptionPage tab = getCurrentPage();
-			if (bShowMessageArea && tab.getDescription() != null)
-				messageLabel.setText(tab.getDescription());
+			if (bShowMessageArea) {
+		        messageLabel.setText(tab.getDescription() != null ? tab.getDescription() : ""); //$NON-NLS-1$
+			}
 		}
 		setValid(ok);
 	}

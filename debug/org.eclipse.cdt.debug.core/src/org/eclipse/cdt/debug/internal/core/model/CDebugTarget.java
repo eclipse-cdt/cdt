@@ -1900,9 +1900,12 @@ public class CDebugTarget extends CDebugElement
 	protected int getRealSourceMode()
 	{
 		ISourceLocator sl = getSourceLocator();
-		if ( sl != null && sl instanceof CSourceManager )
+		if ( sl != null && 
+			 sl instanceof IAdaptable && 
+			 ((IAdaptable)sl).getAdapter( ICSourceLocator.class ) != null &&
+			 ((IAdaptable)sl).getAdapter( ICSourceLocator.class ) instanceof CSourceManager )
 		{
-			return ((CSourceManager)sl).getRealMode();
+			return ((CSourceManager)((IAdaptable)sl).getAdapter( ICSourceLocator.class )).getRealMode();
 		}
 		return ISourceMode.MODE_SOURCE;
 	}

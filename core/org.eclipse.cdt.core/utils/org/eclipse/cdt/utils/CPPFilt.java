@@ -17,7 +17,6 @@ public class CPPFilt {
 	private Process cppfilt;
 	private BufferedReader stdout;
 	private BufferedWriter stdin;
-	private String function;
 			
 	public CPPFilt() throws IOException {
 		String[] args = {"c++filt"};

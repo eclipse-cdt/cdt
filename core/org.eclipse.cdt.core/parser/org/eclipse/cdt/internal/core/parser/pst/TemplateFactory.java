@@ -251,7 +251,8 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	private void memberDeclaration( ISymbol symbol ) throws ParserSymbolTableException{
 		ISymbol previous = findPreviousSymbol( symbol, null );
 		if( previous == null ) {
-			//??
+			//could happen in trying to define something for which we don't have a declaration
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
 		} else {
 			IContainerSymbol originalContainer = previous.getContainingSymbol();
 			

@@ -114,7 +114,7 @@ public class SignalActionDelegate implements IObjectActionDelegate
 
 	private boolean enablesFor( ICSignal signal )
 	{
-		return ( signal != null );
+		return ( signal != null && signal.getDebugTarget().isSuspended() );
 	}
 	
 	private void setSignal( ICSignal signal )

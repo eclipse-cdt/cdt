@@ -1,3 +1,15 @@
+2003-10-29 Alain Magloire
+
+	Deal with PR 45533
+
+	Make a preferenc for Timeout and use it when launching
+	the ICDebugger session, when way wait for for gdb
+	to say "ready" by returning the prompt.
+
+	* src/org/eclipse/cdt/debug/mi/core/MISession.java
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+	* src/org/eclipse/cdt/debug/mi/core/IMIConstants.java
+	
 2003-10-17 Alain Magloire
 
 	Put the framework to deal with deferred breakpoint.

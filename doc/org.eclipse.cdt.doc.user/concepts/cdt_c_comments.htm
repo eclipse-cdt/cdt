@@ -3,8 +3,6 @@
 
 <head>
 <meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Comments</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
@@ -14,13 +12,32 @@
 
 <h1>Comments</h1>
 
-<p>You can select one or more lines of code, right-click, and click <b>Comment</b> 
-to add the leading characters <samp>//</samp> to the beginning of lines. When 
-you uncomment lines of code, the leading <samp>//</samp> characters are removed 
-from the selected lines.</p>
+<h3>Comment</h3>
+<p>You can quickly comment out one or more lies of code by inserting the leading 
+characters <samp>//</samp> at the beginning of the line.  To do so, select the line 
+(or lines) of code you want to comment out and press <b>CTRL+/</b> (slash).</p>
 
-<p><b>Tip:</b> The characters <samp>/* */</samp> on lines that already are 
+<h3>Uncomment</h3>
+<p>To uncomment  select the line (or lines) of code, and press <b>CTRL+\</b> 
+(backslash).
+
+<p><b>Tip:</b> The characters <samp>/* */</samp> on lines that are 
 already commented out, are not affected when you comment and uncomment code.</p>
+
+<h3>Multiline comment</h3>
+<p>You can use the Content Assist feature to insert a multiline comment before a method.
+Type <tt>com+Ctrl+Space</tt>, and the following code is entered at the cursor location:
+<br><pre>
+/*
+ * author userid
+ *
+ * To change this generated comment edit the template variable "comment":
+ * Window>Preferences>C>Templates.
+ */
+ </pre>
+ 
+ To change the default comment click <b>Window > Preferences > C > Templates</b>.  For more information see the
+ <a href="cdt_c_content_assist.htm">Content Assist</a> section.
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>

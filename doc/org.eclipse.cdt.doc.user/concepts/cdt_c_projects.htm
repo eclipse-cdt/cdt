@@ -2,20 +2,17 @@
 <html lang="en">
 
 <head>
-<meta http-equiv="Content-Language" content="en-us">
-<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
-<meta name="ProgId" content="FrontPage.Editor.Document">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>CDT projects</title>
-<link rel="stylesheet" type="text/css" href="../help.css">
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>CDT projects</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
 </head>
-
 <body>
 
 <h1>CDT projects</h1>
 
-<p>Before you do any work in the CDT, you must create a project to store your 
-source code, makefiles, binaries and related files. C/C++ projects are displayed 
+<p>Before you can work in the CDT, you must create a project to store your 
+source code, makefiles, binaries, and related files. C/C++ projects are displayed 
 in the C/C++ Projects view.</p>
 
 <p><b>Tip:</b> Nested projects are not supported. Each project must be organized as a 
@@ -35,22 +32,22 @@ see <a href="../tasks/cdt_t_proj_ref.htm">Selecting referenced projects</a>.</p>
 <p>You can create a standard make C or C++ project or a managed make C or C++ 
 project.</p>
 
-<h3>Standard Make C or C++ project</h3>
+<h3>Standard make C or C++ project</h3>
 
 <p>You need to create a makefile in order to build your project or use an 
 existing makefile.</p>
 
-<h3>Managed Make C or C++ project</h3>
+<h3>Managed make C or C++ project</h3>
 
-<p>A managed make project generates the makefile for you. In addition, the
+<p>A managed make project generates the makefile for you automatically. In addition, the
 files module.dep and module.mk are created for every project sub-directory. 
-These files are required for your managed make project to successfully build.</p>
+These files are required for your managed make projects to build successfully.</p>
 
 <h3>How the CDT associates project natures</h3>
 
 <p>Projects are assigned natures and tags that identify the 
 properties of each project. The CDT uses natures to identify what can and cannot be done with each project. The 
-CDT also uses natures to filter out projects that are contextually 
+CDT also uses natures to filter projects that are contextually 
 irrelevant; for example, non-library projects from a list of library projects.</p>
 
 <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="56%">
@@ -78,29 +75,23 @@ irrelevant; for example, non-library projects from a list of library projects.</
 
 <h2>Project conversion</h2>
 
-<p>You can convert a C project to a C++ project and vice versa. An example of 
-when this may be useful is if you create a C project, your requirements change during the course of 
-the development, and you 
-need to continue coding in C++. Since the initial project was coded in C, 
-the parser will not recognize certain semantics such as &quot;class&quot;, or keywords 
-such as 
-&quot;public&quot;, &quot;private&quot;, and&nbsp; &quot;template&quot;. You need to create a C++ project to 
-make the parser and other tools aware of the language change. You can simply 
-convert your C project to a C++ project rather than creating a new C++ project, copying your project files over and resolving source control issues.</p>
+<p>You can convert projects can be converted from C to C++ (or from C++ to C).  If, for 
+example, your requirements change and you must convert an existing C project to C++, 
+you can do this without recreating the project.  The CDT converts your project files and 
+resolves any source control issues.</p>
 
 <h2>A few notes about projects</h2>
 
 <ul>
-  <li>When you create a file within a project, a record (local 
-history) is created of every time that you modify the file and how you modify it. 
-  For more information about local history, see <b>Workbench User Guide &gt; Reference &gt; User interface 
+  <li>When you create a file within a project, a record (local history) of 
+  every change is created. For more information about local history, see 
+  <b>Workbench User Guide &gt; Reference &gt; User interface 
   information &gt; Development environment &gt; Local history</b>.</li>
   <li>Spaces in projects and filenames can cause problems with some 
 tools, such as the make utility or the compiler.</li>
-  <li>Be careful when using case alone to between distinguish files and projects. UNIX-based 
-  operating system 
-filenames are case-sensitive, but Windows filenames are not. Therefore, Hello.c and 
-hello.c overwrite each other in Windows, but are separate files in UNIX.</li>
+  <li>Be careful when you use only case to distinguish files and projects. UNIX-based 
+  operating system file names are case sensitive, but Windows filenames are not. Therefore, Hello.c and 
+hello.c are separate files in UNIX but overwrite each other in Windows.</li>
 </ul>
 
 

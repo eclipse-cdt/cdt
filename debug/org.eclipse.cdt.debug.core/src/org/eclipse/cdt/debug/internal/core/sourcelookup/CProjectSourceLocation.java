@@ -153,7 +153,11 @@ public class CProjectSourceLocation implements ICSourceLocation
 		IPath[] result = new IPath[0];
 		if ( getProject() != null )
 		{
-			result = new IPath[] { getProject().getLocation() };
+			IPath location = getProject().getLocation();
+			if ( location != null )
+			{
+				result = new IPath[] { location };
+			}
 		}
 		return result;
 	}

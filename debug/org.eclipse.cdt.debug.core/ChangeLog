@@ -1,3 +1,8 @@
+2002-11-07 Mikhail Khodjaiants
+	When a referenced project is deleted it's location is null. The source locator should 
+	check this when it returns the path array.
+	* CProjectSourceLocation.java
+
 2002-11-05 Mikhail Khodjaiants
 	Added support of the 'Add Global Variables' action of the Expressions view.
 	* IExecFileInfo.java

@@ -301,12 +301,11 @@ public class CElementDelta implements ICElementDelta {
 	protected CElementDelta find(ICElement e) {
 		if (equalsAndSameParent(fChangedElement, e)) { // handle case of two jars that can be equals but not in the same project
 			return this;
-		} else {
-			for (int i = 0; i < fAffectedChildren.length; i++) {
-				CElementDelta delta = ((CElementDelta)fAffectedChildren[i]).find(e);
-				if (delta != null) {
-					return delta;
-				}
+		}
+		for (int i = 0; i < fAffectedChildren.length; i++) {
+			CElementDelta delta = ((CElementDelta)fAffectedChildren[i]).find(e);
+			if (delta != null) {
+				return delta;
 			}
 		}
 		return null;
@@ -397,11 +396,10 @@ public class CElementDelta implements ICElementDelta {
 			CElementDelta delta = (CElementDelta)fAffectedChildren[i];
 			if (equalsAndSameParent(delta.getElement(), element)) { // handle case of two jars that can be equals but not in the same project
 				return delta;
-			} else {
-				delta = delta.getDeltaFor(element);
-				if (delta != null)
-					return delta;
 			}
+			delta = delta.getDeltaFor(element);
+			if (delta != null)
+				return delta;
 		}
 		return null;
 	}

@@ -342,7 +342,7 @@ public class CModelManager implements IResourceChangeListener {
 				CProjectInfo info = (CProjectInfo)peekAtInfo(cproject);
 				if (info != null && info.vBin != null) {
 					if (peekAtInfo(info.vBin) != null) {
-						IBinary[] bins = info.vBin.getBinaries();
+						ICElement[] bins = info.getChildren();
 						for (int i = 0; i < bins.length; i++) {
 							if (celement.getPath().isPrefixOf(bins[i].getPath())) {
 								CElementDelta delta = new CElementDelta(getCModel());
@@ -355,7 +355,7 @@ public class CModelManager implements IResourceChangeListener {
 				}
 				if (info != null && info.vLib != null) {
 					if (peekAtInfo(info.vLib) != null) {
-						IArchive[] ars = info.vLib.getArchives();
+						ICElement[] ars = info.vLib.getChildren();
 						for (int i = 0; i < ars.length; i++) {
 							if (celement.getPath().isPrefixOf(ars[i].getPath())) {
 								CElementDelta delta = new CElementDelta(getCModel());

@@ -1,3 +1,12 @@
+2004-1-5 David Inglis
+	
+	PR 49851
+	Fixed deadlock when binary parser was changed while binary runner was running
+	for that project.
+	
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	
+
 2003-12-16 Alain Magloire
 
 	PR 48921.

@@ -16,9 +16,9 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
@@ -102,12 +102,12 @@ public class CStackFrame extends CDebugElement
 	{
 		if ( fVariables == null )
 		{
-			List vars = getAllCDIVariables();
+			List vars = getAllCDIVariableObjects();
 			fVariables = new ArrayList( vars.size() );
 			Iterator it = vars.iterator();
 			while( it.hasNext() )
 			{
-				fVariables.add( new CModificationVariable( this, (ICDIVariable)it.next() ) );
+				fVariables.add( new CModificationVariable( this, (ICDIVariableObject)it.next() ) );
 			}
 		}
 		else if ( refreshVariables() )
@@ -124,15 +124,14 @@ public class CStackFrame extends CDebugElement
 	 */
 	protected void updateVariables() throws DebugException 
 	{
-		List locals = getAllCDIVariables();
+		List locals = getAllCDIVariableObjects();
 		int index = 0;
 		while( index < fVariables.size() )
 		{
-			CVariable local = (CVariable)fVariables.get( index );
-			ICDIVariable var = findVariable( locals, local.getOriginalCDIVariable() );
-			if ( var != null )
+			ICDIVariableObject varObject = findVariable( locals, (CVariable)fVariables.get( index ) );
+			if ( varObject != null )
 			{
-				locals.remove( var );
+				locals.remove( varObject );
 				index++;
 			}
 			else
@@ -570,12 +569,12 @@ public class CStackFrame extends CDebugElement
 	 * list if there are no local variables.
 	 * 
 	 */
-	protected List getCDILocalVariables() throws DebugException
+	protected List getCDILocalVariableObjects() throws DebugException
 	{
 		List list = new ArrayList();
 		try
 		{
-			list.addAll( Arrays.asList( getCDIStackFrame().getLocalVariables() ) );
+			list.addAll( Arrays.asList( getCDISession().getVariableManager().getLocalVariableObjects( getCDIStackFrame() ) ) );
 		}
 		catch( CDIException e )
 		{
@@ -589,12 +588,12 @@ public class CStackFrame extends CDebugElement
 	 * if there are no arguments.
 	 * 
 	 */
-	protected List getCDIArguments() throws DebugException
+	protected List getCDIArgumentObjects() throws DebugException
 	{
 		List list = new ArrayList();
 		try
 		{
-			list.addAll( Arrays.asList( getCDIStackFrame().getArguments() ) );
+			list.addAll( Arrays.asList( getCDISession().getVariableManager().getArgumentObjects( getCDIStackFrame() ) ) );
 		}
 		catch( CDIException e )
 		{
@@ -602,12 +601,20 @@ public class CStackFrame extends CDebugElement
 		}
 		return list;
 	}
-	
+/*	
 	protected List getAllCDIVariables() throws DebugException
 	{
 		List list = new ArrayList();
 		list.addAll( getCDIArguments() );
 		list.addAll( getCDILocalVariables() );
+		return list;
+	} 
+*/
+	protected List getAllCDIVariableObjects() throws DebugException
+	{
+		List list = new ArrayList();
+		list.addAll( getCDIArgumentObjects() );
+		list.addAll( getCDILocalVariableObjects() );
 		return list;
 	} 
 
@@ -684,8 +691,7 @@ public class CStackFrame extends CDebugElement
 		}
 		for ( int i = 0; i < vars.length; ++i )
 		{
-			if ( vars[i] instanceof CVariable &&
-				 ((CVariable)vars[i]).getOriginalCDIVariable() instanceof ICDIArgument )
+			if ( vars[i] instanceof CVariable && ((CVariable)vars[i]).isArgument() )
 			{
 				 list.add( vars[i] );
 			}
@@ -716,14 +722,14 @@ public class CStackFrame extends CDebugElement
 		}
 	}
 	
-	protected ICDIVariable findVariable( List list, ICDIVariable var )
+	protected ICDIVariableObject findVariable( List list, CVariable var )
 	{
 		Iterator it = list.iterator();
 		while( it.hasNext() )
 		{
-			ICDIVariable newVar = (ICDIVariable)it.next();
-			if ( newVar.equals( var ) )
-				return newVar;
+			ICDIVariableObject newVarObject = (ICDIVariableObject)it.next();
+			if ( var.sameVariableObject( newVarObject ) )
+				return newVarObject;
 		}
 		return null;
 	}

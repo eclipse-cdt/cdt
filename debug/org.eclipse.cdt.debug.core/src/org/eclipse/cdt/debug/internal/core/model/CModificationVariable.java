@@ -9,6 +9,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 
@@ -25,9 +26,9 @@ public class CModificationVariable extends CVariable
 	 * @param parent
 	 * @param cdiVariable
 	 */
-	public CModificationVariable( CDebugElement parent, ICDIVariable cdiVariable )
+	public CModificationVariable( CDebugElement parent, ICDIVariableObject cdiVariableObject )
 	{
-		super( parent, cdiVariable );
+		super( parent, cdiVariableObject );
 	}
 
 	/* (non-Javadoc)
@@ -61,16 +62,15 @@ public class CModificationVariable extends CVariable
 	public final void setValue( String expression ) throws DebugException
 	{
 		String newExpression = processExpression( expression );
-		ICDIVariable cdiVariable = getCDIVariable();
-		if ( cdiVariable == null )
-		{
-			logError( "Error in IValueModification#setValue: no cdi variable." );
-			requestFailed( "Unable to set value.", null );
-			return;
-		}
+		ICDIVariable cdiVariable = null;
 		try
 		{
-			cdiVariable.setValue( newExpression );
+			cdiVariable = getCDIVariable();
+			if ( cdiVariable != null )
+				cdiVariable.setValue( newExpression );
+			else
+				requestFailed( "Unable to set value.", null );
+			
 		}
 		catch( CDIException e )
 		{
@@ -86,16 +86,14 @@ public class CModificationVariable extends CVariable
 	 */
 	protected void setValue( ICDIValue value ) throws DebugException
 	{
-		ICDIVariable cdiVariable = getCDIVariable();
-		if ( cdiVariable == null )
-		{
-			logError( "Error in IValueModification#setValue: no cdi variable." );
-			requestFailed( "Unable to set value.", null );
-			return;
-		}
+		ICDIVariable cdiVariable = null;
 		try
 		{
-			cdiVariable.setValue( value );
+			cdiVariable = getCDIVariable();
+			if ( cdiVariable != null )
+				cdiVariable.setValue( value );
+			else
+				requestFailed( "Unable to set value.", null );
 		}
 		catch( CDIException e )
 		{

@@ -136,4 +136,12 @@ public class CArrayPartition extends CVariable
 	{
 		return fEnd;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#canEnableDisable()
+	 */
+	public boolean canEnableDisable()
+	{
+		return false;
+	}
 }

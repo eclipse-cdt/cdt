@@ -29,4 +29,10 @@ public interface ICVariable extends IVariable
 	boolean hasChildren();
 
 	String getQualifiedName() throws DebugException;
+
+	boolean isEnabled();
+
+	void setEnabled( boolean enabled ) throws DebugException;
+
+	boolean canEnableDisable();
 }

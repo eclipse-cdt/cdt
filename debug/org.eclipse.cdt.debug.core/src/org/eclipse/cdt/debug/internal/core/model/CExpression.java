@@ -7,11 +7,12 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
@@ -41,9 +42,9 @@ public class CExpression extends CModificationVariable
 	 * @param target
 	 * @param cdiExpression
 	 */
-	public CExpression( CDebugTarget target, ICDIVariable cdiVariable )
+	public CExpression( CDebugTarget target, ICDIVariableObject cdiVariableObject )
 	{
-		super( target, cdiVariable );
+		super( target, cdiVariableObject );
 		fFormat = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT );
 	}
 
@@ -82,7 +83,7 @@ public class CExpression extends CModificationVariable
 		super.dispose();
 	}
 	
-	protected ICDIExpression getCDIExpression()
+	protected ICDIExpression getCDIExpression() throws CDIException
 	{
 		return (ICDIExpression)getCDIVariable();
 	}
@@ -107,5 +108,21 @@ public class CExpression extends CModificationVariable
 			}
 		}
 		super.handleDebugEvent(event);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isEnabled()
+	 */
+	public boolean isEnabled()
+	{
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#canEnableDisable()
+	 */
+	public boolean canEnableDisable()
+	{
+		return false;
 	}
 }

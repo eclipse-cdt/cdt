@@ -86,11 +86,15 @@ public interface ICDTLaunchConfigurationConstants {
 	 */
 	public static final String ATTR_ATTACH_PROCESS_ID = CDT_LAUNCH_ID + ".ATTACH_PROCESS_ID"; //$NON-NLS-1$
 
-
 	/**
 	 * Launch configuration attribute key. The value is the startup mode for the debugger.
 	 */
 	public static final String ATTR_DEBUGGER_START_MODE = CDT_LAUNCH_ID + ".DEBUGGER_START_MODE"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute key. The value is a boolean specifying whether to enable variable bookkeeping.
+	 */
+	public static final String ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING = CDT_LAUNCH_ID + ".ENABLE_VARIABLE_BOOKKEEPING"; //$NON-NLS-1$
 	
 	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.

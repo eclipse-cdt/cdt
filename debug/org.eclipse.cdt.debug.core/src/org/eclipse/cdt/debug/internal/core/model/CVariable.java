@@ -8,12 +8,14 @@ package org.eclipse.cdt.debug.internal.core.model;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
@@ -24,8 +26,10 @@ import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICastToArray;
 import org.eclipse.cdt.debug.core.model.ICastToType;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
@@ -42,20 +46,80 @@ public abstract class CVariable extends CDebugElement
 										   ICastToType,
 										   ICastToArray
 {
+	class InternalVariable
+	{
+		private ICDIVariableObject fCDIVariableObject;
+
+		private ICDIVariable fCDIVariable;
+
+		public InternalVariable( ICDIVariableObject varObject )
+		{
+			setCDIVariableObject( varObject );
+			setCDIVariable( ( varObject instanceof ICDIVariable ) ? (ICDIVariable)varObject : null );
+		}
+
+		protected synchronized ICDIVariable getCDIVariable() throws CDIException
+		{
+			if ( fCDIVariable == null )
+			{
+				if ( getCDIVariableObject() instanceof ICDIArgumentObject )
+					fCDIVariable = getCDISession().getVariableManager().createArgument( (ICDIArgumentObject)getCDIVariableObject() );
+				else if ( getCDIVariableObject() instanceof ICDIVariableObject )
+					fCDIVariable = getCDISession().getVariableManager().createVariable( getCDIVariableObject() );
+			}
+			return fCDIVariable;
+		}
+
+		protected ICDIVariableObject getCDIVariableObject()
+		{
+			return fCDIVariableObject;
+		}
+
+		private void setCDIVariable( ICDIVariable variable )
+		{
+			fCDIVariable = variable;
+		}
+
+		private void setCDIVariableObject( ICDIVariableObject object )
+		{
+			fCDIVariableObject = object;
+		}
+
+		protected synchronized void invalidate()
+		{
+			try
+			{
+				if ( fCDIVariable != null )
+					getCDISession().getVariableManager().destroyVariable( fCDIVariable );
+			}
+			catch( CDIException e )
+			{
+				logError( e.getMessage() );
+			}
+			setCDIVariable( null );
+		}
+
+		protected void dispose()
+		{
+			invalidate();
+			setCDIVariableObject( null );
+		}
+	}
+
 	/**
 	 * The parent object this variable is contained in.
 	 */
 	private CDebugElement fParent;
 
 	/**
-	 * The underlying CDI variable.
+	 * The original internal variable.
 	 */
-	private ICDIVariable fCDIVariable;
+	private InternalVariable fOriginal;
 	
 	/**
-	 * The shadow CDI variable used for casting.
+	 * The shadow internal variable used for casting.
 	 */
-	private ICDIVariable fShadow;
+	private InternalVariable fShadow = null;
 	
 	/**
 	 * Cache of current value - see #getValue().
@@ -75,15 +139,6 @@ public abstract class CVariable extends CDebugElement
 	private Boolean fEditable = null;
 
 	/**
-	 * Counter corresponding to this variable's debug target
-	 * suspend count indicating the last time this value 
-	 * changed. This variable's value has changed on the
-	 * last suspend event if this counter is equal to the
-	 * debug target's suspend count.
-	 */
-	private int fLastChangeIndex = -1;
-
-	/**
 	 * Change flag.
 	 */
 	protected boolean fChanged = false;
@@ -98,18 +153,78 @@ public abstract class CVariable extends CDebugElement
 	 */
 	protected int fFormat = ICDIFormat.NATURAL;
 
+	private boolean fIsEnabled = true;
+
+	/*
+	 * Temporary solution to avoid NPE in VariablesView. 
+	 * This is fixed in the Eclipse 2.1.1 Maintenance Build.
+	 */
+	static private IValue fDisabledValue = new IValue()
+												{
+													public String getReferenceTypeName() throws DebugException
+													{
+														return null;
+													}
+
+													public String getValueString() throws DebugException
+													{
+														return null;
+													}
+
+													public boolean isAllocated() throws DebugException
+													{
+														return false;
+													}
+
+													public IVariable[] getVariables() throws DebugException
+													{
+														return null;
+													}
+
+													public boolean hasVariables() throws DebugException
+													{
+														return false;
+													}
+
+													public String getModelIdentifier()
+													{
+														return CDebugCorePlugin.getUniqueIdentifier();
+													}
+
+													public IDebugTarget getDebugTarget()
+													{
+														return null;
+													}
+
+													public ILaunch getLaunch()
+													{
+														return null;
+													}
+
+													public Object getAdapter( Class adapter )
+													{
+														return null;
+													}
+													
+												};
 	/**
 	 * Constructor for CVariable.
 	 * @param target
 	 */
-	public CVariable( CDebugElement parent, ICDIVariable cdiVariable )
+	public CVariable( CDebugElement parent, ICDIVariableObject cdiVariableObject )
 	{
 		super( (CDebugTarget)parent.getDebugTarget() );
 		fParent = parent;
-		fCDIVariable = cdiVariable;
+		fIsEnabled = !enableVariableBookkeeping();
+		fOriginal = createOriginal( cdiVariableObject );
 		fShadow = null;
 		fFormat = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT );
 		getCDISession().getEventManager().addEventListener( this );
+	}
+
+	private InternalVariable createOriginal( ICDIVariableObject varObject )
+	{
+		return new InternalVariable( varObject );
 	}
 
 	/**
@@ -121,9 +236,13 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public IValue getValue() throws DebugException
 	{
+		if ( !isEnabled() )
+			return fDisabledValue;
 		if ( fValue == null )
 		{
-			fValue = CValueFactory.createValue( this, getCurrentValue() );
+			ICDIValue cdiValue = getCurrentValue();
+			if ( cdiValue != null )
+				fValue = CValueFactory.createValue( this, cdiValue );
 		}
 		return fValue;
 	}
@@ -212,39 +331,11 @@ public abstract class CVariable extends CDebugElement
 	}
 
 	/**
-	 * Sets this variable's change counter to the specified value
-	 * 
-	 * @param count new value
-	 */
-	protected void setChangeCount( int count )
-	{
-		fLastChangeIndex = count;
-	}
-
-	/**
-	 * Returns this variable's change counter. This corresponds to the
-	 * last time this variable changed.
-	 * 
-	 * @return this variable's change counter
-	 */
-	protected int getChangeCount()
-	{
-		return fLastChangeIndex;
-	}
-
-	/**
 	 * Returns the last known value for this variable
 	 */
 	protected ICDIValue getLastKnownValue()
 	{
-		if ( fValue == null )
-		{
-			return null;
-		}
-		else
-		{
-			return fValue.getUnderlyingValue();
-		}
+		return ( fValue != null ) ? fValue.getUnderlyingValue() : null;
 	}
 	
 	protected void dispose()
@@ -254,15 +345,8 @@ public abstract class CVariable extends CDebugElement
 			((CValue)fValue).dispose();
 		}
 		getCDISession().getEventManager().removeEventListener( this );
-		try
-		{
-			if ( getShadow() != null )
-				destroyShadow( getShadow() );
-		}
-		catch( DebugException e )
-		{
-			logError( e );
-		}
+		if ( getShadow() != null )
+			getShadow().dispose();
 	}
 	
 	protected synchronized void setChanged( boolean changed ) throws DebugException
@@ -287,9 +371,16 @@ public abstract class CVariable extends CDebugElement
 		{
 			if ( event instanceof ICDIChangedEvent )
 			{
-				if ( source instanceof ICDIVariable && source.equals( getCDIVariable() ) )
+				try
 				{
-					handleChangedEvent( (ICDIChangedEvent)event );
+					if ( source instanceof ICDIVariable && source.equals( getCDIVariable() ) )
+					{
+						handleChangedEvent( (ICDIChangedEvent)event );
+					}
+				}
+				catch( CDIException e )
+				{
+					// do nothing
 				}
 			}
 		}
@@ -323,10 +414,10 @@ public abstract class CVariable extends CDebugElement
 	 * 
 	 * @return the underlying CDI variable
 	 */
-	protected ICDIVariable getCDIVariable()
+	protected ICDIVariable getCDIVariable() throws CDIException
 	{
-		if ( fShadow != null )
-			return fShadow;
+		if ( getShadow() != null )
+			return getShadow().getCDIVariable();
 		return getOriginalCDIVariable();
 	}
 
@@ -346,7 +437,7 @@ public abstract class CVariable extends CDebugElement
 	{
 		if ( fName == null )
 		{
-			String cdiName = ( getOriginalCDIVariable() != null ) ? getOriginalCDIVariable().getName() : null;
+			String cdiName = ( fOriginal != null ) ? fOriginal.getCDIVariableObject().getName() : null;
 			fName = cdiName;
 			if ( cdiName != null && getParent() instanceof ICValue )
 			{
@@ -369,7 +460,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public String getReferenceTypeName() throws DebugException
 	{
-		return getType().getName();
+		return ( getType() != null ) ? getType().getName() : null;
 	}
 
 	protected void updateParentVariable( CValue parentValue ) throws DebugException
@@ -410,11 +501,10 @@ public abstract class CVariable extends CDebugElement
 	{
 		try
 		{
-			ICDIVariable newVar = createShadow( getOriginalCDIVariable().getStackFrame(), type );
-			ICDIVariable oldVar = getShadow();
+			InternalVariable newVar = createShadow( getOriginalCDIVariable().getStackFrame(), type );
+			if ( getShadow() != null )
+				getShadow().dispose();
 			setShadow( newVar );
-			if ( oldVar != null )
-				destroyShadow( oldVar );
 		}
 		catch( CDIException e )
 		{
@@ -422,15 +512,7 @@ public abstract class CVariable extends CDebugElement
 		}
 		finally
 		{
-			if ( fValue != null )
-			{
-				((CValue)fValue).dispose();
-				fValue = null;
-			}
-			fEditable = null;
-			if ( fType != null )
-				fType.dispose();
-			fType = null;
+			invalidateValue();
 			fireChangeEvent( DebugEvent.STATE );
 		}
 	}
@@ -456,19 +538,11 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public void restoreDefault() throws DebugException
 	{
-		ICDIVariable oldVar = getShadow();
+		InternalVariable oldVar = getShadow();
 		setShadow( null );
 		if ( oldVar != null )
-			destroyShadow( oldVar );
-		if ( fValue != null )
-		{
-			((CValue)fValue).dispose();
-			fValue = null;
-		}
-		fEditable = null;
-		if ( fType != null )
-			fType.dispose();
-		fType = null;
+			oldVar.dispose();
+		invalidateValue();
 		fireChangeEvent( DebugEvent.STATE );
 	}
 	
@@ -481,27 +555,26 @@ public abstract class CVariable extends CDebugElement
 		return ( target != null && isEditable() );
 	}
 	
-	protected ICDIVariable getOriginalCDIVariable()
+	protected ICDIVariable getOriginalCDIVariable() throws CDIException
 	{
-		return fCDIVariable;
+		return ( fOriginal != null ) ? fOriginal.getCDIVariable() : null;
 	}
 
-	private ICDIVariable getShadow()
+	private InternalVariable getShadow()
 	{
 		return fShadow;
 	}
 
-	private void setShadow( ICDIVariable shadow )
+	private void setShadow( InternalVariable shadow )
 	{
 		fShadow = shadow;
 	}
 	
-	private ICDIVariable createShadow( ICDIStackFrame cdiFrame, String type ) throws DebugException
+	private InternalVariable createShadow( ICDIStackFrame cdiFrame, String type ) throws DebugException
 	{
 		try
 		{
-			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObjectAsType( getOriginalCDIVariable(), type );
-			return getCDISession().getVariableManager().createVariable( varObject );
+			return new InternalVariable( getCDISession().getVariableManager().getVariableObjectAsType( getOriginalCDIVariable(), type ) );
 		}
 		catch( CDIException e )
 		{
@@ -510,30 +583,17 @@ public abstract class CVariable extends CDebugElement
 		return null;
 	}
 	
-	private ICDIVariable createShadow( ICDIStackFrame cdiFrame, String type, int start, int length ) throws DebugException
+	private InternalVariable createShadow( ICDIStackFrame cdiFrame, String type, int start, int length ) throws DebugException
 	{
 		try
 		{
-			ICDIVariableObject varObject = getCDISession().getVariableManager().getVariableObjectAsArray( getOriginalCDIVariable(), type, start, length );
-			return getCDISession().getVariableManager().createVariable( varObject );
+			return new InternalVariable( getCDISession().getVariableManager().getVariableObjectAsArray( getOriginalCDIVariable(), type, start, length ) );
 		}
 		catch( CDIException e )
 		{
 			targetRequestFailed( e.getMessage(), null );
 		}
 		return null;
-	}
-	
-	private void destroyShadow( ICDIVariable shadow ) throws DebugException
-	{
-		try
-		{
-			getCDISession().getVariableManager().destroyVariable( shadow );
-		}
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), null );
-		}
 	}
 
 	/* (non-Javadoc)
@@ -551,11 +611,10 @@ public abstract class CVariable extends CDebugElement
 	{
 		try
 		{
-			ICDIVariable newVar = createShadow( getOriginalCDIVariable().getStackFrame(), type, startIndex, length );
-			ICDIVariable oldVar = getShadow();
+			InternalVariable newVar = createShadow( getOriginalCDIVariable().getStackFrame(), type, startIndex, length );
+			if ( getShadow() != null )
+				getShadow().dispose();
 			setShadow( newVar );
-			if ( oldVar != null )
-				destroyShadow( oldVar );
 		}
 		catch( CDIException e )
 		{
@@ -563,15 +622,7 @@ public abstract class CVariable extends CDebugElement
 		}
 		finally
 		{
-			if ( fValue != null )
-			{
-				((CValue)fValue).dispose();
-				fValue = null;
-			}
-			fEditable = null;
-			if ( fType != null )
-				fType.dispose();
-			fType = null;
+			invalidateValue();
 			fireChangeEvent( DebugEvent.STATE );
 		}
 	}
@@ -606,11 +657,15 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public boolean isEditable()
 	{
-		if ( fEditable == null && getCDIVariable() != null )
+		if ( !isEnabled() )
+			return false;
+		if ( fEditable == null )
 		{
 			try
 			{
-				fEditable = new Boolean( getCDIVariable().isEditable() );
+				ICDIVariable var = getCDIVariable();
+				if ( var != null )
+					fEditable = new Boolean( var.isEditable() );
 			}
 			catch( CDIException e )
 			{
@@ -689,11 +744,13 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public ICType getType() throws DebugException
 	{
-		if ( fType == null && getCDIVariable() != null )
+		if ( isEnabled() && fType == null )
 		{
 			try
 			{
-				fType = new CType( getCDIVariable().getType() );
+				ICDIVariable var = getCDIVariable();
+				if ( var != null )
+					fType = new CType( var.getType() );
 			}
 			catch( CDIException e )
 			{
@@ -701,5 +758,76 @@ public abstract class CVariable extends CDebugElement
 			}
 		}
 		return fType;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isEnabled()
+	 */
+	public boolean isEnabled()
+	{
+		return ( canEnableDisable() ) ? fIsEnabled : true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#setEnabled(boolean)
+	 */
+	public void setEnabled( boolean enabled ) throws DebugException
+	{
+		setEnabled0( enabled );
+		fireChangeEvent( DebugEvent.STATE );
+	}
+
+	private synchronized void setEnabled0( boolean enabled )
+	{
+		if ( fOriginal != null )
+			fOriginal.invalidate();
+		if ( getShadow() != null )
+			getShadow().invalidate();
+		fIsEnabled = enabled;
+		invalidateValue();
+	}
+
+	private void invalidateValue()
+	{
+		if ( fValue != null )
+		{
+			((CValue)fValue).dispose();
+			fValue = null;
+		}
+		fEditable = null;
+		if ( fType != null )
+			fType.dispose();
+		fType = null;
+	}
+
+	protected boolean isArgument()
+	{
+		return ( fOriginal != null ) ? ( fOriginal.getCDIVariableObject() instanceof ICDIArgumentObject ) : false;
+	}
+
+	protected boolean sameVariableObject( ICDIVariableObject object )
+	{
+		return ( fOriginal != null ) ? ( object.getName().equals( fOriginal.getCDIVariableObject().getName() ) ) : false;
+	}
+
+	private boolean enableVariableBookkeeping()
+	{
+		boolean result = false;
+		try
+		{
+			result = getLaunch().getLaunchConfiguration().getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false );
+		}
+		catch( CoreException e )
+		{
+		}
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#canEnableDisable()
+	 */
+	public boolean canEnableDisable()
+	{
+		return ( getParent() instanceof CStackFrame );
 	}
 }

@@ -5,6 +5,18 @@
 		* resources/search/classDecl.cpp
 		* search/org/eclipse/cdt/core/search/tests/OtherPatternTests.java
 
+2003-09-25 Bogdan Gheorghe
+	- separated dependency tests from the indexer tests
+	- modified the AutomatedIntegrationSuite to include new dependency
+	  tests
+	- added the following tests: 
+	 * testDepTable
+	 * testDepSourceChangeTree
+	 * testDepHeaderChangeTree
+	 * testDepHeaderChangeReindex
+	 * testDepSourceChangeTable
+	 * testDepHeaderChangeTable
+	 
 2003-09-25 Hoda Amer
 	Enabled CompleteParseASTExpressionTest.testPostfixTypenameIdentifier()
 	

@@ -5,9 +5,6 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -18,18 +15,20 @@ import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.search.PathCollector;
+import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
-import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
+import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * This class is used by <code>CModelManager</code> to convert
@@ -45,8 +44,6 @@ public class DeltaProcessor {
 	protected CElementDelta fCurrentDelta;
 	
 	protected IndexManager indexManager = new IndexManager();
-	
-	protected DependencyManager sourceDependencyManager = new DependencyManager();
 	
 	/* The C element that was last created (see createElement(IResource). 
 	 * This is used as a stack of C elements (using getParent() to pop it, and 
@@ -465,37 +462,26 @@ public class DeltaProcessor {
 	}
 
 	protected void updateIndexAddResource(ICElement element, IResourceDelta delta) {
-		//CModelManager.getDefault().getIndexManager().addResource(delta.getResource());
 	
 		if (indexManager == null)
 			return;
 		
 	    switch (element.getElementType()) {
 			case ICElement.C_PROJECT :
-					this.indexManager.indexAll(element.getCProject().getProject());
-					this.sourceDependencyManager.generateEntireDependencyTree(element.getCProject().getProject());
-					break;
+				this.indexManager.indexAll(element.getCProject().getProject());
+				break;
 	
 			case ICElement.C_UNIT:
 				IFile file = (IFile) delta.getResource();
 				IProject filesProject = file.getProject();
 				indexManager.addSource(file, filesProject.getFullPath());
-				cleanDependencies(file, filesProject);
-				IScannerInfo scanInfo = null;
-				IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(filesProject);
-				if (provider != null){
-					scanInfo = provider.getScannerInformation(filesProject);
-				}
-
-				this.sourceDependencyManager.addSource(file,filesProject.getFullPath(),scanInfo);
 				break;						
 	    }
 		
 	}
 
 	protected void updateIndexRemoveResource(ICElement element, IResourceDelta delta) {
-		//CModelManager.getDefault().getIndexManager().removeResource(delta.getResource());
-	
+		
 		if (indexManager == null)
 						return;
 
@@ -503,7 +489,6 @@ public class DeltaProcessor {
 			case ICElement.C_PROJECT :
 						this.indexManager.removeIndexFamily(element.getCProject().getProject().getFullPath());
 						// NB: Discarding index jobs belonging to this project was done during PRE_DELETE
-						this.sourceDependencyManager.removeTree(element.getCProject().getProject().getFullPath());
 						break;
 						// NB: Update of index if project is opened, closed, or its c nature is added or removed
 						//     is done in updateCurrentDeltaAndIndex
@@ -511,7 +496,6 @@ public class DeltaProcessor {
 			case ICElement.C_UNIT:
 						IFile file = (IFile) delta.getResource();
 						indexManager.remove(file.getFullPath().toString(), file.getProject().getProject().getFullPath());
-						sourceDependencyManager.remove(file.getFullPath().toString(),file.getProject().getFullPath());
 						break;				
 		}
 	
@@ -519,7 +503,7 @@ public class DeltaProcessor {
 	}
 	
 	private void updateDependencies(ICElement element){
-		//Update table
+	
 		IResource resource = element.getResource();
 		if (resource == null)
 		 return;
@@ -529,41 +513,35 @@ public class DeltaProcessor {
 		if ((fileExtension != null) &&
 			(fileExtension.equals("h") ||
 			fileExtension.equals("hh") ||
-			fileExtension.equals("hpp"))){
-		
-			if (sourceDependencyManager.getProjectDependsForFile(element.getResource().getLocation().toOSString()) == null){
-				//retrigger dep trees
-				 sourceDependencyManager.performConcurrentJob(new DependencyQueryJob(null,null,sourceDependencyManager,null),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
-			}
-			
-			ArrayList projs =sourceDependencyManager.getProjectDependsForFile(element.getResource().getLocation().toOSString());
-			if (projs != null){
-				Iterator iter = projs.iterator();
-				while (iter.hasNext()){
-					IPath pathToReindex = (IPath) iter.next();
-					
-					IWorkspaceRoot workRoot = element.getCProject().getProject().getWorkspace().getRoot();
-					IFile fileToReindex = workRoot.getFileForLocation(pathToReindex);
-					
-					if (fileToReindex.exists() ) {
-						if (VERBOSE)
-						 System.out.println("Going to reindex " + fileToReindex.getName());
-						this.indexManager.addSource(fileToReindex,fileToReindex.getProject().getProject().getFullPath());
-					}
+			fileExtension.equals("hpp")))
+		{
+			PathCollector pathCollector = new PathCollector();
+			//SubProgressMonitor subMonitor = (progressMonitor == null ) ? null : new SubProgressMonitor( progressMonitor, 5 );
+			ICSearchScope scope = SearchEngine.createWorkspaceScope();
+			CSearchPattern pattern = CSearchPattern.createPattern(resource.getLocation().toOSString(),ICSearchConstants.INCLUDE, ICSearchConstants.REFERENCES,ICSearchConstants.EXACT_MATCH,true);
+			IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+			indexManager.performConcurrentJob( 
+				new PatternSearchJob(
+					(CSearchPattern) pattern,
+					scope,
+					pathCollector,
+					indexManager 
+				),
+				ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+				null );
+				
+			String[] iPath = pathCollector.getPaths();
+			for (int i=0;i<iPath.length; i++){
+				IPath pathToReindex = new Path(iPath[i]);
+				IWorkspaceRoot workRoot = element.getCProject().getProject().getWorkspace().getRoot();
+				IFile fileToReindex = workRoot.getFile(pathToReindex);
+				
+				if (fileToReindex!=null && fileToReindex.exists() ) {
+					if (VERBOSE)
+					 System.out.println("Going to reindex " + fileToReindex.getName());
+					this.indexManager.addSource(fileToReindex,fileToReindex.getProject().getProject().getFullPath());
 				}
 			}
 		}
-	}
-	
-	private void cleanDependencies(IFile file, IProject filesProject) {
-		String[] files = sourceDependencyManager.getFileDependencies(filesProject,file);
-		if (files != null){
-			for (int i=0; i<files.length; i++){
-			 if (VERBOSE)
-			  System.out.println("Table Clean Up : " + files[i]+ " removing " + file.getName());
-			  sourceDependencyManager.removeFromTable(files[i],file.getLocation());
-			}
-		}
-		
-	}
+	}	
 }

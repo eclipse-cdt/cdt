@@ -29,12 +29,14 @@ public abstract class IndexInput {
 	protected int filePosition;
 	protected WordEntry currentWordEntry;
 	protected int wordPosition;
-
+	protected IncludeEntry currentIncludeEntry;
+	protected int includePosition;
 
 	public IndexInput() {
 		super();
 		wordPosition= 1;
 		filePosition= 1;
+		includePosition= 1;
 	}
 	/**
 	 * clears the cache of this indexInput, if it keeps track of the information already read.
@@ -56,6 +58,14 @@ public abstract class IndexInput {
 		if (!hasMoreWords())
 			return null;
 		return currentWordEntry;
+	}
+	/**
+	 * Returns the current file the indexInput is pointing to in the index.
+	 */
+	public IncludeEntry getCurrentIncludeEntry() throws IOException {
+		if (!hasMoreIncludes())
+			return null;
+		return currentIncludeEntry;
 	}
 	/**
 	 * Returns the position of the current file the input is pointing to in the index.
@@ -83,6 +93,10 @@ public abstract class IndexInput {
 	 */
 	public abstract int getNumWords();
 	/**
+	 * Returns the number of unique words in the index.
+	 */
+	public abstract int getNumIncludes();
+	/**
 	 * Returns the Object the input is reading from. It can be an IIndex,
 	 * a File, ...
 	 */
@@ -100,6 +114,12 @@ public abstract class IndexInput {
 		return wordPosition <= getNumWords();
 	}
 	/**
+	 * Returns true if the input has not reached the end of the index for the files.
+	 */
+	public boolean hasMoreIncludes() {
+		return includePosition <= getNumIncludes();
+	}
+	/**
 	 * Moves the pointer on the current file to the next file in the index.
 	 */
 	public abstract void moveToNextFile() throws IOException;
@@ -107,6 +127,10 @@ public abstract class IndexInput {
 	 * Moves the pointer on the current word to the next file in the index.
 	 */
 	public abstract void moveToNextWordEntry() throws IOException;
+	/**
+	 * Moves the pointer on the current include entry to the next file in the index.
+	 */
+	public abstract void moveToNextIncludeEntry() throws IOException;
 	/**
 	 * Open the Source where the input gets the information from.
 	 */
@@ -122,6 +146,15 @@ public abstract class IndexInput {
 	 */
 	public abstract IQueryResult[] queryInDocumentNames(String word) throws IOException;
 	/**
+	 * Returns the list of the files whose name contain the given word in the index.
+	 */
+	public abstract IncludeEntry[] queryIncludeEntries();
+	/**
+	 * @param fileNum
+	 * @return
+	 */
+	public abstract IncludeEntry[] queryIncludeEntries(int fileNum) throws IOException;
+	/**
 	 * Set the pointer on the current file to the first file of the index.
 	 */
 	protected abstract void setFirstFile() throws IOException;
@@ -129,4 +162,10 @@ public abstract class IndexInput {
 	 * Set the pointer on the current word to the first word of the index.
 	 */
 	protected abstract void setFirstWord() throws IOException;
+	/**
+	 * Set the pointer on the current include to the first include of the index.
+	 */
+	protected abstract void setFirstInclude() throws IOException;
+
+	
 }

@@ -14,10 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -25,20 +21,12 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.core.search.ICSearchPattern;
-import org.eclipse.cdt.core.search.ICSearchResultCollector;
-import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
-import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
-import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -63,7 +51,7 @@ public class IndexManagerTests extends TestCase {
 	IProject 				testProject;
 	NullProgressMonitor		monitor;
 	IndexManager 			indexManager;
-	
+
 	public static final int TIMEOUT = 5000;
 	/**
 	 * Constructor for IndexManagerTest.
@@ -80,6 +68,9 @@ public class IndexManagerTests extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
+		
+		monitor = new NullProgressMonitor();
+		
 		//Create temp project
 		testProject = createProject("IndexerTestProject");
 		if (testProject==null)
@@ -118,8 +109,7 @@ public class IndexManagerTests extends TestCase {
 		suite.addTest(new IndexManagerTests("testRemoveFileFromIndex"));
 		suite.addTest(new IndexManagerTests("testRemoveProjectFromIndex"));
 		suite.addTest(new IndexManagerTests("testIndexShutdown"));
-		suite.addTest(new IndexManagerTests("testDependencyTree"));
-		
+	
 		return suite;
 	
 	}
@@ -604,86 +594,5 @@ public class IndexManagerTests extends TestCase {
 	  assertEquals(fwdDclRefModel[i],fwdDclRefResults[i].toString());
 	}
   }
-  
-  public void testDependencyTree() throws Exception{
-	//Add a file to the project
-	IFile depTest = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");
-	importFile("DepTest.h","resources/dependency/DepTest.h");
-	importFile("a.h","resources/dependency/a.h");
-	importFile("c.h","resources/dependency/c.h");
-	importFile("d.h","resources/dependency/d.h");
-	importFile("Inc1.h","resources/dependency/Inc1.h");
-	importFile("DepTest2.h","resources/dependency/DepTest2.h");
-	IFile depTest2 = importFile("DepTest2.cpp","resources/dependency/DepTest2.cpp");
-	//Enable indexing on the created project
-	//By doing this, we force the Dependency Manager to do a g()
-	DependencyManager dependencyManager = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
-	//dependencyManager.setEnabled(testProject,true);
-	Thread.sleep(10000);
-	String[] depTestModel = {File.separator + "IndexerTestProject" + File.separator + "d.h", File.separator + "IndexerTestProject" + File.separator + "Inc1.h", File.separator + "IndexerTestProject" + File.separator + "c.h", File.separator + "IndexerTestProject" + File.separator + "a.h", File.separator + "IndexerTestProject" + File.separator + "DepTest.h"};
-	String[] depTest2Model = {File.separator + "IndexerTestProject" + File.separator + "d.h", File.separator + "IndexerTestProject" + File.separator + "DepTest2.h"};
-	
-	ArrayList includes = new ArrayList();
-	dependencyManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest,dependencyManager,includes),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
-	//Thread.sleep(5000);
-	String[] depTestModelLocal = convertToLocalPath(depTestModel);
-	String[] depTestIncludes = new String[includes.size()];
-	Iterator includesIterator = includes.iterator();
-	int i=0;
-	while(includesIterator.hasNext()){
-		depTestIncludes[i] = (String) includesIterator.next();
-		i++;
-	}
-	
-	if (depTestModelLocal.length != depTestIncludes.length)
-			fail("Number of included files differsfrom model");
-	
-	Arrays.sort(depTestModelLocal);
-	Arrays.sort(depTestIncludes);
-		
-	for (i=0;i<depTestIncludes.length; i++)
-	{
-		assertEquals(depTestModelLocal[i],depTestIncludes[i]);
-	}
-	
-	ArrayList includes2 = new ArrayList();
-	dependencyManager.performConcurrentJob(new DependencyQueryJob(testProject,depTest2,dependencyManager,includes2),ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,null);
-	//Thread.sleep(5000);
-	String[] depTest2ModelLocal = convertToLocalPath(depTest2Model);
-	String[] depTest2Includes = new String[includes2.size()];
-	Iterator includes2Iterator = includes2.iterator();
-	i=0;
-	while(includes2Iterator.hasNext()){
-		depTest2Includes[i] = (String) includes2Iterator.next();
-		i++;
-	}
-	
-	if (depTest2ModelLocal.length != depTest2Includes.length)
-			fail("Number of included files differsfrom model");
-	
-	Arrays.sort(depTest2ModelLocal);
-	Arrays.sort(depTest2Includes);
-	
-	for (i=0;i<depTest2Includes.length; i++)
-	{
-		assertEquals(depTest2ModelLocal[i],depTest2Includes[i]);
-	}
-  }
 
-	/**
-	 * @param depTestModel
-	 * @return
-	 */
-	private String[] convertToLocalPath(String[] model) {
-		IPath defaultPath = Platform.getLocation();
-		String[] tempLocalArray = new String[model.length];
-		for (int i=0;i<model.length;i++){
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(defaultPath.toOSString());
-			buffer.append(model[i]);
-			tempLocalArray[i]=buffer.toString();
-		}
-		return tempLocalArray;
-	}
-	
 }

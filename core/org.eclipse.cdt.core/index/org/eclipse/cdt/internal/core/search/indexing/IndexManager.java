@@ -35,9 +35,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.QualifiedName;
 
 
 public class IndexManager extends JobManager implements IIndexConstants {
@@ -106,13 +104,6 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 */
 	public void addSource(IFile resource, IPath indexedContainer){
 	
-		/******
-		*TODO: BOG Remove these methods once the new indexer is
-		*fully integrated
-		*/
-//		IProject project= resource.getProject();
-//		if (!isEnabled(project)) return;
-
 		if (CCorePlugin.getDefault() == null) return;	
 		AddCompilationUnitToIndex job = new AddCompilationUnitToIndex(resource, indexedContainer, this);
 		if (this.awaitingJobsCount() < MAX_FILES_IN_MEMORY) {
@@ -240,13 +231,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 */
 	public void indexAll(IProject project) {
 		if (CCorePlugin.getDefault() == null) return;
-		
-		 /******
-		 *TODO: BOG Remove these methods once the new indexer is
-		 *fully integrated
-		 */
-//		 if (!isEnabled(project)) return;
-
+	
 		// check if the same request is not already in the queue
 		IndexRequest request = new IndexAllProject(project, this);
 		for (int i = this.jobEnd; i > this.jobStart; i--) // NB: don't check job at jobStart, as it may have already started (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=32488)
@@ -258,11 +243,6 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 */
 	public void indexSourceFolder(CProject javaProject, IPath sourceFolder, final char[][] exclusionPattern) {
 		IProject project = javaProject.getProject();
-		/******
-		*TODO: BOG Remove these methods once the new indexer is
-		*fully integrated
-		*/
-//		if (!isEnabled(project)) return;
 
 		if (this.jobEnd > this.jobStart) {
 			// check if a job to index the project is not already in the queue
@@ -320,14 +300,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		IndexRequest request = null;
 		if (target instanceof IProject) {
 			IProject p = (IProject) target;
-			/******
-			*TODO: BOG Remove these methods once the new indexer is
-			*fully integrated
-			*/
-//			if (!isEnabled(p)) return;
-
-			//if (JavaProject.hasJavaNature(p))
-				request = new IndexAllProject(p, this);
+			request = new IndexAllProject(p, this);
 		}
 	
 		if (request != null)
@@ -409,12 +382,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 */
 	public void removeSourceFolderFromIndex(CProject javaProject, IPath sourceFolder, char[][] exclusionPatterns) {
 		IProject project = javaProject.getProject();
-		/******
-		*TODO: BOG Remove these methods once the new indexer is
-		*fully integrated
-		*/
-//		if (!isEnabled(project)) return;
-
+	
 		if (this.jobEnd > this.jobStart) {
 			// check if a job to index the project is not already in the queue
 			IndexRequest request = new IndexAllProject(project, this);
@@ -596,49 +564,5 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			else if (indexState == REBUILDING_STATE) state = "REBUILDING"; //$NON-NLS-1$
 			JobManager.verbose("-> index state updated to: " + state + " for: "+indexName); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-	}
-
-	/*************
-	 *TODO: BOG Remove these methods once the new indexer is
-	 *fully integrated
-	 * START OF TEMP INDEXER ENABLE SECTION
-	 */
-//	final static String INDEX_MODEL_ID = CCorePlugin.PLUGIN_ID + ".newindexmodel";
-//	final static String ACTIVATION = "enable";
-//	
-//	static QualifiedName activationKey = new QualifiedName(INDEX_MODEL_ID, ACTIVATION);
-//	
-//	public boolean isEnabled(IProject project) {
-//		String prop = null;
-//		try {
-//			if (project != null) {
-//				prop = project.getPersistentProperty(activationKey);
-//			}
-//		} catch (CoreException e) {
-//		}
-//		return ((prop != null) && prop.equalsIgnoreCase("true"));
-//	}
-//	
-//	public void setEnabled(IProject project, boolean on) {
-//		try {
-//			if (project != null) {
-//				Boolean newValue = new Boolean(on);
-//				Boolean oldValue = new Boolean(isEnabled(project));
-//				if (!oldValue.equals(newValue)) {
-//					project.setPersistentProperty(activationKey, newValue.toString());
-//					if (on) {
-//						indexAll(project);
-//					} else {
-//						//remove(project);
-//					}
-//				}
-//			}
-//		} catch (CoreException e) {
-//		}
-//	}
-	
-	/************
-	 * END OF TEMP INDEXER ENABLE SECTION
-	 */
-		
+	}	
 }

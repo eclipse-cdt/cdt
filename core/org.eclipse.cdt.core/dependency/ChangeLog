@@ -1,3 +1,25 @@
+2003-09-25 Bogdan Gheorghe
+	- As a result of folding the dependency service into the indexer
+	  have removed the following files:
+	  
+	* src/org/eclipse/cdt/internal/core/sourcedependency/AddFileToDependencyTree.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/DependencyManager.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/DependencyRequest.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/DependencyRequestor.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/DependencySelector.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/DependencyTree.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/EntireProjectDependencyTree.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/IDependencyTree.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/IPreprocessorOutput.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/ISourceDependency.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/PreprocessorOutput.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/RemoveFromDependencyTree.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/impl/IncludeEntry.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/impl/IncludeEntryHashedArray.java
+	* src/org/eclipse/cdt/internal/core/sourcedependency/impl/InMemoryTree.java
+
+	
+	  
 2003-09-22 Bogdan Gheorghe
 	- Took out enable section for DependencyManager
 	

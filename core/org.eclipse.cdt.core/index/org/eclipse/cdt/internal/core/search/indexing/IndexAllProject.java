@@ -14,6 +14,12 @@ package org.eclipse.cdt.internal.core.search.indexing;
 import java.io.IOException;
 import java.util.HashSet;
 
+import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.index.IIndex;
+import org.eclipse.cdt.internal.core.index.IQueryResult;
+import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
+import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
+import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -23,16 +29,6 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import  org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.index.IIndex;
-import org.eclipse.cdt.internal.core.index.IQueryResult;
-import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
-import org.eclipse.cdt.internal.core.search.processing.JobManager;
-import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
-import org.eclipse.cdt.internal.core.model.CModel;
-import org.eclipse.cdt.internal.core.model.CModelManager;
-import org.eclipse.cdt.core.model.ICElement;
 
 
 public class IndexAllProject extends IndexRequest {

@@ -23,18 +23,25 @@ import java.io.RandomAccessFile;
  */
 
 public class BlocksIndexOutput extends IndexOutput {
+
 	protected RandomAccessFile indexOut;
 	protected int blockNum;
 	protected boolean opened= false;
 	protected File indexFile;
+	
 	protected FileListBlock fileListBlock;
 	protected IndexBlock indexBlock;
+	protected IndexBlock includeIndexBlock;
+	
 	protected int numWords= 0;
-	protected IndexSummary summary;
 	protected int numFiles= 0;
+	protected int numIncludes= 0;
+	protected IndexSummary summary;
+	
 	protected boolean firstInBlock;
 	protected boolean firstIndexBlock;
 	protected boolean firstFileListBlock;
+	protected boolean firstIncludeIndexBlock;
 
 	public BlocksIndexOutput(File indexFile) {
 		this.indexFile= indexFile;
@@ -43,6 +50,7 @@ public class BlocksIndexOutput extends IndexOutput {
 		firstInBlock= true;
 		firstIndexBlock= true;
 		firstFileListBlock= true;
+		firstIncludeIndexBlock=true;
 	}
 	/**
 	 * @see IndexOutput#addFile
@@ -93,6 +101,31 @@ public class BlocksIndexOutput extends IndexOutput {
 		}
 	}
 	/**
+	 * @see IndexOutput#addInclude
+	 */
+	public void addInclude(IncludeEntry entry) throws IOException {
+		if (firstIncludeIndexBlock) {
+			includeIndexBlock= new GammaCompressedIndexBlock(IIndexConstants.BLOCK_SIZE);
+			firstInBlock= true;
+			firstIncludeIndexBlock= false;
+		}
+		if (entry.getNumRefs() == 0)
+			return;
+		if (includeIndexBlock.addIncludeEntry(entry)) {
+			if (firstInBlock) {
+				summary.addFirstIncludeInBlock(entry.getFile(), blockNum);
+				firstInBlock= false;
+			}
+			numIncludes++;
+		} else {
+			if (includeIndexBlock.isEmpty()) {
+				return;
+			}
+			flushWords();
+			addInclude(entry);
+		}
+	}
+	/**
 	 * @see IndexOutput#close
 	 */
 	public void close() throws IOException {
@@ -110,6 +143,7 @@ public class BlocksIndexOutput extends IndexOutput {
 		
 		summary.setNumFiles(numFiles);
 		summary.setNumWords(numWords);
+		summary.setNumIncludes(numIncludes);
 		indexOut.seek(blockNum * (long) IIndexConstants.BLOCK_SIZE);
 		summary.write(indexOut);
 		indexOut.seek(0);
@@ -143,6 +177,19 @@ public class BlocksIndexOutput extends IndexOutput {
 		}
 	}
 	/**
+	 * 
+	 */
+	public void flushIncludes() throws IOException {
+		if (!firstInBlock 
+			&& includeIndexBlock != null) { // could have added a document without any indexed word, no block created yet
+		includeIndexBlock.flush();
+		includeIndexBlock.write(indexOut, blockNum++);
+		includeIndexBlock.clear();
+		firstInBlock= true;
+	}
+		
+	}
+	/**
 	 * @see IndexOutput#getDestination
 	 */
 	public Object getDestination() {
@@ -156,10 +203,12 @@ public class BlocksIndexOutput extends IndexOutput {
 			summary= new IndexSummary();
 			numFiles= 0;
 			numWords= 0;
+			numIncludes=0;
 			blockNum= 1;
 			firstInBlock= true;
 			firstIndexBlock= true;
 			firstFileListBlock= true;
+			firstIncludeIndexBlock=true;
 			indexOut= new SafeRandomAccessFile(this.indexFile, "rw"); //$NON-NLS-1$
 			opened= true;
 		}

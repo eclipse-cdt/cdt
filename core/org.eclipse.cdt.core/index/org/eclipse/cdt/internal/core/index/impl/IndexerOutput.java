@@ -55,4 +55,23 @@ public class IndexerOutput implements IIndexerOutput {
 	public void addRef(String word) {
 		addRef(word.toCharArray());
 	}
+		
+	public void addRelatives(String inclusion, String parent) {
+		if (indexedFile == null) {
+					throw new IllegalStateException();
+		}
+		index.addRelatives(indexedFile, inclusion, parent);	
+	}
+
+	public void addIncludeRef(char[] word) {
+		if (indexedFile == null) {
+			throw new IllegalStateException();
+		}
+			index.addIncludeRef(indexedFile, word);	
+	}
+
+	public void addIncludeRef(String word) {
+		addIncludeRef(word.toCharArray());
+	}
+	
 }

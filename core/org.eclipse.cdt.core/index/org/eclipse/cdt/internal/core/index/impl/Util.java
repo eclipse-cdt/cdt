@@ -195,6 +195,32 @@ public class Util {
 			quickSort(list, left, original_right);
 		}
 	}
+	private static void quickSort(IncludeEntry[] list, int left, int right) {
+			int original_left= left;
+			int original_right= right;
+			char[] mid= list[(left + right) / 2].fFile;
+			do {
+				while (compare(list[left].fFile, mid) < 0) {
+					left++;
+				}
+				while (compare(mid, list[right].fFile) < 0) {
+					right--;
+				}
+				if (left <= right) {
+					IncludeEntry tmp= list[left];
+					list[left]= list[right];
+					list[right]= tmp;
+					left++;
+					right--;
+				}
+			} while (left <= right);
+			if (original_left < right) {
+				quickSort(list, original_left, right);
+			}
+			if (left < original_right) {
+				quickSort(list, left, original_right);
+			}
+		}
 	/**
 	 * Reads in a string from the specified data input stream. The 
 	 * string has been encoded using a modified UTF-8 format. 
@@ -288,6 +314,10 @@ public class Util {
 			quickSort(list, 0, list.length - 1);
 	}
 	public static void sort(WordEntry[] list) {
+		if (list.length > 1)
+			quickSort(list, 0, list.length - 1);
+	}
+	public static void sort(IncludeEntry[] list) {
 		if (list.length > 1)
 			quickSort(list, 0, list.length - 1);
 	}

@@ -23,6 +23,7 @@ import org.eclipse.cdt.internal.core.index.IQueryResult;
 
 public class SimpleIndexInput extends IndexInput {
 	protected WordEntry[] sortedWordEntries;
+	protected IncludeEntry[] sortedIncludes;
 	protected IndexedFile currentFile;
 	protected IndexedFile[] sortedFiles;
 	protected InMemoryIndex index;
@@ -78,6 +79,12 @@ public class SimpleIndexInput extends IndexInput {
 		return index.getNumFiles();
 	}
 	/**
+	 * @see IndexInput#getNumIncludes()
+	 */
+	public int getNumIncludes() {
+		return sortedIncludes.length;
+	}
+	/**
 	 * @see IndexInput#getNumWords()
 	 */
 	public int getNumWords() {
@@ -112,15 +119,26 @@ public class SimpleIndexInput extends IndexInput {
 			currentWordEntry= sortedWordEntries[wordPosition - 1];
 	}
 	/**
+	 * @see IndexInput#moveToNextIncludeEntry()
+	 */
+	public void moveToNextIncludeEntry() throws IOException {
+		includePosition++;
+		if (hasMoreIncludes())
+			currentIncludeEntry= sortedIncludes[includePosition - 1];
+	}
+	/**
 	 * @see IndexInput#open()
 	 */
 	public void open() throws IOException {
 		sortedWordEntries= index.getSortedWordEntries();
 		sortedFiles= index.getSortedFiles();
+		sortedIncludes = index.getSortedIncludeEntries();
 		filePosition= 1;
 		wordPosition= 1;
+		includePosition=1;
 		setFirstFile();
 		setFirstWord();
+		setFirstInclude();
 	}
 	/**
 	 * @see IndexInput#query(String)
@@ -172,6 +190,20 @@ public class SimpleIndexInput extends IndexInput {
 		wordPosition= 1;
 		if (sortedWordEntries.length > 0)
 			currentWordEntry= sortedWordEntries[0];
+	}
+	/**
+	 * @see IndexInput#setFirstInclude()
+	 */
+	protected void setFirstInclude() throws IOException {
+		includePosition=1;
+		if (sortedIncludes.length >0)
+			currentIncludeEntry=sortedIncludes[0];
+	}
+	public IncludeEntry[] queryIncludeEntries() {
+		return null;
+	}
+	public IncludeEntry[] queryIncludeEntries(int fileNum) throws IOException {
+		return null;
 	}
 }
 

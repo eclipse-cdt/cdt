@@ -23,6 +23,10 @@ import org.eclipse.cdt.internal.core.index.IDocument;
 public class InMemoryIndex {
 
 	/**
+	* hashtable of IncludeEntrys = includeFiles+numbers of the files they appear in.
+	*/
+	protected IncludeEntryHashedArray includes;
+	/**
 	 * hashtable of WordEntrys = words+numbers of the files they appear in.
 	 */
 	protected WordEntryHashedArray words;
@@ -35,9 +39,14 @@ public class InMemoryIndex {
 	 */
 	protected long footprint;
 
+	private IncludeEntry[] sortedIncludeEntries;
 	private WordEntry[] sortedWordEntries;
 	private IndexedFile[] sortedFiles;
+
+	private int lastId;
+	
 	public InMemoryIndex() {
+		includes= new IncludeEntryHashedArray(501);
 		init();
 	}
 
@@ -47,6 +56,46 @@ public class InMemoryIndex {
 		this.sortedFiles = null;
 		return indexedFile;
 	}
+	
+	public void addIncludeRef(IndexedFile indexedFile, char[] include) {
+		addIncludeRef(include, indexedFile.getFileNumber());
+	}
+	
+	public void addIncludeRef(IndexedFile indexedFile, String include) {
+		addIncludeRef(include.toCharArray(), indexedFile.getFileNumber());
+	}
+	
+	/**
+		 * Adds the references of the include to the tree (reference = number of the file the include belongs to).
+		 */
+		protected void addIncludeRef(char[] include, int[] references) {
+			int size= references.length;
+			int i= 0;
+			while (i < size) {
+				if (references[i] != 0)
+					addIncludeRef(include, references[i]);
+				i++;
+			}
+		}
+		/**
+		 * Looks if the include already exists to the tree and adds the fileNum to this include.
+		 * If the include does not exist, it adds it to the tree.
+		 */
+		protected void addIncludeRef(char[] include, int fileNum) {
+			IncludeEntry entry= (IncludeEntry) this.includes.get(include);
+			if (entry == null) {
+				entry= new IncludeEntry(include, ++lastId);
+				entry.addRef(fileNum);
+				this.includes.add(entry);
+				this.sortedIncludeEntries= null;
+				//TODO: BOG FIGURE OUT FOOTPRINT
+				//this.footprint += entry.getClass(); //footprint();
+				//
+			} else {
+				this.footprint += entry.addRef(fileNum);
+			}
+		}
+
 	/**
 	 * Adds the references of the word to the index (reference = number of the file the word belongs to).
 	 */
@@ -83,6 +132,27 @@ public class InMemoryIndex {
 	public void addRef(IndexedFile indexedFile, String word) {
 		addRef(word.toCharArray(), indexedFile.getFileNumber());
 	}
+	
+	public void addRelatives(IndexedFile indexedFile, String inclusion, String parent) {
+		addRelatives(indexedFile.getFileNumber(),inclusion.toCharArray(),(parent != null ) ? parent.toCharArray() : null);
+	}
+	
+	protected void addRelatives(int fileNumber, char[] inclusion, char[] parent) {
+		IncludeEntry childEntry=null;
+		IncludeEntry parentEntry=null;
+		
+		if (inclusion != null)
+			childEntry= (IncludeEntry) this.includes.get(inclusion);
+	
+		if (parent != null)
+			parentEntry= (IncludeEntry) this.includes.get(parent);
+		
+
+		childEntry.addParent(fileNumber,(parentEntry!=null) ? parentEntry.getID() : -1);
+		
+		if (parent!=null)
+			parentEntry.addChild(fileNumber,(childEntry!=null) ? childEntry.getID() : -1);
+	}	
 	/**
 	 * Returns the footprint of the index.
 	 */
@@ -90,10 +160,28 @@ public class InMemoryIndex {
 		return this.footprint;
 	}
 	/**
+	 * Returns the indexed files contained in the hashtable of includes.
+	 */
+	public IndexedFile[] getIndexedFiles(){
+		return this.files.asArray();
+	}
+	/**
 	 * Returns the indexed file with the given path, or null if such file does not exist.
 	 */
 	public IndexedFile getIndexedFile(String path) {
 		return files.get(path);
+	}
+	/**
+	 * Returns the include entries contained in the hashtable of includes.
+	 */
+	public IncludeEntry[] getIncludeEntries() {
+		return this.includes.asArray();
+	}
+	/**
+	 * Returns the include entry corresponding to the given include.
+	 */
+	protected IncludeEntry getIncludeEntry(char[] include) {
+		return (IncludeEntry) includes.get(include);
 	}
 	/**
 	 * @see IIndex#getNumDocuments()
@@ -107,6 +195,11 @@ public class InMemoryIndex {
 	public int getNumWords() {
 		return words.elementSize;
 	}
+	
+	public int getNumIncludes() {
+		return includes.elementSize;
+	}
+	
 	/**
 	 * Returns the words contained in the hashtable of words, sorted by alphabetical order.
 	 */
@@ -130,6 +223,17 @@ public class InMemoryIndex {
 		return this.sortedWordEntries;
 	}
 	/**
+	 * Returns the include entries contained in the hashtable of includeas, sorted by alphabetical order.
+	 */
+	protected IncludeEntry[] getSortedIncludeEntries() {
+		if (this.sortedIncludeEntries == null) {
+			IncludeEntry[] includes= this.includes.asArray();
+			Util.sort(includes);
+			this.sortedIncludeEntries= includes;
+		}
+		return this.sortedIncludeEntries;
+	}
+	/**
 	 * Returns the word entry corresponding to the given word.
 	 */
 	protected WordEntry getWordEntry(char[] word) {
@@ -139,11 +243,14 @@ public class InMemoryIndex {
 	 * Initialises the fields of the index
 	 */
 	public void init() {
+		includes= new IncludeEntryHashedArray(501);
 		words= new WordEntryHashedArray(501);
 		files= new IndexedFileHashedArray(101);
 		footprint= 0;
+		lastId=0;
 		sortedWordEntries= null;
 		sortedFiles= null;
+		sortedIncludeEntries=null;
 	}
 	/**
 	 * Saves the index in the given file.

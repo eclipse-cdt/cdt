@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IDocument;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IIndexerOutput;
+import org.eclipse.core.resources.IFile;
 
 public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSearchConstants {
 	
@@ -340,6 +342,10 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	 */
 	public abstract String[] getFileTypes();
 	/**
+	 * Returns the file types being indexed.
+	 */
+	public abstract IFile getResourceFile();
+	/**
 	 * @see IIndexer#index(IDocument document, IIndexerOutput output)
 	 */
 	public void index(IDocument document, IIndexerOutput output) throws IOException {
@@ -620,6 +626,34 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		}
 		
 		return bestPrefix( prefix,  (char)0, macroName, null, matchMode, isCaseSenstive );	
+	}
+	
+	/**
+	 * @param _limitTo
+	 * @param simpleName
+	 * @param _matchMode
+	 * @param _caseSensitive
+	 * @return
+	 */
+	public static final char[] bestIncludePrefix( LimitTo limitTo, char[] incName, int matchMode, boolean isCaseSenstive ){
+		//since we only index macro declarations we already know the prefix
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = INCLUDE_REF;
+		} else {
+			return null;
+		}
+		
+		return bestPrefix( prefix,  (char)0, incName, null, matchMode, isCaseSenstive );	
+	}
+	
+	public void addInclude(IASTInclusion inclusion, IASTInclusion parent){
+		this.output.addIncludeRef(inclusion.getFullFileName());
+		this.output.addRelatives(inclusion.getFullFileName(),(parent != null ) ? parent.getFullFileName() : null);
+		//Add Dep Table entry
+		String[] incName = new String[1];
+		incName[0] = inclusion.getFullFileName();
+		this.output.addRef(encodeEntry(incName, INCLUDE_REF, INCLUDE_REF_LENGTH));
 	}
 }
 

@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.core.search.indexing;
 * @author bgheorgh
 */
 
+import java.util.LinkedList;
+
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
@@ -68,6 +70,9 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	char[][] enclosingTypeNames = new char[5][];
 	int depth = 0;
 	int methodDepth = 0;
+	
+	private IASTInclusion currentInclude = null;
+	private LinkedList includeStack = new LinkedList();
 	
 	public SourceIndexerRequestor(SourceIndexer indexer, IDocument document) {
 		super();
@@ -180,9 +185,10 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	public void enterInclusion(IASTInclusion inclusion) {
 		// TODO Auto-generated method stub
 		
-		//System.out.println("NEW INCLUSION \nInclusion short name: " + inclusion.getName()); 
-		//System.out.println("Inclusion Long Name: " + inclusion.getFullFileName());
-		//System.out.println("enterInclusion");
+		IASTInclusion parent = peekInclude();
+		indexer.addInclude(inclusion, parent);
+		//Push on stack
+		pushInclude(inclusion);
 	}
 
 	/* (non-Javadoc)
@@ -342,8 +348,7 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void exitInclusion(IASTInclusion inclusion) {
 		// TODO Auto-generated method stub
-		//System.out.println("exitInclusion");
-
+		popInclude();
 	}
 
 	/* (non-Javadoc)
@@ -455,4 +460,19 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
         	indexer.addParameterReference( (IASTParameterDeclaration) reference.getReferencedElement() );
         
     }
+    
+	private void pushInclude( IASTInclusion inclusion ){
+		includeStack.addFirst( currentInclude );
+		currentInclude = inclusion;
+	}
+	
+	private IASTInclusion popInclude(){
+		IASTInclusion oldInclude = currentInclude;
+		currentInclude = (includeStack.size() > 0 ) ? (IASTInclusion) includeStack.removeFirst() : null;
+		return oldInclude;
+	}
+	
+	private IASTInclusion peekInclude(){
+		return currentInclude;
+	}
 }

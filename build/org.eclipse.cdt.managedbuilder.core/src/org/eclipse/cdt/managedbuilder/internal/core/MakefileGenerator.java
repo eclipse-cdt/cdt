@@ -17,14 +17,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.model.Util;
+import org.eclipse.cdt.internal.core.search.PathCollector;
+import org.eclipse.cdt.internal.core.search.PatternSearchJob;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
+import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.search.ICSearchConstants;
-import org.eclipse.cdt.internal.core.model.Util;
-import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
-import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -160,13 +165,24 @@ public class MakefileGenerator {
 								// Here's the container
 								generator.appendModifiedSubdirectory(resource);
 								// and all the dependents
-								DependencyManager depMgr = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
-								List deps = depMgr.getProjectDependsForFile(resource.getLocation().toOSString());
-								if (deps != null) {
-									ListIterator iter = deps.listIterator();
-									while (iter.hasNext()) {
+								PathCollector pathCollector = new PathCollector();
+								ICSearchScope scope = SearchEngine.createWorkspaceScope();
+								CSearchPattern pattern = CSearchPattern.createPattern(resource.getLocation().toOSString(),ICSearchConstants.INCLUDE, ICSearchConstants.REFERENCES,ICSearchConstants.EXACT_MATCH,true);
+								IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+							    indexManager.performConcurrentJob( 
+								  new PatternSearchJob(
+									  (CSearchPattern) pattern,
+									  scope,
+									  pathCollector,
+									  indexManager 
+								  ),
+								  ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+								  null );
+								 String[] deps = pathCollector.getPaths();
+								 if (deps.length > 0 ) {
+								 	for (int i=0; i<deps.length; i++){
 										generator.appendModifiedSubdirectory(resource);
-									}
+								 	}
 								}
 								// A build should run						
 								generator.shouldRunBuild(true);
@@ -240,7 +256,7 @@ public class MakefileGenerator {
 		// Create the buffer to hold the output for the module and a dep calculator
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(ManagedBuilderCorePlugin.getResourceString(AUTO_DEP) + NEWLINE);
-		DependencyManager dependencyManager = CCorePlugin.getDefault().getCoreModel().getDependencyManager();
+		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 
 		/*
 		 * Visit each resource in the folder that we have a rule to build.
@@ -264,7 +280,7 @@ public class MakefileGenerator {
 					// ASk the dep generator to find all the deps for this resource
 					ArrayList dependencies = new ArrayList();
 					try {
-						dependencyManager.performConcurrentJob(new DependencyQueryJob(project, (IFile)resource, dependencyManager, dependencies), ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+						indexManager.performConcurrentJob(new DependencyQueryJob(project, (IFile)resource, indexManager, dependencies), ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
 					} catch (Exception e) {
 						continue;
 					}

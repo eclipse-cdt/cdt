@@ -13,6 +13,9 @@ package org.eclipse.cdt.internal.core.index;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
+
 /**
  * An IIndex is the interface used to generate an index file, and to make queries on
  * this index.
@@ -71,5 +74,11 @@ public interface IIndex {
 		 * Saves the index on the disk.
 		 */
 		void save() throws IOException;
+		/**
+		 * @param path
+		 * @return
+		 */
+		String[] getFileDependencies(IPath path) throws IOException;
+	    String[] getFileDependencies(IFile file) throws IOException;
 
 }

@@ -12,7 +12,9 @@ package org.eclipse.cdt.internal.core.index.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.internal.core.index.IDocument;
@@ -20,6 +22,8 @@ import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IIndexer;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * An Index is used to create an index on the disk, and to make queries. It uses a set of 
@@ -168,6 +172,19 @@ public class Index implements IIndex {
 		}		
 	}
 	/**
+	 * @see IIndex#getNumWords
+	 */
+	public int getNumIncludes() throws IOException {
+		//save();
+		IndexInput input= new BlocksIndexInput(indexFile);
+		try {
+			input.open();
+			return input.getNumIncludes();
+		} finally {
+			input.close();
+		}		
+	}
+	/**
 	 * Returns the path corresponding to a given document number
 	 */
 	public String getPath(int documentNumber) throws IOException {
@@ -302,6 +319,63 @@ public class Index implements IIndex {
 			input.close();
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.sourcedependency.IDependencyTree#getFileDepencies(int)
+	 */
+	public String[] getFileDependencies(IPath filePath) throws IOException {
+//		List tempFileReturn = new ArrayList();
+//		
+//		IndexedFile indexFile = addsIndex.getIndexedFile(filePath.toString());
+//
+//		if (indexFile == null)
+//		 return new String[0];
+//		 
+//		int fileNum = indexFile.getFileNumber();
+//		IncludeEntry[] tempEntries = addsIndex.getIncludeEntries();
+//		for (int i=0; i<tempEntries.length; i++)
+//		{
+//			int[] fileRefs = tempEntries[i].getRefs();
+//			for (int j=0; j<fileRefs.length; j++)
+//			{
+//				if (fileRefs[j] == fileNum)
+//				{ 
+//					char[] tempFile = tempEntries[i].getFile();
+//					StringBuffer tempString = new StringBuffer();
+//					tempString.append(tempFile);
+//					tempFileReturn.add(tempString.toString());
+//					break;
+//				}
+//			}
+//		}
+//		return (String []) tempFileReturn.toArray(new String[tempFileReturn.size()]);
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.IIndex#getFileDependencies(org.eclipse.core.resources.IFile)
+	 */
+	public String[] getFileDependencies(IFile file) throws IOException  {
+		IndexInput input= new BlocksIndexInput(indexFile);
+		int fileNum=0;
+		List tempFileReturn = new ArrayList();
+		try {
+			IDocument temp = new IFileDocument(file);
+			input.open();
+			IndexedFile inFile = input.getIndexedFile(temp);
+			fileNum =inFile.getFileNumber();
+	
+			IncludeEntry[] tempEntries = input.queryIncludeEntries(fileNum);
+			for (int i=0; i<tempEntries.length; i++)
+			{
+				char[] tempFile = tempEntries[i].getFile();
+				StringBuffer tempString = new StringBuffer();
+				tempString.append(tempFile);
+				tempFileReturn.add(tempString.toString());
+			}
+		}
+		finally{input.close();}
+		return (String []) tempFileReturn.toArray(new String[tempFileReturn.size()]);
+	}
 	/**
 	 * @see IIndex#remove
 	 */
@@ -361,4 +435,6 @@ public class Index implements IIndex {
 	str += "(length: "+ getIndexFile().length() +")"; //$NON-NLS-1$ //$NON-NLS-2$
 	return str;
 }
+
+	
 }

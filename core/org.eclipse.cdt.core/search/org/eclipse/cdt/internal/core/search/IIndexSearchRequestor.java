@@ -82,4 +82,6 @@ void acceptFieldDeclaration(String resourcePath, char[] simpleTypeName, char[][]
 
 void acceptMacroDeclaration(String resourcePath, char[] decodedSimpleName);
 
+void acceptIncludeDeclaration(String resourcePath, char[] decodedSimpleName);
+
 }

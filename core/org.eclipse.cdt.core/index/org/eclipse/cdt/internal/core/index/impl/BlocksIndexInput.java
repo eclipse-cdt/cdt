@@ -31,6 +31,7 @@ public class BlocksIndexInput extends IndexInput {
 	protected int currentFileListBlockNum;
 	protected int currentIndexBlockNum;
 	protected IndexBlock currentIndexBlock;
+	protected IndexBlock currentIncludeIndexBlock;
 	private RandomAccessFile raf;
 	protected File indexFile;
 	protected LRUCache blockCache;
@@ -157,6 +158,12 @@ public class BlocksIndexInput extends IndexInput {
 		return summary.getNumWords();
 	}
 	/**
+	 * @see IndexInput#getNumIncludes()
+	 */
+	public int getNumIncludes() {
+		return summary.getNumIncludes();
+	}
+	/**
 	 * @see IndexInput#getSource()
 	 */
 	public Object getSource() {
@@ -169,6 +176,7 @@ public class BlocksIndexInput extends IndexInput {
 		clearCache();
 		setFirstFile();
 		setFirstWord();
+		setFirstInclude();
 	}
 	/**
 	 * @see IndexInput#moveToNextFile()
@@ -388,4 +396,79 @@ public class BlocksIndexInput extends IndexInput {
 			currentIndexBlock.nextEntry(currentWordEntry);
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.impl.IndexInput#moveToNextIncludeEntry()
+	 */
+	public void moveToNextIncludeEntry() throws IOException {
+		includePosition++;
+		if (!hasMoreIncludes()) {
+			return;
+		}
+		//if end of the current block, we load the next one.
+		boolean endOfBlock= !currentIncludeIndexBlock.nextEntry(currentIncludeEntry);
+		if (endOfBlock) {
+			currentIncludeIndexBlock= getIndexBlock(++currentIndexBlockNum);
+			currentIncludeIndexBlock.nextEntry(currentWordEntry);
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.impl.IndexInput#setFirstInclude()
+	 */
+	protected void setFirstInclude() throws IOException {
+		includePosition= 1;
+		if (getNumIncludes() > 0) {
+			currentIndexBlockNum= summary.getFirstIncludeBlockNum();
+			currentIncludeIndexBlock= getIndexBlock(currentIndexBlockNum);
+			currentIncludeEntry= new IncludeEntry(0);
+			currentIncludeIndexBlock.reset();
+			currentIncludeIndexBlock.nextEntry(currentIncludeEntry);
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.impl.IndexInput#queryIncludeEntries()
+	 */
+	public IncludeEntry[] queryIncludeEntries() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.index.impl.IndexInput#queryIncludeEntries(int)
+	 */
+	public IncludeEntry[] queryIncludeEntries(int fileNum) throws IOException {
+		open();
+		
+		if (fileNum < 0) return null;
+		int[] blockNums = null;
+		blockNums = summary.getBlockNumsForIncludes();
+		
+		if (blockNums == null || blockNums.length == 0)	return null;
+				
+		IncludeEntry[] entries = new IncludeEntry[5];
+		int count = 0;
+		for (int i = 0, max = blockNums.length; i < max; i++) {
+			IndexBlock block = getIndexBlock(blockNums[i]);
+			block.reset();
+			boolean found = false;
+			IncludeEntry entry = new IncludeEntry(0);
+			
+			while (block.nextEntry(entry)) {
+				if (count == entries.length){
+					System.arraycopy(entries, 0, entries = new IncludeEntry[count*2], 0, count);
+				}
+				for (int j=0; j<entry.getNumRefs(); j++){
+					if (entry.getRef(j) == fileNum){
+						entries[count++] = new IncludeEntry(entry.getFile(),entry.getID());
+						break; 
+					}
+				}
+			}
+		}
+		if (count == 0) return null;
+		if (count != entries.length){
+			System.arraycopy(entries, 0, entries = new IncludeEntry[count], 0, count);
+		}
+		return entries;
+	}
+
 }

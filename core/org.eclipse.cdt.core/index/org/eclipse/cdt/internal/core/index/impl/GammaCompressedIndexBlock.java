@@ -57,6 +57,43 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 		}
 	}
 	/**
+	 * @see IndexBlock#addEntry
+	 */
+	public boolean addIncludeEntry(IncludeEntry entry) {
+		writeCodeStream.reset();
+		encodeEntry(entry, prevWord, writeCodeStream);
+		if (offset + writeCodeStream.byteLength() > this.blockSize - 2) {
+			return false;
+		}
+		byte[] bytes= writeCodeStream.toByteArray();
+		field.put(offset, bytes);
+		offset += bytes.length;
+		prevWord= entry.getFile();
+		return true;
+	}
+	/**
+	 * @param entry
+	 * @param prevWord
+	 * @param writeCodeStream
+	 */
+	protected void encodeEntry(IncludeEntry entry, char[] prevWord, CodeByteStream codeStream) {
+		char[] file= entry.getFile();
+		int prefixLen= prevWord == null ? 0 : Util.prefixLength(prevWord, file);
+		codeStream.writeByte(prefixLen);
+		codeStream.writeUTF(file, prefixLen, file.length);
+		int n= entry.getNumRefs();
+		codeStream.writeGamma(n);
+		int prevRef= 0;
+		for (int i= 0; i < n; ++i) {
+			int ref= entry.getRef(i);
+			if (ref <= prevRef)
+				throw new IllegalArgumentException();
+			codeStream.writeGamma(ref - prevRef);
+			prevRef= ref;
+		}
+		
+	}
+	/**
 	 * @see IndexBlock#flush
 	 */
 	public void flush() {
@@ -107,6 +144,40 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 		}
 	}
 	/**
+	 * @see IndexBlock#nextEntry
+	 */
+	public boolean nextEntry(IncludeEntry entry) {
+		try {
+			readCodeStream.reset(field.buffer(), offset);
+			int prefixLength= readCodeStream.readByte();
+			char[] file= readCodeStream.readUTF();
+			if (prevWord != null && prefixLength > 0) {
+				char[] temp= new char[prefixLength + file.length];
+				System.arraycopy(prevWord, 0, temp, 0, prefixLength);
+				System.arraycopy(file, 0, temp, prefixLength, file.length);
+				file= temp;
+			}
+			if (file.length == 0) {
+				return false;
+			}
+			entry.reset(file);
+			int n= readCodeStream.readGamma();
+			int prevRef= 0;
+			for (int i= 0; i < n; ++i) {
+				int ref= prevRef + readCodeStream.readGamma();
+				if (ref < prevRef)
+					throw new InternalError();
+				entry.addRef(ref);
+				prevRef= ref;
+			}
+			offset= readCodeStream.byteLength();
+			prevWord= file;
+			return true;
+		} catch (UTFDataFormatException e) {
+			return false;
+		}
+	}
+	/**
 	 * @see IndexBlock#reset
 	 */
 	public void reset() {
@@ -114,5 +185,6 @@ public class GammaCompressedIndexBlock extends IndexBlock {
 		offset= 0;
 		prevWord= null;
 	}
+	
 }
 

@@ -25,6 +25,10 @@ public abstract class IndexBlock extends Block {
 	 */
 	public abstract boolean addEntry(WordEntry entry);
 	/**
+	 * Adds the given wordEntry to the indexBlock.
+	 */
+	public abstract boolean addIncludeEntry(IncludeEntry entry);
+	/**
 	 * @see Block#clear()
 	 */
 	public void clear() {
@@ -69,6 +73,9 @@ public abstract class IndexBlock extends Block {
 	 * Finds the next wordEntry and stores it in the given entry.
 	 */
 	public abstract boolean nextEntry(WordEntry entry);
+	public abstract boolean nextEntry(IncludeEntry entry);
+	
 	public void reset() {
 	}
+	
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.internal.core.sourcedependency.impl;
+package org.eclipse.cdt.internal.core.index.impl;
 
 import org.eclipse.cdt.internal.core.CharOperation;
 

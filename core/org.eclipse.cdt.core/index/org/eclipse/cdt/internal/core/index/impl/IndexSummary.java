@@ -32,6 +32,10 @@ public class IndexSummary {
 	 */
 	protected ArrayList firstWordsInBlocks= new ArrayList();
 	/**
+	 * First include for each block.
+	 */
+	protected ArrayList firstIncludesInBlocks= new ArrayList();
+	/**
 	 * Number of files in the index.
 	 */
 	protected int numFiles;
@@ -39,7 +43,11 @@ public class IndexSummary {
 	 * Number of words in the index.
 	 */
 	protected int numWords;
-
+	/**
+	 * Number of includes in the index.
+	 */
+	protected int numIncludes;
+	
 	static class FirstFileInBlock {
 		IndexedFile indexedFile;
 		int blockNum;
@@ -53,8 +61,19 @@ public class IndexSummary {
 		}
 	}
 
+	static class FirstIncludeInBlock {
+		char[] file;
+		int blockNum;
+		public String toString(){
+			return "FirstIncludeInBlock: " + new String(file) + ", blockNum: " + blockNum; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+	
 	protected int firstWordBlockNum;
 	protected boolean firstWordAdded= true;
+	
+	protected int firstIncludeBlockNum;
+	protected boolean firstIncludeBlockAdded= true;
 	/**
 	 * Adds the given file as the first file for the given Block number. 
 	 */
@@ -76,6 +95,19 @@ public class IndexSummary {
 		entry.word= word;
 		entry.blockNum= blockNum;
 		firstWordsInBlocks.add(entry);
+	}
+	/**
+	 * Adds the given include as the first include for the given Block number. 
+	 */
+	public void addFirstIncludeInBlock(char[] file, int blockNum) {
+		if (firstIncludeBlockAdded) {
+			firstIncludeBlockNum= blockNum;
+			firstIncludeBlockAdded= false;
+		}
+		FirstIncludeInBlock entry= new FirstIncludeInBlock();
+		entry.file = file;
+		entry.blockNum= blockNum;
+		firstIncludesInBlocks.add(entry);
 	}
 	/**
 	 * Returns the numbers of all the blocks
@@ -187,6 +219,14 @@ public class IndexSummary {
 		}
 		return result;
 	}
+	public int[] getBlockNumsForIncludes() {
+		int max = firstIncludesInBlocks.size();
+		int[] blockNums = new int[max];
+		for (int i = 0; i < max; i++){
+			blockNums[i] = ((FirstIncludeInBlock)firstIncludesInBlocks.get(i)).blockNum;
+		}
+		return blockNums;
+	}
 	public int getFirstBlockLocationForPrefix(char[] prefix) {
 		int min = 0;
 		int size = firstWordsInBlocks.size();
@@ -229,6 +269,12 @@ public class IndexSummary {
 	public int getFirstWordBlockNum() {
 		return firstWordBlockNum;
 	}
+	/**
+	 * Returns the number of the first IndexBlock (containing words).
+	 */
+	public int getFirstIncludeBlockNum() {
+		return firstIncludeBlockNum;
+	}
 	/** 
 	 * Blocks are contiguous, so the next one is a potential candidate if its first word starts with
 	 * the given prefix
@@ -253,12 +299,20 @@ public class IndexSummary {
 		return numWords;
 	}
 	/**
+	 * Returns the number of words contained in the index.
+	 */
+	public int getNumIncludes() {
+		return numIncludes;
+	}
+	/**
 	 * Loads the summary in memory.
 	 */
 	public void read(RandomAccessFile raf) throws IOException {
 		numFiles= raf.readInt();
 		numWords= raf.readInt();
+		numIncludes= raf.readInt();
 		firstWordBlockNum= raf.readInt();
+		firstIncludeBlockNum= raf.readInt();
 		int numFirstFiles= raf.readInt();
 		for (int i= 0; i < numFirstFiles; ++i) {
 			FirstFileInBlock entry= new FirstFileInBlock();
@@ -274,6 +328,13 @@ public class IndexSummary {
 			entry.word= raf.readUTF().toCharArray();
 			entry.blockNum= raf.readInt();
 			firstWordsInBlocks.add(entry);
+		}
+		int numIncludes = raf.readInt();
+		for (int i= 0; i < numIncludes; ++i) {
+			FirstIncludeInBlock entry= new FirstIncludeInBlock();
+			entry.file= raf.readUTF().toCharArray();
+			entry.blockNum= raf.readInt();
+			firstIncludesInBlocks.add(entry);
 		}
 	}
 	/**
@@ -291,12 +352,20 @@ public class IndexSummary {
 		this.numWords= numWords;
 	}
 	/**
+	 * Sets the number of includes of the index.
+	 */
+	public void setNumIncludes(int numIncs) {
+		this.numIncludes= numIncs;
+	}
+	/**
 	 * Saves the summary on the disk.
 	 */
 	public void write(RandomAccessFile raf) throws IOException {
 		raf.writeInt(numFiles);
 		raf.writeInt(numWords);
+		raf.writeInt(numIncludes);
 		raf.writeInt(firstWordBlockNum);
+		raf.writeInt(firstIncludeBlockNum);
 		raf.writeInt(firstFilesInBlocks.size());
 		for (int i= 0, size= firstFilesInBlocks.size(); i < size; ++i) {
 			FirstFileInBlock entry= (FirstFileInBlock) firstFilesInBlocks.get(i);
@@ -308,6 +377,12 @@ public class IndexSummary {
 		for (int i= 0, size= firstWordsInBlocks.size(); i < size; ++i) {
 			FirstWordInBlock entry= (FirstWordInBlock) firstWordsInBlocks.get(i);
 			raf.writeUTF(new String(entry.word));
+			raf.writeInt(entry.blockNum);
+		}
+		raf.writeInt(firstIncludesInBlocks.size());
+		for (int i= 0, size= firstIncludesInBlocks.size(); i < size; ++i) {
+			FirstIncludeInBlock entry= (FirstIncludeInBlock) firstIncludesInBlocks.get(i);
+			raf.writeUTF(new String(entry.file));
 			raf.writeInt(entry.blockNum);
 		}
 	}

@@ -79,6 +79,7 @@ public class MergeFactory {
 			//findChanges();
 			mergeFiles();
 			mergeReferences();
+			mergeIncludes();
 			mergeOutput.flush();
 		} finally {
 			//closes everything
@@ -96,6 +97,7 @@ public class MergeFactory {
 	protected void mergeFiles() throws IOException {
 		int positionInMerge= 1;
 		int compare;
+
 		while (oldInput.hasMoreFiles() || addsInput.hasMoreFiles()) {
 			IndexedFile file1= oldInput.getCurrentFile();
 			IndexedFile file2= addsInput.getCurrentFile();
@@ -184,6 +186,45 @@ public class MergeFactory {
 			}
 		}
 		mergeOutput.flushWords();
+	}
+	/**
+	 * Merges the files of the 2 indexes in the new index, according to the changes
+	 * recorded during mergeFiles().
+	 */
+	protected void mergeIncludes() throws IOException {
+		int compare;
+		
+		while (oldInput.hasMoreIncludes() || addsInput.hasMoreIncludes()) {
+			IncludeEntry inc1= oldInput.getCurrentIncludeEntry();
+			IncludeEntry inc2= addsInput.getCurrentIncludeEntry();
+
+			if (inc1 == null && inc2 == null)
+				break;
+			
+			if (inc1 == null)
+				compare= 1;
+			else if (inc2 == null)
+				compare= -1;
+			else
+				compare= Util.compare(inc1.getFile(), inc2.getFile());
+			if (compare < 0) {
+				inc1.mapRefs(mappingOld);
+				mergeOutput.addInclude(inc1);
+				oldInput.moveToNextIncludeEntry();
+			} else if (compare > 0) {
+				inc2.mapRefs(mappingAdds);
+				mergeOutput.addInclude(inc2);
+				addsInput.moveToNextIncludeEntry();
+			} else {
+				inc1.mapRefs(mappingOld);
+				inc2.mapRefs(mappingAdds);
+				inc1.addRefs(inc2.getRefs());
+				mergeOutput.addInclude(inc1);
+				addsInput.moveToNextIncludeEntry();
+				oldInput.moveToNextIncludeEntry();
+			}
+		}
+		mergeOutput.flushIncludes();
 	}
 	/**
 	 * Records the deletion of one file.

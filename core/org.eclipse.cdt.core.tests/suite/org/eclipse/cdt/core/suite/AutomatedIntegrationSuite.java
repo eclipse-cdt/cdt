@@ -20,6 +20,7 @@ import junit.textui.TestRunner;
 import org.eclipse.cdt.core.build.managed.tests.ManagedBuildTests;
 import org.eclipse.cdt.core.build.managed.tests.StandardBuildTests;
 import org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest;
+import org.eclipse.cdt.core.indexer.tests.DependencyTests;
 import org.eclipse.cdt.core.indexer.tests.IndexManagerTests;
 import org.eclipse.cdt.core.model.failedTests.CModelElementsFailedTests;
 import org.eclipse.cdt.core.model.tests.AllCoreTests;
@@ -85,6 +86,7 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTest(WorkingCopyTests.suite());
 		suite.addTest(SearchTestSuite.suite());
 		suite.addTestSuite( CompletionProposalsTest.class);
+		suite.addTest(DependencyTests.suite());
 		//Indexer Tests need to be run after any indexer client tests
 		//as the last test shuts down the indexing thread
 		suite.addTest(IndexManagerTests.suite());

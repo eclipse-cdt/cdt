@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
@@ -103,9 +103,25 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 			pattern = createNamespacePattern( patternString, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == MACRO ){
 			pattern = createMacroPattern( patternString, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == INCLUDE){
+			pattern = createIncludePattern( patternString, limitTo, matchMode, caseSensitive);
 		}
 	
 		return pattern;
+	}
+
+	/**
+	 * @param patternString
+	 * @param limitTo
+	 * @param matchMode
+	 * @param caseSensitive
+	 * @return
+	 */
+	private static CSearchPattern createIncludePattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		if( limitTo != REFERENCES )
+			return null;
+			
+		return new IncludePattern ( patternString.toCharArray(), matchMode, limitTo, caseSensitive );	
 	}
 
 	/**

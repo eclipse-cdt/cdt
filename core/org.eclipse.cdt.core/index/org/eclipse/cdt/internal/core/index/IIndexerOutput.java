@@ -19,4 +19,8 @@ public interface IIndexerOutput {
 	public void addDocument(IDocument document);
 	public void addRef(char[] word);
 	public void addRef(String word);
+	//For Dep Tree
+	public void addIncludeRef(char[] word);
+	public void addIncludeRef(String word);
+	public void addRelatives(String inclusion, String parent);
 }

@@ -10,6 +10,13 @@
 	bug#43154: Code Assist Preferences: Enable Auto activation not working 
 	bug#42224: Code Assist preferences Do not work properly 
 	
+2003-09-25 Bogdan Gheorghe
+	Deleted the remaining CProjectPropertyPage artifacts.
+	
+	* src/org/eclipse/cdt/internal/ui/preferences/CProjectOptionBlock.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CProjectPropertyPage.java
+	* src/org/eclipse/cdt/ui/dialogs/IndexerBlock.java	
+	
 2003-09-25 Hoda Amer
 	Solution to bug#43646: Code Assist won't work if missing end bracket
 

@@ -32,7 +32,6 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
-import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -229,9 +228,6 @@ public class CCorePlugin extends Plugin {
 
 		//Fired up the indexer
 		fCoreModel.startIndexing();
-		
-		//Fire up dependency manager
-		fCoreModel.startDependencyService();
 		
 		fDescriptorManager = new CDescriptorManager();
 		fDescriptorManager.startup();
@@ -765,7 +761,6 @@ public class CCorePlugin extends Plugin {
 	private static final String SEARCH  = CCorePlugin.PLUGIN_ID + "/debug/search" ; //$NON-NLS-1$
 	private static final String MATCH_LOCATOR  = CCorePlugin.PLUGIN_ID + "/debug/matchlocator" ; //$NON-NLS-1$
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
-	private static final String DEPENDENCY = CCorePlugin.PLUGIN_ID + "/debug/dependency" ; //$NON-NLS-1$
 	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor" ;
 	/**
 	 * Configure the plugin with respect to option settings defined in ".options" file
@@ -779,13 +774,6 @@ public class CCorePlugin extends Plugin {
 			option = Platform.getDebugOption(MODEL);
 			if(option != null) Util.VERBOSE_MODEL = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
-			boolean depFlag = false;
-			option = Platform.getDebugOption(DEPENDENCY);
-			if(option != null){
-				depFlag = option.equalsIgnoreCase("true"); 
-				DependencyManager.VERBOSE = depFlag;
-			}//$NON-NLS-1$
-			
 			boolean indexFlag = false;
 			option = Platform.getDebugOption(INDEX_MANAGER);
 			if(option != null) {
@@ -805,8 +793,7 @@ public class CCorePlugin extends Plugin {
 			option = Platform.getDebugOption(MATCH_LOCATOR);
 			if(option != null) MatchLocator.VERBOSE = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 			
-			if (indexFlag == true ||
-			    depFlag == true){
+			if (indexFlag == true){
 			   JobManager.VERBOSE = true; 	
 			}
 		}

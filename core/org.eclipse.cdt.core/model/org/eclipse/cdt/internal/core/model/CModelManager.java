@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -42,8 +43,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.cdt.internal.core.sourcedependency.DependencyManager;
 
 public class CModelManager implements IResourceChangeListener {
 
@@ -782,10 +781,5 @@ public class CModelManager implements IResourceChangeListener {
 	public void deleting(IProject project){
 		//	discard all indexing jobs for this project
 		this.getIndexManager().discardJobs(project.getName());
-	}
-	
-	
-	public DependencyManager getSourceDependencyManager() {
-		return this.fDeltaProcessor.sourceDependencyManager;
 	}
 }

@@ -41,6 +41,14 @@
 	* src/org/eclipse/cdt/managedbuilder/internal/core/ToolReference.java
 	
 
+2003-09-25 Bogdan Gheorghe
+	Modified ResourceDeltaVisitor.visit() to use the new mechanism to get the
+	projects that dependend a file.
+	
+	Modified addSourceDependencies() to use the new mechanism to perform a DependencyQueryJob
+	
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakeFileGenerator.java
+	
 2003-09-24 Sean Evoy
 	Changed the implementor of IScannerInfo to answer only absolute paths when asked for 
 	includes paths. Users will specify the includes paths in the managed build UI in such a way

@@ -1,3 +1,35 @@
+2003-09-25 Bogdan Gheorghe
+	Integrated the dependency service into the indexer. Changes
+	as follows:
+	
+	org.eclipse.cdt.internal.core.index.impl:
+	* IIndex - added getFileDependencies methods
+	* IIndexerOutput - modified to allow dep inputs into the index
+	* BlocksIndexInput - modified to allow the reading of the new index (which includes dep entries)
+	* BlocksIndexOutput - added facilities to write includes to the index
+	* GammaCompressedIndexBlock - modified with addIncludeEntry() and nextEntry()
+	* IncludeEntry - new file
+	* IncludeEntryHashedArray - new file
+	* Index - Added getFileDepenendencies to query includeEntries from the index
+	* IndexBlock - modified to reflect changes in GammaCompressedIndexBlock
+	* IndexerOutput - added new methods from IIndexerOutput
+	* IndexInput - modified to allow reading of includes from index files
+	* IndexSummary - modified to save/read new format which contains include info
+	* InMemoryIndex - modified InMemoryIndex to keep track of includes
+	* MergeFactory - modified MergeFactory to accomodate new index file format
+	* SimpleIndexInput - modified to use the new functions for includes in InMemoryIndex
+	* Util - Added a quickSort for includeEntry[]
+	
+	org.eclipse.cdt.internal.core.search.indexing:
+	* AbstractIndexer - modified to getResourceFile being indexed, added bestIncludePrefix 
+	  to find include table entries, addInclude() which accepts IASTInclusion node and adds it
+	  to the index
+	* IIndexConstants - added includeRef constant
+	* IndexManager - got rid of all dependency table references
+	* SourceIndexer - modified to return resource being indexed
+	* SourceIndexerRequestor - Added inclusion handling code; stack for includes
+	
+	
 2003-09-22 Bogdan Gheorghe
 	
 	Took out the old CTags Indexer. Modified IndexAllProject to get

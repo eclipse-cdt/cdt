@@ -1,3 +1,13 @@
+2003-09-25 Bogdan Gheorghe
+
+	- Got rid of refs to old dependency service; restructured
+	  index request section 
+	
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/model/CoreModel.java
+	* src/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* src/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	
 2003-09-24 Alain Magloire
 
 	With the removal of the old CDT parser, there was no

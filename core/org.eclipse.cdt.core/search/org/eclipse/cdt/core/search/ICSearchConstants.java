@@ -96,9 +96,12 @@ public interface ICSearchConstants {
 	public static final SearchFor MACRO = new SearchFor( 10 );
 	
 	public static final SearchFor CLASS_STRUCT = new SearchFor( 11 );
-	
+
 	public static final SearchFor TYPEDEF = new SearchFor( 12 );
 	
+	public static final SearchFor INCLUDE = new SearchFor( 13 );
+	
+
 	/* Nature of match */
 	
 	/**

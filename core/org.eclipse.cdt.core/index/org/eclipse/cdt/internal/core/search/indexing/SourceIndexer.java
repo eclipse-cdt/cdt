@@ -108,4 +108,10 @@ public class SourceIndexer extends AbstractIndexer {
 	 */
 	
 	public void setFileTypes(String[] fileTypes){}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.search.indexing.AbstractIndexer#getResourceFile()
+	 */
+	public IFile getResourceFile() {
+		return resourceFile;
+	}
 }

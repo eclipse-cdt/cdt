@@ -156,6 +156,12 @@ import org.eclipse.core.runtime.Path;
 	public void acceptMacroDeclaration(String resourcePath, char[] decodedSimpleName) {
 		this.paths.add(resourcePath);
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.search.IIndexSearchRequestor#acceptIncludeDeclaration(java.lang.String, char[])
+	 */
+	public void acceptIncludeDeclaration(String resourcePath, char[] decodedSimpleName) {
+		this.paths.add(resourcePath);
+	}
 
 	
 

@@ -1,3 +1,7 @@
+2003-09-24 John Camelon
+	Fixed Bug 43106 : Symbol Table support needed to resolve types
+	Fixed Bug 43375 : isExtern not returning true for extern declarations 
+
 2003-09-23 John Camelon
 	Fixed Bug 43084 : need to restructure TypeId to allow dynamic_cast<> type expression references.
 	Fixed Bug 39504 : sizeof-expressions are not handled properly 

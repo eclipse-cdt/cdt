@@ -40,21 +40,6 @@ public class FailedCompleteParseASTExpressionTest extends CompleteParseBaseTest
     {
         super(name);
     }
-    
-	public void testConditionalExpressionWithReferencesB_Bug43106() throws Exception { 
-		Iterator i = parse( "class A{}; class B : public A{}; int foo(); int foo(A&); A a ; B b; int c = 0; int x = foo( c > 5 ? b : a );").getDeclarations();
-		IASTClassSpecifier cla = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
-		IASTClassSpecifier clb = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
-		IASTFunction foo1 = (IASTFunction)i.next();
-		IASTFunction foo2 = (IASTFunction)i.next(); 
-		IASTVariable a = (IASTVariable)i.next();
-		IASTVariable b = (IASTVariable)i.next();
-		IASTVariable c = (IASTVariable)i.next();
-		IASTVariable x = (IASTVariable)i.next();
-		assertFalse( i.hasNext() );
-		assertAllReferences( 7 /* should be 8 */, 
-			createTaskList( new Task( cla, 3 ), new Task( clb ), new Task( c), new Task( b ), new Task( a )/*, new Task( foo2) */));
-	}
 	
 	public void testPMDotStarPointerToMemberFunction_Bug43242() throws Exception
 	{
@@ -98,7 +83,36 @@ public class FailedCompleteParseASTExpressionTest extends CompleteParseBaseTest
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 2 /* should be 3 */, 
 			createTaskList( new Task( m ), new Task( pm ) /* ,new Task( f2 )*/));
-
 	}
-	    
+	
+	// Kind DELETE_CASTEXPRESSION        
+	// Kind DELETE_VECTORCASTEXPRESSION  
+	// Kind CASTEXPRESSION               
+	// Kind PM_DOTSTAR                   
+	public void testPMDotStar_bug43579() throws Exception
+	{
+		Iterator i = parse ("class A { int m; }; \n A a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a.*pm);").getDeclarations();
+		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTVariable a  = (IASTVariable) i.next();
+		IASTVariable pm  = (IASTVariable) i.next();
+		IASTFunction f1 = (IASTFunction) i.next();
+		IASTFunction f2 = (IASTFunction) i.next();
+		IASTVariable x  = (IASTVariable) i.next();
+		assertFalse( i.hasNext() );
+		assertAllReferences( 4 /*should be 5 */, createTaskList( new Task( cl /* , 2 */ ), new Task( a), new Task( pm), new Task( f2)));
+	}
+
+	// Kind PM_ARROWSTAR          
+	public void testPMArrowStar_bug43579() throws Exception
+	{
+		Iterator i = parse ("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);").getDeclarations();
+		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTVariable a  = (IASTVariable) i.next();
+		IASTVariable pm  = (IASTVariable) i.next();
+		IASTFunction f1 = (IASTFunction) i.next();
+		IASTFunction f2 = (IASTFunction) i.next();
+		IASTVariable x  = (IASTVariable) i.next();
+		assertFalse( i.hasNext() );
+		assertAllReferences( 4 /*should be 5 */, createTaskList( new Task( cl /* , 2 */ ), new Task( a), new Task( pm), new Task( f2)));
+	}
 }

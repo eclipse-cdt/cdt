@@ -102,6 +102,4 @@ public interface ISourceElementRequestor {
 	public void exitNamespaceDefinition( IASTNamespaceDefinition namespaceDefinition ); 
 	public void exitInclusion( IASTInclusion inclusion ); 
 	public void exitCompilationUnit( IASTCompilationUnit compilationUnit );
-
-   
 }

@@ -806,4 +806,10 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertEquals( callback.getReferences().size(), 2 );
 	}
 	
+	public void testBug43375() throws Exception
+	{
+		IASTVariable varX = (IASTVariable)parse( "extern int x;").getDeclarations().next();
+		assertTrue( varX.isExtern() ); 	
+	}
+	
 }

@@ -1978,7 +1978,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
         newSymbol.getTypeInfo().setBit( isMutable, TypeInfo.isMutable );
         newSymbol.getTypeInfo().setBit( isAuto, TypeInfo.isAuto );
-        newSymbol.getTypeInfo().setBit( isExtern, TypeInfo.isExplicit );
+        newSymbol.getTypeInfo().setBit( isExtern, TypeInfo.isExtern );
         newSymbol.getTypeInfo().setBit( isRegister, TypeInfo.isRegister );
         newSymbol.getTypeInfo().setBit( isStatic, TypeInfo.isStatic );
         newSymbol.getTypeInfo().setBit( abstractDeclaration.isConst(), TypeInfo.isConst );
@@ -2438,4 +2438,20 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		setPointerOperators( result, id.getPointerOperators(), id.getArrayModifiers() );
 		return result;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#signalEndOfClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier)
+     */
+    public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier)
+    {
+    	if( astClassSpecifier == null ) return;
+		try
+        {
+            ((IDerivableContainerSymbol)((ASTClassSpecifier)astClassSpecifier).getSymbol()).addCopyConstructor();
+        }
+        catch (ParserSymbolTableException e)
+        {
+        	// do nothing, this is best effort
+        }
+    }
 }

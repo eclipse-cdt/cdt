@@ -1,3 +1,8 @@
+2003-09-24 John Camelon
+	Added testBug43375() to CompleteParseASTTest. 
+	Moved testConditionalExpressionWithReferencesB_Bug43106 from failed tests to passed tests. 
+	Moved testPMDotStar() and testPMArrowStar to failed tests w/defect number 43579.  
+
 2003-09-23 John Camelon
 	Replaced ASTFailedTests::testBug39504A() with CompleteParseASTTest::testBug39504(). 
 	Moved testPostfixTypeIdExpression2() && testPostfixTypeIdTypeId2() to CompleteParseASTExpressionTest. 

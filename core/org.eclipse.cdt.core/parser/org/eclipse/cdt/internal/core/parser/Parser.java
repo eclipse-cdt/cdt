@@ -2508,7 +2508,11 @@ public class Parser implements IParser
             // consume the }
             IToken lt = consume(IToken.tRBRACE);
             astClassSpecifier.setEndingOffset(lt.getEndOffset());
+            
+            astFactory.signalEndOfClassSpecifier( astClassSpecifier );
+            
             astClassSpecifier.exitScope( requestor );
+            
         }
     }
     /**

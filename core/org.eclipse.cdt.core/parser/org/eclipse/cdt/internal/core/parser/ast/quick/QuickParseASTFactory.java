@@ -307,4 +307,11 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
         return new ASTTypeId( kind, name == null ? "" : name.toString(), pointerOps, arrayMods, isConst, 
         	isVolatile, isUnsigned, isSigned, isShort, isLong, isTypename );
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#signalEndOfClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier)
+     */
+    public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier)
+    {
+    }
 }

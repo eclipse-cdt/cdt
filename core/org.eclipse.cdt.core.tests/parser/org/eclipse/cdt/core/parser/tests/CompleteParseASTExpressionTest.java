@@ -50,10 +50,6 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 1, createTaskList( new Task( f1 )));
-//		Iterator references = callback.getReferences().iterator();
-//		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
-//		assertEquals( fr1.getReferencedElement(), f1 );
-		 
 	}	
 	// Kind PRIMARY_CHAR_LITERAL : char
 	public void testPrimaryCharLiteral() throws Exception
@@ -471,35 +467,6 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 //		assertFalse( i.hasNext() );
 //		assertAllReferences( 3, createTaskList( new Task( cl, 2), new Task( foo2 )));
 //	}
-
-	// Kind DELETE_CASTEXPRESSION        
-	// Kind DELETE_VECTORCASTEXPRESSION  
-	// Kind CASTEXPRESSION               
-	// Kind PM_DOTSTAR                   
-	public void testPMDotStar() throws Exception
-	{
-		Iterator i = parse ("class A { int m; }; \n A a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a.*pm);").getDeclarations();
-		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		IASTVariable a  = (IASTVariable) i.next();
-		IASTVariable pm  = (IASTVariable) i.next();
-		IASTFunction f1 = (IASTFunction) i.next();
-		IASTFunction f2 = (IASTFunction) i.next();
-		IASTVariable x  = (IASTVariable) i.next();
-		assertAllReferences( 4, createTaskList( new Task( cl ), new Task( a), new Task( pm ), new Task(f2)));
-	}
-
-	// Kind PM_ARROWSTAR          
-	public void testPMArrowStar() throws Exception
-	{
-		Iterator i = parse ("class A { int m; }; \n A * a; int A::*pm; \n int f(){} \n int f(int); \n int x = f(a->*pm);").getDeclarations();
-		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		IASTVariable a  = (IASTVariable) i.next();
-		IASTVariable pm  = (IASTVariable) i.next();
-		IASTFunction f1 = (IASTFunction) i.next();
-		IASTFunction f2 = (IASTFunction) i.next();
-		IASTVariable x  = (IASTVariable) i.next();
-		assertAllReferences( 4, createTaskList( new Task( cl ), new Task( a), new Task( pm), new Task( f2)));
-	}
 	       
 	// Kind MULTIPLICATIVE_MULTIPLY : usual arithmetic conversions
 	public void testMultiplicativeMultiply() throws Exception { 
@@ -842,4 +809,20 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind EXPRESSIONLIST : list of LHS, RHS
 	// Already tested with each test trying to find a reference to function.
+
+	public void testConditionalExpressionWithReferencesB_Bug43106() throws Exception { 
+		Iterator i = parse( "class A{}; class B : public A{}; int foo(); int foo(A&); A a ; B b; int c = 0; int x = foo( c > 5 ? b : a );").getDeclarations();
+		IASTClassSpecifier cla = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
+		IASTClassSpecifier clb = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();		
+		IASTFunction foo1 = (IASTFunction)i.next();
+		IASTFunction foo2 = (IASTFunction)i.next(); 
+		IASTVariable a = (IASTVariable)i.next();
+		IASTVariable b = (IASTVariable)i.next();
+		IASTVariable c = (IASTVariable)i.next();
+		IASTVariable x = (IASTVariable)i.next();
+		assertFalse( i.hasNext() );
+		assertAllReferences( 8, 
+			createTaskList( new Task( cla, 3 ), new Task( clb ), new Task( c), new Task( b ), new Task( a ), new Task( foo2) ));
+	}
+
 }

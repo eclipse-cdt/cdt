@@ -22,7 +22,7 @@
    <extension
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
-      		platform="local"
+      		platform="native"
             name="%GDBDebugger.name"
             modes="run,core,attach"
             class="org.eclipse.cdt.debug.mi.core.GDBDebugger"

@@ -9,6 +9,8 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 import org.eclipse.cdt.internal.ui.text.AbstractCScanner;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 import org.eclipse.cdt.internal.ui.text.IColorManager;
+import org.eclipse.cdt.internal.ui.text.util.CWhitespaceDetector;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
+import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.jface.text.rules.WordPatternRule;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -30,54 +33,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public final class AsmCodeScanner extends AbstractCScanner {
 	
-	private static class VersionedWordRule extends WordRule {
-
-		private final String fVersion;
-		private final boolean fEnable;
-		
-		private String fCurrentVersion;
-
-		public VersionedWordRule(IWordDetector detector, String version, boolean enable, String currentVersion) {
-			super(detector);
-
-			fVersion= version;
-			fEnable= enable;
-			fCurrentVersion= currentVersion;
-		}
-		
-		public void setCurrentVersion(String version) {
-			fCurrentVersion= version;
-		}
-	
-		/*
-		 * @see IRule#evaluate
-		 */
-		public IToken evaluate(ICharacterScanner scanner) {
-			IToken token= super.evaluate(scanner);
-
-			if (fEnable) {
-				if (fCurrentVersion.equals(fVersion))
-					return token;
-					
-				return Token.UNDEFINED;
-
-			} else {
-				if (fCurrentVersion.equals(fVersion))
-					return Token.UNDEFINED;
-					
-				return token;
-			}
-		}
-	}
-
 	private static String[] fgKeywords= { 
 			".set", ".section",  
-			".global", 
+			".global",".file", 
 			".extern", ".macro", ".endm", 
 			".if", ".ifdef", ".ifndef", ".else", ".endif",
 			".include", ".globl", 
 			".text",".data", ".rodata", ".common", ".debug", ".ctor", ".dtor", 
-			".asciz", ".byte", ".long", ".size", ".align", ".type"
+			".ascii", ".asciz", ".byte", ".long", ".size", ".align", ".type"
 	};
 
 
@@ -91,8 +54,6 @@ public final class AsmCodeScanner extends AbstractCScanner {
 		ICColorConstants.C_DEFAULT
 	};
 	
-	private VersionedWordRule fVersionedWordRule;
-
 	/**
 	 * Creates a C code scanner
 	 */
@@ -117,8 +78,6 @@ public final class AsmCodeScanner extends AbstractCScanner {
 		
 		// Add rule for strings
 		Token token= getToken(ICColorConstants.C_SINGLE_LINE_COMMENT);
-		// Add rule for single line comments.
-		rules.add(new EndOfLineRule("//", token));
 		
 		// Add rule for single line comments.
 		rules.add(new EndOfLineRule("#", token));
@@ -126,12 +85,12 @@ public final class AsmCodeScanner extends AbstractCScanner {
 		token= getToken(ICColorConstants.C_STRING);
 		// Add rule for strings and character constants.
 		rules.add(new SingleLineRule("'", "'", token, '\\'));
-		rules.add(new SingleLineRule("\"", "\"", token, '\\'));
+		//rules.add(new SingleLineRule("\"", "\"", token, '\\'));
 				
 		Token other= getToken(ICColorConstants.C_DEFAULT);		
 		
 		// Add generic whitespace rule.
-		//rules.add(new WhitespaceRule(new CWhitespaceDetector()));
+		rules.add(new WhitespaceRule(new CWhitespaceDetector()));
 
 		// Add word rule for labels
 		WordRule labelRule = new WordRule(new AsmWordDetector(false), other) {
@@ -212,14 +171,6 @@ public final class AsmCodeScanner extends AbstractCScanner {
 	 * @see RuleBasedScanner#setRules(IRule[])
 	 */
 	public void setRules(IRule[] rules) {
-		int i;
-		for (i= 0; i < rules.length; i++)
-			if (rules[i].equals(fVersionedWordRule))
-				break;
-
-		// not found - invalidate fVersionedWordRule
-		if (i == rules.length)
-			fVersionedWordRule= null;
 		
 		super.setRules(rules);	
 	}

@@ -8,6 +8,9 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.CPartitionScanner;
+import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IRule;
@@ -16,6 +19,7 @@ import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.MultiLineRule;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
 
@@ -29,7 +33,9 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 	private final static String SKIP= "__skip";
 
 
-	public final static String C_MULTILINE_COMMENT= "__c_multiline_comment";
+	public final static String ASM_MULTILINE_COMMENT= ICColorConstants.C_MULTI_LINE_COMMENT;
+	public final static String ASM_SINGLE_LINE_COMMENT= ICColorConstants.C_SINGLE_LINE_COMMENT;
+	public final static String ASM_STRING= ICColorConstants.C_STRING;
 
 
 	/**
@@ -92,7 +98,11 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 	public AsmPartitionScanner() {
 		super();
 		
-		IToken comment= new Token(C_MULTILINE_COMMENT);
+		IToken comment= new Token(CPartitionScanner.C_MULTILINE_COMMENT);
+		IToken single_comment= new Token(CPartitionScanner.C_SINGLE_LINE_COMMENT);
+		IToken string= new Token(CPartitionScanner.C_STRING);
+		IToken skip= new Token(SKIP);
+
 
 
 		List rules= new ArrayList();
@@ -103,12 +113,11 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 
 
 		// Add rule for single line comments.
-		//rules.add(new EndOfLineRule("//", Token.UNDEFINED));
-
+		rules.add(new EndOfLineRule("//", single_comment));
 
 		// Add rule for strings and character constants.
-		//rules.add(new SingleLineRule("\"", "\"", Token.UNDEFINED, '\\'));
-		//rules.add(new SingleLineRule("'", "'", Token.UNDEFINED, '\\'));
+		rules.add(new SingleLineRule("\"", "\"", string, '\\'));
+		rules.add(new SingleLineRule("'", "'", string, '\\'));
 		
 		EmptyCommentRule wordRule= new EmptyCommentRule(comment);
 		rules.add(wordRule);

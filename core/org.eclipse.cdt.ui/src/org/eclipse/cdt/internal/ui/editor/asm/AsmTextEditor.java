@@ -22,8 +22,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 
 import org.eclipse.ui.IEditorInput;
@@ -31,7 +33,13 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.eclipse.ui.texteditor.ConvertLineDelimitersAction;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
+import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+import org.eclipse.ui.texteditor.ResourceAction;
+import org.eclipse.ui.texteditor.StatusTextEditor;
 
 
 
@@ -40,7 +48,7 @@ import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 /**
  * Assembly text editor
  */
-public class AsmTextEditor extends AbstractTextEditor {
+public class AsmTextEditor extends StatusTextEditor {
 		
 	/**
 	 * Creates a new text editor.
@@ -125,5 +133,40 @@ public class AsmTextEditor extends AbstractTextEditor {
 		
 		if (progressMonitor != null)
 			progressMonitor.setCanceled(!success);
+	}
+	
+	/*
+	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
+	 * Pulled in from 2.0
+	 */
+	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
+		String p= event.getProperty();
+		
+		boolean affects= false;
+		AsmTextTools textTools= CPlugin.getDefault().getAsmTextTools();
+		affects |= textTools.affectsBehavior(event);
+									
+		return affects ? affects : super.affectsTextPresentation(event);
+	}
+	
+		/*
+	 * @see AbstractTextEditor#createActions()
+	 * @since 2.0
+	 */
+	protected void createActions() {
+		super.createActions();
+
+	}
+	
+
+	
+	/*
+	 * @see AbstractTextEditor#editorContextMenuAboutToShow(IMenuManager)
+	 * @since 2.0
+	 */
+	protected void editorContextMenuAboutToShow(IMenuManager menu) {
+		super.editorContextMenuAboutToShow(menu);
+		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_RIGHT);
+		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_LEFT);
 	}
 }

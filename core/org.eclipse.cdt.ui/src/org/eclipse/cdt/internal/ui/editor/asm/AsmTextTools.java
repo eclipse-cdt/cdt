@@ -6,6 +6,8 @@ package org.eclipse.cdt.internal.ui.editor.asm;
  */
  
 import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
 import org.eclipse.cdt.internal.ui.text.util.CColorManager;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -35,7 +37,16 @@ public class AsmTextTools {
 	private AsmCodeScanner fCodeScanner;
 	/** The Asm partitions scanner */
 	private AsmPartitionScanner fPartitionScanner;
-		
+	/** The ASM multiline comment scanner */
+	private SingleTokenCScanner fMultilineCommentScanner;
+	/** The ASM singleline comment scanner */
+	private SingleTokenCScanner fSinglelineCommentScanner;
+	/** The ASM string scanner */
+	private SingleTokenCScanner fStringScanner;
+	
+	
+	/** The preference store */
+	private IPreferenceStore fPreferenceStore;		
 	/** The preference change listener */
 	private PreferenceListener fPreferenceListener= new PreferenceListener();
 	
@@ -49,9 +60,14 @@ public class AsmTextTools {
 			store = CPlugin.getDefault().getPreferenceStore();
 		}
 		store.addPropertyChangeListener(fPreferenceListener);
+		fPreferenceStore = store;
 		fColorManager= new CColorManager();
 		fCodeScanner= new AsmCodeScanner(fColorManager, store);
 		fPartitionScanner= new AsmPartitionScanner();
+				
+		fMultilineCommentScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_MULTI_LINE_COMMENT);
+		fSinglelineCommentScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_SINGLE_LINE_COMMENT);
+		fStringScanner= new SingleTokenCScanner(fColorManager, store, ICColorConstants.C_STRING);
 	}
 	
 	/**
@@ -69,8 +85,20 @@ public class AsmTextTools {
 		fCodeScanner= null;
 		fPartitionScanner= null;
 		
-		fColorManager.dispose();
-		fColorManager= null;
+		fMultilineCommentScanner= null;
+		fSinglelineCommentScanner= null;
+		fStringScanner= null;
+		
+		if (fColorManager != null) {
+			fColorManager.dispose();
+			fColorManager= null;
+		}
+		
+		if (fPreferenceStore != null) {
+			fPreferenceStore.removePropertyChangeListener(fPreferenceListener);
+			fPreferenceStore= null;
+			fPreferenceListener= null;
+		}
 	}
 	
 	/**
@@ -100,14 +128,43 @@ public class AsmTextTools {
 	public IDocumentPartitioner createDocumentPartitioner() {
 		
 		String[] types= new String[] {
-			AsmPartitionScanner.C_MULTILINE_COMMENT
+			AsmPartitionScanner.ASM_MULTILINE_COMMENT,
+			AsmPartitionScanner.ASM_SINGLE_LINE_COMMENT,
+			AsmPartitionScanner.ASM_STRING
 		};
 		
 		//return new RuleBasedPartitioner(getPartitionScanner(), types);
 		return new DefaultPartitioner(getPartitionScanner(), types);
 	}
 	
-		
+	/**
+	 * Returns a scanner which is configured to scan Java multiline comments.
+	 *
+	 * @return a Java multiline comment scanner
+	 */
+	public RuleBasedScanner getMultilineCommentScanner() {
+		return fMultilineCommentScanner;
+	}
+
+	/**
+	 * Returns a scanner which is configured to scan Java singleline comments.
+	 *
+	 * @return a Java singleline comment scanner
+	 */
+	public RuleBasedScanner getSinglelineCommentScanner() {
+		return fSinglelineCommentScanner;
+	}
+	
+	/**
+	 * Returns a scanner which is configured to scan Java strings.
+	 *
+	 * @return a Java string scanner
+	 */
+	public RuleBasedScanner getStringScanner() {
+		return fStringScanner;
+	}
+
+	
 	/**
 	 * Determines whether the preference change encoded by the given event
 	 * changes the behavior of one its contained components.
@@ -116,7 +173,10 @@ public class AsmTextTools {
 	 * @return <code>true</code> if event causes a behavioral change
 	 */
 	public boolean affectsBehavior(PropertyChangeEvent event) {
-		return  fCodeScanner.affectsBehavior(event);
+		return  fCodeScanner.affectsBehavior(event) ||
+					fMultilineCommentScanner.affectsBehavior(event) ||
+					fSinglelineCommentScanner.affectsBehavior(event) ||
+					fStringScanner.affectsBehavior(event);
 	}
 	
 	/**
@@ -128,5 +188,12 @@ public class AsmTextTools {
 	protected void adaptToPreferenceChange(PropertyChangeEvent event) {
 		if (fCodeScanner.affectsBehavior(event))
 			fCodeScanner.adaptToPreferenceChange(event);
+		if (fMultilineCommentScanner.affectsBehavior(event))
+			fMultilineCommentScanner.adaptToPreferenceChange(event);
+		if (fSinglelineCommentScanner.affectsBehavior(event))
+			fSinglelineCommentScanner.adaptToPreferenceChange(event);
+		if (fStringScanner.affectsBehavior(event))
+			fStringScanner.adaptToPreferenceChange(event);
 	}
+		
 }

@@ -1644,5 +1644,17 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	assertFalse( i.hasNext() );
     	
 	}
+ 
+    public void testBug47926() throws Exception
+	{
+    	Iterator i = parse( "void f() {} class A {}; void main() { A * a = new A(); a->f();	}", false ).getDeclarations();
+    	IASTFunction f = (IASTFunction) i.next();
+    	IASTClassSpecifier A = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next() ).getTypeSpecifier();
+    	IASTFunction main = (IASTFunction) i.next();
+    	assertFalse( i.hasNext() );
+    	i = getDeclarations( main );
+    	IASTVariable a = (IASTVariable) i.next();
+    	assertAllReferences( 3, createTaskList( new Task( A, 2 ), new Task( a )));
+	}
     
 }

@@ -1056,7 +1056,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         
         // Try to figure out the result that this expression evaluates to
 		ExpressionResult expressionResult = getExpressionResultType(scope, kind, lhs, rhs, thirdExpression, typeId, literal, symbol);
-			
+		
+		if( symbol == null )
+			purgeBadReferences( kind, rhs );
+		
+		
 		// expression results could be empty, but should not be null
 //		assert expressionResult != null  : expressionResult; //throw new ASTSemanticException();
 			
@@ -1069,7 +1073,32 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 		return expression;			
     }
-    /*
+    /**
+	 * @param kind
+     * @param rhs
+	 */
+	private void purgeBadReferences(Kind kind, IASTExpression rhs) {
+		if( rhs == null ) return;
+		if( kind == Kind.POSTFIX_ARROW_IDEXPRESSION || kind == Kind.POSTFIX_ARROW_TEMPL_IDEXP ||
+			kind == Kind.POSTFIX_DOT_IDEXPRESSION || kind == Kind.POSTFIX_DOT_TEMPL_IDEXPRESS )
+		{
+			ASTExpression astExpression = (ASTExpression) rhs;
+			Iterator refs = astExpression.getReferences().iterator();
+			String idExpression = astExpression.getIdExpression();
+			if( !idExpression.equals( ""))
+			{
+				while( refs.hasNext() )
+				{
+					IASTReference r = (IASTReference) refs.next();
+					if( r.getName().equals( idExpression ) )
+						refs.remove();
+				}
+			}
+		}
+		
+	}
+
+	/*
      * Try and dereference the symbol in the expression
      */
     private ISymbol getExpressionSymbol(

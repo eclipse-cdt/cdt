@@ -136,28 +136,5 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		IASTVariable x  = (IASTVariable) i.next();
 //		assertFalse( i.hasNext() );
 //		assertAllReferences( 4 /*should be 5 */, createTaskList( new Task( cl /* , 2 */ ), new Task( a), new Task( pm), new Task( f2)));
-	}
-
-
-	
-	public void testBug47926() throws Exception{
-		StringBuffer buffer = new StringBuffer();
-		buffer.append( "void f () {} \n" );
-		buffer.append( "class A { }; \n" );
-		buffer.append( "void main() { A * a = new A();  a->f(); } ");
-		
-		Iterator i = parse( buffer.toString() ).getDeclarations();
-		
-		IASTFunction f = (IASTFunction) i.next();
-		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		
-		IASTFunction main = (IASTFunction) i.next();
-		
-		Iterator fnIter = getDeclarations( main );
-		IASTVariable a = (IASTVariable) fnIter.next();
-		
-		//there should be no reference to f, but there is
-		//assertAllReferences( 3, createTaskList( new Task( classA, 2 ), new Task( a ) ) );
-		assertAllReferences( 4, createTaskList( new Task( classA, 2 ), new Task( a ), new Task( f ) ) );
-	}
+	}	
 }

@@ -1,4 +1,7 @@
 2004-04-22 John Camelon
+	Added CompleteParseASTTest:testBug47926().
+
+2004-04-22 John Camelon
 	Updated test clients for IExpressionParser interface changes.  
 	Added QuickParseASTTests.testBug59179().  
 

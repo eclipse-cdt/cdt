@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICPathEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.testplugin.CProjectHelper;
@@ -124,45 +124,47 @@ public class CPathEntryTest extends TestCase {
 	}
 
 	/*******************************************************************************************************************************
-	 * Check if the CPathEntry's are generated.
+	 * Check if the PathEntry's are generated.
 	 * 
 	 * @see CProjectHelper#createCProject
 	 */
 	public void testCPathEntries() throws CoreException {
 		ICProject testProject;
 		testProject = CProjectHelper.createCProject("cpathtest", "none");
-		if (testProject == null)
+		if (testProject == null) {
 			fail("Unable to create project");
-		ICPathEntry[] entries = testProject.getResolvedCPathEntries();
+		}
+		IPathEntry[] entries = testProject.getResolvedPathEntries();
 		assertTrue("No cpathentries", entries.length == 0);
-		entries = new ICPathEntry[3];
+		entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path("cpathtest"), new Path("/usr/include"), true);
 		entries[1] = CoreModel.newIncludeEntry(new Path("cpaththest/foo.c"), new Path("/usr/include"), true);
 		entries[2] = CoreModel.newLibraryEntry(new Path("/usr/lib/libc.so.1"), null, null, null);
-		testProject.setRawCPathEntries(entries, new NullProgressMonitor());
-		entries = testProject.getResolvedCPathEntries();
+		testProject.setRawPathEntries(entries, new NullProgressMonitor());
+		entries = testProject.getResolvedPathEntries();
 		assertTrue("Tree cpathenties", entries.length == 3);
 	}
 
 	/*******************************************************************************************************************************
-	 * Check if the CPathEntry's are generated.
+	 * Check if the PathEntry's are generated.
 	 * 
 	 * @see CProjectHelper#createCProject
 	 */
 	public void testCPathEntriesDelta() throws CoreException {
 		ICProject testProject;
 		testProject = CProjectHelper.createCProject("cpathtest2", "none");
-		if (testProject == null)
+		if (testProject == null) {
 			fail("Unable to create project");
-		ICPathEntry[] entries = new ICPathEntry[3];
+		}
+		IPathEntry[] entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path("cpathtest"), new Path("/usr/include"), true);
 		entries[1] = CoreModel.newIncludeEntry(new Path("cpaththest/foo.c"), new Path("/usr/include"), true);
 		entries[2] = CoreModel.newLibraryEntry(new Path("/usr/lib/libc.so.1"), null, null, null);
 		final int count = 0;
 		CElementListener listener = new CElementListener();
 		CoreModel.getDefault().addElementChangedListener(listener);
-		testProject.setRawCPathEntries(entries, new NullProgressMonitor());
-		entries = testProject.getResolvedCPathEntries();
+		testProject.setRawPathEntries(entries, new NullProgressMonitor());
+		entries = testProject.getResolvedPathEntries();
 		assertTrue("Tree cpathenties", listener.count == 2);
 	}
 }

@@ -1,3 +1,12 @@
+2004-02-21 Alain Magloire
+	Refactor of the ICPatEntry to IPathEntry
+
+	* model/org/eclipse/cdt/core/model/tests/CPathEntryTests.java
+
+	Remove of unused imports
+	* model/org/eclipse/cdt/core/model/tests/CModelElementsTests.java
+	* model/org/eclipse/cdt/core/model/tests/CModelTests.java
+
 2004-02-19 Andrew Niefer
 	remove order dependancy in ParserSymbolTableTests.testUsingDeclaration_2
 

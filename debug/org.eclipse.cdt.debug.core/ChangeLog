@@ -1,3 +1,8 @@
+2003-01-06 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/ICDIBreakpointManager.java (createLocation):
+	New method to take an address.
+
 2003-01-02 Mikhail Khodjaiants
 	The 'DisassemblyStorage' class implements an adapter for the 'IResource' class and returns the executable file.
 	* IExecFileInfo.java: added a new method: 'getExecFile'

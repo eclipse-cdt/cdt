@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
@@ -30,7 +29,7 @@ public class ExpressionEvaluator {
 	private int[] bufferPos = new int[bufferInitialSize];
 	private int[] bufferLimit = new int[bufferInitialSize];
 		
-	private ISourceElementRequestor requestor = null;
+	private ScannerCallbackManager callbackManager = null;
 	private ScannerProblemFactory spf = null;
 
 	private int lineNumber = 1;
@@ -45,8 +44,8 @@ public class ExpressionEvaluator {
 		super();
 	}
 	
-	public ExpressionEvaluator(ISourceElementRequestor requestor, ScannerProblemFactory spf) {
-		this.requestor = requestor;
+	public ExpressionEvaluator( ScannerCallbackManager manager, ScannerProblemFactory spf) {
+		this.callbackManager = manager;
 		this.spf = spf;
 	}
 	
@@ -526,7 +525,7 @@ public class ExpressionEvaluator {
 									tokenValue += c - '0';
 									continue;
 								} 
-								if (bufferPos[bufferStackPos] + 1 < limit)
+								if (bufferPos[bufferStackPos] + 1 < limit && !(c == 'L' || c =='l' || c == 'U' || c =='u') )
 									if (!isValidTokenSeparator(c, buffer[bufferPos[bufferStackPos] + 1])) 
 										handleProblem(IProblem.SCANNER_BAD_DECIMAL_FORMAT, pos);
 							}
@@ -666,6 +665,7 @@ public class ExpressionEvaluator {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
+		skipWhiteSpace();
 		if (++bufferPos[bufferStackPos] >= limit
 				|| buffer[bufferPos[bufferStackPos]] != '(')
 			return;
@@ -898,8 +898,8 @@ public class ExpressionEvaluator {
 	}
 
 	private void handleProblem(int id, int startOffset) {
-		if (requestor != null && spf != null)
-			requestor.acceptProblem(spf.createProblem( id, startOffset, bufferPos[(bufferStackPos == -1 ? 0 : bufferStackPos)], lineNumber, (fileName == null ? "".toCharArray() : fileName), emptyCharArray, false, true )); //$NON-NLS-1$
+		if (callbackManager != null && spf != null)
+		    callbackManager.pushCallback( spf.createProblem( id, startOffset, bufferPos[(bufferStackPos == -1 ? 0 : bufferStackPos)], lineNumber, (fileName == null ? "".toCharArray() : fileName), emptyCharArray, false, true )); //$NON-NLS-1$
 	}
 	
 	private boolean isValidTokenSeparator(char c, char c2) throws EvalException {

@@ -38,7 +38,6 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
@@ -62,7 +61,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @author jcamelon
 	 *
 	 */
-	private static class InclusionData {
+	protected static class InclusionData {
 
 		public final IASTInclusion inclusion;
 		public final CodeReader reader;
@@ -112,9 +111,8 @@ public class Scanner2 implements IScanner, IScannerData {
 	int[] lineNumbers = new int[bufferInitialSize];
 	private int[] lineOffsets = new int[bufferInitialSize];
 	
-	//inclusion stack
-	private Object[] callbackStack = new Object[bufferInitialSize];
-	private int callbackPos = -1;
+	//callbacks
+	private ScannerCallbackManager callbackManager;
 	
 	//branch tracking
 	private int branchStackPos = -1;
@@ -159,7 +157,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		this.language = language;
 		this.log = log;
 		this.workingCopies = workingCopies;
-		this.expressionEvaluator = new ExpressionEvaluator(requestor, spf);
+		this.callbackManager = new ScannerCallbackManager( requestor );
+		this.expressionEvaluator = new ExpressionEvaluator(callbackManager, spf);
 
 		if( language == ParserLanguage.C )
 		    keywords = ckeywords;
@@ -258,7 +257,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		bufferData[bufferStackPos] = data;
 		if( data instanceof InclusionData )
 		{
-			pushCallback( data );
+			callbackManager.pushCallback( data );
 			if( log.isTracing() )
 			{
 				StringBuffer b = new StringBuffer( "Entering inclusion "); //$NON-NLS-1$
@@ -279,37 +278,14 @@ public class Scanner2 implements IScanner, IScannerData {
 				buffer.append( ((InclusionData)bufferData[bufferStackPos]).reader.filename ); 
 				log.traceLog( buffer.toString() );
 			}
-					    pushCallback( ((InclusionData) bufferData[bufferStackPos]).inclusion );
+			
+			callbackManager.pushCallback( ((InclusionData) bufferData[bufferStackPos]).inclusion );
 		}
 		bufferData[bufferStackPos] = null;
 		--bufferStackPos;
 	}
 	
-	private void pushCallback( Object obj ){
-	    if( ++callbackPos == callbackStack.length ){
-	        Object[] temp = new Object[ callbackStack.length << 1 ];
-	        System.arraycopy( callbackStack, 0, temp, 0, callbackStack.length );
-	        callbackStack = temp;
-	    }
-	    callbackStack[ callbackPos ] = obj;
-	}
 	
-	private void popCallbacks(){
-	    Object obj = null;
-	    for( int i = 0; i <= callbackPos; i++ ){
-	        obj = callbackStack[i];
-	        //on the stack, InclusionData means enter, IASTInclusion means exit
-	        if( obj instanceof InclusionData )
-	            requestor.enterInclusion( ((InclusionData)obj).inclusion );
-	        else if( obj instanceof IASTInclusion )
-	            requestor.exitInclusion( (IASTInclusion) obj );
-	        else if( obj instanceof IASTMacro )
-	            requestor.acceptMacro( (IASTMacro) obj );
-	        else if( obj instanceof IProblem )
-	    		requestor.acceptProblem( (IProblem) obj );
-	    }
-	    callbackPos = -1;   
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#addDefinition(java.lang.String, java.lang.String)
@@ -416,8 +392,8 @@ public class Scanner2 implements IScanner, IScannerData {
 			}
 		}
 
-		if( callbackPos != -1 ){
-		    popCallbacks();
+		if( callbackManager.hasCallbacks() ){
+		    callbackManager.popCallbacks();
 		}
 		
 		if (finished)
@@ -1140,7 +1116,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private void handleProblem(int id, int startOffset, char [] arg ) {
 		if( parserMode == ParserMode.COMPLETION_PARSE ) return;
 		IProblem p = spf.createProblem( id, startOffset, bufferPos[bufferStackPos], getLineNumber( bufferPos[bufferStackPos] ), getCurrentFilename(), arg != null ? arg : emptyCharArray, false, true );
-		pushCallback( p );
+		callbackManager.pushCallback( p );
 	}
 
 	
@@ -1644,8 +1620,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		if( parserMode == ParserMode.QUICK_PARSE )
 		{
 			IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, EMPTY_STRING_CHAR_ARRAY, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
-			pushCallback( new InclusionData( null, inclusion ) );
-		    pushCallback( inclusion );
+			callbackManager.pushCallback( new InclusionData( null, inclusion ) );
+			callbackManager.pushCallback( inclusion );
 		}
 		else
 		{
@@ -1815,7 +1791,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				? new ObjectStyleMacro(name, text)
 						: new FunctionStyleMacro(name, text, arglist) );
 		 
-		pushCallback( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, getCurrentFilename() ) );
+		callbackManager.pushCallback( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, getCurrentFilename() ) );
 	}
 	
 	private char[][] extractMacroParameters( int idstart, char[] name, boolean reportProblems ){

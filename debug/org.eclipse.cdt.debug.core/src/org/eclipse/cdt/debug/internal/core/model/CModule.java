@@ -26,6 +26,9 @@ import org.eclipse.debug.core.DebugException;
  
 /**
  * The CDI based implementation of <code>ICModule</code>.
+ * 
+ * This implementation is experimental and needs to be changed when
+ * the CDI level support is available. 
  */
 public class CModule extends CDebugElement implements ICModule {
 
@@ -46,11 +49,6 @@ public class CModule extends CDebugElement implements ICModule {
 
 	public static CModule createSharedLibrary( CDebugTarget target, ICDISharedLibrary lib ) {
 		return new CModule( SHARED_LIBRARY, target, lib );
-	}
-
-	public static CModule createCore( CDebugTarget target, IPath path ) {
-		// TODO Add support for core file to CDI.
-		return new CModule( CORE, target, path );
 	}
 
 	/** 
@@ -187,13 +185,6 @@ public class CModule extends CDebugElement implements ICModule {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICModule#canModifySymbolsSource()
-	 */
-	public boolean canModifySymbolsSource() {
-		return true;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter( Class adapter ) {
@@ -223,7 +214,7 @@ public class CModule extends CDebugElement implements ICModule {
 			requestFailed( CoreModelMessages.getString( "CModule.2" ), null ); //$NON-NLS-1$
 		}
 		String message = CoreModelMessages.getString( "CModule.4" ); //$NON-NLS-1$
-		if ( fCDIObject instanceof ICDISharedLibrary ) {
+		if ( fCDIObject instanceof ICDISharedLibrary && path.equals( getSymbolsFileName() )) {
 			try {
 				((ICDISharedLibrary)fCDIObject).loadSymbols();
 				return;

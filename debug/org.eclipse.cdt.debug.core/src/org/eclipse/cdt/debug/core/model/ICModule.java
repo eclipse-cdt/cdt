@@ -33,11 +33,6 @@ public interface ICModule extends ICDebugElement {
 	public static final int SHARED_LIBRARY = 2;
 
 	/**
-	 * Type constant which identifies core files.
-	 */
-	public static final int CORE = 3;
-
-	/**
 	 * Returns the type of this module.
 	 * The returned value will be one of <code>EXECUTABLE</code>, 
 	 * <code>SHARED_LIBRARY</code>, <code>CORE</code>.
@@ -140,11 +135,4 @@ public interface ICModule extends ICDebugElement {
 	 * @return the CPU identifier
 	 */
 	public String getCPU();
-
-	/**
-	 * Returns whether the symbols of this module can be loaded from another file.
-	 * 
-	 * @return whether the symbols of this module can be loaded from another file
-	 */
-	public boolean canModifySymbolsSource();
 }

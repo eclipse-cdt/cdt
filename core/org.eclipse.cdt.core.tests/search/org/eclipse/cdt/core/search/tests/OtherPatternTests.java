@@ -368,4 +368,36 @@ public class OtherPatternTests extends BaseSearchTest {
 		
 		assertTrue( match1.equals( match2 ) );
 	}
+	
+	public void testBug68235(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "bug68235::xTag", STRUCT, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );		
+		
+		pattern = SearchEngine.createSearchPattern( "bug68235::yTag", STRUCT, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "bug68235::xType", TYPEDEF, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "bug68235::yType", TYPEDEF, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "bug68235::xType", TYPEDEF, REFERENCES, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "bug68235::yType", TYPEDEF, REFERENCES, true );
+		search( workspace, pattern, scope, resultCollector );
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+	}
 }

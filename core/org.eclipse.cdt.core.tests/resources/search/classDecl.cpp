@@ -82,3 +82,21 @@ void DeclsAndDefns::forwardMethod(){ }
 int DeclsAndDefns::staticField = 5;
 
 
+namespace bug68235{
+	struct xTag {	
+		int x;
+	};
+	typedef xTag xType;
+	
+	typedef struct yTag {
+		int x;
+	} yType;			
+			
+	class C1{
+	public:
+		xType x;		
+		yType y;		
+		C1();
+		~C1();
+	};
+}

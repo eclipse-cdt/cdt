@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -1967,7 +1968,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     
     public void testTypeIDSignature() throws Exception
     {
-    	IASTVariable v = (IASTVariable) parse( "int * v = (int*)0;").getDeclarations().next();
+    	IASTVariable v = (IASTVariable) parse( "int * v = (int*)0;").getDeclarations().next();//$NON-NLS-1$
     	IASTTypeId typeId = v.getInitializerClause().getAssigmentExpression().getTypeId();
     	assertEquals( typeId.getFullSignature(), "int *"); //$NON-NLS-1$
     }
@@ -1991,4 +1992,34 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	assertAllReferences( 2, createTaskList( new Task( f1, 1, false, false), new Task( t ) ) );
     }
 	
+    public void testBug68235() throws Exception{
+    	Writer writer = new StringWriter();
+    	writer.write( " struct xTag { int x; };               ");
+    	writer.write( " typedef xTag xType;                   ");
+    	writer.write( " typedef struct yTag { int x; } yType; ");
+    	writer.write( " class C1 { xType x; yType y; };       ");
+    	
+    	Iterator i = parse( writer.toString() ).getDeclarations();
+    	
+    	IASTClassSpecifier xTag = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+    	IASTTypedefDeclaration xType = (IASTTypedefDeclaration) i.next();
+    	IASTSimpleTypeSpecifier typeSpec = (IASTSimpleTypeSpecifier) xType.getAbstractDeclarator().getTypeSpecifier();
+    	assertEquals( typeSpec.getTypeSpecifier(), xTag );
+    	
+    	IASTTypedefDeclaration yType = (IASTTypedefDeclaration) i.next();
+    	IASTClassSpecifier yTag = (IASTClassSpecifier) yType.getAbstractDeclarator().getTypeSpecifier();
+    	
+    	IASTClassSpecifier C1 = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+    	assertFalse( i.hasNext() );
+    	i = getDeclarations( C1 );
+    	
+    	IASTField x = (IASTField) i.next();
+    	IASTField y = (IASTField) i.next();
+    	assertFalse( i.hasNext() );
+    	
+    	IASTSimpleTypeSpecifier simple = (IASTSimpleTypeSpecifier) x.getAbstractDeclaration().getTypeSpecifier();
+    	assertEquals( simple.getTypeSpecifier(), xType );
+    	simple = (IASTSimpleTypeSpecifier) y.getAbstractDeclaration().getTypeSpecifier();
+    	assertEquals( simple.getTypeSpecifier(), yType );
+    }
 }

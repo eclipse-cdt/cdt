@@ -269,6 +269,14 @@ public class CommandFactory {
 		return new MIWhatis(name);
 	}
 
+	public MIInfoSignals createMIInfoSignals() {
+		return new MIInfoSignals();
+	}
+
+	public MIInfoSignals createMIInfoSignals(String name) {
+		return new MIInfoSignals(name);
+	}
+
 	public MIPType createMIPType(String name) {
 		return new MIPType(name);
 	}

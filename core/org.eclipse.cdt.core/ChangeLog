@@ -1,3 +1,8 @@
+2002-10-22 Alain Magloire
+
+	* src/.../internal/parser/LinePositionInputStream.java:
+	We use a BufferedInputStream to limit the number of reads.
+
 2002-10-16 Alain Magloire
 
 	Some of the native functions were throwing exceptions

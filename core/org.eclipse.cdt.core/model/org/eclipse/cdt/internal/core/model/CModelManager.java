@@ -384,14 +384,15 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				for (int i = 0; i < children.length; i++) {
 					releaseCElement(children[i]);
 				}
-				// Make sure any object specifics not part of the children be destroy
-				// For example the CProject needs to destroy the BinaryContainer and ArchiveContainer
-				if (celement instanceof CElement) {
-					try {
-						((CElement)celement).closing(info);
-					} catch (CModelException e) {
-						//
-					}
+			}
+
+			// Make sure any object specifics not part of the children be destroy
+			// For example the CProject needs to destroy the BinaryContainer and ArchiveContainer
+			if (celement instanceof CElement) {
+				try {
+					((CElement)celement).closing(info);
+				} catch (CModelException e) {
+					//
 				}
 			}
 

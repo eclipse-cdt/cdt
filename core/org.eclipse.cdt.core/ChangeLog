@@ -1,5 +1,12 @@
 2004-04-15 Alain Magloire
 
+	BinaryContainer was not cleaned up.
+
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+
+2004-04-15 Alain Magloire
+
 	Fix for PR 58481
 	Since TypeInfo shares have some common code
 	with the Search the fix was put in the search to.

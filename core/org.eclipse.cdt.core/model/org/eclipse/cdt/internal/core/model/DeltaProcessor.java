@@ -126,9 +126,11 @@ public class DeltaProcessor {
 		}
 
 		//  It is not a C resource if the parent is a Binary/ArchiveContainer
+		// But we have to release too.
 		if (celement != null && resource.getType() == IResource.FILE) {
 			ICElement parent = celement.getParent();
 			if (parent instanceof IArchiveContainer || parent instanceof IBinaryContainer) {
+				releaseCElement(celement);
 				celement = null;
 			}
 		}

@@ -24,6 +24,7 @@ import java.util.TreeMap;
 
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
+import org.eclipse.cdt.utils.debug.stabs.TypeInformation;
 
 /**
  * @author aniefer
@@ -226,8 +227,8 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 			fInfo = pf.getTypeInfo();
 			
 			//parameters that differ only in the use of equivalent typedef types are equivalent.
-			info = ParserSymbolTable.getFlatTypeInfo( info );
-			fInfo = ParserSymbolTable.getFlatTypeInfo( fInfo );
+			info = ParserSymbolTable.getFlatTypeInfo( info, true );
+			fInfo = ParserSymbolTable.getFlatTypeInfo( fInfo, true );
 			
 			for( TypeInfo nfo = info; nfo != null; nfo = fInfo ){
 				//an array declaration is adjusted to become a pointer declaration
@@ -255,7 +256,7 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 					nfo.setBit( false, TypeInfo.isConst );
 					nfo.setBit( false, TypeInfo.isVolatile );
 				} else {
-					PtrOp op = (PtrOp) nfo.getPtrOperators().listIterator( nfo.getPtrOperators().size() ).previous();
+					PtrOp op = (PtrOp) nfo.getPtrOperators().get( nfo.getPtrOperators().size() - 1 );
 					op.setConst( false );
 					op.setVolatile( false );
 				}
@@ -264,9 +265,13 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 					break;
 			}
 			
-			if( !info.equals( fInfo ) ){
+			boolean equals = info.equals( fInfo );
+
+			info.release();
+			fInfo.release();
+			
+			if( ! equals )
 				return false;
-			}
 		}
 	
 		

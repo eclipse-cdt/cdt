@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -286,8 +285,14 @@ public class TypeInfo {
 		_templateParameterType = type;
 	}
 	
-	public TypeInfo getFinalType(){
-		return ParserSymbolTable.getFlatTypeInfo( this );
+	/**
+	 * 
+	 * @param usePool - whether or not use to the pool, if true, TypeInfo.release() must
+	 *                  be called on the returned TypeInfo when itis no longer needed
+	 * @return
+	 */
+	public TypeInfo getFinalType(boolean usePool){
+		return ParserSymbolTable.getFlatTypeInfo( this, usePool ); 
 	}
 	/**
 	 * 
@@ -531,6 +536,40 @@ public class TypeInfo {
 		return TypeInfo._image[ getType().toInt() ];
 	}
 
+	public void clear(){
+		_typeBits = 0;
+		_type = TypeInfo.t_undef;
+		_templateParameterType = t_typeName;
+		_typeDeclaration = null;
+		_hasDefaultValue = false;
+		_defaultValue = null;
+		_ptrOperators = Collections.EMPTY_LIST;
+		_operatorExpressions = Collections.EMPTY_LIST;
+	}
+	
+	public void copy( TypeInfo t ){
+		_typeBits = t._typeBits;
+		_type = t._type;
+		_templateParameterType = t._templateParameterType;
+		_typeDeclaration = t._typeDeclaration;
+		_hasDefaultValue = t._hasDefaultValue;
+		_defaultValue = t._defaultValue;
+		if( t._ptrOperators != Collections.EMPTY_LIST )
+			_ptrOperators = (ArrayList)((ArrayList)t._ptrOperators).clone();
+		else 
+			_ptrOperators = Collections.EMPTY_LIST;
+		
+		if( t._operatorExpressions != Collections.EMPTY_LIST )
+			_operatorExpressions = (ArrayList)((ArrayList)t._operatorExpressions).clone();
+		else 
+			_operatorExpressions = Collections.EMPTY_LIST;
+	}
+
+	public void release() {
+		ParserSymbolTable.TypeInfoProvider.returnTypeInfo( this );
+	}
+
+	
 	private int 	_typeBits = 0;
 	private eType   _type = TypeInfo.t_undef;
 	private eType	_templateParameterType = t_typeName;

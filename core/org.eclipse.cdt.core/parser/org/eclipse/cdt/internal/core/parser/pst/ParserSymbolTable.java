@@ -455,8 +455,11 @@ public class ParserSymbolTable {
 			return true;
 		}
 		
-		TypeInfo typeInfo = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo() );
-		return data.getFilter().shouldAccept( symbol, typeInfo ) || data.getFilter().shouldAccept( symbol );
+		TypeInfo typeInfo = ParserSymbolTable.getFlatTypeInfo( symbol.getTypeInfo(), true );
+		boolean accept = data.getFilter().shouldAccept( symbol, typeInfo ) || data.getFilter().shouldAccept( symbol );
+		typeInfo.release();
+		
+		return accept;
 	}
 	
 	private static Object collectSymbol(LookupData data, Object object ) throws ParserSymbolTableException {
@@ -1013,6 +1016,7 @@ public class ParserSymbolTable {
 				
 		TypeInfo source = null;					//parameter we are called with
 		TypeInfo target = null;					//function's parameter
+		TypeInfo voidInfo = null;				//used to compare f() and f(void)
 		
 		int comparison;
 		Cost cost = null;						//the cost of converting source to target
@@ -1030,164 +1034,213 @@ public class ParserSymbolTable {
 		if( numSourceParams == 0 ){
 			//f() is the same as f( void )
 			sourceParameters = new ArrayList(1);
-			sourceParameters.add( new TypeInfo( TypeInfo.t_void, 0, null ) );
+			voidInfo = TypeInfoProvider.getTypeInfo();
+			voidInfo.setType( TypeInfo.t_void );
+			sourceParameters.add( voidInfo );
 			numSourceParams = 1;
 		} else {
 			sourceParameters = data.getParameters();
 		}
 		
-		for( int fnIdx = 0; fnIdx < numFns; fnIdx++ ){
-			currFn = (IParameterizedSymbol) functions.get( fnIdx );
-			
-			if( bestFn != null ){
-				if( bestFn.isForwardDeclaration() && bestFn.getTypeSymbol() == currFn ){
-					bestFn = currFn;
-					continue;
-				} else if( currFn.isForwardDeclaration() && currFn.getTypeSymbol() == bestFn ){
-					continue;
+		try {
+			for( int fnIdx = 0; fnIdx < numFns; fnIdx++ ){
+				currFn = (IParameterizedSymbol) functions.get( fnIdx );
+				
+				if( bestFn != null ){
+					if( bestFn.isForwardDeclaration() && bestFn.getTypeSymbol() == currFn ){
+						bestFn = currFn;
+						continue;
+					} else if( currFn.isForwardDeclaration() && currFn.getTypeSymbol() == bestFn ){
+						continue;
+					}
 				}
-			}
-			
-			
-			if( currFn.getParameterList().isEmpty() && !currFn.hasVariableArgs() ){
-				//the only way we get here and have no parameters, is if we are looking
-				//for a function that takes void parameters ie f( void )
-				targetParameters = new ArrayList(1);
-				targetParameters.add( currFn.getSymbolTable().newSymbol( "", TypeInfo.t_void ) ); //$NON-NLS-1$
-			} else {
-				targetParameters = currFn.getParameterList();
-			}
-			
-			int numTargetParams = targetParameters.size();
-			if( currFnCost == null ){
-				currFnCost = new Cost [ numSourceParams ];	
-			}
-			
-			comparison = 0;
-			boolean varArgs = false;
-			
-			for( int j = 0; j < numSourceParams; j++ ){
-				source = (TypeInfo) sourceParameters.get(j);
 				
-				if( j < numTargetParams )
-					target = ((ISymbol)targetParameters.get(j)).getTypeInfo();
-				else 
-					varArgs = true;
 				
-				if( varArgs ){
-					cost = new Cost( source, null );
-					cost.rank = Cost.ELLIPSIS_CONVERSION;
-				} else if ( target.getHasDefault() && source.isType( TypeInfo.t_void ) && !source.hasPtrOperators() ){
-					//source is just void, ie no parameter, if target had a default, then use that
-					cost = new Cost( source, target );
-					cost.rank = Cost.IDENTITY_RANK;
-				} else if( source.equals( target ) ){
-					cost = new Cost( source, target );
-					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
+				if( currFn.getParameterList().isEmpty() && !currFn.hasVariableArgs() ){
+					//the only way we get here and have no parameters, is if we are looking
+					//for a function that takes void parameters ie f( void )
+					targetParameters = new ArrayList(1);
+					targetParameters.add( currFn.getSymbolTable().newSymbol( "", TypeInfo.t_void ) ); //$NON-NLS-1$
 				} else {
+					targetParameters = currFn.getParameterList();
+				}
 				
-					cost = checkStandardConversionSequence( source, target );
+				int numTargetParams = targetParameters.size();
+				if( currFnCost == null ){
+					currFnCost = new Cost [ numSourceParams ];	
+				}
+				
+				comparison = 0;
+				boolean varArgs = false;
+				
+				for( int j = 0; j < numSourceParams; j++ ){
+					source = (TypeInfo) sourceParameters.get(j);
 					
-					//12.3-4 At most one user-defined conversion is implicitly applied to
-					//a single value.  (also prevents infinite loop)				
-					if( cost.rank == Cost.NO_MATCH_RANK && !data.forUserDefinedConversion ){
-						temp = checkUserDefinedConversionSequence( source, target );
-						if( temp != null ){
-							cost = temp;
+					if( j < numTargetParams )
+						target = ((ISymbol)targetParameters.get(j)).getTypeInfo();
+					else 
+						varArgs = true;
+					
+					if( varArgs ){
+						cost = new Cost( source, null );
+						cost.rank = Cost.ELLIPSIS_CONVERSION;
+					} else if ( target.getHasDefault() && source.isType( TypeInfo.t_void ) && !source.hasPtrOperators() ){
+						//source is just void, ie no parameter, if target had a default, then use that
+						cost = new Cost( source, target );
+						cost.rank = Cost.IDENTITY_RANK;
+					} else if( source.equals( target ) ){
+						cost = new Cost( source, target );
+						cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
+					} else {
+						try{
+							cost = checkStandardConversionSequence( source, target );
+							
+							//12.3-4 At most one user-defined conversion is implicitly applied to
+							//a single value.  (also prevents infinite loop)				
+							if( cost.rank == Cost.NO_MATCH_RANK && !data.forUserDefinedConversion ){
+								temp = checkUserDefinedConversionSequence( source, target );
+								if( temp != null ){
+									cost.release();
+									cost = temp;
+								}
+							}
+						} catch( ParserSymbolTableException e ) {
+							if( cost != null ) { cost.release();  cost = null; }
+							if( temp != null ) { temp.release();  temp = null; }
+							throw e;
+						} catch( ParserSymbolTableError e ) {
+							if( cost != null ) { cost.release();  cost = null; }
+							if( temp != null ) { temp.release();  temp = null; }
+							throw e;
 						}
 					}
-				}
-				
-				currFnCost[ j ] = cost;
-			}
-			
-			
-			hasWorse = false;
-			hasBetter = false;
-			//In order for this function to be better than the previous best, it must
-			//have at least one parameter match that is better that the corresponding
-			//match for the other function, and none that are worse.
-			for( int j = 0; j < numSourceParams; j++ ){ 
-				if( currFnCost[ j ].rank < 0 ){
-					hasWorse = true;
-					hasBetter = false;
 					
-					if( data.isPrefixLookup() ){
-						//for prefix lookup, just remove from the function list those functions
-						//that don't fit the parameters
-						functions.remove( fnIdx-- );
-						numFns--;
-					}
-					break;
+					currFnCost[ j ] = cost;
 				}
 				
-				//an ambiguity in the user defined conversion sequence is only a problem
-				//if this function turns out to be the best.
-				currHasAmbiguousParam = ( currFnCost[ j ].userDefined == 1 );
 				
-				if( bestFnCost != null ){
-					comparison = currFnCost[ j ].compare( bestFnCost[ j ] );
-					hasWorse |= ( comparison < 0 );
-					hasBetter |= ( comparison > 0 );
-				} else {
-					hasBetter = true;
-				}
-			}
-			
-			//during a prefix lookup, we don't need to rank the functions
-			if( data.isPrefixLookup() )
-				continue;
-			
-			//If function has a parameter match that is better than the current best,
-			//and another that is worse (or everything was just as good, neither better nor worse).
-			//then this is an ambiguity (unless we find something better than both later)	
-			ambiguous |= ( hasWorse && hasBetter ) || ( !hasWorse && !hasBetter );
-			
-			if( !hasWorse ){
-				if( !hasBetter ){
-					//if they are both template functions, we can order them that way
-					boolean bestIsTemplate = bestFn.getContainingSymbol() instanceof ITemplateSymbol;
-					boolean currIsTemplate = currFn.getContainingSymbol() instanceof ITemplateSymbol; 
-					if( bestIsTemplate && currIsTemplate )
-					{
-						ITemplateSymbol t1 = (ITemplateSymbol) bestFn.getInstantiatedSymbol().getContainingSymbol();
-						ITemplateSymbol t2 = (ITemplateSymbol) currFn.getInstantiatedSymbol().getContainingSymbol();
-						int order = TemplateEngine.orderTemplateFunctions( t1, t2 );
-						if ( order < 0 ){
-							hasBetter = true;	 				
-						} else if( order > 0 ){
-							ambiguous = false;
+				hasWorse = false;
+				hasBetter = false;
+				//In order for this function to be better than the previous best, it must
+				//have at least one parameter match that is better that the corresponding
+				//match for the other function, and none that are worse.
+				for( int j = 0; j < numSourceParams; j++ ){ 
+					if( currFnCost[ j ].rank < 0 ){
+						hasWorse = true;
+						hasBetter = false;
+						
+						if( data.isPrefixLookup() ){
+							//for prefix lookup, just remove from the function list those functions
+							//that don't fit the parameters
+							functions.remove( fnIdx-- );
+							numFns--;
 						}
+						break;
 					}
-					//we prefer normal functions over template functions, unless we specified template arguments
-					else if( bestIsTemplate && !currIsTemplate ){
-						if( data.getTemplateParameters() == null )
-							hasBetter = true;
-						else
-							ambiguous = false;
-					} else if( !bestIsTemplate && currIsTemplate ){
-						if( data.getTemplateParameters() == null )
-							ambiguous = false;
-						else
-							hasBetter = true;
-					} 
+					
+					//an ambiguity in the user defined conversion sequence is only a problem
+					//if this function turns out to be the best.
+					currHasAmbiguousParam = ( currFnCost[ j ].userDefined == 1 );
+					
+					if( bestFnCost != null ){
+						comparison = currFnCost[ j ].compare( bestFnCost[ j ] );
+						hasWorse |= ( comparison < 0 );
+						hasBetter |= ( comparison > 0 );
+					} else {
+						hasBetter = true;
+					}
 				}
-				if( hasBetter ){
-					//the new best function.
-					ambiguous = false;
-					bestFnCost = currFnCost;
-					bestHasAmbiguousParam = currHasAmbiguousParam;
-					currFnCost = null;
-					bestFn = currFn;
-				}				
+				
+				//during a prefix lookup, we don't need to rank the functions
+				if( data.isPrefixLookup() ){
+					releaseCosts( currFnCost );
+					continue;
+				}
+				
+				//If function has a parameter match that is better than the current best,
+				//and another that is worse (or everything was just as good, neither better nor worse).
+				//then this is an ambiguity (unless we find something better than both later)	
+				ambiguous |= ( hasWorse && hasBetter ) || ( !hasWorse && !hasBetter );
+				
+				if( !hasWorse ){
+					if( !hasBetter ){
+						//if they are both template functions, we can order them that way
+						boolean bestIsTemplate = bestFn.getContainingSymbol() instanceof ITemplateSymbol;
+						boolean currIsTemplate = currFn.getContainingSymbol() instanceof ITemplateSymbol; 
+						if( bestIsTemplate && currIsTemplate )
+						{
+							try{
+								ITemplateSymbol t1 = (ITemplateSymbol) bestFn.getInstantiatedSymbol().getContainingSymbol();
+								ITemplateSymbol t2 = (ITemplateSymbol) currFn.getInstantiatedSymbol().getContainingSymbol();
+								int order = TemplateEngine.orderTemplateFunctions( t1, t2 );
+								if ( order < 0 ){
+									hasBetter = true;	 				
+								} else if( order > 0 ){
+									ambiguous = false;
+								}
+							} catch( ParserSymbolTableException e ) {
+								if( currFnCost != null ) releaseCosts( currFnCost );
+								if( bestFnCost != null ) releaseCosts( bestFnCost );
+								throw e;
+							} catch( ParserSymbolTableError e ) {
+								if( currFnCost != null ) releaseCosts( currFnCost );
+								if( bestFnCost != null ) releaseCosts( bestFnCost );
+								throw e;
+							}
+						}
+						//we prefer normal functions over template functions, unless we specified template arguments
+						else if( bestIsTemplate && !currIsTemplate ){
+							if( data.getTemplateParameters() == null )
+								hasBetter = true;
+							else
+								ambiguous = false;
+						} else if( !bestIsTemplate && currIsTemplate ){
+							if( data.getTemplateParameters() == null )
+								ambiguous = false;
+							else
+								hasBetter = true;
+						} 
+					}
+					if( hasBetter ){
+						//the new best function.
+						ambiguous = false;
+						releaseCosts( bestFnCost );
+						bestFnCost = currFnCost;
+						bestHasAmbiguousParam = currHasAmbiguousParam;
+						currFnCost = null;
+						bestFn = currFn;
+					} else {
+						releaseCosts( currFnCost );
+					}
+				} else {
+					releaseCosts( currFnCost );
+				}
 			}
+		} finally {
+			if( currFnCost != null ){
+				releaseCosts( currFnCost );
+				currFnCost = null;
+			}
+			if( bestFnCost != null ){
+				releaseCosts( bestFnCost );
+				bestFnCost = null;
+			}
+			if( voidInfo != null )
+				voidInfo.release();
 		}
-
+		
 		if( ambiguous || bestHasAmbiguousParam ){
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 		}
 						
 		return bestFn;
+	}
+	static private void releaseCosts( Cost [] costs ){
+		if( costs != null ) {
+			for( int i = 0; i < costs.length; i++ ){
+				costs[i].release();
+			}
+		}
 	}
 	
 	static private boolean functionHasParameters( IParameterizedSymbol function, List params ){
@@ -1518,7 +1571,7 @@ public class ParserSymbolTable {
 
 		//lvalues will have type t_type
 		if( source.isType( TypeInfo.t_type ) ){
-			source = getFlatTypeInfo( source );
+			source = getFlatTypeInfo( source, false );
 		}
 		
 		if( target.isType( TypeInfo.t_type ) ){
@@ -1534,14 +1587,14 @@ public class ParserSymbolTable {
 		
 		//if either source or target is null here, then there was a problem 
 		//with the parameters and we can't match them.
-		if( cost.source == null || cost.target == null ){
+		if( cost.getSource() == null || cost.getTarget() == null ){
 			return cost;
 		}
 		
 		TypeInfo.PtrOp op = null;
 		
-		if( cost.source.hasPtrOperators() ){
-			List sourcePtrs = cost.source.getPtrOperators();
+		if( cost.getSource().hasPtrOperators() ){
+			List sourcePtrs = cost.getSource().getPtrOperators();
 			TypeInfo.PtrOp ptr = (TypeInfo.PtrOp)sourcePtrs.get( 0 );
 			if( ptr.getType() == TypeInfo.PtrOp.t_reference ){
 				sourcePtrs.remove( 0 );
@@ -1555,8 +1608,8 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		if( cost.target.hasPtrOperators() ){
-			List targetPtrs = cost.target.getPtrOperators();
+		if( cost.getTarget().hasPtrOperators() ){
+			List targetPtrs = cost.getTarget().getPtrOperators();
 			//ListIterator iterator = targetPtrs.listIterator();
 			TypeInfo.PtrOp ptr = (TypeInfo.PtrOp)targetPtrs.get(0);
 
@@ -1583,8 +1636,8 @@ public class ParserSymbolTable {
 	 * see spec section 4.4 regarding qualification conversions
 	 */
 	static private void qualificationConversion( Cost cost ){
-		List sourcePtrs = cost.source.getPtrOperators();
-		List targetPtrs = cost.target.getPtrOperators();
+		List sourcePtrs = cost.getSource().getPtrOperators();
+		List targetPtrs = cost.getTarget().getPtrOperators();
 		int size = sourcePtrs.size();
 		int size2 = targetPtrs.size();
 		
@@ -1626,8 +1679,8 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		if( ( cost.source.checkBit( TypeInfo.isConst ) && !cost.target.checkBit( TypeInfo.isConst ) ) ||
-			( cost.source.checkBit( TypeInfo.isVolatile ) && !cost.target.checkBit( TypeInfo.isVolatile ) ) )
+		if( ( cost.getSource().checkBit( TypeInfo.isConst ) && !cost.getTarget().checkBit( TypeInfo.isConst ) ) ||
+			( cost.getSource().checkBit( TypeInfo.isVolatile ) && !cost.getTarget().checkBit( TypeInfo.isVolatile ) ) )
 		{
 			canConvert = false;
 		}
@@ -1655,8 +1708,8 @@ public class ParserSymbolTable {
 	 * 4.6 float can be promoted to double
 	 */
 	static private void promotion( Cost cost ){
-		TypeInfo src = cost.source;
-		TypeInfo trg = cost.target;
+		TypeInfo src = cost.getSource();
+		TypeInfo trg = cost.getTarget();
 		 
 		int mask = TypeInfo.isShort | TypeInfo.isLong | TypeInfo.isUnsigned | TypeInfo.isLongLong | TypeInfo.isSigned;
 		
@@ -1689,8 +1742,8 @@ public class ParserSymbolTable {
 	 * 
 	 */
 	static private void conversion( Cost cost ){
-		TypeInfo src = cost.source;
-		TypeInfo trg = cost.target;
+		TypeInfo src = cost.getSource();
+		TypeInfo trg = cost.getTarget();
 		
 		int temp = -1;
 		
@@ -1772,8 +1825,8 @@ public class ParserSymbolTable {
 	}
 	
 	static private void derivedToBaseConversion( Cost cost ) throws ParserSymbolTableException{
-		TypeInfo src = cost.source;
-		TypeInfo trg = cost.target;
+		TypeInfo src = cost.getSource();
+		TypeInfo trg = cost.getTarget();
 		
 		ISymbol srcDecl = src.isType( TypeInfo.t_type ) ? src.getTypeSymbol() : null;
 		ISymbol trgDecl = trg.isType( TypeInfo.t_type ) ? trg.getTypeSymbol() : null;
@@ -1793,11 +1846,11 @@ public class ParserSymbolTable {
 	static protected Cost checkStandardConversionSequence( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException{
 		Cost cost = lvalue_to_rvalue( source, target );
 		
-		if( cost.source == null || cost.target == null ){
+		if( cost.getSource() == null || cost.getTarget() == null ){
 			return cost;
 		}
 			
-		if( cost.source.equals( cost.target ) ){
+		if( cost.getSource().equals( cost.getTarget() ) ){
 			cost.rank = Cost.IDENTITY_RANK;
 			return cost;
 		}
@@ -1810,10 +1863,10 @@ public class ParserSymbolTable {
 		}
 		
 		//was the qualification conversion enough?
-		if( cost.source.isType( TypeInfo.t_type ) && cost.target.isType( TypeInfo.t_type ) ){
-			if( cost.target.hasSamePtrs( cost.source ) ){
-				ISymbol srcSymbol = cost.source.getTypeSymbol();
-				ISymbol trgSymbol = cost.target.getTypeSymbol();
+		if( cost.getSource().isType( TypeInfo.t_type ) && cost.getTarget().isType( TypeInfo.t_type ) ){
+			if( cost.getTarget().hasSamePtrs( cost.getSource() ) ){
+				ISymbol srcSymbol = cost.getSource().getTypeSymbol();
+				ISymbol trgSymbol = cost.getTarget().getTypeSymbol();
 				if( srcSymbol != null && trgSymbol != null ){
 					if( srcSymbol.equals( trgSymbol ) )
 					{
@@ -1821,8 +1874,8 @@ public class ParserSymbolTable {
 					}
 				}
 			}
-		} else if( cost.source.getType() == cost.target.getType() && 
-				  (cost.source.getTypeInfo() & ~TypeInfo.isConst & ~TypeInfo.isVolatile) == (cost.target.getTypeInfo() & ~TypeInfo.isConst & ~TypeInfo.isVolatile) )
+		} else if( cost.getSource().getType() == cost.getTarget().getType() && 
+				  (cost.getSource().getTypeInfo() & ~TypeInfo.isConst & ~TypeInfo.isVolatile) == (cost.getTarget().getTypeInfo() & ~TypeInfo.isConst & ~TypeInfo.isVolatile) )
 		{
 			return cost;
 		}
@@ -1884,8 +1937,9 @@ public class ParserSymbolTable {
 		
 		//conversion operators
 		if( source.getType() == TypeInfo.t_type ){
-			source = getFlatTypeInfo( source );
+			source = getFlatTypeInfo( source, true );
 			sourceDecl = ( source != null ) ? source.getTypeSymbol() : null;
+			source.release();
 			
 			if( sourceDecl != null && (sourceDecl instanceof IContainerSymbol) ){
 				String name = target.toString();
@@ -1902,32 +1956,46 @@ public class ParserSymbolTable {
 			}
 		}
 		
-		if( constructor != null ){
-			constructorCost = checkStandardConversionSequence( new TypeInfo( TypeInfo.t_type, 0, constructor.getContainingSymbol() ), target );
-		}
-		if( conversion != null ){
-			conversionCost = checkStandardConversionSequence( new TypeInfo( target.getType(), 0, target.getTypeSymbol() ), target );
-		}
-		
-		//if both are valid, then the conversion is ambiguous
-		if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK && 
-			conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK )
-		{
-			cost = constructorCost;
-			cost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;	
-			cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-		} else {
-			if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK ){
+		try {
+			if( constructor != null ){
+				TypeInfo info = TypeInfoProvider.getTypeInfo();
+				info.setType( TypeInfo.t_type );
+				info.setTypeSymbol( constructor.getContainingSymbol() );
+				constructorCost = checkStandardConversionSequence( info, target );
+				info.release();
+			}
+			if( conversion != null ){
+				TypeInfo info = TypeInfoProvider.getTypeInfo();
+				info.setType( target.getType() );
+				info.setTypeSymbol( target.getTypeSymbol() );
+				conversionCost = checkStandardConversionSequence( info, target );
+				info.release();
+			}
+			
+			//if both are valid, then the conversion is ambiguous
+			if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK && 
+				conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK )
+			{
 				cost = constructorCost;
-				cost.userDefined = constructor.hashCode();
+				cost.userDefined = Cost.AMBIGUOUS_USERDEFINED_CONVERSION;	
 				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-			} else if( conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK ){
-				cost = conversionCost;
-				cost.userDefined = conversion.hashCode();
-				cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
-			} 			
+			} else {
+				if( constructorCost != null && constructorCost.rank != Cost.NO_MATCH_RANK ){
+					cost = constructorCost;
+					cost.userDefined = constructor.hashCode();
+					cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
+				} else if( conversionCost != null && conversionCost.rank != Cost.NO_MATCH_RANK ){
+					cost = conversionCost;
+					cost.userDefined = conversion.hashCode();
+					cost.rank = Cost.USERDEFINED_CONVERSION_RANK;
+				} 			
+			}
+		} finally {
+			if( constructorCost != null && constructorCost != cost )
+				constructorCost.release();
+			if( conversionCost != null && conversionCost != cost )
+				conversionCost.release();			
 		}
-		
 		return cost;
 	}
 
@@ -1944,19 +2012,31 @@ public class ParserSymbolTable {
 	 * - If exactly one conversion is possible, that conversion is applied ( return the other TypeInfo )
 	 */
 	static public TypeInfo getConditionalOperand( TypeInfo secondOp, TypeInfo thirdOp ) throws ParserSymbolTableException{
+		Cost thirdCost = null, secondCost = null;
+		TypeInfo temp = null;
 		
-		//can secondOp convert to thirdOp ?
-		Cost secondCost = checkStandardConversionSequence( secondOp, getFlatTypeInfo( thirdOp ) );
-
-		if( secondCost.rank == Cost.NO_MATCH_RANK ){
-			secondCost = checkUserDefinedConversionSequence( secondOp, getFlatTypeInfo( thirdOp ) );
+		try{
+			//can secondOp convert to thirdOp ?
+			temp = getFlatTypeInfo( thirdOp, true );
+			secondCost = checkStandardConversionSequence( secondOp, temp );
+	
+			if( secondCost.rank == Cost.NO_MATCH_RANK ){
+				secondCost.release();
+				secondCost = checkUserDefinedConversionSequence( secondOp, temp );
+			}
+			temp.release();
+			temp = getFlatTypeInfo( secondOp, true );
+			
+			thirdCost = checkStandardConversionSequence( thirdOp, temp );
+			if( thirdCost.rank == Cost.NO_MATCH_RANK ){
+				thirdCost.release();
+				thirdCost = checkUserDefinedConversionSequence( thirdOp, temp );
+			}
+		} finally {
+			if( thirdCost != null ) thirdCost.release();
+			if( secondCost != null ) secondCost.release();
+			if( temp != null ) temp.release();
 		}
-		
-		Cost thirdCost = checkStandardConversionSequence( thirdOp, getFlatTypeInfo( secondOp ) );
-		if( thirdCost.rank == Cost.NO_MATCH_RANK ){
-			thirdCost = checkUserDefinedConversionSequence( thirdOp, getFlatTypeInfo( secondOp ) );
-		}
-		
 		
 		boolean canConvertSecond = ( secondCost != null && secondCost.rank != Cost.NO_MATCH_RANK );
 		boolean canConvertThird  = ( thirdCost  != null && thirdCost.rank  != Cost.NO_MATCH_RANK );
@@ -1985,17 +2065,20 @@ public class ParserSymbolTable {
 	
 	/**
 	 * 
+	 * @param usePool TODO
 	 * @param decl
 	 * @return TypeInfo
 	 * The top level TypeInfo represents modifications to the object and the
 	 * remaining TypeInfo's represent the object.
 	 */
-	static protected TypeInfo getFlatTypeInfo( TypeInfo topInfo ){
-		TypeInfo returnInfo = topInfo;
+	static protected TypeInfo getFlatTypeInfo( TypeInfo topInfo, boolean usePool ){
+		TypeInfo returnInfo = null;
 		TypeInfo info = null;
 		
 		if( topInfo.getType() == TypeInfo.t_type && topInfo.getTypeSymbol() != null ){
-			returnInfo = new TypeInfo();
+			if( usePool ) returnInfo = TypeInfoProvider.getTypeInfo();
+			else          returnInfo = new TypeInfo();
+			
 			returnInfo.setTypeInfo( topInfo.getTypeInfo() );
 			ISymbol typeSymbol = topInfo.getTypeSymbol();
 			
@@ -2007,8 +2090,11 @@ public class ParserSymbolTable {
 				returnInfo.addPtrOperator( info.getPtrOperators() );	
 				returnInfo.setTypeInfo( ( returnInfo.getTypeInfo() | info.getTypeInfo() ) & ~TypeInfo.isTypedef & ~TypeInfo.isForward );
 				info = typeSymbol.getTypeInfo();
-				if( ++j > TYPE_LOOP_THRESHOLD )
+				if( ++j > TYPE_LOOP_THRESHOLD ){
+					if( usePool )
+						returnInfo.release();
 					throw new ParserSymbolTableError();
+				}
 			}
 			
 			if( info.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) || info.isType( TypeInfo.t_function ) ){
@@ -2031,7 +2117,11 @@ public class ParserSymbolTable {
 				returnInfo.addPtrOperator( ptr );
 			}
 		} else {
-			returnInfo = new TypeInfo( topInfo );
+			if( usePool ){
+				returnInfo = TypeInfoProvider.getTypeInfo();
+				returnInfo.copy( topInfo );
+			} else			
+				returnInfo = new TypeInfo( topInfo );
 		}
 		
 		return returnInfo;	
@@ -2040,7 +2130,8 @@ public class ParserSymbolTable {
 	private IContainerSymbol _compilationUnit;
 	private ParserLanguage   _language;
 	private ParserMode		 _mode;
-public void setLanguage( ParserLanguage language ){
+	
+	public void setLanguage( ParserLanguage language ){
 		_language = language;
 	}
 	
@@ -2143,12 +2234,17 @@ public void setLanguage( ParserLanguage language ){
 	{
 		
 		public Cost( TypeInfo s, TypeInfo t ){
-			source = ( s != null ) ? new TypeInfo( s ) : new TypeInfo();
-			target = ( t != null ) ? new TypeInfo( t ) : new TypeInfo();
+			source = TypeInfoProvider.getTypeInfo();
+			if( s != null )
+				source.copy( s );
+			
+			target = TypeInfoProvider.getTypeInfo();
+			if( t != null )
+				target.copy( t );
 		}
 		
-		public TypeInfo source;
-		public TypeInfo target;
+		private TypeInfo source;
+		private TypeInfo target;
 		
 		public boolean targetHadReference = false;
 		
@@ -2172,6 +2268,10 @@ public void setLanguage( ParserLanguage language ){
 		public static final int USERDEFINED_CONVERSION_RANK = 4;
 		public static final int ELLIPSIS_CONVERSION = 5;
 
+		public void release(){
+			getSource().release();
+			getTarget().release();
+		}
 		
 		public int compare( Cost cost ){
 			int result = 0;
@@ -2210,11 +2310,11 @@ public void setLanguage( ParserLanguage language ){
 				} else if( (cost.qualification == qualification) && qualification == 0 ){
 					return 0;
 				} else {
-					int size = cost.target.hasPtrOperators() ? cost.target.getPtrOperators().size() : 0;
-					int size2 = target.hasPtrOperators() ? target.getPtrOperators().size() : 0;
+					int size = cost.getTarget().hasPtrOperators() ? cost.getTarget().getPtrOperators().size() : 0;
+					int size2 = getTarget().hasPtrOperators() ? getTarget().getPtrOperators().size() : 0;
 					
-					ListIterator iter1 = cost.target.getPtrOperators().listIterator( size );
-					ListIterator iter2 = target.getPtrOperators().listIterator( size2 );
+					ListIterator iter1 = cost.getTarget().getPtrOperators().listIterator( size );
+					ListIterator iter2 = getTarget().getPtrOperators().listIterator( size2 );
 					
 					TypeInfo.PtrOp op1 = null, op2 = null;
 					
@@ -2245,6 +2345,20 @@ public void setLanguage( ParserLanguage language ){
 			}
 			 
 			return result;
+		}
+
+		/**
+		 * @return Returns the source.
+		 */
+		public TypeInfo getSource() {
+			return source;
+		}
+		
+		/**
+		 * @return Returns the target.
+		 */
+		public TypeInfo getTarget() {
+			return target;
 		}
 	}
 
@@ -2320,5 +2434,63 @@ public void setLanguage( ParserLanguage language ){
 			}
 		}
 		return resultingAccess;
+	}
+	
+	public static class TypeInfoProvider
+	{
+		private static final int POOL_SIZE = 16;
+		private static final TypeInfo [] pool;
+		private static final boolean [] free;
+		private static int firstFreeHint = 0;
+
+		static
+		{
+			pool = new TypeInfo[ POOL_SIZE ];
+			free = new boolean[POOL_SIZE];
+			for( int i = 0; i < POOL_SIZE; i++ )
+			{
+				pool[i] = new TypeInfo();
+				free[i] = true;
+			}
+		}	
+
+		public static synchronized TypeInfo getTypeInfo()
+		{
+			for( int i = firstFreeHint; i < POOL_SIZE; ++i )
+			{
+				if( free[i] )
+				{
+					free[i] = false;
+					firstFreeHint = i + 1;
+					return pool[i];
+				}
+			}
+			//if there is nothing free, just give them a new one
+			return new TypeInfo();
+		}
+		
+		public static synchronized void returnTypeInfo( TypeInfo t )
+		{
+			for( int i = 0; i < POOL_SIZE; i++ ){
+				if( pool[i] == t ){
+					t.clear();
+					free[i] = true;
+					if( i < firstFreeHint ){
+						firstFreeHint = i;
+					}
+					return;
+				}
+			}
+			//else it was one allocated outside the pool
+		}
+		
+		public static synchronized int numAllocated(){
+			int num = 0;
+			for( int i = 0; i < POOL_SIZE; i++ ){
+				if( !free[i] )
+					num++;
+			}
+			return num;
+		}
 	}
 }

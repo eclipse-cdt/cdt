@@ -1128,8 +1128,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	
 	private boolean createConstructorReference( ISymbol classSymbol, ASTExpression expressionList, ITokenDuple duple, List references ){
 		if( classSymbol != null && classSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
-			TypeInfo info = classSymbol.getTypeInfo().getFinalType();
+			TypeInfo info = classSymbol.getTypeInfo().getFinalType(true);
 			classSymbol = info.getTypeSymbol();
+			info.release();
 		}
 		if( classSymbol == null || ! (classSymbol instanceof IDerivableContainerSymbol ) ){
 			return false;
@@ -1263,11 +1264,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if(lhsInfo != null){
 				TypeInfo info = null;
 				try{
-					info = lhsInfo.getFinalType();
+					info = lhsInfo.getFinalType(true);
 				} catch ( ParserSymbolTableError e ){
 					return null;
 				}
 				ISymbol containingScope = info.getTypeSymbol();
+				info.release();
 //				assert containingScope != null : "Malformed Expression";	
 				if( containingScope instanceof IDeferredTemplateInstance )
 					return ((IDeferredTemplateInstance) containingScope).getTemplate().getTemplatedSymbol();
@@ -3440,8 +3442,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					} catch (ASTSemanticException e) {
 					}
 					if( classSymbol != null && classSymbol.getTypeInfo().checkBit( TypeInfo.isTypedef ) ){
-						TypeInfo info = classSymbol.getTypeInfo().getFinalType();
+						TypeInfo info = classSymbol.getTypeInfo().getFinalType(true);
 						classSymbol = (IContainerSymbol) info.getTypeSymbol();
+						info.release();
 					}
 					if( classSymbol == null || ! (classSymbol instanceof IDerivableContainerSymbol ) ){
 						return null;
@@ -3530,13 +3533,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( ( node instanceof ISymbolOwner ) )
 		{
 			ISymbol symbol = ((ISymbolOwner) node).getSymbol();
-			pointerOps = symbol.getTypeInfo().getFinalType().getPtrOperators();
+			TypeInfo info = symbol.getTypeInfo().getFinalType( true );
+			pointerOps = info.getPtrOperators();
+			info.release();
 		}
 		else if( node instanceof ASTExpression )
 		{
 			ISymbol typeSymbol = ((ASTExpression)node).getResultType().getResult().getTypeSymbol();
-			if( typeSymbol != null )
-				pointerOps = typeSymbol.getTypeInfo().getFinalType().getPtrOperators();
+			if( typeSymbol != null ){
+				TypeInfo info = typeSymbol.getTypeInfo().getFinalType( true );
+				pointerOps = info.getPtrOperators();
+				info.release();
+			}
 		}
 		else
 			return false;
@@ -3556,7 +3564,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( ( node instanceof ISymbolOwner ) )
 		{
 			ISymbol symbol = ((ISymbolOwner) node).getSymbol();
-			pointerOps = symbol.getTypeInfo().getFinalType().getPtrOperators();
+			TypeInfo info = symbol.getTypeInfo().getFinalType( true );
+			pointerOps = info.getPtrOperators();
+			info.release();
 		}
 		else if( node instanceof ASTExpression )
 		{

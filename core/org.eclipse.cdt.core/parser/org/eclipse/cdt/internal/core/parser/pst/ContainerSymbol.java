@@ -691,7 +691,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		ISymbol paramType = null;
 		for( int i = 0; i < size; i++ ){
 			param = (TypeInfo) parameters.get(i);
-			paramType = ParserSymbolTable.getFlatTypeInfo( param ).getTypeSymbol();
+			TypeInfo info = ParserSymbolTable.getFlatTypeInfo( param, true );
+			paramType = info.getTypeSymbol();
+			info.release();
 		
 			if( paramType == null ){
 				continue;

@@ -95,6 +95,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( false, iter.hasNext() );
 		assertEquals( x, contained );
 		assertEquals( contained.getName(), "x" ); //$NON-NLS-1$
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 
 	/**
@@ -111,6 +112,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = table.getCompilationUnit().lookup( "x" ); //$NON-NLS-1$
 		
 		assertEquals( x, look );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	public void testLookupNonExistant() throws Exception{
@@ -118,6 +120,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		ISymbol look = table.getCompilationUnit().lookup("boo"); //$NON-NLS-1$
 		assertEquals( look, null );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	public void testSimpleSetGetObject() throws Exception{
@@ -134,6 +137,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = table.getCompilationUnit().lookup( "x" ); //$NON-NLS-1$
 		
 		assertEquals( look.getASTExtension(), extension );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -163,6 +167,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = table.getCompilationUnit().lookup( "x" ); //$NON-NLS-1$
 		assertEquals( look, firstX );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -183,6 +188,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = decl.lookup( "x" ); //$NON-NLS-1$
 		
 		assertEquals( x, look );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -209,6 +215,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		ISymbol look = class1.lookup( "x" ); //$NON-NLS-1$
 		assertEquals( look, decl );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 
 	/**
@@ -239,6 +246,7 @@ public class ParserSymbolTableTest extends TestCase {
 		catch ( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}	
 	
 	/**
@@ -264,7 +272,7 @@ public class ParserSymbolTableTest extends TestCase {
 		} catch ( ParserSymbolTableException e) {
 			assertEquals( e.reason, ParserSymbolTableException.r_CircularInheritance );
 		}
-		
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );	
 	}
 	/**
 	 * testVirtualParentLookup
@@ -306,6 +314,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = decl.lookup( "x" );  //$NON-NLS-1$
 		
 		assertEquals( look, x );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -340,6 +349,7 @@ public class ParserSymbolTableTest extends TestCase {
 		catch( ParserSymbolTableException e){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -413,6 +423,7 @@ public class ParserSymbolTableTest extends TestCase {
 		catch ( ParserSymbolTableException e){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -458,6 +469,8 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, struct );
 		look = a.elaboratedLookup( TypeInfo.t_union, "union" ); //$NON-NLS-1$
 		assertEquals( look, union );
+		
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -495,6 +508,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = type.lookup("member"); //$NON-NLS-1$
 		assertEquals( look, member );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -533,6 +547,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = f.lookup( "stat" ); //$NON-NLS-1$
 		assertEquals( look, function );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -639,6 +654,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = f4.lookup("i"); //$NON-NLS-1$
 		assertEquals( look, null );//neither i is visible here.
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	/**
 	 * 
@@ -705,6 +721,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = ((IContainerSymbol) look).qualifiedLookup("i"); //ok //$NON-NLS-1$
 		assertEquals( look, nsN_i );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -767,6 +784,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, nsBC );
 		look = ((IContainerSymbol)look).qualifiedLookup("a"); //$NON-NLS-1$
 		assertEquals( look, a );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -833,6 +851,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = lookB.qualifiedLookup("b"); //$NON-NLS-1$
 		assertEquals( look, b );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -880,6 +899,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		ISymbol look = f.lookup("i"); //$NON-NLS-1$
 		assertEquals( look, null );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -964,6 +984,7 @@ public class ParserSymbolTableTest extends TestCase {
 		} catch ( ParserSymbolTableException e ) {
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1008,6 +1029,7 @@ public class ParserSymbolTableTest extends TestCase {
 		//but notice if you wanted to do A::f1 as a function call, it is ok
 		look = lookA.qualifiedLookup( "f1" ); //$NON-NLS-1$
 		assertEquals( look, f1 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1094,6 +1116,7 @@ public class ParserSymbolTableTest extends TestCase {
 		catch ( ParserSymbolTableException exception ){
 			assertTrue( true );
 		}
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1186,6 +1209,7 @@ public class ParserSymbolTableTest extends TestCase {
 		look = bar.unqualifiedFunctionLookup( "f", paramList ); //$NON-NLS-1$
 		assertTrue( look != null );
 		assertEquals( look, list.get( index ) );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1217,6 +1241,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( ((PtrOp)look.getPtrOperators().iterator().next()).getType(), TypeInfo.PtrOp.t_pointer );
 		
 		assertEquals( look.getContainingSymbol(), fn );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1247,6 +1272,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( look, enumerator );
 		assertEquals( look.getContainingSymbol(), cls );
 		assertEquals( look.getTypeSymbol(), enumeration );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 
 	/**
@@ -1310,6 +1336,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = main.unqualifiedFunctionLookup( "f", paramList ); //$NON-NLS-1$
 		assertEquals( look, f );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1397,6 +1424,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = compUnit.unqualifiedFunctionLookup( "f", paramList ); //$NON-NLS-1$
 		assertEquals( look, f2 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1479,6 +1507,7 @@ public class ParserSymbolTableTest extends TestCase {
 		paramList.add( p3 );
 		look = C.memberFunctionLookup( "foo", paramList ); //$NON-NLS-1$
 		assertEquals( look, f3 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1529,6 +1558,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = compUnit.unqualifiedFunctionLookup( "f", null ); //$NON-NLS-1$
 		assertEquals( look, f2 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/** 
@@ -1598,6 +1628,7 @@ public class ParserSymbolTableTest extends TestCase {
 		paramList.add( p2 );
 		look = compUnit.unqualifiedFunctionLookup( "f", paramList ); //$NON-NLS-1$
 		assertEquals( look, f2 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1685,7 +1716,7 @@ public class ParserSymbolTableTest extends TestCase {
 		p.getOperatorExpressions().clear();
 		look = compUnit.unqualifiedFunctionLookup( "f", paramList ); //$NON-NLS-1$
 		assertEquals( look, f1 );
-		
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1738,6 +1769,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		ISymbol look = compUnit.unqualifiedFunctionLookup( "f", paramList ); //$NON-NLS-1$
 		assertEquals( look, f );	
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1829,6 +1861,7 @@ public class ParserSymbolTableTest extends TestCase {
 		params.add( p3 );
 		look = main.unqualifiedFunctionLookup( "f", params ); //$NON-NLS-1$
 		assertEquals( look, f1 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -1928,6 +1961,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = compUnit.unqualifiedFunctionLookup( "f", params ); //$NON-NLS-1$
 		assertEquals( look, f3 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 //	public void testMarkRollback() throws Exception{
@@ -2030,6 +2064,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		lookup = table.getCompilationUnit().elaboratedLookup( TypeInfo.t_class, "A" ); //$NON-NLS-1$
 		assertEquals( lookup, classA );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2119,6 +2154,7 @@ public class ParserSymbolTableTest extends TestCase {
 		paramList.add( p1 );
 		look = classB.memberFunctionLookup( "f", paramList ); //$NON-NLS-1$
 		assertEquals( look, fn1 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	public void testConstructors() throws Exception{
@@ -2154,6 +2190,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol lookup = classA.lookupConstructor( paramList );
 		
 		assertEquals( lookup, constructor2 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2187,6 +2224,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		lookup = NSB.lookup( "x" ); //$NON-NLS-1$
 		assertEquals( lookup, x );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2227,6 +2265,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", paramList ); //$NON-NLS-1$
 		assertEquals( look, f );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2267,6 +2306,7 @@ public class ParserSymbolTableTest extends TestCase {
 		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", paramList ); //$NON-NLS-1$
 		
 		assertEquals( look, null );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2341,6 +2381,7 @@ public class ParserSymbolTableTest extends TestCase {
 		} catch ( ParserSymbolTableException e ){
 			//good
 		}
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2407,6 +2448,7 @@ public class ParserSymbolTableTest extends TestCase {
 		} catch ( ParserSymbolTableException e ){
 			//good
 		}
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2460,6 +2502,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		returned = ParserSymbolTable.getConditionalOperand( secondOp, thirdOp );
 		assertEquals( returned, secondOp );	
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	public void testbug43834() throws Exception{
@@ -2482,6 +2525,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", parameters ); //$NON-NLS-1$
 		assertEquals( look, f );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2523,6 +2567,7 @@ public class ParserSymbolTableTest extends TestCase {
 		} catch ( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2549,7 +2594,7 @@ public class ParserSymbolTableTest extends TestCase {
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_UnableToResolveFunction );
 		}
-		
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2582,6 +2627,7 @@ public class ParserSymbolTableTest extends TestCase {
 		look = table.getCompilationUnit().unqualifiedFunctionLookup( "initialize", new ArrayList() ); //$NON-NLS-1$
 		
 		assertEquals( look, init2 ); 
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2629,6 +2675,7 @@ public class ParserSymbolTableTest extends TestCase {
 		params.clear();
 		look = B.qualifiedFunctionLookup( "f", params ); //$NON-NLS-1$
 		assertEquals( look, null );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2656,6 +2703,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		assertTrue( results.contains( aVar ) );
 		assertTrue( results.contains( anotherVar ) );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2692,6 +2740,8 @@ public class ParserSymbolTableTest extends TestCase {
 		assertTrue( !results.contains( aVar ) );
 		assertTrue( results.contains( aField ) );
 		assertTrue( results.contains( aMethod ) );
+		
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2745,6 +2795,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertTrue( results.contains( aVar ) );
 		assertTrue( results.contains( anotherVar2 ) );
 		assertTrue( results.contains( af2 ) );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2806,6 +2857,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertTrue( results != null );
 		assertEquals( results.size(), 1 );
 		assertTrue( results.contains( aa ) );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2834,6 +2886,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		assertEquals( null, A.qualifiedLookup( "i" ) ); //$NON-NLS-1$
 		assertEquals( i, g.lookup( "i" ) ); //$NON-NLS-1$
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2898,6 +2951,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertTrue( table.getCompilationUnit().isVisible(i, C ) );
 		assertTrue( D.isVisible( j, A ) );
 		assertFalse( D.isVisible( j, B ) );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -2981,6 +3035,7 @@ public class ParserSymbolTableTest extends TestCase {
 		results = f.prefixLookup( new TypeFilter( LookupKind.FIELDS), "a", false, null ); //$NON-NLS-1$
 		assertEquals( results.size(), 1 );
 		assertTrue( results.contains( a3_int ) );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -3006,6 +3061,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "foo", params ); //$NON-NLS-1$
 		
 		assertEquals( foo, look );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -3035,6 +3091,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "foo", params ); //$NON-NLS-1$
 		
 		assertEquals( foo2, look );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -3060,6 +3117,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "foo", params ); //$NON-NLS-1$
 		
 		assertEquals( foo1, look );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -3102,6 +3160,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( iter.next(), var );
 		assertEquals( iter.next(), foo );
 		assertFalse( iter.hasNext() );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -3180,6 +3239,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertEquals( iter.next(), using );
 		
 		assertFalse( iter.hasNext() );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -3211,6 +3271,7 @@ public class ParserSymbolTableTest extends TestCase {
 		params.add( new TypeInfo( TypeInfo.t_int, TypeInfo.isLongLong, null ) );
 		lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params ); //$NON-NLS-1$
 		assertEquals( lookup, f1 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -3263,6 +3324,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		lookup = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params ); //$NON-NLS-1$
 		assertEquals( lookup, f );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	public void test_Bool() throws Exception{
@@ -3291,7 +3353,7 @@ public class ParserSymbolTableTest extends TestCase {
 		params.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
 		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params ); //$NON-NLS-1$
 		assertEquals( look, f );
-		
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -3316,6 +3378,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f2.addParameter( Int, 0, null, false );
 		
 		assertTrue( f1.hasSameParameters( f2 ) );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 
 	/**
@@ -3332,6 +3395,7 @@ public class ParserSymbolTableTest extends TestCase {
 		g2.addParameter( TypeInfo.t_char, 0, new PtrOp( PtrOp.t_array ), false );
 		
 		assertTrue( g1.hasSameParameters( g2 ) );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -3351,6 +3415,7 @@ public class ParserSymbolTableTest extends TestCase {
 		h2.addParameter( f, 0, new PtrOp( PtrOp.t_pointer ), false );
 		
 		assertTrue( h1.hasSameParameters( h2 ) );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	/**
@@ -3367,6 +3432,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f2.addParameter( TypeInfo.t_int, TypeInfo.isConst, null, false );
 		
 		assertTrue( f1.hasSameParameters( f2 ) );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 	
 	public void testBug52111RemoveSymbol() throws Exception{
@@ -3436,6 +3502,7 @@ public class ParserSymbolTableTest extends TestCase {
 		assertNull( look );
 		
 		assertEquals( A.getContainedSymbols().size(), 0 );
+		assertEquals( ParserSymbolTable.TypeInfoProvider.numAllocated(), 0 );
 	}
 }
 

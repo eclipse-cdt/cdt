@@ -42,36 +42,40 @@ public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, 
 
     public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
     	ISymbol sym = getSymbol();
+    	IContainerSymbol result = null;
 		TypeInfo info = null;
 		try{
-			info = sym.getTypeInfo().getFinalType();
+			info = sym.getTypeInfo().getFinalType(true);
 		} catch( ParserSymbolTableError e ){
 			throw new LookupError();
 		}
 		
 		if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() != null && info.getTypeSymbol() instanceof IContainerSymbol )
-			return (IContainerSymbol) info.getTypeSymbol();
+			result = (IContainerSymbol) info.getTypeSymbol();
 		else if( sym instanceof IContainerSymbol )
-			return (IContainerSymbol) sym;
+			result = (IContainerSymbol) sym;
 	
-		return null;
+		info.release();
+		return result;
     }
     
     public boolean shouldFilterLookupResult( ISymbol sym ){
+    	boolean result = false;
     	TypeInfo info = null;
     	try{
-			info = getSymbol().getTypeInfo().getFinalType();
+			info = getSymbol().getTypeInfo().getFinalType(true);
 		} catch( ParserSymbolTableError e ){
 			return true;
 		}
 		
 		if( info.checkBit( TypeInfo.isConst ) && !sym.getTypeInfo().checkBit( TypeInfo.isConst ) )
-			return true;
+			result = true;
 		
 		if( info.checkBit( TypeInfo.isVolatile ) && !sym.getTypeInfo().checkBit( TypeInfo.isVolatile ) )
-			return true;
+			result = true;
 		
-		return false;
+		info.release();
+		return result;
 		
     }
 }

@@ -172,33 +172,37 @@ public abstract class ASTExpression extends ASTNode implements IASTExpression
 	public IContainerSymbol getLookupQualificationSymbol() throws LookupError {
 		ExpressionResult result = getResultType();
 		TypeInfo type = (result != null ) ? result.getResult() : null;
+		IContainerSymbol symbol = null;
 		
 		if( type != null ){
-			type = type.getFinalType();
+			type = type.getFinalType(true);
 			if( type.isType( TypeInfo.t_type ) && 
 				type.getTypeSymbol() != null   && type.getTypeSymbol() instanceof IContainerSymbol )
 			{
-				return (IContainerSymbol) type.getTypeSymbol();
+				symbol = (IContainerSymbol) type.getTypeSymbol();
 			}
+			type.release();
 		}
 				
-		return null;
+		return symbol;
 	}
 	
 	public boolean shouldFilterLookupResult( ISymbol symbol ){
 		ExpressionResult result = getResultType();
 		TypeInfo type = ( result != null ) ? result.getResult() : null;
-		
+		boolean shouldFilter = false;
 		if( type != null ){
-			type = type.getFinalType();
+			type = type.getFinalType(false);
 			if( type.checkBit( TypeInfo.isConst ) && !symbol.getTypeInfo().checkBit( TypeInfo.isConst ) )
-				return true;
+				shouldFilter = true;
 			
 			if( type.checkBit( TypeInfo.isVolatile ) && !symbol.getTypeInfo().checkBit( TypeInfo.isVolatile ) )
-				return true;
+				shouldFilter = true;
+			
+			type.release();
 		}
 		
-		return false;
+		return shouldFilter;
 	}
 	
 	/**

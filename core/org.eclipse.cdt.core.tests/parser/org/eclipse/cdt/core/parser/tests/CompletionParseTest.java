@@ -602,6 +602,8 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		                                                         new IASTNode.LookupKind[]{ IASTNode.LookupKind.THIS },
 																 node.getCompletionContext(), null );
 		
+		assertTrue( node.getCompletionScope() instanceof IASTMethod );
+		assertEquals( ((IASTMethod)node.getCompletionScope()).getName(), "d" ); //$NON-NLS-1$
 		assertEquals( result.getResultsSize(), 4 );
 		
 		Iterator iter = result.getNodes();

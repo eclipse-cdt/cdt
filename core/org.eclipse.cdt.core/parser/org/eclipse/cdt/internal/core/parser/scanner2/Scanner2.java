@@ -265,7 +265,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.core.parser.IScanner#isOnTopContext()
 	 */
 	public boolean isOnTopContext() {
-		return bufferStackPos == 0;
+		return bufferStackPos <= 0;
 	}
 
 	private IToken lastToken;
@@ -2239,6 +2239,11 @@ public class Scanner2 implements IScanner, IScannerData {
 		= new ObjectStyleMacro("__restrict".toCharArray(), "restrict".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __volatile__
 		= new ObjectStyleMacro("__volatile__".toCharArray(), "volatile".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __const__
+	= new ObjectStyleMacro("__const__".toCharArray(), "const".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __const
+	= new ObjectStyleMacro("__const".toCharArray(), "const".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	
 	private static final FunctionStyleMacro __attribute__
 		= new FunctionStyleMacro(
 				"__attribute__".toCharArray(), //$NON-NLS-1$
@@ -2261,6 +2266,8 @@ public class Scanner2 implements IScanner, IScannerData {
 
 		// gcc extensions
 		definitions.put(__inline__.name, __inline__);
+		definitions.put( __const__.name, __const__ );
+		definitions.put( __const.name, __const );
 		definitions.put(__extension__.name, __extension__);
 		definitions.put(__attribute__.name, __attribute__);
 		definitions.put(__restrict__.name, __restrict__);

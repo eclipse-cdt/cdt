@@ -332,10 +332,7 @@ public class BuildInfoFactory {
 			IProjectDescription description = project.getDescription();
 			ICommand builder = MakeProjectNature.getBuildSpec(description, builderID);
 			args.put(name, value);
-			ICommand newBuilder = description.newCommand();
-			newBuilder.setBuilderName(builder.getBuilderName());
-			newBuilder.setArguments(args);
-			description = MakeProjectNature.setBuildSpec(description, newBuilder);
+			builder.setArguments(args);
 			project.setDescription(description, null);
 		}
 

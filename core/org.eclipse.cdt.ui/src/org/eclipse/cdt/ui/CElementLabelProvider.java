@@ -285,9 +285,8 @@ public class CElementLabelProvider extends LabelProvider {
 		if (errortick) {
 			if (extra == null) {
 				return new IAdornmentProvider[] { new ErrorTickAdornmentProvider() };
-			} else {
-				return new IAdornmentProvider[] { new ErrorTickAdornmentProvider(), extra };
 			}
+			return new IAdornmentProvider[] { new ErrorTickAdornmentProvider(), extra };
 		}
 		if (extra != null) {
 			return new IAdornmentProvider[] { extra };

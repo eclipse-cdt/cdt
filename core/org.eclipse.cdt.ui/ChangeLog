@@ -1,11 +1,20 @@
+2004-06-21 Alain Magloire
+
+	It is too late to change the icons, but still
+	make a difference in a CFolder(CContainer) and
+	a normal folder.
+	* icons/full/obj16/sroo_obj.gif
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+
 2004-06-22 Tanya Wolff
 	Fix for Bug 49883:  duplicate mnemonics on editor preferences page.
 	Also flipped label/checkbox presentation for "bold" so the mnemonic would work. 
 	Removed unneeded keys.
 	
 	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
-	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties
-		
+	* src/org/eclipse/cdt/internal/ui/preferences/PreferencesMessages.properties		
 
 2004-06-22 Bogdan Gheorghe
 	Fix for 68028: Open Declaration into closed project causes PartInitException

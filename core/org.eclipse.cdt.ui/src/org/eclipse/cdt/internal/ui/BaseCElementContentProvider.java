@@ -188,9 +188,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			ICProject cp= (ICProject)element;
 			if (!cp.getProject().isOpen()) {
 				return false;
-			} else {
-				return true;	
 			}
+			return true;	
 		}
 
 		if (element instanceof IBinaryContainer) {

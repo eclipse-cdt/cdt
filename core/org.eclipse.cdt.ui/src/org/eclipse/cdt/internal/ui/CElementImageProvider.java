@@ -79,12 +79,12 @@ public class CElementImageProvider {
 
 	private static ImageDescriptor DESC_OBJ_PROJECT_CLOSED;	
 	private static ImageDescriptor DESC_OBJ_PROJECT;	
-	private static ImageDescriptor DESC_OBJ_FOLDER;
+	//private static ImageDescriptor DESC_OBJ_FOLDER;
 	{
 		ISharedImages images= CUIPlugin.getDefault().getWorkbench().getSharedImages(); 
 		DESC_OBJ_PROJECT_CLOSED= images.getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT_CLOSED);
 		DESC_OBJ_PROJECT= 		 images.getImageDescriptor(IDE.SharedImages.IMG_OBJ_PROJECT);
-		DESC_OBJ_FOLDER= 		 images.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
+		//DESC_OBJ_FOLDER= 		 images.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 	}
 	
 	public CElementImageProvider() {
@@ -138,7 +138,8 @@ public class CElementImageProvider {
 				return CPluginImages.DESC_OBJS_TUNIT;
 				
 			case ICElement.C_CCONTAINER:
-				return DESC_OBJ_FOLDER;
+				//return DESC_OBJ_FOLDER;
+				return CPluginImages.DESC_OBJS_CFOLDER;
 			
 			case ICElement.C_PROJECT:
 				return DESC_OBJ_PROJECT;
@@ -292,7 +293,8 @@ public class CElementImageProvider {
 				if (celement instanceof ISourceRoot) {
 					return CPluginImages.DESC_OBJS_SOURCE_ROOT;
 				}
-				return DESC_OBJ_FOLDER;
+				//return DESC_OBJ_FOLDER;
+				return CPluginImages.DESC_OBJS_CFOLDER;
 			
 			case ICElement.C_PROJECT:
 				ICProject cp= (ICProject)celement;

@@ -1029,8 +1029,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()
 	 */
 	public void reconciled(boolean somethingHasChanged) {
-		if(somethingHasChanged && fOutlinePage != null) {
-			fOutlinePage.contentUpdated();
-		}
+		// DO not do this.  It will cripple performance.
+		// Now the Outliner is ElementChangeListener to the Core Model
+		// It listens to the WorkingCopy changes.
+		//if(somethingHasChanged && fOutlinePage != null) {
+		//	fOutlinePage.contentUpdated();
+		//}
 	}
 }

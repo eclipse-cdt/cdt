@@ -1,3 +1,10 @@
+2004-09-08 Alain Magloire
+
+	Fix for PR 69330
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinerProvider.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	
 2004-09-03 Alain Magloire
 
 	Fix for PR 73250

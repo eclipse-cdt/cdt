@@ -11,12 +11,9 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
-import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
-import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.MemberFilterActionGroup;
 import org.eclipse.cdt.ui.actions.RefactoringActionGroup;
@@ -108,9 +105,9 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			Iterator iter= ((IStructuredSelection)sel).iterator();
 			for (;iter.hasNext();) {
 				//ICElement elem= fInput.findEqualMember((ICElement)iter.next());
-				ICElement elem = (ICElement)iter.next();
-				if (elem != null) {
-					newSelection.add(elem);
+				Object o = iter.next();
+				if (o instanceof ICElement) {
+					newSelection.add(o);
 				}
 			}
 		}
@@ -144,7 +141,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	public void createControl(Composite parent) {
 		treeViewer = new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		
-		treeViewer.setContentProvider(new CElementContentProvider(true, true));
+		//treeViewer.setContentProvider(new CElementContentProvider(true, true));
+		treeViewer.setContentProvider(new CContentOutlinerProvider(this));
 		treeViewer.setLabelProvider(new StandardCElementLabelProvider());
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		treeViewer.addSelectionChangedListener(this);
@@ -259,6 +257,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			((ISelectionChangedListener) listeners[i]).selectionChanged(event);
 		}
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on IPage (and Page).
 	 */
@@ -267,6 +266,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			return null;
 		return treeViewer.getControl();
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on ISelectionProvider.
 	 */
@@ -275,6 +275,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 			return StructuredSelection.EMPTY;
 		return treeViewer.getSelection();
 	}
+
 	/**
 	 * Returns this page's tree viewer.
 	 *
@@ -284,12 +285,14 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	protected TreeViewer getTreeViewer() {
 		return treeViewer;
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on ISelectionProvider.
 	 */
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		selectionChangedListeners.remove(listener);
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on ISelectionChangeListener.
 	 * Gives notification that the tree selection has changed.
@@ -297,12 +300,14 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	public void selectionChanged(SelectionChangedEvent event) {
 		fireSelectionChanged(event.getSelection());
 	}
+
 	/**
 	 * Sets focus to a part in the page.
 	 */
 	public void setFocus() {
 		treeViewer.getControl().setFocus();
 	}
+
 	/* (non-Javadoc)
 	 * Method declared on ISelectionProvider.
 	 */
@@ -310,6 +315,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		if (treeViewer != null) 
 			treeViewer.setSelection(selection);
 	}
+
 	/**
 	 * Set the current input to the content provider.  
 	 * @param unit
@@ -321,6 +327,5 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		}
 		contentUpdated();		
 	}
-
 
 }

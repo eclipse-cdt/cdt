@@ -101,18 +101,18 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
 			String prop = event.getProperty();
-			if (prop.equals(PreferenceConstants.OUTLINE_GROUP_INCLUDES)) {
-				Object newValue = event.getNewValue();
-				if (newValue instanceof Boolean) {
-					boolean value = ((Boolean)newValue).booleanValue();
-					if (areIncludesGroup() != value) {
-						setIncludesGrouping(value);
-						if (fOutliner != null) {
-							fOutliner.contentUpdated();
-						}
-					}
-				}
-			}
+//			if (prop.equals(PreferenceConstants.OUTLINE_GROUP_INCLUDES)) {
+//				Object newValue = event.getNewValue();
+//				if (newValue instanceof Boolean) {
+//					boolean value = ((Boolean)newValue).booleanValue();
+//					if (areIncludesGroup() != value) {
+//						setIncludesGrouping(value);
+//						if (fOutliner != null) {
+//							fOutliner.contentUpdated();
+//						}
+//					}
+//				}
+//			}
 		}
 
 	}
@@ -123,7 +123,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	public CContentOutlinerProvider(CContentOutlinePage outliner) {
 		super(true, true);
 		fOutliner = outliner;
-		setIncludesGrouping(PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
+		//setIncludesGrouping(PreferenceConstants.getPreferenceStore().getBoolean(PreferenceConstants.OUTLINE_GROUP_INCLUDES));
 	}
 
 	/* (non-Javadoc)

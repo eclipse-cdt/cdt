@@ -198,7 +198,7 @@ public class Scanner implements IScanner {
 		return buffer.toString();
 	}
 
-	protected void skipOverTextUntilNewline() {
+	protected void skipOverTextUntilNewline() throws ScannerException {
 		for (;;) {
 			switch (getChar()) {
 				case NOCHAR :
@@ -366,12 +366,12 @@ public class Scanner implements IScanner {
 		callback = c;
 	}
 
-	private int getChar()
+	private int getChar() throws ScannerException
 	{
 		return getChar( false );
 	}
 
-	private int getChar( boolean insideString ) {
+	private int getChar( boolean insideString ) throws ScannerException {
 		int c = NOCHAR;
 		
 		lastContext = contextStack.getCurrentContext();
@@ -423,6 +423,10 @@ public class Scanner implements IScanner {
 					c = getChar(false);
 					if( c == '\n')
 						contextStack.newLine(); 
+				} else // '\' is not the last character on the line
+				{
+					ungetChar(c);
+					c = '\\';
 				}
 			}
 			else if( c == '\n' )

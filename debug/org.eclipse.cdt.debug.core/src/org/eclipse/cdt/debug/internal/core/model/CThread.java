@@ -493,6 +493,7 @@ public class CThread extends CDebugElement
 	{
 		if ( !isSuspended() )
 			return;
+		((CDebugTarget)getDebugTarget()).setBreakpoints();
 		try
 		{
 			getCDIThread().resume();

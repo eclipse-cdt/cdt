@@ -1,4 +1,7 @@
 2003-06-30 Mikhail Khodjaiants
+	Fix for PR 39372: Breakpoints don't get activated when symbols are loaded.
+
+2003-06-30 Mikhail Khodjaiants
 	Fix for PR 39100: CDT/Debug core is asking value 16 times.
 	* CValue.java
 

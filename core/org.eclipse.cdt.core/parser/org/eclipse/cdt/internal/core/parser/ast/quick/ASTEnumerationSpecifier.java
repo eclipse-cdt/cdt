@@ -18,13 +18,14 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
  * @author jcamelon
  *
  */
-public class ASTEnumerationSpecifier
+public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
     implements IASTEnumerationSpecifier, IASTOffsetableNamedElement
 {
 	private final String name; 
@@ -34,8 +35,9 @@ public class ASTEnumerationSpecifier
      * @param name
      * @param startingOffset
      */
-    public ASTEnumerationSpecifier(String name, int startingOffset, int nameOffset)
+    public ASTEnumerationSpecifier(IASTScope scope, String name, int startingOffset, int nameOffset)
     {
+    	super( scope, name );
         this.name = name;
         offsets.setNameOffset( nameOffset );
         offsets.setStartingOffset( startingOffset);

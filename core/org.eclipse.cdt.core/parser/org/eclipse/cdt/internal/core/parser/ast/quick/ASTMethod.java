@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 /**
@@ -31,6 +32,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     private final boolean isVirtual;
     private final boolean isVolatile;
     private final ASTAccessVisibility visibility;
+    private final IASTQualifiedNameElement qualifiedName;
     /**
      * @param scope
      * @param name
@@ -84,6 +86,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         this.isConst = isConst;
         this.isVolatile = isVolatile;
         this.visibility = visibility;
+        qualifiedName = new ASTQualifiedNamedElement( scope, name );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isVirtual()
@@ -141,6 +144,13 @@ public class ASTMethod extends ASTFunction implements IASTMethod
     public ASTAccessVisibility getVisiblity()
     {
         return visibility;
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        return qualifiedName.getFullyQualifiedName();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMember#getOwnerClassSpecifier()

@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTTypedefDeclaration extends IASTDeclaration, IASTOffsetableNamedElement {
+public interface IASTTypedefDeclaration extends IASTDeclaration, IASTOffsetableNamedElement, IASTQualifiedNameElement {
 	
 	public String getName(); 
 	public IASTAbstractDeclaration getAbstractDeclarator(); 

@@ -1,7 +1,10 @@
+2003-07-18 John Camelon
+	Wrote new tests in QuickParseASTQualifiedNameTest.java and added it to ParserTestSuite's suite.
+
 2003-07-18 Peter Graves	
 	Removed un-needed file that was using a Java 1.4 reserved keyword (assert)
-
-2003-07-17
+	
+2003-07-17 John Camelon
 	Rewrote the entire DOMTests suite to now be AST tests.  
 	Removed DOMTests, BaseDOMTest, DOMFailedTests after methods were migrated to QuickParseASTTests & ASTFailedTests.  
 	Made sure every parser failed test had a defect number associated with it. 

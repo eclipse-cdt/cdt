@@ -141,9 +141,9 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createEnumerationSpecifier(java.lang.String, int)
      */
-    public IASTEnumerationSpecifier createEnumerationSpecifier(String name, int startingOffset, int nameOffset)
+    public IASTEnumerationSpecifier createEnumerationSpecifier(IASTScope scope, String name, int startingOffset, int nameOffset)
     {
-        return new ASTEnumerationSpecifier( name, startingOffset, nameOffset );
+        return new ASTEnumerationSpecifier( scope, name, startingOffset, nameOffset );
     }
 
     /* (non-Javadoc)
@@ -292,7 +292,7 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      */
     public IASTTypedefDeclaration createTypedef(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset)
     {
-        return new ASTTypedef( scope, name, mapping, startingOffset, nameOffset );
+        return new ASTTypedefDeclaration( scope, name, mapping, startingOffset, nameOffset );
     }
 
     /* (non-Javadoc)

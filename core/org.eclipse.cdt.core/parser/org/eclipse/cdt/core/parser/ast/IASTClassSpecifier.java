@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.Enum;
  * @author jcamelon
  *
  */
-public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTScopedElement, IASTOffsetableNamedElement, IASTQualifiedNameElement {
+public interface IASTClassSpecifier extends IASTTypeSpecifier, IASTScope, IASTOffsetableNamedElement, IASTScopedTypeSpecifier {
 
 	public class ClassNameType extends Enum {
 

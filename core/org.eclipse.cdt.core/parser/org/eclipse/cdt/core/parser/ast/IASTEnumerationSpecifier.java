@@ -16,7 +16,7 @@ import java.util.Iterator;
  * @author jcamelon
  *
  */
-public interface IASTEnumerationSpecifier extends IASTTypeSpecifier, IASTOffsetableNamedElement {
+public interface IASTEnumerationSpecifier extends IASTScopedTypeSpecifier, IASTOffsetableNamedElement {
 
 	public void addEnumerator( IASTEnumerator enumerator );
 	public Iterator getEnumerators(); 

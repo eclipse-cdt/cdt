@@ -19,21 +19,25 @@ import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
  * @author jcamelon
  *
  */
-public class ASTTypedef extends ASTDeclaration implements IASTTypedefDeclaration
+public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedefDeclaration
 {
     private final String name;
     private final IASTAbstractDeclaration mapping;
-    private NamedOffsets offsets = new NamedOffsets(); 
+    private NamedOffsets offsets = new NamedOffsets();
+    private final ASTQualifiedNamedElement qualifiedName; 
     /**
      * @param scope
      * @param name
      * @param mapping
      */
-    public ASTTypedef(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset)
+    public ASTTypedefDeclaration(IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset)
     {
         super( scope );
         this.name = name; 
         this.mapping = mapping;
+        setStartingOffset(startingOffset);
+        setElementNameOffset(nameOffset);
+        qualifiedName = new ASTQualifiedNamedElement( scope, name );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypedef#getName()
@@ -54,23 +58,21 @@ public class ASTTypedef extends ASTDeclaration implements IASTTypedefDeclaration
      */
     public int getElementNameOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getElementNameOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
      */
     public void setElementNameOffset(int o)
     {
-        // TODO Auto-generated method stub
-        
+        offsets.setNameOffset(o);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
      */
     public void setStartingOffset(int o)
     {
-        // TODO Auto-generated method stub
+        offsets.setStartingOffset(o);
         
     }
     /* (non-Javadoc)
@@ -78,24 +80,28 @@ public class ASTTypedef extends ASTDeclaration implements IASTTypedefDeclaration
      */
     public void setEndingOffset(int o)
     {
-        // TODO Auto-generated method stub
-        
+        offsets.setEndingOffset(o);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementStartingOffset()
      */
     public int getElementStartingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getElementStartingOffset();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getElementEndingOffset()
      */
     public int getElementEndingOffset()
     {
-        // TODO Auto-generated method stub
-        return 0;
+        return offsets.getElementEndingOffset();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        return qualifiedName.getFullyQualifiedName();
     }
 
 }

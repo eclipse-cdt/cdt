@@ -35,6 +35,7 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite(MacroTests.class);
 		suite.addTestSuite( PreprocessorTest.class );
 		suite.addTestSuite( PreprocessorConditionalTest.class );
+		suite.addTestSuite( QuickParseASTQualifiedNameTest.class);
 		return suite;
 	}
 

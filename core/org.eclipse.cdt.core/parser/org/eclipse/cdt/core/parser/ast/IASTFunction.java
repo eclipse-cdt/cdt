@@ -16,7 +16,7 @@ import java.util.Iterator;
  * @author jcamelon
  *
  */
-public interface IASTFunction extends IASTScope, IASTOffsetableNamedElement, IASTTemplatedDeclaration, IASTDeclaration {
+public interface IASTFunction extends IASTScope, IASTOffsetableNamedElement, IASTTemplatedDeclaration, IASTDeclaration, IASTQualifiedNameElement {
 	
 	public boolean isInline(); 
 	public boolean isFriend();

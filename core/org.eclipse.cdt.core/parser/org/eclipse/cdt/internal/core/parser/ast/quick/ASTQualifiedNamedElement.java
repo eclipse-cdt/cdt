@@ -15,6 +15,7 @@ import java.util.Stack;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTScopedElement;
 
@@ -22,7 +23,7 @@ import org.eclipse.cdt.core.parser.ast.IASTScopedElement;
  * @author jcamelon
  *
  */
-public class ASTQualifiedNamedElement 
+public class ASTQualifiedNamedElement implements IASTQualifiedNameElement
 {
 
     /**

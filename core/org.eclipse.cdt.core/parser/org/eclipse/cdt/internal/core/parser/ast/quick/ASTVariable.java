@@ -32,7 +32,8 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
     private final boolean isRegister;
     private final boolean isStatic;
     private final String name;
-    private NamedOffsets offsets = new NamedOffsets(); 
+    private NamedOffsets offsets = new NamedOffsets();
+    private final ASTQualifiedNamedElement qualifiedName; 
     /**
      * @param scope
      */
@@ -49,6 +50,7 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 		this.isRegister = isRegister;
 		this.isStatic = isStatic;
 		this.name = name;
+		qualifiedName = new ASTQualifiedNamedElement( scope, name );
 
     }
     /* (non-Javadoc)
@@ -163,6 +165,13 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 	{
 	    offsets.setNameOffset(o);
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        return qualifiedName.getFullyQualifiedName();
+    }
    
  
 }

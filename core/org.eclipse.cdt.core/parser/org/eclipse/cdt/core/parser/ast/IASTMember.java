@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.parser.ast;
  * @author jcamelon
  *
  */
-public interface IASTMember extends IASTDeclaration
+public interface IASTMember extends IASTDeclaration, IASTQualifiedNameElement
 {
 	public ASTAccessVisibility getVisiblity();
 }

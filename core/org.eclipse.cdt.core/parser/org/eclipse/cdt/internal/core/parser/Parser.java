@@ -766,18 +766,18 @@ public class Parser implements IParser
                     sdw.isUnsigned(),
                     sdw.isTypeNamed()));
         
-        DeclaratorDuple d = null;
+        Declarator declarator = null;
         if (LT(1) != IToken.tSEMI)
             try
             {
-                d = initDeclarator(sdw);
+                declarator = initDeclarator(sdw);
                 
                 while (LT(1) == IToken.tCOMMA)
                 {
                     consume();
                     try
                     {
-                        d = initDeclarator(sdw);
+                        initDeclarator(sdw);
                     }
                     catch (Backtrack b)
                     {
@@ -800,12 +800,12 @@ public class Parser implements IParser
             case IToken.tCOLON :
                 if (forKR)
                     throw backtrack;
-                ctorInitializer(d.getDeclarator());
+                ctorInitializer(declarator);
                 // Falling through on purpose
             case IToken.tLBRACE :
                 if (forKR)
                     throw backtrack;
-                d.getDeclarator().hasFunctionBody(true);
+                declarator.hasFunctionBody(true);
                 hasFunctionBody = true;
                 break;
             default :
@@ -869,7 +869,7 @@ public class Parser implements IParser
                     }
                 }
    
-                handleFunctionBody(d.getDeclarator());
+                handleFunctionBody(declarator);
   
                 if (declaration instanceof IASTMethod)
                     requestor.exitMethodBody((IASTMethod)declaration);
@@ -987,7 +987,7 @@ public class Parser implements IParser
         if (LT(1) != IToken.tSEMI)
             try
             {
-                DeclaratorDuple d = initDeclarator(sdw);
+                initDeclarator(sdw);
             }
             catch (Backtrack b)
             {
@@ -1633,12 +1633,11 @@ public class Parser implements IParser
      * @return				declarator that this parsing produced.  
      * @throws Backtrack	request a backtrack
      */
-    protected DeclaratorDuple initDeclarator(
+    protected Declarator initDeclarator(
         DeclarationWrapper sdw)
         throws Backtrack
     {
-        DeclaratorDuple duple = declarator(sdw);
-        Declarator d = duple.getDeclarator();
+        Declarator d = declarator(sdw);
         // handle = initializerClause
         if (LT(1) == IToken.tASSIGN)
         {
@@ -1655,7 +1654,7 @@ public class Parser implements IParser
             d.setConstructorExpression(astExpression);
         }
         sdw.addDeclarator(d);
-        return duple;
+        return d;
     }
     /**
      * 
@@ -1732,7 +1731,7 @@ public class Parser implements IParser
      * @return				declarator that this parsing produced.
      * @throws Backtrack	request a backtrack
      */
-    protected DeclaratorDuple declarator(
+    protected Declarator declarator(
         IDeclaratorOwner owner)
         throws Backtrack
     {
@@ -1756,7 +1755,7 @@ public class Parser implements IParser
             if (LT(1) == IToken.tLPAREN)
             {
                 consume();
-                DeclaratorDuple subDeclarator = declarator(d);
+                declarator(d);
                 consume(IToken.tRPAREN);
             }
             else if (LT(1) == IToken.t_operator)
@@ -1988,7 +1987,7 @@ public class Parser implements IParser
         while (true);
         if (d.getOwner() instanceof Declarator)
              ((Declarator)d.getOwner()).setOwnedDeclarator(d);
-        return new DeclaratorDuple(d);
+        return d;
     }
     protected void operatorId(
         Declarator d,
@@ -2138,9 +2137,9 @@ public class Parser implements IParser
         {
             IASTEnumerationSpecifier enumeration =
                 astFactory.createEnumerationSpecifier(
+                    sdw.getScope(),
                     ((identifier == null) ? "" : identifier.getImage()),
-                    mark.getOffset(),
-                    ((identifier == null)
+                    mark.getOffset(), ((identifier == null)
                         ? mark.getOffset()
                         : identifier.getOffset()));
             consume(IToken.tLBRACE);

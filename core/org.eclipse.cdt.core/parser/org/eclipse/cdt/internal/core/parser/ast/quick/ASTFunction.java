@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
@@ -46,8 +47,10 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 			ownerTemplate.setOwnedDeclaration( this );
         offsets.setStartingOffset( startOffset );
         offsets.setNameOffset( nameOffset );
+        qualifiedName = new ASTQualifiedNamedElement( scope, name );
     }
     
+    private final IASTQualifiedNameElement qualifiedName; 
     private final IASTTemplate ownerTemplateDeclaration;
     private NamedOffsets offsets = new NamedOffsets();
     private List  declarations = new ArrayList(); 
@@ -162,5 +165,12 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     public Iterator getDeclarations()
     {
         return declarations.iterator();
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
+     */
+    public String[] getFullyQualifiedName()
+    {
+        return qualifiedName.getFullyQualifiedName();
     }
 }

@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
  * @author jcamelon
  *
  */
-public class ASTClassSpecifier implements IASTQClassSpecifier, IASTQScope
+public class ASTClassSpecifier extends ASTScopedTypeSpecifier implements IASTQClassSpecifier, IASTQScope
 {
     
     private final IASTScope scope;
@@ -36,6 +36,7 @@ public class ASTClassSpecifier implements IASTQClassSpecifier, IASTQScope
         ASTAccessVisibility access,
         IASTTemplate ownerTemplate)
     {
+    	super( scope, name );
         this.scope = scope; 
         qualifiedNameElement = new ASTQualifiedNamedElement( scope, name );
         classNameType = type;
@@ -151,20 +152,7 @@ public class ASTClassSpecifier implements IASTQClassSpecifier, IASTQScope
     {
         baseClauses.add(baseSpecifier);
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()
-     */
-    public String[] getFullyQualifiedName()
-    {
-        return qualifiedNameElement.getFullyQualifiedName();
-    }
-    /**
-     * @return
-     */
-    public IASTScope getOwnerScope()
-    {
-        return scope;
-    }
+
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#setCurrentVisibility(org.eclipse.cdt.core.parser.ast.ASTAccessVisibility)
      */

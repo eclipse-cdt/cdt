@@ -104,4 +104,15 @@ public class BaseASTTest extends TestCase
         fail( "We should not reach this point");
     }
 
+    protected void assertQualifiedName(String [] fromAST, String [] theTruth)
+    {
+    	assertNotNull( fromAST );
+    	assertNotNull( theTruth );
+    	assertEquals( fromAST.length, theTruth.length );
+    	for( int i = 0; i < fromAST.length; ++i )
+    	{
+    		assertEquals( fromAST[i], theTruth[i]);
+    	}
+    }
+
 }

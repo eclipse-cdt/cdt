@@ -82,9 +82,9 @@ public interface IASTFactory
         int startingOffset,
         int endOffset);
     public IASTEnumerationSpecifier createEnumerationSpecifier(
+        IASTScope scope,
         String name,
-        int startingOffset,
-        int nameOffset);
+        int startingOffset, int nameOffset);
     public void addEnumerator(
         IASTEnumerationSpecifier enumeration,
         String string,

@@ -1,3 +1,8 @@
+2003-07-18 John Camelon
+	Removed DeclaratorDuple as it was obsolete.
+	Fixed offsets in quickParse's IASTTypedefDeclaration implementation.
+	Fixed Bug 40436 - Fully Qualified Names Needed (for Indexer/Search features)
+
 2003-07-17 John Camelon
 	Removed IParserCallback.  
 	Partially converted DOM to ISourceElementRequestor (requires refactoring of CModelBuilder & StuctureComparator modules in near future).  

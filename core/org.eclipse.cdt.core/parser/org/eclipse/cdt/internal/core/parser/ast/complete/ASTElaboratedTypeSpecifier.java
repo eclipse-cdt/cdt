@@ -109,7 +109,9 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
     {
         return qualifiedName.getFullyQualifiedName();
     }
-	
+	public char[][] getFullyQualifiedNameCharArrays(){
+	    return qualifiedName.getFullyQualifiedNameCharArrays();
+	}
 	public List getReferences() 
 	{
 		return references;

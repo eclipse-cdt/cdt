@@ -148,6 +148,9 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
     {
         return qualifiedName.getFullyQualifiedName();
     }
+	public char[][] getFullyQualifiedNameCharArrays(){
+	    return qualifiedName.getFullyQualifiedNameCharArrays();
+	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#accept(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */

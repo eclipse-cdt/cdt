@@ -86,23 +86,15 @@ public class DerivedTypesPattern extends ClassDeclarationPattern {
 			} catch (ASTNotImplementedException e) {}
 			if (typeSpec instanceof IASTClassSpecifier){
 				IASTClassSpecifier baseClassSpec = (IASTClassSpecifier) typeSpec;
-				String[] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedName();
-				
 				//check name, if simpleName == null, its treated the same as "*"	
-				if( simpleName != null && !matchesName( simpleName, baseClassSpec.getName().toCharArray() ) ){
+				if( simpleName != null && !matchesName( simpleName, baseClassSpec.getNameCharArray() ) ){
 					continue;
 				}
-				
-
-				char [][] qualName = new char [ baseFullyQualifiedName.length - 1 ][];
-				for( int j = 0; j < baseFullyQualifiedName.length - 1; j++ ){
-					qualName[j] = baseFullyQualifiedName[j].toCharArray();
-				}
+				char [][] qualName = baseClassSpec.getFullyQualifiedNameCharArrays();
 				//check containing scopes
-				if( !matchQualifications( qualifications, qualName ) ){
+				if( !matchQualifications( qualifications, qualName, true ) ){
 					continue;
 				}
-				
 				
 				matchFlag = true;
 				break;

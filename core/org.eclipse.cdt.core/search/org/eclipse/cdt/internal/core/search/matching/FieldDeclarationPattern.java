@@ -75,42 +75,30 @@ public class FieldDeclarationPattern extends CSearchPattern {
 		} else return IMPOSSIBLE_MATCH;
 		
 		
-		String nodeName = ((IASTOffsetableNamedElement)node).getName();
+		char[] nodeName = ((IASTOffsetableNamedElement)node).getNameCharArray();
 		
 		//check name, if simpleName == null, its treated the same as "*"	
-		if( simpleName != null && !matchesName( simpleName, nodeName.toCharArray() ) ){
+		if( simpleName != null && !matchesName( simpleName, nodeName ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 		
 		//check containing scopes
 		//create char[][] out of full name, 
-		String [] fullName = null;
-		
+		char [][] qualName = null; 
 		if( node instanceof IASTEnumerator ){
 			//Enumerators don't derive from IASTQualifiedElement, so make the fullName
 			//from the enumerations name. 
 			// 7.2 - 10 : each enumerator declared by an enum-specifier is declared in the
 			//scope that immediately contains the enum-specifier. 
 			IASTEnumerationSpecifier enumeration = ((IASTEnumerator)node).getOwnerEnumerationSpecifier();
-			fullName = enumeration.getFullyQualifiedName();
-			
-			String[] enumeratorFullName = new String[ fullName.length ];
-
-			System.arraycopy( fullName, 0, enumeratorFullName, 0, fullName.length);
-			enumeratorFullName[ fullName.length - 1 ] = nodeName;
-			
-			fullName = enumeratorFullName;
+			qualName = enumeration.getFullyQualifiedNameCharArrays();
 		} else if( node instanceof IASTQualifiedNameElement ){
-			fullName = ((IASTQualifiedNameElement) node).getFullyQualifiedName(); 
+			qualName = ((IASTQualifiedNameElement) node).getFullyQualifiedNameCharArrays(); 
 		} 
 		
-		if( fullName != null ){
-			char [][] qualName = new char [ fullName.length - 1 ][];
-			for( int i = 0; i < fullName.length - 1; i++ ){
-				qualName[i] = fullName[i].toCharArray();
-			}
+		if( qualName != null ){
 			//check containing scopes
-			if( !matchQualifications( qualifications, qualName ) ){
+			if( !matchQualifications( qualifications, qualName, true ) ){
 				return IMPOSSIBLE_MATCH;
 			}
 		}

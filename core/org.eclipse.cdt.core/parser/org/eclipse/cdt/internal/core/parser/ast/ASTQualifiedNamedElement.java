@@ -73,6 +73,10 @@ public class ASTQualifiedNamedElement implements IASTQualifiedNameElement
 	    }
 		return result;
 	}
+	
+	public char[][] getFullyQualifiedNameCharArrays(){
+	    return qualifiedNames;
+	}
 
     private final char[][] qualifiedNames;
 

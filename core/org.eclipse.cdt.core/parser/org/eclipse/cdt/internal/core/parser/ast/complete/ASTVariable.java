@@ -144,6 +144,9 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
     {
         return qualifiedName.getFullyQualifiedName();
     }
+	public char[][] getFullyQualifiedNameCharArrays(){
+	    return qualifiedName.getFullyQualifiedNameCharArrays();
+	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
      */

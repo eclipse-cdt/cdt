@@ -57,18 +57,14 @@ public class NamespaceDeclarationPattern extends CSearchPattern {
 			
 		IASTNamespaceDefinition namespace = (IASTNamespaceDefinition)node;
 		
-		if( simpleName != null && !matchesName( simpleName, namespace.getName().toCharArray() ) ){
+		if( simpleName != null && !matchesName( simpleName, namespace.getNameCharArray() ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 
 		//create char[][] out of full name, 
-		String [] fullName = namespace.getFullyQualifiedName();
-		char [] [] qualName = new char [ fullName.length - 1 ][];
-		for( int i = 0; i < fullName.length - 1; i++ ){
-			qualName[i] = fullName[i].toCharArray();
-		}
+		char [] [] qualName = namespace.getFullyQualifiedNameCharArrays();
 		
-		if( !matchQualifications( qualifications, qualName ) ){
+		if( !matchQualifications( qualifications, qualName, true ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 

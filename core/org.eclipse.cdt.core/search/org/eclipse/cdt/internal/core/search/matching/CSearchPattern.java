@@ -630,11 +630,13 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		}
 		return false;
 	}
-	
 	protected boolean matchQualifications( char[][] qualifications, char[][] candidate ){
+	    return matchQualifications( qualifications, candidate, false );
+	}
+	protected boolean matchQualifications( char[][] qualifications, char[][] candidate, boolean skipLastName ){
 		
 		int qualLength = qualifications != null ? qualifications.length : 0;
-		int candidateLength = candidate != null ? candidate.length : 0;
+		int candidateLength = candidate != null ? candidate.length - ( skipLastName ? 1 : 0 ) : 0;
 		
 		if( qualLength == 0 ){
 			return true;

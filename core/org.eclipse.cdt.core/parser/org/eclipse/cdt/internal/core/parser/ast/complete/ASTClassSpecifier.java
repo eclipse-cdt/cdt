@@ -212,6 +212,9 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     {
         return qualifiedName.getFullyQualifiedName();
     }
+    public char[][] getFullyQualifiedNameCharArrays(){
+        return qualifiedName.getFullyQualifiedNameCharArrays();
+    }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTScopedElement#getOwnerScope()
      */

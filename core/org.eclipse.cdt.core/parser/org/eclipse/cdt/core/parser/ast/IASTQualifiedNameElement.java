@@ -17,4 +17,5 @@ package org.eclipse.cdt.core.parser.ast;
 public interface IASTQualifiedNameElement
 {
 	public String[] getFullyQualifiedName();
+	public char[][] getFullyQualifiedNameCharArrays();
 }

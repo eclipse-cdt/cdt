@@ -350,7 +350,7 @@ public class Elf {
 			} else if ( obj instanceof Long ) {
 				Long val = (Long)obj;
 				anotherVal = val.longValue();
-				thisVal = (long)this.st_value;
+				thisVal = this.st_value;
 			}
 			return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
 		}
@@ -1028,7 +1028,7 @@ public class Elf {
 			tmp[1] = (short)((val >> 8) & 0x00ff);
 			tmp[2] = (short)((val >> 16) & 0x00ff); 
 			tmp[3] = (short)((val >> 24) & 0x00ff);
-			return (long)((tmp[0] << 24) + (tmp[1] << 16) + (tmp[2] << 8) + tmp[3]);
+			return ((tmp[0] << 24) + (tmp[1] << 16) + (tmp[2] << 8) + tmp[3]);
 		}
 		return val;
 	}

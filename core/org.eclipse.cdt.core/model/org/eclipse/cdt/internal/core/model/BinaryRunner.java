@@ -10,7 +10,6 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -87,7 +86,7 @@ public class BinaryRunner {
 			ICElement[] children = container.getChildren();
 			if (children.length > 0) {
 				CModelManager factory = CModelManager.getDefault();
-				ICElement root = (ICModel) factory.getCModel();
+				ICElement root = factory.getCModel();
 				CElementDelta cdelta = new CElementDelta(root);
 				cdelta.added(cproject);
 				cdelta.added(container);

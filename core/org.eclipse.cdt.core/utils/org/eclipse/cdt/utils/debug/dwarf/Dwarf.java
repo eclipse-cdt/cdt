@@ -127,7 +127,7 @@ public class Dwarf {
 					sb.append(':');
 					for (int i = 0; i < len; i++) {
 						byte b = Array.getByte(value, i);
-						sb.append(' ').append(Integer.toHexString((int) b));
+						sb.append(' ').append(Integer.toHexString(b));
 					}
 				} else {
 					if (value instanceof Number) {
@@ -506,7 +506,7 @@ public class Dwarf {
 
 			case DwarfConstants.DW_FORM_strp :
 				{
-					int offset = (int) read_4_bytes(in);
+					int offset = read_4_bytes(in);
 					byte[] data = (byte[]) dwarfSections.get(DWARF_DEBUG_STR);
 					if (data == null) {
 						obj = new String();

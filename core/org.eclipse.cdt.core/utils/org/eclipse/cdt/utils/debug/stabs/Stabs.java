@@ -129,7 +129,7 @@ public class Stabs {
 	}
 
 	public void parse(IDebugEntryRequestor requestor) {
-		List list = new ArrayList();
+		//List list = new ArrayList();
 		long nstab = stabData.length / StabConstant.SIZE;
 		int i, offset;
 		String holder = null;
@@ -455,7 +455,7 @@ public class Stabs {
 					String infoField = sf.getTypeInformation();
 					// According to the doc 't' can follow the 'T'
 					if (infoField.length() > 0 && infoField.charAt(0) == 't') {
-						String s = infoField.substring(1);
+						//String s = infoField.substring(1);
 						parseStabString(requestor, field, value);
 					} else {
 						// Just register the type.
@@ -763,34 +763,34 @@ public class Stabs {
 					StringBuffer sb = new StringBuffer();
 
 					// get the width
-					int width = 0;
+					//int width = 0;
 					while ((c = reader.read()) != -1) {
 						if (c == ';') {
 							break;
 						}
 						sb.append((char) c);
 					}
-					try {
-						String token = sb.toString();
-						width = Integer.parseInt(token);
-					} catch (NumberFormatException e) {
-					}
+					//try {
+					//	String token = sb.toString();
+					//	width = Integer.parseInt(token);
+					//} catch (NumberFormatException e) {
+					//}
 
 					sb.setLength(0);
 
 					// get the offset
-					int offset = 0;
+					//int offset = 0;
 					while ((c = reader.read()) != -1) {
 						if (c == ';') {
 							break;
 						}
 						sb.append((char) c);
 					}
-					try {
-						String token = sb.toString();
-						offset = Integer.parseInt(token);
-					} catch (NumberFormatException e) {
-					}
+					//try {
+						//String token = sb.toString();
+						//offset = Integer.parseInt(token);
+					//} catch (NumberFormatException e) {
+					//}
 
 					sb.setLength(0);
 
@@ -823,18 +823,18 @@ public class Stabs {
 					StringBuffer sb = new StringBuffer();
 
 					// get the fp-Type
-					int fpType = 0;
+					//int fpType = 0;
 					while ((c = reader.read()) != -1) {
 						if (c == ';') {
 							break;
 						}
 						sb.append((char) c);
 					}
-					try {
-						String token = sb.toString();
-						fpType = Integer.parseInt(token);
-					} catch (NumberFormatException e) {
-					}
+					//try {
+					//	String token = sb.toString();
+						//fpType = Integer.parseInt(token);
+					//} catch (NumberFormatException e) {
+					//}
 
 					sb.setLength(0);
 
@@ -858,7 +858,8 @@ public class Stabs {
 			case 'c' :
 			case 'g' :
 				{
-					DebugType type = parseStabType(name, reader);
+					//DebugType type = parseStabType(name, reader);
+					parseStabType(name, reader);
 					int c = reader.read(); // semicolon
 					StringBuffer sb = new StringBuffer();
 					int nbits = 0;
@@ -885,7 +886,8 @@ public class Stabs {
 		// we only understand range for an array.
 		int c = reader.read();
 		if (c == 'r') {
-			DebugType index_type = parseStabType("", reader); //$NON-NLS-1$
+			//DebugType index_type = parseStabType("", reader); //$NON-NLS-1$
+			parseStabType("", reader); //$NON-NLS-1$
 
 			c = reader.read();
 			// Check ';'

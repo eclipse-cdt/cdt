@@ -32,7 +32,7 @@ class PTYInputStream extends InputStream {
 		byte b[] = new byte[1];
 		if (1 != read(b, 0, 1))
 			return -1;
-		return (int) b[0];
+		return b[0];
 	}
 
 	/**

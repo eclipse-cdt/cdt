@@ -12,7 +12,6 @@
 package org.eclipse.cdt.utils.debug.tools;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -302,7 +301,7 @@ public class DebugDump implements IDebugEntryRequestor {
 
 	public static void main(String[] args) {
 		try {
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			//ByteArrayOutputStream out = new ByteArrayOutputStream();
 			DebugDump dump = new DebugDump(System.out);
 			dump.parse(args[0]);
 		} catch (IOException e) {

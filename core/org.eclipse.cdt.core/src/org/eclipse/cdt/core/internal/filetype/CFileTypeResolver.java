@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.filetype.ICLanguage;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @author sam.robb
@@ -346,7 +347,7 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 	 * @return the extension point, or null
 	 */
 	private IExtensionPoint getExtensionPoint(String extensionPointId) {
-		return CCorePlugin.getDefault().getDescriptor().getExtensionPoint(extensionPointId);
+        return Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, extensionPointId);
 	}
 
 	/**
@@ -406,7 +407,8 @@ public class CFileTypeResolver implements ICFileTypeResolver {
 			String			line	= null;
 			
 		    try {
-				baseURL = element.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+				//baseURL = element.getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+		    	baseURL =  Platform.getBundle(element.getDeclaringExtension().getNamespace()).getEntry("/"); //$NON-NLS-1$
 				fileURL = new URL(baseURL, attr);
 				in		= new BufferedReader(new InputStreamReader(fileURL.openStream()));
 		        line	= in.readLine();

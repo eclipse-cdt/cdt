@@ -497,7 +497,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if (core == null) {
 			return null;
 		}
-		IExtensionPoint extension = core.getDescriptor().getExtensionPoint(CONTAINER_INITIALIZER_EXTPOINT_ID);
+        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CONTAINER_INITIALIZER_EXTPOINT_ID);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
@@ -565,6 +565,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public void saveRawPathEntries(ICProject cproject, IPathEntry[] entries) throws CModelException {
+		// sanity
+		if (entries == null) {
+			entries = NO_PATHENTRIES;
+		}
+
 		ArrayList list = new ArrayList(entries.length);
 		IPath projectPath = cproject.getPath();
 		for (int i = 0; i < entries.length; i++) {
@@ -787,7 +792,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			return null;
 		}
 		ArrayList containerIDList = new ArrayList(5);
-		IExtensionPoint extension = core.getDescriptor().getExtensionPoint(CONTAINER_INITIALIZER_EXTPOINT_ID);
+        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, CONTAINER_INITIALIZER_EXTPOINT_ID);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {

@@ -39,7 +39,6 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.indexing.SourceIndexer;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -49,7 +48,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -59,6 +57,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.osgi.framework.BundleContext;
 
 public class CCorePlugin extends Plugin {
 
@@ -216,34 +215,37 @@ public class CCorePlugin extends Plugin {
 
 	// ------ CPlugin
 
-	public CCorePlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public CCorePlugin() {
+		super();
 		fgCPlugin = this;
 	}
 
 	/**
 	 * @see Plugin#shutdown
 	 */
-	public void shutdown() throws CoreException {
-		if (fDescriptorManager != null) {
-			fDescriptorManager.shutdown();
+	public void stop(BundleContext context) throws Exception {
+		try {
+			if (fDescriptorManager != null) {
+				fDescriptorManager.shutdown();
+			}
+			
+			if (fCoreModel != null) {
+				fCoreModel.shutdown();
+			}
+			
+			if (cdtLog != null) {
+				cdtLog.shutdown();
+			}
+		} finally {
+			super.stop(context);
 		}
-		
-		if (fCoreModel != null) {
-			fCoreModel.shutdown();
-		}
-		
-		if (cdtLog != null) {
-		   cdtLog.shutdown();
-		}
-		super.shutdown();
 	}
 
 	/**
 	 * @see Plugin#startup
 	 */
-	public void startup() throws CoreException {
-		super.startup();
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		
 		cdtLog = new CDTLogWriter(CCorePlugin.getDefault().getStateLocation().append(".log").toFile()); //$NON-NLS-1$
 		
@@ -464,7 +466,7 @@ public class CCorePlugin extends Plugin {
 
 	public IConsole getConsole(String id) {
 		try {
-			IExtensionPoint extension = getDescriptor().getExtensionPoint("CBuildConsole"); //$NON-NLS-1$
+	        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, "CBuildConsole"); //$NON-NLS-1$
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				for (int i = 0; i < extensions.length; i++) {
@@ -612,7 +614,7 @@ public class CCorePlugin extends Plugin {
 		if (id == null || id.length() == 0) {
 			id = DEFAULT_BINARY_PARSER_UNIQ_ID;
 		}
-		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(BINARY_PARSER_SIMPLE_ID);
+        IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, BINARY_PARSER_SIMPLE_ID);
 		IExtension extension = extensionPoint.getExtension(id);
 		if (extension != null) {
 			IConfigurationElement element[] = extension.getConfigurationElements();
@@ -821,7 +823,7 @@ public class CCorePlugin extends Plugin {
 	 * @return IProcessList
 	 */
 	public IProcessList getProcessList() throws CoreException {
-		IExtensionPoint extension = getDescriptor().getExtensionPoint("ProcessList"); //$NON-NLS-1$
+        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, "ProcessList"); //$NON-NLS-1$
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			IConfigurationElement defaultContributor = null;
@@ -834,7 +836,7 @@ public class CCorePlugin extends Plugin {
 							if (defaultContributor == null) {
 								defaultContributor = configElements[j];
 							}
-						} else if (platform.equals(BootLoader.getOS())) {
+						} else if (platform.equals(Platform.getOS())) {
 							// found explicit contributor for this platform.
 							return (IProcessList) configElements[0].createExecutableExtension("class"); //$NON-NLS-1$
 						}
@@ -854,7 +856,7 @@ public class CCorePlugin extends Plugin {
 	 * @return
 	 */
 	public String[] getAllErrorParsersIDs() {
-		IExtensionPoint extension = getDescriptor().getExtensionPoint(ERROR_PARSER_SIMPLE_ID);
+        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ERROR_PARSER_SIMPLE_ID);
 		String[] empty = new String[0];
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
@@ -870,7 +872,7 @@ public class CCorePlugin extends Plugin {
 	public IErrorParser[] getErrorParser(String id) {
 		IErrorParser[] empty = new IErrorParser[0];
 		try {
-			IExtensionPoint extension = getDescriptor().getExtensionPoint(ERROR_PARSER_SIMPLE_ID);
+	        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, ERROR_PARSER_SIMPLE_ID);
 			if (extension != null) {
 				IExtension[] extensions = extension.getExtensions();
 				List list = new ArrayList(extensions.length);

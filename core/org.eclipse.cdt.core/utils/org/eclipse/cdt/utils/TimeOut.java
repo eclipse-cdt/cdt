@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.utils;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**

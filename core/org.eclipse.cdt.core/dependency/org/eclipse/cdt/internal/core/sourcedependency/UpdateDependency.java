@@ -71,7 +71,7 @@ public class UpdateDependency implements IJob {
 			IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 			indexManager.performConcurrentJob( 
 				new PatternSearchJob(
-					(CSearchPattern) pattern,
+					pattern,
 					scope,
 					pathCollector,
 					indexManager 

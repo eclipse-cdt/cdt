@@ -182,7 +182,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	}
 
 	private void initializeOwnerConfiguration() {
-		IExtensionPoint extpoint = CCorePlugin.getDefault().getDescriptor().getExtensionPoint("CProject"); //$NON-NLS-1$
+        IExtensionPoint extpoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, "CProject"); //$NON-NLS-1$
 		IExtension extension[] = extpoint.getExtensions();
 		fOwnerConfigMap = new HashMap(extension.length);
 		for (int i = 0; i < extension.length; i++) {

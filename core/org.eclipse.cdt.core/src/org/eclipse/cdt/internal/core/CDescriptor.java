@@ -44,8 +44,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -519,8 +519,8 @@ public class CDescriptor implements ICDescriptor {
 
 	protected ICExtension createExtensions(ICExtensionReference ext) throws CoreException {
 		InternalCExtension cExtension = null;
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(ext.getExtension());
+		IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
+		IExtensionPoint extensionPoint = extensionRegistry.getExtensionPoint(ext.getExtension());
 		IExtension extension = extensionPoint.getExtension(ext.getID());
 		if (extension == null) {
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
@@ -539,8 +539,8 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	protected IConfigurationElement[] getConfigurationElement(ICExtensionReference ext) throws CoreException {
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(ext.getExtension());
+		IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
+		IExtensionPoint extensionPoint = extensionRegistry.getExtensionPoint(ext.getExtension());
 		IExtension extension = extensionPoint.getExtension(ext.getID());
 		if (extension == null) {
 			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,

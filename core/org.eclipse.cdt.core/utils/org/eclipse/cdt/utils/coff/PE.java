@@ -473,7 +473,8 @@ public class PE {
 		ReadMemoryAccess memory = new ReadMemoryAccess(data, true);
 		int idx = 0;
 		try {
-			Exe.ExeHeader exeHdr = new Exe.ExeHeader(memory);
+			//Exe.ExeHeader exeHdr = new Exe.ExeHeader(memory);
+			new Exe.ExeHeader(memory);
 			DOSHeader dosHdr = new DOSHeader(memory);
 			// Jump the Coff header, and Check the sig.
 			idx = dosHdr.e_lfanew;

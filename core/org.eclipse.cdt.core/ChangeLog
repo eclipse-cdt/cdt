@@ -1,3 +1,8 @@
+2004-05-18 Alain Magloire
+
+	Remove warnings and compatibility plugin
+	to be full Eclipse-3.0 compliant.
+
 2004-05-11 Alain Magloire
 
 	Preliminary work to get Parser IProblem in the CEditor.

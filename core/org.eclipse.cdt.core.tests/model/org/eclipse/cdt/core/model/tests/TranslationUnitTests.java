@@ -15,8 +15,8 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.testplugin.CProjectHelper;
-import org.eclipse.cdt.testplugin.util.ExpectedStrings;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.util.ExpectedStrings;
 import org.eclipse.core.runtime.CoreException;
 
 

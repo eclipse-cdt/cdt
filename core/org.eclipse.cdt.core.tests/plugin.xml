@@ -4,7 +4,7 @@
    id="org.eclipse.cdt.core.tests"
    name="org.eclipse.cdt.core.tests"
    version="3.0.0"
-   class="org.eclipse.cdt.testplugin.CTestPlugin">
+   class="org.eclipse.cdt.core.testplugin.CTestPlugin">
 
    <runtime>
       <library name="cdtcoretests.jar">
@@ -39,7 +39,7 @@
          name="C/C++ Test Project"
          point="org.eclipse.cdt.core.CProject">
       <cproject
-            class="org.eclipse.cdt.testplugin.TestProject">
+            class="org.eclipse.cdt.core.testplugin.TestProject">
       </cproject>
    </extension>
    <extension
@@ -48,7 +48,7 @@
          point="org.eclipse.cdt.core.ScannerInfoProvider">
       <cextension>
          <run
-               class="org.eclipse.cdt.testplugin.TestScannerProvider">
+               class="org.eclipse.cdt.core.testplugin.TestScannerProvider">
          </run>
       </cextension>
    </extension>

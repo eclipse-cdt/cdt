@@ -13,8 +13,8 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;

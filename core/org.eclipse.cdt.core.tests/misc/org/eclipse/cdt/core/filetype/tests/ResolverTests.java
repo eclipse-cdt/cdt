@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.internal.filetype.CFileType;
 import org.eclipse.cdt.core.internal.filetype.CFileTypeAssociation;
 import org.eclipse.cdt.core.internal.filetype.CLanguage;
 import org.eclipse.cdt.core.internal.filetype.ResolverModel;
-import org.eclipse.cdt.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;

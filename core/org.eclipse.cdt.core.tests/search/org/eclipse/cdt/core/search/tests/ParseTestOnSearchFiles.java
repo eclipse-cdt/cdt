@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.Path;
 
 /**

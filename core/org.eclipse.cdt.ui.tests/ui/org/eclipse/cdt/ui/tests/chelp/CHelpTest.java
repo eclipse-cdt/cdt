@@ -16,10 +16,10 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
 import org.eclipse.cdt.internal.ui.text.CHelpSettings;
-import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICHelpBook;
 import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
@@ -35,10 +35,10 @@ import org.eclipse.core.runtime.Platform;
  * CHelpProvider tests
  */
 public class CHelpTest extends TestCase {
-	public final static String TEST_EXTENSION_ID_PREFIX = "org.eclipse.cdt.ui.tests.chelp.extension";
-	private final static String C_PROJECT_NAME = "cHelpTestProject";
-	private final static String CC_PROJECT_NAME = "ccHelpTestProject";
-	private final static String BIN_DIR_NAME = "bin";
+	public final static String TEST_EXTENSION_ID_PREFIX = "org.eclipse.cdt.ui.tests.chelp.extension"; //$NON-NLS-1$
+	private final static String C_PROJECT_NAME = "cHelpTestProject"; //$NON-NLS-1$
+	private final static String CC_PROJECT_NAME = "ccHelpTestProject"; //$NON-NLS-1$
+	private final static String BIN_DIR_NAME = "bin"; //$NON-NLS-1$
 	
 	private ICProject fCProject = null;
 	private ICProject fCCProject = null;
@@ -94,15 +94,15 @@ public class CHelpTest extends TestCase {
 	public void testCHelpProviderManagerGeneral(){
 		CHelpProviderManager mngr = CHelpProviderManager.getDefault();
 		if(mngr == null)
-			fail("manager not created");
+			fail("manager not created"); //$NON-NLS-1$
 		if(mngr != CHelpProviderManager.getDefault())
-			fail("getDefault returned an other instance of manager");
+			fail("getDefault returned an other instance of manager"); //$NON-NLS-1$
 		
 		try{
 			ICHelpInvocationContext cContext = getDefaultCHelpContext();
 			ICHelpInvocationContext ccContext = getDefaultCCHelpContext();
 
-			String requestedName = "dummyName";
+			String requestedName = "dummyName"; //$NON-NLS-1$
 			CHelpProviderManager.getDefault().getMatchingFunctions(cContext,requestedName);
 			CHelpProviderManager.getDefault().getMatchingFunctions(ccContext,requestedName);
 
@@ -115,14 +115,14 @@ public class CHelpTest extends TestCase {
 			IConfigurationElement configElements[] = Platform.getExtensionRegistry().getConfigurationElementsFor(CUIPlugin.PLUGIN_ID, CHelpSettings.CONTRIBUTION_EXTENSION);
 			int numExts = 0;
 			for(int i = 0; i < configElements.length; i++){
-				String id = configElements[i].getAttribute("id");
+				String id = configElements[i].getAttribute("id"); //$NON-NLS-1$
 				if(id.startsWith(TEST_EXTENSION_ID_PREFIX))
 					numExts++;
 			}
 			
-			assertTrue("number of provider instances created (" + CHelpTestInfoProvider.getNumProviders() + ") is not equal to number of extensions (" + numExts + ")",numExts == CHelpTestInfoProvider.getNumProviders());
+			assertTrue("number of provider instances created (" + CHelpTestInfoProvider.getNumProviders() + ") is not equal to number of extensions (" + numExts + ")",numExts == CHelpTestInfoProvider.getNumProviders()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}catch(CoreException e){
-			fail("CoreException occured: " + e.getMessage());
+			fail("CoreException occured: " + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -135,7 +135,7 @@ public class CHelpTest extends TestCase {
 			ICHelpInvocationContext cContext = getDefaultCHelpContext();
 			ICHelpInvocationContext ccContext = getDefaultCCHelpContext();
 			
-			String requestedName = "dummyName";
+			String requestedName = "dummyName"; //$NON-NLS-1$
 			IFunctionSummary summaries[] = CHelpProviderManager.getDefault().getMatchingFunctions(cContext,requestedName);
 			CHelpProviderTester.getDefault().checkMatchingFunctions(summaries, cContext, requestedName);
 
@@ -143,7 +143,7 @@ public class CHelpTest extends TestCase {
 			CHelpProviderTester.getDefault().checkMatchingFunctions(summaries, ccContext, requestedName);
 		}
 		catch(CoreException e){
-			fail("CoreException occured: " + e.getMessage());
+			fail("CoreException occured: " + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -156,7 +156,7 @@ public class CHelpTest extends TestCase {
 			ICHelpInvocationContext cContext = getDefaultCHelpContext();
 			ICHelpInvocationContext ccContext = getDefaultCCHelpContext();
 			
-			String requestedName = "dummyName";
+			String requestedName = "dummyName"; //$NON-NLS-1$
 			IFunctionSummary summary = CHelpProviderManager.getDefault().getFunctionInfo(cContext,requestedName);
 			CHelpProviderTester.getDefault().checkFunctionInfo(summary, cContext, requestedName);
 
@@ -164,7 +164,7 @@ public class CHelpTest extends TestCase {
 			CHelpProviderTester.getDefault().checkFunctionInfo(summary, ccContext, requestedName);
 		}
 		catch(CoreException e){
-			fail("CoreException occured: " + e.getMessage());
+			fail("CoreException occured: " + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 
@@ -177,7 +177,7 @@ public class CHelpTest extends TestCase {
 			ICHelpInvocationContext cContext = getDefaultCHelpContext();
 			ICHelpInvocationContext ccContext = getDefaultCCHelpContext();
 			
-			String requestedName = "dummyName";
+			String requestedName = "dummyName"; //$NON-NLS-1$
 			ICHelpResourceDescriptor resourceDes[] = CHelpProviderManager.getDefault().getHelpResources(cContext,requestedName);
 			CHelpProviderTester.getDefault().checkHelpResources(resourceDes, cContext, requestedName);
 
@@ -185,7 +185,7 @@ public class CHelpTest extends TestCase {
 			CHelpProviderTester.getDefault().checkHelpResources(resourceDes, ccContext, requestedName);
 		}
 		catch(CoreException e){
-			fail("CoreException occured: " + e.getMessage());
+			fail("CoreException occured: " + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 	
@@ -196,19 +196,19 @@ public class CHelpTest extends TestCase {
 			CHelpBookDescriptor ccBookDescriptors[] = mngr.getCHelpBookDescriptors(getDefaultCCHelpContext());
 			CHelpBookDescriptor cBookDescriptors[] = mngr.getCHelpBookDescriptors(getDefaultCHelpContext());
 			
-			assertTrue("CC book descriptors length (" + ccBookDescriptors.length + ") is less than C book descriptors length (" + cBookDescriptors.length + ")",
+			assertTrue("CC book descriptors length (" + ccBookDescriptors.length + ") is less than C book descriptors length (" + cBookDescriptors.length + ")", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					ccBookDescriptors.length >= cBookDescriptors.length);
 			
 			for(int i = 0; i < cBookDescriptors.length; i++){
 				CHelpBookDescriptor curBookDes = cBookDescriptors[i];
-				assertTrue("book \"" + curBookDes.getCHelpBook().getTitle() + "\" of type HELP_TYPE_CPP in book descriptors for C project \"" + getDefaultCHelpContext().getProject().getName() + "\"",
+				assertTrue("book \"" + curBookDes.getCHelpBook().getTitle() + "\" of type HELP_TYPE_CPP in book descriptors for C project \"" + getDefaultCHelpContext().getProject().getName() + "\"", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						curBookDes.getCHelpBook().getCHelpType() != ICHelpBook.HELP_TYPE_CPP);
 				int j = 0;
 				for(; j < ccBookDescriptors.length; j++){
 					if(ccBookDescriptors[j].getCHelpBook().getTitle().equals(curBookDes.getCHelpBook().getTitle()))
 						break;
 				}
-				assertTrue("book \"" + curBookDes.getCHelpBook().getTitle() + "\" was not found in CC books",j < ccBookDescriptors.length);
+				assertTrue("book \"" + curBookDes.getCHelpBook().getTitle() + "\" was not found in CC books",j < ccBookDescriptors.length); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 			for(int i = 0; i < ccBookDescriptors.length; i++){
@@ -218,12 +218,12 @@ public class CHelpTest extends TestCase {
 					if(cBookDescriptors[j].getCHelpBook().getTitle().equals(curBookDes.getCHelpBook().getTitle()))
 						break;
 				}
-				assertTrue("book \"" + curBookDes.getCHelpBook().getTitle() + "\" of type HELP_TYPE_C was not found in C books",
+				assertTrue("book \"" + curBookDes.getCHelpBook().getTitle() + "\" of type HELP_TYPE_C was not found in C books", //$NON-NLS-1$ //$NON-NLS-2$
 						j < cBookDescriptors.length || curBookDes.getCHelpBook().getCHelpType() == ICHelpBook.HELP_TYPE_CPP);
 			}			
 		}
 		catch(CoreException e){
-			fail("CoreException occured: " + e.getMessage());
+			fail("CoreException occured: " + e.getMessage()); //$NON-NLS-1$
 		}
 	}
 }

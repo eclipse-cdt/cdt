@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
-import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;

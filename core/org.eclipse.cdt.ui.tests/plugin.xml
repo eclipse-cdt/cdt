@@ -4,7 +4,7 @@
    id="org.eclipse.cdt.ui.tests"
    name="org.eclipse.cdt.ui.tests"
    version="3.0.0"
-   class="org.eclipse.cdt.testplugin.CTestPlugin">
+   class="org.eclipse.cdt.ui.testplugin.CTestPlugin">
 
    <runtime>
       <library name="cdtuitests.jar">

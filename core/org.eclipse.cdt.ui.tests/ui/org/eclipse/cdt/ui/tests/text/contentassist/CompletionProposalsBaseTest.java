@@ -30,10 +30,10 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
-import org.eclipse.cdt.testplugin.CProjectHelper;
-import org.eclipse.cdt.testplugin.CTestPlugin;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -46,8 +46,8 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 public abstract class CompletionProposalsBaseTest  extends TestCase{
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	private final String projectName = "TestProject1";
-	private final String projectType = "bin";
+	private final String projectName = "TestProject1"; //$NON-NLS-1$
+	private final String projectType = "bin"; //$NON-NLS-1$
 	private ICProject fCProject;
 	private IFile fCFile;
 	private IFile fHeaderFile;
@@ -133,7 +133,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 			try{
 				wc = tu.getWorkingCopy();
 			}catch (CModelException e){
-				fail("Failed to get working copy");
+				fail("Failed to get working copy"); //$NON-NLS-1$
 			}
 		
 			// call the CompletionProcessor
@@ -150,7 +150,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 			// context
 			IASTNode context = completionNode.getCompletionContext();
 			if(context == null)
-				assertTrue(getExpectedContextClassName().equals("null"));
+				assertTrue(getExpectedContextClassName().equals("null")); //$NON-NLS-1$
 			else
 				assertTrue(context.getClass().getName().endsWith(getExpectedContextClassName()));
 			// kind

@@ -19,7 +19,7 @@ import java.util.zip.ZipFile;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;

@@ -15,8 +15,8 @@ import java.io.FileInputStream;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.testplugin.CProjectHelper;
-import org.eclipse.cdt.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;

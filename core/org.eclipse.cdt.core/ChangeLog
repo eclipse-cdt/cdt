@@ -1,3 +1,14 @@
+2004-02-16 Alain Magloire
+
+	Added new method getElementAtOffset(), with implementation
+	Possible classCastException in Translation.equals() corrected.
+	* model/org/eclipse/cdt/core/model/ITranslationUnit.java
+	* model/org/eclipse/cdt/internal/core/model/TranslationUnit.java
+
+	CElement.exists() was doing the test by checking
+	if we add a corresponding resource.  We change that
+	instead by looking if we have a valid CElementInfo.
+	* model/org/eclipse/cdt/internal/core/model/CElement.java
 2004-02-10 Tanya Wolff
     Start of Fix for 51192: The defect is for all org.eclipse.cdt.core strings, but each package
     should be handled by respective component owners. 

@@ -13,13 +13,25 @@ package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 
 /**
+ * G++ allows for restrict to be a modifier for the decl spec.
+ * 
  * @author jcamelon
  */
 public interface IGPPASTDeclSpecifier extends IASTDeclSpecifier {
 
-	// Extra type qualifier in C
+	/**
+	 * Was restrict keyword encountered?
+	 * 
+	 * @return boolean
+	 */
 	public boolean isRestrict();
-	
-	public void setRestrict( boolean value );
+
+	/**
+	 * Set restrict-modifier-encountered to value.
+	 * 
+	 * @param value
+	 *            boolean
+	 */
+	public void setRestrict(boolean value);
 
 }

@@ -23,10 +23,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 public interface IGPPBasicType extends ICPPBasicType {
 
 	public static final int t_Complex = IGPPASTSimpleDeclSpecifier.t_Complex;
+
 	public static final int t_Imaginary = IGPPASTSimpleDeclSpecifier.t_Imaginary;
+
 	public static final int t_typeof = IGPPASTSimpleDeclSpecifier.t_typeof;
-	
+
 	public boolean isLongLong() throws DOMException;
-	
+
 	public IType getTypeofType() throws DOMException;
 }

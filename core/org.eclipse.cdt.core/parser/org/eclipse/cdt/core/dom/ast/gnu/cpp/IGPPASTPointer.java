@@ -13,10 +13,24 @@ package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 
 /**
+ * g++ allows for restrict pointers.
+ * 
  * @author jcamelon
  */
 public interface IGPPASTPointer extends IASTPointer {
-    
-    public boolean isRestrict();
-    public void setRestrict( boolean value );
+
+	/**
+	 * Is this pointer a restrict pointer?
+	 * 
+	 * @return boolean
+	 */
+	public boolean isRestrict();
+
+	/**
+	 * Set restrict-keyword-encountered to true or false.
+	 * 
+	 * @param value
+	 *            boolean
+	 */
+	public void setRestrict(boolean value);
 }

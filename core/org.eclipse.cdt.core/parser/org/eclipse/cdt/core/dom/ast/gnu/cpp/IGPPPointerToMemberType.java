@@ -20,6 +20,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
  * @author aniefer
  */
 public interface IGPPPointerToMemberType extends ICPPPointerToMemberType,
-        IGPPPointerType {
+		IGPPPointerType {
 
 }

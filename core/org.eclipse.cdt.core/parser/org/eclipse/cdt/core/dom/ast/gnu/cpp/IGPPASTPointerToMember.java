@@ -13,9 +13,11 @@ package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 
 /**
+ * G++ Pointer 2 Members accept the restrict qualified as well.
+ * 
  * @author jcamelon
  */
 public interface IGPPASTPointerToMember extends IGPPASTPointer,
-        ICPPASTPointerToMember {
+		ICPPASTPointerToMember {
 
 }

@@ -18,17 +18,61 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 
 /**
  * This is the declarator for a K&R C Function.
- *
+ * 
  * @author dsteffle
  */
 public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
-	
-	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty( "Parameter Name"); //$NON-NLS-1$
+
+	/**
+	 * <code>PARAMETER_NAME</code> refers to the names qualified in a K&R C
+	 * function definition.
+	 */
+	public static final ASTNodeProperty PARAMETER_NAME = new ASTNodeProperty(
+			"Parameter Name"); //$NON-NLS-1$
+
+	/**
+	 * Overwrite the parameter names. TODO - this should change to add
+	 * 
+	 * @param names
+	 *            <code>IASTName []</code>
+	 */
 	public void setParameterNames(IASTName[] names);
+
+	/**
+	 * Get parameter names.
+	 * 
+	 * @return <code>IASTName []</code>
+	 */
 	public IASTName[] getParameterNames();
-	
-	public static final ASTNodeProperty FUNCTION_PARAMETER = new ASTNodeProperty( "Parameter"); //$NON-NLS-1$
+
+	/**
+	 * <code>FUNCTION_PARAMETER</code> represents the relationship between an
+	 * K&R function declarator and the full parameter declarations.
+	 */
+	public static final ASTNodeProperty FUNCTION_PARAMETER = new ASTNodeProperty(
+			"Parameter"); //$NON-NLS-1$
+
+	/**
+	 * Overrwrite the parameter lists.
+	 * 
+	 * @param decls
+	 *            TODO - replace w/zadd
+	 */
 	public void setParameterDeclarations(IASTDeclaration[] decls);
+
+	/**
+	 * Get parameters declarations.
+	 * 
+	 * @return <code>IASTDeclaration []</code>
+	 */
 	public IASTDeclaration[] getParameterDeclarations();
+
+	/**
+	 * Map declarator to IASTName.
+	 * 
+	 * @param name
+	 *            <code>IASTName</code>
+	 * @return
+	 */
 	public IASTDeclarator getDeclaratorForParameterName(IASTName name);
 }

@@ -20,9 +20,10 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
  * @author aniefer
  */
 public interface IGPPPointerType extends IPointerType {
-    /**
-     * is this a restrict pointer
-     * @return
-     */
-    boolean isRestrict();
+	/**
+	 * is this a restrict pointer
+	 * 
+	 * @return
+	 */
+	boolean isRestrict();
 }

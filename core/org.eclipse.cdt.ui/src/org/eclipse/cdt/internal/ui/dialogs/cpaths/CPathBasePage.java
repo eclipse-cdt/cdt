@@ -43,7 +43,7 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 				IPath currPath = curr.getPath();
 				if (currPath.isPrefixOf(entryPath) && !currPath.equals(entryPath)) {
 					IPath[] exclusionFilters = (IPath[]) curr.getAttribute(CPListElement.EXCLUSION);
-					if (!CoreModelUtil.isExcludedPath(entryPath, exclusionFilters)) {
+					if (!CoreModelUtil.isExcludedPath(entryPath.removeFirstSegments(1), exclusionFilters)) {
 						IPath pathToExclude = entryPath.removeFirstSegments(currPath.segmentCount()).addTrailingSeparator();
 						IPath[] newExclusionFilters = new IPath[exclusionFilters.length + 1];
 						System.arraycopy(exclusionFilters, 0, newExclusionFilters, 0, exclusionFilters.length);

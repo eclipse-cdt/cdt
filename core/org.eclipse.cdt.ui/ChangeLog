@@ -1,7 +1,18 @@
+2004-04-20 David Inglis
+
+	Work in progress CPath UI changes
+
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPListElement.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathBasePage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathEntryMessages.properties
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathIncludeEntryPage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathSymbolEntryPage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/ExtendedCPathBasePage.java	
+
 2004-04-20 Alain Magloire
 	Fix NPE in CDocumentProvider
 	* src/org/eclipse/cdt/internalu/ui/editor/CDocumentProvider.java
-
+	
 2004-04-20 David Inglis
 
 	More of the model throws CModeLException. 

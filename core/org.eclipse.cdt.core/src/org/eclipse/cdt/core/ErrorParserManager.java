@@ -13,15 +13,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.resources.ACBuilder;
-import org.eclipse.cdt.internal.errorparsers.GASErrorParser;
-import org.eclipse.cdt.internal.errorparsers.GCCErrorParser;
-import org.eclipse.cdt.internal.errorparsers.GLDErrorParser;
-import org.eclipse.cdt.internal.errorparsers.MakeErrorParser;
-import org.eclipse.cdt.internal.errorparsers.VCErrorParser;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -31,16 +25,15 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 public class ErrorParserManager extends OutputStream {
-	private int nOpens;
 
-	private static String PREF_ERROR_PARSER = "errorOutputParser";
+	private int nOpens;
 
 	private IProject fProject;
 	private IMarkerGenerator fMarkerGenerator;
 	private Map fFilesInProject;
 	private List fNameConflicts;
 
-	private ArrayList fErrorParsers;
+	private Map fErrorParsers;
 	private ArrayList fErrors;
 
 	private Vector fDirectoryStack;
@@ -57,14 +50,26 @@ public class ErrorParserManager extends OutputStream {
 	}
 
 	public ErrorParserManager(IProject project, IMarkerGenerator markerGenerator) {
-		fProject = project;
-		fErrorParsers = new ArrayList();
-		fMarkerGenerator = markerGenerator;
-		readPreferences();
-		initParser();
+		this(project, markerGenerator, null);
 	}
 
-	private void initParser() {
+	public ErrorParserManager(IProject project, IMarkerGenerator markerGenerator, String[] parsersIDs) {
+		fProject = project;
+		if (parsersIDs == null) {
+			fErrorParsers = new HashMap();
+			readPreferences();
+		} else {
+			fErrorParsers = new HashMap(parsersIDs.length);
+			for (int i = 0; i < parsersIDs.length; i++) {
+				IErrorParser[] parsers = CCorePlugin.getDefault().getErrorParser(parsersIDs[i]);
+				fErrorParsers.put(parsersIDs[i], parsers);
+			}
+		}
+		fMarkerGenerator = markerGenerator;
+		initErrorParserManager();
+	}
+
+	private void initErrorParserManager() {
 		fFilesInProject = new HashMap();
 		fNameConflicts = new ArrayList();
 		fDirectoryStack = new Vector();
@@ -111,7 +116,7 @@ public class ErrorParserManager extends OutputStream {
 
 	public IPath popDirectory() {
 		int i = fDirectoryStack.size();
-		if (i != 0) {			
+		if (i != 0) {
 			IPath dir = (IPath) fDirectoryStack.lastElement();
 			fDirectoryStack.removeElementAt(i - 1);
 			return dir;
@@ -123,57 +128,34 @@ public class ErrorParserManager extends OutputStream {
 		return fDirectoryStack.size();
 	}
 
-	protected void addParser(IErrorParser parser) {
-		fErrorParsers.add(parser);
-	}
-
 	private void readPreferences() {
 		fErrorParsers.clear();
-		String parserNames = CCorePlugin.getDefault().getPluginPreferences().getString(PREF_ERROR_PARSER);
-		if (parserNames != null && parserNames.length() > 0) {
-			StringTokenizer tok = new StringTokenizer(parserNames, ";");
-			while (tok.hasMoreElements()) {
-				String clName = tok.nextToken();
-				try {
-					IErrorParser parser = (IErrorParser) Class.forName(clName).newInstance();
-					fErrorParsers.add(parser);
-				}
-				catch (ClassNotFoundException e) {
-					// not found
-					CCorePlugin.log(e);
-				}
-				catch (InstantiationException e) {
-					CCorePlugin.log(e);
-				}
-				catch (IllegalAccessException e) {
-					CCorePlugin.log(e);
-				}
-				catch (ClassCastException e) {
-					CCorePlugin.log(e);
-				}
-			}
+		String[] parserIDs = CCorePlugin.getDefault().getPreferenceErrorParserIDs();
+		for (int i = 0; i < parserIDs.length; i++) {
+			IErrorParser[] parsers = CCorePlugin.getDefault().getErrorParser(parserIDs[i]);
+			fErrorParsers.put(parserIDs[i], parsers);
 		}
 		if (fErrorParsers.size() == 0) {
-			initErrorParsersArray(fErrorParsers);
+			initErrorParsersMap();
+			savePreferences();
 		}
-		savePreferences();
 	}
 
-	private void initErrorParsersArray(List errorParsers) {
-		errorParsers.add(new VCErrorParser());
-		errorParsers.add(new GCCErrorParser());
-		errorParsers.add(new GLDErrorParser());
-		errorParsers.add(new GASErrorParser());
-		errorParsers.add(new MakeErrorParser());
+	private void initErrorParsersMap() {
+		String[] parserIDs = CCorePlugin.getDefault().getAllErrorParsersIDs();
+		for (int i = 0; i < parserIDs.length; i++) {
+			IErrorParser[] parsers = CCorePlugin.getDefault().getErrorParser(parserIDs[i]);
+			fErrorParsers.put(parserIDs[i], parsers);
+		}
 	}
 
 	private void savePreferences() {
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < fErrorParsers.size(); i++) {
-			buf.append(fErrorParsers.get(i).getClass().getName());
-			buf.append(';');
+		String[] parserIDs = new String[fErrorParsers.size()];
+		Iterator items = fErrorParsers.keySet().iterator();
+		for (int i = 0; items.hasNext(); i++) {
+			parserIDs[i] = (String) items.next();
 		}
-		CCorePlugin.getDefault().getPluginPreferences().setValue(PREF_ERROR_PARSER, buf.toString());
+		CCorePlugin.getDefault().setPreferenceErrorParser(parserIDs);
 	}
 
 	protected void collectFiles(IContainer parent, List result) {
@@ -183,13 +165,11 @@ public class ErrorParserManager extends OutputStream {
 				IResource resource = resources[i];
 				if (resource instanceof IFile) {
 					result.add(resource);
-				}
-				else if (resource instanceof IContainer) {
+				} else if (resource instanceof IContainer) {
 					collectFiles((IContainer) resource, result);
 				}
 			}
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			CCorePlugin.log(e.getStatus());
 		}
 	}
@@ -198,22 +178,30 @@ public class ErrorParserManager extends OutputStream {
 	 * Parses the input and try to generate error or warning markers
 	 */
 	private void processLine(String line) {
-		int top = fErrorParsers.size() - 1;
+		String[] parserIDs = new String[fErrorParsers.size()];
+		Iterator items = fErrorParsers.keySet().iterator();
+		for (int i = 0; items.hasNext(); i++) {
+			parserIDs[i] = (String) items.next();
+		}
+
+		int top = parserIDs.length - 1;
 		int i = top;
 		do {
-			IErrorParser curr = (IErrorParser) fErrorParsers.get(i);
-			if (curr.processLine(line, this)) {
-				if (i != top) {
-					// move to top
-					Object used = fErrorParsers.remove(i);
-					fErrorParsers.add(used);
-					savePreferences();
+			IErrorParser[] parsers = (IErrorParser[]) fErrorParsers.get(parserIDs[i]);
+			for (int j = 0; j < parsers.length; j++) {
+				IErrorParser curr = parsers[j];
+				if (curr.processLine(line, this)) {
+					if (i != top) {
+						// move to top
+						Object used = fErrorParsers.remove(parserIDs[i]);
+						fErrorParsers.put(parserIDs[i], used);
+						//savePreferences();
+					}
+					return;
 				}
-				return;
 			}
 			i--;
-		}
-		while (i >= 0);
+		} while (i >= 0);
 	}
 
 	/**
@@ -242,8 +230,7 @@ public class ErrorParserManager extends OutputStream {
 			if (fBaseDirectory.isPrefixOf(fp)) {
 				int segments = fBaseDirectory.matchingFirstSegments(fp);
 				path = fp.removeFirstSegments(segments);
-			}
-			else {
+			} else {
 				path = fp;
 			}
 		} else {
@@ -257,7 +244,7 @@ public class ErrorParserManager extends OutputStream {
 			file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
 		} catch (Exception e) {
 		}
-		
+
 		// We have to do another try, on Windows for cases like "TEST.C" vs "test.c"
 		// We use the java.io.File canonical path.
 		if (file == null || !file.exists()) {
@@ -267,7 +254,7 @@ public class ErrorParserManager extends OutputStream {
 				path = new Path(canon);
 				file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
 			} catch (IOException e1) {
-			}	
+			}
 		} else {
 			return file;
 		}
@@ -357,11 +344,9 @@ public class ErrorParserManager extends OutputStream {
 	public synchronized void write(byte[] b, int off, int len) throws IOException {
 		if (b == null) {
 			throw new NullPointerException();
-		}
-		else if (off != 0 || (len < 0) || (len > b.length)) {
+		} else if (off != 0 || (len < 0) || (len > b.length)) {
 			throw new IndexOutOfBoundsException();
-		}
-		else if (len == 0) {
+		} else if (len == 0) {
 			return;
 		}
 		currentLine.append(new String(b, 0, len));
@@ -374,7 +359,7 @@ public class ErrorParserManager extends OutputStream {
 		String buffer = currentLine.toString();
 		int i = 0;
 		while ((i = buffer.indexOf('\n')) != -1) {
-			String line = buffer.substring(0, i).trim();  // get rid of any trailing \r
+			String line = buffer.substring(0, i).trim(); // get rid of any trailing \r
 			processLine(line);
 			previousLine = line;
 			buffer = buffer.substring(i + 1); // skip the \n and advance
@@ -392,7 +377,7 @@ public class ErrorParserManager extends OutputStream {
 
 	public boolean reportProblems() {
 		boolean reset = false;
-		if (nOpens == 0) {	
+		if (nOpens == 0) {
 			Iterator iter = fErrors.iterator();
 			while (iter.hasNext()) {
 				Problem problem = (Problem) iter.next();
@@ -431,7 +416,7 @@ public class ErrorParserManager extends OutputStream {
 	 * @param line
 	 */
 	public void appendToScratchBuffer(String line) {
-		scratchBuffer.append(line);		
+		scratchBuffer.append(line);
 	}
 
 	/**

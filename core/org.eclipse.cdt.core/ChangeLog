@@ -1,3 +1,9 @@
+2004-06-28 Alain Magloire
+
+	Fix for PR 68820.
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	* src/org/eclipse/cdt/core/resources/FileStorage.java
+
 2004-06-28 Hoda Amer
 	Patch for Keith Campbell, a small fix in CConventions. 
 	

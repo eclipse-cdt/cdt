@@ -40,9 +40,8 @@ public class FileStorage extends PlatformObject implements IStorage {
 				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID,
 						IStatus.ERROR, e.toString(), e));
 			}
-		} else {
-			return in;
 		}
+		return in;
 	}
 
 	/**
@@ -86,10 +85,10 @@ public class FileStorage extends PlatformObject implements IStorage {
 		if (this == obj)
 			return true;
 		if (obj instanceof IStorage) {
-			IPath path= getFullPath();
+			IPath p= getFullPath();
 			IPath objPath= ((IStorage)obj).getFullPath();
-			if (path != null && objPath != null)
-				return path.equals(objPath);
+			if (p != null && objPath != null)
+				return p.equals(objPath);
 		}
 		return super.equals(obj);
 	}

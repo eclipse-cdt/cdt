@@ -492,24 +492,24 @@ public class FileListControl {
 		SelectPathInputDialog dialog = new SelectPathInputDialog(getListControl().getShell(), title, message, initVal, null, browseType);
 		if (dialog.open() == SelectPathInputDialog.OK) {
 			input = dialog.getValue();
-			if (input == null || input.length() == 0) return "";	//$NON-NLS-1$
 		}
 		
 		// Double-quote the spaces in paths (if any)
-		switch (browseType) {
-			case IOption.BROWSE_DIR:
-			case IOption.BROWSE_FILE:
-				String[] segments = input.split("\\s"); //$NON-NLS-1$
-				if (segments.length > 1) {
-					// Double-quote paths with whitespaces
-					input = "\"" + input + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
-				}
-				break;
-			default:
-				break;
+		if (input != null && input.length() > 0) {
+			switch (browseType) {
+				case IOption.BROWSE_DIR:
+				case IOption.BROWSE_FILE:
+					String[] segments = input.split("\\s"); //$NON-NLS-1$
+					if (segments.length > 1) {
+						// Double-quote paths with whitespaces
+						input = "\"" + input + "\"";	//$NON-NLS-1$ //$NON-NLS-2$
+					}
+					break;
+				default:
+					break;
+			}
 		}
-		
+
 		return input;
 	}
-	
 }

@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
+import org.eclipse.cdt.debug.core.model.ICastToArray;
 import org.eclipse.cdt.debug.core.model.ICastToType;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -35,7 +36,8 @@ import org.eclipse.debug.core.model.IVariable;
 public abstract class CVariable extends CDebugElement 
 								implements ICVariable,
 										   ICDIEventListener,
-										   ICastToType
+										   ICastToType,
+										   ICastToArray
 {
 	/**
 	 * The parent object this variable is contained in.
@@ -80,6 +82,15 @@ public abstract class CVariable extends CDebugElement
 	 * The current format of this variable.
 	 */
 	private int fFormat = ICDIFormat.NATURAL;
+
+	/**
+	 * @param target
+	 */
+	public CVariable(CDebugTarget target)
+	{
+		super(target);
+		// TODO Auto-generated constructor stub
+	}
 
 	/**
 	 * Constructor for CVariable.
@@ -481,7 +492,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public boolean supportsCasting()
 	{
-		return false;
+		return supportsValueModification();
 	}
 	
 	protected ICDIVariable getOriginalCDIVariable()
@@ -533,5 +544,28 @@ public abstract class CVariable extends CDebugElement
 	public boolean isCasted()
 	{
 		return ( getShadow() != null );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICastToArray#castToArray(java.lang.String, int, int)
+	 */
+	public void castToArray( String type, int startIndex, int endIndex ) throws DebugException
+	{
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICastToArray#supportsCastToArray()
+	 */
+	public boolean supportsCastToArray()
+	{
+		try
+		{
+			return ( supportsValueModification() && getValue().hasVariables() );
+		}
+		catch( DebugException e )
+		{
+			logError( e );
+		}
+		return false;
 	}
 }

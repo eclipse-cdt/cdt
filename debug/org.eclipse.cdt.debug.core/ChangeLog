@@ -1,4 +1,10 @@
 2003-03-09 Mikhail Khodjaiants
+	Core support of the "Display As Array" action.
+	* ICastToArray.java
+	* CLocalVariable.java
+	* CVariable.java
+
+2003-03-09 Mikhail Khodjaiants
 	Core support of the "Cast To Type" and "Restore Default Type" actions.
 	* ICastToType.java: new
 	* CLocalVariable.java

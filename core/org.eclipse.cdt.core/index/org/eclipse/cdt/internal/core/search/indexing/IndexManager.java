@@ -756,16 +756,18 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	
 	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project, true );
-		
-		Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
+		// FIXME: descriptor should not be null ... but ... lets catch here for now.
 		Boolean strBool = null;
+		if (descriptor != null) {
+			Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
 		
-		while (child != null) {
-			if (child.getNodeName().equals(INDEXER_ENABLED)) 
-				 strBool = Boolean.valueOf(((Element)child).getAttribute(INDEXER_VALUE));
+			while (child != null) {
+				if (child.getNodeName().equals(INDEXER_ENABLED)) 
+					strBool = Boolean.valueOf(((Element)child).getAttribute(INDEXER_VALUE));
 			
 			
-			child = child.getNextSibling();
+				child = child.getNextSibling();
+			}
 		}
 		
 		return strBool;

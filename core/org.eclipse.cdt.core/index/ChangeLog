@@ -1,3 +1,7 @@
+2004-06-18 Alain Magloire
+	- The call CCorePlugin.getCDescriptor(..) seems to return null.
+	This should be fix but meanwhile give the indexer a break by catching it.
+
 2004-06-18 Andrew Niefer
 	- call InderManager.jobFinishedNotification( this ) from IndexRequest.cancel() so that the IndexManager's jobSet doesn't 
 	  become stale.

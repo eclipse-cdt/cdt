@@ -18,8 +18,8 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
-import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
 import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
@@ -191,22 +191,23 @@ public class MIPlugin extends Plugin {
 			pgdb.destroy();
 			throw e;
 		}
-		// Try to detect if we have been attach via "target remote localhost:port"
-		// and set the state to be suspended.
+		// Try to detect if we have been attach/connected via "target remote localhost:port"
+		// or "attach" and set the state to be suspended.
 		try {
-			CLICommand cmd = new CLICommand("info remote-process"); //$NON-NLS-1$
-			session.postCommand(cmd);
-			MIInfo info = cmd.getMIInfo();
+			CommandFactory factory = session.getCommandFactory();
+			MIStackListFrames frames = factory.createMIStackListFrames();
+			session.postCommand(frames);
+			MIInfo info = frames.getMIInfo();
 			if (info == null) {
 				pgdb.destroy();
 				throw new MIException(getResourceString("src.common.No_answer")); //$NON-NLS-1$
 			}
-			//@@@ We have to manually set the suspended state when we attach
+			//@@@ We have to manually set the suspended state since we have some stackframes
 			session.getMIInferior().setSuspended();
 			session.getMIInferior().update();
 		} catch (MIException e) {
 			// If an exception is thrown that means ok
-			// we did not attach to any target.
+			// we did not attach/connect to any target.
 		}
 		return new Session(session, false);
 	}

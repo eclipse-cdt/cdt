@@ -1,3 +1,9 @@
+2004-04-20 Alain Magloire
+
+	Fix for PR 59081
+
+	* model/org/eclipse/cdt/internal/core/model/Openable.java
+
 2004-04-19 Alain Magloire
 
 	Fix for PR 59098

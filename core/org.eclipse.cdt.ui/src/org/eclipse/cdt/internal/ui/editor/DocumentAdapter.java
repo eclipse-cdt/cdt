@@ -117,7 +117,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		public void setContents(char[] contents) {}
 		
 		public void setContents(String contents) {}
-	};
+	}
 		
 	
 	/** NULL implementing <code>IBuffer</code> */
@@ -138,7 +138,8 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 			fContents= contents;
 			Display.getDefault().syncExec(this);
 		}
-	};
+	}
+
 	/**
 	 * Executes a document replace call in the ui thread.
 	 */
@@ -162,7 +163,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 			fText= text;
 			Display.getDefault().syncExec(this);
 		}
-	};
+	}
 
 	private static final boolean DEBUG_LINE_DELIMITERS= true;
 
@@ -320,7 +321,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 	 * @see org.eclipse.cdt.internal.core.model.IBuffer#getOwner()
 	 */
 	public IOpenable getOwner() {
-		return (IOpenable) fOwner;
+		return fOwner;
 	}
 
 	/**

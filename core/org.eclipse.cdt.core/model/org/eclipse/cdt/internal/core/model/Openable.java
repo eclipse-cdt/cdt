@@ -100,6 +100,18 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	}
 
 	/**
+	 * This element is being closed.  Do any necessary cleanup.
+	 */
+	protected void closing(Object info) throws CModelException {
+		if (info instanceof OpenableInfo) {
+			closeBuffer((OpenableInfo)info);
+		} else {
+			closeBuffer(null);
+		}
+	}
+
+
+	/**
 	 * Builds this element's structure and properties in the given
 	 * info object, based on this element's current contents (i.e. buffer
 	 * contents if this element has an open buffer, or resource contents

@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
@@ -158,7 +157,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
         public void propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent event) {
             handlePreferencePropertyChanged(new org.eclipse.jface.util.PropertyChangeEvent(event.getSource(), event.getProperty(), event.getOldValue(), event.getNewValue()));
         }
-    };        
+    }        
 
 	/**
 	 * Default constructor.
@@ -200,7 +199,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	public IFile getInputFile() {
 		//IFileEditorInput editorInput = (IFileEditorInput)getEditorInput();
-		IEditorInput editorInput = (IEditorInput) getEditorInput();
+		IEditorInput editorInput = getEditorInput();
 		if (editorInput != null) {
 			if ((editorInput instanceof IFileEditorInput)) {
 				return ((IFileEditorInput) editorInput).getFile();
@@ -545,7 +544,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	public void setOutlinePageInput(CContentOutlinePage page, IEditorInput input) {
 		if (page != null) {
 			IWorkingCopyManager manager = CUIPlugin.getDefault().getWorkingCopyManager();
-			page.setInput((IWorkingCopy)manager.getWorkingCopy(input));
+			page.setInput(manager.getWorkingCopy(input));
 		}
 	}
 

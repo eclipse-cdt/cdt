@@ -1,6 +1,7 @@
 2004-04-21 Hoda Amer
 	Fix for bug#58703 :[Content Assist] An extra [^SPC] is required after appending to a prefix
 	Fix for bug#58708 :[Content Assist] Invalid proposals on nested classes
+	Fix for bug#58858 :[Content Assist] No completion when declaring a struct variable
 	
 2004-04-06 Chris Wiebe
 	initial placement of non-ui code into org.eclipse.cdt.core.browser

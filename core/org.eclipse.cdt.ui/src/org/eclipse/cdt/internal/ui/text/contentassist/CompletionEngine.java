@@ -595,6 +595,34 @@ public class CompletionEngine implements RelevanceConstants {
 		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
 	}
+
+	private void completionOnStructReference(IASTCompletionNode completionNode){
+		// 1. Get the search scope node 
+		IASTScope searchNode = completionNode.getCompletionScope();
+		// only look for classes
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.STRUCTS; 
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		addToCompletions(result);
+	}
+	private void completionOnUnionReference(IASTCompletionNode completionNode){
+		// 1. Get the search scope node 
+		IASTScope searchNode = completionNode.getCompletionScope();
+		// only look for classes
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.UNIONS; 
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		addToCompletions(result);
+	}
+	private void completionOnEnumReference(IASTCompletionNode completionNode){
+		// 1. Get the search scope node 
+		IASTScope searchNode = completionNode.getCompletionScope();
+		// only look for classes
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.ENUMERATIONS; 
+		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		addToCompletions(result);
+	}
 	
 	private void completionOnNamespaceReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
@@ -749,6 +777,18 @@ public class CompletionEngine implements RelevanceConstants {
 			// completionOnConstructorReference
 			completionOnConstructorReference(completionNode);
 		}
+		else if(kind == CompletionKind.STRUCT_REFERENCE){
+			// CompletionOnClassReference
+			completionOnStructReference(completionNode);
+		}
+		else if(kind == CompletionKind.UNION_REFERENCE){
+			// CompletionOnClassReference
+			completionOnUnionReference(completionNode);
+		}
+		else if(kind == CompletionKind.ENUM_REFERENCE){
+			// CompletionOnClassReference
+			completionOnEnumReference(completionNode);
+		}
 	
 		// add keywords in all cases except for member and scoped reference cases. 
 		if(kind != CompletionKind.MEMBER_REFERENCE){
@@ -792,6 +832,12 @@ public class CompletionEngine implements RelevanceConstants {
 			kindStr = "PREPROCESSOR_DIRECTIVE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.USER_SPECIFIED_NAME)
 			kindStr = "USER_SPECIFIED_NAME"; //$NON-NLS-1$
+		else if(kind == IASTCompletionNode.CompletionKind.STRUCT_REFERENCE)
+			kindStr = "STRUCT_REFERENCE"; //$NON-NLS-1$
+		else if(kind == IASTCompletionNode.CompletionKind.UNION_REFERENCE)
+			kindStr = "UNION_REFERENCE"; //$NON-NLS-1$
+		else if(kind == IASTCompletionNode.CompletionKind.ENUM_REFERENCE)
+			kindStr = "ENUM_REFERENCE"; //$NON-NLS-1$
 		else if(kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND)
 			kindStr = "NO_SUCH_KIND"; //$NON-NLS-1$
 

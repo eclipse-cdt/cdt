@@ -41,11 +41,18 @@ public class GASErrorParser implements IErrorParser {
 								desc = line.substring(secondColon + 2);
 							}
 						}
-						file = eoParser.findFilePath(fileName);
+						file = eoParser.findFileName(fileName);
 					}
 				}
+				boolean isConflicting = false;
+				if (file != null) {
+					isConflicting = eoParser.isConflictingName(fileName);
+					file = null;
+				} else {
+					file = eoParser.findFileName(fileName);
+				}
 				if (file == null) {
-					desc = fileName + " " + desc; //$NON-NLS-1$
+					desc = fileName + ":" + desc; //$NON-NLS-1$
 				}
 				eoParser.generateMarker(file, num, desc, severity, null);
 			}

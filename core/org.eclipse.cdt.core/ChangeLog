@@ -1,3 +1,13 @@
+2004-11-14 Alain Magloire
+	Fix for PR 77546.
+	Make the error parser manager faster by
+	using IResourceProxyVisitor to get the files.
+	Use eoParser.findFileName() faster.
+	* src/org/eclipse/cdt/core/ErrorParserManager.java
+	* src/org/eclipse/cdt/core/internal/errorparsers/GASErrorParser.java
+	* src/org/eclipse/cdt/core/internal/errorparsers/GCCErrorParser.java
+	* src/org/eclipse/cdt/core/internal/errorparsers/GLDErrorarser.java
+
 2004-11-11 Alain Magloire
 	PR 78573, patch from Brad Jarvinen
 	* src/org/eclipse/cdt/internal/errorparser/VCErroParser.java

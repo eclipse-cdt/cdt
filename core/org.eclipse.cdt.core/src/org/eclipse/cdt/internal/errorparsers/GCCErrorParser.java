@@ -9,6 +9,8 @@ import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IErrorParser;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public class GCCErrorParser implements IErrorParser {
 	
@@ -211,16 +213,39 @@ public class GCCErrorParser implements IErrorParser {
 						}
 					}
 
-					IFile file = eoParser.findFilePath(fileName);
-
-					if (file == null) {
-						// Parse the entire project.
-						file = eoParser.findFileName(fileName);
-						if (file != null) {
-							// If there is a conflict set the error on the project.
-							if (eoParser.isConflictingName(fileName)) {
-								desc = "*" + desc; //$NON-NLS-1$
-								file = null;
+					// The pattern is to generall we have to guard:
+					// Before making this pattern a marker we do one more check
+					// The fileName that we extract __must__ look like a valid file name.
+					// We been having to much bad hits with patterns like
+					//   /bin/sh ../libtool --mode=link gcc -version-info 0:1:0 foo.lo var.lo
+					// Things like libtool that will fool the parser because of "0:1:0"
+					if (!Path.EMPTY.isValidPath(fileName)) {
+						return false;
+					}
+					IFile file = eoParser.findFileName(fileName);
+					if (file != null) {
+						if (eoParser.isConflictingName(fileName)) {
+							desc = "[Conflicting names: " + fileName + " ] " + desc; //$NON-NLS-1$ //$NON-NLS-2$
+							file = null;							
+						}
+					} else {
+						file = eoParser.findFilePath(fileName);
+						if (file == null) {
+							// one last try before bailing out we may be in a wrong
+							// directory.  This will happen, for example in the Makefile:
+							// all: foo.c
+							//    cd src3; gcc -c bar/foo.c
+							// the user do a cd(1).
+							IPath path = new Path(fileName);
+							if (path.segmentCount() > 1) {
+								String name = path.lastSegment();
+								file = eoParser.findFileName(fileName);
+								if (file != null) {
+									if (eoParser.isConflictingName(fileName)) {
+										desc = "[Conflicting names: " + name + " ] " + desc; //$NON-NLS-1$ //$NON-NLS-2$
+										file = null;							
+									}
+								}
 							}
 						}
 					}

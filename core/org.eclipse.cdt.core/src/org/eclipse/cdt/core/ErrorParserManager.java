@@ -17,10 +17,11 @@ import java.util.Map;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.resources.ACBuilder;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -83,19 +84,15 @@ public class ErrorParserManager extends OutputStream {
 		fDirectoryStack = new Vector();
 		fErrors = new ArrayList();
 
-		// prepare file lists
-		fFilesInProject.clear();
-		fNameConflicts.clear();
-
 		List collectedFiles = new ArrayList();
 		fBaseDirectory = (workingDirectory == null || workingDirectory.isEmpty()) ? fProject.getLocation() : workingDirectory;
 		collectFiles(fProject, collectedFiles);
 
 		for (int i = 0; i < collectedFiles.size(); i++) {
-			IFile curr = (IFile) collectedFiles.get(i);
-			Object existing = fFilesInProject.put(curr.getName(), curr);
+			IFile file = (IFile) collectedFiles.get(i);
+			Object existing = fFilesInProject.put(file.getName(), file);
 			if (existing != null) {
-				fNameConflicts.add(curr.getName());
+				fNameConflicts.add(file.getName());
 			}
 		}
 	}
@@ -156,17 +153,17 @@ public class ErrorParserManager extends OutputStream {
 		}
 	}
 
-	protected void collectFiles(IContainer parent, List result) {
+	protected void collectFiles(IProject parent, final List result) {
 		try {
-			IResource[] resources = parent.members();
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				if (resource instanceof IFile) {
-					result.add(resource);
-				} else if (resource instanceof IContainer) {
-					collectFiles((IContainer) resource, result);
+			parent.accept(new IResourceProxyVisitor() {
+				public boolean visit(IResourceProxy proxy) throws CoreException {
+					if (proxy.getType() == IResource.FILE) {
+						result.add(proxy.requestResource());
+						return false;
+					}
+					return true;
 				}
-			}
+			}, IResource.NONE);
 		} catch (CoreException e) {
 			CCorePlugin.log(e.getStatus());
 		}

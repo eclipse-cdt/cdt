@@ -1,3 +1,13 @@
+2003-01-07 Alain Magloire
+
+	REMIND:More work needs to be done on the ContentAssist preferences
+	For example the autoactivation can not be a character but has to be
+	a string since we need: "." and "->"
+	To be revisited when we the story of the C/C++ Parser is clearer.
+	
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage (createContentAssistPage):
+	The addFieldText() for autoactivation is not a number.
+
 2003-01-02 Alain Magloire
 
 	* src/org/eclipse/cdt/internal/ui/text/BufferedDocumentScanner.java (setRange):

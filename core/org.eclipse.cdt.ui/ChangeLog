@@ -1,8 +1,10 @@
 2004-06-21 Alain Magloire
 
 	Big Patch from Vladimir Hirsl
-	This patch contains a binary parser core and UI elements to 'support' AIX
-	XCOFF32 binaries.
+	Implementation of AIX XCOFF32 binary parser page.
+
+	* src/org/eclipse/cdt/ui/dialogs/GNUElfBinaryParserPage.java
+	* src/org/eclipse/cdt/ui/dialogs/GNUXCoffBinaryParserPage.java
 
 2004-06-21 Hoda Amer
 	Fix for PR 63439 : [Content Assist] When prefix is a C/C++ keyword, Content Assist does not complete templates

@@ -1,8 +1,15 @@
 2004-06-21 Alain Magloire
 
 	Big Patch from Vladimir Hirsl
-	This patch contains a binary parser core and UI elements to 'support' AIX
-	XCOFF32 binaries.
+	Implementation of AIX XCOFF32 binary parser.
+
+	* utils/org/eclipse/cdt/utils/xcoff/AR.java
+	* utils/org/eclipse/cdt/utils/xcoff/XCoff32.java
+
+	* utils/org/eclipse/cdt/utils/xcoff/parser/ARMember.java
+	* utils/org/eclipse/cdt/utils/xcoff/parser/BinaryArchive.java
+	* utils/org/eclipse/cdt/utils/xcoff/parser/XCOFF32Parser.java
+	* utils/org/eclipse/cdt/utils/xcoff/parser/XCOFFBinaryObject.java
 	
 2004-06-21 Alain Magloire
 

@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -20,6 +21,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.launch.sourcelookup.DefaultSourceLocator;
+import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -43,6 +45,11 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	abstract public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 		throws CoreException;
 
+	/**
+	 * Return the save environment variables in the configuration.
+	 * The array does not include the default environment of the target.
+	 *  array[n] : name=value
+	 */
 	protected String[] getEnvironmentArray(ILaunchConfiguration config) {
 		Map env = null;
 		try {
@@ -58,18 +65,21 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		Entry entry;
 		for (int i = 0; entries.hasNext() && i < array.length; i++) {
 			entry = (Entry) entries.next();
-			array[i] = ((String) entry.getKey()) + ((String) entry.getValue());
+			array[i] = ((String) entry.getKey()) + "=" + ((String) entry.getValue());
 		}
 		return array;
 	}
 
+	/**
+	 * Return the save environment variables of this configuration.
+	 * The array does not include the default environment of the target.
+	 */
 	protected Properties getEnvironmentProperty(ILaunchConfiguration config) {
 		Properties prop = new Properties();
 		Map env = null;
 		try {
 			env = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ENVIROMENT_MAP, (Map) null);
-		}
-		catch (CoreException e) {
+		} catch (CoreException e) {
 		}
 		if (env == null)
 			return prop;
@@ -80,6 +90,112 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 			prop.setProperty((String) entry.getKey(), (String) entry.getValue());
 		}
 		return prop;
+	}
+
+	/**
+	 * Return the default Environment of the target.
+	 */
+	protected Properties getDefaultEnvironment() {
+		return EnvironmentReader.getEnvVars();
+	}
+
+	/**
+	 * Expand the variable with the format ${key}. example:
+	 * HOME=/foobar
+	 * NEWHOME = ${HOME}/project
+	 * The environement NEWHOME will be /foobar/project.
+	 */
+	protected Properties expandEnvironment(ILaunchConfiguration config ) {
+		return expandEnvironment(getEnvironmentProperty(config));
+	}
+
+	/**
+	 * Expand the variable with the format ${key}. example:
+	 * HOME=/foobar
+	 * NEWHOME = ${HOME}/project
+	 * The environement NEWHOME will be /foobar/project.
+	 */
+	protected Properties expandEnvironment(Properties props) {
+		Enumeration names = props.propertyNames();
+		if (names != null) {
+			while (names.hasMoreElements()) {
+				String key = (String) names.nextElement();
+				String value = props.getProperty(key);
+				if (value != null && value.indexOf('$') != -1) {
+					StringBuffer sb = new StringBuffer();
+					StringBuffer param = new StringBuffer();
+					char prev = '\n';
+					char ch = prev;
+					boolean inMacro = false;
+					boolean inSingleQuote = false;
+
+					for (int i = 0; i < value.length(); i++) {
+						ch = value.charAt(i);
+						switch (ch) {
+							case '\'':
+								if (prev != '\\') {
+									inSingleQuote = !inSingleQuote;
+								}
+							break;
+
+							case '$' :
+								if (!inSingleQuote && prev != '\\') {
+									if (i < value.length() && value.indexOf('}', i) > 0) {
+										char c = value.charAt(i + 1);
+										if (c == '{') {
+											param.setLength(0);
+											inMacro = true;
+											prev = ch;
+											continue;
+										}
+									}
+								}
+							break;
+
+							case '}' :
+								if (inMacro) {
+									inMacro = false;
+									String v = null;
+									String p = param.toString();
+									/* Search in the current property only
+									 * if it is not the same name.
+									 */
+									if (!p.equals(key)) {
+										v = props.getProperty(p);
+									}
+									/* Fallback to the default Environemnt. */
+									if (v == null) {
+										Properties def = getDefaultEnvironment();
+										if (def != null) {
+											v = def.getProperty(p);
+										}
+									}
+									if (v != null) {
+										sb.append(v);
+									}
+									param.setLength(0);
+									/* Skip the trailing } */
+									prev = ch;
+									continue;
+								}
+							break;
+						} /* switch */
+
+						if (!inMacro) {
+							sb.append(ch);
+						} else {
+							/* Do not had the '{' */
+							if (!(ch == '{' && prev == '$')) {
+								param.append(ch);
+							}
+						}
+						prev = (ch == '\\' && prev == '\\') ? '\n' : ch;
+					} /* for */
+					props.setProperty(key, sb.toString());
+				} /* !if (value ..) */
+			} /* while() */
+		} /* if (names != null) */
+		return props;
 	}
 
 	/**

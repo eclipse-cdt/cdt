@@ -5,6 +5,7 @@ package org.eclipse.cdt.core;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -255,6 +256,20 @@ public class ErrorParserManager extends OutputStream {
 		try {
 			file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
 		} catch (Exception e) {
+		}
+		
+		// We have to do another try, on Windows for cases like "TEST.C" vs "test.c"
+		// We use the java.io.File canonical path.
+		if (file == null || !file.exists()) {
+			File f = path.toFile();
+			try {
+				String canon = f.getCanonicalPath();
+				path = new Path(canon);
+				file = (path.isAbsolute()) ? fProject.getWorkspace().getRoot().getFileForLocation(path) : fProject.getFile(path);
+			} catch (IOException e1) {
+			}	
+		} else {
+			return file;
 		}
 		return (file != null && file.exists()) ? file : null;
 	}

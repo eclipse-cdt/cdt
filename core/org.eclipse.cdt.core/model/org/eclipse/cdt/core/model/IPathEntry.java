@@ -84,6 +84,10 @@ public interface IPathEntry {
 	 */
 	boolean isExported();
 
+	/**
+	 * 
+	 * @return IPath
+	 */
 	IPath getPath();
 
 }

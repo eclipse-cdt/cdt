@@ -34,8 +34,8 @@ public class CPListElement {
 	public static final String SYSTEM_INCLUDE = "systeminclude"; //$NON-NLS-1$
 	public static final String MACRO_NAME = "macroname"; //$NON-NLS-1$
 	public static final String MACRO_VALUE = "macrovalue"; //$NON-NLS-1$
-	public static final String BASE_REF = "baseref"; //$NON-NLS-1$
-	public static final String BASE = "base"; //$NON-NLS-1$
+	public static final String BASE_REF = "base-ref"; //$NON-NLS-1$
+	public static final String BASE = "base-path"; //$NON-NLS-1$
 
 	private ICProject fProject;
 
@@ -123,25 +123,21 @@ public class CPListElement {
 				return CoreModel.newSourceEntry(fPath, exclusionPattern);
 			case IPathEntry.CDT_LIBRARY:
 				IPath attach = (IPath) getAttribute(SOURCEATTACHMENT);
-				return CoreModel.newLibraryEntry(fPath, base, attach, null, null, isExported());
+				return CoreModel.newLibraryEntry(base, fPath, attach, null, null, isExported());
 			case IPathEntry.CDT_PROJECT:
 				return CoreModel.newProjectEntry(fPath, isExported());
 			case IPathEntry.CDT_CONTAINER:
 				return CoreModel.newContainerEntry(fPath, isExported());
 			case IPathEntry.CDT_INCLUDE:
 				if (base != null) {
-					return CoreModel.newIncludeEntry(fPath, (IPath) getAttribute(INCLUDE), base,
+					return CoreModel.newIncludeEntry(fPath, base, (IPath) getAttribute(INCLUDE),
 							((Boolean) getAttribute(SYSTEM_INCLUDE)).booleanValue(), exclusionPattern);
 				} else {
-
+					
 				}
 			case IPathEntry.CDT_MACRO:
-				if (base != null) {
-					return CoreModel.newMacroEntry(fPath, base, (String) getAttribute(MACRO_NAME),
-							(String) getAttribute(MACRO_VALUE), exclusionPattern);
-				} else {
-
-				}
+				return CoreModel.newMacroEntry(fPath, (String) getAttribute(MACRO_NAME),
+						(String) getAttribute(MACRO_VALUE), exclusionPattern);
 			default:
 				return null;
 		}

@@ -1,3 +1,7 @@
+2004-04-21 Alain Magloire
+	Update the PathEntry test.
+	* model/org/eclipse/cdt/core/model/tests/CPatEntryTest.java
+
 2004-04-21 John Camelon
 	Moved testBug39703() from ASTFailedTests to QuickParseASTTest.
 	Added ScannerTestCase::testBug39698().

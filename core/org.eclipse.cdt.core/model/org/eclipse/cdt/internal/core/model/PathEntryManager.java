@@ -65,7 +65,8 @@ public class PathEntryManager implements ICDescriptorListener {
 	static String PATH_ENTRY_ID = "org.eclipse.cdt.core.pathentry"; //$NON-NLS-1$
 	static String ATTRIBUTE_KIND = "kind"; //$NON-NLS-1$
 	static String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
-	static String ATTRIBUTE_BASE_PATH = "base"; //$NON-NLS-1$
+	static String ATTRIBUTE_BASE_PATH = "base-path"; //$NON-NLS-1$
+	static String ATTRIBUTE_BASE_REF = "base-ref"; //$NON-NLS-1$
 	static String ATTRIBUTE_EXPORTED = "exported"; //$NON-NLS-1$
 	static String ATTRIBUTE_SOURCEPATH = "sourcepath"; //$NON-NLS-1$
 	static String ATTRIBUTE_ROOTPATH = "roopath"; //$NON-NLS-1$
@@ -665,19 +666,18 @@ public class PathEntryManager implements ICDescriptorListener {
 			isExported = element.getAttribute(ATTRIBUTE_EXPORTED).equals(VALUE_TRUE);
 		}
 
-		// ensure path is absolute
-		//boolean hasPath = element.hasAttribute(ATTRIBUTE_PATH);
-		String pathAttr = element.getAttribute(ATTRIBUTE_PATH);
-		IPath path = new Path(pathAttr);
+		// get path and ensure it is absolute
+		//String pathAttr = element.getAttribute(ATTRIBUTE_PATH);
+		IPath path = new Path(element.getAttribute(ATTRIBUTE_PATH));
 		if (!path.isAbsolute()) {
 			path = projectPath.append(path);
 		}
 
 		// check fo the base path
-		IPath basePath = new Path(""); //$NON-NLS-1$
-		if (element.hasAttribute(ATTRIBUTE_BASE_PATH)) {
-			basePath = new Path(element.getAttribute(ATTRIBUTE_BASE_PATH));
-		}
+		IPath basePath = new Path(element.getAttribute(ATTRIBUTE_BASE_PATH));
+
+		// get the base ref
+		IPath baseRef = new Path(element.getAttribute(ATTRIBUTE_BASE_REF));
 
 		// source attachment info (optional)
 		IPath sourceAttachmentPath = element.hasAttribute(ATTRIBUTE_SOURCEPATH) ? new Path(
@@ -706,8 +706,11 @@ public class PathEntryManager implements ICDescriptorListener {
 			case IPathEntry.CDT_PROJECT :
 				return CoreModel.newProjectEntry(path, isExported);
 			case IPathEntry.CDT_LIBRARY :
-				return CoreModel.newLibraryEntry(path, basePath, sourceAttachmentPath, sourceAttachmentRootPath,
-						sourceAttachmentPrefixMapping, isExported);
+				if (!baseRef.isEmpty()) {
+					return CoreModel.newLibraryRefEntry(baseRef, path);
+				}
+				return CoreModel.newLibraryEntry(basePath, path, sourceAttachmentPath, sourceAttachmentRootPath,
+					sourceAttachmentPrefixMapping, isExported);
 			case IPathEntry.CDT_SOURCE :
 				{
 					// must be an entry in this project or specify another
@@ -727,21 +730,25 @@ public class PathEntryManager implements ICDescriptorListener {
 			case IPathEntry.CDT_INCLUDE :
 				{
 					// include path info
-					IPath includePath = element.hasAttribute(ATTRIBUTE_INCLUDE)
-							? new Path(element.getAttribute(ATTRIBUTE_INCLUDE))
-							: null;
+					IPath includePath = new Path(element.getAttribute(ATTRIBUTE_INCLUDE));
 					// isSysteminclude
 					boolean isSystemInclude = false;
 					if (element.hasAttribute(ATTRIBUTE_SYSTEM)) {
 						isSystemInclude = element.getAttribute(ATTRIBUTE_SYSTEM).equals(VALUE_TRUE);
 					}
-					return CoreModel.newIncludeEntry(path, includePath, basePath, isSystemInclude, exclusionPatterns, isExported);
+					if (!baseRef.isEmpty()) {
+						return CoreModel.newIncludeRefEntry(path, baseRef, includePath);
+					}
+					return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns, isExported);
 				}
 			case IPathEntry.CDT_MACRO :
 				{
 					String macroName = element.getAttribute(ATTRIBUTE_NAME);
 					String macroValue = element.getAttribute(ATTRIBUTE_VALUE);
-					return CoreModel.newMacroEntry(path, basePath, macroName, macroValue, exclusionPatterns);
+					if (!baseRef.isEmpty()) {
+						return CoreModel.newMacroRefEntry(path, baseRef, macroName);
+					}
+					return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
 				}
 			case IPathEntry.CDT_CONTAINER :
 				{
@@ -785,66 +792,67 @@ public class PathEntryManager implements ICDescriptorListener {
 				}
 			}
 
+			// Save the path
+			element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
+
 			// Specifics to the entries
-			if (kind == IPathEntry.CDT_SOURCE) {
-				element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
-			} else if (kind == IPathEntry.CDT_OUTPUT) {
-				element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
-			} else if (kind == IPathEntry.CDT_LIBRARY) {
-				ILibraryEntry lib = (ILibraryEntry) entries[i];
-				element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
-				if (lib.getBasePath() != null) {
-					element.setAttribute(ATTRIBUTE_BASE_PATH, lib.getBasePath().toString());
-				}
-				IPath sourcePath = lib.getSourceAttachmentPath();
-				if (sourcePath != null) {
-					// translate to project relative from absolute 
-					if (projectPath != null && projectPath.isPrefixOf(sourcePath)) {
-						if (sourcePath.segment(0).equals(projectPath.segment(0))) {
-							sourcePath = sourcePath.removeFirstSegments(1);
-							sourcePath = sourcePath.makeRelative();
+			switch(kind) {
+				case IPathEntry.CDT_SOURCE:
+				case IPathEntry.CDT_OUTPUT:
+				case IPathEntry.CDT_PROJECT:
+				case IPathEntry.CDT_CONTAINER:
+					break;
+				case IPathEntry.CDT_LIBRARY: {
+					ILibraryEntry lib = (ILibraryEntry) entries[i];
+					IPath sourcePath = lib.getSourceAttachmentPath();
+					if (sourcePath != null) {
+						// translate to project relative from absolute 
+						if (projectPath != null && projectPath.isPrefixOf(sourcePath)) {
+							if (sourcePath.segment(0).equals(projectPath.segment(0))) {
+								sourcePath = sourcePath.removeFirstSegments(1);
+								sourcePath = sourcePath.makeRelative();
+							}
 						}
+						element.setAttribute(ATTRIBUTE_SOURCEPATH, sourcePath.toString());
 					}
-					element.setAttribute(ATTRIBUTE_SOURCEPATH, sourcePath.toString());
+					if (lib.getSourceAttachmentRootPath() != null) {
+						element.setAttribute(ATTRIBUTE_ROOTPATH, lib.getSourceAttachmentRootPath().toString());
+					}
+					if (lib.getSourceAttachmentPrefixMapping() != null) {
+						element.setAttribute(ATTRIBUTE_PREFIXMAPPING, lib.getSourceAttachmentPrefixMapping().toString());
+					}
+					break;
 				}
-				if (lib.getSourceAttachmentRootPath() != null) {
-					element.setAttribute(ATTRIBUTE_ROOTPATH, lib.getSourceAttachmentRootPath().toString());
+				case IPathEntry.CDT_INCLUDE: {
+					IIncludeEntry include = (IIncludeEntry) entries[i];
+					IPath includePath = include.getIncludePath();
+					element.setAttribute(ATTRIBUTE_INCLUDE, includePath.toString());
+					if (include.isSystemInclude()) {
+						element.setAttribute(ATTRIBUTE_SYSTEM, VALUE_TRUE);
+					}
+					break;
 				}
-				if (lib.getSourceAttachmentPrefixMapping() != null) {
-					element.setAttribute(ATTRIBUTE_PREFIXMAPPING, lib.getSourceAttachmentPrefixMapping().toString());
+				case IPathEntry.CDT_MACRO: {
+					IMacroEntry macro = (IMacroEntry) entries[i];
+					element.setAttribute(ATTRIBUTE_NAME, macro.getMacroName());
+					element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());
+					break;
 				}
-			} else if (kind == IPathEntry.CDT_PROJECT) {
-				element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
-			} else if (kind == IPathEntry.CDT_INCLUDE) {
-				IIncludeEntry include = (IIncludeEntry) entries[i];
-				if (!xmlPath.isEmpty()) {
-					element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
-				}
-				if (include.getBasePath() != null) {
-					element.setAttribute(ATTRIBUTE_BASE_PATH, include.getBasePath().toString());
-				}
-				IPath includePath = include.getIncludePath();
-				element.setAttribute(ATTRIBUTE_INCLUDE, includePath.toString());
-				if (include.isSystemInclude()) {
-					element.setAttribute(ATTRIBUTE_SYSTEM, VALUE_TRUE);
-				}
-			} else if (kind == IPathEntry.CDT_MACRO) {
-				IMacroEntry macro = (IMacroEntry) entries[i];
-				if (!xmlPath.isEmpty()) {
-					element.setAttribute(ATTRIBUTE_PATH, macro.getPath().toString());
-				}
-				if (macro.getBasePath() != null) {
-					element.setAttribute(ATTRIBUTE_BASE_PATH, macro.getBasePath().toString());
-				}
-				element.setAttribute(ATTRIBUTE_NAME, macro.getMacroName());
-				element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());
-			} else if (kind == IPathEntry.CDT_CONTAINER) {
-				element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
 			}
 
-			// Save the exclusions attributes
 			if (entries[i] instanceof APathEntry) {
 				APathEntry entry = (APathEntry) entries[i];
+
+				// save the basePath or the baseRef
+				IPath basePath = entry.getBasePath();
+				IPath baseRef = entry.getBaseReference();
+				if (basePath != null && !basePath.isEmpty()) {
+					element.setAttribute(ATTRIBUTE_BASE_PATH, basePath.toString());
+				} else if (baseRef != null && !baseRef.isEmpty()) {
+					element.setAttribute(ATTRIBUTE_BASE_REF, baseRef.toString());
+				}
+
+				// Save the exclusions attributes
 				IPath[] exclusionPatterns = entry.getExclusionPatterns();
 				if (exclusionPatterns.length > 0) {
 					StringBuffer excludeRule = new StringBuffer(10);

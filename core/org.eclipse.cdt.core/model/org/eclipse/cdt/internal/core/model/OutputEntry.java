@@ -20,12 +20,11 @@ public class OutputEntry extends APathEntry implements IOutputEntry {
 	/**
 	 * @param kind
 	 * @param path
-	 * @param isRecursive
 	 * @param exclusionPatterns
 	 * @param isExported
 	 */
 	public OutputEntry(IPath path, IPath[] exclusionPatterns, boolean isExported) {
-		super(CDT_OUTPUT, path, null, exclusionPatterns, isExported);
+		super(CDT_OUTPUT, null, null, path, exclusionPatterns, isExported);
 	}
 
 	public boolean equals(Object obj) {

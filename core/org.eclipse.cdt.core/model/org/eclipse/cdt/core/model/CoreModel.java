@@ -196,7 +196,7 @@ public class CoreModel {
 	 * for the project identified by the given absolute path.
 	 * <p>
 	 * A project entry is used to denote a prerequisite project. The
-	 * IPathEntry[] entries of the project will be contributed.
+	 * exported IPathEntry[] entries of the project will be contributed.
 	 * <p>
 	 * The prerequisite project is referred to using an absolute path relative
 	 * to the workspace root.
@@ -205,19 +205,19 @@ public class CoreModel {
 	 * is equivalent to <code>newProjectEntry(path,false)</code>.
 	 * <p>
 	 * 
-	 * @param path
-	 *            the absolute path of the binary archive
+	 * @param projectPath
+	 *            the workspace-relative path of the project
 	 * @return a new project entry
 	 * 
 	 * @see CoreModel#newProjectEntry(IPath, boolean)
 	 */
-	public static IProjectEntry newProjectEntry(IPath path) {
-		return newProjectEntry(path, false);
+	public static IProjectEntry newProjectEntry(IPath projectPath) {
+		return newProjectEntry(projectPath, false);
 	}
 
 	/**
 	 * Creates and returns a new entry of kind <code>CDT_PROJECT</code> for
-	 * the project identified by the given absolute path.
+	 * the project identified by the given workspace-relative path.
 	 * <p>
 	 * A project entry is used to denote a prerequisite project. All the
 	 * IPathEntries of the project will be contributed as a whole. The
@@ -225,15 +225,15 @@ public class CoreModel {
 	 * the workspace root.
 	 * <p>
 	 * 
-	 * @param path
-	 *            the absolute path of the prerequisite project
+	 * @param projectPath
+	 *            the absolute workspace-relative path of the prerequisite project
 	 * @param isExported
 	 *            indicates whether this entry is contributed to dependent
-	 *            projects in addition to the output location
+	 *            projects
 	 * @return a new project entry
 	 */
-	public static IProjectEntry newProjectEntry(IPath path, boolean isExported) {
-		return new ProjectEntry(path, isExported);
+	public static IProjectEntry newProjectEntry(IPath projectPath, boolean isExported) {
+		return new ProjectEntry(projectPath, isExported);
 	}
 
 	/**
@@ -270,60 +270,48 @@ public class CoreModel {
 	}
 
 	/**
-	 * Creates and returns a new non-exported entry of kind <code>CDT_LIBRARY</code>
+	 * Creates and returns a new entry of kind <code>CDT_LIBRARY</code>
 	 * for the archive or folder identified by the given absolute path.
 	 * 
 	 * Note that this operation does not attempt to validate or access the
 	 * resources at the given paths.
 	 * <p>
-	 * The resulting entry is not exported to dependent projects. This method
-	 * is equivalent to <code>newLibraryEntry(-,-,-,false)</code>.
-	 * <p>
 	 * 
-	 * @param path
-	 *            the absolute path of the library
+	 * @param basePath
+	 *            the base path of the library
+	 * @param libraryPath
+	 *            the path of the library
 	 * @param sourceAttachmentPath
-	 *            the absolute path of the corresponding source archive or
+	 *            the project-relative path of the corresponding source archive or
 	 *            folder, or <code>null</code> if none.
 	 * @param sourceAttachmentRootPath
 	 *            the location of the root within the source archive or folder
 	 *            or <code>null</code>.
 	 * @param sourceAttachmentPrefixMapping
 	 *            prefix mapping or <code>null</code>.
+	 * @param isExported
+	 *           whether the entry is exported
 	 * @return a new library entry
 	 *  
 	 */
-	public static ILibraryEntry newLibraryEntry(IPath libraryPath, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath,
-			IPath sourceAttachmentPrefixMapping) {
-		return newLibraryEntry(libraryPath, null, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping, false);
+	public static ILibraryEntry newLibraryEntry(IPath basePath, IPath libraryPath, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath,
+			IPath sourceAttachmentPrefixMapping, boolean isExported) {
+		return new LibraryEntry(basePath, null, libraryPath, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
 	}
 
 	/**
-	 * Creates and returns a new non-exported entry of kind <code>CDT_LIBRARY</code>
+	 * Creates and returns a new entry of kind <code>CDT_LIBRARY</code>
 	 * for the archive or folder identified by the given absolute path.
 	 * 
-	 * Note that this operation does not attempt to validate or access the
-	 * resources at the given paths.
-	 * <p>
-	 * 
-	 * @param path
-	 *            the path of the library
-	 * @param path
-	 *            the base path of the library
-	 * @param sourceAttachmentPath
-	 *            the absolute path of the corresponding source archive or
-	 *            folder, or <code>null</code> if none.
-	 * @param sourceAttachmentRootPath
-	 *            the location of the root within the source archive or folder
-	 *            or <code>null</code>.
-	 * @param sourceAttachmentPrefixMapping
-	 *            prefix mapping or <code>null</code>.
+	 * @param baseRef
+	 *            the base reference path to find the library
+	 * @param libraryPath
+	 *            the library name.
 	 * @return a new library entry
 	 *  
 	 */
-	public static ILibraryEntry newLibraryEntry(IPath libraryPath, IPath basePath, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath,
-			IPath sourceAttachmentPrefixMapping, boolean isExported) {
-		return new LibraryEntry(libraryPath, basePath, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
+	public static ILibraryEntry newLibraryRefEntry(IPath baseRef, IPath libraryPath) {
+		return new LibraryEntry(null, baseRef, libraryPath, null, null, null, false);
 	}
 
 	/**
@@ -331,28 +319,28 @@ public class CoreModel {
 	 * the project's output folder
 	 * <p>
 	 * 
-	 * @param path
-	 *            the project-relative path of a binary folder
+	 * @param outputPath
+	 *            the project-relative path of a folder
 	 * @return a new source entry with not exclusion patterns
 	 *  
 	 */
-	public static IOutputEntry newOutputEntry(IPath path) {
-		return newOutputEntry(path, OutputEntry.NO_EXCLUSION_PATTERNS);
+	public static IOutputEntry newOutputEntry(IPath outputPath) {
+		return newOutputEntry(outputPath, OutputEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
 	 * Creates and returns a new entry of kind <code>CDT_OUPUT</code> for
 	 * the project
 	 * 
-	 * @param path
-	 *            the absolute project-relative path of a binary folder
+	 * @param outputPath
+	 *            the project-relative path of a folder
 	 * @param exclusionPatterns
 	 *            the possibly empty list of exclusion patterns represented as
 	 *            relative paths
 	 * @return a new source entry with the given exclusion patterns
 	 */
-	public static IOutputEntry newOutputEntry(IPath path, IPath[] exclusionPatterns) {
-		return new OutputEntry(path, exclusionPatterns, false);
+	public static IOutputEntry newOutputEntry(IPath outputPath, IPath[] exclusionPatterns) {
+		return new OutputEntry(outputPath, exclusionPatterns, false);
 	}
 
 	/**
@@ -373,13 +361,13 @@ public class CoreModel {
 	 * Particular source entries cannot be selectively exported.
 	 * </p>
 	 * 
-	 * @param path
+	 * @param sourcePath
 	 *            the project-relative path of a source folder
 	 * @return a new source entry with not exclusion patterns
 	 *  
 	 */
-	public static ISourceEntry newSourceEntry(IPath path) {
-		return newSourceEntry(path, SourceEntry.NO_EXCLUSION_PATTERNS);
+	public static ISourceEntry newSourceEntry(IPath sourcePath) {
+		return newSourceEntry(sourcePath, SourceEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
@@ -396,61 +384,56 @@ public class CoreModel {
 	 * <code>P1</code>.
 	 * </p>
 	 * 
-	 * @param path
-	 *            the absolute workspace-relative path of a source folder
+	 * @param sourcePath
+	 *            the absolute project-relative path of a source folder
 	 * @param exclusionPatterns
 	 *            the possibly empty list of exclusion patterns represented as
 	 *            relative paths
 	 * @return a new source entry with the given exclusion patterns
 	 */
-	public static ISourceEntry newSourceEntry(IPath path, IPath[] exclusionPatterns) {
-		return new SourceEntry(path, exclusionPatterns);
+	public static ISourceEntry newSourceEntry(IPath sourcePath, IPath[] exclusionPatterns) {
+		return new SourceEntry(sourcePath, exclusionPatterns);
 	}
 
 	/**
 	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
-	 * @param includePath
-	 *            the absolute path of the include
-	 * @return IIncludeEntry
-	 */
-	public static IIncludeEntry newIncludeEntry(IPath includePath) {
-		return newIncludeEntry(null, includePath);
-	}
-
-	/**
-	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
-	 * 
-	 * @param path
+	 * @param resourcePath
 	 *            the affected project-relative resource path
+	 * @param basePath
+	 *            the base path of the includePath
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @return IIncludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath) {
-		return newIncludeEntry(resourcePath, includePath, false);
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath) {
+		return newIncludeEntry(resourcePath, basePath, includePath, false);
 	}
 
 	/**
 	 * * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
-	 * @param path
+	 * @param resourcePath
 	 *            the affected project-relative resource path
+	 * @param basePath
+	 *            the base path of the includePath
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @param isSystemInclude
 	 *            whether this include path should be consider a system include path
 	 * @return IIncludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude) {
-		return newIncludeEntry(resourcePath, includePath, isSystemInclude, IncludeEntry.NO_EXCLUSION_PATTERNS);
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath, boolean isSystemInclude) {
+		return newIncludeEntry(resourcePath, basePath, includePath, isSystemInclude, IncludeEntry.NO_EXCLUSION_PATTERNS);
 	}
 
 	/**
 	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
-	 * @param path
+	 * @param resoourcePath
 	 *            the affected project-relative resource path
+	 * @param basePath
+	 *            the base path of the includePath
 	 * @param includePath
 	 *            the absolute path of the include
 	 * @param isSystemInclude
@@ -460,43 +443,19 @@ public class CoreModel {
 	 *            exclusion patterns in the resource if a container
 	 * @return IIincludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, boolean isSystemInclude, IPath[] exclusionPathterns) {
-		return newIncludeEntry(resourcePath, includePath, null, isSystemInclude, exclusionPathterns);
-	}
-	
-	/**
-	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
-	 * 
-	 * @param path
-	 *            the affected project-relative resource path
-	 * @param includePath
-	 *            the path of the include
-	 * @param basePath
-	 *            the base path of the include
-	 * @param isSystemInclude
-	 *            wheter this include path should be consider the system
-	 *            include path
-	 * @param isRecursive
-	 *            if the resource is a folder the include applied to all
-	 *            recursively
-	 * @param exclusionPatterns
-	 *            exclusion patterns in the resource if a container
-	 * @return IIincludeEntry
-	 */
-	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, IPath basePath, boolean isSystemInclude,
-			 IPath[] exclusionPatterns) {
-		return newIncludeEntry(resourcePath, includePath, basePath, isSystemInclude, exclusionPatterns, resourcePath == null || resourcePath.isEmpty());
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath, boolean isSystemInclude, IPath[] exclusionPathterns) {
+		return newIncludeEntry(resourcePath, basePath, includePath, isSystemInclude, exclusionPathterns, false);
 	}
 
 	/**
 	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
-	 * @param path
+	 * @param resourcePath
 	 *            the affected project-relative resource path
-	 * @param includePath
-	 *            the path of the include
 	 * @param basePath
 	 *            the base path of the include
+	 * @param includePath
+	 *            the path of the include
 	 * @param isSystemInclude
 	 *            wheter this include path should be consider the system
 	 *            include path
@@ -506,44 +465,31 @@ public class CoreModel {
 	 *            if the entry ix exported to reference projects
 	 * @return IIincludeEntry
 	 */
-	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath includePath, IPath basePath, boolean isSystemInclude,
+	public static IIncludeEntry newIncludeEntry(IPath resourcePath, IPath basePath, IPath includePath, boolean isSystemInclude,
 			 IPath[] exclusionPatterns, boolean isExported) {
-		return new IncludeEntry(resourcePath, includePath, basePath, isSystemInclude, exclusionPatterns, isExported);
+		return new IncludeEntry(resourcePath, basePath, null, includePath, isSystemInclude, exclusionPatterns, isExported);
 	}
 
 	/**
-	 * Creates and returns an entry kind <code>CDT_MACRO</code>
+	 * Creates and returns a new entry of kind <code>CDT_INCLUDE</code>
 	 * 
-	 * @param macroName
-	 *            the name of the macro
-	 * @param macroValue
-	 *            the value of the macro
-	 * @return
+	 * @param resourcePath
+	 *            the affected project-relative resource path
+	 * @param baseRef
+	 *            the base reference path of the include
+	 * @param includePath
+	 *            the path of the include
+	 * @return IIincludeEntry
 	 */
-	public static IMacroEntry newMacroEntry(String macroName, String macroValue) {
-		return newMacroEntry(null, macroName, macroValue);
+	public static IIncludeEntry newIncludeRefEntry(IPath resourcePath, IPath baseRef, IPath includePath) {
+		return new IncludeEntry(resourcePath, null, baseRef, includePath, false, null, false);
 	}
 
 	/**
 	 * Creates and returns an entry kind <code>CDT_MACRO</code>
 	 * 
 	 * @param path
-	 *            the affected workspace-relative resource path
-	 * @param macroName
-	 *            the name of the macro
-	 * @param macroValue
-	 *            the value of the macro
-	 * @return
-	 */
-	public static IMacroEntry newMacroEntry(IPath basePath, String macroName) {
-		return newMacroEntry(null, basePath, macroName, null, MacroEntry.NO_EXCLUSION_PATTERNS);
-	}
-
-	/**
-	 * Creates and returns an entry kind <code>CDT_MACRO</code>
-	 * 
-	 * @param path
-	 *            the affected workspace-relative resource path
+	 *            the affected project-relative resource path
 	 * @param macroName
 	 *            the name of the macro
 	 * @param macroValue
@@ -557,8 +503,8 @@ public class CoreModel {
 	/**
 	 * Creates and returns an entry kind <code>CDT_MACRO</code>
 	 * 
-	 * @param path
-	 *            the affected workspace-relative resource path
+	 * @param resourcePath
+	 *            the affected project-relative resource path
 	 * @param macroName
 	 *            the name of the macro
 	 * @param macroValue
@@ -568,13 +514,13 @@ public class CoreModel {
 	 * @return
 	 */
 	public static IMacroEntry newMacroEntry(IPath resourcePath, String macroName, String macroValue, IPath[] exclusionPatterns) {
-		return newMacroEntry(resourcePath, null, macroName, macroValue, exclusionPatterns);
+		return newMacroEntry(resourcePath, macroName, macroValue, exclusionPatterns, false);
 	}
 
 	/**
 	 * Creates and returns an entry kind <code>CDT_MACRO</code>
 	 * 
-	 * @param path
+	 * @param resourcePath
 	 *            the affected workspace-relative resource path
 	 * @param macroName
 	 *            the name of the macro
@@ -584,9 +530,25 @@ public class CoreModel {
 	 *            exclusion patterns in the resource if a container
 	 * @return
 	 */
-	public static IMacroEntry newMacroEntry(IPath resourcePath, IPath basePath, String macroName, String macroValue, IPath[] exclusionPatterns) {
-		return new MacroEntry(resourcePath, basePath, macroName, macroValue, exclusionPatterns);
+	public static IMacroEntry newMacroEntry(IPath resourcePath, String macroName, String macroValue, IPath[] exclusionPatterns, boolean isExported) {
+		return new MacroEntry(resourcePath, null, macroName, macroValue, exclusionPatterns, isExported);
 	}
+
+	/**
+	 * Creates and returns an entry kind <code>CDT_MACRO</code>
+	 * 
+	 * @param resourcePath
+	 *            the affected workspace-relative resource path
+	 * @param baseRef
+	 *        the base reference path
+	 * @param macroName
+	 *            the name of the macro
+	 * @return
+	 */
+	public static IMacroEntry newMacroRefEntry(IPath resourcePath, IPath baseRef, String macroName) {
+		return new MacroEntry(resourcePath, baseRef, macroName, null, MacroEntry.NO_EXCLUSION_PATTERNS, false);
+	}
+
 	/**
 	 * Answers the project specific value for a given container. In case this
 	 * container path could not be resolved, then will answer <code>null</code>.

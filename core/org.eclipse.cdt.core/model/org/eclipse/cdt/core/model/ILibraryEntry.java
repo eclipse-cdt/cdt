@@ -63,4 +63,11 @@ public interface ILibraryEntry extends IPathEntry {
 	 */
 	IPath getBasePath();
 
+	/**
+	 * Return the base reference.
+	 * 
+	 * @return
+	 */
+	IPath getBaseReference();
+
 }

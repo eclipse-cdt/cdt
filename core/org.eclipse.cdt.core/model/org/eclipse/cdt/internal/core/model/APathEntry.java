@@ -13,23 +13,32 @@
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 public abstract class APathEntry extends PathEntry {
 
 	public static IPath[] NO_EXCLUSION_PATTERNS = {};
+	public final static IPath EMPTY_PATH = new Path("");
 	IPath[] exclusionPatterns;
 	IPath basePath;
+	IPath baseRef;
 	private final static char[][] UNINIT_PATTERNS = new char[][] { "Non-initialized yet".toCharArray() }; //$NON-NLS-1$
 	char[][]fullCharExclusionPatterns = UNINIT_PATTERNS;
 
-	public APathEntry (int kind, IPath path, IPath basePath, IPath[] exclusionPatterns, boolean isExported) {
+	/**
+	 * 
+	 * @param kind
+	 * @param basePath
+	 * @param baseRef
+	 * @param path
+	 * @param exclusionPatterns
+	 * @param isExported
+	 */
+	public APathEntry (int kind, IPath basePath, IPath baseRef, IPath path, IPath[] exclusionPatterns, boolean isExported) {
 		super(kind, path, isExported);
-		this.basePath = basePath;
-		if (exclusionPatterns == null) {
-			this.exclusionPatterns = NO_EXCLUSION_PATTERNS;
-		} else {
-			this.exclusionPatterns = exclusionPatterns;
-		}
+		this.basePath = (basePath == null) ? EMPTY_PATH : basePath;
+		this.baseRef = (baseRef == null) ? EMPTY_PATH : baseRef;
+		this.exclusionPatterns = (exclusionPatterns == null) ? NO_EXCLUSION_PATTERNS : exclusionPatterns;
 	}
 
 	/**
@@ -46,6 +55,14 @@ public abstract class APathEntry extends PathEntry {
 	 */
 	public IPath getBasePath() {
 		return basePath;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public IPath getBaseReference() {
+		return baseRef;
 	}
 
 	/**

@@ -66,11 +66,12 @@ public class CSession implements ICDISession, ICDISessionObject {
 		sourceManager = new SourceManager(this);
 		ctarget = new CTarget(this);
 	}
-	MISession getMISession() {
+
+	public MISession getMISession() {
 		return session;
 	}
 
-	CTarget getCTarget() {
+	public CTarget getCTarget() {
 		return ctarget;
 	}
 

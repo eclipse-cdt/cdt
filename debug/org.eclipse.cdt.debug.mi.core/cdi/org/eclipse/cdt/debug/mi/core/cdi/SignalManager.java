@@ -127,15 +127,15 @@ public class SignalManager extends Manager implements ICDISignalManager {
 		StringBuffer buffer = new StringBuffer(sig.getName());
 		buffer.append(" "); //$NON-NLS-1$
 		if (isIgnore) {
-			buffer.append(CdiResources.getString("cdi.SignalManager.ignore")); //$NON-NLS-1$
+			buffer.append("ignore"); //$NON-NLS-1$
 		} else {
-			buffer.append(CdiResources.getString("cdi.SignalManager.noignore")); //$NON-NLS-1$
+			buffer.append("noignore"); //$NON-NLS-1$
 		}
 		buffer.append(" "); //$NON-NLS-1$
 		if (isStop) {
-			buffer.append(CdiResources.getString("cdi.SignalManager.stop")); //$NON-NLS-1$
+			buffer.append("stop"); //$NON-NLS-1$
 		} else  {
-			buffer.append(CdiResources.getString("cdi.SignalManager.nostop")); //$NON-NLS-1$
+			buffer.append("nostop"); //$NON-NLS-1$
 		}
 		MIHandle handle = factory.createMIHandle(buffer.toString());
 		try {

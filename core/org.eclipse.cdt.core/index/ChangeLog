@@ -1,3 +1,8 @@
+2005-03-18 Alain Magloire
+	Move more code in the try/finally as a precaution.  Bad things
+	where happening (i.e. NPE) but the monitor was not decremented
+	* index/org/eclipse/cdt/internal/core/indexing/IndexManager.java
+
 2005-03-15 Bogdan Gheorghe
 	Added a check for closed projects to update code
 	

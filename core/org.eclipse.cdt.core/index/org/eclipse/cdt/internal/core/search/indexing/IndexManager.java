@@ -415,31 +415,32 @@ public class IndexManager extends JobManager{
 		//this point
 		ICDTIndexer indexer = null;
 		indexer = (ICDTIndexer) indexerMap.get(project);
-		
-		if (indexer == null){
-			String indexerID = null;
-			try {
-				//Indexer has not been created yet for this session
-				//Check to see if the indexer has been set in a session property 
-				indexerID = (String) project.getSessionProperty(indexerIDKey);
-			} catch (CoreException e) {}
-			
-			//Project was either closed at startup or imported
-			if (indexerID == null &&
-				project.isAccessible()){
-			   	try {
-					indexer=initializeIndexer(project);
-				} catch (CoreException e1) {}
+		try {
+			if (indexer == null){
+				String indexerID = null;
+				try {
+					//Indexer has not been created yet for this session
+					//Check to see if the indexer has been set in a session property 
+					indexerID = (String) project.getSessionProperty(indexerIDKey);
+				} catch (CoreException e) {}
+				
+				//Project was either closed at startup or imported
+				if (indexerID == null &&
+						project.isAccessible()){
+					try {
+						indexer=initializeIndexer(project);
+					} catch (CoreException e1) {}
+				}
+				else{
+					//Create the indexer and store it
+					indexer = getIndexer(indexerID);
+				}
+				
+				//Make sure we're not putting null in map
+				if (indexer != null)
+					indexerMap.put(project,indexer);
 			}
-			else{
-				//Create the indexer and store it
-				indexer = getIndexer(indexerID);
-			}
-			
-			//Make sure we're not putting null in map
-			if (indexer != null)
-				indexerMap.put(project,indexer);
-			
+		} finally {	
 			monitor.exitRead();
 		}
 		

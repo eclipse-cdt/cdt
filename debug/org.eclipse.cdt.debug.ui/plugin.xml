@@ -148,7 +148,7 @@
                enablesFor="1"
                icon="icons/full/elcl16/jump_co.gif"
                helpContextId="jump_to_line_action_context"
-               label="%JumpToLineAction.label"
+               label="%GlobalJumpToLineAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup">
             <enablement>
                <pluginState
@@ -165,7 +165,7 @@
                enablesFor="1"
                icon="icons/full/elcl16/runtoline_co.gif"
                helpContextId="run_to_line_action_context"
-               label="%RunToLineAction.label"
+               label="%GlobalRunToLineAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup">
             <enablement>
                <pluginState
@@ -192,7 +192,7 @@
             </enablement>
          </action>
          <action
-               label="%ManageBreakpointAction.label"
+               label="%GlobalManageBreakpointAction.label"
                icon="icons/full/obj16/brkp_obj.gif"
                helpContextId="manage_breakpoint_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointActionDelegate"
@@ -221,7 +221,7 @@
             </enablement>
          </action>
          <action
-               label="%ManageWatchpointAction.label"
+               label="%GlobalManageWatchpointAction.label"
                icon="icons/full/obj16/readwrite_obj.gif"
                helpContextId="manage_watchpoint_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointActionDelegate"
@@ -236,7 +236,7 @@
             </enablement>
          </action>
          <action
-               label="%AddExpressionAction.label"
+               label="%GlobalAddExpressionAction.label"
                icon="icons/full/obj16/expression_obj.gif"
                helpContextId="add_expression_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"

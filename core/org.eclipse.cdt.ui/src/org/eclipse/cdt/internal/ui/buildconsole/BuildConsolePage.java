@@ -1,13 +1,11 @@
-/**********************************************************************
- * Copyright (c) 2002,2003,2004 QNX Software Systems and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+/*******************************************************************************
+ * Copyright (c) 2002,2003,2004 QNX Software Systems and others. All rights
+ * reserved. This program and the accompanying materials are made available
+ * under the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.util.ArrayList;
@@ -180,7 +178,7 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	 * Fill the context menu
 	 * 
 	 * @param menu
-	 *            menu
+	 *        menu
 	 */
 	protected void contextMenuAboutToShow(IMenuManager menu) {
 		menu.add((IAction) fGlobalActions.get(ActionFactory.COPY.getId()));
@@ -191,6 +189,7 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -199,24 +198,23 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	public void propertyChange(PropertyChangeEvent event) {
 		final Object source = event.getSource();
 		final String property = event.getProperty();
-		Display display = getControl().getDisplay();
-		display.asyncExec(new Runnable() {
-			/* (non-Javadoc)
-			 * @see java.lang.Runnable#run()
-			 */
-			public void run() {
-				if (BuildConsole.P_STREAM_COLOR.equals(property) && source instanceof BuildConsoleStream) {
-					BuildConsoleStream stream = (BuildConsoleStream) source;
-					if (stream.getConsole().equals(getConsole())) {
+
+		if (BuildConsole.P_STREAM_COLOR.equals(property) && source instanceof BuildConsoleStream) {
+			BuildConsoleStream stream = (BuildConsoleStream) source;
+			if (stream.getConsole().equals(getConsole()) && getControl() != null) {
+				Display display = getControl().getDisplay();
+				display.asyncExec(new Runnable() {
+
+					public void run() {
 						getViewer().getTextWidget().redraw();
 					}
-				} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT)) {
-					setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
-				} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH)) {
-					setTabs(CUIPlugin.getDefault().getPluginPreferences().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
-				}
+				});
+			} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT)) {
+				setFont(JFaceResources.getFont(BuildConsolePreferencePage.PREF_BUILDCONSOLE_FONT));
+			} else if (property.equals(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH)) {
+				setTabs(CUIPlugin.getDefault().getPluginPreferences().getInt(BuildConsolePreferencePage.PREF_BUILDCONSOLE_TAB_WIDTH));
 			}
-		});
+		}
 
 	}
 
@@ -382,7 +380,7 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	 * Sets the font for this page.
 	 * 
 	 * @param font
-	 *            font
+	 *        font
 	 */
 	protected void setFont(Font font) {
 		getViewer().getTextWidget().setFont(font);
@@ -391,13 +389,13 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	/**
 	 * Sets the tab width for this page.
 	 * 
-	 * @param int 
-	 *            tab width
+	 * @param int
+	 *        tab width
 	 */
 	protected void setTabs(int tabs) {
 		getViewer().getTextWidget().setTabs(tabs);
 	}
-	
+
 	/**
 	 * Refreshes this page
 	 */

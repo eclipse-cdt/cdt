@@ -64,7 +64,7 @@ public class MakeProjectNature implements IProjectNature {
 			newCommands[0] = newCommand;
 		} else {
 			for (int i = 0, max = oldCommands.length; i < max; i++) {
-				if (oldCommands[i] == oldCommand) {
+				if (oldCommands[i].getBuilderName().equals(oldCommand.getBuilderName())) {
 					oldCommands[i] = newCommand;
 					break;
 				}

@@ -7,36 +7,34 @@ package org.eclipse.cdt.internal.ui.editor;
  
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.IColorManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -61,12 +59,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
@@ -95,25 +90,12 @@ import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
-import org.eclipse.ui.texteditor.IStatusField;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.ui.views.tasklist.TaskList;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.internal.ui.CPlugin;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.IColorManager;
-import org.eclipse.cdt.ui.ICDTConstants;
-import org.eclipse.cdt.ui.ICEditorContextMenuAction;
-import org.eclipse.cdt.ui.ICEditorRulerAction;
 /**
  * C specific text editor.
  */
@@ -123,10 +105,6 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	/** The outline page */
 	protected CContentOutlinePage fOutlinePage;
 	
-	private ICEditorContextMenuAction[] fEditorActions;
-//	private HashMap fEditorActionPaths = new HashMap( 5 );
-	private ICEditorRulerAction[] fRulerActions;
-	private IAction fRulerSingleclickAction;
 	private SearchForReferencesAction fSearchForReferencesAction;
 	
 	/** Status bar fields -- @@@ gone with Eclipse 2.0 */
@@ -218,7 +196,6 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		//setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 		
 		fCEditorErrorTickUpdater= new CEditorErrorTickUpdater(this);
-
 	}
 	
 	/**
@@ -648,11 +625,6 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	protected void createActions() 
 	{
 		super.createActions();
-
-		fEditorActions = getContextMenuActions();
-		
-		for ( int i = 0; i < fEditorActions.length; ++i )
-			setAction( fEditorActions[i].getId(), fEditorActions[i] );
 			
 		// Default text editing menu items
 		setAction("Comment", new TextOperationAction(CEditorMessages.getResourceBundle(), "Comment.", this, ITextOperationTarget.PREFIX)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -662,39 +634,8 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		
 		setAction("AddIncludeOnSelection", new AddIncludeOnSelectionAction(this));		 //$NON-NLS-1$
 		setAction("OpenOnSelection", new OpenOnSelectionAction(this));
-		//setAction("OrganizeImports", new OrganizeImportsAction(this)); //$NON-NLS-1$
 		
-
 		fSearchForReferencesAction= new SearchForReferencesAction(getSelectionProvider());
-
-		fRulerSingleclickAction = new CRulerSingleclickAction( getVerticalRuler(), this, getSourceViewer());
-		
-		fRulerActions = getRulerActions();
-		
-		for ( int i = 0; i < fRulerActions.length; ++i ) 
-		{
-			setAction( fRulerActions[i].getId(), fRulerActions[i] );
-			
-			/* To make it configurable, we could do
-			if(fRulerActions[i].isDefaultDoubleClick()) {
-				setAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK, fRulerActions[i]);
-			}
-			*/
-		}
-		
-		/*
-		 * Create the action for the single-click in the ruler
-		 */
-		setAction( fRulerSingleclickAction.getId(), fRulerSingleclickAction );
-		
-		/*
-		 * Instead, take action 0 as the double-click default
-		 */
-
-		if ( fRulerActions.length > 0 ) 
-		{
-			setAction( ITextEditorActionConstants.RULER_DOUBLE_CLICK, fRulerActions[0] );
-		}
 	}
 
 	public void editorContextMenuAboutToShow( IMenuManager menu ) 
@@ -704,18 +645,7 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_REORGANIZE);
 		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_GENERATE);
 		addGroup(menu, ITextEditorActionConstants.GROUP_EDIT, IContextMenuConstants.GROUP_NEW);
-		
-		for ( int i = 0; i < fEditorActions.length; ++i )
-		{
-			if ( fEditorActions[i].isEnabled() )
-			{
-				String menuPath = fEditorActions[i].getMenuPath();
-				addAction( menu, 
-						   ( menuPath != null ) ? menuPath : ITextEditorActionConstants.GROUP_REST, 
-						   fEditorActions[i].getId() );
-			}
-		}
-		
+
 		// Code formatting menu items -- only show in C perspective
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Comment"); //$NON-NLS-1$
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, "Uncomment"); //$NON-NLS-1$
@@ -732,27 +662,6 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "AddIncludeOnSelection"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "OpenOnSelection"); //$NON-NLS-1$
 	}
-
-
-	/*
-	 * Add our items to the ruler menu. Since most people care about breakpoints
-	 * and not about tasks, we add our items before the default task ones.
-	 */
-	protected void rulerContextMenuAboutToShow( IMenuManager menu ) 
-	{
-
-		for ( int i = 0; i < fRulerActions.length; ++i )
-		{
-			if ( fRulerActions[i].isEnabled() )
-				addAction( menu, fRulerActions[i].getId() );
-		}
-
-		/* Give us a nice separator */
-		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
-		
-		super.rulerContextMenuAboutToShow( menu );
-	}
-
 
 	/**
 	 * Internal interface for a cursor listener. I.e. aggregation 
@@ -773,24 +682,6 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		fPaintManager= new PaintManager(getSourceViewer());
-		Control ruler;
-		ruler = getVerticalRuler().getControl();
-		MouseListener mListener = new MouseListener() {
-				public void mouseDown(MouseEvent e) {
-					if(e.button == 1) {
-						 IAction action= getAction(fRulerSingleclickAction.getId());
-						if (action != null) {
-							action.run();
-						}
-					}
-				}
-				
-				public void mouseUp(MouseEvent e) {}
-				
-				public void mouseDoubleClick(MouseEvent e) {}
-		};
-		ruler.addMouseListener(mListener);
-		
 		ISelectionChangedListener sListener = new ISelectionChangedListener() {
 				private Runnable fRunnable= new Runnable() {
 					public void run() {
@@ -1537,86 +1428,6 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 		return affects ? affects : super.affectsTextPresentation(event);
 	}
 
-	private ICEditorContextMenuAction[] getContextMenuActions()
-	{
-		LinkedList menuActions = new LinkedList();
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IExtensionPoint point = pluginRegistry.getExtensionPoint( CPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
-																  ICDTConstants.EP_EDITOR_ACTIONS );
-		if ( point != null ) 
-		{
-			IExtension[] extensions = point.getExtensions();
-			for ( int i = 0; i < extensions.length; i++ ) 
-			{
-				IExtension currentExtension = extensions[i];
-				IConfigurationElement[] configElements = currentExtension.getConfigurationElements();
-				for ( int j = 0; j < configElements.length; j++ ) 
-				{
-					IConfigurationElement element = configElements[j];
-					if ( element.getName().equals( ICDTConstants.TAG_ACTION ) ) 
-					{
-						ICEditorContextMenuAction action = null;
-						try 
-						{
-							action = (ICEditorContextMenuAction)element.createExecutableExtension( ICDTConstants.ATT_CLASS );
-						} 
-						catch( CoreException e ) 
-						{
-							CPlugin.getDefault().getLog().log( e.getStatus() );
-//							ErrorDialog.openError( CPlugin.getDefault().getActiveWorkbenchShell(), null, null, e.getStatus() );
-						}
-						if ( action != null )
-						{
-							action.init( this );
-							menuActions.add( action );
-						}
-					}
-				}
-			}
-		}
-		return (ICEditorContextMenuAction[])menuActions.toArray( new ICEditorContextMenuAction[0] );
-	}
-
-	private ICEditorRulerAction[] getRulerActions()
-	{
-		LinkedList rulerActions = new LinkedList();
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IExtensionPoint point = pluginRegistry.getExtensionPoint( CPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
-																  ICDTConstants.EP_EDITOR_RULER_ACTIONS );
-		if ( point != null ) 
-		{
-			IExtension[] extensions = point.getExtensions();
-			for ( int i = 0; i < extensions.length; i++ ) 
-			{
-				IExtension currentExtension = extensions[i];
-				IConfigurationElement[] configElements = currentExtension.getConfigurationElements();
-				for ( int j = 0; j < configElements.length; j++ ) 
-				{
-					IConfigurationElement element = configElements[j];
-					if ( element.getName().equals( ICDTConstants.TAG_ACTION ) ) 
-					{
-						ICEditorRulerAction action = null;
-						try 
-						{
-							action = (ICEditorRulerAction)element.createExecutableExtension( ICDTConstants.ATT_CLASS );
-						} 
-						catch( CoreException e ) 
-						{
-							CPlugin.getDefault().getLog().log( e.getStatus() );
-//							ErrorDialog.openError( CPlugin.getDefault().getActiveWorkbenchShell(), null, null, e.getStatus() );
-						}
-						if ( action != null )
-						{
-							action.init( getVerticalRuler(), this );
-							rulerActions.add( action );
-						}
-					}
-				}
-			}
-		}
-		return (ICEditorRulerAction[])rulerActions.toArray( new ICEditorRulerAction[0] );
-	}
-	
 	/**
 	 * Creates a new line number ruler column that is appropriately initialized.
 	 */

@@ -9,12 +9,9 @@ public interface ICDTConstants
 {
 	// CDT Extension Points
 	public static final String EP_TEXT_HOVERS = "textHovers";
-	public static final String EP_EDITOR_ACTIONS = "editorActions";
-	public static final String EP_EDITOR_RULER_ACTIONS = "editorRulerActions";
 
 	// Persistance tags.
 	public static final String TAG_TEXT_HOVER = "textHover";
-	public static final String TAG_ACTION = "action";
 
 	// Atributes
 	public static final String ATT_CLASS = "class";

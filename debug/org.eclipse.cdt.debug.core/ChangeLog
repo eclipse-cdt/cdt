@@ -1,3 +1,7 @@
+2004-04-15 Mikhail Khodjaiants
+	Additional fix for bug 58711: Breakpoint race condition.
+	* CBreakpointManager.java
+
 2004-04-21 Mikhail Khodjaiants
 	Disassembly should provide an adapter for IExecFialeInfo.
 	* Disassembly.java

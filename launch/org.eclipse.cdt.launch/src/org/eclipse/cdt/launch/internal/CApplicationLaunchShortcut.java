@@ -15,6 +15,7 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -111,9 +112,10 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 			ICDebugConfiguration debugConfig = null;
 			ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
 			List debugList = new ArrayList(debugConfigs.length);
+			String os = BootLoader.getOS();
 			for (int i = 0; i < debugConfigs.length; i++) {
 				String platform = debugConfigs[i].getPlatform();
-				if (platform == null || platform.equals("native")) {
+				if (platform == null || platform.equals("native") || platform.equals(os)) {
 					debugList.add(debugConfigs[i]);
 				}
 			}

@@ -9,6 +9,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.sourcelookup.SourceLookupBlock;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
+import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -77,7 +78,7 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 	 */
 	public String getName()
 	{
-		return "Source";
+		return LaunchUIPlugin.getResourceString("CSourceLookupTab.Source"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -93,7 +94,7 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 		IProject project = null;
 		try
 		{
-			String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "" );
+			String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "" ); //$NON-NLS-1$
 			if ( !isEmpty( projectName ) )
 				project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
 		}

@@ -46,7 +46,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 		}
 		catch (CoreException e) {
 		}
-		if (projectName != null && !projectName.equals("")) {
+		if (projectName != null && !projectName.equals("")) { //$NON-NLS-1$
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 			ICProject cProject = CCorePlugin.getDefault().getCoreModel().create(project);
 			if (cProject != null && cProject.exists()) {
@@ -73,12 +73,12 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 			obj = ce;
 		}
 		if (obj instanceof ICElement) {
-			if (platform != null && !platform.equals("*")) {
+			if (platform != null && !platform.equals("*")) { //$NON-NLS-1$
 				ICDescriptor descriptor;
 				try {
 					descriptor = CCorePlugin.getDefault().getCProjectDescription(((ICElement) obj).getCProject().getProject());
 					String projectPlatform = descriptor.getPlatform();
-					if (!projectPlatform.equals(platform) && !projectPlatform.equals("*")) {
+					if (!projectPlatform.equals(platform) && !projectPlatform.equals("*")) { //$NON-NLS-1$
 						obj = null;
 					}
 				}
@@ -86,7 +86,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 				}
 			}
 			if (obj != null) {
-				if (programName == null || programName.equals("")) {
+				if (programName == null || programName.equals("")) { //$NON-NLS-1$
 					return (ICElement) obj;
 				}
 				ICElement ce = (ICElement) obj;

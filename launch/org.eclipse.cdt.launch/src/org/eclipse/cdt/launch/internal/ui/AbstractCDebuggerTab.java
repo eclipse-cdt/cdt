@@ -193,7 +193,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 		setErrorMessage(null);
 		setMessage(null);
 		if (getDebugConfig() == null) {
-			setErrorMessage("No debugger available");
+			setErrorMessage(LaunchUIPlugin.getResourceString("AbstractCDebuggerTab.No_debugger_available")); //$NON-NLS-1$
 			return false;
 		}
 
@@ -217,7 +217,7 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	}
 
 	public String getName() {
-		return "Debugger";
+		return LaunchUIPlugin.getResourceString("AbstractCDebuggerTab.Debugger"); //$NON-NLS-1$
 	}
 
 }

@@ -118,7 +118,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilte
 			String os = BootLoader.getOS();
 			for (int i = 0; i < debugConfigs.length; i++) {
 				String platform = debugConfigs[i].getPlatform();
-				if (platform == null || platform.equals("native") || platform.equals(os)) {
+				if (platform == null || platform.equals(ICDebugConfiguration.PLATFORM_NATIVE) || platform.equals(os)) {
 					debugList.add(debugConfigs[i]);
 				}
 			}
@@ -203,7 +203,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilte
 			 */
 			public String getText(Object element) {
 				if (element == null) {
-					return "";
+					return ""; //$NON-NLS-1$
 				} else if (element instanceof ICDebugConfiguration) {
 					return ((ICDebugConfiguration) element).getName();
 				}
@@ -304,8 +304,8 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilte
 		dialog.setElements(binList.toArray());
 		dialog.setTitle(getBinarySelectionDialogTitleString(binList, mode)); //$NON-NLS-1$
 		dialog.setMessage(getBinarySelectionDialogMessageString(binList, mode)); //$NON-NLS-1$
-		dialog.setUpperListLabel("Binaries:");
-		dialog.setLowerListLabel("Qualifier:");
+		dialog.setUpperListLabel(LaunchUIPlugin.getResourceString("Launch.common.BinariesColon")); //$NON-NLS-1$
+		dialog.setLowerListLabel(LaunchUIPlugin.getResourceString("Launch.common.QualifierColon")); //$NON-NLS-1$
 		dialog.setMultipleSelection(false);
 		if (dialog.open() == ElementListSelectionDialog.OK) {
 			return (IBinary) dialog.getFirstResult();
@@ -376,12 +376,12 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilte
 				} catch (InterruptedException e) {
 					return;
 				} catch (InvocationTargetException e) {
-					MessageDialog.openError(getShell(), "Application Launcher", e.getMessage());
+					MessageDialog.openError(getShell(), LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.Application_Launcher"), e.getMessage()); //$NON-NLS-1$
 					return;
 				}
 				int count = results.size();
 				if (count == 0) {
-					MessageDialog.openError(getShell(), "Application Launcher", "Launch failed no binaries");
+					MessageDialog.openError(getShell(), LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.Application_Launcher"), LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.Launch_failed_no_binaries")); //$NON-NLS-1$ //$NON-NLS-2$
 				} else if (count > 1) {
 					bin = chooseBinary(results, mode);
 				} else {
@@ -392,7 +392,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilte
 				launch(bin, mode);
 			}
 		} else {
-			MessageDialog.openError(getShell(), "Application Launcher", "Launch failed no project selected");
+			MessageDialog.openError(getShell(), LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.Application_Launcher"), LaunchUIPlugin.getResourceString("CApplicationLaunchShortcut.Launch_failed_no_project_selected")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

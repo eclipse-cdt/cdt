@@ -60,7 +60,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			monitor = new NullProgressMonitor();
 		}
 
-		monitor.beginTask("Launching Local C Application", IProgressMonitor.UNKNOWN);
+		monitor.beginTask(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Launching_Local_C_Application"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
@@ -99,7 +99,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
 					debugger =  dsession.getSessionProcess();
 					if ( debugger != null ) {
-						debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console");
+						debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console"); //$NON-NLS-1$
 						launch.removeProcess(debuggerProcess);
 					}
 					boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
@@ -117,12 +117,12 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 				} else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
 					int pid = getProcessID();
 					if (pid == -1) {
-						cancel("No Process ID selected", ICDTLaunchConfigurationConstants.ERR_NO_PROCESSID);
+						cancel(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.No_Process_ID_selected"), ICDTLaunchConfigurationConstants.ERR_NO_PROCESSID); //$NON-NLS-1$
 					}
 					dsession = debugConfig.getDebugger().createAttachSession(config, exeFile, pid);
 					debugger = dsession.getSessionProcess();
 					if ( debugger != null ) {
-						debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console");
+						debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console"); //$NON-NLS-1$
 						launch.removeProcess(debuggerProcess);
 					}
 					CDebugModel.newAttachDebugTarget(
@@ -133,12 +133,12 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						exeFile);
 				}
 			} catch (CDIException e) {
-				abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+				abort(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Failed_Launching_CDI_Debugger"), e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 			}
 		} else {
 			File wd = getWorkingDirectory(config);
 			if (wd == null) {
-				wd = new File(System.getProperty("user.home", ".")); //NON-NLS-1;
+				wd = new File(System.getProperty("user.home", ".")); //NON-NLS-1;  //$NON-NLS-1$//$NON-NLS-2$
 			}
 			Process process = exec(commandArray, getEnvironmentProperty(config), wd);
 			DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
@@ -152,7 +152,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		final Shell shell = LaunchUIPlugin.getShell();
 		final int pid[] = { -1 };
 		if (shell == null) {
-			abort("No Shell availible in Launch", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			abort(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.No_Shell_available_in_Launch"), null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		}
 		Display display = shell.getDisplay();
 		display.syncExec(new Runnable() {
@@ -164,7 +164,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					public String getText(Object element) {
 						IProcessInfo info = (IProcessInfo)element;
 						IPath path = new Path(info.getName());
-						return path.lastSegment() + " - " + info.getPid();
+						return path.lastSegment() + " - " + info.getPid(); //$NON-NLS-1$
 					}
 					/* (non-Javadoc)
 					 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
@@ -186,11 +186,11 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					}
 				};
 				TwoPaneElementSelector dialog = new TwoPaneElementSelector(shell, provider, qprovider);
-				dialog.setTitle("Select Process");
-				dialog.setMessage("Select a Process to attach debugger to:");
+				dialog.setTitle(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Select_Process")); //$NON-NLS-1$
+				dialog.setMessage(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Select_Process_to_attach_debugger_to")); //$NON-NLS-1$
 				IProcessList plist = CCorePlugin.getDefault().getProcessList();
 				if (plist == null) {
-					MessageDialog.openError(shell, "CDT Launch Error", "Current platform does not support listing processes");
+					MessageDialog.openError(shell, LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.CDT_Launch_Error"), LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Platform_cannot_list_processes")); //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 				}
 				dialog.setElements(plist.getProcessList());
@@ -229,7 +229,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		if (names != null) {
 			while (names.hasMoreElements()) {
 				String key = (String) names.nextElement();
-				envList.add(key + "=" + props.getProperty(key));
+				envList.add(key + "=" + props.getProperty(key)); //$NON-NLS-1$
 			}
 			envp = (String[]) envList.toArray(new String[envList.size()]);
 		}
@@ -244,7 +244,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			if (p != null) {
 				p.destroy();
 			}
-			abort("Error starting process", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			abort(LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Error_starting_process"), e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		} catch (NoSuchMethodError e) {
 			//attempting launches on 1.2.* - no ability to set working directory
 
@@ -253,7 +253,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					IStatus.ERROR,
 					LaunchUIPlugin.getUniqueIdentifier(),
 					ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_NOT_SUPPORTED,
-					"Eclipse runtime does not support working directory",
+					LaunchUIPlugin.getResourceString("LocalCLaunchConfigurationDelegate.Does_not_support_working_dir"), //$NON-NLS-1$
 					e);
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 

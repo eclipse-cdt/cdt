@@ -12,6 +12,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
+import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -40,7 +41,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		GridLayout topLayout = new GridLayout(2, false);
 		comp.setLayout(topLayout);
 		Label dlabel = new Label(comp, SWT.NONE);
-		dlabel.setText("Debugger:");
+		dlabel.setText(LaunchUIPlugin.getResourceString("Launch.common.DebuggerColon")); //$NON-NLS-1$
 		fDCombo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fDCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -48,7 +49,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 			}
 		});
 		Group debuggerGroup = new Group(comp, SWT.SHADOW_ETCHED_IN);
-		debuggerGroup.setText("Debugger Options");
+		debuggerGroup.setText(LaunchUIPlugin.getResourceString("CorefileDebuggerTab.Debugger_Options")); //$NON-NLS-1$
 		setDynamicTabHolder(debuggerGroup);
 		GridLayout tabHolderLayout = new GridLayout();
 		tabHolderLayout.marginHeight = 0;
@@ -68,8 +69,8 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		ICDebugConfiguration[] debugConfigs;
 		String configPlatform = getPlatform(config);
 		ICElement ce = getContext(config, null);
-		String projectPlatform = "*";
-		String projectCPU = "*";
+		String projectPlatform = "*"; //$NON-NLS-1$
+		String projectCPU = "*"; //$NON-NLS-1$
 		if (ce != null) {
 			try {
 				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
@@ -87,7 +88,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 			if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
 				String debuggerPlatform = debugConfigs[i].getPlatform();
 				boolean platformMatch = configPlatform.equals(projectPlatform);
-				if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (platformMatch && projectPlatform.equals("*"))) {
+				if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (platformMatch && projectPlatform.equals("*"))) { //$NON-NLS-1$
 					if (debugConfigs[i].supportsCPU(projectCPU)) {
 						fDCombo.add(debugConfigs[i].getName());
 						fDCombo.setData(Integer.toString(x), debugConfigs[i]);
@@ -102,7 +103,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 			}
 		}
 		// if no selection meaning nothing in config the force initdefault on tab
-		setInitializeDefault(selection.equals("") ? true : false);
+		setInitializeDefault(selection.equals("") ? true : false); //$NON-NLS-1$
 
 		fDCombo.select(selndx == -1 ? 0 : selndx);
 		//The behaviour is undefined for if the callbacks should be triggered for this,
@@ -115,7 +116,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 	public void initializeFrom(ILaunchConfiguration config) {
 		super.initializeFrom(config);
 		try {
-			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, "");
+			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
 			if (getDebugConfig() == null || !getDebugConfig().getID().equals(id)) {
 				loadDebuggerComboBox(config, id);
 			}
@@ -133,7 +134,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 
 	public boolean isValid(ILaunchConfiguration config) {
 		if (!validateDebuggerConfig(config)) {
-			setErrorMessage("No debugger available");
+			setErrorMessage(LaunchUIPlugin.getResourceString("CorefileDebuggerTab.No_debugger_available")); //$NON-NLS-1$
 			return false;
 		}
 		return super.isValid(config);
@@ -142,8 +143,8 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 	private boolean validateDebuggerConfig(ILaunchConfiguration config) {
 		String platform = getPlatform(config);
 		ICElement ce = getContext(config, null);
-		String projectPlatform = "*";
-		String projectCPU = "*";
+		String projectPlatform = "*"; //$NON-NLS-1$
+		String projectCPU = "*"; //$NON-NLS-1$
 		if (ce != null) {
 			try {
 				ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(ce.getCProject().getProject());
@@ -159,7 +160,7 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		}
 		String debuggerPlatform = debugConfig.getPlatform();
 		boolean platformMatch = platform.equals(projectPlatform);
-		if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (platformMatch && projectPlatform.equals("*"))) {
+		if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (platformMatch && projectPlatform.equals("*"))) { //$NON-NLS-1$
 			if (debugConfig.supportsCPU(projectCPU)) {
 				return true;
 			}

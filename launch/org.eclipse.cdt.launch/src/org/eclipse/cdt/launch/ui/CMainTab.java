@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
@@ -107,7 +108,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		projComp.setLayoutData(gd);
 
 		fProjLabel = new Label(projComp, SWT.NONE);
-		fProjLabel.setText("&Project:");
+		fProjLabel.setText(LaunchUIPlugin.getResourceString("CMainTab.&ProjectColon")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		fProjLabel.setLayoutData(gd);
@@ -121,7 +122,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			}
 		});
 
-		fProjButton = createPushButton(projComp, "&Browse...", null);
+		fProjButton = createPushButton(projComp, LaunchUIPlugin.getResourceString("Launch.common.B&rowse..."), null); //$NON-NLS-1$
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleProjectButtonSelected();
@@ -140,7 +141,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		mainComp.setLayoutData(gd);
 		fProgLabel = new Label(mainComp, SWT.NONE);
-		fProgLabel.setText("C/C++ Application:");
+		fProgLabel.setText(LaunchUIPlugin.getResourceString("CMainTab.C/C++_Application")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
 		fProgLabel.setLayoutData(gd);
@@ -153,7 +154,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			}
 		});
 
-		fSearchButton = createPushButton(mainComp, "Searc&h...", null);
+		fSearchButton = createPushButton(mainComp, LaunchUIPlugin.getResourceString("CMainTab.Search..."), null); //$NON-NLS-1$
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleSearchButtonSelected();
@@ -162,7 +163,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		});
 
 		Button fBrowseForBinaryButton;
-		fBrowseForBinaryButton = createPushButton(mainComp, "B&rowse...", null);
+		fBrowseForBinaryButton = createPushButton(mainComp, LaunchUIPlugin.getResourceString("Launch.common.B&rowse..."), null); //$NON-NLS-1$
 		fBrowseForBinaryButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleBinaryBrowseButtonSelected();
@@ -219,8 +220,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 		if (getCProject() == null) {
 			MessageDialog.openInformation(
 				getShell(),
-				"Project required",
-				"Project must first be entered before searching for a program");
+				LaunchUIPlugin.getResourceString("CMainTab.Project_required"), //$NON-NLS-1$
+				LaunchUIPlugin.getResourceString("CMainTab.Enter_project_before_searching_for_program")); //$NON-NLS-1$
 			return;
 		}
 
@@ -261,8 +262,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 				if (element instanceof IBinary) {
 					IBinary bin = (IBinary)element;
 					StringBuffer name = new StringBuffer();
-					name.append(bin.getCPU() + (bin.isLittleEndian() ? "le" : "be"));
-					name.append(" - ");
+					name.append(bin.getCPU() + (bin.isLittleEndian() ? "le" : "be")); //$NON-NLS-1$ //$NON-NLS-2$
+					name.append(" - "); //$NON-NLS-1$
 					name.append(bin.getPath().toString());
 					return name.toString();
 				}
@@ -272,10 +273,10 @@ public class CMainTab extends CLaunchConfigurationTab {
 		
 		TwoPaneElementSelector dialog = new TwoPaneElementSelector(getShell(), programLabelProvider, qualifierLabelProvider);
 		dialog.setElements(getBinaryFiles(getCProject()));
-		dialog.setMessage("Choose a &program to run:");
-		dialog.setTitle("Program Selection");
-		dialog.setUpperListLabel("Binaries:");
-		dialog.setLowerListLabel("Qualifier:");
+		dialog.setMessage(LaunchUIPlugin.getResourceString("CMainTab.Choose_program_to_run")); //$NON-NLS-1$
+		dialog.setTitle(LaunchUIPlugin.getResourceString("CMainTab.Program_Selection")); //$NON-NLS-1$
+		dialog.setUpperListLabel(LaunchUIPlugin.getResourceString("Launch.common.BinariesColon")); //$NON-NLS-1$
+		dialog.setLowerListLabel(LaunchUIPlugin.getResourceString("Launch.common.QualifierColon")); //$NON-NLS-1$
 		dialog.setMultipleSelection(false);
 		//dialog.set
 		if (dialog.open() == ElementListSelectionDialog.OK) {
@@ -296,8 +297,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 		if(cproject == null) {
 			MessageDialog.openInformation(
 				getShell(),
-				"Project required",
-				"Project must first be entered before browsing for a program");
+				LaunchUIPlugin.getResourceString("CMainTab.Project_required"), //$NON-NLS-1$
+				LaunchUIPlugin.getResourceString("CMainTab.Enter_project_before_browsing_for_program")); //$NON-NLS-1$
 			return;
 		}
 
@@ -305,26 +306,26 @@ public class CMainTab extends CLaunchConfigurationTab {
 		WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
 		WorkbenchContentProvider contentProvider = new WorkbenchContentProvider();
 		dialog = new ElementTreeSelectionDialog(getShell(), labelProvider, contentProvider);
-		dialog.setTitle("Program selection");
-		dialog.setMessage("Choose a program to run from " + cproject.getResource().getName() + ":");
+		dialog.setTitle(LaunchUIPlugin.getResourceString("CMainTab.Program_selection")); //$NON-NLS-1$
+		dialog.setMessage(LaunchUIPlugin.getFormattedResourceString("CMainTab.Choose_program_to_run_from_NAME", cproject.getResource().getName())); //$NON-NLS-1$
 		dialog.setBlockOnOpen(true);
 		dialog.setAllowMultiple(false);
 		dialog.setInput(cproject.getResource());
 		dialog.setValidator(new ISelectionStatusValidator() {
 			public IStatus validate(Object [] selection) {
 				if(selection.length == 0 || !(selection[0] instanceof IFile)) {
-					return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, "Selection must be a file", null);
+					return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_file"), null); //$NON-NLS-1$
 				} else {
 					try {
 						ICElement celement = cproject.findElement(((IFile)selection[0]).getProjectRelativePath());
 						if(celement == null ||
 						   (celement.getElementType() != ICElement.C_BINARY && celement.getElementType() != ICElement.C_ARCHIVE)) {
-							return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, "Selection must be a binary file", null);
+							return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
 					   }
 					
 						return new Status(IStatus.OK, LaunchUIPlugin.PLUGIN_ID, IStatus.OK, celement.getResource().getName(), null);
 					} catch(Exception ex) {
-						return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, "Selection must be a binary file", null);
+						return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
 					}
 				}
 			}
@@ -391,8 +392,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		ILabelProvider labelProvider = new CElementLabelProvider();
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setTitle("Project Selection");
-		dialog.setMessage("Choose a &project to constrain the search for a program");
+		dialog.setTitle(LaunchUIPlugin.getResourceString("CMainTab.Project_Selection")); //$NON-NLS-1$
+		dialog.setMessage(LaunchUIPlugin.getResourceString("CMainTab.Choose_project_to_constrain_search_for_program")); //$NON-NLS-1$
 		dialog.setElements(projects);
 
 		ICProject cProject = getCProject();
@@ -419,9 +420,9 @@ public class CMainTab extends CLaunchConfigurationTab {
 			try {
 				cdesciptor = CCorePlugin.getDefault().getCProjectDescription((IProject) cproject[i].getResource());
 				String projectPlatform = cdesciptor.getPlatform();
-				if (filterPlatform.equals("*")
-					|| projectPlatform.equals("*")
-					|| (isNative && cdesciptor.getPlatform().equalsIgnoreCase("native"))
+				if (filterPlatform.equals("*") //$NON-NLS-1$
+					|| projectPlatform.equals("*") //$NON-NLS-1$
+					|| (isNative && cdesciptor.getPlatform().equalsIgnoreCase(ICDebugConfiguration.PLATFORM_NATIVE))
 					|| filterPlatform.equalsIgnoreCase(cdesciptor.getPlatform()) == true) {
 					list.add(cproject[i]);
 				}
@@ -453,30 +454,30 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		String name = fProjText.getText().trim();
 		if (name.length() == 0) {
-			setErrorMessage("Project not specified");
+			setErrorMessage(LaunchUIPlugin.getResourceString("CMainTab.Project_not_specified")); //$NON-NLS-1$
 			return false;
 		}
 		if (!ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists()) {
-			setErrorMessage("Project does not exist");
+			setErrorMessage(LaunchUIPlugin.getResourceString("Launch.common.Project_does_not_exist")); //$NON-NLS-1$
 			return false;
 		}
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 
 		name = fProgText.getText().trim();
 		if (name.length() == 0) {
-			setErrorMessage("Program not specified");
+			setErrorMessage(LaunchUIPlugin.getResourceString("CMainTab.Program_not_specified")); //$NON-NLS-1$
 			return false;
 		}
-		if (name.equals(".") || name.equals("..")) {
-			setErrorMessage("Program does not exist");
+		if (name.equals(".") || name.equals("..")) { //$NON-NLS-1$ //$NON-NLS-2$
+			setErrorMessage(LaunchUIPlugin.getResourceString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 			return false;
 		}
 		if (!project.isOpen()) {
-			setErrorMessage("Project must be opened");
+			setErrorMessage(LaunchUIPlugin.getResourceString("CMainTab.Project_must_be_opened")); //$NON-NLS-1$
 			return false;
 		}
 		if (!project.getFile(name).exists()) {
-			setErrorMessage("Program does not exist");
+			setErrorMessage(LaunchUIPlugin.getResourceString("CMainTab.Program_does_not_exist")); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -533,7 +534,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Main";
+		return LaunchUIPlugin.getResourceString("CMainTab.Main"); //$NON-NLS-1$
 	}
 
 	/**

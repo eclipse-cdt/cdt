@@ -23,20 +23,20 @@ public class LaunchImages {
 	private static URL fgIconBaseURL;
 	static {
 		try {
-			fgIconBaseURL= new URL(LaunchUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" );
+			fgIconBaseURL= new URL(LaunchUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" ); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			//LaunchUIPlugin.getDefault().log(e);
 		}
 	}	
 
-	private static final String T_TABS = "tabs/";
-	private static final String T_OBJS = "obj16/";
+	private static final String T_TABS = "tabs/"; //$NON-NLS-1$
+	private static final String T_OBJS = "obj16/"; //$NON-NLS-1$
 
-	public static String IMG_VIEW_MAIN_TAB = NAME_PREFIX + "main_tab.gif";
-	public static String IMG_VIEW_ARGUMENTS_TAB = NAME_PREFIX + "arguments_tab.gif";
-	public static String IMG_VIEW_ENVIRONMENT_TAB = NAME_PREFIX + "environment_tab.gif";
-	public static String IMG_VIEW_DEBUGGER_TAB = NAME_PREFIX + "debugger_tab.gif";
-	public static String IMG_VIEW_SOURCE_TAB = NAME_PREFIX + "source_tab.gif";
+	public static String IMG_VIEW_MAIN_TAB = NAME_PREFIX + "main_tab.gif"; //$NON-NLS-1$
+	public static String IMG_VIEW_ARGUMENTS_TAB = NAME_PREFIX + "arguments_tab.gif"; //$NON-NLS-1$
+	public static String IMG_VIEW_ENVIRONMENT_TAB = NAME_PREFIX + "environment_tab.gif"; //$NON-NLS-1$
+	public static String IMG_VIEW_DEBUGGER_TAB = NAME_PREFIX + "debugger_tab.gif"; //$NON-NLS-1$
+	public static String IMG_VIEW_SOURCE_TAB = NAME_PREFIX + "source_tab.gif"; //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_TAB_MAIN= createManaged(T_TABS, IMG_VIEW_MAIN_TAB);
 	public static final ImageDescriptor DESC_TAB_ARGUMENTS = createManaged(T_TABS, IMG_VIEW_ARGUMENTS_TAB);
@@ -44,7 +44,7 @@ public class LaunchImages {
 	public static final ImageDescriptor DESC_TAB_DEBUGGER = createManaged(T_TABS, IMG_VIEW_DEBUGGER_TAB);
 	public static final ImageDescriptor DESC_TAB_SOURCE = createManaged(T_TABS, IMG_VIEW_SOURCE_TAB);
 
-	public static String IMG_OBJS_EXEC= NAME_PREFIX + "exec_obj.gif";
+	public static String IMG_OBJS_EXEC= NAME_PREFIX + "exec_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_EXEC = createManaged(T_OBJS, IMG_OBJS_EXEC);
 
 	public static void initialize() {

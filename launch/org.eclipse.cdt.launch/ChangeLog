@@ -1,3 +1,25 @@
+2004-03-01 James Ciesielski
+
+	Marked those strings that are non-translatable as such and 
+	externalized those strings that can be translated.
+
+	* src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java
+	* src/org/eclipse/cdt/launch/internal/CoreFileLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/LocalCLaunchConfigurationDelegate.java
+	* src/org/eclipse/cdt/launch/internal/ui/AbstractCDebuggerTab.java
+	* src/org/eclipse/cdt/launch/internal/ui/CoreFileCLaunchConfigurationTab.java
+	* src/org/eclipse/cdt/launch/internal/ui/LaunchUIPlugin.java
+	* src/org/eclipse/cdt/launch/internal/ui/WorkingDirectoryBlock.java
+	* src/org/eclipse/cdt/launch/internal/ui/LaunchUIPluginResources.properties
+	* src/org/eclipse/cdt/launch/ui/CArgumentsTab.java
+	* src/org/eclipse/cdt/launch/ui/CDebuggerTab.java
+	* src/org/eclipse/cdt/launch/ui/CEnvironmentTab.java
+	* src/org/eclipse/cdt/launch/ui/CLaunchConfigurationTab.java
+	* src/org/eclipse/cdt/launch/ui/CMainTab.java
+	* src/org/eclipse/cdt/launch/ui/CorefileDebuggerTab.java
+	* src/org/eclipse/cdt/launch/ui/CSourceLookupTab.java
+
 2004-02-18 Alain Magloire
 
 	filterClass contribution to be able to use

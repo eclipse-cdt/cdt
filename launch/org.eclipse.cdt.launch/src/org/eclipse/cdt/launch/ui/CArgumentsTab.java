@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.help.WorkbenchHelp;
 
+
 /**
  * A launch configuration tab that displays and edits program arguments,
  * and working directory launch configuration attributes.
@@ -57,7 +58,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 		createVerticalSpacer(comp, 1);
 
 		fPrgmArgumentsLabel = new Label(comp, SWT.NONE);
-		fPrgmArgumentsLabel.setText("C/C++ Program Arguments:");
+		fPrgmArgumentsLabel.setText(LaunchUIPlugin.getResourceString("CArgumentsTab.C/C++_Program_Arguments")); //$NON-NLS-1$
 		fPrgmArgumentsText = new Text(comp, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 40;
@@ -105,7 +106,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 			fWorkingDirectoryBlock.initializeFrom(configuration);
 		}
 		catch (CoreException e) {
-			setErrorMessage("Exception occurred reading configuration " + e.getStatus().getMessage());
+			setErrorMessage(LaunchUIPlugin.getFormattedResourceString("Launch.common.Exception_occurred_reading_configuration_EXCEPTION", e.getStatus().getMessage())); //$NON-NLS-1$
 			LaunchUIPlugin.log(e);
 		}
 	}
@@ -137,7 +138,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#getName()
 	 */
 	public String getName() {
-		return "Arguments";
+		return LaunchUIPlugin.getResourceString("CArgumentsTab.Arguments"); //$NON-NLS-1$
 	}
 
 	/**

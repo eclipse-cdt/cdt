@@ -36,7 +36,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			monitor = new NullProgressMonitor();
 		}
 
-		monitor.beginTask("Launching postmortem debugger", IProgressMonitor.UNKNOWN);
+		monitor.beginTask(LaunchUIPlugin.getResourceString("CoreFileLaunchDelegate.Launching_postmortem_debugger"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;
@@ -49,7 +49,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 
 		IPath corefile = getCoreFilePath((IProject) cproject.getResource());
 		if (corefile == null) {
-			cancel("No Corefile selected", ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
+			cancel(LaunchUIPlugin.getResourceString("CoreFileLaunchDelegate.No_Corefile_selected"), ICDTLaunchConfigurationConstants.ERR_NO_COREFILE); //$NON-NLS-1$
 		}
 		Process debugger = null;
 		IProcess debuggerProcess = null;
@@ -57,10 +57,10 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			dsession = debugConfig.getDebugger().createCoreSession(config, exeFile, corefile);
 			debugger = dsession.getSessionProcess();
 		} catch (CDIException e) {
-			abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			abort(LaunchUIPlugin.getResourceString("CoreFileLaunchDelegate.Failed_Launching_CDI_Debugger"), e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		}
 		if ( debugger != null ) {
-			debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console");
+			debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console"); //$NON-NLS-1$
 			launch.removeProcess(debuggerProcess);
 		}
 		// set the source locator
@@ -80,20 +80,20 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		final Shell shell = LaunchUIPlugin.getShell();
 		final String res[] = { null };
 		if (shell == null) {
-			abort("No Shell available in Launch", null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
+			abort(LaunchUIPlugin.getResourceString("CoreFileLaunchDelegate.No_Shell_available_in_Launch"), null, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR); //$NON-NLS-1$
 		}
 		Display display = shell.getDisplay();
 		display.syncExec(new Runnable() {
 			public void run() {
 				FileDialog dialog = new FileDialog(shell);
-				dialog.setText("Select Corefile");
+				dialog.setText(LaunchUIPlugin.getResourceString("CoreFileLaunchDelegate.Select_Corefile")); //$NON-NLS-1$
 
 				String initPath = null;
 				try {
-					initPath = project.getPersistentProperty(new QualifiedName(LaunchUIPlugin.getUniqueIdentifier(), "SavePath"));
+					initPath = project.getPersistentProperty(new QualifiedName(LaunchUIPlugin.getUniqueIdentifier(), "SavePath")); //$NON-NLS-1$
 				} catch (CoreException e) {
 				}
-				if (initPath == null || initPath.equals("")) {
+				if (initPath == null || initPath.equals("")) { //$NON-NLS-1$
 					initPath = project.getLocation().toString();
 				}
 				dialog.setFilterPath(initPath);

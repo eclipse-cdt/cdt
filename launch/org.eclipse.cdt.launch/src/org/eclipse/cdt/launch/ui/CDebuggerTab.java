@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
+import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 
 public class CDebuggerTab extends AbstractCDebuggerTab {
 
@@ -56,7 +58,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		layout = new GridLayout(2, false);
 		comboComp.setLayout(layout);
 		Label dlabel = new Label(comboComp, SWT.NONE);
-		dlabel.setText("Debugger:");
+		dlabel.setText(LaunchUIPlugin.getResourceString("Launch.common.DebuggerColon")); //$NON-NLS-1$
 		fDCombo = new Combo(comboComp, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fDCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -69,7 +71,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		radioLayout.marginHeight = 0;
 		radioLayout.marginWidth = 0;
 		radioComp.setLayout(radioLayout);
-		fRunButton = createRadioButton(radioComp, "Run program in debugger.");
+		fRunButton = createRadioButton(radioComp, LaunchUIPlugin.getResourceString("CDebuggerTab.Run_program_in_debugger")); //$NON-NLS-1$
 		fRunButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (fRunButton.getSelection() == true) {
@@ -80,7 +82,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		fAttachButton = createRadioButton(radioComp, "Attach to running process.");
+		fAttachButton = createRadioButton(radioComp, LaunchUIPlugin.getResourceString("CDebuggerTab.Attach_to_running_process")); //$NON-NLS-1$
 		fAttachButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -96,7 +98,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		optionComp.setLayoutData(gd);
 		
 		fStopInMain = new Button(optionComp, SWT.CHECK);
-		fStopInMain.setText("Stop at main() on startup.");
+		fStopInMain.setText(LaunchUIPlugin.getResourceString("CDebuggerTab.Stop_at_main_on_startup")); //$NON-NLS-1$
 		fStopInMain.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -104,7 +106,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		});
 		
 		fVarBookKeeping = new Button(optionComp, SWT.CHECK);
-		fVarBookKeeping.setText("Automatically track the values of variables.");
+		fVarBookKeeping.setText(LaunchUIPlugin.getResourceString("CDebuggerTab.Automatically_track_values_of_variables")); //$NON-NLS-1$
 		fVarBookKeeping.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -112,7 +114,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		});
 		
 		Group debuggerGroup = new Group(comp, SWT.SHADOW_ETCHED_IN);
-		debuggerGroup.setText("Debugger Options");
+		debuggerGroup.setText(LaunchUIPlugin.getResourceString("CDebuggerTab.Debugger_Options")); //$NON-NLS-1$
 		setDynamicTabHolder(debuggerGroup);
 		GridLayout tabHolderLayout = new GridLayout();
 		tabHolderLayout.marginHeight = 0;
@@ -127,7 +129,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	protected void loadDebuggerComboBox(ILaunchConfiguration config, String selection) {
 		ICDebugConfiguration[] debugConfigs;
 		String configPlatform = getPlatform(config);
-		String programCPU = "native";
+		String programCPU = ICDebugConfiguration.PLATFORM_NATIVE;
 		ICElement ce = getContext(config, configPlatform);
 		if (ce instanceof IBinary) {
 			IBinary bin = (IBinary) ce;
@@ -150,7 +152,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 				String debuggerPlatform = debugConfigs[i].getPlatform();
 				boolean isNative = configPlatform.equals(BootLoader.getOS());
 				if (debuggerPlatform.equalsIgnoreCase(configPlatform)
-					|| (isNative && debuggerPlatform.equalsIgnoreCase("native"))) {
+					|| (isNative && debuggerPlatform.equalsIgnoreCase(ICDebugConfiguration.PLATFORM_NATIVE))) {
 					if (debugConfigs[i].supportsCPU(programCPU)) {
 						fDCombo.add(debugConfigs[i].getName());
 						fDCombo.setData(Integer.toString(x), debugConfigs[i]);
@@ -165,7 +167,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			}
 		}
 		// if no selection meaning nothing in config the force initdefault on tab
-		setInitializeDefault(selection.equals("") ? true : false);
+		setInitializeDefault(selection.equals("") ? true : false); //$NON-NLS-1$
 
 		fDCombo.select(selndx == -1 ? 0 : selndx);
 		//The behaviour is undefined for if the callbacks should be triggered for this,
@@ -215,7 +217,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	public void initializeFrom(ILaunchConfiguration config) {
 		super.initializeFrom(config);
 		try {
-			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, "");
+			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
 			if (getDebugConfig() == null || !getDebugConfig().getID().equals(id)) {
 				loadDebuggerComboBox(config, id);
 			}
@@ -261,14 +263,14 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 	public boolean isValid(ILaunchConfiguration config) {
 		if (!validateDebuggerConfig(config)) {
-			setErrorMessage("No debugger available");
+			setErrorMessage(LaunchUIPlugin.getResourceString("CDebuggerTab.No_debugger_available")); //$NON-NLS-1$
 			return false;
 		}
 		if (super.isValid(config) == false) {
 			return false;
 		}
 		if (!fRunButton.getSelection() && !fAttachButton.getSelection()) {
-			setErrorMessage("Select a Debug mode.");
+			setErrorMessage(LaunchUIPlugin.getResourceString("CDebuggerTab.Select_Debug_mode")); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -278,7 +280,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		String platform = getPlatform(config);
 		ICElement ce = getContext(config, null);
 		String projectPlatform = getPlatform(config);
-		String projectCPU = "native";
+		String projectCPU = ICDebugConfiguration.PLATFORM_NATIVE;
 		if (ce != null) {
 			if (ce instanceof IBinary) {
 				IBinary bin = (IBinary) ce;
@@ -291,7 +293,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 		String debuggerPlatform = debugConfig.getPlatform();
 		boolean isNative = platform.equals(projectPlatform);
-		if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (isNative && debuggerPlatform.equalsIgnoreCase("native"))) {
+		if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (isNative && debuggerPlatform.equalsIgnoreCase(ICDebugConfiguration.PLATFORM_NATIVE))) {
 			if (debugConfig.supportsCPU(projectCPU)) {
 				return true;
 			}

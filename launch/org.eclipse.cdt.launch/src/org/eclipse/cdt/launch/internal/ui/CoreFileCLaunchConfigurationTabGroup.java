@@ -32,7 +32,7 @@ public class CoreFileCLaunchConfigurationTabGroup extends AbstractLaunchConfigur
 	
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// This configuration should work for all platforms
-		configuration.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PLATFORM, "*");
+		configuration.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PLATFORM, "*"); //$NON-NLS-1$
 		super.setDefaults(configuration);
 	}
 

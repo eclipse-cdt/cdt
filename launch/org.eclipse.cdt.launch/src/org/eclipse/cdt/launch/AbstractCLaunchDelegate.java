@@ -68,7 +68,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		Entry entry;
 		for (int i = 0; entries.hasNext() && i < array.length; i++) {
 			entry = (Entry) entries.next();
-			array[i] = ((String) entry.getKey()) + "=" + ((String) entry.getValue());
+			array[i] = ((String) entry.getKey()) + "=" + ((String) entry.getValue()); //$NON-NLS-1$
 		}
 		return array;
 	}
@@ -247,7 +247,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	 */
 	protected void abort(String message, Throwable exception, int code) throws CoreException {
 		MultiStatus status = new MultiStatus(getPluginID(),code, message,exception);
-		status.add(new Status(IStatus.ERROR,getPluginID(),code, exception == null ? "" : exception.getLocalizedMessage(),exception));
+		status.add(new Status(IStatus.ERROR,getPluginID(),code, exception == null ? "" : exception.getLocalizedMessage(),exception)); //$NON-NLS-1$
 		throw new CoreException(status);
 	}
 
@@ -296,7 +296,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 			if (id == null) {
 				ICProject cProject = getCProject(configuration);
 				if (cProject == null) {
-					abort("Project does not exist", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+					abort(LaunchUIPlugin.getResourceString("Launch.common.Project_does_not_exist"), null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT); //$NON-NLS-1$
 				}
 				sourceLocator = CDebugUIPlugin.createDefaultSourceLocator();
 				sourceLocator.initializeDefaults(configuration);
@@ -345,7 +345,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		try {
 			dbgCfg =
 				CDebugCorePlugin.getDefault().getDebugConfiguration(
-					config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""));
+					config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, "")); //$NON-NLS-1$
 		}
 		catch (CoreException e) {
 			IStatus status =
@@ -353,7 +353,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 					IStatus.ERROR,
 					LaunchUIPlugin.getUniqueIdentifier(),
 					ICDTLaunchConfigurationConstants.ERR_DEBUGGER_NOT_INSTALLED,
-					"CDT Debubger not installed",
+					LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Debugger_not_installed"), //$NON-NLS-1$
 					e);
 			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(status);
 
@@ -369,13 +369,13 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	}
 
 	protected String renderTargetLabel(ICDebugConfiguration debugConfig) {
-		String format = "{0} ({1})";
+		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
 		return MessageFormat.format(format, new String[] { debugConfig.getName(), timestamp });
 	}
 
 	protected String renderProcessLabel(String commandLine) {
-		String format = "{0} ({1})";
+		String format = "{0} ({1})"; //$NON-NLS-1$
 		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
 		return MessageFormat.format(format, new String[] { commandLine, timestamp });
 	}
@@ -383,18 +383,18 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 	protected ICProject verifyCProject(ILaunchConfiguration config) throws CoreException {
 		String name = getProjectName(config);
 		if (name == null) {
-			abort("C Project not specified", null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
+			abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.C_Project_not_specified"), null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT); //$NON-NLS-1$
 		}
 		ICProject cproject = getCProject(config);
 		if (cproject == null) {
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 			if (!project.exists()) {
-				abort("Project '"+ name + "' does not exist", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+				abort( LaunchUIPlugin.getFormattedResourceString("AbstractCLaunchDelegate.Project_NAME_does_not_exist", name), null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT); //$NON-NLS-1$
 			}
 			else if (!project.isOpen()) {
-				abort("Project '"+ name + "' is closed", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+				abort( LaunchUIPlugin.getFormattedResourceString("AbstractCLaunchDelegate.Project_NAME_is_closed", name), null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT); //$NON-NLS-1$
 			}
-			abort("Project is not a C/C++ project", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+			abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Not_a_C_CPP_project"), null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT); //$NON-NLS-1$
 		}
 		return cproject;
 	}
@@ -403,12 +403,12 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		ICProject cproject = verifyCProject(config);
 		String fileName = getProgramName(config);
 		if (fileName == null) {
-			abort("Program file not specified", null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM);
+			abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Program_file_not_specified"), null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROGRAM); //$NON-NLS-1$
 		}
 
 		IFile programPath = ((IProject) cproject.getResource()).getFile(fileName);
 		if (programPath == null || !programPath.exists() || !programPath.getLocation().toFile().exists()) {
-			abort("Program file does not exist", new FileNotFoundException(programPath.getLocation() + " not found."), ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
+			abort(LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Program_file_does_not_exist"), new FileNotFoundException(LaunchUIPlugin.getFormattedResourceString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", programPath.getLocation().toOSString())), ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return programPath;
 	}
@@ -445,8 +445,8 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 				}
 				else {
 					abort(
-						"Working directory does not exist",
-						new FileNotFoundException(path.toOSString() + " not found."),
+						LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
+						new FileNotFoundException( LaunchUIPlugin.getFormattedResourceString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", path.toOSString())), //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
 			}
@@ -457,8 +457,8 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 				}
 				else {
 					abort(
-						"Working directory does not exist",
-					    new FileNotFoundException(path.toOSString() + "Does not exsit."),
+						LaunchUIPlugin.getResourceString("AbstractCLaunchDelegate.Working_directory_does_not_exist"), //$NON-NLS-1$
+						new FileNotFoundException( LaunchUIPlugin.getFormattedResourceString("AbstractCLaunchDelegate.PROGRAM_PATH_does_not_exist", path.toOSString())), //$NON-NLS-1$
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 				}
 			}

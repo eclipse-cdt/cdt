@@ -12,12 +12,8 @@ package org.eclipse.cdt.debug.internal.core;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
@@ -28,31 +24,29 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * Enter type comment.
- * 
- * @since: Jan 16, 2003
+ * Manages the collection of the shared libraries loaded on a debug target.
  */
-public class CSharedLibraryManager extends CUpdateManager implements ICSharedLibraryManager
-{
+public class CSharedLibraryManager implements ICSharedLibraryManager {
+
+	/**
+	 * The debug target associated with this manager.
+	 */
+	private CDebugTarget fDebugTarget;
+
+	/**
+	 * The collection of the shared libraries loaded on this target.
+	 */
 	private ArrayList fSharedLibraries;
 
 	/**
 	 * Constructor for CSharedLibraryManager.
 	 */
-	public CSharedLibraryManager( CDebugTarget target )
-	{
-		super( target );
+	public CSharedLibraryManager( CDebugTarget target ) {
+		fDebugTarget = target;
 		fSharedLibraries = new ArrayList( 5 );
-		boolean autoRefresh = CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH );
-		if ( getCDIManager() != null )
-			getCDIManager().setAutoUpdate( autoRefresh );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#sharedLibararyLoaded(ICDISharedLibrary)
-	 */
-	public void sharedLibraryLoaded( ICDISharedLibrary cdiLibrary )
-	{
+	public void sharedLibraryLoaded( ICDISharedLibrary cdiLibrary ) {
 		CSharedLibrary library = new CSharedLibrary( getDebugTarget(), cdiLibrary );
 		synchronized( fSharedLibraries ) {
 			fSharedLibraries.add( library );
@@ -62,14 +56,9 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 			setBreakpoints();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#sharedLibraryUnloaded(ICDISharedLibrary)
-	 */
-	public synchronized void sharedLibraryUnloaded( ICDISharedLibrary cdiLibrary )
-	{
+	public synchronized void sharedLibraryUnloaded( ICDISharedLibrary cdiLibrary ) {
 		CSharedLibrary library = find( cdiLibrary );
-		if ( library != null )
-		{
+		if ( library != null ) {
 			synchronized( fSharedLibraries ) {
 				fSharedLibraries.remove( library );
 			}
@@ -78,14 +67,9 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#symbolsLoaded(ICDISharedLibrary)
-	 */
-	public void symbolsLoaded( ICDISharedLibrary cdiLibrary )
-	{
+	public void symbolsLoaded( ICDISharedLibrary cdiLibrary ) {
 		CSharedLibrary library = find( cdiLibrary );
-		if ( library != null )
-		{
+		if ( library != null ) {
 			library.fireChangeEvent( DebugEvent.STATE );
 			setBreakpoints();
 		}
@@ -94,71 +78,53 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#getSharedLibraries()
 	 */
-	public ICSharedLibrary[] getSharedLibraries()
-	{
+	public ICSharedLibrary[] getSharedLibraries() {
 		return (ICSharedLibrary[])fSharedLibraries.toArray( new ICSharedLibrary[fSharedLibraries.size()] );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#dispose()
 	 */
-	public void dispose()
-	{
+	public void dispose() {
 		Iterator it = fSharedLibraries.iterator();
-		while( it.hasNext() )
-		{
+		while( it.hasNext() ) {
 			((CSharedLibrary)it.next()).dispose();
 		}
 		fSharedLibraries.clear();
-		super.dispose();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	public Object getAdapter( Class adapter )
-	{
-		if ( adapter.equals( ICSharedLibraryManager.class ) )
-		{
+	public Object getAdapter( Class adapter ) {
+		if ( adapter.equals( ICSharedLibraryManager.class ) ) {
 			return this;
 		}
-		if ( adapter.equals( CSharedLibraryManager.class ) )
-		{
+		if ( adapter.equals( CSharedLibraryManager.class ) ) {
 			return this;
 		}
-		return super.getAdapter( adapter );
+		return null;
 	}
-	
-	protected CSharedLibrary find( ICDISharedLibrary cdiLibrary )
-	{
+
+	protected CSharedLibrary find( ICDISharedLibrary cdiLibrary ) {
 		Iterator it = fSharedLibraries.iterator();
-		while( it.hasNext() )
-		{
+		while( it.hasNext() ) {
 			CSharedLibrary library = (CSharedLibrary)it.next();
 			if ( library.getCDISharedLibrary().equals( cdiLibrary ) )
 				return library;
 		}
 		return null;
-	}	
-	
-	protected ICDIManager getCDIManager()
-	{
-		return null;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#loadSymbols(org.eclipse.cdt.debug.core.model.ICSharedLibrary)
+	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#loadSymbols(org.eclipse.cdt.debug.core.model.ICSharedLibrary[])
 	 */
-	public void loadSymbols( ICSharedLibrary[] libraries ) throws DebugException
-	{
-		for (int i = 0; i < libraries.length; ++i)
-		{
-			try 
-			{
+	public void loadSymbols( ICSharedLibrary[] libraries ) throws DebugException {
+		for( int i = 0; i < libraries.length; ++i ) {
+			try {
 				((CSharedLibrary)libraries[i]).getCDISharedLibrary().loadSymbols();
 			}
-			catch ( CDIException e ) 
-			{
+			catch( CDIException e ) {
 				CDebugElement.targetRequestFailed( e.getMessage(), null );
 			}
 		}
@@ -167,25 +133,24 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICSharedLibraryManager#loadSymbolsForAll()
 	 */
-	public void loadSymbolsForAll() throws DebugException
-	{
+	public void loadSymbolsForAll() throws DebugException {
 		ICDITarget target = getDebugTarget().getCDITarget();
-		try 
-		{
+		try {
 			ICDISharedLibrary[] libraries = target.getSharedLibraries();
-			for (int i = 0; i < libraries.length; ++i)
-			{
+			for( int i = 0; i < libraries.length; ++i ) {
 				libraries[i].loadSymbols();
 			}
 		}
-		catch ( CDIException e ) 
-		{
+		catch( CDIException e ) {
 			CDebugElement.targetRequestFailed( e.getMessage(), null );
 		}
 	}
 
-	private void setBreakpoints()
-	{
+	private void setBreakpoints() {
 		getDebugTarget().setBreakpoints();
+	}
+
+	protected CDebugTarget getDebugTarget() {
+		return fDebugTarget;
 	}
 }

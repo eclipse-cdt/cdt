@@ -15,12 +15,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 
 /**
- * Enter type comment.
- * 
- * @since: Jan 15, 2003
+ * Provides the access to the shared libraries' management functions.
  */
-public interface ICSharedLibraryManager extends ICUpdateManager, IAdaptable
-{
+public interface ICSharedLibraryManager extends IAdaptable {
+
 	ICSharedLibrary[] getSharedLibraries();
 
 	void loadSymbolsForAll() throws DebugException;

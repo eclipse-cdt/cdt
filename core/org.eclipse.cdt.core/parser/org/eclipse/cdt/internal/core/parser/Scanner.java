@@ -80,9 +80,16 @@ public class Scanner implements IScanner {
 			String attributes [] = problemFactory.getRequiredAttributesForId( problemID );
 			arguments.put( attributes[ 0 ], argument );
 		}
-		IProblem p = problemFactory.createProblem( problemID, beginningOffset, getCurrentOffset(), contextStack.getCurrentLineNumber(), getCurrentFile().toCharArray(), arguments, warning, error );
-		if( (! requestor.acceptProblem( p )) && extra )
-			throw new ScannerException( p );
+		
+		IProblem problem = problemFactory.createProblem( problemID, beginningOffset, getCurrentOffset(), contextStack.getCurrentLineNumber(), getCurrentFile().toCharArray(), arguments, warning, error );
+		
+		// trace log
+		StringBuffer logMessage = new StringBuffer( "Scanner problem encountered: ");
+		logMessage.append( problem.getMessage() );
+		log.traceLog( logMessage.toString() );
+		
+		if( (! requestor.acceptProblem( problem )) && extra )
+			throw new ScannerException( problem );
 	}
 
     public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log ) {

@@ -1,11 +1,14 @@
 2004-01-20 John Camelon
-		Tidied up Scanner implementation for unused fields, inefficient String manipulations and redundant parameters.
+	Added traceLog() call into Scanner.handleProblem() and updated ParserFactory.createPreprocessor() for extra error handling.  
+
+2004-01-20 John Camelon
+	Tidied up Scanner implementation for unused fields, inefficient String manipulations and redundant parameters.
 
 2004-01-19 John Camelon
-		Added IToken.getLineNumber() to facilitate adding line numbers to AST.
-		Added line number support into IASTOffsetableElement.  Updated all implementations to use this.  
-		Updated Parser and IASTFactory to populate IASTOffsetableElement with the values retrieved from IToken.  
-		Removed IScanner.getLineNumberForOffset().  
+	Added IToken.getLineNumber() to facilitate adding line numbers to AST.
+	Added line number support into IASTOffsetableElement.  Updated all implementations to use this.  
+	Updated Parser and IASTFactory to populate IASTOffsetableElement with the values retrieved from IToken.  
+	Removed IScanner.getLineNumberForOffset().  
 
 2004-01-16 Andrew Niefer
 	Created IExtensibleSymbol, which is a new base class for the symbol interfaces

@@ -74,9 +74,14 @@ public class ParserFactory {
     
     public static IPreprocessor createPreprocessor( Reader input, String fileName, IScannerInfo info, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService logService )
     {
-		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode ); 
-		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor );
-		IPreprocessor s = new Preprocessor( input, fileName, info, ourRequestor, ourMode, language, logService );
+    	if( input == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_READER );
+    	if( fileName == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_FILENAME );
+    	if( info == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_CONFIG );
+    	if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
+    	IParserLogService log = ( logService == null ) ? createDefaultLogService() : logService;
+    	ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
+    	ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
+    	IPreprocessor s = new Preprocessor( input, fileName, info, ourRequestor, ourMode, language, log );
 		return s;
     }
 	

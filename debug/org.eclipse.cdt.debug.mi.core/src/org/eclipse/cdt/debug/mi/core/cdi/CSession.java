@@ -66,6 +66,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 		memoryManager = new MemoryManager(this);
 		signalManager = new SignalManager(this);
 		sourceManager = new SourceManager(this);
+		sharedLibraryManager = new SharedLibraryManager(this);
 		ctarget = new CTarget(this);
 	}
 

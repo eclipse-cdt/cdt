@@ -54,8 +54,8 @@ public class RequestList {
 		//print("in addItem() - leaving");
 	}
 
-	private static void print(String msg) {
-		String name = Thread.currentThread().getName();
-		System.out.println(name + ": " + msg);
-	}
+//	private static void print(String msg) {
+//		String name = Thread.currentThread().getName();
+//		System.out.println(name + ": " + msg);
+//	}
 }

@@ -10,7 +10,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -249,11 +248,6 @@ public class DeltaProcessor {
 			return CoreModel.getDefault().hasCNature(project);
 		}
 		return false;
-	}
-
-
-	private CModelException newInvalidElementType() {
-		return new CModelException(new CModelStatus(ICModelStatusConstants.INVALID_ELEMENT_TYPES));
 	}
 
 	/**

@@ -106,7 +106,6 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		fContentAssist = new RetargetTextEditorAction(bundle, "ContentAssistProposal."); //$NON-NLS-1$
 		fContentAssist.setActionDefinitionId(ICEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		CPluginImages.setImageDescriptors(fContentAssist, CPluginImages.T_TOOL, CPluginImages.IMG_MENU_COLLAPSE_ALL);
 
 		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection."); //$NON-NLS-1$
 		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);

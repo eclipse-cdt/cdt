@@ -1,3 +1,6 @@
+2004-06-10 Hoda Amer
+	Fix for PR 66289: [Content assist] menu item contains red square icon
+	
 2004-06-10 Alain Magloire
 
 	Move from working in progress the checkbox

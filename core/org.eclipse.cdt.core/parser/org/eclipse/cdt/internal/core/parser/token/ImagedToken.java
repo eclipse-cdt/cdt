@@ -50,23 +50,6 @@ public class ImagedToken extends SimpleToken {
 		this.image = image;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.token.SimpleToken#getOffset()
-	 */
-	public int getOffset() {
-		 int s_val = super.getOffset();
-		 switch( getType() )
-		 {
-		 case IToken.tSTRING:
-		 case IToken.tCHAR:
-		 	return s_val;
-		 case IToken.tLSTRING:
-		 case IToken.tLCHAR:
-		 	return s_val - 1;
-		 default:
-		 	return s_val;
-		 }
-	}
 		
 	public int getLength() {
 		if( getCharImage() == null )
@@ -75,10 +58,8 @@ public class ImagedToken extends SimpleToken {
 		 switch( getType() )
 		 {
 		 case IToken.tSTRING:
-		 case IToken.tCHAR:
 		 	return s_length + 2;
 		 case IToken.tLSTRING:
-		 case IToken.tLCHAR:
 		 	return s_length + 3;
 		 default:
 		 	return s_length;

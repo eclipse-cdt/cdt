@@ -9,7 +9,10 @@ package org.eclipse.cdt.debug.internal.ui;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
+import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.IState;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
@@ -114,7 +117,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			if ( element instanceof IStackFrame )
 			{
-				label.append( getStackFrameText( (IStackFrame)element ) );
+				label.append( getStackFrameText( (IStackFrame)element, showQualified ) );
 				return label.toString();
 			}
 
@@ -197,8 +200,25 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return getFormattedString( "Thread [{0}] (Suspended)", thread.getName() );
 	}
 
-	protected String getStackFrameText( IStackFrame stackFrame ) throws DebugException 
+	protected String getStackFrameText( IStackFrame stackFrame, boolean qualified ) throws DebugException 
 	{
+		IStackFrameInfo info = (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class );
+		if ( info != null )
+		{
+			String label = new String();
+			label += info.getLevel() + " ";
+			if ( info.getFunction() != null )
+				label += info.getFunction() + "() ";
+
+			if ( info.getFile() != null )
+			{
+				IPath path = new Path( info.getFile() );
+				label += "at " + ( qualified ? path.toOSString() : path.lastSegment() ) + ":";
+			}
+			if ( info.getFrameLineNumber() != 0 )
+				label += info.getFrameLineNumber();
+			return label;
+		}
 		return stackFrame.getName();
 	}
 

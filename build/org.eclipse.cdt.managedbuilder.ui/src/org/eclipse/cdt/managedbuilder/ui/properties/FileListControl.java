@@ -498,9 +498,8 @@ public class FileListControl {
 			if (browseType == IOption.BROWSE_DIR ||
 					browseType == IOption.BROWSE_FILE) {
 				// Check for spaces 
-				int firstWhitespace = input.indexOf("\\s");	//$NON-NLS-1$
+				int firstWhitespace = input.indexOf(" ");	//$NON-NLS-1$
 				int firstBackslash = input.indexOf("\\");	//$NON-NLS-1$
-//				String[] segments = input.split("\\s"); //$NON-NLS-1$
 				if (firstWhitespace != -1 || firstBackslash != -1) {
 					// Double-quote paths with whitespaces
 					input = "\"" + input + "\"";	//$NON-NLS-1$ //$NON-NLS-2$

@@ -32,10 +32,10 @@ public class WordPartDetector {
 			IDocument doc = viewer.getDocument();
 			int bottom = viewer.getBottomIndexEndOffset();
 			int top = viewer.getTopIndexStartOffset();
-			while (offset >= top && Character.isLetterOrDigit(doc.getChar(offset))) {
+			while (offset >= top && isMakefileLetter(doc.getChar(offset))) {
 				offset--;
 			}
-			while (endOffset < bottom && Character.isLetterOrDigit(doc.getChar(endOffset))) {
+			while (endOffset < bottom && isMakefileLetter(doc.getChar(endOffset))) {
 					endOffset++;
 			} 
 			//we've been one step too far : increase the offset
@@ -58,4 +58,7 @@ public class WordPartDetector {
 		return offset;
 	}
 
+	boolean isMakefileLetter(char c) {
+		return Character.isLetterOrDigit(c) || c == '_';
+	}
 }

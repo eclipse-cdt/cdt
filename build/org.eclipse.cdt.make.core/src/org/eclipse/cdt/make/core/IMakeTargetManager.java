@@ -15,7 +15,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 public interface IMakeTargetManager {
-	IMakeTarget createTarget(IProject project, String targetName, String targetID) throws CoreException;
+	IMakeTarget createTarget(IProject project, String targetName, String targetBuilderID) throws CoreException;
 	void addTarget(IContainer container, IMakeTarget target) throws CoreException;
 	void removeTarget(IMakeTarget target) throws CoreException;
 	void renameTarget(IMakeTarget target, String name) throws CoreException;
@@ -25,7 +25,7 @@ public interface IMakeTargetManager {
 
 	IProject[]    getTargetBuilderProjects() throws CoreException;
 	
-	String getBuilderID(String targetID);
+	String getBuilderID(String targetBuilderID);
 	
 	String[] getTargetBuilders(IProject project);
 				

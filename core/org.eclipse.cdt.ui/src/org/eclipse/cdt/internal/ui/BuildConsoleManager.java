@@ -180,7 +180,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 			return;
 		}
 		IResource resource = event.getResource();
-		if (resource.getType() == IResource.PROJECT) {
+		if (resource != null && resource.getType() == IResource.PROJECT) {
 			if (event.getType() == IResourceChangeEvent.PRE_DELETE || event.getType() == IResourceChangeEvent.PRE_CLOSE) {
 				fConsoleDocumentMap.remove(resource);
 				Object[] list = listeners.getListeners();

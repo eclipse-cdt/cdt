@@ -151,7 +151,7 @@ public class MemoryPresentation
 		String[] items = row.getData();
 		for ( int i = 0; i < items.length; ++i )
 		{
-			result.append( items[i] );
+			result.append( getDataItemPresentation( items[i] ) );
 			result.append( getInterval( INTERVAL_BETWEEN_DATA_ITEMS ) );
 		}
 		if ( displayASCII() )
@@ -238,7 +238,17 @@ public class MemoryPresentation
 	private int getDataItemLength()
 	{
 		if ( getMemoryBlock() != null )
-			return getMemoryBlock().getWordSize() * 2;
+		{
+			switch( getDataFormat() )
+			{
+				case IFormattedMemoryBlock.MEMORY_FORMAT_HEX:
+					return getMemoryBlock().getWordSize() * 2;
+				case IFormattedMemoryBlock.MEMORY_FORMAT_SIGNED_DECIMAL:
+					return getDecimalDataItemLength( getMemoryBlock().getWordSize(), true );
+				case IFormattedMemoryBlock.MEMORY_FORMAT_UNSIGNED_DECIMAL:
+					return getDecimalDataItemLength( getMemoryBlock().getWordSize(), false );
+			}
+		}
 		return 0;
 	}
 	
@@ -302,7 +312,7 @@ public class MemoryPresentation
 	{
 		if ( getMemoryBlock() != null )
 			return getMemoryBlock().getFormat();
-		return -1;
+		return IFormattedMemoryBlock.MEMORY_FORMAT_HEX;
 	}
 	
 	private Long[] getChangedAddresses()
@@ -495,5 +505,55 @@ public class MemoryPresentation
 			return getMemoryBlock().isDirty();
 		}
 		return false;
+	}
+	
+	private String getDataItemPresentation( String item )
+	{
+		switch( getDataFormat() )
+		{
+			case IFormattedMemoryBlock.MEMORY_FORMAT_HEX:
+				return item;
+			case IFormattedMemoryBlock.MEMORY_FORMAT_SIGNED_DECIMAL:
+				return convertToDecimal( getWordSize(), item, true );
+			case IFormattedMemoryBlock.MEMORY_FORMAT_UNSIGNED_DECIMAL:
+				return convertToDecimal( getWordSize(), item, false );
+		}
+		return "";
+	}
+	
+	private int getDecimalDataItemLength( int wordSize, boolean signed )
+	{
+		switch( wordSize )
+		{
+			case IFormattedMemoryBlock.MEMORY_SIZE_HALF_WORD:
+				return ( signed ) ? 6 : 5;
+			case IFormattedMemoryBlock.MEMORY_SIZE_WORD:
+				return ( signed ) ? 11 : 10;
+		}
+		return 0;
+	}
+	
+	private int getWordSize()
+	{
+		if ( getMemoryBlock() != null )
+		{
+			return getMemoryBlock().getWordSize();
+		}
+		return 0;
+	}
+	
+	private String convertToDecimal( int wordSize, String item, boolean signed )
+	{
+		String result = "";
+		switch( wordSize )
+		{
+			case IFormattedMemoryBlock.MEMORY_SIZE_HALF_WORD:
+				result = Long.toString( CDebugUtils.toShort( item.toCharArray(), signed ) );
+				break;
+			case IFormattedMemoryBlock.MEMORY_SIZE_WORD:
+				result = Long.toString( CDebugUtils.toInt( item.toCharArray(), signed ) );
+				break;
+		}
+		return CDebugUtils.prependString( result, getDataItemLength(), ' ' );
 	}
 }

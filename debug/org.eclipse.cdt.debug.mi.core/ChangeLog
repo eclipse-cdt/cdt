@@ -1,3 +1,9 @@
+2003-02-05 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/command/MISignal.java:
+	* src/org/eclipse/cdt/debug/mi/core/command/MIJump.java:
+	Return a fake ^running, since the MI semantic is not respected.
+
 2003-02-04 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/CLICommand.java:

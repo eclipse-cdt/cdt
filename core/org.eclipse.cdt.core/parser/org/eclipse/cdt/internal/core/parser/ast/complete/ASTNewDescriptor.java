@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
@@ -22,19 +23,28 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescripto
  */
 public class ASTNewDescriptor implements IASTNewExpressionDescriptor {
 	
-	List expressions;
-	
-	public ASTNewDescriptor(List expressions) {
+	List newPlacementExpressions;
+	List newTypeIdExpressions;	
+	List newInitializerExpressions;
+	public ASTNewDescriptor(List newPlacementExpressions, List newTypeIdExpressions, List newInitializerExpressions) {
 		super();
-		this.expressions = expressions;
+		this.newPlacementExpressions = newPlacementExpressions;
+		this.newTypeIdExpressions = newTypeIdExpressions;
+		this.newInitializerExpressions = newInitializerExpressions;
 	}
 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor#getExpressions()
 	 */
-	public List getExpressions() {
-		return expressions;
+	public Iterator getNewPlacementExpressions() {
+		return newPlacementExpressions.iterator();
+	}
+	public Iterator getNewTypeIdExpressions() {
+		return newTypeIdExpressions.iterator();
+	}
+	public Iterator getNewInitializerExpressions() {
+		return newInitializerExpressions.iterator();
 	}
 
 }

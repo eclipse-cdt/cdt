@@ -3540,7 +3540,9 @@ public class Parser implements IParser
         IToken beforeSecondParen = null;
         IToken backtrackMarker = null;
         ITokenDuple typeId = null;
-		ArrayList expressions = new ArrayList();
+		ArrayList newPlacementExpressions = new ArrayList();
+		ArrayList newTypeIdExpressions = new ArrayList();
+		ArrayList newInitializerExpressions = new ArrayList();
 				
         if (LT(1) == IToken.tLPAREN)
         {
@@ -3550,7 +3552,7 @@ public class Parser implements IParser
                 // Try to consume placement list
                 // Note: since expressionList and expression are the same...
                 backtrackMarker = mark();
-                expressions.add(expression(scope));
+				newPlacementExpressions.add(expression(scope));
                 consume(IToken.tRPAREN);
                 placementParseFailure = false;
                 if (LT(1) == IToken.tLPAREN)
@@ -3634,7 +3636,7 @@ public class Parser implements IParser
 							return astFactory.createExpression(
 								scope, IASTExpression.Kind.NEW_TYPEID, 
 								null, null,	null, null, typeId, "", 
-								astFactory.createNewDescriptor(expressions));
+								astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
 							}
 							catch (ASTSemanticException e)
 							{
@@ -3663,7 +3665,7 @@ public class Parser implements IParser
         {
             // array new
             consume();
-            expressions.add(assignmentExpression(scope));
+			newTypeIdExpressions.add(assignmentExpression(scope));
             consume(IToken.tRBRACKET);
         }
         // newinitializer
@@ -3671,7 +3673,7 @@ public class Parser implements IParser
         {
             consume(IToken.tLPAREN);
             if (LT(1) != IToken.tRPAREN)
-                expressions.add(expression(scope));
+			newInitializerExpressions.add(expression(scope));
             consume(IToken.tRPAREN);
         }
 		try
@@ -3679,7 +3681,7 @@ public class Parser implements IParser
         return astFactory.createExpression(
         	scope, IASTExpression.Kind.NEW_TYPEID, 
 			null, null,	null, null, typeId, "", 
-			astFactory.createNewDescriptor(expressions));
+			astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
 		}
 		catch (ASTSemanticException e)
 		{

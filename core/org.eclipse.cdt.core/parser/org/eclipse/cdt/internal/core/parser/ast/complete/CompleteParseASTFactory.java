@@ -641,12 +641,21 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         getExpressionReferences(rhs, references);
         getExpressionReferences(thirdExpression,references);
     	
+		// add newDescriptor's references & add to references
     	// if there is a newDescriptor, check related expressions
     	if(newDescriptor != null){
-    		Iterator i  = newDescriptor.getExpressions().iterator();
+    		Iterator i  = newDescriptor.getNewPlacementExpressions();
 			while (i.hasNext()){
 				getExpressionReferences((IASTExpression)i.next(), references);    			
     		}
+			i  = newDescriptor.getNewTypeIdExpressions();
+			while (i.hasNext()){
+				getExpressionReferences((IASTExpression)i.next(), references);    			
+			}
+			i  = newDescriptor.getNewInitializerExpressions();
+			while (i.hasNext()){
+				getExpressionReferences((IASTExpression)i.next(), references);    			
+			}
     	}
     	
         //look up id & add to references
@@ -672,7 +681,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         if( typeId != null )
         	lookupQualifiedName( startingScope, typeId, references, false );
         
-        //TODO add newDescriptor's references & add to references
         return new ASTExpression( kind, lhs, rhs, thirdExpression, 
         							id == null ? "" : id.getImage(), 
         							typeId == null ? "" : typeId.toString(), 
@@ -690,11 +698,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNewDescriptor()
      */
-    public IASTNewExpressionDescriptor createNewDescriptor(List expressions)
+    public IASTNewExpressionDescriptor createNewDescriptor(List newPlacementExpressions,List newTypeIdExpressions,List newInitializerExpressions)
     {
-        // TODO FIX THIS
-        // return null;
-		return new ASTNewDescriptor(expressions);
+		return new ASTNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions);
     }
 
     /* (non-Javadoc)

@@ -1,4 +1,9 @@
 2003-03-28 Mikhail Khodjaiants
+	Added the default format section for variables, registers and expressions 
+	to the debugger preference page.
+	* CDebugPreferencePage.java
+
+2003-03-28 Mikhail Khodjaiants
 	'Run To C/C++ Line' and 'Resume At C/C++ Line' actions for external files.
 	* JumpToLineActionDelegate.java
 	* RunToLineActionDelegate.java

@@ -7,9 +7,11 @@ package org.eclipse.cdt.debug.internal.ui.preferences;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
+import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -23,9 +25,9 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
@@ -43,14 +45,18 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
-	// Primitive display preference widgets
-//	private Button fHexButton;
-
 	// View setting widgets
 	private Button fPathsButton;
+	private Combo fVariableFormatCombo;
+	private Combo fExpressionFormatCombo;
+	private Combo fRegisterFormatCombo;
 
 	// Disassembly setting widgets
 	private Button fAutoDisassemblyButton;
+
+	// Format constants
+	private static int[] fFormatIds = new int[]{ ICDIFormat.NATURAL, ICDIFormat.HEXADECIMAL, ICDIFormat.DECIMAL };
+	private static String[] fFormatLabels = new String[] { "Natural", "Hexadecimal", "Decimal" };
 
 	private PropertyChangeListener fPropertyChangeListener;
 
@@ -107,10 +113,6 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		composite.setLayoutData( data );
 
 		createSpacer( composite, 1 );
-/*
-		createPrimitiveDisplayPreferences( composite );		
-		createSpacer( composite, 1 );
-*/
 		createViewSettingPreferences( composite );
 		createSpacer( composite, 1 );
 		createDisassemblySettingPreferences( composite );
@@ -129,18 +131,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	private Composite createGroupComposite( Composite parent, int numColumns, String labelText )
 	{
-		Group comp = new Group( parent, SWT.NONE );
-		//GridLayout
-		GridLayout layout = new GridLayout();
-		layout.numColumns = numColumns;
-		comp.setLayout( layout );
-		//GridData
-		GridData gd = new GridData();
-		gd.verticalAlignment = GridData.FILL;
-		gd.horizontalAlignment = GridData.FILL;
-		comp.setLayoutData( gd );
-		comp.setText( labelText );
-		return comp;
+		return ControlFactory.createGroup( parent, labelText, numColumns );
 	}
 		
 	/**
@@ -151,9 +142,11 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	{
 		IPreferenceStore store = getPreferenceStore();
 
-//		fHexButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) );
 		fPathsButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fAutoDisassemblyButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY ) );
+		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
+		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
+		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
 	}
 
 	/* (non-Javadoc)
@@ -180,6 +173,9 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, false );
 		store.setDefault( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, true );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_AUTO_DISASSEMBLY, false );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, ICDIFormat.NATURAL );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, ICDIFormat.NATURAL );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, ICDIFormat.NATURAL );
 	}
 
 	/**
@@ -192,23 +188,17 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	/**
-	 * Create the primitive display preferences composite widget
-	 */
-	private void createPrimitiveDisplayPreferences( Composite parent )
-	{
-/*
-		Composite comp = createGroupComposite( parent, 1, "Primitive type display options" );
-		fHexButton = createCheckButton( comp, "Display &hexadecimal values (short, char, int, long)" );
-*/
-	}
-
-	/**
 	 * Create the view setting preferences composite widget
 	 */
 	private void createViewSettingPreferences( Composite parent )
 	{
 		Composite comp = createGroupComposite( parent, 1, "Opened view default settings" );
 		fPathsButton = createCheckButton( comp, "Show full &paths" );
+		Composite formatComposite = ControlFactory.createCompositeEx( comp, 2, 0 );
+		((GridLayout)formatComposite.getLayout()).makeColumnsEqualWidth = true;
+		fVariableFormatCombo = createComboBox( formatComposite, "Default variable format:", fFormatLabels, fFormatLabels[0] );
+		fExpressionFormatCombo = createComboBox( formatComposite, "Default expression format:", fFormatLabels, fFormatLabels[0] );
+		fRegisterFormatCombo = createComboBox( formatComposite, "Default register format:", fFormatLabels, fFormatLabels[0] );
 	}
 
 	/**
@@ -232,6 +222,18 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		GridData data = new GridData();
 		button.setLayoutData( data );
 		return button;
+	}
+
+	/**
+	 * Creates a button with the given label and sets the default 
+	 * configuration data.
+	 */
+	private Combo createComboBox( Composite parent, String label, String[] items, String selection )
+	{
+		ControlFactory.createLabel( parent, label );
+		Combo combo = ControlFactory.createSelectCombo( parent, items, selection );
+		combo.setLayoutData( new GridData() );
+		return combo;
 	}
 
 	protected void createSpacer( Composite composite, int columnSpan )
@@ -312,9 +314,11 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void storeValues()
 	{
 		IPreferenceStore store = getPreferenceStore();
-//		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES, fHexButton.getSelection() );
 		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, fPathsButton.getSelection() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_AUTO_DISASSEMBLY, fAutoDisassemblyButton.getSelection() );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, getFormatId( fVariableFormatCombo.getSelectionIndex() ) );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, getFormatId( fExpressionFormatCombo.getSelectionIndex() ) );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, getFormatId( fRegisterFormatCombo.getSelectionIndex() ) );
 	}
 
 	/**
@@ -330,8 +334,23 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	private void setDefaultValues()
 	{
 		IPreferenceStore store = getPreferenceStore();
-//		fHexButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_HEX_VALUES ) );
 		fPathsButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fAutoDisassemblyButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY ) );
+		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
+		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
+		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
+	}
+	
+	private static int getFormatId( int index )
+	{
+		return ( index >= 0 && index < fFormatIds.length ) ? fFormatIds[index] : fFormatIds[0];
+	}
+
+	private static int getFormatIndex( int id )
+	{
+		for ( int i = 0; i < fFormatIds.length; ++i )
+			if ( fFormatIds[i] == id )
+				return i;
+		return -1;
 	}
 }

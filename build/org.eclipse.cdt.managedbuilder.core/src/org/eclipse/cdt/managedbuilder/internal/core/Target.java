@@ -51,6 +51,7 @@ public class Target extends BuildObject implements ITarget {
 	private IResource owner;
 	private ITarget parent;
 	private List targetOSList;
+	private List targetArchList;
 	private Map toolMap;
 	private List toolList;
 	private List toolReferences;
@@ -464,6 +465,22 @@ public class Target extends BuildObject implements ITarget {
 			}
 		}
 		return (String[]) targetOSList.toArray(new String[targetOSList.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getTargetArchList()
+	 */
+	public String[] getTargetArchList() {
+		if (targetArchList == null) {
+			// Ask parent for its list
+			if (parent != null) {
+				return parent.getTargetArchList();
+			} else {
+				// I have no parent and no defined list
+				return new String[] {"all"}; //$NON-NLS-1$
+			}
+		}
+		return (String[]) targetArchList.toArray(new String[targetArchList.size()]);
 	}
 
 	/* (non-Javadoc)

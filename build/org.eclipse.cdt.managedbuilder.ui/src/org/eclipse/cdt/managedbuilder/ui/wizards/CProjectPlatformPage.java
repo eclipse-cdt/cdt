@@ -291,6 +291,7 @@ public class CProjectPlatformPage extends WizardPage {
 		ITarget[] allTargets = ManagedBuildManager.getDefinedTargets(null);
 		targets = new ArrayList();
 		String os = BootLoader.getOS();
+		String arch = BootLoader.getOSArch();
 		// Add all of the concrete targets to the target list
 		for (int index = 0; index < allTargets.length; ++index) {
 			ITarget target = allTargets[index];
@@ -299,9 +300,13 @@ public class CProjectPlatformPage extends WizardPage {
 				if (showAll != null && showAll.getSelection() == true) {
 					targets.add(target);
 				} else {
+					// Apply the OS and ARCH filters to determine if the target should be shown
 					List targetOSList = Arrays.asList(target.getTargetOSList());
 					if (targetOSList.contains("all") || targetOSList.contains(os)) {	//$NON-NLS-1$
-						targets.add(target);
+						List targetArchList = Arrays.asList(target.getTargetArchList());
+						if (targetArchList.contains("all") || targetArchList.contains(arch)) { //$NON-NLS-1$
+							targets.add(target);
+						}
 					}
 				}
 			}

@@ -29,6 +29,7 @@ public interface ITarget extends IBuildObject {
 	public static final String MAKE_COMMAND = "makeCommand";	//$NON-NLS-1$
 	public static final String MAKE_ARGS = "makeArguments";	//$NON-NLS-1$
 	public static final String OS_LIST = "osList";	//$NON-NLS-1$
+	public static final String ARCH_LIST = "archList";	//$NON-NLS-1$
 	public static final String PARENT = "parent";	//$NON-NLS-1$
 	
 	/**
@@ -160,6 +161,13 @@ public interface ITarget extends IBuildObject {
 	 * @return String[]
 	 */
 	public String[] getTargetOSList();
+		 
+		 /**
+		  * Answers an array of architectures the target can be created on.
+		  * 
+		  * @return String[]
+		  */
+		 public String[] getTargetArchList();
 
 	/**
 	 * Returns the list of platform specific tools associated with this

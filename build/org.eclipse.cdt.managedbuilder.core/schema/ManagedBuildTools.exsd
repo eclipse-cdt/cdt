@@ -486,6 +486,13 @@ Additional special types exist to flag options of special relevance to the build
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="archList" type="string">
+            <annotation>
+               <documentation>
+                  This field is used by the managed build system to decide when to show the user the target. The value should be a comma-separated list. Current values include &quot;x86&quot;, &quot;sparc&quot;, &quot;ppc&quot;; or &quot;all&quot;.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="errorParsers" type="string">
             <annotation>
                <documentation>

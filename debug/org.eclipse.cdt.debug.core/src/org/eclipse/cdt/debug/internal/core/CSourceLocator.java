@@ -233,9 +233,9 @@ public class CSourceLocator implements ICSourceLocator
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getSourceElementForFunection(String)
+	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getSourceElementForFunction(String)
 	 */
-	public Object getSourceElementForFunection( String function )
+	public Object getSourceElementForFunction( String function )
 	{
 		return null;
 	}

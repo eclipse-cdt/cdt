@@ -65,7 +65,7 @@ public interface ICSourceLocator extends ISourceLocator
 	 * @param function the function name for which to locate source
 	 * @return an object representing a source element. 
 	 */
-	Object getSourceElementForFunection( String function );
+	Object getSourceElementForFunction( String function );
 	
 	/**
 	 * Returns a source element that corresponds to the given address, or

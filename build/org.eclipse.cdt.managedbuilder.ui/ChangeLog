@@ -1,3 +1,6 @@
+2004-03-16 Tanya Wolff
+	Marked remaining strings forming keys, directories and filenames untranslatable.
+
 2004-03-03 James Ciesielski
 	Marked those strings that are non-translatable as such and externalized 
 	those strings that can be translated.

@@ -32,35 +32,35 @@ public class ManagedBuilderUIImages {
 	private static URL fgIconBaseURL;
 	static {
 		try {
-			fgIconBaseURL= new URL(ManagedBuilderUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" );
+			fgIconBaseURL= new URL(ManagedBuilderUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" ); //$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			CUIPlugin.getDefault().log(e);
 		}
 	}	
 	private static final String NAME_PREFIX= ManagedBuilderUIPlugin.getUniqueIdentifier() + '.';
 	private static final int NAME_PREFIX_LENGTH= NAME_PREFIX.length();
-	private static final String T= "full/";
+	private static final String T= "full/"; //$NON-NLS-1$
 
-	public static final String T_BUILD= T + "build16/";
+	public static final String T_BUILD= T + "build16/"; //$NON-NLS-1$
 
 
 
 	// For the managed build images
-	public static final String IMG_BUILD_CONFIG = NAME_PREFIX + "build_configs.gif";
+	public static final String IMG_BUILD_CONFIG = NAME_PREFIX + "build_configs.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_CONFIG = createManaged(T_BUILD, IMG_BUILD_CONFIG);
-	public static final String IMG_BUILD_COMPILER = NAME_PREFIX + "config-compiler.gif";
+	public static final String IMG_BUILD_COMPILER = NAME_PREFIX + "config-compiler.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_COMPILER = createManaged(T_BUILD, IMG_BUILD_COMPILER);
-	public static final String IMG_BUILD_LINKER = NAME_PREFIX + "config-linker.gif";
+	public static final String IMG_BUILD_LINKER = NAME_PREFIX + "config-linker.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_LINKER = createManaged(T_BUILD, IMG_BUILD_LINKER);
-	public static final String IMG_BUILD_LIBRARIAN = NAME_PREFIX + "config-librarian.gif";
+	public static final String IMG_BUILD_LIBRARIAN = NAME_PREFIX + "config-librarian.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_LIBRARIAN = createManaged(T_BUILD, IMG_BUILD_LIBRARIAN);
-	public static final String IMG_BUILD_COMMAND = NAME_PREFIX + "config-command.gif";
+	public static final String IMG_BUILD_COMMAND = NAME_PREFIX + "config-command.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_COMMAND = createManaged(T_BUILD, IMG_BUILD_COMMAND);
-	public static final String IMG_BUILD_PREPROCESSOR = NAME_PREFIX + "config-preprocessor.gif";
+	public static final String IMG_BUILD_PREPROCESSOR = NAME_PREFIX + "config-preprocessor.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_PREPROCESSOR = createManaged(T_BUILD, IMG_BUILD_PREPROCESSOR);
-	public static final String IMG_BUILD_TOOL = NAME_PREFIX + "config-tool.gif";
+	public static final String IMG_BUILD_TOOL = NAME_PREFIX + "config-tool.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_TOOL = createManaged(T_BUILD, IMG_BUILD_TOOL);
-	public static final String IMG_BUILD_CAT = NAME_PREFIX + "config-category.gif";
+	public static final String IMG_BUILD_CAT = NAME_PREFIX + "config-category.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_CAT = createManaged(T_BUILD, IMG_BUILD_CAT);
 
 	
@@ -98,9 +98,9 @@ public class ManagedBuilderUIImages {
 	 */	
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		relPath= relPath.substring(NAME_PREFIX_LENGTH);
-		action.setDisabledImageDescriptor(create(T + "d" + type, relPath));
-		action.setHoverImageDescriptor(create(T + "c" + type, relPath));
-		action.setImageDescriptor(create(T + "e" + type, relPath));
+		action.setDisabledImageDescriptor(create(T + "d" + type, relPath)); //$NON-NLS-1$
+		action.setHoverImageDescriptor(create(T + "c" + type, relPath)); //$NON-NLS-1$
+		action.setImageDescriptor(create(T + "e" + type, relPath)); //$NON-NLS-1$
 	}
 	
 	/**

@@ -14,12 +14,34 @@ import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
 /**
+ * There are GNU language extensions that apply to both GCC and G++. Compound
+ * statement's as expressions.
+ * 
  * @author jcamelon
  */
 public interface IGNUASTCompoundStatementExpression extends IASTExpression {
 
-    public static final ASTNodeProperty STATEMENT = new ASTNodeProperty( "Statement"); //$NON-NLS-1$
-    public IASTCompoundStatement getCompoundStatement();
-    public void setCompoundStatement( IASTCompoundStatement statement );
-    
+	/**
+	 * <code>STATEMENT</code> describes the relationship between
+	 * <code>IGNUASTCompoundStatementExpression</code> and
+	 * <code>IASTCompoundStatement</code>.
+	 */
+	public static final ASTNodeProperty STATEMENT = new ASTNodeProperty(
+			"Statement"); //$NON-NLS-1$
+
+	/**
+	 * Get the compound statement.
+	 * 
+	 * @return <code>IASTCompoundStatement</code>
+	 */
+	public IASTCompoundStatement getCompoundStatement();
+
+	/**
+	 * Set the compound statement.
+	 * 
+	 * @param statement
+	 *            <code>IASTCompoundStatement</code>
+	 */
+	public void setCompoundStatement(IASTCompoundStatement statement);
+
 }

@@ -12,11 +12,27 @@ package org.eclipse.cdt.core.dom.ast.gnu;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 
 /**
+ * There are GNU language extensions that apply to both GCC and G++. Unary
+ * expressions for _alignOf() and typeof() along the lines of sizeof().
+ * 
  * @author jcamelon
  */
 public interface IGNUASTUnaryExpression extends IASTUnaryExpression {
 
-    public static final int op_typeof = IASTUnaryExpression.op_last + 1;
-    public static final int op_alignOf = IASTUnaryExpression.op_last + 2;
-    public static final int op_last = op_alignOf;
+	/**
+	 * <code>op_typeof</code> is used for typeof( unaryExpression ) type
+	 * expressions.
+	 */
+	public static final int op_typeof = IASTUnaryExpression.op_last + 1;
+
+	/**
+	 * <code>op_alignOf</code> is used for __alignOf( unaryExpression ) type
+	 * expressions.
+	 */
+	public static final int op_alignOf = IASTUnaryExpression.op_last + 2;
+
+	/**
+	 * <code>op_last</code> is available for sub-interfaces.
+	 */
+	public static final int op_last = op_alignOf;
 }

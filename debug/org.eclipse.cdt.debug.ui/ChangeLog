@@ -1,3 +1,14 @@
+2002-11-05 Mikhail Khodjaiants
+	Implementation of the "Add Global Variables" action of the Expressions view.
+	Action images:
+		watch_globals.gif (clcl, dlcl, elcl).
+	* AddGlobalsActionDelegate.java: implementation.
+	* plugin.xml: contribution to the Expression view
+	* plugin.xml: added dependency to org.eclipse.cdt.core
+	* .classpath: added dependency to org.eclipse.cdt.core
+	* .project:  added dependency to org.eclipse.cdt.core
+	* plugin.properties: action's label and tooltip text
+
 2002-11-03 Mikhail Khodjaiants
 	Implementation of the "Format/Decimal" and "Format/Unsigned Decimal" actions of the Memory view.
 	* MemoryFormataction.java

@@ -47,4 +47,25 @@ public class Archive extends CFile implements IArchive {
 	protected ArchiveInfo getArchiveInfo() {
 		return (ArchiveInfo)getElementInfo();
 	}
+	/**
+	 * @see org.eclipse.cdt.core.model.ICFile#isArchive()
+	 */
+	public boolean isArchive() {
+		return true;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ICFile#isBinary()
+	 */
+	public boolean isBinary() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ICFile#isTranslationUnit()
+	 */
+	public boolean isTranslationUnit() {
+		return false;
+	}
+
 }

@@ -25,10 +25,6 @@ public class Binary extends CFile implements IBinary {
 		super(parent, file, name);
 	}
 
-	public boolean isBinary() {
-		return true;
-	}
-
 	public boolean hasDebug () {
 		return ((BinaryInfo)getElementInfo()).hasDebug();
 	}
@@ -85,6 +81,34 @@ public class Binary extends CFile implements IBinary {
 
 	public CElementInfo createElementInfo() {
 		return new BinaryInfo(this);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ICFile#isArchive()
+	 */
+	public boolean isArchive() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ICFile#isBinary()
+	 */
+	public boolean isBinary() {
+		return true;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ICFile#isTranslationUnit()
+	 */
+	public boolean isTranslationUnit() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.model.CFile#setLocation(IPath)
+	 */
+	public void setLocation(IPath location) {
+		super.setLocation(location);
 	}
 
 }

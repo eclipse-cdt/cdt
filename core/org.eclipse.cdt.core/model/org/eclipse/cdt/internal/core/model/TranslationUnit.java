@@ -180,4 +180,25 @@ public class TranslationUnit extends CFile implements ITranslationUnit {
 	protected CElementInfo createElementInfo () {
 		return new TranslationUnitInfo(this);
 	}
+	/**
+	 * @see org.eclipse.cdt.core.model.ICFile#isArchive()
+	 */
+	public boolean isArchive() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ICFile#isBinary()
+	 */
+	public boolean isBinary() {
+		return false;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.core.model.ICFile#isTranslationUnit()
+	 */
+	public boolean isTranslationUnit() {
+		return true;
+	}
+
 }

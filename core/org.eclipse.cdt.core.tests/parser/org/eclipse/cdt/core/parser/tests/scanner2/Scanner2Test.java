@@ -2005,6 +2005,17 @@ public class Scanner2Test extends BaseScanner2Test
         assertEquals( 0, callback.problems.size() );
     }
     
+    public void testUnExpandedFunctionMacro() throws Exception{
+        Writer writer = new StringWriter();
+        writer.write( "#define foo( a ) #a         \n"); //$NON-NLS-1$
+        writer.write( "foo( 1 )   foo              \n"); //$NON-NLS-1$
+        
+        initializeScanner( writer.toString() );
+        validateString( "1" ); //$NON-NLS-1$
+        validateIdentifier( "foo" ); //$NON-NLS-1$
+        validateEOF();
+    }
+    
     public void testBug39688A() throws Exception { // test valid IProblems
     	Writer writer = new StringWriter();
     	writer.write("#define decl1(type, ...    \\\n  )   type var;\n"); //$NON-NLS-1$

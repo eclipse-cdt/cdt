@@ -26,6 +26,8 @@
 // #define DEBUG_MONITOR
 #define MAX_CMD_LINE_LENGTH (1024)
 
+int copyTo(char * target, const char * source, int cpyLength, int availSpace);
+
 ///////////////////////////////////////////////////////////////////////////////
 BOOL WINAPI HandlerRoutine(  DWORD dwCtrlType)   //  control signal type
 {
@@ -64,17 +66,23 @@ extern "C" int  _tmain(int argc, TCHAR* argv[]) {
 
    // Construct the full command line
    TCHAR szCmdLine[MAX_CMD_LINE_LENGTH] = { 0 };
-   for (int i = 4; i < argc; i++) {
-	  if(sizeof(szCmdLine) > (_tcslen(szCmdLine) + _tcslen(argv[i]))) 
+   int nPos = 0;
+
+   for(int i = 4; i < argc; ++i) 
 		{
-		_tcscat(szCmdLine, argv[i]); 
-		_tcscat(szCmdLine, __TEXT(" ")); 
-		}
+		int nCpyLen;
+		if(0 > (nCpyLen = copyTo(szCmdLine + nPos, argv[i], _tcslen(argv[i]), MAX_CMD_LINE_LENGTH - nPos)))
+			{
 #ifdef DEBUG_MONITOR
-	  else
-		OutputDebugString("Command line is too long\n");
+			OutputDebugString("Not enough space to build command line\n");
 #endif
-   }
+			return 0;
+			}
+		nPos += nCpyLen;
+		szCmdLine[nPos] = _T(' ');
+		++nPos;
+		}   
+   szCmdLine[nPos] = _T('\0');
 
    STARTUPINFO         si = { sizeof(si) };
    PROCESS_INFORMATION pi = { 0 };
@@ -172,6 +180,76 @@ extern "C" int  _tmain(int argc, TCHAR* argv[]) {
  
    return(dwExitCode);
 }
+
+// Return number of bytes in target or -1 in case of error
+int copyTo(LPTSTR target, LPCTSTR source, int cpyLength, int availSpace)
+{
+	BOOL bSlash = FALSE;
+	int i = 0, j = 0;
+	int totCpyLength = cpyLength;
+
+#define QUOTATION_DO   0
+#define QUOTATION_DONE 1
+#define QUOTATION_NONE 2
+
+	int nQuotationMode = 0;
+	if(availSpace <= cpyLength)  // = to reserve space for '\0'
+		return -1;
+
+	if((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1)))
+		{
+		// Already done
+		nQuotationMode = QUOTATION_DONE;
+		}
+	else
+	if(_tcschr(source, _T(' ')) == NULL)
+		{
+		// No reason to quotate term becase it doesn't have embedded spaces
+		nQuotationMode = QUOTATION_NONE;
+		}
+	else
+		{
+		// Needs to be quotated
+		nQuotationMode = QUOTATION_DO;
+		*target = _T('\"');
+		++j;
+		}
+
+	for(; i < cpyLength; ++i, ++j) 
+		{
+		if(source[i] == _T('\\'))
+			bSlash = TRUE;
+		else
+		// Don't escape embracing quotation marks
+		if((source[i] == _T('\"')) && !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))) ) )
+			{
+			if(!bSlash)
+				{
+				if(j == availSpace)
+					return -1;
+				target[j] = _T('\\');
+				++j;
+				}
+			bSlash = FALSE;
+			}
+		else
+			bSlash = FALSE;
+
+		if(j == availSpace)
+			return -1;
+		target[j] = source[i];
+		}
+
+	if(nQuotationMode == QUOTATION_DO)
+		{
+		if(j == availSpace)
+			return -1;
+		target[j] = _T('\"');
+		++j;
+		}
+	return j;
+}
+
 
 
 //////////////////////////////// End of File //////////////////////////////////

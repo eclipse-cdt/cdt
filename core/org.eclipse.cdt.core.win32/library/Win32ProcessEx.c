@@ -85,7 +85,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	LPVOID envBlk = NULL;
     int ret = 0;
 	char  szCmdLine[MAX_CMD_SIZE];
-	char  szEnvBlock[MAX_ENV_SIZE];
+	int nBlkSize = MAX_ENV_SIZE; 
+	char  * szEnvBlock = (char *)malloc(nBlkSize);
 	jsize nCmdTokens = 0;
 	jsize nEnvVars = 0;
 	int i;
@@ -96,7 +97,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 	char eventWaitName[20];
 	char eventTerminateName[20];
 #ifdef DEBUG_MONITOR
-	char buffer[100];
+	char buffer[1000];
 #endif
 
 
@@ -150,6 +151,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	nPos = sprintf(szCmdLine, "%sstarter.exe %s %s %s ", path, eventBreakName, eventWaitName, eventTerminateName);
 
+	// Prepare command line
 	for(i = 0; i < nCmdTokens; ++i) 
 		{
 		jobject item = (*env) -> GetObjectArrayElement(env, cmdarray, i);
@@ -160,7 +162,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			{
 			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
 				{
-				ThrowByName(env, "java/Exception", "Too long command line");
+				ThrowByName(env, "java/lang/Exception", "Too long command line");
 				return 0;
 				}
 			nPos += nCpyLen;
@@ -172,6 +174,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	szCmdLine[nPos] = '\0';
 
+	// Prepare environment block
     if (nEnvVars > 0) 
 		{
 		nPos = 0;
@@ -179,16 +182,26 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 			{
 			jobject item = (*env) -> GetObjectArrayElement(env, envp, i);
 			jsize    len = (*env) -> GetStringUTFLength(env, item);
-			int nCpyLen;
 			const char *  str = (*env) -> GetStringUTFChars(env, item, 0);	
 			if(NULL != str)
 				{
-				if(0 > (nCpyLen = copyTo(szEnvBlock + nPos, str, len, MAX_ENV_SIZE - nPos - 1)))
+				while((nBlkSize - nPos) <= (len + 2)) // +2 for two '\0'
 					{
-					ThrowByName(env, "java/Exception", "Too many environment variables");
-					return 0;
+					nBlkSize += MAX_ENV_SIZE;
+					szEnvBlock = (char *)realloc(szEnvBlock, nBlkSize);
+					if(NULL == szEnvBlock) 
+						{
+						ThrowByName(env, "java/lang/Exception", "Not enough memory");
+						return 0;
+						}
+#ifdef DEBUG_MONITOR
+					sprintf(buffer, "Realloc environment block; new length is  %i \n", nBlkSize);
+					OutputDebugString(buffer);
+#endif
+
 					}
-				nPos += nCpyLen;
+				strncpy(szEnvBlock + nPos, str, len);
+				nPos += len;
 				szEnvBlock[nPos] = '\0';
 				++nPos;
 				(*env) -> ReleaseStringUTFChars(env, item, str);
@@ -249,7 +262,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	if(NULL != cwd)
 		free(cwd);
-
+	
+	free(szEnvBlock);
 
     CloseHandle(hread[0]);
     CloseHandle(hwrite[1]);
@@ -294,7 +308,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 		pCurProcInfo -> pid = pi.dwProcessId;
         h[0] = pCurProcInfo -> eventWait;
 		h[1] = (HANDLE)_beginthreadex(NULL, 0, waitProcTermination, 
-			(void *) &(pi.dwProcessId), 0, (UINT*) &dwThreadId);
+			(void *) pi.dwProcessId, 0, (UINT*) &dwThreadId);
 		
 		what = WaitForMultipleObjects(2, h, FALSE, INFINITE); 
 		if((what != WAIT_OBJECT_0) && (pCurProcInfo -> pid > 0)) // CreateProcess failed
@@ -345,7 +359,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 	int i;
 	int nPos;
 	char  szCmdLine[MAX_CMD_SIZE];
-	char  szEnvBlock[MAX_ENV_SIZE];
+	int nBlkSize = MAX_ENV_SIZE; 
+	char * szEnvBlock = (char *)malloc(nBlkSize);
 
 
     sa.nLength = sizeof(sa);
@@ -358,6 +373,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
 	nPos = 0;
 
+	// Prepare command line
 	for(i = 0; i < nCmdTokens; ++i) 
 		{
 		jobject item = (*env) -> GetObjectArrayElement(env, cmdarray, i);
@@ -368,7 +384,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 			{
 			if(0 > (nCpyLen = copyTo(szCmdLine + nPos, str, len, MAX_CMD_SIZE - nPos)))
 				{
-				ThrowByName(env, "java/Exception", "Too long command line");
+				ThrowByName(env, "java/lang/Exception", "Too long command line");
 				return 0;
 				}
 			nPos += nCpyLen;
@@ -380,6 +396,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
 	szCmdLine[nPos] = '\0';
 
+	// Prepare environment block
     if (nEnvVars > 0) 
 		{
 		nPos = 0;
@@ -387,16 +404,21 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 			{
 			jobject item = (*env) -> GetObjectArrayElement(env, envp, i);
 			jsize    len = (*env) -> GetStringUTFLength(env, item);
-			int nCpyLen;
 			const char *  str = (*env) -> GetStringUTFChars(env, item, 0);	
 			if(NULL != str)
 				{
-				if(0 > (nCpyLen = copyTo(szEnvBlock + nPos, str, len, MAX_ENV_SIZE - nPos - 1)))
+				while((nBlkSize - nPos) <= (len + 2)) // +2 for two '\0'
 					{
-					ThrowByName(env, "java/Exception", "Too many environment variables");
-					return 0;
+					nBlkSize += MAX_ENV_SIZE;
+					szEnvBlock = (char *)realloc(szEnvBlock, nBlkSize);
+					if(NULL == szEnvBlock) 
+						{
+						ThrowByName(env, "java/lang/Exception", "Not enough memory");
+						return 0;
+						}
 					}
-				nPos += nCpyLen;
+				strncpy(szEnvBlock + nPos, str, len);
+				nPos += len;
 				szEnvBlock[nPos] = '\0';
 				++nPos;
 				(*env) -> ReleaseStringUTFChars(env, item, str);
@@ -443,6 +465,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
 	if(NULL != cwd)
 		free(cwd);
+	free(szEnvBlock);
 
     if (!ret) 
 		{
@@ -486,12 +509,15 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_raise
 	pProcInfo_t pCurProcInfo = findProcInfo(uid);
 #ifdef DEBUG_MONITOR
 	char buffer[100];
-	sprintf(buffer, "Spawner received signal %i for process %i\n", signal, pCurProcInfo -> pid);
-	OutputDebugString(buffer);
 #endif
 	
 	if(NULL == pCurProcInfo)
 		return -1;
+
+#ifdef DEBUG_MONITOR
+	sprintf(buffer, "Spawner received signal %i for process %i\n", signal, pCurProcInfo -> pid);
+	OutputDebugString(buffer);
+#endif
 	
 	hProc = OpenProcess(PROCESS_ALL_ACCESS, 0, pCurProcInfo -> pid);
 
@@ -661,10 +687,10 @@ void cleanUpProcBlock(pProcInfo_t pCurProcInfo)
 unsigned int _stdcall waitProcTermination(void* pv) 
 {
 	int i;
-	int pid = *(int *)pv;
+	int pid = (int)pv;
 	DWORD rc = 0;
 #ifdef DEBUG_MONITOR
-	char buffer[100];
+	char buffer[1000];
 #endif
 
 	HANDLE hProc = OpenProcess(PROCESS_ALL_ACCESS, 0, pid);
@@ -711,42 +737,70 @@ unsigned int _stdcall waitProcTermination(void* pv)
 int copyTo(char * target, const char * source, int cpyLength, int availSpace)
 {
 	BOOL bSlash = FALSE;
-	int i, j;
+	int i = 0, j = 0;
 	int totCpyLength = cpyLength;
 
-	if(availSpace < cpyLength)
+#define QUOTATION_DO   0
+#define QUOTATION_DONE 1
+#define QUOTATION_NONE 2
+
+	int nQuotationMode = 0;
+
+
+
+	if(availSpace <= cpyLength) // = to reserve space for final '\0'
 		return -1;
-	strncpy(target, source, cpyLength);
-	return cpyLength;
 
-	// Don't open this feature for a while
+	if(('\"' == *source) && ('\"' == *(source + cpyLength - 1)))
+		{
+		nQuotationMode = QUOTATION_DONE;
+		}
+	else
+	if(strchr(source, ' ') == NULL)
+		{
+		// No reason to quotate term becase it doesn't have embedded spaces
+		nQuotationMode = QUOTATION_NONE;
+		}
+	else
+		{
+		// Needs to be quotated
+		nQuotationMode = QUOTATION_DO;
+		*target = '\"';
+		++j;
+		}
 
-	for(i = 0, j = 0; i < cpyLength; ++i, ++j) 
+
+	for(; i < cpyLength; ++i, ++j) 
 		{
 		if(source[i] == '\\')
 			bSlash = TRUE;
 		else
-		if(source[i] == '"') 
 			{
-			if(bSlash)
+			// Don't escape embracing quotation marks
+			if((source[i] == '\"') && !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))) ) )
 				{
-				if(j == availSpace)
-					return -1;
-				target[j] = '\\';
-				++j;
-				bSlash = FALSE;
+				if(!bSlash) // If still not escaped
+					{
+					if(j == availSpace)
+						return -1;
+					target[j] = '\\';
+					++j;
+					}
 				}
-			if(j == availSpace)
-				return -1;
-			target[j] = '\\';
-			++j;
-			}
-		else
 			bSlash = FALSE;
+			}
 
 		if(j == availSpace)
 			return -1;
 		target[j] = source[i];
+		}
+
+	if(nQuotationMode == QUOTATION_DO)
+		{
+		if(j == availSpace)
+			return -1;
+		target[j] = '\"';
+		++j;
 		}
 
 	return j;

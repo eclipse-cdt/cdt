@@ -31,8 +31,8 @@ import org.eclipse.jface.wizard.IWizardPage;
 public interface ICPathContainerPage extends IWizardPage {
 
 	/**
-	 * Method <code>initialize()</code> is called before  <code>IClasspathContainerPage.setSelection</code>
-	 * to give additional information about the context the classpath container entry is configured in. This information
+	 * Method <code>initialize()</code> is called before  <code>ICPathContainerPage.setSelection</code>
+	 * to give additional information about the context the path container entry is configured in. This information
 	 * only reflects the underlying dialogs current selection state. The user still can make changes after the
 	 * the classpath container pages has been closed or decide to cancel the operation.
 	 * @param project The project the new or modified entry is added to. The project does not have to exist. 

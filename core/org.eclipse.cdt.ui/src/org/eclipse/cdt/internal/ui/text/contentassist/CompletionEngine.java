@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.IParser;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -49,7 +51,9 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
 import org.eclipse.cdt.internal.core.CharOperation;
+import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.parser.util.ASTUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
@@ -384,6 +388,7 @@ public class CompletionEngine implements RelevanceConstants{
 	
 	private LookupResult lookup(IASTScope searchNode, String prefix, LookupKind[] kinds, IASTNode context){
 		try {
+			logLookups (kinds);
 			LookupResult result = searchNode.lookup (prefix, kinds, context);
 			return result ;
 		} catch (IASTNode.LookupException ilk ){
@@ -552,8 +557,16 @@ public class CompletionEngine implements RelevanceConstants{
 		// 1- Parse the translation unit
 		IASTCompletionNode completionNode = parse(sourceUnit, completionOffset);
 		
-		if (completionNode == null)
+		log("");
+		
+		if (completionNode == null){
+			log("Null Completion Node Error");
 			return null;
+		}
+		
+		logNode("Scope   = " , completionNode.getCompletionScope());
+		logNode("Context = " , completionNode.getCompletionContext());
+		logKind("Kind    = ", completionNode.getCompletionKind().getEnumValue());		
 		
 		// set the completionStart and the completionLength
 		completionStart = completionOffset - completionNode.getCompletionPrefix().length();
@@ -622,5 +635,185 @@ public class CompletionEngine implements RelevanceConstants{
 		return completionNode;
 			
 	}
+	private void logKind(String message, int kindEnum){
+		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST) )
+			return;
+		
+		String kindStr = "";
+		switch (kindEnum){
+		case 0:
+			kindStr = "MEMBER_REFERENCE";
+			break;
 	
+		case 1:
+			kindStr = "SCOPED_REFERENCE";
+			break;
+			
+		case 2:
+			kindStr = "FIELD_TYPE";
+			break;
+			
+		case 3:
+			kindStr = "VARIABLE_TYPE";
+			break;
+			
+		case 4:
+			kindStr = "ARGUMENT_TYPE";
+			break;
+			
+		case 5:
+			kindStr = "SINGLE_NAME_REFERENCE";
+			break;
+			
+		case 6:
+			kindStr = "TYPE_REFERENCE";
+			break;
+			
+		case 7:
+			kindStr = "CLASS_REFERENCE";
+			break;
+			
+		case 8:
+			kindStr = "NAMESPACE_REFERENCE";
+			break;
+			
+		case 9:
+			kindStr = "EXCEPTION_REFERENCE";
+			break;
+			
+		case 10:
+			kindStr = "MACRO_REFERENCE";
+			break;
+			
+		case 11:
+			kindStr = "FUNCTION_REFERENCE";
+			break;
+			
+		case 12:
+			kindStr = "CONSTRUCTOR_REFERENCE";
+			break;
+			
+		case 13:
+			kindStr = "KEYWORD";
+			break;
+			
+		case 14:
+			kindStr = "PREPROCESSOR_DIRECTIVE";
+			break;
+			
+		case 15:
+			kindStr = "USER_SPECIFIED_NAME";
+			break;
+			
+		case 200:
+			kindStr = "NO_SUCH_KIND";
+			break;
+		}
+		log (message + kindStr);
+	}
+	private void logNode(String message, IASTNode node){
+		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
+			return;
+		
+		if(node == null){
+			log(message + "null");
+			return;
+		}
+		if(node instanceof IASTMethod){
+			String name = "Method: ";
+			name += ((IASTMethod)node).getName();
+			log(message + name);
+			return;
+		}
+		if(node instanceof IASTFunction){
+			String name = "Function: ";
+			name += ((IASTFunction)node).getName();
+			log(message + name);
+			return;
+		}
+		if(node instanceof IASTClassSpecifier){
+			String name = "Class: ";
+			name += ((IASTClassSpecifier)node).getName();
+			log(message + name);
+			return;
+		}
+		if(node instanceof IASTCompilationUnit){
+			String name = "Global";
+			log(message + name);
+			return;
+		}
+		
+		log(message + node.toString());
+		return;
+		
+	}
+	private void logLookups(LookupKind[] kinds){
+		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
+			return;
+		
+		StringBuffer kindName = new StringBuffer("Looking For ");
+		for(int i = 0; i<kinds.length; i++){
+			LookupKind kind = (LookupKind) kinds[i];
+			switch (kind.getEnumValue()){
+			case 0:
+				kindName.append("ALL");
+				break;
+			case 1:
+				kindName.append("STRUCTURES");
+				break;
+			case 2:
+				kindName.append("STRUCS");
+				break;
+			case 3:
+				kindName.append("UNIONS");
+				break;
+			case 4:
+				kindName.append("CLASSES");
+				break;
+			case 5:
+				kindName.append("FUNCTIONS");
+				break;
+			case 6:
+				kindName.append("VARIABLES");
+				break;
+			case 7:
+				kindName.append("LOCAL_VARIABLES");
+				break;
+			case 8:
+				kindName.append("MEMBERS");
+				break;
+			case 9:
+				kindName.append("METHODS");
+				break;
+			case 10:
+				kindName.append("FIELDS");
+				break;
+			case 11:
+				kindName.append("CONSTRUCTORS");
+				break;
+			case 12:
+				kindName.append("NAMESPACES"); 
+				break;
+			case 13:
+				kindName.append("MACROS"); 
+				break;
+			case 14:
+				kindName.append("ENUMERATIONS"); 
+				break;
+			case 15:
+				kindName.append("ENUMERATORS");
+				break;
+			case 16:
+				kindName.append("THIS");
+				break;		
+			}
+			kindName.append(", ");
+		}
+		log (kindName.toString());
+	}
+	private void log(String message){
+		if (! CCorePlugin.getDefault().isDebugging() && Util.isActive(IDebugLogConstants.CONTENTASSIST))
+			return;
+		Util.debugLog(message, IDebugLogConstants.CONTENTASSIST, false);
+	}
 }

@@ -265,7 +265,7 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 			displayString = name;
 			String functionPrototype = returnType + " " + name;
 			if(parameterString != null){
-				if ((parameterString.indexOf("(") != -1) && (parameterString.indexOf(")") != -1))
+				if ((parameterString.indexOf("(") == -1) && (parameterString.indexOf(")") == -1))
 				{	
 					functionPrototype += "(" + parameterString + ")";
 				}

@@ -26,6 +26,7 @@ public class Util implements ICLogConstants {
 	
 	public static boolean VERBOSE_PARSER = false;
 	public static boolean VERBOSE_MODEL = false;
+	public static boolean VERBOSE_CONTENTASSIST = false;
 	
 	private Util() {
 	}
@@ -183,12 +184,16 @@ public class Util implements ICLogConstants {
 		Util.log(status, logType);
 	}
 	
-	
 	public static void debugLog(String message, DebugLogConstant client) {
+		Util.debugLog(message, client, true);
+	}
+	
+	public static void debugLog(String message, DebugLogConstant client, boolean addTimeStamp) {
 		if( CCorePlugin.getDefault() == null ) return;
 		if ( CCorePlugin.getDefault().isDebugging() && isActive(client)) {
 			// Time stamp
-			message = MessageFormat.format( "[{0}] {1}", new Object[] { new Long( System.currentTimeMillis() ), message } );
+			if(addTimeStamp)
+				message = MessageFormat.format( "[{0}] {1}", new Object[] { new Long( System.currentTimeMillis() ), message } );
 			while (message.length() > 100) {
 				String partial = message.substring(0, 100);
 				message = message.substring(100);
@@ -206,12 +211,15 @@ public class Util implements ICLogConstants {
 	 * @param client
 	 * @return
 	 */
-	private static boolean isActive(DebugLogConstant client) {
+	public static boolean isActive(DebugLogConstant client) {
 		if (client.equals(IDebugLogConstants.PARSER)){
 			return VERBOSE_PARSER;
 		}
 		else if (client.equals(IDebugLogConstants.MODEL)){
 			return VERBOSE_MODEL;
+		}
+		else if (client.equals(IDebugLogConstants.CONTENTASSIST)){
+			return VERBOSE_CONTENTASSIST;
 		}
 		return false;
 	}

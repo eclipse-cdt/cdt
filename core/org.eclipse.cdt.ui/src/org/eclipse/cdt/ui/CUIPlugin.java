@@ -78,9 +78,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private static CUIPlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
-
+	
 	static String SEPARATOR = System.getProperty("file.separator");
-
+	
 	// -------- static methods --------
 
 	static {
@@ -213,7 +213,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		fDocumentProvider = null;
 		fTextTools = null;
 	}
-	
+		
 	/**
 	 * Returns the used document provider
 	 */
@@ -308,6 +308,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	public void startup() throws CoreException {
 		super.startup();
+		
 		runUI(new Runnable() {
 			public void run() {
 				registerAdapters();

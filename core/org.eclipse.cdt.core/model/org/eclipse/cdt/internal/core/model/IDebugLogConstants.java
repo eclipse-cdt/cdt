@@ -23,5 +23,6 @@ public interface IDebugLogConstants {
 		
 	public static final DebugLogConstant PARSER = new DebugLogConstant( 1 );
 	public static final DebugLogConstant MODEL = new DebugLogConstant ( 2 );
-
+	public static final DebugLogConstant CONTENTASSIST = new DebugLogConstant ( 3 );
+	
 }

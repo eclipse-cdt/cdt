@@ -719,6 +719,7 @@ public class CCorePlugin extends Plugin {
 	private static final String MATCH_LOCATOR  = CCorePlugin.PLUGIN_ID + "/debug/matchlocator" ; //$NON-NLS-1$
 	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser" ; //$NON-NLS-1$
 	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor" ;
+	private static final String CONTENTASSIST = CCorePlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
 	/**
 	 * Configure the plugin with respect to option settings defined in ".options" file
 	 */
@@ -731,6 +732,9 @@ public class CCorePlugin extends Plugin {
 			option = Platform.getDebugOption(MODEL);
 			if(option != null) Util.VERBOSE_MODEL = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
 
+			option = Platform.getDebugOption(CONTENTASSIST);
+			if(option != null) Util.VERBOSE_CONTENTASSIST = option.equalsIgnoreCase("true") ; //$NON-NLS-1$
+			
 			boolean indexFlag = false;
 			option = Platform.getDebugOption(INDEX_MANAGER);
 			if(option != null) {

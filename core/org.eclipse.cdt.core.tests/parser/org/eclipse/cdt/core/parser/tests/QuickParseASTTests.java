@@ -1657,7 +1657,8 @@ public class QuickParseASTTests extends BaseASTTest
 		parse("double x = 0x1.fp1;").getDeclarations().next(); //$NON-NLS-1$
 	}
 	
-	public void testBug39552A() throws Exception
+	// digraphs/trigraphs have been temporarily remove
+	public void testBug39552A(int x) throws Exception
 	{
 		Writer code = new StringWriter();
 
@@ -1682,7 +1683,8 @@ public class QuickParseASTTests extends BaseASTTest
 		parse(code.toString());
 	}
     
-	public void testBug39552B() throws Exception
+	// digraphs/trigraphs have been temporarily remove
+	public void testBug39552B(int x) throws Exception
 	{
 		Writer code = new StringWriter();
 

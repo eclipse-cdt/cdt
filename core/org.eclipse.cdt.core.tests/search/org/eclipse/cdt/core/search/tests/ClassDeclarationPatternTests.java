@@ -82,6 +82,29 @@ public class ClassDeclarationPatternTests extends TestCase implements ICSearchCo
 		assertEquals( matches.size(), 1 );
 	}
 	
+	public void testBug39652() {
+		CSearchPattern pattern = CSearchPattern.createPattern( "A::B", TYPE, DECLARATIONS, EXACT_MATCH, true );
+		
+		initialize( pattern );
+		matchLocator.locateMatches( new String[] { cppPath }, null, null );
+		Set matches = resultCollector.getMatches();
+		/* Test should find 1 match */
+		assertTrue( matches != null );
+		assertTrue( matches.size() == 1 );
+				
+		pattern = CSearchPattern.createPattern( "NS::NS2::a", TYPE, DECLARATIONS, EXACT_MATCH, true );
+		initialize( pattern );
+		matchLocator.locateMatches( new String[] { cppPath }, null, null );
+		matches = resultCollector.getMatches();
+		assertTrue( matches == null );
+		
+		pattern = CSearchPattern.createPattern( "NS::B::A", TYPE, DECLARATIONS, EXACT_MATCH, true );
+		initialize( pattern );
+		matchLocator.locateMatches( new String[] { cppPath }, null, null );
+		matches = resultCollector.getMatches();
+		assertTrue( matches == null );
+	}
+	
 	public void failingtestMatchStruct(){
 		CSearchPattern pattern = CSearchPattern.createPattern( "A", STRUCT, DECLARATIONS, EXACT_MATCH, true );
 		

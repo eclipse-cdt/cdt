@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.parser.failedTests.DOMFailedTest;
 import org.eclipse.cdt.core.parser.failedTests.LokiFailures;
 import org.eclipse.cdt.core.parser.failedTests.STLFailedTests;
 import org.eclipse.cdt.core.parser.tests.ParserTestSuite;
-import org.eclipse.cdt.core.search.failedTests.PatternsFailedTests;
 import org.eclipse.cdt.core.search.tests.ClassDeclarationPatternTests;
 import org.eclipse.core.boot.IPlatformRunnable;
 
@@ -90,7 +89,6 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTestSuite(LokiFailures.class);
 		suite.addTestSuite(STLFailedTests.class);
 		suite.addTestSuite(CModelElementsFailedTests.class);
-		suite.addTestSuite(PatternsFailedTests.class);
 
 		// Last test to trigger report generation
 		suite.addTest(suite.new GenerateReport("generateReport"));

@@ -2355,11 +2355,22 @@ public class Parser implements IParser
                                 {
                                     do
                                     {
+                                    	IASTScope s = null;
+                                    	if( sdw != null )
+                                    		s = sdw.getScope();
+                                    	else
+                                    	{
+                                    		Declarator i = owningDeclarator; 
+                                    		while( i.getOwnerDeclarator() != null )
+                                    			i = i.getOwnerDeclarator(); 
+                                    		s = i.getOwner().getScope();
+                                    	}
+                                    	
                                         simpleDeclaration(
                                             oldKRParameterDeclarationClause,
                                             false,
                                             true,
-                                            sdw.getScope());
+                                            s);
                                     }
                                     while (LT(1) != IToken.tLBRACE);
                                 }
@@ -2944,7 +2955,7 @@ public class Parser implements IParser
                     default :
                         try
                         {
-                            declaration(classSpec);
+                            declaration(classSpec,astClassSpecifier);
                         }
                         catch (Backtrack bt)
                         {

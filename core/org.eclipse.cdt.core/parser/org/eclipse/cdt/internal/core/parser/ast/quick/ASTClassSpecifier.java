@@ -49,6 +49,8 @@ public class ASTClassSpecifier
         
         Stack names = new Stack();
         IASTScope parent = getOwnerScope();
+        
+        names.push( name ); // push on our own name
         while (parent != null)
         {
             if (parent instanceof IASTNamespaceDefinition

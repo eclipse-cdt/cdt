@@ -1,3 +1,7 @@
+2003-07-04 John Camelon
+	Fixed NPE in Parser::declarator().
+	Bug 39652 - AST: Nested Classes incorrectly report null qualified Names 
+
 2003-07-04 Victor Mozgin
 	Added CTaskTagsReconciler.
 	Extended ParserFactory with createProblemReporter() and createTranslationResult().

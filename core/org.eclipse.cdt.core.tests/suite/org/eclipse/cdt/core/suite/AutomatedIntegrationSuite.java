@@ -9,7 +9,6 @@ package org.eclipse.cdt.core.suite;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.build.managed.tests.ManagedBuildTests;
 import org.eclipse.cdt.core.build.managed.tests.StandardBuildTests;
 import org.eclipse.cdt.core.cdescriptor.tests.CDescriptorTests;
 import org.eclipse.cdt.core.indexer.tests.DependencyTests;
@@ -51,7 +50,6 @@ public class AutomatedIntegrationSuite extends TestSuite {
 		
 		// Add all success tests
 		suite.addTest(CDescriptorTests.suite());
-		suite.addTest(ManagedBuildTests.suite());
 		suite.addTest(StandardBuildTests.suite());
 		suite.addTest(ParserTestSuite.suite());
 		suite.addTest(AllCoreTests.suite());

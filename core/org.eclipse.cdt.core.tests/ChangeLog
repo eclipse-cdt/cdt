@@ -1,3 +1,6 @@
+2004-04-23 Hoda Amer
+	Patch for Sean Evoy : Removing Managed Build Tests from core tests.
+	
 2004-04-22 John Camelon
 	Added CompleteParseASTTest:testBug47926().
 

@@ -37,7 +37,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			monitor = new NullProgressMonitor();
 		}
 
-		monitor.beginTask("Launching Local C Application", IProgressMonitor.UNKNOWN);
+		monitor.beginTask("Launching postmortem debugger", IProgressMonitor.UNKNOWN);
 		// check for cancellation
 		if (monitor.isCanceled()) {
 			return;

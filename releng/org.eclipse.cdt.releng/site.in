@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+	<category-def name="cdt" label="CDT Milestone @milestone@"/>
+	<feature id="org.eclipse.cdt" url="features/org.eclipse.cdt_2.0.0.jar" version="2.0.0">
+		<category name="cdt"/>
+	</feature>
+	<feature id="org.eclipse.cdt.make" url="features/org.eclipse.cdt.make_2.0.0.jar" version="2.0.0">
+		<category name="cdt"/>
+	</feature>
+	<feature id="org.eclipse.cdt.managedbuilder" url="features/org.eclipse.cdt.managedbuilder_2.0.0.jar" version="2.0.0">
+		<category name="cdt"/>
+	</feature>
+</site>

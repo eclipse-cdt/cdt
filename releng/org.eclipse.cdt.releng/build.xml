@@ -3,6 +3,7 @@
 	<target name="build" depends="zips,test,updateSite"/>
 	<target name="nightly" depends="build,upload,mail"/>
 	<target name="integration" depends="nightly,wswbmap"/>
+	<target name="milestone" depends="integration,milestoneSite"/>
 	
 	<target name="init">
 		<touch file="${user.home}/.cvspass" />
@@ -19,6 +20,7 @@
 		<property name="zipsdir" value="${buildDirectory}/${buildType}.${buildId}"/>
 		<property name="sitedir" value="${buildDirectory}/build.site"/>
 		<property name="siteversion" value="2.0.0"/>
+		<property name="milestonedir" value="${buildDirectory}/${milestone}"/>
 	</target>
 
 	<target name="zips" depends="init">
@@ -29,6 +31,9 @@
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/builders" />
 		</ant>
+		<concat destfile="compile.log">
+			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>
+		</concat>
 	</target>
 
 	<target name="test" depends="init">
@@ -56,7 +61,6 @@
 	</target>
 	
 	<target name="updateSite" depends="init">
-		<mkdir dir="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-aix.motif.ppc.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip" dest="${sitedir}"/>
 		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.motif.x86.zip" dest="${sitedir}"/>
@@ -90,6 +94,29 @@
 		     destfile="${sitedir}/${dir}/${id}_${siteversion}.${timestamp}.jar"/>
 	</target>
 
+	<target name="milestoneSite" depends="init">
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-aix.motif.ppc.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.gtk.x86.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-linux.motif.x86.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-qnx.photon.x86.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-solaris.motif.sparc.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt-${buildId}-win32.win32.x86.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.make-${buildId}.zip" dest="${milestonedir}"/>
+		<unzip src="${zipsdir}/org.eclipse.cdt.managedbuilder-${buildId}.zip" dest="${milestonedir}"/>
+		<antcall target="allElements">
+			<param name="target" value="milestoneJars"/>
+		</antcall>
+		<copy file="site.in" tofile="${milestonedir}/site.xml"/>
+		<replace file="${milestonedir}/site.xml" token="@milestone@" value="${milestone}"/>
+		<delete dir="${milestonedir}/eclipse"/>
+	</target>
+
+	<target name="milestoneJars">
+		<mkdir dir="${milestonedir}/${dir}"/>
+		<jar basedir="${milestonedir}/eclipse/${dir}/${id}_${siteversion}"
+			 destfile="${milestonedir}/${dir}/${id}_${siteversion}.jar"/>
+	</target>
+	
 	<target name="upload" depends="init">
 		<ftp server="update.eclipse.org" userid="${cdtuser}" password="${cdtpasswd}"
 			remotedir="${remotedir}" action="put" verbose="yes">
@@ -107,9 +134,12 @@
 	</target>
 	
 	<target name="mail" depends="init">	
+		<concat destfile="mail.txt">
+			<filelist dir="${basedir}" files="message.txt,compile.log"/>
+		</concat>
 		<mail subject="CDT Build ${siteversion}.${timestamp} completed"
-			tolist="cdt-test-dev@eclipse.org" from="dschaefe@ca.ibm.com">
-			<message src="message.txt"/>
+			tolist="dschaefe@ca.ibm.com" from="dschaefe@ca.ibm.com">
+			<message src="mail.txt"/>
 		</mail>
 	</target>
 

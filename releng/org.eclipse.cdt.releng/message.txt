@@ -4,3 +4,6 @@ The build is available at
 
 Cheers,
 dschaefer2, the buildmaster...
+
+--- Compile logs ---
+

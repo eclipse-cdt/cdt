@@ -36,6 +36,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 	BreakpointManager breakpointManager;
 	EventManager eventManager;
 	VariableManager variableManager;
+	RegisterManager registerManager;
 	MemoryManager memoryManager;
 	SignalManager signalManager;
 	SourceManager sourceManager;
@@ -59,6 +60,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 		eventManager = new EventManager(this);
 		s.addObserver(eventManager);
 		variableManager = new VariableManager(this);
+		registerManager = new RegisterManager(this);
 		memoryManager = new MemoryManager(this);
 		signalManager = new SignalManager(this);
 		sourceManager = new SourceManager(this);
@@ -101,11 +103,17 @@ public class CSession implements ICDISession, ICDISessionObject {
 	}
 
 	/**
-	 * 
+	 */
+	public RegisterManager getRegisterManager() {
+		return registerManager;
+	}
+
+	/**
 	 */
 	public VariableManager getVariableManager() {
 		return variableManager;
 	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getMemoryManager()
 	 */

@@ -180,7 +180,13 @@ public class CValue extends CDebugElement implements ICValue
 			ICDIValue value = getUnderlyingValue();
 			if ( value != null )
 			{
-				return Arrays.asList( value.getVariables() );
+				ICDIVariable[] vars = value.getVariables();
+				//Should throw an exception
+				if ( vars == null )
+				{
+					vars = new ICDIVariable[0];
+				}
+				return Arrays.asList( vars );
 			}
 		}
 		catch( CDIException e )

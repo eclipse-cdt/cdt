@@ -1914,4 +1914,9 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	{
     	parse( "#define DEF1(A1) A1\n#define DEF2     DEF1(DEF2)\nDEF2;", false ); //$NON-NLS-1$
 	}
+    
+    public void testBug65569() throws Exception
+	{
+    	parse( "class Sample;\nstruct Sample { /* ... */ };" ); //$NON-NLS-1$
+	}
 }

@@ -258,7 +258,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getQualifiedName()
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getQualifiedName()
 	 */
 	public String getQualifiedName() throws CDIException {
 		if (qualifiedName == null) {

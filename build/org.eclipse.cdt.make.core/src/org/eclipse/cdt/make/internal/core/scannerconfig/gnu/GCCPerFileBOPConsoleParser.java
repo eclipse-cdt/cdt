@@ -128,7 +128,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
             String genericLine = line.replaceAll(filePath, "LONG_NAME");
             genericLine = genericLine.replaceAll(shortFileName+"\\.", "SHORT_NAME\\.");
 
-            CCommandDSC cmd = fUtil.getNewCCommandDSC(genericLine);
+            CCommandDSC cmd = fUtil.getNewCCommandDSC(genericLine, extensionsIndex > 0);
             List cmdList = new ArrayList();
             cmdList.add(cmd);
             Map sc = new HashMap(1);

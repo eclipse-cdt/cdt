@@ -28,18 +28,25 @@ public class CCommandDSC {
 	private boolean discovered;
 //	private List files;				// list of files this command applies to
 	private boolean cppFileType;	// C or C++ file type
-	// TODO add discovered scanner config
-	/**
-	 * 
+
+    private List symbols;
+    private List includes;
+    
+    /**
+	 * @param cppFileType2 
 	 */
-	public CCommandDSC() {
+	public CCommandDSC(boolean cppFileType) {
 		compilerCommand = new ArrayList();
 		discovered = false;
 //		files = null;
-		cppFileType = false;	// assume C file type
+		this.cppFileType = cppFileType;
 		commandId = ++ids;
 	}
 
+    public boolean appliesToCFileType() {
+        return !cppFileType;
+    }
+    
 	public void addSCOption(KVPair option) {
 		compilerCommand.add(option);
 	}
@@ -142,7 +149,9 @@ public class CCommandDSC {
 	 */
 	public boolean equals(Object arg0) {
 		if (arg0 != null && arg0.getClass().equals(this.getClass())) {
-			return compilerCommand.equals(((CCommandDSC)arg0).compilerCommand);
+            CCommandDSC other = (CCommandDSC)arg0;
+			return (compilerCommand.equals(other.compilerCommand) &&
+                cppFileType == other.cppFileType);
 		}
 		return false;
 	}
@@ -153,4 +162,40 @@ public class CCommandDSC {
 		return compilerCommand.hashCode();
 	}
 
+    /**
+     * @return Returns the includes.
+     */
+    public List getIncludes() {
+        return includes;
+    }
+    /**
+     * @param includes The includes to set.
+     */
+    public void setIncludes(List includes) {
+        this.includes = includes;
+    }
+    /**
+     * @return Returns the symbols.
+     */
+    public List getSymbols() {
+        return symbols;
+    }
+    /**
+     * @param symbols The symbols to set.
+     */
+    public void setSymbols(List symbols) {
+        this.symbols = symbols;
+    }
+    /**
+     * @return Returns the discovered.
+     */
+    public boolean isDiscovered() {
+        return discovered;
+    }
+    /**
+     * @param discovered The discovered to set.
+     */
+    public void setDiscovered(boolean discovered) {
+        this.discovered = discovered;
+    }
 }

@@ -52,6 +52,8 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
     private static final String BO_PROVIDER_OPEN_FILE_DIALOG = PREFIX + ".boProvider.browse.openFileDialog"; //$NON-NLS-1$
     private static final String BO_PROVIDER_LOAD_BUTTON = PREFIX + ".boProvider.load.button"; //$NON-NLS-1$
 
+    private static final String providerId = "makefileGenerator";  //$NON-NLS-1$
+
     private Button bopEnabledButton;
     private Text bopOpenFileText;
     private Button bopLoadButton;
@@ -265,6 +267,7 @@ public class GCCPerFileSCDProfilePage extends AbstractDiscoveryPage {
             buildInfo.setBuildOutputFileActionEnabled(true);
             buildInfo.setBuildOutputFilePath(getBopOpenFileText());
             buildInfo.setBuildOutputParserEnabled(bopEnabledButton.getSelection());
+            buildInfo.setProviderOutputParserEnabled(providerId, bopEnabledButton.getSelection());
         }
     }
 

@@ -173,33 +173,24 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		// check TSO for the project
-		updateScannerConfig(monitor);
+        IDiscoveredPathInfo pathInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project);
+        monitor.beginTask(MakeMessages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
+        if (pathInfo != null) {
+            monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
+            if (scannerConfigNeedsUpdate(pathInfo)) {
+                monitor.worked(50);
+                monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
+                try {
+                    // update scanner configuration
+                    MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(pathInfo);
+                    monitor.worked(50);
+                } catch (CoreException e) {
+                    MakeCorePlugin.log(e);
+                }
+            }
+        }
+        monitor.done();
         scPersisted = true;
-	}
-
-    /**
-	 * @param monitor
-	 * @throws CoreException
-	 */
-	private void updateScannerConfig(IProgressMonitor monitor) throws CoreException {
-		IDiscoveredPathInfo pathInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project);
-		monitor.beginTask(MakeMessages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
-		if (pathInfo != null) {
-			monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
-			if (scannerConfigNeedsUpdate(pathInfo)) {
-				monitor.worked(50);
-				monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + project.getName()); //$NON-NLS-1$
-				try {
-					// update scanner configuration
-					MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(pathInfo);
-					monitor.worked(50);
-				} catch (CoreException e) {
-					MakeCorePlugin.log(e);
-				}
-			}
-		}
-		monitor.done();
 	}
 
 	/**

@@ -110,7 +110,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
             return;
         compiledFileList.add(longFileName);
 
-        CCommandDSC command = getNewCCommandDSC(genericLine);
+        CCommandDSC command = getNewCCommandDSC(genericLine, false); // assume .c file type
         int index = commandsList2.indexOf(command);
         if (index == -1) {
             commandsList2.add(command);
@@ -126,9 +126,10 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 
     /**
      * @param genericLine
+     * @param cppFileType 
      */
-    public CCommandDSC getNewCCommandDSC(String genericLine) {
-        CCommandDSC command = new CCommandDSC();
+    public CCommandDSC getNewCCommandDSC(String genericLine, boolean cppFileType) {
+        CCommandDSC command = new CCommandDSC(cppFileType);
         String[] tokens = genericLine.split("\\s+");
         command.addSCOption(new KVPair(SCDOptionsEnum.COMMAND, tokens[0]));
         for (int i = 1; i < tokens.length; ++i) {
@@ -179,7 +180,11 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
         }
         else {
             // relative path
-            pFilePath = getWorkingDirectory().append(filePath);
+            IPath cwd = getWorkingDirectory();
+            if (!cwd.isAbsolute()) {
+                cwd = getBaseDirectory().append(cwd);
+            }
+            pFilePath = cwd.append(filePath);
         }
         return pFilePath;
     }

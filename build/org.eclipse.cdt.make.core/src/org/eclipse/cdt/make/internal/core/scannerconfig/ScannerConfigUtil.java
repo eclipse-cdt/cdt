@@ -23,6 +23,9 @@ import java.util.Set;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
@@ -297,29 +300,107 @@ public final class ScannerConfigUtil {
 	}
 	
 	public static IPath getDiscoveredScannerConfigStore(IProject project, boolean delete) {
-		String fileName = null;
+        String fileName = project.getName() + ".sc"; //$NON-NLS-1$
+		String storedFileName = null;
 		try {
-			fileName = project.getPersistentProperty(discoveredScannerConfigFileNameProperty);
+            storedFileName = project.getPersistentProperty(discoveredScannerConfigFileNameProperty);
 		} catch (CoreException e) {
 			MakeCorePlugin.log(e.getStatus());
 		}
-		if (fileName == null) {
-			fileName = String.valueOf(sRandom.nextLong()) + ".sc"; //$NON-NLS-1$
-			try {
-				project.setPersistentProperty(discoveredScannerConfigFileNameProperty, fileName);
-			} catch (CoreException e) {
-				MakeCorePlugin.log(e.getStatus());
-			}
-		}
+        if (storedFileName != null && !storedFileName.equals(fileName)) {
+            // try to move 2.x file name format to 3.x file name format
+            movePluginStateFile(storedFileName, fileName);
+        }
+        try {
+            project.setPersistentProperty(discoveredScannerConfigFileNameProperty, fileName);
+        } catch (CoreException e) {
+            MakeCorePlugin.log(e.getStatus());
+        }
 
-		IPath path = MakeCorePlugin.getWorkingDirectory();
-		path = path.append(fileName);
 		if (delete) {
-			File file = path.toFile();
-			if (file.exists()) {
-				file.delete();
-			}
+			deletePluginStateFile(fileName);
 		}
-		return path;
+		return MakeCorePlugin.getWorkingDirectory().append(fileName);
 	}
+
+    /**
+     * @param delta
+     */
+    public static void updateScannerConfigStore(IResourceDelta delta) {
+        try {
+            delta.accept(new IResourceDeltaVisitor() {
+
+                public boolean visit(IResourceDelta delta) throws CoreException {
+                    IResource resource = delta.getResource();
+                    if (resource instanceof IProject) {
+                        IProject project = (IProject) resource;
+                        int kind = delta.getKind();
+                        switch (kind) {
+                        case IResourceDelta.REMOVED:
+                            if ((delta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
+                                // project renamed
+                                IPath newPath = delta.getMovedToPath();
+                                IProject newProject = delta.getResource().getWorkspace().
+                                        getRoot().getProject(newPath.toString());
+                                scProjectRenamed(project, newProject);
+                            }
+                            else {
+                                // project deleted
+                                scProjectDeleted(project);
+                            }
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+
+            });
+        }
+        catch (CoreException e) {
+            MakeCorePlugin.log(e);
+        }
+    }
+
+    private static void scProjectDeleted(IProject project) {
+        String scFileName = project.getName() + ".sc"; //$NON-NLS-1$
+        deletePluginStateFile(scFileName);
+    }
+
+    /**
+     * @param scFileName
+     */
+    private static void deletePluginStateFile(String scFileName) {
+        IPath path = MakeCorePlugin.getWorkingDirectory().append(scFileName);
+        File file = path.toFile();
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    private static void scProjectRenamed(IProject project, IProject newProject) {
+        String scOldFileName = project.getName() + ".sc"; //$NON-NLS-1$
+        String scNewFileName = newProject.getName() + ".sc"; //$NON-NLS-1$
+        movePluginStateFile(scOldFileName, scNewFileName);
+        try {
+            newProject.setPersistentProperty(discoveredScannerConfigFileNameProperty, scNewFileName);
+        }
+        catch (CoreException e) {
+            MakeCorePlugin.log(e);
+        }
+    }
+
+    /**
+     * @param oldFileName
+     * @param newFileName
+     */
+    private static void movePluginStateFile(String oldFileName, String newFileName) {
+        IPath oldPath = MakeCorePlugin.getWorkingDirectory().append(oldFileName);
+        IPath newPath = MakeCorePlugin.getWorkingDirectory().append(newFileName);
+        File oldFile = oldPath.toFile();
+        File newFile = newPath.toFile();
+        if (oldFile.exists()) {
+            oldFile.renameTo(newFile);
+        }
+    }
+
 }

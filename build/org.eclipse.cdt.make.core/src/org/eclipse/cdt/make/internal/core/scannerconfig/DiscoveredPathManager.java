@@ -88,6 +88,9 @@ public class DiscoveredPathManager implements IDiscoveredPathManager, IResourceC
 			IResource resource = event.getResource();
 
 			switch (event.getType()) {
+                case IResourceChangeEvent.POST_CHANGE :
+                    ScannerConfigUtil.updateScannerConfigStore(event.getDelta());
+                    break;
 				case IResourceChangeEvent.PRE_DELETE :
 				case IResourceChangeEvent.PRE_CLOSE :
 					if (resource.getType() == IResource.PROJECT) {

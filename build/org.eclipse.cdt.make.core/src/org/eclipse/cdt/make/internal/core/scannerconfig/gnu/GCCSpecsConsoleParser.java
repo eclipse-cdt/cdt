@@ -66,7 +66,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 						symbol = defineParts[1];
 						break;
 					case 3:
-						symbol = defineParts[1] + "=" + defineParts[2];
+						symbol = defineParts[1] + "=" + defineParts[2]; //$NON-NLS-1$
 						break;
 				}
 				if (symbol != null && !symbols.contains(symbol)) { //$NON-NLS-1$

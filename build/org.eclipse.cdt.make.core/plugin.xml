@@ -151,6 +151,13 @@
          <open/>
          <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCPerFileBOPConsoleParser"/>
       </buildOutputProvider>
+      <scannerInfoProvider providerId="makefileGenerator">
+         <run
+               arguments="-f ${project_name}_scd.mk"
+               command="make"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.SCDMakefileGenerator"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCPerFileSIPConsoleParser"/>
+      </scannerInfoProvider>
    </extension>
 
 </plugin>

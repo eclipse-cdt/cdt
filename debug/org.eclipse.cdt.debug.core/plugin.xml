@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
    id="org.eclipse.cdt.debug.core"
-   name="CDT Debug Core Plug-in"
+   name="%pluginName"
    version="1.0.0"
-   provider-name="QNX"
+   provider-name="%providerName"
    class="org.eclipse.cdt.debug.core.CDebugCorePlugin">
 
    <runtime>

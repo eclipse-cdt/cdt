@@ -12,14 +12,15 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
-import org.eclipse.cdt.debug.mi.core.cdi.CSession;
 import org.eclipse.cdt.debug.mi.core.cdi.MemoryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
-import org.eclipse.cdt.debug.mi.core.cdi.model.CTarget;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterCreatedEvent;
@@ -31,10 +32,10 @@ import org.eclipse.cdt.debug.mi.core.event.MIVarCreatedEvent;
  */
 public class CreatedEvent implements ICDICreatedEvent {
 
-	CSession session;
+	Session session;
 	ICDIObject source;
 
-	public CreatedEvent(CSession s, MIBreakpointCreatedEvent bpoint) {
+	public CreatedEvent(Session s, MIBreakpointCreatedEvent bpoint) {
 		session = s;
 		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
 		int number = bpoint.getNumber();
@@ -42,25 +43,25 @@ public class CreatedEvent implements ICDICreatedEvent {
 		if (breakpoint != null) {
 			source = breakpoint;
 		} else {
-			source = new CObject(session.getCTarget());
+			source = new CObject(session.getCurrentTarget());
 		}
 	}
 
-	public CreatedEvent(CSession s, MIVarCreatedEvent var) {
+	public CreatedEvent(Session s, MIVarCreatedEvent var) {
 		session = s;
-		VariableManager mgr = session.getVariableManager();
+		VariableManager mgr = (VariableManager)session.getVariableManager();
 		String varName = var.getVarName();
-		VariableManager.Element element = mgr.getElement(varName);
-		if (element != null && element.variable != null) {
-			source = element.variable;
+		Variable variable = mgr.getVariable(varName);
+		if (variable != null) {
+			source = variable;
 		} else {
-			source = new CObject(session.getCTarget());
+			source = new CObject(session.getCurrentTarget());
 		}
 	}
 
-	public CreatedEvent(CSession s, MIRegisterCreatedEvent var) {
+	public CreatedEvent(Session s, MIRegisterCreatedEvent var) {
 		session = s;
-		RegisterManager mgr = session.getRegisterManager();
+		RegisterManager mgr = (RegisterManager)session.getRegisterManager();
 		int regno = var.getNumber();
 		Register reg = null;
 		try {
@@ -70,22 +71,22 @@ public class CreatedEvent implements ICDICreatedEvent {
 		if (reg != null) {
 			source = reg;
 		} else {
-			source = new CObject(session.getCTarget());
+			source = new CObject(session.getCurrentTarget());
 		}
 	}
 
-	public CreatedEvent(CSession s, MIThreadCreatedEvent ethread) {
+	public CreatedEvent(Session s, MIThreadCreatedEvent ethread) {
 		session = s;
-		CTarget target = (CTarget)session.getCurrentTarget();
+		Target target = (Target)session.getCurrentTarget();
 		ICDIThread thread = target.getThread(ethread.getId());
 		if (thread != null) {
 			source = thread;
 		} else {
-			source = new CObject(session.getCTarget());
+			source = new CObject(session.getCurrentTarget());
 		}
 	}
 
-	public CreatedEvent(CSession s, MIMemoryCreatedEvent mblock) {
+	public CreatedEvent(Session s, MIMemoryCreatedEvent mblock) {
 		session = s;
 		MemoryManager mgr = (MemoryManager)session.getMemoryManager();
 		ICDIMemoryBlock[] blocks = mgr.listMemoryBlocks();
@@ -97,11 +98,11 @@ public class CreatedEvent implements ICDICreatedEvent {
 			}
 		}
 		if (source == null) {
-			source = new CObject(session.getCTarget());
+			source = new CObject(session.getCurrentTarget());
 		}
 	}
 
-	public CreatedEvent(CSession s, MISharedLibCreatedEvent slib) {
+	public CreatedEvent(Session s, MISharedLibCreatedEvent slib) {
 		session = s;
 		SharedLibraryManager mgr = (SharedLibraryManager)session.getSharedLibraryManager();
 		String name = slib.getName();
@@ -109,11 +110,11 @@ public class CreatedEvent implements ICDICreatedEvent {
 		if (lib != null) {
 			source = lib;
 		} else {
-			source = new CObject(session.getCTarget());
+			source = new CObject(session.getCurrentTarget());
 		}
 	}
 
-	public CreatedEvent(CSession s, ICDIObject src) {
+	public CreatedEvent(Session s, ICDIObject src) {
 		session = s;
 		source = src;
 	}

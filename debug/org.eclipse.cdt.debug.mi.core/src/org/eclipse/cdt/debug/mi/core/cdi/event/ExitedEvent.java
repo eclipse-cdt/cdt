@@ -8,7 +8,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.event;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.ExitInfo;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 
@@ -17,9 +17,9 @@ import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 public class ExitedEvent implements ICDIExitedEvent {
 
 	MIInferiorExitEvent event;
-	CSession session;
+	Session session;
 	
-	public ExitedEvent(CSession s, MIInferiorExitEvent e) {
+	public ExitedEvent(Session s, MIInferiorExitEvent e) {
 		session = s;
 		event = e;
 	}

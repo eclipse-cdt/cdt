@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.MemoryBlock;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
 
@@ -17,11 +17,11 @@ import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
  */
 public class MemoryChangedEvent implements ICDIMemoryChangedEvent {
 
-	CSession session;
+	Session session;
 	MemoryBlock source;
 	MIMemoryChangedEvent miMem;
 
-	public MemoryChangedEvent(CSession s, MemoryBlock block, MIMemoryChangedEvent mem) {
+	public MemoryChangedEvent(Session s, MemoryBlock block, MIMemoryChangedEvent mem) {
 		session = s;
 		source = block;
 		miMem = mem;

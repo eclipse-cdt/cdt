@@ -7,17 +7,17 @@ package org.eclipse.cdt.debug.mi.core.cdi.event;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 
 /**
  */
 public class ResumedEvent implements ICDIResumedEvent {
 
-	CSession session;
+	Session session;
 	MIRunningEvent event;
 
-	public ResumedEvent(CSession s, MIRunningEvent e) {
+	public ResumedEvent(Session s, MIRunningEvent e) {
 		session = s;
 		event = e;
 	}

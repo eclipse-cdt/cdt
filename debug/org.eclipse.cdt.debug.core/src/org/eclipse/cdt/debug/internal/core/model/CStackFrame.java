@@ -208,13 +208,14 @@ public class CStackFrame extends CDebugElement
 	{
 		ICDILocation location = getCDIStackFrame().getLocation();
 		String name = new String();
-		if ( location.getFunction() != null )
+		if ( location.getFunction() != null && location.getFunction().trim().length() > 0 )
 			name += location.getFunction() + "() ";
-		if ( location.getFile() != null )
+		if ( location.getFile() != null && location.getFile().trim().length() > 0 )
+		{
 			name += "at " + location.getFile() + ":" ;
-		if ( location.getLineNumber() != 0 )
-			name += location.getLineNumber();
-			
+			if ( location.getLineNumber() != 0 )
+				name += location.getLineNumber();
+		}			
 		return name.toString();
 	}
 

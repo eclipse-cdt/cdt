@@ -102,14 +102,17 @@ public class DisassemblyManager
 		if ( frameInfo != null )
 		{
 			long address = frameInfo.getAddress();
-			if ( getDisassemblyStorage() != null && getDisassemblyStorage().containsAddress( address ) )
+			if ( address != 0 )
 			{
-				storage = getDisassemblyStorage();
+				if ( getDisassemblyStorage() != null && getDisassemblyStorage().containsAddress( address ) )
+				{
+					storage = getDisassemblyStorage();
+				}
+				else
+				{
+					storage = loadDisassemblyStorage( frameInfo );
+				}			
 			}
-			else
-			{
-				storage = loadDisassemblyStorage( frameInfo );
-			}			
 		}
 		return storage;
 	}

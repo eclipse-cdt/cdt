@@ -13,22 +13,8 @@ package org.eclipse.cdt.core.build.managed;
 /**
  * 
  */
-public interface IOptionCategory {
+public interface IOptionCategory extends IBuildObject {
 
-	/**
-	 * Returns the name of the option category.
-	 * 
-	 * @return
-	 */
-	public String getName();
-
-	/**
-	 * Returns the options that have been assigned to this category.
-	 * 
-	 * @return
-	 */
-	public IOption[] getOptions();
-	
 	/**
 	 * Returns the list of children of this node in the option category tree
 	 * 
@@ -36,7 +22,33 @@ public interface IOptionCategory {
 	 */
 	public IOptionCategory[] getChildCategories();
 	
+	/**
+	 * Returns a new child category for this category.
+	 * 
+	 * @return
+	 */
+	public IOptionCategory createChildCategory();
+	
+	/**
+	 * Returns the options in this category for a given tool.
+	 * 
+	 * @param tool
+	 * @return
+	 */
+	public IOption[] getOptions(ITool tool);
+	
+	/**
+	 * Returns the category that owns this category, or null if this is the
+	 * top category for a tool.
+	 * 
+	 * @return
+	 */
 	public IOptionCategory getOwner();
 	
+	/**
+	 * Returns the tool that ultimately owns this category.
+	 * 
+	 * @return
+	 */
 	public ITool getTool();
 }

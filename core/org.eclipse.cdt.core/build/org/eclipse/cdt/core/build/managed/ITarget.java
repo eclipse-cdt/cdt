@@ -16,22 +16,8 @@ import org.eclipse.core.resources.IResource;
  * This class represents targets for the managed build process.  A target
  * is some type of resource built using a given collection of tools.
  */
-public interface ITarget {
+public interface ITarget extends IBuildObject {
 
-	/**
-	 * Gets the name for the target.
-	 * 
-	 * @return
-	 */
-	public String getName();
-	
-	/**
-	 * Gets the parent for the target.
-	 * 
-	 * @return
-	 */
-	public ITarget getParent();
-	
 	/**
 	 * Gets the resource that this target is applied to.
 	 * 
@@ -48,27 +34,33 @@ public interface ITarget {
 	public ITool[] getTools();
 
 	/**
+	 * Creates a new tool.
+	 * 
+	 * @return
+	 */
+	public ITool createTool();
+	
+	/**
 	 * Returns all of the configurations defined by this target.
 	 * @return
 	 */
 	public IConfiguration[] getConfigurations();
 
 	/**
-	 * Creates a new configuration for the given resource.
+	 * Creates a new configuration for this target.
 	 * 
-	 * @param resource
 	 * @return
 	 */
-	public IConfiguration addConfiguration(IResource resource)
+	public IConfiguration createConfiguration()
 		throws BuildException;
 	
 	/**
-	 * Creates a new configuration for the given resource based on the parent config
-	 * @param resource
+	 * Creates a new configuration based on the parent config for this target.
+	 * 
 	 * @param parentConfig
 	 * @return
 	 */
-	public IConfiguration addConfiguration(IResource resource, IConfiguration parentConfig)
+	public IConfiguration createConfiguration(IConfiguration parentConfig)
 		throws BuildException;
 
 }

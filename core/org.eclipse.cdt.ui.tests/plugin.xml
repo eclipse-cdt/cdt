@@ -36,6 +36,7 @@
                name="Compiler"
                id="linux.compiler">
             <optionCategory
+                  owner="linux.compiler"
                   name="Optimization Options"
                   id="linux.compiler.optimization">
             </optionCategory>
@@ -94,6 +95,41 @@
       <target
             name="Test Root"
             id="test.root">
+         <configuration
+               name="Root Config"
+               id="root.config">
+         </configuration>
+         <tool
+               name="Root Tool"
+               id="root.tool">
+            <optionCategory
+                  owner="root.tool"
+                  name="Category"
+                  id="category">
+            </optionCategory>
+            <option
+                  name="Option in Top"
+                  id="topOption">
+            </option>
+            <option
+                  name="Option in Category"
+                  category="category"
+                  id="childOption">
+            </option>
+         </tool>
+      </target>
+      <target
+            name="Test Sub"
+            parent="test.root"
+            id="test.sub">
+         <configuration
+               name="Sub Config"
+               id="sub.config">
+         </configuration>
+         <tool
+               name="Sub Tool"
+               id="tool.sub">
+         </tool>
       </target>
    </extension>
 

@@ -15,16 +15,10 @@ import org.eclipse.core.resources.IResource;
 /**
  * 
  */
-public interface IConfiguration {
+public interface IConfiguration extends IBuildObject {
 
 	/**
-	 * Returns the name of this configuration
-	 * @return
-	 */
-	public String getName();
-	
-	/**
-	 * Returns the platform for this configuration.
+	 * Returns the target for this configuration.
 	 * 
 	 * @return
 	 */
@@ -35,14 +29,6 @@ public interface IConfiguration {
 	 * @return
 	 */
 	public IResource getOwner();
-	
-	/**
-	 * Returns the configuration from which this configuration inherits
-	 * properties.
-	 * 
-	 * @return
-	 */
-	public IConfiguration getParent();
 	
 	/**
 	 * Returns the tools that are used in this configuration.

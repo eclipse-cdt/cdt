@@ -13,15 +13,8 @@ package org.eclipse.cdt.core.build.managed;
 /**
  * 
  */
-public interface ITool {
+public interface ITool extends IBuildObject {
 
-	/**
-	 * Returns the name of the tool.
-	 * 
-	 * @return
-	 */
-	public String getName();
-	
 	/**
 	 * Return the target that defines this tool, if applicable
 	 * @return
@@ -29,15 +22,17 @@ public interface ITool {
 	public ITarget getTarget();
 	
 	/**
-	 * Returns the tool that this tool inherits properties from.
-	 * @return
-	 */
-	public ITool getParent();
-	
-	/**
 	 * Returns the options that may be customized for this tool.
 	 */
 	public IOption[] getOptions();
+	
+	/**
+	 * Creates a new option for this tool.  Generally, this should only be
+	 * done by the extension and project data loaders.
+	 * 
+	 * @return
+	 */
+	public IOption createOption();
 	
 	/**
 	 * Options are organized into categories for UI purposes.

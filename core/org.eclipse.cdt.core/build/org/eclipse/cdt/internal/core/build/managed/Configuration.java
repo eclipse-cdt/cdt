@@ -20,9 +20,8 @@ import org.eclipse.core.resources.IResource;
 /**
  * 
  */
-public class Configuration implements IConfiguration {
+public class Configuration extends BuildObject implements IConfiguration {
 
-	private String name;
 	private ITarget target;
 	private IConfiguration parent;
 	private List toolReference;
@@ -40,13 +39,6 @@ public class Configuration implements IConfiguration {
 	 */
 	public String getName() {
 		return (name == null && parent != null) ? parent.getName() : name;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.IConfiguration#setName(java.lang.String)
-	 */
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	/* (non-Javadoc)

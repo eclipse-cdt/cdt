@@ -11,7 +11,9 @@
 package org.eclipse.cdt.core.build.managed;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.build.managed.Configuration;
@@ -138,6 +140,15 @@ public class ManagedBuildManager {
 		return newTarget;
 	}
 	
+	/**
+	 * Saves the build information associated with a project and all resources
+	 * in the project to the build info file.
+	 * 
+	 * @param project
+	 */
+	public static void saveBuildInfo(IProject project) {
+	}
+	
 	// Private stuff
 	
 	private static List extensionTargets;
@@ -147,6 +158,7 @@ public class ManagedBuildManager {
 			return;
 			
 		extensionTargets = new ArrayList();
+		Map targetMap = new HashMap(); 
 		
 		IExtensionPoint extensionPoint
 			= CCorePlugin.getDefault().getDescriptor().getExtensionPoint("ManagedBuildInfo");
@@ -157,17 +169,49 @@ public class ManagedBuildManager {
 			for (int j = 0; j < elements.length; ++j) {
 				IConfigurationElement element = elements[j];
 				if (element.getName().equals("target")) {
-					Target target = new Target(null);
+					String parentId = element.getAttribute("parent");
+					Target target = null;
+					if (parentId != null)
+						target  = new Target(null, (Target)targetMap.get(parentId));
+					else
+						target = new Target(null);
 					target.setName(element.getAttribute("name"));
 					extensionTargets.add(target);
+					targetMap.put(element.getAttribute("id"), target);
 					
 					IConfigurationElement[] targetElements = element.getChildren();
 					for (int k = 0; k < targetElements.length; ++k) {
 						IConfigurationElement targetElement = targetElements[k];
 						if (targetElement.getName().equals("tool")) {
-							Tool tool = new Tool(targetElement.getAttribute("name"), target);
+							ITool tool = target.createTool();
+							tool.setName(targetElement.getAttribute("name"));
+							
+							Map categoryMap = new HashMap();
+							categoryMap.put(targetElement.getAttribute("id"), tool.getTopOptionCategory());
+							IConfigurationElement[] toolElements = targetElement.getChildren();
+							for (int l = 0; l < toolElements.length; ++l) {
+								IConfigurationElement toolElement = toolElements[l];
+								if (toolElement.getName().equals("option")) {
+									IOption option = tool.createOption();
+									option.setName(toolElement.getAttribute("name"));
+									
+									String categoryId = toolElement.getAttribute("category");
+									if (categoryId != null)
+										option.setCategory((IOptionCategory)categoryMap.get(categoryId));
+								} else if (toolElement.getName().equals("optionCategory")) {
+									IOptionCategory owner = (IOptionCategory)categoryMap.get(toolElement.getAttribute("owner"));
+									IOptionCategory category = owner.createChildCategory();
+									category.setName(toolElement.getAttribute("name"));
+									categoryMap.put(toolElement.getAttribute("id"), category);
+								}
+							}
 						} else if (targetElement.getName().equals("configuration")) {
-							target.addConfiguration(new Configuration(target));
+							try {
+								IConfiguration config = target.createConfiguration();
+								config.setName(targetElement.getAttribute("name"));
+							} catch (BuildException e) {
+								// Not sure what to do here.
+							}
 						}
 					}
 				}

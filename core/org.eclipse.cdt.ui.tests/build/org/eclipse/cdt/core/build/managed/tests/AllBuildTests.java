@@ -14,7 +14,11 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.build.managed.IConfiguration;
+import org.eclipse.cdt.core.build.managed.IOption;
+import org.eclipse.cdt.core.build.managed.IOptionCategory;
 import org.eclipse.cdt.core.build.managed.ITarget;
+import org.eclipse.cdt.core.build.managed.ITool;
 import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
 
 /**
@@ -43,7 +47,8 @@ public class AllBuildTests extends TestCase {
 	 * defined in this plugin
 	 */
 	public void testExtensions() {
-		boolean testRootFound = false;
+		ITarget testRoot = null;
+		ITarget testSub = null;
 		
 		// Note secret null parameter which means just extensions
 		ITarget[] targets = ManagedBuildManager.getDefinedTargets(null);
@@ -52,10 +57,61 @@ public class AllBuildTests extends TestCase {
 			ITarget target = targets[i];
 			
 			if (target.getName().equals("Test Root")) {
-				testRootFound = true;
+				testRoot = target;
+				
+				// Tools
+				ITool[] tools = testRoot.getTools();
+				// Root Tool
+				ITool rootTool = tools[0];
+				assertEquals("Root Tool", rootTool.getName());
+				// Options
+				IOption[] options = rootTool.getOptions();
+				assertEquals(2, options.length);
+				assertEquals("Option in Top", options[0].getName());
+				assertEquals("Option in Category", options[1].getName());
+				// Option Categories
+				IOptionCategory topCategory = rootTool.getTopOptionCategory();
+				assertEquals("Root Tool", topCategory.getName());
+				options = topCategory.getOptions(rootTool);
+				assertEquals(1, options.length);
+				assertEquals("Option in Top", options[0].getName());
+				IOptionCategory[] categories = topCategory.getChildCategories();
+				assertEquals(1, categories.length);
+				assertEquals("Category", categories[0].getName());
+				options = categories[0].getOptions(rootTool);
+				assertEquals(1, options.length);
+				assertEquals("Option in Category", options[0].getName());
+				
+				// Configs
+				IConfiguration[] configs = testRoot.getConfigurations();
+				// Root Config
+				IConfiguration rootConfig = configs[0];
+				assertEquals("Root Config", rootConfig.getName());
+				
+			} else if (target.getName().equals("Test Sub")) {
+				testSub = target;
+				
+				// Tools
+				ITool[] tools = testSub.getTools();
+				// Root Tool
+				ITool rootTool = tools[0];
+				assertEquals("Root Tool", rootTool.getName());
+				// Sub Tool
+				ITool subTool = tools[1];
+				assertEquals("Sub Tool", subTool.getName());
+
+				// Configs
+				IConfiguration[] configs = testSub.getConfigurations();
+				// Root Config
+				IConfiguration rootConfig = configs[0];
+				assertEquals("Root Config", rootConfig.getName());
+				// Sub Config
+				IConfiguration subConfig = configs[1];
+				assertEquals("Sub Config", subConfig.getName());
 			}
 		}
 		
-		assertTrue(testRootFound);
+		assertNotNull(testRoot);
+		assertNotNull(testSub);
 	}
 }

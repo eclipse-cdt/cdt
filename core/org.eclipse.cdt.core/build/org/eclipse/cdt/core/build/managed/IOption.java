@@ -13,7 +13,7 @@ package org.eclipse.cdt.core.build.managed;
 /**
  * 
  */
-public interface IOption {
+public interface IOption extends IBuildObject {
 
 	// Type for the value of the option
 	public static final int STRING = 0;
@@ -32,6 +32,13 @@ public interface IOption {
 	 * @return
 	 */
 	public IOptionCategory getCategory();
+	
+	/**
+	 * Set the option category for this option.
+	 * 
+	 * @param category
+	 */
+	public void setCategory(IOptionCategory category);
 	
 	/**
 	 * Returns the name of this option.

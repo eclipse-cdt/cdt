@@ -17,21 +17,21 @@ import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
-import org.eclipse.cdt.core.build.managed.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 
 /**
  * 
  */
-public class Target implements ITarget {
+public class Target extends BuildObject implements ITarget {
 
-	private String name;
 	private ITarget parent;
 	private IResource owner;
 	private List tools;
 	private List configurations;
 
+	private static final IConfiguration[] emptyConfigs = new IConfiguration[0];
+	
 	public Target(IResource owner) {
 		this.owner = owner;
 	}
@@ -61,10 +61,6 @@ public class Target implements ITarget {
 		return parent;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public IResource getOwner() {
 		return owner;
 	}
@@ -95,53 +91,55 @@ public class Target implements ITarget {
 		return toolArray;
 	}
 
-	public void addTool(ITool tool){
+	public ITool createTool() {
+		ITool tool = new Tool(this);
+		
 		if (tools == null)
 			tools = new ArrayList();
 		tools.add(tool);
+		
+		return tool;
 	}
 	
 	public IConfiguration[] getConfigurations() {
-		return (IConfiguration[])configurations.toArray(new IConfiguration[configurations.size()]);
+		if (configurations != null)
+			return (IConfiguration[])configurations.toArray(new IConfiguration[configurations.size()]);
+		else
+			return emptyConfigs;
 	}
 
-	public void addConfiguration(IConfiguration configuration) {
+	private void addLocalConfiguration(IConfiguration configuration) {
 		if (configurations == null)
 			configurations = new ArrayList();
 		configurations.add(configuration);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITarget#addConfiguration(org.eclipse.core.resources.IResource)
-	 */
-	public IConfiguration addConfiguration(IResource resource)
+	public IConfiguration createConfiguration()
 		throws BuildException
 	{
-		Target target = (Target)ManagedBuildManager.addTarget(resource, this);
-		IConfiguration config = new Configuration(target);
-		target.addConfiguration(config);
-		return null;
+		IConfiguration config = new Configuration(this);
+		addLocalConfiguration(config);
+		return config;
 	}
 
-	public IConfiguration addConfiguration(IResource resource, IConfiguration parentConfig)
+	public IConfiguration createConfiguration(IConfiguration parentConfig)
 		throws BuildException
 	{
 		IResource parentOwner = parentConfig.getOwner();
 		
-		if (resource instanceof IProject) {
+		if (owner instanceof IProject) {
 			// parent must be owned by the same project
-			if (!resource.equals(parentOwner))
+			if (!owner.equals(parentOwner))
 				throw new BuildException("addConfiguration: parent must be in same project");
 		} else {
 			// parent must be owned by the project
-			if (!resource.getProject().equals(parentOwner))
+			if (!owner.getProject().equals(parentOwner))
 				throw new BuildException("addConfiguration: parent must be in owning project");
 		}
 
 		// Validation passed
-		Target target = (Target)ManagedBuildManager.addTarget(resource, this);
 		IConfiguration config = new Configuration(parentConfig);
-		target.addConfiguration(config);
+		addLocalConfiguration(config);
 		return config;
 	}
 

@@ -39,7 +39,7 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 	public MemoryViewPreferencePage()
 	{
 		super( GRID );
-		setDescription( "Memory View Settings." );
+		setDescription( CDebugUIPlugin.getResourceString("internal.ui.preferences.MemoryViewPreferencePage.Description") ); //$NON-NLS-1$
 		setPreferenceStore( CDebugUIPlugin.getDefault().getPreferenceStore() );
 	}
 
@@ -82,13 +82,13 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 
 		addField( new BooleanFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_DISPLAY_ASCII, "Display ASCII", getFieldEditorParent() ) );
 */
-		ColorFieldEditor foreground = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_FOREGROUND_RGB, "Text Color:", getFieldEditorParent() );
-		ColorFieldEditor background = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_BACKGROUND_RGB, "Background Color:", getFieldEditorParent() );
-		ColorFieldEditor address = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_ADDRESS_RGB, "Address Color:", getFieldEditorParent() );
-		ColorFieldEditor changed = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_CHANGED_RGB, "Changed Value Color:", getFieldEditorParent() );
+		ColorFieldEditor foreground = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_FOREGROUND_RGB, CDebugUIPlugin.getResourceString("internal.ui.preferences.MemoryViewPreferencePage.Text_Color"), getFieldEditorParent() ); //$NON-NLS-1$
+		ColorFieldEditor background = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_BACKGROUND_RGB, CDebugUIPlugin.getResourceString("internal.ui.preferences.MemoryViewPreferencePage.Background_Color"), getFieldEditorParent() ); //$NON-NLS-1$
+		ColorFieldEditor address = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_ADDRESS_RGB, CDebugUIPlugin.getResourceString("internal.ui.preferences.MemoryViewPreferencePage.Address_Color"), getFieldEditorParent() ); //$NON-NLS-1$
+		ColorFieldEditor changed = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_CHANGED_RGB, CDebugUIPlugin.getResourceString("internal.ui.preferences.MemoryViewPreferencePage.Changed_Value_Color"), getFieldEditorParent() ); //$NON-NLS-1$
 //		ColorFieldEditor dirty = new ColorFieldEditor( ICDebugPreferenceConstants.MEMORY_DIRTY_RGB, "Modified Value Color:", getFieldEditorParent() );
 
-		FontFieldEditor font = new FontFieldEditor( ICDebugPreferenceConstants.MEMORY_FONT, "Font:", getFieldEditorParent() );
+		FontFieldEditor font = new FontFieldEditor( ICDebugPreferenceConstants.MEMORY_FONT, CDebugUIPlugin.getResourceString("internal.ui.preferences.MemoryViewPreferencePage.Font"), getFieldEditorParent() ); //$NON-NLS-1$
 
 		addField( foreground );
 		addField( background );
@@ -144,7 +144,7 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 	
 	private StringFieldEditor createPaddingCharacterField()
 	{
-		return new StringFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR, "Padding Character:", 1, getFieldEditorParent() )
+		return new StringFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR, CDebugUIPlugin.getResourceString("internal.ui.preferences.MemoryViewPreferencePage.Padding_Character"), 1, getFieldEditorParent() ) //$NON-NLS-1$
 					{
 						protected boolean doCheckState() 
 						{
@@ -155,7 +155,7 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 
 	private void createDefaultSettingsFields()
 	{
-		addField( new BooleanFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_AUTO_REFRESH, "Auto-Refresh by default", SWT.NONE, getFieldEditorParent() ) );
-		addField( new BooleanFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_SHOW_ASCII, "Show ASCII by default", SWT.NONE, getFieldEditorParent() ) );
+		addField( new BooleanFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_AUTO_REFRESH, CDebugUIPlugin.getResourceString("internal.ui.preferences.MemoryViewPreferencePage.Auto_Refresh_by_default"), SWT.NONE, getFieldEditorParent() ) ); //$NON-NLS-1$
+		addField( new BooleanFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_SHOW_ASCII, CDebugUIPlugin.getResourceString("internal.ui.preferences.MemoryViewPreferencePage.Show_ascii_by_default"), SWT.NONE, getFieldEditorParent() ) ); //$NON-NLS-1$
 	}
 }

@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * 
@@ -65,7 +66,7 @@ public class MemoryViewer extends ContentViewer
 			for ( int i = 0; i < NUMBER_OF_TABS; ++i )
 			{
 				CTabItem tabItem = new CTabItem( fTabFolder, SWT.NONE );
-				tabItem.setText( "Memory " + (i + 1) );
+				tabItem.setText( CDebugUIPlugin.getResourceString("MemoryViewer.Memory") + (i + 1) ); //$NON-NLS-1$
 				fMemoryControlAreas[i] = new MemoryControlArea( fTabFolder, SWT.NONE, i, fView );
 				tabItem.setControl( fMemoryControlAreas[i] );			
 			}

@@ -45,7 +45,7 @@ public class FileNotFoundElement
 	public String getName()
 	{
 		IPath path = getFullPath();
-		return ( path != null ) ? path.lastSegment() : "";
+		return ( path != null ) ? path.lastSegment() : ""; //$NON-NLS-1$
 	}
 
 	public IStackFrame getStackFrame()

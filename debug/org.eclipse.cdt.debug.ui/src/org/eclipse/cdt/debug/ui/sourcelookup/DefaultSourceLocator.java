@@ -80,7 +80,7 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 			Composite comp = ControlFactory.createComposite( parent, 1 );
 			super.createDialogArea( comp );
 			Composite comp1 = ControlFactory.createComposite( comp, 1 );
-			fAlwaysUseThisFileButton.setLabelText( "Always map to the selection" );
+			fAlwaysUseThisFileButton.setLabelText( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Always_map_to_selection") ); //$NON-NLS-1$
 			fAlwaysUseThisFileButton.doFillIntoGrid( comp1, 1 );
 			return comp;
 		}
@@ -125,11 +125,11 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 	 */
 	public static final String ID_DEFAULT_SOURCE_LOCATOR = CDebugUIPlugin.getUniqueIdentifier() + ".DefaultSourceLocator"; //$NON-NLS-1$
 	// to support old configurations
-	public static final String ID_OLD_DEFAULT_SOURCE_LOCATOR = "org.eclipse.cdt.launch" + ".DefaultSourceLocator"; //$NON-NLS-1$
+	public static final String ID_OLD_DEFAULT_SOURCE_LOCATOR = "org.eclipse.cdt.launch" + ".DefaultSourceLocator"; //$NON-NLS-1$ //$NON-NLS-2$
 
-	private static final String ELEMENT_NAME = "PromptingSourceLocator";
-	private static final String ATTR_PROJECT = "project";
-	private static final String ATTR_MEMENTO = "memento";
+	private static final String ELEMENT_NAME = "PromptingSourceLocator"; //$NON-NLS-1$
+	private static final String ATTR_PROJECT = "project"; //$NON-NLS-1$
+	private static final String ATTR_MEMENTO = "memento"; //$NON-NLS-1$
 
 	/**
 	 * Underlying source locator.
@@ -163,11 +163,11 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 			}
 			try
 			{
-				return CDebugUtils.serializeDocument( doc, " " );
+				return CDebugUtils.serializeDocument( doc, " " ); //$NON-NLS-1$
 			}
 			catch( IOException e )
 			{
-				abort( "Unable to create memento for C/C++ source locator.", e );
+				abort( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Unable_to_create_memento_for_src_location"), e ); //$NON-NLS-1$
 			}
 		}
 		return null;
@@ -189,14 +189,14 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 
 			if ( !root.getNodeName().equalsIgnoreCase( ELEMENT_NAME ) )
 			{
-				abort( "Unable to restore prompting source locator - invalid format.", null );
+				abort( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Unable_to_restore_prompting_src_locator"), null ); //$NON-NLS-1$
 			}
 
 			String projectName = root.getAttribute( ATTR_PROJECT );
 			String data = root.getAttribute( ATTR_MEMENTO );
 			if ( isEmpty( projectName ) )
 			{
-				abort( "Unable to restore prompting source locator - invalid format.", null );
+				abort( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Unable_to_restore_prompting_src_locator"), null ); //$NON-NLS-1$
 			}
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
 			if ( getCSourceLocator() == null )
@@ -204,13 +204,13 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 			if ( getCSourceLocator().getProject() != null && !getCSourceLocator().getProject().equals( project ) )
 				return;
 			if ( project == null || !project.exists() || !project.isOpen() )
-				abort( MessageFormat.format( "Unable to restore prompting source locator - project {0} not found.", new String[] { projectName } ), null );
+				abort( MessageFormat.format( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Unable_to_restore_prompting_src_locator_project_not_found"), new String[] { projectName } ), null ); //$NON-NLS-1$
 
 			IPersistableSourceLocator psl = getPersistableSourceLocator();
 			if ( psl != null )
 				psl.initializeFromMemento( data );
 			else
-				abort( "Unable to restore C/C++ source locator - invalid format.", null );
+				abort( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Unable_to_restore_prompting_src_locator_project_not_found"), null ); //$NON-NLS-1$ 
 			return;
 		}
 		catch( ParserConfigurationException e )
@@ -225,7 +225,7 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 		{
 			ex = e;
 		}
-		abort( "Exception occurred initializing source locator.", ex );
+		abort( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Exception_initializing_src_locator"), ex ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -234,7 +234,7 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
 	{
 		setCSourceLocator( SourceLookupFactory.createSourceLocator( getProject( configuration ) ) );
-		String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" );
+		String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" ); //$NON-NLS-1$
 		if ( !isEmpty( memento ) )
 			initializeFromMemento( memento );
 	}
@@ -322,8 +322,8 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 		dialog.setInput( list.toArray() );
 		dialog.setContentProvider( new ArrayContentProvider() );
 		dialog.setLabelProvider( new SourceElementLabelProvider() );
-		dialog.setTitle( "Selection needed" );
-		dialog.setMessage( "Debugger has found multiple files with the same name.\nPlease select one associated with the selected stack frame." );
+		dialog.setTitle( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Selection_needed") ); //$NON-NLS-1$
+		dialog.setMessage( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Select_file_associated_with_stack_frame") ); //$NON-NLS-1$
 		dialog.setInitialSelections( new Object[] { list.get( 0 ) } );
 		return dialog;
 	}
@@ -413,7 +413,7 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 				return project;
 			}
 		}
-		abort( MessageFormat.format( "Project \"{0}\" does not exist.", new String[] { projectName } ), null );
+		abort( MessageFormat.format( CDebugUIPlugin.getResourceString("ui.sourcelookup.DefaultSourceLocator.Project_does_not_exist"), new String[] { projectName } ), null ); //$NON-NLS-1$
 		return null;
 	}
 }

@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 
 public class SourceListDialogField extends ListDialogField
@@ -41,13 +42,13 @@ public class SourceListDialogField extends ListDialogField
 	}
 
 	// String constants
-	protected static final String YES_VALUE = "yes";
-	protected static final String NO_VALUE = "no";
+	protected static final String YES_VALUE = CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceListDialogField.yes"); //$NON-NLS-1$
+	protected static final String NO_VALUE = CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceListDialogField.no"); //$NON-NLS-1$
 
 	// Column properties
-	private static final String CP_LOCATION = "location";
-	private static final String CP_ASSOCIATION = "association";
-	private static final String CP_SEARCH_SUBFOLDERS = "searchSubfolders";
+	private static final String CP_LOCATION = "location"; //$NON-NLS-1$
+	private static final String CP_ASSOCIATION = "association"; //$NON-NLS-1$
+	private static final String CP_SEARCH_SUBFOLDERS = "searchSubfolders"; //$NON-NLS-1$
 	
 	private ObservableSourceList fObservable = new ObservableSourceList();
 
@@ -56,12 +57,12 @@ public class SourceListDialogField extends ListDialogField
 		super( listAdapter, 
 			   new String[] 
 					{
-						/* 0 */ "Add...",
+						/* 0 */ CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceListDialogField.Add"), //$NON-NLS-1$
 						/* 1 */ null,
-						/* 2 */ "Up",
-						/* 3 */ "Down",
+						/* 2 */ CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceListDialogField.Up"), //$NON-NLS-1$
+						/* 3 */ CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceListDialogField.Down"), //$NON-NLS-1$
 						/* 4 */ null,
-						/* 5 */ "Remove",
+						/* 5 */ CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceListDialogField.Remove"), //$NON-NLS-1$
 					},
 			   new SourceLookupLabelProvider() );
 		setUpButtonIndex( 2 );
@@ -100,9 +101,9 @@ public class SourceListDialogField extends ListDialogField
 		tableLayout.addColumnData( new ColumnWeightData( 1, true ) );
 
 		TableColumn[] columns = table.getColumns();
-		columns[0].setText( "Location" );
-		columns[1].setText( "Association" );
-		columns[2].setText( "Search subfolders" );
+		columns[0].setText( CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceListDialogField.Location") ); //$NON-NLS-1$
+		columns[1].setText( CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceListDialogField.Association") ); //$NON-NLS-1$
+		columns[2].setText( CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceListDialogField.Search_subfolders") ); //$NON-NLS-1$
 		
 		CellEditor textCellEditor = new TextCellEditor( table );
 		CellEditor comboCellEditor = new ComboBoxCellEditor( table, new String[]{ YES_VALUE, NO_VALUE } );

@@ -84,7 +84,7 @@ public class RestoreDefaultTypeActionDelegate extends ActionDelegate
 			IWorkbenchWindow window= CDebugUIPlugin.getActiveWorkbenchWindow();
 			if ( window != null ) 
 			{
-				CDebugUIPlugin.errorDialog( "Unable to cast to type.", getStatus() );
+				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.RestoreDefaultTypeActionDelegate.Unable_to_cast_type"), getStatus() ); //$NON-NLS-1$
 			} 
 			else 
 			{

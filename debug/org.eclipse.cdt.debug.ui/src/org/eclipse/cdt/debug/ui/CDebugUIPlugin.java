@@ -1,5 +1,7 @@
 package org.eclipse.cdt.debug.ui;
 
+import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -118,14 +120,23 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	public static String getResourceString(String key)
 	{
 		ResourceBundle bundle = CDebugUIPlugin.getDefault().getResourceBundle();
-		try
-		{
+		try	{	
 			return bundle.getString( key );
+		} catch (MissingResourceException e) {
+			return "!" + key + "!";
+		} catch (NullPointerException e) {
+			return "#" + key + "#";
 		}
-		catch ( MissingResourceException e )
-		{
-			return key;
-		}
+	}
+	public static String getFormattedString(String key, String arg) {
+		return MessageFormat.format(getResourceString(key), new String[] { arg });
+	}
+	public static String getFormattedString(String key, Integer arg) {
+		return MessageFormat.format(getResourceString(key), new Object[] { arg });
+	}
+
+	public static String getFormattedString(String key, String[] args) {
+		return MessageFormat.format(getResourceString(key), args);
 	}
 
 	/**

@@ -61,8 +61,8 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 	{
 		fRuler = ruler;
 		fTextEditor = editor;
-		fAddLabel = "Add Breakpoint";
-		fRemoveLabel = "Remove Breakpoint";
+		fAddLabel = CDebugUIPlugin.getResourceString("internal.ui.actions.ManageBreakpointRulerAction.Add_Breakpoint"); //$NON-NLS-1$
+		fRemoveLabel = CDebugUIPlugin.getResourceString("internal.ui.actions.ManageBreakpointRulerAction.Remove_Breakpoint"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -243,11 +243,11 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 		}
 		catch( DebugException e )
 		{
-			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageBreakpointRulerAction.Cannot_add_breakpoint"), e ); //$NON-NLS-1$
 		}
 		catch( CoreException e )
 		{
-			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageBreakpointRulerAction.Cannot_add_breakpoint"), e ); //$NON-NLS-1$
 		}
 	}
 
@@ -263,7 +263,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 			{
 				if ( CDebugModel.lineBreakpointExists( fileName, lineNumber ) == null )
 				{
-					CDebugModel.createLineBreakpoint( editorInput.getFile(), lineNumber, true, 0, "", true );
+					CDebugModel.createLineBreakpoint( editorInput.getFile(), lineNumber, true, 0, "", true ); //$NON-NLS-1$
 				}
 			}
 		}
@@ -284,7 +284,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 					long address = ((IDisassemblyStorage)editorInput.getStorage()).getAddress( lineNumber );
 					if ( address != 0 && CDebugModel.addressBreakpointExists( resource, address ) == null )
 					{
-						CDebugModel.createAddressBreakpoint( resource, address, true, 0, "", true );
+						CDebugModel.createAddressBreakpoint( resource, address, true, 0, "", true ); //$NON-NLS-1$
 					}
 				}
 			}
@@ -305,7 +305,7 @@ public class ManageBreakpointRulerAction extends Action implements IUpdate
 		}
 		catch( CoreException e )
 		{
-			CDebugUIPlugin.errorDialog( "Cannot remove breakpoint", e );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageBreakpointRulerAction.Cannot_remove_breakpoint"), e ); //$NON-NLS-1$
 		}
 	}
 }

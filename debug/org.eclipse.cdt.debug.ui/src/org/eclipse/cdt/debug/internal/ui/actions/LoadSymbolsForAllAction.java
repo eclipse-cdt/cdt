@@ -31,11 +31,11 @@ public class LoadSymbolsForAllAction extends Action implements IUpdate
 	 */
 	public LoadSymbolsForAllAction( Viewer viewer )
 	{
-		super( "Load Symbols For All" );
+		super( CDebugUIPlugin.getResourceString("internal.ui.actions.LoadSymbolsForAllAction.Load_Symbols_For_all") ); //$NON-NLS-1$
 		fViewer = viewer;
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_LOAD_ALL_SYMBOLS );
-		setDescription( "Load symbols for all shared libraries." );
-		setToolTipText( "Load Symbols For All" );
+		setDescription( CDebugUIPlugin.getResourceString("internal.ui.actions.LoadSymbolsForAllAction.Load_symbols_for_all_shared_libraries.") ); //$NON-NLS-1$
+		setToolTipText( CDebugUIPlugin.getResourceString("internal.ui.actions.LoadSymbolsForAllAction.Load_Symbols_For_All") ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.LOAD_SYMBOLS_FOR_ALL );
 	}
 
@@ -72,7 +72,7 @@ public class LoadSymbolsForAllAction extends Action implements IUpdate
 				}
 				catch( DebugException e )
 				{
-					CDebugUIPlugin.errorDialog( "Unable to load symbols.", e.getStatus() );
+					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("ui.actions.LoadSymbolsForAllAction.Unable_to_load_symbols."), e.getStatus() ); //$NON-NLS-1$
 				}
 			}
 		}

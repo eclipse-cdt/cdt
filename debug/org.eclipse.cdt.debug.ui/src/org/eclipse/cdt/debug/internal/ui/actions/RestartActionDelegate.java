@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * 
@@ -57,7 +58,7 @@ public class RestartActionDelegate extends AbstractListenerActionDelegate
 	 */
 	protected String getStatusMessage()
 	{
-		return "Exceptions occurred attempting to restart.";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.RestartActionDelegate.Exceptions_occurred_attempting_to_restart"); //$NON-NLS-1$
 	}
 
 	/**
@@ -65,7 +66,7 @@ public class RestartActionDelegate extends AbstractListenerActionDelegate
 	 */
 	protected String getErrorDialogMessage()
 	{
-		return "Restart failed.";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.RestartActionDelegate.Restart_failed"); //$NON-NLS-1$
 	}
 
 	/**
@@ -73,6 +74,6 @@ public class RestartActionDelegate extends AbstractListenerActionDelegate
 	 */
 	protected String getErrorDialogTitle()
 	{
-		return "Restart";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.RestartActionDelegate.Restart"); //$NON-NLS-1$
 	}
 }

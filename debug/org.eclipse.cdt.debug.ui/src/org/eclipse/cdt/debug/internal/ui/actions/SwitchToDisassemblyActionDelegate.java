@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -80,7 +81,7 @@ public class SwitchToDisassemblyActionDelegate extends AbstractListenerActionDel
 	 */
 	protected String getStatusMessage()
 	{
-		return "Exceptions occurred attempting to switch to disassembly/source mode.";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.SwitchToDisassemblyActionDelegate.Exceptions_occurred_attempting_to_switch_to_disassemblysource_mode."); //$NON-NLS-1$
 	}
 
 	/**
@@ -88,7 +89,7 @@ public class SwitchToDisassemblyActionDelegate extends AbstractListenerActionDel
 	 */
 	protected String getErrorDialogMessage()
 	{
-		return "Switch to disassembly/source mode failed.";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.SwitchToDisassemblyActionDelegate.1"); //$NON-NLS-1$
 	}
 
 	/**
@@ -96,7 +97,7 @@ public class SwitchToDisassemblyActionDelegate extends AbstractListenerActionDel
 	 */
 	protected String getErrorDialogTitle()
 	{
-		return "Switch to disassembly/source mode";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.SwitchToDisassemblyActionDelegate.2"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

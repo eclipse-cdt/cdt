@@ -32,9 +32,9 @@ public class ShowRegisterTypesAction extends Action
 	 */
 	public ShowRegisterTypesAction( IDebugView view )
 	{
-		super( "Show &Type Names", IAction.AS_CHECK_BOX );
+		super( CDebugUIPlugin.getResourceString("internal.ui.actions.ShowRegisterTypesAction.Show_Type_Names_checkbox"), IAction.AS_CHECK_BOX ); //$NON-NLS-1$
 		setView( view );
-		setToolTipText( "Show Type Names" );
+		setToolTipText( CDebugUIPlugin.getResourceString("internal.ui.actions.ShowRegisterTypesAction.Show_Type_Names_tooltip") ); //$NON-NLS-1$
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_TYPE_NAMES );
 		setId( CDebugUIPlugin.getUniqueIdentifier() + ".ShowTypesAction" ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.SHOW_TYPES_ACTION );

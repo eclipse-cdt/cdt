@@ -52,7 +52,7 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	{
 		super();
 		setPreferenceStore( CDebugUIPlugin.getDefault().getPreferenceStore() );
-		setDescription( "Common source lookup settings." );
+		setDescription( CDebugUIPlugin.getResourceString("internal.ui.preferences.SourcePreferencePage.Description") ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -108,7 +108,7 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	private SourceListDialogField createSourceListField()
 	{
 		SourceListDialogField field = 
-					new SourceListDialogField( "Source Locations",
+					new SourceListDialogField( CDebugUIPlugin.getResourceString("internal.ui.preferences.SourcePreferencePage.Source_locations"), //$NON-NLS-1$
 												new IListAdapter()
 													{
 														public void customButtonPressed( DialogField field, int index )
@@ -127,7 +127,7 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 	private SelectionButtonDialogField createSearchForDuplicateFilesButton()
 	{
 		SelectionButtonDialogField button = new SelectionButtonDialogField( SWT.CHECK );
-		button.setLabelText( "Search for duplicate source files" );
+		button.setLabelText( CDebugUIPlugin.getResourceString("internal.ui.preferences.SourcePreferencePage.Search_for_duplicate_source_files") ); //$NON-NLS-1$
 		button.setDialogFieldListener( 
 					new IDialogFieldListener()
 						{

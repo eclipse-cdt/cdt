@@ -57,7 +57,7 @@ public class ChangeRegisterValueAction extends SelectionProviderAction
 	 */
 	public ChangeRegisterValueAction( Viewer viewer )
 	{
-		super( viewer, "Change Register Value" );
+		super( viewer, CDebugUIPlugin.getResourceString("internal.ui.actions.ChangeRegisterValueAction.Change_Register_Value") ); //$NON-NLS-1$
 		setDescription( "Change Register Value" );
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_CHANGE_REGISTER_VALUE );
 		fTree = ((TreeViewer)viewer).getTree();
@@ -103,7 +103,7 @@ public class ChangeRegisterValueAction extends SelectionProviderAction
 		// getting pushed down so that only there very tops are visible.  Thus,
 		// we have to specify different style constants for the different platforms.
 		int textStyles = SWT.SINGLE | SWT.LEFT;
-		if ( SWT.getPlatform().equals( "win32" ) )
+		if ( SWT.getPlatform().equals( "win32" ) ) //$NON-NLS-1$
 		{ //$NON-NLS-1$
 			textStyles |= SWT.BORDER;
 		}
@@ -116,7 +116,7 @@ public class ChangeRegisterValueAction extends SelectionProviderAction
 		}
 		catch( DebugException de )
 		{
-			CDebugUIPlugin.errorDialog( "Setting the register value failed.", de );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ChangeRegisterValueAction.Setting_the_register_value_failed"), de ); //$NON-NLS-1$
 		}
 		TreeItem[] selectedItems = fTree.getSelection();
 		fTreeEditor.horizontalAlignment = SWT.LEFT;

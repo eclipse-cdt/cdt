@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -29,14 +30,14 @@ import org.eclipse.swt.widgets.TableColumn;
 public class SignalsViewer extends TableViewer
 {
 	// String constants
-	protected static final String YES_VALUE = "yes";
-	protected static final String NO_VALUE = "no";
+	protected static final String YES_VALUE = CDebugUIPlugin.getResourceString("SignalsViewer.yes"); //$NON-NLS-1$
+	protected static final String NO_VALUE = CDebugUIPlugin.getResourceString("SignalsViewer.no"); //$NON-NLS-1$
 
 	// Column properties
-	private static final String CP_NAME = "name";
-	private static final String CP_PASS = "pass";
-	private static final String CP_SUSPEND = "suspend";
-	private static final String CP_DESCRIPTION = "description";
+	private static final String CP_NAME = "name"; //$NON-NLS-1$
+	private static final String CP_PASS = "pass"; //$NON-NLS-1$
+	private static final String CP_SUSPEND = "suspend"; //$NON-NLS-1$
+	private static final String CP_DESCRIPTION = "description"; //$NON-NLS-1$
 
 	private IDebugExceptionHandler fExceptionHandler = null;
 
@@ -64,10 +65,10 @@ public class SignalsViewer extends TableViewer
 		columns[2].setResizable( false );
 		columns[3].setResizable( true );
 
-		columns[0].setText( "Name" );
-		columns[1].setText( "Pass" );
-		columns[2].setText( "Suspend" );
-		columns[3].setText( "Description" );
+		columns[0].setText( CDebugUIPlugin.getResourceString("SignalsViewer.Name") ); //$NON-NLS-1$
+		columns[1].setText( CDebugUIPlugin.getResourceString("SignalsViewer.Pass") ); //$NON-NLS-1$
+		columns[2].setText( CDebugUIPlugin.getResourceString("SignalsViewer.Suspend") ); //$NON-NLS-1$
+		columns[3].setText( CDebugUIPlugin.getResourceString("SignalsViewer.Description") ); //$NON-NLS-1$
 
 		PixelConverter pc = new PixelConverter( parent );
 		columns[0].setWidth( pc.convertWidthInCharsToPixels( 20 ) );

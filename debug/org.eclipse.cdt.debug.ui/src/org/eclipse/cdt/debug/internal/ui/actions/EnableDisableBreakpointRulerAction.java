@@ -15,7 +15,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 	{
 		setInfo( info );
 		setTextEditor( editor );
-		setText( "&Enable Breakpoint" );
+		setText( CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Enable_Breakpoint") ); //$NON-NLS-1$
 	}
 
 	/**
@@ -32,8 +32,8 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 			catch (CoreException e)
 			{
 				ErrorDialog.openError( getTextEditor().getEditorSite().getShell(), 
-									   "Enabling/disabling breakpoints", 
-									   "Exceptions occurred enabling disabling the breakpoint", 
+									   CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Enabling_disabling_breakpoints"),  //$NON-NLS-1$
+									   CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Exceptions_occured_enabling_disabling_breakpoint"),  //$NON-NLS-1$
 									   e.getStatus() );
 			}
 		}
@@ -54,7 +54,7 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 		try
 		{
 			boolean enabled = getBreakpoint().isEnabled();
-			setText( enabled ? "&Disable Breakpoint" : "&Enable Breakpoint" );
+			setText( enabled ? CDebugUIPlugin.getResourceString("internal.ui.actions.EnableDisableBreakpointRulerAction.Disable_breakpoint") : "&Enable Breakpoint" ); //$NON-NLS-1$
 		}
 		catch( CoreException ce )
 		{

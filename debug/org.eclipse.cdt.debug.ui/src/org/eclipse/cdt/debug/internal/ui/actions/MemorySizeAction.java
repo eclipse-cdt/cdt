@@ -48,21 +48,18 @@ public class MemorySizeAction extends Action implements IUpdate
 	
 	private static String getLabel( int id )
 	{
-		String label = "";
+		String label = ""; //$NON-NLS-1$
+		
 		switch( id )
 		{
 			case( IFormattedMemoryBlock.MEMORY_SIZE_BYTE ):
-				label = "1 byte";
-				break;
 			case( IFormattedMemoryBlock.MEMORY_SIZE_HALF_WORD ):
-				label = "2 bytes";
-				break;
 			case( IFormattedMemoryBlock.MEMORY_SIZE_WORD ):
-				label = "4 bytes";
-				break;
 			case( IFormattedMemoryBlock.MEMORY_SIZE_DOUBLE_WORD ):
-				label = "8 bytes";
-				break;
+				// English value of key is "{0, number} {0, choice, 1#byte|2#bytes}"
+				label = CDebugUIPlugin.getFormattedString("internal.ui.actions.MemorySizeAction.byte_bytes", new Integer(id)); //$NON-NLS-1$
+			    break;
+			
 		}
 		return label;
 	}
@@ -79,13 +76,13 @@ public class MemorySizeAction extends Action implements IUpdate
 		}
 		catch( DebugException e )
 		{
-			CDebugUIPlugin.errorDialog( "Unable to change memory unit size.", e.getStatus() );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("MemorySizeAction.Unable_to_change_memory_unit_size"), e.getStatus() ); //$NON-NLS-1$
 			setChecked( false );
 		}
 	}
 	
 	public String getActionId()
 	{
-		return "MemorySize" + fId;
+		return "MemorySize" + fId; //$NON-NLS-1$
 	}
 }

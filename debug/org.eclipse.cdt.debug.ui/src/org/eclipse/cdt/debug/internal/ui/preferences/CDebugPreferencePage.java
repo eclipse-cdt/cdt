@@ -65,7 +65,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 	// Format constants
 	private static int[] fFormatIds = new int[]{ ICDIFormat.NATURAL, ICDIFormat.HEXADECIMAL, ICDIFormat.DECIMAL };
-	private static String[] fFormatLabels = new String[] { "Natural", "Hexadecimal", "Decimal" };
+	private static String[] fFormatLabels = new String[] { CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Natural"), CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Hexadecimal"), CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Decimal") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private PropertyChangeListener fPropertyChangeListener;
 
@@ -99,7 +99,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		super();
 		setPreferenceStore( CDebugUIPlugin.getDefault().getPreferenceStore() );
 		getPreferenceStore().addPropertyChangeListener( getPropertyChangeListener() );
-		setDescription( "General settings for C/C++ Debugging." );
+		setDescription( CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Preference_page_description") ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -203,13 +203,13 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	private void createViewSettingPreferences( Composite parent )
 	{
-		Composite comp = createGroupComposite( parent, 1, "Opened view default settings" );
-		fPathsButton = createCheckButton( comp, "Show full &paths" );
+		Composite comp = createGroupComposite( parent, 1, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Opened_view_default_settings") ); //$NON-NLS-1$
+		fPathsButton = createCheckButton( comp, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.pathsButton") ); //$NON-NLS-1$
 		Composite formatComposite = ControlFactory.createCompositeEx( comp, 2, 0 );
 		((GridLayout)formatComposite.getLayout()).makeColumnsEqualWidth = true;
-		fVariableFormatCombo = createComboBox( formatComposite, "Default variable format:", fFormatLabels, fFormatLabels[0] );
-		fExpressionFormatCombo = createComboBox( formatComposite, "Default expression format:", fFormatLabels, fFormatLabels[0] );
-		fRegisterFormatCombo = createComboBox( formatComposite, "Default register format:", fFormatLabels, fFormatLabels[0] );
+		fVariableFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.variableFormatCombo"), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
+		fExpressionFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.expressionFormatCombo"), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
+		fRegisterFormatCombo = createComboBox( formatComposite, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.registerFormatCombo"), fFormatLabels, fFormatLabels[0] ); //$NON-NLS-1$
 	}
 
 	/**
@@ -217,8 +217,8 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	 */
 	private void createDisassemblySettingPreferences( Composite parent )
 	{
-		Composite comp = createGroupComposite( parent, 1, "Disassembly options" );
-		fAutoDisassemblyButton = createCheckButton( comp, "Automatically switch to &disassembly mode" );
+		Composite comp = createGroupComposite( parent, 1, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.Disassembly_options") ); //$NON-NLS-1$
+		fAutoDisassemblyButton = createCheckButton( comp, CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.autoDisassemblyButton") ); //$NON-NLS-1$
 		createMaxNumberOfInstructionsField( comp );
 	}
 
@@ -226,7 +226,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 	{
 		Composite composite = ControlFactory.createComposite( parent, 2 );
 		fMaxNumberOfInstructionsText = new IntegerFieldEditor( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS,
-															   "Maximum number of instructions: ",
+															   CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.maxNumberOfInstructions"), //$NON-NLS-1$
 															   composite,
 															   NUMBER_OF_DIGITS );		
 		GridData data = (GridData)fMaxNumberOfInstructionsText.getTextControl( composite ).getLayoutData();
@@ -237,7 +237,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		fMaxNumberOfInstructionsText.setValidRange( ICDebugConstants.MIN_NUMBER_OF_INSTRUCTIONS, ICDebugConstants.MAX_NUMBER_OF_INSTRUCTIONS );
 		String minValue = Integer.toString( ICDebugConstants.MIN_NUMBER_OF_INSTRUCTIONS );
 		String maxValue = Integer.toString( ICDebugConstants.MAX_NUMBER_OF_INSTRUCTIONS );
-		fMaxNumberOfInstructionsText.setErrorMessage( MessageFormat.format( "The valid value range is [{0},{1}].", new String[]{ minValue, maxValue } ) );
+		fMaxNumberOfInstructionsText.setErrorMessage( MessageFormat.format( CDebugUIPlugin.getResourceString("internal.ui.preferences.CDebugPreferencePage.ErrorMaxNumberOfInstructionsRange"), new String[]{ minValue, maxValue } ) ); //$NON-NLS-1$
 		fMaxNumberOfInstructionsText.load();
 		fMaxNumberOfInstructionsText.setPropertyChangeListener( 
 					new IPropertyChangeListener()

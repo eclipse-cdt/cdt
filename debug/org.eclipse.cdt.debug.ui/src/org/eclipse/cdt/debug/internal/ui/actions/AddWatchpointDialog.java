@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * 
@@ -38,7 +39,7 @@ public class AddWatchpointDialog extends Dialog
 	
 	private boolean fWrite = true;
 	private boolean fRead = false;
-	private String fExpression = "";
+	private String fExpression = ""; //$NON-NLS-1$
 
 	/**
 	 * Constructor for AddWatchpointDialog.
@@ -56,7 +57,7 @@ public class AddWatchpointDialog extends Dialog
 	protected void configureShell( Shell shell ) 
 	{
 		super.configureShell( shell );
-		shell.setText( "Add C/C++ Watchpoint" );
+		shell.setText( CDebugUIPlugin.getResourceString("internal.ui.actions.AddWatchpointDialog.Add_C_C++_Watchpoint") ); //$NON-NLS-1$
 		shell.setImage( CDebugImages.get( CDebugImages.IMG_OBJS_WATCHPOINT_ENABLED ) );
 	}
 
@@ -101,7 +102,7 @@ public class AddWatchpointDialog extends Dialog
 	private Text createExpressionText( Composite parent )
 	{
 		Label label = new Label( parent, SWT.RIGHT );
-		label.setText( "Expression to watch:" );	
+		label.setText( CDebugUIPlugin.getResourceString("internal.ui.actions.AddWatchpointDialog.Expression_to_watch") );	 //$NON-NLS-1$
 		final Text text = new Text( parent, SWT.BORDER );
 		GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
 		gridData.widthHint = 300;
@@ -115,12 +116,12 @@ public class AddWatchpointDialog extends Dialog
 		Group group = new Group( parent, SWT.NONE );
 		group.setLayout( new GridLayout() );
 		group.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-		group.setText( "Access" );
+		group.setText( CDebugUIPlugin.getResourceString("internal.ui.actions.AddWatchpointDialog.Access") ); //$NON-NLS-1$
 		fChkBtnWrite = new Button( group, SWT.CHECK );
-		fChkBtnWrite.setText( "Write" );
+		fChkBtnWrite.setText( CDebugUIPlugin.getResourceString("internal.ui.actions.AddWatchpointDialog.Write") ); //$NON-NLS-1$
         addSelectionListener( fChkBtnWrite );
 		fChkBtnRead = new Button( group, SWT.CHECK );
-		fChkBtnRead.setText( "Read" );
+		fChkBtnRead.setText( CDebugUIPlugin.getResourceString("internal.ui.actions.AddWatchpointDialog.Read") ); //$NON-NLS-1$
         addSelectionListener( fChkBtnRead );
 	}
 

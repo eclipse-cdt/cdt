@@ -164,7 +164,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate
 				}
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	protected void update( ISelection selection )
@@ -220,7 +220,7 @@ public class AddWatchpointActionDelegate extends ActionDelegate
 			}
 			catch( CoreException ce )
 			{
-				CDebugUIPlugin.errorDialog( "Cannot add watchpoint", ce );
+				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.AddWatchpointActionDelegate.Cannot_add_watchpoint"), ce ); //$NON-NLS-1$
 			}
 		}
 	}

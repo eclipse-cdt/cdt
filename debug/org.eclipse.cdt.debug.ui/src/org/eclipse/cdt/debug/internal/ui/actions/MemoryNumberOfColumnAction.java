@@ -38,7 +38,11 @@ public class MemoryNumberOfColumnAction extends Action implements IUpdate
 
 	private static String getLabel( int numberOfColumns )
 	{
-		return Integer.toString( numberOfColumns) + " column" + ( ( numberOfColumns > 1 ) ? "s" : "" );
+		//String col = CDebugUIPlugin.getResourceString("internal.ui.actions.MemoryNumberOfColumnsAction.column");
+		//String cols = CDebugUIPlugin.getResourceString("internal.ui.actions.MemoryNumberOfColumnsAction.columns");
+		//ChoiceFormat myform = new ChoiceFormat("0# "+cols+"|1# "+col+"|2# "+cols);
+		//return Integer.toString( numberOfColumns) + myform.format(numberOfColumns);
+		return CDebugUIPlugin.getFormattedString("internal.ui.actions.MemoryNumberOfColumnsAction.number_of_columns", new Integer(numberOfColumns)); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -62,13 +66,13 @@ public class MemoryNumberOfColumnAction extends Action implements IUpdate
 		}
 		catch( DebugException e )
 		{
-			CDebugUIPlugin.errorDialog( "Unable to change the column  number.", e.getStatus() );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.MemoryNumberOfColumnAction.Unable_to_change_the_column_number."), e.getStatus() ); //$NON-NLS-1$
 			setChecked( false );
 		}
 	}
 	
 	public String getActionId()
 	{
-		return "MemoryNumberOfColumns" + fNumberOfColumns;
+		return "MemoryNumberOfColumns" + fNumberOfColumns; //$NON-NLS-1$
 	}
 }

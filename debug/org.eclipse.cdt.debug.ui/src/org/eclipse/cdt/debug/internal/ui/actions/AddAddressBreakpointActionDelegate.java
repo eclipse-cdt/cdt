@@ -13,6 +13,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * 
@@ -44,7 +45,7 @@ public class AddAddressBreakpointActionDelegate extends AbstractListenerActionDe
 		public String isValid( String newText )
 		{
 			if ( newText.trim().length() == 0 )
-				return "";
+				return ""; //$NON-NLS-1$
 			long value = 0;
 			try
 			{
@@ -52,9 +53,9 @@ public class AddAddressBreakpointActionDelegate extends AbstractListenerActionDe
 			}
 			catch( NumberFormatException e )
 			{
-				return "Invalid address.";
+				return CDebugUIPlugin.getResourceString("internal.ui.actions.AddAddressBreakpointActionDelegate.Invalid_address"); //$NON-NLS-1$
 			}
-			return ( value > 0 ) ? null : "Address can not be 0.";
+			return ( value > 0 ) ? null : CDebugUIPlugin.getResourceString("internal.ui.actions.AddAddressBreakpointActionDelegate.Address_can_not_be_0"); //$NON-NLS-1$
 		}
 	}
 
@@ -64,8 +65,8 @@ public class AddAddressBreakpointActionDelegate extends AbstractListenerActionDe
 	protected void doAction( Object element ) throws DebugException
 	{
 		InputDialog dialog = new InputDialog( getWindow().getShell(),
-											  "Add Address Breakpoint",
-											  "Enter address:",
+											  CDebugUIPlugin.getResourceString("internal.ui.actions.AddAddressBreakpointActionDelegate.Add_Address_Breakpoint"), //$NON-NLS-1$
+											  CDebugUIPlugin.getResourceString("internal.ui.actions.AddAddressBreakpointActionDelegate.Enter_address"), //$NON-NLS-1$
 											  null,
 											  new AddressValidator() );
 		if ( dialog.open() == Window.OK )
@@ -74,7 +75,7 @@ public class AddAddressBreakpointActionDelegate extends AbstractListenerActionDe
 												 parseValue( dialog.getValue().trim() ),
 												 true, 
 												 0, 
-												 "", 
+												 "",  //$NON-NLS-1$
 												 true );
 		}
 	}
@@ -95,7 +96,7 @@ public class AddAddressBreakpointActionDelegate extends AbstractListenerActionDe
 	protected long parseValue( String text ) throws NumberFormatException
 	{
 		long value = 0;
-		if ( text.trim().startsWith( "0x" ) )
+		if ( text.trim().startsWith( "0x" ) ) //$NON-NLS-1$
 		{
 			value = Integer.parseInt( text.substring( 2 ), 16 );
 		}

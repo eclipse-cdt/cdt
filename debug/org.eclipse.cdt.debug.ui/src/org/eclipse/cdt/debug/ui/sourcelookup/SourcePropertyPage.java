@@ -56,7 +56,7 @@ public class SourcePropertyPage extends PropertyPage
 	protected Control createTerminatedContents( Composite parent )
 	{
 		Label label= new Label( parent, SWT.LEFT );
-		label.setText( "Terminated." );
+		label.setText( CDebugUIPlugin.getResourceString("ui.sourcelookup.SourcePropertyPage.Terminated") ); //$NON-NLS-1$
 		return label;
 	}
 

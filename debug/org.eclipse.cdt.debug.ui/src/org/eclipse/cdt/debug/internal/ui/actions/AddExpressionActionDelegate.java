@@ -62,7 +62,7 @@ public class AddExpressionActionDelegate extends AbstractEditorActionDelegate
 		{
 			return ((ITextSelection)selection).getText().trim();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	protected Shell getShell()
@@ -96,7 +96,7 @@ public class AddExpressionActionDelegate extends AbstractEditorActionDelegate
 										}
 										catch( DebugException e )
 										{
-											CDebugUIPlugin.errorDialog( "Evaluation of expression failed.", e );
+											CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.AddExpressionActionDelegate.Evaluation_of_expression_failed"), e ); //$NON-NLS-1$
 										}
 									}
 								} );

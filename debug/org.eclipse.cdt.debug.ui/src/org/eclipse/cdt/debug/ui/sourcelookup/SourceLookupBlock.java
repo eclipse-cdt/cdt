@@ -129,12 +129,12 @@ public class SourceLookupBlock implements Observer
 			setProject( project );
 			try
 			{
-				String id = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, "" );
+				String id = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, "" ); //$NON-NLS-1$
 				if ( isEmpty( id ) || 
 					 CDebugUIPlugin.getDefaultSourceLocatorID().equals( id ) || 
 					 CDebugUIPlugin.getDefaultSourceLocatorOldID().equals( id ) )
 				{
-					String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" );
+					String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" ); //$NON-NLS-1$
 					if ( !isEmpty( memento ) )
 						initializeFromMemento( memento );
 					else
@@ -410,8 +410,8 @@ public class SourceLookupBlock implements Observer
 	{
 		String[] generatedSourceButtonLabels = new String[] 
 		{
-			/* 0 */ "Select All",
-			/* 1 */ "Deselect All",
+			/* 0 */ CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceLookupBlock.Select_All"), //$NON-NLS-1$
+			/* 1 */ CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceLookupBlock.Deselect_All"), //$NON-NLS-1$
 		};
 
 		IListAdapter generatedSourceAdapter = new IListAdapter()
@@ -428,7 +428,7 @@ public class SourceLookupBlock implements Observer
 													};
 
 		CheckedListDialogField field = new CheckedListDialogField( generatedSourceAdapter, generatedSourceButtonLabels, new SourceLookupLabelProvider() );
-		field.setLabelText( "Generic Source Locations" );
+		field.setLabelText( CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceLookupBlock.Generic_Source_Locations") ); //$NON-NLS-1$
 		field.setCheckAllButtonIndex( 0 );
 		field.setUncheckAllButtonIndex( 1 );
 		field.setDialogFieldListener( 
@@ -445,7 +445,7 @@ public class SourceLookupBlock implements Observer
 	private SourceListDialogField createAddedSourceListField()
 	{
 		SourceListDialogField field = 
-					new SourceListDialogField( "Additional Source Locations",
+					new SourceListDialogField( CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceLookupBlock.Additional_Source_Locations"), //$NON-NLS-1$
 												new IListAdapter()
 													{
 														public void customButtonPressed( DialogField field, int index )
@@ -464,7 +464,7 @@ public class SourceLookupBlock implements Observer
 	private SelectionButtonDialogField createSearchForDuplicateFilesButton()
 	{
 		SelectionButtonDialogField button = new SelectionButtonDialogField( SWT.CHECK );
-		button.setLabelText( "Search for duplicate source files" );
+		button.setLabelText( CDebugUIPlugin.getResourceString("ui.sourcelookup.SourceLookupBlock.Search_for_dup_src_files") ); //$NON-NLS-1$
 		button.setDialogFieldListener( 
 					new IDialogFieldListener()
 						{
@@ -510,7 +510,7 @@ public class SourceLookupBlock implements Observer
 	{
 		try
 		{
-			String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "" );
+			String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "" ); //$NON-NLS-1$
 			if ( !isEmpty( projectName ) )
 			{
 				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );

@@ -96,7 +96,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 */
 	public final static String DISPLAY_FULL_PATHS = "DISPLAY_FULL_PATHS"; //$NON-NLS-1$
 
-	private static final String DUMMY_STACKFRAME_LABEL = "..."; 
+	private static final String DUMMY_STACKFRAME_LABEL = "...";  //$NON-NLS-1$
 	
 	protected HashMap fAttributes = new HashMap(3);
 
@@ -327,7 +327,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		StringBuffer baseText = new StringBuffer( getBaseText( element ) );
 		if ( element instanceof ICDebugElementErrorStatus && !((ICDebugElementErrorStatus)element).isOK() )
 		{
-			baseText.append( getFormattedString( " <{0}>", ((ICDebugElementErrorStatus)element).getMessage() ) );
+			baseText.append( getFormattedString( " <{0}>", ((ICDebugElementErrorStatus)element).getMessage() ) ); //$NON-NLS-1$
 		}
 		return baseText.toString();
 	}
@@ -451,7 +451,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 					{
 						label += ". Exit code = " + ((ICDIExitInfo)info).getCode();
 					}
-					return label + ")";
+					return label + ")"; //$NON-NLS-1$
 				}
 				case IState.SUSPENDED:
 					return target.getName() + " (Suspended)";

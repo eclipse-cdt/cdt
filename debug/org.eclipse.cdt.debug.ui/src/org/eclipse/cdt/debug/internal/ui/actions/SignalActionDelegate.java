@@ -52,7 +52,7 @@ public class SignalActionDelegate implements IObjectActionDelegate
 		{
 			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
 													DebugException.REQUEST_FAILED, 
-													MessageFormat.format( "Unable to deliver the signal ''{0}'' to the target.", new String[] { getSignal().getName() } ), 
+													MessageFormat.format( CDebugUIPlugin.getResourceString("internal.ui.actions.SignalActionDelegate.Unable_to_deliver_signal_to_target"), new String[] { getSignal().getName() } ),  //$NON-NLS-1$
 													null ); 
 			BusyIndicator.showWhile( Display.getCurrent(), 
 									new Runnable()
@@ -74,7 +74,7 @@ public class SignalActionDelegate implements IObjectActionDelegate
 				IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
 				if ( window != null )
 				{
-					CDebugUIPlugin.errorDialog( "Operation failed.", ms );
+					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.SignalActionDelegate.Operation_failed"), ms ); //$NON-NLS-1$
 				}
 				else
 				{

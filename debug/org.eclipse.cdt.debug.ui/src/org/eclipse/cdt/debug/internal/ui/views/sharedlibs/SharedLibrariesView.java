@@ -42,6 +42,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -78,15 +79,15 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 				switch( columnIndex )
 				{
 					case 0:
-						return "";
+						return ""; //$NON-NLS-1$
 					case 1:
 						return getText( element );
 					case 2:
 						return ( library.getStartAddress() > 0 ) ? 
-									CDebugUtils.toHexAddressString( library.getStartAddress() ) : "";
+									CDebugUtils.toHexAddressString( library.getStartAddress() ) : ""; //$NON-NLS-1$
 					case 3:
 						return ( library.getEndAddress() > 0 ) ? 
-									CDebugUtils.toHexAddressString( library.getEndAddress() ) : "";
+									CDebugUtils.toHexAddressString( library.getEndAddress() ) : ""; //$NON-NLS-1$
 				}
 			}
 			return null;
@@ -113,10 +114,10 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 		columns[2].setResizable( true );
 		columns[3].setResizable( true );
 
-		columns[0].setText( "" );
-		columns[1].setText( "Name" );
-		columns[2].setText( "Start Address" );
-		columns[3].setText( "End Address" );
+		columns[0].setText( "" ); //$NON-NLS-1$
+		columns[1].setText( CDebugUIPlugin.getResourceString("SharedLibrariesView.Name") ); //$NON-NLS-1$
+		columns[2].setText( CDebugUIPlugin.getResourceString("SharedLibrariesView.Start_Address") ); //$NON-NLS-1$
+		columns[3].setText( CDebugUIPlugin.getResourceString("SharedLibrariesView.End_Address") ); //$NON-NLS-1$
 
 		PixelConverter pc = new PixelConverter( parent );
 		columns[0].setWidth( pc.convertWidthInCharsToPixels( 3 ) );
@@ -139,19 +140,19 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	 */
 	protected void createActions()
 	{
-		IAction action = new AutoRefreshAction( getViewer(), "Auto-Refresh" );
+		IAction action = new AutoRefreshAction( getViewer(), CDebugUIPlugin.getResourceString("RegistersView.Auto_Refresh") ); //$NON-NLS-1$
 		CDebugImages.setLocalImageDescriptors( action, CDebugImages.IMG_LCL_AUTO_REFRESH );
-		action.setDescription( "Automatically Refresh Shared Libraries View" );
-		action.setToolTipText( "Auto-Refresh" );
+		action.setDescription( "Automatically Refresh Shared Libraries View" ); //$NON-NLS-1$
+		action.setToolTipText( CDebugUIPlugin.getResourceString("RegistersView.Auto_Refresh") ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( action, ICDebugHelpContextIds.AUTO_REFRESH_SHARED_LIBRARIES_ACTION );
 		action.setEnabled( false );
 		setAction( "AutoRefresh", action ); //$NON-NLS-1$
 		add( (AutoRefreshAction)action );
 
-		action = new RefreshAction( getViewer(), "Refresh" );
+		action = new RefreshAction( getViewer(), CDebugUIPlugin.getResourceString("RegistersView.Refresh") ); //$NON-NLS-1$
 		CDebugImages.setLocalImageDescriptors( action, CDebugImages.IMG_LCL_REFRESH );
-		action.setDescription( "Refresh Shared Libraries View" );
-		action.setToolTipText( "Refresh" );
+		action.setDescription( CDebugUIPlugin.getResourceString("SharedLibrariesView.Refresh_Shared_Libraries_View") ); //$NON-NLS-1$
+		action.setToolTipText( CDebugUIPlugin.getResourceString("RegistersView.Refresh") ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( action, ICDebugHelpContextIds.REFRESH_SHARED_LIBRARIES_ACTION );
 		action.setEnabled( false );
 		setAction( "Refresh", action ); //$NON-NLS-1$

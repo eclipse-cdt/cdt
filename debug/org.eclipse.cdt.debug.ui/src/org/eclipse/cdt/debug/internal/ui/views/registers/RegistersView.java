@@ -183,19 +183,19 @@ public class RegistersView extends AbstractDebugEventHandlerView
 		setAction( "ChangeRegisterValue", action ); //$NON-NLS-1$
 		setAction( DOUBLE_CLICK_ACTION, action );
 
-		action = new AutoRefreshAction( getViewer(), "Auto-Refresh" );
+		action = new AutoRefreshAction( getViewer(), CDebugUIPlugin.getResourceString("RegistersView.Auto_Refresh") ); //$NON-NLS-1$
 		CDebugImages.setLocalImageDescriptors( action, CDebugImages.IMG_LCL_AUTO_REFRESH );
-		action.setDescription( "Automatically Refresh Registers View" );
-		action.setToolTipText( "Auto-Refresh" );
+		action.setDescription( CDebugUIPlugin.getResourceString("RegistersView.Automatically_Refresh_Registers_View") ); //$NON-NLS-1$
+		action.setToolTipText( CDebugUIPlugin.getResourceString("RegistersView.Auto_Refresh") ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( action, ICDebugHelpContextIds.AUTO_REFRESH_REGISTERS_ACTION );
 		action.setEnabled( false );
 		setAction( "AutoRefresh", action ); //$NON-NLS-1$
 		add( (AutoRefreshAction)action );
 
-		action = new RefreshAction( getViewer(), "Refresh" );
+		action = new RefreshAction( getViewer(), CDebugUIPlugin.getResourceString("RegistersView.Refresh") ); //$NON-NLS-1$
 		CDebugImages.setLocalImageDescriptors( action, CDebugImages.IMG_LCL_REFRESH );
-		action.setDescription( "Refresh Registers View" );
-		action.setToolTipText( "Refresh" );
+		action.setDescription( CDebugUIPlugin.getResourceString("RegistersView.Refresh_Registers_View") ); //$NON-NLS-1$
+		action.setToolTipText( CDebugUIPlugin.getResourceString("RegistersView.Refresh") ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( action, ICDebugHelpContextIds.REFRESH_REGISTERS_ACTION );
 		action.setEnabled( false );
 		setAction( "Refresh", action ); //$NON-NLS-1$

@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * 
@@ -48,7 +49,7 @@ public class ExpressionDialog extends Dialog
 	protected void configureShell( Shell shell ) 
 	{
 		super.configureShell( shell );
-		shell.setText( "Add Expression" );
+		shell.setText( CDebugUIPlugin.getResourceString("internal.ui.actions.ExpressionDialog.Add_Expression") ); //$NON-NLS-1$
 		shell.setImage( DebugPluginImages.getImage( IDebugUIConstants.IMG_OBJS_EXPRESSION ) );
 	}
 
@@ -92,7 +93,7 @@ public class ExpressionDialog extends Dialog
 	private Text createExpressionText( Composite parent )
 	{
 		Label label = new Label( parent, SWT.RIGHT );
-		label.setText( "Expression to add:" );	
+		label.setText( CDebugUIPlugin.getResourceString("internal.ui.actions.ExpressionDialog.Expression_to_add") );	 //$NON-NLS-1$
 		final Text text = new Text( parent, SWT.BORDER );
 		GridData gridData = new GridData( GridData.FILL_HORIZONTAL );
 		gridData.widthHint = 300;

@@ -107,12 +107,12 @@ public class ManageFunctionBreakpointActionDelegate extends ActionDelegate
 			}
 			else
 			{
-				CDebugModel.createFunctionBreakpoint( function, true, 0, "", true );
+				CDebugModel.createFunctionBreakpoint( function, true, 0, "", true ); //$NON-NLS-1$
 			}
 		}
 		catch( CoreException e )
 		{
-			CDebugUIPlugin.errorDialog( "Cannot add breakpoint", e );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageFunctionBreakpointActionDelegate.Cannot_add_breakpoint"), e ); //$NON-NLS-1$
 		}
 	}
 	
@@ -132,7 +132,7 @@ public class ManageFunctionBreakpointActionDelegate extends ActionDelegate
 			}
 			else
 			{
-				CDebugModel.createMethodBreakpoint( method, true, 0, "", true );
+				CDebugModel.createMethodBreakpoint( method, true, 0, "", true ); //$NON-NLS-1$
 			}
 		}
 		catch( CoreException e )

@@ -46,7 +46,7 @@ public class CastToTypeActionDelegate extends ActionDelegate
 		{
 			if ( newText.trim().length() == 0 )
 			{
-				return "The 'Type' field must not be empty.";
+				return CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Type_field_must_not_be_empty"); //$NON-NLS-1$
 			}
 			return null;
 		}
@@ -57,7 +57,10 @@ public class CastToTypeActionDelegate extends ActionDelegate
 	{
 		public CastToTypeDialog( Shell parentShell, String initialValue )
 		{
-			super( parentShell, "Cast To Type", "Enter type:", initialValue, new CastToTypeInputValidator() );
+			super( parentShell, 
+				   CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Cast_To_Type"), 
+				   CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Enter_type"), 
+				   initialValue, new CastToTypeInputValidator() ); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		/* (non-Javadoc)
@@ -116,7 +119,7 @@ public class CastToTypeActionDelegate extends ActionDelegate
 			IWorkbenchWindow window= CDebugUIPlugin.getActiveWorkbenchWindow();
 			if ( window != null ) 
 			{
-				CDebugUIPlugin.errorDialog( "Unable to cast to type.", getStatus() );
+				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.CastToTypeActionDelegate.Unable_to_cast_to_type."), getStatus() ); //$NON-NLS-1$
 			} 
 			else 
 			{

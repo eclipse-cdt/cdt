@@ -217,7 +217,7 @@ public class ManageBreakpointActionDelegate implements IWorkbenchWindowActionDel
 				}
 				catch( CoreException ce )
 				{
-					CDebugUIPlugin.errorDialog( "Cannot add breakpoint", ce );
+					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.ManageBreakpointActionDelegate.Cannot_add_breakpoint"), ce ); //$NON-NLS-1$
 				}
 			}
 		}

@@ -290,7 +290,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate
 											{
 												if ( element instanceof Global )
 												{
-													String path = "";
+													String path = ""; //$NON-NLS-1$
 													if ( ((Global)element).getPath() != null )
 													{
 														path = ((Global)element).getPath().toString();
@@ -298,12 +298,12 @@ public class AddGlobalsActionDelegate extends ActionDelegate
 													 	if ( index != -1 )
 													 		path = path.substring( index + 1 );
 													}
-													return ( path.length() > 0 ? ( '\'' + path + "\'::" ) : "" ) + ((Global)element).getName();
+													return ( path.length() > 0 ? ( '\'' + path + "\'::" ) : "" ) + ((Global)element).getName(); //$NON-NLS-1$ //$NON-NLS-2$
 												}
 												return null;				
 											}
 										},
-										"Select Variables:" );
+										CDebugUIPlugin.getResourceString("internal.ui.actions.AddGlobalsActionDelegate.Select_Variables") ); //$NON-NLS-1$
 	}
 	
 	protected Global[] getGlobals()
@@ -353,7 +353,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate
 
 	protected String getStatusMessage()
 	{
-		return "Exceptions occurred attempting to add global variables.";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.AddGlobalsActionDelegate.Exceptions_occurred_attempting_to_add_global_variables."); //$NON-NLS-1$
 	}
 
 	/**
@@ -361,7 +361,7 @@ public class AddGlobalsActionDelegate extends ActionDelegate
 	 */
 	protected String getErrorDialogMessage()
 	{
-		return "Add global variables failed.";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.AddGlobalsActionDelegate.Add_global_variables_failed"); //$NON-NLS-1$
 	}
 	
 	protected void setStatus( IStatus status )

@@ -81,7 +81,7 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate
 			return;
 
 		final Iterator enum = selection.iterator();
-		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, "Enable variable(s) failed.", null );
+		final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, CDebugUIPlugin.getResourceString("internal.ui.actions.EnableVariablesActionDelegate.Enable_variables_failed."), null ); //$NON-NLS-1$
 		Runnable runnable = new Runnable()
 								{
 									public void run()
@@ -117,7 +117,7 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate
 
 		if ( !ms.isOK() )
 		{
-			CDebugUIPlugin.errorDialog( "Exceptions occurred enabling the variable(s).", ms );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.EnableVariablesActionDelegate.Exceptions_occurred_enabling_the_variables"), ms ); //$NON-NLS-1$
 		}
 	}
 

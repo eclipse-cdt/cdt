@@ -20,6 +20,7 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * 
@@ -29,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class AddDirectorySourceLocationWizard extends Wizard implements INewSourceLocationWizard
 {
-	protected static final String PAGE_NAME = "AddDirectorySourceLocationWizardPage";
+	protected static final String PAGE_NAME = "AddDirectorySourceLocationWizardPage"; //$NON-NLS-1$
 
 	/**
 	 * 
@@ -49,9 +50,9 @@ public class AddDirectorySourceLocationWizard extends Wizard implements INewSour
 		 */
 		public AddDirtectorySourceLocationWizardPage( AddDirectorySourceLocationWizard wizard, IPath initialAssociationPath )
 		{
-			super( PAGE_NAME, "Select Directory", CDebugImages.DESC_WIZBAN_ADD_DIR_SOURCE_LOCATION );
-			setWindowTitle( "Add Directory Source Location" );
-			setMessage( "Add a local file system directory to the source locations list." );
+			super( PAGE_NAME, CDebugUIPlugin.getResourceString("internal.ui.wizards.AddDirectorySourceLocationWizard.Select_Directory"), CDebugImages.DESC_WIZBAN_ADD_DIR_SOURCE_LOCATION ); //$NON-NLS-1$
+			setWindowTitle( CDebugUIPlugin.getResourceString("internal.ui.wizards.AddDirectorySourceLocationWizard.WindowTitle") ); //$NON-NLS-1$
+			setMessage( CDebugUIPlugin.getResourceString("internal.ui.wizards.AddDirectorySourceLocationWizard.WindowMessage") ); //$NON-NLS-1$
 			setWizard( wizard );
 			fAttachBlock = new AddDirectorySourceLocationBlock( initialAssociationPath );
 		}
@@ -103,7 +104,7 @@ public class AddDirectorySourceLocationWizard extends Wizard implements INewSour
 			String dirText = fAttachBlock.getLocationPath();
 			if ( dirText.length() == 0 )
 			{
-				setErrorMessage( "Directory must not be empty." );
+				setErrorMessage( CDebugUIPlugin.getResourceString("internal.ui.wizards.AddDirectorySourceLocationWizard.ErrorDirectoryEmpty") ); //$NON-NLS-1$
 				complete = false;
 			}
 			else
@@ -111,12 +112,12 @@ public class AddDirectorySourceLocationWizard extends Wizard implements INewSour
 				File file = new File( dirText );
 				if ( !file.exists() || !file.isDirectory() )
 				{
-					setErrorMessage( "Directory does not exist." );
+					setErrorMessage( CDebugUIPlugin.getResourceString("internal.ui.wizards.AddDirectorySourceLocationWizard.ErrorDirectoryDoesNotExist") ); //$NON-NLS-1$
 					complete = false;
 				}
 				else if ( !file.isAbsolute() )
 				{
-					setErrorMessage( "Directory must be absolute." );
+					setErrorMessage( CDebugUIPlugin.getResourceString("internal.ui.wizards.AddDirectorySourceLocationWizard.ErrorDirectoryMustBeAbsolute") ); //$NON-NLS-1$
 					complete = false;
 				}
 			}
@@ -173,7 +174,7 @@ public class AddDirectorySourceLocationWizard extends Wizard implements INewSour
 	 */
 	public String getDescription()
 	{
-		return "Add a local file system directory to the source locations list.";
+		return CDebugUIPlugin.getResourceString("internal.ui.wizards.AddDirectorySourceLocationWizard.Description"); //$NON-NLS-1$
 	}
 
 	/**

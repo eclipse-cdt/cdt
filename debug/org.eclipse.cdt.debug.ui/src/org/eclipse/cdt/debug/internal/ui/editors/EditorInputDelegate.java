@@ -68,7 +68,7 @@ public class EditorInputDelegate implements IEditorInputDelegate
 	{
 		if ( fDelegate != null )
 			return fDelegate.getName();
-		return ( fElement != null ) ? fElement.getName() : "";
+		return ( fElement != null ) ? fElement.getName() : ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class EditorInputDelegate implements IEditorInputDelegate
 	{
 		if ( fDelegate != null )
 			return fDelegate.getToolTipText();
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -150,7 +150,7 @@ public class EditorInputDelegate implements IEditorInputDelegate
 						{
 							if ( getElement() != null )
 								return getElement().getName();
-							return "";
+							return ""; //$NON-NLS-1$
 						}
 
 						public boolean isReadOnly()

@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -28,11 +29,11 @@ public class RefreshMemoryAction extends SelectionProviderAction implements IUpd
 	 */
 	public RefreshMemoryAction( MemoryViewer viewer )
 	{
-		super( viewer, "Refresh" );
+		super( viewer, "Refresh" ); //$NON-NLS-1$
 		fMemoryViewer = viewer;
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_REFRESH );
-		setDescription( "Refresh Memory Block" );
-		setToolTipText( "Refresh" );
+		setDescription( CDebugUIPlugin.getResourceString("internal.ui.actions.RefreshMemoryAction.Refresh_Memory_Block") ); //$NON-NLS-1$
+		setToolTipText( CDebugUIPlugin.getResourceString("internal.ui.actions.RefreshMemoryAction.Refresh") ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.REFRESH_MEMORY_ACTION );
 	}
 

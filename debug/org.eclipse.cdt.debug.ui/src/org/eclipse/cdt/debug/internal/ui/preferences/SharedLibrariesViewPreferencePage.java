@@ -39,7 +39,7 @@ public class SharedLibrariesViewPreferencePage extends FieldEditorPreferencePage
 	public SharedLibrariesViewPreferencePage()
 	{
 		super( GRID );
-		setDescription( "Shared Libraries View Settings." );
+		setDescription( CDebugUIPlugin.getResourceString("internal.ui.preferences.SharedLibrariesViewPreferencePage.Shared_Libraries_View_Settings") ); //$NON-NLS-1$
 		setPreferenceStore( CDebugUIPlugin.getDefault().getPreferenceStore() );
 	}
 
@@ -48,7 +48,7 @@ public class SharedLibrariesViewPreferencePage extends FieldEditorPreferencePage
 	 */
 	protected void createFieldEditors()
 	{
-		fAutoRefreshField = ControlFactory.createCheckBox( getFieldEditorParent(), "Auto-Refresh by default" );
+		fAutoRefreshField = ControlFactory.createCheckBox( getFieldEditorParent(), CDebugUIPlugin.getResourceString("internal.ui.preferences.SharedLibrariesViewPreferencePage.Auto-Refresh_by_default") ); //$NON-NLS-1$
 		fAutoRefreshField.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
 	}
 

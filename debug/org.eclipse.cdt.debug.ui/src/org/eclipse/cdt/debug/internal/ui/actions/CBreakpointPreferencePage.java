@@ -40,7 +40,7 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 		public BreakpointIntegerFieldEditor( String name, String labelText, Composite parent )
 		{
 			super( name, labelText, parent );
-			setErrorMessage( "Ignore count must be a positive integer" );
+			setErrorMessage( CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Ignore_count_must_be_positive_integer") ); //$NON-NLS-1$
 		}
 
 		/**
@@ -265,7 +265,7 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 			String condition= breakpoint.getCondition();
 			if ( condition == null ) 
 			{
-				condition = "";
+				condition = ""; //$NON-NLS-1$
 			}
 			store.setValue( CBreakpointPreferenceStore.CONDITION, condition );
 
@@ -292,7 +292,7 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 		if ( breakpoint instanceof ICFunctionBreakpoint )
 		{
 			ICFunctionBreakpoint fbrkpt = (ICFunctionBreakpoint)breakpoint;
-			String function = "Not available";
+			String function = CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Not_available"); //$NON-NLS-1$
 			try
 			{
 				function = fbrkpt.getFunction();
@@ -305,9 +305,9 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 			}
 			if ( function != null )
 			{
-				addField( createLabelEditor( getFieldEditorParent(), "Function name: ", function ) );
+				addField( createLabelEditor( getFieldEditorParent(), CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Function_name"), function ) ); //$NON-NLS-1$
 			}
-			setTitle( "C/C++ Function Breakpoint Properties" );
+			setTitle( CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Function_Breakpoint_Properties") ); //$NON-NLS-1$
 		}
 		else if ( breakpoint instanceof ICAddressBreakpoint )
 		{
@@ -325,18 +325,18 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 			}
 			if ( address != null )
 			{
-				addField( createLabelEditor( getFieldEditorParent(), "Address: ", address ) );
+				addField( createLabelEditor( getFieldEditorParent(), CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Address"), address ) ); //$NON-NLS-1$
 			}
-			setTitle( "C/C++ Address Breakpoint Properties" );
+			setTitle( CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Address_Breakpoint_Properties") ); //$NON-NLS-1$
 		}
 		else if ( breakpoint instanceof ILineBreakpoint )
 		{
 			String fileName = breakpoint.getMarker().getResource().getLocation().toOSString();
 			if ( fileName != null )
 			{
-				addField( createLabelEditor( getFieldEditorParent(), "File: ", fileName ) );
+				addField( createLabelEditor( getFieldEditorParent(), CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.File"), fileName ) ); //$NON-NLS-1$
 			}
-			setTitle( "C/C++ Line Breakpoint Properties" );
+			setTitle( CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Line_Breakpoint_Properties") ); //$NON-NLS-1$
 			ILineBreakpoint lBreakpoint = (ILineBreakpoint)breakpoint;
 			StringBuffer lineNumber = new StringBuffer( 4 );
 			try
@@ -353,7 +353,7 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 			}
 			if ( lineNumber.length() > 0 )
 			{
-				addField( createLabelEditor( getFieldEditorParent(), "Line Number: ", lineNumber.toString() ) );
+				addField( createLabelEditor( getFieldEditorParent(), CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Line_Number"), lineNumber.toString() ) ); //$NON-NLS-1$
 			}
 		}
 		else if ( breakpoint instanceof ICWatchpoint )
@@ -361,19 +361,19 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 			String projectName = breakpoint.getMarker().getResource().getLocation().toOSString();
 			if ( projectName != null )
 			{
-				addField( createLabelEditor( getFieldEditorParent(), "Project: ", projectName ) );
+				addField( createLabelEditor( getFieldEditorParent(), CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Project"), projectName ) ); //$NON-NLS-1$
 			}
 			ICWatchpoint watchpoint = (ICWatchpoint)breakpoint;
-			String title = "";
-			String expression = "";
+			String title = ""; //$NON-NLS-1$
+			String expression = ""; //$NON-NLS-1$
 			try
 			{
 				if ( watchpoint.isReadType() && !watchpoint.isWriteType() )
-					title = "C/C++ Read Watchpoint Properties";
+					title = CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Read_Watchpoint_Properties"); //$NON-NLS-1$
 				else if ( !watchpoint.isReadType() && watchpoint.isWriteType() )
-					title = "C/C++ Watchpoint Properties";
+					title = CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Watchpoint_Properties"); //$NON-NLS-1$
 				else
-					title = "C/C++ Access Watchpoint Properties";
+					title = CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Access_Watchpoint_Properties"); //$NON-NLS-1$
 				expression = watchpoint.getExpression();
 			}
 			catch( CoreException ce )
@@ -381,21 +381,21 @@ public class CBreakpointPreferencePage extends FieldEditorPreferencePage
 				CDebugUIPlugin.log( ce );
 			}
 			setTitle( title );
-			addField( createLabelEditor( getFieldEditorParent(), "Expression To Watch: ", expression ) );
+			addField( createLabelEditor( getFieldEditorParent(), CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Expression_To_Watch"), expression ) ); //$NON-NLS-1$
 		}
 	}
 
 	protected void createConditionEditor( Composite parent )
 	{
-		fCondition = new BreakpointStringFieldEditor( CBreakpointPreferenceStore.CONDITION, "&Condition", parent );
+		fCondition = new BreakpointStringFieldEditor( CBreakpointPreferenceStore.CONDITION, CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Condition"), parent ); //$NON-NLS-1$
 		fCondition.setEmptyStringAllowed( true );
-		fCondition.setErrorMessage( "Invalid_condition" );
+		fCondition.setErrorMessage( CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Invalid_condition") ); //$NON-NLS-1$
 		addField( fCondition );
 	}
 
 	protected void createIgnoreCountEditor( Composite parent )
 	{
-		fIgnoreCount = new BreakpointIntegerFieldEditor( CBreakpointPreferenceStore.IGNORE_COUNT, "&Ignore Count: ", parent );
+		fIgnoreCount = new BreakpointIntegerFieldEditor( CBreakpointPreferenceStore.IGNORE_COUNT, CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPreferencePage.Ignore_Count"), parent ); //$NON-NLS-1$
 		fIgnoreCount.setValidRange( 0, Integer.MAX_VALUE );
 		fIgnoreCountTextControl = fIgnoreCount.getTextControl( parent );
 		try

@@ -51,7 +51,7 @@ public class SignalZeroObjectActionDelegate implements IObjectActionDelegate
 		{
 			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
 													DebugException.REQUEST_FAILED, 
-													"Unable to resume ignoring signal.", 
+													CDebugUIPlugin.getResourceString("internal.ui.actions.SignalZeroObjectActionDelegate.Unable_to_resume_ignoring_signal"),  //$NON-NLS-1$
 													null ); 
 			BusyIndicator.showWhile( Display.getCurrent(), 
 									new Runnable()
@@ -73,7 +73,7 @@ public class SignalZeroObjectActionDelegate implements IObjectActionDelegate
 				IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
 				if ( window != null )
 				{
-					CDebugUIPlugin.errorDialog( "Operation failed.", ms );
+					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.SignalZeroObjectActionDelegate.Operation_failed"), ms ); //$NON-NLS-1$
 				}
 				else
 				{

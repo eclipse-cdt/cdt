@@ -88,27 +88,31 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		IAction action = null; 
 		
 		action = new MemoryViewAction( this, ITextOperationTarget.CUT );
-		action.setText( "Cut" );
-		action.setToolTipText( "Cut" );
-		action.setDescription( "Cut" );
+		String cutStr = CDebugUIPlugin.getResourceString("MemoryView.Cut"); //$NON-NLS-1$
+		action.setText( cutStr );
+		action.setToolTipText( cutStr );
+		action.setDescription( cutStr );
 		setGlobalAction( ITextEditorActionConstants.CUT, (MemoryViewAction)action );
 
 		action = new MemoryViewAction( this, ITextOperationTarget.COPY );
-		action.setText( "Copy" );
-		action.setToolTipText( "Copy" );
-		action.setDescription( "Copy" );
+		String copyStr = CDebugUIPlugin.getResourceString("MemoryView.Copy"); //$NON-NLS-1$
+		action.setText( copyStr );
+		action.setToolTipText( copyStr );
+		action.setDescription( copyStr );
 		setGlobalAction( ITextEditorActionConstants.COPY, (MemoryViewAction)action );
 
 		action = new MemoryViewAction( this, ITextOperationTarget.PASTE );
-		action.setText( "Paste" );
-		action.setToolTipText( "Paste" );
-		action.setDescription( "Paste" );
+		String pasteStr = CDebugUIPlugin.getResourceString("MemoryView.Paste"); //$NON-NLS-1$
+		action.setText( pasteStr );
+		action.setToolTipText( pasteStr );
+		action.setDescription( pasteStr );
 		setGlobalAction( ITextEditorActionConstants.PASTE, (MemoryViewAction)action );
 
 		action = new MemoryViewAction( this, ITextOperationTarget.SELECT_ALL );
-		action.setText( "Select All" );
-		action.setToolTipText( "Select All" );
-		action.setDescription( "Select All" );
+		String selectAllStr = CDebugUIPlugin.getResourceString("MemoryView.Select_All"); //$NON-NLS-1$
+		action.setText( selectAllStr );
+		action.setToolTipText( selectAllStr );
+		action.setDescription( selectAllStr );
 		setGlobalAction( ITextEditorActionConstants.SELECT_ALL, (MemoryViewAction)action );
 
 		action = new RefreshMemoryAction( (MemoryViewer)getViewer() );
@@ -174,7 +178,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		menu.appendToGroup( ICDebugUIConstants.MEMORY_GROUP, getAction( "RefreshMemory" ) ); //$NON-NLS-1$
 		menu.appendToGroup( ICDebugUIConstants.MEMORY_GROUP, getAction( "ClearMemory" ) ); //$NON-NLS-1$
 
-		MenuManager subMenu = new MenuManager( "Format" );
+		MenuManager subMenu = new MenuManager( CDebugUIPlugin.getResourceString("MemoryView.Format") ); //$NON-NLS-1$
 		{
 			IAction[] actions = fMemoryFormatGroup.getActions();
 			for ( int i = 0; i < actions.length; ++i )
@@ -184,7 +188,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		}
 		menu.appendToGroup( ICDebugUIConstants.FORMAT_GROUP, subMenu );
 
-		subMenu = new MenuManager( "Memory Unit Size         " );
+		subMenu = new MenuManager( CDebugUIPlugin.getResourceString("MemoryView.Memory_Unit_Size") ); //$NON-NLS-1$
 		{
 			IAction[] actions = fMemorySizeGroup.getActions();
 			for ( int i = 0; i < actions.length; ++i )
@@ -194,7 +198,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		}
 		menu.appendToGroup( ICDebugUIConstants.FORMAT_GROUP, subMenu );
 
-		subMenu = new MenuManager( "Number Of Columns" );
+		subMenu = new MenuManager( CDebugUIPlugin.getResourceString("MemoryView.Number_of_Columns") ); //$NON-NLS-1$
 		{
 			IAction[] actions = fMemoryNumberOfColumnsGroup.getActions();
 			for ( int i = 0; i < actions.length; ++i )
@@ -263,10 +267,10 @@ public class MemoryView extends AbstractDebugEventHandlerView
 		removeActionGroup( fMemoryNumberOfColumnsGroup );
 		fMemoryNumberOfColumnsGroup.dispose();
 
-		remove( (ShowAsciiAction)getAction( "ShowAscii" ) );
-		remove( (ClearMemoryAction)getAction( "ClearMemory" ) );
-		remove( (RefreshMemoryAction)getAction( "RefreshMemory" ) );
-		remove( (AutoRefreshMemoryAction)getAction( "AutoRefreshMemory" ) );
+		remove( (ShowAsciiAction)getAction( "ShowAscii" ) ); //$NON-NLS-1$
+		remove( (ClearMemoryAction)getAction( "ClearMemory" ) ); //$NON-NLS-1$
+		remove( (RefreshMemoryAction)getAction( "RefreshMemory" ) ); //$NON-NLS-1$
+		remove( (AutoRefreshMemoryAction)getAction( "AutoRefreshMemory" ) ); //$NON-NLS-1$
 
 		getSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		CDebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener( this );

@@ -48,7 +48,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 {
 	protected class CastToArrayDialog extends Dialog
 	{
-		private String fType = "";
+		private String fType = ""; //$NON-NLS-1$
 		private int fFirstIndex = 0;
 		private int fLength = 0;
 
@@ -61,7 +61,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 		public CastToArrayDialog( Shell parentShell, String initialType, int initialStart, int initialLength )
 		{
 			super( parentShell );
-			fType = ( initialType == null ) ? "" : initialType;
+			fType = ( initialType == null ) ? "" : initialType; //$NON-NLS-1$
 			fFirstIndex = initialStart;
 			fLength = initialLength;
 		}
@@ -87,7 +87,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 		protected void configureShell( Shell newShell )
 		{
 			super.configureShell( newShell );
-			newShell.setText( "Display As Array" );
+			newShell.setText( CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.Shell_Display_As_Array") ); //$NON-NLS-1$
 			newShell.setImage( CDebugImages.get( CDebugImages.IMG_LCL_DISPLAY_AS_ARRAY ) );
 		}
 
@@ -141,7 +141,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 			((GridData)composite.getLayoutData()).widthHint = convertHorizontalDLUsToPixels( IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH );
 			((GridLayout)composite.getLayout()).makeColumnsEqualWidth = true;
 			
-			Label label = ControlFactory.createLabel( composite, "Start index:" );
+			Label label = ControlFactory.createLabel( composite, CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.Start_index") ); //$NON-NLS-1$
 			((GridData)label.getLayoutData()).horizontalSpan = 3;
 			fFirstIndexText = ControlFactory.createTextField( composite );
 			fFirstIndexText.addModifyListener(
@@ -153,7 +153,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 										}
 									} );
 
-			label = ControlFactory.createLabel( composite, "Length:" );
+			label = ControlFactory.createLabel( composite, CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.Length") ); //$NON-NLS-1$
 			((GridData)label.getLayoutData()).horizontalSpan = 3;
 			fLengthText = ControlFactory.createTextField( composite );
 			fLengthText.addModifyListener(
@@ -169,11 +169,11 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 		protected void validateInput()
 		{
 			boolean enabled = true;
-			String message = "";
+			String message = ""; //$NON-NLS-1$
 			String firstIndex = fFirstIndexText.getText().trim();
 			if ( firstIndex.length() == 0 )
 			{
-				message = "The 'First index' field must not be empty.";
+				message = CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.First_index_field_must_not_be_empty"); //$NON-NLS-1$
 				enabled = false;
 			}
 			else
@@ -184,7 +184,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 				}
 				catch( NumberFormatException e )
 				{
-					message = "Invalid first index.";
+					message = CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.7"); //$NON-NLS-1$
 					enabled = false;
 				}
 				if ( enabled )
@@ -192,7 +192,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 					String lengthText = fLengthText.getText().trim();
 					if ( lengthText.length() == 0 )
 					{
-						message = "The 'Last index' field must not be empty.";
+						message = CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.Invalid_first_index"); //$NON-NLS-1$
 						enabled = false;
 					}
 					else
@@ -204,12 +204,12 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 						}
 						catch( NumberFormatException e )
 						{
-							message = "Invalid last index.";
+							message = CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.Invalid_last_index."); //$NON-NLS-1$
 							enabled = false;
 						}
 						if ( enabled && length < 1 )
 						{
-							message = "The length must be greater than 0.";
+							message = CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.The_length_must_be_greater_than_0"); //$NON-NLS-1$
 							enabled = false;
 						}
 					}
@@ -292,7 +292,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 			IWorkbenchWindow window= CDebugUIPlugin.getActiveWorkbenchWindow();
 			if ( window != null ) 
 			{
-				CDebugUIPlugin.errorDialog( "Unable to display this variable as an array.", getStatus() );
+				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.CastToArrayActionDelegate.Unable_to_display_this_variable_as_an_array"), getStatus() ); //$NON-NLS-1$
 			} 
 			else 
 			{

@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -84,7 +85,7 @@ public class AddDirectorySourceLocationBlock
 	{
 		PixelConverter converter = new PixelConverter( parent );
 		Label label = new Label( parent, SWT.NONE );
-		label.setText( "Select location directory:" );
+		label.setText( CDebugUIPlugin.getResourceString("AddDirectorySourceLocationBlock.Select_location_directory") ); //$NON-NLS-1$
 		label.setLayoutData( new GridData( GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL ) );
 		Composite composite = new Composite( parent, SWT.NONE );
 		composite.setLayout( new GridLayout( 2, false ) );
@@ -93,7 +94,7 @@ public class AddDirectorySourceLocationBlock
 		composite.setLayoutData( data );
 		fLocationText = new Text( composite, SWT.SINGLE | SWT.BORDER );
 		fLocationText.setLayoutData( new GridData( GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL ) );
-		Button button = createButton( composite, "&Browse..." );
+		Button button = createButton( composite, CDebugUIPlugin.getResourceString("AddDirectorySourceLocationBlock.Browse") ); //$NON-NLS-1$
 		button.addSelectionListener( new SelectionAdapter() 
 											{
 												/* (non-Javadoc)
@@ -109,7 +110,7 @@ public class AddDirectorySourceLocationBlock
 	protected void selectLocation()
 	{
 		DirectoryDialog dialog = new DirectoryDialog( fShell );
-		dialog.setMessage( "Select Location Directory" );
+		dialog.setMessage( CDebugUIPlugin.getResourceString("AddDirectorySourceLocationBlock.Select_Location_Directory") ); //$NON-NLS-1$
 		String result = dialog.open();
 		if ( result != null )
 		{
@@ -124,7 +125,7 @@ public class AddDirectorySourceLocationBlock
 		GridData data = new GridData( GridData.FILL_BOTH );
 		composite.setLayoutData( data );
 		fAssocitedCheckButton = new Button( composite, SWT.CHECK );
-		fAssocitedCheckButton.setText( "&Associate with" );
+		fAssocitedCheckButton.setText( CDebugUIPlugin.getResourceString("AddDirectorySourceLocationBlock.Associate_with") ); //$NON-NLS-1$
 		fAssociationText = new Text( composite, SWT.SINGLE | SWT.BORDER );
 		fAssociationText.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
 		fAssocitedCheckButton.addSelectionListener( new SelectionAdapter()
@@ -145,7 +146,7 @@ public class AddDirectorySourceLocationBlock
 		boolean checked = fAssocitedCheckButton.getSelection();
 		fAssociationText.setEnabled( checked );
 		if ( !checked )
-			fAssociationText.setText( "" );
+			fAssociationText.setText( "" ); //$NON-NLS-1$
 	}
 
 	protected void createSearchSubfoldersButton( Composite parent )
@@ -155,7 +156,7 @@ public class AddDirectorySourceLocationBlock
 		GridData data = new GridData( GridData.FILL_BOTH );
 		composite.setLayoutData( data );
 		fSearchSubfoldersButton = new Button( composite, SWT.CHECK );
-		fSearchSubfoldersButton.setText( "Search sub&folders" );
+		fSearchSubfoldersButton.setText( CDebugUIPlugin.getResourceString("AddDirectorySourceLocationBlock.Search_subfolders") ); //$NON-NLS-1$
 	}
 
 	protected Button createButton( Composite parent, String label )
@@ -181,7 +182,7 @@ public class AddDirectorySourceLocationBlock
 		{
 			return fAssociationText.getText().trim();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public boolean searchSubfolders()

@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -43,7 +44,7 @@ public class SignalZeroWorkbenchActionDelegate extends AbstractListenerActionDel
 	 */
 	protected String getStatusMessage()
 	{
-		return "Exceptions occurred attempting to resume without signal.";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.SignalZeroWorkbenchActionDelegate.Exceptions_occurred_attempting_to_resume_without_signal"); //$NON-NLS-1$
 	}
 
 	/**
@@ -51,7 +52,7 @@ public class SignalZeroWorkbenchActionDelegate extends AbstractListenerActionDel
 	 */
 	protected String getErrorDialogMessage()
 	{
-		return "Resume without signal failed.";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.SignalZeroWorkbenchActionDelegate.ErrorMsg_Resume_without_signal_failed"); //$NON-NLS-1$
 	}
 
 	/**
@@ -59,6 +60,6 @@ public class SignalZeroWorkbenchActionDelegate extends AbstractListenerActionDel
 	 */
 	protected String getErrorDialogTitle()
 	{
-		return "Resume Without Signal";
+		return CDebugUIPlugin.getResourceString("internal.ui.actions.SignalZeroWorkbenchActionDelegate.ErrorMsgTitle_Resume_Without_Signal"); //$NON-NLS-1$
 	}
 }

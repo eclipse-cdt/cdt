@@ -60,7 +60,7 @@ public class DisassemblyMarkerAnnotationModel extends AbstractMarkerAnnotationMo
 			}
 			catch( CoreException x )
 			{
-				doHandleCoreException( x, "Resource Changed" );
+				doHandleCoreException( x, "Resource Changed" ); 
 			}
 		}
 	}
@@ -263,7 +263,7 @@ public class DisassemblyMarkerAnnotationModel extends AbstractMarkerAnnotationMo
 	{
 		try
 		{
-			return createPositionFromAddress( Long.parseLong( marker.getAttribute( ICAddressBreakpoint.ADDRESS, "0" ) ) );
+			return createPositionFromAddress( Long.parseLong( marker.getAttribute( ICAddressBreakpoint.ADDRESS, "0" ) ) ); //$NON-NLS-1$
 		}
 		catch( NumberFormatException e )
 		{

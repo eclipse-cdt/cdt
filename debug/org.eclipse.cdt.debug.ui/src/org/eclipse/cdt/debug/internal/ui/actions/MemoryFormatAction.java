@@ -59,24 +59,24 @@ public class MemoryFormatAction extends Action implements IUpdate
 		}
 		catch( DebugException e )
 		{
-			CDebugUIPlugin.errorDialog( "Unable to change format.", e.getStatus() );
+			CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.MemoryFormatAction.Unable_to_change_format"), e.getStatus() ); //$NON-NLS-1$
 			setChecked( false );
 		}
 	}
 
 	private static String getLabel( int id )
 	{
-		String label = "";
+		String label = ""; //$NON-NLS-1$
 		switch( id )
 		{
 			case( IFormattedMemoryBlock.MEMORY_FORMAT_HEX ):
-				label = "Hexadecimal";
+				label = CDebugUIPlugin.getResourceString("internal.ui.actions.MemoryFormatAction.Hexadecimal"); //$NON-NLS-1$
 				break;
 			case( IFormattedMemoryBlock.MEMORY_FORMAT_SIGNED_DECIMAL ):
-				label = "Signed Decimal";
+				label = CDebugUIPlugin.getResourceString("internal.ui.actions.MemoryFormatAction.Signed_Decimal"); //$NON-NLS-1$
 				break;
 			case( IFormattedMemoryBlock.MEMORY_FORMAT_UNSIGNED_DECIMAL ):
-				label = "Unsigned Decimal";
+				label = CDebugUIPlugin.getResourceString("internal.ui.actions.MemoryFormatAction.Unsigned_Decimal"); //$NON-NLS-1$
 				break;
 		}
 		return label;
@@ -84,6 +84,6 @@ public class MemoryFormatAction extends Action implements IUpdate
 	
 	public String getActionId()
 	{
-		return "MemoryFormat" + fFormat;
+		return "MemoryFormat" + fFormat; //$NON-NLS-1$
 	}
 }

@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -28,11 +29,11 @@ public class ShowAsciiAction extends SelectionProviderAction implements IUpdate
 	 */
 	public ShowAsciiAction( MemoryViewer viewer )
 	{
-		super( viewer, "Show ASCII" );
+		super( viewer, CDebugUIPlugin.getResourceString("internal.ui.actions.ShowAsciiAction.Show_ASCII") ); //$NON-NLS-1$
 		fMemoryViewer = viewer;
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_SHOW_ASCII );
-		setDescription( "Show ASCII" );
-		setToolTipText( "Show ASCII" );
+		setDescription( CDebugUIPlugin.getResourceString("internal.ui.actions.ShowAsciiAction.Show_ASCII") ); //$NON-NLS-1$
+		setToolTipText( CDebugUIPlugin.getResourceString("internal.ui.actions.ShowAsciiAction.Show_ASCII") ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.MEMORY_SHOW_ASCII_ACTION );
 	}
 

@@ -110,7 +110,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 		composite.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
 		// create label
 		Label label = new Label( composite, SWT.RIGHT );
-		label.setText( "Address: " );
+		label.setText( CDebugUIPlugin.getResourceString("MemoryControlArea.Address") ); //$NON-NLS-1$
 		label.pack();
 	
 		// create address text
@@ -177,8 +177,8 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 									} );
 
 		fEvaluateButton = new Button( composite, SWT.PUSH );
-		fEvaluateButton.setText( "Evaluate" );
-		fEvaluateButton.setToolTipText( "Evaluate expression to address" );
+		fEvaluateButton.setText( CDebugUIPlugin.getResourceString("MemoryControlArea.Evaluate") ); //$NON-NLS-1$
+		fEvaluateButton.setToolTipText( CDebugUIPlugin.getResourceString("MemoryControlArea.Evaluate_Expression") ); //$NON-NLS-1$
 		fEvaluateButton.addSelectionListener( new SelectionAdapter()
 													{
 														public void widgetSelected( SelectionEvent e )
@@ -211,7 +211,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 			}
 			catch( DebugException e )
 			{
-				CDebugUIPlugin.errorDialog( "Unable to get memory block.", e.getStatus() );
+				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("MemoryControlArea.Error_memoryBlock"), e.getStatus() ); //$NON-NLS-1$
 			}
 			refresh();
 			getMemoryView().updateObjects();
@@ -262,7 +262,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 	
 	protected void refresh()
 	{
-		fAddressText.setText( ( getPresentation() != null ) ? getPresentation().getAddressExpression() : "" );
+		fAddressText.setText( ( getPresentation() != null ) ? getPresentation().getAddressExpression() : "" ); //$NON-NLS-1$
 		fMemoryText.refresh();
 		getMemoryView().updateObjects();
 		updateToolTipText();
@@ -411,7 +411,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 	
 	protected void clear()
 	{
-		fAddressText.setText( "" );
+		fAddressText.setText( "" ); //$NON-NLS-1$
 		handleAddressEnter();
 		updateToolTipText();
 	}
@@ -435,7 +435,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 			CTabItem[] tabItems = ((CTabFolder)getParent()).getItems();
 			return tabItems[fIndex].getText();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	protected void setTitle( String title )
@@ -453,7 +453,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 		if ( getParent() instanceof CTabFolder )
 		{
 			CTabItem[] tabItems = ((CTabFolder)getParent()).getItems();
-			tabItems[fIndex].setToolTipText( "Memory View " + (fIndex + 1) + ( ( newText.length() > 0 ) ? ( ": " + newText ) : "" ) );
+			tabItems[fIndex].setToolTipText( CDebugUIPlugin.getResourceString("MemoryControlArea.Memory_view") + (fIndex + 1) + ( ( newText.length() > 0 ) ? ( ": " + newText ) : "" ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 
@@ -467,7 +467,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 			}
 			catch( DebugException e )
 			{
-				CDebugUIPlugin.errorDialog( "Unable to refresh memory.", e.getStatus() );
+				CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("MemoryControlArea.Error_memoryRefresh"), e.getStatus() ); //$NON-NLS-1$
 			}
 		}
 	}
@@ -514,7 +514,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 				}
 				catch( DebugException e )
 				{
-					CDebugUIPlugin.errorDialog( "Unable to get memory block.", e.getStatus() );
+					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("MemoryControlArea.Error_memoryBlock"), e.getStatus() ); //$NON-NLS-1$
 				}
 			}
 			if ( getMemoryBlock() != null )

@@ -48,7 +48,7 @@ public class RunToLineRulerAction extends Action
 	{
 		setInfo( info );
 		setTextEditor( editor );
-		setText( "Run To Line" );
+		setText( CDebugUIPlugin.getResourceString("internal.ui.actions.RunToLineRulerAction.Run_To_Line") ); //$NON-NLS-1$
 		initializeTarget();
 		update();
 	}

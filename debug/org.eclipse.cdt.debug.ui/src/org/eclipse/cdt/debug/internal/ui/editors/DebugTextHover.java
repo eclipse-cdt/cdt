@@ -156,7 +156,7 @@ public class DebugTextHover implements ITextHover
 										String debugTargetName ) throws DebugException 
 	{
 		if ( value.length() > MAX_HOVER_INFO_SIZE )
-			value = value.substring( 0, MAX_HOVER_INFO_SIZE ) + " ...";
+			value = value.substring( 0, MAX_HOVER_INFO_SIZE ) + " ..."; //$NON-NLS-1$
 		buffer.append( "<p>" ); //$NON-NLS-1$
 		if ( debugTargetName != null ) 
 		{

@@ -49,7 +49,7 @@ public class LoadSymbolsActionDelegate implements IObjectActionDelegate
 		if ( getSharedLibrary() != null )
 		{
 			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
-													DebugException.REQUEST_FAILED, "Unable to load symbols of shared library.", null ); 
+													DebugException.REQUEST_FAILED, CDebugUIPlugin.getResourceString("internal.ui.actions.LoadSymbolsActionDelegate.Unable_to_load_symbols_of_shared_library"), null );  //$NON-NLS-1$
 			BusyIndicator.showWhile( Display.getCurrent(), 
 									new Runnable()
 										{
@@ -70,7 +70,7 @@ public class LoadSymbolsActionDelegate implements IObjectActionDelegate
 				IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
 				if ( window != null )
 				{
-					CDebugUIPlugin.errorDialog( "Operation failed.", ms );
+					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.LoadSymbolsActionDelegate.Operation_failed"), ms ); //$NON-NLS-1$
 				}
 				else
 				{

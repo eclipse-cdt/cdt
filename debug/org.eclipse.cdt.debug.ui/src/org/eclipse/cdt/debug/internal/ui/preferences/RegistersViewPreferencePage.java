@@ -42,7 +42,7 @@ public class RegistersViewPreferencePage extends FieldEditorPreferencePage
 	public RegistersViewPreferencePage()
 	{
 		super( GRID );
-		setDescription( "Registers View Settings." );
+		setDescription( CDebugUIPlugin.getResourceString("internal.ui.preferences.RegistersViewPreferencePage.Registers_View_Settings") ); //$NON-NLS-1$
 		setPreferenceStore( CDebugUIPlugin.getDefault().getPreferenceStore() );
 	}
 
@@ -60,9 +60,9 @@ public class RegistersViewPreferencePage extends FieldEditorPreferencePage
 	 */
 	protected void createFieldEditors()
 	{
-		addField( new ColorFieldEditor( ICDebugPreferenceConstants.CHANGED_REGISTER_RGB, "&Changed register value color:", getFieldEditorParent() ) );		
+		addField( new ColorFieldEditor( ICDebugPreferenceConstants.CHANGED_REGISTER_RGB, CDebugUIPlugin.getResourceString("internal.ui.preferences.RegistersViewPreferencePage.Changed_register_value_color"), getFieldEditorParent() ) );		 //$NON-NLS-1$
 		createSpacer( getFieldEditorParent(), 2 );
-		fAutoRefreshField = ControlFactory.createCheckBox( getFieldEditorParent(), "Auto-Refresh by default" );
+		fAutoRefreshField = ControlFactory.createCheckBox( getFieldEditorParent(), CDebugUIPlugin.getResourceString("internal.ui.preferences.RegistersViewPreferencePage.Auto-Refresh_by_default") ); //$NON-NLS-1$
 		fAutoRefreshField.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_REGISTERS_AUTO_REFRESH ) );
 	}
 

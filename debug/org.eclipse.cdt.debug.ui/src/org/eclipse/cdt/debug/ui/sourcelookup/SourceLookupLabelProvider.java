@@ -60,6 +60,6 @@ public class SourceLookupLabelProvider extends LabelProvider implements ITableLa
 			if ( element instanceof IDirectorySourceLocation )
 				return  ( ((IDirectorySourceLocation)element).searchSubfolders() ) ? SourceListDialogField.YES_VALUE : SourceListDialogField.NO_VALUE;
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

@@ -79,7 +79,7 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 				IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
 				if ( window != null )
 				{
-					CDebugUIPlugin.errorDialog( "Unable to set format of variable.", ms );
+					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.VariableFormatActionDelegate.Unable_to_set_format_of_variable"), ms ); //$NON-NLS-1$
 				}
 				else
 				{

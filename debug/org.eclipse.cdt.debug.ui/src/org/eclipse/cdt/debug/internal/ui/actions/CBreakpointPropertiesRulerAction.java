@@ -9,6 +9,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * 
@@ -26,7 +27,7 @@ public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAct
 	{
 		setInfo( info );
 		setTextEditor( editor );
-		setText( "Breakpoint &Properties..." );
+		setText( CDebugUIPlugin.getResourceString("internal.ui.actions.CBreakpointPropertiesRulerAction.Breakpoint_Properties") ); //$NON-NLS-1$
 	}
 
 	/**

@@ -33,6 +33,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * 
@@ -44,7 +45,7 @@ public class SourceLocationSelectionPage extends WizardSelectionPage
 										 implements ISelectionChangedListener, 
 										 			IDoubleClickListener
 {
-	private static final String PAGE_NAME = "Add Source Location";
+	private static final String PAGE_NAME = CDebugUIPlugin.getResourceString("internal.ui.preferences.SourceLocationSelectionPage.Add_Source_Location"); //$NON-NLS-1$
 	private final static int SIZING_LISTS_HEIGHT = 200;
 	private final static int SIZING_LISTS_WIDTH = 150;
 
@@ -59,7 +60,7 @@ public class SourceLocationSelectionPage extends WizardSelectionPage
 	public SourceLocationSelectionPage( ICSourceLocation[] locations )
 	{
 		super( PAGE_NAME );
-		setTitle( "Select" );
+		setTitle( CDebugUIPlugin.getResourceString("internal.ui.preferences.SourceLocationSelectionPage.WindowTitle") ); //$NON-NLS-1$
 		setImageDescriptor( CDebugImages.DESC_WIZBAN_ADD_SOURCE_LOCATION );
 		fElements = new Object[] { new AddProjectSourceLocationWizard( getProjectList( locations ) ),
 								   new AddDirectorySourceLocationWizard() };
@@ -75,7 +76,7 @@ public class SourceLocationSelectionPage extends WizardSelectionPage
 		outerContainer.setLayout( new GridLayout() );
 		outerContainer.setLayoutData( new GridData( GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL ) );
 
-		new Label( outerContainer, SWT.NONE ).setText( "Select source location type:" );
+		new Label( outerContainer, SWT.NONE ).setText( CDebugUIPlugin.getResourceString("internal.ui.preferences.SourceLocationSelectionPage.Select_source_location_type") ); //$NON-NLS-1$
 
 		//Create a table for the list
 		Table table = new Table( outerContainer, SWT.BORDER );
@@ -107,11 +108,11 @@ public class SourceLocationSelectionPage extends WizardSelectionPage
 															{
 																if ( element instanceof AddProjectSourceLocationWizard )
 																{
-																	return "Existing Project Into Workspace"; 
+																	return CDebugUIPlugin.getResourceString("internal.ui.preferences.SourceLocationSelectionPage.Existing_Project_Into_Workspace");  //$NON-NLS-1$
 																}
 																if ( element instanceof AddDirectorySourceLocationWizard )
 																{
-																	return "File System Directory"; 
+																	return CDebugUIPlugin.getResourceString("internal.ui.preferences.SourceLocationSelectionPage.File_System_Directory");  //$NON-NLS-1$
 																}
 																return super.getText( element );
 															}

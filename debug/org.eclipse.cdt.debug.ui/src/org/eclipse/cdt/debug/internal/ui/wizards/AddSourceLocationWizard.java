@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.ui.wizards;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.ui.sourcelookup.INewSourceLocationWizard;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -24,7 +25,7 @@ public class AddSourceLocationWizard extends Wizard implements INewSourceLocatio
 	public AddSourceLocationWizard( ICSourceLocation[] locations )
 	{
 		super();
-		setWindowTitle( "Add Source Location" );
+		setWindowTitle( CDebugUIPlugin.getResourceString("AddSourceLocationWizard.Window_Title") ); //$NON-NLS-1$
 		setForcePreviousAndNextButtons( true );
 		fLocations = locations;
 	}
@@ -60,6 +61,6 @@ public class AddSourceLocationWizard extends Wizard implements INewSourceLocatio
 	 */
 	public String getDescription()
 	{
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * Enter type comment.
@@ -21,7 +22,7 @@ import org.eclipse.ui.IStorageEditorInput;
  */
 public class DisassemblyEditorInput implements IStorageEditorInput
 {
-	private final static String FILE_NAME_EXTENSION = ".dasm";
+	private final static String FILE_NAME_EXTENSION = ".dasm"; //$NON-NLS-1$
 	protected IStorage fStorage;
 
 	/**
@@ -72,7 +73,7 @@ public class DisassemblyEditorInput implements IStorageEditorInput
 		{
 			// ignore
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -88,7 +89,7 @@ public class DisassemblyEditorInput implements IStorageEditorInput
 	 */
 	public String getToolTipText()
 	{
-		return "Disassembly";
+		return CDebugUIPlugin.getResourceString("internal.ui.editors.DisassemblyEditorInput.Disassembly"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

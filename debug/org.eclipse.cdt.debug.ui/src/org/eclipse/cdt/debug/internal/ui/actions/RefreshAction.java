@@ -64,7 +64,7 @@ public class RefreshAction extends Action implements IUpdate
 				}
 				catch( DebugException e )
 				{
-					CDebugUIPlugin.errorDialog( "Unable to refresh.", e.getStatus() );
+					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.RefreshAction.Unable_to_refresh"), e.getStatus() ); //$NON-NLS-1$
 				}
 			}
 		}

@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 
 /**
  * 
@@ -29,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class AddProjectSourceLocationWizard extends Wizard implements INewSourceLocationWizard
 {
-	protected static final String PAGE_NAME = "AddProjectSourceLocationWizardPage";
+	protected static final String PAGE_NAME = "AddProjectSourceLocationWizardPage"; //$NON-NLS-1$
 
 	protected IProject[] fProjects = null;
 
@@ -52,9 +53,9 @@ public class AddProjectSourceLocationWizard extends Wizard implements INewSource
 		 */
 		public AddProjectSourceLocationWizardPage( AddProjectSourceLocationWizard wizard )
 		{
-			super( PAGE_NAME, "Select Project", CDebugImages.DESC_WIZBAN_ADD_PRJ_SOURCE_LOCATION );
-			setWindowTitle( "Add Project Source Location" );
-			setMessage( "Add an existing workspace project to the source locations list." );
+			super( PAGE_NAME, CDebugUIPlugin.getResourceString("internal.ui.wizards.AddProjectSourceLocationWizard.Select_Project"), CDebugImages.DESC_WIZBAN_ADD_PRJ_SOURCE_LOCATION ); //$NON-NLS-1$
+			setWindowTitle( CDebugUIPlugin.getResourceString("internal.ui.wizards.AddProjectSourceLocationWizard.WindowTitle") ); //$NON-NLS-1$
+			setMessage( CDebugUIPlugin.getResourceString("internal.ui.wizards.AddProjectSourceLocationWizard.AddProjectLocationMessage") ); //$NON-NLS-1$
 			setWizard( wizard );
 			fBlock = new AddProjectSourceLocationBlock( fProjects );
 			setPageComplete( false );
@@ -128,7 +129,7 @@ public class AddProjectSourceLocationWizard extends Wizard implements INewSource
 	 */
 	public String getDescription()
 	{
-		return "Add an existing project to the source locations list.";
+		return CDebugUIPlugin.getResourceString("internal.ui.wizards.AddProjectSourceLocationWizard.Description"); //$NON-NLS-1$
 	}
 
 	/**

@@ -155,22 +155,22 @@ public class CDebugEditor extends CEditor
 			Composite composite = createComposite( fScrolledComposite );
 			composite.setLayout( new GridLayout() );
 		
-			createTitleLabel( composite, "C/C++ File Editor" );
+			createTitleLabel( composite, CDebugUIPlugin.getResourceString("internal.ui.editors.CDebugEditor.C_CPP_File_Editor") ); //$NON-NLS-1$
 			createLabel( composite, null );
 			createLabel( composite, null );
 		
-			createHeadingLabel( composite, "Source not found" );
+			createHeadingLabel( composite, CDebugUIPlugin.getResourceString("internal.ui.editors.CDebugEditor.Source_not_found") ); //$NON-NLS-1$
 		
 			Composite separator = createCompositeSeparator( composite );
 			GridData data = new GridData( GridData.FILL_HORIZONTAL );
 			data.heightHint = 2;
 			separator.setLayoutData( data );
 
-			fInputLabel = createLabel( composite, "" );
-			createLabel( composite, "You can attach a new source location by pressing the button below:" );
+			fInputLabel = createLabel( composite, "" ); //$NON-NLS-1$
+			createLabel( composite, CDebugUIPlugin.getResourceString("internal.ui.editors.CDebugEditor.attach_source_location_instructions") ); //$NON-NLS-1$
 			createLabel( composite, null );
 
-			fAttachButton = createButton( composite, "&Attach Source..." );
+			fAttachButton = createButton( composite, CDebugUIPlugin.getResourceString("internal.ui.editors.CDebugEditor.Attach_Source_button") ); //$NON-NLS-1$
 			fAttachButton.addSelectionListener( 
 						new SelectionListener()
 							{
@@ -287,7 +287,7 @@ public class CDebugEditor extends CEditor
 		{
 			FileNotFoundElement element = (FileNotFoundElement)input.getAdapter( FileNotFoundElement.class );
 			if ( element != null )
-				fInputLabel.setText( MessageFormat.format( "Can not find the file ''{0}'' in the specified source locations.", new String[] { element.getFullPath().toOSString() } ) );
+				fInputLabel.setText( MessageFormat.format( CDebugUIPlugin.getResourceString("internal.ui.editors.CDebugEditor.Can_not_find_file"), new String[] { element.getFullPath().toOSString() } ) ); //$NON-NLS-1$
 		}
 
 		protected ScrolledComposite getScrolledComposite()
@@ -351,7 +351,7 @@ public class CDebugEditor extends CEditor
 		}
 	}
 
-	public static final String EDITOR_ID = CDebugUIPlugin.getUniqueIdentifier() + ".editor.CDebugEditor";
+	public static final String EDITOR_ID = CDebugUIPlugin.getUniqueIdentifier() + ".editor.CDebugEditor"; //$NON-NLS-1$
 
 	private AttachSourceForm fAttachSourceForm = null;
 

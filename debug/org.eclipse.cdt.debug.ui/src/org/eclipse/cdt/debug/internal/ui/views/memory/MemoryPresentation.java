@@ -121,12 +121,12 @@ public class MemoryPresentation
 	
 	public String getStartAddress()
 	{
-		return ( fBlock != null ) ? getAddressString( fBlock.getStartAddress() ) : ""; 
+		return ( fBlock != null ) ? getAddressString( fBlock.getStartAddress() ) : "";  //$NON-NLS-1$
 	}
 
 	public String getAddressExpression()
 	{
-		return ( fBlock != null ) ? fBlock.getAddressExpression() : "";
+		return ( fBlock != null ) ? fBlock.getAddressExpression() : ""; //$NON-NLS-1$
 	}
 
 	private String getInterval( int length )
@@ -431,7 +431,7 @@ public class MemoryPresentation
 			case IFormattedMemoryBlock.MEMORY_FORMAT_UNSIGNED_DECIMAL:
 				return convertToDecimal( getWordSize(), item, false );
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	private int getDecimalDataItemLength( int wordSize, boolean signed )
@@ -478,7 +478,7 @@ public class MemoryPresentation
 	
 	private String convertToDecimal( int wordSize, String item, boolean signed )
 	{
-		String result = "";
+		String result = ""; //$NON-NLS-1$
 		boolean le = getMemoryBlock().isLittleEndian();
 		switch( wordSize )
 		{

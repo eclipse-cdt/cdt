@@ -31,7 +31,7 @@ public interface ICDebugPreferenceConstants
 	 * full paths. When <code>true</code> the debugger
 	 * will show full paths in newly opened views.
 	 */
-	public static final String PREF_SHOW_FULL_PATHS = ICDebugUIConstants.PLUGIN_ID + "cDebug.show_full_paths";
+	public static final String PREF_SHOW_FULL_PATHS = ICDebugUIConstants.PLUGIN_ID + "cDebug.show_full_paths"; //$NON-NLS-1$
 
 	/**
 	 * The RGB for the color to be used to indicate changed registers
@@ -41,7 +41,7 @@ public interface ICDebugPreferenceConstants
 	/**
 	 * The default values for the memory view parameters. 
 	 */
-	public static final String DEFAULT_MEMORY_PADDING_CHAR = ".";
+	public static final String DEFAULT_MEMORY_PADDING_CHAR = "."; //$NON-NLS-1$
 	public static final FontData DEFAULT_MEMORY_FONT = Display.getDefault().getSystemFont().getFontData()[0];
 
 	public static final RGB DEFAULT_MEMORY_FOREGROUND_RGB = Display.getCurrent().getSystemColor( SWT.COLOR_LIST_FOREGROUND ).getRGB();
@@ -50,11 +50,11 @@ public interface ICDebugPreferenceConstants
 	public static final RGB DEFAULT_MEMORY_CHANGED_RGB = Display.getCurrent().getSystemColor( SWT.COLOR_RED ).getRGB();
 	public static final RGB DEFAULT_MEMORY_DIRTY_RGB = Display.getCurrent().getSystemColor( SWT.COLOR_BLUE ).getRGB();
 
-	public static final String PREF_MEMORY_NUMBER_OF_BYTES = "Memory.NumberOfBytes";
-	public static final String PREF_MEMORY_SIZE = "Memory.Size";
-	public static final String PREF_MEMORY_FORMAT = "Memory.Format";
-	public static final String PREF_MEMORY_BYTES_PER_ROW = "Memory.BytesPerRow";
-	public static final String PREF_MEMORY_PADDING_CHAR = "Memory.PaddingChar";
+	public static final String PREF_MEMORY_NUMBER_OF_BYTES = "Memory.NumberOfBytes"; //$NON-NLS-1$
+	public static final String PREF_MEMORY_SIZE = "Memory.Size"; //$NON-NLS-1$
+	public static final String PREF_MEMORY_FORMAT = "Memory.Format"; //$NON-NLS-1$
+	public static final String PREF_MEMORY_BYTES_PER_ROW = "Memory.BytesPerRow"; //$NON-NLS-1$
+	public static final String PREF_MEMORY_PADDING_CHAR = "Memory.PaddingChar"; //$NON-NLS-1$
 
 	/**
 	 * The RGB for the memory text foreground color

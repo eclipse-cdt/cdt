@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
@@ -39,7 +40,6 @@ import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -66,23 +66,26 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	static final String[] NO_PREREQUISITES = new String[0];
 	/**
 	 * pathentry containers pool
+	 * accessing the Container is done synch with the class
 	 */
-	public static HashMap Containers = new HashMap(5);
+	private static HashMap Containers = new HashMap(5);
 
 	static final IPathEntry[] NO_PATHENTRIES = new IPathEntry[0];
 
-	HashMap resolvedMap = new HashMap();
+	// Synchronized the access of the cache entries.
+	private Map resolvedMap = new Hashtable();
 
-	HashMap storeMap = new HashMap();
+	// Accessing the map is synch with the class
+	private Map storeMap = new HashMap();
 
 	private static PathEntryManager pathEntryManager;
-	private PathEntryManager() {
+		private PathEntryManager() {
 	}
 
 	/**
 	 * Return the singleton.
 	 */
-	public static PathEntryManager getDefault() {
+	public static synchronized PathEntryManager getDefault() {
 		if (pathEntryManager == null) {
 			pathEntryManager = new PathEntryManager();
 			CoreModel.getDefault().addElementChangedListener(pathEntryManager);
@@ -91,7 +94,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	}
 
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
-		IPathEntry[] entries = (IPathEntry[]) resolvedMap.get(cproject);
+		IPathEntry[] entries = (IPathEntry[])resolvedMap.get(cproject);
 		if (entries == null) {
 			entries = getRawPathEntries(cproject);
 			ArrayList list = new ArrayList();
@@ -351,9 +354,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				}
 			}
 			if (!found) {
-				// filter out this project - does not reference the container
-				// path
+				// filter out this project - does not reference the container path
 				modifiedProjects[i] = null;
+				// Still add it to the cache
 				containerPut(affectedProject, containerPath, newContainer);
 				continue;
 			}
@@ -372,42 +375,27 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			return;
 		}
 		// trigger model refresh
-		try {
-			CoreModel.run(new IWorkspaceRunnable() {
-
-				public void run(IProgressMonitor progressMonitor) throws CoreException {
-					boolean shouldFire = false;
-					CModelManager mgr = CModelManager.getDefault();
-					for (int i = 0; i < projectLength; i++) {
-						if (progressMonitor != null && progressMonitor.isCanceled()) {
-							return;
-						}
-						ICProject affectedProject = modifiedProjects[i];
-						if (affectedProject == null) {
-							continue; // was filtered out
-						}
-						IPathEntry[] newEntries = getResolvedPathEntries(affectedProject);
-						ICElementDelta[] deltas = generatePathEntryDeltas(affectedProject, oldResolvedEntries[i], newEntries);
-						if (deltas.length > 0) {
-							shouldFire = true;
-							for (int j = 0; j < deltas.length; j++) {
-								mgr.registerCModelDelta(deltas[j]);
-							}
-						}
-						//affectedProject.setRawPathEntries(affectedProject.getRawPathEntries(),
-						// progressMonitor);
-					}
-					if (shouldFire) {
-						mgr.fire(ElementChangedEvent.POST_CHANGE);
-					}
-				}
-			}, monitor);
-		} catch (CoreException e) {
-			if (e instanceof CModelException) {
-				throw (CModelException) e;
-			} else {
-				throw new CModelException(e);
+		boolean shouldFire = false;
+		CModelManager mgr = CModelManager.getDefault();
+		for (int i = 0; i < projectLength; i++) {
+			if (monitor != null && monitor.isCanceled()) {
+				return;
 			}
+			ICProject affectedProject = modifiedProjects[i];
+			if (affectedProject == null) {
+				continue; // was filtered out
+			}
+			IPathEntry[] newEntries = getResolvedPathEntries(affectedProject);
+			ICElementDelta[] deltas = generatePathEntryDeltas(affectedProject, oldResolvedEntries[i], newEntries);
+			if (deltas.length > 0) {
+				shouldFire = true;
+				for (int j = 0; j < deltas.length; j++) {
+					mgr.registerCModelDelta(deltas[j]);
+				}
+			}
+		}
+		if (shouldFire) {
+			mgr.fire(ElementChangedEvent.POST_CHANGE);
 		}
 	}
 
@@ -495,23 +483,27 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return null;
 	}
 
-	public synchronized IPathEntryContainer containerGet(ICProject project, IPath containerPath) {
-		Map projectContainers = (Map) Containers.get(project);
+	private synchronized IPathEntryContainer containerGet(ICProject cproject, IPath containerPath) {
+		Map projectContainers = (Map) Containers.get(cproject);
 		if (projectContainers == null) {
 			projectContainers = new HashMap();
-			Containers.put(project, projectContainers);
+			Containers.put(cproject, projectContainers);
 		}
 		IPathEntryContainer container = (IPathEntryContainer) projectContainers.get(containerPath);
 		return container;
 	}
 
-	public synchronized void containerPut(ICProject project, IPath containerPath, IPathEntryContainer container) {
-		Map projectContainers = (Map) Containers.get(project);
+	private synchronized void containerPut(ICProject cproject, IPath containerPath, IPathEntryContainer container) {
+		Map projectContainers = (Map) Containers.get(cproject);
 		if (projectContainers == null) {
 			projectContainers = new HashMap();
-			Containers.put(project, projectContainers);
+			Containers.put(cproject, projectContainers);
 		}
 		projectContainers.put(containerPath, container);
+	}
+
+	private synchronized void containerRemove(ICProject cproject) {
+		Containers.remove(cproject);
 	}
 
 	public String[] projectPrerequisites(IPathEntry[] entries) throws CModelException {
@@ -548,10 +540,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 		// Sanity checks
 		if (oldEntries == null) {
-			oldEntries = new IPathEntry[0];
+			oldEntries = NO_PATHENTRIES;
 		}
 		if (newEntries == null) {
-			newEntries = new IPathEntry[0];
+			newEntries = NO_PATHENTRIES;
 		}
 
 		// Check the removed entries.
@@ -689,7 +681,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return containerIDs;
 	}
 
-	IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
+	private synchronized IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
 		IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
 		if (store == null) {
 			store = CCorePlugin.getDefault().getPathEntryStore(project);
@@ -697,6 +689,10 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			store.addPathEntryStoreListener(this);
 		}
 		return store;
+	}
+
+	private synchronized Object removePathEntryStore(IProject project) {
+		return storeMap.remove(project);
 	}
 
 	/* (non-Javadoc)
@@ -710,34 +706,39 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 			return;
 		}
 
-		IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
-		if (store != null) {
-			if (event.hasClosed()) {
-				storeMap.remove(project);
-				store.removePathEntryStoreListener(this);
-				Containers.remove(project);
-			}
-			CModelManager manager = CModelManager.getDefault();
-			ICProject cproject = manager.create(project);
-			if (project.isAccessible()) {
-				try {
-					IPathEntry[] oldResolvedEntries = getResolvedPathEntries(cproject);
-					// Clear the old cache entries.
-					resolvedMap.remove(cproject);
-					IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
-					ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
-					if (deltas.length > 0) {
-						cproject.close();
-						for (int i = 0; i < deltas.length; i++) {
-							manager.registerCModelDelta(deltas[i]);
-						}
-						manager.fire(ElementChangedEvent.POST_CHANGE);
-					}
-				} catch (CModelException e) {
+		CModelManager manager = CModelManager.getDefault();
+		ICProject cproject = manager.create(project);
+		try {
+			IPathEntryStore store = getPathEntryStore(project);
+			if (store != null) {
+				if (event.hasClosed()) {
+					removePathEntryStore(project);
+					store.removePathEntryStoreListener(this);
+					containerRemove(cproject);
 				}
-			} else {
-				resolvedMap.remove(cproject);
 			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		if (project.isAccessible()) {
+			try {
+				// Clear the old cache entries.
+				IPathEntry[] oldResolvedEntries = (IPathEntry[])resolvedMap.remove(cproject);
+				IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
+				ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
+				if (deltas.length > 0) {
+					cproject.close();
+					for (int i = 0; i < deltas.length; i++) {
+						manager.registerCModelDelta(deltas[i]);
+					}
+					manager.fire(ElementChangedEvent.POST_CHANGE);
+				}
+			} catch (CModelException e) {
+				CCorePlugin.log(e);
+			}
+		} else {
+			resolvedMap.remove(cproject);
+			containerRemove(cproject);
 		}
 	}
 
@@ -761,13 +762,21 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		// handle closing and removing of projects
 		if (((flags & ICElementDelta.F_CLOSED) != 0) || (kind == ICElementDelta.REMOVED)) {
 			if (element.getElementType() == ICElement.C_PROJECT) {
-				IProject project = element.getCProject().getProject();
-				IPathEntryStore store = (IPathEntryStore)storeMap.get(project);
-				if (store != null) {
-					store.fireClosedEvent(project);
-				} else {
-					resolvedMap.remove(element.getCProject());
-					Containers.remove(project);
+				ICProject cproject = (ICProject)element;
+				IProject project = cproject.getProject();
+				IPathEntryStore store = null;
+				try {
+					store = getPathEntryStore(project);
+					if (store != null) {
+						store.fireClosedEvent(project);
+					}
+				} catch (CoreException e) {
+					throw new CModelException(e);
+				} finally {
+					if (store == null) {
+						resolvedMap.remove(cproject);
+						containerRemove(cproject);
+					}
 				}
 			}
 		}
@@ -815,5 +824,4 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		}
 	}
 
-	
 }

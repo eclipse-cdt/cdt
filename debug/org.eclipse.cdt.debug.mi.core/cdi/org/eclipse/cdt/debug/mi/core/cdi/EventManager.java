@@ -21,7 +21,6 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -33,7 +32,6 @@ import org.eclipse.cdt.debug.mi.core.cdi.event.ExitedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.MemoryChangedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.ResumedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.SuspendedEvent;
-import org.eclipse.cdt.debug.mi.core.cdi.model.Breakpoint;
 import org.eclipse.cdt.debug.mi.core.cdi.model.MemoryBlock;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Thread;
@@ -72,7 +70,6 @@ import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
-import org.eclipse.cdt.debug.mi.core.output.MIBreakpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackInfoDepthInfo;
 
@@ -370,45 +367,9 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		if (mgr.isDeferredBreakpoint()) {
 			if (stopped instanceof MISharedLibEvent) {
 				// Check if we have a new library loaded
-				List eventList = null;
 				try {
-					eventList = mgr.updateState(currentTarget);
+					mgr.update(currentTarget);
 				} catch (CDIException e3) {
-					eventList = Collections.EMPTY_LIST;
-				}
-				// A new Libraries loaded, try to set the breakpoints.
-				if (eventList.size() > 0) {
-					BreakpointManager bpMgr = session.getBreakpointManager();
-					ICDIBreakpoint bpoints[] = null;
-					try {
-						bpoints = bpMgr.getDeferredBreakpoints(currentTarget);
-					} catch (CDIException e) {
-						bpoints = new ICDIBreakpoint[0];
-					}
-					for (int i = 0; i < bpoints.length; i++) {
-						if (bpoints[i] instanceof Breakpoint) {
-							Breakpoint bkpt = (Breakpoint)bpoints[i];
-							try {
-								boolean enable = bkpt.isEnabled();
-								bpMgr.setLocationBreakpoint(bkpt);
-								bpMgr.deleteFromDeferredList(bkpt);
-								bpMgr.addToBreakpointList(bkpt);
-								// If the breakpoint was disable in the IDE
-								// install it but keep it disable
-								if (!enable) {
-									bpMgr.disableBreakpoint(bkpt);
-								}
-								MIBreakpoint[] miBreakpoints = bkpt.getMIBreakpoints();
-								if (miBreakpoints != null && miBreakpoints.length > 0) {
-									eventList.add(new MIBreakpointCreatedEvent(miSession, miBreakpoints[0].getNumber()));
-								}
-							} catch (CDIException e) {
-								// ignore
-							}
-						}
-					}
-					MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
-					miSession.fireEvents(events);
 				}
 				CommandFactory factory = miSession.getCommandFactory();
 				int type = (lastRunningEvent == null) ? MIRunningEvent.CONTINUE : lastRunningEvent.getType();

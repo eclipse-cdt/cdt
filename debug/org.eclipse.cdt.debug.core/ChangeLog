@@ -1,3 +1,8 @@
+2003-12-23 Mikhail Khodjaiants
+	Fix for bug 49294: Source file doesn't change when switching between stack frames. 
+	Do not use the breakpoint's markers for source lookup.
+	* CSourceManager.java
+
 2003-12-08 Mikhail Khodjaiants
 	Reset the 'terminating' flag if 'terminate' fails.
 	* CDebugTarget.java

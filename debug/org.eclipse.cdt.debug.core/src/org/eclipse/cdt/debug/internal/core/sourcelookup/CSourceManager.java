@@ -157,14 +157,7 @@ public class CSourceManager implements ICSourceLocator,
 		boolean autoDisassembly = CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY );
 		
 		if ( getMode() == ISourceMode.MODE_SOURCE && getSourceLocator() != null )
-		{
-			// if the target is suspended by a line breakpoint the source manager 
-			// tries to retrieve the file resource from the breakpoint marker.
-			if ( getDebugTarget() != null )
-				result = getDebugTarget().getCurrentBreakpointFile();
-			if ( result == null )
-				result = getSourceLocator().getSourceElement( stackFrame );
-		}
+			result = getSourceLocator().getSourceElement( stackFrame );
 		if ( result == null && 
 			 ( autoDisassembly || getMode() == ISourceMode.MODE_DISASSEMBLY ) && 
 			 getDisassemblyManager( stackFrame ) != null )

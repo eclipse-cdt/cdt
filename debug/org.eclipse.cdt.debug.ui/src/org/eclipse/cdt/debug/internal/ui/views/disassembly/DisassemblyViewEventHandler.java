@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 
+import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.ui.AbstractDebugView;
@@ -45,6 +46,9 @@ public class DisassemblyViewEventHandler extends AbstractDebugEventHandler {
 				case DebugEvent.RESUME:
 					handleResumeEvent( events[i] );
 					break;
+				case DebugEvent.CHANGE:
+					handleChangeEvent( events[i] );
+					break;
 			}
 		}
 	}
@@ -68,6 +72,11 @@ public class DisassemblyViewEventHandler extends AbstractDebugEventHandler {
 	}
 
 	private void handleSuspendEvent( DebugEvent event ) {
+	}
+
+	private void handleChangeEvent( DebugEvent event ) {
+		if ( event.getSource() instanceof IDisassembly )
+			getDisassemblyView().refresh( (IDisassembly)event.getSource() );
 	}
 
 	protected DisassemblyView getDisassemblyView() {

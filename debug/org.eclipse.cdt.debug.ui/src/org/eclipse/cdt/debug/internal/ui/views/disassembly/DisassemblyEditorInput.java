@@ -270,16 +270,11 @@ public class DisassemblyEditorInput implements IEditorInput {
 		return text;
 	}
 
-//	private void addSourceLineRegion( int offset, int length ) {
-//		if ( fTextPresentation != null ) {
-//			fTextPresentation.addStyleRange( new StyleRange( offset, 
-//															 length, 
-//															 JFaceResources.getColorRegistry().get( IInternalCDebugUIConstants.DISASSEMBLY_SOURCE_LINE_COLOR ),
-//															 null ) );
-//		}
-//	}
-
 	public IRegion[] getSourceRegions() {
 		return this.fSourceRegions;
+	}
+	
+	protected IDisassembly getDisassembly() {
+		return ( fBlock != null ) ? fBlock.getDisassembly() : null;
 	}
 }

@@ -1,3 +1,9 @@
+2004-05-14 Mikhail Khodjaiants
+	Refresh the Disassembly view on change events.
+	* DisassemblyEditorInput.java
+	* DisassemblyView.java
+	* DisassemblyViewEventHandler.java
+
 2004-05-13 Mikhail Khodjaiants
 	Removed old disassembly implementation.
 	* SwitchToDisassemblyActionDelegate.java: deleted

@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerAction;
@@ -25,11 +26,13 @@ import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -905,5 +908,21 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 											 null ) );
 		}
 		return p;
+	}
+
+	protected void refresh( IDisassembly disassembly ) {
+		if ( !(getInput() instanceof DisassemblyEditorInput) || !disassembly.equals( ((DisassemblyEditorInput)getInput()).getDisassembly() ) )
+			return;
+		resetViewerInput();
+		if ( !isAvailable() || !isVisible() )
+			return;
+		IAdaptable context = DebugUITools.getDebugContext();
+		if ( context instanceof ICStackFrame ) {
+			fLastStackFrame = (ICStackFrame)context;
+			IEditorInput input = getInput();
+			if ( input instanceof DisassemblyEditorInput )
+				setViewerInput( DisassemblyEditorInput.PENDING_EDITOR_INPUT );
+			computeInput( input, (ICStackFrame)context, this );
+		}
 	}
 }

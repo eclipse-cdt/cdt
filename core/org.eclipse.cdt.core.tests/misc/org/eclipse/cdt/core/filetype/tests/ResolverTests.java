@@ -10,6 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.filetype.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -25,9 +28,9 @@ import org.eclipse.cdt.core.filetype.ICLanguage;
 import org.eclipse.cdt.core.filetype.IResolverChangeListener;
 import org.eclipse.cdt.core.filetype.IResolverModel;
 import org.eclipse.cdt.core.filetype.ResolverChangeEvent;
+import org.eclipse.cdt.core.filetype.ResolverDelta;
 import org.eclipse.cdt.core.internal.filetype.CFileType;
 import org.eclipse.cdt.core.internal.filetype.CFileTypeAssociation;
-import org.eclipse.cdt.core.internal.filetype.CFileTypeResolver;
 import org.eclipse.cdt.core.internal.filetype.CLanguage;
 import org.eclipse.cdt.core.internal.filetype.ResolverModel;
 import org.eclipse.cdt.testplugin.CTestPlugin;
@@ -113,8 +116,8 @@ public class ResolverTests extends TestCase {
 	protected void setUp() throws Exception {
 		model = CCorePlugin.getDefault().getResolverModel();
 		
-		model.setResolver(null);
-		model.setResolver(project, null);
+		//model.setResolver(null);
+		//model.setResolver(project, null);
 		
 		workspaceResolver = model.getResolver();
 		projectResolver = model.getResolver(project);
@@ -141,9 +144,9 @@ public class ResolverTests extends TestCase {
 		super(name);
 	}
 
-	private ICFileTypeResolver createResolver() {
-		return new CFileTypeResolver();
-	}
+//	private ICFileTypeResolver createResolver() {
+//		return new CFileTypeResolver();
+//	}
 	
 	public final void testInternalCtors() {
 		ICLanguage 				lang	= null;
@@ -359,8 +362,9 @@ public class ResolverTests extends TestCase {
 	public final void testWorkspaceFileTypeResolution() {
 
 		// Reset the resolver
-		model.setResolver(null);
-		workspaceResolver = model.getResolver(); 
+		//model.setResolver(null);
+		workspaceResolver = model.getResolver();
+		//workspaceResolver = new WorkspaceResolver();
 		
 		// Validate that we are using the default resolver set...
 		doTestFileTypeResolution(workspaceResolver, "file.c", ICFileTypeConstants.FT_C_SOURCE); //$NON-NLS-1$
@@ -374,15 +378,25 @@ public class ResolverTests extends TestCase {
 		
 		// Set up a new resolver just for the tests
 		// This one will only recognize '*.c', '*.h', and '*.sam'
-		ICFileTypeResolver resolver = createResolver();
+		//ICFileTypeResolver resolver = createResolver();
+		ICFileTypeResolver resolver = workspaceResolver.createWorkingCopy();
+		resolver.removeAssociations(workspaceResolver.getFileTypeAssociations());
+
+		ICFileTypeAssociation[] assocs = new ICFileTypeAssociation[1];
 		
-		resolver.addAssociation(model.createAssocation("*.sam", model.getFileTypeById(ICFileTypeConstants.FT_C_SOURCE))); //$NON-NLS-1$
-		resolver.addAssociation(model.createAssocation("*.shari", model.getFileTypeById(ICFileTypeConstants.FT_C_HEADER))); //$NON-NLS-1$
-		resolver.addAssociation(model.createAssocation("*.delainey", model.getFileTypeById(ICFileTypeConstants.FT_ASM_SOURCE))); //$NON-NLS-1$
+		assocs[0] =model.createAssocation("*.sam", model.getFileTypeById(ICFileTypeConstants.FT_C_SOURCE)); //$NON-NLS-1$
+		resolver.addAssociations(assocs);
+
+		assocs[0] = model.createAssocation("*.shari", model.getFileTypeById(ICFileTypeConstants.FT_C_HEADER)); //$NON-NLS-1$
+		resolver.addAssociations(assocs);
 		
+		assocs[0] = model.createAssocation("*.delainey", model.getFileTypeById(ICFileTypeConstants.FT_ASM_SOURCE)); //$NON-NLS-1$
+		resolver.addAssociations(assocs);
+
 		// Set the workspace to use the new resolver
-		model.setResolver(resolver);
-		workspaceResolver = model.getResolver(); 
+		//model.setResolver(resolver);
+		//workspaceResolver = model.getResolver(); 
+		workspaceResolver = resolver;
 
 		// Test the known types
 		doTestFileTypeResolution(workspaceResolver, "file.sam", ICFileTypeConstants.FT_C_SOURCE); //$NON-NLS-1$
@@ -400,7 +414,7 @@ public class ResolverTests extends TestCase {
 		doTestFileTypeResolution(workspaceResolver, "file.s", ICFileTypeConstants.FT_UNKNOWN); //$NON-NLS-1$
 		
 		// Reset the resolver
-		model.setResolver(null);
+		//model.setResolver(null);
 		workspaceResolver = model.getResolver(); 
 		
 		// Validate that we are back to using the default resolver set...
@@ -417,11 +431,12 @@ public class ResolverTests extends TestCase {
 	public final void testProjectFileTypeResolution() {
 
 		// Reset the resolver(s)
-		model.setResolver(null);
+		//model.setResolver(null);
 		workspaceResolver = model.getResolver();
 		
-		model.setResolver(project, null);
-		projectResolver = model.getResolver(project);
+		//model.setResolver(project, null);
+		//projectResolver = model.getResolver(project);
+		projectResolver = model.createCustomResolver(project, workspaceResolver);
 		
 		// Validate that we are using the default resolver set...
 		doTestFileTypeResolution(projectResolver, "file.c", ICFileTypeConstants.FT_C_SOURCE); //$NON-NLS-1$
@@ -434,15 +449,24 @@ public class ResolverTests extends TestCase {
 		
 		// Set up a new resolver just for the tests
 		// This one will only recognize '*.c', '*.h', and '*.sam'
-		ICFileTypeResolver resolver = createResolver();
+		//ICFileTypeResolver resolver = createResolver();
+		ICFileTypeResolver resolver = workspaceResolver.createWorkingCopy();
+		resolver.removeAssociations(projectResolver.getFileTypeAssociations());
+		ICFileTypeAssociation[] assocs = new ICFileTypeAssociation[1];
+
+		assocs[0] = model.createAssocation("*.sam", model.getFileTypeById(ICFileTypeConstants.FT_C_SOURCE)); //$NON-NLS-1$
+		resolver.addAssociations(assocs);
 		
-		resolver.addAssociation(model.createAssocation("*.sam", model.getFileTypeById(ICFileTypeConstants.FT_C_SOURCE))); //$NON-NLS-1$
-		resolver.addAssociation(model.createAssocation("*.shari", model.getFileTypeById(ICFileTypeConstants.FT_C_HEADER))); //$NON-NLS-1$
-		resolver.addAssociation(model.createAssocation("*.delainey", model.getFileTypeById(ICFileTypeConstants.FT_ASM_SOURCE))); //$NON-NLS-1$
+		assocs[0] = model.createAssocation("*.shari", model.getFileTypeById(ICFileTypeConstants.FT_C_HEADER)); //$NON-NLS-1$
+		resolver.addAssociations(assocs);
+		
+		assocs[0] = model.createAssocation("*.delainey", model.getFileTypeById(ICFileTypeConstants.FT_ASM_SOURCE)); //$NON-NLS-1$
+		resolver.addAssociations(assocs);
 		
 		// Set the workspace to use the new resolver
-		model.setResolver(project, resolver);
-		projectResolver = model.getResolver(project);
+		//model.setResolver(project, resolver);
+		//projectResolver = model.getResolver(project);
+		projectResolver = resolver;
 
 		// Test the known types
 		doTestFileTypeResolution(projectResolver, "file.sam", ICFileTypeConstants.FT_C_SOURCE); //$NON-NLS-1$
@@ -460,8 +484,9 @@ public class ResolverTests extends TestCase {
 		doTestFileTypeResolution(projectResolver, "file.s", ICFileTypeConstants.FT_UNKNOWN); //$NON-NLS-1$
 		
 		// Reset the resolver
-		model.setResolver(project, null);
-		projectResolver = model.getResolver(project);
+		//model.setResolver(project, null);
+		//projectResolver = model.getResolver(project);
+		projectResolver = model.createCustomResolver(project, workspaceResolver);
 		
 		// Validate that we are back to using the default resolver set...
 		doTestFileTypeResolution(projectResolver, "file.c", ICFileTypeConstants.FT_C_SOURCE); //$NON-NLS-1$
@@ -546,11 +571,12 @@ public class ResolverTests extends TestCase {
 		// Languages
 		
 		ICLanguage langIn = new CLanguage(LANG_TEST, "Test Language"); //$NON-NLS-1$
-		
-		result = ((ResolverModel) model).removeLanguage(langIn);
+		ICLanguage[] langIns = new ICLanguage[]{langIn}; //$NON-NLS-1$
+
+		result = ((ResolverModel) model).removeLanguages(langIns);
 		assertFalse(result);
 
-		result = ((ResolverModel) model).addLanguage(langIn);
+		result = ((ResolverModel) model).addLanguages(langIns);
 		assertTrue(result);
 		
 		ICLanguage langOut = model.getLanguageById(LANG_TEST);
@@ -560,15 +586,18 @@ public class ResolverTests extends TestCase {
 		// File types
 
 		ICFileType th = new CFileType(FT_TEST_HEADER, langIn, "Test Language Header", ICFileType.TYPE_HEADER); //$NON-NLS-1$
+		ICFileType[] ths = new ICFileType[] {th};
 		ICFileType ts = new CFileType(FT_TEST_SOURCE, langIn, "Test Language Source", ICFileType.TYPE_SOURCE); //$NON-NLS-1$
+		ICFileType[] tss = new ICFileType[] {ts};
 		ICFileType tu = new CFileType(FT_TEST_WHASAT, langIn, "Test Language Unknown", ICFileType.TYPE_UNKNOWN); //$NON-NLS-1$
+		ICFileType[] tus = new ICFileType[] {tu};
 		
 		// -- header
 		
-		result = ((ResolverModel) model).removeFileType(th);
+		result = ((ResolverModel) model).removeFileTypes(ths);
 		assertFalse(result);
 
-		result = ((ResolverModel) model).addFileType(th);
+		result = ((ResolverModel) model).addFileTypes(ths);
 		assertTrue(result);
 
 		ICFileType thOut = model.getFileTypeById(FT_TEST_HEADER);
@@ -577,10 +606,10 @@ public class ResolverTests extends TestCase {
 
 		// -- source
 
-		result = ((ResolverModel) model).removeFileType(ts);
+		result = ((ResolverModel) model).removeFileTypes(tss);
 		assertFalse(result);
 
-		result = ((ResolverModel) model).addFileType(ts);
+		result = ((ResolverModel) model).addFileTypes(tss);
 		assertTrue(result);
 
 		ICFileType tsOut = model.getFileTypeById(FT_TEST_SOURCE);
@@ -589,10 +618,10 @@ public class ResolverTests extends TestCase {
 
 		// -- unknown
 
-		result = ((ResolverModel) model).removeFileType(tu);
+		result = ((ResolverModel) model).removeFileTypes(tus);
 		assertFalse(result);
 
-		result = ((ResolverModel) model).addFileType(tu);
+		result = ((ResolverModel) model).addFileTypes(tus);
 		assertTrue(result);
 
 		ICFileType tuOut = model.getFileTypeById(FT_TEST_WHASAT);
@@ -602,15 +631,18 @@ public class ResolverTests extends TestCase {
 		// File type associations
 
 		ICFileTypeAssociation tha = new CFileTypeAssociation("*.aest", th); //$NON-NLS-1$
+		ICFileTypeAssociation[] thas = new ICFileTypeAssociation[] { tha };
 		ICFileTypeAssociation tsa = new CFileTypeAssociation("*.test", th); //$NON-NLS-1$
+		ICFileTypeAssociation[] tsas = new ICFileTypeAssociation[] {tsa};
 		ICFileTypeAssociation tua = new CFileTypeAssociation("*.zest", th); //$NON-NLS-1$
+		ICFileTypeAssociation[] tuas = new ICFileTypeAssociation[] { tua };
 
 		// -- header
 
-		result = workspaceResolver.removeAssociation(tha);
+		result = workspaceResolver.removeAssociations(thas);
 		assertFalse(result);
 
-		result = workspaceResolver.addAssociation(tha);
+		result = workspaceResolver.addAssociations(thas);
 		assertTrue(result);
 
 		ICFileType thaOut = workspaceResolver.getFileType("file.aest"); //$NON-NLS-1$
@@ -619,10 +651,10 @@ public class ResolverTests extends TestCase {
 		
 		// -- source
 
-		result = workspaceResolver.removeAssociation(tsa);
+		result = workspaceResolver.removeAssociations(tsas);
 		assertFalse(result);
 
-		result = workspaceResolver.addAssociation(tsa);
+		result = workspaceResolver.addAssociations(tsas);
 		assertTrue(result);
 
 		ICFileType tsaOut = workspaceResolver.getFileType("file.test"); //$NON-NLS-1$
@@ -632,10 +664,10 @@ public class ResolverTests extends TestCase {
 
 		// -- unknown
 
-		result = workspaceResolver.removeAssociation(tua);
+		result = workspaceResolver.removeAssociations(tuas);
 		assertFalse(result);
 
-		result = workspaceResolver.addAssociation(tua);
+		result = workspaceResolver.addAssociations(tuas);
 		assertTrue(result);
 
 		ICFileType tuaOut = workspaceResolver.getFileType("file.zest"); //$NON-NLS-1$
@@ -649,22 +681,26 @@ public class ResolverTests extends TestCase {
 		// Languages
 		
 		ICLanguage lang = model.getLanguageById(LANG_TEST);
+		ICLanguage[] langs = new ICLanguage[] { lang };
 		ICFileType fth  = model.getFileTypeById(FT_TEST_HEADER);
+		ICFileType[] fths = new ICFileType[] { fth };
 		ICFileType fts  = model.getFileTypeById(FT_TEST_SOURCE);
+		ICFileType[] ftss = new ICFileType[] { fts };
 		ICFileType ftu  = model.getFileTypeById(FT_TEST_WHASAT);
+		ICFileType[] ftus = new ICFileType[] { ftu };
 
 		// Test two file types
 		
-		result = ((ResolverModel) model).removeFileType(fth);
+		result = ((ResolverModel) model).removeFileTypes(fths);
 		assertTrue(result);
 
-		result = ((ResolverModel) model).removeFileType(fth);
+		result = ((ResolverModel) model).removeFileTypes(fths);
 		assertFalse(result);
 
-		result = ((ResolverModel) model).removeFileType(fts);
+		result = ((ResolverModel) model).removeFileTypes(ftss);
 		assertTrue(result);
 
-		result = ((ResolverModel) model).removeFileType(fts);
+		result = ((ResolverModel) model).removeFileTypes(ftss);
 		assertFalse(result);
 
 		// Removing the language should remove the
@@ -673,13 +709,13 @@ public class ResolverTests extends TestCase {
 		assertNotNull(lang);
 		assertEquals(LANG_TEST, lang.getId());
 		
-		result = ((ResolverModel) model).removeLanguage(lang);
+		result = ((ResolverModel) model).removeLanguages(langs);
 		assertTrue(result);
 
-		result = ((ResolverModel) model).removeLanguage(lang);
+		result = ((ResolverModel) model).removeLanguages(langs);
 		assertFalse(result);
 
-		result = ((ResolverModel) model).removeFileType(ftu);
+		result = ((ResolverModel) model).removeFileTypes(ftus);
 		assertFalse(result);
 
 		// File type associations
@@ -688,256 +724,271 @@ public class ResolverTests extends TestCase {
 		assertNotNull(assocs);
 		assertTrue(assocs.length > 3);
 
+		List list = new ArrayList();
 		for (int i = 0; i < assocs.length; i++) {
 			if (assocs[i].getType().getLanguage().getId().equals(LANG_TEST)) {
-				workspaceResolver.removeAssociation(assocs[i]);
+				list.add (assocs[i]);
+				//workspaceResolver.removeAssociation(assocs[i]);
 			}
 		}
+		assocs = (ICFileTypeAssociation[]) list.toArray(new ICFileTypeAssociation[list.size()]);
+		workspaceResolver.removeAssociations(assocs);
 		
 	}
 
 	class TestModelListener implements IResolverChangeListener {
-		private ResolverChangeEvent[] fEvents;
+		private ResolverChangeEvent fEvent;
 		public TestModelListener() {
 			model.addResolverChangeListener(this);
 		}
-		public void resolverChanged(ResolverChangeEvent[] events) {
-			fEvents = events;
+		public void resolverChanged(ResolverChangeEvent event) {
+			fEvent = event;
 			model.removeResolverChangeListener(this);
 			this.notifyAll();
 		}
-		public ResolverChangeEvent[] getEvents() {
-			return fEvents;
+		public ResolverChangeEvent getEvent() {
+			return fEvent;
 		}
 	}
 
 	public final void testChangeNotifications() {
 		ResolverModel			rawModel = ((ResolverModel) model);
-		ResolverChangeEvent[]	events	 = null;	
+		ResolverChangeEvent		event	 = null;	
 		ICLanguage				lang 	 = new CLanguage(LANG_TEST, "Test Language"); //$NON-NLS-1$
+		ICLanguage[]			langs	= new ICLanguage[] { lang };
 		ICFileType				type	 = new CFileType("?", model.getLanguageById("?"), "?", ICFileType.TYPE_UNKNOWN); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		ICFileType[]	types = new ICFileType[] { type };
 		TestModelListener		listener = null;
+		ResolverDelta[] 	deltas = null;
 
 		// Add language
 		try {
 			listener = new TestModelListener();
 			synchronized (listener) {
-				assertTrue(rawModel.addLanguage(lang));
+				assertTrue(rawModel.addLanguages(langs));
 				listener.wait(3);
 			}
 		} catch (InterruptedException e) {
 			assertTrue(e.getMessage(), false);
 		}
 		
-		events  = listener.getEvents();
-		assertNotNull(events);
-		
-		assertEquals(1, events.length);
-		assertNotNull(events[0].getContainer());
-		assertEquals(ResolverChangeEvent.ELEMENT_LANGUAGE, events[0].getElementType());
-		assertEquals(ResolverChangeEvent.EVENT_ADD, events[0].getEventType());
-		assertNotNull(events[0].getElement());
-		//assertNull(deltas[0].getAssociation());
-		assertNotNull(events[0].getElement());
-		//assertNull(deltas[0].getFileType());
+		event  = listener.getEvent();
+		assertNotNull(event);
+
+		deltas = event.getDeltas();
+		assertEquals(1, deltas.length);
+		assertNotNull(event.getResolver());
+		assertNotNull(event.getResolver().getContainer());
+		assertEquals(ResolverDelta.ELEMENT_LANGUAGE, deltas[0].getElementType());
+		assertEquals(ResolverDelta.EVENT_ADD, deltas[0].getEventType());
+		assertNotNull(deltas[0].getElement());
+		assertNull(deltas[0].getAssociation());
+		assertNull(deltas[0].getFileType());
 		//assertNull(deltas[0].getProject());
 		
 		// Repeated addition should not result in a change event
 		try {
 			listener = new TestModelListener();
 			synchronized (listener) {
-				assertFalse(rawModel.addLanguage(lang));
+				assertFalse(rawModel.addLanguages(langs));
 				listener.wait(3);
 			}
 		} catch (InterruptedException e) {
 			assertTrue(e.getMessage(), false);
 		}
 		
-		assertNull(listener.getEvents());
+		assertNull(listener.getEvent());
 
 		// Remove language
 		try {
 			listener = new TestModelListener();
 			synchronized (listener) {
-				assertTrue(rawModel.removeLanguage(lang));
+				assertTrue(rawModel.removeLanguages(langs));
 				listener.wait(3);
 			}
 		} catch (InterruptedException e) {
 			assertTrue(e.getMessage(), false);
 		}
 		
-		events  = listener.getEvents();
-		assertNotNull(events);
-		
-		assertEquals(1, events.length);
-		assertNotNull(events[0].getContainer());
-		assertEquals(ResolverChangeEvent.ELEMENT_LANGUAGE, events[0].getElementType());
-		assertEquals(ResolverChangeEvent.EVENT_REMOVE, events[0].getEventType());
-		assertNotNull(events[0].getElement());
-		//assertNull(deltas[0].getAssociation());
-		//assertNotNull(deltas[0].getLanguage());
-		//assertNull(deltas[0].getFileType());
+		event  = listener.getEvent();
+		assertNotNull(event);
+
+		deltas = event.getDeltas();
+		assertEquals(1, deltas.length);
+		assertNotNull(event.getResolver());
+		assertNotNull(event.getResolver().getContainer());
+		assertEquals(ResolverDelta.ELEMENT_LANGUAGE, deltas[0].getElementType());
+		assertEquals(ResolverDelta.EVENT_REMOVE, deltas[0].getEventType());
+		//assertNotNull(deltas[0].getElement());
+		assertNull(deltas[0].getAssociation());
+		assertNotNull(deltas[0].getLanguage());
+		assertNull(deltas[0].getFileType());
 		//assertNull(deltas[0].getProject());
 		
 		// Repeated removal should not result in a change event
 		try {
 			listener = new TestModelListener();
 			synchronized (listener) {
-				assertFalse(rawModel.removeLanguage(lang));
+				assertFalse(rawModel.removeLanguages(langs));
 				listener.wait(3);
 			}
 		} catch (InterruptedException e) {
 			assertTrue(e.getMessage(), false);
 		}
 		
-		assertNull(listener.getEvents());
+		assertNull(listener.getEvent());
 		
 		// Add file type
 		try {
 			listener = new TestModelListener();
 			synchronized (listener) {
-				assertTrue(rawModel.addFileType(type));
+				assertTrue(rawModel.addFileTypes(types));
 				listener.wait(3);
 			}
 		} catch (InterruptedException e) {
 			assertTrue(e.getMessage(), false);
 		}
 		
-		events  = listener.getEvents();
-		assertNotNull(events);
+		event  = listener.getEvent();
+		assertNotNull(event);
 
-		
-		assertEquals(1, events.length);
-		assertNotNull(events[0].getContainer());
-		assertEquals(ResolverChangeEvent.ELEMENT_FILETYPE, events[0].getElementType());
-		assertEquals(ResolverChangeEvent.EVENT_ADD, events[0].getEventType());
-		assertNotNull(events[0].getElement());
-		//assertNull(deltas[0].getAssociation());
-		//assertNull(deltas[0].getLanguage());
-		//assertNotNull(deltas[0].getFileType());
+		deltas = event.getDeltas();
+		assertEquals(1, deltas.length);
+		assertNotNull(event.getResolver());
+		assertNotNull(event.getResolver().getContainer());
+		assertEquals(ResolverDelta.ELEMENT_FILETYPE, deltas[0].getElementType());
+		assertEquals(ResolverDelta.EVENT_ADD, deltas[0].getEventType());
+		assertNotNull(deltas[0].getElement());
+		assertNull(deltas[0].getAssociation());
+		assertNull(deltas[0].getLanguage());
+		assertNotNull(deltas[0].getFileType());
 		//assertNull(deltas[0].getProject());
 
 		// Repeated addition should not result in a change event
 		try {
 			listener = new TestModelListener();
 			synchronized (listener) {
-				assertFalse(rawModel.addFileType(type));
+				assertFalse(rawModel.addFileTypes(types));
 				listener.wait(3);
 			}
 		} catch (InterruptedException e) {
 			assertTrue(e.getMessage(), false);
 		}
 		
-		assertNull(listener.getEvents());
+		assertNull(listener.getEvent());
 
 		// Remove file type
 		try {
 			listener = new TestModelListener();
 			synchronized (listener) {
-				assertTrue(rawModel.removeFileType(type));
+				assertTrue(rawModel.removeFileTypes(types));
 				listener.wait(3);
 			}
 		} catch (InterruptedException e) {
 			assertTrue(e.getMessage(), false);
 		}
 		
-		events  = listener.getEvents();
-		assertNotNull(events);
+		event  = listener.getEvent();
+		assertNotNull(event);
 
-		
-		assertEquals(1, events.length);
-		assertNotNull(events[0].getContainer());
-		assertEquals(ResolverChangeEvent.ELEMENT_FILETYPE, events[0].getElementType());
-		assertEquals(ResolverChangeEvent.EVENT_REMOVE, events[0].getEventType());
-		assertNotNull(events[0].getElement());
-		//assertNull(deltas[0].getAssociation());
-		//assertNull(deltas[0].getLanguage());
-		//assertNotNull(deltas[0].getFileType());
+		deltas = event.getDeltas();
+		assertEquals(1, deltas.length);
+		assertNotNull(event.getResolver());
+		assertNotNull(event.getResolver().getContainer());
+		assertEquals(ResolverDelta.ELEMENT_FILETYPE, deltas[0].getElementType());
+		assertEquals(ResolverDelta.EVENT_REMOVE, deltas[0].getEventType());
+		assertNotNull(deltas[0].getElement());
+		assertNull(deltas[0].getAssociation());
+		assertNull(deltas[0].getLanguage());
+		assertNotNull(deltas[0].getFileType());
 		//assertNull(deltas[0].getProject());
 		
 		// Repeated removal should not result in a change event
 		try {
 			listener = new TestModelListener();
 			synchronized (listener) {
-				assertFalse(rawModel.removeFileType(type));
+				assertFalse(rawModel.removeFileTypes(types));
 				listener.wait(3);
 			}
 		} catch (InterruptedException e) {
 			assertTrue(e.getMessage(), false);
 		}
 		
-		assertNull(listener.getEvents());
+		assertNull(listener.getEvent());
 
-		// Test setting workspace resolver
-		ICFileTypeResolver testResolver = createResolver();
-		
-		try {
-			listener = new TestModelListener();
-			synchronized (listener) {
-				model.setResolver(testResolver);
-				listener.wait(3);
-			}
-		} catch (InterruptedException e) {
-			assertTrue(e.getMessage(), false);
-		}
-		
-		events  = listener.getEvents();
-		assertNotNull(events);
-	
-		assertTrue(events.length > 1);
-		assertNotNull(events[0].getContainer());
-		assertEquals(ResolverChangeEvent.ELEMENT_RESOLVER, events[0].getElementType());
-		assertEquals(ResolverChangeEvent.EVENT_SET, events[0].getEventType());
-		assertNotNull(events[0].getElement());
-		//assertNull(deltas[0].getAssociation());
-		//assertNull(deltas[0].getLanguage());
-		//assertNull(deltas[0].getFileType());
-		//assertNull(deltas[0].getProject());
-		
-		// Test resetting workspace resolver
-		try {
-			listener = new TestModelListener();
-			synchronized (listener) {
-				model.setResolver(null);
-				listener.wait(3);
-			}
-		} catch (InterruptedException e) {
-			assertTrue(e.getMessage(), false);
-		}
-		
-		events  = listener.getEvents();
-		assertNotNull(events);
-
-		
-		assertTrue(events.length > 1);
-		assertNotNull(events[0].getContainer());
-		assertEquals(ResolverChangeEvent.ELEMENT_RESOLVER, events[0].getElementType());
-		assertEquals(ResolverChangeEvent.EVENT_SET, events[0].getEventType());
-		assertNotNull(events[0].getElement());
-		//assertNull(deltas[0].getAssociation());
-		//assertNull(deltas[0].getLanguage());
-		//assertNull(deltas[0].getFileType());
-		//assertNull(deltas[0].getProject());
-
+//		// Test setting workspace resolver
+//		ICFileTypeResolver testResolver = createResolver();
+//		
+//		try {
+//			listener = new TestModelListener();
+//			synchronized (listener) {
+//				model.setResolver(testResolver);
+//				listener.wait(3);
+//			}
+//		} catch (InterruptedException e) {
+//			assertTrue(e.getMessage(), false);
+//		}
+//		
+//		events  = listener.getEvents();
+//		assertNotNull(events);
+//	
+//		assertTrue(events.length > 1);
+//		assertNotNull(events[0].getContainer());
+//		assertEquals(ResolverChangeEvent.ELEMENT_RESOLVER, events[0].getElementType());
+//		assertEquals(ResolverChangeEvent.EVENT_SET, events[0].getEventType());
+//		assertNotNull(events[0].getElement());
+//		//assertNull(deltas[0].getAssociation());
+//		//assertNull(deltas[0].getLanguage());
+//		//assertNull(deltas[0].getFileType());
+//		//assertNull(deltas[0].getProject());
+//		
+//		// Test resetting workspace resolver
+//		try {
+//			listener = new TestModelListener();
+//			synchronized (listener) {
+//				model.setResolver(null);
+//				listener.wait(3);
+//			}
+//		} catch (InterruptedException e) {
+//			assertTrue(e.getMessage(), false);
+//		}
+//		
+//		events  = listener.getEvents();
+//		assertNotNull(events);
+//
+//		
+//		assertTrue(events.length > 1);
+//		assertNotNull(events[0].getContainer());
+//		assertEquals(ResolverChangeEvent.ELEMENT_RESOLVER, events[0].getElementType());
+//		assertEquals(ResolverChangeEvent.EVENT_SET, events[0].getEventType());
+//		assertNotNull(events[0].getElement());
+//		//assertNull(deltas[0].getAssociation());
+//		//assertNull(deltas[0].getLanguage());
+//		//assertNull(deltas[0].getFileType());
+//		//assertNull(deltas[0].getProject());
+//
 		// Test setting project resolver
 		try {
 			listener = new TestModelListener();
 			synchronized (listener) {
-				model.setResolver(project, testResolver);
+				//model.setResolver(project, testResolver);
+				model.createCustomResolver(project, null);
 				listener.wait(3);
 			}
 		} catch (InterruptedException e) {
 			assertTrue(e.getMessage(), false);
 		}
 		
-		events  = listener.getEvents();
-		assertNotNull(events);
-		
-		assertTrue(events.length > 1);
-		assertNotNull(events[0].getContainer());
-		assertEquals(ResolverChangeEvent.ELEMENT_RESOLVER, events[0].getElementType());
-		assertEquals(ResolverChangeEvent.EVENT_SET, events[0].getEventType());
-		assertNotNull(events[0].getElement());
+		event  = listener.getEvent();
+		assertNotNull(event);
+
+		deltas = event.getDeltas();
+		//assertTrue(deltas.length >= 1);
+		assertNotNull(event.getResolver().getContainer());
+		assertTrue(event.resolverHasChanged());
+		//assertEquals(ResolverChangeEvent.ELEMENT_RESOLVER, events[0].getElementType());
+		//assertEquals(ResolverChangeEvent.EVENT_SET, events[0].getEventType());
+		//assertNotNull(events[0].getElement());
 		//assertNull(deltas[0].getAssociation());
 		//assertNull(deltas[0].getLanguage());
 		//assertNull(deltas[0].getFileType());
@@ -947,21 +998,24 @@ public class ResolverTests extends TestCase {
 		try {
 			listener = new TestModelListener();
 			synchronized (listener) {
-				model.setResolver(project, null);
+				//model.setResolver(project, null);
+				model.removeCustomResolver(project);
 				listener.wait(3);
 			}
 		} catch (InterruptedException e) {
 			assertTrue(e.getMessage(), false);
 		}
 		
-		events  = listener.getEvents();
-		assertNotNull(events);
+		event  = listener.getEvent();
+		assertNotNull(event);
 
-		assertTrue(events.length > 1);
-		assertNotNull(events[0].getContainer());
-		assertEquals(ResolverChangeEvent.ELEMENT_RESOLVER, events[0].getElementType());
-		assertEquals(ResolverChangeEvent.EVENT_SET, events[0].getEventType());
-		assertNotNull(events[0].getElement());
+		deltas = event.getDeltas();
+		//assertTrue(deltas.length >= 1);
+		assertNotNull(event.getResolver().getContainer());
+		assertTrue(event.resolverHasChanged());
+		//assertEquals(ResolverChangeEvent.ELEMENT_RESOLVER, events[0].getElementType());
+		//assertEquals(ResolverChangeEvent.EVENT_SET, events[0].getEventType());
+		//assertNotNull(events[0].getElement());
 		//assertNull(deltas[0].getAssociation());
 		//assertNull(deltas[0].getLanguage());
 		//assertNull(deltas[0].getFileType());

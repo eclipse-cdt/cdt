@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -167,8 +166,8 @@ class BinaryInfo extends CFileInfo {
 			IBinaryParser parser = CModelManager.getDefault().getBinaryParser(project);
 			if (parser != null) {
 				try {
-					IFile file = (IFile) getElement().getUnderlyingResource();
-					IBinaryFile bfile = parser.getBinary(file);
+					IPath path = getElement().getUnderlyingResource().getLocation();
+					IBinaryFile bfile = parser.getBinary(path);
 					if (bfile instanceof IBinaryObject) {
 						binary = (IBinaryObject) bfile;
 					}

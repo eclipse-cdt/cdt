@@ -13,9 +13,9 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 /** 
  * Info for ICProject.
@@ -73,8 +73,8 @@ class ArchiveInfo extends CFileInfo {
 			IBinaryParser parser = CModelManager.getDefault().getBinaryParser(project);
 			if (parser != null) {
 				try {
-					IFile file = (IFile) getElement().getUnderlyingResource();
-					IBinaryFile bfile = parser.getBinary(file);
+					IPath path = getElement().getUnderlyingResource().getLocation();
+					IBinaryFile bfile = parser.getBinary(path);
 					if (bfile instanceof IBinaryArchive) {
 						archive = (IBinaryArchive) bfile;
 					}

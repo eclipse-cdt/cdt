@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.core.model.parser;
  */
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -20,16 +21,13 @@ import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
 import org.eclipse.cdt.utils.elf.ElfHelper.Sizes;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
  */
 public class ElfBinaryFile extends PlatformObject implements IBinaryFile, IBinaryObject, IBinaryExecutable, IBinaryShared {
-	IFile file;
+	IPath path;
 	AR.ARHeader header;
 	long timestamp;
 	String soname;
@@ -38,13 +36,13 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile, IBinar
 	Attribute attribute;
 	ArrayList symbols;
 
-	public ElfBinaryFile(IFile f) throws IOException {
-		this(f, null);
+	public ElfBinaryFile(IPath p) throws IOException {
+		this(p, null);
 	}
 
-	public ElfBinaryFile(IFile f, AR.ARHeader h) throws IOException {
+	public ElfBinaryFile(IPath p, AR.ARHeader h) throws IOException {
 		header = h;
-		file = f;
+		path = p;
 		loadInformation();
 		hasChanged();
 	}
@@ -52,8 +50,8 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile, IBinar
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getFile()
 	 */
-	public IFile getFile() {
-		return file;
+	public IPath getPath() {
+		return path;
 	}
 
 	/**
@@ -204,15 +202,15 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile, IBinar
 	public InputStream getContents() {
 		InputStream stream = null;
 		// Archive ?
-		if (file != null && header != null) {
+		if (path != null && header != null) {
 			try {
 				stream = new ByteArrayInputStream(header.getObjectData());
 			} catch (IOException e) {
 			}
-		} else if (file != null && file.exists()) {
+		} else if (path != null) {
 			try {
-				stream = file.getContents();
-			} catch (CoreException e) {
+				stream = new FileInputStream(path.toFile());
+			} catch (IOException e) {
 			}
 		}
 		if (stream == null) {
@@ -228,8 +226,8 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile, IBinar
 		if (header != null) {
 			return header.getObjectName();
 		}
-		if (file != null) {
-			return file.getName();
+		if (path != null) {
+			return path.lastSegment().toString();
 		}
 		return "";
 	}
@@ -259,7 +257,7 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile, IBinar
 	}
 
 	boolean hasChanged() {
-		long modification = file.getModificationStamp();
+		long modification = path.toFile().lastModified();
 		boolean changed = modification != timestamp;
 		timestamp = modification;
 		return changed;
@@ -269,11 +267,7 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile, IBinar
 		// Archive ?
 		if (header != null) {
 			return new ElfHelper(header.getElf());
-		} else if (file != null && file.exists()) {
-			IPath path = file.getLocation();
-			if (path == null) {
-				path = new Path("");
-			}
+		} else if (path != null) {
 			return new ElfHelper(path.toOSString());
 		}
 		throw new IOException("No file assiocated with Binary");

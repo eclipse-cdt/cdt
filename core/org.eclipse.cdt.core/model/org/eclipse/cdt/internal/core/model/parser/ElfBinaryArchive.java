@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.core.model.parser;
  */
  
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -14,8 +15,6 @@ import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.utils.elf.AR;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -23,12 +22,12 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public class ElfBinaryArchive extends PlatformObject implements IBinaryArchive {
 
-	IFile file;
+	IPath path;
 	ArrayList children;
 	long timestamp;
 	
-	public ElfBinaryArchive(IFile f) {
-		file = f;
+	public ElfBinaryArchive(IPath p) {
+		path = p;
 		children = new ArrayList(5);
 	}
 
@@ -38,14 +37,13 @@ public class ElfBinaryArchive extends PlatformObject implements IBinaryArchive {
 	public IBinaryObject[] getObjects() {
 		if (hasChanged()) {
 			children.clear();
-			IPath location = file.getLocation();
-			if (location != null) {
+			if (path != null) {
 				AR ar = null;
 				try {
-					ar = new AR(location.toOSString());
+					ar = new AR(path.toOSString());
 					AR.ARHeader[] headers = ar.getHeaders();
 					for (int i = 0; i < headers.length; i++) {
-						IBinaryObject bin = new ElfBinaryFile(file, headers[i]);
+						IBinaryObject bin = new ElfBinaryFile(path, headers[i]);
 						children.add(bin);
 					}
 				} catch (IOException e) {
@@ -63,8 +61,8 @@ public class ElfBinaryArchive extends PlatformObject implements IBinaryArchive {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getFile()
 	 */
-	public IFile getFile() {
-		return file;
+	public IPath getPath() {
+		return path;
 	}
 
 	/**
@@ -79,14 +77,14 @@ public class ElfBinaryArchive extends PlatformObject implements IBinaryArchive {
 	 */
 	public InputStream getContents() {
 		try {
-			return file.getContents();
-		} catch (CoreException e) {
+			return new FileInputStream(path.toFile());
+		} catch (IOException e) {
 		}
 		return new ByteArrayInputStream(new byte[0]);
 	}
 
 	boolean hasChanged() {
-		long modif = file.getModificationStamp();
+		long modif = path.toFile().lastModified();
 		boolean changed = modif != timestamp;
 		timestamp = modif;
 		return changed;

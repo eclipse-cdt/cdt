@@ -5,6 +5,8 @@ package org.eclipse.cdt.internal.core.model.parser;
  */
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,10 +20,7 @@ import org.eclipse.cdt.utils.coff.Coff;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PEArchive;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
@@ -29,18 +28,18 @@ import org.eclipse.core.runtime.PlatformObject;
 public class PEBinaryFile extends PlatformObject implements IBinaryFile, 
 	IBinaryObject, IBinaryExecutable, IBinaryShared {
 
-	IFile file;
+	IPath path;
 	long timestamp;
 	PE.Attribute attribute;
 	String objectName;
 	ArrayList symbols;
 
-	public PEBinaryFile(IFile file) throws IOException {
-		this(file, null);
+	public PEBinaryFile(IPath p) throws IOException {
+		this(p, null);
 	}
 	
-	public PEBinaryFile(IFile file, String o) throws IOException {
-		this.file = file;
+	public PEBinaryFile(IPath p, String o) throws IOException {
+		path = p;
 		objectName = o;
 		loadInformation();
 		hasChanged();
@@ -51,30 +50,28 @@ public class PEBinaryFile extends PlatformObject implements IBinaryFile,
 	 */
 	public InputStream getContents() {
 		InputStream stream = null;
-		if (file != null && objectName != null) {
-			IPath location = file.getLocation();
-			if (location != null) {
-				PEArchive ar = null;
-				try {   
-					ar = new PEArchive(file.getLocation().toOSString());
-					PEArchive.ARHeader[] headers = ar.getHeaders();
-					for (int i = 0; i < headers.length; i++) {
-						PEArchive.ARHeader hdr = headers[i];
-						if (objectName.equals(hdr.getObjectName())) {
-							stream = new ByteArrayInputStream(hdr.getObjectData());
-							break;
-						}
+		if (path != null && objectName != null) {
+			PEArchive ar = null;
+			try {   
+				ar = new PEArchive(path.toOSString());
+				PEArchive.ARHeader[] headers = ar.getHeaders();
+				for (int i = 0; i < headers.length; i++) {
+					PEArchive.ARHeader hdr = headers[i];
+					if (objectName.equals(hdr.getObjectName())) {
+						stream = new ByteArrayInputStream(hdr.getObjectData());
+						break;
 					}
-				} catch (IOException e) {
 				}
+			} catch (IOException e) {
+			} finally {
 				if (ar != null) {
 					ar.dispose();
 				}
 			}
-		} else if (file != null && file.exists()) {
+		} else if (path != null) {
 			try {
-				stream = file.getContents();
-			} catch (CoreException e) {
+				stream = new FileInputStream (path.toFile());
+			} catch (IOException e) {
 			}
 		}
 		if (stream == null) {
@@ -86,8 +83,8 @@ public class PEBinaryFile extends PlatformObject implements IBinaryFile,
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getFile()
 	 */
-	public IFile getFile() {
-		return file;
+	public IPath getPath() {
+		return path;
 	}
 
 	/**
@@ -149,8 +146,8 @@ public class PEBinaryFile extends PlatformObject implements IBinaryFile,
 	public String getName() {
 		if (objectName != null) {
 			return objectName;
-		} else if (file != null) {
-			return file.getName();
+		} else if (path != null) {
+			return path.lastSegment().toString();
 		}
 		return "";
 	}
@@ -215,35 +212,28 @@ public class PEBinaryFile extends PlatformObject implements IBinaryFile,
 	}
 
 	protected PE getPE() throws IOException {
-		if (file != null && objectName != null) {
-			IPath location = file.getLocation();
-			if (location != null) { 
-				PE pe = null;
-				PEArchive ar = null;
-				try {
-					ar = new PEArchive(file.getLocation().toOSString());
-					PEArchive.ARHeader[] headers = ar.getHeaders();
-					for (int i = 0; i < headers.length; i++) {
-						PEArchive.ARHeader hdr = headers[i];
-						if (objectName.equals(hdr.getObjectName())) {
-							pe = hdr.getPE();
-							break;
-						}
-					}
-				} finally {
-					if (ar != null) {
-						ar.dispose();
+		if (path != null && objectName != null) {
+			PE pe = null;
+			PEArchive ar = null;
+			try {
+				ar = new PEArchive(path.toOSString());
+				PEArchive.ARHeader[] headers = ar.getHeaders();
+				for (int i = 0; i < headers.length; i++) {
+					PEArchive.ARHeader hdr = headers[i];
+					if (objectName.equals(hdr.getObjectName())) {
+						pe = hdr.getPE();
+						break;
 					}
 				}
-				if (pe != null) {
-					return pe; 
+			} finally {
+				if (ar != null) {
+					ar.dispose();
 				}
 			}
-		} else if (file != null && file.exists()) {
-			IPath path = file.getLocation();
-			if (path == null) {
-				path = new Path("");
+			if (pe != null) {
+				return pe; 
 			}
+		} else if (path != null) {
 			return new PE(path.toOSString());
 		}
 		throw new IOException("No file assiocated with Binary");
@@ -299,10 +289,14 @@ public class PEBinaryFile extends PlatformObject implements IBinaryFile,
 	}
 
 	boolean hasChanged() {
-		long modification = file.getModificationStamp();
-		boolean changed = modification != timestamp;
-		timestamp = modification;
-		return changed;
+		File file = path.toFile();
+		if (file != null && file.exists()) {
+			long modification = file.lastModified();
+			boolean changed = modification != timestamp;
+			timestamp = modification;
+			return changed;
+		}
+		return false;
 	}
 
 }

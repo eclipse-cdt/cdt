@@ -8,8 +8,8 @@ package org.eclipse.cdt.core;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 
 /**
  */
@@ -25,7 +25,7 @@ public interface IBinaryParser {
 		public int ARCHIVE = 0x08;
 		public int CORE = 0x10;
 
-		public IFile getFile();
+		public IPath getPath();
 		public int getType();
 		public InputStream getContents();
 	}
@@ -84,7 +84,7 @@ public interface IBinaryParser {
 		public int getType();
 	}
 
-	public IBinaryFile getBinary(IFile file) throws IOException;
+	public IBinaryFile getBinary(IPath path) throws IOException;
 	
 	public String getFormat();
 }

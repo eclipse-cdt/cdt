@@ -10,7 +10,7 @@ import java.io.IOException;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PEArchive;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
 
 /**
  */
@@ -19,17 +19,17 @@ public class PEParser implements IBinaryParser {
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IFile)
 	 */
-	public IBinaryFile getBinary(IFile file) throws IOException {
+	public IBinaryFile getBinary(IPath path) throws IOException {
 		try {
-			PE pe = new PE(file.getLocation().toOSString());
+			PE pe = new PE(path.toOSString());
 			pe.dispose();
-			return new PEBinaryFile(file);
+			return new PEBinaryFile(path);
 		} catch (IOException e) {
 		}
 		// Is it an Archive.
-		PEArchive ar = new PEArchive(file.getLocation().toOSString());
+		PEArchive ar = new PEArchive(path.toOSString());
 		ar.dispose();
-		return new PEBinaryArchive(file);
+		return new PEBinaryArchive(path);
 	}
 
 	/**

@@ -23,6 +23,23 @@ public interface IOption extends IBuildObject {
 	public static final int PREPROCESSOR_SYMBOLS = 5;
 	public static final int LIBRARIES = 6;
 	
+	// Schema element names for options
+	public static final String CATEGORY = "category";
+	public static final String COMMAND = "command";
+	public static final String DEFAULT_VALUE = "defaultValue";
+	public static final String ENUM_VALUE = "enumeratedOptionValue";
+	public static final String IS_DEFAULT = "isDefault";
+	public static final String LIST_VALUE = "listOptionValue";
+	public static final String TYPE_BOOL = "boolean";
+	public static final String TYPE_ENUM = "enumerated";
+	public static final String TYPE_INC_PATH = "includePath";
+	public static final String TYPE_LIB = "libs";
+	public static final String TYPE_STRING = "string";
+	public static final String TYPE_STR_LIST = "stringList";
+	public static final String VALUE_TYPE = "valueType";
+	public static final String VALUE = "value";
+
+	
 	/**
 	 * If this option is defined as an enumeration, this function returns
 	 * the list of possible values for that enum.

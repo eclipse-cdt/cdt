@@ -671,55 +671,55 @@
                   category="cygwin.compiler.category.general"
                   valueType="enumerated"
                   id="cygwin.compiler.general.optimization.level">
-               <optionEnum
+               <enumeratedOptionValue
                      name="None (-O0)"
                      command="-O0"
                      id="cygwin.optimization.level.none">
-               </optionEnum>
-               <optionEnum
+               </enumeratedOptionValue>
+               <enumeratedOptionValue
                      name="Optimize (-O1)"
                      command="-O1"
                      id="cygwin.optimization.level.optimize">
-               </optionEnum>
-               <optionEnum
+               </enumeratedOptionValue>
+               <enumeratedOptionValue
                      name="Optimize more (-O2)"
                      isDefault="true"
                      command="-O2"
                      id="cygwin.optimization.level.more">
-               </optionEnum>
-               <optionEnum
+               </enumeratedOptionValue>
+               <enumeratedOptionValue
                      name="Optimize most (-O3)"
                      command="-O3"
                      id="cygwin.optimization.level.most">
-               </optionEnum>
+               </enumeratedOptionValue>
             </option>
             <option
                   name="Debug Level"
                   category="cygwin.compiler.category.general"
                   valueType="enumerated"
                   id="cygwin.compiler.debugging.level">
-               <optionEnum
+               <enumeratedOptionValue
                      name="None"
                      isDefault="false"
                      id="cygwin.debugging.level.none">
-               </optionEnum>
-               <optionEnum
+               </enumeratedOptionValue>
+               <enumeratedOptionValue
                      name="Minimal (-g1)"
                      command="-g1"
                      id="cygwin.debugging.level.minimal">
-               </optionEnum>
-               <optionEnum
+               </enumeratedOptionValue>
+               <enumeratedOptionValue
                      name="Default (-g)"
                      isDefault="true"
                      command="-g"
                      id="cygwin.debugging.level.default">
-               </optionEnum>
-               <optionEnum
+               </enumeratedOptionValue>
+               <enumeratedOptionValue
                      name="Maximum (-g3)"
                      isDefault="false"
                      command="-g3"
                      id="cygwin.debugging.level.max">
-               </optionEnum>
+               </enumeratedOptionValue>
             </option>
             <option
                   name="Include Paths"

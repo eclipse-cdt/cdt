@@ -1,6 +1,11 @@
 2003-07-30 Hoda Amer
 	The New Class Wizard uses search to look for base classes in the workspace.
 
+2003-07-30 Sean Evoy
+	* plugin.xml:
+	Updated the attribute names to reflect changes to the ManagedBuildInfo 
+	extension point schema.
+
 2003-07-29 Andrew Niefer
 	- Refactoring Search Result Collecting:
 		* CSearchResultCollector now extends BasicSearchResultCollector

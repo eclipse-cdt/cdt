@@ -62,42 +62,42 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		this(target);
 
 		// id		
-		setId(element.getAttribute("id"));
+		setId(element.getAttribute(ITool.ID));
 		
 		// hook me up
 		target.addTool(this);
 
 		// name
-		setName(element.getAttribute("name"));
+		setName(element.getAttribute(ITool.NAME));
 		
 		// Get the supported input file extension
-		String inputs = element.getAttribute("sources") == null ? 
+		String inputs = element.getAttribute(ITool.SOURCES) == null ? 
 			new String() : 
-			element.getAttribute("sources");
+			element.getAttribute(ITool.SOURCES);
 		StringTokenizer tokenizer = new StringTokenizer(inputs, DEFAULT_SEPARATOR);
 		while (tokenizer.hasMoreElements()) {
 			getInputExtensions().add(tokenizer.nextElement());
 		}
 				
 		// Get the output extension
-		outputExtension = element.getAttribute("outputs") == null ? 
+		outputExtension = element.getAttribute(ITool.OUTPUTS) == null ? 
 			new String() : 
-			element.getAttribute("outputs");
+			element.getAttribute(ITool.OUTPUTS);
 			
 		// Get the tool invocation
-		command = element.getAttribute("command") == null ? 
+		command = element.getAttribute(ITool.COMMAND) == null ? 
 			new String() : 
-			element.getAttribute("command");
+			element.getAttribute(ITool.COMMAND);
 			
 		// Get the flag to control output
-		outputFlag = element.getAttribute("outputFlag") == null ?
+		outputFlag = element.getAttribute(ITool.OUTPUT_FLAG) == null ?
 			new String() :
-			element.getAttribute("outputFlag");
+			element.getAttribute(ITool.OUTPUT_FLAG);
 			
 		// Get the output prefix
-		outputPrefix = element.getAttribute("outputPrefix") == null ?
+		outputPrefix = element.getAttribute(ITool.OUTPUT_PREFIX) == null ?
 			new String() :
-			element.getAttribute("outputPrefix");
+			element.getAttribute(ITool.OUTPUT_PREFIX);
 
 		// set up the category map
 		categoryMap = new HashMap();
@@ -107,9 +107,9 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		IConfigurationElement[] toolElements = element.getChildren();
 		for (int l = 0; l < toolElements.length; ++l) {
 			IConfigurationElement toolElement = toolElements[l];
-			if (toolElement.getName().equals("option")) {
+			if (toolElement.getName().equals(ITool.OPTION)) {
 				new Option(this, toolElement);
-			} else if (toolElement.getName().equals("optionCategory")) {
+			} else if (toolElement.getName().equals(ITool.OPTION_CAT)) {
 				new OptionCategory(this, toolElement);
 			}
 		}

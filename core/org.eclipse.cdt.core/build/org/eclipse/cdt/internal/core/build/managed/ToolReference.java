@@ -65,7 +65,7 @@ public class ToolReference implements ITool {
 		IConfigurationElement[] toolElements = element.getChildren();
 		for (int m = 0; m < toolElements.length; ++m) {
 			IConfigurationElement toolElement = toolElements[m];
-			if (toolElement.getName().equals("optionRef")) {
+			if (toolElement.getName().equals(ITool.OPTION_REF)) {
 				new OptionReference(this, toolElement);
 			}
 		}
@@ -89,7 +89,7 @@ public class ToolReference implements ITool {
 		NodeList configElements = element.getChildNodes();
 		for (int i = 0; i < configElements.getLength(); ++i) {
 			Node configElement = configElements.item(i);
-			if (configElement.getNodeName().equals("optionRef")) {
+			if (configElement.getNodeName().equals(ITool.OPTION_REF)) {
 				new OptionReference(this, (Element)configElement);
 			}
 		}
@@ -103,12 +103,12 @@ public class ToolReference implements ITool {
 	 * to persist settings.
 	 */
 	public void serialize(Document doc, Element element) {
-		element.setAttribute("id", parent.getId());
+		element.setAttribute(ITool.ID, parent.getId());
 		
 		if (optionReferences != null)
 			for (int i = 0; i < optionReferences.size(); ++i) {
 				OptionReference optionRef = (OptionReference)optionReferences.get(i);
-				Element optionRefElement = doc.createElement("optionRef");
+				Element optionRefElement = doc.createElement(ITool.OPTION_REF);
 				element.appendChild(optionRefElement);
 				optionRef.serialize(doc, optionRefElement);
 			}

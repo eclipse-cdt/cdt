@@ -47,37 +47,37 @@ public class Option extends BuildObject implements IOption {
 		this(tool);
 		
 		// Get the unique id of the option
-		setId(element.getAttribute("id"));
+		setId(element.getAttribute(IOption.ID));
 		
 		// Hook me up to a tool
 		tool.addOption(this);
 		
 		// Get the option Name (this is what the user will see in the UI)
-		setName(element.getAttribute("name"));
+		setName(element.getAttribute(IOption.NAME));
 
 		// Options can be grouped into categories
-		String categoryId = element.getAttribute("category");
+		String categoryId = element.getAttribute(IOption.CATEGORY);
 		if (categoryId != null)
 			setCategory(tool.getOptionCategory(categoryId));
 		
 		// Get the command defined for the option
-		command = element.getAttribute("command");
+		command = element.getAttribute(IOption.COMMAND);
 		
 		// Options hold different types of values
-		String valueTypeStr = element.getAttribute("valueType");
+		String valueTypeStr = element.getAttribute(IOption.VALUE_TYPE);
 		if (valueTypeStr == null)
 			valueType = -1;
-		else if (valueTypeStr.equals("string"))
+		else if (valueTypeStr.equals(IOption.TYPE_STRING))
 			valueType = IOption.STRING;
-		else if (valueTypeStr.equals("stringList"))
+		else if (valueTypeStr.equals(IOption.TYPE_STR_LIST))
 			valueType = IOption.STRING_LIST;
-		else if (valueTypeStr.equals("boolean"))
+		else if (valueTypeStr.equals(IOption.TYPE_BOOL))
 			valueType = IOption.BOOLEAN;
-		else if (valueTypeStr.equals("enumerated"))
+		else if (valueTypeStr.equals(IOption.TYPE_ENUM))
 			valueType = IOption.ENUMERATED;
-		else if (valueTypeStr.equals("includePath"))
+		else if (valueTypeStr.equals(IOption.TYPE_INC_PATH))
 			valueType = IOption.INCLUDE_PATH;
-		else if (valueTypeStr.equals("libs"))
+		else if (valueTypeStr.equals(IOption.TYPE_LIB))
 			valueType = IOption.LIBRARIES;
 		else
 			valueType = IOption.PREPROCESSOR_SYMBOLS;
@@ -87,21 +87,21 @@ public class Option extends BuildObject implements IOption {
 		switch (valueType) {
 			case IOption.BOOLEAN:
 				// Convert the string to a boolean
-				value = new Boolean(element.getAttribute("defaultValue"));
+				value = new Boolean(element.getAttribute(IOption.DEFAULT_VALUE));
 				break;
 			case IOption.STRING:
 				// Just get the value out of the option directly
-				value = element.getAttribute("defaultValue");
+				value = element.getAttribute(IOption.DEFAULT_VALUE);
 			break;
 			case IOption.ENUMERATED:
 				List enumList = new ArrayList();
-				IConfigurationElement[] enumElements = element.getChildren("optionEnum");
+				IConfigurationElement[] enumElements = element.getChildren(IOption.ENUM_VALUE);
 				for (int i = 0; i < enumElements.length; ++i) {
-					String optName = enumElements[i].getAttribute("name");
-					String optCommand = enumElements[i].getAttribute("command"); 
+					String optName = enumElements[i].getAttribute(IOption.NAME);
+					String optCommand = enumElements[i].getAttribute(IOption.COMMAND); 
 					enumList.add(optName);
 					enumCommands.put(optName, optCommand);
-					Boolean isDefault = new Boolean(enumElements[i].getAttribute("isDefault"));
+					Boolean isDefault = new Boolean(enumElements[i].getAttribute(IOption.IS_DEFAULT));
 					if (isDefault.booleanValue()) {
 							defaultEnumName = optName; 
 					}
@@ -113,9 +113,9 @@ public class Option extends BuildObject implements IOption {
 			case IOption.PREPROCESSOR_SYMBOLS:
 			case IOption.LIBRARIES:
 				List valueList = new ArrayList();
-				IConfigurationElement[] valueElements = element.getChildren("optionValue");
+				IConfigurationElement[] valueElements = element.getChildren(IOption.LIST_VALUE);
 				for (int i = 0; i < valueElements.length; ++i) {
-					valueList.add(valueElements[i].getAttribute("value"));
+					valueList.add(valueElements[i].getAttribute(IOption.VALUE));
 				}
 				value = valueList;
 				break;

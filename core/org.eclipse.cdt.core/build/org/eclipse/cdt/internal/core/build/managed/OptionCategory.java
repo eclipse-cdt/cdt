@@ -34,17 +34,17 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 	}
 	
 	public OptionCategory(Tool tool, IConfigurationElement element) {
-		String parentId = element.getAttribute("parent");
+		String parentId = element.getAttribute(IOptionCategory.PARENT);
 		if (parentId != null)
-			owner = tool.getOptionCategory(element.getAttribute("parent"));
+			owner = tool.getOptionCategory(element.getAttribute(IOptionCategory.PARENT));
 		else
 			owner = tool;
 		
 		// id
-		setId(element.getAttribute("id"));
+		setId(element.getAttribute(IOptionCategory.ID));
 		
 		// Name
-		setName(element.getAttribute("name"));
+		setName(element.getAttribute(IOptionCategory.NAME));
 		
 		// Hook me in
 		if (owner instanceof Tool)

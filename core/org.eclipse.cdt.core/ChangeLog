@@ -1,6 +1,31 @@
 2003-07-30 Hoda Amer
 	The C Model recognizes pointers to functions.
 
+2003-07-30 Sean Evoy
+	The managed build model is going to go through a bit of change over the next while.
+	In order to make that more manageable, I have moved all the hard-coded strings used 
+	to access the XML elements of the extension point definition into the appropriate
+	interface classes. 
+	
+	* build/org/eclipse/cdt/core/build/managed/IBuildObject.java
+	* build/org/eclipse/cdt/core/build/managed/IConfiguration.java
+	* build/org/eclipse/cdt/core/build/managed/IOption.java
+	* build/org/eclipse/cdt/core/build/managed/IOptionCategory.java
+	* build/org/eclipse/cdt/core/build/managed/ITool.java
+	* build/org/eclipse/cdt/internal/core/build/managed/Configuration.java
+	* build/org/eclipse/cdt/internal/core/build/managed/Option.java
+	* build/org/eclipse/cdt/internal/core/build/managed/OptionCategory.java
+	* build/org/eclipse/cdt/internal/core/build/managed/OptionReference.java
+	* build/org/eclipse/cdt/internal/core/build/managed/Tool.java
+	* build/org/eclipse/cdt/internal/core/build/managed/ToolReference.java:
+	Moved the hard-coded strings used to access the XML elements into appropropriate interfaces.
+
+	* schema/ManagedBuildTools.exsd:
+	Renamed four attributes optionRef->optionReference, toolRef->toolReference, 
+	optionValue->listOptionValue, and  optionEnum->enumeratedOptionValue. In the first 
+	2 cases, I was just trying to remove the tech-ese from the names. In the later 2, I 
+	tried to use a more descriptive name.
+
 2003-07-29 Alain Magloire
 
 	To discover if an application has debug info for DWARF-2 format

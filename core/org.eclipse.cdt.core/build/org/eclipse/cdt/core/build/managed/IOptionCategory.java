@@ -15,6 +15,9 @@ package org.eclipse.cdt.core.build.managed;
  */
 public interface IOptionCategory extends IBuildObject {
 
+	// Schema element names
+	public static final String PARENT = "parent";
+
 	/**
 	 * Returns the list of children of this node in the option category tree
 	 * 

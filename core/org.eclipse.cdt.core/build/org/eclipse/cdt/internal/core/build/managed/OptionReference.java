@@ -60,17 +60,17 @@ public class OptionReference implements IOption {
 	 */
 	public OptionReference(ToolReference owner, IConfigurationElement element) {
 		this.owner = owner;
-		option = owner.getTool().getOption(element.getAttribute("id"));
+		option = owner.getTool().getOption(element.getAttribute(IOption.ID));
 		
 		owner.addOptionReference(this);
 
 		// value
 		switch (option.getValueType()) {
 			case IOption.BOOLEAN:
-				value = new Boolean(element.getAttribute("defaultValue"));
+				value = new Boolean(element.getAttribute(IOption.DEFAULT_VALUE));
 				break;
 			case IOption.STRING:
-				value = element.getAttribute("defaultValue");
+				value = element.getAttribute(IOption.DEFAULT_VALUE);
 				break;
 			case IOption.ENUMERATED:
 				try {
@@ -84,9 +84,9 @@ public class OptionReference implements IOption {
 			case IOption.PREPROCESSOR_SYMBOLS:
 			case IOption.LIBRARIES:
 				List valueList = new ArrayList();
-				IConfigurationElement[] valueElements = element.getChildren("optionValue");
+				IConfigurationElement[] valueElements = element.getChildren(IOption.LIST_VALUE);
 				for (int i = 0; i < valueElements.length; ++i) {
-					valueList.add(valueElements[i].getAttribute("value"));
+					valueList.add(valueElements[i].getAttribute(IOption.VALUE));
 				}
 				value = valueList;
 				break;
@@ -101,29 +101,29 @@ public class OptionReference implements IOption {
 	 */
 	public OptionReference(ToolReference owner, Element element) {
 		this.owner = owner;	
-		option = owner.getTool().getOption(element.getAttribute("id"));
+		option = owner.getTool().getOption(element.getAttribute(IOption.ID));
 		
 		owner.addOptionReference(this);
 
 		// value
 		switch (option.getValueType()) {
 			case IOption.BOOLEAN:
-				value = new Boolean(element.getAttribute("defaultValue"));
+				value = new Boolean(element.getAttribute(IOption.DEFAULT_VALUE));
 				break;
 			case IOption.STRING:
 			case IOption.ENUMERATED:
-				value = (String) element.getAttribute("defaultValue");
+				value = (String) element.getAttribute(IOption.DEFAULT_VALUE);
 				break;
 			case IOption.STRING_LIST:
 			case IOption.INCLUDE_PATH:
 			case IOption.PREPROCESSOR_SYMBOLS:
 			case IOption.LIBRARIES:
 				List valueList = new ArrayList();
-				NodeList nodes = element.getElementsByTagName("optionValue");
+				NodeList nodes = element.getElementsByTagName(IOption.LIST_VALUE);
 				for (int i = 0; i < nodes.getLength(); ++i) {
 					Node node = nodes.item(i);
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
-						valueList.add(((Element)node).getAttribute("value"));
+						valueList.add(((Element)node).getAttribute(IOption.VALUE));
 					}
 				}
 				value = valueList;
@@ -139,16 +139,16 @@ public class OptionReference implements IOption {
 	 * @param element
 	 */
 	public void serialize(Document doc, Element element) {
-		element.setAttribute("id", option.getId());
+		element.setAttribute(IOption.ID, option.getId());
 		
 		// value
 		switch (option.getValueType()) {
 			case IOption.BOOLEAN:
-				element.setAttribute("defaultValue", ((Boolean)value).toString());
+				element.setAttribute(IOption.DEFAULT_VALUE, ((Boolean)value).toString());
 				break;
 			case IOption.STRING:
 			case IOption.ENUMERATED:
-				element.setAttribute("defaultValue", (String)value);
+				element.setAttribute(IOption.DEFAULT_VALUE, (String)value);
 				break;
 			case IOption.STRING_LIST:
 			case IOption.INCLUDE_PATH:
@@ -157,8 +157,8 @@ public class OptionReference implements IOption {
 				ArrayList stringList = (ArrayList)value;
 				ListIterator iter = stringList.listIterator();
 				while (iter.hasNext()) {
-					Element valueElement = doc.createElement("optionValue");
-					valueElement.setAttribute("value", (String)iter.next());
+					Element valueElement = doc.createElement(IOption.LIST_VALUE);
+					valueElement.setAttribute(IOption.VALUE, (String)iter.next());
 					element.appendChild(valueElement);
 				}
 				break;

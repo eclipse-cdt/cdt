@@ -74,18 +74,18 @@ public class Configuration extends BuildObject implements IConfiguration {
 		this.target = target;
 		
 		// id
-		setId(element.getAttribute("id"));
+		setId(element.getAttribute(IConfiguration.ID));
 		
 		// hook me up
 		target.addConfiguration(this);
 		
 		// name
-		setName(element.getAttribute("name"));
+		setName(element.getAttribute(IConfiguration.NAME));
 
 		IConfigurationElement[] configElements = element.getChildren();
 		for (int l = 0; l < configElements.length; ++l) {
 			IConfigurationElement configElement = configElements[l];
-			if (configElement.getName().equals("toolRef")) {
+			if (configElement.getName().equals(IConfiguration.TOOL_REF)) {
 				new ToolReference(this, configElement);
 			}
 		}
@@ -101,21 +101,21 @@ public class Configuration extends BuildObject implements IConfiguration {
 		this.target = target;
 		
 		// id
-		setId(element.getAttribute("id"));
+		setId(element.getAttribute(IConfiguration.ID));
 		
 		// hook me up
 		target.addConfiguration(this);
 		
 		// name
-		if (element.hasAttribute("name"))
-			setName(element.getAttribute("name"));
+		if (element.hasAttribute(IConfiguration.NAME))
+			setName(element.getAttribute(IConfiguration.NAME));
 		
-		if (element.hasAttribute("parent")) {
+		if (element.hasAttribute(IConfiguration.PARENT)) {
 			// See if the target has a parent
 			ITarget targetParent = target.getParent();
 			// If so, then get my parent from it
 			if (targetParent != null) {
-				parent = targetParent.getConfiguration(element.getAttribute("parent"));
+				parent = targetParent.getConfiguration(element.getAttribute(IConfiguration.PARENT));
 			}
 			else {
 				parent = null;
@@ -125,7 +125,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		NodeList configElements = element.getChildNodes();
 		for (int i = 0; i < configElements.getLength(); ++i) {
 			Node configElement = configElements.item(i);
-			if (configElement.getNodeName().equals("toolRef")) {
+			if (configElement.getNodeName().equals(IConfiguration.TOOL_REF)) {
 				new ToolReference(this, (Element)configElement);
 			}
 		}
@@ -139,18 +139,18 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @param element
 	 */
 	public void serialize(Document doc, Element element) {
-		element.setAttribute("id", id);
+		element.setAttribute(IConfiguration.ID, id);
 		
 		if (name != null)
-			element.setAttribute("name", name);
+			element.setAttribute(IConfiguration.NAME, name);
 			
 		if (parent != null)
-			element.setAttribute("parent", parent.getId());
+			element.setAttribute(IConfiguration.PARENT, parent.getId());
 		
 		if (toolReferences != null)
 			for (int i = 0; i < toolReferences.size(); ++i) {
 				ToolReference toolRef = (ToolReference)toolReferences.get(i);
-				Element toolRefElement = doc.createElement("toolRef");
+				Element toolRefElement = doc.createElement(IConfiguration.TOOL_REF);
 				element.appendChild(toolRefElement);
 				toolRef.serialize(doc, toolRefElement);
 			}

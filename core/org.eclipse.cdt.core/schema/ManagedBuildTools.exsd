@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.core" id="ManagedBuildTools" name="Managed Build Tools"/>
       </appInfo>
       <documentation>
-         Describes targets, configurations, and toolchains for the build system.
+         The managed build information model describes targets, configurations, and toolchains for the build system.
       </documentation>
    </annotation>
 
@@ -80,16 +80,6 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="dependencyCalculator" type="string">
-            <annotation>
-               <documentation>
-                  A reference to the class that will calculate the dependencies for a given file. For example, a compiler might require a dependency calculator for source files that discovers the dependenncies on header files.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
-            </annotation>
-         </attribute>
          <attribute name="command" type="string">
             <annotation>
                <documentation>
@@ -111,14 +101,29 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="dependencyCalculator" type="string">
+            <annotation>
+               <documentation>
+                  This is an optional field that specifies the class that provides the dependency calculation for a given tool.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.internal.core.sourcedependency.ISourceDependency"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <element name="option">
+      <annotation>
+         <documentation>
+            An option is associated with a tool. Options can contain boolean values, a simple text string, a selection from an enumerated list, or a list of values. Options also map the value they contain to a command-line flag, such as &apos;-g&apos; in the case of debugging symbol information for compilers.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
-            <element ref="optionEnum"/>
-            <element ref="optionValue"/>
+            <element ref="enumeratedOptionValue"/>
+            <element ref="listOptionValue"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -192,7 +197,7 @@ Two additional types exist to flag options of special relevance to the build mod
       </complexType>
    </element>
 
-   <element name="optionEnum">
+   <element name="enumeratedOptionValue">
       <annotation>
          <documentation>
             Defines a single value of an enumerated option.
@@ -231,31 +236,36 @@ Two additional types exist to flag options of special relevance to the build mod
    </element>
 
    <element name="configuration">
+      <annotation>
+         <documentation>
+            A configuration is used to gather together certain default tools and options to build  target a certain way. For example, a &quot;Debug&quot; configuration might supply tools with the options set to build with debugging symbols, whereas a &quot;Release&quot; configuration would supply tools with options set to create the best performance.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
-            <element ref="toolRef"/>
+            <element ref="toolReference"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Unique identifier for the configuration.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  A descriptive name for the configuration to be used in the UI.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="toolRef">
+   <element name="toolReference">
       <complexType>
          <sequence>
-            <element ref="optionRef"/>
+            <element ref="optionReference"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -267,7 +277,7 @@ Two additional types exist to flag options of special relevance to the build mod
       </complexType>
    </element>
 
-   <element name="optionRef">
+   <element name="optionReference">
       <annotation>
          <documentation>
             Option references hold onto information the user has changed through the UI. Not all fields will be populated, depending on the option type the reference overrides. For example, the &apos;name&apos; field is used by enumerated options only.
@@ -277,7 +287,7 @@ Two additional types exist to flag options of special relevance to the build mod
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The ID of the option the reference is for.
                </documentation>
             </annotation>
          </attribute>
@@ -392,38 +402,38 @@ Two additional types exist to flag options of special relevance to the build mod
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  Used by the build model to uniquely identify the option category.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  
+                  A human-readable category name, such as &apos;Preprocessor Options&apos;. This will be the name the user sees displayed in the UI.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="owner" type="string">
             <annotation>
                <documentation>
-                  
+                  Option categories can be nested inside other option categories. This is the ID of the owner of the category.
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="optionValue">
+   <element name="listOptionValue">
       <annotation>
          <documentation>
-            A value for defining individual elements of a string list option.
+            A value for defining individual elements of a list option.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The contents of the list item.
                </documentation>
             </annotation>
          </attribute>
@@ -444,7 +454,49 @@ Two additional types exist to flag options of special relevance to the build mod
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         [Enter extension point usage example here.]
+         The following is an example of the extension point usage:
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         id=&quot;buildExample&quot;
+         name=&quot;Tools for Build Example&quot;
+         point=&quot;org.eclipse.cdt.core.ManagedBuildInfo&quot;&gt;
+      &lt;target
+            makeFlags=&quot;-k&quot;
+            isTest=&quot;false&quot;
+            cleanCommand=&quot;rm -rf&quot;
+            name=&quot;Executable&quot;
+            defaultExtension=&quot;.exe&quot;
+            isAbstract=&quot;false&quot;
+            makeCommand=&quot;make&quot;
+            id=&quot;example.target.executable&quot;&gt;
+         &lt;tool
+               sources=&quot;C&quot;
+               name=&quot;Compiler&quot;
+               outputFlag=&quot;-o&quot;
+               outputs=&quot;exe&quot;
+               command=&quot;g++&quot;
+               id=&quot;executable.compiler&quot;&gt;
+            &lt;optionCategory
+                  owner=&quot;executable.compiler&quot;
+                  name=&quot;Flags&quot;
+                  id=&quot;compiler.category.flags&quot;&gt;
+            &lt;/optionCategory&gt;
+            &lt;option
+                  defaultValue=&quot;-c&quot;
+                  name=&quot;Compiler Flags&quot;
+                  category=&quot;compiler.category.flags&quot;
+                  valueType=&quot;string&quot;
+                  id=&quot;category.flags.comp_flags&quot;&gt;
+            &lt;/option&gt;
+         &lt;/tool&gt;
+         &lt;configuration
+               name=&quot;Default&quot;
+               id=&quot;example.config.default&quot;&gt;
+         &lt;/configuration&gt;
+      &lt;/target&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
       </documentation>
    </annotation>
 
@@ -453,7 +505,7 @@ Two additional types exist to flag options of special relevance to the build mod
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         [Enter API information here.]
+         
       </documentation>
    </annotation>
 
@@ -462,7 +514,7 @@ Two additional types exist to flag options of special relevance to the build mod
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         [Enter information about supplied implementation of this extension point.]
+         An implementation of this extension point is supplied in &lt;samp&gt;org.eclipse.cdt.ui&lt;/samp&gt;
       </documentation>
    </annotation>
 
@@ -471,7 +523,8 @@ Two additional types exist to flag options of special relevance to the build mod
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         Copyright (c) 2003 IBM Corporation and others.
+All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available on the &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt; Eclipse&lt;/a&gt; website.
       </documentation>
    </annotation>
 

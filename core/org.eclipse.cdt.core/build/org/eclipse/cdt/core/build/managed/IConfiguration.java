@@ -13,6 +13,9 @@ package org.eclipse.cdt.core.build.managed;
 import org.eclipse.core.resources.IResource;
 
 public interface IConfiguration extends IBuildObject {
+	// Schema element names
+	public static final String TOOL_REF = "toolReference";
+	public static final String PARENT = "parent";
 
 	/**
 	 * Returns the target for this configuration.

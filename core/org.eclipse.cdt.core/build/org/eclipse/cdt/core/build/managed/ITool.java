@@ -14,6 +14,15 @@ package org.eclipse.cdt.core.build.managed;
  * 
  */
 public interface ITool extends IBuildObject {
+	// Schema element names
+	public static final String COMMAND = "command";
+	public static final String OPTION = "option";
+	public static final String OPTION_CAT = "optionCategory";
+	public static final String OPTION_REF = "optionReference";
+	public static final String OUTPUT_FLAG = "outputFlag";
+	public static final String OUTPUT_PREFIX = "outputPrefix";
+	public static final String OUTPUTS = "outputs";
+	public static final String SOURCES = "sources";
 	public static final String WHITE_SPACE = " ";
 
 	/**

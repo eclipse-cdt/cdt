@@ -52,12 +52,12 @@
                   command="-L"
                   valueType="stringList"
                   id="list.option">
-               <optionValue
+               <listOptionValue
                      value="a">
-               </optionValue>
-               <optionValue
+               </listOptionValue>
+               <listOptionValue
                      value="b">
-               </optionValue>
+               </listOptionValue>
             </option>
             <option
                   defaultValue="false"
@@ -78,17 +78,17 @@
                   category="category"
                   valueType="enumerated"
                   id="enumerated.option">
-               <optionEnum
+               <enumeratedOptionValue
                      name="Default Enum"
                      isDefault="true"
                      command="-e1"
                      id="default.enum.option">
-               </optionEnum>
-               <optionEnum
+               </enumeratedOptionValue>
+               <enumeratedOptionValue
                      name="Another Enum"
                      command="-e2"
                      id="another.enum.option">
-               </optionEnum>
+               </enumeratedOptionValue>
             </option>
          </tool>
          <configuration
@@ -98,17 +98,17 @@
          <configuration
                name="Root Override Config"
                id="root.override.config">
-            <toolRef
+            <toolReference
                   id="root.tool">
-               <optionRef
+               <optionReference
                      defaultValue="y"
                      id="string.option">
-               </optionRef>
-               <optionRef
+               </optionReference>
+               <optionReference
                      defaultValue="true"
                      id="boolean.option">
-               </optionRef>
-            </toolRef>
+               </optionReference>
+            </toolReference>
          </configuration>
       </target>
       <target
@@ -136,12 +136,12 @@
                   command="-I"
                   valueType="includePath"
                   id="sub.tool.opt.inc.paths">
-               <optionValue
+               <listOptionValue
                      value="/usr/include">
-               </optionValue>
-               <optionValue
+               </listOptionValue>
+               <listOptionValue
                      value="/opt/gnome/include">
-               </optionValue>
+               </listOptionValue>
             </option>
             <option
                   name="Defined Symbols"
@@ -154,9 +154,9 @@
                   command="-I"
                   valueType="includePath"
                   id="sub.tool.opts.inc.paths.more">
-               <optionValue
+               <listOptionValue
                      value="/home/tester/include">
-               </optionValue>
+               </listOptionValue>
             </option>
          </tool>
       </target>

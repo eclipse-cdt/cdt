@@ -1,3 +1,7 @@
+2004-09-13 Mikhail Khodjaiants
+	Fix for bug 72555: "Toggle breakpoint" action doesn't remove function breakpoints from editor.
+	* CDIDebugModel.java
+
 2004-09-10 Mikhail Khodjaiants
 	Fixes for breakpoint filtering.
 	* CBreakpointManager.java

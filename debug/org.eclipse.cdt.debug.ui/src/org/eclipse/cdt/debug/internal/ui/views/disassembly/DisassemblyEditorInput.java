@@ -11,7 +11,7 @@
 package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 
 import java.util.Arrays;
-
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
 import org.eclipse.cdt.debug.core.model.IAsmSourceLine;
 import org.eclipse.cdt.debug.core.model.IBreakpointTarget;
@@ -21,10 +21,14 @@ import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IDisassemblyBlock;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.util.Assert;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
@@ -276,5 +280,31 @@ public class DisassemblyEditorInput implements IEditorInput {
 	
 	protected IDisassembly getDisassembly() {
 		return ( fBlock != null ) ? fBlock.getDisassembly() : null;
+	}
+
+	public ICLineBreakpoint breakpointExists( long address ) throws CoreException {
+		Assert.isTrue( address != 0 );
+		IDisassembly dis = getDisassembly();
+		if ( dis != null ) {
+			IBreakpointTarget bt = (IBreakpointTarget)dis.getDebugTarget().getAdapter( IBreakpointTarget.class );
+			if ( bt != null ) {
+				String modelId = CDIDebugModel.getPluginIdentifier();
+				IBreakpoint[] bps = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints( modelId );
+				for ( int i = 0; i < bps.length; ++i ) {
+					if ( bps[i] instanceof ICLineBreakpoint ) {
+						ICLineBreakpoint b = (ICLineBreakpoint)bps[i];
+						try {
+							if ( address == bt.getBreakpointAddress( b )  )
+								return b;
+						}
+						catch( NumberFormatException e ) {
+						}
+						catch( CoreException e ) {
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
 }

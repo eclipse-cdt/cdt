@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
-import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
@@ -28,7 +27,6 @@ import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -112,15 +110,18 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$
 				}
 				else {
-					IResource resource = ResourcesPlugin.getWorkspace().getRoot();
-					String sourceHandle = getSourceHandle( input );
 					long address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-					if ( address != 0 ) {
-						ICAddressBreakpoint breakpoint = CDIDebugModel.addressBreakpointExists( sourceHandle, resource, address );
+					if ( address == 0 ) {
+						errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$						
+					}
+					else {
+						ICLineBreakpoint breakpoint = ((DisassemblyEditorInput)input).breakpointExists( address );
 						if ( breakpoint != null ) {
 							DebugPlugin.getDefault().getBreakpointManager().removeBreakpoint( breakpoint, true );
 						}
 						else {
+							IResource resource = ResourcesPlugin.getWorkspace().getRoot();
+							String sourceHandle = getSourceHandle( input );
 							CDIDebugModel.createAddressBreakpoint( sourceHandle, 
 																   resource, 
 																   address, 
@@ -131,7 +132,6 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 						}
 						return;
 					}
-					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Invalid_line_1" ); //$NON-NLS-1$						
 				}
 			}
 		}
@@ -179,9 +179,7 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 						if ( sourceRange != null ) {
 							charStart = sourceRange.getStartPos();
 							charEnd = charStart + sourceRange.getLength();
-							// for now
-							if ( charEnd == 0 )
-								lineNumber = sourceRange.getStartLine();
+							lineNumber = sourceRange.getStartLine();
 						}
 					}
 					catch( CModelException e ) {
@@ -364,10 +362,10 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	private String getSourceHandle( IDeclaration declaration ) {
 		ITranslationUnit tu = declaration.getTranslationUnit();
 		if ( tu != null ) {
-			IPath path = tu.getPath();
-			if ( path != null ) {
-				return path.toOSString();
-			}
+			IResource resource = tu.getResource();
+			if ( resource != null )
+				return resource.getLocation().toOSString();
+			return tu.getPath().toOSString();
 		}
 		return ""; //$NON-NLS-1$
 	}

@@ -376,7 +376,6 @@ public class CDIDebugModel {
 	 */
 	public static ICLineBreakpoint lineBreakpointExists( String sourceHandle, IResource resource, int lineNumber ) throws CoreException {
 		String modelId = getPluginIdentifier();
-		String markerType = CLineBreakpoint.getMarkerType();
 		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 		IBreakpoint[] breakpoints = manager.getBreakpoints( modelId );
 		for( int i = 0; i < breakpoints.length; i++ ) {
@@ -384,52 +383,10 @@ public class CDIDebugModel {
 				continue;
 			}
 			ICLineBreakpoint breakpoint = (ICLineBreakpoint)breakpoints[i];
-			if ( breakpoint.getMarker().getType().equals( markerType ) ) {
-				if ( sourceHandle != null && sourceHandle.equals( breakpoint.getSourceHandle() ) ) {
-					if ( breakpoint.getMarker().getResource().equals( resource ) ) {
-						if ( breakpoint.getLineNumber() == lineNumber ) {
-							return breakpoint;
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the address breakpoint that is already registered with the breakpoint
-	 * manager for a source with the given handle and the given resource at the 
-	 * given address.
-	 *  
-	 * @param sourceHandle the source handle
-	 * @param resource the breakpoint resource
-	 * @param address the address
-	 * @return the address breakpoint that is already registered with the breakpoint
-	 *  manager or <code>null</code> if no such breakpoint is registered
-	 * @exception CoreException if unable to retrieve the associated marker
-	 * 	attributes (line number).
-	 */
-	public static ICAddressBreakpoint addressBreakpointExists( String sourceHandle, IResource resource, long address ) throws CoreException {
-		String modelId = getPluginIdentifier();
-		String markerType = CAddressBreakpoint.getMarkerType();
-		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
-		IBreakpoint[] breakpoints = manager.getBreakpoints( modelId );
-		for( int i = 0; i < breakpoints.length; i++ ) {
-			if ( !(breakpoints[i] instanceof ICAddressBreakpoint) ) {
-				continue;
-			}
-			ICAddressBreakpoint breakpoint = (ICAddressBreakpoint)breakpoints[i];
-			if ( breakpoint.getMarker().getType().equals( markerType ) ) {
-				if ( sourceHandle != null && sourceHandle.equals( breakpoint.getSourceHandle() ) ) {
-					if ( breakpoint.getMarker().getResource().equals( resource ) ) {
-						try {
-							if ( Long.parseLong( breakpoint.getAddress() ) == address ) {
-								return breakpoint;
-							}
-						}
-						catch( NumberFormatException e ) {
-						}
+			if ( sourceHandle != null && sourceHandle.equals( breakpoint.getSourceHandle() ) ) {
+				if ( breakpoint.getMarker().getResource().equals( resource ) ) {
+					if ( breakpoint.getLineNumber() == lineNumber ) {
+						return breakpoint;
 					}
 				}
 			}

@@ -2081,4 +2081,11 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     			parse( writer.toString(), false );
     	}
 	}
+    
+    public void testBug74180() throws Exception
+    {
+        parse( "enum DHCPFOBoolean { false, true } additionalHB, more_payload; \n", true, ParserLanguage.C );
+        assertTrue( callback.problems.isEmpty() );
+    }
 }
+

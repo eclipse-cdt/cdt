@@ -36,6 +36,13 @@ public class CharArrayIntMap extends CharTable {
 		for( int i = 0; i < capacity(); i++ )
 			valueTable[i] = undefined;
 	}
+	public Object clone(){
+	    CharArrayIntMap newMap = (CharArrayIntMap) super.clone();
+	    newMap.valueTable = new int[ capacity() ];
+	    System.arraycopy(valueTable, 0, newMap.valueTable, 0, valueTable.length);
+	    return newMap;
+	}
+	
 	public int put(char[] key, int start, int length, int value) {
 		int i = addIndex(key, start, length);
 		int oldvalue = valueTable[i];

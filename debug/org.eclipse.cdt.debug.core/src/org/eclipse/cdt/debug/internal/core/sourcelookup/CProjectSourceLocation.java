@@ -6,6 +6,8 @@
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.core.resources.IContainer;
@@ -29,6 +31,10 @@ public class CProjectSourceLocation implements ICSourceLocation
 	 * The project associated with this source location
 	 */
 	private IProject fProject;
+	
+	private HashMap fCache = new HashMap( 20 );
+	
+	private HashSet fNotFoundCache = new HashSet( 20 );
 
 	/**
 	 * Constructor for CProjectSourceLocation.
@@ -43,15 +49,24 @@ public class CProjectSourceLocation implements ICSourceLocation
 	 */
 	public Object findSourceElement( String name ) throws CoreException
 	{
-		if ( getProject() != null )
+		Object result = null;
+		if ( getProject() != null && !notFoundCacheLookup( name ) )
 		{
-			File file = new File( name );
-			if ( file.isAbsolute() )
-				return findFileByAbsolutePath( name );
-			else
-				return findFileByRelativePath( getProject(), name );
+			result = cacheLookup( name );
+			if ( result == null )
+			{ 
+				result = doFindSourceElement( name );
+				if ( result != null )
+				{
+					cacheSourceElement( name, result );
+				}
+			}
+			if ( result == null )
+			{
+				cacheNotFound( name );
+			}
 		}
-		return null;
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -84,6 +99,13 @@ public class CProjectSourceLocation implements ICSourceLocation
 	public IProject getProject()
 	{
 		return fProject;
+	}
+
+	private Object doFindSourceElement( String name )
+	{
+		File file = new File( name );
+		return ( file.isAbsolute() ) ? findFileByAbsolutePath( name ) : 
+									   findFileByRelativePath( getProject(), name );
 	}
 
 	private Object findFileByAbsolutePath( String name )
@@ -168,5 +190,31 @@ public class CProjectSourceLocation implements ICSourceLocation
 		}
 		
 		return null;
+	}
+	
+	private Object cacheLookup( String name )
+	{
+		return fCache.get( name );
+	}
+	
+	private boolean notFoundCacheLookup( String name )
+	{
+		return fNotFoundCache.contains( name );
+	}
+	
+	private void cacheSourceElement( String name, Object element )
+	{
+		fCache.put( name, element );
+	}
+
+	private void cacheNotFound( String name )
+	{
+		fNotFoundCache.add( name );
+	}
+
+	protected void dispose()
+	{
+		fCache.clear();
+		fNotFoundCache.clear();
 	}
 }

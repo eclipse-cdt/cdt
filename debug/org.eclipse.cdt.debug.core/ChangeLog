@@ -1,4 +1,8 @@
 2002-11-22 Mikhail Khodjaiants
+	Cache source elements to optimize search.
+	* CProjectSourceLocator.java
+
+2002-11-22 Mikhail Khodjaiants
 	Fix in the source locator's search algorithm.
 	* CProjectSourceLocator.java
 

@@ -1,4 +1,26 @@
 2003-10-27 Mikhail Khodjaiants
+	Changed the initialization of 'SourceLookupBlock'.
+	* SourceLookupBlock.java
+	* SourcePropertyPage.java
+
+2003-10-27 Mikhail Khodjaiants
+	Moved the 'org.eclipse.debug.core.sourceLocators' extension from the launcher.
+	* plugin.xml
+	* plugin.properties
+
+2003-10-27 Mikhail Khodjaiants
+	Added dependency to 'org.apache.xerces'.
+	* plugin.xml
+	* .classpath
+	* .project 
+
+2003-10-27 Mikhail Khodjaiants
+	Moved 'DefaultSourceLocator' from the 'org.eclipse.cdt.launch' plugin and merge it with 'CUISourceLocator'.
+	* CUISourceLocator.java: removed
+	* DefaultSourceLocator.java: moved from the launcher.
+	* CDebugUIPlugin.java: added the 'createSourceLocator' method.
+
+2003-10-27 Mikhail Khodjaiants
 	Renamed 'SourceLocationFactory' to 'SourceLookupFactory'.
 	* AddDirectorySourceLocationBlock.java
 	* AddProjectSourceLocationBlock.java

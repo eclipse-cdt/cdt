@@ -3,6 +3,7 @@
 	<name>org.eclipse.cdt.debug.ui</name>
 	<comment></comment>
 	<projects>
+		<project>org.apache.xerces</project>
 		<project>org.eclipse.cdt.core</project>
 		<project>org.eclipse.cdt.debug.core</project>
 		<project>org.eclipse.cdt.ui</project>

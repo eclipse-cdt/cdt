@@ -13,11 +13,12 @@ import java.util.Observer;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
-import org.eclipse.cdt.debug.core.sourcelookup.SourceLocationFactory;
+import org.eclipse.cdt.debug.core.sourcelookup.SourceLookupFactory;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.CheckedListDialogField;
@@ -28,7 +29,14 @@ import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.SelectionButtonDialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.Separator;
 import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -116,28 +124,83 @@ public class SourceLookupBlock implements Observer
 		return fControl;
 	}
 	
-	public void initialize( ICSourceLocator locator )
+	public void initialize( ILaunchConfiguration configuration )
 	{
-		if ( locator != null )
+		IProject project = getProjectFromLaunchConfiguration( configuration );
+		if ( project != null )
 		{
-			ICSourceLocation[] locations = locator.getSourceLocations();
-			initializeGeneratedLocations( locator.getProject(), locations );
-			resetAdditionalLocations( locations );
-			fSearchForDuplicateFiles.setSelection( locator.searchForDuplicateFiles() );
-		} 
+			IProject oldProject = getProject();
+			setProject( project );
+			if ( project.equals( oldProject ) )
+			{
+				try
+				{
+					String id = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, "" );
+					if ( isEmpty( id ) || 
+						 CDebugUIPlugin.getDefaultSourceLocatorID().equals( id ) || 
+						 CDebugUIPlugin.getDefaultSourceLocatorOldID().equals( id ) )
+					{
+						String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" );
+						if ( !isEmpty( memento ) )
+							initializeFromMemento( memento );
+						else
+							initializeDefaults();
+					}
+				}
+				catch( CoreException e )
+				{
+					initializeDefaults();
+				}
+			}
+			else
+				initializeDefaults();
+		}
+		else
+		{
+			initializeGeneratedLocations( null, new ICSourceLocation[0] );
+			resetAdditionalLocations( CDebugCorePlugin.getDefault().getCommonSourceLocations() );
+			fSearchForDuplicateFiles.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SEARCH_DUPLICATE_FILES ) );
+		}
+	}
+
+	private void initializeFromMemento( String memento ) throws CoreException
+	{
+		IPersistableSourceLocator locator = CDebugUIPlugin.createDefaultSourceLocator();
+		locator.initializeFromMemento( memento );
+		if ( locator instanceof IAdaptable )
+		{
+			ICSourceLocator clocator = (ICSourceLocator)((IAdaptable)locator).getAdapter( ICSourceLocator.class );
+			if ( clocator != null )
+				initializeFromLocator( clocator );
+		}
+	}
+
+	private void initializeDefaults()
+	{
+		initializeGeneratedLocations( getProject(), new ICSourceLocation[] { SourceLookupFactory.createProjectSourceLocation( getProject() ) } );
+		resetAdditionalLocations( CDebugCorePlugin.getDefault().getCommonSourceLocations() );
+		fSearchForDuplicateFiles.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SEARCH_DUPLICATE_FILES ) );
+	}
+
+	private void initializeFromLocator( ICSourceLocator locator )
+	{
+		ICSourceLocation[] locations = locator.getSourceLocations();
+		initializeGeneratedLocations( locator.getProject(), locations );
+		resetAdditionalLocations( locations );
+		fSearchForDuplicateFiles.setSelection( locator.searchForDuplicateFiles() );
 	}
 
 	private void initializeGeneratedLocations( IProject project, ICSourceLocation[] locations )
 	{
 		fGeneratedSourceListField.removeAllElements();
-		if ( project == null && project.exists() && project.isOpen() )
+		if ( project == null || !project.exists() || !project.isOpen() )
 			return;
 		List list = CDebugUtils.getReferencedProjects( project );
 		IProject[] refs = (IProject[])list.toArray( new IProject[list.size()] );
 		ICSourceLocation loc = getLocationForProject( project, locations );
 		boolean checked = ( loc != null && ((IProjectSourceLocation)loc).isGeneric() );
 		if ( loc == null )
-			loc = SourceLocationFactory.createProjectSourceLocation( project, true );
+			loc = SourceLookupFactory.createProjectSourceLocation( project, true );
 		fGeneratedSourceListField.addElement( loc );
 		fGeneratedSourceListField.setChecked( loc, checked );
 
@@ -146,7 +209,7 @@ public class SourceLookupBlock implements Observer
 			loc = getLocationForProject( refs[i], locations );
 			checked = ( loc != null );
 			if ( loc == null )
-				loc = SourceLocationFactory.createProjectSourceLocation( refs[i], true );
+				loc = SourceLookupFactory.createProjectSourceLocation( refs[i], true );
 			fGeneratedSourceListField.addElement( loc );
 			fGeneratedSourceListField.setChecked( loc, checked );
 		}
@@ -170,6 +233,28 @@ public class SourceLookupBlock implements Observer
 		{
 			if ( !( locations[i] instanceof IProjectSourceLocation ) || !((IProjectSourceLocation)locations[i]).isGeneric() )
 				fAddedSourceListField.addElement( locations[i] );
+		}
+	}
+
+	public void performApply( ILaunchConfigurationWorkingCopy configuration )
+	{
+		IPersistableSourceLocator locator = CDebugUIPlugin.createDefaultSourceLocator();
+		try
+		{
+			locator.initializeDefaults( configuration );
+			if ( locator instanceof IAdaptable )
+			{
+				ICSourceLocator clocator = (ICSourceLocator)((IAdaptable)locator).getAdapter( ICSourceLocator.class );
+				if ( clocator != null )
+				{
+					clocator.setSourceLocations( getSourceLocations() );
+					clocator.setSearchForDuplicateFiles( searchForDuplicateFiles() );
+				}
+			}
+			configuration.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, locator.getMemento() );
+		}
+		catch( CoreException e )
+		{
 		}
 	}
 
@@ -286,7 +371,7 @@ public class SourceLookupBlock implements Observer
 		return fProject;
 	}
 
-	public void setProject( IProject project )
+	private void setProject( IProject project )
 	{
 		fProject = project;
 	}
@@ -401,6 +486,11 @@ public class SourceLookupBlock implements Observer
 			updateLaunchConfigurationDialog();
 	}
 
+	private boolean isEmpty( String string )
+	{
+		return string == null || string.length() == 0;
+	}
+
 	public void dispose()
 	{
 		if ( getAddedSourceListField() != null )
@@ -408,5 +498,23 @@ public class SourceLookupBlock implements Observer
 			getAddedSourceListField().deleteObserver( this );
 			getAddedSourceListField().dispose();
 		}
+	}
+
+	private IProject getProjectFromLaunchConfiguration( ILaunchConfiguration configuration )
+	{
+		try
+		{
+			String projectName = configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, "" );
+			if ( !isEmpty( projectName ) )
+			{
+				IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
+				if ( project != null && project.exists() && project.isOpen() )
+					return project;
+			}
+		}
+		catch( CoreException e )
+		{
+		}
+		return null;
 	}
 }

@@ -19,6 +19,7 @@
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.core"/>
+      <import plugin="org.apache.xerces"/>
    </requires>
 
 
@@ -1242,6 +1243,14 @@
             class="org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor"
             id="org.eclipse.cdt.debug.ui.editor.CDebugEditor">
       </editor>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            class="org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator"
+            name="%DefaultSourceLocator.name"
+            id="org.eclipse.cdt.debug.ui.DefaultSourceLocator">
+      </sourceLocator>
    </extension>
 
 </plugin>

@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.RegistersViewPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.SharedLibrariesViewPreferencePage;
+import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -34,6 +35,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -507,5 +509,23 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		{
 			display.asyncExec( runnable );
 		}
+	}
+
+	public static IPersistableSourceLocator createDefaultSourceLocator()
+	{
+		return new DefaultSourceLocator();
+	}
+
+	public static String getDefaultSourceLocatorID()
+	{
+		return DefaultSourceLocator.ID_DEFAULT_SOURCE_LOCATOR;
+	}
+
+	/*
+	 * to support old launch configurations
+	 */
+	public static String getDefaultSourceLocatorOldID()
+	{
+		return DefaultSourceLocator.ID_OLD_DEFAULT_SOURCE_LOCATOR;
 	}
 }

@@ -36,6 +36,7 @@ public class ScannerSpeedTest extends SpeedTest {
 			System.out.println(e);
 		}
 	}
+	
 	public void test() throws Exception {
 		runTest(10);
 	}

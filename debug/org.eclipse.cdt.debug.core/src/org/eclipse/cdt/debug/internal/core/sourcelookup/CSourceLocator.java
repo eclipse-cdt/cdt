@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
@@ -15,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -99,37 +101,18 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 						break;
 				}
 			}
+			if ( result == null )
+			{
+				Path path = new Path( fileName );
+				if ( path.isAbsolute() && path.toFile().exists() )
+				{
+					return new FileStorage( path );
+				}
+			}
 		}		
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getSourceElement(String)
-	 */
-/*
-	public Object getSourceElement( String fileName )
-	{
-		Object result = null;
-		if ( fileName != null && fileName.length() > 0 )
-		{
-			ICSourceLocation[] locations = getSourceLocations();
-			for ( int i = 0; i < locations.length; ++i )
-			{
-				try
-				{
-					result = locations[i].findSourceElement( fileName );
-				}
-				catch( CoreException e )
-				{
-					// do nothing
-				}
-				if ( result != null )
-					break;
-			}
-		}
-		return result;
-	}
-*/
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#contains(IResource)
 	 */

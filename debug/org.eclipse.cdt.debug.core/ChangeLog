@@ -1,3 +1,7 @@
+2002-12-10 Mikhail Khodjaiants
+	If the given source file path is absolute and the source locator can not find it in the all specified locations return a FileStorage object.
+	* CSourceLocator.java
+
 2002-12-09 Mikhail Khodjaiants
 	Split the detail message of ICDIErrorInfo into tokens and trancate aech token if it is too long.
 	* CDebugTarget.java

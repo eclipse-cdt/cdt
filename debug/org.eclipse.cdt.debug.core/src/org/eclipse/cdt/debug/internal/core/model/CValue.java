@@ -223,7 +223,7 @@ public class CValue extends CDebugElement implements ICValue
 					end = result.length();
 				result = result.substring( 0, end );
 			}
-			else if ( result.charAt( result.length() - 1 ) == '\'' )
+			else if ( result.endsWith("'"))
 			{
 				int start = result.indexOf( '\'' );
 				if ( start != -1 )

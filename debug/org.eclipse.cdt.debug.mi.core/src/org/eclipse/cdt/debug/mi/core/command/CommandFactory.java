@@ -277,6 +277,10 @@ public class CommandFactory {
 		return new MIInfoSignals(name);
 	}
 
+	public MIHandle createMIHandle(String arg) {
+		return new MIHandle(arg);
+	}
+
 	public MIPType createMIPType(String name) {
 		return new MIPType(name);
 	}

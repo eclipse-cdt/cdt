@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.ICSignalManager;
  */
 public class SignalManager extends SessionObject implements ICSignalManager {
 
-	public SignalManager(Session session) {
+	public SignalManager(CSession session) {
 		super(session);
 	}
 	

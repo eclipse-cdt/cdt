@@ -21,7 +21,7 @@ import org.eclipse.cdt.debug.core.cdi.ICSourceManager;
  */
 public class SourceManager extends SessionObject implements ICSourceManager {
 
-	public SourceManager(Session session) {
+	public SourceManager(CSession session) {
 		super(session);
 	}
 	

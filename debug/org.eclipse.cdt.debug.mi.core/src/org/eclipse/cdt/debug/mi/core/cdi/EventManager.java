@@ -19,7 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.event.ICEventListener;
  */
 public class EventManager extends SessionObject implements ICEventManager {
 
-	public EventManager(Session session) {
+	public EventManager(CSession session) {
 		super(session);
 	}
 	

@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICMemoryBlock;
  */
 public class MemoryManager extends SessionObject implements ICMemoryManager {
 
-	public MemoryManager(Session session) {
+	public MemoryManager(CSession session) {
 		super(session);
 	}
 	

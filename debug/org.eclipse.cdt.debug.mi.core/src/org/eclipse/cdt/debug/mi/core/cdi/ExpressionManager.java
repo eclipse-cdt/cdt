@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICExpression;
  */
 public class ExpressionManager extends SessionObject implements ICExpressionManager {
 
-	public ExpressionManager(Session session) {
+	public ExpressionManager(CSession session) {
 		super(session);
 	}
 	

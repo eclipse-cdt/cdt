@@ -29,7 +29,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICThread;
  */
 public class CTarget extends SessionObject implements ICTarget {
 
-	public CTarget(Session session) {
+	public CTarget(CSession session) {
 		super(session);
 	}
 	

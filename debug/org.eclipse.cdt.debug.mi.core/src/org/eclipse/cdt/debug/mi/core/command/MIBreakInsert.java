@@ -84,7 +84,7 @@ public class MIBreakInsert extends MICommand
 			opts[i] = "-h";
 			i++;
 		}
-		if (condition != null) {
+		if (condition != null && condition.length() > 0) {
 			opts[i] = "-c";
 			i++;
 			opts[i] = condition;

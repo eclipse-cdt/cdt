@@ -24,7 +24,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 /**
  * @see org.eclipse.cdt.debug.core.cdi.ICSession
  */
-public class Session implements ICSession {
+public class CSession implements ICSession {
 
 	Properties props;
 	MISession session;
@@ -36,7 +36,7 @@ public class Session implements ICSession {
 	SourceManager sourceManager;
 	CTarget ctarget;
 
-	public Session(MISession s) {
+	public CSession(MISession s) {
 		session = s;
 		props = new Properties();
 		breakpointManager = new BreakpointManager(this);

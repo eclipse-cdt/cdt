@@ -49,6 +49,10 @@ public class MIBreakPoint {
 		return enabled;
 	}
 
+	public void setEnabled(boolean e) {
+		enabled = e;
+	}
+
 	public long getAddress() {
 		return address;
 	}

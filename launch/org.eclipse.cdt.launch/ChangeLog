@@ -1,3 +1,10 @@
+2003-12-16  Alain Magloire
+
+	Choose a debugger base on the Eclipse platform
+
+	* plugin.xml
+	* src/org/eclipse/cdt/launch/internal/CApplicationlaunchShortcut.java
+
 2003-10-27 
 	Fixed 46129
 	

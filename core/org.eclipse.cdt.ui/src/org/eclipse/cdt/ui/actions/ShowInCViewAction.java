@@ -11,14 +11,24 @@
 
 package org.eclipse.cdt.ui.actions;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.jface.action.Action;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.part.IShowInSource;
-import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.SelectionProviderAction;
+import org.eclipse.ui.part.ISetSelectionTarget;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * This class will open the C/C++ Projects view and highlight the
@@ -27,64 +37,79 @@ import org.eclipse.ui.texteditor.IUpdate;
  * accomplish this task so as to provide some additional portability
  * and future proofing.
  */
-public class ShowInCViewAction extends Action implements IUpdate {
+public class ShowInCViewAction extends SelectionProviderAction {
+
+	private IWorkbenchPage page;
+
 	private ITextEditor fEditor;
-	final String CVIEW_ID = "org.eclipse.cdt.ui.CView";
+
+	public ShowInCViewAction(IWorkbenchPage page, ISelectionProvider viewer) {
+		super(viewer, CEditorMessages.getString("ShowInCView.label")); //$NON-NLS-1$
+		setToolTipText(CEditorMessages.getString("ShowInCView.tooltip")); //$NON-NLS-1$
+		setDescription(CEditorMessages.getString("ShowInCView.description")); //$NON-NLS-1$
+		this.page = page;
+		setDescription(CEditorMessages.getString("ShowInCView.toolTip")); //$NON-NLS-1$
+		//WorkbenchHelp.setHelp(this, ICHelpContextIds.SHOW_IN_CVIEW_ACTION);
+	}
 
 	public ShowInCViewAction() {
 		this(null);
 	}
 	
 	public ShowInCViewAction(ITextEditor editor) {	
-		super(CEditorMessages.getString("ShowInCView.label"));		 //$NON-NLS-1$
-		setToolTipText(CEditorMessages.getString("ShowInCView.tooltip")); //$NON-NLS-1$
-		setDescription(CEditorMessages.getString("ShowInCView.description")); //$NON-NLS-1$
-
-		fEditor= editor;
-		//WorkbenchHelp.setHelp(this,	new Object[] { IJavaHelpContextIds.ADD_IMPORT_ON_SELECTION_ACTION });	
+		this(editor.getEditorSite().getWorkbenchWindow().getActivePage(), editor.getSelectionProvider());
+		fEditor = editor;
 	}
 
 	/**
 	 * @see IAction#actionPerformed
 	 */
 	public void run() {
-		if(fEditor == null) {
+		if(page == null) {
 			return;
 		}
-		
+		ISelection selection = getSelection();
+		if (selection instanceof ITextSelection) {
+			run(fEditor);
+		} else if (selection instanceof IStructuredSelection) {
+			run((IStructuredSelection)selection);
+		}
+
+	}
+
+	public void run(IStructuredSelection selection) {
 		//Locate a source and a target for us to use
-		IShowInTarget showInTarget;
-		IShowInSource showInSource;
 		try {
-			IWorkbenchPage page = fEditor.getEditorSite().getWorkbenchWindow().getActivePage();
-			IWorkbenchPart part = page.showView(CVIEW_ID);
-			if(part instanceof IShowInTarget) {
-				showInTarget = (IShowInTarget)part;
-			} else {
-				showInTarget = (IShowInTarget)part.getAdapter(IShowInTarget.class);
+			IWorkbenchPart part = page.showView(CUIPlugin.CVIEW_ID);
+			if (part instanceof ISetSelectionTarget) {
+				((ISetSelectionTarget) part).selectReveal(selection);
 			}
-
-			if(fEditor instanceof IShowInSource) {
-				showInSource = (IShowInSource)fEditor;			
-			} else {
-				showInSource = (IShowInSource)fEditor.getAdapter(IShowInSource.class);
-			}
-		} catch(Exception ex) {
-			return;
+		} catch(PartInitException ex) {
 		}
-		
-		if(showInTarget == null || showInSource == null) {
-			return;
-		}
-		
-		//Now go ahead and show it (assuming that you can!)
-		showInTarget.show(showInSource.getShowInContext());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	public void run(ITextEditor editor) {
+		if (editor != null) {
+			IEditorInput input = editor.getEditorInput();
+			if (input instanceof IFileEditorInput) {
+				IFileEditorInput fileInput = (IFileEditorInput) input;
+				IFile file = fileInput.getFile();
+				CoreModel factory = CoreModel.getDefault();
+				ICElement celement = factory.create(file);
+				if (celement != null) {
+					run(new StructuredSelection(celement));
+				}
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * Method declared on SelectionProviderAction.
 	 */
-	public void update() {
+	public void selectionChanged(IStructuredSelection selection) {
+		setEnabled(!getSelection().isEmpty());
 	}
+
 }
 

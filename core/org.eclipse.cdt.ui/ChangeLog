@@ -1,3 +1,8 @@
+2004-02-16 Alain Magloire
+
+	Use ITextEditor instead of CEditor.
+	* src/org/eclipse/cdt/ui/actions/ShowInCViewAction.java
+
 2004-02-15 Alain Magloire
 
 	Special working set for the C/C++ Celements

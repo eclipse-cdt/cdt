@@ -2329,6 +2329,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			symbolToBeCloned.setTypeSymbol(elab.getSymbol());
 			if( elab.getSymbol() != null )
 				references.add( createReference( elab.getSymbol(), elab.getName(), elab.getNameOffset()) );
+		} 
+		else if ( abstractDeclaration.getTypeSpecifier() instanceof ASTEnumerationSpecifier )
+		{
+			symbolToBeCloned = pst.newSymbol( name, TypeInfo.t_type );
+			symbolToBeCloned.setTypeSymbol(((ASTEnumerationSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol());
 		}
 		newSymbol = (ISymbol) symbolToBeCloned.clone(); 
 		newSymbol.setName( name );

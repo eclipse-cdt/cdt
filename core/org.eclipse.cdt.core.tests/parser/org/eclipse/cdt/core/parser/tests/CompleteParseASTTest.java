@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
@@ -1281,4 +1282,24 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertFalse( i.hasNext() );
 	}
 	
+	public void testBug54639() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "typedef enum _A { } A, *pA; " );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)i.next();
+		assertEquals( typedef.getName(), "A" );
+		IASTEnumerationSpecifier enumSpec = (IASTEnumerationSpecifier) typedef.getAbstractDeclarator().getTypeSpecifier();
+		assertEquals( enumSpec.getName(), "_A" );
+		
+		IASTTypedefDeclaration typedef2 = (IASTTypedefDeclaration)i.next();
+		assertEquals( typedef2.getName(), "pA" );
+		assertEquals( typedef2.getAbstractDeclarator().getPointerOperators().next(), ASTPointerOperator.POINTER );
+		enumSpec = (IASTEnumerationSpecifier) typedef2.getAbstractDeclarator().getTypeSpecifier();
+		assertEquals( enumSpec.getName(), "_A" );
+		
+		assertFalse( i.hasNext() ); 
+	}
 }

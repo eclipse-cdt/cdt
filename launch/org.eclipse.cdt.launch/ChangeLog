@@ -1,3 +1,9 @@
+2005-02-24 Alain Magloire
+	Fix for PR 86443
+
+	* src/org/eclipse/cdt/launch/internal/ui/LaunchMessages.properties
+	* src/org/eclipse/cdt/launch/ui/CArgumentsTab.java
+
 2005-02-03 David Inglis
 	Fixed PR#84361
 	

@@ -1089,7 +1089,7 @@ public class CThread extends CDebugElement
 		{
 			MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(),
 												  ICDebugInternalConstants.STATUS_CODE_ERROR,
-												  "Unable to get stack depth.",
+												  "Stack is not available.",
 												  null );
 			status.add( new Status( IStatus.ERROR, status.getPlugin(), status.getCode(), e.getMessage(), null ) );
 			CDebugUtils.error( status, getDebugTarget() );

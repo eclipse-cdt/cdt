@@ -85,8 +85,9 @@ public class IndexManager implements IElementChangedListener {
 		projectsMap = Collections.synchronizedMap(new HashMap());
 		CTagsRunner ctags = new CTagsRunner(this);
 		thread = new Thread(ctags, "C Tags indexer");
-        thread.setPriority (Thread.NORM_PRIORITY - 1);
-        thread.start();
+		thread.setDaemon(true);
+		thread.setPriority (Thread.NORM_PRIORITY - 1);
+		thread.start();
 		addAll();
 	}
 

@@ -156,6 +156,8 @@ public class MIInferior extends Process {
 			CommandFactory factory = session.getCommandFactory();
 			MIExecAbort abort = factory.createMIExecAbort();
 			try {
+				// Try to interrupt the inferior, first.
+				interrupt();
 				session.postCommand(abort);
 				MIInfo info = abort.getMIInfo();
 			} catch (MIException e) {

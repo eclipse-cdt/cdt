@@ -1140,29 +1140,37 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	void restoreSelection() {
 		// Default is to do nothing
 	}
-
-	void adjustInputPreservingSelection(Object input) {
-		Object elementToSelect = null;
-		ISelection selection = getSelectionProvider().getSelection();
-		Object oldSelObj = null;
-		if (selection instanceof IStructuredSelection) {
-		    oldSelObj = getSingleElementFromSelection(selection);
-		    if (input != null) {
-		        elementToSelect = findChildInInput(input, oldSelObj);
-		        if (elementToSelect != null) {
-		            adjustInputAndSetSelection(elementToSelect);
-		            return;
-		        }
-		    }
+	
+	void adjustInputAndPreserveSelection(Object o) {
+		Object element = getOriginalElement(o);
+		if (!(element instanceof ICElement) && !(element instanceof ITypeInfo)) {
+			setSelection(StructuredSelection.EMPTY, true);
+			return;
 		}
-		adjustInputAndSetSelection(input);
+		
+		Object elementToSelect= getSuitableElement(findElementToSelect(element));
+		Object newInput= findInputForElement(element);
+		Object oldInput= null;
+		Object viewerInput = getInput();
+		if (viewerInput instanceof ICElement || viewerInput instanceof ITypeInfo)
+			oldInput = viewerInput;
+
+		if (elementToSelect == null && !isValidInput(newInput) && (newInput == null && !isAncestorOf(element, oldInput)))
+			// Clear input
+			setInput(null);
+		else { // if (mustSetNewInput(elementToSelect, oldInput, newInput)) {
+			// Adjust input to selection
+			setInput(newInput);
+			// Recompute suitable element since it depends on the viewer's input
+			elementToSelect= getSuitableElement(elementToSelect);
+		}
+		
+		if (elementToSelect != null /*&& elementToSelect.exists()*/)
+			setSelection(new StructuredSelection(elementToSelect), true);
+		else
+			setSelection(StructuredSelection.EMPTY, true);
 	}
 
-    private Object findChildInInput(Object input, Object oldSelObj) {
-        //TODO
-        return null;
-    }
-	
 	void adjustInputAndSetSelection(Object o) {
 		Object element = getOriginalElement(o);
 		if (!(element instanceof ICElement) && !(element instanceof ITypeInfo)) {
@@ -1245,7 +1253,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	 * @return	the closest C element used as input for this part
 	 */
 	abstract protected Object findInputForElement(Object element);
-	
+
 	/**
 	 * Finds the element which has to be selected in this part.
 	 * 

@@ -1,3 +1,10 @@
+2004-07-06 Chris Wiebe
+
+	This patch prevents some NPEs from happening in the class browser.  I
+	suggest this should be applied to both HEAD and CDT_2_0 branch.
+
+	* src/org/eclipse/cdt/internal/ui/viewsupport/CElementLabels.java
+
 2004-07-06 Hoda Amer
 	Fix for PR 69330 : Outline is flickering.
 	

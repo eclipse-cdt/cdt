@@ -1,3 +1,10 @@
+2005-04-05 Vladimir Hirsl
+	Improved filtering of indexer problem markers
+	
+	* index/org/eclipse/cdt/core/index/IIndexDelta.java
+	* index/org/eclipse/cdt/internal/core/index/domsourceindexer/DOMSourceIndexerRunner.java
+	* index/org/eclipse/cdt/internal/core/index/impl/IndexDelta.java
+
 2005-03-30 Alain Magloire
 	Patch from Alex Chapiro, tentative fix for PR 89662
 	* utils/org/eclipse/cdt/utils/spawner/EnvironmentReader.java

@@ -11,7 +11,7 @@
 
 package org.eclipse.cdt.core.index;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 
@@ -33,7 +33,7 @@ public interface IIndexDelta {
 	/**
 	 * @return Returns the files.
 	 */
-	public ArrayList getFiles();
+	public List getFiles();
 	/**
 	 * @return Returns the project.
 	 */

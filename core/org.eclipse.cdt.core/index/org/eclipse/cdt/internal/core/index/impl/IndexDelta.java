@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.index.impl;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.core.resources.IProject;
 
 public class IndexDelta implements IIndexDelta {
 
-	private ArrayList files = null;
+	private List files = null;
 	private IProject project = null;
 	private IndexDeltaType deltaType = null; 
 	
@@ -26,7 +26,7 @@ public class IndexDelta implements IIndexDelta {
 	 * @param project
 	 * 
 	 */
-	public IndexDelta(IProject project, ArrayList filesTrav) {
+	public IndexDelta(IProject project, List filesTrav) {
 		this(project,filesTrav,null);
 	}
 
@@ -35,7 +35,7 @@ public class IndexDelta implements IIndexDelta {
 	 * @param project
 	 * 
 	 */
-	public IndexDelta(IProject project, ArrayList filesTrav, IndexDeltaType indexDeltaType) {
+	public IndexDelta(IProject project, List filesTrav, IndexDeltaType indexDeltaType) {
 		this.project = project;
 		this.files = filesTrav;
 		this.deltaType = indexDeltaType;
@@ -44,7 +44,7 @@ public class IndexDelta implements IIndexDelta {
 	/**
 	 * @return Returns the files.
 	 */
-	public ArrayList getFiles() {
+	public List getFiles() {
 		return files;
 	}
 	/**

@@ -11,6 +11,8 @@
 package org.eclipse.cdt.internal.core.index.domsourceindexer;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.dom.CDOM;
@@ -25,11 +27,13 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.search.ICSearchConstants;
+import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
 import org.eclipse.cdt.internal.core.index.impl.IndexedFile;
 import org.eclipse.cdt.internal.core.index.sourceindexer.AbstractIndexer;
 import org.eclipse.cdt.internal.core.index.sourceindexer.SourceIndexer;
@@ -62,7 +66,6 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
 
     public void setFileTypes(String[] fileTypes) {
         // TODO Auto-generated method stub
-
     }
 
     protected void indexFile(IFile file) throws IOException {
@@ -76,15 +79,14 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
         //C or CPP?
         ParserLanguage language = CoreModel.hasCCNature(resourceFile.getProject()) ? 
                 ParserLanguage.CPP : ParserLanguage.C;
-        
+        IASTTranslationUnit tu = null;
         try {
             long startTime = 0, parseTime = 0, endTime = 0;
             
             if (AbstractIndexer.TIMING)
                 startTime = System.currentTimeMillis();
             
-            IASTTranslationUnit tu = CDOM.getInstance().getASTService().getTranslationUnit(
-                    resourceFile,
+            tu = CDOM.getInstance().getASTService().getTranslationUnit(resourceFile,
                     CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_SAVED_RESOURCES));
             
             if (AbstractIndexer.TIMING)
@@ -136,9 +138,11 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
             }
             
             // Report events
-//            ArrayList filesTrav = requestor.getFilesTraversed();
-//            IndexDelta indexDelta = new IndexDelta(resourceFile.getProject(),filesTrav, IIndexDelta.INDEX_FINISHED_DELTA);
-//            CCorePlugin.getDefault().getCoreModel().getIndexManager().notifyListeners(indexDelta);
+            if (tu != null) {
+                List filesTrav = Arrays.asList(tu.getIncludeDirectives());
+                IndexDelta indexDelta = new IndexDelta(resourceFile.getProject(),filesTrav, IIndexDelta.INDEX_FINISHED_DELTA);
+                indexer.notifyListeners(indexDelta);
+            }
             // Release all resources
         }
     }
@@ -232,14 +236,18 @@ public class DOMSourceIndexerRunner extends AbstractIndexer {
                     
                     if (markers.length > 0) {
                         IMarker tempMarker = null;
-                        Integer tempInt = null; 
+                        int nameStart = -1; 
+                        int nameLen = -1;
                         String tempMsgString = null;
                         
                         for (int i=0; i<markers.length; i++) {
                             tempMarker = markers[i];
-                            tempInt = (Integer) tempMarker.getAttribute(IMarker.LINE_NUMBER);
+                            nameStart = ((Integer) tempMarker.getAttribute(IMarker.CHAR_START)).intValue();
+                            nameLen = ((Integer) tempMarker.getAttribute(IMarker.CHAR_END)).intValue() - nameStart;
                             tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
-                            if (tempInt != null && tempInt.intValue()== sourceLineNumber &&
+                            if (nameStart != -1 && 
+                                    nameStart == fileLoc.getNodeOffset() &&
+                                    nameLen == fileLoc.getNodeLength() &&
                                     tempMsgString.equalsIgnoreCase(INDEXER_MARKER_PREFIX + errorMessage)) {
                                 newProblem = false;
                                 break;

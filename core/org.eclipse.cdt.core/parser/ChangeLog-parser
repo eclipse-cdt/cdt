@@ -1,4 +1,7 @@
 2004-02-10 John Camelon
+	Fixed Bug 51302 - Content Assist: No completion list available following namespace declaration. 
+
+2004-02-10 John Camelon
 	Refactored Parser.java to allow inline small functions and tightened the signatures for statement().  
 	Refactored Scanner.java to allow for data to be encapsulated to allow for IScannerExtension to act upon it. 
 	Partially fixed Bug 47628 - signed char is parsed as char (affects the outline view) 

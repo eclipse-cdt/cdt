@@ -843,6 +843,8 @@ public abstract class Parser implements IParser
     {
         IToken first = consume(IToken.t_namespace);
  
+        IASTCompletionNode.CompletionKind kind = getCompletionKindForDeclaration(scope, null);
+        
         setCompletionValues(scope,CompletionKind.USER_SPECIFIED_NAME, Key.EMPTY );
         IToken identifier = null;
         // optional name 		
@@ -900,6 +902,7 @@ public abstract class Parser implements IParser
  
             namespaceDefinition.setEndingOffsetAndLineNumber(
                 last.getOffset() + last.getLength(), last.getLineNumber());
+            setCompletionValues(scope, kind, Key.DECLARATION );
             namespaceDefinition.exitScope( requestor );
         }
         else if( LT(1) == IToken.tASSIGN )
@@ -912,6 +915,7 @@ public abstract class Parser implements IParser
 
         	ITokenDuple duple = name(scope);
         	consume( IToken.tSEMI );
+        	setCompletionValues(scope, kind, Key.DECLARATION );
         	try
             {
                 astFactory.createNamespaceAlias( 

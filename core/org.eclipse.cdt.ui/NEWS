@@ -1,16 +1,22 @@
 Release CDT-3.0
 
+	* Implement Eclipse 3.0 Next/Prev Annonation retargetable actions for CEditor with Problems
+	   view highlighting.
+
 	* Added keybinding next/previous(CTRL-SHIFT-UP/DOWN) to move from
 	  member to member in the CEditor(PR 84423).
 
+	* Move Code Assist in its own preference Page(PR 81403).
+		- New option:"Insert common prefix automatically.
+
 	* Drag && Drop support
-	  for ICElement classes , in the C/C++ project view and C Outliner.
+	  for ICElement classes , in the C/C++ project view and C Outliner(PR83112).
 
 	* C/C++ Editor:
 		- coloring of operators, braces and numbers,
-		- outline in selectable dialog (Ctrl O) with search input.
+		- outline in selectable dialog (Ctrl O) with search input(PR 83112).
 			* sorting action
 
-	* Template Preference Page for C/C++ Editor
+	* Template Preference Page for C/C++ Editor(PR 71111).
 
 	

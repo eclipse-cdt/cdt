@@ -126,33 +126,14 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 		fConsoleManager.addConsoleListener(this);
 	}
 
-	protected IProject setProject(ISelection selection) {
-		if ( selection == null ) {
-			return null;
-		}
-		try {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
-			IAdaptable input = (IAdaptable) ssel.getFirstElement();
-			if (input != null) {
-				IResource resource = null;
-				if (input instanceof IResource) {
-					resource = (IResource) input;
-				}
-				else {
-					resource = (IResource) input.getAdapter(IResource.class);
-				}
-				if (resource != null) {
-					selProject = resource.getProject();
-					return selProject;
-				}
-			}
-		}
-		catch (ClassCastException e) {
-		}
-		selProject = null;
-		return selProject;
+	protected void setProject(ISelection selection) {
+		selProject = convertSelectionToProject(selection);
 	}
-	
+
+	protected void setProject(IProject project) {
+		selProject = project;
+	}
+
 	protected IProject getProject() {
 		return selProject;
 	}
@@ -240,16 +221,6 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 		actionBars.getToolBarManager().add(fClearOutputAction);
 		actionBars.updateActionBars();
 	}
-
-	/**
-	 * Clears the console
-	 */
-	void clear() {
-		if (selProject != null) {
-			fConsoleManager.getConsole(selProject).clear();
-		}
-	}
-
 	/**
 	 * Reveals (makes visible) the end of the current document
 	 */
@@ -282,9 +253,14 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 	}
 	
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		setProject(selection);
-		setDocument();
-		setTitle();
+		IProject newProject = convertSelectionToProject(selection);
+		IProject oldProject = getProject();
+		if (oldProject == null ||
+		    (newProject != null && !newProject.equals(oldProject))) { 
+			setProject(newProject);
+			setDocument();
+			setTitle();
+		}
 	}
 
 	public void consoleChange(IBuildConsoleEvent event) {
@@ -297,6 +273,39 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 					setTitle();
 				}
 			});
+		}
+	}
+
+	IProject convertSelectionToProject(ISelection selection) {
+		IProject project = null;
+		if ( selection == null ) {
+			return project;
+		}
+		try {
+			IStructuredSelection ssel = (IStructuredSelection) selection;
+			IAdaptable input = (IAdaptable) ssel.getFirstElement();
+			if (input != null) {
+				IResource resource = null;
+				if (input instanceof IResource) {
+					resource = (IResource) input;
+				} else {
+					resource = (IResource) input.getAdapter(IResource.class);
+				}
+				if (resource != null) {
+					project = resource.getProject();
+				}
+			}
+		} catch (ClassCastException e) {
+		}
+		return project;
+	}
+
+	/**
+	 * Clears the console
+	 */
+	void clear() {
+		if (selProject != null) {
+			fConsoleManager.getConsole(selProject).clear();
 		}
 	}
 

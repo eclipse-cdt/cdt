@@ -2222,4 +2222,35 @@ public class Scanner2Test extends BaseScanner2Test
         validateToken( IToken.tRPAREN   );
     }
     
+    public void testBug75956() throws Exception
+    {
+        Writer writer = new StringWriter();
+        writer.write( "#define ROPE( name ) name##Alloc\n"); //$NON-NLS-1$
+        writer.write( "#define _C 040                  \n"); //$NON-NLS-1$
+        writer.write( "ROPE( _C )                      \n"); //$NON-NLS-1$
+        
+        initializeScanner( writer.toString() );
+        validateIdentifier( "_CAlloc" ); //$NON-NLS-1$
+        validateEOF();
+        
+        writer = new StringWriter();
+        writer.write( "#define ROPE( name ) Alloc ## name \n"); //$NON-NLS-1$
+        writer.write( "#define _C 040                     \n"); //$NON-NLS-1$
+        writer.write( "ROPE( _C )                         \n"); //$NON-NLS-1$
+        
+        initializeScanner( writer.toString() );
+        validateIdentifier( "Alloc_C" ); //$NON-NLS-1$
+        validateEOF();
+        
+        writer = new StringWriter();
+        writer.write( "#define ROPE( name ) name##Alloc\n"); //$NON-NLS-1$
+        writer.write( "#define _C 040                  \n"); //$NON-NLS-1$
+        writer.write( "#define _CAlloc ooga            \n"); //$NON-NLS-1$
+        writer.write( "ROPE( _C )                      \n"); //$NON-NLS-1$
+        
+        initializeScanner( writer.toString() );
+        validateIdentifier( "ooga" ); //$NON-NLS-1$
+        validateEOF();
+    }
+    
 }

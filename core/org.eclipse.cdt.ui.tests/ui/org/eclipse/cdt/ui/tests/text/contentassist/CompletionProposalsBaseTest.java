@@ -162,9 +162,18 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 			assertTrue(results.length >= expected.length);
 			
 			for (int i = 0; i< expected.length; i++){
-				ICompletionProposal proposal = results[i];
-				String displayString = proposal.getDisplayString();
-				assertEquals(displayString, expected[i]);
+				boolean found = false;
+				for(int j = 0; j< results.length; j++){
+					ICompletionProposal proposal = results[j];
+					String displayString = proposal.getDisplayString();
+					if(expected[i].equals(displayString)){
+						found = true;
+						break;
+					}
+				}
+				if(found == false){
+					assertTrue(found);
+				}
 			}	
 			
 		} catch(CModelException e){

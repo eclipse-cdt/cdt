@@ -1,3 +1,6 @@
+2004-01-29 Hoda Amer
+	Removed CompletionKind.KEYWORD.
+	
 2004-01-29 John Camelon
 	Fixed  50642 - Wrong completion kind when declaring an argument type
 	Updated using declarations for more accurate keywords and closure.

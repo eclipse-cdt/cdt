@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist;
 
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -18,69 +19,49 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Single name reference, with prefix 
+ * Testing Single_Name_Reference in parameter passing
+ * Bug#
  *
  */
-public class CompletionTest_SingleName_NoPrefix  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart15.cpp";
+public class CompletionTest_SingleName_Parameter  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart36.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTFunction";
+	private final String expectedScopeName = "ASTMethod";
 	private final String expectedContextName = "null";
 	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE;
-	private final String expectedPrefix = "";
+	private final String expectedPrefix = "x";
 	private final String[] expectedResults = {
-			"x : int"
-//			"aVariable : int",
-//			"xVariable : int",
-//			"aFunction() bool",
-//			"anotherFunction() void",
-//			"foo(int) void",
-//			"xFunction() bool",
-//			"xOtherFunction() void",
-//			"aClass",
-//			"anotherClass",
-//			"xOtherClass",
-//			"AStruct",
-//			"XStruct",
-//			"aNamespace",
-//			"xNamespace",
-//			"anEnumeration",
-//			"xEnumeration",
-//			"aFirstEnum",
-//			"aSecondEnum",
-//			"aThirdEnum",
-//			"xFirstEnum",
-//			"xSecondEnum",
-//			"xThirdEnum",
-//			"__cplusplus", 
-//			"__DATE__",
-//			"__FILE__",
-//			"__LINE__",
-//			"__STDC__",
-//			"__STDC_HOSTED__",
-//			"__STDC_VERSION__",
-//			"__TIME__",
-//			"AMacro(x)",
-//			"DEBUG",
-//			"XMacro(x,y)"
+			"xLocal : int",
+			"xAClassField : float",
+			"xVariable : int",
+			"xAClassMethod(int) void",
+			"xFunction() bool",
+			"xOtherFunction() void",
+			"xNamespace",
+			"xEnumeration",
+			"xFirstEnum",
+			"xSecondEnum",
+			"xThirdEnum",
+			"XStruct",
+			"XMacro(x,y)"
 	};
 	
-	public CompletionTest_SingleName_NoPrefix(String name) {
+	public CompletionTest_SingleName_Parameter(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_SingleName_NoPrefix.class.getName());
-		suite.addTest(new CompletionTest_SingleName_NoPrefix("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_SingleName_Parameter.class.getName());
+		suite.addTest(new CompletionTest_SingleName_Parameter("testCompletionProposals"));
 		return suite;
 	}		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("      ") + 2;
+		return getBuffer().indexOf(" x ") + 2;
 	}
 
 	/* (non-Javadoc)

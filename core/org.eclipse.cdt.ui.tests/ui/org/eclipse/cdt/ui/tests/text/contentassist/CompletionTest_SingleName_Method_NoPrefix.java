@@ -34,6 +34,7 @@ public class CompletionTest_SingleName_Method_NoPrefix  extends CompletionPropos
 	//TODO Hoda - please update this constant with what it is supposed to be
 	private final String[] expectedResults = {
 			"anotherField : int",
+			"anotherMethod() void"
 	};
 	
 	public CompletionTest_SingleName_Method_NoPrefix(String name) {

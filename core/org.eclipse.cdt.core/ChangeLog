@@ -1,3 +1,8 @@
+2004-09-03 Alain Magloire
+
+	Patch from Patrick Duboy. 72901
+	* plugin.xml
+
 2004-09-02 Alain Magloire
 
 	Fix to TranslationUnit.getElement(String).

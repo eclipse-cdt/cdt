@@ -334,6 +334,10 @@
             extension="hh">
       </fileTypes>
       <fileTypes
+            type="text"
+            extension="hpp">
+      </fileTypes>
+      <fileTypes
             type="binary"
             extension="o">
       </fileTypes>

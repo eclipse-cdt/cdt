@@ -1,3 +1,8 @@
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ *
+ */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -41,8 +46,6 @@ public class Value extends CObject implements ICDIValue {
 	 */
 	public String getValueString() throws CDIException {
 		String result = "";
-		StackFrame stack = variable.getStackFrame();
-		stack.getCThread().setCurrentStackFrame(stack);
 		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarEvaluateExpression var =
@@ -64,8 +67,6 @@ public class Value extends CObject implements ICDIValue {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getVariables()
 	 */
 	public ICDIVariable[] getVariables() throws CDIException {
-		StackFrame stack = variable.getStackFrame();
-		stack.getCThread().setCurrentStackFrame(stack);
 		Variable[] variables = null;
 		MISession mi = getCTarget().getCSession().getMISession();
 		CommandFactory factory = mi.getCommandFactory();

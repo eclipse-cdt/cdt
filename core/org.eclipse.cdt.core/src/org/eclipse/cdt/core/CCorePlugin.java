@@ -163,32 +163,40 @@ public class CCorePlugin extends Plugin {
 
 	public IBinaryParser getBinaryParser(IProject project) throws CoreException {
 		IBinaryParser parser = null;
-		try {
-			ICDescriptor cdesc = (ICDescriptor) getCProjectDescription(project);
-			ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID);
-			if (cextensions.length > 0)
-				parser = (IBinaryParser) cextensions[0].createExtension();
-		} catch (CoreException e) {
+		if (project != null) {
+			try {
+				ICDescriptor cdesc = (ICDescriptor) getCProjectDescription(project);
+				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID);
+				if (cextensions.length > 0)
+					parser = (IBinaryParser) cextensions[0].createExtension();
+			} catch (CoreException e) {
+			}
 		}
 		if (parser == null) {
-			String id = getPluginPreferences().getDefaultString(PREF_BINARY_PARSER);
-			if (id == null || id.length() == 0) {
-				id = DEFAULT_BINARY_PARSER_UNIQ_ID;
-			}
-			IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(BINARY_PARSER_SIMPLE_ID);
-			IExtension extension = extensionPoint.getExtension(id);
-			if (extension != null) {
-				IConfigurationElement element[] = extension.getConfigurationElements();
-				for (int i = 0; i < element.length; i++) {
-					if (element[i].getName().equalsIgnoreCase("cextension")) {
-						parser = (IBinaryParser) element[i].createExecutableExtension("run");
-						break;
-					}
+			parser = getDefaultBinaryParser();
+		}
+		return parser;
+	}
+
+	public IBinaryParser getDefaultBinaryParser() throws CoreException {
+		IBinaryParser parser = null;
+		String id = getPluginPreferences().getDefaultString(PREF_BINARY_PARSER);
+		if (id == null || id.length() == 0) {
+			id = DEFAULT_BINARY_PARSER_UNIQ_ID;
+		}
+		IExtensionPoint extensionPoint = getDescriptor().getExtensionPoint(BINARY_PARSER_SIMPLE_ID);
+		IExtension extension = extensionPoint.getExtension(id);
+		if (extension != null) {
+			IConfigurationElement element[] = extension.getConfigurationElements();
+			for (int i = 0; i < element.length; i++) {
+				if (element[i].getName().equalsIgnoreCase("cextension")) {
+					parser = (IBinaryParser) element[i].createExecutableExtension("run");
+					break;
 				}
-			} else {
-				IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "No Binary Format", null);
-				throw new CoreException(s);
 			}
+		} else {
+			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "No Binary Format", null);
+			throw new CoreException(s);
 		}
 		return parser;
 	}

@@ -8,9 +8,11 @@ package org.eclipse.cdt.debug.core;
 
 import java.util.HashMap;
 
+import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.SessionManager;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
+import org.eclipse.cdt.debug.internal.core.sourcelookup.SourceUtils;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -228,5 +230,15 @@ public class CDebugCorePlugin extends Plugin
 		if ( fSessionManager != null )
 			fSessionManager.dispose();
 		fSessionManager = sm;
+	}
+
+	public void saveCommonSourceLocations( ICSourceLocation[] locations )
+	{
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_SOURCE_LOCATIONS, SourceUtils.getCommonSourceLocationsMemento( locations ) );
+	}
+
+	public ICSourceLocation[] getCommonSourceLocations()
+	{
+		return SourceUtils.getCommonSourceLocationsFromMemento( CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_SOURCE_LOCATIONS ) );
 	}
 }

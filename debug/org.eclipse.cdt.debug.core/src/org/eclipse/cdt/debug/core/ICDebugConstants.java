@@ -59,6 +59,17 @@ public interface ICDebugConstants
 	public static final String PREF_MAX_NUMBER_OF_INSTRUCTIONS = PLUGIN_ID + "cDebug.max_number_of_instructions"; //$NON-NLS-1$
 
 	/**
+	 * Boolean preference controlling whether the search for duplicate source files
+	 * will be performed by debugger.
+	 */
+	public static final String PREF_SEARCH_DUPLICATE_FILES = PLUGIN_ID + "cDebug.Source.search_duplicate_files"; //$NON-NLS-1$
+
+	/**
+	 * The identifier of the common source locations list
+	 */
+	public static final String PREF_SOURCE_LOCATIONS = PLUGIN_ID + "cDebug.Source.source_locations"; //$NON-NLS-1$
+
+	/**
 	 * The default number of instructions displayed in disassembly. 
 	 */
 	public static final int DEF_NUMBER_OF_INSTRUCTIONS = 100;

@@ -1763,4 +1763,10 @@ public class QuickParseASTTests extends BaseASTTest
 		parse("class {} const null;");
 		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
 	}
+	
+	public void testBug39530() throws Exception
+	{
+		parse( "X sPassed(-1)");
+	}
+		
 }

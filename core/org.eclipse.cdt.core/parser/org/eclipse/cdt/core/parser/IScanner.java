@@ -32,4 +32,9 @@ public interface IScanner  {
 	public void setTokenizingMacroReplacementList(boolean b);
     
 	public void onParseEnd();
+    /**
+     * @param i
+     * @return
+     */
+    public int getLineNumberForOffset(int i);
 }

@@ -793,7 +793,7 @@ public class Parser implements IParser
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, LA(1).getOffset(), ownerTemplate);
 
-        declSpecifierSeq(false, tryConstructor, sdw);
+        declSpecifierSeq(false, tryConstructor, sdw, forKR );
         try
         {       
 	        if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED )
@@ -816,14 +816,14 @@ public class Parser implements IParser
         if (LT(1) != IToken.tSEMI)
             try
             {
-                declarator = initDeclarator(sdw);
+                declarator = initDeclarator(sdw, forKR);
                 
                 while (LT(1) == IToken.tCOMMA)
                 {
                     consume();
                     try
                     {
-                        initDeclarator(sdw);
+                        initDeclarator(sdw, forKR);
                     }
                     catch (Backtrack b)
                     {
@@ -1010,7 +1010,7 @@ public class Parser implements IParser
  
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, current.getOffset(), null);
-        declSpecifierSeq(true, false, sdw);
+        declSpecifierSeq(true, false, sdw, false);
         try
         {
 	        if (sdw.getTypeSpecifier() == null
@@ -1034,7 +1034,7 @@ public class Parser implements IParser
         if (LT(1) != IToken.tSEMI)
             try
             {
-                initDeclarator(sdw);
+                initDeclarator(sdw, false);
             }
             catch (Backtrack b)
             {
@@ -1219,7 +1219,8 @@ public class Parser implements IParser
     protected void declSpecifierSeq(
         boolean parm,
         boolean tryConstructor,
-        DeclarationWrapper sdw)
+        DeclarationWrapper sdw, 
+        boolean forKR )
         throws Backtrack
     {
         Flags flags = new Flags(parm, tryConstructor);
@@ -1418,7 +1419,7 @@ public class Parser implements IParser
                 case IToken.t_class :
                 case IToken.t_struct :
                 case IToken.t_union :
-                    if (!parm)
+                    if (!parm && !forKR )
                     {
                         try
                         {
@@ -1440,7 +1441,7 @@ public class Parser implements IParser
                         break;
                     }
                 case IToken.t_enum :
-                    if (!parm)
+                    if (!parm || !forKR )
                     {
                         try
                         {
@@ -1684,7 +1685,7 @@ public class Parser implements IParser
      * @return			Returns the same object sent in.
      * @throws Backtrack
      */
-    protected void cvQualifier(
+    protected boolean cvQualifier(
         Declarator declarator)
         throws Backtrack
     {
@@ -1693,13 +1694,13 @@ public class Parser implements IParser
             case IToken.t_const :
             	consume( IToken.t_const ); 
                 declarator.addPtrOp(ASTPointerOperator.CONST_POINTER);
-                return;
+                return true;
             case IToken.t_volatile :
             	consume( IToken.t_volatile ); 
                 declarator.addPtrOp(ASTPointerOperator.VOLATILE_POINTER);
-                return;
+                return true;
             default :
-                throw backtrack;
+                return false;
         }
     }
     /**
@@ -1712,10 +1713,10 @@ public class Parser implements IParser
      * @throws Backtrack	request a backtrack
      */
     protected Declarator initDeclarator(
-        DeclarationWrapper sdw)
+        DeclarationWrapper sdw, boolean forKR )
         throws Backtrack
     {
-        Declarator d = declarator(sdw, sdw.getScope());
+        Declarator d = declarator(sdw, sdw.getScope(), forKR );
         // handle = initializerClause
         if (LT(1) == IToken.tASSIGN)
         {
@@ -1810,7 +1811,7 @@ public class Parser implements IParser
      * @throws Backtrack	request a backtrack
      */
     protected Declarator declarator(
-        IDeclaratorOwner owner, IASTScope scope)
+        IDeclaratorOwner owner, IASTScope scope, boolean forKR )
         throws Backtrack
     {
         Declarator d = null;
@@ -1819,21 +1820,12 @@ public class Parser implements IParser
         {
             d = new Declarator(owner);
  
-            for (;;)
-            {
-                try
-                {
-                    ptrOperator(d);
-                }
-                catch (Backtrack b)
-                {
-                    break;
-                }
-            }
+            consumePointerOperators(d, false);
+ 
             if (LT(1) == IToken.tLPAREN)
             {
                 consume();
-                declarator(d, scope);
+                declarator(d, scope, forKR);
                 consume(IToken.tRPAREN);
             }
             else if (LT(1) == IToken.t_operator)
@@ -1879,8 +1871,11 @@ public class Parser implements IParser
                 switch (LT(1))
                 {
                     case IToken.tLPAREN :
+                    	if( forKR )
+                    		throw backtrack;
+                    
                         // temporary fix for initializer/function declaration ambiguity
-                        if (!LA(2).looksLikeExpression())
+                        if (!LA(2).looksLikeExpression()  )
                         {
                             // parameterDeclarationClause
                             d.setIsFunction(true);
@@ -2030,7 +2025,7 @@ public class Parser implements IParser
                                     }
                                     while (LT(1) != IToken.tLBRACE);
                                 }
-                                catch (Exception e)
+                                catch (Backtrack bt)
                                 {
                                     // Something is wrong, 
                                     // this is not a proper K&R declaration clause
@@ -2122,8 +2117,9 @@ public class Parser implements IParser
             {
                 // this ptrOp doesn't belong to the declarator, 
                 // it's just a part of the name
-                ptrOperator(d);
-                toSend = lastToken;
+                consumePointerOperators(d, true);
+                if( lastToken != null )
+                	toSend = lastToken;
             }
             catch (Backtrack b)
             {
@@ -2149,50 +2145,59 @@ public class Parser implements IParser
      * @param owner 		Declarator that this pointer operator corresponds to.  
      * @throws Backtrack 	request a backtrack
      */
-    protected void ptrOperator(Declarator d) throws Backtrack
+    protected void consumePointerOperators(Declarator d, boolean consumeOnlyOne) throws Backtrack
     {
-        int t = LT(1);
-        if (t == IToken.tAMPER)
-        {
-        	consume( IToken.tAMPER ); 
-            d.addPtrOp(ASTPointerOperator.REFERENCE);
-            return;
-        }
-        IToken mark = mark();
-        IToken tokenType = LA(1);
-        ITokenDuple nameDuple = null;
-        if (t == IToken.tIDENTIFIER || t == IToken.tCOLONCOLON)
-        {
-            nameDuple = name();
-            t = LT(1);
-        }
-        if (t == IToken.tSTAR)
-        {
-            tokenType = consume(Token.tSTAR); // tokenType = "*"
-
-			d.setPointerOperatorName(nameDuple);
-
-			boolean successful = false;
-            for (;;)
-            {
-                try
-                {
-                    cvQualifier(d);
-                    successful = true;
-                }
-                catch (Backtrack b)
-                {
-                    // expected at some point
-                    break;
-                }
-            }
-			if( !successful )
-				d.addPtrOp( ASTPointerOperator.POINTER );
-            
-            return;
-        }
-        backup(mark);
-        throw backtrack;
+    	for( ; ; )
+    	{
+	        int t = LT(1);
+	        if (t == IToken.tAMPER)
+	        {
+	        	consume( IToken.tAMPER ); 
+	            d.addPtrOp(ASTPointerOperator.REFERENCE);
+	            if( consumeOnlyOne ) return;
+	            continue;
+	        }
+	        IToken mark = mark();
+	        IToken tokenType = LA(1);
+	        ITokenDuple nameDuple = null;
+	        if (t == IToken.tIDENTIFIER || t == IToken.tCOLONCOLON)
+	        {
+	        	try
+	        	{
+		            nameDuple = name();
+	        	}
+	        	catch( Backtrack bt )
+	        	{
+	        		backup( mark ); 
+	        		return;
+	        	}
+	            t = LT(1);
+	        }
+	        if (t == IToken.tSTAR)
+	        {
+	            tokenType = consume(Token.tSTAR); // tokenType = "*"
+	
+				d.setPointerOperatorName(nameDuple);
+	
+				boolean successful = false;
+	            for (;;)
+	            {
+                    boolean newSuccess = cvQualifier(d);
+                    if( newSuccess ) successful = true; 
+                    else break;
+                    
+	            }
+	            
+				if( !successful )
+				{
+					d.addPtrOp( ASTPointerOperator.POINTER );
+				}
+				if( consumeOnlyOne ) return;
+				continue;	            
+	        }
+	        backup(mark);
+	        return;
+    	}
     }
     /**
      * Parse an enumeration specifier, as according to the ANSI specs in C & C++.  
@@ -4401,6 +4406,9 @@ public class Parser implements IParser
     private IScanner scanner;
     private IToken currToken, // current token we plan to consume next 
     lastToken; // last token we consumed
+    
+    private int highWaterOffset = 0; 
+    
     /**
      * Fetches a token from the scanner. 
      * 
@@ -4411,7 +4419,17 @@ public class Parser implements IParser
     {
         try
         {
-            return scanner.nextToken();
+            IToken t = scanner.nextToken();
+            if( t.getEndOffset() > highWaterOffset )
+            	highWaterOffset = t.getEndOffset();
+            if( t.getOffset() == 872556 )
+            {
+            	Util.debugLog( "This is the point of failure."); 
+            	Util.debugLog( "Token is of image =" + t.getImage() );
+            	Util.debugLog( "Token is on line " + scanner.getLineNumberForOffset( t.getOffset() ) );
+            }
+            Util.debugLog( "FetchToken retrieved token w/offset=" + t.getOffset() );
+            return t;
         }
         catch (EndOfFile e)
         {
@@ -4419,7 +4437,7 @@ public class Parser implements IParser
         }
         catch (ScannerException e)
         {
-            //			e.printStackTrace();
+            Util.debugLog( "ScannerException thrown : " + e.getMessage() );
             return fetchToken();
         }
     }

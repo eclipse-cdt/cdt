@@ -174,7 +174,8 @@ public class Util {
 	}
 	
 	public static void debugLog(String message) {
-		if (CCorePlugin.getDefault() != null && CCorePlugin.getDefault().isDebugging()) {
+		if( CCorePlugin.getDefault() == null ) return;
+		if ( CCorePlugin.getDefault().isDebugging()) {
 			// Time stamp
 			message = MessageFormat.format( "[{0}] {1}", new Object[] { new Long( System.currentTimeMillis() ), message } );
 			while (message.length() > 100) {

@@ -26,6 +26,7 @@ import java.util.Vector;
 
 import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblemReporter;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.internal.core.model.Util;
 
 
 /**
@@ -51,10 +53,13 @@ import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 
 public class Scanner implements IScanner {
    
-	public Scanner(Reader reader, String filename, IScannerInfo info, IProblemReporter problemReporter, ITranslationResult unitResult, ISourceElementRequestor requestor, ParserMode parserMode ) {
+	private Reader backupReader;
+
+    public Scanner(Reader reader, String filename, IScannerInfo info, IProblemReporter problemReporter, ITranslationResult unitResult, ISourceElementRequestor requestor, ParserMode parserMode ) {
 		this.requestor = requestor;
 		this.mode = parserMode;
 		astFactory = ParserFactory.createASTFactory( mode );
+		this.backupReader = reader;
 		
 		try {
 			//this is a hack to get around a sudden EOF experience
@@ -2133,7 +2138,7 @@ public class Scanner implements IScanner {
 						BAD_PP + contextStack.getCurrentContext().getOffset());
 			}
 		} else {
-			System.out.println("Unexpected character " + ((char) c));
+			Util.debugLog("Scanner : Encountered unexpected character " + ((char) c));
 			if (throwExceptionOnBadPreprocessorSyntax)
 				throw new ScannerException(BAD_PP + contextStack.getCurrentContext().getOffset());
 		}
@@ -2325,7 +2330,7 @@ public class Scanner implements IScanner {
 						"Improper use of macro " + symbol);
 
 		} else {
-			System.out.println(
+			Util.debugLog(
 				"Unexpected class stored in definitions table. "
 					+ expansion.getClass().getName());
 		}
@@ -2546,4 +2551,15 @@ public class Scanner implements IScanner {
 			}
 		}
 	}
+
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.IScanner#getLineNumberForOffset(int)
+     */
+    public int getLineNumberForOffset(int i)
+    {
+        ILineOffsetReconciler reconciler = ParserFactory.createLineOffsetReconciler( backupReader );
+        return reconciler.getLineNumberForOffset(i);
+    }
 }

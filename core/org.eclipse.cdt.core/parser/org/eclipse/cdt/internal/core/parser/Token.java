@@ -78,6 +78,11 @@ public class Token implements IToken {
 			case tAMPER:
 			case tDOT:
 			case tLPAREN:
+			case tMINUS:
+			case tSTAR: 
+			case tPLUS: 
+			case tNOT:
+			case tCOMPL:
 				return true;
 			default:
 				break;

@@ -1894,7 +1894,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             List initializerList = new ArrayList();
             for (;;)
             {
-            	int checkOffset = LA(1).getOffset();
+            	int checkOffset = LA(1).hashCode();
                 // required at least one initializer list
                 // get designator list
                 List newDesignators = designatorList(scope);
@@ -1912,7 +1912,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     consume(IToken.tCOMMA);
                 if (LT(1) == IToken.tRBRACE)
                     break;
-                if( checkOffset == LA(1).getOffset())
+                if( checkOffset == LA(1).hashCode())
                 	throw backtrack;
                 
                 // otherwise, its another initializer in the list

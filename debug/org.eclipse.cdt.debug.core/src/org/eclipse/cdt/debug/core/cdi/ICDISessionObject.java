@@ -11,8 +11,8 @@ package org.eclipse.cdt.debug.core.cdi;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDISessionObject
-{
+public interface ICDISessionObject {
+
 	/**
 	 * Returns the debug session this object is associated with.
 	 * 

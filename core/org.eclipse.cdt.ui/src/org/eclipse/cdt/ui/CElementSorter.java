@@ -26,7 +26,11 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -48,7 +52,11 @@ public class CElementSorter extends ViewerSorter {
 
 	private static final int CMODEL = 0;
 	private static final int PROJECT = 10;
-	private static final int RESOURCE = 200;
+	
+	private static final int RESOURCES= 300;
+	private static final int RESOURCEFOLDERS= 210;
+	private static final int STORAGE= 400;
+	private static final int OTHERS= 500;
 
 	public int category (Object element) {
 		if (element instanceof ICModel) {
@@ -131,8 +139,16 @@ public class CElementSorter extends ViewerSorter {
 				return 174;
 			}
 			return 180;
+		} else if (element instanceof IFile) {
+			return RESOURCES;
+		} else if (element instanceof IProject) {
+			return PROJECT;
+		} else if (element instanceof IContainer) {
+			return RESOURCEFOLDERS;
+		} else if (element instanceof IStorage) {
+			return STORAGE;
 		}
-		return RESOURCE;
+		return OTHERS;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
@@ -153,7 +169,7 @@ public class CElementSorter extends ViewerSorter {
 		}
 
 		// non - c resources are sorted using the label from the viewers label provider
-		if (cat1 == RESOURCE) {
+		if (cat1 == RESOURCES || cat1 == RESOURCEFOLDERS || cat1 == STORAGE || cat1 == OTHERS) {
 			return compareWithLabelProvider(viewer, e1, e2);
 		}
 		

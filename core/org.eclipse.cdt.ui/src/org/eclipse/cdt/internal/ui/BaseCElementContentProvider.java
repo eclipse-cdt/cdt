@@ -303,7 +303,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	private Object[] getResources(IFolder folder) {
 		try {
-			Object[] members= folder.members();
+			ICProject cproject = CoreModel.getDefault().create(folder.getProject());
+			ICElement[] binaries = cproject.getBinaryContainer().getChildren();
+			ICElement[] archives = cproject.getArchiveContainer().getChildren();
+			Object[] members = folder.members();
 			List nonCResources= new ArrayList();
 			for (int i= 0; i < members.length; i++) {
 				Object o= members[i];
@@ -318,6 +321,25 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 					ICElement element= CoreModel.getDefault().create((IFolder)o);
 					if (element instanceof ISourceRoot && element.exists()) {
 						continue;
+					}
+				} else if (o instanceof IFile){
+					boolean found = false;
+					for (int j = 0; j < binaries.length; j++) {
+						IResource res = binaries[j].getResource();
+						if (o.equals(res)) {
+							o = binaries[j];
+							found = true;
+							break;
+						}
+					}
+					if (!found) {
+						for (int j = 0; j < archives.length; j++) {
+							IResource res = archives[j].getResource();
+							if (o.equals(res)) {
+								o = archives[j];
+								break;
+							}
+						}
 					}
 				}
 				nonCResources.add(o);

@@ -34,9 +34,9 @@ import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
-import org.eclipse.cdt.debug.internal.ui.editors.AttachSourceEditor;
-import org.eclipse.cdt.debug.internal.ui.editors.AttachSourceEditorInput;
+import org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
+import org.eclipse.cdt.debug.internal.ui.editors.EditorInputDelegate;
 import org.eclipse.cdt.debug.internal.ui.editors.FileNotFoundElement;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
@@ -164,7 +164,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		}
 		if ( element instanceof FileNotFoundElement )
 		{
-			return new AttachSourceEditorInput( (FileNotFoundElement)element );
+			return new EditorInputDelegate( (FileNotFoundElement)element );
 		}
 		return null;
 	}
@@ -174,17 +174,24 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 */
 	public String getEditorId( IEditorInput input, Object element )
 	{
+		if ( input instanceof EditorInputDelegate )
+		{
+			if ( ((EditorInputDelegate)input).getDelegate() == null )
+				return CDebugEditor.EDITOR_ID;
+			else
+				return getEditorId( ((EditorInputDelegate)input).getDelegate(), element );
+		}
+
+		String id = null;
 		if ( input != null )
 		{
-			if ( input instanceof AttachSourceEditorInput )
-			{
-				return AttachSourceEditor.EDITOR_ID;
-			}
 			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 			IEditorDescriptor descriptor = registry.getDefaultEditor( input.getName() );
-			if ( descriptor != null )
-				return descriptor.getId();
-			return CUIPlugin.EDITOR_ID;
+			id = ( descriptor != null ) ? descriptor.getId() : CUIPlugin.EDITOR_ID;
+		}
+		if ( CUIPlugin.EDITOR_ID.equals( id ) )
+		{
+			return CDebugEditor.EDITOR_ID;
 		}
 		return null;
 	}

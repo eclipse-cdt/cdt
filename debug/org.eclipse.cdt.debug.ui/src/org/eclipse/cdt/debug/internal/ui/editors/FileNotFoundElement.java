@@ -6,11 +6,13 @@
 package org.eclipse.cdt.debug.internal.ui.editors;
 
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IStackFrame;
 
 /**
- * Enter type comment.
+ * The source locator creates an instance of this class if it cannot find the file specified in stack frame.
  * 
  * @since: Feb 21, 2003
  */
@@ -26,14 +28,24 @@ public class FileNotFoundElement
 		fStackFrame = stackFrame;
 	}
 
-	public String getName()
+	public IPath getFullPath()
 	{
 		IStackFrameInfo frameInfo = (IStackFrameInfo)fStackFrame.getAdapter( IStackFrameInfo.class );
 		if ( frameInfo != null && frameInfo.getFile() != null && frameInfo.getFile().length() > 0 )
 		{
-			return frameInfo.getFile();
+			Path path = new Path( frameInfo.getFile() );
+			if ( path.isValidPath( frameInfo.getFile() ) )
+			{
+				return path;
+			}
 		}
-		return "";
+		return null;
+	}
+
+	public String getName()
+	{
+		IPath path = getFullPath();
+		return ( path != null ) ? path.lastSegment() : "";
 	}
 
 	public IStackFrame getStackFrame()

@@ -965,6 +965,22 @@
          </action>
       </editorContribution>
       <editorContribution
+            targetID="org.eclipse.cdt.debug.ui.editor.CDebugEditor"
+            id="org.eclipse.cdt.debug.ui.CEditor.BreakpointRulerActions">
+         <action
+               label="%Dummy.label"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
+               actionID="RulerDoubleClick"
+               id="org.eclipse.cdt.debug.ui.CEditor.ManageBreakpointRulerAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+      </editorContribution>
+      <editorContribution
             targetID="org.eclipse.cdt.ui.editor.asm.AsmEditor"
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor.BreakpointRulerActions">
          <action
@@ -1091,10 +1107,10 @@
             id="org.eclipse.cdt.debug.ui.DisassemblyEditor">
       </editor>
       <editor
-            name="%AttachSourceEditor.name"
+            name="%CDebugEditor.name"
             icon="icons/full/obj16/filenotfound_obj.gif"
-            class="org.eclipse.cdt.debug.internal.ui.editors.AttachSourceEditor"
-            id="org.eclipse.cdt.debug.ui.editor.AttachSourceEditor">
+            class="org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor"
+            id="org.eclipse.cdt.debug.ui.editor.CDebugEditor">
       </editor>
    </extension>
 

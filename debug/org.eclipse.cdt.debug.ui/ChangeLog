@@ -1,3 +1,16 @@
+2003-03-05 Mikhail Khodjaiants
+	The extension of CEditor that displays the 'Source Not Found' form.
+	* plugin.properties
+	* plugin.xml
+	* CDTDebugModelPresentation.java
+	* AttachSourceEditor.java: removed
+	* AttachSourceEditorInput.java: removed
+	* FileNotFoundElement.java: new
+	* CDebugDocumentProvider.java: new
+	* CDebugEditor.java: new
+	* EditorInputDelegate.java: new
+	* ManageBreakpointRulerActionDelegate.java
+
 2003-02-28 Mikhail Khodjaiants
 	Check if part is not null when set the selection.
 	* AddExpressionActionDelegate.java

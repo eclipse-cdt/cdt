@@ -145,6 +145,7 @@ public class CPPSemantics {
 			this.name = n;
 		}
 		public boolean includeBlockItem( IASTNode item ){
+		    if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
 		    if( ( astName != null && astName.getParent() instanceof IASTIdExpression ) || 
 		        item instanceof IASTNamespaceDefinition  ||
 	           (item instanceof IASTSimpleDeclaration && ((IASTSimpleDeclaration)item).getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ) )
@@ -155,6 +156,7 @@ public class CPPSemantics {
 		}
 		private boolean typesOnly(){
 			if( astName == null ) return false;
+			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
 			IASTNode parent = astName.getParent();
 			if( parent instanceof ICPPASTBaseSpecifier || parent instanceof ICPPASTElaboratedTypeSpecifier || 
 			    parent instanceof ICPPASTCompositeTypeSpecifier )
@@ -167,6 +169,7 @@ public class CPPSemantics {
 		}
 		public boolean forUsingDeclaration(){
 			if( astName == null ) return false;
+			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
 			IASTNode p1 = astName.getParent();
 			if( p1 instanceof ICPPASTUsingDeclaration )
 			    return true;
@@ -182,6 +185,7 @@ public class CPPSemantics {
 		}
 		public boolean forDefinition(){
 			if( astName == null ) return false;
+			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
 			IASTNode p1 = astName.getParent();
 			IASTNode p2 = p1.getParent();
 			
@@ -191,6 +195,7 @@ public class CPPSemantics {
 		}
 		private boolean considerConstructors(){
 			if( astName == null ) return false;
+			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
 			IASTNode p1 = astName.getParent();
 			IASTNode p2 = p1.getParent();
 			
@@ -210,6 +215,7 @@ public class CPPSemantics {
 		public boolean qualified(){
 		    if( forceQualified ) return true;
 			if( astName == null ) return false;
+			if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
 			IASTNode p1 = astName.getParent();
 			if( p1 instanceof ICPPASTQualifiedName ){
 				return ((ICPPASTQualifiedName)p1).getNames()[0] != astName;
@@ -218,6 +224,7 @@ public class CPPSemantics {
 		}
 		public boolean functionCall(){
 		    if( astName == null ) return false;
+		    if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return false;
 		    IASTNode p1 = astName.getParent();
 		    if( p1 instanceof ICPPASTQualifiedName )
 		        p1 = p1.getParent();
@@ -225,6 +232,7 @@ public class CPPSemantics {
 		}
         public boolean checkWholeClassScope() {
             if( astName == null ) return false;
+            if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
             ASTNodeProperty prop = astName.getPropertyInParent();
             if( prop == IASTIdExpression.ID_NAME || 
 				prop == IASTFieldReference.FIELD_NAME || 

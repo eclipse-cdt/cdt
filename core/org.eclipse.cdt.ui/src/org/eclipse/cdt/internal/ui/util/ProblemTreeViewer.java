@@ -7,16 +7,18 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.TreeViewer;
 
 
 /**
@@ -133,5 +135,18 @@ public class ProblemTreeViewer extends TreeViewer implements IProblemChangedList
 		super.handleInvalidSelection(invalidSelection, newSelection);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#isExpandable(java.lang.Object)
+	 */
+	public boolean isExpandable(Object element) {
+		ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
+		if (cp == null)
+			return false;
+		// since AbstractTreeViewer will run filteres here on element children this will cause binary search threads and TU parsering 
+		// to be started for each project/file tested for expandablity, this can be expensive if lots of project exists in workspace 
+		// or lots of TUs exist in one folder so lets skip it....
+		return cp.hasChildren(element);
+	}
 }
 

@@ -1,4 +1,8 @@
 2002-11-29 Mikhail Khodjaiants
+	Cosmetic change for the MemoryView preference page.
+	* plugin.properties
+
+2002-11-29 Mikhail Khodjaiants
 	Cosmetic fix for the memory view tab's tooltips.
 	* MemoryControlArea.java
 

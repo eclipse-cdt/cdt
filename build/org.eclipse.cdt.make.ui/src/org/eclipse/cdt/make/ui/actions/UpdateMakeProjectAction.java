@@ -138,7 +138,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 		} catch (InterruptedException e) {
 			return;
 		} catch (InvocationTargetException e) {
-			MakeUIPlugin.logException(e, "Error", "Error updating Make Projects");
+			MakeUIPlugin.logException(e, MakeUIPlugin.getResourceString("UpdateMakeProjectAction.exception.error"), MakeUIPlugin.getResourceString("UpdateMakeProjectAction.eception.message")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -152,7 +152,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 
 		public TargetConvertVisitor(IProgressMonitor monitor) {
 			this.monitor = monitor;
-			monitor.beginTask("Converting Make Targets...", TOTAL_WORK);
+			monitor.beginTask(MakeUIPlugin.getResourceString("UpdateMakeProjectAction.monitor.convert"), TOTAL_WORK); //$NON-NLS-1$
 		}
 
 		public boolean visit(IResourceProxy proxy) throws CoreException {
@@ -194,7 +194,7 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	protected static void doProjectUpdate(IProgressMonitor monitor, IProject[] project) throws CoreException {
-		monitor.beginTask("Updating make Projects...", project.length * 4);
+		monitor.beginTask(MakeUIPlugin.getResourceString("UpdateMakeProjectAction.monitor.update"), project.length * 4); //$NON-NLS-1$
 		try {
 			for (int i = 0; i < project.length; i++) {
 				// remove old builder

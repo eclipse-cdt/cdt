@@ -74,7 +74,7 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
     }    
     
 	public void convertProject(IProject project, IProgressMonitor monitor, String projectID) throws CoreException {
-		monitor.beginTask("Converting Make project...", 3);
+		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 3); //$NON-NLS-1$
 		try {
 			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
 			MakeProjectNature.addNature(project, new SubProgressMonitor(monitor, 1));

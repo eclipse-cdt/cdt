@@ -23,10 +23,10 @@ public class AddTargetAction extends SelectionListenerAction {
 	IResource resource;
 
 	public AddTargetAction(Shell shell) {
-		super("Add Build Target");
+		super(MakeUIPlugin.getResourceString("AddTargetAction.label")); //$NON-NLS-1$
 		this.shell = shell;
 
-		setToolTipText("Add Build Target");
+		setToolTipText(MakeUIPlugin.getResourceString("AddTargetAction.tooltip")); //$NON-NLS-1$
 		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_ADD); //$NON-NLS-1$
 	}
 
@@ -36,7 +36,7 @@ public class AddTargetAction extends SelectionListenerAction {
 				MakeTargetDialog dialog = new MakeTargetDialog(shell, (IContainer) getStructuredSelection().getFirstElement());
 				dialog.open();
 			} catch (CoreException e) {
-				MakeUIPlugin.errorDialog(shell, "Internal Error", "Internal Error", e);
+				MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("AddTargetAction.exception.internalError"), e.toString(), e); //$NON-NLS-1$
 			}
 		}
 

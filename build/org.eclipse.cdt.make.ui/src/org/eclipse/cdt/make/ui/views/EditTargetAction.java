@@ -23,10 +23,10 @@ public class EditTargetAction extends SelectionListenerAction {
 	IResource resource;
 
 	public EditTargetAction(Shell shell) {
-		super("Edit Build Target");
+		super(MakeUIPlugin.getResourceString("EditTargetAction.label")); //$NON-NLS-1$
 		this.shell = shell;
 
-		setToolTipText("Edit Build Target");
+		setToolTipText(MakeUIPlugin.getResourceString("EditTargetAction.tooltip")); //$NON-NLS-1$
 		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_EDIT); //$NON-NLS-1$
 	}
 
@@ -37,7 +37,7 @@ public class EditTargetAction extends SelectionListenerAction {
 				dialog = new MakeTargetDialog(shell, (IMakeTarget) getStructuredSelection().getFirstElement());
 				dialog.open();
 			} catch (CoreException e) {
-				MakeUIPlugin.errorDialog(shell, "Internal Error", "Error editing target.", e);
+				MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("EditTargetAction.exception.internalError"), MakeUIPlugin.getResourceString("EditTargetAction.exception.errorEditingTarget"), e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

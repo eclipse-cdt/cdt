@@ -74,7 +74,7 @@ public class TargetBuild {
 		try {
 			TargetBuild.run(true, pd, targets);
 		} catch (InvocationTargetException e) {
-			MakeUIPlugin.errorDialog(shell, "Target Build Error", "Error Building Target", e);
+			MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("TargetBuild.execption.message"), e.getTargetException().toString(), e.getTargetException()); //$NON-NLS-1$
 		}
 	}
 		
@@ -87,7 +87,7 @@ public class TargetBuild {
 					try {
 						IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 							public void run(IProgressMonitor monitor) throws CoreException {
-								monitor.beginTask("Building Targets...", targets.length);
+								monitor.beginTask(MakeUIPlugin.getResourceString("TargetBuild.monitor.beginTask"), targets.length); //$NON-NLS-1$
 								for( int i = 0; i < targets.length; i++) {
 									targets[i].build(new SubProgressMonitor(monitor, 1));
 								}

@@ -224,12 +224,6 @@
             description="%category.source.description"
             id="org.eclipse.cdt.make.ui.category.source">
       </category>
-      <scope
-            name="%scope.makefileEditor.name"
-            parent="org.eclipse.ui.textEditorScope"
-            description="%makefileEditor.description"
-            id="org.eclipse.cdt.make.ui.makefileEditorScope">
-      </scope>
       <command
             name="%ActionDefinition.comment.name"
             description="%ActionDefinition.comment.description"

@@ -92,7 +92,7 @@ public class ConvertToMakeProjectWizard extends ConversionWizard {
 	}
 
 	protected void doRun(IProgressMonitor monitor) throws CoreException {
-		monitor.beginTask("Converting to Make Project...", 2);
+		monitor.beginTask(MakeUIPlugin.getResourceString("WizardMakeProjectConversion.monitor.convertingToMakeProject"), 2); //$NON-NLS-1$
 		try {
 			super.doRun(new SubProgressMonitor(monitor, 1));
 		} finally {

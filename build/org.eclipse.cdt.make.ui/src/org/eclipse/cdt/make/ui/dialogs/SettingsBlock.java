@@ -219,7 +219,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 						getShell(),
 						getContainer().getProject(),
 						true,
-						"Selection Location to build from.");
+						MakeUIPlugin.getResourceString("SettingsBlock.title.selectLocationToBuildFrom")); //$NON-NLS-1$
 				if (dialog.open() == Window.OK) {
 					Object[] selection = dialog.getResult();
 					if (selection.length > 0) {
@@ -239,7 +239,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 		if (fBuildInfo == null) {
 			ControlFactory.createEmptySpace(composite);
-			ControlFactory.createLabel(composite, "Missing builder information on project.");
+			ControlFactory.createLabel(composite, MakeUIPlugin.getResourceString("SettingsBlock.label.missingBuilderInformation")); //$NON-NLS-1$
 			return;
 		}
 
@@ -270,7 +270,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		// To avoid multi-build
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask("Applying Settings...", 1);
+				monitor.beginTask(MakeUIPlugin.getResourceString("SettingsBlock.monitor.applyingSettings"), 1); //$NON-NLS-1$
 				IMakeBuilderInfo info;
 				if (getContainer().getProject() != null) {
 					info = MakeCorePlugin.createBuildInfo(getContainer().getProject(), fBuilderID);
@@ -387,7 +387,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		if (!useDefaultBuildCmd()) {
 			String cmd = getBuildLine();
 			if (cmd == null || cmd.length() == 0) {
-				return "Must enter a build command";
+				return MakeUIPlugin.getResourceString("SettingsBlock.message.mustEnterBuildCommand"); //$NON-NLS-1$
 			}
 		}
 		return null;

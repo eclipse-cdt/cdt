@@ -27,10 +27,10 @@ public class DeleteTargetAction extends SelectionListenerAction {
 	IResource resource;
 
 	public DeleteTargetAction(Shell shell) {
-		super("Delete Build Target");
+		super(MakeUIPlugin.getResourceString("DeleteTargetAction.label")); //$NON-NLS-1$
 		this.shell = shell;
 
-		setToolTipText("Delete Build Target");
+		setToolTipText(MakeUIPlugin.getResourceString("DeleteTargetAction.tooltip")); //$NON-NLS-1$
 		MakeUIImages.setImageDescriptors(this, "tool16", MakeUIImages.IMG_TOOLS_MAKE_TARGET_DELETE); //$NON-NLS-1$
 	}
 
@@ -45,14 +45,14 @@ public class DeleteTargetAction extends SelectionListenerAction {
 		String title;
 		String msg;
 		if (targets.size() == 1) {
-			title = "Confirm Target Deletion";
+			title = MakeUIPlugin.getResourceString("DeleteTargetAction.title.confirmDeletion"); //$NON-NLS-1$
 			IMakeTarget target = (IMakeTarget) targets.get(0);
-			msg = MessageFormat.format("Are you sure you want to delete  ''{0}''?", new Object[] { target.getName()});
+			msg = MessageFormat.format(MakeUIPlugin.getResourceString("DeleteTargetAction.message.confirmDeleteion"), new Object[] { target.getName()}); //$NON-NLS-1$
 		} else {
-			title = "Confirm Multiple Target Deletion";
+			title = MakeUIPlugin.getResourceString("DeleteTargetAction.title.confirmMultipleDeletion"); //$NON-NLS-1$
 			msg =
 				MessageFormat.format(
-					"Are you sure you want to delete these {0} targets?",
+					MakeUIPlugin.getResourceString("DeleteTargetAction.message.confirmMultipleDeletion"), //$NON-NLS-1$
 					new Object[] { new Integer(targets.size())});
 		}
 		return MessageDialog.openQuestion(shell, title, msg);
@@ -69,7 +69,7 @@ public class DeleteTargetAction extends SelectionListenerAction {
 				manager.removeTarget((IMakeTarget) iter.next());
 			}
 		} catch (CoreException e) {
-			MakeUIPlugin.errorDialog(shell, "Target Remove Error", "Error deleting build target", e);
+			MakeUIPlugin.errorDialog(shell, MakeUIPlugin.getResourceString("DeleteTargetAction.exception.removeError"), MakeUIPlugin.getResourceString("DeleteTargetAction.exception.errorDeletingBuildTarget"), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

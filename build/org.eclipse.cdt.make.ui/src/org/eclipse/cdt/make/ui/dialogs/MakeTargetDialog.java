@@ -41,11 +41,11 @@ public class MakeTargetDialog extends Dialog {
 
 	protected MessageLine fStatusLine;
 	private static final String TARGET_PREFIX = "TargetBlock"; //$NON-NLS-1$
-	private static final String TARGET_NAME_LABEL = TARGET_PREFIX + ".target.label";
+	private static final String TARGET_NAME_LABEL = TARGET_PREFIX + ".target.label"; //$NON-NLS-1$
 
 	private static final String BUILD_ARGUMENT_PREFIX = "BuildTarget"; //$NON-NLS-1$
-	private static final String BUILD_ARGUMENT_GROUP = BUILD_ARGUMENT_PREFIX + ".target.group_label";
-	private static final String BUILD_ARGUMENT_LABEL = BUILD_ARGUMENT_PREFIX + ".target.label";
+	private static final String BUILD_ARGUMENT_GROUP = BUILD_ARGUMENT_PREFIX + ".target.group_label"; //$NON-NLS-1$
+	private static final String BUILD_ARGUMENT_LABEL = BUILD_ARGUMENT_PREFIX + ".target.label"; //$NON-NLS-1$
 
 	private static final String SETTING_PREFIX = "SettingsBlock"; //$NON-NLS-1$
 
@@ -99,7 +99,7 @@ public class MakeTargetDialog extends Dialog {
 		String[] id = fTargetManager.getTargetBuilders(container.getProject());
 		if (id.length == 0) {
 			throw new CoreException(
-				new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1, "Not target builders on the project", null));
+				new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1, MakeUIPlugin.getResourceString("MakeTargetDialog.exception.noTargetBuilderOnProject"), null)); //$NON-NLS-1$
 		}
 		targetBuildID = id[0];
 		IMakeBuilderInfo buildInfo =
@@ -112,16 +112,19 @@ public class MakeTargetDialog extends Dialog {
 	}
 
 	protected void configureShell(Shell newShell) {
-		String title;
-		if (fTarget == null) {
-			title = "Create Make target.";
-		} else {
-			title = "Modify Make target,";
-		}
-		newShell.setText(title);
+		newShell.setText(getTitle());
 		super.configureShell(newShell);
 	}
 
+	private String getTitle() {
+		String title;
+		if (fTarget == null) {
+			title = MakeUIPlugin.getResourceString("MakeTargetDialog.title.createMakeTarget"); //$NON-NLS-1$
+		} else {
+			title = MakeUIPlugin.getResourceString("MakeTargetDialog.title.modifyMakeTarget"); //$NON-NLS-1$
+		}
+		return title;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -131,19 +134,13 @@ public class MakeTargetDialog extends Dialog {
 		Composite composite = (Composite)super.createDialogArea(parent);
 		initializeDialogUnits(composite);
 
-		String title;
-		if (fTarget == null) {
-			title = "Create a new Make target.";
-		} else {
-			title = "Modify a Make target,";
-		}
 
 		fStatusLine = new MessageLine(composite);
 		fStatusLine.setAlignment(SWT.LEFT);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		fStatusLine.setLayoutData(gd);
-		fStatusLine.setMessage(title);
+		fStatusLine.setMessage(getTitle());
 
 		createNameControl(composite);
 		createTargetControl(composite);
@@ -166,8 +163,8 @@ public class MakeTargetDialog extends Dialog {
 		targetNameText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event e) {
 				String newName = targetNameText.getText().trim();
-				if (newName.equals("")) {
-					fStatusLine.setErrorMessage("Must specify a target name.");
+				if (newName.equals("")) { //$NON-NLS-1$
+					fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyName")); //$NON-NLS-1$
 					getButton(IDialogConstants.OK_ID).setEnabled(false);
 				} else
 					try {
@@ -177,7 +174,7 @@ public class MakeTargetDialog extends Dialog {
 							fStatusLine.setErrorMessage(null);
 							getButton(IDialogConstants.OK_ID).setEnabled(true);
 						} else {
-							fStatusLine.setErrorMessage("Target with that name already exits");
+							fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.targetWithNameExists")); //$NON-NLS-1$
 							getButton(IDialogConstants.OK_ID).setEnabled(false);
 						}
 					} catch (CoreException ex) {
@@ -233,8 +230,8 @@ public class MakeTargetDialog extends Dialog {
 		((GridData) (commandText.getLayoutData())).grabExcessHorizontalSpace = true;
 		commandText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event e) {
-				if (commandText.getText().equals("")) {
-					fStatusLine.setErrorMessage("Must specify a build command");
+				if (commandText.getText().equals("")) { //$NON-NLS-1$
+					fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyBuildCommand")); //$NON-NLS-1$
 				}
 			}
 		});
@@ -275,9 +272,9 @@ public class MakeTargetDialog extends Dialog {
 
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (fTarget != null) {
-			createButton(parent, IDialogConstants.OK_ID, "Update", true);
+			createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("MakeTargetDialog.button.update"), true); //$NON-NLS-1$
 		} else {
-			createButton(parent, IDialogConstants.OK_ID, "Create", true);
+			createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("MakeTargetDialog.button.create"), true); //$NON-NLS-1$
 		}
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		//do this here because setting the text will set enablement on the ok button
@@ -296,7 +293,7 @@ public class MakeTargetDialog extends Dialog {
 		try {
 			while (fTargetManager.findTarget(fContainer, newName) != null) {
 				i++;
-				newName = targetString + " (" + Integer.toString(i) + ")";
+				newName = targetString + " (" + Integer.toString(i) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} catch (CoreException e) {
 		}
@@ -362,7 +359,7 @@ public class MakeTargetDialog extends Dialog {
 				}
 			}
 		} catch (CoreException e) {
-			MakeUIPlugin.errorDialog(getShell(), "Make Target Error", "Error adding target", e);
+			MakeUIPlugin.errorDialog(getShell(), MakeUIPlugin.getResourceString("MakeTargetDialog.exception.makeTargetError"), MakeUIPlugin.getResourceString("MakeTargetDialog.exception.errorAddingTarget"), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		super.okPressed();
 	}

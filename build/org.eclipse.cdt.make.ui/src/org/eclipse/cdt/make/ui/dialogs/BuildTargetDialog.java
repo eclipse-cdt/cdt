@@ -1,6 +1,7 @@
 package org.eclipse.cdt.make.ui.dialogs;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.TargetBuild;
 import org.eclipse.cdt.make.ui.TargetListViewerPart;
 import org.eclipse.core.resources.IContainer;
@@ -38,12 +39,12 @@ public class BuildTargetDialog extends Dialog {
 
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Build Targets");
+		newShell.setText(MakeUIPlugin.getResourceString("BuildTargetDialog.title.buildTarget")); //$NON-NLS-1$
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create Build and Cancel buttons by default
-		createButton(parent, IDialogConstants.OK_ID, "Build", true);
+		createButton(parent, IDialogConstants.OK_ID, MakeUIPlugin.getResourceString("BuildTargetDialog.button.build"), true); //$NON-NLS-1$
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		getButton(IDialogConstants.OK_ID).setEnabled(targetPart.getSelectedTarget() != null);
 	}
@@ -55,7 +56,7 @@ public class BuildTargetDialog extends Dialog {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		title.setLayoutData(gd);
-		title.setText("Make Targets for: " + fContainer.getFullPath().toString().substring(1));
+		title.setText(MakeUIPlugin.getResourceString("BuildTargetDialog.title.makeTargetsFor") + fContainer.getFullPath().toString().substring(1)); //$NON-NLS-1$
 		targetPart.createControl(composite, SWT.NULL, 2);
 
 		gd = (GridData) targetPart.getControl().getLayoutData();

@@ -94,7 +94,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		
 		protected void createButtonsForButtonBar(Composite parent) {
 			super.createButtonsForButtonBar(parent);
-			Button browse = createButton(parent, 3, "Browse...", true);
+			Button browse = createButton(parent, 3, MakeUIPlugin.getResourceString("BuildPathInfoBlock.button.browse"), true); //$NON-NLS-1$
 			browse.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent ev) {
 					DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
@@ -114,7 +114,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 
 	public BuildPathInfoBlock() {
 		super(MakeUIPlugin.getResourceString(LABEL));
-		setDescription("Set the include paths and preprocessor symbols for this project");
+		setDescription(MakeUIPlugin.getResourceString("BuildPathInfoBlock.description")); //$NON-NLS-1$
 	}
 
 	private void createPathListButtons(Composite parent) {
@@ -309,7 +309,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		}
 		if (getContainer().getProject() != null) {
 			// Store the paths and symbols 
-			monitor.beginTask("Setting Scanner Info", 3);
+			monitor.beginTask(MakeUIPlugin.getResourceString("BuildPathInfoBlock.monitor.settingScannerInfo"), 3); //$NON-NLS-1$
 			MakeScannerInfo info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject(), false);
 			info.setIncludePaths(getPathListContents());
 			monitor.worked(1);

@@ -65,7 +65,7 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		setTitle(MakeUIPlugin.getResourceString(MAKE_UPDATE_TITLE));
 		setDescription(MakeUIPlugin.getResourceString(MAKE_UPDATE_DESCRIPTION));
 		this.selected = selected;
-		tablePart = new TablePart("Project list");
+		tablePart = new TablePart(MakeUIPlugin.getResourceString("MakeWizardUpdatePage.projectList")); //$NON-NLS-1$
 	}
 
 	public void dispose() {
@@ -111,10 +111,10 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 	private IStatus validatePlugins() {
 		Object[] allModels = UpdateMakeProjectAction.getOldProjects();
 		if (allModels == null || allModels.length == 0) {
-			return createStatus(IStatus.ERROR, "No projects to update");
+			return createStatus(IStatus.ERROR, MakeUIPlugin.getResourceString("MakeWizardUpdatePage.status.noProjectsToUpdate")); //$NON-NLS-1$
 		}
 		if (tablePart.getSelectionCount() == 0) {
-			return createStatus(IStatus.ERROR, "No projects selected");
+			return createStatus(IStatus.ERROR, MakeUIPlugin.getResourceString("MakeWizardUpdatePage.status.noProjectsSelected")); //$NON-NLS-1$
 		}
 		return createStatus(IStatus.OK, ""); //$NON-NLS-1$
 	}

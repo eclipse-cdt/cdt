@@ -322,8 +322,6 @@ public class OtherPatternTests extends BaseSearchTest {
 		String path = pluginRoot + "resources/search/include.h";
 		
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "Head", CLASS, REFERENCES, true );
-
-		resultCollector.setProgressMonitor( monitor );
 		
 		resultCollector.aboutToStart();
 

@@ -19,12 +19,12 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
-import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.cdt.testplugin.FileManager;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
@@ -54,7 +54,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	IProject 				testProject;
 	NullProgressMonitor		monitor;
 	IWorkspace 				workspace;
-	CSearchResultCollector	resultCollector;
+	BasicSearchResultCollector	resultCollector;
 	SearchEngine			searchEngine;
 	FileManager 			fileManager;
     
@@ -85,8 +85,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		
 		scope = SearchEngine.createWorkspaceScope();
 	
-		resultCollector = new CSearchResultCollector();
-		resultCollector.setProgressMonitor( monitor );
+		resultCollector = new BasicSearchResultCollector();
 		
 		searchEngine = new SearchEngine();
 	}
@@ -180,7 +179,6 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	}
 	
 	protected void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector) {
-		resultCollector.setProgressMonitor( monitor );
 		searchEngine.search( workspace, pattern, scope, collector, false );
 	}
 	

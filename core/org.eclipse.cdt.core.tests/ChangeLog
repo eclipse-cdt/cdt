@@ -1,3 +1,6 @@
+2003-11-06 Andrew Niefer
+	Remove dependancy on cdt.internal.ui.search.CSearchResultCollector in BaseSearchTest and DependencyTests
+
 2003-11-07 John Camelon
 	Moved testBug39554() from ASTFailedTests to QuickParseASTTests.  
 

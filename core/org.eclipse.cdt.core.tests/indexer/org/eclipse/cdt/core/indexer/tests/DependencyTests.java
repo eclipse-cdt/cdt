@@ -21,6 +21,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
@@ -33,7 +34,6 @@ import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
-import org.eclipse.cdt.internal.ui.search.CSearchResultCollector;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -59,7 +59,7 @@ import org.eclipse.core.runtime.Platform;
 	NullProgressMonitor		monitor;
 	IndexManager 			indexManager;
 	IWorkspace 				workspace;
-	CSearchResultCollector	resultCollector;
+	BasicSearchResultCollector	resultCollector;
 	SearchEngine			searchEngine;
 	ICSearchScope 			scope;
 
@@ -99,8 +99,7 @@ import org.eclipse.core.runtime.Platform;
 		
 		scope = SearchEngine.createWorkspaceScope();
 		monitor = new NullProgressMonitor();
-		resultCollector = new CSearchResultCollector();
-		resultCollector.setProgressMonitor( monitor );
+		resultCollector = new BasicSearchResultCollector();
 	
 		searchEngine = new SearchEngine();
 	}
@@ -638,7 +637,6 @@ import org.eclipse.core.runtime.Platform;
    }
 	
    protected void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector) {
-	   resultCollector.setProgressMonitor( monitor );
 	   searchEngine.search( workspace, pattern, scope, collector, false );
    }
    

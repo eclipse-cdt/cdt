@@ -2,6 +2,11 @@
 	First step in replacing IParserCallback with ISourceElementRequestor.  
 
 2003-06-09 Victor Mozgin
+	Moved testBug36769() from ACEFailedTest.java to DOMTests.java.
+	Removed ACEFailedTest.java as it is empty now.
+	Added DOMTests.testBug36769B(). 
+
+2003-06-09 Victor Mozgin
 	Moved testBug36932() from DOMFailedTest.java to DOMTests.java.
 	Added DOMTests.testBug36932B() and DOMTests.testBug36932C(). 
 

@@ -77,7 +77,6 @@ public class AutomatedIntegrationSuite extends TestSuite implements TestListener
 		suite.addTest(suite.new GenerateReport("testStartFailedTests"));
 		
 		// Add all failed tests
-		suite.addTestSuite(ACEFailedTest.class);
 		suite.addTestSuite(DOMFailedTest.class);
 		suite.addTestSuite(LokiFailures.class);
 		suite.addTestSuite(STLFailedTests.class);

@@ -6,6 +6,10 @@
 	classTemplateSpecializationToFunctionTemplate, transformFunctionTemplateForOrdering
 	
 2003-06-09 Victor Mozgin
+	Fixed for conversion operator declarations.
+	This fixes PR 36769 (finally) and PR 38657.
+
+2003-06-09 Victor Mozgin
 	Fixed Bug 36932 - RTS: Parser fails on "new" in ctor initializer
 	Improved handling of new-expressions: placements, arrays and
 	multiple parameters in initializers are now parsed.

@@ -961,11 +961,11 @@ c, quickParse);
 	}
 	
 	/**
-	 * @param flags			input flags that are used to make our decision 
-	 * @return				whether or not this looks like a constructor (true or false)
-	 * @throws EndOfFile	we could encounter EOF while looking ahead
+	 * @param flags            input flags that are used to make our decision 
+	 * @return                 whether or not this looks like a constructor (true or false)
+	 * @throws EndOfFile       we could encounter EOF while looking ahead
 	 */
-	private boolean lookAheadForConstructor( Flags flags ) throws EndOfFile
+	private boolean lookAheadForConstructorOrConversion( Flags flags ) throws EndOfFile
 	{
 		if (flags.isForParameterDeclaration()) return false;
 		if (LT(2) == Token.tLPAREN && flags.isForConstructor()) return true;
@@ -992,14 +992,27 @@ c, quickParse);
 			}
 		}
 
-		return 
-		  (LT(posTokenAfterTemplateParameters) == Token.tCOLONCOLON)
-         && 
-		  (
-			LA(posTokenAfterTemplateParameters+1).getImage().equals( LA(1).getImage() ) ||  
-			LT(posTokenAfterTemplateParameters+1) == Token.tCOMPL
-		  )
-		;
+         // for constructors
+		 return
+		 (
+			 ( 
+			  (LT(posTokenAfterTemplateParameters) == Token.tCOLONCOLON)
+	         && 
+			  (
+				LA(posTokenAfterTemplateParameters+1).getImage().equals( LA(1).getImage() ) ||  
+				LT(posTokenAfterTemplateParameters+1) == Token.tCOMPL
+			  )
+		 	 )
+		 ||
+			 (
+	           // for conversion operators   
+			  (LT(posTokenAfterTemplateParameters) == Token.tCOLONCOLON)
+	         && 
+			  (
+				LT(posTokenAfterTemplateParameters+1) == Token.t_operator
+			  )
+			 )
+		 );
  	}
 	
 	/**
@@ -1114,7 +1127,7 @@ c, quickParse);
 						return;
 					if( parm && flags.haveEncounteredTypename() )
 						return;
-					if ( lookAheadForConstructor( flags )  )
+					if ( lookAheadForConstructorOrConversion( flags )  )
 						return;
 					if ( lookAheadForDeclarator( flags ) )
 						return;
@@ -1514,11 +1527,18 @@ c, quickParse);
 				}
 				else
 				{
-					// temporary 
-					while( LT(1) != Token.tLPAREN )
-					{
-						toSend = consume(); 
-					}
+                    // must be a conversion function
+                    typeId(); 
+                    toSend = lastToken;
+                    try {
+                    	// this ptrOp doesn't belong to the declarator, 
+                    	// it's just a part of the name
+                    	ptrOperator(null); 
+                    	toSend = lastToken; 
+                   	} catch (Backtrack b) {}
+                    
+					// In case we'll need better error recovery 
+					// while( LT(1) != Token.tLPAREN )	{ toSend = consume(); }
 				}
 					
 				try{ 
@@ -1579,13 +1599,20 @@ c, quickParse);
 													
 							}
 							else
-							{
-								// temporary 
-								while( LT(1) != Token.tLPAREN )
-								{
-									end = consume(); 
-								}
-							}
+							{                              
+                                // must be a conversion function
+                                typeId();
+								end = lastToken;
+								try { 
+									// this ptrOp doesn't belong to the declarator, 
+									// it's just a part of the name
+									ptrOperator(null);
+									end = lastToken; 
+								} catch (Backtrack b) {}
+
+                                // In case we'll need better error recovery 
+                                // while( LT(1) != Token.tLPAREN )  { toSend = consume(); }
+                            }
 					
 							try{ 
 								callback.nameBegin( start );

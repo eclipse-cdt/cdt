@@ -1178,7 +1178,7 @@ public class DOMTests extends BaseDOMTest {
 		PointerOperator po = (PointerOperator)functionDeclarator.getPointerOperators().get(0);
 		assertEquals( po.getType(), PointerOperator.t_reference );
 		assertFalse( po.isConst() || po.isVolatile() );
-		assertEquals( functionDeclarator.getName().toString(), "A::operator=");
+		assertEquals( functionDeclarator.getName().toString(), "A::operator =");
 		assertEquals( functionDeclarator.getParms().getDeclarations().size(), 1 );
 		ParameterDeclaration parameterDeclaration = (ParameterDeclaration)functionDeclarator.getParms().getDeclarations().get(0);
 		assertEquals( parameterDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_type );
@@ -2042,5 +2042,43 @@ public class DOMTests extends BaseDOMTest {
         parse("X::X( ) : var( new (P) (A)[B] ) {}");
         parse("X::X( ) : var( new (P) (A)[B][C][D] ) {}");
     }
-}
+    
+	public void testBug36769A() throws Exception {
+		Writer code = new StringWriter();
+		code.write("template <class A, B> cls<A, C>::operator op &() const {}\n");
+		code.write("template <class A, B> cls<A, C>::cls() {}\n");
+		code.write("template <class A, B> cls<A, C>::~cls() {}\n");
+			
+		parse( code.toString());
+	}
+	
+	public void testBug36769B() throws Exception {
+		parse("class X { operator int(); } \n");
+		parse("class X { operator int*(); } \n");
+		parse("class X { operator int&(); } \n");
+		parse("class X { operator A(); } \n");
+		parse("class X { operator A*(); } \n");
+		parse("class X { operator A&(); } \n");
+		
+		parse("X::operator int() { } \n");
+		parse("X::operator int*() { } \n");
+		parse("X::operator int&() { } \n");
+		parse("X::operator A() { } \n");
+		parse("X::operator A*() { } \n");
+		parse("X::operator A&() { } \n");
+		
+		parse("template <class A,B> class X<A,C> { operator int(); } \n");
+		parse("template <class A,B> class X<A,C> { operator int*(); } \n");
+		parse("template <class A,B> class X<A,C> { operator int&(); } \n");
+		parse("template <class A,B> class X<A,C> { operator A(); } \n");
+		parse("template <class A,B> class X<A,C> { operator A*(); } \n");
+		parse("template <class A,B> class X<A,C> { operator A&(); } \n");
 
+		parse("template <class A,B> X<A,C>::operator int() { } \n");
+		parse("template <class A,B> X<A,C>::operator int*() { } \n");
+		parse("template <class A,B> X<A,C>::operator int&() { } \n");
+		parse("template <class A,B> X<A,C>::operator A() { } \n");
+		parse("template <class A,B> X<A,C>::operator A*() { } \n");
+		parse("template <class A,B> X<A,C>::operator A&() { } \n");
+	}
+}

@@ -48,7 +48,8 @@ public class Name {
 		while (t != nameEnd) {
 			t = t.getNext();
 				
-			buffer.append( t.getImage() );			
+			buffer.append( t.getImage() );	
+			if (t.getType() == Token.t_operator) buffer.append( " " );					
 		}
 		
 		return buffer.toString();

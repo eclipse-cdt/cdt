@@ -706,8 +706,19 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.tLT:
             case IToken.tLTEQUAL:
             case IToken.tGTEQUAL:
+                IToken m = mark();
                 int t = consume().getType();
-                IASTExpression secondExpression = shiftExpression();
+            
+                IASTExpression secondExpression = null;
+                try
+                {
+                   secondExpression = shiftExpression(); 
+                }
+                catch( BacktrackException bte )
+                {
+                    backup( m );
+                    return firstExpression;
+                }
                 int expressionKind = 0;
                 switch (t) {
                 case IToken.tGT:
@@ -874,7 +885,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         try
         {
 	        declSpecifier = declSpecifierSeq(false, false);
-	        declarator = declarator( SimpleDeclarationStrategy.TRY_CONSTRUCTOR );
+	        declarator = declarator( SimpleDeclarationStrategy.TRY_CONSTRUCTOR, true );
         }
         catch( BacktrackException bt )
         {
@@ -2367,7 +2378,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @return
      */
     private IASTName createTemplateID(ITokenDuple duple) {
-        return new CASTName(); //TODO
+        return new CASTName(); //TODO - what is a template ID?
     }
 
     /**
@@ -3145,7 +3156,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTDeclarator initDeclarator(SimpleDeclarationStrategy strategy )
             throws EndOfFileException, BacktrackException {
-        IASTDeclarator d = declarator(strategy);
+        IASTDeclarator d = declarator(strategy, false);
 
         IASTInitializer initializer = optionalCPPInitializer();
         if( initializer != null )
@@ -3269,14 +3280,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * (oldKRParameterDeclaration)*
      * 
      * declaratorId : name
+     * @param forTypeID TODO
      * @param container
      *            IParserCallback object that represents the owner declaration.
-     * 
      * @return declarator that this parsing produced.
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected IASTDeclarator declarator(SimpleDeclarationStrategy strategy) throws EndOfFileException,
+    protected IASTDeclarator declarator(SimpleDeclarationStrategy strategy, boolean forTypeID) throws EndOfFileException,
             BacktrackException {
         
         IToken la = LA(1);
@@ -3300,12 +3311,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
             consumePointerOperators(pointerOps);
 
-            if (LT(1) == IToken.tLPAREN) {
+            if (!forTypeID && LT(1) == IToken.tLPAREN) {
                 IToken mark = mark();
                 try
                 {
 	                consume();
-	                innerDecl = declarator(strategy);
+	                innerDecl = declarator(strategy, forTypeID);
 	                consume(IToken.tRPAREN);
                 }
                 catch( BacktrackException bte )
@@ -3652,7 +3663,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     throwBacktrack(mark.getOffset(), endOffset, mark
                             .getLineNumber(), mark.getFilename());
                 }
-                return TokenFactory.createTokenDuple( start, end );
+                return TokenFactory.createTokenDuple( start, end, argumentList.getTemplateArgumentsList() );
             }
             int endOffset = (lastToken != null) ? lastToken
                     .getEndOffset() : 0;

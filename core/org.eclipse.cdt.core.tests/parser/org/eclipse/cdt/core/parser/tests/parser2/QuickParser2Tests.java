@@ -51,11 +51,14 @@ public class QuickParser2Tests extends TestCase {
     public static class ProblemCollector implements IProblemRequestor {
 
         List problems = new ArrayList();
-        /* (non-Javadoc)
+
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.cdt.internal.core.parser2.IProblemRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
          */
         public boolean acceptProblem(IProblem problem) {
-            problems.add( problem );
+            problems.add(problem);
             return true;
         }
 
@@ -67,8 +70,11 @@ public class QuickParser2Tests extends TestCase {
         }
 
     }
+
     private static final NullLogService NULL_LOG = new NullLogService();
+
     private static final NullSourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
+
     /**
      *  
      */
@@ -113,19 +119,20 @@ public class QuickParser2Tests extends TestCase {
         parse(code.toString());
     }
 
-    protected void parse( String code, boolean expectedToPass, ParserLanguage lang ) throws Exception
-    {
-        parse( code, expectedToPass, lang, false );
+    protected void parse(String code, boolean expectedToPass,
+            ParserLanguage lang) throws Exception {
+        parse(code, expectedToPass, lang, false);
     }
-    protected void parse( String code, boolean expectedToPass ) throws Exception
-    {
-        parse( code, expectedToPass, ParserLanguage.CPP );
+
+    protected void parse(String code, boolean expectedToPass) throws Exception {
+        parse(code, expectedToPass, ParserLanguage.CPP);
     }
+
     /**
      * @param code
      */
     protected void parse(String code) throws Exception {
-        parse( code, true, ParserLanguage.CPP );
+        parse(code, true, ParserLanguage.CPP);
     }
 
     public void testNamespaceDefinition() throws Exception {
@@ -541,13 +548,10 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug36769A() throws Exception {
-        Writer code = new StringWriter();
-        code
-                .write("template <class A, B> cls<A, C>::operator op &() const {}\n"); //$NON-NLS-1$
-        code.write("template <class A, B> cls<A, C>::cls() {}\n"); //$NON-NLS-1$
-        code.write("template <class A, B> cls<A, C>::~cls() {}\n"); //$NON-NLS-1$
 
-        parse(code.toString());
+        parse("template <class A, B> cls<A, C>::operator  &() const {}\n"); //$NON-NLS-1$
+        parse("template <class A, B> cls<A, C>::cls() {}\n"); //$NON-NLS-1$
+        parse("template <class A, B> cls<A, C>::~cls() {}\n"); //$NON-NLS-1$
     }
 
     public void testBug36714() throws Exception {
@@ -578,14 +582,11 @@ public class QuickParser2Tests extends TestCase {
 
     public void testBug36699() throws Exception {
         Writer code = new StringWriter();
-        code
-                .write("template <	template <class> class ThreadingModel = DEFAULT_THREADING,\n"); //$NON-NLS-1$
+        code.write("template <	template <class> class ThreadingModel = DEFAULT_THREADING,\n"); //$NON-NLS-1$
         code.write("std::size_t chunkSize = DEFAULT_CHUNK_SIZE,\n"); //$NON-NLS-1$
-        code
-                .write("std::size_t maxSmallObjectSize = MAX_SMALL_OBJECT_SIZE	>\n"); //$NON-NLS-1$
+        code.write("std::size_t maxSmallObjectSize = MAX_SMALL_OBJECT_SIZE	>\n"); //$NON-NLS-1$
         code.write("class SmallObject : public ThreadingModel<\n"); //$NON-NLS-1$
-        code
-                .write("SmallObject<ThreadingModel, chunkSize, maxSmallObjectSize> >\n"); //$NON-NLS-1$
+        code.write("SmallObject<ThreadingModel, chunkSize, maxSmallObjectSize> >\n"); //$NON-NLS-1$
         code.write("{};\n"); //$NON-NLS-1$
         parse(code.toString());
     }
@@ -692,8 +693,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testTemplateSpecialization() throws Exception {
-        parse(
-                "template<> class stream<char> { /* ... */ };"); //$NON-NLS-1$
+        parse("template<> class stream<char> { /* ... */ };"); //$NON-NLS-1$
     }
 
     public void testTemplateInstantiation() throws Exception {
@@ -705,11 +705,11 @@ public class QuickParser2Tests extends TestCase {
      */
     public void testMultipleDeclarators() throws Exception {
         // Parse and get the translaton unit
-        parse( "class A { int floor( double input ), someInt; };"); //$NON-NLS-1$
+        parse("class A { int floor( double input ), someInt; };"); //$NON-NLS-1$
     }
 
     public void testFunctionModifiers() throws Exception {
-        parse(                "class A {virtual void foo( void ) const throw ( yay, nay, we::dont::care ) = 0;};"); //$NON-NLS-1$
+        parse("class A {virtual void foo( void ) const throw ( yay, nay, we::dont::care ) = 0;};"); //$NON-NLS-1$
     }
 
     public void testArrays() throws Exception {
@@ -734,8 +734,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testPointerOperators() throws Exception {
-        parse(
-                "int * x = 0, & y, * const * volatile * z;"); //$NON-NLS-1$
+        parse("int * x = 0, & y, * const * volatile * z;"); //$NON-NLS-1$
     }
 
     public void testBug26467() throws Exception {
@@ -753,7 +752,7 @@ public class QuickParser2Tests extends TestCase {
 
     public void testConstructorChain() throws Exception {
         //TODO - requires CPPVisitor in order to reduce ambiguities
-        parse( "TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}"); //$NON-NLS-1$
+        parse("TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}"); //$NON-NLS-1$
     }
 
     public void testBug36237() throws Exception {
@@ -777,11 +776,11 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testTemplateDeclarationOfFunction() throws Exception {
-        parse( "template<class A, typename B=C> A aTemplatedFunction( B bInstance );"); //$NON-NLS-1$
+        parse("template<class A, typename B=C> A aTemplatedFunction( B bInstance );"); //$NON-NLS-1$
     }
 
     public void testTemplateDeclarationOfClass() throws Exception {
-        parse( "template<class T, typename Tibor = junk, class, typename, int x, float y,template <class Y> class, template<class A> class AClass> class myarray { /* ... */ };"); //$NON-NLS-1$
+        parse("template<class T, typename Tibor = junk, class, typename, int x, float y,template <class Y> class, template<class A> class AClass> class myarray { /* ... */ };"); //$NON-NLS-1$
     }
 
     public void testBug35906() throws Exception {
@@ -812,7 +811,8 @@ public class QuickParser2Tests extends TestCase {
         code.write("#define CMD_GET		\"g\"\n"); //$NON-NLS-1$
         code.write("#define CMD_ACTION   	\"a\"\n"); //$NON-NLS-1$
         code.write("#define CMD_QUIT		\"q\"\n"); //$NON-NLS-1$
-        code.write("static const memevent_cmd_func memevent_cmd_funcs[sizeof memevent_cmds - 1] = {\n"); //$NON-NLS-1$
+        code
+                .write("static const memevent_cmd_func memevent_cmd_funcs[sizeof memevent_cmds - 1] = {\n"); //$NON-NLS-1$
         code.write("memevent_get,\n"); //$NON-NLS-1$
         code.write("memevent_action,\n"); //$NON-NLS-1$
         code.write("memevent_quit,\n"); //$NON-NLS-1$
@@ -866,13 +866,11 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug36708() throws Exception {
-        parse(
-                "enum { isPointer = PointerTraits<T>::result };"); //$NON-NLS-1$
+        parse("enum { isPointer = PointerTraits<T>::result };"); //$NON-NLS-1$
     }
 
     public void testBug36690() throws Exception {
-        parse(
-                "Functor(const Functor& rhs) : spImpl_(Impl::Clone(rhs.spImpl_.get())){}"); //$NON-NLS-1$
+        parse("Functor(const Functor& rhs) : spImpl_(Impl::Clone(rhs.spImpl_.get())){}"); //$NON-NLS-1$
     }
 
     public void testBug36703() throws Exception {
@@ -933,8 +931,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug36600() throws Exception {
-        parse(
-                "enum mad_flow (*input_func)(void *, struct mad_stream *);"); //$NON-NLS-1$
+        parse("enum mad_flow (*input_func)(void *, struct mad_stream *);"); //$NON-NLS-1$
     }
 
     public void testBug36713() throws Exception {
@@ -1189,8 +1186,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug43062() throws Exception {
-        parse(
-                "class X { operator short  (); 	operator int unsigned(); operator int signed(); };"); //$NON-NLS-1$
+        parse("class X { operator short  (); 	operator int unsigned(); operator int signed(); };"); //$NON-NLS-1$
     }
 
     public void testBug39531() throws Exception {
@@ -1253,8 +1249,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug39536A() throws Exception {
-        parse(
-                "template<class E> class X { X<E>(); };"); //$NON-NLS-1$
+        parse("template<class E> class X { X<E>(); };"); //$NON-NLS-1$
     }
 
     public void testBug39536B() throws Exception {
@@ -1268,7 +1263,7 @@ public class QuickParser2Tests extends TestCase {
     //Here starts C99-specific section
     public void testBug39549() throws Exception {
         parse(
-                "struct X x = { .b = 40, .z = { sizeof(X), 42 }, .t[3] = 2, .t.f[3].x = A * B };", true,  ParserLanguage.C); //$NON-NLS-1$
+                "struct X x = { .b = 40, .z = { sizeof(X), 42 }, .t[3] = 2, .t.f[3].x = A * B };", true, ParserLanguage.C); //$NON-NLS-1$
         // with trailing commas
         parse(
                 "struct X x = { .b = 40, .z = { sizeof(X), 42,}, .t[3] = 2, .t.f[3].x = A * B  ,};", true, ParserLanguage.C); //$NON-NLS-1$
@@ -1280,12 +1275,11 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug39551B() throws Exception {
-        parse(
-                "_Imaginary double id = 99.99 * __I__;", true, ParserLanguage.C); //$NON-NLS-1$
+        parse("_Imaginary double id = 99.99 * __I__;", true, ParserLanguage.C); //$NON-NLS-1$
     }
 
     public void testCBool() throws Exception {
-        parse( "_Bool x;", true, ParserLanguage.C); //$NON-NLS-1$
+        parse("_Bool x;", true, ParserLanguage.C); //$NON-NLS-1$
     }
 
     public void testBug39678() throws Exception {
@@ -1305,14 +1299,17 @@ public class QuickParser2Tests extends TestCase {
     //		IASTMacro swap = (IASTMacro) macros.next();
     //		assertFalse( macros.hasNext() );
     //		assertEquals( swap.getName(), "SWAP"); //$NON-NLS-1$
-    //		assertEquals( swap.getMacroType(), IMacroDescriptor.MacroType.FUNCTION_LIKE );
+    //		assertEquals( swap.getMacroType(),
+    // IMacroDescriptor.MacroType.FUNCTION_LIKE );
     //		String [] params = swap.getParameters();
     //		assertEquals( params.length, 2 );
     //		assertEquals( params[0], "x"); //$NON-NLS-1$
     //		assertEquals( params[1], "y"); //$NON-NLS-1$
     //		String completeSignature = swap.getCompleteSignature().trim();
-    //		assertEquals( completeSignature, "#define SWAP(x,y) {x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
-    //		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
+    //		assertEquals( completeSignature, "#define SWAP(x,y) {x|=y;y|=x;x|=y;}");
+    // //$NON-NLS-1$
+    //		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}");
+    // //$NON-NLS-1$
     //		IToken [] tokens = swap.getTokenizedExpansion();
     //		validateToken( tokens[0], IToken.tLBRACE);
     //		validateIdentifier( tokens[1], "x"); //$NON-NLS-1$
@@ -1335,7 +1332,7 @@ public class QuickParser2Tests extends TestCase {
     //	 */
     //	private void validateIdentifier(IToken token, String identifierName ) {
     //		validateToken( token, IToken.tIDENTIFIER);
-    //		assertEquals( token.getImage(), identifierName  );
+    //		assertEquals( token.getImage(), identifierName );
     //	}
     //	/**
     //	 * @param token
@@ -1376,7 +1373,8 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug57652() throws Exception {
-        parse( "struct file_operations driver_fops = {  open: device_open, release: device_release	};", true, ParserLanguage.C, true); //$NON-NLS-1$
+        parse(
+                "struct file_operations driver_fops = {  open: device_open, release: device_release	};", true, ParserLanguage.C, true); //$NON-NLS-1$
     }
 
     /**
@@ -1385,41 +1383,37 @@ public class QuickParser2Tests extends TestCase {
      * @param c
      * @param d
      */
-    protected void parse(String code, boolean expectedToPass, ParserLanguage lang, boolean gcc ) throws Exception {
-        
+    protected void parse(String code, boolean expectedToPass,
+            ParserLanguage lang, boolean gcc) throws Exception {
+
         ProblemCollector collector = new ProblemCollector();
         IScanner scanner = ParserFactory.createScanner(new CodeReader(code
                 .toCharArray()), new ScannerInfo(), ParserMode.QUICK_PARSE,
-                lang, NULL_REQUESTOR,
-                NULL_LOG, Collections.EMPTY_LIST);
+                lang, NULL_REQUESTOR, NULL_LOG, Collections.EMPTY_LIST);
         ISourceCodeParser parser2 = null;
-        if( lang == ParserLanguage.CPP )
-        {
+        if (lang == ParserLanguage.CPP) {
             ICPPParserExtensionConfiguration config = null;
-            if( gcc )
+            if (gcc)
                 config = new GNUCPPParserExtensionConfiguration();
             else
                 config = new ANSICPPParserExtensionConfiguration();
-            parser2 = new GNUCPPSourceParser(scanner, ParserMode.QUICK_PARSE, collector,
-                NULL_LOG,
-                config );
-        }
-        else
-        {
+            parser2 = new GNUCPPSourceParser(scanner, ParserMode.QUICK_PARSE,
+                    collector, NULL_LOG, config);
+        } else {
             ICParserExtensionConfiguration config = null;
-            if( gcc )
+            if (gcc)
                 config = new GCCParserExtensionConfiguration();
             else
                 config = new ANSICParserExtensionConfiguration();
-            
-            parser2 = new GNUCSourceParser( scanner, ParserMode.QUICK_PARSE, collector, 
-                NULL_LOG, config );
+
+            parser2 = new GNUCSourceParser(scanner, ParserMode.QUICK_PARSE,
+                    collector, NULL_LOG, config);
         }
         IASTTranslationUnit tu = parser2.parse();
-        if( parser2.encounteredError() && expectedToPass )
-            throw new ParserException( "FAILURE"); //$NON-NLS-1$
-        if( expectedToPass )
-            assertTrue( collector.hasNoProblems() );
+        if (parser2.encounteredError() && expectedToPass)
+            throw new ParserException("FAILURE"); //$NON-NLS-1$
+        if (expectedToPass)
+            assertTrue(collector.hasNoProblems());
     }
 
     public void testBug60142() throws Exception {
@@ -1430,8 +1424,7 @@ public class QuickParser2Tests extends TestCase {
         for (int i = 0; i < 2; ++i) {
             ParserLanguage language = (i == 0) ? ParserLanguage.C
                     : ParserLanguage.CPP;
-            parse(
-                    "int k[][] = { {0, {1}, {2,3}};", false, language); //$NON-NLS-1$
+            parse("int k[][] = { {0, {1}, {2,3}};", false, language); //$NON-NLS-1$
         }
     }
 
@@ -1468,82 +1461,76 @@ public class QuickParser2Tests extends TestCase {
         writer
                 .write("static char fmt_1002[] = \"(/,\\002At iterate\\002,i5,4x,\\002f= \\002,1p,d12\\\r\n"); //$NON-NLS-1$
         writer.write(".5,4x,\\002|proj g|= \\002,1p,d12.5)\";"); //$NON-NLS-1$
-        parse(
-                writer.toString(), true, ParserLanguage.C);
+        parse(writer.toString(), true, ParserLanguage.C);
     }
 
-    public void testBug39694() throws Exception
-    {
+    public void testBug39694() throws Exception {
         parse("int ab$cd = 1;"); //$NON-NLS-1$
     }
-    
-    public void testBug39704A() throws Exception
-    {
+
+    public void testBug39704A() throws Exception {
         parse("__declspec (dllimport) int foo;"); //$NON-NLS-1$
-    } 
-    public void testBug39704D() throws Exception
-    {
+    }
+
+    public void testBug39704D() throws Exception {
         parse("__declspec(dllexport) int func1 (int a) {}"); //$NON-NLS-1$
     }
-    
-    public void testBug39695() throws Exception
-    {
+
+    public void testBug39695() throws Exception {
         parse("int a = __alignof__ (int);", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
-    
-    public void testBug39684() throws Exception
-    {
-        parse("typeof(foo(1)) bar () { return foo(1); }", true, ParserLanguage.CPP, true); //$NON-NLS-1$
+
+    public void testBug39684() throws Exception {
+        parse(
+                "typeof(foo(1)) bar () { return foo(1); }", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
-    
-    public void testBug39703() throws Exception
-    {
+
+    public void testBug39703() throws Exception {
         Writer code = new StringWriter();
-        code.write("/* __extension__ enables GNU C mode for the duration of the declaration.  */\n"); //$NON-NLS-1$
+        code
+                .write("/* __extension__ enables GNU C mode for the duration of the declaration.  */\n"); //$NON-NLS-1$
         code.write("__extension__ struct G {\n"); //$NON-NLS-1$
         code.write("  struct { char z; };\n"); //$NON-NLS-1$
         code.write("  char g;\n"); //$NON-NLS-1$
         code.write("};\n"); //$NON-NLS-1$
-       	parse(code.toString(), true, ParserLanguage.CPP, true);
+        parse(code.toString(), true, ParserLanguage.CPP, true);
     }
 
-    public void testBug39698A() throws Exception
-    {
+    public void testBug39698A() throws Exception {
         parse("int c = a <? b;", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
-    public void testBug39698B() throws Exception
-    {
-    	parse("int c = a >? b;", true, ParserLanguage.CPP, true); //$NON-NLS-1$
+
+    public void testBug39698B() throws Exception {
+        parse("int c = a >? b;", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
 
-	public void testBug39554() throws Exception
-	{
-		 parse("_Pragma(\"foobar\")", true, ParserLanguage.C ); //$NON-NLS-1$
-	}
+    public void testBug39554() throws Exception {
+        parse("_Pragma(\"foobar\")", true, ParserLanguage.C); //$NON-NLS-1$
+    }
 
-    public void testBug39704B() throws Exception
-    {
-		parse("extern int (* import) (void) __attribute__((dllimport));", true, ParserLanguage.CPP, true); //$NON-NLS-1$
+    public void testBug39704B() throws Exception {
+        parse(
+                "extern int (* import) (void) __attribute__((dllimport));", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
-    public void testBug39704C() throws Exception
-    {
- 		parse("int func2 (void) __attribute__((dllexport));", true, ParserLanguage.CPP, true); //$NON-NLS-1$
+
+    public void testBug39704C() throws Exception {
+        parse(
+                "int func2 (void) __attribute__((dllexport));", true, ParserLanguage.CPP, true); //$NON-NLS-1$
     }
-    
-    public void testBug39686() throws Exception
-    {
+
+    public void testBug39686() throws Exception {
         Writer code = new StringWriter();
         code.write("__complex__ double x; // complex double\n"); //$NON-NLS-1$
         code.write("__complex__ short int a; // complex short int\n"); //$NON-NLS-1$
-        code.write("__complex__ float y = 2.5fi; // 2.5 imaginary float literal\n"); //$NON-NLS-1$
+        code
+                .write("__complex__ float y = 2.5fi; // 2.5 imaginary float literal\n"); //$NON-NLS-1$
         code.write("__complex__ int a = 3i; // imaginary intege r literal\n"); //$NON-NLS-1$
         code.write("double v = __real__ x; // real part of expression\n"); //$NON-NLS-1$
         code.write("double w = __imag__ x; // imaginary part of expression\n"); //$NON-NLS-1$
         parse(code.toString(), true, ParserLanguage.C, true);
     }
-    
-    public void testBug39681() throws Exception
-    {
+
+    public void testBug39681() throws Exception {
         Writer code = new StringWriter();
         code.write("double\n"); //$NON-NLS-1$
         code.write("foo (double a, double b)\n"); //$NON-NLS-1$
@@ -1553,42 +1540,40 @@ public class QuickParser2Tests extends TestCase {
         code.write("}\n"); //$NON-NLS-1$
         parse(code.toString());
     }
-    
-    public void testBug39677() throws Exception
-    {
+
+    public void testBug39677() throws Exception {
         parse("B::B() : a(({ 1; })) {}", true, ParserLanguage.CPP, true); //$NON-NLS-1$
         Writer writer = new StringWriter();
-        writer.write( "B::B() : a(( { int y = foo (); int z;\n" ); //$NON-NLS-1$
-        writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
-        writer.write( "else z = - y;\n" );//$NON-NLS-1$
-        writer.write( "z; }))\n" );//$NON-NLS-1$
-        parse( writer.toString(), true, ParserLanguage.CPP, true );
+        writer.write("B::B() : a(( { int y = foo (); int z;\n"); //$NON-NLS-1$
+        writer.write("if (y > 0) z = y;\n"); //$NON-NLS-1$
+        writer.write("else z = - y;\n");//$NON-NLS-1$
+        writer.write("z; }))\n");//$NON-NLS-1$
+        parse(writer.toString(), true, ParserLanguage.CPP, true);
         writer = new StringWriter();
-        writer.write( "int x = ({ int y = foo (); int z;\n" ); //$NON-NLS-1$
-        writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
-        writer.write( "else z = - y;\n" );//$NON-NLS-1$
-        writer.write( "z; });\n" );//$NON-NLS-1$
-        parse( writer.toString() , true, ParserLanguage.CPP, true);
+        writer.write("int x = ({ int y = foo (); int z;\n"); //$NON-NLS-1$
+        writer.write("if (y > 0) z = y;\n"); //$NON-NLS-1$
+        writer.write("else z = - y;\n");//$NON-NLS-1$
+        writer.write("z; });\n");//$NON-NLS-1$
+        parse(writer.toString(), true, ParserLanguage.CPP, true);
         writer = new StringWriter();
-        writer.write( "typeof({ int y = foo (); int z;\n" ); //$NON-NLS-1$
-        writer.write( "if (y > 0) z = y;\n" ); //$NON-NLS-1$
-        writer.write( "else z = - y;\n" );//$NON-NLS-1$
-        writer.write( "z; }) zoot;\n" );//$NON-NLS-1$
-        parse( writer.toString() , true, ParserLanguage.CPP, true);
-    }
-    
-    public void testBug39701A() throws Exception
-    {
-        parse("extern template int max (int, int);", true, ParserLanguage.CPP, true); //$NON-NLS-1$
-    }
-    public void testBug39701B() throws Exception
-    {
-    	parse("inline template class Foo<int>;", true, ParserLanguage.CPP, true); //$NON-NLS-1$
-    }
-    public void testBug39701C() throws Exception
-    {
-    	parse("static template class Foo<int>;", true, ParserLanguage.CPP, true); //$NON-NLS-1$
+        writer.write("typeof({ int y = foo (); int z;\n"); //$NON-NLS-1$
+        writer.write("if (y > 0) z = y;\n"); //$NON-NLS-1$
+        writer.write("else z = - y;\n");//$NON-NLS-1$
+        writer.write("z; }) zoot;\n");//$NON-NLS-1$
+        parse(writer.toString(), true, ParserLanguage.CPP, true);
     }
 
-    
+    public void testBug39701A() throws Exception {
+        parse(
+                "extern template int max (int, int);", true, ParserLanguage.CPP, true); //$NON-NLS-1$
+    }
+
+    public void testBug39701B() throws Exception {
+        parse("inline template class Foo<int>;", true, ParserLanguage.CPP, true); //$NON-NLS-1$
+    }
+
+    public void testBug39701C() throws Exception {
+        parse("static template class Foo<int>;", true, ParserLanguage.CPP, true); //$NON-NLS-1$
+    }
+
 }

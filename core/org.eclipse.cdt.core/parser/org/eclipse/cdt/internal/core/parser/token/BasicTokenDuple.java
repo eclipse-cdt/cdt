@@ -112,6 +112,8 @@ public class BasicTokenDuple implements ITokenDuple {
 				continue;
 			}
 		}
+		ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, last );
+		r.add( d );
 		return (ITokenDuple[]) r.toArray( new ITokenDuple[ r.size() ]);
 
 	}

@@ -132,4 +132,46 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 			}
 		}
 	}
+	
+	public ITokenDuple[] getSegments()
+	{
+		List r = new ArrayList();
+		IToken token = null;
+		IToken prev = null;
+		IToken last = getLastToken();
+		IToken startOfSegment = getFirstToken();
+		int count = 0;
+		for( ;; ){
+		    if( token == last )
+		        break;
+		    prev = token;
+			token = ( token != null ) ? token.getNext() : getFirstToken();
+			if( token.getType() == IToken.tLT )
+				token = TokenFactory.consumeTemplateIdArguments( token, last );
+			if( token.getType() == IToken.tCOLONCOLON  ){
+			    List newArgs = null;
+			    if( argLists[count] != null )
+			    {
+			        newArgs = new ArrayList( 1 );
+			        newArgs.add( argLists[count]);
+			    }
+			    ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, prev, newArgs );
+			    r.add( d );
+			    startOfSegment = token.getNext();
+			    ++count;
+				continue;
+			}
+		}
+	    List newArgs = null;
+	    if( argLists[count] != null )
+	    {
+	        newArgs = new ArrayList( 1 );
+	        newArgs.add( argLists[count]);
+	    }
+		ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, last, newArgs);
+		r.add( d );
+		return (ITokenDuple[]) r.toArray( new ITokenDuple[ r.size() ]);
+
+	}
+
 }

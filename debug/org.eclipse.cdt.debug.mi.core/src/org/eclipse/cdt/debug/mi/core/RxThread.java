@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
+import org.eclipse.cdt.debug.mi.core.output.MIAsyncRecord;
 import org.eclipse.cdt.debug.mi.core.output.MIOOBRecord;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
@@ -31,7 +32,8 @@ public class RxThread extends Thread {
 	 * search for the corresponding token in rxQueue.
 	 */
 	public void run () {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(session.getInputStream()));
+		BufferedReader reader =
+			new BufferedReader(new InputStreamReader(session.getInputStream()));
 		StringBuffer buffer = new StringBuffer();
 		try {
 			while (true) {
@@ -52,20 +54,36 @@ public class RxThread extends Thread {
 	void processMIOutput(String buffer) {
 		MIOutput response = session.parse(buffer);
 		if (response != null) {
-			String id = response.getToken();
 			Queue rxQueue = session.getRxQueue();
-			Command cmd = rxQueue.removeCommand(id);
-			if (cmd != null) {
-				cmd.setMIOutput(response);
-				cmd.notifyAll();
+
+			// Notify any command waiting for a ResultRecord.
+			MIResultRecord rr = response.getMIResultRecord();
+			if (rr != null) {
+				int id = rr.geToken();
+				Command cmd = rxQueue.removeCommand(id);
+				if (cmd != null) {
+					cmd.setMIOutput(response);
+					cmd.notifyAll();
+				}
 			}
+
+			// A command may wait on a specific oob, like breakpointhit
 			MIOOBRecord[] oobs = response.getMIOOBRecords();
-			if (oobs != null && oobs.length > 0) {
-				processMIOOBRecords(oobs);
+			for (int i = 0; i < oobs.length; i++) {
+				if (oobs[i] instanceof MIAsyncRecord) {
+					int id = ((MIAsyncRecord)oobs[i]).getToken();
+					Command cmd = rxQueue.removeCommand(id);
+					if (cmd != null) {
+						cmd.setMIOutput(response);
+						cmd.notifyAll();
+					}
+				}
+				processMIOOBRecord(oobs[i]);
 			}
 		}
 	}
 
-	void processMIOOBRecords(MIOOBRecord[] oobs) {
+	void processMIOOBRecord(MIOOBRecord oob) {
+		// Dispatch a thread to deal with the listeners.
 	}
 }

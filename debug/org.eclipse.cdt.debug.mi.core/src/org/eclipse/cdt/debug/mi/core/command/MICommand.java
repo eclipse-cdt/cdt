@@ -22,7 +22,7 @@ public class MICommand extends Command
 	String[] options = empty;
 	String[] parameters = empty;
 	String operation = "";
-	String token = "";
+	int token = -1;
 	MIOutput miOutput = null;
 
 	public MICommand(String oper) {
@@ -95,11 +95,11 @@ public class MICommand extends Command
 		return command + "\n";
 	}
 
-	public String getToken() {
+	public int getToken() {
 		return token;
 	}
 
-	public void setToken(String t) {
+	public void setToken(int t) {
 		token = t;
 	}
 

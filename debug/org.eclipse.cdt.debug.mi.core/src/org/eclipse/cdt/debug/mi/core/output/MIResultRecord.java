@@ -4,7 +4,18 @@ package org.eclipse.cdt.debug.mi.core.output;
  */
 public class MIResultRecord {
 
+	public static final MIResult[] nullResults = new MIResult[0];
+	MIResult[] results = null;
 	String resultClass = "";
+	int token = -1;
+
+	public int geToken() {
+		return token;
+	}
+
+	public void setToken(int t) {
+		token = t;
+	}
 
 	/**
 	 */
@@ -12,7 +23,18 @@ public class MIResultRecord {
 		return resultClass;
 	}
 
+	public void setResultClass(String type) {
+		resultClass = type;
+	}
+
 	public MIResult[] getResults() {
-		return null;
+		if (results == null) {
+			return nullResults;
+		}
+		return results;
+	}
+
+	public void setResults(MIResult[] res) {
+		results = res;
 	}
 }

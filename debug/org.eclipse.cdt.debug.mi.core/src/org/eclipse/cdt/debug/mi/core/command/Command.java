@@ -23,9 +23,9 @@ public abstract class Command
 	 * 
 	 * @return the identifier of this request
 	 */
-	public abstract String getToken();
+	public abstract int getToken();
 	
-	public abstract void setToken(String token);
+	public abstract void setToken(int token);
 
 	public abstract String toString();
 

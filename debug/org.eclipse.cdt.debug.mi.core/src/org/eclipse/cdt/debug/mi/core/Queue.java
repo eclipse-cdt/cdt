@@ -19,14 +19,14 @@ public class Queue {
 		list = Collections.synchronizedList(new LinkedList());
 	}
 
-	public Command removeCommand(String id) {
+	public Command removeCommand(int id) {
 		//print("in removeCommand(" + id + ") - entering");
 		synchronized (list) {
 			int size = list.size();
 			for (int i = 0; i < size; i++) {
 				Command cmd = (Command)list.get(i);
-				String token = cmd.getToken();
-				if (token.equals(id)) {
+				int token = cmd.getToken();
+				if (token == id) {
 					list.remove(cmd);
 					return cmd;
 				} 

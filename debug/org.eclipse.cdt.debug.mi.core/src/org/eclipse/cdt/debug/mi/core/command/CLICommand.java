@@ -18,7 +18,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public class CLICommand extends Command
 {
-	String token = "";
+	int token = -1;
 	MIOutput miOutput = null;
 	
 	/**
@@ -26,11 +26,11 @@ public class CLICommand extends Command
 	 * 
 	 * @return the text representation of this command
 	 */
-	public String getToken() {
+	public int getToken() {
 		return token;
 	}
 	
-	public void setToken(String t) {
+	public void setToken(int t) {
 		token = t;
 	}
 	

@@ -438,7 +438,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		data.widthHint = convertWidthInCharsToPixels( 10 );
 		toText.getTextControl( parent ).setLayoutData( data );
 		toText.setPreferenceStore( getMICorePreferenceStore() );
-		toText.setPreferencePage( this );
+		toText.setPage( this );
 		toText.setValidateStrategy( StringFieldEditor.VALIDATE_ON_KEY_STROKE );
 		toText.setValidRange( IMIConstants.MIN_REQUEST_TIMEOUT, IMIConstants.MAX_REQUEST_TIMEOUT );
 		String minValue = Integer.toString( IMIConstants.MIN_REQUEST_TIMEOUT );
@@ -450,7 +450,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 
 	private BooleanFieldEditor createRefreshField( String preference, String label, Composite parent ) {
 		BooleanFieldEditor field = new BooleanFieldEditor( preference, label, parent );
-		field.setPreferencePage( this );
+		field.setPage( this );
 		field.setPreferenceStore( new MIPreferenceStore( MIPlugin.getDefault().getPluginPreferences() ) );
 		field.load();
 		return field;

@@ -12,13 +12,13 @@ package org.eclipse.cdt.debug.mi.core.event;
  */
 public class MIThreadExitEvent extends MIEvent {
 
-		int tid;
+	int tid;
 
-		public MIThreadExitEvent(int id) {
-			tid = id;
-		}
+	public MIThreadExitEvent(int id) {
+		tid = id;
+	}
 
-		public int getId() {
-			return tid;
-		}
+	public int getId() {
+		return tid;
+	}
 }

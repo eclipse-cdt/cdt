@@ -40,66 +40,15 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 	Attribute attribute;
 	ArrayList symbols;
 	
-	public class ElfSymbol implements ISymbol {
-	
-		String filename;
-		int lineno;
-		String name;
-		int type;
-
-		public ElfSymbol (Elf.Symbol symbol, int t) throws IOException {
-			filename = symbol.getFilename();
-			name = symbol.toString();
-			lineno = symbol.getFuncLineNumber();
-			type = t;
-		}
-		
-		/**
-		 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getFilename()
-		 */
-		public String getFilename() {
-			return filename;
-		}
-
-		/**
-		 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getLineNumber()
-		 */
-		public int getLineNumber() {
-			return lineno;
-		}
-
-		/**
-		 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getName()
-		 */
-		public String getName() {
-			return name;
-		}
-
-		/**
-		 * @see org.eclipse.cdt.core.model.IBinaryParser.ISymbol#getType()
-		 */
-		public int getType() {
-			return type;
-		}
-
-	}
-	
 	public ElfBinaryFile(IFile f) throws IOException {
-		this(f, null, null);
+		this(f, null);
 	}
 
 	public ElfBinaryFile(IFile f, String n) throws IOException {
-		this(f, n, null);
-	}
-
-	public ElfBinaryFile(IFile f, String n, Elf elf) throws IOException {
 		file = f;
 		objectName = n;
-		if (elf != null) {
-			loadAttributes(new ElfHelper(elf));
-		} else {
-			loadAttributes();
-		}
+		loadInformation();
+		hasChanged();
 	}
 
 	/**
@@ -292,7 +241,13 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getName()
 	 */
 	public String getName() {
-		return objectName;
+		if (objectName != null) {
+			return objectName;
+		}
+		if (file != null) {
+			return file.getName();
+		}
+		return "";
 	}
 
 	public String toString() {
@@ -328,24 +283,30 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 
 	protected ElfHelper getElfHelper() throws IOException {
 		// Archive ?
-		if (file != null && file.exists() && objectName != null) {
-			ElfHelper helper = null;
-			AR ar = null;
-			try {	
-				ar = new AR(file.getLocation().toOSString());
-				AR.ARHeader[] headers = ar.getHeaders();
-				for (int i = 0; i < headers.length; i++) {
-					if (objectName.equals(headers[i].getObjectName())) {
-						helper = new ElfHelper(headers[i].getElf());
-						break;
+		if (file != null && objectName != null) {
+			IPath location = file.getLocation();
+			if (location != null) {
+				ElfHelper helper = null;
+				AR ar = null;
+				try {	
+					ar = new AR(file.getLocation().toOSString());
+					AR.ARHeader[] headers = ar.getHeaders();
+					for (int i = 0; i < headers.length; i++) {
+						AR.ARHeader hdr = headers[i];
+						if (objectName.equals(hdr.getObjectName())) {
+							helper = new ElfHelper(hdr.getElf());
+							break;
+						}
+					}
+				} finally {
+					if (ar != null) {
+						ar.dispose();
 					}
 				}
-			} finally {
-				if (ar != null) {
-					ar.dispose();
+				if (helper != null) {
+					return helper;
 				}
 			}
-			return helper;
 		} else if (file != null && file.exists()) {
 			IPath path = file.getLocation();
 			if (path == null) {
@@ -357,21 +318,21 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 	}
 
 	protected void loadInformation() throws IOException {
-		loadAttributes();
+		ElfHelper helper = getElfHelper();
+		loadInformation(helper);
+		helper.dispose();
+	}
+
+	private void loadInformation(ElfHelper helper) throws IOException {
+		loadAttributes(helper);
 		if (symbols != null) {
 			symbols.clear();
-			loadSymbols();
+			loadSymbols(helper);
 			symbols.trimToSize();
 		}
 	}
 	
-	protected void loadAttributes() throws IOException {
-		ElfHelper helper = getElfHelper();
-		loadAttributes(helper);
-		helper.dispose();
-	}
-
-	protected void loadAttributes(ElfHelper helper) throws IOException {
+	private void loadAttributes(ElfHelper helper) throws IOException {
 		Elf.Dynamic[] sharedlibs = helper.getNeeded();
 		needed = new String[sharedlibs.length];
 		for (int i = 0; i < sharedlibs.length; i++) {
@@ -382,13 +343,7 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 		attribute = helper.getElf().getAttributes();
 	}
 
-	protected void loadSymbols() throws IOException {
-		ElfHelper helper = getElfHelper();
-		loadSymbols(helper);
-		helper.dispose();
-	}
-
-	protected void loadSymbols(ElfHelper helper) throws IOException {
+	private void loadSymbols(ElfHelper helper) throws IOException {
 		Elf.Dynamic[] sharedlibs = helper.getNeeded();
 		needed = new String[sharedlibs.length];
 		for (int i = 0; i < sharedlibs.length; i++) {
@@ -405,10 +360,14 @@ public class ElfBinaryFile extends PlatformObject implements IBinaryFile,
 		symbols.trimToSize();
 	}
 
-	protected void addSymbols(Elf.Symbol[] array, int type) {
+	private void addSymbols(Elf.Symbol[] array, int type) {
 		for (int i = 0; i < array.length; i++) {
 			try {
-				ISymbol sym = new ElfSymbol(array[i], type);
+				Symbol sym = new Symbol();
+				sym.filename = array[i].getFilename();
+				sym.name = array[i].toString();
+				sym.lineno = array[i].getFuncLineNumber();
+				sym.type = type;
 				symbols.add(sym);
 			} catch (IOException e) {
 			}

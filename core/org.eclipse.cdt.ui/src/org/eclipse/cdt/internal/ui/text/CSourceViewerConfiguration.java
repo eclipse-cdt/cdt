@@ -202,6 +202,12 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 		return new CDoubleClickSelector();
 	}
 
+	/**
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDefaultPrefixes(ISourceViewer, String)
+	 */
+	public String[] getDefaultPrefixes(ISourceViewer sourceViewer, String contentType) {
+		return new String[] { "//", "" };
+	}
 
 	/**
 	 * @see SourceViewerConfiguration#getDefaultPrefix(ISourceViewer, String)
@@ -342,5 +348,5 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	protected IPreferenceStore getPreferenceStore() {
 		return CUIPlugin.getDefault().getPreferenceStore();
 	}
-	
+
 }

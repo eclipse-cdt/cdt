@@ -1,3 +1,10 @@
+2004-08-27 Alain Magloire
+
+	Fix for 72135
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathBasePage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathSourceEntryPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/TreeListDialgField.java
+
 2004-08-26 Alain Magloire
 	Be on the same length as the Java Editor and Ant Editor
 	for the Preference page.  Misc warning removes, when

@@ -67,13 +67,13 @@ public class TreeListDialogField extends DialogField {
 
 	private Label fLastSeparator;
 
-	private Tree fTreeControl;
+	Tree fTreeControl;
 	private Composite fButtonsControl;
 	private ISelection fSelectionWhenEnabled;
 
-	private ITreeListAdapter fTreeAdapter;
+	ITreeListAdapter fTreeAdapter;
 
-	private Object fParentElement;
+	Object fParentElement;
 	private int fTreeExpandLevel;
 
 	/**
@@ -389,7 +389,7 @@ public class TreeListDialogField extends DialogField {
 		return fButtonsControl;
 	}
 
-	private void doButtonSelected(SelectionEvent e) {
+	void doButtonSelected(SelectionEvent e) {
 		if (fButtonControls != null) {
 			for (int i = 0; i < fButtonControls.length; i++) {
 				if (e.widget == fButtonControls[i]) {

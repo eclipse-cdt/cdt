@@ -28,10 +28,13 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 		super(title, image);
 	}
 
-	protected void fixNestingConflicts(List newEntries, List existing, Set modifiedSourceEntries) {
+	protected void fixNestingConflicts(List newEntries, List existingList, Set modifiedSourceEntries) {
+		ArrayList existing = new ArrayList(existingList);
 		for (int i = 0; i < newEntries.size(); i++) {
 			CPElement curr = (CPElement) newEntries.get(i);
 			addExclusionPatterns(curr, existing, modifiedSourceEntries);
+			// add the entry to the existing list so it can be analyse also.
+			existing.add(curr);
 		}
 	}
 

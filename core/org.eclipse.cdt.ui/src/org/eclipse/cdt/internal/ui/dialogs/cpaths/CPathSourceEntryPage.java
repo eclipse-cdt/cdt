@@ -208,37 +208,16 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		}
 	}
 
-	private boolean hasFolders(IContainer container) {
-		try {
-			IResource[] members = container.members();
-			for (int i = 0; i < members.length; i++) {
-				if (members[i] instanceof IContainer) {
-					return true;
-				}
-			}
-		} catch (CoreException e) {
-			// ignore
-		}
-		return false;
-	}
-
 	protected void sourcePageCustomButtonPressed(DialogField field, int index) {
 		if (field == fFoldersList) {
 			if (index == IDX_ADD) {
 				List elementsToAdd = new ArrayList(10);
 				IProject project = fCurrCProject.getProject();
 				if (project.exists()) {
-					if (hasFolders(project)) {
-						CPElement[] srcentries = openSourceContainerDialog(null);
-						if (srcentries != null) {
-							for (int i = 0; i < srcentries.length; i++) {
-								elementsToAdd.add(srcentries[i]);
-							}
-						}
-					} else {
-						CPElement entry = openNewSourceContainerDialog(null, true);
-						if (entry != null) {
-							elementsToAdd.add(entry);
+					CPElement[] srcentries = openSourceContainerDialog(null);
+					if (srcentries != null) {
+						for (int i = 0; i < srcentries.length; i++) {
+							elementsToAdd.add(srcentries[i]);
 						}
 					}
 				} else {
@@ -372,7 +351,7 @@ public class CPathSourceEntryPage extends CPathBasePage {
 		return false;
 	}
 
-	private void sourcePageDialogFieldChanged(DialogField field) {
+	void sourcePageDialogFieldChanged(DialogField field) {
 		if (fCurrCProject == null) {
 			// not initialized
 			return;

@@ -1,4 +1,9 @@
-2003-02023 Alain Magloire
+2003-02-24 Alain Magloire
+
+	* model/org/eclipse/cdt/internal/core/model/Resource.java:
+	Removed, this file was implementing IResource.
+
+2003-02-23 Alain Magloire
 
 	Remove implementations of IResource and IContainer.
 

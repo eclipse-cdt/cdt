@@ -37,8 +37,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 public class CoreModel {
 	private static CoreModel cmodel = null;
-	private static CModelManager manager = null;
-	private static PathEntryManager pathEntryManager = null;
+	private static CModelManager manager = CModelManager.getDefault();
+	private static PathEntryManager pathEntryManager = PathEntryManager.getDefault();
 	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel"; //$NON-NLS-1$
 
 	/**
@@ -196,7 +196,7 @@ public class CoreModel {
 	/**
 	 * Return the list of headers extensions.
 	 */
-	public String[] getHeaderExtensions() {
+	public static String[] getHeaderExtensions() {
 		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
 		ICFileTypeAssociation[] associations = resolver.getFileTypeAssociations();
 		ArrayList list = new ArrayList(associations.length);
@@ -214,7 +214,7 @@ public class CoreModel {
 	/**
 	 * Returns the list of source extensions.
 	 */
-	public String[] getSourceExtensions() {
+	public static String[] getSourceExtensions() {
 		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
 		ICFileTypeAssociation[] associations = resolver.getFileTypeAssociations();
 		ArrayList list = new ArrayList(associations.length);
@@ -232,7 +232,7 @@ public class CoreModel {
 	/**
 	 * Returns the list of headers and sources extensions
 	 */
-	public String[] getTranslationUnitExtensions() {
+	public static String[] getTranslationUnitExtensions() {
 		ICFileTypeResolver resolver = CCorePlugin.getDefault().getFileTypeResolver();
 		ICFileTypeAssociation[] associations = resolver.getFileTypeAssociations();
 		ArrayList list = new ArrayList(associations.length);
@@ -733,7 +733,7 @@ public class CoreModel {
 	 * @exception CModelException
 	 *                if the entries could not be set. Reasons include:
 	 */
-	public void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
+	public static void setRawPathEntries(ICProject cproject, IPathEntry[] newEntries, IProgressMonitor monitor) throws CModelException {
 		pathEntryManager.setRawPathEntries(cproject, newEntries, monitor);
 	}
 
@@ -748,7 +748,7 @@ public class CoreModel {
 	 *                while accessing its corresponding resource
 	 * @see IPathEntry
 	 */
-	public IPathEntry[] getRawPathEntries(ICProject cproject) throws CModelException {
+	public static IPathEntry[] getRawPathEntries(ICProject cproject) throws CModelException {
 		return pathEntryManager.getRawPathEntries(cproject);
 	}
 
@@ -767,7 +767,7 @@ public class CoreModel {
 	 * @exception CModelException
 	 * @see IPathEntry
 	 */
-	public IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
+	public static IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
 		return pathEntryManager.getResolvedPathEntries(cproject);
 	}
 
@@ -791,13 +791,46 @@ public class CoreModel {
 	}
 
 	/**
+	 * Validate a given path entries for a project, using the following rules:
+	 * <ul>
+	 *   <li> Entries cannot collide with each other; that is, all entry paths must be unique.
+	 *   <li> The output entry location path can be empty, if not they must be located inside the project.
+	 *   <li> Source entry location can be null, if not they must be located inside the project,
+	 *   <li> A project entry cannot refer to itself directly (that is, a project cannot prerequisite itself).
+     *   <li> Source entries or output locations cannot coincidate or be nested in each other, except for the following scenarii listed below:
+	 *      <ul><li> A source folder can coincidate with its own output location, in which case this output can then contain library archives. 
+	 *                     However, a specific output location cannot coincidate with any library or a distinct source folder than the one referring to it. </li> 
+	 *              <li> A source/library folder can be nested in any source folder as long as the nested folder is excluded from the enclosing one. </li>
+	 * 			<li> An output location can be nested in a source folder, if the source folder coincidates with the project itself, or if the output
+	 * 					location is excluded from the source folder. </li>
+	 *      </ul>
+	 * </ul>
+	 * 
+	 *  Note that the entries are not validated automatically. Only bound variables or containers are considered 
+	 *  in the checking process (this allows to perform a consistency check on an entry which has references to
+	 *  yet non existing projects, folders, ...).
+	 *  <p>
+	 *  This validation is intended to anticipate issues prior to assigning it to a project. In particular, it will automatically
+	 *  be performed during the setting operation (if validation fails, the classpath setting will not complete)
+	 *  and during getResolvedPathEntries.
+	 *  <p>
+	 * @param cProject the given C project
+	 * @param PathEntry entries
+	 * @return a status object with code <code>IStatus.OK</code> if
+	 *		the entries location are compatible, otherwise a status 
+	 *		object indicating what is wrong with them
+	 */
+	//private static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {
+		//pathEntryManager.validatePathEntry(cproject, entries)
+	//	return null;
+	//}
+
+	/**
 	 * Return the singleton.
 	 */
 	public static CoreModel getDefault() {
 		if (cmodel == null) {
 			cmodel = new CoreModel();
-			manager = CModelManager.getDefault();
-			pathEntryManager = PathEntryManager.getDefault();
 		}
 		return cmodel;
 	}

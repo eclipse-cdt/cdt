@@ -16,9 +16,7 @@ import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
 import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.core.parser.extension.IParserExtensionFactory;
-import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 import org.eclipse.cdt.internal.core.parser.ast.GCCASTExtension;
-import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtension;
 
 /**
  * @author jcamelon
@@ -32,15 +30,6 @@ public class ParserExtensionFactory implements IParserExtensionFactory {
 	 */
 	public ParserExtensionFactory(ExtensionDialect dialect) {
 		this.dialect = dialect;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IParserExtensionFactory#createScannerExtension()
-	 */
-	public IScannerExtension createScannerExtension() throws ParserFactoryError {
-		if( dialect == ExtensionDialect.GCC )
-			return new GCCScannerExtension();
-		throw new ParserFactoryError( ParserFactoryError.Kind.BAD_DIALECT );
 	}
 
 	/* (non-Javadoc)

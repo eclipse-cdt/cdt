@@ -10,7 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import org.eclipse.cdt.core.parser.GCCKeywords;
+import org.eclipse.cdt.core.parser.IGCCToken;
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
  * @author jcamelon
@@ -29,8 +34,25 @@ public class GPPScannerConfiguration extends GNUScannerConfiguration implements
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#getAdditionalKeywords()
      */
     public CharArrayIntMap getAdditionalKeywords() {
-        // TODO Auto-generated method stub
-        return null;
+        CharArrayIntMap additionalCPPKeywords = new CharArrayIntMap( 8, -1 );
+		additionalCPPKeywords.put( GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
+		additionalCPPKeywords.put( GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );		
+		additionalCPPKeywords.put( Keywords.cRESTRICT, IToken.t_restrict );
+		additionalCPPKeywords.put( Keywords.c_COMPLEX, IToken.t__Complex );
+		additionalCPPKeywords.put( Keywords.c_IMAGINARY, IToken.t__Imaginary );
+		return additionalCPPKeywords;
+    }
+
+    private static final ObjectStyleMacro __asm__ = new ObjectStyleMacro(
+            "__asm__".toCharArray(), "asm".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration#getAdditionalMacros()
+     */
+    public CharArrayObjectMap getAdditionalMacros() {
+        CharArrayObjectMap result = super.getAdditionalMacros();
+        result.put( __asm__.name, __asm__ );
+        return result;
     }
 
 }

@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 
 /**
  * @author jcamelon
@@ -27,16 +26,15 @@ public class DOMScanner extends Scanner2 {
     /**
      * @param reader
      * @param info
-     * @param requestor
      * @param parserMode
      * @param language
      * @param log
-     * @param extension
      * @param workingCopies
+     * @param requestor
      */
-    public DOMScanner(CodeReader reader, IScannerInfo info, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtension extension, List workingCopies, IScannerConfiguration configuration) {
-        super(reader, info, null, parserMode, language, log, extension,
-                workingCopies, configuration);
+    public DOMScanner(CodeReader reader, IScannerInfo info, ParserMode parserMode, ParserLanguage language, IParserLogService log, List workingCopies, IScannerConfiguration configuration) {
+        super(reader, info, null, parserMode, language, log, workingCopies,
+                configuration);
     }
 
     /* (non-Javadoc)

@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 
 /**
  * @author jcamelon
@@ -20,8 +21,9 @@ public interface IScannerConfiguration {
     public boolean initializeMacroValuesTo1();
     public boolean support$InIdentifiers();
     public boolean supportMinAndMaxOperators();
+    
     public CharArrayIntMap getAdditionalKeywords();
+
     public char [] supportAdditionalNumericLiteralSuffixes();
-    
-    
+    public CharArrayObjectMap getAdditionalMacros();
 }

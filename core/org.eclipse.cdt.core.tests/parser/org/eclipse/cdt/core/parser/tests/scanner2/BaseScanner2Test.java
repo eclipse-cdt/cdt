@@ -29,9 +29,7 @@ import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.internal.core.parser.ParserExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.IScannerConfiguration;
@@ -85,7 +83,7 @@ public class BaseScanner2Test extends TestCase {
 		    configuration = new GCCScannerConfiguration();
 		else
 		    configuration = new GPPScannerConfiguration();
-		return new Scanner2( code, config, ourRequestor, ourMode, language, logService, new ParserExtensionFactory( ExtensionDialect.GCC ).createScannerExtension(), workingCopies, configuration );
+		return new Scanner2( code, config, ourRequestor, ourMode, language, logService, workingCopies, configuration );
     }
 
 	public int fullyTokenize() throws Exception

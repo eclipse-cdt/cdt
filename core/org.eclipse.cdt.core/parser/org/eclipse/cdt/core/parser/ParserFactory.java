@@ -93,7 +93,7 @@ public class ParserFactory {
 		else
 		    configuration = new GPPScannerConfiguration();
 
-		return new Scanner2( code, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension(), workingCopies, configuration );
+		return new Scanner2( code, config, ourRequestor, ourMode, language, logService, workingCopies, configuration );
     }
     
     public static IScanner createScanner( String fileName, IScannerInfo config, ParserMode mode, ParserLanguage language, ISourceElementRequestor requestor, IParserLogService log, List workingCopies ) throws ParserFactoryError, IOException

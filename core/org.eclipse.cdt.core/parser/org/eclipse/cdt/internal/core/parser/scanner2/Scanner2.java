@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -38,7 +39,6 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -94,7 +94,6 @@ public class Scanner2 implements IScanner, IScannerData {
 	
 	private ParserLanguage language;
 	private IParserLogService log;
-	private IScannerExtension scannerExtension;
 	
 	private CharArrayObjectMap definitions = new CharArrayObjectMap(512);
 	private String[] includePaths;
@@ -139,7 +138,9 @@ public class Scanner2 implements IScanner, IScannerData {
 	private Iterator preIncludeFiles = EmptyIterator.EMPTY_ITERATOR;
 	private boolean isInitialized = false;
 	private final char [] suffixes; 
-	boolean support$Initializers = false;
+	private final boolean support$Initializers;
+	private final boolean supportMinAndMax;
+    private final CharArrayIntMap additionalKeywords;
 	
 
 	public Scanner2(CodeReader reader,
@@ -148,10 +149,9 @@ public class Scanner2 implements IScanner, IScannerData {
 					ParserMode parserMode,
 					ParserLanguage language,
 					IParserLogService log,
-					IScannerExtension extension,
-					List workingCopies, IScannerConfiguration configuration) {
+					List workingCopies,
+					IScannerConfiguration configuration) {
 
-		this.scannerExtension = extension;
 		this.requestor = requestor;
 		this.parserMode = parserMode;
 		this.language = language;
@@ -164,16 +164,19 @@ public class Scanner2 implements IScanner, IScannerData {
 		else
 		    suffixes = EMPTY_CHAR_ARRAY;
 		support$Initializers = configuration.support$InIdentifiers();
+		supportMinAndMax = configuration.supportMinAndMaxOperators();
 		
 		if( language == ParserLanguage.C )
 		    keywords = ckeywords;
 		else 
 		    keywords = cppkeywords;
+		
+		additionalKeywords = configuration.getAdditionalKeywords();
 		    
 		if (reader.filename != null)
 			fileCache.put(reader.filename, reader);
 
-		setupBuiltInMacros();
+		setupBuiltInMacros(configuration);
 		
 		if (info.getDefinedSymbols() != null) {
 			Map symbols = info.getDefinedSymbols();
@@ -859,15 +862,10 @@ public class Scanner2 implements IScanner, IScannerData {
 							++bufferPos[bufferStackPos];
 							return newToken(IToken.tSHIFTL );
 						}
-						else
+						else if( buffer[pos+1] == '?' && supportMinAndMax )
 						{
-							char [] queryCharArray  = CharArrayUtils.extract( buffer, pos, 2 ); 
-							if( scannerExtension.isExtensionOperator( language, queryCharArray  ) )
-							{
-								++bufferPos[ bufferStackPos ];
-								return scannerExtension.createExtensionToken( this, queryCharArray  );
-							}
-								
+						    ++bufferPos[bufferStackPos];
+							return newToken( IGCCToken.tMIN, CharArrayUtils.extract( buffer, pos, 2 ) );
 						}
 					}
 					return newToken(IToken.tLT );
@@ -887,15 +885,12 @@ public class Scanner2 implements IScanner, IScannerData {
 							++bufferPos[bufferStackPos];
 							return newToken(IToken.tSHIFTR);
 						}
-						else
+						else if( buffer[pos+1] == '?' && supportMinAndMax )
 						{
-							char [] queryCharArray = CharArrayUtils.extract( buffer, pos, 2 ); 
-							if( scannerExtension.isExtensionOperator( language, queryCharArray ) )
-							{
-								++bufferPos[ bufferStackPos ];
-								return scannerExtension.createExtensionToken( this, queryCharArray );
-							}
+						    ++bufferPos[bufferStackPos];
+							return newToken( IGCCToken.tMAX, CharArrayUtils.extract( buffer, pos, 2 ) );
 						}
+						
 					}
 					return newToken(IToken.tGT );
 				
@@ -1026,14 +1021,20 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		
 		char [] result = escapedNewline ? removedEscapedNewline( buffer, start, len ) : CharArrayUtils.extract( buffer, start, len );
-		if( scannerExtension.isExtensionKeyword( language,  result))
-			return scannerExtension.createExtensionToken( this, result );
 		int tokenType = escapedNewline ? keywords.get(result, 0, result.length) 
 		                               : keywords.get(buffer, start, len );
 		
 		if (tokenType == keywords.undefined){
+		    tokenType = escapedNewline ? additionalKeywords.get(result, 0, result.length) 
+                    : additionalKeywords.get(buffer, start, len );
+		    
+		    if( tokenType == additionalKeywords.undefined )
+		    {
+			    result = (result != null) ? result : CharArrayUtils.extract( buffer, start, len );
+				return newToken(IToken.tIDENTIFIER, result );
+		    }
 		    result = (result != null) ? result : CharArrayUtils.extract( buffer, start, len );
-			return newToken(IToken.tIDENTIFIER, result );
+			return newToken(tokenType, result );
 		}
 		return newToken(tokenType);
 	}
@@ -3153,7 +3154,7 @@ public class Scanner2 implements IScanner, IScannerData {
 
 	private int offsetBoundary = -1;
 	
-	protected void setupBuiltInMacros() {
+	protected void setupBuiltInMacros( IScannerConfiguration config ) {
 
 		definitions.put(__STDC__.name, __STDC__);
 		definitions.put(__FILE__.name, __FILE__);
@@ -3168,9 +3169,10 @@ public class Scanner2 implements IScanner, IScannerData {
 			definitions.put( __STDC_HOSTED__.name, __STDC_HOSTED__ );
 			definitions.put( __STDC_VERSION__.name, __STDC_VERSION__ );
 		}
-		
-		scannerExtension.setupBuiltInMacros( this );		
-		
+
+		CharArrayObjectMap toAdd = config.getAdditionalMacros();
+		for( int i = 0; i < toAdd.size(); ++i )
+		    definitions.put( toAdd.keyAt( i ), toAdd.getAt(i) );
 	}
 	
 

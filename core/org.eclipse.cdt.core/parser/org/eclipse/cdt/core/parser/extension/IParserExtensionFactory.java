@@ -18,8 +18,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
  * @author jcamelon
  */
 public interface IParserExtensionFactory {
-
-	public IScannerExtension createScannerExtension() throws ParserFactoryError;
+    
 	public IParserExtension createParserExtension() throws ParserFactoryError;
 	public IASTFactoryExtension createASTExtension(ParserMode mode);
 }

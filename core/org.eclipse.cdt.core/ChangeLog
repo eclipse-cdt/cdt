@@ -1,3 +1,12 @@
+2004-06-01 Alain Magloire
+
+	A release of the CDT was distributed with
+	a typ "ELF" instead of "Elf" we provide
+	and extension point pointing back to "ELF"
+	parser for backward comp.
+
+	* plugin.xml
+
 2004-05-26 Alain Magloire
 
 	Do not generate CElementDelta for pathEntries

@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -52,6 +53,12 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	private static final String PREFIX = "BinaryParserBlock"; //$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
 	private static final String DESC = PREFIX + ".desc"; //$NON-NLS-1$
+
+	private static final String ATTR_FILTER = "filter"; //$NON-NLS-1$
+	private static final String ATTR_NAME = "name"; //$NON-NLS-1$
+	private static final String ATTR_NAME_VISIBILITY = "visibility"; //$NON-NLS-1$
+	private static final String ATTR_VALUE = "value"; //$NON-NLS-1$
+	private static final String ATTR_VALUE_PRIVATE = "private"; //$NON-NLS-1$
 
 	protected CheckedListDialogField binaryList;
 	Map configMap;
@@ -140,9 +147,28 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			IExtension[] exts = point.getExtensions();
 			configMap = new HashMap(exts.length);
 			for (int i = 0; i < exts.length; i++) {
-				configMap.put(exts[i].getUniqueIdentifier(), new BinaryParserConfiguration(exts[i]));
+				if (isExtensionVisible(exts[i])) {
+					configMap.put(exts[i].getUniqueIdentifier(), new BinaryParserConfiguration(exts[i]));
+				}
 			}
 		}
+	}
+
+	private boolean isExtensionVisible(IExtension ext) {
+		IConfigurationElement[] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			IConfigurationElement[] children = elements[i].getChildren(ATTR_FILTER);
+			for (int j = 0; j < children.length; j++) {
+				String name = children[j].getAttribute(ATTR_NAME);
+				if (name != null && name.equals(ATTR_NAME_VISIBILITY)) {
+					String value = children[j].getAttribute(ATTR_VALUE);
+					if (value != null && value.equals(ATTR_VALUE_PRIVATE)) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	public void createControl(Composite parent) {

@@ -1,5 +1,15 @@
 2004-06-01 Alain Magloire
 
+	A release of the CDT was distributed with
+	a typ "ELF" instead of "Elf" we provide
+	and extension point pointing back to "ELF"
+	parser for backward comp.  But ignoring
+	it in the UI.
+
+	* src/org/eclipse/cdt/ui/dialogs/BinaryParserBlock.java
+
+2004-06-01 Alain Magloire
+
 	Fall back on the Nature of the project
 	to decide of the syntax of the CEditor.
 

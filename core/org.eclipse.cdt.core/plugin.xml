@@ -97,7 +97,22 @@
          </run>
       </cextension>
    </extension>
-
+   <!-- This is for backward compatibility: an Typo was introduce in on of the realease
+        and "ELF" instead of "Elf" -->
+   <extension
+         id="TYPO_Elf"
+         name="%ElfParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <filter
+            name = "visibility"
+            value = "private">
+         </filter>
+         <run
+               class="org.eclipse.cdt.utils.elf.parser.ElfParser">
+         </run>
+      </cextension>
+   </extension>
 <!-- =================================================================================== -->
 <!-- Define the list of Error Parser provided by the CDT                                 -->
 <!-- =================================================================================== -->

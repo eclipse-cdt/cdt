@@ -12,6 +12,10 @@ package org.eclipse.cdt.debug.core;
 
 import java.util.HashMap;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
@@ -21,12 +25,20 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
+import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
+import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
 
 /**
  * Provides utility methods for creating debug sessions, targets and 
@@ -345,6 +357,34 @@ public class CDIDebugModel {
 						}
 					}
 				}
+			}
+		}
+		return null;
+	}
+
+	public static IExpression createExpression( IDebugTarget target, String text ) throws DebugException {
+		if ( target != null && target instanceof CDebugTarget ) {
+			try {
+				ICDIExpression cdiExpression = ((CDebugTarget)target).getCDISession().getExpressionManager().createExpression( text );
+				return new CExpression( (CDebugTarget)target, cdiExpression );
+			}
+			catch( CDIException e ) {
+				throw new DebugException( new Status( IStatus.ERROR, getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, e.getMessage(), null ) );
+			}
+		}
+		return null;
+	}
+
+	public static IExpression createExpressionForGlobalVariable( IDebugTarget target, IPath fileName, String name ) throws DebugException {
+		if ( target != null && target instanceof CDebugTarget ) {
+			ICDIVariableObject vo = null;
+			try {
+				vo = ((CDebugTarget)target).getCDISession().getVariableManager().getGlobalVariableObject( fileName.lastSegment(), null, name );
+				ICDIVariable cdiVariable = ((CDebugTarget)target).getCDISession().getVariableManager().createVariable( vo );
+				return new CExpression( (CDebugTarget)target, cdiVariable );
+			}
+			catch( CDIException e ) {
+				throw new DebugException( new Status( IStatus.ERROR, getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, (vo != null) ? vo.getName() + ": " + e.getMessage() : e.getMessage(), null ) ); //$NON-NLS-1$
 			}
 		}
 		return null;

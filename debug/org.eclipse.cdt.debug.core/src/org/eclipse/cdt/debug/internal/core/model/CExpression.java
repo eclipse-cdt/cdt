@@ -12,8 +12,10 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 
@@ -81,11 +83,21 @@ public class CExpression extends CModificationVariable
 	public void dispose()
 	{
 		super.dispose();
+		try {
+			ICDIExpression cdiExpression = getCDIExpression();
+			if ( cdiExpression != null ) {
+					getCDISession().getExpressionManager().destroyExpression( cdiExpression );
+			}
+		}
+		catch( CDIException e ) {
+			DebugPlugin.log( e );
+		}
 	}
 	
 	protected ICDIExpression getCDIExpression() throws CDIException
 	{
-		return (ICDIExpression)getCDIVariable();
+		ICDIVariable var = getCDIVariable();
+		return ( var instanceof ICDIExpression ) ? (ICDIExpression)var : null;
 	}
 
 	/**

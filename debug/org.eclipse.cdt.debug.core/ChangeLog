@@ -1,3 +1,12 @@
+2004-05-19 Mikhail Khodjaiants
+	Added the support of watch expressions.
+	* CDIDebugModel.java
+	* ICStackFrame.java
+	* CExpressionTarget.java: new
+	* CDebugTarget.java
+	* CExpression.java
+	* CStackFrame.java
+
 2004-05-14 Mikhail Khodjaiants
 	Update disassembly when source locator is changed.
 	* Disassembly.java

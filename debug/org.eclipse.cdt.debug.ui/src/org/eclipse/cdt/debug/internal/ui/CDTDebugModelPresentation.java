@@ -59,6 +59,9 @@ import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -176,8 +179,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			if ( ((EditorInputDelegate)input).getDelegate() == null )
 				return CDebugEditor.EDITOR_ID;
-			else
-				return getEditorId( ((EditorInputDelegate)input).getDelegate(), element );
+			return getEditorId( ((EditorInputDelegate)input).getDelegate(), element );
 		}
 
 		String id = null;
@@ -215,6 +217,8 @@ public class CDTDebugModelPresentation extends LabelProvider
 						break;
 				}
 			}
+			if ( element instanceof IWatchExpression && ((IWatchExpression)element).hasErrors() )
+				overlays[OverlayImageDescriptor.BOTTOM_LEFT] = CDebugImages.DESC_OVRS_ERROR;
 			if ( element instanceof ICVariable && ((ICVariable)element).isArgument() )
 				overlays[OverlayImageDescriptor.TOP_RIGHT] = CDebugImages.DESC_OVRS_ARGUMENT;
 			
@@ -238,10 +242,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 			{
 				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED ) );
 			}
-			else
-			{
-				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET ) );
-			}
+			return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET ) );
 		}
 		if ( element instanceof IThread )
 		{
@@ -338,6 +339,11 @@ public class CDTDebugModelPresentation extends LabelProvider
 				return label.toString();
 			}
 
+			if ( element instanceof IWatchExpression ) 
+			{
+				return getWatchExpressionText( (IWatchExpression)element );
+			}
+
 			if ( element instanceof IVariable )
 			{
 				label.append( getVariableText( (IVariable)element ) );
@@ -401,7 +407,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 			CDebugUIPlugin.log( e );
 		}
 
-		return null;
+		return getDefaultText( element );
 	}
 
 	protected boolean isShowQualifiedNames()
@@ -554,6 +560,27 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return DUMMY_STACKFRAME_LABEL;
 	}
 
+	protected String getWatchExpressionText( IWatchExpression expression ) {
+		StringBuffer result = new StringBuffer();
+		result.append( '"' ).append( expression.getExpressionText() ).append( '"' );
+		if ( expression.isPending() ) {
+			result.append( " = " ).append( "..." );  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		else {
+			IValue value = expression.getValue();
+			if ( value != null ) {
+				String valueString = DebugUIPlugin.getModelPresentation().getText( value );
+				if ( valueString.length() > 0 ) {
+					result.append( " = " ).append( valueString ); //$NON-NLS-1$
+				}
+			}
+		}
+		if ( !expression.isEnabled() ) {
+			result.append( CDebugUIPlugin.getResourceString( "internal.ui.CDTDebugModelPresentation.disabled" ) ); //$NON-NLS-1$
+		}
+		return result.toString();		
+	}
+
 	protected String getVariableText( IVariable var ) throws DebugException
 	{
 		StringBuffer label = new StringBuffer();
@@ -587,8 +614,6 @@ public class CDTDebugModelPresentation extends LabelProvider
 					label.append( ' ' );
 				}
 			}
-			if ( !((ICVariable)var).isEnabled() )
-				label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.disabled") ); //$NON-NLS-1$
 			String name = var.getName();
 			if ( name != null )
 				label.append( name.trim() );
@@ -625,10 +650,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 				}
 			}
 		}
+		if ( !((ICVariable)var).isEnabled() )
+			label.append( CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.disabled") ); //$NON-NLS-1$
 		return label.toString();
 	}
 
-	protected String getSharedLibraryText( ICSharedLibrary library, boolean qualified ) throws DebugException
+	protected String getSharedLibraryText( ICSharedLibrary library, boolean qualified )
 	{
 		String label = new String();
 		IPath path = new Path( library.getFileName() );
@@ -774,7 +801,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return label.toString();
 	}
 
-	protected StringBuffer appendResourceName( ICBreakpoint breakpoint, StringBuffer label, boolean qualified ) throws CoreException
+	protected StringBuffer appendResourceName( ICBreakpoint breakpoint, StringBuffer label, boolean qualified )
 	{
 		IPath path = breakpoint.getMarker().getResource().getLocation();
 		if ( !path.isEmpty() )
@@ -897,7 +924,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return overlays;
 	}
 
-	protected Image getVariableImage( IVariable element ) throws DebugException
+	protected Image getVariableImage( IVariable element )
 	{
 		if ( element instanceof ICVariable )
 		{
@@ -923,22 +950,22 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return null;
 	}
 
-	protected Image getRegisterGroupImage( IRegisterGroup element ) throws DebugException
+	protected Image getRegisterGroupImage( IRegisterGroup element )
 	{
 		return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER_GROUP );
 	}
 
-	protected Image getRegisterImage( IRegister element ) throws DebugException
+	protected Image getRegisterImage( IRegister element )
 	{
 		return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER );
 	}
 
-	protected Image getExpressionImage( IExpression element ) throws DebugException
+	protected Image getExpressionImage( IExpression element )
 	{
 		return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_EXPRESSION ) );
 	}
 
-	protected Image getSharedLibraryImage( ICSharedLibrary element ) throws DebugException
+	protected Image getSharedLibraryImage( ICSharedLibrary element )
 	{
 		if ( element.areSymbolsLoaded() )
 		{
@@ -971,5 +998,19 @@ public class CDTDebugModelPresentation extends LabelProvider
 	private boolean isEmpty( String str )
 	{
 		return ( str == null || str.length() == 0 );
+	}
+
+	/**
+	 * Returns a default text label for the debug element
+	 */
+	protected String getDefaultText(Object element) {
+		return DebugUIPlugin.getDefaultLabelProvider().getText( element );
+	}
+
+	/**
+	 * Returns a default image for the debug element
+	 */
+	protected Image getDefaultImage(Object element) {
+		return DebugUIPlugin.getDefaultLabelProvider().getImage( element );
 	}
 }

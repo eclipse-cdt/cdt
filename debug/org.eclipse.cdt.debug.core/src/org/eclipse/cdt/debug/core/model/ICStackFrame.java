@@ -10,7 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.debug.core.model;
 
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IValue;
 
 /**
  * C/C++ extension of <code>IStackFrame</code>.
@@ -54,4 +56,13 @@ public interface ICStackFrame extends IStackFrame, ICDebugElement {
 	 * @return the level of this stack frame 
 	 */
 	public int getLevel();
+
+	/**
+	 * Evaluates the given expression in the context of this stack frame.
+	 * 
+	 * @param expression expression to evaluate
+	 * @return the evaluation result
+	 * @throws DebugException if this method fails.
+	 */
+	public IValue evaluateExpression( String expression ) throws DebugException;
 }

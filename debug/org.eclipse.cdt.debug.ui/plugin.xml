@@ -1301,5 +1301,11 @@
          </description>
       </fontDefinition>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.watchExpressionDelegates">
+      <watchExpressionDelegate
+            debugModel="org.eclipse.cdt.debug.core"
+            delegateClass="org.eclipse.cdt.debug.internal.ui.CWatchExpressionDelegate"/>
+   </extension>
 
 </plugin>

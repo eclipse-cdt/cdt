@@ -74,6 +74,7 @@ import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
+import org.eclipse.cdt.debug.internal.core.CExpressionTarget;
 import org.eclipse.cdt.debug.internal.core.CMemoryManager;
 import org.eclipse.cdt.debug.internal.core.CRegisterManager;
 import org.eclipse.cdt.debug.internal.core.CSharedLibraryManager;
@@ -163,11 +164,6 @@ public class CDebugTarget extends CDebugElement
 	private IProcess fDebuggeeProcess = null;
 
 	/**
-	 * Associated debugger process, or <code>null</code> if not available.
-	 */
-//	private IProcess fDebuggerProcess = null;
-
-	/**
 	 * The underlying CDI target.
 	 */
 	private ICDITarget fCDITarget;
@@ -252,10 +248,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	private CBreakpointManager fBreakpointManager;
 
-	/**
-	 * Whether the debugger process is default.
-	 */
-//	private boolean fIsDebuggerProcessDefault = false;
+	private CExpressionTarget fExpressionTarget;
 
 	/**
 	 * The suspension thread.
@@ -1002,6 +995,8 @@ public class CDebugTarget extends CDebugElement
 			return getSignalManager();
 		if ( adapter.equals( ICRegisterManager.class ) )
 			return getRegisterManager();
+		if ( adapter.equals( CExpressionTarget.class ) )
+			return getExpressionTarget();
 		if ( adapter.equals( ICDISession.class ) )
 			return getCDISession();
 		return super.getAdapter( adapter );
@@ -1238,6 +1233,7 @@ public class CDebugTarget extends CDebugElement
 		disposeDisassembly();
 		disposeSourceManager();
 		disposeBreakpointManager();
+		disposeExpresionTarget();
 		removeAllExpressions();
 		disposePreferences();
 	}
@@ -2238,6 +2234,12 @@ public class CDebugTarget extends CDebugElement
 		}
 	}
 
+	private void disposeExpresionTarget() {
+		if ( fExpressionTarget != null ) {
+			fExpressionTarget.dispose();
+			fExpressionTarget = null;
+		}
+	}
 	protected RunningInfo getRunningInfo()
 	{
 		return fRunningInfo;
@@ -2478,5 +2480,12 @@ public class CDebugTarget extends CDebugElement
 	public void removePropertyChangeListener( IPropertyChangeListener listener ) {
 		if ( fPreferences!= null )
 			fPreferences.removePropertyChangeListener( listener );
+	}
+
+	protected CExpressionTarget getExpressionTarget() {
+		if ( fExpressionTarget == null ) {
+			fExpressionTarget = new CExpressionTarget( this );
+		}
+		return fExpressionTarget;
 	}
 }

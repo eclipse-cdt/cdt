@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
+import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -26,12 +26,15 @@ import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
+import org.eclipse.cdt.debug.internal.core.CExpressionTarget;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 /**
@@ -795,5 +798,13 @@ public class CStackFrame extends CDebugElement
 		{
 			((IResumeWithoutSignal)getDebugTarget()).resumeWithoutSignal();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#evaluateExpression(java.lang.String)
+	 */
+	public IValue evaluateExpression( String expression ) throws DebugException {
+		CExpressionTarget target = (CExpressionTarget)getDebugTarget().getAdapter( CExpressionTarget.class );
+		return ( target != null ) ? target.evaluateExpression( expression ) : null;
 	}
 }

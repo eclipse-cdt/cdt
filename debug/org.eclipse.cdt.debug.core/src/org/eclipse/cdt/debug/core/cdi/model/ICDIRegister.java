@@ -6,8 +6,6 @@
 
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import org.eclipse.cdt.debug.core.cdi.CDIException;
-
 /**
  * 
  * A register is a special kind of variable that is contained

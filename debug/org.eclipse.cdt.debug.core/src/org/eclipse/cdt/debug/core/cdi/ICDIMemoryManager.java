@@ -6,7 +6,6 @@
 package org.eclipse.cdt.debug.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 
 /**
  * 

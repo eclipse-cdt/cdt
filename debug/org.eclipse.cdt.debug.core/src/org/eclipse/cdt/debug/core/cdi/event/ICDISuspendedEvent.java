@@ -7,7 +7,6 @@
 package org.eclipse.cdt.debug.core.cdi.event;
 
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 
 /**
  * 

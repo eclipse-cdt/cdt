@@ -1,3 +1,8 @@
+2004-09-20 Mikhail Khodjaiants
+	Evaluate expressions on stack frame instead of target to provide evaluation context.
+	Evaluate the hovering expression for the selected context only.
+	* DebugTextHover.java
+
 2004-09-17 Alain Magloire
 	Support for 64 bits application
 	PR 74056. Pathc from Artyom Kuanbekov

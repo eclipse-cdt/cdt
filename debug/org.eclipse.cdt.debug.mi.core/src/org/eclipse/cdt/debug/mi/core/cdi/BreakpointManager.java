@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDICatchpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakAfter;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakCondition;
@@ -27,6 +28,10 @@ import org.eclipse.cdt.debug.mi.core.command.MIBreakEnable;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakInsert;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakList;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakWatch;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakPointChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakPointCreatedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIBreakPointDeletedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakInsertInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakListInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
@@ -39,16 +44,77 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 public class BreakpointManager extends SessionObject implements ICDIBreakpointManager {
 
 	List breakList;
+	List delList;
 	boolean allowInterrupt;
 
 	public BreakpointManager(CSession session) {
 		super(session);
 		breakList = new ArrayList(1);
+		delList = new ArrayList(1);
 		allowInterrupt = true;
+	}
+
+	public MIBreakPoint[] getMIBreakpoints() throws CDIException {
+		CSession s = getCSession();
+		CommandFactory factory = s.getMISession().getCommandFactory();
+		MIBreakList breakpointList = factory.createMIBreakList();
+		try {
+			s.getMISession().postCommand(breakpointList);
+			MIBreakListInfo info = breakpointList.getMIBreakListInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+			return info.getBreakPoints();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
+		}
+	}
+
+	void update() throws CDIException {
+		MIBreakPoint[] newMIBreakPoints = getMIBreakpoints();
+		List eventList = new ArrayList(newMIBreakPoints.length);
+		for (int i = 0; i < newMIBreakPoints.length; i++) {
+			int no = newMIBreakPoints[i].getNumber();
+			if (containsBreakpoint(no)) {
+				if (hasBreakpointChanged(newMIBreakPoints[i])) {
+					// Fire ChangedEvent
+					eventList.add(new MIBreakPointChangedEvent(no)); 
+				}
+			} else {
+				// add the new breakpoint and fire create event
+				breakList.add(new Breakpoint(this, newMIBreakPoints[i]));
+				eventList.add(new MIBreakPointCreatedEvent(no)); 
+			}
+		}
+		// Check if any breakpoint was removed.
+		Breakpoint[] oldBreakpoints = listBreakpoints();
+		for (int i = 0; i < oldBreakpoints.length; i++) {
+			boolean found = false;
+			int no = oldBreakpoints[i].getMIBreakPoint().getNumber();
+			for (int j = 0; j < newMIBreakPoints.length; j++) {
+				if (no == newMIBreakPoints[i].getNumber()) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				// Fire destroyed Events.
+				breakList.remove(oldBreakpoints[i]);
+				delList.add(oldBreakpoints[i]);
+				eventList.add(new MIBreakPointDeletedEvent(no)); 
+			}
+		}
+		MISession mi = getCSession().getMISession();
+		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
+		mi.fireEvents(events);
 	}
 
 	boolean containsBreakpoint(int number) {
 		return (getBreakpoint(number) != null);
+	}
+
+	boolean hasBreakpointChanged(MIBreakPoint miBreakPoint) {
+		return false;
 	}
 
 	Breakpoint getBreakpoint(int number) {
@@ -70,8 +136,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	}
 
 	Breakpoint[] listBreakpoints() {
-		return (Breakpoint[]) breakList.toArray(
-			new Breakpoint[breakList.size()]);
+		return (Breakpoint[]) breakList.toArray(new Breakpoint[breakList.size()]);
 	}
 
 	boolean suspendInferior() throws CDIException {
@@ -149,9 +214,29 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		} finally {
 			resumeInferior(state);
 		}
+		List eventList = new ArrayList(breakpoints.length);
 		for (int i = 0; i < breakpoints.length; i++) {
 			breakList.remove(breakpoints[i]);
+			delList.add(breakpoints[i]);
+			int no = ((Breakpoint)breakpoints[i]).getMIBreakPoint().getNumber();
+			eventList.add(new MIBreakPointDeletedEvent(no));
 		}
+		MISession mi = s.getMISession();
+		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
+		mi.fireEvents(events);
+	}
+
+	Breakpoint deleteBreakpoint (int no) {
+		Breakpoint point = null;
+		Breakpoint[] points = (Breakpoint[])delList.toArray(new Breakpoint[delList.size()]);
+		for (int i = 0; i < points.length; i++) {
+			if (points[i].getMIBreakPoint().getNumber() == no) {
+				delList.remove(points[i]);
+				point = points[i];
+				break;
+			}
+		}
+		return point;
 	}
 
 	public void enableBreakpoint(ICDIBreakpoint breakpoint) throws CDIException {
@@ -258,28 +343,36 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#getBreakpoints()
 	 */
 	public ICDIBreakpoint[] getBreakpoints() throws CDIException {
-		CSession s = getCSession();
-		CommandFactory factory = s.getMISession().getCommandFactory();
-		MIBreakList breakpointList = factory.createMIBreakList();
-		try {
-			s.getMISession().postCommand(breakpointList);
-			MIBreakListInfo info = breakpointList.getMIBreakListInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
-			}
-			MIBreakPoint[] miPoints = info.getBreakPoints();
-			for (int i = 0; i < miPoints.length; i++) {
-				if (!containsBreakpoint(miPoints[i].getNumber())) {
-					// FIXME: Generate a Create/Change Event??
-					breakList.add(new Breakpoint(this, miPoints[i]));
-				}
-			}
-			// FIXME: Generate a DestroyEvent for deleted ones.
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
-		}
+		update();
 		return (ICDIBreakpoint[]) listBreakpoints();
 	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#getBreakpoints()
+	 */
+//	public ICDIBreakpoint[] getBreakpoints() throws CDIException {
+//		CSession s = getCSession();
+//		CommandFactory factory = s.getMISession().getCommandFactory();
+//		MIBreakList breakpointList = factory.createMIBreakList();
+//		try {
+//			s.getMISession().postCommand(breakpointList);
+//			MIBreakListInfo info = breakpointList.getMIBreakListInfo();
+//			if (info == null) {
+//				throw new CDIException("No answer");
+//			}
+//			MIBreakPoint[] miPoints = info.getBreakPoints();
+//			for (int i = 0; i < miPoints.length; i++) {
+//				if (!containsBreakpoint(miPoints[i].getNumber())) {
+//					// FIXME: Generate a Create/Change Event??
+//					breakList.add(new Breakpoint(this, miPoints[i]));
+//				}
+//			}
+//			// FIXME: Generate a DestroyEvent for deleted ones.
+//		} catch (MIException e) {
+//			throw new MI2CDIException(e);
+//		}
+//		return (ICDIBreakpoint[]) listBreakpoints();
+//	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#setCatchpoint(int, ICDICatchEvent, String, ICDICondition, boolean)

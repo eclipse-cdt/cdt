@@ -17,6 +17,7 @@ import org.eclipse.cdt.make.core.makefile.IMacroDefinition;
 public class MacroDefinition extends Statement implements IMacroDefinition {
 	String name;
 	StringBuffer value;
+	char sepChar;
 
 	public MacroDefinition(String line) {
 		value = new StringBuffer();
@@ -25,9 +26,9 @@ public class MacroDefinition extends Statement implements IMacroDefinition {
 			int separator = index;
 			// Check for "+=",  ":="
 			if (index > 0) {
-				char c = line.charAt(index - 1);
-				if (c == ':' || c =='+') {
-					separator = index -1;
+				sepChar = line.charAt(index - 1);
+				if (sepChar == ':' || sepChar =='+' || sepChar == '?') {
+					separator = index - 1;
 				}
 			}
 			name = line.substring(0, separator).trim();

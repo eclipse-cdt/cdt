@@ -122,9 +122,6 @@ public interface IParserCallback {
 	public void		constructorChainElementId( Object element );
 	public void		constructorChainElementEnd( Object element );
 	
-	public Object	constructorChainElementExpressionListElementBegin( Object element ); 
-	public void		constructorChainElementExpressionListElementEnd( Object expression );
-	
 	public Object	explicitInstantiationBegin( Object container);
 	public void		explicitInstantiationEnd( Object instantiation ); 
 	

@@ -12,10 +12,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.internal.core.parser.Name;
 
 
@@ -23,10 +19,9 @@ import org.eclipse.cdt.internal.core.parser.Name;
  * @author jcamelon
  *
  */
-public class ConstructorChainElement {
+public class ConstructorChainElement implements IExpressionOwner {
 
 	private Name name;
-	private List expressionList = new ArrayList(); 
 	private final ConstructorChain ownerChain; 
 	
 	ConstructorChainElement( ConstructorChain chain )
@@ -49,22 +44,30 @@ public class ConstructorChainElement {
 		this.name = name;
 	}
 
-	/**
-	 * @return List
-	 */
-	public List getExpressionList() {
-		return Collections.unmodifiableList( expressionList );
-	}
 
-	public void addExpression( ConstructorChainElementExpression expression )
-	{
-		expressionList.add( expression ); 
-	}
 	/**
 	 * @return ConstructorChain
 	 */
 	public ConstructorChain getOwnerChain() {
 		return ownerChain;
 	}
+
+
+	private Expression exp = null; 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#getExpression()
+     */
+    public Expression getExpression()
+    {
+        return exp;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.dom.IExpressionOwner#setExpression(org.eclipse.cdt.internal.core.dom.Expression)
+     */
+    public void setExpression(Expression exp)
+    {
+        this.exp = exp;
+    }
 
 }

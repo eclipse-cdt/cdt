@@ -802,21 +802,6 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainElementExpressionListElementBegin(java.lang.Object)
-	 */
-	public Object constructorChainElementExpressionListElementBegin(Object element) {
-		return new ConstructorChainElementExpression( (ConstructorChainElement)element );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#constructorChainElementExpressionListElementEnd(java.lang.Object)
-	 */
-	public void constructorChainElementExpressionListElementEnd(Object expression) {
-		ConstructorChainElementExpression exp = (ConstructorChainElementExpression)expression;
-		exp.getOwnerElement().addExpression( exp );
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#explicitInstantiationBegin(java.lang.Object)
 	 */
 	public Object explicitInstantiationBegin(Object container) {

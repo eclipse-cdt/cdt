@@ -12,10 +12,16 @@ package org.eclipse.cdt.internal.core.parser;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 
 /**
  * @author jcamelon
@@ -299,6 +305,73 @@ public class DeclarationWrapper
     {
         typeSpecifier = specifier;
     }
-
+    
+    /**
+     * @param requestor
+     */
+    public List createAndCallbackASTNodes()
+    {
+        Iterator i = declarators.iterator();
+        List l = new ArrayList();  
+        while( i.hasNext() )
+        	l.add( createAndCallbackASTNode( (Declarator)i.next() ) );
+        return l;
+    }
+    /**
+     * @param declarator
+     */
+    private Object createAndCallbackASTNode(Declarator declarator)
+    {
+        boolean isWithinClass = ( getScope() instanceof IASTClassSpecifier );
+        boolean isFunction = declarator.isFunction(); 
+        
+        if( isWithinClass && isFunction )
+        	return createMethodASTNode( declarator );
+        else if( isWithinClass )
+        	return createFieldASTNode( declarator );
+        else if ( ( ! isWithinClass )&& isFunction )
+        	return createFunctionASTNode( declarator );
+        else 
+        	return createVariableASTNode( declarator ); 
+        
+    }
+    
+    /**
+     * @param declarator
+     * @return
+     */
+    private IASTMethod createMethodASTNode(Declarator declarator)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /**
+     * @param declarator
+     * @return
+     */
+    private IASTFunction createFunctionASTNode(Declarator declarator)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /**
+     * @param declarator
+     * @return
+     */
+    private IASTField createFieldASTNode(Declarator declarator)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    /**
+     * @param declarator
+     * @return
+     */
+    private IASTVariable createVariableASTNode(Declarator declarator)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+  
 }
 

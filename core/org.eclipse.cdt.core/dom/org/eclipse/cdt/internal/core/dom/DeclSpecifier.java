@@ -335,6 +335,7 @@ public class DeclSpecifier {
 						type.append("short ");
 					if (isLong())
 						type.append("long ");
+						
 				}
 				break;
 			default :

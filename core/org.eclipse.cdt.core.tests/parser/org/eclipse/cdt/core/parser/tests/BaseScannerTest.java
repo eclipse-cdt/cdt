@@ -34,7 +34,7 @@ public class BaseScannerTest extends TestCase {
 		super(x);
 	}
 
-	public void initializeScanner(String input)
+	protected void initializeScanner(String input)
 	{
 		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", null, null, null );
 	}

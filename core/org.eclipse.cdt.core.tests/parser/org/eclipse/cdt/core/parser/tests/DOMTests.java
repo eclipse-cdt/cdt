@@ -1,6 +1,5 @@
 package org.eclipse.cdt.core.parser.tests;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
@@ -15,7 +14,6 @@ import org.eclipse.cdt.internal.core.dom.ClassKey;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.ConstructorChain;
 import org.eclipse.cdt.internal.core.dom.ConstructorChainElement;
-import org.eclipse.cdt.internal.core.dom.ConstructorChainElementExpression;
 import org.eclipse.cdt.internal.core.dom.DeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.Declaration;
 import org.eclipse.cdt.internal.core.dom.Declarator;
@@ -914,59 +912,7 @@ public class DOMTests extends BaseDOMTest {
 		assertEquals( chainElements1.size(), 2 );
 		ConstructorChainElement element1_1 = (ConstructorChainElement) chainElements1.get(0);
 		assertEquals( element1_1.getName().toString(), "RTActor");
-		List expressions1_1 = element1_1.getExpressionList();
-		assertEquals( expressions1_1.size(), 2 );
-		ConstructorChainElementExpression expression1_1_1 = (ConstructorChainElementExpression)expressions1_1.get(0);
-		assertEquals( expression1_1_1.getExpression().elements().size(), 1 ); 
-		Name t1_1_1  = (Name)expression1_1_1.getExpression().elements().get(0);
-		ConstructorChainElementExpression expression1_1_2 = (ConstructorChainElementExpression)expressions1_1.get(1);
-		assertEquals( expression1_1_2.getExpression().elements().size(), 1 ); 
-		Name t1_1_2 = (Name)expression1_1_2.getExpression().elements().get(0);
 		
-		assertEquals( t1_1_1.toString(), "rtg_rts");
-		assertEquals( t1_1_2.toString(), "rtg_ref");
-		
-		ConstructorChainElement element1_2 = (ConstructorChainElement) chainElements1.get(1);
-		assertEquals( element1_2.getName().toString(), "myId" );
-		List expressions1_2 = element1_2.getExpressionList();
-		assertEquals( expressions1_2.size(), 1 );
-		ConstructorChainElementExpression expression = (ConstructorChainElementExpression) expressions1_2.get(0);
-		assertEquals( expression.getExpression().elements().size(), 1 );
-		Token t = (Token)expression.getExpression().elements().get(0);
-		assertEquals( t.getImage(), "0");
-		assertEquals( t.getType(), IToken.tINTEGER );
-		
-		
-		
-	}
-
-//	public void testErrors()
-//	{
-//		validateWeEncounterAnError( "void myFunc( int hey, flo );");
-//	}
- 
-	public void validateWeEncounterAnError( String codeText )
-	{
-		try
-		{
-			// Parse and get the translaton unit
-			Writer code = new StringWriter();
-			code.write(codeText);
-			try
-			{
-				TranslationUnit translationUnit = parse(code.toString());
-				fail( "We should not reach this line.  Failure."); 
-			} catch( ParserException pe )
-			{
-			}
-			catch( Exception e )
-			{
-				fail( "Unknown exception " + e.getMessage() );
-			}
-		}catch( IOException io )
-		{
-			fail( "IOException thrown");
-		}				
 	}
 	
 	public void testTemplateDeclarationOfMethod() throws Exception
@@ -2237,6 +2183,11 @@ public class DOMTests extends BaseDOMTest {
 		assertEquals( ((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclarators().size(), 1 );  
 		assertNull( ((Declarator)((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclarators().get(0)).getName() );
 		assertEquals( ((ParameterDeclaration)clause2.getDeclarations().get(0)).getDeclSpecifier().getType(), DeclSpecifier.t_float );          
+	}
+	
+	public void testAssignmentExpressions() throws Exception 
+	{
+		parse( "int x = y = z = 5;");
 	}
 	
 	public void testBug39348() throws Exception

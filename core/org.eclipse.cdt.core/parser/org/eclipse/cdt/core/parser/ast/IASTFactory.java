@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
+import org.eclipse.cdt.internal.core.parser.IASTArrayModifier;
 
 /**
  * @author jcamelon
@@ -75,6 +76,22 @@ public interface IASTFactory {
     
     public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor();
     
-    public IASTInitializerClause createIASTInitializerClause(IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses);  
+    public IASTInitializerClause createInitializerClause(IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses);
+    
+    public IASTExceptionSpecification createExceptionSpecification( List typeIds );
+    /**
+     * @param exp
+     */
+    public IASTArrayModifier createArrayModifier(IASTExpression exp);
+    /**
+     * @param duple
+     * @param expressionList
+     * @return
+     */
+    public IASTConstructorMemberInitializer createConstructorMemberInitializer(ITokenDuple duple, IASTExpression expressionList );
+    
+    public IASTSimpleTypeSpecifier createSimpleTypeSpecifier( IASTSimpleTypeSpecifier.SimpleType kind, ITokenDuple typeName, boolean isShort, boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename );
+    
+
 	
 }

@@ -337,6 +337,35 @@ public class CModelManager implements IResourceChangeListener {
 						}
 					}
 				}
+			} else {
+				ICProject cproject = celement.getCProject();
+				CProjectInfo info = (CProjectInfo)peekAtInfo(cproject);
+				if (info.vBin != null) {
+					if (peekAtInfo(info.vBin) != null) {
+						IBinary[] bins = info.vBin.getBinaries();
+						for (int i = 0; i < bins.length; i++) {
+							if (celement.getPath().isPrefixOf(bins[i].getPath())) {
+								CElementDelta delta = new CElementDelta(getCModel());
+								delta.changed(info.vBin, ICElementDelta.CHANGED); 
+								registerCModelDelta(delta); 
+								info.vBin.removeChild(bins[i]);
+							}
+						}
+					}
+				}
+				if (info.vLib != null) {
+					if (peekAtInfo(info.vLib) != null) {
+						IArchive[] ars = info.vLib.getArchives();
+						for (int i = 0; i < ars.length; i++) {
+							if (celement.getPath().isPrefixOf(ars[i].getPath())) {
+								CElementDelta delta = new CElementDelta(getCModel());
+								delta.changed(info.vLib, ICElementDelta.CHANGED); 
+								registerCModelDelta(delta); 
+								info.vLib.removeChild(ars[i]);
+							}
+						}
+					}
+				}
 			}
 		}
 

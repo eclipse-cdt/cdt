@@ -37,7 +37,7 @@ public interface IToken {
 	public boolean looksLikeExpression();
 	public boolean isPointer();
 	public boolean isOperator();
-	public boolean isKeywordOrOperator();
+	public boolean canBeAPrefix();
 	
 	
 	// Token types
@@ -142,8 +142,6 @@ public interface IToken {
 	static public final int tDIVASSIGN = 51;
 
 	static public final int tDIV = 52;
-
-//	static public final int tCLASSNAME = 53;
 
 	static public final int t_and = 54;
 

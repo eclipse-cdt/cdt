@@ -1,4 +1,7 @@
 2004-04-14 John Camelon
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=52253
+
+2004-04-14 John Camelon
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=44249
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=52004
 

@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.parser.IToken;
 /**
  * @author johnc
  */
-public abstract class AbstractToken  {
+public abstract class AbstractToken implements IToken {
 
 	public AbstractToken( int type, int lineNumber )
 	{
@@ -70,20 +70,11 @@ public abstract class AbstractToken  {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IToken#isKeyword()
 	 */
-	public boolean isKeywordOrOperator() {
-		switch( getType() )
-		{
-			case IToken.tCHAR:
-			case IToken.tFLOATINGPT:
-			case IToken.tIDENTIFIER:
-			case IToken.tINTEGER:
-			case IToken.tSTRING:
-			case IToken.tLSTRING:
-			case IToken.tLCHAR:
-				return false;
-			default:
-				return true;
-		}
+	public boolean canBeAPrefix() {
+		if( getType() == tIDENTIFIER ) return true;
+		if( getType() >= t_and && getType() <= t_xor_eq ) return true;
+		if( getType() >= t__Bool && getType() <= t_restrict ) return true;
+		return false;
 	}
 
 	public boolean looksLikeExpression()

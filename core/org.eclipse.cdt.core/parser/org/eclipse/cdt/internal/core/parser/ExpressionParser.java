@@ -2230,9 +2230,6 @@ public class ExpressionParser implements IExpressionParser {
 		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, isTemplate );
 	                															
 	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE);
-	                checkEndOfFile();
-	                
-	                setCompletionValues(scope, CompletionKind.NO_SUCH_KIND,	KeywordSets.Key.EMPTY );
 	                
 	                try
 	                {
@@ -2269,12 +2266,9 @@ public class ExpressionParser implements IExpressionParser {
 	                        isTemplate = true;
 	                    }
 	                
-		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, isTemplate );
-	                															
-	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE);
-	                checkEndOfFile();                    
+		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, isTemplate );	                															
+	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE);                 
 	
-	                setCompletionValues(scope, CompletionKind.NO_SUCH_KIND,	KeywordSets.Key.EMPTY );
 	                try
 	                {
 	                    firstExpression =
@@ -2560,7 +2554,6 @@ public class ExpressionParser implements IExpressionParser {
 					 duple = d.getNameDuple();
 	            }
 	            
-	            checkEndOfFile();
 	            try
 	            {
 	                return astFactory.createExpression(
@@ -2581,6 +2574,14 @@ public class ExpressionParser implements IExpressionParser {
 	                throw backtrack;
 	            }
 	        default :
+	        	if( !queryLookaheadCapability(2) )
+	        	{
+	        		if( LA(1).canBeAPrefix() )
+	        		{
+	        			consume();
+	        			checkEndOfFile();
+	        		}
+	        	}
 				IASTExpression empty = null;
 		        try {
 					empty = astFactory.createExpression(

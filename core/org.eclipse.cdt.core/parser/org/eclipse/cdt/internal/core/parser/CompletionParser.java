@@ -93,7 +93,7 @@ public class CompletionParser extends ContextualParser implements IParser {
 		if( exception.getCompletionNode() == null )
 		{	
 			setCompletionToken( exception.getFinalToken() );
-			if( (finalToken!= null )&& (finalToken.isKeywordOrOperator() ))
+			if( (finalToken!= null )&& (!finalToken.canBeAPrefix() ))
 				setCompletionToken(null);
 		}
 		else

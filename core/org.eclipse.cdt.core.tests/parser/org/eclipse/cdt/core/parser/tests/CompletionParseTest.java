@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
@@ -840,6 +839,27 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 		final String where = "= GL_T";
 		IASTCompletionNode node = parse( code, code.indexOf( where ) + where.length() );
 		assertEquals( node.getCompletionPrefix(), "GL_T");
+	}
+
+	public void testBug52253() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "class CMyClass {public:\n void doorBell(){ return; }};");
+		writer.write( "int	main(int argc, char **argv) {CMyClass mc; mc.do }");
+		String code = writer.toString();
+		final String where = "mc.do";
+		IASTCompletionNode node = parse( code, code.indexOf( where) + where.length() );
+		assertEquals( node.getCompletionPrefix(), "do");
+		assertEquals( node.getCompletionKind(), CompletionKind.MEMBER_REFERENCE );
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+                new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL }, 
+				 node.getCompletionContext() );
+		assertEquals( result.getResultsSize(), 1 );
+		Iterator i = result.getNodes();
+		IASTMethod doorBell = (IASTMethod) i.next();
+		assertFalse( i.hasNext() );
+		assertEquals( doorBell.getName(), "doorBell");
+		
 	}
 	
 }

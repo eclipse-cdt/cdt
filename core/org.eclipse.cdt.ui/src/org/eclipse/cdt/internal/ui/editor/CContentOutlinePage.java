@@ -93,10 +93,8 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 					public void run() {
 						if (!treeViewer.getControl().isDisposed()) {
 							ISelection sel= treeViewer.getSelection();
-							treeViewer.getControl().setRedraw(false);
-							treeViewer.refresh();
 							treeViewer.setSelection(updateSelection(sel));		
-							treeViewer.getControl().setRedraw(true);
+							treeViewer.refresh();
 						}
 					}
 				});

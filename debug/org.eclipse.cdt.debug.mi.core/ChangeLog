@@ -1,3 +1,8 @@
+2003-05-06 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Thread.java (suspend):
+	Suspend the program before selecting the thread.
+
 2003-05-01 Mikhail Khodjaiants
 	Implementations of the new "terminateSessionOnExit" method of ICDIConfiguration.
 	* Configuration.java

@@ -1,5 +1,11 @@
 2004-03-01 Alain Magloire
 
+	Fix to PR 53253. From Steve Garbarini
+
+	* src/org/eclipse/cdt/internal/errorparsers/VCErrorParser.java
+
+2004-03-01 Alain Magloire
+
 	Patch from Uwe Stieber
 	PR #53323 extending the implementation of Addr2line/CPPFilt and Objdump.
 

@@ -4035,9 +4035,6 @@ public class Parser implements IParserData, IParser
 			            ((IASTOffsetableElement)declaration).setEndingOffsetAndLineNumber(
 			                lastToken.getEndOffset(), lastToken.getLineNumber());
 			            declaration.acceptElement( requestor );
-			            if( sdw.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier )
-			            	((IASTSimpleTypeSpecifier)sdw.getTypeSpecifier()).releaseReferences( );
-
 			        }
 			        return declaration;
 			    }
@@ -4045,10 +4042,7 @@ public class Parser implements IParserData, IParser
 			    endDeclaration( declaration );
 			    declaration.enterScope( requestor );
 			    try
-				{
-				    if( sdw.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier )
-				    	((IASTSimpleTypeSpecifier)sdw.getTypeSpecifier()).releaseReferences( );
-	
+				{	
 					if ( !( declaration instanceof IASTScope ) ) 
 						throwBacktrack(firstOffset, endOffset, firstLine, fn);
 	 
@@ -4092,15 +4086,11 @@ public class Parser implements IParserData, IParser
 			return null;
 		} catch( BacktrackException be ) 
 		{
-			if( simpleTypeSpecifier != null )
-				simpleTypeSpecifier.releaseReferences();
 			throwBacktrack(be);
 			return null;
 		}
 		catch( EndOfFileException eof )
 		{
-			if( simpleTypeSpecifier != null )
-				simpleTypeSpecifier.releaseReferences();
 			throw eof;			
 		}
     }

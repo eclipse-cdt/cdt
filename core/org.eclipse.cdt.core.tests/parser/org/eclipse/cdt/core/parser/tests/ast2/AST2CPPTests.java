@@ -1953,5 +1953,66 @@ public class AST2CPPTests extends AST2BaseTest {
 //    	  IASTIfStatement if_stmt = (IASTIfStatement) body.getStatements()[0];
 //    	  assertNotNull( if_stmt.getCondition() );
 //    }
+    
+    public void testBug86267() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct B { void mutate(); };     \n"); //$NON-NLS-1$
+        buffer.append("struct D1 : B {};                \n"); //$NON-NLS-1$
+        buffer.append("struct D2 : B {};                \n"); //$NON-NLS-1$
+        buffer.append("void B::mutate() {               \n"); //$NON-NLS-1$
+        buffer.append("   new (this) D2;                \n"); //$NON-NLS-1$
+        buffer.append("}                                \n"); //$NON-NLS-1$
+        buffer.append("void g() {                       \n"); //$NON-NLS-1$
+        buffer.append("   B* pb = new (p) D1;           \n"); //$NON-NLS-1$
+        buffer.append("}                                \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit( col);
+        
+        ICPPClassType D1 = (ICPPClassType) col.getName(2).resolveBinding();
+        ICPPClassType D2 = (ICPPClassType) col.getName(4).resolveBinding();
+        
+        ICPPConstructor [] ctors = D1.getConstructors();
+        ICPPConstructor d1_ctor = ctors[0];
+        
+        ctors = D2.getConstructors();
+        ICPPConstructor d2_ctor = ctors[0];
+        
+        assertInstances( col, d1_ctor, 1 );
+        assertInstances( col, d2_ctor, 1 );
+    }
+    
+    public void testBug86269() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct C {                                  \n"); //$NON-NLS-1$
+        buffer.append("   void f();                                \n"); //$NON-NLS-1$
+        buffer.append("   const C& operator =( const C& );         \n"); //$NON-NLS-1$
+        buffer.append("};                                          \n"); //$NON-NLS-1$
+        buffer.append("const C& C::operator = ( const C& other ) { \n"); //$NON-NLS-1$
+        buffer.append("   if( this != &other ) {                   \n"); //$NON-NLS-1$
+        buffer.append("      this->~C();                           \n"); //$NON-NLS-1$
+        buffer.append("      new (this) C(other);                  \n"); //$NON-NLS-1$
+        buffer.append("      f();                                  \n"); //$NON-NLS-1$
+        buffer.append("   }                                        \n"); //$NON-NLS-1$
+        buffer.append("   return *this;                            \n"); //$NON-NLS-1$
+        buffer.append("}                                           \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit( col);
+        
+        ICPPClassType C = (ICPPClassType) col.getName(0).resolveBinding();
+        ICPPMethod f = (ICPPMethod) col.getName(1).resolveBinding();
+        ICPPMethod op = (ICPPMethod) col.getName(3).resolveBinding();
+        IParameter other = (IParameter) col.getName(5).resolveBinding();
+        
+        assertInstances( col, C, 6 );
+        assertInstances( col, f, 2 );
+        assertInstances( col, op, 3 );
+        assertInstances( col, other, 4 );
+        
+        assertEquals( other.getName(), "other" ); //$NON-NLS-1$
+    }
 }
 

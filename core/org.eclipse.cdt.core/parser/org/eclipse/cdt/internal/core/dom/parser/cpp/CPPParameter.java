@@ -13,7 +13,9 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -66,12 +68,28 @@ public class CPPParameter implements IParameter, ICPPBinding {
 		tmp[ declarations.length ] = name;
 		declarations = tmp;
 	}
+	
+	private IASTName getPrimaryDeclaration(){
+	    if( declarations != null ){
+	        for( int i = 0; i < declarations.length && declarations[i] != null; i++ ){
+	            IASTNode node = declarations[i].getParent();
+	            while( !(node instanceof IASTDeclaration) )
+	                node = node.getParent();
+	            
+	            if( node instanceof IASTFunctionDefinition )
+	                return declarations[i];
+	        }
+	        return declarations[0];
+	    }
+	    return null;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-	    if( declarations != null )
-	        return declarations[0].toString();
+	    IASTName name = getPrimaryDeclaration();
+	    if( name != null )
+	        return name.toString();
 	    return CPPSemantics.EMPTY_NAME;
 	}
 
@@ -79,8 +97,9 @@ public class CPPParameter implements IParameter, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-	    if( declarations != null )
-	        return declarations[0].toCharArray();
+	    IASTName name = getPrimaryDeclaration();
+	    if( name != null )
+	        return name.toCharArray();
 	    return CPPSemantics.EMPTY_NAME_ARRAY;
 	}
 

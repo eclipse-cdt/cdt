@@ -160,6 +160,23 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		references.add(reference);
 	}
 	
+	protected void addTemplateIdReferences( List references, List templateArgs ){
+		if( templateArgs == null )
+			return;
+		
+		Iterator i = templateArgs.iterator();
+		while( i.hasNext() ){
+			ASTExpression exp = (ASTExpression) i.next();
+			Iterator j = null;
+			if( exp.getExpressionKind() == IASTExpression.Kind.POSTFIX_TYPEID_TYPEID )
+				j = ((ASTTypeId) exp.getTypeId()).getReferences().iterator();
+			else
+				j = exp.getReferences().iterator();
+			while( j.hasNext() ){
+				addReference( references, (IASTReference) j.next() );
+			}
+		}
+	}
 	/*
 	 * Test if the provided list is a valid parameter list
 	 * Parameters are list of TypeInfos
@@ -356,6 +373,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		                		((ITemplateFactory)startingScope).pushSymbol( result );
 		                	}
 							addReference( references, createReference( result, image, offset ));
+							if( templateArgLists != null && templateArgLists[idx] != null )
+								addTemplateIdReferences( references, templateArgLists[idx] );
 						}
 						else
 							break;
@@ -1726,9 +1745,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
                     else
                     	typeSymbol = ((IContainerSymbol)typeSymbol).lookup( image );
 					
-					if( typeSymbol != null )	
+					if( typeSymbol != null )
+					{	
                     	addReference( references, createReference( typeSymbol, image, offset ));
-                    else
+                    	if( argLists != null && argLists[idx] != null )
+							addTemplateIdReferences( references, argLists[idx] );
+					}
+					else
                     	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, image );
                 }
                 catch (ParserSymbolTableException e)

@@ -1516,8 +1516,8 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertEquals( ((IASTSimpleTypeSpecifier)z.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), A );
 		assertEquals( ((IASTSimpleTypeSpecifier)z2.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), A );
 		
-		assertAllReferences( 8 /*9*/, createTaskList( new Task( T2 ), 
-											    //new Task( T3 ), 
+		assertAllReferences( 9, createTaskList( new Task( T2 ), 
+											    new Task( T3 ), 
 												new Task( A, 3 ), 
 												new Task( z ), 
 												new Task( z2 ),
@@ -1665,12 +1665,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		iter = getDeclarations( main );
 		IASTVariable a = (IASTVariable) iter.next();
 		
-		assertAllReferences( 4 /*5*/, createTaskList( new Task( T ), 
-											    new Task( A ), 
-												//new Task( B ), 
-												new Task( a ),
-												new Task( i ) ) ); 	
-		
+		assertAllReferences( 5, createTaskList( new Task( T ), new Task( A ), new Task( B ), new Task( a ), new Task( i ) ) ); 	
 	}
 	
 	
@@ -1759,9 +1754,9 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTVariable au = (IASTVariable) getDeclarations( g ).next();
 		IASTVariable b = (IASTVariable) getDeclarations( h ).next();
 		
-		assertAllReferences( 12, createTaskList( new Task( A ),
+		assertAllReferences( 13, createTaskList( new Task( A ),
 												 new Task( T ),
-												 new Task( U ),
+												 new Task( U, 2 ),
 				                                 new Task( AU, 2 ),
 								  			     new Task( au ),
 								  			     new Task( x, 2 ),
@@ -1777,6 +1772,14 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		writer.write( "A< int > a; \n" );
 		
 		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTTemplateParameter T = (IASTTemplateParameter) template.getTemplateParameters().next();
+		IASTClassSpecifier A = (IASTClassSpecifier) template.getOwnedDeclaration();
+		IASTField next = (IASTField) getDeclarations( A ).next();
+		IASTVariable a = (IASTVariable) i.next();
+		
+		assertAllReferences( 3, createTaskList( new Task( A, 2 ), new Task( T ) ) );
 	}
 	
 	public void testTemplateArgumentDeduction() throws Exception{
@@ -1845,9 +1848,14 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		Iterator i = parse( writer.toString() ).getDeclarations();
 		
 		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTTemplateParameter T1 = (IASTTemplateParameter) template.getTemplateParameters().next();
 		IASTTemplateDeclaration template2 = (IASTTemplateDeclaration) i.next();
+		IASTTemplateParameter T2 = (IASTTemplateParameter) template2.getTemplateParameters().next();
 		
 		IASTField member = (IASTField) getDeclarations( template2 ).next();
 		assertEquals( member.getName(), "member" );
+		
+		assertReferenceTask( new Task( T1, 2, false, false ) );
+		assertReferenceTask( new Task( T2, 2, false, false ) );
 	}
 }

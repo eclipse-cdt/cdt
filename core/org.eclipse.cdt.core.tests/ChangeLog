@@ -1,3 +1,11 @@
+2003-04-26 Andrew Niefer
+	test references to symbols in template-ids
+	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testOverloadedFunctionTemplates_2()
+	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTemplateParameterAsBaseClause()
+	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testTypedefedTemplate_2()
+	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testInstantiatingDeferredInstances()
+	- modified parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testClassTemplateStaticMemberDefinition() 
+
 2003-04-25 Andrew Niefer
 	-added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testClassTemplateStaticMemberDefinition()
 	-modified parser/org/eclipse/cdt/core/parser/tests/QuickParseASTTests.testPointersToMemberFunctions

@@ -1,3 +1,6 @@
+2004-03-26 Andrew Niefer
+	-report references to symbols used in a template-id.
+
 2004-03-25 Andrew Niefer
 	-modify IASTFactory.createField & .createVariable to take ITokenDuple's for the name
 	-modify ITokenDuple to support manipulating TokenDuples that have template arguments in them

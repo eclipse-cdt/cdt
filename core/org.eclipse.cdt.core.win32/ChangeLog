@@ -1,3 +1,15 @@
+2003-08-29 Alex Chapiro
+
+	This patch just increase command line buffer up to OS limit (2K). It also
+	replaces java/lang/Exception to java/io/IOException in order to unify error
+	processing.
+
+	* library/Win32ProcessEx.c
+	* library/starter/starter.cpp
+	* library/spawner.dsw
+	* os/win32/x86/spawner.dll
+	* os/win32/x86/starter.exe
+
 2003-04-30 Alex Chapiro
 
 	* library/listtasks: new Folder

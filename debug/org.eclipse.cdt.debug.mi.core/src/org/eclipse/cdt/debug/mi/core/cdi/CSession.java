@@ -172,7 +172,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getRuntimeOptions()
 	 */
 	public ICDIRuntimeOptions getRuntimeOptions() {
-		return new RuntimeOptions();
+		return new RuntimeOptions(this);
 	}
 	
 	/**

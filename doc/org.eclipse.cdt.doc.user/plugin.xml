@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ================================================= -->
+<!-- This is the plugin for declaring the help         -->
+<!-- contributions of a doc component plugin.          -->
+<!-- ================================================= -->
+
+<plugin 
+
+   name = "%pluginName"
+   id = "org.eclipse.cdt.doc.user"
+   version = "1.1.0"
+  provider-name = "%providerName">
+   <!-- Configure the help contribution for this plugin --> 
+   <!-- This part should be in a documentation plugin -->
+   <extension point="org.eclipse.help.toc">
+       <toc file="toc.xml" primary="true" /> 
+   </extension>
+   <extension point="org.eclipse.help.contexts">
+       <contexts file="contextHelp.xml" plugin="org.eclipse.cdt.ui"/> 
+   </extension>
+   <extension point="org.eclipse.help.contexts">
+       <contexts file="contextHelp.xml" plugin="org.eclipse.debug.ui"/> 
+   </extension>
+   <extension point="org.eclipse.help.contexts">
+       <contexts file="contextHelp.xml" plugin="org.eclipse.cdt.debug.ui"/> 
+   </extension>
+</plugin>

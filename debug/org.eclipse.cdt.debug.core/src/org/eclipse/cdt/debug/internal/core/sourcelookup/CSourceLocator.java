@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -214,7 +215,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 				IProject[] projects = project.getReferencedProjects();
 				for ( int i = 0; i < projects.length; i++ )
 				{
-					if (  projects[i].exists() )
+					if (  projects[i].exists() && !containsProject( list, projects[i] ) )
 					{
 						list.add( new CProjectSourceLocation( projects[i] ) );
 						addReferencedSourceLocations( list, projects[i] );
@@ -228,6 +229,18 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		}
 	}
  	
+ 	private static boolean containsProject( List list, IProject project )
+ 	{
+		Iterator it = list.iterator();
+		while( it.hasNext() )
+		{
+			CProjectSourceLocation location = (CProjectSourceLocation)it.next();
+			if ( project.equals( location.getProject() ) )
+				return true;
+		}
+		return false;
+ 	}
+
 	private Object findFileByAbsolutePath( String fileName )
 	{
 		Path path = new Path( fileName );

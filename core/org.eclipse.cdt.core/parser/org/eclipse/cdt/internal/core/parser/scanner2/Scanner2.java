@@ -2641,10 +2641,10 @@ public class Scanner2 implements IScanner, IScannerData {
 		char [] expansion = null;
 		if( expObject instanceof FunctionStyleMacro ){
 		    FunctionStyleMacro expMacro = (FunctionStyleMacro) expObject;
-		    pushContext( ( start == 0 ) ? arg : CharArrayUtils.extract( arg, start, arg.length - start + 1 ) );
+		    pushContext( ( start == 0 ) ? arg : CharArrayUtils.extract( arg, start, arg.length - start ) );
 		    bufferPos[bufferStackPos] += end - start + 1;
 		    expansion = handleFunctionStyleMacro( expMacro, false );
-		    end = bufferPos[bufferStackPos];
+		    end = bufferPos[bufferStackPos] + start;
 		    popContext();
 		} else if (expObject instanceof ObjectStyleMacro) {
 			ObjectStyleMacro expMacro = (ObjectStyleMacro)expObject;

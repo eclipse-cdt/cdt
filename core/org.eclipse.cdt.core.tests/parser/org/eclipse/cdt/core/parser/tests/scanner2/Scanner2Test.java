@@ -2191,4 +2191,35 @@ public class Scanner2Test extends BaseScanner2Test
 		
 		validateEOF();
     }
+    
+    public void testMacroArgumentExpansion() throws Exception {
+        Writer writer = new StringWriter();
+        writer.write( "#define g_return( expr ) ( expr )                                   \n" ); //$NON-NLS-1$
+        writer.write( "#define ETH( obj ) ( CHECK( (obj), boo ) )                          \n" ); //$NON-NLS-1$
+        writer.write( "#define CHECK CHECK_INSTANCE                                        \n" ); //$NON-NLS-1$
+        writer.write( "#define CHECK_INSTANCE( instance, type ) (foo((instance), (type)))  \n" ); //$NON-NLS-1$
+        writer.write( "g_return( ETH(ooga) )                                               \n" ); //$NON-NLS-1$
+        
+        initializeScanner( writer.toString() );
+        
+        validateToken( IToken.tLPAREN   );
+        validateToken( IToken.tLPAREN   );
+        validateToken( IToken.tLPAREN   );
+        validateIdentifier( "foo" ); //$NON-NLS-1$
+        validateToken( IToken.tLPAREN   );
+        validateToken( IToken.tLPAREN   );
+        validateToken( IToken.tLPAREN   );
+        validateIdentifier( "ooga" ); //$NON-NLS-1$
+        validateToken( IToken.tRPAREN   );
+        validateToken( IToken.tRPAREN   );
+        validateToken( IToken.tCOMMA );
+        validateToken( IToken.tLPAREN   );
+        validateIdentifier( "boo" ); //$NON-NLS-1$
+        validateToken( IToken.tRPAREN   );
+        validateToken( IToken.tRPAREN   );
+        validateToken( IToken.tRPAREN   );
+        validateToken( IToken.tRPAREN   );
+        validateToken( IToken.tRPAREN   );
+    }
+    
 }

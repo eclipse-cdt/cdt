@@ -7,7 +7,6 @@ package org.eclipse.cdt.testplugin;
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 
-import org.eclipse.core.resources.IWorkspaceRoot;
 
 
 public class CTestSetup extends TestSetup {

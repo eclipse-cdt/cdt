@@ -4,8 +4,6 @@ package org.eclipse.cdt.core.model.tests;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
-import org.eclipse.cdt.testplugin.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

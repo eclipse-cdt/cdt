@@ -6,14 +6,9 @@ package org.eclipse.cdt.core.model.tests;
  */
 
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Stack;
 
 import junit.framework.TestCase;
@@ -21,12 +16,8 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.testplugin.*;
 import org.eclipse.cdt.testplugin.util.*;
 import org.eclipse.cdt.core.model.*;
-import org.eclipse.core.internal.runtime.Log;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.internal.core.model.*;
 
 
@@ -196,7 +187,7 @@ public class TranslationUnitTests extends TestCase {
         } catch  (IllegalArgumentException e) {
             caught=true;
         }
-        assertTrue("PR:13037 Created an TranslationUnit with a .o file", caught);
+        assertTrue("PR:23601  Created an TranslationUnit with a .o file", caught);
         myTranslationUnit=null;
         caught=false;
         try {
@@ -293,7 +284,7 @@ public class TranslationUnitTests extends TestCase {
                 expectedString.foundString(elements[x].getElementName());
             }
         }
-        assertTrue("PR:13062 " +expectedString.getMissingString(),expectedString.gotAll());
+        assertTrue("PR:23603 " +expectedString.getMissingString(),expectedString.gotAll());
         assertTrue(expectedString.getExtraString(),!expectedString.gotExtra());
     
     }
@@ -319,7 +310,7 @@ public class TranslationUnitTests extends TestCase {
             
         }
         if (!missing.empty()) {
-            String output=new String("PR: 13062 Could not get elements: ");
+            String output=new String("PR:23603 Could not get elements: ");
             while (!missing.empty())
                 output+=missing.pop() + " ";
             assertTrue(output, false);
@@ -342,7 +333,7 @@ public class TranslationUnitTests extends TestCase {
                 missing.push(expectedStringList[x]);
             else {
                 if (expectedStringList[x].equals("mystruct_t")) {
-                    assertTrue("PR: 13062 expected:" + expectedStringList[x] + " Got:" + myElement.getElementName(),
+                    assertTrue("PR:23603 expected:" + expectedStringList[x] + " Got:" + myElement.getElementName(),
                         expectedStringList[x].equals(myElement.getElementName()));
                 } else {
                     assertTrue("Expected:" + expectedStringList[x] + " Got:" + myElement.getElementName(),
@@ -353,7 +344,7 @@ public class TranslationUnitTests extends TestCase {
             
         }
         if (!missing.empty()) {
-            String output=new String("PR: 13062 Could not get elements: ");
+            String output=new String("PR: 23603 Could not get elements: ");
             while (!missing.empty())
                 output+=missing.pop() + " ";
             assertTrue(output, false);
@@ -374,7 +365,7 @@ public class TranslationUnitTests extends TestCase {
             if (myInclude==null)
                 fail("Unable to get include: " + includes[x]);
             else
-                assertTrue("PR:BZ23478 Expected:"+includes[x] +" Got:"+ myInclude.getIncludeName(), includes[x].equals(myInclude.getIncludeName()));
+                assertTrue("PR:23478 Expected:"+includes[x] +" Got:"+ myInclude.getIncludeName(), includes[x].equals(myInclude.getIncludeName()));
         }
         
 
@@ -388,7 +379,7 @@ public class TranslationUnitTests extends TestCase {
         ExpectedStrings myExp= new ExpectedStrings(includes);
         int x;
         TranslationUnit myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
-        fail("Unable to test because we can't get the name of an include file (PR: BZ23478"); 
+        fail("PR:23478 Unable to test because we can't get the name of an include file"); 
                 
         myIncludes=myTranslationUnit.getIncludes();
         for (x=0;x<myIncludes.length;x++) {
@@ -399,8 +390,5 @@ public class TranslationUnitTests extends TestCase {
         
 
     }
-    
-    
-    
-    
+      
 }

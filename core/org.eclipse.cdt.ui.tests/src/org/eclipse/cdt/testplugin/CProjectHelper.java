@@ -1,11 +1,7 @@
 package org.eclipse.cdt.testplugin;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.zip.ZipFile;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -21,9 +17,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.model.ArchiveContainer;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -148,7 +142,6 @@ public class CProjectHelper {
 	 * Attempts to find an archive with the given name in the workspace
 	 */
 	public static Archive findArchive(ICProject testProject,String name) {
-		Archive myArchive;
 		int x;
 	   	IArchive[] myArchives;
 		ArchiveContainer archCont;
@@ -163,7 +156,6 @@ public class CProjectHelper {
 		myArchives=testProject.getArchiveContainer().getArchives();
 		if (myArchives.length<1) 
 			return(null);
-		myArchive=null;
 		for (x=0;x<myArchives.length;x++) {
 			if (myArchives[x].getElementName().equals(name))
 				if (myArchives[x] instanceof Archive) {
@@ -179,7 +171,6 @@ public class CProjectHelper {
 	 * Attempts to find a binary with the given name in the workspace
 	 */
 	public static Binary findBinary(ICProject testProject,String name) {
-		Binary myBinary;
 		BinaryContainer binCont;
 		int x;
 	   	IBinary[] myBinaries;
@@ -190,7 +181,6 @@ public class CProjectHelper {
 		myBinaries=binCont.getBinaries();
 		if (myBinaries.length<1) 
 			return(null);
-		myBinary=null;
 		for (x=0;x<myBinaries.length;x++) {
 			if (myBinaries[x].getElementName().equals(name))
 				if (myBinaries[x] instanceof Binary) {
@@ -206,13 +196,11 @@ public class CProjectHelper {
 	 * Attempts to find an object with the given name in the workspace
 	 */
 	public static Binary findObject(ICProject testProject,String name) {
-		ICElement myICElement;
 		int x;
 	   	ICElement[] myElements;
 		myElements=testProject.getChildren();
 		if (myElements.length<1) 
 			return(null);
-		myICElement=null;
 		for (x=0;x<myElements.length;x++) {
 			if (myElements[x].getElementName().equals(name))
 				if (myElements[x] instanceof ICElement) {
@@ -227,13 +215,11 @@ public class CProjectHelper {
 	 * Attempts to find a TranslationUnit with the given name in the workspace
 	 */
 	public static TranslationUnit findTranslationUnit(ICProject testProject,String name) {
-		ICElement myICElement;
 		int x;
 	   	ICElement[] myElements;
 		myElements=testProject.getChildren();
 		if (myElements.length<1) 
 			return(null);
-		myICElement=null;
 		for (x=0;x<myElements.length;x++) {
 			if (myElements[x].getElementName().equals(name))
 				if (myElements[x] instanceof ICElement) {
@@ -251,13 +237,11 @@ public class CProjectHelper {
 	 * Attempts to find an element with the given name in the workspace
 	 */
 	public static ICElement findElement(ICProject testProject,String name) {
-		ICElement myICElement;
 		int x;
 	   	ICElement[] myElements;
 		myElements=testProject.getChildren();
 		if (myElements.length<1) 
 			return(null);
-		myICElement=null;
 		for (x=0;x<myElements.length;x++) {
 			if (myElements[x].getElementName().equals(name))
 				if (myElements[x] instanceof ICElement) {

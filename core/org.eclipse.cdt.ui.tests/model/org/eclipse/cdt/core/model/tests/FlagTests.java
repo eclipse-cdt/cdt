@@ -9,12 +9,9 @@ package org.eclipse.cdt.core.model.tests;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.cdt.testplugin.*;
 
 import org.eclipse.cdt.core.model.*;
 import org.eclipse.cdt.internal.core.model.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
 /**
  * @author Peter Graves
  *

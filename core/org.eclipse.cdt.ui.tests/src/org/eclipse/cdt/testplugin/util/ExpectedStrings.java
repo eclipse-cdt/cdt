@@ -86,7 +86,6 @@ public class ExpectedStrings {
 		return(missing);
 	}
 	public String getExtraString() {
-		int x;
 		String extra= new String("Extra elements: ");
 		while (!extraStrings.empty()) {
 			extra+=extraStrings.pop();

@@ -15,9 +15,6 @@ import org.eclipse.cdt.testplugin.*;
 import org.eclipse.cdt.core.model.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
 
 
 /**
@@ -146,7 +143,6 @@ public class CModelTests extends TestCase {
      */
     public void testFileType() throws CoreException,FileNotFoundException {
         ICProject testProject;
-        ICFile myfile;
         testProject=CProjectHelper.createCProject("filetest", "none");
         if (testProject==null)
             fail("Unable to create project");

@@ -6,7 +6,6 @@ package org.eclipse.cdt.core.model.tests;
  */
 
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -15,12 +14,8 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.testplugin.*;
 import org.eclipse.cdt.testplugin.util.*;
 import org.eclipse.cdt.core.model.*;
-import org.eclipse.core.internal.runtime.Log;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.internal.core.model.*;
 
 
@@ -144,7 +139,7 @@ public class ArchiveTests extends TestCase {
 
      */
     public void testArchive() throws CoreException {
-           Archive myArchive;
+        Archive myArchive;
         boolean caught;
 
         myArchive=null;
@@ -154,7 +149,7 @@ public class ArchiveTests extends TestCase {
         } catch  (IllegalArgumentException e) {
             caught=true;
         }
-        assertTrue("PR:12037 Created an archive with a C file", caught);
+        assertTrue("PR:23601  Created an archive with a C file", caught);
         myArchive=null;
         caught=false;
         try {
@@ -244,7 +239,6 @@ public class ArchiveTests extends TestCase {
         ExpectedStrings expBin, expObj[];
         String[] myStrings;
         int x;
-           IArchive[] myArchives;
 
         
         /****

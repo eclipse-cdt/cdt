@@ -6,7 +6,6 @@ package org.eclipse.cdt.core.model.tests;
  */
 
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -15,12 +14,8 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.testplugin.*;
 import org.eclipse.cdt.testplugin.util.*;
 import org.eclipse.cdt.core.model.*;
-import org.eclipse.core.internal.runtime.Log;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.internal.core.model.*;
 
 
@@ -188,7 +183,7 @@ public class BinaryTests extends TestCase {
      * getting their archives from the project, not creating them themselves
      */
     public void testBinary() throws CoreException {
-           Binary myBinary;
+        Binary myBinary;
         boolean caught;
 
         myBinary=null;
@@ -198,7 +193,7 @@ public class BinaryTests extends TestCase {
         } catch  (IllegalArgumentException e) {
             caught=true;
         }
-        assertTrue("PR:13037 Created an Binary with a C file", caught);
+        assertTrue("PR:23601  Created an Binary with a C file", caught);
         myBinary=null;
         caught=false;
         try {
@@ -331,12 +326,12 @@ public class BinaryTests extends TestCase {
              * Since there is no comment on this function, I have no idea what 
              * it is ment to do.  Once I find out what it's ment to do, I will
              * actually write some tests.
-             * PR13052
+             * PR23602 
              */
             assertTrue("Expected 76 Got: " + bigBinary.getData(), bigBinary.getData()==76);
             assertTrue("Expected 8, Got: " + littleBinary.getData(), littleBinary.getData()==8);                
         } else
-            fail("PR:13052 No docs, can't test");
+            fail("PR:23602  No docs, can't test");
     }
 
     /***
@@ -423,13 +418,13 @@ public class BinaryTests extends TestCase {
              * Since there is no comment on this function, I have no idea what 
              * it is ment to do.  Once I find out what it's ment to do, I will
              * actually write some tests.
-             * PR13052
+             * PR23602 
              */
 
             assertTrue("Expected 296, Got: " + bigBinary.getText(), bigBinary.getText()==296);
             assertTrue("Expected 296, Got: " + littleBinary.getText(), littleBinary.getText()==296);                
         } else
-            fail("PR:13052 No docs, can't test");
+            fail("PR:23602  No docs, can't test");
     }
     
     /***

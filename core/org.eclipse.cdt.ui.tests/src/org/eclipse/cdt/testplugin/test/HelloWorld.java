@@ -11,7 +11,6 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.TestPluginLauncher;
-import org.eclipse.core.runtime.Path;
 
 
 public class HelloWorld extends TestCase {

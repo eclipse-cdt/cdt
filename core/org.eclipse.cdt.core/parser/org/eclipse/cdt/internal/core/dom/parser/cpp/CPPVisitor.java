@@ -950,12 +950,39 @@ public class CPPVisitor {
 		return true;
 	}
 	
+	private static boolean visitIfStatement( IASTIfStatement ifStatement, CPPBaseVisitorAction action ){
+		while( ifStatement != null ){
+			if( action.processStatements ){
+			    switch( action.processStatement( ifStatement ) ){
+			        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+			        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+			        default : break;
+			    }
+		    }	
+		    if( !visitExpression( ifStatement.getCondition(), action ) ) return false;
+		    if( !visitStatement( ifStatement.getThenClause(), action ) ) return false;
+		    if( ifStatement.getElseClause() != null ){
+		    	IASTStatement statement = ifStatement.getElseClause();
+		       	if( statement instanceof IASTIfStatement ){
+		       		ifStatement = (IASTIfStatement) statement;
+		       		continue;
+		       	} 
+		       	if( !visitStatement( statement, action ) ) return false;
+		    }
+		    ifStatement = null;
+		}
+		return true;
+	}
 	/**
 	 * @param body
 	 * @param action
 	 * @return
 	 */
 	public static boolean visitStatement(IASTStatement statement, CPPBaseVisitorAction action) {
+		//handle if's in a non-recursive manner to avoid stack overflows in case of huge number of elses
+		if( statement instanceof IASTIfStatement )
+			return visitIfStatement( (IASTIfStatement) statement, action );
+		
 		if( action.processStatements ){
 		    switch( action.processStatement( statement ) ){
 	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
@@ -981,10 +1008,6 @@ public class CPPVisitor {
 		    if( !visitExpression( ((IASTDoStatement)statement).getCondition(), action ) ) return false;
 		} else if( statement instanceof IASTGotoStatement ){
 		    if( !visitName( ((IASTGotoStatement)statement).getName(), action ) ) return false;
-		} else if( statement instanceof IASTIfStatement ){
-		    if( !visitExpression( ((IASTIfStatement) statement ).getCondition(), action ) ) return false;
-		    if( !visitStatement( ((IASTIfStatement) statement ).getThenClause(), action ) ) return false;
-		    if( !visitStatement( ((IASTIfStatement) statement ).getElseClause(), action ) ) return false;
 		} else if( statement instanceof IASTLabelStatement ){
 		    if( !visitName( ((IASTLabelStatement)statement).getName(), action ) ) return false;
 		} else if( statement instanceof IASTReturnStatement ){

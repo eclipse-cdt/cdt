@@ -35,6 +35,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -219,11 +221,13 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 	protected MakefileEditor fEditor;
 	protected Object fInput;
 	protected AddBuildTargetAction fAddBuildTargetAction;
+	protected OpenIncludeAction fOpenIncludeAction;
 
 	public MakefileContentOutlinePage(MakefileEditor editor) {
 		super();
 		fEditor = editor;
 		fAddBuildTargetAction = new AddBuildTargetAction(this);
+		fOpenIncludeAction = new OpenIncludeAction(this);
 	}
 
 	/* (non-Javadoc)
@@ -248,7 +252,18 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 		Control tree = viewer.getControl();
 		Menu menu = manager.createContextMenu(tree);
 		tree.setMenu(menu);
-                 
+
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+			 */
+			public void doubleClick(DoubleClickEvent event) {
+				if (fOpenIncludeAction != null) {
+					fOpenIncludeAction.run();
+				}
+			}
+		});
+
 		IPageSite site= getSite();
 		site.registerContextMenu(MakeUIPlugin.getPluginId() + ".outline", manager, viewer); //$NON-NLS-1$
 		site.setSelectionProvider(viewer);
@@ -259,8 +274,12 @@ public class MakefileContentOutlinePage extends ContentOutlinePage implements IC
 	 * called to create the context menu of the outline
 	 */
 	protected void contextMenuAboutToShow(IMenuManager menu) {
-		if (fAddBuildTargetAction.canActionBeAdded(getSelection()))
+		if (fOpenIncludeAction.canActionBeAdded(getSelection())) {
+			menu.add(fOpenIncludeAction);
+		}
+		if (fAddBuildTargetAction.canActionBeAdded(getSelection())) {
 			menu.add(fAddBuildTargetAction);
+		}
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
 	}

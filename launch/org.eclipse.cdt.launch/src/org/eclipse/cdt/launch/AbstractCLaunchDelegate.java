@@ -157,7 +157,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 	}
 
-	public String getProgramName(ILaunchConfiguration configuration) throws CoreException {
+	public static String getProgramName(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, (String) null);
 	}
 

@@ -40,9 +40,9 @@ public class CExtendedMemoryBlock extends CDebugElement implements IExtendedMemo
 		/** 
 		 * Constructor for CMemoryByte. 
 		 */
-		public CMemoryByte( byte value, byte flags ) {
-			this.value = value;
-			this.flags = flags;
+		public CMemoryByte( byte v, byte f ) {
+			this.value = v;
+			this.flags = f;
 		}
 
 		/** 

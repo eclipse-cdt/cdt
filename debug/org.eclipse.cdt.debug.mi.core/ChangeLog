@@ -5,6 +5,13 @@
 
 	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
 
+2004-02-11 Alain Magloire
+
+	Use String.endsWith("(gdb)") to detect the prompt.
+	Sometimes gdb does not flush the endline.
+
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
 2004-01-29 Alain Magloire
 
 	CDT Debug UI prefers things to be in ascending number.

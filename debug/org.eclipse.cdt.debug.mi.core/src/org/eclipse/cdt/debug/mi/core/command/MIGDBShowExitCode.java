@@ -13,19 +13,22 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 
 /**
  * 
- *      -gdb-show
+ *-data-evaluate-expression $_exitcode
+ * ^done,value="10"
  *
- *   Show the current value of a GDB variable.
+ *   Show the current value of a $_exitcode
  * 
  */
-public class MIGDBShowExitCode extends MIGDBShow {
+public class MIGDBShowExitCode extends MIDataEvaluateExpression {
+
 	public MIGDBShowExitCode() {
-		super(new String[] { "convenience", "$_exitcode" });
+		super("$_exitcode");
 	}
 
 	public MIGDBShowExitCodeInfo getMIGDBShowExitCodeInfo() throws MIException {
 		return (MIGDBShowExitCodeInfo)getMIInfo();
 	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

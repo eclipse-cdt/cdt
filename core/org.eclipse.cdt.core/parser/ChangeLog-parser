@@ -1,3 +1,12 @@
+2004-04-07 John Camelon
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=50808.
+	Provided partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=50807.
+	Provided partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=52988.
+	Introduced EMPTY_STRING, a single constant that replaced > 100'S O literal "" in the code.
+	Updated IASTCompletionNode interface to provide better support for FUNCTION_REFERENCE and CONSTRUCTOR_REFERENCE.
+	Implemented IASTTypeId.getFullSignature() for both QUICK_PARSE and COMPLETE_PARSE.
+	Tweaked ASTNode.lookup() so that it would work for FUNCTION_REFERENCE.
+
 2004-04-07 Andrew Niefer
 	fix lookup in parents when the parent is a deferred template instance, enables content assist on list (from <list>)
 

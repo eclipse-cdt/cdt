@@ -11,6 +11,7 @@
 package org.eclipse.cdt.ui.tests.text.contentassist;
 
 
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -19,49 +20,39 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Single_Name_Reference in parameter passing
- * Bug#
+ * Testing Typedef as a possible returned type.
+ * Bug#52948 
  *
  */
-public class CompletionTest_SingleName_Parameter  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart36.cpp";
+public class CompletionTest_TypeDef_NoPrefix  extends CompletionProposalsBaseTest{
+	
+	private final String fileName = "CompletionTestStart37.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE;
-	private final String expectedPrefix = "x";
+	private final String expectedScopeName = "ASTCompilationUnit";
+	private final String expectedContextName = "null"; 
+	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE; 
+	private final String expectedPrefix = "m";  
 	private final String[] expectedResults = {
-			"xLocal : int",
-			"xAClassField : float",
-			"xVariable : int",
-			"xAClassMethod(int) void",
-			"xFunction() bool",
-			"xOtherFunction() void",
-			"xNamespace",
-			"xEnumeration",
-			"xFirstEnum",
-			"xSecondEnum",
-			"xThirdEnum",
-			"XStruct",
-			"XMacro(x,y)"
+			"myType"
 	};
 	
-	public CompletionTest_SingleName_Parameter(String name) {
+	public CompletionTest_TypeDef_NoPrefix(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_SingleName_Parameter.class.getName());
-		suite.addTest(new CompletionTest_SingleName_Parameter("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_TypeDef_NoPrefix.class.getName());
+		suite.addTest(new CompletionTest_TypeDef_NoPrefix("testCompletionProposals"));
 		return suite;
 	}		
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" x ") + 2;
+		return getBuffer().indexOf(" m ") + 2;
 	}
 
 	/* (non-Javadoc)

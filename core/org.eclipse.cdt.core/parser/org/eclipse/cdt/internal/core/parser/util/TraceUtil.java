@@ -49,4 +49,17 @@ public class TraceUtil {
 				log.traceLog( preface );
 		}				
 	}
+	/**
+	 * @param logService
+	 * @param preface
+	 * @param data
+	 */
+	public static void outputTrace(IParserLogService logService, String preface, String data) {
+		if( logService.isTracing() ) {
+			StringBuffer buffer = new StringBuffer();
+			if( preface != null ) buffer.append( preface );
+			if( data   != null ) buffer.append( data );
+			logService.traceLog( buffer.toString() );
+		}
+	}
 }

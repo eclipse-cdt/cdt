@@ -539,8 +539,8 @@ public class CompletionEngine implements RelevanceConstants {
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
 			kinds[0] = IASTNode.LookupKind.ALL; 
 			String prefix = completionNode.getCompletionPrefix();
-			if(prefix.equals("(")) //$NON-NLS-1$
-				prefix = ""; //$NON-NLS-1$
+//			if(prefix.equals("(")) //$NON-NLS-1$
+//				prefix = ""; //$NON-NLS-1$
 			result = lookup(searchNode, prefix, kinds, completionNode.getCompletionContext());
 			addToCompletions(result);
 		
@@ -628,14 +628,22 @@ public class CompletionEngine implements RelevanceConstants {
 		addToCompletions(result);
 	}
 	private void completionOnFunctionReference(IASTCompletionNode completionNode){
-		// 1. Get the search scope node 
-		IASTScope searchNode = completionNode.getCompletionScope();
-		// only lookup this function
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[2];
-		kinds[0] = IASTNode.LookupKind.FUNCTIONS; 
-		kinds[1] = IASTNode.LookupKind.METHODS; 
-		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
+		//NOTE:
+		// Hoda, I changed this so it makes sense with regards to your JUnit tests
+		// and examples.  If my assumptions are not correct as to what deserves to be 
+		// looked up for FUNCTION_REFRENCE then please update the documentation in
+		// IASTCompletionNode.java.
+		
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.ALL; 
+		String prefix = completionNode.getCompletionPrefix();
+
+		ILookupResult result = lookup(completionNode.getCompletionScope(), prefix, kinds, completionNode.getCompletionContext());
 		addToCompletions(result);
+	
+		List macros = lookupMacros(completionNode.getCompletionPrefix());
+		addMacrosToCompletions(macros.iterator());
+
 	}
 	
 	public IASTCompletionNode complete(IWorkingCopy sourceUnit, int completionOffset) {

@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
+package org.eclipse.cdt.ui.tests.text.contentassist;
 
 
 
@@ -16,38 +16,35 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
  * 
- * Testing Constructor_Reference
- * Bug#
+ * Testing Typedef as a possible returned type.
+ * Bug#52948 
  *
  */
-public class CompletionFailedTest_ConstructorReference_Bug50808  extends CompletionProposalsBaseTest{
+public class CompletionTest_TypeDef_Prefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionTestStart35.cpp";
+	private final String fileName = "CompletionTestStart37.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "null"; // should be "ASTClassSpecifier" 
-	private final CompletionKind expectedKind = CompletionKind.NEW_TYPE_REFERENCE; // should be CompletionKind.CONSTRUCTOR_REFERENCE; 
-	private final String expectedPrefix = "";  
+	private final String expectedScopeName = "ASTCompilationUnit";
+	private final String expectedContextName = "null"; 
+	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE; 
+	private final String expectedPrefix = "m";  
 	private final String[] expectedResults = {
-	// should be
-	//		"xOtherClass(char*)",
-	//		"xOtherClass(int)"
+			"myType"
 	};
 	
-	public CompletionFailedTest_ConstructorReference_Bug50808(String name) {
+	public CompletionTest_TypeDef_Prefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionFailedTest_ConstructorReference_Bug50808.class.getName());
-		suite.addTest(new CompletionFailedTest_ConstructorReference_Bug50808("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_TypeDef_Prefix.class.getName());
+		suite.addTest(new CompletionTest_TypeDef_Prefix("testCompletionProposals"));
 		return suite;
 	}		
 	
@@ -55,7 +52,7 @@ public class CompletionFailedTest_ConstructorReference_Bug50808  extends Complet
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("(      ") + 2;
+		return getBuffer().indexOf(" m ") + 2;
 	}
 
 	/* (non-Javadoc)
@@ -121,4 +118,3 @@ public class CompletionFailedTest_ConstructorReference_Bug50808  extends Complet
 	}
 
 }
-

@@ -232,7 +232,7 @@ public interface IASTFactory
 	public IASTCodeScope createNewCodeBlock(IASTScope scope);
 	
 	public IASTTypeId    createTypeId( IASTScope scope, IASTSimpleTypeSpecifier.Type kind, boolean isConst, boolean isVolatile, boolean isShort, 
-			boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods ) throws ASTSemanticException;
+			boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods, String completeSignature ) throws ASTSemanticException;
     /**
      * @param astClassSpecifier
      */
@@ -250,4 +250,12 @@ public interface IASTFactory
 	 * @param log
 	 */
 	public void setLogger(IParserLogService log);
+
+	/**
+	 * @param scope TODO
+	 * @param expression
+	 * @return
+	 */
+	public IASTNode expressionToASTNode(IASTScope scope, IASTExpression expression);
+
 }

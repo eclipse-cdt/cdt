@@ -3046,7 +3046,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#parserTimeout()
 	 */
-	protected boolean parserTimeout() {
+	protected final boolean parserTimeout() {
 		return requestor.parserTimeout();
 	}
 	/* (non-Javadoc)

@@ -101,6 +101,13 @@ public interface IASTCompletionNode {
 	public IASTNode			getCompletionContext(); 
 
 	/**
+	 * @return		the name of the function/constructor being completed in
+	 * 					CONSTRUCTOR_REFERENCE
+	 * 					FUNCTION_REFERENCE
+	 */
+	public String			getFunctionName(); 
+	
+	/**
 	 * @return		the prefix
 	 */
 	public String			getCompletionPrefix(); 

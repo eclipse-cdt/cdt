@@ -44,7 +44,7 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 public abstract class CompletionProposalsBaseTest  extends TestCase{
-	private final String pluginName = "org.eclipse.cdt.ui.tests";
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private final String projectName = "TestProject1";
 	private final String projectType = "bin";
 	private ICProject fCProject;
@@ -52,7 +52,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	private IFile fHeaderFile;
 	private NullProgressMonitor monitor;
 	private TranslationUnit tu = null;
-	private String buffer = "";
+	private String buffer = EMPTY_STRING;
 	private Document document = null;
 	
 		
@@ -73,6 +73,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	protected abstract String getExpectedPrefix();
 	protected abstract IASTCompletionNode.CompletionKind getExpectedKind();
 	protected abstract String[] getExpectedResultsValues();
+	protected String getFunctionOrConstructorName()	{ return EMPTY_STRING; }
 	
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
@@ -144,7 +145,6 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 			// scope
 			IASTScope scope = completionNode.getCompletionScope();
 			assertNotNull(scope);
-			String scopeClassName = scope.getClass().getName();
 			assertTrue(scope.getClass().getName().endsWith(getExpectedScopeClassName()));
 			// context
 			IASTNode context = completionNode.getCompletionContext();
@@ -158,6 +158,8 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 			// prefix
 			String prefix = completionNode.getCompletionPrefix();
 			assertEquals(prefix, getExpectedPrefix());
+			
+			assertEquals( completionNode.getFunctionName(), getFunctionOrConstructorName() );
 			
 			String[] expected = getExpectedResultsValues();
 			assertTrue(results.length >= expected.length);

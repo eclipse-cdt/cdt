@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
@@ -37,6 +37,7 @@ public class ASTExpression implements IASTExpression
     private final IASTNewExpressionDescriptor newDescriptor;
     private final List references; 
     private ExpressionResult resultType;
+	private String stringRepresentation;
     /**
      * 
      */
@@ -257,4 +258,54 @@ public class ASTExpression implements IASTExpression
 		}
 	}
 
+	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		if( stringRepresentation == null )
+		{
+			StringBuffer buffer = new StringBuffer();
+			buffer.append( "ASTExpression w/Kind=" ); //$NON-NLS-1$
+			buffer.append( kind.getKindName() );
+			
+			if( !literal.equals( "" )) //$NON-NLS-1$
+			{
+				buffer.append( " LITERAL="); //$NON-NLS-1$
+				buffer.append( literal );
+			}
+			if( idExpressionDuple != null )
+			{
+				buffer.append( " IDEXPRESSION="); //$NON-NLS-1$
+				buffer.append( idExpressionDuple.toString() );
+			}
+			if( typeId != null )
+			{
+				buffer.append( " TYPEID="); //$NON-NLS-1$
+				buffer.append( typeId.getFullSignature() );
+			}				
+
+			if( lhs != null )
+			{
+				buffer.append( "\n\tLHS=**"); //$NON-NLS-1$
+				buffer.append( lhs.toString() );
+				buffer.append( "**");//$NON-NLS-1$
+			}
+			if( rhs != null )
+			{
+				buffer.append( "\n\tRHS=="); //$NON-NLS-1$
+				buffer.append( rhs.toString() );
+				buffer.append( "==");//$NON-NLS-1$
+			}
+			if( thirdExpression != null )
+			{
+				buffer.append( "\n\t3rd Expression =::"); //$NON-NLS-1$
+				buffer.append( thirdExpression.toString() );
+				buffer.append( "::");//$NON-NLS-1$
+			}		
+			stringRepresentation = buffer.toString();
+		}
+		return stringRepresentation;
+	}
 }

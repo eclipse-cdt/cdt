@@ -329,10 +329,10 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createTypeId(org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type, org.eclipse.cdt.core.parser.ITokenDuple, java.util.List, java.util.List)
      */
     public IASTTypeId createTypeId(IASTScope scope, Type kind, boolean isConst, boolean isVolatile, boolean isShort, 
-	boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods)
+	boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods, String completeSignature)
     {
         return new ASTTypeId( kind, name == null ? "" : name.toString(), pointerOps, arrayMods, isConst,  //$NON-NLS-1$
-        	isVolatile, isUnsigned, isSigned, isShort, isLong, isTypename );
+        	isVolatile, isUnsigned, isSigned, isShort, isLong, isTypename, completeSignature );
     }
 
     /* (non-Javadoc)
@@ -362,5 +362,12 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 */
 	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple) throws ASTNotImplementedException {
 		throw new ASTNotImplementedException();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getNodeForThisExpression(org.eclipse.cdt.core.parser.ast.IASTExpression)
+	 */
+	public IASTNode expressionToASTNode(IASTScope scope, IASTExpression expression) {
+		return null;
 	}
 }

@@ -36,6 +36,7 @@ public class ASTTypeId implements IASTTypeId
     private final String name;
     private final List pointerOps;
     private final List arrayMods;
+	private final String completeSignature;
     /**
      * @param kind
      * @param string
@@ -43,7 +44,7 @@ public class ASTTypeId implements IASTTypeId
      * @param arrayMods
      */
     public ASTTypeId(Type kind, String string, List pointerOps, List arrayMods, boolean isConst, boolean isVolatile, 
-    	boolean isUnsigned, boolean isSigned, boolean isShort, boolean isLong, boolean isTypeName)
+    	boolean isUnsigned, boolean isSigned, boolean isShort, boolean isLong, boolean isTypeName, String completeSignature)
     {
        this.kind = kind; 
        this.name = string; 
@@ -55,7 +56,8 @@ public class ASTTypeId implements IASTTypeId
 	   this.isSigned =isSigned;  
 	   this.isShort =isShort;  
 	   this.isLong =isLong;  
-	   this.isConst =isConst;  
+	   this.isConst =isConst;
+	   this.completeSignature = completeSignature;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypeId#getKind()
@@ -88,9 +90,9 @@ public class ASTTypeId implements IASTTypeId
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypeId#getFullSignature()
      */
-    public String getFullSignature() throws ASTNotImplementedException
+    public String getFullSignature() 
     {
-        throw new ASTNotImplementedException();
+        return completeSignature;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypeId#createTypeSymbol(org.eclipse.cdt.core.parser.ast.IASTFactory)

@@ -50,6 +50,7 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
  */
 public class ExpressionParser implements IExpressionParser {
 
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	protected final IParserLogService log;
 	private static int FIRST_ERROR_OFFSET_UNSET = -1;
 	protected int firstErrorOffset = FIRST_ERROR_OFFSET_UNSET;
@@ -58,6 +59,7 @@ public class ExpressionParser implements IExpressionParser {
 	protected IASTFactory astFactory = null;
 	
 	private Stack templateIdScopes = null;
+
 
 	/**
 	 * @param scanner2
@@ -177,7 +179,7 @@ public class ExpressionParser implements IExpressionParser {
         		IASTTypeId typeId = typeId( scope, false, CompletionKind.TYPE_REFERENCE );
         		
         		expression = astFactory.createExpression( scope, IASTExpression.Kind.POSTFIX_TYPEID_TYPEID,
-                                                          null, null, null, typeId, null, "", null); //$NON-NLS-1$
+                                                          null, null, null, typeId, null, EMPTY_STRING, null); 
         		list.add( expression );
         		completedArg = true;
         	} catch( BacktrackException e ){
@@ -202,7 +204,7 @@ public class ExpressionParser implements IExpressionParser {
 	        	try{
 	        		ITokenDuple nameDuple = name( scope, null );
 	        		expression = astFactory.createExpression( scope, IASTExpression.Kind.ID_EXPRESSION, 
-	        				                                  null, null, null, null, nameDuple, "", null); //$NON-NLS-1$
+	        				                                  null, null, null, null, nameDuple, EMPTY_STRING, null); 
 	        		list.add( expression );
 	        		continue;
 	        	} catch( ASTSemanticException e ){
@@ -265,7 +267,7 @@ public class ExpressionParser implements IExpressionParser {
 	 * 
 	 * @throws BacktrackException	request a backtrack
 	 */
-	protected ITokenDuple name(IASTScope scope, IASTCompletionNode.CompletionKind kind) throws BacktrackException, EndOfFileException {
+	protected ITokenDuple name(IASTScope scope, IASTCompletionNode.CompletionKind kind ) throws BacktrackException, EndOfFileException {
 		
 	    IToken first = LA(1);
 	    IToken last = null;
@@ -325,7 +327,9 @@ public class ExpressionParser implements IExpressionParser {
                     backup(mark);
                     throw backtrack;
                 case IToken.tIDENTIFIER :
+                	prev = last;
                     last = consume();
+                    setCompletionValues( scope, kind, first, prev );
 		            last = consumeTemplateArguments(scope, last, argumentList);
 		            if( last.getType() == IToken.tGT )
 		            	hasTemplateId = true;
@@ -540,7 +544,7 @@ public class ExpressionParser implements IExpressionParser {
 	        {
 	        	try
 	        	{
-		            nameDuple = name(d.getScope(), CompletionKind.NO_SUCH_KIND );
+		            nameDuple = name(d.getScope(), CompletionKind.USER_SPECIFIED_NAME );
 	        	}
 	        	catch( BacktrackException bt )
 	        	{
@@ -550,7 +554,7 @@ public class ExpressionParser implements IExpressionParser {
 	        }
 	        if ( LT(1) == IToken.tSTAR)
 	        {
-	            result = consume(IToken.tSTAR); // tokenType = "*"
+	            result = consume(IToken.tSTAR); 
 	
 				d.setPointerOperatorName(nameDuple);
 	
@@ -598,7 +602,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null); //$NON-NLS-1$
+	                    null, EMPTY_STRING, null); 
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -616,6 +620,7 @@ public class ExpressionParser implements IExpressionParser {
 	 * @throws BacktrackException
 	 */
 	protected IASTExpression assignmentExpression(IASTScope scope, CompletionKind kind) throws EndOfFileException, BacktrackException {
+		setCompletionValues(scope, kind, Key.EXPRESSION );
 		if (LT(1) == IToken.t_throw) {
 			return throwExpression(scope);
 		}
@@ -691,6 +696,7 @@ public class ExpressionParser implements IExpressionParser {
 	 */
 	protected IASTExpression throwExpression(IASTScope scope) throws EndOfFileException, BacktrackException {
 	    consume(IToken.t_throw);
+	    setCompletionValues( scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION );
 	    IASTExpression throwExpression = null;
 	    try
 	    {
@@ -708,7 +714,7 @@ public class ExpressionParser implements IExpressionParser {
 	            null,
 	            null,
 	            null,
-	            null, "", null); //$NON-NLS-1$
+	            null, EMPTY_STRING, null); 
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -741,7 +747,7 @@ public class ExpressionParser implements IExpressionParser {
 	                secondExpression,
 	                thirdExpression,
 	                null,
-	                null, "", null); //$NON-NLS-1$
+	                null, EMPTY_STRING, null); 
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -776,7 +782,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null); //$NON-NLS-1$
+	                    null, EMPTY_STRING, null); 
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -809,7 +815,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null); //$NON-NLS-1$
+	                    null, EMPTY_STRING, null); 
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -843,7 +849,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null); //$NON-NLS-1$
+	                    null, EMPTY_STRING, null); 
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -878,7 +884,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null); //$NON-NLS-1$
+	                    null, EMPTY_STRING, null); 
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -912,7 +918,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    secondExpression,
 	                    null,
 	                    null,
-	                    null, "", null); //$NON-NLS-1$
+	                    null, EMPTY_STRING, null); 
 	        }
 	        catch (ASTSemanticException e)
 	        {
@@ -953,7 +959,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -1033,7 +1039,7 @@ public class ExpressionParser implements IExpressionParser {
 	                                secondExpression,
 	                                null,
 	                                null,
-	                                null, "", null); //$NON-NLS-1$
+	                                null, EMPTY_STRING, null); 
 	                    }
 	                    catch (ASTSemanticException e)
 	                    {
@@ -1077,7 +1083,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -1120,7 +1126,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -1174,7 +1180,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -1217,7 +1223,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -1263,7 +1269,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    null,
 	                    null,
 	                    typeId,
-	                    null, "", null); //$NON-NLS-1$
+	                    null, EMPTY_STRING, null); 
 	            }
 	            catch (ASTSemanticException e)
 	            {
@@ -1289,6 +1295,7 @@ public class ExpressionParser implements IExpressionParser {
 	 */
 	protected IASTTypeId typeId(IASTScope scope, boolean skipArrayModifiers, CompletionKind completionKind) throws EndOfFileException, BacktrackException {
 		IToken mark = mark();
+		IToken start = mark;
 		ITokenDuple name = null;
 		boolean isConst = false, isVolatile = false; 
 		boolean isSigned = false, isUnsigned = false; 
@@ -1464,7 +1471,10 @@ public class ExpressionParser implements IExpressionParser {
 		
 		try
 	    {
-	        return astFactory.createTypeId( scope, kind, isConst, isVolatile, isShort, isLong, isSigned, isUnsigned, isTypename, name, id.getPointerOperators(), id.getArrayModifiers());
+			String signature = "";
+			if( start != null && lastToken != null )
+				signature = new TokenDuple( start, lastToken ).toString();
+	        return astFactory.createTypeId( scope, kind, isConst, isVolatile, isShort, isLong, isSigned, isUnsigned, isTypename, name, id.getPointerOperators(), id.getArrayModifiers(), signature);
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -1480,13 +1490,15 @@ public class ExpressionParser implements IExpressionParser {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression deleteExpression(IASTScope scope, CompletionKind kind) throws EndOfFileException, BacktrackException {    	
-	    if (LT(1) == IToken.tCOLONCOLON)
+	protected IASTExpression deleteExpression(IASTScope scope, CompletionKind kind) throws EndOfFileException, BacktrackException {
+		if (LT(1) == IToken.tCOLONCOLON)
 	    {
 	        // global scope
-	        consume();
+	        consume(IToken.tCOLONCOLON);
 	    }
+	    
 	    consume(IToken.t_delete);
+	    
 	    boolean vectored = false;
 	    if (LT(1) == IToken.tLBRACKET)
 	    {
@@ -1507,7 +1519,7 @@ public class ExpressionParser implements IExpressionParser {
 	            null,
 	            null,
 	            null,
-	            null, "", null); //$NON-NLS-1$
+	            null, EMPTY_STRING, null); 
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -1539,7 +1551,7 @@ public class ExpressionParser implements IExpressionParser {
 	    if (LT(1) == IToken.tCOLONCOLON)
 	    {
 	        // global scope
-	        consume();
+	        consume(IToken.tCOLONCOLON);
 	    }
 	    consume(IToken.t_new);
 	    boolean typeIdInParen = false;
@@ -1650,7 +1662,7 @@ public class ExpressionParser implements IExpressionParser {
 								return astFactory.createExpression(
 									scope, IASTExpression.Kind.NEW_TYPEID, 
 									null, null, null, typeId, null, 
-									"", astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions)); //$NON-NLS-1$
+									EMPTY_STRING, astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions)); 
 							}
 							catch (ASTSemanticException e)
 							{
@@ -1694,11 +1706,14 @@ public class ExpressionParser implements IExpressionParser {
 	    if (LT(1) == IToken.tLPAREN)
 	    {
 	        consume(IToken.tLPAREN);
+	        setCurrentFunctionName( (( typeId != null ) ? typeId.getFullSignature() : EMPTY_STRING));
+	        setCompletionValues( scope, CompletionKind.CONSTRUCTOR_REFERENCE  );
 	        if( templateIdScopes != null ){	templateIdScopes.push( new Integer( IToken.tLPAREN ) ); }
 	        
-	        if (LT(1) != IToken.tRPAREN)
-			newInitializerExpressions.add(expression(scope, CompletionKind.SINGLE_NAME_REFERENCE));
+	        if ( queryLookaheadCapability() && (LT(1) != IToken.tRPAREN))
+	        	newInitializerExpressions.add(expression(scope, CompletionKind.CONSTRUCTOR_REFERENCE));
 	        
+	        setCurrentFunctionName( EMPTY_STRING ); 
 	        consume(IToken.tRPAREN);
 	        if( templateIdScopes != null ){	templateIdScopes.pop(); }
 	    }
@@ -1708,7 +1723,7 @@ public class ExpressionParser implements IExpressionParser {
 	    return astFactory.createExpression(
 	    	scope, IASTExpression.Kind.NEW_TYPEID, 
 			null, null, null, typeId, null, 
-			"", astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions)); //$NON-NLS-1$
+			EMPTY_STRING, astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions)); 
 		}
 		catch (ASTSemanticException e)
 		{
@@ -1718,6 +1733,12 @@ public class ExpressionParser implements IExpressionParser {
 	        throw backtrack;
 	    }
 		
+	}
+
+	/**
+	 * @param functionName 
+	 */
+	protected void setCurrentFunctionName(String functionName ) {
 	}
 
 	/**
@@ -1792,7 +1813,7 @@ public class ExpressionParser implements IExpressionParser {
 	                        null,
 	                        null,
 	                        d,
-	                        null, "", null); //$NON-NLS-1$
+	                        null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -1811,7 +1832,7 @@ public class ExpressionParser implements IExpressionParser {
 	                        null,
 	                        null,
 	                        null,
-	                        null, "", null); //$NON-NLS-1$
+	                        null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e1)
 	                {
@@ -1851,7 +1872,8 @@ public class ExpressionParser implements IExpressionParser {
 	protected IASTExpression postfixExpression(IASTScope scope, CompletionKind kind) throws EndOfFileException, BacktrackException {
 	    IASTExpression firstExpression = null;
 	    boolean isTemplate = false;
-	    checkEndOfFile();
+	    
+	    setCompletionValues( scope, kind, Key.EXPRESSION );
 	    switch (LT(1))
 	    {
 	        case IToken.t_typename :
@@ -1889,7 +1911,7 @@ public class ExpressionParser implements IExpressionParser {
 													null, 
 													null, 
 													nestedName,
-													"",  //$NON-NLS-1$
+													EMPTY_STRING,  
 													null );
 				} catch (ASTSemanticException ase ) {
 					throw backtrack;
@@ -1999,7 +2021,7 @@ public class ExpressionParser implements IExpressionParser {
 	                        null,
 	                        null,
 	                        typeId,
-	                        null, "", null); //$NON-NLS-1$
+	                        null, EMPTY_STRING, null); 
 	            }
 	            catch (ASTSemanticException e6)
 	            {
@@ -2020,7 +2042,7 @@ public class ExpressionParser implements IExpressionParser {
 	        {
 	            case IToken.tLBRACKET :
 	                // array access
-	                consume();
+	                consume(IToken.tLBRACKET);
 	            	if( templateIdScopes != null ){ templateIdScopes.push( new Integer( IToken.tLBRACKET ) );	}
 	                secondExpression = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
 	                consume(IToken.tRBRACKET);
@@ -2035,7 +2057,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e2)
 	                {
@@ -2049,8 +2071,23 @@ public class ExpressionParser implements IExpressionParser {
 	            case IToken.tLPAREN :
 	                // function call
 	                consume(IToken.tLPAREN);
+	            	IASTNode context = null;
+	            	if( firstExpression != null )
+	            	{
+	            		if( firstExpression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION )
+	            			setCurrentFunctionName( firstExpression.getIdExpression() );
+	            		else if( firstExpression.getRHSExpression() != null && 
+	            				 firstExpression.getRHSExpression().getIdExpression() != null )
+	            		{
+	            			setCurrentFunctionName( firstExpression.getRHSExpression().getIdExpression() );
+	            			context = astFactory.expressionToASTNode( scope, firstExpression.getLHSExpression() );
+	            		}
+	            	}
+	            	
 	            	if( templateIdScopes != null ){ templateIdScopes.push( new Integer( IToken.tLPAREN ) );	}
-	                secondExpression = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
+	            	setCompletionValues(scope, CompletionKind.FUNCTION_REFERENCE, context );
+	                secondExpression = expression(scope, CompletionKind.FUNCTION_REFERENCE);
+	                setCurrentFunctionName( EMPTY_STRING ); 
 	                consume(IToken.tRPAREN);
 	                if( templateIdScopes != null ){ templateIdScopes.pop();	}
 	                try
@@ -2063,7 +2100,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e3)
 	                {
@@ -2075,7 +2112,7 @@ public class ExpressionParser implements IExpressionParser {
 	                }
 	                break;
 	            case IToken.tINCR :
-	                consume();
+	                consume(IToken.tINCR);
 	                try
 	                {
 	                    firstExpression =
@@ -2086,7 +2123,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            null,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e1)
 	                {
@@ -2109,7 +2146,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            null,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e4)
 	                {
@@ -2150,7 +2187,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e5)
 	                {
@@ -2190,7 +2227,7 @@ public class ExpressionParser implements IExpressionParser {
 	                            secondExpression,
 	                            null,
 	                            null,
-	                            null, "", null); //$NON-NLS-1$
+	                            null, EMPTY_STRING, null); 
 	                }
 	                catch (ASTSemanticException e)
 	                {
@@ -2234,9 +2271,11 @@ public class ExpressionParser implements IExpressionParser {
 	}
 
 	protected IASTExpression simpleTypeConstructorExpression(IASTScope scope, Kind type ) throws EndOfFileException, BacktrackException {
-	    consume();
+	    String typeName = consume().getImage();
 	    consume(IToken.tLPAREN);
-	    IASTExpression inside = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
+	    setCurrentFunctionName( typeName );
+	    IASTExpression inside = expression(scope, CompletionKind.CONSTRUCTOR_REFERENCE);
+	    setCurrentFunctionName( EMPTY_STRING );
 	    consume(IToken.tRPAREN);
 	    try
 	    {
@@ -2247,7 +2286,7 @@ public class ExpressionParser implements IExpressionParser {
 	            null,
 	            null,
 	            null,
-	            null, "", null); //$NON-NLS-1$
+	            null, EMPTY_STRING, null); 
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -2379,7 +2418,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    null,
 	                    null,
 	                    null,
-	                    null, "", null); //$NON-NLS-1$
+	                    null, EMPTY_STRING, null); 
 	            }
 	            catch (ASTSemanticException e7)
 	            {
@@ -2403,7 +2442,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    null,
 	                    null,
 	                    null,
-	                    null, "", null); //$NON-NLS-1$
+	                    null, EMPTY_STRING, null); 
 	            }
 	            catch (ASTSemanticException e6)
 	            {
@@ -2462,7 +2501,7 @@ public class ExpressionParser implements IExpressionParser {
 	                    null,
 	                	null,
 						null,
-	                    duple, "", null); //$NON-NLS-1$
+	                    duple, EMPTY_STRING, null); 
 	            }
 	            catch (ASTSemanticException e8)
 	            {
@@ -2481,7 +2520,7 @@ public class ExpressionParser implements IExpressionParser {
 							null,
 							null,
 							null,
-							null, "", null); //$NON-NLS-1$
+							null, EMPTY_STRING, null); 
 				} catch (ASTSemanticException e9) {
 					// TODO Auto-generated catch block
 					e9.printStackTrace();
@@ -2522,7 +2561,7 @@ public class ExpressionParser implements IExpressionParser {
 	    catch (ScannerException e)
 	    {
 	    	TraceUtil.outputTrace(log, "ScannerException thrown : ", e.getProblem(), null, null, null); //$NON-NLS-1$
-			log.errorLog( "Scanner Exception: " + e.getProblem().getMessage()); //$NON-NLS-1$h
+			log.errorLog( "Scanner Exception: " + e.getProblem().getMessage()); //$NON-NLS-1$
 	        failParse(); 
 	        return fetchToken();
 	    }
@@ -2643,7 +2682,7 @@ public class ExpressionParser implements IExpressionParser {
 				assignmentExpression,
 	            null,
 	            null,
-	            null, "", null); //$NON-NLS-1$
+	            null, EMPTY_STRING, null); 
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -2678,7 +2717,7 @@ public class ExpressionParser implements IExpressionParser {
 	            null,
 	            null,
 	            null,
-	            null, "", null); //$NON-NLS-1$
+	            null, EMPTY_STRING, null); 
 	    }
 	    catch (ASTSemanticException e)
 	    {
@@ -2706,7 +2745,7 @@ public class ExpressionParser implements IExpressionParser {
 	            null,
 	            null,
 	            duple,
-	            null, "", null); //$NON-NLS-1$
+	            null, EMPTY_STRING, null); 
 	    }
 	    catch (ASTSemanticException e)
 	    {

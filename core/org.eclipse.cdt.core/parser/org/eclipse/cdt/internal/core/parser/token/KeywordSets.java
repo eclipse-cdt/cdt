@@ -38,6 +38,7 @@ public class KeywordSets {
 		public static final Key NAMESPACE_ONLY = new Key(6);
 		public static final Key MACRO = new Key( 7 );
 		public static final Key PP_DIRECTIVE = new Key( 8 );
+		public static final Key EXPRESSION = new Key( 9 );
 		/**
 		 * @param enumValue
 		 */
@@ -69,7 +70,8 @@ public class KeywordSets {
 			return MACRO_ONLY;
 		if( kind == Key.PP_DIRECTIVE )
 			return PP_DIRECTIVES;
-		
+		if( kind == Key.EXPRESSION )
+			return (Set) EXPRESSION.get( language );
 		//TODO finish this
 		return null;
 	}
@@ -258,5 +260,49 @@ public class KeywordSets {
 		PP_DIRECTIVES.add(Directives.POUND_ERROR);
 		PP_DIRECTIVES.add(Directives.POUND_PRAGMA);
 		PP_DIRECTIVES.add(Directives.POUND_ELIF); 
+	}
+	
+	private static final Set EXPRESSION_C;
+	static
+	{
+		EXPRESSION_C = new TreeSet();
+		EXPRESSION_C.add( Keywords.CHAR );
+		EXPRESSION_C.add( Keywords.WCHAR_T);
+		EXPRESSION_C.add( Keywords.SHORT);		
+		EXPRESSION_C.add( Keywords.INT);
+		EXPRESSION_C.add( Keywords.LONG);	
+		EXPRESSION_C.add( Keywords.SIGNED);
+		EXPRESSION_C.add( Keywords.UNSIGNED);
+		EXPRESSION_C.add( Keywords.FLOAT);
+		EXPRESSION_C.add( Keywords.DOUBLE);
+		
+	}
+	
+	private static final Set EXPRESSION_CPP;
+	static
+	{
+		EXPRESSION_CPP = new TreeSet(EXPRESSION_C);
+		EXPRESSION_CPP.add( Keywords.BOOL );
+		EXPRESSION_CPP.add( Keywords.NEW );
+		EXPRESSION_CPP.add( Keywords.DELETE );
+		EXPRESSION_CPP.add( Keywords.TYPENAME );
+		EXPRESSION_CPP.add( Keywords.DYNAMIC_CAST );
+		EXPRESSION_CPP.add( Keywords.STATIC_CAST );
+		EXPRESSION_CPP.add( Keywords.REINTERPRET_CAST );
+		EXPRESSION_CPP.add( Keywords.CONST_CAST );
+		EXPRESSION_CPP.add( Keywords.TYPEID );
+		EXPRESSION_CPP.add( Keywords.TRUE );
+		EXPRESSION_CPP.add( Keywords.FALSE );
+		EXPRESSION_CPP.add( Keywords.THIS );
+		EXPRESSION_CPP.add( Keywords.OPERATOR );
+		EXPRESSION_CPP.add( Keywords.THROW );
+	}
+	
+	private static final Hashtable EXPRESSION;
+	static
+	{
+		EXPRESSION = new Hashtable();
+		EXPRESSION.put( ParserLanguage.CPP, EXPRESSION_CPP );
+		EXPRESSION.put( ParserLanguage.C, EXPRESSION_C );
 	}
 }

@@ -61,7 +61,7 @@ public class ASTTypeId implements IASTTypeId
 		this.isSigned = isSigned;
 		this.isShort = isShort;
 		this.isLong = isLong;
-		this.isTypename  = isTypeName; 
+		this.isTypename  = isTypeName;
     }
     
     /* (non-Javadoc)

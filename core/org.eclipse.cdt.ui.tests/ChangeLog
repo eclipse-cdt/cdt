@@ -1,4 +1,11 @@
 2004-04-07 John Camelon
+	Updated CompletionFailedTest_ConstructorReference_Bug50808, renamed it to CompletionTest_ConstructorReference and moved it out of the failed tests folder.
+	Updated CompletionFailedTest_TypeDef_Bug52948, renamed it to CompletionTest_TypeDef_Prefix and moved it out of the failed tests folder.
+	Renamed CompletionTest_TypeDef_Bug52948 it to CompletionTest_TypeDef_NoPrefix.
+	Updated CompletionTest_SingleName_Parameter and renamed it to CompletionTest_FunctionReference_Prefix.
+	Updated CompletionFailedTest_FunctionReference_Bug50807, renamed it to CompletionTest_FunctionReference_NoPrefix and moved it out of the failed tests folder.
+
+2004-04-07 John Camelon
 	Updated CompletionFailedTest_ScopedReference_Prefix_Bug50152, moved it out of failed tests package and renamed it to CompletionTest_ScopedReference_Prefix_Bug50152.
 	Updated CompletionFailedTest_TypeDef_Bug52948, moved it out of failed tests package and renamed it to CompletionTest_TypeDef_Bug52948. 
 	Updated CompletionFailedTest_ScopedReference_NoPrefix_Bug50152 to show Hoda/Andrew what is still broken.  	

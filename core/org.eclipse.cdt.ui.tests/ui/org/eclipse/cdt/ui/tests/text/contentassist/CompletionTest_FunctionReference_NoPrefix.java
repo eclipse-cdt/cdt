@@ -11,7 +11,6 @@
 package org.eclipse.cdt.ui.tests.text.contentassist;
 
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -20,39 +19,40 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Typedef as a possible returned type.
- * Bug#52948 
+ * Testing Function_Reference
+ * Bug#
  *
  */
-public class CompletionTest_TypeDef_Bug52948  extends CompletionProposalsBaseTest{
+public class CompletionTest_FunctionReference_NoPrefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionTestStart37.cpp";
+	private final String fileName = "CompletionTestStart34.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCompilationUnit";
-	private final String expectedContextName = "null"; 
-	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE; 
-	private final String expectedPrefix = "m";  
+	private final String expectedScopeName = "ASTMethod";
+	private final String expectedContextName = "ASTVariable"; // variables are more precise to lookup upon than the variable's type is
+	private final CompletionKind expectedKind = CompletionKind.FUNCTION_REFERENCE;  
+	private final String expectedPrefix = ""; 
 	private final String[] expectedResults = {
-			"myType"
+			"xOtherMethod() void",
+			"xOtherMethod(int) void"
 	};
 	
-	public CompletionTest_TypeDef_Bug52948(String name) {
+	public CompletionTest_FunctionReference_NoPrefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_TypeDef_Bug52948.class.getName());
-		suite.addTest(new CompletionTest_TypeDef_Bug52948("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_FunctionReference_NoPrefix.class.getName());
+		suite.addTest(new CompletionTest_FunctionReference_NoPrefix("testCompletionProposals"));
 		return suite;
 	}		
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
+	* @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" m ") + 2;
+		return getBuffer().indexOf("(      ") + 2;
 	}
 
 	/* (non-Javadoc)
@@ -117,4 +117,12 @@ public class CompletionTest_TypeDef_Bug52948  extends CompletionProposalsBaseTes
 		return headerFileName;
 	}
 
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest#getFunctionOrConstructorName()
+	 */
+	protected String getFunctionOrConstructorName() {
+		return "xOtherMethod"; 
+	}
 }

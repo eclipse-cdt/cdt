@@ -56,7 +56,7 @@ public class CompletionParser extends ContextualParser implements IParser {
 	public IASTCompletionNode parse(int offset) {
 		scanner.setOffsetBoundary(offset);
 		translationUnit();
-		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), reconcileKeywords( getKeywordSet(), getCompletionPrefix() ) );
+		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), reconcileKeywords( getKeywordSet(), getCompletionPrefix() ), getCompletionFunctionName() );
 	}
 
 	/**

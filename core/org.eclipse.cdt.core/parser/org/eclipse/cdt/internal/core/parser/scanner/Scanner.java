@@ -712,6 +712,7 @@ public class Scanner implements IScanner {
 	private boolean atEOF = false;
 
 	private boolean tokenizingMacroReplacementList = false;
+	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	public void setTokenizingMacroReplacementList( boolean mr ){
 		tokenizingMacroReplacementList = mr;
 	}
@@ -1457,12 +1458,12 @@ public class Scanner implements IScanner {
 		if( v.size() == 4 )
 		{
 			for( int i = 0; i < 4; ++i )
-				buff.append( (char)((Character)v.get(i)).charValue());
+				buff.append( ((Character)v.get(i)).charValue());
 		}
 		else
 		{
 			for( int i = v.size() - 1; i >= 0; --i )
-				ungetChar( (char) ((Character)v.get(i)).charValue() );
+				ungetChar( ((Character)v.get(i)).charValue() );
 		}
 		return buff;
 	}
@@ -2018,7 +2019,7 @@ public class Scanner implements IScanner {
 	 */
 	protected void handleCompletionOnDefinition(String definition) throws EndOfFileException {
 		IASTCompletionNode node = new ASTCompletionNode( IASTCompletionNode.CompletionKind.MACRO_REFERENCE, 
-				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()) );
+				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()), EMPTY_STRING );
 		
 		throwEOF( node ); 
 	}
@@ -2077,19 +2078,19 @@ public class Scanner implements IScanner {
 		
 		IASTCompletionNode node = new ASTCompletionNode( kind, 
 				null, null, prefix, 
-				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSets.Key.EMPTY : KeywordSets.Key.MACRO), scannerData.getLanguage()) );
+				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSets.Key.EMPTY : KeywordSets.Key.MACRO), scannerData.getLanguage()), EMPTY_STRING );
 		
 		throwEOF( node );
 	}
 
 	protected void handleInvalidCompletion() throws EndOfFileException
 	{
-		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, "", KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()) )); //$NON-NLS-1$
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, EMPTY_STRING, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, scannerData.getLanguage()) , EMPTY_STRING)); 
 	}
 	
 	protected void handleCompletionOnPreprocessorDirective( String prefix ) throws EndOfFileException 
 	{
-		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null, prefix, KeywordSets.getKeywords(KeywordSets.Key.PP_DIRECTIVE, scannerData.getLanguage() )));
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null, prefix, KeywordSets.getKeywords(KeywordSets.Key.PP_DIRECTIVE, scannerData.getLanguage() ), EMPTY_STRING));
 	}
 	/**
 	 * @param key

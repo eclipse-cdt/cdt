@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ast.SymbolIterator;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.IExtensibleSymbol;
@@ -55,7 +56,11 @@ public class ASTNode implements IASTNode {
 				ISymbol typedef = ((ISymbolOwner)context).getSymbol();
 				TypeInfo info = typedef.getTypeInfo().getFinalType();
 				sym = info.getTypeSymbol();
-			} else {
+			} else if ( context instanceof IASTVariable ){
+				sym = ((ISymbolOwner)context).getSymbol().getTypeSymbol(); // good enough for now
+			}
+			else
+			{
 				sym = (IContainerSymbol) ((ISymbolOwner)context).getSymbol();	
 			}
 			

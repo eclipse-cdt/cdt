@@ -1,3 +1,6 @@
+2004-04-07 John Camelon
+	Updated CompletionEngine to use the extended IASTCompletionNode interface for FUNCTION_REFERENCE.
+
 2004-04-07 David Inglis
 	
 	Begining of new Include/Symbols UI pages.

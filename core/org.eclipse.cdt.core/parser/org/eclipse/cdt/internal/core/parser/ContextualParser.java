@@ -70,12 +70,13 @@ public class ContextualParser extends CompleteParser {
 	protected IASTNode context;
 	protected IToken finalToken;
 	protected Set keywordSet;
+	protected String functionOrConstructorName = "";
 
 	/**
 	 * @return
 	 */
 	protected String getCompletionPrefix() {
-		return ( finalToken == null ? "" : finalToken.getImage() ); //$NON-NLS-1$
+		return ( finalToken == null ? EMPTY_STRING : finalToken.getImage() ); 
 	}
 
 	/**
@@ -105,7 +106,14 @@ public class ContextualParser extends CompleteParser {
 		this.keywordSet = keywordSet;
 		setCompletionKind(kind);
 		setCompletionContext(null);
+		setCompletionFunctionName( );
 		setCompletionToken( new Token( IToken.tIDENTIFIER, prefix ) );
+	}
+
+	/**
+	 */
+	protected void setCompletionFunctionName() {
+		functionOrConstructorName = currentFunctionName;
 	}
 
 	protected void setCompletionKeywords(KeywordSets.Key key) {
@@ -139,6 +147,7 @@ public class ContextualParser extends CompleteParser {
 		setCompletionKeywords(key);
 		setCompletionKind(kind);
 		setCompletionContext(node);
+		setCompletionFunctionName( );
 		checkEndOfFile();
 	}
 
@@ -153,9 +162,12 @@ public class ContextualParser extends CompleteParser {
 			setCompletionContext( astFactory.lookupSymbolInContext( scope, duple ) );
 		} catch (ASTNotImplementedException e) {
 		}
-	
+		setCompletionFunctionName();
 	}
 
+	private String currentFunctionName = EMPTY_STRING;
+	
+	
 	
 	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTExpression firstExpression, boolean isTemplate) throws EndOfFileException {
 		setCompletionValues(scope,kind,key, getCompletionContextForExpression(firstExpression,isTemplate)  );
@@ -171,6 +183,7 @@ public class ContextualParser extends CompleteParser {
 	protected void setCompletionValues(IASTScope scope, CompletionKind kind) throws EndOfFileException {
 		setCompletionScope(scope);
 		setCompletionKind(kind);
+		setCompletionFunctionName( );
 		checkEndOfFile();
 	}
 	/* (non-Javadoc)
@@ -181,5 +194,21 @@ public class ContextualParser extends CompleteParser {
 		setCompletionScope(scope);
 		setCompletionKind(kind);
 		setCompletionContext(context);
+		setCompletionFunctionName( );
 		checkEndOfFile();	}
+
+	/**
+	 * @return
+	 */
+	protected String getCompletionFunctionName() {
+		return functionOrConstructorName;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setCurrentFunctionName(java.lang.String)
+	 */
+	protected void setCurrentFunctionName(String functionName) {
+		currentFunctionName = functionName;
+	}
 }

@@ -35,6 +35,6 @@ public interface IASTTypeId extends ISourceElementCallbackDelegate
 	public boolean    isTypename();
 	
 	
-	public String  getFullSignature() throws ASTNotImplementedException; 
+	public String  getFullSignature(); 
 	public ISymbol getTypeSymbol() throws ASTNotImplementedException; 
 }

@@ -27,14 +27,16 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	private final IASTScope scope;
 	private final CompletionKind kind;
 	private final Set keywordSet;
+	private final String functionName;
 
-	public ASTCompletionNode( CompletionKind kind, IASTScope scope, IASTNode context, String prefix, Set keywords )
+	public ASTCompletionNode( CompletionKind kind, IASTScope scope, IASTNode context, String prefix, Set keywords, String functionName )
 	{
 		this.kind = kind;
 		this.context = context;
 		this.scope = scope; 
 		this.prefix = prefix;
 		this.keywordSet = keywords;
+		this.functionName = functionName;
 	}
 	
 	/* (non-Javadoc)
@@ -78,6 +80,13 @@ public class ASTCompletionNode implements IASTCompletionNode {
 	{
 		return keywordSet;
 	
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTCompletionNode#getFunctionName()
+	 */
+	public String getFunctionName() {
+		return functionName;
 	}
 
 }

@@ -66,16 +66,16 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionTest_NewTypeReference_Prefix.suite());
 		addTest(CompletionTest_ExceptionReference_NoPrefix.suite());
 		addTest(CompletionTest_ExceptionReference_Prefix.suite());
-		addTest(CompletionTest_SingleName_Parameter.suite());
+		addTest(CompletionTest_FunctionReference_Prefix.suite());
 		
 		// Failed Tests
 		addTest(CompletionFailedTest_ScopedReference_NoPrefix_Bug50152.suite());
 		addTest(CompletionTest_ScopedReference_Prefix_Bug50152.suite());
 		addTest(CompletionTest_MacroRef_NoPrefix.suite());		
 		addTest(CompletionTest_MacroRef_Prefix.suite());
-		addTest(CompletionFailedTest_FunctionReference_Bug50807.suite());
-		addTest(CompletionFailedTest_ConstructorReference_Bug50808.suite());
-		addTest(CompletionTest_TypeDef_Bug52948.suite());
+		addTest(CompletionTest_FunctionReference_NoPrefix.suite());
+		addTest(CompletionTest_ConstructorReference.suite());
+		addTest(CompletionTest_TypeDef_NoPrefix.suite());
 	}
 	
 }

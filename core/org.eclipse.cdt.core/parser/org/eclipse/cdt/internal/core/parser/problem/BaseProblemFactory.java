@@ -41,8 +41,8 @@ public abstract class BaseProblemFactory {
 	 * @param file
 	 * @return
 	 */
-	private String createInternalMessage(int id, String arg, int line, char[] file)
-	{
+//	private String createInternalMessage(int id, String arg, int line, char[] file)
+//	{
 //		if( checkBitmask( id, IProblem.INTERNAL_RELATED ))
 //		{
 //			StringBuffer buffer = new StringBuffer();
@@ -53,7 +53,7 @@ public abstract class BaseProblemFactory {
 //			 
 //			return buffer.toString();
 //		}
-		return null;
-	}
+//		return null;
+//	}
 
 }

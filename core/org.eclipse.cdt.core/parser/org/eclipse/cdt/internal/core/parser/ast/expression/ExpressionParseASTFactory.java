@@ -875,7 +875,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		boolean isTypename,
 		ITokenDuple name,
 		List pointerOps,
-		List arrayMods)
+		List arrayMods, String completeSignature)
 		throws ASTSemanticException {
 		// TODO Auto-generated method stub
 		return null;
@@ -900,7 +900,6 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	public IASTNode getCompletionContext(
 		Kind kind,
 		IASTExpression expression) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -912,9 +911,16 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 	 */
 	public IASTNode lookupSymbolInContext(IASTScope scope, ITokenDuple duple)
 		throws ASTNotImplementedException {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getNodeForThisExpression(org.eclipse.cdt.core.parser.ast.IASTExpression)
+	 */
+	public IASTNode expressionToASTNode(IASTScope scope, IASTExpression expression) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
+	
 }

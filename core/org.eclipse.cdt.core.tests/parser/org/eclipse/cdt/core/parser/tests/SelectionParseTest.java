@@ -406,4 +406,38 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 	    assertEquals( ((IASTMethod)node).getName(), "ABC" ); //$NON-NLS-1$
 	    assertTrue( ((IASTMethod)node).isConstructor() );
 	}
+	
+	public void testBug72372() throws Exception{
+	    Writer writer = new StringWriter();
+	    writer.write("namespace B {                                   \n"); //$NON-NLS-1$
+	    writer.write("   class SD_02 { void f_SD(); };                \n"); //$NON-NLS-1$
+	    writer.write("}                                               \n"); //$NON-NLS-1$
+	    writer.write("using namespace B;                              \n"); //$NON-NLS-1$
+	    writer.write("void SD_02::f_SD(){}                            \n"); //$NON-NLS-1$
+	    
+	    String code = writer.toString();
+	    int startIndex = code.indexOf( ":f_SD" ); //$NON-NLS-1$
+	    IASTNode node = parse( code, startIndex + 1, startIndex + 5 );
+	    assertTrue( node instanceof IASTMethod );
+	    assertEquals( ((IASTMethod)node).getName(), "f_SD" ); //$NON-NLS-1$
+	}
+	public void testBug72372_2() throws Exception{
+	    Writer writer = new StringWriter();
+	    writer.write("namespace A {                                   \n"); //$NON-NLS-1$
+	    writer.write("   namespace B {                                \n"); //$NON-NLS-1$
+	    writer.write("      void f_SD();                              \n"); //$NON-NLS-1$
+	    writer.write("   }                                            \n"); //$NON-NLS-1$
+	    writer.write("}                                               \n"); //$NON-NLS-1$
+	    writer.write("namespace C {                                   \n"); //$NON-NLS-1$
+	    writer.write("   using namespace A;                           \n"); //$NON-NLS-1$
+	    writer.write("}                                               \n"); //$NON-NLS-1$
+	    writer.write("void C::B::f_SD(){}                             \n"); //$NON-NLS-1$
+	    
+	    String code = writer.toString();
+	    int startIndex = code.indexOf( ":f_SD" ); //$NON-NLS-1$
+	    IASTNode node = parse( code, startIndex + 1, startIndex + 5 );
+	    assertTrue( node instanceof IASTFunction );
+	    assertEquals( ((IASTFunction)node).getName(), "f_SD" ); //$NON-NLS-1$
+	}
 }
+

@@ -1,3 +1,19 @@
+2003-10-21 Alain Magloire
+
+	Moving the implementation of the ICPathEntry in the Core Model
+	new files:
+
+	* model/org/eclipse/cdt/core/model/IIncludeEntry.java
+	* model/org/eclipse/cdt/internal/core/model/IncludeEntry.java
+	* model/org/eclipse/cdt/core/model/IMacroEntry.java
+	* model/org/eclipse/cdt/internal/core/model/IIncludeEntry.java
+	* model/org/eclipse/cdt/core/model/ICPathEntry.java
+	* model/org/eclipse/cdt/internal/core/model/CPathEntry.java
+	* model/org/eclipse/cdt/core/model/ILibraryEntry.java
+	* model/org/eclipse/cdt/internal/core/model/LibraryEntry.java
+	* model/org/eclipse/cdt/core/model/ISourceEntry.java
+	* model/org/eclipse/cdt/internal/core/model/SourceEntry.java
+
 2003-10-20 Hoda Amer
 	Fixed bug#44507 outline flickers with CDT1.2 RC0
 	Returned a boolean from IWorkingCopy.reconcile() indicating

@@ -1,3 +1,7 @@
+2005-03-9 Chris Wiebe
+	temporary fix for type parser timeout
+	* browser/org/eclipse/cdt/core/browser/cache/TypeParser.java
+
 2005-03-13 Bogdan Gheorghe
 	Updated references to IndexManager to reflect new multi-indexer framework.
 	* browser/org/eclipse/cdt/internal/core/browser/cache/IndexerDependencies.java

@@ -926,11 +926,30 @@ public class TypeParser implements ISourceElementRequestor {
 	public CodeReader createReader(String finalPath, Iterator workingCopies) {
 		return ParserUtil.createReader(finalPath, workingCopies);
 	}
+    
+    private static final int DEFAULT_PARSER_TIMEOUT = 30;
 	
 	public int getParserTimeout() {
-		// here we just reuse the indexer timeout
-		String timeOut = CCorePlugin.getDefault().getPluginPreferences().getString("CDT_INDEXER_TIMEOUT");
-		return Integer.valueOf(timeOut).intValue();
+        //TODO we shouldn't be trying to access the indexer prefs
+        //TODO clean this up
+        int timeout = 0;
+        try {
+            // here we just reuse the indexer timeout
+            String str = CCorePlugin.getDefault().getPluginPreferences().getString("CDT_INDEXER_TIMEOUT"); //$NON-NLS-1$
+            if (str != null && str.length() > 0) {
+                int val = Integer.valueOf(str).intValue();
+                if (val > 0) {
+                    timeout = val;
+                }
+            }
+        } catch (NumberFormatException e) {
+            // do nothing
+        }
+
+        if (timeout == 0) {
+            timeout = DEFAULT_PARSER_TIMEOUT;
+        }
+        return timeout;
 	}
 	
 }

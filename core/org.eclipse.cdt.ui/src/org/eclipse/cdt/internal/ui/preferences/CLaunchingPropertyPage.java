@@ -106,7 +106,7 @@ public class CLaunchingPropertyPage extends PropertyPage {
 			labelField.setLabelText(CPlugin.getResourceString(NO_CPROJECT));
 			labelField.doFillIntoGrid(composite, 3);
 		}
-		WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, ICHelpContextIds.LAUNCH_PROPERTY_PAGE));
+		WorkbenchHelp.setHelp(parent, ICHelpContextIds.LAUNCH_PROPERTY_PAGE);
 
 		return composite;
 	}

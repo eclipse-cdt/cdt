@@ -60,7 +60,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, ICHelpContextIds.C_PREF_PAGE));
+		WorkbenchHelp.setHelp(getControl(), ICHelpContextIds.C_PREF_PAGE);
 	}	
 
 	/**

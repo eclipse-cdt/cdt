@@ -73,7 +73,7 @@ public class CProjectPropertyPage extends PropertyPage implements IStatusChangeL
 		item2.setData(settingsBlock);
 		item2.setControl(settingsBlock.getControl(folder));
 
-		WorkbenchHelp.setHelp(parent, new DialogPageContextComputer(this, ICHelpContextIds.PROJECT_PROPERTY_PAGE));	
+		WorkbenchHelp.setHelp(parent, ICHelpContextIds.PROJECT_PROPERTY_PAGE);	
 	}
 	
 	private void contentForClosedProject(Composite parent) {

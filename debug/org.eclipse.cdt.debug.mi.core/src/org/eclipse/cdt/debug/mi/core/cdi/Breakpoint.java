@@ -72,7 +72,9 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#setCondition(ICDICondition)
 	 */
 	public void setCondition(ICDICondition condition) throws CDIException {
-		mgr.setCondition(this, condition);
+		if (isEnabled()) {
+			mgr.setCondition(this, condition);
+		}
 		this.condition = condition;
 	}
 

@@ -10,17 +10,21 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * @author dsteffle
  */
 public class TreeObject implements IAdaptable {
+	private static final String FILE_SEPARATOR = "\\";
 	public static final String BLANK_FILENAME = ""; //$NON-NLS-1$
 	private static final String IGCCAST_PREFIX = "IGCCAST"; //$NON-NLS-1$
 	private static final String IGNUAST_PREFIX = "IGNUAST"; //$NON-NLS-1$
@@ -73,11 +77,42 @@ public class TreeObject implements IAdaptable {
 			}
 		}
 		
-		if ( node instanceof IASTName ) {
+		if ( node instanceof IASTSimpleDeclaration ) {
+			IASTDeclarator[] decltors = ((IASTSimpleDeclaration)node).getDeclarators();
+			
+			if ( decltors.length > 0 ) {
+				buffer.append(START_OF_LIST);
+				for (int i=0; i<decltors.length; i++) {
+					buffer.append(decltors[i].getName());
+					
+					if (i+1<decltors.length)
+						buffer.append(LIST_SEPARATOR);
+				}
+			}
+			return buffer.toString();
+		} else if ( node instanceof IASTFunctionDefinition ) {
+			String name = ((IASTFunctionDefinition)node).getDeclarator().getName().toString();
+			if (name != null) {
+				buffer.append(START_OF_LIST);
+				buffer.append(name);
+			}
+			return buffer.toString();
+		} else if ( node instanceof IASTName ) {
 			buffer.append(START_OF_LIST);
 			buffer.append(node);
+			return buffer.toString();
+		} else if ( node instanceof IASTTranslationUnit ) {
+			String fileName = getFilename();
+			int lastSlash = fileName.lastIndexOf(FILE_SEPARATOR);
+			
+			if (lastSlash > 0) {
+				buffer.append(START_OF_LIST);
+				buffer.append(fileName.substring(lastSlash+1)); // TODO make path relative to project, i.e. /projectName/path/file.c
+			}
+			
+			return buffer.toString();
 		}
-
+		
 		return buffer.toString();
 	}
 	public Object getAdapter(Class key) {

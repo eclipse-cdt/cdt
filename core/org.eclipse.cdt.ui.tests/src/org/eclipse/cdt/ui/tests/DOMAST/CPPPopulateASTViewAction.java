@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
+import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -18,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -79,6 +82,17 @@ public class CPPPopulateASTViewAction extends CPPBaseVisitorAction implements IP
 	 */
 	public int processDeclarator(IASTDeclarator declarator) {
 		addRoot(declarator);
+		
+		IASTPointerOperator[] ops = declarator.getPointerOperators();
+		for(int i=0; i<ops.length; i++)
+			addRoot(ops[i]);
+		
+		if (declarator instanceof IASTArrayDeclarator) {
+			IASTArrayModifier[] mods = ((IASTArrayDeclarator)declarator).getArrayModifiers();
+			for(int i=0; i<mods.length; i++)
+				addRoot(mods[i]);	
+		}
+		
 		return PROCESS_CONTINUE;
 	}
 	

@@ -12,9 +12,19 @@ package org.eclipse.cdt.ui.dialogs;
 ***********************************************************************/
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 public interface ICOptionContainer {
 
 	void updateContainer();
+
 	IProject getProject();
+
+	/**
+	 * Returns the preference store.
+	 *
+	 * @return the preference store, or <code>null</code> if none
+	 */
+	public IPreferenceStore getPreferenceStore();
+
 }

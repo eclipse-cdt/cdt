@@ -12,6 +12,7 @@ import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.widgets.Composite;
@@ -19,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 public abstract class NewCProjectWizardOptionPage extends WizardPage implements ICOptionContainer {
 
 	private TabFolderOptionBlock fOptionBlock;
+	private IPreferenceStore preferenceStore;
 
 	public NewCProjectWizardOptionPage(String pageName) {
 		this(pageName, null, null);
@@ -51,5 +53,20 @@ public abstract class NewCProjectWizardOptionPage extends WizardPage implements 
 		fOptionBlock.performApply(monitor);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreferenceStore()
+	 */
+	public IPreferenceStore getPreferenceStore() {
+		return preferenceStore;
+	}
+
+	/**
+	 * @param store
+	 */
+	public void setPreferenceStore(IPreferenceStore store) {
+		preferenceStore = store;
+	}
+
 	public abstract IProject getProject();
+
 }

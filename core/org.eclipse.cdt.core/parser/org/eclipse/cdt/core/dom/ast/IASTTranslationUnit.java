@@ -56,4 +56,9 @@ public interface IASTTranslationUnit extends IASTNode {
 	 */
 	public List getReferences(IBinding binding);
 	
+	public IASTNodeLocation getLocationInfo( int offset );
+	public IASTNodeLocation [] getLocationInfo( int offset, int length );
+	
+	public IASTNode getNodeForLocation( IASTNodeLocation location );
+	
 }

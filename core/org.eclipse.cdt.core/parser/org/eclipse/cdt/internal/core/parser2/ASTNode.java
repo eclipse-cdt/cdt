@@ -9,10 +9,13 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.parser2;
 
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+
 /**
  * @author jcamelon
  */
-public class ASTNode {
+public abstract class ASTNode implements IASTNode {
 
     private int length;
     private int offset;
@@ -33,4 +36,10 @@ public class ASTNode {
         this.length = length;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTNode#getNodeLocations()
+     */
+    public IASTNodeLocation[] getNodeLocations() {
+        return getTranslationUnit().getLocationInfo( offset, length );
+    }
 }

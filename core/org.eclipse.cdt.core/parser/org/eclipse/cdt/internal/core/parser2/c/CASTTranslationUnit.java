@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.core.parser2.c;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -97,4 +99,31 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLocationInfo(int)
+     */
+    public IASTNodeLocation getLocationInfo(int offset) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLocationInfo(int, int)
+     */
+    public IASTNodeLocation[] getLocationInfo(int offset, int length) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getNodeForLocation(org.eclipse.cdt.core.dom.ast.IASTNodeLocation)
+     */
+    public IASTNode getNodeForLocation(IASTNodeLocation location) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

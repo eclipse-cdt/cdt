@@ -19,6 +19,7 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTNode {
 
     public IASTTranslationUnit getTranslationUnit();
+    public IASTNodeLocation[] getNodeLocations();
     
 	/**
 	 * Get the parent node of this node in the tree.

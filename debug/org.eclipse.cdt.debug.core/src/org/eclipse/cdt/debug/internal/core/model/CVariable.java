@@ -316,7 +316,7 @@ public abstract class CVariable extends CDebugElement
 		try
 		{
 			setChanged( true );
-			getParent().fireChangeEvent( DebugEvent.CONTENT );
+			fireChangeEvent( DebugEvent.STATE );
 		}
 		catch( DebugException e )
 		{

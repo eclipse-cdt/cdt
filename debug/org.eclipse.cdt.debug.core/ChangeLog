@@ -1,4 +1,8 @@
 2003-06-06 Mikhail Khodjaiants
+	Refresh only the state of variable when handling a change event.
+	* CVariable.java
+
+2003-06-06 Mikhail Khodjaiants
 	Correct presentation of the full names of variables that contain pointers.
 	* CVariable.java
 

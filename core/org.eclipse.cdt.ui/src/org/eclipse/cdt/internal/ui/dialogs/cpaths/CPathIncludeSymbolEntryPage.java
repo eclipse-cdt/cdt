@@ -1045,6 +1045,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 
 				public void widgetSelected(SelectionEvent ev) {
 					DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
+					dialog.setText(CPathEntryMessages.getString("IncludeSymbolEntryPage.browseForFolder")); //$NON-NLS-1$
 					String currentName = getText().getText();
 					if (currentName != null && currentName.trim().length() != 0) {
 						dialog.setFilterPath(currentName);

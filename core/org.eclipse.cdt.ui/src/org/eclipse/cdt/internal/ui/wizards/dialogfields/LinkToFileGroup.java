@@ -254,6 +254,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		}
 		if (type == IResource.FILE) {
 			FileDialog dialog = new FileDialog(linkTargetField.getShell());
+			dialog.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.open")); //$NON-NLS-1$
 			if (file != null) {
 				if (file.isFile())
 					dialog.setFileName(linkTargetName);
@@ -264,6 +265,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		}
 		else {
 			DirectoryDialog dialog = new DirectoryDialog(linkTargetField.getShell());
+			dialog.setText(NewWizardMessages.getString("CreateLinkedResourceGroup.open")); //$NON-NLS-1$
 			if (file != null) {
 				if (file.isFile())
 					linkTargetName = file.getParent();

@@ -1,4 +1,11 @@
 2004-06-23 Tanya Wolff
+	Fix for bugs 66134,66145
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathEntryMessages.properties
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathIncludeSymbolEntryPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/NewWizardMessages.properties
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/LinkToFileGroup.java
+	
+2004-06-23 Tanya Wolff
 	Fix for Bug 66300 - i18n: File Types preferences buttons don't expand
 	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferences.java
 

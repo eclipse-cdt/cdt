@@ -664,18 +664,19 @@ import org.eclipse.core.runtime.Platform;
    }
 	
    private IFile importFile(String fileName, String resourceLocation)throws Exception{
-	  String testCaseName = this.getName();
-	
-	  //Obtain file handle
-	  file = testProject.getProject().getFile(fileName); 
-	  String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
-	  //Create file input stream
-	  monitor = new NullProgressMonitor();
-	  if (!file.exists()){
-		file.create(new FileInputStream(pluginRoot + resourceLocation),false,monitor);
-	  }
-	  fileDoc = new IFileDocument(file);
-	  
-	  return file;
+   		String testCaseName = this.getName();
+		//Obtain file handle
+		file = testProject.getProject().getFile(fileName);
+		String pluginRoot = Platform.asLocalURL(
+				Platform.getPlugin("org.eclipse.cdt.core.tests")
+						.getDescriptor().getInstallURL()).getFile();
+		//Create file input stream
+		monitor = new NullProgressMonitor();
+		if (!file.exists()) {
+			file.create(new FileInputStream(pluginRoot + resourceLocation),
+					false, monitor);
+		}
+		fileDoc = new IFileDocument(file);
+		return file;
    }
 }

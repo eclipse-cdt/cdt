@@ -30,7 +30,7 @@ import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.matching.NamespaceDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @author aniefer
@@ -317,8 +317,8 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 2 );
 	}
 	
-	public void testNoResourceSearching(){
-		String pluginRoot = org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
+	public void testNoResourceSearching() throws Exception {
+		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
 		String path = pluginRoot + "resources/search/include.h";
 		
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "Head", CLASS, REFERENCES, true );

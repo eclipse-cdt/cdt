@@ -25,6 +25,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 
 
@@ -73,13 +74,13 @@ public class ArchiveTests extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
-    protected void setUp() throws CoreException,FileNotFoundException {
+    protected void setUp() throws Exception {
             
         /***
          * Setup the various files, paths and projects that are needed by the
          * tests
          */
-        String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
+		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
         testProject=CProjectHelper.createCProject("filetest", "none");
         if (testProject==null)
             fail("Unable to create project");

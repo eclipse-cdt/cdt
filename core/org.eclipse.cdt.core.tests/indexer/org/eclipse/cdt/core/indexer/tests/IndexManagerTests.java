@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @author bgheorgh
@@ -129,17 +129,20 @@ public class IndexManagerTests extends TestCase {
 		return cPrj.getProject();
 	}
 	
-	private IFile importFile(String fileName, String resourceLocation)throws Exception{
-	   //Obtain file handle
-	   file = testProject.getProject().getFile(fileName); 
-	   String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
-	   //Create file input stream
-	   monitor = new NullProgressMonitor();
-	   if (!file.exists()){
-		 file.create(new FileInputStream(pluginRoot + resourceLocation),false,monitor);
-	   }
-	   fileDoc = new IFileDocument(file);
-	   return file;
+	private IFile importFile(String fileName, String resourceLocation)throws Exception {
+		//Obtain file handle
+		file = testProject.getProject().getFile(fileName);
+		String pluginRoot = Platform.asLocalURL(
+				Platform.getPlugin("org.eclipse.cdt.core.tests")
+						.getDescriptor().getInstallURL()).getFile();
+		//Create file input stream
+		monitor = new NullProgressMonitor();
+		if (!file.exists()) {
+			file.create(new FileInputStream(pluginRoot + resourceLocation),
+					false, monitor);
+		}
+		fileDoc = new IFileDocument(file);
+		return file;
 	}
 
 	/*

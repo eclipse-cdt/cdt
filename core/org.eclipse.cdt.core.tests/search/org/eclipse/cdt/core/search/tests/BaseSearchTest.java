@@ -34,7 +34,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @author aniefer
@@ -106,10 +106,10 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		return cPrj.getProject();
 	}
 
-	private void importFile(String fileName, String resourceLocation)throws Exception{
+	private void importFile(String fileName, String resourceLocation) throws Exception{
 		//Obtain file handle
 		file = testProject.getProject().getFile(fileName); 
-		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
+		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
 		//Create file input stream
 		
 		if (!file.exists()){

@@ -38,7 +38,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
@@ -75,7 +75,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin(pluginName).find(new Path("/")).getFile();
+		String pluginRoot = Platform.asLocalURL(Platform.getPlugin(pluginName).getDescriptor().getInstallURL()).getFile();
 		
 		fCProject= CProjectHelper.createCProject(projectName, projectType);
 		fHeaderFile = fCProject.getProject().getFile(getHeaderFileName());

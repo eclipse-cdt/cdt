@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @author jcamelon
@@ -51,7 +51,7 @@ public class ParseTestOnSearchFiles extends TestCase
     }
     
 	protected void setUp() throws Exception {	
-		pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
+		pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
         name = pluginRoot+ "resources/search/classDecl.cpp";
         fileIn = new FileInputStream(name);
 	}

@@ -26,6 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 
 /**
@@ -58,7 +59,7 @@ public class CModelTests extends TestCase {
      * Example code test the packages in the project 
      *  "com.qnx.tools.ide.cdt.core"
      */
-    protected void setUp() throws CoreException {
+    protected void setUp() throws Exception {
         /***
          * The test of the tests assume that they have a working workspace
          * and workspace root object to use to create projects/files in, 
@@ -72,7 +73,7 @@ public class CModelTests extends TestCase {
             fail("Workspace was not setup");
         if (root==null)
             fail("Workspace root was not setup");
-        pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
+		pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
 		desc=workspace.getDescription();
 		desc.setAutoBuilding(false);
 		workspace.setDescription(desc);

@@ -28,7 +28,7 @@ import org.eclipse.cdt.testplugin.TestPluginLauncher;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Contains unit test cases for Working Copies. Run using JUnit Plugin Test
@@ -54,9 +54,9 @@ public class WorkingCopyTests extends TestCase {
 		super(name);
 	}
 	
-	protected void setUp() {
+	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
+		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
 
 		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
 		//Path filePath = new Path(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString()+ fCProject.getPath().toString()+ "/WorkingCopyTest.h");

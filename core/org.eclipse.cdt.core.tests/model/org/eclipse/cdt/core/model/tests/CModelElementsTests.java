@@ -45,7 +45,7 @@ import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 public class CModelElementsTests extends TestCase {	
 	private ICProject fCProject;
@@ -62,9 +62,10 @@ public class CModelElementsTests extends TestCase {
 		super(name);
 	}
 		
-	protected void setUp() {
+	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
+		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL())
+			.getFile();
 	
 		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
 		headerFile = fCProject.getProject().getFile("CModelElementsTest.h");

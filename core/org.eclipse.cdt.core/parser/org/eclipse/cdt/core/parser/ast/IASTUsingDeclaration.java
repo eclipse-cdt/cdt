@@ -16,7 +16,7 @@ import java.util.Iterator;
  * @author jcamelon
  *
  */
-public interface IASTUsingDeclaration extends IASTDeclaration, IASTOffsetableElement {
+public interface IASTUsingDeclaration extends IASTDeclaration, IASTOffsetableNamedElement {
 
 	public boolean isTypename(); 
 	public String usingTypeName(); 

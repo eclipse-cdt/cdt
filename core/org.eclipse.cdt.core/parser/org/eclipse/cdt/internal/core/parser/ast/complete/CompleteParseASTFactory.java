@@ -459,7 +459,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				handleProblem( pste.createProblemID(), duple.toCharArray(), startingOffset, endingOffset, startingLine, true );
 			}
 		
-		ASTUsingDirective using = new ASTUsingDirective( scopeToSymbol(scope), usingDirective, startingOffset, startingLine, endingOffset, endingLine, references, filename );
+		ASTUsingDirective using = new ASTUsingDirective( scopeToSymbol(scope), usingDirective, startingOffset, startingLine, endingOffset, endingLine, references, filename, duple.getStartOffset(), duple.getEndOffset(), duple.getLineNumber() );
 		attachSymbolExtension( usingDirective, using );
 		
 		return using;
@@ -548,7 +548,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 			}
 		ASTUsingDeclaration using = new ASTUsingDeclaration( scope, name.getLastToken().getCharImage(),
-	        	endResult.getReferencedSymbols(), isTypeName, startingOffset, startingLine, endingOffset, endingLine, references, filename );
+	        	endResult.getReferencedSymbols(), isTypeName, startingOffset, startingLine, endingOffset, endingLine, references, filename, name.getStartOffset(), name.getEndOffset(), name.getLineNumber() );
 		attachSymbolExtension( endResult, using );
 		
         return using; 

@@ -121,7 +121,7 @@ public class GNUMakefile extends AbstractMakefile {
 
 			// We still in a define.
 			if (!defines.empty()) {
-				DefineVariable def = (DefineVariable) defines.peek();
+				VariableDefinition def = (VariableDefinition) defines.peek();
 				StringBuffer sb = def.getValue();
 				if (sb.length() > 0) {
 					sb.append('\n');

@@ -243,6 +243,16 @@ public class AllTypesCache {
 	}
 	
 	/**
+	 * Returns the global (default) namespace for the given project.
+	 * 
+	 * @param project the project
+	 */
+	public static ITypeInfo getGlobalNamespace(IProject project) {
+		ITypeCache cache = TypeCacheManager.getInstance().getCache(project);
+		return cache.getGlobalNamespace();
+	}
+
+	/**
 	 * Returns true if the type cache is up to date.
 	 */
 	public static boolean isCacheUpToDate(ITypeSearchScope scope) {

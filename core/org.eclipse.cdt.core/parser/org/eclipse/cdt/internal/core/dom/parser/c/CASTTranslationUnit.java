@@ -113,14 +113,6 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
 	}
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLocationInfo(int)
-     */
-    public IASTNodeLocation getLocationInfo(int offset) {
-        if( resolver == null ) return null;
-        return resolver.getLocation(offset);
-    }
-
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getLocationInfo(int, int)

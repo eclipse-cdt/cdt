@@ -46,6 +46,7 @@ public class SetCPathEntriesOperation extends CModelOperation {
 	CProject project;
 
 	public SetCPathEntriesOperation(CProject project, ICPathEntry[] oldEntries, ICPathEntry[] newEntries) {
+		super(project);
 		this.oldEntries = oldEntries;
 		this.newEntries = newEntries;
 		this.project = project;
@@ -214,6 +215,7 @@ public class SetCPathEntriesOperation extends CModelOperation {
 		}
 		if (celement != null) {
 			delta.changed(celement, flag);
+			addDelta(delta);
 		}
 	}
 }

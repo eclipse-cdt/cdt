@@ -5,4 +5,88 @@
    	label="Default Context Sensitive Help"/>
 </context>
 
+<context id ="cdt_u_newproj_buildset">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Make Builder page, C/C++ New Project wizard"/>
+</context>
+
+<context id ="cdt_u_newproj_parser_error">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Error Parsers, C/C++ New Project wizard"/>
+</context>
+
+<context id ="cdt_u_newproj_parser_binary">
+   <description>Click below to see help</description>
+   <topic href="cdt_u_newproj_parser_binary.htm"
+   	label="Binary Parser page, C/C++ New Project wizard"/>
+</context>
+
+<context id ="cdt_u_newproj_pathsymb">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Paths and Symbols page, C/C++ New Project wizard"/>
+</context>
+
+<context id ="cdt_u_outlineview">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Outline view"/>
+</context>
+
+<context id ="cdt_u_registersview">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Registers view"/>
+</context>
+
+<context id ="cdt_u_reg_view_pref">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Registers view preferences"/>
+</context>
+
+<context id ="cdt_u_memoryview">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Memory view"/>
+</context>
+
+<context id ="cdt_u_mem_view_pref">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Memory view preferences"/>
+</context>
+
+<context id ="cdt_u_shared_lib_view">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Shared Libraries view"/>
+</context>
+
+<context id ="cdt_u_shared_lib_view_pref">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Shared Libraries view preferences"/>
+</context>
+
+<context id ="cdt_u_signals_view">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Signals view"/>
+</context>
+
+<context id ="cdt_u_dbg_view">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="Debug view"/>
+</context>
+
+<context id ="cdt_u_search">
+   <description>Click below to see help</description>
+   <topic href="topic_under_dev.htm"
+   	label="C/C++ Search page, Search dialog box"/>
+</context>
+
 </contexts>

@@ -21,10 +21,10 @@ public class MakefileSimpleMacroRule extends PatternRule {
 	public MakefileSimpleMacroRule(IToken token) {
 		super("$(", ")", token, (char) 0, true); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
-	protected IToken doEvaluate(ICharacterScanner scanner) {
+	
+	protected IToken doEvaluate(ICharacterScanner scanner, boolean resume) {
 		nOfBrackets = 1;
-		return super.doEvaluate(scanner);
+		return super.doEvaluate(scanner, resume);
 	}
 
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
@@ -33,6 +33,9 @@ public class MakefileSimpleMacroRule extends PatternRule {
 		while ((c = scanner.read()) != ICharacterScanner.EOF) {
 			if ('(' == (char) c)
 				++nOfBrackets;
+			if ('(' == (char)c)
+				--nOfBrackets;
+
 			if (fEndSequence.length > 0 && c == fEndSequence[0]) {
 				// Check if the specified end sequence has been found.
 				if (sequenceDetected(scanner, fEndSequence, true)) {

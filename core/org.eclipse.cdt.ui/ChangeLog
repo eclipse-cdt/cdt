@@ -1,5 +1,8 @@
-2002-11-01
+2002-11-06 David Inglis
+	* src/.../ui/CUIPlugin.java
+	fixed NPE.
 	
+2002-11-01 David Inglis
 	* src/.../internal/ui/CElementLabelProvider.java
 	change cpu display string to use isLittleEndian method on IBinary
 	

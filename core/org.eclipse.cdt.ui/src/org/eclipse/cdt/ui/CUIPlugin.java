@@ -184,8 +184,10 @@ public class CUIPlugin extends AbstractUIPlugin {
 		}
 		if (fImageDescriptorRegistry != null)
 			fImageDescriptorRegistry.dispose();
-		fBuildConsoleManager.shutdown();
-		fBuildConsoleManager = null;
+		if ( fBuildConsoleManager != null ) {
+			fBuildConsoleManager.shutdown();
+			fBuildConsoleManager = null;
+		}
 		super.shutdown();
 	}
 

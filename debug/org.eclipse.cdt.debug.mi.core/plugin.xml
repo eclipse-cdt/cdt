@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.cdt.debug.mi.core"
+   name="org.eclipse.cdt.debug.mi.core"
+   version="1.0.0">
+
+   <runtime>
+      <library name="micore.jar"/>
+   </runtime>
+
+</plugin>

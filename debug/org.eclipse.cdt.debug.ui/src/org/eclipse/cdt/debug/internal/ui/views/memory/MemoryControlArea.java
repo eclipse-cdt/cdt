@@ -371,4 +371,24 @@ public class MemoryControlArea extends Composite
 			tabItems[fIndex].setText( title );
 		}
 	}
+	
+	protected void saveChanges()
+	{
+		if ( getMemoryBlock() != null )
+		{
+			try
+			{
+				getMemoryBlock().saveChanges();
+				String title = getTitle();
+				if ( title.charAt( 0 ) == '*' )
+				{
+					setTitle( title.substring( 1 ) );
+				}
+			}
+			catch( DebugException e )
+			{
+				CDebugUIPlugin.errorDialog( "Unable to save memory changes.", e.getStatus() );
+			}
+		}
+	}
 }

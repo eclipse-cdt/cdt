@@ -175,6 +175,11 @@ public class MemoryViewer extends ContentViewer
 		return ( ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock() != null );
 	}
 	
+	public boolean canSave()
+	{
+		return ( ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock() != null );
+	}
+	
 	public boolean isFrozen()
 	{
 		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
@@ -193,6 +198,11 @@ public class MemoryViewer extends ContentViewer
 	public void clear()
 	{
 		((MemoryControlArea)fTabFolder.getSelection().getControl()).clear();
+	}
+	
+	public void saveChanges()
+	{
+		((MemoryControlArea)fTabFolder.getSelection().getControl()).saveChanges();
 	}
 	
 	public boolean showAscii()

@@ -1,3 +1,13 @@
+2002-10-30 Mikhail Khodjaiants
+	Implementation of the 'SaveMemoryChanges' action.
+	* SaveMemoryChangesAction.java
+	* CDebugImages.java
+	* ICDebugHelpConstants.java
+	* MemoryControlArea.java
+	* MemoryText.java
+	* MemoryViewer.java
+	* MemoryView.java
+
 2002-10-30 Alain Magloire
 
 	* src/.../ui/CDebugUIPlugin.java (selectionChanged):

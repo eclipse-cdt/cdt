@@ -66,7 +66,7 @@ public class CDebugImages
 	public static final String IMG_LCL_CHANGE_REGISTER_VALUE = NAME_PREFIX + "change_reg_value_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_AUTO_REFRESH_MEMORY = NAME_PREFIX + "autorefresh_mem.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_REFRESH_MEMORY = NAME_PREFIX + "refresh_mem.gif";	//$NON-NLS-1$
-	public static final String IMG_LCL_MEMORY_SAVE = NAME_PREFIX + "memory_save.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_MEMORY_SAVE = NAME_PREFIX + "memory_update.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_MEMORY_CLEAR = NAME_PREFIX + "memory_clear.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_SHOW_ASCII = NAME_PREFIX + "show_ascii.gif";	//$NON-NLS-1$
 

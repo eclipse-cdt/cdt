@@ -320,4 +320,20 @@ public class CCorePlugin extends Plugin {
 		System.arraycopy(extensions, 0, builders, 0, extensions.length);
 		return builders;
 	}
+	
+	public IProcessList getProcessList() {
+		IExtensionPoint extension = getDescriptor().getExtensionPoint("ProcessList");
+		if (extension != null) {
+			IExtension[] extensions =  extension.getExtensions();
+			IConfigurationElement [] configElements = extensions[0].getConfigurationElements();
+			if ( configElements.length != 0 ) {
+				try {
+					return (IProcessList) configElements[0].createExecutableExtension("class");
+				}
+				catch (CoreException e) {
+				}
+			}
+		}
+		return null;
+	}
 }

@@ -15,13 +15,11 @@
 <!-- The C Plugin                                                            -->
 <!-- ======================================================================= -->
    <requires>
-      <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.compare"/>
-      <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.debug.core"/>
    </requires>
 
@@ -30,6 +28,7 @@
    <extension-point id="CBuildConsole" name="%CBuildConsole.name"/>
    <extension-point id="CProjectOwner" name="%CProjectOwner.name"/>
    <extension-point id="CBuildModel" name="%CBuilder.name"/>
+   <extension-point id="ProcessList" name="%ProcessList.name" schema="schema/ProcessList.exsd"/>
 
    <extension
          id="cbuilder"
@@ -41,7 +40,6 @@
          </run>
       </builder>
    </extension>
-
    <extension
          id="newcbuilder"
          name="C Builder"

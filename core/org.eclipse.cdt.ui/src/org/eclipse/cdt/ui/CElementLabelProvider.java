@@ -5,20 +5,16 @@ package org.eclipse.cdt.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.jface.resource.ImageRegistry;
-
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICFile;
-import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.internal.ui.CElementImageProvider;
 import org.eclipse.cdt.internal.ui.ErrorTickAdornmentProvider;
 import org.eclipse.cdt.internal.ui.IAdornmentProvider;
-import org.eclipse.cdt.ui.*;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * The label provider for the c model elements.

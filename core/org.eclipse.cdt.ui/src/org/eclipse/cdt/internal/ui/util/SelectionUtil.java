@@ -5,12 +5,10 @@ package org.eclipse.cdt.internal.ui.util;
  * All Rights Reserved.
  */
  
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.viewers.IStructuredSelection;
-
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 

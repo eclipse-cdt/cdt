@@ -1,3 +1,12 @@
+2003-12-01 Mikhail Khodjaiants
+	Fix for PR 47230: Need a shared library search path editing capability for GDBServerDebugger.
+	Implemented 'GDBServerDebuggerPage' as an extension of 'GDBDebuggerPage'.
+	Added two new control blocks - "TCP Connection" and "Serial Connection".
+	* src/org/eclipse/cdt/debug/mi/internal/ui/GDBDebuggerPage.java
+	* src/org/eclipse/cdt/debug/mi/internal/ui/GDBServerDebuggerPage.java
+	* src/org/eclipse/cdt/debug/mi/internal/ui/SerialPortSettingsBlock.java: new
+	* src/org/eclipse/cdt/debug/mi/internal/ui/TCPSettingsBlock.java: new
+
 2003-11-20 Mikhail Khodjaiants
 	Removed dependencies on internal packages from other cdt plugins.
 	* src/org/eclipse/cdt/debug/mi/internal/ui/PixelConverter.java: added

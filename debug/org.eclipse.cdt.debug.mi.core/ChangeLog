@@ -1,5 +1,19 @@
 2003-01-27 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java (getTypeName):
+	Use MIWhatis to get the type of the register.
+	(getVariables): Cache the answer.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java (loadSymbols):
+	Use MISharedLibrary.
+	* src/org/eclipse/cdt/debug/mi/core/command/CommandFactory.java (createMIWhatis):
+	New method.
+	(MIPType): New method.
+	* src/org/eclipse/cdt/debug/mi/core/command/MISharedLibrary.java:
+	New file.
+
+
+2003-01-27 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java (getCThreads):
 	When attaching gdb(at least on some platform) does not show
 	the selected thread(info threads).  Fallback on the first one.

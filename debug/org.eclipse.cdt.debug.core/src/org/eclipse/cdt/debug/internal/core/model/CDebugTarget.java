@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
+import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
@@ -1827,7 +1828,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			if ( getExecFile() != null && CoreModel.getDefault().isBinary( getExecFile() ) ) {
 				ICElement cFile = CCorePlugin.getDefault().getCoreModel().create( getExecFile() );
 				if ( cFile instanceof IBinary ) {
-					fAddressFactory = ((IBinary)cFile).getAddressFactory();
+					IBinaryParser.IBinaryObject obj;
+					obj = (IBinaryParser.IBinaryObject)cFile.getAdapter(IBinaryParser.IBinaryObject.class);
+					fAddressFactory = obj.getAddressFactory();
 				}
 			}
 		}

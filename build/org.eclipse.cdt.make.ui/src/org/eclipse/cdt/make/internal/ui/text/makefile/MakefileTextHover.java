@@ -54,31 +54,33 @@ public class MakefileTextHover implements ITextHover {
 				if (fEditor != null && len > -1) {
 					IWorkingCopyManager fManager = MakeUIPlugin.getDefault().getWorkingCopyManager();
 					IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());
-					WordPartDetector wordPart = new WordPartDetector(textViewer, offset);
-					String name = wordPart.toString();
-					IMacroDefinition[] statements = null;
-					if (WordPartDetector.inMacro(textViewer, offset)) {
-						statements = makefile.getMacroDefinitions(name);
-						if (statements == null || statements.length == 0) {
-							statements = makefile.getBuiltinMacroDefinitions(name);
+					if (makefile != null) {
+						WordPartDetector wordPart = new WordPartDetector(textViewer, offset);
+						String name = wordPart.toString();
+						IMacroDefinition[] statements = null;
+						if (WordPartDetector.inMacro(textViewer, offset)) {
+							statements = makefile.getMacroDefinitions(name);
+							if (statements == null || statements.length == 0) {
+								statements = makefile.getBuiltinMacroDefinitions(name);
+							}
 						}
-					}
-					
-					if (statements == null) {
-						statements = new IMacroDefinition[0];
-					}
-					// iterate over all the different categories
-					StringBuffer buffer = new StringBuffer();
-					for (int i = 0; i < statements.length; i++) {
-						if (i > 0) {
-							buffer.append("\n"); //$NON-NLS-1$
+						
+						if (statements == null) {
+							statements = new IMacroDefinition[0];
 						}
-						String infoString = statements[i].getValue().toString();
-						buffer.append(name);
-						buffer.append(" - "); //$NON-NLS-1$
-						buffer.append(infoString);			
+						// iterate over all the different categories
+						StringBuffer buffer = new StringBuffer();
+						for (int i = 0; i < statements.length; i++) {
+							if (i > 0) {
+								buffer.append("\n"); //$NON-NLS-1$
+							}
+							String infoString = statements[i].getValue().toString();
+							buffer.append(name);
+							buffer.append(" - "); //$NON-NLS-1$
+							buffer.append(infoString);			
+						}
+						return buffer.toString();
 					}
-					return buffer.toString();
 				}
 			} catch (BadLocationException e) {
 			}

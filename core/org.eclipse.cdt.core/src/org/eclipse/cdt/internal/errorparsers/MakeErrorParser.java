@@ -45,11 +45,9 @@ public class MakeErrorParser implements IErrorParser {
 			    		 */
 			    		int level = getDirectoryLevel(line);
 			    		int parseLevel = eoParser.getDirectoryLevel();
-			    		if (level <= parseLevel) {
-			    			for ( ; level <= parseLevel; level++) {
-			    				eoParser.popDirectory();
-			    			}
-			    		}
+		    			for (; level < parseLevel; level++) {
+		    				eoParser.popDirectory();
+		    			}
 			    		eoParser.pushDirectory(new Path(dir));
 			    	} else {
 			    		eoParser.popDirectory();

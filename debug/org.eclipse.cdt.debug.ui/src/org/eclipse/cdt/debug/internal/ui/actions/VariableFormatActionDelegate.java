@@ -54,7 +54,8 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 	 */
 	public void run( IAction action )
 	{
-		if ( fVariables != null && fVariables.length > 0 )
+		ICVariable[] vars = getVariables();
+		if ( vars != null && vars.length > 0 )
 		{
 			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
 													DebugException.REQUEST_FAILED, "", null ); 
@@ -65,7 +66,7 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 											{
 												try
 												{
-													doAction( fVariables );
+													doAction( getVariables() );
 												}
 												catch( DebugException e )
 												{
@@ -109,14 +110,15 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 					action.setEnabled( enabled );
 					if ( enabled )
 					{
-						action.setChecked( var.getFormat() == fFormat  );
+						action.setChecked( var.getFormat() == fFormat );
 						list.add(o);
 					}
 				}
 			}
-			fVariables = new ICVariable[list.size()];
-			list.toArray(fVariables);
-		} else {
+			setVariables( (ICVariable[])list.toArray( new ICVariable[list.size()] ) );
+		} 
+		else 
+		{
 			action.setChecked( false );
 			action.setEnabled( false );
 		}
@@ -124,9 +126,19 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 	
 	protected void doAction( ICVariable[] vars ) throws DebugException
 	{
-		for (int i = 0; i < vars.length; i++ )
+		for( int i = 0; i < vars.length; i++ )
 		{
-			vars[i].setFormat(fFormat);
+			vars[i].setFormat( fFormat );
 		}
+	}
+
+	protected ICVariable[] getVariables()
+	{
+		return fVariables;
+	}
+
+	private void setVariables( ICVariable[] variables )
+	{
+		fVariables = variables;
 	}
 }

@@ -1,3 +1,9 @@
+2004-03-02 James Ciesielski
+	
+	Marked strings as non-translatable.
+
+	* src/org/eclipse/cdt/internal/core/linux/Processlist.java
+
 2003-02-01 Alain Magloire
 
 	* library/ptyio.c: Do not throw any exception.

@@ -47,10 +47,8 @@ public class ParserTestSuite extends TestCase {
 		suite.addTestSuite( CompleteParseASTTemplateTest.class );
 		suite.addTestSuite( StructuralParseTest.class );
 		suite.addTestSuite( ObjectMapTest.class );
-		
 		suite.addTest( CompleteParsePluginTest.suite() );
-		
-//		suite.addTest( GCCParserExtensionTestSuite.suite() );
+		suite.addTest( GCCParserExtensionTestSuite.suite() );
 		return suite;
 	}	
 }

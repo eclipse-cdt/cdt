@@ -296,16 +296,7 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		parse( code, startIndex, startIndex + 8 );
 	}
 	
-	public void testBug43021() throws Exception
-	{
-		Writer writer = new StringWriter();
-		writer.write( "extern int johnc(__const char *__restrict __format, ...);\n" ); //$NON-NLS-1$
-		writer.write( "void m() {johnc(\"HI\");}" ); //$NON-NLS-1$
-		String code = writer.toString();
-		int startIndex = code.indexOf( "{johnc") + 1; //$NON-NLS-1$
-		IASTNode node = parse( code, startIndex, startIndex + 5 );
-		assertNotNull( node );
-	}
+
 	
 	public void testBug68527() throws Exception
 	{

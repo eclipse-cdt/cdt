@@ -14,14 +14,23 @@
  */
 package org.eclipse.cdt.internal.core.parser.ast.complete.gcc;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.GCCKeywords;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
+import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
+import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
@@ -31,12 +40,14 @@ import org.eclipse.cdt.internal.core.parser.ast.complete.ASTBinaryExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTypeIdExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTUnaryExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ExpressionFactory;
+import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
  * @author aniefer
  */
 public class GCCASTCompleteExtension extends GCCASTExtension {
 
+	private static final char [] __BUILTIN_VA_LIST = "__builtin_va_list".toCharArray(); //$NON-NLS-1$
 	/**
 	 * @param mode
 	 */
@@ -118,5 +129,23 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
 			return createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression, literal, newDescriptor, references );
 		
 		return ExpressionFactory.createExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression, literal, newDescriptor, references );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#initialize(org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable)
+	 */
+	public void initialize(IASTFactory factory, IASTCompilationUnit compilationUnit) {
+		try
+		{
+			IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.CHAR, new SimpleToken( IToken.t_char, -1, EMPTY_STRING, -1), false, false, false, false, false, false, false, true, Collections.EMPTY_MAP );
+			List pointers = new ArrayList( 1 );
+			pointers.add( ASTPointerOperator.POINTER );
+			IASTAbstractDeclaration abs = factory.createAbstractDeclaration( false, false, typeSpec, pointers, Collections.EMPTY_LIST, Collections.EMPTY_LIST, null );
+			factory.createTypedef( compilationUnit, __BUILTIN_VA_LIST, abs, -1, -1, -1, -1, -1, EMPTY_STRING );
+		}
+		catch( ASTSemanticException ase )
+		{
+			
+		}
 	}
 }

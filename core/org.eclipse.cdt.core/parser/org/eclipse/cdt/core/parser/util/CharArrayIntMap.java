@@ -53,4 +53,12 @@ public class CharArrayIntMap extends CharTable {
 			return valueTable[i];
 		return undefined;
 	}
+
+	/**
+	 * @param image
+	 * @return
+	 */
+	public int get(char[] image) {
+		return get( image, 0, image.length );
+	}
 }

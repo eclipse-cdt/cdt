@@ -668,7 +668,10 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			Set results = new HashSet();
 			results.add( "aInteger"); //$NON-NLS-1$
 			if( i == 0 )
+			{
 				results.add( "NMS"); //$NON-NLS-1$
+				results.add( "__builtin_va_list "); //$NON-NLS-1$
+			}
 			validateLookupResult(result, results );
 		}
 	}

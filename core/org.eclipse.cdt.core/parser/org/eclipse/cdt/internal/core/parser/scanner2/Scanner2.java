@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -88,12 +89,12 @@ public class Scanner2 implements IScanner, IScannerData {
 	
 	// The context stack
 	private static final int bufferInitialSize = 8;
-	private int bufferStackPos = -1;
+	int bufferStackPos = -1;
 	private char[][] bufferStack = new char[bufferInitialSize][];
 	private Object[] bufferData = new Object[bufferInitialSize];
 	private int[] bufferPos = new int[bufferInitialSize];
 	private int[] bufferLimit = new int[bufferInitialSize];
-	private int[] lineNumbers = new int[bufferInitialSize];
+	int[] lineNumbers = new int[bufferInitialSize];
 	private int[] lineOffsets = new int[bufferInitialSize];
 	
 	//inclusion stack
@@ -160,7 +161,7 @@ public class Scanner2 implements IScanner, IScannerData {
 
 				if( value instanceof String ) {	
 					//TODO add in check here for '(' and ')'
-					addDefinition( symbolName, scannerExtension.initializeMacroValue(this, (String) value));
+					addDefinition( symbolName.toCharArray(), scannerExtension.initializeMacroValue(this, ((String)value).toCharArray()));
 				} 
 			}
 		}
@@ -292,9 +293,8 @@ public class Scanner2 implements IScanner, IScannerData {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#addDefinition(java.lang.String, java.lang.String)
 	 */
-	public void addDefinition(String key, String value) {
-		char[] ckey = key.toCharArray();
-		definitions.put(ckey, new ObjectStyleMacro(ckey, value.toCharArray()));
+	public void addDefinition(char[] key, char[] value) {
+		definitions.put(key, new ObjectStyleMacro(key, value ));
 	}
 
 	/* (non-Javadoc)
@@ -768,6 +768,16 @@ public class Scanner2 implements IScanner, IScannerData {
 							++bufferPos[bufferStackPos];
 							return newToken(IToken.tSHIFTL );
 						}
+						else
+						{
+							char [] queryCharArray  = CharArrayUtils.extract( buffer, pos, 2 ); 
+							if( scannerExtension.isExtensionOperator( language, queryCharArray  ) )
+							{
+								++bufferPos[ bufferStackPos ];
+								return scannerExtension.createExtensionToken( this, queryCharArray  );
+							}
+								
+						}
 					}
 					return newToken(IToken.tLT );
 				
@@ -786,6 +796,15 @@ public class Scanner2 implements IScanner, IScannerData {
 							++bufferPos[bufferStackPos];
 							return newToken(IToken.tSHIFTR);
 						}
+						else
+						{
+							char [] queryCharArray = CharArrayUtils.extract( buffer, pos, 2 ); 
+							if( scannerExtension.isExtensionOperator( language, queryCharArray ) )
+							{
+								++bufferPos[ bufferStackPos ];
+								return scannerExtension.createExtensionToken( this, queryCharArray );
+							}
+						}
 					}
 					return newToken(IToken.tGT );
 				
@@ -793,7 +812,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					return newToken(IToken.tCOMMA );
 
 				default:
-				    if( Character.isLetter( buffer[pos] ) ){
+				    if( Character.isLetter( buffer[pos] ) || scannerExtension.isValidIdentifierStartCharacter( buffer[pos ]) ){
 				        t = scanIdentifier();
 						if (t instanceof MacroExpansionToken)
 							continue;
@@ -864,6 +883,11 @@ public class Scanner2 implements IScanner, IScannerData {
 					continue;
 				}
 			}
+			else if( scannerExtension.isValidIdentifierCharacter( c ))
+			{
+				++len;
+				continue;
+			}
 			break;
 		}
 
@@ -892,6 +916,14 @@ public class Scanner2 implements IScanner, IScannerData {
 				char[] expText = expMacro.expansion;
 				if (expText.length > 0)
 					pushContext(expText, expMacro);
+			}
+			else if( expObject instanceof DynamicStyleMacro )
+			{
+				DynamicStyleMacro expMacro = (DynamicStyleMacro) expObject;
+				char[] expText = expMacro.execute();
+				if (expText.length > 0)
+					pushContext(expText, expMacro);
+				
 			} else if (expObject instanceof char[]) {
 				char[] expText = (char[])expObject;
 				if (expText.length > 0)
@@ -900,7 +932,11 @@ public class Scanner2 implements IScanner, IScannerData {
 			return new MacroExpansionToken();
 		}
 		
-		char [] result = escapedNewline ? removedEscapedNewline( buffer, start, len ) : null;
+		
+		
+		char [] result = escapedNewline ? removedEscapedNewline( buffer, start, len ) : CharArrayUtils.extract( buffer, start, len );
+		if( scannerExtension.isExtensionKeyword( language,  result))
+			return scannerExtension.createExtensionToken( this, result );
 		int tokenType = escapedNewline ? keywords.get(result, 0, result.length) 
 		                               : keywords.get(buffer, start, len );
 		
@@ -1040,7 +1076,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @param i
 	 * @return
 	 */
-	protected int getLineNumber(int offset) {
+	public int getLineNumber(int offset) {
 		if( parserMode == ParserMode.COMPLETION_PARSE ) return -1;
 		int index = getCurrentFileIndex();
 		if( offset >= bufferLimit[ index ]) return -1;
@@ -1992,6 +2028,14 @@ public class Scanner2 implements IScanner, IScannerData {
 						++bufferPos[bufferStackPos];
 						continue;
 					}
+					if( pos + 1 < limit && buffer[ pos + 1 ] == '\r')
+					{
+						if( pos + 2 < limit && buffer[ pos + 2] == '\n' )
+						{
+							bufferPos[bufferStackPos] +=2;
+							continue;
+						}
+					}
 					break;
 			}
 			
@@ -2656,44 +2700,73 @@ public class Scanner2 implements IScanner, IScannerData {
 		= new ObjectStyleMacro("__cplusplus".toCharArray(), "1".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final ObjectStyleMacro __STDC__
 		= new ObjectStyleMacro("__STDC__".toCharArray(), "1".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __STDC_HOSTED__
+	= new ObjectStyleMacro("__STDC_HOSTED_".toCharArray(), "1".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __STDC_VERSION__
+	= new ObjectStyleMacro("__STDC_VERSION_".toCharArray(), "199901L".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private final DynamicStyleMacro __FILE__ = 
+		new DynamicStyleMacro( "__FILE__".toCharArray()) { //$NON-NLS-1$
+
+			public char[] execute() {
+				StringBuffer buffer = new StringBuffer( "\""); //$NON-NLS-1$
+				buffer.append( getCurrentFilename() );
+				buffer.append( '\"');
+				return buffer.toString().toCharArray();
+			} };
+	private final DynamicStyleMacro __DATE__ = 
+		new DynamicStyleMacro( "__DATE__".toCharArray()) { //$NON-NLS-1$
+
+		private final void append( StringBuffer buffer, int value )
+		{
+			if( value < 10 )
+				buffer.append( "0" ); //$NON-NLS-1$
+			buffer.append( value );
+		}
+
+		public char[] execute() {
+			StringBuffer buffer = new StringBuffer( "\""); //$NON-NLS-1$
+			Calendar cal = Calendar.getInstance();
+			buffer.append( cal.get( Calendar.MONTH ));
+			buffer.append( " " ); //$NON-NLS-1$
+			append( buffer, cal.get( Calendar.DAY_OF_MONTH ));
+			buffer.append( " " ); //$NON-NLS-1$
+			buffer.append( cal.get(Calendar.YEAR));
+			buffer.append( "\""); //$NON-NLS-1$
+			return buffer.toString().toCharArray();
+		} 
+	};
+	private final DynamicStyleMacro __TIME__ = 
+		new DynamicStyleMacro( "__TIME__".toCharArray()) { //$NON-NLS-1$
+
+			private final void append( StringBuffer buffer, int value )
+			{
+				if( value < 10 )
+					buffer.append( "0" ); //$NON-NLS-1$
+				buffer.append( value );
+			}
+			public char[] execute() {
+				StringBuffer buffer = new StringBuffer( "\""); //$NON-NLS-1$
+				Calendar cal = Calendar.getInstance();
+				append( buffer, cal.get( Calendar.HOUR ));
+				buffer.append( ":"); //$NON-NLS-1$
+				append( buffer, cal.get( Calendar.MINUTE));
+				buffer.append( ":"); //$NON-NLS-1$
+				append( buffer, cal.get( Calendar.SECOND));
+				buffer.append( "\""); //$NON-NLS-1$
+				return buffer.toString().toCharArray();
+			} 
+	};
+	private final DynamicStyleMacro __LINE__ = 
+		new DynamicStyleMacro( "__LINE__".toCharArray() ) { //$NON-NLS-1$
+
+			public char[] execute() {
+				int lineNumber = lineNumbers[ bufferStackPos ];
+				return Long.toString( lineNumber ).toCharArray();
+			} 
+	};
+
 	
-	// gcc built-ins
-	private static final ObjectStyleMacro __inline__
-		= new ObjectStyleMacro("__inline__".toCharArray(), "inline".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final ObjectStyleMacro __extension__
-		= new ObjectStyleMacro("__extension__".toCharArray(), emptyCharArray); //$NON-NLS-1$
-	private static final ObjectStyleMacro __asm__
-		= new ObjectStyleMacro("__asm__".toCharArray(), "asm".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final ObjectStyleMacro __restrict__
-		= new ObjectStyleMacro("__restrict__".toCharArray(), "restrict".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final ObjectStyleMacro __restrict
-		= new ObjectStyleMacro("__restrict".toCharArray(), "restrict".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final ObjectStyleMacro __volatile__
-		= new ObjectStyleMacro("__volatile__".toCharArray(), "volatile".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final ObjectStyleMacro __const__
-	= new ObjectStyleMacro("__const__".toCharArray(), "const".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final ObjectStyleMacro __const
-	= new ObjectStyleMacro("__const".toCharArray(), "const".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final ObjectStyleMacro __signed__
-	= new ObjectStyleMacro("__signed__".toCharArray(), "signed".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final ObjectStyleMacro __cdecl = new
-		ObjectStyleMacro( "__cdecl".toCharArray(), emptyCharArray ); //$NON-NLS-1$
 	
-	private static final FunctionStyleMacro __attribute__
-		= new FunctionStyleMacro(
-				"__attribute__".toCharArray(), //$NON-NLS-1$
-				emptyCharArray,
-				new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
-	private static final FunctionStyleMacro __declspec
-	= new FunctionStyleMacro(
-			"__declspec".toCharArray(), //$NON-NLS-1$
-			emptyCharArray,
-			new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
-	
-	private static final FunctionStyleMacro _Pragma = new FunctionStyleMacro( 
-			"_Pragma".toCharArray(),  //$NON-NLS-1$
-			emptyCharArray, 
-			new char[][] { "arg".toCharArray() } ); //$NON-NLS-1$
 
 	private IASTFactory astFactory;
 
@@ -2702,156 +2775,21 @@ public class Scanner2 implements IScanner, IScannerData {
 	protected void setupBuiltInMacros() {
 
 		definitions.put(__STDC__.name, __STDC__);
+		definitions.put(__FILE__.name, __FILE__);
+		definitions.put(__DATE__.name, __DATE__ );
+		definitions.put(__TIME__.name, __TIME__ );
+		definitions.put(__LINE__.name, __LINE__ );
+		
 		if( language == ParserLanguage.CPP )
 			definitions.put(__cplusplus.name, __cplusplus);
-
-		// gcc extensions
-		definitions.put(__inline__.name, __inline__);
-		definitions.put(__cdecl.name, __cdecl );
-		definitions.put( __const__.name, __const__ );
-		definitions.put( __const.name, __const );
-		definitions.put(__extension__.name, __extension__);
-		definitions.put(__attribute__.name, __attribute__);
-		definitions.put( __declspec.name, __declspec );
-		definitions.put(__restrict__.name, __restrict__);
-		definitions.put(__restrict.name, __restrict);
-		definitions.put(__volatile__.name, __volatile__);
-		definitions.put(__signed__.name, __signed__ );
-		if( language == ParserLanguage.CPP )
-			definitions.put(__asm__.name, __asm__);
 		else
-			definitions.put(_Pragma.name, _Pragma );
-		
-		/*
-		
-		// add these to private table
-		if( scannerData.getScanner().getDefinition( __ATTRIBUTE__) == null )
-			scannerData.getPrivateDefinitions().put( __ATTRIBUTE__, ATTRIBUTE_MACRO); 
-		
-		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
-			scannerData.getPrivateDefinitions().put( __DECLSPEC, DECLSPEC_MACRO );
-
-		if( scannerData.getScanner().getDefinition( __EXTENSION__ ) == null )
-			scannerData.getPrivateDefinitions().put( __EXTENSION__, EXTENSION_MACRO);
-		
-		if( scannerData.getScanner().getDefinition( __CONST__ ) == null )
-		scannerData.getPrivateDefinitions().put( __CONST__, __CONST__MACRO);
-		if( scannerData.getScanner().getDefinition( __CONST ) == null )
-		scannerData.getPrivateDefinitions().put( __CONST, __CONST_MACRO);
-		if( scannerData.getScanner().getDefinition( __INLINE__ ) == null )
-		scannerData.getPrivateDefinitions().put( __INLINE__, __INLINE__MACRO);
-		if( scannerData.getScanner().getDefinition( __SIGNED__ ) == null )
-		scannerData.getPrivateDefinitions().put( __SIGNED__, __SIGNED__MACRO);
-		if( scannerData.getScanner().getDefinition( __VOLATILE__ ) == null )
-		scannerData.getPrivateDefinitions().put( __VOLATILE__, __VOLATILE__MACRO);
-		ObjectMacroDescriptor __RESTRICT_MACRO = new ObjectMacroDescriptor( __RESTRICT, Keywords.RESTRICT );
-		if( scannerData.getScanner().getDefinition( __RESTRICT ) == null )
-		scannerData.getPrivateDefinitions().put( __RESTRICT, __RESTRICT_MACRO);
-		if( scannerData.getScanner().getDefinition( __RESTRICT__ ) == null )
-		scannerData.getPrivateDefinitions().put( __RESTRICT__, __RESTRICT__MACRO);
-		if( scannerData.getScanner().getDefinition( __TYPEOF__ ) == null )
-		scannerData.getPrivateDefinitions().put( __TYPEOF__, __TYPEOF__MACRO);
-		if( scannerData.getLanguage() == ParserLanguage.CPP )
-			if( scannerData.getScanner().getDefinition( __ASM__ ) == null )
-			scannerData.getPrivateDefinitions().put( __ASM__, __ASM__MACRO);
-		*/
-		
-		// standard extensions
-
-		/*
-		if( getDefinition(__STDC__) == null )
-			addDefinition( __STDC__, STDC_MACRO ); 
-		
-		if( language == ParserLanguage.C )
 		{
-			if( getDefinition(__STDC_HOSTED__) == null )
-				addDefinition( __STDC_HOSTED__, STDC_HOSTED_MACRO); 
-			if( getDefinition( __STDC_VERSION__) == null )
-				addDefinition( __STDC_VERSION__, STDC_VERSION_MACRO); 
+			definitions.put( __STDC_HOSTED__.name, __STDC_HOSTED__ );
+			definitions.put( __STDC_VERSION__.name, __STDC_VERSION__ );
 		}
-		else
-			if( getDefinition( __CPLUSPLUS ) == null )
-					addDefinition( __CPLUSPLUS, CPLUSPLUS_MACRO); //$NON-NLS-1$
 		
-		if( getDefinition(__FILE__) == null )
-			addDefinition(  __FILE__, 
-					new DynamicMacroDescriptor( __FILE__, new DynamicMacroEvaluator() {
-						public String execute() {
-							return contextStack.getMostRelevantFileContext().getContextName();
-						}				
-					} ) );
+		scannerExtension.setupBuiltInMacros( this );		
 		
-		if( getDefinition( __LINE__) == null )
-			addDefinition(  __LINE__, 
-					new DynamicMacroDescriptor( __LINE__, new DynamicMacroEvaluator() {
-						public String execute() {
-							return new Integer( contextStack.getCurrentLineNumber() ).toString();
-						}				
-			} ) );
-		
-		
-		if( getDefinition(  __DATE__ ) == null )
-			addDefinition(  __DATE__, 
-					new DynamicMacroDescriptor( __DATE__, new DynamicMacroEvaluator() {
-						
-						public String getMonth()
-						{
-							if( Calendar.MONTH == Calendar.JANUARY ) return  "Jan" ; //$NON-NLS-1$
-							if( Calendar.MONTH == Calendar.FEBRUARY) return "Feb"; //$NON-NLS-1$
-							if( Calendar.MONTH == Calendar.MARCH) return "Mar"; //$NON-NLS-1$
-							if( Calendar.MONTH == Calendar.APRIL) return "Apr"; //$NON-NLS-1$
-							if( Calendar.MONTH == Calendar.MAY) return "May"; //$NON-NLS-1$
-							if( Calendar.MONTH == Calendar.JUNE) return "Jun"; //$NON-NLS-1$
-							if( Calendar.MONTH ==  Calendar.JULY) return "Jul"; //$NON-NLS-1$
-							if( Calendar.MONTH == Calendar.AUGUST) return "Aug"; //$NON-NLS-1$
-							if( Calendar.MONTH ==  Calendar.SEPTEMBER) return "Sep"; //$NON-NLS-1$
-							if( Calendar.MONTH ==  Calendar.OCTOBER) return "Oct"; //$NON-NLS-1$
-							if( Calendar.MONTH ==  Calendar.NOVEMBER) return "Nov"; //$NON-NLS-1$
-							if( Calendar.MONTH ==  Calendar.DECEMBER) return "Dec"; //$NON-NLS-1$
-							return ""; //$NON-NLS-1$
-						}
-						
-						public String execute() {
-							StringBuffer result = new StringBuffer();
-							result.append( getMonth() );
-							result.append(" "); //$NON-NLS-1$
-							if( Calendar.DAY_OF_MONTH < 10 )
-								result.append(" "); //$NON-NLS-1$
-							result.append(Calendar.DAY_OF_MONTH);
-							result.append(" "); //$NON-NLS-1$
-							result.append( Calendar.YEAR );
-							return result.toString();
-						}				
-					} ) );
-		
-		if( getDefinition( __TIME__) == null )
-			addDefinition(  __TIME__, 
-					new DynamicMacroDescriptor( __TIME__, new DynamicMacroEvaluator() {
-						
-						
-						public String execute() {
-							StringBuffer result = new StringBuffer();
-							if( Calendar.AM_PM == Calendar.PM )
-								result.append( Calendar.HOUR + 12 );
-							else
-							{	
-								if( Calendar.HOUR < 10 )
-									result.append( '0');
-								result.append(Calendar.HOUR);
-							}
-							result.append(':');
-							if( Calendar.MINUTE < 10 )
-								result.append( '0');
-							result.append(Calendar.MINUTE);
-							result.append(':');
-							if( Calendar.SECOND < 10 )
-								result.append( '0');
-							result.append(Calendar.SECOND);
-							return result.toString();
-						}				
-					} ) );
-		
-		*/
 	}
 	
 
@@ -2920,7 +2858,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	}
 
 	
-	private final char[] getCurrentFilename() {
+	public final char[] getCurrentFilename() {
 		for( int i = bufferStackPos; i >= 0; --i )
 		{
 			if( bufferData[i] instanceof InclusionData )
@@ -3106,6 +3044,13 @@ public class Scanner2 implements IScanner, IScannerData {
 	protected void handleCompletionOnPreprocessorDirective( String prefix ) throws EndOfFileException 
 	{
 		throw new OffsetLimitReachedException( new ASTCompletionNode( IASTCompletionNode.CompletionKind.PREPROCESSOR_DIRECTIVE, null, null, prefix, KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, language ), EMPTY_STRING, null));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerData#getCurrentOffset()
+	 */
+	public int getCurrentOffset() {
+		return bufferPos[ bufferStackPos ];
 	}
 
 }

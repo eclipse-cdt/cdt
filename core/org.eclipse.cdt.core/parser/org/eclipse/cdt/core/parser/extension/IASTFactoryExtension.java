@@ -15,8 +15,10 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
@@ -69,5 +71,7 @@ public interface IASTFactoryExtension {
     
     public boolean overrideCreateDesignatorMethod( IASTDesignator.DesignatorKind kind );
     public IASTDesignator createDesignator( IASTDesignator.DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier, Map extensionParms );
+    
+    public void initialize( IASTFactory factory, IASTCompilationUnit compilationUnit );
 
 }

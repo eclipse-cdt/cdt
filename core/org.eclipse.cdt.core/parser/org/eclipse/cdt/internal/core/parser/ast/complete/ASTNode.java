@@ -93,6 +93,7 @@ public class ASTNode implements IASTNode {
 			
 			if( context != null && ((ASTNode)context).shouldFilterLookupResult( s ) )
 				iter.remove();
+			
 		}
 		
 		SymbolIterator iterator = new SymbolIterator( lookupResults.iterator() );

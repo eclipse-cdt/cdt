@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.parser.tests.scanner2;
 
 import org.eclipse.cdt.core.parser.IGCCToken;
+import org.eclipse.cdt.core.parser.IToken;
 
 /**
  * @author jcamelon
@@ -33,4 +34,12 @@ public class GCCScannerExtensionsTest extends BaseScanner2Test {
     	validateEOF();
 	}
 
+    public void test__attribute__() throws Exception {
+    	initializeScanner(
+    			"#define __cdecl __attribute__((cdecl))\n" + //$NON-NLS-1$
+				"__cdecl;"); //$NON-NLS-1$
+    	validateToken(IToken.tSEMI);
+    	validateEOF();
+	}
+    
 }

@@ -1498,47 +1498,6 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertAllReferences( 1, createTaskList( new Task( SD_01 )));
 	}
 	
-	public void testBug39697() throws Exception
-	{
-		Writer writer = new StringWriter();
-		writer.write( "__asm__( \"CODE\" );\n" ); //$NON-NLS-1$
-		writer.write( "__inline__ int foo() { return 4; }\n"); //$NON-NLS-1$
-		writer.write( "__const__ int constInt;\n"); //$NON-NLS-1$
-		writer.write( "__volatile__ int volInt;\n"); //$NON-NLS-1$
-		writer.write( "__signed__ int signedInt;\n"); //$NON-NLS-1$
-		Iterator i = parse( writer.toString() ).getDeclarations();
-		IASTASMDefinition asmDefinition = (IASTASMDefinition) i.next();
-		assertEquals( asmDefinition.getBody(), "CODE"); //$NON-NLS-1$
-		IASTFunction foo = (IASTFunction) i.next();
-		assertTrue( foo.isInline() );
-		IASTVariable constInt = (IASTVariable) i.next();
-		assertTrue( constInt.getAbstractDeclaration().isConst());
-		IASTVariable volInt = (IASTVariable) i.next();
-		assertTrue( volInt.getAbstractDeclaration().isVolatile() );
-		IASTVariable signedInt = (IASTVariable) i.next();
-		assertTrue( ((IASTSimpleTypeSpecifier) signedInt.getAbstractDeclaration().getTypeSpecifier()).isSigned() );
-		assertFalse( i.hasNext() );
-		for( int j = 0; j < 2; ++j )
-		{
-			writer = new StringWriter();
-			writer.write( "int * __restrict__ resPointer1;\n"); //$NON-NLS-1$
-			writer.write( "int * __restrict resPointer2;\n"); //$NON-NLS-1$
-			i = parse( writer.toString(), true, ((j == 0 )? ParserLanguage.C : ParserLanguage.CPP) ).getDeclarations();
-			int count = 0;
-			while( i.hasNext() )
-			{
-				++count;
-				IASTVariable resPointer = (IASTVariable) i.next();
-				Iterator pOps = resPointer.getAbstractDeclaration().getPointerOperators();
-				assertTrue( pOps.hasNext() );
-				ASTPointerOperator op = (ASTPointerOperator) pOps.next();
-				assertFalse( pOps.hasNext() );
-				assertEquals( op, ASTPointerOperator.RESTRICT_POINTER );
-			}
-	
-			assertEquals( count, 2 );
-		}
-	}
 	public void testBug59149() throws Exception
 	{
 		Writer writer = new StringWriter();

@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 
 /**
@@ -52,4 +53,29 @@ public interface IScannerData {
 	 * @return
 	 */
 //	public abstract InclusionDirective parseInclusionDirective(String restOfLine, int offset) throws InclusionParseException;
+
+
+	/**
+	 * @return
+	 */
+	public int getCurrentOffset();
+
+
+	/**
+	 * @param o
+	 * @return
+	 */
+	public int getLineNumber(int o);
+
+
+	/**
+	 * @return
+	 */
+	public char [] getCurrentFilename();
+
+
+	/**
+	 * @return
+	 */
+	public abstract CharArrayObjectMap getRealDefinitions();
 }

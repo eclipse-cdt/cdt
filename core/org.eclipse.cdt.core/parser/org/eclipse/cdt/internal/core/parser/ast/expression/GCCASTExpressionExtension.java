@@ -21,7 +21,9 @@ import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
+import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
@@ -133,5 +135,13 @@ public class GCCASTExpressionExtension extends GCCASTExtension {
 	 */
 	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor, List references) {
 		return createExpression( kind, lhs, rhs, thirdExpression, typeId, (idExpression == null ) ? EMPTY_STRING : idExpression.toCharArray(), literal, newDescriptor );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#initialize(org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable)
+	 */
+	public void initialize(IASTFactory factory, IASTCompilationUnit compilationUnit) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -17,4 +17,10 @@
    </requires>
 
 
+   <extension
+         point="org.eclipse.cdt.core.ProcessList">
+      <processList
+            class="org.eclipse.cdt.internal.core.linux.ProcessList">
+      </processList>
+   </extension>
 </fragment>

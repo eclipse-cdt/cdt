@@ -180,7 +180,7 @@ public class CPPImplicitMethod extends CPPMethod {
 					IType [] ps = t.getParameterTypes();
 					if( ps.length == params.length ){
 						int idx = 0;
-						for( ; idx < ps.length; idx++ ){
+						for( ; idx < ps.length && ps[idx] != null; idx++ ){
 							if( !ps[idx].equals(params[idx]) )
 								break;
 						}

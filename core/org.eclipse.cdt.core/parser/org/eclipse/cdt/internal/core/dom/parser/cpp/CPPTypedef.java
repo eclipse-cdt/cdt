@@ -54,9 +54,14 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPBinding {
     }
 
     public boolean equals( Object o ){
+        if( o == this )
+            return true;
 	    if( o instanceof ITypedef )
             try {
-                return getType().equals( ((ITypedef)o).getType());
+                IType t = getType();
+                if( t != null )
+                    return t.equals( ((ITypedef)o).getType());
+                return false;
             } catch ( DOMException e ) {
                 return false;
             }
@@ -64,7 +69,10 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPBinding {
 	    if( !( o instanceof IType ) ) 
 	        return false;
 	    
-	    return getType().equals( o );
+	    IType t = getType();
+	    if( t != null )
+	        return t.equals( o );
+	    return false;
 	}
     
 	/* (non-Javadoc)

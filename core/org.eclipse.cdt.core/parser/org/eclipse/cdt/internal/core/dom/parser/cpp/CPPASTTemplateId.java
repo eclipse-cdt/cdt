@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author jcamelon
@@ -109,8 +110,8 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
      * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
      */
     public IBinding resolveBinding() {
-        // TODO Auto-generated method stub
-        return null;
+        // TODO templates not yet supported
+        return new ProblemBinding( -1, templateName.toCharArray() );
     }
 
 	public IBinding[] resolvePrefix() {

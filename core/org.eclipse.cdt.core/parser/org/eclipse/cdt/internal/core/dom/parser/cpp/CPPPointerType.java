@@ -47,6 +47,9 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	    if( !( o instanceof CPPPointerType ) ) 
 	        return false;
 	    
+	    if( type == null )
+	        return false;
+	    
 	    CPPPointerType pt = (CPPPointerType) o;
 	    if( isConst() == pt.isConst() && isVolatile() == pt.isVolatile() )
 	        return type.equals( pt.getType() );

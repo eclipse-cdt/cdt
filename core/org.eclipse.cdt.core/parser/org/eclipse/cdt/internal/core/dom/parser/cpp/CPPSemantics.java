@@ -431,9 +431,11 @@ public class CPPSemantics {
 		    ICPPClassType cls = (ICPPClassType) binding;
 		    try {
                 //force resolution of constructor bindings
-                cls.getConstructors();
-                //then use the class scope to resolve which one.
-    		    binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding( data.astName );
+                IBinding [] ctors = cls.getConstructors();
+                if( ctors.length > 0 && !(ctors[0] instanceof IProblemBinding) ){
+	                //then use the class scope to resolve which one.
+	    		    binding = ((ICPPClassScope)cls.getCompositeScope()).getBinding( data.astName );
+                }
             } catch ( DOMException e ) {
                 binding = e.getProblem();
             }
@@ -1527,14 +1529,17 @@ public class CPPSemantics {
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
 				} else {
 					cost = checkStandardConversionSequence( source, target );
-					
-					//12.3-4 At most one user-defined conversion is implicitly applied to
-					//a single value.  (also prevents infinite loop)				
-					if( cost.rank == Cost.NO_MATCH_RANK && !data.forUserDefinedConversion ){
-						temp = checkUserDefinedConversionSequence( source, target );
-						if( temp != null ){
-							cost = temp;
+					if( !data.forDefinition() ){
+						//12.3-4 At most one user-defined conversion is implicitly applied to
+						//a single value.  (also prevents infinite loop)				
+						if( cost.rank == Cost.NO_MATCH_RANK && !data.forUserDefinedConversion ){
+							temp = checkUserDefinedConversionSequence( source, target );
+							if( temp != null ){
+								cost = temp;
+							}
 						}
+					} else {
+					    cost.rank = Cost.NO_MATCH_RANK;
 					}
 				}
 				
@@ -1829,6 +1834,12 @@ public class CPPSemantics {
 		//was the qualification conversion enough?
 		IType s = getUltimateType( cost.source, true );
 		IType t = getUltimateType( cost.target, true );
+		
+		if( s == null || t == null ){
+		    cost.rank = Cost.NO_MATCH_RANK;
+			return cost;
+		}
+		
 		if( s.equals( t ) ){
 			return cost;
 		}

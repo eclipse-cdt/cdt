@@ -49,12 +49,13 @@ public class CPPVariable implements IVariable, ICPPBinding {
 	private IType type = null;
 	
 	public CPPVariable( IASTName name ){
+	    boolean isDef = isDefinition( name );
 	    if( name instanceof ICPPASTQualifiedName ){
 	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
 	        name = ns[ ns.length - 1 ];
 	    }
 	    
-	    if( isDefinition( name ) )
+	    if( isDef )
 	        definition = name;
 	    else 
 	        declarations = new IASTName [] { name };
@@ -62,6 +63,13 @@ public class CPPVariable implements IVariable, ICPPBinding {
 	}
 	
 	protected boolean isDefinition( IASTName name ){
+	    IASTNode node = name.getParent();
+	    if( node instanceof ICPPASTQualifiedName )
+	        node = node.getParent();
+	    
+	    if( !( node instanceof IASTDeclarator ) )
+	        return false;
+	    
 	    IASTDeclarator dtor = (IASTDeclarator) name.getParent();
 	    while( dtor.getParent() instanceof IASTDeclarator )
 	        dtor = (IASTDeclarator) dtor.getParent();

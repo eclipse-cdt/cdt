@@ -1,5 +1,13 @@
 2002-11-18 Alain Magloire
 
+	* src/.../mi/core/cdi/StackFrame.java (getCurrentStackFrame):
+	if the currentFrame was not set only get the top level
+	frame for the current.
+	* src/.../mi/core/cdi/CTarget.java (updateStateId):
+	Set the currentThreads && currentThreadId.
+	
+2002-11-18 Alain Magloire
+
 	* src/.../mi/core/cdi/CThread.java (getStackFrameCount):
 	Set the new thread before getting the value and restore
 	after.

@@ -14,7 +14,10 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -41,8 +44,13 @@ public class DOMCompletionContributor implements ICompletionContributor {
 											  ASTCompletionNode completionNode,
 											  List proposals) {
 		if (completionNode != null) {
-			List allBindings = new ArrayList();
 			IASTName[] names = completionNode.getNames();
+			if (names == null || names.length == 0)
+				// No names, not much we can do here
+				return;
+			
+			// Find all bindings
+			List allBindings = new ArrayList();
 			for (int i = 0; i < names.length; ++i) {
 				IBinding[] bindings = names[i].resolvePrefix();
 				if (bindings != null)
@@ -57,6 +65,16 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			while (iBinding.hasNext()) {
 				IBinding binding = (IBinding)iBinding.next();
 				handleBinding(binding, completionNode, offset, viewer, proposals);
+			}
+			
+			// Find all macros if there is a prefix
+			String prefix = completionNode.getPrefix();
+			if (prefix.length() > 0) {
+				IASTPreprocessorMacroDefinition[] macros = completionNode.getTranslationUnit().getMacroDefinitions();
+				if (macros != null)
+					for (int i = 0; i < macros.length; ++i)
+						if (macros[i].getName().toString().startsWith(prefix))
+							handleMacro(macros[i], completionNode, offset, viewer, proposals);
 			}
 		}
 	}
@@ -123,6 +141,50 @@ public class DOMCompletionContributor implements ICompletionContributor {
 		}
 		
 		proposals.add(proposal);
+	}
+	
+	private void handleMacro(IASTPreprocessorMacroDefinition macro, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
+		String macroName = macro.getName().toString();
+		Image image = getImage(CElementImageProvider.getMacroImageDescriptor());
+		
+		if (macro instanceof IASTPreprocessorFunctionStyleMacroDefinition) {
+			IASTPreprocessorFunctionStyleMacroDefinition functionMacro = (IASTPreprocessorFunctionStyleMacroDefinition)macro;
+			
+			StringBuffer repStringBuff = new StringBuffer();
+			repStringBuff.append(macroName);
+			repStringBuff.append('(');
+			
+			StringBuffer args = new StringBuffer();
+
+			IASTFunctionStyleMacroParameter[] params = functionMacro.getParameters();
+			if (params != null)
+				for (int i = 0; i < params.length; ++i) {
+					if (i > 0)
+						args.append(", ");
+					args.append(params[i].getParameter());
+				}
+			String argString = args.toString();
+			
+			StringBuffer descStringBuff = new StringBuffer(repStringBuff.toString());
+			descStringBuff.append(argString);
+			descStringBuff.append(')');
+			
+			repStringBuff.append(')');
+			String repString = repStringBuff.toString();
+			String descString = descStringBuff.toString();
+			
+			CCompletionProposal proposal = createProposal(repString, descString, image, completionNode, offset, viewer);
+			proposal.setCursorPosition(repString.length() - 1);
+			
+			if (argString.length() > 0) {
+				CProposalContextInformation info = new CProposalContextInformation(repString, argString);
+				info.setContextInformationPosition(offset);
+				proposal.setContextInformation(info);
+			}
+			
+			proposals.add(proposal);
+		} else
+			proposals.add(createProposal(macroName, macroName, image, completionNode, offset, viewer));
 	}
 	
 	private CCompletionProposal createProposal(String repString, String dispString, Image image, ASTCompletionNode completionNode, int offset, ITextViewer viewer) {

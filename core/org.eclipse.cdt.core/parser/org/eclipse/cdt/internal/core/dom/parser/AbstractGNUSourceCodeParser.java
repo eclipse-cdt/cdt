@@ -123,7 +123,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	// Use to create the completion node
 	protected ASTCompletionNode createCompletionNode(IToken token) {
 		if (completionNode == null)
-			completionNode = new ASTCompletionNode(token);
+			completionNode = new ASTCompletionNode(token, getTranslationUnit());
 		return completionNode;
 	}
     /**

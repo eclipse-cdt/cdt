@@ -30,15 +30,18 @@ public class ASTCompletionNode {
 	private IToken completionToken;
 
 	private List names = new ArrayList();
+	
+	private IASTTranslationUnit translationUnit;
 
 	/**
 	 * Only constructor.
 	 * 
-	 * @param completionToken -
-	 *            the completion token
+	 * @param completionToken the completion token
+	 * @param translationUnit the translation unit for this completion
 	 */
-	public ASTCompletionNode(IToken completionToken) {
+	public ASTCompletionNode(IToken completionToken, IASTTranslationUnit translationUnit) {
 		this.completionToken = completionToken;
+		this.translationUnit = translationUnit;
 	}
 
 	/**
@@ -78,4 +81,12 @@ public class ASTCompletionNode {
 		return (IASTName[]) names.toArray(new IASTName[names.size()]);
 	}
 
+	/**
+	 * Get the translation unit for this completion
+	 * 
+	 * @return the translation unit
+	 */
+	public IASTTranslationUnit getTranslationUnit() {
+		return translationUnit;
+	}
 }

@@ -525,8 +525,22 @@ public class DeltaProcessor {
 						}
 					} 
 					if ((flags & IResourceDelta.DESCRIPTION) != 0) {
-						if (element != null) {
-							elementAdded(element, delta);
+						IProject res = (IProject)delta.getResource();
+						CModel cModel = CModelManager.getDefault().getCModel();
+						boolean wasCProject = cModel.findCProject(res) != null;
+						boolean isCProject = CProject.hasCNature(res);
+						if (wasCProject != isCProject) {
+							// project's nature has been added or removed
+							if (element != null) {
+								// note its resources are still visible as roots to other projects
+								if (isCProject) {
+									elementAdded(element, delta);
+									updateIndexAddResource(element, delta);
+								} else {
+									elementRemoved(element, delta);
+									updateIndexRemoveResource(element, delta);
+								}
+							}
 						}
 					}
 				}

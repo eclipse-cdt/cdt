@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 
 /** 
  * Info for ICProject.
@@ -64,9 +63,7 @@ class CProjectInfo extends OpenableInfo {
 		if (nonCResources != null)
 			return nonCResources;
 
-		CProject cproject = (CProject)getElement();
 		// determine if src == project
-		IPath projectPath = res.getProject().getFullPath();
 		ISourceRoot root = null;
 		ICElement[] elements = getChildren();
 		for (int i = 0; i < elements.length; i++) {
@@ -80,7 +77,6 @@ class CProjectInfo extends OpenableInfo {
 		}
 
 		ArrayList notChildren = new ArrayList();
-		ICElement parent = getElement();
 		try {
 			IResource[] resources = null;
 			if (res instanceof IContainer) {
@@ -89,7 +85,6 @@ class CProjectInfo extends OpenableInfo {
 			}
 
 			if (resources != null) {
-				CModelManager factory = CModelManager.getDefault();
 				ICElement[] children;
 				if (root == null) {
 					children = getChildren();

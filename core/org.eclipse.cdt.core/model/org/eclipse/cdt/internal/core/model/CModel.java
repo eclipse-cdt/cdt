@@ -74,6 +74,25 @@ public class CModel extends Openable implements ICModel {
 		}
 	}
 
+	/**
+	 * Finds the given project in the list of the java model's children.
+	 * Returns null if not found.
+	 */
+	public ICProject findCProject(IProject project) {
+		try {
+			ICProject[] projects = getOldCProjectsList();
+			for (int i = 0, length = projects.length; i < length; i++) {
+				ICProject javaProject = projects[i];
+				if (project.equals(javaProject.getProject())) {
+					return javaProject;
+				}
+			}
+		} catch (CModelException e) {
+			// c model doesn't exist: cannot find any project
+		}
+		return null;
+	}
+	
 	public IWorkspace getWorkspace() {
 		return getUnderlyingResource().getWorkspace();
 	}
@@ -139,6 +158,18 @@ public class CModel extends Openable implements ICModel {
 	// CHECKPOINT: Roots will return the hashcode of their resource
 	public int hashCode() {
 		return resource.hashCode();
+	}
+
+	/**
+	 * Workaround for bug 15168 circular errors not reported
+	 * Returns the list of java projects before resource delta processing
+	 * has started.
+	 */
+	public ICProject[] getOldCProjectsList() throws CModelException {
+		CModelManager manager = CModelManager.getDefault();
+		return manager.cProjectsCache == null ?
+				getCProjects() :
+				manager.cProjectsCache;
 	}
 
 	/* (non-Javadoc)

@@ -1,5 +1,13 @@
 2004-04-19 Alain Magloire
 
+	Fix for PR 59098
+
+	* model/org/eclipse/cdt/internal/core/model/CModel.java
+	* model/org/eclipse/cdt/internal/core/model/CProjectInfo.java
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+
+2004-04-19 Alain Magloire
+
 	It has become necessary to add exception in the interface
 	  IParent.getChildren()
 	  IParent.getChildrenOfType()

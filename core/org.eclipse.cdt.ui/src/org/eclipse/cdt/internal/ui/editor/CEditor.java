@@ -349,11 +349,22 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 
 			// 0 length and start and non-zero start line says we know
 			// the line for some reason, but not the offset.
-			if (length == 0 && start == 0 && element.getStartLine() != 0) {
-				alternateRegion = getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine());
-				if (alternateRegion != null) {
-					start = alternateRegion.getOffset();
-					length = alternateRegion.getLength();
+			if (length == 0 && start == 0 && element.getStartLine() > 0) {
+				// We have the information in term of lines, we can work it out.
+				// Binary elements return the first executable statement so we have to substract -1
+				start = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getStartLine() - 1);
+				if (element.getEndLine() > 0) {
+					length = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(element.getEndLine()) - start;
+				} else {
+					length = start;
+				}
+				// create an alternate region for the keyword highlight.
+				alternateRegion = getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine() - 1);
+				if (start == length || length < 0) {
+					if (alternateRegion != null) {
+						start = alternateRegion.getOffset();
+						length = alternateRegion.getLength();
+					}
 				}
 			}
 			setHighlightRange(start, length, moveCursor);

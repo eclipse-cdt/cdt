@@ -31,7 +31,11 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	public MIBreakpoint getMIBreakpoint() {
 		return miBreakpoint;
 	}
-	
+
+	public void setMIBreakpoint(MIBreakpoint newMIBreakpoint) {
+		miBreakpoint = newMIBreakpoint;
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint#getCondition()
 	 */

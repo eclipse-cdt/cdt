@@ -137,7 +137,7 @@ MIPlugin.getDefault().debugLog(line);
 				} else if ("exit".equals(state)) {
 					// No need to do anything, terminate() will.
 				} else if ("connected".equals(state)) {
-					session.getMIInferior().setAttached();
+					session.getMIInferior().setConnected();
 				}
 
 				// Clear the accumulate oobList on each new Result Command

@@ -17,16 +17,26 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTDoStatement extends IASTStatement {
 
+    /**
+     * <code>BODY</code> represents the relationship between a <code>IASTDoStatement</code> and its nested body <code>IASTStatement</code>.
+     */
     public static final ASTNodeProperty BODY = new ASTNodeProperty("body");  //$NON-NLS-1$
+    /**
+     * <code>CONDITION</code> represents the relationship between a <code>IASTDoStatement</code> and its condition <code>IASTExpression</code>.
+     */
     public static final ASTNodeProperty CONDITION = new ASTNodeProperty("condition");  //$NON-NLS-1$
 
 	/**
-	 * The body of the loop.
+	 * Get the body of the loop.
 	 * 
-	 * @return
+	 * @return <code>IASTStatement</code> loop code body
 	 */
 	public IASTStatement getBody();
 	
+	/**
+	 * Set the body of the loop.
+	 * @param body an <code>IASTStatement</code>
+	 */
 	public void setBody(IASTStatement body);
 	
 	/**
@@ -36,6 +46,10 @@ public interface IASTDoStatement extends IASTStatement {
 	 */
 	public IASTExpression getCondition();
 	
+	/**
+	 * Set the condition for the loop.
+	 * @param condition an IASTExpression
+	 */
 	public void setCondition(IASTExpression condition);
 	
 }

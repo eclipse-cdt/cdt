@@ -17,6 +17,9 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTDeclarationStatement extends IASTStatement {
 
+	/**
+	 * <code>DECLARATION</code> represents the relationship between a declaration statement and the declaration it wraps. 
+	 */
 	public static final ASTNodeProperty DECLARATION = new ASTNodeProperty( "Declaration"); //$NON-NLS-1$
 
     /**
@@ -26,6 +29,11 @@ public interface IASTDeclarationStatement extends IASTStatement {
 	 */
 	public IASTDeclaration getDeclaration();
 	
+	/**
+	 * Set the declaration for this statement. 
+	 * 
+	 * @param declaration
+	 */
 	public void setDeclaration( IASTDeclaration declaration );
 	
 }

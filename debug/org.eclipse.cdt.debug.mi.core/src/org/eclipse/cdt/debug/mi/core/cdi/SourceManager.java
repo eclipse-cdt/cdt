@@ -13,8 +13,12 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetAutoSolib;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetSolibSearchPath;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBShowDirectories;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBShowSolibSearchPath;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowDirectoriesInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIGDBShowSolibSearchPathInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 
@@ -76,17 +80,41 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#addLibraryPaths(String[])
-	 */
-	public void addLibraryPaths(String[] libPaths) throws CDIException {
+	public void setLibraryPaths(String[] libPaths) throws CDIException {
+		MISession mi = getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIGDBSetSolibSearchPath solib = factory.createMIGDBSetSolibSearchPath(libPaths);
+		try {
+			mi.postCommand(solib);
+			MIInfo info = solib.getMIInfo();
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getLibraryPaths()
-	 */
 	public String[] getLibraryPaths() throws CDIException {
-		return null;
+		MISession mi = getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIGDBShowSolibSearchPath dir = factory.createMIGDBShowSolibSearchPath();
+		try {
+			mi.postCommand(dir);
+			MIGDBShowSolibSearchPathInfo info = dir.getMIGDBShowSolibSearchPathInfo();
+			return info.getDirectories();
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
+	}
+
+	public void setAutoSolib() throws CDIException {
+		MISession mi = getCSession().getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIGDBSetAutoSolib solib = factory.createMIGDBSetAutoSolib();
+		try {
+			mi.postCommand(solib);
+			MIInfo info = solib.getMIInfo();
+		} catch (MIException e) {
+			throw new CDIException(e.getMessage());
+		}
 	}
 
 }

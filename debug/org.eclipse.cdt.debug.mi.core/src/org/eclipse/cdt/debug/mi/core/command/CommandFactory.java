@@ -163,6 +163,14 @@ public class CommandFactory {
 		return new MIGDBSet(params);
 	}
 
+	public MIGDBSetAutoSolib createMIGDBSetAutoSolib() {
+		return new MIGDBSetAutoSolib();
+	}
+
+	public MIGDBSetSolibSearchPath createMIGDBSetSolibSearchPath(String[] params) {
+		return new MIGDBSetSolibSearchPath(params);
+	}
+
 	public MIGDBShow createMIGDBShow(String[] params) {
 		return new MIGDBShow(params);
 	}
@@ -173,6 +181,10 @@ public class CommandFactory {
 
 	public MIGDBShowDirectories createMIGDBShowDirectories() {
 		return new MIGDBShowDirectories();
+	}
+
+	public MIGDBShowSolibSearchPath createMIGDBShowSolibSearchPath() {
+		return new MIGDBShowSolibSearchPath();
 	}
 
 	public MIStackInfoDepth createMIStackInfoDepth(int depth) {

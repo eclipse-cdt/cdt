@@ -65,21 +65,25 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String program) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, String program) throws IOException, MIException {
+		if (gdb == null || gdb.length() == 0) {
+			gdb =  "gdb";
+		}
+
 		String[] args;
 		PTY pty = null;
 		try {
 			pty = new PTY();
 			String ttyName = pty.getSlaveName();
-			args = new String[] {"gdb", "-q", "-nw", "-tty", ttyName, "-i", "mi", program};
+			args = new String[] {gdb, "-q", "-nw", "-tty", ttyName, "-i", "mi", program};
 		} catch (IOException e) {
 			//e.printStackTrace();
 			pty = null;
 			args = new String[] {"gdb", "-q", "-nw", "-i", "mi", program};
 		}
 
-		Process gdb = ProcessFactory.getFactory().exec(args);
-		MISession session = createMISession(gdb, pty);
+		Process pgdb = ProcessFactory.getFactory().exec(args);
+		MISession session = createMISession(pgdb, pty);
 		/*
 		try {
 			CommandFactory factory = session.getCommandFactory();
@@ -103,10 +107,13 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String program, String core) throws IOException, MIException {
-		String[] args = new String[] {"gdb", "--quiet", "-nw", "-i", "mi", program, core};
-		Process gdb = ProcessFactory.getFactory().exec(args);
-		MISession session = createMISession(gdb);
+	public ICDISession createCSession(String gdb, String program, String core) throws IOException, MIException {
+		if (gdb == null || gdb.length() == 0) {
+			gdb =  "gdb";
+		}
+		String[] args = new String[] {gdb, "--quiet", "-nw", "-i", "mi", program, core};
+		Process pgdb = ProcessFactory.getFactory().exec(args);
+		MISession session = createMISession(pgdb);
 		return new CSession(session);
 	}
 
@@ -117,10 +124,13 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String program, int pid) throws IOException, MIException {
-		String[] args = new String[] {"gdb", "--quiet", "-nw", "-i", "mi", program};
-		Process gdb = ProcessFactory.getFactory().exec(args);
-		MISession session = createMISession(gdb);
+	public ICDISession createCSession(String gdb, String program, int pid) throws IOException, MIException {
+		if (gdb == null || gdb.length() == 0) {
+			gdb =  "gdb";
+		}
+		String[] args = new String[] {gdb, "--quiet", "-nw", "-i", "mi", program};
+		Process pgdb = ProcessFactory.getFactory().exec(args);
+		MISession session = createMISession(pgdb);
 		try {
 			CommandFactory factory = session.getCommandFactory();
 			MITargetAttach attach = factory.createMITargetAttach(pid);

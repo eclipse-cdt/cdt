@@ -104,7 +104,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (name == null || name.length() == 0) {
 			return null;
 		}
-		String[] names = name.split("::");
+		String[] names = name.split("::"); //$NON-NLS-1$
 		ICElement current = this;
 		for (int j = 0; j < names.length; ++j) {
 			if (current instanceof IParent) {

@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
@@ -58,19 +59,19 @@ public class Binary extends Openable implements IBinary {
 	}
 
 	public boolean isSharedLib() {
-		return getType() == IBinaryObject.SHARED;
+		return getType() == IBinaryFile.SHARED;
 	}
 
 	public boolean isExecutable() {
-		return getType() == IBinaryObject.EXECUTABLE;
+		return getType() == IBinaryFile.EXECUTABLE;
 	}
 
 	public boolean isObject() {
-		return getType() == IBinaryObject.OBJECT;
+		return getType() == IBinaryFile.OBJECT;
 	}
 
 	public boolean isCore() {
-		return getType() == IBinaryObject.CORE;
+		return getType() == IBinaryFile.CORE;
 	}
 
 	public boolean hasDebug() {

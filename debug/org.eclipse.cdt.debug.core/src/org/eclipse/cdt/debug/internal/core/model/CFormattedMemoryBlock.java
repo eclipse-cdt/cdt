@@ -33,6 +33,106 @@ public class CFormattedMemoryBlock extends CDebugElement
 								   implements IFormattedMemoryBlock,
 											  ICDIEventListener
 {
+	protected class ByteRange
+	{
+		private int fStart;
+		private byte[] fRangeBytes;
+
+		/**
+		 * Constructor for Range.
+		 */
+		public ByteRange( int start, byte[] bytes )
+		{
+			fStart = start;
+			fRangeBytes = bytes;
+		}
+
+		public int getStart()
+		{
+			return fStart;
+		}
+
+		public int getLength()
+		{
+			if ( fRangeBytes != null )
+			{
+				return fRangeBytes.length;
+			}
+			return 0;
+		}
+		
+		public byte[] getBytes()
+		{
+			return fRangeBytes;
+		}
+	}
+
+	protected class DirtyBytes
+	{
+		private boolean[] fDirtyBytes = null;
+		
+		/**
+		 * Constructor for DirtyBytes.
+		 */
+		public DirtyBytes( int size )
+		{
+			fDirtyBytes = new boolean[size];
+			Arrays.fill( fDirtyBytes, false );
+		}
+		
+		public void reset()
+		{
+			Arrays.fill( fDirtyBytes, false );
+		}
+		
+		public void set( int start, int end, boolean value )
+		{
+			Arrays.fill( fDirtyBytes, start, end, value );
+		}
+
+		public void set( ByteRange range, boolean value )
+		{
+			Arrays.fill( fDirtyBytes, range.getStart(), range.getLength(), value );
+		}
+		
+		public ByteRange[] getDirtyRanges( byte[] bytes )
+		{
+			ArrayList list = new ArrayList();
+			int startIndex = -1;
+			for ( int i = 0; i < fDirtyBytes.length; ++i )
+			{
+				if ( fDirtyBytes[i] )
+				{
+					if ( startIndex == -1 )
+					{
+						startIndex = i;
+					}
+				}
+				else
+				{
+					if ( startIndex != -1 )
+					{
+						byte[] rangeBytes = new byte[i - startIndex];
+						System.arraycopy( bytes, startIndex, rangeBytes, 0, i - startIndex );
+						list.add( new ByteRange( startIndex, rangeBytes ) );
+						startIndex = -1;
+					}
+				}
+			}
+			return (ByteRange[])list.toArray( new ByteRange[list.size()] );
+		}
+
+		public boolean isDirty()
+		{
+			for ( int i = 0; i < fDirtyBytes.length; ++i )
+			{
+				if ( fDirtyBytes[i] )
+					return true;
+			}
+			return false;
+		}
+	}
+
 	class CFormattedMemoryBlockRow implements IFormattedMemoryBlockRow
 	{
 		private long fAddress;
@@ -85,7 +185,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	private char fPaddingChar = '.';
 	private List fRows = null;
 	private Long[] fChangedAddresses = new Long[0];
-	private boolean[] fDirtyBytes = null;
+	private DirtyBytes fDirtyBytes = null;
 
 	/**
 	 * Constructor for CFormattedMemoryBlock.
@@ -196,10 +296,13 @@ public class CFormattedMemoryBlock extends CDebugElement
 		return (IFormattedMemoryBlockRow[])fRows.toArray( new IFormattedMemoryBlockRow[fRows.size()] );
 	}
 
-	private void resetBytes()
+	private synchronized void resetBytes()
 	{
 		fBytes = null;
-		fDirtyBytes = null;
+		if ( fDirtyBytes != null )
+		{
+			fDirtyBytes.reset();
+		}
 	}
 
 	private void resetRows()
@@ -296,7 +399,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IMemoryBlock#getBytes()
 	 */
-	public byte[] getBytes() throws DebugException
+	public synchronized byte[] getBytes() throws DebugException
 	{
 		if ( fBytes == null )
 		{ 
@@ -305,8 +408,10 @@ public class CFormattedMemoryBlock extends CDebugElement
 				try
 				{
 					fBytes = fCDIMemoryBlock.getBytes();
-					fDirtyBytes = new boolean[fBytes.length];
-					Arrays.fill( fDirtyBytes, false );
+					if ( fDirtyBytes == null )
+					{
+						fDirtyBytes = createDirtyBytes( fBytes.length );
+					}
 				}
 				catch( CDIException e )
 				{
@@ -314,7 +419,13 @@ public class CFormattedMemoryBlock extends CDebugElement
 				}
 			}
 		}
-		return fBytes;
+		byte[] copyBytes = null;
+		if ( fBytes != null )
+		{
+			copyBytes = new byte[fBytes.length];
+			System.arraycopy( fBytes, 0, copyBytes, 0, fBytes.length );
+		}
+		return copyBytes;
 	}
 
 	/* (non-Javadoc)
@@ -488,22 +599,19 @@ public class CFormattedMemoryBlock extends CDebugElement
 	{
 		byte[] bytes = itemToBytes( newValue.toCharArray() );
 		setBytes( index * getWordSize(), bytes );
-		Arrays.fill( fDirtyBytes, index * getWordSize(), index * getWordSize() + bytes.length, true );
+		fDirtyBytes.set( index * getWordSize(), index * getWordSize() + bytes.length, true );
 		resetRows();
 	}
 	
 	private void setBytes( int index, byte[] newBytes )
 	{
-		try
+		if ( fBytes != null && fDirtyBytes != null )
 		{
-			byte[] bytes = getBytes();
 			for ( int i = index; i < index + newBytes.length; ++i )
 			{
-				bytes[i] = newBytes[i - index];
+				fBytes[i] = newBytes[i - index];
+				fDirtyBytes.set( index, newBytes.length, true );
 			}
-		}
-		catch( DebugException e )
-		{
 		}
 	}
 	
@@ -534,11 +642,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	{
 		if ( fDirtyBytes != null )
 		{
-			for ( int i = 0; i < fDirtyBytes.length; ++i )
-			{
-				if ( fDirtyBytes[i] )
-					return true;
-			}
+			return fDirtyBytes.isDirty();
 		}
 		return false;
 	}
@@ -548,40 +652,22 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public void saveChanges() throws DebugException
 	{
-		if ( getBytes() != null && fDirtyBytes != null && getCDIMemoryBlock() != null )
+		byte[] bytes = getBytes();
+		if ( bytes != null && fDirtyBytes != null && getCDIMemoryBlock() != null )
 		{
-			int startIndex = -1;
-			for ( int i = 0; i < fDirtyBytes.length; ++i )
+			ByteRange[] ranges = fDirtyBytes.getDirtyRanges( getBytes() );
+			for ( int i = 0; i < ranges.length; ++i )
 			{
-				if ( fDirtyBytes[i] )
+				try
 				{
-					if ( startIndex == -1 )
-					{
-						startIndex = i;
-					}
+					getCDIMemoryBlock().setValue( ranges[i].getStart(), ranges[i].getBytes() );
 				}
-				else
+				catch( CDIException e )
 				{
-					if ( startIndex != -1 )
-					{
-						byte[] bytes = new byte[i - startIndex];
-						for ( int j = startIndex; j < i; ++j )
-						{
-							bytes[j - startIndex] = getBytes()[j];
-						}
-						try
-						{
-							getCDIMemoryBlock().setValue( startIndex, bytes );
-							startIndex = -1;
-						}
-						catch( CDIException e )
-						{
-							targetRequestFailed( e.getMessage(), null );
-						}
-					}
+					targetRequestFailed( e.getMessage(), null );
 				}
 			}
-			Arrays.fill( fDirtyBytes, false );
+			fDirtyBytes.reset();
 		}
 	}
 
@@ -601,5 +687,10 @@ public class CFormattedMemoryBlock extends CDebugElement
 				targetRequestFailed( e.getMessage(), null );
 			}
 		}
+	}
+
+	private DirtyBytes createDirtyBytes( int size )
+	{
+		return new DirtyBytes( size );
 	}
 }

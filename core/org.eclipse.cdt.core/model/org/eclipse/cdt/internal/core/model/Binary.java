@@ -82,7 +82,7 @@ public class Binary extends Openable implements IBinary {
 				cpu = ((IBinaryObject)getBinaryFile()).getCPU();
 			}
 		}
-		return (cpu == null ? "" : cpu);
+		return (cpu == null ? "" : cpu); //$NON-NLS-1$
 	}
 
 	public String[] getNeededSharedLibs() {
@@ -127,7 +127,7 @@ public class Binary extends Openable implements IBinary {
 				soname = ((IBinaryShared)getBinaryFile()).getSoName();
 			}
 		}
-		return (soname == null ? "" : soname);
+		return (soname == null ? "" : soname); //$NON-NLS-1$
 	}
 
 	public boolean isLittleEndian() {

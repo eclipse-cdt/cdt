@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.model.ITypeDef;
 
 public class TypeDef extends SourceManipulation implements ITypeDef{
 	
-	String typeName= "";
+	String typeName= ""; //$NON-NLS-1$
 	public TypeDef(ICElement parent, String name) {
 		super(parent, name, CElement.C_TYPEDEF);
 	}

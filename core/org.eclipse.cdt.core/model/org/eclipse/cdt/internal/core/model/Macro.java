@@ -15,11 +15,11 @@ public class Macro extends SourceManipulation implements IMacro {
 	}
 
 	public String getIdentifierList() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	public String getTokenSequence() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	protected CElementInfo createElementInfo () {

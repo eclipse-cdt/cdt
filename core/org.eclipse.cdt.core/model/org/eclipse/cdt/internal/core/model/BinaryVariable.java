@@ -21,7 +21,7 @@ public class BinaryVariable extends BinaryElement implements IVariable {
 	 */
 	public String getInitializer() {
 		// TODO Auto-generated method stub
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -29,7 +29,7 @@ public class BinaryVariable extends BinaryElement implements IVariable {
 	 */
 	public String getTypeName() {
 		// TODO Auto-generated method stub
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

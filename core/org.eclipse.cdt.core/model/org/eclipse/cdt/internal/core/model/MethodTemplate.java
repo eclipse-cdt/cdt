@@ -62,27 +62,27 @@ public class MethodTemplate extends MethodDeclaration implements ITemplate{
 	public String getTemplateSignature() {
 		StringBuffer sig = new StringBuffer(getElementName());
 		if(getNumberOfTemplateParameters() > 0){
-			sig.append("<");
+			sig.append("<"); //$NON-NLS-1$
 			String[] paramTypes = getTemplateParameterTypes();
 			int i = 0;
 			sig.append(paramTypes[i++]);
 			while (i < paramTypes.length){
-				sig.append(", ");
+				sig.append(", "); //$NON-NLS-1$
 				sig.append(paramTypes[i++]);
 			}
-			sig.append(">");
+			sig.append(">"); //$NON-NLS-1$
 		}
 		else{
-			sig.append("<>");
+			sig.append("<>"); //$NON-NLS-1$
 		}
 		sig.append(this.getParameterClause());
 		if(isConst())
-			sig.append(" const");
+			sig.append(" const"); //$NON-NLS-1$
 		if(isVolatile())
-			sig.append(" volatile");
+			sig.append(" volatile"); //$NON-NLS-1$
 
 		if((this.getReturnType() != null) && (this.getReturnType().length() > 0)){ 
-			sig.append(" : ");
+			sig.append(" : "); //$NON-NLS-1$
 			sig.append(this.getReturnType());
 		}
 		

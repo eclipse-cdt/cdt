@@ -15,7 +15,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 public class FieldInfo extends SourceManipulationInfo {
 
-	String typeStr = "";
+	String typeStr = ""; //$NON-NLS-1$
 	boolean isConst = false;
 	boolean isVolatile = false;
 	boolean isMutable = false;

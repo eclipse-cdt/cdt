@@ -82,7 +82,7 @@ public class CPathEntry implements ICPathEntry {
 
 		switch (kind) {
 			case ICPathEntry.CDT_PROJECT :
-				return "prj";
+				return "prj"; //$NON-NLS-1$
 			case ICPathEntry.CDT_SOURCE :
 				return "src"; //$NON-NLS-1$
 			case ICPathEntry.CDT_LIBRARY :

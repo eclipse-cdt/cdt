@@ -111,9 +111,9 @@ public class CModelManager implements IResourceChangeListener {
 	 */
 	private HashMap sourceMappers = new HashMap();
 
-	public static final String [] sourceExtensions = {"c", "cxx", "cc", "C", "cpp"};
+	public static final String [] sourceExtensions = {"c", "cxx", "cc", "C", "cpp"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
-	public static final String [] headerExtensions = {"h", "hh", "hpp", "H"};
+	public static final String [] headerExtensions = {"h", "hh", "hpp", "H"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	
 	public static final IWorkingCopy[] NoWorkingCopy = new IWorkingCopy[0];
 

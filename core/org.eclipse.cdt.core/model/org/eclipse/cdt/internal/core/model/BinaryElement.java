@@ -80,7 +80,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -115,7 +115,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 			} else {
 				// TODO-model: handle non-absolute paths when finding source files
 				// ??? assert()
-				path = new Path("");
+				path = new Path(""); //$NON-NLS-1$
 			}
 			// Fall back to the project sourcemapper.
 			if (tu == null) {

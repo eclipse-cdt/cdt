@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.cdt.core.CCorePlugin;
 
 public class BinaryRunner {
 	IProject project;
@@ -52,7 +53,7 @@ public class BinaryRunner {
 				}
 			}
 
-		}, "Binary Search Thread");
+		}, CCorePlugin.getResourceString("CoreModel.BinaryRunner.Binary_Search_Thread")); //$NON-NLS-1$
 		runner.start();
 	}
 

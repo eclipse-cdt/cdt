@@ -491,7 +491,7 @@ public class CProject extends CContainer implements ICProject {
 
 			default :
 				{
-					ICModelStatus status = new CModelStatus(ICModelStatus.ERROR, "CPathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$
+					ICModelStatus status = new CModelStatus(ICModelStatus.ERROR, "CPathEntry: unknown kind (" + kindAttr + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 					throw new CModelException(status);
 				}
 		}

@@ -6,7 +6,7 @@ package org.eclipse.cdt.internal.core.model;
  */
  
 import java.util.Map;
-
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class ArchiveContainer extends Openable implements IArchiveContainer {
 
 	public ArchiveContainer (CProject cProject) {
-		super (cProject, null, "Archives", CElement.C_VCONTAINER);
+		super (cProject, null, CCorePlugin.getResourceString("CoreModel.ArchiveContainer.Archives"), CElement.C_VCONTAINER); //$NON-NLS-1$
 	}
 
 	public IArchive[] getArchives() {

@@ -49,21 +49,21 @@ public class VariableTemplate extends Variable implements ITemplate {
 	public String getTemplateSignature() {
 		StringBuffer sig = new StringBuffer(getElementName());
 		if(getNumberOfTemplateParameters() > 0){
-			sig.append("<");
+			sig.append("<"); //$NON-NLS-1$
 			String[] paramTypes = getTemplateParameterTypes();
 			int i = 0;
 			sig.append(paramTypes[i++]);
 			while (i < paramTypes.length){
-				sig.append(", ");
+				sig.append(", "); //$NON-NLS-1$
 				sig.append(paramTypes[i++]);
 			}
-			sig.append(">");
+			sig.append(">"); //$NON-NLS-1$
 		}
 		else{
-			sig.append("<>");
+			sig.append("<>"); //$NON-NLS-1$
 		}
 		
-		sig.append(" : ");
+		sig.append(" : "); //$NON-NLS-1$
 		sig.append(this.getTypeName());
 		
 		return sig.toString();

@@ -6,7 +6,7 @@ package org.eclipse.cdt.internal.core.model;
  */
  
 import java.util.Map;
-
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class BinaryContainer extends Openable implements IBinaryContainer {
 
 	public BinaryContainer (CProject cProject) {
-		super (cProject, null, "Binaries", CElement.C_VCONTAINER);
+		super (cProject, null, CCorePlugin.getResourceString("CoreModel.BinaryContainer.Binaries"), CElement.C_VCONTAINER); //$NON-NLS-1$
 	}
 
 	public IBinary[] getBinaries() {

@@ -1,3 +1,19 @@
+2004-02-10 Tanya Wolff
+    Start of Fix for 51192: The defect is for all org.eclipse.cdt.core strings, but each package
+    should be handled by respective component owners. 
+    
+    These files have strings extracted; the other
+    changed files have only strings commented out with //$NON-NLS-1$
+    See defect 51192 for how these strings were extracted with the 
+    "Find strings to externalize" wizard.
+    
+    model/org.eclipse.cdt.internal.core.model/ArchiveContainer.java
+    model/org.eclipse.cdt.internal.core.model/BinaryContainer.java
+    model/org.eclipse.cdt.internal.core.model/BinaryRunner.java
+    model/org.eclipse.cdt.internal.core.model/CModelBuilder.java
+    model/org.eclipse.cdt.internal.core.model/CModelStatus.java
+    model/org.eclipse.cdt.internal.core.model/NullBinaryParser.java    
+   
 2004-02-10 Vladimir Hirsl
 	Fix for PR# 51373: NPE when trying to instantiate a CBuildConsole with non null id
 

@@ -31,7 +31,7 @@ public class CoreModel {
 	private static CoreModel cmodel = null;
 	private static CModelManager manager = null;
 
-	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel";
+	public final static String CORE_MODEL_ID = CCorePlugin.PLUGIN_ID + ".coremodel"; //$NON-NLS-1$
 
 	/**
 	 * Creates an ICElement form and IPath.

@@ -19,7 +19,7 @@ public class Variable extends VariableDeclaration implements IVariable {
 	}
 
 	public String getInitializer() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 }

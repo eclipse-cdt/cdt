@@ -215,44 +215,44 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	}
 
 	public String toDebugString() {
-			return getElementName() + " " + getTypeString(getElementType());
+			return getElementName() + " " + getTypeString(getElementType()); //$NON-NLS-1$
 	}
 
 	// util
 	public static String getTypeString(int type) {
 		switch (type) {
 			case C_MODEL:
-				return "CMODEL"; 
+				return "CMODEL";  //$NON-NLS-1$
 			case C_PROJECT:
-				return "CPROJECT"; 
+				return "CPROJECT";  //$NON-NLS-1$
 			case C_CCONTAINER:
-				return "CCONTAINER";
+				return "CCONTAINER"; //$NON-NLS-1$
 			case C_UNIT:
-				return "TRANSLATION_UNIT"; 
+				return "TRANSLATION_UNIT";  //$NON-NLS-1$
 			case C_FUNCTION:
-				return "C_FUNCTION"; 
+				return "C_FUNCTION";  //$NON-NLS-1$
 			case C_FUNCTION_DECLARATION:
-				return "C_FUNCTION_DECLARATION"; 
+				return "C_FUNCTION_DECLARATION";  //$NON-NLS-1$
 			case C_VARIABLE:
-				return "C_VARIABLE"; 
+				return "C_VARIABLE";  //$NON-NLS-1$
 			case C_VARIABLE_DECLARATION:
-				return "C_VARIABLE_DECLARATION"; 
+				return "C_VARIABLE_DECLARATION";  //$NON-NLS-1$
 			case C_INCLUDE:
-				return "C_INCLUDE"; 
+				return "C_INCLUDE";  //$NON-NLS-1$
 			case C_MACRO:
-				return "C_MACRO"; 			
+				return "C_MACRO"; 			 //$NON-NLS-1$
 			case C_STRUCT:
-				return "C_STRUCT";
+				return "C_STRUCT"; //$NON-NLS-1$
 			case C_CLASS:
-				return "C_CLASS";
+				return "C_CLASS"; //$NON-NLS-1$
 			case C_UNION:
-				return "C_UNION";
+				return "C_UNION"; //$NON-NLS-1$
 			case C_FIELD:
-				return "C_FIELD"; 
+				return "C_FIELD";  //$NON-NLS-1$
 			case C_METHOD:
-				return "C_METHOD"; 						
+				return "C_METHOD"; 						 //$NON-NLS-1$
 			default:
-				return "UNKNOWN";
+				return "UNKNOWN"; //$NON-NLS-1$
 		}
 	}
 

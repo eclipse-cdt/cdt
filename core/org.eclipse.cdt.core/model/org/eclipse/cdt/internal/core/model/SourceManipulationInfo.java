@@ -56,7 +56,7 @@ class SourceManipulationInfo extends CElementInfo {
 				throw new CModelException(e, ICModelStatusConstants.IO_EXCEPTION);
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**

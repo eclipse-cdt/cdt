@@ -78,7 +78,7 @@ public class CModelBuilder {
 	{
 		IProject currentProject = null;
 		boolean hasCppNature = true;
-		String code = "";
+		String code = ""; //$NON-NLS-1$
 		
 		// get the current project
 		if (translationUnit != null && translationUnit.getCProject() != null) {
@@ -137,11 +137,11 @@ public class CModelBuilder {
 		}
 		catch( ParserFactoryError pfe )
 		{
-			throw new ParserException( "Parser/Scanner construction failure.");
+			throw new ParserException( CCorePlugin.getResourceString("CModelBuilder.Parser_Construction_Failure")); //$NON-NLS-1$
 		}
 		// call parse
 		if( ! parser.parse() && throwExceptionOnError )
-			throw new ParserException("Parse failure");
+			throw new ParserException(CCorePlugin.getResourceString("CModelBuilder.Parse_Failure")); //$NON-NLS-1$
 		return quickParseCallback.getCompilationUnit(); 
 	}
 	
@@ -154,7 +154,7 @@ public class CModelBuilder {
 			
 		catch( ParserException e )
 		{
-			Util.debugLog( "Parse Exception in CModelBuilder", IDebugLogConstants.MODEL ); 
+			Util.debugLog( "Parse Exception in CModelBuilder", IDebugLogConstants.MODEL );  //$NON-NLS-1$
 			//e.printStackTrace();
 		}
 		long startTime = System.currentTimeMillis();
@@ -164,7 +164,7 @@ public class CModelBuilder {
 		}
 		catch( NullPointerException npe )
 		{
-			Util.debugLog( "NullPointer exception in CModelBuilder", IDebugLogConstants.MODEL);
+			Util.debugLog( "NullPointer exception in CModelBuilder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
 			//npe.printStackTrace();
 		}
 				 
@@ -343,7 +343,7 @@ public class CModelBuilder {
 	
 	private Namespace createNamespace(Parent parent, IASTNamespaceDefinition nsDef){
 		// create element
-		String type = "namespace";
+		String type = "namespace"; //$NON-NLS-1$
 		String nsName = (nsDef.getName() == null )  
 						? "" 
 						: nsDef.getName().toString();
@@ -362,7 +362,7 @@ public class CModelBuilder {
 
 	private Enumeration createEnumeration(Parent parent, IASTEnumerationSpecifier enumSpecifier){
 		// create element
-		String type = "enum";
+		String type = "enum"; //$NON-NLS-1$
 		String enumName = (enumSpecifier.getName() == null )
 						  ? "" 
 						  : enumSpecifier.getName().toString();
@@ -407,8 +407,8 @@ public class CModelBuilder {
 	
 	private Structure createClass(Parent parent, IASTClassSpecifier classSpecifier, boolean isTemplate){
 		// create element
-		String className = "";
-		String type = "";
+		String className = ""; //$NON-NLS-1$
+		String type = ""; //$NON-NLS-1$
 		int kind = ICElement.C_CLASS;
 		ASTClassKind classkind = classSpecifier.getClassKind();
 		if(classkind == ASTClassKind.CLASS){
@@ -416,7 +416,7 @@ public class CModelBuilder {
 				kind = ICElement.C_CLASS;
 			else
 				kind = ICElement.C_TEMPLATE_CLASS;
-			type = "class";
+			type = "class"; //$NON-NLS-1$
 			className = (classSpecifier.getName() == null )
 						? ""
 						: classSpecifier.getName().toString();				
@@ -426,7 +426,7 @@ public class CModelBuilder {
 				kind = ICElement.C_STRUCT;
 			else
 				kind = ICElement.C_TEMPLATE_STRUCT;
-			type = "struct";
+			type = "struct"; //$NON-NLS-1$
 			className = (classSpecifier.getName() == null ) 
 						? "" 
 						: classSpecifier.getName().toString();				
@@ -436,7 +436,7 @@ public class CModelBuilder {
 				kind = ICElement.C_UNION;
 			else
 				kind = ICElement.C_TEMPLATE_UNION;
-			type = "union";
+			type = "union"; //$NON-NLS-1$
 			className = (classSpecifier.getName() == null )
 						? "" 
 						: classSpecifier.getName().toString();				

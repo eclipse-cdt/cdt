@@ -18,11 +18,11 @@ public class StructureInfo extends VariableInfo {
 		super(element);
 		
 		if (element.getElementType() == ICElement.C_CLASS)
-			this.setTypeName("class");
+			this.setTypeName("class"); //$NON-NLS-1$
 		else if (element.getElementType() == ICElement.C_UNION)
-			this.setTypeName("union");
+			this.setTypeName("union"); //$NON-NLS-1$
 		else
-			this.setTypeName("struct");
+			this.setTypeName("struct"); //$NON-NLS-1$
 	}
 
 	public boolean isUnion() {

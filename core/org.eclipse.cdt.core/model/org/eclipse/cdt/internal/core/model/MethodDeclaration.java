@@ -38,7 +38,7 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	public boolean isDestructor() {
 		// is not implemented in the parser's quick mode
 		//return isDestructor;
-		return getElementName().startsWith("~");
+		return getElementName().startsWith("~"); //$NON-NLS-1$
 	}
 
 	public void setConstructor(boolean isConstructor) {
@@ -50,7 +50,7 @@ public class MethodDeclaration extends FunctionDeclaration implements IMethodDec
 	}
 
 	public boolean isOperator(){
-		return getElementName().startsWith("operator");
+		return getElementName().startsWith("operator"); //$NON-NLS-1$
 	}
 
 	public boolean isPureVirtual(){

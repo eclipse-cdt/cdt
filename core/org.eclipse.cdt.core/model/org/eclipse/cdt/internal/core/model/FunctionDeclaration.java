@@ -30,7 +30,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		if (returnType != null)
 			return returnType;
 		else
-			return "";
+			return ""; //$NON-NLS-1$
 	}
 
 	public void setReturnType(String type){
@@ -53,9 +53,9 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		StringBuffer sig = new StringBuffer(getElementName());
 		sig.append(getParameterClause());
 		if(isConst())
-			sig.append(" const");
+			sig.append(" const"); //$NON-NLS-1$
 		if(isVolatile())
-			sig.append(" volatile");
+			sig.append(" volatile"); //$NON-NLS-1$
 		return sig.toString();
 	}
 	
@@ -63,24 +63,24 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 		StringBuffer sig = new StringBuffer();
 		
 		if(getNumberOfParameters() > 0){
-			sig.append("(");
+			sig.append("("); //$NON-NLS-1$
 			String[] paramTypes = getParameterTypes();
 			int i = 0;
 			sig.append(paramTypes[i++]);
 			while (i < paramTypes.length){
-				sig.append(", ");
+				sig.append(", "); //$NON-NLS-1$
 				sig.append(paramTypes[i++]);
 			}
-			sig.append(")");
+			sig.append(")"); //$NON-NLS-1$
 		}
 		else{
-			sig.append("()");
+			sig.append("()"); //$NON-NLS-1$
 		}
 		return sig.toString();	
 	}
 	
 	public String getParameterInitializer(int pos) {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public String[] getExceptions(){

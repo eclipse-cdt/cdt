@@ -37,10 +37,10 @@ public class ASTTypeId implements IASTTypeId
     private final boolean isLong;
     private final boolean isVolatile;
     private final boolean isConst;
-    private final String signature;
+    private final char[] signature;
     private ITokenDuple tokenDuple;
     private final List arrayModifiers;
-    private final String typeName;
+    private final char[] typeName;
     private final List pointerOps;
     private final Type kind;
     private List references = null; 
@@ -49,10 +49,10 @@ public class ASTTypeId implements IASTTypeId
     /**
      * 
      */
-    public ASTTypeId( Type kind, ITokenDuple duple, List pointerOps, List arrayMods, String signature, 
+    public ASTTypeId( Type kind, ITokenDuple duple, List pointerOps, List arrayMods, char[] signature, 
 		boolean isConst, boolean isVolatile, boolean isUnsigned, boolean isSigned, boolean isShort, boolean isLong, boolean isTypeName )
     {
- 		typeName = ( duple == null ) ? "" : duple.toString() ; //$NON-NLS-1$
+ 		typeName = ( duple == null ) ? "".toCharArray() : duple.toCharArray() ; //$NON-NLS-1$
  		this.tokenDuple = duple;
  		this.kind = kind;
  		this.pointerOps = pointerOps; 
@@ -79,7 +79,7 @@ public class ASTTypeId implements IASTTypeId
      */
     public String getTypeOrClassName()
     {
-        return typeName;
+        return String.valueOf(typeName);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTTypeId#getPointerOperators()
@@ -111,7 +111,7 @@ public class ASTTypeId implements IASTTypeId
      */
     public String getFullSignature()
     {
-        return signature;
+        return String.valueOf(signature);
     }
 
     /* (non-Javadoc)

@@ -51,7 +51,7 @@ public class ASTTypedefDeclaration extends ASTDeclaration implements IASTTypedef
         setStartingOffsetAndLineNumber(startingOffset, startingLine);
         setNameOffset(nameOffset);
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
-        qualifiedName = new ASTQualifiedNamedElement( scope, name );
+        qualifiedName = new ASTQualifiedNamedElement( scope, name.toCharArray() );
         fn = filename;
     }
     /* (non-Javadoc)

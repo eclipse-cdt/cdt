@@ -32,7 +32,7 @@ public class ASTGCCDesignator extends ASTDesignator
 	 * @param fieldName
 	 * @param fieldOffset
 	 */
-	public ASTGCCDesignator(IASTDesignator.DesignatorKind kind, IASTExpression constantExpression, String fieldName, int fieldOffset, IASTExpression secondSubscriptExpression) {
+	public ASTGCCDesignator(IASTDesignator.DesignatorKind kind, IASTExpression constantExpression, char[] fieldName, int fieldOffset, IASTExpression secondSubscriptExpression) {
 		super(kind, constantExpression, fieldName, fieldOffset);
 		secondExpression = secondSubscriptExpression;
 	}

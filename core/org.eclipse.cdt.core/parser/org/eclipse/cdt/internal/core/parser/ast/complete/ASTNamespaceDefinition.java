@@ -60,7 +60,7 @@ public class ASTNamespaceDefinition
      */
     public String getName()
     {
-        return symbol.getName();
+        return String.valueOf(symbol.getName());
     }
 
     /* (non-Javadoc)

@@ -72,7 +72,7 @@ public class BaseASTFactory  {
     	if( extension.overrideCreateDesignatorMethod( kind ))
     		return extension.createDesignator( kind, constantExpression, fieldIdentifier, extensionParms );
         return new ASTDesignator( kind, constantExpression, 
-        		fieldIdentifier == null ? "" : fieldIdentifier.getImage(),  //$NON-NLS-1$
+        		fieldIdentifier == null ? new char[0] : fieldIdentifier.getCharImage(),  //$NON-NLS-1$
         		fieldIdentifier == null ? -1 : fieldIdentifier.getOffset() );
     }
 

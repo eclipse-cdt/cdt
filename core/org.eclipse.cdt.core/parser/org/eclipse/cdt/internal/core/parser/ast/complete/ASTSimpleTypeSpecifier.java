@@ -29,14 +29,14 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
     private final List refs;
     private ISymbol symbol;
     private final boolean isTypename;
-    private final String name;
+    private final char[] name;
 
     /**
      * @param s
      * @param b
      * @param string
      */
-    public ASTSimpleTypeSpecifier(ISymbol s, boolean b, String string, List references )
+    public ASTSimpleTypeSpecifier(ISymbol s, boolean b, char[] string, List references )
     {
     	this.symbol = s; 
     	this.isTypename = b; 
@@ -76,7 +76,7 @@ public class ASTSimpleTypeSpecifier extends ASTNode implements IASTSimpleTypeSpe
      */
     public String getTypename()
     {
-        return name;
+        return String.valueOf(name);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#isLong()

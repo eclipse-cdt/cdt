@@ -98,7 +98,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         this.isVolatile = isVolatile;
         this.visibility = visibility;
         this.constructorChainElements = constructorChainElements;
-        qualifiedName = new ASTQualifiedNamedElement( scope, name );
+        qualifiedName = new ASTQualifiedNamedElement( scope, name.toCharArray() );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTMethod#isVirtual()

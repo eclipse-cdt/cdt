@@ -115,9 +115,9 @@ public class ASTNode implements IASTNode {
 		List results = null;
 		try {
 			if( qualification != null ){
-				results = qualification.prefixLookup( filter, prefix, true, paramList );
+				results = qualification.prefixLookup( filter, prefix.toCharArray(), true, paramList );
 			} else {
-				results = thisContainer.prefixLookup( filter, prefix, false, paramList );
+				results = thisContainer.prefixLookup( filter, prefix.toCharArray(), false, paramList );
 			}
 		} catch (ParserSymbolTableException e) {
 			throw new LookupError();

@@ -53,11 +53,25 @@ public class CharArrayUtils {
 	}
 	
 	public static final boolean equals(char[] str1, int start1, int length1, char[] str2) {
-		if (length1 != str2.length)
+		if (length1 != str2.length || str1.length < length1 )
 			return false;
 		
 		for (int i = 0; i < length1; ++i)
 			if (str1[start1++] != str2[i])
+				return false;
+		
+		return true;
+	}
+	
+	public static final boolean equals(char[] str1, int start1, int length1, char[] str2, boolean ignoreCase ) {
+	    if( !ignoreCase )
+	        return equals( str1, start1, length1, str2 );
+	    
+		if (length1 != str2.length || str1.length < length1 )
+			return false;
+		
+		for (int i = 0; i < length1; ++i)
+			if( Character.toLowerCase(str1[start1++]) != Character.toLowerCase( str2[i] ) )
 				return false;
 		
 		return true;
@@ -179,6 +193,32 @@ public class CharArrayUtils {
 				return i;
 		return -1;
 	}
+	public static final int indexOf( char[] toBeFound, char[] array ){
+	    if( toBeFound.length > array.length )
+	        return -1;
+	    
+	    int j = 0;
+	    for( int i = 0; i < array.length; i++ ){
+	        if( toBeFound[j] == array[i] ){
+	            if( ++j == toBeFound.length )
+	                return i - j;
+	        }
+	        else j = 0; 
+	    }
+	    return -1;
+	}
+	
+	public static final int lastIndexOf(char[] toBeFound, char[] array) {
+	    int j = toBeFound.length - 1;
+		for (int i = array.length; --i >= 0;){
+			if (toBeFound[j] == array[i]){
+			    if( --j == -1 )
+			        return i;
+			} else j = toBeFound.length - 1;
+		}
+		return -1;
+	}
+	
 	final static public char[] trim(char[] chars) {
 
 		if (chars == null)
@@ -195,5 +235,13 @@ public class CharArrayUtils {
 			return subarray(chars, start, end + 1);
 		}
 		return chars;
+	}
+
+	
+	final static public char[] lastSegment(char[] array, char[] separator) {
+		int pos = lastIndexOf(separator, array);
+		if (pos < 0)
+			return array;
+		return subarray(array, pos + separator.length, array.length);
 	}
 }

@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
 {
 	
-    private final String alias;
+    private final char[] alias;
     private final IASTNamespaceDefinition namespace;
     private List references;
     private final char [] fn;
@@ -44,7 +44,7 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
      * @param endOffset
      * @param filename
      */
-    public ASTNamespaceAlias(ISymbol s, String alias, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine, List references, char[] filename)
+    public ASTNamespaceAlias(ISymbol s, char[] alias, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine, List references, char[] filename)
     {
         super( s );
         this.alias = alias; 
@@ -61,7 +61,7 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
      */
     public String getAlias()
     {
-        return alias;
+        return String.valueOf(alias);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTNamespaceAlias#getNamespace()
@@ -97,7 +97,7 @@ public class ASTNamespaceAlias extends ASTSymbol implements IASTNamespaceAlias
      */
     public String getName()
     {
-        return getSymbol().getName();
+        return String.valueOf(getSymbol().getName());
     }
 	private int startingLineNumber, startingOffset, endingLineNumber, endingOffset, nameStartOffset, nameEndOffset, nameLineNumber;
     /* (non-Javadoc)

@@ -62,7 +62,7 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 		this.isStatic = isStatic;
 		this.name = name;
 		this.constructorExpression = constructorExpression;
-		qualifiedName = new ASTQualifiedNamedElement( scope, name );
+		qualifiedName = new ASTQualifiedNamedElement( scope, name.toCharArray() );
 		setStartingOffsetAndLineNumber(startingOffset, startLine);
 		setNameOffset(nameOffset);
 		setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );

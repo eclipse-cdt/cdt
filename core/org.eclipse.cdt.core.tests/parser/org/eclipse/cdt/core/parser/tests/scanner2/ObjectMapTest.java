@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.parser.tests.scanner2;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
@@ -145,6 +146,17 @@ public class ObjectMapTest extends TestCase {
         
         insertContents( map, con );
         assertContents( map, con );
+    }
+    
+    public void testCharArrayUtils() throws Exception{
+        char [] buffer = "A::B::C".toCharArray(); //$NON-NLS-1$
+        
+        assertEquals( CharArrayUtils.lastIndexOf( "::".toCharArray(), buffer ), 4 ); //$NON-NLS-1$
+        assertTrue( CharArrayUtils.equals( CharArrayUtils.lastSegment( buffer, "::".toCharArray()), "C".toCharArray() ) ); //$NON-NLS-1$ //$NON-NLS-2$
+        
+        buffer = "A::B::C:foo".toCharArray(); //$NON-NLS-1$
+        assertEquals( CharArrayUtils.lastIndexOf( "::".toCharArray(), buffer ), 4 ); //$NON-NLS-1$
+        assertTrue( CharArrayUtils.equals( CharArrayUtils.lastSegment( buffer, "::".toCharArray()), "C:foo".toCharArray() ) ); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

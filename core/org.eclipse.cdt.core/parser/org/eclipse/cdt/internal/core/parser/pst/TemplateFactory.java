@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateInstantiation;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateSpecialization;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 
 /**
  * @author aniefer
@@ -345,7 +345,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ITemplateFactory#lookupMemberForDefinition(java.lang.String)
 	 */
-	public ISymbol lookupMemberForDefinition(String name) throws ParserSymbolTableException {
+	public ISymbol lookupMemberForDefinition(char[] name) throws ParserSymbolTableException {
 		ISymbol look = null;
 		IContainerSymbol last = getLastSymbol();
 		if( last != null ){
@@ -362,7 +362,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#elaboratedLookup(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType, java.lang.String)
 	 */
-	public ISymbol elaboratedLookup(ITypeInfo.eType type, String name) throws ParserSymbolTableException {
+	public ISymbol elaboratedLookup(ITypeInfo.eType type, char[] name) throws ParserSymbolTableException {
 		ListIterator iter = templates.listIterator( templates.size() );
 		while( iter.hasPrevious() ){
 			ITemplateSymbol template = (ITemplateSymbol) iter.previous();
@@ -379,7 +379,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookup(java.lang.String)
 	 */
-	public ISymbol lookup(String name) throws ParserSymbolTableException {
+	public ISymbol lookup(char[] name) throws ParserSymbolTableException {
 		ListIterator iter = templates.listIterator( templates.size() );
 		while( iter.hasPrevious() ){
 			ITemplateSymbol template = (ITemplateSymbol) iter.previous();
@@ -396,7 +396,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupMethodForDefinition(java.lang.String, java.util.List)
 	 */
-	public IParameterizedSymbol lookupMethodForDefinition(String name, List parameters) throws ParserSymbolTableException {
+	public IParameterizedSymbol lookupMethodForDefinition(char[] name, List parameters) throws ParserSymbolTableException {
 		IContainerSymbol last = getLastSymbol();
 		if( last != null ){
 			IParameterizedSymbol found = last.lookupMethodForDefinition( name, parameters );
@@ -410,49 +410,49 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupNestedNameSpecifier(java.lang.String)
 	 */
-	public IContainerSymbol lookupNestedNameSpecifier(String name) throws ParserSymbolTableException {
+	public IContainerSymbol lookupNestedNameSpecifier(char[] name) throws ParserSymbolTableException {
 		return getContainingSymbol().lookupNestedNameSpecifier( name );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedLookup(java.lang.String)
 	 */
-	public ISymbol qualifiedLookup(String name) throws ParserSymbolTableException {
+	public ISymbol qualifiedLookup(char[] name) throws ParserSymbolTableException {
 		return getContainingSymbol().qualifiedLookup( name );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedLookup(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType)
 	 */
-	public ISymbol qualifiedLookup(String name, ITypeInfo.eType t) throws ParserSymbolTableException {
+	public ISymbol qualifiedLookup(char[] name, ITypeInfo.eType t) throws ParserSymbolTableException {
 		return getContainingSymbol().qualifiedLookup( name, t );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#unqualifiedFunctionLookup(java.lang.String, java.util.List)
 	 */
-	public IParameterizedSymbol unqualifiedFunctionLookup(String name, List parameters) throws ParserSymbolTableException {
+	public IParameterizedSymbol unqualifiedFunctionLookup(char[] name, List parameters) throws ParserSymbolTableException {
 		return getContainingSymbol().unqualifiedFunctionLookup( name, parameters );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#memberFunctionLookup(java.lang.String, java.util.List)
 	 */
-	public IParameterizedSymbol memberFunctionLookup(String name, List parameters) throws ParserSymbolTableException {
+	public IParameterizedSymbol memberFunctionLookup(char[] name, List parameters) throws ParserSymbolTableException {
 		return getContainingSymbol().memberFunctionLookup( name, parameters );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedFunctionLookup(java.lang.String, java.util.List)
 	 */
-	public IParameterizedSymbol qualifiedFunctionLookup(String name, List parameters) throws ParserSymbolTableException {
+	public IParameterizedSymbol qualifiedFunctionLookup(char[] name, List parameters) throws ParserSymbolTableException {
 		return getContainingSymbol().qualifiedFunctionLookup( name, parameters );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupTemplate(java.lang.String, java.util.List)
 	 */
-	public ISymbol lookupTemplateId(String name, List arguments) throws ParserSymbolTableException {
+	public ISymbol lookupTemplateId(char[] name, List arguments) throws ParserSymbolTableException {
 		ISymbol look = null;
 		IContainerSymbol last = getLastSymbol();
 		if( last != null ){
@@ -463,7 +463,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		return look;
 	}
 	
-	public IContainerSymbol lookupTemplateIdForDefinition(String name, List arguments) throws ParserSymbolTableException {
+	public IContainerSymbol lookupTemplateIdForDefinition(char[] name, List arguments) throws ParserSymbolTableException {
 		ISymbol look = null;
 		IContainerSymbol last = getLastSymbol();
 		if( last != null ){
@@ -482,7 +482,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupFunctionTemplateId(java.lang.String, java.util.List, java.util.List)
 	 */
-	public ISymbol lookupFunctionTemplateId(String name, List parameters, List arguments, boolean forDefinition) throws ParserSymbolTableException {
+	public ISymbol lookupFunctionTemplateId(char[] name, List parameters, List arguments, boolean forDefinition) throws ParserSymbolTableException {
 		IContainerSymbol last = getLastSymbol();
 		if( last != null ){
 			IParameterizedSymbol found = (IParameterizedSymbol) last.lookupFunctionTemplateId( name, parameters, arguments, forDefinition );
@@ -562,28 +562,28 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDeclaration(java.lang.String)
 	 */
-	public IUsingDeclarationSymbol addUsingDeclaration(String name) {
+	public IUsingDeclarationSymbol addUsingDeclaration(char[] name) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDeclaration(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol)
 	 */
-	public IUsingDeclarationSymbol addUsingDeclaration(String name, IContainerSymbol declContext) {
+	public IUsingDeclarationSymbol addUsingDeclaration(char[] name, IContainerSymbol declContext) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#getContainedSymbols()
 	 */
-	public ObjectMap getContainedSymbols() {
+	public CharArrayObjectMap getContainedSymbols() {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#prefixLookup(org.eclipse.cdt.internal.core.parser.pst.TypeFilter, java.lang.String, boolean)
 	 */
-	public List prefixLookup(TypeFilter filter, String prefix, boolean qualified, List paramList) {
+	public List prefixLookup(TypeFilter filter, char[] prefix, boolean qualified, List paramList) {
 		return null;
 	}
 	/* (non-Javadoc)
@@ -617,14 +617,14 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#setName(java.lang.String)
 	 */
-	public void setName(String name) {
+	public void setName(char[] name) {
 	    /* nothing */
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.ISymbol#getName()
 	 */
-	public String getName() {
+	public char[] getName() {
 		return null;
 	}
 
@@ -834,14 +834,14 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#lookupForFriendship(java.lang.String)
 	 */
-	public ISymbol lookupForFriendship(String name) {
+	public ISymbol lookupForFriendship(char[] name) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol#lookupFunctionForFriendship(java.lang.String, java.util.List)
 	 */
-	public IParameterizedSymbol lookupFunctionForFriendship(String name, List parameters) {
+	public IParameterizedSymbol lookupFunctionForFriendship(char[] name, List parameters) {
 		return null;
 	}
 

@@ -45,7 +45,7 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfoProvider;
  */
 public abstract class GCCASTExtension implements IASTFactoryExtension {
 	protected final ParserMode mode;
-	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	protected static final char[] EMPTY_STRING = new char[0]; //$NON-NLS-1$
 	/**
 	 * @param mode
 	 */
@@ -116,7 +116,7 @@ public abstract class GCCASTExtension implements IASTFactoryExtension {
 			ASTExpression typeOfExpression = (ASTExpression) extensionParms.get( IASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION );
 			ISymbol s = pst.newSymbol( EMPTY_STRING );
 			s.setTypeInfo( typeOfExpression.getResultType().getResult() );
-			return new ASTGCCSimpleTypeSpecifier( s, isTypename, ( typeName == null ? EMPTY_STRING : typeName.toString()), Collections.EMPTY_LIST, typeOfExpression );
+			return new ASTGCCSimpleTypeSpecifier( s, isTypename, ( typeName == null ? EMPTY_STRING : typeName.toCharArray()), Collections.EMPTY_LIST, typeOfExpression );
 		}
 		return null;
 	}

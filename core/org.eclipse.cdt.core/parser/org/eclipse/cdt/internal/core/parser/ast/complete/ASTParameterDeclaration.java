@@ -32,7 +32,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterDeclaration
 {
 	private final ASTAbstractDeclaration abstractDeclaration;
-    private final String parameterName; 
+    private final char[] parameterName; 
 	private final IASTInitializerClause initializerClause;
     private final char [] fn;
 	/* (non-Javadoc)
@@ -51,7 +51,7 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
      * @param initializerClause
      * @param filename
      */
-    public ASTParameterDeclaration(ISymbol symbol, boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] filename )
+    public ASTParameterDeclaration(ISymbol symbol, boolean isConst, boolean isVolatile, IASTTypeSpecifier typeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, char[] parameterName, IASTInitializerClause initializerClause, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endingOffset, int endingLine, char[] filename )
     {
     	super( symbol );
     	abstractDeclaration = new ASTAbstractDeclaration( isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOp );
@@ -68,6 +68,9 @@ public class ASTParameterDeclaration extends ASTSymbol implements IASTParameterD
      */
     public String getName()
     {
+        return String.valueOf(parameterName);
+    }
+    public char[] getNameArray(){
         return parameterName;
     }
     /* (non-Javadoc)

@@ -231,7 +231,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
 				ISymbol thisPointer = thisContainer.lookup( ParserSymbolTable.THIS );
 				ISymbol thisClass = ( thisPointer != null ) ? thisPointer.getTypeSymbol() : null; 
 				if( thisClass != null && thisClass instanceof IContainerSymbol ){
-					return ((IContainerSymbol) thisClass).prefixLookup( filter, prefix, true, paramList );
+					return ((IContainerSymbol) thisClass).prefixLookup( filter, prefix.toCharArray(), true, paramList );
 				}	
 			} catch (ParserSymbolTableException e) {
 				throw new LookupError();

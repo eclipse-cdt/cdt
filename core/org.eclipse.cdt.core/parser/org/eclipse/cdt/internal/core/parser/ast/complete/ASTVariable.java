@@ -114,7 +114,7 @@ public class ASTVariable extends ASTSymbol implements IASTVariable
      */
     public String getName()
     {
-        return getSymbol().getName();
+        return String.valueOf(getSymbol().getName());
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#getInitializerClause()

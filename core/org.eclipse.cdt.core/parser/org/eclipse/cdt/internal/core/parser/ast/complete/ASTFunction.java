@@ -108,7 +108,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
      */
     public String getName()
     {
-        return symbol.getName();
+        return String.valueOf(symbol.getName());
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFunction#getReturnType()

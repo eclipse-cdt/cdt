@@ -63,7 +63,7 @@ public class ASTBaseSpecifier implements IASTBaseSpecifier
      */
     public String getParentClassName()
     {
-        return symbol.getName();
+        return String.valueOf(symbol.getName());
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier#getParentClassSpecifier()

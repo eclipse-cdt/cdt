@@ -85,7 +85,7 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 	 * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameter#getIdentifier()
 	 */
 	public String getIdentifier() {
-		return symbol.getName();
+		return String.valueOf(symbol.getName());
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTTemplateParameter#getDefaultValueIdExpression()
@@ -134,8 +134,12 @@ public class ASTTemplateParameter extends ASTSymbol implements IASTTemplateParam
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getName()
 	 */
 	public String getName() {
-		return symbol.getName();
+		return String.valueOf(symbol.getName());
 	}
+	public char[] getNameArray(){
+	    return symbol.getName();
+	}
+	
 	private int startingLineNumber, startingOffset, endingLineNumber, endingOffset, nameStartOffset, nameEndOffset, nameLineNumber;
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()

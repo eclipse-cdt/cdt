@@ -40,7 +40,7 @@ public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamesp
 	public ASTNamespaceDefinition( IASTScope scope, String name, int startOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, char[] filename )
 	{
 		super( scope );
-		qualifiedNameElement = new ASTQualifiedNamedElement( scope, name );
+		qualifiedNameElement = new ASTQualifiedNamedElement( scope, name.toCharArray() );
 		this.name = name; 
 		setStartingOffsetAndLineNumber(startOffset, startingLine);
 		setNameOffset(nameOffset);

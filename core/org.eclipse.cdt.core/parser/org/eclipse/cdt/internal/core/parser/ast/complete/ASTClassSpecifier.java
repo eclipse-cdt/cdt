@@ -146,9 +146,11 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
      */
     public String getName()
     {
+        return String.valueOf(symbol.getName());
+    }
+    public char[] getNameArray(){
         return symbol.getName();
     }
-
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)

@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Cost;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
 
 /**
@@ -112,7 +113,7 @@ public final class TemplateEngine {
 				info1 = (ITypeInfo) specArgs.get(j);
 				info2 = (ITypeInfo) args.get(j);
 				
-				ISymbol sym1 = template.getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME );
+				ISymbol sym1 = template.getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME_ARRAY );
 				sym1.setTypeInfo( info1 );
 				
 				if( !deduceTemplateArgument( map, sym1, info2 ) ){
@@ -208,7 +209,7 @@ public final class TemplateEngine {
 			//14.3.1, local type, type with no name
 			if( arg.isType( ITypeInfo.t_type ) && arg.getTypeSymbol() != null ){
 				ISymbol symbol = arg.getTypeSymbol();
-				if( symbol.getName().equals( ParserSymbolTable.EMPTY_NAME ) ){
+				if( CharArrayUtils.equals( symbol.getName(), ParserSymbolTable.EMPTY_NAME_ARRAY ) ){
 					return false;
 				} else if( hasNoLinkage( arg ) ){
 					return false;
@@ -223,7 +224,7 @@ public final class TemplateEngine {
 			//if the parameter has reference type
 			if( op != null && op.getType() == ITypeInfo.PtrOp.t_reference ){
 				if( arg.isType( ITypeInfo.t_type )  && arg.getTypeSymbol() != null ){
-					if( arg.getTypeSymbol().getName().equals( ParserSymbolTable.EMPTY_NAME ) ){
+				    if( CharArrayUtils.equals( arg.getTypeSymbol().getName(), ParserSymbolTable.EMPTY_NAME_ARRAY )){
 						return false;
 					}
 				}
@@ -571,7 +572,9 @@ public final class TemplateEngine {
 		}
 		if( p.getType() == a.getType() ){
 			if( p.getDefault() != null ){
-				return ( p.getDefault().equals( a.getDefault() ) );
+			    if( p.getDefault() instanceof char[] && a.getDefault() instanceof char[] )
+			        return CharArrayUtils.equals( (char[])p.getDefault(), (char[])a.getDefault() );
+		        return ( p.getDefault().equals( a.getDefault() ) );
 			}
 			return true;
 		}
@@ -628,7 +631,7 @@ public final class TemplateEngine {
 			if( obj instanceof ISymbol ){
 				sym = (ISymbol) obj;
 			} else {
-				sym = pSymbol.getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME );
+				sym = pSymbol.getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME_ARRAY );
 				sym.setTypeInfo( (ITypeInfo) obj );
 			}
 			
@@ -820,7 +823,7 @@ public final class TemplateEngine {
 			ISymbol param = (ISymbol) paramList.get( i );
 			//template type parameter
 			if( param.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_typeName ){
-				val = TypeInfoProvider.newTypeInfo( ITypeInfo.t_type, 0, template.getSymbolTable().newSymbol( "", ITypeInfo.t_class ) ); //$NON-NLS-1$
+				val = TypeInfoProvider.newTypeInfo( ITypeInfo.t_type, 0, template.getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME_ARRAY, ITypeInfo.t_class ) ); //$NON-NLS-1$
 			} 
 			//template parameter
 			else if ( param.getTypeInfo().getTemplateParameterType() == ITypeInfo.t_template ) {
@@ -858,7 +861,7 @@ public final class TemplateEngine {
 		} catch ( ParserSymbolTableException e ){
 			//we shouldn't get this because there aren't any other symbols in the template
 		}
-		ISymbol param = specialization.getSymbolTable().newSymbol( "", ITypeInfo.t_type ); //$NON-NLS-1$
+		ISymbol param = specialization.getSymbolTable().newSymbol( ParserSymbolTable.EMPTY_NAME_ARRAY, ITypeInfo.t_type ); //$NON-NLS-1$
 		
 		param.setTypeSymbol( specialization.instantiate( specialization.getArgumentList() ) );
 				
@@ -1148,7 +1151,7 @@ public final class TemplateEngine {
 		return ( instance != null ) ? instance : (ISymbol) symbol;
 	}
 	
-	static protected boolean alreadyHasTemplateParameter( IContainerSymbol container, String name ){
+	static protected boolean alreadyHasTemplateParameter( IContainerSymbol container, char[] name ){
 		while( container != null ){
 			if( container instanceof ITemplateSymbol ){
 				ITemplateSymbol template = (ITemplateSymbol) container;
@@ -1197,7 +1200,7 @@ public final class TemplateEngine {
 				//14.7.3-11 a trailing template-argument can be left unspecified in the template-id naming an explicit
 				//function template specialization provided it can be deduced from the function argument type
 				if( template.getTemplatedSymbol() instanceof IParameterizedSymbol &&
-					symbol instanceof IParameterizedSymbol && template.getTemplatedSymbol().getName().equals( symbol.getName() ) )
+					symbol instanceof IParameterizedSymbol && CharArrayUtils.equals( template.getTemplatedSymbol().getName(), symbol.getName() ) )
 				{
 					Map map = deduceTemplateArgumentsUsingParameterList( template, (IParameterizedSymbol) symbol ); 
 					if( map != null && map.containsKey( param ) ){

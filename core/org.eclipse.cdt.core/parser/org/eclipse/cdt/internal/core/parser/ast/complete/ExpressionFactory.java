@@ -27,7 +27,7 @@ public class ExpressionFactory {
 	public static ASTExpression createExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor, List references )
 	{
 		if( !literal.equals( "") && idExpression == null ) //$NON-NLS-1$
-			return new ASTLiteralExpression( kind, references, literal );
+			return new ASTLiteralExpression( kind, references, literal.toCharArray() );
 		
 		if( idExpression != null && lhs == null )
 			return new ASTIdExpression( kind, references, idExpression );

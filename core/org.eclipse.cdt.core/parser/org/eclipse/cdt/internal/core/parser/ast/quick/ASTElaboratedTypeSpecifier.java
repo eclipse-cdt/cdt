@@ -50,7 +50,7 @@ public class ASTElaboratedTypeSpecifier extends ASTNode implements IASTElaborate
     	setNameOffset( nameOffset );
     	setNameEndOffsetAndLineNumber( nameEndOffset, nameLine );
     	setEndingOffsetAndLineNumber( endOffset, endingLine );
-    	qualifiedName = new ASTQualifiedNamedElement( scope, typeName );
+    	qualifiedName = new ASTQualifiedNamedElement( scope, typeName.toCharArray() );
     	fn = filename;
     }
     /* (non-Javadoc)

@@ -23,7 +23,7 @@ import java.util.Map;
 public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTemplateInstance {
 
 	public DeferredTemplateInstance( ParserSymbolTable table, ITemplateSymbol template, List args ){
-		super(table, ParserSymbolTable.EMPTY_NAME );
+		super(table, ParserSymbolTable.EMPTY_NAME_ARRAY );
 		_template = template;
 		_arguments = new ArrayList( args );
 		

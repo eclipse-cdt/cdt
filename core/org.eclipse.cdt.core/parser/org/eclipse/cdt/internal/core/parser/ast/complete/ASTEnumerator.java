@@ -71,7 +71,7 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
      */
     public String getName()
     {
-        return symbol.getName();
+        return String.valueOf(symbol.getName());
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)

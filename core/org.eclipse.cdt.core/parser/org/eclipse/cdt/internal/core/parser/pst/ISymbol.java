@@ -33,8 +33,8 @@ public interface ISymbol extends Cloneable,  IExtensibleSymbol {
 	 */
 	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException;
 
-	public void setName(String name);
-	public String getName();
+	public void setName(char[] name);
+	public char[] getName();
 	
 	public IContainerSymbol getContainingSymbol();
 	public void setContainingSymbol( IContainerSymbol containing );

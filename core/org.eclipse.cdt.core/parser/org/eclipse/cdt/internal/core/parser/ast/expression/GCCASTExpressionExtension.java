@@ -60,7 +60,7 @@ public class GCCASTExpressionExtension extends GCCASTExtension {
 	 * @return
 	 */
 	private static IASTExpression createExpression(IASTExpression.Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, String idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {			
-		if( !idExpression.equals( EMPTY_STRING ) && literal.equals( EMPTY_STRING ))
+		if( !idExpression.equals( String.valueOf(EMPTY_STRING) ) && literal.equals( String.valueOf(EMPTY_STRING) ))
 			return new ASTIdExpression( kind, idExpression )
 			{
 				public long evaluateExpression() throws ASTExpressionEvaluationException {
@@ -132,6 +132,6 @@ public class GCCASTExpressionExtension extends GCCASTExtension {
 	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#createExpression(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTExpression.Kind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTTypeId, org.eclipse.cdt.core.parser.ITokenDuple, java.lang.String, org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor, java.util.List)
 	 */
 	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor, List references) {
-		return createExpression( kind, lhs, rhs, thirdExpression, typeId, (idExpression == null ) ? EMPTY_STRING : idExpression.toString(), literal, newDescriptor );
+		return createExpression( kind, lhs, rhs, thirdExpression, typeId, (idExpression == null ) ? String.valueOf(EMPTY_STRING) : idExpression.toString(), literal, newDescriptor );
 	}
 }

@@ -67,8 +67,8 @@ public interface IDerivableContainerSymbol extends IContainerSymbol {
 	 *                            IDerivableContainerSymbol
 	 *             r_CircularInheritance if during lookup of the name, we come across a class with a circular inheritance tree
 	 */
-	public ISymbol lookupForFriendship( String name ) throws ParserSymbolTableException;
-	public IParameterizedSymbol lookupFunctionForFriendship( String name, List parameters ) throws ParserSymbolTableException;
+	public ISymbol lookupForFriendship( char[] name ) throws ParserSymbolTableException;
+	public IParameterizedSymbol lookupFunctionForFriendship( char[] name, List parameters ) throws ParserSymbolTableException;
 	
 	public List getFriends();
 	

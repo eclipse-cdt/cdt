@@ -55,6 +55,9 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
      */
     public String getName()
     {
+        return String.valueOf(getSymbol().getName());
+    }
+    public char[] getNameArray(){
         return getSymbol().getName();
     }
     /* (non-Javadoc)
@@ -116,11 +119,12 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
+	    if( obj == this ) return true;
 		if( obj == null ) return false;
 		if( ! (obj instanceof IASTElaboratedTypeSpecifier )) return false;
 		IASTElaboratedTypeSpecifier elab = (IASTElaboratedTypeSpecifier) obj;
 		if( elab.getClassKind() != getClassKind() ) return false;
-		if( elab.getName() != getName() ) return false;
+		if( !elab.getName().equals( getName() ) ) return false;
 		return true;
 	}
 	

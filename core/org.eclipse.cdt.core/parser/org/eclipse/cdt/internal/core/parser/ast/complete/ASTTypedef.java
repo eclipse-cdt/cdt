@@ -65,7 +65,7 @@ public class ASTTypedef extends ASTSymbol implements IASTTypedefDeclaration
      */
     public String getName()
     {
-        return getSymbol().getName();
+        return String.valueOf(getSymbol().getName());
     }
 
     /* (non-Javadoc)

@@ -43,7 +43,7 @@ public class ObjectMap extends HashTable{
 	    return newMap;
 	}
 	
-	public void clear(){
+	final public void clear(){
 	    super.clear();
 	    for( int i = 0; i < valueTable.length; i++ ){
 	        valueTable[i] = null;
@@ -65,25 +65,25 @@ public class ObjectMap extends HashTable{
 		return oldvalue;
 	}
 
-	public Object get(Object key) {
+	final public Object get(Object key) {
 		int i = lookup(key);
 		if (i >= 0)
 			return valueTable[i];
 		return null;
 	}
 
-	public Object getAt( int i ){
+	final public Object getAt( int i ){
 	    if( i < 0 || i > currEntry )
 	        return null;
 	    
 	    return get( keyAt( i ) );
 	}
 
-	public boolean isEmpty(){
+	final public boolean isEmpty(){
 	    return currEntry == -1;
 	}
 	
-	public Object remove( Object key ) {
+	final public Object remove( Object key ) {
 		int i = lookup(key);
 		if (i < 0)
 			return null;
@@ -94,7 +94,7 @@ public class ObjectMap extends HashTable{
 		return value;
 	}
 	
-	protected void removeEntry(int i) {
+	final protected void removeEntry(int i) {
 		// Remove the entry from the valueTable, shifting everything over if necessary
 		if (i < currEntry)
 			System.arraycopy(valueTable, i + 1, valueTable, i, currEntry - i);
@@ -104,7 +104,7 @@ public class ObjectMap extends HashTable{
 		super.removeEntry(i);
 	}
 	
-    public void sort( Comparator c ) {
+    final public void sort( Comparator c ) {
         if( size() > 1 ){
 	        quickSort( c, 0, size() - 1 );
 	        

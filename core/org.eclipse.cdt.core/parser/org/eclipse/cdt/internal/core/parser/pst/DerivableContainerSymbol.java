@@ -22,7 +22,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.LookupData;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 
 /**
  * @author aniefer
@@ -32,11 +32,11 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
  */
 public class DerivableContainerSymbol extends ContainerSymbol implements IDerivableContainerSymbol {
 
-	protected DerivableContainerSymbol( ParserSymbolTable table, String name ){
+	protected DerivableContainerSymbol( ParserSymbolTable table, char[] name ){
 		super( table, name );
 	}
 
-	protected DerivableContainerSymbol( ParserSymbolTable table, String name, ITypeInfo.eType typeInfo ){
+	protected DerivableContainerSymbol( ParserSymbolTable table, char[] name, ITypeInfo.eType typeInfo ){
 		super( table, name, typeInfo );
 	}
 	
@@ -231,7 +231,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 */
 	public IParameterizedSymbol lookupConstructor( final List parameters ) throws ParserSymbolTableException
 	{
-		LookupData data = new LookupData( ParserSymbolTable.EMPTY_NAME ){
+		LookupData data = new LookupData( ParserSymbolTable.EMPTY_NAME_ARRAY ){
 			public List getParameters() { return params; }
 			public TypeFilter getFilter() { return CONSTRUCTOR_FILTER; }
 			final private List params = parameters;
@@ -285,7 +285,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 			
 			LookupData data = new LookupData( ParserSymbolTable.THIS );
 			try {
-				ObjectMap map = ParserSymbolTable.lookupInContained( data, obj );
+			    CharArrayObjectMap map = ParserSymbolTable.lookupInContained( data, obj );
 				foundThis = ( map != null ) ? map.containsKey( data.name ) : false;
 			} catch (ParserSymbolTableException e) {
 				return false;
@@ -366,7 +366,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 	 * without considering scopes that are outside the innermost enclosing non-
 	 * class scope.
 	 */
-	public ISymbol lookupForFriendship( String name ) throws ParserSymbolTableException{
+	public ISymbol lookupForFriendship( char[] name ) throws ParserSymbolTableException{
 		IContainerSymbol enclosing = getContainingSymbol();
 		if( enclosing != null && enclosing.isType( ITypeInfo.t_namespace, ITypeInfo.t_union ) ){
 			while( enclosing != null && ( enclosing.getType() != ITypeInfo.t_namespace) )
@@ -386,7 +386,7 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		return getSymbolTable().resolveAmbiguities( data ); 
 	}
 	
-	public IParameterizedSymbol lookupFunctionForFriendship( String name, final List parameters ) throws ParserSymbolTableException{
+	public IParameterizedSymbol lookupFunctionForFriendship( char[] name, final List parameters ) throws ParserSymbolTableException{
 
 		
 		IContainerSymbol enclosing = getContainingSymbol();

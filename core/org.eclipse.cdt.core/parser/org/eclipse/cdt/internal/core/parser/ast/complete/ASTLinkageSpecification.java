@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 public class ASTLinkageSpecification extends ASTAnonymousDeclaration implements IASTLinkageSpecification
 {
 	private List declarations = new ArrayList();
-    private final String linkageString;
+    private final char[] linkageString;
     private final char [] fn;
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getFilename()
@@ -41,7 +41,7 @@ public class ASTLinkageSpecification extends ASTAnonymousDeclaration implements 
      * @param filename
      * 
      */
-    public ASTLinkageSpecification( IContainerSymbol scope, String linkageString, int startingOffset, int startingLine, char[] filename )
+    public ASTLinkageSpecification( IContainerSymbol scope, char[] linkageString, int startingOffset, int startingLine, char[] filename )
     {
         super( scope );
         this.linkageString = linkageString;
@@ -53,7 +53,7 @@ public class ASTLinkageSpecification extends ASTAnonymousDeclaration implements 
      */
     public String getLinkageString()
     {
-        return linkageString;
+        return String.valueOf(linkageString);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()

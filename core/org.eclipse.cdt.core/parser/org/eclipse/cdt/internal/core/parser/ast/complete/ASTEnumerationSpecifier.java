@@ -109,7 +109,7 @@ public class ASTEnumerationSpecifier
      */
     public String getName()
     {
-        return getSymbol().getName();
+        return String.valueOf(getSymbol().getName());
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTQualifiedNameElement#getFullyQualifiedName()

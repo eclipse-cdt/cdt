@@ -246,7 +246,7 @@ public interface ITypeInfo {
 
     public abstract boolean equals( Object t );
 
-    public abstract String toString();
+    public abstract char[] toCharArray();
 
     public abstract void clear();
 

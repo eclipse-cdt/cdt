@@ -51,7 +51,7 @@ public class ASTFunction extends ASTDeclaration implements IASTFunction
 			ownerTemplate.setOwnedDeclaration( this );
         setStartingOffsetAndLineNumber( startOffset, startLine );
         setNameOffset( nameOffset );
-        qualifiedName = new ASTQualifiedNamedElement( scope, name );
+        qualifiedName = new ASTQualifiedNamedElement( scope, name.toCharArray() );
         setNameEndOffsetAndLineNumber(nameEndOffset, nameLine);
         this.hasFunctionTryBlock = hasFunctionTryBlock;
         this.varArgs = hasVarArgs;

@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
+
 /**
  * @author aniefer
  *
@@ -25,7 +27,7 @@ import java.util.Map;
  */
 public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymbol {
 	
-	protected TemplateSymbol ( ParserSymbolTable table, String name ){
+	protected TemplateSymbol ( ParserSymbolTable table, char[] name ){
 		super( table, name, ITypeInfo.t_template );
 	}
 	
@@ -198,7 +200,9 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		if( !param.isType( ITypeInfo.t_templateParameter ) )
 			return false;
 		
-		if(  !getName().equals( ParserSymbolTable.EMPTY_NAME ) && param.getName().equals( getName() ) ){
+		if( !CharArrayUtils.equals( getName(), ParserSymbolTable.EMPTY_NAME_ARRAY ) &&
+		     CharArrayUtils.equals( param.getName(), getName() ) ) 
+		{
 			return false;
 		}
 		
@@ -294,7 +298,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		} catch (ParserSymbolTableException e) {
 		    /* nothing */
 		}
-		if( found == null && getTemplatedSymbol().getName().equals( symbol.getName() ) ){
+		if( found == null && CharArrayUtils.equals( getTemplatedSymbol().getName(), symbol.getName() ) ){
 			found = getTemplatedSymbol();
 			
 			IContainerSymbol instance = findInstantiation( actualArgs );

@@ -19,12 +19,12 @@ import java.util.Map;
 public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 {
 	
-	public BasicSymbol( ParserSymbolTable table, String name ){
+	public BasicSymbol( ParserSymbolTable table, char[] name ){
 		super( table );
 		_name = name;
 	}	
 	
-	public BasicSymbol( ParserSymbolTable table, String name, ITypeInfo.eType typeInfo )
+	public BasicSymbol( ParserSymbolTable table, char[] name, ITypeInfo.eType typeInfo )
 	{
 		super( table );
 		_name = name;
@@ -42,8 +42,8 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		return newSymbol;	
 	}
 	
-	public String getName() { return _name; }
-	public void setName(String name) { _name = name; }
+	public char[] getName() { return _name; }
+	public void setName(char[] name) { _name = name; }
 
 
 	public void setContainingSymbol( IContainerSymbol scope ){ 
@@ -167,7 +167,7 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		_isInvisible = invisible ;
 	}
 	
-	private 	String 				_name;					//our name
+	private 	char[] 				_name;					//our name
 	private		ITypeInfo			_typeInfo;				//our type info
 	private		int 				_depth;					//how far down the scope stack we are
 	

@@ -26,8 +26,11 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArraySet;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 
 /**
  * @author aniefer
@@ -37,15 +40,16 @@ public class ParserSymbolTable {
 
 	public static final int    TYPE_LOOP_THRESHOLD = 50;
 	public static final int    TEMPLATE_LOOP_THRESHOLD = 10;
-	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
-	public static final String THIS = "this";	//$NON-NLS-1$
+	public static final char[] EMPTY_NAME_ARRAY = new char[0]; //$NON-NLS-1$
+	public static final char[] THIS = new char[] {'t','h','i','s'};	//$NON-NLS-1$
+	public static final char[] OPERATOR_ = new char[] {'o','p','e','r','a','t','o','r',' '};  //$NON-NLS-1$
 	
 	/**
 	 * Constructor for ParserSymbolTable.
 	 */
 	public ParserSymbolTable( ParserLanguage language, ParserMode mode ) {
 		super();
-		_compilationUnit = newContainerSymbol( EMPTY_NAME, ITypeInfo.t_namespace );
+		_compilationUnit = newContainerSymbol( EMPTY_NAME_ARRAY, ITypeInfo.t_namespace );
 		_language = language;
 		_mode = mode;
 		_typeInfoProvider = new TypeInfoProvider();
@@ -55,47 +59,44 @@ public class ParserSymbolTable {
 		return _compilationUnit;
 	}
 	
-	public IContainerSymbol newContainerSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
+	public IContainerSymbol newContainerSymbol( char[] name ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new ContainerSymbol( this, name );
 	}
-	public IContainerSymbol newContainerSymbol( String name, ITypeInfo.eType type ){
-		if( name == null ) name = EMPTY_NAME;
+	public IContainerSymbol newContainerSymbol( char[] name, ITypeInfo.eType type ){
+	    if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new ContainerSymbol( this, name, type );
 	}
 	
-	public ISymbol newSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
+	public ISymbol newSymbol( char[] name ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new BasicSymbol( this, name );
 	}
-	public ISymbol newSymbol( String name, ITypeInfo.eType type ){
-		if( name == null ) name = EMPTY_NAME;
+	public ISymbol newSymbol( char[] name, ITypeInfo.eType type ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new BasicSymbol( this, name, type );
 	}
-	
-	public IDerivableContainerSymbol newDerivableContainerSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
-		return new DerivableContainerSymbol( this, name );
+	public IDerivableContainerSymbol newDerivableContainerSymbol( char[] name ){
+		return new DerivableContainerSymbol( this, name != null ? name : EMPTY_NAME_ARRAY );
 	}
-	public IDerivableContainerSymbol newDerivableContainerSymbol( String name, ITypeInfo.eType type ){
-		if( name == null ) name = EMPTY_NAME;
-		return new DerivableContainerSymbol( this, name, type );
+	public IDerivableContainerSymbol newDerivableContainerSymbol( char[] name, ITypeInfo.eType type ){
+		return new DerivableContainerSymbol( this, name != null ? name : EMPTY_NAME_ARRAY, type );
 	}
-	public IParameterizedSymbol newParameterizedSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
+	public IParameterizedSymbol newParameterizedSymbol( char[] name ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new ParameterizedSymbol( this, name );
 	}
-	public IParameterizedSymbol newParameterizedSymbol( String name, ITypeInfo.eType type ){
-		if( name == null ) name = EMPTY_NAME;
+	public IParameterizedSymbol newParameterizedSymbol( char[] name, ITypeInfo.eType type ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new ParameterizedSymbol( this, name, type );
 	}
-	public ITemplateSymbol newTemplateSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
+	public ITemplateSymbol newTemplateSymbol( char[] name ){
+	    if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new TemplateSymbol( this, name );
 	}
 	
-	public ISpecializedSymbol newSpecializedSymbol( String name ){
-		if( name == null ) name = EMPTY_NAME;
+	public ISpecializedSymbol newSpecializedSymbol( char[] name ){
+		if( name == null ) name = EMPTY_NAME_ARRAY;
 		return new SpecializedSymbol( this, name );
 	}
 	
@@ -123,7 +124,7 @@ public class ParserSymbolTable {
 		ArrayList transitives = null;	//list of transitive using directives
 		
 		//if this name define in this scope?
-		ObjectMap map = null;
+		CharArrayObjectMap map = null;
 		if( !data.usingDirectivesOnly ){
 			map = lookupInContained( data, inSymbol );
 			if( data.foundItems == null || data.foundItems.isEmpty() ){
@@ -247,7 +248,7 @@ public class ParserSymbolTable {
 			if( !data.visited.containsKey( temp ) ){
 				data.visited.put( temp );
 				
-				ObjectMap map = lookupInContained( data, temp );
+				CharArrayObjectMap map = lookupInContained( data, temp );
 				foundSomething = ( map != null && !map.isEmpty() );
 				if( foundSomething ){
 					if( data.foundItems == null )
@@ -274,12 +275,12 @@ public class ParserSymbolTable {
 	 * @param map
 	 * @param map2
 	 */
-	private static void mergeResults( LookupData data, ObjectMap resultMap, ObjectMap map ) throws ParserSymbolTableException {
+	private static void mergeResults( LookupData data, CharArrayObjectMap resultMap, CharArrayObjectMap map ) throws ParserSymbolTableException {
 		if( resultMap == null || map == null || map.isEmpty() ){
 			return;
 		}
 		
-		Object key = null;
+		char[] key = null;
 		int size = map.size();
 		for( int i = 0; i < size; i++ ){
 		    key = map.keyAt( i );
@@ -309,8 +310,8 @@ public class ParserSymbolTable {
 	 * 
 	 * Look for data.name in our collection _containedDeclarations
 	 */
-	protected static ObjectMap lookupInContained( LookupData data, IContainerSymbol lookIn ) throws ParserSymbolTableException{
-		ObjectMap found = null;
+	protected static CharArrayObjectMap lookupInContained( LookupData data, IContainerSymbol lookIn ) throws ParserSymbolTableException{
+		CharArrayObjectMap found = null;
 		
 		Object obj = null;
 	
@@ -319,15 +320,15 @@ public class ParserSymbolTable {
 			data.getAssociated().remove( lookIn );
 		}
 		
-		ObjectMap declarations = lookIn.getContainedSymbols();
+		CharArrayObjectMap declarations = lookIn.getContainedSymbols();
 		
 		int numKeys = -1;
 		int idx = 0;
-		if( data.isPrefixLookup() && declarations != ObjectMap.EMPTY_MAP ){
+		if( data.isPrefixLookup() && declarations != CharArrayObjectMap.EMPTY_MAP ){
 		    numKeys = declarations.size();
 		}
 		
-		String name = ( numKeys > 0 ) ? (String) declarations.keyAt( idx++ ) : data.name;
+		char[] name = ( numKeys > 0 ) ? (char[]) declarations.keyAt( idx++ ) : data.name;
 		
 		while( name != null ) {
 			if( nameMatches( data, name ) ){
@@ -337,14 +338,14 @@ public class ParserSymbolTable {
 					
 					if( obj != null ){
 						if( found == null ){
-						    found = new ObjectMap( 2 );
+						    found = new CharArrayObjectMap( 2 );
 						}
 						found.put( name, obj );
 					}
 				}
 			}
 			if( idx < numKeys )
-			    name = (String) declarations.keyAt( idx++ );
+			    name = declarations.keyAt( idx++ );
 			else 
 			    name = null;
 		} 
@@ -379,10 +380,10 @@ public class ParserSymbolTable {
 	 * @param found
 	 * @throws ParserSymbolTableException
 	 */
-	private static ObjectMap lookupInParameters(LookupData data, IContainerSymbol lookIn, ObjectMap found) throws ParserSymbolTableException {
+	private static CharArrayObjectMap lookupInParameters(LookupData data, IContainerSymbol lookIn, CharArrayObjectMap found) throws ParserSymbolTableException {
 		Object obj;
 		Iterator iterator;
-		String name;
+		char[] name;
 		
 		if( lookIn instanceof ITemplateSymbol && !((ITemplateSymbol)lookIn).getDefinitionParameterMap().isEmpty() ){
 			ITemplateSymbol template = (ITemplateSymbol) lookIn;
@@ -395,7 +396,7 @@ public class ParserSymbolTable {
 						obj = collectSymbol( data, symbol );
 						if( obj != null ){
 						    if( found == null ){
-						        found = new ObjectMap(2);
+						        found = new CharArrayObjectMap(2);
 							}
 							found.put( symbol.getName(), obj );
 						}
@@ -408,29 +409,29 @@ public class ParserSymbolTable {
 			}
 			
 		}
-		ObjectMap parameters = ((IParameterizedSymbol)lookIn).getParameterMap();
-		if( parameters != ObjectMap.EMPTY_MAP ){
+		CharArrayObjectMap parameters = ((IParameterizedSymbol)lookIn).getParameterMap();
+		if( parameters != CharArrayObjectMap.EMPTY_MAP ){
 			int numKeys = -1;
 			int idx = 0;
 			
-			if( data.isPrefixLookup() && parameters != ObjectMap.EMPTY_MAP ){
+			if( data.isPrefixLookup() && parameters != CharArrayObjectMap.EMPTY_MAP ){
 			    numKeys = parameters.size();
 			}
-			name = ( numKeys > 0 ) ? (String) parameters.keyAt( idx++ ) : data.name;
+			name = ( numKeys > 0 ) ? (char[]) parameters.keyAt( idx++ ) : data.name;
 			while( name != null ){
 				if( nameMatches( data, name ) ){
 					obj = parameters.get( name );
 					obj = collectSymbol( data, obj );
 					if( obj != null ){
 					    if( found == null ){
-					        found = new ObjectMap( 2 );
+					        found = new CharArrayObjectMap( 2 );
 						}
 						found.put( name, obj );
 					}
 				}
 				
 				if( idx < numKeys )
-				    name = (String) parameters.keyAt( idx++ );
+				    name = parameters.keyAt( idx++ );
 				else 
 					name = null;
 			}
@@ -441,11 +442,11 @@ public class ParserSymbolTable {
 		return found;
 	}
 
-	private static boolean nameMatches( LookupData data, String name ){
+	private static boolean nameMatches( LookupData data, char[] name ){
 		if( data.isPrefixLookup() ){
-			return name.regionMatches( true, 0, data.name, 0, data.name.length() );
+			return CharArrayUtils.equals( name, 0, data.name.length, data.name, true);
 		} 
-		return name.equals( data.name );
+		return CharArrayUtils.equals( name, data.name );
 	}
 	private static boolean checkType( LookupData data, ISymbol symbol ) {
 		if( data.getFilter() == null ){
@@ -623,7 +624,7 @@ public class ParserSymbolTable {
 	 * @return Declaration
 	 * @throws ParserSymbolTableException
 	 */
-	private static ObjectMap lookupInParents( LookupData data, ISymbol lookIn ) throws ParserSymbolTableException{
+	private static CharArrayObjectMap lookupInParents( LookupData data, ISymbol lookIn ) throws ParserSymbolTableException{
 		IDerivableContainerSymbol container = null;
 
 		if( lookIn instanceof IDerivableContainerSymbol ){
@@ -634,9 +635,9 @@ public class ParserSymbolTable {
 		
 		List scopes = container.getParents();
 
-		ObjectMap temp = null;
-		ObjectMap symbol = null;
-		ObjectMap inherited = null;
+		CharArrayObjectMap temp = null;
+		CharArrayObjectMap symbol = null;
+		CharArrayObjectMap inherited = null;
 		
 		IDerivableContainerSymbol.IParentSymbol wrapper = null;
 		
@@ -694,7 +695,7 @@ public class ParserSymbolTable {
 				if( symbol == null || symbol.isEmpty() ){
 					symbol = temp;
 				} else if ( temp != null && !temp.isEmpty() ) {
-					Object key = null;
+					char[] key = null;
 					int tempSize = temp.size();
 					for( int ii = 0; ii < tempSize; ii++ ){
 					    key = temp.keyAt( ii );
@@ -764,12 +765,12 @@ public class ParserSymbolTable {
 	 * @param map
 	 * @throws ParserSymbolTableException
 	 */
-	private static void mergeInheritedResults( ObjectMap resultMap, ObjectMap map ){
+	private static void mergeInheritedResults( CharArrayObjectMap resultMap, CharArrayObjectMap map ){
 		if( resultMap == null || map == null || map.isEmpty() ){
 			return;
 		}
 		
-		Object key = null;
+		char[] key = null;
 		int size = map.size();
 		for( int i = 0; i < size; i++ ){
 		    key = map.keyAt( i );
@@ -1073,7 +1074,7 @@ public class ParserSymbolTable {
 					//the only way we get here and have no parameters, is if we are looking
 					//for a function that takes void parameters ie f( void )
 					targetParameters = new ArrayList(1);
-					targetParameters.add( currFn.getSymbolTable().newSymbol( "", ITypeInfo.t_void ) ); //$NON-NLS-1$
+					targetParameters.add( currFn.getSymbolTable().newSymbol( EMPTY_NAME_ARRAY, ITypeInfo.t_void ) ); //$NON-NLS-1$
 				} else {
 					targetParameters = currFn.getParameterList();
 				}
@@ -1262,11 +1263,11 @@ public class ParserSymbolTable {
 			return function.getParameterList().isEmpty();
 		}
 		//create a new function that has params as its parameters, then use IParameterizedSymbol.hasSameParameters
-		IParameterizedSymbol tempFn = function.getSymbolTable().newParameterizedSymbol( EMPTY_NAME, ITypeInfo.t_function );
+		IParameterizedSymbol tempFn = function.getSymbolTable().newParameterizedSymbol( EMPTY_NAME_ARRAY, ITypeInfo.t_function );
 		
 		int size = params.size();
 		for( int i = 0; i < size; i++ ){
-			ISymbol param = function.getSymbolTable().newSymbol( EMPTY_NAME );
+			ISymbol param = function.getSymbolTable().newSymbol( EMPTY_NAME_ARRAY );
 			param.setTypeInfo( (ITypeInfo) params.get(i) );
 			tempFn.addParameter( param );
 		}
@@ -1925,7 +1926,7 @@ public class ParserSymbolTable {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 			}
 			if( targetDecl.isType( ITypeInfo.t_class, ITypeInfo.t_union ) ){
-				LookupData data = new LookupData( EMPTY_NAME){
+				LookupData data = new LookupData( EMPTY_NAME_ARRAY ){
 					public List getParameters() { return parameters; }
 					public TypeFilter getFilter() { return CONSTRUCTOR_FILTER; }
 					private List parameters = new ArrayList( 1 );
@@ -1957,10 +1958,11 @@ public class ParserSymbolTable {
 			provider.returnTypeInfo( source );
 			
 			if( sourceDecl != null && (sourceDecl instanceof IContainerSymbol) ){
-				String name = target.toString();
+				char[] name = target.toCharArray();
 				
-				if( !name.equals(EMPTY_NAME) ){
-					LookupData data = new LookupData( "operator " + name ){ //$NON-NLS-1$
+				if( !CharArrayUtils.equals( name, EMPTY_NAME_ARRAY) ){
+				    
+					LookupData data = new LookupData( CharArrayUtils.concat( OPERATOR_, name )){ //$NON-NLS-1$
 						public List getParameters() { return Collections.EMPTY_LIST; }
 						public TypeFilter getFilter() { return FUNCTION_FILTER; }
 					};
@@ -2217,7 +2219,7 @@ public class ParserSymbolTable {
 		protected static final TypeFilter CONSTRUCTOR_FILTER = new TypeFilter( ITypeInfo.t_constructor );
 		protected static final TypeFilter FUNCTION_FILTER = new TypeFilter( ITypeInfo.t_function );
 		
-		public String name;
+		public char[] name;
 		public ObjectMap usingDirectives; 
 		public ObjectSet visited = new ObjectSet(0);	//used to ensure we don't visit things more than once
 		public ObjectSet inheritanceChain;	//used to detect circular inheritance
@@ -2230,17 +2232,17 @@ public class ParserSymbolTable {
 		public boolean exactFunctionsOnly = false;
 		public boolean returnInvisibleSymbols = false;
 		
-		public ObjectMap foundItems = null;
+		public CharArrayObjectMap foundItems = null;
 		
-		public LookupData( String n ){
+		public LookupData( char[] n ){
 			name = n;
 		}
 
 		//the following function are optionally overloaded by anonymous classes deriving from 
 		//this LookupData
 		public boolean isPrefixLookup(){ return false;}       //prefix lookup
-		public ObjectSet getAmbiguities()    { return null; }       
-		public void addAmbiguity(String n ) { /*nothing*/ }
+		public CharArraySet getAmbiguities()    { return null; }       
+		public void addAmbiguity(char[] n ) { /*nothing*/ }
 		public List getParameters()    { return null; }       //parameter info for resolving functions
 		public ObjectSet getAssociated() { return null; }     //associated namespaces for argument dependant lookup
 		public ISymbol getStopAt()     { return null; }       //stop looking along the stack once we hit this declaration

@@ -29,8 +29,10 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.LookupData;
-import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArraySet;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 
 /**
  * @author aniefer
@@ -40,11 +42,11 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
  */
 public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 
-	protected ContainerSymbol( ParserSymbolTable table, String name ){
+	protected ContainerSymbol( ParserSymbolTable table, char[] name ){
 		super( table, name );
 	}
 	
-	protected ContainerSymbol( ParserSymbolTable table, String name, ITypeInfo.eType typeInfo ){
+	protected ContainerSymbol( ParserSymbolTable table, char[] name, ITypeInfo.eType typeInfo ){
 		super( table, name, typeInfo );
 	}
 	
@@ -52,7 +54,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		ContainerSymbol copy = (ContainerSymbol)super.clone();
 			
 		copy._usingDirectives  =  (_usingDirectives != Collections.EMPTY_LIST) ? (List) ((ArrayList)_usingDirectives).clone() : _usingDirectives;
-		copy._containedSymbols = (ObjectMap) ( ( _containedSymbols != ObjectMap.EMPTY_MAP )? _containedSymbols.clone() : _containedSymbols );
+		copy._containedSymbols = (CharArrayObjectMap) ( ( _containedSymbols != CharArrayObjectMap.EMPTY_MAP )? _containedSymbols.clone() : _containedSymbols );
 		copy._contents = (_contents != Collections.EMPTY_LIST) ? (List) ((ArrayList)_contents).clone() : _contents;
 		
 		return copy;	
@@ -188,7 +190,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 		}
 	
-		boolean unnamed = obj.getName().equals( ParserSymbolTable.EMPTY_NAME );
+		boolean unnamed = CharArrayUtils.equals( obj.getName(), ParserSymbolTable.EMPTY_NAME_ARRAY );
 	
 		Object origObj = null;
 	
@@ -344,15 +346,15 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * class being defined, or shall refer to an enumerator for an enumeration
 	 * type that is a member of a base class of the class being defined.
 	 */
-	public IUsingDeclarationSymbol addUsingDeclaration( String name ) throws ParserSymbolTableException {
+	public IUsingDeclarationSymbol addUsingDeclaration( char[] name ) throws ParserSymbolTableException {
 		return addUsingDeclaration( name, null );
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addUsingDeclaration(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol)
 	 */
-	public IUsingDeclarationSymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException{
-		LookupData data = new LookupData( name );
+	public IUsingDeclarationSymbol addUsingDeclaration( char[] name, IContainerSymbol declContext ) throws ParserSymbolTableException{
+	    LookupData data = new LookupData( name );
 
 		if( declContext != null ){				
 			data.qualified = true;
@@ -421,20 +423,20 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#getContainedSymbols()
 	 */
-	public ObjectMap getContainedSymbols(){
+	public CharArrayObjectMap getContainedSymbols(){
 		return _containedSymbols;
 	}
 	
-	protected void putInContainedSymbols( String key, Object obj ){
-		if( _containedSymbols == ObjectMap.EMPTY_MAP ){
-			_containedSymbols = new ObjectMap( 4 );
+	protected void putInContainedSymbols( char[] key, Object obj ){
+		if( _containedSymbols == CharArrayObjectMap.EMPTY_MAP ){
+			_containedSymbols = new CharArrayObjectMap( 4 );
 		}
 		_containedSymbols.put( key, obj );
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#elaboratedLookup(org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType, java.lang.String)
 	 */
-	public ISymbol elaboratedLookup( final ITypeInfo.eType type, String name ) throws ParserSymbolTableException{
+	public ISymbol elaboratedLookup( final ITypeInfo.eType type, char[] name ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name ){
 			public TypeFilter getFilter() {
 				if( t == ITypeInfo.t_any ) return ANY_FILTER;
@@ -469,7 +471,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookup(java.lang.String)
 	 */
-	public ISymbol lookup( String name ) throws ParserSymbolTableException {
+	public ISymbol lookup( char[] name ) throws ParserSymbolTableException {
 		LookupData data = new LookupData( name );
 	
 		ParserSymbolTable.lookup( data, this );
@@ -514,7 +516,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * ie, We need a seperate lookup function for looking up the member names
 	 * for a definition.
 	 */
-	public ISymbol lookupMemberForDefinition( String name ) throws ParserSymbolTableException{
+	public ISymbol lookupMemberForDefinition( char[] name ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name );
 		data.qualified = true;
 		
@@ -534,7 +536,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return null;
 	}
 
-	public IParameterizedSymbol lookupMethodForDefinition( String name, final List parameters ) throws ParserSymbolTableException{
+	public IParameterizedSymbol lookupMethodForDefinition( char[] name, final List parameters ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name ){
 			public List getParameters() { return params; }
 			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
@@ -574,10 +576,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * the ::, object, function and enumerator names are ignored.  If the name
 	 * is not a class-name or namespace-name, the program is ill-formed
 	 */
-	public IContainerSymbol lookupNestedNameSpecifier( String name ) throws ParserSymbolTableException {
+	public IContainerSymbol lookupNestedNameSpecifier( char[] name ) throws ParserSymbolTableException {
 		return lookupNestedNameSpecifier( name, this );
 	}
-	private IContainerSymbol lookupNestedNameSpecifier(String name, IContainerSymbol inSymbol ) throws ParserSymbolTableException{		
+	private IContainerSymbol lookupNestedNameSpecifier(char[] name, IContainerSymbol inSymbol ) throws ParserSymbolTableException{		
 		ISymbol foundSymbol = null;
 	
 		final TypeFilter filter = new TypeFilter( ITypeInfo.t_namespace );
@@ -609,7 +611,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedLookup(java.lang.String)
 	 */
-	public ISymbol qualifiedLookup( String name ) throws ParserSymbolTableException{
+	public ISymbol qualifiedLookup( char[] name ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name );
 		data.qualified = true;
 		ParserSymbolTable.lookup( data, this );
@@ -620,7 +622,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedLookup(java.lang.String, org.eclipse.cdt.internal.core.parser.pst.TypeInfo.eType)
 	 */
-	public ISymbol qualifiedLookup( String name, final ITypeInfo.eType t ) throws ParserSymbolTableException{
+	public ISymbol qualifiedLookup( char[] name, final ITypeInfo.eType t ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name ){
 			public TypeFilter getFilter() { 
 				if( t == ITypeInfo.t_any ) return ANY_FILTER;
@@ -663,7 +665,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * ordinary unqualified lookup and the set of declarations found in the
 	 * namespaces and classes associated with the argument types.
 	 */
-	public IParameterizedSymbol unqualifiedFunctionLookup( String name, final List parameters ) throws ParserSymbolTableException{
+	public IParameterizedSymbol unqualifiedFunctionLookup( char[] name, final List parameters ) throws ParserSymbolTableException{
 		//figure out the set of associated scopes first, so we can remove those that are searched
 		//during the normal lookup to avoid doing them twice
 		final ObjectSet associated = new ObjectSet(0);
@@ -756,7 +758,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 * Member lookup really proceeds as an unqualified lookup, but doesn't
 	 * include argument dependant scopes
 	 */
-	public IParameterizedSymbol memberFunctionLookup( String name, final List parameters ) throws ParserSymbolTableException{
+	public IParameterizedSymbol memberFunctionLookup( char[] name, final List parameters ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name ){
 			public List getParameters() { return params; }
 			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
@@ -769,7 +771,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#qualifiedFunctionLookup(java.lang.String, java.util.List)
 	 */
-	public IParameterizedSymbol qualifiedFunctionLookup( String name, final List parameters ) throws ParserSymbolTableException{
+	public IParameterizedSymbol qualifiedFunctionLookup( char[] name, final List parameters ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name ){
 			public List getParameters() { return params; }
 			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
@@ -785,7 +787,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#templateLookup(java.lang.String, java.util.List)
 	 */
-	public ISymbol lookupTemplateId( String name, List arguments ) throws ParserSymbolTableException
+	public ISymbol lookupTemplateId( char[] name, List arguments ) throws ParserSymbolTableException
 	{
 		LookupData data = new LookupData( name );
 		
@@ -807,7 +809,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupFunctionTemplateId(java.lang.String, java.util.List, java.util.List)
 	 */
-	public ISymbol lookupFunctionTemplateId(String name, final List parameters, final List arguments, boolean forDefinition) throws ParserSymbolTableException {
+	public ISymbol lookupFunctionTemplateId(char[] name, final List parameters, final List arguments, boolean forDefinition) throws ParserSymbolTableException {
 		LookupData data = new LookupData( name ){
 			public List getParameters() { return params; }
 			public List getTemplateParameters() { return templateParams; }
@@ -827,27 +829,27 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#lookupTemplateIdForDefinition(java.lang.String, java.util.List)
 	 */
-	public IContainerSymbol lookupTemplateIdForDefinition(String name, List arguments){
+	public IContainerSymbol lookupTemplateIdForDefinition(char[] name, List arguments){
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	public List prefixLookup( final TypeFilter filter, String prefix, boolean qualified, final List paramList ) throws ParserSymbolTableException{
+	public List prefixLookup( final TypeFilter filter, char[] prefix, boolean qualified, final List paramList ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( prefix ){
 			public List 	getParameters() { return params;      }
 			public boolean 	isPrefixLookup(){ return true;        }
-			public ObjectSet  getAmbiguities(){ return ambiguities; }
+			public CharArraySet  getAmbiguities(){ return ambiguities; }
 			public TypeFilter getFilter() { return typeFilter; }
 			
-			public void addAmbiguity( String n ){
-				if( ambiguities == ObjectSet.EMPTY_SET ){
-					ambiguities = new ObjectSet(2);
+			public void addAmbiguity( char[] n ){
+				if( ambiguities == CharArraySet.EMPTY_SET ){
+					ambiguities = new CharArraySet(2);
 				}
 				ambiguities.put( n );
 			}
 			
 			final private List params = paramList;
-			private ObjectSet ambiguities = ObjectSet.EMPTY_SET;	
+			private CharArraySet ambiguities = CharArraySet.EMPTY_SET;	
 			final private TypeFilter typeFilter = filter;
 		};
 		
@@ -857,7 +859,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		
 		List constructors = null;
 		if( filter != null && filter.willAccept( ITypeInfo.t_constructor ) && (this instanceof IDerivableContainerSymbol) ){
-			if( getName().startsWith( prefix ) ){
+			if( CharArrayUtils.equals( getName(), 0, prefix.length, prefix, true ) ){
 				List temp = ((IDerivableContainerSymbol)this).getConstructors();
 				int size = temp.size();
 				constructors = new ArrayList( size );
@@ -880,7 +882,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		List list = new ArrayList();
 		
 		Object obj = null;
-		Object key = null;
+		char[] key = null;
 		List tempList = null;
 		int size = data.foundItems.size();
 		for( int i = 0; i < size; i++ ){
@@ -1175,10 +1177,12 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		static final private Collator collator = Collator.getInstance();
 		static { collator.setStrength( Collator.PRIMARY ); }
 		public int compare( Object o1, Object o2 ){
-			int result = collator.compare( o1, o2 );
+		    String s1 = String.valueOf( (char[])o1 );
+		    String s2 = String.valueOf( (char[])o2 );
+			int result = collator.compare( s1, s2 );
 			if( result == 0 ){
 				collator.setStrength( Collator.IDENTICAL );
-				result = collator.compare( o1, o2 );
+				result = collator.compare( s1, s2 );
 				collator.setStrength( Collator.PRIMARY );
 			}
 			return result;
@@ -1191,7 +1195,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 
 	private 	List _contents = Collections.EMPTY_LIST;				//ordered list of all contents of this symbol
 	private		List _usingDirectives = Collections.EMPTY_LIST;		//collection of nominated namespaces
-	private		ObjectMap _containedSymbols = ObjectMap.EMPTY_MAP;		//declarations contained by us.
+	private		CharArrayObjectMap _containedSymbols = CharArrayObjectMap.EMPTY_MAP;		//declarations contained by us.
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addTemplateId(org.eclipse.cdt.internal.core.parser.pst.ISymbol, java.util.List)
 	 */

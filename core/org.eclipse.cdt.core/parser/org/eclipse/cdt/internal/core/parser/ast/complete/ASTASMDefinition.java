@@ -21,12 +21,12 @@ import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
  */
 public class ASTASMDefinition extends ASTAnonymousDeclaration implements IASTASMDefinition
 {
-	private final String assembly;
+	private final char[] assembly;
     /**
      * @param filename
      * 
      */
-    public ASTASMDefinition( IContainerSymbol scope, String assembly, int first, int firstLine, int last , int lastLine, char[] filename )
+    public ASTASMDefinition( IContainerSymbol scope, char[] assembly, int first, int firstLine, int last , int lastLine, char[] filename )
     {
         super( scope );
         this.assembly = assembly;
@@ -39,7 +39,7 @@ public class ASTASMDefinition extends ASTAnonymousDeclaration implements IASTASM
      */
     public String getBody()
     {
-        return assembly;
+        return String.valueOf( assembly );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)

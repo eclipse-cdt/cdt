@@ -237,33 +237,33 @@ public class BasicTypeInfo implements ITypeInfo {
     	return result;
     }
 
-    private static final String _image[] = {	"", 		//$NON-NLS-1$	t_undef
-    			"", 		//$NON-NLS-1$	t_type
-    			"namespace", //$NON-NLS-1$	t_namespace
-    			"class", 	//$NON-NLS-1$	t_class
-    			"struct", 	//$NON-NLS-1$	t_struct
-    			"union", 	//$NON-NLS-1$	t_union
-    			"enum",		//$NON-NLS-1$	t_enumeration
-    			"",			//$NON-NLS-1$	t_constructor
-    			"",			//$NON-NLS-1$	t_function
-    			"_Bool",    //$NON-NLS-1$   t__Bool
-    			"bool",		//$NON-NLS-1$	t_bool
-    			"char",		//$NON-NLS-1$	t_char
-    			"wchar_t",	//$NON-NLS-1$	t_wchar_t
-    			"int",		//$NON-NLS-1$	t_int
-    			"float",	//$NON-NLS-1$	t_float
-    			"double",	//$NON-NLS-1$	t_double
-    			"void",		//$NON-NLS-1$	t_void
-    			"",			//$NON-NLS-1$	t_enumerator
-    			"",			//$NON-NLS-1$	t_block	
-    			"template",	//$NON-NLS-1$	t_template
-    			"",			//$NON-NLS-1$	t_asm			
-    			"",			//$NON-NLS-1$	t_linkage
-    			"",         //$NON-NLS-1$   t_templateParameter
-    			"typename"  //$NON-NLS-1$   t_typeName
+    private static final char _image[][] = {	"".toCharArray(), 		//$NON-NLS-1$	t_undef
+    			"".toCharArray(), 		//$NON-NLS-1$	t_type
+    			"namespace".toCharArray(), //$NON-NLS-1$	t_namespace
+    			"class".toCharArray(), 	//$NON-NLS-1$	t_class
+    			"struct".toCharArray(), 	//$NON-NLS-1$	t_struct
+    			"union".toCharArray(), 	//$NON-NLS-1$	t_union
+    			"enum".toCharArray(),		//$NON-NLS-1$	t_enumeration
+    			"".toCharArray(),			//$NON-NLS-1$	t_constructor
+    			"".toCharArray(),			//$NON-NLS-1$	t_function
+    			"_Bool".toCharArray(),    //$NON-NLS-1$   t__Bool
+    			"bool".toCharArray(),		//$NON-NLS-1$	t_bool
+    			"char".toCharArray(),		//$NON-NLS-1$	t_char
+    			"wchar_t".toCharArray(),	//$NON-NLS-1$	t_wchar_t
+    			"int".toCharArray(),		//$NON-NLS-1$	t_int
+    			"float".toCharArray(),	//$NON-NLS-1$	t_float
+    			"double".toCharArray(),	//$NON-NLS-1$	t_double
+    			"void".toCharArray(),		//$NON-NLS-1$	t_void
+    			"".toCharArray(),			//$NON-NLS-1$	t_enumerator
+    			"".toCharArray(),			//$NON-NLS-1$	t_block	
+    			"template".toCharArray(),	//$NON-NLS-1$	t_template
+    			"".toCharArray(),			//$NON-NLS-1$	t_asm			
+    			"".toCharArray(),			//$NON-NLS-1$	t_linkage
+    			"".toCharArray(),         //$NON-NLS-1$   t_templateParameter
+    			"typename".toCharArray()  //$NON-NLS-1$   t_typeName
     		 };
 
-    public String toString() {
+    public char[] toCharArray() {
     	if( isType( t_type ) && getTypeSymbol() != null ){
     		return getTypeSymbol().getName();
     	} 

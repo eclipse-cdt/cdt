@@ -24,7 +24,7 @@ import java.util.Map;
  */
 
 public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSymbol {
-	protected SpecializedSymbol( ParserSymbolTable table, String name ){
+	protected SpecializedSymbol( ParserSymbolTable table, char[] name ){
 		super( table, name );
 	}
 	

@@ -1,3 +1,13 @@
+2004-08-25 Mikhail Khodjaiants
+	Added the "Filtering" page to the breakpoint properties.
+	* CBreakpointWorkbenchAdapterFactory.java: new
+	* CDebugUIMessages.properties
+	* PropertyPageMessages.properties
+	* CBreakpointFilteringPage.java: new
+	* ThreadFilterEditor.java: new
+	* plugin.xml
+	* plugin.properties
+
 2004-08-24 Mikhail Khodjaiants
 	Moved the property pages and related classes into the newly created package - "org.eclipse.cdt.debug.internal.ui.propertypages".
 	* PropertyPageMessages.properties: new

@@ -1077,6 +1077,12 @@
             class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointPropertyPage"
             name="%CommonBreakpointPage.label"
             id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"/>
+      <page
+            adaptable="true"
+            objectClass="org.eclipse.cdt.debug.core.model.ICBreakpoint"
+            class="org.eclipse.cdt.debug.internal.ui.propertypages.CBreakpointFilteringPage"
+            name="%FilteringBreakpointPage.label"
+            id="org.eclipse.cdt.debug.ui.propertypages.breakpoint.filtering"/>
    </extension>
    <extension
          id="org.eclipse.cdt.debug.ui.editors"
@@ -1238,6 +1244,11 @@
          <adapter
                type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
          </adapter>
+      </factory>
+      <factory
+            class="org.eclipse.cdt.debug.internal.ui.CBreakpointWorkbenchAdapterFactory"
+            adaptableType="org.eclipse.cdt.debug.core.model.ICBreakpoint">
+         <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
    </extension>
    <extension

@@ -3292,11 +3292,15 @@ public final class Scanner implements IScanner, IScannerData {
 					c = getChar( true );
 				}
                 
-                // Position of the closing ')'
-                int endMacroOffset = lastContext.getOffset()  - 1;
 				
 				String betweenTheBrackets = strbuff.toString().trim();
                 
+                if (expansion.getExpansionSignature() == EMPTY_STRING) {
+                	return;  //
+                }
+                // Position of the closing ')'
+                int endMacroOffset = lastContext.getOffset()  - 1;
+
                 Vector parameterValues = getMacroParameters(betweenTheBrackets, false);
                 Vector parameterValuesForStringizing = null;
                 SimpleToken t = null;

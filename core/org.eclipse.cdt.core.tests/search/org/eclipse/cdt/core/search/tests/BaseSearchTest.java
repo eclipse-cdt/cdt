@@ -111,7 +111,7 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		}
 	}
 	
-	private IProject createProject(String projectName) {
+	private IProject createProject(String projectName) throws CoreException {
 		IWorkspaceRoot root = workspace.getRoot();
 		IProject project = root.getProject(projectName);
 		IProject cproject = null;
@@ -152,9 +152,9 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	 	cproject = project;
 	 	cproject.open(null);
 	 }
-	 finally{
-		return cproject;
-	 }
+
+	return cproject;
+	
 		
 	}
 

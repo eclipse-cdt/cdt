@@ -150,9 +150,9 @@ public class IndexManagerTests extends TestCase {
 		  cproject = project;
 		  cproject.open(null);
 	   }
-	   finally{
-		  return cproject;
-	   }
+	  
+	   return cproject;
+	   
 	}
 	
 	private IFile importFile(String fileName, String resourceLocation)throws Exception{

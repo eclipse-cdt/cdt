@@ -45,34 +45,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		fDCombo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fDCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				handleDebuggerChanged();
-				ICDebugConfiguration debugConfig = getConfigForCurrentDebugger();
-				if ( debugConfig != null ) {
-					fRunButton.setEnabled(debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN));
-					fRunButton.setSelection(false);
-					fAttachButton.setEnabled(debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH));
-					fAttachButton.setSelection(false);
-					try {
-						String mode =
-							getLaunchConfiguration().getAttribute(
-								ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-								ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
-						if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN) && fRunButton.isEnabled()) {
-							fRunButton.setSelection(true);
-						}
-						else if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH) && fAttachButton.isEnabled()) {
-							fAttachButton.setSelection(true);
-						}
-						if (fRunButton.getSelection() == true) {
-							fStopInMain.setEnabled(true);
-						}
-						else {
-							fStopInMain.setEnabled(false);
-						}
-					}
-					catch (CoreException ex) {
-					}
-				}
+				updateComboFromSelection();
 			}
 		});
 
@@ -148,7 +121,41 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			}
 		}
 		fDCombo.select(selndx);
+		//The behaviour is undefined for if the callbacks should be triggered for this,
+		//so to avoid unnecessary confusion, we force an update.
+		updateComboFromSelection();
 		fDCombo.getParent().layout(true);
+	}
+
+	protected void updateComboFromSelection() {
+		handleDebuggerChanged();
+		ICDebugConfiguration debugConfig = getConfigForCurrentDebugger();
+		if ( debugConfig != null ) {
+			fRunButton.setEnabled(debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN));
+			fRunButton.setSelection(false);
+			fAttachButton.setEnabled(debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH));
+			fAttachButton.setSelection(false);
+			try {
+				String mode =
+					getLaunchConfiguration().getAttribute(
+						ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+						ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+				if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN) && fRunButton.isEnabled()) {
+					fRunButton.setSelection(true);
+				}
+				else if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH) && fAttachButton.isEnabled()) {
+					fAttachButton.setSelection(true);
+				}
+				if (fRunButton.getSelection() == true) {
+					fStopInMain.setEnabled(true);
+				}
+				else {
+					fStopInMain.setEnabled(false);
+				}
+			}
+			catch (CoreException ex) {
+			}
+		}
 	}
 
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {

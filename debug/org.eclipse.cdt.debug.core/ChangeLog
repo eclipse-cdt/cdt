@@ -1,3 +1,10 @@
+2005-02-14 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
+	Support for the symbols loading operations.
+	* ICModule.java
+	* CModule.java
+	* CoreModelMessages.properties
+
 2005-02-11 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
 	Added new "getCPU" method to ICModule.

@@ -17,6 +17,8 @@ import org.eclipse.debug.core.DebugException;
  
 /**
  * Represents a module in the process being debugged.
+ * 
+ * @since 3.0
  */
 public interface ICModule extends ICDebugElement {
 
@@ -72,8 +74,9 @@ public interface ICModule extends ICDebugElement {
 	 * search mechanism will be used.
 	 * 
 	 * @param symbolsFile the symbol provider for this module.
+	 * @throws DebugException if this method fails. Reasons include:
 	 */
-	public void setSymbolsFileName( IPath symbolsFile );
+	public void setSymbolsFileName( IPath symbolsFile ) throws DebugException;
 
 	/**
 	 * Returns the base address of this module.
@@ -95,6 +98,13 @@ public interface ICModule extends ICDebugElement {
 	 * @return whether the symbols of this module are read
 	 */
 	public boolean areSymbolsLoaded();
+
+	/**
+	 * Returns whether the module's symbols can be loaded or reloaded.
+	 * 
+	 * @return whether the module's symbols can be loaded or reloaded
+	 */
+	public boolean canLoadSymbols();
 
 	/**
 	 * Loads the module symbols from the specified file.
@@ -130,4 +140,11 @@ public interface ICModule extends ICDebugElement {
 	 * @return the CPU identifier
 	 */
 	public String getCPU();
+
+	/**
+	 * Returns whether the symbols of this module can be loaded from another file.
+	 * 
+	 * @return whether the symbols of this module can be loaded from another file
+	 */
+	public boolean canModifySymbolsSource();
 }

@@ -10,7 +10,9 @@
  ***********************************************************************/ 
 package org.eclipse.cdt.debug.internal.core.model; 
 
+import java.io.File;
 import java.math.BigInteger;
+import java.text.MessageFormat;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -109,7 +111,8 @@ public class CModule extends CDebugElement implements ICModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#setSymbolsFileName(org.eclipse.core.runtime.IPath)
 	 */
-	public void setSymbolsFileName( IPath symbolsFile ) {
+	public void setSymbolsFileName( IPath symbolsFile ) throws DebugException {
+		loadSymbolsFromFile( symbolsFile );
 		fSymbolsFileName = symbolsFile;
 	}
 
@@ -143,11 +146,17 @@ public class CModule extends CDebugElement implements ICModule {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICModule#canLoadSymbols()
+	 */
+	public boolean canLoadSymbols() {
+		return ( getDebugTarget().isSuspended() && (canModifySymbolsSource() || !areSymbolsLoaded()) );
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICModule#loadSymbols()
 	 */
 	public void loadSymbols() throws DebugException {
-		// TODO Auto-generated method stub
-		
+		loadSymbolsFromFile( getSymbolsFileName() );
 	}
 
 	/* (non-Javadoc)
@@ -178,12 +187,11 @@ public class CModule extends CDebugElement implements ICModule {
 		return ( fCElement instanceof IBinary ) ? ((IBinary)fCElement).getCPU() : null;
 	}
 
-	public void dispose() {
-		
-	}
-
-	public boolean equals( ICDIObject cdiObject ) {
-		return ( fCDIObject != null ) ? fCDIObject.equals( cdiObject ) : false;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICModule#canModifySymbolsSource()
+	 */
+	public boolean canModifySymbolsSource() {
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -199,7 +207,26 @@ public class CModule extends CDebugElement implements ICModule {
 		return super.getAdapter( adapter );
 	}
 
+	public void dispose() {
+		
+	}
+
+	public boolean equals( ICDIObject cdiObject ) {
+		return ( fCDIObject != null ) ? fCDIObject.equals( cdiObject ) : false;
+	}
+
 	protected ICElement getCElement() {
 		return fCElement;
+	}
+
+	private void loadSymbolsFromFile( IPath path ) throws DebugException {
+		if ( path == null || path.isEmpty() ) {
+			requestFailed( CoreModelMessages.getString( "CModule.2" ), null ); //$NON-NLS-1$
+		}
+		File file = new File( path.toOSString() );
+		if ( !file.exists() ) {
+			requestFailed( MessageFormat.format( CoreModelMessages.getString( "CModule.3" ), new String[] { path.toOSString() } ), null ); //$NON-NLS-1$
+		}
+		targetRequestFailed( CoreModelMessages.getString( "CModule.4" ), null ); //$NON-NLS-1$
 	}
 }

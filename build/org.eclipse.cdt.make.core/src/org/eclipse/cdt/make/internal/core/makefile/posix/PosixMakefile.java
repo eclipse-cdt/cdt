@@ -73,6 +73,7 @@ public class PosixMakefile extends AbstractMakefile {
 		while ((line = reader.readLine()) != null) {
 			startLine = endLine + 1;
 			endLine = reader.getLineNumber();
+
 			// Strip away any comments.
 			int pound = MakefileUtil.indexOfComment(line);
 			if (pound != -1) {
@@ -81,22 +82,35 @@ public class PosixMakefile extends AbstractMakefile {
 				stmt.setLines(startLine, endLine);
 				addStatement(stmt);
 				line = line.substring(0, pound);
+				// If all we have left are spaces continue
+				if (MakefileUtil.isEmptyLine(line)) {
+					continue;
+				}
 			}
+
+			// Empty lines ?
 			if (MakefileUtil.isEmptyLine(line)) {
 				// Empty Line.
 				Statement stmt = new EmptyLine();
 				stmt.setLines(startLine, endLine);
 				addStatement(stmt);
-			} else if (MakefileUtil.isCommand(line)) {
-				// Command.
+				continue;
+			}
+
+			// Is this a command ?
+			if (MakefileUtil.isCommand(line)) {
 				Command cmd = new Command(line);
+				// The commands are added to a Rule
 				if (rule != null) {
 					rule.addCommand(cmd);
 					rule.setEndLine(endLine);
-				} else {
-					throw new IOException("Error Parsing");
+					continue;
 				}
-			} else if (MakefileUtil.isInferenceRule(line)) {
+				// If it is not a command give the other a chance a fallthrough
+			}
+
+			// Check for inference rule.
+			if (MakefileUtil.isInferenceRule(line)) {
 				// Inference Rule
 				String tgt;
 				int index = MakefileUtil.indexOf(line, ':');
@@ -108,12 +122,10 @@ public class PosixMakefile extends AbstractMakefile {
 				rule = new InferenceRule(new Target(tgt));
 				rule.setLines(startLine, endLine);
 				addStatement(rule);
-			} else if (MakefileUtil.isMacroDefinition(line)) {
-				// MacroDefinition
-				Statement stmt = new MacroDefinition(line);
-				stmt.setLines(startLine, endLine);
-				addStatement(stmt);
-			} else if (MakefileUtil.isTargetRule(line)) {
+				continue;
+			}
+
+			if (MakefileUtil.isTargetRule(line)) {
 				String[] targets;
 				String[] reqs = new String[0];
 				String cmd = null;
@@ -146,11 +158,22 @@ public class PosixMakefile extends AbstractMakefile {
 						rule.addCommand(new Command(cmd));
 					}
 				}
-			} else {
-				Statement stmt = new BadStatement(line);
+				continue;
+			}
+
+			// Macro Definiton ?
+			if (MakefileUtil.isMacroDefinition(line)) {
+				// MacroDefinition
+				Statement stmt = new MacroDefinition(line);
 				stmt.setLines(startLine, endLine);
 				addStatement(stmt);
+				continue;
 			}
+
+			// Should not be here.
+			Statement stmt = new BadStatement(line);
+			stmt.setLines(startLine, endLine);
+			addStatement(stmt);
 		}
 	}
 

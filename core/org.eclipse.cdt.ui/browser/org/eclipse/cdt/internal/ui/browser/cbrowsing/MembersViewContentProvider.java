@@ -52,6 +52,10 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 				ITypeInfo info = (ITypeInfo) element;
 				return (info.getCElementType() != ICElement.C_TYPEDEF);
 			}
+			
+			if (element instanceof IParent) {
+				return ((IParent)element).hasChildren();
+			}
 
 			return false;
 //		} catch (CModelException e) {
@@ -99,6 +103,10 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 					return ((IParent)elem).getChildren();
 				}
 				return NO_CHILDREN;
+			}
+			
+			if (element instanceof IParent) {
+				return ((IParent)element).getChildren();
 			}
 
 			return NO_CHILDREN;

@@ -23,8 +23,10 @@ import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.resources.FileStorage;
@@ -45,6 +47,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -711,6 +714,26 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		return null;
 	}
 	
+	private static boolean hasChild(final ICElement parent, final ICElement child) {
+		final boolean foundChild[] = { false };
+		final ICElementVisitor visitor = new ICElementVisitor() {
+			public boolean visit(ICElement element) throws CoreException {
+				if (foundChild[0])
+					return false;
+				if (element.equals(child)) {
+					foundChild[0] = true;
+					return false;
+				}
+				return true;
+			}
+		};
+		try {
+			parent.accept(visitor);
+		} catch (CoreException e) {
+		}
+		return foundChild[0];
+	}
+	
 	protected Object getTypesInput(Object element) {
 		if (element instanceof ICModel || element instanceof ICProject || element instanceof ISourceRoot) {
 			return null;
@@ -737,7 +760,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 						ITypeInfo enclosedType = enclosedTypes[j];
 						if (enclosedType.getResolvedReference() != null) {
 							ICElement typeElem = enclosedType.getResolvedReference().getCElement();
-							if (typeElem != null && typeElem.equals(cElem)) {
+							if (typeElem != null && (typeElem.equals(cElem) || (typeElem instanceof IParent && hasChild(typeElem, cElem)))) {
 								return namespaces[i];
 							}
 						}

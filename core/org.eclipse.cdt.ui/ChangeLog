@@ -1,3 +1,6 @@
+2004-0618 Alain Magloire
+	Patch from Chris W. to fix PR 6606
+
 2004-06-17 Tanya Wolff
 	Fix for PR 60616: [Accessibility] 
 	Removed mnemonics for reusable code Browse & Variables buttons, 

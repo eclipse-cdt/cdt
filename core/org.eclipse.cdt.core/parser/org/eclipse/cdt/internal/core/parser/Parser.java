@@ -3637,14 +3637,14 @@ public class Parser implements IParserData, IParser
                                 null, null, 
 								declarator.getName(), 
                                 declarator.getInitializerClause(), 
-								wrapper.getStartingOffset(), wrapper.getStartingLine(), 
+								wrapper.startingOffset, wrapper.startingLine, 
 								declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), 
-								wrapper.getEndOffset(), wrapper.getEndLine(), fn ),
+								wrapper.endOffset, wrapper.endLine, fn ),
                             null, 
 							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null,
-							wrapper.getStartingOffset(), wrapper.getStartingLine(), 
+							wrapper.startingOffset, wrapper.startingLine, 
 							declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), 
-							wrapper.getEndOffset(), wrapper.getEndLine(), fn ));
+							wrapper.endOffset, wrapper.endLine, fn ));
                 }
 				catch( ASTSemanticException ase )
 				{
@@ -4075,9 +4075,9 @@ public class Parser implements IParserData, IParser
 				if( e.getProblem() == null )
 				{
 					IProblem p = problemFactory.createProblem( IProblem.SYNTAX_ERROR, 
-							                                   sdw.getStartingOffset(), 
+							                                   sdw.startingOffset, 
 							                                   lastToken != null ? lastToken.getEndOffset() : 0, 
-							                                   sdw.getStartingLine(),
+							                                   sdw.startingLine,
 							                                   fn,
 							                                   EMPTY_STRING, false, true );
 					throwBacktrack( p );
@@ -4141,8 +4141,8 @@ public class Parser implements IParserData, IParser
 			                sdw.getScope(),
 			                sdw.getTypeSpecifier(),
 			                ownerTemplate,
-			                sdw.getStartingOffset(),
-			                sdw.getStartingLine(), lastToken.getEndOffset(), lastToken.getLineNumber(),
+			                sdw.startingOffset,
+			                sdw.startingLine, lastToken.getEndOffset(), lastToken.getLineNumber(),
 							sdw.isFriend(), lastToken.getFilename());
 					declaration.acceptElement(requestor);
 					return declaration;

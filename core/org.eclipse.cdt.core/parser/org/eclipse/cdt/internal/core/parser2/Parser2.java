@@ -2923,28 +2923,29 @@ public class Parser2
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#failParse()
 	 */
 	protected void failParse( BacktrackException bt ) {
-		if( bt.getProblem() == null )
-		{
-			IProblem problem = problemFactory.createProblem( 
-					IProblem.SYNTAX_ERROR, 
-					bt.getStartingOffset(), 
-					bt.getEndOffset(), 
-					bt.getLineNumber(), 
-					bt.getFilename(), 
-					EMPTY_STRING, 
-					false, 
-					true );
-			requestor.acceptProblem( problem );
-		}
-		else
-		{
-			requestor.acceptProblem( bt.getProblem() );
-		}
+	    if( requestor != null )
+	    {
+			if( bt.getProblem() == null )
+			{
+				IProblem problem = problemFactory.createProblem( 
+						IProblem.SYNTAX_ERROR, 
+						bt.getStartingOffset(), 
+						bt.getEndOffset(), 
+						bt.getLineNumber(), 
+						bt.getFilename(), 
+						EMPTY_STRING, 
+						false, 
+						true );
+				requestor.acceptProblem( problem );
+			}
+			else
+				requestor.acceptProblem( bt.getProblem() );
+	    }
 		failParse();
 	}
 	
 	protected void failParse( IProblem problem ){
-		if( problem != null ){
+		if( problem != null && requestor != null ){
 			requestor.acceptProblem( problem );
 		}
 		failParse();
@@ -3632,14 +3633,14 @@ public class Parser2
                                 null, null, 
 								declarator.getName(), 
                                 declarator.getInitializerClause(), 
-								wrapper.getStartingOffset(), wrapper.getStartingLine(), 
+								wrapper.startingOffset, wrapper.startingLine, 
 								declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), 
-								wrapper.getEndOffset(), wrapper.getEndLine(), fn ),
+								wrapper.endOffset, wrapper.endLine, fn ),
                             null, 
 							( parameterScope instanceof IASTCodeScope ) ? (IASTCodeScope) parameterScope : null,
-							wrapper.getStartingOffset(), wrapper.getStartingLine(), 
+							wrapper.startingOffset, wrapper.startingLine, 
 							declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), 
-							wrapper.getEndOffset(), wrapper.getEndLine(), fn ));
+							wrapper.endOffset, wrapper.endLine, fn ));
                 }
 				catch( ASTSemanticException ase )
 				{
@@ -4053,9 +4054,9 @@ public class Parser2
 				if( e.getProblem() == null )
 				{
 					IProblem p = problemFactory.createProblem( IProblem.SYNTAX_ERROR, 
-							                                   sdw.getStartingOffset(), 
+							                                   sdw.startingOffset, 
 							                                   lastToken != null ? lastToken.getEndOffset() : 0, 
-							                                   sdw.getStartingLine(),
+							                                   sdw.startingLine,
 							                                   fn,
 							                                   EMPTY_STRING, false, true );
 					throwBacktrack( p );
@@ -4119,8 +4120,8 @@ public class Parser2
 			                sdw.getScope(),
 			                sdw.getTypeSpecifier(),
 			                ownerTemplate,
-			                sdw.getStartingOffset(),
-			                sdw.getStartingLine(), lastToken.getEndOffset(), lastToken.getLineNumber(),
+			                sdw.startingOffset,
+			                sdw.startingLine, lastToken.getEndOffset(), lastToken.getLineNumber(),
 							sdw.isFriend(), lastToken.getFilename());
 //					declaration.acceptElement(requestor);
 					return declaration;

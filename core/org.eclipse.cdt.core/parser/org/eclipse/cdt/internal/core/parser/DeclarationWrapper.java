@@ -81,9 +81,9 @@ public class DeclarationWrapper implements IDeclaratorOwner
 	protected static final int IS_INLINE      = 0x01000000;
 
 
-    private int startingOffset = 0;
-	private int startingLine;
-    private int endOffset;
+    public int startingOffset = 0;
+	public int startingLine;
+    public int endOffset;
     
     private ITokenDuple name;
     private Type simpleType = IASTSimpleTypeSpecifier.Type.UNSPECIFIED;
@@ -262,18 +262,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
     	return checkBit( IS_REGISTER );
     }
-    /**
-     * @return
-     */
-    public int getStartingOffset()
-    {
-        return startingOffset;
-    }
     
-    public int getStartingLine()
-	{
-    	return startingLine;
-    }
     /**
      * @return
      */
@@ -337,7 +326,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         typeSpecifier = specifier;
     }
     private IASTFactory astFactory = null;
-	private int endLine;
+	public int endLine;
 
 	private final char[] fn;
     /**
@@ -436,14 +425,14 @@ public class DeclarationWrapper implements IDeclaratorOwner
         	
         	if( isTypedef() )
 				return astFactory.createTypedef(scope, nameDuple.toCharArray(), abs,
-						getStartingOffset(), getStartingLine(), d
+						startingOffset, startingLine, d
 								.getNameStartOffset(), d.getNameEndOffset(), d
 								.getNameLine(), fn);
         	
         	if( isWithinClass )
-        		return astFactory.createField( scope, nameDuple, isAuto(), d.getInitializerClause(), d.getBitFieldExpression(), abs, isMutable(), isExtern(), isRegister(), isStatic(), getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), fn );
+        		return astFactory.createField( scope, nameDuple, isAuto(), d.getInitializerClause(), d.getBitFieldExpression(), abs, isMutable(), isExtern(), isRegister(), isStatic(), startingOffset, startingLine, d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), fn );
         	 
-        	return astFactory.createVariable( scope, nameDuple, isAuto(), d.getInitializerClause(), d.getBitFieldExpression(), abs, isMutable(), isExtern(), isRegister(), isStatic(), getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), fn );        	
+        	return astFactory.createVariable( scope, nameDuple, isAuto(), d.getInitializerClause(), d.getBitFieldExpression(), abs, isMutable(), isExtern(), isRegister(), isStatic(), startingOffset, startingLine, d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression(), fn );        	
         	
         }
        	throw new BacktrackException();
@@ -461,7 +450,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
 				astFactory.createAbstractDeclaration(isConst(), isVolatile(),
 						getTypeSpecifier(), declarator.getPointerOperators(),
 						declarator.getArrayModifiers(), null, null),
-				startingOffset, getStartingLine(), declarator
+				startingOffset, startingLine, declarator
 						.getNameStartOffset(), declarator.getNameEndOffset(),
 				declarator.getNameLine(), fn);
     }
@@ -484,7 +473,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
 										.getPointerOperators(), declarator
 										.getArrayModifiers(), null, null),
 				declarator.getExceptionSpecification(), isInline(), isFriend(),
-				isStatic(), startingOffset, getStartingLine(), declarator
+				isStatic(), startingOffset, startingLine, declarator
 						.getNameStartOffset(), declarator.getNameEndOffset(),
 				declarator.getNameLine(), templateDeclaration, declarator
 						.isConst(), declarator.isVolatile(), isVirtual(), isExplicit(),
@@ -509,7 +498,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
 										.getPointerOperators(), declarator
 										.getArrayModifiers(), null, null),
 				declarator.getExceptionSpecification(), isInline(), isFriend(),
-				isStatic(), startingOffset, getStartingLine(), declarator
+				isStatic(), startingOffset, startingLine, declarator
 						.getNameStartOffset(), declarator.getNameEndOffset(),
 				declarator.getNameLine(), templateDeclaration, declarator
 						.isConst(), declarator.isVolatile(), isVirtual(), isExplicit(),
@@ -540,7 +529,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 isRegister(),
                 isStatic(),
                 startingOffset,
-                getStartingLine(),
+                startingLine,
             	declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), fn);
     }
 
@@ -563,7 +552,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         wrapper.getTypeSpecifier(),
                         declarator.getPointerOperators(),
                         declarator.getArrayModifiers(),
-                        null, null, declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), getEndLine(), wrapper.fn ));
+                        null, null, declarator.getName(), declarator.getInitializerClause(), wrapper.startingOffset, startingLine, declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.endOffset, endLine, wrapper.fn ));
             }
         }
         return result;
@@ -589,8 +578,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
             isExtern(),
             isRegister(),
             isStatic(),
-            getStartingOffset(),
-            getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression(), fn);
+            startingOffset,
+            startingLine, declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression(), fn);
 
     }        
     
@@ -700,18 +689,6 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         endOffset = offset;
         endLine = lineNumber;
-    }
-    /**
-     * @return
-     */
-    public int getEndOffset()
-    {
-        return endOffset;
-    }
-    
-    public int getEndLine()
-	{
-    	return endLine;
     }
     /**
      * @param b

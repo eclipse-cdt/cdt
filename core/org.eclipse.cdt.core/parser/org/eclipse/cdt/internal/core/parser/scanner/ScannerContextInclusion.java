@@ -63,6 +63,7 @@ public class ScannerContextInclusion implements IScannerContext
 	 */
 	public void ungetChar(int undo) {
 		--offset;
+		if (undo == '\n') line--;
 	}
 
 	/**

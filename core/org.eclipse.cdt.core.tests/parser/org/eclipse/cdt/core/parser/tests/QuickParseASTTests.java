@@ -2247,7 +2247,11 @@ public class QuickParseASTTests extends BaseASTTest
     
     public void testBadIdentifier() throws Exception
 	{
-    	parse( "class 0302 { private: int stinks; };", true, false ); //$NON-NLS-1$
-    	
+    	parse( "class 0302 { private: int stinks; };", true, false ); //$NON-NLS-1$	
+	}
+    
+    public void testBug67622() throws Exception
+	{
+    	parse( "const char * x = __FILE__;"); //$NON-NLS-1$
 	}
 }

@@ -1942,4 +1942,9 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		writer.write("}\n"); //$NON-NLS-1$
 		parse( writer.toString() );
 	}
+    
+    public void testBug67622() throws Exception
+	{
+    	parse( "const char * x = __FILE__;"); //$NON-NLS-1$
+	}
 }

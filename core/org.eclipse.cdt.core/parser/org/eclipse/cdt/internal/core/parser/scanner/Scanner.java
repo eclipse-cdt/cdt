@@ -276,7 +276,12 @@ public final class Scanner implements IScanner, IScannerData {
 			addDefinition(  __FILE__, 
 					new DynamicMacroDescriptor( __FILE__, new DynamicMacroEvaluator() {
 						public String execute() {
-							return contextStack.getMostRelevantFileContext().getContextName();
+							String fName = contextStack.getMostRelevantFileContext().getContextName();
+							StringBuffer buff = new StringBuffer(fName.length() + 2);
+							buff.append('"');
+							buff.append(fName);
+							buff.append('"');
+							return buff.toString();
 						}				
 					} ) );
 		

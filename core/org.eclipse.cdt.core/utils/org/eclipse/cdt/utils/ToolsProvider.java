@@ -12,7 +12,7 @@ package org.eclipse.cdt.utils;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.ICExtension;
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -20,19 +20,10 @@ import org.eclipse.core.runtime.Path;
 /*
  * ToolsProvider 
 */
-public class ToolsProvider implements IToolsProvider {
+public class ToolsProvider extends AbstractCExtension {
 
-	ICExtension cextension;
-
-	public ToolsProvider(ICExtension cext) {
-		cextension = cext;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IToolsProvider#getAddr2Line(org.eclipse.core.runtime.IPath)
-	 */
-	public Addr2line getAddr2Line(IPath path) {
-			IPath addr2LinePath = getAddr2LinePath();
+	public Addr2line getAddr2line(IPath path) {
+			IPath addr2LinePath = getAddr2linePath();
 			Addr2line addr2line = null;
 			if (addr2LinePath != null && !addr2LinePath.isEmpty()) {
 				try {
@@ -43,9 +34,6 @@ public class ToolsProvider implements IToolsProvider {
 			return addr2line;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IToolsProvider#getCPPFilt()
-	 */
 	public CPPFilt getCPPFilt() {
 		IPath cppFiltPath = getCPPFiltPath();
 		CPPFilt cppfilt = null;
@@ -58,9 +46,6 @@ public class ToolsProvider implements IToolsProvider {
 		return cppfilt;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IToolsProvider#getObjdump(org.eclipse.core.runtime.IPath)
-	 */
 	public Objdump getObjdump(IPath path) {
 		IPath objdumpPath = getObjdumpPath();
 		String objdumpArgs = getObjdumpArgs();
@@ -74,11 +59,7 @@ public class ToolsProvider implements IToolsProvider {
 		return objdump;
 	}
 
-	ICExtensionReference getExtensionReference() {
-		return cextension.getExtensionReference();
-	}
-
-	IPath getAddr2LinePath() {
+	protected IPath getAddr2linePath() {
 		ICExtensionReference ref = getExtensionReference();
 		String value =  ref.getExtensionData("addr2line"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
@@ -87,7 +68,7 @@ public class ToolsProvider implements IToolsProvider {
 		return new Path(value);
 	}
 
-	IPath getObjdumpPath() {
+	protected IPath getObjdumpPath() {
 		ICExtensionReference ref = getExtensionReference();
 		String value =  ref.getExtensionData("objdump"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
@@ -96,7 +77,7 @@ public class ToolsProvider implements IToolsProvider {
 		return new Path(value);
 	}
 	
-	String getObjdumpArgs() {
+	protected String getObjdumpArgs() {
 		ICExtensionReference ref = getExtensionReference();
 		String value =  ref.getExtensionData("objdumpArgs"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
@@ -105,11 +86,20 @@ public class ToolsProvider implements IToolsProvider {
 		return value;
 	}
 	
-	IPath getCPPFiltPath() {
+	protected IPath getCPPFiltPath() {
 		ICExtensionReference ref = getExtensionReference();
 		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
 			value = "c++filt"; //$NON-NLS-1$
+		}
+		return new Path(value);
+	}
+
+	protected IPath getStripPath() {
+		ICExtensionReference ref = getExtensionReference();
+		String value = ref.getExtensionData("strip"); //$NON-NLS-1$
+		if (value == null || value.length() == 0) {
+			value = "strip"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}

@@ -10,10 +10,11 @@ import java.io.IOException;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.PlatformObject;
 
 /**
  */
-public class NullBinaryParser implements IBinaryParser {
+public class NullBinaryParser extends PlatformObject implements IBinaryParser {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)

@@ -16,21 +16,23 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
-import org.eclipse.cdt.utils.IToolsProvider;
+import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.ElfHelper;
 import org.eclipse.core.runtime.IPath;
 
 /**
+ * ARMember
  */
-public class ARMember extends BinaryObject {
+public class ARMember extends ElfBinaryObject {
 	AR.ARHeader header;
 
-	public ARMember(IPath p, AR.ARHeader h, IToolsProvider provider) throws IOException {
-		super(p, new ElfHelper(h.getElf()), provider);
+	public ARMember(IBinaryParser parser, IPath p, AR.ARHeader h) throws IOException {
+		super(parser, p);
 		header = h;
 	}
 

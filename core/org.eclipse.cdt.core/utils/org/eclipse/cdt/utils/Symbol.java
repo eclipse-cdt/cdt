@@ -8,17 +8,16 @@
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.utils.elf.parser;
+package org.eclipse.cdt.utils;
 
 import java.io.IOException;
 
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
-import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.core.runtime.IPath;
 
 public class Symbol implements ISymbol, Comparable {
 
-	BinaryObject binary;
+	BinaryObjectAdapter binary;
 	long timestamp;
 	Addr2line addr2line;
 
@@ -30,7 +29,7 @@ public class Symbol implements ISymbol, Comparable {
 	public int type;
 	public long size;
 
-	public Symbol(BinaryObject bin) {
+	public Symbol(BinaryObjectAdapter bin) {
 		binary = bin;
 	}
 	/**
@@ -114,7 +113,7 @@ public class Symbol implements ISymbol, Comparable {
 
 	synchronized Addr2line startAddr2Line () {
 		if (addr2line == null) {
-			addr2line = binary.getAddr2Line();
+			addr2line = binary.getAddr2line();
 			if (addr2line != null) {
 				timestamp = System.currentTimeMillis();
 				Runnable worker = new Runnable () {

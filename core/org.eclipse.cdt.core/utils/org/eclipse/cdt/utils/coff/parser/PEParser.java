@@ -14,9 +14,9 @@ package org.eclipse.cdt.utils.coff.parser;
 import java.io.EOFException;
 import java.io.IOException;
 
-import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.utils.CygwinToolsProvider;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PEArchive;
 import org.eclipse.cdt.utils.coff.PEConstants;
@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class PEParser extends AbstractCExtension implements IBinaryParser {
+public class PEParser extends CygwinToolsProvider implements IBinaryParser {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
@@ -42,7 +42,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 			throw new IOException(CCorePlugin.getResourceString("Util.exception.nullPath")); //$NON-NLS-1$
 		}
 
-		BinaryFile binary = null;
+		IBinaryFile binary = null;
 		try {
 			PE.Attribute attribute = null;
 			if (hints != null && hints.length > 0) {
@@ -60,27 +60,25 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 			if (attribute != null) {
 				switch (attribute.getType()) {
 					case Attribute.PE_TYPE_EXE :
-						binary = new BinaryExecutable(path);
+						binary = createBinaryExecutable(path);
 					break;
  
 					case Attribute.PE_TYPE_SHLIB :
-						binary = new BinaryShared(path);
+						binary = createBinaryShared(path);
 					break;
  
 					case Attribute.PE_TYPE_OBJ :
-						binary = new BinaryObject(path);
+						binary = createBinaryObject(path);
 					break;
  
 					case Attribute.PE_TYPE_CORE :
-						BinaryObject obj = new BinaryObject(path);
-						obj.setType(IBinaryFile.CORE);
-						binary = obj;
+						binary = createBinaryCore(path);
 					break;
 				}
 			}
 		} catch (IOException e) {
 			// Is it an Archive?
-			binary = new BinaryArchive(path);
+			binary = createBinaryArchive(path);
 		}
 
 		return binary;
@@ -131,6 +129,74 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 */
 	public int getHintBufferSize() {
 		return 512;
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	protected IBinaryExecutable createBinaryExecutable(IPath path) {
+		return new PEBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.EXECUTABLE;
+			}
+		};
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	protected IBinaryObject createBinaryCore(IPath path) {
+		return new PEBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.CORE;
+			}
+		};
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	protected IBinaryObject createBinaryObject(IPath path) {
+		return new PEBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.OBJECT;
+			}
+		};
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	protected IBinaryShared createBinaryShared(IPath path) {
+		return new PEBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.SHARED;
+			}
+		};
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
+		return new BinaryArchive(this, path);
 	}
 
 }

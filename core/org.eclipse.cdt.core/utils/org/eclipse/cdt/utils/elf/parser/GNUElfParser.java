@@ -12,29 +12,12 @@ package org.eclipse.cdt.utils.elf.parser;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.utils.Addr2line;
-import org.eclipse.cdt.utils.CPPFilt;
-import org.eclipse.cdt.utils.IToolsProvider;
-import org.eclipse.cdt.utils.Objdump;
-import org.eclipse.cdt.utils.ToolsProvider;
 import org.eclipse.core.runtime.IPath;
 
 /**
+ * GNUElfParser
  */
-public class GNUElfParser extends ElfParser implements IBinaryParser, IToolsProvider {
-
-	
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IPath)
-	 */
-	public IBinaryFile getBinary(byte[] data, IPath path) throws IOException {
-		IBinaryFile binary = super.getBinary(data, path);
-		if (binary instanceof BinaryFile) {
-			((BinaryFile)binary).setToolsProvider(this);
-		}
-		return binary;
-	}
+public class GNUElfParser extends ElfParser {
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
@@ -43,19 +26,59 @@ public class GNUElfParser extends ElfParser implements IBinaryParser, IToolsProv
 		return "GNU ELF"; //$NON-NLS-1$
 	}
 
-
-	public Addr2line getAddr2Line(IPath path) {
-		ToolsProvider provider = new ToolsProvider(this);
-		return provider.getAddr2Line(path);
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryCore(org.eclipse.core.runtime.IPath)
+	 */
+	protected IBinaryObject createBinaryCore(IPath path) throws IOException {
+		return new GNUElfBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.CORE;
+			}
+		};
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryExecutable(org.eclipse.core.runtime.IPath)
+	 */
+	protected IBinaryExecutable createBinaryExecutable(IPath path) throws IOException {
+		return new GNUElfBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.EXECUTABLE;
+			}
+		};
 	}
 
-	public Objdump getObjdump(IPath path) {
-		ToolsProvider provider = new ToolsProvider(this);
-		return provider.getObjdump(path);
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryObject(org.eclipse.core.runtime.IPath)
+	 */
+	protected IBinaryObject createBinaryObject(IPath path) throws IOException {
+		return new GNUElfBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.OBJECT;
+			}
+		};
 	}
 
-	public CPPFilt getCPPFilt() {
-		return new ToolsProvider(this).getCPPFilt();
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryShared(org.eclipse.core.runtime.IPath)
+	 */
+	protected IBinaryShared createBinaryShared(IPath path) throws IOException {
+		return new GNUElfBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.SHARED;
+			}
+		};
 	}
-
 }

@@ -8,20 +8,15 @@
  * Contributors:
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.utils.coff.parser;
+package org.eclipse.cdt.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
-import org.eclipse.cdt.utils.Addr2line;
-import org.eclipse.cdt.utils.CPPFilt;
-import org.eclipse.cdt.utils.CygPath;
-import org.eclipse.cdt.utils.ICygwinToolsProvider;
-import org.eclipse.cdt.utils.Objdump;
-import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
 
@@ -31,40 +26,16 @@ import org.eclipse.core.runtime.PlatformObject;
 public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 
 	protected IPath path;
-	protected ICygwinToolsProvider toolsProvider;
 	protected long timestamp;
+	protected IBinaryParser parser;
 
-	public BinaryFile(IPath p) {
-		path = p;
+	public BinaryFile(IBinaryParser parser, IPath path) {
+		this.path = path;
+		this.parser = parser;
 	}
 
-	public void setToolsProvider(ICygwinToolsProvider p) {
-		toolsProvider = p;
-	}
-
-	public Addr2line getAddr2Line() {
-		if (toolsProvider != null)
-			return toolsProvider.getAddr2Line(path);
-		return null;
-	}
-
-	public CPPFilt getCPPFilt() {
-		if (toolsProvider != null)
-			return toolsProvider.getCPPFilt();
-		return null;
-	}
-
-	public CygPath getCygPath() {
-		if (toolsProvider != null)
-			return toolsProvider.getCygPath();
-		return null;
-	}
-
-	public Objdump getObjdump() {
-		if (toolsProvider != null) {
-			return toolsProvider.getObjdump(path);
-		}
-		return null;
+	public IBinaryParser getBinaryParser() {
+		return parser;
 	}
 
 	/**
@@ -85,19 +56,9 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 	public InputStream getContents() {
 		InputStream stream = null;
 		if (path != null) {
-			Objdump objdump = getObjdump();
-			if (objdump != null) {
-				try {
-					byte[] contents = objdump.getOutput();
-					stream = new ByteArrayInputStream(contents);
-				} catch (IOException e) {
-					// Nothing
-				}
-			} else {
-				try {
-					stream = new FileInputStream(path.toFile());
-				} catch (IOException e) {
-				}
+			try {
+				stream = new FileInputStream(path.toFile());
+			} catch (IOException e) {
 			}
 		}
 		if (stream == null) {
@@ -106,16 +67,11 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 		return stream;
 	}
 
-	/**
-	 * @return
-	 */
-	protected abstract Attribute getAttribute();
-
 	protected boolean hasChanged() {
 		long modification = getPath().toFile().lastModified();
 		boolean changed = modification != timestamp;
 		timestamp = modification;
 		return changed;
 	}
-
+ 
 }

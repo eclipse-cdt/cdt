@@ -10,31 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
-import java.io.IOException;
-
-import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.utils.Addr2line;
-import org.eclipse.cdt.utils.CPPFilt;
-import org.eclipse.cdt.utils.CygPath;
-import org.eclipse.cdt.utils.CygwinToolsProvider;
-import org.eclipse.cdt.utils.ICygwinToolsProvider;
-import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.core.runtime.IPath;
+
 
 /**
  */
-public class CygwinPEParser extends PEParser implements IBinaryParser, ICygwinToolsProvider {
-
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IPath)
-	 */
-	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
-		IBinaryFile binary = super.getBinary(hints, path);
-		if (binary instanceof BinaryFile) {
-			((BinaryFile)binary).setToolsProvider(this);
-		}
-		return binary;
-	}
+public class CygwinPEParser extends PEParser {
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
@@ -43,31 +24,64 @@ public class CygwinPEParser extends PEParser implements IBinaryParser, ICygwinTo
 		return "Cygwin PE"; //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.ICygwinToolsProvider#getCygPath()
+	/**
+	 * @param path
+	 * @return
 	 */
-	public CygPath getCygPath() {
-		return new CygwinToolsProvider(this).getCygPath();
+	protected IBinaryExecutable createBinaryExecutable(IPath path) {
+		return new CygwinPEBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.EXECUTABLE;
+			}
+		};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IToolsProvider#getAddr2Line(org.eclipse.core.runtime.IPath)
+	/**
+	 * @param path
+	 * @return
 	 */
-	public Addr2line getAddr2Line(IPath path) {
-		return new CygwinToolsProvider(this).getAddr2Line(path);
+	protected IBinaryObject createBinaryCore(IPath path) {
+		return new CygwinPEBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.CORE;
+			}
+		};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IToolsProvider#getCPPFilt()
+	/**
+	 * @param path
+	 * @return
 	 */
-	public CPPFilt getCPPFilt() {
-		return new CygwinToolsProvider(this).getCPPFilt();
+	protected IBinaryObject createBinaryObject(IPath path) {
+		return new CygwinPEBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.OBJECT;
+			}
+		};
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IToolsProvider#getObjdump(org.eclipse.core.runtime.IPath)
+	/**
+	 * @param path
+	 * @return
 	 */
-	public Objdump getObjdump(IPath path) {
-		return new CygwinToolsProvider(this).getObjdump(path);
+	protected IBinaryShared createBinaryShared(IPath path) {
+		return new CygwinPEBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.SHARED;
+			}
+		};
 	}
+
 }

@@ -16,11 +16,12 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.CygPath;
-import org.eclipse.cdt.utils.ICygwinToolsProvider;
+import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.coff.Coff;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PEArchive;
@@ -28,11 +29,11 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class ARMember extends BinaryObject {
+public class ARMember extends PEBinaryObject {
 	PEArchive.ARHeader header;
 
-	public ARMember(IPath p, PEArchive.ARHeader h, ICygwinToolsProvider provider) throws IOException {
-		super(p, h.getPE(), provider);
+	public ARMember(IBinaryParser parser, IPath path, PEArchive.ARHeader h) throws IOException {
+		super(parser, path);
 		header = h;
 	}
 

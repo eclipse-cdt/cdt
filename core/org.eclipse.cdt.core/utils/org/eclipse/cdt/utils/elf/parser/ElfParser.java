@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * Copyright (c) 2002,2003,2004 QNX Software Systems and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,9 @@ package org.eclipse.cdt.utils.elf.parser;
 import java.io.EOFException;
 import java.io.IOException;
 
-import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.utils.ToolsProvider;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class ElfParser extends AbstractCExtension implements IBinaryParser {
+public class ElfParser extends ToolsProvider implements IBinaryParser {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
@@ -38,7 +38,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 			throw new IOException(CCorePlugin.getResourceString("Util.exception.nullPath")); //$NON-NLS-1$
 		}
 
-		BinaryFile binary = null;
+		IBinaryFile binary = null;
 		try {
 			Elf.Attribute attribute = null;
 			if (hints != null && hints.length > 0) {
@@ -57,26 +57,24 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 			if (attribute != null) {
 				switch (attribute.getType()) {
 					case Attribute.ELF_TYPE_EXE :
-						binary = new BinaryExecutable(path);
+						binary = createBinaryExecutable(path);
 						break;
 
 					case Attribute.ELF_TYPE_SHLIB :
-						binary = new BinaryShared(path);
+						binary = createBinaryShared(path);
 						break;
 
 					case Attribute.ELF_TYPE_OBJ :
-						binary = new BinaryObject(path);
+						binary = createBinaryObject(path);
 						break;
 
 					case Attribute.ELF_TYPE_CORE :
-						BinaryObject obj = new BinaryObject(path);
-						obj.setType(IBinaryFile.CORE);
-						binary = obj;
+						binary = createBinaryCore(path);
 						break;
 				}
 			}
 		} catch (IOException e) {
-			binary = new BinaryArchive(path);
+			binary = createBinaryArchive(path);
 		}
 		return binary;
 	}
@@ -100,5 +98,50 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 	 */
 	public int getHintBufferSize() {
 		return 128;
+	}
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
+		return new BinaryArchive(this, path);
+	}
+
+	protected IBinaryObject createBinaryObject(IPath path) throws IOException {
+		return new ElfBinaryObject(this, path);
+	}
+
+	protected IBinaryExecutable createBinaryExecutable(IPath path) throws IOException {
+		return new ElfBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.EXECUTABLE;
+			}
+		};
+	}
+
+	protected IBinaryShared createBinaryShared(IPath path) throws IOException {
+		return new ElfBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.SHARED;
+			}
+		};
+	}
+
+	protected IBinaryObject createBinaryCore(IPath path) throws IOException {
+		return new ElfBinaryObject(this, path) {
+			/* (non-Javadoc)
+			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
+			 */
+			public int getType() {
+				return IBinaryFile.CORE;
+			}
+		};
 	}
 }

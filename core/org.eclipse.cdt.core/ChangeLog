@@ -1,3 +1,17 @@
+2004-03-04 Alain Magloire
+
+	Large cleanup(?) of the BinaryParser classes.
+	They now extends IAdaptable.
+
+	* src/org/eclipse/cdt/core/IBinaryParser.java
+	* utils/org/eclipse/cdt/utils/BinaryFile.java
+	* utils/org/eclipse/cdt/utils/BinaryObjectAdapter.java
+	* utils/org/eclipse/cdt/utils/Symbol.java
+	* utils/org/eclipse/cdt/utils/elf/parser/ElfBinaryObject.java
+	* utils/org/eclipse/cdt/utils/elf/parser/GNUElfBinaryObject.java
+	* utils/org/eclipse/cdt/utils/coff/parser/PEBinaryObject.java
+	* utils/org/eclipse/cdt/utils/coff/parser/CygwinPEBinaryObject.java
+	
 2004-03-04 Hoda Amer
 	The CModelBuilder is reporting to the TranslationUnit 
 	whether parsing was successful or not.

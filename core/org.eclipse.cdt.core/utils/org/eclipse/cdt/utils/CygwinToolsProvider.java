@@ -12,7 +12,6 @@ package org.eclipse.cdt.utils;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -20,11 +19,7 @@ import org.eclipse.core.runtime.Path;
 /*
  * CygwinToolsProvider 
 */
-public class CygwinToolsProvider extends ToolsProvider implements ICygwinToolsProvider {
-
-	public CygwinToolsProvider(ICExtension cextension) {
-		super(cextension);
-	}
+public class CygwinToolsProvider extends ToolsProvider {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.ICygwinToolsProvider#getCygPath()
@@ -41,7 +36,7 @@ public class CygwinToolsProvider extends ToolsProvider implements ICygwinToolsPr
 		return cygpath;
 	}
 
-	public IPath getCygPathPath() {
+	protected IPath getCygPathPath() {
 		ICExtensionReference ref = getExtensionReference();
 		String value =  ref.getExtensionData("cygpath"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {

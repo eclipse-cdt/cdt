@@ -13,11 +13,12 @@ package org.eclipse.cdt.managedbuilder.ui.actions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -46,8 +47,10 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -92,6 +95,8 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 	private static final String NEW_CYGWIN_TARGET_ROOT = "cdt.managedbuild.target.gnu.cygwin";	//$NON-NLS-1$
 	private static final String NEW_POSIX_TARGET_ROOT = "cdt.managedbuild.target.gnu";	//$NON-NLS-1$
 	private static final String NEW_TOOL_ROOT = "cdt.managedbuild.tool.gnu";	//$NON-NLS-1$
+	private static final int NOT_BUILTIN = -2;
+	private static final String REGEXP_SEPARATOR = "\\.";	//$NON-NLS-1$
 	private static final String TOOL_LANG_BOTH = "both";	//$NON-NLS-1$
 	private static final String TOOL_LANG_C = "c";	//$NON-NLS-1$
 	private static final String TOOL_LANG_CPP = "cpp";	//$NON-NLS-1$
@@ -113,10 +118,10 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 	/* (non-Javadoc)
 	 * Create a back-up file containing the pre-2.0 project settings. 
 	 * 
-	 * @param settingsFile
-	 * @param monitor
-	 * @param project
-	 * @throws CoreException
+	 * @param settingsFile the file to be backed up
+	 * @param monitor a progress monitor
+	 * @param project the project being updated
+	 * @throws CoreException if this resource could not be copied
 	 */
 	protected static void backupFile(IFile settingsFile, IProgressMonitor monitor, IProject project) throws CoreException {
 		// Make a back-up of the settings file
@@ -147,9 +152,9 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		
 		// Figure out what the original parent of the config is
 		String parentId = oldConfig.getAttribute(IConfiguration.PARENT);
-		StringTokenizer idTokens = new StringTokenizer(parentId, ID_SEPARATOR);
-		while (idTokens.hasMoreTokens()) {
-			String id = idTokens.nextToken();
+		Iterator idTokens = Arrays.asList(parentId.split(REGEXP_SEPARATOR)).iterator();
+		while (idTokens.hasNext()) {
+			String id = (String) idTokens.next();
 			if (id.equalsIgnoreCase(ID_CYGWIN)) {
 				cygwin = true;
 			} else if(id.equalsIgnoreCase(ID_EXEC)) {
@@ -203,7 +208,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 	protected static void convertOptionRef(IConfiguration newConfig, ITool newTool, Element optRef) {
 		String optId = optRef.getAttribute(IOption.ID);
 		if (optId == null) return;
-		String[] idTokens = optId.split("\\.");	//$NON-NLS-1$
+		String[] idTokens = optId.split(REGEXP_SEPARATOR);
 		
 		// New ID will be in for gnu.[compiler|link|lib].[c|c++|both].option.{1.2_component}
 		Vector newIdVector = new Vector(idTokens.length + 2);
@@ -338,7 +343,17 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		}
 		
 	}
-	protected static ITarget convertTarget(IProject project, Element oldTarget, IProgressMonitor monitor) {
+	
+	
+	/* (non-Javadoc)
+	 * 
+	 * @param project the project being upgraded
+	 * @param oldTarget a document element contain the old target information
+	 * @param monitor 
+	 * @return new 2.0.X target 
+	 * @throws CoreException if the target is unknown
+	 */
+	protected static ITarget convertTarget(IProject project, Element oldTarget, IProgressMonitor monitor) throws CoreException {
 		// What we want to create
 		ITarget newTarget = null;
 		ITarget newParent = null;
@@ -349,11 +364,18 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		
 		// Get the parent
 		String id = oldTarget.getAttribute(ITarget.PARENT);
+		if (!isBuiltInTarget(id)) {
+			throw new CoreException(new Status(IStatus.ERROR, 
+											ManagedBuilderUIPlugin.getUniqueIdentifier(), 
+											NOT_BUILTIN, 
+											id, 
+											null));
+		}
 		
 		// Figure out the new target definition to use for that type
-		StringTokenizer idTokens = new StringTokenizer(id, ID_SEPARATOR);
-		while (idTokens.hasMoreTokens()) {
-			String token = idTokens.nextToken();
+		Iterator idTokens = Arrays.asList(id.split(REGEXP_SEPARATOR)).iterator();
+		while (idTokens.hasNext()) {
+			String token = (String) idTokens.next();
 			if (token.equals(ID_LINUX) || token.equals(ID_SOLARIS)) {
 				posix = true;
 			} else if (token.equalsIgnoreCase(ID_EXEC)){
@@ -390,7 +412,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 			newTarget = ManagedBuildManager.createTarget(project, newParent);
 			// Old build goals made no distinction between the name and extension
 			String buildGoal = oldTarget.getAttribute(ITarget.ARTIFACT_NAME);
-			String[] nameElements = buildGoal.split("\\.");	//$NON-NLS-1$
+			String[] nameElements = buildGoal.split(REGEXP_SEPARATOR);
 			String artifactName = null;
 			try {
 				// We should have a name (which may inlcude whitespaces)
@@ -403,7 +425,7 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 			for (int index = 1; index < nameElements.length; ++index) {
 				artifactExtension += nameElements[index];
 				if (index < nameElements.length - 1) {
-					artifactExtension += ".";	//$NON-NLS-1$
+					artifactExtension += ID_SEPARATOR;
 				}
 			}
 			newTarget.setArtifactName(artifactName);
@@ -430,9 +452,9 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		int toolType = -1;
 		
 		// Figure out what kind of tool the ref pointed to
-		StringTokenizer idTokens = new StringTokenizer(oldToolId, ID_SEPARATOR);
-		while (idTokens.hasMoreTokens()) {
-			String token = idTokens.nextToken();
+		Iterator idTokens = Arrays.asList(oldToolId.split(REGEXP_SEPARATOR)).iterator();
+		while (idTokens.hasNext()) {
+			String token = (String) idTokens.next();
 			if(token.equals(TOOL_LANG_C)) {
 				cppFlag = false;
 			} else if (token.equalsIgnoreCase(TOOL_NAME_COMPILER)) {
@@ -474,9 +496,15 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		monitor.worked(1);
 	}
 	
-	/**
+	/* (non-Javadoc)
+	 * This method is called to update the project settings for all targets, configurations, tool
+	 * references, and option references stored in a 1.2 project file. It must also handle the case 
+	 * where a project is based on external tool definitions, in which case there is no 
+	 * way to programmatically update the file. However, the version information should 
+	 * be updated, since the project file will be rejected unless the version is correct. 
+	 *  
 	 * @param monitor the monitor to allow users to cancel the long-running operation
-	 * @param project the <code>IProject</code> that needs to be upgraded
+	 * @param project the project that needs to be upgraded
 	 * @throws CoreException
 	 */
 	protected static void doProjectUpdate(IProgressMonitor monitor, IProject project) throws CoreException {
@@ -508,12 +536,21 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 			for (int targIndex = 0; targIndex < listSize; ++targIndex) {
 				Element oldTarget = (Element) targetNodes.item(targIndex);
 				String oldTargetId = oldTarget.getAttribute(ITarget.ID);
-				newTarget = convertTarget(project, oldTarget, monitor);
+				try {
+					newTarget = convertTarget(project, oldTarget, monitor);
 			
-				// Remove the old target
-				if (newTarget != null) {
-					info.removeTarget(oldTargetId);
-					monitor.worked(9);
+					// Remove the old target
+					if (newTarget != null) {
+						info.removeTarget(oldTargetId);
+						monitor.worked(1);
+					}
+				} catch (CoreException e) {
+					// Check if this is due to trying to convert a built-in
+					if (e.getStatus().getCode() == NOT_BUILTIN) {
+						newTarget = info.getTarget(oldTargetId);
+					}
+					// Keep iterating
+					continue;
 				}
 			}
 			
@@ -524,7 +561,13 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 				// Find the new config corresponding to the old default ID
 				String oldDefConfigId = defaultConfig.getAttribute(IBuildObject.ID);
 				IConfiguration newDefaultConfig = (IConfiguration) getConfigIdMap().get(oldDefConfigId);
-				info.setDefaultConfiguration(newDefaultConfig);
+				// If this is NULL it may be because the target was improperly converted or supplied by an ISV
+				if (newDefaultConfig != null) {
+					info.setDefaultConfiguration(newDefaultConfig);
+				} else {
+					info.setDefaultConfiguration(newTarget.getConfiguration(oldDefConfigId));
+				}
+				
 			} else {
 				// Otherwise just choose the first config in the list
 				IConfiguration[] newConfigs = newTarget.getConfigurations();
@@ -616,6 +659,45 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		
 	}
 
+	/* (non-Javadoc)
+	 * Answers true if the target is one supplied by the CDT which will have the 
+	 * format :
+	 * 	cygyin.[exec|so|lib]
+	 * 	[linux|solaris].gnu.[exec|so|lib]
+	 * 
+	 * @param id id to test
+	 * @return true if the target is recognized as built-in
+	 */
+	private static boolean isBuiltInTarget(String id) {
+		// Do the deed
+		if (id == null) return false;
+		String[] idTokens = id.split(REGEXP_SEPARATOR);
+		if (!(idTokens.length == 2 || idTokens.length == 3)) return false;
+		try {
+			String platform = idTokens[0];
+			if (platform.equals(ID_CYGWIN)) {
+				return (idTokens[1].equals(ID_EXEC) 
+						|| idTokens[1].equals(ID_SHARED)
+						|| idTokens[1].equals(ID_STATIC));
+			} else if (platform.equals(ID_LINUX) 
+					|| platform.equals(ID_SOLARIS)) {
+				if (idTokens[1].equals(ID_GNU)) {
+					return (idTokens[2].equals(ID_EXEC) 
+							|| idTokens[2].equals(ID_SHARED)
+							|| idTokens[2].equals(ID_STATIC));					
+				}
+			}
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return false;
+		}
+		return false;
+	}
+
+	/**
+	 * @param fork
+	 * @param context
+	 * @param project
+	 */
 	static public void run(boolean fork, IRunnableContext context, final IProject project) {
 		try {
 			context.run(fork, true, new IRunnableWithProgress() {

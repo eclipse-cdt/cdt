@@ -27,8 +27,8 @@ public class IMacroTests extends IntegratedCModelTest {
 	public static Test suite() {
 		TestSuite suite= new TestSuite( IMacroTests.class.getName() );
 		suite.addTest( new IMacroTests("testGetElementName"));
-		// TODO: suite.addTest( new IMacroTest("testGetIdentifierList"));
-		// TODO: suite.addTest( new IMacroTest("testGetTokenSequence"));
+		// TODO Bug# 38740: suite.addTest( new IMacroTest("testGetIdentifierList"));
+		// TODO Bug# 38740: suite.addTest( new IMacroTest("testGetTokenSequence"));
 		return suite;
 	}		
 

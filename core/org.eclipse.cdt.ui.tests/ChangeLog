@@ -1,7 +1,5 @@
-2003-06-14 Victor Mozgin
-	Moved testBugSingleton192() from LokiFailures to DOMTests.
-	Added testPointersToMembers() and testPointersToMemberFunctions() to DOMTests.
-	Added testBug36290() and testBug36931() to DOMTests.
+2003-06-17 Brent Nicolle
+	Added Interface tests of IStructure.java.
 
 2003-06-16 Vladimir Hirsl
 	Added /build, /parser, /failures and /suite directories to the library. 
@@ -9,6 +7,11 @@
 	                 to /model/org/clipse/cdt/core/model/tests/resources/cmodel.
 	Added class AISResultPrinter to format test results.  
 	Class AutomatedIntegrationSuite now implements IPlatformRunnable.
+
+2003-06-14 Victor Mozgin
+	Moved testBugSingleton192() from LokiFailures to DOMTests.
+	Added testPointersToMembers() and testPointersToMemberFunctions() to DOMTests.
+	Added testBug36290() and testBug36931() to DOMTests.
 
 2003-06-13 John Camelon
 	Added Class/Base infrastructure to public interfaces & requestor callback. 

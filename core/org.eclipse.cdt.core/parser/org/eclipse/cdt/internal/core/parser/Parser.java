@@ -371,7 +371,7 @@ public class Parser implements IParserData, IParser
 
 				expression = astFactory.createExpression(scope,
 						IASTExpression.Kind.POSTFIX_TYPEID_TYPEID, null, null,
-						null, typeId, null, EMPTY_STRING, null);
+						null, typeId, null, EMPTY_STRING, null, null);
 				list.add(expression);
 				completedArg = true;
 			} catch (BacktrackException e) {
@@ -404,7 +404,7 @@ public class Parser implements IParserData, IParser
 							KeywordSetKey.EMPTY);
 					expression = astFactory.createExpression(scope,
 							IASTExpression.Kind.ID_EXPRESSION, null, null,
-							null, null, nameDuple, EMPTY_STRING, null);
+							null, null, nameDuple, EMPTY_STRING, null, null);
 					list.add(expression);
 					continue;
 				} catch (ASTSemanticException e) {
@@ -827,7 +827,7 @@ public class Parser implements IParserData, IParser
 				assignmentExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.EXPRESSIONLIST,
 						assignmentExpression, secondExpression, null, null,
-						null, EMPTY_STRING, null);
+						null, EMPTY_STRING, null, null);
 			} catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
@@ -868,7 +868,7 @@ public class Parser implements IParserData, IParser
 			consume( IToken.tRPAREN );
 			try
 			{
-				resultExpression = astFactory.createExpression( scope, extension.getExpressionKindForStatement(), null, null, null, null, null,EMPTY_STRING, null );
+				resultExpression = astFactory.createExpression( scope, extension.getExpressionKindForStatement(), null, null, null, null, null,EMPTY_STRING, null, null );
 			}
 			catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
@@ -970,7 +970,7 @@ public class Parser implements IParserData, IParser
 		try {
 			return astFactory.createExpression(scope,
 					IASTExpression.Kind.THROWEXPRESSION, throwExpression, null,
-					null, null, null, EMPTY_STRING, null);
+					null, null, null, EMPTY_STRING, null, null);
 		} catch (ASTSemanticException e) {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
@@ -1006,7 +1006,7 @@ public class Parser implements IParserData, IParser
 				return astFactory.createExpression(scope,
 						IASTExpression.Kind.CONDITIONALEXPRESSION,
 						firstExpression, secondExpression, thirdExpression,
-						null, null, EMPTY_STRING, null);
+						null, null, EMPTY_STRING, null, null);
 			} catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
@@ -1038,7 +1038,7 @@ public class Parser implements IParserData, IParser
 				firstExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.LOGICALOREXPRESSION,
 						firstExpression, secondExpression, null, null, null,
-						EMPTY_STRING, null);
+						EMPTY_STRING, null, null);
 			} catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
@@ -1070,7 +1070,7 @@ public class Parser implements IParserData, IParser
 				firstExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.LOGICALANDEXPRESSION,
 						firstExpression, secondExpression, null, null, null,
-						EMPTY_STRING, null);
+						EMPTY_STRING, null, null);
 			} catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
@@ -1103,7 +1103,7 @@ public class Parser implements IParserData, IParser
 				firstExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.INCLUSIVEOREXPRESSION,
 						firstExpression, secondExpression, null, null, null,
-						EMPTY_STRING, null);
+						EMPTY_STRING, null, null);
 			} catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
@@ -1136,7 +1136,7 @@ public class Parser implements IParserData, IParser
 				firstExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.EXCLUSIVEOREXPRESSION,
 						firstExpression, secondExpression, null, null, null,
-						EMPTY_STRING, null);
+						EMPTY_STRING, null, null);
 			} catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
@@ -1168,7 +1168,7 @@ public class Parser implements IParserData, IParser
 			try {
 				firstExpression = astFactory.createExpression(scope,
 						IASTExpression.Kind.ANDEXPRESSION, firstExpression,
-						secondExpression, null, null, null, EMPTY_STRING, null);
+						secondExpression, null, null, null, EMPTY_STRING, null, null);
 			} catch (ASTSemanticException e) {
 				throwBacktrack(e.getProblem());
 			} catch (Exception e) {
@@ -1226,7 +1226,7 @@ public class Parser implements IParserData, IParser
 								? IASTExpression.Kind.EQUALITY_EQUALS
 								: IASTExpression.Kind.EQUALITY_NOTEQUALS,
 								firstExpression, secondExpression, null, null,
-								null, EMPTY_STRING, null);
+								null, EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e) {
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
@@ -1293,7 +1293,7 @@ public class Parser implements IParserData, IParser
 						firstExpression = astFactory.createExpression(scope,
 								expressionKind, firstExpression,
 								secondExpression, null, null, null,
-								EMPTY_STRING, null);
+								EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e) {
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
@@ -1341,7 +1341,7 @@ public class Parser implements IParserData, IParser
 										? IASTExpression.Kind.SHIFT_LEFT
 										: IASTExpression.Kind.SHIFT_RIGHT),
 								firstExpression, secondExpression, null, null,
-								null, EMPTY_STRING, null);
+								null, EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e) {
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
@@ -1382,7 +1382,7 @@ public class Parser implements IParserData, IParser
 										? IASTExpression.Kind.ADDITIVE_PLUS
 										: IASTExpression.Kind.ADDITIVE_MINUS),
 								firstExpression, secondExpression, null, null,
-								null, EMPTY_STRING, null);
+								null, EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e) {
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
@@ -1434,7 +1434,7 @@ public class Parser implements IParserData, IParser
 						firstExpression = astFactory.createExpression(scope,
 								expressionKind, firstExpression,
 								secondExpression, null, null, null,
-								EMPTY_STRING, null);
+								EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e) {
 						firstExpression.freeReferences();
 						throwBacktrack(e.getProblem());
@@ -1476,7 +1476,7 @@ public class Parser implements IParserData, IParser
 										? IASTExpression.Kind.PM_DOTSTAR
 										: IASTExpression.Kind.PM_ARROWSTAR),
 								firstExpression, secondExpression, null, null,
-								null, EMPTY_STRING, null);
+								null, EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e) {
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
@@ -1540,7 +1540,7 @@ public class Parser implements IParserData, IParser
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.CASTEXPRESSION, castExpression,
-							null, null, typeId, null, EMPTY_STRING, null);
+							null, null, typeId, null, EMPTY_STRING, null, null);
 				} catch (ASTSemanticException e) {
 					throwBacktrack(e.getProblem());
 				} catch (Exception e) {
@@ -1809,7 +1809,7 @@ public class Parser implements IParserData, IParser
 			return astFactory.createExpression(scope, (vectored
 					? IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION
 					: IASTExpression.Kind.DELETE_CASTEXPRESSION),
-					castExpression, null, null, null, null, EMPTY_STRING, null);
+					castExpression, null, null, null, null, EMPTY_STRING, null, null);
 		} catch (ASTSemanticException e) {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
@@ -1953,7 +1953,7 @@ public class Parser implements IParserData, IParser
 										astFactory.createNewDescriptor(
 												newPlacementExpressions,
 												newTypeIdExpressions,
-												newInitializerExpressions));
+												newInitializerExpressions), null);
 							} catch (ASTSemanticException e) {
 								throwBacktrack(e.getProblem());
 							} catch (Exception e) {
@@ -2023,7 +2023,7 @@ public class Parser implements IParserData, IParser
 					IASTExpression.Kind.NEW_TYPEID, null, null, null, typeId,
 					null, EMPTY_STRING, astFactory.createNewDescriptor(
 							newPlacementExpressions, newTypeIdExpressions,
-							newInitializerExpressions));
+							newInitializerExpressions), null);
 		} catch (ASTSemanticException e) {
 			throwBacktrack(e.getProblem());
 			return null;
@@ -2105,7 +2105,7 @@ public class Parser implements IParserData, IParser
 					try {
 						return astFactory.createExpression(scope,
 								IASTExpression.Kind.UNARY_SIZEOF_TYPEID, null,
-								null, null, d, null, EMPTY_STRING, null);
+								null, null, d, null, EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e) {
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
@@ -2116,7 +2116,7 @@ public class Parser implements IParserData, IParser
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION,
 							unaryExpression, null, null, null, null,
-							EMPTY_STRING, null);
+							EMPTY_STRING, null, null);
 				} catch (ASTSemanticException e1) {
 					throwBacktrack(e1.getProblem());
 				} catch (Exception e) {
@@ -2195,7 +2195,7 @@ public class Parser implements IParserData, IParser
 											? IASTExpression.Kind.POSTFIX_TYPENAME_TEMPLATEID
 											: IASTExpression.Kind.POSTFIX_TYPENAME_IDENTIFIER),
 									expressionList, null, null, null,
-									nestedName, EMPTY_STRING, null);
+									nestedName, EMPTY_STRING, null, null);
 				} catch (ASTSemanticException ase) {
 					throwBacktrack(ase.getProblem());
 				} catch (Exception e) {
@@ -2287,7 +2287,7 @@ public class Parser implements IParserData, IParser
 											? IASTExpression.Kind.POSTFIX_TYPEID_TYPEID
 											: IASTExpression.Kind.POSTFIX_TYPEID_EXPRESSION),
 									lhs, null, null, typeId, null,
-									EMPTY_STRING, null);
+									EMPTY_STRING, null, null);
 				} catch (ASTSemanticException e6) {
 					throwBacktrack(e6.getProblem());
 				} catch (Exception e) {
@@ -2317,7 +2317,7 @@ public class Parser implements IParserData, IParser
 						firstExpression = astFactory.createExpression(scope,
 								IASTExpression.Kind.POSTFIX_SUBSCRIPT,
 								firstExpression, secondExpression, null, null,
-								null, EMPTY_STRING, null);
+								null, EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e2) {
 						throwBacktrack(e2.getProblem());
 					} catch (Exception e) {
@@ -2361,7 +2361,7 @@ public class Parser implements IParserData, IParser
 						firstExpression = astFactory.createExpression(scope,
 								IASTExpression.Kind.POSTFIX_FUNCTIONCALL,
 								firstExpression, secondExpression, null, null,
-								null, EMPTY_STRING, null);
+								null, EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e3) {
 						throwBacktrack(e3.getProblem());
 					} catch (Exception e) {
@@ -2376,7 +2376,7 @@ public class Parser implements IParserData, IParser
 						firstExpression = astFactory.createExpression(scope,
 								IASTExpression.Kind.POSTFIX_INCREMENT,
 								firstExpression, null, null, null, null,
-								EMPTY_STRING, null);
+								EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e1) {
 						throwBacktrack(e1.getProblem());
 					} catch (Exception e) {
@@ -2391,7 +2391,7 @@ public class Parser implements IParserData, IParser
 						firstExpression = astFactory.createExpression(scope,
 								IASTExpression.Kind.POSTFIX_DECREMENT,
 								firstExpression, null, null, null, null,
-								EMPTY_STRING, null);
+								EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e4) {
 						throwBacktrack(e4.getProblem());
 					} catch (Exception e) {
@@ -2429,7 +2429,7 @@ public class Parser implements IParserData, IParser
 						firstExpression = astFactory.createExpression(scope,
 								memberCompletionKind, firstExpression,
 								secondExpression, null, null, null,
-								EMPTY_STRING, null);
+								EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e5) {
 						throwBacktrack(e5.getProblem());
 					} catch (Exception e) {
@@ -2466,7 +2466,7 @@ public class Parser implements IParserData, IParser
 						firstExpression = astFactory.createExpression(scope,
 								arrowCompletionKind, firstExpression,
 								secondExpression, null, null, null,
-								EMPTY_STRING, null);
+								EMPTY_STRING, null, null);
 					} catch (ASTSemanticException e) {
 						throwBacktrack(e.getProblem());
 					} catch (Exception e) {
@@ -2523,7 +2523,7 @@ public class Parser implements IParserData, IParser
 		int endOffset = consume(IToken.tRPAREN).getEndOffset();
 		try {
 			return astFactory.createExpression(scope, type, inside, null, null,
-					null, null, EMPTY_STRING, null);
+					null, null, EMPTY_STRING, null, null);
 		} catch (ASTSemanticException e) {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
@@ -2549,7 +2549,7 @@ public class Parser implements IParserData, IParser
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_INTEGER_LITERAL, null,
-							null, null, null, null, t.getCharImage(), null);
+							null, null, null, null, t.getCharImage(), null, (ITokenDuple)t);
 				} catch (ASTSemanticException e1) {
 					throwBacktrack(e1.getProblem());
 				} catch (Exception e) {
@@ -2561,7 +2561,7 @@ public class Parser implements IParserData, IParser
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_FLOAT_LITERAL, null,
-							null, null, null, null, t.getCharImage(), null);
+							null, null, null, null, t.getCharImage(), null, (ITokenDuple)t);
 				} catch (ASTSemanticException e2) {
 					throwBacktrack(e2.getProblem());
 				} catch (Exception e) {
@@ -2574,7 +2574,7 @@ public class Parser implements IParserData, IParser
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_STRING_LITERAL, null,
-							null, null, null, null, t.getCharImage(), null);
+							null, null, null, null, t.getCharImage(), null, (ITokenDuple)t);
 				} catch (ASTSemanticException e5) {
 					throwBacktrack(e5.getProblem());
 				} catch (Exception e) {
@@ -2588,7 +2588,7 @@ public class Parser implements IParserData, IParser
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL, null,
-							null, null, null, null, t.getCharImage(), null);
+							null, null, null, null, t.getCharImage(), null, (ITokenDuple)t);
 				} catch (ASTSemanticException e3) {
 					throwBacktrack(e3.getProblem());
 				} catch (Exception e) {
@@ -2603,7 +2603,7 @@ public class Parser implements IParserData, IParser
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_CHAR_LITERAL, null,
-							null, null, null, null, t.getCharImage(), null);
+							null, null, null, null, t.getCharImage(), null, (ITokenDuple)t);
 				} catch (ASTSemanticException e4) {
 					throwBacktrack(e4.getProblem());
 				} catch (Exception e) {
@@ -2616,7 +2616,7 @@ public class Parser implements IParserData, IParser
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_THIS, null, null, null,
-							null, null, EMPTY_STRING, null);
+							null, null, EMPTY_STRING, null, (ITokenDuple)t);
 				} catch (ASTSemanticException e7) {
 					throwBacktrack(e7.getProblem());
 				} catch (Exception e) {
@@ -2642,7 +2642,7 @@ public class Parser implements IParserData, IParser
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION,
-							lhs, null, null, null, null, EMPTY_STRING, null);
+							lhs, null, null, null, null, EMPTY_STRING, null, (ITokenDuple)t);
 				} catch (ASTSemanticException e6) {
 					throwBacktrack(e6.getProblem());
 				} catch (Exception e) {
@@ -2691,7 +2691,7 @@ public class Parser implements IParserData, IParser
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.ID_EXPRESSION, null, null,
-							null, null, duple, EMPTY_STRING, null);
+							null, null, duple, EMPTY_STRING, null, duple);
 				} catch (ASTSemanticException e8) {
 					throwBacktrack(e8.getProblem());
 				} catch (Exception e) {
@@ -2713,7 +2713,7 @@ public class Parser implements IParserData, IParser
 				try {
 					empty = astFactory.createExpression(scope,
 							IASTExpression.Kind.PRIMARY_EMPTY, null, null,
-							null, null, null, EMPTY_STRING, null);
+							null, null, null, EMPTY_STRING, null, (ITokenDuple)la);
 				} catch (ASTSemanticException e9) {
 					throwBacktrack( e9.getProblem() );
 					return null;
@@ -2756,7 +2756,7 @@ public class Parser implements IParserData, IParser
 		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
 			return astFactory.createExpression(scope, kind, lhs,
-					assignmentExpression, null, null, null, EMPTY_STRING, null);
+					assignmentExpression, null, null, null, EMPTY_STRING, null, null);
 		} catch (ASTSemanticException e) {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
@@ -2780,7 +2780,7 @@ public class Parser implements IParserData, IParser
 		int endOffset = ( lastToken != null ) ? lastToken.getEndOffset() : 0;
 		try {
 			return astFactory.createExpression(scope, kind, castExpression,
-					null, null, null, null, EMPTY_STRING, null);
+					null, null, null, null, EMPTY_STRING, null, null);
 		} catch (ASTSemanticException e) {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
@@ -2809,7 +2809,7 @@ public class Parser implements IParserData, IParser
 		int endOffset = consume(IToken.tRPAREN).getEndOffset();
 		try {
 			return astFactory.createExpression(scope, kind, lhs, null, null,
-					duple, null, EMPTY_STRING, null);
+					duple, null, EMPTY_STRING, null, null);
 		} catch (ASTSemanticException e) {
 			throwBacktrack(e.getProblem());
 		} catch (Exception e) {
@@ -6926,4 +6926,5 @@ public class Parser implements IParserData, IParser
 	    
 	    references.clear();
 	}
+
 }

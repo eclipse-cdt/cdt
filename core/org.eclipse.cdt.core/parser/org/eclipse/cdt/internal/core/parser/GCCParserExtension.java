@@ -171,7 +171,7 @@ public class GCCParserExtension implements IParserExtension {
 	                    null,
 	                    null,
 	                    d,
-	                    null, EMPTY_STRING, null); 
+	                    null, EMPTY_STRING, null, null); 
 	            }
 	            catch (ASTSemanticException e)
 	            {
@@ -199,7 +199,7 @@ public class GCCParserExtension implements IParserExtension {
 	                    null,
 	                    null,
 	                    null,
-	                    null, EMPTY_STRING, null); 
+	                    null, EMPTY_STRING, null, null); 
 	            }
 	            catch (ASTSemanticException e1)
 	            {
@@ -374,7 +374,7 @@ public class GCCParserExtension implements IParserExtension {
 
             try {
 				IASTExpression resultExpression = data.getAstFactory().createExpression( 
-						scope, expressionKind, lhsExpression, secondExpression, null, null, null, EMPTY_STRING, null );
+						scope, expressionKind, lhsExpression, secondExpression, null, null, null, EMPTY_STRING, null, null );
 				return resultExpression;
 			} catch (ASTSemanticException e1) {
 				data.backup( mark );

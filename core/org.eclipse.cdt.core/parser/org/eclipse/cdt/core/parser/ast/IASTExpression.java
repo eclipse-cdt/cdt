@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
  * @author jcamelon
  *
  */
-public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode
+public interface IASTExpression extends ISourceElementCallbackDelegate, IASTNode, IASTOffsetableElement
 {
 	public class Kind extends Enum
 	{

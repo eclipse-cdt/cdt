@@ -123,6 +123,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	private final CharArrayObjectMap simpleTypeSpecCache = new CharArrayObjectMap( BUILTIN_TYPE_SIZE );
 	private static final int DEFAULT_QUALIFIEDNAME_REFERENCE_SIZE = 4;
 	private char[] filename;
+	private int problemStartOffset = -1;
+	private int problemEndOffset = -1;
+	private int problemLineNumber = -1;
 	
     static 
     {
@@ -213,11 +216,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return true;
 	}
 	
-	private ISymbol lookupElement (IContainerSymbol startingScope, char[] name, ITypeInfo.eType type, List parameters, LookupType lookupType ) throws ASTSemanticException {
-		return lookupElement( startingScope, name, type, parameters, null, lookupType );
+	private ISymbol lookupElement (IContainerSymbol startingScope, char[] name, ITypeInfo.eType type, List parameters, LookupType lookupType) throws ASTSemanticException {
+		return lookupElement( startingScope, name, type, parameters, null, lookupType);
 	}
 	
-	private ISymbol lookupElement (IContainerSymbol startingScope, char[] name, ITypeInfo.eType type, List parameters, List arguments, LookupType lookupType ) throws ASTSemanticException {
+	private ISymbol lookupElement (IContainerSymbol startingScope, char[] name, ITypeInfo.eType type, List parameters, List arguments, LookupType lookupType) throws ASTSemanticException {
 		ISymbol result = null;
 		if( startingScope == null ) return null;
 		try {
@@ -269,7 +272,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return lookupQualifiedName(startingScope, name, ITypeInfo.t_any, null, 0, references, throwOnError, lookup );
 	}
 
-	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, char[] name, ITypeInfo.eType type, List parameters, int offset, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException
+	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, char[] name, ITypeInfo.eType type, List parameters, int offset, List references, boolean throwOnError, LookupType lookup) throws ASTSemanticException
 	{
 		ISymbol result = null;
 		if( name == null && throwOnError )
@@ -306,6 +309,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	
 	protected ISymbol lookupQualifiedName( IContainerSymbol startingScope, ITokenDuple name, ITypeInfo.eType type, List parameters, List references, boolean throwOnError, LookupType lookup ) throws ASTSemanticException
 	{
+		setProblemInfo(name);
 		ISymbol result = null;
 		if( name == null && throwOnError ) handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, null );
 		else if( name == null ) return null;
@@ -466,7 +470,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int startingLine, int endingOffset, int endingLine)
         throws ASTSemanticException
     {		
-    	setFilename( duple );
+    	setProblemInfo( duple );
 		List references = new ArrayList();	
 		ISymbol symbol = lookupQualifiedName( 
 			scopeToSymbol( scope), duple, references, true ); 
@@ -485,14 +489,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		return using;
     }
-    
-
-    /**
-	 * @param duple
-	 */
-	private void setFilename(ITokenDuple duple) {
-		filename = ( duple == null ) ? EMPTY_STRING : duple.getFilename();
-	}
 
 	protected IContainerSymbol getScopeToSearchUpon(
         IASTScope currentScope,
@@ -525,7 +521,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         int startingOffset,
         int startingLine, int endingOffset, int endingLine) throws ASTSemanticException
     {
-    	setFilename( name );
+    	setProblemInfo( name );
         List references = new ArrayList(); 
         
         IUsingDeclarationSymbol endResult = null;
@@ -832,12 +828,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	
     protected void handleProblem( int id, char[] attribute ) throws ASTSemanticException
 	{
-    	handleProblem( null, id, attribute, -1, -1, -1, true );  //TODO make this right
+    	handleProblem( null, id, attribute, problemStartOffset, problemEndOffset, problemLineNumber, true );
     }
 
     protected void handleProblem( IASTScope scope, int id, char[] attribute ) throws ASTSemanticException
 	{
-    	handleProblem( scope, id, attribute, -1, -1, -1, true);
+    	handleProblem( scope, id, attribute, problemStartOffset, problemEndOffset, problemLineNumber, true);
 	}
     
     protected void handleProblem( int id, char[] attribute, int startOffset, int endOffset, int lineNumber, boolean isError ) throws ASTSemanticException {
@@ -905,7 +901,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         ASTAccessVisibility visibility,
         ITokenDuple parentClassName) throws ASTSemanticException 
     {
-    	setFilename( parentClassName );
+    	setProblemInfo( parentClassName );
     	IDerivableContainerSymbol classSymbol = (IDerivableContainerSymbol)scopeToSymbol( astClassSpec);
         List references = new ArrayList(); 
         
@@ -1086,9 +1082,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTExpression rhs,
         IASTExpression thirdExpression,
         IASTTypeId typeId,
-        ITokenDuple idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException
+        ITokenDuple idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor, ITokenDuple extra) throws ASTSemanticException
     {
-    	setFilename( idExpression );
+    	setProblemInfo( extra );
     	if( idExpression != null && logService.isTracing() )
     	{
     		TraceUtil.outputTrace(
@@ -1116,7 +1112,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		ISymbol symbol = getExpressionSymbol(scope, kind, lhs, rhs, idExpression, references );
         
         // Try to figure out the result that this expression evaluates to
-		ExpressionResult expressionResult = getExpressionResultType(scope, kind, lhs, rhs, thirdExpression, typeId, literal, symbol);
+		ExpressionResult expressionResult = getExpressionResultType(scope, kind, lhs, rhs, thirdExpression, typeId, literal, symbol, extra);
 
 		if( newDescriptor != null ){
 			createConstructorReference( newDescriptor, typeId, references );
@@ -1372,7 +1368,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 * Apply the usual arithmetic conversions to find out the result of an expression 
 	 * that has a lhs and a rhs as indicated in the specs (section 5.Expressions, page 64)
 	 */
-	protected ITypeInfo usualArithmeticConversions( IASTScope scope, ITypeInfo lhs, ITypeInfo rhs) throws ASTSemanticException{
+	protected ITypeInfo usualArithmeticConversions( IASTScope scope, ASTExpression lhsExp, ASTExpression rhsExp) throws ASTSemanticException{
+		setFilename(lhsExp.getFilename());
+		
+		ITypeInfo lhs = lhsExp.getResultType().getResult();
+		ITypeInfo rhs = rhsExp.getResultType().getResult();
+
 		if( lhs == null ) return null;
 		if( rhs == null ) return null;
 		// if you have a variable of type basic type, then we need to go to the basic type first
@@ -1382,12 +1383,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		while( (rhs.getType() == ITypeInfo.t_type) && (rhs.getTypeSymbol() != null)){
 			rhs = rhs.getTypeSymbol().getTypeInfo();  
 		}
-		
-		if( !lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) || 
-			!rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) ) 
-		{
-			handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null ); 
-		}
+
+		if( !lhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) )
+			handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, lhsExp.getStartingOffset(), lhsExp.getEndingOffset(), lhsExp.getStartingLine(), true );
+		if( !rhs.isType(ITypeInfo.t__Bool, ITypeInfo.t_enumerator ) )
+			handleProblem( scope, IProblem.SEMANTIC_INVALID_CONVERSION_TYPE, null, rhsExp.getStartingOffset(), rhsExp.getEndingOffset(), rhsExp.getStartingLine(), true );
 
 		ITypeInfo info = TypeInfoProvider.newTypeInfo( );
 		if( 
@@ -1553,8 +1553,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			IASTExpression thirdExpression,
 			IASTTypeId typeId,
 			char[] literal,
-			ISymbol symbol)	throws ASTSemanticException
+			ISymbol symbol, ITokenDuple extra)	throws ASTSemanticException
 	{
+		setProblemInfo(extra);
 	    ITypeInfo info = null;
 	    ExpressionResult result = null;
 	    
@@ -1738,9 +1739,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			ASTExpression left = (ASTExpression)lhs;
 			ASTExpression right = (ASTExpression)rhs;  
 			if((left != null ) && (right != null)){
-				ITypeInfo leftType =left.getResultType().getResult();
-				ITypeInfo rightType =right.getResultType().getResult();
-				info = usualArithmeticConversions( scope, leftType, rightType);
+				info = usualArithmeticConversions( scope, left, right);
 			}
 			else 
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null ); 
@@ -1903,7 +1902,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IASTScope scope,
         ITokenDuple duple, IASTExpression expressionList)
     {
-    	setFilename( duple );
+    	setProblemInfo( duple );
         List references = new ArrayList(); 
         
         IContainerSymbol scopeSymbol = scopeToSymbol(scope);
@@ -1953,7 +1952,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isImaginary,
 		boolean isGlobal, Map extensionParms ) throws ASTSemanticException
     {
-    	setFilename( typeName );
+    	setProblemInfo( typeName );
     	if( extension.overrideCreateSimpleTypeSpecifierMethod( kind ))
     		return extension.createSimpleTypeSpecifier(pst, scope, kind, typeName, isShort, isLong, isSigned, isUnsigned, isTypename, isComplex, isImaginary, isGlobal, extensionParms );
     	char[] typeNameAsString = typeName.toCharArray();
@@ -2101,7 +2100,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isExplicit, 
 		boolean isPureVirtual, List constructorChain, boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments ) throws ASTSemanticException
 	{
-		setFilename( name );
+		setProblemInfo( name );
 		List references = new ArrayList();
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
 		
@@ -2469,7 +2468,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isPureVirtual,
         ASTAccessVisibility visibility, List constructorChain, List references, boolean isFunctionDefinition, boolean hasFunctionTryBlock, boolean hasVariableArguments ) throws ASTSemanticException
     {
-    	setFilename( nameDuple );
+    	setProblemInfo( nameDuple );
 		boolean isConstructor = false;
 		boolean isDestructor = false;
 
@@ -2677,7 +2676,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
 
 		if( name == null )
-			handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, null, startingOffset, nameEndOffset, nameLine, true );
+			handleProblem( IProblem.SEMANTIC_NAME_NOT_PROVIDED, null, startingOffset, startingOffset + 1, startingLine, true );
 		
 		if(name.getSegmentCount() > 1)
 		{
@@ -2752,7 +2751,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		catch (ParserSymbolTableException e)
 		{
-			handleProblem(e.createProblemID(), name.getFirstToken().getCharImage() );
+			handleProblem(e.createProblemID(), name.getFirstToken().getCharImage(), name.getFirstToken().getOffset(), name.getFirstToken().getEndOffset(), name.getFirstToken().getLineNumber(), true );
 		}
         
         ASTVariable variable = new ASTVariable( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, references, constructorExpression, previouslyDeclared, filename );
@@ -2993,7 +2992,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		catch (ParserSymbolTableException e)
 		{
-			handleProblem(e.createProblemID(), image );
+			if (name==null)
+				handleProblem(e.createProblemID(), image );
+			else
+				handleProblem(e.createProblemID(), image, name.getStartOffset(), name.getEndOffset(), name.getLineNumber(), true );
 		}
 		
 		ASTField field = new ASTField( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, references, previouslyDeclared, constructorExpression, visibility, filename );
@@ -3199,7 +3201,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind kind, ITokenDuple name, int startingOffset, int startingLine, int endOffset, int endingLine, boolean isForewardDecl, boolean isFriend) throws ASTSemanticException
     {
-    	setFilename( name );
+    	setProblemInfo( name );
 		IContainerSymbol currentScopeSymbol = scopeToSymbol(scope);
 		IContainerSymbol originalScope = currentScopeSymbol;
 		
@@ -3343,7 +3345,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 */
     public IASTNamespaceAlias createNamespaceAlias(IASTScope scope, char[] identifier, ITokenDuple alias, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine) throws ASTSemanticException
     {
-    	setFilename( alias );
+    	setProblemInfo( alias );
         IContainerSymbol startingSymbol = scopeToSymbol(scope);
         List references = new ArrayList();
         
@@ -3797,4 +3799,17 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return (pst.getTypeInfoProvider().numAllocated() == 0);
 	}
 
+	private void setProblemInfo(ITokenDuple extra) {
+		if (extra != null) {
+			this.problemStartOffset = extra.getStartOffset();
+			this.problemEndOffset = extra.getEndOffset();
+			this.problemLineNumber = extra.getLineNumber();
+			this.filename = extra.getFilename();
+		} else {
+			this.problemStartOffset = -1;
+			this.problemEndOffset = -1;
+			this.problemLineNumber = -1;
+			this.filename = EMPTY_STRING;
+		}
+	}
 }

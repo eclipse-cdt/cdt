@@ -118,7 +118,7 @@ public interface IASTFactory
         IASTExpression rhs,
         IASTExpression thirdExpression,
         IASTTypeId typeId,
-        ITokenDuple idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException;
+        ITokenDuple idExpression, char[] literal, IASTNewExpressionDescriptor newDescriptor, ITokenDuple extra) throws ASTSemanticException;
     
     public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor(List newPlacementExpressions,List newTypeIdExpressions,List newInitializerExpressions);
 

@@ -16,12 +16,15 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -48,7 +51,10 @@ import org.eclipse.cdt.internal.core.parser2.c.CASTBinaryExpression;
 import org.eclipse.cdt.internal.core.parser2.c.CASTCompoundStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTCompoundStatementExpression;
 import org.eclipse.cdt.internal.core.parser2.c.CASTConditionalExpression;
+import org.eclipse.cdt.internal.core.parser2.c.CASTEnumerationSpecifier;
+import org.eclipse.cdt.internal.core.parser2.c.CASTEnumerator;
 import org.eclipse.cdt.internal.core.parser2.c.CASTExpressionList;
+import org.eclipse.cdt.internal.core.parser2.c.CASTName;
 import org.eclipse.cdt.internal.core.parser2.c.CASTUnaryExpression;
 
 /**
@@ -4586,6 +4592,34 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected IASTExpressionList createExpressionList() {
         return new CASTExpressionList();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createName(org.eclipse.cdt.core.parser.IToken)
+     */
+    protected IASTName createName(IToken token) {
+        return new CASTName( token.getCharImage() );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createName()
+     */
+    protected IASTName createName() {
+        return new CASTName();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createEnumerator()
+     */
+    protected IASTEnumerator createEnumerator() {
+        return new CASTEnumerator();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createEnumerationSpecifier()
+     */
+    protected IASTEnumerationSpecifier createEnumerationSpecifier() {
+        return new CASTEnumerationSpecifier();
     }
 
 }

@@ -16,12 +16,15 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.gcc.IGCCASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -1081,137 +1084,119 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected void enumSpecifier(DeclarationWrapper sdw)
+    protected IASTEnumerationSpecifier enumSpecifier(DeclarationWrapper sdw)
             throws BacktrackException, EndOfFileException {
         IToken mark = mark();
-        IToken identifier = null;
-        consume(IToken.t_enum);
+        IASTName name = null;
+        int startOffset = consume(IToken.t_enum).getOffset();
         if (LT(1) == IToken.tIDENTIFIER) {
-            identifier = identifier();
+            name = createName( identifier() );
         }
+        else
+            name = createName();
         if (LT(1) == IToken.tLBRACE) {
-            Object enumeration = null;
-            try {
-                enumeration = null; /*
-                                     * astFactory.createEnumerationSpecifier(sdw
-                                     * .getScope(), ((identifier == null) ?
-                                     * EMPTY_STRING :
-                                     * identifier.getCharImage()), //$NON-NLS-1$
-                                     * mark.getOffset(), mark.getLineNumber(),
-                                     * ((identifier == null) ? mark.getOffset() :
-                                     * identifier .getOffset()), ((identifier ==
-                                     * null) ? mark .getEndOffset() :
-                                     * identifier.getEndOffset()), ((identifier ==
-                                     * null) ? mark.getLineNumber() :
-                                     * identifier.getLineNumber()),
-                                     * mark.getFilename()); } catch
-                                     * (ASTSemanticException e) {
-                                     * throwBacktrack(e.getProblem());
-                                     */
-            } catch (Exception e) {
-                int endOffset = (lastToken != null) ? lastToken.getEndOffset()
-                        : 0;
-                logException("enumSpecifier:createEnumerationSpecifier", e); //$NON-NLS-1$
-                throwBacktrack(mark.getOffset(), endOffset, mark
-                        .getLineNumber(), mark.getFilename());
-            }
+            
+            IASTEnumerationSpecifier result = createEnumerationSpecifier();
+            result.setOffset( startOffset );
+            result.setName( name );
+            name.setParent( result );
+            name.setPropertyInParent( IASTEnumerationSpecifier.ENUMERATION_NAME );
             cleanupLastToken();
             consume(IToken.tLBRACE);
             while (LT(1) != IToken.tRBRACE) {
-                IToken enumeratorIdentifier = null;
+                IASTName enumeratorName = null;
                 if (LT(1) == IToken.tIDENTIFIER) {
-                    enumeratorIdentifier = identifier();
+                    enumeratorName = createName( identifier() );
                 } else {
                     IToken la = LA(1);
                     throwBacktrack(la.getOffset(), la.getEndOffset(), la
                             .getLineNumber(), la.getFilename());
                 }
-                Object initialValue = null;
+                IASTExpression initialValue = null;
                 if (LT(1) == IToken.tASSIGN) {
                     consume(IToken.tASSIGN);
                     initialValue = constantExpression();
                 }
-                Object enumerator = null;
+                IASTEnumerationSpecifier.IASTEnumerator enumerator = null;
                 if (LT(1) == IToken.tRBRACE) {
-                    try {
-                        enumerator = null; /*
-                                            * astFactory.addEnumerator(enumeration,
-                                            * enumeratorIdentifier.getCharImage(),
-                                            * enumeratorIdentifier.getOffset(),
-                                            * enumeratorIdentifier.getLineNumber(),
-                                            * enumeratorIdentifier.getOffset(),
-                                            * enumeratorIdentifier.getEndOffset(),
-                                            * enumeratorIdentifier.getLineNumber(),
-                                            * lastToken .getEndOffset(),
-                                            * lastToken .getLineNumber(),
-                                            * initialValue,
-                                            * lastToken.getFilename());
-                                            */
-                        cleanupLastToken();
-                        //					} catch (ASTSemanticException e1) {
-                        //						throwBacktrack(e1.getProblem());
-                    } catch (Exception e) {
-                        int endOffset = (lastToken != null) ? lastToken
-                                .getEndOffset() : 0;
-                        logException("enumSpecifier:addEnumerator", e); //$NON-NLS-1$
-                        throwBacktrack(mark.getOffset(), endOffset, mark
-                                .getLineNumber(), mark.getFilename());
+                    enumerator = createEnumerator();
+                    enumerator.setName( enumeratorName );
+                    enumerator.setOffset( enumeratorName.getOffset() );
+                    enumeratorName.setParent( enumerator );
+                    enumeratorName.setPropertyInParent( IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_NAME );
+                    if( initialValue != null )
+                    {
+                        enumerator.setValue( initialValue );
+                        initialValue.setParent( enumerator );
+                        initialValue.setPropertyInParent( IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_VALUE );
                     }
+                    result.addEnumerator( enumerator );
+                    enumerator.setParent( result );
+                    enumerator.setPropertyInParent( IASTEnumerationSpecifier.ENUMERATOR );
+                    cleanupLastToken();
                     break;
                 }
                 if (LT(1) != IToken.tCOMMA) {
-                    //                    enumeration.freeReferences();
-                    //                  enumerator.freeReferences();
                     int endOffset = (lastToken != null) ? lastToken
                             .getEndOffset() : 0;
                     throwBacktrack(mark.getOffset(), endOffset, mark
                             .getLineNumber(), mark.getFilename());
                 }
-                try {
-                    enumerator = null; /*
-                                        * astFactory.addEnumerator(enumeration,
-                                        * enumeratorIdentifier.getCharImage(),
-                                        * enumeratorIdentifier.getOffset(),
-                                        * enumeratorIdentifier.getLineNumber(),
-                                        * enumeratorIdentifier.getOffset(),
-                                        * enumeratorIdentifier.getEndOffset(),
-                                        * enumeratorIdentifier.getLineNumber(),
-                                        * lastToken .getEndOffset(),
-                                        * lastToken.getLineNumber(),
-                                        * initialValue,
-                                        * lastToken.getFilename());
-                                        */
-                    cleanupLastToken();
-                    //				} catch (ASTSemanticException e1) {
-                    //					throwBacktrack(e1.getProblem());
-                } catch (Exception e) {
-                    int endOffset = (lastToken != null) ? lastToken
-                            .getEndOffset() : 0;
-                    logException("enumSpecifier:addEnumerator", e); //$NON-NLS-1$
-                    throwBacktrack(mark.getOffset(), endOffset, mark
-                            .getLineNumber(), mark.getFilename());
+
+                enumerator = createEnumerator();
+                enumerator.setName( enumeratorName );
+                enumerator.setOffset( enumeratorName.getOffset() );
+                enumeratorName.setParent( enumerator );
+                enumeratorName.setPropertyInParent( IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_NAME );
+                if( initialValue != null )
+                {
+                    enumerator.setValue( initialValue );
+                    initialValue.setParent( enumerator );
+                    initialValue.setPropertyInParent( IASTEnumerationSpecifier.IASTEnumerator.ENUMERATOR_VALUE );
                 }
+                result.addEnumerator( enumerator );
+                enumerator.setParent( result );
+                enumerator.setPropertyInParent( IASTEnumerationSpecifier.ENUMERATOR );
+                cleanupLastToken();
+
                 consume(IToken.tCOMMA);
             }
-            IToken t = consume(IToken.tRBRACE);
-            //                enumeration.setEndingOffsetAndLineNumber(t.getEndOffset(), t
-            //                        .getLineNumber());
-            //			enumeration.acceptElement(requestor);
-            sdw.setTypeSpecifier(enumeration);
-        } else {
-            // enumSpecifierAbort
-            int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
-            backup(mark);
-            throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(),
-                    mark.getFilename());
+            consume(IToken.tRBRACE);
+            return result;
         }
+        // enumSpecifierAbort
+        int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
+        backup(mark);
+        throwBacktrack(mark.getOffset(), endOffset, mark.getLineNumber(),
+                mark.getFilename());
+        return null;
     }
+
+    /**
+     * @return
+     */
+    protected abstract IASTEnumerator createEnumerator();        
+
+    /**
+     * @return
+     */
+    protected abstract IASTEnumerationSpecifier createEnumerationSpecifier();
+
+    /**
+     * @param token
+     * @return
+     */
+    protected abstract IASTName createName(IToken token); 
+    /**
+     * @return
+     */
+    protected abstract IASTName createName();
 
     /**
      * @throws BacktrackException
      */
     protected void condition() throws BacktrackException, EndOfFileException {
-        IASTExpression c = expression();
+        expression();
         cleanupLastToken();
     }
 

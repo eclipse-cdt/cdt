@@ -179,7 +179,7 @@ public class CExpression extends CVariable implements IExpression {
 			((AbstractCValue)fValue).dispose();
 			fValue = null;
 		}
-		super.dispose();
+		internalDispose( true );
 	}
 
 	/* (non-Javadoc)

@@ -1,5 +1,16 @@
 2003-04-02 Alain Magloire
 
+	Show LibraryReference in the  CViewer.
+
+	* src/org/eclipse/internal/ui/cview/CViewSorter.java:
+	* src/org/eclipse/internal/ui/BaseCElementContentProvider.java:
+	Call CProject.getLibraryReferences().
+	* src/org/eclipse/internal/ui/CElementImagerProvider.java:
+	* src/org/eclipse/internal/ui/CPluginImages.java:
+	lib_obj.gif.
+
+2003-04-02 Alain Magloire
+
 	Bug fix and cleanup in CView
 	
 	* src/org/eclipse/internal/ui/cview/CView.java:

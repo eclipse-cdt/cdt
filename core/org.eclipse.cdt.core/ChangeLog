@@ -1,3 +1,17 @@
+2003-04-02 Alain Magloire
+
+	First draft on implementing LibraryReference.
+
+	* model/org/eclipse/cdt/core/model/ICProject.java:
+	* model/org/eclipse/cdt/internal/core/model/CProject.java:
+	New method getLibraryReferences().
+	* model/org/eclipse/cdt/internal/core/model/LibraryReference.java:
+	New class.
+
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java:
+	Bug fix in readProjectDescription(); fPathEntries was not initialized
+	and decodePathEntry() was call with the wrong argument.
+ 
 2003-04-01 Alain Magloire
 
 	Implement SourceRefence and SourceManipulation for IBinary, this is

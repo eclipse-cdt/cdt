@@ -296,9 +296,11 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	protected Addr2line getAddr2Line() {
 		IPath addr2LinePath = getAddr2LinePath();
 		Addr2line addr2line = null;
-		try {
-			addr2line = new Addr2line(addr2LinePath.toOSString(), getPath().toOSString());
-		} catch (IOException e1) {
+		if (addr2LinePath != null && !addr2LinePath.isEmpty()) {
+			try {
+				addr2line = new Addr2line(addr2LinePath.toOSString(), getPath().toOSString());
+			} catch (IOException e1) {
+			}
 		}
 		return addr2line;
 	}
@@ -306,9 +308,11 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	protected CPPFilt getCPPFilt() {
 		IPath cppFiltPath = getCPPFiltPath();
 		CPPFilt cppfilt = null;
-		try {
-			cppfilt = new CPPFilt(cppFiltPath.toOSString());
-		} catch (IOException e2) {
+		if (cppFiltPath != null && ! cppFiltPath.isEmpty()) {
+			try {
+				cppfilt = new CPPFilt(cppFiltPath.toOSString());
+			} catch (IOException e2) {
+			}
 		}
 		return cppfilt;
 	}

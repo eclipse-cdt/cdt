@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  */
-public class GNUElfParser extends ElfParser implements IBinaryParser {
+public class GNUElfParser extends ElfParser implements IBinaryParser, IToolsProvider {
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IPath)
@@ -27,8 +27,7 @@ public class GNUElfParser extends ElfParser implements IBinaryParser {
 	public IBinaryFile getBinary(IPath path) throws IOException {
 		IBinaryFile binary = super.getBinary(path);
 		if (binary instanceof BinaryFile) {
-			((BinaryFile)binary).setAddr2LinePath(getAddr2LinePath());
-			((BinaryFile)binary).setCPPFiltPath(getCPPFiltPath());
+			((BinaryFile)binary).setToolsProvider(this);
 		}
 		return binary;
 	}

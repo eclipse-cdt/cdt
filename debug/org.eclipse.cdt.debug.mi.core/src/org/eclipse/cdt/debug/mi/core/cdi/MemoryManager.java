@@ -44,19 +44,31 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 		for (int i = 0; i < blocks.length; i++) {
 			if (! blocks[i].isFrozen()) {
 				try {
-					MemoryBlock block = cloneBlock(blocks[i]);
-					Long[] array = compareBlocks(blocks[i], block);
-					if (array.length > 0) {
-						eventList.add(new MIMemoryChangedEvent(array));
-					}
-					// Update the block MIDataReadMemoryInfo.
-					blocks[i].setMIDataReadMemoryInfo(block.getMIDataReadMemoryInfo());
+					update(blocks[i], eventList);
 				} catch (CDIException e) {
 				}
 			}
 		}
 		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);
 		mi.fireEvents(events);
+	}
+
+	/**
+	 * update one Block.
+	 */
+	public void update(MemoryBlock block, List aList) throws CDIException {
+		MemoryBlock newBlock = cloneBlock(block);
+		Long[] array = compareBlocks(block, newBlock);
+		// Update the block MIDataReadMemoryInfo.
+		block.setMIDataReadMemoryInfo(newBlock.getMIDataReadMemoryInfo());
+		if (array.length > 0) {
+			if (aList != null) {
+				aList.add(new MIMemoryChangedEvent(array));
+			} else {
+				MISession mi = getCSession().getMISession();
+				mi.fireEvent(new MIMemoryChangedEvent(array));
+			}
+		}
 	}
 
 	/**

@@ -5,13 +5,19 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICPathEntry;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -75,4 +81,20 @@ public class CProject extends CContainer implements ICProject {
 		return getProject().hashCode();
 	}
 
+	public ILibraryReference[] getLibraryReferences() throws CModelException {
+		ArrayList list = new ArrayList(5);
+		try {
+			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(getProject());
+			ICPathEntry[] entries = cdesc.getPathEntries();
+			for (int i = 0; i < entries.length; i++) {
+				if (entries[i].getEntryKind() == ICPathEntry.CDT_LIBRARY) {
+					ICPathEntry entry = entries[i];
+					list.add(new LibraryReference(this, entry.getPath().lastSegment(),entry));
+				}
+			}
+		} catch (CoreException e) {
+			throw new CModelException(e);
+		}
+		return (ILibraryReference[])list.toArray(new ILibraryReference[0]);
+	}
 }

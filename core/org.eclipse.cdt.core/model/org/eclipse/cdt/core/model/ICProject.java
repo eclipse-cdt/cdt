@@ -39,5 +39,16 @@ public interface ICProject extends ICContainer {
 	 */
 	IBinaryContainer getBinaryContainer();
 
+	/**
+	 * Return the library references for this project.
+	 * 
+	 * @return [] ILibraryReference
+	 */
+	ILibraryReference[] getLibraryReferences() throws CModelException;
+
+	/**
+	 * 
+	 * @return IProject
+	 */
 	IProject getProject();
 }

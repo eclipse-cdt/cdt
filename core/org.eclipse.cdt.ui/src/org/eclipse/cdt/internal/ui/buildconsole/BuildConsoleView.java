@@ -279,7 +279,7 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 
 	IProject convertSelectionToProject(ISelection selection) {
 		IProject project = null;
-		if (selection == null) {
+		if (selection == null || !(selection instanceof IStructuredSelection)) {
 			return project;
 		}
 		try {

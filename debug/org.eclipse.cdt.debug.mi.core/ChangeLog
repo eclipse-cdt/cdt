@@ -1,4 +1,12 @@
 2004-11-19 Alain Magloire
+	Use the qualified name when creating a register.
+	Destroy the corresponding gdb variable on register's disposal.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java
+	
+	Added the "dispose" method.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java
+
+2004-11-19 Alain Magloire
 	RegisterManager.findRegister() was not implemented correctly
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/RegisterManager.java
 

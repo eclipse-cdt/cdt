@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
+import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 
 /**
@@ -51,6 +55,12 @@ public class Register extends Variable implements ICDIRegister {
 
 	protected Variable createVariable(Target target, Thread thread, StackFrame frame, String name, String fullName, int pos, int depth, MIVar miVar) {
 		return new Register(target, thread, frame, name, fullName, pos, depth, miVar);
+	}
+
+	public void dispose() throws CDIException {
+		ICDITarget target = getTarget();
+		RegisterManager regMgr = ((Session)target.getSession()).getRegisterManager();
+		regMgr.destroyRegister(this);
 	}
 
 }

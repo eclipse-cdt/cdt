@@ -64,8 +64,8 @@ public class Scanner implements IScanner {
 	}
 
 	protected void updateContext(Reader reader, String filename) {
-		if (callback != null)
-			callback.inclusionBegin(filename); // not quite right ... fix me!!!
+//		if (callback != null)
+//			callback.inclusionBegin(filename); // not quite right ... fix me!!!
 
 		contextStack.push(currentContext);
 		currentContext =

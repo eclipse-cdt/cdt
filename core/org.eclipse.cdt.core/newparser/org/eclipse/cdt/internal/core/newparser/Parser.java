@@ -69,11 +69,11 @@ c, quick);
 	 * 
 	 */
 	public void translationUnit() throws Exception {
-		callback.translationUnitBegin();
+		Object translationUnit = callback.translationUnitBegin();
 		Token lastBacktrack = null;
 		while (LT(1) != Token.tEOF) {
 			try {
-				declaration();
+				declaration( translationUnit );
 			} catch (Backtrack b) {
 				// Mark as failure and try to reach a recovery point
 				parsePassed = false;
@@ -93,7 +93,7 @@ c, quick);
 				}
 			}
 		}
-		callback.translationUnitEnd();
+		callback.translationUnitEnd(translationUnit);
 	}
 	
 	/**
@@ -114,7 +114,7 @@ c, quick);
 	 *   - explicitInstantiation and explicitSpecialization into
 	 *       templateDeclaration
 	 */
-	public void declaration() throws Exception {
+	public void declaration( Object container ) throws Exception {
 		switch (LT(1)) {
 			case Token.t_asm:
 				return; // asmDefinition();
@@ -130,7 +130,7 @@ c, quick);
 					return; // linkageSpecification();
 				// else drop through
 			default:
-				simpleDeclaration(); 
+				simpleDeclaration( container ); 
 		}
 	}
 	
@@ -145,19 +145,19 @@ c, quick);
 	 * To do:
 	 * - work in ctorInitializer and functionTryBlock
 	 */
-	public void simpleDeclaration() throws Exception {
-		callback.simpleDeclarationBegin(LA(1));
-		declSpecifierSeq();
+	public void simpleDeclaration( Object container ) throws Exception {
+		Object simpleDecl = callback.simpleDeclarationBegin( container, LA(1));
+		declSpecifierSeq(simpleDecl);
 
 		if (LT(1) != Token.tSEMI)
 			try {
-				initDeclarator();
+				initDeclarator(simpleDecl);
 				
 				while (LT(1) == Token.tCOMMA) {
 					consume();
 					
 					try {
-						initDeclarator();
+						initDeclarator(simpleDecl);
 					} catch (Backtrack b) {
 						throw b;
 					}
@@ -199,7 +199,7 @@ c, quick);
 				throw backtrack;
 		}
 		
-		callback.simpleDeclarationEnd();
+		callback.simpleDeclarationEnd(simpleDecl);
 	}
 	
 	/**
@@ -219,7 +219,7 @@ c, quick);
 	 * - folded elaboratedTypeSpecifier into classSpecifier and enumSpecifier
 	 * - find template names in name
 	 */
-	public void declSpecifierSeq() throws Exception {
+	public void declSpecifierSeq( Object decl ) throws Exception {
 		declSpecifiers:		
 		for (;;) {
 			switch (LT(1)) {
@@ -246,7 +246,7 @@ c, quick);
 				case Token.t_float:
 				case Token.t_double:
 				case Token.t_void:
-					callback.simpleDeclSpecifier(consume());
+					callback.simpleDeclSpecifier(decl, consume());
 					break;
 				case Token.t_typename:
 					consume();
@@ -266,7 +266,7 @@ c, quick);
 				case Token.t_class:
 				case Token.t_struct:
 				case Token.t_union:
-					classSpecifier();
+					classSpecifier(decl);
 					break;
 				case Token.t_enum:
 					// enumSpecifier();
@@ -331,8 +331,8 @@ c, quick);
 	 * To Do:
 	 * - handle initializers
 	 */
-	public void initDeclarator() throws Exception {
-		declarator();
+	public void initDeclarator( Object owner ) throws Exception {
+		declarator( owner );
 	}
 	
 	/**
@@ -349,9 +349,9 @@ c, quick);
 	 * declaratorId
 	 * : name
 	 */
-	public void declarator() throws Exception {
+	public void declarator( Object container ) throws Exception {
 		
-		callback.declaratorBegin();
+		Object declarator = callback.declaratorBegin( container );
 		
 		for (;;) {
 			try {
@@ -363,13 +363,13 @@ c, quick);
 		
 		if (LT(1) == Token.tLPAREN) {
 			consume();
-			declarator();
+			declarator(declarator);
 			consume(Token.tRPAREN);
 			return;
 		}
 		
 		name();
-		callback.declaratorId();
+		callback.declaratorId(declarator);
 		
 		for (;;) {
 			switch (LT(1)) {
@@ -390,8 +390,8 @@ c, quick);
 								consume();
 								break;
 							default:
-								declSpecifierSeq();
-								declarator();
+								declSpecifierSeq(container);
+								declarator(container);
 						}
 					}
 					callback.argumentsEnd();
@@ -405,7 +405,7 @@ c, quick);
 			break;
 		}
 		
-		callback.declaratorEnd();
+		callback.declaratorEnd(declarator);
 	}
 	
 	/**
@@ -448,7 +448,7 @@ c, quick);
 	 * classSpecifier
 	 * : classKey name (baseClause)? "{" (memberSpecification)* "}"
 	 */
-	public void classSpecifier() throws Exception {
+	public void classSpecifier( Object owner ) throws Exception {
 		Token classKey = null;
 		
 		// class key
@@ -462,12 +462,12 @@ c, quick);
 				throw backtrack;
 		}
 
-		callback.classSpecifierBegin(classKey);
+		Object classSpec = callback.classSpecifierBegin( owner, classKey);
 		
 		// class name
 		if (LT(1) == Token.tIDENTIFIER) {
 			name();
-			callback.classSpecifierName();			
+			callback.classSpecifierName(classSpec);			
 		}
 
 		//currRegion.put(name.getImage(), classKey);
@@ -475,33 +475,7 @@ c, quick);
 		// base clause
 		if (LT(1) == Token.tCOLON) {
 			consume();
-			
-			baseSpecifierLoop:
-			for (;;) {
-				switch (LT(1)) {
-					case Token.t_virtual:
-						consume();
-						break;
-					case Token.t_public:
-						consume();
-						break;
-					case Token.t_protected:
-						consume();
-						break;
-					case Token.t_private:
-						consume();
-						break;
-					case Token.tCOLONCOLON:
-					case Token.tIDENTIFIER:
-						// TO DO: handle nested names and template ids
-						consume();
-						break;
-					case Token.tCOMMA:
-						continue baseSpecifierLoop;
-					default:
-						break baseSpecifierLoop;
-				}
-			}
+			baseSpecifier( classSpec );
 		}
 		
 		// If we don't get a "{", assume elaborated type
@@ -527,14 +501,44 @@ c, quick);
 						consume(Token.tRBRACE);
 						break memberDeclarationLoop;
 					default:
-						declaration();
+						declaration(classSpec);
 				}
 			}
 			// consume the }
 			consume();
 		}
 		
-		callback.classSpecifierEnd();
+		callback.classSpecifierEnd(classSpec);
+	}
+
+	public void baseSpecifier( Object classSpecOwner ) {
+		baseSpecifierLoop:
+		for (;;) {
+			switch (LT(1)) {
+				case Token.t_virtual:
+					consume();
+					break;
+				case Token.t_public:
+					consume();
+					break;
+				case Token.t_protected:
+					consume();
+					break;
+				case Token.t_private:
+					consume();
+					break;
+				case Token.tCOLONCOLON:
+				case Token.tIDENTIFIER:
+					// TO DO: handle nested names and template ids
+					consume();
+					break;
+				case Token.tCOMMA:
+					
+					continue baseSpecifierLoop;
+				default:
+					break baseSpecifierLoop;
+			}
+		}
 	}
 	
 	public void functionBody() throws Exception {
@@ -628,7 +632,7 @@ c, quick);
 				while (LT(1) == Token.t_catch) {
 					consume();
 					consume(Token.tLPAREN);
-					declaration(); // was exceptionDeclaration
+					declaration(null); // was exceptionDeclaration
 					consume(Token.tRPAREN);
 					compoundStatement();
 				}
@@ -657,7 +661,7 @@ c, quick);
 				}
 				
 				// declarationStatement
-				declaration();
+				declaration(null);
 		}
 	}
 	

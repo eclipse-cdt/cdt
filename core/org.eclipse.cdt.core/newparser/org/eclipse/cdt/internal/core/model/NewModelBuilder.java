@@ -31,18 +31,21 @@ public class NewModelBuilder extends NullParserCallback {
 		currentElement = tu;
 	}
 	
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginTranslationUnit()
+	 */
+	public Object translationUnitBegin() {
+		return translationUnit;
+	}
+
+	
+	
 	private Token classKey;
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginClass(String, String)
 	 */
-	public void classSpecifierBegin(Token classKey) {
-		this.classKey = classKey;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classSpecifierName()
-	 */
-	public void classSpecifierName() {
+	public Object classSpecifierBegin(Object container, Token classKey) {
+		
 		int kind;
 		switch (classKey.getType()) {
 			case Token.t_class:
@@ -54,32 +57,43 @@ public class NewModelBuilder extends NullParserCallback {
 			default:
 				kind = ICElement.C_UNION;
 		}
+		this.classKey = classKey;
+		
+		Structure elem = new Structure( translationUnit, kind, null );  
+		currentElement.addChild(elem);
+		return elem; 
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classSpecifierName() 
+	 */
+	public void classSpecifierName(Object classSpecifier) {
 
 		String name = nameEndToken.getImage();
-		
-		Structure elem = new Structure(translationUnit, kind, name);
-		
-		currentElement.addChild(elem);
+		Structure elem = ((Structure)classSpecifier);
+		elem.setElementName( name );
 		elem.setIdPos(nameEndToken.getOffset() - 2, nameEndToken.getImage().length());
 		elem.setPos(nameEndToken.getOffset(), nameEndToken.getImage().length());
 		currentElement = elem;
+
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endClass()
 	 */
-	public void classSpecifierEnd() {
+	public void classSpecifierEnd(Object classSpecifier) {
 		currentElement = (CElement)currentElement.getParent();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginDeclarator()
 	 */
-	public void declaratorBegin() {
+	public Object declaratorBegin(Object container) {
 		if (!inArguments) {
 			declaratorId = null;
 			isFunction = false;
 		}
+		return null; 
 	}
 
 	/**
@@ -133,7 +147,7 @@ public class NewModelBuilder extends NullParserCallback {
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endDeclarator()
 	 */
-	public void declaratorEnd() {
+	public void declaratorEnd( Object declarator) {
 		elem = null;
 		
 		if (isFunction) {
@@ -178,9 +192,10 @@ public class NewModelBuilder extends NullParserCallback {
 	 * @see 
 org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(Token)
 	 */
-	public void simpleDeclarationBegin(Token firstToken) {
+	public Object simpleDeclarationBegin(Object Container, Token firstToken) {
 		if (inclusionDepth == 0)
 			startPos = firstToken.getOffset();
+		return null; 
 	}
 
 	/**

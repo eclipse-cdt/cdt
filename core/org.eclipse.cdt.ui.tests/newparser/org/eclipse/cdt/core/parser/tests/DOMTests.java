@@ -4,6 +4,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 
+import org.eclipse.cdt.internal.core.dom.BaseSpecifier;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
 import org.eclipse.cdt.internal.core.dom.Declarator;
@@ -123,5 +124,67 @@ public class DOMTests extends TestCase {
 		Name name = declarator.getName();
 		assertEquals("x", name.getName());
 	}
-	
+	/**
+	 * Test code: class A { public: int x; };
+	 * Purpose: tests a declaration in a class scope.
+	 */
+	public void testSimpleClassMembers() throws Exception {
+		// Parse and get the translaton unit
+		Writer code = new StringWriter();
+		code.write("class A : public B { public: int x, y; float a,b,c; };");
+		TranslationUnit translationUnit = parse(code.toString());
+		
+		// Get the declaration
+		List declarations = translationUnit.getDeclarations();
+		assertEquals(1, declarations.size());
+		SimpleDeclaration declaration = (SimpleDeclaration)declarations.get(0);
+
+		// Make sure there is no declarator
+		assertEquals(0, declaration.getDeclarators().size());
+
+		// Make sure it's a type specifier
+		assertEquals(0, declaration.getDeclSpecifierSeq());
+		
+		// Get the class specifier and check its name
+		ClassSpecifier classSpecifier = (ClassSpecifier)declaration.getTypeSpecifier();
+		Name className = classSpecifier.getName();
+		assertEquals("A", className.getName());
+		
+//		List baseClasses = classSpecifier.getBaseSpecifiers();
+//		assertEquals( 1, baseClasses.size() );
+//		BaseSpecifier bs = (BaseSpecifier)baseClasses.get( 0 ); 
+//		assertEquals( bs.getName(), "B" ); 
+		
+		// Get the member declaration
+		declarations = classSpecifier.getDeclarations();
+		assertEquals(2, declarations.size());
+		declaration = (SimpleDeclaration)declarations.get(0);
+		
+		// Make sure it's an int
+		assertEquals(SimpleDeclaration.t_int, declaration.getDeclSpecifierSeq());
+		
+		// Get the declarator and check it's name
+		List declarators = declaration.getDeclarators();
+		assertEquals(2, declarators.size());
+		Declarator declarator = (Declarator)declarators.get(0);
+		Name name = declarator.getName();
+		assertEquals("x", name.getName());
+		declarator = (Declarator)declarators.get(1); 
+		name = declarator.getName();
+		assertEquals("y", name.getName());
+		
+		declaration = (SimpleDeclaration)declarations.get(1); 
+		// Make sure it's an float
+		assertEquals(SimpleDeclaration.t_float, declaration.getDeclSpecifierSeq());
+		declarators = declaration.getDeclarators(); 
+		assertEquals( 3, declarators.size() );
+		name  = ((Declarator)declarators.get(0)).getName(); 
+		assertEquals( "a", name.getName() );
+		name  = ((Declarator)declarators.get(1)).getName();
+		assertEquals( "b", name.getName() );
+		name  = ((Declarator)declarators.get(2)).getName();		
+		assertEquals( "c", name.getName() );
+		
+	}	
 }
+

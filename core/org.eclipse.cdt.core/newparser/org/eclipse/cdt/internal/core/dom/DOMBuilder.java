@@ -1,6 +1,5 @@
 package org.eclipse.cdt.internal.core.dom;
 
-import java.util.Stack;
 
 import org.eclipse.cdt.core.dom.IScope;
 import org.eclipse.cdt.internal.core.newparser.IParserCallback;
@@ -17,8 +16,6 @@ public class DOMBuilder implements IParserCallback {
 		return translationUnit;
 	}
 
-	private Stack stack = new Stack();
-
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#argumentsBegin()
 	 */
@@ -34,8 +31,8 @@ public class DOMBuilder implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classBegin(java.lang.String, org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void classSpecifierBegin(Token classKey) {
-		SimpleDeclaration decl = (SimpleDeclaration)stack.peek();
+	public Object classSpecifierBegin(Object container, Token classKey) {
+		SimpleDeclaration decl = (SimpleDeclaration)container;
 		
 		int kind = ClassSpecifier.t_struct;
 		
@@ -53,52 +50,50 @@ public class DOMBuilder implements IParserCallback {
 		
 		ClassSpecifier classSpecifier = new ClassSpecifier(kind, decl);
 		decl.setTypeSpecifier(classSpecifier);
-		stack.push(classSpecifier);
+		return classSpecifier;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classSpecifierName()
 	 */
-	public void classSpecifierName() {
-		((ClassSpecifier)stack.peek()).setName(currName);
+	public void classSpecifierName(Object classSpecifier) {
+		((ClassSpecifier)classSpecifier).setName(currName);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classEnd()
 	 */
-	public void classSpecifierEnd() {
-		stack.pop();
+	public void classSpecifierEnd(Object classSpecifier) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorBegin()
 	 */
-	public void declaratorBegin() {
-		SimpleDeclaration decl = (SimpleDeclaration)stack.peek();
+	public Object declaratorBegin(Object container) {
+		SimpleDeclaration decl = (SimpleDeclaration)container; 
 		Declarator declarator = new Declarator(decl);
 		decl.addDeclarator(declarator);
-		stack.push(declarator);
+		return declarator; 
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorEnd()
 	 */
-	public void declaratorEnd() {
-		stack.pop();
+	public void declaratorEnd(Object declarator) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorId(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void declaratorId() {
-		((Declarator)stack.peek()).setName(currName);
+	public void declaratorId(Object declarator) {
+		((Declarator)declarator).setName(currName);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declSpecifier(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void simpleDeclSpecifier(Token specifier) {
-		SimpleDeclaration decl = (SimpleDeclaration)stack.peek();
+	public void simpleDeclSpecifier(Object Container, Token specifier) {
+		SimpleDeclaration decl = (SimpleDeclaration)Container;
 		
 		switch (specifier.getType()) {
 			case Token.t_auto:
@@ -218,32 +213,30 @@ public class DOMBuilder implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationBegin(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void simpleDeclarationBegin(Token firstToken) {
+	public Object simpleDeclarationBegin(Object container, Token firstToken) {
 		SimpleDeclaration decl = new SimpleDeclaration();
-		((IScope)stack.peek()).addDeclaration(decl);
-		stack.push(decl);
+		((IScope)container).addDeclaration(decl);
+		return decl;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationEnd(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void simpleDeclarationEnd() {
-		stack.pop();
+	public void simpleDeclarationEnd(Object declaration) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#translationUnitBegin()
 	 */
-	public void translationUnitBegin() {
+	public Object translationUnitBegin() {
 		translationUnit = new TranslationUnit();
-		stack.push(translationUnit);
+		return translationUnit; 
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#translationUnitEnd()
 	 */
-	public void translationUnitEnd() {
-		stack.pop();
+	public void translationUnitEnd(Object unit) {
 	}
 
 	private Name currName;
@@ -262,4 +255,36 @@ public class DOMBuilder implements IParserCallback {
 		currName.setEnd(lastToken);
 	}
 
+	public Object baseSpecifierBegin( Object classSpecifier, Token visibility )
+	{
+		ClassSpecifier cs =(ClassSpecifier)classSpecifier;
+		BaseSpecifier baseSpec = new BaseSpecifier( cs );
+
+		int access = BaseSpecifier.t_public;  
+		switch( visibility.type )
+		{
+		case Token.t_public:
+			access = BaseSpecifier.t_public; 
+			break; 
+		case Token.t_protected:
+			access = BaseSpecifier.t_protected;		 
+		case Token.t_private:
+			access = BaseSpecifier.t_private; 		
+		default: 
+			break;
+		}
+	
+		baseSpec.setAccess(access);  
+		return baseSpec; 
+	}
+
+	public void baseSpecifierEnd( Object baseSpecifier  )
+	{
+		
+	}
+	
+	public void baseSpecifierName( Object baseSpecifier )
+	{
+		((BaseSpecifier)baseSpecifier).setName(currName.getName());		
+	}
 }

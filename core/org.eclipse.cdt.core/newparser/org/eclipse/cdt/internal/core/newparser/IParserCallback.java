@@ -12,34 +12,37 @@ package org.eclipse.cdt.internal.core.newparser;
 
 public interface IParserCallback {
 
-	public void translationUnitBegin();
-	public void translationUnitEnd();
+	public Object translationUnitBegin();
+	public void translationUnitEnd(Object unit);
 	
 	public void inclusionBegin(String includeFile);
 	public void inclusionEnd();
-	
 	public void macro(String macroName);
 	
-	public void simpleDeclarationBegin(Token firstToken);
-	public void simpleDeclarationEnd();
+	public Object simpleDeclarationBegin(Object Container, Token firstToken);
+	public void simpleDeclarationEnd(Object declaration);
 	
-	public void simpleDeclSpecifier(Token specifier);
+	public void simpleDeclSpecifier(Object Container, Token specifier);
 	
 	public void nameBegin(Token firstToken);
 	public void nameEnd(Token lastToken);
 	
-	public void declaratorBegin();
-	public void declaratorId();
+	public Object declaratorBegin(Object container);
+	public void declaratorId(Object declarator);
 	public void argumentsBegin();
 	public void argumentsEnd();
-	public void declaratorEnd();
+	public void declaratorEnd(Object declarator);
 	
 	public void functionBodyBegin();
 	public void functionBodyEnd();
 	
-	public void classSpecifierBegin(Token classKey);
-	public void classSpecifierName();
-	public void classSpecifierEnd();
+	public Object classSpecifierBegin(Object container, Token classKey);
+	public void classSpecifierName(Object classSpecifier);
+	public void classSpecifierEnd(Object classSpecifier);
+	
+	public Object	baseSpecifierBegin( Object containingClassSpec, Token visibility );
+	public void	baseSpecifierName( Object baseSpecifier );
+	public void  	baseSpecifierEnd( Object baseSpecifier );
 	
 	public void expressionOperator(Token operator) throws Exception;
 	public void expressionTerminal(Token terminal) throws Exception;

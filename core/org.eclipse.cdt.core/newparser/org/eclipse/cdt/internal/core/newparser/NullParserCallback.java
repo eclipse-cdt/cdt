@@ -10,13 +10,15 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginClass(String, Token)
 	 */
-	public void classSpecifierBegin(Token classKey) {
+	public Object classSpecifierBegin(Object container, Token classKey) {
+		return null; 
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginDeclarator()
 	 */
-	public void declaratorBegin() {
+	public Object declaratorBegin(Object container) {
+		return null; 
 	}
 
 	/**
@@ -34,25 +36,27 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(Token)
 	 */
-	public void simpleDeclarationBegin(Token firstToken) {
+	public Object simpleDeclarationBegin(Object Container, Token firstToken) {
+		return null; 
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#beginTranslationUnit()
 	 */
-	public void translationUnitBegin() {
+	public Object translationUnitBegin() {
+		return null; 
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declaratorId(Token)
 	 */
-	public void declaratorId() {
+	public void declaratorId(Object declarator) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#declSpecifier(Token)
 	 */
-	public void simpleDeclSpecifier(Token specifier) {
+	public void simpleDeclSpecifier(Object Container, Token specifier) {
 	}
 
 	/**
@@ -64,13 +68,13 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endClass()
 	 */
-	public void classSpecifierEnd() {
+	public void classSpecifierEnd(Object classSpecifier) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endDeclarator()
 	 */
-	public void declaratorEnd() {
+	public void declaratorEnd(Object declarator) { 
 	}
 
 	/**
@@ -88,13 +92,13 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endSimpleDeclaration(Token)
 	 */
-	public void simpleDeclarationEnd() {
+	public void simpleDeclarationEnd(Object declaration) {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#endTranslationUnit()
 	 */
-	public void translationUnitEnd() {
+	public void translationUnitEnd(Object unit) {
 	}
 
 	/**
@@ -130,7 +134,19 @@ public class NullParserCallback implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classSpecifierName()
 	 */
-	public void classSpecifierName() {
+	public void classSpecifierName(Object classSpecifier) {
+	}
+	
+	public Object baseSpecifierBegin( Object classSpecifier, Token visibility )
+	{
+		return null; 
 	}
 
+	public void baseSpecifierEnd( Object x )
+	{
+	}
+	
+	public void baseSpecifierName( Object baseSpecifier )
+	{
+	}
 }

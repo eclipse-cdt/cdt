@@ -8,6 +8,8 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.text.rules.ICharacterScanner;
+import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.IWordDetector;
@@ -51,6 +53,37 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 			return (c == '*' || c == '/');
 		}
 	};
+	
+	/**
+	 * Word rule for empty comments.
+	 */
+	static class EmptyCommentRule extends WordRule implements IPredicateRule {
+		
+		private IToken fSuccessToken;
+		/**
+		 * Constructor for EmptyCommentRule.
+		 * @param defaultToken
+		 */
+		public EmptyCommentRule(IToken successToken) {
+			super(new EmptyCommentDetector());
+			fSuccessToken= successToken;
+			addWord("/**/", fSuccessToken); //$NON-NLS-1$
+		}
+		
+		/*
+		 * @see IPredicateRule#evaluate(ICharacterScanner, boolean)
+		 */
+		public IToken evaluate(ICharacterScanner scanner, boolean resume) {
+			return evaluate(scanner);
+		}
+
+		/*
+		 * @see IPredicateRule#getSuccessToken()
+		 */
+		public IToken getSuccessToken() {
+			return fSuccessToken;
+		}
+	};
 
 
 	/**
@@ -76,11 +109,8 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 		// Add rule for strings and character constants.
 		//rules.add(new SingleLineRule("\"", "\"", Token.UNDEFINED, '\\'));
 		//rules.add(new SingleLineRule("'", "'", Token.UNDEFINED, '\\'));
-
-
-		// Add special case word rule.
-		WordRule wordRule= new WordRule(new EmptyCommentDetector());
-		wordRule.addWord("/**/", comment);
+		
+		EmptyCommentRule wordRule= new EmptyCommentRule(comment);
 		rules.add(wordRule);
 
 
@@ -88,8 +118,8 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 		rules.add(new MultiLineRule("/*", "*/", comment));
 
 
-		IRule[] result= new IRule[rules.size()];
+		IPredicateRule[] result= new IPredicateRule[rules.size()];
 		rules.toArray(result);
-		setRules(result);
+		setPredicateRules(result);
 	}
 }

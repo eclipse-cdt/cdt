@@ -21,7 +21,7 @@ import org.eclipse.cdt.make.core.makefile.ISilentRule;
 public class SilentRule extends SpecialRule implements ISilentRule {
 
 	public SilentRule(Directive parent, String[] reqs) {
-		super(parent, new Target(".SILENT"), reqs, new Command[0]);
+		super(parent, new Target(".SILENT"), reqs, new Command[0]); //$NON-NLS-1$
 	}
 
 }

@@ -31,7 +31,7 @@ public abstract class SpecialRule extends Rule implements ISpecialRule {
 
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(target).append(":");
+		sb.append(target).append(':');
 		String[] reqs = getPrerequisites();
 		for (int i = 0; i < reqs.length; i++) {
 			sb.append(' ').append(reqs[i]);

@@ -16,7 +16,7 @@ import org.eclipse.cdt.make.core.makefile.IEmptyLine;
 public class EmptyLine extends Directive implements IEmptyLine {
 
 	final public static char NL = '\n';
-	final public static String NL_STRING = "\n";
+	final public static String NL_STRING = "\n"; //$NON-NLS-1$
 
 	public EmptyLine(Directive parent) {
 		super(parent);

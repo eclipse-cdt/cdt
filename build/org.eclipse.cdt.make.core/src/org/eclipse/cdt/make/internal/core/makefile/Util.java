@@ -19,11 +19,11 @@ public class Util {
 	}
 
 	public static boolean isCommand(String line) {
-		return line.length() > 1 && line.startsWith("\t");
+		return line.length() > 1 && line.startsWith("\t"); //$NON-NLS-1$
 	}
 
 	public static boolean isEscapedLine(String line) {
-		return (line.endsWith("\\") && !line.endsWith("\\\\"));
+		return (line.endsWith("\\") && !line.endsWith("\\\\")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public static boolean isEmptyLine(String line) {

@@ -34,7 +34,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	}
 
 	public void setName(String n) {
-		name = (n == null) ? "" : n.trim() ;
+		name = (n == null) ? "" : n.trim() ; //$NON-NLS-1$
 	}
 
 	public StringBuffer getValue() {
@@ -46,7 +46,7 @@ public class MacroDefinition extends Directive implements IMacroDefinition {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(getName()).append(" = ").append(getValue()).append('\n');
+		buffer.append(getName()).append(" = ").append(getValue()).append('\n'); //$NON-NLS-1$
 		return buffer.toString();
 	}
 

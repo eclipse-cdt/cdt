@@ -31,7 +31,7 @@ public class InferenceRule extends Rule {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(getTarget().toString()).append(":\n");
+		buffer.append(getTarget().toString()).append(":\n"); //$NON-NLS-1$
 		ICommand[] cmds = getCommands();
 		for (int i = 0; i < cmds.length; i++) {
 			buffer.append(cmds[i].toString());

@@ -19,10 +19,8 @@ import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -74,9 +72,6 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		noDefaultAndApplyButton();
 	}
 
-	/**
-	 * @see PreferencePage#performOk
-	 */
 	public boolean performOk() {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
@@ -104,9 +99,6 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 		return null;
 	}
 
-	/**
-	 * @see DialogPage#setVisible(boolean)
-	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		fOptionBlock.setVisible(visible);

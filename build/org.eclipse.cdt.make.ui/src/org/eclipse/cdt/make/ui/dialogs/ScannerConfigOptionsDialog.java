@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -221,8 +222,7 @@ public class ScannerConfigOptionsDialog extends Dialog {
 	 * Fills console parser maps
 	 */
 	private void retrieveSIConsoleParsers() {
-		IExtensionPoint ep = MakeCorePlugin.getDefault().getDescriptor().
-			getExtensionPoint(MakeCorePlugin.SI_CONSOLE_PARSER_SIMPLE_ID);
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.SI_CONSOLE_PARSER_SIMPLE_ID);
 		if (ep != null) {
 			IExtension[] extensions = ep.getExtensions();
 			for (int i = 0; i < extensions.length; ++i) {
@@ -276,13 +276,6 @@ public class ScannerConfigOptionsDialog extends Dialog {
 		enableAllControls();
 		
 		return composite;
-	}
-
-	/**
-	 * 
-	 */
-	private void storeCurrentValues() {
-		
 	}
 
 	private void createBuildOutputParserControls(Composite parent) {

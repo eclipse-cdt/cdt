@@ -207,7 +207,9 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 		}
 
 		private void scanToBeginOfLine(ICharacterScanner scanner) {
-			for (; scanner.getColumn() != 0; scanner.unread());
+			while(scanner.getColumn() != 0) {
+				scanner.unread();
+			}
 		}
 
 		private boolean sequenceDetected(ICharacterScanner scanner, char[] sequence) {

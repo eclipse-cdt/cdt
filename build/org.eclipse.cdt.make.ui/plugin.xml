@@ -23,7 +23,7 @@
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.make.core"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
 
@@ -468,4 +468,8 @@
             class="org.eclipse.cdt.make.ui.dialogs.DiscoveredPathContainerPage"
             name="%DiscoveredScannerInfoContainer.name"
             id="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.make.internal.ui.MakeUIPreferenceInitializer"/>
    </extension></plugin>

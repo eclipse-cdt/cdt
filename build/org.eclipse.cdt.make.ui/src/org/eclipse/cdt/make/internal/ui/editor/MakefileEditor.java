@@ -13,7 +13,6 @@ package org.eclipse.cdt.make.internal.ui.editor;
 import java.util.ResourceBundle;
 
 import org.eclipse.cdt.make.core.makefile.IDirective;
-import org.eclipse.cdt.make.core.makefile.IMakefile;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.text.MakefileColorManager;
 import org.eclipse.cdt.make.internal.ui.text.makefile.MakefileWordDetector;
@@ -31,10 +30,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
@@ -47,7 +49,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 * The page that shows the outline.
 	 */
 	protected MakefileContentOutlinePage page;
-	private IMakefile makefile;
 	private FindReplaceDocumentAdapter fFindReplaceDocumentAdapter;
 
 	public MakefileContentOutlinePage getOutlinePage() {
@@ -91,7 +92,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
-		makefile = null;
 		if (page != null) {
 			page.update();
 		}

@@ -7,21 +7,19 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.make.internal.ui.editor.IMakefileDocumentProvider;
 import org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentProvider;
 import org.eclipse.cdt.make.internal.ui.editor.WorkingCopyManager;
-import org.eclipse.cdt.make.internal.ui.preferences.MakeTargetsPreferencePage;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -38,8 +36,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The constructor.
 	 */
-	public MakeUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public MakeUIPlugin() {
 		plugin = this;
 		try {
 			resourceBundle = ResourceBundle.getBundle("org.eclipse.cdt.make.internal.ui.MakeResources"); //$NON-NLS-1$
@@ -59,7 +56,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 	 * Returns the Uniqu idenetifier for this plugin.
 	 */
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
  
 	/**
@@ -125,7 +122,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 			// match the plugin id defined in plugin.xml
 			return "org.eclipse.cdt.make.ui"; //$NON-NLS-1$
 		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return getDefault().getBundle().getSymbolicName();
 	}
 
 	public static void log(IStatus status) {
@@ -234,15 +231,15 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 		return fWorkingCopyManager;
 	}
 
-	public void shutdown() throws CoreException {
-		super.shutdown();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
 		if (fWorkingCopyManager != null) {
-				fWorkingCopyManager.shutdown();
-				fWorkingCopyManager= null;
-		}
-        }
-
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
-		MakeTargetsPreferencePage.initDefaults(store);
+			fWorkingCopyManager.shutdown();
+			fWorkingCopyManager= null;
+	}
+		super.stop(context);
 	}
 }

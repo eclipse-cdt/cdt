@@ -28,7 +28,7 @@ public class MakeUIImages {
 	private static URL fgIconBaseURL;
 	static {
 		try {
-			fgIconBaseURL = new URL(MakeUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/"); //$NON-NLS-1$
+			fgIconBaseURL = new URL(MakeUIPlugin.getDefault().getBundle().getEntry("/"), "icons/"); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (MalformedURLException e) {
 			MakeUIPlugin.log(e);
 		}

@@ -21,8 +21,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -92,7 +90,6 @@ public class OpenDeclarationAction extends TextEditorAction {
 			if (p != null) {
 				IEditorPart editorPart = IDE.openEditor(p, file, true);
 				if (editorPart instanceof MakefileEditor) {
-					IStructuredSelection selection = new StructuredSelection(directive);
 					((MakefileEditor)editorPart).setSelection(directive, true);
 				}
 				return editorPart;

@@ -10,11 +10,7 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
-import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
@@ -617,35 +613,6 @@ public class Target  implements ICDITarget {
 
 	public boolean isRunning() {
 		return session.getMISession().getMIInferior().isRunning();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getRegisterObjects()
-	 */
-	public ICDIRegisterObject[] getRegisterObjects() throws CDIException {
-		ICDIRegisterManager mgr = session.getRegisterManager();
-		return mgr.getRegisterObjects();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getRegisters(ICDIRegisterObject[])
-	*/
-	public ICDIRegister[] getRegisters(ICDIRegisterObject[] regs) throws CDIException {
-		ICDIRegister[] registers = null;
-		ICDIRegisterManager mgr = session.getRegisterManager();
-		registers = new ICDIRegister[regs.length];
-		for (int i = 0; i < registers.length; i++) {
-				registers[i] = mgr.createRegister(regs[i]);
-		}
-		return registers;
-	}
-
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getSharedLibraries()
-	 */
-	public ICDISharedLibrary[] getSharedLibraries() throws CDIException {
-		return new ICDISharedLibrary[0];
 	}
 
 	/**

@@ -663,7 +663,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean canDisconnect()
 	{
-		return supportsDisconnect() && !isDisconnected();
+		return supportsDisconnect() && !isDisconnected() && isSuspended();
 	}
 
 	/* (non-Javadoc)
@@ -685,7 +685,6 @@ public class CDebugTarget extends CDebugElement
 		try
 		{
 			getCDITarget().disconnect();
-			disconnected();
 		}
 		catch( CDIException e )
 		{
@@ -1005,6 +1004,14 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !isDisconnected() )
 		{
+			try
+			{
+				getCDISession().terminate();
+			}
+			catch( CDIException e )
+			{
+				logError( e );
+			}
 			setDisconnected( true );
 			cleanup();
 			fireTerminateEvent();
@@ -1373,18 +1380,6 @@ public class CDebugTarget extends CDebugElement
 	{
 		setCurrentStateId( IState.DISCONNECTED );
 		setCurrentStateInfo( null );
-		IProcess process = getProcess();
-		if ( process != null )
-		{
-			try
-			{
-				process.terminate();
-			}
-			catch( DebugException e )
-			{
-				CDebugCorePlugin.log( e.getStatus() );
-			}
-		}
 		disconnected();
 	}
 

@@ -9,8 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.internal.core.dom.parser;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -2058,11 +2056,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
      * @param declarators
      * @return
      */
-    protected int figureEndOffset(IASTDeclSpecifier declSpec, List declarators) {
-        if (declarators.isEmpty())
+    protected int figureEndOffset(IASTDeclSpecifier declSpec, IASTDeclarator [] declarators) {
+        if (declarators.length == 0 )
             return calculateEndOffset(declSpec);
-        return calculateEndOffset((IASTDeclarator) declarators.get(declarators
-                .size() - 1));
+        return calculateEndOffset(declarators[ declarators.length - 1 ] );
     }
 
     /**

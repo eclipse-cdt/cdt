@@ -131,6 +131,7 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
@@ -1860,7 +1861,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
    private final boolean    supportLongLong;
 
    private static final int DEFAULT_PARM_LIST_SIZE              = 4;
-   private static final int DEFAULT_DECLARATOR_LIST_SIZE        = 4;
    private static final int DEFAULT_POINTEROPS_LIST_SIZE        = 4;
    private static final int DEFAULT_SIZE_EXCEPTIONS_LIST        = 2;
    private static final int DEFAULT_CONSTRUCTOR_CHAIN_LIST_SIZE = 4;
@@ -2697,16 +2697,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
       ICPPASTDeclSpecifier declSpec = declSpecifierSeq(false,
             strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR);
-      List declarators = Collections.EMPTY_LIST;
+      IASTDeclarator [] declarators = new IASTDeclarator[2];
       if (LT(1) != IToken.tSEMI && LT(1) != IToken.tEOC) {
-         declarators = new ArrayList(DEFAULT_DECLARATOR_LIST_SIZE);
-         declarators.add(initDeclarator(strategy));
+         declarators = (IASTDeclarator []) ArrayUtil.append( IASTDeclarator.class, declarators,initDeclarator(strategy) );
          while (LT(1) == IToken.tCOMMA) {
             consume(IToken.tCOMMA);
-            declarators.add(initDeclarator(strategy));
+            declarators = (IASTDeclarator []) ArrayUtil.append( IASTDeclarator.class, declarators,initDeclarator(strategy) );
          }
       }
 
+      declarators = (IASTDeclarator[]) ArrayUtil.removeNulls( IASTDeclarator.class, declarators );
+      
       boolean hasFunctionBody = false;
       boolean hasFunctionTryBlock = false;
       boolean consumedSemi = false;
@@ -2756,10 +2757,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       }
 
       if (hasFunctionBody) {
-         if (declarators.size() != 1)
+         if (declarators.length != 1)
             throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
 
-         IASTDeclarator declarator = (IASTDeclarator) declarators.get(0);
+         IASTDeclarator declarator = declarators[0];
          if (!(declarator instanceof IASTStandardFunctionDeclarator))
             throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
 
@@ -2835,8 +2836,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       declSpec.setParent(simpleDeclaration);
       declSpec.setPropertyInParent(IASTSimpleDeclaration.DECL_SPECIFIER);
 
-      for (int i = 0; i < declarators.size(); ++i) {
-         IASTDeclarator declarator = (IASTDeclarator) declarators.get(i);
+      for (int i = 0; i < declarators.length; ++i) {
+         IASTDeclarator declarator = declarators[i];
          simpleDeclaration.addDeclarator(declarator);
          declarator.setParent(simpleDeclaration);
          declarator.setPropertyInParent(IASTSimpleDeclaration.DECLARATOR);

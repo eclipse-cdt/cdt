@@ -14,15 +14,22 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * @author aniefer
@@ -52,9 +59,19 @@ public class CPPImplicitMethod extends CPPMethod {
     }
     
     public IFunctionType getType() {
-        if( type == null ) {
-            type = CPPVisitor.createImplicitFunctionType( returnType, parameters );
-        }
+    	if( type == null ){
+    		IASTDeclaration primary = null;
+			try {
+				primary = getPrimaryDeclaration();
+			} catch (DOMException e) {
+			}
+			if( primary != null ){
+				type = super.getType();
+			} else {
+				type = CPPVisitor.createImplicitFunctionType( returnType, parameters );
+			}
+    	}
+    	
         return type;
     }
 
@@ -122,5 +139,62 @@ public class CPPImplicitMethod extends CPPMethod {
 			    ((CPPParameter)parameters[i]).addDeclaration( name );
 			}
 		}
+	}
+	
+	public IASTDeclaration getPrimaryDeclaration() throws DOMException{
+		//first check if we already know it
+		if( declarations != null ){
+			for( int i = 0; i < declarations.length; i++ ){
+				IASTDeclaration decl = (IASTDeclaration) declarations[i].getParent();
+				if( decl.getParent() instanceof ICPPASTCompositeTypeSpecifier )
+					return decl;
+			}
+		}
+		
+		IFunctionType ftype = CPPVisitor.createImplicitFunctionType( returnType, parameters );
+		IType [] params = ftype.getParameterTypes();
+		
+		ICPPASTCompositeTypeSpecifier compSpec = (ICPPASTCompositeTypeSpecifier) scope.getPhysicalNode();
+		IASTDeclaration [] members = compSpec.getMembers();
+		for( int i = 0; i < members.length; i++ ){
+			IASTDeclarator dtor = null;
+			IASTDeclarator [] ds = null;
+			int di = -1;
+			
+			if( members[i] instanceof IASTSimpleDeclaration ){
+				ds = ((IASTSimpleDeclaration)members[i]).getDeclarators();
+			} else if( members[i] instanceof IASTFunctionDefinition ){
+				dtor = ((IASTFunctionDefinition) members[i]).getDeclarator();
+			}
+			if( ds != null && ds.length > 0 ){
+				di = 0;
+				dtor = ds[0];
+			}
+			
+			while( dtor != null ){
+				IASTName name = dtor.getName();
+				if( dtor instanceof ICPPASTFunctionDeclarator &&
+					CharArrayUtils.equals( name.toCharArray(), implicitName ) )
+				{
+					IFunctionType t = (IFunctionType) CPPVisitor.createType( dtor );
+					IType [] ps = t.getParameterTypes();
+					if( ps.length == params.length ){
+						int idx = 0;
+						for( ; idx < ps.length; idx++ ){
+							if( !ps[idx].equals(params[idx]) )
+								break;
+						}
+						if( idx == ps.length ){
+							((CPPASTName)name).setBinding( this );
+							addDeclaration( (ICPPASTFunctionDeclarator) dtor );
+							return members[i];
+						}
+							
+					}
+				}
+				dtor = ( di > -1 && ++ di < ds.length ) ? ds[di] : null;
+			}
+		}
+		return null;
 	}
 }

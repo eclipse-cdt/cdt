@@ -79,6 +79,7 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -115,9 +116,11 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypenameExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -125,6 +128,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.c.CPointerType;
 
 /**
  * @author aniefer
@@ -1581,7 +1585,36 @@ public class CPPVisitor {
 	        return createType( type, id.getAbstractDeclarator() );
 	    } else if( expression instanceof ICPPASTLiteralExpression ){
 	    	switch( ((ICPPASTLiteralExpression) expression).getKind() ){
-	    		case ICPPASTLiteralExpression.lk_this : break;
+	    		case ICPPASTLiteralExpression.lk_this : {
+	    			IScope scope = getContainingScope( expression );
+	    			try {
+	    				IASTNode node = null;
+	    				while( scope != null ){
+	    					if( scope instanceof ICPPBlockScope ){
+	    						node = ((ICPPBlockScope)scope).getPhysicalNode();
+	    						if( node.getParent() instanceof IASTFunctionDefinition )
+	    							break;
+	    					}
+	    					scope = scope.getParent();
+	    				}
+	    				if( node != null && node.getParent() instanceof IASTFunctionDefinition ){
+	    					IASTFunctionDefinition def = (IASTFunctionDefinition) node.getParent();
+							IASTName fName = def.getDeclarator().getName();
+							IBinding binding = fName.resolveBinding();
+							if( binding != null && binding instanceof ICPPMethod ){
+								ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) def.getDeclarator();
+								ICPPClassScope cScope = (ICPPClassScope) binding.getScope();
+								IType type = cScope.getClassType();
+								if( dtor.isConst() || dtor.isVolatile() )
+									type = new CPPQualifierType(type, dtor.isConst(), dtor.isVolatile() );
+								type = new CPPPointerType( type );
+								return type;
+							}
+	    				}
+	    			} catch (DOMException e) {
+					}
+	    			break;
+	    		}
 	    		case ICPPASTLiteralExpression.lk_true :
 	    		case ICPPASTLiteralExpression.lk_false:
 	    			return new CPPBasicType( ICPPBasicType.t_bool, 0 );
@@ -1612,8 +1645,18 @@ public class CPPVisitor {
 	    }
 	    else if( expression instanceof IASTUnaryExpression )
 	    {
-	       if( ((IASTUnaryExpression)expression).getOperator() == IASTUnaryExpression.op_bracketedPrimary )
-	           return getExpressionType(((IASTUnaryExpression)expression).getOperand() );
+			IType type = getExpressionType(((IASTUnaryExpression)expression).getOperand() );
+			int op = ((IASTUnaryExpression)expression).getOperator(); 
+			if( op == IASTUnaryExpression.op_star && (type instanceof IPointerType || type instanceof IArrayType) ){
+			    try {
+					return ((ITypeContainer)type).getType();
+				} catch (DOMException e) {
+					return e.getProblem();
+				}
+			} else if( op == IASTUnaryExpression.op_amper ){
+			    return new CPointerType( type );
+			}
+			return type;
 	    }
 	    return null;
 	}

@@ -28,8 +28,8 @@ public class CPPImplicitConstructor extends CPPImplicitMethod implements ICPPCon
      * @param name
      * @param params
      */
-    public CPPImplicitConstructor( ICPPClassScope scope, IParameter[] params ) {
-        super( scope, CPPSemantics.EMPTY_NAME_ARRAY, new CPPBasicType( IBasicType.t_unspecified, 0 ), params );
+    public CPPImplicitConstructor( ICPPClassScope scope, char [] name, IParameter[] params ) {
+        super( scope, name, new CPPBasicType( IBasicType.t_unspecified, 0 ), params );
     }
 
     /* (non-Javadoc)

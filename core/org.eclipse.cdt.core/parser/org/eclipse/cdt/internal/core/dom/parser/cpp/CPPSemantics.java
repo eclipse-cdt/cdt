@@ -811,7 +811,10 @@ public class CPPSemantics {
 			declaration = ((IASTForStatement)node).getInitDeclaration();
 		else if( node instanceof IASTParameterDeclaration && !data.typesOnly() ){
 		    IASTParameterDeclaration parameterDeclaration = (IASTParameterDeclaration) node;
-			IASTName declName = parameterDeclaration.getDeclarator().getName();
+		    IASTDeclarator dtor = parameterDeclaration.getDeclarator();
+		    while( dtor.getNestedDeclarator() != null )
+		    	dtor = dtor.getNestedDeclarator();
+			IASTName declName = dtor.getName();
 			if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
 				return declName;
 			}
@@ -825,6 +828,8 @@ public class CPPSemantics {
 				IASTDeclarator [] declarators = simpleDeclaration.getDeclarators();
 				for( int i = 0; i < declarators.length; i++ ){
 					IASTDeclarator declarator = declarators[i];
+					while( declarator.getNestedDeclarator() != null )
+						declarator = declarator.getNestedDeclarator();
 					if( data.considerConstructors() || !CPPVisitor.isConstructor( scope, declarator ) ){
 						IASTName declaratorName = declarator.getName();
 						if( CharArrayUtils.equals( declaratorName.toCharArray(), data.name ) ){
@@ -906,7 +911,10 @@ public class CPPSemantics {
 					for( int i = 0; i < parameters.length; i++ ){
 						IASTParameterDeclaration parameterDeclaration = parameters[i];
 						if( parameterDeclaration == null ) break;
-						declName = parameterDeclaration.getDeclarator().getName();
+						IASTDeclarator dtor = parameterDeclaration.getDeclarator();
+						while( dtor.getNestedDeclarator() != null )
+							dtor = dtor.getNestedDeclarator();
+						declName = dtor.getName();
 						if( CharArrayUtils.equals( declName.toCharArray(), data.name ) ){
 							return declName;
 						}

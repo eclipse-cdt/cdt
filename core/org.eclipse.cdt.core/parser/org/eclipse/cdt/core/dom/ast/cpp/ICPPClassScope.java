@@ -17,5 +17,5 @@ package org.eclipse.cdt.core.dom.ast.cpp;
  * @author aniefer
  */
 public interface ICPPClassScope extends ICPPScope {
-
+	ICPPClassType getClassType();
 }

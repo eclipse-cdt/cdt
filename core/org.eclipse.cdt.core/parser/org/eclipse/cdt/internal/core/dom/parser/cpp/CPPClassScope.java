@@ -61,22 +61,24 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
             return;
         }
         
+        char [] className = compTypeSpec.getName().toCharArray();
+        
         //default constructor: A()
-	    addBinding( new CPPImplicitConstructor( this, IParameter.EMPTY_PARAMETER_ARRAY ) );
+	    addBinding( new CPPImplicitConstructor( this, className, IParameter.EMPTY_PARAMETER_ARRAY ) );
 	    
 	    ICPPClassType clsType = (ICPPClassType) compTypeSpec.getName().resolveBinding();
 
 	    //copy constructor: A( const A & )
 	    IType pType = new CPPReferenceType( new CPPQualifierType( clsType, true, false ) );
 	    IParameter [] ps = new IParameter [] { new CPPParameter( pType ) };
-	    addBinding( new CPPImplicitConstructor( this, ps ) );
+	    addBinding( new CPPImplicitConstructor( this, className, ps ) );
 	    
 	    //copy assignment operator: A& operator = ( const A & ) 
 	    IType refType = new CPPReferenceType( clsType );
 	    addBinding( new CPPImplicitMethod( this, "operator =".toCharArray(), refType, ps ) ); //$NON-NLS-1$
 	    
 	    //destructor: ~A()
-	    char [] dtorName = CharArrayUtils.concat( "~".toCharArray(), compTypeSpec.getName().toCharArray() );  //$NON-NLS-1$
+	    char [] dtorName = CharArrayUtils.concat( "~".toCharArray(), className );  //$NON-NLS-1$
 	    addBinding( new CPPImplicitMethod( this, dtorName, new CPPBasicType( IBasicType.t_unspecified, 0 ), IParameter.EMPTY_PARAMETER_ARRAY ) );
 	}
 	
@@ -191,4 +193,17 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    return true;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope#getClassType()
+	 */
+	public ICPPClassType getClassType() {
+		ICPPASTCompositeTypeSpecifier compSpec;
+		try {
+			compSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+		} catch (DOMException e) {
+			return null;
+		}
+		return (ICPPClassType) compSpec.getName().resolveBinding();
+		
+	}
 }

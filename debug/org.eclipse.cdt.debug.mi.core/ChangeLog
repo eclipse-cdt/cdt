@@ -1,3 +1,8 @@
+2003-01-10 Alain Magloire
+
+	* src/.../mi/core/cdi/model/CTarget.java (runUntil): Address breakpoint
+	needs a "*" prefix.
+
 2003-01-09 Alain Magloire
 
 	* src/.../mi/core/cdi/BreakpointManager.java (hasBreakpointChanged):

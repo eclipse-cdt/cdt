@@ -121,4 +121,9 @@ public interface ICDIBreakpointManager extends ICDISessionObject
 	 */
 	ICDILocation createLocation(String file, String function, int line);
 
+	/**
+	 * Returns a ICDILocation
+	 */
+	ICDILocation createLocation(long address);
+
 }

@@ -95,6 +95,7 @@ public class CPPASTQualifiedName extends CPPASTNode implements ICPPASTQualifiedN
     private int currentIndex = 0;    
     private IASTName [] names = null;
     private static final int DEFAULT_NAMES_LIST_SIZE = 4;
+   private boolean value;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#getNames()
@@ -137,6 +138,20 @@ public class CPPASTQualifiedName extends CPPASTNode implements ICPPASTQualifiedN
         }
         return nameArray;    
     }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#isFullyQualified()
+    */
+   public boolean isFullyQualified() {
+      return value;
+   }
+
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName#setFullyQualified(boolean)
+    */
+   public void setFullyQualified(boolean value) {
+      this.value = value;
+   }
     
     
 }

@@ -21,4 +21,7 @@ public interface ICPPASTQualifiedName extends IASTName {
     public static final ASTNodeProperty SEGMENT_NAME = new ASTNodeProperty( "Segment"); //$NON-NLS-1$
     public void addName( IASTName name );
     public IASTName [] getNames();
+    
+    public boolean isFullyQualified();
+    public void setFullyQualified( boolean value ); 
 }

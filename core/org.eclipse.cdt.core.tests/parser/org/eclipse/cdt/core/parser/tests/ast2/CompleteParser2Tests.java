@@ -498,7 +498,7 @@ public class CompleteParser2Tests extends TestCase {
         CPPNameCollector col = new CPPNameCollector();
  		CPPVisitor.visitTranslationUnit( tu, col );
  		
- 		assertEquals( col.size(), 13 );
+ 		assertEquals( col.size(), 12 );
  		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
  		IFunction foo = (IFunction) col.getName(1).resolveBinding();
  		ICPPClassType A = (ICPPClassType) col.getName(3).resolveBinding();
@@ -1682,13 +1682,13 @@ public class CompleteParser2Tests extends TestCase {
 		CPPNameCollector col = new CPPNameCollector();
 		CPPVisitor.visitTranslationUnit( tu, col );
 
-		assertEquals( col.size(), 11 );
+		assertEquals( col.size(), 10 );
 		
 		ICPPClassType s = (ICPPClassType) col.getName(0).resolveBinding();
 		ICPPClassType s2 = (ICPPClassType) col.getName(3).resolveBinding();
 		
 		ICPPClassType ref1 = (ICPPClassType) col.getName(5).resolveBinding();
-		ICPPClassType ref2 = (ICPPClassType) col.getName( 9 ).resolveBinding();
+		ICPPClassType ref2 = (ICPPClassType) col.getName( 8 ).resolveBinding();
 		
 		assertSame( s, ref2 );
 		assertSame( s2, ref1 );

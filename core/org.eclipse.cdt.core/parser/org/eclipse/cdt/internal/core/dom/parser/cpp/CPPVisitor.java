@@ -519,6 +519,10 @@ public class CPPVisitor {
 						return ((ICPPNamespace)binding).getNamespaceScope();
 					}
 				}
+				else if( ((ICPPASTQualifiedName)parent).isFullyQualified() )
+				{
+				   return parent.getTranslationUnit().getScope();
+				}
 			} else if( parent instanceof ICPPASTFieldReference ){
 				IASTExpression owner = ((ICPPASTFieldReference)parent).getFieldOwner();
 				IType type = CPPSemantics.getUltimateType( getExpressionType( owner ) );

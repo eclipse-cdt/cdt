@@ -79,7 +79,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
-import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.ObjectMap;
@@ -316,17 +315,20 @@ public class CPPSemantics {
 		}
 	}
 	static protected IBinding resolveBinding( IASTName name ){
-	    if( name.toCharArray().length == 2 && CharArrayUtils.equals( name.toCharArray(), Keywords.cpCOLONCOLON ) ){
-	    	IASTNode node = name.getParent();
-	    	if( node instanceof ICPPASTQualifiedName ){
-	    		ICPPASTQualifiedName qname = (ICPPASTQualifiedName) node;
-	    		if( qname.getNames()[0] == name ){
-	    			//translation unit
-	    			return ((ICPPASTTranslationUnit)node.getTranslationUnit()).resolveBinding();
-	    		}
-	    	}
-	    	return null;	    	
-	    }
+	    if( name instanceof ICPPASTQualifiedName && ((ICPPASTQualifiedName)name).isFullyQualified() ) 
+	       return ((ICPPASTTranslationUnit)name.getTranslationUnit()).resolveBinding();
+	       
+//	    if( name.toCharArray().length == 2 && CharArrayUtils.equals( name.toCharArray(), Keywords.cpCOLONCOLON ) ){	       
+//	    	IASTNode node = name.getParent();
+//	    	if( node instanceof ICPPASTQualifiedName ){
+//	    		ICPPASTQualifiedName qname = (ICPPASTQualifiedName) node;
+//	    		if( qname.getNames()[0] == name ){
+//	    			//translation unit
+//	    			return ((ICPPASTTranslationUnit)node.getTranslationUnit()).resolveBinding();
+//	    		}
+//	    	}
+//	    	return null;	    	
+//	    }
 
 		//1: get some context info off of the name to figure out what kind of lookup we want
 		LookupData data = createLookupData( name );

@@ -2487,11 +2487,21 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       result.setOffsetAndLength(duple.getStartOffset(), duple.getEndOffset()
             - duple.getStartOffset());
       ITokenDuple[] segments = duple.getSegments();
-      for (int i = 0; i < segments.length; ++i) {
+      int startingValue = 0;
+      if(   segments.length > 0 && 
+            segments[0] instanceof IToken && 
+            ((IToken)segments[0]).getType() == IToken.tCOLONCOLON )
+      {
+         ++startingValue;
+         result.setFullyQualified(true);
+      }
+      for (int i = startingValue; i < segments.length; ++i) {
          IASTName subName = null;
          // take each name and add it to the result
          if (segments[i] instanceof IToken)
+         {
             subName = createName((IToken) segments[i]);
+         }
          else if (segments[i].getTemplateIdArgLists() == null)
             subName = createName(segments[i]);
          else
@@ -2503,7 +2513,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                segments[i].getEndOffset() - segments[i].getStartOffset());
          result.addName(subName);
       }
-
       return result;
    }
 

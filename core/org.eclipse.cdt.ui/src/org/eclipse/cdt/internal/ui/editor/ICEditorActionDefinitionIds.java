@@ -130,4 +130,13 @@ public interface ICEditorActionDefinitionIds extends ITextEditorActionDefinition
      * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.prev.memeber"</code>)
      */
     public static final String GOTO_PREVIOUS_MEMBER = "org.eclipse.cdt.ui.edit.text.c.goto.prev.member"; //$NON-NLS-1$
+
+	/**
+	 * Action definition ID of the edit -> go to matching bracket action
+	 * (value <code>"org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"</code>).
+	 *
+	 * @since 3.0
+	 */
+	public static final String GOTO_MATCHING_BRACKET= "org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"; //$NON-NLS-1$
+
 }

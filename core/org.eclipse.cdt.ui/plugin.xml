@@ -1025,6 +1025,19 @@
             command="org.eclipse.cdt.ui.edit.text.c.goto.prev.member"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+
+      <command
+            name="%ActionDefinition.gotoMatchingBracket.name"
+            description="%ActionDefinition.gotoMatchingBracket.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+P"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.text.c.goto.matching.bracket"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          id="org.eclipse.cdt.ui.CSearchPage"

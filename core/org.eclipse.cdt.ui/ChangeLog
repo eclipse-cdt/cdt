@@ -1,4 +1,13 @@
 2005-02-25 Alain Magloire
+	Fix PR 69572: Key binding action for Matching Bracket ... Ctrl+Shift+P
+	* src/org/eclipse/cdt/internal/ui/ICHelpContextIds.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	+ src/org/elcipse/cdt/internal/ui/editor/GotoMatchingBracketAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/ICEditorActionDefinitionIds.java
+	* plugin.properties
+	* plugin.xml
+
+2005-02-25 Alain Magloire
 	Fix PR 86718: Dialog shows twice
 	* src/org/eclipse/cdt/internal/ui/cview/OpenProjectGroup.java
 	* src/org/eclipse/cdt/internal/ui/cview/RefactorActionGroup.java

@@ -44,7 +44,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -56,11 +56,14 @@ import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
@@ -77,6 +80,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
@@ -633,8 +637,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		fFoldingGroup= new FoldingActionGroup(this, getSourceViewer());
 
 		// Default text editing menu items
+		Action action= new GotoMatchingBracketAction(this);
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.GOTO_MATCHING_BRACKET);				
+		setAction(GotoMatchingBracketAction.GOTO_MATCHING_BRACKET, action);
 
-		IAction action = new TextOperationAction(CEditorMessages.getResourceBundle(), "Comment.", this, ITextOperationTarget.PREFIX); //$NON-NLS-1$
+		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "Comment.", this, ITextOperationTarget.PREFIX); //$NON-NLS-1$
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.COMMENT);
 		setAction("Comment", action); //$NON-NLS-1$
 		markAsStateDependentAction("Comment", true); //$NON-NLS-1$
@@ -834,6 +841,71 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			}
 		}
 	}
+
+	/**
+	 * Jumps to the matching bracket.
+	 */
+	public void gotoMatchingBracket() {
+		
+		ISourceViewer sourceViewer= getSourceViewer();
+		IDocument document= sourceViewer.getDocument();
+		if (document == null)
+			return;
+		
+		IRegion selection= getSignedSelection(sourceViewer);
+
+		int selectionLength= Math.abs(selection.getLength());
+		if (selectionLength > 1) {
+			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.invalidSelection"));	//$NON-NLS-1$		
+			sourceViewer.getTextWidget().getDisplay().beep();
+			return;
+		}
+
+		// #26314
+		int sourceCaretOffset= selection.getOffset() + selection.getLength();
+		if (isSurroundedByBrackets(document, sourceCaretOffset))
+			sourceCaretOffset -= selection.getLength();
+
+		IRegion region= fBracketMatcher.match(document, sourceCaretOffset);
+		if (region == null) {
+			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.noMatchingBracket"));	//$NON-NLS-1$		
+			sourceViewer.getTextWidget().getDisplay().beep();
+			return;		
+		}
+		
+		int offset= region.getOffset();
+		int length= region.getLength();
+		
+		if (length < 1)
+			return;
+			
+		int anchor= fBracketMatcher.getAnchor();
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=34195
+		int targetOffset= (ICharacterPairMatcher.RIGHT == anchor) ? offset + 1: offset + length;
+		
+		boolean visible= false;
+		if (sourceViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) sourceViewer;
+			visible= (extension.modelOffset2WidgetOffset(targetOffset) > -1);
+		} else {
+			IRegion visibleRegion= sourceViewer.getVisibleRegion();
+			// http://dev.eclipse.org/bugs/show_bug.cgi?id=34195
+			visible= (targetOffset >= visibleRegion.getOffset() && targetOffset <= visibleRegion.getOffset() + visibleRegion.getLength());
+		}
+		
+		if (!visible) {
+			setStatusLineErrorMessage(CEditorMessages.getString("GotoMatchingBracket.error.bracketOutsideSelectedElement"));	//$NON-NLS-1$		
+			sourceViewer.getTextWidget().getDisplay().beep();
+			return;
+		}
+		
+		if (selection.getLength() < 0)
+			targetOffset -= selection.getLength();
+			
+		sourceViewer.setSelectedRange(targetOffset, selection.getLength());
+		sourceViewer.revealRange(targetOffset, selection.getLength());
+	}
+
 
 	/**
 	 * Returns whether the given annotation is configured as a target for the
@@ -1282,6 +1354,53 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		if (statusLine != null)
 			statusLine.setMessage(false, msg, null);	
 	}
+
+	/**
+	 * Returns the signed current selection.
+	 * The length will be negative if the resulting selection
+	 * is right-to-left (RtoL).
+	 * <p>
+	 * The selection offset is model based.
+	 * </p>
+	 * 
+	 * @param sourceViewer the source viewer
+	 * @return a region denoting the current signed selection, for a resulting RtoL selections length is < 0 
+	 */
+	protected IRegion getSignedSelection(ISourceViewer sourceViewer) {
+		StyledText text= sourceViewer.getTextWidget();
+		Point selection= text.getSelectionRange();
+		
+		if (text.getCaretOffset() == selection.x) {
+			selection.x= selection.x + selection.y;
+			selection.y= -selection.y;
+		}
+		
+		selection.x= widgetOffset2ModelOffset(sourceViewer, selection.x);
+		
+		return new Region(selection.x, selection.y);
+	}
+	
+	private static boolean isBracket(char character) {
+		for (int i= 0; i != BRACKETS.length; ++i)
+			if (character == BRACKETS[i])
+				return true;
+		return false;
+	}
+
+	private static boolean isSurroundedByBrackets(IDocument document, int offset) {
+		if (offset == 0 || offset == document.getLength())
+			return false;
+
+		try {
+			return
+				isBracket(document.getChar(offset - 1)) &&
+				isBracket(document.getChar(offset));
+			
+		} catch (BadLocationException e) {
+			return false;	
+		}
+	}
+		
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()

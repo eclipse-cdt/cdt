@@ -18,27 +18,21 @@ import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.DOMException;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.ICompositeType;
-import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 
 /**
@@ -59,6 +53,8 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer,
 			int offset) {
 		try {
+			errorMessage = "No completions found";
+			
 			long startTime = System.currentTimeMillis();
 			IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
 			ASTCompletionNode completionNode = CDOM.getInstance().getCompletionNode(
@@ -75,43 +71,48 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 					public int getUniqueIdentifier() {
 						return 99;
 					}
-				}	
+				}
 			);
 			long stopTime = System.currentTimeMillis();
 
-			List proposals = null;
+			List proposals = new ArrayList();
 			
-			if (completionNode != null) {
-				int repLength = completionNode.getLength();
-				int repOffset = offset - repLength;
-				proposals = new ArrayList();
-				
-				IASTName[] names = completionNode.getNames();
-				for (int i = 0; i < names.length; ++i) {
-					IBinding [] bindings = names[i].resolvePrefix();
-					if (bindings != null)
-						for (int j = 0; j < bindings.length; ++j)
-							proposals.add(createBindingCompletionProposal(bindings[j], repOffset, repLength));
+			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "completionContributors"); //$NON-NLS-1$
+			if (point == null)
+				return null;
+			IExtension[] extensions = point.getExtensions();
+			for (int i = 0; i < extensions.length; ++i) {
+				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+				for (int j = 0; j < elements.length; ++j) {
+					IConfigurationElement element = elements[j];
+					if (!"contributor".equals(element.getName())) //$NON-NLS-1$
+						continue;
+					Class contribClass = element.loadExtensionClass("class"); //$NON-NLS-1$
+					Object contribObject = contribClass.newInstance();
+					if (!(contribObject instanceof ICompletionContributor))
+						continue;
+					ICompletionContributor contributor = (ICompletionContributor)contribObject;
+					contributor.contributeCompletionProposals(viewer, offset, completionNode, proposals);
 				}
+				int x = 5;
 			}
 			
 			long propTime = System.currentTimeMillis();
-			System.out.println("Completion Parse: " + (stopTime - startTime) + " + Resolve:"
+			System.out.println("Completion Parse: " + (stopTime - startTime) + " + Proposals: " //$NON-NLS-1$ //$NON-NLS-2$
 					+ (propTime - stopTime));
 			System.out.flush();
 
-			if (proposals != null && !proposals.isEmpty()) {
+			if (!proposals.isEmpty()) {
 				errorMessage = null;
 				return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
 			}
-
-			// The rest are error conditions
-			errorMessage = "No completions found";
+			
 		} catch (UnsupportedDialectException e) {
 			errorMessage = "Unsupported Dialect Exception";
 		} catch (Throwable e) {
 			errorMessage = e.toString();
 		}
+		
 		return null;
 	}
 
@@ -155,31 +156,4 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 		return null;
 	}
 
-	private ICompletionProposal createBindingCompletionProposal(IBinding binding, int offset, int length) {
-		ImageDescriptor imageDescriptor = null;
-		
-		try {
-			if (binding instanceof ITypedef) {
-				imageDescriptor = CElementImageProvider.getTypedefImageDescriptor();
-			} else if (binding instanceof ICompositeType) {
-				if (((ICompositeType)binding).getKey() == ICPPClassType.k_class)
-					imageDescriptor = CElementImageProvider.getClassImageDescriptor();
-				else if (((ICompositeType)binding).getKey() == ICompositeType.k_struct)
-					imageDescriptor = CElementImageProvider.getStructImageDescriptor();
-				else if (((ICompositeType)binding).getKey() == ICompositeType.k_union)
-					imageDescriptor = CElementImageProvider.getUnionImageDescriptor();
-			} else if (binding instanceof IFunction) {
-				imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
-			} else if (binding instanceof IVariable) {
-				imageDescriptor = CElementImageProvider.getVariableImageDescriptor();
-			}
-		} catch (DOMException e) {
-		}
-		
-		Image image = imageDescriptor != null
-			? CUIPlugin.getImageDescriptorRegistry().get( imageDescriptor )
-			: null;
-
-		return new CCompletionProposal(binding.getName(), offset, length, image, binding.getName(), 1);
-	}
 }

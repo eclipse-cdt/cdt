@@ -7,12 +7,25 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.text.contentassist;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
 public interface ICompletionContributor {
 
-	ICompletionProposal[] contributeCompletionProposals(ITextViewer viewer, int offset, ASTCompletionNode node);
+	/**
+	 * This method allows the contributor to add to the list of proposals
+	 * 
+	 * @param viewer the text viewer where completion is occuring
+	 * @param offset the offset into the text where the completion is occuring
+	 * @param completionNode the completion node produced by the parser for the offset
+	 * @param proposals the current list of proposals. This method should any additional
+	 * proposals to this list.
+	 */
+	void contributeCompletionProposals(ITextViewer viewer,
+									   int offset,
+									   ASTCompletionNode completionNode,
+									   List proposals);
 	
 }

@@ -110,4 +110,10 @@ public interface ICDISession {
 	 */
 	void terminate() throws CDIException;
 	
+	/**
+	 * Gaves direct access to the underlying debugger process.
+	 * @return the debugger process.
+	 */
+	Process getSessionProcess() throws CDIException;
+	
 }

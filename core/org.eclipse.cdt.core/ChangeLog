@@ -1,5 +1,18 @@
 2003-04-29 Alain Magloire
 
+	PR 37064
+
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java (elementChanged):
+	Call close() for Openable to remove the elements in the cache.
+	(close): new method to close the openable.
+	(contentChanged): Removed.
+
+	* utils/org/eclipse/cdt/utils/spawner/Spawner.java (raise):
+	Change the visibility of the native method to public.
+	Change the visibility of the flags to public.
+
+2003-04-29 Alain Magloire
+
 	PR 36920
 	PR 36919
 

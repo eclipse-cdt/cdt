@@ -27,14 +27,17 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
+import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
+import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.BranchTracker;
@@ -47,6 +50,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionDire
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
 import org.eclipse.cdt.internal.core.parser.token.ImagedExpansionToken;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
@@ -352,7 +356,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	}
 
 	// Return null to signify end of file
-	private IToken fetchToken() throws ScannerException {
+	private IToken fetchToken() throws ScannerException, EndOfFileException{
 		++count;
 		contextLoop:
 		while (bufferStackPos >= 0) {
@@ -1089,7 +1093,7 @@ public class Scanner2 implements IScanner, IScannerData {
 						bufferPos[bufferStackPos] - start + 1) );
 	}
 	
-	private void handlePPDirective(int pos) throws ScannerException {
+	private void handlePPDirective(int pos) throws ScannerException, EndOfFileException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		int startingLineNumber = bufferLineNums[ bufferStackPos ];
@@ -1112,6 +1116,9 @@ public class Scanner2 implements IScanner, IScannerData {
 			}
 			--bufferPos[bufferStackPos];
 			int len = bufferPos[bufferStackPos] - start + 1;
+			if( isLimitReached() ) 
+				handleCompletionOnPreprocessorDirective( new String( buffer, pos, len + 1 ));
+			
 			int type = ppKeywords.get(buffer, start, len);
 			if (type != ppKeywords.undefined) {
 				switch (type) {
@@ -2853,4 +2860,40 @@ public class Scanner2 implements IScanner, IScannerData {
 		ppKeywords.put("error".toCharArray(), ppError); //$NON-NLS-1$
 		ppKeywords.put("include_next".toCharArray(), ppInclude_next); //$NON-NLS-1$
 	}
+	
+	/**
+	 * @param definition
+	 */
+	protected void handleCompletionOnDefinition(String definition) throws EndOfFileException {
+		IASTCompletionNode node = new ASTCompletionNode( IASTCompletionNode.CompletionKind.MACRO_REFERENCE, 
+				null, null, definition, KeywordSets.getKeywords(KeywordSetKey.EMPTY, language), EMPTY_STRING, null );
+		
+		throw new OffsetLimitReachedException( node ); 
+	}
+
+	/**
+	 * @param expression2
+	 */
+	protected void handleCompletionOnExpression(String expression) throws EndOfFileException {
+
+		
+		IASTCompletionNode.CompletionKind kind = IASTCompletionNode.CompletionKind.MACRO_REFERENCE;
+		IASTCompletionNode node = new ASTCompletionNode( kind, 
+				null, null, EMPTY_STRING, 
+				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSetKey.EMPTY : KeywordSetKey.MACRO), language), EMPTY_STRING, null );
+		
+		throw new OffsetLimitReachedException( node );
+	}
+
+	
+	protected void handleInvalidCompletion() throws EndOfFileException
+	{
+		throw new OffsetLimitReachedException( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, EMPTY_STRING, KeywordSets.getKeywords(KeywordSetKey.EMPTY, language ) , EMPTY_STRING, null)); 
+	}
+	
+	protected void handleCompletionOnPreprocessorDirective( String prefix ) throws EndOfFileException 
+	{
+		throw new OffsetLimitReachedException( new ASTCompletionNode( IASTCompletionNode.CompletionKind.PREPROCESSOR_DIRECTIVE, null, null, prefix, KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, language ), EMPTY_STRING, null));
+	}
+
 }

@@ -46,7 +46,8 @@ public class TxThread extends Thread {
 					// Move to the RxQueue only if we have
 					// a valid token, this is to permit input(HACK!)
 					// or commands that do not want to wait for responses.
-					if (cmd.getToken() > 0) {
+					Thread rx = session.getRxThread();
+					if (cmd.getToken() > 0 && rx != null && rx.isAlive()) {
 						CommandQueue rxQueue = session.getRxQueue();
 						rxQueue.addCommand(cmd);
 					} else {
@@ -66,5 +67,16 @@ public class TxThread extends Thread {
 		} catch (IOException e) {
 			//e.printStackTrace();
 		}
+
+		// Clear the queue and notify any command waiting, we are going down.
+                CommandQueue txQueue = session.getTxQueue();
+                if (txQueue != null) {
+                        Command[] cmds = txQueue.clearCommands();
+                        for (int i = 0; i < cmds.length; i++) {
+                                synchronized (cmds[i]) {
+                                        cmds[i].notifyAll();
+                                }
+                        }
+                }
 	}
 }

@@ -91,6 +91,16 @@ public class RxThread extends Thread {
 			clean.setDaemon(true);
 			clean.start();
 		}
+		// Clear the queue and notify any command waiting, we are going down.
+		CommandQueue rxQueue = session.getRxQueue();
+		if (rxQueue != null) {
+			Command[] cmds = rxQueue.clearCommands();
+			for (int i = 0; i < cmds.length; i++) {
+				synchronized (cmds[i]) {
+					cmds[i].notifyAll();
+				}
+			}
+		}
 	}
 
 	/**

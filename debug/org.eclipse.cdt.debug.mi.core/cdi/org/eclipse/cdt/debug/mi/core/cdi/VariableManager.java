@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -205,26 +206,19 @@ public class VariableManager extends Manager {
 		}
 	}
 
-	/**
-	 * When element are remove from the cache, they are put on the OutOfScope list, oos,
-	 * because they are still needed for the destroy events.  The destroy event will
-	 * call removeOutOfScope.
-	 */
-	public void removeVariable(MISession miSession, String varName) throws CDIException {
+	public Variable removeVariableFromList(MISession miSession, String varName) {
 		Target target = ((Session)getSession()).getTarget(miSession);
-		removeVariable(target, varName);
-	}
-	public void removeVariable(Target target, String varName) throws CDIException {
-		Variable[] vars = getVariables(target);
-		for (int i = 0; i < vars.length; i++) {
-			if (vars[i].getMIVar().getVarName().equals(varName)) {
-				List variableList = (List)variablesMap.get(target);
-				if (variableList != null) {
-					variableList.remove(vars[i]);
+		List varList = getVariablesList(target);
+		synchronized (varList) {
+			for (Iterator iterator = varList.iterator(); iterator.hasNext();) {
+				Variable variable = (Variable)iterator.next();
+				if (variable.getMIVar().getVarName().equals(varName)) {
+					iterator.remove();
+					return variable;
 				}
-				removeMIVar(target.getMISession(), vars[i].getMIVar());
 			}
 		}
+		return null;
 	}
 
 	public VariableDescriptor getVariableDescriptorAsArray(VariableDescriptor varDesc, int start, int length)
@@ -520,8 +514,19 @@ public class VariableManager extends Manager {
 		// Fire  a destroyEvent ?
 		Target target = (Target)variable.getTarget();
 		MISession mi = target.getMISession();
+		removeMIVar(mi, variable.getMIVar());
 		MIVarDeletedEvent del = new MIVarDeletedEvent(mi, variable.getMIVar().getVarName());
 		mi.fireEvent(del);
+	}
+
+	public void destroyAllVariables(Target target) throws CDIException {
+		Variable[] variables = getVariables(target);
+		MISession mi = target.getMISession();
+		for (int i = 0; i < variables.length; ++i) {
+			removeMIVar(mi, variables[i].getMIVar());
+			MIVarDeletedEvent del = new MIVarDeletedEvent(mi, variables[i].getMIVar().getVarName());
+			mi.fireEvent(del);			
+		}
 	}
 
 	/**
@@ -580,6 +585,7 @@ public class VariableManager extends Manager {
 					if (changes[j].isInScope()) {
 						eventList.add(new MIVarChangedEvent(mi, n));
 					} else {
+						destroyVariable(variable);
 						eventList.add(new MIVarDeletedEvent(mi, n));
 					}
 				}

@@ -1,4 +1,7 @@
 2004-10-31 Alain Magloire
+	Tentative fix for PR 74496
+
+2004-10-31 Alain Magloire
 	Refactor ICDIVariableObject --> ICDIVariableDescriptor
 	Refactor ICDIArgumentObject --> ICDIArgumentDescriptor
 	Refactor ICDIRegisterObject --> ICDIRegisterDescriptor

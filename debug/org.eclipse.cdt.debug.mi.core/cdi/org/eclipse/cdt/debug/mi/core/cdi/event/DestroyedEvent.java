@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core.cdi.event;
 
-import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
@@ -48,13 +47,9 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 		VariableManager varMgr = session.getVariableManager();
 		MISession miSession = var.getMISession();
 		String varName = var.getVarName();
-		Variable variable = varMgr.getVariable(miSession, varName);
-		if (variable!= null) {
+		Variable variable = varMgr.removeVariableFromList(miSession, varName);
+		if (variable != null) {
 			source = variable;
-			try {
-				varMgr.removeVariable(miSession, variable.getMIVar().getVarName());
-			} catch (CDIException e) {
-			}
 		} else {
 			ExpressionManager expMgr = session.getExpressionManager();
 			variable = expMgr.getVariable(miSession, varName);

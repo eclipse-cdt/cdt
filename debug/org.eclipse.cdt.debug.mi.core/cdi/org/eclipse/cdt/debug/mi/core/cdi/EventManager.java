@@ -184,6 +184,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					}
 				}
 			} else if (miEvent instanceof MISharedLibUnloadedEvent) {
+				processSharedLibUnloadedEvent((MISharedLibUnloadedEvent)miEvent);
 				cdiList.add(new DestroyedEvent(session, (MISharedLibUnloadedEvent)miEvent));
 			} else if (miEvent instanceof MIVarDeletedEvent) {
 				cdiList.add(new DestroyedEvent(session, (MIVarDeletedEvent)miEvent));
@@ -327,6 +328,27 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			//System.out.println(e);
 		}
 		return true;
+	}
+
+	/**
+	 * When a shared library is unloading we could possibly have stale libraries.
+	 * GDB does no react well to this: see PR
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=74496
+	 * @param unLoaded
+	 * @return
+	 */
+	boolean processSharedLibUnloadedEvent(MISharedLibUnloadedEvent unLoaded) {
+		Session session = (Session)getSession();
+		MISession miSession = unLoaded.getMISession();
+		Target target = session.getTarget(miSession);
+		ExpressionManager expMgr = session.getExpressionManager();
+		VariableManager varMgr = session.getVariableManager();
+		try {
+			expMgr.destroyAllExpressions(target);
+			varMgr.destroyAllVariables(target);
+		} catch (CDIException e) {
+		}
+		return false;
 	}
 
 	/**
@@ -509,9 +531,6 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			MIBreakpointHitEvent bpEvent = (MIBreakpointHitEvent)stopped;
 			BreakpointManager bpMgr = session.getBreakpointManager();
 			int bpNo = bpEvent.getNumber();
-			//if (bpMgr.isExceptionBreakpoint(bpNo)) {
-				
-			//}
 		}
 		return false;
 	}

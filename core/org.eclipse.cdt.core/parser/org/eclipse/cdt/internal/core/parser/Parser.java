@@ -1109,6 +1109,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             else
             {
                 IASTDeclaration declaration = (IASTDeclaration)i.next();
+                endDeclaration( declaration );
                 declaration.enterScope( requestor );
    			
    				if ( !( declaration instanceof IASTScope ) ) 
@@ -2628,6 +2629,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             consume(IToken.tLBRACE);
             setCompletionValues(astClassSpecifier, CompletionKind.FIELD_TYPE, Key.DECLARATION );
             astClassSpecifier.enterScope( requestor );
+            handleClassSpecifier( astClassSpecifier );
             memberDeclarationLoop : while (LT(1) != IToken.tRBRACE)
             {
                 IToken checkToken = LA(1);
@@ -3187,6 +3189,14 @@ public abstract class Parser extends ExpressionParser implements IParser
 	protected void endExpressionStatement( IASTExpression expression ) throws EndOfFileException
 	{
 		cleanupLastToken();
+	}
+	
+	protected void handleClassSpecifier( IASTClassSpecifier classSpecifier ) throws EndOfFileException
+	{
+		cleanupLastToken();
+		if( classSpecifier instanceof IASTOffsetableNamedElement )
+			handleOffsetableNamedElement( classSpecifier );
+
 	}
 
 

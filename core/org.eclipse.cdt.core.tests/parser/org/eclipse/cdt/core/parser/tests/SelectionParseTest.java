@@ -36,28 +36,7 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 
 	protected IASTNode parse(String code, int offset1, int offset2 )
 	throws Exception {
-		callback = new FullParseCallback();
-		IParser parser = null;
-
-		parser =
-			ParserFactory.createParser(
-					ParserFactory.createScanner(
-							new StringReader(code),
-							"completion-test", //$NON-NLS-1$
-							new ScannerInfo(),
-							ParserMode.SELECTION_PARSE,
-							ParserLanguage.CPP,
-							callback,
-							new NullLogService(), null),
-							callback,
-							ParserMode.SELECTION_PARSE,
-							ParserLanguage.CPP,
-							ParserUtil.getParserLogService());
-		
-		IParser.ISelectionParseResult result =parser.parse( offset1, offset2 );
-		if( result == null ) return null;
-		return (IASTNode) result.getOffsetableNamedElement();
-
+		return parse( code, offset1, offset2, true );
 	}
 	
 	
@@ -86,9 +65,47 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 		String code = "int x() { y( ) }"; //$NON-NLS-1$
 		int offset1 = code.indexOf( "y( " ); //$NON-NLS-1$
 		int offset2 = code.indexOf( "( )"); //$NON-NLS-1$
-		assertNull( parse( code, offset1, offset2 ));
+		assertNull( parse( code, offset1, offset2, false ));
 	}
 	
+	/**
+	 * @param code
+	 * @param offset1
+	 * @param offset2
+	 * @param b
+	 * @return
+	 */
+	protected IASTNode parse(String code, int offset1, int offset2, boolean expectedToPass ) throws Exception {
+		callback = new FullParseCallback();
+		IParser parser = null;
+
+		parser =
+			ParserFactory.createParser(
+					ParserFactory.createScanner(
+							new StringReader(code),
+							"completion-test", //$NON-NLS-1$
+							new ScannerInfo(),
+							ParserMode.SELECTION_PARSE,
+							ParserLanguage.CPP,
+							callback,
+							new NullLogService(), null),
+							callback,
+							ParserMode.SELECTION_PARSE,
+							ParserLanguage.CPP,
+							ParserUtil.getParserLogService());
+		
+		IParser.ISelectionParseResult result =parser.parse( offset1, offset2 );
+		if( expectedToPass )
+		{
+			assertNotNull( result );
+			String filename = result.getFilename();
+			assertTrue( !filename.equals( "")); //$NON-NLS-1$
+			return (IASTNode) result.getOffsetableNamedElement();
+		}
+		return null;
+	}
+
+
 	public void testBaseCase_FunctionDeclaration() throws Exception
 	{
 		String code = "int x(); x( );"; //$NON-NLS-1$
@@ -200,4 +217,25 @@ public class SelectionParseTest extends CompleteParseBaseTest {
 		assertEquals( namespace.getStartingLine(), 1 );
 
 	}
+	
+	public void testBug61613() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "class Foo {  // ** (A) **\n" ); //$NON-NLS-1$
+		writer.write( "	public:\n" ); //$NON-NLS-1$
+		writer.write( "Foo() {};\n" ); //$NON-NLS-1$
+		writer.write( "};\n" ); //$NON-NLS-1$
+		writer.write( "int \n" ); //$NON-NLS-1$
+		writer.write( "main(int argc, char **argv) {\n" ); //$NON-NLS-1$
+		writer.write( "Foo foo;  // ** (B) **\n" ); //$NON-NLS-1$
+		writer.write( "}\n" ); //$NON-NLS-1$
+		String code = writer.toString();
+		int index = code.indexOf( "class Foo") + 6; //$NON-NLS-1$
+		IASTNode node = parse( code, index, index + 3 );
+		assertTrue( node instanceof IASTClassSpecifier );
+		IASTClassSpecifier foo = (IASTClassSpecifier) node;
+		assertEquals( foo.getName(), "Foo"); //$NON-NLS-1$
+
+	}
+	
 }

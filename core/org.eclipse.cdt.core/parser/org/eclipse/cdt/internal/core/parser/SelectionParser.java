@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParseError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -248,7 +249,11 @@ public class SelectionParser extends ContextualParser {
 				if( token == lastTokenOfDuple ) ++tokensFound;
 			}
 			if( tokensFound == 2 )
+			{
 				greaterContextDuple = tokenDuple;
+				pastPointOfSelection = true;
+			}
+			
 		}
 	}
 	
@@ -328,6 +333,20 @@ public class SelectionParser extends ContextualParser {
 		{
 			contextNode = enumerator;
 			handleOffsetableNamedElement(enumerator);
+			throw new EndOfFileException();
+		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#endClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecifier)
+	 */
+	protected void handleClassSpecifier(IASTClassSpecifier classSpecifier)
+			throws EndOfFileException {
+		if( ! tokenDupleCompleted() )
+			super.handleClassSpecifier(classSpecifier);
+		else
+		{
+			contextNode = classSpecifier;
+			handleOffsetableNamedElement( classSpecifier );
 			throw new EndOfFileException();
 		}
 	}

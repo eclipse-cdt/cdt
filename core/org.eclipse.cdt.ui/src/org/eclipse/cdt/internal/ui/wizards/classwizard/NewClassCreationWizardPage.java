@@ -994,7 +994,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 		IProject project = getCurrentProject();
 	    if (project != null) {
-			if (typeName.isQualified()) {
+		    prepareTypeCache();
+
+		    if (typeName.isQualified()) {
 			    // make sure enclosing namespace exists
 			    ITypeInfo parentNamespace = AllTypesCache.getType(project, ICElement.C_NAMESPACE, typeName.getEnclosingTypeName());
 			    if (parentNamespace == null) {
@@ -1081,6 +1083,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 	    IProject project = getCurrentProject();
 	    if (project != null) {
+		    prepareTypeCache();
+
 		    ITypeInfo[] types = AllTypesCache.getTypes(project, typeName, false, true);
 		    if (types.length > 0) {
 			    // look for class
@@ -1145,7 +1149,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	
 	    IProject project = getCurrentProject();
 	    if (project != null) {
-	        IQualifiedTypeName fullyQualifiedName = className;
+		    prepareTypeCache();
+
+		    IQualifiedTypeName fullyQualifiedName = className;
 			if (isEnclosingTypeSelected()) {
 			    IQualifiedTypeName enclosing = getEnclosingTypeName();
 			    if (enclosing != null) {
@@ -1796,7 +1802,6 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-		    prepareTypeCache();
 			setFocus();
 		}
 	}
@@ -1821,6 +1826,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             }
         }
         if (!classExists) {
+    	    prepareTypeCache();
+    	    
     		// resolve location of base class
 			if (newBaseClass.getResolvedReference() == null) {
 				final ITypeInfo[] typesToResolve = new ITypeInfo[] { newBaseClass };
@@ -1960,6 +1967,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		    scope = new TypeSearchScope(true);
 	    }
 
+	    prepareTypeCache();
+	    
 		ITypeInfo[] elements = AllTypesCache.getNamespaces(scope, false);
 		if (elements == null || elements.length == 0) {
 			String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.title"); //$NON-NLS-1$
@@ -2016,7 +2025,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		    scope = new TypeSearchScope(true);
 	    }
 	    
-		ITypeInfo[] elements = AllTypesCache.getTypes(scope, ENCLOSING_CLASS_TYPES);
+	    prepareTypeCache();
+	    
+	    ITypeInfo[] elements = AllTypesCache.getTypes(scope, ENCLOSING_CLASS_TYPES);
 		if (elements == null || elements.length == 0) {
 			String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.title"); //$NON-NLS-1$
 			String message = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.message"); //$NON-NLS-1$
@@ -2032,6 +2043,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		    if (enclosingClass != null) {
 	    		// resolve location of class
 				if (enclosingClass.getResolvedReference() == null) {
+				    prepareTypeCache();
+				    
 					final ITypeInfo[] typesToResolve = new ITypeInfo[] { enclosingClass };
 					IRunnableWithProgress runnable = new IRunnableWithProgress() {
 						public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
@@ -2064,6 +2077,8 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	private final int[] CLASS_TYPES = { ICElement.C_CLASS, ICElement.C_STRUCT };
 	
 	void chooseBaseClasses() {
+	    prepareTypeCache();
+	    
 		ITypeInfo[] elements = AllTypesCache.getTypes(new TypeSearchScope(true), CLASS_TYPES);
 		if (elements == null || elements.length == 0) {
 			String title = NewClassWizardMessages.getString("NewClassCreationWizardPage.getClasses.noclasses.title"); //$NON-NLS-1$

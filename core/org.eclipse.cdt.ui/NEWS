@@ -1,0 +1,9 @@
+Release CDT-3.0
+
+	* C/C++ Editor:
+		- coloring of operators, braces and numbers,
+		- outline in selectable dialog (Ctrl O) with search input.
+
+	* Template Preference Page for C/C++ Editor
+
+	

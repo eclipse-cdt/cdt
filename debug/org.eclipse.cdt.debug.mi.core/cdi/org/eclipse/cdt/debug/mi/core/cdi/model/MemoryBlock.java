@@ -248,6 +248,9 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getFlags(int)
 	 */
 	public synchronized byte getFlags(int offset) {
+		if (offset < 0 || offset >= getLength()) {
+			throw new IndexOutOfBoundsException();
+		}
 		if (badOffsets == null) {
 			badOffsets = getBadOffsets(mem);
 		}
@@ -257,9 +260,8 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 					return 0;
 				}
 			}
-			return VALID;
 		}
-		return 0;
+		return VALID;
 	}
 
 }

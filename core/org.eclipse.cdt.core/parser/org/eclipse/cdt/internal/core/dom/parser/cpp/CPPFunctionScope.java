@@ -23,7 +23,10 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.core.parser.util.ObjectSet;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics.LookupData;
 
 /**
  * @author aniefer
@@ -65,8 +68,26 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) {
-		// TODO Auto-generated method stub
-		return null;
+	    char [] n = name.toCharArray();
+	    if( labels.containsKey( n ) )
+	        return new IBinding[] { (IBinding) labels.get( n ) };
+
+	    LookupData data = new LookupData( n );
+		try {
+            data.foundItems = CPPSemantics.lookupInScope( data, this, null, null );
+        } catch ( DOMException e ) {
+        }
+        
+        if( data.foundItems != null ){
+            IASTName [] ns = (IASTName[]) data.foundItems;
+            ObjectSet set = new ObjectSet( ns.length );
+            for( int i = 0; i < ns.length && ns[i] != null; i++ ){
+                set.put( ns[i].resolveBinding() );
+            }
+            return (IBinding[]) ArrayUtil.trim( IBinding.class, set.keyArray(), true );
+        }
+	    
+		return new IBinding[0];
 	}
 	
 	public IScope getParent() throws DOMException {

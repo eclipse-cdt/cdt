@@ -14,13 +14,19 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.c.CScope.CollectNamesAction;
 
 /**
  * @author aniefer
@@ -68,8 +74,26 @@ public class CCompositeTypeScope implements ICCompositeTypeScope {
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
     public IBinding[] find( String name ) {
-        // TODO Auto-generated method stub
-        return null;
+        IASTNode node = getPhysicalNode();
+        IASTTranslationUnit tu = node.getTranslationUnit();
+        IASTVisitor visitor = tu.getVisitor();
+        
+        CollectNamesAction action = new CollectNamesAction( name.toCharArray() );
+        visitor.visitDeclSpecifier( compositeTypeSpec, action );
+        
+        IASTName [] names = action.getNames();
+        IBinding [] result = null;
+        for( int i = 0; i < names.length; i++ ){
+            IBinding b = names[i].resolveBinding();
+            if( b == null ) continue;
+            try {
+                if( b.getScope() == this )
+                    result = (IBinding[]) ArrayUtil.append( IBinding.class, result, b );
+            } catch ( DOMException e ) {
+            }
+        }
+            
+        return (IBinding[]) ArrayUtil.trim( IBinding.class, result );
     }
     
 	/* (non-Javadoc)

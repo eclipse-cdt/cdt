@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics.LookupData;
 
 /**
@@ -189,8 +190,29 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
 	public IBinding[] find(String name) {
-		// TODO Auto-generated method stub
-		return null;
+	    char [] n = name.toCharArray();
+	    if( bindings.containsKey( n ) ){
+	        Object o = bindings.get( n );
+	        if( o instanceof IBinding[] )
+	            return (IBinding[]) ArrayUtil.trim( IBinding.class, (Object[]) o );
+            return new IBinding[] { (IBinding) o };
+	    } 
+        LookupData data = new LookupData( n );
+		try {
+            data.foundItems = CPPSemantics.lookupInScope( data, this, null, null );
+        } catch ( DOMException e ) {
+        }
+        
+        if( data.foundItems != null ){
+            IASTName [] ns = (IASTName[]) data.foundItems;
+            ObjectSet set = new ObjectSet( ns.length );
+            for( int i = 0; i < ns.length && ns[i] != null; i++ ){
+                set.put( ns[i].resolveBinding() );
+            }
+            return (IBinding[]) ArrayUtil.trim( IBinding.class, set.keyArray(), true );
+        }
+	    
+		return new IBinding[0];
 	}
 	
 	private boolean isConstructorReference( IASTName name ){

@@ -86,13 +86,16 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		String scopeDescription = ""; //$NON-NLS-1$
 		
 		switch( getContainer().getSelectedScope() ) {
+			case ISearchPageContainer.SELECTION_SCOPE:
+				if( fStructuredSelection != null && fStructuredSelection.iterator().hasNext() ){
+					scopeDescription = CSearchMessages.getString("SelectionScope"); //$NON-NLS-1$
+					scope = CSearchScopeFactory.getInstance().createCSearchScope(fStructuredSelection);
+					break;
+				}
+				/* else fall through to workspace scope */
 			case ISearchPageContainer.WORKSPACE_SCOPE:
 				scopeDescription = CSearchMessages.getString("WorkspaceScope"); //$NON-NLS-1$
 				scope = SearchEngine.createWorkspaceScope();
-				break;
-			case ISearchPageContainer.SELECTION_SCOPE:
-				scopeDescription = CSearchMessages.getString("SelectionScope"); //$NON-NLS-1$
-				scope = CSearchScopeFactory.getInstance().createCSearchScope(fStructuredSelection);
 				break;
 			case ISearchPageContainer.WORKING_SET_SCOPE:
 				IWorkingSet[] workingSets= getContainer().getSelectedWorkingSets();

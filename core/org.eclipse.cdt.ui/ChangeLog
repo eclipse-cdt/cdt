@@ -1,3 +1,9 @@
+2003-10-01 Andrew Niefer
+	-bug44032 - deleting/moving files breaks search
+		* modified src/org/eclipse/cdt/ui/CSearchResultLabelProvider getText to return empty string instead of null
+	-bug43130 - Selected resources is disabled but selected
+		* src/org/eclipse/cdt/internal/ui/search/CSearchPage
+
 2003-10-01 Alain Magloire
 
 	Fix PR 44013, not defining a resource.

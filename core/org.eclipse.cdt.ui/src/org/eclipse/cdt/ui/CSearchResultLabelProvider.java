@@ -120,18 +120,18 @@ public class CSearchResultLabelProvider extends LabelProvider {
 			try {
 				match = (IMatch) marker.getAttribute(CSearchResultCollector.IMATCH);
 			} catch (CoreException e) {
-				return null;
+				return "";
 			}
 		} else if( element instanceof IMatch ){
 			match = (IMatch) element;
 		}
 		
 		if( match == null )
-			return null;
+			return "";
 		
 		IResource resource = match.getResource();
 		
-		String result = null;
+		String result = "";
 		String path = (resource != null ) ? resource.getFullPath().toString() : "";
 		
 		switch( getOrder() ){

@@ -441,6 +441,10 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	
 	protected void report( ISourceElementCallbackDelegate node, int accuracyLevel ){
 		try {
+			if( currentResource != null && !searchScope.encloses(currentResource.getFullPath().toOSString() ) ){
+				return;
+			}
+			
 			int offset = 0;
 			int end = 0;
 			

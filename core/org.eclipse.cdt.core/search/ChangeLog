@@ -1,4 +1,7 @@
 2003-10-01 Andrew Niefer
+	- fix bug 44026 by checking scope before reporting match in MatchLocator.report
+
+2003-10-01 Andrew Niefer
 	- fix BasicSearchMatch.equals() for bug43988
 
 2003-09-30 Bogdan Gheorghe

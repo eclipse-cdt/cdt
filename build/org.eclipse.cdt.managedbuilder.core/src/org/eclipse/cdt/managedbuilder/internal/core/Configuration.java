@@ -666,7 +666,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		if (command != null) {
 			// Does this config have a ref to the tool
 			IToolReference ref = getToolReference(tool);
-			if (ref == null) {
+			if (ref == null || !((ToolReference)ref).ownedByConfiguration(this)) {
 				// Then make one
 				ref = new ToolReference(this, tool);
 			}

@@ -47,6 +47,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
+import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
@@ -492,8 +493,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static void setToolCommand(IConfiguration config, ITool tool, String command) {
 		// The tool may be a reference.
 		if (tool instanceof IToolReference) {
-			// If so, just set the command in the reference
-			((IToolReference)tool).setToolCommand(command);
+			// It may be part of tha target and not the config
+			if(!((ToolReference)tool).ownedByConfiguration(config)) {
+				config.setToolCommand(tool, command);
+			} else {
+				// A ref and owned by the config so set the command in the reference
+				((IToolReference)tool).setToolCommand(command);
+			}
 		} else {
 			config.setToolCommand(tool, command);
 		}

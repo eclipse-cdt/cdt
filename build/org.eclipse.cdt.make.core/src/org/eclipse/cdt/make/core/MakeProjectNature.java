@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 public class MakeProjectNature implements IProjectNature {
 	
-	private IMakeBuilderInfo fBuildInfo;
 	public final static String NATURE_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeNature";
 	private IProject fProject;
 
@@ -103,21 +102,22 @@ public class MakeProjectNature implements IProjectNature {
 	public void configure() throws CoreException {
 		addBuildSpec();
 		IMakeBuilderInfo info = BuildInfoFactory.create(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID, false);
-		fBuildInfo.setBuildLocation(info.getBuildLocation());
+		IMakeBuilderInfo projectInfo = BuildInfoFactory.create(getProject(), MakeBuilder.BUILDER_ID);
+		projectInfo.setBuildLocation(info.getBuildLocation());
 
 
-		fBuildInfo.setUseDefaultBuildCmd(info.isDefaultBuildCmd());
-		fBuildInfo.setStopOnError(info.isStopOnError());
-		fBuildInfo.setBuildCommand(info.getBuildCommand());
+		projectInfo.setUseDefaultBuildCmd(info.isDefaultBuildCmd());
+		projectInfo.setStopOnError(info.isStopOnError());
+		projectInfo.setBuildCommand(info.getBuildCommand());
 
-		fBuildInfo.setAutoBuildEnable(info.isAutoBuildEnable());
-		fBuildInfo.setAutoBuildTarget(info.getAutoBuildTarget());
+		projectInfo.setAutoBuildEnable(info.isAutoBuildEnable());
+		projectInfo.setAutoBuildTarget(info.getAutoBuildTarget());
 
-		fBuildInfo.setIncrementalBuildEnable(info.isIncrementalBuildEnabled());
-		fBuildInfo.setIncrementalBuildTarget(info.getIncrementalBuildTarget());
+		projectInfo.setIncrementalBuildEnable(info.isIncrementalBuildEnabled());
+		projectInfo.setIncrementalBuildTarget(info.getIncrementalBuildTarget());
 
-		fBuildInfo.setFullBuildEnable(info.isFullBuildEnabled());
-		fBuildInfo.setFullBuildTarget(info.getFullBuildTarget());
+		projectInfo.setFullBuildEnable(info.isFullBuildEnabled());
+		projectInfo.setFullBuildTarget(info.getFullBuildTarget());
 	}
 
 	public void removeBuildSpec() throws CoreException {
@@ -142,10 +142,6 @@ public class MakeProjectNature implements IProjectNature {
 		* @see IProjectNature#setProject
 		*/
 	public void setProject(IProject project) {
-		try {
-			fProject = project;
-			fBuildInfo = MakeBuildManager.getBuildInfo(fProject, true);
-		} catch (CoreException e) {
-		}
+		fProject = project;
 	}
 }

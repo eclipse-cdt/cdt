@@ -27,9 +27,6 @@ public interface IMakeBuilderInfo {
 	String getIncrementalBuildTarget();
 	boolean isFullBuildEnabled();
 	String getFullBuildTarget();
-
-	public String[] getPreprocessorSymbols();
-    public String[] getIncludePaths();
     
 	void setBuildLocation(IPath location) throws CoreException;
     void setStopOnError(boolean on) throws CoreException;
@@ -43,8 +40,5 @@ public interface IMakeBuilderInfo {
 	void setIncrementalBuildTarget(String target) throws CoreException;
 	void setFullBuildEnable(boolean enabled) throws CoreException;
 	void setFullBuildTarget(String target) throws CoreException;
-	
-	public void setPreprocessorSymbols(String[] symbols);
-	public void setIncludePaths(String[] paths);
 }
 

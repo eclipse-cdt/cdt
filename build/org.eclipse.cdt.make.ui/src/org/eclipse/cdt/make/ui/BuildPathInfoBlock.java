@@ -1,8 +1,8 @@
 package org.eclipse.cdt.make.ui;
 
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.cdt.make.core.IMakeBuilderInfo;
-import org.eclipse.cdt.make.core.MakeBuildManager;
+import org.eclipse.cdt.make.core.MakeScannerInfo;
+import org.eclipse.cdt.make.core.MakeScannerProvider;
 import org.eclipse.cdt.ui.AbstractCOptionPage;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
@@ -252,13 +252,14 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		}
 		if (getContainer().getProject() != null) {
 			// Store the paths and symbols 
-			monitor.beginTask("Setting Include Paths", 1);
-			MakeBuildManager.setIncludePaths(getContainer().getProject(), getPathListContents());
-
-			monitor.beginTask("Setting Defined Symbols", 1);
-			MakeBuildManager.setPreprocessorSymbols(getContainer().getProject(), getSymbolListContents());
-
-			MakeBuildManager.saveBuildInfo(getContainer().getProject());
+			monitor.beginTask("Setting Scanner Info", 3);
+			MakeScannerInfo info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject());
+			info.setIncludePaths(getPathListContents());
+			monitor.worked(1);
+			info.setPreprocessorSymbols(getSymbolListContents());
+			monitor.worked(1);
+			info.update();
+			monitor.done();
 		}
 	}
 
@@ -394,7 +395,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		createSymbolListControl(composite, tabColumns);
 		createSymbolListButtons(composite);
 		enableSymbolButtons();
-		
+
 		setPathListContents();
 		pathList.select(0);
 		enablePathButtons();
@@ -586,8 +587,9 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 
 	private void setPathListContents() {
 		if (getContainer().getProject() != null) {
+			MakeScannerInfo info;
 			try {
-				IMakeBuilderInfo info = MakeBuildManager.getBuildInfo(getContainer().getProject());
+				info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject());
 				pathList.setItems(info.getIncludePaths());
 			} catch (CoreException e) {
 			}
@@ -596,8 +598,9 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 
 	private void setSymbolListContents() {
 		if (getContainer().getProject() != null) {
+			MakeScannerInfo info;
 			try {
-				IMakeBuilderInfo info = MakeBuildManager.getBuildInfo(getContainer().getProject());
+				info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject());
 				symbolList.setItems(info.getPreprocessorSymbols());
 			} catch (CoreException e) {
 			}

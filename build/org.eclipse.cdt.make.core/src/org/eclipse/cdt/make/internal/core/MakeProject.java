@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.ICOwner;
-import org.eclipse.cdt.make.core.MakeBuildManager;
+import org.eclipse.cdt.make.core.MakeScannerProvider;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 
@@ -25,7 +25,7 @@ public class MakeProject implements ICOwner {
 		ICExtensionReference ext = cproject.create(CCorePlugin.BUILDER_MODEL_ID, MakeCorePlugin.getUniqueIdentifier() + ".makeBuilder");
 		ext.setExtensionData("command", "make");
 		cproject.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
-		cproject.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, MakeBuildManager.INTERFACE_IDENTITY);
+		cproject.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, MakeScannerProvider.INTERFACE_IDENTITY);
 	}
 
 	public void update(ICDescriptor cproject, String extensionID) throws CoreException {
@@ -34,7 +34,7 @@ public class MakeProject implements ICOwner {
 			ext.setExtensionData("command", "make");
 		}
 		if ( extensionID.equals(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID)) {
-			cproject.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, MakeBuildManager.INTERFACE_IDENTITY);
+			cproject.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, MakeScannerProvider.INTERFACE_IDENTITY);
 		}
 		if ( extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
 			cproject.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, CCorePlugin.PLUGIN_ID + ".Elf");

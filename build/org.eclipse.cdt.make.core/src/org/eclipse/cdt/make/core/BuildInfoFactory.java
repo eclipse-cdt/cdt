@@ -11,13 +11,8 @@ package org.eclipse.cdt.make.core;
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -47,10 +42,7 @@ public class BuildInfoFactory {
 	private static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild";
 	private static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments";
 
-	private abstract static class Store implements IMakeBuilderInfo, IScannerInfo {
-		// List of include paths
-		protected List pathList;
-		protected List symbolList;
+	private abstract static class Store implements IMakeBuilderInfo {
 
 		public void setUseDefaultBuildCmd(boolean on) throws CoreException {
 			putValue(USE_DEFAULT_BUILD_CMD, new Boolean(on).toString());
@@ -143,68 +135,6 @@ public class BuildInfoFactory {
 			return getString(BUILD_TARGET_FULL);
 		}
 
-		public void setPreprocessorSymbols(String[] symbols) {
-			// Clear out any existing symbols and add the new stuff
-			getSymbolList().clear();
-			getSymbolList().addAll(Arrays.asList(symbols));
-		}
-
-		public void setIncludePaths(String[] paths) {
-			// Clear the existing list and add the paths
-			getPathList().clear();
-			getPathList().addAll(Arrays.asList(paths));
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
-		 */
-		public String[] getIncludePaths() {
-			return (String[])getPathList().toArray(new String[getPathList().size()]);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
-		 */
-		public Map getDefinedSymbols() {
-			// Return the defined symbols for the default configuration
-			HashMap symbols = new HashMap();
-			String[] symbolList = getPreprocessorSymbols();
-			for (int i = 0; i < symbolList.length; ++i) {
-				String symbol = symbolList[i];
-				if (symbol.length() == 0) {
-					continue;
-				}
-				String key = new String();
-				String value = new String();
-				int index = symbol.indexOf("=");
-				if (index != -1) {
-					key = symbol.substring(0, index).trim();
-					value = symbol.substring(index + 1).trim();
-				} else {
-					key = symbol.trim();
-				}
-				symbols.put(key, value);
-			}
-			return symbols;
-		}
-
-		protected List getPathList() {
-			if (pathList == null) {
-				pathList = new ArrayList();
-			}
-			return pathList;
-		}
-
-		public String[] getPreprocessorSymbols() {
-			return (String[])getSymbolList().toArray(new String[getSymbolList().size()]);
-		}
-
-		protected List getSymbolList() {
-			if (symbolList == null) {
-				symbolList = new ArrayList();
-			}
-			return symbolList;
-		}
 
 		public boolean getBoolean(String property) {
 			return Boolean.valueOf(getString(property)).booleanValue();

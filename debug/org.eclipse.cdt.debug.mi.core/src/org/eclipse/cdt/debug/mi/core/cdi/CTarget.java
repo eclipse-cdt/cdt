@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
@@ -145,11 +146,11 @@ public class CTarget  implements ICDITarget {
 			// HACK/FIXME: gdb/mi thread-list-ids does not
 			// show any newly create thread, we workaround by
 			// issuing "info threads" before to force it. 
-			/*
-			if (oldThreads != null) {
+			//*
+			//if (currentThreads == null || currentThreads.length == 0) {
 				mi.postCommand(new CLICommand("info threads"));
-			}
-			*/
+			//}
+			//*/
 			mi.postCommand(tids);
 			MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
 			int[] ids = info.getThreadIds();

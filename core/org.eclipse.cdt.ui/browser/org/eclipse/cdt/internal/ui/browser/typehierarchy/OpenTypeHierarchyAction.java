@@ -181,7 +181,7 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
         ITypeSearchScope projectScope = new TypeSearchScope();
         projectScope.add(unit.getCProject());
         int[] kinds = {ICElement.C_CLASS, ICElement.C_STRUCT};
-        ITypeInfo[] types = AllTypesCache.getTypes(projectScope, new QualifiedTypeName(name), kinds);
+        ITypeInfo[] types = AllTypesCache.getTypes(projectScope, new QualifiedTypeName(name), kinds, true);
         if (types != null) {
             List elements = new ArrayList(types.length);
             for (int i = 0; i < types.length; ++i) {

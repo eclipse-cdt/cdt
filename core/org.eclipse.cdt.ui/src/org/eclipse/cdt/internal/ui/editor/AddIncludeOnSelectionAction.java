@@ -273,7 +273,7 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 				}
 				ITypeInfo[] results = null;
 			    if (!monitor.isCanceled()) {
-					results = AllTypesCache.getTypes(scope, new QualifiedTypeName(name), types);
+					results = AllTypesCache.getTypes(scope, new QualifiedTypeName(name), types, true);
 				    if (!monitor.isCanceled()) {
 						for (int i = 0; i < results.length; ++i) {
 						    ITypeInfo info = results[i];

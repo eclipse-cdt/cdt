@@ -1,3 +1,14 @@
+2004-08-25 Chris Wiebe
+
+	support for matching enclosed type names
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/OpenTypeHierarchyAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java
+
+2004-08-25 Chris Wiebe
+
+	Got rid of little 'C' icons on the editor preference pages
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+
 2004-08-25 Alain Magloire
 
 	Fix for 65761: Show all the include paths in the includes container.

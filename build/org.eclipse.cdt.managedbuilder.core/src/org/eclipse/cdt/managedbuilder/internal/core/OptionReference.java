@@ -43,21 +43,6 @@ public class OptionReference implements IOption {
 	private Object value;
 
 	/**
-	 * Constructor called when the option reference is created from an 
-	 * existing <code>IOption</code>
-	 * 
-	 * @param owner
-	 * @param option
-	 */
-	public OptionReference(ToolReference owner, IOption option) {
-		this.owner = owner;
-		this.option = option;
-		
-		// Until the option reference is changed, all values will be extracted from original option		
-		owner.addOptionReference(this);
-	}
-
-	/**
 	 * This constructor will be called when the receiver is created from 
 	 * the settings found in an extension point.
 	 * 
@@ -95,13 +80,12 @@ public class OptionReference implements IOption {
 			case LIBRARIES:
 			case OBJECTS:
 				List valueList = new ArrayList();
-				builtIns = new ArrayList();
 				IConfigurationElement[] valueElements = element.getChildren(LIST_VALUE);
 				for (int i = 0; i < valueElements.length; ++i) {
 					IConfigurationElement valueElement = valueElements[i];
 					Boolean isBuiltIn = new Boolean(valueElement.getAttribute(LIST_ITEM_BUILTIN));
 					if (isBuiltIn.booleanValue()) {
-						builtIns.add(valueElement.getAttribute(LIST_ITEM_VALUE));
+						getBuiltInList().add(valueElement.getAttribute(LIST_ITEM_VALUE));
 					}
 					else {
 						valueList.add(valueElement.getAttribute(LIST_ITEM_VALUE));
@@ -109,6 +93,21 @@ public class OptionReference implements IOption {
 				value = valueList;
 				break;
 		}
+	}
+
+	/**
+	 * Constructor called when the option reference is created from an 
+	 * existing <code>IOption</code>
+	 * 
+	 * @param owner
+	 * @param option
+	 */
+	public OptionReference(ToolReference owner, IOption option) {
+		this.owner = owner;
+		this.option = option;
+		
+		// Until the option reference is changed, all values will be extracted from original option		
+		owner.addOptionReference(this);
 	}
 
 	/**
@@ -144,14 +143,13 @@ public class OptionReference implements IOption {
 			case LIBRARIES:
 			case OBJECTS:
 				List valueList = new ArrayList();
-				builtIns = new ArrayList();
 				NodeList nodes = element.getElementsByTagName(LIST_VALUE);
 				for (int i = 0; i < nodes.getLength(); ++i) {
 					Node node = nodes.item(i);
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 						Boolean isBuiltIn = new Boolean(((Element)node).getAttribute(LIST_ITEM_BUILTIN));
 						if (isBuiltIn.booleanValue()) {
-							builtIns.add(((Element)node).getAttribute(LIST_ITEM_VALUE));
+							getBuiltInList().add(((Element)node).getAttribute(LIST_ITEM_VALUE));
 						} else {
 							valueList.add(((Element)node).getAttribute(LIST_ITEM_VALUE));
 						}
@@ -309,15 +307,32 @@ public class OptionReference implements IOption {
 		}
 	}
 	
+	private List getBuiltInList() {
+		if (builtIns == null) {
+			builtIns = new ArrayList();
+		}
+		return builtIns;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getBuiltIns()
 	 */
 	public String[] getBuiltIns() {
-		// Return any overridden built-ins here, or the default set 
-		// from the option this is a reference to
-		return builtIns == null ?
-			   option.getBuiltIns():
-			   (String[])builtIns.toArray(new String[builtIns.size()]);
+		List answer = new ArrayList();
+		if (builtIns != null) {
+			answer.addAll(builtIns);
+		}
+
+		// Add the built-ins from the referenced option to the list
+		if (option != null) {
+			String[] optionBuiltIns = option.getBuiltIns();
+			for (int index = 0; index < optionBuiltIns.length; ++index) {
+				if (!answer.contains(optionBuiltIns[index])) {
+					answer.add(optionBuiltIns[index]);
+				}
+			}
+		}
+		return (String[]) answer.toArray(new String[answer.size()]);
 	}
 
 	public IOption getOption() {
@@ -467,4 +482,19 @@ public class OptionReference implements IOption {
 			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		String answer = new String();	
+		if (option != null) {
+			answer += "Reference to " + option.getName();	//$NON-NLS-1$ 
+		}
+		
+		if (answer.length() > 0) {
+			return answer;
+		} else {
+			return super.toString();			
+		}
+	}
 }

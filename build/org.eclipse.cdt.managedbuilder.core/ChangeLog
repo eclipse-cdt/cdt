@@ -1,5 +1,21 @@
+2004-03-05 Sean Evoy
+	Fix for bug 53856: "Option reference not reporting built-in includes 
+	paths to scanner"
+	
+	Changed the constructor for the OptionReference so it only creates a 
+	list if it finds built-in path or symbol definitions in the manifest 
+	or project file. The getter method for built-ins also concatenates the 
+	definitions it contains with those of its parent.
+	
+	Undid the changes to the geenrated makefile builder since bug 53253 has 
+	been corrected.
+	
+	Fix for bug 53861: "Cannot reset tool command back to default"
+	Changed the way the configuration sets the tool command when the value 
+	is the same as the default.
+	
 2004-03-02 Sean Evoy
-	A change in VCErrorParser to fix PR 53253 causes an IndexOutOfBounds 
+	A change in VCErrorParser to fix bug 53253 causes an IndexOutOfBounds 
 	exception when echoing a build command on Win32 if the absolute path 
 	to the make utility is specified, i.e. C:\<path>\make.exe
 	

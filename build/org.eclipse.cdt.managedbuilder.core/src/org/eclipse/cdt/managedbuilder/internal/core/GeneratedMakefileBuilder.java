@@ -348,7 +348,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				// Get a launcher for the make command
 				String errMsg = null;
 				CommandLauncher launcher = new CommandLauncher();
-				launcher.showCommand(false);
+				launcher.showCommand(true);
 	
 				// Set the environmennt, some scripts may need the CWD var to be set.
 				Properties props = launcher.getEnvironment();
@@ -372,15 +372,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				OutputStream stderr = epm.getOutputStream();
 			
 				// Launch make
-				StringBuffer cmd = new StringBuffer();
-				cmd.append(makeCommand.toOSString());
-				for (int index = 0; index < makeTargets.length; ++index) {
-					cmd.append(' ');
-					cmd.append(makeTargets[index]);
-				}
-				cmd.append(System.getProperty("line.separator", "\n")); //$NON-NLS-2$
-				consoleOutStream.write(cmd.toString().getBytes());
-				consoleOutStream.flush();
 				Process proc = launcher.execute(makeCommand, makeTargets, env, workingDirectory);
 				if (proc != null) {
 					try {

@@ -461,7 +461,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 */
 	public void setToolCommand(ITool tool, String command) {
 		// Make sure the command is different
-		if (command != null && !tool.getToolCommand().equals(command)) {
+		if (command != null) {
 			// Does this config have a ref to the tool
 			ToolReference ref = getToolReference(tool);
 			if (ref == null) {

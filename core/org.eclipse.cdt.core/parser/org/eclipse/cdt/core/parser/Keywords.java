@@ -225,4 +225,15 @@ public class Keywords {
 	public static final char[] cpDIV = 	"/".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpPOUND = "#".toCharArray(); //$NON-NLS-1$
 	public static final char[] cpPOUNDPOUND = "##".toCharArray(); //$NON-NLS-1$
+	
+	// preprocessor keywords
+	public static final char[] cIFDEF = "ifdef".toCharArray(); //$NON-NLS-1$
+	public static final char[] cIFNDEF = "ifndef".toCharArray(); //$NON-NLS-1$
+	public static final char[] cELIF = "elif".toCharArray(); //$NON-NLS-1$
+	public static final char[] cENDIF = "endif".toCharArray(); //$NON-NLS-1$
+	public static final char[] cINCLUDE = "include".toCharArray(); //$NON-NLS-1$
+	public static final char[] cDEFINE = "define".toCharArray(); //$NON-NLS-1$
+	public static final char[] cUNDEF = "undef".toCharArray(); //$NON-NLS-1$
+	public static final char[] cERROR = "error".toCharArray(); //$NON-NLS-1$
+	public static final char[] cINCLUDE_NEXT = "include_next".toCharArray(); //$NON-NLS-1$
 }

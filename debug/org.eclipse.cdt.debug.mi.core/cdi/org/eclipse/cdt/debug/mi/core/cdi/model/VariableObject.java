@@ -54,6 +54,9 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 	public VariableObject(VariableObject obj) {
 		super(obj.getTarget());
 		name = obj.getName();
+		fullName = obj.fullName;
+		sizeof = obj.sizeof;
+		type = obj.type;
 		try {
 			frame = obj.getStackFrame();
 		} catch (CDIException e) {

@@ -68,8 +68,8 @@ public class RxThread extends Thread {
 		try {
 			String line;
 			while ((line = reader.readLine()) != null) {
-//String text = (line.length() > 500) ? line.substring(0, 500) : line;
-//MIPlugin.getDefault().debugLog(text);
+				// TRACING: print the output.
+				MIPlugin.getDefault().debugLog(line);
 				processMIOutput(line + "\n");
 			}
 		} catch (IOException e) {

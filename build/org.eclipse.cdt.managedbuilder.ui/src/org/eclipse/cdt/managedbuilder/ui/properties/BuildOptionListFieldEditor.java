@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 /**********************************************************************
- * Copyright (c) 2002,2004 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 IBM Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -210,8 +211,9 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 
 		// Create a grid data that takes up the extra space in the dialog and spans one column.
 		GridData listData = new GridData(GridData.FILL_HORIZONTAL);
-		listData.heightHint = buttonGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		listData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		Point buttonGroupSize = buttonGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT); 
+		listData.heightHint = buttonGroupSize.y;
+		listData.widthHint = buttonGroupSize.x * 2;
 		list.setLayoutData(listData);
 	}
 
@@ -251,12 +253,16 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		swap(false);		
 	}
 
+	/* (non-Javadoc)
+	 * Event handler for the edit button pressed event. Delegates
+	 * the work to a helper method.
+	 */
 	private void editPressed() {
 		editSelection();
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 * Edit the value of the selected item.
 	 */
 	protected void editSelection() {
 		// Edit the selection index
@@ -378,7 +384,11 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 		int index = list.getSelectionIndex();
 		if (index >= 0) {
 			list.remove(index);
-			list.setSelection(index - 1);
+			if (index - 1 < 0) {
+				list.setSelection(0);
+			} else {
+				list.setSelection(index - 1);
+			}
 			selectionChanged();
 		}
 	}

@@ -25,12 +25,14 @@ import java.util.regex.Pattern;
 
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
+import org.eclipse.cdt.managedbuilder.ui.properties.BuildSettingsPage;
+import org.eclipse.cdt.managedbuilder.ui.properties.BuildToolsSettingsStore;
+import org.eclipse.cdt.managedbuilder.ui.properties.ToolListContentProvider;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -325,6 +327,23 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 				children[i].setVisible(false);
 		}
 		currentSettingsPage.setVisible(true);
+
+		// save the last page build options.
+		// If the last page is tool page then parse all the options
+		// and put it in the appropriate preference store.
+		if (oldPage != null){
+			if(oldPage instanceof BuildOptionSettingsPage) {
+				((BuildOptionSettingsPage)oldPage).storeSettings();
+			}
+			else if(oldPage instanceof BuildToolSettingsPage) {
+				((BuildToolSettingsPage)oldPage).storeSettings();
+				((BuildToolSettingsPage)oldPage).parseAllOptions();
+			}
+		}
+		//update the field editors in the current page
+		if(currentSettingsPage instanceof BuildOptionSettingsPage)
+			((BuildOptionSettingsPage)currentSettingsPage).updateFields();
+		
 		if (oldPage != null)
 			oldPage.setVisible(false);
 
@@ -376,6 +395,23 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 				children[i].setVisible(false);
 		}
 		currentSettingsPage.setVisible(true);
+
+		// save the last page build options.
+		// If the last page is tool page then parse all the options
+		// and put it in the appropriate preference store.
+		if (oldPage != null){
+			if(oldPage instanceof BuildOptionSettingsPage) {
+				((BuildOptionSettingsPage)oldPage).storeSettings();
+			}
+			else if(oldPage instanceof BuildToolSettingsPage) {
+				((BuildToolSettingsPage)oldPage).storeSettings();
+				((BuildToolSettingsPage)oldPage).parseAllOptions();
+			}
+		}
+		//update the field editor that displays all the build options
+		if(currentSettingsPage instanceof BuildToolSettingsPage)
+			((BuildToolSettingsPage)currentSettingsPage).updateAllOptionField();
+
 		if (oldPage != null)
 			oldPage.setVisible(false);
 
@@ -395,7 +431,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		return names;
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @return
 	 */
 	protected Point getLastShellSize() {
@@ -440,10 +476,10 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		return null;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @return
 	 */
-	public IConfiguration getSelectedConfiguration() {
+	protected IConfiguration getSelectedConfiguration() {
 		return selectedConfiguration;
 	}
 
@@ -478,9 +514,9 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		Object primary = elements.length > 0 ? elements[0] : null;
 		
 		if (primary != null && primary instanceof ITool) {
-			// Check to see if there are any options.
+			// set the tool as primary selection in the tree hence it displays all the build options.
 			ITool tool = (ITool)primary;
-			IOptionCategory top = tool.getTopOptionCategory();
+		/*	IOptionCategory top = tool.getTopOptionCategory();
 			IOption[] topOpts = top.getOptions(selectedConfiguration);
 			if (topOpts != null && topOpts.length == 0) {
 				// Get the children categories and start looking
@@ -493,7 +529,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 						break;
 					}
 				}
-			}
+			}*/
 		}
 		
 		if (primary != null) {
@@ -543,6 +579,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 				configurations = selectedTarget.getConfigurations();
 				configSelector.removeAll();
 				configSelector.setItems(getConfigurationNames());
+				configSelector.add(ManagedBuilderUIPlugin.getResourceString(ALL_CONFS));
 				configSelector.select(0);
 				updateConfigs = true;
 			}
@@ -568,6 +605,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 					configurations = selectedTarget.getConfigurations();
 					configSelector.removeAll();
 					configSelector.setItems(getConfigurationNames());
+					configSelector.add(ManagedBuilderUIPlugin.getResourceString(ALL_CONFS));
 					configSelector.select(configSelector.indexOf(name));
 					updateConfigs = true;
 				}
@@ -768,6 +806,11 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		while (iter.hasNext()) {
 			BuildSettingsPage page = (BuildSettingsPage) iter.next();
 			if (page instanceof BuildToolSettingsPage) {
+				// if the currentsettings page is not the tool settings page
+				// then update the all build options field editor based on the 
+				// build options in other options settings page.
+				if (!(currentSettingsPage instanceof BuildToolSettingsPage))
+					((BuildToolSettingsPage)page).updateAllOptionField();
 				((BuildToolSettingsPage)page).performOk();
 			} else if (page instanceof BuildOptionSettingsPage) {
 				((BuildOptionSettingsPage)page).performOk();				

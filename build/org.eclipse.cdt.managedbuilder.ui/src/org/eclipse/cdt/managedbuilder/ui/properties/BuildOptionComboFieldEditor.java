@@ -76,13 +76,12 @@ public class BuildOptionComboFieldEditor extends FieldEditor {
 	 * @see org.eclipse.jface.preference.FieldEditor#doLoad()
 	 */
 	protected void doLoad() {
-		// Retrieve the option string from the store
-		String values = getPreferenceStore().getString(getPreferenceName());
-		
-		// Convert it to a string array
-		options = BuildToolsSettingsStore.parseString(values);
+		// set all the options to option selector
 		optionSelector.removeAll();
 		optionSelector.setItems(options);
+
+		// get the selected option from preference store
+		selected = getPreferenceStore().getString(getPreferenceName());
 		
 		// Set the index of selection in the combo box
 		int index = optionSelector.indexOf(selected);

@@ -11,10 +11,8 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * IBM Rational Software - Initial API and implementation
  * **********************************************************************/
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -54,14 +52,14 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	}
 
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		listenerList.add(listener);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#contains(java.lang.String)
 	 */
 	public boolean contains(String name) {
@@ -87,7 +85,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		return path.toString();
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#firePropertyChangeEvent(java.lang.String, java.lang.Object, java.lang.Object)
 	 */
 	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
@@ -103,7 +101,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 			}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getBoolean(java.lang.String)
 	 */
 	public boolean getBoolean(String name) {
@@ -185,7 +183,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		return getDefaultLong(name);
 	}
 
-	/* (non-javadoc)
+	/* (non-Javadoc)
 	 * Answers the map containing the strings associated with each option 
 	 * ID.
 	 * 
@@ -223,8 +221,12 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					break;
 
 				case IOption.ENUMERATED :
-					value = createList(opt.getApplicableValues());
-					getSettingsMap().put(name, value);					
+					try{
+						value = opt.getSelectedEnum();
+					} catch (BuildException e) {
+						break;
+					}
+						getSettingsMap().put(name, value);					
 					break;
 					
 				case IOption.STRING :
@@ -282,7 +284,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#getString(java.lang.String)
 	 */
 	public String getString(String name) {
@@ -295,30 +297,33 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		return getDefaultString(name);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#isDefault(java.lang.String)
 	 */
 	public boolean isDefault(String name) {
 		return false;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#needsSaving()
 	 */
 	public boolean needsSaving() {
 		return dirtyFlag;
 	}
 
+	/**
+	 * @param stringList
+	 * @return
+	 */
 	public static String[] parseString(String stringList) {
-		StringTokenizer tokenizer = new StringTokenizer(stringList, BuildToolsSettingsStore.DEFAULT_SEPERATOR);
-		ArrayList list = new ArrayList();
-		while (tokenizer.hasMoreElements()) {
-			list.add(tokenizer.nextElement());
+		if (stringList == null || stringList.length() == 0) {
+			return new String[0];
+		} else {
+			return stringList.split(BuildToolsSettingsStore.DEFAULT_SEPERATOR);
 		}
-		return (String[]) list.toArray(new String[list.size()]);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * 
 	 */
 	private void populateSettingsMap() {
@@ -335,7 +340,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#putValue(java.lang.String, java.lang.String)
 	 */
 	public void putValue(String name, String value) {
@@ -347,19 +352,19 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, double)
 	 */
 	public void setDefault(String name, double value) {
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setDefault(java.lang.String, float)
 	 */
 	public void setDefault(String name, float value) {
@@ -424,7 +429,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 	public void setValue(String name, long value) {
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, java.lang.String)
 	 */
 	public void setValue(String name, String value) {
@@ -437,7 +442,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.IPreferenceStore#setValue(java.lang.String, boolean)
 	 */
 	public void setValue(String name, boolean value) {

@@ -1,3 +1,9 @@
+2003-03-18 Alain Magloire
+
+	* plugin.xml
+	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java:
+	Change the texts for "C Local Application".
+
 2003-02-20 Mikhail Khodjaiants
 	The generation of launch configuration shouldn't fail if project is not set or project name is empty.
 	* DefaultSourceLocator.java

@@ -66,6 +66,7 @@ import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICModule;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
@@ -163,6 +164,11 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 	private CSharedLibraryManager fSharedLibraryManager;
 
 	/**
+	 * The module manager for this target.
+	 */
+	private CModuleManager fModuleManager;
+
+	/**
 	 * The signal manager for this target.
 	 */
 	private CSignalManager fSignalManager;
@@ -230,6 +236,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		setThreadList( new ArrayList( 5 ) );
 		createDisassembly();
 		setSharedLibraryManager( new CSharedLibraryManager( this ) );
+		setModuleManager( new CModuleManager( this ) );
 		setSignalManager( new CSignalManager( this ) );
 		setRegisterManager( new CRegisterManager( this ) );
 		setBreakpointManager( new CBreakpointManager( this ) );
@@ -248,6 +255,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		initializeBreakpoints();
 		initializeRegisters();
 		initializeSourceManager();
+		initializeModuleManager();
 		getLaunch().addDebugTarget( this );
 		fireEventSet( (DebugEvent[])debugEvents.toArray( new DebugEvent[debugEvents.size()] ) );
 	}
@@ -325,6 +333,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			if ( listener != null )
 				CCorePlugin.getWorkspace().addResourceChangeListener( listener );
 		}
+	}
+
+	protected void initializeModuleManager() {
+		getModuleManager().addModules( new ICModule[] { CModule.createExecutable( this, getExecFile().getPath() ) } );
 	}
 
 	/* (non-Javadoc)
@@ -797,8 +809,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			return this;
 		if ( adapter.equals( CBreakpointManager.class ) )
 			return getBreakpointManager();
-		if ( adapter.equals( ICSharedLibraryManager.class ) )
-			return getSharedLibraryManager();
 		if ( adapter.equals( CSignalManager.class ) )
 			return getSignalManager();
 		if ( adapter.equals( ICRegisterManager.class ) )
@@ -831,6 +841,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 					}
 					if ( source instanceof ICDISharedLibrary ) {
 						getSharedLibraryManager().sharedLibraryLoaded( (ICDISharedLibrary)source );
+						getModuleManager().sharedLibraryLoaded( (ICDISharedLibrary)source );
 					}
 				}
 				else if ( event instanceof ICDISuspendedEvent ) {
@@ -854,6 +865,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 					}
 					if ( source instanceof ICDISharedLibrary ) {
 						getSharedLibraryManager().sharedLibraryUnloaded( (ICDISharedLibrary)source );
+						getModuleManager().sharedLibraryUnloaded( (ICDISharedLibrary)source );
 					}
 				}
 				else if ( event instanceof ICDIDisconnectedEvent ) {
@@ -971,6 +983,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		saveGlobalVariables();
 		disposeGlobalVariableManager();
 		disposeSharedLibraryManager();
+		disposeModuleManager();
 		disposeSignalManager();
 		disposeRegisterManager();
 		disposeDisassembly();
@@ -1399,6 +1412,19 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		fSharedLibraryManager.dispose();
 	}
 
+	protected void setModuleManager( CModuleManager mm ) {
+		fModuleManager = mm;
+	}
+
+	protected CModuleManager getModuleManager() {
+		return fModuleManager;
+	}
+
+	protected void disposeModuleManager() {
+		fModuleManager.dispose();
+		fModuleManager = null;
+	}
+
 	protected void setSignalManager( CSignalManager sm ) {
 		fSignalManager = sm;
 	}
@@ -1781,6 +1807,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	private void handleSymbolsLoaded( ICDISharedLibrary library ) {
 		getSharedLibraryManager().symbolsLoaded( library );
+		getModuleManager().symbolsLoaded( library );
 	}
 
 	public ICGlobalVariable createGlobalVariable( IGlobalVariableDescriptor info ) throws DebugException {
@@ -1792,5 +1819,29 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			throw new DebugException( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, (vo != null) ? vo.getName() + ": " + e.getMessage() : e.getMessage(), null ) ); //$NON-NLS-1$
 		}
 		return CVariableFactory.createGlobalVariable( this, info, vo );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#hasModules()
+	 */
+	public boolean hasModules() throws DebugException {
+		CModuleManager mm = getModuleManager();
+		return ( mm != null ) ? mm.hasModules() : false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#getModules()
+	 */
+	public ICModule[] getModules() throws DebugException {
+		CModuleManager mm = getModuleManager();
+		return ( mm != null ) ? mm.getModules() : new ICModule[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#loadSymbolsForAllModules()
+	 */
+	public void loadSymbolsForAllModules() throws DebugException {
+		CModuleManager mm = getModuleManager();
+		mm.loadSymbolsForAll();
 	}
 }

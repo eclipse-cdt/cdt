@@ -1,3 +1,13 @@
+2005-02-07 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
+	Core support for the Modules view.
+	* ICDebugTarget.java
+	* ICModule.java: new
+	* CoreModelMessages.properties
+	* CDebugTarget.java
+	* CModule.java: new
+	* CModuleManager.java: new
+
 2005-02-03 Mikhail Khodjaiants
 	Fix for bug 84187: "Toggle Watchpoint" and "Toggle Method Breakpoint" don't work with C editor.
 	ICWatchpoint should extend ILineBreakpoint to allow watchpoints to be shown in editors.

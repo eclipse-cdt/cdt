@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
@@ -972,6 +973,11 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, A, 4 );
         assertInstances( col, x, 3 );
     }
+    
+    public void testBug84250() throws Exception {
+       assertTrue( ((IASTDeclarationStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) parse( "void f() { int (*p) [2]; }", ParserLanguage.CPP ).getDeclarations()[0]).getBody()).getStatements()[0]).getDeclaration() instanceof IASTSimpleDeclaration ); //$NON-NLS-1$
+    }
+
     
     public void _testBug84250() throws Exception{
    		StringBuffer buffer = new StringBuffer();

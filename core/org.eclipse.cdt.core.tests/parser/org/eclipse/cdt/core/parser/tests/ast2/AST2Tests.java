@@ -2671,4 +2671,8 @@ public class AST2Tests extends AST2BaseTest {
       buffer.append("}\n"); //$NON-NLS-1$
       parse( buffer.toString(), ParserLanguage.C );
    }
+   
+   public void testBug84250() throws Exception {
+      assertTrue( ((IASTDeclarationStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) parse( "void f() { int (*p) [2]; }", ParserLanguage.C ).getDeclarations()[0]).getBody()).getStatements()[0]).getDeclaration() instanceof IASTSimpleDeclaration ); //$NON-NLS-1$
+   }
 }

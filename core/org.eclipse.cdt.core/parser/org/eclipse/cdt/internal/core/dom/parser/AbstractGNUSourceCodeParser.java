@@ -1465,6 +1465,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
          return expressionStatement;
       }
+      
+      if( resolveOtherAmbiguitiesAsDeclaration( ds, expressionStatement )  )
+         return ds;
+      
       backup(mark);
       while (true) {
          if (consume() == lastTokenOfExpression)
@@ -1472,6 +1476,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
       }
 
       return expressionStatement;
+   }
+
+   /**
+    * @param ds
+    * @param expressionStatement
+    * @return
+    */
+   protected boolean resolveOtherAmbiguitiesAsDeclaration(IASTDeclarationStatement ds, IASTExpressionStatement expressionStatement) {
+      return false;
    }
 
    /**

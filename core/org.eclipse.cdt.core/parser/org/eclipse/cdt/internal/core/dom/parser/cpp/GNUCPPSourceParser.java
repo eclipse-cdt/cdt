@@ -4706,5 +4706,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       ((ASTNode) result).setLength(length);
       return result;
    }
+   
+   /* (non-Javadoc)
+    * @see org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser#resolveOtherAmbiguitiesAsDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement, org.eclipse.cdt.core.dom.ast.IASTExpressionStatement)
+    */
+   protected boolean resolveOtherAmbiguitiesAsDeclaration(
+         IASTDeclarationStatement ds,
+         IASTExpressionStatement expressionStatement) {
+      if( expressionStatement.getExpression() instanceof IASTArraySubscriptExpression )
+      {
+         IASTArraySubscriptExpression arraySub = (IASTArraySubscriptExpression) expressionStatement.getExpression();
+         if( ! ( arraySub.getArrayExpression() instanceof IASTIdExpression || 
+                 arraySub.getArrayExpression() instanceof IASTArraySubscriptExpression || 
+                 arraySub.getArrayExpression() instanceof IASTFieldReference ))
+              return true;
+      }
+      return super
+            .resolveOtherAmbiguitiesAsDeclaration(ds, expressionStatement);
+   }
 
 }

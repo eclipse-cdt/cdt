@@ -15,8 +15,24 @@ import org.eclipse.cdt.debug.mi.core.output.MIOutput;
  */
 public abstract class Command
 {
+	private static int globalCounter;
+
 	int token = 0;
 	MIOutput output;
+
+	/**
+	 * A global counter for all command, the token
+	 * will be use to identify uniquely a command.
+	 * Unless the value wraps around which is unlikely.
+	 */
+	private static synchronized int getUniqToken() {
+		int count = ++globalCounter;
+		// If we ever wrap around.
+		if (count <= 0) {
+			count = globalCounter = 1;
+		}
+		return count;
+	}
 
 	/**
 	 * Returns the identifier of this request.
@@ -24,12 +40,15 @@ public abstract class Command
 	 * @return the identifier of this request
 	 */
 	public int getToken() {
+		if (token == 0) {
+			token = getUniqToken();
+		}
 		return token;
 	}
 	
-	public void setToken(int token) {
-		this.token = token;
-	}
+//	public void setToken(int token) {
+//		this.token = token;
+//	}
 
 	public MIOutput getMIOutput() {
 		return output;

@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 
 /**
  * @author jcamelon
@@ -694,7 +695,7 @@ public class ReferenceCache implements IReferenceManager {
 			if (!(obj instanceof IASTReference))
 				return false;
 
-			if (((IASTReference) obj).getName().equals(getName())
+			if (  CharArrayUtils.equals( ((IASTReference) obj).getNameCharArray(), getNameCharArray() )
 					&& ((IASTReference) obj).getOffset() == getOffset())
 				return true;
 			return false;

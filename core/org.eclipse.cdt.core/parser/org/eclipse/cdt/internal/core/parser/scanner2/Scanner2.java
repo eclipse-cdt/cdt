@@ -730,6 +730,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	
 	private IToken scanIdentifier() {
 		char[] buffer = bufferStack[bufferStackPos];
+		boolean escapedNewline = false;
 		int start = bufferPos[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		int len = 1;
@@ -746,6 +747,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				// escaped newline
 				++bufferPos[bufferStackPos];
 				len += 2;
+				escapedNewline = true;
 				continue;
 			}
 			else if( c == '\\' && ( bufferPos[bufferStackPos] + 1 < limit ) )  
@@ -793,10 +795,14 @@ public class Scanner2 implements IScanner, IScannerData {
 			return new MacroExpansionToken();
 		}
 		
-		int tokenType = keywords.get(buffer, start, len);
-		char [] result = removedEscapedNewline( CharArrayUtils.extract( buffer, start, len ) );
-		if (tokenType == keywords.undefined)
+		char [] result = escapedNewline ? removedEscapedNewline( buffer, start, len ) : null;
+		int tokenType = escapedNewline ? keywords.get(result, 0, result.length) 
+		                               : keywords.get(buffer, start, len );
+		
+		if (tokenType == keywords.undefined){
+		    result = (result != null) ? result : CharArrayUtils.extract( buffer, start, len );
 			return newToken(IToken.tIDENTIFIER, result );
+		}
 		return newToken(tokenType);
 	}
 	
@@ -1408,7 +1414,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		if( encounteredMultilineComment )
 			text = removeMultilineCommentFromBuffer( text );
-		text = removedEscapedNewline( text );
+		text = removedEscapedNewline( text, 0, text.length );
 			
 		// Throw it in
 		definitions.put(name, 	arglist == null
@@ -1424,8 +1430,8 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @param text
 	 * @return
 	 */
-	private char[] removedEscapedNewline(char[] text) {
-		if( CharArrayUtils.indexOf( '\n', text ) == -1 )
+	private char[] removedEscapedNewline(char[] text, int start, int len ) {
+		if( CharArrayUtils.indexOf( '\n', text, start, len ) == -1 )
 			return text;
 		char [] result = new char[ text.length ];
 		Arrays.fill( result, ' ');

@@ -542,7 +542,9 @@ public class BasicTokenDuple implements ITokenDuple {
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#toCharArray()
 	 */
 	public char[] toCharArray() {
-		return toString().toCharArray(); //TODO fix me!
+	    if( stringRepresentation == null )
+			stringRepresentation = createCharArrayRepresentation(firstToken, lastToken);
+	    return stringRepresentation;
 	}
 
 	/* (non-Javadoc)

@@ -55,7 +55,8 @@ public class CharArrayUtils {
 	public static final boolean equals(char[] str1, int start1, int length1, char[] str2) {
 		if (length1 != str2.length || str1.length < length1 )
 			return false;
-		
+		if( str1 == str2 && start1 == 0 )
+		    return true;
 		for (int i = 0; i < length1; ++i)
 			if (str1[start1++] != str2[i])
 				return false;
@@ -193,6 +194,16 @@ public class CharArrayUtils {
 				return i;
 		return -1;
 	}
+	
+    public static int indexOf( char toBeFound, char[] buffer, int start, int len ) {
+        if( start < 0 || start > buffer.length || start + len > buffer.length )
+            return -1;
+        
+        for (int i = start; i < len; i++)
+			if (toBeFound == buffer[i])
+				return i;
+		return -1;
+    }
 	public static final int indexOf( char[] toBeFound, char[] array ){
 	    if( toBeFound.length > array.length )
 	        return -1;
@@ -257,4 +268,6 @@ public class CharArrayUtils {
             buff[ i + j ] = charImage[j];
         }
     }
+
+
 }

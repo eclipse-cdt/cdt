@@ -1,3 +1,8 @@
+2002-11-01 David Inglis	
+	* src/.../launch/internal/CoreFileLaunchDelegate.java
+	* src/.../launch/internal/LocalCLaunchConfigur.ationDelegate.java
+	use new newDebugTaget methods in CDebugModel
+
 2002-10-23 David Inglis
 	
 	* /src/.../launch/internal/CoreFileDelegate.java

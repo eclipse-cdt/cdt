@@ -100,7 +100,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						renderTargetLabel(debugConfig),
 						iprocess,
 						debuggerProcess,
-						exe.getProject(),
+						exe,
 						true,
 						false,
 						stopInMain);
@@ -121,7 +121,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						dsession.getCurrentTarget(),
 						renderTargetLabel(debugConfig),
 						debuggerProcess,
-						exe.getProject());
+						exe);
 				}
 			} catch (CDIException e) {
 				abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);

@@ -71,7 +71,7 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			dsession.getCurrentTarget(),
 			renderTargetLabel(debugConfig),
 			debuggerProcess,
-			exe.getProject());
+			exe);
 	}
 
 	protected IPath getCoreFilePath(final IProject project) throws CoreException {

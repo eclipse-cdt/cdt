@@ -395,7 +395,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 						}
 						catch( DebugException e )
 						{
-							errorDialog( "Switch to stack frame failed.", e );
+//							errorDialog( "Switch to stack frame failed.", e );
 						}
 					}
 				}

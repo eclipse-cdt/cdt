@@ -11,11 +11,14 @@ import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -70,6 +73,7 @@ public class CastToTypeActionDelegate extends ActionDelegate
 
 	private ICastToType fCastToType = null;
 	private IStatus fStatus = null;
+	private IWorkbenchPart fTargetPart = null;
 
 	public CastToTypeActionDelegate()
 	{
@@ -81,6 +85,7 @@ public class CastToTypeActionDelegate extends ActionDelegate
 	 */
 	public void setActivePart( IAction action, IWorkbenchPart targetPart )
 	{
+		fTargetPart = targetPart;
 	}
 
 	/* (non-Javadoc)
@@ -171,6 +176,13 @@ public class CastToTypeActionDelegate extends ActionDelegate
 		{
 			String newType = dialog.getValue().trim();
 			castToType.cast( newType );
+			if ( getSelectionProvider() != null )
+				getSelectionProvider().setSelection( new StructuredSelection( castToType ) );
 		}
+	}
+
+	private ISelectionProvider getSelectionProvider()
+	{
+		return ( fTargetPart instanceof IDebugView ) ? ((IDebugView)fTargetPart).getViewer() : null;
 	}
 }

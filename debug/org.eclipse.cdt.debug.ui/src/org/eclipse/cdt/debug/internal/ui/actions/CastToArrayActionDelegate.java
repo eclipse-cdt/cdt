@@ -12,11 +12,14 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -246,6 +249,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 
 	private ICastToArray fCastToArray = null;
 	private IStatus fStatus = null;
+	private IWorkbenchPart fTargetPart = null;
 
 	public CastToArrayActionDelegate()
 	{
@@ -257,6 +261,7 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 	 */
 	public void setActivePart( IAction action, IWorkbenchPart targetPart )
 	{
+		fTargetPart = targetPart;
 	}
 
 	/* (non-Javadoc)
@@ -348,6 +353,13 @@ public class CastToArrayActionDelegate extends ActionDelegate implements IObject
 			int firstIndex = dialog.getFirstIndex();
 			int lastIndex = dialog.getLength();
 			castToArray.castToArray( firstIndex, lastIndex );
+			if ( getSelectionProvider() != null )
+				getSelectionProvider().setSelection( new StructuredSelection( castToArray ) );
 		}
+	}
+
+	private ISelectionProvider getSelectionProvider()
+	{
+		return ( fTargetPart instanceof IDebugView ) ? ((IDebugView)fTargetPart).getViewer() : null;
 	}
 }

@@ -36,8 +36,6 @@ import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.DefaultManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
-import org.eclipse.cdt.managedbuilder.internal.core.ToolReference;
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.core.resources.IFile;
@@ -282,9 +280,9 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static void setToolCommand(IConfiguration config, ITool tool, String command) {
 		// The tool may be a reference.
-		if (tool instanceof ToolReference) {
+		if (tool instanceof IToolReference) {
 			// If so, just set the command in the reference
-			((ToolReference)tool).setToolCommand(command);
+			((IToolReference)tool).setToolCommand(command);
 		} else {
 			config.setToolCommand(tool, command);
 		}

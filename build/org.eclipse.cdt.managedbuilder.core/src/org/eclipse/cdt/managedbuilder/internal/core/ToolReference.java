@@ -14,23 +14,25 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.managedbuilder.core.AbstractToolReference;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
+import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class ToolReference extends AbstractToolReference {
+public class ToolReference implements IToolReference {
 	private String command;
 	private List optionReferences;
 	private IBuildObject owner;
+	protected ITool parent;
 	private boolean resolved = true;
 	
 	/**
@@ -110,13 +112,34 @@ public class ToolReference extends AbstractToolReference {
 	 * @param parent The <code>ITool</code>tool the reference will be based on.
 	 */
 	public ToolReference(BuildObject owner, ITool parent) {
-		super(parent);
+		this.parent = parent;
 		this.owner = owner;
 		
 		if (owner instanceof Configuration) {
 			((Configuration)owner).addToolReference(this);
 		} else if (owner instanceof Target) {
 			((Target)owner).addToolReference(this);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#references(org.eclipse.cdt.managedbuilder.core.ITool)
+	 */
+	public boolean references(ITool target) {
+		if (equals(target)) {
+			// we are the target
+			return true;
+		}
+		else if (parent instanceof IToolReference) {
+			// check the reference we are overriding
+			return ((IToolReference)parent).references(target);
+		}
+		else if (target instanceof IToolReference) {
+			return parent.equals(((IToolReference)target).getTool()); 
+		}
+		else {
+			// the real reference
+			return parent.equals(target);
 		}
 	}
 
@@ -155,23 +178,15 @@ public class ToolReference extends AbstractToolReference {
 		getOptionReferenceList().add(optionRef);
 	}
 
-	private OptionReference getOptionReference(String id) {
-		Iterator it = getOptionReferenceList().iterator();
-		while (it.hasNext()) {
-			OptionReference current = (OptionReference)it.next();
-			if (current.getId().equals(id)) {
-				return current;
-			}
-		}
-		return null;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#buildsFileType(java.lang.String)
+	 */
+	public boolean buildsFileType(String extension) {
+		return parent.buildsFileType(extension);
 	}
-	
-	/**
-	 * Answers a reference to the option. If the reference does not exist, 
-	 * a new reference is created. 
-	 * 
-	 * @param option
-	 * @return OptionReference
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#createOptionReference(org.eclipse.cdt.managedbuilder.core.IOption)
 	 */
 	public OptionReference createOptionReference(IOption option) {
 		// Check if the option reference already exists
@@ -182,6 +197,70 @@ public class ToolReference extends AbstractToolReference {
 		return ref;
 	}
 	
+	/* (non-Javadoc)
+	 * @return
+	 */
+	protected List getAllOptionRefs() {
+		// First get all the option references this tool reference contains
+		if (owner instanceof Configuration) {
+			return ((Configuration)owner).getOptionReferences(parent);
+		} else if (owner instanceof Target) {
+			return ((Target)owner).getOptionReferences(parent);
+		} else {
+			// this shouldn't happen
+			return null;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getId()
+	 */
+	public String getId() {
+		return parent.getId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IBuildObject#getName()
+	 */
+	public String getName() {
+		return parent.getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getNatureFilter()
+	 */
+	public int getNatureFilter() {
+		return parent.getNatureFilter();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
+	 */
+	public IOption getOption(String id) {
+		IOption[] options = getOptions();
+		for (int i = 0; i < options.length; i++) {
+			IOption current = options[i];
+			if (current.getId().equals(id)) {
+				return current;
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#producesFileType(java.lang.String)
+	 */
+	public boolean producesFileType(String outputExtension) {
+		return parent.producesFileType(outputExtension);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getTool()
+	 */
+	public ITool getTool() {
+		return parent;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITool#getToolCommand()
 	 */
@@ -256,34 +335,13 @@ public class ToolReference extends AbstractToolReference {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOptions()
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getTopOptionCategory()
 	 */
-	public IOption[] getOptions() {
-		IOption[] options = parent.getOptions();
-		
-		// Replace with our references
-		for (int i = 0; i < options.length; ++i) {
-			OptionReference ref = getOptionReference(options[i]);
-			if (ref != null)
-				options[i] = ref;
-		}
-			
-		return options;
+	public IOptionCategory getTopOptionCategory() {
+		return parent.getTopOptionCategory();
 	}
 
-	protected List getAllOptionRefs() {
-		// First get all the option references this tool reference contains
-		if (owner instanceof Configuration) {
-			return ((Configuration)owner).getOptionReferences(parent);
-		} else if (owner instanceof Target) {
-			return ((Target)owner).getOptionReferences(parent);
-		} else {
-			// this shouldn't happen
-			return null;
-		}
-	}
-	
-	/* (non-javadoc)
+	/* (non-Javadoc)
 	 * Answers an option reference that overrides the option, or <code>null</code>
 	 * 
 	 * @param option
@@ -301,7 +359,26 @@ public class ToolReference extends AbstractToolReference {
 		return null;
 	}
 	
-	protected List getOptionReferenceList() {
+	/* (non-Javadoc)
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private OptionReference getOptionReference(String id) {
+		Iterator it = getOptionReferenceList().iterator();
+		while (it.hasNext()) {
+			OptionReference current = (OptionReference)it.next();
+			if (current.getId().equals(id)) {
+				return current;
+			}
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getOptionReferenceList()
+	 */
+	public List getOptionReferenceList() {
 		if (optionReferences == null) {
 			optionReferences = new ArrayList();
 			optionReferences.clear();
@@ -311,17 +388,47 @@ public class ToolReference extends AbstractToolReference {
 	
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITool#getOption(java.lang.String)
+	 * @see org.eclipse.cdt.core.build.managed.ITool#getOptions()
 	 */
-	public IOption getOption(String id) {
-		IOption[] options = getOptions();
-		for (int i = 0; i < options.length; i++) {
-			IOption current = options[i];
-			if (current.getId().equals(id)) {
-				return current;
-			}
+	public IOption[] getOptions() {
+		IOption[] options = parent.getOptions();
+		
+		// Replace with our references
+		for (int i = 0; i < options.length; ++i) {
+			OptionReference ref = getOptionReference(options[i]);
+			if (ref != null)
+				options[i] = ref;
 		}
-		return null;
+			
+		return options;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputExtension(java.lang.String)
+	 */
+	public String getOutputExtension(String inputExtension) {
+		return parent.getOutputExtension(inputExtension);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputFlag()
+	 */
+	public String getOutputFlag() {
+		return parent.getOutputFlag();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputPrefix()
+	 */
+	public String getOutputPrefix() {
+		return parent.getOutputPrefix();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isHeaderFile(java.lang.String)
+	 */
+	public boolean isHeaderFile(String ext) {
+		return parent.isHeaderFile(ext);
 	}
 
 	/**
@@ -363,12 +470,9 @@ public class ToolReference extends AbstractToolReference {
 		}
 	}
 
-	/**
-	 * Sets the command in the receiver to be the argument.
-	 * 
-	 * @param cmd
-	 * @return <code>true</code> if the call results in a chnaged command, else <code>false</code>
-	 */	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#setToolCommand(java.lang.String)
+	 */
 	public boolean setToolCommand(String cmd) {
 		if (cmd != null && !cmd.equals(command)) {
 			command = cmd;
@@ -393,4 +497,5 @@ public class ToolReference extends AbstractToolReference {
 			return super.toString();			
 		}
 	}
+
 }

@@ -20,7 +20,7 @@
    </requires>
 
 
-   <extension-point id="ManagedBuildInfo" name="%ExtensionPoint.name" schema="schema/ManagedBuildTools.exsd"/>
+   <extension-point id="ManagedBuildInfo" name="Managed Build Tools" schema="schema/ManagedBuildTools.exsd"/>
 
 <!-- =================================================================================== -->
 <!-- Extension Point: IScannerInfoProvider for the managed Builder                       -->

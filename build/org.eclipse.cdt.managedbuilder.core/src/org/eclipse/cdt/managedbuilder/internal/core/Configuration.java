@@ -23,6 +23,7 @@ import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.IToolReference;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -225,7 +226,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 				return toolRef.createOptionReference(option);
 			}
 		} else {
-			ToolReference toolRef = getToolReference(option.getTool());
+			IToolReference toolRef = getToolReference(option.getTool());
 			if (toolRef == null)
 				toolRef = new ToolReference(this, option.getTool());
 			return toolRef.createOptionReference(option);
@@ -299,7 +300,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		
 		// Replace tools with local overrides
 		for (int i = 0; i < tools.length; ++i) {
-			ToolReference ref = getToolReference(tools[i]);
+			IToolReference ref = getToolReference(tools[i]);
 			if (ref != null)
 				tools[i] = ref;
 		}
@@ -331,7 +332,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		List references = new ArrayList();
 		
 		// Get all the option references I add for this tool
-		ToolReference toolRef = getToolReference(tool);
+		IToolReference toolRef = getToolReference(tool);
 		if (toolRef != null) {
 			references.addAll(toolRef.getOptionReferenceList());
 		}
@@ -372,7 +373,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @param tool
 	 * @return ToolReference
 	 */
-	private ToolReference getToolReference(ITool tool) {
+	private IToolReference getToolReference(ITool tool) {
 		// See if the receiver has a reference to the tool
 		ToolReference ref = null;
 		if (tool == null) return ref;
@@ -506,7 +507,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 		// Make sure the command is different
 		if (command != null) {
 			// Does this config have a ref to the tool
-			ToolReference ref = getToolReference(tool);
+			IToolReference ref = getToolReference(tool);
 			if (ref == null) {
 				// Then make one
 				ref = new ToolReference(this, tool);

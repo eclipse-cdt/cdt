@@ -1,3 +1,9 @@
+2005-02-01 Alain Magloire
+	Part of Fix for PR 84165
+	We check in the expression is a number and
+	add a "*" for address watchpoint
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+
 2005-01-20 Mikhail Khodjaiants
 	Fix for bug 83355: The disable/enable breakpoints durning debugging acts weird.
 	* cdi\org\eclipse\cdt\debug\mi\core\cdi\model\Breakpoint.java

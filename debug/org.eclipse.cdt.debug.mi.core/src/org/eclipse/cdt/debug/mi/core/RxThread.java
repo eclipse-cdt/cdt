@@ -267,9 +267,8 @@ public class RxThread extends Thread {
 				}
 			}
 		} else if (stream instanceof MILogStreamOutput) {
-			/*
 			// This is meant for the gdb console.
-			OutputStream log = session.getMIInferior().getPipedErrorStream();
+			OutputStream log = session.getLogPipe();
 			if (log != null) {
 				MILogStreamOutput out = (MILogStreamOutput)stream;
 				String str = out.getString();
@@ -281,7 +280,6 @@ public class RxThread extends Thread {
 					}
 				}
 			}
-			*/
 		}
 	}
 

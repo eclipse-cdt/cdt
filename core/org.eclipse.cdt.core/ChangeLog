@@ -1,3 +1,19 @@
+2002-12-20 Alain Magloire
+
+	Bug fix, We use a feature of GNU make to help track the directories
+		Entering Directory '...'
+		Leaving Directory '...'
+	It looks like sometimes we loose track, or GNU make does not show
+	a "Leaving Directory" this may actually depend on how it was spawn,
+	you can suppress the message.  If you loose track we popDirectories()
+	and try to recover.
+
+	* src/org/eclipse/cdt/core/ErrorParserManager.java (popDirectory):
+	Is throwing NoSuchElement, check the size of the stack first.
+
+	* src/org/eclipse/cdt/internal/errorparsers/MakeErrorParser.java (processLine):
+	Recover when loosing track.
+
 2002-12-19 Alain Magloire
 
 	* model/org/eclipse/cdt/internal/core/model/parser/BinaryContainerAdapter.java (getFile):

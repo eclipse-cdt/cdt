@@ -226,7 +226,7 @@ public class GDBTypeParser {
 	// GDB hack accept ':' ',' part of the GDB hacks
 	// when doing ptype gdb returns "class A : public C { ..}"
 	boolean isCIdentifierPart(int c) {
-		if ((c >= '0' && c <= 9) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || c == ':') {
+		if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || c == ':') {
 			return true;
 		}
 		return false;

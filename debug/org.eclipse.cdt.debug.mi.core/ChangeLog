@@ -1,5 +1,10 @@
 2004-05-28 Alain Magloire
 
+	Error in looking for the CIdentifier.
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
+2004-05-28 Alain Magloire
+
 	Fix to PR 60020.
 	GDB returns the children when a pointer
 	points to a structure.

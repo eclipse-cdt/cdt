@@ -748,7 +748,7 @@ public class ResolverModel implements IResolverModel {
 	//----------------------------------------------------------------------
 
 	private boolean customProjectResolverExists(IProject project) {
-		Element	data	= getProjectData(project);
+		Element	data	= getProjectData(project, false);
 		Node	child	= ((null != data) ? data.getFirstChild() : null);
 		Boolean custom	= new Boolean(false);
 		
@@ -762,16 +762,19 @@ public class ResolverModel implements IResolverModel {
 		return custom.booleanValue();
 	}
 	
-	private ICDescriptor getProjectDescriptor(IProject project) throws CoreException {
+	private ICDescriptor getProjectDescriptor(IProject project, boolean create) throws CoreException {
 		ICDescriptor descriptor = null;
-		descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		descriptor = CCorePlugin.getDefault().getCProjectDescription(project, false);
 		return descriptor;
 	}
-	
-	private Element getProjectData(IProject project) {
+
+	private Element getProjectData(IProject project, boolean create) {
 		Element data = null;
 		try {
-			data = getProjectDescriptor(project).getProjectData(CDT_RESOLVER);
+			ICDescriptor desc = getProjectDescriptor(project, create);
+			if (desc != null) {
+				data = desc.getProjectData(CDT_RESOLVER);
+			}
 		} catch (CoreException e) {
 		}
 		return data;
@@ -780,7 +783,7 @@ public class ResolverModel implements IResolverModel {
 	private ICFileTypeResolver loadProjectResolver(IProject project) {
 		List				assocs		= new ArrayList();
 		ICFileTypeResolver	resolver 	= new CFileTypeResolver();
-		Element				data		= getProjectData(project);
+		Element				data		= getProjectData(project, false);
 		Node				child 		= ((null != data) ? data.getFirstChild() : null);
 		
 		while (child != null) {
@@ -809,7 +812,7 @@ public class ResolverModel implements IResolverModel {
 	}
 
 	private void saveProjectResolver(IProject project, ICFileTypeResolver resolver) {
-		Element			root	= getProjectData(project);
+		Element			root	= getProjectData(project, true);
 		Document 		doc 	= root.getOwnerDocument();
 		Node			child	= root.getFirstChild();
 		Element			element	= null;
@@ -840,7 +843,7 @@ public class ResolverModel implements IResolverModel {
 		}
 		
 		try {
-			getProjectDescriptor(project).saveProjectData();
+			getProjectDescriptor(project, true).saveProjectData();
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		}

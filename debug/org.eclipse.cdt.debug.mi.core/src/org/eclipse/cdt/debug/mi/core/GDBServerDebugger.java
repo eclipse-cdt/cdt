@@ -74,7 +74,7 @@ public class GDBServerDebugger implements ICDebugger {
 
 				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid");
 				String remoteBaud = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "invalid");
-				session = (Session)MIPlugin.getDefault().createCSession(gdb, (File)null, cwd, gdbinit);
+				session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), -1, null, cwd, gdbinit);
 				MISession miSession = session.getMISession();
 				CommandFactory factory = miSession.getCommandFactory();
 				MIGDBSet setRemoteBaud = factory.createMIGDBSet(new String[]{"remotebaud", remoteBaud});

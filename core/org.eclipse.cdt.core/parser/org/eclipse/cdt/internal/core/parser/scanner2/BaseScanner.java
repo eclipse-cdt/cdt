@@ -41,6 +41,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
  * @author Doug Schaefer
@@ -54,6 +55,8 @@ abstract class BaseScanner implements IScanner {
 
     protected static final char[] VA_ARGS_CHARARRAY = "__VA_ARGS__".toCharArray(); //$NON-NLS-1$
 
+	protected static final IToken eocToken = new SimpleToken(IToken.tEOC, 0, null, 0);
+	
     /**
      * @author jcamelon
      *  
@@ -1514,12 +1517,12 @@ abstract class BaseScanner implements IScanner {
 
         if (finished) {
         	if (contentAssistMode) {
+				if (lastToken == eocToken)
+					throwEOF();
+				
         		lastToken = nextToken;
-        		nextToken = null;
-        		if (lastToken == null)
-        			throwEOF();
-        		else
-        			return lastToken;
+        		nextToken = eocToken;
+       			return lastToken;
         	}
         	
             if (isCancelled == true)

@@ -474,7 +474,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
         ((ASTNode) result).setOffset(startingOffset);
         result.setParent(mostRelevantScopeNode);
         result.setPropertyInParent(IASTFunctionDefinition.FUNCTION_BODY);
-        while (LT(1) != IToken.tRBRACE && LT(1) != IToken.tCOMPLETION) {
+        while (LT(1) != IToken.tRBRACE && LT(1) != IToken.tCOMPLETION && LT(1) != IToken.tEOC) {
             int checkToken = LA(1).hashCode();
             try {
                 IASTStatement s = statement();

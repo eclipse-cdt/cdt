@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -342,7 +343,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
          switch (LT(1)) {
             case IToken.tIDENTIFIER:
-               last = consume(IToken.tIDENTIFIER);
+               last = consume();
                last = consumeTemplateArguments(last, argumentList);
                if (last.getType() == IToken.tGT)
                   hasTemplateId = true;
@@ -1721,6 +1722,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          case IToken.tCOLONCOLON:
          case IToken.t_operator:
          case IToken.tCOMPL:
+		 {
             ITokenDuple duple = idExpression();
             IASTName name = createName(duple);
             IASTIdExpression idExpression = createIdExpression();
@@ -1730,6 +1732,20 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             name.setParent(idExpression);
             name.setPropertyInParent(IASTIdExpression.ID_NAME);
             return idExpression;
+		 }
+         case IToken.tCOMPLETION:
+		 {
+			 IToken token = consume();
+			 IASTName name = createName(token);
+			 IASTIdExpression idExpression = createIdExpression();
+			 idExpression.setName(name);
+			 name.setParent(idExpression);
+			 name.setPropertyInParent(IASTIdExpression.ID_NAME);
+			 if (completionNode == null)
+				 completionNode = new ASTCompletionNode(token);
+			 completionNode.addName(name);
+			 return idExpression;
+		 }
          default:
             IToken la = LA(1);
             int startingOffset = la.getOffset();
@@ -2662,6 +2678,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (!fromCatchHandler)
                throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
             break;
+         case IToken.tEOC:
+			 // Pretend we consumed the semi
+			 consumedSemi = true;
+			 break;
          default:
             throwBacktrack(firstOffset, LA(1).getEndOffset() - firstOffset);
       }

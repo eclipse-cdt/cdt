@@ -106,9 +106,17 @@ public class MIPlugin extends Plugin {
 
 		String[] args;
 		if (pty != null) {
-			args = new String[] {gdb, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1", program};
+			if (program == null) {
+				args = new String[] {gdb, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1"};
+			} else {
+				args = new String[] {gdb, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1", program};
+			}
 		} else {
-			args = new String[] {gdb, "-q", "-nw", "-i", "mi1", program};
+			if (program == null) {
+				args = new String[] {gdb, "-q", "-nw", "-i", "mi1"};
+			} else {
+				args = new String[] {gdb, "-q", "-nw", "-i", "mi1", program};
+			}
 		}
 
 		Process pgdb = ProcessFactory.getFactory().exec(args);
@@ -141,7 +149,12 @@ public class MIPlugin extends Plugin {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  "gdb";
 		}
-		String[] args = new String[] {gdb, "--quiet", "-nw", "-i", "mi1", program, core};
+		String[] args;
+		if (program == null) {
+			args = new String[] {gdb, "--quiet", "-nw", "-i", "mi1", "-c", core};
+		} else {
+			args = new String[] {gdb, "--quiet", "-nw", "-i", "mi1", "-c", core, program};
+		}
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb, null, MISession.CORE);
 		return new CSession(session);
@@ -158,7 +171,15 @@ public class MIPlugin extends Plugin {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  "gdb";
 		}
-		String[] args = new String[] {gdb, "--quiet", "-nw", "-i", "mi1", program};
+
+		String[] args = null;
+
+		if (program == null) {
+			args = new String[] {gdb, "--quiet", "-nw", "-i", "mi1"};
+		} else {
+			args = new String[] {gdb, "--quiet", "-nw", "-i", "mi1", program};
+		}
+
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb, null, MISession.ATTACH);
 		MIInfo info = null;

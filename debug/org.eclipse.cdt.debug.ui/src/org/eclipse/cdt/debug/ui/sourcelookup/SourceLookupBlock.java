@@ -323,8 +323,8 @@ public class SourceLookupBlock
 		{
 			getLaunchConfigurationDialog().updateMessage();
 			getLaunchConfigurationDialog().updateButtons();
+			fIsDirty = false;
 		}
-		fIsDirty = false;
 	}
 
 	public ILaunchConfigurationDialog getLaunchConfigurationDialog()

@@ -125,15 +125,19 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 				abort( "Unable to restore prompting source locator - invalid format.", null );
 			}
 			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject( projectName );
-			if ( project != null )
-			{
-				fSourceLocator = new CUISourceLocator( project );
-			}
-			else
+			if ( project == null )
 			{
 				abort( MessageFormat.format( "Unable to restore prompting source locator - project {0} not found.", new String[] { projectName } ), null );
 			}
-			
+			ICSourceLocator locator = getCSourceLocator();
+			if ( locator == null )
+			{
+				fSourceLocator = new CUISourceLocator( project );
+			}
+			else if ( locator.getProject() != null && !project.equals( locator.getProject() ) )
+			{
+				return;
+			}
 			IPersistableSourceLocator psl = getPersistableSourceLocator();
 			if ( psl != null )
 			{

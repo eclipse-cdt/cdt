@@ -754,7 +754,7 @@
                icon="icons/full/clcl16/load_symbols_co.gif"
                helpContextId="load_symbols_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsActionDelegate"
-               menubarPath="additions"
+               menubarPath="sharedLibrariesGroup"
                enablesFor="1"
                id="org.eclipse.cdt.debug.internal.ui.actions.LoadSymbolsActionDelegate">
             <enablement>

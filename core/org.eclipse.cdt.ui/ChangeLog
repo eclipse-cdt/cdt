@@ -1,3 +1,22 @@
+2003-04-04 Alain Magloire
+
+	The way to register actions change from 2.0 to 2.1
+	Action must have an ID.  This fixes the editor to
+	be activate on Ctrl+space.
+	
+	* src/org/eclipse/internal/ui/editor/CEditor.java:
+	* src/org/eclipse/internal/ui/ICEditorActionDefinitionIds.java:
+
+2003-04-04 Alain Magloire
+
+	Remove on some warnings now that we move to 2.1
+	
+	* src/org/eclipse/internal/ui/dialogs/SelectionStatusDialog.java:
+	* src/org/eclipse/internal/ui/editor/DocumentAdapter.java:
+	* src/org/eclipse/internal/ui/preferences/CEditroPreference.java:
+	* src/org/eclipse/internal/ui/CElementImageProvider.java:
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+
 2003-04-02 Alain Magloire
 
 	Show LibraryReference in the  CViewer.

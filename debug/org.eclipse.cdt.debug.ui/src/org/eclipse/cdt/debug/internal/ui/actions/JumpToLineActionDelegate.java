@@ -5,8 +5,8 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.model.IRunToAddress;
-import org.eclipse.cdt.debug.core.model.IRunToLine;
+import org.eclipse.cdt.debug.core.model.IJumpToAddress;
+import org.eclipse.cdt.debug.core.model.IJumpToLine;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
@@ -30,18 +30,44 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * 
  * Enter type comment.
  * 
- * @since Sep 19, 2002
+ * @since: Feb 5, 2003
  */
-public class RunToLineActionDelegate extends AbstractEditorActionDelegate
+public class JumpToLineActionDelegate extends AbstractEditorActionDelegate
 {
 	/**
-	 * Constructor for RunToLineActionDelegate.
+	 * Constructor for JumpToLineActionDelegate.
 	 */
-	public RunToLineActionDelegate()
+	public JumpToLineActionDelegate()
 	{
+		super();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
+	 */
+	public void selectionChanged( IWorkbenchPart part, ISelection selection )
+	{
+		IDebugTarget target = null;
+		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
+		{
+			if ( selection != null && selection instanceof IStructuredSelection )
+			{
+				Object element = ((IStructuredSelection)selection).getFirstElement();
+				if ( element != null && element instanceof IDebugElement )
+				{
+					IDebugTarget target1 = ((IDebugElement)element).getDebugTarget();
+					if ( target1 != null && 
+						 ( target1 instanceof IJumpToLine || target1 instanceof IJumpToAddress ) )
+					{
+						target = target1;
+					}
+				}
+			}
+			setDebugTarget( target );
+			update();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -59,7 +85,7 @@ public class RunToLineActionDelegate extends AbstractEditorActionDelegate
 				{
 					ITextSelection selection = (ITextSelection)((ITextEditor)getTargetPart()).getSelectionProvider().getSelection();
 					int lineNumber = selection.getStartLine() + 1;
-					runToLine( file, lineNumber );
+					jumpToLine( file, lineNumber );
 				}
 			}
 			else if ( input != null && input instanceof IStorageEditorInput )
@@ -74,7 +100,7 @@ public class RunToLineActionDelegate extends AbstractEditorActionDelegate
 						int lineNumber = selection.getStartLine();
 						long address = disassemblyStorage.getAddress( lineNumber );
 						if ( address > 0 )
-							runToAddress( address );
+							jumpToAddress( address );
 					}
 				}
 				catch( CoreException e )
@@ -95,52 +121,26 @@ public class RunToLineActionDelegate extends AbstractEditorActionDelegate
 		{
 			IDebugTarget target = ((IDebugElement)context).getDebugTarget();
 			if ( target != null && 
-				 ( target instanceof IRunToLine || target instanceof IRunToAddress ) )
+				 ( target instanceof IJumpToLine || target instanceof IJumpToAddress ) )
 			{
 				setDebugTarget( target );
 			}			
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
-	 */
-	public void selectionChanged( IWorkbenchPart part, ISelection selection )
-	{
-		IDebugTarget target = null;
-		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
-		{
-			if ( selection != null && selection instanceof IStructuredSelection )
-			{
-				Object element = ((IStructuredSelection)selection).getFirstElement();
-				if ( element != null && element instanceof IDebugElement )
-				{
-					IDebugTarget target1 = ((IDebugElement)element).getDebugTarget();
-					if ( target1 != null && 
-						 ( target1 instanceof IRunToLine || target1 instanceof IRunToAddress ) )
-					{
-						target = target1;
-					}
-				}
-			}
-			setDebugTarget( target );
-			update();
-		}
-	}
 
-	protected void runToLine( IResource resource, int lineNumber )
+	protected void jumpToLine( IResource resource, int lineNumber )
 	{
-		IRunToLine target = (IRunToLine)getDebugTarget().getAdapter( IRunToLine.class );
+		IJumpToLine target = (IJumpToLine)getDebugTarget().getAdapter( IJumpToLine.class );
 		if ( target != null )
 		{
-			if ( !target.canRunToLine( resource, lineNumber ) )
+			if ( !target.canJumpToLine( resource, lineNumber ) )
 			{
 				getTargetPart().getSite().getShell().getDisplay().beep();
 				return;
 			}
 			try
 			{
-				target.runToLine( resource, lineNumber );
+				target.jumpToLine( resource, lineNumber );
 			}
 			catch( DebugException e )
 			{
@@ -149,19 +149,19 @@ public class RunToLineActionDelegate extends AbstractEditorActionDelegate
 		}
 	}
 
-	protected void runToAddress( long address )
+	protected void jumpToAddress( long address )
 	{
-		IRunToAddress target = (IRunToAddress)getDebugTarget().getAdapter( IRunToAddress.class );
+		IJumpToAddress target = (IJumpToAddress)getDebugTarget().getAdapter( IJumpToAddress.class );
 		if ( target != null )
 		{
-			if ( !target.canRunToAddress( address ) )
+			if ( !target.canJumpToAddress( address ) )
 			{
 				getTargetPart().getSite().getShell().getDisplay().beep();
 				return;
 			}
 			try
 			{
-				target.runToAddress( address );
+				target.jumpToAddress( address );
 			}
 			catch( DebugException e )
 			{

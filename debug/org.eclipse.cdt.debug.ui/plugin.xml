@@ -135,14 +135,14 @@
             </separator>
          </menu>
          <action
-               id="org.eclipse.cdt.debug.ui.internal.actions.RestartActionDelegate"
-               hoverIcon="icons/full/clcl16/restart.gif"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
-               disabledIcon="icons/full/dlcl16/restart.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               hoverIcon="icons/full/clcl16/jump_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               disabledIcon="icons/full/dlcl16/jump_co.gif"
                enablesFor="1"
-               icon="icons/full/elcl16/restart.gif"
-               helpContextId="restart_action_context"
-               label="%RestartAction.label"
+               icon="icons/full/elcl16/jump_co.gif"
+               helpContextId="jump_to_line_action_context"
+               label="%JumpToLineAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup">
             <enablement>
                <pluginState
@@ -160,6 +160,23 @@
                icon="icons/full/elcl16/runtoline_co.gif"
                helpContextId="run_to_line_action_context"
                label="%RunToLineAction.label"
+               menubarPath="org.eclipse.ui.run/stepGroup">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.ui.internal.actions.RestartActionDelegate"
+               hoverIcon="icons/full/clcl16/restart.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RestartActionDelegate"
+               disabledIcon="icons/full/dlcl16/restart.gif"
+               enablesFor="1"
+               icon="icons/full/elcl16/restart.gif"
+               helpContextId="restart_action_context"
+               label="%RestartAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup">
             <enablement>
                <pluginState
@@ -364,6 +381,21 @@
             </enablement>
          </action>
          <action
+               label="%JumpToLineAction.label"
+               icon="icons/full/clcl16/jump_co.gif"
+               helpContextId="jump_to_line_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
                label="%RunToLineAction.label"
                icon="icons/full/clcl16/runtoline_co.gif"
                helpContextId="run_to_line_action_context"
@@ -505,6 +537,21 @@
             </enablement>
          </action>
          <action
+               menubarPath="additions"
+               class="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               icon="icons/full/clcl16/jump_co.gif"
+               label="%JumpToLineAction.label"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               helpContextId="jump_to_line_action_context">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
                label="%RunToLineAction.label"
                icon="icons/full/clcl16/runtoline_co.gif"
                helpContextId="run_to_line_action_context"
@@ -627,6 +674,21 @@
             </enablement>
          </action>
          <action
+               menubarPath="additions"
+               label="%JumpToLineAction.label"
+               icon="icons/full/clcl16/jump_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
+               helpContextId="jump_to_line_action_context">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
                label="%RunToLineAction.label"
                icon="icons/full/clcl16/runtoline_co.gif"
                helpContextId="run_to_line_action_context"
@@ -711,8 +773,8 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroActionDelegate">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
@@ -964,6 +1026,21 @@
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.AddAddressBreakpointActionDelegate">
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate">
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.ui.internal.actions.RunToLineActionDelegate">
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.ui.internal.actions.ManageBreakpointActionDelegate">
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.ManageWatchpointActionDelegate">
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
          </action>
       </debugActionGroup>
    </extension>

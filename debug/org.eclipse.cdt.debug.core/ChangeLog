@@ -1,3 +1,10 @@
+2003-02-05 Mikhail Khodjaiants
+	Support of the 'Resume At C/C++ Line' action.
+	* IJumpToLine.java: new
+	* IJumpToAddress.java: new
+	* ICDebugTarget.java
+	* CDebugTarget.java
+	
 2003-02-04 Mikhail Khodjaiants
 	Support of the 'Resume Without Signal' action.
 	* IResumeWithoutSignal.java: new

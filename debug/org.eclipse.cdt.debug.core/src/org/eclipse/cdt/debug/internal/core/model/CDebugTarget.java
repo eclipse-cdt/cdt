@@ -66,6 +66,8 @@ import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IGlobalVariable;
+import org.eclipse.cdt.debug.core.model.IJumpToAddress;
+import org.eclipse.cdt.debug.core.model.IJumpToLine;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
@@ -906,6 +908,10 @@ public class CDebugTarget extends CDebugElement
 		if ( adapter.equals( IRunToLine.class ) )
 			return this;
 		if ( adapter.equals( IRunToAddress.class ) )
+			return this;
+		if ( adapter.equals( IJumpToLine.class ) )
+			return this;
+		if ( adapter.equals( IJumpToAddress.class ) )
 			return this;
 		if ( adapter.equals( ICBreakpointManager.class ) )
 			return this;
@@ -2461,6 +2467,62 @@ public class CDebugTarget extends CDebugElement
 		try
 		{
 			getCDITarget().signal();
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.toString(), e );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#canJumpToLine(IResource, int)
+	 */
+	public boolean canJumpToLine( IResource resource, int lineNumber )
+	{
+		// check if supports jump to line
+		return canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToLine#jumpToLine(IResource, int)
+	 */
+	public void jumpToLine( IResource resource, int lineNumber ) throws DebugException
+	{
+		if ( !canJumpToLine( resource, lineNumber ) )
+			return;
+		setBreakpoints();
+		ICDILocation location = getCDISession().getBreakpointManager().createLocation( resource.getLocation().lastSegment(), null, lineNumber );
+		try
+		{
+			getCDITarget().jump( location );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.toString(), e );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#canJumpToAddress(long)
+	 */
+	public boolean canJumpToAddress( long address )
+	{
+		// check if supports jump to address
+		return canResume();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IJumpToAddress#jumpToAddress(long)
+	 */
+	public void jumpToAddress( long address ) throws DebugException
+	{
+		if ( !canJumpToAddress( address ) )
+			return;
+		setBreakpoints();
+		ICDILocation location = getCDISession().getBreakpointManager().createLocation( address );
+		try
+		{
+			getCDITarget().jump( location );
 		}
 		catch( CDIException e )
 		{

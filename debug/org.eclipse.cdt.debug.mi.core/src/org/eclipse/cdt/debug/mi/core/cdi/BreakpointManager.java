@@ -39,10 +39,12 @@ import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 public class BreakpointManager extends SessionObject implements ICDIBreakpointManager {
 
 	List breakList;
+	boolean allowInterrupt;
 
 	public BreakpointManager(CSession session) {
 		super(session);
 		breakList = new ArrayList(1);
+		allowInterrupt = true;
 	}
 
 	boolean containsBreakpoint(int number) {
@@ -77,10 +79,12 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		CSession s = getCSession();
 		CTarget target = s.getCTarget();
 		// Stop the program and disable events.
-		if (target.isRunning()) {
+		if (target.isRunning() && allowInterrupt) {
+			int lastToken = target.getLastExecutionToken();
 			shouldRestart = true;
-			((EventManager)s.getEventManager()).disableEvents();
+			((EventManager)s.getEventManager()).disableEventToken(lastToken);
 			target.suspend();
+			((EventManager)s.getEventManager()).enableEventToken(lastToken);
 		}
 		return shouldRestart;
 	}
@@ -90,10 +94,16 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			CSession s = getCSession();
 			CTarget target = s.getCTarget();
 			target.resume();
-			((EventManager)s.getEventManager()).enableEvents();
 		}
 	}
 
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#allowProgramInterruption()
+	 */
+	public void allowProgramInterruption(boolean e) {
+		allowInterrupt = e;
+	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#deleteAllBreakpoints()

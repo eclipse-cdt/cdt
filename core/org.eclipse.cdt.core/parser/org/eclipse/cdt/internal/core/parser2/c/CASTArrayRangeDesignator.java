@@ -10,7 +10,7 @@
 package org.eclipse.cdt.internal.core.parser2.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.c.gnu.IGCCASTArrayRangeDesignator;
+import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 
 /**
  * @author jcamelon

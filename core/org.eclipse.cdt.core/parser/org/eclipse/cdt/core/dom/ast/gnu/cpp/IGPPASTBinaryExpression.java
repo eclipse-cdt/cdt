@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  * IBM Rational Software - Initial API and implementation */
-package org.eclipse.cdt.core.dom.ast.cpp.gnu;
+package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 

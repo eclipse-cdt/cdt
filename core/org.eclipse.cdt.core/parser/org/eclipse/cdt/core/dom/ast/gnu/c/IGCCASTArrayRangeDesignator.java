@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  * IBM Rational Software - Initial API and implementation */
-package org.eclipse.cdt.core.dom.ast.c.gnu;
+package org.eclipse.cdt.core.dom.ast.gnu.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;

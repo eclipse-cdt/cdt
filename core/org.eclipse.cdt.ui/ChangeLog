@@ -1,3 +1,9 @@
+2003-10-01 Alain Magloire
+
+	Fix PR 44013, not defining a resource.
+
+	* src/org/eclipse/cdt/internal/ui/CPluginResource.properties
+
 2003-10-01 David Inglis
 	- Fixed bug with binary parser page not saving change to preference.
 	* src/org/eclipse/cdt/ui/dialogs/BinaryParserBlock.java

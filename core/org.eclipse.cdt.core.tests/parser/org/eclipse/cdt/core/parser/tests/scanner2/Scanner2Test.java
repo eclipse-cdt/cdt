@@ -1770,6 +1770,42 @@ public class Scanner2Test extends BaseScanner2Test
 	        validateEOF();
 	        assertTrue( callback.problems.isEmpty() );
     	}
-        
 	}
+    
+    public void testBug72506() throws Exception{
+        StringWriter writer = new StringWriter();
+        writer.write("#define INCFILE(x) ver ## x\n"); //$NON-NLS-1$
+        writer.write("#define xstr(x) str(x)\n"); //$NON-NLS-1$
+        writer.write("#define str(x) #x\n"); //$NON-NLS-1$
+        writer.write("xstr(INCFILE(2).h)\n"); //$NON-NLS-1$
+        
+        initializeScanner( writer.toString() );
+        validateString("ver2.h"); //$NON-NLS-1$
+        validateEOF();
+    }
+    
+    public void testBug72506_2() throws Exception{
+        StringWriter writer = new StringWriter();
+        writer.write("#define str(x) #x\n"); //$NON-NLS-1$
+        writer.write("#define A B\n"); //$NON-NLS-1$
+        writer.write("#define B A\n"); //$NON-NLS-1$
+        writer.write("str(B)\n"); //$NON-NLS-1$
+        
+        initializeScanner( writer.toString() );
+        validateString( "B" ); //$NON-NLS-1$
+        validateEOF();
+    }
+    
+    public void testMacroPastingError() throws Exception{
+        StringWriter writer = new StringWriter();
+        writer.write("#define m(expr) \\\r\n"); //$NON-NLS-1$
+        writer.write("    foo( #expr )  \r\n"); //$NON-NLS-1$
+        
+        Callback callback = new Callback(ParserMode.COMPLETE_PARSE);
+        initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+        validateEOF();
+        assertTrue( callback.problems.isEmpty() );
+    }
+    
+    
 }

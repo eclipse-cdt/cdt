@@ -10,11 +10,13 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
+import org.eclipse.cdt.core.parser.IMacro;
+
 /**
  * @author jcamelon
  *
  */
-public abstract class DynamicStyleMacro {
+public abstract class DynamicStyleMacro implements IMacro{
 
 	public abstract char [] execute();
 	
@@ -24,4 +26,12 @@ public abstract class DynamicStyleMacro {
 	}
 	public final char [] name; 
 
+	public char[] getSignature()
+	{
+	    return name;
+	}
+	public char[] getName()
+	{
+	    return name;
+	}
 }

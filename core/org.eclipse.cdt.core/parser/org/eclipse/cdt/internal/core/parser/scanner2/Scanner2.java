@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
+import org.eclipse.cdt.core.parser.IMacro;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -835,16 +836,13 @@ public class Scanner2 implements IScanner, IScannerData {
 
 	private IToken newToken( int signal, char [] buffer )
 	{
-		if( bufferData[bufferStackPos] instanceof ObjectStyleMacro || 
-			bufferData[bufferStackPos] instanceof FunctionStyleMacro )
+		if( bufferData[bufferStackPos] instanceof IMacro )
 		{
 			int mostRelevant;
 			for( mostRelevant = bufferStackPos; mostRelevant >= 0; --mostRelevant )
 				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
 					break;
-			if( bufferData[bufferStackPos] instanceof ObjectStyleMacro )
-				return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((ObjectStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1) );
-			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((FunctionStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
+			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((IMacro)bufferData[bufferStackPos]).getName().length, getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
 		}
 		IToken i = new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
 		if( buffer != null && buffer.length == 0 )
@@ -896,19 +894,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		// Check for macro expansion
 		Object expObject = definitions.get(buffer, start, len);
 			
-		// but not if it has been expanded on the stack already
-		// i.e. recursion avoidance
-		if (expObject != null && !isLimitReached() )
-			for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos)
-				if (bufferData[stackPos] != null
-						&& bufferData[stackPos] instanceof ObjectStyleMacro
-						&& CharArrayUtils.equals(buffer, start, len,
-								((ObjectStyleMacro)bufferData[stackPos]).name)) {
-					expObject = null;
-					break;
-				}
-		
-		if (expObject != null && !isLimitReached()) {
+		if (expObject != null && !isLimitReached() && shouldExpandMacro( (IMacro) expObject)) {
 			if (expObject instanceof FunctionStyleMacro) {
 				handleFunctionStyleMacro((FunctionStyleMacro)expObject, true);
 			} else if (expObject instanceof ObjectStyleMacro) {
@@ -948,6 +934,26 @@ public class Scanner2 implements IScanner, IScannerData {
 	}
 	
 	/**
+     * @param buffer
+     * @param start
+     * @param len
+     * @param expObject
+     * @return
+     */
+    private boolean shouldExpandMacro( IMacro macro ) {
+        // but not if it has been expanded on the stack already
+		// i.e. recursion avoidance
+		if( macro != null && !isLimitReached() )
+			for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos)
+				if( bufferData[stackPos] != null && bufferData[stackPos] instanceof IMacro && 
+				    CharArrayUtils.equals(macro.getName(), ((IMacro)bufferData[stackPos]).getName()) ) 
+				{
+					return false;
+				}
+        return true;
+    }
+
+    /**
 	 * @return
 	 */
 	private final boolean isLimitReached() {
@@ -1521,6 +1527,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				}
 				if( t != null ) 
 				{
+					t = replaceArgumentMacros( t );
 					if( (t[ t.length - 1 ] ==  t[0] ) && ( t[0] == '\"') )
 					{
 						local = true;
@@ -1702,14 +1709,19 @@ public class Scanner2 implements IScanner, IScannerData {
 		boolean encounteredMultilineComment = false;
 		while (bufferPos[bufferStackPos] + 1 < limit
 				&& buffer[bufferPos[bufferStackPos] + 1] != '\n') {
+		    //16.3.2-1 Each # preprocessing token in the replacement list for a function-like-macro shall
+		    //be followed by a parameter as the next preprocessing token 
 			if( arglist != null && !skipOverNonWhiteSpace( true ) ){
-			    ++bufferPos[bufferStackPos];
+			    ++bufferPos[bufferStackPos];  //advances us to the #
 			    if( skipOverWhiteSpace() )
 			        encounteredMultilineComment = true;
+			    ++bufferPos[bufferStackPos]; //advances us past the # (or last whitespace) 
 			    boolean isArg = false;
 			    for( int i = 0; i < arglist.length && arglist[i] != null; i++ ){
 			        if( CharArrayUtils.equals( buffer, bufferPos[bufferStackPos], arglist[i].length, arglist[i] ) ){
 			            isArg = true;
+			            //advance us to the end of the arg
+			            bufferPos[bufferStackPos] += arglist[i].length - 1;
 			            break;
 			        }
 			    }
@@ -2145,31 +2157,29 @@ public class Scanner2 implements IScanner, IScannerData {
 		return true;
 	}
 
-	private void skipOverMacroArg() {
-		char[] buffer = bufferStack[bufferStackPos];
-		int limit = bufferLimit[bufferStackPos];
-		
-		while (++bufferPos[bufferStackPos] < limit) {
+	private int skipOverMacroArg(){
+	    char [] buffer = bufferStack[bufferStackPos];
+	    int limit = bufferLimit[bufferStackPos];
+	    int argEnd = bufferPos[bufferStackPos]--;
+	    int nesting = 0;
+	    while (++bufferPos[bufferStackPos] < limit) {
 			switch (buffer[bufferPos[bufferStackPos]]) {
-				case ' ':
-				case '\t':
-				case '\r':
-				case '\n':
+			    case '(':	
+			        ++nesting; 
+			        break;
+			    case ')':
+			        if( nesting == 0 ){
+			            --bufferPos[bufferStackPos];
+			            return argEnd;
+			        } 
+			        --nesting;
+			        break;
 				case ',':
-				case ')':
-				case '(':
-				case '<':
-				case '>':
-					--bufferPos[bufferStackPos];
-					return;
-				case '\\':
-					int pos = bufferPos[bufferStackPos];
-					if (pos + 1 < limit && buffer[pos + 1] == '\n') {
-						// \n is whitespace
-						--bufferPos[bufferStackPos];
-						return;
-					}
-					break;
+				    if( nesting == 0 ){
+				        --bufferPos[bufferStackPos];
+			            return argEnd;
+				    }
+				    break;
 				case '"':
 					boolean escaped = false;
 					loop:
@@ -2190,8 +2200,11 @@ public class Scanner2 implements IScanner, IScannerData {
 					}
 					break;
 			}
+			argEnd = bufferPos[bufferStackPos];
+			skipOverWhiteSpace();
 		}
 		--bufferPos[bufferStackPos];
+		return argEnd;
 	}
 
 	private void skipOverIdentifier() {
@@ -2274,73 +2287,23 @@ public class Scanner2 implements IScanner, IScannerData {
 		CharArrayObjectMap argmap = new CharArrayObjectMap(arglist.length);
 		
 		while (bufferPos[bufferStackPos] < limit) {
+			skipOverWhiteSpace();
+			
+			if (buffer[++bufferPos[bufferStackPos]] == ')') {
+				// end of macro
+				break;
+			} else if( buffer[bufferPos[bufferStackPos]] == ',' ){
+			    continue;
+			}
+			
 			if (++currarg >= arglist.length || arglist[currarg] == null){
 				// too many args
 			    handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, bufferPos[bufferStackPos], macro.name );
 				break;
 			}
-
-			skipOverWhiteSpace();
 			
-			int pos = ++bufferPos[bufferStackPos];
-			char c = buffer[pos];
-			if (c == ')') {
-				// end of macro
-				break;
-			} else if (c == ',') {
-				// empty arg
-				argmap.put(arglist[currarg], emptyCharArray);
-				continue;
-			}
-			
-			// peel off the arg
-			--bufferPos[bufferStackPos];
-			int argend = bufferPos[bufferStackPos];
-			int argstart = argend + 1;
-			
-			// Loop looking for end of argument
-			int argparens = 0;
-//			int startOffset = -1;
-			while (bufferPos[bufferStackPos] < limit) {
-//				if( bufferPos[bufferStackPos] == startOffset )
-//					++bufferPos[bufferStackPos];
-//				startOffset = bufferPos[bufferStackPos];
-				skipOverMacroArg();
-				argend = bufferPos[bufferStackPos];
-				skipOverWhiteSpace();
-				
-				if (++bufferPos[bufferStackPos] >= limit)
-					break;
-				c = buffer[bufferPos[bufferStackPos]];
-				if (c == '(' || c == '<')
-					++argparens;
-				else if (c == '>')
-					--argparens;
-				else if (c == ')') {
-					if (argparens == 0)
-						break;
-					--argparens;
-				} else if (c == ',') {
-					if (argparens == 0) {
-						break;
-					}
-				} else if (c == '\n') {
-					// eat it and continue
-					continue;
-				} else {
-					// start of next macro arg
-					--bufferPos[bufferStackPos];
-					continue;
-				}
-				
-				skipOverWhiteSpace();
-				while (++bufferPos[bufferStackPos] < limit) {
-					if (buffer[bufferPos[bufferStackPos]] != '\n')
-						break;
-					skipOverWhiteSpace();
-				}
-				--bufferPos[bufferStackPos];
-			}
+		    int argstart = bufferPos[bufferStackPos];
+			int argend = skipOverMacroArg(); 
 			
 			char[] arg = emptyCharArray;
 			int arglen = argend - argstart + 1;
@@ -2349,15 +2312,11 @@ public class Scanner2 implements IScanner, IScannerData {
 				System.arraycopy(buffer, argstart, arg, 0, arglen);
 			}
 			
-			//TODO 16.3.1 We are supposed to completely macro replace the arguments before
-			//substituting them in, this is only a partial replacement of object macros,
-			//we may need a full solution later.
+			//16.3.1 completely macro replace the arguments before substituting them in
 			arg = replaceArgumentMacros( arg );
 			argmap.put(arglist[currarg], arg);
-			
-			if (c == ')')
-				break;
 		}
+		
 		int numArgs = arglist.length;
 		for( int i = 0; i < arglist.length; i++ ){
 		    if( arglist[i] == null ){
@@ -2378,33 +2337,74 @@ public class Scanner2 implements IScanner, IScannerData {
 	}
 
 	private char[] replaceArgumentMacros( char [] arg ){
-		// Check for macro expansion
-		Object expObject = definitions.get(arg, 0, arg.length);
-		
-		// but not if it has been expanded on the stack already
-		// i.e. recursion avoidance
-		if (expObject != null){
-			for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos){
-				if (bufferData[stackPos] != null
-						&& bufferData[stackPos] instanceof ObjectStyleMacro
-						&& CharArrayUtils.equals(arg, ((ObjectStyleMacro)bufferData[stackPos]).name)) 
-				{
-					expObject = null;
+		int limit = arg.length;
+		int start = -1, end = -1;
+		Object expObject = null;
+		for( int pos = 0; pos < limit; pos++ ){
+		    char c = arg[pos];
+		    if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || 
+		        Character.isLetter( c ) || scannerExtension.isValidIdentifierStartCharacter( c ) )
+		    {
+		        start = pos;
+		        while (++pos < limit) {
+					c = arg[pos];
+					if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || 
+					    scannerExtension.isValidIdentifierCharacter(c) || Character.isUnicodeIdentifierPart(c) ) 
+					{
+						continue;
+					} 
 					break;
+				}    
+		        end = pos - 1; 
+		    }
+
+		    if( start != -1 && end >= start ){
+		        //Check for macro expansion
+		        expObject = definitions.get(arg, start, ( end - start + 1 ) );
+		        if( expObject == null || !shouldExpandMacro( (IMacro) expObject) ){
+				    expObject = null;
+				    start = -1;
+				    continue;
 				}
-			}
+				//else, break and expand macro
+				break;
+		    }
 		}
 		
 		if( expObject == null )
 		    return arg;
 		
-		if (expObject instanceof ObjectStyleMacro) {
+		char [] expansion = null;
+		if( expObject instanceof FunctionStyleMacro ){
+		    FunctionStyleMacro expMacro = (FunctionStyleMacro) expObject;
+		    pushContext( ( start == 0 ) ? arg : CharArrayUtils.extract( arg, start, arg.length - start + 1 ) );
+		    bufferPos[bufferStackPos] += end - start + 1;
+		    expansion = handleFunctionStyleMacro( expMacro, false );
+		    end = bufferPos[bufferStackPos];
+		    popContext();
+		} else if (expObject instanceof ObjectStyleMacro) {
 			ObjectStyleMacro expMacro = (ObjectStyleMacro)expObject;
-			return expMacro.expansion;
+			expansion = expMacro.expansion;
 		} else if (expObject instanceof char[]) {
-			return (char[])expObject;
+			expansion = (char[])expObject;
+		} else if( expObject instanceof DynamicStyleMacro ){
+			DynamicStyleMacro expMacro = (DynamicStyleMacro) expObject;
+			expansion = expMacro.execute(); 
 		}
-		
+
+		if( expansion != null ){
+			int newlength = start + expansion.length + ( limit - end - 1 );
+			char [] result = new char [ newlength ];
+			System.arraycopy( arg, 0, result, 0, start);
+			System.arraycopy( expansion, 0, result, start, expansion.length );
+			if( arg.length > end + 1 )
+			    System.arraycopy( arg, end + 1, result, start + expansion.length, limit - end - 1 );
+			
+			//we need to put the macro on the context stack in order to detect recursive macros
+			pushContext( emptyCharArray, expObject );
+			arg = replaceArgumentMacros( result );  //rescan for more macros
+			popContext();
+		}
 		return arg;
 	}
 	

@@ -39,6 +39,9 @@ public class MIPlugin extends Plugin {
 	// GDB init command file
 	private static final String GDBINIT = ".gdbinit";
 
+	// GDB command
+	private static final String GDB = "gdb";
+
 	/**
 	 * The constructor
 	 * @see org.eclipse.core.runtime.Plugin#Plugin(IPluginDescriptor)
@@ -106,7 +109,7 @@ public class MIPlugin extends Plugin {
 	 */
 	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit, PTY pty) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
-			gdb =  "gdb";
+			gdb =  GDB;
 		}
 		
 		if (gdbinit == null || gdbinit.length() == 0) {
@@ -158,7 +161,7 @@ public class MIPlugin extends Plugin {
 	 */
 	public ICDISession createCSession(String gdb, File program, File core, File cwd, String gdbinit) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
-			gdb =  "gdb";
+			gdb =  GDB;
 		}
 		
 		if (gdbinit == null || gdbinit.length() == 0) {
@@ -185,7 +188,7 @@ public class MIPlugin extends Plugin {
 	 */
 	public ICDISession createCSession(String gdb, File program, int pid, String[] targetParams, File cwd, String gdbinit) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
-			gdb =  "gdb";
+			gdb =  GDB;
 		}
 
 		if (gdbinit == null || gdbinit.length() == 0) {

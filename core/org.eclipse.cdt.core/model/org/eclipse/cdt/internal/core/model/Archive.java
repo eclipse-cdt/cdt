@@ -5,14 +5,18 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.resources.IFile;
-
-import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.core.model.parser.BinaryContainerAdapter;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 
 public class Archive extends CFile implements IArchive {
+
+	IResource archive;
 
 	public Archive(ICElement parent, IFile file) {
 		super(parent, file);
@@ -21,13 +25,12 @@ public class Archive extends CFile implements IArchive {
 	public Archive(ICElement parent, IPath path) {
 		super (parent, path);
 	}
-
-	public boolean isReadOnly() {
-		return true;
-	}
-
-	public boolean isArchive() {
-		return true;
+	
+	public IResource getResource() throws CModelException {
+		if (archive == null) {
+			archive = new BinaryContainerAdapter(getArchiveInfo().getBinaryArchive());
+		}
+		return archive;
 	}
 
 	public IBinary[] getBinaries() {

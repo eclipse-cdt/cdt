@@ -25,11 +25,6 @@ public class Binary extends CFile implements IBinary {
 		super(parent, file, name);
 	}
 
-
-	public boolean isReadOnly () {
-		return true;
-	}
-
 	public boolean isBinary() {
 		return true;
 	}

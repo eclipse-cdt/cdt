@@ -28,7 +28,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 
 	private static final Image HEADER_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT_HEADER);
 	private static final Image SOURCE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT);
-	private static final Image NAMESPACE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_CONTAINER);
+	private static final Image NAMESPACE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_NAMESPACE);
 	private static final Image TEMPLATE_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_TEMPLATE);
 	private static final Image CLASS_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_CLASS);
 	private static final Image STRUCT_ICON= CPluginImages.get(CPluginImages.IMG_OBJS_STRUCT);

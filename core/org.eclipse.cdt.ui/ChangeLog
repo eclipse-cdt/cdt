@@ -1,5 +1,17 @@
 2004-03-30 Alain Magloire
 
+	New set of icons from Chris Wiebe.
+
+	* icons/full/obj16/enum_obj.gif
+	* icons/full/obj16/namespace_obj.gif
+	* icons/full/obj16/struct_obj.gif
+	* icons/full/obj16/union_obj.gif
+	* icons/full/obj16/typedef_obj.gif
+
+	* browser/org/eclipse/cdt/ui/browser/TypeInfoLabelProvider.java
+
+2004-03-30 Alain Magloire
+
 	Fix in the CView was not refreshing.
 	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
 

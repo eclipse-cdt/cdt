@@ -112,11 +112,13 @@ public class CPluginImages {
 	public static final String IMG_MENU_SHIFT_RIGHT= NAME_PREFIX + "shift_r_edit.gif";
 	public static final String IMG_MENU_SHIFT_LEFT= NAME_PREFIX + "shift_l_edit.gif";
 	public static final String IMG_MENU_OPEN_INCLUDE= NAME_PREFIX + "open_incl.gif";
+	public static final String IMG_MENU_SEGMENT_EDIT= NAME_PREFIX + "segment_edit.gif";
 	public static final String IMG_CLEAR_CONSOLE= NAME_PREFIX + "clear_co.gif";
 	public static final String IMG_ALPHA_SORTING= NAME_PREFIX + "alphab_sort_co.gif";
 	public static final String IMG_TOOL_GOTO_PREV_ERROR= NAME_PREFIX + "prev_error_nav.gif";
 	public static final String IMG_TOOL_GOTO_NEXT_ERROR= NAME_PREFIX + "next_error_nav.gif";
-	public static final String IMG_EDIT_PROPERTIES= NAME_PREFIX + "prop_edt.gif";
+	public static final String IMG_EDIT_PROPERTIES= NAME_PREFIX + "prop_edt.gif";	
+
 	public static final ImageDescriptor DESC_OBJS_TEMPLATE= createManaged(T_OBJ, IMG_OBJS_TEMPLATE);
 	
 	public static final ImageDescriptor DESC_OVR_STATIC= create(T_OVR, "static_co.gif");

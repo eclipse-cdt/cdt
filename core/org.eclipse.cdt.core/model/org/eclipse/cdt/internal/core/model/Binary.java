@@ -371,7 +371,10 @@ public class Binary extends Openable implements IBinary {
 	 * @see org.eclipse.cdt.core.model.ICElement#exists()
 	 */
 	public boolean exists() {
-		return getResource() != null;
+		IResource res = getResource();
+		if (res != null)
+			return res.exists();
+		return super.exists();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.model.CElement#closing(java.lang.Object)

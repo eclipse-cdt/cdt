@@ -1,3 +1,8 @@
+2005-03-19 Alain Magloire
+	PR 87336: Did not check if the resource exists.
+	* model/org/eclipse/cdt/internal/core/model/Archive.java
+	* model/org/eclipse/cdt/internal/core/model/Binary.java
+
 2005-03-18 Alain Magloire
 	Export the PathEntry Variable to the outside world.
 	* src/org/eclipse/cdt/internal/core/CCorePluginResources.properties

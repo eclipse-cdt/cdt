@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.internal.ui.views.modules;
 
 import java.util.HashMap;
 import org.eclipse.cdt.core.IAddress;
-import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
@@ -24,6 +23,7 @@ import org.eclipse.cdt.debug.internal.ui.actions.ToggleDetailPaneAction;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
+import org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.cdt.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.cdt.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.cdt.debug.internal.ui.views.DebugViewLabelDecorator;
@@ -32,9 +32,10 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.cdt.debug.internal.ui.views.AbstractViewerState;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -55,6 +56,7 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -72,11 +74,13 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
@@ -92,6 +96,90 @@ import org.eclipse.ui.texteditor.IUpdate;
  * Displays the modules currently loaded by the process being debugged.
  */
 public class ModulesView extends AbstractDebugEventHandlerView implements IDebugExceptionHandler, IPropertyChangeListener, ISelectionListener, INullSelectionListener {
+
+
+	class ModulesViewModelPresentation implements IDebugModelPresentation {
+
+		private CDebugModelPresentation fDelegate;
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.IDebugModelPresentation#setAttribute(java.lang.String, java.lang.Object)
+		 */
+		public void setAttribute( String attribute, Object value ) {
+			getModelPresentation().setAttribute( attribute, value );
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+		 */
+		public Image getImage( Object element ) {
+			return getModelPresentation().getImage( element );
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+		 */
+		public String getText( Object element ) {
+			String text = getModelPresentation().getText( element );
+			if ( element instanceof ICModule ) {
+				ICModule module = (ICModule)element;
+				text += ( module.areSymbolsLoaded() ) ? ModulesMessages.getString( "ModulesView.11" ) : ModulesMessages.getString( "ModulesView.12" ); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return text;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.IDebugModelPresentation#computeDetail(org.eclipse.debug.core.model.IValue, org.eclipse.debug.ui.IValueDetailListener)
+		 */
+		public void computeDetail( IValue value, IValueDetailListener listener ) {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorInput(java.lang.Object)
+		 */
+		public IEditorInput getEditorInput( Object element ) {
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.ui.ISourcePresentation#getEditorId(org.eclipse.ui.IEditorInput, java.lang.Object)
+		 */
+		public String getEditorId( IEditorInput input, Object element ) {
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void addListener( ILabelProviderListener listener ) {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object, java.lang.String)
+		 */
+		public boolean isLabelProperty( Object element, String property ) {
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void removeListener( ILabelProviderListener listener ) {
+		}
+
+		private CDebugModelPresentation getModelPresentation() {
+			if ( fDelegate == null ) {
+				fDelegate = CDebugModelPresentation.getDefault();
+			}
+			return fDelegate;
+		}
+	}
 
 	/**
 	 * Internal interface for a cursor listener. I.e. aggregation 
@@ -424,7 +512,7 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 
 	protected IDebugModelPresentation getModelPresentation() {
 		if ( fModelPresentation == null ) {
-			fModelPresentation = CDebugModelPresentation.getDefault();
+			fModelPresentation = new ModulesViewModelPresentation();
 		}
 		return fModelPresentation;
 	}
@@ -814,12 +902,14 @@ public class ModulesView extends AbstractDebugEventHandlerView implements IDebug
 			sb.append( module.getSymbolsFileName().toOSString() );
 			sb.append( '\n' );
 		}
-		IBinary binary = (IBinary)module.getAdapter( IBinary.class );
-		if ( binary != null ) {
+
+		String cpu = module.getCPU();
+		if ( cpu != null ) {
 			sb.append( ModulesMessages.getString( "ModulesView.8" ) ); //$NON-NLS-1$
-			sb.append( binary.getCPU() );
+			sb.append( cpu );
 			sb.append( '\n' );
 		}
+
 		IAddress baseAddress = module.getBaseAddress();
 		if ( !baseAddress.isZero() ) {
 			sb.append( ModulesMessages.getString( "ModulesView.9" ) ); //$NON-NLS-1$

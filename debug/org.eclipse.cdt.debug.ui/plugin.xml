@@ -729,6 +729,24 @@
                menubarPath="additions"
                id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"/>
       </viewerContribution>
+      <objectContribution
+            objectClass="org.eclipse.cdt.debug.core.model.ICModule"
+            id="org.eclipse.cdt.debug.ui.ModuleActions">
+         <action
+               helpContextId="module_properties_action_context"
+               enablesFor="1"
+               label="%ModulePropertiesAction.label"
+               tooltip="%ModulePropertiesAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.ModulesPropertiesActionDelegate"
+               style="pulldown"
+               id="org.eclipse.cdt.debug.ui.ModulePropertiesAction">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui.pluginState1"/>
+            </enablement>
+         </action>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
@@ -1006,6 +1024,11 @@
             class="org.eclipse.cdt.debug.internal.ui.propertypages.SignalPropertyPage"
             name="%CommonSignalPage.label"
             id="org.eclipse.cdt.debug.ui.propertypages.signal.common"/>
+      <page
+            objectClass="org.eclipse.cdt.debug.core.model.ICModule"
+            class="org.eclipse.cdt.debug.internal.ui.propertypages.ModulePropertyPage"
+            name="%CommonModulePage.label"
+            id="org.eclipse.cdt.debug.ui.propertypages.module.common"/>
    </extension>
    <extension
          id="org.eclipse.cdt.debug.ui.editors"
@@ -1067,7 +1090,7 @@
       </contextViewBinding>
       <contextViewBinding
             contextId="org.eclipse.cdt.debug.ui.debugging"
-            viewId="org.eclipse.debug.ui.MemoryView"/>
+            viewId="org.eclipse.cdt.debug.ui.ModulesView"/>
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">

@@ -427,7 +427,6 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 		else {
 			sb.append( CDebugUIMessages.getString( "CDebugModelPresentation.unknown_1" ) ); //$NON-NLS-1$		
 		}
-		sb.append( ( module.areSymbolsLoaded() ) ? CDebugUIMessages.getString( "CDebugModelPresentation.0" ) : CDebugUIMessages.getString( "CDebugModelPresentation.1" ) ); //$NON-NLS-1$ //$NON-NLS-2$
 		return sb.toString();
 	}
 

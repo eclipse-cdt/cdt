@@ -36,7 +36,6 @@ public class Session implements ICDISession, ICDISessionObject {
 
 	Properties props;
 	MISession session;
-	UpdateManager updateManager;
 	EventManager eventManager;
 	BreakpointManager breakpointManager;
 	ExpressionManager expressionManager;
@@ -68,12 +67,8 @@ public class Session implements ICDISession, ICDISessionObject {
 		eventManager = new EventManager(this);
 		s.addObserver(eventManager);
 
-		updateManager = new UpdateManager(this);
 		expressionManager = new ExpressionManager(this);
 		variableManager = new VariableManager(this);
-		updateManager.addUpdateListener(variableManager);
-		updateManager.addUpdateListener(expressionManager);
-
 		registerManager = new RegisterManager(this);
 		memoryManager = new MemoryManager(this);
 		signalManager = new SignalManager(this);
@@ -84,10 +79,6 @@ public class Session implements ICDISession, ICDISessionObject {
 
 	public MISession getMISession() {
 		return session;
-	}
-
-	public UpdateManager getUpdateManager() {
-		return updateManager;
 	}
 
 	/**

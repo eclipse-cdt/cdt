@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 <!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
 
-<toc label="Concepts" href="concepts/cdt_o_concepts.htm">
+<toc label="Concepts">
           <topic label="What's new" href="concepts/cdt_c_whatsnew.htm"/>
           <topic label="CDT overview" href="concepts/cdt_c_over_cdt.htm"/>
           <topic label="How to bring C/C++ source files into Eclipse" href="concepts/cdt_w_existing_code.htm"/>

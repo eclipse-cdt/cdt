@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 <!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
 
-     <toc label="Tasks" href="tasks/cdt_o_tasks.htm">
+     <toc label="Tasks">
           <topic label="Updating the CDT" href="tasks/cdt_t_update_man.htm"/>
           <topic label="Creating a project" href="tasks/cdt_t_proj_new.htm"/>
           <topic label="Defining project properties" href="tasks/cdt_o_proj_prop.htm">

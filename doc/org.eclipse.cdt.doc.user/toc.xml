@@ -4,16 +4,16 @@
 
 <toc id="cdt" label="C/C++ Development User Guide" topic="concepts/cdt_o_home.htm">
 
-<topic label="Tutorial">
+<topic label="Tutorial" href="getting_started/cdt_o_tutorial.htm">
 		<link toc="topics_Getting_Started.xml" />
 	</topic>
-<topic label="Concepts">
+<topic label="Concepts" href="concepts/cdt_o_concepts.htm">
 		<link toc="topics_Concepts.xml" />
 	</topic>
-<topic label="Tasks">
+<topic label="Tasks"  href="tasks/cdt_o_tasks.htm">
 		<link toc="topics_Tasks.xml" />
 	</topic>
-<topic label="Reference">
+<topic label="Reference"  href="reference/cdt_o_ref.htm">
 		<link toc="topics_Reference.xml" />
 	</topic>
 </toc>

@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 <!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
 
-<toc label="Tutorial" href="getting_started/cdt_o_tutorial.htm">
+<toc label="Tutorial">
           <topic label="Creating your project" href="getting_started/cdt_w_newproj.htm"/>
           <topic label="Creating your C++ file" href="getting_started/cdt_w_newcpp.htm"/>
           <topic label="Creating your makefile" href="getting_started/cdt_w_newmake.htm"/>

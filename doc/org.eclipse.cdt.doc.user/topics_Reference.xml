@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 <!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
 
-     <toc label="Reference" href="reference/cdt_o_ref.htm">
+     <toc label="Reference">
           <topic label="CDT icons" href="reference/cdt_u_icons.htm"/>
           <topic label="Project properties" href="reference/cdt_o_proj_prop_pages.htm">
                <topic label="Make Builder page, C/C++ Properties window" href="reference/cdt_u_newproj_buildset.htm"/>

@@ -1,23 +1,26 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
-
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
+import org.eclipse.cdt.debug.internal.core.model.Disassembly;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
@@ -26,106 +29,115 @@ import org.eclipse.debug.core.model.IStackFrame;
 
 /**
  * Locates sources for a C/C++ debug session.
- * 
- * @since: Oct 8, 2002
  */
-public class CSourceManager implements ICSourceLocator, 
-									   IPersistableSourceLocator, 
-									   IAdaptable
-{
+public class CSourceManager implements ICSourceLocator, IPersistableSourceLocator, IAdaptable {
+
 	private ISourceLocator fSourceLocator = null;
+
 	private ILaunch fLaunch = null;
-	private CDebugTarget fDebugTarget = null; 
-	
+
+	private CDebugTarget fDebugTarget = null;
+
 	/**
 	 * Constructor for CSourceManager.
 	 */
-	public CSourceManager( ISourceLocator sourceLocator )
-	{
+	public CSourceManager( ISourceLocator sourceLocator ) {
 		setSourceLocator( sourceLocator );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getLineNumber(IStackFrameInfo)
 	 */
-	public int getLineNumber( IStackFrame frame )
-	{
-		if ( getCSourceLocator() != null )
-		{
+	public int getLineNumber( IStackFrame frame ) {
+		if ( getCSourceLocator() != null ) {
 			return getCSourceLocator().getLineNumber( frame );
 		}
 		IStackFrameInfo info = (IStackFrameInfo)frame.getAdapter( IStackFrameInfo.class );
-		if ( info != null )
-		{
+		if ( info != null ) {
 			return info.getFrameLineNumber();
 		}
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getSourceLocations()
 	 */
-	public ICSourceLocation[] getSourceLocations()
-	{
-		return ( getCSourceLocator() != null ) ? getCSourceLocator().getSourceLocations() : new ICSourceLocation[0];
+	public ICSourceLocation[] getSourceLocations() {
+		return (getCSourceLocator() != null) ? getCSourceLocator().getSourceLocations() : new ICSourceLocation[0];
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#setSourceLocations(ICSourceLocation[])
 	 */
-	public void setSourceLocations( ICSourceLocation[] locations )
-	{
-		if ( getCSourceLocator() != null )
-		{
+	public void setSourceLocations( ICSourceLocation[] locations ) {
+		if ( getCSourceLocator() != null ) {
 			getCSourceLocator().setSourceLocations( locations );
+			CDebugTarget target = getDebugTarget();
+			if ( target != null ) {
+				Disassembly d = null;
+				try {
+					d = (Disassembly)target.getDisassembly();
+				}
+				catch( DebugException e ) {
+				}
+				if ( d != null ) {
+					d.reset();
+				}
+			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#contains(IResource)
 	 */
-	public boolean contains( IResource resource )
-	{
-		return ( getCSourceLocator() != null ) ? getCSourceLocator().contains( resource ) : false;
+	public boolean contains( IResource resource ) {
+		return (getCSourceLocator() != null) ? getCSourceLocator().contains( resource ) : false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
-	public Object getAdapter( Class adapter )
-	{
+	public Object getAdapter( Class adapter ) {
 		if ( adapter.equals( CSourceManager.class ) )
 			return this;
 		if ( adapter.equals( ICSourceLocator.class ) )
 			return this;
 		if ( adapter.equals( IPersistableSourceLocator.class ) )
 			return this;
-		if ( adapter.equals( IResourceChangeListener.class ) &&
-			 fSourceLocator instanceof IResourceChangeListener )
+		if ( adapter.equals( IResourceChangeListener.class ) && fSourceLocator instanceof IResourceChangeListener )
 			return fSourceLocator;
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(IStackFrame)
 	 */
-	public Object getSourceElement( IStackFrame stackFrame )
-	{
+	public Object getSourceElement( IStackFrame stackFrame ) {
 		Object result = null;
 		if ( getSourceLocator() != null )
 			result = getSourceLocator().getSourceElement( stackFrame );
 		return result;
 	}
 
-	protected ICSourceLocator getCSourceLocator()
-	{
+	protected ICSourceLocator getCSourceLocator() {
 		if ( getSourceLocator() instanceof ICSourceLocator )
 			return (ICSourceLocator)getSourceLocator();
 		return null;
 	}
-	
-	protected ISourceLocator getSourceLocator()
-	{
+
+	protected ISourceLocator getSourceLocator() {
 		if ( fSourceLocator != null )
 			return fSourceLocator;
 		else if ( fLaunch != null )
@@ -133,98 +145,92 @@ public class CSourceManager implements ICSourceLocator,
 		return null;
 	}
 
-	protected void setSourceLocator( ISourceLocator sl )
-	{
+	private void setSourceLocator( ISourceLocator sl ) {
 		fSourceLocator = sl;
 	}
-	
-	public void addSourceLocation( ICSourceLocation location )
-	{
-		ICSourceLocation[] locations = getSourceLocations();
-		ArrayList list = new ArrayList( Arrays.asList( locations ) );
-		list.add( location );
-		setSourceLocations( (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] ) );
-	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#findSourceElement(String)
 	 */
-	public Object findSourceElement( String fileName )
-	{
-		if ( getCSourceLocator() != null )
-		{
+	public Object findSourceElement( String fileName ) {
+		if ( getCSourceLocator() != null ) {
 			return getCSourceLocator().findSourceElement( fileName );
 		}
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
 	 */
-	public String getMemento() throws CoreException
-	{
+	public String getMemento() throws CoreException {
 		if ( getPersistableSourceLocator() != null )
 			return getPersistableSourceLocator().getMemento();
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
-	{
+	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException {
 		if ( getPersistableSourceLocator() != null )
 			getPersistableSourceLocator().initializeDefaults( configuration );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
 	 */
-	public void initializeFromMemento( String memento ) throws CoreException
-	{
+	public void initializeFromMemento( String memento ) throws CoreException {
 		if ( getPersistableSourceLocator() != null )
 			getPersistableSourceLocator().initializeFromMemento( memento );
 	}
 
-	private IPersistableSourceLocator getPersistableSourceLocator()
-	{
+	private IPersistableSourceLocator getPersistableSourceLocator() {
 		if ( fSourceLocator instanceof IPersistableSourceLocator )
 			return (IPersistableSourceLocator)fSourceLocator;
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getProject()
 	 */
-	public IProject getProject()
-	{
-		return ( getCSourceLocator() != null ) ? getCSourceLocator().getProject() :  null;
+	public IProject getProject() {
+		return (getCSourceLocator() != null) ? getCSourceLocator().getProject() : null;
 	}
 
-	public void setDebugTarget( CDebugTarget target )
-	{
+	public void setDebugTarget( CDebugTarget target ) {
 		fDebugTarget = target;
 	}
 
-	protected CDebugTarget getDebugTarget()
-	{
+	protected CDebugTarget getDebugTarget() {
 		return fDebugTarget;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#setSearchForDuplicateFiles(boolean)
 	 */
-	public void setSearchForDuplicateFiles( boolean search )
-	{
+	public void setSearchForDuplicateFiles( boolean search ) {
 		if ( getCSourceLocator() != null )
 			getCSourceLocator().setSearchForDuplicateFiles( search );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#searchForDuplicateFiles()
 	 */
-	public boolean searchForDuplicateFiles()
-	{
-		return ( getCSourceLocator() != null ) ? getCSourceLocator().searchForDuplicateFiles() : false;
-	}	
+	public boolean searchForDuplicateFiles() {
+		return (getCSourceLocator() != null) ? getCSourceLocator().searchForDuplicateFiles() : false;
+	}
 }

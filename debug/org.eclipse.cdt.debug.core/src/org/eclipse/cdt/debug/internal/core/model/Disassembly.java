@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IDisassemblyBlock;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -132,5 +133,14 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 		if ( IExecFileInfo.class.equals( adapter ) )
 			return getDebugTarget().getAdapter( adapter );
 		return super.getAdapter( adapter );
+	}
+
+	public void reset() {
+		for ( int i = 0; i < fBlocks.length; ++i )
+			if ( fBlocks[i] != null ) {
+				fBlocks[i].dispose();
+				fBlocks[i] = null;
+			}
+		fireChangeEvent( DebugEvent.CONTENT );
 	}
 }

@@ -1,3 +1,8 @@
+2004-05-14 Mikhail Khodjaiants
+	Update disassembly when source locator is changed.
+	* Disassembly.java
+	* CSourceManager.java
+
 2004-05-13 Mikhail Khodjaiants
 	Changed the format of the disassembly error messages.
 	* Disassembly.java

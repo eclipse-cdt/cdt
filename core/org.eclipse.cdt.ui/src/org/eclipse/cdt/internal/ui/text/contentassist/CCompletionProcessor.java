@@ -445,8 +445,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		int length = prefix.length();
 		
 		// calling functions should happen only within the context of a code body
-		if(    (completionNode.getCompletionContext() != IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
-			&& (completionNode.getCompletionContext() != IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE))
+		if (completionNode.getCompletionContext() != null)
 			return;
 		
 		IFunctionSummary[] summary;
@@ -487,6 +486,8 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			
 			if(fargs != null && fargs.length() > 0) {
 				proposal.setContextInformation(new ContextInformation(fname, fargs));
+				// set the cursor before the closing bracket
+				proposal.setCursorPosition(fname.length() - 1);
 			}
 
 			completions.add(proposal);

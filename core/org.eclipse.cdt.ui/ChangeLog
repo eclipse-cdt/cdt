@@ -1,3 +1,8 @@
+2004-11-02 Tanya Wolff
+	Fixed content assist extensibility for 77482 - changed context condition 
+	for addProposalsFromCompletionContributors() & 	fixed cursor position
+	* src/org/eclipse/cdt/internal/ui/text/contentassist/CCompletionProcessor.java
+
 2004-11-01 Alain Magloire
 	Patch from Mikhail Voronin to implement 71240.
 	Too many changes to enumerate refer to PR:

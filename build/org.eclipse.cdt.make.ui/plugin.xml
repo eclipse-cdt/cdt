@@ -361,8 +361,8 @@
          </action>
       </actionSet>
    </extension>
-<!-- Makefile Editor comment out for CDT 1.2 -->
-<!--extension
+
+   <extension
          id="org.eclipse.cdt.make.editor"
          name="MakefileEditor"
          point="org.eclipse.ui.editors">
@@ -374,7 +374,8 @@
             class="org.eclipse.cdt.make.internal.ui.editor.MakefileEditor"
             id="org.eclipse.cdt.make.editor">
       </editor>
-   </extension -->
+   </extension>
+
    <extension
          point="org.eclipse.ui.startup">
       <startup>

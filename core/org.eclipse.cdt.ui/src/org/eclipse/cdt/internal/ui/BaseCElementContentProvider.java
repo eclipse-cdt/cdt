@@ -130,6 +130,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			return getSourceRoots((ICProject)element);
 		} else if (element instanceof ICContainer) {
 			return getCResources((ICContainer)element);
+		} else if (element instanceof IBinaryContainer) {
+			return NO_CHILDREN; // we deal with this in the CVIewContentProvider
+		} else if (element instanceof IArchiveContainer) {
+			return NO_CHILDREN; // we deal with this in the CViewContentProvider
 		} else if (element instanceof ITranslationUnit) {
 			// if we want to get the chidren of a translation unit
 			if (fProvideMembers) {

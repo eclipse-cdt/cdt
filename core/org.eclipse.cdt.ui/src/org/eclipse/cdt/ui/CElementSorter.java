@@ -5,6 +5,7 @@ package org.eclipse.cdt.ui;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IUsing;
 import org.eclipse.cdt.core.model.IVariable;
@@ -32,6 +34,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -51,24 +54,54 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public class CElementSorter extends ViewerSorter { 
 
 	private static final int CMODEL = 0;
-	private static final int PROJECT = 10;
+	private static final int PROJECTS = 10;
+	private static final int BINARYCONTAINER = 11;
+	private static final int ARCHIVECONTAINER = 12;
+	private static final int SOURCEROOTS = 13;
+	private static final int CCONTAINERS = 14;
+	private static final int TRANSLATIONUNIT_HEADERS = 15;
+	private static final int TRANSLATIONUNIT_SOURCE = 16;
+	private static final int TRANSLATIONUNITS = 17;
+	private static final int BINARIES = 18;
+	private static final int ARCHIVES = 19;
+	private static final int LIBRARYREFERENCES = 20;
 	
-	private static final int RESOURCES= 300;
-	private static final int RESOURCEFOLDERS= 210;
-	private static final int STORAGE= 400;
+	private static final int INCLUDES = 30;
+	private static final int MACROS = 31;
+	private static final int NAMESPACES = 32;
+	private static final int USINGS = 33;
+	private static final int VARIABLEDECLARATIONS = 34;
+	private static final int FUNCTIONDECLARATIONS = 35;
+	private static final int VARIABLES = 36;
+	private static final int VARIABLES_RESERVED = 37;
+	private static final int VARIABLES_SYSTEM = 38;
+	private static final int FUNCTIONS = 39;
+	private static final int FUNCTIONS_RESERVED = 40;
+	private static final int FUNCTIONS_SYSTEM = 41;
+	private static final int METHODDECLARATIONS = 42;
+
+	private static final int CELEMENTS = 100;
+	private static final int CELEMENTS_RESERVED = 101;
+	private static final int CELEMENTS_SYSTEM = 102;
+
+	private static final int RESOURCEFOLDERS= 200;
+	private static final int RESOURCES= 201;
+	private static final int STORAGE= 202;
 	private static final int OTHERS= 500;
 
 	public int category (Object element) {
 		if (element instanceof ICModel) {
 			return CMODEL;
 		} else if (element instanceof ICProject) {
-			return PROJECT;
+			return PROJECTS;
+		} else if (element instanceof ISourceRoot) {
+			return SOURCEROOTS;
 		} else if (element instanceof IBinaryContainer) {
-			return 20;
+			return BINARYCONTAINER;
 		} else if (element instanceof IArchiveContainer) {
-			return 30;
+			return ARCHIVECONTAINER;
 		} else if (element instanceof ICContainer) {
-			return 40;
+			return CCONTAINERS;
 		} else if (element instanceof ITranslationUnit) {
 			IResource res = null;
 			res = ((ITranslationUnit)element).getUnderlyingResource();
@@ -78,71 +111,69 @@ public class CElementSorter extends ViewerSorter {
 					String[] headers = CoreModel.getDefault().getHeaderExtensions();
 					for (int i = 0; i < headers.length; i++) {
 						if (ext.equals(headers[i])) {
-							return 42;
+							return TRANSLATIONUNIT_HEADERS;
 						}
 					}
 					String[] sources = CoreModel.getDefault().getSourceExtensions();
 					for (int i = 0; i < sources.length; i++) {
 						if (ext.equals(sources[i])) {
-							return 47;
+							return TRANSLATIONUNIT_SOURCE;
 						}
 					}					
-					return 48;
 				}
-				return 49;
 			}
-			return 50;
+			return TRANSLATIONUNITS;
 		} else if (element instanceof IInclude) {
-			return 60;
+			return INCLUDES;
 		} else if (element instanceof IMacro) {
-			return 70;
+			return MACROS;
 		} else if (element instanceof INamespace) {
-			return 80;
+			return NAMESPACES;
 		} else if (element instanceof IUsing) {
-			return 90;
+			return USINGS;
 		} else if (element instanceof IFunctionDeclaration && ! (element instanceof IFunction)) {
-			return 100;
+			return FUNCTIONDECLARATIONS;
 		} else if (element instanceof IMethodDeclaration && !(element instanceof IMethod)) {
-			return 110;
+			return METHODDECLARATIONS;
 		} else if (element instanceof IVariableDeclaration) {
-			return 120;
+			return VARIABLEDECLARATIONS;
 		} else if (element instanceof IVariable) {
 			String name = ((ICElement)element).getElementName();
 			if (name.startsWith("__")) { //$NON-NLS-1$
-				return 122;
+				return VARIABLES_SYSTEM;
 			}
 			if (name.charAt(0) == '_') {
-				return 124;
+				return VARIABLES_RESERVED;
 			}
-			return 130;
+			return VARIABLES;
 		} else if (element instanceof IFunction) {
 			String name = ((ICElement)element).getElementName();
 			if (name.startsWith("__")) { //$NON-NLS-1$
-				return 132;
+				return FUNCTIONS_SYSTEM;
 			}
 			if (name.charAt(0) == '_') {
-				return 134;
+				return FUNCTIONS_RESERVED;
 			}
-			return 140;
+			return FUNCTIONS;
 		} else if (element instanceof IArchive) {
-			return 150;
+			return ARCHIVES;
 		} else if (element instanceof IBinary) {
-			return 160;
+			return BINARIES;
 		} else if (element instanceof ILibraryReference) {
-			return 170;
+			return LIBRARYREFERENCES;
 		} else if (element instanceof ICElement) {
 			String name = ((ICElement)element).getElementName();
 			if (name.startsWith("__")) { //$NON-NLS-1$
-				return 172;
+				return CELEMENTS_SYSTEM;
 			}
 			if (name.charAt(0) == '_') {
-				return 174;
+				return CELEMENTS_RESERVED;
 			}
-			return 180;
+			return CELEMENTS;
 		} else if (element instanceof IFile) {
 			return RESOURCES;
 		} else if (element instanceof IProject) {
-			return PROJECT;
+			return PROJECTS;
 		} else if (element instanceof IContainer) {
 			return RESOURCEFOLDERS;
 		} else if (element instanceof IStorage) {
@@ -162,10 +193,31 @@ public class CElementSorter extends ViewerSorter {
 
 		// cat1 == cat2
 
-		if (cat1 == PROJECT) {
+		if (cat1 == PROJECTS) {
 			IWorkbenchAdapter a1= (IWorkbenchAdapter)((IAdaptable)e1).getAdapter(IWorkbenchAdapter.class);
 			IWorkbenchAdapter a2= (IWorkbenchAdapter)((IAdaptable)e2).getAdapter(IWorkbenchAdapter.class);
 			return getCollator().compare(a1.getLabel(e1), a2.getLabel(e2));
+		}
+
+		if (cat1 == SOURCEROOTS) {
+			ISourceRoot root1= getSourceRoot(e1);
+			ISourceRoot root2= getSourceRoot(e2);
+			if (root1 == null) {
+				if (root2 == null) {
+					return 0;
+				} else {
+					return 1;
+				}
+			} else if (root2 == null) {
+				return -1;
+			}			
+			if (!root1.getPath().equals(root2.getPath())) {
+				int p1= getPathEntryIndex(root1);
+				int p2= getPathEntryIndex(root2);
+				if (p1 != p2) {
+					return p1 - p2;
+				}
+			}
 		}
 
 		// non - c resources are sorted using the label from the viewers label provider
@@ -189,6 +241,14 @@ public class CElementSorter extends ViewerSorter {
 		return getCollator().compare(name1, name2);		
 	}
 
+	private ISourceRoot getSourceRoot(Object element) {
+		ICElement celement = (ICElement)element;
+		while (! (celement instanceof ISourceRoot) && celement != null) {
+			celement = celement.getParent();
+		}
+		return (ISourceRoot)celement;
+	}
+
 	private int compareWithLabelProvider(Viewer viewer, Object e1, Object e2) {
 		if (viewer == null || !(viewer instanceof ContentViewer)) {
 			IBaseLabelProvider prov = ((ContentViewer) viewer).getLabelProvider();
@@ -202,6 +262,21 @@ public class CElementSorter extends ViewerSorter {
 			}
 		}
 		return 0; // can't compare
+	}
+
+	private int getPathEntryIndex(ISourceRoot root) {
+		try {
+			IPath rootPath= root.getPath();
+			ISourceRoot[] roots= root.getCProject().getSourceRoots();
+			for (int i= 0; i < roots.length; i++) {
+				if (roots[i].getPath().equals(rootPath)) {
+					return i;
+				}
+			}
+		} catch (CModelException e) {
+		}
+
+		return Integer.MAX_VALUE;
 	}
 
 }

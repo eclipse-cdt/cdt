@@ -7,7 +7,7 @@ package org.eclipse.cdt.debug.core;
 import org.eclipse.core.runtime.CoreException;
 
 public interface ICDebugConfiguration {
-	final static String PLATFORM_NATIVE = "native";
+	final static String PLATFORM_NATIVE = "native"; //$NON-NLS-1$
 	
 	ICDebugger getDebugger() throws CoreException;
 	String getName();

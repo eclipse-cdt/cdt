@@ -149,7 +149,7 @@ public abstract class ConversionWizard
      * 
      * i.e. <br>
      *<pre> 
-     *   mainPage = new ConvertSimpleToCStdMakeProjectWizardPage(getPrefix());
+     *   mainPage = new ConvertToStdMakeProjectWizardPage(getPrefix());
      *   addPage(mainPage);
      *</pre>
      * 

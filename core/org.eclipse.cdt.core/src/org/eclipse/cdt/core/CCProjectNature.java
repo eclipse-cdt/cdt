@@ -8,6 +8,8 @@ package org.eclipse.cdt.core;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 
 
@@ -22,5 +24,20 @@ public class CCProjectNature extends CProjectNature {
 	public static void removeCCNature(IProject project, IProgressMonitor mon) throws CoreException {
 		removeNature(project, CC_NATURE_ID, mon);
 	}
+	
+	/**
+	 * Checks to ensure that a cnature already exists,
+	 * if not throw a CoreException. Does NOT add a default builder
+     * @see IProjectNature#configure
+     */
+    public void configure() throws CoreException {
+    	if (!getProject().hasNature(CProjectNature.C_NATURE_ID)){
+    		IStatus status = new Status(IStatus.ERROR, 
+    									CCorePlugin.PLUGIN_ID, 
+    									CCorePlugin.CDT_PROJECT_NATURE_ID_MISMATCH, 
+    									"project must have a cnature", null); // $NON_NLS
+    		throw new CoreException(status);
+    	}
+    }
 
 }

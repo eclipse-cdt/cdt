@@ -1,3 +1,21 @@
+
+2002-11-13 Judy Green
+
+	*src/org/eclipse/cdt/core/CCProjectNature.java
+		added configure() to overwrite CNatures implementation which adds a default CBuilder.
+		We now check that a project having a CCNature added already has a CNature
+		Throws a CoreException if not.
+	
+	*src/org/eclipse/cdt/core/CCorePlugin.java
+	Added a static va CDT_PROJECT_NATURE_ID_MISMATCH to indicate the condition
+	described above in configure()
+	
+	Cleaned up the convert methods to ensure that extra calls to add a
+	CBuilder are not called.
+	
+	
+	
+		
 2002-11-13 Alain Magloire
 
 	* src/.../internal/core/CBuilder.java (invokeMake):

@@ -36,6 +36,7 @@ public class CCorePlugin extends Plugin {
 	
 	public static final int STATUS_CDTPROJECT_EXISTS = 1;
 	public static final int STATUS_CDTPROJECT_MISMATCH = 2;
+	public static final int CDT_PROJECT_NATURE_ID_MISMATCH = 3;
 	
 	public static final String PLUGIN_ID= "org.eclipse.cdt.core";
 
@@ -218,41 +219,19 @@ public class CCorePlugin extends Plugin {
      * 
      * @param projectHandle
      * @param monitor
-     * @param projectID
      * @throws CoreException
      */
     
-    public void convertProjectFromCtoCC(IProject projectHandle, IProgressMonitor monitor, String projectID)
+    public void convertProjectFromCtoCC(IProject projectHandle, IProgressMonitor monitor)
     throws CoreException{
         if ((projectHandle != null) 
                 && projectHandle.hasNature(CCProjectNature.C_NATURE_ID)
                 && !projectHandle.hasNature(CCProjectNature.CC_NATURE_ID)) {
             // Add C++ Nature ... does not add duplicates        
             CCProjectNature.addCCNature(projectHandle, monitor);
-            
-            if(projectID != null){
-                mapCProjectOwner(projectHandle, projectID);
-            }
          } 
     }
-    /**
-     * Method convertProjectFromCtoCC converts
-     * a C Project to a C++ Project
-     * The newProject MUST, not be null, already have a C Nature 
-     * && must NOT already have a C++ Nature<br>
-     * This method does not map the project to an owner and should only
-     * be used when this mapping has already taken place.
-     * 
-     * @param projectHandle
-     * @param monitor
-     * @throws CoreException
-     */
-    
-    public void convertProjectFromCtoCC(IProject projectHandle, IProgressMonitor monitor)
-    throws CoreException{
-                
-        convertProjectFromCtoCC(projectHandle, monitor, null);
-    }
+ 
 	/**
 	 * Method addDefaultCBuilder adds the default C make builder
 	 * @param projectHandle
@@ -264,10 +243,10 @@ public class CCorePlugin extends Plugin {
         // Set the Default C Builder.
         CProjectNature.addCBuildSpec(projectHandle, monitor);
     }
-    
+
     /**
      * Method to convert a project to a C nature 
-     * & default make builder
+     * & default make builder (Will always add a default builder)
      * All checks should have been done externally
      * (as in the Conversion Wizards). 
      * This method blindly does the conversion.
@@ -281,6 +260,26 @@ public class CCorePlugin extends Plugin {
     
     public void convertProjectToC(IProject projectHandle, IProgressMonitor monitor, String projectID)
     throws CoreException{
+    	this.convertProjectToC(projectHandle, monitor, projectID, true);
+
+    }   
+    /**
+     * Method to convert a project to a C nature 
+     * & default make builder (if indicated)
+     * All checks should have been done externally
+     * (as in the Conversion Wizards). 
+     * This method blindly does the conversion.
+     * 
+     * @param project
+     * @param String targetNature
+     * @param monitor
+     * @param projectID
+     * @param addMakeBuilder
+     * @exception CoreException
+     */
+    
+    public void convertProjectToC(IProject projectHandle, IProgressMonitor monitor, String projectID, boolean addMakeBuilder)
+    throws CoreException{
         if ((projectHandle == null) || (monitor == null) || (projectID == null)){
             return;
         }
@@ -288,11 +287,38 @@ public class CCorePlugin extends Plugin {
         IProjectDescription description = workspace.newProjectDescription(projectHandle.getName());
         description.setLocation(projectHandle.getFullPath());
         createCProject(description, projectHandle, monitor, projectID);
-        addDefaultCBuilder(projectHandle, monitor);
+        if (addMakeBuilder) {
+        	addDefaultCBuilder(projectHandle, monitor);
+        }
     }
     /**
      * Method to convert a project to a C++ nature 
-     * & default make builder, if it does not have one already
+     * & default make builder(if indicated), if it does not have one already
+     * 
+     * @param project
+     * @param String targetNature
+     * @param monitor
+     * @param projectID
+     * @param addMakeBuilder
+     * @exception CoreException
+     */
+    
+    public void convertProjectToCC(IProject projectHandle, IProgressMonitor monitor, String projectID, boolean addMakeBuilder)
+    throws CoreException{
+        if ((projectHandle == null) || (monitor == null) || (projectID == null)){
+            return;
+        }
+        createCProject(projectHandle.getDescription(), projectHandle, monitor, projectID);
+        // now add C++ nature
+        convertProjectFromCtoCC(projectHandle, monitor);
+        if (addMakeBuilder){
+        	addDefaultCBuilder(projectHandle, monitor);
+        }
+    }
+        /**
+     * Method to convert a project to a C++ nature 
+     * & default make builder,
+     * Note: Always adds the default Make builder
      * 
      * @param project
      * @param String targetNature
@@ -303,13 +329,7 @@ public class CCorePlugin extends Plugin {
     
     public void convertProjectToCC(IProject projectHandle, IProgressMonitor monitor, String projectID)
     throws CoreException{
-        if ((projectHandle == null) || (monitor == null) || (projectID == null)){
-            return;
-        }
-        createCProject(projectHandle.getDescription(), projectHandle, monitor, projectID);
-        // now add C++ nature
-        convertProjectFromCtoCC(projectHandle, monitor);
-        addDefaultCBuilder(projectHandle, monitor);
+    	this.convertProjectToCC(projectHandle, monitor, projectID, true);
     }
     
 	public ICBuilder[] getBuilders(IProject project) throws CoreException {

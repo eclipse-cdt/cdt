@@ -5,16 +5,15 @@ package org.eclipse.cdt.ui.wizards.conversion;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  *
- * ConvertSimpleToCStdMakeProjectWizardPage
+ * ConvertToStdMakeProjectWizardPage
  * Standard main page for a wizard that adds a C project Nature to a project with no nature associated with it.
  * This conversion is one way in that the project cannot be converted back (i.e have the nature removed).
  *
@@ -23,22 +22,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *<p>
  * Example useage:
  * <pre>
- * mainPage = new ConvertSimpleToCStdMakeProjectWizardPage("UKtoCConvertProjectPage");
+ * mainPage = new ConvertToStdMakeProjectWizardPage("ConvertProjectPage");
  * mainPage.setTitle("Project Conversion");
- * mainPage.setDescription("Add C a Nature to a project.");
+ * mainPage.setDescription("Add C or C++ a Nature to a project.");
  * </pre>
  * </p>
  */
-public class ConvertSimpleToCStdMakeProjectWizardPage extends ConvertProjectWizardPage {
+public class ConvertToStdMakeProjectWizardPage extends ConvertProjectWizardPage {
     
-    private static final String WZ_TITLE = "SimpleToCStdMakeConversionWizard.title"; //$NON-NLS-1$
-    private static final String WZ_DESC = "SimpleToCStdMakeConversionWizard.description"; //$NON-NLS-1$
+    private static final String WZ_TITLE = "StdMakeConversionWizard.title"; //$NON-NLS-1$
+    private static final String WZ_DESC = "StdMakeConversionWizard.description"; //$NON-NLS-1$
     
 	/**
-	 * Constructor for ConvertSimpleToCStdMakeProjectWizardPage.
+	 * Constructor for ConvertToStdMakeProjectWizardPage.
 	 * @param pageName
 	 */
-	public ConvertSimpleToCStdMakeProjectWizardPage(String pageName) {
+	public ConvertToStdMakeProjectWizardPage(String pageName) {
 		super(pageName);
 	}
     
@@ -60,7 +59,7 @@ public class ConvertSimpleToCStdMakeProjectWizardPage extends ConvertProjectWiza
        
     /**
      * Method isCandidate returns projects that have
-     * no "C" Nature, but are Projects in the Eclipse sense.
+     * no "C" or "C++" Nature, but are Projects in the Eclipse sense.
      * 
      * @param project
      * @return boolean
@@ -68,28 +67,11 @@ public class ConvertSimpleToCStdMakeProjectWizardPage extends ConvertProjectWiza
     public boolean isCandidate(IProject project) {       
         boolean noCNature = false;
         try {
-            noCNature =  !project.hasNature(CProjectNature.C_NATURE_ID);
+            noCNature =  !project.hasNature(CProjectNature.C_NATURE_ID)
+            || !project.hasNature(CCProjectNature.CC_NATURE_ID);
        } catch (CoreException e) {
            noCNature = true;
        }
         return noCNature;
-    }
-   
-    /**
-     * Method convertProject adds a C Nature and default make builder
-     * to those projects that were selected by the user.
-     * 
-     * @param project
-     * @param monitor
-     * @param projectID
-     * @throws CoreException
-     */
-    public void convertProject(IProject project, IProgressMonitor monitor, String projectID)
-        throws CoreException {
-        
-        CCorePlugin.getDefault().convertProjectToC(project, monitor, projectID);  
-        if (!project.isOpen()){
-            project.open(monitor);   
-        } 
-    }     
+    }    
 }

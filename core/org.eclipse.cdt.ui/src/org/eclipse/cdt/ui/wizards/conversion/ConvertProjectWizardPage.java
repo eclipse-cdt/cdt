@@ -7,15 +7,17 @@ package org.eclipse.cdt.ui.wizards.conversion;
  */
 import java.util.Vector;
 
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.ui.CUIPlugin;
-
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -26,8 +28,12 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
-
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,7 +43,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
-
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
@@ -66,6 +71,11 @@ public abstract class ConvertProjectWizardPage
     public static final String  KEY_CONVERTING = "ConvertionWizard.converting";
     private static final String PROJECT_LIST = "ConversionWizard.projectlist";
 
+	protected boolean convertToC = false;
+    protected boolean convertToCC = true;
+    protected Button cRadioButton;
+    protected Button ccRadioButton;
+   
     // The Main widget containing the table and its list of condidate open projects
     protected CheckboxTableViewer tableViewer;
     
@@ -126,7 +136,35 @@ public abstract class ConvertProjectWizardPage
      * 
      */
     protected void addToMainPage(Composite container){
-        // by default do nothing        
+       
+		// Add convert to C or C/C++ buttons
+		Composite area = ControlFactory.createGroup(container, "Convert to C or C/C++", 2);
+		
+
+		SelectionListener cListener =  new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {				
+				convertToC = cRadioButton.getSelection();
+				convertToCC = ccRadioButton.getSelection();	
+				validatePage();
+			}
+		};
+		cRadioButton = ControlFactory.createRadioButton(area, 
+							  "C Project",
+							  "C ",
+			  			      cListener);
+		cRadioButton.setSelection(convertToC);			  			      
+		ccRadioButton = ControlFactory.createRadioButton(area, 
+							  "C/C++ Project",
+							  "C++",
+			  			      cListener);	
+		ccRadioButton.setSelection(convertToCC);			  			      
+				
+		area.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				cRadioButton = null;
+				ccRadioButton = null;
+			}
+		});      
     }
 
     /**
@@ -445,7 +483,36 @@ public abstract class ConvertProjectWizardPage
      * @param projectID
      * @throws CoreException
      */
-    public abstract void convertProject(IProject project, 
-                                           IProgressMonitor monitor, String projectID)
-                                    throws CoreException;
+    public void convertProject(IProject project, 
+                                IProgressMonitor monitor, 
+                                String projectID)
+                                throws CoreException{
+        // Add the correct nature
+    	if (convertToC) {
+    		if (!project.hasNature(CProjectNature.C_NATURE_ID)){
+    			addCNature(project, monitor, true);          	
+    		} else {
+    			if (project.hasNature(CCProjectNature.CC_NATURE_ID)){
+    				// remove the C++ nature
+    				CCProjectNature.removeCCNature(project, monitor);
+    			}    			
+    		}
+    	} else {
+    		if (convertToCC && !project.hasNature(CCProjectNature.CC_NATURE_ID)) {
+    			addCCNature(project, monitor, true);          	
+    		}            			
+    	}                           	
+    }
+	protected void addCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException{
+     	CCorePlugin.getDefault().convertProjectToC(project, monitor, CCorePlugin.getDefault().PLUGIN_ID + ".make", addMakeBuilder);  //$NON-NLS-1$
+     }
+     
+     protected void addCCNature(IProject project, IProgressMonitor monitor, boolean addMakeBuilder) throws CoreException{
+     	if (project.hasNature(CProjectNature.C_NATURE_ID)) {     		
+	     	CCorePlugin.getDefault().convertProjectFromCtoCC(project, monitor);  //$NON-NLS-1$
+     	} else {
+	     	CCorePlugin.getDefault().convertProjectToCC(project, monitor, CCorePlugin.getDefault().PLUGIN_ID + ".make", addMakeBuilder);  //$NON-NLS-1$
+     	}
+     }
+    
 }

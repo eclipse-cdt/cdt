@@ -9,29 +9,29 @@ import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This wizard provides a method by which the user can 
- * add a C++ nature to a project that previously had no nature associated with it.
+ * add a C nature to a project that previously had no nature associated with it.
  */
-public class SimpleToCCStdMakeConversionWizard extends ConversionWizard {
+public class ConvertToStdMakeConversionWizard extends ConversionWizard {
 	
-    private static final String WZ_TITLE = "SimpleToCCStdMakeConversionWizard.title"; //$NON-NLS-1$
-	private static final String WZ_DESC = "SimpleToCCStdMakeConversionWizard.description"; //$NON-NLS-1$
-    private static final String PREFIX= "SimpleToCCStdMakeConversionWizard"; //$NON-NLS-1$
+    private static final String WZ_TITLE = "ConvertToStdMakeConversionWizard.title"; //$NON-NLS-1$
+	private static final String WZ_DESC = "ConvertToStdMakeConversionWizard.description"; //$NON-NLS-1$
+    private static final String PREFIX= "ConvertToStdMakeConversionWizard"; //$NON-NLS-1$
     
-    private static final String WINDOW_TITLE = "SimpleToCCStdMakeConversionWizard.windowTitle";//$NON-NLS-1$
+    private static final String WINDOW_TITLE = "ConvertToStdMakeConversionWizard.windowTitle";//$NON-NLS-1$
     
     /**
-     * SimpleToCCStdMakeConversionWizard Wizard constructor
+     * ConvertToStdMakeConversionWizard Wizard constructor
      */
- 	public SimpleToCCStdMakeConversionWizard() {
+ 	public ConvertToStdMakeConversionWizard() {
 		this(getWindowTitleResource(), getWzDescriptionResource());
 	}
     /**
-     * SimpleToCCStdMakeConversionWizard Wizard constructor
+     * ConvertToStdMakeConversionWizard Wizard constructor
      * 
      * @param title
      * @param desc
      */
-	public SimpleToCCStdMakeConversionWizard(String title, String desc) {
+	public ConvertToStdMakeConversionWizard(String title, String desc) {
 		super(title, desc);
 	}
  
@@ -67,7 +67,7 @@ public class SimpleToCCStdMakeConversionWizard extends ConversionWizard {
     }
     
    /**
-     * Method getPrefix, allows prefix value to be changed by subclasses
+     * Method getPrefix,  allows prefix value to be changed by subclasses
      * 
      * @return String
      */
@@ -76,12 +76,12 @@ public class SimpleToCCStdMakeConversionWizard extends ConversionWizard {
     }
     
     /**
-     * Method addPages adds our Simple to C++ conversion Wizard page.
+     * Method addPages adds our Simple to C conversion Wizard page.
      * 
      * @see Wizard#createPages
      */ 
     public void addPages() { 
-        mainPage = new ConvertSimpleToCCStdMakeProjectWizardPage(getPrefix());
+        mainPage = new ConvertToStdMakeProjectWizardPage(getPrefix());
         
         addPage(mainPage);
     }     

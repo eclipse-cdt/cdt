@@ -159,17 +159,17 @@
             %StdCWizard.description
          </description>
       </wizard>
-<!-- For C Conversion Wizards -->
+<!-- For C Conversion Wizard -->
       <wizard
-            name="%SimpleToCStdMakeConversionWizard.name"
+            name="%StdMakeConversionWizard.name"
             icon="icons/full/ctool16/newcc_app.gif"
             category="org.eclipse.cdt.ui.newCWizards"
-            class="org.eclipse.cdt.ui.wizards.conversion.SimpleToCStdMakeConversionWizard"
+            class="org.eclipse.cdt.ui.wizards.conversion.ConvertToStdMakeConversionWizard"
             project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.SimpleToCStdMakeConversionWizard">
+            id="org.eclipse.cdt.ui.wizards.ConvertToStdMakeConversionWizard">
          <description>
-            %SimpleToCStdMakeConversionWizard.description
+            %StdMakeConversionWizard.description
          </description>
       </wizard>
 <!-- For C++ Wizards -->
@@ -189,28 +189,17 @@
             %StdCCWizard.description
          </description>
       </wizard>
+<!-- For C++ Conversion Wizard -->      
       <wizard
-            name="%CtoCCConversionWizard.name"
-            icon="icons/full/ctool16/newc_app.gif"
-            category="org.eclipse.cdt.ui.newCCWizards"
-            class="org.eclipse.cdt.ui.wizards.conversion.CtoCCConversionWizard"
-            project="true"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.CtoCCConversionWizard">
-         <description>
-            %CtoCCConversionWizard.description
-         </description>
-      </wizard>
-      <wizard
-            name="%SimpleToCCStdMakeConversionWizard.name"
+            name="%StdMakeConversionWizard.name"
             icon="icons/full/ctool16/newcc_app.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
-            class="org.eclipse.cdt.ui.wizards.conversion.SimpleToCCStdMakeConversionWizard"
+            class="org.eclipse.cdt.ui.wizards.conversion.ConvertToStdMakeConversionWizard"
             project="true"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            id="org.eclipse.cdt.ui.wizards.SimpleToCCStdMakeConversionWizard">
+            id="org.eclipse.cdt.ui.wizards.ConvertToStdMakeConversionWizard">
          <description>
-            %SimpleToCCStdMakeConversionWizard.description
+            %StdMakeConversionWizard.description
          </description>
       </wizard>
    </extension>

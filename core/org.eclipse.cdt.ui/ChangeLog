@@ -1,3 +1,38 @@
+2002-11-13 Judy N. Green
+	*/home/tools/org.eclipse.cdt.ui/plugin.properties
+	*/home/tools/org.eclipse.cdt.ui/plugin.xml
+	updated labels & wizards to use combined conversion wizard
+	
+	*src/org/eclipse/cdt/internal/ui/CPluginResources.properties
+	updated labels
+	
+	*src/org/eclipse/cdt/ui/wizards/StdMakeProjectWizard.java
+	No longer add builder in run method. it is being added in enough other places 
+
+	*src/org/eclipse/cdt/ui/wizards/conversion/ConversionWizard.java
+	updated reference to call combined conversion page
+	
+	*src/org/eclipse/cdt/ui/wizards/conversion/ConvertProjectWizardPage.java
+	Moved common c/c== conversion methods up to this shared class
+	
+	
+	Added:
+	*src/org/eclipse/cdt/ui/wizards/conversion/ConvertToStdMakeConversionWizard.java
+	*src/org/eclipse/cdt/ui/wizards/conversion/ConvertToStdMakeProjectWizardPage.java
+	Combined the C/C++ conversion wizards to this class
+	
+	Removed:
+	*src/org/eclipse/cdt/ui/wizards/conversion/ConvertSimpleToCCStdMakeProjectWizardPage.java
+	*src/org/eclipse/cdt/ui/wizards/conversion/ConvertCtoCCStdMakeProjectWizardPage.java
+	*src/org/eclipse/cdt/ui/wizards/conversion/ConvertSimpleToCStdMakeProjectWizardPage.java
+	*src/org/eclipse/cdt/ui/wizards/conversion/CtoCCConversionWizard.java
+	*src/org/eclipse/cdt/ui/wizards/conversion/SimpleToCCStdMakeConversionWizard.java
+	
+	
+	
+	
+	
+
 2002-11-13 Alain Magloire
 
 	* src/.../internal/ui/editor/ProblemPainter.java (hasProblem):

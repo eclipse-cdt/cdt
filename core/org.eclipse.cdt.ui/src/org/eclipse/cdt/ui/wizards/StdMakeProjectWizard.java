@@ -87,9 +87,6 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 			if (settingsBlock != null) {
 				settingsBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
 			}
-            
-            // Set the Default C Builder to make this a StdMakeProject.
-            CCorePlugin.getDefault().addDefaultCBuilder(newProject, new SubProgressMonitor(monitor, 1));
 		}
 	}
 	

@@ -1,3 +1,6 @@
+2004-06-11 Andrew Niefer
+	fix bugs 43063 & 43498 - better handling of spaces around wild cards in search pattern
+
 2004-06-10 Andrew Niefer
 	fix bug 64986 - handle Containers in CSearchScope
 

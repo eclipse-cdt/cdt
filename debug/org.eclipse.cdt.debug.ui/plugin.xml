@@ -1228,5 +1228,28 @@
             annotationType="org.eclipse.cdt.debug.core.breakpoint">
       </specification>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory"
+            adaptableType="org.eclipse.cdt.internal.ui.editor.CEditor">
+         <adapter
+               type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.ui.actions.IRunToLineTarget">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"
+            class="org.eclipse.cdt.debug.internal.ui.actions.RetargettableActionAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.ui.actions.IRunToLineTarget">
+         </adapter>
+      </factory>
+   </extension>
 
 </plugin>

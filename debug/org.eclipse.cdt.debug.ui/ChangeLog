@@ -1,4 +1,11 @@
 2004-04-08 Mikhail Khodjaiants
+	Implementing retargettable actions.
+	* plugin.xml
+	* RetargettableActionAdapterFactory.java
+	* RunToLineAdapter.java
+	* ToggleBreakpointAdapter.java
+
+2004-04-08 Mikhail Khodjaiants
 	Added breakpoint images and implemented the extension points for breakpoint 
 	marker annotations.
 	* plugin.xml

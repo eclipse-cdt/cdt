@@ -26,9 +26,9 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
 <!-- =========================================================================== -->
-<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
    <extension-point id="CToolTabGroup" name="C/C++ Tool Configuration Tabs" schema="schema/CToolTabGroup.exsd"/>
@@ -137,8 +137,8 @@
             id="org.eclipse.cdt.ui.MakeView">
       </view>
    </extension>
-<!-- For C Wizards -->
 <!-- The wizards -->
+<!-- For C Wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -316,12 +316,12 @@
             class="org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage"
             id="org.eclipse.cdt.ui.preferneces.CBuildConsolePreferernces">
       </page>
-      <page 
+      <page
             name="%todoTaskPrefName"
-	    id = "org.eclipse.cdt.ui.preferences.TodoTaskPreferencePage"
-	    class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPreferencePage"
-	    category= "org.eclipse.cdt.ui.preferences.CPluginPreferencePage">
-      </page>		
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPreferencePage"
+            id="org.eclipse.cdt.ui.preferences.TodoTaskPreferencePage">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
@@ -346,13 +346,16 @@
                value="org.eclipse.cdt.core.managedBuildNature">
          </filter>
       </page>
-     <page 
-           name="%todoPageName"
-  	   id="org.eclipse.cdt.ui.propertyPages.TodoTaskPropertyPage"
-           objectClass="org.eclipse.core.resources.IProject"
-           class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPropertyPage">
-           <filter name="nature" value="org.eclipse.cdt.core.cnature"/>
-     </page>
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            name="%todoPageName"
+            class="org.eclipse.cdt.internal.ui.preferences.TodoTaskPropertyPage"
+            id="org.eclipse.cdt.ui.propertyPages.TodoTaskPropertyPage">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.core.cnature">
+         </filter>
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -526,7 +529,6 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
    </extension>
-   
 <!--
    <extension
          point="org.eclipse.ui.views">
@@ -958,27 +960,62 @@
       <sorter
             pageId="org.eclipse.cdt.ui.CSearchPage"
             label="%ElementNameSorter.label"
-            class="org.eclipse.cdt.internal.ui.search.ElementNameSorter"
-            tooltip="%ElementNameSorter.tooltip"
             icon="icons/full/clcl16/search_sortmatch.gif"
-            id="org.eclipse.search.internal.ui.ElementNameSorter" >
+            tooltip="%ElementNameSorter.tooltip"
+            class="org.eclipse.cdt.internal.ui.search.ElementNameSorter"
+            id="org.eclipse.search.internal.ui.ElementNameSorter">
       </sorter>
       <sorter
-		id="org.eclipse.search.internal.ui.ParentNameSorter"
-		pageId="org.eclipse.cdt.ui.CSearchPage"
-		label="%ParentNameSorter.label"
-		tooltip="%ParentNameSorter.tooltip"
-		icon="icons/full/clcl16/search_sortmatch.gif"
-		class="org.eclipse.cdt.internal.ui.search.ParentNameSorter">
-	</sorter>
-	<sorter
-		id="org.eclipse.search.internal.ui.PathNameSorter"
-		pageId="org.eclipse.cdt.ui.JavaSearchPage"
-		label="%PathNameSorter.label"
-		tooltip="%PathNameSorter.tooltip"
-		icon="icons/full/clcl16/search_sortmatch.gif"
-		class="org.eclipse.cdt.internal.ui.search.PathNameSorter">
-	</sorter>
+            pageId="org.eclipse.cdt.ui.CSearchPage"
+            label="%ParentNameSorter.label"
+            icon="icons/full/clcl16/search_sortmatch.gif"
+            tooltip="%ParentNameSorter.tooltip"
+            class="org.eclipse.cdt.internal.ui.search.ParentNameSorter"
+            id="org.eclipse.search.internal.ui.ParentNameSorter">
+      </sorter>
+      <sorter
+            pageId="org.eclipse.cdt.ui.JavaSearchPage"
+            label="%PathNameSorter.label"
+            icon="icons/full/clcl16/search_sortmatch.gif"
+            tooltip="%PathNameSorter.tooltip"
+            class="org.eclipse.cdt.internal.ui.search.PathNameSorter"
+            id="org.eclipse.search.internal.ui.PathNameSorter">
+      </sorter>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            label="%CSearchActionSet.label"
+            description="%CSearchActionSet.description"
+            visible="false"
+            id="org.eclipse.cdt.ui.SearchActionSet">
+         <action
+               label="%openCSearchPageAction.label"
+               icon="icons/full/obj16/csearch_obj.gif"
+               class="org.eclipse.cdt.internal.ui.search.OpenCSearchPageAction"
+               menubarPath="org.eclipse.search.menu/dialogGroup"
+               id="org.eclipse.cdt.ui.actions.OpenCSearchPage">
+         </action>
+         <menu
+               label="%searchMenu.label"
+               id="org.eclipse.search.menu">
+         </menu>
+      </actionSet>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSetPartAssociations">
+      <actionSetPartAssociation
+            targetID="org.eclipse.cdt.ui.SearchActionSet">
+         <part
+               id="org.eclipse.cdt.ui.CView">
+         </part>
+         <part
+               id="org.eclipse.cdt.ui.editor.CEditor">
+         </part>
+         <part
+               id="org.eclipse.search.SearchResultView">
+         </part>
+      </actionSetPartAssociation>
    </extension>
 
 </plugin>

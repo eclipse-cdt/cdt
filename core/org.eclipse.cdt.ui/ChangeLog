@@ -1,3 +1,13 @@
+2003-07-11 Bogdan Gheorghe
+	Added new C/C++ Search menu item.
+	
+	Added:
+	* src/org/eclipse/cdt/internal/ui/search/OpenCSearchPageAction.java
+	
+	Modified:
+	* plugin.properties
+	* plugin.xml
+	
 2003-07-08 John Camelon
 	Updated IScanner, clients & implementations to use IScannerInfo.  
 

@@ -95,15 +95,18 @@ public abstract class Conditional extends Parent implements IConditional {
 		// Find the end of the first string.
 		int count = 0;
 		// For the (ARG1, ARG2) format.
+
+		// get the first ARG1
 		if (terminal == ',') {
 			int paren = 0;
-			for (count = 0; count < line.length(); count++) {
+			for (count = 1; count < line.length(); count++) {
 				char ch = line.charAt(count);
 				if (ch == '(') {
 					paren++;
 				} else if (ch == ')') {
 					paren--;
-				} else if (ch == terminal && paren <= 0) {
+				}
+				if (ch == terminal && paren <= 0) {
 					break;
 				}
 			}
@@ -136,7 +139,8 @@ public abstract class Conditional extends Parent implements IConditional {
 					paren++;
 				} else if (ch == ')') {
 					paren--;
-				} else if (ch == terminal && paren <= 0) {
+				}
+				if (ch == terminal && paren <= 0) {
 					break;
 				}
 			}
@@ -147,6 +151,6 @@ public abstract class Conditional extends Parent implements IConditional {
 				}
 			}
 		}
-		arg2 = line.substring(1, count);
+		arg2 = line.substring(0, count);
 	}
 }

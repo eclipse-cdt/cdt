@@ -8,7 +8,7 @@ package org.eclipse.cdt.core.model;
 /**
  * Represents a field(variable) declared in an IStructure(struct, class, union).
  */
-public interface IField extends IMember, IVariable {
+public interface IField extends IMember, IVariableDeclaration {
 
 	/**
 	 * Returns whether this storage specifier is mutable for the member.

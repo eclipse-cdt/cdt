@@ -31,38 +31,44 @@ public class NewModelBuilder extends NullParserCallback {
 		currentElement = tu;
 	}
 	
+	private Token classKey;
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#beginClass(String, String)
 	 */
-	public void classBegin(String classKey, Token className) {
+	public void classSpecifierBegin(Token classKey) {
+		this.classKey = classKey;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classSpecifierName()
+	 */
+	public void classSpecifierName() {
 		int kind;
-		if (classKey.equals("class"))
-			kind = ICElement.C_CLASS;
-		else if (classKey.equals("struct"))
-			kind = ICElement.C_STRUCT;
-		else
-			kind = ICElement.C_UNION;
-		
-		String name = "";
-		if (className != null) {
-			try {
-				name = Parser.generateName(className);
-			} catch (Exception e) {
-			}
+		switch (classKey.getType()) {
+			case Token.t_class:
+				kind = ICElement.C_CLASS;
+				break;
+			case Token.t_struct:
+				kind = ICElement.C_STRUCT;
+				break;
+			default:
+				kind = ICElement.C_UNION;
 		}
+
+		String name = nameEndToken.getImage();
 		
 		Structure elem = new Structure(translationUnit, kind, name);
 		
 		currentElement.addChild(elem);
-		elem.setIdPos(className.getOffset() - 2, className.getImage().length());
-		elem.setPos(className.getOffset(), className.getImage().length());
+		elem.setIdPos(nameEndToken.getOffset() - 2, nameEndToken.getImage().length());
+		elem.setPos(nameEndToken.getOffset(), nameEndToken.getImage().length());
 		currentElement = elem;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.newparser.IParserCallback#endClass()
 	 */
-	public void classEnd() {
+	public void classSpecifierEnd() {
 		currentElement = (CElement)currentElement.getParent();
 	}
 
@@ -191,6 +197,23 @@ org.eclipse.cdt.internal.core.newparser.IParserCallback#beginSimpleDeclaration(T
 	 */
 	public void inclusionEnd() {
 		--inclusionDepth;
+	}
+
+	private Token nameBeginToken;
+	private Token nameEndToken;
+	
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void nameBegin(Token firstToken) {
+		nameBeginToken = firstToken;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void nameEnd(Token lastToken) {
+		nameEndToken = lastToken;
 	}
 
 }

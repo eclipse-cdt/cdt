@@ -3,21 +3,23 @@ package org.eclipse.cdt.internal.core.dom;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ClassSpecifier extends Object {
+public class ClassSpecifier extends TypeSpecifier {
 
 	public static final int t_class = 0;
 	public static final int t_struct = 1;
 	public static final int t_union = 2;
 
-	public ClassSpecifier(int classKey) {
-		this.classKey = classKey;
-	}
 	private final int classKey;
 	public int getClassKey() { return classKey; }
+
+	public ClassSpecifier(int classKey, SimpleDeclaration declaration) {
+		super(declaration);
+		this.classKey = classKey;
+	}
 	
-	private String name;
-	public void setName(String n) { name = n; }
-	public String getName() { return name; }
+	private Name name;
+	public void setName(Name n) { name = n; }
+	public Name getName() { return name; }
 	
 	private List baseSpecifiers = new LinkedList();
 	public void addBaseSpecifier(BaseSpecifier baseSpecifier) {

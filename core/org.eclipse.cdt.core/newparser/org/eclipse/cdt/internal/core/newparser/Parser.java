@@ -197,6 +197,8 @@ c, quick);
 			default:
 				throw backtrack;
 		}
+		
+		callback.simpleDeclarationEnd();
 	}
 	
 	/**
@@ -446,32 +448,28 @@ c, quick);
 	 * : classKey name (baseClause)? "{" (memberSpecification)* "}"
 	 */
 	public void classSpecifier() throws Exception {
-		String classKey = null;
+		Token classKey = null;
 		
 		// class key
 		switch (LT(1)) {
 			case Token.t_class:
-				classKey = consume().getImage();
-				break;
 			case Token.t_struct:
-				classKey = consume().getImage();
-				break;
 			case Token.t_union:
-				classKey = consume().getImage();
+				classKey = consume();
 				break;
 			default:
 				throw backtrack;
 		}
 
-		Token name = null;
+		callback.classSpecifierBegin(classKey);
 		
 		// class name
 		if (LT(1) == Token.tIDENTIFIER) {
-			name = consume();
+			name();
+			callback.classSpecifierName();			
 		}
 
-		callback.classBegin(classKey, name);
-		currRegion.put(name.getImage(), classKey);
+		//currRegion.put(name.getImage(), classKey);
 		
 		// base clause
 		if (LT(1) == Token.tCOLON) {
@@ -535,7 +533,7 @@ c, quick);
 			consume();
 		}
 		
-		callback.classEnd();
+		callback.classSpecifierEnd();
 	}
 	
 	public void functionBody() throws Exception {

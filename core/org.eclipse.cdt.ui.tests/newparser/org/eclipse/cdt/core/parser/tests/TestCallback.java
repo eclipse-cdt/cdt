@@ -102,7 +102,7 @@ public class TestCallback extends Assert implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationEnd(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void simpleDeclarationEnd(Token lastToken) {
+	public void simpleDeclarationEnd() {
 		fail();
 	}
 
@@ -174,7 +174,7 @@ public class TestCallback extends Assert implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classBegin(java.lang.String, org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void classBegin(String classKey, Token name) {
+	public void classSpecifierBegin(Token classKey) {
 		fail();
 	}
 
@@ -182,7 +182,7 @@ public class TestCallback extends Assert implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classEnd()
 	 */
-	public void classEnd() {
+	public void classSpecifierEnd() {
 		fail();
 	}
 
@@ -212,6 +212,12 @@ public class TestCallback extends Assert implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
 	public void nameEnd(Token lastToken) {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classSpecifierName()
+	 */
+	public void classSpecifierName() {
 	}
 
 }

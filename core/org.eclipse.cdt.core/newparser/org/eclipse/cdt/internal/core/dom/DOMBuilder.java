@@ -17,7 +17,7 @@ public class DOMBuilder implements IParserCallback {
 	}
 
 	private Stack stack = new Stack();
-		
+
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#argumentsBegin()
 	 */
@@ -33,13 +33,40 @@ public class DOMBuilder implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classBegin(java.lang.String, org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void classBegin(String classKey, Token name) {
+	public void classSpecifierBegin(Token classKey) {
+		SimpleDeclaration decl = (SimpleDeclaration)stack.peek();
+		
+		int kind = ClassSpecifier.t_struct;
+		
+		switch (classKey.getType()) {
+			case Token.t_class:
+				kind = ClassSpecifier.t_class;
+				break;
+			case Token.t_struct:
+				kind = ClassSpecifier.t_struct;
+				break;
+			case Token.t_union:
+				kind = ClassSpecifier.t_union;
+				break;			
+		}
+		
+		ClassSpecifier classSpecifier = new ClassSpecifier(kind, decl);
+		decl.setTypeSpecifier(classSpecifier);
+		stack.push(classSpecifier);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classSpecifierName()
+	 */
+	public void classSpecifierName() {
+		((ClassSpecifier)stack.peek()).setName(currName);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#classEnd()
 	 */
-	public void classEnd() {
+	public void classSpecifierEnd() {
+		stack.pop();
 	}
 
 	/**
@@ -199,7 +226,7 @@ public class DOMBuilder implements IParserCallback {
 	/**
 	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#simpleDeclarationEnd(org.eclipse.cdt.internal.core.newparser.Token)
 	 */
-	public void simpleDeclarationEnd(Token lastToken) {
+	public void simpleDeclarationEnd() {
 		stack.pop();
 	}
 

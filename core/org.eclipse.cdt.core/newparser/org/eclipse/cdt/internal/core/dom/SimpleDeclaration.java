@@ -85,7 +85,7 @@ public class SimpleDeclaration extends Declaration {
 	public boolean isLong() {	return checkBit(isLong); }
 
 	// Simple Types
-	public static final int t_type = 0; // Complex type
+	public static final int t_type = 0; // Type Specifier
 	public static final int t_char = 1;
 	public static final int t_wchar_t = 2;
 	public static final int t_bool = 3;
@@ -102,6 +102,29 @@ public class SimpleDeclaration extends Declaration {
 		return declSpecifierSeq & typeMask;
 	}
 	
+	/**
+	 * This is valid when the type is t_type.  It points to a
+	 * classSpecifier, etc.
+	 */
+	private TypeSpecifier typeSpecifier;
+	
+	/**
+	 * Returns the typeSpecifier.
+	 * @return TypeSpecifier
+	 */
+	public TypeSpecifier getTypeSpecifier() {
+		return typeSpecifier;
+	}
+
+	/**
+	 * Sets the typeSpecifier.
+	 * @param typeSpecifier The typeSpecifier to set
+	 */
+	public void setTypeSpecifier(TypeSpecifier typeSpecifier) {
+		setType(t_type);
+		this.typeSpecifier = typeSpecifier;
+	}
+
 	private List declarators = new LinkedList();
 	
 	public void addDeclarator(Declarator declarator) {

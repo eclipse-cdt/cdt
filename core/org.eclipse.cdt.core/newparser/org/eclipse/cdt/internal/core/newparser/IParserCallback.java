@@ -21,7 +21,7 @@ public interface IParserCallback {
 	public void macro(String macroName);
 	
 	public void simpleDeclarationBegin(Token firstToken);
-	public void simpleDeclarationEnd(Token lastToken);
+	public void simpleDeclarationEnd();
 	
 	public void simpleDeclSpecifier(Token specifier);
 	
@@ -37,8 +37,9 @@ public interface IParserCallback {
 	public void functionBodyBegin();
 	public void functionBodyEnd();
 	
-	public void classBegin(String classKey, Token name);
-	public void classEnd();
+	public void classSpecifierBegin(Token classKey);
+	public void classSpecifierName();
+	public void classSpecifierEnd();
 	
 	public void expressionOperator(Token operator) throws Exception;
 	public void expressionTerminal(Token terminal) throws Exception;

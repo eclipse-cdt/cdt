@@ -27,7 +27,9 @@ public interface IScope {
 
 	/**
 	 * This is the general lookup entry point. It returns the list of
-	 * valid bindings for a given name.
+	 * valid bindings for a given name.  The lookup proceeds as an unqualified
+	 * lookup.  Constructors are not considered during this lookup and won't be returned.
+	 * No attempt is made to resolve potential ambiguities or perform access checking.
 	 * 
 	 * @param searchString
 	 * @return List of IBinding

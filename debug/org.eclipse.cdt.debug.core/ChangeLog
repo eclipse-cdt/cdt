@@ -1,3 +1,7 @@
+2005-02-18 Mikhail Khodjaiants
+	Remove.
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDIManager.java
+
 2005-02-17 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
 	Removed the core support of the Shared Libraries view.

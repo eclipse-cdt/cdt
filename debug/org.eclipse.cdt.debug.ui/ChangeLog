@@ -1,3 +1,7 @@
+2003-06-09 Mikhail Khodjaiants
+	Renamed the 'refresh' method of ICVariable to 'reset'.
+	* VariableFormatActionDelegate.java
+
 2003-06-05 Mikhail Khodjaiants
 	Changed the presentation of arrays and array types.
 	* CDTDebugModelPresentation.java

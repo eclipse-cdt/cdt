@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTSimpleDeclSpecifier {
+public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 
 	/**
 	 * This returns the built-in type for the declaration. The type is

@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.parser;
  * All Rights Reserved.
  */
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.List;
 public class LinePositionInputStream extends InputStream {
 	
 	private List fLinePositions;
-	private InputStream fInputStream;
+	private BufferedInputStream buffered;
 	
 	private boolean fRRead;
 	private boolean fAddLine;
@@ -26,7 +27,7 @@ public class LinePositionInputStream extends InputStream {
 	private int fCurrPosition;
 	
 	public LinePositionInputStream(InputStream inputStream) throws IOException {
-		fInputStream= inputStream;
+		buffered = new BufferedInputStream(inputStream);
 		fLinePositions= new ArrayList(30);
 		fAddLine= true;
 		fRRead= false;
@@ -34,7 +35,8 @@ public class LinePositionInputStream extends InputStream {
 	}
 	
 	public int read() throws IOException {
-		int ch= fInputStream.read();
+	
+		int ch = buffered.read();	
 		if (fRRead && ch == '\n') {
 			fRRead= false;
 		} else {

@@ -19,6 +19,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
@@ -110,16 +111,11 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		super.doRun(new SubProgressMonitor(monitor, 5));
 
 		// Add the managed build nature and builder
-		ICDescriptor desc = null;
 		try {
 			monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_NATURE));
 			ManagedCProjectNature.addManagedNature(newProject, new SubProgressMonitor(monitor, 1));
 			monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_ADD_BUILDER));
 			ManagedCProjectNature.addManagedBuilder(newProject, new SubProgressMonitor(monitor, 1));
-			desc = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
-			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
-			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
-			desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 		} catch (CoreException e) {
 			ManagedBuilderUIPlugin.log(e);
 		}
@@ -131,8 +127,10 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			ITarget parent = targetConfigurationPage.getSelectedTarget();
 			newTarget = ManagedBuildManager.createTarget(newProject, parent);
 			if (newTarget != null) {
+				ICDescriptor desc = null;
 				try {
-					// org.eclipse.cdt.core.ELF or org.eclipse.cdt.core.PE
+					desc = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
+					desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
 					desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, newTarget.getBinaryParserId());
 				} catch (CoreException e) {
 					ManagedBuilderUIPlugin.log(e);
@@ -209,8 +207,8 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 	 * @see org.eclipse.cdt.ui.wizards.NewCProjectWizard#getProjectID()
 	 */
 	public String getProjectID() {
-		return "org.eclipse.cdt.make.core.make"; //$NON-NLS-1$
-//		return ManagedBuilderCorePlugin.getUniqueIdentifier() + ".make"; //$NON-NLS-1$
+//		return "org.eclipse.cdt.make.core.make"; //$NON-NLS-1$
+		return ManagedBuilderCorePlugin.MANAGED_MAKE_PROJECT_ID;
 	}
 	
 	public ITarget getSelectedTarget() {

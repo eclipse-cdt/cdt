@@ -1,3 +1,12 @@
+2004-06-22 Alain Magloire
+
+	Fix the exclusion scheme in IPathEntry.
+
+	* model/org/eclipse/cdt/core/mode/CoreModelUtil.java
+	* model/org/eclipse/cdt/internal/core/model/CContainer.java
+	* model/org/eclipse/cdt/internal/core/model/Openable.java
+	* model/org/eclipse/cdt/internal/core/model/SourceRoot.java
+
 2004-06-21 Alain Magloire
 
 	Big Patch from Vladimir Hirsl

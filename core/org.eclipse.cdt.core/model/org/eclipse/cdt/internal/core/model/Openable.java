@@ -109,9 +109,8 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 				buffer = openBuffer(null);
 			}
 			return buffer;
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -308,5 +307,17 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 			this.makeConsistent(pm); // update the element info of this element
 		}
 	}
-		
+
+	/**
+	 * Find enclosing package fragment root if any
+	 */
+	public SourceRoot getSourceRoot() {
+		ICElement current = this;
+		do {
+			if (current instanceof SourceRoot) return (SourceRoot)current;
+			current = current.getParent();
+		} while(current != null);
+		return null;
+	}
+
 }

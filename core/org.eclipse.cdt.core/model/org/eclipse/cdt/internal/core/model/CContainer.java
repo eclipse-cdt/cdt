@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -199,11 +200,14 @@ public class CContainer extends Openable implements ICContainer {
 			}
 			if (resources != null) {
 				ICProject cproject = getCProject();
+				ISourceRoot sroot = getSourceRoot();
 				for (int i = 0; i < resources.length; i++) {
-					// Check for Valid C Element only.
-					ICElement celement = computeChild(resources[i], cproject);
-					if (celement != null) {
-						vChildren.add(celement);
+					if (sroot.isOnSourceEntry(resources[i])) {
+						// Check for Valid C Element only.
+						ICElement celement = computeChild(resources[i], cproject);
+						if (celement != null) {
+							vChildren.add(celement);
+						}
 					}
 				}
 			}
@@ -220,12 +224,12 @@ public class CContainer extends Openable implements ICContainer {
 		return true;
 	}
 
-	protected ICElement computeChild(IResource resource, ICProject cproject) throws CModelException {
+	protected ICElement computeChild(IResource res, ICProject cproject) throws CModelException {
 		ICElement celement = null;
-		switch (resource.getType()) {
+		switch (res.getType()) {
 			case IResource.FILE :
 				{
-					IFile file = (IFile) resource;
+					IFile file = (IFile) res;
 					if (CoreModel.isTranslationUnit(file)) {
 						celement = new TranslationUnit(this, file);
 					} else if (cproject.isOnOutputEntry(file)) {
@@ -247,7 +251,7 @@ public class CContainer extends Openable implements ICContainer {
 					break;
 				}
 			case IResource.FOLDER :
-				celement = new CContainer(this, resource);
+				celement = new CContainer(this, res);
 				break;
 		}
 		return celement;

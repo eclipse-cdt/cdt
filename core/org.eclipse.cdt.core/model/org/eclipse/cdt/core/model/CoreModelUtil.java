@@ -5,30 +5,19 @@ import org.eclipse.core.runtime.IPath;
 
 public class CoreModelUtil {
 
-	public static boolean isExcludedPath(IPath resourcePath, IPath[] exclusionPatterns) {
-		char[] path = resourcePath.toString().toCharArray();
-		for (int i = 0, length = exclusionPatterns.length; i < length; i++) {
-			char[] pattern = exclusionPatterns[i].toString().toCharArray();
-			if (pathMatch(pattern, path, true, '/')) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	/*
-	 * Returns whether the given resource path matches one of the exclusion patterns.
-	 * 
-	 * @see IClasspathEntry#getExclusionPatterns
+	 *  Returns whether the given path matches one of the exclusion patterns.
+	 * @param resourcePath
+	 * @param exclusionPatterns
+	 * @return
 	 */
-	public final static boolean isExcluded(IPath resourcePath, char[][] exclusionPatterns) {
-		if (exclusionPatterns == null)
-			return false;
-		char[] path = resourcePath.toString().toCharArray();
-		for (int i = 0, length = exclusionPatterns.length; i < length; i++)
-			if (pathMatch(exclusionPatterns[i], path, true, '/'))
-				return true;
-		return false;
+	public static boolean isExcludedPath(IPath resourcePath, IPath[] exclusionPatterns) {
+		int length = exclusionPatterns.length;
+		char[][] fullCharExclusionPatterns = new char[length][];
+		for (int i = 0; i < length; i++) {
+			fullCharExclusionPatterns[i] = exclusionPatterns[i].toString().toCharArray();
+		}
+		return isExcluded(resourcePath, fullCharExclusionPatterns);
 	}
 
 	/*
@@ -43,6 +32,49 @@ public class CoreModelUtil {
 		if (resource.getType() == IResource.FOLDER)
 			path = path.append("*"); //$NON-NLS-1$
 		return isExcluded(path, exclusionPatterns);
+	}
+
+	/*
+	 * Returns whether the given resource path matches one of the exclusion patterns.
+	 * 
+	 * @see IClasspathEntry#getExclusionPatterns
+	 */
+	public final static boolean isExcluded(IPath resourcePath, char[][] exclusionPatterns) {
+		if (exclusionPatterns == null)
+			return false;
+		char[] path = resourcePath.toString().toCharArray();
+		for (int i = 0, length = exclusionPatterns.length; i < length; i++) {
+			if (prefixOfCharArray(exclusionPatterns[i], path)) {
+				return true;
+			}
+			if (pathMatch(exclusionPatterns[i], path, true, '/')) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/*
+	 * if b is a prefix of a return true.
+	 */
+	static boolean prefixOfCharArray (char[] a, char[] b) {
+		if (a == b)
+			return true;
+		if (a == null || b == null)
+			return false;
+		int len = a.length;
+		if (len > b.length)
+			return false;
+		int i =0;
+		for (; i < len; ++i) {
+			if (a[i] != b[i])
+				return false;
+		}
+		if (i < b.length && b[i] != '/') {
+			return false;
+		}
+		return true;
+
 	}
 
 	/**

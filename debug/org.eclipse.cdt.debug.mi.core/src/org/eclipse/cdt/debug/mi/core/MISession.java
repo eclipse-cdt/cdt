@@ -4,8 +4,10 @@
  */
 package org.eclipse.cdt.debug.mi.core;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -106,6 +108,27 @@ public class MISession extends Observable {
 		txQueue = new CommandQueue();
 		rxQueue = new CommandQueue();
 		eventQueue = new Queue();
+
+		// The Process may have terminated earlier because
+		// of bad arguments etc .. check this here and bail out.
+		try {
+			process.exitValue();
+			InputStream err = process.getErrorStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(err));
+			String line = null;
+			try {
+				line = reader.readLine();
+				reader.close();
+			} catch (Exception e) {
+				// the reader may throw a NPE.
+			}
+			if (line == null) {
+				line = "Process Terminated";
+			}
+			throw new MIException(line);
+		} catch (IllegalThreadStateException e) {
+			// Ok, it means the process is alive.
+		}
 
 		txThread = new TxThread(this);
 		rxThread = new RxThread(this);

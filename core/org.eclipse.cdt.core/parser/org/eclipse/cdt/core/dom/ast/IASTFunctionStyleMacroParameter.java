@@ -13,6 +13,9 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * @author jcamelon
  */
-public interface IASTObjectStyleMacroDefinition extends IASTMacroDefinition {
+public interface IASTFunctionStyleMacroParameter extends IASTNode {
 
+   public String getParameter();
+   public void   setParameter( String value );
+   
 }

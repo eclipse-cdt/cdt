@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -145,6 +146,10 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
 
          assertSoleFileLocation(FOO,
                "foo.h", foo.indexOf("int"), foo.indexOf(";") + 1); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+         IASTPreprocessorIncludeStatement [] incs = tu.getIncludeDirectives();
+         assertNotNull( incs );
+         assertEquals( incs.length, 1 );
+         assertSoleFileLocation( incs[0], "code.cpp", code.indexOf( "#inc"), code.indexOf( ".h\"\n") + ".h\"".length() - code.indexOf( "#inc") ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
       }
    }
    
@@ -168,6 +173,10 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
          assertSoleFileLocation(FOO,
                "foo.h", foo.indexOf("int"), foo.indexOf(";") + 1 - foo.indexOf( "int")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
          assertSoleFileLocation( byob, "code.cpp", code.indexOf( "float"), code.indexOf( "b;") + 2 - code.indexOf( "float") ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+         IASTPreprocessorIncludeStatement [] incs = tu.getIncludeDirectives();
+         assertNotNull( incs );
+         assertEquals( incs.length, 1 );
+         assertSoleFileLocation( incs[0], "code.cpp", code.indexOf( "#inc"), code.indexOf( ".h\"\n") + ".h\"".length() - code.indexOf( "#inc") ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
       }
    }
    

@@ -114,10 +114,10 @@ public class DOMScanner extends BaseScanner {
          int textEnd, int endingLine, IMacro macro) {
       if (macro instanceof ObjectStyleMacro)
          locationMap.defineObjectStyleMacro((ObjectStyleMacro) macro,
-               startingLineNumber, idstart, idend, textEnd);
+               startingOffset, idstart, idend, textEnd);
       else if (macro instanceof FunctionStyleMacro)
          locationMap.defineFunctionStyleMacro((FunctionStyleMacro) macro,
-               startingLineNumber, idstart, idend, textEnd);
+               startingOffset, idstart, idend, textEnd);
 
    }
 
@@ -146,7 +146,7 @@ public class DOMScanner extends BaseScanner {
          }
          DOMInclusion inc = ((DOMInclusion) ((InclusionData) data).inclusion);
          globalCounter += getCurrentOffset();
-         locationMap.startInclusion(inc.pt, inc.o, globalCounter);
+         locationMap.startInclusion(((InclusionData)data).reader, inc.o, globalCounter);
          contextDelta = 0;
       }
       super.pushContext(buffer, data);
@@ -263,7 +263,7 @@ public class DOMScanner extends BaseScanner {
     */
    protected void postConstructorSetup(CodeReader reader, IScannerInfo info) {
       super.postConstructorSetup(reader, info);
-      locationMap.startTranslationUnit(getMainFilename());
+      locationMap.startTranslationUnit(getMainReader());
    }
 
    /*

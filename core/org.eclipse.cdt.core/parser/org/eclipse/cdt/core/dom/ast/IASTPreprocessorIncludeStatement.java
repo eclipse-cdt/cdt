@@ -15,5 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTPreprocessorIncludeStatement extends
         IASTPreprocessorStatement {
+   
+   public String getPath();
 
 }

@@ -11,23 +11,8 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * @author Doug Schaefer
+ * @author jcamelon
  */
-public interface IASTMacroExpansion extends IASTNodeLocation {
+public interface IASTPreprocessorObjectStyleMacroDefinition extends IASTPreprocessorMacroDefinition {
 
-	/**
-	 * The macro definition used for the expansion
-	 * 
-	 * @return
-	 */
-	public IASTPreprocessorMacroDefinition getMacroDefinition();
-
-	/**
-	 * The source locations for for the macro expansion. These are the locations
-	 * where the expansion in question occured and was replaced.
-	 * 
-	 * @return
-	 */
-	public IASTNodeLocation[] getExpansionLocations();
-	
 }

@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTMacroDefinition extends IASTPreprocessorStatement {
+public interface IASTPreprocessorMacroDefinition extends IASTPreprocessorStatement {
 
     public static final ASTNodeProperty MACRO_NAME = new ASTNodeProperty( "Macro Name"); //$NON-NLS-1$
     public IASTName getName();

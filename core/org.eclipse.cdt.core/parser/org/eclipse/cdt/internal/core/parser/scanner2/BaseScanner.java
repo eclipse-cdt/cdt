@@ -4301,6 +4301,14 @@ abstract class BaseScanner implements IScanner {
    protected ParserLanguage getLanguage() {
       return language;
    }
+   
+   protected CodeReader getMainReader()
+   {
+      if (bufferData != null && bufferData[0] != null
+            && bufferData[0] instanceof CodeReader)
+         return ((CodeReader) bufferData[0]);
+      return null;
+   }
 
    public char[] getMainFilename() {
       if (bufferData != null && bufferData[0] != null

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -88,6 +89,21 @@ public class DOMLocationTests extends AST2BaseTest {
       }
    }
 
+   
+   public void testSimpleMacroDefinition() throws Exception {
+      String code ="/* hi */\n#define FOOT 0x01\n\n"; //$NON-NLS-1$
+      for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+            : null) {
+         IASTTranslationUnit tu = parse(code, p); 
+         IASTDeclaration[] declarations = tu.getDeclarations();
+         assertEquals(declarations.length, 0);
+         IASTPreprocessorMacroDefinition [] macros = tu.getMacroDefinitions();
+         assertNotNull( macros );
+         assertEquals( macros.length, 1 );
+         assertSoleLocation( macros[0], code.indexOf( "#"), code.indexOf( "0x01") + 4 - code.indexOf( "#")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      }
+      
+   }
    /**
     * @param declarator
     * @param offset

@@ -11,16 +11,17 @@
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.parser.CodeReader;
 
 /**
  * @author jcamelon
  */
 public interface IScannerPreprocessorLog {
 
-    public void startTranslationUnit( char [] filename );
+    public void startTranslationUnit( CodeReader tu_reader );
     public void endTranslationUnit(int offset);
 
-    public void startInclusion(char[] includePath, int offset, int endOffset);
+    public void startInclusion(CodeReader reader, int offset, int endOffset);
     public void endInclusion(int offset);
 
     public void enterObjectStyleMacroExpansion(char[] name, char[] expansion,
@@ -36,13 +37,13 @@ public interface IScannerPreprocessorLog {
     public void defineFunctionStyleMacro(FunctionStyleMacro m, int startOffset,
             int nameOffset, int nameEndOffset, int endOffset);
 
-    public void encounterPoundIf(int startOffset, int endOffset);
+    public void encounterPoundIf(int startOffset, int endOffset, boolean taken);
     public void encounterPoundPragma(int startOffset, int endOffset);
     public void encounterPoundError(int startOffset, int endOffset);
-    public void encounterPoundIfdef(int startOffset, int endOffset);
+    public void encounterPoundIfdef(int startOffset, int endOffset, boolean taken);
     public void encounterPoundUndef(int startOffset, int endOffset);
     public void encounterPoundElse(int startOffset, int endOffset);
-    public void encounterPoundElif(int startOffset, int endOffset);
+    public void encounterPoundElif(int startOffset, int endOffset, boolean taken);
     public void encounterPoundEndIf(int startOffset, int endOffset);
     
     public void encounterProblem( IASTProblem problem );

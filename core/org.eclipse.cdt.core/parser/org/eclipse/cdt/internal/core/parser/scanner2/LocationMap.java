@@ -14,19 +14,218 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
  * @author jcamelon
  */
 public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
+   /**
+    * @author jcamelon
+    */
+   protected static class _InclusionStatement extends ScannerASTNode implements
+         IASTPreprocessorIncludeStatement {
+
+      private final char[] path;
+
+      /**
+       * @param cs
+       */
+      public _InclusionStatement(char[] cs) {
+         this.path = cs;
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement#getPath()
+       */
+      public String getPath() {
+         return new String( path );
+      }
+
+   }
+   /**
+    * @author jcamelon
+    */
+   public static class ASTFunctionMacro extends ScannerASTNode implements
+         IASTPreprocessorFunctionStyleMacroDefinition {
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroDefinition#getParameters()
+       */
+      public IASTFunctionStyleMacroParameter[] getParameters() {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroDefinition#addParameter(org.eclipse.cdt.core.dom.ast.IASTFunctionStyleMacroParameter)
+       */
+      public void addParameter(IASTFunctionStyleMacroParameter parm) {
+         // TODO Auto-generated method stub
+         
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#getName()
+       */
+      public IASTName getName() {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#setName(org.eclipse.cdt.core.dom.ast.IASTName)
+       */
+      public void setName(IASTName name) {
+         // TODO Auto-generated method stub
+         
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#getExpansion()
+       */
+      public String getExpansion() {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#setExpansion(java.lang.String)
+       */
+      public void setExpansion(String exp) {
+         // TODO Auto-generated method stub
+         
+      }
+
+   }
+   public static class ScannerASTNode extends ASTNode
+   {
+      private IASTNode parent;
+      private ASTNodeProperty property;
+
+      public IASTNode getParent() {
+          return parent;
+      }
+
+      
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTNode#getPropertyInParent()
+       */
+      public ASTNodeProperty getPropertyInParent() {
+          return property;
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTNode#setParent(org.eclipse.cdt.core.dom.ast.IASTNode)
+       */
+      public void setParent(IASTNode parent) {
+          this.parent = parent;
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTNode#setPropertyInParent(org.eclipse.cdt.core.dom.ast.IASTNodeProperty)
+       */
+      public void setPropertyInParent(ASTNodeProperty property) {
+          this.property = property;
+      }
+
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTNode#getTranslationUnit()
+       */
+      public IASTTranslationUnit getTranslationUnit() {
+          if( this instanceof IASTTranslationUnit ) return (IASTTranslationUnit) this;
+          IASTNode node = getParent();
+          while( ! (node instanceof IASTTranslationUnit ) && node != null )
+          {
+              node = node.getParent();
+          }
+          return (IASTTranslationUnit) node;
+      }
+
+   
+   }
+   /**
+    * @author jcamelon
+    */
+   public static class ScannerASTName extends ScannerASTNode implements IASTName {
+      private final char[] name;
+
+      public ScannerASTName( char [] n )
+      {
+         this.name = n;
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
+       */
+      public IBinding resolveBinding() {
+         // TODO Auto-generated method stub
+         return null;
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
+       */
+      public char[] toCharArray() {
+         return name;
+      }
+   }
+   /**
+    * @author jcamelon
+    */
+   public static class ASTObjectMacro extends ScannerASTNode implements
+         IASTPreprocessorObjectStyleMacroDefinition {
+
+      private IASTName name;
+      private String expansion;
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#getName()
+       */
+      public IASTName getName() {
+         return name;
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#setName(org.eclipse.cdt.core.dom.ast.IASTName)
+       */
+      public void setName(IASTName name) {
+         this.name = name;
+         
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#getExpansion()
+       */
+      public String getExpansion() {
+         return expansion;
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTMacroDefinition#setExpansion(java.lang.String)
+       */
+      public void setExpansion(String exp) {
+         this.expansion = exp;
+      }
+
+   }
    public static class Location implements IASTNodeLocation {
       private final int nodeOffset;
       private final int nodeLength;
@@ -60,9 +259,6 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
    }
 
-   /**
-    * @author jcamelon
-    */
    public static class FileLocation extends Location implements
          IASTFileLocation {
 
@@ -89,34 +285,32 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       }
 
    }
-
-   private static final IASTProblem[]      EMPTY_PROBLEMS_ARRAY = new IASTProblem[0];
-   private static final IASTNodeLocation[] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
-
-   public static class Context {
+   
+   protected static class _Context {
       /**
        * @param startOffset
        * @param endOffset
        */
-      public Context(CompositeContext parent, int startOffset, int endOffset) {
+      public _Context(_CompositeContext parent, int startOffset, int endOffset) {
          this.context_directive_start = startOffset;
          this.context_directive_end = endOffset;
+         this.context_ends = endOffset;
          this.parent = parent;
       }
 
       public final int               context_directive_start;
       public final int               context_directive_end;
-      public int                     context_ends = -1;
-      private final CompositeContext parent;
+      public int                     context_ends;
+      private final _CompositeContext parent;
 
-      public CompositeContext getParent() {
+      public _CompositeContext getParent() {
          return parent;
       }
    }
 
-   public static class CompositeContext extends Context {
+   protected static class _CompositeContext extends _Context {
 
-      public CompositeContext(CompositeContext parent, int startOffset,
+      public _CompositeContext(_CompositeContext parent, int startOffset,
             int endOffset) {
          super(parent, startOffset, endOffset);
       }
@@ -129,7 +323,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          return subContexts;
       }
 
-      public void addSubContext(Context c) {
+      public void addSubContext(_Context c) {
          if (subContexts == Collections.EMPTY_LIST)
             subContexts = new ArrayList(DEFAULT_SUBCONTEXT_ARRAY_SIZE);
          subContexts.add(c);
@@ -144,30 +338,83 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
    }
 
-   public static class Inclusion extends CompositeContext {
-      public final char[] path;
+   protected static class _Inclusion extends _CompositeContext {
+      public final CodeReader reader;
 
-      public Inclusion(CompositeContext parent, char[] path, int startOffset,
+      public _Inclusion(_CompositeContext parent, CodeReader reader, int startOffset,
             int endOffset) {
          super(parent, startOffset, endOffset);
-         this.path = path;
+         this.reader = reader;
       }
    }
 
-   public static class TranslationUnit extends CompositeContext {
-      public final char[] path;
+   protected static class _TranslationUnit extends _CompositeContext {
+      public final CodeReader reader;
 
       /**
        * @param startOffset
        * @param endOffset
        */
-      public TranslationUnit(char[] path) {
+      public _TranslationUnit(CodeReader reader) {
          super(null, 0, 0);
-         this.path = path;
+         this.reader = reader;
       }
    }
+   
+   protected static class _MacroDefinition extends _Context 
+   {
 
-   public static class Problem extends Context {
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       * @param nameOffset TODO
+       */
+      public _MacroDefinition(_CompositeContext parent, int startOffset, int endOffset, char[] name, int nameOffset, char[] expansion) {
+         super(parent, startOffset, endOffset);
+         this.name = name;
+         this.expansion = expansion;
+         this.nameOffset = nameOffset;
+      }
+
+      public final char [] name;
+      public final char [] expansion;
+      public final int nameOffset;
+   }
+   
+   protected static class _ObjectMacroDefinition extends _MacroDefinition
+   {
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       * @param name TODO
+       * @param expansion TODO
+       */
+      public _ObjectMacroDefinition(_CompositeContext parent, int startOffset, int endOffset, char[] name, int nameOffset, char[] expansion) {
+         super(parent, startOffset, endOffset, name, nameOffset, expansion);
+      }
+      
+   }
+   
+   protected static class _FunctionMacroDefinition extends _MacroDefinition
+   {
+
+      public final char [] [] parms; 
+      /**
+       * @param parent
+       * @param startOffset
+       * @param endOffset
+       * @param parameters
+       */
+      public _FunctionMacroDefinition(_CompositeContext parent, int startOffset, int endOffset, char [] name, int nameOffset, char [] expansion, char[][] parameters ) {
+         super(parent, startOffset, endOffset, name, nameOffset, expansion);
+         this.parms = parameters;
+      }
+   }
+   
+
+   protected static class _Problem extends _Context {
       public final IASTProblem problem;
 
       /**
@@ -175,7 +422,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
        * @param startOffset
        * @param endOffset
        */
-      public Problem(CompositeContext parent, int startOffset, int endOffset,
+      public _Problem(_CompositeContext parent, int startOffset, int endOffset,
             IASTProblem problem) {
          super(parent, startOffset, endOffset);
          this.problem = problem;
@@ -183,8 +430,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
    }
 
-   protected TranslationUnit  tu;
-   protected CompositeContext currentContext;
+   protected _TranslationUnit  tu;
+   protected _CompositeContext currentContext;
+   
 
    /**
     *  
@@ -192,25 +440,63 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
    public LocationMap() {
    }
 
+   private static final IASTProblem[]      EMPTY_PROBLEMS_ARRAY = new IASTProblem[0];
+   private static final IASTNodeLocation[] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
+   private static final IASTPreprocessorMacroDefinition[] EMPTY_MACRO_DEFINITIONS_ARRAY = new IASTPreprocessorMacroDefinition[0];
+   private static final IASTPreprocessorIncludeStatement[] EMPTY_INCLUDES_ARRAY = new IASTPreprocessorIncludeStatement[0];
+
    /*
     * (non-Javadoc)
     * 
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getMacroDefinitions()
     */
-   public IASTMacroDefinition[] getMacroDefinitions(IASTNode parent) {
-      // TODO Auto-generated method stub
-      return null;
-   }
+   public IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
+      List contexts = new ArrayList(8);
+      LocationMap.collectContexts(V_MACRODEFS, tu, contexts);
+      if (contexts.isEmpty())
+         return EMPTY_MACRO_DEFINITIONS_ARRAY;
+      IASTPreprocessorMacroDefinition[] result = new IASTPreprocessorMacroDefinition[contexts.size()];
+      for (int i = 0; i < contexts.size(); ++i)
+      {
+         _MacroDefinition d = (_MacroDefinition) contexts.get(i);
+         IASTPreprocessorMacroDefinition r = null;
+         if( d instanceof _ObjectMacroDefinition )
+            r = new ASTObjectMacro();
+         else if ( d instanceof _FunctionMacroDefinition )
+         {
+            IASTPreprocessorFunctionStyleMacroDefinition f = new ASTFunctionMacro();
+            //TODO parms
+            r = f;
+         }
+
+         IASTName name = new ScannerASTName( d.name );
+         name.setPropertyInParent( IASTPreprocessorMacroDefinition.MACRO_NAME );
+         name.setParent( r );
+         r.setName( name );  
+         r.setExpansion( new String( ((_ObjectMacroDefinition)d).expansion ) );
+         ((ScannerASTNode)r).setOffsetAndLength( d.context_directive_start, d.context_directive_end - d.context_directive_start );
+         result[i] = r;
+      }
+
+      return result;   }
 
    /*
     * (non-Javadoc)
     * 
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getIncludeDirectives()
     */
-   public IASTPreprocessorIncludeStatement[] getIncludeDirectives(
-         IASTNode newParam) {
-      // TODO Auto-generated method stub
-      return null;
+   public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
+      List contexts = new ArrayList(8);
+      collectContexts( V_INCLUSIONS, tu, contexts );
+      if( contexts.isEmpty() ) return EMPTY_INCLUDES_ARRAY;
+      IASTPreprocessorIncludeStatement [] result = new IASTPreprocessorIncludeStatement[ contexts.size() ];
+      for( int i = 0; i < contexts.size(); ++i )
+      {
+         _Inclusion inc = ((_Inclusion)contexts.get(i));
+         result[i] = new _InclusionStatement( inc.reader.filename );
+         ((ScannerASTNode)result[i]).setOffsetAndLength( inc.context_directive_start, inc.context_directive_end - inc.context_directive_start );
+      }
+      return result;
    }
 
    /*
@@ -218,8 +504,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * 
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getAllPreprocessorStatements()
     */
-   public IASTPreprocessorStatement[] getAllPreprocessorStatements(
-         IASTNode newParam) {
+   public IASTPreprocessorStatement[] getAllPreprocessorStatements() {
       // TODO Auto-generated method stub
       return null;
    }
@@ -233,7 +518,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
    public IASTNodeLocation[] getLocations(int offset, int length) {
       if (tu == null)
          return EMPTY_LOCATION_ARRAY;
-      Context c = findContextForOffset(offset);
+      _Context c = findContextForOffset(offset);
       if (c.context_ends >= offset + length)
          return createSoleLocation(c, offset, length);
 
@@ -246,17 +531,17 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @param length
     * @return
     */
-   protected IASTNodeLocation[] createSoleLocation(Context c, int offset,
+   protected IASTNodeLocation[] createSoleLocation(_Context c, int offset,
          int length) {
       IASTNodeLocation[] result = new IASTNodeLocation[1];
-      if (c instanceof TranslationUnit) {
-         result[0] = new FileLocation(((TranslationUnit) c).path, reconcileOffset( c, offset ),
+      if (c instanceof _TranslationUnit) {
+         result[0] = new FileLocation(((_TranslationUnit) c).reader.filename, reconcileOffset( c, offset ),
                length);
          return result;
       }
-      if( c instanceof Inclusion )
+      if( c instanceof _Inclusion )
       {
-         result[0] = new FileLocation(((Inclusion) c).path, reconcileOffset( c, offset ),
+         result[0] = new FileLocation(((_Inclusion) c).reader.filename, reconcileOffset( c, offset ),
                length);
          return result;
       }
@@ -268,14 +553,14 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @param offset
     * @return
     */
-   protected static int reconcileOffset(Context c, int offset) {
+   protected static int reconcileOffset(_Context c, int offset) {
       int subtractOff = 0;
-      if( c instanceof CompositeContext )
+      if( c instanceof _CompositeContext )
       {
-         List subs = ((CompositeContext)c).getSubContexts();
+         List subs = ((_CompositeContext)c).getSubContexts();
          for( int i = 0; i < subs.size(); ++i )
          {
-            Context subC = (Context) subs.get(i);
+            _Context subC = (_Context) subs.get(i);
             if( subC.context_ends < offset )
                subtractOff += subC.context_ends - subC.context_directive_end;
             else
@@ -289,11 +574,11 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @param offset
     * @return
     */
-   protected Context findContextForOffset(int offset) {
+   protected _Context findContextForOffset(int offset) {
       return findContextForOffset(tu, offset);
    }
 
-   protected static Context findContextForOffset(CompositeContext context,
+   protected static _Context findContextForOffset(_CompositeContext context,
          int offset) {
       if (!context.hasSubContexts() )
       {
@@ -303,12 +588,12 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       }
       List subContexts = context.getSubContexts();
       //check first
-      Context bestContext = (Context) subContexts.get(0);
+      _Context bestContext = (_Context) subContexts.get(0);
       if (bestContext.context_directive_end > offset)
          return context;
       
       for (int i = 1; i < subContexts.size(); ++i) {
-         Context nextContext = (Context) subContexts.get(i);
+         _Context nextContext = (_Context) subContexts.get(i);
          if (nextContext.context_directive_end < offset)
             bestContext = nextContext;
          else
@@ -318,8 +603,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       if ( bestContext.context_ends < offset )
          return context;
       
-      if (bestContext instanceof CompositeContext)
-         return findContextForOffset((CompositeContext) bestContext, offset);
+      if (bestContext instanceof _CompositeContext)
+         return findContextForOffset((_CompositeContext) bestContext, offset);
       return bestContext;
    }
 
@@ -338,8 +623,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * 
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#startTranslationUnit()
     */
-   public void startTranslationUnit(char[] filename) {
-      tu = new TranslationUnit(filename);
+   public void startTranslationUnit(CodeReader tu_reader) {
+      tu = new _TranslationUnit(tu_reader);
       currentContext = tu;
    }
 
@@ -358,8 +643,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#startInclusion(char[],
     *      int)
     */
-   public void startInclusion(char[] includePath, int offset, int endOffset) {
-      Inclusion i = new Inclusion(currentContext, includePath, offset,
+   public void startInclusion(CodeReader reader, int offset, int endOffset) {
+      _Inclusion i = new _Inclusion(currentContext, reader, offset,
             endOffset);
       currentContext.addSubContext(i);
       currentContext = i;
@@ -372,7 +657,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public void endInclusion(int offset) {
-      ((Inclusion) currentContext).context_ends = offset;
+      ((_Inclusion) currentContext).context_ends = offset;
       currentContext = currentContext.getParent();
    }
 
@@ -430,8 +715,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     */
    public void defineObjectStyleMacro(ObjectStyleMacro m, int startOffset,
          int nameOffset, int nameEndOffset, int endOffset) {
-      // TODO Auto-generated method stub
-
+      currentContext.addSubContext(new _ObjectMacroDefinition( currentContext, startOffset, endOffset, m.name, nameOffset, m.expansion ));
    }
 
    /*
@@ -442,8 +726,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     */
    public void defineFunctionStyleMacro(FunctionStyleMacro m, int startOffset,
          int nameOffset, int nameEndOffset, int endOffset) {
-      // TODO Auto-generated method stub
-
+      currentContext.addSubContext(new _FunctionMacroDefinition( currentContext, startOffset, endOffset, m.name, nameOffset, m.expansion, m.arglist ));   
    }
 
    /*
@@ -452,7 +735,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundIf(int,
     *      int)
     */
-   public void encounterPoundIf(int startOffset, int endOffset) {
+   public void encounterPoundIf(int startOffset, int endOffset, boolean taken) {
       // TODO Auto-generated method stub
 
    }
@@ -485,7 +768,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundIfdef(int,
     *      int)
     */
-   public void encounterPoundIfdef(int startOffset, int endOffset) {
+   public void encounterPoundIfdef(int startOffset, int endOffset, boolean taken) {
       // TODO Auto-generated method stub
 
    }
@@ -518,7 +801,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#encounterPoundElif(int,
     *      int)
     */
-   public void encounterPoundElif(int startOffset, int endOffset) {
+   public void encounterPoundElif(int startOffset, int endOffset, boolean taken) {
       // TODO Auto-generated method stub
 
    }
@@ -540,7 +823,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getTranslationUnitPath()
     */
    public String getTranslationUnitPath() {
-      return new String(tu.path);
+      return new String(tu.reader.filename);
    }
 
    /*
@@ -564,7 +847,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          return EMPTY_PROBLEMS_ARRAY;
       IASTProblem[] result = new IASTProblem[contexts.size()];
       for (int i = 0; i < contexts.size(); ++i)
-         result[i] = ((Problem) contexts.get(i)).problem;
+         result[i] = ((_Problem) contexts.get(i)).problem;
 
       return result;
    }
@@ -576,7 +859,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     */
    public void encounterProblem(IASTProblem problem) {
       ScannerASTProblem p = (ScannerASTProblem) problem;
-      Problem pr = new Problem(currentContext, p.getOffset(), p.getOffset()
+      _Problem pr = new _Problem(currentContext, p.getOffset(), p.getOffset()
             + p.getLength(), problem);
       pr.context_ends = p.getOffset() + p.getLength();
    }
@@ -584,25 +867,30 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
    protected static final int V_ALL        = 1;
    protected static final int V_INCLUSIONS = 2;
    protected static final int V_PROBLEMS   = 3;
+   protected static final int V_MACRODEFS  = 4;
 
-   protected static void collectContexts(int key, Context source, List result) {
+   protected static void collectContexts(int key, _Context source, List result) {
       switch (key) {
          case V_ALL:
             result.add(source);
             break;
          case V_INCLUSIONS:
-            if (source instanceof Inclusion)
+            if (source instanceof _Inclusion)
                result.add(source);
             break;
          case V_PROBLEMS:
-            if (source instanceof Problem)
+            if (source instanceof _Problem)
+               result.add(source);
+            break;
+         case V_MACRODEFS:
+            if( source instanceof _MacroDefinition )
                result.add(source);
             break;
       }
-      if (source instanceof CompositeContext) {
-         List l = ((CompositeContext) source).getSubContexts();
+      if (source instanceof _CompositeContext) {
+         List l = ((_CompositeContext) source).getSubContexts();
          for (int i = 0; i < l.size(); ++i)
-            collectContexts(key, (Context) l.get(i), result);
+            collectContexts(key, (_Context) l.get(i), result);
       }
    }
 

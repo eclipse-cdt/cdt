@@ -10,8 +10,9 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -39,7 +40,7 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     private ILocationResolver resolver;
     private static final IASTPreprocessorStatement[] EMPTY_PREPROCESSOR_STATEMENT_ARRAY = new IASTPreprocessorStatement[0];
     private static final IASTNodeLocation[] EMPTY_PREPROCESSOR_LOCATION_ARRAY = new IASTNodeLocation[0];
-    private static final IASTMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTMacroDefinition[0];
+    private static final IASTPreprocessorMacroDefinition[] EMPTY_PREPROCESSOR_MACRODEF_ARRAY = new IASTPreprocessorMacroDefinition[0];
     private static final IASTPreprocessorIncludeStatement[] EMPTY_PREPROCESSOR_INCLUSION_ARRAY = new IASTPreprocessorIncludeStatement[0];
     private static final IASTProblem[] EMPTY_PROBLEM_ARRAY = new IASTProblem[0];
     
@@ -142,9 +143,11 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getMacroDefinitions()
      */
-    public IASTMacroDefinition[] getMacroDefinitions() {
+    public IASTPreprocessorMacroDefinition[] getMacroDefinitions() {
         if( resolver == null ) return EMPTY_PREPROCESSOR_MACRODEF_ARRAY;
-        return resolver.getMacroDefinitions(this);
+        IASTPreprocessorMacroDefinition [] result = resolver.getMacroDefinitions();
+        setParentRelationship( result, IASTTranslationUnit.PREPROCESSOR_STATEMENT );
+        return result;
     }
 
 
@@ -153,16 +156,31 @@ public class CASTTranslationUnit extends CASTNode implements IASTTranslationUnit
      */
     public IASTPreprocessorIncludeStatement[] getIncludeDirectives() {
         if( resolver == null ) return EMPTY_PREPROCESSOR_INCLUSION_ARRAY;
-        return resolver.getIncludeDirectives(this);
+        IASTPreprocessorIncludeStatement [] result = resolver.getIncludeDirectives();
+        setParentRelationship( result, IASTTranslationUnit.PREPROCESSOR_STATEMENT );
+        return result;
     }
 
 
-    /* (non-Javadoc)
+    /**
+    * @param result
+    * @param preprocessor_statement
+    */
+   protected void setParentRelationship(IASTNode[] result, ASTNodeProperty property ) {
+      for( int i = 0; i < result.length; ++i )
+      {
+         result[i].setParent( this );
+         result[i].setPropertyInParent( property );
+      }
+   }
+
+
+   /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getAllPreprocessorStatements()
      */
     public IASTPreprocessorStatement[] getAllPreprocessorStatements() {
         if( resolver == null ) return EMPTY_PREPROCESSOR_STATEMENT_ARRAY;
-        return resolver.getAllPreprocessorStatements(this);
+        return resolver.getAllPreprocessorStatements();
     }
 
 

@@ -1,3 +1,6 @@
+2004-06-15 Tanya Wolff
+	Removed intermediate composites to allow groupings to be readable by screenreader in the Manage Configuration dialog.
+	
 2004-03-16 Tanya Wolff
 	Marked remaining strings forming keys, directories and filenames untranslatable.
 

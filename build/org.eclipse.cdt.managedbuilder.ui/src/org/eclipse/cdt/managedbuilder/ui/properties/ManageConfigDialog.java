@@ -240,14 +240,9 @@ public class ManageConfigDialog extends Dialog {
 		deletedConfigLabel.setText(ManagedBuilderUIMessages.getResourceString(DELETED_CONFIGS));
 		deletedConfigLabel.setLayoutData(new GridData());
 		
-		// Create the current config list
-		final Composite currentComp = new Composite(configListGroup, SWT.NULL);
-		currentComp.setFont(configListGroup.getFont());
-		currentComp.setLayout(new GridLayout(1, true));
-		currentComp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		currentConfigList = new List(currentComp, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
-		currentConfigList.setFont(currentComp.getFont());
+		// Create the current config List
+		currentConfigList = new List(configListGroup, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
+		currentConfigList.setFont(configListGroup.getFont());
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = (IDialogConstants.ENTRY_FIELD_WIDTH / 2);
 		currentConfigList.setLayoutData(data);
@@ -308,14 +303,9 @@ public class ManageConfigDialog extends Dialog {
 			}
 		});
 
-		// Create the deleted config list
-		final Composite deletedComp = new Composite(configListGroup, SWT.NULL);
-		deletedComp.setFont(configListGroup.getFont());
-		deletedComp.setLayout(new GridLayout(1, true));
-		deletedComp.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		deletedConfigList = new List(deletedComp, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
-		deletedConfigList.setFont(deletedComp.getFont());
+		//Create the deleted config list
+		deletedConfigList = new List(configListGroup, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
+		deletedConfigList.setFont(configListGroup.getFont());
 		data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = (IDialogConstants.ENTRY_FIELD_WIDTH / 2);
 		deletedConfigList.setLayoutData(data);

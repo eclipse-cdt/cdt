@@ -9,6 +9,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.ui.wizards.CProjectWizard;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.swt.widgets.TabFolder;
@@ -115,9 +116,14 @@ public abstract class ConversionWizard
      */
     protected void doRun(IProgressMonitor monitor) {
         doRunPrologue(monitor);
-        mainPage.doRun(monitor, getProjectID());
-        doRunEpilogue(monitor);
-        monitor.done();
+        try{
+            mainPage.doRun(monitor, getProjectID());
+        } catch (CoreException ce){
+            CCorePlugin.log(ce);
+        } finally{
+            doRunEpilogue(monitor);
+            monitor.isCanceled();
+        }
     }
     /**
      * Return the type of project that it is being converted to

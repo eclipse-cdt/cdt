@@ -373,26 +373,19 @@ public abstract class ConvertProjectWizardPage
      * 
      * @param monitor
      * @param projectID
+     * @exception CoreException
      */
-    public void doRun(IProgressMonitor monitor, String projectID) {
+    public void doRun(IProgressMonitor monitor, String projectID) throws CoreException {
 
         Object[] selection = getCheckedElements();
         int      totalSelected = selection.length;
 
         if ((selection != null) && (totalSelected > 0)) {
-
             if (monitor == null) {
                 monitor = new NullProgressMonitor();
             }
-
             monitor.beginTask(CPlugin.getResourceString(KEY_TITLE), 1);
-
-            try {
-                convertProjects(selection, monitor, projectID);
-            }
-             catch (CoreException ce) {
-                CPlugin.log(ce);
-            }
+            convertProjects(selection, monitor, projectID);
         }
     }
 

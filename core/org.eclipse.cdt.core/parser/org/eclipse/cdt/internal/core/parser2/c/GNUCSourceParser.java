@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -294,33 +295,36 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         case IToken.t_asm:
             IToken first = consume(IToken.t_asm);
             consume(IToken.tLPAREN);
-            char[] assembly = consume(IToken.tSTRING).getCharImage();
+            String assembly = consume(IToken.tSTRING).getImage();
             consume(IToken.tRPAREN);
-            IToken last = consume(IToken.tSEMI);
-
-            try {
-                //                    astFactory.createASMDefinition(
-                //                            scope,
-                //                            assembly,
-                //                            first.getOffset(),
-                //                            first.getLineNumber(), last.getEndOffset(),
-                // last.getLineNumber(), last.getFilename());
-            } catch (Exception e) {
-                logException("declaration:createASMDefinition", e); //$NON-NLS-1$
-                throwBacktrack(first.getOffset(), last.getEndOffset(), first
-                        .getLineNumber(), first.getFilename());
-            }
-            // if we made it this far, then we have all we need
-            // do the callback
-            // 				resultDeclaration.acceptElement(requestor);
+            consume(IToken.tSEMI);
             cleanupLastToken();
-            return null;
+            return buildASMDirective( first.getOffset(), assembly );
         default:
             IASTDeclaration d = simpleDeclaration();
             cleanupLastToken();
             return d;
         }
 
+    }
+
+    /**
+     * @param offset
+     * @param assembly
+     * @return
+     */
+    protected IASTASMDeclaration buildASMDirective(int offset, String assembly) {
+        IASTASMDeclaration result = createASMDirective();
+        result.setOffset( offset );
+        result.setAssembly( assembly );
+        return result;
+    }
+
+    /**
+     * @return
+     */
+    protected IASTASMDeclaration createASMDirective() {
+        return new CASTASMDeclaration();
     }
 
     /**
@@ -1012,22 +1016,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IToken la = LA(1);
             startingOffset = la.getOffset();
             line = la.getLineNumber();
-            char[] fn = la.getFilename();
-
-            IASTExpression empty = null;
-            try {
-                empty = null; /*
-                               * astFactory.createExpression(scope,
-                               * IASTExpression.Kind.PRIMARY_EMPTY, null, null,
-                               * null, null, null, EMPTY_STRING, null); } catch
-                               * (ASTSemanticException e9) { throwBacktrack(
-                               * e9.getProblem() ); return null;
-                               */
-            } catch (Exception e) {
-                logException("primaryExpression_9::createExpression()", e); //$NON-NLS-1$
-                throwBacktrack(startingOffset, 0, line, fn);
-            }
-            return empty;
+            throwBacktrack( startingOffset, startingOffset, line, la.getFilename() );
+            return null;
         }
 
     }

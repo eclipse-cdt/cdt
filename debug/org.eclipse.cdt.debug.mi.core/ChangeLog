@@ -1,3 +1,19 @@
+2003-01-03 Alain Magloire
+
+	The Class creating the CDISession part of the initialization would call
+		(gdb) set autosolib on
+	this works fine for Unix system, but on Windows it throws an error
+	failing the debugger.  Windows(Cygwin, MingWin) does not need any
+	special initialization like solib-search-paths etc ..
+
+	* src/.../mi/core/cdi/SourceManager.java (setAutoSolib): Takes a boolean argument
+	to set the autosolib on or off.
+	* src/.../mi/core/CygwinGDBDebugger.java(initializeLibraries):
+	Empty method, cygwin does not need any special handling.
+	* src/.../mi/core/GDBDebugger.java (initializeLibraries):
+	Always call autosolib.
+
+
 2003-01-02 Alain Magloire
 
 	Bug when using recursive:

@@ -280,22 +280,6 @@ public class CModelManager implements IResourceChangeListener {
 		//return new CModel(root);
 	}
 
-	private void removeChildrenContainer(Parent container, IResource resource) {
-		if (container.hasChildren()) {
-			ICElement[] children = container.getChildren();
-			for (int i = 0; i < children.length; i++) {
-				try {
-					IResource r = children[i].getUnderlyingResource();
-					if (r.equals(resource)) {
-						container.removeChild(children[i]);
-						break;
-					}
-				} catch (CModelException e) {
-				}
-			}
-		}
-	}
-
 	public void releaseCElement(ICElement celement) {
 
 		// Guard.

@@ -101,6 +101,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	StringButtonDialogField fNamespaceDialogField;
 	private boolean fCanModifyNamespace;
 	protected IStatus fNamespaceStatus;
+	ITypeInfo fCurrentNamespace;
 	
 	/** ID of the enclosing class input field. */
 	protected final static String ENCLOSING_CLASS = PAGE_NAME + ".enclosingclass"; //$NON-NLS-1$
@@ -590,6 +591,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		public void changeControlPressed(DialogField field) {
 			ITypeInfo namespace = chooseNamespace();
 			if (namespace != null) {
+			    fCurrentNamespace = namespace;
 			    String name = namespace.getQualifiedTypeName().getFullyQualifiedName();
 
 			    // this will trigger dialogFieldChanged
@@ -641,9 +643,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
         boolean enclosing = isEnclosingClassSelected();
         String name = ""; //$NON-NLS-1$
         if (enclosing && fCurrentEnclosingClass != null) {
-			ITypeInfo namespace = fCurrentEnclosingClass.getEnclosingNamespace();
-			if (namespace != null) {
-			    IQualifiedTypeName qualNSName = namespace.getQualifiedTypeName();
+			fCurrentNamespace = fCurrentEnclosingClass.getEnclosingNamespace();
+			if (fCurrentNamespace != null) {
+			    IQualifiedTypeName qualNSName = fCurrentNamespace.getQualifiedTypeName();
 			    name = qualNSName.getFullyQualifiedName();
 			}
         }
@@ -785,7 +787,54 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * @return the model's error status
 	 */
 	protected IStatus namespaceChanged() {
-		StatusInfo status = new StatusInfo();
+	    StatusInfo status = new StatusInfo();
+		fCurrentNamespace = null;
+
+		String namespace = getNamespace();
+
+		// check if empty
+		if (namespace.length() == 0) {
+		    return status;
+		}
+
+		IStatus val = CConventions.validateClassName(namespace);
+		if (val.getSeverity() == IStatus.ERROR) {
+			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidNamespace", val.getMessage())); //$NON-NLS-1$
+			return status;
+		} else if (val.getSeverity() == IStatus.WARNING) {
+			status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.NamespaceDiscouraged", val.getMessage())); //$NON-NLS-1$
+			// continue checking
+		}
+	
+	    IProject project = getCurrentProject();
+	    if (project != null) {
+		    ITypeSearchScope scope = prepareTypeCache();
+		    if (scope == null) {
+				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.noTypeCache")); //$NON-NLS-1$
+				return status;
+		    }
+		
+			IQualifiedTypeName qualName = new QualifiedTypeName(namespace);
+
+		    ITypeInfo[] types = AllTypesCache.getTypes(project, qualName, false);
+	        for (int i = 0; i < types.length; ++i) {
+	            if (types[i].getCElementType() == ICElement.C_NAMESPACE) {
+	                fCurrentNamespace = types[i];
+	                break;
+	            }
+	        }
+	        if (fCurrentNamespace == null) {
+			    types = AllTypesCache.getTypes(project, qualName, true);
+		        for (int i = 0; i < types.length; ++i) {
+		            if (types[i].getCElementType() == ICElement.C_NAMESPACE) {
+						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NamespaceExistsDifferentCase")); //$NON-NLS-1$
+						return status;
+		            }
+		        }
+				status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NamespaceNotExists")); //$NON-NLS-1$
+				return status;
+	        }
+	    }
 		return status;
 	}
 
@@ -802,7 +851,53 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 		if (!isEnclosingClassSelected()) {
 		    return status;
 		}
-		//TODO check if enclosing class exists
+		fCurrentEnclosingClass = null;
+
+		String enclosing = getEnclosingClass();
+		// must not be empty
+		if (enclosing.length() == 0) {
+			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.EnterClassName")); //$NON-NLS-1$
+			return status;
+		}
+
+		IStatus val = CConventions.validateClassName(enclosing);
+		if (val.getSeverity() == IStatus.ERROR) {
+			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.InvalidClassName", val.getMessage())); //$NON-NLS-1$
+			return status;
+		} else if (val.getSeverity() == IStatus.WARNING) {
+			status.setWarning(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.warning.ClassNameDiscouraged", val.getMessage())); //$NON-NLS-1$
+			// continue checking
+		}
+	
+	    IProject project = getCurrentProject();
+	    if (project != null) {
+		    ITypeSearchScope scope = prepareTypeCache();
+		    if (scope == null) {
+				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.noTypeCache")); //$NON-NLS-1$
+				return status;
+		    }
+		
+			IQualifiedTypeName qualName = new QualifiedTypeName(enclosing);
+
+		    ITypeInfo[] types = AllTypesCache.getTypes(project, qualName, false);
+	        for (int i = 0; i < types.length; ++i) {
+	            if (types[i].getCElementType() == ICElement.C_CLASS) {
+	                fCurrentEnclosingClass = types[i];
+	                break;
+	            }
+	        }
+	        if (fCurrentEnclosingClass == null) {
+			    types = AllTypesCache.getTypes(project, qualName, true);
+		        for (int i = 0; i < types.length; ++i) {
+		            if (types[i].getCElementType() == ICElement.C_CLASS) {
+						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
+						return status;
+		            }
+		        }
+				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameNotExists")); //$NON-NLS-1$
+				return status;
+	        }
+	    }
 		return status;
 	}
 
@@ -834,45 +929,56 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			// continue checking
 		}
 	
-		IQualifiedTypeName qualName = new QualifiedTypeName(className);
-		// must not exist
-		if (!isEnclosingClassSelected()) {
-		    IProject project = getCurrentProject();
-		    if (project == null)
-		        return null;
+	    IProject project = getCurrentProject();
+	    if (project != null) {
 		    ITypeSearchScope scope = prepareTypeCache();
-		    if (scope == null)
-		        return null;
-	
-		    ITypeInfo[] types = AllTypesCache.getTypes(project, qualName, false);
-		    if (types.length != 0) {
-				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+		    if (scope == null) {
+				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.noTypeCache")); //$NON-NLS-1$
 				return status;
 		    }
-		    types = AllTypesCache.getTypes(project, qualName, true);
-		    if (types.length != 0) {
-				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
-				return status;
-		    }
-		} else {
-		    ITypeSearchScope scope = prepareTypeCache();
-		    if (scope == null)
-		        return null;
-	
-		    if (fCurrentEnclosingClass != null) {
+			
+			IQualifiedTypeName qualName = new QualifiedTypeName(className);
+
+			// must not exist
+			if (!isEnclosingClassSelected()) {
+			    if (fCurrentNamespace != null) {
+			        ITypeInfo[] types = fCurrentNamespace.getEnclosedTypes();
+			        for (int i = 0; i < types.length; ++i) {
+			            IQualifiedTypeName typeName = types[i].getQualifiedTypeName().removeFirstSegments(1);
+			            if (typeName.equalsIgnoreCase(qualName)) {
+			                if (typeName.equals(qualName))
+			                    status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+			                else
+			                    status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
+							return status;
+			            }
+			        }
+			    } else {
+				    ITypeInfo[] types = AllTypesCache.getTypes(project, qualName, false);
+				    if (types.length != 0) {
+						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
+						return status;
+				    }
+				    types = AllTypesCache.getTypes(project, qualName, true);
+				    if (types.length != 0) {
+						status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
+						return status;
+				    }
+			    }
+			} else if (fCurrentEnclosingClass != null) {
 		        ITypeInfo[] types = fCurrentEnclosingClass.getEnclosedTypes();
 		        for (int i = 0; i < types.length; ++i) {
-		            ITypeInfo type = types[i];
-		            if (type.getQualifiedTypeName().equalsIgnoreCase(qualName)) {
-		                if (type.getQualifiedTypeName().equals(qualName))
+		            IQualifiedTypeName typeName = types[i].getQualifiedTypeName().removeFirstSegments(1);
+		            if (typeName.equalsIgnoreCase(qualName)) {
+		                if (typeName.equals(qualName))
 		                    status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExists")); //$NON-NLS-1$
 		                else
 		                    status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.ClassNameExistsDifferentCase")); //$NON-NLS-1$
 						return status;
 		            }
 		        }
-		    }
-		}
+			}
+	    }
 		return status;
 	}
 
@@ -950,6 +1056,24 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	}
 	
 	/**
+	 * Returns the namespace entered into the namespace input field.
+	 * 
+	 * @return the namespace
+	 */
+	public String getNamespace() {
+		return fNamespaceDialogField.getText();
+	}
+
+	/**
+	 * Returns the enclosing class name entered into the enclosing class input field.
+	 * 
+	 * @return the enclosing class name
+	 */
+	public String getEnclosingClass() {
+		return fEnclosingClassDialogField.getText();
+	}
+
+	/**
 	 * Returns the selection state of the enclosing class checkbox.
 	 * 
 	 * @return the selection state of the enclosing class checkbox
@@ -959,9 +1083,9 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	}
 	
 	/**
-	 * Returns the type name entered into the type input field.
+	 * Returns the class name entered into the class input field.
 	 * 
-	 * @return the type name
+	 * @return the class name
 	 */
 	public String getClassName() {
 		return fClassNameDialogField.getText();
@@ -1152,7 +1276,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	 * editable; otherwise it is read-only.
 	 */
 	public void setNamespace(ITypeInfo namespace, boolean canBeModified) {
-//		fCurrNamespace = namespace;
+		fCurrentNamespace = namespace;
 		fCanModifyNamespace = canBeModified;
 		if (namespace != null) {
 		    String name = namespace.getQualifiedTypeName().getFullyQualifiedName();
@@ -1404,6 +1528,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
             headerPath,
             sourcePath,
             getClassName(),
+            getNamespace(),
             getBaseClasses(),
             getCheckedMethodStubs());
 	    fCodeGenerator.createClass(monitor);

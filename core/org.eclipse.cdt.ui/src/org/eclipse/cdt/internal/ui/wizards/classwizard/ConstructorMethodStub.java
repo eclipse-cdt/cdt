@@ -48,11 +48,12 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
             buf.append("::"); //$NON-NLS-1$
             buf.append(className);
             buf.append("()"); //$NON-NLS-1$
-            buf.append(" {"); //$NON-NLS-1$
+            buf.append(lineDelimiter);
+            buf.append('{');
             buf.append(lineDelimiter);
             //buf.append("// TODO Auto-generated constructor stub");
             //buf.append(lineDelimiter);
-            buf.append("}"); //$NON-NLS-1$
+            buf.append('}');
             return buf.toString();
         }
     }

@@ -1,10 +1,15 @@
-2004-08-012 Chris Wiebe
+2004-08-13 Chris Wiebe
+
+	add namespace to class wizard.
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/*
+
+2004-08-12 Chris Wiebe
 
 	Initial draft of new class wizard.
 	* src/org/eclipse/cdt/ui/wizards/NewClassCreationWizard.java
 	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/*
 
-2004-08-012 Chris Wiebe
+2004-08-12 Chris Wiebe
 
 	* src/org/eclipse/cdt/internal/ui/wizards/dialogsfields/ListDialogField.java
 	* src/org/eclipse/cdt/internal/ui/wizards/dialogsfields/CheckedListDialogField.java

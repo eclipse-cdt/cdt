@@ -324,7 +324,6 @@
             %NewWizards.class.description
          </description>
       </wizard>
-<!--
       <wizard
             name="New C++ Class"
             icon="icons/full/ctool16/newclass_wiz.gif"
@@ -338,7 +337,6 @@
             %NewWizards.class.description
          </description>
       </wizard>
--->
    </extension>
 <!-- Define the document provider and partitionner for the CEditor -->
    <extension

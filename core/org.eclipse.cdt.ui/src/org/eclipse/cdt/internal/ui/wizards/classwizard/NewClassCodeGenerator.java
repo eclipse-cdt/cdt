@@ -36,6 +36,7 @@ public class NewClassCodeGenerator {
     private IPath fHeaderPath = null;
     private IPath fSourcePath = null;
     private String fClassName = null;
+    private String fNamespace = null;
     private String fLineDelimiter;
     private IBaseClassInfo[] fBaseClasses = null;
     private IMethodStub[] fMethodStubs = null;
@@ -43,10 +44,11 @@ public class NewClassCodeGenerator {
     private ITranslationUnit fCreatedSourceTU = null;
     private ICElement fCreatedClass = null;
 
-    public NewClassCodeGenerator(IPath headerPath, IPath sourcePath, String className, IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs) {
+    public NewClassCodeGenerator(IPath headerPath, IPath sourcePath, String className, String namespace, IBaseClassInfo[] baseClasses, IMethodStub[] methodStubs) {
         fHeaderPath = headerPath;
         fSourcePath = sourcePath;
         fClassName = className;
+        fNamespace = namespace;
         fBaseClasses = baseClasses;
         fMethodStubs = methodStubs;
         fLineDelimiter = NewSourceFileGenerator.getLineDelimiter();
@@ -161,16 +163,24 @@ public class NewClassCodeGenerator {
 		        text.append(oldContents);
 	        else
 	            text.append(oldContents.substring(0, insertionPos));
+            text.append(fLineDelimiter);
         }
 
-        addBaseClassIncludes(headerTU, text);
-
+        if (fBaseClasses != null && fBaseClasses.length > 0) {
+            addBaseClassIncludes(headerTU, text);
+            text.append(fLineDelimiter);
+        }
+        
+        if (fNamespace != null && fNamespace.length() > 0) {
+            beginNamespace(text);
+        }
+        
         text.append("class "); //$NON-NLS-1$
         text.append(fClassName);
-
         addBaseClassInheritance(text);
         text.append(fLineDelimiter);
         text.append('{');
+        text.append(fLineDelimiter);
 
         //TODO sort methods (eg constructor always first?)
         List publicMethods = getStubs(ASTAccessVisibility.PUBLIC, false);
@@ -188,6 +198,10 @@ public class NewClassCodeGenerator {
         text.append("};"); //$NON-NLS-1$
         text.append(fLineDelimiter);
 
+        if (fNamespace != null && fNamespace.length() > 0) {
+            endNamespace(text);
+        }
+
         if (oldContents != null && insertionPos != -1) {
             text.append(fLineDelimiter);
             text.append(oldContents.substring(insertionPos));
@@ -195,7 +209,7 @@ public class NewClassCodeGenerator {
 
         return text.toString();
     }
-    
+
     private int getInsertionPos(String contents) {
         //TODO temporary hack
         int insertPos = contents.lastIndexOf("#endif"); //$NON-NLS-1$
@@ -208,10 +222,24 @@ public class NewClassCodeGenerator {
         }
         return insertPos;
     }
+    
+    private void beginNamespace(StringBuffer text) {
+        text.append("namespace "); //$NON-NLS-1$
+        text.append(fNamespace);
+        text.append(fLineDelimiter);
+        text.append('{');
+        text.append(fLineDelimiter);
+        text.append(fLineDelimiter);
+    }
+
+    private void endNamespace(StringBuffer text) {
+        text.append(fLineDelimiter);
+        text.append("};"); //$NON-NLS-1$
+        text.append(fLineDelimiter);
+    }
 
     private void addMethodDeclarations(List publicMethods, List protectedMethods, List privateMethods, StringBuffer text) {
         if (!publicMethods.isEmpty()) {
-            text.append(fLineDelimiter);
             text.append("public:"); //$NON-NLS-1$
             text.append(fLineDelimiter);
             for (Iterator i = publicMethods.iterator(); i.hasNext();) {
@@ -224,7 +252,6 @@ public class NewClassCodeGenerator {
         }
 
         if (!protectedMethods.isEmpty()) {
-            text.append(fLineDelimiter);
             text.append("protected:"); //$NON-NLS-1$
             text.append(fLineDelimiter);
             for (Iterator i = protectedMethods.iterator(); i.hasNext();) {
@@ -237,7 +264,6 @@ public class NewClassCodeGenerator {
         }
 
         if (!privateMethods.isEmpty()) {
-            text.append(fLineDelimiter);
             text.append("private:"); //$NON-NLS-1$
             text.append(fLineDelimiter);
             for (Iterator i = privateMethods.iterator(); i.hasNext();) {
@@ -288,42 +314,39 @@ public class NewClassCodeGenerator {
     }
 
     private void addBaseClassIncludes(ITranslationUnit headerTU, StringBuffer text) {
-        if (fBaseClasses != null && fBaseClasses.length > 0) {
-            IProject project = headerTU.getCProject().getProject();
-            IPath projectLocation = project.getLocation();
-            IPath headerLocation = headerTU.getResource().getLocation();
-            for (int i = 0; i < fBaseClasses.length; ++i) {
-                String baseClassFileName = null;
-                boolean isSystemIncludePath = false;
-                IBaseClassInfo baseClass = fBaseClasses[i];
-                ITypeReference ref = baseClass.getType().getResolvedReference();
-                if (ref != null) {
-                    IPath baseClassLocation = ref.getLocation();
-                    IPath includePath = makeRelativePathToProjectIncludes(baseClassLocation, project);
-                    if (includePath != null && !projectLocation.isPrefixOf(baseClassLocation)) {
-                        isSystemIncludePath = true;
-                    } else if (projectLocation.isPrefixOf(baseClassLocation)
-                            && projectLocation.isPrefixOf(headerLocation)) {
-                        includePath = makeRelativePath(baseClassLocation, headerLocation);
-                    }
-                    if (includePath == null)
-                        includePath = baseClassLocation;
-                    baseClassFileName = includePath.toString();
+        IProject project = headerTU.getCProject().getProject();
+        IPath projectLocation = project.getLocation();
+        IPath headerLocation = headerTU.getResource().getLocation();
+        for (int i = 0; i < fBaseClasses.length; ++i) {
+            String baseClassFileName = null;
+            boolean isSystemIncludePath = false;
+            IBaseClassInfo baseClass = fBaseClasses[i];
+            ITypeReference ref = baseClass.getType().getResolvedReference();
+            if (ref != null) {
+                IPath baseClassLocation = ref.getLocation();
+                IPath includePath = makeRelativePathToProjectIncludes(baseClassLocation, project);
+                if (includePath != null && !projectLocation.isPrefixOf(baseClassLocation)) {
+                    isSystemIncludePath = true;
+                } else if (projectLocation.isPrefixOf(baseClassLocation)
+                        && projectLocation.isPrefixOf(headerLocation)) {
+                    includePath = makeRelativePath(baseClassLocation, headerLocation);
                 }
-                if (baseClassFileName == null) {
-                    baseClassFileName = NewSourceFileGenerator.generateHeaderFileNameFromClass(baseClass.getType().getName());
-                }
-
-                // add the include statement if we are extending a base class
-                // and we are not already in the base class header file
-                // (enclosing type)
-                if (!(headerTU.getElementName().equals(baseClassFileName))) {
-                    String include = getIncludeString(baseClassFileName, isSystemIncludePath);
-                    text.append(include);
-                    text.append(fLineDelimiter);
-                }
+                if (includePath == null)
+                    includePath = baseClassLocation;
+                baseClassFileName = includePath.toString();
             }
-            text.append(fLineDelimiter);
+            if (baseClassFileName == null) {
+                baseClassFileName = NewSourceFileGenerator.generateHeaderFileNameFromClass(baseClass.getType().getName());
+            }
+
+            // add the include statement if we are extending a base class
+            // and we are not already in the base class header file
+            // (enclosing type)
+            if (!(headerTU.getElementName().equals(baseClassFileName))) {
+                String include = getIncludeString(baseClassFileName, isSystemIncludePath);
+                text.append(include);
+                text.append(fLineDelimiter);
+            }
         }
     }
 
@@ -333,8 +356,9 @@ public class NewClassCodeGenerator {
 
         if (headerTU != null) {
             addHeaderInclude(sourceTU, headerTU, text);
+            text.append(fLineDelimiter);
         }
-
+        
         //TODO sort methods (eg constructor always first?)
         List publicMethods = getStubs(ASTAccessVisibility.PUBLIC, true);
         List protectedMethods = getStubs(ASTAccessVisibility.PROTECTED, true);
@@ -343,9 +367,17 @@ public class NewClassCodeGenerator {
         if (publicMethods.isEmpty()
                 && protectedMethods.isEmpty()
                 && privateMethods.isEmpty()) {
-            text.append(' ');
+            // no methods
         } else {
+            if (fNamespace != null && fNamespace.length() > 0) {
+                beginNamespace(text);
+            }
+
             addMethodBodies(publicMethods, protectedMethods, privateMethods, text);
+
+            if (fNamespace != null && fNamespace.length() > 0) {
+                endNamespace(text);
+            }
         }
 
         return text.toString();
@@ -378,9 +410,10 @@ public class NewClassCodeGenerator {
             for (Iterator i = publicMethods.iterator(); i.hasNext();) {
                 IMethodStub stub = (IMethodStub) i.next();
                 String code = stub.createMethodImplementation(fClassName, fBaseClasses, fLineDelimiter);
-                text.append(fLineDelimiter);
                 text.append(code);
                 text.append(fLineDelimiter);
+                if (i.hasNext())
+                    text.append(fLineDelimiter);
             }
         }
 
@@ -388,9 +421,10 @@ public class NewClassCodeGenerator {
             for (Iterator i = protectedMethods.iterator(); i.hasNext();) {
                 IMethodStub stub = (IMethodStub) i.next();
                 String code = stub.createMethodImplementation(fClassName, fBaseClasses, fLineDelimiter);
-                text.append(fLineDelimiter);
                 text.append(code);
                 text.append(fLineDelimiter);
+                if (i.hasNext())
+                    text.append(fLineDelimiter);
             }
         }
 
@@ -398,9 +432,10 @@ public class NewClassCodeGenerator {
             for (Iterator i = privateMethods.iterator(); i.hasNext();) {
                 IMethodStub stub = (IMethodStub) i.next();
                 String code = stub.createMethodImplementation(fClassName, fBaseClasses, fLineDelimiter);
-                text.append(fLineDelimiter);
                 text.append(code);
                 text.append(fLineDelimiter);
+                if (i.hasNext())
+                    text.append(fLineDelimiter);
             }
         }
     }

@@ -49,6 +49,20 @@ public class ParserUtil
 		return scannerLogService;
 	}
 	
+	public static char [] findWorkingCopyBuffer( String path, Iterator workingCopies )
+	{
+		IResource resultingResource = getResourceForFilename(path);
+			
+		if( resultingResource != null && resultingResource.getType() == IResource.FILE )
+		{
+			// this is the file for sure
+			// check the working copy
+			if( workingCopies.hasNext() )
+				return findWorkingCopy( resultingResource, workingCopies );
+		}
+		return null;
+	}
+	
 	public static CodeReader createReader( String finalPath, Iterator workingCopies )
 	{
 		// check to see if the file which this path points to points to an 

@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.ParserUtil;
 
 /**
  * @author jcamelon
@@ -40,7 +39,7 @@ public class WorkingCopyCodeReaderFactory extends
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)
      */
     public CodeReader createCodeReaderForInclusion(String path) {
-        return ParserUtil.createReader(path, createWorkingCopyIterator());
+        return checkWorkingCopyThenCache(path);
     }
 
 }

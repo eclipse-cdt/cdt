@@ -12,13 +12,12 @@ package org.eclipse.cdt.internal.core.dom;
 
 import java.util.Arrays;
 import java.util.Iterator;
-
 import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ICodeReaderCache;
-import org.eclipse.cdt.internal.core.dom.parser.EmptyCodeReaderCache;
+import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
 /**
@@ -35,7 +34,7 @@ public class PartialWorkingCopyCodeReaderFactory
      */
     public PartialWorkingCopyCodeReaderFactory(IWorkingCopyProvider provider) {
         this.provider = provider;
-		cache = new EmptyCodeReaderCache();
+		cache = SavedCodeReaderFactory.getInstance().getCodeReaderCache();
     }
 
     /* (non-Javadoc)
@@ -49,8 +48,19 @@ public class PartialWorkingCopyCodeReaderFactory
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForTranslationUnit(java.lang.String)
      */
     public CodeReader createCodeReaderForTranslationUnit(String path) {
-        return ((EmptyCodeReaderCache)cache).createReader( path, createWorkingCopyIterator() );
+		return checkWorkingCopyThenCache(path);
     }
+
+	/**
+	 * @param path
+	 * @return
+	 */
+	protected CodeReader checkWorkingCopyThenCache(String path) {
+		char [] buffer = ParserUtil.findWorkingCopyBuffer( path, createWorkingCopyIterator() );
+		if( buffer != null )
+			return new CodeReader(path, buffer);
+		return cache.get( path );
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ICodeReaderFactory#createCodeReaderForInclusion(java.lang.String)

@@ -13,36 +13,45 @@
 #endif
 
 
-char *pfind(const char *name)
+char * pfind(const char *name)
 {
 	char *tok;
 	char *sp;
-	char *path = getenv("PATH" );
-	char FullPath[PATH_MAX+1];
+	char *path;
+	char fullpath[PATH_MAX+1];
 
+	/* Sanity check.  */
 	if (name == NULL) {
 		fprintf(stderr, "pfind(): Null argument.\n");
 		return NULL;
 	}
 
-	if (path == NULL || strlen( path ) <= 0) {
+	/* For absolute name or name with a path, check if it is an executable.  */
+	if (name[0] == '/' || name[0] == '.') {
+		if (access(name, X_OK | R_OK) == 0) {
+			return strdup(name);
+		}
+		return NULL;
+	}
+
+	/* Search in the PATH environment.  */
+	path = getenv("PATH" );
+
+	if (path == NULL || strlen(path) <= 0) {
 		fprintf(stderr, "Unable to get $PATH.\n");
 		return NULL;
 	}
 
-	// The value return by getenv() is readonly */
+	/* The value return by getenv() is readonly */
 	path = strdup(path);
 
 	tok = strtok_r(path, ":", &sp);
 	while (tok != NULL) {
-		//strcpy(FullPath, tok);
-		//strcat(FullPath, "/");
-		//strcat(FullPath, name);
-		snprintf(FullPath, sizeof(FullPath) - 1, "%s/%s", tok, name);
+		snprintf(fullpath, sizeof(fullpath) - 1, "%s/%s", tok, name);
 
-		if (access(FullPath, X_OK | R_OK) == 0) {
+		if (access(fullpath, X_OK | R_OK) == 0) {
 			free(path);
-			return strdup(FullPath);
+			return strdup(fullpath);
 		}
 
 		tok = strtok_r( NULL, ":", &sp );

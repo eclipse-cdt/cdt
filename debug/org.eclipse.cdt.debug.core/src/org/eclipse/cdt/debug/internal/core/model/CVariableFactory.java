@@ -34,7 +34,7 @@ public class CVariableFactory {
 	}
 
 	public static IGlobalVariableDescriptor createGlobalVariableDescriptor( final String name, final IPath path ) {
-
+		
 		return new IGlobalVariableDescriptor() {
 
 			public String getName() {
@@ -42,7 +42,7 @@ public class CVariableFactory {
 			}
 
 			public IPath getPath() {
-				return path;
+				return ( path != null ) ? path : new Path( "" ); //$NON-NLS-1$
 			}
 
 			public String toString() {
@@ -60,7 +60,7 @@ public class CVariableFactory {
 		return createGlobalVariableDescriptor( var.getElementName(), path );
 	}
 
-	public static IGlobalVariableDescriptor createGlobalVariableDescriptor(ISymbol symbol) {
+	public static IGlobalVariableDescriptor createGlobalVariableDescriptor( ISymbol symbol ) {
 		return createGlobalVariableDescriptor( symbol.getName(), symbol.getFilename() );
 	}
 	

@@ -25,6 +25,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.ArgumentObject;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIPType;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListArguments;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListLocals;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIArg;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
+import org.eclipse.cdt.debug.mi.core.output.MIPTypeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListLocalsInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
@@ -282,15 +284,28 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableArrayObject(ICDIVariableObject, String, int, int)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjectAsArray(ICDIVariableObject, String, int, int)
 	 */
-	public ICDIVariableObject getVariableArrayObject(ICDIVariableObject object, String type, int start, int end) throws CDIException {
+	public ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject object, String type, int start, int end) throws CDIException {
 		if (object instanceof VariableObject) {
 			VariableObject obj = (VariableObject)object;
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("*(");
 			buffer.append('(');
 			if (type != null && type.length() > 0) {
+				// Check if the type is valid.
+				try {
+					MISession mi = ((Session)getSession()).getMISession();
+					CommandFactory factory = mi.getCommandFactory();
+					MIPType ptype = factory.createMIPType(type);
+					mi.postCommand(ptype);
+					MIPTypeInfo info = ptype.getMIPtypeInfo();
+					if (info == null) {
+						throw new CDIException("No answer");
+					}
+				} catch (MIException e) {
+					throw new MI2CDIException(e);
+				}
 				buffer.append('(').append(type).append(')');
 			}
 			buffer.append(obj.getName());
@@ -300,6 +315,37 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			}
 			buffer.append(')');
 			buffer.append('@').append(end - start + 1);
+			return new VariableObject(obj, buffer.toString());
+		}
+		throw new CDIException("Unknown variable object");
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjectAsArray(ICDIVariableObject, String, int, int)
+	 */
+	public ICDIVariableObject getVariableObjectAsType(ICDIVariableObject object, String type) throws CDIException {
+		if (object instanceof VariableObject) {
+			VariableObject obj = (VariableObject)object;
+			StringBuffer buffer = new StringBuffer();
+			if (type != null && type.length() > 0) {
+				// Check if the type is valid.
+				try {
+					MISession mi = ((Session)getSession()).getMISession();
+					CommandFactory factory = mi.getCommandFactory();
+					MIPType ptype = factory.createMIPType(type);
+					mi.postCommand(ptype);
+					MIPTypeInfo info = ptype.getMIPtypeInfo();
+					if (info == null) {
+						throw new CDIException("No answer");
+					}
+				} catch (MIException e) {
+					throw new MI2CDIException(e);
+				}
+				buffer.append('(').append(type).append(')');
+			}
+			buffer.append('(');
+			buffer.append(obj.getName());
+			buffer.append(')');
 			return new VariableObject(obj, buffer.toString());
 		}
 		throw new CDIException("Unknown variable object");

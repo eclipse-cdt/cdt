@@ -47,6 +47,16 @@ public class MakefileAnnotationHover implements IAnnotationHover {
 		try {
 			IRegion info = document.getLineInformation(lineNumber);
 			String line = document.get(info.getOffset(), info.getLength());
+			int numberOfLines = document.getNumberOfLines();
+			while (line != null && line.endsWith("\\")) { //$NON-NLS-1$
+				line = line.substring(0, line.length() - 1);
+				lineNumber++;
+				if (lineNumber < numberOfLines) {
+					info = document.getLineInformation(lineNumber);
+					String l = document.get(info.getOffset(), info.getLength());
+					line += "\n" + l; //$NON-NLS-1$
+				}
+			}
 			if (line != null && line.indexOf('$') != -1 && line.length() > 1) {
 				IWorkingCopyManager fManager = MakeUIPlugin.getDefault().getWorkingCopyManager();
 				IMakefile makefile = fManager.getWorkingCopy(fEditor.getEditorInput());

@@ -1,0 +1,16 @@
+#
+# The main build script
+# - The assumption is that the scripts start off in the root directory
+# of the eclipse install doing the build
+#
+
+if [ -n "$CDT_ROOT" ]; then cd $CDT_ROOT; fi
+
+for i in dobuild doinstall dotest
+do
+	if ! $i
+	then
+		echo $i failed
+		exit 1
+	fi
+done

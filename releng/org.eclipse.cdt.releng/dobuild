@@ -1,0 +1,19 @@
+#
+# Main build script
+# - the following environment variables need to be set
+# - $CDT_USER - the username to use on the eclipse download machine
+# - $CDT_PASSWD - the password for that account
+#
+
+#
+# Run Build
+#
+
+if [ -z "$CDT_USER" ]
+then
+	echo CDT_USER environment variable not set
+	exit 1
+fi
+
+./eclipse -nosplash -application org.eclipse.cdt.releng.build \
+	-vmargs -Dcdt.build.user=$CDT_USER -Dcdt.build.passwd=$CDT_PASSWD

@@ -1,0 +1,28 @@
+#
+# Run Tests
+#
+
+export RESULTS=`pwd`/results
+rm -fr $RESULTS
+mkdir $RESULTS
+
+cd testspace/eclipse
+
+# TODO - add in the rest of the test plugins
+export PLUGINS='org.eclipse.cdt.core.tests'
+for i in $PLUGINS
+do
+	./eclipse -nosplash -application org.eclipse.ant.core.antRunner \
+		-f plugins/$i*/test.xml -Declipse-home=`pwd` \
+		-Dorg.eclipse.test=org.eclipse.test_2.1.0\
+		-Dos=linux -Dws=gtk -Darch=x86
+	mv $i*.xml $RESULTS
+done
+
+cd $RESULTS
+for i in $PLUGINS
+do
+	xsltproc ../workspace/org.eclipse.cdt.releng/JUNIT.XSL $i.xml > $i.html
+done
+
+cd ..

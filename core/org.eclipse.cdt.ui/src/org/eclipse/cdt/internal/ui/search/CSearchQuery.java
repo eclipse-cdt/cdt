@@ -172,16 +172,22 @@ public class CSearchQuery implements ISearchQuery, ICSearchConstants {
 	 * @see org.eclipse.search.ui.ISearchQuery#getLabel()
 	 */
 	public String getLabel() {
+		String label;
 		if (_limitTo == REFERENCES)
-			return CSearchMessages.getString("CSearchQuery.searchfor_references"); //$NON-NLS-1$
+			label = CSearchMessages.getString("CSearchQuery.searchfor_references"); //$NON-NLS-1$
 		else if (_limitTo == DECLARATIONS)
-			return CSearchMessages.getString("CSearchQuery.searchfor_declarations"); //$NON-NLS-1$
+			label = CSearchMessages.getString("CSearchQuery.searchfor_declarations"); //$NON-NLS-1$
 		else if (_limitTo == DEFINITIONS)
-			return CSearchMessages.getString("CSearchQuery.searchfor_definitions"); //$NON-NLS-1$
+			label = CSearchMessages.getString("CSearchQuery.searchfor_definitions"); //$NON-NLS-1$
 		else if (_limitTo == ALL_OCCURRENCES)
-			return CSearchMessages.getString("CSearchQuery.searchfor_all"); //$NON-NLS-1$ 
+			label = CSearchMessages.getString("CSearchQuery.searchfor_all"); //$NON-NLS-1$ 
+		else
+			label = CSearchMessages.getString("CSearchQuery.search_label"); //$NON-NLS-1$;
 		
-		return CSearchMessages.getString("CSearchQuery.search_label"); //$NON-NLS-1$;
+		label += " \"";
+		label += _stringPattern;
+		label += '"';
+		return label;
 	}
 
 	/* (non-Javadoc)

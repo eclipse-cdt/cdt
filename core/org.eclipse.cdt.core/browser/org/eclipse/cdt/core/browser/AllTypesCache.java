@@ -181,7 +181,7 @@ public class AllTypesCache {
 		IProject[] projects = scope.getEnclosingProjects();
 		ITypeInfoVisitor visitor = new ITypeInfoVisitor() {
 			public void visit(ITypeInfo info) {
-				if (fQualifiedName.equals(info.getQualifiedTypeName())
+				if ((fScope != null && info.isEnclosed(fScope)) && fQualifiedName.equals(info.getQualifiedTypeName())
 						&& ArrayUtil.contains(fKinds, info.getCElementType())) {
 					fTypesFound.add(info);
 				}

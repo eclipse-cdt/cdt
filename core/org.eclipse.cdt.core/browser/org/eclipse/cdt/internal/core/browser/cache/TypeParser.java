@@ -219,7 +219,6 @@ public class TypeParser implements ISourceElementRequestor {
 			//TODO what about working copies outside the workspace?
 		}
 		
-		boolean foundType = false;
 		monitor.beginTask("", searchPaths.length + workingCopyPaths.size()); //$NON-NLS-1$
 		try {
 			fTypeToFind = info;

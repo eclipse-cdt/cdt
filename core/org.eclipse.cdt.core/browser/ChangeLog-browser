@@ -1,0 +1,14 @@
+2004-05-12 Chris Wiebe
+	Heavy refactoring of type cache to address scalability
+	concerns.
+
+2004-05-06 Chris Wiebe
+	Creating a new Job to handle the changes, instead
+	of reusing the same job.
+
+2004-04-20 Chris Wiebe
+	refactored TypeCacheDeltaListener into standalone class
+	added option in Work In Progress prefs page to disable background cache
+
+2004-04-06 Chris Wiebe
+	initial placement of non-ui code into org.eclipse.cdt.core.browser

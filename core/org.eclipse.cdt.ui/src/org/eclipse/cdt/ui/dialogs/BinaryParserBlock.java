@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -107,25 +108,27 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask("Parsers", 1);
-		if (getContainer().getProject() != null) {
-			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(getContainer().getProject());
-			String selected = comboBox.getText();
-			if (selected != null) {
-				if (initial == null || !selected.equals(initial)) {
+		monitor.beginTask("Setting Binary Parser...", 2);
+		String selected = comboBox.getText();
+		if (selected != null) {
+			if (initial == null || !selected.equals(initial)) {
+				if (getContainer().getProject() != null) {
+					ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(getContainer().getProject());
 					desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 					desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, (String) idMap.get(selected));
 					CCorePlugin.getDefault().getCoreModel().resetBinaryParser(getContainer().getProject());
-					initial = selected;
+				} else {
+					fPrefs.setValue(CCorePlugin.PREF_BINARY_PARSER, (String) idMap.get(selected));
 				}
+				initial = selected;
 			}
-		} else {
-			fPrefs.setDefault(CCorePlugin.PREF_BINARY_PARSER, (String) idMap.get(initial));
 		}
+		monitor.worked(1);
 		// Give a chance to the contributions to save.
 		// We have to do it last to make sure the parser id is save
 		// in .cdtproject
-		super.performApply(monitor);
+		super.performApply(new SubProgressMonitor(monitor, 1));
+		monitor.done();
 	}
 
 	public void setContainer(ICOptionContainer container) {
@@ -168,12 +171,13 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		} else {
 			id = fPrefs.getDefaultString(CCorePlugin.PREF_BINARY_PARSER);
 		}
+		String selected;
 		if (id == null || id.length() == 0) {
-			initial = point.getExtension(CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID).getLabel();
+			selected = point.getExtension(CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID).getLabel();
 		} else {
-			initial = point.getExtension(id).getLabel();
+			selected = point.getExtension(id).getLabel();
 		}
-		comboBox.setText(initial);
+		comboBox.setText(selected);
 		// Give a change to the UI contributors to react.
 		// But do it last after the comboBox is set.
 		handleBinaryParserChanged();

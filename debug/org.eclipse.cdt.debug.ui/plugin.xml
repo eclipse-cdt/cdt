@@ -323,6 +323,14 @@
       <viewerContribution
             targetID="org.eclipse.debug.ui.BreakpointView"
             id="org.eclipse.cdt.debug.ui.breakpointview.popupMenu">
+         <action
+               helpContextId="add_watchpoint_action_context"
+               label="%AddWatchpoint.label"
+               icon="icons/full/elcl16/watchpoint_co.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointActionDelegate"
+               tooltip="%AddWatchpoint.tooltip"
+               menubarPath="additions"
+               id="org.eclipse.cdt.debug.ui.addWatchpoint"/>
       </viewerContribution>
       <viewerContribution
             targetID="#ASMEditorRulerContext"

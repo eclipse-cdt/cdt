@@ -1,3 +1,9 @@
+2005-02-01 Mikhail Khodjaiants
+	Fix for bug 84165: Resurrect the "Add Watchpoint (C/C++)" Code.
+	* plugin.properties
+	* plugin.xml
+	* AddWatchpointActionDelegate.java
+
 2005-01-21 Mikhail Khodjaiants
 	Fix for bug 83437: Loading symbols should be run in the background.
 	* ActionMessages.properties

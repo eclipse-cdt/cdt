@@ -197,6 +197,10 @@ public class CommandFactory {
 		return new MIGDBShowSolibSearchPath();
 	}
 
+	public MIStackInfoDepth createMIStackInfoDepth() {
+		return new MIStackInfoDepth();
+	}
+
 	public MIStackInfoDepth createMIStackInfoDepth(int depth) {
 		return new MIStackInfoDepth(depth);
 	}

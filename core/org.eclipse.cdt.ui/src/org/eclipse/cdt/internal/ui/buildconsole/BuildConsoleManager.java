@@ -132,13 +132,15 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		if (resource != null && resource.getType() == IResource.PROJECT) {
 			if (event.getType() == IResourceChangeEvent.PRE_DELETE || event.getType() == IResourceChangeEvent.PRE_CLOSE) {
 				IDocumentPartitioner partioner = (IDocumentPartitioner)fConsoleMap.remove(resource);
-				partioner.disconnect();
-				Object[] list = listeners.getListeners();
-				if (list.length > 0) {
-					for (int i = 0; i < list.length; i++) {
-						IBuildConsoleListener listener = (IBuildConsoleListener)list[i];
-						ConsoleEvent consoleEvent = new ConsoleEvent(this, (IProject)resource, ConsoleEvent.CONSOLE_CLOSE);
-						listener.consoleChange(consoleEvent);
+				if (partioner != null) {
+					partioner.disconnect();
+					Object[] list = listeners.getListeners();
+					if (list.length > 0) {
+						for (int i = 0; i < list.length; i++) {
+							IBuildConsoleListener listener = (IBuildConsoleListener)list[i];
+							ConsoleEvent consoleEvent = new ConsoleEvent(this, (IProject)resource, ConsoleEvent.CONSOLE_CLOSE);
+							listener.consoleChange(consoleEvent);
+						}
 					}
 				}
 			}

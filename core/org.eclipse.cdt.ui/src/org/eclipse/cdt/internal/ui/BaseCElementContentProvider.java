@@ -280,7 +280,9 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		try {
 			ILibraryReference[] refs = cproject.getLibraryReferences();
-			objects = concatenate(objects, refs);
+			if (refs != null && refs.length > 0) {
+				objects = concatenate(objects, refs);
+			}
 		} catch (CModelException e) {
 		}
 		return objects;
@@ -293,7 +295,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			objects = container.getNonCResources();
 		} catch (CModelException e) {
 		}
-		if (objects == null) {
+		if (objects == null || objects.length == 0) {
 			return children;
 		}
 		return concatenate(children, objects);

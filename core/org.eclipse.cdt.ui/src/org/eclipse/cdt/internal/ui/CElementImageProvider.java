@@ -14,11 +14,13 @@ import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -99,6 +101,15 @@ public class CElementImageProvider {
 		ImageDescriptor descriptor= null;
 		if (element instanceof ICElement) {
 			descriptor= getCImageDescriptor((ICElement) element, flags);
+		} else if (element instanceof IFile) {
+			// Check for Non Translation Unit.
+			IFile file = (IFile)element;
+			CoreModel model = CoreModel.getDefault();
+			if (model.isTranslationUnit(file)) {
+				descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE;
+				Point size= useSmallSize(flags) ? SMALL_SIZE : BIG_SIZE;
+				descriptor = new CElementImageDescriptor(descriptor, 0, size);
+			}
 		}
 		if (descriptor == null && element instanceof IAdaptable) {
 			descriptor= getWorkbenchImageDescriptor((IAdaptable) element, flags);
@@ -278,6 +289,9 @@ public class CElementImageProvider {
 				return CPluginImages.DESC_OBJS_TUNIT;
 				
 			case ICElement.C_CCONTAINER:
+				if (celement instanceof ISourceRoot) {
+					return CPluginImages.DESC_OBJS_SOURCE_ROOT;
+				}
 				return DESC_OBJ_FOLDER;
 			
 			case ICElement.C_PROJECT:

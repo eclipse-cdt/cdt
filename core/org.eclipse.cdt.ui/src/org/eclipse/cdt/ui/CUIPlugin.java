@@ -59,7 +59,6 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static final String EDITOR_ID = PLUGIN_ID + ".editor.CEditor";
 	public static final String CONSOLE_ID = PLUGIN_ID + ".BuildConsoleView";
 	public static final String CVIEW_ID = PLUGIN_ID + ".CView";
-	public static final String MAKEVIEW_ID = PLUGIN_ID + ".MakeView";
 	public static final String C_PROBLEMMARKER = PLUGIN_CORE_ID + ".problem";
 
 	public static final String C_PROJECT_WIZARD_ID = PLUGIN_ID + ".wizards.StdCWizard";

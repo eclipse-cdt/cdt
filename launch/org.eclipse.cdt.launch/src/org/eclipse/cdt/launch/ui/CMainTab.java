@@ -246,7 +246,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		if (fTerminalButton != null) {
 			boolean useTerminal = true;
 			try {
-				useTerminal = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
+				useTerminal = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, ICDTLaunchConfigurationConstants.USE_TERMINAL_DEFAULT);
 			} catch (CoreException e) {
 				LaunchUIPlugin.log(e);
 			}
@@ -597,7 +597,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			initializeProgramName(cElement, config);
 		}
 		if (wantsTerminalOption()) {
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, ICDTLaunchConfigurationConstants.USE_TERMINAL_DEFAULT);
 		}
 	}
 

@@ -120,7 +120,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate {
 				command.add(exePath.toOSString());
 				command.addAll(Arrays.asList(arguments));
 				String[] commandArray = (String[]) command.toArray(new String[command.size()]);
-				boolean usePty = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, true);
+				boolean usePty = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_USE_TERMINAL, ICDTLaunchConfigurationConstants.USE_TERMINAL_DEFAULT);
 				monitor.worked(5);
 				Process process = exec(commandArray, getEnvironment(config), wd, usePty);
 				monitor.worked(3);

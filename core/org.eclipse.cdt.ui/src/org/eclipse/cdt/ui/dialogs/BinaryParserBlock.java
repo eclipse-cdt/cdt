@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -376,6 +377,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			}
 		}
 		binaryList.setCheckedElements(selected);
+		binaryList.getTableViewer().setSelection(new StructuredSelection(selected.get(0)), true);
 		// Give a change to the UI contributors to react.
 		// But do it last after the comboBox is set.
 		handleBinaryParserChanged();

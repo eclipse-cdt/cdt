@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -181,6 +182,7 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		List checkedList = Arrays.asList(parserIDs);
 		fErrorParserList.setElements(checkedList);
 		fErrorParserList.setCheckedElements(checkedList);
+		fErrorParserList.getTableViewer().setSelection(new StructuredSelection(checkedList.get(0)), true);
 		
 		Iterator items =  mapParsers.keySet().iterator();
 		while( items.hasNext()) {

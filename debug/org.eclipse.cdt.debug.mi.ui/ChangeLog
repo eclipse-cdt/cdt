@@ -1,3 +1,11 @@
+2004-04-04 Alain Magloire
+
+	Code from Monta Vista to do a GDBServer launch.
+	The GDBServer launch page.
+	
+	* src/org/eclipse/cdt/debug/mi/internal/ui/GDBServerDebuggerPager.java:
+	* plugin.xml
+
 2003-03-26 Mikhail Khodjaiants
 	Cosmetic changes in the 'MIPreferencePage' class.
 	* MIPreferencePage.java

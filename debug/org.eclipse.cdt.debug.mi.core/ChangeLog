@@ -1,5 +1,14 @@
 2003-04-04 Alain Magloire
 
+	Code from Monta Vista to add a Session via GDBServer.
+	
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java:
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerDebugger.java:
+	* src/org/eclipse/cdt/debug/mi/core/IGDBServerMILaunchConfigurationConstants.java:
+	* plugin.xml
+
+2003-04-04 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdt/VariableManager.java:
 	Check for null in update().
 

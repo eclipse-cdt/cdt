@@ -180,6 +180,8 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		
 		fConstDestButtons= new SelectionButtonDialogFieldGroup(SWT.CHECK, buttonNames2, 3);
 		fConstDestButtons.setDialogFieldListener(adapter);
+		fConstDestButtons.setSelection(1, true);
+		fConstDestButtons.setSelection(2, true);
 				
 		linkedResourceGroupForHeader = new LinkToFileGroup(adapter, this);
 		linkedResourceGroupForHeader.setDialogFieldListener(adapter);
@@ -778,10 +780,6 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 
 	protected IFile createFileHandle(LinkToFileGroup linkedGroup, boolean isHeader) {
 		IWorkspaceRoot root= CUIPlugin.getWorkspace().getRoot();						
-		if (linkedGroup.linkCreated()) {
-			IPath path = (isHeader) ? getHeaderFullPath() : getBodyFullPath();
-			return root.getFile(path);
-		}
 		IPath filePath = getContainerFullPath(linkedGroup);
 		IFile newFile = root.getFileForLocation(filePath);
 		if(newFile == null)
@@ -933,8 +931,9 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 			text.append(lineDelimiter);
 			text.append(lineDelimiter);
 		}
-		
-		if(extendingBase){
+		// add the include statement if we are extending a base class
+		// and we are not already in the base class header file (via link to file option )
+		if((extendingBase) && (!(header.getElementName().equals(baseClassFileName)))){
 			text.append("#include "); //$NON-NLS-1$
 			if (systemIncludePath)
 				text.append('<'); //$NON-NLS-1$
@@ -1006,8 +1005,10 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 	
 	protected String constructBodyFileContent(String lineDelimiter){
 		StringBuffer text = new StringBuffer();
-		text.append("#include \""); //$NON-NLS-1$
-		text.append(getCreatedClassHeaderFile().getElementName());
+		if(getCreatedClassHeaderFile() != null){
+			text.append("#include \""); //$NON-NLS-1$
+			text.append(getCreatedClassHeaderFile().getElementName());
+		}
 		text.append("\""); //$NON-NLS-1$
 		text.append(lineDelimiter);			
 		text.append(lineDelimiter);			

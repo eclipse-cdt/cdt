@@ -1,3 +1,6 @@
+2004-06-24 Hoda Amer
+	A small fix to the New Class Wizard "link to file" option.
+	
 2004-06-24 Chris Wiebe
 	Fix for PR 48783 : [New Class Wizard] Err Create C++ Class with "Link to  File" checkbox selected
 	Fix for PR 47571 : [New Class Wizard] resolved location can be blanked

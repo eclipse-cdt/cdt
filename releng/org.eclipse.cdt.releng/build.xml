@@ -12,7 +12,6 @@
 		<property name="baseLocation" value="${buildDirectory}/eclipse"/>
 		<property name="pde.build.scripts" value="${baseLocation}/plugins/org.eclipse.pde.build_3.0.0/scripts" />
 		<property name="eclipseZip" value="eclipse-SDK.zip"/>
-		<property name="testZip" value="../org.eclipse.test/org.eclipse.test_2.1.0.zip"/>
 		<property name="buildType" value="I" />
 		<property name="buildId" value="${buildType}${timestamp}"/>
 		<property name="siteurl" value="http://update.eclipse.org/tools/cdt/updates/builds/2.0"/>

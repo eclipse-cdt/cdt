@@ -161,7 +161,7 @@
 						    			<font size="1">
 							    			<xsl:text>org.eclipse.cdt-I</xsl:text>
 						    				<xsl:value-of select="substring-after(@label,'CDT Build 2.0.0.')"/>
-							    			<xsl:text>-win32.win32.ppc.zip</xsl:text>
+							    			<xsl:text>-win32.win32.x86.zip</xsl:text>
 							    		</font>
 					    			</a>
 					    		</td>

@@ -1,3 +1,11 @@
+/*******************************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: QNX Software Systems - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.Arrays;
@@ -11,8 +19,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
- * Viewer filter for archive selection dialogs. Archives are files with file
- * extension '.so', '.dll' and '.a'. The filter is not case sensitive.
+ * Viewer filter for archive selection dialogs. Archives are files with file extension '.so', '.dll' and '.a'. The filter is not
+ * case sensitive.
  */
 public class CPElementFilter extends ViewerFilter {
 
@@ -22,10 +30,9 @@ public class CPElementFilter extends ViewerFilter {
 
 	/**
 	 * @param excludedFiles
-	 *        Excluded paths will not pass the filter. <code>null</code> is
-	 *        allowed if no files should be excluded.
+	 *            Excluded paths will not pass the filter. <code>null</code> is allowed if no files should be excluded.
 	 * @param recusive
-	 *        Folders are only shown if, searched recursivly, contain an archive
+	 *            Folders are only shown if, searched recursivly, contain an archive
 	 */
 	public CPElementFilter(CPElement[] excludedElements, int kind, boolean exportedOnly) {
 		if (excludedElements != null) {
@@ -34,20 +41,19 @@ public class CPElementFilter extends ViewerFilter {
 		fKind = kind;
 		fExportedOnly = exportedOnly;
 	}
-	
+
 	public CPElementFilter(int kind, boolean exportedOnly) {
 		this(null, kind, exportedOnly);
 	}
-	
 
 	/*
 	 * @see ViewerFilter#select
 	 */
 	public boolean select(Viewer viewer, Object parent, Object element) {
 		if (element instanceof CPElement) {
-			if (((CPElement) element).getEntryKind() == fKind) {
+			if ( ((CPElement) element).getEntryKind() == fKind) {
 				if (fExcludes != null && !fExcludes.contains(element)) {
-					if (fExportedOnly == true && !((CPElement) element).isExported()) {
+					if (fExportedOnly == true && ! ((CPElement) element).isExported()) {
 						return false;
 					}
 					return true;

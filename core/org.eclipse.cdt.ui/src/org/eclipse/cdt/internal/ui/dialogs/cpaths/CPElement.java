@@ -510,7 +510,7 @@ public class CPElement {
 		elem.setAttribute(BASE, base);
 		elem.setExported(curr.isExported());
 
-		if (project.exists()) {
+		if (project != null && project.exists()) {
 			elem.setIsMissing(isMissing);
 		}
 		return elem;

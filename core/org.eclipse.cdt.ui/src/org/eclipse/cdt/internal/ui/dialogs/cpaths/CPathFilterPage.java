@@ -1,11 +1,11 @@
-/*
- * Created on Apr 26, 2004
- *
- * Copyright (c) 2002,2003 QNX Software Systems Ltd.
+/*******************************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.Arrays;
@@ -13,9 +13,11 @@ import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
@@ -23,9 +25,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -33,21 +32,24 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-
 public class CPathFilterPage extends WizardPage {
+
 	private final int fFilterType;
 
 	private CheckboxTableViewer viewer;
 	private IPathEntry fParentEntry;
 	private List fPaths;
-	private ICProject fCProject;
-			
-	protected CPathFilterPage(ICProject cProject, int filterType) {
+	private ICElement fCElement;
+
+	protected CPathFilterPage(ICElement cElement, int filterType) {
 		super("CPathFilterPage"); //$NON-NLS-1$
+		setTitle(CPathEntryMessages.getString("CPathFilterPage.title")); //$NON-NLS-1$
+		setDescription(CPathEntryMessages.getString("CPathFilterPage.description")); //$NON-NLS-1$
+		setImageDescriptor(CPluginImages.DESC_WIZBAN_ADD_LIBRARY);
 		fFilterType = filterType;
-		fCProject = cProject;
+		fCElement = cElement;
+		validatePage();
 	}
-	
 
 	public void createControl(Composite parent) {
 		Composite container = new Composite(parent, SWT.NULL);
@@ -59,21 +61,13 @@ public class CPathFilterPage extends WizardPage {
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		viewer =
-			CheckboxTableViewer.newCheckList(
-				container,
-				SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		viewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		viewer.setContentProvider(new ListContentProvider());
 		viewer.setLabelProvider(new CPElementLabelProvider());
 		viewer.addCheckStateListener(new ICheckStateListener() {
+
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				// Prevent user to change checkbox states
-				viewer.setChecked(event.getElement(), !event.getChecked());
-			}
-		});
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent e) {
-				handleSelectionChanged((IStructuredSelection) e.getSelection());
+				validatePage();
 			}
 		});
 		viewer.addFilter(new CPElementFilter(fFilterType, true));
@@ -84,14 +78,12 @@ public class CPathFilterPage extends WizardPage {
 		setControl(container);
 		Dialog.applyDialogFont(container);
 	}
-	
-	
+
 	public void setVisible(boolean visible) {
 		if (fPaths != null) {
 			viewer.setInput(fPaths);
 		}
-	}
-	protected void handleSelectionChanged(IStructuredSelection selection) {
+		super.setVisible(visible);
 	}
 
 	public void setParentEntry(IPathEntry entry) {
@@ -107,15 +99,28 @@ public class CPathFilterPage extends WizardPage {
 			}
 		} else if (fParentEntry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
 			try {
-				IPathEntryContainer container = CoreModel.getPathEntryContainer(fParentEntry.getPath(), fCProject);
+				IPathEntryContainer container = CoreModel.getPathEntryContainer(fParentEntry.getPath(), fCElement.getCProject());
 				fPaths = Arrays.asList(container.getPathEntries());
 			} catch (CModelException e) {
 			}
 		}
 	}
-	
+
+	/**
+	 * Method validatePage.
+	 */
+	private void validatePage() {
+		setPageComplete(getSelectedEntries().length > 0);
+	}
+
 	public IPathEntry[] getSelectedEntries() {
-		return (IPathEntry[]) viewer.getCheckedElements();
+		if (viewer != null) {
+			Object[] paths = viewer.getCheckedElements();
+			IPathEntry[] entries = new IPathEntry[paths.length];
+			System.arraycopy(paths, 0, entries, 0, entries.length);
+			return entries;
+		}
+		return new IPathEntry[0];
 	}
 
 }

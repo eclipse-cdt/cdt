@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003, 2004 QNX Software Systems Ltd. and others. All
- * rights reserved. This program and the accompanying materials are made
- * available under the terms of the Common Public License v1.0 which
- * accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004 QNX Software Systems and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: QNX Software Systems - Initial API and implementation
+ * Contributors: QNX Software Systems - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
@@ -22,11 +21,12 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -37,16 +37,27 @@ public class CPathContainerSelectionPage extends WizardPage {
 	private static final String DIALOGSTORE_CONTAINER_IDX= "index"; //$NON-NLS-1$
 
 
-	private static class ClasspathContainerLabelProvider extends LabelProvider {
+	private static class CPathContainerLabelProvider extends LabelProvider {
 		public String getText(Object element) {
 			return ((IContainerDescriptor) element).getName();
 		}
+		
+		public Image getImage(Object element) {
+			return ((IContainerDescriptor) element).getImage();
+		}
 	}
 
-	private static class ClasspathContainerSorter extends ViewerSorter {
+	private static class CPathContainerSorter extends ViewerSorter {
+		
+		public int category(Object element) {
+			if ( element instanceof ProjectContainerDescriptor) {
+				return 0;
+			}
+			return 1;
+		}
 	}
 
-	private ListViewer fListViewer;
+	private TableViewer fListViewer;
 	private IContainerDescriptor[] fContainers;
 	private IDialogSettings fDialogSettings;
 
@@ -75,10 +86,10 @@ public class CPathContainerSelectionPage extends WizardPage {
 	 * @see IDialogPage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
-		fListViewer= new ListViewer(parent, SWT.SINGLE | SWT.BORDER);
-		fListViewer.setLabelProvider(new ClasspathContainerLabelProvider());
+		fListViewer= new TableViewer(parent, SWT.SINGLE | SWT.BORDER);
+		fListViewer.setLabelProvider(new CPathContainerLabelProvider());
 		fListViewer.setContentProvider(new ListContentProvider());
-		fListViewer.setSorter(new ClasspathContainerSorter());
+		fListViewer.setSorter(new CPathContainerSorter());
 		fListViewer.setInput(Arrays.asList(fContainers));
 		fListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -95,10 +106,10 @@ public class CPathContainerSelectionPage extends WizardPage {
 		if (selectionIndex >= fContainers.length) {
 			selectionIndex= 0;
 		}
-		fListViewer.getList().select(selectionIndex);
+		fListViewer.getTable().select(selectionIndex);
 		validatePage();
-		setControl(fListViewer.getList());
-		Dialog.applyDialogFont(fListViewer.getList());
+		setControl(fListViewer.getTable());
+		Dialog.applyDialogFont(fListViewer.getTable());
 	}
 
 	/**
@@ -135,7 +146,7 @@ public class CPathContainerSelectionPage extends WizardPage {
 	 */
 	public void setVisible(boolean visible) {
 		if (!visible && fListViewer != null) {
-			fDialogSettings.put(DIALOGSTORE_CONTAINER_IDX, fListViewer.getList().getSelectionIndex());
+			fDialogSettings.put(DIALOGSTORE_CONTAINER_IDX, fListViewer.getTable().getSelectionIndex());
 		}
 		super.setVisible(visible);
 	}

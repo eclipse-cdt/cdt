@@ -1,25 +1,30 @@
-/***********************************************************************************************************************************
- * Created on Apr 27, 2004
+/*******************************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Copyright (c) 2002,2003 QNX Software Systems Ltd.
- * 
- * Contributors: QNX Software Systems - Initial API and implementation
- **********************************************************************************************************************************/
+ * Contributors: QNX Software Systems - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.internal.ui.util.SelectionUtil;
+import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
 import org.eclipse.cdt.ui.wizards.ICPathContainerPage;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.wizard.WizardPage;
@@ -28,59 +33,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 public class ProjectContainerPage extends WizardPage implements ICPathContainerPage {
 
 	private int fFilterType;
-	private CheckboxTableViewer viewer;
+	private TableViewer viewer;
 	private ICProject fCProject;
-
-	private class WorkbenchCPathContentProvider extends WorkbenchContentProvider {
-
-		public Object[] getChildren(Object element) {
-			if (element instanceof ICProject) {
-				try {
-					IPathEntry[] entries = ((ICProject) element).getRawPathEntries();
-					List list = new ArrayList(entries.length);
-					for (int i = 0; i < entries.length; i++) {
-						if (fFilterType == entries[i].getEntryKind() && entries[i].isExported()) {
-							list.add(CPElement.createFromExisting(entries[i], (ICProject) element));
-						}
-					}
-					return list.toArray();
-				} catch (CModelException e) {
-					CUIPlugin.getDefault().log(e);
-					return new Object[0];
-				}
-			}
-			return super.getChildren(element);
-		}
-
-		public boolean hasChildren(Object element) {
-			if (element instanceof ICProject) {
-				try {
-					IPathEntry[] entries = ((ICProject) element).getRawPathEntries();
-					for (int i = 0; i < entries.length; i++) {
-						if (fFilterType == entries[i].getEntryKind() && entries[i].isExported()) {
-							return true;
-						}
-					}
-				} catch (CModelException e) {
-					CUIPlugin.getDefault().log(e);
-					return false;
-				}
-			}
-			return super.hasChildren(element);
-		}
-
-		public Object getParent(Object element) {
-			if (element instanceof CPElement) {
-				return ((CPElement) element).getCProject().getProject();
-			}
-			return super.getParent(element);
-		}
-	}
 
 	protected ProjectContainerPage(int filterType) {
 		super("projectContainerPage"); //$NON-NLS-1$
@@ -100,9 +59,16 @@ public class ProjectContainerPage extends WizardPage implements ICPathContainerP
 	}
 
 	public IPathEntry[] getContainerEntries() {
-		return /*viewer != null ? (IPathEntry[]) viewer.getCheckedElements(): */new IPathEntry[0];
-	}
+		if (viewer != null) {
+			ISelection selection = viewer.getSelection();
+			ICProject project = (ICProject)SelectionUtil.getSingleElement(selection);
+			if (project != null) {
+				return new IPathEntry[]{CoreModel.newProjectEntry(project.getPath())};
+			}
+		}
+		return new IPathEntry[0];
 
+	}
 	public void setSelection(IPathEntry containerEntry) {
 		if (containerEntry != null) {
 			viewer.setSelection(new StructuredSelection(containerEntry));
@@ -120,12 +86,13 @@ public class ProjectContainerPage extends WizardPage implements ICPathContainerP
 		GridData gd = new GridData();
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
-		viewer = CheckboxTableViewer.newCheckList(container, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		viewer.setContentProvider(new WorkbenchCPathContentProvider());
-		viewer.setLabelProvider(new CPElementLabelProvider());
-		viewer.addCheckStateListener(new ICheckStateListener() {
+		viewer = new TableViewer(container, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 
-			public void checkStateChanged(CheckStateChangedEvent event) {
+		viewer.setContentProvider(new ListContentProvider());
+		viewer.setLabelProvider(new WorkbenchLabelProvider());
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
 				validatePage();
 			}
 		});
@@ -136,11 +103,34 @@ public class ProjectContainerPage extends WizardPage implements ICPathContainerP
 		viewer.addFilter(new ViewerFilter() {
 
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				return true;
+				return !element.equals(fCProject);
 			}
 		});
 		setControl(container);
+		initializeView();
 		validatePage();
+	}
+
+	private void initializeView() {
+		List list = new ArrayList();
+		List current;
+		try {
+			current = Arrays.asList(fCProject.getRawPathEntries());
+			ICProject[] cProjects = CoreModel.getDefault().getCModel().getCProjects();
+			for (int i = 0; i < cProjects.length; i++) {
+				if (!cProjects[i].equals(fCProject) && !current.contains(CoreModel.newProjectEntry(cProjects[i].getPath()))) {
+					IPathEntry[] projEntries = cProjects[i].getRawPathEntries();
+					for (int j = 0; j < projEntries.length; j++) {
+						if (projEntries[j].getEntryKind() == fFilterType && projEntries[j].isExported()) {
+							list.add(cProjects[i]);
+							break;
+						}
+					}
+				}
+			}
+		} catch (CModelException e) {
+		}
+		viewer.setInput(list);
 	}
 
 	/**

@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003, 2004 QNX Software Systems Ltd. and others. All
- * rights reserved. This program and the accompanying materials are made
- * available under the terms of the Common Public License v1.0 which accompanies
- * this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004 QNX Software Systems and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: QNX Software Systems - Initial API and implementation
+ * Contributors: QNX Software Systems - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
@@ -47,15 +46,16 @@ public class CPathSymbolEntryPage extends ExtendedCPathBasePage {
 				addSymbol();
 				break;
 			case IDX_ADD_CONTRIBUTED :
+				addContributed();
 				break;
 			case IDX_EDIT :
 				if (canEdit(selected)) {
-					editSymbol((CPElement) selected.get(0));
+					editSymbol((CPElement)selected.get(0));
 				}
 				break;
 			case IDX_REMOVE :
 				if (canRemove(selected)) {
-					removeSymbol((CPElement) selected.get(0));
+					removeSymbol((CPElement)selected.get(0));
 				}
 				break;
 		}
@@ -73,7 +73,7 @@ public class CPathSymbolEntryPage extends ExtendedCPathBasePage {
 
 	protected boolean canEdit(List selected) {
 		if (!selected.isEmpty()) {
-			return !isPathInheritedFromSelected((CPElement) selected.get(0));
+			return !isPathInheritedFromSelected((CPElement)selected.get(0));
 		}
 		return false;
 	}
@@ -105,7 +105,7 @@ public class CPathSymbolEntryPage extends ExtendedCPathBasePage {
 			symbol = dialog.getValue();
 			if (symbol != null && symbol.length() > 0) {
 				List cplist = getPathList().getElements();
-				IResource resource = ((ICElement) getSelection().get(0)).getResource();
+				IResource resource = ((ICElement)getSelection().get(0)).getResource();
 				CPElement newPath = new CPElement(fCurrCProject, IPathEntry.CDT_MACRO, resource.getFullPath(), resource);
 				String name, value = ""; //$NON-NLS-1$
 				int index = symbol.indexOf("="); //$NON-NLS-1$
@@ -156,17 +156,18 @@ public class CPathSymbolEntryPage extends ExtendedCPathBasePage {
 			title = CPathEntryMessages.getString("SymbolEntryPage.ContainerDialog.edit.title"); //$NON-NLS-1$
 			elem = existing.getPathEntry();
 		}
-		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, fCurrCProject, getRawClasspath(), IPathEntry.CDT_INCLUDE);
+		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, (ICElement)getSelection().get(0), getRawClasspath(),
+				IPathEntry.CDT_MACRO);
 		wizard.setWindowTitle(title);
 		if (CPathContainerWizard.openWizard(getShell(), wizard) == Window.OK) {
 			IPathEntry parent = wizard.getEntriesParent();
 			IPathEntry[] elements = wizard.getEntries();
-			IResource resource = ((ICElement) getSelection().get(0)).getResource();
+			IResource resource = ((ICElement)getSelection().get(0)).getResource();
 			if (elements != null) {
 				CPElement[] res = new CPElement[elements.length];
 				for (int i = 0; i < res.length; i++) {
 					res[i] = new CPElement(fCurrCProject, IPathEntry.CDT_MACRO, resource.getFullPath(), resource);
-					res[i].setAttribute(CPElement.MACRO_NAME, ((IMacroEntry)elements[i]).getMacroName());					
+					res[i].setAttribute(CPElement.MACRO_NAME, ((IMacroEntry)elements[i]).getMacroName());
 					res[i].setAttribute(CPElement.BASE_REF, parent.getPath());
 				}
 				return res;

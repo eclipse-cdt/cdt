@@ -1,11 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003, 2004 QNX Software Systems Ltd. and others. All
- * rights reserved. This program and the accompanying materials are made
- * available under the terms of the Common Public License v1.0 which accompanies
- * this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004 QNX Software Systems and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: QNX Software Systems - Initial API and implementation
+ * Contributors: QNX Software Systems - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
@@ -51,7 +50,7 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 	private static final int IDX_EDIT = 4;
 	private static final int IDX_REMOVE = 5;
 
-	private static final String[] buttonLabel = new String[] {
+	private static final String[] buttonLabel = new String[]{
 	/* 0 */CPathEntryMessages.getString("IncludeEntryPage.addExternal"), //$NON-NLS-1$
 			/* 1 */CPathEntryMessages.getString("IncludeEntryPage.addFromWorkspace"), //$NON-NLS-1$
 			/* 2 */CPathEntryMessages.getString("IncludeEntryPage.addContributed"), null, //$NON-NLS-1$
@@ -65,23 +64,23 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 
 	protected void buttonPressed(int indx, List selected) {
 		switch (indx) {
-			case IDX_ADD_USER:
+			case IDX_ADD_USER :
 				addInclude();
 				break;
-			case IDX_ADD_WORKSPACE:
+			case IDX_ADD_WORKSPACE :
 				addFromWorkspace();
 				break;
-			case IDX_ADD_CONTRIBUTED:
+			case IDX_ADD_CONTRIBUTED :
 				addContributed();
 				break;
-			case IDX_EDIT:
+			case IDX_EDIT :
 				if (canEdit(selected)) {
-					editInclude((CPElement) selected.get(0));
+					editInclude((CPElement)selected.get(0));
 				}
 				break;
-			case IDX_REMOVE:
+			case IDX_REMOVE :
 				if (canRemove(selected)) {
-					removeInclude((CPElement) selected.get(0));
+					removeInclude((CPElement)selected.get(0));
 				}
 				break;
 		}
@@ -109,7 +108,7 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 
 	protected boolean canEdit(List selected) {
 		if (!selected.isEmpty()) {
-			return !isPathInheritedFromSelected((CPElement) selected.get(0));
+			return !isPathInheritedFromSelected((CPElement)selected.get(0));
 		}
 		return false;
 	}
@@ -130,7 +129,7 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 			newItem = dialog.getValue();
 			if (newItem != null && !newItem.equals("")) { //$NON-NLS-1$
 				List cplist = getPathList().getElements();
-				ICElement element = (ICElement) getSelection().get(0);
+				ICElement element = (ICElement)getSelection().get(0);
 				CPElement newPath = new CPElement(element.getCProject(), IPathEntry.CDT_INCLUDE, element.getPath(),
 						element.getResource());
 				newPath.setAttribute(CPElement.INCLUDE, new Path(newItem));
@@ -166,7 +165,7 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 	}
 
 	protected CPElement[] openWorkspacePathEntryDialog(CPElement existing) {
-		Class[] acceptedClasses = new Class[] { ICProject.class, IProject.class, IContainer.class, ICContainer.class};
+		Class[] acceptedClasses = new Class[]{ICProject.class, IProject.class, IContainer.class, ICContainer.class};
 		TypedElementSelectionValidator validator = new TypedElementSelectionValidator(acceptedClasses, existing == null);
 		ViewerFilter filter = new TypedViewerFilter(acceptedClasses);
 
@@ -191,16 +190,16 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
 			CPElement[] res = new CPElement[elements.length];
-			ICElement element = (ICElement) getSelection().get(0);
+			ICElement element = (ICElement)getSelection().get(0);
 			for (int i = 0; i < res.length; i++) {
 				IProject project;
 				IPath includePath;
 				if (elements[i] instanceof IResource) {
-					project = ((IResource) elements[i]).getProject();
-					includePath = ((IResource) elements[i]).getProjectRelativePath();
+					project = ((IResource)elements[i]).getProject();
+					includePath = ((IResource)elements[i]).getProjectRelativePath();
 				} else {
-					project = ((ICElement) elements[i]).getCProject().getProject();
-					includePath = ((ICElement) elements[i]).getResource().getProjectRelativePath();
+					project = ((ICElement)elements[i]).getCProject().getProject();
+					includePath = ((ICElement)elements[i]).getResource().getProjectRelativePath();
 				}
 				res[i] = new CPElement(element.getCProject(), IPathEntry.CDT_INCLUDE, element.getPath(), element.getResource());
 				res[i].setAttribute(CPElement.BASE, project.getFullPath().makeRelative());
@@ -220,12 +219,13 @@ public class CPathIncludeEntryPage extends ExtendedCPathBasePage {
 			title = CPathEntryMessages.getString("IncludeEntryPage.ContainerDialog.edit.title"); //$NON-NLS-1$
 			elem = existing.getPathEntry();
 		}
-		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, fCurrCProject, getRawClasspath(), IPathEntry.CDT_INCLUDE);
+		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, (ICElement)getSelection().get(0), getRawClasspath(),
+				IPathEntry.CDT_INCLUDE);
 		wizard.setWindowTitle(title);
 		if (CPathContainerWizard.openWizard(getShell(), wizard) == Window.OK) {
 			IPathEntry parent = wizard.getEntriesParent();
 			IPathEntry[] elements = wizard.getEntries();
-			IResource resource = ((ICElement) getSelection().get(0)).getResource();
+			IResource resource = ((ICElement)getSelection().get(0)).getResource();
 
 			if (elements != null) {
 				CPElement[] res = new CPElement[elements.length];

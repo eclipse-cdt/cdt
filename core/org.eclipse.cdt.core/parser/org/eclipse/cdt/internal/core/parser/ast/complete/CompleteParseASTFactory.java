@@ -448,12 +448,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		ISymbol symbol = lookupQualifiedName( 
 			scopeToSymbol( scope), duple, references, true ); 
 
+		
 		IUsingDirectiveSymbol usingDirective = null;
-		try {
-			usingDirective = ((ASTScope)scope).getContainerSymbol().addUsingDirective( (IContainerSymbol)symbol );
-		} catch (ParserSymbolTableException pste) {
-			handleProblem( pste.createProblemID(), duple.toString(), startingOffset, endingOffset, startingLine );
-		}
+		if( symbol != null )
+			try {
+				usingDirective = ((ASTScope)scope).getContainerSymbol().addUsingDirective( (IContainerSymbol)symbol );
+			} catch (ParserSymbolTableException pste) {
+				handleProblem( pste.createProblemID(), duple.toString(), startingOffset, endingOffset, startingLine );
+			}
 		
 		return new ASTUsingDirective( scopeToSymbol(scope), usingDirective, startingOffset, startingLine, endingOffset, endingLine, references );
     }

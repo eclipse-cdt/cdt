@@ -1,3 +1,8 @@
+2003-02-06 David Inglis
+	* src/.../launch/internal/CApplicationLaunchShortcut.java
+	* src/.../launch/ui/CMainTab.java
+	Change to use WorkbenchLabelProvider
+	
 2003-01-29 David Inglis
 	* src/.../launch/internal/ui/LaunchUIPluging.java (getShell)
 	change so that it will always return a shell.

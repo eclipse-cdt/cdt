@@ -11,7 +11,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.internal.ui.CElementLabelProvider;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -39,6 +38,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  */
@@ -254,7 +254,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 	 * @return the selected binary or <code>null</code> if none.
 	 */
 	protected IBinary chooseBinary(List binList, String mode) {
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new CElementLabelProvider());
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), new WorkbenchLabelProvider());
 		dialog.setElements(binList.toArray());
 		dialog.setTitle("C ApplicationAction"); //$NON-NLS-1$
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {

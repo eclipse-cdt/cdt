@@ -15,7 +15,6 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.internal.ui.CElementLabelProvider;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
@@ -40,6 +39,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * A launch configuration tab that displays and edits project and
@@ -197,7 +197,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		}
 
 		IBinary[] executables = getBinaryFiles(getCProject());
-		ILabelProvider labelProvider = new CElementLabelProvider();
+		ILabelProvider labelProvider = new WorkbenchLabelProvider();
 			ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setElements(executables);
 		dialog.setMessage("Choose a &program to run");
@@ -243,7 +243,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		ICProject[] projects;
 		projects = getCProjects();
 
-		ILabelProvider labelProvider = new CElementLabelProvider();
+		ILabelProvider labelProvider = new WorkbenchLabelProvider();
 		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
 		dialog.setTitle("Project Selection");
 		dialog.setMessage("Choose a &project to constrain the search for a program");

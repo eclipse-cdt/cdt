@@ -61,6 +61,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescripto
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
+import org.eclipse.cdt.internal.core.parser.ast.ASTParameterDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.pst.ForewardDeclaredSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
@@ -718,24 +719,26 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         IContainerSymbol startingScope = scopeToSymbol( scope );
                 
         //look up typeId & add to references
-        if( typeId != null )
-        	lookupQualifiedName( startingScope, typeId, references, false );
+		ISymbol symbol = null;
+        if( typeId != null ){
+			 symbol = lookupQualifiedName( startingScope, typeId, references, false );
+        }
 		
 		if (kind == IASTExpression.Kind.POSTFIX_FUNCTIONCALL){        							
 			ITokenDuple functionId = ((ASTExpression)lhs).getTypeId();
 			List parameters = ((ASTExpression)rhs).getResultType();
-			lookupQualifiedName(startingScope, functionId, TypeInfo.t_function, parameters, references, false);	        	
+			symbol = lookupQualifiedName(startingScope, functionId, TypeInfo.t_function, parameters, references, false);	        	
 		}
         
         ASTExpression expression =  new ASTExpression( kind, lhs, rhs, thirdExpression, 
         							typeId,	literal, newDescriptor, references);
 		       							
-		expression.setResultType (getExpressionResultType(expression));
+		expression.setResultType (getExpressionResultType(expression, symbol));
         							
         return expression;
     }
 
-	protected List getExpressionResultType(IASTExpression expression){
+	protected List getExpressionResultType(IASTExpression expression, ISymbol symbol){
 		List result = new ArrayList();
 		
 		if (expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_EMPTY) {
@@ -765,6 +768,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if (expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL){
 			TypeInfo info = new TypeInfo();
 			info.setType(TypeInfo.t_bool);
+			result.add(info);
+			return result;
+		}
+		if (expression.getExpressionKind() == IASTExpression.Kind.ID_EXPRESSION){
+			TypeInfo info = new TypeInfo();
+			info.setType(TypeInfo.t_type);
+			if(symbol != null)
+				info.setTypeSymbol(symbol);			
 			result.add(info);
 			return result;
 		}
@@ -798,9 +809,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			return result;			
 		}
 		if(expression.getExpressionKind() == IASTExpression.Kind.POSTFIX_FUNCTIONCALL){
-			TypeInfo type = new TypeInfo();
-			type.setType(TypeInfo.t_function);
-			result.add(type);
+			TypeInfo info = new TypeInfo();
+			info.setType(TypeInfo.t_function);
+			if(symbol != null)
+				info.setTypeSymbol(symbol);			
+			result.add(info);
 			return result;
 		}
 		return result;
@@ -1012,8 +1025,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if((parentScope != null) && (parentScope.getType() == TypeInfo.t_class)){
 				// find out the visibility of the method's declaration
 				List functionReferences = new ArrayList();
+				List functionParameters = new LinkedList();
+				// the lookup requires a list of type infos
+				// instead of a list of IASTParameterDeclaration
+				Iterator p = parameters.iterator();
+				while (p.hasNext()){
+					ASTParameterDeclaration param = (ASTParameterDeclaration)p.next();
+					functionParameters.add(getParameterTypeInfo(param));
+				}
 				IParameterizedSymbol methodDeclaration = 
-					(IParameterizedSymbol) lookupQualifiedName(parentScope, functionName, TypeInfo.t_function, parameters, 0, functionReferences, false);
+					(IParameterizedSymbol) lookupQualifiedName(parentScope, functionName, TypeInfo.t_function, functionParameters, 0, functionReferences, false);
 				if(methodDeclaration != null){
 					ASTMethodReference reference = (ASTMethodReference) functionReferences.iterator().next();
 					visibility = ((IASTMethod)reference.getReferencedElement()).getVisiblity();		
@@ -1074,92 +1095,108 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         }
     }
 
-    /**
-     * @param symbol
-     * @param returnType
-     */
-    protected void setParameter(IParameterizedSymbol symbol, IASTAbstractDeclaration absDecl, boolean isParameter, List references) throws ASTSemanticException
-    {
-    	if (absDecl.getTypeSpecifier() == null)
-    		return;
-    		
-    	TypeInfo.eType type = null;
-    	ISymbol xrefSymbol = null;
-    	List newReferences = null; 
-        if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ) 
-        {
-        	IASTSimpleTypeSpecifier.Type kind = ((IASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getType();
-        	if( kind == IASTSimpleTypeSpecifier.Type.BOOL )
-        		type = TypeInfo.t_bool;
-        	else if( kind == IASTSimpleTypeSpecifier.Type.CHAR )
-        		type = TypeInfo.t_char;
-        	else if( kind == IASTSimpleTypeSpecifier.Type.DOUBLE )
-        		type = TypeInfo.t_double;
-        	else if( kind == IASTSimpleTypeSpecifier.Type.FLOAT )
-        		type = TypeInfo.t_float; 
-        	else if( kind == IASTSimpleTypeSpecifier.Type.INT )
-        		type = TypeInfo.t_int;
-        	else if( kind == IASTSimpleTypeSpecifier.Type.VOID )
-        		type = TypeInfo.t_void;
-        	else if( kind == IASTSimpleTypeSpecifier.Type.WCHAR_T)
-        		type = TypeInfo.t_wchar_t;
-        	else if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
-        	{
-        		type = TypeInfo.t_type;
-        		xrefSymbol = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol(); 
-        		newReferences = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getReferences();
-        	}
-        	else
-        		throw new ASTSemanticException(); 
-        }
-        else if( absDecl.getTypeSpecifier() instanceof IASTClassSpecifier )
-        {
-        	ASTClassKind kind = ((IASTClassSpecifier)absDecl.getTypeSpecifier()).getClassKind();
-        	if( kind == ASTClassKind.CLASS )
-        		type = TypeInfo.t_class;
-        	else if( kind == ASTClassKind.STRUCT )
-				type = TypeInfo.t_struct;
+	protected TypeInfo getParameterTypeInfo( IASTAbstractDeclaration absDecl)throws ASTSemanticException{
+		TypeInfo type = new TypeInfo();
+		if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ) 
+		{
+			IASTSimpleTypeSpecifier.Type kind = ((IASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getType();
+			if( kind == IASTSimpleTypeSpecifier.Type.BOOL )
+				type.setType(TypeInfo.t_bool);
+			else if( kind == IASTSimpleTypeSpecifier.Type.CHAR )
+				type.setType(TypeInfo.t_char);
+			else if( kind == IASTSimpleTypeSpecifier.Type.DOUBLE )
+				type.setType(TypeInfo.t_double);
+			else if( kind == IASTSimpleTypeSpecifier.Type.FLOAT )
+				type.setType(TypeInfo.t_float); 
+			else if( kind == IASTSimpleTypeSpecifier.Type.INT )
+				type.setType(TypeInfo.t_int);
+			else if( kind == IASTSimpleTypeSpecifier.Type.VOID )
+				type.setType(TypeInfo.t_void);
+			else if( kind == IASTSimpleTypeSpecifier.Type.WCHAR_T)
+				type.setType(TypeInfo.t_wchar_t);
+			else if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
+				type.setType(TypeInfo.t_type);
+			else
+				throw new ASTSemanticException(); 
+		}
+		else if( absDecl.getTypeSpecifier() instanceof IASTClassSpecifier )
+		{
+			ASTClassKind kind = ((IASTClassSpecifier)absDecl.getTypeSpecifier()).getClassKind();
+			if( kind == ASTClassKind.CLASS )
+				type.setType(TypeInfo.t_class);
+			else if( kind == ASTClassKind.STRUCT )
+				type.setType(TypeInfo.t_struct);
 			else if( kind == ASTClassKind.UNION )
-				type = TypeInfo.t_union;
+				type.setType(TypeInfo.t_union);
 			else
 				throw new ASTSemanticException();
-        }
-        else if( absDecl.getTypeSpecifier() instanceof IASTEnumerationSpecifier )
-        {
-        	type = TypeInfo.t_enumeration;
-        }
-        else if( absDecl.getTypeSpecifier() instanceof IASTElaboratedTypeSpecifier )
-        {
+		}
+		else if( absDecl.getTypeSpecifier() instanceof IASTEnumerationSpecifier )
+		{
+			type.setType(TypeInfo.t_enumeration);
+		}
+		else if( absDecl.getTypeSpecifier() instanceof IASTElaboratedTypeSpecifier )
+		{
 			ASTClassKind kind = ((IASTElaboratedTypeSpecifier)absDecl.getTypeSpecifier()).getClassKind();
 			if( kind == ASTClassKind.CLASS )
-				type = TypeInfo.t_class;
+				type.setType(TypeInfo.t_class);
 			else if( kind == ASTClassKind.STRUCT )
-				type = TypeInfo.t_struct;
+				type.setType(TypeInfo.t_struct);
 			else if( kind == ASTClassKind.UNION )
-				type = TypeInfo.t_union;
+				type.setType(TypeInfo.t_union);
 			else if( kind == ASTClassKind.ENUM )
-				type = TypeInfo.t_enumeration;
+				type.setType(TypeInfo.t_enumeration);
 			else
 				throw new ASTSemanticException();
-        }
-        else
-        	throw new ASTSemanticException(); 
-        
-        ISymbol paramSymbol = pst.newSymbol( "", type );
-        if( xrefSymbol != null )
-        	paramSymbol.setTypeSymbol( xrefSymbol );
-        
-        setPointerOperators( paramSymbol, absDecl.getPointerOperators(), absDecl.getArrayModifiers() );
-
-        if( isParameter)
-        	symbol.addParameter( paramSymbol );
-        else
+		}
+		else
+			throw new ASTSemanticException(); 		
+		return type;		
+	}
+    /**
+	 * @param symbol
+	 * @param returnType
+	 */
+	protected void setParameter(IParameterizedSymbol symbol, IASTAbstractDeclaration absDecl, boolean isParameter, List references) throws ASTSemanticException
+	{
+		if (absDecl.getTypeSpecifier() == null)
+			return;
+	
+		// now determined by another function    		
+		TypeInfo.eType type = getParameterTypeInfo(absDecl).getType();
+		
+		ISymbol xrefSymbol = null;
+		List newReferences = null; 
+	    if( absDecl.getTypeSpecifier() instanceof IASTSimpleTypeSpecifier ) 
+	    {
+	    	IASTSimpleTypeSpecifier.Type kind = ((IASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getType();
+	   		if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
+	    	{
+	    		xrefSymbol = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getSymbol(); 
+	    		newReferences = ((ASTSimpleTypeSpecifier)absDecl.getTypeSpecifier()).getReferences();
+	    	}
+	    }
+	    
+	    String paramName = "";
+	    if(absDecl instanceof IASTParameterDeclaration){
+	    	paramName = ((IASTParameterDeclaration)absDecl).getName();
+	    }
+	    
+	    ISymbol paramSymbol = pst.newSymbol( paramName, type );
+	    if( xrefSymbol != null )
+	    	paramSymbol.setTypeSymbol( xrefSymbol.getTypeSymbol() );
+	    
+	    setPointerOperators( paramSymbol, absDecl.getPointerOperators(), absDecl.getArrayModifiers() );
+	
+	    if( isParameter)
+	    	symbol.addParameter( paramSymbol );
+	    else
 			symbol.setReturnType( paramSymbol );
 			
 		if( newReferences != null )
 			references.addAll( newReferences );
 		
-    }
+	}
 
     /**
      * @param paramSymbol
@@ -1391,13 +1428,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	symbolToBeCloned = ((ASTSimpleTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol();
             references.addAll( ((ASTSimpleTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getReferences() );
         }
-        else if( abstractDeclaration.getTypeSpecifier() instanceof ASTClassSpecifier )
+        else if( abstractDeclaration.getTypeSpecifier() instanceof ASTClassSpecifier )  
         {
-        	symbolToBeCloned = ((ASTClassSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol();
-        }
-		else if( abstractDeclaration.getTypeSpecifier() instanceof ASTElaboratedTypeSpecifier )
+            symbolToBeCloned = pst.newSymbol(name, TypeInfo.t_type);
+            symbolToBeCloned.setTypeSymbol(((ASTClassSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol());
+		}
+		else if( abstractDeclaration.getTypeSpecifier() instanceof ASTElaboratedTypeSpecifier ) 
 		{
-			symbolToBeCloned = ((ASTElaboratedTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol();
+			symbolToBeCloned = pst.newSymbol(name, TypeInfo.t_type);
+			symbolToBeCloned.setTypeSymbol(((ASTElaboratedTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol());
 		}
 		newSymbol = (ISymbol) symbolToBeCloned.clone(); 
 		newSymbol.setName( name );

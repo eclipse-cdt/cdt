@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTFunctionReference;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -525,21 +526,26 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 	
 	public void testQualifiedNameReferences() throws Exception
 	{
-		Iterator i = parse( "class A{ class B{ class C { public: int cMethod(); }; }; }; \n  int A::B::C::cMethod() {}; \n" ).getDeclarations();
-		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-		Iterator j = getDeclarations(classA);
-		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)j.next()).getTypeSpecifier();
-		Iterator k = getDeclarations(classB);
-		IASTClassSpecifier classC = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)k.next()).getTypeSpecifier();
-		
-		// Note : this used to be considered a function, not a method
-		IASTMethod method = (IASTMethod)i.next(); 
-		
-		assertEquals( callback.getReferences().size(), 3 );
-		Iterator references = callback.getReferences().iterator();
-		assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classA );
-		assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classB );
-		assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classC );
+		try { // This is to prove that there are no exceptions
+			// Used to cause AST Semantic exception
+			Iterator i = parse( "class A{ class B{ class C { public: int cMethod(); }; }; }; \n  int A::B::C::cMethod() {}; \n" ).getDeclarations();
+			IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+			Iterator j = getDeclarations(classA);
+			IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)j.next()).getTypeSpecifier();
+			Iterator k = getDeclarations(classB);
+			IASTClassSpecifier classC = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)k.next()).getTypeSpecifier();
+			
+			// Note : this used to be considered a function, not a method
+			IASTMethod method = (IASTMethod)i.next(); 
+			
+			assertEquals( callback.getReferences().size(), 3 );
+			Iterator references = callback.getReferences().iterator();
+			assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classA );
+			assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classB );
+			assertEquals( ((IASTClassReference)references.next()).getReferencedElement(), classC );
+		}catch (Exception e){
+			fail();
+		}
 	}
 
 	public void testIsConstructor() throws Exception
@@ -618,5 +624,33 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTField intV  = (IASTField)sub.next();
 		IASTField charA = (IASTField)sub.next();
 	}
+	
+	public void testExpressionResultValueWithSimpleTypes() throws Exception
+	{
+		Iterator i = parse ("int f(int, int); \n int f(int); \n int x = f(1, 2+3);").getDeclarations();
+		IASTFunction f1 = (IASTFunction) i.next();
+		IASTFunction f2 = (IASTFunction) i.next();
+		IASTVariable x  = (IASTVariable) i.next();
+		Iterator references = callback.getReferences().iterator();
+		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
+		assertEquals( fr1.getReferencedElement(), f1 );
+		 
+	}	
+
+	public void testExpressionResultValueWithReferenceTypes() throws Exception
+	{
+		Iterator i = parse ("class A{}a;  \n int f(A a); \n int x = f(a);").getDeclarations();
+		IASTVariable a  = (IASTVariable) i.next();
+		IASTFunction f1 = (IASTFunction) i.next();
+		IASTVariable x  = (IASTVariable) i.next();
+		Iterator references = callback.getReferences().iterator();
+		IASTClassReference clr1 = (IASTClassReference) references.next();
+		IASTFunctionReference fr1 = (IASTFunctionReference) references.next();
+		IASTVariableReference ar1 = (IASTVariableReference) references.next();
+		IASTFunctionReference fr2 = (IASTFunctionReference) references.next();
+		assertEquals( ar1.getReferencedElement(), a );
+		assertEquals( fr2.getReferencedElement(), f1 );
+		 
+	}	
 	
 }

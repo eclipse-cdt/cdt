@@ -17,20 +17,22 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 public interface ICDIMemoryManager extends ICDISessionObject
 {
 	/**
-	 * Adds the given memory block to the debug session.
+	 * Returns a memory block specified by given identifier.
 	 * 
-	 * @param memoryBlock - the memory block to be added
-	 * @exception CDIException on failure. Reasons include:
+	 * @param address 
+	 * @param length - how much for address
+	 * @return a memory block with the specified identifier
+	 * @throws CDIException on failure. Reasons include:
 	 */
-	void addBlock( ICDIMemoryBlock memoryBlock ) throws CDIException;
-	
+	ICDIMemoryBlock createMemoryBlock(long address, int length) throws CDIException;
+
 	/**
 	 * Removes the given memory block from the debug session.
 	 * 
 	 * @param memoryBlock - the memory block to be removed
 	 * @exception CDIException on failure. Reasons include:
 	 */
-	void removeBlock( ICDIMemoryBlock memoryBlock );
+	void removeBlock(ICDIMemoryBlock memoryBlock) throws CDIException;
 	
 	/**
 	 * Removes the given array of memory blocks from the debug session.
@@ -38,7 +40,7 @@ public interface ICDIMemoryManager extends ICDISessionObject
 	 * @param memoryBlock - the array of memory blocks to be removed
 	 * @exception CDIException on failure. Reasons include:
 	 */
-	void removeBlocks( ICDIMemoryBlock[] memoryBlocks ) throws CDIException;;
+	void removeBlocks(ICDIMemoryBlock[] memoryBlocks) throws CDIException;;
 	
 	/**
 	 * Removes all memory blocks from the debug session.
@@ -47,14 +49,6 @@ public interface ICDIMemoryManager extends ICDISessionObject
 	 */
 	void removeAllBlocks() throws CDIException;
 
-	/**
-	 * Returns a memory block specified by given identifier.
-	 * 
-	 * @param id - the block identifier
-	 * @return a memory block with the specified identifier
-	 * @throws CDIException on failure. Reasons include:
-	 */
-	ICDIMemoryBlock getBlock( String id ) throws CDIException;
 	
 	/**
 	 * Returns an array of all memory blocks set for this debug session.
@@ -62,5 +56,5 @@ public interface ICDIMemoryManager extends ICDISessionObject
 	 * @return an array of all memory blocks set for this debug session
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	ICDIMemoryBlock[] getBlocks() throws CDIException;
+	ICDIMemoryBlock[] getMemoryBlocks() throws CDIException;
 }

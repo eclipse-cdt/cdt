@@ -12,13 +12,12 @@ Java_org_eclipse_cdt_utils_pty_PTY_forkpty (JNIEnv *env, jobject jobj) {
 	jstring jstr = NULL;
 	int master = -1;
 	char line[1024];	/* FIXME: Should be enough */
-	int err;
 	jclass cls;
 
 	line[0] = '\0';
 
 	master = ptym_open(line);
-	if (err >= 0) {
+	if (master >= 0) {
 		/* Get a reference to the obj's class */
 		cls = (*env)->GetObjectClass(env, jobj);
 

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 
 /**
  * @author jcamelon
@@ -44,6 +45,7 @@ public class ASTIdExpression extends ASTExpression {
 		return idExpression;
 	}
 	
-	
-
+	public String toString(){
+		return ASTUtil.getExpressionString( this );
+	}
 }

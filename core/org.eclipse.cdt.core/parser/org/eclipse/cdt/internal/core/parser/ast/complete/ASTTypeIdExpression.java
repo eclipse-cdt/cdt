@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
@@ -50,5 +51,9 @@ public class ASTTypeIdExpression extends ASTExpression {
 	public void freeReferences(IReferenceManager manager) {
 		super.freeReferences(manager);
 		typeId.freeReferences(manager);
+	}
+	
+	public String toString(){
+		return ASTUtil.getExpressionString( this );
 	}
 }

@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
@@ -83,5 +84,9 @@ public class ASTUnaryExpression extends ASTExpression {
 	public void freeReferences(IReferenceManager manager) {
 		super.freeReferences(manager);
 		lhs.freeReferences(manager);
+	}
+	
+	public String toString(){
+		return ASTUtil.getExpressionString( this );
 	}
 }

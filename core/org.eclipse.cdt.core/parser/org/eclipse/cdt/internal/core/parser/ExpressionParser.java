@@ -1966,8 +1966,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        setCompletionValues( scope, CompletionKind.CONSTRUCTOR_REFERENCE  );
 	        if( templateIdScopes != null ){	templateIdScopes.push( new Integer( IToken.tLPAREN ) ); }
 	        
-	        if ( queryLookaheadCapability() && (LT(1) != IToken.tRPAREN))
-	        	newInitializerExpressions.add(expression(scope, CompletionKind.CONSTRUCTOR_REFERENCE, key));
+	        //we want to know the difference between no newInitializer and an empty new Initializer
+	        //if the next token is the RPAREN, then we have an Empty expression in our list.
+        	newInitializerExpressions.add(expression(scope, CompletionKind.CONSTRUCTOR_REFERENCE, key));
 	        
 	        setCurrentFunctionName( EMPTY_STRING ); 
 	        consume(IToken.tRPAREN);
@@ -2139,26 +2140,15 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    {
 	        case IToken.t_typename :
 	            consume(IToken.t_typename);
-	            ITokenDuple nestedName = name(scope, CompletionKind.TYPE_REFERENCE, KeywordSetKey.EMPTY);
+	            
 				boolean templateTokenConsumed = false;
 				if( LT(1) == IToken.t_template )
 				{
 				  consume( IToken.t_template ); 
 				  templateTokenConsumed = true;
 				}
-				IToken current = mark(); 
-				ITokenDuple templateId = null;
-				try
-				{
-					templateId = TokenFactory.createTokenDuple( current, templateId(scope, CompletionKind.SINGLE_NAME_REFERENCE ) ); 
-				}
-				catch( BacktrackException bt )
-				{
-					if( templateTokenConsumed )
-						throw bt;
-					backup( current );
-				}
-				current = null;
+				ITokenDuple nestedName = name(scope, CompletionKind.TYPE_REFERENCE, KeywordSetKey.EMPTY);
+				
 	            consume( IToken.tLPAREN ); 
 	            if( templateIdScopes != null ){ templateIdScopes.push( new Integer( IToken.tLPAREN ) );	}
 	            IASTExpression expressionList = expression( scope, CompletionKind.TYPE_REFERENCE, key ); 
@@ -2167,7 +2157,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            try {
 					firstExpression = 
 						astFactory.createExpression( scope, 
-													(( templateId != null )? IASTExpression.Kind.POSTFIX_TYPENAME_TEMPLATEID : IASTExpression.Kind.POSTFIX_TYPENAME_IDENTIFIER ), 
+													( templateTokenConsumed ? IASTExpression.Kind.POSTFIX_TYPENAME_TEMPLATEID : IASTExpression.Kind.POSTFIX_TYPENAME_IDENTIFIER ), 
 													expressionList, 
 													null, 
 													null, 

@@ -11,8 +11,14 @@
 package org.eclipse.cdt.core.parser.ast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
+import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 
 
 /**
@@ -94,12 +100,10 @@ public class ASTUtil {
 			if(clause != null){
 				IASTExpression expression = clause.getAssigmentExpression();
 				if(expression != null){
-					String literal = (expression.getLiteralString().length() > 0 
-									? expression.getLiteralString() 
-									: expression.getIdExpression() );
-					if(literal.length() > 0){
+					String init = getExpressionString( expression );
+					if(init.length() > 0){
 						initializer.append("="); //$NON-NLS-1$
-						initializer.append(literal);
+						initializer.append(init);
 					}
 				}
 			}
@@ -235,4 +239,431 @@ public class ASTUtil {
 		return parameters.toString();
 	}	    
 
+	public static String getTypeId( IASTTypeId id ){
+		StringBuffer type = new StringBuffer();
+
+		if( id.isTypename() ){
+			type.append( Keywords.TYPENAME );
+			type.append( ' ' );
+		}
+		type.append( id.getFullSignature() );
+		
+		Iterator i = id.getPointerOperators();
+		while(i.hasNext()){
+			ASTPointerOperator po = (ASTPointerOperator) i.next();
+			type.append(getPointerOperator(po));
+		}
+		
+		i  = id.getArrayModifiers(); 
+		while (i.hasNext()){
+			i.next();
+			type.append("[]");				 //$NON-NLS-1$
+		}
+		
+		return type.toString();
+	}
+	
+	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	public static String getExpressionString( IASTExpression expression ){
+		String literal = expression.getLiteralString();
+		String idExpression = expression.getIdExpression();
+		
+		IASTExpression lhs = expression.getLHSExpression();
+		IASTExpression rhs = expression.getRHSExpression();
+		IASTExpression third = expression.getThirdExpression();
+		IASTNewExpressionDescriptor descriptor = expression.getNewExpressionDescriptor();
+		IASTTypeId typeId = expression.getTypeId();
+
+		if( literal != null && !literal.equals( EMPTY_STRING ) && ( idExpression == null || idExpression.equals( EMPTY_STRING ) ) )
+			return getLiteralExpression( expression );
+			
+		if( idExpression != null && !idExpression.equals( EMPTY_STRING ) && lhs == null )
+			return getIdExpression( expression );
+		
+		if( third != null )
+			return getConditionalExpression( expression );
+		
+		if( descriptor != null  )
+			return getNewExpression( expression );
+		
+		if( lhs != null && rhs != null )
+			return getBinaryExpression( expression );
+		
+		if( lhs != null && typeId != null )
+			return getUnaryTypeIdExpression( expression );
+		
+		if( lhs != null && ( idExpression != null && !idExpression.equals( EMPTY_STRING ) ) )
+			return getUnaryIdExpression( expression );
+		
+		if( lhs != null )
+			return getUnaryExpression( expression );
+		
+		if( typeId != null )
+			return getTypeIdExpression( expression );
+
+		return getEmptyExpression( expression );
+	}
+	
+	private static String getEmptyExpression( IASTExpression expression ){
+		if( expression.getExpressionKind() == Kind.PRIMARY_THIS )
+			return Keywords.THIS;
+		
+		return EMPTY_STRING;
+	}
+	
+	private static String getLiteralExpression( IASTExpression expression ){
+		Kind kind = expression.getExpressionKind();
+		
+		if( kind != Kind.PRIMARY_CHAR_LITERAL && kind != Kind.PRIMARY_STRING_LITERAL )
+			return expression.getLiteralString();
+		
+		StringBuffer buffer = new StringBuffer();
+		if( kind == Kind.PRIMARY_CHAR_LITERAL ){
+			buffer.append( '\'' );
+			buffer.append( expression.getLiteralString() );
+			buffer.append( '\'' );
+		} else if( kind == Kind.PRIMARY_STRING_LITERAL ) {
+			buffer.append( '"' );
+			buffer.append( expression.getLiteralString() );
+			buffer.append( '"' );
+		}
+		return buffer.toString();
+	}
+	
+	private static String getIdExpression( IASTExpression expression ){
+		return expression.getIdExpression();
+	}
+	private static String getConditionalExpression( IASTExpression expression ){
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append( getExpressionString( expression.getLHSExpression() ) );
+		buffer.append( " ? " ); //$NON-NLS-1$
+		buffer.append( getExpressionString( expression.getRHSExpression() ) );
+		buffer.append( " : " ); //$NON-NLS-1$
+		buffer.append( getExpressionString( expression.getThirdExpression() ) );
+		
+		return buffer.toString();
+	}
+	private static String getNewExpression( IASTExpression expression ){
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append( Keywords.NEW );
+		buffer.append( ' ' );
+		
+		IASTNewExpressionDescriptor descriptor = expression.getNewExpressionDescriptor();
+		Iterator iter = descriptor.getNewPlacementExpressions();
+		if( iter.hasNext() ){
+			buffer.append( '(' );
+			buffer.append( getExpressionString( (IASTExpression) iter.next() ) );
+			buffer.append( ") " ); //$NON-NLS-1$
+		}
+		
+		iter = descriptor.getNewTypeIdExpressions();
+		if( iter.hasNext() ){
+			buffer.append( getExpressionString( (IASTExpression) iter.next() ) );
+			buffer.append( ' ' ); 
+		}
+		
+		if( expression.getTypeId() != null ){
+			buffer.append( getTypeId( expression.getTypeId() ) );
+		}
+		
+		iter = descriptor.getNewInitializerExpressions();
+		if( iter.hasNext() ){
+			buffer.append( '(' );
+			buffer.append( getExpressionString( (IASTExpression) iter.next() ) );
+			buffer.append( ')' ); 
+		}
+		
+		return buffer.toString();
+	}
+	private static String getBinaryExpression( IASTExpression expression ){
+		Kind kind = expression.getExpressionKind();
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( getExpressionString( expression.getLHSExpression() ) );
+		
+		boolean appendSpace = false;
+		if( kind != Kind.EXPRESSIONLIST && 
+			kind != Kind.PM_DOTSTAR &&
+			kind != Kind.PM_ARROWSTAR &&
+			kind != Kind.POSTFIX_SUBSCRIPT &&
+			kind != Kind.POSTFIX_FUNCTIONCALL &&
+			kind != Kind.POSTFIX_DOT_TEMPL_IDEXPRESS &&
+            kind != Kind.POSTFIX_DOT_IDEXPRESSION &&
+			kind != Kind.POSTFIX_DOT_DESTRUCTOR &&
+			kind != Kind.POSTFIX_ARROW_TEMPL_IDEXP &&
+            kind != Kind.POSTFIX_ARROW_IDEXPRESSION &&
+			kind != Kind.POSTFIX_ARROW_DESTRUCTOR)
+		{
+			appendSpace = true;
+			buffer.append( ' ' );
+		}
+		
+		if( kind == Kind.ANDEXPRESSION ||
+			kind == Kind.EXPRESSIONLIST ||
+			kind == Kind.EXCLUSIVEOREXPRESSION ||
+			kind == Kind.PM_DOTSTAR ||
+			kind == Kind.PM_ARROWSTAR ||
+			kind == Kind.LOGICALANDEXPRESSION ||
+			kind == Kind.LOGICALOREXPRESSION ||
+			kind == Kind.RELATIONAL_GREATERTHAN ||
+			kind == Kind.RELATIONAL_LESSTHAN || 
+			kind == Kind.RELATIONAL_LESSTHANEQUALTO ||
+			kind == Kind.RELATIONAL_GREATERTHANEQUALTO ||
+			kind == Kind.EQUALITY_EQUALS ||
+            kind == Kind.EQUALITY_NOTEQUALS ||
+            kind == Kind.ADDITIVE_PLUS ||
+            kind == Kind.ADDITIVE_MINUS ||
+			kind == Kind.INCLUSIVEOREXPRESSION ||
+			kind == Kind.MULTIPLICATIVE_MULTIPLY ||
+        	kind == Kind.MULTIPLICATIVE_DIVIDE ||
+			kind == Kind.MULTIPLICATIVE_MODULUS ||
+			kind == Kind.POSTFIX_DOT_TEMPL_IDEXPRESS ||
+            kind == Kind.POSTFIX_DOT_IDEXPRESSION ||
+            kind == Kind.POSTFIX_DOT_DESTRUCTOR ||
+			kind == Kind.POSTFIX_ARROW_TEMPL_IDEXP ||
+            kind == Kind.POSTFIX_ARROW_IDEXPRESSION ||
+			kind == Kind.POSTFIX_ARROW_DESTRUCTOR ||
+			kind == Kind.ASSIGNMENTEXPRESSION_NORMAL ||
+			kind == Kind.ASSIGNMENTEXPRESSION_MULT ||
+			kind == Kind.ASSIGNMENTEXPRESSION_DIV ||
+			kind == Kind.ASSIGNMENTEXPRESSION_MOD ||
+			kind == Kind.ASSIGNMENTEXPRESSION_PLUS ||
+			kind == Kind.ASSIGNMENTEXPRESSION_MINUS ||
+			kind == Kind.ASSIGNMENTEXPRESSION_RSHIFT ||
+			kind == Kind.ASSIGNMENTEXPRESSION_LSHIFT ||
+			kind == Kind.ASSIGNMENTEXPRESSION_AND ||
+			kind == Kind.ASSIGNMENTEXPRESSION_XOR  ||
+			kind == Kind.ASSIGNMENTEXPRESSION_OR ||
+			kind == Kind.SHIFT_LEFT ||
+			kind == Kind.SHIFT_RIGHT)
+		{
+			buffer.append( ASTUtil.getStringForKind( kind ) );
+		} else if( kind == Kind.POSTFIX_SUBSCRIPT )
+			buffer.append( '[' );
+		else if( kind == Kind.POSTFIX_FUNCTIONCALL )
+			buffer.append( '(' );
+		
+		if( kind == Kind.POSTFIX_DOT_TEMPL_IDEXPRESS ||
+			kind == IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP)
+		{
+			buffer.append( ' ' );
+			buffer.append( Keywords.TEMPLATE );
+			buffer.append( ' ' );
+		}
+			
+		if( appendSpace || kind == Kind.EXPRESSIONLIST )
+			buffer.append( ' ' );
+		
+		buffer.append( getExpressionString( expression.getRHSExpression() ) );
+		
+		if( kind == Kind.POSTFIX_SUBSCRIPT )
+			buffer.append( ']' );
+		else if( kind == Kind.POSTFIX_FUNCTIONCALL )
+			buffer.append( ')' );
+		
+		return buffer.toString();
+	}
+
+	private static String getUnaryTypeIdExpression( IASTExpression expression ){
+		StringBuffer buffer = new StringBuffer();
+		
+		Kind kind = expression.getExpressionKind();
+		if( kind == Kind.CASTEXPRESSION ){
+			buffer.append( '(' );
+			buffer.append( getTypeId( expression.getTypeId() ) );
+			buffer.append( ')' );
+			buffer.append( getExpressionString( expression.getLHSExpression() ) );
+			
+		} else if ( kind == Kind.POSTFIX_DYNAMIC_CAST || 
+				    kind == Kind.POSTFIX_STATIC_CAST ||
+					kind == Kind.POSTFIX_REINTERPRET_CAST ||
+					kind == Kind.POSTFIX_CONST_CAST )
+		{
+			buffer.append( ASTUtil.getStringForKind( kind ) );
+			buffer.append( '<' );
+			buffer.append( getTypeId( expression.getTypeId() ) );
+			buffer.append( ">(" ); //$NON-NLS-1$
+			buffer.append( getExpressionString( expression.getLHSExpression() ) );
+			buffer.append( ')' );
+		}			
+		
+		return buffer.toString();
+	}
+	
+	private static String getUnaryIdExpression( IASTExpression expression ){
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append( Keywords.TYPENAME );
+		buffer.append( ' ' );
+		if( expression.getExpressionKind() == Kind.POSTFIX_TYPENAME_TEMPLATEID ){
+			buffer.append( Keywords.TEMPLATE );
+			buffer.append( ' ' );
+		}
+		buffer.append( expression.getIdExpression() );
+		buffer.append( '(' );
+		buffer.append( getExpressionString( expression.getLHSExpression() ) );
+		buffer.append( ')' );
+		
+		return buffer.toString();
+	}
+	private static String getUnaryExpression( IASTExpression expression ){
+		StringBuffer buffer = new StringBuffer();
+		Kind kind = expression.getExpressionKind();
+		
+		boolean bracketsAroundExpression = ( kind == Kind.PRIMARY_BRACKETED_EXPRESSION );
+		
+		if ( kind == Kind.UNARY_SIZEOF_UNARYEXPRESSION ){
+			buffer.append( Keywords.SIZEOF );
+			buffer.append( ' ' );
+		}
+		else if ( kind == Kind.UNARY_STAR_CASTEXPRESSION ||
+				  kind == Kind.UNARY_AMPSND_CASTEXPRESSION ||
+				  kind == Kind.UNARY_PLUS_CASTEXPRESSION ||
+				  kind == Kind.UNARY_MINUS_CASTEXPRESSION ||
+				  kind == Kind.UNARY_NOT_CASTEXPRESSION ||
+				  kind == Kind.UNARY_TILDE_CASTEXPRESSION ||
+				  kind == Kind.UNARY_DECREMENT ||
+				  kind == Kind.THROWEXPRESSION
+				)
+		{
+			buffer.append( ASTUtil.getStringForKind( kind ) );
+		}
+		else if ( kind == Kind.UNARY_INCREMENT )
+			buffer.append( "++" );  //$NON-NLS-1$
+		else if( kind == Kind.DELETE_VECTORCASTEXPRESSION || kind == Kind.DELETE_CASTEXPRESSION ){
+			buffer.append( Keywords.DELETE );
+			buffer.append(' ');
+			if( kind == Kind.DELETE_VECTORCASTEXPRESSION )
+				buffer.append( "[ ] " ); //$NON-NLS-1$
+		} else if( kind == Kind.POSTFIX_SIMPLETYPE_CHAR || 
+				   kind == Kind.POSTFIX_SIMPLETYPE_WCHART ||
+				   kind == Kind.POSTFIX_SIMPLETYPE_BOOL ||
+				   kind == Kind.POSTFIX_SIMPLETYPE_SHORT ||
+				   kind == Kind.POSTFIX_SIMPLETYPE_INT ||
+				   kind == Kind.POSTFIX_SIMPLETYPE_LONG ||
+				   kind == Kind.POSTFIX_SIMPLETYPE_SIGNED ||
+				   kind == Kind.POSTFIX_SIMPLETYPE_UNSIGNED ||
+				   kind == Kind.POSTFIX_SIMPLETYPE_FLOAT ||
+				   kind == Kind.POSTFIX_SIMPLETYPE_DOUBLE
+				 )
+		{
+			buffer.append( ASTUtil.getStringForKind( kind ) );
+			bracketsAroundExpression = true;
+		}  else if( kind == Kind.POSTFIX_TYPEID_EXPRESSION )
+		{
+			buffer.append( Keywords.TYPEID );
+			bracketsAroundExpression = true;
+		}
+		
+		if( bracketsAroundExpression )
+			buffer.append( '(' );
+		
+		buffer.append( getExpressionString( expression.getLHSExpression() ) );
+		
+		if( bracketsAroundExpression )
+			buffer.append( ')' );
+		
+		if( kind == Kind.POSTFIX_INCREMENT ||
+			kind == Kind.POSTFIX_DECREMENT )
+		{
+			buffer.append( ASTUtil.getStringForKind( kind ) );
+		}
+
+		return buffer.toString();
+	}
+	private static String getTypeIdExpression( IASTExpression expression ){
+		StringBuffer buffer = new StringBuffer();
+		
+		Kind kind = expression.getExpressionKind();
+		
+		boolean addBrackets = false;
+		if( kind == Kind.UNARY_SIZEOF_TYPEID ){
+			buffer.append( Keywords.SIZEOF );
+			buffer.append( ' ' );
+			addBrackets = true;
+		} else if( kind == Kind.POSTFIX_TYPEID_TYPEID ){
+			buffer.append( Keywords.TYPEID );
+			addBrackets = true;
+		}
+		
+		if( addBrackets )
+			buffer.append( '(' );
+		buffer.append( ASTUtil.getTypeId( expression.getTypeId() ) );
+		if( addBrackets )
+			buffer.append( ')' );
+		
+		return buffer.toString();
+	}
+	
+	private static final Map expressionKindStringMap = new HashMap();
+	static {
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_DYNAMIC_CAST,  		Keywords.DYNAMIC_CAST );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_STATIC_CAST,  			Keywords.STATIC_CAST );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_REINTERPRET_CAST, 		Keywords.REINTERPRET_CAST );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_CONST_CAST, 			Keywords.CONST_CAST );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_SIMPLETYPE_CHAR, 		Keywords.CHAR );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_SIMPLETYPE_WCHART, 	Keywords.WCHAR_T );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_SIMPLETYPE_BOOL, 		Keywords.BOOL );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_SIMPLETYPE_SHORT, 		Keywords.SHORT );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_SIMPLETYPE_INT, 		Keywords.INT );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_SIMPLETYPE_LONG, 		Keywords.LONG );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_SIMPLETYPE_SIGNED, 	Keywords.SIGNED );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_SIMPLETYPE_UNSIGNED, 	Keywords.UNSIGNED );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_SIMPLETYPE_FLOAT, 		Keywords.FLOAT );
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_SIMPLETYPE_DOUBLE, 	Keywords.DOUBLE );
+		expressionKindStringMap.put( IASTExpression.Kind.THROWEXPRESSION, 				Keywords.THROW );
+        expressionKindStringMap.put( IASTExpression.Kind.ANDEXPRESSION, 				"&" ); //$NON-NLS-1$
+        expressionKindStringMap.put( IASTExpression.Kind.UNARY_AMPSND_CASTEXPRESSION, 	"&" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.EXPRESSIONLIST, 				"," ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.EXCLUSIVEOREXPRESSION, 		"^" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.PM_DOTSTAR, 					".*" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.PM_ARROWSTAR, 					"->*" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.LOGICALANDEXPRESSION, 			"&&" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.LOGICALOREXPRESSION, 			"||" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.RELATIONAL_GREATERTHAN, 		">" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.RELATIONAL_LESSTHAN, 			"<" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.RELATIONAL_LESSTHANEQUALTO, 	"<=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.RELATIONAL_GREATERTHANEQUALTO,	">=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.EQUALITY_EQUALS, 				"==" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.EQUALITY_NOTEQUALS, 			"!=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.UNARY_STAR_CASTEXPRESSION, 	"*" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.MULTIPLICATIVE_MULTIPLY, 		"*" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.UNARY_PLUS_CASTEXPRESSION, 	"+" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ADDITIVE_PLUS, 				"+" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.UNARY_MINUS_CASTEXPRESSION, 	"-" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ADDITIVE_MINUS, 				"-" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.UNARY_NOT_CASTEXPRESSION, 		"!" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.UNARY_TILDE_CASTEXPRESSION, 	"~" );  //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.UNARY_DECREMENT, 				"--" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_DECREMENT, 			"--" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.UNARY_INCREMENT, 				"++" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_INCREMENT, 			"++" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.INCLUSIVEOREXPRESSION, 		"|" ); //$NON-NLS-1$		
+    	expressionKindStringMap.put( IASTExpression.Kind.MULTIPLICATIVE_DIVIDE, 		"/" ); //$NON-NLS-1$
+    	expressionKindStringMap.put( IASTExpression.Kind.MULTIPLICATIVE_MODULUS, 		"%" ); //$NON-NLS-1$
+    	expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS, 	"." ); //$NON-NLS-1$	
+    	expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION, 		"." ); //$NON-NLS-1$   |
+		expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_DOT_DESTRUCTOR, 		"." ); //$NON-NLS-1$
+    	expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP, 	"->" ); //$NON-NLS-1$
+    	expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_ARROW_DESTRUCTOR, 		"->" ); //$NON-NLS-1$
+    	expressionKindStringMap.put( IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION, 	"->" ); //$NON-NLS-1$
+    	expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_NORMAL,	"=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_MULT,		"*=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_DIV,		"/=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_MOD,		"%=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_PLUS,		"+=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_MINUS,	"-=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_RSHIFT,	">>=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_LSHIFT,	"<<=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_AND,		"&=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_XOR,		"^=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.ASSIGNMENTEXPRESSION_OR,		"|=" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.SHIFT_LEFT, 					"<<" ); //$NON-NLS-1$
+		expressionKindStringMap.put( IASTExpression.Kind.SHIFT_RIGHT, 					">>" ); //$NON-NLS-1$
+
+	}
+	private static String getStringForKind( IASTExpression.Kind kind ){
+        return (String) expressionKindStringMap.get( kind );
+	}
 }

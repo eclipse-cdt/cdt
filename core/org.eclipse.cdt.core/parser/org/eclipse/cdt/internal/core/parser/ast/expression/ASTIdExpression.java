@@ -10,6 +10,7 @@
 
 package org.eclipse.cdt.internal.core.parser.ast.expression;
 
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 
 /**
@@ -36,5 +37,9 @@ public class ASTIdExpression extends ASTExpression implements IASTExpression {
 	 */
 	public String getIdExpression() {
 		return idExpression;
+	}
+	
+	public String toString(){
+		return ASTUtil.getExpressionString( this );
 	}
 }

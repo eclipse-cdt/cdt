@@ -373,7 +373,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					if( t.getType() == IToken.tCOLONCOLON ){
 						idx++;
 						continue;
-					}
+					} else if( t.getType() == IToken.t_template ){
+						continue;
+ 					}
 					if( t.isPointer() ) break;
 					
 					image = t.getImage();

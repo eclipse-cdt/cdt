@@ -10,6 +10,7 @@
 
 package org.eclipse.cdt.internal.core.parser.ast.expression;
 
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 
 /**
@@ -24,5 +25,9 @@ public class ASTEmptyExpression extends ASTExpression implements IASTExpression 
 	public ASTEmptyExpression(Kind kind) {
 		super(kind);
 		// TODO Auto-generated constructor stub
+	}
+	
+	public String toString(){
+		return ASTUtil.getExpressionString( this );
 	}
 }

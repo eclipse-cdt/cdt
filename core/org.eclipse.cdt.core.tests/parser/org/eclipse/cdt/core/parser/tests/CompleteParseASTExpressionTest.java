@@ -14,9 +14,12 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 
 /**
@@ -39,6 +42,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences(1, createTaskList( new Task( f2 ) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f()" ); //$NON-NLS-1$
 	}	
 	// Kind PRIMARY_INTEGER_LITERAL : int 
 	public void testPrimaryIntegerLiteral() throws Exception
@@ -48,6 +54,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 1, createTaskList( new Task( f1 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(1, 2 + 3)" ); //$NON-NLS-1$
 	}	
 	// Kind PRIMARY_CHAR_LITERAL : char
 	public void testPrimaryCharLiteral() throws Exception
@@ -57,6 +66,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 1, createTaskList( new Task( f2 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f('c')" ); //$NON-NLS-1$
 	}	
 	// Kind PRIMARY_FLOAT_LITERAL : float
 	public void testPrimaryFloatLiteral() throws Exception
@@ -66,6 +78,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 1, createTaskList( new Task( f2 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(1.13)" ); //$NON-NLS-1$
 	}	
 	// Kind PRIMARY_STRING_LITERAL : char*
 	public void testPrimaryStringLiteral() throws Exception
@@ -75,6 +90,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 1, createTaskList( new Task( f2 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(\"str\")" ); //$NON-NLS-1$
 	}	
 	// Kind PRIMARY_BOOLEAN_LITERAL : bool
 	public void testPrimaryBooleanLiteral() throws Exception
@@ -84,6 +102,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 1, createTaskList( new Task( f1 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(true)" ); //$NON-NLS-1$
 	}
 	// Kind PRIMARY_THIS : type of inner most enclosing structure scope
 	public void testPrimaryThis() throws Exception
@@ -98,6 +119,11 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTMethod   m  = (IASTMethod) i.next();
 		Iterator r = callback.getReferences().iterator();
 		assertAllReferences( 4, createTaskList( new Task( cl, 3 ), new Task( f2 )));
+		
+		Iterator body = getDeclarations( m );
+		IASTVariable x = (IASTVariable) body.next();
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(this)" ); //$NON-NLS-1$
 	}	
 	// Kind PRIMARY_BRACKETED_EXPRESSION : LHS
 	public void testPrimaryBracketedExpression() throws Exception
@@ -107,6 +133,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 1, createTaskList( new Task( f1 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(1, (2 + 3))" ); //$NON-NLS-1$
 	}
 	// Kind ID_EXPRESSION : type of the ID
 	public void testIdExpression() throws Exception
@@ -120,6 +149,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x  = (IASTVariable) i.next();
 		
 		assertAllReferences( 3, createTaskList( new Task( cl ), new Task( f1 ),new Task( a ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(a)" ); //$NON-NLS-1$
 	}	
 	// Kind ID_EXPRESSION ( refers to a pointer ) : pointer to type of ID
 	public void testIdExpressionToPointer() throws Exception
@@ -131,7 +163,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 4, createTaskList( new Task( cl, 2 ), new Task( f1 ), new Task( a ) ) );
-
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(pa)" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_SUBSCRIPT	
 	public void testPostfixSubscript() throws Exception
@@ -142,6 +176,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();		
 		assertAllReferences( 2, createTaskList( new Task( f1 ), new Task( pa ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(pa[1])" ); //$NON-NLS-1$
 	}
 		
  	public void testPostfixSubscriptA() throws Exception
@@ -152,6 +189,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 2, createTaskList( new Task( f1 ), new Task( pa ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(pa[1][2])" ); //$NON-NLS-1$
 	}	 
   
  	public void testPostfixSubscriptB() throws Exception
@@ -162,6 +202,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 2, createTaskList( new Task( f1 ), new Task( pa ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(pa[1][2])" ); //$NON-NLS-1$
 	}	
 	
 	public void testPostfixSubscriptWithReferences() throws Exception
@@ -181,9 +224,14 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		Iterator i = parse( "int foo( float b );  int bar( int a, int b ); int test( void ) { int x = bar( foo( 3.0 ), foo( 5.0 ) ) ; }").getDeclarations(); //$NON-NLS-1$
 		IASTFunction foo = (IASTFunction)i.next(); 
 		IASTFunction bar = (IASTFunction)i.next(); 
-		i.next();
+		IASTFunction test = (IASTFunction) i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 3, createTaskList( new Task( bar ), new Task( foo, 2 )));
+		
+		i = getDeclarations( test );
+		IASTVariable x = (IASTVariable) i.next();
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "bar(foo(3.0), foo(5.0))" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_SIMPLETYPE_* : simple type
 	public void testPostfixSimpletypesBug42823() throws Exception
@@ -196,6 +244,11 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction test = (IASTFunction)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 1, createTaskList( new Task( foo )));
+		
+		i = getDeclarations( test );
+		IASTVariable someInt = (IASTVariable) i.next();
+		IASTExpression exp = someInt.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(int(3), short(4), double(3.0), float(4.0), char('a'), wchar_t('a'), signed(2), unsigned(3), bool(false), long(3))" ); //$NON-NLS-1$
 	}
 	
 	// Kind POSTFIX_TYPENAME_IDENTIFIER
@@ -206,9 +259,39 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 3, createTaskList( new Task( cl, 2 ), new Task( f2)  ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(typename A())" ); //$NON-NLS-1$
 	}
 	
 	// Kind POSTFIX_TYPENAME_TEMPLATEID
+	public void testPostfixTypeNameTemplateId() throws Exception{
+		Iterator i = parse( " template<class T> class A {}; int foo( A<int> a ); \n int x = foo( typename template A< int >() );").getDeclarations(); //$NON-NLS-1$
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier A = (IASTClassSpecifier) template.getOwnedDeclaration();
+		IASTFunction f = (IASTFunction) i.next();
+		IASTVariable x = (IASTVariable) i.next();
+		assertAllReferences( 3, createTaskList( new Task( A, 2 ), new Task( f ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(typename template A<int>())" ); //$NON-NLS-1$
+	}
+	
+	public void testPostfixTypeNameTemplateId_2() throws Exception{
+		Iterator i = parse( "namespace NS{ template<class T> class A {}; } int foo( NS::A<int> a ); \n int x = foo( typename NS::template A< int >() );").getDeclarations(); //$NON-NLS-1$
+		IASTNamespaceDefinition NS = (IASTNamespaceDefinition) i.next();
+		IASTFunction f = (IASTFunction) i.next();
+		IASTVariable x = (IASTVariable) i.next();
+
+		i = getDeclarations( NS );
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier A = (IASTClassSpecifier) template.getOwnedDeclaration();
+
+		assertAllReferences( 5, createTaskList( new Task( NS, 2 ), new Task( A, 2 ), new Task( f ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(typename NS::template A<int>())" ); //$NON-NLS-1$
+	}
 	
 	// Kind POSTFIX_DOT_IDEXPRESSION : type of member in the scope of the container
 	public void testPostfixDotExpression() throws Exception{
@@ -221,6 +304,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		Iterator members = getDeclarations(cl);
 		IASTField m = (IASTField)members.next();
 		assertAllReferences( 4, createTaskList( new Task(cl), new Task(a), new Task(m), new Task(f2) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a.m)" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_ARROW_IDEXPRESSION : type of member in the scope of the container
 	public void testPostfixArrowExpression() throws Exception{
@@ -233,6 +319,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		Iterator members = getDeclarations(cl);
 		IASTField m = (IASTField)members.next();
 		assertAllReferences( 4, createTaskList( new Task(cl), new Task(a), new Task(m), new Task(f2) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a->m)" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_DOT_TEMPL_IDEXPRESS 
 	// Kind POSTFIX_ARROW_TEMPL_IDEXP
@@ -253,6 +342,11 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertFalse( subDecls.hasNext() ); 
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task( x ), new Task( foo2)));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "5" ); //$NON-NLS-1$
+		exp = y.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(x++)" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_DECREMENT : LHS
 	public void testPostfixDecrement() throws Exception
@@ -267,6 +361,11 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertFalse( subDecls.hasNext() ); 
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task( x ), new Task( foo2)));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "5" ); //$NON-NLS-1$
+		exp = y.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(x--)" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_DYNAMIC_CAST 
 	public void testPostfixDynamicCast() throws Exception{
@@ -279,6 +378,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x  = (IASTVariable) i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 6, createTaskList( new Task( cla, 2 ), new Task( clb, 2), new Task(a), new Task(f2)));		
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(dynamic_cast<B*>(a))" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_REINTERPRET_CAST
 	public void testPostfixReinterpretCast() throws Exception{
@@ -288,7 +390,10 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertFalse( i.hasNext() );
-		assertAllReferences( 2, createTaskList( new Task(a), new Task(f2)));		
+		assertAllReferences( 2, createTaskList( new Task(a), new Task(f2)));	
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(reinterpret_cast<double*>(a))" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_STATIC_CAST
 	public void testPostfixStaticCast() throws Exception{
@@ -299,6 +404,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x  = (IASTVariable) i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(a), new Task(f2)));		
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(static_cast<char>(a))" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_CONST_CAST
 	public void testPostfixConstCast() throws Exception{
@@ -309,6 +417,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x  = (IASTVariable) i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(a), new Task(f2)));		
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(const_cast<int*>(&a))" ); //$NON-NLS-1$
 	}	
 	// Kind POSTFIX_TYPEID_EXPRESSION : LHS
 	public void testPostfixTypeIdExpression() throws Exception{
@@ -316,7 +427,10 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		assertAllReferences( 1, createTaskList( new Task( f2 ))); 		
+		assertAllReferences( 1, createTaskList( new Task( f2 ))); 	
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(typeid(5))" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_TYPEID_EXPRESSION : type of the ID
 	public void testPostfixTypeIdExpression2() throws Exception{
@@ -327,6 +441,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 4, createTaskList( new Task(cl, 2),new Task(a),new Task(f1)));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(typeid(a))" ); //$NON-NLS-1$
 	}
 	// Kind POSTFIX_TYPEID_TYPEID : type of the ID
 	public void testPostfixTypeIdTypeId() throws Exception{
@@ -336,7 +453,10 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f1 = (IASTFunction) i.next();
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
-		assertAllReferences( 4, createTaskList( new Task(cl, 3), new Task(f1)));		
+		assertAllReferences( 4, createTaskList( new Task(cl, 3), new Task(f1)));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(typeid(A))" ); //$NON-NLS-1$
 	}	
 	// Kind POSTFIX_TYPEID_TYPEID : type of the ID
 	public void testPostfixTypeIdTypeId2() throws Exception{
@@ -347,6 +467,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 4, createTaskList( new Task(cl, 3), new Task(f1)));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(typeid(const A))" ); //$NON-NLS-1$
 	}	
 	// Kind UNARY_INCREMENT : LHS             
 	public void testUnaryIncrement() throws Exception
@@ -361,6 +484,11 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertFalse( subDecls.hasNext() ); 
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(foo2), new Task(x) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "5" ); //$NON-NLS-1$
+		exp = y.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(++x)" ); //$NON-NLS-1$
 	}	
 	// Kind UNARY_DECREMENT : LHS             
 	public void testUnaryDecrement() throws Exception
@@ -375,6 +503,11 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertFalse( subDecls.hasNext() ); 
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(foo2), new Task(x) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "5" ); //$NON-NLS-1$
+		exp = y.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(--x)" ); //$NON-NLS-1$	
 	}
 	// Kind UNARY_STAR_CASTEXPRESSION : LHS + t_pointer	
 	public void testUnaryStarCastExpression() throws Exception
@@ -386,6 +519,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 4, createTaskList( new Task(cl, 2 ), new Task( a ), new Task(f1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(*pa)" ); //$NON-NLS-1$
 	}
 	// Kind UNARY_AMPSND_CASTEXPRESSION : LHS + t_reference
 	public void testUnaryAmpersandCastExpression() throws Exception
@@ -397,6 +533,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertAllReferences( 4, createTaskList( new Task(cl, 2 ), new Task( a ), new Task(f1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "f(&pa)" ); //$NON-NLS-1$
 	}
 	// Kind UNARY_PLUS_CASTEXPRESSION  : LHS
 	public void testUnaryPlusCastExpression() throws Exception { 
@@ -406,6 +545,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 1, createTaskList( new Task( foo2 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(+5)" ); //$NON-NLS-1$
 	}
 	// Kind UNARY_MINUS_CASTEXPRESSION : LHS
 	public void testUnaryMinusCastExpression() throws Exception { 
@@ -415,6 +557,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 1, createTaskList( new Task( foo2 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(-5)" ); //$NON-NLS-1$
 	}
 	// Kind UNARY_NOT_CASTEXPRESSION : LHS   
 	public void testUnaryNotCastExpression() throws Exception { 
@@ -425,6 +570,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task( b ), new Task( foo2 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(!b)" ); //$NON-NLS-1$
 	}
 	// Kind UNARY_TILDE_CASTEXPRESSION : LHS   
 	public void testTildeNotCastExpression() throws Exception { 
@@ -435,6 +583,11 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable y = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task( x ), new Task( foo2 )));
+
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "5" ); //$NON-NLS-1$
+		exp = y.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(~x)" ); //$NON-NLS-1$
 	}
 	// Kind UNARY_SIZEOF_UNARYEXPRESSION : unsigned int 
 	public void testUnarySizeofUnaryExpression() throws Exception { 
@@ -445,6 +598,11 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable y = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 1, createTaskList( new Task( foo2 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "5" ); //$NON-NLS-1$
+		exp = y.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(sizeof (5))" ); //$NON-NLS-1$
 	}
 	// Kind UNARY_SIZEOF_TYPEID : unsigned int          
 	public void testUnarySizeofTypeId() throws Exception { 
@@ -455,6 +613,11 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable y = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task( x ), new Task( foo2 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "5" ); //$NON-NLS-1$
+		exp = y.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(sizeof (x))" ); //$NON-NLS-1$
 	}
 	// Kind NEW_NEWTYPEID                
 	// Kind NEW_TYPEID                   
@@ -466,6 +629,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 3, createTaskList( new Task( cl, 2), new Task( foo2 )));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(new A())" ); //$NON-NLS-1$
 	}
 
 	// Kind DELETE_CASTEXPRESSION        
@@ -481,7 +647,10 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTFunction f2 = (IASTFunction) i.next();
 		IASTVariable x  = (IASTVariable) i.next();
 		assertFalse( i.hasNext() );
-		assertAllReferences( 6, createTaskList( new Task( cla, 3 ), new Task( clb, 1), new Task(b), new Task(f2)));		
+		assertAllReferences( 6, createTaskList( new Task( cla, 3 ), new Task( clb, 1), new Task(b), new Task(f2)));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo((A*)b)" ); //$NON-NLS-1$
 	}
 	         
 	// Kind PM_DOTSTAR                   
@@ -501,6 +670,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertFalse( i.hasNext() );
 		assertEquals( callback.getReferences().size(), 3 );
 		assertAllReferences( 3, createTaskList( new Task(a), new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a * b)" ); //$NON-NLS-1$
 	}
 	// Kind MULTIPLICATIVE_DIVIDE : usual arithmetic conversions        
 	public void testMultiplicativeDivide() throws Exception { 
@@ -512,6 +684,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 3, createTaskList( new Task(a), new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(b / a)" ); //$NON-NLS-1$
 	}	
 	// Kind MULTIPLICATIVE_MODULUS : usual arithmetic conversions      
 	public void testMultiplicativeModulus() throws Exception { 
@@ -523,6 +698,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 3, createTaskList( new Task(a), new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(b % a)" ); //$NON-NLS-1$
 	}	
 	// Kind ADDITIVE_PLUS : usual arithmetic conversions              
 	public void testAdditivePlus() throws Exception { 
@@ -534,6 +712,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 3, createTaskList( new Task(a), new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(b + a)" ); //$NON-NLS-1$
 	}	
 	// Kind ADDITIVE_MINUS : usual arithmetic conversions           
 	public void testAdditiveMinus() throws Exception { 
@@ -545,6 +726,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 3, createTaskList( new Task(a), new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(b - a)" ); //$NON-NLS-1$
 	}	
 	// Kind SHIFT_LEFT : LHS
 	public void testShiftLeft() throws Exception { 
@@ -555,6 +739,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(a), new Task( foo1 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a << 5)" ); //$NON-NLS-1$
 	}              
 	// Kind SHIFT_RIGHT : LHS                  
 	public void testShiftRight() throws Exception { 
@@ -565,6 +752,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(a), new Task( foo1 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a >> 5)" ); //$NON-NLS-1$
 	}
 	// Kind RELATIONAL_LESSTHAN : bool          
 	public void testRelationalLessThan() throws Exception { 
@@ -575,6 +765,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );	
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(b < 3)" ); //$NON-NLS-1$
 	}
 	// Kind RELATIONAL_GREATERTHAN : bool      
 	public void testRelationalGreaterThan() throws Exception { 
@@ -585,6 +778,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(b > 3)" ); //$NON-NLS-1$
 	}
 	// Kind RELATIONAL_LESSTHANEQUALTO : bool  
 	public void testRelationalLessThanOrEqual() throws Exception { 
@@ -595,6 +791,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(b <= 3)" ); //$NON-NLS-1$
 	}
 	// Kind RELATIONAL_GREATERTHANEQUALTO : bool
 	public void testRelationalGreaterThanOrEqual() throws Exception { 
@@ -605,6 +804,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(b >= 3)" ); //$NON-NLS-1$
 	}
 	// Kind EQUALITY_EQUALS : bool         
 	public void testEqualityEquals() throws Exception { 
@@ -615,6 +817,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(b == 3)" ); //$NON-NLS-1$
 	}
 	// Kind EQUALITY_NOTEQUALS : bool      
 	public void testEqualityNotEquals() throws Exception { 
@@ -625,6 +830,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 2, createTaskList( new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(b != 3)" ); //$NON-NLS-1$
 	}
 	// Kind ANDEXPRESSION  : usual arithmetic conversions          
 	public void testAndExpression() throws Exception { 
@@ -636,6 +844,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );	
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a & b)" ); //$NON-NLS-1$
 	}
 	// Kind EXCLUSIVEOREXPRESSION : usual arithmetic conversions      
 	public void testExclusiveOrExpression() throws Exception { 
@@ -647,6 +858,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );	
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a ^ b)" ); //$NON-NLS-1$
 	}
 	// Kind INCLUSIVEOREXPRESSION : : usual arithmetic conversions     
 	public void testInclusiveOrExpression() throws Exception { 
@@ -658,6 +872,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );	
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a | b)" ); //$NON-NLS-1$
 	}
 	// Kind LOGICALANDEXPRESSION : bool      
 	public void testLogicalAndExpression() throws Exception { 
@@ -669,6 +886,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );	
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a && b)" ); //$NON-NLS-1$
 	}
 	// Kind LOGICALOREXPRESSION  : bool      
 	public void testLogicalOrExpression() throws Exception { 
@@ -679,7 +899,10 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable b = (IASTVariable)i.next();
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
-		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );	
+		assertAllReferences( 3, createTaskList( new Task( a ), new Task(b), new Task( foo2 ) ) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a || b)" ); //$NON-NLS-1$
 	}
 	// Kind CONDITIONALEXPRESSION : conditional Expression Conversions     
 	public void testConditionalExpression() throws Exception { 
@@ -692,6 +915,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences( 4, createTaskList( new Task( a ), new Task(b), new Task( c ), new Task( foo2 ) ) );	
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a > 5 ? b : c)" ); //$NON-NLS-1$
 	}
 	// Kind CONDITIONALEXPRESSION with references : conditional Expression Conversions      
 	public void testConditionalExpressionWithReferencesA() throws Exception { 
@@ -706,6 +932,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(8, createTaskList( new Task( cla, 3 ), new Task( clb ), new Task( c ), new Task( b ), new Task( a ), new Task( foo2 )) );
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(c > 5 ? b : a)" ); //$NON-NLS-1$
 	}
 	public void testConditionalExpressionWithReferencesB_Bug43106() throws Exception { 
 		Iterator i = parse( "class A{}; class B : public A{}; int foo(); int foo(A&); A a ; B b; int c = 0; int x = foo( c > 5 ? b : a );").getDeclarations(); //$NON-NLS-1$
@@ -720,6 +949,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertFalse( i.hasNext() );
 		assertAllReferences( 8, 
 			createTaskList( new Task( cla, 3 ), new Task( clb ), new Task( c), new Task( b ), new Task( a ), new Task( foo2) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(c > 5 ? b : a)" ); //$NON-NLS-1$
 	}	
 	// Kind THROWEXPRESSION
 	            
@@ -732,6 +964,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));	
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a = 5)" ); //$NON-NLS-1$
 	}
 	// Kind ASSIGNMENTEXPRESSION_PLUS : LHS  
 	public void testAssignmentExpressionPlus() throws Exception { 
@@ -742,6 +977,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a += 5)" ); //$NON-NLS-1$
 	}
 	// Kind ASSIGNMENTEXPRESSION_MINUS : LHS 
 	public void testAssignmentExpressionMinus() throws Exception { 
@@ -752,6 +990,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a -= 5)" ); //$NON-NLS-1$
 	}
 	// Kind ASSIGNMENTEXPRESSION_MULT : LHS  
 	public void testAssignmentExpressionMulti() throws Exception { 
@@ -762,6 +1003,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a *= 5)" ); //$NON-NLS-1$
 	}
 	// Kind ASSIGNMENTEXPRESSION_DIV : LHS   
 	public void testAssignmentExpressionDiv() throws Exception { 
@@ -772,6 +1016,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a /= 5)" ); //$NON-NLS-1$
 	}
 	// Kind ASSIGNMENTEXPRESSION_MOD : LHS   
 	public void testAssignmentExpressionMod() throws Exception { 
@@ -782,6 +1029,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a %= 5)" ); //$NON-NLS-1$
 	}
 	// Kind ASSIGNMENTEXPRESSION_LSHIFT : LHS
 	public void testAssignmentExpressionLShift() throws Exception { 
@@ -792,6 +1042,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a >>= 5)" ); //$NON-NLS-1$
 	}
 	// Kind ASSIGNMENTEXPRESSION_RSHIFT : LHS
 	public void testAssignmentExpressionRShift() throws Exception { 
@@ -802,6 +1055,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a <<= 5)" ); //$NON-NLS-1$
 	}
 	// Kind ASSIGNMENTEXPRESSION_AND : LHS
 	public void testAssignmentExpressionAnd() throws Exception { 
@@ -812,6 +1068,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a &= 5)" ); //$NON-NLS-1$
 	}
 	// Kind ASSIGNMENTEXPRESSION_OR : LHS 
 	public void testAssignmentExpressionOr() throws Exception { 
@@ -822,6 +1081,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a |= 5)" ); //$NON-NLS-1$
 	}
 	// Kind ASSIGNMENTEXPRESSION_XOR : LHS
 	public void testAssignmentExpressionXOr() throws Exception { 
@@ -832,6 +1094,9 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		IASTVariable x = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
 		assertAllReferences(2, createTaskList( new Task(a), new Task(foo1) ));	
+		
+		IASTExpression exp = x.getInitializerClause().getAssigmentExpression(); 
+		assertEquals( exp.toString(), "foo(a ^= 5)" ); //$NON-NLS-1$
 	}
 	// Kind EXPRESSIONLIST : list of LHS, RHS
 	// Already tested with each test trying to find a reference to function.

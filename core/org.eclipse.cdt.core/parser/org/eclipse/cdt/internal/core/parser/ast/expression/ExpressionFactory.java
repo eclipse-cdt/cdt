@@ -43,7 +43,7 @@ public class ExpressionFactory {
 		if( !literal.equals( EMPTY_STRING ) && idExpression.equals( EMPTY_STRING )) //$NON-NLS-1$
 			return new ASTLiteralExpression( kind, literal );
 		
-		if( !idExpression.equals( EMPTY_STRING )  )
+		if( !idExpression.equals( EMPTY_STRING ) && lhs == null )
 			return new ASTIdExpression( kind, idExpression );
 		
 		if( thirdExpression != null )
@@ -57,6 +57,9 @@ public class ExpressionFactory {
 		
 		if( lhs != null && typeId != null )
 			return new ASTUnaryTypeIdExpression( kind, lhs, typeId );
+		
+		if( lhs != null && !idExpression.equals( EMPTY_STRING ) )
+			return new ASTUnaryIdExpression( kind, lhs, idExpression );
 		
 		if( lhs != null )
 			return new ASTUnaryExpression( kind, lhs );

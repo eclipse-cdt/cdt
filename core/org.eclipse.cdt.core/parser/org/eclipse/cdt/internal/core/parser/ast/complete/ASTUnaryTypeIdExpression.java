@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
@@ -57,4 +58,7 @@ public class ASTUnaryTypeIdExpression extends ASTUnaryExpression {
 		typeId.acceptElement( requestor, manager );
 	}
 
+	public String toString(){
+		return ASTUtil.getExpressionString( this );
+	}
 }

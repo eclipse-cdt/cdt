@@ -302,7 +302,7 @@ public class CModelBuilder {
 	private void generateModelElements (Parent parent, IASTTemplateDeclaration templateDeclaration) throws CModelException, ASTNotImplementedException
 	{				
 		// Template Declaration 
-		IASTDeclaration declaration = (IASTDeclaration)templateDeclaration.getOwnedDeclaration();
+		IASTDeclaration declaration = templateDeclaration.getOwnedDeclaration();
 		if(declaration instanceof IASTAbstractTypeSpecifierDeclaration){
 			IASTAbstractTypeSpecifierDeclaration abstractDeclaration = (IASTAbstractTypeSpecifierDeclaration)declaration ;
 			CElement element = createAbstractElement(parent, abstractDeclaration , true);
@@ -478,10 +478,7 @@ public class CModelBuilder {
 		Enumerator element = new Enumerator (enum, enumDef.getName().toString());
 		IASTExpression initialValue = enumDef.getInitialValue();
 		if(initialValue != null){
-			if(initialValue.getLiteralString().length() > 0)
-				element.setConstantExpression(initialValue.getLiteralString());
-			else 
-				element.setConstantExpression(initialValue.getIdExpression());
+			element.setConstantExpression( ASTUtil.getExpressionString( initialValue ) );
 		}
 		// add to parent
 		enum.addChild(element);

@@ -29,7 +29,7 @@ public class ExpressionFactory {
 		if( !literal.equals( "") && idExpression == null ) //$NON-NLS-1$
 			return new ASTLiteralExpression( kind, references, literal );
 		
-		if( idExpression != null )
+		if( idExpression != null && lhs == null )
 			return new ASTIdExpression( kind, references, idExpression );
 		
 		if( thirdExpression != null )
@@ -43,6 +43,9 @@ public class ExpressionFactory {
 		
 		if( lhs != null && typeId != null )
 			return new ASTUnaryTypeIdExpression( kind, references, lhs, typeId );
+		
+		if( lhs != null && idExpression != null )
+			return new ASTUnaryIdExpression( kind, references, lhs, idExpression );
 		
 		if( lhs != null )
 			return new ASTUnaryExpression( kind, references, lhs );

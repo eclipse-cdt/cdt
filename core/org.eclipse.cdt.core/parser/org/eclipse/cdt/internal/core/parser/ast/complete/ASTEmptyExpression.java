@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IReferenceManager;
 
 /**
@@ -31,5 +32,9 @@ public class ASTEmptyExpression extends ASTExpression {
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
 	 */
 	public void freeReferences(IReferenceManager manager) {
+	}
+	
+	public String toString(){
+		return ASTUtil.getExpressionString( this );
 	}
 }

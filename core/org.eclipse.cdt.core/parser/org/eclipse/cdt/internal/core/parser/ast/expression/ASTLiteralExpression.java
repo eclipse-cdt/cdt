@@ -10,6 +10,8 @@
 
 package org.eclipse.cdt.internal.core.parser.ast.expression;
 
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
+
 
 /**
  * @author jcamelon
@@ -32,5 +34,9 @@ public class ASTLiteralExpression extends ASTExpression {
 	 */
 	public String getLiteralString() {
 		return literal;
+	}
+	
+	public String toString(){
+		return ASTUtil.getExpressionString( this );
 	}
 }

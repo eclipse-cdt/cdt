@@ -1,3 +1,6 @@
+2004-04-04 John Camelon
+	Added CompleteParseASTTest::testBug56516() && CompleteParseASTTests::testBug53786().  
+
 2004-04-02 Andrew Niefer
 	- created CompleteParseASTTemplateTest, added it to the ParserTestSuite and moved all the template tests from 
 	  CompleteParseASTTest to it.

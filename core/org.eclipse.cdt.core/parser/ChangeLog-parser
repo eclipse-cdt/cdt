@@ -1,3 +1,7 @@
+2004-04-04 John Camelon
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=56516  
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=53786
+
 2004-04-02 Andrew Niefer
 	- partial handling template explicit instantiations
 	- bug 56834 - Symbols not available until end of parameter list, fixed for templates using temporary code block

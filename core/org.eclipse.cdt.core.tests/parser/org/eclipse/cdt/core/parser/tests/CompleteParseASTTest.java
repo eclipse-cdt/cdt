@@ -37,8 +37,6 @@ import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
@@ -1351,5 +1349,29 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTTypedefDeclaration thePointer = (IASTTypedefDeclaration) i.next();
 		assertEquals( thePointer.getName(), "pA" );
 		assertFalse( i.hasNext() );
+	}
+	
+	public void testBug56516() throws Exception
+	{
+		Iterator i = parse( "typedef struct blah sb;").getDeclarations();
+		IASTTypedefDeclaration sb = (IASTTypedefDeclaration) i.next();
+		assertEquals( sb.getName(), "sb");
+		assertFalse( i.hasNext() );
+		IASTElaboratedTypeSpecifier elab = ((IASTElaboratedTypeSpecifier)sb.getAbstractDeclarator().getTypeSpecifier());
+		assertEquals( elab.getName(), "blah");
+		assertEquals( elab.getClassKind(), ASTClassKind.STRUCT );
+	}
+	
+	public void testBug53786() throws Exception
+	{
+		Iterator i = parse( "struct Example {  struct Data * data; };").getDeclarations();
+		IASTClassSpecifier Example = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		assertFalse( i.hasNext() );
+		assertEquals( Example.getName(), "Example");
+		assertEquals( Example.getClassKind(), ASTClassKind.STRUCT );
+		Iterator j = getDeclarations( Example );
+		IASTField data = (IASTField) j.next();
+		assertFalse( j.hasNext() );
+		assertEquals( data.getName(), "data" );
 	}
 }

@@ -2783,119 +2783,123 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind kind, ITokenDuple name, int startingOffset, int startingLine, int endOffset, int endingLine, boolean isForewardDecl, boolean isFriend) throws ASTSemanticException
     {
 		IContainerSymbol currentScopeSymbol = scopeToSymbol(scope);
-		TypeInfo.eType pstType = classKindToTypeInfo(kind);		
+		TypeInfo.eType pstType = classKindToTypeInfo(kind);
 		List references = new ArrayList();
-		
 		IToken nameToken = name.getFirstToken();
-		
 		String newSymbolName = ""; //$NON-NLS-1$
 		List templateIdArgList = null;
 		boolean isTemplateId = false;
-		
-		if( name.getSegmentCount() != 1 ) // qualified name 
+		if (name.getSegmentCount() != 1) // qualified name
 		{
-			ITokenDuple containerSymbolName = name.getLeadingSegments(); 
-			currentScopeSymbol = (IContainerSymbol)lookupQualifiedName( currentScopeSymbol, containerSymbolName, references, true);
-			if( currentScopeSymbol == null )
-			 	handleProblem( IProblem.SEMANTIC_NAME_NOT_FOUND, containerSymbolName.toString(), containerSymbolName.getFirstToken().getOffset(), containerSymbolName.getLastToken().getEndOffset(), containerSymbolName.getLastToken().getLineNumber() );	
-		
+			ITokenDuple containerSymbolName = name.getLeadingSegments();
+			currentScopeSymbol = (IContainerSymbol) lookupQualifiedName(
+					currentScopeSymbol, containerSymbolName, references, true);
+			if (currentScopeSymbol == null)
+				handleProblem(IProblem.SEMANTIC_NAME_NOT_FOUND,
+						containerSymbolName.toString(), containerSymbolName
+								.getFirstToken().getOffset(),
+						containerSymbolName.getLastToken().getEndOffset(),
+						containerSymbolName.getLastToken().getLineNumber());
 			nameToken = name.getLastSegment().getFirstToken();
 		}
-		
 		//template-id
-		List [] array = name.getTemplateIdArgLists();
-		if( array != null ){
+		List[] array = name.getTemplateIdArgLists();
+		if (array != null) {
 			isTemplateId = true;
-			templateIdArgList = array[ array.length - 1 ];
+			templateIdArgList = array[array.length - 1];
 		}
-		
 		newSymbolName = nameToken.getImage();
-		
 		ISymbol checkSymbol = null;
-		if( !isTemplateId ){
-			try
-			{
-	            if( isFriend ){
-	                checkSymbol = ((IDerivableContainerSymbol)currentScopeSymbol).lookupForFriendship( newSymbolName );
-	            } else {
-	                checkSymbol = currentScopeSymbol.elaboratedLookup( pstType, newSymbolName);
+		if (!isTemplateId) {
+			try {
+				if (isFriend) {
+					checkSymbol = ((IDerivableContainerSymbol) currentScopeSymbol)
+							.lookupForFriendship(newSymbolName);
+				} else {
+					checkSymbol = currentScopeSymbol.elaboratedLookup(pstType,
+							newSymbolName);
 				}
-			}
-			catch (ParserSymbolTableException e)
-			{
-				handleProblem(e.createProblemID(),nameToken.getImage(), nameToken.getOffset(), nameToken.getEndOffset(), nameToken.getLineNumber() ); 
-			
+			} catch (ParserSymbolTableException e) {
+				handleProblem(e.createProblemID(), nameToken.getImage(),
+						nameToken.getOffset(), nameToken.getEndOffset(),
+						nameToken.getLineNumber());
 			}
 		}
-
 		List args = null;
-		if( isTemplateId ){
-			args = getTemplateArgList( templateIdArgList );
+		if (isTemplateId) {
+			args = getTemplateArgList(templateIdArgList);
 		}
-	
- 		if( isForewardDecl )
- 		{
- 			if( scope instanceof IASTTemplateInstantiation )
- 			{
- 				if( isTemplateId ){
- 					checkSymbol  = pst.newDerivableContainerSymbol( newSymbolName, pstType );
-					try {
-						currentScopeSymbol.addTemplateId( checkSymbol, args );
-					} catch (ParserSymbolTableException e) {
-						handleProblem(e.createProblemID(),nameToken.getImage(), nameToken.getOffset(), nameToken.getEndOffset(), nameToken.getLineNumber() );
-					}
- 				} else { 
- 					handleProblem( IProblem.SEMANTIC_INVALID_TEMPLATE, nameToken.getImage() );
- 				}
- 				checkSymbol = ((ASTTemplateInstantiation)scope).getInstanceSymbol();
- 			} 
- 			else if( checkSymbol == null ) 
-			{ 
-				checkSymbol  = pst.newDerivableContainerSymbol( newSymbolName, pstType );
-				checkSymbol.setIsForwardDeclaration( true );
-				try
-	            {
-                    if( isFriend ){
-                        ((IDerivableContainerSymbol)currentScopeSymbol).addFriend( checkSymbol );
-                    } else {
-                    	if( !isTemplateId )
-                    		currentScopeSymbol.addSymbol( checkSymbol  );
-                    	else 
-                    		currentScopeSymbol.addTemplateId( checkSymbol, args );
-                    }
-	            }
-	            catch (ParserSymbolTableException e1)
-	            {
-	    			handleProblem(e1.createProblemID(),nameToken.getImage(), nameToken.getOffset(), nameToken.getEndOffset(), nameToken.getLineNumber() );
-	            }
-	            
-	            ASTElaboratedTypeSpecifier elab = 
-	            	new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, startingLine, name.getFirstToken().getOffset(), name.getLastToken().getEndOffset(), name.getLastToken().getLineNumber(), endOffset, endingLine, references, isForewardDecl );
-	            	
-	            attachSymbolExtension( checkSymbol, elab, isForewardDecl );
-			} else if( isFriend ){
-				((IDerivableContainerSymbol)currentScopeSymbol).addFriend( checkSymbol );
+		if (scope instanceof IASTTemplateInstantiation) {
+			if (isTemplateId) {
+				checkSymbol = pst.newDerivableContainerSymbol(newSymbolName,
+						pstType);
+				try {
+					currentScopeSymbol.addTemplateId(checkSymbol, args);
+				} catch (ParserSymbolTableException e) {
+					handleProblem(e.createProblemID(), nameToken.getImage(),
+							nameToken.getOffset(), nameToken.getEndOffset(),
+							nameToken.getLineNumber());
+				}
+			} else {
+				handleProblem(IProblem.SEMANTIC_INVALID_TEMPLATE, nameToken
+						.getImage());
 			}
- 		}
- 		
- 		if( checkSymbol != null ){
- 			if( scope instanceof IASTTemplateInstantiation ){
- 				addReference( references, createReference( checkSymbol, newSymbolName, nameToken.getOffset() ));
- 			}
- 			if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTClassSpecifier ||
-			    checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier 
-			)
-			{
-				ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, startingLine, name.getFirstToken().getOffset(), name.getLastToken().getEndOffset(), name.getLastToken().getLineNumber(), endOffset, endingLine, references, isForewardDecl );
-				attachSymbolExtension( checkSymbol, elab, isForewardDecl );
+			checkSymbol = ((ASTTemplateInstantiation) scope)
+					.getInstanceSymbol();
+		} else if (checkSymbol == null) {
+			checkSymbol = pst.newDerivableContainerSymbol(newSymbolName,
+					pstType);
+			checkSymbol.setIsForwardDeclaration(true);
+			try {
+				if (isFriend) {
+					((IDerivableContainerSymbol) currentScopeSymbol)
+							.addFriend(checkSymbol);
+				} else {
+					if (!isTemplateId)
+						currentScopeSymbol.addSymbol(checkSymbol);
+					else
+						currentScopeSymbol.addTemplateId(checkSymbol, args);
+				}
+			} catch (ParserSymbolTableException e1) {
+				handleProblem(e1.createProblemID(), nameToken.getImage(),
+						nameToken.getOffset(), nameToken.getEndOffset(),
+						nameToken.getLineNumber());
+			}
+			ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier(
+					checkSymbol, kind, startingOffset, startingLine, name
+							.getFirstToken().getOffset(), name.getLastToken()
+							.getEndOffset(), name.getLastToken()
+							.getLineNumber(), endOffset, endingLine,
+					references, isForewardDecl);
+			attachSymbolExtension(checkSymbol, elab, !isForewardDecl);
+		} else if (isFriend) {
+			((IDerivableContainerSymbol) currentScopeSymbol)
+					.addFriend(checkSymbol);
+		}
+		if (checkSymbol != null) {
+			if (scope instanceof IASTTemplateInstantiation) {
+				addReference(references, createReference(checkSymbol,
+						newSymbolName, nameToken.getOffset()));
+			}
+			if (checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTClassSpecifier
+					|| checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier) {
+				ASTElaboratedTypeSpecifier elab = new ASTElaboratedTypeSpecifier(
+						checkSymbol, kind, startingOffset, startingLine, name
+								.getFirstToken().getOffset(), name
+								.getLastToken().getEndOffset(), name
+								.getLastToken().getLineNumber(), endOffset,
+						endingLine, references, isForewardDecl);
+				attachSymbolExtension(checkSymbol, elab, !isForewardDecl);
 				return elab;
 			}
-
-			if( checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier )
-				return (IASTElaboratedTypeSpecifier)checkSymbol.getASTExtension().getPrimaryDeclaration();
- 		} else {
- 			handleProblem(IProblem.SEMANTIC_NAME_NOT_FOUND, newSymbolName, nameToken.getOffset(), nameToken.getEndOffset(), nameToken.getLineNumber() );
- 		}
+			if (checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier)
+				return (IASTElaboratedTypeSpecifier) checkSymbol
+						.getASTExtension().getPrimaryDeclaration();
+		} else {
+			handleProblem(IProblem.SEMANTIC_NAME_NOT_FOUND, newSymbolName,
+					nameToken.getOffset(), nameToken.getEndOffset(), nameToken
+							.getLineNumber());
+		}
 	
 		
 //		assert false : this;
@@ -2905,9 +2909,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     protected ParserSymbolTable pst;
 
 
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNamespaceAlias(org.eclipse.cdt.core.parser.ast.IASTScope, java.lang.String, org.eclipse.cdt.core.parser.ITokenDuple, int, int, int)
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNamespaceAlias(org.eclipse.cdt.core.parser.ast.IASTScope,
+	 *      java.lang.String, org.eclipse.cdt.core.parser.ITokenDuple, int, int,
+	 *      int)
+	 */
     public IASTNamespaceAlias createNamespaceAlias(IASTScope scope, String identifier, ITokenDuple alias, int startingOffset, int startingLine, int nameOffset, int nameEndOffset, int nameLine, int endOffset, int endingLine) throws ASTSemanticException
     {
         IContainerSymbol startingSymbol = scopeToSymbol(scope);

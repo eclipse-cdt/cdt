@@ -1188,7 +1188,7 @@ public class Scanner2Test extends BaseScanner2Test
 		
 		//TODO as in 36701B, whitespace is not properly replaced inside the string, ok for now.
 		//validateString("strncmp(\\\"abc\\\\0d\\\", \\\"abc\\\", '\\\\4') == 0");  //$NON-NLS-1$
-		validateString("strncmp(\\\"abc\\\\0d\\\", \\\"abc\\\", '\\\\4')\n        == 0");  //$NON-NLS-1$
+		validateString("strncmp(\\\"abc\\\\0d\\\", \\\"abc\\\", '\\\\4')         == 0");  //$NON-NLS-1$
 		
 		validateToken(IToken.tCOMMA); 
 		validateIdentifier("s");  //$NON-NLS-1$

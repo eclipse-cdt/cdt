@@ -463,9 +463,7 @@ public class Scanner2 implements IScanner, IScannerData {
 							continue;
 						return t;
 					}
-					//TODO - handle problem invalid char sequence
-					//error handling
-					bufferPos[ bufferStackPos ] += 2;
+					handleProblem( IProblem.SCANNER_BAD_CHARACTER, bufferPos[ bufferStackPos ], new char[] { '\\' } );
 					continue;
 					
 				case '0':
@@ -844,17 +842,24 @@ public class Scanner2 implements IScanner, IScannerData {
 		int stringStart = bufferPos[bufferStackPos] + 1;
 		int stringLen = 0;
 		boolean escaped = false;
+		boolean foundClosingQuote = false;
 		loop:
 		while (++bufferPos[bufferStackPos] < bufferLimit[bufferStackPos]) {
 			++stringLen;
 			char c = buffer[bufferPos[bufferStackPos]];
 			if (c == '"') {
-				if (!escaped)
+				if (!escaped){
+				    foundClosingQuote = true;
 					break;
 				}
+			}
 			else if (c == '\\') {
 				escaped = !escaped;
 				continue;
+			} else if(c == '\n'){
+			    //unescaped end of line before end of string
+			    if( !escaped )
+			        break;
 			}
 			escaped = false;
 		}
@@ -862,8 +867,11 @@ public class Scanner2 implements IScanner, IScannerData {
 
 		// We should really throw an exception if we didn't get the terminating
 		// quote before the end of buffer
-		
-		return newToken(tokenType, CharArrayUtils.extract(buffer, stringStart, stringLen));
+		char[] result = CharArrayUtils.extract(buffer, stringStart, stringLen);
+		if( !foundClosingQuote ){
+		    handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, stringStart, result );
+		}
+		return newToken(tokenType, result);
 	}
 
 	private IToken scanCharLiteral(boolean b) {
@@ -955,9 +963,11 @@ public class Scanner2 implements IScanner, IScannerData {
 					continue;
 				
 				case '.':
-					if (isFloat)
+					if (isFloat){
 						// second dot
+					    handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, start, null );
 						break;
+					}
 					
 					isFloat = true;
 					continue;
@@ -1094,9 +1104,13 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		--bufferPos[bufferStackPos];
 		
-		return newToken( isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER,
-				CharArrayUtils.extract(buffer, start,
-						bufferPos[bufferStackPos] - start + 1) );
+		char[] result = CharArrayUtils.extract( buffer, start, bufferPos[bufferStackPos] - start + 1);
+		int tokenType = isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER;
+		if( tokenType == IToken.tINTEGER && isHex && result.length == 2 ){
+		    handleProblem( IProblem.SCANNER_BAD_HEX_FORMAT, start, result );
+		}
+		
+		return newToken( tokenType, result );
 	}
 	
 	private void handlePPDirective(int pos) throws ScannerException, EndOfFileException {
@@ -1114,6 +1128,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		if (start >= limit || buffer[start] == '\n')
 			return;
 
+		boolean problem = false;
 		char c = buffer[start];
 		if ((c >= 'a' && c <= 'z')) {
 			while (++bufferPos[bufferStackPos] < limit) {
@@ -1172,10 +1187,19 @@ public class Scanner2 implements IScanner, IScannerData {
 						return;
 					case ppError:
 						throw new ScannerException(null);
+					case ppEndif:
+					    break;
+					default:
+					    problem = true;
+					    break;
 				}
 			}
-		}
+		} else 
+		    problem = true;
 
+		if( problem )
+		    handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, start, null );
+		
 		// don't know, chew up to the end of line
 		// includes endif which is immatereal at this point
 		skipToNewLine();
@@ -1295,16 +1319,17 @@ public class Scanner2 implements IScanner, IScannerData {
 		 
 		if( filename == null || filename == EMPTY_STRING )
 		{
-			//TODO IProblem
+			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, startOffset, null );
 			return;
 		}
+		char [] fileNameArray = filename.toCharArray();
 		// TODO else we need to do macro processing on the rest of the line
 		endLine = bufferLineNums[ bufferStackPos ];
 		skipToNewLine();
 
 		if( parserMode == ParserMode.QUICK_PARSE )
 		{
-			IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), EMPTY_STRING_CHAR_ARRAY, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+			IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, EMPTY_STRING_CHAR_ARRAY, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 			requestor.enterInclusion( inclusion );
 			requestor.exitInclusion( inclusion );
 		}
@@ -1327,7 +1352,7 @@ public class Scanner2 implements IScanner, IScannerData {
 						if (reader.filename != null)
 							fileCache.put(reader.filename, reader);
 						if (dlog != null) dlog.println("#include \"" + finalPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-						IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+						IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 						pushContext(reader.buffer, new InclusionData( reader, inclusion ));
 						return;
 					}
@@ -1354,16 +1379,16 @@ public class Scanner2 implements IScanner, IScannerData {
 							if (reader.filename != null)
 								fileCache.put(reader.filename, reader);
 							if (dlog != null) dlog.println("#include <" + finalPath + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-							IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+							IASTInclusion inclusion = getASTFactory().createInclusion( fileNameArray, reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 							pushContext(reader.buffer, new InclusionData( reader, inclusion ));
 							return;
 						}
 					}
 				}
 		
-			// TODO raise a problem
-			//if (reader == null)
-			//	handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, filename, beginOffset, false, true );
+			
+			if (reader == null)
+				handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset, fileNameArray);
 		}
 		
 	}
@@ -1383,6 +1408,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		char c = buffer[idstart];
 		if (!((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_')) {
+		    handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, idstart, null );
 			skipToNewLine();
 			return;
 		}
@@ -1429,6 +1455,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					arglist[++currarg] = "...".toCharArray(); //$NON-NLS-1$
 					continue;
 				} else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_')) {
+				    handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, idstart, name );
 					// yuck
 					skipToNewLine();
 					return;
@@ -1455,7 +1482,22 @@ public class Scanner2 implements IScanner, IScannerData {
 		boolean encounteredMultilineComment = false;
 		while (bufferPos[bufferStackPos] + 1 < limit
 				&& buffer[bufferPos[bufferStackPos] + 1] != '\n') {
-			skipOverNonWhiteSpace();
+			if( arglist != null && !skipOverNonWhiteSpace( true ) ){
+			    ++bufferPos[bufferStackPos];
+			    if( skipOverWhiteSpace() )
+			        encounteredMultilineComment = true;
+			    boolean isArg = false;
+			    for( int i = 0; i < arglist.length && arglist[i] != null; i++ ){
+			        if( CharArrayUtils.equals( buffer, bufferPos[bufferStackPos], arglist[i].length, arglist[i] ) ){
+			            isArg = true;
+			            break;
+			        }
+			    }
+			    if( !isArg )
+			        handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, bufferPos[bufferStackPos], null );
+			} else {
+			    skipOverNonWhiteSpace();
+			}
 			textend = bufferPos[bufferStackPos];
 			if( skipOverWhiteSpace() )
 				encounteredMultilineComment = true;
@@ -1756,7 +1798,10 @@ public class Scanner2 implements IScanner, IScannerData {
 		return encounteredMultiLineComment;
 	}
 	
-	private void skipOverNonWhiteSpace() {
+	private void skipOverNonWhiteSpace(){
+	    skipOverNonWhiteSpace( false );
+	}
+	private boolean skipOverNonWhiteSpace( boolean stopAtPound ) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
@@ -1767,13 +1812,13 @@ public class Scanner2 implements IScanner, IScannerData {
 				case '\r':
 				case '\n':
 					--bufferPos[bufferStackPos];
-					return;
+					return true;
 				case '/':
 					int pos = bufferPos[bufferStackPos];
 					if( pos +1 < limit && ( buffer[pos+1] == '/' ) || ( buffer[pos+1] == '*') )
 					{
 						--bufferPos[bufferStackPos];
-						return;
+						return true;
 					}
 					break;
 													
@@ -1782,7 +1827,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (pos + 1 < limit && buffer[pos + 1] == '\n') {
 						// \n is whitespace
 						--bufferPos[bufferStackPos];
-						return;
+						return true;
 					}
 					break;
 				case '"':
@@ -1810,7 +1855,7 @@ public class Scanner2 implements IScanner, IScannerData {
 										  buffer[bufferPos[ bufferStackPos ] + 1] == '*' ) )
 								{
 									--bufferPos[bufferStackPos];
-									return;
+									return true;
 								}
 						
 							default:
@@ -1837,9 +1882,16 @@ public class Scanner2 implements IScanner, IScannerData {
 						}
 					}
 					break;
+				case '#' :
+				    if( stopAtPound ){
+					    --bufferPos[bufferStackPos];
+					    return false;
+				    }
+				    break;
 			}
 		}
 		--bufferPos[bufferStackPos];
+		return true;
 	}
 
 	private void skipOverMacroArg() {
@@ -1970,9 +2022,11 @@ public class Scanner2 implements IScanner, IScannerData {
 		CharArrayObjectMap argmap = new CharArrayObjectMap(arglist.length);
 		
 		while (bufferPos[bufferStackPos] < limit) {
-			if (++currarg >= arglist.length || arglist[currarg] == null)
+			if (++currarg >= arglist.length || arglist[currarg] == null){
 				// too many args
+			    handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, bufferPos[bufferStackPos], macro.name );
 				break;
+			}
 
 			skipOverWhiteSpace();
 			
@@ -2051,6 +2105,16 @@ public class Scanner2 implements IScanner, IScannerData {
 			
 			if (c == ')')
 				break;
+		}
+		int numArgs = arglist.length;
+		for( int i = 0; i < arglist.length; i++ ){
+		    if( arglist[i] == null ){
+		        numArgs = i;
+		        break;
+		    }
+		}
+		if( argmap.size() < numArgs ){
+		    handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, bufferPos[bufferStackPos], macro.name );
 		}
 		
 		int size = expandFunctionStyleMacro(macro.expansion, argmap, null);
@@ -2344,7 +2408,10 @@ public class Scanner2 implements IScanner, IScannerData {
 							for( int i = 0; i < argvalue.length; i++ ){
 							    if( argvalue[i] == '"' || argvalue[i] == '\\' )
 							        result[outpos++] = '\\';
-							    result[outpos++] = argvalue[i];
+							    if( argvalue[i] == '\r' || argvalue[i] == '\n' )
+							        result[outpos++] = ' ';
+							    else
+							        result[outpos++] = argvalue[i];
 							}
 							result[outpos++] = '"';
 						} else {

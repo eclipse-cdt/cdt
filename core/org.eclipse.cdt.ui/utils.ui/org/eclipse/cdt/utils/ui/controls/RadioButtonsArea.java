@@ -7,11 +7,18 @@ package org.eclipse.cdt.utils.ui.controls;
  
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.eclipse.swt.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+
 import org.eclipse.jface.util.Assert;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * A field editor for an enumeration type preference.
@@ -32,7 +39,7 @@ public class RadioButtonsArea extends Composite {
 	/**
 	 * Indent used for the first column of the radion button matrix.
 	 */
-	private int indent = 0;
+	//private int indent = 0;
 
 	/**
 	 * The current value, or <code>null</code> if none.

@@ -1814,4 +1814,17 @@ public class Scanner2Test extends BaseScanner2Test
         validateToken( IToken.t_int );
         assertEquals( problems.size(), 1 );
     }
+    
+    public void testBug73652() throws Exception
+	{
+    	StringWriter writer = new StringWriter();
+    	writer.write( "#define DoSuperMethodA IDoSuperMethodA\n" ); //$NON-NLS-1$
+    	writer.write( "#define IDoSuperMethodA(a,b,c) IIntuition->IDoSuperMethodA(a,b,c)\n" ); //$NON-NLS-1$
+		writer.write( "void hang(void)\n" ); //$NON-NLS-1$
+		writer.write( "{\n" ); //$NON-NLS-1$
+		writer.write( "DoSuperMethodA(0,0,0);\n" ); //$NON-NLS-1$
+		writer.write( "}\n" ); //$NON-NLS-1$
+		initializeScanner( writer.toString() );
+		fullyTokenize();
+	}
 }

@@ -29,7 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.internal.core.FileStorage;
+import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;

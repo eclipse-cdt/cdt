@@ -114,10 +114,13 @@
 	
 	<target name="wswbmap" depends="init" unless="hasErrors">
 		<copy file="cdt-map.in" tofile="cdt-map.txt" overwrite="true"/>
-		<replace file="cdt-map.txt" token="@buildId@" value="${buildId}"/>
-		<scp todir="${cdtuser}:${cdtpasswd}@download.eclipse.org:/home/www/tools/cdt/wswb">
+		<replace file="cdt-map.txt">
+			<replacefilter token="@branchVersion@" value="${branchVersion}"/>
+			<replacefilter token="@buildId@" value="${buildId}"/>
+		</replace>
+		<ftp server="${cdtserver}" remotedir="/home/www/tools/cdt/wswb" userid="${cdtuser}" password="${cdtpasswd}">
 			<fileset file="cdt-map.txt"/>
-		</scp>
+		</ftp>
 	</target>
 
 	<target name="mail" depends="init">

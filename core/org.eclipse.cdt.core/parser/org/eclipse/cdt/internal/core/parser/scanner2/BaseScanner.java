@@ -105,7 +105,8 @@ abstract class BaseScanner implements IScanner {
 
     protected CharArrayObjectMap definitions = new CharArrayObjectMap(512);
 
-    protected String[] includePaths;
+    protected String[] stdIncludePaths;
+    protected String[] locIncludePaths = null;
 
     int count;
 
@@ -1244,7 +1245,8 @@ abstract class BaseScanner implements IScanner {
                 }
             }
         }
-        includePaths = info.getIncludePaths();
+        stdIncludePaths = info.getIncludePaths();
+        
 
     }
 
@@ -1287,6 +1289,7 @@ abstract class BaseScanner implements IScanner {
                 && einfo.getIncludeFiles().length > 0)
             preIncludeFiles = Arrays.asList(einfo.getIncludeFiles()).iterator();
 
+        locIncludePaths = einfo.getLocalIncludePath();
         pushContext(reader.buffer, reader);
 
         if (preIncludeFiles.hasNext())
@@ -1461,7 +1464,7 @@ abstract class BaseScanner implements IScanner {
      * @see org.eclipse.cdt.core.parser.IScanner#getIncludePaths()
      */
     public String[] getIncludePaths() {
-        return includePaths;
+        return stdIncludePaths;
     }
 
     /*
@@ -2798,15 +2801,32 @@ abstract class BaseScanner implements IScanner {
         endLine = getLineNumber(bufferPos[bufferStackPos]);
         skipToNewLine();
 
+        findAndPushInclusion(filename, fileNameArray, local, include_next, startOffset, nameOffset, nameEndOffset, endOffset, startingLineNumber, nameLine, endLine);
+    }
+
+    /**
+     * @param filename
+     * @param fileNameArray
+     * @param local
+     * @param include_next
+     * @param startOffset
+     * @param nameOffset
+     * @param nameEndOffset
+     * @param endOffset
+     * @param startingLine
+     * @param nameLine
+     * @param endLine
+     */
+    protected void findAndPushInclusion(String filename, char[] fileNameArray, boolean local, boolean include_next, int startOffset, int nameOffset, int nameEndOffset, int endOffset, int startingLine, int nameLine, int endLine) {
         if (parserMode == ParserMode.QUICK_PARSE) {
             Object inclusion = createInclusionConstruct(fileNameArray,
-                    EMPTY_CHAR_ARRAY, local, startOffset, startingLineNumber,
+                    EMPTY_CHAR_ARRAY, local, startOffset, startingLine,
                     nameOffset, nameEndOffset, nameLine, endOffset, endLine,
                     false);
             quickParsePushPopInclusion(inclusion);
             return;
         }
-
+        
         CodeReader reader = null;
         File currentDirectory = null;
         if (local || include_next) {
@@ -2814,8 +2834,8 @@ abstract class BaseScanner implements IScanner {
             // then we need to know what the current directory is!
             File file = new File(String.valueOf(getCurrentFilename()));
             currentDirectory = file.getParentFile();
-        }
-
+        }       
+        
         if (local && !include_next) {
             // Check to see if we find a match in the current directory
             if (currentDirectory != null) {
@@ -2825,37 +2845,41 @@ abstract class BaseScanner implements IScanner {
                     pushContext(reader.buffer, new InclusionData(reader,
                             createInclusionConstruct(fileNameArray,
                                     reader.filename, local, startOffset,
-                                    startingLineNumber, nameOffset,
+                                    startingLine, nameOffset,
                                     nameEndOffset, nameLine, endOffset,
                                     endLine, false)));
                     return;
                 }
             }
         }
-
         // if we're not include_next, then we are looking for the
         // first occurance of the file, otherwise, we ignore all the paths
         // before
         // the
         // current directory
-        if (includePaths != null) {
+        
+        String [] includePathsToUse = stdIncludePaths;
+        if( local && locIncludePaths != null && locIncludePaths.length > 0 )
+            includePathsToUse = locIncludePaths;
+        
+        if (includePathsToUse != null ) {
             int startpos = 0;
             if (include_next)
-                startpos = findIncludePos(includePaths, currentDirectory) + 1;
-            for (int i = startpos; i < includePaths.length; ++i) {
-                reader = createReader(includePaths[i], filename);
+                startpos = findIncludePos(includePathsToUse, currentDirectory) + 1;
+            for (int i = startpos; i < includePathsToUse.length; ++i) {
+                reader = createReader(includePathsToUse[i], filename);
                 if (reader != null) {
                     pushContext(reader.buffer, new InclusionData(reader,
                             createInclusionConstruct(fileNameArray,
                                     reader.filename, local, startOffset,
-                                    startingLineNumber, nameOffset,
+                                    startingLine, nameOffset,
                                     nameEndOffset, nameLine, endOffset,
                                     endLine, false)));
                     return;
                 }
             }
         }
-
+        
         handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset,
                 fileNameArray);
     }

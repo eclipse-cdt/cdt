@@ -20,15 +20,10 @@ public class ConsoleOutputStream extends OutputStream {
 		fBuffer= new StringBuffer();
 	}
 
-		
 	public synchronized String readBuffer() {
 		String buf = fBuffer.toString();
 		fBuffer.setLength(0);
 		return buf;
-	}
-
-	public void clear() {
-		fBuffer.setLength (0);
 	}
 
 	public synchronized void write(int c) throws IOException {
@@ -36,11 +31,7 @@ public class ConsoleOutputStream extends OutputStream {
 		ascii[0] = (byte) c;
 		fBuffer.append(new String(ascii));
 	}
-	
-    public synchronized void write(byte[] b) throws IOException {
-        fBuffer.append(new String(b));
-    }
-    
+	    
     public synchronized void write(byte[] b, int off, int len) throws IOException {
         fBuffer.append(new String(b, off, len));
     }

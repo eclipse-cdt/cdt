@@ -5,6 +5,7 @@ package org.eclipse.cdt.core;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -456,13 +457,27 @@ public class CCorePlugin extends Plugin {
 			}
 		} catch (CoreException e) {
 		}
-		return new IConsole() {
-			public void clear() {
-			}
+		return new IConsole() { // return a null console
+			private ConsoleOutputStream nullStream = new ConsoleOutputStream() {
+			    public void write(byte[] b) throws IOException {
+			    }			    
+				public void write(byte[] b, int off, int len) throws IOException {
+				}					
+				public void write(int c) throws IOException {
+				}
+			};
+			
 			public void start(IProject project) {
 			}
+		    // this can be a null console....
 			public ConsoleOutputStream getOutputStream() {
-				return new ConsoleOutputStream();
+				return nullStream;
+			}
+			public ConsoleOutputStream getInfoStream() {
+				return nullStream; 
+			}
+			public ConsoleOutputStream getErrorStream() {
+				return nullStream;
 			}
 		};
 	}
@@ -475,7 +490,7 @@ public class CCorePlugin extends Plugin {
 		IBinaryParser parsers[] = null;
 		if (project != null) {
 			try {
-				ICDescriptor cdesc = (ICDescriptor) getCProjectDescription(project);
+				ICDescriptor cdesc = getCProjectDescription(project);
 				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
 				if (cextensions.length > 0) {
 					ArrayList list = new ArrayList(cextensions.length);
@@ -719,7 +734,7 @@ public class CCorePlugin extends Plugin {
 		IScannerInfoProvider provider = null;
 		if (project != null) {
 			try {
-				ICDescriptor desc = (ICDescriptor) getCProjectDescription(project);
+				ICDescriptor desc = getCProjectDescription(project);
 				ICExtensionReference[] extensions = desc.get(BUILD_SCANNER_INFO_UNIQ_ID, true);
 				if (extensions.length > 0)
 					provider = (IScannerInfoProvider) extensions[0].createExtension();

@@ -1,3 +1,11 @@
+2004-03-12 David Inglis
+
+	Improved IConsole API to support multiple streams.
+	
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/ConsoleOutputStream.java
+	* src/org/eclipse/cdt/core/resources/IConsole.java
+
 2004-03-09 David Inglis
 	
 	Don't error in CDescriptorManager.configure() when project is created twice with the same owner id.

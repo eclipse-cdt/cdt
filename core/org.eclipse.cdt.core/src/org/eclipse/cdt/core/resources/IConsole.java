@@ -10,8 +10,9 @@ import org.eclipse.core.resources.IProject;
 
 
 public interface IConsole {
-    ConsoleOutputStream getOutputStream();
 	void start(IProject project);
-    void clear();
+    ConsoleOutputStream getOutputStream();
+    ConsoleOutputStream getInfoStream();
+    ConsoleOutputStream getErrorStream();
 }
 

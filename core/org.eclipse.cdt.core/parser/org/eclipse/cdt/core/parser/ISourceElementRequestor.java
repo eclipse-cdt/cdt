@@ -11,7 +11,7 @@
 package org.eclipse.cdt.core.parser;
 
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTClassSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructor;
 import org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier;
@@ -27,8 +27,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedef;
-import org.eclipse.cdt.core.parser.ast.IASTUsageDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTUsageDirective;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 
 /**
@@ -42,8 +42,8 @@ public interface ISourceElementRequestor {
 	public void acceptMacro( IASTMacro macro );
 	public void acceptVariable( IASTVariable variable );
 	public void acceptFunctionDeclaration( IASTFunction function );
-	public void acceptUsageDirective( IASTUsageDirective usageDirective );
-	public void acceptUsageDeclaration( IASTUsageDeclaration usageDeclaration );
+	public void acceptUsingDirective( IASTUsingDirective usageDirective );
+	public void acceptUsingDeclaration( IASTUsingDeclaration usageDeclaration );
 	public void acceptASMDefinition( IASTASMDefinition asmDefinition );
 	public void acceptTypedef( IASTTypedef typedef );
 
@@ -57,7 +57,7 @@ public interface ISourceElementRequestor {
 	public void enterCompilationUnit( IASTCompilationUnit compilationUnit ); 
 	public void enterInclusion( IASTInclusion inclusion ); 
 	public void enterNamespaceDefinition( IASTNamespaceDefinition namespaceDefinition );
-	public void enterClassSpecifier( IASTClassSpecification classSpecification );
+	public void enterClassSpecifier( IASTClassSpecifier classSpecification );
 	public void enterLinkageSpecification( IASTLinkageSpecification linkageSpec );
 	
 	public void enterTemplateDeclaration( IASTTemplateDeclaration declaration );
@@ -75,7 +75,7 @@ public interface ISourceElementRequestor {
 	public void exitTemplateExplicitInstantiation( IASTTemplateInstantiation instantiation );
 	
 	public void exitLinkageSpecification( IASTLinkageSpecification linkageSpec );
-	public void exitClassSpecifier( IASTClassSpecification classSpecification ); 	 
+	public void exitClassSpecifier( IASTClassSpecifier classSpecification ); 	 
 	public void exitNamespaceDefinition( IASTNamespaceDefinition namespaceDefinition ); 
 	public void exitInclusion( IASTInclusion inclusion ); 
 	public void exitCompilationUnit( IASTCompilationUnit compilationUnit );

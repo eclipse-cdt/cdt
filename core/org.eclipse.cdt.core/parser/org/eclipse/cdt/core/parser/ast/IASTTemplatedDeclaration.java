@@ -8,13 +8,13 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
+package org.eclipse.cdt.core.parser.ast;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTScope
-	extends org.eclipse.cdt.core.parser.ast.IASTScope, IPSTContainerExtension {
+public interface IASTTemplatedDeclaration {
 
+	public IASTTemplateDeclaration getOwnerTemplateDeclaration(); 
 }

@@ -17,6 +17,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import org.eclipse.cdt.core.parser.ast.AccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompilationUnit;
 import org.eclipse.cdt.internal.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IParameterizedSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableException;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Declaration;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Mark;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TypeInfo;
@@ -264,10 +266,10 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol c    = table.newDerivableContainerSymbol("C");
 		
 		IDerivableContainerSymbol a    = table.newDerivableContainerSymbol("A");
-		a.addParent( c, true );
+		a.addParent( c, true, AccessVisibility.v_public );
 		
 		IDerivableContainerSymbol b    = table.newDerivableContainerSymbol("B");
-		b.addParent( c, true );
+		b.addParent( c, true, AccessVisibility.v_public );
 		
 		decl.addParent( a );
 		decl.addParent( b );

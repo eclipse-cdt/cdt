@@ -14,9 +14,11 @@ package org.eclipse.cdt.internal.core.parser;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.cdt.internal.core.parser.ast.ASTASMDefinition;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompilationUnit;
@@ -260,7 +262,7 @@ c, quickParse);
 	 * @param container		Callback object representing the scope these definitions fall into. 
 	 * @throws Backtrack	request for a backtrack
 	 */
-	protected void usingClause( Object container ) throws Backtrack
+	protected void usingClause( Object container, IASTScope scope ) throws Backtrack
 	{
 		Token firstToken = consume( Token.t_using );
 		
@@ -271,10 +273,11 @@ c, quickParse);
 			// using-directive
 			consume( Token.t_namespace );
 			
-			// optional :: and nested classes handled in name	
+			// optional :: and nested classes handled in name
+			TokenDuple duple = null ;	
 			if( LT(1) == Token.tIDENTIFIER || LT(1) == Token.tCOLONCOLON )
 			{
-				name();
+				duple = name();
 				try{ callback.usingDirectiveNamespaceId( directive );} catch( Exception e ) {}
 			}
 			else
@@ -287,6 +290,47 @@ c, quickParse);
 			{
 				consume( Token.tSEMI );
 				try{ callback.usingDirectiveEnd( directive );} catch( Exception e ) {}
+				
+				Iterator iter = duple.iterator();
+				Token t1 = (Token)iter.next();
+				IContainerSymbol symbol = null; 
+
+				if( t1.getType() == Token.tCOLONCOLON )
+					symbol = pst.getCompilationUnit();
+				else
+				{
+					try
+					{
+						symbol = (IContainerSymbol)scope.getContainerSymbol().Lookup( t1.getImage() );
+					}
+					catch( ParserSymbolTableException pste )
+					{
+						handlePSTException( pste );
+					}
+				}
+			
+				while( iter.hasNext() )
+				{
+					Token t = (Token)iter.next(); 
+					if( t.getType() == Token.tCOLONCOLON ) continue; 
+					try
+					{
+						symbol = symbol.LookupNestedNameSpecifier( t.getImage() );
+					}
+					catch( ParserSymbolTableException pste )
+					{
+						handlePSTException( pste );
+					}
+				}
+				
+				try {
+					scope.getContainerSymbol().addUsingDirective( symbol );
+				} catch (ParserSymbolTableException pste) {
+					handlePSTException( pste );
+				}
+				
+				IASTUsingDirective astUD = new ASTUsingDirective( duple.toString() );
+				requestor.acceptUsingDirective( astUD );
 				return;
 			}
 			else
@@ -332,6 +376,14 @@ c, quickParse);
 		}
 	}
 	
+	/**
+	 * @param pste
+	 */
+	private void handlePSTException(ParserSymbolTableException pste) throws Backtrack {
+		throw backtrack; 
+	}
+
+
 	/**
 	 * Implements Linkage specification in the ANSI C++ grammar. 
 	 * 
@@ -626,7 +678,7 @@ c, quickParse);
 				namespaceDefinition( container, scope);
 				return; 
 			case Token.t_using:
-				usingClause( container );
+				usingClause( container, scope );
 				return; 
 			case Token.t_export:
 			case Token.t_template:
@@ -1308,7 +1360,7 @@ c, quickParse);
 	 * 
 	 * @throws Backtrack	request a backtrack
 	 */
-	protected void name() throws Backtrack {
+	protected TokenDuple name() throws Backtrack {
 		Token first = LA(1);
 		Token last = null;
 		
@@ -1352,6 +1404,7 @@ c, quickParse);
 		}
 
 		try{ callback.nameEnd(last);} catch( Exception e ) {}
+		return new TokenDuple( first, last );
 
 	}
 

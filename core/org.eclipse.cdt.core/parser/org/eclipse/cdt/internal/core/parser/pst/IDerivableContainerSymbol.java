@@ -18,6 +18,8 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.ast.AccessVisibility;
+
 /**
  * @author aniefer
  *
@@ -27,7 +29,7 @@ import java.util.List;
 public interface IDerivableContainerSymbol extends IContainerSymbol {
 
 	public void addParent( ISymbol parent );
-	public void addParent( ISymbol parent, boolean virtual );
+	public void addParent( ISymbol parent, boolean virtual, AccessVisibility visibility );
 	public List getParents();
 	public boolean hasParents();
 	

@@ -37,7 +37,7 @@ public class ASTLinkageSpecification implements IASTLinkageSpecification {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IPSTSymbolExtension#getSymbol()
 	 */
-	public ISymbol getSymbol() {
+	public IContainerSymbol getContainerSymbol() {
 		return symbol;
 	}
 	
@@ -49,6 +49,12 @@ public class ASTLinkageSpecification implements IASTLinkageSpecification {
 	 */
 	public String getLinkageString() {
 		return linkage;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ast.IPSTSymbolExtension#getSymbol()
+	 */
+	public ISymbol getSymbol() {
+		return symbol;
 	} 
 
 }

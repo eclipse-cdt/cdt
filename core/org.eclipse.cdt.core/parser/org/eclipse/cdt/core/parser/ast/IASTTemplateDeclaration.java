@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import java.util.Iterator;
+
 /**
  * @author jcamelon
  *
@@ -17,4 +19,6 @@ package org.eclipse.cdt.core.parser.ast;
 public interface IASTTemplateDeclaration {
 
 	public TemplateDeclarationType getTemplateDeclarationType(); 
+	public Iterator getTemplateParameters(); 
+
 }

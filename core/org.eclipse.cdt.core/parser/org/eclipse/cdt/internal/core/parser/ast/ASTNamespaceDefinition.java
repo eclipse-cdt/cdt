@@ -93,5 +93,12 @@ public class ASTNamespaceDefinition implements IASTNamespaceDefinition {
 	 */
 	public int getElementEndingOffset() {
 		return endingOffset;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ast.IPSTContainerExtension#getContainerSymbol()
+	 */
+	public IContainerSymbol getContainerSymbol() {
+		return symbol;
 	} 
 }

@@ -22,6 +22,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.parser.ast.AccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.IPSTSymbolExtension;
 
 /**
@@ -2336,14 +2337,14 @@ public class ParserSymbolTable {
 		}
 	
 		public void addParent( ISymbol parent ){
-			addParent( parent, false );
+			addParent( parent, false, AccessVisibility.v_public );
 		}
-		public void addParent( ISymbol parent, boolean virtual ){
+		public void addParent( ISymbol parent, boolean virtual, AccessVisibility visibility ){
 			if( _parentScopes == null ){
 				_parentScopes = new LinkedList();
 			}
 			
-			ParentWrapper wrapper = new ParentWrapper( parent, virtual );
+			ParentWrapper wrapper = new ParentWrapper( parent, virtual, visibility );
 			_parentScopes.add( wrapper );
 			
 			Command command = new AddParentCommand( this, wrapper );
@@ -3101,11 +3102,12 @@ public class ParserSymbolTable {
 	
 		
 		
-		protected class ParentWrapper implements IDerivableContainerSymbol.IParentSymbol
+		public class ParentWrapper implements IDerivableContainerSymbol.IParentSymbol
 		{
-			public ParentWrapper( ISymbol p, boolean v ){
+			public ParentWrapper( ISymbol p, boolean v, AccessVisibility s ){
 				parent    = p;
 				isVirtual = v;
+				access = s;
 			}
 		
 			public void setParent( ISymbol parent ){
@@ -3126,6 +3128,14 @@ public class ParserSymbolTable {
 			
 			private boolean isVirtual = false;
 			private ISymbol parent = null;
+			private final AccessVisibility access; 
+			/**
+			 * @return
+			 */
+			public AccessVisibility getAccess() {
+				return access;
+			}
+
 		}
 	}
 	

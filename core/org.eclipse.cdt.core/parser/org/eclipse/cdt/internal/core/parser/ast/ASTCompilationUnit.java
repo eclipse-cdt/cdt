@@ -36,9 +36,15 @@ public class ASTCompilationUnit implements IASTCompilationUnit {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.ISymbolTableExtension#getSymbol()
 	 */
-	public ISymbol getSymbol() {
+	public IContainerSymbol getContainerSymbol() {
 		return symbol;
 	}
 
 	private final IContainerSymbol symbol;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ast.IPSTSymbolExtension#getSymbol()
+	 */
+	public ISymbol getSymbol() {
+		return symbol;
+	}
 }

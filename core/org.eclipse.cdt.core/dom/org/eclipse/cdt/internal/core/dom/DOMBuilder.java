@@ -5,7 +5,7 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
-import org.eclipse.cdt.core.parser.ast.IASTClassSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructor;
 import org.eclipse.cdt.core.parser.ast.IASTEnumSpecifier;
@@ -21,8 +21,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedef;
-import org.eclipse.cdt.core.parser.ast.IASTUsageDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTUsageDirective;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Name;
@@ -1013,7 +1013,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptUsageDirective(org.eclipse.cdt.core.parser.ast.IASTUsageDirective)
 	 */
-	public void acceptUsageDirective(IASTUsageDirective usageDirective) {
+	public void acceptUsingDirective(IASTUsingDirective usageDirective) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1021,7 +1021,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptUsageDeclaration(org.eclipse.cdt.core.parser.ast.IASTUsageDeclaration)
 	 */
-	public void acceptUsageDeclaration(IASTUsageDeclaration usageDeclaration) {
+	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1117,7 +1117,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecification)
 	 */
-	public void enterClassSpecifier(IASTClassSpecification classSpecification) {
+	public void enterClassSpecifier(IASTClassSpecifier classSpecification) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -1229,7 +1229,7 @@ public class DOMBuilder implements IParserCallback, ISourceElementRequestor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitClassSpecifier(org.eclipse.cdt.core.parser.ast.IASTClassSpecification)
 	 */
-	public void exitClassSpecifier(IASTClassSpecification classSpecification) {
+	public void exitClassSpecifier(IASTClassSpecifier classSpecification) {
 		// TODO Auto-generated method stub
 		
 	}

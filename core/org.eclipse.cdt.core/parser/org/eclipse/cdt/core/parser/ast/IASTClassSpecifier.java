@@ -8,13 +8,20 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
+package org.eclipse.cdt.core.parser.ast;
+
+import java.util.Iterator;
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTScope
-	extends org.eclipse.cdt.core.parser.ast.IASTScope, IPSTContainerExtension {
+public interface IASTClassSpecifier extends IASTScope, IASTOffsetableNamedElement, IASTTemplatedDeclaration {
 
+	public ClassNameType getClassNameType(); 
+
+	public ClassKind getClassKind();
+
+	public Iterator getBaseClauses();
+	 
 }

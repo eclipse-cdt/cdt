@@ -35,6 +35,10 @@ public class MIInfoThreadsInfo extends MIInfo {
 		return threadIds;
 	}
 
+	public String[] getThreadNames() {
+		return null;
+	}
+
 	public int getCurrentThread() {
 		return currentThreadId;
 	}

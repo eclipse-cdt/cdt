@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces_4.0.13/xmlParserAPIs.jar"/>
-	<classpathentry kind="var" path="ECLIPSE_HOME/plugins/org.apache.xerces_4.0.13/xercesImpl.jar"/>
-	<classpathentry kind="src" path="/org.eclipse.cdt.core"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.core.resources_3.0.0/resourcessrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.core.resources_3.0.0/resources.jar"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.core.runtime.compatibility_3.0.0/compatibilitysrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime.compatibility_3.0.0/compatibility.jar"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.core.runtime_3.0.0/runtimesrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime_3.0.0/runtime.jar"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi.util_3.0.0/utilsrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi.util_3.0.0/util.jar"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi_3.0.0/osgisrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.0.0/osgi.jar"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi_3.0.0/coresrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.0.0/core.jar"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi_3.0.0/resolversrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.0.0/resolver.jar"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi_3.0.0/defaultAdaptorsrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.0.0/defaultAdaptor.jar"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.osgi_3.0.0/eclipseAdaptorsrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.osgi_3.0.0/eclipseAdaptor.jar"/>
-	<classpathentry sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.update.configurator_3.0.0/configuratorsrc.zip" kind="var" path="ECLIPSE_HOME/plugins/org.eclipse.update.configurator_3.0.0/configurator.jar"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

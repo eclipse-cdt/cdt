@@ -1,5 +1,23 @@
 2003-02-04 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/CLICommand.java:
+	Catch cli command "jump"
+
+2003-02-04 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java:
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Thread.java:
+	New implementation for signal(), jump, and stepReturn(boolean).
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Signal.java:
+	(signal): Calls Target.signal().
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/SignalManager.java:
+	(signal): Method removed.
+	* src/org/eclipse/cdt/debug/mi/core/command/MIJump.java:
+	New file.
+	* src/org/eclipse/cdt/debug/mi/core/command/CommandFactory.java:
+	New method creteMIJump().
+
+2003-02-04 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/SignalManger.java:
 	Implement signal() method.

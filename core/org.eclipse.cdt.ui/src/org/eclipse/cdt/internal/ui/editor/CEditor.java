@@ -591,7 +591,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 				IRegion alternateRegion = null;
 				int start= element.getStartPos();
 				int length= element.getLength();
-                               
+
+				// Sanity check sometimes the parser may throw wrong numbers.
+				if (start < 0 || length < 0) {
+					start = 0;                              
+					length = 0;
+				}
+
 				// 0 length and start and non-zero start line says we know
 				// the line for some reason, but not the offset.
 				if (length == 0 && start == 0 && element.getStartLine() != 0) {

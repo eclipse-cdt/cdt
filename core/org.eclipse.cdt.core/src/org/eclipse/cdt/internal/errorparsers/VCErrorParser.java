@@ -38,8 +38,13 @@ public class VCErrorParser implements IErrorParser {
 			if (tok.hasMoreTokens()) {
 				String fileName = tok.nextToken();
 				if (tok.hasMoreTokens()) {
+					// Line number can either be ### or ###,##
 					String lineNumber = tok.nextToken();
 					try {
+				    	int firstComma = lineNumber.indexOf(',');
+				    	if (firstComma != -1) {
+				    		lineNumber = lineNumber.substring(0, firstComma);
+				    	}
 						int num = Integer.parseInt(lineNumber);
 						int i = fileName.lastIndexOf(File.separatorChar);
 						if (i != -1) {

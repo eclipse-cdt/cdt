@@ -32,12 +32,14 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListChangedRegisters;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterNames;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
+import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListChangedRegistersInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
 import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
@@ -102,7 +104,7 @@ public class RegisterManager extends Manager {
 		Register reg = findRegister(regDesc);
 		if (reg == null) {
 			try {
-				String name = "$" + regDesc.getName(); //$NON-NLS-1$
+				String name = regDesc.getQualifiedName(); //$NON-NLS-1$
 				Target target = (Target)regDesc.getTarget();
 				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
@@ -127,7 +129,28 @@ public class RegisterManager extends Manager {
 		Target target = (Target)reg.getTarget();
 		List regList = (List)regsMap.get(target);
 		if (regList != null) {
-			regList.remove(reg);
+			if (regList.remove(reg)) {
+				MISession miSession = target.getMISession();
+				try {
+					removeMIVar(miSession, reg.getMIVar());
+				} catch (CDIException e) {
+					//
+				}
+			}
+		}
+	}
+
+	/**
+	 * Tell gdb to remove the underlying var-object also.
+	 */
+	void removeMIVar(MISession miSession, MIVar miVar) throws CDIException {
+		CommandFactory factory = miSession.getCommandFactory();
+		MIVarDelete var = factory.createMIVarDelete(miVar.getVarName());
+		try {
+			miSession.postCommand(var);
+			var.getMIInfo();
+		} catch (MIException e) {
+			throw new MI2CDIException(e);
 		}
 	}
 

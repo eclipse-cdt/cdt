@@ -24,9 +24,9 @@ public interface RelevanceConstants {
 	final int UNION_TYPE_RELEVANCE = 70;
 	final int TYPEDEF_TYPE_RELEVANCE = 60;
 	final int NAMESPACE_TYPE_RELEVANCE = 50;
-	final int MACRO_TYPE_RELEVANCE = 40;
+	final int ENUMERATOR_TYPE_RELEVANCE = 40;
 	final int ENUMERATION_TYPE_RELEVANCE = 30;
-	final int ENUMERATOR_TYPE_RELEVANCE = 20;
+	final int MACRO_TYPE_RELEVANCE = 20;
 	final int KEYWORD_TYPE_RELEVANCE = 10;
 	final int DEFAULT_TYPE_RELEVANCE = 0;
 }

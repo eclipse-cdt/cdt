@@ -40,7 +40,7 @@ public class CompletionTest_FunctionReference_Prefix  extends CompletionProposal
 			"xFunction() bool",
 			"xOtherFunction() void",
 			"xNamespace",
-			"xEnumeration",
+			"xOtherClass",
 			"xFirstEnum",
 			"xSecondEnum",
 			"xThirdEnum",

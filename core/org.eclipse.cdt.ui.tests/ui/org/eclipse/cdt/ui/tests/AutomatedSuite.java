@@ -47,6 +47,7 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_TypeRef_Prefix
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_NestedPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_Prefix;
+import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTests;
 import org.eclipse.cdt.ui.tests.textmanipulation.TextBufferTest;
 
 
@@ -112,6 +113,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionTest_TypeDef_NoPrefix.suite());
 		addTest(CompletionTest_VariableType_NestedPrefix.suite());
 		
+		addTest( ContentAssistTests.suite() );
 		// Failed Tests
 		addTest(CompletionFailedTest_MemberReference_Arrow_Prefix2.suite());
 	}

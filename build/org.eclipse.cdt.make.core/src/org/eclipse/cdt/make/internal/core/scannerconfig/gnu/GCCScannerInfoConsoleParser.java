@@ -119,17 +119,17 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 					if (!targetSpecificOptions.contains(token))
 						targetSpecificOptions.add(token);
 				}
-				else {
+				else if (fileName == null) {
 					String possibleFileName = token.toLowerCase();
-					if (possibleFileName.startsWith("..") ||	//$NON-NLS-1$
-						possibleFileName.startsWith(".") ||		//$NON-NLS-1$
-						possibleFileName.startsWith("/") ||		//$NON-NLS-1$
-						possibleFileName.endsWith(".c") || 		//$NON-NLS-1$
+					if (possibleFileName.endsWith(".c") || 		//$NON-NLS-1$
 						possibleFileName.endsWith(".cpp") ||	//$NON-NLS-1$
 						possibleFileName.endsWith(".cc") ||		//$NON-NLS-1$
 						possibleFileName.endsWith(".cxx") ||	//$NON-NLS-1$
 						possibleFileName.endsWith(".C") ||		//$NON-NLS-1$
-						possibleFileName.endsWith(".CC")) {		//$NON-NLS-1$
+						possibleFileName.endsWith(".CPP") ||	//$NON-NLS-1$
+						possibleFileName.endsWith(".CC") ||		//$NON-NLS-1$
+						possibleFileName.endsWith(".CXX") ||	//$NON-NLS-1$
+						possibleFileName.endsWith(".c++")) {	//$NON-NLS-1$
 						
 						fileName = token;
 					}

@@ -1,6 +1,6 @@
-package org.eclipse.cdt.debug.mi.core;
+package org.eclipse.cdt.debug.mi.core.output;
 
-import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+
 
 /**
  */
@@ -16,12 +16,8 @@ public class MIBreakListInfo extends MIInfo {
 		int times;
 	}
 
-	public MIBreakListInfo(MIResultRecord rr) {
+	public MIBreakListInfo(MIOutput rr) {
 		super(rr);
-	}
-
-	int getCount() {
-		return 0;
 	}
 
 	BreakPoint[] getBreakPoints() {

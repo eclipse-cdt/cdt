@@ -1,12 +1,12 @@
-package org.eclipse.cdt.debug.mi.core;
+package org.eclipse.cdt.debug.mi.core.output;
 
-import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+
 
 /**
  */
 public class MIBreakpointInfo extends MIInfo {
 
-	public MIBreakpointInfo(MIResultRecord record) {
+	public MIBreakpointInfo(MIOutput record) {
 		super(record);
 	}
 

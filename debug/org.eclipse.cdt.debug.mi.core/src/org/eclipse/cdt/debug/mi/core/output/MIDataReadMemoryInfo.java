@@ -1,6 +1,6 @@
-package org.eclipse.cdt.debug.mi.core;
+package org.eclipse.cdt.debug.mi.core.output;
 
-import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+
 
 /**
  */
@@ -12,7 +12,7 @@ public class MIDataReadMemoryInfo extends MIInfo {
 		String ascii;
 	}
 
-	public MIDataReadMemoryInfo(MIResultRecord rr) {
+	public MIDataReadMemoryInfo(MIOutput rr) {
 		super(rr);
 	}
 

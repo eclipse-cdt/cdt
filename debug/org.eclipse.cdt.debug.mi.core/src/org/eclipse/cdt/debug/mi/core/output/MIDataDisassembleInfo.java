@@ -1,6 +1,6 @@
-package org.eclipse.cdt.debug.mi.core;
+package org.eclipse.cdt.debug.mi.core.output;
 
-import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+
 
 /**
  */
@@ -15,12 +15,8 @@ public class MIDataDisassembleInfo extends MIInfo {
 		String file;
 	}
 
-	public MIDataDisassembleInfo(MIResultRecord rr) {
+	public MIDataDisassembleInfo(MIOutput rr) {
 		super(rr);
-	}
-
-	public int getCount() {
-		return 0;
 	}
 
 	public ASM[] getData() {

@@ -1,6 +1,6 @@
-package org.eclipse.cdt.debug.mi.core;
+package org.eclipse.cdt.debug.mi.core.output;
 
-import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+
 
 /**
  */
@@ -11,7 +11,7 @@ public class MIDataListRegisterValuesInfo extends MIInfo {
 		int value;
 	}
 
-	public MIDataListRegisterValuesInfo(MIResultRecord rr) {
+	public MIDataListRegisterValuesInfo(MIOutput rr) {
 		super(rr);
 	}
 

@@ -3,7 +3,7 @@ package org.eclipse.cdt.debug.mi.core.output;
 /**
  *
  */
-public class MIOOBRecord  {
+public class MIOOBRecord {
 
 	public final int ASYNC_STOPPED = 0;
 

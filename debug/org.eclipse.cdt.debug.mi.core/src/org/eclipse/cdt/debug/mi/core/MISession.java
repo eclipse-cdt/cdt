@@ -4,7 +4,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIParser;
 
 
 /**
@@ -24,12 +26,18 @@ public class MISession {
 	Reader targetStream = null;
 	Reader logStream = null;
 
+	CommandFactory factory;
+
+	MIParser parser;
+
 	/**
 	 * The constructor.
 	 */
 	MISession(InputStream i, OutputStream o) {
 		in = i;
 		out = o;
+		factory = new CommandFactory();
+		parser = new MIParser();
 		txQueue = new Queue();
 		rxQueue = new Queue();
 		txThread = new TxThread(this);
@@ -53,12 +61,39 @@ public class MISession {
 	}
 
 	/**
-	* Set Log Stream
-	*/
+	 * Set Log Stream
+	 */
 	public void setLogStreamOutput(Reader log) {
 		logStream = log;
 	}
 
+	/**
+	 *
+	 */
+	public CommandFactory getCommandFactory() {
+		return factory;
+	}
+
+	/**
+	 *
+	 */
+	public void setCommandFactory(CommandFactory f) {
+		factory = f;
+	}
+
+	/**
+	 *
+	 */
+	public MIParser getMIParser() {
+		return parser;
+	}
+
+	/**
+	 *
+	 */
+	public void setMIParser(MIParser p) {
+		parser = p;
+	}
 
 	Queue getTxQueue() {
 		return txQueue;
@@ -77,6 +112,6 @@ public class MISession {
 	}
 
 	MIOutput parse(String buffer) {
-		return null;
+		return parser.parse(buffer);
 	}
 }

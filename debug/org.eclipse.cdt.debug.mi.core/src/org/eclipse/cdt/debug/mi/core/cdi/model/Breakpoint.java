@@ -34,6 +34,9 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 
 	public void setMIBreakpoint(MIBreakpoint newMIBreakpoint) {
 		miBreakpoint = newMIBreakpoint;
+		// Force the reset of the location and condition.
+		location = null;
+		condition = null;
 	}
 
 	/**
@@ -42,7 +45,7 @@ public class Breakpoint extends CObject implements ICDILocationBreakpoint {
 	public ICDICondition getCondition() throws CDIException {
 		if (condition == null) {
 			condition =  new Condition(miBreakpoint.getIgnoreCount(),
-				miBreakpoint.getWhat());
+				miBreakpoint.getCondition());
 		}
 		return condition;
 	}

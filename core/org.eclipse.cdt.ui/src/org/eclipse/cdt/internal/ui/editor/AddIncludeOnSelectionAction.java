@@ -192,7 +192,10 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 			IFunctionSummary fs = findContribution(name);
 			if (fs != null) {
 				fRequiredIncludes = fs.getIncludes();
-				fUsings = new String[] {fs.getNamespace()};
+				String ns = fs.getNamespace();
+				if (ns != null && ns.length() > 0) {
+					fUsings = new String[] {fs.getNamespace()};
+				}
 			}
 
 			// Try the type caching.

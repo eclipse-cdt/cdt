@@ -7,7 +7,6 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
-import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -18,12 +17,12 @@ import org.eclipse.debug.core.DebugException;
  */
 public class CValueFactory
 {
-	static public ICValue createValue( CVariable parent, ICDIValue cdiValue ) throws DebugException
+	static public CValue createValue( CVariable parent, ICDIValue cdiValue ) throws DebugException
 	{
 		return new CValue( parent, cdiValue );
 	}
 
-	static public ICValue createGlobalValue( CVariable parent, ICDIValue cdiValue ) throws DebugException
+	static public CValue createGlobalValue( CVariable parent, ICDIValue cdiValue ) throws DebugException
 	{
 		return new CGlobalValue( parent, cdiValue );
 	}

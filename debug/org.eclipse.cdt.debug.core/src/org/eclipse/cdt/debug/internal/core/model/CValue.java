@@ -168,9 +168,6 @@ public class CValue extends CDebugElement implements ICValue
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICValue#getUnderlyingValue()
-	 */
 	public ICDIValue getUnderlyingValue()
 	{
 		return fCDIValue;
@@ -514,26 +511,6 @@ public class CValue extends CDebugElement implements ICValue
 		{
 		}
 		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICValue#getUnderlyingValueString()
-	 */
-	public String getUnderlyingValueString()
-	{
-		String valueString = null;
-		if ( getUnderlyingValue() != null )
-		{
-			try
-			{
-				valueString = getUnderlyingValue().getValueString();
-			}
-			catch( CDIException e )
-			{
-				valueString = e.getMessage();
-			}
-		}
-		return valueString;
 	}
 
 	/* (non-Javadoc)

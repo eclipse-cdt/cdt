@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
@@ -55,22 +54,6 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 		fParent = parent;
 		fStart = start;
 		fEnd = end;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICValue#getType()
-	 */
-	public int getType()
-	{
-		return 0;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICValue#getUnderlyingValue()
-	 */
-	public ICDIValue getUnderlyingValue()
-	{
-		return null;
 	}
 
 	/* (non-Javadoc)
@@ -131,9 +114,6 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 		return fEnd;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICValue#setChanged(boolean)
-	 */
 	public void setChanged( boolean changed ) throws DebugException
 	{
 		Iterator it = fVariables.iterator();
@@ -141,14 +121,6 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 		{
 			((CVariable)it.next()).setChanged( changed );
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICValue#getUnderlyingValueString()
-	 */
-	public String getUnderlyingValueString()
-	{
-		return null;
 	}
 
 	/* (non-Javadoc)

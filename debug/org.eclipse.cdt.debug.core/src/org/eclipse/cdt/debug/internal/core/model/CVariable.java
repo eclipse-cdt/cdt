@@ -60,7 +60,7 @@ public abstract class CVariable extends CDebugElement
 	/**
 	 * Cache of current value - see #getValue().
 	 */
-	protected ICValue fValue;
+	protected CValue fValue;
 
 	/**
 	 * The name of this variable.
@@ -270,7 +270,7 @@ public abstract class CVariable extends CDebugElement
 		if ( getValue() != null && getValue() instanceof ICValue )
 		{
 			fChanged = changed;
-			((ICValue)getValue()).setChanged( changed );
+			((CValue)getValue()).setChanged( changed );
 		}
 	}
 

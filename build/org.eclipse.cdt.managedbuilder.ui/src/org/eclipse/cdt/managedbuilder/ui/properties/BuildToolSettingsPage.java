@@ -307,9 +307,17 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					// the option value
 					switch (opt.getValueType()) {
 						case IOption.BOOLEAN :
-							if (opt.getCommand().equals(optionValue)) {
+							String boolCommand;
+							boolCommand = opt.getCommand();
+							if (boolCommand != null && boolCommand.equals(optionValue)) {
 								getPreferenceStore()
 										.setValue(opt.getId(), true);
+								optionValueExist = true;
+							}
+							boolCommand = opt.getCommandFalse();
+							if (boolCommand != null && boolCommand.equals(optionValue)) {
+								getPreferenceStore()
+										.setValue(opt.getId(), false);
 								optionValueExist = true;
 							}
 							break;
@@ -400,9 +408,14 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			switch (opt.getValueType()) {
 				case IOption.BOOLEAN :
 					ArrayList optsList = new ArrayList(optionsArr);
-					if (opt.getCommand() != null
+					if (opt.getCommand() != null 
+							&& opt.getCommand().length() > 0  
 							&& !optsList.contains(opt.getCommand()))
 						getPreferenceStore().setValue(opt.getId(), false);
+					if (opt.getCommandFalse() != null 
+							&& opt.getCommandFalse().length() > 0  
+							&& !optsList.contains(opt.getCommandFalse()))
+						getPreferenceStore().setValue(opt.getId(), true);
 					break;
 				case IOption.STRING :
 					// TODO create a lst of valid default string options for the tool

@@ -590,14 +590,10 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			final private TypeFilter typeFilter = filter; 
 		};
 		
-		data.foundItems = ParserSymbolTable.lookupInContained( data, inSymbol );
+		ParserSymbolTable.lookup( data, inSymbol );
 	
 		if( data.foundItems != null ){
 			foundSymbol = getSymbolTable().resolveAmbiguities( data );
-		}
-			
-		if( foundSymbol == null && inSymbol.getContainingSymbol() != null ){
-			foundSymbol = lookupNestedNameSpecifier( name, inSymbol.getContainingSymbol() );
 		}
 		
 		if( foundSymbol instanceof IContainerSymbol )

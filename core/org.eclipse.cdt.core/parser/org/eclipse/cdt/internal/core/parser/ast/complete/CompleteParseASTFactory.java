@@ -2181,7 +2181,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 			catch (ParserSymbolTableException e)
 			{
-				handleProblem( e.createProblemID(), name.toCharArray());   
+				handleProblem( e.createProblemID(), name.toCharArray(), nameOffset, nameEndOffset, nameLine, true);   
 			}	
 		} else {
 			symbol = functionDeclaration;

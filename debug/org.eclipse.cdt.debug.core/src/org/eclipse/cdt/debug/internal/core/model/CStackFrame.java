@@ -730,4 +730,16 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		}
 		return new ICGlobalVariable[0];
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		try {
+			return getName();
+		}
+		catch( DebugException e ) {
+			return e.getLocalizedMessage();
+		}
+	}
 }

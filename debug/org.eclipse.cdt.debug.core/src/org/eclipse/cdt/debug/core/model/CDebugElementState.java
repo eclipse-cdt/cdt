@@ -35,9 +35,6 @@ public class CDebugElementState {
 	public static final CDebugElementState STEPPING = new CDebugElementState( "stepping" ); //$NON-NLS-1$
 	public static final CDebugElementState SUSPENDING = new CDebugElementState( "suspending" ); //$NON-NLS-1$
 	public static final CDebugElementState SUSPENDED = new CDebugElementState( "suspended" ); //$NON-NLS-1$
-	public static final CDebugElementState EVALUATING = new CDebugElementState( "evaluating" ); //$NON-NLS-1$
-	public static final CDebugElementState EVALUATED = new CDebugElementState( "evaluated" ); //$NON-NLS-1$
-	public static final CDebugElementState CHANGING = new CDebugElementState( "changing" ); //$NON-NLS-1$
-	public static final CDebugElementState CHANGED = new CDebugElementState( "changed" ); //$NON-NLS-1$
-	public static final CDebugElementState POSTMORTEM = new CDebugElementState( "postmortem" ); //$NON-NLS-1$
+	public static final CDebugElementState RESTARTING = new CDebugElementState( "restarting" ); //$NON-NLS-1$
+	public static final CDebugElementState EXITED = new CDebugElementState( "exited" ); //$NON-NLS-1$
 }

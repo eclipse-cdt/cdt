@@ -17,7 +17,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
  * C/C++ extension of <code>IDebugTarget</code>.
  */
 public interface ICDebugTarget extends IDebugTarget,
-									   ICDebugTargetType,
 									   ICExpressionEvaluator,
 									   IExecFileInfo,
 									   IRestart,
@@ -26,7 +25,6 @@ public interface ICDebugTarget extends IDebugTarget,
 									   IJumpToLine,
 									   IJumpToAddress,
 									   IResumeWithoutSignal,
-									   IState,
 									   ISwitchToThread,
 									   ICDebugElement,
 									   IBreakpointTarget,
@@ -89,4 +87,11 @@ public interface ICDebugTarget extends IDebugTarget,
 	 * @throws DebugException if this method fails.
 	 */
 	public IDisassembly getDisassembly() throws DebugException;
+
+	/**
+	 * Returns whether this target is a post mortem type.
+	 * 
+	 * @return whether this target is a post mortem type
+	 */
+	public boolean isPostMortem();
 }

@@ -17,5 +17,18 @@ import org.eclipse.debug.core.model.IDebugElement;
  */
 public interface ICDebugElement extends IDebugElement {
 
+	/**
+	 * Returns the current state of this element.
+	 * 
+	 * @return the current state
+	 */
 	public CDebugElementState getState();
+
+
+	/**
+	 * Returns the info object associated with the current state.
+	 * 
+	 * @return the info object associated with the current state
+	 */
+	public Object getCurrentStateInfo();
 }

@@ -1,3 +1,19 @@
+2004-07-16 Mikhail Khodjaiants
+	Asynchronous resume, suspend and step operations. Cleanup.
+	* CDebugModel.java
+	* CDebugElementState.java
+	* ICDebugElement.java
+	* ICDebugTarget.java
+	* ICThread.java: new
+	* ICDebugTargetType: removed
+	* IState: removed
+	* CCoreFileDebugTarget.java
+	* CDebugElement.java
+	* CDebugTarget.java
+	* CStackFrame.java
+	* CThread.java
+	* CModificationVariable.java
+
 2004-07-15 Alain Magloire
 
 	org.eclipse.cdt.debug.core.cdi.model.type should

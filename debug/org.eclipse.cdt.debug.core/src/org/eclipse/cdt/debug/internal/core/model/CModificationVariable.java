@@ -15,6 +15,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
+import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IValueModification;
@@ -43,7 +44,7 @@ public class CModificationVariable extends CVariable
 	public boolean supportsValueModification()
 	{
 		CDebugTarget target = (CDebugTarget)getDebugTarget().getAdapter( CDebugTarget.class );
-		return ( target != null && !target.isCoreDumpTarget() && isEditable() );
+		return ( target != null && CDebugElementState.SUSPENDED.equals( target.getState() ) && isEditable() );
 	}
 
 	/**

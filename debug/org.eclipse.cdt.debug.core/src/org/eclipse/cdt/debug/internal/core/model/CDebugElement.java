@@ -57,6 +57,11 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 	private CDebugElementState fState = CDebugElementState.UNDEFINED;
 
 	/**
+	 * The current state info.
+	 */
+	private Object fCurrentStateInfo = null;
+
+	/**
 	 * Constructor for CDebugElement.
 	 */
 	public CDebugElement( CDebugTarget target ) {
@@ -340,5 +345,16 @@ abstract public class CDebugElement extends PlatformObject implements ICDebugEle
 			throw new IllegalArgumentException( state.toString() );
 		}
 		fState = state;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugElement#getCurrentStateInfo()
+	 */
+	public Object getCurrentStateInfo() {
+		return fCurrentStateInfo;
+	}
+
+	protected void setCurrentStateInfo( Object currentStateInfo ) {
+		fCurrentStateInfo = currentStateInfo;
 	}
 }

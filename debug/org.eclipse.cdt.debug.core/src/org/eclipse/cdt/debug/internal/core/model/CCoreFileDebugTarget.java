@@ -8,54 +8,47 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
+import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
 
 /**
- * Enter type comment.
- * 
- * @since Aug 20, 2003
+ * A debug target for the postmortem debugging.
  */
-public class CCoreFileDebugTarget extends CDebugTarget
-{
-	public CCoreFileDebugTarget( ILaunch launch,
-								 ICDITarget cdiTarget,
-								 String name,
-								 IProcess debuggerProcess,
-								 IFile file )
-	{
-		super( launch, 
-			   ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP, 
-			   cdiTarget, 
-			   name, 
-			   null,
-			   debuggerProcess,
-			   file,
-			   true,
-			   false );
+public class CCoreFileDebugTarget extends CDebugTarget {
+
+	public CCoreFileDebugTarget( ILaunch launch, ICDITarget cdiTarget, String name, IProcess debuggerProcess, IFile file ) {
+		super( launch, cdiTarget, name, null, debuggerProcess, file, true, false );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
-	public boolean canTerminate()
-	{
-		return !isTerminated();
+	public boolean canTerminate() {
+		return !isTerminated() || !isTerminating();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
+	 */
+	public void terminate() throws DebugException {
+		setState( CDebugElementState.TERMINATING );
+		terminated();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
+	 * @see org.eclipse.cdt.debug.core.model.ICDebugTarget#isPostMortem()
 	 */
-	public void terminate() throws DebugException
-	{
-		setTerminating( true );
-		terminated();
+	public boolean isPostMortem() {
+		return true;
 	}
 }

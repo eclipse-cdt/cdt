@@ -24,7 +24,6 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
-import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.model.CCoreFileDebugTarget;
@@ -112,7 +111,6 @@ public class CDebugModel
 			public void run( IProgressMonitor m )
 			{
 				target[0] = new CDebugTarget( launch,
-											  ICDebugTargetType.TARGET_TYPE_LOCAL_RUN, 
 											  cdiTarget, 
 											  name,
 											  debuggeeProcess,
@@ -160,7 +158,6 @@ public class CDebugModel
 			public void run( IProgressMonitor m )
 			{
 				target[0] = new CDebugTarget( launch, 
-											  ICDebugTargetType.TARGET_TYPE_LOCAL_ATTACH, 
 											  cdiTarget, 
 											  name,
 											  null,

@@ -1,3 +1,10 @@
+2003-02-17 Doug Schaefer
+
+    Merged in Sam Robb's source for the build model.  The source can be
+    found in the build source folder.  There are new extension point schema
+    in the schema folder.  As well a number of extension points and extensions
+    have been added to the plugin.xml file.
+    
 2003-02-13 Alain Magloire
 
 	* src/org/eclipse/cdt/core/CCorePlugin.java:

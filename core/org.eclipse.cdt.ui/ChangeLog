@@ -1,3 +1,11 @@
+2003-02-17 Doug Schaefer
+
+    Merged in Sam Robb's source for the build model.  The source can be
+    found in the build source folder.  There are new extension point schema
+    in the schema folder.  There are build icons in the icons/full/build16
+    folder.  As well a number of extension points and extensions have been
+    added to the plugin.xml file.
+
 2003-02-17 Judy N. Green
 	* plugin.xml
 	* icons/full/ctool16/convert-normal.gif

@@ -271,6 +271,7 @@ public class TokenDuple implements ITokenDuple {
 
 	public static String createStringRepresentation( IToken f, IToken l)
 	{
+		if( f == l ) return f.getImage();
 		StringBuffer buff = new StringBuffer(); 
 		IToken prev = null;
 		IToken iter = f; 

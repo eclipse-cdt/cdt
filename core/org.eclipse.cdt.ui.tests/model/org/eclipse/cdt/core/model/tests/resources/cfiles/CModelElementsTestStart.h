@@ -54,9 +54,17 @@ namespace MyPackage
 
 	// check enums
 	// enum without name
-	enum { first, second, third };
+	enum { 
+		first, 
+		second, 
+		third 
+	}
+	;
 	// enum with name
-	enum MyEnum { f, s, t };
+	enum MyEnum { 
+		f, 
+		s, 
+		t };
 
 	// check variables
 	// variable 
@@ -76,12 +84,12 @@ namespace MyPackage
 	// simple function declaration
 	void foo();
 	// function declaration with parameters
-	char* foo(int& x, char**y);
+	char* foo(int& x, 
+		char**y);
 	// simple function definition
 	void boo(){
 		int g = 0;
 	};
-
 	// check Structs
 	// struct 
 	struct MyStruct{
@@ -90,7 +98,9 @@ namespace MyPackage
 	// typedef and elaborated types
 	typedef struct MyStruct myStruct;
 	// typedef 
-	typedef struct{ int ss; } myTypedef;
+	typedef struct{ 
+		int ss; 
+	} myTypedef;
 	// unions
 	union U{
 		int U1;
@@ -113,6 +123,8 @@ namespace MyPackage
 	// check arrays
 	// arrays
 	int myArray [5][];
-	int main(int argc, char * argv[]) { }
+	int main(int argc, char * argv[]) 
+	{ 
+	}
 	
 

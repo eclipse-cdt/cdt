@@ -481,8 +481,13 @@ public class CModelBuilder {
 				// this will not be known until we have cross reference information
 				
 				// function
-				Function newElement = new Function( parent, declaratorName );
-				element = newElement;				
+				if(!isTemplate){
+					Function newElement = new Function( parent, declaratorName );
+					element = newElement;				
+				} else {
+					FunctionTemplate newElement = new FunctionTemplate( parent, declaratorName );
+					element = newElement;
+				}
 			}
 			else
 			{

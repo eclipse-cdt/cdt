@@ -831,8 +831,13 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		// Recreate the settings store for the configuration
 		settingsStore = new BuildToolsSettingsStore(getSelectedConfiguration());
 
-		// Reset the category selection and run selection event handler
+		// Write out the build model info
+		ManagedBuildManager.setDefaultConfiguration(getProject(), getSelectedConfiguration());
+		ManagedBuildManager.saveBuildInfo(getProject(), false);
+
+		// Reset the category or tool selection and run selection event handler
 		selectedCategory = null;
+		selectedTool = null;
 		handleOptionSelection();
 	}
 

@@ -71,7 +71,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static final String EXTENSION_POINT_ID = "ManagedBuildInfo";	//$NON-NLS-1$
 	
 	// This is the version of the manifest and project files that
-	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier("2.0.0"); //$NON-NLS-1$
+	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier(2, 0, 0);
 	private static boolean extensionTargetsLoaded = false;
 	private static Map extensionTargetMap;
 	private static List extensionTargets;
@@ -455,6 +455,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return new Target(resource, parentTarget);
 	}
 	
+	private static boolean isVersionCompatible(IPluginDescriptor descriptor) {
+		// Get the version of the manifest
+		PluginVersionIdentifier plugin = descriptor.getVersionIdentifier();
+		
+		// We can ignore the qualifier
+		PluginVersionIdentifier version = new PluginVersionIdentifier(plugin.getMajorComponent(), 
+																	  plugin.getMinorComponent(), 
+																	  plugin.getServiceComponent());
+		
+		return(buildInfoVersion.isCompatibleWith(version));
+	}
+	
 	/* (non-Javadoc)
 	 * Load the build information for the specified resource from its project
 	 * file. Pay attention to the version number too.
@@ -492,9 +504,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		// Get those extensions
 		IPluginDescriptor descriptor = ManagedBuilderCorePlugin.getDefault().getDescriptor();
 		
-		// Get the version of the manifest
-		PluginVersionIdentifier version = descriptor.getVersionIdentifier();
-		if (version.isGreaterThan(buildInfoVersion)) {
+		if (!isVersionCompatible(descriptor)) {
 			//The version of the Plug-in is greater than what the manager thinks it understands
 			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("ManagedBuildManager.error.version.higher"));	//$NON-NLS-1$
 		}

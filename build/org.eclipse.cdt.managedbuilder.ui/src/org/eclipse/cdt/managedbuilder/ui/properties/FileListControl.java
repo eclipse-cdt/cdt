@@ -13,6 +13,7 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIImages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -123,11 +124,9 @@ public class FileListControl {
 	private List list;
 	private String compTitle;
 	private SelectionListener selectionListener;
-	private GridData gdata, tgdata, grid3, grid4, grid2;
-	// types of dialogs that will be displayed when the add button is pressed.
-//	public static final int FILE_DIALOG = 0;
-//	public static final int DIR_DIALOG = 1;
-//	public static final int TEXT_DIALOG = 2;
+	private GridData tgdata, grid3, grid4, grid2;
+	
+	// The type of browse support that is required
 	private int browseType;
 	private IPath path;
 	private static final String ADD_STR = ManagedBuilderUIPlugin.getResourceString("FileListControl.add"); //$NON-NLS-1$
@@ -171,20 +170,18 @@ public class FileListControl {
 		form1.marginHeight = 0;
 		form1.marginWidth = 0;
 		filePanel.setLayout(form1);
-		gdata = new GridData(GridData.FILL_BOTH);
-		gdata.heightHint = 83;
-		filePanel.setLayoutData(gdata);
+		filePanel.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		// title panel
 		Composite titlePanel = new Composite(filePanel, SWT.BORDER);
-		GridLayout titleform = new GridLayout();
-		titleform.numColumns = 2;
+		GridLayout titleform = new GridLayout(2, false);
 		titleform.horizontalSpacing = 0;
 		titleform.verticalSpacing = 0;
 		titleform.marginHeight = 0;
 		titleform.marginWidth = 0;
 		titlePanel.setLayout(titleform);
 		tgdata = new GridData(GridData.FILL_HORIZONTAL);
-		tgdata.heightHint = 22;
+		tgdata.heightHint = IDialogConstants.BUTTON_BAR_HEIGHT;
 		titlePanel.setLayoutData(tgdata);
 		title = new Label(titlePanel, SWT.NONE | SWT.BOLD);
 		this.compTitle = "  " + compTitle; //$NON-NLS-1$

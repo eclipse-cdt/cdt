@@ -412,6 +412,7 @@ public class Configuration extends BuildObject implements IConfiguration {
 				ref.resolveReferences();
 			}
 		}
+		isDirty = true;
 	}
 
 	/**

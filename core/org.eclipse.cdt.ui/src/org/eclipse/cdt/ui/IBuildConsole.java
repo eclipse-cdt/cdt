@@ -10,12 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.ui;
 
+import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.text.IDocument;
 
-public interface IBuildConsoleManager {
-	IBuildConsole getConsole(IProject project);
-	IDocument getConsoleDocument(IProject project);
-	void addConsoleListener(IBuildConsoleListener listener);
-	void removeConsoleListener(IBuildConsoleListener listener);
+public interface IBuildConsole {
+	void start(IProject project);
+	ConsoleOutputStream getOutputStream();
+	ConsoleOutputStream getInfoStream();
+	ConsoleOutputStream getErrorStream();
 }

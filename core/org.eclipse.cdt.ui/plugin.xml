@@ -20,14 +20,14 @@
       <import plugin="org.eclipse.ui.editors"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.core.runtime.compatibility"/>
-      <import plugin="org.eclipse.core.filebuffers"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.apache.xerces"/>
    </requires>
 
 
@@ -123,13 +123,6 @@
             name="%viewsCategory.name"
             id="org.eclipse.cdt.ui.views">
       </category>
-      <view
-            name="%BuildConsoleView.name"
-            icon="icons/full/cview16/buildconsole.gif"
-            category="org.eclipse.cdt.ui.views"
-            class="org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleView"
-            id="org.eclipse.cdt.ui.BuildConsoleView">
-      </view>
       <view
             name="%CView.name"
             icon="icons/full/cview16/cview.gif"
@@ -392,7 +385,7 @@
    <extension
          point="org.eclipse.cdt.core.CBuildConsole">
       <CBuildConsole
-            class="org.eclipse.cdt.internal.ui.BuildConsole">
+            class="org.eclipse.cdt.internal.ui.buildconsole.CBuildConsole">
       </CBuildConsole>
    </extension>
    <extension
@@ -575,5 +568,15 @@
             id="org.eclipse.cdt.ui.CElementWorkingSetPage">
       </workingSet>
    </extension>
-
+   <extension
+         point="org.eclipse.ui.fontDefinitions">
+      <fontDefinition
+            label="%BuildConsoleFontDefinition.label"
+            defaultsTo="org.eclipse.jface.textfont"
+            id="org.eclipse.cdt.ui.buildconsole.ConsoleFont">
+         <description>
+            %BuildConsoleFontDefinition.description
+         </description>
+      </fontDefinition>
+   </extension>
 </plugin>

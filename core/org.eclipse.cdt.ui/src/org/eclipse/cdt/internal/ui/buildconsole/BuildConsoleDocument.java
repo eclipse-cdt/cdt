@@ -8,14 +8,16 @@
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui;
+package org.eclipse.cdt.internal.ui.buildconsole;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.DefaultLineTracker;
+import org.eclipse.jface.text.Document;
 
-public interface IBuildConsoleManager {
-	IBuildConsole getConsole(IProject project);
-	IDocument getConsoleDocument(IProject project);
-	void addConsoleListener(IBuildConsoleListener listener);
-	void removeConsoleListener(IBuildConsoleListener listener);
+public class BuildConsoleDocument extends Document {
+
+	public BuildConsoleDocument() {
+		setTextStore(new ConsoleOutputTextStore(2500));	
+		setLineTracker(new DefaultLineTracker());
+		completeInitialization();
+	}
 }

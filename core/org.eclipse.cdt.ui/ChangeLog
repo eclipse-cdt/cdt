@@ -1,3 +1,44 @@
+2004-03-12 David Inglis
+
+	Implemented new build console using the Eclipse 3 generic console, supporting multiple 
+	streams with colorizing.
+	
+	* plugin.properties
+	* plugin.xml
+	
+	moved to src/org/eclipse/cdt/internal/ui/buildconsole
+	
+	* src/org/eclipse/cdt/internal/ui/BuildConsole.java
+	* src/org/eclipse/cdt/internal/ui/BuildConsoleManager.java
+
+	removed 
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleAction.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleView.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/ClearConsoleAction.java
+
+	modified
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+	* src/org/eclipse/cdt/internal/ui/CPluginResources.properties
+	* src/org/eclipse/cdt/internal/ui/preferences/BuildConsolePreferencePage.java
+	* src/org/eclipse/cdt/ui/CUIPlugin.java
+	* src/org/eclipse/cdt/ui/IBuildConsoleManager.java
+
+	new
+	* src/org/eclipse/cdt/ui/IBuildConsole.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsole.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleDocument.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleManager.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsolePage.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsolePartition.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsolePartitioner.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleStream.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleViewer.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/CBuildConsole.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/ConsoleMessages.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/ConsoleMessages.properties
+	* src/org/eclipse/cdt/internal/ui/buildconsole/ConsoleOutputTextStore.java
+	* src/org/eclipse/cdt/internal/ui/buildconsole/ScrollLockAction.java
+
 2004-03-11 Hoda Amer
 	Added the undo manager for the renaming refactor.
 	

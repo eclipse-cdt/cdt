@@ -24,6 +24,7 @@ public class CPluginImages {
 
 	// Subdirectory (under the package containing this class) where 16 color images are
 	private static URL fgIconBaseURL;
+
 	static {
 		try {
 			fgIconBaseURL= new URL(CUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" ); //$NON-NLS-1$
@@ -39,7 +40,7 @@ public class CPluginImages {
 	public static final String T_WIZBAN= T + "wizban/"; //$NON-NLS-1$
 	public static final String T_LCL=  "lcl16/"; //$NON-NLS-1$
 	public static final String T_TOOL= "tool16/"; //$NON-NLS-1$
-	public static final String T_VIEW= "view16/"; //$NON-NLS-1$
+	public static final String T_VIEW= T + "cview16/"; //$NON-NLS-1$
 	public static final String T_OVR= T + "ovr16/"; //$NON-NLS-1$
 
 	public static final String IMG_OBJS_TEMPLATE= NAME_PREFIX + "template_obj.gif"; //$NON-NLS-1$
@@ -80,6 +81,10 @@ public class CPluginImages {
 	public static final String IMG_OBJS_BREAKPOINT = NAME_PREFIX + "breakpoint.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_BREAKPOINT_DISABLED = NAME_PREFIX + "breakpoint_disabled.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_BREAKPOINT_ACTIVE = NAME_PREFIX + "breakpoint_active.gif"; //$NON-NLS-1$
+
+	// build console
+	public static final String IMG_VIEW_BUILD = NAME_PREFIX + "buildconsole.gif"; //$NON-NLS-1$
+    public static final ImageDescriptor DESC_BUILD_CONSOLE = createManaged(T_VIEW, IMG_VIEW_BUILD);
 
 	public static final ImageDescriptor DESC_OBJS_VARIABLE= createManaged(T_OBJ, IMG_OBJS_VARIABLE);
 	public static final ImageDescriptor DESC_OBJS_LOCAL_VARIABLE= createManaged(T_OBJ, IMG_OBJS_LOCAL_VARIABLE);
@@ -125,6 +130,7 @@ public class CPluginImages {
 	public static final String IMG_MENU_CODE_ASSIST= NAME_PREFIX + "metharg_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_MENU_COLLAPSE_ALL= NAME_PREFIX + "collapseall.gif"; //$NON-NLS-1$
 	public static final String IMG_CLEAR_CONSOLE= NAME_PREFIX + "clear_co.gif"; //$NON-NLS-1$
+	public static final String IMG_SCROLL_LOCK= NAME_PREFIX + "lock_co.gif"; //$NON-NLS-1$
 	public static final String IMG_ALPHA_SORTING= NAME_PREFIX + "alphab_sort_co.gif"; //$NON-NLS-1$
 	public static final String IMG_TOOL_GOTO_PREV_ERROR= NAME_PREFIX + "prev_error_nav.gif"; //$NON-NLS-1$
 	public static final String IMG_TOOL_GOTO_NEXT_ERROR= NAME_PREFIX + "next_error_nav.gif"; //$NON-NLS-1$

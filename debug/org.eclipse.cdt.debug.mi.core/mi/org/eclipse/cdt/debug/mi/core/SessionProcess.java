@@ -78,7 +78,9 @@ public class SessionProcess extends Process {
 					String str = buf.toString().trim();
 					buf.setLength(0);
 					Command cmd = null;
-					if (session.useExecConsole() && str.length() > 0) {
+					// Do not use the interpreterexec for stepping operation
+					// the UI will fall out of step.
+					if (session.useExecConsole() && str.length() > 0 && !CLIProcessor.isSteppingOperation(str)) {
 						cmd = new MIInterpreterExecConsole(str);
 					} else {
 						cmd = new CLICommand(str);

@@ -1,3 +1,10 @@
+2004-11-08 Alain Magloire
+	Implement new Interface ICDIFunctionFinished.
+	It returns the return value of the function.
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/FunctionFinished.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/event/SuspendedEvent.java
+	* mi/org/eclipse/cdt/debug/mi/core/event/MIFuncitonFinishedEvent.java
+
 2004-11-07 Alain Magloire
 	Support for MIInterpreterExec
 

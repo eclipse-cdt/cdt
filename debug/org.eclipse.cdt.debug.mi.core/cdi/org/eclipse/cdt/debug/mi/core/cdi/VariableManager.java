@@ -95,6 +95,10 @@ public class VariableManager extends Manager {
 		Target target = ((Session)getSession()).getTarget(miSession);
 		return getVariable(target, varName);
 	}
+	/**
+	 * Return the element that have the uniq varName.
+	 * null is return if the element is not in the cache.
+	 */
 	public Variable getVariable(Target target, String varName) {
 		Variable[] vars = getVariables(target);
 		for (int i = 0; i < vars.length; i++) {
@@ -163,7 +167,6 @@ public class VariableManager extends Manager {
 	 */
 	public void checkType(StackFrame frame, String type) throws CDIException {
 		if (type != null && type.length() > 0) {
-			Session session = (Session)getSession();
 			Target target = (Target)frame.getTarget();
 			Thread currentThread = (Thread)target.getCurrentThread();
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
@@ -203,6 +206,12 @@ public class VariableManager extends Manager {
 		}
 	}
 
+	/**
+	 * Remove variable form the maintained cache list.
+	 * @param miSession
+	 * @param varName
+	 * @return
+	 */
 	public Variable removeVariableFromList(MISession miSession, String varName) {
 		Target target = ((Session)getSession()).getTarget(miSession);
 		List varList = getVariablesList(target);
@@ -218,6 +227,14 @@ public class VariableManager extends Manager {
 		return null;
 	}
 
+	/**
+	 * Encode the variableDescriptor as an array
+	 * @param varDesc
+	 * @param start
+	 * @param length
+	 * @return
+	 * @throws CDIException
+	 */
 	public VariableDescriptor getVariableDescriptorAsArray(VariableDescriptor varDesc, int start, int length)
 		throws CDIException {
 		Target target = (Target)varDesc.getTarget();
@@ -248,6 +265,13 @@ public class VariableManager extends Manager {
 		return vo;
 	}
 
+	/**
+	 * Encode the variableDescriptor in a typecasting.
+	 * @param varDesc
+	 * @param type
+	 * @return
+	 * @throws CDIException
+	 */
 	public VariableDescriptor getVariableDescriptorAsType(VariableDescriptor varDesc, String type) throws CDIException {
 		// throw an exception if not a good type.
 		Target target = (Target)varDesc.getTarget();
@@ -301,7 +325,7 @@ public class VariableManager extends Manager {
 		return vo;
 	}
 
-	public ICDIVariable createVariable(VariableDescriptor varDesc) throws CDIException {
+	public Variable createVariable(VariableDescriptor varDesc) throws CDIException {
 		if (varDesc instanceof ArgumentDescriptor) {
 			return createArgument((ArgumentDescriptor)varDesc);
 		} else if (varDesc instanceof LocalVariableDescriptor) {
@@ -326,7 +350,6 @@ public class VariableManager extends Manager {
 		if (argument == null) {
 			String name = argDesc.getQualifiedName();
 			StackFrame stack = (StackFrame)argDesc.getStackFrame();
-			Session session = (Session) getSession();
 			Target target = (Target)argDesc.getTarget();
 			Thread currentThread = (Thread)target.getCurrentThread();
 			StackFrame currentFrame = currentThread.getCurrentStackFrame();
@@ -356,7 +379,6 @@ public class VariableManager extends Manager {
 
 	public ICDIArgumentDescriptor[] getArgumentDescriptors(StackFrame frame) throws CDIException {
 		List argObjects = new ArrayList();
-		Session session = (Session) getSession();
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
@@ -424,7 +446,6 @@ public class VariableManager extends Manager {
 		}
 		if (global == null) {
 			String name = varDesc.getQualifiedName();
-			Session session = (Session) getSession();
 			Target target = (Target)varDesc.getTarget();
 			try {
 				MISession mi = target.getMISession();
@@ -447,7 +468,6 @@ public class VariableManager extends Manager {
 
 	public ICDILocalVariableDescriptor[] getLocalVariableDescriptors(StackFrame frame) throws CDIException {
 		List varObjects = new ArrayList();
-		Session session = (Session) getSession();
 		Target target = (Target)frame.getTarget();
 		Thread currentThread = (Thread)target.getCurrentThread();
 		StackFrame currentFrame = currentThread.getCurrentStackFrame();
@@ -488,7 +508,6 @@ public class VariableManager extends Manager {
 		}
 		if (local == null) {
 			String name = varDesc.getQualifiedName();
-			Session session = (Session) getSession();
 			StackFrame stack = (StackFrame)varDesc.getStackFrame();
 			Target target = (Target)varDesc.getTarget();
 			Thread currentThread = (Thread)target.getCurrentThread();

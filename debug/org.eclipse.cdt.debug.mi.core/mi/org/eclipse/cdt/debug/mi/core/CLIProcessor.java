@@ -82,7 +82,7 @@ public class CLIProcessor {
 		}
 	}
 
-	int getSteppingOperationKind(String operation) {
+	static int getSteppingOperationKind(String operation) {
 		int type = -1;
 		/* execution commands: n, next, s, step, si, stepi, u, until, finish,
 		   c, continue, fg */
@@ -110,6 +110,17 @@ public class CLIProcessor {
 			type = MIRunningEvent.CONTINUE;
 		}
 		return type;
+	}
+
+	/**
+	 * Return true if the operation is a stepping operation.
+	 * 
+	 * @param operation
+	 * @return
+	 */
+	public static boolean isSteppingOperation(String operation) {
+		int type = getSteppingOperationKind(operation);
+		return type != -1;
 	}
 
 	boolean isSettingBreakpoint(String operation) {

@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointHit;
 import org.eclipse.cdt.debug.mi.core.cdi.EndSteppingRange;
 import org.eclipse.cdt.debug.mi.core.cdi.ErrorInfo;
+import org.eclipse.cdt.debug.mi.core.cdi.FunctionFinished;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalReceived;
@@ -60,7 +61,7 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 		} else if (event instanceof MILocationReachedEvent) {
 			return new EndSteppingRange(session);
 		} else if (event instanceof MIFunctionFinishedEvent) {
-			return new EndSteppingRange(session);
+			return new FunctionFinished(session, (MIFunctionFinishedEvent)event);
 		} else if (event instanceof MIErrorEvent) {
 			return new ErrorInfo(session, (MIErrorEvent)event);
 		} else if (event instanceof MISharedLibEvent) {

@@ -18,6 +18,9 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
  */
 public class VoidType extends Type implements ICDIVoidType {
 
+	public VoidType(StackFrame frame) {
+		this(frame, "void"); //$NON-NLS-1$
+	}
 	public VoidType(StackFrame frame, String typename) {
 		super(frame, typename);
 	}

@@ -1,3 +1,11 @@
+2002-11-13 Mikhail Khodjaiants
+	Added the 'Auto-Refresh by default' and 'Show ASCII by default' preferences 
+	to the 'Memory Views' preference page.
+	* ICDebugPreferenceConstants.java
+	* MemoryViewPreferencePage.java
+	* MemoryControlArea.java
+	* MemoryView.java
+
 2002-11-11 Mikhail Khodjaiants
 	Fix for PR 25988: The 'Padding Character' preference of the Memory view doesn't work.
 	* MemoryControlArea.java

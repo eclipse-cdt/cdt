@@ -13,7 +13,6 @@ import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -69,14 +68,18 @@ public class MemoryControlArea extends Composite
 		fPresentation = createPresentation();
 		fAddressText = createAddressText( this );
 		fMemoryText = createMemoryText( this, style, fPresentation );
+		setDefaultPreferences();
+	}
+
+	private void setDefaultPreferences()
+	{
+		char[] paddingCharStr = CDebugUIPlugin.getDefault().getPreferenceStore().getString( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR ).toCharArray();
+		setPaddingChar( ( paddingCharStr.length > 0 ) ? paddingCharStr[0] : '.' );
+		fPresentation.setDisplayAscii( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_MEMORY_SHOW_ASCII ) );
 	}
 
 	private MemoryPresentation createPresentation()
 	{
-		IPreferenceStore pstore = CDebugUIPlugin.getDefault().getPreferenceStore();
-		char[] paddingCharStr = pstore.getString( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR ).toCharArray();
-		setPaddingChar( ( paddingCharStr.length > 0 ) ? paddingCharStr[0] : '.' );
-
 		return new MemoryPresentation();
 	}
 
@@ -250,6 +253,7 @@ public class MemoryControlArea extends Composite
 																				   getNumberOfRows(),
 																				   getNumberOfColumns(),
 																				   getPaddingChar() ) );
+ 			getMemoryBlock().setFrozen( !CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_MEMORY_AUTO_REFRESH ) );
 			getPresentation().setMemoryBlock( getMemoryBlock() );
 		}
 		setMemoryTextState();

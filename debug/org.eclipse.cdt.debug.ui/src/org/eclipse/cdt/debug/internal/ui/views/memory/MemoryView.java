@@ -17,6 +17,7 @@ import org.eclipse.cdt.debug.internal.ui.actions.MemorySizeAction;
 import org.eclipse.cdt.debug.internal.ui.actions.RefreshMemoryAction;
 import org.eclipse.cdt.debug.internal.ui.actions.SaveMemoryChangesAction;
 import org.eclipse.cdt.debug.internal.ui.actions.ShowAsciiAction;
+import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
@@ -90,7 +91,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 
 		action = new AutoRefreshMemoryAction( (MemoryViewer)getViewer() );
 		action.setEnabled( false );
-		action.setChecked( false );
+		action.setChecked( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_MEMORY_AUTO_REFRESH ) );
 		setAction( "AutoRefreshMemory", action ); //$NON-NLS-1$
 		add( (AutoRefreshMemoryAction)action );
 
@@ -106,7 +107,7 @@ public class MemoryView extends AbstractDebugEventHandlerView
 
 		action = new ShowAsciiAction( (MemoryViewer)getViewer() );
 		action.setEnabled( false );
-		action.setChecked( false );
+		action.setChecked( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_MEMORY_SHOW_ASCII ) );
 		setAction( "ShowAscii", action ); //$NON-NLS-1$
 		add( (ShowAsciiAction)action );
 

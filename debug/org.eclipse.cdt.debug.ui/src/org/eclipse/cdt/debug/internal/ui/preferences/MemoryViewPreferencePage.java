@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.ui.preferences;
 
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.FontFieldEditor;
@@ -96,10 +97,11 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 //		addField( dirty );
 		addField( font );
 
-//		StringFieldEditor paddingChar = new StringFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR, "Padding Character:", 1, getFieldEditorParent() );
 		StringFieldEditor paddingChar = createPaddingCharacterField();
 		paddingChar.setTextLimit( 1 );
 		addField( paddingChar );
+		createSpacer( getFieldEditorParent(), 1 );
+		createDefaultSettingsFields();
 	}
 
 	/* (non-Javadoc)
@@ -120,6 +122,8 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 	public static void initDefaults( IPreferenceStore store ) 
 	{
 		store.setDefault( ICDebugPreferenceConstants.PREF_MEMORY_PADDING_CHAR, ICDebugPreferenceConstants.DEFAULT_MEMORY_PADDING_CHAR );	
+		store.setDefault( ICDebugPreferenceConstants.PREF_MEMORY_AUTO_REFRESH, true );	
+		store.setDefault( ICDebugPreferenceConstants.PREF_MEMORY_SHOW_ASCII, true );
 		PreferenceConverter.setDefault( store, ICDebugPreferenceConstants.MEMORY_FONT, ICDebugPreferenceConstants.DEFAULT_MEMORY_FONT );
 		PreferenceConverter.setDefault( store, ICDebugPreferenceConstants.MEMORY_FOREGROUND_RGB, ICDebugPreferenceConstants.DEFAULT_MEMORY_FOREGROUND_RGB );
 		PreferenceConverter.setDefault( store, ICDebugPreferenceConstants.MEMORY_BACKGROUND_RGB, ICDebugPreferenceConstants.DEFAULT_MEMORY_BACKGROUND_RGB );
@@ -147,5 +151,11 @@ public class MemoryViewPreferencePage extends FieldEditorPreferencePage
 							return ( getTextControl().getText().length() == 1 );
 						}
 					};
+	}
+
+	private void createDefaultSettingsFields()
+	{
+		addField( new BooleanFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_AUTO_REFRESH, "Auto-Refresh by default", SWT.NONE, getFieldEditorParent() ) );
+		addField( new BooleanFieldEditor( ICDebugPreferenceConstants.PREF_MEMORY_SHOW_ASCII, "Show ASCII by default", SWT.NONE, getFieldEditorParent() ) );
 	}
 }

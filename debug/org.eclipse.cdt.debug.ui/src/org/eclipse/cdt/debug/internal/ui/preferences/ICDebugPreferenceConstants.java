@@ -27,6 +27,13 @@ import org.eclipse.swt.widgets.Display;
 public interface ICDebugPreferenceConstants
 {
 	/**
+	 * Boolean preference controlling whether the debugger shows 
+	 * full paths. When <code>true</code> the debugger
+	 * will show full paths in newly opened views.
+	 */
+	public static final String PREF_SHOW_FULL_PATHS = ICDebugUIConstants.PLUGIN_ID + "cDebug.show_full_paths";
+
+	/**
 	 * The RGB for the color to be used to indicate changed registers
 	 */
 	public static final String CHANGED_REGISTER_RGB = "Changed.Register.RGB"; //$NON-NLS-1$
@@ -47,7 +54,6 @@ public interface ICDebugPreferenceConstants
 	public static final String PREF_MEMORY_SIZE = "Memory.Size";
 	public static final String PREF_MEMORY_FORMAT = "Memory.Format";
 	public static final String PREF_MEMORY_BYTES_PER_ROW = "Memory.BytesPerRow";
-	public static final String PREF_MEMORY_DISPLAY_ASCII = "Memory.DisplayASCII";
 	public static final String PREF_MEMORY_PADDING_CHAR = "Memory.PaddingChar";
 
 	/**
@@ -93,9 +99,15 @@ public interface ICDebugPreferenceConstants
 	public static final String PREF_SHOW_CHAR_VALUES = ICDebugUIConstants.PLUGIN_ID + "cDebug.showCharValues"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference controlling whether the debugger shows 
-	 * full paths. When <code>true</code> the debugger
-	 * will show full paths in newly opened views.
+	 * Boolean preference controlling whether the memory view shows ASCII characters. 
+	 * When <code>true</code> the memory view will show ASCII characters by default.
 	 */
-	public static final String PREF_SHOW_FULL_PATHS = ICDebugUIConstants.PLUGIN_ID + "cDebug.show_full_paths"; //$NON-NLS-1$
+	public static final String PREF_MEMORY_SHOW_ASCII = ICDebugUIConstants.PLUGIN_ID + "Memory.show_ascii"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether the memory view will be refreshed 
+	 * every time when the execution of program stops. 
+	 * When <code>true</code> the 'Auto-Refresh' option will be checked.
+	 */
+	public static final String PREF_MEMORY_AUTO_REFRESH = ICDebugUIConstants.PLUGIN_ID + "Memory.auto_refresh"; //$NON-NLS-1$
 }

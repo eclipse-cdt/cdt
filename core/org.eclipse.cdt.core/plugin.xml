@@ -18,6 +18,7 @@
       <import plugin="org.eclipse.search"/>
       <import plugin="org.eclipse.compare"/>
       <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.team.core"/>
    </requires>
 
 

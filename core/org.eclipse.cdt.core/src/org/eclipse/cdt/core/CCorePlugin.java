@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
 import org.eclipse.cdt.core.filetype.IResolverModel;
@@ -900,6 +901,11 @@ public class CCorePlugin extends Plugin {
 
 	public boolean useStructuralParseMode() {
 		return getPluginPreferences().getBoolean(PREF_USE_STRUCTURAL_PARSE_MODE);
+	}
+	
+	public CDOM getDOM()
+	{
+	    return CDOM.getInstance();
 	}
 
 	

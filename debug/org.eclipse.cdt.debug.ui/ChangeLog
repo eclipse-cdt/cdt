@@ -1,3 +1,7 @@
+2004-07-16 Mikhail Khodjaiants
+	Cleanup.
+	* CDTDebugModelPresentation.java
+
 2004-07-15 Mikhail Khodjaiants
 	Fix for bug 70147. TVT3.0: Preferences CDT Editor has non-externalized string.
 	* plugin.properties

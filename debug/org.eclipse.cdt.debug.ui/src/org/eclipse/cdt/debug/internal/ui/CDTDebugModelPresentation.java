@@ -22,21 +22,23 @@ import org.eclipse.cdt.debug.core.cdi.ICDISignalReceived;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointScope;
 import org.eclipse.cdt.debug.core.cdi.ICDIWatchpointTrigger;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
+import org.eclipse.cdt.debug.core.model.CDebugElementState;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICDebugElement;
 import org.eclipse.cdt.debug.core.model.ICDebugElementStatus;
-import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
+import org.eclipse.cdt.debug.core.model.ICThread;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
-import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor;
 import org.eclipse.cdt.debug.internal.ui.editors.EditorInputDelegate;
 import org.eclipse.cdt.debug.internal.ui.editors.FileNotFoundElement;
@@ -216,25 +218,22 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 	}
 
 	private Image getBaseImage( Object element ) {
-		if ( element instanceof IDebugTarget ) {
-			ICDebugTargetType targetType = (ICDebugTargetType)((IDebugTarget)element).getAdapter( ICDebugTargetType.class );
-			int type = (targetType != null) ? targetType.getTargetType() : ICDebugTargetType.TARGET_TYPE_UNKNOWN;
-			if ( type == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP ) {
+		if ( element instanceof ICDebugTarget ) {
+			ICDebugTarget target = (ICDebugTarget)element;
+			if ( target.isPostMortem() ) {
 				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED ) );
 			}
-			IDebugTarget target = (IDebugTarget)element;
 			if ( target.isTerminated() || target.isDisconnected() ) {
 				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED ) );
 			}
 			return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET ) );
 		}
-		if ( element instanceof IThread ) {
-			ICDebugTargetType targetType = (ICDebugTargetType)((IThread)element).getDebugTarget().getAdapter( ICDebugTargetType.class );
-			int type = (targetType != null) ? targetType.getTargetType() : ICDebugTargetType.TARGET_TYPE_UNKNOWN;
-			if ( type == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP ) {
+		if ( element instanceof ICThread ) {
+			ICThread thread = (ICThread)element;
+			ICDebugTarget target = (ICDebugTarget)thread.getDebugTarget();
+			if ( target.isPostMortem() ) {
 				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_THREAD_TERMINATED ) );
 			}
-			IThread thread = (IThread)element;
 			if ( thread.isSuspended() ) {
 				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED ) );
 			}
@@ -364,11 +363,12 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 	}
 
 	protected String getTargetText( IDebugTarget target, boolean qualified ) throws DebugException {
-		if ( target instanceof IState ) {
-			IState state = (IState)target;
-			switch( state.getCurrentStateId() ) {
-				case IState.EXITED: {
-					Object info = state.getCurrentStateInfo();
+		ICDebugTarget t = (ICDebugTarget)target.getAdapter( ICDebugTarget.class );
+		if ( t != null ) {
+			if ( !t.isPostMortem() ) {
+				CDebugElementState state = t.getState();
+				if ( state.equals( CDebugElementState.EXITED ) ) {
+					Object info = t.getCurrentStateInfo();
 					String label = CDebugUIMessages.getString( "CDTDebugModelPresentation.3" ); //$NON-NLS-1$
 					String reason = ""; //$NON-NLS-1$
 					if ( info != null && info instanceof ICDISignalExitInfo ) {
@@ -380,17 +380,17 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 					}
 					return MessageFormat.format( label, new String[] { target.getName(), reason } );
 				}
-				case IState.SUSPENDED:
-					return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.7" ), new String[] { target.getName() } ); //$NON-NLS-1$
+				else if ( state.equals( CDebugElementState.SUSPENDED ) ) {
+						return MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.7" ), new String[] { target.getName() } ); //$NON-NLS-1$
+				}
 			}
 		}
 		return target.getName();
 	}
 
 	protected String getThreadText( IThread thread, boolean qualified ) throws DebugException {
-		ICDebugTargetType targetType = (ICDebugTargetType)thread.getDebugTarget().getAdapter( ICDebugTargetType.class );
-		int type = (targetType != null) ? targetType.getTargetType() : ICDebugTargetType.TARGET_TYPE_UNKNOWN;
-		if ( type == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP ) {
+		ICDebugTarget target = (ICDebugTarget)thread.getDebugTarget().getAdapter( ICDebugTarget.class );
+		if ( target.isPostMortem() ) {
 			return getFormattedString( CDebugUIMessages.getString( "CDTDebugModelPresentation.8" ), thread.getName() ); //$NON-NLS-1$
 		}
 		if ( thread.isTerminated() ) {
@@ -404,9 +404,9 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 		}
 		if ( thread.isSuspended() ) {
 			String reason = ""; //$NON-NLS-1$
-			IState state = (IState)thread.getAdapter( IState.class );
-			if ( state != null ) {
-				Object info = state.getCurrentStateInfo();
+			ICDebugElement element = (ICDebugElement)thread.getAdapter( ICDebugElement.class );
+			if ( element != null ) {
+				Object info = element.getCurrentStateInfo();
 				if ( info != null && info instanceof ICDISignalReceived ) {
 					ICDISignal signal = ((ICDISignalReceived)info).getSignal();
 					reason = MessageFormat.format( CDebugUIMessages.getString( "CDTDebugModelPresentation.13" ), new String[]{ signal.getName(), signal.getDescription() } ); //$NON-NLS-1$

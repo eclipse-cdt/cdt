@@ -1,4 +1,9 @@
 2003-09-10 Mikhail Khodjaiants
+	If breakpoint is a line breakpoint check if source locator contains this file 
+	instead of container project.
+	* CDebugTarget.java
+
+2003-09-10 Mikhail Khodjaiants
 	Fix for PR 42790: Memory view is not cleared when target is terminated.
 	* CFormattedMemoryBlock.java: fire 'terminate' event when block is disposing.
 	* CMemoryManager.java: implementation of 'dispose'.

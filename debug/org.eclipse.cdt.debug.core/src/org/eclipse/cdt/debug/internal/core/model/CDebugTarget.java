@@ -88,6 +88,7 @@ import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -394,25 +395,36 @@ public class CDebugTarget extends CDebugElement
 
 	private boolean isTargetBreakpoint( IBreakpoint bp )
 	{
-		IProject project = bp.getMarker().getResource().getProject();
-		if ( project != null && project.exists() )
-		{
+		IResource resource = bp.getMarker().getResource();
+		if ( bp instanceof ICLineBreakpoint )
+		{ 
 			if ( getSourceLocator() instanceof IAdaptable )
 			{
 				ICSourceLocator sl = (ICSourceLocator)((IAdaptable)getSourceLocator()).getAdapter( ICSourceLocator.class );
 				if ( sl != null )
-				{
-					return sl.contains( project );
-				}
-			}
-			else
-			{
-				if ( project.equals( getExecFile().getProject() ) )
-					return true;
-				return CDebugUtils.isReferencedProject( getExecFile().getProject(), project );
+					return sl.contains( resource );
 			}
 		}
-		return false;
+		else
+		{
+			IProject project = resource.getProject();
+			if ( project != null && project.exists() )
+			{
+				if ( getSourceLocator() instanceof IAdaptable )
+				{
+					ICSourceLocator sl = (ICSourceLocator)((IAdaptable)getSourceLocator()).getAdapter( ICSourceLocator.class );
+					if ( sl != null )
+						return sl.contains( project );
+				}
+				else
+				{
+					if ( project.equals( getExecFile().getProject() ) )
+						return true;
+					return CDebugUtils.isReferencedProject( getExecFile().getProject(), project );
+				}
+			}
+		}
+		return true;
 	}
 
 	protected void initializeRegisters()

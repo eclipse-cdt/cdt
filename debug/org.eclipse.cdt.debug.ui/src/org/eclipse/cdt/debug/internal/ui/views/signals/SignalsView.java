@@ -19,6 +19,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -98,6 +99,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 		vv.setContentProvider( new SignalsViewContentProvider() );
 		vv.setLabelProvider( new SignalsViewLabelProvider() );
 		vv.setUseHashlookup( true );
+		vv.setExceptionHandler( this );
 
 		// listen to selection in debug view
 		getSite().getPage().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
@@ -161,6 +163,7 @@ public class SignalsView extends AbstractDebugEventHandlerView
 	 */
 	public void handleException( DebugException e )
 	{
+		ErrorDialog.openError( getSite().getShell(), "Error", e.getMessage(), null );
 	}
 
 	protected void setViewerInput( IStructuredSelection ssel )

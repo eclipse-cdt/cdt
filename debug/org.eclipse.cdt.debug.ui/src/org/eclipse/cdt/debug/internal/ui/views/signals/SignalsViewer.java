@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.ui.views.signals;
 
 import org.eclipse.cdt.debug.core.model.ICSignal;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
+import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -35,6 +36,8 @@ public class SignalsViewer extends TableViewer
 	private static final String CP_PASS = "pass";
 	private static final String CP_SUSPEND = "suspend";
 	private static final String CP_DESCRIPTION = "description";
+
+	private IDebugExceptionHandler fExceptionHandler = null;
 
 	/**
 	 * Constructor for SignalsViewer.
@@ -127,9 +130,21 @@ public class SignalsViewer extends TableViewer
 								}
 								catch( DebugException e )
 								{
+									if ( getExceptionHandler() != null )
+										getExceptionHandler().handleException( e );
 								}
 							}
 						}
 					};
+	}
+
+	protected IDebugExceptionHandler getExceptionHandler()
+	{
+		return fExceptionHandler;
+	}
+
+	protected void setExceptionHandler( IDebugExceptionHandler handler )
+	{
+		fExceptionHandler = handler;
 	}
 }

@@ -461,6 +461,7 @@ public class CCorePlugin extends Plugin {
 				}
 			}
 		} catch (CoreException e) {
+			log(e);
 		}
 		return new IConsole() { // return a null console
 			private ConsoleOutputStream nullStream = new ConsoleOutputStream() {
@@ -487,7 +488,7 @@ public class CCorePlugin extends Plugin {
 		};
 	}
 
-	public IConsole getConsole() throws CoreException {
+	public IConsole getConsole() {
 		return getConsole(null);
 	}
 
@@ -515,6 +516,7 @@ public class CCorePlugin extends Plugin {
 					list.toArray(configs);
 				}
 			} catch (CoreException e) {
+				log(e);
 			}
 		}
 		if (configs == null) {
@@ -542,6 +544,7 @@ public class CCorePlugin extends Plugin {
 					list.toArray(ids);
 				}
 			} catch (CoreException e) {
+				log(e);
 			}
 		}
 		if (ids == null) {
@@ -573,6 +576,7 @@ public class CCorePlugin extends Plugin {
 					list.toArray(parsers);
 				}
 			} catch (CoreException e) {
+				log(e);
 			}
 		}
 		if (parsers == null) {
@@ -756,6 +760,7 @@ public class CCorePlugin extends Plugin {
 				try {
 					return (IProcessList) configElements[0].createExecutableExtension("class"); //$NON-NLS-1$
 				} catch (CoreException e) {
+					log(e);
 				}
 			}
 		}
@@ -800,6 +805,7 @@ public class CCorePlugin extends Plugin {
 				return (IErrorParser[]) list.toArray(empty);
 			}
 		} catch (CoreException e) {
+			log(e);
 		}
 		return empty;
 	}
@@ -813,6 +819,7 @@ public class CCorePlugin extends Plugin {
 				if (extensions.length > 0)
 					provider = (IScannerInfoProvider) extensions[0].createExtension();
 			} catch (CoreException e) {
+				log(e);
 			}
 		}
 		return provider;

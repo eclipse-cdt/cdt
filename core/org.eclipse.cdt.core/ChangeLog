@@ -1,4 +1,10 @@
-2004-08-19 Alain Magloire
+2004-03-19 David Inglis
+
+	Added logging on failures in CCorePlugin.
+	
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	
+2004-03-19 Alain Magloire
 
 	Correct typos.
 

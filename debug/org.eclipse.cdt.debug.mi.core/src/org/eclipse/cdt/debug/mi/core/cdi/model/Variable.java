@@ -189,22 +189,20 @@ public class Variable extends VariableObject implements ICDIVariable {
 						//    - public
 						//       - y
 						// So we choose to ignore the first set of children
-						// but carry over to those "fake" variable the typename and the qualified name
-						if (isFake()) {
-							qName = "(" + getQualifiedName() + ")." + vars[i].getExp();
-						} else {
-							// So if the child is something like "public", "private" ...
-							// carrry over the parent qualified name and the typename
-							// also flag it as a fake variable.
-							qName = getQualifiedName();
-							childTypename = typename;
+						// but carry over to those "fake" variables the typename and the qualified name
+						if (!isFake()
+							|| (isFake() && !(name.equals("private") || name.equals("public") || name.equals("protected")))) {
 							childFake = true;
+							childTypename = getTypeName();
+						} else {
+							qName = "(" + getQualifiedName() + ")." + vars[i].getExp();
 						}
-					} else {
+					} else { // If not C++ language
 						qName = "(" + getQualifiedName() + ")." + vars[i].getExp();
 					}
 				}
-				Variable v = new Variable(getTarget(), vars[i].getExp(), qName, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
+				Variable v =
+					new Variable(getTarget(), vars[i].getExp(), qName, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
 				if (childTypename != null) {
 					// Hack to reset the typename to a known value
 					v.typename = childTypename;

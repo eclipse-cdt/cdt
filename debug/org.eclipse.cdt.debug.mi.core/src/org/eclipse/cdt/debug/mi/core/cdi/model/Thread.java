@@ -28,9 +28,9 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
  */
 public class Thread extends CObject implements ICDIThread {
 
-	static StackFrame[] noStack = new StackFrame[0];
+	static ICDIStackFrame[] noStack = new ICDIStackFrame[0];
 	int id;
-	StackFrame currentFrame;
+	ICDIStackFrame currentFrame;
 	int stackdepth = 0;
 	
 	public Thread(ICDITarget target, int threadId) {
@@ -55,7 +55,7 @@ public class Thread extends CObject implements ICDIThread {
 		if (currentFrame == null) {
 			ICDIStackFrame[] frames = getStackFrames(0, 0);
 			if (frames.length > 0) {
-				currentFrame = (StackFrame)frames[0];
+				currentFrame = frames[0];
 			}
 		}
 		return currentFrame;
@@ -66,7 +66,7 @@ public class Thread extends CObject implements ICDIThread {
 	 */
 	public ICDIStackFrame[] getStackFrames() throws CDIException {
 
-		StackFrame[] stacks = noStack;
+		ICDIStackFrame[] stacks = noStack;
 		Session session = (Session)getTarget().getSession();
 		Target currentTarget = (Target)session.getCurrentTarget();
 		ICDIThread currentThread = currentTarget.getCurrentThread();
@@ -137,7 +137,7 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#getStackFrames()
 	 */
 	public ICDIStackFrame[] getStackFrames(int low, int high) throws CDIException {
-		StackFrame[] stacks = noStack;
+		ICDIStackFrame[] stacks = noStack;
 		Session session = (Session)getTarget().getSession();
 		Target currentTarget = (Target)session.getCurrentTarget();
 		ICDIThread currentThread = currentTarget.getCurrentThread();
@@ -179,18 +179,13 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#setCurrentStackFrame(ICDIStackFrame)
 	 */
 	public void setCurrentStackFrame(ICDIStackFrame stackframe) throws CDIException {
-		if (stackframe instanceof  StackFrame) {
-			setCurrentStackFrame((StackFrame)stackframe);
-		} else {
-			throw new CDIException("Unknown stackframe");
-		}
-	}
-
-	public void setCurrentStackFrame(StackFrame stackframe) throws CDIException {
 		setCurrentStackFrame(stackframe, true);
 	}
 
-	public void setCurrentStackFrame(StackFrame stackframe, boolean doUpdate) throws CDIException {
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#setCurrentStackFrame(ICDIStackFrame, boolean)
+	 */
+	public void setCurrentStackFrame(ICDIStackFrame stackframe, boolean doUpdate) throws CDIException {
 		int frameNum = 0;
 		if (stackframe != null) {
 			frameNum = stackframe.getLevel();

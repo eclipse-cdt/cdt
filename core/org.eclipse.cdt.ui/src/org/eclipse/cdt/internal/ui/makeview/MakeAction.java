@@ -104,10 +104,10 @@ public class MakeAction extends Action  {
 								if (target.isLeaf()) {
 									MakeUtil.setSessionTarget(project, target.toString());
 								}
-								//System.out.println ("Build0: " + res + " " + ta);
 							}
-							//System.out.println ("Build: " + project);
-							project.build (IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+							// Full build to force builder for targets like clean and rebuild.
+							// maybe this should be a option
+							project.build (IncrementalProjectBuilder.FULL_BUILD, monitor);
 						} catch (CoreException e) {
 						} 
 

@@ -13,3 +13,7 @@
 	over the code in the C/C++ Editor colour preference dialog.
 	From Thomas Fletcher.
 
+2002-10-15 David Inglis	
+	* MakeAction.java
+	Invoke builder as full build so that CBuilder is always invoked.
+		

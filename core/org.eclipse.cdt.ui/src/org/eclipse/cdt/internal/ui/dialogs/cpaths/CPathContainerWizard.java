@@ -86,7 +86,7 @@ public class CPathContainerWizard extends Wizard {
 		if (fContainerPage != null) {
 			if (fContainerPage.finish()) {
 				fContainerEntries = fContainerPage.getContainerEntries();
-				if (fFilterType != -1 && fFilterPage.isPageComplete()) {
+				if (fFilterPage != null && fFilterPage.isPageComplete()) {
 					fNewEntries = fFilterPage.getSelectedEntries();
 				}
 				return true;
@@ -161,7 +161,7 @@ public class CPathContainerWizard extends Wizard {
 			IContainerDescriptor selected = fSelectionWizardPage.getSelected();
 			fContainerPage = getContainerPage(selected);
 			return fContainerPage;
-		} else if (page == fContainerPage) {
+		} else if (page == fContainerPage && fFilterPage != null) {
 			if (fContainerPage.finish() && fContainerPage.getContainerEntries().length > 0
 					&& fContainerPage.getContainerEntries()[0] != null) {
 				fFilterPage.setParentEntry(fContainerPage.getContainerEntries()[0]);

@@ -30,6 +30,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 	private CPathSourceEntryPage fSourcePage;
 	private CPathProjectsEntryPage fProjectsPage;
 	private CPathOutputEntryPage fOutputPage;
+	private CPathContainerEntryPage fContainerPage;
 	//private LibrariesWorkbookPage fLibrariesPage;
 
 	private CPathOrderExportPage fOrderExportPage;
@@ -81,6 +82,8 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		addPage(fOutputPage);
 		fProjectsPage = new CPathProjectsEntryPage(fCPathList);
 		addPage(fProjectsPage);
+		fContainerPage = new CPathContainerEntryPage(fCPathList);
+		addPage(fContainerPage);
 		fOrderExportPage = new CPathOrderExportPage(fCPathList);
 		addPage(fOrderExportPage);
 	}
@@ -96,6 +99,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 			fSourcePage.init(getCProject());
 			fOutputPage.init(getCProject());
 			fProjectsPage.init(getCProject());
+			fContainerPage.init(getCProject());
 			//fLibrariesPage.init(fCurrCProject);
 		}
 		Dialog.applyDialogFont(control);
@@ -120,6 +124,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 			fSourcePage.init(getCProject());
 			fOutputPage.init(getCProject());
 			fProjectsPage.init(getCProject());
+			fContainerPage.init(getCProject());
 			//			fLibrariesPage.init(fCurrCProject);
 		}
 

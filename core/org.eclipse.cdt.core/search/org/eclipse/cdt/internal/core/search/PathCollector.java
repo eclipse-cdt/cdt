@@ -152,6 +152,10 @@ import org.eclipse.core.runtime.Path;
 		}
 		return result;
 	}
+	
+	public void acceptMacroDeclaration(String resourcePath, char[] decodedSimpleName) {
+		this.paths.add(resourcePath);
+	}
 
 	
 

@@ -18,7 +18,6 @@ import java.util.Set;
 import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.internal.core.search.CharOperation;
-import org.eclipse.cdt.internal.core.search.matching.FunctionDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.MethodDeclarationPattern;
 
 /**
@@ -36,18 +35,17 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		super(name);
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	public void testFunctionIndexPrefix(){
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "c()", FUNCTION, DECLARATIONS, true );
-		assertTrue( pattern instanceof FunctionDeclarationPattern );
 		
-		FunctionDeclarationPattern functionPattern = (FunctionDeclarationPattern)pattern;
+		MethodDeclarationPattern functionPattern = (MethodDeclarationPattern)pattern;
 		assertEquals( CharOperation.compareWith( "functionDecl/c".toCharArray(), functionPattern.indexEntryPrefix() ), 0);
 		
-		functionPattern = (FunctionDeclarationPattern) SearchEngine.createSearchPattern( "rt*()", FUNCTION, DECLARATIONS, true );
+		functionPattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "rt*()", FUNCTION, DECLARATIONS, true );
 		assertEquals( CharOperation.compareWith( "functionDecl/rt".toCharArray(), functionPattern.indexEntryPrefix() ), 0);
 				
-		functionPattern = (FunctionDeclarationPattern) SearchEngine.createSearchPattern( "Ac", FUNCTION, REFERENCES, false );
+		functionPattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "Ac", FUNCTION, REFERENCES, false );
 		assertEquals( CharOperation.compareWith( "functionRef/".toCharArray(), functionPattern.indexEntryPrefix() ), 0);
 	}
 	

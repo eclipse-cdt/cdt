@@ -93,6 +93,7 @@ public interface ICSearchConstants {
 	 */
 	public static final SearchFor UNION = new SearchFor( 9 );
 	
+	public static final SearchFor MACRO = new SearchFor( 10 );
 	
 	/* Nature of match */
 	

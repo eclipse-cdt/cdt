@@ -39,7 +39,7 @@ public class OtherPatternTests extends BaseSearchTest {
 		super(name);
 		// TODO Auto-generated constructor stub
 	}
-	
+		
 	public void testNamespaceIndexPrefix(){
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A::B::c", NAMESPACE, DECLARATIONS, true );
 		assertTrue( pattern instanceof NamespaceDeclarationPattern );
@@ -169,4 +169,12 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 6 );
 	}
 
+	public void testMacroPattern(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "FOO", MACRO, DECLARATIONS, true );
+		
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+	}
 }

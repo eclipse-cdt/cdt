@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.search.matching;
 
+import java.io.CharArrayReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStreamReader;
@@ -302,24 +303,26 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 				IWorkingCopy workingCopy = (IWorkingCopy)wcPaths.get( pathString );
 				
 				if( workingCopy != null ){
-					currentResource = workingCopy.getOriginalElement().getResource();
+					reader = new CharArrayReader( workingCopy.getContents() );
+					currentResource = workingCopy.getResource();
+					realPath = currentResource.getLocation();
 				} else {
 					currentResource = workspaceRoot.findMember( pathString, true );
-				}
-			
-				try{
-					if( currentResource == null ){
-						IPath path = new Path( pathString );
-						IFile file = workspaceRoot.getFile( path );
-						file.createLink( path, 0, null );
+					
+					try{
+						if( currentResource == null ){
+							IPath path = new Path( pathString );
+							IFile file = workspaceRoot.getFile( path );
+							file.createLink( path, 0, null );
+						}
+						if( currentResource != null && currentResource instanceof IFile ){
+							IFile file = (IFile) currentResource;
+							reader = new InputStreamReader( file.getContents() );
+							realPath = currentResource.getLocation();
+						} else continue;
+					} catch ( CoreException e ){
+						continue;
 					}
-					if( currentResource != null && currentResource instanceof IFile ){
-						IFile file = (IFile) currentResource;
-						reader = new InputStreamReader( file.getContents() );
-						realPath = currentResource.getLocation();
-					} else continue;
-				} catch ( CoreException e ){
-					continue;
 				}
 			} else {
 				IPath path = new Path( pathString );

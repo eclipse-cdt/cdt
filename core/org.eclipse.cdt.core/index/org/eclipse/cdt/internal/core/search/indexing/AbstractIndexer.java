@@ -508,7 +508,26 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		}
 		
 		return result;
-	}   
+	}
+
+	/**
+	 * @param _limitTo
+	 * @param simpleName
+	 * @param _matchMode
+	 * @param _caseSensitive
+	 * @return
+	 */
+	public static final char[] bestMacroPrefix( LimitTo limitTo, char[] macroName, int matchMode, boolean isCaseSenstive ){
+		//since we only index macro declarations we already know the prefix
+		char [] prefix = null;
+		if( limitTo == DECLARATIONS ){
+			prefix = MACRO_DECL;
+		} else {
+			return null;
+		}
+		
+		return bestPrefix( prefix,  (char)0, macroName, null, matchMode, isCaseSenstive );	
+	}
 
 }
 

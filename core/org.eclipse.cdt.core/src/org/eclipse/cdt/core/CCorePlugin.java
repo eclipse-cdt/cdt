@@ -6,18 +6,23 @@ package org.eclipse.cdt.core;
  */
 
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.CDescriptorManager;
 import org.eclipse.cdt.internal.core.CPathEntry;
+import org.eclipse.cdt.internal.core.model.BufferManager;
 import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.core.model.IBufferFactory;
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -111,6 +116,29 @@ public class CCorePlugin extends Plugin {
 		}
 	}
 
+	/**
+	 * Answers the shared working copies currently registered for this buffer factory. 
+	 * Working copies can be shared by several clients using the same buffer factory,see 
+	 * <code>IWorkingCopy.getSharedWorkingCopy</code>.
+	 * 
+	 * @param factory the given buffer factory
+	 * @return the list of shared working copies for a given buffer factory
+	 * @see IWorkingCopy
+	 */
+	public static IWorkingCopy[] getSharedWorkingCopies(IBufferFactory factory){
+		
+		// if factory is null, default factory must be used
+		if (factory == null) factory = BufferManager.getDefaultBufferManager().getDefaultBufferFactory();
+		Map sharedWorkingCopies = CModelManager.getDefault().sharedWorkingCopies;
+		
+		Map perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(factory);
+		if (perFactoryWorkingCopies == null) return CModelManager.NoWorkingCopy;
+		Collection copies = perFactoryWorkingCopies.values();
+		IWorkingCopy[] result = new IWorkingCopy[copies.size()];
+		copies.toArray(result);
+		return result;
+	}
+	
 	public static String getResourceString(String key) {
 		try {
 			return fgResourceBundle.getString(key);

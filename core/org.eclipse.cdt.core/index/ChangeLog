@@ -1,5 +1,6 @@
 2003-08-11 Bogdan Gheorghe
 	- Added macro declarations to the index
+	- Added macro prefix to AbstractIndexer
 	
 2003-08-07 Bogdan Gheorghe
 	- Added shutdown cleanup routine in IndexManager

@@ -1,3 +1,7 @@
+2003-08-11 Andrew Niefer
+	- Added testMacroPattern to OtherPatternTests
+	- Changed the function tests to use new function/method pattern
+	
 2003-08-11 Bogdan Gheorghe
 	- Added testMacros to IndexManagerTests
 	

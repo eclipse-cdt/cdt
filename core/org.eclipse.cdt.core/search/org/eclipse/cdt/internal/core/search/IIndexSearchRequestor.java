@@ -80,4 +80,6 @@ void acceptVariableDeclaration(String resourcePath, char[] simpleTypeName);
 
 void acceptFieldDeclaration(String resourcePath, char[] simpleTypeName, char[][] enclosingTypeNames);
 
+void acceptMacroDeclaration(String resourcePath, char[] decodedSimpleName);
+
 }

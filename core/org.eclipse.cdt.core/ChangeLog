@@ -1,3 +1,6 @@
+2003-08-11 Andrew Niefer
+	Added getSharedWorkingCopies to CCorePlugin.
+	
 2003-08-10 Sean Evoy
 	Fix for Bug 41274. Was not saving the library option properly because the value type 
 	of the option was not recognized.

@@ -78,20 +78,33 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		CSearchPattern pattern = null;
 		if( searchFor == TYPE || searchFor == CLASS || searchFor == STRUCT || searchFor == ENUM || searchFor == UNION ){
 			pattern = createClassPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
-		} else if ( searchFor == METHOD ){
-			pattern = createMethodPattern( patternString, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == METHOD || searchFor == FUNCTION ){
+			pattern = createMethodPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == FIELD){
 			pattern = createFieldPattern( patternString, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == VAR ){
 			pattern = createVariablePattern( patternString, limitTo, matchMode, caseSensitive );
-		} else if ( searchFor == FUNCTION ){
-			pattern = createFunctionPattern( patternString, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == NAMESPACE ){
 			pattern = createNamespacePattern( patternString, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == MACRO ){
+			pattern = createMacroPattern( patternString, limitTo, matchMode, caseSensitive );
 		}
 	
 		return pattern;
 	}
+
+	/**
+	 * @param patternString
+	 * @param limitTo
+	 * @param matchMode
+	 * @param caseSensitive
+	 * @return
+	 */
+	private static CSearchPattern createMacroPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		if( limitTo != DECLARATIONS )
+			return null;
+			
+		return new MacroDeclarationPattern( patternString.toCharArray(), matchMode, limitTo, caseSensitive );	}
 
 	/**
 	 * @param patternString
@@ -117,38 +130,38 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		return new NamespaceDeclarationPattern( name, (char[][]) list.toArray( qualifications ), matchMode, limitTo, caseSensitive );
 	}
 
-	/**
-	 * @param patternString
-	 * @param limitTo
-	 * @param matchMode
-	 * @param caseSensitive
-	 * @return
-	 */
-	private static CSearchPattern createFunctionPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
-		if( limitTo == ALL_OCCURRENCES ){
-			OrPattern orPattern = new OrPattern();
-			orPattern.addPattern( createFunctionPattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
-			orPattern.addPattern( createFunctionPattern( patternString, REFERENCES, matchMode, caseSensitive ) );
-			orPattern.addPattern( createFunctionPattern( patternString, DEFINITIONS, matchMode, caseSensitive ) );
-			return orPattern;
-		}
-		
-		int index = patternString.indexOf( '(' );
-		
-		String paramString = ( index == -1 ) ? "" : patternString.substring( index );
-		
-		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
-				
-		IScanner scanner = ParserFactory.createScanner( new StringReader( paramString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
-				
-		LinkedList params = scanForParameters( scanner );
-				
-		char [] name = nameString.toCharArray();
-		char [][] parameters = new char [0][];
-		parameters = (char[][])params.toArray( parameters );
-				
-		return new FunctionDeclarationPattern( name, parameters, matchMode, limitTo, caseSensitive );
-	}
+//	/**
+//	 * @param patternString
+//	 * @param limitTo
+//	 * @param matchMode
+//	 * @param caseSensitive
+//	 * @return
+//	 */
+//	private static CSearchPattern createFunctionPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+//		if( limitTo == ALL_OCCURRENCES ){
+//			OrPattern orPattern = new OrPattern();
+//			orPattern.addPattern( createFunctionPattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
+//			orPattern.addPattern( createFunctionPattern( patternString, REFERENCES, matchMode, caseSensitive ) );
+//			orPattern.addPattern( createFunctionPattern( patternString, DEFINITIONS, matchMode, caseSensitive ) );
+//			return orPattern;
+//		}
+//		
+//		int index = patternString.indexOf( '(' );
+//		
+//		String paramString = ( index == -1 ) ? "" : patternString.substring( index );
+//		
+//		String nameString = ( index == -1 ) ? patternString : patternString.substring( 0, index );
+//				
+//		IScanner scanner = ParserFactory.createScanner( new StringReader( paramString ), "TEXT", new ScannerInfo(), ParserMode.QUICK_PARSE, null );
+//				
+//		LinkedList params = scanForParameters( scanner );
+//				
+//		char [] name = nameString.toCharArray();
+//		char [][] parameters = new char [0][];
+//		parameters = (char[][])params.toArray( parameters );
+//				
+//		return new MethodDeclarationPattern( name, parameters, matchMode, FUNCTION, limitTo, caseSensitive );
+//	}
 
 	/**
 	 * @param patternString
@@ -198,13 +211,13 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	 * @param caseSensitive
 	 * @return
 	 */
-	private static CSearchPattern createMethodPattern(String patternString, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+	private static CSearchPattern createMethodPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
 
 		if( limitTo == ALL_OCCURRENCES ){
 			OrPattern orPattern = new OrPattern();
-			orPattern.addPattern( createMethodPattern( patternString, DECLARATIONS, matchMode, caseSensitive ) );
-			orPattern.addPattern( createMethodPattern( patternString, REFERENCES, matchMode, caseSensitive ) );
-			orPattern.addPattern( createMethodPattern( patternString, DEFINITIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createMethodPattern( patternString, searchFor, DECLARATIONS, matchMode, caseSensitive ) );
+			orPattern.addPattern( createMethodPattern( patternString, searchFor, REFERENCES, matchMode, caseSensitive ) );
+			orPattern.addPattern( createMethodPattern( patternString, searchFor, DEFINITIONS, matchMode, caseSensitive ) );
 			return orPattern;
 		}
 				
@@ -226,7 +239,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		char [][] parameters = new char [0][];
 		parameters = (char[][])params.toArray( parameters );
 		
-		return new MethodDeclarationPattern( name, qualifications, parameters, matchMode, limitTo, caseSensitive );
+		return new MethodDeclarationPattern( name, qualifications, parameters, matchMode, searchFor, limitTo, caseSensitive );
 	}
 
 	/**

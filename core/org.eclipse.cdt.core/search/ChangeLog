@@ -1,3 +1,10 @@
+2003-08-11 Andrew Niefer
+	- Added Macro ICSearchConstant
+	- Added acceptMacro to IIndexSearchRequestor and PathCollector
+	- Added MacroDeclaration Pattern
+	- Rolled method and function patterns into one method pattern
+	- Added WorkingCopy support to search
+	
 2003-08-08 Bogdan Gheorghe
 	- Added CreateSearchScope to create a search scope out of
 	  CElements

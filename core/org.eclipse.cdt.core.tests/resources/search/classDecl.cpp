@@ -1,5 +1,7 @@
 #include "include.h"
 
+#define FOO bar
+
 class Heal{};
 
 class A {

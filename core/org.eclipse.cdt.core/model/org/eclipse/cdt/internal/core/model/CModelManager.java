@@ -107,6 +107,8 @@ public class CModelManager implements IResourceChangeListener {
 	public static final String [] sourceExtensions = {"c", "cxx", "cc", "C", "cpp"};
 
 	public static final String [] headerExtensions = {"h", "hh", "hpp", "H"};
+	
+	public static final IWorkingCopy[] NoWorkingCopy = new IWorkingCopy[0];
 
 	static CModelManager factory = null;
 	

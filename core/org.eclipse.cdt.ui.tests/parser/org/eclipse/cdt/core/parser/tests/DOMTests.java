@@ -1712,5 +1712,48 @@ public class DOMTests extends BaseDOMTest {
 	
 		TranslationUnit tu = parse( code.toString() );
 	}
+	
+	public void testBugFunctor758() throws Exception {
+		TranslationUnit tu = parse( "template <typename Fun> Functor(Fun fun) : spImpl_(new FunctorHandler<Functor, Fun>(fun)){}" ); 
+	}
+	
+	public void testBug36932() throws Exception
+	{
+		TranslationUnit tu = parse( "A::A(): b( new int( 5 ) ), b( new B ), c( new int ) {}" );
+	}
+
+	public void testBug36704() throws Exception {
+		Writer code = new StringWriter(); 
+		code.write( "template <class T, class U>\n" ); 
+		code.write( "struct Length< Typelist<T, U> >\n" );
+		code.write( "{\n" );
+		code.write( "enum { value = 1 + Length<U>::value };\n" );
+		code.write( "};\n" );
+		parse(code.toString());
+	}
+
+	public void testBug36699() throws Exception {
+		Writer code = new StringWriter();
+		code.write(
+			"template <	template <class> class ThreadingModel = DEFAULT_THREADING,\n");
+		code.write("std::size_t chunkSize = DEFAULT_CHUNK_SIZE,\n");
+		code.write(
+			"std::size_t maxSmallObjectSize = MAX_SMALL_OBJECT_SIZE	>\n");
+		code.write("class SmallObject : public ThreadingModel<\n");
+		code.write(
+			"SmallObject<ThreadingModel, chunkSize, maxSmallObjectSize> >\n");
+		code.write("{};\n");
+		parse(code.toString());
+	}
+
+	public void testBug36691() throws Exception {
+		Writer code = new StringWriter();
+		code.write("template <class T, class H>\n");
+		code.write(
+			"typename H::template Rebind<T>::Result& Field(H& obj)\n");
+		code.write("{	return obj;	}\n");
+		parse(code.toString());
+	}
+
 }
 

@@ -1,3 +1,9 @@
+2003-04-27 John Camelon
+	Partial fix for Bug 36932 - RTS: Parser fails on "new" in ctor initializer
+	Fixed Bug 36704 - Problem parsing Loki's Reference Typelist.h 
+	Fixed Bug 36699 - Problem parsing Loki's Reference SmartPtr.h Impl 
+	Fixed Bug 36691 - Problem parsing Loki's Reference HierarchyGenerators.h Impl 
+
 2003-04-25 Andrew Niefer
 	Fixed bug36771	  - Outline view shows include with no name
 	Fixed bug36714	  - Parser fails on initial assignment using floating-suffix 

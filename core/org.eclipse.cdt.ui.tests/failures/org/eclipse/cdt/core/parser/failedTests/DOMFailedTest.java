@@ -10,9 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.failedTests;
 
-import java.io.StringWriter;
-import java.io.Writer;
-
 import org.eclipse.cdt.core.parser.tests.BaseDOMTest;
 
 /**
@@ -22,33 +19,6 @@ public class DOMFailedTest extends BaseDOMTest  {
 
 	public DOMFailedTest(String name) {
 		super(name);
-	}
-
-	public void testBug36704() throws Exception {
-		failTest("template <class T, class U> struct Length< Typelist<T, U> >	{ enum { value = 1 + Length<U>::value };};);");
-	}
-
-	public void testBug36691() throws Exception {
-		Writer code = new StringWriter();
-		code.write("template <class T, class H>\n");
-		code.write(
-			"typename H::template Rebind<T>::Result& Field(H& obj)\n");
-		code.write("{	return obj;	}\n");
-		failTest(code.toString());
-	}
-
-	public void testBug36699() throws Exception {
-		Writer code = new StringWriter();
-		code.write(
-			"template <	template <class> class ThreadingModel = DEFAULT_THREADING,\n");
-		code.write("std::size_t chunkSize = DEFAULT_CHUNK_SIZE,\n");
-		code.write(
-			"std::size_t maxSmallObjectSize = MAX_SMALL_OBJECT_SIZE	>\n");
-		code.write("class SmallObject : public ThreadingModel<\n");
-		code.write(
-			"SmallObject<ThreadingModel, chunkSize, maxSmallObjectSize> >\n");
-		code.write("{};\n");
-		failTest(code.toString());
 	}
 	
 	public void testBug36730(){

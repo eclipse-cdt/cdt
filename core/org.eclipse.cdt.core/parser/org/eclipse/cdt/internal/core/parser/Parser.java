@@ -861,7 +861,23 @@ c, quick);
 					break;
 				case Token.t_typename:
 					try{ callback.simpleDeclSpecifier(decl, consume( Token.t_typename ));} catch( Exception e ) {}
+					Token first = LA(1);
+					Token last = null;  
 					name();
+					if( LT(1) == Token.t_template )
+					{
+						consume( Token.t_template );
+						last = templateId();
+						try
+						{
+							callback.nameBegin( first );
+							callback.nameEnd( last );
+						}
+						catch( Exception e ) { }
+						
+						  
+					}
+					
 					try{ callback.simpleDeclSpecifierName( decl );} catch( Exception e ) {}
 					return;
 				case Token.tCOLONCOLON:
@@ -871,6 +887,8 @@ c, quick);
 					// TODO - Kludgy way to handle constructors/destructors
 					// handle nested later:
 					if ( flags.haveEncounteredRawType() )
+						return;
+					if( parm && flags.haveEncounteredTypename() )
 						return;
 					if ( lookAheadForConstructor( flags )  )
 						return;
@@ -962,32 +980,11 @@ c, quick);
 	 */
 	protected void className() throws Backtrack
 	{	
-		Token first = LA(1);
 		if( LT(1)  == Token.tIDENTIFIER)
 		{
 			if( LT(2) == Token.tLT )
 			{
-				consume( Token.tIDENTIFIER );
-				consume( Token.tLT );
-				
-				// until we get all the names sorted out
-				int depth = 1;
-				Token last = null; 
-
-				while (depth > 0) {
-					last = consume();
-					switch ( last.getType()) {
-						case Token.tGT:
-							--depth;
-							break;
-						case Token.tLT:
-							++depth;
-						break;
-					}
-				}
-				
-				callback.nameBegin( first );
-				callback.nameEnd( last );
+				templateId();
 			}
 			else
 			{
@@ -997,6 +994,31 @@ c, quick);
 		}
 		else
 			throw backtrack;
+	}
+
+	protected Token templateId() throws Backtrack, EndOfFile {
+		Token first = consume( Token.tIDENTIFIER );
+		consume( Token.tLT );
+		
+		// until we get all the names sorted out
+		int depth = 1;
+		Token last = null; 
+		
+		while (depth > 0) {
+			last = consume();
+			switch ( last.getType()) {
+				case Token.tGT:
+					--depth;
+					break;
+				case Token.tLT:
+					++depth;
+				break;
+			}
+		}
+		
+		callback.nameBegin( first );
+		callback.nameEnd( last );
+		return last; 
 	}
 	
 	/**
@@ -1055,6 +1077,9 @@ c, quick);
 		while (LT(1) == Token.tCOLONCOLON) {
 			last = consume();
 			
+			if (LT(1) == Token.t_template )
+				consume(); 
+				
 			if (LT(1) == Token.tCOMPL)
 				consume();
 				
@@ -2013,9 +2038,22 @@ c, quick);
 				case Token.tLT:
 				case Token.tLTEQUAL:
 				case Token.tGTEQUAL:
+					Token mark = mark(); 
 					Token t = consume();
+					Token next = LA(1); 
 					shiftExpression(expression);
-					try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
+					if( next == LA(1) )
+					{
+						// we did not consume anything
+						// this is most likely an error
+						backup( mark ); 
+						return;
+					}
+					else
+					{
+						try{ callback.expressionOperator(expression, t);} catch( Exception e ) {}
+					}
+					
 					break;
 				default:
 					return;
@@ -2195,6 +2233,21 @@ c, quick);
 		castExpression( expression );
 	}
 	
+	/**
+	 * 
+	 * @param expression
+	 * @throws Backtrack
+	 * 
+	 * 
+	 * newexpression: 	::? new newplacement? newtypeid newinitializer?
+	 *					::? new newplacement? ( typeid ) newinitializer?
+	 * newplacement:	( expressionlist )
+	 * newtypeid:		typespecifierseq newdeclarator?
+	 * newdeclarator:	ptroperator newdeclarator? | directnewdeclarator
+	 * directnewdeclarator:		[ expression ]
+	 *							directnewdeclarator [ constantexpression ]
+	 * newinitializer:	( expressionlist? )
+	 */
 	protected void newExpression( Object expression ) throws Backtrack {
 		if (LT(1) == Token.tCOLONCOLON) {
 			// global scope
@@ -2203,7 +2256,34 @@ c, quick);
 		
 		consume (Token.t_new);
 		
-		//TODO: finish this horrible mess...
+		// TODO: We are still not handling placement new right 
+		// there are some ambiguities here that make it difficult to look ahead on 
+		// we will need a better strategy in order to not do 3 or 4 backtracks 
+		// every new expression
+		
+		boolean typeIdInBrackets = false;
+		if( LT(1) == Token.tLPAREN )
+		{
+			consume( Token.tLPAREN );
+			typeIdInBrackets = true;
+		}
+		
+		typeId();
+		
+		if( typeIdInBrackets )
+		{
+			consume( Token.tRPAREN ); 
+		}
+		
+		// newinitializer
+		if( LT(1) == Token.tLPAREN ) 
+		{
+			consume( Token.tLPAREN ); 
+			if( LT(1) != Token.tRPAREN )
+				assignmentExpression( expression );
+			consume( Token.tRPAREN );  
+		}
+		
 	}
 	
 	protected void unaryExpression( Object expression ) throws Backtrack {
@@ -2476,7 +2556,9 @@ c, quick);
 		if (currToken == null)
 			currToken = fetchToken();
 
-		lastToken = currToken;
+		if( currToken != null )
+			lastToken = currToken;
+			
 		currToken = currToken.getNext();
 		return lastToken;
 	}

@@ -329,6 +329,16 @@ public class MIPlugin extends Plugin {
 	 * @throws IOException
 	 */
 	protected Process getGDBProcess(String[] args) throws IOException {
+		if ( getDefault().isDebugging() )
+		{
+			StringBuffer sb = new StringBuffer();
+			for ( int i = 0; i < args.length; ++i )
+			{
+				sb.append( args[i] );
+				sb.append( ' ' );
+			}
+			getDefault().debugLog( sb.toString() );
+		}
 		final Process pgdb = ProcessFactory.getFactory().exec(args);
 		Thread syncStartup = new Thread("GDB Start") {
 			public void run() {

@@ -14,6 +14,7 @@ import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -96,6 +97,13 @@ public class MakePreferencePage extends PreferencePage implements IWorkbenchPref
 	protected void performDefaults() {
 		fOptionBlock.performDefaults();
 		super.performDefaults();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreferences()
+	 */
+	public Preferences getPreferences() {
+		return MakeUIPlugin.getDefault().getPluginPreferences();
 	}
 
 }

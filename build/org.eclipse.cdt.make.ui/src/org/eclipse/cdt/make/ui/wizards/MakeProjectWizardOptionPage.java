@@ -6,12 +6,14 @@ package org.eclipse.cdt.make.ui.wizards;
  */
 
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Preferences;
 
 /**
  * Standard main page for a wizard that is creates a project resource.
@@ -54,4 +56,12 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 	public IProject getProject() {
 		return ((NewCProjectWizard)getWizard()).getNewProject();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#getPreference()
+	 */
+	public Preferences getPreferences() {
+		return MakeUIPlugin.getDefault().getPluginPreferences();
+	}
+
 }

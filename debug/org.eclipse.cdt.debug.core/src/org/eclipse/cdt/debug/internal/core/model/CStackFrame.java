@@ -309,7 +309,7 @@ public class CStackFrame extends CDebugElement
 	 */
 	public void stepInto() throws DebugException
 	{
-		if ( !canStepInto() )
+		if ( canStepInto() )
 		{
 			getThread().stepInto();
 		}

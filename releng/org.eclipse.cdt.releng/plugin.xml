@@ -31,5 +31,15 @@
          </run>
       </application>
    </extension>
+   <extension
+         id="postResults"
+         name="Post Build Results"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run
+               class="org.eclipse.cdt.releng.PostResults">
+         </run>
+      </application>
+   </extension>
 
 </plugin>

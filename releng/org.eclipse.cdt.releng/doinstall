@@ -23,7 +23,7 @@ do
 		export DEST=$d/`echo $i | sed -e s:$BUILD_SITE/$d/:: -e s/.jar//`
 		mkdir $DEST
 		cd $DEST
-		jar xf $i
+		jar xf ../../$i
 		cd ../..
 	done
 done

@@ -6,9 +6,9 @@
 
 if [ -n "$CDT_ROOT" ]; then cd $CDT_ROOT; fi
 
-for i in dobuild doinstall dotest
+for i in dobuild doinstall dotests dopost
 do
-	if ! $i
+	if ! workspace/org.eclipse.cdt.releng/$i
 	then
 		echo $i failed
 		exit 1

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -21,8 +22,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.pde.core.plugin.IFragment;
 import org.eclipse.pde.core.plugin.IPlugin;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
@@ -213,8 +216,13 @@ public class DoBuild implements IPlatformRunnable {
 		ftp.login(ftpUser, ftpPassword);
 		ftp.chdir(ftpPath);
 		
+		IPath resultDir = Platform.getLocation().removeLastSegments(1).append("results");
+		OutputStream stream = new FileOutputStream(resultDir.append("index.html").toOSString());
+		ftp.get(stream, "index.html");
+		stream.close();
+
 		IFile file = buildSite.getFile("version.xml");
-		OutputStream stream = new FileOutputStream(file.getRawLocation().toOSString());
+		stream = new FileOutputStream(file.getRawLocation().toOSString());
 		ftp.get(stream, "version.xml");
 		stream.close();
 		
@@ -255,6 +263,14 @@ public class DoBuild implements IPlatformRunnable {
 		transformer.transform(new DOMSource(versionDoc), new StreamResult(versionResult));
 		versionFile.refreshLocal(IResource.DEPTH_ONE, monitor);
 		version = versionId + "." + buildNum;
+		
+		// Save the version in a text file for inclusion in the build page
+		IPath resultDir = Platform.getLocation().removeLastSegments(1).append("results");
+		OutputStream stream = new FileOutputStream(resultDir.append("version.txt").toOSString());
+		PrintStream versionText = new PrintStream(stream);
+		versionText.println(version);
+		stream.close();
+		
 		System.out.println("Version: " + version);
 
 		// Go through the projects and update the version info

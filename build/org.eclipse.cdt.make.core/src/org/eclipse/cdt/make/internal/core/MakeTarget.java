@@ -154,7 +154,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 					monitor.beginTask("", commands.length); //$NON-NLS-1$
 					for (int i = 0; i < commands.length; i++) {
 						if (commands[i].getBuilderName().equals(builderID)) {
-							project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, monitor);
+							project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, new SubProgressMonitor(monitor, 1));
 						} else {
 							project.build(IncrementalProjectBuilder.FULL_BUILD, commands[i].getBuilderName(),
 									commands[i].getArguments(), new SubProgressMonitor(monitor, 1));

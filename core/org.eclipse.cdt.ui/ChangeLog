@@ -1,3 +1,6 @@
+2004-04-21 Hoda Amer
+	Fix for bug#52823 : Content Assist: No completions available inside an empty document.
+	
 2004-04-21 Bogdan Gheorghe
 	Fixed external markers not working with new Search UI problem. 
 	

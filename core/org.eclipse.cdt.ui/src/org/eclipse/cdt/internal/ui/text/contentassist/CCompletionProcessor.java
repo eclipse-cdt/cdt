@@ -326,25 +326,27 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		IWorkingCopy unit = fManager.getWorkingCopy(fEditor.getEditorInput());
 		
 		IDocument document = viewer.getDocument();
+		
 		// check for :: and ->
 		int pos = offset -1;
-		try{
-			//While we aren't on a space, then go back and look for :: or a ->
-			while(document.getChar(pos) == ' ') {	
-				pos--;
-			}			
-			if ((document.getChar(pos) == ':') && (document.getChar(pos -1) != ':')) {
-				// ignore this request
-				return null;
-			} else if ((document.getChar(pos) == '>') && (document.getChar(pos - 1) != '-')) {
+		if(pos >= 0){
+			try{
+				//While we aren't on a space, then go back and look for :: or a ->
+				while ((pos >= 0) && (document.getChar(pos) == ' ')) {	
+					pos--;
+				}			
+				if ((document.getChar(pos) == ':') && (document.getChar(pos -1) != ':')) {
+					// ignore this request
+					return null;
+				} else if ((document.getChar(pos) == '>') && (document.getChar(pos - 1) != '-')) {
+					// ignore this request
+					return null;
+				}
+			} catch ( BadLocationException ex ){
 				// ignore this request
 				return null;
 			}
-		} catch ( BadLocationException ex ){
-			// ignore this request
-			return null;
 		}
-		
 		ICCompletionProposal[] results = null;
 
 		try {

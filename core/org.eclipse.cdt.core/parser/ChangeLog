@@ -1,3 +1,6 @@
+2003-06-09 John Camelon
+	First step in replacing IParserCallback with ISourceElementRequestor.  
+
 2003-06-05 Andrew Niefer
 	Begin implementation of functions for template specializations: deduceTemplateArgument,
 	classTemplateSpecializationToFunctionTemplate, transformFunctionTemplateForOrdering

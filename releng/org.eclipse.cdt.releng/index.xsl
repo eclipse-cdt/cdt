@@ -6,7 +6,7 @@
     <xsl:template match="/">
         <html>
 	    <head>
-	        <title>CDT 1.2 Buld Page</title>
+	        <title>CDT 1.2 Build Page</title>
 	    </head>
 	    <body>
 	        <h2>CDT 1.2 Build Page</h2>
@@ -23,16 +23,16 @@
 		<p>
 		    There is one category for each build. Expanding the
 		    category will reveal the installable features.
-		</p>
-		<p>
-		    <span style="font-style: italic;">
-		        Warning: The source feature is currently not providing
-		        source as required. If you require debugging the CDT
-		        with source, the only mechanism that works for now is
-			to get the source from CVS. We are actively working
-			to resolve this issue for those	who do not have CVS
-			access.
-		    </span>
+		    Currently the following features are available:
+		    <ul>
+		    	<li>
+		    		the main CDT feature for the currently running platform
+		    	</li>
+		    	<li>
+		    		the CDT Source feature which supplies the source to allow
+		    		debugging of the CDT plugins.
+		    	</li>
+		    </ul>
 		</p>
 		<h3>Builds</h3>
 		<p>

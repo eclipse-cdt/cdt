@@ -1,3 +1,10 @@
+2004-10-08 Mikhail Khodjaiants
+	Added the bookkeeping of registers and register groups.
+	* CDebugImages.java
+	* CDTDebugModelPresentation.java
+	* EnableVariablesActionDelegate.java
+	* plugin.xml
+
 2004-10-07 Mikhail Khodjaiants
 	Added images of disabled registers and register groups.
 	* icons/full/obj16/registerd_obj.gif: new

@@ -12,6 +12,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.ICVariable;
+import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
 import org.eclipse.debug.core.DebugException;
 
 /**
@@ -50,6 +51,15 @@ public abstract class AbstractCVariable extends CDebugElement implements ICVaria
 		if ( parent instanceof CStackFrame )
 			return (CStackFrame)parent;
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter( Class adapter ) {
+		if ( IEnableDisableTarget.class.equals( adapter ) )
+			return this;
+		return super.getAdapter( adapter );
 	}
 
 	/**

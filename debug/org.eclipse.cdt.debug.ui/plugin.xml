@@ -751,6 +751,32 @@
                      id="org.eclipse.cdt.debug.ui"/>
             </enablement>
          </action>
+         <action
+               label="%DisableVariablesAction.label"
+               icon="icons/full/clcl16/disabled_co.gif"
+               helpContextId="disable_variables_action_context"
+               tooltip="%DisableVariablesAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.DisableVariablesActionDelegate"
+               menubarPath="variableGroup"
+               enablesFor="2+"
+               id="org.eclipse.cdt.debug.internal.ui.actions.DisableVariablesActionDelegate">
+            <selection
+                  class="org.eclipse.cdt.debug.core.model.ICVariable">
+            </selection>
+         </action>
+         <action
+               label="%EnableVariablesAction.label"
+               icon="icons/full/clcl16/enabled_co.gif"
+               helpContextId="enable_variables_action_context"
+               tooltip="%EnableVariablesAction.tooltip"
+               class="org.eclipse.cdt.debug.internal.ui.actions.EnableVariablesActionDelegate"
+               menubarPath="variableGroup"
+               enablesFor="2+"
+               id="org.eclipse.cdt.debug.internal.ui.actions.EnableVariablesActionDelegate">
+            <selection
+                  class="org.eclipse.cdt.debug.core.model.ICVariable">
+            </selection>
+         </action>
       </viewerContribution>
    </extension>
    <extension

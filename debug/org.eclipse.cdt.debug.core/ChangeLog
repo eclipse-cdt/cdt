@@ -1,3 +1,11 @@
+2004-10-08 Mikhail Khodjaiants
+	Added the bookkeeping of registers and register groups.
+	* ICVariable.java
+	* IEnableDisableTarget.java: new
+	* AbstractCVariable.java
+	* CRegister.java
+	* CRegisterGroup.java
+
 2004-10-07 Mikhail Khodjaiants
 	Pass the current stack frame to the registers manager to provide the evaluation context.
 	* ICRegisterManager.java

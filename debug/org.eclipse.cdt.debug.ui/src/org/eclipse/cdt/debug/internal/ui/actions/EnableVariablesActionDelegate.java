@@ -11,8 +11,9 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import java.util.Iterator;
-import org.eclipse.cdt.debug.core.model.ICVariable;
+import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.action.IAction;
@@ -83,19 +84,18 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 
 			public void run() {
 				while( enum.hasNext() ) {
-					ICVariable var = (ICVariable)enum.next();
-					try {
-						if ( size > 1 ) {
-							if ( isEnableAction() )
-								var.setEnabled( true );
+					IEnableDisableTarget target = getEnableDisableTarget( enum.next() );
+					if ( target != null ) {
+						try {
+							if ( size > 1 ) {
+								target.setEnabled( isEnableAction() );
+							}
 							else
-								var.setEnabled( false );
+								target.setEnabled( !target.isEnabled() );
 						}
-						else
-							var.setEnabled( !var.isEnabled() );
-					}
-					catch( DebugException e ) {
-						ms.merge( e.getStatus() );
+						catch( DebugException e ) {
+							ms.merge( e.getStatus() );
+						}
 					}
 				}
 				update();
@@ -117,16 +117,16 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 			return;
 		IStructuredSelection sel = (IStructuredSelection)selection;
 		Object o = sel.getFirstElement();
-		if ( !(o instanceof ICVariable) )
+		if ( getEnableDisableTarget( o ) == null )
 			return;
 		Iterator enum = sel.iterator();
 		boolean allEnabled = true;
 		boolean allDisabled = true;
 		while( enum.hasNext() ) {
-			ICVariable var = (ICVariable)enum.next();
-			if ( !var.canEnableDisable() )
+			IEnableDisableTarget target = getEnableDisableTarget( enum.next() );
+			if ( target != null && !target.canEnableDisable() )
 				continue;
-			if ( var.isEnabled() )
+			if ( target.isEnabled() )
 				allDisabled = false;
 			else
 				allEnabled = false;
@@ -143,5 +143,13 @@ public class EnableVariablesActionDelegate implements IViewActionDelegate {
 
 	protected void update() {
 		getView().getViewSite().getSelectionProvider().setSelection( getView().getViewSite().getSelectionProvider().getSelection() );
+	}
+
+	protected IEnableDisableTarget getEnableDisableTarget( Object obj ) {
+		IEnableDisableTarget target = null;
+		if ( obj instanceof IAdaptable ) {
+			target = (IEnableDisableTarget)((IAdaptable)obj).getAdapter( IEnableDisableTarget.class );
+		}
+		return target;
 	}
 }

@@ -13,6 +13,8 @@ package org.eclipse.cdt.debug.internal.core.model;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterObject;
+import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;
@@ -20,13 +22,15 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 /**
  * Represents a group of registers.
  */
-public class CRegisterGroup extends CDebugElement implements IRegisterGroup {
+public class CRegisterGroup extends CDebugElement implements IRegisterGroup, IEnableDisableTarget {
 
 	private String fName;
 
 	private ICDIRegisterObject[] fRegisterObjects;
 
 	private IRegister[] fRegisters;
+
+	private boolean fIsEnabled = true;
 
 	/**
 	 * Constructor for CRegisterGroup.
@@ -57,6 +61,7 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup {
 				catch( DebugException e ) {
 					fRegisters[i] = new CRegister( this, fRegisterObjects[i], e.getMessage() );
 				}
+				((CRegister)fRegisters[i]).setEnabled( isEnabled() );
 			}
 		}
 		return fRegisters;
@@ -96,5 +101,47 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup {
 				fRegisters[i] = null;
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter( Class adapter ) {
+		if ( IEnableDisableTarget.class.equals( adapter ) )
+			return this;
+		return super.getAdapter( adapter );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IEnableDisableTarget#canEnableDisable()
+	 */
+	public boolean canEnableDisable() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IEnableDisableTarget#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return fIsEnabled;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IEnableDisableTarget#setEnabled(boolean)
+	 */
+	public void setEnabled( boolean enabled ) throws DebugException {
+		if ( fRegisters != null ) {
+			synchronized( fRegisters ) {
+				if ( fRegisters != null ) {
+					for ( int i = 0; i < fRegisters.length; ++i ) {
+						if ( fRegisters[i] instanceof CRegister ) {
+							((CRegister)fRegisters[i]).setEnabled( enabled );
+						}
+					}
+				}
+			}
+		}
+		fIsEnabled = enabled;
+		fireChangeEvent( DebugEvent.CONTENT );
 	}
 }

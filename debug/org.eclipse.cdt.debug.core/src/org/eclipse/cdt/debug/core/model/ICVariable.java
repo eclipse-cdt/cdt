@@ -17,7 +17,7 @@ import org.eclipse.debug.core.model.IVariable;
 /**
  * C/C++ specific extension <code>IVariable</code>. 
  */
-public interface ICVariable extends IVariable, ICDebugElement, IFormatSupport, ICastToArray, IValueModification {
+public interface ICVariable extends IVariable, ICDebugElement, IFormatSupport, ICastToArray, IValueModification, IEnableDisableTarget {
 
 	/**
 	 * Returns the type of this variable.
@@ -26,28 +26,6 @@ public interface ICVariable extends IVariable, ICDebugElement, IFormatSupport, I
 	 * @throws DebugException
 	 */
 	ICType getType() throws DebugException;
-
-	/**
-	 * Returns whether this variable is enabled.
-	 * 
-	 * @return whether this variable is enabled
-	 */
-	boolean isEnabled();
-
-	/**
-	 * Sets the enabled state of this action.
-	 * 
-	 * @param enabled <code>true</code> to enable, and <code>false</code> to disable
-	 * @throws DebugException
-	 */
-	void setEnabled( boolean enabled ) throws DebugException;
-
-	/**
-	 * Returns whether this variable supports enable/disable operation.
-	 * 
-	 * @return whether this variable supports enable/disable operation
-	 */
-	boolean canEnableDisable();
 
 	/**
 	 * Returns whether this variable is an argument.

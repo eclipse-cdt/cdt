@@ -88,7 +88,9 @@ public class CDebugImages
 	public static final String IMG_OBJS_VARIABLE_POINTER_DISABLED = NAME_PREFIX + "vard_pointer.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_VARIABLE_STRING = NAME_PREFIX + "var_string.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_REGISTER_GROUP = NAME_PREFIX + "registergroup_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_REGISTER_GROUP_DISABLED = NAME_PREFIX + "registergroupd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_REGISTER = NAME_PREFIX + "register_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_REGISTER_DISABLED = NAME_PREFIX + "registerd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_DISASSEMBLY = NAME_PREFIX + "disassembly_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_PROJECT = NAME_PREFIX + "project_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_CLOSED_PROJECT = NAME_PREFIX + "cproject_obj.gif";	//$NON-NLS-1$
@@ -160,7 +162,9 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_VARIABLE_POINTER_DISABLED = createManaged( T_OBJ, IMG_OBJS_VARIABLE_POINTER_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_VARIABLE_STRING = createManaged( T_OBJ, IMG_OBJS_VARIABLE_STRING );
 	public static final ImageDescriptor DESC_OBJS_REGISTER_GROUP = createManaged( T_OBJ, IMG_OBJS_REGISTER_GROUP );
+	public static final ImageDescriptor DESC_OBJS_REGISTER_GROUP_DISABLED = createManaged( T_OBJ, IMG_OBJS_REGISTER_GROUP_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_REGISTER = createManaged( T_OBJ, IMG_OBJS_REGISTER );
+	public static final ImageDescriptor DESC_OBJS_REGISTER_DISABLED = createManaged( T_OBJ, IMG_OBJS_REGISTER_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_DISASSEMBLY = createManaged( T_OBJ, IMG_OBJS_DISASSEMBLY );
 	public static final ImageDescriptor DESC_OBJS_PROJECT = createManaged( T_OBJ, IMG_OBJS_PROJECT );
 	public static final ImageDescriptor DESC_OBJS_CLOSED_PROJECT = createManaged( T_OBJ, IMG_OBJS_CLOSED_PROJECT );

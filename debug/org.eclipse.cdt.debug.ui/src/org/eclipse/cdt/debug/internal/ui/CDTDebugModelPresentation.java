@@ -39,6 +39,7 @@ import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
+import org.eclipse.cdt.debug.core.model.IEnableDisableTarget;
 import org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor;
 import org.eclipse.cdt.debug.internal.ui.editors.EditorInputDelegate;
 import org.eclipse.cdt.debug.internal.ui.editors.FileNotFoundElement;
@@ -50,6 +51,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
@@ -285,6 +287,15 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 		if ( element instanceof ICDebugElementStatus && !((ICDebugElementStatus)element).isOK() ) {
 			baseText.append( getFormattedString( " <{0}>", ((ICDebugElementStatus)element).getMessage() ) ); //$NON-NLS-1$
 		}
+		if ( element instanceof IAdaptable ) {
+			IEnableDisableTarget target = (IEnableDisableTarget)((IAdaptable)element).getAdapter( IEnableDisableTarget.class );
+			if ( target != null ) {
+				if ( !target.isEnabled() ) {
+					baseText.append( ' ' );
+					baseText.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.25" ) ); //$NON-NLS-1$
+				}
+			}
+		}
 		return baseText.toString();
 	}
 
@@ -490,9 +501,11 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 						result.insert( 0, typeName + ' ' );
 					}
 				}
-				String valueString = DebugUIPlugin.getModelPresentation().getText( value );
-				if ( valueString.length() > 0 ) {
-					result.append( " = " ).append( valueString ); //$NON-NLS-1$
+				if ( expression.isEnabled() ) {
+					String valueString = DebugUIPlugin.getModelPresentation().getText( value );
+					if ( valueString.length() > 0 ) {
+						result.append( " = " ).append( valueString ); //$NON-NLS-1$
+					}
 				}
 			}
 		}
@@ -523,15 +536,13 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 			if ( name != null )
 				label.append( name.trim() );
 			IValue value = var.getValue();
-			String valueString = DebugUIPlugin.getModelPresentation().getText( value );
-			if ( !isEmpty( valueString ) ) {
-				label.append( " = " ); //$NON-NLS-1$
-				label.append( valueString );
+			if ( value != null ) {
+				String valueString = DebugUIPlugin.getModelPresentation().getText( value );
+				if ( !isEmpty( valueString ) ) {
+					label.append( " = " ); //$NON-NLS-1$
+					label.append( valueString );
+				}
 			}
-		}
-		if ( !((ICVariable)var).isEnabled() ) {
-			label.append( ' ' );
-			label.append( CDebugUIMessages.getString( "CDTDebugModelPresentation.25" ) ); //$NON-NLS-1$
 		}
 		return label.toString();
 	}
@@ -804,11 +815,14 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 	}
 
 	protected Image getRegisterGroupImage( IRegisterGroup element ) {
+		IEnableDisableTarget target = (IEnableDisableTarget)element.getAdapter( IEnableDisableTarget.class );
+		if ( target != null && !target.isEnabled() )
+			return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER_GROUP_DISABLED );
 		return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER_GROUP );
 	}
 
 	protected Image getRegisterImage( IRegister element ) {
-		return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER );
+		return ( ( element instanceof ICVariable && ((ICVariable)element).isEnabled() ) ) ? fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER ) : fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER_DISABLED );
 	}
 
 	protected Image getExpressionImage( IExpression element ) {
@@ -825,6 +839,8 @@ public class CDTDebugModelPresentation extends LabelProvider implements IDebugMo
 	private String getVariableTypeName( ICType type ) {
 		StringBuffer result = new StringBuffer();
 		String typeName = type.getName();
+		if ( typeName != null )
+			typeName = typeName.trim();
 		if ( type.isArray() && typeName != null ) {
 			int index = typeName.indexOf( '[' );
 			if ( index != -1 )

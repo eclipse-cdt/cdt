@@ -46,11 +46,4 @@ public class CRegister extends CGlobalVariable implements IRegister {
 	public IRegisterGroup getRegisterGroup() throws DebugException {
 		return (IRegisterGroup)getParent();
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isEnabled()
-	 */
-	public boolean isEnabled() {
-		return true;
-	}
 }

@@ -8,15 +8,18 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.opentype;
+package org.eclipse.cdt.internal.ui.browser.opentype;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+/**
+ * OpenTypeMessages
+ */
 public class OpenTypeMessages {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.cdt.internal.ui.opentype.OpenTypeMessages";//$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE= OpenTypeMessages.class.getName();
 
 	private static ResourceBundle fgResourceBundle;
 	static {
@@ -47,5 +50,5 @@ public class OpenTypeMessages {
 	public static String getFormattedString(String key, String[] args) {
 		return MessageFormat.format(getString(key), args);	
 	}	
-	
+
 }

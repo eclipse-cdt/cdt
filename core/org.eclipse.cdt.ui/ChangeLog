@@ -1,3 +1,13 @@
+2004-03-08 Alain Magloire
+
+	Jumbo patch from Chris Wiebe.  Moving the relevant
+	typehierarchy/browsing to a specfic src/browser to reduce
+	collitions
+
+	* .classpath
+	* plugin.xml
+	* browser
+
 2004-03-08 Bogdan Gheorghe
 	
 	Refactored the hyperlink-enabling MouseListener class out of CEditor.

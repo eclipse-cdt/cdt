@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000,2003,2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - adapted for use in CDT
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.opentype;
+package org.eclipse.cdt.ui.browser.typeinfo;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -17,9 +17,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-
-
-public class TypeSearchMatchLabelProvider extends LabelProvider {
+public class TypeInfoLabelProvider extends LabelProvider {
 
 	public static final int SHOW_FULLYQUALIFIED=	0x01;
 	public static final int SHOW_FILENAME_POSTFIX=	0x02;
@@ -40,7 +38,7 @@ public class TypeSearchMatchLabelProvider extends LabelProvider {
 
 	private int fFlags;
 	
-	public TypeSearchMatchLabelProvider(int flags) {
+	public TypeInfoLabelProvider(int flags) {
 		fFlags= flags;
 	}	
 	
@@ -52,10 +50,10 @@ public class TypeSearchMatchLabelProvider extends LabelProvider {
 	 * @see ILabelProvider#getText
 	 */
 	public String getText(Object element) {
-		if (! (element instanceof TypeSearchMatch)) 
+		if (! (element instanceof ITypeInfo)) 
 			return super.getText(element);
 		
-		TypeSearchMatch typeRef= (TypeSearchMatch) element;
+		ITypeInfo typeRef= (ITypeInfo) element;
 		
 		StringBuffer buf= new StringBuffer();
 		if (isSet(SHOW_TYPE_ONLY)) {
@@ -85,7 +83,7 @@ public class TypeSearchMatchLabelProvider extends LabelProvider {
 			if (isSet(SHOW_FILENAME_POSTFIX)) {
 				String name= typeRef.getFileName();
 				if (name != null && name.length() > 0) {
-					buf.append(OpenTypeMessages.getString("TypeInfoLabelProvider.dash")); //$NON-NLS-1$
+					buf.append(TypeInfoMessages.getString("TypeInfoLabelProvider.dash")); //$NON-NLS-1$
 					buf.append(name);
 				}
 			}
@@ -94,14 +92,14 @@ public class TypeSearchMatchLabelProvider extends LabelProvider {
 		if (isSet(SHOW_ROOT_POSTFIX)) {
 			String path= typeRef.getFilePath();
 			if (path != null && path.length() > 0) {
-				buf.append(OpenTypeMessages.getString("TypeInfoLabelProvider.dash"));//$NON-NLS-1$
+				buf.append(TypeInfoMessages.getString("TypeInfoLabelProvider.dash"));//$NON-NLS-1$
 				buf.append(path);
 			}
 		}
 		return buf.toString();				
 	}
 	
-	private Image getFileIcon(TypeSearchMatch typeRef)
+	private Image getFileIcon(ITypeInfo typeRef)
 	{
 		String ext = typeRef.getFileExtension();
 		if (ext != null) {	
@@ -115,9 +113,9 @@ public class TypeSearchMatchLabelProvider extends LabelProvider {
 		return SOURCE_ICON;
 	}
 	
-	private Image getIcon(TypeSearchMatch typeRef)
+	private Image getIcon(ITypeInfo typeRef)
 	{
-		switch (typeRef.getType())
+		switch (typeRef.getElementType())
 		{
 		case ICElement.C_NAMESPACE:
 			return NAMESPACE_ICON;
@@ -149,10 +147,10 @@ public class TypeSearchMatchLabelProvider extends LabelProvider {
 	 * @see ILabelProvider#getImage
 	 */	
 	public Image getImage(Object element) {
-		if (!(element instanceof TypeSearchMatch)) 
+		if (!(element instanceof ITypeInfo)) 
 			return super.getImage(element);	
 
-		TypeSearchMatch typeRef= (TypeSearchMatch) element;
+		ITypeInfo typeRef= (ITypeInfo) element;
 		if (isSet(SHOW_TYPE_CONTAINER_ONLY)) {
 			return getFileIcon(typeRef);
 		} else if (isSet(SHOW_FILENAME_ONLY)) {

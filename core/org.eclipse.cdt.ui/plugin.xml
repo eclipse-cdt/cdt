@@ -490,14 +490,14 @@
                id="org.eclipse.cdt.ui.actions.OpenCSearchPage">
          </action>
          <action
+               id="org.eclipse.cdt.ui.actions.OpenType"
                label="%OpenTypeAction.label"
                icon="icons/full/opentype16/opentype.gif"
-               class="org.eclipse.cdt.internal.ui.opentype.OpenTypeAction"
+               class="org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeAction"
+               definitionId="org.eclipse.cdt.ui.navigate.opentype"
                menubarPath="navigate/open.ext2"
                toolbarPath="org.eclipse.search.searchActionSet/Search"
-               id="org.eclipse.cdt.ui.actions.OpenType"
-               definitionId="org.eclipse.cdt.ui.navigate.opentype"
-               enablesFor="*"
+               helpContextId="org.eclipse.cdt.ui.open_type_action"
                tooltip="%OpenTypeAction.tooltip">
          </action>
          <menu

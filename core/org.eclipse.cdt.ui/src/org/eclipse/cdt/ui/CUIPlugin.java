@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
 import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
+import org.eclipse.cdt.ui.browser.typeinfo.AllTypesCache;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
@@ -277,6 +278,9 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @see Plugin#shutdown
 	 */
 	public void shutdown() throws CoreException {
+
+		AllTypesCache.terminate();
+		
 		if (fTextTools != null) {
 			fTextTools.dispose();
 		}
@@ -326,6 +330,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 			public void run() {
 				registerAdapters();
 				CPluginImages.initialize();
+				AllTypesCache.initialize();
 			}
 		});
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000,2003,2004 IBM Corporation and others.
+ * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,13 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - adapted for use in CDT
  *******************************************************************************/
-package org.eclipse.cdt.internal.ui.opentype.dialogs;
+package org.eclipse.cdt.internal.ui.browser.opentype;
 
-import org.eclipse.cdt.core.search.ICSearchScope;
+import org.eclipse.cdt.ui.browser.typeinfo.TypeSelectionDialog;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -26,22 +24,24 @@ import org.eclipse.swt.widgets.Shell;
  * A dialog to select a type from a list of types. The selected type will be
  * opened in the editor.
  */
-public class OpenTypeSelectionDialog extends TypeSelectionDialog {
+public class OpenTypeDialog extends TypeSelectionDialog {
 
-	public static final int IN_HIERARCHY= IDialogConstants.CLIENT_ID + 1;
 	/** The dialog location. */
 	private Point fLocation;
 	/** The dialog size. */
 	private Point fSize;
 
 	/**
-	 * Constructs an instance of <code>OpenTypeSelectionDialog</code>.
+	 * Constructs an instance of <code>OpenTypeDialog</code>.
 	 * @param parent  the parent shell.
 	 * @param context the context.
-	 * @param scope   the C search scope.
 	 */
-	public OpenTypeSelectionDialog(Shell parent, IRunnableContext context, ICSearchScope scope) {
-		super(parent, context, scope);
+	public OpenTypeDialog(Shell parent) {
+		super(parent);
+		setTitle(OpenTypeMessages.getString("OpenTypeDialog.title")); //$NON-NLS-1$
+		setMessage(OpenTypeMessages.getString("OpenTypeDialog.message")); //$NON-NLS-1$
+		//setFilter(OpenTypeMessages.getString("OpenTypeDialog.filter")); //$NON-NLS-1$
+		setMatchEmptyString(true);
 	}
 	
 	/*
@@ -117,7 +117,6 @@ public class OpenTypeSelectionDialog extends TypeSelectionDialog {
 			int width= s.getInt("width"); //$NON-NLS-1$
 			int height= s.getInt("height"); //$NON-NLS-1$
 			fSize= new Point(width, height);
-
 		} catch (NumberFormatException e) {
 			fLocation= null;
 			fSize= null;
@@ -129,11 +128,9 @@ public class OpenTypeSelectionDialog extends TypeSelectionDialog {
 	 */
 	private void writeSettings() {
 		IDialogSettings s= getDialogSettings();
-
 		Point location= getShell().getLocation();
 		s.put("x", location.x); //$NON-NLS-1$
 		s.put("y", location.y); //$NON-NLS-1$
-
 		Point size= getShell().getSize();
 		s.put("width", size.x); //$NON-NLS-1$
 		s.put("height", size.y); //$NON-NLS-1$

@@ -64,9 +64,7 @@ public class MakePreferencePage extends PreferencePage implements IWorkbenchPref
 
 	public boolean performOk() {
 		boolean ok = fOptionBlock.performApply(null);
-		if (MakeCorePlugin.getDefault().getPluginPreferences().needsSaving()) {
-			MakeCorePlugin.getDefault().savePluginPreferences();
-		}
+		MakeCorePlugin.getDefault().savePluginPreferences();
 		return ok;
 	}
 

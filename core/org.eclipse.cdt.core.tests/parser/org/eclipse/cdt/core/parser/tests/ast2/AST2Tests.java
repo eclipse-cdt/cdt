@@ -2741,4 +2741,33 @@ public class AST2Tests extends AST2BaseTest {
 	    
 	    assertSame( s_ref, s_decl );
    }
+   
+   public void testBug84267() throws Exception {
+       StringBuffer buffer = new StringBuffer();
+       buffer.append( "typedef struct { int a; } S;      \n"); //$NON-NLS-1$
+       buffer.append( "void g( S* (*funcp) (void) ) {    \n"); //$NON-NLS-1$
+       buffer.append( "   (*funcp)()->a;                 \n"); //$NON-NLS-1$
+       buffer.append( "   funcp()->a;                    \n"); //$NON-NLS-1$
+       buffer.append( "}                                 \n"); //$NON-NLS-1$
+       
+	   IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.C);
+	    CNameCollector col = new CNameCollector();
+	    CVisitor.visitTranslationUnit(tu, col);
+	
+	    assertEquals(col.size(), 11);
+	    
+	    ITypedef S = (ITypedef) col.getName(2).resolveBinding();
+	    IField a = (IField) col.getName( 10 ).resolveBinding();
+	    IParameter funcp = (IParameter) col.getName(7).resolveBinding();
+	    assertNotNull( funcp );
+	    assertInstances( col, funcp, 3 );
+	    assertInstances( col, a, 3 );
+	    
+	    assertTrue( funcp.getType() instanceof IPointerType );
+	    IType t = ((IPointerType) funcp.getType()).getType();
+	    assertTrue( t instanceof IFunctionType );
+	    IFunctionType ft = (IFunctionType) t;
+	    assertTrue( ft.getReturnType() instanceof IPointerType );
+	    assertSame( ((IPointerType)ft.getReturnType()).getType(), S ); 
+   }
 }

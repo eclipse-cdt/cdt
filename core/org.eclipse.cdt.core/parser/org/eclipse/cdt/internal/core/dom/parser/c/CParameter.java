@@ -49,7 +49,7 @@ public class CParameter implements IParameter {
 	 */
 	
     public IType getType() {
-        return CVisitor.createType( declarations[0], true );
+        return CVisitor.createType( declarations[0] );
 	}
 
 	/* (non-Javadoc)

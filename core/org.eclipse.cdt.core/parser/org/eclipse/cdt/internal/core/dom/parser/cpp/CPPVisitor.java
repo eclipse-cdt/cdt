@@ -1361,7 +1361,12 @@ public class CPPVisitor {
 		type = getPointerTypes( type, declarator );
 		if( declarator instanceof IASTArrayDeclarator )
 		    type = getArrayTypes( type, (IASTArrayDeclarator) declarator );
-		return type;
+
+	    IASTDeclarator nested = declarator.getNestedDeclarator();
+	    if( nested != null ) {
+	    	return createType( type, nested );
+	    }
+	    return type;
 	}
 
 	private static IType getPointerTypes( IType type, IASTDeclarator declarator ){

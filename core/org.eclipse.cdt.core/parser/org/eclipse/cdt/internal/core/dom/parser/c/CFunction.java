@@ -94,7 +94,7 @@ public class CFunction implements IFunction, ICBinding {
 			if( names.length > 0 ){
 				// ensures that the List of parameters is created in the same order as the K&R C parameter names
 				for( int i=0; i<names.length; i++ ) {
-				    IASTDeclarator decl = getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) dtor, names[i] );
+				    IASTDeclarator decl = CVisitor.getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) dtor, names[i] );
 				    if( decl != null ) {
 				        result[i] = (IParameter) decl.getName().resolveBinding();
 				    } else {
@@ -145,7 +145,7 @@ public class CFunction implements IFunction, ICBinding {
         if( type == null ) {
         	IASTDeclarator functionName = ( definition != null ) ? definition : declarators[0];
         	
-        	while (functionName.getName().toString() == null)
+        	while (functionName.getNestedDeclarator() != null)
         		functionName = functionName.getNestedDeclarator();
         	
         	IType tempType = CVisitor.createType( functionName.getName() );
@@ -163,7 +163,7 @@ public class CFunction implements IFunction, ICBinding {
     	IBinding binding = null;
     	int idx = 0;
     	IASTNode parent = paramName.getParent();
-    	if( !(parent instanceof ICASTKnRFunctionDeclarator ) )
+    	while( parent instanceof IASTDeclarator && !(parent instanceof ICASTKnRFunctionDeclarator ) )
     	    parent = parent.getParent();
     	
     	ICASTKnRFunctionDeclarator fKnRDtor = null;
@@ -192,7 +192,7 @@ public class CFunction implements IFunction, ICBinding {
         		if( ps[idx] == paramName)
         			break;
         	}
-        	knrParamDtor = getKnRParameterDeclarator( fKnRDtor, paramName );
+        	knrParamDtor = CVisitor.getKnRParameterDeclarator( fKnRDtor, paramName );
         	paramName = knrParamDtor.getName();
     	}
     	
@@ -206,7 +206,7 @@ public class CFunction implements IFunction, ICBinding {
     	    } else if( definition instanceof ICASTKnRFunctionDeclarator ){
     	        IASTName n = fKnRDtor.getParameterNames()[idx];
     	        ((CASTName)n).setBinding( binding );
-    	        IASTDeclarator dtor = getKnRParameterDeclarator( fKnRDtor, n );
+    	        IASTDeclarator dtor = CVisitor.getKnRParameterDeclarator( fKnRDtor, n );
     	        if( dtor != null ){
     	            ((CASTName)dtor.getName()).setBinding( binding );
     	        }
@@ -223,22 +223,7 @@ public class CFunction implements IFunction, ICBinding {
     	return binding;
     }
     
-    private IASTDeclarator getKnRParameterDeclarator( ICASTKnRFunctionDeclarator fKnRDtor, IASTName name ){
-        IASTDeclaration [] decls = fKnRDtor.getParameterDeclarations();
-        char [] n = name.toCharArray();
-        for( int i = 0; i < decls.length; i++ ){
-            if( !( decls[i] instanceof IASTSimpleDeclaration ) )
-                continue;
-            
-            IASTDeclarator [] dtors = ((IASTSimpleDeclaration)decls[i]).getDeclarators();
-            for( int j = 0; j < dtors.length; j++ ){
-                if( CharArrayUtils.equals( dtors[j].getName().toCharArray(), n ) ){
-                    return dtors[j]; 
-                }
-            }
-        }
-        return null;
-    }
+
     
     protected void updateParameterBindings( IASTFunctionDeclarator fdtor ){
         CParameter temp = null;
@@ -273,7 +258,7 @@ public class CFunction implements IFunction, ICBinding {
             		    CASTName name = (CASTName) ns[i];
             			name.setBinding( temp );
             			
-            			IASTDeclarator dtor = getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) fdtor, name );
+            			IASTDeclarator dtor = CVisitor.getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) fdtor, name );
             			if( dtor != null ){
             			    ((CASTName) dtor.getName()).setBinding( temp );
             			    temp.addDeclaration( (CASTName) dtor.getName() );

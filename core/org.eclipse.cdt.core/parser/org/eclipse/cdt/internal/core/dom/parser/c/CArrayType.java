@@ -91,4 +91,11 @@ public class CArrayType implements ICArrayType, ITypeContainer {
         }
         return t;
     }
+
+    /**
+     * @return
+     */
+    public ICASTArrayModifier getModifier() {
+        return mod;
+    }
 }

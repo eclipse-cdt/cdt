@@ -1432,7 +1432,7 @@ public class Scanner2 implements IScanner, IScannerData {
 						handlePPIfdef(false);
 						return;
 					case ppIf:
-						start = bufferPos[bufferStackPos];
+						start = bufferPos[bufferStackPos] + 1;
 						skipToNewLine();
 						len = bufferPos[bufferStackPos] - start;
 						if( isLimitReached() )
@@ -2036,7 +2036,7 @@ public class Scanner2 implements IScanner, IScannerData {
 							    if( branchState( BRANCH_ELIF ) ){
 									if (checkelse && nesting == 0) {
 										// check the condition
-										start = bufferPos[bufferStackPos];
+										start = bufferPos[bufferStackPos] + 1;
 										skipToNewLine();
 										len = bufferPos[bufferStackPos] - start;
 										if (expressionEvaluator.evaluate(buffer, start, len, definitions) != 0)
@@ -2490,9 +2490,14 @@ public class Scanner2 implements IScanner, IScannerData {
 		    handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, bufferPos[bufferStackPos], macro.name );
 		}
 		
-		int size = expandFunctionStyleMacro(macro.expansion, argmap, null);
-		char[] result = new char[size];
-		expandFunctionStyleMacro(macro.expansion, argmap, result);
+		char[] result = null;
+		if( macro instanceof DynamicFunctionStyleMacro ){
+		    result = ((DynamicFunctionStyleMacro)macro).execute( argmap );
+		} else {
+			int size = expandFunctionStyleMacro(macro.expansion, argmap, null);
+			result = new char[size];
+			expandFunctionStyleMacro(macro.expansion, argmap, result);
+		}
 		if( pushContext )
 			pushContext(result, new MacroData( start, bufferPos[bufferStackPos], macro ) );
 		return result;

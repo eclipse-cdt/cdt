@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 
 /**
@@ -95,6 +96,30 @@ public class GCCScannerExtension implements IScannerExtension {
 		        "__builtin_va_arg".toCharArray(), //$NON-NLS-1$
 		        "*(type *)ap".toCharArray(), //$NON-NLS-1$
 		        new char[][] { "ap".toCharArray(), "type".toCharArray() } );  //$NON-NLS-1$//$NON-NLS-2$
+
+	private static final FunctionStyleMacro __builtin_constant_p
+		= new FunctionStyleMacro(
+	        "__builtin_constant_p".toCharArray(), //$NON-NLS-1$
+	        "0".toCharArray(), //$NON-NLS-1$
+	        new char[][] {"exp".toCharArray()} );  //$NON-NLS-1$//$NON-NLS-2$
+	
+	private final DynamicFunctionStyleMacro __builtin_choose_expr = 
+		new DynamicFunctionStyleMacro( "__builtin_choose_expr".toCharArray(),  //$NON-NLS-1$
+		        					   new char[][] { "const_exp".toCharArray(), "exp1".toCharArray(), "exp2".toCharArray() } ) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		{
+	    	public char [] execute( CharArrayObjectMap argmap ){
+                ExpressionEvaluator evaluator = new ExpressionEvaluator();
+                char[] const_exp = (char[]) argmap.get( arglist[0] );
+                long exp = 0;
+                if( const_exp != null)
+                    exp = evaluator.evaluate( const_exp, 0, const_exp.length, CharArrayObjectMap.EMPTY_MAP );
+                
+                if( exp != 0 )
+                    return (char[])argmap.get( arglist[1] );
+                return (char[])argmap.get( arglist[2] );
+            } 
+		};
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#setupBuiltInMacros()
 	 */
@@ -115,10 +140,13 @@ public class GCCScannerExtension implements IScannerExtension {
 		scannerData.getRealDefinitions().put(__imag__.name, __imag__ );
 		scannerData.getRealDefinitions().put(__real__.name, __real__ );
 		scannerData.getRealDefinitions().put( __builtin_va_arg.name, __builtin_va_arg );
+		scannerData.getRealDefinitions().put( __builtin_constant_p.name, __builtin_constant_p );
 		if( scannerData.getLanguage() == ParserLanguage.CPP )
 			scannerData.getRealDefinitions().put(__asm__.name, __asm__);
-		else
+		else{
 			scannerData.getRealDefinitions().put(_Pragma.name, _Pragma );
+			scannerData.getRealDefinitions().put( __builtin_choose_expr.name, __builtin_choose_expr );
+		}
 				
 	}
 	

@@ -41,11 +41,14 @@ import org.eclipse.cdt.internal.core.parser.Declarator;
 import org.eclipse.cdt.internal.core.parser.ast.GCCASTExtension;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTBinaryExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTEmptyExpression;
+import org.eclipse.cdt.internal.core.parser.ast.complete.ASTSimpleTypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTypeIdExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTUnaryExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ExpressionFactory;
+import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
+import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 
 /**
  * @author aniefer
@@ -82,6 +85,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
 	private static final char [] __BUILTIN_CTZLL   = "__builtin_ctzll".toCharArray(); //$NON-NLS-1$
 	private static final char [] __BUILTIN_POPCOUNTLL = "__builtin_popcountll".toCharArray(); //$NON-NLS-1$
 	private static final char [] __BUILTIN_PARITYLL   = "__builtin_parityll".toCharArray(); //$NON-NLS-1$	
+	private static final char [] __BUILTIN_TYPES_COMPATIBLE_P = "__builtin_types_compatible_p".toCharArray(); //$NON-NLS-1$
 	
 	/**
 	 * @param mode
@@ -181,6 +185,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         __builtin_unsigned_int( factory, compilationUnit );
         __builtin_unsigned_long( factory, compilationUnit );
         __builtin_unsigned_long_long( factory, compilationUnit );
+        __builtin_types_compatible_p( factory, compilationUnit );
 	}
 
     /**
@@ -191,7 +196,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //double __builtin_inf (void)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_double, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -209,7 +214,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //float __builtin_inff (void)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.FLOAT, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.FLOAT, new SimpleToken( IToken.t_float, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -227,7 +232,11 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //long double __builtin_infl (void)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, true, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IToken t1 = new SimpleToken( IToken.t_long, -1, EMPTY_STRING, -1 );
+            IToken t2 = new SimpleToken( IToken.t_double, -1, EMPTY_STRING, -1 );
+            t1.setNext( t2 );
+            ITokenDuple duple = TokenFactory.createTokenDuple( t1, t2 );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, duple, false, true, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -251,7 +260,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //double __builtin_huge_val (void)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_double, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -269,7 +278,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //float __builtin_huge_valf (void)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.FLOAT, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.FLOAT, new SimpleToken( IToken.t_float, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -287,7 +296,11 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //long double __builtin_huge_vall (void)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, true, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IToken t1 = new SimpleToken( IToken.t_long, -1, EMPTY_STRING, -1 );
+            IToken t2 = new SimpleToken( IToken.t_double, -1, EMPTY_STRING, -1 );
+            t1.setNext( t2 );
+            ITokenDuple duple = TokenFactory.createTokenDuple( t1, t2 );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, duple, false, true, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -376,7 +389,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         //const char *
         DeclarationWrapper param = new DeclarationWrapper( compilationUnit, 0, 0, null, EMPTY_STRING );
 	    try {
-            param.setTypeSpecifier( factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.CHAR, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP ) );
+            param.setTypeSpecifier( factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.CHAR, new SimpleToken( IToken.t_char, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP ) );
         } catch ( ASTSemanticException e1 ) {//nothing
         }
 	    Declarator paramDecl = new Declarator( param );
@@ -387,7 +400,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //double __builtin_nan (const char * str)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_double, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -402,7 +415,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //float __builtin_nanf (const char * str)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.FLOAT, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.FLOAT, new SimpleToken( IToken.t_float, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -417,7 +430,11 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //long double __builtin_nanl (const char * str)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, true, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IToken t1 = new SimpleToken( IToken.t_long, -1, EMPTY_STRING, -1 );
+            IToken t2 = new SimpleToken( IToken.t_double, -1, EMPTY_STRING, -1 );
+            t1.setNext( t2 );
+            ITokenDuple duple = TokenFactory.createTokenDuple( t1, t2 );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, duple, false, true, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -432,7 +449,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //double __builtin_nans (const char * str)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_double, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -447,7 +464,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //float __builtin_nansf (const char * str)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.FLOAT, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.FLOAT, new SimpleToken( IToken.t_float, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -462,7 +479,11 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         try {
             //long double __builtin_nansl (const char * str)
             DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, true, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IToken t1 = new SimpleToken( IToken.t_long, -1, EMPTY_STRING, -1 );
+            IToken t2 = new SimpleToken( IToken.t_double, -1, EMPTY_STRING, -1 );
+            t1.setNext( t2 );
+            ITokenDuple duple = TokenFactory.createTokenDuple( t1, t2 );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.DOUBLE, duple, false, true, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
 		    Declarator d = new Declarator(sdw);
 		    d.setIsFunction( true );
@@ -479,7 +500,11 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         //unsigned int
         DeclarationWrapper param = new DeclarationWrapper( compilationUnit, 0, 0, null, EMPTY_STRING );
 	    try {
-            param.setTypeSpecifier( factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, true, false, false, false, false, Collections.EMPTY_MAP ) );
+            IToken t1 = new SimpleToken( IToken.t_unsigned, -1, EMPTY_STRING, -1 );
+            IToken t2 = new SimpleToken( IToken.t_int, -1, EMPTY_STRING, -1 );
+            t1.setNext( t2 );
+            ITokenDuple duple = TokenFactory.createTokenDuple( t1, t2 );
+            param.setTypeSpecifier( factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, duple, false, false, false, true, false, false, false, false, Collections.EMPTY_MAP ) );
     		param.addDeclarator( new Declarator( param ) );
         } catch ( ASTSemanticException e1 ) {//nothing
         }
@@ -492,7 +517,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
 	    sdw.addDeclarator( d );
 
         try {
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, new SimpleToken( IToken.t_int, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
         } catch ( ASTSemanticException e ) { //nothing
         }
@@ -536,7 +561,11 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         //unsigned long
         DeclarationWrapper param = new DeclarationWrapper( compilationUnit, 0, 0, null, EMPTY_STRING );
 	    try {
-            param.setTypeSpecifier( factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, true, false, true, false, false, false, false, Collections.EMPTY_MAP ) );
+            IToken t1 = new SimpleToken( IToken.t_unsigned, -1, EMPTY_STRING, -1 );
+            IToken t2 = new SimpleToken( IToken.t_long, -1, EMPTY_STRING, -1 );
+            t1.setNext( t2 );
+            ITokenDuple duple = TokenFactory.createTokenDuple( t1, t2 );
+            param.setTypeSpecifier( factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, duple, false, true, false, true, false, false, false, false, Collections.EMPTY_MAP ) );
     		param.addDeclarator( new Declarator( param ) );
         } catch ( ASTSemanticException e1 ) {//nothing
         }
@@ -549,7 +578,7 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
 	    sdw.addDeclarator( d );
 
         try {
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, new SimpleToken( IToken.t_int, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
         } catch ( ASTSemanticException e ) { //nothing
         }
@@ -593,8 +622,16 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
         //unsigned long long
         DeclarationWrapper param = new DeclarationWrapper( compilationUnit, 0, 0, null, EMPTY_STRING );
 	    try {
-	        //TODO: this is just a long, we need to make it long long]
-	        IASTSimpleTypeSpecifier spec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, true, false, true, false, false, false, false, Collections.EMPTY_MAP );
+            IToken t1 = new SimpleToken( IToken.t_unsigned, -1, EMPTY_STRING, -1 );
+            IToken t2 = new SimpleToken( IToken.t_long, -1, EMPTY_STRING, -1 );
+            IToken t3 = new SimpleToken( IToken.t_long, -1, EMPTY_STRING, -1 );
+            t1.setNext( t2 );
+            t2.setNext( t3 );
+            ITokenDuple duple = TokenFactory.createTokenDuple( t1, t3 );
+	        IASTSimpleTypeSpecifier spec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, duple, false, true, false, true, false, false, false, false, Collections.EMPTY_MAP );
+	        //TODO modify the typeSpec to be long long instead of long, this won't be necessary once we parse long long properly
+	        ((ASTSimpleTypeSpecifier)spec).getSymbol().getTypeInfo().setBit( false, ITypeInfo.isLong );
+	        ((ASTSimpleTypeSpecifier)spec).getSymbol().getTypeInfo().setBit( true, ITypeInfo.isLongLong );
             param.setTypeSpecifier( spec );
     		param.addDeclarator( new Declarator( param ) );
         } catch ( ASTSemanticException e1 ) {//nothing
@@ -608,42 +645,62 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
 	    sdw.addDeclarator( d );
 
         try {
-            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, new SimpleToken( IToken.t_void, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, new SimpleToken( IToken.t_int, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
 	        sdw.setTypeSpecifier( typeSpec );
         } catch ( ASTSemanticException e ) { //nothing
         }
 
-        try {//int __builtin_ffsll(unsigned int x)
+        try {//int __builtin_ffsll(unsigned long long x)
             d.setName( new ImagedToken( IToken.tIDENTIFIER, __BUILTIN_FFSLL, __BUILTIN_FFSLL.length, EMPTY_STRING, 0 ) );
             sdw.createASTNodes( factory );
         } catch ( ASTSemanticException e2 ) { //nothing
         } catch ( BacktrackException e2 ) {//nothing
         }
 
-        try {//int __builtin_clsll(unsigned int x)
+        try {//int __builtin_clsll(unsigned long long x)
             d.setName( new ImagedToken( IToken.tIDENTIFIER, __BUILTIN_CLZLL, __BUILTIN_CLZLL.length, EMPTY_STRING, 0 ) );
             sdw.createASTNodes( factory );
         } catch ( ASTSemanticException e2 ) {//nothing
         } catch ( BacktrackException e2 ) {//nothing
         }
 
-        try {//int __builtin_ctzll(unsigned int x)
+        try {//int __builtin_ctzll(unsigned long long x)
             d.setName( new ImagedToken( IToken.tIDENTIFIER, __BUILTIN_CTZLL, __BUILTIN_CTZLL.length, EMPTY_STRING, 0 ) );
             sdw.createASTNodes( factory );
         } catch ( ASTSemanticException e2 ) {//nothing
         } catch ( BacktrackException e2 ) {//nothing
         }
 
-        try {//int __builtin_popcountll(unsigned int x)
+        try {//int __builtin_popcountll(unsigned long long x)
             d.setName( new ImagedToken( IToken.tIDENTIFIER, __BUILTIN_POPCOUNTLL, __BUILTIN_POPCOUNTLL.length, EMPTY_STRING, 0 ) );
             sdw.createASTNodes( factory );
         } catch ( ASTSemanticException e2 ) {//nothing
         } catch ( BacktrackException e2 ) {//nothing
         }
-        try {//int __builtin_parityll(unsigned int x)
+        try {//int __builtin_parityll(unsigned long long x)
             d.setName( new ImagedToken( IToken.tIDENTIFIER, __BUILTIN_PARITYLL, __BUILTIN_PARITYLL.length, EMPTY_STRING, 0 ) );
             sdw.createASTNodes( factory );
         } catch ( ASTSemanticException e2 ) {//nothing
+        } catch ( BacktrackException e2 ) {//nothing
+        }
+    }
+    private void __builtin_types_compatible_p( IASTFactory factory, IASTCompilationUnit compilationUnit ) {
+        DeclarationWrapper sdw = new DeclarationWrapper(compilationUnit, 0, 0, null, EMPTY_STRING );
+        Declarator d = new Declarator(sdw);
+	    d.setIsFunction( true );
+	    d.setIsVarArgs( true );
+	    sdw.addDeclarator( d );
+
+        try {
+            IASTSimpleTypeSpecifier typeSpec = factory.createSimpleTypeSpecifier( compilationUnit, IASTSimpleTypeSpecifier.Type.INT, new SimpleToken( IToken.t_int, -1, EMPTY_STRING, -1 ), false, false, false, false, false, false, false, false, Collections.EMPTY_MAP );
+	        sdw.setTypeSpecifier( typeSpec );
+        } catch ( ASTSemanticException e ) { //nothing
+        }
+
+        try {//int __builtin_types_compatible_p( type1, type2 ) implemented via ( ... )
+            d.setName( new ImagedToken( IToken.tIDENTIFIER, __BUILTIN_TYPES_COMPATIBLE_P, __BUILTIN_TYPES_COMPATIBLE_P.length, EMPTY_STRING, 0 ) );
+            sdw.createASTNodes( factory );
+        } catch ( ASTSemanticException e2 ) { //nothing
         } catch ( BacktrackException e2 ) {//nothing
         }
     }

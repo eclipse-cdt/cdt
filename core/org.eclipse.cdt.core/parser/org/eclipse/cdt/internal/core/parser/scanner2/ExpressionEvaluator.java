@@ -33,7 +33,7 @@ public class ExpressionEvaluator {
 
 	public long evaluate(char[] buffer, int pos, int length, CharArrayObjectMap defs) {
 		bufferStack[++bufferStackPos] = buffer;
-		bufferPos[bufferStackPos] = pos;
+		bufferPos[bufferStackPos] = pos - 1;
 		bufferLimit[bufferStackPos] = pos + length;
 		this.definitions = defs;
 		tokenType = 0;

@@ -700,6 +700,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 				results.add("__builtin_ctzll"); //$NON-NLS-1$
 				results.add("__builtin_popcountll"); //$NON-NLS-1$
 				results.add("__builtin_parityll"); //$NON-NLS-1$
+				results.add("__builtin_types_compatible_p"); //$NON-NLS-1$
 			}
 			validateLookupResult(result, results );
 		}

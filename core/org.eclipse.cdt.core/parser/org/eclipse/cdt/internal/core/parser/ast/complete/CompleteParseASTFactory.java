@@ -71,6 +71,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
 import org.eclipse.cdt.core.parser.extension.IASTFactoryExtension;
+import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.ast.ASTAbstractDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.ASTDesignator;
@@ -119,8 +120,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	private final ParserMode mode;
 
 	private static final int BUILTIN_TYPE_SIZE = 64;
-	private final Hashtable typeIdCache = new Hashtable( BUILTIN_TYPE_SIZE );
-	private final Hashtable simpleTypeSpecCache = new Hashtable( BUILTIN_TYPE_SIZE );
+	private final CharArrayObjectMap typeIdCache = new CharArrayObjectMap( BUILTIN_TYPE_SIZE );
+	private final CharArrayObjectMap simpleTypeSpecCache = new CharArrayObjectMap( BUILTIN_TYPE_SIZE );
 	private static final int DEFAULT_QUALIFIEDNAME_REFERENCE_SIZE = 4;
 	private char[] filename;
 	

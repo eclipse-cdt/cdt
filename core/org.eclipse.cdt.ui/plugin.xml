@@ -668,33 +668,6 @@
     	     </filter>            
       </page>
    </extension>
-<!--
-   <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            objectClass="org.eclipse.cdt.core.model.ICContainer"
-            adaptable="true"
-            name="C/C++ Include Paths &amp; Symbols"
-            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
-            id="org.eclipse.cdt.internal.ui.dialogs.cpath.IncludeSymbolsPropertyPage">
-         <filter
-               name="nature"
-               value="org.eclipse.cdt.core.cnature">
-         </filter>
-      </page>
-      <page
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            name="C/C++ Include Paths &amp; Symbols"
-            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
-            id="org.eclipse.cdt.internal.ui.dialogs.cpath.IncludeSymbolsPropertyPage">
-         <filter
-               name="nature"
-               value="org.eclipse.cdt.core.cnature">
-         </filter>
-      </page>
-   </extension>
--->
    <extension
          point="org.eclipse.cdt.ui.PathContainerPage">
       <PathContainerPage

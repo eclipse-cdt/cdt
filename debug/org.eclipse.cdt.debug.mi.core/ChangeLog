@@ -1,5 +1,16 @@
 2003-08-26 Alain Magloire
 
+	This is still a hack: "info shared"  the real solution
+	is to implement in GDB/MI the corresponding command.
+	So now we do weird parsing, that varies from platform
+	to platform.  For example Cygwin output of "info shared"
+	is totally different from the GNU/Linux one etc ...
+	We the best we can to cope ... but things will break.
+
+	* src/org/eclipse.cdt/debug/mi/core/output/MIInfoSharedLibraryInfo.java
+
+2003-08-26 Alain Magloire
+
 	Using the wrong method for toString() and we were returning
 	a overly verbose string.
 

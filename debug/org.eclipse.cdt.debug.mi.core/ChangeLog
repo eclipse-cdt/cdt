@@ -1,3 +1,34 @@
+2002-10-20 Alain Magloire
+
+	-data-write-register-values is not in the texinfo manual but implemented in
+	gdb-5.2.1/gdb/mi/mim-main.c:
+	Write given values into registers. The registers and values are
+	given as pairs. The corresponding MI command is 
+	-data-write-register-values <format> [<regnum1> <value1>...<regnumN> <valueN>]
+
+	* src/.../core/command/MIDataWriteRegisterValues.java: New file.
+	* src/.../core/command/CommandFactory.java (createMIDataWriteMemory): New method.
+	* src/.../core/cdi/Register.java (setValue): Implemented.
+	
+2002-10-20 Alain Magloire
+
+	Althought -data-write-memory is not documented in the texinfo manual
+	it is implemented and well documented in the code(gdb-5.2.1/gdb/mi/mi-main.c).
+	"mi_cmd_data_write_memory: Usage: [-o COLUMN_OFFSET] ADDR FORMAT WORD-SIZE VALUE.");
+
+	* src/.../core/command/MIDataWriteMemory.java: New file
+	* src/.../core/command/CommandFactory.java (createMIDataWriteMemory): New method.
+	* src/.../core/cdi/MemoryBlock.java (setValue): Implemented.
+
+2002-10-20 Alain Magloire
+
+	* src/.../core/cdi/CTarget.java (getMemoryBlock): Remove
+	we use the MemoryManager instead.
+	(EvaluateExpressionToValue): Removed not use.
+	* src/.../core/cdi/SourceManager.java (setFile): Removed not use.
+	(getFile): Removed not use.
+	(reset): Removed not use.
+
 2002-10-19 Alain Magloire
 
 	The responsability to generate Events for modify memory blocks is push

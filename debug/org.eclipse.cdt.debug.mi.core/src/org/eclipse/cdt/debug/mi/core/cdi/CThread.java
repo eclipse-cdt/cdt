@@ -64,7 +64,7 @@ public class CThread extends CObject implements ICDIThread {
 		MIStackListFrames frames = factory.createMIStackListFrames();
 		try {
 			ICDIThread oldThread = getCTarget().getCurrentThread();
-			getCTarget().setCurrentThread(this);
+			getCTarget().setCurrentThread(this, false);
 			mi.postCommand(frames);
 			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
 			if (info == null) {
@@ -75,7 +75,7 @@ public class CThread extends CObject implements ICDIThread {
 			for (int i = 0; i < stack.length; i++) {
 				stack[i] = new StackFrame(this, miFrames[i]);
 			}
-			getCTarget().setCurrentThread(oldThread);
+			getCTarget().setCurrentThread(oldThread, false);
 			return stack;
 		} catch (MIException e) {
 			//throw new CDIException(e.getMessage());
@@ -97,13 +97,13 @@ public class CThread extends CObject implements ICDIThread {
 		MIStackInfoDepth depth = factory.createMIStackInfoDepth();
 		try {
 			ICDIThread oldThread = getCTarget().getCurrentThread();
-			getCTarget().setCurrentThread(this);
+			getCTarget().setCurrentThread(this, false);
 			mi.postCommand(depth);
 			MIStackInfoDepthInfo info = depth.getMIStackInfoDepthInfo();
 			if (info == null) {
 				throw new CDIException("No answer");
 			}
-			getCTarget().setCurrentThread(oldThread);
+			getCTarget().setCurrentThread(oldThread, false);
 			return info.getDepth();
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -123,7 +123,7 @@ public class CThread extends CObject implements ICDIThread {
 		MIStackListFrames frames = factory.createMIStackListFrames(low, high);
 		try {
 			ICDIThread oldThread = getCTarget().getCurrentThread();
-			getCTarget().setCurrentThread(this);
+			getCTarget().setCurrentThread(this, false);
 			mi.postCommand(frames);
 			MIStackListFramesInfo info = frames.getMIStackListFramesInfo();
 			if (info == null) {
@@ -134,7 +134,7 @@ public class CThread extends CObject implements ICDIThread {
 			for (int i = 0; i < stack.length; i++) {
 				stack[i] = new StackFrame(this, miFrames[i]);
 			}
-			getCTarget().setCurrentThread(oldThread);
+			getCTarget().setCurrentThread(oldThread, false);
 			return stack;
 		} catch (MIException e) {
 			//throw new CDIException(e.getMessage());
@@ -151,11 +151,12 @@ public class CThread extends CObject implements ICDIThread {
 	 */
 	public void setCurrentStackFrame(ICDIStackFrame stackframe) throws CDIException {
 		if (stackframe instanceof  StackFrame) {
-			setCurrentStackFrame((StackFrame)stackframe);
+			setCurrentStackFrame((StackFrame)stackframe, true);
 		}
 	}
 
-	public void setCurrentStackFrame(StackFrame stackframe) throws CDIException {
+
+	public void setCurrentStackFrame(StackFrame stackframe, boolean doUpdate) throws CDIException {
 		CSession session = getCTarget().getCSession();
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -174,7 +175,7 @@ public class CThread extends CObject implements ICDIThread {
 		MIStackSelectFrame frame = factory.createMIStackSelectFrame(frameNum);
 		try {
 			// Set ourself as the current thread first.
-			getCTarget().setCurrentThread(this);
+			getCTarget().setCurrentThread(this, doUpdate);
 			mi.postCommand(frame);
 			MIInfo info = frame.getMIInfo();
 			if (info == null) {

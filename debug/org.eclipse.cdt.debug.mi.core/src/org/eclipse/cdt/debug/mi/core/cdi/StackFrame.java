@@ -58,7 +58,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 			MIStackListArguments listArgs =
 				factory.createMIStackListArguments(false, level, level);
 			try {
-				cthread.setCurrentStackFrame(this);
+				cthread.setCurrentStackFrame(this, false);
 				MIArg[] args = null;
 				mi.postCommand(listArgs);
 				MIStackListArgumentsInfo info =
@@ -100,7 +100,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 		CommandFactory factory = mi.getCommandFactory();
 		MIStackListLocals locals = factory.createMIStackListLocals(false);
 		try {
-			cthread.setCurrentStackFrame(this);
+			cthread.setCurrentStackFrame(this, false);
 			MIArg[] args = null;
 			mi.postCommand(locals);
 			MIStackListLocalsInfo info = locals.getMIStackListLocalsInfo();

@@ -80,14 +80,20 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#setCurrentThread(ICDIThread)
 	 */
 	public void setCurrentThread(ICDIThread cthread) throws CDIException {
+		if (cthread instanceof Thread) {
+			setCurrentThread(cthread, true);
+		}
+	}
+
+	public void setCurrentThread(ICDIThread cthread, boolean doUpdate) throws CDIException {
 		if (cthread instanceof CThread) {
-			setCurrentThread((CThread)cthread);
+			setCurrentThread((CThread)cthread, doUpdate);
 		}
 	}
 
 	/**
 	 */
-	public void setCurrentThread(CThread cthread) throws CDIException {
+	public void setCurrentThread(CThread cthread, boolean doUpdate) throws CDIException {
 		session.setCurrentTarget(this);
 		int id = cthread.getId();
 		// No need to set thread id 0, it is a dummy thread.
@@ -113,8 +119,10 @@ public class CTarget  implements ICDITarget {
 			// Resetting threads may change the value of
 			// some variables like Register.  Send an update
 			// To generate changeEvents.
-			RegisterManager regMgr = session.getRegisterManager();
-			regMgr.update();
+			if (doUpdate) {
+				RegisterManager regMgr = session.getRegisterManager();
+				regMgr.update();
+			}
 		}
 
 		// We should be allright now.

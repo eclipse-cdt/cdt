@@ -4,27 +4,18 @@
 <head>
 <meta http-equiv="Content-Language" content="en-us">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Building manually</title>
+<title>Building Manually</title>
 <link rel="stylesheet" type="text/css" href="../help.css">
-<script language="JavaScript">
-function changeSize(theImage,wd,ht) {
-	wdth=parseInt(theImage.style.width); hght=parseInt(theImage.style.height);
-	if ( !(wdth==(wd*2)) ) {wdth=wd*2; hght=ht*2;}
-	else {wdth=wd;hght=ht;}
-	theImage.style.width=wdth; theImage.style.height=hght;
-}
-</script>
 </head>
 
 <body>
 
-<h1>Building manually</h1>
+<h1>Building Manually</h1>
 
 <p>Manual builds let you choose the scope of a build, as well as options for building, 
 or rebuilding projects. You can view the output of the make utility in the console.</p>
 
-<p><img src="../images/console_build.png" width="300" height="75" onClick="changeSize(this,300,75);" 
-	     alt="Screen capture showing sample build in console veiw" title="click to toggle image size"></p>
+<p><img src="../images/console_build.png" alt="Sample build in console veiw"></p>
 
 
 <p>To rebuild all open projects:</p>
@@ -46,13 +37,17 @@ want to build only certain projects.</p>
   <li>In C/C++ Projects view, right-click a project, and click <b>Rebuild Project</b>.</li>
 </ul>
 
-<p><b>Tip:</b> If you get the error message:</p>
+<p><b>Tip: </b>If you get the error message:</p>
 
 <p><samp>Exec error:Launching failed</samp></p>
 
 <p>The error message means 
 that the CDT cannot locate the build command, (usually <samp>make</samp>). Either your path is 
 not configured correctly or you do not have <samp>make</samp> installed on your system.</p>
+
+
+<p><b>Tip: </b>The menubar item <b>Project > Build Working Set</b> submenu for C/C++ projects simply creates a link to the build all target as defined in your makefile, and is no different from an <b>Incremental Build</b>.</p>
+
 
 <p><img border="0" src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
 <br>

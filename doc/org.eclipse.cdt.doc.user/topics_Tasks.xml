@@ -10,6 +10,8 @@
 			<topic label="Create a cpp file" href="tasks/cdt_t_new_cpp.htm"/>
 			<topic label="Create a makefile" href="tasks/cdt_t_new_make.htm"/>
 			<topic label="Hide files of a given type" href="tasks/cdt_t_prvw_hide_files.htm"/>
+			<topic label="Converting CDT 1.x Projects" href="cdt_t_convert_cdt_proj.htm"/>
+			<topic label="Adding Convert to a C/C++ Make Project to the New menu" href="cdt_t_add_custom_persp.htm"/>
 		</topic>
 		<topic label="Write code" href="tasks/cdt_o_write_code.htm">
 			<topic label="Customize the C/C++ editor" href="tasks/cdt_t_cust_cpp_editor.htm"/>
@@ -22,6 +24,7 @@
 			<topic label="Shift lines of code to the left or right" href="tasks/cdt_t_shift_code.htm"/>
 			<topic label="Search for C/C++ elements" href="tasks/cdt_t_search.htm"/>
 			<topic label="Navigate to C/C++ declarations by name" href="tasks/cdt_t_open_declarations.htm"/>
+			<topic label="Adding #include directives" href="cdt_t_add_includes.htm"/>
 		</topic>
 		<topic label="Build your C or C++ projects" href="tasks/cdt_o_build_task.htm">
 			<topic label="Rename a project" href="tasks/cdt_t_proj_rename.htm"/>
@@ -33,6 +36,7 @@
 			<topic label="Select deployment platform for managed make projects" href="tasks/cdt_t_proj_platf.htm"/>
 			<topic label="Set build order" href="tasks/cdt_t_setbuildorder.htm"/>
 			<topic label="Build your project as required" href="tasks/cdt_t_manualbuild.htm"/>
+			<topic label="Removing Build Automatically" href="cdt_t_autobuild.htm"/>
 			<topic label="Autosaving on manual build" href="tasks/cdt_t_autosave.htm"/>
 			<topic label="Add a make target" href="tasks/cdt_t_addmaketarget.htm"/>
 			<topic label="Customize the Console view" href="tasks/cdt_t_cbuild_pref.htm"/>

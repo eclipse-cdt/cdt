@@ -41,22 +41,18 @@
 		<topic label="Build Console" href="reference/cdt_u_build_pref.htm"/>
 		<topic label="C/C++ Editor preferences" href="reference/cdt_o_ceditor_pref.htm">
 			<topic label="General" href="reference/cdt_u_c_editor_gen.htm"/>
-			<topic label="Annotations" href="reference/cdt_u_c_editor_anno.htm"/>
 			<topic label="Colors" href="reference/cdt_u_c_editor_color.htm"/>
 			<topic label="Content Assist" href="reference/cdt_u_c_editor_con_assist.htm"/>
 			<topic label="Navigation" href="reference/cdt_u_c_editor_navigation.htm"/>
 		</topic>
+		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
 		<topic label="Code Templates" href="reference/cdt_u_code_temp.htm"/>
 		<topic label="Make Targets" href="reference/cdt_u_make_targets_pref.htm"/>
 		<topic label="New Make Projects properties" href="reference/cdt_o_proj_prop_pages.htm">
 			<topic label="Make Builder" href="reference/cdt_u_newproj_buildset.htm"/>
 			<topic label="Error Parser" href="reference/cdt_u_newproj_parser_error.htm"/>
 			<topic label="Binary Parser" href="reference/cdt_u_newproj_parser_binary.htm"/>
-			<topic label="Paths and Symbols" href="reference/cdt_u_newproj_pathsymb.htm">
-				<topic label="Scanner Configuration Discovery" href="reference/cdt_u_scanner_cfg_disc.htm"/>
-				<topic label="Manage Include Paths" href="reference/cdt_u_newproj_incl_path.htm"/>
-				<topic label="Manage Defined Symbols" href="reference/cdt_u_newproj_def_symb.htm"/>
-			</topic>
+			<topic label="Discovery Options" href="reference/cdt_u_discovery_preferences.htm"/>
 		</topic>
 	</topic>
 	<topic label="C/C++ Project Properties" href="reference/cdt_u_properties.htm">

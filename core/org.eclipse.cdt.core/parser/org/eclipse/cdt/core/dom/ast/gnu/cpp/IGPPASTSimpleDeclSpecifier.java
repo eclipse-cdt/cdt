@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.gnu.cpp;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 
 /**
@@ -20,9 +22,17 @@ public interface IGPPASTSimpleDeclSpecifier extends IGPPASTDeclSpecifier,
 
 	public static final int t_Complex = ICPPASTSimpleDeclSpecifier.t_last + 1;
 	public static final int t_Imaginary = ICPPASTSimpleDeclSpecifier.t_last + 2;
-	public static final int t_last = t_Imaginary;
+	public static final int t_typeof = ICPPASTSimpleDeclSpecifier.t_last + 3;
+	public static final int t_last = t_typeof;
+    
+	public static final ASTNodeProperty TYPEOF_EXPRESSION = new ASTNodeProperty( "Typeof Expression"); //$NON-NLS-1$
 	
 	public boolean isLongLong();
 	public void setLongLong( boolean value );
+    /**
+     * @param typeofExpression
+     */
+    public void setTypeofExpression(IASTExpression typeofExpression);
+    public IASTExpression getTypeofExpression();
 
 }

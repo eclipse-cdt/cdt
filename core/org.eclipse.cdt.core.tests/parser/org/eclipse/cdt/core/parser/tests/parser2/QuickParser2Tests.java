@@ -407,6 +407,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug36766and36769C() throws Exception {
+        //TODO - requires CPPVisitor
         Writer code = new StringWriter();
         code.write("template <class _CharT, class _Alloc>\n"); //$NON-NLS-1$
         code.write("_Rope_char_ref_proxy<_CharT, _Alloc>&\n"); //$NON-NLS-1$
@@ -417,6 +418,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testBug36766and36769D() throws Exception {
+        //TODO - requires CPPVisitor
         Writer code = new StringWriter();
         code.write("template <class _CharT, class _Alloc>\n"); //$NON-NLS-1$
         code.write("rope<_CharT, _Alloc>::~rope()\n"); //$NON-NLS-1$
@@ -750,6 +752,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testConstructorChain() throws Exception {
+        //TODO - requires CPPVisitor in order to reduce ambiguities
         parse( "TrafficLight_Actor::TrafficLight_Actor( RTController * rtg_rts, RTActorRef * rtg_ref )	: RTActor( rtg_rts, rtg_ref ), myId( 0 ) {}"); //$NON-NLS-1$
     }
 
@@ -809,8 +812,7 @@ public class QuickParser2Tests extends TestCase {
         code.write("#define CMD_GET		\"g\"\n"); //$NON-NLS-1$
         code.write("#define CMD_ACTION   	\"a\"\n"); //$NON-NLS-1$
         code.write("#define CMD_QUIT		\"q\"\n"); //$NON-NLS-1$
-        code
-                .write("static const memevent_cmd_func memevent_cmd_funcs[sizeof memevent_cmds - 1] = {\n"); //$NON-NLS-1$
+        code.write("static const memevent_cmd_func memevent_cmd_funcs[sizeof memevent_cmds - 1] = {\n"); //$NON-NLS-1$
         code.write("memevent_get,\n"); //$NON-NLS-1$
         code.write("memevent_action,\n"); //$NON-NLS-1$
         code.write("memevent_quit,\n"); //$NON-NLS-1$
@@ -835,6 +837,7 @@ public class QuickParser2Tests extends TestCase {
     }
 
     public void testOrder() throws Exception {
+        //TODO - requires CPPVisitor
         Writer code = new StringWriter();
         code.write("#define __SGI_STL_INTERNAL_ALGOBASE_H\n"); //$NON-NLS-1$
         code.write("#include <string.h>\n"); //$NON-NLS-1$
@@ -1343,6 +1346,7 @@ public class QuickParser2Tests extends TestCase {
     //	}
 
     public void testBug47752() throws Exception {
+        //TODO requires CPPVisitor
         parse("void func( cFoo bar ) try {	} catch ( const char * error ){	}"); //$NON-NLS-1$
     }
 

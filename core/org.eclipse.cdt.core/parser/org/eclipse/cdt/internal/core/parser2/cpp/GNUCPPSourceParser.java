@@ -621,6 +621,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         if (LT(1) == IToken.t_throw) {
             return throwExpression();
         }
+        
+        if (LT(1) == IToken.tLPAREN && LT(2) == IToken.tLBRACE
+                && supportStatementsInExpressions) {
+            IASTExpression resultExpression = compoundStatementExpression();
+            if (resultExpression != null)
+                return resultExpression;
+        }
+
 
         IASTExpression conditionalExpression = conditionalExpression();
         // if the condition not taken, try assignment operators
@@ -2707,6 +2715,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             backup(mark);
             return true;
         }
+        char [] destructorName = CharArrayUtils.concat( "~".toCharArray(), otherName ); //$NON-NLS-1$
+        if( CharArrayUtils.equals( destructorName, className ))
+        {
+            backup( mark );
+            return true;
+        }
 
         backup(mark);
         return false;
@@ -2752,6 +2766,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         ICPPASTCompositeTypeSpecifier classSpec = null;
         ICPPASTElaboratedTypeSpecifier elabSpec = null;
         IASTEnumerationSpecifier enumSpec = null;
+        IASTExpression typeofExpression = null;
         declSpecifiers: for (;;) {
             switch (LT(1)) {
             case IToken.t_inline:
@@ -2939,8 +2954,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
             default:
                 if (supportTypeOfUnaries && LT(1) == IGCCToken.t_typeof) {
-                    Object expression = unaryTypeofExpression();
-                    if (expression != null) {
+                    typeofExpression = unaryTypeofExpression();
+                    if (typeofExpression != null) {
                         flags.setEncounteredTypename(true);
                     }
                 }
@@ -3008,10 +3023,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             return nameSpec;
         }
         ICPPASTSimpleDeclSpecifier simpleDeclSpec = null;
-        if( isLongLong )
+        if( isLongLong ||  typeofExpression != null )
         {
             simpleDeclSpec = createGPPSimpleDeclSpecifier();
             ((IGPPASTSimpleDeclSpecifier)simpleDeclSpec).setLongLong( isLongLong );
+            if( typeofExpression != null )
+            {
+                ((IGPPASTSimpleDeclSpecifier)simpleDeclSpec).setTypeofExpression( typeofExpression );
+                typeofExpression.setParent( simpleDeclSpec );
+                typeofExpression.setPropertyInParent( IGPPASTSimpleDeclSpecifier.TYPEOF_EXPRESSION );
+            }
         }
         else
             simpleDeclSpec = createSimpleDeclSpecifier();
@@ -3192,6 +3213,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 
             for (;;) {
+                if (LT(1) == IToken.tRBRACE)
+                    break;
+
                 IASTInitializer clause = initializerClause( );
                 if (clause != null) {
                     result.addInitializer( clause );
@@ -3321,7 +3345,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                             try {
                                 try {
                                     queryName = name();
-                                    failed = true;
+                                    //TODO - when the Visitor is available
+                                    //find the IASTName relating to this in the AST
+                                    //if this is a type, failed = false
+                                    //if this is a value, failed = true
+                                    failed = false;
                                 } catch (Exception e) {
                                     int endOffset = (lastToken != null) ? lastToken
                                             .getEndOffset()

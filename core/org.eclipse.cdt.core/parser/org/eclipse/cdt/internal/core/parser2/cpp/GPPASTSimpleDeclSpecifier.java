@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 
 /**
@@ -19,6 +20,8 @@ public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
         implements IGPPASTSimpleDeclSpecifier {
 
     private boolean longLong;
+    private boolean restrict;
+    private IASTExpression typeOfExpression;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier#isLongLong()
@@ -38,16 +41,28 @@ public class GPPASTSimpleDeclSpecifier extends CPPASTSimpleDeclSpecifier
      * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier#isRestrict()
      */
     public boolean isRestrict() {
-        // TODO Auto-generated method stub
-        return false;
+        return restrict;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTDeclSpecifier#setRestrict(boolean)
      */
     public void setRestrict(boolean value) {
-        // TODO Auto-generated method stub
-        
+        restrict = value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier#setTypeofExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
+     */
+    public void setTypeofExpression(IASTExpression typeofExpression) {
+        typeOfExpression = typeofExpression;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier#getTypeofExpression()
+     */
+    public IASTExpression getTypeofExpression() {
+        return typeOfExpression;
     }
 
 }

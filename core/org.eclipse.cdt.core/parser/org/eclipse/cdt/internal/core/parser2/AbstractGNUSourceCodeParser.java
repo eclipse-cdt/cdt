@@ -516,15 +516,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     protected abstract IASTCompoundStatement createCompoundStatement();
 
     /**
-     * @param la
      * @return @throws
      *         EndOfFileException
      * @throws BacktrackException
      */
-    protected IASTExpression compoundStatementExpression(IToken la)
+    protected IASTExpression compoundStatementExpression()
             throws EndOfFileException, BacktrackException {
-        int startingOffset = la.getOffset();
-        consume(IToken.tLPAREN);
+        int startingOffset =consume(IToken.tLPAREN).getOffset(); 
         IASTCompoundStatement compoundStatement = null;
         if (mode == ParserMode.QUICK_PARSE
                 || mode == ParserMode.STRUCTURAL_PARSE)
@@ -564,7 +562,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         if (la.getType() == IToken.tLPAREN && LT(2) == IToken.tLBRACE
                 && supportStatementsInExpressions) {
-            IASTExpression resultExpression = compoundStatementExpression(la);
+            IASTExpression resultExpression = compoundStatementExpression();
             if (resultExpression != null)
                 return resultExpression;
         }
@@ -918,15 +916,20 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
         IToken m = mark();
         if (LT(1) == IToken.tLPAREN) {
-            try {
-                consume(IToken.tLPAREN);
-                d = typeId(false);
-                consume(IToken.tRPAREN);
-            } catch (BacktrackException bt) {
-                backup(m);
-                d = null;
-                unaryExpression = unaryExpression();
+            if( LT(2) == IToken.tLBRACE )
+            {
+                unaryExpression = compoundStatementExpression();
             }
+            else
+	            try {
+	                consume(IToken.tLPAREN);
+	                d = typeId(false);
+	                consume(IToken.tRPAREN);
+	            } catch (BacktrackException bt) {
+	                backup(m);
+	                d = null;
+	                unaryExpression = unaryExpression();
+	            }
         } else {
             unaryExpression = unaryExpression();
         }

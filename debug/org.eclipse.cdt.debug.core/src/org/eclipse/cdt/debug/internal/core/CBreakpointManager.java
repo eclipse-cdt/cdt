@@ -125,6 +125,8 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	private CDebugTarget fDebugTarget;
 
 	private BreakpointMap fMap;
+	
+	private boolean fSkipBreakpoint= false;
 
 	public CBreakpointManager( CDebugTarget target ) {
 		super();
@@ -353,6 +355,14 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			doHandleLocationBreakpointCreatedEvent( (ICDILocationBreakpoint)cdiBreakpoint );
 		else if ( cdiBreakpoint instanceof ICDIWatchpoint )
 			doHandleWatchpointCreatedEvent( (ICDIWatchpoint)cdiBreakpoint );
+		if ( !cdiBreakpoint.isTemporary() && !DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
+			try {
+				cdiBreakpoint.setEnabled( false );
+			}
+			catch( CDIException e ) {
+				DebugPlugin.log( e );
+			}
+		}
 	}
 
 	protected void doHandleLocationBreakpointCreatedEvent( ICDILocationBreakpoint cdiBreakpoint ) {
@@ -396,7 +406,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		if ( breakpoint != null ) {
 			Map map = new HashMap( 3 );
 			try {
-				if ( DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
+				if ( !fSkipBreakpoint && DebugPlugin.getDefault().getBreakpointManager().isEnabled() ) {
 						map.put( IBreakpoint.ENABLED, new Boolean( cdiBreakpoint.isEnabled() ) );
 				}
 				else {
@@ -631,19 +641,32 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
 	 */
 	public void breakpointManagerEnablementChanged( boolean enabled ) {
+		doSkipBreakpoints( !enabled );
+	}
+
+	public void skipBreakpoints( boolean enabled ) {
+		if ( fSkipBreakpoint != enabled && (DebugPlugin.getDefault().getBreakpointManager().isEnabled() || !enabled) ) {
+			fSkipBreakpoint = enabled;
+			doSkipBreakpoints( enabled );
+		}
+	}
+
+	private void doSkipBreakpoints( boolean enabled ) {
 		ICBreakpoint[] cBreakpoints = getBreakpointMap().getAllCBreakpoints();
 		for ( int i = 0; i < cBreakpoints.length; ++i ) {
 			try {
 				if ( cBreakpoints[i].isEnabled() ) {
 					ICDIBreakpoint cdiBreakpoint = getBreakpointMap().getCDIBreakpoint( cBreakpoints[i] );
 					if ( cdiBreakpoint != null ) {
-						cdiBreakpoint.setEnabled( enabled );
+						cdiBreakpoint.setEnabled( !enabled );
 					}
 				}
 			}
 			catch( CoreException e ) {
+				DebugPlugin.log( e.getStatus() );
 			}
 			catch( CDIException e ) {
+				DebugPlugin.log( e );
 			}
 		}
 	}

@@ -30,7 +30,7 @@ public interface IRunToLine {
 	 * 
 	 * @exception DebugException on failure. Reasons include:
 	 */
-	public void runToLine( IFile file, int lineNumber ) throws DebugException;
+	public void runToLine( IFile file, int lineNumber, boolean skipBreakpoints ) throws DebugException;
 
 	/**
 	 * Returns whether this operation is currently available for this file and line number.
@@ -44,5 +44,5 @@ public interface IRunToLine {
 	 * 
 	 * @exception DebugException on failure. Reasons include:
 	 */
-	public void runToLine( String fileName, int lineNumber ) throws DebugException;
+	public void runToLine( String fileName, int lineNumber, boolean skipBreakpoints ) throws DebugException;
 }

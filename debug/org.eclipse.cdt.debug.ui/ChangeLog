@@ -1,4 +1,8 @@
 2004-06-16 Mikhail Khodjaiants
+	Added support for the "Skip Breakpoints" and "Skip breakpoints during a "Run To Line" operation.
+	* RunToLineAdapter.java
+
+2004-06-16 Mikhail Khodjaiants
 	Removed the "Add Address Breakpoint" and "Add Watchpoint" global actions.
 	* plugin.properties
 	* plugin.xml	

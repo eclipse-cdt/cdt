@@ -29,5 +29,5 @@ public interface IRunToAddress {
 	 * 
 	 * @exception DebugException on failure. Reasons include:
 	 */
-	public void runToAddress( long address ) throws DebugException;
+	public void runToAddress( long address, boolean skipBreakpoints ) throws DebugException;
 }

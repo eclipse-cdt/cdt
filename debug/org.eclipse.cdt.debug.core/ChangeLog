@@ -1,3 +1,10 @@
+2004-06-16 Mikhail Khodjaiants
+	Added support for the "Skip Breakpoints" and "Skip breakpoints during a "Run To Line" operation.
+	* IRunToAddress.java
+	* IRunToLine.java
+	* CBreakpointManager.java
+	* CDebugTarget.java
+
 2004-06-12 Mikhail Khodjaiants
 	"CUpdateManager" extends "Observable" to support "Auto-Refresh" toggle actions.
 	* CRegisterManager.java

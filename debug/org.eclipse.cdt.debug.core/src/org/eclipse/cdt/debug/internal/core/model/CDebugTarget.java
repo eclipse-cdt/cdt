@@ -1325,6 +1325,7 @@ public class CDebugTarget extends CDebugElement
 		// Reset the registers that have errors.
 		getRegisterManager().targetSuspended();
 		setSuspensionThread();
+		getBreakpointManager().skipBreakpoints( false );
 		List newThreads = refreshThreads();
 		if ( event.getSource() instanceof ICDITarget )
 		{
@@ -1856,10 +1857,13 @@ public class CDebugTarget extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IRunToLine#runToLine(IResource, int)
 	 */
-	public void runToLine( String fileName, int lineNumber ) throws DebugException
+	public void runToLine( String fileName, int lineNumber, boolean skipBreakpoints ) throws DebugException
 	{
 		if ( !canRunToLine( fileName, lineNumber ) )
 			return;
+		if ( skipBreakpoints ) {
+			getBreakpointManager().skipBreakpoints( true );
+		}
 		ICDILocation location = getCDISession().getBreakpointManager().createLocation( fileName, null, lineNumber );
 		try
 		{
@@ -1867,6 +1871,9 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
+			if ( skipBreakpoints ) {
+				getBreakpointManager().skipBreakpoints( false );
+			}
 			targetRequestFailed( e.getMessage(), e );
 		}
 	}
@@ -1883,11 +1890,11 @@ public class CDebugTarget extends CDebugElement
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IRunToLine#runToLine(IResource, int)
 	 */
-	public void runToLine( IFile file, int lineNumber ) throws DebugException
+	public void runToLine( IFile file, int lineNumber, boolean skipBreakpoints ) throws DebugException
 	{
 		if ( !canRunToLine( file, lineNumber ) )
 			return;
-		runToLine( file.getLocation().lastSegment(), lineNumber );
+		runToLine( file.getLocation().lastSegment(), lineNumber, skipBreakpoints );
 	}
 
 	/* (non-Javadoc)
@@ -2111,10 +2118,13 @@ public class CDebugTarget extends CDebugElement
 	/**
 	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#runToLine(long)
 	 */
-	public void runToAddress( long address ) throws DebugException
+	public void runToAddress( long address, boolean skipBreakpoints ) throws DebugException
 	{
 		if ( !canRunToAddress( address ) )
 			return;
+		if ( skipBreakpoints ) {
+			getBreakpointManager().skipBreakpoints( true );
+		}
 		ICDILocation location = getCDISession().getBreakpointManager().createLocation( address );
 		try
 		{
@@ -2122,6 +2132,9 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
+			if ( skipBreakpoints ) {
+				getBreakpointManager().skipBreakpoints( false );
+			}
 			targetRequestFailed( e.getMessage(), e );
 		}
 	}

@@ -513,7 +513,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 				//Get file's dependencies
 				try {
 					IndexManager indexMan = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-					indexMan.performConcurrentJob(new DependencyQueryJob(project, (IFile)actualFile, indexMan, dependencies), ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null, null);
+		 		 		 		 		 indexMan.performConcurrentJob(new DependencyQueryJob(project, (IFile)actualFile, indexMan, dependencies), ICSearchConstants.FORCE_IMMEDIATE_SEARCH, null, null);
 				} catch (Exception e) {
 				}
 			}
@@ -529,8 +529,13 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false ));
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false ));
 		orPattern.addPattern(SearchEngine.createSearchPattern( prefix, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, false ));
-		searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector, true);
-		elementsFound.addAll(resultCollector.getSearchResults());
+		 		 
+		 		 try {
+		 		 		 searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector, true, ICSearchConstants.FORCE_IMMEDIATE_SEARCH);
+		 		 		 elementsFound.addAll(resultCollector.getSearchResults());
+		 		 } catch(Exception ex) {
+		 		 		 /* Ignore exception, there may be partial results collected */
+		 		 }
 
 		if((currentScope instanceof IMethod) || (currentScope instanceof IMethodDeclaration) ){
 			// add the methods and fields of the parent class

@@ -156,6 +156,10 @@ public class SearchEngine implements ICSearchConstants{
 	 * @param _collector
 	 */
 	public void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector, boolean excludeLocalDeclarations) {
+		 		 search(workspace, pattern, scope, collector, excludeLocalDeclarations, ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH);
+		 }
+		 
+		 public void search(IWorkspace workspace, ICSearchPattern pattern, ICSearchScope scope, ICSearchResultCollector collector, boolean excludeLocalDeclarations, int waitingPolicy) {
 		if( VERBOSE ) {
 			System.out.println("Searching for " + pattern + " in " + scope); //$NON-NLS-1$//$NON-NLS-2$
 		}
@@ -189,7 +193,7 @@ public class SearchEngine implements ICSearchConstants{
 					pathCollector,
 					indexManager
 				),
-			    ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+		 		 		     waitingPolicy,
 				subMonitor,
 				null );
 			

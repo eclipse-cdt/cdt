@@ -1,3 +1,10 @@
+2004-02-13 Bogdan Gheorghe
+	Thomas' patch: Modified CCompletionProcessor to use FORCE_IMMEDIATE_SEARCH
+	when requesting a dependency query/search.
+	
+	* src/org/eclipse/cdt/internal/ui/text/CCompletionProcessor.java
+	
+	
 2004-02-05 Alain Magloire
 	PR 51221
 	Reformat Patch from Bogdan base on Thomas Fletcher original patch

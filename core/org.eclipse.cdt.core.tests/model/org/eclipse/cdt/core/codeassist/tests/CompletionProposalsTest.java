@@ -58,6 +58,7 @@ public class CompletionProposalsTest  extends TestCase{
 	}
 		
 	protected void setUp() throws Exception {
+		(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
 		monitor = new NullProgressMonitor();
 		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
 	
@@ -79,8 +80,8 @@ public class CompletionProposalsTest  extends TestCase{
 		}
 
 		// use the new indexer
-		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
-		indexManager.reset();
+//		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+//		indexManager.reset();
 		
 	}
 
@@ -110,13 +111,15 @@ public class CompletionProposalsTest  extends TestCase{
 			Document document = new Document(buffer);
 			int pos = buffer.indexOf(" a ") + 2;
 			int length = 0;
-			CCompletionProcessor completionProcessor = new CCompletionProcessor(null);
-			ICompletionProposal[] results = completionProcessor.evalProposals(document, pos, length, tu);
 			try {
 				Thread.sleep(MAGIC_NUMBER);
 			} catch (InterruptedException e1) {
 				fail( "Bogdan's hack did not suffice");
 			}
+					
+			CCompletionProcessor completionProcessor = new CCompletionProcessor(null);
+			ICompletionProposal[] results = completionProcessor.evalProposals(document, pos, length, tu);
+		
 			assertEquals(results.length, 7);
 			for (int i = 0; i<results.length; i++){
 				ICompletionProposal proposal = results[i];

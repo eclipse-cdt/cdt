@@ -1,3 +1,10 @@
+2004-02-13 Bogdan Gheorghe
+    -Modified CompletionProposalsTest to reset the indexer thread at the
+     beginning of the test case - this means that the project will be indexed
+     as soon as it is created. Since completions now use FORCE_IMMEDIATE_SEARCH,
+     we have to give a bit of time to ensure that the project is indexed before
+     we try a query.
+     
 2004-01-29 John Camelon
 	Added ScannerTestCase::testBug50821().  
 

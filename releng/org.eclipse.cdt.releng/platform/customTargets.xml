@@ -41,12 +41,6 @@
 	</ant>
 </target>
 
-<target name="assemble.org.eclipse.cdt.macosx.*.ppc">
-	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
-		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-macosx.ppc.tar.gz"/>
-	</ant>
-</target>
-
 <target name="assemble.org.eclipse.cdt.qnx.*.x86">
 	<ant antfile="${assembleScriptName}" dir="${buildDirectory}">
 		<property name="archiveName" value="org.eclipse.cdt-${branchVersion}-${buildId}-qnx.x86.zip"/>

@@ -1,45 +1,45 @@
 ! Cross platform
 
-plugin@org.eclipse.cdt.core=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core
-plugin@org.eclipse.cdt.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui
+plugin@org.eclipse.cdt.core=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core
+plugin@org.eclipse.cdt.ui=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui
 
-plugin@org.eclipse.cdt.make.core=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.make.core
-plugin@org.eclipse.cdt.make.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.make.ui
+plugin@org.eclipse.cdt.make.core=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.make.core
+plugin@org.eclipse.cdt.make.ui=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.make.ui
 
-plugin@org.eclipse.cdt.managedbuilder.core=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.core
-plugin@org.eclipse.cdt.managedbuilder.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.ui
+plugin@org.eclipse.cdt.managedbuilder.core=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.core
+plugin@org.eclipse.cdt.managedbuilder.ui=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-build/org.eclipse.cdt.managedbuilder.ui
 
-plugin@org.eclipse.cdt.debug.core=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.core
-plugin@org.eclipse.cdt.debug.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui
+plugin@org.eclipse.cdt.debug.core=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.core
+plugin@org.eclipse.cdt.debug.ui=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui
 
-plugin@org.eclipse.cdt.debug.mi.core=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.mi.core
-plugin@org.eclipse.cdt.debug.mi.ui=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.mi.ui
+plugin@org.eclipse.cdt.debug.mi.core=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.mi.core
+plugin@org.eclipse.cdt.debug.mi.ui=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.mi.ui
 
-plugin@org.eclipse.cdt.launch=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-launch/org.eclipse.cdt.launch
+plugin@org.eclipse.cdt.launch=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-launch/org.eclipse.cdt.launch
 
-plugin@org.eclipse.cdt.doc.user=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-doc/org.eclipse.cdt.doc.user
+plugin@org.eclipse.cdt.doc.user=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-doc/org.eclipse.cdt.doc.user
 
-plugin@org.eclipse.cdt=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt
-feature@org.eclipse.cdt=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt-feature
+plugin@org.eclipse.cdt=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt
+feature@org.eclipse.cdt=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt-feature
 
 ! Platform specific
 
-fragment@org.eclipse.cdt.core.aix=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.aix
-fragment@org.eclipse.cdt.core.linux=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux
-fragment@org.eclipse.cdt.core.macosx=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.macosx
-fragment@org.eclipse.cdt.core.qnx=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.qnx
-fragment@org.eclipse.cdt.core.solaris=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.solaris
-fragment@org.eclipse.cdt.core.win32=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.win32
+fragment@org.eclipse.cdt.core.aix=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.aix
+fragment@org.eclipse.cdt.core.linux=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.linux
+fragment@org.eclipse.cdt.core.qnx=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.qnx
+fragment@org.eclipse.cdt.core.solaris=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.solaris
+fragment@org.eclipse.cdt.core.win32=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.win32
 
 ! Testing feature
 
-plugin@org.eclipse.cdt.core.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.tests
-plugin@org.eclipse.cdt.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui.tests
-plugin@org.eclipse.cdt.debug.ui.tests=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui.tests
-plugin@org.eclipse.cdt.testing=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing
-feature@org.eclipse.cdt.testing=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing-feature
+plugin@org.eclipse.cdt.core.tests=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.core.tests
+plugin@org.eclipse.cdt.ui.tests=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-core/org.eclipse.cdt.ui.tests
+plugin@org.eclipse.cdt.debug.ui.tests=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-debug/org.eclipse.cdt.debug.ui.tests
+plugin@org.eclipse.cdt.testing=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing
+feature@org.eclipse.cdt.testing=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.testing-feature
 
 ! SDK Feature
 
-plugin@org.eclipse.cdt.sdk=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.sdk
-feature@org.eclipse.cdt.sdk=HEAD,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.sdk-feature
+plugin@org.eclipse.cdt.sdk=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.sdk
+feature@org.eclipse.cdt.sdk=cdt_2_0,:pserver:anonymous@dev.eclipse.org:/home/tools,,org.eclipse.cdt-releng/org.eclipse.cdt.sdk-feature
+xs

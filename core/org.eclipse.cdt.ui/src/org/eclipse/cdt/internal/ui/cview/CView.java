@@ -34,6 +34,7 @@ import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -42,6 +43,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -134,8 +136,6 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 
 	// Actions for Menu context.
 	AddBookmarkAction addBookmarkAction;
-	//BuildAction buildAction;
-	//BuildAction rebuildAction;
 	CopyResourceAction copyResourceAction;
 	DeleteResourceAction deleteResourceAction;
 	OpenFileAction openFileAction;
@@ -816,15 +816,29 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		}
 		
 		menu.add(new GroupMarker(BUILD_GROUP_MARKER));
+		if (resource instanceof IProject && hasBuilder((IProject) resource)) {
+			buildAction.selectionChanged(selection);
+			menu.add(buildAction);
+			rebuildAction.selectionChanged(selection);
+			menu.add(rebuildAction);
+		}
 		
-		//if (resource instanceof IProject) {
-			// Allow manual incremental build only if auto build is off.
-			//if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-				//menu.add(buildAction);
-			//}
-		//}
 		menu.add(new GroupMarker(BUILD_GROUP_MARKER_END));
 	}
+	
+	boolean hasBuilder(IProject project) {
+		try {
+			ICommand[] commands = project.getDescription().getBuildSpec();
+			if (commands.length > 0)
+				return true;
+		}
+		catch (CoreException e) {
+			// Cannot determine if project has builders. Project is closed 
+			// or does not exist. Fall through to return false.
+		}
+		return false;
+	}
+
 
 	void addRefreshMenu (IMenuManager menu, IStructuredSelection selection) {
 		menu.add(refreshAction);

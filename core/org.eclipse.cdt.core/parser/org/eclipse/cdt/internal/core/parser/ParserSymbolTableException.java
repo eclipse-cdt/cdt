@@ -36,9 +36,11 @@ public class ParserSymbolTableException extends Exception {
 		reason = r;
 	}
 
-	public static final int r_Unspecified   = -1;
-	public static final int r_AmbiguousName =  0;
-	public static final int r_BadTypeInfo   =  1;
+	public static final int r_Unspecified   			= -1;
+	public static final int r_AmbiguousName 			=  0;
+	public static final int r_BadTypeInfo   			=  1;
+	public static final int r_CircularInheritance	=  2;
+	public static final int r_InvalidOverload		=  3;
 	
 	public int reason = -1;
 }

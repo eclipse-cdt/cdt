@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Iterator;
 
 /**
  * @author aniefer
@@ -24,7 +25,7 @@ import java.util.Map;
  * Window>Preferences>Java>Code Generation.
  */
 
-public class Declaration {
+public class Declaration implements Cloneable {
 
 	/**
 	 * Constructor for Declaration.
@@ -42,6 +43,40 @@ public class Declaration {
 		_object = obj;
 	}
 
+	/**
+	 * clone
+	 * @see java.lang.Object#clone()
+	 * 
+	 * implement clone for the purposes of using declarations.
+	 * int   		_typeInfo;				//by assignment
+	 * String 		_name;					//by assignment
+	 * Object 		_object;				//null this out
+	 * Declaration	_typeDeclaration;		//by assignment
+	 * Declaration	_containingScope;		//by assignment
+	 * LinkedList 	_parentScopes;			//shallow copy
+	 * LinkedList 	_usingDirectives;		//shallow copy
+	 * HashMap		_containedDeclarations;	//shallow copy
+	 * int 			_depth;					//by assignment
+	 */
+	public Object clone(){
+		Declaration copy = null;
+		try{
+			copy = (Declaration)super.clone();
+		}
+		catch ( CloneNotSupportedException e ){
+			//should not happen
+			return null;
+		}
+		
+		copy._object = null;
+		copy._parentScopes          = ( _parentScopes != null ) ? (LinkedList) _parentScopes.clone() : null;
+		copy._usingDirectives       = ( _usingDirectives != null ) ? (LinkedList) _usingDirectives.clone() : null; 
+		copy._containedDeclarations = ( _containedDeclarations != null ) ? (HashMap) _containedDeclarations.clone() : null;
+		copy._parameters            = ( _parameters != null ) ? (LinkedList) _parameters.clone() : null;
+		
+		return copy;	
+	}
+	
 	public static final int typeMask   = 0x001f;
 	public static final int isAuto     = 0x0020;
 	public static final int isRegister = 0x0040;
@@ -112,7 +147,7 @@ public class Declaration {
 	public static final int t_class       =  2;
 	public static final int t_struct      =  3;
 	public static final int t_union       =  4;
-	public static final int t_enum        =  5;
+	public static final int t_enumeration =  5;
 	public static final int t_function    =  6;
 	public static final int t_char        =  7;
 	public static final int t_wchar_t     =  8;
@@ -169,13 +204,6 @@ public class Declaration {
 	}
 	
 	public void setTypeDeclaration( Declaration type ){
-		//setting our type to a declaration implies we are type t_type
-		try { 
-			setType( t_type ); 
-		} catch (ParserSymbolTableException e) { 
-			/*will never happen*/ 
-		}
-		
 		_typeDeclaration = type; 
 	}
 	
@@ -217,6 +245,93 @@ public class Declaration {
 		return _parentScopes;
 	}
 	
+	public boolean needsDefinition(){
+		return _needsDefinition;
+	}
+	public void setNeedsDefinition( boolean need ) {
+		_needsDefinition = need;
+	}
+	
+	public String getCVQualifier(){
+		return _cvQualifier;
+	}
+	
+	public void setCVQualifier( String cv ){
+		_cvQualifier = cv;
+	}
+	
+	public String getPtrOperator(){
+		return _ptrOperator;
+	}
+	public void setPtrOperator( String ptrOp ){
+		_ptrOperator = ptrOp;
+	}
+	
+	public int getReturnType(){
+		return _returnType;
+	}
+	
+	public void setReturnType( int type ){
+		_returnType = type;
+	}
+	
+	public void addParameter( Declaration typeDecl, String ptrOperator, boolean hasDefault ){
+		if( _parameters == null ){
+			_parameters = new LinkedList();
+		}
+		
+		ParameterInfo info = new ParameterInfo();
+		info.typeInfo = t_type;
+		info.typeDeclaration = typeDecl;
+		info.ptrOperator = ptrOperator;
+		info.hasDefaultValue = hasDefault;
+				
+		_parameters.add( info );
+	}
+	
+	public void addParameter( int type, String ptrOperator, boolean hasDefault ){
+		if( _parameters == null ){
+			_parameters = new LinkedList();
+		}
+		
+		ParameterInfo info = new ParameterInfo();
+		info.typeInfo = type;
+		info.typeDeclaration = null;
+		info.ptrOperator = ptrOperator;
+		info.hasDefaultValue = hasDefault;
+				
+		_parameters.add( info );
+	}
+	
+	public boolean hasSameParameters( Declaration function ){
+		if( function.getType() != getType() ){
+			return false;	
+		}
+		
+		int size = _parameters.size();
+		if( function._parameters.size() != size ){
+			return false;
+		}
+		
+		Iterator iter = _parameters.iterator();
+		Iterator fIter = function._parameters.iterator();
+		
+		ParameterInfo info = null;
+		ParameterInfo fInfo = null;
+		
+		for( int i = size; i > 0; i-- ){
+			info = (ParameterInfo) iter.next();
+			fInfo = (ParameterInfo) fIter.next();
+			
+			if( !info.equals( fInfo ) ){
+				return false;
+			}
+		}
+		
+			
+		return true;
+	}
+	
 	// Convenience methods
 	private void setBit(boolean b, int mask){
 		if( b ){
@@ -234,11 +349,16 @@ public class Declaration {
 	private 	String 		_name;					//our name
 	private	Object 		_object;				//the object associated with us
 	private 	Declaration	_typeDeclaration;		//our type if _typeInfo says t_type
-	
+	private	boolean	_needsDefinition;		//this name still needs to be defined
+	private	String		_cvQualifier;
+	private	String		_ptrOperator;
 	protected	Declaration	_containingScope;		//the scope that contains us
 	protected	LinkedList 	_parentScopes;			//inherited scopes (is base classes)
 	protected	LinkedList 	_usingDirectives;		//collection of nominated namespaces
-	protected	Map    		_containedDeclarations;	//declarations contained by us.
+	protected	HashMap 	_containedDeclarations;	//declarations contained by us.
+	
+	protected LinkedList	_parameters;			//parameter list
+	protected int			_returnType;			
 	
 	protected	int 		_depth;					//how far down the scope stack we are
 		
@@ -253,4 +373,26 @@ public class Declaration {
 		public Declaration parent = null;
 	}
 	
+	public class ParameterInfo
+	{
+		public ParameterInfo() {}
+		public ParameterInfo( int t, Declaration decl, String ptr, boolean def ){
+			typeInfo = t;
+			typeDeclaration = decl;
+			ptrOperator = ptr;
+			hasDefaultValue = def;
+		}
+		
+		public boolean equals( ParameterInfo obj ){
+			return	( hasDefaultValue == obj.hasDefaultValue ) &&
+				    ( typeInfo == obj.typeInfo ) &&
+				    ( typeDeclaration == obj.typeDeclaration ) &&
+				    ( ptrOperator.equals( obj.ptrOperator ) );
+		}
+		
+		public boolean	hasDefaultValue;
+		public int		typeInfo;
+		public Declaration	typeDeclaration;
+		public String		ptrOperator;
+	}
 }

@@ -1,3 +1,11 @@
+2003-03-20 Andrew Niefer
+	Parser Symbol Table updates for:
+	* friends
+	* "this" pointer
+	* enumerators
+	* Argument dependent lookup
+	* adding parameters to functions & function overloading
+	
 2003-03-19	John Camelon
 	Updated Parser method visibility to solidify external interface.  
 	Solved and removed TODO's from Scanner implementation.

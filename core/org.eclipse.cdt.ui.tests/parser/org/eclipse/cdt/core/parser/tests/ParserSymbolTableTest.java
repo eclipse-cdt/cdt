@@ -12,6 +12,7 @@
 package org.eclipse.cdt.core.parser.tests;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -244,6 +245,33 @@ public class ParserSymbolTableTest extends TestCase {
 	}	
 	
 	/**
+	 * 
+	 * @throws Exception
+	 * test for circular inheritance 
+	 */
+	public void testCircularParentLookup() throws Exception{
+		newTable();
+		
+		Declaration a = new Declaration("a");
+		table.addDeclaration( a );
+		
+		Declaration b = new Declaration("b");
+		table.addDeclaration(b);
+		
+		a.addParent( b );
+		b.addParent( a );
+		
+		table.push( a );
+		 
+		try{
+			Declaration look = table.Lookup("foo");
+			assertTrue( false );
+		} catch ( ParserSymbolTableException e) {
+			assertEquals( e.reason, ParserSymbolTableException.r_CircularInheritance );
+		}
+		
+	}
+	/**
 	 * testVirtualParentLookup
 	 * 
 	 * @throws Exception
@@ -320,7 +348,7 @@ public class ParserSymbolTableTest extends TestCase {
 			assertTrue( false );
 		}
 		catch( ParserSymbolTableException e){
-			assertTrue( true );
+			assertEquals( e.reason, ParserSymbolTableException.r_AmbiguousName );
 		}
 	}
 	
@@ -351,7 +379,10 @@ public class ParserSymbolTableTest extends TestCase {
 		table.addDeclaration( d );
 		
 		Declaration enum = new Declaration("enum");
-		enum.setType( Declaration.t_enumerator );
+		enum.setType( Declaration.t_enumeration );
+		
+		Declaration enumerator = new Declaration( "enumerator" );
+		enumerator.setType( Declaration.t_enumerator );
 		
 		Declaration stat = new Declaration("static");
 		stat.setStatic(true);
@@ -360,6 +391,9 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		table.push(d);
 		table.addDeclaration( enum );
+		table.push( enum );
+		table.addDeclaration( enumerator );
+		table.pop();
 		table.addDeclaration( stat );
 		table.addDeclaration( x );
 		table.pop();
@@ -371,7 +405,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		table.push( a );
 		try{
-			table.Lookup( "enum" );
+			table.Lookup( "enumerator" );
 			assertTrue( true );	
 		}
 		catch ( ParserSymbolTableException e){
@@ -391,7 +425,7 @@ public class ParserSymbolTableTest extends TestCase {
 			assertTrue( false );	
 		}
 		catch ( ParserSymbolTableException e){
-			assertTrue( true );
+			assertEquals( e.reason, ParserSymbolTableException.r_AmbiguousName );
 		}
 	}
 	
@@ -474,46 +508,6 @@ public class ParserSymbolTableTest extends TestCase {
 		table.push(type);
 		look = table.Lookup("member");
 		assertEquals( look, member );
-	}
-	
-	/**
-	 * testFunctions
-	 * @throws Exception
-	 * Functions are stored by signature. Where the signature can really be of
-	 * any for you like, as long as it can't possibly be a regular name (ie
-	 * including the parenthese is good...)
-	 * So lookup of function names proceeds inthe same manner as normal names,
-	 * this test doesn't really test anything new
-	 */
-	
-	public void testFunctions() throws Exception{
-		newTable();
-		
-		Declaration cls = new Declaration( "class");
-		Declaration f1 = new Declaration("foo()");
-		Declaration f2 = new Declaration("foo(int)");
-		Declaration f3 = new Declaration("foo(int,char)");
-		
-		table.addDeclaration(cls);
-		table.push(cls);
-		
-		table.addDeclaration( f1 );
-		table.addDeclaration( f2 );
-		table.addDeclaration( f3 );
-		
-		//return type can be specified by setting the TypeDeclaration
-		Declaration returnType = new Declaration("return");
-		f1.setTypeDeclaration( returnType );
-		f2.setTypeDeclaration( returnType );
-		f3.setTypeDeclaration( returnType );
-		
-		assertEquals( table.Lookup("foo()"), f1 );
-		assertEquals( table.Lookup("foo(int)"), f2 );
-		assertEquals( table.Lookup("foo(int,char)"), f3 );
-		
-		//notice that, with the current implementation, you can't do a lookup
-		//on just the function name without the rest of the signature
-		assertEquals( table.Lookup("foo"), null );
 	}
 	
 	/**
@@ -649,7 +643,8 @@ public class ParserSymbolTableTest extends TestCase {
 		}
 		catch ( ParserSymbolTableException e )
 		{
-			assertTrue(true); //ambiguous B::C::i and A::i
+			//ambiguous B::C::i and A::i
+			assertEquals( e.reason, ParserSymbolTableException.r_AmbiguousName );
 		}
 		table.pop(); //end f2
 		table.pop(); //end nsD
@@ -732,7 +727,8 @@ public class ParserSymbolTableTest extends TestCase {
 		}
 		catch ( ParserSymbolTableException e )
 		{
-			assertTrue( true );		//ambiguous, both M::i and N::i are visible.
+			//ambiguous, both M::i and N::i are visible.
+			assertEquals( e.reason, ParserSymbolTableException.r_AmbiguousName );
 		}
 		
 		look = table.LookupNestedNameSpecifier("N");
@@ -1025,9 +1021,551 @@ public class ParserSymbolTableTest extends TestCase {
 		try{
 			look = table.QualifiedLookup( "y" );
 			assertTrue(false);
-		} catch ( Exception e ) {
-			assertTrue(true);
+		} catch ( ParserSymbolTableException e ) {
+			assertEquals( e.reason, ParserSymbolTableException.r_AmbiguousName );
 		}
 	}
 	
+	/**
+	 * In a definition for a namespace member in which the declarator-id is a
+	 * qualified-id, given that the qualified-id for the namespace member has
+	 * the form "nested-name-specifier unqualified-id", the unqualified-id shall
+	 * name a member of the namespace designated by the nested-name-specifier.
+	 * 
+	 * namespace A{    
+	 *    namespace B{       
+	 *       void  f1(int);    
+	 *    }  
+	 *    using  namespace B; 
+	 * }
+	 * void A::f1(int) { ... } //ill-formed, f1 is not a member of A
+	 */
+	public void testLookupMemberForDefinition() throws Exception{
+		newTable();
+	
+		Declaration nsA = new Declaration( "A" );
+		nsA.setType( Declaration.t_namespace );
+		table.addDeclaration( nsA );
+		table.push( nsA );
+	
+		Declaration nsB = new Declaration( "B" );
+		nsB.setType( Declaration.t_namespace );
+		table.addDeclaration( nsB );
+		table.push( nsB );
+	
+		Declaration f1 = new Declaration("f1");
+		f1.setType( Declaration.t_function );
+		table.addDeclaration( f1 );
+	
+		table.pop();
+	
+		table.addUsingDirective( nsB );
+		table.pop();
+	
+		Declaration look = table.LookupNestedNameSpecifier( "A" );
+		assertEquals( nsA, look );
+		table.push( look );
+	
+		look = table.LookupMemberForDefinition( "f1" );
+		assertEquals( look, null );
+	
+		//but notice if you wanted to do A::f1 as a function call, it is ok
+		look = table.QualifiedLookup( "f1" );
+		assertEquals( look, f1 );
+	}
+	
+	/**
+	 * testUsingDeclaration
+	 * @throws Exception
+	 * 7.3.3-4 A using-declaration used as a member-declaration shall refer to a
+	 * member of a base-class of the class being defined, shall refer to a
+	 * member of an anonymous union that is a member of a base class of the
+	 * class being defined or shall refer to an enumerator for an enumeration
+	 * type that is a member of a base class of the class being defined
+	 *
+	 * struct B {
+	 *    void f( char );
+	 *    enum E { e };
+	 *    union { int x; };
+	 * };
+	 * class C {
+	 *	  int g();
+	 * }
+	 * struct D : B {
+	 *    using B::f;	//ok, B is a base class of D
+	 *    using B::e;   //ok, e is an enumerator in base class B
+	 *    using B::x;   //ok, x is an union member of base class B
+	 *    using C::g;   //error, C isn't a base class of D
+	 * }
+	 */
+	public void testUsingDeclaration() throws Exception{
+		newTable();
+		
+		Declaration B = new Declaration("B");
+		B.setType( Declaration.t_struct );
+		table.addDeclaration( B );
+		table.push( B );
+		
+		Declaration f = new Declaration("f");
+		f.setType( Declaration.t_function );
+		table.addDeclaration( f );
+	
+		Declaration E = new Declaration( "E" );
+		E.setType( Declaration.t_enumeration );
+		table.addDeclaration( E );
+		
+		table.push( E );
+		Declaration e = new Declaration( "e" );
+		e.setType( Declaration.t_enumerator );
+		table.addDeclaration( e );
+		table.pop();
+		
+		//TBD: Anonymous unions are not yet implemented
+		
+		table.pop();
+		
+		Declaration C = new Declaration( "C" );
+		C.setType( Declaration.t_class );
+		table.addDeclaration( C );
+		
+		table.push( C );
+		Declaration g = new Declaration( "g" );
+		g.setType( Declaration.t_function );
+		table.addDeclaration( g );
+		table.pop();
+		
+		Declaration D = new Declaration( "D" );
+		D.setType( Declaration.t_struct );
+		Declaration look = table.Lookup( "B" );
+		assertEquals( look, B );
+		D.addParent( look );
+		
+		table.addDeclaration( D );
+		table.push( D );
+		
+		Declaration lookB = table.LookupNestedNameSpecifier("B");
+		assertEquals( lookB, B );
+		table.push( lookB );
+		look = table.QualifiedLookup( "f" );
+		table.pop();
+		
+		assertEquals( look, f );
+		table.addUsingDeclaration( look );
+		
+		table.push( lookB );
+		look = table.QualifiedLookup( "e" );
+		table.pop();
+		assertEquals( look, e );
+		table.addUsingDeclaration( look );
+		  
+		//TBD anonymous union
+		//table.push( lookB );
+		//look = table.QualifiedLookup( "x")
+		//table.pop();
+		//table.addUsingDeclaration( look );
+		
+		look = table.LookupNestedNameSpecifier("C");
+		assertEquals( look, C );
+		table.push( look );
+		look = table.QualifiedLookup("g");
+		table.pop();
+		assertEquals( look, g );
+		
+		try{
+			table.addUsingDeclaration( look );
+			assertTrue( false );
+		}
+		catch ( ParserSymbolTableException exception ){
+			assertTrue( true );
+		}
+	}
+	
+	/**
+	 * testUsingDeclaration_2
+	 * @throws Exception
+	 * 7.3.3-9 The entity declared by a using-declaration shall be known in the
+	 * context using it according to its definition at the point of the using-
+	 * declaration.  Definitions added to the namespace after the using-
+	 * declaration are not considered when a use of the name is made.
+	 * 
+	 * namespace A {
+	 *     void f(int);
+	 * }
+	 * using A::f;
+	 * 
+	 * namespace A {
+	 * 	   void f(char);
+	 * }
+	 * void foo(){
+	 * 	  f('a');    //calls f( int )
+	 * }
+	 * void bar(){
+	 * 	  using A::f;
+	 * 	  f('a');    //calls f( char );
+	 * }	
+	 *
+	 * TBD: we need to support using declarations for overloaded functions.
+	 * TBD: function overload resolution is not done yet, so the call to f in
+	 * bar() can't be tested yet.
+	 */
+	public void testUsingDeclaration_2() throws Exception{
+		newTable();
+		
+		Declaration A = new Declaration( "A" );
+		A.setType( Declaration.t_namespace );
+		table.addDeclaration( A );
+		
+		table.push( A );
+		
+		Declaration f1 = new Declaration( "f" );
+		f1.setType( Declaration.t_function );
+		f1.setReturnType( Declaration.t_void );
+		f1.addParameter( Declaration.t_int, "", false );
+		table.addDeclaration( f1 );
+		
+		table.pop();
+		
+		Declaration look = table.LookupNestedNameSpecifier("A");
+		assertEquals( look, A );
+		table.push( A );
+		look = table.QualifiedLookup("f");
+		assertEquals( look, f1 );
+		table.pop();
+		
+		Declaration usingF = table.addUsingDeclaration( look );
+		
+		look = table.Lookup("A");
+		assertEquals( look, A );
+		
+		table.push( look );
+		Declaration f2 = new Declaration("f");
+		f2.setType( Declaration.t_function );
+		f2.setReturnType( Declaration.t_void );
+		f2.addParameter( Declaration.t_char, "", false );
+		
+		table.addDeclaration( f2 );
+		
+		table.pop();
+		
+		Declaration foo = new Declaration("foo");
+		foo.setType( Declaration.t_function );
+		table.addDeclaration( foo );
+		table.push( foo );
+		LinkedList paramList = new LinkedList();
+		Declaration.ParameterInfo param = foo.new ParameterInfo();
+		param.typeInfo = Declaration.t_char;
+		paramList.add( param );
+		
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, usingF );
+		
+	}
+	
+	/**
+	 * testThisPointer
+	 * @throws Exception
+	 * In the body of a nonstatic member function... the type of this of a class
+	 * X is X*.  If the member function is declared const, the type of this is
+	 * const X*, if the member function is declared volatile, the type of this
+	 * is volatile X*....
+	 */
+	public void testThisPointer() throws Exception{
+		newTable();
+		
+		Declaration cls = new Declaration("class");
+		cls.setType( Declaration.t_class );
+		
+		Declaration fn = new Declaration("function");
+		fn.setType( Declaration.t_function );
+		fn.setCVQualifier("const");
+		
+		table.addDeclaration( cls );
+		table.push( cls );
+		
+		table.addDeclaration( fn );
+		table.push( fn );
+		
+		Declaration look = table.Lookup("this");
+		assertTrue( look != null );
+		
+		assertEquals( look.getType(), Declaration.t_type );
+		assertEquals( look.getTypeDeclaration(), cls );
+		assertEquals( look.getPtrOperator(), "*" );
+		assertEquals( look.getCVQualifier(), fn.getCVQualifier() );
+		assertEquals( look.getContainingScope(), fn );
+	}
+	
+	/**
+	 * testEnumerator
+	 * @throws Exception
+	 * Following the closing brace of an enum-specifier, each enumerator has the
+	 * type of its enumeration.
+	 * The enum-name and each enumerator declared by an enum-specifier is
+	 * declared in the scope that immediately contains the enum-specifier
+	 */
+	public void testEnumerator() throws Exception{
+		newTable();
+		
+		Declaration cls = new Declaration("class");
+		cls.setType( Declaration.t_class );
+		
+		Declaration enumeration = new Declaration("enumeration");
+		enumeration.setType( Declaration.t_enumeration );
+		
+		table.addDeclaration( cls );
+		table.push( cls );
+		table.addDeclaration( enumeration );
+		table.push( enumeration );
+		
+		Declaration enumerator = new Declaration( "enumerator" );
+		enumerator.setType( Declaration.t_enumerator );
+		table.addDeclaration( enumerator );
+		
+		table.pop();
+		
+		Declaration look = table.Lookup( "enumerator" );
+		assertEquals( look, enumerator );
+		assertEquals( look.getContainingScope(), cls );
+		assertEquals( look.getTypeDeclaration(), enumeration );
+	}
+
+	/**
+	 * 
+	 * @throws Exception
+	 * 
+	 * namespace NS{
+	 *    class T {};
+	 *    void f( T );
+	 * }
+	 * NS::T parm;
+	 * int main(){
+	 *    f( parm );   //ok, calls NS::f
+	 * }
+	 */
+	public void testArgumentDependentLookup() throws Exception{
+		newTable();
+		
+		Declaration NS = new Declaration("NS");
+		NS.setType( Declaration.t_namespace );
+		
+		table.addDeclaration( NS );
+		table.push( NS );
+		
+		Declaration T = new Declaration("T");
+		T.setType( Declaration.t_class );
+		
+		table.addDeclaration( T );
+		
+		Declaration f = new Declaration("f");
+		f.setType( Declaration.t_function );
+		f.setReturnType( Declaration.t_void );
+		
+		Declaration look = table.Lookup( "T" );
+		assertEquals( look, T );				
+		f.addParameter( look, "", false );
+		
+		table.addDeclaration( f );	
+		
+		table.pop(); //done NS
+				
+		look = table.LookupNestedNameSpecifier( "NS" );
+		assertEquals( look, NS );
+		table.push( look );
+		look = table.QualifiedLookup( "T" );
+		assertEquals( look, T );
+		table.pop();
+		
+		Declaration param = new Declaration("parm");
+		param.setType( Declaration.t_type );
+		param.setTypeDeclaration( look );
+		table.addDeclaration( param );
+		
+		Declaration main = new Declaration("main");
+		main.setType( Declaration.t_function );
+		main.setReturnType( Declaration.t_int );
+		table.addDeclaration( main );
+		table.push( main );
+		
+		LinkedList paramList = new LinkedList();
+		look = table.Lookup( "parm" );
+		assertEquals( look, param );
+		
+		Declaration.ParameterInfo p = look.new ParameterInfo();
+		p.typeInfo = look.getType();
+		p.typeDeclaration = look.getTypeDeclaration();
+		
+		paramList.add( p );
+		
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f );
+	}
+	
+	/**
+	 * testArgumentDependentLookup_2
+	 * @throws Exception
+	 * in the following, NS2 is an associated namespace of class B which is an
+	 * associated namespace of class A, so we should find f in NS2, we should
+	 * not find f in NS1 because usings are ignored for associated scopes.
+	 * 
+	 *
+	 * namespace NS1{
+	 *    void f( void * ){}; 
+	 * } 
+	 * namespace NS2{
+	 *	  using namespace NS1;
+	 * 	  class B {};
+	 *	  void f( void * ){}; 
+	 * }
+	 * 
+	 * class A : public NS2::B {};
+	 *
+	 * A a;
+	 * f( &a );
+	 *    
+	 */
+	public void testArgumentDependentLookup_2() throws Exception{
+		newTable();
+		
+		Declaration NS1 = new Declaration( "NS1" );
+		NS1.setType( Declaration.t_namespace );
+		 
+		table.addDeclaration( NS1 );
+		table.push( NS1 );
+		
+		Declaration f1 = new Declaration( "f" );
+		f1.setType( Declaration.t_function );
+		f1.setReturnType( Declaration.t_void );
+		f1.addParameter( Declaration.t_void, "*", false );
+		table.addDeclaration( f1 );
+		table.pop();
+		
+		Declaration NS2 = new Declaration( "NS2" );
+		NS2.setType( Declaration.t_namespace );
+		
+		table.addDeclaration( NS2 );
+		table.push( NS2 );
+		
+		Declaration look = table.Lookup( "NS1" );
+		assertEquals( look, NS1 );
+		table.addUsingDirective( look );
+		
+		Declaration B = new Declaration( "B" );
+		B.setType( Declaration.t_class );
+		table.addDeclaration( B );
+		
+		Declaration f2 = new Declaration( "f" );
+		f2.setType( Declaration.t_function );
+		f2.setReturnType( Declaration.t_void );
+		f2.addParameter( Declaration.t_void, "*", false );
+		table.addDeclaration( f2 );
+		table.pop();
+		
+		Declaration A = new Declaration( "A" );
+		A.setType( Declaration.t_class );
+		look = table.LookupNestedNameSpecifier( "NS2" );
+		assertEquals( look, NS2 );
+		table.push( look );
+		look = table.QualifiedLookup( "B" );
+		assertEquals( look, B );
+		A.addParent( look );
+		
+		table.addDeclaration( A );
+		
+		look = table.Lookup( "A" );
+		assertEquals( look, A );
+		Declaration a = new Declaration( "a" );
+		a.setType( Declaration.t_type );
+		a.setTypeDeclaration( look );
+		table.addDeclaration( a );
+		
+		LinkedList paramList = new LinkedList();
+		look = table.Lookup( "a" );
+		assertEquals( look, a );
+		Declaration.ParameterInfo param = look.new ParameterInfo( look.getType(), look, "&", false );
+		paramList.add( param );
+		
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f2 );
+	}
+	
+	/**
+	 * testFunctionOverloading
+	 * @throws Exception
+	 * Note that this test has been contrived to not strain the resolution as
+	 * that aspect is not yet complete.
+	 * 
+	 * class C
+	 * {   
+	 *    void foo( int i );
+	 *    void foo( int i, char c );
+	 *    void foo( int i, char c, C * ptr ); 
+	 * }
+	 *
+	 * C * c = new C;
+	 * c->foo( 1 );
+	 * c->foo( 1, 'a' );
+	 * c->foo( 1, 'a', c );
+	 * 
+	 */
+	
+	public void testFunctionOverloading() throws Exception{
+		newTable();
+		
+		Declaration C = new Declaration( "C" );
+		
+		table.addDeclaration(C);
+		table.push(C);
+				
+		Declaration f1 = new Declaration("foo");
+		f1.setType( Declaration.t_function );
+		f1.setReturnType( Declaration.t_void );
+		f1.addParameter( Declaration.t_int, "", false );
+		table.addDeclaration( f1 );
+		
+		Declaration f2 = new Declaration("foo");
+		f2.setType( Declaration.t_function );
+		f2.setReturnType( Declaration.t_void );
+		f2.addParameter( Declaration.t_int, "", false );
+		f2.addParameter( Declaration.t_char, "", false );
+		table.addDeclaration( f2 );
+		
+		Declaration f3 = new Declaration("foo");
+		f3.setType( Declaration.t_function );
+		f3.setReturnType( Declaration.t_void );
+		f3.addParameter( Declaration.t_int, "", false );
+		f3.addParameter( Declaration.t_char, "", false );
+		f3.addParameter( C, "*", false );
+		table.addDeclaration( f3 );
+		table.pop();
+		
+		Declaration look = table.Lookup("C");
+		assertEquals( look, C );
+		
+		Declaration c = new Declaration("c");
+		c.setType( Declaration.t_class );
+		c.setTypeDeclaration( look );
+		table.addDeclaration( c );
+		
+		look = table.Lookup( "c" );
+		assertEquals( look, c );
+		assertEquals( look.getTypeDeclaration(), C );
+		table.push( look.getTypeDeclaration() );
+		
+		LinkedList paramList = new LinkedList();
+		Declaration.ParameterInfo p1 = c.new ParameterInfo(Declaration.t_int, null, "", false);
+		Declaration.ParameterInfo p2 = c.new ParameterInfo(Declaration.t_char, null, "", false);
+		Declaration.ParameterInfo p3 = c.new ParameterInfo(Declaration.t_class, C, "", false);
+		
+		paramList.add( p1 );
+		look = table.MemberFunctionLookup( "foo", paramList );
+		assertEquals( look, f1 );
+		
+		paramList.add( p2 );
+		look = table.MemberFunctionLookup( "foo", paramList );
+		assertEquals( look, f2 );
+				
+		paramList.add( p3 );
+		look = table.MemberFunctionLookup( "foo", paramList );
+		assertEquals( look, f3 );
+	}
 }

@@ -528,8 +528,10 @@ public class CompletionEngine implements RelevanceConstants {
 		// completing on a type
 		// 1. Get the search scope node
 		IASTScope searchNode = completionNode.getCompletionScope();
-		// if the prefix is not empty
-		if(completionNode.getCompletionPrefix().length() > 0 ) {
+		// if the prefix is not empty, or we have a context
+		if(completionNode.getCompletionPrefix().length() > 0 ||
+		   completionNode.getCompletionContext() != null ) 
+		{
 			// 2. Lookup all types that could be used here
 			ILookupResult result;
 			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[4];

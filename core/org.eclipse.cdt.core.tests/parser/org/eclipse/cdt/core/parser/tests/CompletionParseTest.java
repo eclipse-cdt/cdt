@@ -1037,4 +1037,16 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertEquals( node.getCompletionKind(), CompletionKind.SINGLE_NAME_REFERENCE );
 		
 	}
+	
+	public void testBug62344() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( " namespace Foo{  class bar{}; }     ");
+		writer.write( " void main() {                      ");
+		writer.write( "    Foo::bar * foobar = new Foo::SP ");
+		
+		String code = writer.toString();
+		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) );
+		assertEquals( node.getCompletionKind(), CompletionKind.NEW_TYPE_REFERENCE );
+	}
 }

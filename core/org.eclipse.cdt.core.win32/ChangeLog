@@ -1,3 +1,15 @@
+2003-02-25 Alex Chapiro
+
+	Fix for this type of problem:
+		make CFLAGS="-D jek "
+	
+	* os/win32/x86/spawner.dll: Rebuild
+	* os/win32/x86/starter.exe: Rebuild
+	* src/library/starter/starter.cpp:
+	Fix problem with embedded quotation
+	* src/library/Win32ProcessEx.c:
+	Fix problem with embedded quotation.
+
 2003-01-27 Alex Chapiro
 
 	* os/win32/x86/spawner.dll: Rebuild

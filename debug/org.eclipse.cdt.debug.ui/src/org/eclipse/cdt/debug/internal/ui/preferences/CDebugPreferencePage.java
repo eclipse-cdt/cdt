@@ -17,12 +17,13 @@ import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -299,7 +300,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 					if ( page != null ) {
 						refreshViews( page, IDebugUIConstants.ID_EXPRESSION_VIEW );
 						refreshViews( page, IDebugUIConstants.ID_VARIABLE_VIEW );
-						refreshViews( page, ICDebugUIConstants.ID_REGISTERS_VIEW );
+						refreshViews( page, IDebugUIConstants.ID_REGISTER_VIEW );
 					}
 				}
 			}

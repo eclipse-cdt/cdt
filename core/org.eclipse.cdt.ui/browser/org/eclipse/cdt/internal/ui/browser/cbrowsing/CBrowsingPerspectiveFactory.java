@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -61,7 +61,7 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
 		
 		// views - searching
-		layout.addShowViewShortcut(SearchUI.SEARCH_RESULT_VIEW_ID);
+		layout.addShowViewShortcut(NewSearchUI.SEARCH_VIEW_ID);
 		
 		// views - standard workbench
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
@@ -108,7 +108,7 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 //		layout.addShowViewShortcut(CUIPlugin.ID_JAVADOC_VIEW);
 
 		// views - search		
-		layout.addShowViewShortcut(SearchUI.SEARCH_RESULT_VIEW_ID);
+		layout.addShowViewShortcut(NewSearchUI.SEARCH_VIEW_ID);
 
 		// views - debugging
 		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
@@ -153,7 +153,7 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		
 		IPlaceholderFolderLayout placeHolderBottom= layout.createPlaceholderFolder("bottom", IPageLayout.BOTTOM, (float)0.75, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
 		placeHolderBottom.addPlaceholder(IPageLayout.ID_PROBLEM_VIEW);
-		placeHolderBottom.addPlaceholder(SearchUI.SEARCH_RESULT_VIEW_ID);
+		placeHolderBottom.addPlaceholder(NewSearchUI.SEARCH_VIEW_ID);
 		placeHolderBottom.addPlaceholder(IConsoleConstants.ID_CONSOLE_VIEW);
 		placeHolderBottom.addPlaceholder(IPageLayout.ID_BOOKMARKS);		
 //		placeHolderBottom.addPlaceholder(JavaUI.ID_SOURCE_VIEW);
@@ -185,7 +185,7 @@ public class CBrowsingPerspectiveFactory implements IPerspectiveFactory {
 		
 		IPlaceholderFolderLayout placeHolderBottom= layout.createPlaceholderFolder("bottom", IPageLayout.BOTTOM, (float)0.75, IPageLayout.ID_EDITOR_AREA); //$NON-NLS-1$
 		placeHolderBottom.addPlaceholder(IPageLayout.ID_PROBLEM_VIEW);
-		placeHolderBottom.addPlaceholder(SearchUI.SEARCH_RESULT_VIEW_ID);
+		placeHolderBottom.addPlaceholder(NewSearchUI.SEARCH_VIEW_ID);
 		placeHolderBottom.addPlaceholder(IConsoleConstants.ID_CONSOLE_VIEW);
 		placeHolderBottom.addPlaceholder(IPageLayout.ID_BOOKMARKS);		
 //		placeHolderBottom.addPlaceholder(JavaUI.ID_SOURCE_VIEW);

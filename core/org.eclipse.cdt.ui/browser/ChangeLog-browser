@@ -1,3 +1,8 @@
+2004-09-01 Chris Wiebe
+
+	replace deprecated SearchUI.SEARCH_RESULT_VIEW_ID w/ NewSearchUI.SEARCH_VIEW_ID
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingPerspectiveFactory.java
+
 2004-08-31 Chris Wiebe
 
 	Fix for 68883

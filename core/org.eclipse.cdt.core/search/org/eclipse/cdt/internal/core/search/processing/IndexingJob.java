@@ -58,7 +58,7 @@ public class IndexingJob extends Job {
 		ticks++;
 		if( ticks > maxTicks )
 			maxTicks = ticks;
-		updateRemainingCount();
+		updateRemainingCount( "" );
 	}
 	
 	public void setTicks( int n ){
@@ -67,10 +67,10 @@ public class IndexingJob extends Job {
 			maxTicks = ticks;
 		
 		updatePercentage();
-		updateRemainingCount();
+		updateRemainingCount( "" );
 	}
 	
-	public int tickDown(){
+	public int tickDown( String str ){
 		if( progressMonitor != null && progressMonitor.isCanceled() ){
 			jobManager.pause();
 			return 0;
@@ -78,15 +78,17 @@ public class IndexingJob extends Job {
 		ticks--;
 		
 		updatePercentage();
-		updateRemainingCount();
+		updateRemainingCount( str );
 		return ticks;
 	}
 	
-	private void updateRemainingCount(){
+	private void updateRemainingCount( String str ){
 		if( progressMonitor == null )
 			return;
 		
-		progressMonitor.subTask( Util.bind("manager.filesToIndex", Integer.toString(ticks)) );
+		String taskString = Util.bind("manager.filesToIndex", Integer.toString(ticks));
+		taskString += str;
+		progressMonitor.subTask( taskString );
 	}
 	
 	private void updatePercentage(){

@@ -17,6 +17,7 @@ import java.util.HashSet;
 
 import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.search.indexing.IndexRequest;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -189,9 +190,18 @@ public abstract class JobManager implements Runnable {
 				jobEnd = -1;
 			}
 		}
-		if( indexJob != null && indexJob.tickDown() == 0 ){
-			indexJob.done( OK_STATUS );
-			indexJob = null;
+		if( indexJob != null ){
+			String progressString = null;
+			IJob job = currentJob();
+			if( job instanceof IndexRequest ){
+				progressString = " (";
+				progressString += job.toString();
+				progressString += ")";
+			}
+			if( indexJob.tickDown( progressString ) == 0 ){
+				indexJob.done( OK_STATUS );
+				indexJob = null;
+			}
 		}
 	}
 	/**

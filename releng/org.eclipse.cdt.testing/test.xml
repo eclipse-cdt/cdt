@@ -2,7 +2,9 @@
 
 	<property name="library-file" value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
 	<property name="cdt-core-loc" value="${eclipse-home}/cdt_core_folder"/>
-	<property name="cdt-core-loc" value="${eclipse-home}/cdt_ui_folder"/>
+	<property name="cdt-ui-loc" value="${eclipse-home}/cdt_ui_folder"/>
+	<property name="cdt-debug-ui-loc" value="${eclipse-home}/cdt_debug_ui_folder"/>
+	<property name="cdt-mbs-loc" value="${eclipse-home}/cdt_mbs_folder"/>
 
 	<target name="init">
 		<tstamp/>
@@ -28,15 +30,33 @@
 
 	<target name="cdt-ui" depends="init">
 		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
-			<property name="data-dir" value="${cdt-core-loc}"/>
+			<property name="data-dir" value="${cdt-ui-loc}"/>
 			<property name="plugin-name" value="org.eclipse.cdt.ui.tests"/>
 			<property name="classname" value="org.eclipse.cdt.ui.tests.AutomatedSuite"/>
+		</ant>
+	</target>
+
+	<target name="cdt-debug-ui" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${cdt-debug-ui-loc}"/>
+			<property name="plugin-name" value="org.eclipse.cdt.debug.ui.tests"/>
+			<property name="classname" value="org.eclipse.cdt.debug.core.tests.AllDebugTests"/>
+		</ant>
+	</target>
+
+	<target name="cdt-mbs" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${cdt-mbs-loc}"/>
+			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.core.tests"/>
+			<property name="classname" value="org.eclipse.cdt.managedbuilder.tests.AllManagedBuildTests"/>
 		</ant>
 	</target>
 
 	<target name="suite">
 		<antcall target="cdt-core"/>
 		<antcall target="cdt-ui"/>
+		<antcall target="cdt-debug-ui"/>
+		<antcall target="cdt-mbs"/>
 	</target>
 
 </project>

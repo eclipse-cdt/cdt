@@ -309,8 +309,9 @@ public class CDebugUtils
 
 	public static String getFunctionName( IFunction function )
 	{
-		StringBuffer name = new StringBuffer( function.getElementName() );
-		if ( name.indexOf( "::" ) != -1 )
+		String functionName = function.getElementName();
+		StringBuffer name = new StringBuffer( functionName );
+		if ( functionName.indexOf( "::" ) != -1 )
 		{
 			String[] params = function.getParameterTypes();
 			name.append( '(' );

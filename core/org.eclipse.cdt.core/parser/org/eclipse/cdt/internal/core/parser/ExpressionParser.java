@@ -1408,12 +1408,20 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 						typeId.freeReferences(astFactory.getReferenceManager());
 					throw bte;
 				}
-				mark = null; // clean up mark so that we can garbage collect
+				
 				if (templateIdScopes != null) {
 					templateIdScopes.pop();
 					popped = true;
 				}
 				IASTExpression castExpression = castExpression(scope, kind, key);
+				if( castExpression != null && castExpression.getExpressionKind() == IASTExpression.Kind.PRIMARY_EMPTY )
+				{
+					backup( mark );
+					if (typeId != null)
+						typeId.freeReferences(astFactory.getReferenceManager());
+					return unaryExpression(scope, kind, key);
+				}
+				mark = null; // clean up mark so that we can garbage collect
 				try {
 					return astFactory.createExpression(scope,
 							IASTExpression.Kind.CASTEXPRESSION, castExpression,

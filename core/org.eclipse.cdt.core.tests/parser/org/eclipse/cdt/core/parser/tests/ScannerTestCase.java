@@ -674,6 +674,29 @@ public class ScannerTestCase extends BaseScannerTest
 		}
 	}
 
+	public void testBug67834() throws Exception {
+		initializeScanner(
+				"#if ! BAR\n" + //$NON-NLS-1$
+				"foo\n" + //$NON-NLS-1$
+				"#else\n" + //$NON-NLS-1$
+				"bar\n" + //$NON-NLS-1$
+				"#endif\n"  //$NON-NLS-1$
+				); //$NON-NLS-1$
+		validateIdentifier("foo"); //$NON-NLS-1$
+		validateEOF();
+		validateBalance();
+		
+		initializeScanner(
+				"#if ! (BAR)\n" + //$NON-NLS-1$
+				"foo\n" + //$NON-NLS-1$
+				"#else\n" + //$NON-NLS-1$
+				"bar\n" + //$NON-NLS-1$
+				"#endif\n"  //$NON-NLS-1$
+				); //$NON-NLS-1$
+		validateIdentifier("foo"); //$NON-NLS-1$
+		validateEOF();
+		validateBalance();
+	}
 	public void testPreprocessorMacros()
 	{
 		try

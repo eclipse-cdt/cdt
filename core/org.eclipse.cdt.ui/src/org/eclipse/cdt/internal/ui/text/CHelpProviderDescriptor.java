@@ -97,7 +97,7 @@ public class CHelpProviderDescriptor {
 			if(provider == null){
 				provider = (ICHelpProvider)element.createExecutableExtension(CLASS);
 				providersMap.put(id,provider);
-			}
+
 			final ICHelpProvider c = provider;
 			// Run the initialiser the class
 			ISafeRunnable runnable = new ISafeRunnable() {
@@ -109,6 +109,7 @@ public class CHelpProviderDescriptor {
 				}
 			};
 			Platform.run(runnable);
+			}
 			return provider;
 		}
 		catch(Exception e){

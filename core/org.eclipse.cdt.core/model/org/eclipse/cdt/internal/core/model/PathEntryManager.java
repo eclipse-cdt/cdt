@@ -760,10 +760,88 @@ public class PathEntryManager implements ICDescriptorListener {
 		Element element;
 		for (int i = 0; i < entries.length; i++) {
 			element = doc.createElement(PATH_ENTRY);
+
 			configRootElement.appendChild(element);
 			int kind = entries[i].getEntryKind();
 			// Set the kind
 			element.setAttribute(ATTRIBUTE_KIND, PathEntry.kindToString(kind));
+
+			// translate the project prefix.
+			IPath xmlPath = entries[i].getPath();
+			if (xmlPath == null) {
+				xmlPath = new Path("");
+			}
+			if (kind != IPathEntry.CDT_CONTAINER) {
+				// translate to project relative from absolute (unless a device path)
+				if (xmlPath.isAbsolute()) {
+					if (projectPath != null && projectPath.isPrefixOf(xmlPath)) {
+						if (xmlPath.segment(0).equals(projectPath.segment(0))) {
+							xmlPath = xmlPath.removeFirstSegments(1);
+							xmlPath = xmlPath.makeRelative();
+						} else {
+							xmlPath = xmlPath.makeAbsolute();
+						}
+					}
+				}
+			}
+
+			// Specifics to the entries
+			if (kind == IPathEntry.CDT_SOURCE) {
+				element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
+			} else if (kind == IPathEntry.CDT_OUTPUT) {
+				element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
+			} else if (kind == IPathEntry.CDT_LIBRARY) {
+				ILibraryEntry lib = (ILibraryEntry) entries[i];
+				element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
+				if (lib.getBasePath() != null) {
+					element.setAttribute(ATTRIBUTE_BASE_PATH, lib.getBasePath().toString());
+				}
+				IPath sourcePath = lib.getSourceAttachmentPath();
+				if (sourcePath != null) {
+					// translate to project relative from absolute 
+					if (projectPath != null && projectPath.isPrefixOf(sourcePath)) {
+						if (sourcePath.segment(0).equals(projectPath.segment(0))) {
+							sourcePath = sourcePath.removeFirstSegments(1);
+							sourcePath = sourcePath.makeRelative();
+						}
+					}
+					element.setAttribute(ATTRIBUTE_SOURCEPATH, sourcePath.toString());
+				}
+				if (lib.getSourceAttachmentRootPath() != null) {
+					element.setAttribute(ATTRIBUTE_ROOTPATH, lib.getSourceAttachmentRootPath().toString());
+				}
+				if (lib.getSourceAttachmentPrefixMapping() != null) {
+					element.setAttribute(ATTRIBUTE_PREFIXMAPPING, lib.getSourceAttachmentPrefixMapping().toString());
+				}
+			} else if (kind == IPathEntry.CDT_PROJECT) {
+				element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
+			} else if (kind == IPathEntry.CDT_INCLUDE) {
+				IIncludeEntry include = (IIncludeEntry) entries[i];
+				if (!xmlPath.isEmpty()) {
+					element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
+				}
+				if (include.getBasePath() != null) {
+					element.setAttribute(ATTRIBUTE_BASE_PATH, include.getBasePath().toString());
+				}
+				IPath includePath = include.getIncludePath();
+				element.setAttribute(ATTRIBUTE_INCLUDE, includePath.toString());
+				if (include.isSystemInclude()) {
+					element.setAttribute(ATTRIBUTE_SYSTEM, VALUE_TRUE);
+				}
+			} else if (kind == IPathEntry.CDT_MACRO) {
+				IMacroEntry macro = (IMacroEntry) entries[i];
+				if (!xmlPath.isEmpty()) {
+					element.setAttribute(ATTRIBUTE_PATH, macro.getPath().toString());
+				}
+				if (macro.getBasePath() != null) {
+					element.setAttribute(ATTRIBUTE_BASE_PATH, macro.getBasePath().toString());
+				}
+				element.setAttribute(ATTRIBUTE_NAME, macro.getMacroName());
+				element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());
+			} else if (kind == IPathEntry.CDT_CONTAINER) {
+				element.setAttribute(ATTRIBUTE_PATH, xmlPath.toString());
+			}
+
 			// Save the exclusions attributes
 			if (entries[i] instanceof APathEntry) {
 				APathEntry entry = (APathEntry) entries[i];
@@ -779,61 +857,8 @@ public class PathEntryManager implements ICDescriptorListener {
 					element.setAttribute(ATTRIBUTE_EXCLUDING, excludeRule.toString());
 				}
 			}
-			if (kind == IPathEntry.CDT_SOURCE) {
-				ISourceEntry source = (ISourceEntry) entries[i];
-				IPath path = source.getPath();
-				element.setAttribute(ATTRIBUTE_PATH, path.toString());
-			} else if (kind == IPathEntry.CDT_OUTPUT) {
-				IOutputEntry out = (IOutputEntry) entries[i];
-				IPath path = out.getPath();
-				element.setAttribute(ATTRIBUTE_PATH, path.toString());
-			} else if (kind == IPathEntry.CDT_LIBRARY) {
-				ILibraryEntry lib = (ILibraryEntry) entries[i];
-				IPath path = lib.getPath();
-				element.setAttribute(ATTRIBUTE_PATH, path.toString());
-				if (lib.getBasePath() != null) {
-					element.setAttribute(ATTRIBUTE_BASE_PATH, lib.getBasePath().toString());
-				}
-				if (lib.getSourceAttachmentPath() != null) {
-					element.setAttribute(ATTRIBUTE_SOURCEPATH, lib.getSourceAttachmentPath().toString());
-				}
-				if (lib.getSourceAttachmentRootPath() != null) {
-					element.setAttribute(ATTRIBUTE_ROOTPATH, lib.getSourceAttachmentRootPath().toString());
-				}
-				if (lib.getSourceAttachmentPrefixMapping() != null) {
-					element.setAttribute(ATTRIBUTE_PREFIXMAPPING, lib.getSourceAttachmentPrefixMapping().toString());
-				}
-			} else if (kind == IPathEntry.CDT_PROJECT) {
-				IProjectEntry pentry = (IProjectEntry) entries[i];
-				IPath path = pentry.getPath();
-				element.setAttribute(ATTRIBUTE_PATH, path.toString());
-			} else if (kind == IPathEntry.CDT_INCLUDE) {
-				IIncludeEntry include = (IIncludeEntry) entries[i];
-				if (include.getPath() != null) {
-					element.setAttribute(ATTRIBUTE_PATH, include.getPath().toString());
-				}
-				if (include.getBasePath() != null) {
-					element.setAttribute(ATTRIBUTE_BASE_PATH, include.getBasePath().toString());
-				}
-				IPath includePath = include.getIncludePath();
-				element.setAttribute(ATTRIBUTE_INCLUDE, includePath.toString());
-				if (include.isSystemInclude()) {
-					element.setAttribute(ATTRIBUTE_SYSTEM, VALUE_TRUE);
-				}
-			} else if (kind == IPathEntry.CDT_MACRO) {
-				IMacroEntry macro = (IMacroEntry) entries[i];
-				if (macro.getPath() != null) {
-					element.setAttribute(ATTRIBUTE_PATH, macro.getPath().toString());
-				}
-				if (macro.getBasePath() != null) {
-					element.setAttribute(ATTRIBUTE_BASE_PATH, macro.getBasePath().toString());
-				}
-				element.setAttribute(ATTRIBUTE_NAME, macro.getMacroName());
-				element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());
-			} else if (kind == IPathEntry.CDT_CONTAINER) {
-				IContainerEntry container = (IContainerEntry) entries[i];
-				element.setAttribute(ATTRIBUTE_PATH, container.getPath().toString());
-			}
+
+			// Save the export attribute
 			if (entries[i].isExported()) {
 				element.setAttribute(ATTRIBUTE_EXPORTED, VALUE_TRUE);
 			}

@@ -40,9 +40,8 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
@@ -308,7 +307,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 
         	if( ! completedArg ){
 	        	try{
-	        		expression = assignmentExpression( scope, CompletionKind.VARIABLE_TYPE, Key.EXPRESSION ); 
+	        		expression = assignmentExpression( scope, CompletionKind.VARIABLE_TYPE, KeywordSetKey.EXPRESSION ); 
 	        		if( expression.getExpressionKind() == IASTExpression.Kind.PRIMARY_EMPTY ){
 	        			throw backtrack;
 	        		}
@@ -320,7 +319,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
         	}
         	if( !completedArg ){
 	        	try{
-	        		ITokenDuple nameDuple = name( scope, null, Key.EMPTY );
+	        		ITokenDuple nameDuple = name( scope, null, KeywordSetKey.EMPTY );
 	        		expression = astFactory.createExpression( scope, IASTExpression.Kind.ID_EXPRESSION, 
 	        				                                  null, null, null, null, nameDuple, EMPTY_STRING, null); 
 	        		list.add( expression );
@@ -371,7 +370,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @throws BacktrackException	request a backtrack
 	 */
 	protected IToken templateId(IASTScope scope, CompletionKind kind) throws EndOfFileException, BacktrackException {
-	    ITokenDuple duple = name(scope, kind, Key.EMPTY );
+	    ITokenDuple duple = name(scope, kind, KeywordSetKey.EMPTY );
 	    //IToken last = consumeTemplateParameters(duple.getLastToken());
 	    return duple.getLastToken();//last;
 	}
@@ -389,7 +388,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param key TODO
 	 * @throws BacktrackException	request a backtrack
 	 */
-	protected ITokenDuple name(IASTScope scope, IASTCompletionNode.CompletionKind kind, Key key ) throws BacktrackException, EndOfFileException {
+	protected ITokenDuple name(IASTScope scope, IASTCompletionNode.CompletionKind kind, KeywordSetKey key ) throws BacktrackException, EndOfFileException {
 		
 		TemplateParameterManager argumentList = TemplateParameterManager.getInstance();
 		
@@ -406,7 +405,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        if (LT(1) == IToken.tCOLONCOLON){
 	        	argumentList.addSegment( null );
 	            last = consume( IToken.tCOLONCOLON );
-	            setCompletionValues( scope, kind, Key.EMPTY, getCompliationUnit() );
+	            setCompletionValues( scope, kind, KeywordSetKey.EMPTY, getCompliationUnit() );
 	            startsWithColonColon = true;
 	        }
 	
@@ -421,7 +420,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            	if( startsWithColonColon )
 	            		setCompletionValues( scope, kind, getCompliationUnit() );
 	            	else if( prev != null )
-	            		setCompletionValues(scope, kind, first, prev, Key.EMPTY );
+	            		setCompletionValues(scope, kind, first, prev, KeywordSetKey.EMPTY );
 	            	else
 	            		setCompletionValuesNoContext(scope, kind, key );
 	            	
@@ -439,7 +438,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        {
 	        	IToken prev = last;
 	            last = consume(IToken.tCOLONCOLON);
-	            setCompletionValues( scope, kind, first, prev, Key.EMPTY );
+	            setCompletionValues( scope, kind, first, prev, KeywordSetKey.EMPTY );
 	            
 	            if (queryLookaheadCapability() && LT(1) == IToken.t_template)
 	                consume();
@@ -455,7 +454,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                case IToken.tIDENTIFIER :
 	                	prev = last;
 	                    last = consume();
-	                    setCompletionValues( scope, kind, first, prev, Key.EMPTY );
+	                    setCompletionValues( scope, kind, first, prev, KeywordSetKey.EMPTY );
 			            last = consumeTemplateArguments(scope, last, argumentList, kind);
 			            if( last.getType() == IToken.tGT )
 			            	hasTemplateId = true;
@@ -478,7 +477,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param kind
 	 * @param key
 	 */
-	protected void setCompletionValuesNoContext(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException {
+	protected void setCompletionValuesNoContext(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException {
 	}
 	/**
 	 * @param tokenDuple
@@ -514,7 +513,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param key
 	 * @param node
 	 */
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTNode node) throws EndOfFileException
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, KeywordSetKey key, IASTNode node) throws EndOfFileException
 	{
 	}
 
@@ -604,7 +603,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        IASTExpression exp = null;
 	        if (LT(1) != IToken.tRBRACKET)
 	        {
-	            exp = constantExpression(scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION );
+	            exp = constantExpression(scope, CompletionKind.SINGLE_NAME_REFERENCE, KeywordSetKey.EXPRESSION );
 	        }
 	        consume(IToken.tRBRACKET);
 	        IASTArrayModifier arrayMod;
@@ -719,7 +718,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        	{
 	        		try
 					{
-	        			nameDuple = name(d.getScope(), CompletionKind.SINGLE_NAME_REFERENCE, Key.EMPTY );
+	        			nameDuple = name(d.getScope(), CompletionKind.SINGLE_NAME_REFERENCE, KeywordSetKey.EMPTY );
 					}
 	        		catch( OffsetLimitReachedException olre )
 					{
@@ -765,11 +764,11 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression constantExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	protected IASTExpression constantExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    return conditionalExpression(scope,kind,key);
 	}
 
-	public IASTExpression expression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	public IASTExpression expression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    IASTExpression assignmentExpression = assignmentExpression(scope,kind,key);
 	    while (LT(1) == IToken.tCOMMA)
 	    {
@@ -810,8 +809,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression assignmentExpression(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException, BacktrackException {
-		setCompletionValues(scope, kind, Key.EXPRESSION );
+	protected IASTExpression assignmentExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
+		setCompletionValues(scope, kind, key );
 		if (LT(1) == IToken.t_throw) {
 			return throwExpression(scope,key);
 		}
@@ -885,9 +884,9 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression throwExpression(IASTScope scope, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression throwExpression(IASTScope scope, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    consume(IToken.t_throw);
-	    setCompletionValues( scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION );
+	    setCompletionValues( scope, CompletionKind.SINGLE_NAME_REFERENCE, KeywordSetKey.EXPRESSION );
 	    IASTExpression throwExpression = null;
 	    try
 	    {
@@ -922,7 +921,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @return
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression conditionalExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	protected IASTExpression conditionalExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    IASTExpression firstExpression = logicalOrExpression(scope,kind,key);
 	    if (LT(1) == IToken.tQUESTION)
 	    {
@@ -957,7 +956,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression logicalOrExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	protected IASTExpression logicalOrExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    IASTExpression firstExpression = logicalAndExpression(scope,kind,key);
 	    while (LT(1) == IToken.tOR)
 	    {
@@ -992,7 +991,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression logicalAndExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	protected IASTExpression logicalAndExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    IASTExpression firstExpression = inclusiveOrExpression( scope,kind,key );
 	    while (LT(1) == IToken.tAND)
 	    {
@@ -1026,7 +1025,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression inclusiveOrExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	protected IASTExpression inclusiveOrExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    IASTExpression firstExpression = exclusiveOrExpression(scope,kind,key);
 	    while (LT(1) == IToken.tBITOR)
 	    {
@@ -1061,7 +1060,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression exclusiveOrExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	protected IASTExpression exclusiveOrExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    IASTExpression firstExpression = andExpression( scope,kind, key );
 	    while (LT(1) == IToken.tXOR)
 	    {
@@ -1097,7 +1096,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression andExpression(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression andExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    IASTExpression firstExpression = equalityExpression(scope,kind, key);
 	    while (LT(1) == IToken.tAMPER)
 	    {
@@ -1153,7 +1152,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression equalityExpression(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression equalityExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    IASTExpression firstExpression = relationalExpression(scope,kind,key);
 	    for (;;)
 	    {
@@ -1198,7 +1197,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression relationalExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	protected IASTExpression relationalExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    IASTExpression firstExpression = shiftExpression(scope,kind, key);
 	    for (;;)
 	    {
@@ -1280,7 +1279,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	public IASTExpression shiftExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	public IASTExpression shiftExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    IASTExpression firstExpression = additiveExpression(scope,kind,key);
 	    for (;;)
 	    {
@@ -1324,7 +1323,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression additiveExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	protected IASTExpression additiveExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    IASTExpression firstExpression = multiplicativeExpression( scope, kind, key );
 	    for (;;)
 	    {
@@ -1368,7 +1367,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression multiplicativeExpression(IASTScope scope, CompletionKind kind, Key key) throws BacktrackException, EndOfFileException {
+	protected IASTExpression multiplicativeExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws BacktrackException, EndOfFileException {
 	    IASTExpression firstExpression = pmExpression(scope,kind,key);
 	    for (;;)
 	    {
@@ -1424,7 +1423,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression pmExpression(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression pmExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    IASTExpression firstExpression = castExpression(scope,kind,key);
 	    for (;;)
 	    {
@@ -1469,7 +1468,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * : unaryExpression
 	 * | "(" typeId ")" castExpression
 	 */
-	protected IASTExpression castExpression(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression castExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    // TO DO: we need proper symbol checkint to ensure type name
 	    if (LT(1) == IToken.tLPAREN)
 	    {
@@ -1552,7 +1551,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		{
 	        try
 	        {
-	            name  = name(scope, completionKind, Key.DECL_SPECIFIER_SEQUENCE );
+	            name  = name(scope, completionKind, KeywordSetKey.DECL_SPECIFIER_SEQUENCE );
 	            kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
 	            break;
 	        }
@@ -1599,7 +1598,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                case IToken.tIDENTIFIER :
 	                	if( encounteredType ) break simpleMods;
 	                	encounteredType = true;
-	                    name = name(scope, completionKind, Key.EMPTY );
+	                    name = name(scope, completionKind, KeywordSetKey.EMPTY );
 						kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
 	                    break;
 	                    
@@ -1683,7 +1682,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            consume();
 	            try
 	            {
-	            	name = name(scope, completionKind, Key.EMPTY );
+	            	name = name(scope, completionKind, KeywordSetKey.EMPTY );
 	            	kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
 	            } catch( BacktrackException b )
 	            {
@@ -1744,7 +1743,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression deleteExpression(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression deleteExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 		if (LT(1) == IToken.tCOLONCOLON)
 	    {
 	        // global scope
@@ -1801,8 +1800,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 *							directnewdeclarator [ constantexpression ]
 	 * newinitializer:	( expressionlist? )
 	 */
-	protected IASTExpression newExpression(IASTScope scope, Key key) throws BacktrackException, EndOfFileException {
-		setCompletionValues(scope, CompletionKind.NEW_TYPE_REFERENCE, Key.EMPTY);
+	protected IASTExpression newExpression(IASTScope scope, KeywordSetKey key) throws BacktrackException, EndOfFileException {
+		setCompletionValues(scope, CompletionKind.NEW_TYPE_REFERENCE, KeywordSetKey.EMPTY);
 	    if (LT(1) == IToken.tCOLONCOLON)
 	    {
 	        // global scope
@@ -1913,7 +1912,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	                        // new-expression ends here.
 							try
 							{
-								setCompletionValues(scope, CompletionKind.NO_SUCH_KIND, Key.EMPTY);
+								setCompletionValues(scope, CompletionKind.NO_SUCH_KIND, KeywordSetKey.EMPTY);
 								return astFactory.createExpression(
 									scope, IASTExpression.Kind.NEW_TYPEID, 
 									null, null, null, typeId, null, 
@@ -1973,7 +1972,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	        consume(IToken.tRPAREN);
 	        if( templateIdScopes != null ){	templateIdScopes.pop(); }
 	    }
-	    setCompletionValues(scope, CompletionKind.NO_SUCH_KIND, Key.EMPTY);
+	    setCompletionValues(scope, CompletionKind.NO_SUCH_KIND, KeywordSetKey.EMPTY);
 		try
 		{
 	    return astFactory.createExpression(
@@ -2002,7 +2001,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	public IASTExpression unaryExpression(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException, BacktrackException {
+	public IASTExpression unaryExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    switch (LT(1))
 	    {
 	        case IToken.tSTAR :
@@ -2130,16 +2129,16 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression postfixExpression(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression postfixExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    IASTExpression firstExpression = null;
 	    boolean isTemplate = false;
 	    
-	    setCompletionValues( scope, kind, Key.EXPRESSION );
+	    setCompletionValues( scope, kind, key );
 	    switch (LT(1))
 	    {
 	        case IToken.t_typename :
 	            consume(IToken.t_typename);
-	            ITokenDuple nestedName = name(scope, CompletionKind.TYPE_REFERENCE, Key.EMPTY);
+	            ITokenDuple nestedName = name(scope, CompletionKind.TYPE_REFERENCE, KeywordSetKey.EMPTY);
 				boolean templateTokenConsumed = false;
 				if( LT(1) == IToken.t_template )
 				{
@@ -2440,7 +2439,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
                             ? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
                             : IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION);
 		                															
-		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, memberCompletionKind  );
+		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSetKey.EMPTY, firstExpression, memberCompletionKind  );
 	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE, key);
 	                if( secondExpression != null && secondExpression.getExpressionKind() == Kind.ID_EXPRESSION && secondExpression.getIdExpression().indexOf( '~') != -1 )
 	                	memberCompletionKind = Kind.POSTFIX_DOT_DESTRUCTOR;
@@ -2482,7 +2481,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
                          ? IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP
                          : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION);
 
-		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSets.Key.EMPTY, firstExpression, arrowCompletionKind );	                															
+		            setCompletionValues(scope, CompletionKind.MEMBER_REFERENCE,	KeywordSetKey.EMPTY, firstExpression, arrowCompletionKind );	                															
 	                secondExpression = primaryExpression(scope, CompletionKind.MEMBER_REFERENCE, key);                 
 
 	                if( secondExpression != null && secondExpression.getExpressionKind() == Kind.ID_EXPRESSION && secondExpression.getIdExpression().indexOf( '~') != -1 )
@@ -2541,7 +2540,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		LA(1);
 	}
 
-	protected IASTExpression simpleTypeConstructorExpression(IASTScope scope, Kind type, Key key ) throws EndOfFileException, BacktrackException {
+	protected IASTExpression simpleTypeConstructorExpression(IASTScope scope, Kind type, KeywordSetKey key ) throws EndOfFileException, BacktrackException {
 	    String typeName = consume().getImage();
 	    consume(IToken.tLPAREN);
 	    setCurrentFunctionName( typeName );
@@ -2574,7 +2573,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param expression
 	 * @throws BacktrackException
 	 */
-	protected IASTExpression primaryExpression(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression primaryExpression(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    IToken t = null;
 	    switch (LT(1))
 	    {
@@ -2857,7 +2856,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		throw new EndOfFileException();
 	}
 
-	protected IASTExpression assignmentOperatorExpression(IASTScope scope, IASTExpression.Kind kind, IASTExpression lhs, CompletionKind completionKind, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression assignmentOperatorExpression(IASTScope scope, IASTExpression.Kind kind, IASTExpression lhs, CompletionKind completionKind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    consume();
 	    IASTExpression assignmentExpression = assignmentExpression(scope,completionKind, key);
 	
@@ -2882,20 +2881,20 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    }
 	}
 
-	protected void setCompletionValues(IASTScope scope, IASTCompletionNode.CompletionKind kind, KeywordSets.Key key) throws EndOfFileException {	
+	protected void setCompletionValues(IASTScope scope, IASTCompletionNode.CompletionKind kind, KeywordSetKey key) throws EndOfFileException {	
 	}
 
-	protected void setCompletionValues(IASTScope scope, IASTCompletionNode.CompletionKind kind, KeywordSets.Key key, IASTNode node, String prefix) throws EndOfFileException {	
+	protected void setCompletionValues(IASTScope scope, IASTCompletionNode.CompletionKind kind, KeywordSetKey key, IASTNode node, String prefix) throws EndOfFileException {	
 	}
 
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTExpression firstExpression, Kind expressionKind) throws EndOfFileException {
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, KeywordSetKey key, IASTExpression firstExpression, Kind expressionKind) throws EndOfFileException {
 	}
 	
-	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last, Key key ) throws EndOfFileException {
+	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last, KeywordSetKey key ) throws EndOfFileException {
 	}
 
 
-	protected IASTExpression unaryOperatorCastExpression(IASTScope scope, IASTExpression.Kind kind, CompletionKind completionKind, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression unaryOperatorCastExpression(IASTScope scope, IASTExpression.Kind kind, CompletionKind completionKind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    IASTExpression castExpression = castExpression(scope,completionKind,key);
 	    try
 	    {
@@ -2918,7 +2917,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    }
 	}
 
-	protected IASTExpression specialCastExpression(IASTScope scope, IASTExpression.Kind kind, Key key) throws EndOfFileException, BacktrackException {
+	protected IASTExpression specialCastExpression(IASTScope scope, IASTExpression.Kind kind, KeywordSetKey key) throws EndOfFileException, BacktrackException {
 	    consume();
 	    consume(IToken.tLT);
 	    IASTTypeId duple = typeId(scope, false, CompletionKind.TYPE_REFERENCE);

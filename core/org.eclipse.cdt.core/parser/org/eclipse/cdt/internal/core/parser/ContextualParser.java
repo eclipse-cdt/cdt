@@ -28,9 +28,9 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 
 /**
  * @author jcamelon
@@ -120,7 +120,7 @@ public class ContextualParser extends CompleteParser {
 	
 	
 
-	protected void setCompletionKeywords(KeywordSets.Key key) {
+	protected void setCompletionKeywords(KeywordSetKey key) {
 		this.keywordSet = KeywordSets.getKeywords( key, language );
 	}
 
@@ -128,18 +128,18 @@ public class ContextualParser extends CompleteParser {
 		finalToken = token;
 	}
 
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTNode node, String prefix) throws EndOfFileException {
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, KeywordSetKey key, IASTNode node, String prefix) throws EndOfFileException {
 		setCompletionToken( TokenFactory.createStandAloneToken( IToken.tIDENTIFIER, prefix ) );
 		setCompletionValues(scope, kind, key, node );
 	}
 
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key) throws EndOfFileException {
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, KeywordSetKey key) throws EndOfFileException {
 		setCompletionValues(scope, kind, key, null );
 	}
 
 	
 	
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTNode node) throws EndOfFileException {
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, KeywordSetKey key, IASTNode node) throws EndOfFileException {
 		setCompletionScope(scope);
 		setCompletionKeywords(key);
 		setCompletionKind(kind);
@@ -150,7 +150,7 @@ public class ContextualParser extends CompleteParser {
 
 	
 	
-	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last, Key key ) throws EndOfFileException{		
+	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last, KeywordSetKey key ) throws EndOfFileException{		
 		setCompletionScope( scope );
 		setCompletionKind( kind );
 		setCompletionKeywords(key);
@@ -167,7 +167,7 @@ public class ContextualParser extends CompleteParser {
 	
 	
 	
-	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTExpression firstExpression, Kind expressionKind) throws EndOfFileException {
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind, KeywordSetKey key, IASTExpression firstExpression, Kind expressionKind) throws EndOfFileException {
 		IASTNode node = astFactory.expressionToMostPreciseASTNode( scope, firstExpression );
 		if( kind == CompletionKind.MEMBER_REFERENCE )
 		{
@@ -250,7 +250,7 @@ public class ContextualParser extends CompleteParser {
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setCompletionValuesNoContext(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind, org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key)
 	 */
 	protected void setCompletionValuesNoContext(IASTScope scope,
-			CompletionKind kind, Key key) throws EndOfFileException {
+			CompletionKind kind, KeywordSetKey key) throws EndOfFileException {
 		setCompletionScope(scope);
 		setCompletionKeywords(key);
 		setCompletionKind(kind);

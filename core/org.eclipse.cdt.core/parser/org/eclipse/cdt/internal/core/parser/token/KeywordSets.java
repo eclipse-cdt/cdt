@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.core.parser.Directives;
-import org.eclipse.cdt.core.parser.Enum;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 
@@ -26,51 +25,35 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 public class KeywordSets {
 
 	
-	public static class Key extends Enum
+	public static Set getKeywords( KeywordSetKey kind, ParserLanguage language )
 	{
-		public static final Key EMPTY = new Key( 0 );
-		public static final Key DECL_SPECIFIER_SEQUENCE = new Key( 1 );
-		public static final Key DECLARATION = new Key( 2 );
-		public static final Key STATEMENT = new Key(3);
-		public static final Key BASE_SPECIFIER = new Key(4);
-		public static final Key POST_USING = new Key( 5 );
-		public static final Key FUNCTION_MODIFIER = new Key( 6 );
-		public static final Key NAMESPACE_ONLY = new Key(6);
-		public static final Key MACRO = new Key( 7 );
-		public static final Key PP_DIRECTIVE = new Key( 8 );
-		public static final Key EXPRESSION = new Key( 9 );
-		/**
-		 * @param enumValue
-		 */
-		protected Key(int enumValue) {
-			super(enumValue);
-		}
-		
-	}
-	
-	public static Set getKeywords( Key kind, ParserLanguage language )
-	{
-		if( kind == Key.EMPTY )
+		if( kind == KeywordSetKey.EMPTY )
 			return EMPTY_TABLE;
-		if( kind == Key.DECL_SPECIFIER_SEQUENCE )
+		if( kind == KeywordSetKey.DECL_SPECIFIER_SEQUENCE )
 			return (Set) DECL_SPECIFIER_SEQUENCE_TABLE.get( language );
-		if( kind == Key.DECLARATION )
+		if( kind == KeywordSetKey.DECLARATION )
 			return (Set) DECLARATION_TABLE.get( language );
-		if( kind == Key.STATEMENT )
+		if( kind == KeywordSetKey.STATEMENT )
 			return (Set) STATEMENT_TABLE.get( language );
-		if( kind == Key.BASE_SPECIFIER )
+		if( kind == KeywordSetKey.BASE_SPECIFIER )
 			return BASE_SPECIFIER_CPP;
-		if( kind == Key.POST_USING )
+		if( kind == KeywordSetKey.MEMBER )
+		{
+			if( language == ParserLanguage.CPP )
+				return CLASS_MEMBER;
+			return EMPTY_TABLE;
+		}
+		if( kind == KeywordSetKey.POST_USING )
 			return POST_USING_CPP;
-		if( kind == Key.FUNCTION_MODIFIER )
+		if( kind == KeywordSetKey.FUNCTION_MODIFIER )
 			return (Set) FUNCTION_MODIFIER_TABLE.get( language );
-		if( kind == Key.NAMESPACE_ONLY )	
+		if( kind == KeywordSetKey.NAMESPACE_ONLY )	
 			return NAMESPACE_ONLY_SET;
-		if( kind == Key.MACRO )
+		if( kind == KeywordSetKey.MACRO )
 			return MACRO_ONLY;
-		if( kind == Key.PP_DIRECTIVE )
+		if( kind == KeywordSetKey.PP_DIRECTIVE )
 			return PP_DIRECTIVES;
-		if( kind == Key.EXPRESSION )
+		if( kind == KeywordSetKey.EXPRESSION )
 			return (Set) EXPRESSION_TABLE.get( language );
 		//TODO finish this
 		return null;
@@ -157,7 +140,10 @@ public class KeywordSets {
 		DECLARATION_CPP = new TreeSet();
 		DECLARATION_CPP.addAll( DECL_SPECIFIER_SEQUENCE_CPP );
 		DECLARATION_CPP.add( Keywords.ASM );
-		// more to come
+		DECLARATION_CPP.add( Keywords.TEMPLATE );
+		DECLARATION_CPP.add( Keywords.USING );
+		DECLARATION_CPP.add( Keywords.NAMESPACE );
+		DECLARATION_CPP.add( Keywords.EXPORT );
 	}
 	
 	private static final Set DECLARATION_C; 
@@ -166,7 +152,6 @@ public class KeywordSets {
 		DECLARATION_C = new TreeSet();
 		DECLARATION_C.addAll(DECL_SPECIFIER_SEQUENCE_C );
 		DECLARATION_C.add(Keywords.ASM );
-		// more to come
 	}
 	
 	private static final Hashtable DECLARATION_TABLE; 
@@ -229,7 +214,17 @@ public class KeywordSets {
 		STATEMENT_C.addAll( DECLARATION_C );
 		STATEMENT_C.addAll( EXPRESSION_C );
 		STATEMENT_C.add( Keywords.FOR );
-		// more to come
+		STATEMENT_C.add( Keywords.BREAK );
+		STATEMENT_C.add( Keywords.CASE );
+		STATEMENT_C.add( Keywords.GOTO );
+		STATEMENT_C.add( Keywords.SWITCH );
+		STATEMENT_C.add( Keywords.WHILE );
+		STATEMENT_C.add( Keywords.IF);
+		STATEMENT_C.add( Keywords.CONTINUE);
+		STATEMENT_C.add( Keywords.DEFAULT);
+		STATEMENT_C.add( Keywords.RETURN);
+		STATEMENT_C.add( Keywords.ELSE);
+		STATEMENT_C.add( Keywords.DO);
 	}
 	
 	private static final Set STATEMENT_CPP; 
@@ -238,7 +233,19 @@ public class KeywordSets {
 		STATEMENT_CPP = new TreeSet( DECLARATION_CPP );
 		STATEMENT_CPP.addAll( EXPRESSION_CPP );
 		STATEMENT_CPP.add( Keywords.TRY );
-		//TODO finish this
+		STATEMENT_CPP.add( Keywords.FOR );
+		STATEMENT_CPP.add( Keywords.BREAK );
+		STATEMENT_CPP.add( Keywords.CASE );
+		STATEMENT_CPP.add( Keywords.CATCH );
+		STATEMENT_CPP.add( Keywords.GOTO );
+		STATEMENT_CPP.add( Keywords.SWITCH );
+		STATEMENT_CPP.add( Keywords.WHILE );
+		STATEMENT_CPP.add( Keywords.IF);
+		STATEMENT_CPP.add( Keywords.CONTINUE);
+		STATEMENT_CPP.add( Keywords.DEFAULT);
+		STATEMENT_CPP.add( Keywords.RETURN);
+		STATEMENT_CPP.add( Keywords.ELSE);
+		STATEMENT_CPP.add( Keywords.DO);
 	}
 	
 	private static final Hashtable STATEMENT_TABLE;
@@ -257,6 +264,15 @@ public class KeywordSets {
 		BASE_SPECIFIER_CPP.add(Keywords.PROTECTED);
 		BASE_SPECIFIER_CPP.add(Keywords.PRIVATE);
 		BASE_SPECIFIER_CPP.add(Keywords.VIRTUAL);
+	}
+	
+	private static final Set CLASS_MEMBER;
+	static
+	{
+		CLASS_MEMBER = new TreeSet(DECL_SPECIFIER_SEQUENCE_CPP);
+		CLASS_MEMBER.add(Keywords.PUBLIC);
+		CLASS_MEMBER.add(Keywords.PROTECTED);
+		CLASS_MEMBER.add(Keywords.PRIVATE);
 	}
 	
 	private static final Set POST_USING_CPP;

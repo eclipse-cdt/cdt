@@ -183,7 +183,8 @@ public class CompletionEngine implements RelevanceConstants {
 				// set timeout
 				IPreferenceStore prefStore = CUIPlugin.getDefault().getPreferenceStore();
 				int timeout = prefStore.getInt(ContentAssistPreference.TIMEOUT_DELAY);
-				elementRequestor.setTimeout(timeout);
+				if( timeout > 0 )
+					elementRequestor.setTimeout(timeout);
 
 				// start timer
 				elementRequestor.startTimer();

@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
 
 /**
  * @author jcamelon
@@ -135,13 +135,13 @@ public class CompletionParser extends ContextualParser implements IParser {
 		while (LT(1) == IToken.t_catch)
 		{
 			consume(IToken.t_catch);
-			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY );
+			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,KeywordSetKey.EMPTY );
 			consume(IToken.tLPAREN);
-			setCompletionValues(scope,CompletionKind.EXCEPTION_REFERENCE,Key.DECL_SPECIFIER_SEQUENCE);
+			setCompletionValues(scope,CompletionKind.EXCEPTION_REFERENCE,KeywordSetKey.DECL_SPECIFIER_SEQUENCE);
 			if( LT(1) == IToken.tELLIPSIS )
 				consume( IToken.tELLIPSIS );
 			else 
-				simpleDeclarationStrategyUnion( scope, null, CompletionKind.EXCEPTION_REFERENCE, Key.DECLARATION); // was exceptionDeclaration
+				simpleDeclarationStrategyUnion( scope, null, CompletionKind.EXCEPTION_REFERENCE, KeywordSetKey.DECLARATION); // was exceptionDeclaration
 			consume(IToken.tRPAREN);
 			
 			catchBlockCompoundStatement(scope);

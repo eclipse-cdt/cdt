@@ -32,8 +32,7 @@ import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.Parser.Flags;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
-import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
 
 
 /**
@@ -78,7 +77,7 @@ public class GCCParserExtension implements IParserExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#parseUnaryExpression(org.eclipse.cdt.internal.core.parser.IParserData)
 	 */
-	public IASTExpression parseUnaryExpression(IASTScope scope, IParserData data, IASTCompletionNode.CompletionKind kind, KeywordSets.Key key) {
+	public IASTExpression parseUnaryExpression(IASTScope scope, IParserData data, IASTCompletionNode.CompletionKind kind, KeywordSetKey key) {
 		try {
 			switch( data.LT(1))
 			{
@@ -117,7 +116,7 @@ public class GCCParserExtension implements IParserExtension {
 	 * @param type TODO
 	 * @return
 	 */
-	protected IASTExpression performUnaryExpression(IParserData data, IASTScope scope, CompletionKind kind, KeywordSets.Key key, UnaryExpressionKind type) {
+	protected IASTExpression performUnaryExpression(IParserData data, IASTScope scope, CompletionKind kind, KeywordSetKey key, UnaryExpressionKind type) {
 		IToken startingPoint = null;
 		try
 		{
@@ -241,7 +240,7 @@ public class GCCParserExtension implements IParserExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#handleDeclSpecifierSequence(org.eclipse.cdt.internal.core.parser.IParserData, org.eclipse.cdt.core.model.Flags, org.eclipse.cdt.internal.core.parser.DeclarationWrapper)
 	 */
-	public IDeclSpecifierExtensionResult parseDeclSpecifierSequence(IParserData data, Parser.Flags flags, DeclarationWrapper sdw, CompletionKind kind, Key key) {
+	public IDeclSpecifierExtensionResult parseDeclSpecifierSequence(IParserData data, Parser.Flags flags, DeclarationWrapper sdw, CompletionKind kind, KeywordSetKey key) {
 		IToken startingPoint = null;
 		try
 		{
@@ -336,7 +335,7 @@ public class GCCParserExtension implements IParserExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IParserExtension#parseRelationalExpression(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.internal.core.parser.IParserData, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind)
 	 */
-	public IASTExpression parseRelationalExpression(IASTScope scope, IParserData data, CompletionKind kind, KeywordSets.Key key, IASTExpression lhsExpression) {
+	public IASTExpression parseRelationalExpression(IASTScope scope, IParserData data, CompletionKind kind, KeywordSetKey key, IASTExpression lhsExpression) {
 		if( data.getParserLanguage() == ParserLanguage.C ) return null;
 		IToken mark = null;
 		try {
@@ -429,9 +428,9 @@ public class GCCParserExtension implements IParserExtension {
 			if( parserData.LT(1) == IToken.tLBRACKET )
 			{
 				parserData.consume( IToken.tLBRACKET );
-				IASTExpression constantExpression1 = parserData.expression( scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION );
+				IASTExpression constantExpression1 = parserData.expression( scope, CompletionKind.SINGLE_NAME_REFERENCE, KeywordSetKey.EXPRESSION );
 				parserData.consume( IToken.tELLIPSIS );
-				IASTExpression constantExpression2 = parserData.expression( scope, CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION );
+				IASTExpression constantExpression2 = parserData.expression( scope, CompletionKind.SINGLE_NAME_REFERENCE, KeywordSetKey.EXPRESSION );
 				parserData.consume(IToken.tRBRACKET );
 				Map extensionParms = new Hashtable();
 				extensionParms.put( IASTGCCDesignator.SECOND_EXRESSION, constantExpression2 );

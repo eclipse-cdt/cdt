@@ -60,6 +60,7 @@ import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
@@ -2116,7 +2117,7 @@ public final class Scanner implements IScanner, IScannerData {
 	 */
 	protected void handleCompletionOnDefinition(String definition) throws EndOfFileException {
 		IASTCompletionNode node = new ASTCompletionNode( IASTCompletionNode.CompletionKind.MACRO_REFERENCE, 
-				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, language), EMPTY_STRING, null );
+				null, null, definition, KeywordSets.getKeywords(KeywordSetKey.EMPTY, language), EMPTY_STRING, null );
 		
 		throwEOF( node ); 
 	}
@@ -2175,7 +2176,7 @@ public final class Scanner implements IScanner, IScannerData {
 		
 		IASTCompletionNode node = new ASTCompletionNode( kind, 
 				null, null, prefix, 
-				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSets.Key.EMPTY : KeywordSets.Key.MACRO), language), EMPTY_STRING, null );
+				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSetKey.EMPTY : KeywordSetKey.MACRO), language), EMPTY_STRING, null );
 		
 		throwEOF( node );
 	}
@@ -2190,12 +2191,12 @@ public final class Scanner implements IScanner, IScannerData {
 
 	protected void handleInvalidCompletion() throws EndOfFileException
 	{
-		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, EMPTY_STRING, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, language ) , EMPTY_STRING, null)); 
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.UNREACHABLE_CODE, null, null, EMPTY_STRING, KeywordSets.getKeywords(KeywordSetKey.EMPTY, language ) , EMPTY_STRING, null)); 
 	}
 	
 	protected void handleCompletionOnPreprocessorDirective( String prefix ) throws EndOfFileException 
 	{
-		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null, prefix, KeywordSets.getKeywords(KeywordSets.Key.PP_DIRECTIVE, language ), EMPTY_STRING, null));
+		throwEOF( new ASTCompletionNode( IASTCompletionNode.CompletionKind.NO_SUCH_KIND, null, null, prefix, KeywordSets.getKeywords(KeywordSetKey.PP_DIRECTIVE, language ), EMPTY_STRING, null));
 	}
 	/**
 	 * @param key

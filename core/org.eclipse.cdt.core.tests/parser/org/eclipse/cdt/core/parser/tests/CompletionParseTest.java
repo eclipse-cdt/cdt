@@ -29,6 +29,8 @@ import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSetKey;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 
 /**
  * @author jcamelon
@@ -1145,5 +1147,53 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), kind, null, null );
 		assertNotNull( result );
 		assertEquals( result.getResultsSize(), 3 );
+	}
+	
+	public void testBug52988() throws Exception
+	{
+		for( int i = 0; i < 2; ++i )
+		{
+			ParserLanguage language = ( i == 0 ) ? ParserLanguage.C : ParserLanguage.CPP;	
+			String code = "void foo() { "; //$NON-NLS-1$
+			Set kset = KeywordSets.getKeywords( KeywordSetKey.STATEMENT, language );
+
+			validateAllKeywordsAndPrefixes( code, kset, language ); 
+		}
+	}
+
+	/**
+	 * @param startingCode
+	 * @param keywordsToTry
+	 * @param language
+	 * @throws Exception
+	 */
+	private void validateAllKeywordsAndPrefixes(String startingCode, Set keywordsToTry, ParserLanguage language) throws Exception {
+		Iterator keywordIterator = keywordsToTry.iterator();
+		while( keywordIterator.hasNext() )
+		{
+			String keyword = (String) keywordIterator.next();
+			for( int i = 0; i < keyword.length(); ++i )
+			{
+				String substring = keyword.subSequence( 0, i ).toString();
+				String totalCode = (startingCode + substring);
+				IASTCompletionNode node = parse( totalCode, totalCode.length() - 1, language );
+				assertNotNull( node );
+				assertTrue( "Failure on keyword=" + keyword + " prefix=" + substring, setContainsKeyword( node.getKeywords(), keyword )); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		
+	}
+
+	/**
+	 * @param keywords
+	 * @param keyword
+	 * @return
+	 */
+	private boolean setContainsKeyword(Iterator keywords, String keyword) {
+		while( keywords.hasNext() )
+		{
+			if( keywords.next().equals( keyword )) return true;
+		}
+		return false;
 	}
 }

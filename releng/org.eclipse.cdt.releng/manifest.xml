@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projects>
+    <plugin name="org.eclipse.cdt" type="plugin"/>
+    <plugin name="org.eclipse.cdt.core" type="plugin"/>
+    <plugin name="org.eclipse.cdt.core.linux" type="fragment"/>
+    <plugin name="org.eclipse.cdt.core.qnx" type="fragment"/>
+    <plugin name="org.eclipse.cdt.core.solaris" type="fragment"/>
+    <plugin name="org.eclipse.cdt.core.win32" type="fragment"/>
+    <plugin name="org.eclipse.cdt.core.tests" type="plugin"/>
+    <plugin name="org.eclipse.cdt.debug.core" type="plugin"/>
+    <plugin name="org.eclipse.cdt.debug.mi.core" type="plugin"/>
+    <plugin name="org.eclipse.cdt.debug.mi.ui" type="plugin"/>
+    <plugin name="org.eclipse.cdt.debug.ui" type="plugin"/>
+    <plugin name="org.eclipse.cdt.debug.ui.tests" type="plugin"/>
+    <plugin name="org.eclipse.cdt.doc.user" type="plugin"/>
+    <plugin name="org.eclipse.cdt.launch" type="plugin"/>
+    <plugin name="org.eclipse.cdt.linux.gtk" type="plugin"/>
+    <plugin name="org.eclipse.cdt.linux.motif" type="plugin"/>
+    <plugin name="org.eclipse.cdt.qnx.photon" type="plugin"/>
+    <plugin name="org.eclipse.cdt.solaris.motif" type="plugin"/>
+    <plugin name="org.eclipse.cdt.source" type="plugin"/>
+    <plugin name="org.eclipse.cdt.testing" type="plugin"/>
+    <plugin name="org.eclipse.cdt.ui" type="plugin"/>
+    <plugin name="org.eclipse.cdt.ui.tests" type="plugin"/>
+    <plugin name="org.eclipse.cdt.win32" type="plugin"/>
+    <feature name="org.eclipse.cdt" suffix="-feature" type="feature" visible="false"/>
+    <feature name="org.eclipse.cdt.linux.gtk" suffix="-feature" type="feature"/>
+    <feature name="org.eclipse.cdt.linux.motif" suffix="-feature" type="feature"/>
+    <feature name="org.eclipse.cdt.qnx.photon" suffix="-feature" type="feature"/>
+    <feature name="org.eclipse.cdt.solaris.motif" suffix="-feature" type="feature"/>
+    <feature name="org.eclipse.cdt.source" suffix="-feature" type="feature"/>
+    <feature name="org.eclipse.cdt.testing" suffix="-feature" type="feature"/>
+    <feature name="org.eclipse.cdt.win32" suffix="-feature" type="feature"/>
+</projects>

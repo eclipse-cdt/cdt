@@ -9,6 +9,8 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
@@ -50,12 +52,14 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.type.Type;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.WCharValue;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
+import org.eclipse.cdt.debug.mi.core.command.MIVarInfoExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIVarListChildren;
 import org.eclipse.cdt.debug.mi.core.command.MIVarSetFormat;
 import org.eclipse.cdt.debug.mi.core.command.MIVarShowAttributes;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
+import org.eclipse.cdt.debug.mi.core.output.MIVarInfoExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarListChildrenInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
 
@@ -65,15 +69,20 @@ public class Variable extends VariableObject implements ICDIVariable {
 
 	MIVar miVar;
 	Value value;
-	VariableObject varObj;
 	ICDIVariable[] children = new ICDIVariable[0];
 	Type type;
 	String editable = null;
+	String language;
+	boolean isFake = false;
 
 	public Variable(VariableObject obj, MIVar v) {
-		super(obj, obj.getName());
+		super(obj);
 		miVar = v;
-		varObj = obj;
+	}
+
+	public Variable(ICDITarget target, String n, String q, ICDIStackFrame stack, int pos, int depth, MIVar v) {
+		super(target, n, q, stack, pos, depth);
+		miVar = v;
 	}
 
 	public MIVar getMIVar() {
@@ -82,7 +91,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 
 	public Variable getChild(String name) {
 		for (int i = 0; i < children.length; i++) {
-			Variable variable = (Variable)children[i];
+			Variable variable = (Variable) children[i];
 			if (name.equals(variable.getMIVar().getVarName())) {
 				return variable;
 			} else {
@@ -96,6 +105,38 @@ public class Variable extends VariableObject implements ICDIVariable {
 		return null;
 	}
 
+	String getLanguage() throws CDIException {
+		if (language == null) {
+			Session session = (Session) (getTarget().getSession());
+			MISession mi = session.getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			MIVarInfoExpression var = factory.createMIVarInfoExpression(getMIVar().getVarName());
+			try {
+				mi.postCommand(var);
+				MIVarInfoExpressionInfo info = var.getMIVarInfoExpressionInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+				language = info.getLanguage();
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
+			}
+		}
+		return (language == null) ? "" : language;
+	}
+
+	boolean isCPPLanguage() throws CDIException {
+		return getLanguage().equalsIgnoreCase("C++");
+	}
+
+	void setIsFake(boolean f) {
+		isFake = f;
+	}
+
+	boolean isFake() {
+		return isFake;
+	}
+
 	public ICDIVariable[] getChildren() throws CDIException {
 		// Use the default timeout.
 		return getChildren(-1);
@@ -106,11 +147,10 @@ public class Variable extends VariableObject implements ICDIVariable {
 	 * allow the override of the timeout.
 	 */
 	public ICDIVariable[] getChildren(int timeout) throws CDIException {
-		Session session = (Session)(getTarget().getSession());
+		Session session = (Session) (getTarget().getSession());
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIVarListChildren var =
-			factory.createMIVarListChildren(getMIVar().getVarName());
+		MIVarListChildren var = factory.createMIVarListChildren(getMIVar().getVarName());
 		try {
 			if (timeout >= 0) {
 				mi.postCommand(var, timeout);
@@ -124,10 +164,53 @@ public class Variable extends VariableObject implements ICDIVariable {
 			MIVar[] vars = info.getMIVars();
 			children = new Variable[vars.length];
 			for (int i = 0; i < vars.length; i++) {
-				VariableObject varObj = new VariableObject(getTarget(),
-				 vars[i].getExp(), getStackFrame(),
-				 getPosition(),getStackDepth());
-				children[i] = new Variable(varObj, vars[i]);
+				String qName = getQualifiedName();
+				String childTypename = null;
+				boolean childFake = false;
+				ICDIType t = getType();
+				if (t instanceof ICDIArrayType) {
+					qName = "(" + getQualifiedName() + ")[" + i + "]";
+				} else if (t instanceof ICDIPointerType) {
+					qName = "*(" + getQualifiedName() + ")";
+				} else if (t instanceof ICDIStructType) {
+					if (isCPPLanguage()) {
+						// For C++ in GDB the children of the
+						// the struture are the scope and the inherited classes.
+						// For example:
+						// class foo: public bar {
+						//   int x;
+						//   public: int y;
+						// } foobar;
+						// This will map to
+						// - foobar
+						//    + bar
+						//    - private
+						//       - x
+						//    - public
+						//       - y
+						// So we choose to ignore the first set of children
+						// but carry over to those "fake" variable the typename and the qualified name
+						if (isFake()) {
+							qName = "(" + getQualifiedName() + ")." + vars[i].getExp();
+						} else {
+							// So if the child is something like "public", "private" ...
+							// carrry over the parent qualified name and the typename
+							// also flag it as a fake variable.
+							qName = getQualifiedName();
+							childTypename = typename;
+							childFake = true;
+						}
+					} else {
+						qName = "(" + getQualifiedName() + ")." + vars[i].getExp();
+					}
+				}
+				Variable v = new Variable(getTarget(), vars[i].getExp(), qName, getStackFrame(), getPosition(), getStackDepth(), vars[i]);
+				if (childTypename != null) {
+					// Hack to reset the typename to a known value
+					v.typename = childTypename;
+				}
+				v.setIsFake(childFake);
+				children[i] = v;
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -147,7 +230,10 @@ public class Variable extends VariableObject implements ICDIVariable {
 	 */
 	public String getTypeName() throws CDIException {
 		// We overload here not to use the whatis command.
-		return miVar.getType();
+		if (typename == null) {
+			typename = miVar.getType();
+		}
+		return typename;
 	}
 
 	/**
@@ -185,7 +271,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 			} else if (t instanceof ICDIArrayType) {
 				value = new ArrayValue(this);
 			} else if (t instanceof ICDIStructType) {
-				value = new StructValue(this);	
+				value = new StructValue(this);
 			} else {
 				value = new Value(this);
 			}
@@ -204,7 +290,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
 	public void setValue(String expression) throws CDIException {
-		Session session = (Session)(getTarget().getSession());
+		Session session = (Session) (getTarget().getSession());
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarAssign var = factory.createMIVarAssign(miVar.getVarName(), expression);
@@ -226,20 +312,20 @@ public class Variable extends VariableObject implements ICDIVariable {
 		// Changing values may have side effects i.e. affecting other variables
 		// if the manager is on autoupdate check all the other variables.
 		// Note: This maybe very costly.
-		if (this instanceof Register) {		
+		if (this instanceof Register) {
 			// If register was on autoupdate, update all the other registers
 			// assigning may have side effects i.e. affecting other registers.
 			ICDIRegisterManager mgr = session.getRegisterManager();
 			if (mgr.isAutoUpdate()) {
 				mgr.update();
-			}	
+			}
 		} else if (this instanceof Expression) {
 			// If expression was on autoupdate, update all the other expression
 			// assigning may have side effects i.e. affecting other expressions.
 			ICDIExpressionManager mgr = session.getExpressionManager();
 			if (mgr.isAutoUpdate()) {
 				mgr.update();
-			}	
+			}
 		} else {
 			// FIXME: Should we always call the Variable Manager ?
 			ICDIVariableManager mgr = session.getVariableManager();
@@ -256,7 +342,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 	 */
 	public boolean isEditable() throws CDIException {
 		if (editable == null) {
-			MISession mi = ((Session)(getTarget().getSession())).getMISession();
+			MISession mi = ((Session) (getTarget().getSession())).getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIVarShowAttributes var = factory.createMIVarShowAttributes(miVar.getVarName());
 			try {
@@ -278,7 +364,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 	 */
 	public void setFormat(int format) throws CDIException {
 		int fmt = Format.toMIFormat(format);
-		MISession mi = ((Session)(getTarget().getSession())).getMISession();
+		MISession mi = ((Session) (getTarget().getSession())).getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarSetFormat var = factory.createMIVarSetFormat(miVar.getVarName(), fmt);
 		try {
@@ -297,7 +383,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 	 */
 	public boolean equals(ICDIVariable var) {
 		if (var instanceof Variable) {
-			Variable variable = (Variable)var;
+			Variable variable = (Variable) var;
 			return miVar.getVarName().equals(variable.getMIVar().getVarName());
 		}
 		return super.equals(var);

@@ -1,6 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * (c) Copyright IBM Corp. 2000, 2001. All Rights Reserved.
  */
 package org.eclipse.cdt.debug.internal.ui;
 
@@ -20,18 +19,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * Utility class to simplify access to some SWT resources. 
+ * Utility class to simplify access to some SWT resources.
  */
-public class SWTUtil
-{
+public class SWTUtil {
 
 	/**
-	 * Returns the standard display to be used. The method first checks, if
-	 * the thread calling this method has an associated disaply. If so, this
+	 * Returns the standard display to be used. The method first checks, if the
+	 * thread calling this method has an associated disaply. If so, this
 	 * display is returned. Otherwise the method returns the default display.
 	 */
-	public static Display getStandardDisplay()
-	{
+	public static Display getStandardDisplay() {
 		Display display;
 		display = Display.getCurrent();
 		if ( display == null )
@@ -45,29 +42,26 @@ public class SWTUtil
 	 * 
 	 * @return the shell for the given widget
 	 */
-	public static Shell getShell( Widget widget )
-	{
+	public static Shell getShell(Widget widget) {
 		if ( widget instanceof Control )
-			return ((Control) widget).getShell();
+			return ((Control)widget).getShell();
 		if ( widget instanceof Caret )
-			return ((Caret) widget).getParent().getShell();
+			return ((Caret)widget).getParent().getShell();
 		if ( widget instanceof DragSource )
-			return ((DragSource) widget).getControl().getShell();
+			return ((DragSource)widget).getControl().getShell();
 		if ( widget instanceof DropTarget )
-			return ((DropTarget) widget).getControl().getShell();
+			return ((DropTarget)widget).getControl().getShell();
 		if ( widget instanceof Menu )
-			return ((Menu) widget).getParent().getShell();
+			return ((Menu)widget).getParent().getShell();
 		if ( widget instanceof ScrollBar )
-			return ((ScrollBar) widget).getParent().getShell();
-
+			return ((ScrollBar)widget).getParent().getShell();
 		return null;
 	}
 
 	/**
 	 * Returns a width hint for a button control.
 	 */
-	public static int getButtonWidthHint( Button button )
-	{
+	public static int getButtonWidthHint( Button button ) {
 		PixelConverter converter = new PixelConverter( button );
 		int widthHint = converter.convertHorizontalDLUsToPixels( IDialogConstants.BUTTON_WIDTH );
 		return Math.max( widthHint, button.computeSize( SWT.DEFAULT, SWT.DEFAULT, true ).x );
@@ -76,27 +70,23 @@ public class SWTUtil
 	/**
 	 * Returns a height hint for a button control.
 	 */
-	public static int getButtonHeigthHint( Button button )
-	{
+	public static int getButtonHeigthHint( Button button ) {
 		PixelConverter converter = new PixelConverter( button );
 		return converter.convertVerticalDLUsToPixels( IDialogConstants.BUTTON_HEIGHT );
 	}
 
 	/**
-	 * Sets width and height hint for the button control.
-	 * <b>Note:</b> This is a NOP if the button's layout data is not
-	 * an instance of <code>GridData</code>.
+	 * Sets width and height hint for the button control. <b>Note:</b> This
+	 * is a NOP if the button's layout data is not an instance of <code>GridData</code>.
 	 * 
-	 * @param	the button for which to set the dimension hint
+	 * @param the button for which to set the dimension hint
 	 */
-	public static void setButtonDimensionHint( Button button )
-	{
+	public static void setButtonDimensionHint( Button button ) {
 		Assert.isNotNull( button );
 		Object gd = button.getLayoutData();
-		if ( gd instanceof GridData )
-		{
-			((GridData) gd).heightHint = getButtonHeigthHint( button );
-			((GridData) gd).widthHint = getButtonWidthHint( button );
+		if ( gd instanceof GridData ) {
+			((GridData)gd).heightHint = getButtonHeigthHint( button );
+			((GridData)gd).widthHint = getButtonWidthHint( button );
 		}
 	}
 }

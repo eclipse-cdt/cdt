@@ -1,4 +1,17 @@
 2004-04-07 Mikhail Khodjaiants
+	Strings externalization fixes and reformatting.
+	* CDebugUIMessages.properties
+	* CDebugModelPresentation.java
+	* CDTDebugModelPresentation.java
+	* ColorManager.java
+	* InfoStatusHandler.java
+	* OverlayImageCache.java
+	* OverlayImageDescriptor.java
+	* PixelConverter.java
+	* QuestionStatusHandler.java
+	* SWTUtil.java
+
+2004-04-07 Mikhail Khodjaiants
 	Removed the "Show Debugger Console" action.
 	* DebuggerConsoleActionDelegate.java 
 	* ToggelDelegateAction.java

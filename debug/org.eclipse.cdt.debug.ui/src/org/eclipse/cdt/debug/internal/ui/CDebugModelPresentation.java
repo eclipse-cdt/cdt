@@ -151,13 +151,13 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 				label += ( qualified ? path.toOSString() : path.lastSegment() );
 		}
 		else {
-			label += "unknown";
+			label += CDebugUIMessages.getString( "CDebugModelPresentation.unknown_1" ); //$NON-NLS-1$
 		}
 		return label;
 	}
 
 	protected String getRegisterGroupText( IRegisterGroup group ) {
-		String name = "<not available>";
+		String name = CDebugUIMessages.getString( "CDebugModelPresentation.not_available_1" ); //$NON-NLS-1$
 		try {
 			name = group.getName();
 		}

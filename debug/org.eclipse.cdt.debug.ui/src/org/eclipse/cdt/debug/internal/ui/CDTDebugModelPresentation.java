@@ -444,7 +444,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 					if ( info != null && info instanceof ICDISignalExitInfo)
 					{
 						ICDISignalExitInfo sigInfo = (ICDISignalExitInfo)info;
-						label += CDebugUIPlugin.getFormattedString("CDTDebugModelPresentation.Signal_received_Description", //$NON-NLS-1$//$NON-NLS-2$
+						label += CDebugUIPlugin.getFormattedString("internal.ui.CDTDebugModelPresentation.Signal_received_Description", //$NON-NLS-1$//$NON-NLS-2$
 											  new String[] { sigInfo.getName(), sigInfo.getDescription() } );						
 					}
 					else if ( info != null && info instanceof ICDIExitInfo )
@@ -493,14 +493,14 @@ public class CDTDebugModelPresentation extends LabelProvider
 					ICDISignal signal = ((ICDISignalReceived)info).getSignal();
 					String label = threadName + 
 						CDebugUIPlugin.getResourceString("internal.ui.CDTDebugModelPresentation.Suspended") +  //$NON-NLS-1$
-						CDebugUIPlugin.getFormattedString("CDTDebugModelPresentation.Signal_received_Description",  //$NON-NLS-1$
+						CDebugUIPlugin.getFormattedString("internal.ui.CDTDebugModelPresentation.Signal_received_Description",  //$NON-NLS-1$
 														 new String[] { signal.getName(), signal.getDescription() } );
 					return label;
 				}
 				if ( info != null && info instanceof ICDIWatchpointTrigger )
 				{
 					String label = threadName + 
-								   CDebugUIPlugin.getFormattedString("CDTDebugModelPresentation.Suspended_Watchpoint_triggered_Old_New",  //$NON-NLS-1$
+								   CDebugUIPlugin.getFormattedString("internal.ui.CDTDebugModelPresentation.Suspended_Watchpoint_triggered_Old_New",  //$NON-NLS-1$
 														 new String[] { ((ICDIWatchpointTrigger)info).getOldValue(), 
 																		((ICDIWatchpointTrigger)info).getNewValue() } );
 					return label;

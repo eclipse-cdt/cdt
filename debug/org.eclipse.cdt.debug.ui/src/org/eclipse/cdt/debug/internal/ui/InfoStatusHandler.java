@@ -18,26 +18,24 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * 
  * @since Sep 25, 2002
  */
-public class InfoStatusHandler implements IStatusHandler
-{
+public class InfoStatusHandler implements IStatusHandler {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(IStatus, Object)
 	 */
-	public Object handleStatus( IStatus status, Object source ) throws CoreException
-	{
-		if ( status != null && source != null && source instanceof IDebugTarget )
-		{
+	public Object handleStatus( IStatus status, Object source )
+		throws CoreException {
+		if ( status != null && source != null && source instanceof IDebugTarget ) {
 			final String title = ((IDebugTarget)source).getName();
 			final String message = status.getMessage();
 			CDebugUIPlugin.getStandardDisplay().asyncExec(
-					new Runnable()
-						{
-							public void run()
-							{		
-								MessageDialog.openInformation( CDebugUIPlugin.getActiveWorkbenchShell(), title, message );
-							}
-						} );
+					new Runnable() {
+						public void run() { 
+							MessageDialog.openInformation( CDebugUIPlugin.getActiveWorkbenchShell(), title, message );
+						}
+					} );
 		}
 		return null;
 	}

@@ -1,7 +1,6 @@
 /*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
- * 
+ * (c) Copyright QNX Software Systems Ltd. 2002. All Rights Reserved.
+ *  
  */
 package org.eclipse.cdt.debug.internal.ui;
 
@@ -18,27 +17,25 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * 
  * @since Sep 25, 2002
  */
-public class QuestionStatusHandler implements IStatusHandler
-{
+public class QuestionStatusHandler implements IStatusHandler {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(IStatus, Object)
 	 */
-	public Object handleStatus( IStatus status, Object source ) throws CoreException
-	{
+	public Object handleStatus( IStatus status, Object source ) throws CoreException {
+
 		final boolean result[] = new boolean[1];
-		if ( status != null && source != null && source instanceof IDebugTarget )
-		{
+		if ( status != null && source != null && source instanceof IDebugTarget ) {
 			final String title = ((IDebugTarget)source).getName();
 			final String message = status.getMessage();
 			CDebugUIPlugin.getStandardDisplay().syncExec(
-					new Runnable()
-						{
-							public void run()
-							{		
-								result[0] = MessageDialog.openQuestion( CDebugUIPlugin.getActiveWorkbenchShell(), title, message );
-							}
-						} );
+					new Runnable() {
+						public void run() {
+							result[0] = MessageDialog.openQuestion( CDebugUIPlugin.getActiveWorkbenchShell(), title, message );
+						}
+					} );
 		}
 		return new Boolean( result[0] );
 	}

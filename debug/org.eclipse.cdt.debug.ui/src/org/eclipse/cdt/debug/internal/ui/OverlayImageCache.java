@@ -1,7 +1,6 @@
 /*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
- * 
+ * (c) Copyright QNX Software Systems Ltd. 2002. All Rights Reserved.
+ *  
  */
 
 package org.eclipse.cdt.debug.internal.ui;
@@ -17,23 +16,23 @@ import org.eclipse.swt.graphics.Image;
  * 
  * @since May 30, 2003
  */
-public class OverlayImageCache
-{
-	private Map cache = new HashMap();
+public class OverlayImageCache {
+
+	private Map fCache = new HashMap();
 
 	/**
-	 * Returns and caches an image corresponding to the specified image descriptor.
+	 * Returns and caches an image corresponding to the specified image
+	 * descriptor.
 	 * 
-	 * @param imageDecsriptor the image descriptor 
+	 * @param imageDecsriptor
+	 *            the image descriptor
 	 * @return the image
 	 */
-	public Image getImageFor( OverlayImageDescriptor imageDescriptor )
-	{
-		Image image = (Image)cache.get( imageDescriptor );
-		if ( image == null )
-		{
+	public Image getImageFor( OverlayImageDescriptor imageDescriptor ) {
+		Image image = (Image)getCache().get( imageDescriptor );
+		if ( image == null ) {
 			image = imageDescriptor.createImage();
-			cache.put( imageDescriptor, image );
+			getCache().put( imageDescriptor, image );
 		}
 		return image;
 	}
@@ -41,13 +40,15 @@ public class OverlayImageCache
 	/**
 	 * Disposes of all images in the cache.
 	 */
-	public void disposeAll()
-	{
-		for ( Iterator it = cache.values().iterator(); it.hasNext(); )
-		{
+	public void disposeAll() {
+		for ( Iterator it = getCache().values().iterator(); it.hasNext(); ) {
 			Image image = (Image)it.next();
 			image.dispose();
 		}
-		cache.clear();
+		getCache().clear();
+	}
+
+	private Map getCache() {
+		return this.fCache;
 	}
 }

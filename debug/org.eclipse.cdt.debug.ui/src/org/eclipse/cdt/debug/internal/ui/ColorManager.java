@@ -19,40 +19,38 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @since Jul 23, 2002
  */
-public class ColorManager
-{
-	private static ColorManager fgColorManager;
+public class ColorManager {
 
-	private ColorManager()
-	{
+	private static ColorManager gfColorManager;
+
+	private ColorManager() {
 	}
 
-	public static ColorManager getDefault()
-	{
-		if ( fgColorManager == null )
-		{
-			fgColorManager = new ColorManager();
+	public static ColorManager getDefault() {
+		if ( gfColorManager == null ) {
+			gfColorManager = new ColorManager();
 		}
-		return fgColorManager;
+		return gfColorManager;
 	}
 
 	protected Map fColorTable = new HashMap( 10 );
 
-	public Color getColor( RGB rgb )
-	{
-		Color color = (Color)fColorTable.get( rgb );
-		if ( color == null )
-		{
+	public Color getColor( RGB rgb ) {
+		Color color = (Color)getColorTable().get(rgb);
+		if ( color == null ) {
 			color = new Color( Display.getCurrent(), rgb );
-			fColorTable.put( rgb, color );
+			getColorTable().put( rgb, color );
 		}
 		return color;
 	}
 
-	public void dispose()
-	{
-		Iterator e = fColorTable.values().iterator();
+	public void dispose() {
+		Iterator e = getColorTable().values().iterator();
 		while( e.hasNext() )
-			((Color)e.next()).dispose();
+			 ((Color)e.next()).dispose();
+	}
+
+	private Map getColorTable() {
+		return this.fColorTable;
 	}
 }

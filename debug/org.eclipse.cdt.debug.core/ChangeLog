@@ -1,3 +1,9 @@
+2002-10-24 Mikhail Khodjaiants
+	Moved the memory format constants from IFormattedMemoryRetrieval.java 
+	to IFormattedMemoryBlock.java.
+	* IFormattedMemoryRetrieval.java
+	* IFormattedMemoryBlock.java
+
 2002-10-24 David Inglis
 	* CDebugTarget.java
 	fix exception on shutdown with a connected target, CDI session

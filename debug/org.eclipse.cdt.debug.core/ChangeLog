@@ -1,4 +1,8 @@
 2003-01-14 Mikhail Khodjaiants
+	Added new methods to the 'ICDISharedLibrary' interface.
+	* ICDISharedLibarary.java
+
+2003-01-14 Mikhail Khodjaiants
 	Check if thread is already disposed in the CDI event handler because the array of listeners used by EventManager
 	in some situations is not up to date.
 	* CThread.java

@@ -5,7 +5,7 @@
  */
 package org.eclipse.cdt.debug.core.cdi.model;
 
-import java.io.File;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
  * 
@@ -14,12 +14,39 @@ import java.io.File;
  * 
  * @since Jul 8, 2002
  */
-public interface ICDISharedLibrary extends ICDIObject
-{
+public interface ICDISharedLibrary extends ICDIObject {
 	/**
-	 * Returns the shared library file.
+	 * Returns the name of shared library file.
 	 * 
-	 * @return the shared library file
+	 * @return the name of shared library file
 	 */
-	File getFile();
+	String getFileName();
+	
+	/**
+	 * Returns the start address of this library.
+	 * 
+	 * @return the start address of this library
+	 */
+	long getStartAddress();
+
+	/**
+	 * Returns the end address of this library.
+	 * 
+	 * @return the end address of this library
+	 */
+	long getEndAddress();
+
+	/**
+	 * Returns whether the symbols of this library are read.
+	 *
+	 * @return whether the symbols of this library are read
+	 */
+	boolean symbolsRead();
+	
+	/**
+	 * Loads the library symbols.
+	 * 
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	void loadSymbols() throws CDIException;
 }

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,4 +77,10 @@ public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 	 *            <code>ICPPASTTemplateParameter</code>
 	 */
 	public void addTemplateParamter(ICPPASTTemplateParameter parm);
+	
+	/**
+	 * get the template scope representing this declaration in the logical tree
+	 * @return <code>ICPPTemplateScope</code>
+	 */
+	public ICPPTemplateScope getScope();
 }

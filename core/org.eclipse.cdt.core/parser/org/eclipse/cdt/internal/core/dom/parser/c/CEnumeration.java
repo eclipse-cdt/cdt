@@ -41,14 +41,14 @@ public class CEnumeration implements IEnumeration {
         	declarations = new IASTName[] { enumeration };
         else
             definition = enumeration;
-        ((CASTName)enumeration).setBinding( this );
+        enumeration.setBinding( this );
 	}
 	
     public void addDeclaration( IASTName decl ){
         if( decl.getPropertyInParent() != IASTElaboratedTypeSpecifier.TYPE_NAME )
             return;
             
-        ((CASTName) decl).setBinding( this );
+        decl.setBinding( this );
         if( declarations == null ){
             declarations = new IASTName[] { decl };
         	return;
@@ -77,7 +77,7 @@ public class CEnumeration implements IEnumeration {
 		if( spec != null && spec instanceof ICASTEnumerationSpecifier ){
 		    ICASTEnumerationSpecifier enumSpec = (ICASTEnumerationSpecifier) spec;
 		    
-			((CASTName)enumSpec.getName()).setBinding( this );
+			enumSpec.getName().setBinding( this );
 			definition = enumSpec.getName();
 		}
 		return;

@@ -188,7 +188,7 @@ public class CScope implements ICScope {
         if( o instanceof IBinding )
             return (IBinding) o;
 
-        if( (resolve || ((CASTName)o).hasBinding()) && ( o != name ) )
+        if( (resolve || ((IASTName)o).getBinding() != null) && ( o != name ) )
             return ((IASTName)o).resolveBinding();
 
         return null;

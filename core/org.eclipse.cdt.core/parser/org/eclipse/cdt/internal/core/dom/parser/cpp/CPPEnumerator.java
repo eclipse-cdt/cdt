@@ -46,7 +46,7 @@ public class CPPEnumerator implements IEnumerator, ICPPInternalBinding, ICPPBind
      */
     public CPPEnumerator( IASTName enumerator ) {
         this.enumName = enumerator;
-        ((CPPASTName)enumerator).setBinding( this );
+        enumerator.setBinding( this );
     }
 
     /* (non-Javadoc)

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
@@ -96,17 +97,9 @@ public class CParameter implements IParameter {
     /**
      * @param name
      */
-    public void addDeclaration( CASTName name ) {
-		for( int i = 0; i < declarations.length; i++ ){
-			if( declarations[i] == null ){
-				declarations[i] = name;
-				return;
-			}
-		}
-		IASTName [] tmp = new IASTName[ declarations.length * 2 ];
-		System.arraycopy( declarations, 0, tmp, 0, declarations.length );
-		tmp[ declarations.length ] = name;
-		declarations = tmp;
+    public void addDeclaration( IASTName name ) {
+    	if( name != null )
+    		declarations = (IASTName[]) ArrayUtil.append( IASTName.class, declarations, name );
     }
 
     /* (non-Javadoc)

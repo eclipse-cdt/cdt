@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,36 +10,33 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import java.util.List;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * @author Doug Schaefer
  */
-public interface ICPPTemplateDefinition {
+public interface ICPPTemplateDefinition extends ICPPBinding{
 
 	/**
-	 * Returns the list of template parameters. If this is a template
-	 * specialization, the parameters will be substituted by the arguments
-	 * determined in the specialization.
-	 * 
-	 * @return List of ICPPTemplateParameter, IType, or IASTExpression. The type
-	 *         or expression are arguments in a specialization.
+	 * Returns an array of the template parameters. 
+	 * In the case of a specialization, the array will be empty,
+	 * a partial specialization will have the specialized parameter list
+	 * @return array of ICPPTemplateParameter
 	 */
-	public List getParameters();
+	public ICPPTemplateParameter[] getParameters();
 
 	/**
-	 * Returns whether this is a template specialization.
-	 * 
-	 * @return is this a template specialization
-	 */
-	public boolean isSpecialization();
-
-	/**
-	 * If this is a template specialization, this returns the template
-	 * definition this is specializing. It returns null if this template is not
-	 * a specialization.
-	 * 
+	 * instantiate this template using the given arguments
+	 * @param arguments
 	 * @return
 	 */
-	public ICPPTemplateDefinition getSpecializes();
+	public IBinding instantiate( IASTNode [] arguments );
+	
+	/**
+	 * returns the templated declaration for this template,
+	 * will be either a ICPPClassType or a ICPPFunction
+	 * @return
+	 */
+	public IBinding getTemplatedDeclaration();
 }

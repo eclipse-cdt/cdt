@@ -27,12 +27,25 @@ public interface IASTName extends IASTNode {
 	public static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
 
 	/**
-	 * Return the semantic object this name is referring to.
+	 * Resolve the semantic object this name is referring to.
 	 * 
 	 * @return <code>IBinding</code> binding
 	 */
 	public IBinding resolveBinding();
 
+	/**
+	 * Get the semantic object attached to this name.  May be null if this name
+	 * has not yet been semantically resolved (@see resolveBinding)
+	 * @return <code>IBinding</code> if it has been resolved, otherwise null 
+	 */
+	public IBinding getBinding();
+	
+	/** 
+	 * Set the semantic object for this name to be the given binding
+	 * @param binding
+	 */
+	public void setBinding( IBinding binding );
+	
 	/**
 	 * Return a list of bindings in the scope of the name that have the name as
 	 * a prefix.

@@ -143,7 +143,7 @@ public class CFunction implements IFunction, ICInternalBinding {
 	}
 	public char[] getNameCharArray(){
 	    IASTFunctionDeclarator dtor = ( definition != null ) ? definition : declarators[0];
-	    return ((CASTName) dtor.getName()).toCharArray();
+	    return dtor.getName().toCharArray();
 	}
 
 	/* (non-Javadoc)
@@ -184,8 +184,8 @@ public class CFunction implements IFunction, ICInternalBinding {
     }
 	
     public IBinding resolveParameter( IASTName paramName ){
-    	if( ((CASTName)paramName).hasBinding() )
-    	    return paramName.resolveBinding();
+    	if( paramName.getBinding() != null )
+    	    return paramName.getBinding();
 
     	IBinding binding = null;
     	int idx = 0;
@@ -229,13 +229,13 @@ public class CFunction implements IFunction, ICInternalBinding {
     	if( definition != null ){
     	    if( definition instanceof IASTStandardFunctionDeclarator ){
     	        temp = ((IASTStandardFunctionDeclarator)definition).getParameters()[idx];
-        		((CASTName)temp.getDeclarator().getName()).setBinding( binding );
+        		temp.getDeclarator().getName().setBinding( binding );
     	    } else if( definition instanceof ICASTKnRFunctionDeclarator ){
     	        IASTName n = fKnRDtor.getParameterNames()[idx];
-    	        ((CASTName)n).setBinding( binding );
+    	        n.setBinding( binding );
     	        IASTDeclarator dtor = CVisitor.getKnRParameterDeclarator( fKnRDtor, n );
     	        if( dtor != null ){
-    	            ((CASTName)dtor.getName()).setBinding( binding );
+    	            dtor.getName().setBinding( binding );
     	        }
     	    }
     	}
@@ -243,7 +243,7 @@ public class CFunction implements IFunction, ICInternalBinding {
     		for( int j = 0; j < declarators.length && declarators[j] != null; j++ ){
     		    if( declarators[j].getParameters().length > idx ){
 					temp = declarators[j].getParameters()[idx];
-		    		((CASTName)temp.getDeclarator().getName()).setBinding( binding );
+		    		temp.getDeclarator().getName().setBinding( binding );
     		    }
     		}
     	}
@@ -260,11 +260,11 @@ public class CFunction implements IFunction, ICInternalBinding {
         	IASTParameterDeclaration [] nps = ((IASTStandardFunctionDeclarator)fdtor).getParameters();
 
         	for( int i = 0; i < nps.length; i++ ){
-        	    CASTName origname = (CASTName) ops[i].getDeclarator().getName();
-        	    if( origname.hasBinding() ){
-        	        temp = (CParameter) origname.resolveBinding();
+        	    IASTName origname = ops[i].getDeclarator().getName();
+        	    if( origname.getBinding() != null ){
+        	        temp = (CParameter) origname.getBinding();
             		if( temp != null ){
-            		    CASTName name = (CASTName) nps[i].getDeclarator().getName();
+            		    IASTName name = nps[i].getDeclarator().getName();
             			name.setBinding( temp );
             			temp.addDeclaration( name );
             		}    
@@ -278,17 +278,17 @@ public class CFunction implements IFunction, ICInternalBinding {
                 return; //problem
             
             for( int i = 0; i < ops.length; i++ ){
-        	    CASTName origname = (CASTName) ops[i].getDeclarator().getName();
-        	    if( origname.hasBinding() ){
+        	    IASTName origname = ops[i].getDeclarator().getName();
+        	    if( origname.getBinding() != null ){
         	        temp = (CParameter) origname.resolveBinding();
             		if( temp != null ){
-            		    CASTName name = (CASTName) ns[i];
+            		    IASTName name = ns[i];
             			name.setBinding( temp );
             			
             			IASTDeclarator dtor = CVisitor.getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) fdtor, name );
             			if( dtor != null ){
-            			    ((CASTName) dtor.getName()).setBinding( temp );
-            			    temp.addDeclaration( (CASTName) dtor.getName() );
+            			    dtor.getName().setBinding( temp );
+            			    temp.addDeclaration( dtor.getName() );
             			}
             		}    
         	    }

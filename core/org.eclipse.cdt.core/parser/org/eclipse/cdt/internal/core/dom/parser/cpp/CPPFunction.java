@@ -114,7 +114,7 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
 		        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
 		        name = ns[ ns.length - 1 ];
 		    }
-		    ((CPPASTName)name).setBinding( this );
+		    name.setBinding( this );
 	    }
 	}
 	
@@ -287,7 +287,7 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
 
     public IBinding resolveParameter( IASTParameterDeclaration param ){
     	IASTName name = param.getDeclarator().getName();
-    	IBinding binding = ((CPPASTName)name).getBinding();
+    	IBinding binding = name.getBinding();
     	if( binding != null )
     		return binding;
 		
@@ -304,7 +304,7 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
     	IASTParameterDeclaration temp = null;
     	if( definition != null ){
     		temp = definition.getParameters()[i];
-    		CPPASTName n = (CPPASTName)temp.getDeclarator().getName();
+    		IASTName n = temp.getDeclarator().getName();
     		if( n != name ) {
     		    n.setBinding( binding );
     		    ((CPPParameter)binding).addDeclaration( n );
@@ -313,7 +313,7 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
     	if( declarations != null ){
     		for( int j = 0; j < declarations.length && declarations[j] != null; j++ ){
     			temp = declarations[j].getParameters()[i];
-        		CPPASTName n = (CPPASTName)temp.getDeclarator().getName();
+        		IASTName n = temp.getDeclarator().getName();
         		if( n != name ) {
         		    n.setBinding( binding );
         		    ((CPPParameter)binding).addDeclaration( n );
@@ -330,9 +330,9 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
     	IASTParameterDeclaration [] nps = fdtor.getParameters();
     	CPPParameter temp = null;
     	for( int i = 0; i < nps.length; i++ ){
-    		temp = (CPPParameter) ((CPPASTName)ops[i].getDeclarator().getName()).getBinding();
+    		temp = (CPPParameter) ops[i].getDeclarator().getName().getBinding();
     		if( temp != null ){
-    		    CPPASTName name = (CPPASTName) nps[i].getDeclarator().getName();
+    		    IASTName name = nps[i].getDeclarator().getName();
     			name.setBinding( temp );
     			temp.addDeclaration( name );
     		}

@@ -52,7 +52,7 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPInternalBinding
 	 */
 	public CPPTypedef(IASTName name) {
 		this.typedefName = name;
-		((CPPASTName)name).setBinding( this );
+		name.setBinding( this );
 		
 		// TODO Auto-generated constructor stub
 	}

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,14 +104,16 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
     private int currentIndex = 0;    
     private IASTNode [] templateArguments = null;
     private static final int DEFAULT_ARGS_LIST_SIZE = 4;
-
+    private IBinding binding = null;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTName#resolveBinding()
      */
     public IBinding resolveBinding() {
-        // TODO templates not yet supported
-        return new CPPScope.CPPTemplateProblem( -1, templateName.toCharArray() );
+    	if( binding == null )
+    		binding = CPPTemplates.createBinding( this ); 
+    	
+        return binding;    
     }
 
 	public IBinding[] resolvePrefix() {
@@ -167,5 +169,19 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
 		if( n == templateName )
 			return r_reference;
 		return r_unclear;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#getBinding()
+	 */
+	public IBinding getBinding() {
+		return binding;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#setBinding(org.eclipse.cdt.core.dom.ast.IBinding)
+	 */
+	public void setBinding(IBinding binding) {
+		this.binding = binding;
 	}
 }

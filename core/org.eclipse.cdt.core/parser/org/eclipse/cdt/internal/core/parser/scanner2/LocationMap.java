@@ -640,6 +640,22 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 		public boolean isReference() {
 			return !isDeclaration();
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTName#getBinding()
+		 */
+		public IBinding getBinding() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTName#setBinding(org.eclipse.cdt.core.dom.ast.IBinding)
+		 */
+		public void setBinding(IBinding binding) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     /**

@@ -42,7 +42,7 @@ public class CEnumerator implements IEnumerator {
     private final IASTName enumeratorName;
     public CEnumerator( IASTEnumerator enumtor ){
 		this.enumeratorName = enumtor.getName();
-		((CASTName)enumeratorName).setBinding( this );
+		enumeratorName.setBinding( this );
 	}
     
     public IASTNode getPhysicalNode(){

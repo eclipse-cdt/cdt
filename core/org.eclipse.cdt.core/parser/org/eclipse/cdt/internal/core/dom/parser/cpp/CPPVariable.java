@@ -81,7 +81,7 @@ public class CPPVariable implements ICPPVariable, ICPPInternalBinding {
 	        definition = name;
 	    else 
 	        declarations = new IASTName [] { name };
-	    ((CPPASTName)name).setBinding( this );
+	    name.setBinding( this );
 	}
 	
 	protected boolean isDefinition( IASTName name ){

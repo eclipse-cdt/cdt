@@ -94,7 +94,7 @@ public class CPPImplicitMethod extends CPPMethod {
 	
 	public IBinding resolveParameter( IASTParameterDeclaration param ){
     	IASTName name = param.getDeclarator().getName();
-    	IParameter binding = (IParameter) ((CPPASTName)name).getBinding();
+    	IParameter binding = (IParameter) name.getBinding();
     	if( binding != null )
     		return binding;
 		
@@ -112,14 +112,14 @@ public class CPPImplicitMethod extends CPPMethod {
     	IASTParameterDeclaration temp = null;
     	if( definition != null ){
     		temp = definition.getParameters()[i];
-    		CPPASTName n = (CPPASTName) temp.getDeclarator().getName();
+    		IASTName n = temp.getDeclarator().getName();
     		n.setBinding( binding );
     		((CPPParameter)binding).addDeclaration( n );
     	}
     	if( declarations != null ){
     		for( int j = 0; j < declarations.length; j++ ){
     			temp = declarations[j].getParameters()[i];
-    			CPPASTName n = (CPPASTName) temp.getDeclarator().getName();
+    			IASTName n = temp.getDeclarator().getName();
         		n.setBinding( binding );
         		((CPPParameter)binding).addDeclaration( n );
     		}
@@ -134,7 +134,7 @@ public class CPPImplicitMethod extends CPPMethod {
 			    return;
 
 			for( int i = 0; i < nps.length; i++ ){
-			    CPPASTName name = (CPPASTName) nps[i].getDeclarator().getName(); 
+			    IASTName name = nps[i].getDeclarator().getName(); 
 			    name.setBinding( parameters[i] );
 			    ((CPPParameter)parameters[i]).addDeclaration( name );
 			}
@@ -185,7 +185,7 @@ public class CPPImplicitMethod extends CPPMethod {
 								break;
 						}
 						if( idx == ps.length ){
-							((CPPASTName)name).setBinding( this );
+							name.setBinding( this );
 							addDeclaration( (ICPPASTFunctionDeclarator) dtor );
 							return members[i];
 						}

@@ -122,7 +122,7 @@ abstract public class CPPScope implements ICPPScope{
         					IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
         					n = ns[ ns.length - 1 ];
         				}
-        				bs = (IBinding[]) ArrayUtil.append( IBinding.class, bs, ((CPPASTName)n).getBinding() );
+        				bs = (IBinding[]) ArrayUtil.append( IBinding.class, bs, n.getBinding() );
         			} else
 						bs = (IBinding[]) ArrayUtil.append( IBinding.class, bs, os[i] );
         		}	    
@@ -137,7 +137,7 @@ abstract public class CPPScope implements ICPPScope{
     					IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
     					n = ns[ ns.length - 1 ];
     				}
-	        		binding = ((CPPASTName)n).getBinding();
+	        		binding = n.getBinding();
 	        	}
 	        	if( binding instanceof ICPPUsingDeclaration ){
 	        		return CPPSemantics.resolveAmbiguities( name, ((ICPPUsingDeclaration)binding).getDelegates() );

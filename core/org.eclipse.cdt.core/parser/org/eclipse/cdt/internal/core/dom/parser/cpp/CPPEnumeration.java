@@ -48,7 +48,7 @@ public class CPPEnumeration implements IEnumeration, ICPPInternalBinding, ICPPBi
      */
     public CPPEnumeration( IASTName name ) {
         this.enumName = name;
-        ((CPPASTName)name).setBinding( this );
+        name.setBinding( this );
     }
 
     /* (non-Javadoc)

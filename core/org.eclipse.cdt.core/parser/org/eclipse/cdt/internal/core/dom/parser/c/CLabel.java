@@ -41,7 +41,7 @@ public class CLabel implements ILabel {
     
     public CLabel( IASTName statement ){
         labelStatement = statement;
-        ((CASTName)statement).setBinding( this );
+        statement.setBinding( this );
     }
     public IASTNode getPhysicalNode(){
         return labelStatement;

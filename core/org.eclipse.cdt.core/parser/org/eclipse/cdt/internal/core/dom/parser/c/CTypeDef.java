@@ -54,7 +54,7 @@ public class CTypeDef implements ITypedef, ITypeContainer {
 		return name.toString();
 	}
 	public char[] getNameCharArray(){
-	    return ((CASTName) name).toCharArray();
+	    return name.toCharArray();
 	}
 
 	/* (non-Javadoc)

@@ -44,7 +44,7 @@ public class CStructure implements ICompositeType, ICInternalBinding {
 	    else {
 	        declarations = new IASTName[] { name };
 	    }
-	    ((CASTName) name).setBinding( this );
+	    name.setBinding( this );
 	}
 	
     public IASTNode getPhysicalNode(){
@@ -54,7 +54,7 @@ public class CStructure implements ICompositeType, ICInternalBinding {
 		IASTDeclSpecifier spec = CVisitor.findDefinition( (ICASTElaboratedTypeSpecifier) declSpec );
 		if( spec != null && spec instanceof ICASTCompositeTypeSpecifier ){
 			ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) spec;
-			((CASTName)compTypeSpec.getName()).setBinding( this );
+			compTypeSpec.getName().setBinding( this );
 			return compTypeSpec;
 		}
 		return null;
@@ -205,6 +205,6 @@ public class CStructure implements ICompositeType, ICInternalBinding {
 	 */
 	public void addDefinition(ICASTCompositeTypeSpecifier compositeTypeSpec) {
 		definition = compositeTypeSpec.getName();
-		((CASTName)compositeTypeSpec.getName()).setBinding( this );
+		compositeTypeSpec.getName().setBinding( this );
 	}
 }

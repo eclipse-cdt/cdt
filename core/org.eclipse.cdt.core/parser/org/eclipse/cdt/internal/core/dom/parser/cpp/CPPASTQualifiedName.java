@@ -243,4 +243,20 @@ public class CPPASTQualifiedName extends CPPASTNode implements
 		return r_unclear;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#getBinding()
+	 */
+	public IBinding getBinding() {
+		removeNullNames();
+		return names[names.length - 1].getBinding();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#setBinding(org.eclipse.cdt.core.dom.ast.IBinding)
+	 */
+	public void setBinding(IBinding binding) {
+		removeNullNames();
+		names[names.length - 1].setBinding( binding );
+	}
+
 }

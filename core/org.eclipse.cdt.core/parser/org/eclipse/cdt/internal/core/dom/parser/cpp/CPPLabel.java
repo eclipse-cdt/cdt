@@ -32,7 +32,7 @@ public class CPPLabel implements ILabel, ICPPInternalBinding, ICPPBinding {
      */
     public CPPLabel( IASTName statement ) {
         this.statement = statement;
-        ((CPPASTName)statement).setBinding( this );
+        statement.setBinding( this );
     }
 
     /* (non-Javadoc)

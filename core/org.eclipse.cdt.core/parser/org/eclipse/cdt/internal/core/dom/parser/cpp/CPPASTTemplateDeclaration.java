@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004, 2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 
 /**
  * @author jcamelon
@@ -23,6 +24,7 @@ public class CPPASTTemplateDeclaration extends CPPASTNode implements
 
     private boolean exported;
     private IASTDeclaration declaration;
+    private ICPPTemplateScope templateScope;
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#isExported()
@@ -106,14 +108,21 @@ public class CPPASTTemplateDeclaration extends CPPASTNode implements
 	        }
 		}
         
-        //TODO bindings for template parameters aren't done yet, trying to resolve one would result in trouble,
-        //so don't visit them for now.
-//        ICPPASTTemplateParameter [] params = getTemplateParameters();
-//        for ( int i = 0; i < params.length; i++ ) {
-//            if( !params[i].accept( action ) ) return false;
-//        }
+        ICPPASTTemplateParameter [] params = getTemplateParameters();
+        for ( int i = 0; i < params.length; i++ ) {
+            if( !params[i].accept( action ) ) return false;
+        }
         
         if( declaration != null ) if( !declaration.accept( action ) ) return false;
         return true;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration#getScope()
+	 */
+	public ICPPTemplateScope getScope() {
+		if( templateScope == null )
+			templateScope = new CPPTemplateScope( this );
+		return templateScope;
+	}
 }

@@ -118,7 +118,7 @@ public class CPPNamespace implements ICPPNamespace, ICPPInternalBinding {
 	    namespaceDefinitions = new IASTName [ size ];
 	    for( int i = 0; i < size; i++ ){
 	        namespaceDefinitions[i] = (IASTName) collector.namespaces.get(i);
-	        ((CPPASTName)namespaceDefinitions[i]).setBinding( this );
+	        namespaceDefinitions[i].setBinding( this );
 	    }
 	}
 	

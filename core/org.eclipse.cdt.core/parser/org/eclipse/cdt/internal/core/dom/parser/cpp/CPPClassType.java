@@ -166,7 +166,7 @@ public class CPPClassType implements ICPPClassType, ICPPInternalBinding {
 			definition = name;
 		else 
 			declarations = new IASTName[] { name };
-		((CPPASTName)name).setBinding( this );
+		name.setBinding( this );
 	}
 	
     /* (non-Javadoc)

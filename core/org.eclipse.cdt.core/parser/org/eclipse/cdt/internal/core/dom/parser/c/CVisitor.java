@@ -91,7 +91,7 @@ public class CVisitor {
 			shouldVisitNames = true;
 		}
 		public int visit(IASTName name) {
-			if ( ((CASTName)name).hasBinding() ) {
+			if ( name.getBinding() != null ) {
 				 ICScope scope;
                 try {
                     scope = (ICScope)name.resolveBinding().getScope();
@@ -99,7 +99,7 @@ public class CVisitor {
     				 	scope.removeBinding(name.resolveBinding());
                 } catch ( DOMException e ) {
                 }
-				 ((CASTName) name ).setBinding( null );
+				name.setBinding( null );
 			}
 			
 			return PROCESS_CONTINUE;
@@ -454,7 +454,7 @@ public class CVisitor {
 		} else if( parent instanceof ICASTFieldDesignator ) {
 			binding = resolveBinding( parent );
 		}
-		((CASTName)name).setBinding( binding );
+		name.setBinding( binding );
 	}
 
 	private static IBinding createBinding( ICASTEnumerationSpecifier enumeration ){

@@ -53,6 +53,10 @@ public abstract class CVariable extends CDebugElement
 
 		private ICDIVariable fCDIVariable;
 
+		private Boolean fEditable = null;
+
+		private ICType fType = null;
+
 		public InternalVariable( ICDIVariableObject varObject )
 		{
 			setCDIVariableObject( varObject );
@@ -74,6 +78,28 @@ public abstract class CVariable extends CDebugElement
 		protected ICDIVariableObject getCDIVariableObject()
 		{
 			return fCDIVariableObject;
+		}
+
+		protected ICType getType() throws CDIException
+		{
+			if ( fType == null )
+			{
+				ICDIVariable var = getCDIVariable();
+				if ( var != null )
+					fType = new CType( var.getType() );
+			}
+			return fType;
+		}
+
+		protected boolean isEditable() throws CDIException
+		{
+			if ( fEditable == null )
+			{
+				ICDIVariable var = getCDIVariable();
+				if ( var != null )
+					fEditable = new Boolean( var.isEditable() );
+			}
+			return ( fEditable != null ) ? fEditable.booleanValue() : false;
 		}
 
 		private void setCDIVariable( ICDIVariable variable )
@@ -98,6 +124,10 @@ public abstract class CVariable extends CDebugElement
 				logError( e.getMessage() );
 			}
 			setCDIVariable( null );
+			if ( fType != null )
+				fType.dispose();
+			fType = null;
+			fEditable = null;
 		}
 
 		protected void dispose()
@@ -142,17 +172,10 @@ public abstract class CVariable extends CDebugElement
 	 */
 	private String fQualifiedName = null;
 
-	private Boolean fEditable = null;
-
 	/**
 	 * Change flag.
 	 */
 	protected boolean fChanged = false;
-
-	/**
-	 * The type of this variable.
-	 */
-	private ICType fType = null;
 
 	/**
 	 * The current format of this variable.
@@ -674,20 +697,18 @@ public abstract class CVariable extends CDebugElement
 	{
 		if ( !isEnabled() )
 			return false;
-		if ( fEditable == null )
+		boolean result = false;
+		try
 		{
-			try
-			{
-				ICDIVariable var = getCDIVariable();
-				if ( var != null )
-					fEditable = new Boolean( var.isEditable() );
-			}
-			catch( CDIException e )
-			{
-				logError( e );
-			}
+			InternalVariable var = getInternalVariable();
+			if ( var != null )
+				result = var.isEditable();
 		}
-		return ( fEditable != null ) ? fEditable.booleanValue() : false;
+		catch( CDIException e )
+		{
+			logError( e );
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -759,20 +780,21 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public ICType getType() throws DebugException
 	{
-		if ( isEnabled() && fType == null )
+		ICType type = null;
+		if ( isEnabled() )
 		{
 			try
 			{
-				ICDIVariable var = getCDIVariable();
-				if ( var != null )
-					fType = new CType( var.getType() );
+				InternalVariable iv = getInternalVariable();
+				if ( iv != null )
+					type = iv.getType();
 			}
 			catch( CDIException e )
 			{
 				requestFailed( "Type is not available.", e );
 			}
 		}
-		return fType;
+		return type;
 	}
 
 	/* (non-Javadoc)
@@ -809,10 +831,6 @@ public abstract class CVariable extends CDebugElement
 			((CValue)fValue).dispose();
 			fValue = null;
 		}
-		fEditable = null;
-		if ( fType != null )
-			fType.dispose();
-		fType = null;
 	}
 
 	protected boolean isArgument()
@@ -850,5 +868,10 @@ public abstract class CVariable extends CDebugElement
 	{
 		return ( ( getShadow() != null && getShadow().isSameVariable( cdiVar ) ) ||
 				 ( fOriginal != null && fOriginal.isSameVariable( cdiVar ) ) );
+	}
+
+	private InternalVariable getInternalVariable()
+	{
+		return ( getShadow() != null ) ? getShadow() : fOriginal;
 	}
 }

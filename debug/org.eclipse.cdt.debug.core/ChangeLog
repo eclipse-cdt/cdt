@@ -1,3 +1,7 @@
+2003-06-30 Mikhail Khodjaiants
+	Fix for PR 39087: Cache the MI answer once we know if the variable is writable.
+	* CVariable.java
+
 2003-06-24 Mikhail Khodjaiants
 	All local var_objects are destroyed when a thread other than current is selected.
 	CVariable has to be invalidated if a "destroyed" event has been received.

@@ -1,4 +1,8 @@
 2004-12-01 Mikhail Khodjaiants
+	Fix for bug 79454: Unable to remove a breakpoint set from the gdb console.
+	* CBreakpointManager.java
+
+2004-12-01 Mikhail Khodjaiants
 	Fix for bug 74043: Overaggressive exception reporting?
 	* CBreakpointManager.java
 

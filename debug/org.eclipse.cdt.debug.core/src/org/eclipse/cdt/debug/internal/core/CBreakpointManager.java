@@ -48,6 +48,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -616,8 +618,10 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 				ICSourceLocator locator = getSourceLocator();
 				if ( locator != null ) {
 					Object sourceElement = locator.findSourceElement( cdiBreakpoint.getLocation().getFile() );
-					if ( sourceElement != null && sourceElement instanceof IFile ) {
-						breakpoint = createLineBreakpoint( (IFile)sourceElement, cdiBreakpoint );
+					if ( sourceElement instanceof IFile || sourceElement instanceof IStorage ) {
+						String sourceHandle = ( sourceElement instanceof IFile ) ? ((IFile)sourceElement).getLocation().toOSString() : ((IStorage)sourceElement).getFullPath().toOSString();
+						IResource resource = ( sourceElement instanceof IFile ) ? (IResource)sourceElement : ResourcesPlugin.getWorkspace().getRoot();
+						breakpoint = createLineBreakpoint( sourceHandle, resource, cdiBreakpoint );
 					}
 					else if ( !isEmpty( cdiBreakpoint.getLocation().getFunction() ) ) {
 						breakpoint = createFunctionBreakpoint( cdiBreakpoint );
@@ -630,7 +634,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			else if ( !isEmpty( cdiBreakpoint.getLocation().getFunction() ) ) {
 				breakpoint = createFunctionBreakpoint( cdiBreakpoint );
 			}
-			else if ( ! cdiBreakpoint.getLocation().getAddress().equals( BigInteger.ZERO ) ) {
+			else if ( !cdiBreakpoint.getLocation().getAddress().equals( BigInteger.ZERO ) ) {
 				breakpoint = createAddressBreakpoint( cdiBreakpoint );
 			}
 		}
@@ -641,9 +645,9 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		return breakpoint;
 	}
 
-	private ICLineBreakpoint createLineBreakpoint( IFile file, ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException {
-		ICLineBreakpoint breakpoint = CDIDebugModel.createLineBreakpoint( cdiBreakpoint.getLocation().getFile(), 
-																		  file, 
+	private ICLineBreakpoint createLineBreakpoint( String sourceHandle, IResource resource, ICDILocationBreakpoint cdiBreakpoint ) throws CDIException, CoreException {
+		ICLineBreakpoint breakpoint = CDIDebugModel.createLineBreakpoint( sourceHandle, 
+																		  resource, 
 																		  cdiBreakpoint.getLocation().getLineNumber(), 
 																		  cdiBreakpoint.isEnabled(), 
 																		  cdiBreakpoint.getCondition().getIgnoreCount(), 

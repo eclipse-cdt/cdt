@@ -29,6 +29,10 @@ public class MIStackInfoDepth extends MICommand
 		super("-stack-info-depth", new String[]{Integer.toString(maxDepth)});
 	}
 
+	public MIStackInfoDepthInfo getMIStackInfoDepthInfo() throws MIException {
+		return (MIStackInfoDepthInfo)getMIInfo();
+	}
+
 	public MIInfo getMIInfo() throws MIException {
 		MIInfo info = null;
 		MIOutput out = getMIOutput();

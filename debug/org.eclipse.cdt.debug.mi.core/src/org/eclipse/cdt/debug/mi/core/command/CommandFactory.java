@@ -253,6 +253,10 @@ public class CommandFactory {
 		return new MIThreadSelect(threadNum);
 	}
 
+	public MIInfoSharedLibrary createMIInfoSharedLibrary() {
+		return new MIInfoSharedLibrary();
+	}
+
 	public MIVarCreate createMIVarCreate(String expression) {
 		return new MIVarCreate(expression);
 	}

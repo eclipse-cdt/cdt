@@ -54,10 +54,12 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
@@ -372,7 +374,12 @@ public class CPPSemantics {
 	    } else if( parent instanceof ICPPASTBaseSpecifier ) {
 	        IASTNode n = CPPVisitor.getContainingBlockItem( parent );
 	        return (ICPPScope) CPPVisitor.getContainingScope( n );
-	    } 
+	    } else if( parent instanceof ICPPASTConstructorChainInitializer ){
+	    	ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) parent;
+	    	IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) initializer.getParent();
+	    	return (ICPPScope) dtor.getName().resolveBinding().getScope();
+	    	
+	    }
 	    return (ICPPScope) CPPVisitor.getContainingScope( name );
 	}
 	
@@ -800,6 +807,10 @@ public class CPPSemantics {
 			IASTName namespaceName = ((ICPPASTNamespaceDefinition) declaration).getName();
 			if( CharArrayUtils.equals( namespaceName.toCharArray(), data.name ) )
 				return namespaceName;
+		} else if( declaration instanceof ICPPASTNamespaceAlias ){
+			IASTName alias = ((ICPPASTNamespaceAlias) declaration).getAlias();
+			if( CharArrayUtils.equals( alias.toCharArray(), data.name ) )
+				return alias;
 		}
 		
 		return null;

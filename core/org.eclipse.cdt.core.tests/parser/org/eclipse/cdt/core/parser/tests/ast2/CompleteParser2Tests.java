@@ -1314,10 +1314,20 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testBug44510() throws Exception
 	{
-		parse( "int initialize(); " + //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "int initialize(); " + //$NON-NLS-1$
 							"int initialize( char ){} " + //$NON-NLS-1$
 							"int initialize(){ return 1; } " + //$NON-NLS-1$
 							"void main(){ int i = initialize(); }" ); //$NON-NLS-1$
+		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 7 );
+		IFunction init1 = (IFunction) col.getName(0).resolveBinding();
+		IFunction init2 = (IFunction) col.getName(1).resolveBinding();
+		
+		assertInstances( col, init1, 3 );
+		assertInstances( col, init2, 1 );
 	}	
 	
 	public void testBug44925() throws Exception
@@ -1327,7 +1337,23 @@ public class CompleteParser2Tests extends TestCase {
 		buffer.append( "class MyClass myObj1;"); //$NON-NLS-1$
 		buffer.append( "enum MyEnum { Item1 };"); //$NON-NLS-1$
 		buffer.append( "enum MyEnum myObj2;"); //$NON-NLS-1$
-		parse( buffer.toString() );		
+		IASTTranslationUnit tu = parse( buffer.toString() );	
+		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 7 );
+		ICPPClassType myClass = (ICPPClassType) col.getName(0).resolveBinding();
+		IVariable obj1 = (IVariable) col.getName(2).resolveBinding();
+		IEnumeration myEnum = (IEnumeration) col.getName(3).resolveBinding();
+		IEnumerator item = (IEnumerator) col.getName(4).resolveBinding();
+		IVariable obj2 = (IVariable)col.getName(6).resolveBinding();
+		
+		assertInstances( col, myClass, 2 );
+		assertInstances( col, myEnum, 2 );
+		assertSame( obj1.getType(), myClass );
+		assertSame( obj2.getType(), myEnum );
+		assertSame( item.getType(), myEnum );
 	}
 	
 	public void testBug44838() throws Exception
@@ -1335,7 +1361,21 @@ public class CompleteParser2Tests extends TestCase {
 		StringBuffer buffer = new StringBuffer(); 
 		buffer.append( "class A { int myX; A( int x ); };\n"); //$NON-NLS-1$
 		buffer.append( "A::A( int x ) : myX( x ) { if( x == 5 ) myX++; }\n"); //$NON-NLS-1$
-		parse( buffer.toString() ); 
+		IASTTranslationUnit tu = parse( buffer.toString() );	
+		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 12 );
+		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+		ICPPField myX = (ICPPField) col.getName(1).resolveBinding();
+		ICPPConstructor ctor = (ICPPConstructor) col.getName(2).resolveBinding();
+		IParameter x = (IParameter) col.getName(3).resolveBinding();
+		
+		assertInstances( col, A, 2 );
+		assertInstances( col, myX, 3 );
+		assertInstances( col, ctor, 3 );
+		assertInstances( col, x, 4 );
 	}
 	
 	public void testBug46165() throws Exception

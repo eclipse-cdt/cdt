@@ -259,6 +259,9 @@ public class CPPVisitor {
 			return binding;
 		} else if( declaration instanceof ICPPASTUsingDirective ){
 			return CPPSemantics.resolveBinding( ((ICPPASTUsingDirective) declaration).getQualifiedName() );
+		} else if( declaration instanceof ICPPASTNamespaceAlias ) {
+			ICPPASTNamespaceAlias alias = (ICPPASTNamespaceAlias) declaration;
+			return CPPSemantics.resolveBinding( alias.getQualifiedName() );
 		}
 		
 			
@@ -387,6 +390,12 @@ public class CPPVisitor {
 	        return ((IASTForStatement)parent).getScope();
 	    } else if( parent instanceof IASTCompoundStatement ){
 	        return ((IASTCompoundStatement)parent).getScope();
+	    } else if( parent instanceof ICPPASTConstructorChainInitializer ){
+	    	IASTNode node = getContainingBlockItem( parent );
+	    	if( node instanceof IASTFunctionDefinition ){
+	    		IASTCompoundStatement body = (IASTCompoundStatement) ((IASTFunctionDefinition)node).getBody();
+	    		return body.getScope();
+	    	}
 	    }
 	    return getContainingScope( parent );
 	}

@@ -39,6 +39,7 @@ public class CPPImplicitMethod extends CPPMethod {
         this.implicitName = name;
         this.parameters = params;
         this.returnType = returnType;
+        this.scope = scope;
     }
    
 	/**

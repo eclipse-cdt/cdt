@@ -953,5 +953,23 @@ public class AST2CPPTests extends AST2BaseTest {
         assertTrue( qt.isConst() );
         assertSame( qt.getType(), A );
     }
+    
+    public void testNamespaceAlias() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "namespace A { int x; }   \n" ); //$NON-NLS-1$
+        buffer.append( "namespace B = A;         \n" ); //$NON-NLS-1$
+        buffer.append( "int f(){ B::x;  }        \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit( tu, col );
+        
+        assertEquals( col.size(), 8 );
+        ICPPNamespace A = (ICPPNamespace) col.getName(0).resolveBinding();
+        IVariable x = (IVariable) col.getName(1).resolveBinding();
+        
+        assertInstances( col, A, 4 );
+        assertInstances( col, x, 3 );
+    }
 }
 

@@ -52,6 +52,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 	
 	private static final String EXTERNAL_SI_PROVIDER_ERROR = "ExternalScannerInfoProvider.Provider_Error"; //$NON-NLS-1$
 	private static final String EXTERNAL_SI_PROVIDER_CONSOLE_ID = MakeCorePlugin.getUniqueIdentifier() + ".ExternalScannerInfoProviderConsole";	//$NON-NLS-1$
+	private static final String LANG_ENV_VAR = "LANG";
 	
 	private IPath fWorkingDirectory;
 	private IPath fCompileCommand;
@@ -224,6 +225,14 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 		Properties props = launcher.getEnvironment();
 		props.put("CWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
 		props.put("PWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
+		// On POSIX (Linux, UNIX) systems reset LANG variable to English with UTF-8 encoding
+		// since GNU compilers can handle only UTF-8 characters. English language is chosen
+		// beacuse GNU compilers inconsistently handle different locales when generating
+		// output of the 'gcc -v' command. Include paths with locale characters will be
+		// handled properly regardless of the language as long as the encoding is set to UTF-8.
+		if (props.containsKey(LANG_ENV_VAR)) {
+			props.put(LANG_ENV_VAR, "en_US.UTF-8"); //$NON-NLS-1$
+		}
 		String[] env = null;
 		ArrayList envList = new ArrayList();
 		Enumeration names = props.propertyNames();

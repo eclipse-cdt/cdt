@@ -71,4 +71,5 @@ public class Field extends SourceManipulation implements IField {
 	protected CElementInfo createElementInfo () {
 		return new SourceManipulationInfo(this);
 	}
+
 }

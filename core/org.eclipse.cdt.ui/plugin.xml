@@ -26,9 +26,9 @@
    <extension-point id="CCompletionContributor" name="%completionContributorName"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
 <!-- =========================================================================== -->
-<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
    <extension-point id="CToolTabGroup" name="C/C++ Tool Configuration Tabs" schema="schema/CToolTabGroup.exsd"/>
@@ -137,8 +137,8 @@
             id="org.eclipse.cdt.ui.MakeView">
       </view>
    </extension>
-<!-- For C Wizards -->
 <!-- The wizards -->
+<!-- For C Wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -268,6 +268,7 @@
          id="org.eclipse.cdt.ui.ceditor"
          point="org.eclipse.ui.editors">
       <editor
+            default="true"
             name="%CEditor.name"
             icon="icons/full/obj16/c_file_obj.gif"
             extensions="c, h, cc, hh, cpp, cxx, hpp"
@@ -825,8 +826,8 @@
          <tool
                name="%ToolName.linker"
                outputFlag="-o"
-               command="g++ -shared"
                outputs="dll"
+               command="g++ -shared"
                id="org.eclipse.cdt.build.tool.cygwin.solink">
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.solink"
@@ -874,9 +875,9 @@
          <tool
                name="%ToolName.linker"
                outputFlag="-o"
+               outputs="dll"
                outputPrefix="cyg"
                command="g++ -shared"
-               outputs="dll"
                id="org.eclipse.cdt.build.tool.cygwin.explink">
             <optionCategory
                   owner="org.eclipse.cdt.build.tool.cygwin.explink"

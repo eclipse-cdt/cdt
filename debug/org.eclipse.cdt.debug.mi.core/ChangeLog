@@ -1,3 +1,12 @@
+2003-05-25 Alain Magloire
+
+	Do extra parsing.
+	* src/org/eclipse/cdt/debug/mi/core/model/type/ArrayType.java
+	* src/org/eclipse/cdt/debug/mi/core/model/type/DerivedType.java
+	* src/org/eclipse/cdt/debug/mi/core/model/type/PointerType.java
+	* src/org/eclipse/cdt/debug/mi/core/model/type/FunctionType.java
+	* src/org/eclipse/cdt/debug/mi/core/model/Variable.java
+
 2003-05-24 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/StackFrame.java

@@ -1,3 +1,11 @@
+2004-08-18 Chris Wiebe
+
+	added source/header file selection dialog
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardMessages.properties
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/SourceFileSelectionDialog.java
+
 2004-08-16 Chris Wiebe
 
 	better handling of source folders in class wizard

@@ -156,13 +156,25 @@ public class NewClassCodeGenerator {
         //TODO should use code templates
         StringBuffer text = new StringBuffer();
         
-        int insertionPos = -1;
+        int appendFirstCharPos = -1;
         if (oldContents != null) {
-	        insertionPos = getInsertionPos(oldContents);
-	        if (insertionPos == -1)
+	        int insertionPos = getInsertionPos(oldContents);
+	        if (insertionPos == -1) {
 		        text.append(oldContents);
-	        else
-	            text.append(oldContents.substring(0, insertionPos));
+	        } else {
+	            // skip over whitespace
+	            int prependLastCharPos = insertionPos - 1;
+	            while (prependLastCharPos >= 0 && Character.isWhitespace(oldContents.charAt(prependLastCharPos))) {
+	                --prependLastCharPos;
+	            }
+	            if (prependLastCharPos >= 0) {
+	                text.append(oldContents.substring(0, prependLastCharPos + 1));
+	            }
+	            appendFirstCharPos = prependLastCharPos + 1;
+	        }
+            text.append(fLineDelimiter);
+            
+            // insert a blank line before class definition
             text.append(fLineDelimiter);
         }
 
@@ -202,9 +214,18 @@ public class NewClassCodeGenerator {
             endNamespace(text);
         }
 
-        if (oldContents != null && insertionPos != -1) {
+        if (oldContents != null && appendFirstCharPos != -1) {
+            // insert a blank line after class definition
             text.append(fLineDelimiter);
-            text.append(oldContents.substring(insertionPos));
+            
+            // skip over any extra whitespace
+            int len = oldContents.length();
+            while (appendFirstCharPos < len && Character.isWhitespace(oldContents.charAt(appendFirstCharPos))) {
+                ++appendFirstCharPos;
+            }
+            if (appendFirstCharPos < len) {
+                text.append(oldContents.substring(appendFirstCharPos));
+            }
         }
 
         return text.toString();
@@ -440,7 +461,7 @@ public class NewClassCodeGenerator {
         }
     }
 
-    private IPath makeRelativePathToProjectIncludes(IPath fullPath, IProject project) {
+    public static IPath makeRelativePathToProjectIncludes(IPath fullPath, IProject project) {
         IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
         if (provider != null) {
             IScannerInfo info = provider.getScannerInformation(project);
@@ -465,7 +486,7 @@ public class NewClassCodeGenerator {
         return null;
     }
 
-    private IPath makeRelativePath(IPath path, IPath relativeTo) {
+    public static IPath makeRelativePath(IPath path, IPath relativeTo) {
         int segments = relativeTo.matchingFirstSegments(path);
         if (segments > 0) {
             IPath prefix = relativeTo.removeFirstSegments(segments).removeLastSegments(1);
@@ -479,7 +500,7 @@ public class NewClassCodeGenerator {
         return null;
     }
 
-    private String getIncludeString(String fileName, boolean isSystemInclude) {
+    private static String getIncludeString(String fileName, boolean isSystemInclude) {
         StringBuffer buf = new StringBuffer();
         buf.append("#include "); //$NON-NLS-1$
         if (isSystemInclude)

@@ -108,7 +108,7 @@ public class StringButtonStatusDialogField extends StringButtonDialogField {
 	
 	protected GridData gridDataForStatusLabel(Control aControl, int span) {
 		GridData gd= new GridData();
-		gd.horizontalAlignment= gd.BEGINNING;
+		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.grabExcessHorizontalSpace= false;
 		gd.horizontalIndent= 0;
 		if (fWidthHintString != null) {

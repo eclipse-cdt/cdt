@@ -76,7 +76,7 @@ public class StringButtonDialogField extends StringDialogField {
 	
 	protected static GridData gridDataForButton(Button button, int span) {
 		GridData gd= new GridData();
-		gd.horizontalAlignment= gd.FILL;
+		gd.horizontalAlignment= GridData.FILL;
 		gd.grabExcessHorizontalSpace= false;
 		gd.horizontalSpan= span;
 		gd.heightHint = SWTUtil.getButtonHeigthHint(button);

@@ -162,7 +162,7 @@ public class DialogField {
 	public static Control createEmptySpace(Composite parent, int span) {
 		Label label= new Label(parent, SWT.LEFT);
 		GridData gd= new GridData();
-		gd.horizontalAlignment= gd.BEGINNING;
+		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.grabExcessHorizontalSpace= false;
 		gd.horizontalSpan= span;
 		gd.horizontalIndent= 0;

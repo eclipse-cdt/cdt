@@ -52,7 +52,7 @@ public class StringDialogField extends DialogField {
 	
 	protected static GridData gridDataForText(int span) {
 		GridData gd= new GridData();
-		gd.horizontalAlignment= gd.FILL;
+		gd.horizontalAlignment= GridData.FILL;
 		gd.grabExcessHorizontalSpace= false;
 		gd.horizontalSpan= span;
 		return gd;

@@ -59,7 +59,7 @@ public class ComboDialogField extends DialogField {
 	
 	protected static GridData gridDataForCombo(int span) {
 		GridData gd= new GridData();
-		gd.horizontalAlignment= gd.FILL;
+		gd.horizontalAlignment= GridData.FILL;
 		gd.grabExcessHorizontalSpace= false;
 		gd.horizontalSpan= span;
 		return gd;

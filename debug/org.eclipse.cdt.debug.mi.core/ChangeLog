@@ -1,5 +1,11 @@
 2003-08-19 Alain Magloire
 
+	Fix to the GDBTypeParser to deal with gdb
+	awkwardness
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
+2003-08-19 Alain Magloire
+
 	GDB, uses false category for C++ class/struct.
 	Fix to return the correct name.
 	

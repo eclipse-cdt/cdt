@@ -71,6 +71,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
@@ -1572,7 +1573,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         IToken identifier = null;
         ICASTCompositeTypeSpecifier structSpec = null;
         ICASTElaboratedTypeSpecifier elabSpec = null;
-
+        ICASTEnumerationSpecifier enumSpec = null;
+        
         declSpecifiers: for (;;) {
             switch (LT(1)) {
             //Storage Class Specifiers
@@ -1696,22 +1698,22 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             case IToken.t_struct:
             case IToken.t_union:
                 try {
-                    structSpec = structOrUnionSpecifier( isConst, isVolatile, isRestrict, isInline, storageClass );
+                    structSpec = structOrUnionSpecifier( );
                     flags.setEncounteredTypename(true);
                     break;
                 } catch (BacktrackException bt) {
-                    elabSpec = elaboratedTypeSpecifier( isConst, isVolatile, isRestrict, isInline, storageClass  );
+                    elabSpec = elaboratedTypeSpecifier(  );
                     flags.setEncounteredTypename(true);
                     break;
                 }
             case IToken.t_enum:
                 try {
-                    enumSpecifier(null);
+                    enumSpec = (ICASTEnumerationSpecifier) enumSpecifier(null);
                     flags.setEncounteredTypename(true);
                     break;
                 } catch (BacktrackException bt) {
                     // this is an elaborated class specifier
-                    elabSpec = elaboratedTypeSpecifier(isConst, isVolatile, isRestrict, isInline, storageClass );
+                    elabSpec = elaboratedTypeSpecifier( );
                     flags.setEncounteredTypename(true);
                     break;
                 }
@@ -1729,11 +1731,35 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         if( structSpec != null )
         {
             structSpec.setOffset( startingOffset );
+            structSpec.setConst(isConst);
+            structSpec.setRestrict(isRestrict);
+            structSpec.setVolatile(isVolatile);
+            structSpec.setInline(isInline);
+            structSpec.setStorageClass(storageClass);
+
             return structSpec;
+        }
+        
+        if( enumSpec != null )
+        {
+            enumSpec.setOffset( startingOffset );
+            enumSpec.setConst(isConst);
+            enumSpec.setRestrict(isRestrict);
+            enumSpec.setVolatile(isVolatile);
+            enumSpec.setInline(isInline);
+            enumSpec.setStorageClass(storageClass);
+            return enumSpec;
+            
         }
         if( elabSpec != null )
         {
             elabSpec.setOffset( startingOffset );
+            elabSpec.setConst(isConst);
+            elabSpec.setRestrict(isRestrict);
+            elabSpec.setVolatile(isVolatile);
+            elabSpec.setInline(isInline);
+            elabSpec.setStorageClass(storageClass);
+
             return elabSpec;
         }
         if (isIdentifier) {
@@ -1791,7 +1817,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * 
      * classSpecifier : classKey name (baseClause)? "{" (memberSpecification)*
      * "}"
-     * 
      * @param owner
      *            IParserCallback object that represents the declaration that
      *            owns this classSpecifier
@@ -1800,7 +1825,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
      * @throws BacktrackException
      *             request a backtrack
      */
-    protected ICASTCompositeTypeSpecifier structOrUnionSpecifier( boolean isConst, boolean isVolatile, boolean isRestrict, boolean isInline, int storageClass )
+    protected ICASTCompositeTypeSpecifier structOrUnionSpecifier( )
             throws BacktrackException, EndOfFileException {
 
         int classKind = 0;
@@ -1845,13 +1870,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             name = createName();
         
         ICASTCompositeTypeSpecifier result = createCompositeTypeSpecifier();
-        
-        result.setConst( isConst );
-        result.setInline( isInline );
-        result.setVolatile( isVolatile );
-        result.setRestrict( isRestrict );
-        result.setStorageClass( storageClass );
-        
         
         result.setKey( classKind );
         result.setOffset( classKey.getOffset() );
@@ -1902,7 +1920,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         return new CASTCompositeTypeSpecifier();
     }
 
-    protected ICASTElaboratedTypeSpecifier elaboratedTypeSpecifier(boolean isConst, boolean isVolatile, boolean isRestrict, boolean isInline, int storageClass)
+    protected ICASTElaboratedTypeSpecifier elaboratedTypeSpecifier()
             throws BacktrackException, EndOfFileException {
         // this is an elaborated class specifier
         IToken t = consume();
@@ -1930,11 +1948,6 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
         result.setName( name );
         name.setParent( result );
         name.setPropertyInParent( IASTElaboratedTypeSpecifier.TYPE_NAME );
-        result.setConst( isConst );
-        result.setInline( isInline );
-        result.setVolatile( isVolatile );
-        result.setRestrict( isRestrict );
-        result.setStorageClass( storageClass );
         result.setKind( eck );
         return result;
     }

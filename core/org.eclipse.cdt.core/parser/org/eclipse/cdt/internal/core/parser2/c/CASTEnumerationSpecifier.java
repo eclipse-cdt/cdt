@@ -13,14 +13,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 
 /**
  * @author jcamelon
  */
 public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
-        IASTEnumerationSpecifier {
+        ICASTEnumerationSpecifier {
 
     private IASTName name;
 

@@ -65,6 +65,8 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
+import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
+import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**
@@ -116,6 +118,14 @@ public class CompleteParseBaseTest extends TestCase
          
             return scope;
         }
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
+		 */
+		public LookupResult lookup(String prefix, LookupKind kind) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
     }
     
     public static class CodeScope extends Scope implements IASTCodeScope

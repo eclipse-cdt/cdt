@@ -135,14 +135,14 @@ public class CompletionProposalsTest  extends TestCase{
 						assertEquals(displayString, "anotherClass");
 					break;	
 					case 4:
-						assertEquals(displayString, "AStruct");
-					break;	
-					case 5:
-						assertEquals(displayString, "AMacro");
-					break;	
-					case 6:
 						assertEquals(displayString, "anEnumeration");
 					break;	
+					case 5:
+						assertEquals(displayString, "AStruct");
+					break;	
+					case 6:
+						assertEquals(displayString, "AMacro");
+						break;	
 				}
 			}			 
 		} catch(CModelException e){

@@ -17,6 +17,8 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
+import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
 
 /**
  * @author jcamelon
@@ -73,5 +75,13 @@ public class ASTCompilationUnit implements IASTCompilationUnit, IASTQScope {
             /* do nothing */
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
+	 */
+	public LookupResult lookup(String prefix, LookupKind kind) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

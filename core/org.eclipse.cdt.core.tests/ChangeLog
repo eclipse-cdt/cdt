@@ -1,3 +1,7 @@
+2003-12-09 Hoda Amer
+	Modified the Completion Proposal test to include case sensitivity 
+	in the order of proposals.
+	
 2003-12-09 John Camelon
 	Added ContextualParseTest.java and some test cases.  
 

@@ -75,7 +75,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
-import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -83,6 +82,7 @@ import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.DefaultRangeIndicator;
+import org.eclipse.ui.texteditor.ExtendedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
@@ -865,12 +865,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		fSourceViewerDecorationSupport.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR);
 
 		fSourceViewerDecorationSupport.setCursorLinePainterPreferenceKeys(
-			TextEditorPreferenceConstants.EDITOR_CURRENT_LINE,
-			TextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR);
+			ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE,
+			ExtendedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR);
 		fSourceViewerDecorationSupport.setMarginPainterPreferenceKeys(
-			TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN,
-			TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR,
-			TextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN);
+			ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN,
+			ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR,
+			ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN);
 		fSourceViewerDecorationSupport.setSymbolicFontName(getFontPropertyPreferenceKey());
 	}
 

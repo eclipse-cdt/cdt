@@ -51,6 +51,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.TabFolder;
@@ -186,20 +187,23 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOACTIVATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, ContentAssistPreference.AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.AUTOINSERT));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_BACKGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PROPOSALS_FOREGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_BACKGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.PARAMETERS_FOREGROUND));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_C));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.SHOW_DOCUMENTED_PROPOSALS));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ORDER_PROPOSALS));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CASE_SENSITIVITY));
+		//overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CASE_SENSITIVITY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.ADD_INCLUDE));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SCOPE_SEARCH));        
-        overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_TAG_COLOR));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE));        
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_SEARCH_SCOPE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_TAG_COLOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_TAG_BOLD));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PreferenceConstants.EDITOR_TASK_INDICATION_COLOR));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION));
@@ -273,9 +277,11 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
 
-		store.setDefault(ContentAssistPreference.AUTOACTIVATION, false);
+		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, true);
+		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW, true);
+		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_DELAY, 500);
-
+		
 		store.setDefault(ContentAssistPreference.AUTOINSERT, true);
 		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
 		PreferenceConverter.setDefault(store, ContentAssistPreference.PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
@@ -284,11 +290,13 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		//store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_C, ".,");
 		//store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVADOC, "@");
 		//store.setDefault(ContentAssistPreference.SHOW_VISIBLE_PROPOSALS, true);
-		store.setDefault(ContentAssistPreference.CASE_SENSITIVITY, false);
+		//store.setDefault(ContentAssistPreference.CASE_SENSITIVITY, false);
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
 		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
-		store.setDefault(ContentAssistPreference.PROJECT_SCOPE_SEARCH, false);
-
+		store.setDefault(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, true);
+		store.setDefault(ContentAssistPreference.PROJECT_SEARCH_SCOPE, false);
+		store.setDefault(ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE, false);
+		
 	}
 
 	/*
@@ -829,47 +837,61 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		contentAssistComposite.setLayout(layout);
-	
-		String label= "&Search entire project for completion proposals";
-		addCheckBox(contentAssistComposite, label, ContentAssistPreference.PROJECT_SCOPE_SEARCH, 0);
-
-		label = "Insert single &proposals automatically";
+		
+		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		// The following three radio buttons are grouped together
+		String label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupTitle");
+		Group searchGroup = addGroupBox(contentAssistComposite, label, 2);
+		
+		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentFileOption");
+		addRadioButton(searchGroup, label, ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, 0);
+		
+		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentProjectOption");
+		addRadioButton(searchGroup, label, ContentAssistPreference.PROJECT_SEARCH_SCOPE, 0);
+		
+		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.searchGroupCurrentProjectAndDependenciesOption");
+		addRadioButton(searchGroup, label, ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE, 0);
+		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		
+		
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.insertSingleProposalAutomatically");
 		addCheckBox(contentAssistComposite, label, ContentAssistPreference.AUTOINSERT, 0);
 		
-		//label= "Show only proposals visible in the invocation conte&xt";
+		//label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.showOnlyProposalsWithCorrectVisibility"); 
 		//addCheckBox(contentAssistComposite, label, ContentAssistPreference.SHOW_VISIBLE_PROPOSALS, 0);
 
-		label= "Show only proposals with &matching cases";
-		addCheckBox(contentAssistComposite, label, ContentAssistPreference.CASE_SENSITIVITY, 0);
-
-		//label= "Present proposals in a&lphabetical order";
+		//label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.showProposalsInAlphabeticalOrder");
 		//addCheckBox(contentAssistComposite, label, ContentAssistPreference.ORDER_PROPOSALS, 0);
 
-		label = "&Enable auto activation";
-		addCheckBox(contentAssistComposite, label, ContentAssistPreference.AUTOACTIVATION, 0);
+		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+		// The following items are grouped for Auto Activation
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationGroupTitle");
+		Group enableGroup = addGroupBox(contentAssistComposite, label, 2);
+		
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableDot");
+		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, 0);
 
-		//label= "Automatically add &include for proposals from system functions";
-		//addCheckBox(contentAssistComposite, label, ContentAssistPreference.ADD_INCLUDE, 0);
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableArrow");
+		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW, 0);
+		
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationEnableDoubleColon");
+		addCheckBox(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON, 0);
+		
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.autoActivationDelay");
+		addTextField(enableGroup, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
 
-		label = "Auto activation dela&y:";
-		addTextField(contentAssistComposite, label, ContentAssistPreference.AUTOACTIVATION_DELAY, 4, 0, true);
+		//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 
-		label = "Auto activation &triggers for C:";
-		addTextField(contentAssistComposite, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_C, 25, 0, false);
-
-		//label= "Auto activation triggers for &JavaDoc:";
-		//addTextField(contentAssistComposite, label, ContentAssistPreference.AUTOACTIVATION_TRIGGERS_JAVADOC, 25, 0);
-
-		label = "&Background for completion proposals:";
+		label = PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.completionProposalBackgroundColor");
 		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_BACKGROUND, 0);
 
-		label= "&Foreground for completion proposals:";
+		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.completionProposalForegroundColor");
 		addColorButton(contentAssistComposite, label, ContentAssistPreference.PROPOSALS_FOREGROUND, 0);
 
-//		label= "Bac&kground for method parameters:";
+//		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.parameterBackgroundColor"); 
 //		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_BACKGROUND, 0);
 //
-//		label= "Fo&reground for method parameters:";
+//		label= PreferencesMessages.getString("CEditorPreferencePage.ContentAssistPage.parameterForegroundColor");
 //		addColorButton(contentAssistComposite, label, ContentAssistPreference.PARAMETERS_FOREGROUND, 0);
 
 		WorkbenchHelp.setHelp(contentAssistComposite, ICHelpContextIds.C_EDITOR_CONTENT_ASSIST_PREF_PAGE);	
@@ -890,22 +912,22 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText("&General");
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.generalTabTitle"));
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createBehaviorPage(folder));
 
 		item = new TabItem(folder, SWT.NONE);
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
-		item.setText("Annotations");
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.annotationTabTitle"));
 		item.setControl(createAnnotationsPage(folder));
 
 		item = new TabItem(folder, SWT.NONE);
-		item.setText("&Colors");
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.colorsTabTitle"));
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createColorPage(folder));
 
 		item = new TabItem(folder, SWT.NONE);
-		item.setText("Content A&ssist");
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.contentAssistTabTitle"));
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createContentAssistPage(folder));
 
@@ -1067,6 +1089,16 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		return composite;
 	}
 
+	private Group addGroupBox(Composite parent, String label, int nColumns ){
+		Group group = new Group(parent, SWT.NONE);
+		group.setText(label);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = nColumns;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		return group;
+	}
+	
 	private Button addCheckBox(Composite parent, String label, String key, int indentation) {
 		Button checkBox = new Button(parent, SWT.CHECK);
 		checkBox.setText(label);
@@ -1082,6 +1114,21 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		return checkBox;
 	}
 
+	private Button addRadioButton(Composite parent, String label, String key, int indentation) {
+		Button radioButton = new Button(parent, SWT.RADIO);
+		radioButton.setText(label);
+
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalIndent = indentation;
+		gd.horizontalSpan = 2;
+		radioButton.setLayoutData(gd);
+		radioButton.addSelectionListener(fCheckBoxListener);
+
+		fCheckBoxes.put(radioButton, key);
+
+		return radioButton;
+	}
+	
 	private Control addTextField(Composite composite, String label, String key, int textLimit, int indentation, boolean isNumber) {
 
 		Label labelControl = new Label(composite, SWT.NONE);

@@ -2,6 +2,7 @@ package org.eclipse.cdt.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
@@ -123,5 +124,8 @@ public class NewClassWizard extends BasicNewResourceWizard implements INewWizard
 			}
 		}
 	}
-
+	
+	public ICElement getCreatedClassElement(){
+		return fPage.getCreatedClassElement();
+	}
 }

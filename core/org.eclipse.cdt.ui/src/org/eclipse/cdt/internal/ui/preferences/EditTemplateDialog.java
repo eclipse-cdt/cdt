@@ -108,7 +108,12 @@ public class EditTemplateDialog extends StatusDialog {
 			assistant.setContentAssistProcessor(fProcessor, IDocument.DEFAULT_CONTENT_TYPE);
 
 			//assistant.enableAutoInsert(store.getBoolean(ContentAssistPreference.AUTOINSERT));
-			assistant.enableAutoActivation(store.getBoolean(ContentAssistPreference.AUTOACTIVATION));
+			boolean enabled = (store.getBoolean(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT) 
+							|| store.getBoolean(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW)
+							|| store.getBoolean(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON)
+			);
+			assistant.enableAutoActivation(enabled);
+			
 			assistant.setAutoActivationDelay(store.getInt(ContentAssistPreference.AUTOACTIVATION_DELAY));
 			assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 			assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);

@@ -98,12 +98,8 @@ public class CompletionEngine implements RelevanceConstants{
 			} else {
 				return CASE_MATCH_RELEVANCE;
 			}
-		} else {
-			boolean matchCase = store.getBoolean(ContentAssistPreference.CASE_SENSITIVITY);
-			
-			if(matchCase)
-				return CASE_NOT_VALID_RELEVANCE;
-			else
+		} 
+		else {
 				return 0;
 		}	
 	}
@@ -193,100 +189,79 @@ public class CompletionEngine implements RelevanceConstants{
 		if(node instanceof IASTField){
 			IASTField field = (IASTField)node;
 			int relevance = computeRelevance(ICElement.C_FIELD, prefix, field.getName());
-			if(relevance >= 0){
-				requestor.acceptField(field.getName(), 
-						ASTUtil.getType(field.getAbstractDeclaration()),
-						field.getVisiblity(), completionStart, completionLength, relevance);
-			}
+			requestor.acceptField(field.getName(), 
+					ASTUtil.getType(field.getAbstractDeclaration()),
+					field.getVisiblity(), completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTVariable){
 			IASTVariable variable = (IASTVariable)node;
 			int relevance = computeRelevance(ICElement.C_VARIABLE, prefix, variable.getName());
-			if(relevance >= 0){
-				requestor.acceptVariable(variable.getName(), 
-					ASTUtil.getType(variable.getAbstractDeclaration()),
-					completionStart, completionLength, relevance);
-			}
+			requestor.acceptVariable(variable.getName(), 
+				ASTUtil.getType(variable.getAbstractDeclaration()),
+				completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTMethod) {
 			IASTMethod method = (IASTMethod)node;
 			int relevance = computeRelevance(ICElement.C_METHOD, prefix, method.getName());
-			if(relevance >= 0){
-				String parameterString = ASTUtil.getParametersString(ASTUtil.getFunctionParameterTypes(method));
-				requestor.acceptMethod(method.getName(), 
-					ASTUtil.getType(method.getReturnType()), parameterString,
-					method.getVisiblity(), completionStart, completionLength, relevance);
-			}
+			String parameterString = ASTUtil.getParametersString(ASTUtil.getFunctionParameterTypes(method));
+			requestor.acceptMethod(method.getName(), 
+				ASTUtil.getType(method.getReturnType()), parameterString,
+				method.getVisiblity(), completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTFunction){
 			IASTFunction function = (IASTFunction)node;
 			int relevance = computeRelevance(ICElement.C_FUNCTION, prefix, function.getName());
-			if(relevance >= 0){
-				String parameterString = ASTUtil.getParametersString(ASTUtil.getFunctionParameterTypes(function));
-				requestor.acceptFunction(function.getName(), 
-					ASTUtil.getType(function.getReturnType()), parameterString,
-					completionStart, completionLength, relevance);
-			}
+			String parameterString = ASTUtil.getParametersString(ASTUtil.getFunctionParameterTypes(function));
+			requestor.acceptFunction(function.getName(), 
+				ASTUtil.getType(function.getReturnType()), parameterString,
+				completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTClassSpecifier){
 			IASTClassSpecifier classSpecifier = (IASTClassSpecifier)node;
 			ASTClassKind classkind = classSpecifier.getClassKind();
 			if(classkind == ASTClassKind.CLASS){
 				int relevance = computeRelevance(ICElement.C_CLASS, prefix, classSpecifier.getName());
-				if(relevance >= 0){
-					requestor.acceptClass(classSpecifier.getName(), 
-						completionStart, completionLength, relevance);
-				}
+				requestor.acceptClass(classSpecifier.getName(), 
+					completionStart, completionLength, relevance);
 			}
 			if(classkind == ASTClassKind.STRUCT){
 				int relevance = computeRelevance(ICElement.C_STRUCT, prefix, classSpecifier.getName());
-				if(relevance >= 0){
-					requestor.acceptStruct(classSpecifier.getName(), 
-						completionStart, completionLength, relevance);
-				}
+				requestor.acceptStruct(classSpecifier.getName(), 
+					completionStart, completionLength, relevance);
 			}
 			if(classkind == ASTClassKind.UNION){
 				int relevance = computeRelevance(ICElement.C_UNION, prefix, classSpecifier.getName());
-				if(relevance >= 0){
-					requestor.acceptUnion(classSpecifier.getName(), 
-						completionStart, completionLength, relevance);
-				}
+				requestor.acceptUnion(classSpecifier.getName(), 
+					completionStart, completionLength, relevance);
 			}				
 		}
 		else if(node instanceof IASTMacro){
 			IASTMacro macro = (IASTMacro)node;
 			int relevance = computeRelevance(ICElement.C_MACRO, prefix, macro.getName());
-			if(relevance >= 0){
-				requestor.acceptMacro(macro.getName(), completionStart, completionLength, relevance);
-			}
+			requestor.acceptMacro(macro.getName(), completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTNamespaceDefinition){
 			IASTNamespaceDefinition namespace = (IASTNamespaceDefinition)node;
 			int relevance = computeRelevance(ICElement.C_NAMESPACE, prefix, namespace.getName());
-			if(relevance >= 0){
-				requestor.acceptNamespace(namespace.getName(), completionStart, completionLength, relevance);
-			}
+			requestor.acceptNamespace(namespace.getName(), completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTEnumerationSpecifier){
 			IASTEnumerationSpecifier enumeration = (IASTEnumerationSpecifier)node;
 			int relevance = computeRelevance(ICElement.C_ENUMERATION, prefix, enumeration.getName());
-			if(relevance >= 0){
-				requestor.acceptEnumeration(enumeration.getName(), completionStart, completionLength, relevance);
-			}
+			requestor.acceptEnumeration(enumeration.getName(), completionStart, completionLength, relevance);
 		}
 		else if(node instanceof IASTEnumerator){
 			IASTEnumerator enumerator = (IASTEnumerator)node;
 			int relevance = computeRelevance(ICElement.C_ENUMERATOR, prefix, enumerator.getName());
-			if(relevance >= 0){
-				requestor.acceptEnumerator(enumerator.getName(), completionStart, completionLength, relevance);
-			}
+			requestor.acceptEnumerator(enumerator.getName(), completionStart, completionLength, relevance);
 		}
 	}
+	
 	private void addKeywordToCompletions (String keyword){
 		int relevance = KEYWORD_TYPE_RELEVANCE;
-		requestor.acceptKeyword(keyword, completionStart, completionLength, relevance);
-		
+		requestor.acceptKeyword(keyword, completionStart, completionLength, relevance);		
 	}
+	
 	private void addKeywordsToCompletions(Iterator keywords){
 		while (keywords.hasNext()){
 			String keyword = (String) keywords.next();
@@ -318,10 +293,10 @@ public class CompletionEngine implements RelevanceConstants{
 		}
 		return result;
 	}
-	private void completionOnMember(IASTCompletionNode completionNode){
+	private void completionOnMemberReference(IASTCompletionNode completionNode){
 		// Completing after a dot
 		// 1. Get the search scope node
-		IASTNode searchNode = completionNode.getCompletionContext();
+		IASTNode searchNode = completionNode.getCompletionScope();
 		// 2. lookup fields & add to completion proposals
 		LookupResult result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.FIELDS);
 		addToCompletions (result);
@@ -332,10 +307,10 @@ public class CompletionEngine implements RelevanceConstants{
 		result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.STRUCTURES);
 		addToCompletions (result);				
 	}
-	private void completionOnType(IASTCompletionNode completionNode){
+	private void completionOnTypeReference(IASTCompletionNode completionNode){
 		// completing on a type
 		// 1. Get the search scope node
-		IASTNode searchNode = completionNode.getCompletionContext();
+		IASTNode searchNode = completionNode.getCompletionScope();
 		// if the prefix is not empty
 		if(completionNode.getCompletionPrefix().length() > 0 ) {
 			// 2. Lookup all types that could be used here
@@ -353,9 +328,9 @@ public class CompletionEngine implements RelevanceConstants{
 	
 	private void completionOnFieldType(IASTCompletionNode completionNode){
 		// 1. basic completion on all types
-		completionOnType(completionNode);
+		completionOnTypeReference(completionNode);
 		// 2. Get the search scope node
-		IASTNode searchNode = completionNode.getCompletionContext();
+		IASTNode searchNode = completionNode.getCompletionScope();
 		// 3. lookup methods
 		// we are at a field declaration place, the user could be trying to override a function.
 		// We have to lookup functions that could be overridden here.
@@ -364,20 +339,12 @@ public class CompletionEngine implements RelevanceConstants{
 	}
 	private void completionOnVariableType(IASTCompletionNode completionNode){
 		// 1. basic completion on all types
-		completionOnType(completionNode);
-	}
-	private void completionOnMethodReturnType(IASTCompletionNode completionNode){
-		// 1. basic completion on all types
-		completionOnType(completionNode);
-	}
-	private void completionOnFunctionReturnType(IASTCompletionNode completionNode){
-		// 1. basic completion on all types
-		completionOnType(completionNode);
+		completionOnTypeReference(completionNode);
 	}
 	private void completionOnSingleNameReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node
 		// the search node is the code scope inwhich completion is requested
-		IASTNode searchNode = completionNode.getCompletionContext();
+		IASTNode searchNode = completionNode.getCompletionScope();
 		// if prefix is not empty
 		if (completionNode.getCompletionPrefix().length() > 0){
 			// here we have to look for anything that could be referenced within this scope
@@ -393,32 +360,33 @@ public class CompletionEngine implements RelevanceConstants{
 			// TODO : complete the lookup call
 		}
 	}
-	private void completionOnQualifiedNameReference(IASTCompletionNode completionNode){
+	private void completionOnScopedReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node
 		// the search node is the name before the qualification 
-		IASTNode searchNode = completionNode.getCompletionContext();
+		IASTNode searchNode = completionNode.getCompletionScope();
 		// here we have to look for anything that could be referenced within this scope
 		// 1. lookup local variables, global variables, functions, methods, structures, enums, macros, and namespaces
 		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.ALL);
 		addToCompletions(result);
 	}
-	private void completionOnStructureReference(IASTCompletionNode completionNode){
-		// 1. Get the search scope node 
-		IASTNode searchNode = completionNode.getCompletionContext();
-		// only look for structures : classes, structs, and unions
-		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.STRUCTURES);
-		addToCompletions(result);
-	}
+
 	private void completionOnClassReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
-		IASTNode searchNode = completionNode.getCompletionContext();
+		IASTNode searchNode = completionNode.getCompletionScope();
 		// only look for classes
 		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.CLASSES);
 		addToCompletions(result);
 	}
+	private void completionOnNamespaceReference(IASTCompletionNode completionNode){
+		// 1. Get the search scope node 
+		IASTNode searchNode = completionNode.getCompletionScope();
+		// only look for classes
+		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.NAMESPACES);
+		addToCompletions(result);
+	}
 	private void completionOnExceptionReference(IASTCompletionNode completionNode){
 		// here we have to look for all types
-		completionOnType(completionNode);
+		completionOnTypeReference(completionNode);
 		// plus if the prefix is empty, add "..." to the proposals
 		if(completionNode.getCompletionPrefix().length() == 0){
 			addKeywordToCompletions(exceptionKeyword);
@@ -426,17 +394,17 @@ public class CompletionEngine implements RelevanceConstants{
 	}
 	private void completionOnMacroReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
-		IASTNode searchNode = completionNode.getCompletionContext();
+		IASTNode searchNode = completionNode.getCompletionScope();
 		// only look for macros
 		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.MACROS);
 		addToCompletions(result);
 	}
-	private void completionOnMessageSend(IASTCompletionNode completionNode){
+	private void completionOnFunctionReference(IASTCompletionNode completionNode){
 		// TODO: complete the lookups
 	}
-	private void completionOnQualifiedAllocationExpression(IASTCompletionNode completionNode){
+	private void completionOnConstructorReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
-		IASTNode searchNode = completionNode.getCompletionContext();
+		IASTNode searchNode = completionNode.getCompletionScope();
 		// only lookup constructors
 		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.CONSTRUCTORS);
 	}
@@ -447,30 +415,26 @@ public class CompletionEngine implements RelevanceConstants{
 		addKeywordsToCompletions(result.iterator());
 	}
 	
-	public void complete(IWorkingCopy sourceUnit, int completionOffset, List completionList) {
+	public IASTCompletionNode complete(IWorkingCopy sourceUnit, int completionOffset, List completionList) {
 		
 		// 1- Parse the translation unit
 		IASTCompletionNode completionNode = parse(sourceUnit, completionOffset);
 		
 		if (completionNode == null)
-			return;
+			return null;
 		
 		// set the completionStart and the completionLength
 		completionStart = completionOffset;
 		completionLength = completionNode.getCompletionPrefix().length();
 		
 		// 2- Check the return value 
-		if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.DOT_MEMBER){
-			// CompletionOnDotMember
-			completionOnMember(completionNode);
+		if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.MEMBER_REFERENCE){
+			// completionOnMemberReference
+			completionOnMemberReference(completionNode);
 		}
-		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.ARROW_MEMBER){
-			//CompletionOnArrowMember
-			completionOnMember(completionNode);
-		}
-		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.QUALIFIEDNAME_MEMBER){
-			//CompletionOnQualifiedNameMember
-			completionOnMember(completionNode);
+		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SCOPED_REFERENCE){
+			// completionOnMemberReference
+			completionOnMemberReference(completionNode);
 		}
 		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.FIELD_TYPE){
 			// CompletionOnFieldType
@@ -478,35 +442,27 @@ public class CompletionEngine implements RelevanceConstants{
 		}
 		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.VARIABLE_TYPE){
 			// CompletionOnVariableType
-			completionOnType(completionNode);
+			completionOnTypeReference(completionNode);
 		}
 		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.ARGUMENT_TYPE){
 			// CompletionOnArgumentType
 			completionOnVariableType(completionNode);
 		}
-		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.METHOD_RETURN_TYPE){
-			// CompletionOnMethodReturnType
-			completionOnMethodReturnType(completionNode);			
-		}
-		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.FUNCTIOND_RETURN_TYPE){
-			// CompletionOnFunctionReturnType
-			completionOnFunctionReturnType(completionNode);
-		}
 		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE){
 			// CompletionOnSingleNameReference
 			completionOnSingleNameReference(completionNode);
 		}
-		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.QUALIFIED_NAME_REFERENCE){
-			// CompletionOnQualifiedNameReference
-			completionOnQualifiedNameReference(completionNode);
-		}
-		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.STRUCTURE_REFERENCE){
+		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.TYPE_REFERENCE){
 			// CompletionOnStructureReference
-			completionOnStructureReference(completionNode);
+			completionOnTypeReference(completionNode);
 		}
 		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.CLASS_REFERENCE){
 			// CompletionOnClassReference
 			completionOnClassReference(completionNode);
+		}
+		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.NAMESPACE_REFERENCE){
+			// completionOnNamespaceReference
+			completionOnNamespaceReference(completionNode);
 		}
 		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.EXCEPTION_REFERENCE){
 			// CompletionOnExceptionReference
@@ -516,13 +472,13 @@ public class CompletionEngine implements RelevanceConstants{
 			// CompletionOnMacroReference
 			completionOnMacroReference(completionNode);
 		}
-		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.MESSAGE_SEND){
-			// CompletionOnMessageSend
-			completionOnMessageSend(completionNode);
+		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.FUNCTION_REFERENCE){
+			// completionOnFunctionReference
+			completionOnFunctionReference(completionNode);
 		}
-		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.QUALIFIED_ALLOCATION_EXPRESSION){
-			// CompletionOnQualifiedAllocationExpression
-			completionOnQualifiedAllocationExpression(completionNode);
+		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.CONSTRUCTOR_REFERENCE){
+			// completionOnConstructorReference
+			completionOnConstructorReference(completionNode);
 		}
 		else if(completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.KEYWORD){
 			// CompletionOnKeyword
@@ -530,7 +486,7 @@ public class CompletionEngine implements RelevanceConstants{
 		}
 	
 		completionList.addAll(completions);
-		return;
+		return completionNode;
 			
 	}
 	

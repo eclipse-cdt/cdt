@@ -1,3 +1,8 @@
+2003-12-09 Hoda Amer
+	Modified IASTCompletionNode.CompletionKind
+	modified IASTNode.LookupKind
+	Changed IASTScope to extend IASTNode
+	
 2003-15-09 John Camelon
 	Fixed Bug 47234 : new ParserMode required for a better CModel
 	Updated IASTCompletionNode to include a scope as well as a context.  

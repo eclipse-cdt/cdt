@@ -11,9 +11,8 @@
 
 package org.eclipse.cdt.ui;
 
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.ui.IEditorInput;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * Extension interface for <code>IWorkingCopyManager</code>.
@@ -30,7 +29,7 @@ public interface IWorkingCopyManagerExtension {
 	 * @param input the editor input
 	 * @param workingCopy the working copy
 	 */
-	void setWorkingCopy(IEditorInput input, ITranslationUnit workingCopy);
+	void setWorkingCopy(IEditorInput input, IWorkingCopy workingCopy);
 	
 	/**
 	 * Removes the working copy set for the given editor input. If there is no

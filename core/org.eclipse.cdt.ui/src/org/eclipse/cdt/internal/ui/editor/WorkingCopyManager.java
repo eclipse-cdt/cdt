@@ -15,16 +15,13 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.jface.text.Assert;
-
-import org.eclipse.ui.IEditorInput;
-
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.IWorkingCopyManagerExtension;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.Assert;
+import org.eclipse.ui.IEditorInput;
 
 
 /**
@@ -83,15 +80,15 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	/*
 	 * @see org.eclipse.cdt.ui.IWorkingCopyManager#getWorkingCopy(org.eclipse.ui.IEditorInput)
 	 */
-	public ITranslationUnit getWorkingCopy(IEditorInput input) {
-		ITranslationUnit unit= fMap == null ? null : (ITranslationUnit) fMap.get(input);
+	public IWorkingCopy getWorkingCopy(IEditorInput input) {
+		IWorkingCopy unit= fMap == null ? null : (IWorkingCopy) fMap.get(input);
 		return unit != null ? unit : fDocumentProvider.getWorkingCopy(input);
 	}
 	
 	/*
 	 * @see org.eclipse.cdt.internal.ui.editor.IWorkingCopyManagerExtension#setWorkingCopy(org.eclipse.ui.IEditorInput, org.eclipse.cdt.core.model.ITranslationUnit)
 	 */
-	public void setWorkingCopy(IEditorInput input, ITranslationUnit workingCopy) {
+	public void setWorkingCopy(IEditorInput input, IWorkingCopy workingCopy) {
 		if (fDocumentProvider.isConnected(input)) {
 			if (fMap == null)
 				fMap= new HashMap();

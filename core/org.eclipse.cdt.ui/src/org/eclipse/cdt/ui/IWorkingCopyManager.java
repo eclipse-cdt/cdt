@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
 
@@ -65,7 +65,7 @@ public interface IWorkingCopyManager {
 	 *   input does not encode an editor input, or if there is no remembered working
 	 *   copy for this translation unit
 	 */
-	ITranslationUnit getWorkingCopy(IEditorInput input);
+	IWorkingCopy getWorkingCopy(IEditorInput input);
 	
 	/**
 	 * Shuts down this working copy manager. All working copies still remembered

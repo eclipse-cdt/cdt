@@ -23,7 +23,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public class ContentAssistPreference {
 	
 	/** Preference key for content assist auto activation */
-	public final static String AUTOACTIVATION=  "content_assist_autoactivation";
+	//public final static String AUTOACTIVATION=  "content_assist_autoactivation";
 	/** Preference key for content assist auto activation delay */
 	public final static String AUTOACTIVATION_DELAY=  "content_assist_autoactivation_delay";
 	/** Preference key for content assist proposal color */
@@ -37,20 +37,26 @@ public class ContentAssistPreference {
 	/** Preference key for content assist auto insert */
 	public final static String AUTOINSERT=  "content_assist_autoinsert";
 	
-	/** Preference key for java content assist auto activation triggers */
-	public final static String AUTOACTIVATION_TRIGGERS_C= "content_assist_autoactivation_triggers_java";
+	/** Preference key for C/CPP content assist auto activation triggers */
+	public final static String AUTOACTIVATION_TRIGGERS_DOT= "content_assist_autoactivation_trigger_dot";
+	public final static String AUTOACTIVATION_TRIGGERS_ARROW= "content_assist_autoactivation_trigger_arrow";
+	public final static String AUTOACTIVATION_TRIGGERS_DOUBLECOLON= "content_assist_autoactivation_trigger_doublecolon";
 	
 	/** Preference key for visibility of proposals */
 	public final static String SHOW_DOCUMENTED_PROPOSALS= "content_assist_show_visible_proposals";
 	/** Preference key for alphabetic ordering of proposals */
 	public final static String ORDER_PROPOSALS= "content_assist_order_proposals";
 	/** Preference key for case sensitivity of propsals */
-	public final static String CASE_SENSITIVITY= "content_assist_case_sensitivity";
+	//public final static String CASE_SENSITIVITY= "content_assist_case_sensitivity";
 	/** Preference key for adding imports on code assist */
 	public final static String ADD_INCLUDE= "content_assist_add_import";	
 	/** Preference key for completion search scope */
-	public final static String PROJECT_SCOPE_SEARCH= "content_assist_project_scope_search";	
-		
+	public final static String CURRENT_FILE_SEARCH_SCOPE= "content_assist_current_file_search_scope";	
+	/** Preference key for completion search scope */
+	public final static String PROJECT_SEARCH_SCOPE= "content_assist_project_search_scope";	
+	/** Preference key for completion search scope */
+	public final static String PROJECT_AND_DEPENDENCY_SEARCH_SCOPE= "content_assist_project_and_dependency_search_scope";	
+	
 	private static Color getColor(IPreferenceStore store, String key, IColorManager manager) {
 		RGB rgb= PreferenceConverter.getColor(store, key);
 		return manager.getColor(rgb);
@@ -72,16 +78,24 @@ public class ContentAssistPreference {
 		CCompletionProcessor jcp= getCProcessor(assistant);
 		if (jcp == null)
 			return;
-			
-		String triggers= store.getString(AUTOACTIVATION_TRIGGERS_C);
-		if (triggers != null)
-			jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
-			
+
+		String triggers = "";
+		boolean useDotAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
+		if(useDotAsTrigger)
+			triggers = ".";
+		boolean useArrowAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
+		if(useArrowAsTrigger)
+			triggers += ">";
+		boolean useDoubleColonAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
+		if(useDoubleColonAsTrigger)
+			triggers += ":";
+		jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+					
 		boolean enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
 		//jcp.restrictProposalsToVisibility(enabled);
 		
-		enabled= store.getBoolean(CASE_SENSITIVITY);
-		jcp.restrictProposalsToMatchingCases(enabled);
+		//enabled= store.getBoolean(CASE_SENSITIVITY);
+		//jcp.restrictProposalsToMatchingCases(enabled);
 		
 		enabled= store.getBoolean(ORDER_PROPOSALS);
 		jcp.orderProposalsAlphabetically(enabled);
@@ -99,8 +113,11 @@ public class ContentAssistPreference {
 		CTextTools textTools= CUIPlugin.getDefault().getTextTools();
 		IColorManager manager= textTools.getColorManager();		
 		
-		boolean enabled= store.getBoolean(AUTOACTIVATION);
-		assistant.enableAutoActivation(enabled);
+		boolean enabledDot= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
+		boolean enabledArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
+		boolean enabledDoubleColon= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
+		boolean enabled =  ((enabledDot) || ( enabledArrow ) || (enabledDoubleColon ));
+		assistant.enableAutoActivation(enabled);				
 		
 		int delay= store.getInt(AUTOACTIVATION_DELAY);
 		assistant.setAutoActivationDelay(delay);
@@ -121,8 +138,6 @@ public class ContentAssistPreference {
 		
 		enabled= store.getBoolean(AUTOINSERT);
 		assistant.enableAutoInsert(enabled);
-
-		enabled= store.getBoolean(PROJECT_SCOPE_SEARCH);
 			
 		configureCProcessor(assistant, store);
 	}
@@ -133,17 +148,33 @@ public class ContentAssistPreference {
 		if (jcp == null)
 			return;
 			
-		if (AUTOACTIVATION_TRIGGERS_C.equals(key)) {
-			String triggers= store.getString(AUTOACTIVATION_TRIGGERS_C);
-			if (triggers != null)
+		if (AUTOACTIVATION_TRIGGERS_DOT.equals(key)) {
+			boolean useDotAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
+			if (useDotAsTrigger){
+				String triggers= ".";
 				jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+			}
+		} else if (AUTOACTIVATION_TRIGGERS_ARROW.equals(key)) {
+			boolean useArrowAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
+			if (useArrowAsTrigger){
+				String triggers= ">";
+				jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+			}
+		} else if (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(key)) {
+			boolean useDoubleColonAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
+			if (useDoubleColonAsTrigger){
+				String triggers= ":";
+				jcp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
+			}
 		} else if (SHOW_DOCUMENTED_PROPOSALS.equals(key)) {
 			//boolean enabled= store.getBoolean(SHOW_DOCUMENTED_PROPOSALS);
 			//jcp.restrictProposalsToVisibility(enabled);
-		} else if (CASE_SENSITIVITY.equals(key)) {
-			boolean enabled= store.getBoolean(CASE_SENSITIVITY);
-			jcp.restrictProposalsToMatchingCases(enabled);
-		} else if (ORDER_PROPOSALS.equals(key)) {
+		} 
+		//else if (CASE_SENSITIVITY.equals(key)) {
+		//	boolean enabled= store.getBoolean(CASE_SENSITIVITY);
+		//	jcp.restrictProposalsToMatchingCases(enabled);
+		// } 
+		else if (ORDER_PROPOSALS.equals(key)) {
 			boolean enable= store.getBoolean(ORDER_PROPOSALS);
 			jcp.orderProposalsAlphabetically(enable);
 		} else if (ADD_INCLUDE.equals(key)) {
@@ -160,9 +191,14 @@ public class ContentAssistPreference {
 		
 		String p= event.getProperty();
 		
-		if (AUTOACTIVATION.equals(p)) {
-			boolean enabled= store.getBoolean(AUTOACTIVATION);
-			assistant.enableAutoActivation(enabled);
+		if ((AUTOACTIVATION_TRIGGERS_DOT.equals(p)) 
+			|| (AUTOACTIVATION_TRIGGERS_ARROW.equals(p))
+			|| (AUTOACTIVATION_TRIGGERS_DOUBLECOLON.equals(p))){
+			boolean enabledDot= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
+			boolean enabledArrow= store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
+			boolean enabledDoubleColon= store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
+			boolean enabled =  ((enabledDot) || ( enabledArrow ) || (enabledDoubleColon ));
+			assistant.enableAutoActivation(enabled);				
 		} else if (AUTOACTIVATION_DELAY.equals(p)) {
 			int delay= store.getInt(AUTOACTIVATION_DELAY);
 			assistant.setAutoActivationDelay(delay);

@@ -1,3 +1,8 @@
+2003-12-09 Hoda Amer
+	Content Assist work: Modified the project scope user preference
+	Removed the case sensitivily user preference.
+	Exported content assist strings to a properties file.
+	
 2003-12-03 Hoda Amer
 	Content Assist work :Added a new internal package for content assist
 	Added more functionality to the CompletionEngine.

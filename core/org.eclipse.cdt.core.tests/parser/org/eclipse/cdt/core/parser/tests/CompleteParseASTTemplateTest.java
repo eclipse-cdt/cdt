@@ -1194,4 +1194,49 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		assertTrue(ad != null);
 		assertAllReferences(4, createTaskList(new Task(tp, 2), new Task(x), new Task(y)));
 	}
+
+	public void testInstantiatingTemplateWithDTI_bug69604() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("template <typename T> class A {}; \n");
+		writer.write("template <typename U> class B {}; \n");
+		writer.write("template <typename V, typename W = B< A<V> > > class C {}; \n");
+		writer.write("C<int> c_int;\n");
+		Iterator i = parse(writer.toString()).getDeclarations();
+		IASTTemplateDeclaration td1 = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier cs1 = (IASTClassSpecifier) td1.getOwnedDeclaration();
+		IASTTemplateDeclaration td2 = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier cs2 = (IASTClassSpecifier) td2.getOwnedDeclaration();
+		IASTTemplateDeclaration td3 = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier cs3 = (IASTClassSpecifier) td3.getOwnedDeclaration();
+		Iterator j = td3.getTemplateParameters();
+		IASTTemplateParameter tp1 = (IASTTemplateParameter) j.next();
+		IASTTemplateParameter tp2 = (IASTTemplateParameter) j.next();
+		assertFalse(j.hasNext());
+		IASTVariable cr = (IASTVariable) i.next();
+		assertFalse(i.hasNext());
+		assertReferenceTask(new Task(cs1, 1));
+		assertReferenceTask(new Task(cs2, 1));
+	}
+	
+	public void testTemplatedBaseClass_bug74359() throws Exception {
+		Writer writer = new StringWriter();
+		writer.write("template <typename T> class A {}; \n");
+		writer.write("template <typename U> class B {}; \n");
+		writer.write("template <typename V> class C : public B<A<V> > {}; \n");
+		writer.write("C<int> c_int;\n");
+		Iterator i = parse(writer.toString()).getDeclarations();
+		IASTTemplateDeclaration td1 = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier cs1 = (IASTClassSpecifier) td1.getOwnedDeclaration();
+		IASTTemplateDeclaration td2 = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier cs2 = (IASTClassSpecifier) td2.getOwnedDeclaration();
+		IASTTemplateDeclaration td3 = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier cs3 = (IASTClassSpecifier) td3.getOwnedDeclaration();
+		Iterator j = cs3.getBaseClauses();
+		IASTBaseSpecifier bs = (IASTBaseSpecifier) j.next();
+		assertFalse(j.hasNext());
+		IASTVariable cr = (IASTVariable) i.next();
+		assertFalse(i.hasNext());
+		assertReferenceTask(new Task(cs1, 1));
+		assertReferenceTask(new Task(cs2, 1));
+	}
 }

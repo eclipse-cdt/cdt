@@ -98,7 +98,8 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 				if( arg.isType( ITypeInfo.t_type ) ){
 					if( arg.getTypeSymbol() == null ) 
 						throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );
-					else if( arg.getTypeSymbol().isType( ITypeInfo.t_templateParameter ) )
+					else if( arg.getTypeSymbol().isType( ITypeInfo.t_templateParameter ) ||
+							 arg.getTypeSymbol() instanceof IDeferredTemplateInstance )
 						return deferredInstance( arguments );
 				}
 			} else {
@@ -115,6 +116,13 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 						IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) arg.getTypeSymbol();
 						arg = TypeInfoProvider.newTypeInfo( arg );
 						arg.setTypeSymbol( deferred.instantiate( this, map ) );
+//					//	IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) info.getTypeSymbol();
+//						ITypeInfo newInfo = TypeInfoProvider.newTypeInfo( arg );
+//						//newInfo.setTypeSymbol( deferred.instantiate( template, argMap ) );
+//						template.registerDeferredInstatiation( newInfo, deferred, ITemplateSymbol.DeferredKind.TYPE_SYMBOL, map );
+//						newInfo.setTypeSymbol( deferred );
+//						// process any accumulated deferred instances, we may need them
+//						processDeferredInstantiations();
 					}
 				} else {
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateArgument );					
@@ -465,6 +473,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_RecursiveTemplate );
 			}
 		}
+		_deferredInstantiations.clear();
 		_processingDeferred = false;
 	}
 	

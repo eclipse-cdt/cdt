@@ -49,7 +49,7 @@ public class GCCScannerConfigUtil {
 				file.close();
 			} catch (IOException e) {
 				throw new CoreException(new Status(IStatus.ERROR,
-						MakeCorePlugin.getDefault().getDescriptor().getUniqueIdentifier(), -1,
+						MakeCorePlugin.getUniqueIdentifier(), -1,
 						MakeCorePlugin.getResourceString("GCCScannerConfigUtil.Error_Message"), e));	//$NON-NLS-1$
 			}
 		}

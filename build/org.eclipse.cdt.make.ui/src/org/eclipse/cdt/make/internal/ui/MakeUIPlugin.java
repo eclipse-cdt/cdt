@@ -210,7 +210,7 @@ public class MakeUIPlugin extends AbstractUIPlugin {
 		ErrorDialog.openError(shell, title, message, status);
 	}
 
-	protected Shell getShell() {
+	public Shell getShell() {
 		if (getActiveWorkbenchShell() != null) {
 			return getActiveWorkbenchShell();
 		} else {

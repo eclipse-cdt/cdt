@@ -10,7 +10,10 @@
  **********************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.MakeScannerProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
@@ -24,9 +27,6 @@ public class ScannerConfigNature implements IProjectNature {
 	
 	public final static String NATURE_ID = MakeCorePlugin.getUniqueIdentifier() + ".ScannerConfigNature"; //$NON-NLS-1$
 	private IProject fProject;
-
-	public ScannerConfigNature() {
-	}
 
 	/**
 	 * @see IProjectNature#configure
@@ -46,6 +46,8 @@ public class ScannerConfigNature implements IProjectNature {
 		newCommands[commands.length] = command;
 		description.setBuildSpec(newCommands);
 		getProject().setDescription(description, null);
+		
+		// set default project scanner config settings
 	}
 
 	/**
@@ -81,20 +83,24 @@ public class ScannerConfigNature implements IProjectNature {
 	}
 	
 	public static void addScannerConfigNature(IProject project) throws CoreException {
-		if (project.hasNature(NATURE_ID))
-			return;
-		
 		IProjectDescription description = project.getDescription();
+		if (description.hasNature(NATURE_ID))
+			return;
 		String[] ids = description.getNatureIds();
 		String[] newIds = new String[ids.length + 1];
 		System.arraycopy(ids, 0, newIds, 0, ids.length);
 		newIds[ids.length] = NATURE_ID;
 		description.setNatureIds(newIds);
 		project.setDescription(description, null);
+		
+		// set DiscoveredScannerInfoProvider as a default one for the project
+		updateProjectsScannerInfoProvider(project, true);
 	}
 	
 	public static void removeScannerConfigNature(IProject project) throws CoreException {
 		IProjectDescription description = project.getDescription();
+		if (!description.hasNature(NATURE_ID))
+			return;
 		String[] ids = description.getNatureIds();
 		for (int i = 0; i < ids.length; ++i) {
 			if (ids[i].equals(NATURE_ID)) {
@@ -105,6 +111,9 @@ public class ScannerConfigNature implements IProjectNature {
 				project.setDescription(description, null);
 			}
 		}
+
+		// fall back to MakeScannerProvider
+		updateProjectsScannerInfoProvider(project, false);
 	}
 
 	/**
@@ -124,5 +133,21 @@ public class ScannerConfigNature implements IProjectNature {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * @param project
+	 * @param b
+	 */
+	private static void updateProjectsScannerInfoProvider(IProject project, boolean discovered) {
+		try {
+			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project);
+			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
+			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, (discovered)?
+					DiscoveredScannerInfoProvider.INTERFACE_IDENTITY:
+					MakeScannerProvider.INTERFACE_IDENTITY);
+		} catch (CoreException e) {
+			MakeCorePlugin.log(e.getStatus());
+		}
 	}
 }

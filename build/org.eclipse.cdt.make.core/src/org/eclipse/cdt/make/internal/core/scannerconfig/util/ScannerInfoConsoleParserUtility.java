@@ -168,7 +168,7 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 				path = fp;
 			}
 		} else {
-			path = (IPath) getWorkingDirectory().append(filePath);
+			path = getWorkingDirectory().append(filePath);
 		}
 
 		IFile file = null;
@@ -312,24 +312,46 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 				// check if it is a relative path
 				if (include.startsWith("..") || include.startsWith(".")) {	//$NON-NLS-1$ //$NON-NLS-2$
 					// First try the current working directory
-					IPath pwd = getWorkingDirectory();
-					if (!pwd.isAbsolute()) {
-						pwd = fProject.getLocation().append(pwd);
+					IPath cwd = getWorkingDirectory();
+					if (!cwd.isAbsolute()) {
+						cwd = fProject.getLocation().append(cwd);
 					}
-					IPath candidatePath = pwd.append(includePath);
-					File dir = candidatePath.makeAbsolute().toFile();
+					// check if the cwd is the right one
+					// appending fileName to cwd should yield file path
+					IPath filePath = cwd.append(fileName);
+					if (!filePath.equals(file.getLocation())) {
+						// must be the cwd is wrong
+						// check if file name starts with ".."
+						if (fileName.startsWith("..")) {	//$NON-NLS-1$
+							// probably multiple choices for cwd, hopeless
+							generateMarker(file, -1, "Unable to determine working directory",
+									IMarkerGenerator.SEVERITY_WARNING, fileName);				
+							break;
+						}
+						else {
+							// remove common segments at the end 
+							IPath tPath = new Path(fileName);
+							if (fileName.startsWith(".")) {	//$NON-NLS-1$
+								tPath = tPath.removeFirstSegments(1);
+							}
+							// get the file path from the file
+							filePath = file.getLocation();
+							IPath lastFileSegment = filePath.removeFirstSegments(filePath.segmentCount() - tPath.segmentCount());
+							if (lastFileSegment.matchingFirstSegments(tPath) == tPath.segmentCount()) {
+								cwd = filePath.removeLastSegments(tPath.segmentCount());
+							}
+						}
+					}
+					
+					IPath candidatePath = cwd.append(includePath);
+					File dir = candidatePath.toFile();
 					if (dir.exists()) {
 						translatedIncludes.add(candidatePath.toString());
-						break;
+						continue;
 					}
 					else {
-						// try to deduce a current path from the fileName format
-						if (file != null && fileName != null) {
-							// TODO VMIR implement heuristics to translate relative path when the working directory is invalid
-							// For now create a marker to identify prospective cases
-							generateMarker(file.getProject(), -1, "Ambiguous include path: "+include, //$NON-NLS-1$
-									IMarkerGenerator.SEVERITY_WARNING, fileName);				
-						}
+						generateMarker(file, -1, "Nonexistent include path: "+include,
+								IMarkerGenerator.SEVERITY_WARNING, fileName);				
 					}
 				}
 			}
@@ -337,6 +359,49 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 			translatedIncludes.add(include);
 		}
 		return translatedIncludes;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility#normalizePath(java.lang.String)
+	 */
+	public String normalizePath(String path) {
+		if (path.indexOf('.') == -1 || path.equals(".")) {	//$NON-NLS-1$
+			return path;
+		}
+		// lose "./" segments since they confuse the Path normalization
+		StringBuffer buf = new StringBuffer(path);
+		int len = buf.length();
+		StringBuffer newBuf = new StringBuffer(buf.length());
+		int i = 0;
+		int sp = 0;
+		int sdot;
+		while (sp < len && (sdot = buf.indexOf(".", sp)) != -1) {	//$NON-NLS-1$
+			int ddot = buf.indexOf("..", sp);//$NON-NLS-1$
+			if (sdot < ddot || ddot == -1) {
+				newBuf.append(buf.substring(i, sdot));
+				i = sdot + 1;
+				if (i < len) {
+					char nextChar = buf.charAt(i);
+					if (nextChar == '/') {
+						++i;
+					}
+					else if (nextChar == '\\') {
+						++i;
+						if (i < len - 1 && buf.charAt(i) == '\\') {
+							++i;
+						}
+					}
+				}
+				sp = i;
+			}
+			else if (sdot == ddot) {
+				sp = sdot + 2;
+			}
+		}
+		newBuf.append(buf.substring(i, len));
+					 
+		IPath orgPath = new Path(newBuf.toString());
+		return orgPath.toString();
 	}
 
 }

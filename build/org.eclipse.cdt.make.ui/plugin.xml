@@ -26,6 +26,7 @@
       <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
+
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
@@ -277,12 +278,6 @@
             id="org.eclipse.cdt.make.ui.preferences.MakePreferencePage">
       </page>
       <page
-            name="%PreferenceScannerConfig.name"
-            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
-            class="org.eclipse.cdt.make.internal.ui.preferences.ScannerConfigPreferencePage"
-            id="org.eclipse.cdt.make.ui.preferences.ScannerConfigPreferencePage">
-      </page>
-      <page
             name="%PreferenceMakeTargets.name"
             category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
             class="org.eclipse.cdt.make.internal.ui.preferences.MakeTargetsPreferencePage"
@@ -302,18 +297,6 @@
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
       </page>
-      <page
-            adaptable="true"
-            objectClass="org.eclipse.core.resources.IProject"
-            name="%PropertyScannerConfig.name"
-            class="org.eclipse.cdt.make.internal.ui.properties.ScannerConfigPropertyPage"
-            id="org.eclipse.cdt.make.ui.properties.ScannerConfigPropertyPage">
-         <filter
-               name="nature"
-               value="org.eclipse.cdt.make.core.makeNature">
-         </filter>
-      </page>
-      
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -345,13 +328,13 @@
                <and>
                   <not>
                      <objectState
-                           name="projectNature"
-                           value="org.eclipse.cdt.make.core.makeNature">
+                           value="org.eclipse.cdt.make.core.makeNature"
+                           name="projectNature">
                      </objectState>
                   </not>
                   <objectState
-                        name="projectNature"
-                        value="org.eclipse.cdt.core.cnature">
+                        value="org.eclipse.cdt.core.cnature"
+                        name="projectNature">
                   </objectState>
                </and>
             </enablement>
@@ -404,7 +387,6 @@
          </action>
       </actionSet>
    </extension>
-
    <extension
          id="org.eclipse.cdt.make.editor"
          name="MakefileEditor"
@@ -418,7 +400,6 @@
             id="org.eclipse.cdt.make.editor">
       </editor>
    </extension>
-
    <extension
          point="org.eclipse.ui.startup">
       <startup
@@ -443,4 +424,5 @@
          </actionSet>
       </perspectiveExtension>
    </extension>
+
 </plugin>

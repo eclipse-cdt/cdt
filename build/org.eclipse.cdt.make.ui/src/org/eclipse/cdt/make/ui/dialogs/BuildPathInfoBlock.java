@@ -14,14 +14,19 @@ package org.eclipse.cdt.make.ui.dialogs;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.MakeScannerInfo;
-import org.eclipse.cdt.make.core.MakeScannerProvider;
+import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfo;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -30,24 +35,24 @@ import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BuildPathInfoBlock extends AbstractCOptionPage {
-	private static final int PROJECT_LIST_MULTIPLIER = 10;
+	private static final int PROJECT_LIST_MULTIPLIER = 15;
 
 	private static final String PREF_SYMBOLS = "ScannerSymbols"; //$NON-NLS-1$
 	private static final String PREF_INCLUDES = "ScannerIncludes"; //$NON-NLS-1$
@@ -55,39 +60,31 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
 	private static final String PATHS = PREFIX + ".paths"; //$NON-NLS-1$
 	private static final String SYMBOLS = PREFIX + ".symbols"; //$NON-NLS-1$
-	private static final String BROWSE = PREFIX + ".browse"; //$NON-NLS-1$
-	private static final String PATH_TITLE = BROWSE + ".path"; //$NON-NLS-1$
-	private static final String EDIT_PATH_TITLE = BROWSE + ".path.edit"; //$NON-NLS-1$
-	private static final String PATH_LABEL = BROWSE + ".path.label"; //$NON-NLS-1$
-	private static final String SYMBOL_TITLE = BROWSE + ".symbol"; //$NON-NLS-1$
-	private static final String EDIT_SYMBOL_TITLE = BROWSE + ".symbol.edit"; //$NON-NLS-1$
-	private static final String SYMBOL_LABEL = BROWSE + ".symbol.label"; //$NON-NLS-1$
-	private static final String NEW = "BuildPropertyCommon.label.new"; //$NON-NLS-1$
-	private static final String EDIT = "BuildPropertyCommon.label.edit"; //$NON-NLS-1$
-	private static final String REMOVE = "BuildPropertyCommon.label.remove"; //$NON-NLS-1$
-	private static final String UP = "BuildPropertyCommon.label.up"; //$NON-NLS-1$
-	private static final String DOWN = "BuildPropertyCommon.label.down"; //$NON-NLS-1$
+	private static final String MANAGE = "BuildPropertyCommon.label.manage"; //$NON-NLS-1$
+	private static final String SC_GROUP_LABEL = PREFIX + ".scGroup.label";	//$NON-NLS-1$
+	private static final String SC_ENABLED_LABEL = PREFIX + ".scGroup.enabled.label";	//$NON-NLS-1$
+	private static final String SC_OPTIONS_LABEL = PREFIX + ".scGroup.options.label";	//$NON-NLS-1$
+	private static final String MISSING_BUILDER_MSG = "ScannerConfigOptionsDialog.label.missingBuilderInformation";	//$NON-NLS-1$
 
+	private Button scEnabledButton;
+	private Button scOptionsButton;
 	private List pathList;
 	private List symbolList;
 	private Composite pathButtonComp;
-	private Button addPath;
-	private Button editPath;
-	private Button removePath;
-	private Button pathUp;
-	private Button pathDown;
+	private Button managePathsButton;
 	private Composite symbolButtonComp;
-	private Button addSymbol;
-	private Button editSymbol;
-	private Button removeSymbol;
-	private Button symbolUp;
-	private Button symbolDown;
-	private Shell shell;
+	private Button manageSymbolsButton;
+	
+	private ScannerConfigOptionsDialog scOptionsDialog;
+	private ManageIncludePathsDialog manageIncludesDialog;
+	private ManageDefinedSymbolsDialog manageSymbolsDialog;
+	
+	private boolean needsSCNature = false;
 	
 	/**
 	 * This class add a "browse" button to the selection to be used for the path
 	 */
-	class SelectPathInputDialog extends InputDialog {
+	static class SelectPathInputDialog extends InputDialog {
 		public SelectPathInputDialog(Shell parentShell, String dialogTitle, String dialogMessage, String initialValue, IInputValidator validator) {
 			super(parentShell, dialogTitle, dialogMessage, initialValue, validator);
 		}
@@ -118,78 +115,39 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	}
 
 	private void createPathListButtons(Composite parent) {
+		// Create a ManageIncludePathsDialog
+		if (manageIncludesDialog == null) {
+			manageIncludesDialog = new ManageIncludePathsDialog(getShell(), getContainer());
+		}
+		
 		// Create a composite for the buttons
 		pathButtonComp = ControlFactory.createComposite(parent, 1);
+		((GridData) pathButtonComp.getLayoutData()).verticalAlignment = GridData.BEGINNING;
+		((GridData) pathButtonComp.getLayoutData()).grabExcessHorizontalSpace = false;
 		pathButtonComp.setFont(parent.getFont());
 
 		// Add the buttons
-		addPath = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(NEW));
-		addPath.addSelectionListener(new SelectionAdapter() {
+		managePathsButton = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(MANAGE));
+		managePathsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleAddPath();
+				handleManagePaths();
 			}
 		});
-		addPath.setEnabled(true);
-		addPath.setFont(parent.getFont());
-		addPath.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(addPath);
+		managePathsButton.setFont(parent.getFont());
+		managePathsButton.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(managePathsButton);
+		return;
+	}
 
-		editPath = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(EDIT));
-		editPath.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				editPathListItem();
-			}
-		});
-		editPath.setEnabled(true);
-		editPath.setFont(parent.getFont());
-		editPath.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(editPath);
-
-		removePath = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(REMOVE));
-		removePath.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleRemovePath();
-			}
-		});
-		removePath.setFont(parent.getFont());
-		removePath.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(removePath);
-
-		pathUp = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(UP));
-		pathUp.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handlePathUp();
-			}
-		});
-		pathUp.setFont(parent.getFont());
-		pathUp.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(pathUp);
-
-		pathDown = ControlFactory.createPushButton(pathButtonComp, MakeUIPlugin.getResourceString(DOWN));
-		pathDown.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handlePathDown();
-			}
-		});
-		pathDown.setFont(parent.getFont());
-		pathDown.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(pathDown);
-
+	protected void handleManagePaths() {
+		if (manageIncludesDialog.open() == Window.OK) {
+			pathList.setItems(manageIncludesDialog.getManagedIncludes());
+		}
 	}
 
 	private void createPathListControl(Composite parent, int numColumns) {
 		// Create the list
 		pathList = new List(parent, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
-		pathList.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				enablePathButtons();
-			}
-		});
-		pathList.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent e) {
-				editPathListItem();
-			}
-		});
 
 		// Make it occupy the first 2 columns
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -198,7 +156,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		gd.heightHint = getDefaultFontHeight(pathList, PROJECT_LIST_MULTIPLIER);
 		pathList.setLayoutData(gd);
 		pathList.setFont(parent.getFont());
-
 	}
 
 	/**
@@ -218,77 +175,39 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	}
 
 	private void createSymbolListButtons(Composite parent) {
+		// Create a ManageDefinedSymbolsDialog
+		if (manageSymbolsDialog == null) {
+			manageSymbolsDialog = new ManageDefinedSymbolsDialog(getShell(), getContainer());
+		}
+
 		// Create a composite for the buttons
 		symbolButtonComp = ControlFactory.createComposite(parent, 1);
+		((GridData) symbolButtonComp.getLayoutData()).verticalAlignment = GridData.BEGINNING;
+		((GridData) symbolButtonComp.getLayoutData()).grabExcessHorizontalSpace = false;
 		symbolButtonComp.setFont(parent.getFont());
 
-		// Add the buttons
-		addSymbol = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(NEW));
-		addSymbol.addSelectionListener(new SelectionAdapter() {
+		// Add the Manage button
+		manageSymbolsButton = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(MANAGE));
+		manageSymbolsButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				handleAddSymbol();
+				handleManageSymbols();
 			}
 		});
-		addSymbol.setEnabled(true);
-		addSymbol.setFont(parent.getFont());
-		addSymbol.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(addSymbol);
+		manageSymbolsButton.setFont(parent.getFont());
+		manageSymbolsButton.setLayoutData(new GridData());
+		SWTUtil.setButtonDimensionHint(manageSymbolsButton);
+		return;
+	}
 
-		editSymbol = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(EDIT));
-		editSymbol.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				editSymbolListItem();
-			}
-		});
-		editSymbol.setEnabled(true);
-		editSymbol.setFont(parent.getFont());
-		editSymbol.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(editSymbol);
-
-		removeSymbol = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(REMOVE));
-		removeSymbol.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleRemoveSymbol();
-			}
-		});
-		removeSymbol.setFont(parent.getFont());
-		removeSymbol.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(removeSymbol);
-
-		symbolUp = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(UP));
-		symbolUp.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleSymbolUp();
-			}
-		});
-		symbolUp.setFont(parent.getFont());
-		symbolUp.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(symbolUp);
-
-		symbolDown = ControlFactory.createPushButton(symbolButtonComp, MakeUIPlugin.getResourceString(DOWN));
-		symbolDown.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleSymbolDown();
-			}
-		});
-		symbolDown.setFont(parent.getFont());
-		symbolDown.setLayoutData(new GridData());
-		SWTUtil.setButtonDimensionHint(symbolDown);
+	protected void handleManageSymbols() {
+		if (manageSymbolsDialog.open() == Window.OK) {
+			symbolList.setItems(manageSymbolsDialog.getManagedSymbols());
+		}
 	}
 
 	private void createSymbolListControl(Composite parent, int numColumns) {
 		// Create the list
 		symbolList = new List(parent, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
-		symbolList.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				enableSymbolButtons();
-			}
-		});
-		symbolList.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent e) {
-				editSymbolListItem();
-			}
-		});
 
 		// Make it occupy the first n-1 columns
 		GridData gd = new GridData(GridData.FILL_BOTH);
@@ -307,16 +226,34 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		if (getContainer().getProject() != null) {
+		// First store scanner config options
+		if (scOptionsDialog.isInitialized()) {
+			scOptionsDialog.performApply(monitor);
+		}
+		
+		IProject project = getContainer().getProject();
+		if (project != null) {
 			// Store the paths and symbols 
 			monitor.beginTask(MakeUIPlugin.getResourceString("BuildPathInfoBlock.monitor.settingScannerInfo"), 3); //$NON-NLS-1$
-			MakeScannerInfo info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject(), false);
-			info.setIncludePaths(getPathListContents());
-			monitor.worked(1);
-			info.setPreprocessorSymbols(getSymbolListContents());
-			monitor.worked(1);
-			info.update();
-			monitor.done();
+			IScannerInfo info = CCorePlugin.getDefault().getScannerInfoProvider(project).getScannerInformation(project);
+			if (info instanceof MakeScannerInfo) {
+				MakeScannerInfo mInfo = (MakeScannerInfo) info;
+				mInfo.setIncludePaths(getPathListContents());
+				monitor.worked(1);
+				mInfo.setPreprocessorSymbols(getSymbolListContents());
+				monitor.worked(1);
+				mInfo.update();
+				monitor.done();
+			}
+			else if (info instanceof DiscoveredScannerInfo) {
+				DiscoveredScannerInfo dInfo = (DiscoveredScannerInfo) info;
+				manageIncludesDialog.saveTo(dInfo);
+				monitor.worked(1);
+				manageSymbolsDialog.saveTo(dInfo);
+				monitor.worked(1);
+				dInfo.update();
+				monitor.done();
+			}
 		} else {
 			setIncludes(MakeCorePlugin.getDefault().getPluginPreferences());
 			setSymbols(MakeCorePlugin.getDefault().getPluginPreferences());
@@ -324,12 +261,19 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	}
 
 	public void performDefaults() {
+		// First restore scanner config options
+		scOptionsDialog.performDefaults();
+		scEnabledButton.setSelection(scOptionsDialog.isScannerConfigDiscoveryEnabled());
+		handleScannerConfigEnable();
+		
 		pathList.removeAll();
 		symbolList.removeAll();
 		if (getContainer().getProject() != null) {
 			pathList.setItems(getIncludes(MakeCorePlugin.getDefault().getPluginPreferences()));
 			symbolList.setItems(getSymbols(MakeCorePlugin.getDefault().getPluginPreferences()));
 		}
+		manageIncludesDialog.restore();
+		manageSymbolsDialog.restore();
 		getContainer().updateContainer();
 	}
 
@@ -349,17 +293,17 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		return buf.toString();
 	}
 
-	private String[] getSymbols(Preferences prefs) {
+	static String[] getSymbols(Preferences prefs) {
 		String syms = prefs.getString(PREF_SYMBOLS);
 		return parseStringToList(syms);
 	}
 
-	private String[] getIncludes(Preferences prefs) {
+	static String[] getIncludes(Preferences prefs) {
 		String syms = prefs.getString(PREF_INCLUDES);
 		return parseStringToList(syms);
 	}
 
-	private String[] parseStringToList(String syms) {
+	private static String[] parseStringToList(String syms) {
 		if (syms != null && syms.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(syms, ";"); //$NON-NLS-1$
 			ArrayList list = new ArrayList(tok.countTokens());
@@ -371,99 +315,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		return new String[0];
 	}
 
-	/*
-	 * Double-click handler to allow edit of path information
-	 */
-	protected void editPathListItem() {
-		// Edit the selection index
-		int index = pathList.getSelectionIndex();
-		if (index != -1) {
-			String selItem = pathList.getItem(index);
-			if (selItem != null) {
-				InputDialog dialog =
-					new SelectPathInputDialog(
-						shell,
-						MakeUIPlugin.getResourceString(EDIT_PATH_TITLE),
-						MakeUIPlugin.getResourceString(PATH_LABEL),
-						selItem,
-						null);
-				String newItem = null;
-				if (dialog.open() == Window.OK) {
-					newItem = dialog.getValue();
-					if (newItem != null && !newItem.equals(selItem)) {
-						pathList.setItem(index, newItem);
-					}
-				}
-			}
-		}
-	}
-
-	/*
-	 * Double-click handler to allow edit of symbol information
-	 */
-	protected void editSymbolListItem() {
-		// Edit the selection index
-		int index = symbolList.getSelectionIndex();
-		if (index != -1) {
-			String selItem = symbolList.getItem(index);
-			if (selItem != null) {
-				InputDialog dialog =
-					new InputDialog(
-						shell,
-						MakeUIPlugin.getResourceString(EDIT_SYMBOL_TITLE),
-						MakeUIPlugin.getResourceString(SYMBOL_LABEL),
-						selItem,
-						null);
-				String newItem = null;
-				if (dialog.open() == Window.OK) {
-					newItem = dialog.getValue();
-					if (newItem != null && !newItem.equals(selItem)) {
-						symbolList.setItem(index, newItem);
-					}
-				}
-			}
-		}
-	}
-
-	/*
-	 * Enables the buttons on the path control if the right conditions are met
-	 */
-	void enablePathButtons() {
-		// Enable the remove button if there is at least 1 item in the list
-		int items = pathList.getItemCount();
-		if (items > 0) {
-			editPath.setEnabled(true);
-			removePath.setEnabled(true);
-			// Enable the up/down buttons depending on what item is selected
-			int index = pathList.getSelectionIndex();
-			pathUp.setEnabled(items > 1 && index > 0);
-			pathDown.setEnabled(items > 1 && index < (items - 1));
-		} else {
-			editPath.setEnabled(false);
-			removePath.setEnabled(false);
-			pathUp.setEnabled(false);
-			pathDown.setEnabled(false);
-		}
-	}
-
-	void enableSymbolButtons() {
-		// Enable the remove button if there is at least 1 item in the list
-		int items = symbolList.getItemCount();
-		if (items > 0) {
-			editSymbol.setEnabled(true);
-			removeSymbol.setEnabled(true);
-			// Enable the up/down buttons depending on what item is selected
-			int index = symbolList.getSelectionIndex();
-			symbolUp.setEnabled(items > 1 && index > 0);
-			symbolDown.setEnabled(items > 1 && index < (items - 1));
-		} else {
-			editSymbol.setEnabled(false);
-			removeSymbol.setEnabled(false);
-			symbolUp.setEnabled(false);
-			symbolDown.setEnabled(false);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.IWizardTab#getControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -472,41 +323,129 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		int tabColumns = 3;
 		Font font = parent.getFont();
 		Composite composite = ControlFactory.createComposite(parent, tabColumns);
+		((GridLayout) composite.getLayout()).makeColumnsEqualWidth = false;
 		composite.setFont(font);
 		GridData gd;
 		setControl(composite);
 
 		WorkbenchHelp.setHelp(getControl(), IMakeHelpContextIds.MAKE_PATH_SYMBOL_SETTINGS);
 
+		// Create a group for scanner config discovery
+		createScannerConfigControls(composite, tabColumns);
+		
 		// Create a label for the include paths control
 		Label paths = ControlFactory.createLabel(composite, MakeUIPlugin.getResourceString(PATHS));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = tabColumns;
+		gd.grabExcessHorizontalSpace = false;
 		paths.setLayoutData(gd);
 		paths.setFont(font);
 
 		//Create the list and button controls
 		createPathListControl(composite, tabColumns);
 		createPathListButtons(composite);
-		enablePathButtons();
 
 		// Create a label for the symbols control
 		Label symbols = ControlFactory.createLabel(composite, MakeUIPlugin.getResourceString(SYMBOLS));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = tabColumns;
+		gd.grabExcessHorizontalSpace = false;
 		symbols.setLayoutData(gd);
 		symbols.setFont(font);
 
 		// Create list and button controls for symbols
 		createSymbolListControl(composite, tabColumns);
 		createSymbolListButtons(composite);
-		enableSymbolButtons();
 
 		setListContents();
-		pathList.select(0);
-		enablePathButtons();
-		symbolList.select(0);
-		enableSymbolButtons();
+	}
+
+	/**
+	 * @param composite
+	 */
+	private void createScannerConfigControls(Composite parent, int numColumns) {
+		// Check if it is an old project
+		IProject project = getContainer().getProject();
+		boolean showMissingBuilder = false;
+		try {
+			if (project != null &&
+					project.hasNature(MakeProjectNature.NATURE_ID) &&
+					!project.hasNature(ScannerConfigNature.NATURE_ID)) {
+				needsSCNature = true;	// an old project
+			}
+		} 
+		catch (CoreException e) {
+			showMissingBuilder = true;
+		}
+		
+		// Create a ScannerConfigOptionsDialog
+		if (scOptionsDialog == null) {
+			if (needsSCNature) {
+				// create a temporary dialog
+				scOptionsDialog = new ScannerConfigOptionsDialog(getContainer());
+			}
+			else {
+				scOptionsDialog = new ScannerConfigOptionsDialog(getShell(), getContainer());
+			}
+		}
+		
+		Group scGroup = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(SC_GROUP_LABEL), numColumns);
+		scGroup.setFont(parent.getFont());
+		((GridData) scGroup.getLayoutData()).grabExcessHorizontalSpace = false;
+		((GridData) scGroup.getLayoutData()).horizontalSpan = numColumns;
+		((GridData) scGroup.getLayoutData()).horizontalAlignment = GridData.FILL;
+		((GridLayout) scGroup.getLayout()).marginWidth = 7;
+
+		if ((!needsSCNature && !scOptionsDialog.isInitialized())) {
+			ControlFactory.createLabel(scGroup, MakeUIPlugin.getResourceString(MISSING_BUILDER_MSG));
+			return;
+		}
+		
+		// Add checkbox
+		scEnabledButton = ControlFactory.createCheckBox(scGroup, MakeUIPlugin.getResourceString(SC_ENABLED_LABEL));
+		scEnabledButton.setFont(parent.getFont());
+		((GridData) scEnabledButton.getLayoutData()).horizontalSpan = 2;
+		((GridData) scEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
+		// VMIR* old projects will have discovery disabled by default
+		scEnabledButton.setSelection(needsSCNature ? false : scOptionsDialog.isScannerConfigDiscoveryEnabled());
+		scEnabledButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				handleScannerConfigEnable();
+			}
+		});
+		// Add Options... button 
+		scOptionsButton = ControlFactory.createPushButton(scGroup, MakeUIPlugin.getResourceString(SC_OPTIONS_LABEL));
+		scOptionsButton.setFont(parent.getFont());
+		((GridData) scOptionsButton.getLayoutData()).grabExcessHorizontalSpace = false;
+		SWTUtil.setButtonDimensionHint(scOptionsButton);
+		scOptionsButton.setEnabled(scEnabledButton.getSelection());
+		scOptionsButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				scOptionsDialog.open();
+			}
+		});
+//		handleScannerConfigEnable(); Only if true in VMIR*
+	}
+
+	/**
+	 * Handles scanner configuration discovery selection change
+	 */
+	protected void handleScannerConfigEnable() {
+		boolean enable = scEnabledButton.getSelection();
+		scOptionsButton.setEnabled(enable);
+		if (enable && needsSCNature) {
+			// first install the SC nature
+			try {
+				ScannerConfigNature.addScannerConfigNature(getContainer().getProject());
+				// create the real dialog
+				scOptionsDialog = new ScannerConfigOptionsDialog(getShell(), getContainer());
+				needsSCNature = false;
+			} 
+			catch (CoreException e) {
+				MakeCorePlugin.log(e.getStatus());
+			}
+		}
+		scOptionsDialog.setScannerConfigDiscoveryEnabled(enable);
 	}
 
 	private String[] getPathListContents() {
@@ -515,138 +454,6 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 
 	private String[] getSymbolListContents() {
 		return symbolList.getItems();
-	}
-
-	protected void handleAddPath() {
-		// Popup an entry dialog
-		InputDialog dialog = new SelectPathInputDialog(shell, MakeUIPlugin.getResourceString(PATH_TITLE), MakeUIPlugin.getResourceString(PATH_LABEL), "", null); //$NON-NLS-1$
-		String path = null;
-		if (dialog.open() == Window.OK) {
-			path = dialog.getValue();
-		}
-		if (path != null && path.length() > 0) {
-			pathList.add(path);
-			pathList.select(pathList.getItemCount() - 1);
-			enablePathButtons();
-		}
-	}
-
-	protected void handleAddSymbol() {
-		// Popup an entry dialog
-		InputDialog dialog = new InputDialog(shell, MakeUIPlugin.getResourceString(SYMBOL_TITLE), MakeUIPlugin.getResourceString(SYMBOL_LABEL), "", null); //$NON-NLS-1$
-		String symbol = null;
-		if (dialog.open() == Window.OK) {
-			symbol = dialog.getValue();
-		}
-		if (symbol != null && symbol.length() > 0) {
-			symbolList.add(symbol);
-			symbolList.select(symbolList.getItemCount() - 1);
-			enableSymbolButtons();
-		}
-	}
-
-	protected void handlePathDown() {
-		// Get the selection index
-		int index = pathList.getSelectionIndex();
-		int items = pathList.getItemCount();
-		if (index == -1 || index == items - 1) {
-			return;
-		}
-		// Swap the items in the list
-		String selItem = pathList.getItem(index);
-		pathList.remove(index);
-		if (index + 1 == items) {
-			pathList.add(selItem);
-		} else {
-			pathList.add(selItem, ++index);
-		}
-
-		// Keep the swapped item selected
-		pathList.select(index);
-		enablePathButtons();
-	}
-
-	protected void handlePathUp() {
-		// Get the selection index
-		int index = pathList.getSelectionIndex();
-		if (index == -1 || index == 0) {
-			return;
-		}
-		// Swap the items in the list
-		String selItem = pathList.getItem(index);
-		pathList.remove(index);
-		pathList.add(selItem, --index);
-
-		// Keep the index selected
-		pathList.select(index);
-		enablePathButtons();
-	}
-
-	protected void handleRemovePath() {
-		// Get the selection index
-		int index = pathList.getSelectionIndex();
-		if (index == -1) {
-			return;
-		}
-
-		// Remove the element at that index
-		pathList.remove(index);
-		index = index - 1 < 0 ? 0 : index - 1;
-		pathList.select(index);
-
-		// Check if the buttons should still be enabled
-		enablePathButtons();
-	}
-
-	protected void handleRemoveSymbol() {
-		// Get the selection index
-		int index = symbolList.getSelectionIndex();
-		if (index == -1) {
-			return;
-		}
-		// Remove the item at that index
-		symbolList.remove(index);
-		index = index - 1 < 0 ? 0 : index - 1;
-		symbolList.select(index);
-		// Check if the button state should be toggled
-		enableSymbolButtons();
-	}
-
-	protected void handleSymbolDown() {
-		// Get the selection index
-		int index = symbolList.getSelectionIndex();
-		int items = symbolList.getItemCount();
-		if (index == -1 || index == items - 1) {
-			return;
-		}
-		// Swap the items in the list
-		String selItem = symbolList.getItem(index);
-		symbolList.remove(index);
-		if (index + 1 == items) {
-			symbolList.add(selItem);
-		} else {
-			symbolList.add(selItem, ++index);
-		}
-
-		// Keep the swapped item selected
-		symbolList.select(index);
-		enableSymbolButtons();
-	}
-
-	protected void handleSymbolUp() {
-		// Get the selection index
-		int index = symbolList.getSelectionIndex();
-		if (index == -1 || index == 0) {
-			return;
-		}
-		// Swap the items in the list
-		String selItem = symbolList.getItem(index);
-		symbolList.remove(index);
-		symbolList.add(selItem, --index);
-
-		// Keep the index selected
-		symbolList.select(index);
-		enableSymbolButtons();
 	}
 
 	/* (non-Javadoc)
@@ -658,13 +465,18 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	}
 
 	private void setListContents() {
-		if (getContainer().getProject() != null) {
-			MakeScannerInfo info;
-			try {
-				info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject(), false);
-				pathList.setItems(info.getIncludePaths());
-				symbolList.setItems(info.getPreprocessorSymbols());
-			} catch (CoreException e) {
+		IProject project = getContainer().getProject();
+		if (project != null) {
+			IScannerInfo info = CCorePlugin.getDefault().getScannerInfoProvider(project).getScannerInformation(project);
+			if (info instanceof MakeScannerInfo) {
+				MakeScannerInfo mInfo = (MakeScannerInfo) info;
+				pathList.setItems(mInfo.getIncludePaths());
+				symbolList.setItems(mInfo.getPreprocessorSymbols());
+			}
+			else if (info instanceof DiscoveredScannerInfo) {
+				DiscoveredScannerInfo dInfo = (DiscoveredScannerInfo) info;
+				pathList.setItems(dInfo.getIncludePaths());
+				symbolList.setItems(dInfo.getPreprocessorSymbols());
 			}
 		} else {
 			pathList.setItems(getIncludes(MakeCorePlugin.getDefault().getPluginPreferences()));

@@ -11,13 +11,11 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -33,10 +31,10 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.cdt.make.core.MakeScannerInfo;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
@@ -143,18 +141,16 @@ public class ScannerInfoCollector {
 		if (provider != null) {
 			IScannerInfo scanInfo = provider.getScannerInformation(project);
 			if (scanInfo != null) {
-				if (scanInfo instanceof MakeScannerInfo) {
-					MakeScannerInfo makeScanInfo = (MakeScannerInfo)scanInfo;
+				if (scanInfo instanceof DiscoveredScannerInfo) {
+					DiscoveredScannerInfo discScanInfo = (DiscoveredScannerInfo)scanInfo;
 					String projectName = project.getName();
-					
 					monitor.subTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
-					if (scannerConfigNeedsUpdate(makeScanInfo, projectName)) {
+					if (scannerConfigNeedsUpdate(discScanInfo, projectName)) {
 						monitor.worked(50);
 						monitor.subTask(MakeCorePlugin.getResourceString("ScannerInfoCollector.Updating") + projectName); //$NON-NLS-1$
-						
 						try {
 							// update scanner configuration
-							makeScanInfo.update();
+							discScanInfo.update();
 							monitor.worked(50);
 						} catch (CoreException e) {
 							// TODO : VMIR create a marker?
@@ -173,13 +169,11 @@ public class ScannerInfoCollector {
 	 * @param projectName
 	 * @return
 	 */
-	private boolean scannerConfigNeedsUpdate(MakeScannerInfo makeScanInfo, String projectName) {
-		// TODO : VMIR to implement other variants
+	private boolean scannerConfigNeedsUpdate(DiscoveredScannerInfo discScanInfo, String projectName) {
 		List includes = (List) discoveredIncludes.get(projectName);
-		List dSymbols = (List) discoveredSymbols.get(projectName);
-		if (includes == null && dSymbols == null)
+		List symbols = (List) discoveredSymbols.get(projectName);
+		if (includes == null && symbols == null)
 			return false;
-		Set symbols = new HashSet(dSymbols);
 		
 		// Step 1. Add discovered scanner config to the existing discovered scanner config 
 		// add the includes from the latest discovery
@@ -205,32 +199,30 @@ public class ScannerInfoCollector {
 		boolean addedSymbols = false;
 		Map sumSymbols = (Map) sumDiscoveredSymbols.get(projectName);
 		if (sumSymbols == null) {
-			sumSymbols = new HashMap();
+			sumSymbols = new LinkedHashMap();
 			sumDiscoveredSymbols.put(projectName, sumSymbols);
 		}
-		addedSymbols = ScannerConfigUtil.scAddSymbolsSet2SymbolEntryMap(sumSymbols, symbols, false);
+		addedSymbols = ScannerConfigUtil.scAddSymbolsList2SymbolEntryMap(sumSymbols, symbols, false);
 		
 		// Step 2. Get project's scanner config
-		String[] persistedIncludes = makeScanInfo.getIncludePaths();
-		Map persistedSymbols = makeScanInfo.getDefinedSymbols();
+		LinkedHashMap persistedIncludes = discScanInfo.getDiscoveredIncludePaths();
+		LinkedHashMap persistedSymbols = discScanInfo.getDiscoveredSymbolDefinitions();
 		
-		// TODO VMIR this is likely to change when new UI is introduced
 		// Step 3. Merge scanner config from steps 1 and 2
-		List candidateIncludes = new ArrayList(Arrays.asList(persistedIncludes));
 		for (Iterator i = finalSumIncludes.iterator(); i.hasNext(); ) {
 			String include = (String) i.next();
-			if (!candidateIncludes.contains(include)) {
-				addedIncludes |= candidateIncludes.add(include);
+			if (!persistedIncludes.containsKey(include)) {
+				persistedIncludes.put(include, 
+						((new Path(include)).toFile().exists()) ? Boolean.FALSE : Boolean.TRUE);
+				addedIncludes |= true;
 			}
 		}
-		Map candidateSymbols = new HashMap(sumSymbols);
-		Set persistedSymbolsSet = ScannerConfigUtil.scSymbolsMap2Set(persistedSymbols);
-		addedSymbols |= ScannerConfigUtil.scAddSymbolsSet2SymbolEntryMap(candidateSymbols, persistedSymbolsSet, true);
+		LinkedHashMap candidateSymbols = new LinkedHashMap(persistedSymbols);
+		addedSymbols |= ScannerConfigUtil.scAddSymbolEntryMap2SymbolEntryMap(candidateSymbols, sumSymbols);
 		
 		// Step 4. Set resulting scanner config
-		makeScanInfo.setIncludePaths((String[])candidateIncludes.toArray(new String[candidateIncludes.size()]));
-		makeScanInfo.setPreprocessorSymbols((String[])ScannerConfigUtil.
-			scSymbolsSymbolEntryMap2Set(candidateSymbols).toArray(new String[candidateSymbols.size()]));
+		discScanInfo.setDiscoveredIncludePaths(persistedIncludes);
+		discScanInfo.setDiscoveredSymbolDefinitions(candidateSymbols);
 		
 		// invalidate discovered include paths and symbol definitions
 		discoveredIncludes.put(projectName, null);
@@ -291,7 +283,6 @@ public class ScannerInfoCollector {
 					project, ScannerConfigBuilder.BUILDER_ID);
 		}
 		catch (CoreException e) {
-			MakeCorePlugin.log(e);
 			info = MakeCorePlugin.createScannerConfigBuildInfo(
 					MakeCorePlugin.getDefault().getPluginPreferences(), 
 					ScannerConfigBuilder.BUILDER_ID, false);
@@ -340,4 +331,27 @@ public class ScannerInfoCollector {
 		discoveredTSO.put(projectName, null);
 	}
 
+	/**
+	 * Delete all discovered paths for the project
+	 * 
+	 * @param project
+	 */
+	public void deleteAllPaths(IProject project) {
+		if (project != null) {
+			sumDiscoveredIncludes.put(project.getName(), null);
+		}
+		// TODO VMIR define error message
+	}
+
+	/**
+	 * Delete all discovered symbols for the project
+	 * 
+	 * @param project
+	 */
+	public void deleteAllSymbols(IProject project) {
+		if (project != null) {
+			sumDiscoveredSymbols.put(project.getName(), null);
+		}
+		// TODO VMIR define error message
+	}
 }

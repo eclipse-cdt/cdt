@@ -7,6 +7,7 @@ package org.eclipse.cdt.make.ui.wizards;
  
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.wizards.conversion.ConvertProjectWizardPage;
 import org.eclipse.core.resources.IProject;
@@ -78,6 +79,7 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
 		try {
 			super.convertProject(project, new SubProgressMonitor(monitor, 1), projectID);
 			MakeProjectNature.addNature(project, new SubProgressMonitor(monitor, 1));
+			ScannerConfigNature.addScannerConfigNature(project);
 			CCorePlugin.getDefault().mapCProjectOwner(project, projectID, true);
 		} finally {
 			monitor.done();

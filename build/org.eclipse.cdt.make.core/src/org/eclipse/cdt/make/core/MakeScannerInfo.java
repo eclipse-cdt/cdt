@@ -27,7 +27,7 @@ public class MakeScannerInfo implements IScannerInfo {
 	private ArrayList pathList;
 	boolean hasChanged = false;
 
-	MakeScannerInfo(IProject project) {
+	public MakeScannerInfo(IProject project) {
 		this.project = project;
 	}
 

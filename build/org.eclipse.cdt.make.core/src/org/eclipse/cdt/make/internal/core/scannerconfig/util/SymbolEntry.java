@@ -11,9 +11,11 @@
 
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -27,101 +29,114 @@ import java.util.Set;
 public class SymbolEntry {
 	private static final String UNSPECIFIED_VALUE = "1";	//$NON-NLS-1$
 	private String name;
-	private Set values;
-	private String preferredValue;	// the first added value unless otherwise specified
+	private Map values;	// Values can be either in the active (selected) group or in the removed group 
 	
-	public SymbolEntry(String name) {
-		this.name = name;
-	}
+//	public SymbolEntry(String name) {
+//		this.name = name;
+//	}
+
 	public SymbolEntry(String name, String value) {
-		this(name);
-		if (values == null) {
-			values = new HashSet();
-		}
-		values.add(value);
+		this(name, value, true);
 	}
-	public SymbolEntry(String name, String value, boolean preferred) {
-		this(name, value);
-		if (preferred) {
-			preferredValue = value;
+	public SymbolEntry(String name, String value, boolean active) {
+		this.name = name;
+		if (values == null) {
+			values = new LinkedHashMap();
+		}
+		values.put(value, Boolean.valueOf(active));
+	}
+	public SymbolEntry(SymbolEntry se) {
+		name = se.name;
+		// deep copy
+		values = new LinkedHashMap(se.values.size());
+		for (Iterator i = se.values.keySet().iterator(); i.hasNext(); ) {
+			String key = (String) i.next();
+			Boolean value = (Boolean) se.values.get(key);
+			values.put(key, Boolean.valueOf(value.booleanValue()));
 		}
 	}
 
 	public boolean add(String value) {
-		if (values == null) {
-			values = new HashSet();
-		}
-		if (preferredValue == null) {
-			preferredValue = value;
-		}
-		return values.add(value);
+		return add(value, true);
 	}
-	public boolean add(String value, boolean preferred) {
-		boolean rc = add(value);
-		if (preferred) {
-			preferredValue = value;
+	public boolean add(String value, boolean active) {
+		boolean rc = false;
+		if (!values.containsKey(value)) {
+			values.put(value, Boolean.valueOf(active));
+			rc = true;
 		}
 		return rc;
 	}
-	public boolean addAll(SymbolEntry se) {
-		return values.addAll(se.values);
+	public void replace(String value, boolean active) {
+		values.put(value, Boolean.valueOf(active));
+	}
+	private void addAll(SymbolEntry se) {
+		values.putAll(se.values);
 	}
 	
+	public void remove(String value) {
+		values.remove(value);
+	}
 	public void removeAll() {
 		values = null;
-		preferredValue = null;
 	}
 	
-	public String getPrefered() {
-		return name+ "=" + (preferredValue == null ? UNSPECIFIED_VALUE : preferredValue);//$NON-NLS-1$
+	public List getActive() {
+		return get(true, true, true);
 	}
-	public String getPreferedRaw() {
-		return name + (preferredValue == null ? "" : "=" + preferredValue);//$NON-NLS-1$ //$NON-NLS-2$
+	public List getActiveRaw() {
+		return get(false, true, true);
 	}
 	
-	public Set getAllButPreferred() {
-		if (values == null)
-			return null;
-		Set rv = new HashSet(values.size());
-		for (Iterator i = values.iterator(); i.hasNext(); ) {
+	public List getRemoved() {
+		return get(true, true, false);
+	}
+	public List getRemovedRaw() {
+		return get(false, true, false);
+	}
+	
+	public List getAll() {
+		return get(true, false, true /*don't care*/);
+	}
+	public List getAllRaw() {
+		return get(false, false, true /*don't care*/);
+	}
+
+	/**
+	 * Utility function to retrieve values as a set.
+	 * 
+	 * @param format - false = raw
+	 * @param subset - false = all
+	 * @param active - false = removed
+	 * @return List
+	 */
+	private List get(boolean format, boolean subset, boolean active) {
+		List rv = new ArrayList(values.size());
+		for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
 			String val = (String) i.next();
-			if (val.equals(preferredValue))
+			if (subset && ((Boolean) values.get(val)).booleanValue() != active)
 				continue;
-			rv.add(name + "=" + (val == null ? UNSPECIFIED_VALUE : val));//$NON-NLS-1$
+			if (format) {
+				rv.add(name + "=" + (val == null ? UNSPECIFIED_VALUE : val));//$NON-NLS-1$
+			}
+			else {
+				rv.add(name + (val == null ? "" : "=" + val));//$NON-NLS-1$ //$NON-NLS-2$
+			}				
 		}
 		return rv;
 	}
-	public Set getAllButPreferredRaw() {
-		if (values == null)
-			return null;
-		Set rv = new HashSet(values.size());
-		for (Iterator i = values.iterator(); i.hasNext(); ) {
+	/**
+	 * Returns only value part of all active entries
+	 * @return List
+	 */
+	public List getValuesOnly(boolean active) {
+		List rv = new ArrayList(values.size());
+		for (Iterator i = values.keySet().iterator(); i.hasNext(); ) {
 			String val = (String) i.next();
-			if (val.equals(preferredValue))
-				continue;
-			rv.add(name + (val == null ? "" : "=" + val));//$NON-NLS-1$ //$NON-NLS-2$
+			if (((Boolean) values.get(val)).booleanValue() == active) {
+				rv.add(val == null ? UNSPECIFIED_VALUE : val);
+			}
 		}
 		return rv;
 	}
-	public Set getAll() {
-		if (values == null)
-			return null;
-		Set rv = new HashSet(values.size());
-		for (Iterator i = values.iterator(); i.hasNext(); ) {
-			String val = (String) i.next();
-			rv.add(name + "=" + (val == null ? UNSPECIFIED_VALUE : val));//$NON-NLS-1$
-		}
-		return rv;
-	}
-	public Set getAllRaw() {
-		if (values == null)
-			return null;
-		Set rv = new HashSet(values.size());
-		for (Iterator i = values.iterator(); i.hasNext(); ) {
-			String val = (String) i.next();
-			rv.add(name + (val == null ? "" : "=" + val));//$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return rv;
-	}
-	
 }

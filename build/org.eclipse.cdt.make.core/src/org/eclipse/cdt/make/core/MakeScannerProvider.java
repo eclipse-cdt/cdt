@@ -123,7 +123,7 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 	 * information is then associated with the resource for the duration of the
 	 * session.
 	 */
-	private MakeScannerInfo loadScannerInfo(IProject project) throws CoreException {
+	public MakeScannerInfo loadScannerInfo(IProject project) throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 		Node child = descriptor.getProjectData(CDESCRIPTOR_ID).getFirstChild();
 		ArrayList includes = new ArrayList();
@@ -169,7 +169,7 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 	 * 
 	 * @param project
 	 */
-	static void updateScannerInfo(MakeScannerInfo scannerInfo) throws CoreException {
+	public static void updateScannerInfo(MakeScannerInfo scannerInfo) throws CoreException {
 		IProject project = scannerInfo.getProject();
 
 		// See if there's already one associated with the resource for this

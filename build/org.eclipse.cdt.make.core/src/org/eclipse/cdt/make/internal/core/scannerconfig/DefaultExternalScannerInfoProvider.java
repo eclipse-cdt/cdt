@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  */
 public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoProvider, IMarkerGenerator {
 	
-	private static final String EXTERNAL_SI_PROVIDER_ERROR = "DefaultExternalScannerInfoProvider.Provider_Error"; //$NON-NLS-1$
+	private static final String EXTERNAL_SI_PROVIDER_ERROR = "ExternalScannerInfoProvider.Provider_Error"; //$NON-NLS-1$
 	private static final String EXTERNAL_SI_PROVIDER_CONSOLE_ID = MakeCorePlugin.getUniqueIdentifier() + ".ExternalScannerInfoProviderConsole";	//$NON-NLS-1$
 	
 	private IPath fWorkingDirectory;
@@ -106,7 +106,7 @@ public class DefaultExternalScannerInfoProvider implements IExternalScannerInfoP
 			if (errMsg != null) {
 				String errorDesc = MakeCorePlugin.getFormattedString(EXTERNAL_SI_PROVIDER_ERROR, 
 						fCompileCommand.toString() + ca);
-				addMarker(currentProject, -1, errorDesc, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+				addMarker(currentProject, -1, errorDesc, IMarkerGenerator.SEVERITY_WARNING, null);
 			}
 
 			monitor.subTask(MakeCorePlugin.getResourceString("ExternalScannerInfoProvider.Creating_Markers")); //$NON-NLS-1$

@@ -28,4 +28,5 @@ public interface IScannerInfoConsoleParserUtility {
 	public void changeMakeDirectory(String dir, int dirLevel, boolean enterDir);
 	public IFile findFile(String fileName);
 	public List translateRelativePaths(IFile file, String fileName, List includes);
+	public String normalizePath(String path);
 }

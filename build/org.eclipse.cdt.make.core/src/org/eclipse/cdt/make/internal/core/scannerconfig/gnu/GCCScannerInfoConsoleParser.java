@@ -76,7 +76,8 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 		boolean rc = false;
 		// make\[[0-9]*\]:  error_desc
 		int firstColon= line.indexOf(':');
-		if (firstColon != -1 && line.startsWith("make")) { //$NON-NLS-1$
+		String make = line.substring(0, firstColon + 1);
+		if (firstColon != -1 && make.indexOf("make") != -1) { //$NON-NLS-1$
 			boolean enter = false;
 			String msg = line.substring(firstColon + 1).trim();		
 			if ((enter = msg.startsWith("Entering directory")) || //$NON-NLS-1$
@@ -95,8 +96,8 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 		StringTokenizer scanner = new StringTokenizer(line);
 		if (scanner.countTokens() <= 1)
 			return false;
-		String token = scanner.nextToken();
-		if (token.equalsIgnoreCase("gcc") || token.equalsIgnoreCase("g++")) {//$NON-NLS-1$ //$NON-NLS-2$
+		String token = scanner.nextToken().toLowerCase();
+		if (token.endsWith("gcc") || token.endsWith("g++")) {//$NON-NLS-1$ //$NON-NLS-2$
 			// Recognized gcc or g++ compiler invocation
 			List includes = new ArrayList();
 			List symbols = new ArrayList();
@@ -114,8 +115,9 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 				}
 				else if (token.startsWith("-I")) {//$NON-NLS-1$
 					String iPath = token.substring(2);
-					if (!includes.contains(iPath))
-						includes.add(iPath);
+					String nPath = fUtil.normalizePath(iPath);
+					if (!includes.contains(nPath))
+						includes.add(nPath);
 				}
 				else if (token.equals("-mwin32") ||		//$NON-NLS-1$
 						 token.equals("-mno-win32") ||	//$NON-NLS-1$
@@ -132,7 +134,6 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 					if (possibleFileName.startsWith("..") ||	//$NON-NLS-1$
 						possibleFileName.startsWith(".") ||		//$NON-NLS-1$
 						possibleFileName.startsWith("/") ||		//$NON-NLS-1$
-						possibleFileName.startsWith("$(") ||	//$NON-NLS-1$
 						possibleFileName.endsWith(".c") || 		//$NON-NLS-1$
 						possibleFileName.endsWith(".cpp") ||	//$NON-NLS-1$
 						possibleFileName.endsWith(".cc") ||		//$NON-NLS-1$

@@ -17,6 +17,7 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerInfoConsoleParserUtility;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -73,18 +74,20 @@ public class ScannerInfoConsoleParserFactory {
 														   IMarkerGenerator markerGenerator) {
 		try {
 			// get the SC builder settings
-			IScannerConfigBuilderInfo scBuildInfo = MakeCorePlugin.
-				createScannerConfigBuildInfo(currentProject, ScannerConfigBuilder.BUILDER_ID);
-			if (scBuildInfo.isMakeBuilderConsoleParserEnabled()) {
-				// get the make builder console parser 
-				IScannerInfoConsoleParser clParser = MakeCorePlugin.getDefault().
-					getScannerInfoConsoleParser(scBuildInfo.getMakeBuilderConsoleParserId());			
-				// initialize it with the utility
-				clParser.startup(currentProject, new ScannerInfoConsoleParserUtility(
-					currentProject, workingDirectory, markerGenerator));
-				// create an output stream sniffer
-				return new ConsoleOutputStreamSniffer(outputStream, new 
-					IScannerInfoConsoleParser[] {clParser});
+			if (currentProject.hasNature(ScannerConfigNature.NATURE_ID)) {
+				IScannerConfigBuilderInfo scBuildInfo = MakeCorePlugin.
+					createScannerConfigBuildInfo(currentProject, ScannerConfigBuilder.BUILDER_ID);
+				if (scBuildInfo != null && scBuildInfo.isMakeBuilderConsoleParserEnabled()) {
+					// get the make builder console parser 
+					IScannerInfoConsoleParser clParser = MakeCorePlugin.getDefault().
+						getScannerInfoConsoleParser(scBuildInfo.getMakeBuilderConsoleParserId());			
+					// initialize it with the utility
+					clParser.startup(currentProject, new ScannerInfoConsoleParserUtility(
+						currentProject, workingDirectory, markerGenerator));
+					// create an output stream sniffer
+					return new ConsoleOutputStreamSniffer(outputStream, new 
+						IScannerInfoConsoleParser[] {clParser});
+				}
 			}
 		} 
 		catch (CoreException e) {

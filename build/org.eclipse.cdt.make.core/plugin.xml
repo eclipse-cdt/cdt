@@ -142,5 +142,14 @@
             class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser">
       </scannerInfoConsoleParser>
    </extension>
+   <extension
+         id="DiscoveredScannerInfoProvider"
+         point="org.eclipse.cdt.core.ScannerInfoProvider">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfoProvider">
+         </run>
+      </cextension>
+   </extension>
 
 </plugin>

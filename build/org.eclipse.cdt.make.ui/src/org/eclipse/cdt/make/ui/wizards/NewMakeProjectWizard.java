@@ -7,6 +7,7 @@ package org.eclipse.cdt.make.ui.wizards;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.runtime.CoreException;
@@ -40,6 +41,7 @@ public abstract class NewMakeProjectWizard extends NewCProjectWizard {
 		super.doRun(new SubProgressMonitor(monitor, 5));
 
 		MakeProjectNature.addNature(getProjectHandle(), new SubProgressMonitor(monitor, 1));
+		ScannerConfigNature.addScannerConfigNature(getProjectHandle());
 		        
         // Modify the project based on what the user has selected
 		if (newProject != null) {

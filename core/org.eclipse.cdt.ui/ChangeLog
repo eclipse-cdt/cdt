@@ -1,8 +1,13 @@
 2005-01-11 David Inglis
+	Further fix to 36837
+	
+	* src/org/eclipse/cdt/internal/ui/util/ResourceToItemsMapper.java
+	
+2005-01-11 David Inglis
 
 	Fix for 82516
 	
-	*/src/org/eclipse/cdt/internal/ui/viewsupport/CElementLabels.java
+	* src/org/eclipse/cdt/internal/ui/viewsupport/CElementLabels.java
 	
 2004-12-08 Bogdan Gheorghe
 	Fix for 76123

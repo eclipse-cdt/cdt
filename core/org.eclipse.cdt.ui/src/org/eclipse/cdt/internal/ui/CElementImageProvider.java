@@ -508,5 +508,9 @@ public class CElementImageProvider {
 	public static ImageDescriptor getNamespaceImageDescriptor(){
 		return getImageDescriptor(ICElement.C_NAMESPACE);
 	}
+	
+	public static ImageDescriptor getKeywordImageDescriptor(){
+		return CPluginImages.DESC_OBJS_KEYWORD;
+	}
 
 }

@@ -564,7 +564,10 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		// fill the replace, display and info strings
 		replaceString = name;
 		displayString = name;
-		
+
+		ImageDescriptor imageDescriptor = CElementImageProvider.getKeywordImageDescriptor();
+		image = registry.get( imageDescriptor );
+
 		// no image for keywords 	
 		// create proposal and add it to completions list
 		CCompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), 

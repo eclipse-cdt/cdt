@@ -1,4 +1,11 @@
 2002-12-18 Mikhail Khodjaiants
+	Implementing the "Source Lookup" property page.
+	* SourceLookupBlock.java: common control block.
+	* SourcePropertyPage.java: implementation
+	* plugin.properties: page name
+	* plugin.xml: contribution to ICDebugTarget properties
+ 
+2002-12-18 Mikhail Khodjaiants
 	Do not show the source lookup dialog if file name is not specified.
 	* CUISourceLocator.java
 

@@ -12,8 +12,10 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.IJumpToAddress;
 import org.eclipse.cdt.debug.core.model.IJumpToLine;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -21,7 +23,10 @@ import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -273,12 +278,24 @@ public class ResumeAtLineActionDelegate implements IWorkbenchWindowActionDelegat
 					errorMessage = ActionMessages.getString( "ResumeAtLineActionDelegate.Missing_document" ); //$NON-NLS-1$
 				}
 				else {
-					String fileName = getFileName( input );
+					final String fileName = getFileName( input );
 					ITextSelection textSelection = (ITextSelection)selection;
-					int lineNumber = textSelection.getStartLine() + 1;
-					IJumpToLine jumpToLine = (IJumpToLine)((IAdaptable)debugTarget).getAdapter( IJumpToLine.class );
-					if ( jumpToLine != null )
-						jumpToLine.jumpToLine( fileName, lineNumber );
+					final int lineNumber = textSelection.getStartLine() + 1;
+					final IJumpToLine jumpToLine = (IJumpToLine)((IAdaptable)debugTarget).getAdapter( IJumpToLine.class );
+					if ( jumpToLine != null ) {
+						Runnable r = new Runnable() {
+							
+							public void run() {
+								try {
+									jumpToLine.jumpToLine( fileName, lineNumber );
+								}
+								catch( DebugException e ) {
+									failed( e );
+								}								
+							}
+						};
+						runInBackground( r );
+					}
 					return;
 				}
 			}
@@ -291,10 +308,22 @@ public class ResumeAtLineActionDelegate implements IWorkbenchWindowActionDelegat
 			else {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
-				IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
-				IJumpToAddress jumpToAddress = (IJumpToAddress)((IAdaptable)debugTarget).getAdapter( IJumpToAddress.class );
-				if ( jumpToAddress != null )
-					jumpToAddress.jumpToAddress( address );
+				final IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
+				final IJumpToAddress jumpToAddress = (IJumpToAddress)((IAdaptable)debugTarget).getAdapter( IJumpToAddress.class );
+				if ( jumpToAddress != null ) {
+					Runnable r = new Runnable() {
+						
+						public void run() {
+							try {
+								jumpToAddress.jumpToAddress( address );
+							}
+							catch( DebugException e ) {
+								failed( e );
+							}								
+						}
+					};
+					runInBackground( r );
+				}
 				return;
 			}
 		}
@@ -312,5 +341,15 @@ public class ResumeAtLineActionDelegate implements IWorkbenchWindowActionDelegat
 			return ((IStorageEditorInput)input).getStorage().getName();
 		}
 		return null;
+	}
+
+	private void runInBackground( Runnable r ) {
+		DebugPlugin.getDefault().asyncExec( r );
+	}
+
+	protected void failed( Throwable e ) {
+		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString( "ResumeAtLineActionDelegate.0" ), null ); //$NON-NLS-1$
+		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
+		CDebugUtils.error( ms, this );
 	}
 }

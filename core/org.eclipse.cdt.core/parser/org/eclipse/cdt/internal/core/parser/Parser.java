@@ -2440,7 +2440,8 @@ c, quick);
 			case Token.tSTRING:
 			case Token.tLSTRING:
 			case Token.t_false: 
-			case Token.t_true:			
+			case Token.t_true:	
+			case Token.tCHAR:		
 				try{ callback.expressionTerminal(expression, consume());} catch( Exception e ) {}
 				return;
 			

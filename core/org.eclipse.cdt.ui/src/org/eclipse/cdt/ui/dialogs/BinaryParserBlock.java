@@ -7,7 +7,7 @@
  * 
  * Contributors:
  * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ ***********************************************************************/
 package org.eclipse.cdt.ui.dialogs;
 
 import java.util.HashMap;
@@ -15,6 +15,7 @@ import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -40,14 +41,14 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BinaryParserBlock extends AbstractBinaryParserPage {
 
-	private static final String PREFIX = "BinaryParserBlock"; // $NON-NLS-1$ //$NON-NLS-1$
-	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$ //$NON-NLS-1$
-	private static final String DESC = PREFIX + ".desc"; // $NON-NLS-1$ //$NON-NLS-1$
+	private static final String PREFIX = "BinaryParserBlock"; //$NON-NLS-1$
+	private static final String LABEL = PREFIX + ".label";  //$NON-NLS-1$
+	private static final String DESC = PREFIX + ".desc"; //$NON-NLS-1$
 
 	protected Combo comboBox;
-	private HashMap idMap = new HashMap();
-	private String initial;
-	private Preferences fPrefs;
+	HashMap idMap = new HashMap();
+	String initial;
+	Preferences fPrefs;
 
 	public BinaryParserBlock(Preferences prefs) {
 		super(CUIPlugin.getResourceString(LABEL));
@@ -72,6 +73,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		gd.grabExcessHorizontalSpace = true;
 		comboBox.setLayoutData(gd);
 		comboBox.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				getContainer().updateContainer();
 				handleBinaryParserChanged();
@@ -109,29 +111,43 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask(CUIMessages.getString("BinaryParserBlock.settingBinaryParser"), 2); //$NON-NLS-1$
-		String selected = comboBox.getText();
+		final String selected = comboBox.getText();
 		if (selected != null) {
-			if (initial == null || !selected.equals(initial)) {
-				if (getContainer().getProject() != null) {
-					ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(getContainer().getProject());
-					desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-					desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, (String) idMap.get(selected));
-				} else {
+			if (getContainer().getProject() != null) {
+				ICDescriptorOperation op = new ICDescriptorOperation() {
+
+					public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+						if (initial == null || !selected.equals(initial)) {
+							descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+							descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, (String) idMap.get(selected));
+						}
+						monitor.worked(1);
+						// Give a chance to the contributions to save.
+						// We have to do it last to make sure the parser id
+						// is save
+						// in .cdtproject
+						ICOptionPage page = getCurrentBinaryParserPage();
+						if (page != null) {
+							page.performApply(new SubProgressMonitor(monitor, 1));
+						}
+					}
+				};
+				CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(getContainer().getProject(), op, monitor);
+			} else {
+				if (initial == null || !selected.equals(initial)) {
 					fPrefs.setValue(CCorePlugin.PREF_BINARY_PARSER, (String) idMap.get(selected));
 				}
-				initial = selected;
+				monitor.worked(1);
+				// Give a chance to the contributions to save.
+				// We have to do it last to make sure the parser id is save
+				// in .cdtproject
+				ICOptionPage page = getCurrentBinaryParserPage();
+				if (page != null) {
+					page.performApply(new SubProgressMonitor(monitor, 1));
+				}
 			}
+			initial = selected;
 		}
-		monitor.worked(1);
-		// Give a chance to the contributions to save.
-		// We have to do it last to make sure the parser id is save
-		// in .cdtproject
-		super.performApply(new SubProgressMonitor(monitor, 1));
-
-		// Reset the binary parser the paths may have change.
-		if (getContainer().getProject() != null)
-			CCorePlugin.getDefault().getCoreModel().resetBinaryParser(getContainer().getProject());
-
 		monitor.done();
 	}
 

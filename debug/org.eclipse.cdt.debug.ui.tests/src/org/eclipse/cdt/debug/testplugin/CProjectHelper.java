@@ -7,6 +7,7 @@ import java.util.zip.ZipFile;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
@@ -53,12 +54,16 @@ public class CProjectHelper {
 		
 		ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(project);
 		/* Try to guess at the correct binary parser.. elf or pe at this point.. */
-		String os = System.getProperty("os.name");
-		boolean pe=(os.toLowerCase().indexOf("windows")!=-1);
-		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project);
-		desc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-		desc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, pe?"org.eclipse.cdt.core.PE":"org.eclipse.cdt.core.ELF");
-		CCorePlugin.getDefault().getCoreModel().resetBinaryParser(project);
+		ICDescriptorOperation op = new ICDescriptorOperation() {
+			
+			public void execute(ICDescriptor descriptor, IProgressMonitor monitor) throws CoreException {
+				descriptor.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+				String os = System.getProperty("os.name");
+				boolean pe=(os.toLowerCase().indexOf("windows")!=-1);
+				descriptor.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, pe?"org.eclipse.cdt.core.PE":"org.eclipse.cdt.core.ELF");
+			}
+		};
+		CCorePlugin.getDefault().getCDescriptorManager().runDescriptorOperation(project, op, null);
 		return cproject;	
 	}
 	

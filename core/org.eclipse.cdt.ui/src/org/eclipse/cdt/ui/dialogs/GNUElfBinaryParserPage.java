@@ -7,7 +7,7 @@
  * 
  * Contributors:
  * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ ***********************************************************************/
 
 package org.eclipse.cdt.ui.dialogs;
 
@@ -50,7 +50,9 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 	protected Text fAddr2LineCommandText;
 	protected Text fCPPFiltCommandText;
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
@@ -64,11 +66,10 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 		monitor.beginTask(CUIMessages.getString("BinaryParserPage.task.savingAttributes"), 1); //$NON-NLS-1$
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
+			String parserID = ""; //$NON-NLS-1$
 			ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(proj);
 			ICExtensionReference[] cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-			if (cext.length == 0) {
-				// The value was not save yet and we need to save it now
-				// to apply the changes.  Search the extension for our own ID
+			if (cext.length > 0) {
 				IPluginDescriptor descriptor = CUIPlugin.getDefault().getDescriptor();
 				IExtensionPoint point = descriptor.getExtensionPoint("BinaryParserPage"); //$NON-NLS-1$
 				IConfigurationElement[] infos = point.getConfigurationElements();
@@ -77,23 +78,24 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 					String clazz = infos[i].getAttribute("class"); //$NON-NLS-1$
 					String ego = getClass().getName();
 					if (clazz != null && clazz.equals(ego)) {
-						cdesc.remove(CCorePlugin.BINARY_PARSER_UNIQ_ID);
-						cdesc.create(CCorePlugin.BINARY_PARSER_UNIQ_ID, id);
+						parserID = id;
+						break;
 					}
 				}
-				// Try again.
-				cext = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
+				for (int i = 0; i < cext.length; i++) {
+					if (cext[i].getID().equals(parserID)) {
+
+						String orig = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$
+						if (orig == null || !orig.equals(addr2line)) {
+							cext[0].setExtensionData("addr2line", addr2line); //$NON-NLS-1$
+						}
+						orig = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$
+						if (orig == null || !orig.equals(cppfilt)) {
+							cext[0].setExtensionData("c++filt", cppfilt); //$NON-NLS-1$
+						}
+					}
+				}
 			}
-			if (cext.length > 0) {
-				String orig = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$
-				if (orig == null || !orig.equals(addr2line)) {
-					cext[0].setExtensionData("addr2line", addr2line); //$NON-NLS-1$
-				}
-				orig = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$
-				if (orig == null || !orig.equals(cppfilt)) {
-					cext[0].setExtensionData("c++filt", cppfilt); //$NON-NLS-1$
-				}
-			} 
 		} else {
 			Preferences store = getContainer().getPreferences();
 			if (store != null) {
@@ -103,7 +105,9 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	public void performDefaults() {
@@ -131,7 +135,9 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 		fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -145,6 +151,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 
 		fAddr2LineCommandText = ControlFactory.createTextField(comp, SWT.SINGLE | SWT.BORDER);
 		fAddr2LineCommandText.addModifyListener(new ModifyListener() {
+
 			public void modifyText(ModifyEvent evt) {
 				//updateLaunchConfigurationDialog();
 			}
@@ -152,6 +159,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 
 		Button button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent evt) {
 				handleAddr2LineButtonSelected();
 				//updateLaunchConfigurationDialog();
@@ -182,12 +190,14 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		fCPPFiltCommandText.setLayoutData(gd);
 		fCPPFiltCommandText.addModifyListener(new ModifyListener() {
+
 			public void modifyText(ModifyEvent evt) {
 				//updateLaunchConfigurationDialog();
 			}
 		});
 		button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse")); //$NON-NLS-1$
 		button.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent evt) {
 				handleCPPFiltButtonSelected();
 				//updateLaunchConfigurationDialog();

@@ -152,7 +152,7 @@ public class CPathEntryTest extends TestCase {
 		// We always have at least two entries:
 		//  1) the default sourceEntry becomes the project
 		//  2) the default outputEntry becomes the project
-		assertTrue("Expecting 3 pathentries", entries.length == (3 + 2));
+		assertTrue("Expecting 5 pathentries", entries.length == (3 + 2));
 		testProject.setRawPathEntries(null, null);
 	}
 

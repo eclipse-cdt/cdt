@@ -1,3 +1,19 @@
+2003-06-20 Sean Evoy
+	Added (again) the icons required for the new managed project wizard and property pages
+	* icons/full/build16/config-command.gif
+	* icons/full/build16/config-librarian.gif
+	* icons/full/build16/config-tool.gif
+	* icons/full/wizban/newmngc_app.gif
+	* icons/full/wizban/newmngcc_app.gif
+
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=38665
+	* build/org/eclipse/cdt/ui/build/wizards/CProjectPlatformPage.java
+
+	Adjusted the Option settings store and pages to properly handle new option types needed
+	to implement parser interface for include paths and defined symbols.
+	* build/org/eclipse/cdt/ui/build/properties/BuildToolSettingsPage.java
+	* build/org/eclipse/cdt/ui/build/properties/BuildToolsSettingsStore.java
+	
 2003-06-18 David Inglis	
 	
 	fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39053

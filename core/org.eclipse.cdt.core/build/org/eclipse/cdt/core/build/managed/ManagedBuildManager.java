@@ -118,19 +118,28 @@ public class ManagedBuildManager {
 		}
 	}
 
-
+	
+	/**
+	 * Answers the result of a best-effort search to find a target with the 
+	 * specified ID, or <code>null</code> if one is not found.
+	 * 
+	 * @param resource
+	 * @param id
+	 * @return
+	 */
 	public static ITarget getTarget(IResource resource, String id) {
+		ITarget target = null;
+		// Check if the target is spec'd in the build info for the resource
 		if (resource != null) {
 			IResourceBuildInfo buildInfo = getBuildInfo(resource);
 			if (buildInfo != null)
-				return buildInfo.getTarget(id);
+				target = buildInfo.getTarget(id);
 		}
-
-		ITarget target = (ITarget)getExtensionTargetMap().get(id);
-		if (target != null)
-			return target;
-			
-		return null;
+		// OK, check the extension map
+		if (target == null) {
+			target = (ITarget)getExtensionTargetMap().get(id);
+		}
+		return target;
 	}
 
 	/**
@@ -329,7 +338,7 @@ public class ManagedBuildManager {
 		return buildInfo;
 	}
 
-	public static IResourceBuildInfo getBuildInfo(IResource resource, boolean create) {
+	private static ResourceBuildInfo findBuildInfo(IResource resource, boolean create) {
 		// Make sure the extension information is loaded first
 		loadExtensions();
 		ResourceBuildInfo buildInfo = null;
@@ -354,9 +363,23 @@ public class ManagedBuildManager {
 		return buildInfo;
 	}
 	
-	public static IResourceBuildInfo getBuildInfo(IResource resource) {
-		return getBuildInfo(resource, false);
+	public static IResourceBuildInfo getBuildInfo(IResource resource, boolean create) {
+		return (IResourceBuildInfo) findBuildInfo(resource, create);
 	}
 
+	public static IResourceBuildInfo getBuildInfo(IResource resource) {
+		return (IResourceBuildInfo) findBuildInfo(resource, false);
+	}
+
+	/**
+	 * Answers with an interface to the parse information that has been 
+	 * associated with the resource specified in the argument. 
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	public static IManagedBuildPathInfo getBuildPathInfo(IResource resource) {
+		return (IManagedBuildPathInfo) getBuildInfo(resource, false);
+	}
 
 }

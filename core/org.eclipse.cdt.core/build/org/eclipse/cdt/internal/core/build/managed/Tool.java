@@ -233,14 +233,32 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 					break;
 					
 				case IOption.STRING_LIST :
-					String cmd = option.getCommand();
+					String listCmd = option.getCommand();
 					String[] list = option.getStringListValue();
 					for (int j = 0; j < list.length; j++) {
 						String temp = list[j];
-						buf.append(cmd + temp + WHITE_SPACE);
+						buf.append(listCmd + temp + WHITE_SPACE);
 					}
 					break;
 					
+				case IOption.INCLUDE_PATH :
+					String incCmd = option.getCommand();
+					String[] paths = option.getIncludePaths();
+					for (int j = 0; j < paths.length; j++) {
+						String temp = paths[j];
+						buf.append(incCmd + temp + WHITE_SPACE);
+					}
+					break;
+
+				case IOption.PREPROCESSOR_SYMBOLS :
+					String defCmd = option.getCommand();
+					String[] symbols = option.getDefinedSymbols();
+					for (int j = 0; j < symbols.length; j++) {
+						String temp = symbols[j];
+						buf.append(defCmd + temp + WHITE_SPACE);
+					}
+					break;
+
 				default :
 					break;
 			}

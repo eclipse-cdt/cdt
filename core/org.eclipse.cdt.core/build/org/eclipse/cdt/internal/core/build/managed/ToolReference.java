@@ -168,6 +168,24 @@ public class ToolReference implements ITool {
 					}
 					break;
 					
+				case IOption.INCLUDE_PATH :
+					String incCmd = option.getCommand();
+					String[] paths = option.getIncludePaths();
+					for (int j = 0; j < paths.length; j++) {
+						String temp = paths[j];
+						buf.append(incCmd + temp + WHITE_SPACE);
+					}
+					break;
+
+				case IOption.PREPROCESSOR_SYMBOLS :
+					String defCmd = option.getCommand();
+					String[] symbols = option.getDefinedSymbols();
+					for (int j = 0; j < symbols.length; j++) {
+						String temp = symbols[j];
+						buf.append(defCmd + temp + WHITE_SPACE);
+					}
+					break;
+
 				default :
 					break;
 			}

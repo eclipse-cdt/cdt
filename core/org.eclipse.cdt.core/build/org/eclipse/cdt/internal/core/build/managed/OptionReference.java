@@ -53,7 +53,7 @@ public class OptionReference implements IOption {
 	}
 
 	/**
-	 * Created from extension.
+	 * Created from extension point.
 	 * 
 	 * @param owner
 	 * @param element
@@ -73,9 +73,15 @@ public class OptionReference implements IOption {
 				value = element.getAttribute("defaultValue");
 				break;
 			case IOption.ENUMERATED:
-				value = option.getSelectedEnum();
+				try {
+					value = option.getSelectedEnum();
+				} catch (BuildException e) {
+					value = new String();
+				}
 				break;
 			case IOption.STRING_LIST:
+			case IOption.INCLUDE_PATH:
+			case IOption.PREPROCESSOR_SYMBOLS:
 				List valueList = new ArrayList();
 				IConfigurationElement[] valueElements = element.getChildren("optionValue");
 				for (int i = 0; i < valueElements.length; ++i) {
@@ -108,6 +114,8 @@ public class OptionReference implements IOption {
 				value = (String) element.getAttribute("defaultValue");
 				break;
 			case IOption.STRING_LIST:
+			case IOption.INCLUDE_PATH:
+			case IOption.PREPROCESSOR_SYMBOLS:
 				List valueList = new ArrayList();
 				NodeList nodes = element.getElementsByTagName("optionValue");
 				for (int i = 0; i < nodes.getLength(); ++i) {
@@ -141,6 +149,8 @@ public class OptionReference implements IOption {
 				element.setAttribute("defaultValue", (String)value);
 				break;
 			case IOption.STRING_LIST:
+			case IOption.INCLUDE_PATH:
+			case IOption.PREPROCESSOR_SYMBOLS:
 				ArrayList stringList = (ArrayList)value;
 				ListIterator iter = stringList.listIterator();
 				while (iter.hasNext()) {
@@ -174,6 +184,20 @@ public class OptionReference implements IOption {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefinedSymbols()
+	 */
+	public String[] getDefinedSymbols() throws BuildException {
+		if (value == null)
+			return option.getDefinedSymbols();
+		else if (getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
+			ArrayList list = (ArrayList)value;
+			return (String[]) list.toArray(new String[list.size()]);
+		}
+		else
+			throw new BuildException("bad value type");
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getEnumCommand(java.lang.String)
 	 */
 	public String getEnumCommand(String name) {
@@ -184,13 +208,29 @@ public class OptionReference implements IOption {
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getId()
 	 */
 	public String getId() {
+		// A reference has the same id as the option it references
 		return option.getId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IOption#getIncludePaths()
+	 */
+	public String[] getIncludePaths() throws BuildException {
+		if (value == null)
+			return option.getIncludePaths();
+		else if (getValueType() == IOption.INCLUDE_PATH) {
+			ArrayList list = (ArrayList)value;
+			return (String[]) list.toArray(new String[list.size()]);
+		}
+		else
+			throw new BuildException("bad value type");
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IBuildObject#getName()
 	 */
 	public String getName() {
+		// A reference has the same name as the option it references
 		return option.getName();
 	}
 
@@ -212,13 +252,15 @@ public class OptionReference implements IOption {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IOption#getDefaultEnumValue()
 	 */
-	public String getSelectedEnum() {
+	public String getSelectedEnum() throws BuildException {
 		if (value == null) {
 			// Return the default defined for the enumeration in the manifest.
 			return option.getSelectedEnum();
-		} else {
+		} else if (getValueType() == IOption.ENUMERATED) {
 			// Value will contain the human-readable name of the enum 
 			return (String) value;
+		} else {
+			throw new BuildException("bad value type");
 		}
 	}
 
@@ -302,11 +344,14 @@ public class OptionReference implements IOption {
 	 * @throws BuildException
 	 */
 	public void setValue(String [] value) throws BuildException {
-		if (getValueType() == IOption.STRING_LIST) {
+		if (getValueType() == IOption.STRING_LIST
+			|| getValueType() == IOption.INCLUDE_PATH
+			|| getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
 			// Just replace what the option reference is holding onto 
 			this.value = new ArrayList(Arrays.asList(value));
 		}
 		else
 			throw new BuildException("bad value type");
 	}
+
 }

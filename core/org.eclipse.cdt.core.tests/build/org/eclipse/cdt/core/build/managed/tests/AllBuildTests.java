@@ -19,6 +19,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
+import org.eclipse.cdt.core.build.managed.IManagedBuildPathInfo;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
 import org.eclipse.cdt.core.build.managed.IResourceBuildInfo;
@@ -56,6 +57,7 @@ public class AllBuildTests extends TestCase {
 		suite.addTest(new AllBuildTests("testProject"));
 		suite.addTest(new AllBuildTests("testConfigurations"));
 		suite.addTest(new AllBuildTests("testTargetArtifacts"));
+		suite.addTest(new AllBuildTests("testBuildPathInfoInterface"));
 		suite.addTest(new AllBuildTests("cleanup"));
 		
 		return suite;
@@ -89,6 +91,88 @@ public class AllBuildTests extends TestCase {
 		assertNotNull(testSub);
 	}
 
+	/**
+	 * The purpose of this test is to exercise the build path info interface.
+	 * To get to that point, a new target/config has to be created in the test
+	 * project and the default configuration changed.
+	 *  
+	 * @throws CoreException
+	 */
+	public void testBuildPathInfoInterface(){
+		// Open the test project
+		IProject project = null;
+		try {
+			project = createProject(projectName);
+		} catch (CoreException e) {
+			fail("Failed to open project: " + e.getLocalizedMessage());
+		}
+		
+		// Create a new target in the project based on the sub target
+		ITarget baseTarget = ManagedBuildManager.getTarget(project, "test.sub");
+		assertNotNull(baseTarget);
+		ITarget newTarget = null;
+		try {
+			newTarget = ManagedBuildManager.createTarget(project, baseTarget);
+		} catch (BuildException e) {
+			fail("Failed adding new target to project: " + e.getLocalizedMessage());
+		}
+		assertNotNull(newTarget);
+		// Copy over the configs
+		IConfiguration[] baseConfigs = baseTarget.getConfigurations();
+		for (int i = 0; i < baseConfigs.length; ++i) {
+			newTarget.createConfiguration(baseConfigs[i], baseConfigs[i].getId() + "." + i);
+		}
+				
+		// Change the default configuration to the sub config
+		IConfiguration[] configs = newTarget.getConfigurations();
+		assertEquals(3, configs.length);
+		IResourceBuildInfo buildInfo = ManagedBuildManager.getBuildInfo(project);
+		buildInfo.setDefaultConfiguration(newTarget.getConfiguration("sub.config.2"));
+		// Get the path information for the project
+		IManagedBuildPathInfo info = ManagedBuildManager.getBuildPathInfo(project);
+		assertNotNull(info);
+		
+		// Test the interface for include paths. It is important that the build model
+		// return the contents of all options flagged as containing include paths
+		String[] expectedPaths = {"/usr/include", "/opt/gnome/include", "/home/tester/include"};
+		String[] actualPaths = info.getIncludePaths();
+		assertTrue(Arrays.equals(expectedPaths, actualPaths));
+		
+		// Test the interface for defined symbols (there are none but it should not return null)
+		String[] definedSymbols = info.getDefinedSymbols();
+		assertNotNull(definedSymbols);
+		assertEquals(0, definedSymbols.length);
+
+		// Add some defined symbols programmatically
+		String[] expectedSymbols = {"DEBUG", "GNOME"};
+		IConfiguration defaultConfig = buildInfo.getDefaultConfiguration(newTarget);
+		ITool[] tools = defaultConfig.getTools();
+		ITool subTool = null;
+		for (int i = 0; i < tools.length; i++) {
+			ITool tool = tools[i];
+			if("tool.sub".equalsIgnoreCase(tool.getId())) {
+				subTool = tool;
+				break;
+			}
+		}
+		assertNotNull(subTool);
+		IOption symbolOpt = null;
+		IOption[] opts = subTool.getOptions();
+		for (int i = 0; i < opts.length; i++) {
+			IOption option = opts[i];
+			if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
+				symbolOpt = option;
+				break;
+			}
+		}
+		assertNotNull(symbolOpt);
+		ManagedBuildManager.setOption(defaultConfig, symbolOpt, expectedSymbols);
+		
+		// Retest
+		definedSymbols = info.getDefinedSymbols();
+		assertTrue(Arrays.equals(expectedSymbols, definedSymbols));
+	}
+	
 	/**
 	 * Create a new configuration based on one defined in the plugin file.
 	 * Overrides all of the configuration settings. Saves, closes, and reopens 
@@ -145,9 +229,18 @@ public class AllBuildTests extends TestCase {
 		checkOptionReferences(project);
 	}
 	
-	public void testProject() throws CoreException, BuildException {
+	/**
+	 * @throws CoreException
+	 * @throws BuildException
+	 */
+	public void testProject() throws BuildException {
 		// Create new project
-		IProject project = createProject(projectName);
+		IProject project = null;
+		try {
+			project = createProject(projectName);
+		} catch (CoreException e) {
+			fail("Test failed on project creation: " + e.getLocalizedMessage());
+		}
 		// There should not be any targets defined for this project yet
 		assertEquals(0, ManagedBuildManager.getTargets(project).length);
 		
@@ -196,9 +289,17 @@ public class AllBuildTests extends TestCase {
 		
 		// Save, close, reopen and test again
 		ManagedBuildManager.saveBuildInfo(project);
-		project.close(null);
+		try {
+			project.close(null);
+		} catch (CoreException e) {
+			fail("Failed on project close: " + e.getLocalizedMessage());
+		}
 		ManagedBuildManager.removeBuildInfo(project);
-		project.open(null);
+		try {
+			project.open(null);
+		} catch (CoreException e) {
+			fail("Failed on project open: " + e.getLocalizedMessage());
+		}
 		
 		// Test that the default config was remembered
 		IResourceBuildInfo info = ManagedBuildManager.getBuildInfo(project);
@@ -213,7 +314,8 @@ public class AllBuildTests extends TestCase {
 		checkRootTarget(targets[0], "z");
 		
 		// Now test the information the makefile builder needs
-		checkBuildSettings(project);
+		checkBuildTestSettings(info);
+		ManagedBuildManager.removeBuildInfo(project);
 	}
 	
 	/**
@@ -222,15 +324,13 @@ public class AllBuildTests extends TestCase {
 	 * 
 	 * @param project
 	 */
-	private void checkBuildSettings(IProject project) {
+	private void checkBuildTestSettings(IResourceBuildInfo info) {
 		String ext1 = "foo";
 		String ext2 = "bar";
 		String badExt = "cpp";
 		String expectedOutput = "toor";
 		String expectedCmd = "doIt";
 		
-		// Get that interface, Rover. Go get it. That's a good doggie! Good boy.
-		IResourceBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 		assertNotNull(info);
 		assertEquals(info.getBuildArtifactName(), "BuildTest.toor");
 		
@@ -330,7 +430,9 @@ public class AllBuildTests extends TestCase {
 		assertEquals("-e2", rootOptions[3].getEnumCommand(selEnum));
 	}
 	
-	
+	/*
+	 * Do a full sanity check on the root target.
+	 */
 	private void checkRootTarget(ITarget target, String oicValue) throws BuildException {
 		// Target stuff
 		assertTrue(target.isTestTarget());
@@ -439,28 +541,58 @@ public class AllBuildTests extends TestCase {
 		assertEquals("-e2", options[1].getEnumCommand(valueList[1]));
 	}
 
-	private void checkSubTarget(ITarget target) {
+	/*
+	 * Do a sanity check on the values in the sub-target. Most of the
+	 * sanity on the how build model entries are read is performed in 
+	 * the root target check, so these tests just verify that the the sub 
+	 * target properly inherits from its parent. For the new options
+	 * in the sub target, the test does a sanity check just to be complete.
+	 */
+	private void checkSubTarget(ITarget target) throws BuildException {
 		// Make sure this is a test target
 		assertTrue(target.isTestTarget());
 		// Make sure the build artifact extension is there
 		assertEquals(target.getDefaultExtension(), subExt);
 				
-		// Tools
+		// Get the tools for this target
 		ITool[] tools = target.getTools();
-		// Root Tool
+		// Do we inherit properly from parent
 		ITool rootTool = tools[0];
 		assertEquals("Root Tool", rootTool.getName());
-		// Sub Tool
+		// Now get the tool defined for this target
 		ITool subTool = tools[1];
 		assertEquals("Sub Tool", subTool.getName());
+		// Confirm that it has three options
+		IOption[] subOpts = subTool.getOptions();
+		assertEquals(3, subOpts.length);
 
-		// Configs
+		// Do a sanity check on the options 
+		assertEquals("Include Paths", subOpts[0].getName());
+		assertEquals(IOption.INCLUDE_PATH, subOpts[0].getValueType());
+		String[] incPath = subOpts[0].getIncludePaths();
+		assertEquals(2, incPath.length);
+		assertEquals("/usr/include", incPath[0]);
+		assertEquals("/opt/gnome/include", incPath[1]);
+		assertEquals("-I", subOpts[0].getCommand());
+		assertEquals("Defined Symbols", subOpts[1].getName());
+		assertEquals(IOption.PREPROCESSOR_SYMBOLS, subOpts[1].getValueType());
+		String[] defdSymbols = subOpts[1].getDefinedSymbols();
+		assertEquals(0, defdSymbols.length);
+		assertEquals("-D", subOpts[1].getCommand());
+		assertEquals("More Includes", subOpts[2].getName());
+		assertEquals(IOption.INCLUDE_PATH, subOpts[2].getValueType());
+		String[] moreIncPath = subOpts[2].getIncludePaths();
+		assertEquals(1, moreIncPath.length);
+		assertEquals("/home/tester/include", moreIncPath[0]);
+		assertEquals("-I", subOpts[2].getCommand());
+
+		// Get the configs for this target
 		IConfiguration[] configs = target.getConfigurations();
-		// Root Config
+		// Check inheritance
 		IConfiguration rootConfig = configs[0];
 		assertEquals("Root Config", rootConfig.getName());
 		assertEquals("Root Override Config", configs[1].getName());
-		// Sub Config
+		// Check the defined config for target
 		IConfiguration subConfig = configs[2];
 		assertEquals("Sub Config", subConfig.getName());
 	}
@@ -550,4 +682,5 @@ public class AllBuildTests extends TestCase {
 	public void testThatAlwaysFails() {
 		assertTrue(false);
 	}
+	
 }

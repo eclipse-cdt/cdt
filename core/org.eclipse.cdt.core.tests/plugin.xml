@@ -121,6 +121,33 @@
          <tool
                name="Sub Tool"
                id="tool.sub">
+            <option
+                  name="Include Paths"
+                  command="-I"
+                  valueType="includePath"
+                  id="sub.tool.opt.inc.paths">
+               <optionValue
+                     value="/usr/include">
+               </optionValue>
+               <optionValue
+                     value="/opt/gnome/include">
+               </optionValue>
+            </option>
+            <option
+                  name="Defined Symbols"
+                  command="-D"
+                  valueType="definedSymbols"
+                  id="sub.tool.opt.def.symbols">
+            </option>
+            <option
+                  name="More Includes"
+                  command="-I"
+                  valueType="includePath"
+                  id="sub.tool.opts.inc.paths.more">
+               <optionValue
+                     value="/home/tester/include">
+               </optionValue>
+            </option>
          </tool>
       </target>
    </extension>

@@ -127,6 +127,9 @@ public class CProjectPlatformPage extends WizardPage {
 			}
 		});
 		
+		// Select the first target in the list
+		handleTargetSelection();
+		
 		// Do the nasty
 		setErrorMessage(null);
 		setMessage(null);

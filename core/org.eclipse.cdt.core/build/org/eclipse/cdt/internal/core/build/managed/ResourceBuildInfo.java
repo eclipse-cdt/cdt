@@ -12,13 +12,16 @@ package org.eclipse.cdt.internal.core.build.managed;
  * **********************************************************************/
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.build.managed.BuildException;
+import org.eclipse.cdt.core.build.managed.IManagedBuildPathInfo;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
+import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IResourceBuildInfo;
 import org.eclipse.cdt.core.build.managed.ITarget;
 import org.eclipse.cdt.core.build.managed.ITool;
@@ -27,7 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class ResourceBuildInfo implements IResourceBuildInfo {
+public class ResourceBuildInfo implements IResourceBuildInfo, IManagedBuildPathInfo {
 
 	private IResource owner;
 	private Map targetMap;
@@ -271,6 +274,60 @@ public class ResourceBuildInfo implements IResourceBuildInfo {
 			return;
 		}
 		defaultTarget = target;		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IBuildParseInfo#getDefinedSymbols()
+	 */
+	public String[] getDefinedSymbols() {
+		// Return the include paths for the default configuration
+		ArrayList paths = new ArrayList();
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		ITool[] tools = config.getTools();
+		for (int i = 0; i < tools.length; i++) {
+			ITool tool = tools[i];
+			IOption[] opts = tool.getOptions();
+			for (int j = 0; j < opts.length; j++) {
+				IOption option = opts[j];
+				if (option.getValueType() == IOption.PREPROCESSOR_SYMBOLS) {
+					try {
+						paths.addAll(Arrays.asList(option.getDefinedSymbols()));
+					} catch (BuildException e) {
+						// we should never get here
+						continue;
+					}
+				}
+			}
+		}
+		paths.trimToSize();
+		return (String[])paths.toArray(new String[paths.size()]); 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.IBuildParseInfo#getIncludePaths()
+	 */
+	public String[] getIncludePaths() {
+		// Return the include paths for the default configuration
+		ArrayList paths = new ArrayList();
+		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
+		ITool[] tools = config.getTools();
+		for (int i = 0; i < tools.length; i++) {
+			ITool tool = tools[i];
+			IOption[] opts = tool.getOptions();
+			for (int j = 0; j < opts.length; j++) {
+				IOption option = opts[j];
+				if (option.getValueType() == IOption.INCLUDE_PATH) {
+					try {
+						paths.addAll(Arrays.asList(option.getIncludePaths()));
+					} catch (BuildException e) {
+						// we should never get here
+						continue;
+					}
+				}
+			}
+		}
+		paths.trimToSize();
+		return (String[])paths.toArray(new String[paths.size()]); 
 	}
 
 }

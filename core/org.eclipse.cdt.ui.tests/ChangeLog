@@ -1,3 +1,6 @@
+2003-06-20 Sean Evoy
+	Moved the ManagedBuildInfo extension point to the plugin file in org.eclipse.cdt.core.tests
+
 2003-06-17 Brent Nicolle
 	Added Interface tests of IStructure.java.
 

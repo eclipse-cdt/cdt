@@ -272,7 +272,21 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 */
 	public void setOption(IOption option, String[] value) throws BuildException {
 		// Is there a delta
-		String[] oldValue = option.getStringListValue();
+		String[] oldValue;
+		switch (option.getValueType()) {
+			case IOption.STRING_LIST :
+				oldValue = option.getStringListValue();
+				break;
+			case IOption.INCLUDE_PATH :
+				oldValue = option.getIncludePaths();
+				break;
+			case IOption.PREPROCESSOR_SYMBOLS :
+				oldValue = option.getDefinedSymbols();
+				break;
+			default :
+				oldValue = new String[0];
+				break;
+		}
 		if(!Arrays.equals(value, oldValue))
 			createOptionReference(option).setValue(value);
 	}

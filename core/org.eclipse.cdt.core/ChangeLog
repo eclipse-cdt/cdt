@@ -1,3 +1,22 @@
+2003-06-20 Sean Evoy
+	Added two new value types to the ManagedBuildTools schema for include paths 
+	and defined symbols.
+	
+	Added interface so clients can query build model for include paths and 
+	defined symbols
+	* build/org/eclipse/cdt/core/build/managed/ManagedBuildManager.java
+	* build/org/eclipse/cdt/core/build/managed/IManagedBuildPathInfo.java
+	* build/org/eclipse/cdt/internal/core/build/managed/ResourceBuildInfo.java
+	
+	Changed code in build model to support these new value types
+	* build/org/eclipse/cdt/internal/core/build/managed/Configuration.java
+	* build/org/eclipse/cdt/internal/core/build/managed/Option.java
+	* build/org/eclipse/cdt/core/build/managed/IOption.java
+	* build/org/eclipse/cdt/internal/core/build/managed/OptionReference.java
+	* build/org/eclipse/cdt/internal/core/build/managed/Tool.java
+	* build/org/eclipse/cdt/internal/core/build/managed/ToolReference.java
+	
+
 2003-06-19 Alain Magloire
 
 	* model/org/eclipse/cdt/internal/core/model/CModelManager.java:

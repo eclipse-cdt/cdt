@@ -194,6 +194,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 					try {
 						value = new Boolean(opt.getBooleanValue());
 					} catch (BuildException e) {
+						// Exception occurs if there's an option value type mismatch
 						break;
 					}
 					optionMap.put(name, value);
@@ -207,7 +208,7 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 				case IOption.STRING :
 					try {
 						value = opt.getStringValue();
-					} catch (BuildException e1) {
+					} catch (BuildException e) {
 						break;
 					}
 					optionMap.put(name, value);
@@ -216,7 +217,23 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 				case IOption.STRING_LIST :
 					try {
 						value = createList(opt.getStringListValue());
-					} catch (BuildException e2) {
+					} catch (BuildException e) {
+						break;
+					}
+					optionMap.put(name, value);
+					break;
+				case IOption.INCLUDE_PATH :
+					try {
+						value = createList(opt.getIncludePaths());
+					} catch (BuildException e) {
+						break;
+					}
+					optionMap.put(name, value);
+					break;
+				case IOption.PREPROCESSOR_SYMBOLS :
+					try {
+						value = createList(opt.getDefinedSymbols());
+					} catch (BuildException e) {
 						break;
 					}
 					optionMap.put(name, value);
@@ -239,36 +256,6 @@ public class BuildToolsSettingsStore implements IPreferenceStore {
 			return (String)s;
 		}
 		return getDefaultString(name);
-
-//		Object s = optionMap.get(name);
-//		if (s instanceof IOption) {
-//			IOption option = (IOption) s;
-//			String [] values = null;
-//			String list = null;
-//			try {
-//				switch (option.getValueType()) {
-//					// Return the enumerated options in a semicolon-separated list
-//					case IOption.ENUMERATED : 
-//					values = option.getApplicableValues();
-//					list = createList(values);
-//					break;
-//					// Just return the string
-//					case IOption.STRING :
-//					list = option.getStringValue();
-//					break;
-//					// Return the list values in a semicolon-spearated string
-//					case IOption.STRING_LIST :
-//					values = option.getStringListValue();
-//					list = createList(values);
-//					default:
-//					break;
-//				}
-//			} catch (BuildException e) {
-//				return getDefaultString(name);
-//			}
-//			return list == null ? getDefaultString(name) : list;
-//		}
-//		return getDefaultString(name);
 	}
 
 	/**

@@ -118,7 +118,9 @@
          <attribute name="valueType" use="default" value="string">
             <annotation>
                <documentation>
-                  An option can be one of the following types; &apos;string&apos; for catch-all entries for options that cannot be easily defined any other way, &apos;string list&apos; for entries that consist of a list of values such as defined symbols or paths, &apos;boolean&apos; for options that have two values, and &apos;enumerated&apos; for options that are one-of a list of values.
+                  General options can be one of the following types; &apos;string&apos; for catch-all entries for options that cannot be easily defined any other way, &apos;string list&apos; for entries that consist of a list of values such as defined symbols or paths, &apos;boolean&apos; for options that have two values, and &apos;enumerated&apos; for options that are one-of a list of values.
+
+Two additional types exist to flag options of special relevance to the build model; &apos;include&apos;, and &apos;definedSymbols&apos;. You can pre-populate with optionValues, and they will display in the UI the same way the &apos;StringList&apos; options do. The build model will look specifically for these value types when clients query for include paths and preprocessor defines.
                </documentation>
             </annotation>
             <simpleType>
@@ -130,6 +132,10 @@
                   <enumeration value="boolean">
                   </enumeration>
                   <enumeration value="enumerated">
+                  </enumeration>
+                  <enumeration value="includePath">
+                  </enumeration>
+                  <enumeration value="definedSymbols">
                   </enumeration>
                </restriction>
             </simpleType>

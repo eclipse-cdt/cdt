@@ -230,7 +230,7 @@
 <!-- Managed Make Builder Projects -->
       <wizard
             name="%MngCCWizard.name"
-            icon="icons/full/ctool16/newmngcc_app.gif"
+            icon="icons/full/wizban/newmngcc_app.gif"
             category="org.eclipse.cdt.ui.newCCWizards"
             class="org.eclipse.cdt.ui.build.wizards.ManagedCCWizard"
             project="true"
@@ -242,7 +242,7 @@
       </wizard>
       <wizard
             name="%MngCWizard.name"
-            icon="icons/full/ctool16/newmngcc_app.gif"
+            icon="icons/full/wizban/newmngcc_app.gif"
             category="org.eclipse.cdt.ui.newCWizards"
             class="org.eclipse.cdt.ui.build.wizards.ManagedCWizard"
             project="true"
@@ -625,7 +625,7 @@
                   name="Defined Symbols"
                   category="cygwin.compiler.category.preprocessor"
                   command="-D"
-                  valueType="stringList"
+                  valueType="definedSymbols"
                   id="cygwin.preprocessor.def.symbols">
             </option>
             <option
@@ -706,7 +706,7 @@
                   name="Include Paths"
                   category="cygwin.compiler.category.general"
                   command="-I"
-                  valueType="stringList"
+                  valueType="includePath"
                   id="cygwin.compiler.general.include.paths">
             </option>
             <option

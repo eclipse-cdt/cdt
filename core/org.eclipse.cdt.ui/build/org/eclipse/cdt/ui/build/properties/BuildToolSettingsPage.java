@@ -1,5 +1,6 @@
 package org.eclipse.cdt.ui.build.properties;
 
+import org.eclipse.cdt.core.build.managed.BuildException;
 import org.eclipse.cdt.core.build.managed.IConfiguration;
 import org.eclipse.cdt.core.build.managed.IOption;
 import org.eclipse.cdt.core.build.managed.IOptionCategory;
@@ -58,27 +59,36 @@ public class BuildToolSettingsPage extends FieldEditorPreferencePage {
 			// Figure out which type the option is and add a proper field editor for it
 			switch (opt.getValueType()) {
 				case IOption.STRING :
-				StringFieldEditor stringField = new StringFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
-				addField(stringField);
-				break;
+					StringFieldEditor stringField = new StringFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
+					addField(stringField);
+					break;
 				case IOption.BOOLEAN :
-				BooleanFieldEditor booleanField = new BooleanFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
-				addField(booleanField);
-				break;
+					BooleanFieldEditor booleanField = new BooleanFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
+					addField(booleanField);
+					break;
 				case IOption.ENUMERATED :
-				BuildOptionComboFieldEditor comboField = new BuildOptionComboFieldEditor(opt.getId(), opt.getName(), opt.getApplicableValues(), opt.getSelectedEnum(), getFieldEditorParent());
-				addField(comboField); 
-				break;
+					String sel;
+					try {
+						sel = opt.getSelectedEnum();
+					} catch (BuildException e) {
+						// If we get this exception, then the option type is wrong
+						break;
+					}
+					BuildOptionComboFieldEditor comboField = new BuildOptionComboFieldEditor(opt.getId(), opt.getName(), opt.getApplicableValues(), sel, getFieldEditorParent());
+					addField(comboField); 
+					break;
 				case IOption.STRING_LIST :
-				BuildOptionListFieldEditor listField = new BuildOptionListFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
-				addField(listField); 
-				break;
+				case IOption.INCLUDE_PATH :
+				case IOption.PREPROCESSOR_SYMBOLS :
+					BuildOptionListFieldEditor listField = new BuildOptionListFieldEditor(opt.getId(), opt.getName(), getFieldEditorParent());
+					addField(listField); 
+					break;
 //				case IOption.SUMMARY :
 //				SummaryFieldEditor summaryField = new SummaryFieldEditor(opt.getId(), opt.getName(), category.getTool(), getFieldEditorParent());
 //				addField(summaryField);
 //				break;
 				default :
-				break;
+					break;
 			}
 		}
 	}
@@ -117,6 +127,8 @@ public class BuildToolSettingsPage extends FieldEditorPreferencePage {
 					ManagedBuildManager.setOption(configuration, option, strVal);
 					break;
 				case IOption.STRING_LIST :
+				case IOption.INCLUDE_PATH :
+				case IOption.PREPROCESSOR_SYMBOLS :
 					String listStr = getPreferenceStore().getString(option.getId());
 					String[] listVal = BuildToolsSettingsStore.parseString(listStr);
 					ManagedBuildManager.setOption(configuration, option, listVal);

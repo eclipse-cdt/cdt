@@ -2,6 +2,12 @@
 	Added MacroTests.java (invocation in AllCoreTests).
 	Added MacroTests.c to resources.
 
+2003-06-17 Sean Evoy
+	Moved the ManagedBuildInfo extension point from the plugin file in org.eclipse.cdt.ui.tests
+	Added new options to sub target for include paths and preprocessor symbols
+	Added test for IManagedBuildPathInfo
+	* build/org/eclipse/cdt/core/build/managed/tests/AllBuildTests.java
+	
 2003-06-17 Brent Nicolle
 	Added Interface tests of IStructure.java.
 

@@ -1,5 +1,15 @@
 2003-01-23 Alain Magloire
 
+	Cleanups proposed by Amer Hoda.
+
+	* model/org/eclipse/cdt/core/model/ICRoot.java: No need to extend ICElement
+	* model/org/eclipse/cdt/core/model/ICProject.java: No need to extend ICElement
+	* model/org/eclipse/cdt/core/model/ICFolder.java: No need to extend ICElement
+	* model/org/eclipse/cdt/core/model/ICFile.java: No need to extend ICElement
+	* model/org/eclipse/cdt/core/model/IMethod.java: Extends ICFunction.
+
+2003-01-23 Alain Magloire
+
 	* model/org/eclipse/cdt/internal/core/model/CModelManager.java (getHeaderExtensions):  Returns possible C/C++ header extensions name.
 	(getSourceExtensions): Returns possible C/C++ extension.
 	(getTranslationUnitExtensions): Returns possible C/C++ extension.

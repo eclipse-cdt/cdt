@@ -361,8 +361,14 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 									bpMgr.setLocationBreakpoint(bkpt);
 									bpMgr.deleteFromDeferredList(bkpt);
 									bpMgr.addToBreakpointList(bkpt);
+									// If the breakpoint was disable
+									// install it but keep it disable
+									if (!bkpt.isEnabled()) {
+										bpMgr.disableBreakpoint(bkpt);
+									}
 									eventList.add(new MIBreakpointCreatedEvent(bkpt.getMIBreakpoint().getNumber()));
 								} catch (CDIException e) {
+									// ignore
 								}
 							}
 						}

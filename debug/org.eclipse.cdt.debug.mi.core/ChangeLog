@@ -1,3 +1,10 @@
+2004-06-09 Alain Magloire
+
+	Keep the breakpoint disable when doing
+	deffered breakpoint installation.
+
+	* cdt/org/eclpse/cdt/debug/mi/core/cdi/EventManager.java
+
 2004-06-08 Alain Magloire
 
 	Fix for PR 65077

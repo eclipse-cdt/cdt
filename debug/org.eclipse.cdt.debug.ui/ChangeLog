@@ -1,4 +1,12 @@
 2004-05-28 Mikhail Khodjaiants
+	New implementation of the "Add Expression" editor action.
+	* AddExpressionActionDelegate.java: removed
+	* AddExpressionEditorActionDelegate.java: new
+	* icons/full/dtool16/watch_exp.gif: new
+	* icons/full/etool16/watch_exp.gif: new
+	* plugin.xml
+
+2004-05-28 Mikhail Khodjaiants
 	Changed the error handling of the "Add Globals" and "Enable/Disable Variable" actions.
 	* AddGlobalsActionDelegate.java
 	* EnableVariablesActionDelegate.java

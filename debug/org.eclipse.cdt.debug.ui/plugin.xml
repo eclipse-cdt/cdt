@@ -224,20 +224,6 @@
             </enablement>
          </action>
          <action
-               label="%GlobalAddExpressionAction.label"
-               icon="icons/full/obj16/expression_obj.gif"
-               helpContextId="add_expression_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
-               menubarPath="org.eclipse.ui.run/cExpressionGroup"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
                id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
                hoverIcon="icons/full/clcl16/signal0_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
@@ -344,9 +330,9 @@
             id="org.eclipse.cdt.debug.ui.CEditorPopupActions">
          <action
                label="%AddExpressionAction.label"
-               icon="icons/full/obj16/expression_obj.gif"
+               icon="icons/full/etool16/watch_exp.gif"
                helpContextId="add_expression_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionEditorActionDelegate"
                menubarPath="additions"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
             <enablement>
@@ -467,9 +453,9 @@
             id="org.eclipse.cdt.debug.ui.AsmEditorPopupActions">
          <action
                label="%AddExpressionAction.label"
-               icon="icons/full/obj16/expression_obj.gif"
+               icon="icons/full/etool16/watch_exp.gif"
                helpContextId="add_expression_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionEditorActionDelegate"
                menubarPath="additions"
                id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
             <enablement>
@@ -546,107 +532,6 @@
                id="org.eclipse.cdt.debug.internal.ui.actions.NaturalVariableFormatActionDelegate">
          </action>
       </objectContribution>
-      <viewerContribution
-            targetID="#DisassemblyEditorRulerContext"
-            id="org.eclipse.cdt.debug.ui.DisassemblyEditorRulerActions">
-<!--
-         <action
-               label="%RunToLineAction.label"
-               icon="icons/full/clcl16/runtoline_co.gif"
-               helpContextId="run_to_line_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineRulerActionDelegate">
-         </action>
--->
-         <action
-               label="%BreakpointProperties.label"
-               helpContextId="breakpoint_properties_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.cdt.debug.internal.ui.actions.CBreakpointPropertiesRulerActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
-               label="%EnableBreakpoint.label"
-               helpContextId="enable_disable_breakpoint_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.cdt.debug.internal.ui.actions.EnableDisableBreakpointRulerActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
-               label="%AddBreakpoint.label"
-               helpContextId="manage_breakpoint_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate"
-               menubarPath="debug"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ManageBreakpointRulerActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-      </viewerContribution>
-      <viewerContribution
-            targetID="#DisassemblyEditorContext"
-            id="org.eclipse.cdt.debug.ui.DisassemblyEditorPopupActions">
-         <action
-               label="%AddExpressionAction.label"
-               icon="icons/full/obj16/expression_obj.gif"
-               helpContextId="add_expression_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
-               menubarPath="additions"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
-               label="%JumpToLineAction.label"
-               icon="icons/full/clcl16/jump_co.gif"
-               helpContextId="jump_to_line_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate"
-               menubarPath="additions"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.JumpToLineActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
-               label="%RunToLineAction.label"
-               icon="icons/full/clcl16/runtoline_co.gif"
-               helpContextId="run_to_line_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
-               menubarPath="additions"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-      </viewerContribution>
       <viewerContribution
             targetID="org.eclipse.cdt.debug.ui.SharedLibrariesView"
             id="org.eclipse.cdt.debug.ui.SharedLibrariesViewPopupActions">

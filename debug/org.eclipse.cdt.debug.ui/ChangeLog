@@ -1,3 +1,7 @@
+2003-05-29 Mikhail Khodjaiants
+	Changed the vizualization of arrays and structures.
+	* CDTDebugModelPresentation.java
+
 2003-05-14 Mikhail Khodjaiants
 	Created preference for the maximum number of disassembly instructions.
 	* CDebugPreferencePage.java

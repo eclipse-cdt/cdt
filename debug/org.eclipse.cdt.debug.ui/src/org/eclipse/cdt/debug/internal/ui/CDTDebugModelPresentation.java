@@ -33,7 +33,6 @@ import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
-import org.eclipse.cdt.debug.internal.core.model.CValue;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
@@ -538,29 +537,40 @@ public class CDTDebugModelPresentation extends LabelProvider
 
 	protected String getVariableText( IVariable var ) throws DebugException
 	{
-		String label = new String();
-		if ( var != null )
+		StringBuffer label = new StringBuffer();
+		if ( var instanceof ICVariable )
 		{
 			if ( isShowVariableTypeNames() )
 			{
 				String type = getVariableTypeName( var );
 				if ( type != null && type.length() > 0 )
-					label += type + " ";
+				{
+					label.append( type );
+					label.append( ' ' );
+				}
 			}
-			label += var.getName();
+			label.append( var.getName() );
 			IValue value = var.getValue();
 			if ( value != null )
 			{
-				if ( value instanceof CValue && ((CValue)value).isCharacter() )
-					label += getCharacterValue( (CValue)value );					
-				else if ( value instanceof CValue && ((CValue)value).isCharPointer() )
-					label += "= " + ((CValue)value).getUnderlyingValueString();
-				else if ( value.getValueString() != null && value.getValueString().trim().length() > 0 )
-					label += getVariableValue( value.getValueString().trim() );					
-//				label += "= " + value.getValueString();
+				if ( ((ICVariable)var).isArray() )
+				{
+					int[] dims = ((ICVariable)var).getArrayDimensions();
+					for ( int i = 0; i < dims.length; ++i )
+					{
+						label.append( '[' );					
+						label.append( dims[i] );					
+						label.append( ']' );					
+					}
+				}
+				else if ( !((ICVariable)var).isStructure() && value.getValueString() != null && value.getValueString().trim().length() > 0 )
+				{
+					label.append( "= " );
+					label.append( value.getValueString().trim() );
+				}
 			}
 		}
-		return label;
+		return label.toString();
 	}
 
 	protected String getSharedLibraryText( ICSharedLibrary library, boolean qualified ) throws DebugException
@@ -901,65 +911,6 @@ public class CDTDebugModelPresentation extends LabelProvider
 			}
 		}
 		return null;
-	}
-
-	private String getVariableValue( String value )
-	{
-		if ( value.startsWith( "[" ) )
-			return value;
-		if ( value.startsWith( "{" ) )
-			return "";
-		return "=" + value; 
-	}
-
-	private String getCharacterValue( CValue value )
-	{
-		String result = null;
-		String uv = value.getUnderlyingValueString();
-		int index = uv.indexOf( '\\' );
-		try
-		{
-			if ( index == -1 && value.getValueString() != null )
-				return "=" + value.getValueString();
-			char ch = '.';
-			if ( uv.length() > index + 1 )
-			{
-				switch( uv.charAt( index + 1 ) )
-				{
-					case 'b':
-						ch = '\b';
-						break;				
-					case 'f':
-						ch = '\f';
-						break;				
-					case 'n':
-						ch = '\n';
-						break;				
-					case 't':
-						ch = '\t';
-						break;				
-					case 'r':
-						ch = '\r';
-						break;				
-					case '\'':
-						ch = '\'';
-						break;				
-					case '\"':
-						ch = '\"';
-						break;				
-					case '\\':
-						ch = '\\';
-						break;
-					default:
-						return "=" + new String( new char[] { ch } );
-				}
-				result = "='" + new String( new char[] { ch } ) + '\'';
-			}
-		}
-		catch( DebugException e )
-		{
-		}
-		return result;
 	}
 
 	private String getVariableTypeName( IVariable variable )

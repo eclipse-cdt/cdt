@@ -6,12 +6,13 @@
  * 
  * Contributors: Rational Software - Initial API and implementation
  ******************************************************************************/
-package org.eclipse.cdt.core.parser;
+package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.ICodeReaderCache;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
-import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
 /**
  * This is an empty implementation of the ICodeReaderCache interface.  It is used to implement a 
@@ -42,7 +43,7 @@ public class EmptyCodeReaderCache implements ICodeReaderCache {
 	 * @return
 	 */
 	public CodeReader createReader( String finalPath, Iterator workingCopies ) {
-		return ParserUtil.createReader(finalPath, workingCopies);
+		return InternalParserUtil.createFileReader(finalPath);
 	}
 
 	/**

@@ -9,7 +9,6 @@
 
 package org.eclipse.cdt.core.parser;
 
-import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 import org.eclipse.cdt.internal.core.util.ILRUCacheable;
 import org.eclipse.cdt.internal.core.util.LRUCache;
@@ -51,7 +50,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 	private CodeReaderLRUCache cache = null; // the actual cache
 
 	private class UpdateCodeReaderCacheListener implements IResourceChangeListener {
-		ICodeReaderCache cache = null;
+		ICodeReaderCache c = null;
 		
 		/**
 		 * Create the UpdateCodeReaderCacheListener used to dispatch events to remove CodeReaders 
@@ -59,12 +58,12 @@ public class CodeReaderCache implements ICodeReaderCache {
 		 * @param cache
 		 */
 		public UpdateCodeReaderCacheListener(ICodeReaderCache cache) {
-			this.cache = cache;
+			this.c = cache;
 		}
 		
 		private class RemoveCacheJob extends Job {
 			private static final String REMOVE_CACHE = "Remove Cache"; //$NON-NLS-1$
-			ICodeReaderCache cache = null;
+			ICodeReaderCache cache1 = null;
 			IResourceChangeEvent event = null;
 			
 			/**
@@ -75,7 +74,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 			 */
 			public RemoveCacheJob(ICodeReaderCache cache, IResourceChangeEvent event) {
 				super(REMOVE_CACHE);
-				this.cache = cache;
+				this.cache1 = cache;
 				this.event = event;
 			}
 			
@@ -96,8 +95,8 @@ public class CodeReaderCache implements ICodeReaderCache {
 					}
 				}
 				
-				if (key != null && cache != null)
-					cache.remove(key);
+				if (key != null && cache1 != null)
+					cache1.remove(key);
 				
 				return Status.OK_STATUS;
 			}
@@ -108,8 +107,8 @@ public class CodeReaderCache implements ICodeReaderCache {
 		 * Identifies when a resource was chaned and schedules a new RemoveCacheJob.
 		 */
 		public void resourceChanged(IResourceChangeEvent event) {
-			if (cache instanceof CodeReaderCache)
-				new RemoveCacheJob(cache, event).schedule();
+			if (c instanceof CodeReaderCache)
+				new RemoveCacheJob(c, event).schedule();
 		}
 	}
 	

@@ -69,7 +69,7 @@
    <extension
          point="org.eclipse.cdt.make.core.MakeTargetBuilder">
       <builder
-            builderID="org.eclipse.cdt.core.make.makeBuilder"
+            builderID="org.eclipse.cdt.make.core.makeBuilder"
             id="org.eclipse.cdt.make.MakeTargetBuilder">
       </builder>
    </extension>

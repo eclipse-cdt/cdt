@@ -64,6 +64,7 @@ public class CPPFunction implements IFunction {
 		tmp[ declarations.length ] = dtor;
 		declarations = tmp;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IFunction#getParameters()
 	 */

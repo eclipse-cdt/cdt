@@ -24,8 +24,8 @@ public interface ICPPMember {
 	 */
 	public int getVisibility();
 	
-	public static final int v_private = 1;
-	public static final int v_protected = 2;
-	public static final int v_public = 3;
+	public static final int v_private = ICPPASTVisiblityLabel.v_private;
+	public static final int v_protected = ICPPASTVisiblityLabel.v_protected;
+	public static final int v_public = ICPPASTVisiblityLabel.v_public;
 	
 }

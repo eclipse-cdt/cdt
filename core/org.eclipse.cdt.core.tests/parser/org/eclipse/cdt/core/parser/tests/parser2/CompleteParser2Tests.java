@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -39,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
@@ -783,51 +785,162 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testNewXReferences() throws Exception
 	{
-		parse( "const int max = 5;\n int * x = new int[max];"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "const int max = 5;\n int * x = new int[max];"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 3 );
+ 		IVariable max = (IVariable) col.getName(0).resolveBinding();
+ 		assertInstances( col, max, 2 );
 	}
 	
 	public void testQualifiedNameReferences() throws Exception
 	{
 		// Used to cause AST Semantic exception
-		parse( "class A{ class B{ class C { public: int cMethod(); }; }; }; \n  int A::B::C::cMethod() {}; \n" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class A{ class B{ class C { public: int cMethod(); }; }; }; \n  int A::B::C::cMethod() {}; \n" ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 9 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ICPPClassType B = (ICPPClassType) col.getName(1).resolveBinding();
+ 		ICPPClassType C = (ICPPClassType) col.getName(2).resolveBinding();
+ 		ICPPMethod cMethod = (ICPPMethod) col.getName(3).resolveBinding();
+ 		
+ 		assertInstances( col, A, 2 );
+ 		assertInstances( col, B, 2 );
+ 		assertInstances( col, C, 2 );
+ 		assertInstances( col, cMethod, 3 );
+ 		assertEquals( cMethod.getVisibility(), ICPPMember.v_public );
+ 		assertSame( cMethod.getScope(), C.getCompositeScope() );
+ 		assertSame( C.getScope(), B.getCompositeScope() );
+ 		assertSame( B.getScope(), A.getCompositeScope() );
 	}
 
 	public void testIsConstructor() throws Exception
 	{
-		parse( "class A{ public: A(); }; \n  A::A() {}; \n" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class A{ public: A(); }; \n  A::A() {}; \n" ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 5 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ICPPConstructor ctor = (ICPPConstructor) col.getName(1).resolveBinding();
+ 		
+ 		assertInstances( col, A, 2 );
+ 		assertInstances( col, ctor, 3 );
 	}
 
 	public void testIsDestructor() throws Exception
 	{
-		parse( "class A{ public: ~A(); }; \n  A::~A() {}; \n" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class A{ public: ~A(); }; \n  A::~A() {}; \n" ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 5 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ICPPMethod dtor = (ICPPMethod) col.getName(1).resolveBinding();
+ 		
+ 		assertInstances( col, A, 2 );
+ 		assertInstances( col, dtor, 3 );
 	}
 	
 	public void testBug41445() throws Exception
 	{
-		parse( "class A { }; namespace N { class B : public A { struct A {}; }; }"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class A { }; namespace N { class B : public A { struct A {}; }; }"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 5 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ICPPNamespace N = (ICPPNamespace) col.getName(1).resolveBinding();
+ 		ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
+ 		ICPPClassType A2 = (ICPPClassType) col.getName(4).resolveBinding();
+ 		
+ 		assertInstances( col, A, 2 );
+ 		assertNotSame( A, A2 );
+ 		assertSame( A2.getScope(), B.getCompositeScope() );
+ 		assertSame( B.getScope(), N.getNamespaceScope() );
+ 		assertSame( B.getBases()[0].getBaseClass(), A );
+ 		
 	}
 	
 	public void testSimpleFunctionBody() throws Exception
 	{
-		parse( "class A { int f1(); }; const int x = 4; int f() { return x; } int A::f1() { return x; }"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "class A { int f1(); }; const int x = 4; int f() { return x; } int A::f1() { return x; }"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 9 );
+ 		ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ICPPMethod f1 = (ICPPMethod) col.getName(1).resolveBinding();
+ 		IVariable x = (IVariable) col.getName(2).resolveBinding();
+ 		
+ 		assertInstances( col, A, 2 );
+ 		assertInstances( col, f1, 3 );
+ 		assertInstances( col, x, 3 );
 	}
 
 
 	public void testSimpleForLoop() throws Exception
 	{
-		parse( "const int FIVE = 5;  void f() {  int x = 0; for( int i = 0; i < FIVE; ++i ) { x += i; }  }"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "const int FIVE = 5;  void f() {  int x = 0; for( int i = 0; i < FIVE; ++i ) { x += i; }  }"); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 9 );
+ 		IVariable FIVE = (IVariable) col.getName(0).resolveBinding();
+ 		IVariable x = (IVariable) col.getName(2).resolveBinding();
+ 		IVariable i = (IVariable) col.getName(3).resolveBinding();
+ 		
+ 		assertInstances( col, FIVE, 2 );
+ 		assertInstances( col, x, 2 );
+ 		assertInstances( col, i, 4 );
 	}
 
 	public void testBug42541() throws Exception
 	{
-		parse( "union{ int v; char a; } id;" ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "union{ int v; char a; } id;" ); //$NON-NLS-1$
+		CPPNameCollector col = new CPPNameCollector();
+ 		CPPVisitor.visitTranslationUnit( tu, col );
+ 		
+ 		assertEquals( col.size(), 4 );
+ 		
+ 		ICPPClassType unnamed = (ICPPClassType) col.getName(0).resolveBinding();
+ 		ICPPField v = (ICPPField) col.getName(1).resolveBinding();
+ 		ICPPField a = (ICPPField) col.getName(2).resolveBinding();
+ 		IVariable id = (IVariable) col.getName(3).resolveBinding();
+ 		
+ 		assertEquals( unnamed.getKey(), ICompositeType.k_union );
+ 		assertSame( v.getScope(), unnamed.getCompositeScope() );
+ 		assertSame( a.getScope(), unnamed.getCompositeScope() );
+ 		assertSame( id.getType(), unnamed );
 	}
 	
 	
 	
 	public void testSimpleIfStatement() throws Exception
 	{
-		parse( "const bool T = true; int foo() { if( T ) { return 5; } else if( ! T ) return 20; else { return 10; } }"); //$NON-NLS-1$
+		/*IASTTranslationUnit tu =*/ parse( "const bool T = true; int foo() { if( T ) { return 5; } else if( ! T ) return 20; else { return 10; } }"); //$NON-NLS-1$
+		
+//		IASTFunctionDefinition foo = (IASTFunctionDefinition) tu.getDeclarations()[1];
+//		IASTCompoundStatement compound  = (IASTCompoundStatement) foo.getBody();
+//		IASTIfStatement ifstmt = (IASTIfStatement) compound.getStatements()[0];
+//		assertTrue( ifstmt.getCondition() instanceof IASTIdExpression );
+//		assertTrue( ifstmt.getThenClause() instanceof IASTCompoundStatement );
+//		assertTrue( ifstmt.getElseClause() instanceof IASTIfStatement );
+//		ifstmt = (IASTIfStatement) ifstmt.getElseClause();
+//		assertTrue( ifstmt.getCondition() instanceof IASTUnaryExpression );
+//		assertTrue( ifstmt.getThenClause() instanceof IASTReturnStatement );
+//		assertTrue( ifstmt.getElseClause() instanceof IASTCompoundStatement );
+//		
+//		CPPNameCollector col = new CPPNameCollector();
+// 		CPPVisitor.visitTranslationUnit( tu, col );
+// 		
+// 		assertEquals( col.size(), 4 );
+// 		
+// 		IVariable T = (IVariable) col.getName(0).resolveBinding();
+// 		assertInstances( col, T, 3 );
 	}
 	
 	public void testSimpleWhileStatement() throws Exception

@@ -262,13 +262,15 @@ public class CPPVisitor {
 			    }
 			} 
 			if( scope instanceof ICPPClassScope ){
+				char [] name = declarator.getName().toCharArray();
 				IASTDeclSpecifier decl = null;
 				if( parent instanceof IASTSimpleDeclaration )
 					decl = ((IASTSimpleDeclaration)parent).getDeclSpecifier();
 				else if( parent instanceof IASTFunctionDefinition )
 					decl = ((IASTFunctionDefinition)parent).getDeclSpecifier();
 				if( decl != null && decl instanceof IASTSimpleDeclSpecifier && 
-					((IASTSimpleDeclSpecifier) decl).getType() == 0 )
+					((IASTSimpleDeclSpecifier) decl).getType() == 0 &&
+					name.length > 0 && name[0] != '~' )
 				{
 					binding = new CPPConstructor( (ICPPASTFunctionDeclarator) declarator );
 				} else 

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.ICompositeType;
  */
 public interface ICPPClassType extends ICompositeType {
 
+	public static final int k_class = ICPPASTCompositeTypeSpecifier.k_class;
 	/**
 	 * Returns a list of base class relationships. The list is empty if
 	 * there are none.

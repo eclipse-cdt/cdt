@@ -17,6 +17,8 @@ import java.util.List;
  */
 public interface ICompositeType extends IBinding, IType {
 
+	public static final int k_struct = IASTCompositeTypeSpecifier.k_struct;
+	public static final int k_union = IASTCompositeTypeSpecifier.k_union;
 	/**
 	 *  what kind of composite type is this?
 	 * @return

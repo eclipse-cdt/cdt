@@ -1,3 +1,9 @@
+2003-12-15 Hoda Amer
+	Fixed [Bug 47234] new ParserMode required for a better CModel :
+	- Added a user preference to build the CModel using Structural mode
+	Enabled the Completion Engine and called the parser in Contextual Mode
+	Changed default user preference to Project scope until the completion engine is ready
+	
 2003-12-15 Thomas Fletcher
 	Re-activate the hover help based on the function summary extension point. 
 	Fix a bug in the FunctionSummary class which displayed arguments as

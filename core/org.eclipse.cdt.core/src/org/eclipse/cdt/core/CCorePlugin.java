@@ -65,7 +65,8 @@ public class CCorePlugin extends Plugin {
 	public final static String PREF_BINARY_PARSER = "binaryparser";
 	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF";
 	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID;
-
+	public final static String PREF_USE_STRUCTURAL_PARSE_MODE = "useStructualParseMode";
+	
 	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
 	
 	// Build Model Interface Discovery
@@ -236,6 +237,10 @@ public class CCorePlugin extends Plugin {
 		
 		fDescriptorManager = new CDescriptorManager();
 		fDescriptorManager.startup();
+		
+		// Set the default for using the structual parse mode to build the CModel
+		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
+		
 	}
     
     
@@ -750,4 +755,16 @@ public class CCorePlugin extends Plugin {
 			}
 		}
 	}
+
+	// Preference to turn on/off the use of structural parse mode to build the CModel
+	public void setStructuralParseMode(boolean useNewParser) {
+		getPluginPreferences().setValue(PREF_USE_STRUCTURAL_PARSE_MODE, useNewParser);
+		savePluginPreferences();
+	}
+
+	public boolean useStructuralParseMode() {
+		return getPluginPreferences().getBoolean(PREF_USE_STRUCTURAL_PARSE_MODE);
+	}
+
+	
 }

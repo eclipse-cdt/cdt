@@ -15,12 +15,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITemplate;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -67,53 +72,80 @@ public class CModelBuilder {
 		this.newElements = new HashMap();
 	}
 
-	private IASTCompilationUnit parse( String code, boolean hasCppNature, boolean quick, boolean throwExceptionOnError ) throws ParserException
+	private IASTCompilationUnit parse( ITranslationUnit translationUnit, boolean quickParseMode, boolean throwExceptionOnError ) throws ParserException
 	{
-		ParserMode mode = quick ? ParserMode.QUICK_PARSE : ParserMode.COMPLETE_PARSE; 
-		quickParseCallback = ParserFactory.createQuickParseCallback(); 
+		IProject currentProject = null;
+		boolean hasCppNature = true;
+		String code = "";
 		
+		// get the current project
+		if (translationUnit != null && translationUnit.getCProject() != null) {
+			currentProject = translationUnit.getCProject().getProject();
+		}
+		// check the project's nature
+		if( currentProject != null )
+		{
+			hasCppNature = CoreModel.getDefault().hasCCNature(currentProject);
+		}
+		// get the code to parse
+		try{
+			code = translationUnit.getBuffer().getContents();
+		} catch (CModelException e) {
+			
+		}
+		// use quick or structural parse mode
+		ParserMode mode = quickParseMode ? ParserMode.QUICK_PARSE : ParserMode.STRUCTURAL_PARSE;
+		if(quickParseMode)
+			quickParseCallback = ParserFactory.createQuickParseCallback();
+		else
+			quickParseCallback = ParserFactory.createStructuralParseCallback();
+
+		// pick the language
 		ParserLanguage language = hasCppNature ? ParserLanguage.CPP : ParserLanguage.C;
 		
+		// create the parser
 		IParser parser = null;
 		try
 		{
+			
+			IScannerInfo scanInfo = new ScannerInfo();
+			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(currentProject);
+			if (provider != null){
+				IScannerInfo buildScanInfo = provider.getScannerInformation(currentProject);
+				if (buildScanInfo != null){
+					scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
+				}
+			}
+			
 			parser = ParserFactory.createParser( 
-				ParserFactory.createScanner( new StringReader( code ), "code", 
-				new ScannerInfo(), mode, language, quickParseCallback, ParserUtil.getParserLogService()), quickParseCallback, mode, language, ParserUtil.getParserLogService() );
+				ParserFactory.createScanner( 
+					new StringReader( code ), 
+					translationUnit.getUnderlyingResource().getLocation().toOSString(), 
+					scanInfo, 
+					mode, 
+					language, 
+					quickParseCallback, 
+					ParserUtil.getParserLogService())
+				,quickParseCallback, 
+				mode, 
+				language, 
+				ParserUtil.getParserLogService() );
 		}
 		catch( ParserFactoryException pfe )
 		{
 			throw new ParserException( "Parser/Scanner construction failure.");
 		}
-		
+		// call parse
 		if( ! parser.parse() && throwExceptionOnError )
 			throw new ParserException("Parse failure");
 		return quickParseCallback.getCompilationUnit(); 
 	}
 	
-	private IASTCompilationUnit parse( String code, boolean hasCppNature )throws ParserException
-	{
-		return parse( code, hasCppNature, true, true );
-	}
 
-	public Map parse() throws Exception {
-
-		Map options = null;
-		IProject currentProject = null;
-		boolean hasCppNature = true;
-		
-		if (translationUnit != null && translationUnit.getCProject() != null) {
-			options = translationUnit.getCProject().getOptions(true);
-			currentProject = translationUnit.getCProject().getProject();
-		}		
-		if( currentProject != null )
-		{
-			hasCppNature = CoreModel.getDefault().hasCCNature(currentProject);
-		}
-		
+	public Map parse(boolean quickParseMode) throws Exception {
 		try
 		{
-			compilationUnit = parse( translationUnit.getBuffer().getContents(), hasCppNature);		
+			compilationUnit = parse( translationUnit, quickParseMode, true);		
 		}
 			
 		catch( ParserException e )

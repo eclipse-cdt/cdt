@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -19,6 +20,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
@@ -32,7 +34,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParen
  */
 public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 {
-	
+	private List declarations = new ArrayList();	
 	public class BaseIterator implements Iterator
 	{
 
@@ -256,6 +258,16 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     {
     	offsets.setNameEndOffset(o);
     }
+    
+    public Iterator getDeclarations()
+    {
+    	return declarations.iterator();
+    }
+    public void addDeclaration(IASTDeclaration declaration)
+    {
+    	declarations.add(declaration);
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
 	 */

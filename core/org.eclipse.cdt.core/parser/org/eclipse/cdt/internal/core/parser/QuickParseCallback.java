@@ -42,6 +42,15 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 		return macros.iterator();
 	}
 	
+	public Iterator getDeclarations(){
+		try{
+			return compilationUnit.getDeclarations();
+		}
+		catch (ASTNotImplementedException ne )
+		{
+			return null;
+		}
+	}
 		
 	public void exitMethodBody( IASTMethod method )
 	{
@@ -89,25 +98,19 @@ public class QuickParseCallback extends NullSourceElementRequestor implements IQ
 	
 		public OffsetableIterator()
 		{
-			try
-            {
-                declarationIter = compilationUnit.getDeclarations();
-            }
-            catch (ASTNotImplementedException ne )
-            {
-                
-            }
-			inclusionIter = inclusions.iterator();
-			macroIter = macros.iterator();		
+            declarationIter = getDeclarations();
+			inclusionIter = getInclusions();
+			macroIter = getMacros();		
 			updateInclusionIterator(); 
-			updateDeclarationIterator();
 			updateMacroIterator(); 
+			updateDeclarationIterator();
 		}
 	
 		private Object updateDeclarationIterator()
 		{
-			Object offsetable = currentDeclaration; 			
-			currentDeclaration = ( declarationIter.hasNext() ) ? (IASTOffsetableElement)declarationIter.next() : null; 
+			Object offsetable = currentDeclaration;
+			if(declarationIter != null)
+				currentDeclaration = ( declarationIter.hasNext() ) ? (IASTOffsetableElement)declarationIter.next() : null; 
 			return offsetable; 
 		}
 

@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTExceptionSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
@@ -42,7 +44,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
 	private final List parameters;
 	protected final ASTReferenceStore references;
 	private final int nameEndOffset;  
-	
+	private List declarations = new ArrayList();	
     /**
      * @param symbol
      * @param parameters
@@ -319,7 +321,15 @@ public class ASTFunction extends ASTScope implements IASTFunction
         return hasFunctionTryBlock;
     }
 
-
+    public Iterator getDeclarations()
+    {
+    	return declarations.iterator();
+    }
+    public void addDeclaration(IASTDeclaration declaration)
+    {
+    	declarations.add(declaration);
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
 	 */

@@ -165,8 +165,8 @@ public class CompletionEngine implements RelevanceConstants{
 		IParser parser = null;
 		try
 		{
-			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getParserLogService() );
-			parser  = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
+			IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.CONTEXTUAL_PARSE, language, requestor, ParserUtil.getParserLogService() );
+			parser  = ParserFactory.createParser( scanner, requestor, ParserMode.CONTEXTUAL_PARSE, language, ParserUtil.getParserLogService() );
 		}
 		catch( ParserFactoryException pfe )
 		{
@@ -269,6 +269,8 @@ public class CompletionEngine implements RelevanceConstants{
 	}
 	
 	private void addToCompletions (LookupResult result){
+		if(result == null)
+			return;
 		Iterator nodes = result.getNodes();
 		while (nodes.hasNext()){
 			IASTNode node = (IASTNode) nodes.next();

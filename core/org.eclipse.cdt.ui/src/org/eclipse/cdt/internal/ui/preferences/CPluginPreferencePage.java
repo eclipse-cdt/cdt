@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.ui.preferences;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
@@ -24,8 +25,8 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 
 	private static final String LINK_TO_EDITOR_LABEL= "CBasePreferencePage.linkToEditor.label";
 	private static final String SHOW_CU_CHILDREN_LABEL= "CBasePreferencePage.CUChildren.label";
-	private static final String USE_NEW_PARSER_LABEL= "CBasePreferencePage.useNewParser.label";
-
+	private static final String USE_STRUCTURAL_PARSE_MODE_LABEL= "CBasePreferencePage.OutlineView.structuralParseMode.label";
+	
 	public CPluginPreferencePage() {
 		super(GRID);
 		setPreferenceStore(CUIPlugin.getDefault().getPreferenceStore());
@@ -50,6 +51,9 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 
 		BooleanFieldEditor showCUChildrenEditor= new BooleanFieldEditor(PreferenceConstants.PREF_SHOW_CU_CHILDREN, CUIPlugin.getResourceString(SHOW_CU_CHILDREN_LABEL), parent);
 		addField(showCUChildrenEditor);
+		
+		BooleanFieldEditor useStructuralParseMode= new BooleanFieldEditor(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, CUIPlugin.getResourceString(USE_STRUCTURAL_PARSE_MODE_LABEL), parent);
+		addField(useStructuralParseMode);		
 	}
 	
 
@@ -61,10 +65,15 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_SHOW_CU_CHILDREN);
 	}
 	
+	public static boolean useStructuralParseMode() {
+		return CUIPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE);
+	}
+	
 	/**
 	 * @see IWorkbenchPreferencePage#init
 	 */
 	public void init(IWorkbench workbench) {
+		CUIPlugin.getDefault().getPreferenceStore().setValue(CCorePlugin.PREF_USE_STRUCTURAL_PARSE_MODE, CCorePlugin.getDefault().useStructuralParseMode());
 	}
 	
 	/**
@@ -73,6 +82,7 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	public static void initDefaults(IPreferenceStore prefs) {
 		prefs.setDefault(PreferenceConstants.PREF_LINK_TO_EDITOR, true);
 		prefs.setDefault(PreferenceConstants.PREF_SHOW_CU_CHILDREN, true);
+		prefs.setDefault(PreferenceConstants.PREF_USE_STRUCTURAL_PARSE_MODE, CCorePlugin.getDefault().useStructuralParseMode());
 		prefs.setDefault(PreferenceConstants.EDITOR_SHOW_SEGMENTS, false);
 	}
 	
@@ -82,7 +92,8 @@ public class CPluginPreferencePage extends FieldEditorPreferencePage implements 
 	public boolean performOk() {
 		if (!super.performOk())
 			return false;
-		
+		// tell the Core Plugin about this preference
+		CCorePlugin.getDefault().setStructuralParseMode(useStructuralParseMode());
 		return true;
 	}
 

@@ -277,6 +277,10 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
 
+		store.setDefault(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, false);
+		store.setDefault(ContentAssistPreference.PROJECT_SEARCH_SCOPE, true);
+		store.setDefault(ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE, false);
+		
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_ARROW, true);
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOUBLECOLON, true);
@@ -293,9 +297,6 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		//store.setDefault(ContentAssistPreference.CASE_SENSITIVITY, false);
 		store.setDefault(ContentAssistPreference.ORDER_PROPOSALS, false);
 		store.setDefault(ContentAssistPreference.ADD_INCLUDE, true);
-		store.setDefault(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, true);
-		store.setDefault(ContentAssistPreference.PROJECT_SEARCH_SCOPE, false);
-		store.setDefault(ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE, false);
 		
 	}
 

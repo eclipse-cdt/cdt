@@ -12,8 +12,8 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
 
 /**
- * Preference constants used in the JDT-UI preference store. Clients should only read the
- * JDT-UI preference store using these values. Clients are not allowed to modify the 
+ * Preference constants used in the CDT-UI preference store. Clients should only read the
+ * CDT-UI preference store using these values. Clients are not allowed to modify the 
  * preference store programmatically.
  * 
  * @since 2.0
@@ -54,6 +54,14 @@ public class PreferenceConstants {
 	 * </p>
 	 */
 	public static final String PREF_SHOW_CU_CHILDREN= "org.eclipse.cdt.ui.editor.CUChildren"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that speficies whether to use the parser's structural mode to build the CModel.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 */
+	public static final String PREF_USE_STRUCTURAL_PARSE_MODE= "org.eclipse.cdt.ui.editor.UseStructuralMode"; //$NON-NLS-1$
 	
 	/**
 	 * A named preference that controls if segmented view (show selected element only) is turned on or off.

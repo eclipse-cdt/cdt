@@ -1,3 +1,9 @@
+2003-12-15 Hoda Amer
+	Fixed [Bug 47234] new ParserMode required for a better CModel :
+	- Added a core plugin preference to build the CModel in Structural mode
+	- Added StructuralParseCallBack class
+	- Added lists of declarations to AST Scopes in the complete AST   
+	
 2003-12-12 John Camelon
 	Added preliminary keyword support into IASTCompletionNode::getKeywords().  
 	Refactored parser to put keyword string literals in one utility class.  

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -465,7 +466,9 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		try {
 				removeChildren();
 				CModelBuilder modelBuilder = new CModelBuilder(this);
-				return modelBuilder.parse();
+				
+				boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
+				return modelBuilder.parse(quickParseMode);
 		} catch (Exception e) {
 			// FIXME: use the debug log for this exception.
 			//System.out.println(e);

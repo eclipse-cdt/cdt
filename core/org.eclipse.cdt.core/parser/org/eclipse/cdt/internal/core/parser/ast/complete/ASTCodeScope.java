@@ -6,8 +6,13 @@
  */
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 
 /**
@@ -18,6 +23,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
  */
 public class ASTCodeScope extends ASTScope implements IASTCodeScope {
 
+	private List declarations = new ArrayList();	
 	private final IASTCodeScope ownerCodeScope;
 
     /**
@@ -71,7 +77,17 @@ public class ASTCodeScope extends ASTScope implements IASTCodeScope {
     {
         return ownerCodeScope;
     }
-
+    
+    public Iterator getDeclarations()
+    {
+    	return declarations.iterator();
+    }
+    
+    public void addDeclaration(IASTDeclaration declaration)
+    {
+    	declarations.add(declaration);
+    }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
 	 */

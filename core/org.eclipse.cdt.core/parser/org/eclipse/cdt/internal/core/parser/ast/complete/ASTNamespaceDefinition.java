@@ -10,7 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
@@ -27,6 +32,7 @@ public class ASTNamespaceDefinition
 
 	private NamedOffsets namedOffsets = new NamedOffsets();
 	private final ASTQualifiedNamedElement qualifiedName;
+	private List declarations = new ArrayList();
 	
     /**
      * @param namespaceSymbol
@@ -158,7 +164,16 @@ public class ASTNamespaceDefinition
 	{
 		namedOffsets.setNameEndOffset(o);
 	}
-
+	
+	public Iterator getDeclarations()
+	{
+		return declarations.iterator();
+	}
+	public void addDeclaration(IASTDeclaration declaration)
+	{
+		declarations.add(declaration);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTNode#lookup(java.lang.String, org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind)
 	 */

@@ -17,8 +17,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -52,16 +54,23 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 		if (corefile == null) {
 			cancel("No Corefile selected", ICDTLaunchConfigurationConstants.ERR_NO_COREFILE);
 		}
+		Process debugger = null;
+		IProcess debuggerProcess = null;
 		try {
 			dsession = debugConfig.getDebugger().createCoreSession(config, exe, corefile);
+			debugger = dsession.getSessionProcess();
 		} catch (CDIException e) {
 			abort("Failed Launching CDI Debugger", e, ICDTLaunchConfigurationConstants.ERR_INTERNAL_ERROR);
 		}
-
+		if ( debugger != null ) {
+			debuggerProcess = DebugPlugin.getDefault().newProcess(launch, debugger, "Debug Console");
+			launch.removeProcess(debuggerProcess);
+		}
 		CDebugModel.newCoreFileDebugTarget(
 			launch,
 			dsession.getCurrentTarget(),
 			renderTargetLabel(debugConfig),
+			debuggerProcess,
 			exe.getProject());
 	}
 

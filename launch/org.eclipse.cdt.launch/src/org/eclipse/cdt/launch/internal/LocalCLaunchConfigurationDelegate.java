@@ -66,6 +66,8 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		String[] commandArray = (String[]) command.toArray(new String[command.size()]);
 
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
+			IProcess debuggerProcess = null;
+			Process debugger;
 			ICDebugConfiguration debugConfig = getDebugConfig(config);
 			IFile exe = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(projectPath);
 			ICDISession dsession = null;
@@ -86,12 +88,18 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 					ICDITarget dtarget = dsession.getTargets()[0];
 					Process process = dtarget.getProcess();
 					IProcess iprocess = DebugPlugin.newProcess(launch, process, renderProcessLabel(commandArray[0]));
+					debugger =  dsession.getSessionProcess();
+					if ( debugger != null ) {
+						debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console");
+						launch.removeProcess(debuggerProcess);
+					}
 					boolean stopInMain = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 					CDebugModel.newDebugTarget(
 						launch,
 						dsession.getCurrentTarget(),
 						renderTargetLabel(debugConfig),
 						iprocess,
+						debuggerProcess,
 						exe.getProject(),
 						true,
 						false,
@@ -103,10 +111,16 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						cancel("No Process ID selected", ICDTLaunchConfigurationConstants.ERR_NO_PROCESSID);
 					}
 					dsession = debugConfig.getDebugger().createAttachSession(config, exe, pid);
+					debugger = dsession.getSessionProcess();
+					if ( debugger != null ) {
+						debuggerProcess = DebugPlugin.newProcess(launch, debugger, "Debug Console");
+						launch.removeProcess(debuggerProcess);
+					}
 					CDebugModel.newAttachDebugTarget(
 						launch,
 						dsession.getCurrentTarget(),
 						renderTargetLabel(debugConfig),
+						debuggerProcess,
 						exe.getProject());
 				}
 			} catch (CDIException e) {

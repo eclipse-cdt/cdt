@@ -1,0 +1,6 @@
+2002-10-23 David Inglis
+	
+	* /src/.../launch/internal/CoreFileDelegate.java
+	* /src/.../launch/internal/LocalCLaunchConfigurationDelegate.java
+		create new IProcess for debug console from CDISession and pass
+		to newDebugTarget methods

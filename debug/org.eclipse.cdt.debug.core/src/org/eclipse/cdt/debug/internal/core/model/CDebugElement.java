@@ -214,7 +214,7 @@ public class CDebugElement extends PlatformObject
 	 */
 	public void targetRequestFailed( String message, CDIException e ) throws DebugException
 	{
-		requestFailed( message, e, DebugException.TARGET_REQUEST_FAILED );
+		requestFailed( "Target request failed: " + message, e, DebugException.TARGET_REQUEST_FAILED );
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class CDebugElement extends PlatformObject
 	 */
 	public void targetRequestFailed( String message, Throwable e ) throws DebugException
 	{
-		throwDebugException( message, DebugException.TARGET_REQUEST_FAILED, e );
+		throwDebugException( "Target request failed: " + message, DebugException.TARGET_REQUEST_FAILED, e );
 	}
 	
 	/**

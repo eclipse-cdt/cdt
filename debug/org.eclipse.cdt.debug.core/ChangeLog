@@ -1,4 +1,8 @@
 2003-04-07 Mikhail Khodjaiants
+	Changed the message generated in the 'targetRequestFailed' methods of CDebugElement.
+	* CDebugElement.java
+
+2003-04-07 Mikhail Khodjaiants
 	Replaced 'toString()' by 'getMessage()' for CDI exceptions.
 	* CSharedLibraryManager.java
 	* CUpdateManager.java

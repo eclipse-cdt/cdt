@@ -165,7 +165,9 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 				else
 					fCElement= null;
 				handleAllElements( event );
-				setLimitTo( getSearchFor() );
+				List searchFor = getSearchFor();
+				getContainer().setPerformActionEnabled( searchFor.size() != 0 );
+				setLimitTo( searchFor );
 				updateCaseSensitiveCheckbox();
 			}
 		};
@@ -349,6 +351,12 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		
 		for( int i = 0; i < fLimitTo.length; i++ )
 			fLimitTo[ i ].setEnabled( set.contains( fLimitToValues[ i ] ) );
+		
+		if( !fLimitTo[ LIMIT_TO_DEFINITIONS ].isEnabled() && fLimitTo[LIMIT_TO_DEFINITIONS].getSelection() ){
+			fLimitTo[ LIMIT_TO_DEFINITIONS ].setSelection( false );
+			fLimitTo[ LIMIT_TO_ALL ].setSelection( true );
+		}
+			
 	}
 	
 	private Control createSearchFor(Composite parent) {
@@ -368,7 +376,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		return result;		
 	}
 	
-	private List getSearchFor() {
+	protected List getSearchFor() {
 		List search = new LinkedList( );
 		
 //		boolean all = fSearchFor[ fSearchFor.length - 1 ].getSelection();
@@ -659,6 +667,8 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		
 		
 	private Button[] fLimitTo;
+	private final static int LIMIT_TO_ALL = 3;
+	private final static int LIMIT_TO_DEFINITIONS = 1;
 	private LimitTo[] fLimitToValues = { DECLARATIONS, DEFINITIONS, REFERENCES, ALL_OCCURRENCES };
 	private String[] fLimitToText= {
 		CSearchMessages.getString("CSearchPage.limitTo.declarations"), //$NON-NLS-1$

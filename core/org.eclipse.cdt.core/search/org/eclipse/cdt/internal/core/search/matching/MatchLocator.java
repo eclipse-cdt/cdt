@@ -80,6 +80,7 @@ import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.core.search.IMatchLocator;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
 import org.eclipse.cdt.internal.core.search.AcceptMatchOperation;
 import org.eclipse.cdt.internal.core.search.indexing.IndexProblemHandler;
 import org.eclipse.core.resources.IFile;
@@ -101,10 +102,15 @@ import org.eclipse.core.runtime.Path;
  */
 public class MatchLocator implements IMatchLocator{
 
-
+	
 	ArrayList matchStorage;
 	
+	protected ObjectSet encounteredHeaders;
+	protected ObjectSet tempHeaderSet;
+	
 	public static boolean VERBOSE = false;
+	
+	private boolean checkForMatch = true;
 	/**
 	 * 
 	 */
@@ -144,120 +150,149 @@ public class MatchLocator implements IMatchLocator{
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptParameterReference(org.eclipse.cdt.internal.core.parser.ast.complete.ASTParameterReference)
 	 */
 	public void acceptParameterReference(IASTParameterReference reference)
-	{
-		check( REFERENCES, reference );        
+	{	
+		if (checkForMatch)
+			check( REFERENCES, reference );        
 	}
 	
 
 	public void acceptTemplateParameterReference(IASTTemplateParameterReference reference) 
 	{
-		check( REFERENCES, reference );	
+		if (checkForMatch)
+			check( REFERENCES, reference );	
 	}
 	
 	public void acceptTypedefDeclaration(IASTTypedefDeclaration typedef){
 		lastDeclaration = typedef;
-		check( DECLARATIONS, typedef );
+		
+		if (checkForMatch)
+			check( DECLARATIONS, typedef );
 	}
 	
 	public void acceptTypedefReference( IASTTypedefReference reference ){
-		check( REFERENCES, reference );
+		if (checkForMatch)
+			check( REFERENCES, reference );
 	}
 	
 	public void acceptEnumeratorReference(IASTEnumeratorReference reference){
-		check( REFERENCES, reference );	
+		if (checkForMatch)
+			check( REFERENCES, reference );	
 	}
 		
 	public void acceptMacro(IASTMacro macro){
-		check( DECLARATIONS, macro );	
+		if (checkForMatch)
+			check( DECLARATIONS, macro );	
 	}
 	
 	public void acceptVariable(IASTVariable variable){
 		lastDeclaration = variable;
 		
-		check( DECLARATIONS, variable );
-		
-		//A declaration is a definition unless...:
-		//it contains the extern specifier or a linkage-spec and no initializer
-		if( variable.getInitializerClause() != null ||
-		    ( !variable.isExtern() && !(currentScope instanceof IASTLinkageSpecification) ) ){
-			check( DEFINITIONS, variable );
+		if (checkForMatch){
+			check( DECLARATIONS, variable );
+			
+			//A declaration is a definition unless...:
+			//it contains the extern specifier or a linkage-spec and no initializer
+			if( variable.getInitializerClause() != null ||
+			    ( !variable.isExtern() && !(currentScope instanceof IASTLinkageSpecification) ) ){
+				check( DEFINITIONS, variable );
+			}
 		}
 	}
 	
 	public void acceptField(IASTField field){
 		lastDeclaration = field;
-		if( currentScope instanceof IASTClassSpecifier ){
-			check( DECLARATIONS, field ); 	   
-			if( !field.isStatic() ){
-				check( DEFINITIONS, field ); 
+		
+		if (checkForMatch){
+			if( currentScope instanceof IASTClassSpecifier ){
+				check( DECLARATIONS, field ); 	   
+				if( !field.isStatic() ){
+					check( DEFINITIONS, field ); 
+				}
+			} else {
+				check( DEFINITIONS, field );
 			}
-		} else {
-			check( DEFINITIONS, field );
 		}
 	}
 	
 	public void acceptEnumerationSpecifier(IASTEnumerationSpecifier enumeration){
 		lastDeclaration = enumeration; 
-		check( DECLARATIONS, enumeration );
-		Iterator iter = enumeration.getEnumerators();
-		while( iter.hasNext() ){
-			IASTEnumerator enumerator = (IASTEnumerator) iter.next();
-			lastDeclaration = enumerator;
-			check ( DECLARATIONS, enumerator );
-		}  
+		
+		if (checkForMatch){		
+			check( DECLARATIONS, enumeration );
+			Iterator iter = enumeration.getEnumerators();
+			while( iter.hasNext() ){
+				IASTEnumerator enumerator = (IASTEnumerator) iter.next();
+				lastDeclaration = enumerator;
+				check ( DECLARATIONS, enumerator );
+			}  
+		}
 	}
 		
 	public void acceptFunctionDeclaration(IASTFunction function){
 		lastDeclaration = function;
-		check( DECLARATIONS, function );
+		
+		if (checkForMatch)
+			check( DECLARATIONS, function );
 	}
 	
 	public void acceptMethodDeclaration(IASTMethod method){
 		lastDeclaration = method;
-		check( DECLARATIONS, method );
+		
+		if (checkForMatch)
+			check( DECLARATIONS, method );
 	}
 		
 	public void acceptClassReference(IASTClassReference reference) {
-		check( REFERENCES, reference );
+		if (checkForMatch)
+			check( REFERENCES, reference );
 	}
 	
 	public void acceptNamespaceReference( IASTNamespaceReference reference ){
-		check( REFERENCES, reference );
+		if (checkForMatch)
+			check( REFERENCES, reference );
 	}
 	
 	public void acceptVariableReference( IASTVariableReference reference ){
-		check( REFERENCES, reference );		
+		if (checkForMatch)
+			check( REFERENCES, reference );		
 	}
 	
 	public void acceptFieldReference( IASTFieldReference reference ){
-		check( REFERENCES, reference );
+		if (checkForMatch)
+			check( REFERENCES, reference );
 	}
 	
 	public void acceptEnumerationReference( IASTEnumerationReference reference ){
-		check( REFERENCES, reference );
+		if (checkForMatch)
+			check( REFERENCES, reference );
 	}
 	
 	public void acceptFunctionReference( IASTFunctionReference reference ){
-		check( REFERENCES, reference );
+		if (checkForMatch)
+			check( REFERENCES, reference );
 	}
 	
 	public void acceptMethodReference( IASTMethodReference reference ){
-		check( REFERENCES, reference );	
+		if (checkForMatch)
+			check( REFERENCES, reference );	
 	}
 	
 	public void enterFunctionBody(IASTFunction function){
 		lastDeclaration = function;
 		
-		if( !function.previouslyDeclared() )
-			check( DECLARATIONS, function );
+		if (checkForMatch)
+		{
+			if( !function.previouslyDeclared() )
+				check( DECLARATIONS, function );
+				
+			check( DEFINITIONS, function );
 			
-		check( DEFINITIONS, function );
-		
-		Iterator parms =function.getParameters();
-		while (parms.hasNext()){
-			Object tempParm = parms.next();
-			if (tempParm instanceof IASTParameterDeclaration){
-				check( DECLARATIONS, ((IASTParameterDeclaration)tempParm));
+			Iterator parms =function.getParameters();
+			while (parms.hasNext()){
+				Object tempParm = parms.next();
+				if (tempParm instanceof IASTParameterDeclaration){
+					check( DECLARATIONS, ((IASTParameterDeclaration)tempParm));
+				}
 			}
 		}
 		
@@ -266,20 +301,22 @@ public class MatchLocator implements IMatchLocator{
 	
 	public void enterMethodBody(IASTMethod method) {
 		lastDeclaration = method;
-		if( !method.previouslyDeclared() )
-			check( DECLARATIONS, method );
+		
+		if (checkForMatch){
+			if( !method.previouslyDeclared() )
+				check( DECLARATIONS, method );
+				
+			check( DEFINITIONS, method );
 			
-		check( DEFINITIONS, method );
-		
-		
-		Iterator parms =method.getParameters();
-		while (parms.hasNext()){
-			Object tempParm = parms.next();
-			if (tempParm instanceof IASTParameterDeclaration){
-				check( DECLARATIONS, ((IASTParameterDeclaration)tempParm));
+			
+			Iterator parms =method.getParameters();
+			while (parms.hasNext()){
+				Object tempParm = parms.next();
+				if (tempParm instanceof IASTParameterDeclaration){
+					check( DECLARATIONS, ((IASTParameterDeclaration)tempParm));
+				}
 			}
 		}
-		
 
 		pushScope( method );
 	}
@@ -290,14 +327,22 @@ public class MatchLocator implements IMatchLocator{
 	
 	public void enterNamespaceDefinition(IASTNamespaceDefinition namespaceDefinition) {
 		lastDeclaration = namespaceDefinition;
-		check( DECLARATIONS, namespaceDefinition );
-		check( DEFINITIONS, namespaceDefinition );
+		
+		if (checkForMatch){
+			check( DECLARATIONS, namespaceDefinition );
+			check( DEFINITIONS, namespaceDefinition );
+		}
+		
 		pushScope( namespaceDefinition );			
 	}
 
 	public void enterClassSpecifier(IASTClassSpecifier classSpecification) {
 		lastDeclaration = classSpecification;
-		check( DECLARATIONS, classSpecification );
+		
+		if (checkForMatch){
+			check( DECLARATIONS, classSpecification );
+		}
+		
 		pushScope( classSpecification );		
 	}
 	
@@ -310,7 +355,10 @@ public class MatchLocator implements IMatchLocator{
 	}
 
 	public void exitClassSpecifier(IASTClassSpecifier classSpecification) {
-		check(DECLARATIONS, classSpecification);
+		if (checkForMatch){
+			check(DECLARATIONS, classSpecification);
+		}
+		
 		popScope();
 	}
 
@@ -327,12 +375,26 @@ public class MatchLocator implements IMatchLocator{
 
 		IPath path = new Path( includePath );
 		IResource resource = null;
-		
+		if (!encounteredHeaders.containsKey(includePath)){
+			//this header has not been seen before
+			searchStack.addFirst(new Boolean(checkForMatch));
+			checkForMatch = true;
+			if (!tempHeaderSet.containsKey(includePath)){
+				tempHeaderSet.put(includePath);
+			}
+		}
+		else{
+			//this header has been seen before; don't bother processing it
+			searchStack.addFirst(new Boolean(checkForMatch));
+			checkForMatch = false;
+		}
+			
 		if( workspaceRoot != null ){
 			resource = workspaceRoot.getFileForLocation( path );
 //			if( resource == null ){
 //				//TODO:What to do if the file is not in the workspace?				
-//				IFile file = currentResource.getProject().getFile( inclusion.getName() );
+			//				IFile file = currentResource.getProject().getFile(
+			// inclusion.getName() );
 //				try{
 //					file.createLink( path, 0, null );
 //				} catch ( CoreException e ){
@@ -357,12 +419,19 @@ public class MatchLocator implements IMatchLocator{
 			currentPath = (IPath) obj;
 			currentResource = null;
 		}
+		
+		//set match for current level
+		Boolean check= (Boolean) searchStack.removeFirst();
+		checkForMatch = check.booleanValue();
 	}
 		
    
 	public void locateMatches( String [] paths, IWorkspace workspace, IWorkingCopy[] workingCopies ) throws InterruptedException{
 		
 		matchStorage = new ArrayList();
+		encounteredHeaders= new ObjectSet(32);
+		tempHeaderSet = new ObjectSet(32);
+		
 		workspaceRoot = (workspace != null) ? workspace.getRoot() : null;
 		
 		HashMap wcPaths = new HashMap();
@@ -406,6 +475,10 @@ public class MatchLocator implements IMatchLocator{
 			if( i > 0 && pathString.equals( paths[ i - 1 ] ) ) continue;
 			
 			if  (!searchScope.encloses(pathString)) continue;
+			
+			IFile tempFile=workspaceRoot.getFile(new Path(pathString));
+			IPath tempLocation =tempFile.getLocation();
+			if ((tempLocation != null) && (encounteredHeaders.containsKey(tempLocation.toOSString()))) continue;
 			
 			CodeReader reader = null;
 			
@@ -466,6 +539,9 @@ public class MatchLocator implements IMatchLocator{
 				}
 			}
 			
+			//Set checkForMatch to true
+			checkForMatch = true;
+			
 			//Get the scanner info
 			IScannerInfo scanInfo = new ScannerInfo();
 			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
@@ -512,8 +588,11 @@ public class MatchLocator implements IMatchLocator{
 					vmErr.printStackTrace();
 				}
 			} finally { 
+				encounteredHeaders.addAll(tempHeaderSet);
+				tempHeaderSet.clear();
 				scopeStack.clear();
 				resourceStack.clear();
+				searchStack.clear();
 				lastDeclaration = null;
 				currentScope = null;
 				parser = null;
@@ -645,6 +724,8 @@ public class MatchLocator implements IMatchLocator{
 	
 	private IASTScope				currentScope = null;
 	private LinkedList				scopeStack = new LinkedList();
+	
+	private LinkedList				searchStack = new LinkedList();
 
 	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptElaboratedForewardDeclaration(org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier)

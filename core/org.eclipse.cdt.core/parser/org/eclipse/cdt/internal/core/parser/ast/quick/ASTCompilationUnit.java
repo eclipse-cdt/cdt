@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTNode;
 
 /**
  * @author jcamelon

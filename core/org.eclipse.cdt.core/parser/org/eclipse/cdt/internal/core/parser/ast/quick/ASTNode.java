@@ -7,9 +7,6 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ast.IASTNode;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupException;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
 
 /**
  * @author hamer

@@ -13,9 +13,6 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTScopedTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupException;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 
 /**

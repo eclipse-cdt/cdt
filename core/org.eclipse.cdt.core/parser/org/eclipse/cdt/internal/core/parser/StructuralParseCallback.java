@@ -7,7 +7,8 @@
  * 
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
-***********************************************************************/package org.eclipse.cdt.internal.core.model;
+***********************************************************************/
+package org.eclipse.cdt.internal.core.parser;
 import java.util.LinkedList;
 
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;

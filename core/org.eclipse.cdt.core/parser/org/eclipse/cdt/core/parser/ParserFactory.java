@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.parser;
 import java.io.Reader;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
-import org.eclipse.cdt.internal.core.model.StructuralParseCallback;
 import org.eclipse.cdt.internal.core.parser.CompleteParser;
 import org.eclipse.cdt.internal.core.parser.ContextualParser;
 import org.eclipse.cdt.internal.core.parser.LineOffsetReconciler;
@@ -22,6 +21,7 @@ import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.QuickParser;
 import org.eclipse.cdt.internal.core.parser.Scanner;
 import org.eclipse.cdt.internal.core.parser.StructuralParser;
+import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 

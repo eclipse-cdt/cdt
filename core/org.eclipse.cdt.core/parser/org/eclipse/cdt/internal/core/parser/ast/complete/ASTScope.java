@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.Iterator;
 
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;

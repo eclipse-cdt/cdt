@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser2.cpp;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -26,6 +27,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceAlias;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
@@ -56,6 +60,7 @@ import org.eclipse.cdt.internal.core.parser2.c.CASTEnumerationSpecifier;
 import org.eclipse.cdt.internal.core.parser2.c.CASTEnumerator;
 import org.eclipse.cdt.internal.core.parser2.c.CASTExpressionList;
 import org.eclipse.cdt.internal.core.parser2.c.CASTName;
+import org.eclipse.cdt.internal.core.parser2.c.CASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser2.c.CASTUnaryExpression;
 
 /**
@@ -69,7 +74,7 @@ import org.eclipse.cdt.internal.core.parser2.c.CASTUnaryExpression;
 public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     
     private ScopeStack templateIdScopes = new ScopeStack();
-    protected Object translationUnit;
+    protected IASTTranslationUnit translationUnit;
     private static class ScopeStack {
         private int[] stack;
 
@@ -2605,31 +2610,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             throws EndOfFileException, BacktrackException {
         switch (LT(1)) {
         case IToken.t_asm:
-            IToken first = consume(IToken.t_asm);
-            consume(IToken.tLPAREN);
-            char[] assembly = consume(IToken.tSTRING).getCharImage();
-            consume(IToken.tRPAREN);
-            IToken last = consume(IToken.tSEMI);
-
-            try {
-                //                    astFactory.createASMDefinition(
-                //                            scope,
-                //                            assembly,
-                //                            first.getOffset(),
-                //                            first.getLineNumber(), last.getEndOffset(),
-                // last.getLineNumber(), last.getFilename());
-            } catch (Exception e) {
-                logException("declaration:createASMDefinition", e); //$NON-NLS-1$
-                throwBacktrack(first.getOffset(), last.getEndOffset(), first
-                        .getLineNumber(), first.getFilename());
-            }
-            // if we made it this far, then we have all we need
-            // do the callback
-            // 				resultDeclaration.acceptElement(requestor);
-            break;
+            return asmDeclaration();
         case IToken.t_namespace:
-            namespaceDefinition();
-            break;
+            return namespaceDefinitionOrAlias();
         case IToken.t_using:
             usingClause();
             break;
@@ -2717,105 +2700,71 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      *             request a backtrack
      *  
      */
-    protected Object namespaceDefinition()
+    protected IASTDeclaration namespaceDefinitionOrAlias()
             throws BacktrackException, EndOfFileException {
-        IToken first = consume(IToken.t_namespace);
 
-        IToken identifier = null;
+        IToken first = consume(IToken.t_namespace);
+        IASTName name = null;
         // optional name
         if (LT(1) == IToken.tIDENTIFIER)
-            identifier = identifier();
+            name = createName( identifier() );
+        else
+            name = createName();
 
         if (LT(1) == IToken.tLBRACE) {
-            IToken lbrace = consume();
-            Object namespaceDefinition = null;
-            try {
-                namespaceDefinition = null; /*
-                                             * astFactory.createNamespaceDefinition(
-                                             * scope, (identifier == null ?
-                                             * EMPTY_STRING:
-                                             * identifier.getCharImage()),
-                                             * //$NON-NLS-1$ first.getOffset(),
-                                             * first.getLineNumber(),
-                                             * (identifier == null ?
-                                             * first.getOffset() :
-                                             * identifier.getOffset()),
-                                             * (identifier == null ?
-                                             * first.getEndOffset() :
-                                             * identifier.getEndOffset() ),
-                                             * (identifier == null ?
-                                             * first.getLineNumber() :
-                                             * identifier.getLineNumber() ),
-                                             * first.getFilename());
-                                             */
-            } catch (Exception e1) {
-
-                logException(
-                        "namespaceDefinition:createNamespaceDefinition", e1); //$NON-NLS-1$
-                throwBacktrack(first.getOffset(), lbrace.getEndOffset(), first
-                        .getLineNumber(), first.getFilename());
-                return null;
-            }
-            //            namespaceDefinition.enterScope( requestor );
-            try {
-                cleanupLastToken();
-                namespaceDeclarationLoop: while (LT(1) != IToken.tRBRACE) {
-                    int checkToken = LA(1).hashCode();
-                    switch (LT(1)) {
-                    case IToken.tRBRACE:
-                        //consume(Token.tRBRACE);
-                        break namespaceDeclarationLoop;
-                    default:
-                        try {
-                            declaration();
-                        } catch (BacktrackException bt) {
-                            failParse(bt);
-                            if (checkToken == LA(1).hashCode())
-                                failParseWithErrorHandling();
-                        }
+            consume();
+            ICPPASTNamespaceDefinition namespaceDefinition = createNamespaceDefinition();
+            ((CPPASTNode)namespaceDefinition).setOffset( first.getOffset() );
+            namespaceDefinition.setName( name );
+            name.setParent( namespaceDefinition );
+            name.setPropertyInParent( ICPPASTNamespaceDefinition.NAMESPACE_NAME );
+            
+            cleanupLastToken();
+            namespaceDeclarationLoop: while (LT(1) != IToken.tRBRACE) {
+                int checkToken = LA(1).hashCode();
+                switch (LT(1)) {
+                case IToken.tRBRACE:
+                    break namespaceDeclarationLoop;
+                default:
+                    try {
+                        IASTDeclaration d = declaration();
+                        d.setParent( namespaceDefinition );
+                        d.setPropertyInParent( ICPPASTNamespaceDefinition.OWNED_DECLARATION );
+                        namespaceDefinition.addDeclaration( d );
+                    } catch (BacktrackException bt) {
+                        failParse(bt);
+                        if (checkToken == LA(1).hashCode())
+                            failParseWithErrorHandling();
                     }
-                    if (checkToken == LA(1).hashCode())
-                        failParseWithErrorHandling();
                 }
-                // consume the }
-                IToken last = consume(IToken.tRBRACE);
-
-                //		        namespaceDefinition.setEndingOffsetAndLineNumber(
-                //		                last.getOffset() + last.getLength(), last.getLineNumber());
-            } finally {
-                //            	namespaceDefinition.exitScope( requestor );
+                if (checkToken == LA(1).hashCode())
+                    failParseWithErrorHandling();
             }
+            // consume the }
+            consume(IToken.tRBRACE);
+
             return namespaceDefinition;
         } else if (LT(1) == IToken.tASSIGN) {
             IToken assign = consume(IToken.tASSIGN);
 
-            if (identifier == null) {
+            if (name.toString() == null) {
                 throwBacktrack(first.getOffset(), assign.getEndOffset(), first
                         .getLineNumber(), first.getFilename());
                 return null;
             }
 
             ITokenDuple duple = name();
-            IToken semi = consume(IToken.tSEMI);
+            ICPPASTQualifiedName qualifiedName = createQualifiedName( duple );
+            consume(IToken.tSEMI);
 
-            Object alias = null;
-            try {
-                alias = null; /*
-                               * astFactory.createNamespaceAlias( scope,
-                               * identifier.getCharImage(), duple,
-                               * first.getOffset(), first.getLineNumber(),
-                               * identifier.getOffset(),
-                               * identifier.getEndOffset(),
-                               * identifier.getLineNumber(),
-                               * duple.getLastToken().getEndOffset(),
-                               * duple.getLastToken().getLineNumber() );
-                               */
-            } catch (Exception e1) {
-                logException("namespaceDefinition:createNamespaceAlias", e1); //$NON-NLS-1$
-                throwBacktrack(first.getOffset(), semi.getEndOffset(), first
-                        .getLineNumber(), first.getFilename());
-                return null;
-            }
+            ICPPASTNamespaceAlias alias = createNamespaceAlias();            
+            ((CPPASTNode)alias).setOffset( first.getOffset() );
+            alias.setAlias( name );
+            name.setParent( alias );
+            name.setPropertyInParent( ICPPASTNamespaceAlias.ALIAS_NAME );
+            alias.setQualifiedName( qualifiedName );
+            qualifiedName.setParent( alias );
+            qualifiedName.setPropertyInParent( ICPPASTNamespaceAlias.MAPPING_NAME );
             return alias;
         } else {
             int endOffset = (lastToken != null) ? lastToken.getEndOffset() : 0;
@@ -2823,6 +2772,66 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                     first.getFilename());
             return null;
         }
+    }
+
+    /**
+     * @return
+     */
+    protected ICPPASTNamespaceAlias createNamespaceAlias() {
+        return new CPPASTNamespaceAlias();
+    }
+
+    /**
+     * @param duple
+     * @return
+     */
+    protected ICPPASTQualifiedName createQualifiedName(ITokenDuple duple) {
+        CPPASTName result = new CPPASTName();
+        result.setOffset( duple.getStartOffset());
+        ITokenDuple [] segments = duple.getSegments();
+        for( int i = 0; i < segments.length; ++i )
+        {
+            IASTName subName = null;
+            // take each name and add it to the result
+            if( segments[i] instanceof IToken )
+                subName = createName( (IToken)segments[i]);
+            else if( segments[i].getTemplateIdArgLists() == null )
+                subName = createName( segments[i] );
+            else // templateID
+                subName = createTemplateID( segments[i] );
+            subName.setParent( result );
+            subName.setPropertyInParent( ICPPASTQualifiedName.SEGMENT_NAME );
+            result.addName( subName );
+        }
+        
+        return result;
+    }
+
+    
+    
+    /**
+     * @param duple
+     * @return
+     */
+    private IASTName createTemplateID(ITokenDuple duple) {
+        return new CASTName(); //TODO
+    }
+
+    /**
+     * @param duple
+     * @return
+     */
+    protected IASTName createName(ITokenDuple duple) {
+        CASTName name = new CASTName( duple.toCharArray() );
+        name.setOffset( duple.getStartOffset());
+        return name;
+    }
+
+    /**
+     * @return
+     */
+    protected ICPPASTNamespaceDefinition createNamespaceDefinition() {
+        return new CPPASTNamespaceDefinition();
     }
 
     /**
@@ -4291,7 +4300,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      */
     protected void translationUnit() {
         try {
-            translationUnit = null; /* astFactory.createCompilationUnit(); */
+            translationUnit = createTranslationUnit();
         } catch (Exception e2) {
             logException("translationUnit::createCompilationUnit()", e2); //$NON-NLS-1$
             return;
@@ -4302,7 +4311,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         while (true) {
             try {
                 int checkOffset = LA(1).hashCode();
-                declaration();
+                IASTDeclaration declaration = declaration();
+                translationUnit.addDeclaration( declaration );
+                declaration.setParent( translationUnit );
+                declaration.setPropertyInParent( IASTTranslationUnit.OWNED_DECLARATION );
+                
                 if (LA(1).hashCode() == checkOffset)
                     failParseWithErrorHandling();
             } catch (EndOfFileException e) {
@@ -4349,7 +4362,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                 }
             }
         }
-        //        compilationUnit.exitScope( requestor );
+    }
+
+    /**
+     * @return
+     */
+    protected IASTTranslationUnit createTranslationUnit() {
+        return new CASTTranslationUnit();
     }
 
     protected IToken consumeArrayModifiers(IDeclarator d) throws EndOfFileException, BacktrackException {
@@ -4380,7 +4399,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
      * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#getTranslationUnit()
      */
     protected IASTTranslationUnit getTranslationUnit() {
-        return (IASTTranslationUnit) translationUnit;
+        return translationUnit;
     }
     
     /* (non-Javadoc)
@@ -4461,4 +4480,5 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
         return null;
     }
 
+    
 }

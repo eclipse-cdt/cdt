@@ -339,4 +339,13 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 	 */
 	public void acceptElement(ISourceElementRequestor requestor) {
 	}
+	
+	/* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ITokenDuple#getSegmentIterator()
+     */
+    public ITokenDuple[] getSegments() {
+        ITokenDuple [] r = new ITokenDuple[0];
+        r[0] = this;
+        return r;
+    }
 }

@@ -17,7 +17,7 @@ import org.eclipse.cdt.internal.core.parser2.ASTNode;
 /**
  * @author jcamelon
  */
-class CASTNode extends ASTNode implements IASTNode {
+public class CASTNode extends ASTNode implements IASTNode {
 
     
     private IASTNode parent;

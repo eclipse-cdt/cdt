@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -58,6 +59,7 @@ import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.parser.ParserProblemFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
+import org.eclipse.cdt.internal.core.parser2.c.CASTASMDeclaration;
 import org.eclipse.cdt.internal.core.parser2.c.CASTBreakStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTCaseStatement;
 import org.eclipse.cdt.internal.core.parser2.c.CASTContinueStatement;
@@ -1568,4 +1570,39 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
     
     protected abstract IASTNode forInitStatement() throws BacktrackException,
     EndOfFileException;
+    
+    /**
+     * @return
+     * @throws EndOfFileException
+     * @throws BacktrackException
+     */
+    protected IASTDeclaration asmDeclaration() throws EndOfFileException, BacktrackException {
+        IToken first = consume(IToken.t_asm);
+        consume(IToken.tLPAREN);
+        String assembly = consume(IToken.tSTRING).getImage();
+        consume(IToken.tRPAREN);
+        consume(IToken.tSEMI);
+        cleanupLastToken();
+        return buildASMDirective( first.getOffset(), assembly );
+    }
+
+    /**
+     * @param offset
+     * @param assembly
+     * @return
+     */
+    protected IASTASMDeclaration buildASMDirective(int offset, String assembly) {
+        IASTASMDeclaration result = createASMDirective();
+        ((ASTNode)result).setOffset( offset );
+        result.setAssembly( assembly );
+        return result;
+    }
+
+    /**
+     * @return
+     */
+    protected IASTASMDeclaration createASMDirective() {
+        return new CASTASMDeclaration();
+    }
+
 }

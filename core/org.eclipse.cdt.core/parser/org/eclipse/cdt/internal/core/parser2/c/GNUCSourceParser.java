@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
@@ -335,13 +334,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             BacktrackException {
         switch (LT(1)) {
         case IToken.t_asm:
-            IToken first = consume(IToken.t_asm);
-            consume(IToken.tLPAREN);
-            String assembly = consume(IToken.tSTRING).getImage();
-            consume(IToken.tRPAREN);
-            consume(IToken.tSEMI);
-            cleanupLastToken();
-            return buildASMDirective( first.getOffset(), assembly );
+            return asmDeclaration();
         default:
             IASTDeclaration d = simpleDeclaration();
             cleanupLastToken();
@@ -350,25 +343,8 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 
     }
 
-    /**
-     * @param offset
-     * @param assembly
-     * @return
-     */
-    protected IASTASMDeclaration buildASMDirective(int offset, String assembly) {
-        IASTASMDeclaration result = createASMDirective();
-        ((CASTNode)result).setOffset( offset );
-        result.setAssembly( assembly );
-        return result;
-    }
 
-    /**
-     * @return
-     */
-    protected IASTASMDeclaration createASMDirective() {
-        return new CASTASMDeclaration();
-    }
-
+  
     /**
      * @throws BacktrackException
      * @throws EndOfFileException

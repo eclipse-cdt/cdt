@@ -112,6 +112,13 @@
                enablesFor="1"
                id="org.eclipse.cdt.make.ui.NavigatorBuildTargetAction">
          </action>
+         <action
+               label="%ActionMakeCreateTarget.label"
+               class="org.eclipse.cdt.make.ui.actions.CreateTargetAction"
+               menubarPath="additions"
+               enablesFor="1"
+               id="org.eclipse.cdt.make.ui.CViewCreateTargetAction">
+         </action>
          <filter
                name="projectNature"
                value="org.eclipse.cdt.make.core.makeNature">

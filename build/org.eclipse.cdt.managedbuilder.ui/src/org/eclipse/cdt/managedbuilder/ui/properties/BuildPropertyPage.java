@@ -240,9 +240,10 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		fd.top = new FormAttachment(configSelector, 0, SWT.CENTER);
 		fd.right = new FormAttachment(100,0);
 		manageConfigs.setLayoutData(fd);
-		// Anchor config combo left 5 pixels from label, top 5% below the centre, and right to the button
+		// Anchor config combo left 5 pixels from longest label, top 5% below the centre, and right to the button
+		Label longestLabel = (platformLabel.getText().length()>configLabel.getText().length()?platformLabel:configLabel);
 		fd = new FormData();
-		fd.left = new FormAttachment(configLabel, 5); 
+		fd.left = new FormAttachment(longestLabel, 5); 
 		fd.top = new FormAttachment(55,0);
 		fd.right = new FormAttachment(manageConfigs, -5 , SWT.LEFT);
 		configSelector.setLayoutData(fd);		

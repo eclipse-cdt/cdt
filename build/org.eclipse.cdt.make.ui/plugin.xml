@@ -149,9 +149,9 @@
          </visibility>
          <action
                label="%ActionMakeUpdate.label"
+               icon="icons/ctool16/update_old.gif"
                class="org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction"
                enablesFor="+"
-               icon="icons/ctool16/update_old.gif"
                id="org.eclipse.cdt.make.ui.UpdateProjectMakeAction">
          </action>
       </objectContribution>
@@ -159,9 +159,10 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            name="%CommandMakeBuildCreate.name"
-            description="%CommandMakeBuildCreate.description"
-            id="org.eclipse.cdt.make.ui.createBuildAction">
+            name="%CommandMakeBuild.name"
+            description="%CommandMakeBuild.description"
+            category="org.eclipse.ui.category.project"
+            id="org.eclipse.cdt.make.ui.makeTargetCommand">
       </command>
    </extension>
    <extension
@@ -208,44 +209,57 @@
             id="org.eclipse.cdt.make.ui.updateActionSet">
          <action
                label="%ActionMakeUpdate.label"
-               class="org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction"
-               id="org.eclipse.cdt.make.ui.UpdateMakeAction"
                icon="icons/ctool16/update_old.gif"
+               tooltip="%ActionMakeUpdate.tooltip"
+               class="org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction"
                toolbarPath="Normal"
-               tooltip="%ActionMakeUpdate.tooltip">
+               id="org.eclipse.cdt.make.ui.UpdateMakeAction">
             <enablement>
-            <and>
-               <not>
+               <and>
+                  <not>
+                     <objectState
+                           name="nature"
+                           value="org.eclipse.cdt.make.core.makeNature">
+                     </objectState>
+                  </not>
                   <objectState
                         name="nature"
-                        value="org.eclipse.cdt.make.core.makeNature">
+                        value="org.eclipse.cdt.core.cnature">
                   </objectState>
-               </not>
-               <objectState
-                     name="nature"
-                     value="org.eclipse.cdt.core.cnature">
-               </objectState>
-               <or>
-                  <objectState
-                        name="projectPersistentProperty"
-                        value="org.eclipse.cdt.core.buildLocation">
-                  </objectState>
-                  <objectState
-                        name="projectPersistentProperty"
-                        value="org.eclipse.cdt.core.buildFullArguments">
-                  </objectState>
-                  <objectState
-                        name="projectPersistentProperty"
-                        value="org.eclipse.cdt.core.buildIncrementalArguments">
-                  </objectState>
-                  <objectState
-                        name="projectPersistentProperty"
-                        value="org.eclipse.cdt.make.goals">
-                  </objectState>
-               </or>
-            </and>
+                  <or>
+                     <objectState
+                           name="projectPersistentProperty"
+                           value="org.eclipse.cdt.core.buildLocation">
+                     </objectState>
+                     <objectState
+                           name="projectPersistentProperty"
+                           value="org.eclipse.cdt.core.buildFullArguments">
+                     </objectState>
+                     <objectState
+                           name="projectPersistentProperty"
+                           value="org.eclipse.cdt.core.buildIncrementalArguments">
+                     </objectState>
+                     <objectState
+                           name="projectPersistentProperty"
+                           value="org.eclipse.cdt.make.goals">
+                     </objectState>
+                  </or>
+               </and>
             </enablement>
-               
+         </action>
+      </actionSet>
+      <actionSet
+            label="%ActionSetMakeTarget.name"
+            id="org.eclipse.cdt.make.ui.makeTargetActionSet">
+         <action
+               definitionId="org.eclipse.cdt.make.ui.makeTargetCommand"
+               label="%ActionMakeBuildTarget.name"
+               class="org.eclipse.cdt.make.ui.actions.BuildTargetAction"
+               enablesFor="1"
+               id="org.eclipse.cdt.make.ui.makeTargetAction">
+            <selection
+                  class="org.eclipse.core.resources.IContainer">
+            </selection>
          </action>
       </actionSet>
    </extension>

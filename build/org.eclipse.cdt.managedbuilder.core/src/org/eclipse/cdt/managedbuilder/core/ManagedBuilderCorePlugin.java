@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.core;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -29,13 +29,15 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	private static final String PLUGIN_ID = "org.eclipse.cdt.managedbuilder.core"; //$NON-NLS-1$
 	// The attribute name for the dependency calculator
 	public static final String DEP_CALC_ID ="dependencyCalculator"; //$NON-NLS-1$
-	//The shared instance.
+	// The shared instance
 	private static ManagedBuilderCorePlugin plugin;
 	// The attribute name for the scanner info collector
 	public static final String SCANNER_INFO_ID = "scannerInfoCollector"; //$NON-NLS-1$
 	// The attribute name for the makefile generator
 	public static final String MAKEGEN_ID ="makefileGenerator"; //$NON-NLS-1$
-	
+	// The unique id for all managed make projects 
+	public static final String MANAGED_MAKE_PROJECT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".managedMake"; //$NON-NLS-1$
+
 	/**
 	 * @param descriptor
 	 */

@@ -727,7 +727,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		boolean isContainer = (resource instanceof IContainer);
 		if (isContainer) {
 			MakeTarget[] aBuild = new MakeTarget[1];
-			aBuild[0] = new MakeTarget(resource, "");
+			aBuild[0] = new MakeTarget(resource, "all");
 			menu.add(new MakeAction(aBuild, getViewSite().getShell(), "Build"));
 
 			MakeTarget[] aReBuild = new MakeTarget[1];

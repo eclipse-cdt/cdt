@@ -154,7 +154,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		boolean temporary = (type == ICDIBreakpoint.TEMPORARY);
 		String exprCond = null;
 		int ignoreCount = 0;
-		String line = "";
+		StringBuffer line = new StringBuffer();
 
 		if (condition != null) {
 			exprCond = condition.getExpression();
@@ -162,24 +162,26 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		}
 
 		if (location != null) {
-			if (location.getFile() != null && location.getFile().length() > 0) {
-				line = location.getFile() + ":";
-				if (location.getFunction() != null && location.getFunction().length() > 0) {
-					line += location.getFunction();
+			String file = location.getFile(); 
+			String function = location.getFunction(); 
+			if (file != null && file.length() > 0) {
+				line.append(file).append(':');
+				if (function != null && function.length() > 0) {
+					line.append(function);
 				} else {
-					line += Integer.toString(location.getLineNumber());
+					line.append(location.getLineNumber());
 				}
-			} else if (location.getFunction() != null && location.getFunction().length() > 0) {
-				line = location.getFunction();
+			} else if (function != null && function.length() > 0) {
+					line.append(function);
 			} else {
-				line = "*" + Long.toString(location.getAddress());
+				line.append('*').append(location.getAddress());
 			}
 		}
 
 		CSession s = getCSession();
 		CommandFactory factory = s.getMISession().getCommandFactory();
 		MIBreakInsert breakInsert = factory.createMIBreakInsert(temporary, hardware,
-			exprCond, ignoreCount, line);
+			exprCond, ignoreCount, line.toString());
 		MIBreakPoint[] points = null;
 		try {
 			s.getMISession().postCommand(breakInsert);

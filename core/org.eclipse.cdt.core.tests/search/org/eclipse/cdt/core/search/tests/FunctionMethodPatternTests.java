@@ -138,7 +138,7 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 		pattern = SearchEngine.createSearchPattern( "operator *", METHOD, DECLARATIONS, true );
 		search( workspace, pattern, scope, resultCollector );
 		matches = resultCollector.getSearchResults();
-		assertEquals( matches.size(), 3 ); //3 in classDecl.cpp
+		assertEquals( matches.size(), 6 ); //3 in classDecl.cpp
 	}
 	
 	public void testBug43498(){
@@ -162,5 +162,33 @@ public class FunctionMethodPatternTests extends BaseSearchTest {
 
 		string = new char[] {'w','o','r','d','?','w','o','r','d'};
 		assertTrue( CharOperation.equals( string, methodPattern.getSimpleName() ) );
+	}
+	
+	public void testBug43062(){
+		MethodDeclarationPattern pattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "operator const short &", METHOD, DECLARATIONS, true );
+		char [] string = new char [] { 'o','p','e','r','a','t','o','r',' ','c','o','n','s','t',' ','s','h','o','r','t',' ','&' };
+		assertTrue( CharOperation.equals( string, pattern.getSimpleName() ) );
+		
+		pattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "operator short", METHOD, DECLARATIONS, true );
+		string = new char [] { 'o','p','e','r','a','t','o','r',' ','s','h','o','r','t' };
+		assertTrue( CharOperation.equals( string, pattern.getSimpleName() ) );
+				
+		pattern = (MethodDeclarationPattern) SearchEngine.createSearchPattern( "operator short int", METHOD, DECLARATIONS, true );
+		string = new char [] { 'o','p','e','r','a','t','o','r',' ','s','h','o','r','t',' ','i','n','t' };
+		assertTrue( CharOperation.equals( string, pattern.getSimpleName() ) );
+	}
+	
+	public void testConstructorDestructor(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", METHOD, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		
+		pattern = SearchEngine.createSearchPattern( "~A", METHOD, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+
+		matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
 	}
 }

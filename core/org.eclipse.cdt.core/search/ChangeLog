@@ -1,4 +1,9 @@
 2003-09-29 Andrew Niefer
+	- fix bug 43062 outline is confused on operator methods containing spaces
+		- modify CSearchPattern.scanForNames to use same naming convention as TokenDuple.toString()
+		- modify MatchLocator.report to use IASTOffsetableNamedElement.getNameEndOffset()
+
+2003-09-29 Andrew Niefer
 	-fix NPE if IScannerInfoProvider returns null IScannerInfo
 
 2003-09-25 Andrew Niefer

@@ -1,4 +1,9 @@
 2003-09-29 Andrew Niefer
+	added testBug43062 and testConstructorDestructor to FunctionMethodPatternTests
+	modified resources/search/classDecl.cpp & include.h to include more operators and a constructor
+	& destructor
+
+2003-09-29 Andrew Niefer
 	added testbug43834() to ParserSymbolTableTest
 
 2003-09-29 John Camelon

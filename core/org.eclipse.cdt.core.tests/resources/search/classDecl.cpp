@@ -5,6 +5,8 @@
 class Heal{};
 
 class A {
+	A() {}
+	~A(){}
 	class B {
 		void f( A );
 		void f( A & );

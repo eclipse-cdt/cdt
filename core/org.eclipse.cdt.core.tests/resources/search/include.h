@@ -6,6 +6,10 @@ class Head {
 	Head * operator *  ( int index ){ return array[ index ]; }
 	Head * operator += ( int index );
 	
+	operator const short & ();
+	operator short         ();
+	operator short int     ();
+	
 	Head ** array;
 };
 

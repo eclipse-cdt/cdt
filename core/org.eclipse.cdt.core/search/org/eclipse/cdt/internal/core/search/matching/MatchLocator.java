@@ -442,19 +442,23 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	protected void report( ISourceElementCallbackDelegate node, int accuracyLevel ){
 		try {
 			int offset = 0;
-			int length = 0;
+			int end = 0;
 			
 			if( node instanceof IASTReference ){
 				IASTReference reference = (IASTReference) node;
 				offset = reference.getOffset();
-				length = reference.getName().length();
+				end = offset + reference.getName().length();;
 				if (VERBOSE)
 					MatchLocator.verbose("Report Match: " + reference.getName());
 			} else if( node instanceof IASTOffsetableNamedElement ){
 				IASTOffsetableNamedElement offsetableElement = (IASTOffsetableNamedElement) node;
 				offset = offsetableElement.getNameOffset() != 0 ? offsetableElement.getNameOffset() 
 															    : offsetableElement.getStartingOffset();
-				length = offsetableElement.getName().length();															  
+				end = offsetableElement.getNameEndOffset();
+				if( end == 0 ){
+					end = offset + offsetableElement.getName().length();;
+				}
+																						  
 				if (VERBOSE)
 					MatchLocator.verbose("Report Match: " + offsetableElement.getName());
 			}
@@ -482,9 +486,9 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			}
 		
 			if( currentResource != null ){
-				match = resultCollector.createMatch( currentResource, offset, offset + length, object );
+				match = resultCollector.createMatch( currentResource, offset, end, object );
 			} else if( currentPath != null ){
-				match = resultCollector.createMatch( currentPath, offset, offset + length, object );
+				match = resultCollector.createMatch( currentPath, offset, end, object );
 			}
 			if( match != null ){
 				resultCollector.acceptMatch( match );

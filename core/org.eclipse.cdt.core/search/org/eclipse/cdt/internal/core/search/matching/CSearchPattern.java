@@ -433,6 +433,8 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		try {
 			IToken token = ( unusedToken != null ) ? unusedToken : scanner.nextToken();
+			IToken prev = null;
+			
 			scanner.setThrowExceptionOnBadCharacterRead( true );
 			
 			boolean encounteredWild = false;
@@ -453,11 +455,17 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					
 					default:
 						if( token.getType() == IToken.tSTAR || 
-						    token.getType() == IToken.tQUESTION ||
-						    token.getType() == IToken.tCOMPL //Need this for destructors
+						    token.getType() == IToken.tQUESTION 
 						    ){
 							encounteredWild = true;
-						} else if( !encounteredWild && !lastTokenWasOperator && name.length() > 0 )	{
+						} else if( !encounteredWild && !lastTokenWasOperator && name.length() > 0 &&
+									prev.getType() != IToken.tIDENTIFIER &&
+									prev.getType() != IToken.tLT &&
+									prev.getType() != IToken.tCOMPL &&
+									prev.getType() != IToken.tLBRACKET && 
+									token.getType() != IToken.tRBRACKET &&
+									token.getType()!= IToken.tGT
+								 ){
 							name += " ";
 						} else {
 							encounteredWild = false;
@@ -468,6 +476,8 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 						lastTokenWasOperator = false;
 						break;
 				}
+				prev = token;
+				
 				token = null;
 				while( token == null ){
 					try{
@@ -478,10 +488,10 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 							name += "\\";
 							encounteredWild = true;
 							lastTokenWasOperator = false;
+							prev = null;
 						}
 					}
 				}
-				
 			}
 		} catch (EndOfFile e) {	
 			list.addLast( name.toCharArray() );

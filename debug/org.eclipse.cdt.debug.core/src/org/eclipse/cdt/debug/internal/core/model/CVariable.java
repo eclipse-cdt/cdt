@@ -168,8 +168,9 @@ public abstract class CVariable extends CDebugElement
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#equals(org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject)
 		 */
-		public boolean equals(ICDIVariableObject varObject) {
-			return super.equals(varObject);
+		public boolean equals( ICDIVariableObject varObject )
+		{
+			return ( fVariableObject != null ) ? fVariableObject.equals( varObject ) : false;
 		}
 	}
 
@@ -987,7 +988,7 @@ public abstract class CVariable extends CDebugElement
 
 	protected boolean sameVariableObject( ICDIVariableObject object )
 	{
-		return ( fOriginal != null ) ? ( object.getName().equals( fOriginal.getCDIVariableObject().getName() ) ) : false;
+		return ( object != null && fOriginal != null ) ? ( object.equals( fOriginal.getCDIVariableObject() ) ) : false;
 	}
 
 	private boolean enableVariableBookkeeping()

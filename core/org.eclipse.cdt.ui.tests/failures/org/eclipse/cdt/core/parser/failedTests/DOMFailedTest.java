@@ -20,13 +20,8 @@ public class DOMFailedTest extends BaseDOMTest  {
 	public DOMFailedTest(String name) {
 		super(name);
 	}
-	
-	public void testBug36932() {
-		failTest("A::A( ) : var( new char [ (unsigned)bufSize ] ) {}");
-	}
 
 	public void testBug36730()throws Exception {
 		failTest("FUNCTION_MACRO( 1, a )\n	int i;");
-	}
-
+	}    
 }

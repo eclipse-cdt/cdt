@@ -1,3 +1,13 @@
+2004-04-15 Alain Magloire
+
+	Added Properties for the Binaries.
+	* src/org/eclipse/cdt/internal/ui/BinaryProjectSource.java
+	* src/org/eclipse/cdt/internal/ui/CElementAdapterFactory.java
+	* src/org/eclipse/cdt/internla/ui/CElementPropertySource.java
+
+	removed unused files
+	* src/org/eclipse/cdt/internal/ui/CElementProperties.java
+
 2004-04-15 Hoda Amer
 	Fix for bug#58566 : [Refactoring] renaming #define statements 
 	Fix for bug#58335 : [Content Assist] Class forward declarations not reported 

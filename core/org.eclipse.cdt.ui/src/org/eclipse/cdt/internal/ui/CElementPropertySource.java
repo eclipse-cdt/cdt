@@ -5,13 +5,12 @@ package org.eclipse.cdt.internal.ui;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.*;
 
 public class CElementPropertySource implements IPropertySource {
 	

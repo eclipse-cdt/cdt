@@ -49,14 +49,12 @@ public class CElementAdapterFactory implements IAdapterFactory {
 		if (IPropertySource.class.equals(key)) {
 			if (celem instanceof IBinary) {
 				return new BinaryPropertySource((IBinary)celem);				
-			} else if (celem.getElementType() == ICElement.C_UNIT) {
-				IResource file = celem.getResource();
-				if (file != null && file instanceof IFile) {
-					return new FilePropertySource((IFile)file);
-				}
 			} else {
 				res = celem.getResource();
 				if (res != null) {
+					if (res instanceof IFile) {
+						return new FilePropertySource((IFile)res);
+					}
 					return new ResourcePropertySource(res);
 				}
 			}

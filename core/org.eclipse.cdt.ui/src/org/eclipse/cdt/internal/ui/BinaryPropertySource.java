@@ -7,12 +7,14 @@ package org.eclipse.cdt.internal.ui;
  
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.ui.views.properties.FilePropertySource;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-public class BinaryPropertySource implements IPropertySource {
+public class BinaryPropertySource extends FilePropertySource implements IPropertySource {
 	
 	private final static String ELF_CPU= "CElementProperties.elf_cpu"; //$NON-NLS-1$
 	private final static String ELF_TEXT= "CElementProperties.elf_text"; //$NON-NLS-1$
@@ -78,6 +80,7 @@ public class BinaryPropertySource implements IPropertySource {
 	}
 	
 	public BinaryPropertySource(IBinary bin) {
+		super((IFile)bin.getResource());
 		binary= bin;
 	}
 
@@ -85,8 +88,9 @@ public class BinaryPropertySource implements IPropertySource {
 	 * @see IPropertySource#getPropertyDescriptors
 	 */
 	public IPropertyDescriptor[] getPropertyDescriptors() {
-		if (fgPropertyDescriptors == null)
+		if (fgPropertyDescriptors == null) {
 			initializeBinaryDescriptors();
+		}
 		return fgPropertyDescriptors;
 	}
 
@@ -94,12 +98,12 @@ public class BinaryPropertySource implements IPropertySource {
 	 * @see IPropertySource#getPropertyValue
 	 */	
 	public Object getPropertyValue(Object name) {
-//		if (element != null) {
-//			Object returnValue = super.getPropertyValue(name);
-//
-//			if(returnValue != null)
-//				return returnValue;
-//		}
+		if (element != null) {
+			Object returnValue = super.getPropertyValue(name);
+			if(returnValue != null) {
+				return returnValue;
+			}
+		}
 		if (name.equals(IBasicPropertyConstants.P_TEXT)) {
 			return binary.getElementName();
 		} else if (name.equals(ICElementPropertyConstants.P_ELF_CPU)) {
@@ -143,14 +147,17 @@ public class BinaryPropertySource implements IPropertySource {
 	 * Return the Property Descriptors for the file type.
 	 */
 	private void initializeBinaryDescriptors() {
-//		IPropertyDescriptor[] superDescriptors = super.getPropertyDescriptors();
-//		int superLength = superDescriptors.length;
-//		IPropertyDescriptor[] binDescriptors = getInitialPropertyDescriptor();
-//		int binLength = binDescriptors.length;
-//		fgPropertyDescriptors = new IPropertyDescriptor[superLength + binLength];
-//		System.arraycopy(superDescriptors, 0, fgPropertyDescriptors, 0, superLength);
-//		System.arraycopy(binDescriptors, 0, fgPropertyDescriptors, superLength, binLength);
-		fgPropertyDescriptors = getInitialPropertyDescriptor();
+		if (element != null) {
+			IPropertyDescriptor[] superDescriptors = super.getPropertyDescriptors();
+			int superLength = superDescriptors.length;
+			IPropertyDescriptor[] binDescriptors = getInitialPropertyDescriptor();
+			int binLength = binDescriptors.length;
+			fgPropertyDescriptors = new IPropertyDescriptor[superLength + binLength];
+			System.arraycopy(superDescriptors, 0, fgPropertyDescriptors, 0, superLength);
+			System.arraycopy(binDescriptors, 0, fgPropertyDescriptors, superLength, binLength);
+		} else {
+			fgPropertyDescriptors = getInitialPropertyDescriptor();
+		}
 	}
 
 	/* (non-Javadoc)

@@ -215,6 +215,30 @@ public class Scanner2 implements IScanner, IScannerData {
 	}
 	
 	private void pushContext(char[] buffer, Object data) {
+		if( data instanceof InclusionData )
+		{
+			boolean isCircular = false;
+			for( int i = 0; i < bufferStackPos; ++i )
+			{
+				if( bufferData[i] instanceof CodeReader && 
+					CharArrayUtils.equals( ((CodeReader)bufferData[i]).filename, ((InclusionData)data).reader.filename ) )
+				{
+					isCircular = true;
+					break;
+				}
+				else if( bufferData[i] instanceof InclusionData &&
+					CharArrayUtils.equals( ((InclusionData)bufferData[i]).reader.filename, ((InclusionData)data).reader.filename ) )
+				{
+					isCircular = true;
+					break;
+				}
+			}
+			if( isCircular )
+			{
+				handleProblem( IProblem.PREPROCESSOR_CIRCULAR_INCLUSION, ((InclusionData)data).inclusion.getStartingOffset(), ((InclusionData)data).inclusion.getFilename() );
+				return;
+			}
+		}
 		pushContext(buffer);
 		bufferData[bufferStackPos] = data;
 		if( data instanceof InclusionData )

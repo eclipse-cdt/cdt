@@ -22,6 +22,8 @@ public class MessageLine extends CLabel {
 
 	private Color fNormalMsgAreaBackground;
 
+	private boolean hasErrorMessage;
+
 	/**
 	 * Creates a new message line as a child of the given parent.
 	 */
@@ -44,10 +46,13 @@ public class MessageLine extends CLabel {
      */
 	public void setErrorMessage(String message) {
 		if (message != null && message.length() > 0) {
+			hasErrorMessage = true;
 			setText(message);
 			setImage(MakeUIImages.getImage(MakeUIImages.IMG_OBJS_ERROR));
 			setBackground(JFaceColors.getErrorBackground(getDisplay()));
 			return;
+		} else {
+			hasErrorMessage = false;
 		}
 		setText(fMessage);	
 		setImage(null);
@@ -57,5 +62,9 @@ public class MessageLine extends CLabel {
 	public void setMessage(String message) {
 		fMessage = message;
 		setText(message);
+	}
+	
+	public boolean hasErrorMessage() {
+		return hasErrorMessage;
 	}
 }

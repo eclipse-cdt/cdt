@@ -75,6 +75,7 @@ public class MakeTargetDialog extends Dialog {
 	private String targetName;
 	private String targetBuildID;
 	protected IMakeTarget fTarget;
+	private boolean initializing = true;
 
 	/**
 	 * @param parentShell
@@ -147,7 +148,7 @@ public class MakeTargetDialog extends Dialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = convertWidthInCharsToPixels(50);
 		fStatusLine.setLayoutData(gd);
-
+		initializing = false;
 		return composite;
 	}
 
@@ -167,21 +168,18 @@ public class MakeTargetDialog extends Dialog {
 				String newName = targetNameText.getText().trim();
 				if (newName.equals("")) { //$NON-NLS-1$
 					fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyName")); //$NON-NLS-1$
-					getButton(IDialogConstants.OK_ID).setEnabled(false);
 				} else
 					try {
 						if (fTarget != null && fTarget.getName().equals(newName)
 								|| fTargetManager.findTarget(fContainer, newName) == null) {
 							fStatusLine.setErrorMessage(null);
-							getButton(IDialogConstants.OK_ID).setEnabled(true);
 						} else {
 							fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.targetWithNameExists")); //$NON-NLS-1$
-							getButton(IDialogConstants.OK_ID).setEnabled(false);
 						}
 					} catch (CoreException ex) {
 						fStatusLine.setErrorMessage(ex.getLocalizedMessage());
-						getButton(IDialogConstants.OK_ID).setEnabled(false);
 					}
+				updateButtons();
 			}
 		});
 	}
@@ -190,6 +188,13 @@ public class MakeTargetDialog extends Dialog {
 		Group group = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(MAKE_SETTING_GROUP), 1);
 		stopOnErrorButton = new Button(group, SWT.CHECK);
 		stopOnErrorButton.setText(MakeUIPlugin.getResourceString(MAKE_SETTING_STOP_ERROR));
+		stopOnErrorButton.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				updateButtons();
+			}
+		});
+
 		if (isStopOnError) {
 			stopOnErrorButton.setSelection(true);
 		}
@@ -200,6 +205,12 @@ public class MakeTargetDialog extends Dialog {
 		}
 		runAllBuildersButton = new Button(group, SWT.CHECK);
 		runAllBuildersButton.setText(MakeUIPlugin.getResourceString("SettingsBlock.makeSetting.runAllBuilders")); //$NON-NLS-1$
+		runAllBuildersButton.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				updateButtons();
+			}
+		});
 		if (runAllBuilders) {
 			runAllBuildersButton.setSelection(true);
 		}
@@ -223,6 +234,7 @@ public class MakeTargetDialog extends Dialog {
 					commandText.setEnabled(true);
 					stopOnErrorButton.setEnabled(false);
 				}
+				updateButtons();
 			}
 		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -240,6 +252,7 @@ public class MakeTargetDialog extends Dialog {
 				if (commandText.getText().equals("")) { //$NON-NLS-1$
 					fStatusLine.setErrorMessage(MakeUIPlugin.getResourceString("MakeTargetDialog.message.mustSpecifyBuildCommand")); //$NON-NLS-1$
 				}
+				updateButtons();
 			}
 		});
 		if (buildCommand != null) {
@@ -275,6 +288,12 @@ public class MakeTargetDialog extends Dialog {
 		((GridData) (targetText.getLayoutData())).horizontalAlignment = GridData.FILL;
 		((GridData) (targetText.getLayoutData())).grabExcessHorizontalSpace = true;
 		targetText.setText(targetString);
+		targetText.addListener(SWT.Modify, new Listener() {
+
+			public void handleEvent(Event e) {
+				updateButtons();
+			}
+		});
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -293,6 +312,34 @@ public class MakeTargetDialog extends Dialog {
 			targetNameText.setText(generateUniqueName(targetString));
 		}
 		targetNameText.selectAll();
+	}
+
+	protected void updateButtons() {
+		if (getButton(IDialogConstants.OK_ID) != null) {
+			getButton(IDialogConstants.OK_ID).setEnabled(targetHasChanged() && !fStatusLine.hasErrorMessage());
+		}
+	}
+
+	protected boolean targetHasChanged() {
+		if (initializing || fTarget == null)
+			return true;
+		if (isStopOnError != isStopOnError())
+			return true;
+		if (runAllBuilders != runAllBuilders())
+			return true;
+		if (isDefaultCommand != useDefaultBuildCmd())
+			return true;
+		if (!targetName.equals(getTargetName()))
+			return true;
+		if (!targetString.equals(getTarget()))
+			return true;
+		if (!isDefaultCommand) {
+			StringBuffer cmd = new StringBuffer(buildCommand.toOSString()).append(buildArguments);
+			if (!getBuildLine().equals(cmd.toString())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private String generateUniqueName(String targetString) {
@@ -329,11 +376,19 @@ public class MakeTargetDialog extends Dialog {
 		return null;
 	}
 
+	private String getTarget() {
+		return targetText.getText().trim();
+	}
+
+	private String getTargetName() {
+		return targetNameText.getText().trim();
+	}
+
 	protected void okPressed() {
 		IMakeTarget target = fTarget;
 		try {
 			if (fTarget == null) {
-				target = fTargetManager.createTarget(fContainer.getProject(), targetNameText.getText().trim(), targetBuildID);
+				target = fTargetManager.createTarget(fContainer.getProject(), getTargetName(), targetBuildID);
 			}
 			target.setStopOnError(isStopOnError());
 			target.setRunAllBuilders(runAllBuilders());
@@ -361,13 +416,13 @@ public class MakeTargetDialog extends Dialog {
 				}
 				target.setBuildArguments(args);
 			}
-			target.setBuildTarget(targetText.getText().trim());
+			target.setBuildTarget(getTarget());
 
 			if (fTarget == null) {
 				fTargetManager.addTarget(fContainer, target);
 			} else {
-				if (!target.getName().equals(targetNameText.getText().trim())) {
-					fTargetManager.renameTarget(target, targetNameText.getText().trim());
+				if (!target.getName().equals(getTargetName())) {
+					fTargetManager.renameTarget(target, getTargetName());
 				}
 			}
 		} catch (CoreException e) {

@@ -20,13 +20,21 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
  */
 public class CThread extends CObject implements ICDIThread {
 
-	String id = "";
+	int id = 0;
 	
-	public CThread(CTarget target, String threadId) {
+	public CThread(CTarget target, int threadId) {
 		super(target);
 		id = threadId;
 	}
 	
+	int getId() {
+		return id;
+	}
+
+	public String toString() {
+		return "thread-" + Integer.toString(id);
+	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#finish()
 	 */
@@ -58,13 +66,14 @@ public class CThread extends CObject implements ICDIThread {
 		}
 	}
 
-	/**
+	/*
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#isStepping()
-	 */
+	 *
 	public boolean isStepping() {
 		return getTarget().isStepping();
 	}
-
+ 	*/
+ 	
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#isSuspended()
 	 */

@@ -6,10 +6,13 @@ import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIStepEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
 
 /**
@@ -24,13 +27,14 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 		session = s;
 		event = e;
 	}
-		
 
 	public ICDISessionObject getReason() {
-		if (event instanceof MIBreakpointEvent) {
+		if (event instanceof MIBreakpointEvent || event instanceof MIWatchpointEvent) {
 			MIBreakpointEvent breakEvent = (MIBreakpointEvent)event;
 			int number = breakEvent.getNumber();
 			ICDIBreakpointManager mgr = session.getBreakpointManager();
+			// Ask the breakpoint manager the array of ICDIBreakpoint(s)
+			// We need to return the same object as the reason.
 			try {
 				ICDIBreakpoint[] bkpts= mgr.getBreakpoints();
 				for (int i = 0; i < bkpts.length; i++) {
@@ -44,7 +48,13 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 				}
 			} catch (CDIException e) {
 			}
-		} else if (event instanceof MIStepEvent) {
+		} else if (event instanceof MISteppingRangeEvent) {
+			return new EndSteppingRange(session);
+		} else if (event instanceof MISignalEvent) {
+			return new Signal(session, (MISignalEvent)event);
+		} else if (event instanceof MILocationReachedEvent) {
+			return new EndSteppingRange(session);
+		} else if (event instanceof MIFunctionFinishedEvent) {
 			return new EndSteppingRange(session);
 		}
 		return session;
@@ -54,21 +64,41 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
 	public ICDIObject getSource() {
-		return new CThread(session.getCTarget(), "");
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent#getStackFrame()
-	 */
-	public ICDIStackFrame getStackFrame() {
+		CTarget target = session.getCTarget();
+		int threadId = 0;
 		if (event instanceof MIBreakpointEvent) {
 			MIBreakpointEvent breakEvent = (MIBreakpointEvent)event;
-			return new StackFrame(session.getCTarget(), breakEvent.getMIFrame());
-		} else if (event instanceof MIStepEvent) {
-			MIStepEvent stepEvent = (MIStepEvent)event;
-			return new StackFrame(session.getCTarget(), stepEvent.getMIFrame());
+			threadId = breakEvent.getThreadId();
+		} else if (event instanceof MIWatchpointEvent) {
+			MIWatchpointEvent watchEvent = (MIWatchpointEvent)event;
+			threadId = watchEvent.getThreadId();
+		} else if (event instanceof MISteppingRangeEvent) {
+			MISteppingRangeEvent rangeEvent = (MISteppingRangeEvent)event;
+			threadId = rangeEvent.getThreadId();
+		} else if (event instanceof MISignalEvent) {
+			MISignalEvent sigEvent = (MISignalEvent)event;
+			threadId = sigEvent.getThreadId();
+		} else if (event instanceof MILocationReachedEvent) {
+			MILocationReachedEvent locEvent = (MILocationReachedEvent)event;
+			threadId = locEvent.getThreadId();
+		} else if (event instanceof MIFunctionFinishedEvent) {
+			MIFunctionFinishedEvent funcEvent = (MIFunctionFinishedEvent)event;
+			threadId = funcEvent.getThreadId();
 		}
-		return null;
-	}
 
+		// If it came from a thread return it as the source.
+		if (threadId > 0) {
+			CThread[] cthreads = target.getCThreads();
+			for (int i = 0; i < cthreads.length; i++) {
+				if (cthreads[i].getId() == threadId) {
+					return cthreads[i];
+				}
+			}
+			// Not found?? new thread created?
+			CThread cthread = new CThread(session.getCTarget(), threadId);
+			target.addCThread(cthread);
+			return cthread;
+		}
+		return target;
+	}
 }

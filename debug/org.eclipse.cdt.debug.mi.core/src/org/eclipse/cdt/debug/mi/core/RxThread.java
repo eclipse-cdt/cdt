@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
+import org.eclipse.cdt.debug.mi.core.command.MIExecFinish;
 import org.eclipse.cdt.debug.mi.core.command.MIExecNext;
 import org.eclipse.cdt.debug.mi.core.command.MIExecNextInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecStep;
@@ -23,9 +24,10 @@ import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
+import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIStepEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIAsyncRecord;
 import org.eclipse.cdt.debug.mi.core.output.MIConsoleStreamOutput;
@@ -115,22 +117,27 @@ MIPlugin.getDefault().debugLog(line);
 				// Check if the state changed.
 				String state = rr.getResultClass();
 				if ("running".equals(state)) {
-					MIEvent[] events = new MIEvent[1];
+					int type = 0;
 					// Check the type of command
 					// if it was a step instruction set state stepping
-					if (cmd instanceof MIExecNext ||
-						cmd instanceof MIExecNextInstruction ||
-						cmd instanceof MIExecStep ||
-						cmd instanceof MIExecStepInstruction ||
-						cmd instanceof MIExecUntil) {
-						session.getMIProcess().setStepping();
-						events[0] = new MIRunningEvent(true);
+					if (cmd instanceof MIExecNext) {
+						type = MIRunningEvent.NEXT;
+					} else if (cmd instanceof MIExecNextInstruction) {
+						type = MIRunningEvent.NEXTI;
+					} else if (cmd instanceof MIExecStep) {
+						type = MIRunningEvent.STEP;
+					} else if (cmd instanceof MIExecStepInstruction) {
+						type = MIRunningEvent.STEPI;
+					} else if (cmd instanceof MIExecUntil) {
+						type = MIRunningEvent.UNTIL;
+					} else if (cmd instanceof MIExecFinish) {
+						type = MIRunningEvent.FINISH;
 					} else {
-						session.getMIProcess().setRunning();
-						events[0] = new MIRunningEvent();
+						type = MIRunningEvent.CONTINUE;
 					}
-					Thread eventTread = new EventThread(session, events);
-					eventTread.start();
+					session.getMIProcess().setRunning();
+					MIEvent event = new MIRunningEvent(type);
+					fireEvents(new MIEvent[]{event});
 				} else if ("exit".equals(state)) {
 					session.getMIProcess().setTerminated();
 				}
@@ -155,10 +162,7 @@ MIPlugin.getDefault().debugLog(line);
 			}
 
 			MIEvent[] events = (MIEvent[])list.toArray(new MIEvent[list.size()]);
-			if (events.length > 0) {
-				Thread eventTread = new EventThread(session, events);
-				eventTread.start();
-			}
+			fireEvents(events);
 		}
 	}
 
@@ -291,9 +295,9 @@ MIPlugin.getDefault().debugLog(line);
 			}
 		} else if ("end-stepping-range".equals(reason)) {
 			if (exec != null) {
-				event = new MIStepEvent(exec);
+				event = new MISteppingRangeEvent(exec);
 			} else if (rr != null) {
-				event = new MIStepEvent(rr);
+				event = new MISteppingRangeEvent(rr);
 			}
 		} else if ("signal-received".equals(reason)) {
 			if (exec != null) {
@@ -303,9 +307,9 @@ MIPlugin.getDefault().debugLog(line);
 			}
 		} else if ("location-reached".equals(reason)) {
 			if (exec != null) {
-				event = new MISignalEvent(exec);
+				event = new MILocationReachedEvent(exec);
 			} else if (rr != null) {
-				event = new MISignalEvent(rr);
+				event = new MILocationReachedEvent(rr);
 			}
 		} else if ("function-finished".equals(reason)) {
 			if (exec != null) {
@@ -321,5 +325,12 @@ MIPlugin.getDefault().debugLog(line);
 			event = new MIInferiorExitEvent();
 		}
 		return event;
+	}
+
+	public void fireEvents(MIEvent[] events) {
+		if (events.length > 0) {
+			Thread eventTread = new EventThread(session, events);
+			eventTread.start();
+		}
 	}
 }

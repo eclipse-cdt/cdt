@@ -224,7 +224,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 			throw new CDIException(e.toString());
 		}
 
-		Breakpoint bkpt= new Breakpoint(this, points[0]);
+		Watchpoint bkpt= new Watchpoint(this, points[0]);
 		breakList.add(bkpt);
 		return bkpt;
 	}

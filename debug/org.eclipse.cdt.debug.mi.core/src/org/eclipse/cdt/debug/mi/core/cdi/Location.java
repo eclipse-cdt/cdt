@@ -19,6 +19,10 @@ public class Location implements ICDILocation {
 	String function = "";
 	int line;
 
+	public Location(String f, String fnct, int l) {
+		this(f, fnct, l, 0);
+	}
+
 	public Location(String f, String fnct, int l, long a) {
 		file = f;
 		function = fnct;

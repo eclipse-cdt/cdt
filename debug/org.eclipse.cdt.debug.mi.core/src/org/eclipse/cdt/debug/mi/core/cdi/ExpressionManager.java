@@ -6,6 +6,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
@@ -58,6 +59,13 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 	public ICDIExpression createExpression(String expressionId)
 		throws CDIException {
 		return null;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createCondition(int, String)
+	 */
+	public ICDICondition createCondition(int ignoreCount, String expression) {
+		return new Condition(ignoreCount, expression);
 	}
 
 }

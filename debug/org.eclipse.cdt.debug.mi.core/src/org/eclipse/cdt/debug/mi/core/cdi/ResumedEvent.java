@@ -3,21 +3,16 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class ResumedEvent implements ICDIResumedEvent {
 
 	CSession session;
-	MIEvent event;
+	MIRunningEvent event;
 
-	public ResumedEvent(CSession s, MIEvent e) {
+	public ResumedEvent(CSession s, MIRunningEvent e) {
 		session = s;
 		event = e;
 	}
@@ -27,6 +22,14 @@ public class ResumedEvent implements ICDIResumedEvent {
 	 */
 	public ICDIObject getSource() {
 		return session.getTarget();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent#getType()
+	 */
+	public int getType() {
+		MIRunningEvent running = (MIRunningEvent)event;
+		return running.getType();
 	}
 
 }

@@ -32,11 +32,11 @@ public class MISignalEvent extends MIEvent {
 		parse();
 	}
 
-	public String getSignalName() {
+	public String getName() {
 		return sigName;
 	}
 
-	public String getSignalMeaning() {
+	public String getMeaning() {
 		return sigMeaning;
 	}
 

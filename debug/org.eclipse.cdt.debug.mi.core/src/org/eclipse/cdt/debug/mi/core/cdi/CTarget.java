@@ -5,15 +5,13 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
@@ -36,23 +34,31 @@ import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class CTarget  implements ICDITarget {
 
+	List threadList;
 	CSession session;
 	
 	public CTarget(CSession s) {
 		session = s;
+		threadList = new ArrayList(1);
 	}
 	
 	CSession getCSession() {
 		return session;
+	}
+
+	void addCThread(CThread cthread) {
+		threadList.add(cthread);
+	}
+
+	void removeCThread(CThread cthread) {
+		threadList.remove(cthread);
+	}
+
+	CThread[] getCThreads() {
+		return (CThread[])threadList.toArray(new CThread[threadList.size()]);
 	}
 
 	/**

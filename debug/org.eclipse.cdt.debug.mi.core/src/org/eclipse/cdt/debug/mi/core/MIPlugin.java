@@ -95,7 +95,11 @@ public class MIPlugin extends Plugin {
 	public static void debugLog(String message) {
 	//	if ( getDefault().isDebugging() ) {
 	//		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
-			System.err.println(message);
+			if (message.endsWith("\n")) {
+				System.err.print(message);
+			} else {
+				System.err.println(message);
+			}
 	//	}
 	}
 }

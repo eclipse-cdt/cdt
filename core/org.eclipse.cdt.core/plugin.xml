@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.cdt.core"
+   name="%pluginName"
+   version="1.0.0"
+   provider-name="QNX Software Systems Ltd."
+   class="org.eclipse.cdt.internal.CCorePlugin">
+
+   <runtime>
+      <library name="cdt.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+<!-- ======================================================================= -->
+<!-- The C Plugin                                                            -->
+<!-- ======================================================================= -->
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.debug.core"/>
+   </requires>
+
+
+   <extension-point id="CBuildCommand" name="%CBuildCommand.name"/>
+
+   <extension
+         id="cbuilder"
+         name="C Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.eclipse.cdt.internal.core.CBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="problem"
+         name="%CProblemMarker.name"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+   <extension
+         point="org.eclipse.ui.projectNatureImages">
+      <image
+            icon="icons/full/ovr16/c_ovr.gif"
+            natureId="org.eclipse.cdt.core.cnature"
+            id="org.eclipse.cdt.cProjectNatureImage">
+      </image>
+   </extension>
+   <extension
+         id="cnature"
+         name="%cnature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.core.CProjectNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="ccnature"
+         name="%cnature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.core.CCProjectNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildCommand">
+      <buildcommand
+            command="make">
+      </buildcommand>
+   </extension>
+
+</plugin>

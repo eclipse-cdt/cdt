@@ -1,0 +1,843 @@
+package org.eclipse.cdt.utils.elf;
+
+/*
+ * (c) Copyright QNX Software Systems Ltd. 2002.
+ * All Rights Reserved.
+ */
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import java.util.Comparator;
+import org.eclipse.cdt.utils.Addr2line;
+import org.eclipse.cdt.utils.CPPFilt;
+
+// test checkin
+public class Elf {
+	protected ERandomAccessFile efile;		
+
+	private ELFhdr ehdr;
+	private Section[] sections;
+	private int syms = 0;
+	private Addr2line addr2line;
+    private boolean cppFiltEnabled = true;
+	private CPPFilt cppFilt;
+	private String file;
+	private byte[] section_strtab;	
+	private Symbol[] symbols;
+	// private Section sym;
+    private Symbol[] symtab_symbols;
+	private Section  symtab_sym;
+    private Symbol[] dynsym_symbols;
+	private Section  dynsym_sym;
+
+	public class ELFhdr {
+		/* e_ident offsets */
+		public final static int EI_MAG0 = 0;
+		public final static int EI_MAG1 = 1;
+		public final static int EI_MAG2 = 2;
+		public final static int EI_MAG3 = 3;
+		public final static int EI_CLASS = 4;
+	    public final static int EI_DATA = 5;
+ 		public final static int EI_VERSION = 6;
+		public final static int EI_PAD = 7;
+		public final static int EI_NDENT = 16;
+
+		/* e_ident[EI_CLASS] */
+		public final static int ELFCLASSNONE = 0;
+		public final static int ELCLASS32 = 1;
+		public final static int ELFCLASS64 = 2;
+
+		/* e_ident[EI_DATA] */
+		public final static int ELFDATANONE = 0;
+		public final static int ELFDATA2LSB = 1;
+		public final static int ELFDATA2MSB = 2;
+			
+		/* values of e_type */	
+		public final static int ET_NONE = 0;
+		public final static int ET_REL = 1;
+		public final static int ET_EXEC = 2;
+		public final static int ET_DYN = 3;
+		public final static int ET_CORE = 4;
+		public final static int ET_LOPROC = 0xff00;
+		public final static int ET_HIPROC = 0xffff;
+		
+		/* values of e_machine */
+		public final static int EM_NONE = 0;
+		public final static int EM_M32 = 1;
+		public final static int EM_SPARC = 2;
+		public final static int EM_386 = 3;
+		public final static int EM_68K = 4;
+		public final static int EM_88K = 5;
+		public final static int EM_486 = 6;
+		public final static int EM_860 = 7;
+		public final static int EM_MIPS = 8;
+		public final static int EM_MIPS_RS3_LE = 10;
+		public final static int EM_RS6000 = 11;
+		public final static int EM_PA_RSIC = 15;
+		public final static int EM_nCUBE = 16;
+		public final static int EM_VPP500 = 17;
+		public final static int EM_SPARC32PLUS = 18;
+		public final static int EM_PPC = 20;
+		public final static int EM_ARM = 40;
+		public final static int EM_SH = 42;
+
+		public byte 	e_ident[] = new byte[EI_NDENT];
+		public short 	e_type; 				/* file type (Elf32_Half) */
+		public short 	e_machine;				/* machine type (Elf32_Half) */
+		public long		e_version;				/* version number (Elf32_Word) */
+		public long		e_entry;        		/* entry point (Elf32_Addr)*/
+	    public long		e_phoff;				/* Program hdr offset (Elf32_Off)*/
+		public long		e_shoff;				/* Section hdr offset (Elf32_Off)*/
+	    public long		e_flags;				/* Processor flags (Elf32_Word)*/
+	    public short	e_ehsize;       		/* sizeof ehdr (Elf32_Half)*/
+	    public short	e_phentsize;			/* Program header entry size (Elf32_Half)*/
+	    public short	e_phnum;				/* Number of program headers (Elf32_Half)*/
+	    public short	e_shentsize;			/* Section header entry size (Elf32_Half)*/
+	    public short 	e_shnum;				/* Number of section headers (Elf32_Half)*/
+	    public short	e_shstrndx;				/* String table index (Elf32_Half)*/
+
+		private ELFhdr() throws IOException {
+			efile.seek(0);
+			efile.readFully(e_ident);
+			if ( e_ident[ELFhdr.EI_MAG0] != 0x7f || e_ident[ELFhdr.EI_MAG1] != 'E' || 
+				e_ident[ELFhdr.EI_MAG2] != 'L' || e_ident[ELFhdr.EI_MAG3] != 'F' )
+				throw new IOException("Not ELF format");
+			efile.setEndian(e_ident[ELFhdr.EI_DATA] == ELFhdr.ELFDATA2LSB);
+			e_type = efile.readShortE();
+			e_machine = efile.readShortE();
+			e_version = efile.readIntE();
+			e_entry = efile.readIntE();
+			e_phoff = efile.readIntE();
+			e_shoff = efile.readIntE();
+			e_flags = efile.readIntE();
+			e_ehsize = efile.readShortE();
+			e_phentsize = efile.readShortE();
+			e_phnum = efile.readShortE();
+			e_shentsize = efile.readShortE();
+			e_shnum = efile.readShortE();
+			e_shstrndx = efile.readShortE();
+		}
+	}
+
+	public class Section  {
+		/* sh_type */
+		public final static int SHT_NULL = 0;
+		public final static int SHT_PROGBITS = 1;
+		public final static int SHT_SYMTAB = 2;		
+		public final static int SHT_STRTAB = 3;
+		public final static int SHT_RELA = 4;
+		public final static int SHT_HASH = 5;
+		public final static int SHT_DYNAMIC = 6;
+		public final static int SHT_NOTE = 7;
+		public final static int SHT_NOBITS = 8;
+		public final static int SHT_REL = 9;
+		public final static int SHT_SHLIB = 10;
+		public final static int SHT_DYNSYM = 11;
+		
+		/* sh_flags */
+		public final static int SHF_WRITE = 1;
+		public final static int SHF_ALLOC = 2;
+		public final static int SHF_EXECINTR = 4;
+		
+		public long sh_name;
+		public long sh_type;
+		public long sh_flags;
+		public long sh_addr;
+		public long sh_offset;
+		public long sh_size;
+		public long sh_link;
+		public long sh_info;
+		public long sh_addralign;
+		public long sh_entsize;
+
+        public byte[] loadSectionData() throws IOException {
+            byte[] data = new byte[(int)sh_size];
+            efile.seek( sh_offset );
+            efile.read( data );
+            return data;
+        }
+
+		public String toString() {
+			try {
+				if ( section_strtab == null ) {
+					section_strtab = new byte[(int)sections[ehdr.e_shstrndx].sh_size];
+					efile.seek(sections[ehdr.e_shstrndx].sh_offset);
+					efile.read(section_strtab);
+				}
+				int str_size = 0;
+				if ( sh_name > sh_size || ( sh_name + str_size + 1) > section_strtab.length) {
+					return "";
+				}
+				while( section_strtab[(int)sh_name + str_size] != 0)
+					str_size++;
+				return new String(section_strtab, (int)sh_name, str_size);
+			} catch (IOException e) {
+				return "";
+			}
+		}
+	}
+
+	private String string_from_elf_section(Elf.Section section, int index) throws IOException {
+		StringBuffer str = new StringBuffer();
+		byte tmp;
+		if ( index > section.sh_size ) {
+				return "";
+			}
+		efile.seek(section.sh_offset + index);
+		while( true ) {
+			tmp = efile.readByte();
+			if ( tmp == 0 )
+				break;
+			str.append((char)tmp);
+		}
+		return str.toString();
+	}
+	
+	public class Symbol implements Comparable {
+		/* Symbol bindings */
+		public final static int STB_LOCAL = 0;
+		public final static int STB_GLOBAL = 1;
+		public final static int STB_WEAK = 2;
+		/* Symbol type */
+		public final static int STT_NOTYPE = 0;
+		public final static int STT_OBJECT = 1;
+		public final static int STT_FUNC = 2;
+		public final static int STT_SECTION = 3;
+		public final static int STT_FILE = 4;
+        /* Special Indexes */
+        public final static int SHN_UNDEF = 0;
+        public final static int SHN_LORESERVE = 0xffffff00;
+        public final static int SHN_LOPROC = 0xffffff00;
+        public final static int SHN_HIPROC = 0xffffff1f;
+        public final static int SHN_LOOS = 0xffffff20; 
+        public final static int SHN_HIOS = 0xffffff3f; 
+        public final static int SHN_ABS = 0xfffffff1; 
+        public final static int SHN_COMMON = 0xfffffff2; 
+        public final static int SHN_XINDEX = 0xffffffff; 
+        public final static int SHN_HIRESERVE = 0xffffffff; 
+
+
+		public long st_name;
+		public long st_value;
+		public long st_size;
+		public short st_info;
+		public short st_other;
+		public short st_shndx;		
+
+		private String name = null;
+		private String line = null;
+		private String func = null;
+
+        private Section sym_section;
+
+		private String cppFilt(String in) {
+            if (cppFiltEnabled) {
+				try {
+					if (in.indexOf("__") != -1 || in.indexOf("_._") != -1) {
+						if (cppFilt == null) {
+							cppFilt = new CPPFilt();
+						}
+						return cppFilt.getFunction(in);
+					}
+				} catch (IOException e) {
+					return in;
+				}
+            }
+			return in;
+		}
+
+        public Symbol( Section section ) {
+            sym_section = section;
+        }
+
+		public int st_type() {
+			return st_info & 0xf;
+		}
+
+		public int st_bind() {
+			return (st_info >> 4) & 0xf;
+		}
+						
+		public int compareTo(Object obj) {
+			long thisVal = 0;
+			long anotherVal = 0;
+			if ( obj instanceof Symbol ) {
+				Symbol sym = (Symbol)obj;
+				thisVal = this.st_value;
+				anotherVal = sym.st_value;
+			} else if ( obj instanceof Long ) {
+				Long val = (Long)obj;
+				anotherVal = val.longValue();
+				thisVal = (long)this.st_value;
+			}
+			return (thisVal<anotherVal ? -1 : (thisVal==anotherVal ? 0 : 1));
+		}
+
+		public String toString() {	
+			if ( name == null ) {
+				try { 
+					Section sections[] = getSections();
+					Section symstr = sections[(int)sym_section.sh_link];
+					name = cppFilt(string_from_elf_section(symstr, (int)st_name ));
+				} catch (IOException e ) {
+					return "";
+				}
+			}
+			return name;
+		}
+
+		/**
+		 * Returns line information in the form of filename:line
+		 * and if the information is not available may return null
+		 * _or_ may return ??:??
+		 */
+		public String lineInfo() throws IOException {
+			if ( line == null ) {
+				if ( addr2line == null )
+					addr2line = new Addr2line(file);
+				line = addr2line.getLine(st_value + 19);
+				func = addr2line.getFunction(st_value + 19);
+			}
+			return line;
+		}
+		
+		public String lineInfo(long vma) throws IOException {
+			if ( addr2line == null )
+				addr2line = new Addr2line(file);
+			return addr2line.getLine(vma);
+		}
+		
+		/**
+		 * If the function is available from the symbol information,
+		 * this will return the function name. May return null if 
+		 * the function can't be determined.
+		 */
+		public String getFunction() throws IOException {
+			if ( func == null ) {
+				lineInfo();
+			}
+			return func;
+		}
+			
+		/**
+		 * If the filename is available from the symbol information,
+		 * this will return the base filename information. May
+		 * return null if the filename can't be determined.
+		 */
+		public String getFilename() throws IOException {
+			if ( line == null ) {
+				lineInfo();
+			}
+			int index1, index2;
+			if(line == null || (index1 = line.lastIndexOf(':')) == -1) {
+				return null;
+			}
+			// we do this because addr2line on win produces 
+			// <cygdrive/pathtoexc/C:/pathtofile:##>
+			
+			index2 = line.indexOf(':');
+			if ( index1 == index2 ) {
+				index2 = 0;
+			} else {
+				index2--;
+			}
+			return line.substring(index2, index1);
+		}
+
+		/**
+		 * Returns the line number of the function which is closest
+		 * associated with the address if it is available.
+		 * from the symbol information.  If it is not available,
+		 * then -1 is returned.
+		 */
+		public int getFuncLineNumber() throws IOException {
+			if ( line == null ) {
+				lineInfo();
+			}
+			int index;
+			if(line == null || (index = line.lastIndexOf(':')) == -1) {
+				return -1;
+			}
+			try {
+				int lineno = Integer.parseInt(line.substring(index + 1));
+				return (lineno == 0) ? -1 : lineno;
+			} catch(Exception e) {
+				return -1;
+			}
+		}
+		
+		/**
+		 * Returns the line number of the file if it is available
+		 * from the symbol information.  If it is not available,
+		 * then -1 is returned.  
+		 */
+		public int getLineNumber(long vma) throws IOException {
+			int index;
+			String ligne = lineInfo(vma);
+			if(ligne == null || (index = ligne.lastIndexOf(':')) == -1) {
+				return -1;
+			}
+			try {
+				int lineno = Integer.parseInt(ligne.substring(index + 1));
+				return (lineno == 0) ? -1 : lineno;
+			} catch(Exception e) {
+				return -1;
+			}
+		}
+	}
+
+	/**
+	 * We have to implement a separate compararator since when we do the
+	 * binary search down below we are using a Long and a Symbol object
+	 * and the Long doesn't know how to compare against a Symbol so if
+	 * we compare Symbol vs Long it is ok, but not if we do Long vs Symbol.
+	 */
+	class SymbolComparator implements Comparator {
+		long val1, val2;
+		public int compare(Object o1, Object o2) {
+
+			if(o1 instanceof Long) {
+				val1 = ((Long)o1).longValue();
+			} else if(o1 instanceof Symbol) {
+				val1 = ((Symbol)o1).st_value;
+			} else {
+				return -1;
+			}
+			
+			if(o2 instanceof Long) {
+				val2 = ((Long)o2).longValue();
+			} else if(o2 instanceof Symbol) {
+				val2 = ((Symbol)o2).st_value;
+			} else {
+				return -1;
+			}
+			return (val1 == val2) ? 0 
+								  : ((val1 < val2) ? -1 : 1);
+		}
+	}
+
+	
+	public class PHdr {
+		public final static int PT_NULL 	= 0;
+		public final static int PT_LOAD 	= 1;
+		public final static int PT_DYNAMIC 	= 2;
+		public final static int PT_INTERP	= 3;
+		public final static int PT_NOTE		= 4;
+		public final static int PT_SHLIB	= 5;
+		public final static int PT_PHDR		= 6;
+
+		public final static int PF_X = 1;
+		public final static int PF_W = 2;
+		public final static int PF_R = 4;
+		
+		public long p_type;
+		public long p_offset;
+		public long p_vaddr;
+		public long p_paddr;
+		public long p_filesz;
+		public long p_memsz;
+		public long p_flags;
+		public long p_align;
+	}
+
+	public PHdr[] getPHdrs() throws IOException {
+		if ( ehdr.e_phnum == 0 ) {
+			return new PHdr[0];
+		}
+		efile.seek(ehdr.e_phoff);
+		PHdr phdrs[] = new PHdr[ehdr.e_phnum];
+		for( int i = 0; i < ehdr.e_phnum; i++ ) {
+			phdrs[i] = new PHdr();
+			phdrs[i].p_type = efile.readIntE();
+			phdrs[i].p_offset = efile.readIntE();
+			phdrs[i].p_vaddr = efile.readIntE();
+			phdrs[i].p_paddr = efile.readIntE();
+			phdrs[i].p_filesz = efile.readIntE();
+			phdrs[i].p_memsz = efile.readIntE();
+			phdrs[i].p_flags = efile.readIntE();
+			phdrs[i].p_align = efile.readIntE();
+		}
+		return phdrs;
+	}
+		
+	public class Dynamic {
+		public final static int DT_NULL 		= 0;
+		public final static int DT_NEEDED 		= 1;
+		public final static int DT_PLTRELSZ 	= 2;
+		public final static int DT_PLTGOT 		= 3;
+		public final static int DT_HASH 		= 4;
+		public final static int DT_STRTAB 		= 5;
+		public final static int DT_SYMTAB 		= 6;
+		public final static int DT_RELA			= 7;
+		public final static int DT_RELASZ 		= 8;
+		public final static int DT_RELAENT 		= 9;
+		public final static int DT_STRSZ		= 10;
+		public final static int DT_SYMENT		= 11;
+		public final static int DT_INIT			= 12;
+		public final static int DT_FINI			= 13;
+		public final static int DT_SONAME		= 14;
+		public final static int DT_RPATH		= 15;
+		public long d_tag;
+		public long d_val;
+
+		private Section section;
+		private String name;
+						
+		private Dynamic(Section section, long tag, long val) {
+			this.section = section;
+			d_tag = tag;
+			d_val = val;
+		}						
+		
+		public String toString() {
+			if ( name == null ) {
+				switch ( (int)d_tag ) {
+					case DT_NEEDED:
+					case DT_SONAME:
+					case DT_RPATH:
+						try {
+							Section symstr = sections[(int)section.sh_link];
+							name = string_from_elf_section(symstr, (int)d_val);
+						} catch (IOException e) {
+							name = "";
+						}
+						break;
+					default:
+						name = "";
+				} 
+			}
+			return name;
+		}
+	}					
+
+	public Dynamic[] getDynamicSections(Section section) throws IOException {
+		if ( section.sh_type != Section.SHT_DYNAMIC ) {
+			return new Dynamic[0];
+		}
+		ArrayList dynList = new ArrayList();
+		efile.seek(section.sh_offset);
+		if (section.sh_entsize == 0) {
+			Dynamic dynEnt = new Dynamic(section, efile.readIntE(), efile.readIntE());
+			dynList.add(dynEnt);
+		} else {
+			for (int i = 0; i < section.sh_size / section.sh_entsize; i++ ) {
+				Dynamic dynEnt = new Dynamic(section, efile.readIntE(), efile.readIntE());
+				if ( dynEnt.d_tag == dynEnt.DT_NULL ) 
+					break;
+				dynList.add(dynEnt);
+			}
+		}
+		return (Dynamic[])dynList.toArray(new Dynamic[0]);
+	}
+
+    private void commonSetup( String file, long offset, boolean filton ) 
+        throws IOException 
+    {
+        this.cppFiltEnabled = filton;
+
+        efile = new ERandomAccessFile(file, "r");
+        efile.setFileOffset( offset );
+		try {
+			ehdr = new ELFhdr();
+			this.file = file;
+		} finally {
+			if ( ehdr == null ) {
+				efile.close();
+			}
+		}
+    }
+
+	public Elf (String file, long offset) throws IOException {
+        commonSetup( file, offset, true );
+    }
+
+    public Elf (String file) throws IOException {
+        commonSetup( file, 0, true );
+    }
+     
+    public Elf (String file, long offset, boolean filton) throws IOException {
+        commonSetup( file, offset, filton );
+    }
+
+    public Elf (String file, boolean filton) throws IOException {
+        commonSetup( file, 0, filton );
+    }
+
+    public boolean cppFilterEnabled() {
+        return cppFiltEnabled;
+    }
+
+    public void setCppFilter( boolean enabled ) {
+        cppFiltEnabled = enabled;
+    }
+  
+	public ELFhdr getELFhdr() throws IOException {	
+		return ehdr;		
+	}
+
+	public class Attribute {
+		public static final int ELF_TYPE_EXE   = 1;
+		public static final int ELF_TYPE_SHLIB = 2;
+		public static final int ELF_TYPE_OBJ   = 3;
+		String cpu;
+		int type;
+		boolean bDebug;
+
+		public String getCPU() {
+			return cpu;
+		}
+		
+		public int getType() {
+			return type;
+		}
+		
+		public boolean hasDebug() {
+			return bDebug;
+		}
+	}
+
+
+    public Attribute getAttributes() throws IOException {
+        boolean bSkipElfData = false;
+        Attribute attrib = new Attribute();
+
+        switch( ehdr.e_type ) {
+            case Elf.ELFhdr.ET_EXEC:
+                attrib.type = attrib.ELF_TYPE_EXE;
+                break;
+            case Elf.ELFhdr.ET_REL:
+                attrib.type = attrib.ELF_TYPE_OBJ;
+                break;
+            case Elf.ELFhdr.ET_DYN:
+                attrib.type = attrib.ELF_TYPE_SHLIB;
+                break;
+        }
+
+		switch (ehdr.e_machine) {
+			case Elf.ELFhdr.EM_386 :
+			case Elf.ELFhdr.EM_486 :
+				attrib.cpu = new String("x86");
+				bSkipElfData = true;
+				break;
+			case Elf.ELFhdr.EM_PPC :
+				attrib.cpu = new String("ppc");
+				break;
+			case Elf.ELFhdr.EM_SH :
+				attrib.cpu = new String("sh");
+				break;
+			case Elf.ELFhdr.EM_ARM :
+				attrib.cpu = new String("arm");
+				break;
+			case Elf.ELFhdr.EM_MIPS_RS3_LE :
+			case Elf.ELFhdr.EM_MIPS :
+			case Elf.ELFhdr.EM_RS6000 :
+				attrib.cpu = "mips";
+				break;
+			case Elf.ELFhdr.EM_SPARC32PLUS:
+			case Elf.ELFhdr.EM_SPARC:
+				attrib.cpu = "sparc";
+				break;
+			case Elf.ELFhdr.EM_NONE:
+			default:
+				attrib.cpu = "none";
+		}
+		if ( !bSkipElfData) {
+			switch (ehdr.e_ident[Elf.ELFhdr.EI_DATA]) {
+				case Elf.ELFhdr.ELFDATA2LSB :
+					attrib.cpu+= "le";
+					break;
+				case Elf.ELFhdr.ELFDATA2MSB :
+					attrib.cpu += "be";
+					break;
+			}
+		}
+		// getSections
+		// find .debug using toString
+		Section [] sec = getSections();
+		for (int i = 0; i < sec.length; i++) {
+			String s = sec[i].toString();
+			attrib.bDebug = (s.equals(".debug") || s. equals(".stab"));
+			if (attrib.bDebug) {
+				break;
+			}
+		}
+        return attrib;
+    }
+
+
+	public static Attribute getAttributes(String file) throws IOException {
+		Elf elf = new Elf(file);
+		Attribute attrib = elf.getAttributes();
+		elf.dispose();	
+		return attrib;	
+	}
+	
+	public void dispose() {
+		if ( addr2line != null ) {
+			addr2line.dispose();
+		}
+		if ( cppFilt != null ) {
+			cppFilt.dispose();
+		}
+		try {
+			efile.close();
+		} catch (IOException e) {}
+	}
+	
+	public Section[] getSections(int type) throws IOException {		
+		if ( sections == null )
+			getSections();
+		ArrayList slist = new ArrayList();
+		for( int i = 0; i < sections.length; i++ ) {
+			if ( sections[i].sh_type == type)
+				slist.add(sections[i]);
+		}
+		return (Section[])slist.toArray(new Section[0]);
+	}
+		
+	public Section[] getSections() throws IOException {
+		if ( sections == null ) {
+			if ( ehdr.e_shoff == 0 ) {
+				sections = new Section[0];			
+				return sections;
+			}
+			efile.seek(ehdr.e_shoff);
+			sections = new Section[ehdr.e_shnum];
+			for ( int i = 0; i < ehdr.e_shnum; i++ ) {
+				sections[i] = new Section();
+				sections[i].sh_name = efile.readIntE();
+				sections[i].sh_type = efile.readIntE();
+				sections[i].sh_flags = efile.readIntE();
+				sections[i].sh_addr = efile.readIntE();
+				sections[i].sh_offset = efile.readIntE();
+				sections[i].sh_size = efile.readIntE();
+				sections[i].sh_link = efile.readIntE();
+				sections[i].sh_info = efile.readIntE();
+				sections[i].sh_addralign = efile.readIntE();
+				sections[i].sh_entsize = efile.readIntE();
+				if ( sections[i].sh_type == sections[i].SHT_SYMTAB )
+					syms = i;
+				if ( syms == 0 && sections[i].sh_type == sections[i].SHT_DYNSYM )
+					syms = i;					
+			}
+		}
+		return sections;
+	}
+
+
+    private Symbol[] loadSymbolsBySection( Section section ) throws IOException {
+		int numSyms = 1;
+		if (section.sh_entsize != 0) {
+			numSyms = (int)section.sh_size / (int)section.sh_entsize;
+		}
+        ArrayList symList = new ArrayList(numSyms);
+        for( int c = 0; c < numSyms; c++) {
+	        efile.seek(section.sh_offset + (section.sh_entsize * c));
+            Symbol symbol = new Symbol( section );
+            symbol.st_name = efile.readIntE();
+            symbol.st_value = efile.readIntE();
+            symbol.st_size = efile.readIntE();
+            symbol.st_info = efile.readByte();
+            symbol.st_other = efile.readByte();
+            symbol.st_shndx = efile.readShortE();
+            if ( symbol.st_info == 0 )
+                continue;
+            symList.add(symbol);
+        }
+        Symbol[] results = (Symbol[])symList.toArray(new Symbol[0]);
+        Arrays.sort(results);	
+        return results;
+    }
+
+
+	public void loadSymbols() throws IOException {
+		if ( symbols == null ) {
+			Section section[] = getSections(Section.SHT_SYMTAB);
+            if( section.length > 0 ) {
+                symtab_sym = section[0];
+                symtab_symbols = loadSymbolsBySection( section[0] );
+            } else {
+                symtab_sym = null;
+                symtab_symbols = new Symbol[0];
+            }
+
+            section = getSections(Section.SHT_DYNSYM);
+            if( section.length > 0 ) {
+                dynsym_sym = section[0];
+                dynsym_symbols = loadSymbolsBySection( section[0] );
+            } else {
+                dynsym_sym = null;
+                dynsym_symbols = new Symbol[0];
+            }
+
+            if( symtab_sym != null ) {
+                // sym = symtab_sym;
+                symbols = symtab_symbols;
+            } else if( dynsym_sym != null ) {
+                // sym = dynsym_sym;
+                symbols = dynsym_symbols;
+            }
+		}
+	}
+
+    public Symbol[] getSymbols() {
+        return symbols;
+    }
+
+    public Symbol[] getDynamicSymbols() {
+        return dynsym_symbols;
+    }
+
+    public Symbol[] getSymtabSymbols() {
+        return symtab_symbols;
+    }
+
+
+	
+	/* return the address of the function that address is in */
+	public Symbol getSymbol( long vma ) {
+		if ( symbols == null ) {
+			return null;
+		}
+
+		//@@@ If this works, move it to a single instance in this class.
+		SymbolComparator symbol_comparator = new SymbolComparator();
+		
+		int ndx = Arrays.binarySearch(symbols, new Long(vma), symbol_comparator);
+		if ( ndx > 0 )
+			return symbols[ndx];
+		if ( ndx == -1 ) {
+			return null;
+		}
+		ndx = -ndx - 1;
+		return symbols[ndx-1];
+	}
+		
+	public long swapInt( long val ) {
+		if ( ehdr.e_ident[ehdr.EI_DATA] == ehdr.ELFDATA2LSB ) {
+			short tmp[] = new short[4];
+			tmp[0] = (short)(val & 0x00ff);
+			tmp[1] = (short)((val >> 8) & 0x00ff);
+			tmp[2] = (short)((val >> 16) & 0x00ff); 
+			tmp[3] = (short)((val >> 24) & 0x00ff);
+			return (long)((tmp[0] << 24) + (tmp[1] << 16) + (tmp[2] << 8) + tmp[3]);
+		}
+		return val;
+	}
+
+	public int swapShort( short val ) {
+		if ( ehdr.e_ident[ehdr.EI_DATA] == ehdr.ELFDATA2LSB ) {
+			short tmp[] = new short[2];
+			tmp[0] = (short)(val & 0x00ff);
+			tmp[1] = (short)((val >> 8) & 0x00ff);
+			return (short)((tmp[0] << 8) + tmp[1]);
+		}
+		return val;
+	}
+
+    public String getFilename() {
+        return file;
+    }
+}

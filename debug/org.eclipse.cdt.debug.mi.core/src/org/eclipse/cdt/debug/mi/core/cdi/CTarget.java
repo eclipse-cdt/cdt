@@ -382,6 +382,7 @@ public class CTarget  implements ICDITarget {
 		}
 		MISession miSession = session.getMISession();
 		miSession.fireEvent(new MIDetachedEvent());
+		session.getMISession().getMIInferior().setDetached();
 	}
 
 	/**
@@ -442,7 +443,7 @@ public class CTarget  implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#isDisconnected()
 	 */
 	public boolean isDisconnected() {
-		return !session.getMISession().getMIInferior().isConnected();
+		return !session.getMISession().getMIInferior().isAttached();
 	}
 
 	/**

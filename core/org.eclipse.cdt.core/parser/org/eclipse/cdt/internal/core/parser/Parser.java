@@ -803,15 +803,16 @@ public class Parser implements IParserData, IParser
 		int startingOffset = la.getOffset();
 		int ln = la.getLineNumber();
 		char [] fn = la.getFilename();
-		
-		IASTExpression resultExpression = null;
-		if( la.getType() == IToken.tLPAREN && LT(2) == IToken.tLBRACE && extension.supportsStatementsInExpressions() )
-		{
-			resultExpression = compoundStatementExpression(scope, la, resultExpression);
-		}
-		
-		if( resultExpression != null )
-			return resultExpression;
+
+		//moved to primary expression
+//		IASTExpression resultExpression = null;
+//		if( la.getType() == IToken.tLPAREN && LT(2) == IToken.tLBRACE && extension.supportsStatementsInExpressions() )
+//		{
+//			resultExpression = compoundStatementExpression(scope, la, resultExpression);
+//		}
+//		
+//		if( resultExpression != null )
+//			return resultExpression;
 		
 		IASTExpression assignmentExpression = assignmentExpression(scope, kind,
 				key);
@@ -2623,6 +2624,12 @@ public class Parser implements IParserData, IParser
 					throwBacktrack(t.getOffset(), t.getEndOffset(), t.getLineNumber(), t.getFilename());
 				}
 			case IToken.tLPAREN :
+			    if( LT(2) == IToken.tLBRACE && extension.supportsStatementsInExpressions() )
+				{
+					IASTExpression resultExpression = compoundStatementExpression(scope, LA(1), null);
+					if( resultExpression != null )
+					    return resultExpression;
+				}
 				t = consume();
 				if (templateIdScopes.size() > 0) {
 					templateIdScopes.push(IToken.tLPAREN);

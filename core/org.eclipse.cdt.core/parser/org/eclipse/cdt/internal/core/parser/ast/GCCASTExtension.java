@@ -90,8 +90,13 @@ public abstract class GCCASTExtension implements IASTFactoryExtension {
 		}
 		else if ( kind == IASTGCCExpression.Kind.UNARY_TYPEOF_UNARYEXPRESSION )
 		{
-			if( lhs instanceof ASTExpression )
-				info = TypeInfoProvider.newTypeInfo( ((ASTExpression)lhs).getResultType().getResult() );
+			if( lhs instanceof ASTExpression ){
+			    if( ((ASTExpression) lhs).getResultType() != null )
+			        info = TypeInfoProvider.newTypeInfo( ((ASTExpression)lhs).getResultType().getResult() );
+			    else {
+			        info = TypeInfoProvider.newTypeInfo( ITypeInfo.t_void );
+			    }
+			}
 		}
 		
 		if( info != null )

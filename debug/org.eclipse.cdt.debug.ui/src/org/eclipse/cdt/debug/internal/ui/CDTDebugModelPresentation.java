@@ -921,12 +921,10 @@ public class CDTDebugModelPresentation extends LabelProvider
 	{
 		if ( element.areSymbolsLoaded() )
 		{
-			return CDebugUIPlugin.getImageDescriptorRegistry().get( CDebugImages.DESC_OBJS_LOADED_SHARED_LIBRARY );
+			return fImageCache.getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( CDebugImages.DESC_OBJS_LOADED_SHARED_LIBRARY ), 
+											new ImageDescriptor[] { null, CDebugImages.DESC_OVRS_SYMBOLS, null, null } ) );
 		}
-		else
-		{
-			return CDebugUIPlugin.getImageDescriptorRegistry().get( CDebugImages.DESC_OBJS_SHARED_LIBRARY );
-		}
+		return CDebugUIPlugin.getImageDescriptorRegistry().get( CDebugImages.DESC_OBJS_SHARED_LIBRARY );
 	}
 
 	protected DisassemblyEditorInput getDisassemblyEditorInput( ICAddressBreakpoint breakpoint )

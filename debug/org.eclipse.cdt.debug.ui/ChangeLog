@@ -1,3 +1,9 @@
+2003-06-26 Mikhail Khodjaiants
+	New icon for shared libraries with loaded symbols.
+	* icons/full/ovr16/symbols_ovr.gif: new
+	* CDebugImages.java
+	* CDTDebugModelPresentation.java
+ 
 2003-06-24 Mikhail Khodjaiants
 	Warnings cleanup.
 	* CDebugPreferencePage.java

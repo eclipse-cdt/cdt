@@ -9,12 +9,13 @@
  * QNX Software Systems - Initial API and implementation
  ***********************************************************************/
 
-package org.eclipse.cdt.debug.mi.core.command;
+package org.eclipse.cdt.debug.mi.core;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentCD;
 import org.eclipse.core.runtime.Path;
 
 /**
@@ -63,10 +64,11 @@ public class CygwinMIEnvironmentCD extends MIEnvironmentCD {
 	 * @see org.eclipse.cdt.debug.mi.core.command.MICommand#parametersToString()
 	 */
 	protected String parametersToString() {
-		if (parameters != null && parameters.length == 1) {
+		String[] params = getParameters();
+		if (params != null && params.length == 1) {
 			StringBuffer sb = new StringBuffer();
 			// We need to escape the double quotes and the backslash.
-			String param = parameters[0];
+			String param = params[0];
 			for (int j = 0; j < param.length(); j++) {
 				char c = param.charAt(j);
 				if (c == '"' || c == '\\') {

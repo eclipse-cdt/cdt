@@ -4,7 +4,11 @@
  *
  */
 
-package org.eclipse.cdt.debug.mi.core.command;
+package org.eclipse.cdt.debug.mi.core;
+
+import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentCD;
+import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 
 /**
  * Cygwin Command Factory overrides the regular Command Factory to allow for

@@ -4,11 +4,12 @@
  *
  */
 
-package org.eclipse.cdt.debug.mi.core.command;
+package org.eclipse.cdt.debug.mi.core;
 
 import java.io.ByteArrayOutputStream;
 
 import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 import org.eclipse.core.runtime.Path;
 
 /**

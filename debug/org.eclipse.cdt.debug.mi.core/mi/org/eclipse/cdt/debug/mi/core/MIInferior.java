@@ -24,8 +24,6 @@ import org.eclipse.cdt.debug.mi.core.command.MIInfoProgram;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIGDBShowExitCodeInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfoProgramInfo;
-import org.eclipse.cdt.utils.pty.PTY;
-import org.eclipse.cdt.utils.spawner.Spawner;
 
 /**
  */
@@ -49,16 +47,16 @@ public class MIInferior extends Process {
 
 	PipedInputStream err;
 	PipedOutputStream errPiped;
-	PTY pty;
+	IMITTY tty;
 
 	int inferiorPID;
 
-	MIInferior(MISession mi, PTY p) {
+	MIInferior(MISession mi, IMITTY p) {
 		session = mi;
-		pty = p;
-		if (pty != null) {
-			out = pty.getOutputStream();
-			in = pty.getInputStream();
+		tty = p;
+		if (tty != null) {
+			out = tty.getOutputStream();
+			in = tty.getInputStream();
 		}
 	}
 
@@ -181,7 +179,7 @@ public class MIInferior extends Process {
 	}
 
 	public synchronized void interrupt() throws MIException {
-		Process gdb = session.getGDBProcess();
+		MIProcess gdb = session.getGDBProcess();
 		// Check if they can handle the interrupt
 		// Try the exec-interrupt; this will be for "gdb --async"
 		CommandFactory factory = session.getCommandFactory();
@@ -200,26 +198,8 @@ public class MIInferior extends Process {
 				}
 			} catch (MIException e) {
 			}
-		} else if (gdb instanceof Spawner) {
-			Spawner gdbSpawner = (Spawner) gdb;
-			gdbSpawner.interrupt();
-			// Allow (5 secs) for the interrupt to propagate.
-			for (int i = 0;(state == RUNNING) && i < 5; i++) {
-				try {
-					wait(1000);
-				} catch (InterruptedException e) {
-				}
-			}
-			if ((state == RUNNING) && getInferiorPID() > 0) {
-				// lets try something else.
-				gdbSpawner.raise(getInferiorPID(), gdbSpawner.INT);
-				for (int i = 0;(state == RUNNING) && i < 5; i++) {
-					try {
-						wait(1000);
-					} catch (InterruptedException e) {
-					}
-				}
-			}
+		} else if (gdb.canInterrupt(this)) {
+			gdb.interrupt(this);
 		}
 
 		// If we've failed throw an exception up.
@@ -286,9 +266,9 @@ public class MIInferior extends Process {
 			//e.printStackTrace();
 		}
 
-		// If pty is not null then we are using a master/slave terminal
+		// If tty is not null then we are using a master/slave terminal
 		// emulation close the master to notify the slave.
-		if (pty != null) {
+		if (tty != null) {
 			if (in != null) {
 				try {
 					in.close();
@@ -320,8 +300,8 @@ public class MIInferior extends Process {
 		return errPiped;
 	}
 
-	public PTY getPTY() {
-		return pty;
+	public IMITTY getTTY() {
+		return tty;
 	}
 
 	public void update() {

@@ -146,7 +146,7 @@ public class MICommand extends Command {
 		return command.toString();
 	}
 
-	boolean containsWhitespace(String s) {
+	protected boolean containsWhitespace(String s) {
 		for (int i = 0; i < s.length(); i++) {
 			if (Character.isWhitespace(s.charAt(i))) {
 				return true;

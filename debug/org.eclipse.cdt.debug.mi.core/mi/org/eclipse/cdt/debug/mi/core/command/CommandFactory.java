@@ -139,6 +139,9 @@ public class CommandFactory {
 	}
 
 	public MIExecInterrupt createMIExecInterrupt() {
+		// return null here to signal that we do not support
+		// -exec-interrupt and to use to drop a signal to gdb
+		// instead via the MIProcess class
 		return null;
 	}
 

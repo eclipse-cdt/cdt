@@ -28,7 +28,6 @@ import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIOutput;
 import org.eclipse.cdt.debug.mi.core.output.MIParser;
-import org.eclipse.cdt.utils.pty.PTY;
 
 /**
  * Represents a GDB/MI session.
@@ -57,7 +56,7 @@ public class MISession extends Observable {
 	int sessionType;
 
 	Process sessionProcess;
-	Process gdbProcess;
+	MIProcess gdbProcess;
 	InputStream inChannel;
 	OutputStream outChannel;
 
@@ -91,7 +90,7 @@ public class MISession extends Observable {
 	 * @param timeout time in milliseconds to wait for command response.
 	 * @param type the type of debugin session.
 	 */
-	public MISession(Process process, PTY pty, int timeout, int type, int launchTimeout) throws MIException {
+	public MISession(MIProcess process, IMITTY tty, int timeout, int type, int launchTimeout) throws MIException {
 
 		gdbProcess = process;
 		inChannel = process.getInputStream();
@@ -105,7 +104,7 @@ public class MISession extends Observable {
 
 		parser = new MIParser();
 
-		inferior = new MIInferior(this, pty);
+		inferior = new MIInferior(this, tty);
 
 		txQueue = new CommandQueue();
 		rxQueue = new CommandQueue();
@@ -344,7 +343,7 @@ public class MISession extends Observable {
 	/**
 	 * Return the "gdb" Process.
 	 */
-	public Process getGDBProcess() {
+	public MIProcess getGDBProcess() {
 		return gdbProcess;
 	}
 	

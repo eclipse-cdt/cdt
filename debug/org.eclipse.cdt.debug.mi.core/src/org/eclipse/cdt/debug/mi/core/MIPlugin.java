@@ -10,13 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.mi.core;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -29,7 +26,6 @@ import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 import org.eclipse.cdt.utils.pty.PTY;
-import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Preferences;
 import org.osgi.framework.BundleContext;
@@ -87,7 +83,7 @@ public class MIPlugin extends Plugin {
 	 * @throws MIException
 	 * @return MISession
 	 */
-	public MISession createMISession(Process process, PTY pty, int timeout, int type, int launchTimeout) throws MIException {
+	public MISession createMISession(MIProcess process, IMITTY pty, int timeout, int type, int launchTimeout) throws MIException {
 		return new MISession(process, pty, timeout, type, launchTimeout);
 	}
 
@@ -99,7 +95,7 @@ public class MIPlugin extends Plugin {
 	 * @throws MIException
 	 * @return MISession
 	 */
-	public MISession createMISession(Process process, PTY pty, int type) throws MIException {
+	public MISession createMISession(MIProcess process, IMITTY pty, int type) throws MIException {
 		MIPlugin miPlugin = getDefault();
 		Preferences prefs = miPlugin.getPluginPreferences();
 		int timeout = prefs.getInt(IMIConstants.PREF_REQUEST_TIMEOUT);
@@ -114,11 +110,12 @@ public class MIPlugin extends Plugin {
 	 * @throws MIException
 	 */
 	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit) throws IOException, MIException {
-		PTY pty = null;
+		IMITTY pty = null;
 		boolean failed = false;
 
 		try {
-			pty = new PTY();
+			PTY pseudo = new PTY();
+			pty = new MITTYAdapter(pseudo);
 		} catch (IOException e) {
 		}
 
@@ -156,7 +153,7 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit, PTY pty) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit, IMITTY pty) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  GDB;
 		}
@@ -180,7 +177,7 @@ public class MIPlugin extends Plugin {
 			}
 		}
 
-		Process pgdb = getGDBProcess(args);
+		MIProcess pgdb = new MIProcessAdapter(args);
 
 		MISession session;
 		try {
@@ -231,7 +228,7 @@ public class MIPlugin extends Plugin {
 		} else {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath(), program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 		}
-		Process pgdb = getGDBProcess(args);
+		MIProcess pgdb = new MIProcessAdapter(args);
 		MISession session;
 		try {
 			session = createMISession(pgdb, null, MISession.CORE);
@@ -264,7 +261,7 @@ public class MIPlugin extends Plugin {
 		} else {
 			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program.getAbsolutePath()}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		}
-		Process pgdb = getGDBProcess(args);
+		MIProcess pgdb = new MIProcessAdapter(args);
 		MISession session;
 		try {
 			session = createMISession(pgdb, null, MISession.ATTACH);
@@ -344,68 +341,6 @@ public class MIPlugin extends Plugin {
 		} catch (NullPointerException e) {
 			return '#' + key + '#';
 		}
-	}
-	/**
-	 * Do some basic synchronisation, gdb may take some time to load
-	 * for whatever reasons.
-	 * @param args
-	 * @return Process
-	 * @throws IOException
-	 */
-	protected Process getGDBProcess(String[] args) throws IOException {
-		if ( getDefault().isDebugging() )
-		{
-			StringBuffer sb = new StringBuffer();
-			for ( int i = 0; i < args.length; ++i )
-			{
-				sb.append( args[i] );
-				sb.append( ' ' );
-			}
-			getDefault().debugLog( sb.toString() );
-		}
-		final Process pgdb = ProcessFactory.getFactory().exec(args);
-		Thread syncStartup = new Thread("GDB Start") { //$NON-NLS-1$
-			public void run() {
-				try {
-					String line;
-					InputStream stream = pgdb.getInputStream();
-					Reader r = new InputStreamReader(stream);
-					BufferedReader reader = new BufferedReader(r);
-					while ((line = reader.readLine()) != null) {
-						line = line.trim();
-						//System.out.println("GDB " + line);
-						if (line.endsWith("(gdb)")) { //$NON-NLS-1$
-							break;
-						}
-					}
-				} catch (Exception e) {
-					// Do nothing
-				}
-				synchronized (pgdb) {
-					pgdb.notifyAll();
-				}
-			}
-		};
-		syncStartup.start();
-		
-		synchronized (pgdb) {
-			MIPlugin miPlugin = getDefault();
-			Preferences prefs = miPlugin.getPluginPreferences();
-			int launchTimeout = prefs.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
-			while (syncStartup.isAlive()) {
-				try {
-					pgdb.wait(launchTimeout);
-					break;
-				} catch (InterruptedException e) {
-				}
-			}
-		}
-		try {
-			syncStartup.interrupt();
-			syncStartup.join(1000);
-		} catch (InterruptedException e) {
-		}
-		return pgdb;
 	}
 
 	/* (non-Javadoc)

@@ -12,8 +12,8 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.mi.core.MIInferior;
+import org.eclipse.cdt.debug.mi.core.MIProcess;
 import org.eclipse.cdt.debug.mi.core.MISession;
-import org.eclipse.cdt.utils.spawner.Spawner;
 
 /**
  */
@@ -125,8 +125,9 @@ public class Configuration implements ICDIConfiguration {
 			os = System.getProperty("os.name", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (SecurityException e) {
 		}
-		Process gdb = miSession.getGDBProcess();
-		if (gdb instanceof Spawner) {
+		MIProcess gdb = miSession.getGDBProcess();
+		MIInferior inferior = miSession.getMIInferior();
+		if (gdb.canInterrupt(inferior)) {
 			// If we attached sending a control-c,
 			// seems to alays work.
 			if (fAttached) {
@@ -136,8 +137,7 @@ public class Configuration implements ICDIConfiguration {
 			// If we have a pty, sending a control-c will work
 			// except for solaris.
 			if (os.equals("SunOS")) { //$NON-NLS-1$
-				MIInferior inferior = miSession.getMIInferior();
-				if (inferior.getPTY() != null) {
+				if (inferior.getTTY() != null) {
 					// FIXME: bug in Solaris gdb when using -tty, sending a control-c
 					// does not work.
 					return false;

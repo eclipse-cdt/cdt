@@ -90,14 +90,11 @@
            </enablement>
            <contextLabel
          	  mode="run"
-         	  label="%ContextualRunJavaApplication.label"/>
+         	  label="%ContextualRunCApplication.label"/>
   		   <contextLabel
   		 	  mode="debug"
-  		 	  label="%ContextualDebugJavaApplication.label"/>
+  		 	  label="%ContextualDebugCApplication.label"/>
   		 </contextualLaunch>
-         <filter
-             name="ContextualLaunchActionFilter"
-             value="supportsContextualLaunch"/>
          <perspective
                id="org.eclipse.cdt.ui.CPerspective">
          </perspective>

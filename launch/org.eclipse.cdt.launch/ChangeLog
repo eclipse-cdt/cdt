@@ -1,3 +1,8 @@
+2004-08-16 Mikhail Khodjaiants
+	Contextual launch shortcuts cleanup.
+	* plugin.properties
+	* plugin.xml
+
 2004-08-12 Mikhail Khodjaiants
 	Warning cleanup.
 	* AbstractCLaunchDelegate.java

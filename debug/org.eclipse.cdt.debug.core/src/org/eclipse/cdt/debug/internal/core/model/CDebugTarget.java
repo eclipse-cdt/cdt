@@ -313,7 +313,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !getConfiguration().supportsBreakpoints() )
 			return false;
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -549,20 +549,6 @@ public class CDebugTarget extends CDebugElement
 			{
 				CDebugCorePlugin.log( e );
 			}
-/*
-			try
-			{
-				( (CBreakpoint)breakpoint).addToTarget( this );
-				if ( !getBreakpoints().contains( breakpoint ) )
-				{
-					getBreakpoints().add( breakpoint );
-				}	
-			}
-			catch( CoreException e )
-			{
-				logError( e );
-			}
-*/
 		}
 	}
 

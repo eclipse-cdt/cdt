@@ -492,6 +492,11 @@ public abstract class CModelOperation implements IWorkspaceRunnable, IProgressMo
 			execute();
 		} finally {
 			registerDeltas();
+			// Fire if we change somethings
+			if (!hasModifiedResource()) {
+				CModelManager manager= CModelManager.getDefault();
+				manager.fire();
+			}
 		}
 	}
 

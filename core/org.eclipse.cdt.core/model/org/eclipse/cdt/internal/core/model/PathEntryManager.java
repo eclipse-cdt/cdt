@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.core.model.PathEntryContainerInitializer;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -89,7 +88,7 @@ public class PathEntryManager {
 	 */
 	public static HashMap Containers = new HashMap(5);
 
-	HashMap projectMap = new HashMap();
+	HashMap resolvedMap = new HashMap();
 
 	private static PathEntryManager pathEntryManager;
 
@@ -107,7 +106,7 @@ public class PathEntryManager {
 	}
 
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
-		IPathEntry[] entries = (IPathEntry[]) projectMap.get(cproject);
+		IPathEntry[] entries = (IPathEntry[]) resolvedMap.get(cproject);
 		if (entries == null) {
 			entries = getRawPathEntries(cproject);
 			ArrayList list = new ArrayList();
@@ -121,9 +120,7 @@ public class PathEntryManager {
 						IPathEntry[] containerEntries = container.getPathEntries();
 						if (containerEntries != null) {
 							for (int j = 0; j < containerEntries.length; j++) {
-								if (entry.isExported()) {
-									list.add(containerEntries[i]);
-								}
+								list.add(containerEntries[i]);
 							}
 						}
 					}
@@ -133,7 +130,7 @@ public class PathEntryManager {
 			}
 			entries = new IPathEntry[list.size()];
 			list.toArray(entries);
-			projectMap.put(cproject, entries);
+			resolvedMap.put(cproject, entries);
 		}
 		return entries;
 	}
@@ -142,6 +139,7 @@ public class PathEntryManager {
 		try {
 			SetPathEntriesOperation op = new SetPathEntriesOperation(cproject, getRawPathEntries(cproject), newEntries);
 			CModelManager.getDefault().runOperation(op, monitor);
+			resolvedMap.put(cproject, null);
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}
@@ -173,10 +171,11 @@ public class PathEntryManager {
 			return;
 		}
 
-		IPath containerPath = newContainer.getPath();
+		IPath containerPath = (newContainer == null) ? new Path("") : newContainer.getPath();
 		final int projectLength = affectedProjects.length;
 		final ICProject[] modifiedProjects = new ICProject[projectLength];
 		System.arraycopy(affectedProjects, 0, modifiedProjects, 0, projectLength);
+		final IPathEntry[][] oldResolvedEntries = new IPathEntry[projectLength][];
 
 		// filter out unmodified project containers
 		int remaining = 0;
@@ -189,16 +188,14 @@ public class PathEntryManager {
 			ICProject affectedProject = affectedProjects[i];
 
 			boolean found = false;
-			if (CoreModel.getDefault().hasCCNature(affectedProject.getProject())) {
-				IPathEntry[] rawPath = affectedProject.getRawPathEntries();
-				for (int j = 0, cpLength = rawPath.length; j < cpLength; j++) {
-					IPathEntry entry = rawPath[j];
-					if (entry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
-						IContainerEntry cont = (IContainerEntry) entry;
-						if (cont.getPath().equals(containerPath)) {
-							found = true;
-							break;
-						}
+			IPathEntry[] rawPath = getRawPathEntries(affectedProject);
+			for (int j = 0, cpLength = rawPath.length; j < cpLength; j++) {
+				IPathEntry entry = rawPath[j];
+				if (entry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
+					IContainerEntry cont = (IContainerEntry) entry;
+					if (cont.getPath().equals(containerPath)) {
+						found = true;
+						break;
 					}
 				}
 			}
@@ -208,11 +205,12 @@ public class PathEntryManager {
 				continue;
 			}
 			IPathEntryContainer oldContainer = containerGet(affectedProject, containerPath);
-			if (oldContainer != null && oldContainer.equals(newContainer)) {
+			if (oldContainer != null && newContainer != null && oldContainer.equals(newContainer)) {
 				modifiedProjects[i] = null; // filter out this project - container did not change
 				continue;
 			}
 			remaining++;
+			oldResolvedEntries[i] = (IPathEntry[])resolvedMap.get(affectedProject);
 			containerPut(affectedProject, containerPath, newContainer);
 		}
 
@@ -223,11 +221,11 @@ public class PathEntryManager {
 
 		// trigger model refresh
 		try {
-			//final boolean canChangeResources = !ResourcesPlugin.getWorkspace().isTreeLocked();
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+			CoreModel.run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor progressMonitor) throws CoreException {
+					boolean shouldFire = false;
+					CModelManager mgr = CModelManager.getDefault();
 					for (int i = 0; i < projectLength; i++) {
-
 						if (progressMonitor != null && progressMonitor.isCanceled()) {
 							return;
 						}
@@ -235,8 +233,21 @@ public class PathEntryManager {
 						if (affectedProject == null) {
 							continue; // was filtered out
 						}
-						// force a refresh of the affected project (will compute deltas)
-						affectedProject.setRawPathEntries(affectedProject.getRawPathEntries(), progressMonitor);
+
+						IPathEntry[] newEntries = getResolvedPathEntries(affectedProject);
+						ICElementDelta[] deltas = generatePathEntryDeltas(affectedProject,
+							oldResolvedEntries[i], newEntries);
+						if (deltas.length > 0) {
+							shouldFire = true;
+							for (int j = 0; j < deltas.length; j++) {
+								mgr.registerCModelDelta(deltas[j]);
+							}
+						}
+
+						//affectedProject.setRawPathEntries(affectedProject.getRawPathEntries(), progressMonitor);
+					}
+					if (shouldFire) {
+						mgr.fire();
 					}
 				}
 			}, monitor);
@@ -352,22 +363,24 @@ public class PathEntryManager {
 	}
 
 	public String[] projectPrerequisites(IPathEntry[] entries) throws CModelException {
-		ArrayList prerequisites = new ArrayList();
-		for (int i = 0, length = entries.length; i < length; i++) {
-			if (entries[i].getEntryKind() == IPathEntry.CDT_PROJECT) {
-				IProjectEntry entry = (IProjectEntry)entries[i];
-				prerequisites.add(entry.getProjectPath().lastSegment());
+		if (entries != null) {
+			ArrayList prerequisites = new ArrayList();
+			for (int i = 0, length = entries.length; i < length; i++) {
+				if (entries[i].getEntryKind() == IPathEntry.CDT_PROJECT) {
+					IProjectEntry entry = (IProjectEntry)entries[i];
+					prerequisites.add(entry.getProjectPath().lastSegment());
+				}
 			}
-		}
-		int size = prerequisites.size();
-		if (size != 0) {
-			String[] result = new String[size];
-			prerequisites.toArray(result);
-			return result;
+			int size = prerequisites.size();
+			if (size != 0) {
+				String[] result = new String[size];
+				prerequisites.toArray(result);
+				return result;
+			}
 		}
 		return NO_PREREQUISITES;
 	}
-	public ICElementDelta[] saveRawPathEntries(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) throws CModelException {
+	public void saveRawPathEntries(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) throws CModelException {
 		try {
 			ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(cproject.getProject());
 			Element rootElement = descriptor.getProjectData(PATH_ENTRY_ID);
@@ -383,16 +396,14 @@ public class PathEntryManager {
 				// Serialize the include paths
 				Document doc = rootElement.getOwnerDocument();
 				encodePathEntries(cproject.getPath(), doc, rootElement, newEntries);
-				descriptor.saveProjectData();
 			}
-
-			return generatePathEntryDeltas(cproject, oldEntries, newEntries);
+			descriptor.saveProjectData();
 		} catch (CoreException e) {
 			throw new CModelException(e);
 		}
 	}
 
-	private ICElementDelta[] generatePathEntryDeltas(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
+	public ICElementDelta[] generatePathEntryDeltas(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
 		ArrayList list = new ArrayList();
 		CModelManager manager = CModelManager.getDefault();
 		boolean needToUpdateDependents = false;
@@ -402,16 +413,18 @@ public class PathEntryManager {
 		if (oldEntries != null) {
 			for (int i = 0; i < oldEntries.length; i++) {
 				boolean found = false;
-				for (int j = 0; j < newEntries.length; j++) {
-					if (oldEntries[i].equals(newEntries[j])) {
-						found = true;
-						break;
+				if (newEntries != null) {
+					for (int j = 0; j < newEntries.length; j++) {
+						if (oldEntries[i].equals(newEntries[j])) {
+							found = true;
+							break;
+						}
 					}
 				}
 				// Was it deleted.
 				if (!found) {
 					ICElementDelta delta =
-						makePathEntryDelta(cproject, oldEntries[i], ICElementDelta.F_REMOVED_FROM_CPATHENTRY);
+						makePathEntryDelta(cproject, oldEntries[i], ICElementDelta.F_REMOVED_FROM_PATHENTRY);
 					if (delta != null) {
 						list.add(delta);
 					}
@@ -422,16 +435,18 @@ public class PathEntryManager {
 		if (newEntries != null) {
 			for (int i = 0; i < newEntries.length; i++) {
 				boolean found = false;
-				for (int j = 0; j < oldEntries.length; j++) {
-					if (newEntries[i].equals(oldEntries[j])) {
-						found = true;
-						break;
+				if (oldEntries != null) {
+					for (int j = 0; j < oldEntries.length; j++) {
+						if (newEntries[i].equals(oldEntries[j])) {
+							found = true;
+							break;
+						}
 					}
 				}
 				// is it new?
 				if (!found) {
 					ICElementDelta delta =
-						makePathEntryDelta(cproject, newEntries[i], ICElementDelta.F_ADDED_TO_CPATHENTRY);
+						makePathEntryDelta(cproject, newEntries[i], ICElementDelta.F_ADDED_TO_PATHENTRY);
 					if (delta != null) {
 						list.add(delta);
 					}

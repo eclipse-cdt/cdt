@@ -621,7 +621,7 @@ public class CoreModel {
 	 * @see IPathEntry
 	 */
 	public IPathEntry[] getResolvedClasspathEntries(ICProject cproject) throws CModelException {
-		return pathEntryManager.getRawPathEntries(cproject);
+		return pathEntryManager.getResolvedPathEntries(cproject);
 	}
 
 	/**

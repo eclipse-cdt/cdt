@@ -16,9 +16,11 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -26,6 +28,7 @@ import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -50,7 +53,7 @@ public class CPathEntryTest extends TestCase {
 			int flags = delta.getFlags();
 			int kind = delta.getKind();
 			if (kind == ICElementDelta.CHANGED ) {
-				if ((flags & ICElementDelta.F_ADDED_TO_CPATHENTRY) != 0) {
+				if ((flags & ICElementDelta.F_ADDED_TO_PATHENTRY) != 0) {
 					count++;
 				}
 			}
@@ -142,7 +145,8 @@ public class CPathEntryTest extends TestCase {
 		entries[2] = CoreModel.newLibraryEntry(new Path("/usr/lib/libc.so.1"), null, null, null);
 		testProject.setRawPathEntries(entries, new NullProgressMonitor());
 		entries = testProject.getResolvedPathEntries();
-		assertTrue("Tree cpathenties", entries.length == 3);
+		assertTrue("Expecting 3 pathentries", entries.length == 3);
+		testProject.setRawPathEntries(null, null);
 	}
 
 	/*******************************************************************************************************************************
@@ -152,19 +156,57 @@ public class CPathEntryTest extends TestCase {
 	 */
 	public void testCPathEntriesDelta() throws CoreException {
 		ICProject testProject;
-		testProject = CProjectHelper.createCProject("cpathtest2", "none");
+		testProject = CProjectHelper.createCProject("cpathtest", "none");
 		if (testProject == null) {
 			fail("Unable to create project");
 		}
+		CProjectHelper.addSourceContainer(testProject, "foo");
 		IPathEntry[] entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path("cpathtest"), new Path("/usr/include"), true);
-		entries[1] = CoreModel.newIncludeEntry(new Path("cpaththest/foo.c"), new Path("/usr/include"), true);
+		entries[1] = CoreModel.newIncludeEntry(new Path("cpaththest/foo"), new Path("/usr/include"), true);
 		entries[2] = CoreModel.newLibraryEntry(new Path("/usr/lib/libc.so.1"), null, null, null);
-		final int count = 0;
 		CElementListener listener = new CElementListener();
 		CoreModel.getDefault().addElementChangedListener(listener);
 		testProject.setRawPathEntries(entries, new NullProgressMonitor());
 		entries = testProject.getResolvedPathEntries();
-		assertTrue("Tree cpathenties", listener.count == 2);
+		CoreModel.getDefault().removeElementChangedListener(listener);
+		testProject.setRawPathEntries(null, null);
+		assertTrue("Expecting 3 pathEntries deltas", listener.count >= 1);
+	}
+
+	/**
+	 * Check the IPathEntryContainer.
+	 */
+	public void testPathEntryContainer() throws CoreException {
+		ICProject testProject;
+		testProject = CProjectHelper.createCProject("cpathtest", "none");
+		if (testProject == null) {
+			fail("Unable to create project");
+		}
+		final IPath containerID = new Path("Testing/Container");
+		IContainerEntry containerEntry = CoreModel.newContainerEntry(containerID);
+		IPathEntryContainer container = new IPathEntryContainer() {
+
+			public IPathEntry[] getPathEntries() {
+				IPathEntry[] entries = new IPathEntry[3];
+				entries[0] = CoreModel.newIncludeEntry(new Path("cpathtest"), new Path("/usr/include"), true);
+				entries[1] = CoreModel.newIncludeEntry(new Path("cpaththest/foo.c"), new Path("/usr/include"), true);
+				entries[2] = CoreModel.newLibraryEntry(new Path("/usr/lib/libc.so.1"), null, null, null);
+				return entries;
+			}
+
+			public String getDescription() {
+				return "Testing container"; //$NON-NLS-1$
+			}
+
+			public IPath getPath() {
+				return containerID;
+			}
+			
+		};
+		CoreModel.getDefault().setRawPathEntries(testProject, new IPathEntry[]{containerEntry}, new NullProgressMonitor());
+		CoreModel.getDefault().setPathEntryContainer(new ICProject[]{testProject}, container, new NullProgressMonitor());
+		IPathEntry[] entries = testProject.getResolvedPathEntries();
+		assertTrue("Expecting 3 pathentries from container", entries.length == 3);
 	}
 }

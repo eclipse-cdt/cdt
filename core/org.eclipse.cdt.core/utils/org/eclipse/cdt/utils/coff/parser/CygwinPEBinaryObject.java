@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.CConventions;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
@@ -191,6 +192,10 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 			for (int i = 0; i < pairs.length; ++i) {
 				addSymbol(pairs[i], list, ISymbol.VARIABLE);
 			}
+			pairs = nm.getDataSymbols();
+			for (int i = 0; i < pairs.length; ++i) {
+				addSymbol(pairs[i], list, ISymbol.VARIABLE);
+			}
 		}
 //		pairs = nm.getTextSymbols();
 //		for (int i = 0; i < pairs.length; ++i) {
@@ -216,7 +221,7 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 
 	private void addSymbol(NM.AddressNamePair p, List list, int type) {
 		String name = p.name;		
-		if (name != null && name.length() > 0 && Character.isJavaIdentifierStart(name.charAt(0))) {
+		if (name != null && name.length() > 0 && CConventions.isValidIdentifier(name)) {
 			IAddress addr = new Addr32(p.address);
 			int size = 4;
 			if (symbolLoadingCPPFilt != null) {

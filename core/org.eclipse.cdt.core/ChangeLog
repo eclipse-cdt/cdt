@@ -1,3 +1,7 @@
+2004-12-09 Alain Magloire
+	Fix for 80724: not showing initialized global variables.
+	* utils/org/eclipse/cdt/utils/coff/parser/CygwinPEBinaryObject.java
+
 2004-12-10 David Inglis
 	Fixed bug #80713
 	

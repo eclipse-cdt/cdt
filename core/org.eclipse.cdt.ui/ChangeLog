@@ -1,5 +1,10 @@
 2004-09-08 Alain Magloire
 
+	Fix for PR 73459
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
+
+2004-09-08 Alain Magloire
+
 	Fix for PR 69330
 	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
 	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinerProvider.java

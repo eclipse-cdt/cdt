@@ -10,7 +10,6 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.ASTUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -21,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
@@ -65,7 +65,7 @@ public class DOMCompletionContributor implements ICompletionContributor {
 					if (i > 0)
 						args.append(',');
 					
-					args.append(ASTUtil.getType(paramType));
+					//args.append(ASTUtil.getType(paramType));
 					String paramName = params[i].getName();
 					if (paramName != null) {
 						args.append(' ');

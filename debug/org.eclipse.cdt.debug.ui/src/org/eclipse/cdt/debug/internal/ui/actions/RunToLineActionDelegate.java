@@ -5,10 +5,14 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
+import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
+import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -21,6 +25,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -52,9 +57,28 @@ public class RunToLineActionDelegate extends AbstractEditorActionDelegate
 				IFile file = ((IFileEditorInput)input).getFile();
 				if ( file != null )
 				{
-					ITextSelection selection= (ITextSelection)((ITextEditor)getTargetPart()).getSelectionProvider().getSelection();
+					ITextSelection selection = (ITextSelection)((ITextEditor)getTargetPart()).getSelectionProvider().getSelection();
 					int lineNumber = selection.getStartLine() + 1;
 					runToLine( file, lineNumber );
+				}
+			}
+			else if ( input != null && input instanceof IStorageEditorInput )
+			{
+				try
+				{
+					IStorage storage = ((IStorageEditorInput)input).getStorage();
+					if ( storage != null && storage.getAdapter( IDisassemblyStorage.class ) != null )
+					{
+						IDisassemblyStorage disassemblyStorage = (IDisassemblyStorage)storage.getAdapter( IDisassemblyStorage.class );
+						ITextSelection selection = (ITextSelection)((ITextEditor)getTargetPart()).getSelectionProvider().getSelection();
+						int lineNumber = selection.getStartLine();
+						long address = disassemblyStorage.getAddress( lineNumber );
+						if ( address > 0 )
+							runToAddress( address );
+					}
+				}
+				catch( CoreException e )
+				{
 				}
 			}
 		}
@@ -115,6 +139,27 @@ public class RunToLineActionDelegate extends AbstractEditorActionDelegate
 			try
 			{
 				target.runToLine( resource, lineNumber );
+			}
+			catch( DebugException e )
+			{
+				CDebugUIPlugin.errorDialog( e.getMessage(), e );
+			}
+		}
+	}
+
+	protected void runToAddress( long address )
+	{
+		IRunToAddress target = (IRunToAddress)getDebugTarget().getAdapter( IRunToAddress.class );
+		if ( target != null )
+		{
+			if ( !target.canRunToAddress( address ) )
+			{
+				getTargetPart().getSite().getShell().getDisplay().beep();
+				return;
+			}
+			try
+			{
+				target.runToAddress( address );
 			}
 			catch( DebugException e )
 			{

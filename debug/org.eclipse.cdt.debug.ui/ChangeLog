@@ -1,3 +1,7 @@
+2003-01-10 Mikhail Khodjaiants
+	Implementation of the 'Run To Line' action for disassembly.
+	* RunToLineActionDelegate.java
+
 2003-01-13 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/internal/ui/editors/DebugTextHover.java (getHoverInfo):

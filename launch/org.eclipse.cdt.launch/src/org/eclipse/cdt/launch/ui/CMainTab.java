@@ -7,6 +7,7 @@ package org.eclipse.cdt.launch.ui;
 
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICProjectDescriptor;
@@ -22,7 +23,11 @@ import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.CLaunchConfigurationTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.cdt.utils.elf.Elf;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -31,6 +36,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -46,6 +52,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.FilteredList;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * A launch configuration tab that displays and edits project and
@@ -200,7 +207,79 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * Show a dialog that lists all main types
 	 */
 	protected void handleSearchButtonSelected() {
+		String project = fProjText.getText();
+		
+		if(project == null || project.length() == 0) {
+			MessageDialog.openInformation(getShell(), "Project required", "Project must first be entered before searching for a program");
+			return;
+		}
+
+		IFile [] executables = getExeFiles(project);
+		
+		ILabelProvider labelProvider = new WorkbenchLabelProvider();
+		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
+		dialog.setTitle("Program Selection");
+		dialog.setMessage("Choose a &program to run");
+		dialog.setElements(executables);
+		
+		/*
+		if (cProject != null) {
+			dialog.setInitialSelections(new Object[] { cProject });
+		}
+		*/
+		
+		if (dialog.open() == dialog.OK) {
+			IFile file = (IFile)dialog.getFirstResult();
+			fProgText.setText(file.getProjectRelativePath().toString());
+		}
 	}
+ 
+ 	/**
+ 	 * Iterate through and suck up all of the executable files that
+ 	 * we can find.
+ 	 */
+	protected IFile [] getExeFiles(String projectName) {
+		ArrayList exeList = new ArrayList(1);
+		
+		IProject project;
+		project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
+		if(project == null) {
+			return new IFile[0];
+		}
+		
+		ArrayList kids = new ArrayList();
+		try {
+			kids.addAll(Arrays.asList(project.members()));
+		} catch(Exception e) { /* Ignore */ }
+		
+		for(int i = 0; i < kids.size(); i++) {
+			Object res = kids.get(i);			
+			if(res instanceof IFile) {
+				Elf elf = null;
+				try {
+					elf = new Elf(((IFile)res).getLocation().toOSString());
+					switch(elf.getAttributes().getType()) {
+					case Elf.Attribute.ELF_TYPE_EXE:
+						exeList.add(res);
+						break;
+					}
+				} catch(Exception e) {
+					/* Ignore */
+				} finally {
+					if(elf != null) {
+						elf.dispose();
+					}
+				}
+			} else if(res instanceof IContainer) {
+				try {
+					kids.addAll(Arrays.asList(((IContainer)res).members()));
+				} catch(Exception e) { /* Ignore */ }
+			}
+		}
+		
+		return (IFile [])exeList.toArray(new IFile[0]);
+	}
+	
 
 	/**
 	 * Show a dialog that lets the user select a project.  This in turn provides

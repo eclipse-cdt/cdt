@@ -121,6 +121,7 @@ public class TreeObject implements IAdaptable {
 	// all parents of the desired tree object to display need to have a flag as well
 	private int filterFlag = 0; 
 	public static final int FLAG_PROBLEM = 0x1;
+	public static final int FLAG_PREPROCESSOR = 0x2;
 	
 	public TreeObject(IASTNode node) {
 		this.node = node;

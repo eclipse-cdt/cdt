@@ -10,29 +10,25 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTProblem;
-import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * @author dsteffle
  */
-public class ProblemHolderFilter extends ViewerFilter {
+public class PreprocessorFilter extends ViewerFilter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		if (element instanceof TreeObject) {
-			int flag = ((TreeObject)element).getFiltersFlag() & TreeObject.FLAG_PROBLEM;
+			int flag = ((TreeObject)element).getFiltersFlag() & TreeObject.FLAG_PREPROCESSOR;
 			if (flag > 0) {
-				IASTNode node = ((TreeObject)element).getNode();
-				if (node instanceof IASTProblem ||
-						node instanceof IASTProblemHolder)
+				if (((TreeObject)element).getNode() instanceof IASTPreprocessorStatement)
 					return false;
-				
+
 				return true;
 			}
 		}

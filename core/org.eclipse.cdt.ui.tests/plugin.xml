@@ -103,6 +103,14 @@
             class="org.eclipse.cdt.ui.tests.DOMAST.ProblemHolderFilter"
             id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST.ProblemHolderFilter">
       </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"
+            name="Preprocessor Filter"
+            enabled="false"
+            description="Filter Preprocessor Statements"
+            class="org.eclipse.cdt.ui.tests.DOMAST.PreprocessorFilter"
+            id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST.PreprocessorFilter">
+      </filter>
    </extension>
 
 

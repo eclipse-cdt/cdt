@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
@@ -75,10 +76,13 @@ public class CPopulateASTViewAction extends CBaseVisitorAction implements IPopul
 		TreeParent tree = new TreeParent(node);
 		parent.addChild(tree);
 		
+		// set filter flags
 		if (node instanceof IASTProblemHolder)
 			tree.setFiltersFlag(TreeObject.FLAG_PROBLEM);
 		if (node instanceof IASTProblem)
 			tree.setFiltersFlag(TreeObject.FLAG_PROBLEM);
+		if (node instanceof IASTPreprocessorStatement)
+			tree.setFiltersFlag(TreeObject.FLAG_PREPROCESSOR);
 	}
 	
 	/* (non-Javadoc)

@@ -548,9 +548,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             if (nameDuple != null) {
                IASTName name = createName(nameDuple);
                ICPPASTPointerToMember p2m = createPointerToMember(isRestrict);
-               ((ASTNode) p2m).setOffsetAndLength(starOffset, nameDuple
-                     .getEndOffset()
-                     - starOffset);
+               ((ASTNode) p2m).setOffsetAndLength(nameDuple.getFirstToken().getOffset(), last
+                     .getEndOffset() - nameDuple.getFirstToken().getOffset() );
                p2m.setConst(isConst);
                p2m.setVolatile(isVolatile);
                p2m.setName(name);

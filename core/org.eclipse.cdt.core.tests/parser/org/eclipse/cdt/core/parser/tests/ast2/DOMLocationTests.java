@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorFunctionStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
@@ -209,7 +210,14 @@ public class DOMLocationTests extends AST2BaseTest {
       
    }
    
-   
+   public void testBug84357() throws Exception {
+      String code = "class X {	int a;\n};\nint X::  * pmi = &X::a;"; //$NON-NLS-1$
+      IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
+      IASTSimpleDeclaration pmi = (IASTSimpleDeclaration) tu.getDeclarations()[1];
+      IASTDeclarator d = pmi.getDeclarators()[0];
+      IASTPointerOperator p = d.getPointerOperators()[0];
+      assertSoleLocation( p, code.indexOf( "X::  *") , "X::  *".length()); //$NON-NLS-1$ //$NON-NLS-2$
+   }
    public void testBug84367() throws Exception {
       String code = "void foo(   int   );"; //$NON-NLS-1$
       for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP

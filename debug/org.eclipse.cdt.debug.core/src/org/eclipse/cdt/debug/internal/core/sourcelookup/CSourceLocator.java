@@ -562,31 +562,25 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		IProject project = getProject();
 		if ( project != null && project.exists() && project.isOpen() )
 		{
-			try
+			List list = getReferencedProjects( project );
+			HashSet names = new HashSet( list.size() + 1 );
+			names.add( project.getName() );
+			Iterator it = list.iterator();
+			while( it.hasNext() )
 			{
-				IProject[] refs = project.getReferencedProjects();
-				HashSet names = new HashSet( refs.length + 1 );
-				names.add( project.getName() );
-				for ( int i = 0; i < refs.length; ++i )
-				{
-					names.add( refs[i].getName() );
-				}
-				for ( int i = 0; i < locations.length; ++i )
-					if ( locations[i] instanceof IProjectSourceLocation && 
-						 ((IProjectSourceLocation)locations[i]).isGeneric() )
-						 names.remove( ((IProjectSourceLocation)locations[i]).getProject().getName() );
-				
-				Iterator it = names.iterator();
-				while ( it.hasNext() )
-				{
-					Element child = doc.createElement( DISABLED_GENERIC_PROJECT_NAME );
-					child.setAttribute( ATTR_PROJECT_NAME, (String)it.next() );
-					node.appendChild( child );
-				}
+				names.add( ((IProject)it.next()).getName() );
 			}
-			catch( CoreException e )
+			for ( int i = 0; i < locations.length; ++i )
+				if ( locations[i] instanceof IProjectSourceLocation && 
+					 ((IProjectSourceLocation)locations[i]).isGeneric() )
+					 names.remove( ((IProjectSourceLocation)locations[i]).getProject().getName() );
+			
+			it = names.iterator();
+			while ( it.hasNext() )
 			{
-				CDebugCorePlugin.log( e );
+				Element child = doc.createElement( DISABLED_GENERIC_PROJECT_NAME );
+				child.setAttribute( ATTR_PROJECT_NAME, (String)it.next() );
+				node.appendChild( child );
 			}
 		}
 	}
@@ -598,7 +592,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			if ( locations[i] instanceof IProjectSourceLocation && 
 				 ((IProjectSourceLocation)locations[i]).isGeneric() )
 				continue;
-			Element child = doc.createElement( SOURCE_LOCATION_NAME );
+			Element child = doc.createElement( ADDITIONAL_SOURCE_LOCATION_NAME );
 			child.setAttribute( ATTR_CLASS, locations[i].getClass().getName() );
 			try
 			{

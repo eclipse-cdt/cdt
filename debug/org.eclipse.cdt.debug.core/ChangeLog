@@ -1,3 +1,8 @@
+2003-07-22 Mikhail Khodjaiants
+	Use the 'getReferencedProjects' method of 'CSourceLocator' to obtain the list of referenced projects.
+	Use the correct tag for additional source locations.
+	* CSourceLocator.java
+ 
 2003-07-17 Mikhail Khodjaiants
 	Fix for PR 39936: GDB hits modified conditional breakpoints when condition not satisfied.
 	This is a work around for GDB PR MI/1289.

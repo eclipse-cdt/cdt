@@ -16,8 +16,8 @@ import java.util.List;
  */
 public class MIInfoThreadsInfo extends MIInfo {
 
-	int[] threadIds;
-	int currentThreadId;
+	protected int[] threadIds;
+	protected int currentThreadId;
 
 	public MIInfoThreadsInfo(MIOutput out) {
 		super(out);
@@ -32,7 +32,7 @@ public class MIInfoThreadsInfo extends MIInfo {
 		return currentThreadId;
 	}
 
-	void parse() {
+	protected void parse() {
 		List aList = new ArrayList();
 		if (isDone()) {
 			MIOutput out = getMIOutput();
@@ -52,7 +52,7 @@ public class MIInfoThreadsInfo extends MIInfo {
 		}
 	}
 
-	void parseThreadInfo(String str, List aList) {
+	protected void parseThreadInfo(String str, List aList) {
 		if (str.length() > 0) {
 			boolean isCurrentThread = false;
 			// Discover the current thread

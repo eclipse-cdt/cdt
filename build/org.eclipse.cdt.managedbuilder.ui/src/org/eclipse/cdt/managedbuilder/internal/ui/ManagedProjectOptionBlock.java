@@ -39,10 +39,11 @@ public class ManagedProjectOptionBlock extends TabFolderOptionBlock {
 	public ErrorParserBlock getErrorParserBlock() {
 		return errParserBlock;
 	}
+	
 	public Control createContents(Composite parent) {
 		Control control = super.createContents( parent );
-		
-		WorkbenchHelp.setHelp(getErrorParserBlock().getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_ERROR_PARSER);
+		if (getErrorParserBlock()!= null)
+			WorkbenchHelp.setHelp(getErrorParserBlock().getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_ERROR_PARSER);
 
 		return control;
 	}	

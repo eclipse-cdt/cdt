@@ -1,3 +1,13 @@
+2004-09-07 Alain Magloire
+
+	Part of the uncoming work to supply formatting in CDT
+	* src/org/eclipse/cdt/internal/corext/CodeFormatterUtil.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/text/CFormatingStrategy.java
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java
+	* plugin.properties
+	* plugin.xml
+
 2004-09-07 Chris Wiebe
 
 	comment out old class wizard

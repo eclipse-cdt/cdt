@@ -615,6 +615,18 @@
             id="org.eclipse.cdt.ui.category.source">
       </category>
       <command
+            name="%ActionDefinition.format.name"
+            description="%ActionDefinition.format.description"
+            category="org.eclipse.cdt.ui.category.source"
+            id="org.eclipse.cdt.ui.edit.text.c.format">
+      </command>
+      <keyBinding
+            string="Ctrl+Shift+F"
+            scope="org.eclipse.cdt.ui.cEditorScope"
+            command="org.eclipse.cdt.ui.edit.text.c.format"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
             name="%ActionDefinition.comment.name"
             category="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.comment.description"

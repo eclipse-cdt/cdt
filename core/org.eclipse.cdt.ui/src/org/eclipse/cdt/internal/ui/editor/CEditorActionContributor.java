@@ -81,6 +81,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 
 	protected CEditor fCEditor;
 	protected RetargetTextEditorAction fContentAssist;
+	protected RetargetTextEditorAction fFormatter;
 	protected RetargetTextEditorAction fAddInclude;
 	protected RetargetTextEditorAction fOpenOnSelection;
 	protected SelectionAction fShiftLeft;
@@ -107,6 +108,9 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fContentAssist = new RetargetTextEditorAction(bundle, "ContentAssistProposal."); //$NON-NLS-1$
 		fContentAssist.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 
+		fFormatter = new RetargetTextEditorAction(bundle, "Format."); //$NON-NLS-1$
+		fFormatter.setActionDefinitionId(ICEditorActionDefinitionIds.FORMAT);
+		
 		fAddInclude = new RetargetTextEditorAction(bundle, "AddIncludeOnSelection."); //$NON-NLS-1$
 		fAddInclude.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
 
@@ -152,6 +156,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 			editMenu.add(new Separator(IContextMenuConstants.GROUP_GENERATE));
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fContentAssist);
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fAddInclude);
+			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fFormatter);
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fOpenOnSelection);
 		}
 	}
@@ -198,6 +203,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		fContentAssist.setAction(getAction(textEditor, "ContentAssistProposal")); //$NON-NLS-1$
 		fAddInclude.setAction(getAction(textEditor, "AddIncludeOnSelection")); //$NON-NLS-1$
 		fOpenOnSelection.setAction(getAction(textEditor, "OpenOnSelection")); //$NON-NLS-1$
+		fFormatter.setAction(getAction(textEditor, "Format")); //$NON-NLS-1$
 	}
 	
 	/*

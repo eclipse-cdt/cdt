@@ -668,6 +668,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ContentAssistProposal"); //$NON-NLS-1$
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "AddIncludeOnSelection"); //$NON-NLS-1$
+		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "Format"); //$NON-NLS-1$
 		
 		addAction(menu, IContextMenuConstants.GROUP_GENERATE, "ShowInCView"); //$NON-NLS-1$
 		

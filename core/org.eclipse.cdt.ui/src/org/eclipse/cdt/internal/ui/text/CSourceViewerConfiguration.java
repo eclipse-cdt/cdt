@@ -24,16 +24,14 @@ import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
-import org.eclipse.jface.text.formatter.ContentFormatter;
 import org.eclipse.jface.text.formatter.IContentFormatter;
-import org.eclipse.jface.text.formatter.IFormattingStrategy;
+import org.eclipse.jface.text.formatter.MultiPassContentFormatter;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.Reconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
-import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -51,10 +49,6 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	
 	/** Key used to look up display tab width */
 	public final static String PREFERENCE_TAB_WIDTH= "org.eclipse.cdt.editor.tab.width"; //$NON-NLS-1$
-	/** Key used to look up code formatter tab size */
-	private final static String CODE_FORMATTER_TAB_SIZE= "org.eclipse.cdt.formatter.tabulation.size"; //$NON-NLS-1$
-	/** Key used to look up code formatter tab character */
-	private final static String CODE_FORMATTER_TAB_CHAR= "org.eclipse.cdt.formatter.tabulation.char"; //$NON-NLS-1$
 
 	private CTextTools fTextTools;
 	private CEditor fEditor;
@@ -364,18 +358,15 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getContentFormatter(ISourceViewer)
 	 */
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
-		String[] types= new String[] {
-			DefaultPartitioner.CONTENT_TYPES_CATEGORY
-		};
 		
-		ContentFormatter formatter= new ContentFormatter();
-		IFormattingStrategy strategy= new CFormattingStrategy(sourceViewer);
+		final MultiPassContentFormatter formatter = 
+			new MultiPassContentFormatter(getConfiguredDocumentPartitioning(sourceViewer), 
+				IDocument.DEFAULT_CONTENT_TYPE);
 		
-		formatter.setFormattingStrategy(strategy, IDocument.DEFAULT_CONTENT_TYPE);
-		formatter.enablePartitionAwareFormatting(false);		
-		formatter.setPartitionManagingPositionCategories(types);
-		
+		formatter.setMasterStrategy(new CFormattingStrategy());
 		return formatter;
+		
+		
 	}
 	
 	protected IPreferenceStore getPreferenceStore() {

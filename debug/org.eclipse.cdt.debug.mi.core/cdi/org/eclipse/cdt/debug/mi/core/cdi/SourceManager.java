@@ -307,6 +307,20 @@ public class SourceManager extends Manager implements ICDISourceManager {
 			return new StructType(target, typename);
 		}
 
+		// GDB has some special types for int
+		if (typename.equals("int8_t")) { //$NON-NLS-1$
+			return new CharType(target, typename);
+		} else if (typename.equals("int16_t")) { //$NON-NLS-$1
+			return new ShortType(target, typename);
+		} else if (typename.equals("int32_t")) { //$NON-NLS-$1
+			return new LongType(target, typename);
+		} else if (typename.equals("int64_t")) { //$NON-NLS-$1
+			return new IntType(target, typename);
+		} else if (typename.equals("int128_t")) { //$NON-NLS-$1
+			return new IntType(target, typename);
+		}
+
+
 		StringTokenizer st = new StringTokenizer(typename);
 		int count = st.countTokens();
 

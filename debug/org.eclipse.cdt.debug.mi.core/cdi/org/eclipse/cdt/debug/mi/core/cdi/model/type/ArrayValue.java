@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 
 /**
@@ -52,6 +53,17 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue {
 		//	throw new CDIException("Index out of bound");
 		//}
 
+		// Overload for registers.
+		if (variable instanceof Register) {
+			ICDIVariable[] vars = getVariables();
+			
+			if (index < vars.length && (index + length) <= vars.length) {
+				ICDIVariable[] newVars = new ICDIVariable[length];
+				System.arraycopy(vars, index, newVars, 0, length);
+				return newVars;
+			}
+			return new ICDIVariable[0];
+		}
 		//String subarray = "*(" + variable.getName() + "+" + index + ")@" + length;
 		ICDITarget target = getTarget();
 		Session session = (Session) (target.getSession());

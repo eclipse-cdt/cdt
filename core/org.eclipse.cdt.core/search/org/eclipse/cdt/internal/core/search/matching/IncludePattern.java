@@ -12,8 +12,8 @@
 package org.eclipse.cdt.internal.core.search.matching;
 
 import java.io.IOException;
-
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
@@ -98,7 +98,21 @@ public class IncludePattern extends CSearchPattern {
 	 */
 	public int matchLevel(ISourceElementCallbackDelegate node, LimitTo limit) {
 		// TODO Auto-generated method stub
-		return 0;
+		if (!( node instanceof IASTInclusion )) {
+			return IMPOSSIBLE_MATCH;
+		}
+		
+		if( ! canAccept( limit ) )
+			return IMPOSSIBLE_MATCH;
+		
+		IASTInclusion inc = (IASTInclusion) node;
+		String fileName = inc.getFullFileName();
+		
+		if(CharOperation.equals(simpleName,fileName.toCharArray(),_caseSensitive)){
+			return ACCURATE_MATCH;
+		}
+		
+		return IMPOSSIBLE_MATCH;
 	}
 
 }

@@ -51,8 +51,8 @@ public abstract class JobManager implements Runnable {
 	
 	protected IndexingJob indexJob = null;
 	
-	static private final IStatus OK_STATUS = new Status( IStatus.OK, "org.eclipse.cdt.core", IStatus.OK, "", null );
-	static private final IStatus ERROR_STATUS = new Status( IStatus.ERROR, "org.eclipse.cdt.core", IStatus.ERROR, "", null );
+	static private final IStatus OK_STATUS = new Status( IStatus.OK, "org.eclipse.cdt.core", IStatus.OK, "", null );  //$NON-NLS-1$//$NON-NLS-2$
+	static private final IStatus ERROR_STATUS = new Status( IStatus.ERROR, "org.eclipse.cdt.core", IStatus.ERROR, "", null );  //$NON-NLS-1$//$NON-NLS-2$
 	
 	public static void verbose(String log) {
 		System.out.println("(" + Thread.currentThread() + ") " + log); //$NON-NLS-1$//$NON-NLS-2$
@@ -194,9 +194,9 @@ public abstract class JobManager implements Runnable {
 			String progressString = null;
 			IJob job = currentJob();
 			if( job instanceof IndexRequest ){
-				progressString = " (";
+				progressString = " ("; //$NON-NLS-1$
 				progressString += job.toString();
-				progressString += ")";
+				progressString += ")"; //$NON-NLS-1$
 			}
 			if( indexJob.tickDown( progressString ) == 0 ){
 				indexJob.done( OK_STATUS );

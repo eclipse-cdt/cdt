@@ -35,7 +35,7 @@ public class IndexingJob extends Job {
 	
 	public IndexingJob( Thread thread, JobManager manager )
 	{
-		super( "Indexer" );
+		super( "C/C++ Indexer" ); //$NON-NLS-1$
 		jobManager = manager;
 		indexThread = thread;
 		setPriority( LONG );
@@ -46,7 +46,7 @@ public class IndexingJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 		progressMonitor = monitor;
 		setThread( indexThread );
-		progressMonitor.beginTask( "", 100 );
+		progressMonitor.beginTask( "", 100 ); //$NON-NLS-1$
 		return ASYNC_FINISH;
 	}
 	
@@ -58,7 +58,7 @@ public class IndexingJob extends Job {
 		ticks++;
 		if( ticks > maxTicks )
 			maxTicks = ticks;
-		updateRemainingCount( "" );
+		updateRemainingCount( "" ); //$NON-NLS-1$
 	}
 	
 	public void setTicks( int n ){
@@ -67,7 +67,7 @@ public class IndexingJob extends Job {
 			maxTicks = ticks;
 		
 		updatePercentage();
-		updateRemainingCount( "" );
+		updateRemainingCount( "" ); //$NON-NLS-1$
 	}
 	
 	public int tickDown( String str ){
@@ -86,7 +86,7 @@ public class IndexingJob extends Job {
 		if( progressMonitor == null )
 			return;
 		
-		String taskString = Util.bind("manager.filesToIndex", Integer.toString(ticks));
+		String taskString = Util.bind("manager.filesToIndex", Integer.toString(ticks)); //$NON-NLS-1$
 		taskString += str;
 		progressMonitor.subTask( taskString );
 	}

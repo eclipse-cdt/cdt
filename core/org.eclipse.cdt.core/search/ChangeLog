@@ -1,3 +1,6 @@
+2004-05-17 Bogdan Gheorghe
+	Added matching routine to IncludePattern
+	
 2004-05-17 Andrew Niefer
 	bug 61044 - report search matches at the end of each compilation unit
 

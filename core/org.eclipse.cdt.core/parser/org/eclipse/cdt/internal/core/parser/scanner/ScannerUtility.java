@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
  */
 public class ScannerUtility {
 	
-	static String reconcilePath(String originalPath ) {
+	public static String reconcilePath(String originalPath ) {
 		if( originalPath == null ) return null;
 		originalPath = removeQuotes( originalPath );
 		
@@ -66,7 +66,7 @@ public class ScannerUtility {
 	}
 
 
-	static CodeReader createReaderDuple( String path, ISourceElementRequestor requestor, Iterator workingCopies )
+	public static CodeReader createReaderDuple( String path, ISourceElementRequestor requestor, Iterator workingCopies )
 	{
 		return requestor.createReader( path, workingCopies );
 	}
@@ -85,7 +85,7 @@ public class ScannerUtility {
 		return reconcilePath( newPathBuffer.toString() );
 	}
 
-	static class InclusionDirective
+	public static class InclusionDirective
 	{
 		public InclusionDirective( String fileName, boolean useIncludePaths, int startOffset, int endOffset )
 		{
@@ -121,7 +121,7 @@ public class ScannerUtility {
 		}
 	}
 	
-	static class InclusionParseException extends Exception
+	public static class InclusionParseException extends Exception
 	{
 	}
 		

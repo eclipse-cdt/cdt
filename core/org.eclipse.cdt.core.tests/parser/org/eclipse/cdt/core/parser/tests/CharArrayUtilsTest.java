@@ -1,22 +1,23 @@
-/*
- * Created on May 28, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+/*******************************************************************************
+ * Copyright (c) 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial implementation
+ ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.parser.CharArrayMap;
-import org.eclipse.cdt.core.parser.CharArrayPool;
-import org.eclipse.cdt.core.parser.CharArrayUtils;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayPool;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 
 /**
- * @author dschaefe
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * @author Doug Schaefer
  */
 public class CharArrayUtilsTest extends TestCase {
 
@@ -75,7 +76,7 @@ public class CharArrayUtilsTest extends TestCase {
 	}
 	
 	public void testMapAdd() {
-		CharArrayMap map = new CharArrayMap(4);
+		CharArrayObjectMap map = new CharArrayObjectMap(4);
 		char[] key1 = "key1".toCharArray();
 		Object value1 = new Integer(43);
 		map.put(key1, value1);

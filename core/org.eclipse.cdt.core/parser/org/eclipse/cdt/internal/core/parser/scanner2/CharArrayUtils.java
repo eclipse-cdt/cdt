@@ -4,7 +4,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-package org.eclipse.cdt.core.parser;
+package org.eclipse.cdt.internal.core.parser.scanner2;
 
 /**
  * @author dschaefe
@@ -32,9 +32,6 @@ public class CharArrayUtils {
 		if (str1 == str2)
 			return true;
 		
-		if (str1 == null || str2 == null)
-			return false;
-		
 		if (str1.length != str2.length)
 			return false;
 		
@@ -43,5 +40,25 @@ public class CharArrayUtils {
 				return false;
 		
 		return true;
+	}
+	
+	public static final boolean equals(char[] str1, int start1, int length1, char[] str2) {
+		if (length1 != str2.length)
+			return false;
+		
+		for (int i = 0; i < length1; ++i)
+			if (str1[start1++] != str2[i])
+				return false;
+		
+		return true;
+	}
+	
+	public static final char[] extract(char[] str, int start, int length) {
+		if (start == 0 && length == str.length)
+			return str;
+		
+		char[] copy = new char[length];
+		System.arraycopy(str, start, copy, 0, length);
+		return copy;
 	}
 }

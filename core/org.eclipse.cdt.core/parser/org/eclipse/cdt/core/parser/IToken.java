@@ -309,6 +309,9 @@ public interface IToken {
 
 	static public final int t_restrict = 137;
 
-	static public final int tLAST = t_restrict;
+	static public final int tMACROEXP = 138;
+	
+	static public final int tPOUNDPOUND = 139;
 
+	static public final int tLAST = 139;
 }

@@ -4428,7 +4428,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     * @see org.eclipse.cdt.internal.core.parser2.AbstractGNUSourceCodeParser#createName(org.eclipse.cdt.core.parser.IToken)
     */
    protected IASTName createName(IToken token) {
-      return new CPPASTName(token.getCharImage());
+      CPPASTName n = new CPPASTName(token.getCharImage());
+      n.setOffsetAndLength( token.getOffset(), token.getLength() );
+      return n;
    }
 
    /*

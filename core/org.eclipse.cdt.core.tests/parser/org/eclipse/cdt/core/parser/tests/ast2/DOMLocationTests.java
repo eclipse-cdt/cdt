@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -184,6 +185,15 @@ public class DOMLocationTests extends AST2BaseTest {
       IASTSimpleDeclaration b = (IASTSimpleDeclaration) ds.getDeclaration();
       ICPPASTNamedTypeSpecifier namedTypeSpec = (ICPPASTNamedTypeSpecifier) b.getDeclSpecifier();
       assertSoleLocation( namedTypeSpec, code.indexOf( "\nA") + 1, 1 ); //$NON-NLS-1$
+   }
+   
+   public void testBug84366() throws Exception {
+      String code = "enum hue { red, blue, green };"; //$NON-NLS-1$
+      IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
+      IASTSimpleDeclaration d = (IASTSimpleDeclaration) tu.getDeclarations()[0];
+      IASTEnumerationSpecifier enum = (IASTEnumerationSpecifier) d.getDeclSpecifier();
+      IASTEnumerationSpecifier.IASTEnumerator enumerator = enum.getEnumerators()[0];
+      assertSoleLocation( enumerator, code.indexOf( "red"), "red".length() ); //$NON-NLS-1$ //$NON-NLS-2$
    }
 
    public void testBug84375() throws Exception {

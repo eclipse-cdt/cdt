@@ -73,8 +73,6 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 
 	/**
 	 * Constructor for CStackFrame.
-	 * 
-	 * @param target
 	 */
 	public CStackFrame( CThread thread, ICDIStackFrame cdiFrame ) {
 		super( (CDebugTarget)thread.getDebugTarget() );
@@ -83,18 +81,14 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		getCDISession().getEventManager().addEventListener( this );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getThread()
 	 */
 	public IThread getThread() {
 		return fThread;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getVariables()
 	 */
 	public IVariable[] getVariables() throws DebugException {
@@ -107,25 +101,27 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	}
 
 	protected synchronized List getVariables0() throws DebugException {
-		((CThread)getThread()).switchToFrame( this );
-		if ( fVariables == null ) {			
-			List vars = getAllCDIVariableObjects();
-			fVariables = new ArrayList( vars.size() );
-			Iterator it = vars.iterator();
-			while( it.hasNext() ) {
-				fVariables.add( new CModificationVariable( this, (ICDIVariableObject)it.next() ) );
+		CThread thread = (CThread)getThread();
+		if ( thread.isSuspended() ) {
+			thread.switchToFrame( this );
+			if ( fVariables == null ) {			
+				List vars = getAllCDIVariableObjects();
+				fVariables = new ArrayList( vars.size() );
+				Iterator it = vars.iterator();
+				while( it.hasNext() ) {
+					fVariables.add( new CModificationVariable( this, (ICDIVariableObject)it.next() ) );
+				}
 			}
+			else if ( refreshVariables() ) {
+				updateVariables();
+			}
+			setRefreshVariables( false );
 		}
-		else if ( refreshVariables() ) {
-			updateVariables();
-		}
-		setRefreshVariables( false );
 		return fVariables;
 	}
 
 	/**
 	 * Incrementally updates this stack frame's variables.
-	 *  
 	 */
 	protected void updateVariables() throws DebugException {
 		List locals = getAllCDIVariableObjects();
@@ -151,25 +147,20 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	/**
 	 * Sets the containing thread.
 	 * 
-	 * @param thread
-	 *            the containing thread
+	 * @param thread the containing thread
 	 */
 	protected void setThread( CThread thread ) {
 		fThread = thread;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasVariables()
 	 */
 	public boolean hasVariables() throws DebugException {
 		return getVariables0().size() > 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getLineNumber()
 	 */
 	public int getLineNumber() throws DebugException {
@@ -183,27 +174,21 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		return -1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharStart()
 	 */
 	public int getCharStart() throws DebugException {
 		return -1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getCharEnd()
 	 */
 	public int getCharEnd() throws DebugException {
 		return -1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getName()
 	 */
 	public String getName() throws DebugException {
@@ -225,35 +210,27 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		return MessageFormat.format( CoreModelMessages.getString( "CStackFrame.0" ), new String[]{ func, file, line } ); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#getRegisterGroups()
 	 */
 	public IRegisterGroup[] getRegisterGroups() throws DebugException {
 		return ((CDebugTarget)getDebugTarget()).getRegisterGroups();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStackFrame#hasRegisterGroups()
 	 */
 	public boolean hasRegisterGroups() throws DebugException {
 		return ((CDebugTarget)getDebugTarget()).getRegisterGroups().length > 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(ICDIEvent)
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
 	public void handleDebugEvents( ICDIEvent[] events ) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
 	public boolean canStepInto() {
@@ -266,9 +243,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
 	 */
 	public boolean canStepOver() {
@@ -281,9 +256,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
 	 */
 	public boolean canStepReturn() {
@@ -303,18 +276,14 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#isStepping()
 	 */
 	public boolean isStepping() {
 		return getThread().isStepping();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
 	public void stepInto() throws DebugException {
@@ -323,9 +292,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepOver()
 	 */
 	public void stepOver() throws DebugException {
@@ -341,9 +308,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
 	 */
 	public void stepReturn() throws DebugException {
@@ -362,54 +327,42 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
 	 */
 	public boolean canResume() {
 		return getThread().canResume();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
 		return getThread().canSuspend();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
 	 */
 	public boolean isSuspended() {
 		return getThread().isSuspended();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
 	 */
 	public void resume() throws DebugException {
 		getThread().resume();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
 	 */
 	public void suspend() throws DebugException {
 		getThread().suspend();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
@@ -423,18 +376,14 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		return exists && getThread().canTerminate() || getDebugTarget().canTerminate();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
 	public boolean isTerminated() {
 		return getThread().isTerminated();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
 	public void terminate() throws DebugException {
@@ -458,8 +407,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	/**
 	 * Sets the underlying CDI stack frame. Called by a thread when incrementally updating after a step has completed.
 	 * 
-	 * @param frame
-	 *            the underlying stack frame
+	 * @param frame the underlying stack frame
 	 */
 	protected void setCDIStackFrame( ICDIStackFrame frame ) {
 		if ( frame != null ) {
@@ -592,46 +540,36 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		fVariables = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getAddress()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getAddress()
 	 */
 	public long getAddress() {
 		return getCDIStackFrame().getLocation().getAddress();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getFile()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getFile()
 	 */
 	public String getFile() {
 		return getCDIStackFrame().getLocation().getFile();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getFunction()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getFunction()
 	 */
 	public String getFunction() {
 		return getCDIStackFrame().getLocation().getFunction();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getLevel()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getLevel()
 	 */
 	public int getLevel() {
 		return getCDIStackFrame().getLevel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getFrameLineNumber()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#getFrameLineNumber()
 	 */
 	public int getFrameLineNumber() {
 		return getCDIStackFrame().getLocation().getLineNumber();
@@ -665,19 +603,15 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.IRestart#canRestart()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRestart#canRestart()
 	 */
 	public boolean canRestart() {
 		return getDebugTarget() instanceof IRestart && ((IRestart)getDebugTarget()).canRestart();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.debug.core.IRestart#restart()
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IRestart#restart()
 	 */
 	public void restart() throws DebugException {
 		if ( canRestart() ) {
@@ -693,18 +627,14 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		return fRefreshVariables;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#canResumeWithoutSignal()
 	 */
 	public boolean canResumeWithoutSignal() {
 		return (getDebugTarget() instanceof IResumeWithoutSignal && ((IResumeWithoutSignal)getDebugTarget()).canResumeWithoutSignal());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#resumeWithoutSignal()
 	 */
 	public void resumeWithoutSignal() throws DebugException {
@@ -713,9 +643,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICStackFrame#evaluateExpression(java.lang.String)
 	 */
 	public IValue evaluateExpression( String expression ) throws DebugException {

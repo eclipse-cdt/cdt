@@ -1,3 +1,7 @@
+2002-11-21 Mikhail Khodjaiants
+	Added the 'Evaluate' button to the Memory view.
+	* MemoryControlArea.java
+
 2002-11-20 Mikhail Khodjaiants
 	Reset the tooltips of the memory view tabs on terminate.
 	* MemoryControlArea.java

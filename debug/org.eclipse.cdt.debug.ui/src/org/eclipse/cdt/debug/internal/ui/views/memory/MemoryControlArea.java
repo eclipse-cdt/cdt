@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
+import org.eclipse.cdt.debug.core.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
@@ -17,10 +18,15 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -39,6 +45,7 @@ public class MemoryControlArea extends Composite
 	private ICMemoryManager fMemoryManager = null;
 
 	private Text fAddressText;
+	private Button fEvaluateButton;
 	private MemoryText fMemoryText;
 	
 	private int fFormat = ICMemoryManager.MEMORY_FORMAT_HEX;
@@ -92,7 +99,7 @@ public class MemoryControlArea extends Composite
 	private Text createAddressText( Composite parent )
 	{
 		Composite composite = new Composite( parent, SWT.NONE );
-		composite.setLayout( new GridLayout( 2, false ) );
+		composite.setLayout( new GridLayout( 3, false ) );
 		composite.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
 		// create label
 		Label label = new Label( composite, SWT.RIGHT );
@@ -102,14 +109,36 @@ public class MemoryControlArea extends Composite
 		// create address text
 		Text text = new Text( composite, SWT.BORDER );
 		text.setLayoutData( new GridData( GridData.FILL_HORIZONTAL ) );
-		text.addKeyListener( new KeyAdapter()
-								  {
-									  public void keyReleased( KeyEvent e )
-									  {
-										  if ( e.character == SWT.CR && e.stateMask == 0 )
-										      handleAddressEnter();
-									  }
-								  } );
+		text.addTraverseListener( new TraverseListener()
+										{
+											public void keyTraversed( TraverseEvent e )
+											{
+												if ( e.detail == SWT.TRAVERSE_RETURN && e.stateMask == 0 )
+												{
+													e.doit = false;
+													handleAddressEnter();
+												}
+											}
+										} );
+
+		fEvaluateButton = new Button( composite, SWT.PUSH );
+		fEvaluateButton.setText( "Evaluate" );
+		fEvaluateButton.setToolTipText( "Evaluate expression to address" );
+		fEvaluateButton.addSelectionListener( new SelectionAdapter()
+													{
+														public void widgetSelected( SelectionEvent e )
+														{
+															evaluateAddressExpression();
+														}
+													} );
+		
+		text.addModifyListener( new ModifyListener()
+									{
+										public void modifyText( ModifyEvent e )
+										{
+											handleAddressModification();
+										}
+									} );
 		return text;
 	}
 
@@ -434,5 +463,69 @@ public class MemoryControlArea extends Composite
 			}
 		}
 		return sb.toString();
+	}
+	
+	protected void handleAddressModification()
+	{
+		fEvaluateButton.setEnabled( fAddressText.getText().trim().length() > 0 );
+	}
+	
+	protected void evaluateAddressExpression()
+	{
+		if ( getMemoryManager() != null )
+		{
+			IDebugTarget target = (IDebugTarget)getMemoryManager().getAdapter( IDebugTarget.class );
+			if ( target != null )
+			{
+				ICExpressionEvaluator ee = (ICExpressionEvaluator)target.getAdapter( ICExpressionEvaluator.class );
+				String newExpression = convertToHexString( evaluateExpression( ee, fAddressText.getText().trim() ) );
+				if ( newExpression != null )
+				{
+					fAddressText.setText( newExpression );
+					handleAddressEnter();
+				}
+			}
+		}
+		fAddressText.forceFocus();
+	}
+	
+	private String evaluateExpression( ICExpressionEvaluator ee, String expression )
+	{
+		String result = null;
+		if ( ee != null && ee.canEvaluate() )
+		{
+			try
+			{
+				result = ee.evaluateExpressionToString( expression );
+			}
+			catch( DebugException e )
+			{
+				CDebugUIPlugin.errorDialog( "Unable to evaluate expression.", e.getStatus() );
+			}
+		}
+		return result;
+	}
+	
+	private String convertToHexString( String value )
+	{
+		String result = null;
+		if ( value != null )
+		{
+			if ( !value.startsWith( "0x" ) )
+			{
+				try
+				{
+					result = "0x" + Long.toHexString( Long.parseLong( value ) );
+				}
+				catch( NumberFormatException e )
+				{
+				}
+			}
+			else
+			{
+				result = value;
+			}
+		}
+		return result;
 	}
 }

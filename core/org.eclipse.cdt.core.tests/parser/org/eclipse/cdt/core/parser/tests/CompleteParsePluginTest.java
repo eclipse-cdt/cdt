@@ -68,7 +68,7 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.internal.core.parser.CompleteParser;
+import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.testplugin.CProjectHelper;
@@ -265,7 +265,7 @@ public class CompleteParsePluginTest extends TestCase {
 		if( !parseResult ) throw new ParserException( "FAILURE"); //$NON-NLS-1$
 		if( parseResult  )
 		{
-			assertTrue( ((CompleteParser)parser).validateCaches());
+			assertTrue( ((Parser)parser).validateCaches());
 		}
         return callback.getCompilationUnit();
     }

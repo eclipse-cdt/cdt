@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -26,12 +27,75 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
  */
 public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
+   public static class Location implements IASTNodeLocation
+   {
+      private final int nodeOffset;
+      private final int nodeLength;
+
+      /**
+       * @param offset
+       * @param length
+       */
+      public Location(int offset, int length) {
+         nodeOffset = offset;
+         nodeLength = length;
+      }
+
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTNodeLocation#getNodeOffset()
+       */
+      public int getNodeOffset() {
+         return nodeOffset;
+      }
+
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTNodeLocation#getNodeLength()
+       */
+      public int getNodeLength() {
+         return nodeLength;
+      }
+
+      
+   }
+   /**
+    * @author jcamelon
+    */
+   public static class FileLocation extends Location implements IASTFileLocation {
+
+      private String fileName;
+
+      /**
+       * @param length
+       * @param offset
+       * @param tu_filename
+       * 
+       */
+      public FileLocation(char[] tu_filename, int offset, int length) {
+         super( offset, length );
+         fileName = new String( tu_filename );
+      }
+
+      /* (non-Javadoc)
+       * @see org.eclipse.cdt.core.dom.ast.IASTFileLocation#getFileName()
+       */
+      public String getFileName() {
+         return fileName;
+      }
+
+   }
    private static final char [] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
    private List                       problems             = Collections.EMPTY_LIST;
+   private List						  inclusions = Collections.EMPTY_LIST;
+   private List						  macroExpansions = Collections.EMPTY_LIST;
    private static final IASTProblem[] EMPTY_PROBLEMS_ARRAY = new IASTProblem[0];
    private static final IASTNodeLocation [] EMPTY_LOCATION_ARRAY = new IASTNodeLocation[0];
+   
+   
    private char[]                     tu_filename = EMPTY_CHAR_ARRAY ;
-//   private int finalOffset  = 0;
+   private static final String[] EMPTY_STRING_ARRAY = new String[0];
+   private int finalOffset = 0;
 
    /**
     *  
@@ -79,7 +143,14 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     */
    public IASTNodeLocation[] getLocations(int offset, int length) {
       if( tu_filename == EMPTY_CHAR_ARRAY ) return EMPTY_LOCATION_ARRAY;
-      return null;
+      if( macroExpansions.isEmpty() && inclusions.isEmpty() )
+      {
+         if( offset + length > finalOffset ) return EMPTY_LOCATION_ARRAY;
+         IASTNodeLocation [] result = new IASTNodeLocation[1];
+         result[0] = new FileLocation( tu_filename, offset, length );
+         return result;
+      }
+      return EMPTY_LOCATION_ARRAY; 
    }
 
    /*
@@ -107,7 +178,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#endTranslationUnit(int)
     */
    public void endTranslationUnit(int offset) {
-//      this.finalOffset  = offset;
+      this.finalOffset  = offset;
    }
 
    /*
@@ -117,8 +188,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     *      int)
     */
    public void startInclusion(char[] includePath, int offset) {
-      // TODO Auto-generated method stub
-
+      inclusions.add( new String( includePath ));
    }
 
    /*
@@ -296,8 +366,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getTranslationUnitPath()
     */
    public String getTranslationUnitPath() {
-      // TODO Auto-generated method stub
-      return null;
+      if( tu_filename == EMPTY_CHAR_ARRAY ) return ""; //$NON-NLS-1$
+      return new String( tu_filename );
    }
 
    /*
@@ -306,9 +376,9 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getInclusionsPaths()
     */
    public String[] getInclusionsPaths() {
-      // TODO Auto-generated method stub
-      return null;
-   }
+      if (inclusions == Collections.EMPTY_LIST)
+         return EMPTY_STRING_ARRAY;
+      return (String[]) inclusions.toArray(new String[inclusions.size()]);   }
 
    /*
     * (non-Javadoc)

@@ -2567,11 +2567,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       boolean hasFunctionBody = false;
       boolean hasFunctionTryBlock = false;
       boolean consumedSemi = false;
+      int semiOffset = 0;
       List constructorChain = Collections.EMPTY_LIST;
 
       switch (LT(1)) {
          case IToken.tSEMI:
-            consume(IToken.tSEMI);
+            semiOffset = consume(IToken.tSEMI).getEndOffset();
             consumedSemi = true;
             break;
          case IToken.t_try:
@@ -2669,8 +2670,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       }
 
       IASTSimpleDeclaration simpleDeclaration = createSimpleDeclaration();
+      int length = figureEndOffset(declSpec, declarators) - firstOffset;
+      if( consumedSemi )
+         length = semiOffset - firstOffset;
+    
       ((ASTNode) simpleDeclaration).setOffsetAndLength(firstOffset,
-            figureEndOffset(declSpec, declarators) - firstOffset);
+            length);
       simpleDeclaration.setDeclSpecifier(declSpec);
       declSpec.setParent(simpleDeclaration);
       declSpec.setPropertyInParent(IASTSimpleDeclaration.DECL_SPECIFIER);
@@ -3447,17 +3452,19 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       IASTExpression bitField = null;
       boolean isFunction = false;
       boolean isPureVirtual = false, isConst = false, isVolatile = false;
-
+      int finalOffset = startingOffset;
       overallLoop: do {
 
          consumePointerOperators(pointerOps);
+         if( ! pointerOps.isEmpty() )
+            finalOffset = calculateEndOffset( (IASTNode) pointerOps.get( pointerOps.size() - 1 ) );
 
          if (!forTypeID && LT(1) == IToken.tLPAREN) {
             IToken mark = mark();
             try {
                consume();
                innerDecl = declarator(strategy, forTypeID);
-               consume(IToken.tRPAREN);
+               finalOffset = consume(IToken.tRPAREN).getEndOffset();
             } catch (BacktrackException bte) {
                backup(mark);
             }
@@ -3466,6 +3473,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             try {
                ITokenDuple d = consumeTemplatedOperatorName();
                declaratorName = createName(d);
+               finalOffset = calculateEndOffset(declaratorName);
                if (d.isConversion())
                   isFunction = true;
             } catch (BacktrackException bt) {
@@ -3506,19 +3514,23 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                      isFunction = true;
                      // TODO need to create a temporary scope object here
                      IToken last = consume(IToken.tLPAREN);
+                     finalOffset = last.getEndOffset();
                      boolean seenParameter = false;
                      parameterDeclarationLoop: for (;;) {
                         switch (LT(1)) {
                            case IToken.tRPAREN:
                               last = consume();
+                              finalOffset = last.getEndOffset();
                               break parameterDeclarationLoop;
                            case IToken.tELLIPSIS:
                               last = consume();
                               encounteredVarArgs = true;
+                              finalOffset = last.getEndOffset();
                               break;
                            case IToken.tCOMMA:
                               last = consume();
                               seenParameter = false;
+                              finalOffset = last.getEndOffset();
                               break;
                            default:
                               int endOffset = (last != null) ? last
@@ -3527,6 +3539,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                                  throwBacktrack(startingOffset, endOffset
                                        - startingOffset);
                               IASTParameterDeclaration p = parameterDeclaration();
+                              finalOffset = calculateEndOffset(p);
                               if (parameters == Collections.EMPTY_LIST)
                                  parameters = new ArrayList(
                                        DEFAULT_PARM_LIST_SIZE);
@@ -3556,7 +3569,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                   // This will be determined further below
                   while ((LT(1) == IToken.t_const || LT(1) == IToken.t_volatile)
                         && numCVModifiers < 2) {
-                     cvModifiers[numCVModifiers++] = consume();
+                     IToken t = consume();
+                     finalOffset = t.getEndOffset();
+                     cvModifiers[numCVModifiers++] = t;
                      afterCVModifier = mark();
                   }
                   //check for throws clause here
@@ -3570,7 +3585,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                      while (!done) {
                         switch (LT(1)) {
                            case IToken.tRPAREN:
-                              consume();
+                              finalOffset = consume().getEndOffset();
                               done = true;
                               break;
                            case IToken.tCOMMA:
@@ -3599,7 +3614,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                      char[] image = LA(2).getCharImage();
                      if (image.length == 1 && image[0] == '0') {
                         consume(IToken.tASSIGN);
-                        consume(IToken.tINTEGER);
+                        finalOffset = consume(IToken.tINTEGER).getEndOffset();
                         isPureVirtual = true;
                      }
                   }
@@ -3624,10 +3639,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                case IToken.tLBRACKET:
                   arrayMods = new ArrayList(DEFAULT_POINTEROPS_LIST_SIZE);
                   consumeArrayModifiers(arrayMods);
+                  if( ! arrayMods.isEmpty() )
+                     finalOffset = calculateEndOffset( (IASTNode) arrayMods.get( arrayMods.size() - 1 ) );
                   continue;
                case IToken.tCOLON:
                   consume(IToken.tCOLON);
                   bitField = constantExpression();
+                  finalOffset = calculateEndOffset( bitField );
                   break;
                default:
                   break;
@@ -3698,6 +3716,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          declaratorName.setPropertyInParent(IASTDeclarator.DECLARATOR_NAME);
       }
 
+      ((ASTNode)d).setOffsetAndLength( startingOffset, finalOffset - startingOffset );
       return d;
 
    }

@@ -26,7 +26,6 @@ public interface IASTNodeLocation {
 	 * @return
 	 */
 	public int getNodeOffset();
-	public void setNodeOffset( int offset );
 	
 	/**
 	 * This is the length of the node contained in this location.
@@ -34,6 +33,5 @@ public interface IASTNodeLocation {
 	 * @return
 	 */
 	public int getNodeLength();
-	public void setNodeLength( int length );
 
 }

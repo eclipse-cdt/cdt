@@ -33,7 +33,8 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 public class DOMScanner extends BaseScanner {
 
     private final ICodeReaderFactory codeReaderFactory;
-    private int contextStart = 0;
+    private int globalCounter = 0;
+    private int contextDelta = 0;
     
     private static class DOMInclusion
     {
@@ -133,7 +134,11 @@ public class DOMScanner extends BaseScanner {
     protected Object popContext() {
         //TODO calibrate offsets
         Object result = super.popContext();
-        
+        if( result instanceof CodeReader )
+        {
+           globalCounter += (((CodeReader)result).buffer.length - contextDelta);
+           locationMap.endTranslationUnit( globalCounter );
+        }
         return result;
     }
 	/**
@@ -147,9 +152,9 @@ public class DOMScanner extends BaseScanner {
 				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
 					break;
 			MacroData data = (MacroData)bufferData[mostRelevant + 1];
-			return new SimpleExpansionToken( signal, data.startOffset, data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1)); 
+			return new SimpleExpansionToken( signal, resolveOffset( data.startOffset ), data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1)); 
 		}
-		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1)  );
+		return new SimpleToken(signal,  resolveOffset( bufferPos[bufferStackPos] + 1 ) , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1)  );
 	}
 
 	protected IToken newToken( int signal, char [] buffer )
@@ -161,9 +166,9 @@ public class DOMScanner extends BaseScanner {
 				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
 					break;
 			MacroData data = (MacroData)bufferData[mostRelevant + 1];
-			return new ImagedExpansionToken( signal, buffer, data.startOffset, data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1));
+			return new ImagedExpansionToken( signal, buffer, resolveOffset( data.startOffset ), data.endOffset - data.startOffset + 1, getCurrentFilename(), getLineNumber( bufferPos[mostRelevant] + 1));
 		}
-		IToken i = new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), getLineNumber( bufferPos[bufferStackPos] + 1));
+		IToken i = new ImagedToken(signal, buffer, resolveOffset( bufferPos[bufferStackPos] + 1 ), EMPTY_CHAR_ARRAY, getLineNumber( bufferPos[bufferStackPos] + 1));
 		if( buffer != null && buffer.length == 0 && signal != IToken.tSTRING && signal != IToken.tLSTRING )
 			bufferPos[bufferStackPos] += 1; //TODO - remove this hack at some point
 		
@@ -216,7 +221,7 @@ public class DOMScanner extends BaseScanner {
      * @return
      */
     private int resolveOffset(int offset) {
-        return contextStart + offset; 
+        return globalCounter - contextDelta + offset; 
     }
 
     
@@ -232,9 +237,8 @@ public class DOMScanner extends BaseScanner {
     * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#throwEOF()
     */
    protected void throwEOF() throws EndOfFileException {
-      locationMap.endTranslationUnit( preprocessedOffset );
+      locationMap.endTranslationUnit( globalCounter );
       super.throwEOF();
    }
    
-   protected int preprocessedOffset = 0;
 }

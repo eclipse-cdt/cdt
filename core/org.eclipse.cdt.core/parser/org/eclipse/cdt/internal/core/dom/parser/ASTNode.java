@@ -40,6 +40,7 @@ public abstract class ASTNode implements IASTNode {
     
     public void setOffsetAndLength(int offset, int length) {
         this.offset = offset;
+        this.length = length;
     }
     
     public void setOffsetAndLength( ASTNode node )

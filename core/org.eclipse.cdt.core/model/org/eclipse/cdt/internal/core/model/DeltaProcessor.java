@@ -7,9 +7,12 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -72,6 +75,38 @@ public class DeltaProcessor {
 						celement = children[i];
 						break;
 					}
+				}
+				// BUG 36424:
+				// The Binary may only be visible in the BinaryContainers
+				if (celement == null) {
+					ICProject cproj = parent.getCProject();
+					if (cproj != null) {
+						IBinaryContainer bin = cproj.getBinaryContainer();
+						children = ((CElement)bin).getElementInfo().getChildren();
+						for (int i = 0; i < children.length; i++) {
+							IResource res = children[i].getResource();
+							if (res != null && res.equals(resource)) {
+								celement = children[i];
+								break;
+							}
+						}
+					}
+				}
+				// BUG 36424:
+				// The Archive may only be visible in the ArchiveContainers
+				if (celement == null) {
+					ICProject cproj = parent.getCProject();
+					if (cproj != null) {
+						IArchiveContainer bin = cproj.getArchiveContainer();
+						children = ((CElement)bin).getElementInfo().getChildren();
+						for (int i = 0; i < children.length; i++) {
+							IResource res = children[i].getResource();
+							if (res != null && res.equals(resource)) {
+								celement = children[i];
+								break;
+							}
+						}
+					}				
 				}
 			}
 		}

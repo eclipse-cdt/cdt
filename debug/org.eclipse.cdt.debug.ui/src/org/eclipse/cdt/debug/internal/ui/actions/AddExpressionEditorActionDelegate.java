@@ -15,7 +15,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -24,7 +26,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionDelegate;
  
 
@@ -56,6 +61,7 @@ public class AddExpressionEditorActionDelegate extends ActionDelegate implements
 		if ( dlg.open() != Window.OK )
 			return;
 		createExpression( dlg.getExpression() );
+		activateExpressionView();
 	}
 
 	private String getSelectedText() {
@@ -87,5 +93,19 @@ public class AddExpressionEditorActionDelegate extends ActionDelegate implements
 
 	protected Shell getShell() {
 		return ( getEditorPart() != null ) ? getEditorPart().getSite().getShell() : CDebugUIPlugin.getActiveWorkbenchShell();
+	}
+
+	private void activateExpressionView() {
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		if ( window != null ) {
+			IWorkbenchPage page = window.getActivePage();
+			if ( page != null ) {
+				try {
+					page.showView( IDebugUIConstants.ID_EXPRESSION_VIEW );
+				}
+				catch( PartInitException e ) {
+				}
+			}
+		}
 	}
 }

@@ -1,3 +1,12 @@
+2004-02-10 Alain Magloire
+
+	Fix to PR 50794
+	Rename The CViewSorter to CElementSorter, it is more consistent
+	with eclipse i.e. JavaElementSorter, ResourceSorter ....
+	Also make it accessible.
+
+	* src/prg/eclipse/cdt/ui/CElementSorter.java
+
 2004-02-06 Hoda Amer
 	- Patch for Keith Campbell: Default template file change ( for statement )
 	- Patch for Chris Wiebe: Better header file icon

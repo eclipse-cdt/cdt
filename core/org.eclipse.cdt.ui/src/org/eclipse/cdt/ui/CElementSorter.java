@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.ui.cview;
+package org.eclipse.cdt.ui;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -44,7 +44,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  *  5  C File
  *  6 the reset
  */
-public class CViewSorter extends ViewerSorter { 
+public class CElementSorter extends ViewerSorter { 
 
 	private static final int CMODEL = 0;
 	private static final int PROJECT = 10;

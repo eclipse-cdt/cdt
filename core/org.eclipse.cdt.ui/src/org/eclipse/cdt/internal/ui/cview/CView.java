@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.ui.editor.SearchDialogAction;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.ui.*;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CLocalSelectionTransfer;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -465,7 +466,7 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		viewer.addFilter(patternFilter);
 		viewer.addFilter(workingSetFilter);
 		//viewer.addFilter(clibFilter);
-		viewer.setSorter(new CViewSorter ());
+		viewer.setSorter(new CElementSorter ());
 		// FIXME: Add different Sorting.
 		if(memento != null)
 			restoreFilters();

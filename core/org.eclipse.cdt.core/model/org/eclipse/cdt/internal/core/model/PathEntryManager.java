@@ -822,7 +822,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				if (!lock.isContainerInitialize()) {
 					runInitializer = true;
 					lock.setContainerInitialize(runInitializer);
-				} else {
+				} else if (! Thread.holdsLock(lock)){
+					// FIXME: Use Thread.holdsLock(lock) to break the cycle.
+					// This seem to happend when the container(say the auto discovery)
+					// trigger a resource change, the CoreModel will try to get the pathentries .. deadlock.
+
 					// Wait for the inialization to finish.
 					while (containerGet(project, containerPath, true) instanceof PathEntryContainerLock) {
 						try {

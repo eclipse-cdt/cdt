@@ -1,4 +1,10 @@
 2004-04-16 David Inglis
+	
+	Register our adapter factory though new extension point
+
+	* plugin.xml
+	
+2004-04-16 David Inglis
 
 	Update properties page binary catagory name.
 	

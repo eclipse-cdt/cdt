@@ -143,33 +143,6 @@
             name="%newCCWizardsCategory.name"
             id="org.eclipse.cdt.ui.newCCWizards">
       </category>
-<!-- File and Folder Wizards -->
-      <wizard
-            name="%NewWizards.folder"
-            icon="icons/full/ctool16/newfolder_wiz.gif"
-            category="org.eclipse.ui.Basic"
-            class="org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard"
-            id="org.eclipse.ui.wizards.new.folder">
-         <description>
-            %NewWizards.folder.description
-         </description>
-         <selection
-               class="org.eclipse.core.resources.IResource">
-         </selection>
-      </wizard>
-      <wizard
-            name="%NewWizards.file"
-            icon="icons/full/ctool16/newfile_wiz.gif"
-            category="org.eclipse.ui.Basic"
-            class="org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard"
-            id="org.eclipse.ui.wizards.new.file">
-         <description>
-            %NewWizards.file.description
-         </description>
-         <selection
-               class="org.eclipse.core.resources.IResource">
-         </selection>
-      </wizard>
       <wizard
             name="%NewWizards.class"
             icon="icons/full/ctool16/newclass_wiz.gif"

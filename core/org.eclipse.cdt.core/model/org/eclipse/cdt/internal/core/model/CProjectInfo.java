@@ -14,8 +14,8 @@ import org.eclipse.cdt.core.model.IBinaryContainer;
 
 class CProjectInfo extends CContainerInfo {
 
-	private BinaryContainer vBin;
-	private ArchiveContainer vLib;
+	BinaryContainer vBin;
+	ArchiveContainer vLib;
 
 	/**
 	 */

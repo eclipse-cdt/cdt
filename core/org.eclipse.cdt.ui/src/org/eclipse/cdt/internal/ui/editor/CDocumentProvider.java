@@ -101,29 +101,4 @@ public class CDocumentProvider extends FileDocumentProvider {
 		
 		return super.createAnnotationModel(element);
 	}
-	
-	protected ElementInfo createElementInfo(Object element) throws CoreException {
-		if (element instanceof IFileEditorInput) {
-			
-			IFileEditorInput input= (IFileEditorInput) element;
-			
-			try {
-				input.getFile().refreshLocal(IResource.DEPTH_INFINITE, null);
-			} catch (CoreException x) {
-				handleCoreException(x,"CFileDocumentProvider.createElementInfo"); //$NON-NLS-1$
-			}
-			
-			IDocument d= createDocument(element);
-			IAnnotationModel m= new CMarkerAnnotationModel(((IFileEditorInput)element).getFile());
-			FileSynchronizer f= new FileSynchronizer(input);
-			f.install();
-			
-			FileInfo info= new FileInfo(d, m, f);
-			info.fModificationStamp= computeModificationStamp(input.getFile());
-			
-			return info;
-		}
-		
-		return super.createElementInfo(element);
-	}
 }

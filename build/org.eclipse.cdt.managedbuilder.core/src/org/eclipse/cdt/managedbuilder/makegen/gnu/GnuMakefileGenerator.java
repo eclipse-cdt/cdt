@@ -487,7 +487,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator {
 	}
 
 	/* (non-javadoc)
-	 * Answers a <code>StrinBuffer</code> containing all of the required targets to
+	 * Answers a <code>StringBuffer</code> containing all of the required targets to
 	 * properly build the project.
 	 * 
 	 * @return StringBuffer

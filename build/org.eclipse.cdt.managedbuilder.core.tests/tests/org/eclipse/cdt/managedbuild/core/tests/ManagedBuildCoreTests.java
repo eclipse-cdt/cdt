@@ -1053,6 +1053,9 @@ public class ManagedBuildCoreTests extends TestCase {
 		assertEquals(true, options[3].getBooleanValue());
 		tool = tools[0];
 		assertEquals("-Ld -Le -Lf -b overridden -stralsooverridden -e2", tool.getToolFlags());
+		
+		// Make sure that the build manager returns the default makefile generator (not null)
+		assertNotNull(ManagedBuildManager.getMakefileGenerator(target.getId()));
 	}
 
 	/*

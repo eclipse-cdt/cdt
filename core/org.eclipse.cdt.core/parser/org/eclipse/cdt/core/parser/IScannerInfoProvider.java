@@ -1,6 +1,7 @@
 package org.eclipse.cdt.core.parser;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
@@ -31,7 +32,7 @@ public interface IScannerInfoProvider {
 	 * @param resource
 	 * @return
 	 */
-	public boolean managesResource(IResource resource);
+	public boolean managesResource(IResource resource) throws CoreException;
 	
 	/**
 	 * The receiver will no longer notify the listener specified in 

@@ -265,14 +265,18 @@ public class BuildPathInfoBlock implements IWizardTab {
 			monitor = new NullProgressMonitor();
 		}
 		if (project != null) {
-			// Store the paths and symbols 
-			monitor.beginTask("Setting Include Paths", 1);
-			StandardBuildManager.setIncludePaths(project, getPathListContents());
-
-			monitor.beginTask("Setting Defined Symbols", 1);
-			StandardBuildManager.setPreprocessorSymbols(project, getSymbolListContents());
-		
-			StandardBuildManager.saveBuildInfo(project);
+			try {
+				// Store the paths and symbols 
+				monitor.beginTask("Setting Include Paths", 1);
+				StandardBuildManager.setIncludePaths(project, getPathListContents());
+	
+				monitor.beginTask("Setting Defined Symbols", 1);
+				StandardBuildManager.setPreprocessorSymbols(project, getSymbolListContents());
+			
+				StandardBuildManager.saveBuildInfo(project);
+			} catch (CoreException e) {
+				// Should probably tell someone
+			}
 		}
 	}
 
@@ -589,15 +593,21 @@ public class BuildPathInfoBlock implements IWizardTab {
 
 	private void setPathListContents() {
 		if (project != null) {
-			IStandardBuildInfo info = StandardBuildManager.getBuildInfo(project);
-			pathList.setItems(info.getIncludePaths());
+			try {
+				IStandardBuildInfo info = StandardBuildManager.getBuildInfo(project);
+				pathList.setItems(info.getIncludePaths());
+			} catch (CoreException e) {
+			}
 		}
 	}
 	
 	private void setSymbolListContents() {
 		if (project != null) {
-			IStandardBuildInfo info = StandardBuildManager.getBuildInfo(project);
-			symbolList.setItems(info.getPreprocessorSymbols());
+			try {
+				IStandardBuildInfo info = StandardBuildManager.getBuildInfo(project);
+				symbolList.setItems(info.getPreprocessorSymbols());
+			} catch (CoreException e) {
+			}
 		}
 	}
 

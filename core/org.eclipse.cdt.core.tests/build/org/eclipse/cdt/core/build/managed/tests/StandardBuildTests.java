@@ -107,7 +107,7 @@ public class StandardBuildTests extends TestCase {
 		return suite;
 	}
 	
-	private void checkDefaultProjectSettings(IProject project) {
+	private void checkDefaultProjectSettings(IProject project) throws Exception {
 		assertNotNull(project);
 
 		// There should not be any include path or defined symbols for the project
@@ -128,7 +128,7 @@ public class StandardBuildTests extends TestCase {
 		assertEquals(EMPTY_STRING, info.getIncrementalBuildArguments()); 
 	}
 	
-	private void checkOverriddenProjectSettings(IProject project) {
+	private void checkOverriddenProjectSettings(IProject project) throws Exception {
 		assertNotNull(project);
 
 		// Check that the new stuff is there
@@ -232,7 +232,7 @@ public class StandardBuildTests extends TestCase {
 		removeProject(PROJECT_NAME);
 	}
 
-	public void testProjectConversion() {
+	public void testProjectConversion() throws Exception {
 		// Open the project
 		IProject project = null;
 		try {
@@ -280,7 +280,7 @@ public class StandardBuildTests extends TestCase {
 	/**
 	 * 
 	 */
-	public void testProjectCreation () {
+	public void testProjectCreation() throws Exception  {
 		// Create a new project
 		IProject project = null;
 		try {
@@ -303,7 +303,7 @@ public class StandardBuildTests extends TestCase {
 		checkDefaultProjectSettings(project);
 	}
 	
-	public void testProjectSettings() {
+	public void testProjectSettings() throws Exception {
 		// Get the project
 		IProject project = null;
 		try {
@@ -342,7 +342,7 @@ public class StandardBuildTests extends TestCase {
 		checkOverriddenProjectSettings(project);
 	}
 
-	public void testScannerListenerInterface() {
+	public void testScannerListenerInterface() throws Exception  {
 		// Get the project
 		IProject project = null;
 		try {

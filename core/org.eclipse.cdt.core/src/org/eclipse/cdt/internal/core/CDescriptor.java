@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xerces.dom.DocumentImpl;
 import org.apache.xml.serialize.Method;
@@ -60,6 +61,7 @@ public class CDescriptor implements ICDescriptor {
 	private IProject fProject;
 	private HashMap extMap = new HashMap(4);
 	private HashMap extInfoMap = new HashMap(4);
+	private Document dataDoc;
 
 	static final String DESCRIPTION_FILE_NAME = ".cdtproject";
 	private static final char[][] NO_CHAR_CHAR = new char[0][];
@@ -67,6 +69,9 @@ public class CDescriptor implements ICDescriptor {
 	private static final String PROJECT_EXTENSION = "extension";
 	private static final String PROJECT_EXTENSION_ATTRIBUTE = "attribute";
 	private static final String PATH_ENTRY = "cpathentry";
+	private static final String PROJECT_DATA = "data";
+	private static final String PROJECT_DATA_ITEM = "item";
+	private static final String PROJECT_DATA_ID = "id";
 
 	private boolean fDirty;
 	private boolean autoSave;
@@ -328,6 +333,8 @@ public class CDescriptor implements ICDescriptor {
 					if (entry != null) {
 						pathEntries.add(entry);
 					}
+				} else if (childNode.getNodeName().equals(PROJECT_DATA)) {
+					decodeProjectData((Element)childNode);
 				}
 			}
 		}
@@ -450,6 +457,7 @@ public class CDescriptor implements ICDescriptor {
 		configRootElement.setAttribute("id", fOwner.getID()); //$NON-NLS-1$
 		encodeProjectExtensions(doc, configRootElement);
 		encodePathEntries(doc, configRootElement);
+		encodeProjectData(doc, configRootElement);
 		return serializeDocument(doc);
 	}
 
@@ -544,5 +552,56 @@ public class CDescriptor implements ICDescriptor {
 			}
 		}
 		return (ICExtension) cExtension;
+	}
+	
+	// The project data allows for the storage of any structured information
+	// into the cdtproject file.
+	private Document getProjectDataDoc() throws CoreException {
+		if (dataDoc == null) {
+			try {
+				dataDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			} catch (ParserConfigurationException e) {
+				throw new CoreException(
+					new Status(
+						IStatus.ERROR,
+						CCorePlugin.PLUGIN_ID,
+						IStatus.ERROR,
+						"getProjectDataDoc",
+						e));
+			}
+			Element rootElem = dataDoc.createElement(PROJECT_DATA);
+			dataDoc.appendChild(rootElem);
+		}
+		return dataDoc;
+	}
+	
+	private void decodeProjectData(Element data) throws CoreException {
+		Document doc = getProjectDataDoc();
+		doc.getDocumentElement().appendChild(doc.importNode(data, true));
+	}
+
+	public Element getProjectData(String id) throws CoreException {
+		NodeList nodes = getProjectDataDoc().getDocumentElement().getElementsByTagName(PROJECT_DATA_ITEM);
+		for (int i = 0; i < nodes.getLength(); ++i) {
+			Element element = (Element)nodes.item(i);
+			if (element.getAttribute(PROJECT_DATA_ID).equals(id))
+				return element; 
+		}
+
+		// Not found, make a new one
+		Element element = dataDoc.createElement(PROJECT_DATA_ITEM);
+		element.setAttribute(PROJECT_DATA_ID, id);
+		dataDoc.getDocumentElement().appendChild(element);
+		return element;
+	}
+	
+	public void saveProjectData() throws CoreException {
+		setDirty();
+	}
+	
+	private void encodeProjectData(Document doc, Element root) {
+		// Don't create or encode the doc if it isn't there already
+		if (dataDoc != null)
+			root.appendChild(doc.importNode(dataDoc.getDocumentElement(), true));
 	}
 }

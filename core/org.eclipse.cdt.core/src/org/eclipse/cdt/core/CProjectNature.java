@@ -296,8 +296,11 @@ public class CProjectNature implements IProjectNature {
      * @see IProjectNature#setProject
      */
     public void setProject(IProject project) {
-		fProject= project;
-		fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
+    	try {
+			fProject= project;
+			fBuildInfo = StandardBuildManager.getBuildInfo(fProject, true);
+		} catch (CoreException e) {
+		}
     }
     
 }

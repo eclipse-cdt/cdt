@@ -12,6 +12,7 @@ package org.eclipse.cdt.core;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.w3c.dom.Element;
 
 public interface ICDescriptor {
 	public ICOwnerInfo getProjectOwner();
@@ -27,4 +28,7 @@ public interface ICDescriptor {
 	
 	public void setPathEntries(ICPathEntry[] entries) throws CoreException;
 	public ICPathEntry[] getPathEntries();
+	
+	public Element getProjectData(String id) throws CoreException;
+	public void saveProjectData() throws CoreException;
 }

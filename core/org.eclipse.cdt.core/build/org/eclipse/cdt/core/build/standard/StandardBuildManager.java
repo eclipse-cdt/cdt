@@ -1,9 +1,5 @@
 package org.eclipse.cdt.core.build.standard;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,16 +7,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.cdt.core.BuildInfoFactory;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -30,9 +19,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
@@ -49,18 +38,16 @@ public class StandardBuildManager implements IScannerInfoProvider {
 	// Name we will use to store build property with the project
 	private static final QualifiedName buildInfoProperty
 		= new QualifiedName(CCorePlugin.PLUGIN_ID, "standardBuildInfo");
+	private static final String ID = CCorePlugin.PLUGIN_ID + ".standardBuildInfo";
 
 	// Listeners interested in build model changes
 	private static Map buildModelListeners; 
-
-	private static final String FILE_NAME = ".cdtbuild";
-	private static final String ROOT_ELEM_NAME = "StandardProjectBuildInfo";
 
 	/**
 	 * @param project
 	 * @return
 	 */
-	private static IStandardBuildInfo findBuildInfo(IResource resource, boolean create) {
+	private static IStandardBuildInfo findBuildInfo(IResource resource, boolean create) throws CoreException {
 		IStandardBuildInfo buildInfo = null;
 		// See if there's already one associated with the resource for this session
 		try {
@@ -87,11 +74,11 @@ public class StandardBuildManager implements IScannerInfoProvider {
 		return buildInfo;
 	}
 
-	public static IStandardBuildInfo getBuildInfo(IProject project) {
+	public static IStandardBuildInfo getBuildInfo(IProject project) throws CoreException {
 		return findBuildInfo(project, false);
 	}
 	
-	public static IStandardBuildInfo getBuildInfo(IProject project, boolean create) {
+	public static IStandardBuildInfo getBuildInfo(IProject project, boolean create) throws CoreException {
 		return findBuildInfo(project, create);
 	}
 
@@ -108,7 +95,7 @@ public class StandardBuildManager implements IScannerInfoProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#managesResource(org.eclipse.core.resources.IResource)
 	 */
-	public boolean managesResource(IResource resource) {
+	public boolean managesResource(IResource resource) throws CoreException {
 		/* 
 		 * Answers true if this project has a build info associated with it
 		 */
@@ -129,7 +116,9 @@ public class StandardBuildManager implements IScannerInfoProvider {
 		return info == null ? false : true;
 	}
 
-	public static void setPreprocessorSymbols(IProject project, String[] symbols) {
+	public static void setPreprocessorSymbols(IProject project, String[] symbols)
+		throws CoreException 
+	{
 		// Get the information for the project
 		IStandardBuildInfo info = getBuildInfo(project);
 		// Set the new information
@@ -143,7 +132,9 @@ public class StandardBuildManager implements IScannerInfoProvider {
 		}
 	}
 	
-	public static void setIncludePaths(IProject project, String[] paths) {
+	public static void setIncludePaths(IProject project, String[] paths)
+		throws CoreException
+	{
 		// Get the build info for the project
 		IStandardBuildInfo info = getBuildInfo(project);
 		if (info != null) {
@@ -177,25 +168,10 @@ public class StandardBuildManager implements IScannerInfoProvider {
 	 * information is then associated with the resource for the duration of 
 	 * the session.
 	 */
-	private static IStandardBuildInfo loadBuildInfo(IProject project) {
-		IStandardBuildInfo buildInfo = null;
-		IFile file = project.getFile(FILE_NAME);
-		if (!file.exists())
-			return null;
-	
-		try {
-			InputStream stream = file.getContents();
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document document = parser.parse(stream);
-			Node rootElement = document.getFirstChild();
-			if (rootElement.getNodeName().equals(ROOT_ELEM_NAME)) {
-				buildInfo = BuildInfoFactory.create(project, (Element)rootElement);
-				project.setSessionProperty(buildInfoProperty, buildInfo);
-			}
-		} catch (Exception e) {
-			buildInfo = null;
-		}
-
+	private static IStandardBuildInfo loadBuildInfo(IProject project) throws CoreException {
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		IStandardBuildInfo buildInfo = BuildInfoFactory.create(project, descriptor.getProjectData(ID));
+		project.setSessionProperty(buildInfoProperty, buildInfo);
 		return buildInfo;
 	}
 
@@ -224,38 +200,25 @@ public class StandardBuildManager implements IScannerInfoProvider {
 	 * 
 	 * @param project
 	 */
-	public static void saveBuildInfo(IProject project) {
-		// Create document
-		Document doc = new DocumentImpl();
-		Element rootElement = doc.createElement(ROOT_ELEM_NAME);
-		doc.appendChild(rootElement);
-
+	public static void saveBuildInfo(IProject project) throws CoreException {
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		
+		Element rootElement = descriptor.getProjectData(ID); 
+		
+		// Clear out all current children
+		// Note: Probably would be a better idea to merge in the data
+		NodeList nodes = rootElement.getChildNodes();
+		for (int i = 0; i < nodes.getLength(); ++i) {
+			Node node = nodes.item(i);
+			if (node instanceof Element)
+				rootElement.removeChild(nodes.item(i));
+		}
+		
 		// Save the build info
 		IStandardBuildInfo buildInfo = getBuildInfo(project);
 		if (buildInfo != null)
-			buildInfo.serialize(doc, rootElement);
-		
-		// Save the document
-		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
-		String xml = null;
-		try {
-			Serializer serializer = SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format);
-			serializer.asDOMSerializer().serialize(doc);
-			xml = s.toString("UTF8"); //$NON-NLS-1$		
-			IFile rscFile = project.getFile(FILE_NAME);
-			InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
-			// update the resource content
-			if (rscFile.exists()) {
-				rscFile.setContents(inputStream, IResource.FORCE, null);
-			} else {
-				rscFile.create(inputStream, IResource.FORCE, null);
-			}
-		} catch (Exception e) {
-			return;
-		}
+			buildInfo.serialize(rootElement.getOwnerDocument(), rootElement);
+		descriptor.saveProjectData();
 	}
 
 	/* (non-Javadoc)

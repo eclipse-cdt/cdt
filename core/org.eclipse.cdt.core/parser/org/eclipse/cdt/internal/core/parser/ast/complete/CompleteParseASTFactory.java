@@ -796,9 +796,16 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
         	handleProblem( e2.createProblemID(), newSymbolName );
         }
-			
+		
+        if( name != null && name.getTemplateIdArgLists() != null  )
+        {
+        	for( int i = 0; i < name.getTemplateIdArgLists().length; ++i )
+        		addTemplateIdReferences( references, name.getTemplateIdArgLists()[i]);
+        	name.freeReferences( cache );
+        }
         ASTClassSpecifier classSpecifier = new ASTClassSpecifier( newSymbol, kind, type, access, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, references );
         attachSymbolExtension(newSymbol, classSpecifier, true );
+        
         return classSpecifier;
     }
     

@@ -429,10 +429,11 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 	 * @return an array of names for the configurations defined for the chosen target
 	 */
 	private String [] getConfigurationNames () {
-		String [] names = new String[configurations.length];
+		String [] names = new String[configurations.length /*+ 1*/];
 		for (int index = 0; index < configurations.length; ++index) {
 			names[index] = configurations[index].getName();
 		}
+//		names[names.length - 1] = ManagedBuilderUIPlugin.getResourceString(ALL_CONFS);
 		return names;
 	}
 	
@@ -610,7 +611,6 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 				configurations = selectedTarget.getConfigurations();
 				configSelector.removeAll();
 				configSelector.setItems(getConfigurationNames());
-				configSelector.add(ManagedBuilderUIPlugin.getResourceString(ALL_CONFS));
 				configSelector.select(0);
 				updateConfigs = true;
 			}
@@ -647,7 +647,6 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 					configurations = selectedTarget.getConfigurations();
 					configSelector.removeAll();
 					configSelector.setItems(getConfigurationNames());
-					configSelector.add(ManagedBuilderUIPlugin.getResourceString(ALL_CONFS));
 					configSelector.select(configSelector.indexOf(name));
 					updateConfigs = true;
 				}
@@ -875,7 +874,6 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		// Clear and replace the contents of the selector widget
 		configSelector.removeAll();
 		configSelector.setItems(getConfigurationNames());
-		configSelector.add(ManagedBuilderUIPlugin.getResourceString(ALL_CONFS));
 		
 		// Make sure the active configuration is selected
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());

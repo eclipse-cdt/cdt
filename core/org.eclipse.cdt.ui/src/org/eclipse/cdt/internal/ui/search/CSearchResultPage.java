@@ -264,6 +264,9 @@ public class CSearchResultPage extends AbstractTextSearchViewPage {
 		
 	private IFile getCanonicalFile(IFile originalFile){
 		
+		if (originalFile == null)
+			return null;
+		
 		File tempFile = originalFile.getRawLocation().toFile();
 		String canonicalPath = null;
 		try {

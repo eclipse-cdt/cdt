@@ -1,3 +1,6 @@
+2004-01-20 John Camelon
+		Tidied up Scanner implementation for unused fields, inefficient String manipulations and redundant parameters.
+
 2004-01-19 John Camelon
 		Added IToken.getLineNumber() to facilitate adding line numbers to AST.
 		Added line number support into IASTOffsetableElement.  Updated all implementations to use this.  

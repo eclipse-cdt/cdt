@@ -66,7 +66,6 @@ public class Scanner implements IScanner {
 	private final String filename;
 	private final Reader reader;
 	protected IToken finalToken;
-	private static final boolean NEW_STRATEGY = true;
 
 	protected void handleProblem( int problemID, String argument, int beginningOffset, boolean warning, boolean error ) throws ScannerException
 	{
@@ -110,23 +109,18 @@ public class Scanner implements IScanner {
 		originalConfig = info;
 		if( info.getDefinedSymbols() != null )
 		{	
-			if( NEW_STRATEGY )
-			{	
-				Iterator i = info.getDefinedSymbols().keySet().iterator(); 
-				Map m = info.getDefinedSymbols();
-				while( i.hasNext() )
-				{
-					String symbolName = (String) i.next();
-					Object value = m.get( symbolName );
-		
-					if( value instanceof String )
-						addDefinition( symbolName, (String) value);
-					else if( value instanceof IMacroDescriptor )
-						addDefinition( symbolName, (IMacroDescriptor)value);
-				}
+			Iterator i = info.getDefinedSymbols().keySet().iterator(); 
+			Map m = info.getDefinedSymbols();
+			while( i.hasNext() )
+			{
+				String symbolName = (String) i.next();
+				Object value = m.get( symbolName );
+	
+				if( value instanceof String )
+					addDefinition( symbolName, (String) value);
+				else if( value instanceof IMacroDescriptor )
+					addDefinition( symbolName, (IMacroDescriptor)value);
 			}
-			else
-				definitions.putAll( info.getDefinedSymbols() );
 		}
 			
 		if( info.getIncludePaths() != null )
@@ -182,19 +176,14 @@ public class Scanner implements IScanner {
 	}
 
 	public void addDefinition(String key, String value) {
-		if( NEW_STRATEGY )
-		{
-			StringBuffer signatureBuffer  = new StringBuffer();
-			signatureBuffer.append( key );
-			signatureBuffer.append( ' ');
-			signatureBuffer.append( value );
-			
-			addDefinition(key,
-					new ObjectMacroDescriptor(	key, signatureBuffer.toString(), 
-							tokenizeReplacementString( NO_OFFSET_LIMIT, key, value, null ), value ));
-		}
-		else
-			definitions.put(key, value);
+		StringBuffer signatureBuffer  = new StringBuffer();
+		signatureBuffer.append( key );
+		signatureBuffer.append( ' ' );
+		signatureBuffer.append( value );
+		
+		addDefinition(key,
+				new ObjectMacroDescriptor( key, signatureBuffer.toString(), 
+						tokenizeReplacementString( NO_OFFSET_LIMIT, key, value, null ), value ));
 	}
 
 	public final IMacroDescriptor getDefinition(String key) {
@@ -382,7 +371,10 @@ public class Scanner implements IScanner {
 					pathFile = new File( buffer.toString() );
 				}
 				if (pathFile.isDirectory()) {
-					newPath = pathFile.getPath() + File.separatorChar + fileName;
+					StringBuffer buffer = new StringBuffer( pathFile.getPath() );
+					buffer.append( File.separatorChar );
+					buffer.append( fileName );
+					newPath = buffer.toString();
 					File includeFile = new File(newPath);
 					if (includeFile.exists() && includeFile.isFile()) {
 						try {
@@ -396,9 +388,8 @@ public class Scanner implements IScanner {
 			}
 			
 			if (inclusionReader == null )
-			{
-				handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, fileName, beginOffset, false, true, true );
-			}
+				handleProblem( IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, fileName, beginOffset, false, true );
+
 		}
 		else // local inclusion
 		{
@@ -406,7 +397,10 @@ public class Scanner implements IScanner {
 			File currentIncludeFile = new File( currentFilename );
 			String parentDirectory = currentIncludeFile.getParentFile().getAbsolutePath();
 			currentIncludeFile = null; 
-			newPath = parentDirectory + File.separatorChar + fileName;
+			StringBuffer buffer = new StringBuffer( parentDirectory );
+			buffer.append( File.separatorChar );
+			buffer.append( fileName );
+			newPath = buffer.toString();
 			File includeFile = new File( newPath );
 			if (includeFile.exists() && includeFile.isFile()) {
 				try {
@@ -448,7 +442,7 @@ public class Scanner implements IScanner {
 			}
 			catch (ContextException e1)
 			{
-				handleProblem( e1.getId(), fileName, beginOffset, false, true, true );
+				handleProblem( e1.getId(), fileName, beginOffset, false, true );
 			}
 		}
 	}
@@ -693,7 +687,7 @@ public class Scanner implements IScanner {
 		}
 		catch (ContextException e)
 		{
-			handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true, true );
+			handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true );
 		}
 	}
 
@@ -804,7 +798,7 @@ public class Scanner implements IScanner {
 					if ( ( c =='"' ) && ( previous != '\\' || beforePrevious == '\\') ) break;
 					if ( ( c == '\n' ) && ( previous != '\\' || beforePrevious == '\\') )
 					{
-						handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true, true );
+						handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
 					}
 						
 					if( c == NOCHAR) break;  
@@ -832,7 +826,9 @@ public class Scanner implements IScanner {
 						
 						while( next != null && ( next.getType()  == IToken.tSTRING || 
 							next.getType() == IToken.tLSTRING ) ){
-							returnToken.setImage( returnToken.getImage() + next.getImage() ); 
+							StringBuffer buffer = new StringBuffer( returnToken.getImage() );
+							buffer.append( next.getImage() );
+							returnToken.setImage( buffer.toString() ); 
 							returnToken.setNext( null );
 							currentToken = returnToken; 
 							try{
@@ -852,7 +848,7 @@ public class Scanner implements IScanner {
 					return returnToken; 
 	
 				} else 
-					handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true, true );
+					handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true  );
 				
 		
 			} else if (
@@ -892,7 +888,9 @@ public class Scanner implements IScanner {
 				IMacroDescriptor mapping = getDefinition(ident);
 
 				if (mapping != null) {
-					if( contextStack.shouldExpandDefinition( POUND_DEFINE + ident ) ) {					
+					StringBuffer buffer = new StringBuffer(POUND_DEFINE); 
+					buffer.append( ident );
+					if( contextStack.shouldExpandDefinition( buffer.toString()  ) ) {					
 						expandDefinition(ident, mapping, baseOffset);
 						c = getChar();
 						continue;
@@ -933,7 +931,7 @@ public class Scanner implements IScanner {
 							}
 							catch (ContextException e)
 							{
-								handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true, true );
+								handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true  );
 							}
 							storageBuffer = null;  
 							c = getChar(); 
@@ -975,7 +973,7 @@ public class Scanner implements IScanner {
 							if( getChar() == '.' )
 								return newToken( IToken.tELLIPSIS, "...", contextStack.getCurrentContext() );
 							else
-								handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true, true );				
+								handleProblem( IProblem.SCANNER_BAD_FLOATING_POINT, null, beginOffset, false, true );				
 						} else {
 							ungetChar( c );
 							return newToken( IToken.tDOT, ".", contextStack.getCurrentContext() );
@@ -984,7 +982,7 @@ public class Scanner implements IScanner {
 				} else if (c == 'x') {
 					if( ! firstCharZero ) 
 					{
-						handleProblem( IProblem.SCANNER_BAD_HEX_FORMAT, null, beginOffset, false, true, true );
+						handleProblem( IProblem.SCANNER_BAD_HEX_FORMAT, null, beginOffset, false, true );
 						c = getChar(); 
 						continue;
 					}
@@ -1087,7 +1085,7 @@ public class Scanner implements IScanner {
 							}
 							catch (ContextException e)
 							{
-								handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true, true );
+								handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true );
 							}
 							storageBuffer = null;  
 							c = getChar(); 
@@ -1124,7 +1122,7 @@ public class Scanner implements IScanner {
 				if( c == '#' )
 				{
 					if( skipped )
-						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#  #", beginningOffset, false, true, true ); 
+						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#  #", beginningOffset, false, true ); 
 					else 
 						return newToken( tPOUNDPOUND, "##" );
 				} else if( tokenizingMacroReplacementList ) {
@@ -1144,7 +1142,11 @@ public class Scanner implements IScanner {
 				Object directive = ppDirectives.get(token);
 				if (directive == null) {
 					if (true)
-						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#"+token, beginningOffset, false, true, true );							
+					{	
+						StringBuffer buffer = new StringBuffer( "#");
+						buffer.append( token );
+						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+					}
 				} else {
 					int type = ((Integer) directive).intValue();
 					switch (type) {
@@ -1212,8 +1214,12 @@ public class Scanner implements IScanner {
 							continue;
 						case PreprocessorDirectives.ENDIF :
 							String restOfLine = getRestOfPreprocessorLine().trim();
-							if( ! restOfLine.equals( "" ) && true )
-								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#endif " + restOfLine, beginningOffset, false, true, true );
+							if( ! restOfLine.equals( "" )  )
+							{	
+								StringBuffer buffer = new StringBuffer("#endif ");
+								buffer.append( restOfLine );
+								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+							}
 							passOnToClient = branches.poundendif(); 
 							c = getChar();
 							continue;
@@ -1241,7 +1247,7 @@ public class Scanner implements IScanner {
 								handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
 									token, 
 									beginningOffset, 
-									false, true, true );  
+									false, true );  
 							}
 
 							skipOverTextUntilNewline();
@@ -1253,7 +1259,7 @@ public class Scanner implements IScanner {
 							String elsifExpression = getRestOfPreprocessorLine().trim();
 
 							if (elsifExpression.equals(""))
-								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#elif", beginningOffset, false, true, true );
+								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#elif", beginningOffset, false, true  );
 
 							boolean elsifResult = false;
 							elsifResult = evaluateExpression(elsifExpression, co );
@@ -1264,10 +1270,13 @@ public class Scanner implements IScanner {
 							}
 							catch( EmptyStackException ese )
 							{
+								StringBuffer buffer = new StringBuffer( token );
+								buffer.append( ' ' );
+								buffer.append( elsifExpression );
 								handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
-									token + ' ' + elsifExpression, 
+									buffer.toString(), 
 									beginningOffset, 
-									false, true, true );  
+									false, true );  
 							}
 							c = getChar();
 							continue;
@@ -1283,7 +1292,7 @@ public class Scanner implements IScanner {
 								c = getChar();
 								continue;
 							}
-							handleProblem( IProblem.PREPROCESSOR_POUND_ERROR, getRestOfPreprocessorLine(), beginningOffset, false, true, true );
+							handleProblem( IProblem.PREPROCESSOR_POUND_ERROR, getRestOfPreprocessorLine(), beginningOffset, false, true );
 							c = getChar();
 							continue;
 						case PreprocessorDirectives.PRAGMA :
@@ -1294,12 +1303,16 @@ public class Scanner implements IScanner {
 							String remainderOfLine =
 								getRestOfPreprocessorLine().trim();
 							if (!remainderOfLine.equals("")) {
-								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "# " + remainderOfLine, beginningOffset, false, true, true );
+								StringBuffer buffer = new StringBuffer( "# ");
+								buffer.append( remainderOfLine );
+								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true);
 							}
 							c = getChar();
 							continue;
 						default :
-							handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#" + token, beginningOffset, false, true, true );
+							StringBuffer buffer = new StringBuffer( "# ");
+							buffer.append( token );
+							handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
 					}
 				}
 			} else {
@@ -1633,7 +1646,7 @@ public class Scanner implements IScanner {
 		if (( getDepth() != 0) && !atEOF )
 		{
 			atEOF = true;
-			handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, getCurrentOffset(), false, true, true );
+			handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, getCurrentOffset(), false, true );
 		}
 
 		// we're done
@@ -1751,7 +1764,7 @@ public class Scanner implements IScanner {
                     return newToken( IToken.tSTRING, buff.toString(), contextStack.getCurrentContext());
     
                 } else {
-                	handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true, true );
+                	handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
                 	c = getChar(); 
                 	continue;
                 }
@@ -1991,11 +2004,13 @@ public class Scanner implements IScanner {
 		{	
 			final NullSourceElementRequestor nullCallback = new NullSourceElementRequestor();
 			IParser parser = null;
+			StringBuffer expressionBuffer = new StringBuffer( expression );
+			expressionBuffer.append( ';');
 			try
 			{
 				IScanner trial =
 					ParserFactory.createScanner(
-						new StringReader(expression + ";"),
+						new StringReader(expressionBuffer.toString()),
 							EXPRESSION,
 							new ScannerInfo( definitions, originalConfig.getIncludePaths()), 
 							ParserMode.QUICK_PARSE, language, nullCallback, log );
@@ -2011,12 +2026,12 @@ public class Scanner implements IScanner {
 				return true;
 			} catch( BacktrackException backtrack  )
 			{
-				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true, true ); 
+				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true ); 
 			}
 			catch (ExpressionEvaluationException e) {
-				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true, true );
+				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
 			} catch (EndOfFileException e) {
-				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true, true );
+				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true );
 			}
 			return true; 
 		}
@@ -2075,7 +2090,7 @@ public class Scanner implements IScanner {
 		}
 
 		if (c == NOCHAR)
-			handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, getCurrentOffset(), false, true, true );
+			handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, getCurrentOffset(), false, true  );
 		
 		ungetChar(c);
 
@@ -2083,7 +2098,7 @@ public class Scanner implements IScanner {
 	}
 
 	protected void poundInclude( int beginningOffset, int startLine ) throws ScannerException {
-
+		StringBuffer potentialErrorLine = new StringBuffer( "#include ");
 		skipOverWhitespace();				
 		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize();
 		int nameLine = contextStack.getCurrentLineNumber();
@@ -2105,10 +2120,11 @@ public class Scanner implements IScanner {
 			helperScanner.setForInclusion( true );
 			IToken t = null;
 			
+			potentialErrorLine.append( includeLine );
 			try {
 				t = helperScanner.nextToken(false);
 			} catch (EndOfFileException eof) {
-				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );				
+				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );				
 				return;
 			} 
 
@@ -2121,7 +2137,7 @@ public class Scanner implements IScanner {
 					
 					// This should throw EOF
 					t = helperScanner.nextToken(false);
-					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );					
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );					
 					return;
 				} else if (t.getType() == IToken.tLT) {
 					
@@ -2141,18 +2157,18 @@ public class Scanner implements IScanner {
 						endOffset = baseOffset + t.getEndOffset();
 						
 					} catch (EndOfFileException eof) {
-						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
+						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );
 						return;
 					}
 					
 					// This should throw EOF
 					t = helperScanner.nextToken(false);
-					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );
 	
 					return;
 					
 				} else 
-					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );
 			}
 			catch( EndOfFileException eof )
 			{
@@ -2160,7 +2176,7 @@ public class Scanner implements IScanner {
 			} 
 			
 		} else 
-			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
+			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );
 
 		String f = fileName.toString();
 		
@@ -2265,8 +2281,12 @@ public class Scanner implements IScanner {
 							
 							if( beginning != NO_OFFSET_LIMIT )
 							{	
-								handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, "#define " + key + " " + replacementString,
-										beginning, false, true, true ); 									
+								StringBuffer buffer = new StringBuffer( POUND_DEFINE );
+								buffer.append( key );
+								buffer.append( ' ' );
+								buffer.append( replacementString );
+								handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, buffer.toString(),
+										beginning, false, true ); 									
 								return null;
 							}
 						}
@@ -2289,6 +2309,7 @@ public class Scanner implements IScanner {
 	
 	
 	protected void poundDefine(int beginning, int beginningLine ) throws ScannerException {
+		StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
 		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
@@ -2317,14 +2338,20 @@ public class Scanner implements IScanner {
 						continue;
 					} else {
 						ungetChar( c );
-						handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, "#define " + buffer.toString() + '\\' + (char)c, beginning, false, true, true );
+						potentialErrorMessage.append( buffer );
+						potentialErrorMessage.append( '\\');
+						potentialErrorMessage.append( (char)c );
+						handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true);
 						return;
 					}
 				} else if( c == '\r' || c == '\n' ){
-					handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, "#define " + buffer.toString() + (char)c, beginning, false, true, true );
+					potentialErrorMessage.append( buffer );
+					potentialErrorMessage.append( '\\');
+					potentialErrorMessage.append( (char)c );
+					handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true );
 					return;
 				} else if( c == NOCHAR ){
-					handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, beginning, false, true, true );
+					handleProblem( IProblem.SCANNER_UNEXPECTED_EOF, null, beginning, false, true );
 					return;
 				}
 				
@@ -2352,12 +2379,17 @@ public class Scanner implements IScanner {
 										tokenizeReplacementString( beginning, key, replacementString, parameterIdentifiers ) :
 										EMPTY_LIST;
 			
-
+			StringBuffer fullSignature = new StringBuffer( POUND_DEFINE);
+			fullSignature.append( key );
+			fullSignature.append( '(');
+			fullSignature.append( parameters );
+			fullSignature.append( ") ");
+			fullSignature.append( replacementString );
 			descriptor = new FunctionMacroDescriptor(
 				key,
 				parameterIdentifiers,
 				macroReplacementTokens,
-				"#define " + key + "(" + parameters + ") " + replacementString, 
+				fullSignature.toString(), 
 				replacementString);
 				
 			checkValidMacroRedefinition(key, previousDefinition, descriptor, beginning);
@@ -2403,12 +2435,19 @@ public class Scanner implements IScanner {
 			} else {
 				// this is not a comment 
 				// it is a bad statement
-				handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, "#define " + key + " /" + getRestOfPreprocessorLine(), beginning, false, true, true );
+				potentialErrorMessage.append( key );
+				potentialErrorMessage.append( " /");
+				potentialErrorMessage.append( getRestOfPreprocessorLine() );
+				handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true );
 				return;
 			}
 		} else {
-			log.traceLog("Scanner : Encountered unexpected character " + ((char) c));
-			handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, "#define " + key + (char)c + getRestOfPreprocessorLine(), beginning, false, true, true );
+			potentialErrorMessage = new StringBuffer(); 
+			potentialErrorMessage.append( "#define");
+			potentialErrorMessage.append( key );
+			potentialErrorMessage.append( (char)c );
+			potentialErrorMessage.append( getRestOfPreprocessorLine() );
+			handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true );
 			return;
 		}
 		
@@ -2428,7 +2467,10 @@ public class Scanner implements IScanner {
 			String newDefinition, int beginningOffset )
 	throws ScannerException 
 	{
-		IMacroDescriptor newMacro = new ObjectMacroDescriptor( key, key + ' ' + newDefinition, 
+		StringBuffer buffer = new StringBuffer(key);
+		buffer.append( ' ');
+		buffer.append(newDefinition);
+		IMacroDescriptor newMacro = new ObjectMacroDescriptor( key, buffer.toString(), 
 				tokenizeReplacementString( NO_OFFSET_LIMIT, key, newDefinition, null ), newDefinition );
 		checkValidMacroRedefinition( key, previousDefinition, newMacro, beginningOffset );
 	}
@@ -2440,11 +2482,16 @@ public class Scanner implements IScanner {
 			String newDefinition, int beginningOffset )
 	throws ScannerException 
 	{
-		IMacroDescriptor prevMacro = new ObjectMacroDescriptor( key, key + ' ' + previousDefinition, 
+		StringBuffer oldMacro = new StringBuffer( key );
+		oldMacro.append( ' ');
+		StringBuffer newMacro = new StringBuffer( oldMacro.toString() );
+		oldMacro.append( previousDefinition );
+		newMacro.append( newDefinition );
+		IMacroDescriptor prevMacroDescriptor = new ObjectMacroDescriptor( key, oldMacro.toString(), 
 				tokenizeReplacementString( NO_OFFSET_LIMIT, key, previousDefinition, null ), previousDefinition );
-		IMacroDescriptor newMacro = new ObjectMacroDescriptor( key, key + ' ' + newDefinition, 
+		IMacroDescriptor newMacroDescriptor = new ObjectMacroDescriptor( key, newMacro.toString(), 
 				tokenizeReplacementString( NO_OFFSET_LIMIT, key, newDefinition, null ), newDefinition );
-		checkValidMacroRedefinition( key, prevMacro, newMacro, beginningOffset );
+		checkValidMacroRedefinition( key, prevMacroDescriptor, newMacroDescriptor, beginningOffset );
 	}
 	
 
@@ -2459,7 +2506,7 @@ public class Scanner implements IScanner {
 				if( previousDefinition.compatible( newDefinition ) ) 
 					return; 							
 				
-				handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_REDEFN, key, beginningOffset, false, true, true );
+				handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_REDEFN, key, beginningOffset, false, true );
 			}			
 	}
     
@@ -2477,7 +2524,7 @@ public class Scanner implements IScanner {
         tokenizer.setThrowExceptionOnBadCharacterRead(false);
         Vector parameterValues = new Vector();
         Token t = null;
-        String str = new String();
+        StringBuffer buffer = new StringBuffer();
         boolean space = false;
         int nParen = 0;
         
@@ -2495,27 +2542,41 @@ public class Scanner implements IScanner {
                 } else if (t.type == IToken.tRPAREN) {
                     nParen--;
                 } else if (t.type == IToken.tCOMMA && nParen == 0) {
-                    parameterValues.add(str);
-                    str = "";
+                    parameterValues.add(buffer.toString());
+                    buffer = new StringBuffer();
                     space = false;
                     continue;
                 }
 
                 if (space)
-                    str += ' ';
+                    buffer.append( ' ' );
 
                 switch (t.type) {
-                    case IToken.tSTRING :  str += '\"' + t.image + '\"'; break;
-                    case IToken.tLSTRING : str += "L\"" + t.image + '\"'; break;
-                    case IToken.tCHAR :    str += '\'' + t.image + '\'';  break;
-                    default :             str += t.image; break;
+                    case IToken.tSTRING :
+                    	buffer.append('\"');
+                    	buffer.append(t.getImage());
+                    	buffer.append('\"'); 
+                    	break;
+                    case IToken.tLSTRING :
+                    	buffer.append( "L\"");
+                    	buffer.append(t.getImage());
+                    	buffer.append('\"');	
+                    	break;
+                    case IToken.tCHAR :    
+                    	buffer.append('\'');
+                    	buffer.append(t.getImage());
+                    	buffer.append('\''); 
+                    	break;
+                    default :             
+                    	buffer.append( t.getImage()); 
+                    	break;
                 }
                 space = true;
             }
         }
         catch (EndOfFileException e) {
             // Good
-            parameterValues.add(str);
+            parameterValues.add(buffer.toString());
         }
 
         
@@ -2546,11 +2607,13 @@ public class Scanner implements IScanner {
 			String replacementValue = expansion.getExpansionSignature();
 			try
 			{
-				contextStack.updateContext( new StringReader(replacementValue), (POUND_DEFINE + symbol ), ScannerContext.ContextKind.MACROEXPANSION, null, requestor, symbolOffset, symbol.length());
+				StringBuffer buffer = new StringBuffer( POUND_DEFINE );
+				buffer.append( symbol );
+				contextStack.updateContext( new StringReader(replacementValue), buffer.toString(), ScannerContext.ContextKind.MACROEXPANSION, null, requestor, symbolOffset, symbol.length());
 			}
 			catch (ContextException e)
 			{
-				handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true, true );
+				handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true );
 				consumeUntilOutOfMacroExpansion();
 				return;
 			}
@@ -2591,7 +2654,7 @@ public class Scanner implements IScanner {
 
 				if (parameterNames.size() != parameterValues.size())
 				{ 
-					handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, symbol, getCurrentOffset(), false, true, true );	
+					handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, symbol, getCurrentOffset(), false, true  );	
 					consumeUntilOutOfMacroExpansion();
 					return;
 				}				
@@ -2619,7 +2682,7 @@ public class Scanner implements IScanner {
 						t = (Token) tokens.get( ++i );
 						int index = parameterNames.indexOf(t.image);
 						if( index == -1 ){
-							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true, true  );
+							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true );
 							return;
 						} else {
 							buffer.append('\"');
@@ -2649,10 +2712,25 @@ public class Scanner implements IScanner {
 					} else {
 						switch( t.type )
 						{
-							case IToken.tSTRING:  buffer.append('\"' + t.image + '\"');  break;
-							case IToken.tLSTRING: buffer.append("L\"" + t.image + '\"');	break;
-							case IToken.tCHAR:	 buffer.append('\'' + t.image + '\''); 	break;
-							default:			 buffer.append(t.image);				break;
+							case IToken.tSTRING:
+								buffer.append('\"');
+								buffer.append(t.getImage());
+								buffer.append('\"');  
+								break;
+							case IToken.tLSTRING: 
+								buffer.append("L\"");
+								buffer.append(t.getImage());
+								buffer.append('\"');  
+								break;
+							case IToken.tCHAR:	 
+								buffer.append('\'');
+								buffer.append(t.getImage());
+								buffer.append('\'');  
+								
+								break;
+							default:			 
+								buffer.append(t.image);				
+								break;
 						}
 					}
 					
@@ -2674,27 +2752,29 @@ public class Scanner implements IScanner {
 				String finalString = buffer.toString();
 				try
 				{
+					StringBuffer completeSignature = new StringBuffer( POUND_DEFINE );
+					completeSignature.append( expansion.getCompleteSignature() );
 					contextStack.updateContext(
 						new StringReader(finalString),
-						POUND_DEFINE + expansion.getCompleteSignature(), ScannerContext.ContextKind.MACROEXPANSION, null, requestor, symbolOffset, endMacroOffset - symbolOffset + 1 );
+						completeSignature.toString(), ScannerContext.ContextKind.MACROEXPANSION, null, requestor, symbolOffset, endMacroOffset - symbolOffset + 1 );
 				}
 				catch (ContextException e)
 				{
-					handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true, true );
+					handleProblem( e.getId(), contextStack.getCurrentContext().getFilename(), getCurrentOffset(), false, true );
 					consumeUntilOutOfMacroExpansion();
 					return;
 				}
 			} else
 			{ 
-				handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, symbol, getCurrentOffset(), false, true, true );
+				handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, symbol, getCurrentOffset(), false, true );
 				consumeUntilOutOfMacroExpansion();
 				return;
 			}			
 
 		} else {
-			log.traceLog(
-				"Unexpected class stored in definitions table. "
-					+ expansion.getClass().getName() );
+			StringBuffer logMessage = new StringBuffer( "Unexpected type of MacroDescriptor stored in definitions table: " );
+			logMessage.append( expansion.getMacroType()  );
+			log.traceLog( logMessage.toString() ); 
 		}
 
 	}
@@ -2713,7 +2793,7 @@ public class Scanner implements IScanner {
 			c = getChar();
 			if (c != ')')
 			{
-				handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, "defined()", o, false, true, true);
+				handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, "defined()", o, false, true );
 				return "0";
 			}
 		}

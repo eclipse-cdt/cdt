@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
+import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
 import org.eclipse.cdt.internal.core.dom.IOffsetable;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
@@ -134,7 +135,9 @@ public class LineNumberTest extends TestCase {
 	
 		validateLineNumbers( (SimpleDeclaration)declarations.get(1), 25, 27);
 		validateLineNumbers( (TemplateDeclaration)declarations.get(2), 34, 35);
-		validateLineNumbers( (SimpleDeclaration)declarations.get(3), 38, 43);
+		SimpleDeclaration d = (SimpleDeclaration)declarations.get(3);
+		validateLineNumbers( d, 38, 43);
+		validateLineNumbers( ((EnumerationSpecifier)d.getTypeSpecifier()), 38, 43);
 		
 	}
 	

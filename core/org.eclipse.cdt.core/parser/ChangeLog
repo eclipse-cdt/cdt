@@ -1,3 +1,8 @@
+2003-04-17 John Camelon
+	Fixed error in Elaborated Enumeration Types.  
+	Fixed Bug36559  - Parsing Templates... 
+	Fixed Bug36634  - Enum start line error 
+
 2003-04-16 John Camelon
 	Fixed Bug36532  -   Hang on partial template definition.
 	Fixed Bug36432  -   Trying to open attached source code hangs Eclipse. 

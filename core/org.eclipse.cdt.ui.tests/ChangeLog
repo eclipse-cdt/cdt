@@ -1,3 +1,8 @@
+2003-04-17 John Camelon
+	Updated DOMTests::testBug36600().
+	Updated LineNumberTest::testDOMLineNos().  
+	Added DOMTests::testBug36559().  
+
 2003-04-17 Andrew Niefer
 	Added AutomatedTest
 	Added resources.cFiles

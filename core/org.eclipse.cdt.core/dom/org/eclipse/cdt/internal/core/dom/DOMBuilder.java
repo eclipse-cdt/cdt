@@ -338,7 +338,10 @@ public class DOMBuilder implements IParserCallback
 				break;
 			case Token.t_union:
 				kind = ClassKey.t_union;
-				break;			
+				break;
+			case Token.t_enum:
+				kind = ClassKey.t_enum; 
+				break;
 		}
 
 		ElaboratedTypeSpecifier elab = null;
@@ -637,7 +640,7 @@ public class DOMBuilder implements IParserCallback
 		es.setStartToken(enumKey);
 		decl.setTypeSpecifier(es);
 		((IOffsetable)es).setStartingOffset( enumKey.getOffset() );
-		((IOffsetable)es).setStartingOffset( parser.getLineNumberForOffset(enumKey.getOffset()) );
+		((IOffsetable)es).setTopLine( parser.getLineNumberForOffset(enumKey.getOffset()) );
 		return es;
 	}
 

@@ -75,11 +75,8 @@ public class AutomatedTest extends TestCase {
 				output = file.getCanonicalPath() + ": Parse failed on line ";
 				output += parser.getLastLineNumber() + "\n";
 			} else {
-				StackTraceElement frames[] = e.getStackTrace();
 				output = file.getCanonicalPath() + ": " + e.getClass().toString();
 				output += " on line " + parser.getLastLineNumber() + "\n";
-				output += "\t" + "at " + frames[0].getClassName() + "." + frames[0].getMethodName() + "\n";
-				output += "\t" + "at " + frames[1].getClassName() + "." + frames[1].getMethodName() + "\n";
 			}
 			if( report != null ){
 				report.write( output.getBytes() );

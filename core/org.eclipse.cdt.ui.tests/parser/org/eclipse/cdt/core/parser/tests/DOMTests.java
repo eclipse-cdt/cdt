@@ -1309,7 +1309,25 @@ public class DOMTests extends TestCase {
 	public void testBug36600() throws Exception
 	{
 		TranslationUnit tu = parse( "enum mad_flow (*input_func)(void *, struct mad_stream *);");
+		assertEquals( tu.getDeclarations().size(), 1 );
+		SimpleDeclaration simple = (SimpleDeclaration)tu.getDeclarations().get(0);
+		ElaboratedTypeSpecifier elab = (ElaboratedTypeSpecifier)simple.getTypeSpecifier();
+		assertEquals( elab.getClassKey(), ClassKey.t_enum );
+		assertEquals( elab.getName().toString(), "mad_flow");
+		assertEquals( simple.getDeclarators().size(), 1 );
+		Declarator declarator = (Declarator)simple.getDeclarators().get(0);        
+		assertNull( declarator.getName() );
+		assertNotNull( declarator.getDeclarator() );
 		
+		tu = parse( "enum mad_layer layer;");
+		assertEquals( tu.getDeclarations().size(),  1);
+		SimpleDeclaration declaration = (SimpleDeclaration)tu.getDeclarations().get(0);
+		elab = (ElaboratedTypeSpecifier)declaration.getTypeSpecifier();
+		assertEquals( elab.getClassKey(), ClassKey.t_enum);
+		assertEquals( elab.getName().toString(), "mad_layer");
+		assertEquals( declaration.getDeclarators().size(), 1);
+		assertEquals( ((Declarator)declaration.getDeclarators().get(0)).getName().toString(), "layer" ); 
+
 	}
 	
 	public void testBug36247() throws Exception
@@ -1365,6 +1383,44 @@ public class DOMTests extends TestCase {
 			}
 			
 		}
+		
+	}
+	
+	
+	public void testBug36559() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "namespace myNameSpace {\n" ); 
+		code.write( "template<typename T=short> class B {};\n" );
+		code.write( "template<> class B<int> {};\n" ); 
+		code.write( "}\n" ); 
+		TranslationUnit tu = parse( code.toString() ); 
+		assertEquals( tu.getDeclarations().size(),1);
+		NamespaceDefinition definition = (NamespaceDefinition)tu.getDeclarations().get(0);
+		assertEquals( definition.getName().toString(), "myNameSpace");
+		assertEquals( definition.getDeclarations().size(),  2 );
+		TemplateDeclaration templateDeclaration = (TemplateDeclaration)definition.getDeclarations().get(0);
+		assertFalse( templateDeclaration.isExported());
+		assertEquals( templateDeclaration.getTemplateParms().getDeclarations().size(), 1 );
+		TemplateParameter parm = (TemplateParameter)templateDeclaration.getTemplateParms().getDeclarations().get(0);
+		assertEquals( parm.getKind(), TemplateParameter.k_typename );
+		assertEquals( parm.getName().toString(), "T");
+		assertEquals( parm.getTypeId().toString(), "short");
+		assertEquals( templateDeclaration.getDeclarations().size(),  1 );
+		SimpleDeclaration classB = (SimpleDeclaration)templateDeclaration.getDeclarations().get(0);
+		assertEquals( classB.getDeclarators().size(), 0 );
+		assertEquals( ((ClassSpecifier)classB.getTypeSpecifier()).getName().toString(), "B" );
+		assertEquals( ((ClassSpecifier)classB.getTypeSpecifier()).getClassKey(), ClassKey.t_class ); 
+		assertEquals( ((ClassSpecifier)classB.getTypeSpecifier()).getDeclarations().size(), 0 ); 
+		
+		ExplicitTemplateDeclaration etd = (ExplicitTemplateDeclaration)definition.getDeclarations().get(1);
+		assertEquals( etd.getKind(), ExplicitTemplateDeclaration.k_specialization );
+		assertEquals( etd.getDeclarations().size(), 1 );
+		classB = (SimpleDeclaration)etd.getDeclarations().get(0);
+		assertEquals( classB.getDeclarators().size(), 0 );
+		assertEquals( ((ClassSpecifier)classB.getTypeSpecifier()).getName().toString(), "B<int>" );
+		assertEquals( ((ClassSpecifier)classB.getTypeSpecifier()).getClassKey(), ClassKey.t_class ); 
+		assertEquals( ((ClassSpecifier)classB.getTypeSpecifier()).getDeclarations().size(), 0 ); 
 		
 	}
 }

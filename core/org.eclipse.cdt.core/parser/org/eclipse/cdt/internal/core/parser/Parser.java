@@ -351,7 +351,7 @@ c, quick);
 
 	protected void templateParameterList( Object templateDeclaration ) throws EndOfFile, Backtrack {
 		// if we have gotten this far then we have a true template-declaration
-		// iterate through the template parameter list
+		// iterate through the template parameter listtt
 		
 		Object templateParameterList = null;
 		
@@ -376,7 +376,7 @@ c, quick);
 						if( LT(1) == Token.tASSIGN ) // optional = type-id
 						{
 							consume( Token.tASSIGN );
-							identifier(); // type-id
+							typeId(); // type-id
 							try{ callback.templateTypeParameterInitialTypeId( currentTemplateParm ); }catch( Exception e ) {}
 						}
 					}
@@ -404,7 +404,7 @@ c, quick);
 					if( LT(1) == Token.tASSIGN ) // optional = type-id
 					{
 						consume( Token.tASSIGN );
-						name(); 
+						typeId(); 
 						try{ callback.templateTypeParameterInitialTypeId( newTemplateParm );} catch( Exception e ) {}
 					}
 				}
@@ -757,8 +757,7 @@ c, quick);
 							callback.elaboratedTypeSpecifierName( elab ); 
 							callback.elaboratedTypeSpecifierEnd( elab );
 						} catch( Exception e ) {}
-						encounteredTypename = true;
-						break;
+						return;
 					}
 				case Token.t_enum:
 					try
@@ -776,8 +775,8 @@ c, quick);
 							callback.elaboratedTypeSpecifierName( elab );
 							callback.elaboratedTypeSpecifierEnd( elab );
 						} catch( Exception e ) {}
+						return;
 					}
-					break;
 				default:
 					break declSpecifiers;
 			}
@@ -1948,7 +1947,8 @@ c, quick);
 			name();
 			return;
 		} catch (Backtrack b) {
-			boolean encountered = false;
+			Token begin = LA(1); 
+			Token end = null;
 			simpleMods:
 			for( ; ; )
 			{
@@ -1957,8 +1957,7 @@ c, quick);
 					case Token.t_short:
 					case Token.t_unsigned:
 					case Token.t_long:
-						encountered = true;
-						consume(); 
+						end = consume(); 
 						break;
 					case Token.t_int:
 					case Token.t_char:
@@ -1967,14 +1966,21 @@ c, quick);
 					case Token.t_float:
 					case Token.t_wchar_t:
 					case Token.t_void: 
-						encountered = true;
-						consume(); 
+						end = consume(); 
 					default:
 						break simpleMods;
 				}
 			}
-			if( encountered )
-				return;
+			if( end != null )
+			{
+				try
+				{
+					callback.nameBegin( begin );
+					callback.nameEnd( end );
+				} catch( Exception e ) {}
+			}
+			else
+				throw backtrack;
 		}
 	}
 	

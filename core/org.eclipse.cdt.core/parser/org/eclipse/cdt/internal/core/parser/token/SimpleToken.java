@@ -23,9 +23,9 @@ public class SimpleToken extends AbstractToken implements IToken {
 		setOffsetAndLength(contextStack.getCurrentContext());
 	}
 	
-	public SimpleToken( int t, int endOffset, char [] filename  )
+	public SimpleToken( int t, int endOffset, char [] filename, int line  )
 	{
-		super( t, filename );
+		super( t, filename, line );
 		setOffsetAndLength( endOffset );
 	}
 

@@ -185,7 +185,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		bufferStack[bufferStackPos] = buffer;
 		bufferPos[bufferStackPos] = -1;
-		bufferLineNums[ bufferStackPos ] = 0;
+		bufferLineNums[ bufferStackPos ] = 1;
 		bufferLimit[bufferStackPos] = buffer.length;
 	}
 	
@@ -201,7 +201,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		if( bufferData[bufferStackPos] instanceof InclusionData )
 			requestor.enterInclusion( ((InclusionData)bufferData[bufferStackPos]).inclusion );
 		bufferData[bufferStackPos] = null;
-		bufferLineNums[bufferStackPos] = 0;
+		bufferLineNums[bufferStackPos] = 1;
 		--bufferStackPos;
 	}
 	
@@ -356,7 +356,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		++count;
 		contextLoop:
 		while (bufferStackPos >= 0) {
-			
+
 			// Find the first thing we would care about
 			skipOverWhiteSpace();
 			
@@ -715,7 +715,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @return
 	 */
 	private IToken newToken( int signal ) {
-		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename()  );
+		return new SimpleToken(signal,  bufferPos[bufferStackPos] + 1 , getCurrentFilename(), bufferLineNums[bufferStackPos]  );
 	}
 
 	private IToken newToken( int signal, char [] buffer )
@@ -728,10 +728,10 @@ public class Scanner2 implements IScanner, IScannerData {
 				if( bufferData[mostRelevant] instanceof InclusionData || bufferData[mostRelevant] instanceof CodeReader )
 					break;
 			if( bufferData[bufferStackPos] instanceof ObjectStyleMacro )
-				return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((ObjectStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename() );
-			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((FunctionStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename() );
+				return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((ObjectStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), bufferLineNums[bufferStackPos] );
+			return new ImagedExpansionToken( signal, buffer, bufferPos[mostRelevant], ((FunctionStyleMacro)bufferData[bufferStackPos]).name.length, getCurrentFilename(), bufferLineNums[bufferStackPos] );
 		}
-		return new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename()  );
+		return new ImagedToken(signal, buffer, bufferPos[bufferStackPos] + 1 , getCurrentFilename(), bufferLineNums[bufferStackPos]  );
 	}
 	
 	private IToken scanIdentifier() {
@@ -776,7 +776,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			
 		// but not if it has been expanded on the stack already
 		// i.e. recursion avoidance
-		if (expObject != null)
+		if (expObject != null && !isLimitReached() )
 			for (int stackPos = bufferStackPos; stackPos >= 0; --stackPos)
 				if (bufferData[stackPos] != null
 						&& bufferData[stackPos] instanceof ObjectStyleMacro
@@ -786,7 +786,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					break;
 				}
 		
-		if (expObject != null) {
+		if (expObject != null && !isLimitReached()) {
 			if (expObject instanceof FunctionStyleMacro) {
 				handleFunctionStyleMacro((FunctionStyleMacro)expObject, true);
 			} else if (expObject instanceof ObjectStyleMacro) {
@@ -813,6 +813,15 @@ public class Scanner2 implements IScanner, IScannerData {
 		return newToken(tokenType);
 	}
 	
+	/**
+	 * @return
+	 */
+	private final boolean isLimitReached() {
+		if( offsetBoundary == -1 ) return false;
+		if( bufferPos[bufferStackPos] == offsetBoundary - 1 ) return true;
+		return false;
+	}
+
 	private IToken scanString() {
 		char[] buffer = bufferStack[bufferStackPos];
 		
@@ -1083,7 +1092,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	private void handlePPDirective(int pos) throws ScannerException {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
-	
+		int startingLineNumber = bufferLineNums[ bufferStackPos ];
 		skipOverWhiteSpace();
 		
 		// find the directive
@@ -1107,13 +1116,13 @@ public class Scanner2 implements IScanner, IScannerData {
 			if (type != ppKeywords.undefined) {
 				switch (type) {
 					case ppInclude:
-						handlePPInclude(pos,false);
+						handlePPInclude(pos,false, startingLineNumber);
 						return;
 					case ppInclude_next:
-						handlePPInclude(pos, true);
+						handlePPInclude(pos, true, startingLineNumber);
 						return;
 					case ppDefine:
-						handlePPDefine(pos);
+						handlePPDefine(pos, startingLineNumber );
 						return;
 					case ppUndef:
 						handlePPUndef();
@@ -1151,7 +1160,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipToNewLine();
 	}		
 
-	private void handlePPInclude(int pos2, boolean next) {
+	private void handlePPInclude(int pos2, boolean next, int startingLineNumber) {
  		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
@@ -1168,10 +1177,11 @@ public class Scanner2 implements IScanner, IScannerData {
 		int nameOffset = 0;
 		int nameEndOffset = 0;
 		
-		int nameLine= 0, startLine= 0, endLine = 0; 
+		int nameLine= 0, endLine = 0; 
 		char c = buffer[pos];
 		if( c == '\n') return;
 		if (c == '"') {
+			nameLine = bufferLineNums[ bufferStackPos ];
 			local = true;
 			int start = bufferPos[bufferStackPos] + 1;
 			int length = 0;
@@ -1195,6 +1205,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			nameEndOffset = start + length;
 			endOffset = start + length + 1;
 		} else if (c == '<') {
+			nameLine = bufferLineNums[ bufferStackPos ];
 			local = false;
 			int start = bufferPos[bufferStackPos] + 1;
 			int length = 0;
@@ -1267,12 +1278,12 @@ public class Scanner2 implements IScanner, IScannerData {
 			return;
 		}
 		// TODO else we need to do macro processing on the rest of the line
-
+		endLine = bufferLineNums[ bufferStackPos ];
 		skipToNewLine();
 
 		if( parserMode == ParserMode.QUICK_PARSE )
 		{
-			IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), EMPTY_STRING_CHAR_ARRAY, local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+			IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), EMPTY_STRING_CHAR_ARRAY, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 			requestor.enterInclusion( inclusion );
 			requestor.exitInclusion( inclusion );
 		}
@@ -1295,7 +1306,7 @@ public class Scanner2 implements IScanner, IScannerData {
 						if (reader.filename != null)
 							fileCache.put(reader.filename, reader);
 						if (dlog != null) dlog.println("#include \"" + finalPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-						IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), reader.filename, local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+						IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 						pushContext(reader.buffer, new InclusionData( reader, inclusion ));
 						return;
 					}
@@ -1322,7 +1333,7 @@ public class Scanner2 implements IScanner, IScannerData {
 							if (reader.filename != null)
 								fileCache.put(reader.filename, reader);
 							if (dlog != null) dlog.println("#include <" + finalPath + ">"); //$NON-NLS-1$ //$NON-NLS-2$
-							IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), reader.filename, local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+							IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), reader.filename, local, startOffset, startingLineNumber, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
 							pushContext(reader.buffer, new InclusionData( reader, inclusion ));
 							return;
 						}
@@ -1336,12 +1347,12 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 	}
 	
-	private void handlePPDefine(int pos2) {
+	private void handlePPDefine(int pos2, int startingLineNumber) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
 		int startingOffset = pos2;
-		int startingLine = 0, endingLine = 0, nameLine = 0;
+		int endingLine = 0, nameLine = 0;
 		skipOverWhiteSpace();
 		
 		// get the Identifier
@@ -1366,6 +1377,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			break;
 		}
 		--bufferPos[bufferStackPos];
+		nameLine = bufferLineNums[ bufferStackPos ];
 		char[] name = new char[idlen];
 		System.arraycopy(buffer, idstart, name, 0, idlen);
 		if (dlog != null) dlog.println("#define " + new String(buffer, idstart, idlen)); //$NON-NLS-1$
@@ -1429,6 +1441,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 
 		int textlen = textend - textstart + 1;
+		endingLine = bufferLineNums[ bufferStackPos ] - 1;
 		char[] text = emptyCharArray;
 		if (textlen > 0) {
 			text = new char[textlen];
@@ -1444,7 +1457,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				? new ObjectStyleMacro(name, text)
 						: new FunctionStyleMacro(name, text, arglist) );
 		
-		requestor.acceptMacro( getASTFactory().createMacro( name, startingOffset, startingLine, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, null, getCurrentFilename() )); //TODO - IMacroDescriptor? 
+		requestor.acceptMacro( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, null, getCurrentFilename() )); //TODO - IMacroDescriptor? 
 		
 	}
 	
@@ -1650,12 +1663,17 @@ public class Scanner2 implements IScanner, IScannerData {
 	}
 	
 	private boolean skipOverWhiteSpace() {
+		
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
 		
+		int pos = bufferPos[bufferStackPos];
+//		if( pos > 0 && pos < limit && buffer[pos] == '\n')
+//			return false;
+		
 		boolean encounteredMultiLineComment = false;
 		while (++bufferPos[bufferStackPos] < limit) {
-			int pos = bufferPos[bufferStackPos];
+			pos = bufferPos[bufferStackPos];
 			switch (buffer[pos]) {
 				case ' ':
 				case '\t':
@@ -1941,7 +1959,11 @@ public class Scanner2 implements IScanner, IScannerData {
 			
 			// Loop looking for end of argument
 			int argparens = 0;
+//			int startOffset = -1;
 			while (bufferPos[bufferStackPos] < limit) {
+//				if( bufferPos[bufferStackPos] == startOffset )
+//					++bufferPos[bufferStackPos];
+//				startOffset = bufferPos[bufferStackPos];
 				skipOverMacroArg();
 				argend = bufferPos[bufferStackPos];
 				skipOverWhiteSpace();

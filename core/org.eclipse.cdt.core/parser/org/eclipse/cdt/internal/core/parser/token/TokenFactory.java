@@ -55,7 +55,7 @@ public class TokenFactory {
 	
 	public static IToken createStandAloneToken( int type, String image )
 	{
-		return new ImagedToken( type, image.toCharArray(), 0, EMPTY_CHAR_ARRAY);
+		return new ImagedToken( type, image.toCharArray(), 0, EMPTY_CHAR_ARRAY, 0);
 	}
 
 	public static ITokenDuple createTokenDuple( IToken first, IToken last )

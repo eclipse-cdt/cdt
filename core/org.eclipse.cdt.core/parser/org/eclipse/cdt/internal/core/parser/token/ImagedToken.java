@@ -31,8 +31,8 @@ public class ImagedToken extends SimpleToken {
 		setOffsetAndLength(contextStack.getCurrentContext());
 	}
 	
-	public ImagedToken( int t, char[] i, int endOffset, char [] f ) {
-		super( t, 0, f  );
+	public ImagedToken( int t, char[] i, int endOffset, char [] f, int l ) {
+		super( t, 0, f, l );
 		setImage(i);
 		setOffsetAndLength( endOffset );
 	}

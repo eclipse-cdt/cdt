@@ -34,10 +34,11 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 		this.filename = filename;
 	}
 
-	public AbstractToken( int type, char [] filename  )
+	public AbstractToken( int type, char [] filename, int lineNumber  )
 	{
 		setType( type );
 		this.filename = filename;
+		this.lineNumber = lineNumber;
 	}
 	
 	public String toString() {

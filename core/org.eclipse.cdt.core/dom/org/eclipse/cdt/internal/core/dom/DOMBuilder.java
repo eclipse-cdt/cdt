@@ -807,6 +807,7 @@ public class DOMBuilder implements IParserCallback
 		TemplateDeclaration d = new TemplateDeclaration( (IScope)container, exported );
 		if( container instanceof IAccessable )
 			d.setVisibility( ((IAccessable)container).getVisibility() );
+		d.setStartingOffset( exported.getOffset() );
 		return d;
 	}
 
@@ -824,6 +825,7 @@ public class DOMBuilder implements IParserCallback
 		TemplateDeclaration decl = (TemplateDeclaration)templateDecl;
 		decl.setLastToken(lastToken);
 		decl.getOwnerScope().addDeclaration(decl);
+		decl.setTotalLength(lastToken.getOffset() + lastToken.getLength() - decl.getStartingOffset() );
 	}
 
 	/* (non-Javadoc)

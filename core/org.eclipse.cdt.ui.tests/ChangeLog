@@ -1,3 +1,6 @@
+2003-04-28 John Camelon
+	Added DOMTests::testOrder().  
+
 2003-04-28 Peter Graves
 	* model/org/eclipse/cdt/core/model/tests/BinaryTests:
 	Updated to remove a few small errors, and deal with some changes

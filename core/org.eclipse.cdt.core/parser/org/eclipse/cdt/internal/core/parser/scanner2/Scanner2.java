@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.scanner2;
 
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -237,7 +238,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.core.parser.IScanner#getDefinitions()
 	 */
 	public Map getDefinitions() {
-		return null;
+		return Collections.EMPTY_MAP;
 	}
 
 	public CharArrayObjectMap getRealDefinitions() {
@@ -263,8 +264,7 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @see org.eclipse.cdt.core.parser.IScanner#isOnTopContext()
 	 */
 	public boolean isOnTopContext() {
-		// TODO Auto-generated method stub
-		return false;
+		return bufferStackPos == 0;
 	}
 
 	private IToken lastToken;

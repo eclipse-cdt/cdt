@@ -149,22 +149,19 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
         suite.addTest( new SearchRegressionTests("testVarFieldDeclaration") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testMethodAll") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testVarReference") ); //$NON-NLS-1$
-        //defect75901
-        //suite.addTest( new SearchRegressionTests("testVarDeclarationArgument") ); //$NON-NLS-1$
-        //defect72735
-        //suite.addTest( new SearchRegressionTests("testVarReferenceInitializer") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testVarDefinition") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testFieldDefinition") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testNamespaceReference") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testUnionDeclaration") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testClassStructDeclaration") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testNamespaceDeclaration") ); //$NON-NLS-1$
-        //defect76169
-        //suite.addTest( new SearchRegressionTests("testMethodReferenceInitializer") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testClassStructReference") ); //$NON-NLS-1$
         suite.addTest( new SearchRegressionTests("testFieldReference") ); //$NON-NLS-1$
-        //defect76203
-        //suite.addTest( new SearchRegressionTests("testNestedFieldReference") ); //$NON-NLS-1$
+
+        suite.addTest( new FailingTest( new SearchRegressionTests("testMethodReferenceInitializer"), 76169 ) ); //defect76169 //$NON-NLS-1$ 
+        suite.addTest( new FailingTest( new SearchRegressionTests("testVarDeclarationArgument"), 75901 ) );     //defect75901 //$NON-NLS-1$
+        suite.addTest( new FailingTest( new SearchRegressionTests("testVarReferenceInitializer"), 72735 ) );    //defect72735 //$NON-NLS-1$
+        suite.addTest( new FailingTest( new SearchRegressionTests("testNestedFieldReference"), 76203 ) );       //defect76203//$NON-NLS-1$
         
         if( cleanup )
             suite.addTest( new SearchRegressionTests( "cleanupProject" ) ); //$NON-NLS-1$

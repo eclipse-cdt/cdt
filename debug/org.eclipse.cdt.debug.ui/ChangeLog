@@ -1,3 +1,7 @@
+2005-02-25 Mikhail Khodjaiants
+	"Resume At Line" is disabled if the Disassembly view is opened during an active debug session.
+	* ResumeAtLineActionDelegate.java
+
 2005-02-24 Mikhail Khodjaiants
 	Applied patch from Tracy Miranda (bug 86533: Breakpoint is set on the wrong line in Disassembly view).
 	* DisassemblyEditorInput.java

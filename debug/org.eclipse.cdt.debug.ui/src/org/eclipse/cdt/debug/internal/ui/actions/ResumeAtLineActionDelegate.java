@@ -73,23 +73,7 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IViewA
 	 */
 	public void setActiveEditor( IAction action, IEditorPart targetEditor ) {
 		init( action );
-		if ( fActivePart != null && !fActivePart.equals( targetEditor ) ) {
-			fActivePart.getSite().getWorkbenchWindow().getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener );
-		}
-		fPartTarget = null;
-		fActivePart = targetEditor;
-		if ( targetEditor != null ) {
-			targetEditor.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener );
-			fPartTarget = (IResumeAtLineTarget)targetEditor.getAdapter( IResumeAtLineTarget.class );
-			if ( fPartTarget == null ) {
-				IAdapterManager adapterManager = Platform.getAdapterManager();
-				// TODO: we could restrict loading to cases when the debugging context is on
-				if ( adapterManager.hasAdapter( targetEditor, IResumeAtLineTarget.class.getName() ) ) {
-					fPartTarget = (IResumeAtLineTarget)adapterManager.loadAdapter( targetEditor, IResumeAtLineTarget.class.getName() );
-				}
-			}
-		}
-		update();		
+		bindTo( targetEditor );
 	}
 
 	/* (non-Javadoc)
@@ -164,17 +148,27 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IViewA
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	public void init( IViewPart view ) {
-		fActivePart = view;
-		if ( view != null ) {
-			view.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener );
-			fPartTarget = (IResumeAtLineTarget)view.getAdapter( IResumeAtLineTarget.class );
+		bindTo( view );
+	}
+
+	/**
+	 * Binds this action to operate on the given part's run to line adapter.
+	 */
+	private void bindTo( IWorkbenchPart part ) {
+		fActivePart = part;
+		if ( part != null ) {
+			part.getSite().getWorkbenchWindow().getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, fSelectionListener );
+			fPartTarget = (IResumeAtLineTarget)part.getAdapter( IResumeAtLineTarget.class );
 			if ( fPartTarget == null ) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
 				// TODO: we could restrict loading to cases when the debugging context is on
-				if ( adapterManager.hasAdapter( view, IResumeAtLineTarget.class.getName() ) ) {
-					fPartTarget = (IResumeAtLineTarget)adapterManager.loadAdapter( view, IResumeAtLineTarget.class.getName() );
+				if ( adapterManager.hasAdapter( part, IResumeAtLineTarget.class.getName() ) ) {
+					fPartTarget = (IResumeAtLineTarget)adapterManager.loadAdapter( part, IResumeAtLineTarget.class.getName() );
 				}
 			}
+			// Force the selection update
+			ISelection selection = part.getSite().getWorkbenchWindow().getSelectionService().getSelection( IDebugUIConstants.ID_DEBUG_VIEW );
+			fSelectionListener.selectionChanged( part, selection );
 		}
 		update();		
 	}

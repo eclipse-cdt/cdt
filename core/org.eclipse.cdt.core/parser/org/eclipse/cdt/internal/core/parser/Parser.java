@@ -10,18 +10,20 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
-import org.eclipse.cdt.core.parser.Backtrack;
-import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.BacktrackException;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
+import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -46,6 +48,7 @@ import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
+import org.eclipse.cdt.core.parser.ast.IASTScopedElement;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplate;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
@@ -57,6 +60,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
+import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 
 /**
@@ -71,9 +75,9 @@ public abstract class Parser implements IParser
 {
     protected final IParserLogService log;
 	private static final List EMPTY_LIST = new ArrayList();
-    private static int DEFAULT_OFFSET = -1;
+    private static int FIRST_ERROR_OFFSET_UNSET = -1;
     // sentinel initial value for offsets 
-    protected int firstErrorOffset = DEFAULT_OFFSET;
+    protected int firstErrorOffset = FIRST_ERROR_OFFSET_UNSET;
     // offset where the first parse error occurred
    
     // are we doing the high-level parse, or an in depth parse?
@@ -86,17 +90,17 @@ public abstract class Parser implements IParser
      * This is the single entry point for setting parsePassed to 
      * false, and also making note what token offset we failed upon. 
      * 
-     * @throws EndOfFile
+     * @throws EndOfFileException
      */
-    protected void failParse() throws EndOfFile
+    protected void failParse()
     {
     	try
     	{
-	        if (firstErrorOffset == DEFAULT_OFFSET)
+	        if (firstErrorOffset == FIRST_ERROR_OFFSET_UNSET )
 	            firstErrorOffset = LA(1).getOffset();
-    	} catch( EndOfFile eof )
+    	} catch( EndOfFileException eof )
     	{
-    		throw eof;
+    		// do nothing
     	}
     	finally
     	{
@@ -118,12 +122,14 @@ public abstract class Parser implements IParser
         IParserLogService log )
     {
         this.scanner = scanner;
-        requestor = callback;
+        this.requestor = callback;
         this.language = language;
         this.log = log;
     }
+    
     // counter that keeps track of the number of times Parser.parse() is called
     private static int parseCount = 0;
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#parse()
      */
@@ -174,12 +180,12 @@ public abstract class Parser implements IParser
                 if (LA(1) == checkToken)
                     errorHandling();
             }
-            catch (EndOfFile e)
+            catch (EndOfFileException e)
             {
                 // Good
                 break;
             }
-            catch (Backtrack b)
+            catch (BacktrackException b)
             {
                 try
                 {
@@ -197,17 +203,14 @@ public abstract class Parser implements IParser
                         lastBacktrack = LA(1);
                     }
                 }
-                catch (EndOfFile e)
+                catch (EndOfFileException e)
                 {
                     break;
                 }
             }
             catch (Exception e)
             {
-                try {
-					failParse();
-				} catch (EndOfFile e1) {
-				} 
+				failParse();
                 break;
             }
         }
@@ -217,9 +220,9 @@ public abstract class Parser implements IParser
      * This function is called whenever we encounter and error that we cannot backtrack out of and we 
      * still wish to try and continue on with the parse to do a best-effort parse for our client. 
      * 
-     * @throws EndOfFile  	We can potentially hit EndOfFile here as we are skipping ahead.  
+     * @throws EndOfFileException  	We can potentially hit EndOfFile here as we are skipping ahead.  
      */
-    protected void errorHandling() throws EndOfFile
+    protected void errorHandling() throws EndOfFileException
     {
         failParse();
         consume();
@@ -251,10 +254,10 @@ public abstract class Parser implements IParser
      *  using namespace ::? nested-name-specifier? namespace-name ;
      * 
      * @param container		Callback object representing the scope these definitions fall into. 
-     * @throws Backtrack	request for a backtrack
+     * @throws BacktrackException	request for a backtrack
      */
     protected void usingClause(IASTScope scope)
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         IToken firstToken = consume(IToken.t_using);
         if (LT(1) == IToken.t_namespace)
@@ -340,10 +343,10 @@ public abstract class Parser implements IParser
      * | extern "string literal" { declaration-seq } 
      * 
      * @param container Callback object representing the scope these definitions fall into.
-     * @throws Backtrack	request for a backtrack
+     * @throws BacktrackException	request for a backtrack
      */
     protected void linkageSpecification(IASTScope scope)
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         IToken firstToken = consume(IToken.t_extern);
         if (LT(1) != IToken.tSTRING)
@@ -381,7 +384,7 @@ public abstract class Parser implements IParser
                         {
                             declaration(linkage, null);
                         }
-                        catch (Backtrack bt)
+                        catch (BacktrackException bt)
                         {
                             failParse();
                             if (checkToken == LA(1))
@@ -426,10 +429,10 @@ public abstract class Parser implements IParser
      * explicit-specialization:	template <> declaration
      *  
      * @param container			Callback object representing the scope these definitions fall into.
-     * @throws Backtrack		request for a backtrack
+     * @throws BacktrackException		request for a backtrack
      */
     protected void templateDeclaration(IASTScope scope)
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         IToken firstToken = null;
         boolean exported = false; 
@@ -517,7 +520,7 @@ public abstract class Parser implements IParser
 			templateDecl.exitScope( requestor );
             
         }
-        catch (Backtrack bt)
+        catch (BacktrackException bt)
         {
             throw bt;
         }
@@ -545,10 +548,10 @@ public abstract class Parser implements IParser
      *							id-expression
      *
      * @param templateDeclaration		Callback's templateDeclaration which serves as a scope to this list.  
-     * @throws Backtrack				request for a backtrack
+     * @throws BacktrackException				request for a backtrack
      */
     protected List templateParameterList(IASTScope scope)
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         // if we have gotten this far then we have a true template-declaration
         // iterate through the template parameter list
@@ -581,7 +584,7 @@ public abstract class Parser implements IParser
                     }
 
                 }
-                catch (Backtrack bt)
+                catch (BacktrackException bt)
                 {
                     throw bt;
                 }
@@ -697,12 +700,12 @@ public abstract class Parser implements IParser
      *       templateDeclaration
      * 
      * @param container		IParserCallback object which serves as the owner scope for this declaration.  
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
     protected void declaration(
         IASTScope scope,
         IASTTemplate ownerTemplate)
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
     	setCurrentScope(scope);
         switch (LT(1))
@@ -750,13 +753,22 @@ public abstract class Parser implements IParser
             default :
                 simpleDeclarationStrategyUnion(scope, ownerTemplate);
         }
+        if( scope instanceof IASTScopedElement )
+        	setCurrentScope( ((IASTScopedElement)scope).getOwnerScope() ); 
+        else
+        	setCurrentScope( null );
     }
     protected void simpleDeclarationStrategyUnion(
         IASTScope scope,
         IASTTemplate ownerTemplate)
-        throws EndOfFile, Backtrack
+        throws EndOfFileException, BacktrackException
     {
         IToken mark = mark();
+        
+        if( scope instanceof IASTClassSpecifier )
+        	setCompletionKind( CompletionKind.FIELD_TYPE );
+        else
+        	setCompletionKind( CompletionKind.VARIABLE_TYPE );
         try
         {
             simpleDeclaration(
@@ -765,7 +777,7 @@ public abstract class Parser implements IParser
                 ownerTemplate);
             // try it first with the original strategy
         }
-        catch (Backtrack bt)
+        catch (BacktrackException bt)
         {
             // did not work 
             backup(mark);
@@ -777,7 +789,7 @@ public abstract class Parser implements IParser
 	                scope,
     	            ownerTemplate);
             }
-            catch( Backtrack bt2 )
+            catch( BacktrackException bt2 )
             {
             	backup( mark ); 
 
@@ -788,7 +800,7 @@ public abstract class Parser implements IParser
 						scope,
 						ownerTemplate);
 				}
-				catch( Backtrack b3 )
+				catch( BacktrackException b3 )
 				{
 					backup( mark );
 					throw b3;
@@ -804,11 +816,11 @@ public abstract class Parser implements IParser
      *	 namespace-body:
      *		declaration-seq?
      * @param container		IParserCallback object which serves as the owner scope for this declaration.  
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
     
      */
     protected void namespaceDefinition(IASTScope scope)
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IToken first = consume(IToken.t_namespace);
  
@@ -849,7 +861,7 @@ public abstract class Parser implements IParser
                         {
                             declaration(namespaceDefinition, null);
                         }
-                        catch (Backtrack bt)
+                        catch (BacktrackException bt)
                         {
                             failParse();
                             if (checkToken == LA(1))
@@ -907,13 +919,13 @@ public abstract class Parser implements IParser
      * @param container			IParserCallback object which serves as the owner scope for this declaration.
      * @param tryConstructor	true == take strategy1 (constructor ) : false == take strategy 2 ( pointer to function)
      * @param forKR             Is this for K&R-style parameter declaration (true) or simple declaration (false) 
-     * @throws Backtrack		request a backtrack
+     * @throws BacktrackException		request a backtrack
      */
     protected void simpleDeclaration(
         SimpleDeclarationStrategy strategy,
         IASTScope scope,
         IASTTemplate ownerTemplate)
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
     	IToken firstToken = LA(1);
         DeclarationWrapper sdw =
@@ -1056,9 +1068,9 @@ public abstract class Parser implements IParser
         }
         
     }
-    protected abstract void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws Backtrack, EndOfFile;
+    protected abstract void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws BacktrackException, EndOfFileException;
 
-    protected void skipOverCompoundStatement() throws Backtrack, EndOfFile
+    protected void skipOverCompoundStatement() throws BacktrackException, EndOfFileException
     {
         // speed up the parser by skiping the body
         // simply look for matching brace and return
@@ -1086,10 +1098,10 @@ public abstract class Parser implements IParser
      * 						classname
      * 						identifier
      * @param declarator	IParserCallback object that represents the declarator (constructor) that owns this initializer
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
     protected void ctorInitializer(Declarator d )
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         consume(IToken.tCOLON);
 
@@ -1126,7 +1138,7 @@ public abstract class Parser implements IParser
                 consume(IToken.tCOMMA);
             }
         }
-        catch (Backtrack bt)
+        catch (BacktrackException bt)
         {
  
             throw backtrack;
@@ -1137,11 +1149,11 @@ public abstract class Parser implements IParser
      * This routine parses a parameter declaration 
      * 
      * @param containerObject	The IParserCallback object representing the parameterDeclarationClause owning the parm. 
-     * @throws Backtrack		request a backtrack
+     * @throws BacktrackException		request a backtrack
      */
     protected void parameterDeclaration(
         IParameterCollection collection, IASTScope scope)
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IToken current = LA(1);
  
@@ -1246,10 +1258,10 @@ public abstract class Parser implements IParser
     /**
      * @param flags            input flags that are used to make our decision 
      * @return                 whether or not this looks like a constructor (true or false)
-     * @throws EndOfFile       we could encounter EOF while looking ahead
+     * @throws EndOfFileException       we could encounter EOF while looking ahead
      */
     private boolean lookAheadForConstructorOrConversion(Flags flags, DeclarationWrapper sdw )
-        throws EndOfFile
+        throws EndOfFileException
     {
         if (flags.isForParameterDeclaration())
             return false;
@@ -1262,7 +1274,7 @@ public abstract class Parser implements IParser
         {
             consumeTemplatedOperatorName( d );
         }
-        catch (Backtrack e)
+        catch (BacktrackException e)
         {
             backup( mark ); 
             return false;
@@ -1303,16 +1315,16 @@ public abstract class Parser implements IParser
     /**
      * @param flags			input flags that are used to make our decision 
      * @return				whether or not this looks like a a declarator follows
-     * @throws EndOfFile	we could encounter EOF while looking ahead
+     * @throws EndOfFileException	we could encounter EOF while looking ahead
      */
-    private boolean lookAheadForDeclarator(Flags flags) throws EndOfFile
+    private boolean lookAheadForDeclarator(Flags flags) throws EndOfFileException
     {
         return flags.haveEncounteredTypename()
             && ((LT(2) != IToken.tIDENTIFIER
                 || (LT(3) != IToken.tLPAREN && LT(3) != IToken.tASSIGN))
                 && !LA(2).isPointer());
     }
-    private void callbackSimpleDeclToken(Flags flags) throws Backtrack
+    private void callbackSimpleDeclToken(Flags flags) throws BacktrackException, EndOfFileException
     {
         flags.setEncounteredRawType(true);
         consume(); 
@@ -1339,13 +1351,13 @@ public abstract class Parser implements IParser
      * @param decl				IParserCallback object representing the declaration that owns this specifier sequence
      * @param parm				Is this for a parameter declaration (true) or simple declaration (false)
      * @param tryConstructor	true for constructor, false for pointer to function strategy
-     * @throws Backtrack		request a backtrack
+     * @throws BacktrackException		request a backtrack
      */
     protected void declSpecifierSeq(
         boolean parm,
         boolean tryConstructor,
         DeclarationWrapper sdw )
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         Flags flags = new Flags(parm, tryConstructor);
         IToken typeNameBegin = null;
@@ -1551,6 +1563,7 @@ public abstract class Parser implements IParser
                         if (typeNameBegin != null)
                             sdw.setTypeName(
                                 new TokenDuple(typeNameBegin, typeNameEnd));
+ 
                         return;
                     }
  
@@ -1568,7 +1581,7 @@ public abstract class Parser implements IParser
 						flags.setEncounteredTypename(true);
                         break;
                     }
-                    catch (Backtrack bt)
+                    catch (BacktrackException bt)
                     {
                         elaboratedTypeSpecifier(sdw);
                         flags.setEncounteredTypename(true);
@@ -1581,7 +1594,7 @@ public abstract class Parser implements IParser
    					    flags.setEncounteredTypename(true);
                         break;
                     }
-                    catch (Backtrack bt)
+                    catch (BacktrackException bt)
                     {
                         // this is an elaborated class specifier
                         elaboratedTypeSpecifier(sdw);
@@ -1599,10 +1612,10 @@ public abstract class Parser implements IParser
      * Parse an elaborated type specifier.  
      * 
      * @param decl			Declaration which owns the elaborated type 
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
     protected void elaboratedTypeSpecifier(DeclarationWrapper sdw)
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         // this is an elaborated class specifier
         IToken t = consume();
@@ -1658,10 +1671,10 @@ public abstract class Parser implements IParser
      *
      * @param previousLast	Previous "last" token (returned if nothing was consumed)
      * @return				Last consumed token, or <code>previousLast</code> if nothing was consumed
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
     protected IToken consumeTemplateParameters(IToken previousLast)
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         IToken last = previousLast;
         if (LT(1) == IToken.tLT)
@@ -1709,9 +1722,9 @@ public abstract class Parser implements IParser
     /**
      * Parse an identifier.  
      * 
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
-    protected IToken identifier() throws Backtrack
+    protected IToken identifier() throws EndOfFileException, BacktrackException
     {
         IToken first = consume(IToken.tIDENTIFIER); // throws backtrack if its not that
         return first;
@@ -1721,9 +1734,9 @@ public abstract class Parser implements IParser
      * 
      * class-name: identifier | template-id
      * 
-     * @throws Backtrack
+     * @throws BacktrackException
      */
-    protected ITokenDuple className() throws Backtrack
+    protected ITokenDuple className() throws EndOfFileException, BacktrackException
     {
 		ITokenDuple duple = name();
 		IToken last = duple.getLastToken(); 
@@ -1742,9 +1755,9 @@ public abstract class Parser implements IParser
      * 
      * @return		the last token that we consumed in a successful parse 
      * 
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
-    protected IToken templateId() throws Backtrack
+    protected IToken templateId() throws EndOfFileException, BacktrackException
     {
         ITokenDuple duple = name();
         IToken last = consumeTemplateParameters(duple.getLastToken());
@@ -1759,9 +1772,9 @@ public abstract class Parser implements IParser
      * name2
      * : IDENTIFER
      * 
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
-    protected TokenDuple name() throws Backtrack
+    protected TokenDuple name() throws BacktrackException, EndOfFileException
     {
         IToken first = LA(1);
         IToken last = null;
@@ -1780,7 +1793,7 @@ public abstract class Parser implements IParser
                 try
                 {
                 	last = consumeTemplateParameters(last);
-                } catch( Backtrack bt )
+                } catch( BacktrackException bt )
                 {
                 	backup( secondMark );
                 }
@@ -1818,11 +1831,11 @@ public abstract class Parser implements IParser
      * TODO: fix this 
      * @param ptrOp		Pointer Operator that const-volatile applies to. 		  		
      * @return			Returns the same object sent in.
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IToken cvQualifier(
         IDeclarator declarator)
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
     	IToken result = null; 
         switch (LT(1))
@@ -1856,11 +1869,11 @@ public abstract class Parser implements IParser
      * : declarator ("=" initializerClause | "(" expressionList ")")?
      * @param owner			IParserCallback object that represents the owner declaration object.  
      * @return				declarator that this parsing produced.  
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
     protected Declarator initDeclarator(
         DeclarationWrapper sdw, SimpleDeclarationStrategy strategy )
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         Declarator d = declarator(sdw, sdw.getScope(), strategy );
         if( language == ParserLanguage.CPP )
@@ -1872,7 +1885,7 @@ public abstract class Parser implements IParser
     }
     
     protected void optionalCPPInitializer(Declarator d)
-        throws EndOfFile, Backtrack
+        throws EndOfFileException, BacktrackException
     {
         // handle initializer
         if (LT(1) == IToken.tASSIGN)
@@ -1891,7 +1904,7 @@ public abstract class Parser implements IParser
                 astExpression = expression(d.getDeclarationWrapper().getScope());
                 consume(IToken.tRPAREN);
                 d.setConstructorExpression(astExpression);
-            } catch( Backtrack bt )
+            } catch( BacktrackException bt )
             {
             	backup( mark ); 
             	throw bt;
@@ -1899,7 +1912,7 @@ public abstract class Parser implements IParser
         }
     }
     
-    protected void optionalCInitializer( Declarator d ) throws Backtrack
+    protected void optionalCInitializer( Declarator d ) throws EndOfFileException, BacktrackException
     {
     	if( LT(1) == IToken.tASSIGN )
     	{
@@ -1914,7 +1927,7 @@ public abstract class Parser implements IParser
     protected IASTInitializerClause cInitializerClause(
         IASTScope scope,
         List designators)
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {    	
         if (LT(1) == IToken.tLBRACE)
         {
@@ -1971,7 +1984,7 @@ public abstract class Parser implements IParser
                 throw backtrack;
             }
         }
-        catch (Backtrack b)
+        catch (BacktrackException b)
         {
             // do nothing
         }
@@ -1981,7 +1994,7 @@ public abstract class Parser implements IParser
      * 
      */
     protected IASTInitializerClause initializerClause(IASTScope scope)
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         if (LT(1) == IToken.tLBRACE)
         {
@@ -2046,14 +2059,18 @@ public abstract class Parser implements IParser
                 throw backtrack;
             }
         }
-        catch (Backtrack b)
+        catch (BacktrackException b)
         {
 			// do nothing
+        }
+        catch ( EndOfFileException eof )
+        {
+
         }
         throw backtrack;
     }
     
-    protected List designatorList(IASTScope scope) throws EndOfFile, Backtrack
+    protected List designatorList(IASTScope scope) throws EndOfFileException, BacktrackException
     {
         List designatorList = new ArrayList();
         // designated initializers for C
@@ -2108,11 +2125,11 @@ public abstract class Parser implements IParser
      * 
     	 * @param container		IParserCallback object that represents the owner declaration.  
      * @return				declarator that this parsing produced.
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
     protected Declarator declarator(
         IDeclaratorOwner owner, IASTScope scope, SimpleDeclarationStrategy strategy )
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         Declarator d = null;
         DeclarationWrapper sdw = owner.getDeclarationWrapper();
@@ -2157,7 +2174,7 @@ public abstract class Parser implements IParser
                                     {
                                         throw backtrack;
                                     }
-	                        	} catch( Backtrack b )
+	                        	} catch( BacktrackException b )
 	                        	{ 
 	                        		failed = true; 
 	                        	}
@@ -2238,7 +2255,7 @@ public abstract class Parser implements IParser
                                                 duple = typeId(scope, false);
                                                 exceptionSpecIds.add(duple);
                                             }
-                                            catch (Backtrack e)
+                                            catch (BacktrackException e)
                                             {
                                                 failParse();
                                                 log.traceLog(
@@ -2320,7 +2337,7 @@ public abstract class Parser implements IParser
         return d;
     }
     protected void consumeTemplatedOperatorName(Declarator d)
-        throws EndOfFile, Backtrack
+        throws EndOfFileException, BacktrackException
     {
         if (LT(1) == IToken.t_operator)
             operatorId(d, null);
@@ -2332,7 +2349,7 @@ public abstract class Parser implements IParser
                 d.setName(duple);
         
             }
-            catch (Backtrack bt)
+            catch (BacktrackException bt)
             {
                 Declarator d1 = d;
                 Declarator d11 = d1;
@@ -2364,7 +2381,7 @@ public abstract class Parser implements IParser
         }
     }
     protected void consumeArrayModifiers( IDeclarator d, IASTScope scope )
-        throws EndOfFile, Backtrack
+        throws EndOfFileException, BacktrackException
     {
         while (LT(1) == IToken.tLBRACKET)
         {
@@ -2392,7 +2409,7 @@ public abstract class Parser implements IParser
     protected void operatorId(
         Declarator d,
         IToken originalToken)
-        throws Backtrack, EndOfFile
+        throws BacktrackException, EndOfFileException
     {
         // we know this is an operator
         IToken operatorToken = consume(IToken.t_operator);
@@ -2448,9 +2465,9 @@ public abstract class Parser implements IParser
      * | ::? nestedNameSpecifier "*" (cvQualifier)*
      * 
      * @param owner 		Declarator that this pointer operator corresponds to.  
-     * @throws Backtrack 	request a backtrack
+     * @throws BacktrackException 	request a backtrack
      */
-    protected IToken consumePointerOperators(IDeclarator d) throws Backtrack
+    protected IToken consumePointerOperators(IDeclarator d) throws EndOfFileException, BacktrackException
     {
     	IToken result = null;
     	for( ; ; )
@@ -2471,7 +2488,7 @@ public abstract class Parser implements IParser
 	        	{
 		            nameDuple = name();
 	        	}
-	        	catch( Backtrack bt )
+	        	catch( BacktrackException bt )
 	        	{
 	        		backup( mark ); 
 	        		return null;
@@ -2516,10 +2533,10 @@ public abstract class Parser implements IParser
      * enumerator: identifier 
      * 
      * @param	owner		IParserCallback object that represents the declaration that owns this type specifier. 
-     * @throws	Backtrack	request a backtrack
+     * @throws	BacktrackException	request a backtrack
      */
     protected void enumSpecifier(DeclarationWrapper sdw)
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IToken mark = mark();
         IToken identifier = null;
@@ -2633,17 +2650,18 @@ public abstract class Parser implements IParser
      * : classKey name (baseClause)? "{" (memberSpecification)* "}"
      * 
      * @param	owner		IParserCallback object that represents the declaration that owns this classSpecifier
-     * @throws	Backtrack	request a backtrack
+     * @throws	BacktrackException	request a backtrack
      */
     protected void classSpecifier(DeclarationWrapper sdw)
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         ClassNameType nameType = ClassNameType.IDENTIFIER;
         ASTClassKind classKind = null;
         ASTAccessVisibility access = ASTAccessVisibility.PUBLIC;
         IToken classKey = null;
         IToken mark = mark();
-        // class key
+        
+		// class key
         switch (LT(1))
         {
             case IToken.t_class :
@@ -2663,7 +2681,10 @@ public abstract class Parser implements IParser
                 throw backtrack;
         }
 
+        
         ITokenDuple duple = null;
+        
+        setCompletionKind( CompletionKind.USER_SPECIFIED_NAME );
         // class name
         if (LT(1) == IToken.tIDENTIFIER)
             duple = className();
@@ -2737,7 +2758,7 @@ public abstract class Parser implements IParser
                         {
                             declaration(astClassSpecifier, null);
                         }
-                        catch (Backtrack bt)
+                        catch (BacktrackException bt)
                         {
                             failParse();
                             if (checkToken == LA(1))
@@ -2775,11 +2796,11 @@ public abstract class Parser implements IParser
      * 					accessspecifier virtual? ::? nestednamespecifier? classname
      * accessspecifier:	private | protected | public
      * @param classSpecOwner
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected void baseSpecifier(
         IASTClassSpecifier astClassSpec)
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         consume(IToken.tCOLON);
         boolean isVirtual = false;
@@ -2855,18 +2876,18 @@ public abstract class Parser implements IParser
     /**
      * Parses a function body. 
      * 
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
-    protected void functionBody( IASTScope scope ) throws Backtrack
+    protected void functionBody( IASTScope scope ) throws EndOfFileException, BacktrackException
     {
         compoundStatement( scope, false );
     }
     /**
      * Parses a statement. 
      * 
-     * @throws Backtrack	request a backtrack
+     * @throws BacktrackException	request a backtrack
      */
-    protected void statement(IASTScope scope) throws Backtrack
+    protected void statement(IASTScope scope) throws EndOfFileException, BacktrackException
     {
         
         switch (LT(1))
@@ -2998,7 +3019,7 @@ public abstract class Parser implements IParser
                     thisExpression.acceptElement( requestor );
                     return;
                 }
-                catch (Backtrack b)
+                catch (BacktrackException b)
                 {
                 	backup( mark );
                 }
@@ -3007,7 +3028,7 @@ public abstract class Parser implements IParser
         }
     }
     protected void catchHandlerSequence(IASTScope scope)
-        throws EndOfFile, Backtrack
+        throws EndOfFileException, BacktrackException
     {
     	if( LT(1) != IToken.t_catch )
     		throw backtrack; // error, need at least one of these
@@ -3025,9 +3046,9 @@ public abstract class Parser implements IParser
         }
     }
     
-    protected abstract void catchBlockCompoundStatement(IASTScope scope) throws Backtrack, EndOfFile; 
+    protected abstract void catchBlockCompoundStatement(IASTScope scope) throws BacktrackException, EndOfFileException; 
     
-	protected void singleStatementScope(IASTScope scope) throws Backtrack
+	protected void singleStatementScope(IASTScope scope) throws EndOfFileException, BacktrackException
     {
         IASTCodeScope newScope;
         try
@@ -3050,9 +3071,9 @@ public abstract class Parser implements IParser
     }
 
     /**
-     * @throws Backtrack
+     * @throws BacktrackException
      */
-    protected void condition( IASTScope scope ) throws Backtrack
+    protected void condition( IASTScope scope ) throws BacktrackException, EndOfFileException
     {
         IASTExpression someExpression = expression( scope );
         someExpression.acceptElement(requestor);
@@ -3060,22 +3081,22 @@ public abstract class Parser implements IParser
     }
     
     /**
-     * @throws Backtrack
+     * @throws BacktrackException
      */
-    protected void forInitStatement( IASTScope scope ) throws Backtrack
+    protected void forInitStatement( IASTScope scope ) throws BacktrackException, EndOfFileException
     {
     	try
     	{
         	simpleDeclarationStrategyUnion(scope,null);
     	}
-    	catch( Backtrack bt )
+    	catch( BacktrackException bt )
     	{
     		try
     		{
     			IASTExpression e = expression( scope );
     			e.acceptElement(requestor);
     		}
-    		catch( Backtrack b )
+    		catch( BacktrackException b )
     		{
     			failParse(); 
     			throw b;
@@ -3084,9 +3105,9 @@ public abstract class Parser implements IParser
         
     }
     /**
-     * @throws Backtrack
+     * @throws BacktrackException
      */
-    protected void compoundStatement( IASTScope scope, boolean createNewScope ) throws Backtrack
+    protected void compoundStatement( IASTScope scope, boolean createNewScope ) throws EndOfFileException, BacktrackException
     {
         consume(IToken.tLBRACE);
         
@@ -3111,7 +3132,7 @@ public abstract class Parser implements IParser
         	{
             	statement(createNewScope ? newScope : scope );
         	}
-        	catch( Backtrack b )
+        	catch( BacktrackException b )
         	{
         		failParse(); 
         		if( LA(1) == checkToken )
@@ -3125,17 +3146,17 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression constantExpression( IASTScope scope )
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         return conditionalExpression(scope);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#expression(java.lang.Object)
      */
-    public IASTExpression expression(IASTScope scope) throws Backtrack
+    public IASTExpression expression(IASTScope scope) throws BacktrackException, EndOfFileException
     {
         IASTExpression assignmentExpression = assignmentExpression(scope);
         while (LT(1) == IToken.tCOMMA)
@@ -3166,10 +3187,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
 	protected IASTExpression assignmentExpression(IASTScope scope)
-		throws Backtrack {
+		throws EndOfFileException, BacktrackException {
 		if (LT(1) == IToken.t_throw) {
 			return throwExpression(scope);
 		}
@@ -3241,7 +3262,7 @@ public abstract class Parser implements IParser
     protected IASTExpression assignmentOperatorExpression(
     	IASTScope scope,
         IASTExpression.Kind kind, IASTExpression lhs )
-        throws EndOfFile, Backtrack
+        throws EndOfFileException, BacktrackException
     {
         consume();
         IASTExpression assignmentExpression = assignmentExpression(scope);
@@ -3267,10 +3288,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression throwExpression( IASTScope scope )
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         consume(IToken.t_throw);
         IASTExpression throwExpression = null;
@@ -3278,7 +3299,7 @@ public abstract class Parser implements IParser
         {
             throwExpression = expression(scope);
         }
-        catch (Backtrack b)
+        catch (BacktrackException b)
         {
         }
         try
@@ -3303,10 +3324,10 @@ public abstract class Parser implements IParser
     /**
      * @param expression
      * @return
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression conditionalExpression( IASTScope scope )
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = logicalOrExpression(scope);
         if (LT(1) == IToken.tQUESTION)
@@ -3339,10 +3360,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression logicalOrExpression(IASTScope scope)
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = logicalAndExpression(scope);
         while (LT(1) == IToken.tOR)
@@ -3374,10 +3395,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression logicalAndExpression( IASTScope scope )
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = inclusiveOrExpression( scope );
         while (LT(1) == IToken.tAND)
@@ -3408,10 +3429,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression inclusiveOrExpression( IASTScope scope )
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = exclusiveOrExpression(scope);
         while (LT(1) == IToken.tBITOR)
@@ -3443,15 +3464,16 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression exclusiveOrExpression( IASTScope scope )
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = andExpression( scope );
         while (LT(1) == IToken.tXOR)
         {
             consume();
+            
             IASTExpression secondExpression = andExpression( scope );
 
             try
@@ -3478,9 +3500,9 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
-    protected IASTExpression andExpression(IASTScope scope) throws Backtrack
+    protected IASTExpression andExpression(IASTScope scope) throws EndOfFileException, BacktrackException
     {
         IASTExpression firstExpression = equalityExpression(scope);
         while (LT(1) == IToken.tAMPER)
@@ -3512,10 +3534,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression equalityExpression( IASTScope scope )
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         IASTExpression firstExpression = relationalExpression(scope);
         for (;;)
@@ -3557,10 +3579,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression relationalExpression(IASTScope scope)
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = shiftExpression(scope);
         for (;;)
@@ -3636,10 +3658,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression shiftExpression(IASTScope scope)
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = additiveExpression(scope);
         for (;;)
@@ -3680,10 +3702,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression additiveExpression( IASTScope scope )
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = multiplicativeExpression( scope );
         for (;;)
@@ -3724,10 +3746,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression multiplicativeExpression( IASTScope scope )
-        throws Backtrack
+        throws BacktrackException, EndOfFileException
     {
         IASTExpression firstExpression = pmExpression(scope);
         for (;;)
@@ -3779,9 +3801,9 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
-    protected IASTExpression pmExpression( IASTScope scope ) throws Backtrack
+    protected IASTExpression pmExpression( IASTScope scope ) throws EndOfFileException, BacktrackException
     {
         IASTExpression firstExpression = castExpression(scope);
         for (;;)
@@ -3825,7 +3847,7 @@ public abstract class Parser implements IParser
      * : unaryExpression
      * | "(" typeId ")" castExpression
      */
-    protected IASTExpression castExpression( IASTScope scope ) throws Backtrack
+    protected IASTExpression castExpression( IASTScope scope ) throws EndOfFileException, BacktrackException
     {
         // TO DO: we need proper symbol checkint to ensure type name
         if (LT(1) == IToken.tLPAREN)
@@ -3858,18 +3880,19 @@ public abstract class Parser implements IParser
                     throw backtrack;
                 }
             }
-            catch (Backtrack b)
+            catch (BacktrackException b)
             {
                 backup(mark);
             }
         }
         return unaryExpression(scope);
+        
     }
     
     /**
-     * @throws Backtrack
+     * @throws BacktrackException
      */
-    protected IASTTypeId typeId(IASTScope scope, boolean skipArrayModifiers ) throws Backtrack
+    protected IASTTypeId typeId(IASTScope scope, boolean skipArrayModifiers ) throws EndOfFileException, BacktrackException
     {
     	IToken mark = mark();
     	ITokenDuple name = null;
@@ -3887,7 +3910,7 @@ public abstract class Parser implements IParser
 	            kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
 	            break;
 	        }
-	        catch (Backtrack b)
+	        catch (BacktrackException b)
 	        {
 	        	// do nothing
 	        }
@@ -4010,7 +4033,7 @@ public abstract class Parser implements IParser
                 {
                 	name = name();
                 	kind = IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME;
-                } catch( Backtrack b )
+                } catch( BacktrackException b )
                 {
                 	backup( mark );
                 	throw backtrack; 
@@ -4053,10 +4076,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression deleteExpression( IASTScope scope )
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         if (LT(1) == IToken.tCOLONCOLON)
         {
@@ -4098,7 +4121,7 @@ public abstract class Parser implements IParser
      * Pazse a new-expression.  
      * 
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      * 
      * 
      * newexpression: 	::? new newplacement? newtypeid newinitializer?
@@ -4110,7 +4133,7 @@ public abstract class Parser implements IParser
      *							directnewdeclarator [ constantexpression ]
      * newinitializer:	( expressionlist? )
      */
-    protected IASTExpression newExpression( IASTScope scope ) throws Backtrack
+    protected IASTExpression newExpression( IASTScope scope ) throws BacktrackException, EndOfFileException
     {
         if (LT(1) == IToken.tCOLONCOLON)
         {
@@ -4145,7 +4168,7 @@ public abstract class Parser implements IParser
                     typeIdInParen = true;
                 }
             }
-            catch (Backtrack e)
+            catch (BacktrackException e)
             {
                 backup(backtrackMarker);
             }
@@ -4180,7 +4203,7 @@ public abstract class Parser implements IParser
                             backtrackMarker = mark();
                             typeId = typeId(scope, true);
                         }
-                        catch (Backtrack e)
+                        catch (BacktrackException e)
                         {
                             // Hmmm, so it wasn't typeId after all... Then it is
                             // CASE: new (typeid-looking-as-placement)
@@ -4230,7 +4253,7 @@ public abstract class Parser implements IParser
                             }
                         }
                     }
-                    catch (Backtrack e)
+                    catch (BacktrackException e)
                     {
                         // CASE: new (typeid-looking-as-placement)(initializer-not-looking-as-typeid)
                         // Fallback to initializer processing
@@ -4278,7 +4301,7 @@ public abstract class Parser implements IParser
     }
     protected IASTExpression unaryOperatorCastExpression( IASTScope scope,
         IASTExpression.Kind kind)
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         IASTExpression castExpression = castExpression(scope);
         try
@@ -4302,10 +4325,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression unaryExpression( IASTScope scope )
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         switch (LT(1))
         {
@@ -4354,7 +4377,7 @@ public abstract class Parser implements IParser
                         d = typeId(scope, false);
                         consume(IToken.tRPAREN);
                     }
-                    catch (Backtrack bt)
+                    catch (BacktrackException bt)
                     {
                         backup(mark);
                         unaryExpression = unaryExpression(scope);
@@ -4424,10 +4447,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression postfixExpression( IASTScope scope )
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         IASTExpression firstExpression = null;
         boolean isTemplate = false;
@@ -4448,7 +4471,7 @@ public abstract class Parser implements IParser
 				{
 					templateId = new TokenDuple( current, templateId() ); 
 				}
-				catch( Backtrack bt )
+				catch( BacktrackException bt )
 				{
 					if( templateTokenConsumed )
 						throw bt;
@@ -4556,7 +4579,7 @@ public abstract class Parser implements IParser
                 {
                     typeId = typeId(scope, false);
                 }
-                catch (Backtrack b)
+                catch (BacktrackException b)
                 {
                     isTypeId = false;
                     lhs = expression(scope);
@@ -4762,7 +4785,7 @@ public abstract class Parser implements IParser
     }
     protected IASTExpression specialCastExpression( IASTScope scope,
         IASTExpression.Kind kind)
-        throws EndOfFile, Backtrack
+        throws EndOfFileException, BacktrackException
     {
         consume();
         consume(IToken.tLT);
@@ -4792,7 +4815,7 @@ public abstract class Parser implements IParser
     }
     protected IASTExpression simpleTypeConstructorExpression( IASTScope scope,
         Kind type)
-        throws EndOfFile, Backtrack
+        throws EndOfFileException, BacktrackException
     {
         consume();
         consume(IToken.tLPAREN);
@@ -4820,10 +4843,10 @@ public abstract class Parser implements IParser
     }
     /**
      * @param expression
-     * @throws Backtrack
+     * @throws BacktrackException
      */
     protected IASTExpression primaryExpression( IASTScope scope )
-        throws Backtrack
+        throws EndOfFileException, BacktrackException
     {
         IToken t = null;
         switch (LT(1))
@@ -4981,7 +5004,7 @@ public abstract class Parser implements IParser
                 {
 					duple = name();
                 }
-                catch( Backtrack bt )
+                catch( BacktrackException bt )
                 {
                 	Declarator d = new Declarator( new DeclarationWrapper(scope, 0, null) );
 
@@ -5099,16 +5122,12 @@ public abstract class Parser implements IParser
     }
 
     // the static instance we always use
-    private static Backtrack backtrack = new Backtrack();
-    // the static instance we always use
-    public static EndOfFile endOfFile = new EndOfFile();
-    // Token management
-    
+    private static BacktrackException backtrack = new BacktrackException();
+
+    // Token management    
     protected IScanner scanner;
     protected IToken currToken, // current token we plan to consume next 
     lastToken; // last token we consumed
-    
-    private int highWaterOffset = 0; 
     
     protected void setCurrentScope( IASTScope scope )
     {
@@ -5118,20 +5137,18 @@ public abstract class Parser implements IParser
      * Fetches a token from the scanner. 
      * 
      * @return				the next token from the scanner
-     * @throws EndOfFile	thrown when the scanner.nextToken() yields no tokens
+     * @throws EndOfFileException	thrown when the scanner.nextToken() yields no tokens
      */
-    private IToken fetchToken() throws EndOfFile
+    protected IToken fetchToken() throws EndOfFileException
     {
         try
         {
-            IToken t = scanner.nextToken();
-            if( t.getEndOffset() > highWaterOffset )
-            	highWaterOffset = t.getEndOffset();
-            return t;
+            return scanner.nextToken();
         }
-        catch (EndOfFile e)
+        catch( OffsetLimitReachedException olre )
         {
-            throw e;
+        	handleOffsetLimitException(olre);
+        	return null;
         }
         catch (ScannerException e)
         {
@@ -5141,14 +5158,19 @@ public abstract class Parser implements IParser
             return fetchToken();
         }
     }
-    /**
+
+    protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException {
+		// unexpected, throw EOF instead (equivalent)
+		throw new EndOfFileException();
+	}
+	/**
      * Look Ahead in the token list to see what is coming.  
      * 
      * @param i		How far ahead do you wish to peek?
      * @return		the token you wish to observe
-     * @throws EndOfFile	if looking ahead encounters EOF, throw EndOfFile 
+     * @throws EndOfFileException	if looking ahead encounters EOF, throw EndOfFile 
      */
-    protected IToken LA(int i) throws EndOfFile
+    protected IToken LA(int i) throws EndOfFileException
     {
         if (i < 1) // can't go backwards
             return null;
@@ -5168,9 +5190,9 @@ public abstract class Parser implements IParser
      * 
      * @param i				How far ahead do you wish to peek?
      * @return				The type of that token
-     * @throws EndOfFile	if looking ahead encounters EOF, throw EndOfFile
+     * @throws EndOfFileException	if looking ahead encounters EOF, throw EndOfFile
      */
-    protected int LT(int i) throws EndOfFile
+    protected int LT(int i) throws EndOfFileException
     {
         return LA(i).getType();
     }
@@ -5178,9 +5200,9 @@ public abstract class Parser implements IParser
      * Consume the next token available, regardless of the type.  
      * 
      * @return				The token that was consumed and removed from our buffer.  
-     * @throws EndOfFile	If there is no token to consume.  
+     * @throws EndOfFileException	If there is no token to consume.  
      */
-    protected IToken consume() throws EndOfFile
+    protected IToken consume() throws EndOfFileException
     {
         if (currToken == null)
             currToken = fetchToken();
@@ -5194,9 +5216,9 @@ public abstract class Parser implements IParser
      * 
      * @param type			The type of token that you are expecting.  	
      * @return				the token that was consumed and removed from our buffer. 
-     * @throws Backtrack	If LT(1) != type 
+     * @throws BacktrackException	If LT(1) != type 
      */
-    protected IToken consume(int type) throws Backtrack
+    protected IToken consume(int type) throws EndOfFileException, BacktrackException
     {
         if (LT(1) == type)
             return consume();
@@ -5207,9 +5229,9 @@ public abstract class Parser implements IParser
      * Mark our place in the buffer so that we could return to it should we have to.  
      * 
      * @return				The current token. 
-     * @throws EndOfFile	If there are no more tokens.
+     * @throws EndOfFileException	If there are no more tokens.
      */
-    protected IToken mark() throws EndOfFile
+    protected IToken mark() throws EndOfFileException
     {
         if (currToken == null)
             currToken = fetchToken();
@@ -5254,5 +5276,10 @@ public abstract class Parser implements IParser
     
     protected void setCompletionKind( IASTCompletionNode.CompletionKind kind )
     {
-    }    
+    }
+    
+    protected void setCompletionKeywords( Collection keywords )
+    {
+    }
+    
 }

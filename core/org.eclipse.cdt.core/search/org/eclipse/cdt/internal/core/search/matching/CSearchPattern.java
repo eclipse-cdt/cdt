@@ -18,13 +18,14 @@ import java.io.StringReader;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
+import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -362,7 +363,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		
 		try {
 			token = scanner.nextToken();
-		} catch (EndOfFile e) {
+		} catch (EndOfFileException e) {
 		} catch (ScannerException e) {
 		}
 		
@@ -581,7 +582,7 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 					}
 				}
 			}
-		} catch (EndOfFile e) {	
+		} catch (EndOfFileException e) {	
 			list.addLast( name.toCharArray() );
 		} catch (ScannerException e) {
 		}

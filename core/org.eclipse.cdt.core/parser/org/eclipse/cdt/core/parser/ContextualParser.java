@@ -1,28 +1,35 @@
-/*
- * Created on Dec 8, 2003
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+/**********************************************************************
+ * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM Rational Software - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.core.parser;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.internal.core.parser.Parser;
+import org.eclipse.cdt.internal.core.parser.ast.*;
 
 /**
  * @author jcamelon
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class ContextualParser extends Parser implements IParser {
 
-	private CompletionKind kind;
-	private IASTScope scope;
-	private IASTNode context;
+	protected CompletionKind kind;
+	protected IASTScope scope;
+	protected IASTNode context;
+	protected IToken finalToken;
+	private Set keywordSet = new HashSet();
 
 	/**
 	 * @param scanner
@@ -42,14 +49,21 @@ public class ContextualParser extends Parser implements IParser {
 	public IASTCompletionNode parse(int offset) throws ParserNotImplementedException {
 		scanner.setOffsetBoundary(offset);
 		translationUnit();
-		return new CompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix() );
+		return new ASTCompletionNode( getCompletionKind(), getCompletionScope(), getCompletionContext(), getCompletionPrefix(), getKeywordSet() );
+	}
+
+	/**
+	 * @return
+	 */
+	private Set getKeywordSet() {
+		return keywordSet;
 	}
 
 	/**
 	 * @return
 	 */
 	private String getCompletionPrefix() {
-		return lastToken == null ? "" : lastToken.getImage();
+		return ( finalToken == null ? "" : finalToken.getImage() );
 	}
 
 	/**
@@ -101,7 +115,7 @@ public class ContextualParser extends Parser implements IParser {
 		this.kind = kind;
 	}    
 	
-	protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws Backtrack, EndOfFile
+	protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws BacktrackException, EndOfFileException
 	{
 		if ( isInlineFunction ) 
 			skipOverCompoundStatement();
@@ -109,9 +123,17 @@ public class ContextualParser extends Parser implements IParser {
 			functionBody(scope);
 	}
 	
-	protected void catchBlockCompoundStatement(IASTScope scope) throws Backtrack, EndOfFile 
+	protected void catchBlockCompoundStatement(IASTScope scope) throws BacktrackException, EndOfFileException 
 	{
 		compoundStatement(scope, true);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleOffsetLimitException()
+	 */
+	protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws EndOfFileException, OffsetLimitReachedException {
+		finalToken = exception.getFinalToken(); 
+		throw exception;
+	}	
+
 }

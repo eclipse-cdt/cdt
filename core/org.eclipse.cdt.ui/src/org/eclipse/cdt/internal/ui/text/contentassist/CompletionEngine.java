@@ -43,6 +43,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.core.parser.ast.IASTNode.LookupException;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
@@ -176,8 +177,6 @@ public class CompletionEngine implements RelevanceConstants{
 			try {
 				result = parser.parse(completionOffset);
 			} catch (ParserNotImplementedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			return result;
 		} else {
@@ -275,8 +274,6 @@ public class CompletionEngine implements RelevanceConstants{
 			IASTNode node = (IASTNode) nodes.next();
 			addNodeToCompletions(node, result.getPrefix());	
 		}
-		Iterator keywords = result.getKeywords();
-		addKeywordsToCompletions(keywords);
 		return ;
 	}
 
@@ -297,15 +294,38 @@ public class CompletionEngine implements RelevanceConstants{
 		// Completing after a dot
 		// 1. Get the search scope node
 		IASTNode searchNode = completionNode.getCompletionScope();
+		
+		LookupResult result = null;
 		// 2. lookup fields & add to completion proposals
-		LookupResult result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.FIELDS);
-		addToCompletions (result);
-		// 3. looup methods & add to completion proposals
-		result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.METHODS);
-		addToCompletions (result);
-		// 4. lookup nested structures & add to completion proposals
-		result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.STRUCTURES);
-		addToCompletions (result);				
+		try
+		{
+			result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.FIELDS);
+			addToCompletions (result);
+		}
+		catch( IASTNode.LookupException ilk )
+		{
+			
+		}
+
+		try
+		{
+			// 3. looup methods & add to completion proposals
+			result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.METHODS);
+			addToCompletions (result);
+		}
+		catch( IASTNode.LookupException ilk )
+		{
+			
+		}
+		
+		
+		try {
+			// 4. lookup nested structures & add to completion proposals
+			result = searchNode.lookup (completionNode.getCompletionPrefix(), IASTNode.LookupKind.STRUCTURES);
+			addToCompletions (result);
+		} catch (LookupException e) {
+		}
+				
 	}
 	private void completionOnTypeReference(IASTCompletionNode completionNode){
 		// completing on a type
@@ -314,8 +334,13 @@ public class CompletionEngine implements RelevanceConstants{
 		// if the prefix is not empty
 		if(completionNode.getCompletionPrefix().length() > 0 ) {
 			// 2. Lookup all types that could be used here
-			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.STRUCTURES);
-			addToCompletions(result);
+			LookupResult result;
+			try {
+				result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.STRUCTURES);
+				addToCompletions(result);
+			} catch (LookupException e) {
+			}
+
 			// 3. Lookup keywords
 			// basic types should be in the keyword list 
 			List keywords = lookupKeyword(completionNode.getCompletionPrefix(), BASIC_TYPES_KEYWORDS);
@@ -334,8 +359,15 @@ public class CompletionEngine implements RelevanceConstants{
 		// 3. lookup methods
 		// we are at a field declaration place, the user could be trying to override a function.
 		// We have to lookup functions that could be overridden here.
-		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.METHODS);
-		addToCompletions(result);
+		LookupResult result;
+		try {
+			result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.METHODS);
+			addToCompletions(result);
+		} catch (LookupException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	private void completionOnVariableType(IASTCompletionNode completionNode){
 		// 1. basic completion on all types
@@ -349,13 +381,28 @@ public class CompletionEngine implements RelevanceConstants{
 		if (completionNode.getCompletionPrefix().length() > 0){
 			// here we have to look for anything that could be referenced within this scope
 			// 1. lookup local variables, global variables, functions, methods, structures, enums, macros, and namespaces
-			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.ALL);
-			addToCompletions(result);
+			try
+			{
+				LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.ALL);
+				addToCompletions(result);
+			}
+			catch( LookupException ilk )
+			{
+			
+			}
 		} else // prefix is empty
 		{
-			// 1. look only for local variables 
-			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.LOCAL_VARIABLES);
-			addToCompletions(result);
+			// 1. look only for local variables
+			try
+			{
+				LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.LOCAL_VARIABLES);
+				addToCompletions(result);
+			}
+			catch( LookupException ilk )
+			{
+				
+			}
+			
 			// 2. and what can be accessed through the "this" pointer
 			// TODO : complete the lookup call
 		}
@@ -366,23 +413,42 @@ public class CompletionEngine implements RelevanceConstants{
 		IASTNode searchNode = completionNode.getCompletionScope();
 		// here we have to look for anything that could be referenced within this scope
 		// 1. lookup local variables, global variables, functions, methods, structures, enums, macros, and namespaces
-		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.ALL);
-		addToCompletions(result);
+		try
+		{
+			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.ALL);
+			addToCompletions(result);
+		}
+		catch( LookupException ilk )
+		{
+			
+		}
 	}
 
 	private void completionOnClassReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
 		IASTNode searchNode = completionNode.getCompletionScope();
 		// only look for classes
-		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.CLASSES);
-		addToCompletions(result);
+		try
+		{
+			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.CLASSES);
+			addToCompletions(result);
+		}
+		catch( LookupException ilk )
+		{
+		}
 	}
 	private void completionOnNamespaceReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
 		IASTNode searchNode = completionNode.getCompletionScope();
 		// only look for classes
-		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.NAMESPACES);
-		addToCompletions(result);
+		try
+		{
+			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.NAMESPACES);
+			addToCompletions(result);
+		}
+		catch( LookupException ilk )
+		{
+		}
 	}
 	private void completionOnExceptionReference(IASTCompletionNode completionNode){
 		// here we have to look for all types
@@ -396,8 +462,14 @@ public class CompletionEngine implements RelevanceConstants{
 		// 1. Get the search scope node 
 		IASTNode searchNode = completionNode.getCompletionScope();
 		// only look for macros
-		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.MACROS);
-		addToCompletions(result);
+		try
+		{
+			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.MACROS);
+			addToCompletions(result);
+		}
+		catch( LookupException ilk )
+		{
+		}
 	}
 	private void completionOnFunctionReference(IASTCompletionNode completionNode){
 		// TODO: complete the lookups
@@ -406,7 +478,14 @@ public class CompletionEngine implements RelevanceConstants{
 		// 1. Get the search scope node 
 		IASTNode searchNode = completionNode.getCompletionScope();
 		// only lookup constructors
-		LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.CONSTRUCTORS);
+		try
+		{
+			LookupResult result = searchNode.lookup(completionNode.getCompletionPrefix(), IASTNode.LookupKind.CONSTRUCTORS);
+		}
+		catch( LookupException ilk )
+		{
+		}
+		
 	}
 	private void completionOnKeyword(IASTCompletionNode completionNode){
 		// lookup every type of keywords
@@ -485,6 +564,7 @@ public class CompletionEngine implements RelevanceConstants{
 			completionOnKeyword(completionNode);
 		}
 	
+		addKeywordsToCompletions( completionNode.getKeywords());
 		completionList.addAll(completions);
 		return completionNode;
 			

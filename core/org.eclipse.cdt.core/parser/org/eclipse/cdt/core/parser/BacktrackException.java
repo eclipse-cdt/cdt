@@ -12,7 +12,8 @@ package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
+ *
  */
-public class ParserNotImplementedException extends Exception {
-
+public class BacktrackException extends Exception
+{
 }

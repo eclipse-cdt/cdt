@@ -48,7 +48,7 @@ public interface IASTNode {
 		}
 	 }
 	 
-	 public static class InvalidLookupKind extends Exception
+	 public static class LookupException extends Exception
 	 {
 	 }
 	 
@@ -56,9 +56,8 @@ public interface IASTNode {
 	 {
 	 	public String getPrefix(); 
 	 	public Iterator getNodes(); 
-	 	public Iterator getKeywords();  
 	 }
 
-	public LookupResult lookup( String prefix, LookupKind kind );
+	public LookupResult lookup( String prefix, LookupKind kind ) throws LookupException;
 }
 

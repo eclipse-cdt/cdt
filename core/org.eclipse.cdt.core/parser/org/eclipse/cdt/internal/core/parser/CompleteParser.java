@@ -1,13 +1,17 @@
-/*
- * Created on Dec 5, 2003
- *
- * To change the template for this generated file go to
- * Window - Preferences - Java - Code Generation - Code and Comments
- */
+/**********************************************************************
+ * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * IBM Rational Software - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
-import org.eclipse.cdt.core.parser.Backtrack;
-import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.BacktrackException;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -21,9 +25,6 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 
 /**
  * @author jcamelon
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
  */
 public class CompleteParser extends Parser {
 
@@ -40,7 +41,7 @@ public class CompleteParser extends Parser {
 		scanner.setASTFactory(astFactory);
 	}
 	
-	protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws Backtrack, EndOfFile
+	protected void handleFunctionBody(IASTScope scope, boolean isInlineFunction) throws BacktrackException, EndOfFileException
 	{
 		if ( isInlineFunction ) 
 			skipOverCompoundStatement();
@@ -48,7 +49,7 @@ public class CompleteParser extends Parser {
 			functionBody(scope);
 	}
 	
-	protected void catchBlockCompoundStatement(IASTScope scope) throws Backtrack, EndOfFile 
+	protected void catchBlockCompoundStatement(IASTScope scope) throws BacktrackException, EndOfFileException 
 	{
 		compoundStatement(scope, true);
 	}

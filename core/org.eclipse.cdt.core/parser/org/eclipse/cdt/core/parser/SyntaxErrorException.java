@@ -12,8 +12,18 @@ package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
- *
  */
-public class EndOfFile extends Backtrack
-{
+public class SyntaxErrorException extends Exception {
+
+	private final IProblem problem;
+	
+	public IProblem getProblem() 
+	{
+		return problem;
+	}
+
+	public SyntaxErrorException( IProblem problem )
+	{
+		this.problem = problem;
+	}
 }

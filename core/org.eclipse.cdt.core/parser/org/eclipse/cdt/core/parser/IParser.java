@@ -54,10 +54,10 @@ public interface IParser {
 	 * @param expression	Optional parameter representing an expression object that 
 	 * 						your particular IParserCallback instance would appreciate 
 	 * 	
-	 * @throws Backtrack	thrown if the Scanner/Stream provided does not yield a valid
+	 * @throws BacktrackException	thrown if the Scanner/Stream provided does not yield a valid
 	 * 						expression	
 	 */
-	public IASTExpression expression(IASTScope scope) throws Backtrack;
+	public IASTExpression expression(IASTScope scope) throws BacktrackException, EndOfFileException;
 	
 	/**
 	 * If an error was encountered, give us the offset of the token that caused the error.  

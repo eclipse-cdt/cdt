@@ -15,11 +15,12 @@ import java.io.StringReader;
 
 import junit.framework.TestCase;
 
-import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
+import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -72,7 +73,7 @@ public class BaseScannerTest extends TestCase {
 				t= scanner.nextToken();
 			}
 		}
-		catch ( EndOfFile e)
+		catch ( EndOfFileException e)
 		{
 		}
 		catch (ScannerException se)
@@ -87,9 +88,9 @@ public class BaseScannerTest extends TestCase {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tIDENTIFIER);
 			assertTrue(t.getImage().equals(expectedImage));
-		} catch (EndOfFile e) {
+		} catch (EndOfFileException e) {
 			assertTrue(false);
-		}
+		} 
 	}
 
 	public void validateInteger(String expectedImage) throws ScannerException
@@ -98,7 +99,7 @@ public class BaseScannerTest extends TestCase {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tINTEGER);
 			assertTrue(t.getImage().equals(expectedImage));
-		} catch (EndOfFile e) {
+		} catch (EndOfFileException e) {
 			assertTrue(false);
 		}
 	}
@@ -109,7 +110,7 @@ public class BaseScannerTest extends TestCase {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tFLOATINGPT);
 			assertTrue(t.getImage().equals(expectedImage));
-		} catch (EndOfFile e) {
+		} catch (EndOfFileException e) {
 			assertTrue(false);
 		}
 	}
@@ -121,9 +122,9 @@ public class BaseScannerTest extends TestCase {
 			assertTrue(t.getType() == IToken.tCHAR );
 			Character c = new Character( expected ); 
 			assertEquals( t.getImage(), c.toString() ); 
-		} catch (EndOfFile e) {
+		} catch (EndOfFileException e) {
 			assertTrue(false);
-		}		
+		}
 	}
 
 	public void validateChar( String expected ) throws ScannerException
@@ -132,9 +133,9 @@ public class BaseScannerTest extends TestCase {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tCHAR );
 			assertEquals( t.getImage(), expected ); 
-		} catch (EndOfFile e) {
+		} catch (EndOfFileException e) {
 			assertTrue(false);
-		}		
+		} 
 	}
 
 	public void validateString( String expectedImage ) throws ScannerException
@@ -151,9 +152,9 @@ public class BaseScannerTest extends TestCase {
 			else
 				assertTrue(t.getType() == IToken.tSTRING);
 			assertTrue(t.getImage().equals(expectedImage));
-		} catch (EndOfFile e) {
+		} catch (EndOfFileException e) {
 			assertTrue(false);
-		}
+		} 
 	}
 
 	public void validateToken(int tokenType) throws ScannerException
@@ -161,9 +162,11 @@ public class BaseScannerTest extends TestCase {
 		try {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == tokenType);
-		} catch (EndOfFile e) {
+		} catch (OffsetLimitReachedException e) {
 			assertTrue(false);
-		}
+		} catch (EndOfFileException e) {
+			assertTrue(false);
+		} 
 	}
 
 	public void validateBalance(int expected)
@@ -180,8 +183,10 @@ public class BaseScannerTest extends TestCase {
 	{
 		try {
 			assertNull(scanner.nextToken());
-		} catch (EndOfFile e) {
-		}
+		}catch (OffsetLimitReachedException e) {
+			assertTrue(false);
+		} catch (EndOfFileException e) {
+		} 
 	}
 
 	public void validateDefinition(String name, String value)
@@ -223,7 +228,7 @@ public class BaseScannerTest extends TestCase {
 			IToken t= scanner.nextToken();
 			assertTrue(t.getType() == IToken.tLCHAR );
 			assertEquals( t.getImage(), string ); 
-		} catch (EndOfFile e) {
+		} catch (EndOfFileException e) {
 			assertTrue(false);
 		}		
     }

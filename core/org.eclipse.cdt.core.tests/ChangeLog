@@ -1,3 +1,7 @@
+2003-12-11 John Camelon
+	Expanded ContextualParseTest::testBaseCase().  
+	Updated tests to deal with new signatures/exceptions.  
+
 2003-12-11 Alain Magloire
 
 	New test files for the ICPathEntry in core model.

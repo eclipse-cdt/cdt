@@ -22,13 +22,13 @@ public interface IScanner  {
 	public void addIncludePath(String includePath); 
 	public void overwriteIncludePath( String [] newIncludePaths );
 	
-	public IToken nextToken() throws ScannerException, EndOfFile;
-	public IToken nextToken( boolean next ) throws ScannerException, EndOfFile;
+	public IToken nextToken() throws ScannerException, EndOfFileException, OffsetLimitReachedException;
+	public IToken nextToken( boolean next ) throws ScannerException, EndOfFileException, OffsetLimitReachedException;
 			
 	public int  getCount();
 	public int  getDepth();
 
-	public IToken nextTokenForStringizing() throws ScannerException, EndOfFile;
+	public IToken nextTokenForStringizing() throws ScannerException, EndOfFileException, OffsetLimitReachedException;
 	public void setTokenizingMacroReplacementList(boolean b);
 	public void setThrowExceptionOnBadCharacterRead( boolean throwOnBad );
 

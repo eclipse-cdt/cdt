@@ -5,7 +5,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -853,7 +853,7 @@ public class ScannerTestCase extends BaseScannerTest
 		}
 	}
 
-	public void testQuickScan() throws EndOfFile, ParserFactoryException
+	public void testQuickScan() throws EndOfFileException, ParserFactoryException
 	{
 		try
 		{

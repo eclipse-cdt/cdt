@@ -65,8 +65,6 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
-import org.eclipse.cdt.core.parser.ast.IASTNode.LookupResult;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 /**

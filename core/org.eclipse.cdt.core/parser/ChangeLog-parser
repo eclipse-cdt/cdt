@@ -1,3 +1,8 @@
+2003-12-11 John Camelon
+	Added OffsetLimitReachedException and restructured Parser exceptions.  
+	Continued support for code assist/selection search parser.  
+	Ensured all source in parser/ have copyright notices.  
+
 2003-12-09 Andrew Niefer
 	-created TypeFilter to support support filtering of what kind of symbols to find (for prefix lookup 48306)
 	-added IContainerSymbol.isVisible  for bug 48294

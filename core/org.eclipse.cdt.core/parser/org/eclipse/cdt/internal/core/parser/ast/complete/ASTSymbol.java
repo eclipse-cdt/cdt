@@ -32,7 +32,9 @@ public abstract class ASTSymbol extends ASTSymbolOwner implements ISymbolOwner, 
      */
     public IASTScope getOwnerScope()
     {
-        return (IASTScope)symbol.getContainingSymbol().getASTExtension().getPrimaryDeclaration();
+    	if( symbol.getContainingSymbol() != null )
+    		return (IASTScope)symbol.getContainingSymbol().getASTExtension().getPrimaryDeclaration();
+    	return null;
     }
 
 }

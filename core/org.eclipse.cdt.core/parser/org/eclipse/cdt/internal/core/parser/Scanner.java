@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.eclipse.cdt.core.parser.Backtrack;
-import org.eclipse.cdt.core.parser.EndOfFile;
+import org.eclipse.cdt.core.parser.BacktrackException;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.ILineOffsetReconciler;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParser;
@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
+import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -64,6 +65,7 @@ public class Scanner implements IScanner {
 	private boolean initialContextInitialized = false;
 	private final String filename;
 	private final Reader reader;
+	protected IToken finalToken;
 
 	protected void handleProblem( int problemID, String argument, int beginningOffset, boolean warning, boolean error ) throws ScannerException
 	{
@@ -128,7 +130,7 @@ public class Scanner implements IScanner {
     		contextStack.push( context, requestor ); 
     	} catch( ContextException  ce )
     	{
-    		// should never occur
+    		handleInternalError();
     	}
     	initialContextInitialized = true;   	
     }
@@ -179,7 +181,7 @@ public class Scanner implements IScanner {
 		while ((c != NOCHAR) && ((c == ' ') || (c == '\t')))
 		{
 			c = getChar();
-			result = true; 
+			result = true;
 		}
 		if (c != NOCHAR)
 			ungetChar(c);
@@ -284,9 +286,10 @@ public class Scanner implements IScanner {
 	private void setCurrentToken(IToken t) {
 		if (currentToken != null)
 			currentToken.setNext(t);
+		finalToken = t;
 		currentToken = t;
 	}
-
+	
 	protected void resetStorageBuffer()
 	{
 		if( storageBuffer != null ) 
@@ -691,15 +694,15 @@ public class Scanner implements IScanner {
 			getChar();
 	}
 
-	public IToken nextToken() throws ScannerException, EndOfFile {
+	public IToken nextToken() throws ScannerException, EndOfFileException, OffsetLimitReachedException {
 		return nextToken( true, false ); 
 	}
 
-	public IToken nextToken(boolean pasting) throws ScannerException, EndOfFile {
+	public IToken nextToken(boolean pasting) throws ScannerException, EndOfFileException, OffsetLimitReachedException {
 		return nextToken( pasting, false ); 
 	}
 
-	public IToken nextToken( boolean pasting, boolean lookingForNextAlready ) throws ScannerException, EndOfFile
+	public IToken nextToken( boolean pasting, boolean lookingForNextAlready ) throws ScannerException, EndOfFileException, OffsetLimitReachedException
 	{
 		if( ! initialContextInitialized )
 			setupInitialContext();
@@ -793,7 +796,7 @@ public class Scanner implements IScanner {
 						IToken next = null;
 						try{
 							next = nextToken( true, true );
-						} catch( EndOfFile e ){ 
+						} catch( EndOfFileException e ){ 
 							next = null;
 						}
 						
@@ -804,7 +807,7 @@ public class Scanner implements IScanner {
 							currentToken = returnToken; 
 							try{
 								next = nextToken( true, true );
-							} catch( EndOfFile e ){ 
+							} catch( EndOfFileException e ){ 
 								next = null;
 							}
 						}
@@ -1598,11 +1601,11 @@ public class Scanner implements IScanner {
 						}
 					default :
 						handleProblem( IProblem.SCANNER_BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead ); 
-						c = ' ';
+						c = getChar();
 						continue;
 				}
 
-				throw Parser.endOfFile;
+				throwEOF();
 			}
 		}
 
@@ -1613,7 +1616,8 @@ public class Scanner implements IScanner {
 		}
 
 		// we're done
-		throw Parser.endOfFile;
+		throwEOF();
+		return null;
 	}
 
 
@@ -1683,7 +1687,7 @@ public class Scanner implements IScanner {
     // the static instance we always use
     protected static endOfMacroTokenException endOfMacroToken = new endOfMacroTokenException();
     
-    public IToken nextTokenForStringizing() throws ScannerException, EndOfFile
+    public IToken nextTokenForStringizing() throws ScannerException, EndOfFileException, OffsetLimitReachedException
     {     
     	int beginOffset = getCurrentOffset();
         int c = getChar();
@@ -1771,8 +1775,22 @@ public class Scanner implements IScanner {
         }
         
         // we're done
-        throw Parser.endOfFile;
+        throwEOF();
+        return null;
     }
+
+
+	/**
+	 * 
+	 */
+	protected void throwEOF() throws EndOfFileException, OffsetLimitReachedException {
+		if( offsetLimit == NO_OFFSET_LIMIT )
+			throw new EndOfFileException();
+		
+		if( finalToken.getEndOffset() == offsetLimit )
+			throw new OffsetLimitReachedException(finalToken);
+		throw new OffsetLimitReachedException( null );
+	}
 
 
 	static {
@@ -1956,19 +1974,20 @@ public class Scanner implements IScanner {
 	            parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE, language, log );
 			} catch( ParserFactoryException pfe )
 			{
-				// TODO - make INTERNAL IProblem
-				// should never happen
+				handleInternalError();
 			}
 			try {
 				IASTExpression exp = parser.expression(null);
 				if( exp.evaluateExpression() == 0 )
 					return false;
 				return true;
-			} catch( Backtrack backtrack  )
+			} catch( BacktrackException backtrack  )
 			{
 				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true, true ); 
 			}
 			catch (ExpressionEvaluationException e) {
+				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true, true );
+			} catch (EndOfFileException e) {
 				handleProblem( IProblem.PREPROCESSOR_CONDITIONAL_EVAL_ERROR, expression, beginningOffset, false, true, true );
 			}
 			return true; 
@@ -2058,10 +2077,13 @@ public class Scanner implements IScanner {
 			
 			try {
 				t = helperScanner.nextToken(false);
-			} catch (EndOfFile eof) {
+			} catch (OffsetLimitReachedException e) {
 				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );				
 				return;
-			}
+			} catch (EndOfFileException eof) {
+				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );				
+				return;
+			} 
 
 			try {
 				if (t.getType() == IToken.tSTRING) {
@@ -2091,7 +2113,7 @@ public class Scanner implements IScanner {
 						
 						endOffset = baseOffset + t.getEndOffset();
 						
-					} catch (EndOfFile eof) {
+					} catch (EndOfFileException eof) {
 						handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
 						return;
 					}
@@ -2105,10 +2127,13 @@ public class Scanner implements IScanner {
 				} else 
 					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
 			}
-			catch( EndOfFile eof )
+			catch (OffsetLimitReachedException e) {
+				handleInternalError();
+			}
+			catch( EndOfFileException eof )
 			{
 				// good
-			}
+			} 
 			
 		} else 
 			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#include " + includeLine, beginningOffset, false, true, true );
@@ -2172,7 +2197,7 @@ public class Scanner implements IScanner {
 		forInclusion = b;
 	}
 
-	protected void poundDefine(int beginning) throws ScannerException, EndOfFile {
+	protected void poundDefine(int beginning) throws ScannerException, EndOfFileException {
 		skipOverWhitespace();
 		// definition 
 		String key = getNextIdentifier();
@@ -2245,8 +2270,12 @@ public class Scanner implements IScanner {
 				} catch (ParserFactoryException e1) {
 				}
 				helperScanner.setTokenizingMacroReplacementList( true );
-				IToken t = helperScanner.nextToken(false);
-	
+				IToken t = null;
+				try {
+					t = helperScanner.nextToken(false);
+				} catch (OffsetLimitReachedException e2) {
+					handleInternalError();
+				}
 				try {
 					while (true) {
 						//each # preprocessing token in the replacement list shall be followed
@@ -2268,7 +2297,11 @@ public class Scanner implements IScanner {
 						t = helperScanner.nextToken(false);
 					}
 				}
-				catch( EndOfFile eof )
+				catch( OffsetLimitReachedException olre )
+				{
+					handleInternalError();
+				}
+				catch( EndOfFileException eof )
 				{
 					// good
 				}
@@ -2363,7 +2396,6 @@ public class Scanner implements IScanner {
 				}
 				else if( newDefinition instanceof String )
 				{				 
-					
 					if( previousDefinition instanceof String ) 
 					{
 						Scanner previous = new Scanner( new StringReader( (String)previousDefinition ), "redef-test", new ScannerInfo(), new NullSourceElementRequestor(), 
@@ -2383,7 +2415,11 @@ public class Scanner implements IScanner {
 								break; 
 								
 							}
-							catch( EndOfFile eof )
+							catch( OffsetLimitReachedException olre ) 
+							{
+								handleInternalError(); 
+							}
+							catch( EndOfFileException eof )
 							{
 								if( ( p != null ) && ( c == null ) )
 									break;
@@ -2394,12 +2430,16 @@ public class Scanner implements IScanner {
 										c = current.nextToken(); 
 										break; 
 									}
-									catch( EndOfFile eof2 )
+									catch( OffsetLimitReachedException olre ) 
+									{
+										handleInternalError(); 
+									}
+									catch( EndOfFileException eof2 )
 									{
 										return;
 									}
 								}
-							}
+							}							
 						} 
 					}
 				}
@@ -2408,7 +2448,15 @@ public class Scanner implements IScanner {
 			}			
 	}
     
-    protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
+    /**
+	 * 
+	 */
+	protected void handleInternalError() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
         Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), new NullSourceElementRequestor(), mode, language, log);
         tokenizer.setThrowExceptionOnBadCharacterRead(false);
@@ -2449,10 +2497,16 @@ public class Scanner implements IScanner {
                 }
                 space = true;
             }
-        } catch (EndOfFile e) {
+        }
+        catch( OffsetLimitReachedException olre )
+            {
+            	handleInternalError();
+            }
+        catch (EndOfFileException e) {
             // Good
             parameterValues.add(str);
         }
+
         
         return parameterValues;
     }

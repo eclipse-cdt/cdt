@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.parser.IProblem;
 
 /**
  * @author jcamelon
- *
  */
 public abstract class BaseProblemFactory {
 

@@ -12,8 +12,21 @@ package org.eclipse.cdt.core.parser;
 
 /**
  * @author jcamelon
- *
  */
-public class Backtrack extends Exception
-{
+public class OffsetLimitReachedException extends EndOfFileException {
+
+	private final IToken finalToken;
+
+	public OffsetLimitReachedException( IToken token )
+	{
+		finalToken = token;
+	}
+	
+	/**
+	 * @return Returns the finalToken.
+	 */
+	public IToken getFinalToken() {
+		return finalToken;
+	}
+
 }

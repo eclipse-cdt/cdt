@@ -1,3 +1,12 @@
+2004-08-25 Chris Wiebe
+
+	class wizard fixes
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassWizardMessages.properties
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationCodeGenerator.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/SourceFileSelectionDialog.java
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/SourceFolderSelectionDialog.java
+
 2004-08-27 Alain Magloire
 
 	Fix for 72135

@@ -418,52 +418,56 @@ public class CThread extends CDebugElement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICDIEvent event )
+	public void handleDebugEvents( ICDIEvent[] events )
 	{
 		if ( isDisposed() )
 			return;
-		ICDIObject source = event.getSource();
-		if ( source == null )
-			return;
-		if ( source.getTarget().equals( getCDITarget() ) )
+		for (int i = 0; i < events.length; i++)
 		{
-			if ( event instanceof ICDISuspendedEvent )
+			ICDIEvent event = events[i];
+			ICDIObject source = event.getSource();
+			if ( source == null )
+				continue;
+			if ( source.getTarget().equals( getCDITarget() ) )
 			{
-				if ( ( source instanceof ICDIThread && getCDIThread().equals( (ICDIThread)source ) ) ||
-					 source instanceof ICDITarget )
+				if ( event instanceof ICDISuspendedEvent )
 				{
-//					if ( !(((ICDISuspendedEvent)event).getReason() instanceof ICDISharedLibraryEvent && applyDeferredBreakpoints()) )
-						handleSuspendedEvent( (ICDISuspendedEvent)event );
+					if ( ( source instanceof ICDIThread && getCDIThread().equals( (ICDIThread)source ) ) ||
+							source instanceof ICDITarget )
+					{
+//						if ( !(((ICDISuspendedEvent)event).getReason() instanceof ICDISharedLibraryEvent && applyDeferredBreakpoints()) )
+							handleSuspendedEvent( (ICDISuspendedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIResumedEvent )
-			{
-				if ( ( source instanceof ICDIThread && source.equals( getCDIThread() ) ) )
+				else if ( event instanceof ICDIResumedEvent )
 				{
-					handleResumedEvent( (ICDIResumedEvent)event );
+					if ( ( source instanceof ICDIThread && source.equals( getCDIThread() ) ) )
+					{
+						handleResumedEvent( (ICDIResumedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIDestroyedEvent )
-			{
-				if ( source instanceof ICDIThread )
+				else if ( event instanceof ICDIDestroyedEvent )
 				{
-					handleTerminatedEvent( (ICDIDestroyedEvent)event );
+					if ( source instanceof ICDIThread )
+					{
+						handleTerminatedEvent( (ICDIDestroyedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIDisconnectedEvent )
-			{
-				if ( source instanceof ICDIThread )
+				else if ( event instanceof ICDIDisconnectedEvent )
 				{
-					handleDisconnectedEvent( (ICDIDisconnectedEvent)event );
+					if ( source instanceof ICDIThread )
+					{
+						handleDisconnectedEvent( (ICDIDisconnectedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIChangedEvent )
-			{
-				if ( source instanceof ICDIThread )
+				else if ( event instanceof ICDIChangedEvent )
 				{
-					handleChangedEvent( (ICDIChangedEvent)event );
+					if ( source instanceof ICDIThread )
+					{
+						handleChangedEvent( (ICDIChangedEvent)event );
+					}
 				}
 			}
 		}

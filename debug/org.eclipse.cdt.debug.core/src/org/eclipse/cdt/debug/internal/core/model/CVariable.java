@@ -5,7 +5,6 @@
  */
 package org.eclipse.cdt.debug.internal.core.model;
 
-import java.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -581,33 +580,37 @@ public abstract class CVariable extends CDebugElement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICDIEvent event )
+	public void handleDebugEvents( ICDIEvent[] events )
 	{
-		ICDIObject source = event.getSource();
-		if (source == null)
-			return;
-
-		if ( source.getTarget().equals( getCDITarget() ) )
+		for (int i = 0; i < events.length; i++)
 		{
-			if ( event instanceof ICDIChangedEvent )
+			ICDIEvent event = events[i];
+			ICDIObject source = event.getSource();
+			if (source == null)
+				continue;
+
+			if ( source.getTarget().equals( getCDITarget() ) )
 			{
-				if ( source instanceof ICDIVariable && isSameVariable( (ICDIVariable)source ) )
+				if ( event instanceof ICDIChangedEvent )
 				{
-					handleChangedEvent( (ICDIChangedEvent)event );
+					if ( source instanceof ICDIVariable && isSameVariable( (ICDIVariable)source ) )
+					{
+						handleChangedEvent( (ICDIChangedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIDestroyedEvent )
-			{
-				if ( source instanceof ICDIVariable && isSameVariable( (ICDIVariable)source ) )
+				else if ( event instanceof ICDIDestroyedEvent )
 				{
-					handleDestroyedEvent( (ICDIDestroyedEvent)event );
+					if ( source instanceof ICDIVariable && isSameVariable( (ICDIVariable)source ) )
+					{
+						handleDestroyedEvent( (ICDIDestroyedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIResumedEvent )
-			{
-				handleResumedEvent( (ICDIResumedEvent)event );
+				else if ( event instanceof ICDIResumedEvent )
+				{
+					handleResumedEvent( (ICDIResumedEvent)event );
+				}
 			}
 		}
 	}

@@ -104,9 +104,9 @@ public class CSharedLibrary extends CDebugElement
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICDIEvent event )
+	public void handleDebugEvents( ICDIEvent[] events )
 	{
 	}
 }

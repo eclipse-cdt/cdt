@@ -19,5 +19,5 @@ public interface ICDIEventListener {
 	 * 
 	 * @param event - the event
 	 */
-	void handleDebugEvent( ICDIEvent event );
+	void handleDebugEvents(ICDIEvent[] event);
 }

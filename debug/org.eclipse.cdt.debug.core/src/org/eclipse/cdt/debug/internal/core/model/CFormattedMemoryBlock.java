@@ -422,42 +422,46 @@ public class CFormattedMemoryBlock extends CDebugElement
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICDIEvent event )
+	public void handleDebugEvents( ICDIEvent[] events )
 	{
-		ICDIObject source = event.getSource();
-		if (source == null)
-			return;
-
-		if ( source.getTarget().equals( getCDITarget() ) )
+		for (int i = 0; i < events.length; i++)
 		{
-			if ( event instanceof ICDIResumedEvent )
+			ICDIEvent event = events[i];
+			ICDIObject source = event.getSource();
+			if (source == null)
+				continue;
+
+			if ( source.getTarget().equals( getCDITarget() ) )
 			{
-				if ( source instanceof ICDITarget )
+				if ( event instanceof ICDIResumedEvent )
 				{
-					handleResumedEvent( (ICDIResumedEvent)event );
+					if ( source instanceof ICDITarget )
+					{
+						handleResumedEvent( (ICDIResumedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIMemoryChangedEvent )
-			{
-				if ( source instanceof ICDIMemoryBlock && source.equals( getCDIMemoryBlock() ) )
+				else if ( event instanceof ICDIMemoryChangedEvent )
 				{
-					handleChangedEvent( (ICDIMemoryChangedEvent)event );
+					if ( source instanceof ICDIMemoryBlock && source.equals( getCDIMemoryBlock() ) )
+					{
+						handleChangedEvent( (ICDIMemoryChangedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIChangedEvent )
-			{
-				if ( source instanceof ICDIExpression && source.equals( fAddressExpression ) )
+				else if ( event instanceof ICDIChangedEvent )
 				{
-					handleAddressChangedEvent( (ICDIChangedEvent)event );
+					if ( source instanceof ICDIExpression && source.equals( fAddressExpression ) )
+					{
+						handleAddressChangedEvent( (ICDIChangedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIDestroyedEvent )
-			{
-				if ( source instanceof ICDIExpression && source.equals( fAddressExpression ) )
+				else if ( event instanceof ICDIDestroyedEvent )
 				{
-					handleDestroyedEvent( (ICDIDestroyedEvent)event );
+					if ( source instanceof ICDIExpression && source.equals( fAddressExpression ) )
+					{
+						handleDestroyedEvent( (ICDIDestroyedEvent)event );
+					}
 				}
 			}
 		}

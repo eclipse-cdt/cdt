@@ -1,5 +1,4 @@
 package org.eclipse.cdt.debug.core;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 /*
  * (c) Copyright QNX Software System 2002.

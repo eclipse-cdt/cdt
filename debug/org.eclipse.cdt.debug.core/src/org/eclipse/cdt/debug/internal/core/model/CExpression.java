@@ -89,25 +89,30 @@ public class CExpression extends CModificationVariable
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICDIEvent event )
+	public void handleDebugEvents( ICDIEvent[] events )
 	{
-		if ( event instanceof ICDIResumedEvent )
+		for (int i = 0; i < events.length; i++)
 		{
-			if ( event.getSource() instanceof ICDITarget && getCDITarget().equals( event.getSource() ) )
+			ICDIEvent event = events[i];
+			if ( event instanceof ICDIResumedEvent )
 			{
-				try
+				if ( event.getSource() instanceof ICDITarget && getCDITarget().equals( event.getSource() ) )
 				{
-					setChanged( false );
+					try
+					{
+						setChanged( false );
+					}
+					catch( DebugException e )
+					{
+						CDebugCorePlugin.log( e );
+					}
 				}
-				catch( DebugException e )
-				{
-					CDebugCorePlugin.log( e );
-				}
+				break;
 			}
 		}
-		super.handleDebugEvent(event);
+		super.handleDebugEvents(events);
 	}
 
 	/* (non-Javadoc)

@@ -62,27 +62,30 @@ public class CGlobalVariable extends CModificationVariable
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICDIEvent event )
+	public void handleDebugEvents( ICDIEvent[] events )
 	{
-		super.handleDebugEvent( event );
-	
-		ICDIObject source = event.getSource();
-		if (source == null)
-			return;
-	
-		if ( source.getTarget().equals( getCDITarget() ) )
+		super.handleDebugEvents( events );
+		for (int i = 0; i < events.length; i++)
 		{
-			if ( event instanceof ICDIResumedEvent )
+			ICDIEvent event = events[i];
+			ICDIObject source = event.getSource();
+			if (source == null)
+				continue;
+	
+			if ( source.getTarget().equals( getCDITarget() ) )
 			{
-				try
+				if ( event instanceof ICDIResumedEvent )
 				{
-					setChanged( false );
-				}
-				catch( DebugException e )
-				{
-					CDebugCorePlugin.log( e );
+					try
+					{
+						setChanged( false );
+					}
+					catch( DebugException e )
+					{
+						CDebugCorePlugin.log( e );
+					}
 				}
 			}
 		}

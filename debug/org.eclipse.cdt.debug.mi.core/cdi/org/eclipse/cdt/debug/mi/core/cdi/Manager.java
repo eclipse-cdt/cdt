@@ -48,17 +48,9 @@ public abstract class Manager extends SessionObject implements ICDIManager {
 	public abstract void update() throws CDIException;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent[])
 	 */
-	public void handleDebugEvent(ICDIEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			handleDebugEvent(events[i]);
-		}
+	public void handleDebugEvents(ICDIEvent[] events) {
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent)
-	 */
-	public void handleDebugEvent(ICDIEvent event) {
-	}
 }

@@ -187,27 +187,31 @@ public class CBreakpointManager implements ICBreakpointManager, ICDIEventListene
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(org.eclipse.cdt.debug.core.cdi.event.ICDIEvent)
 	 */
-	public void handleDebugEvent( ICDIEvent event )
+	public void handleDebugEvents( ICDIEvent[] events )
 	{
-		ICDIObject source = event.getSource();
-		if ( source != null && source.getTarget().equals( getDebugTarget().getCDITarget() ) )
+		for (int i = 0; i < events.length; i++)
 		{
-			if ( event instanceof ICDICreatedEvent )
+			ICDIEvent event = events[i];
+			ICDIObject source = event.getSource();
+			if ( source != null && source.getTarget().equals( getDebugTarget().getCDITarget() ) )
 			{
-				if ( source instanceof ICDIBreakpoint )
-					handleBreakpointCreatedEvent( (ICDIBreakpoint)source );
-			}
-			else if ( event instanceof ICDIDestroyedEvent )
-			{
-				if ( source instanceof ICDIBreakpoint )
-					handleBreakpointDestroyedEvent( (ICDIBreakpoint)source );
-			}
-			else if ( event instanceof ICDIChangedEvent )
-			{
-				if ( source instanceof ICDIBreakpoint )
-					handleBreakpointChangedEvent( (ICDIBreakpoint)source );
+				if ( event instanceof ICDICreatedEvent )
+				{
+					if ( source instanceof ICDIBreakpoint )
+						handleBreakpointCreatedEvent( (ICDIBreakpoint)source );
+				}
+				else if ( event instanceof ICDIDestroyedEvent )
+				{
+					if ( source instanceof ICDIBreakpoint )
+						handleBreakpointDestroyedEvent( (ICDIBreakpoint)source );
+				}
+				else if ( event instanceof ICDIChangedEvent )
+				{
+					if ( source instanceof ICDIBreakpoint )
+						handleBreakpointChangedEvent( (ICDIBreakpoint)source );
+				}
 			}
 		}
 	}

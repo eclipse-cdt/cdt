@@ -6,7 +6,6 @@
 
 package org.eclipse.cdt.debug.core;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -17,6 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
@@ -194,20 +194,23 @@ public class CDebugModel
 			throw new DebugException( e.getStatus() );
 		}
 
-		((CDebugTarget)target[0]).handleDebugEvent( new ICDISuspendedEvent()
-														{
-															public ICDISessionObject getReason()
-															{
-																return null;
-															}
+		ICDIEvent[] events = new ICDIEvent[]
+										 {
+											new ICDISuspendedEvent()
+											{
+												public ICDISessionObject getReason()
+												{
+													return null;
+												}
 	
-															public ICDIObject getSource()
-															{
-																return cdiTarget;
-															}
+												public ICDIObject getSource()
+												{
+													return cdiTarget;
+												}
 
-														} );
-
+											}
+										 };
+		((CDebugTarget)target[0]).handleDebugEvents( events );
 		return target[0];
 	}
 
@@ -240,19 +243,23 @@ public class CDebugModel
 			throw new DebugException( e.getStatus() );
 		}
 
-		((CDebugTarget)target[0]).handleDebugEvent( new ICDISuspendedEvent()
-														{
-															public ICDISessionObject getReason()
-															{
-																return null;
-															}
-	
-															public ICDIObject getSource()
-															{
-																return cdiTarget;
-															}
+		ICDIEvent[] events = new ICDIEvent[]
+										   {
+												new ICDISuspendedEvent()
+												{	
+													public ICDISessionObject getReason()
+													{
+														return null;
+													}
 
-														} );
+													public ICDIObject getSource()
+													{
+														return cdiTarget;
+													}
+
+												} 
+										   };
+		((CDebugTarget)target[0]).handleDebugEvents( events );
 
 		return target[0];
 	}

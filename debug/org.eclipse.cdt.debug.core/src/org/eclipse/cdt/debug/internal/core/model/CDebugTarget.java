@@ -675,9 +675,10 @@ public class CDebugTarget extends CDebugElement
 	protected void suspendThreads( ICDISuspendedEvent event )
 	{
 		Iterator it = getThreadList().iterator();
+		ICDIEvent[] events = new ICDIEvent[] {event};
 		while( it.hasNext() )
 		{
-			((CThread)it.next()).handleDebugEvent( event );
+			((CThread)it.next()).handleDebugEvents( events );
 		}
 	}
 
@@ -1002,87 +1003,91 @@ public class CDebugTarget extends CDebugElement
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvents(ICDIEvent)
 	 */
-	public void handleDebugEvent( ICDIEvent event )
+	public void handleDebugEvents( ICDIEvent[] events )
 	{
-		ICDIObject source = event.getSource();
-		if ( source == null && event instanceof ICDIDestroyedEvent )
+		for (int i = 0; i < events.length; i++)
 		{
-			handleTerminatedEvent( (ICDIDestroyedEvent)event );
-		}		
-		else if ( source.getTarget().equals( getCDITarget() ) )
-		{
-			if ( event instanceof ICDICreatedEvent )
+			ICDIEvent event = events[i];
+			ICDIObject source = event.getSource();
+			if ( source == null && event instanceof ICDIDestroyedEvent )
 			{
-				if ( source instanceof ICDIThread )
-				{
-					handleThreadCreatedEvent( (ICDICreatedEvent)event );
-				}
-				if ( source instanceof ICDISharedLibrary )
-				{
-					getSharedLibraryManager().sharedLibraryLoaded( (ICDISharedLibrary)source );
-				}
+				handleTerminatedEvent( (ICDIDestroyedEvent)event );
 			}
-			else if ( event instanceof ICDISuspendedEvent )
+			else if ( source.getTarget().equals( getCDITarget() ) )
 			{
-				if ( source instanceof ICDITarget || source instanceof ICDIThread )
+				if ( event instanceof ICDICreatedEvent )
 				{
-					handleSuspendedEvent( (ICDISuspendedEvent)event );
+					if ( source instanceof ICDIThread )
+					{
+						handleThreadCreatedEvent( (ICDICreatedEvent)event );
+					}
+					if ( source instanceof ICDISharedLibrary )
+					{
+						getSharedLibraryManager().sharedLibraryLoaded( (ICDISharedLibrary)source );
+					}
 				}
-			}
-			else if ( event instanceof ICDIResumedEvent )
-			{
-				if ( source instanceof ICDITarget )
+				else if ( event instanceof ICDISuspendedEvent )
 				{
-					handleResumedEvent( (ICDIResumedEvent)event );
+					if ( source instanceof ICDITarget || source instanceof ICDIThread )
+					{
+						handleSuspendedEvent( (ICDISuspendedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIExitedEvent )
-			{
-				if ( source instanceof ICDITarget )
+				else if ( event instanceof ICDIResumedEvent )
 				{
-					handleExitedEvent( (ICDIExitedEvent)event );
+					if ( source instanceof ICDITarget )
+					{
+						handleResumedEvent( (ICDIResumedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIDestroyedEvent )
-			{
-				if ( source instanceof ICDIThread )
+				else if ( event instanceof ICDIExitedEvent )
 				{
-					handleThreadTerminatedEvent( (ICDIDestroyedEvent)event );
+					if ( source instanceof ICDITarget )
+					{
+						handleExitedEvent( (ICDIExitedEvent)event );
+					}
 				}
-				if ( source instanceof ICDISharedLibrary )
+				else if ( event instanceof ICDIDestroyedEvent )
 				{
-					getSharedLibraryManager().sharedLibraryUnloaded( (ICDISharedLibrary)source );
+					if ( source instanceof ICDIThread )
+					{
+						handleThreadTerminatedEvent( (ICDIDestroyedEvent)event );
+					}
+					if ( source instanceof ICDISharedLibrary )
+					{
+						getSharedLibraryManager().sharedLibraryUnloaded( (ICDISharedLibrary)source );
+					}
 				}
-			}
-			else if ( event instanceof ICDIDisconnectedEvent )
-			{
-				if ( source instanceof ICDITarget )
+				else if ( event instanceof ICDIDisconnectedEvent )
 				{
-					handleDisconnectedEvent( (ICDIDisconnectedEvent)event );
+					if ( source instanceof ICDITarget )
+					{
+						handleDisconnectedEvent( (ICDIDisconnectedEvent)event );
+					}
 				}
-			}
-			else if ( event instanceof ICDIChangedEvent )
-			{
-				if ( source instanceof ICDITarget )
+				else if ( event instanceof ICDIChangedEvent )
 				{
-					handleChangedEvent( (ICDIChangedEvent)event );
+					if ( source instanceof ICDITarget )
+					{
+						handleChangedEvent( (ICDIChangedEvent)event );
+					}
+					if ( source instanceof ICDISharedLibrary )
+					{
+						getSharedLibraryManager().symbolsLoaded( (ICDISharedLibrary)source );
+					}
+					if ( source instanceof ICDISignal )
+					{
+						getSignalManager().signalChanged( (ICDISignal)source );
+					}
 				}
-				if ( source instanceof ICDISharedLibrary )
+				else if ( event instanceof ICDIRestartedEvent )
 				{
-					getSharedLibraryManager().symbolsLoaded( (ICDISharedLibrary)source );
-				}
-				if ( source instanceof ICDISignal )
-				{
-					getSignalManager().signalChanged( (ICDISignal)source );
-				}
-			}
-			else if ( event instanceof ICDIRestartedEvent )
-			{
-				if ( source instanceof ICDITarget )
-				{
-					handleRestartedEvent( (ICDIRestartedEvent)event );
+					if ( source instanceof ICDITarget )
+					{
+						handleRestartedEvent( (ICDIRestartedEvent)event );
+					}
 				}
 			}
 		}
@@ -1318,7 +1323,8 @@ public class CDebugTarget extends CDebugElement
 			CThread thread = findThread( (ICDIThread)event.getSource() );
 			if ( thread != null && newThreads.contains( thread ) )
 			{
-				thread.handleDebugEvent( event );
+				ICDIEvent[] evts = new ICDIEvent[]{event};
+				thread.handleDebugEvents( evts );
 			}
 		}
 		if ( reason instanceof ICDIEndSteppingRange )

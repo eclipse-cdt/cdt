@@ -1,3 +1,11 @@
+2004-03-17 Alain Magloire
+
+	Changes to get some performances.  The array of
+	events is passed instead of one at a time.
+
+	Affected files all the implement ICDIEventListener
+	to many to enumerate.
+
 2004-03-16 Alain Magloire
 
 	Make this class extends ICDIEventListener

@@ -13,7 +13,6 @@ import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 
 public class DebugConfiguration implements ICDebugConfiguration {
 	/**

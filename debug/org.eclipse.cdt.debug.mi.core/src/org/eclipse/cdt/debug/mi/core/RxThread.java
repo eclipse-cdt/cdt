@@ -26,6 +26,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorSignalExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISharedLibEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIStoppedEvent;
@@ -64,9 +65,8 @@ public class RxThread extends Thread {
 	 * Get the response, parse the output, dispatch for OOB
 	 * search for the corresponding token in rxQueue for the ResultRecord.
 	 */
-	public void run () {
-		BufferedReader reader =
-			new BufferedReader(new InputStreamReader(session.getChannelInputStream()));
+	public void run() {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(session.getChannelInputStream()));
 		try {
 			String line;
 			while ((line = reader.readLine()) != null) {
@@ -84,8 +84,8 @@ public class RxThread extends Thread {
 		if (session.getChannelInputStream() != null) {
 			Runnable cleanup = new Runnable() {
 				public void run() {
-					// Change the state of the inferior.
-					session.getMIInferior().setTerminated();
+						// Change the state of the inferior.
+	session.getMIInferior().setTerminated();
 					session.terminate();
 				}
 			};
@@ -125,10 +125,9 @@ public class RxThread extends Thread {
 
 				// Clear the accumulate oobList on each new Result Command
 				// response.
-				MIOOBRecord [] oobRecords =
-					(MIOOBRecord[])oobList.toArray(new MIOOBRecord[0]); 
+				MIOOBRecord[] oobRecords = (MIOOBRecord[]) oobList.toArray(new MIOOBRecord[0]);
 				oobList.clear();
-				
+
 				// Check if the state changed.
 				String state = rr.getResultClass();
 				if ("running".equals(state)) {
@@ -174,7 +173,7 @@ public class RxThread extends Thread {
 						cmd.setMIOutput(response);
 						cmd.notifyAll();
 					}
-				} 
+				}
 				// Some result record contains informaton specific to oob.
 				// This will happen when CLI-Command is use, for example
 				// doing "run" will block and return a breakpointhit
@@ -189,7 +188,7 @@ public class RxThread extends Thread {
 				}
 			}
 
-			MIEvent[] events = (MIEvent[])list.toArray(new MIEvent[list.size()]);
+			MIEvent[] events = (MIEvent[]) list.toArray(new MIEvent[list.size()]);
 			session.fireEvents(events);
 		} // if response != null
 	}
@@ -199,15 +198,15 @@ public class RxThread extends Thread {
 	 */
 	void processMIOOBRecord(MIOOBRecord oob, List list) {
 		if (oob instanceof MIAsyncRecord) {
-			processMIOOBRecord((MIAsyncRecord)oob, list);
+			processMIOOBRecord((MIAsyncRecord) oob, list);
 		} else if (oob instanceof MIStreamRecord) {
-			processMIOOBRecord((MIStreamRecord)oob);
+			processMIOOBRecord((MIStreamRecord) oob);
 		}
 	}
 
 	void processMIOOBRecord(MIAsyncRecord async, List list) {
 		if (async instanceof MIExecAsyncOutput) {
-			MIExecAsyncOutput exec = (MIExecAsyncOutput)async;
+			MIExecAsyncOutput exec = (MIExecAsyncOutput) async;
 			// Change of state.
 			String state = exec.getAsyncClass();
 			if ("stopped".equals(state)) {
@@ -218,7 +217,7 @@ public class RxThread extends Thread {
 					MIValue val = results[i].getMIValue();
 					if (var.equals("reason")) {
 						if (val instanceof MIConst) {
-							String reason =((MIConst)val).getString();
+							String reason = ((MIConst) val).getString();
 							e = createEvent(reason, exec);
 							if (e != null) {
 								list.add(e);
@@ -226,7 +225,24 @@ public class RxThread extends Thread {
 						}
 					}
 				}
-			
+
+				// GDB does not have reason when stopping on shared, hopefully
+				// this will be fix in newer version meanwhile, we will use a hack
+				// to cope.  On most platform we can detect by looking at the
+				// console stream for phrase:
+				// 	~"Stopped due to shared library event\n"
+				//
+				// Althought it is a _real_ bad idea to do this, we do not have
+				// any other alternatives.
+				String[] logs = getStreamRecords();
+				for (int i = 0; i < logs.length; i++) {
+					if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) {
+						session.getMIInferior().setSuspended();
+						e = new MISharedLibEvent(exec);
+						list.add(e);
+					}
+				}
+
 				// We were stopped for some unknown reason, for example
 				// GDB for temporary breakpoints will not send the
 				// "reason" ??? still fire a stopped event.
@@ -247,7 +263,7 @@ public class RxThread extends Thread {
 		if (stream instanceof MIConsoleStreamOutput) {
 			OutputStream console = session.getConsolePipe();
 			if (console != null) {
-				MIConsoleStreamOutput out = (MIConsoleStreamOutput)stream;
+				MIConsoleStreamOutput out = (MIConsoleStreamOutput) stream;
 				String str = out.getString();
 				if (str != null) {
 					try {
@@ -263,7 +279,7 @@ public class RxThread extends Thread {
 		} else if (stream instanceof MITargetStreamOutput) {
 			OutputStream target = session.getMIInferior().getPipedOutputStream();
 			if (target != null) {
-				MITargetStreamOutput out = (MITargetStreamOutput)stream;
+				MITargetStreamOutput out = (MITargetStreamOutput) stream;
 				String str = out.getString();
 				if (str != null) {
 					try {
@@ -277,7 +293,7 @@ public class RxThread extends Thread {
 			// This is meant for the gdb console.
 			OutputStream log = session.getLogPipe();
 			if (log != null) {
-				MILogStreamOutput out = (MILogStreamOutput)stream;
+				MILogStreamOutput out = (MILogStreamOutput) stream;
 				String str = out.getString();
 				if (str != null) {
 					try {
@@ -297,13 +313,13 @@ public class RxThread extends Thread {
 	 * Dispatch a thread to deal with the listeners.
 	 */
 	void processMIOOBRecord(MIResultRecord rr, List list) {
-		MIResult[] results =  rr.getMIResults();
+		MIResult[] results = rr.getMIResults();
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();
 			if (var.equals("reason")) {
 				MIValue value = results[i].getMIValue();
 				if (value instanceof MIConst) {
-					String reason = ((MIConst)value).getString();
+					String reason = ((MIConst) value).getString();
 					MIEvent event = createEvent(reason, rr);
 					if (event != null) {
 						list.add(event);
@@ -330,9 +346,10 @@ public class RxThread extends Thread {
 				event = new MIBreakpointHitEvent(rr);
 			}
 			session.getMIInferior().setSuspended();
-		} else if ("watchpoint-trigger".equals(reason) ||
-		           "read-watchpoint-trigger".equals(reason) ||
-		           "access-watchpoint-trigger".equals(reason)) {
+		} else if (
+			"watchpoint-trigger".equals(reason)
+				|| "read-watchpoint-trigger".equals(reason)
+				|| "access-watchpoint-trigger".equals(reason)) {
 			if (exec != null) {
 				event = new MIWatchpointTriggerEvent(exec);
 			} else if (rr != null) {
@@ -374,8 +391,7 @@ public class RxThread extends Thread {
 				event = new MIFunctionFinishedEvent(rr);
 			}
 			session.getMIInferior().setSuspended();
-		} else if ("exited-normally".equals(reason) ||
-			"exited".equals(reason)) {
+		} else if ("exited-normally".equals(reason) || "exited".equals(reason)) {
 			if (exec != null) {
 				event = new MIInferiorExitEvent(exec);
 			} else if (rr != null) {
@@ -391,6 +407,20 @@ public class RxThread extends Thread {
 			session.getMIInferior().setTerminated();
 		}
 		return event;
+	}
+
+	String[] getStreamRecords() {
+		List streamRecords = new ArrayList();
+		MIOOBRecord[] oobRecords = (MIOOBRecord[]) oobList.toArray(new MIOOBRecord[0]);
+		for (int i = 0; i < oobRecords.length; i++) {
+			if (oobRecords[i] instanceof MIStreamRecord) {
+				String s = ((MIStreamRecord) oobRecords[i]).getString().trim();
+				if (s != null && s.length() > 0) {
+					streamRecords.add(s);
+				}
+			}
+		}
+		return (String[]) streamRecords.toArray(new String[0]);
 	}
 
 }

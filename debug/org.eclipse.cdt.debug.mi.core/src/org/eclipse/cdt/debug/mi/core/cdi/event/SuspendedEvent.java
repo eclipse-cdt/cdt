@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.BreakpointHit;
 import org.eclipse.cdt.debug.mi.core.cdi.EndSteppingRange;
 import org.eclipse.cdt.debug.mi.core.cdi.ErrorInfo;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalReceived;
 import org.eclipse.cdt.debug.mi.core.cdi.WatchpointScope;
 import org.eclipse.cdt.debug.mi.core.cdi.WatchpointTrigger;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIErrorEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MISharedLibEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointScopeEvent;
@@ -56,6 +58,8 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 			return new EndSteppingRange(session);
 		} else if (event instanceof MIErrorEvent) {
 			return new ErrorInfo(session, (MIErrorEvent)event);
+		} else if (event instanceof MISharedLibEvent) {
+			return new SharedLibraryEvent(session);
 		}
 		return session;
 	}

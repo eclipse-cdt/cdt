@@ -47,7 +47,7 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue {
 	 * an Array of range[index, index + length - 1]
 	 */
 	public ICDIVariable[] getVariables(int index, int length) throws CDIException {
-		int children = getChildrenNumber();
+		//int children = getChildrenNumber();
 		//if (index >= children || index + length >= children) {
 		//	throw new CDIException("Index out of bound");
 		//}

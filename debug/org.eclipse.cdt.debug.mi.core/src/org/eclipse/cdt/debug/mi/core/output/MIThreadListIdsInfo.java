@@ -49,7 +49,7 @@ public class MIThreadListIdsInfo extends MIInfo {
 				if (value instanceof MIConst) {
 					String str = ((MIConst)value).getString();
 					try {
-						threadIds[i] = Integer.parseInt(str);
+						threadIds[i] = Integer.parseInt(str.trim());
 					} catch (NumberFormatException e) {
 					}
 				}

@@ -77,21 +77,21 @@ public class MIAsm {
 
 			if (var.equals("address")) {
 				try {
-					address = Long.decode(str).longValue();
+					address = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("func-name")) {
 				func = str;
 			} else if (var.equals("offset")) {
 				try {
-					offset = Long.decode(str).longValue();
+					offset = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("inst")) {
 				inst = str;
 			} else if (var.equals("line")) {
 				try {
-					line = Integer.parseInt(str);
+					line = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("file")) {

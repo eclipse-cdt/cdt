@@ -39,8 +39,8 @@ public class MIFrame {
 			if (i != 0) {
 				buffer.append(',');
 			}
-			buffer.append("{name=\"" + args[i].getName());
-			buffer.append(",value=\"" + args[i].getValue() + "}");
+			buffer.append("{name=\"" + args[i].getName() + "\"");
+			buffer.append(",value=\"" + args[i].getValue() + "\"}");
 		}
 		buffer.append(']');
 		return buffer.toString();
@@ -58,12 +58,12 @@ public class MIFrame {
 
 			if (var.equals("level")) {
 				try {
-					level = Integer.parseInt(str);
+					level = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("addr")) {
 				try {
-					addr = Long.decode(str).longValue();
+					addr = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("func")) {
@@ -72,7 +72,7 @@ public class MIFrame {
 				file = str;
 			} else if (var.equals("line")) {
 				try {
-					line = Integer.parseInt(str);
+					line = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("args")) {

@@ -23,9 +23,17 @@ public class MIResult {
 	}
 
 	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(variable);
 		if (value != null) {
-			return variable + "=" + value.toString(); 
+			String v = value.toString();
+			buffer.append('=');
+			if (v.charAt(0) == '[' || v.charAt(0) =='{') {
+				buffer.append(v); 
+			} else {
+				buffer.append("\"" + value.toString() + "\""); 
+			}
 		}
-		return variable;
+		return buffer.toString();
 	}
 }

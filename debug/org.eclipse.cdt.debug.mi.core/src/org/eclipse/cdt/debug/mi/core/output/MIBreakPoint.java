@@ -71,7 +71,7 @@ public class MIBreakPoint {
 
 			if (var.equals("number")) {
 				try {
-					number = Integer.parseInt(str);
+					number = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("type")) {
@@ -82,7 +82,7 @@ public class MIBreakPoint {
 				enabled = str.equals("y");
 			} else if (var.equals("addr")) {
 				try {
-					address = Long.decode(str).longValue();
+					address = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("func")) {
@@ -91,12 +91,12 @@ public class MIBreakPoint {
 				file = str;
 			} else if (var.equals("line")) {
 				try {
-					line = Integer.parseInt(str);
+					line = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("times")) {
 				try {
-					times = Integer.parseInt(str);
+					times = Integer.parseInt(str.trim());
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("what") || var.equals("exp")) {

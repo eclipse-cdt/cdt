@@ -110,37 +110,37 @@ public class MIDataReadMemoryInfo extends MIInfo {
 
 					if (var.equals("addr")) {
 						try {
-							addr = Long.decode(str).longValue();
+							addr = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
 					} else if (var.equals("nr-bytes")) {
 						try {
-							numBytes = Long.decode(str).longValue();
+							numBytes = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
 					} else if (var.equals("total-bytes")) {
 						try {
-							totalBytes = Long.decode(str).longValue();
+							totalBytes = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
 					} else if (var.equals("next-row")) {
 						try {
-							nextRow = Long.decode(str).longValue();
+							nextRow = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
 					} else if (var.equals("prev-row")) {
 						try {
-							prevRow = Long.decode(str).longValue();
+							prevRow = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
 					} else if (var.equals("next-page")) {
 						try {
-							nextPage = Long.decode(str).longValue();
+							nextPage = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
 					} else if (var.equals("prev-page")) {
 						try {
-							prevPage = Long.decode(str).longValue();
+							prevPage = Long.decode(str.trim()).longValue();
 						} catch (NumberFormatException e) {
 						}
 					} else if (var.equals("memory")) {

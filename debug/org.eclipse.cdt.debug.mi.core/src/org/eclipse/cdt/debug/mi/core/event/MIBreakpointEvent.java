@@ -1,27 +1,34 @@
-package org.eclipse.cdt.debug.mi.core.output;
+package org.eclipse.cdt.debug.mi.core.event;
 
-
+import org.eclipse.cdt.debug.mi.core.output.MIConst;
+import org.eclipse.cdt.debug.mi.core.output.MIExecAsyncOutput;
+import org.eclipse.cdt.debug.mi.core.output.MIFrame;
+import org.eclipse.cdt.debug.mi.core.output.MIResult;
+import org.eclipse.cdt.debug.mi.core.output.MIResultRecord;
+import org.eclipse.cdt.debug.mi.core.output.MITuple;
+import org.eclipse.cdt.debug.mi.core.output.MIValue;
 
 /**
  * ^done,reason="breakpoint-hit",bkptno="1",thread-id="0",frame={addr="0x08048468",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="4"}
  *
  */
-public class MIBreakHitInfo {
+public class MIBreakpointEvent extends MIEvent {
 
 	int bkptno;
 	int threadId;
 	MIFrame frame;
-	String file = "";
-	int line;
+
 	MIExecAsyncOutput exec;
 	MIResultRecord rr;
 
-	public MIBreakHitInfo(MIExecAsyncOutput record) {
+	public MIBreakpointEvent(MIExecAsyncOutput record) {
 		exec = record;
+		parse();
 	}
 
-	public MIBreakHitInfo(MIResultRecord record) {
+	public MIBreakpointEvent(MIResultRecord record) {
 		rr = record;
+		parse();
 	}
 
 	public int getBreakNumber() {
@@ -36,12 +43,12 @@ public class MIBreakHitInfo {
 		return frame;
 	}
 
-	public String getFile() {
-		return file;
-	}
-
-	public int getLine() {
-		return line;
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("number=").append(bkptno).append('\n');
+		buffer.append("thread-id=").append(threadId).append('\n');
+		buffer.append(frame.toString());
+		return buffer.toString();
 	}
 
 	void parse () {
@@ -62,24 +69,17 @@ public class MIBreakHitInfo {
 
 				if (var.equals("bkptno")) {
 					try {
-						bkptno = Integer.parseInt(str);
+						bkptno = Integer.parseInt(str.trim());
 					} catch (NumberFormatException e) {
 					}
 				} else if (var.equals("thread-id")) {
 					try {
-						threadId = Integer.parseInt(str);
+						threadId = Integer.parseInt(str.trim());
 					} catch (NumberFormatException e) {
 					}
 				} else if (var.equals("frame")) {
 					if (value instanceof MITuple) {
 						frame = new MIFrame((MITuple)value);
-					}
-				} else if (var.equals("file")) {
-					file = str;
-				} else if (var.equals("line")) {
-					try {
-						line = Integer.parseInt(str);
-					} catch (NumberFormatException e) {
 					}
 				}
 			}

@@ -40,7 +40,7 @@ public class MIThreadSelectInfo extends MIInfo {
 						if (value instanceof MIConst) {
 							String str = ((MIConst)value).getString();
 							try {
-								threadId = Integer.parseInt(str);
+								threadId = Integer.parseInt(str.trim());
 							} catch (NumberFormatException e) {
 							}
 						}

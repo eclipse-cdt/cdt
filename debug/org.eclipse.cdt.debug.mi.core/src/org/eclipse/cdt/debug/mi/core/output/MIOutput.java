@@ -34,7 +34,6 @@ public class MIOutput {
 		if (rr != null) {
 			buffer.append(rr.toString());
 		}
-		buffer.append(terminator + "\n");
 		return buffer.toString();
 	}
 }

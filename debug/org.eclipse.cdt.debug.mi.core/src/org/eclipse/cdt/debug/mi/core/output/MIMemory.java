@@ -52,7 +52,7 @@ public class MIMemory {
 
 			if (var.equals("addr")) {
 				try {
-					addr = Long.decode(str).longValue();
+					addr = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 				}
 			} else if (var.equals("data")) {
@@ -72,7 +72,7 @@ public class MIMemory {
 			if (values[i] instanceof MIConst) {
 				String str = ((MIConst)values[i]).getString();
 				try {
-					data[i] = Long.decode(str).longValue();
+					data[i] = Long.decode(str.trim()).longValue();
 				} catch (NumberFormatException e) {
 					data[i] = 0;
 				}

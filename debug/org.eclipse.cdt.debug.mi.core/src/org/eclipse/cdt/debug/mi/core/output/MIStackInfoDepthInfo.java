@@ -30,7 +30,7 @@ public class MIStackInfoDepthInfo extends MIInfo {
 						if (val instanceof MIConst) {
 							String str = ((MIConst)val).getString();
 							try {
-								depth = Integer.parseInt(str);
+								depth = Integer.parseInt(str.trim());
 							} catch (NumberFormatException e) {
 							}
 						}

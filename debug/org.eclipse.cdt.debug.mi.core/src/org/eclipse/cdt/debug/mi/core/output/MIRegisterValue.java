@@ -76,8 +76,8 @@ public class MIRegisterValue {
 			}
 
 			try {
-				int reg = Integer.parseInt(aName);
-				long val = Long.decode(aValue).longValue();
+				int reg = Integer.parseInt(aName.trim());
+				long val = Long.decode(aValue.trim()).longValue();
 				arg = new MIRegisterValue(reg, val);
 			} catch (NumberFormatException e) {
 			}

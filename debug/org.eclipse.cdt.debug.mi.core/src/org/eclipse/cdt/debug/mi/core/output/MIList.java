@@ -30,9 +30,15 @@ public class MIList extends MIValue {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('[');
 		for (int i = 0; i < results.length; i++) {
+			if (i != 0) {
+				buffer.append(',');
+			}
 			buffer.append(results[i].toString());
 		}
 		for (int i = 0; i < values.length; i++) {
+			if (i != 0) {
+				buffer.append(',');
+			}
 			buffer.append(values[i].toString());
 		}
 		buffer.append(']');

@@ -42,7 +42,7 @@ public class MIDataListChangedRegistersInfo extends MIInfo {
 		for (int i = 0; i < aList.size(); i++) {
 			String str = (String)aList.get(i);
 			try {
-				registers[i] = Integer.parseInt(str);
+				registers[i] = Integer.parseInt(str.trim());
 			} catch (NumberFormatException e) {
 			}
 		}

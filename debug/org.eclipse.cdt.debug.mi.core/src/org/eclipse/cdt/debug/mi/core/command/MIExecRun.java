@@ -17,6 +17,10 @@ package org.eclipse.cdt.debug.mi.core.command;
  */
 public class MIExecRun extends MICommand 
 {
+	public MIExecRun() {
+		super("-exec-run");
+	}
+	
 	public MIExecRun(String[] args) {
 		super("-exec-run", args);
 	}

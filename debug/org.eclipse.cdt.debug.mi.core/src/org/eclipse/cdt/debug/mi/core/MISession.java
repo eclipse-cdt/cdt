@@ -2,6 +2,7 @@ package org.eclipse.cdt.debug.mi.core;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Observable;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -11,7 +12,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIParser;
 
 /**
  */
-public class MISession {
+public class MISession extends Observable {
 
 	InputStream inChannel;
 	OutputStream outChannel;
@@ -30,6 +31,12 @@ public class MISession {
 
 	MIParser parser;
 
+	long cmdTimeout  = 0000; // 20 * 1000 (~ 20 secs);
+
+	final int STOPPED = 0;
+	final int RUNNING = 1;
+	int state = STOPPED;
+	
 	/**
 	 * The constructor.
 	 */
@@ -96,19 +103,62 @@ public class MISession {
 	}
 
 	/**
+	 * postCommand(cmd, 20 secs) 
+	 */
+	public void postCommand(Command cmd) throws MIException {
+		postCommand(cmd, cmdTimeout);
+	}
+
+	public void setCommandTimeout(long timeout) {
+		cmdTimeout = timeout;
+	}
+	
+	public long getCommandTimeout() {
+		return cmdTimeout;
+	}
+	
+	/**
 	 * 
 	 */
-	public void postCommand(Command cmd) {
+	public void postCommand(Command cmd, long timeout) throws MIException {
+
+		if (!txThread.isAlive()) {
+			throw new MIException("TxThread terminated");
+		}
 		txQueue.addCommand(cmd);
 		synchronized (cmd) {
-			try {
-				// FIXME: missing the predicate
-				cmd.wait();
-			} catch (InterruptedException e) {
+			// RxThread will set the MIOutput on the cmd
+			// when the response arrive.
+			while (cmd.getMIOutput() == null) {
+				try {
+					cmd.wait(timeout);
+					break; // Timeout or Notify
+				} catch (InterruptedException e) {
+				}
 			}
 		}
 	}
 	
+	public boolean isStopped() {
+		return state == STOPPED;
+	}
+
+	public boolean isRunning() {
+		return state == RUNNING;
+	}
+
+	void setStopped() {
+		state = STOPPED;
+	}
+
+	void setRunning() {
+		state = RUNNING;
+	} 
+
+	public void setDirty() {
+		setChanged();
+	}
+
 	Queue getTxQueue() {
 		return txQueue;
 	}

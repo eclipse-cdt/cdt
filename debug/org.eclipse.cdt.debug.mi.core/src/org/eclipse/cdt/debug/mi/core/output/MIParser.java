@@ -261,6 +261,7 @@ public class MIParser {
 			result.setMIValue(value);
 		} else {
 			result.setVariable(buffer.toString());
+			result.setMIValue(new MIConst()); // Empty string:???
 			buffer.setLength(0);
 		}
 		return result;

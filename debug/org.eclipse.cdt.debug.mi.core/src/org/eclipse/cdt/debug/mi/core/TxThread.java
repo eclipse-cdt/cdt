@@ -23,36 +23,32 @@ public class TxThread extends Thread {
 	}
 
 	public void run () {
-		while (true) {
-			Command cmd = null;
-			Queue txQueue = session.getTxQueue();
-			// The removeCommand will block until a command is available.
-			try {
-				cmd = txQueue.removeCommand();
-			} catch (Exception e) {
-				//e.printStackTrace();
-			}
-
-			// The command is then:
-			// - given a Id/token
-			// - shove in the pipe
-			// - Remove from the TxQueue
-			// - Move to the RxQueue
-			if (cmd != null) {
-				OutputStream out = session.getChannelOutputStream();
-				cmd.setToken(token);
-				//System.out.println("Tx " + cmd.toString());
+		try {
+			while (true) {
+				Command cmd = null;
+				Queue txQueue = session.getTxQueue();
+				// removeCommand() will block until a command is available.
 				try {
-					String str = cmd.toString();
-					out.write(str.getBytes());
-					out.flush();
-				} catch (IOException e) {
+					cmd = txQueue.removeCommand();
+				} catch (Exception e) {
 					//e.printStackTrace();
 				}
-				Queue rxQueue = session.getRxQueue();
-				rxQueue.addCommand(cmd);
-				token++;
+
+				if (cmd != null) {
+					// Give the command a token and increment. 
+					cmd.setToken(token++);
+					// shove in the pipe
+					String str = cmd.toString();
+					OutputStream out = session.getChannelOutputStream();
+					out.write(str.getBytes());
+					out.flush();
+					// Move to the RxQueue
+					Queue rxQueue = session.getRxQueue();
+					rxQueue.addCommand(cmd);
+				}
 			}
+		} catch (IOException e) {
+			//e.printStackTrace();
 		}
 	}
 }

@@ -342,7 +342,7 @@ public class SourceLookupBlock
 		List list = getReferencedProjects( project );
 		IProject[] refs = (IProject[])list.toArray( new IProject[list.size()] );
 		ICSourceLocation loc = getLocationForProject( project, locations );
-		boolean checked = ( loc != null );
+		boolean checked = ( loc != null && !((IProjectSourceLocation)loc).isGeneric() );
 		if ( loc == null )
 			loc = SourceLocationFactory.createProjectSourceLocation( project, true );
 		fGeneratedSourceListField.addElement( loc );

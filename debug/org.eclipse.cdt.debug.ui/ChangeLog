@@ -1,3 +1,7 @@
+2003-07-24 Mikhail Khodjaiants
+	When initializing the generic source locations list filter out non-generic locations.
+	* SourceLookupBlock.java
+
 2003-07-22 Mikhail Khodjaiants
 	Check if the value that getName returns is not null.
 	* CDTDebugModelPresentation.java

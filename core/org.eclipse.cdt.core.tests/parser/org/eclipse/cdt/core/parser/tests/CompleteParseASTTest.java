@@ -2084,4 +2084,15 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertFalse(i.hasNext());
 	}
 
+    public void testBug73652() throws Exception
+	{
+    	StringWriter writer = new StringWriter();
+    	writer.write( "#define DoSuperMethodA IDoSuperMethodA\n" ); //$NON-NLS-1$
+    	writer.write( "#define IDoSuperMethodA(a,b,c) IIntuition->IDoSuperMethodA(a,b,c)\n" ); //$NON-NLS-1$
+		writer.write( "void hang(void)\n" ); //$NON-NLS-1$
+		writer.write( "{\n" ); //$NON-NLS-1$
+		writer.write( "DoSuperMethodA(0,0,0);\n" ); //$NON-NLS-1$
+		writer.write( "}\n" ); //$NON-NLS-1$
+		parse( writer.toString() , false );
+	}
 }

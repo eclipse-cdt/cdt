@@ -89,6 +89,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	{
 		setProject( project );
 		setReferencedProjects();
+		setSourceLocations( getDefaultSourceLocations() );
 	}
 
 	/* (non-Javadoc)

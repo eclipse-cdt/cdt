@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.core.cdi;
 import java.io.File;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 
 /**
  * 
@@ -74,5 +75,29 @@ public interface ICDISourceManager extends ICDISessionObject
 	 * @throws CDIException on failure
 	 */
 	ICDIInstruction[] getInstructions(String filename,  int linenum, int lines) throws CDIException;
+
+	/**
+	 *  @param startAddress is the begining address
+	 *  @param endAddress is the end address
+	 *  @throws CDIException on failure.
+	 */
+	ICDIMixedInstruction[] getMixedInstructions(long startAddress, long endAddress)  throws CDIException;
+
+	/**
+	 * @param filename is the name of the file to disassemble
+	 * @param linenum is the line number to disassemble around
+	 * @param lines is the number of disassembly to produced
+	 * @throws CDIException on failure
+	 */
+	ICDIMixedInstruction[] getMixedInstructions(String filename,  int linenum) throws CDIException;
+
+	/**
+	 * @param filename is the name of the file to disassemble
+	 * @param linenum is the line number to disassemble around
+	 * @param lines is the number of disassembly to produced
+	 * @throws CDIException on failure
+	 */
+	ICDIMixedInstruction[] getMixedInstructions(String filename,  int linenum, int lines) throws CDIException;
+
 
 }

@@ -159,9 +159,8 @@ public class CThread extends CDebugElement
 					fStackFrames = createAllStackFrames();
 					if ( fStackFrames.isEmpty() )
 					{
+						fRefreshChildren = false; // ????
 						//leave fRefreshChildren == true
-						//bug 6393
-						// ?????
 						return fStackFrames;
 					}
 				}
@@ -359,7 +358,7 @@ public class CThread extends CDebugElement
 	 */
 	public String getName() throws DebugException
 	{
-		return "Thread " + getCDIThread().toString();
+		return getCDIThread().toString();
 	}
 
 	/* (non-Javadoc)
@@ -428,7 +427,7 @@ public class CThread extends CDebugElement
 	 */
 	public boolean canResume()
 	{
-		return isSuspended() && !getDebugTarget().isSuspended();
+		return isSuspended();
 	}
 
 	/* (non-Javadoc)

@@ -109,7 +109,7 @@ public class CDebugModel
 			try
 			{
 				ICDIBreakpoint bkpt = cdiTarget.getSession().getBreakpointManager().
-											setLocationBreakpoint( ICDIBreakpoint.TEMPORARY,
+											setLocationBreakpoint( ICDIBreakpoint.REGULAR, //ICDIBreakpoint.TEMPORARY,
 																   location,
 																   null,
 																   null );

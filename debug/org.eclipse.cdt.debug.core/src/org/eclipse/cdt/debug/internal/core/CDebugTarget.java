@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
@@ -437,6 +438,43 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected void suspendThreads()
 	{
+	}
+
+	/**
+	 * Refreshes the thread list.
+	 * 
+	 */
+	protected synchronized void refreshThreads()
+	{
+		ArrayList list = new ArrayList( 5 );
+		try
+		{
+			ICDIThread[] cdiThreads = getCDITarget().getThreads();
+			for ( int i = 0; i < cdiThreads.length; ++i )
+			{
+				CThread thread = findThread( cdiThreads[i] ); 
+				if ( thread == null )
+				{
+					thread = createThread( cdiThreads[i] );
+				}
+				else
+				{
+					getThreadList().remove( thread );
+				}
+				list.add( thread );
+			}
+			Iterator it = getThreadList().iterator();
+			while( it.hasNext() )
+			{
+				((CThread)it.next()).terminated();
+			}
+			getThreadList().clear();
+			setThreadList( list );
+		}
+		catch( CDIException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
 	}
 
 	/**
@@ -949,6 +987,13 @@ public class CDebugTarget extends CDebugElement
 		setCurrentStateId( IState.SUSPENDED );
 		ICDISessionObject reason = event.getReason();
 		setCurrentStateInfo( reason );
+		refreshThreads();
+		if ( event.getSource() instanceof ICDIThread )
+		{
+			CThread thread = findThread( (ICDIThread)event.getSource() );
+			if ( thread != null )
+				thread.handleDebugEvent( event );
+		}
 		if ( reason instanceof ICDIEndSteppingRange )
 		{
 			handleEndSteppingRange( (ICDIEndSteppingRange)reason );
@@ -988,9 +1033,10 @@ public class CDebugTarget extends CDebugElement
 
 	private void handleExitedEvent( ICDIExitedEvent event )
 	{
+		removeAllThreads();
 		setCurrentStateId( IState.EXITED );
 		setCurrentStateInfo( event.getExitInfo() );
-		fireChangeEvent( DebugEvent.STATE );
+		fireChangeEvent( DebugEvent.CONTENT );
 	}
 
 	private void handleTerminatedEvent( ICDIDestroyedEvent event )

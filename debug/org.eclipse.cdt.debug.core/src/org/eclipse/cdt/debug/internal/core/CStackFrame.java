@@ -200,7 +200,16 @@ public class CStackFrame extends CDebugElement
 	 */
 	public String getName() throws DebugException
 	{
-		return null;
+		ICDILocation location = getCDIStackFrame().getLocation();
+		String name = new String();
+		if ( location.getFunction() != null )
+			name += location.getFunction() + "() ";
+		if ( location.getFile() != null )
+			name += "at " + location.getFile() + ":" ;
+		if ( location.getLineNumber() != 0 )
+			name += location.getLineNumber();
+			
+		return name.toString();
 	}
 
 	/* (non-Javadoc)
@@ -477,7 +486,7 @@ public class CStackFrame extends CDebugElement
 	{
 		//return ( frameOne.getParent().equals( frameTwo.getParent() ) && 
 		//		 frameOne.getLocation().equals( frameTwo.getLocation() ) );
-		return (frameOne.getLocation().equals(frameTwo.getLocation()));
+		return ( frameOne != null && frameTwo != null && frameOne.getLocation().equals( frameTwo.getLocation() ) );
 	}
 
 	protected boolean exists() throws DebugException
@@ -517,7 +526,7 @@ public class CStackFrame extends CDebugElement
 		List list = new ArrayList();
 		try
 		{
-			list.add( Arrays.asList( getCDIStackFrame().getLocalVariables() ) );
+			list.addAll( Arrays.asList( getCDIStackFrame().getLocalVariables() ) );
 		}
 		catch( CDIException e )
 		{
@@ -536,7 +545,7 @@ public class CStackFrame extends CDebugElement
 		List list = new ArrayList();
 		try
 		{
-			list.add( Arrays.asList( getCDIStackFrame().getArguments() ) );
+			list.addAll( Arrays.asList( getCDIStackFrame().getArguments() ) );
 		}
 		catch( CDIException e )
 		{
@@ -548,8 +557,8 @@ public class CStackFrame extends CDebugElement
 	protected List getAllCDIVariables() throws DebugException
 	{
 		List list = new ArrayList();
-		list.add( getCDIArguments() );
-		list.add( getCDILocalVariables() );
+		list.addAll( getCDIArguments() );
+		list.addAll( getCDILocalVariables() );
 		return list;
 	} 
 

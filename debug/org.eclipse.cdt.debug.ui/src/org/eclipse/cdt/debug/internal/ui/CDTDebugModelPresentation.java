@@ -6,12 +6,14 @@
 
 package org.eclipse.cdt.debug.internal.ui;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.IState;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
@@ -110,6 +112,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 		StringBuffer label = new StringBuffer();
 		try
 		{
+			if ( element instanceof IStackFrame )
+			{
+				label.append( getStackFrameText( (IStackFrame)element ) );
+				return label.toString();
+			}
+
 			if ( element instanceof IDebugTarget )
 				label.append( getTargetText( (IDebugTarget)element, showQualified ) );
 			else if ( element instanceof IThread )
@@ -161,11 +169,56 @@ public class CDTDebugModelPresentation extends LabelProvider
 	
 	protected String getTargetText( IDebugTarget target, boolean qualified ) throws DebugException
 	{
+		if ( target instanceof IState )
+		{
+			switch( ((IState)target).getCurrentStateId() )
+			{
+				case IState.EXITED:
+					return getFormattedString( "{0} (Exited)", target.getName() );
+			}
+		}
 		return target.getName();
 	}
 	
 	protected String getThreadText( IThread thread, boolean qualified ) throws DebugException
 	{
-		return thread.getName();
+		if ( thread.isTerminated() )
+		{
+			return getFormattedString( "Thread [{0}] (Terminated)", thread.getName() );
+		}
+		if ( thread.isStepping() )
+		{
+			return getFormattedString( "Thread [{0}] (Stepping)", thread.getName());
+		}
+		if ( !thread.isSuspended() )
+		{
+			return getFormattedString( "Thread [{0}] (Running)", thread.getName() );
+		}
+		return getFormattedString( "Thread [{0}] (Suspended)", thread.getName() );
+	}
+
+	protected String getStackFrameText( IStackFrame stackFrame ) throws DebugException 
+	{
+		return stackFrame.getName();
+	}
+
+	/**
+	 * Plug in the single argument to the resource String for the key to 
+	 * get a formatted resource String.
+	 * 
+	 */
+	public static String getFormattedString( String key, String arg )
+	{
+		return getFormattedString( key, new String[]{ arg } );
+	}
+
+	/**
+	 * Plug in the arguments to the resource String for the key to get 
+	 * a formatted resource String.
+	 * 
+	 */
+	public static String getFormattedString(String string, String[] args)
+	{
+		return MessageFormat.format( string, args );
 	}
 }

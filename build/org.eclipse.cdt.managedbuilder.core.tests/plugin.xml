@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.cdt.managedbuilder.core.tests"
+   name="Tests"
+   version="1.0.0">
+
+   <requires>
+      <import plugin="org.junit"/>
+      <import plugin="org.eclipse.cdt.managedbuilder.core"/>
+      <import plugin="org.eclipse.cdt.core"/>
+      <import plugin="org.eclipse.cdt.make.core"/>
+      <import plugin="org.eclipse.cdt.core.tests"/>
+      <import plugin="org.eclipse.core.resources"/>
+   </requires>
+
+
+   <extension
+         id="buildTest"
+         name="Tools for Build Test"
+         point="org.eclipse.cdt.managedbuilder.core.ManagedBuildInfo">
+      <tool
+            natureFilter="both"
+            sources="rc"
+            name="Target Independent Tool"
+            headerExtensions="h"
+            outputFlag="/fo"
+            outputs="free"
+            command="RC.EXE"
+            id="target.independent.tool">
+         <optionCategory
+               owner="target.independent.tool"
+               name="Free"
+               id="indy.cat.free">
+         </optionCategory>
+         <option
+               defaultValue="Live free or die"
+               name="String in Free"
+               category="indy.cat.free"
+               id="org.eclipse.cdt.core.tests.option1"
+               valueType="string">
+         </option>
+         <optionCategory
+               owner="indy.cat.free"
+               name="Chained"
+               id="indy.cat.chained">
+         </optionCategory>
+         <option
+               defaultValue="false"
+               name="Boolean in Chained"
+               category="indy.cat.chained"
+               id="org.eclipse.cdt.core.tests.option2"
+               valueType="boolean">
+         </option>
+      </tool>
+      <target
+            name="Test Root"
+            id="test.root"
+            cleanCommand="del /myworld"
+            isTest="true"
+            defaultExtension="toor"
+            isAbstract="false"
+            makeCommand="make"
+            makeFlags="-k"
+            binaryParser="org.eclipse.cdt.core.PE"
+            osList="win32">
+         <tool
+               natureFilter="cnature"
+               name="Root Tool"
+               sources="foo,bar"
+               headerExtensions="baz"
+               outputFlag="-r"
+               command="doIt"
+               outputs="toor"
+               id="root.tool">
+            <optionCategory
+                  owner="root.tool"
+                  name="Category"
+                  id="category">
+            </optionCategory>
+            <option
+                  name="List Option in Top"
+                  command="-L"
+                  id="list.option"
+                  valueType="stringList">
+               <listOptionValue
+                     value="a">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="false"
+                     value="b">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="c">
+               </listOptionValue>
+            </option>
+            <option
+                  defaultValue="false"
+                  name="Boolean Option in Top"
+                  command="-b"
+                  id="boolean.option"
+                  valueType="boolean">
+            </option>
+            <option
+                  defaultValue="x"
+                  name="String Option in Category"
+                  category="category"
+                  id="string.option"
+                  valueType="string">
+            </option>
+            <option
+                  defaultValue=""
+                  name="Another String Option in Category"
+                  category="category"
+                  command="-str"
+                  valueType="string"
+                  id="another.string.option">
+            </option>
+            <option
+                  name="Enumerated Option in Category"
+                  category="category"
+                  id="enumerated.option"
+                  valueType="enumerated">
+               <enumeratedOptionValue
+                     name="Default Enum"
+                     isDefault="true"
+                     command="-e1"
+                     id="default.enum.option">
+               </enumeratedOptionValue>
+               <enumeratedOptionValue
+                     name="Another Enum"
+                     command="-e2"
+                     id="another.enum.option">
+               </enumeratedOptionValue>
+            </option>
+            <option
+                  commandFalse="-nob"
+                  name="Boolean Option in Category"
+                  category="category"
+                  valueType="boolean"
+                  id="boolean.false.option">
+            </option>
+         </tool>
+         <configuration
+               name="Root Config"
+               id="root.config">
+         </configuration>
+         <configuration
+               name="Root Override Config"
+               id="root.override.config">
+            <toolReference
+                  id="root.tool">
+               <optionReference
+                     defaultValue="y"
+                     id="string.option">
+               </optionReference>
+               <optionReference
+                     defaultValue="true"
+                     id="boolean.option">
+               </optionReference>
+            </toolReference>
+         </configuration>
+         <configuration
+               name="Complete Override Config"
+               id="complete.override.config">
+            <toolReference
+                  id="root.tool">
+               <optionReference
+                     defaultValue="overridden"
+                     id="string.option">
+               </optionReference>
+               <optionReference
+                     defaultValue="alsooverridden"
+                     id="another.string.option">
+               </optionReference>
+               <optionReference
+                     defaultValue="true"
+                     id="boolean.option">
+               </optionReference>
+               <optionReference
+                     defaultValue="true"
+                     id="boolean.false.option">
+               </optionReference>
+               <optionReference
+                     defaultValue="-e2"
+                     id="enumerated.option">
+               </optionReference>
+               <optionReference
+                     id="list.option">
+                  <listOptionValue
+                        value="d">
+                  </listOptionValue>
+                  <listOptionValue
+                        value="e">
+                  </listOptionValue>
+                  <listOptionValue
+                        value="f">
+                  </listOptionValue>
+               </optionReference>
+            </toolReference>
+         </configuration>
+      </target>
+      <target
+            name="Test Sub"
+            id="test.sub"
+            cleanCommand="rm -yourworld"
+            isTest="true"
+            defaultExtension="bus"
+            isAbstract="false"
+            binaryParser="org.eclipse.cdt.core.PE"
+            makeFlags="-d"
+            parent="test.root"
+            osList="win32,linux,solaris">
+         <configuration
+               name="Sub Config"
+               id="sub.config">
+         </configuration>
+         <tool
+               natureFilter="both"
+               name="Sub Tool"
+               sources="yarf"
+               headerExtensions="arf,barf"
+               outputPrefix="lib"
+               outputs="bus"
+               id="tool.sub">
+            <option
+                  name="Include Paths"
+                  command="-I"
+                  id="sub.tool.opt.inc.paths"
+                  valueType="includePath"
+                  browseType="directory">
+               <listOptionValue
+                     value="/usr/include">
+               </listOptionValue>
+               <listOptionValue
+                     value="/opt/gnome/include">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="true"
+                     value="/usr/gnu/include">
+               </listOptionValue>
+            </option>
+            <option
+                  name="Defined Symbols"
+                  command="-D"
+                  id="sub.tool.opt.def.symbols"
+                  valueType="definedSymbols">
+               <listOptionValue
+                     builtIn="true"
+                     value="BUILTIN">
+               </listOptionValue>
+            </option>
+            <option
+                  name="More Includes"
+                  command="-I"
+                  id="sub.tool.opts.inc.paths.more"
+                  valueType="includePath"
+                  browseType="directory">
+               <listOptionValue
+                     builtIn="false"
+                     value="C:\home\tester/include">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="false"
+                     value="&quot;../includes&quot;">
+               </listOptionValue>
+            </option>
+            <option
+                  name="User Objects"
+                  id="sub.tool.opt.objs"
+                  valueType="userObjs"
+                  browseType="file">
+               <listOptionValue
+                     builtIn="false"
+                     value="obj1.o">
+               </listOptionValue>
+               <listOptionValue
+                     builtIn="false"
+                     value="obj2.o">
+               </listOptionValue>
+            </option>
+         </tool>
+      </target>
+      <target
+            isTest="true"
+            name="Test Sub Sub"
+            binaryParser="org.eclipse.cdt.core.ELF"
+            parent="test.sub"
+            defaultExtension="tss"
+            makeCommand="nmake"
+            id="test.sub.sub">
+         <toolReference
+               id="target.independent.tool">
+         </toolReference>
+      </target>
+      <dynamicElementProvider
+            class="org.eclipse.cdt.managedbuild.core.tests.TestManagedConfigProvider">
+      </dynamicElementProvider>
+      <target
+            isTest="true"
+            name="Forward Grandchild"
+            binaryParser="org.eclipse.cdt.core.tests.target1"
+            parent="test.forward.child.target"
+            id="test.forward.grandchild.target">
+         <toolReference
+               command="newcommand"
+               id="test.forward.tool">
+         </toolReference>
+      </target>
+      <target
+            isTest="true"
+            osList="win32,solaris,linux"
+            name="Forward Child"
+            parent="test.forward.parent.target"
+            binaryParser="org.eclipse.cdt.core.tests.target2"
+            id="test.forward.child.target">
+         <toolReference
+               id="test.forward.tool">
+            <optionReference
+                  id="test.forward.option">
+            </optionReference>
+         </toolReference>
+      </target>
+      <target
+            isTest="true"
+            name="Forward Parent"
+            binaryParser="org.eclipse.cdt.core.tests.target3"
+            id="test.forward.parent.target">
+         <tool
+               natureFilter="both"
+               name="Forward Parent Tool"
+               id="test.forward.tool">
+            <option
+                  name="Test Forward Option"
+                  category="test.forward.child.category"
+                  id="test.forward.option">
+            </option>
+            <optionCategory
+                  owner="test.forward.parent.category"
+                  name="Forward Child Category"
+                  id="test.forward.child.category">
+            </optionCategory>
+            <optionCategory
+                  owner="test.forward.tool"
+                  name="Forward Parent Category"
+                  id="test.forward.parent.category">
+            </optionCategory>
+         </tool>
+      </target>
+      <target
+            isTest="true"
+            errorParsers="org.eclipse.cdt.core.MakeErrorParser;org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GLDErrorParser"
+            name="Test Error Parsers"
+            binaryParser="org.eclipse.cdt.core.PE"
+            isAbstract="false"
+            id="test.error.parsers">
+         <tool
+               natureFilter="cnature"
+               name="EP Tool"
+               sources="x,y"
+               outputFlag="-o"
+               command="EP"
+               outputs="xy"
+               id="error.parsers.tool">
+         </tool>
+      </target>
+   </extension>
+
+</plugin>

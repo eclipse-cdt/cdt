@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
+import java.util.List;
+
 /**
  * @author Doug Schaefer
  */
@@ -25,11 +27,17 @@ public interface IASTCompositeTypeSpecifier extends IASTDeclSpecifier {
 	public static final int k_union = 2;
 	
 	/**
-	 * Return the name for this composite type.
+	 * Return the name for this composite type. If this is an anonymous
+	 * type, this will return null.
 	 * 
-	 * @return
+	 * @return the name of the type or null
 	 */
 	public IASTIdentifier getName();
 	
-
+	/**
+	 * Returns a list of member declarations.
+	 * 
+	 * @return List of IASTDeclaration
+	 */
+	public List getMembers();
 }

@@ -5,7 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ISelection;

@@ -9,7 +9,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
-import org.eclipse.cdt.debug.core.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;

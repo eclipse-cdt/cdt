@@ -12,8 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.IRestart;
-import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
@@ -21,6 +19,8 @@ import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.model.IRestart;
+import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IRegisterGroup;

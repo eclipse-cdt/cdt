@@ -6,8 +6,8 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
-import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
 
 /**

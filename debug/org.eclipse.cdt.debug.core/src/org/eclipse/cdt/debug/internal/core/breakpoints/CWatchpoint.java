@@ -7,7 +7,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.ICWatchpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;

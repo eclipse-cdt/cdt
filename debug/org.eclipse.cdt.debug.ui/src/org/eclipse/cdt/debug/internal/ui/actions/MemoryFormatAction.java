@@ -5,7 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
+import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;

@@ -3,7 +3,7 @@
  * All Rights Reserved.
  * 
  */
-package org.eclipse.cdt.debug.core;
+package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.DebugException;

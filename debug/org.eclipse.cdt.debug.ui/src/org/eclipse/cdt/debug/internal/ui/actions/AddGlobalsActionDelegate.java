@@ -6,8 +6,8 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.CDebugModel;
-import org.eclipse.cdt.debug.core.IExecFileInfo;
-import org.eclipse.cdt.debug.core.IGlobalVariable;
+import org.eclipse.cdt.debug.core.model.IExecFileInfo;
+import org.eclipse.cdt.debug.core.model.IGlobalVariable;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;

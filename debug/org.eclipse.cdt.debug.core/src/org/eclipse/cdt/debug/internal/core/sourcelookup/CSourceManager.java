@@ -8,7 +8,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
-import org.eclipse.cdt.debug.core.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;

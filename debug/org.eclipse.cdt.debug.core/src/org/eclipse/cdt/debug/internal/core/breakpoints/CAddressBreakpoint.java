@@ -7,7 +7,7 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 
 import java.util.Map;
 
-import org.eclipse.cdt.debug.core.ICAddressBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;

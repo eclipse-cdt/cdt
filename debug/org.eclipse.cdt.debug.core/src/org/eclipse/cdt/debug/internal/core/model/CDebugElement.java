@@ -274,4 +274,14 @@ public class CDebugElement extends PlatformObject
 										null );
 		CDebugUtils.info( newStatus, getDebugTarget() );
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
+	 */
+	public Object getAdapter( Class adapter )
+	{
+		if ( adapter.equals( ICDISession.class ) )
+			return getCDISession(); 
+		return super.getAdapter(adapter);
+	}
 }

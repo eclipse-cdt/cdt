@@ -4,7 +4,7 @@
  * 
  */
 
-package org.eclipse.cdt.debug.core;
+package org.eclipse.cdt.debug.core.sourcelookup;
 
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.debug.core.model.IDebugTarget;

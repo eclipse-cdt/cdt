@@ -5,6 +5,7 @@
  */
 package org.eclipse.cdt.debug.core;
 
+import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
 

@@ -5,7 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.IRestart;
+import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.debug.core.DebugException;
 
 /**

@@ -4,7 +4,7 @@
  * 
  */
 
-package org.eclipse.cdt.debug.core;
+package org.eclipse.cdt.debug.core.model;
 
 import org.eclipse.debug.core.model.IVariable;
 

@@ -17,21 +17,7 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
-import org.eclipse.cdt.debug.core.ICBreakpoint;
-import org.eclipse.cdt.debug.core.ICDebugTargetType;
-import org.eclipse.cdt.debug.core.ICExpressionEvaluator;
-import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
-import org.eclipse.cdt.debug.core.ICWatchpoint;
-import org.eclipse.cdt.debug.core.IDebuggerProcessSupport;
-import org.eclipse.cdt.debug.core.IExecFileInfo;
-import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
-import org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval;
-import org.eclipse.cdt.debug.core.IGlobalVariable;
-import org.eclipse.cdt.debug.core.IRestart;
-import org.eclipse.cdt.debug.core.IRunToLine;
-import org.eclipse.cdt.debug.core.IState;
-import org.eclipse.cdt.debug.core.ISwitchToThread;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
@@ -62,6 +48,17 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
+import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint;
+import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
+import org.eclipse.cdt.debug.core.model.IExecFileInfo;
+import org.eclipse.cdt.debug.core.model.IGlobalVariable;
+import org.eclipse.cdt.debug.core.model.IRunToLine;
+import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
@@ -100,19 +97,10 @@ import org.eclipse.debug.core.model.IThread;
  * @since Aug 1, 2002
  */
 public class CDebugTarget extends CDebugElement
-						  implements IDebugTarget,
-						  			 ICDebugTargetType,
+						  implements ICDebugTarget,
 						  			 ICDIEventListener,
-						  			 IRestart,
-						  			 IRunToLine,
-						  			 IFormattedMemoryRetrieval,
-						  			 IState,
 						  			 ILaunchListener,
-						  			 ISwitchToThread,
-						  			 IExpressionListener,
-						  			 ICExpressionEvaluator,
-						  			 IDebuggerProcessSupport,
-						  			 IExecFileInfo
+						  			 IExpressionListener
 {
 	/**
 	 * The type of this target.
@@ -963,31 +951,6 @@ public class CDebugTarget extends CDebugElement
 	 */
 	protected void restarted()
 	{
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval#getFormattedMemoryBlock(long, int, int, int, int, char)
-	 */
-	public IFormattedMemoryBlock getFormattedMemoryBlock( long startAddress,
-														  int format,
-														  int wordSize,
-														  int numberOfRows,
-														  int numberOfColumns,
-														  char paddingChar ) throws DebugException
-	{
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryRetrieval#getFormattedMemoryBlock(long, int, int, int, int)
-	 */
-	public IFormattedMemoryBlock getFormattedMemoryBlock( long startAddress,
-														  int format,
-														  int wordSize,
-														  int numberOfRows,
-														  int numberOfColumns ) throws DebugException
-	{
-		return null;
 	}
 
 	/* (non-Javadoc)

@@ -8,7 +8,7 @@ package org.eclipse.cdt.debug.internal.core;
 import java.util.Arrays;
 
 import org.eclipse.cdt.debug.core.ICMemoryManager;
-import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
+import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;

@@ -1,4 +1,7 @@
 2002-12-02 Mikhail Khodjaiants
+	Refactoring org.eclipse.cdt.debug.core - UI changes.
+
+2002-12-02 Mikhail Khodjaiants
 	'Run to line' and 'Add expression' actions for assembly editor.
 	*plugin.xml
 

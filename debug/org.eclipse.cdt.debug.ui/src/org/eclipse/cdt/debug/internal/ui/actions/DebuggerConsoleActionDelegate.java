@@ -5,7 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.IDebuggerProcessSupport;
+import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
 import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;

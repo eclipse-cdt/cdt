@@ -8,7 +8,7 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.debug.core.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.core.resources.IFile;

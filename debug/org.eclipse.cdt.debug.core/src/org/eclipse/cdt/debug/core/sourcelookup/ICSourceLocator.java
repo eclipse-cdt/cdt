@@ -5,7 +5,7 @@
  */
 package org.eclipse.cdt.debug.core.sourcelookup;
 
-import org.eclipse.cdt.debug.core.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.model.ISourceLocator;
 

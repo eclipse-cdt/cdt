@@ -11,8 +11,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.ICMemoryManager;
-import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
-import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
+import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
+import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlockRow;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.debug.core.DebugException;

@@ -9,10 +9,10 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
+import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.internal.core.DisassemblyStorage;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;

@@ -10,8 +10,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import org.eclipse.cdt.debug.core.IDisassemblyStorage;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
+import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;

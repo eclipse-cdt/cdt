@@ -1,4 +1,30 @@
 2002-12-02 Mikhail Khodjaiants
+	Refactoring - files moved from org.eclipse.cdt.debug.core to the new package: org.eclipse.cdt.debug.core.model:
+	* ICBreakpoint.java
+	* ICDebugTarget.java
+	* ICExpressionEvaluator.java
+	* ICFunctionBreakpoint.java
+	* ICLineBreakpoint.java
+	* ICValue.java
+	* ICWatchpoint.java
+	* IDebuggerProcessSupport.java
+	* IDummyStackFrame.java
+	* IExecFileInfo.java
+	* IFormattedMemoryBlock.java
+	* IFormattedMemoryBlockRow.java
+	* IGlobalVariable.java
+	* IInstructionStep.java
+	* IRestart.java
+	* IRunToLine.java
+	* IStackFrameInfo.java
+	* IState.java
+	* ISwitchToFrame.java
+	* ISwitchToThread.java
+	* ICDebugTargetType.java: new interface
+	* IFormattedMemoryRetrieval: removed
+	
+	
+2002-12-02 Mikhail Khodjaiants
 	Check if the underlying IFile exists when retrieving the path of global variable.
 	* CDebugTarget.java
 

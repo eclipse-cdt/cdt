@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.eclipse.cdt.debug.core.IDisassemblyStorage;
-import org.eclipse.cdt.debug.core.ISwitchToFrame;
-import org.eclipse.cdt.debug.core.ISwitchToThread;
+import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
+import org.eclipse.cdt.debug.core.model.ISwitchToThread;
+import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;

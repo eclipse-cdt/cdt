@@ -7,7 +7,7 @@ package org.eclipse.cdt.debug.ui;
 
 import java.text.MessageFormat;
 
-import org.eclipse.cdt.debug.core.IStackFrameInfo;
+import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

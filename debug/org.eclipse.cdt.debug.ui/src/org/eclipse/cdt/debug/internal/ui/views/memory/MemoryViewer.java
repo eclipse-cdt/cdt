@@ -6,7 +6,7 @@
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
 import org.eclipse.cdt.debug.core.ICMemoryManager;
-import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
+import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ContentViewer;

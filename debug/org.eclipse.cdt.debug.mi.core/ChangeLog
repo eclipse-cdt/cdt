@@ -1,3 +1,23 @@
+2003-02-12 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ChangedEvent.java (ChangedEvent):
+	Returns a Variable.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/DestroyedEvent.java (DestroyedEvent):
+	Check if it was an expression also.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Value.java (getVariables):
+	Calls the parent's implementation.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java (getVariables):
+	New implementation.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/EventManager.java (update):
+	Deal with new MIVarDeleteEvent.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/ExpressionManager.java (addExpression):
+	Removed.
+	(removeExpression): New method.
+	* src/org/eclipse/cdt/debug/mi/core/event/MIVarChangedEvent.java (getScope):
+	removed.
+	* src/org/eclipse/cdt/debug/mi/core/event/MIVarDeletedEvent.java:
+	New file.
+
 2003-02-09 Alain Magloire
 
 	in GDB/MI 5.3 and below, the -data-list-register-xxx can bring gdb down with

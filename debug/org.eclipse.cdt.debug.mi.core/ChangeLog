@@ -1,5 +1,10 @@
 2002-11-29 Alain Magloire
 
+	* src/.../mi/core/cdi/EventManager.java (processSuspended):
+	get the threadId.
+
+2002-11-29 Alain Magloire
+
 	* src/.../mi/core/cdi/MemoryBlock.java (setValue):
 	Check if the change affects other block and fire MemoryChangedEvent
 	when necessary.

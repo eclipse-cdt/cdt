@@ -1,5 +1,19 @@
 2003-04-01 Alain Magloire
 
+	Implement SourceRefence and SourceManipulation for IBinary, this is
+	done in BinaryElement, BinaryFunction, BinaryVariable.
+
+	* model/org/eclipse/cdt/internal/core/model/Binary.java:
+	* model/org/eclipse/cdt/internal/core/model/BinaryFunction.java:
+	* model/org/eclipse/cdt/internal/core/model/BinaryVariable.java:
+	* model/org/eclipse/cdt/internal/core/model/BinaryElement.java:
+
+	Corrected typo ISymbol.getAdress() should be ISymbol.getAddress().
+	* model/org/eclipse/cdt/internal/core/model/parser/Symbol.java:
+	* src/org/eclipse/cdt/core/IBinaryParser.java:
+
+2003-04-01 Alain Magloire
+
 	Patch form Hoda.
 	IStructure extends IVariableDeclaration.
 	INamespace extends IParent.

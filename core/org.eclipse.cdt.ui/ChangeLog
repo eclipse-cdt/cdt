@@ -1,5 +1,16 @@
 2003-04-01 Alain Magloire
 
+	Support to open a child in an IBinary if we know the TranslationUnit.
+	
+	* src/org/eclipse/internal/ui/editor/CEditor.java:
+	setSelection() make the method visible.
+	* src/org/eclipse/internal/ui/util/EditorUtility.java:
+	More static method taken from the JDT.
+	* src/org/eclipse/internal/ui/cview/CView.java:
+	handleDoubleClick(), for IBinary.
+
+2003-04-01 Alain Magloire
+
 	Patch from Hoda Amer.
 	New icons for enumerations, enumerators and typedefs.
 	Small fix for CElementLabelProvider.getText().

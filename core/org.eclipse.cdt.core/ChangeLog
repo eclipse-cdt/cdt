@@ -1,4 +1,9 @@
 2005-03-02 Alain Magloire
+	Fix PR 84527: PathEntryManager marker jobs were start to often.
+	Scalabilite issue.
+	* model/org/eclipse/cdt/internla/core/model/PathEntrymanager.java
+
+2005-03-02 Alain Magloire
 	Fix for PR 85043: NPE when calling Ar.isARHeader(null);
 	* utils/org/eclipse/cdt/utils/elf/AR.java
 	* utils/org/eclipse/cdt/utils/macho/AR.java

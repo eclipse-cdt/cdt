@@ -121,6 +121,8 @@ public class MakeTarget implements IMakeTarget {
 		info.setFullBuildEnable(true);
 		info.setFullBuildTarget(target);
 		info.setBuildLocation(container.getLocation());
+		IMakeBuilderInfo projectInfo = MakeCorePlugin.createBuildInfo(project, builderID);
+		info.setErrorParsers(projectInfo.getErrorParsers());
 		project.build(IncrementalProjectBuilder.FULL_BUILD, builderID, infoMap, monitor);
 	}
 

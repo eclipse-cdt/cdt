@@ -172,7 +172,6 @@ public class MakeBuilder extends ACBuilder {
 					monitor.subTask(MakeCorePlugin.getResourceString("MakeBuilder.Updating_project")); //$NON-NLS-1$
 
 					try {
-						currProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 						// Do not allow the cancel of the refresh, since the builder is external
 						// to Eclipse, files may have been created/modified and we will be out-of-sync.
 						// The caveat is for hugue projects, it may take sometimes at every build.

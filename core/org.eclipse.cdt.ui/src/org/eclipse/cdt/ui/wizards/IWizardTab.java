@@ -10,6 +10,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * @deprecated
+ *
+ */
 public interface IWizardTab {
 	
 	public String getLabel();

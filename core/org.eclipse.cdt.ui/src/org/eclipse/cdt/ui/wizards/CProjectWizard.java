@@ -47,6 +47,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 
 
 /**
+ * @deprecated
  * C Project wizard that creates a new project resource in
  * a location of the user's choice.
  */

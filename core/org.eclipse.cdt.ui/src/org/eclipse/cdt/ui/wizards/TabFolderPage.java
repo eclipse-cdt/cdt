@@ -15,6 +15,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 
 /**
+ * @deprecated
  * Standard main page for a wizard that is creates a project resource.
  * <p>
  * This page may be used by clients as-is; it may be also be subclassed to suit.

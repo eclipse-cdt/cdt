@@ -20,6 +20,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
+/**
+ * @deprecated
+ *
+ */
 public class BinaryParserBlock implements IWizardTab {
 
 	//private static final String PREFIX = "BinaryParserBlock"; //$NON-NLS-1$

@@ -36,6 +36,9 @@ import org.eclipse.swt.widgets.Shell;
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
 
+/**
+ * @deprecated
+ */
 public class BuildPathInfoBlock implements IWizardTab {
 	private static final String PREFIX = "BuildPathInfoBlock"; //$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$

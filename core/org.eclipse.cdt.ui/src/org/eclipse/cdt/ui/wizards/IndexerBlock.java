@@ -5,6 +5,7 @@ package org.eclipse.cdt.ui.wizards;
  * All Rights Reserved.
  */
 
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
@@ -17,6 +18,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+/**
+ * @deprecated
+ */
 
 public class IndexerBlock implements IWizardTab {
 	private Button indexerSwitch;

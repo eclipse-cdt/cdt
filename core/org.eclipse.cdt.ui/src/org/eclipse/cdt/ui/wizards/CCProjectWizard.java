@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 
 /**
+ * @deprecated
  * C Project wizard that creates a new project resource in
  */
 public abstract class CCProjectWizard extends CProjectWizard {

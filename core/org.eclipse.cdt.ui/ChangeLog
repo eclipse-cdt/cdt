@@ -1,3 +1,16 @@
+2003-09-11 David Inglis
+	Deprecated
+	
+	* src/org/eclipse/cdt/ui/wizards/BinaryParserBlock.java
+	* src/org/eclipse/cdt/ui/wizards/BuildPathInfoBlock.java
+	* src/org/eclipse/cdt/ui/wizards/CCProjectWizard.java
+	* src/org/eclipse/cdt/ui/wizards/CProjectWizard.java
+	* src/org/eclipse/cdt/ui/wizards/CProjectWizardPage.java
+	* src/org/eclipse/cdt/ui/wizards/IWizardTab.java
+	* src/org/eclipse/cdt/ui/wizards/IndexerBlock.java
+	* src/org/eclipse/cdt/ui/wizards/TabFolderPage.java
+	* utils.ui/org/eclipse/cdt/utils/ui/swt/IValidation.java
+
 2003-09-11 John Camelon
 	Updated SourceElementRequestor callbacks to include IASTParameterReference callbacks. 
 

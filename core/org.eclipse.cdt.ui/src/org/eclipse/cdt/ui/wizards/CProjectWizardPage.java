@@ -34,6 +34,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 
 /**
+ * @deprecated
  * Standard main page for a wizard that is creates a project resource.
  * <p>
  * This page may be used by clients as-is; it may be also be subclassed to suit.

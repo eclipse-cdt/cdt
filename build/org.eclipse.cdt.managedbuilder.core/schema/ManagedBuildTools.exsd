@@ -106,7 +106,7 @@
          <attribute name="dependencyCalculator" type="string">
             <annotation>
                <documentation>
-                  This is an optional field that specifies the class that provides the dependency calculation for a given tool. This field is unused in CDT 1.2.
+                  This is an optional field that specifies the class that provides the source file dependency calculation for a given tool. You can replace the default calculator with a class that implements the &lt;code&gt;IManagedDependencyGenerator&lt;/code&gt; interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator"/>
@@ -242,7 +242,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="helpSupplier" type="string">
             <annotation>
                <documentation>
-                  
+                  This field is unused in 2.0
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -330,7 +330,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The unique ID of the tool that the reference is for.
                </documentation>
             </annotation>
          </attribute>
@@ -379,21 +379,22 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The ID of the option the reference is for.
+                  The unique ID of the option the reference is for.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="defaultValue" type="string">
             <annotation>
                <documentation>
-                  
+                  This field is used to record the value of the option that the user has set in the build settings file. For example, if the user has set the verbose flag to true, the project&apos;s build settings file will contain an option reference for the verbose option, with the defaultvalue set to true.
+&lt;p&gt;The attribute is also used to override the default option setting for a configuration in a toolchain. For example, a &apos;Debug&apos; configuration may setthe value of a debug flag differently than the default value defined in the tool.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="command" type="string">
             <annotation>
                <documentation>
-                  
+                  This field is unused in 2.0
                </documentation>
             </annotation>
          </attribute>
@@ -422,7 +423,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="name" type="string">
             <annotation>
                <documentation>
-                  A human-readable target name, such as &apos;Linux Executable&apos;. This will be the name the user sees displayed in the UI.
+                  A human-readable target name, such as &apos;Executable&apos;. This will be the name the user sees displayed in the UI.
                </documentation>
             </annotation>
          </attribute>
@@ -471,14 +472,14 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="makeCommand" type="string">
             <annotation>
                <documentation>
-                  
+                  Specifies the default command to start the build utility for your toolchain. If the user changes this through the UI, the overriden value will be stored in the project build file. The build model will default to this value if the user ever resets a change.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="makeArguments" type="string">
             <annotation>
                <documentation>
-                  
+                  Specifies the additional, default arguments that will be passed to the build utility when it is called by the builder. If the user changes the flags through the UI, the overriden value will be stored in the project build settings file. The build model will default to this value if the user ever resets a change.
                </documentation>
             </annotation>
          </attribute>
@@ -513,7 +514,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="scannerInfoCollector" type="string">
             <annotation>
                <documentation>
-                  
+                  Specifies a class that implements the &lt;code&gt;IManagedScannerInfoCollector&lt;/code&gt; for gathering the built-in compiler settings for a toolchain.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector"/>
@@ -523,7 +524,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="makefileGenerator" type="string">
             <annotation>
                <documentation>
-                  
+                  Allows you to supply a custom makefile generator that conforms to the &lt;code&gt;IManagedBuilderMakefileGenerator&lt;/code&gt; interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator"/>
@@ -557,7 +558,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="owner" type="string">
             <annotation>
                <documentation>
-                  Option categories can be nested inside other option categories. This is the ID of the owner of the category.
+                  Option categories can belong to a tool or be nested inside other option categories. This is the ID of the owner of the category.
                </documentation>
             </annotation>
          </attribute>
@@ -598,10 +599,10 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The class that implements the &lt;code&gt;IManagedConfigElementProvider&lt;/code&gt; interface. The logic of determining the elements is left to the implementer, but they must be correctly formed or the build model will have trouble loading.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.managedbuilder.core.IManagedConfigElementProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -633,7 +634,7 @@ Version identifier for the managed build extension point. It is a string represe
          <attribute name="fileVersion" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The actual string containing the three version tokens.
                </documentation>
             </annotation>
          </attribute>
@@ -723,7 +724,7 @@ Version identifier for the managed build extension point. It is a string represe
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2003 IBM Corporation and others.
+         Copyright (c) 2003, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available on the &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt; Eclipse&lt;/a&gt; website.
       </documentation>
    </annotation>

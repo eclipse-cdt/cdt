@@ -49,6 +49,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
+import org.eclipse.cdt.managedbuilder.makegen.gnu.GnuMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -340,7 +341,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		catch (CoreException e) {
 			// Probably not defined
 		}
-		return null;
+		// If no generator is defined, return the default GNU generator
+		return new GnuMakefileGenerator();
 	}
 
 	/** 

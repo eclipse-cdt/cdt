@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -962,8 +963,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	static class TabConverter implements ITextConverter {
 		
 		private String fTabString= "";
+		private int tabRatio = 0;
 		
 		public void setNumberOfSpacesPerTab(int ratio) {
+			tabRatio = ratio;
 			StringBuffer buffer= new StringBuffer();
 			for (int i= 0; i < ratio; i++)
 				buffer.append(' ');
@@ -972,22 +975,39 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		
 		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
 			String text= command.text;
-			if (text != null) {
-				int index= text.indexOf('\t');
-				if (index > -1) {
-					int length= text.length();
-					StringBuffer buffer= new StringBuffer();
-					buffer.append(text.substring(0, index));
-					for (int i= index; i < length; i++) {
-						char c= text.charAt(i);
-						if (c == '\t')
-							buffer.append(fTabString);
-						else
-							buffer.append(c);
-					}
-					command.text= buffer.toString();
+			StringBuffer buffer= new StringBuffer();
+			final String TAB = "\t";
+			// create tokens including the tabs
+			StringTokenizer tokens = new StringTokenizer(text, TAB, true);
+			
+			int charCount = 0;
+			try{
+				// get offset of insertion less start of line
+				// buffer to determine how many characters
+				// are already on this line and adjust tabs accordingly
+				charCount = command.offset -  (document.getLineInformationOfOffset(command.offset).getOffset());
+			} catch (Exception ex){
+				
+			}
+
+			String nextToken = null;
+			int spaces = 0;
+			while (tokens.hasMoreTokens()){
+				nextToken = tokens.nextToken();
+				if (TAB.equals(nextToken)){
+					spaces = tabRatio - (charCount % tabRatio);
+					
+					for (int i= 0; i < spaces; i++){
+						buffer.append(' ');
+					}						
+					
+					charCount += spaces;
+				} else {
+					buffer.append(nextToken);
+					charCount += nextToken.length();	
 				}
 			}
+			command.text= buffer.toString();			
 		}
 	};
 	

@@ -1,5 +1,17 @@
 2002-12-12 Judy N Green
-	src/org/eclipse/cdt/internal/ui/editor/CMarkerAnnotation.java
+	*src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	Fixed Bugzilla bug PR 25176
+	The C editor doesn't properly handle the space conversion of tabs properly.
+	If I put the following in and tab spaces are set to 8 spaces:
+
+	1234567890123456789
+	<tab>  a
+	abc<tab>  a
+
+	Where it should probably line up with the first entry.
+	
+2002-12-12 Judy N Green
+	*src/org/eclipse/cdt/internal/ui/editor/CMarkerAnnotation.java
 	Added a method that will attempt to highlight the correct instance of 
 	a variable. It will skip instances of the string if they are encased in
 	String quotes and return the first instance that is not encased in quotes

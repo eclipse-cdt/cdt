@@ -7,6 +7,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
+import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
@@ -38,31 +39,34 @@ class TranslationUnitInfo extends OpenableInfo {
 		return fChildren;		
 	}
 
-	protected void parse(InputStream in) {
+	protected Map parse(InputStream in) {
 		try {
 			removeChildren();
 			if (CCorePlugin.getDefault().useNewParser()) {
 				// new parser
 				CModelBuilder modelBuilder = new CModelBuilder((TranslationUnit)getElement());
-				modelBuilder.parse();
+				return (modelBuilder.parse());
 
 			} else {
 				// cdt 1.0 parser
 				ModelBuilder modelBuilder= new ModelBuilder((TranslationUnit)getElement());
 				CStructurizer.getCStructurizer().parse(modelBuilder, in);
-			}
+				return null;
+			}	
 		} catch (Exception e) {
 			System.out.println(e);
+			return null;
 		}
 	}
 
-	protected void parse(String buf) {
+	protected Map parse(String buf) {
 		// CHECKPOINT: Parsing a string using the StringBufferInputStream
 		// FIXME: quick fix for the IBinary which uses fake translationUnit
 		if (buf != null) {
 			StringBufferInputStream in = new StringBufferInputStream (buf);
-			parse (in);
+			return (parse (in));
 		}
+		return null;
 	}
 
 	/* Overide the SourceManipulation for the range.  */

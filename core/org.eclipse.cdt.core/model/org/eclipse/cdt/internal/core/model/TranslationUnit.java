@@ -203,8 +203,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}
 		return sourceManipulationInfo;
 	}
-	protected void parse(InputStream in) {
-		getTranslationUnitInfo().parse(in);
+	protected Map parse(InputStream in) {
+		return (getTranslationUnitInfo().parse(in));
 	}
 
 	protected CElementInfo createElementInfo () {
@@ -300,12 +300,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		// put the info now, because getting the contents requires it
 		CModelManager.getDefault().putInfo(this, info);
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
-
+		
 		// generate structure
-		this.parse();
+		newElements = null;
+		newElements = this.parse();
 		
 		// this is temporary until the New Model Builder is implemented
-		getNewElements(newElements, this);		
+		if(newElements == null)
+			getNewElements(newElements, this);		
 		///////////////////////////////////////////////////////////////
 		
 		if (isWorkingCopy()) {
@@ -455,11 +457,12 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	/**
 	 * Parse the buffer contents of this element.
 	 */
-	public void parse(){
+	public Map parse(){
 		try{
-			getTranslationUnitInfo().parse(this.getBuffer().getContents());
+			return (getTranslationUnitInfo().parse(this.getBuffer().getContents()));
 		} catch (CModelException e){
 			// error getting the buffer
+			return null;
 		}
 	}
 	

@@ -12,8 +12,10 @@ package org.eclipse.cdt.internal.core.model;
  *     Rational Software - initial implementation
  ******************************************************************************/
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -49,12 +51,15 @@ import org.eclipse.core.resources.IProject;
 
 public class CModelBuilder {
 	
-	org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
+	protected org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
+	protected Map newElements;
+	
 	public CModelBuilder(org.eclipse.cdt.internal.core.model.TranslationUnit tu) {
 		this.translationUnit = tu ;
+		this.newElements = new HashMap();
 	}
 
-	public TranslationUnit parse() throws Exception {
+	public Map parse() throws Exception {
 		DOMBuilder domBuilder = new DOMBuilder();
 		String code = translationUnit.getBuffer().getContents();
 		Parser parser = new Parser(code, domBuilder, true);
@@ -68,7 +73,7 @@ public class CModelBuilder {
 		long startTime = System.currentTimeMillis(); 
 		generateModelElements(domBuilder.getTranslationUnit());
 		System.out.println("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms" );
-		return domBuilder.getTranslationUnit();
+		return this.newElements;
 	}
 	
 	protected void generateModelElements(TranslationUnit tu){
@@ -165,7 +170,7 @@ public class CModelBuilder {
 
 	}
 		
-	private void createElement(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator){
+	protected void createElement(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator){
 		// typedef
 		if(simpleDeclaration.getDeclSpecifier().isTypedef()){
 			createTypeDef(parent, declarator, simpleDeclaration);
@@ -187,7 +192,7 @@ public class CModelBuilder {
 		}				
 	}
 
-	private void createTemplateElement(Parent parent, TemplateDeclaration templateDeclaration, SimpleDeclaration simpleDeclaration, Declarator declarator){
+	protected void createTemplateElement(Parent parent, TemplateDeclaration templateDeclaration, SimpleDeclaration simpleDeclaration, Declarator declarator){
 		ParameterDeclarationClause pdc = declarator.getParms();
 		if (pdc != null){
 			// template of function or method
@@ -196,7 +201,7 @@ public class CModelBuilder {
 			template.setTemplateParameterTypes(parameterTypes);				
 		}
 	}
-	private void createInclusion(Parent parent, Inclusion inclusion){
+	protected Include createInclusion(Parent parent, Inclusion inclusion){
 		// create element
 		Include element = new Include((CElement)parent, inclusion.getName());
 		// add to parent
@@ -204,9 +209,11 @@ public class CModelBuilder {
 		// set position
 		element.setIdPos(inclusion.getNameOffset(), inclusion.getNameLength());
 		element.setPos(inclusion.getStartingOffset(), inclusion.getTotalLength());
+		this.newElements.put(element, element.getElementInfo());
+		return element;
 	}
 	
-	private void createMacro(Parent parent, Macro macro){
+	protected org.eclipse.cdt.internal.core.model.Macro createMacro(Parent parent, Macro macro){
 		// create element
 		org.eclipse.cdt.internal.core.model.Macro element = new  org.eclipse.cdt.internal.core.model.Macro(parent, macro.getName());
 		// add to parent
@@ -214,10 +221,11 @@ public class CModelBuilder {
 		// set position
 		element.setIdPos(macro.getNameOffset(), macro.getNameLength());
 		element.setPos(macro.getStartingOffset(), macro.getTotalLength());
-		
+		this.newElements.put(element, element.getElementInfo());
+		return element;
 	}
 	
-	private IParent createNamespace(Parent parent, NamespaceDefinition nsDef){
+	protected Namespace createNamespace(Parent parent, NamespaceDefinition nsDef){
 		// create element
 		String nsName = (nsDef.getName() == null ) ? "" : nsDef.getName().toString();
 		Namespace element = new Namespace ((ICElement)parent, nsName );
@@ -232,41 +240,49 @@ public class CModelBuilder {
 		element.setPos(nsDef.getStartingOffset(), nsDef.getTotalLength());
 		element.setTypeName(nsDef.getStartToken().getImage());
 		
-		return (IParent)element;
+		this.newElements.put(element, element.getElementInfo());		
+		return element;
 	}
 
-	private IParent createEnumeration(Parent parent, EnumerationSpecifier enumSpecifier){
+	protected Enumeration createEnumeration(Parent parent, EnumerationSpecifier enumSpecifier){
 		// create element
 		String enumName = (enumSpecifier.getName() == null ) ? "" : enumSpecifier.getName().toString();
-		Enumeration enum = new Enumeration ((ICElement)parent, enumName );
+		Enumeration element = new Enumeration ((ICElement)parent, enumName );
 		// add to parent
-		parent.addChild((ICElement)enum);
+		parent.addChild((ICElement)element);
 		List enumItems = enumSpecifier.getEnumeratorDefinitions();
 		Iterator i = enumItems.iterator();
 		while (i.hasNext()){
 			// create sub element
 			EnumeratorDefinition enumDef = (EnumeratorDefinition) i.next();
-			Enumerator element = new Enumerator (enum, enumDef.getName().toString());
-			// add to parent
-			enum.addChild(element);
-			// set enumerator position
-			element.setIdPos(enumDef.getName().getStartOffset(), enumDef.getName().length());
-			element.setPos(enumDef.getStartingOffset(), enumDef.getTotalLength());
+			createEnumerator(element, enumDef);
 		}
-		
 		// set enumeration position
 		if(enumSpecifier.getName() != null ){
-			enum.setIdPos(enumSpecifier.getName().getStartOffset(), enumSpecifier.getName().length());
+			element.setIdPos(enumSpecifier.getName().getStartOffset(), enumSpecifier.getName().length());
 		}else {
-			enum.setIdPos(enumSpecifier.getStartToken().getOffset(), enumSpecifier.getStartToken().getLength());				
+			element.setIdPos(enumSpecifier.getStartToken().getOffset(), enumSpecifier.getStartToken().getLength());				
 		}
-		enum.setPos(enumSpecifier.getStartingOffset(), enumSpecifier.getTotalLength());
-		enum.setTypeName(enumSpecifier.getStartToken().getImage());
+		element.setPos(enumSpecifier.getStartingOffset(), enumSpecifier.getTotalLength());
+		element.setTypeName(enumSpecifier.getStartToken().getImage());
 		 
-		return (IParent)enum;
+		this.newElements.put(element, element.getElementInfo());
+		return element;
 	}
 	
-	private IParent createClass(Parent parent, SimpleDeclaration simpleDeclaration, ClassSpecifier classSpecifier, boolean isTemplate){
+	protected Enumerator createEnumerator(Parent enum, EnumeratorDefinition enumDef){
+		Enumerator element = new Enumerator (enum, enumDef.getName().toString());
+		// add to parent
+		enum.addChild(element);
+		// set enumerator position
+		element.setIdPos(enumDef.getName().getStartOffset(), enumDef.getName().length());
+		element.setPos(enumDef.getStartingOffset(), enumDef.getTotalLength());
+
+		this.newElements.put(element, element.getElementInfo());
+		return element;		
+	}
+	
+	protected Structure createClass(Parent parent, SimpleDeclaration simpleDeclaration, ClassSpecifier classSpecifier, boolean isTemplate){
 		// create element
 		String className = (classSpecifier.getName() == null ) ? "" : classSpecifier.getName().toString();
 		int kind;
@@ -311,26 +327,29 @@ public class CModelBuilder {
 		element.setTypeName( type );
 		element.setPos(classSpecifier.getStartingOffset(), classSpecifier.getTotalLength());
 		
+		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
 	
-	private void createTypeDef(Parent parent, Declarator declarator, SimpleDeclaration simpleDeclaration){
+	protected TypeDef createTypeDef(Parent parent, Declarator declarator, SimpleDeclaration simpleDeclaration){
 		// create the element
 		String declaratorName = declarator.getName().toString();		
-		TypeDef typedef = new TypeDef( parent, declaratorName );
+		TypeDef element = new TypeDef( parent, declaratorName );
 		String type = getType(simpleDeclaration, declarator);
-		typedef.setTypeName(type);
+		element.setTypeName(type);
 		
 		// add to parent
-		parent.addChild((CElement)typedef);
+		parent.addChild((CElement)element);
 
 		// set positions
-		typedef.setIdPos(declarator.getName().getStartOffset(), declarator.getName().length());	
-		typedef.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
+		element.setIdPos(declarator.getName().getStartOffset(), declarator.getName().length());	
+		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
+
+		this.newElements.put(element, element.getElementInfo());
+		return element;	
 	}
 
-	private VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator){
-		
+	protected VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator){	
 		String declaratorName = declarator.getName().toString();
 		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 		
@@ -365,10 +384,11 @@ public class CModelBuilder {
 		element.setIdPos( declarator.getName().getStartOffset(), declarator.getName().length() );
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
 			
+		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
 
-	private FunctionDeclaration createFunctionSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
+	protected FunctionDeclaration createFunctionSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
 		String declaratorName = declarator.getName().toString();
 		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 		// getParameterTypes
@@ -442,10 +462,11 @@ public class CModelBuilder {
 		// hook up the offsets
 		element.setIdPos( declarator.getName().getStartOffset(), declarator.getName().length() );		
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
+		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}
 
-	private VariableDeclaration createPointerToFunction(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
+	protected VariableDeclaration createPointerToFunction(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, ParameterDeclarationClause pdc, boolean isTemplate){
 		String declaratorName = declarator.getDeclarator().getName().toString();
 		DeclSpecifier declSpecifier = simpleDeclaration.getDeclSpecifier();
 		// getParameterTypes
@@ -489,8 +510,10 @@ public class CModelBuilder {
 		// hook up the offsets
 		element.setIdPos( declarator.getDeclarator().getName().getStartOffset(), declarator.getDeclarator().getName().length() );
 		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());	
+		this.newElements.put(element, element.getElementInfo());
 		return element;
 	}	
+	
 	private String[] getTemplateParameters(ITemplateParameterListOwner templateDeclaration){
 		// add the parameters
 		List templateParameters = templateDeclaration.getTemplateParms().getDeclarations();

@@ -19,6 +19,8 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.core.model.IBufferFactory;
+import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.BuildConsoleManager;
 import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -86,6 +88,17 @@ public class CUIPlugin extends AbstractUIPlugin {
 		}
 	}
 
+	public static IBufferFactory getBufferFactory() {
+		CDocumentProvider provider= CUIPlugin.getDefault().getDocumentProvider();
+		if (provider != null)
+			return provider.getBufferFactory();
+		return null;
+	}
+
+	public static IWorkingCopy[] getSharedWorkingCopies() {
+		return CCorePlugin.getSharedWorkingCopies(getBufferFactory());
+	}
+	
 	public static String getResourceString(String key) {
 		try {
 			return fgResourceBundle.getString(key);
@@ -101,7 +114,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
-
+	
 	public static String getFormattedString(String key, String arg) {
 		return MessageFormat.format(getResourceString(key), new String[] { arg });
 	}
@@ -357,5 +370,4 @@ public class CUIPlugin extends AbstractUIPlugin {
 		manager.unregisterAdapters(fResourceAdapterFactory);
 		manager.unregisterAdapters(fCElementAdapterFactory);
 	}
-
 }

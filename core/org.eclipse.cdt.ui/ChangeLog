@@ -1,3 +1,6 @@
+2003-08-11 Andrew Niefer
+	- Added some code to CUIPlugin to access working copies 
+	
 2003-08-10 Sean Evoy
 	Added a new target for building DLLs on Cygwin.
 	* plugin.xml

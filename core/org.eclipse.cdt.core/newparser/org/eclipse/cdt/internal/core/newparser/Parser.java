@@ -98,10 +98,7 @@ public class Parser {
 				// Mark as failure and try to reach a recovery point
 				parsePassed = false;
 				
-				if (lastBacktrack == null) {
-					// First backtrack, see if we can continue from here
-					lastBacktrack = LA(1);
-				} else if (lastBacktrack == LA(1)) {
+				if (lastBacktrack != null && lastBacktrack == LA(1)) {
 					// we haven't progressed from the last backtrack
 					// try and find tne next definition
 					for (int t = LT(1); t != Token.tEOF; t = LT(1)) {
@@ -111,7 +108,7 @@ public class Parser {
 							break;
 					}
 				} else {
-					// else we've progressed, start again from here
+					// start again from here
 					lastBacktrack = LA(1);
 				}
 			}
@@ -1888,12 +1885,8 @@ public class Parser {
 		consume(Token.tSEMI);
 	}
 	
-	
 	// Token management
 	private Scanner scanner;
-
-	static public final int maxToken = 2000;
-	
 	private Token currToken;
 	
 	private void fetchToken() throws Exception {

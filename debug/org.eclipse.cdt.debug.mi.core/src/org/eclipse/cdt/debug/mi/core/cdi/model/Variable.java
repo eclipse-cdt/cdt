@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
@@ -169,11 +170,11 @@ public class Variable extends CObject implements ICDIVariable {
 				//value = new FunctionValue(this);
 				value = new Value(this);
 			} else if (t instanceof ICDIPointerType) {
-				((ICDIPointerType)t).getComponentType();
+				//((ICDIPointerType)t).getComponentType();
 				//value = new PointerValue(this);
 				value = new Value(this);
 			} else if (t instanceof ICDIArrayType) {
-				((ICDIArrayType)t).getComponentType();
+				//((ICDIArrayType)t).getComponentType();
 				//value = new ArrayValue(this);
 				value = new Value(this);
 			} else if (t instanceof ICDIStructType) {
@@ -285,20 +286,22 @@ public class Variable extends CObject implements ICDIVariable {
 	 */
 	public ICDIType getType() throws CDIException {
 		if (type == null) {
-			Session session = (Session)(getTarget().getSession());
+			ICDITarget target = getTarget();
+			Session session = (Session)(target.getSession());
 			SourceManager sourceMgr = (SourceManager)session.getSourceManager();
 			String typename = getTypeName();
 			try {
-				type = sourceMgr.getType(getTarget(), typename);
+				type = sourceMgr.getType(target, typename);
 			} catch (CDIException e) {
-				type = new IncompleteType(getTarget(), typename);
-//				// Try after ptype.
-//				String ptype = sourceMgr.getDetailTypeName(typename);
-//				try {
-//					type = sourceMgr.getType(ptype);
-//				} catch (CDIException ex) {
-//					type = new IncompleteType(typename);
-//				}
+				// Try with ptype.
+				try {
+					String ptype = sourceMgr.getDetailTypeName(typename);
+					type = sourceMgr.getType(target, ptype);
+				} catch (CDIException ex) {
+				}
+			}
+			if (type == null) {
+				type = new IncompleteType(target, typename);
 			}
 		}
 		return type;

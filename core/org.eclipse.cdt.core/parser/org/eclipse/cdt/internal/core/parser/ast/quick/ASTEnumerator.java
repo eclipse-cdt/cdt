@@ -163,4 +163,10 @@ public class ASTEnumerator extends ASTNode
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTEnumerator#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void freeReferences(IReferenceManager referenceManager) {
+		// do nothing
+	}
 }

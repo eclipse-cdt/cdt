@@ -168,4 +168,10 @@ public class ASTEnumerationSpecifier extends ASTScopedTypeSpecifier
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void freeReferences(IReferenceManager referenceManager) {
+		// do nothing
+	}
 }

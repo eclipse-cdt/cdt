@@ -1117,4 +1117,33 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		assertTrue( ((IASTFunction)node.getCompletionScope()).getName().equals( "f" ) ); //$NON-NLS-1$
 		assertNotNull( node.getCompletionContext() );
 	}
+	
+	public void testBug64271() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "typedef int DWORD;\n" ); //$NON-NLS-1$
+		writer.write( "typedef char BYTE;\n"); //$NON-NLS-1$
+		writer.write( "#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \\n"); //$NON-NLS-1$
+		writer.write( "((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |       \\n"); //$NON-NLS-1$
+		writer.write( "((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))\n"); //$NON-NLS-1$
+		writer.write( "enum e {\n"); //$NON-NLS-1$
+		writer.write( "blah1 = 5,\n"); //$NON-NLS-1$
+		writer.write( "blah2 = MAKEFOURCC('a', 'b', 'c', 'd'),\n"); //$NON-NLS-1$
+		writer.write( "blah3\n"); //$NON-NLS-1$
+		writer.write( "};\n"); //$NON-NLS-1$
+		writer.write( "e mye = bl\n"); //$NON-NLS-1$
+		String code = writer.toString();
+		IASTCompletionNode node = parse( code, code.indexOf( "= bl") + 4); //$NON-NLS-1$
+		assertNotNull( node );
+		assertEquals( node.getCompletionKind(), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE );
+		assertEquals( node.getCompletionPrefix(), "bl"); //$NON-NLS-1$
+		assertNull( node.getCompletionContext() );
+		assertFalse( node.getKeywords().hasNext() );
+		
+		LookupKind[] kind = new LookupKind[1];
+		kind[0] = LookupKind.ENUMERATORS;
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), kind, null, null );
+		assertNotNull( result );
+		assertEquals( result.getResultsSize(), 3 );
+	}
 }

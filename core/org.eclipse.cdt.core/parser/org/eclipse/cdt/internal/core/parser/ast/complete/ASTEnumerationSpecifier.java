@@ -72,6 +72,13 @@ public class ASTEnumerationSpecifier
         {
             /* do nothing */
         }
+        if( enumerators.isEmpty() ) return;
+        for( int i = 0; i < enumerators.size(); ++i )
+        {
+        	IASTEnumerator enumerator = (IASTEnumerator) enumerators.get(i);
+        	if( enumerator.getInitialValue() != null )
+        		enumerator.getInitialValue().acceptElement(requestor, manager );
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
@@ -175,5 +182,14 @@ public class ASTEnumerationSpecifier
 	 */
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void freeReferences(IReferenceManager referenceManager) {
+		if( enumerators.isEmpty() ) return;
+		for( int i = 0; i < enumerators.size(); ++i )
+			((IASTEnumerator) enumerators.get(i)).freeReferences(referenceManager);
 	}
 }

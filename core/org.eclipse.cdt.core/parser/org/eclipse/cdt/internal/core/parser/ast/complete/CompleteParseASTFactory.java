@@ -3412,7 +3412,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if( result.getType() == TypeInfo.t_type )
 		{
 			ISymbol typeSymbol = lookupQualifiedName( scopeToSymbol(scope), typeId.getTokenDuple(), refs, true );
-			if( typeSymbol == null || typeSymbol.getType() == TypeInfo.t_type )
+			if( typeSymbol == null /*|| typeSymbol.getType() == TypeInfo.t_type*/ )
 			{
 				freeReferences( refs );
 				handleProblem( scope, IProblem.SEMANTIC_INVALID_TYPE, id.getTypeOrClassName() );

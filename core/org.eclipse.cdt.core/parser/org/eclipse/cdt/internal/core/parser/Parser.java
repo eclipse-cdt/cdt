@@ -2533,12 +2533,12 @@ public abstract class Parser extends ExpressionParser implements IParser
                     consume(IToken.tASSIGN);
                     initialValue = constantExpression(sdw.getScope(), CompletionKind.SINGLE_NAME_REFERENCE, Key.EXPRESSION);
                 }
-  
+                IASTEnumerator enumerator = null;
                 if (LT(1) == IToken.tRBRACE)
                 {
                     try
                     {
-                        IASTEnumerator enumerator = astFactory.addEnumerator(
+                        enumerator = astFactory.addEnumerator(
                             enumeration,
                             enumeratorIdentifier.getImage(),
                             enumeratorIdentifier.getOffset(),
@@ -2560,11 +2560,14 @@ public abstract class Parser extends ExpressionParser implements IParser
                 }
                 if (LT(1) != IToken.tCOMMA)
                 {
+                	enumeration.freeReferences( astFactory.getReferenceManager() );
+                	if( enumerator != null )
+                		enumerator.freeReferences( astFactory.getReferenceManager() );
                     throw backtrack;
                 }
                 try
                 {
-                    IASTEnumerator enumerator = astFactory.addEnumerator(
+                    enumerator = astFactory.addEnumerator(
                         enumeration,
                         enumeratorIdentifier.getImage(),
                         enumeratorIdentifier.getOffset(),
@@ -3275,4 +3278,5 @@ public abstract class Parser extends ExpressionParser implements IParser
 	 */
 	protected void handleOffsetableNamedElement(IASTOffsetableNamedElement node ) {
 	}
+	
 }

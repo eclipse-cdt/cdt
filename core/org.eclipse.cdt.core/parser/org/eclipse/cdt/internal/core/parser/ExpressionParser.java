@@ -2983,4 +2983,12 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	{
 		return true;
 	}
+		
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return scanner.toString(); //$NON-NLS-1$
+	}
 }

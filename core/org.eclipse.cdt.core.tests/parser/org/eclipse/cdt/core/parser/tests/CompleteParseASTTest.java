@@ -28,7 +28,6 @@ import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTField;
-import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
@@ -1874,5 +1873,22 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		Iterator d = parse( writer.toString() ).getDeclarations();
 	
 		IASTFunction f = (IASTFunction) d.next();
+	}
+    
+    public void testBug64271() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "typedef int DWORD;\n" ); //$NON-NLS-1$
+		writer.write( "typedef char BYTE;\n"); //$NON-NLS-1$
+		writer.write( "#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \\n"); //$NON-NLS-1$
+		writer.write( "((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |       \\n"); //$NON-NLS-1$
+		writer.write( "((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))\n"); //$NON-NLS-1$
+		writer.write( "enum e {\n"); //$NON-NLS-1$
+		writer.write( "blah1 = 5,\n"); //$NON-NLS-1$
+		writer.write( "blah2 = MAKEFOURCC('a', 'b', 'c', 'd'),\n"); //$NON-NLS-1$
+		writer.write( "blah3\n"); //$NON-NLS-1$
+		writer.write( "};\n"); //$NON-NLS-1$
+		writer.write( "e mye = blah;\n"); //$NON-NLS-1$
+		parse( writer.toString().toString() );
 	}
 }

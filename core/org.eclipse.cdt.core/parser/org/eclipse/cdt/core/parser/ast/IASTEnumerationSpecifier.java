@@ -20,5 +20,10 @@ import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
  */
 public interface IASTEnumerationSpecifier extends ISourceElementCallbackDelegate, IASTScopedTypeSpecifier, IASTOffsetableNamedElement {
 
-	public Iterator getEnumerators(); 
+	public Iterator getEnumerators();
+
+	/**
+	 * @param referenceManager
+	 */
+	public void freeReferences(IReferenceManager referenceManager); 
 }

@@ -159,4 +159,11 @@ public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
 	public int getNameLineNumber() {
 		return offsets.getNameLineNumber();
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTEnumerator#freeReferences(org.eclipse.cdt.core.parser.ast.IReferenceManager)
+	 */
+	public void freeReferences(IReferenceManager referenceManager) {
+		if( initialValue != null )
+			initialValue.freeReferences(referenceManager);
+	}
 }

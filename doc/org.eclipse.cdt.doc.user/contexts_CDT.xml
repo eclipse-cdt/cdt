@@ -27,25 +27,25 @@
    	label="Target platform, C/C++ Properties window"/>
 </context>
 
-<context id ="new_c_editor_pref_page_context">
+<context id ="c_editor_pref_page">
    <description>Customize the appearance of the C/C++ Editor. </description>
    <topic href="cdt_u_c_editor_gen.htm"
    	label="General page, Preferences window"/>
 </context>
 
-<context id ="new_c_editor_annotations_pref_page_context">
+<context id ="c_editor_annotations_pref_page">
    <description>Customize the appearance of the C/C++ Editor. </description>
    <topic href="cdt_u_c_editor_anno.htm"
    	label="Annotations page, Preferences window"/>
 </context>
 
-<context id ="new_c_editor_colors_pref_page_context">
+<context id ="c_editor_colors_pref_page">
    <description>Customize the appearance of the C/C++ editor. </description>
    <topic href="cdt_u_c_editor_color.htm"
    	label="Colors page, Preferences window"/>
 </context>
 
-<context id ="new_c_editor_pref_page_context">
+<context id ="c_editor_content_assist_pref_page">
    <description>Customize how the Content Assist feature works. </description>
    <topic href="cdt_u_c_editor_con_assist.htm"
    	label="Content Assist page, Preferences window"/>

@@ -12,7 +12,10 @@ package org.eclipse.cdt.managedbuilder.ui.properties;
  * **********************************************************************/
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -37,6 +40,10 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	// field editor that displays all the build options for a particular tool
 	private MultiLineTextFieldEditor allOptionFieldEditor;
 	private static final String DEFAULT_SEPERATOR = ";"; //$NON-NLS-1$
+	// Map that holds all string options and its values
+	private HashMap stringOptionsMap;
+	// Map that holds all user object options and its values
+	private HashMap userObjsMap;
 	// Tool the settings belong to
 	private ITool tool;
 	// all build options preference store id
@@ -47,12 +54,12 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		super(configuration);
 		this.tool = tool;
 		allOptionsId = tool.getId() + ".allOptions"; //$NON-NLS-1$
+		stringOptionsMap = new HashMap();
+		userObjsMap = new HashMap();
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#computeSize()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#computeSize()
 	 */
 	public Point computeSize() {
 		return super.computeSize();
@@ -102,8 +109,8 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	/**
 	 * Returns all the build options string
 	 * 
-	 * @return @throws
-	 *         BuildException
+	 * @return String 
+	 * @throws BuildException
 	 */
 	private String getToolFlags() throws BuildException {
 		ITool[] tools = configuration.getTools();
@@ -141,6 +148,8 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 					break;
 				case IOption.STRING :
 					String val = getPreferenceStore().getString(option.getId());
+					// add this string option value to the list
+					stringOptionsMap.put(option, val);
 					if (val.length() > 0) {
 						buf.append(val + ITool.WHITE_SPACE);
 					}
@@ -152,6 +161,8 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 				case IOption.OBJECTS :
 					String cmd = option.getCommand();
 					listStr = getPreferenceStore().getString(option.getId());
+					if (cmd == null)
+						userObjsMap.put(option, listStr);
 					listVal = BuildToolsSettingsStore.parseString(listStr);
 					for (int j = 0; j < listVal.length; j++) {
 						String temp = listVal[j];
@@ -216,68 +227,106 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			for (int k = 0; k < options.length; ++k) {
 				IOption opt = options[k];
 				String name = opt.getId();
-				// check whether the option value is already exist
-				// and also change the preference store based on
-				// the option value
-				switch (opt.getValueType()) {
-					case IOption.BOOLEAN :
-						if (opt.getCommand().equals(optionsArr[j])) {
-							getPreferenceStore().setValue(opt.getId(), true);
-							optionValueExist = true;
-						}
-						break;
-					case IOption.ENUMERATED :
-						String enum = ""; //$NON-NLS-1$
-						String[] enumValues = opt.getApplicableValues();
-						for (int i = 0; i < enumValues.length; i++) {
-							if (opt.getEnumCommand(enumValues[i]).equals(
-									optionsArr[j])) {
-								enum = enumValues[i];
+				// check whether the option value is "STRING" type
+				Iterator stringOptsIter = stringOptionsMap.values().iterator();
+				while (stringOptsIter.hasNext()) {
+					if (((String) stringOptsIter.next()).indexOf(optionsArr[j]) != -1)
+						optionValueExist = true;
+				}
+				// check whether the option value is "OBJECTS" type
+				Iterator userObjsIter = userObjsMap.values().iterator();
+				while (userObjsIter.hasNext()) {
+					if (((String) userObjsIter.next()).indexOf(optionsArr[j]) != -1)
+						optionValueExist = true;
+				}
+				// if the value does not exist in string option or user objects
+				// option
+				if (!optionValueExist) {
+					// check whether the option value is already exist
+					// and also change the preference store based on
+					// the option value
+					switch (opt.getValueType()) {
+						case IOption.BOOLEAN :
+							if (opt.getCommand().equals(optionsArr[j])) {
+								getPreferenceStore()
+										.setValue(opt.getId(), true);
 								optionValueExist = true;
 							}
-						}
-						if (!enum.equals("")) //$NON-NLS-1$
-							getPreferenceStore().setValue(opt.getId(), enum);
-						break;
-					case IOption.STRING :
-						String str = getPreferenceStore()
-								.getString(opt.getId());
-						if (alloptions.indexOf(str) == -1) {
-							getPreferenceStore().setValue(opt.getId(), ""); //$NON-NLS-1$
-						}
-						if (str.indexOf(optionsArr[j]) != -1) {
-							optionValueExist = true;
-						}
-						break;
-					case IOption.STRING_LIST :
-					case IOption.INCLUDE_PATH :
-					case IOption.PREPROCESSOR_SYMBOLS :
-					case IOption.LIBRARIES :
-						if (opt.getCommand() != null
-								&& optionsArr[j].startsWith(opt.getCommand())
-								&& !optionsList.contains(optionsArr[j])) {
-							optionsList.add(optionsArr[j]);
-							optionValueExist = true;
-						}
-						break;
-					case IOption.OBJECTS :
-						String userObjStr = getPreferenceStore().getString(
-								opt.getId());
-						String[] userObjs = BuildToolsSettingsStore
-								.parseString(userObjStr);
-						for (int m = 0; m < userObjs.length; m++) {
-							if (userObjs[m].equalsIgnoreCase(optionsArr[j]))
+							break;
+						case IOption.ENUMERATED :
+							String enum = ""; //$NON-NLS-1$
+							String[] enumValues = opt.getApplicableValues();
+							for (int i = 0; i < enumValues.length; i++) {
+								if (opt.getEnumCommand(enumValues[i]).equals(
+										optionsArr[j])) {
+									enum = enumValues[i];
+									optionValueExist = true;
+								}
+							}
+							if (!enum.equals("")) //$NON-NLS-1$
+								getPreferenceStore()
+										.setValue(opt.getId(), enum);
+							break;
+						case IOption.STRING_LIST :
+						case IOption.INCLUDE_PATH :
+						case IOption.PREPROCESSOR_SYMBOLS :
+						case IOption.LIBRARIES :
+							if (opt.getCommand() != null
+									&& optionsArr[j].startsWith(opt
+											.getCommand())) {
+								optionsList.add(optionsArr[j]);
 								optionValueExist = true;
-						}
-						break;
-					default :
-						break;
+							}
+							break;
+						default :
+							break;
+					}
 				}
 			}
 			// If the parsed string does not match with any previous option
 			// values then consider this option as a additional build option
 			if (!optionValueExist) {
 				addnOptions.append(optionsArr[j] + ITool.WHITE_SPACE);
+			}
+		}
+		// check whether some of the "STRING" option value or "OBJECTS" type
+		// option value removed
+		// by the user from all build option field
+		Set set = stringOptionsMap.keySet();
+		for (int s = 0; s < set.size(); s++) {
+			Iterator iterator = set.iterator();
+			while (iterator.hasNext()) {
+				Object key = iterator.next();
+				String val = (String) stringOptionsMap.get(key);
+				if (alloptions.indexOf(val) == -1) {
+					StringBuffer buf = new StringBuffer();
+					String[] vals = val.split(WHITESPACE);
+					for (int t = 0; t < vals.length; t++) {
+						if (alloptions.indexOf(vals[t]) != -1)
+							buf.append(vals[t] + ITool.WHITE_SPACE);
+					}
+					getPreferenceStore().setValue(((IOption) key).getId(),
+							buf.toString().trim());
+				}
+			}
+		}
+		// "OBJECTS" type
+		Set objSet = userObjsMap.keySet();
+		for (int s = 0; s < objSet.size(); s++) {
+			Iterator iterator = objSet.iterator();
+			while (iterator.hasNext()) {
+				Object key = iterator.next();
+				String val = (String) userObjsMap.get(key);
+				ArrayList list = new ArrayList();
+				String[] vals = BuildToolsSettingsStore.parseString(val);
+				for (int t = 0; t < vals.length; t++) {
+					if (alloptions.indexOf(vals[t]) != -1)
+						list.add(vals[t]);
+				}
+				String listArr[] = new String[list.size()];
+				list.toArray(listArr);
+				String liststr = BuildToolsSettingsStore.createList(listArr);
+				getPreferenceStore().setValue(((IOption) key).getId(), liststr);
 			}
 		}
 		// Now update the preference store with parsed options
@@ -377,34 +426,25 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			// Transfer value from preference store to options
 			switch (option.getValueType()) {
 				case IOption.BOOLEAN :
-					boolean boolVal = getPreferenceStore().getBoolean(
-							option.getId());
-					ManagedBuildManager.setOption(configuration, option,
-							boolVal);
+					boolean boolVal = getPreferenceStore().getBoolean(option.getId());
+					ManagedBuildManager.setOption(configuration, option, boolVal);
 					break;
 				case IOption.ENUMERATED :
-					String enumVal = getPreferenceStore().getString(
-							option.getId());
-					ManagedBuildManager.setOption(configuration, option,
-							enumVal);
+					String enumVal = getPreferenceStore().getString(option.getId());
+					ManagedBuildManager.setOption(configuration, option, enumVal);
 					break;
 				case IOption.STRING :
-					String strVal = getPreferenceStore().getString(
-							option.getId());
-					ManagedBuildManager
-							.setOption(configuration, option, strVal);
+					String strVal = getPreferenceStore().getString(option.getId());
+					ManagedBuildManager.setOption(configuration, option, strVal);
 					break;
 				case IOption.STRING_LIST :
 				case IOption.INCLUDE_PATH :
 				case IOption.PREPROCESSOR_SYMBOLS :
 				case IOption.LIBRARIES :
 				case IOption.OBJECTS :
-					String listStr = getPreferenceStore().getString(
-							option.getId());
-					String[] listVal = BuildToolsSettingsStore
-							.parseString(listStr);
-					ManagedBuildManager.setOption(configuration, option,
-							listVal);
+					String listStr = getPreferenceStore().getString(option.getId());
+					String[] listVal = BuildToolsSettingsStore.parseString(listStr);
+					ManagedBuildManager.setOption(configuration, option, listVal);
 					break;
 				default :
 					break;

@@ -557,37 +557,43 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
          return EMPTY_MACRO_DEFINITIONS_ARRAY;
       IASTPreprocessorMacroDefinition[] result = new IASTPreprocessorMacroDefinition[contexts
             .size()];
-      for (int i = 0; i < contexts.size(); ++i) {
-         _MacroDefinition d = (_MacroDefinition) contexts.get(i);
-         IASTPreprocessorMacroDefinition r = null;
-         if (d instanceof _ObjectMacroDefinition)
-            r = new ASTObjectMacro();
-         else if (d instanceof _FunctionMacroDefinition) {
-            IASTPreprocessorFunctionStyleMacroDefinition f = new ASTFunctionMacro();
-            char[][] parms = ((_FunctionMacroDefinition) d).parms;
-            for (int j = 0; j < parms.length; ++j) {
-               if( parms[j] == null ) continue;
-               IASTFunctionStyleMacroParameter parm = new ASTFunctionMacroParameter();
-               parm.setParameter(new String(parms[j]));
-               f.addParameter(parm);
-               parm.setParent(f);
-               parm
-                     .setPropertyInParent(IASTPreprocessorFunctionStyleMacroDefinition.PARAMETER);
-            }
-            r = f;
-         }
-
-         IASTName name = new ScannerASTName(d.name);
-         name.setPropertyInParent(IASTPreprocessorMacroDefinition.MACRO_NAME);
-         name.setParent(r);
-         r.setName(name);
-         r.setExpansion(new String(d.expansion));
-         ((ScannerASTNode) r).setOffsetAndLength(d.context_directive_start,
-               d.context_directive_end - d.context_directive_start);
-         result[i] = r;
-      }
+      for (int i = 0; i < contexts.size(); ++i) 
+         result[i] = createASTMacroDefinition((_MacroDefinition) contexts.get(i));
+      
 
       return result;
+   }
+
+   /**
+    * @param d
+    * @return
+    */
+   protected IASTPreprocessorMacroDefinition createASTMacroDefinition(_MacroDefinition d) {
+      IASTPreprocessorMacroDefinition r = null;
+      if (d instanceof _ObjectMacroDefinition)
+         r = new ASTObjectMacro();
+      else if (d instanceof _FunctionMacroDefinition) {
+         IASTPreprocessorFunctionStyleMacroDefinition f = new ASTFunctionMacro();
+         char[][] parms = ((_FunctionMacroDefinition) d).parms;
+         for (int j = 0; j < parms.length; ++j) {
+            IASTFunctionStyleMacroParameter parm = new ASTFunctionMacroParameter();
+            parm.setParameter(new String(parms[j]));
+            f.addParameter(parm);
+            parm.setParent(f);
+            parm
+                  .setPropertyInParent(IASTPreprocessorFunctionStyleMacroDefinition.PARAMETER);
+         }
+         r = f;
+      }
+
+      IASTName name = new ScannerASTName(d.name);
+      name.setPropertyInParent(IASTPreprocessorMacroDefinition.MACRO_NAME);
+      name.setParent(r);
+      r.setName(name);
+      r.setExpansion(new String(d.expansion));
+      ((ScannerASTNode) r).setOffsetAndLength(d.context_directive_start,
+            d.context_directive_end - d.context_directive_start);
+      return r;
    }
 
    /*
@@ -838,7 +844,26 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       currentContext
             .addSubContext(new _FunctionMacroDefinition(currentContext,
                   startOffset, endOffset, m.name, nameOffset, m.expansion,
-                  m.arglist));
+                  removeNullArguments( m.arglist)));
+   }
+
+   /**
+    * @param arglist
+    * @return
+    */
+   private char [][] removeNullArguments(char[][] arglist) {
+      int nullCount = 0;
+      for (int i = 0; i < arglist.length; ++i)
+         if (arglist[i] == null)
+            ++nullCount;
+      if (nullCount == 0)
+         return arglist;
+      char [][] old = arglist;
+      int newSize = old.length - nullCount;
+      arglist = new char [newSize][];
+      for (int i = 0; i < newSize; ++i)
+         arglist[i] = old[i];
+      return arglist;
    }
 
    /*

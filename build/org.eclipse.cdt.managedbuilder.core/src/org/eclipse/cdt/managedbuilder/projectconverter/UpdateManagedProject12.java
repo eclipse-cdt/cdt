@@ -182,7 +182,8 @@ class UpdateManagedProject12 {
 
 		// Create the new configuration
 		newConfig = newProject.createConfiguration(newParentConfig, newConfigId);
-		
+		newConfig.setName(oldConfig.getAttribute(IConfigurationV2.NAME));
+
 		Element oldTarget = (Element)oldConfig.getParentNode();
 		if(oldTarget.hasAttribute(ITarget.ARTIFACT_NAME)){
 			String buildGoal = oldTarget.getAttribute(ITarget.ARTIFACT_NAME);

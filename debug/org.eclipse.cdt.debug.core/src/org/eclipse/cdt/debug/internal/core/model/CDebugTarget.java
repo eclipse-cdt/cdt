@@ -423,7 +423,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred while terminating.", new String[]{ e.toString() } ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 
@@ -490,7 +490,7 @@ public class CDebugTarget extends CDebugElement
 		} 
 		catch( CDIException e ) 
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred resuming target.", new String[] { e.toString() } ), e );
+			targetRequestFailed( e.toString(), e );
 		}	
 	}
 
@@ -507,7 +507,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred suspending target.", new String[] { e.toString()} ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 
@@ -689,7 +689,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} ocurred disconnecting from target.", new String[] { e.toString()} ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 
@@ -895,7 +895,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} ocurred restarting the target.", new String[] { e.toString()} ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 

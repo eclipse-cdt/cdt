@@ -464,7 +464,7 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred resuming thread.", new String[] { e.toString()} ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 
@@ -483,7 +483,7 @@ public class CThread extends CDebugElement
 		}
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred suspending thread.", new String[] { e.toString()} ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 
@@ -551,7 +551,7 @@ public class CThread extends CDebugElement
 		}		
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred stepping in thread.", new String[] { e.toString()} ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 
@@ -568,7 +568,7 @@ public class CThread extends CDebugElement
 		}		
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred stepping in thread.", new String[] { e.toString()} ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 
@@ -585,7 +585,7 @@ public class CThread extends CDebugElement
 		}		
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred stepping in thread.", new String[] { e.toString()} ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 
@@ -758,7 +758,7 @@ public class CThread extends CDebugElement
 		}		
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred stepping in thread.", new String[] { e.toString()} ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 
@@ -775,7 +775,7 @@ public class CThread extends CDebugElement
 		}		
 		catch( CDIException e )
 		{
-			targetRequestFailed( MessageFormat.format( "{0} occurred stepping in thread.", new String[] { e.toString()} ), e );
+			targetRequestFailed( e.toString(), e );
 		}
 	}
 

@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.internal.ui.editors;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * Enter type comment.
@@ -24,6 +25,7 @@ public class DisassemblyEditor extends AsmTextEditor
 	{
 		super();
 		setDocumentProvider( CDebugUIPlugin.getDefault().getDisassemblyDocumentProvider() );
+		setSourceViewerConfiguration( new DisassemblySourceViewerConfiguration( CUIPlugin.getDefault().getAsmTextTools(), this ) );
 		setEditorContextMenuId("#DisassemblyEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#DisassemblyEditorRulerContext"); //$NON-NLS-1$
 	}

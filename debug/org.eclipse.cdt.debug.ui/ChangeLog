@@ -1,3 +1,8 @@
+2003-05-06 Mikhail Khodjaiants
+	Ruler tooltips in the dissassembly editor.
+	* DisassemblyEditor.java
+	* DisassemblySourceViewerConfiguration.java: new
+
 2003-05-05 Mikhail Khodjaiants
 	New implementation of overlayed images.
 	* OverlayImageDescriptor.java: new

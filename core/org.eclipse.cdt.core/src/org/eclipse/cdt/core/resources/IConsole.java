@@ -7,12 +7,13 @@ package org.eclipse.cdt.core.resources;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 
 
 public interface IConsole {
 	void start(IProject project);
-    ConsoleOutputStream getOutputStream();
-    ConsoleOutputStream getInfoStream();
-    ConsoleOutputStream getErrorStream();
+    ConsoleOutputStream getOutputStream() throws CoreException;
+    ConsoleOutputStream getInfoStream() throws CoreException;
+    ConsoleOutputStream getErrorStream() throws CoreException;
 }
 

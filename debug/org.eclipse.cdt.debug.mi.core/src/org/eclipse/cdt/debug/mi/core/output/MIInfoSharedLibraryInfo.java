@@ -46,7 +46,7 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 		}
 		shared = new MIShared[aList.size()];
 		for (int i = 0; i < aList.size(); i++) {
-			shared[i] = (MIShared)aList.get(i);
+			shared[i] = (MIShared) aList.get(i);
 		}
 	}
 
@@ -69,53 +69,53 @@ public class MIInfoSharedLibraryInfo extends MIInfo {
 	 * and even the "Sym Read" can be empty....
 	 * @param str
 	 * @param aList
-	 */	
+	 */
 	void parseUnixShared(String str, List aList) {
 		if (str.length() > 0) {
 			// Pass the header
-			if (Character.isDigit(str.charAt(0))) {
-				int index = -1;
-				long from = 0;
-				long to = 0;
-				boolean syms = false;
-				String name = "";
+			int index = -1;
+			long from = 0;
+			long to = 0;
+			boolean syms = false;
+			String name = "";
 
-				for (int i = 0; (index = str.lastIndexOf(' ')) != -1 || i <= 3; i++) {
-					if (index == -1) {
-						index = 0;
-					}
-					String sub = str.substring(index).trim();
-					// move to previous column
-					str = str.substring(0, index).trim();
-					switch(i) {
-						case 0:
-							name = sub;
-						break;
-						case 1:
-							if (sub.equalsIgnoreCase("Yes")) {
-								syms = true;
-							}
-						break;
-						case 2: // second column is "To"
-							try {
-								to = Long.decode(sub).longValue();
-							} catch (NumberFormatException e) {
-							}
-						break;
-						case 3: // first column is "From"
-							try {
-								from = Long.decode(sub).longValue();
-							} catch (NumberFormatException e) {
-							}
-						break;
-					}
+			for (int i = 0;(index = str.lastIndexOf(' ')) != -1 || i <= 3; i++) {
+				if (index == -1) {
+					index = 0;
 				}
+				String sub = str.substring(index).trim();
+				// move to previous column
+				str = str.substring(0, index).trim();
+				switch (i) {
+					case 0 :
+						name = sub;
+						break;
+					case 1 :
+						if (sub.equalsIgnoreCase("Yes")) {
+							syms = true;
+						}
+						break;
+					case 2 : // second column is "To"
+						try {
+							to = Long.decode(sub).longValue();
+						} catch (NumberFormatException e) {
+						}
+						break;
+					case 3 : // first column is "From"
+						try {
+							from = Long.decode(sub).longValue();
+						} catch (NumberFormatException e) {
+						}
+						break;
+				}
+			}
+			if (name.length() > 0) {
 				MIShared s = new MIShared(from, to, syms, name);
 				aList.add(s);
 			}
 		}
 	}
-	
+
 	void parseWinShared(String str, List aList) {
 		long from = 0;
 		long to = 0;

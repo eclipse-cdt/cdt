@@ -16,7 +16,7 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 /**
  * Provides the access to the register groups' management functions.
  */
-public interface ICRegisterManager extends ICUpdateManager, IAdaptable {
+public interface ICRegisterManager extends IAdaptable {
 
 	void addRegisterGroup( IRegisterGroup group );
 

@@ -14,10 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CRegisterGroup;
@@ -28,7 +26,12 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 /**
  * Manages all register groups in a debug target.
  */
-public class CRegisterManager extends CUpdateManager implements ICRegisterManager {
+public class CRegisterManager implements ICRegisterManager {
+
+	/**
+	 * The debug target associated with this manager.
+	 */
+	private CDebugTarget fDebugTarget;
 
 	/**
 	 * Collection of register groups added to this target. Values are of type <code>CRegisterGroup</code>.
@@ -44,7 +47,7 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 	 * Constructor for CRegisterManager. 
 	 */
 	public CRegisterManager( CDebugTarget target ) {
-		super( target );
+		fDebugTarget = target;
 	}
 
 	/* (non-Javadoc)
@@ -55,13 +58,12 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 			return this;
 		if ( CRegisterManager.class.equals( adapter ) )
 			return this;
-		return super.getAdapter( adapter );
+		return null;
 	}
 
 	public void dispose() {
 		setStackFrame( null );
 		removeAllRegisterGroups();
-		super.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -77,11 +79,7 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 	}
 
 	public void initialize() {
-		fRegisterGroups = new ArrayList( 20 );
-		boolean autoRefresh = CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_REGISTERS_AUTO_REFRESH );
-		if ( getCDIManager() != null )
-			getCDIManager().setAutoUpdate( autoRefresh );
-		createMainRegisterGroup();
+		createRegisterGroups();
 	}
 
 	/* (non-Javadoc)
@@ -102,6 +100,11 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 		fRegisterGroups.remove( group );
 	}
 
+	private void createRegisterGroups() {
+		fRegisterGroups = new ArrayList( 20 );
+		createMainRegisterGroup();
+	}
+
 	private void createMainRegisterGroup() {
 		ICDIRegisterGroup[] groups = null;
 		try {
@@ -113,10 +116,6 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 		for (int i = 0; i < groups.length; ++i) {
 			fRegisterGroups.add( new CRegisterGroup( getDebugTarget(), groups[i] ) ); //$NON-NLS-1$
 		}
-	}
-
-	protected ICDIManager getCDIManager() {
-		return null;
 	}
 
 	public void targetSuspended() {
@@ -132,5 +131,9 @@ public class CRegisterManager extends CUpdateManager implements ICRegisterManage
 
 	private void setStackFrame( CStackFrame stackFrame ) {
 		fStackFrame = stackFrame;
+	}
+
+	protected CDebugTarget getDebugTarget() {
+		return fDebugTarget;
 	}
 }

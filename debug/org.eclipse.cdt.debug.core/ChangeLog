@@ -1,4 +1,10 @@
 2004-11-04 Mikhail Khodjaiants
+	Removed "Refresh" and "Auto-Refresh" actions support for registers.
+	* ICDebugConstants.java
+	* ICRegisterManager.java
+	* CRegisterManager.java
+
+2004-11-04 Mikhail Khodjaiants
 	No need of "ICSignalManager".
 	* ICSignalManager.java: removed
 	* CSignalManager.java

@@ -45,12 +45,6 @@ public interface ICDebugConstants
 	public static final String PREF_SHARED_LIBRARIES_AUTO_REFRESH = PLUGIN_ID + "SharedLibraries.auto_refresh"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference controlling whether the register manager will be
-	 * refreshed every time when the execution of program stops.
-	 */
-	public static final String PREF_REGISTERS_AUTO_REFRESH = PLUGIN_ID + "Registers.auto_refresh"; //$NON-NLS-1$
-
-	/**
 	 * The identifier of the maximum number of instructions displayed in disassembly. 
 	 */
 	public static final String PREF_MAX_NUMBER_OF_INSTRUCTIONS = PLUGIN_ID + "cDebug.max_number_of_instructions"; //$NON-NLS-1$

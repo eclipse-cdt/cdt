@@ -5,11 +5,8 @@ package org.eclipse.cdt.ui.wizards.conversion;
  * All Rights Reserved.
  */
  
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 
 /**
  *

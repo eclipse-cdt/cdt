@@ -51,6 +51,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BinaryParserBlock extends AbstractBinaryParserPage {
 
+	private static final int DEFAULT_HEIGHT = 160;
 	private static final String PREFIX = "BinaryParserBlock"; //$NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; //$NON-NLS-1$
 	private static final String DESC = PREFIX + ".desc"; //$NON-NLS-1$
@@ -194,7 +195,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		Composite parserGroup = new Composite(composite, SWT.NULL);
 		
 		GridData gd = new GridData();
-		gd.heightHint = converter.convertHorizontalDLUsToPixels(150);
+		gd.heightHint = converter.convertHorizontalDLUsToPixels(DEFAULT_HEIGHT);
 		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;

@@ -48,10 +48,12 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 	public final static String PREF_ADDR2LINE_PATH = CUIPlugin.PLUGIN_ID + ".addr2line"; //$NON-NLS-1$
 	public final static String PREF_CPPFILT_PATH = CUIPlugin.PLUGIN_ID + ".cppfilt"; //$NON-NLS-1$
 	public final static String PREF_CYGPATH_PATH = CUIPlugin.PLUGIN_ID + ".cygpath"; //$NON-NLS-1$
+	public final static String PREF_NM_PATH = CUIPlugin.PLUGIN_ID + ".nm"; //$NON-NLS-1$
 
 	protected Text fAddr2LineCommandText;
 	protected Text fCPPFiltCommandText;
 	protected Text fCygPathCommandText;
+	protected Text fNMCommandText;
 
 	/*
 	 * (non-Javadoc)
@@ -66,6 +68,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		String addr2line = fAddr2LineCommandText.getText().trim();
 		String cppfilt = fCPPFiltCommandText.getText().trim();
 		String cygpath = fCygPathCommandText.getText().trim();
+		String nm = fNMCommandText.getText().trim();
 
 		monitor.beginTask(CUIMessages.getString("BinaryParserPage.task.savingAttributes"), 1); //$NON-NLS-1$
 		IProject proj = getContainer().getProject();
@@ -99,6 +102,10 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 						if (orig == null || !orig.equals(cygpath)) {
 							cext[i].setExtensionData("cygpath", cygpath); //$NON-NLS-1$
 						}
+						orig = cext[i].getExtensionData("nm"); //$NON-NLS-1$
+						if (orig == null || !orig.equals(nm)) {
+							cext[i].setExtensionData("nm", nm); //$NON-NLS-1$
+						}
 					}
 				}
 			}
@@ -108,6 +115,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 				store.setValue(PREF_ADDR2LINE_PATH, addr2line);
 				store.setValue(PREF_CPPFILT_PATH, cppfilt);
 				store.setValue(PREF_CYGPATH_PATH, cygpath);
+				store.setValue(PREF_NM_PATH, nm);
 			}
 		}
 	}
@@ -121,6 +129,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		String addr2line = null;
 		String cppfilt = null;
 		String cygpath = null;
+		String nm = null;
 		IProject proj = getContainer().getProject();
 		Preferences store = getContainer().getPreferences();
 		if (store != null) {
@@ -128,14 +137,17 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 				addr2line = store.getString(PREF_ADDR2LINE_PATH);
 				cppfilt = store.getString(PREF_CPPFILT_PATH);
 				cygpath = store.getString(PREF_CYGPATH_PATH);
+				nm = store.getString(PREF_NM_PATH);
 			} else {
 				addr2line = store.getDefaultString(PREF_ADDR2LINE_PATH);
 				cppfilt = store.getDefaultString(PREF_CPPFILT_PATH);
 				cygpath = store.getDefaultString(PREF_CYGPATH_PATH);
+				nm = store.getDefaultString(PREF_NM_PATH);
 			}
 			fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$;
 			fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$;
 			fCygPathCommandText.setText((cygpath == null || cygpath.length() == 0) ? "cygpath" : cygpath); //$NON-NLS-1$;
+			fNMCommandText.setText((nm == null || nm.length() == 0) ? "nm" : nm); //$NON-NLS-1$;
 		}
 	}
 
@@ -265,6 +277,45 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 			}
 		});
 
+
+		label = ControlFactory.createLabel(comp, CUIMessages.getString("BinaryParserPage.label.nmCommand")); //$NON-NLS-1$
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+
+		fNMCommandText = ControlFactory.createTextField(comp, SWT.SINGLE | SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		fNMCommandText.setLayoutData(gd);
+		fNMCommandText.addModifyListener(new ModifyListener() {
+
+			public void modifyText(ModifyEvent evt) {
+				//updateLaunchConfigurationDialog();
+			}
+		});
+		button = ControlFactory.createPushButton(comp, CUIMessages.getString("BinaryParserPage.label.browse2")); //$NON-NLS-1$
+		button.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent evt) {
+				handleCygPathButtonSelected();
+				//updateLaunchConfigurationDialog();
+			}
+
+			private void handleCygPathButtonSelected() {
+				FileDialog dialog = new FileDialog(getShell(), SWT.NONE);
+				dialog.setText(CUIMessages.getString("BinaryParserPage.label.nmCommand")); //$NON-NLS-1$
+				String command = fNMCommandText.getText().trim();
+				int lastSeparatorIndex = command.lastIndexOf(File.separator);
+				if (lastSeparatorIndex != -1) {
+					dialog.setFilterPath(command.substring(0, lastSeparatorIndex));
+				}
+				String res = dialog.open();
+				if (res == null) {
+					return;
+				}
+				fNMCommandText.setText(res);
+			}
+		});
+
 		setControl(comp);
 		initializeValues();
 	}
@@ -273,6 +324,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 		String addr2line = null;
 		String cppfilt = null;
 		String cygpath = null;
+		String nm = null;
 		IProject proj = getContainer().getProject();
 		if (proj != null) {
 			try {
@@ -282,6 +334,7 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 					addr2line = cext[0].getExtensionData("addr2line"); //$NON-NLS-1$;
 					cppfilt = cext[0].getExtensionData("c++filt"); //$NON-NLS-1$;
 					cygpath = cext[0].getExtensionData("cygpath"); //$NON-NLS-1$;
+					nm = cext[0].getExtensionData("nm"); //$NON-NLS-1$;
 				}
 			} catch (CoreException e) {
 			}
@@ -291,10 +344,12 @@ public class CygwinPEBinaryParserPage extends AbstractCOptionPage {
 				addr2line = store.getString(PREF_ADDR2LINE_PATH);
 				cppfilt = store.getString(PREF_CPPFILT_PATH);
 				cygpath = store.getString(PREF_CYGPATH_PATH);
+				nm = store.getString(PREF_NM_PATH);
 			}
 		}
 		fAddr2LineCommandText.setText((addr2line == null || addr2line.length() == 0) ? "addr2line" : addr2line); //$NON-NLS-1$;
 		fCPPFiltCommandText.setText((cppfilt == null || cppfilt.length() == 0) ? "c++filt" : cppfilt); //$NON-NLS-1$;
 		fCygPathCommandText.setText((cygpath == null || cygpath.length() == 0) ? "cygpath" : cygpath); //$NON-NLS-1$;
+		fNMCommandText.setText((nm == null || nm.length() == 0) ? "nm" : nm); //$NON-NLS-1$;
 	}
 }

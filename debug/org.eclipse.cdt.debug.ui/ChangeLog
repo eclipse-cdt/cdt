@@ -1,3 +1,8 @@
+2004-08-12 Mikhail Khodjaiants
+	Fix for bug 70453. Linux: error exiting Eclipse on Linux RedHat or SuSe Enterprise Server 9.
+	Applied modified patch from Sean Evoy.
+	* CDebugUIPlugin.java
+
 2004-08-10 Mikhail Khodjaiants
 	Fix for bug 70902. TVT3.0: Customize Perspective C++ Debug has duplicated strings.
 	* plugin.xml

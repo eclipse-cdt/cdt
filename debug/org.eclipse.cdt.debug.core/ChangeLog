@@ -1,3 +1,7 @@
+2004-03-09 David Inglis	
+	Added PLATFORM_NATIVE const to ICDebugCongifuration
+	ICDebugConfiguration.java 
+	
 2004-02-20 Mikhail Khodjaiants
 	Fire the "suspend" event when the target is suspended because of an error.
 	* CDebugTarget.java

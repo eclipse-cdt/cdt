@@ -1,3 +1,17 @@
+2004-11-16 Alain Magloire
+
+	Fix for 27663, allow to exec with pty emulation.
+	* library/Makefile
+	* library/openpty.c(set_noecho): new function
+	* library/opentpty.h: update header.
+	* library/pty.c: refactor forkpyt to openMaster()
+	* library/PTY.h: regenerate
+	* library/spawner.c: add exec2() support
+	* library/Spawner.h: regenerate
+
+	* os/linux/x86/libpty.so
+	* os/linux/x86/libspawner.so
+
 2004-07-12  Tom Tromey  <tromey@redhat.com>
 
 	* library/Makefile (CFLAGS): Define _GNU_SOURCE.

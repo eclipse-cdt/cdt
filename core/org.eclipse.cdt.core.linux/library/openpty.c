@@ -24,6 +24,7 @@
 
 int ptym_open (char *pts_name);
 int ptys_open (int fdm, char * pts_name);
+void set_noecho(int fd);
 
 int
 openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct winsize *winp)
@@ -38,6 +39,7 @@ openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct win
 		close(*amaster);
 		return -1;
 	}
+
 	if (name)
 		strcpy(name, line);
 #ifndef TCSAFLUSH
@@ -50,6 +52,24 @@ openpty(int *amaster, int *aslave, char *name, struct termios *termp, struct win
 		(void) ioctl(*aslave, TIOCSWINSZ, (char *)winp);
 #endif
 	return 0;
+}
+
+void
+set_noecho(int fd)
+{
+	struct termios stermios;
+	if (tcgetattr(fd, &stermios) < 0) {
+		return ;
+	}
+
+	/* turn off echo */
+	stermios.c_lflag &= ~(ECHO | ECHOE | ECHOK | ECHONL);
+	/* Turn off the NL to CR/NL mapping ou output.  */
+	/*stermios.c_oflag &= ~(ONLCR);*/
+
+	stermios.c_iflag |= (IGNCR);
+
+	tcsetattr(fd, TCSANOW, &stermios);
 }
 
 int
@@ -89,6 +109,7 @@ ptys_open(int fdm, char * pts_name)
 		close(fdm);
 		return -5;
 	}
+/*
 	if (ioctl(fds, I_PUSH, "ptem") < 0) {
 		printf("pterm:%s\n", strerror(errno));
 		close(fdm);
@@ -101,5 +122,6 @@ ptys_open(int fdm, char * pts_name)
 		close(fds);
 		return -7;
 	}
+*/
 	return fds;
 }

@@ -7,4 +7,5 @@
 #define _OPENPTY_H
 int ptym_open (char *pts_name);
 int ptys_open (int fdm, char * pts_name);
+void set_noecho(int fd);
 #endif

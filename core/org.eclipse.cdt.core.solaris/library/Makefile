@@ -10,7 +10,7 @@ CFLAGS +=-fpic  -D_REENTRANT
 
 LIB_NAME_SPAWNER = libspawner.so
 LIB_NAME_FULL_SPAWNER = ../os/solaris/sparc/libspawner.so
-OBJS_SPAWNER=spawner.o io.o exec_unix.o pfind.o
+OBJS_SPAWNER=spawner.o io.o exec_unix.o exec_pty.o openpty.o pfind.o
 
 LIB_NAME_PTY = libpty.so
 LIB_NAME_FULL_PTY = ../os/solaris/sparc/libpty.so

@@ -7,7 +7,7 @@
  * Signature: ()I
  */
 JNIEXPORT jstring JNICALL
-Java_org_eclipse_cdt_utils_pty_PTY_forkpty (JNIEnv *env, jobject jobj) {
+Java_org_eclipse_cdt_utils_pty_PTY_openMaster (JNIEnv *env, jobject jobj) {
 	jfieldID fid; /* Store the field ID */
 	jstring jstr = NULL;
 	int master = -1;
@@ -18,6 +18,9 @@ Java_org_eclipse_cdt_utils_pty_PTY_forkpty (JNIEnv *env, jobject jobj) {
 
 	master = ptym_open(line);
 	if (master >= 0) {
+		// turn off echo
+		set_noecho(master);
+
 		/* Get a reference to the obj's class */
 		cls = (*env)->GetObjectClass(env, jobj);
 

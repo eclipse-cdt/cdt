@@ -105,3 +105,22 @@ ptys_open(int fdm, char * pts_name)
 	}
 	return fds;
 }
+
+void
+set_noecho(int fd)
+{
+	struct termios stermios;
+	if (tcgetattr(fd, &stermios) < 0) {
+		return ;
+	}
+
+	/* turn off echo */
+	stermios.c_lflag &= ~(ECHO | ECHOE | ECHOK | ECHONL);
+	/* Turn off the NL to CR/NL mapping ou output.  */
+	/*stermios.c_oflag &= ~(ONLCR);*/
+
+	stermios.c_iflag |= (IGNCR);
+
+	tcsetattr(fd, TCSANOW, &stermios);
+}
+

@@ -1,3 +1,9 @@
+2002-11-20 David Inglis
+	* src/.../internal/ui/BuildConsoleManager.java
+	Only flush the console when buffer > 512 instead of every line.
+	Plus do the console update synchronously as a async update can
+	cause problems if the update happen faster then the drawing.
+	
 2002-11-18 Alain Magloire
 
 	* src/.../internal/ui/editor/CEditor.java (createCSourceViewer):

@@ -151,21 +151,6 @@ public class BuildConsoleViewer extends TextViewer implements LineStyleListener 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.text.TextViewer#canPerformFind()
-	 */
-	protected boolean canPerformFind() {
-		return (getTextWidget() != null && getVisibleDocument() != null && getVisibleDocument().getLength() > 0);
-	}
-
-	/**
-	 * Dispose this viewer and resources
-	 */
-	public void dispose() {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
 	 */
 	public void lineGetStyle(LineStyleEvent event) {

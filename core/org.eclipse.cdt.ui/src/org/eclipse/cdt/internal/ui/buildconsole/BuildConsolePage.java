@@ -30,7 +30,10 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -42,6 +45,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
@@ -60,7 +64,13 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class BuildConsolePage extends Page implements ISelectionListener, IPropertyChangeListener, IBuildConsoleListener {
+public class BuildConsolePage extends Page
+		implements
+			ISelectionListener,
+			IPropertyChangeListener,
+			IBuildConsoleListener,
+			ITextListener, 
+			IAdaptable {
 
 	private BuildConsole fConsole;
 	private IConsoleView fConsoleView;
@@ -120,8 +130,10 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 			if (control != null && !control.isDisposed()) {
 				Display display = control.getDisplay();
 				display.asyncExec(new Runnable() {
-					
-					/* (non-Javadoc)
+
+					/*
+					 * (non-Javadoc)
+					 * 
 					 * @see java.lang.Runnable#run()
 					 */
 					public void run() {
@@ -178,6 +190,7 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 
 		setDocument();
 		getConsole().setTitle(getProject());
+		fViewer.addTextListener(this);
 	}
 
 	/**
@@ -300,9 +313,10 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	 * @see org.eclipse.ui.part.IPage#dispose()
 	 */
 	public void dispose() {
-		super.dispose();
 		getSite().getPage().removeSelectionListener(this);
-		getConsole().getConsoleManager().addConsoleListener(this);
+		getConsole().getConsoleManager().removeConsoleListener(this);
+		fViewer.removeTextListener(this);
+		super.dispose();
 	}
 
 	public void init(IPageSite pageSite) {
@@ -359,15 +373,6 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 		return null;
 	}
 
-	//	/*
-	//	 * (non-Javadoc)
-	//	 *
-	//	 * @see
-	// org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
-	//	 */
-	//	public void setActionBars(IActionBars actionBars) {
-	//	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -406,5 +411,37 @@ public class BuildConsolePage extends Page implements ISelectionListener, IPrope
 	 */
 	protected void refresh() {
 		getViewer().refresh();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class required) {
+		if (IFindReplaceTarget.class.equals(required)) {
+			return getViewer().getFindReplaceTarget();
+		}
+		if (Widget.class.equals(required)) {
+			return getViewer().getTextWidget();
+		}
+//		if (IShowInSource.class.equals(required)) {
+//			return this;
+//		}
+//		if (IShowInTargetList.class.equals(required)) {
+//			return this; 
+//		}
+		return null;
+	}	
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.text.ITextListener#textChanged(org.eclipse.jface.text.TextEvent)
+	 */
+	public void textChanged(TextEvent event) {
+		//		 update the find replace action if the document length is > 0
+		IUpdate findReplace = (IUpdate)fGlobalActions.get(ActionFactory.FIND.getId());
+		if (findReplace != null) {
+			findReplace.update();
+		}
 	}
 }

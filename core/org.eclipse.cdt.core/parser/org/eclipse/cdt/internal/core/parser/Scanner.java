@@ -711,8 +711,24 @@ public class Scanner implements IScanner {
 						buff.append( (char)c );
 						c = getChar(); 
 					}
-					
-					
+				} else {
+					if( floatingPoint ){
+						//floating-suffix
+						if( c == 'l' || c == 'L' || c == 'f' || c == 'F' ){
+							c = getChar();
+						}
+					} else {
+						//integer suffix
+						if( c == 'u' || c == 'U' ){
+							c = getChar();
+							if( c == 'l' || c == 'L')
+								c = getChar();
+						} else if( c == 'l' || c == 'L' ){
+							c = getChar();
+							if( c == 'u' || c == 'U' )
+								c = getChar();
+						}
+					}
 				}
 
 				ungetChar( c );
@@ -1557,33 +1573,49 @@ public class Scanner implements IScanner {
 		skipOverWhitespace();
 		int c = getChar();
 		int offset;
+		
+		if( c == '/' ){
+			c = getChar();
+			if( c == '*' ){
+				skipOverMultilineComment();
+				skipOverWhitespace();
+				c = getChar();
+			} else {
+				if( throwExceptionOnBadPreprocessorSyntax )
+					throw new ScannerException( "Encountered ill-formed #include" );
+				else return;
+			}
+		}
 
 		StringBuffer fileName = new StringBuffer();
 		boolean useIncludePath = true;
-		if (c == '<') {
-			c = getChar();
-			while (c != '>') {
-				if( c == NOCHAR ){
-					//don't attempt an include if we hit the end of file before closing the brackets
-					return;
-				}
-				fileName.append((char) c);
-				c = getChar();
-			}
+		int endChar = -1;
+		if( c == '<' ){
+			endChar = '>'; 		 
+		} else if ( c == '"' ){
+			endChar = '"';
+			useIncludePath = false;
+		} else {
+			if( throwExceptionOnBadPreprocessorSyntax )
+				throw new ScannerException( "Encountered ill-formed #include");
+			else return; 
 		}
-		else if (c == '"') {
-			c = getChar();
-			while (c != '"') {
-				if( c == NOCHAR ){
-					//don't attempt an include if we hit the end of file before closing the quotes
-					return;
-				}
-				fileName.append((char) c);
+		
+		c = getChar();
+
+		while ((c != '\n') && (c != endChar) && (c != NOCHAR)){
+			if( c == '\r' ){
 				c = getChar();
+				continue;
 			}
-			useIncludePath = false; 
-			// TO DO: Make sure the directory of the current file is in the
-			// inclusion paths.
+			fileName.append((char) c);
+			c = getChar();
+		}
+			
+		if( c != endChar ){ 
+			if( throwExceptionOnBadPreprocessorSyntax )
+				throw new ScannerException( "Ill-formed #include: reached end of line before " + (char)endChar );
+			else return;
 		}
 		
 		String f = fileName.toString();
@@ -1625,13 +1657,34 @@ public class Scanner implements IScanner {
 		int c = getChar();
 		if (c == '(') {
 			StringBuffer buffer = new StringBuffer();
-			c = getChar();
+			c = getChar(true);
 			while (c != ')') {
-				if( c == NOCHAR ){
-					return;	//don't attempt #define if we don't hit the closing bracket
+				if( c == '\\' ){
+					c = getChar();
+					if( c == '\r' )
+						c = getChar();	
+					
+					if( c == '\n' ){
+						c = getChar();
+						continue;
+					} else {
+						ungetChar( c );
+						if( throwExceptionOnBadPreprocessorSyntax )
+							throw new ScannerException( "Unexpected '\\' in macro formal parameter list." );
+						else return;
+					}
+				} else if( c == '\r' || c == '\n' ){
+					if( throwExceptionOnBadPreprocessorSyntax )
+						throw new ScannerException( "Unexpected newline in macro formal parameter list." );
+					else return;
+				} else if( c == NOCHAR ){
+					if( throwExceptionOnBadPreprocessorSyntax )
+						throw new ScannerException( "Unexpected EOF in macro formal parameter list." );
+					else return;
 				}
+				
 				buffer.append((char) c);
-				c = getChar();
+				c = getChar(true);
 			}
 
 			String parameters = buffer.toString();

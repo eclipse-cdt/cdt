@@ -31,12 +31,6 @@ public class ACEFailedTest extends BaseDOMTest {
 		super(arg);
 	}
 	
-	public void testBug36771() throws Exception {
-		Writer code = new StringWriter();
-		code.write("#include /**/ \"foo.h\"\n");
-		failTest( code.toString());
-	}
-	
 	public void testBug36769() throws Exception {
 		Writer code = new StringWriter();
 		code.write("template <class A, B> cls<A, C>::operator op &() const {}\n");

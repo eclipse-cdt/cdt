@@ -1,3 +1,8 @@
+2003-04-25 Andrew Niefer
+	Moved ACEFailedTest::testBug36771 to DOMTests
+	Moved DOMFailedTest::testBug36714 to DOMTests
+	Updated ScannerTestCase::testBug36816
+	
 2003-04-25 John Camelon
 	Added DOMTests::testBug36852(). 
 	Added DOMTests::testBug36764().

@@ -1264,16 +1264,37 @@ public class ScannerTestCase extends BaseScannerTest
 	public void testBug36816() throws Exception
 	{
 		initializeScanner( "#include \"foo.h" );
-		validateEOF();
-		
+		try{
+			validateEOF();
+		} catch ( ScannerException e ){
+			assertTrue( e.getMessage().equals( "Ill-formed #include: reached end of line before \"" ));
+		}
+	
 		initializeScanner( "#include <foo.h" );
-		validateEOF();
-		
+		try{
+			validateEOF();
+		} catch ( ScannerException e ){
+			assertTrue( e.getMessage().equals( "Ill-formed #include: reached end of line before >" ));
+		}		
 		initializeScanner( "#define FOO(A" );
-		validateEOF();
+		try{
+			validateEOF();
+		} catch( ScannerException e ){
+			assertTrue( e.getMessage().equals( "Unexpected newline in macro formal parameter list."));
+		}
+		initializeScanner( "#define FOO(A \\ B" );
+		try{
+			validateEOF();
+		} catch( ScannerException e ){
+			assertTrue( e.getMessage().equals( "Unexpected '\\' in macro formal parameter list."));
+		}
 		
-		initializeScanner( "#define FOO(A) 1\n FOO(foo" );
-		validateInteger("1");
+		initializeScanner( "#define FOO(A,\\\nB) 1\n FOO(foo" );
+		try{
+			validateInteger("1");
+		} catch( ScannerException e ){
+			assertTrue( e.getMessage().equals( "Improper use of macro FOO" ) );
+		}
 	}
 	
 	public void testBug36255() throws Exception

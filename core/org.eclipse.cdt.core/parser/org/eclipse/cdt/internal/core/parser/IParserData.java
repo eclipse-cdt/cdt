@@ -23,7 +23,11 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
  * @author jcamelon
  *
  */
-public interface IParserData extends IExpressionParser {
+public interface IParserData  {
+	
+	public IASTExpression expression(IASTScope scope, CompletionKind kind,
+			KeywordSetKey key) throws BacktrackException, EndOfFileException;
+			
 	/**
 	 * @return Returns the astFactory.
 	 */

@@ -14,28 +14,14 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.cdt.core.parser.CodeReader;
-import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserFactoryError;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
-import org.eclipse.cdt.core.parser.extension.IParserExtensionFactory;
 
 /**
  * @author jcamelon
  */
 public class InternalParserUtil extends ParserFactory {
 
-	private static IParserExtensionFactory extensionFactory = new ParserExtensionFactory( ExtensionDialect.GCC );
 	
-	public static IExpressionParser createExpressionParser( IScanner scanner, ParserLanguage language, IParserLogService log ) throws ParserFactoryError
-	{
-		if( scanner == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_SCANNER );
-		if( language == null ) throw new ParserFactoryError( ParserFactoryError.Kind.NULL_LANGUAGE );
-		IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
-		return new ExpressionParser( scanner, language, logService, extensionFactory.createParserExtension() );
-	}
 
 	/**
 	 * @param finalPath

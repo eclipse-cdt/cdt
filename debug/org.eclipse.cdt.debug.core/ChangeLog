@@ -1,4 +1,10 @@
 2003-01-13 Mikhail Khodjaiants
+	Added the 'IRunToAddress' interface to support the 'Run To Line' action in disassembly.
+	* ICDebugTarget.java: extends IRunToAddress
+	* IRunToAddress.java: new interface
+	* CDebugTarget.java: implementation
+
+2003-01-13 Mikhail Khodjaiants
 	Fix in the thread created event handler: do nothing if thread has already created.
 	* CDebugTarget.java
 

@@ -62,6 +62,7 @@ import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IGlobalVariable;
+import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
@@ -860,6 +861,8 @@ public class CDebugTarget extends CDebugElement
 		if ( adapter.equals( IExecFileInfo.class ) )
 			return this;
 		if ( adapter.equals( IRunToLine.class ) )
+			return this;
+		if ( adapter.equals( IRunToAddress.class ) )
 			return this;
 		if ( adapter.equals( ICBreakpointManager.class ) )
 			return this;
@@ -2106,5 +2109,32 @@ public class CDebugTarget extends CDebugElement
 			}
 		}
 		return 0;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#canRunToAddress(long)
+	 */
+	public boolean canRunToAddress( long address )
+	{
+		// for now
+		return canResume();
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.model.IRunToAddress#runToLine(long)
+	 */
+	public void runToAddress( long address ) throws DebugException
+	{
+		if ( !canRunToAddress( address ) )
+			return;
+		ICDILocation location = getCDISession().getBreakpointManager().createLocation( address );
+		try
+		{
+			getCDITarget().runUntil( location );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.toString(), e );
+		}
 	}
 }

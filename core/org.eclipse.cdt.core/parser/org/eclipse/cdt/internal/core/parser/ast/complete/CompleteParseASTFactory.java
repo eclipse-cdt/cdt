@@ -1108,7 +1108,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		ASTExpression exp = ( i.hasNext() )? (ASTExpression) i.next() : null;
 		
-		ITokenDuple duple = ((ASTTypeId)typeId).getTokenDuple();
+		ITokenDuple duple = ((ASTTypeId)typeId).getTokenDuple().getLastSegment();
 		
 		if( createConstructorReference( symbol, exp, duple, references ) ){
 			//if we have a constructor reference, get rid of the class reference.

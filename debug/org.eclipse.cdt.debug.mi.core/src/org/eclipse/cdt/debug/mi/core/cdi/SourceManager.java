@@ -16,7 +16,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentDirectory;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
-import sun.security.krb5.internal.crypto.e;
+
 
 /**
  */
@@ -71,6 +71,19 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 	 */
 	public String[] getSourcePaths() {
 		return (String[])sourcePaths.toArray(new String[0]);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#addLibraryPaths(String[])
+	 */
+	public void addLibraryPaths(String[] libPaths) throws CDIException {
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getLibraryPaths()
+	 */
+	public String[] getLibraryPaths() throws CDIException {
+		return null;
 	}
 
 }

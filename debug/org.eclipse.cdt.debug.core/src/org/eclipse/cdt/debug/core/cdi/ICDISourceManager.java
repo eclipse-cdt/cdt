@@ -16,8 +16,8 @@ import java.io.File;
 public interface ICDISourceManager extends ICDISessionObject
 {
 	/**
-	 * Set the source search paths for the debu session.
-	 * @param String
+	 * Set the source search paths for the debug session.
+	 * @param String array of search paths
 	 */
 	void addSourcePaths(String[] srcPaths) throws CDIException;
 
@@ -26,6 +26,18 @@ public interface ICDISourceManager extends ICDISessionObject
 	 * @return String array of search paths.
 	 */
 	String[] getSourcePaths() throws CDIException;
+
+	/**
+	 * Set the shared library search paths for the debu session.
+	 * @param String
+	 */
+	void addLibraryPaths(String[] libPaths) throws CDIException;
+
+	/**
+	 * Return the array of shared libraries search paths
+	 * @return String array of search paths.
+	 */
+	String[] getLibraryPaths() throws CDIException;
 
 	/**
 	 * Returns an array of directories. Returns the empty array 

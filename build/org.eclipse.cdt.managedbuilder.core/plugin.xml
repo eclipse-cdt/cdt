@@ -18,6 +18,7 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.cdt.make.core"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.team.core"/>
    </requires>
 
 
@@ -95,6 +96,12 @@
                class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
          <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
       </scannerInfoProvider>
+   </extension>
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            extension="cdtbuild"
+            type="text"/>
    </extension>
 
 </plugin>

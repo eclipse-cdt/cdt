@@ -18,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IEnumeration;
@@ -85,7 +86,7 @@ public class CModelElementsTests extends TestCase {
 		  CProjectHelper.delete(fCProject);
 	}	
 			
-	public void testCModelElements(){
+	public void testCModelElements() throws CModelException{
 		TranslationUnit tu = new TranslationUnit(fCProject, headerFile);
 		// parse the translation unit to get the elements tree		
 		tu.parse(); 
@@ -119,7 +120,7 @@ public class CModelElementsTests extends TestCase {
 		checkArrays(tu);
 	}
 
-	private void checkInclude(IParent tu){
+	private void checkInclude(IParent tu) throws CModelException{
 		List tuIncludes = tu.getChildrenOfType(ICElement.C_INCLUDE);
 		IInclude inc1 = (IInclude) tuIncludes.get(0);
 		assertEquals(inc1.getElementName(), new String("stdio.h"));
@@ -127,7 +128,7 @@ public class CModelElementsTests extends TestCase {
 		checkLineNumbers((CElement)inc1, 2, 2);
 	}
 	
-	private void checkMacro(IParent tu){
+	private void checkMacro(IParent tu) throws CModelException{
 		List tuMacros = tu.getChildrenOfType(ICElement.C_MACRO);
 		IMacro mac1 = (IMacro) tuMacros.get(0);
 		assertEquals(mac1.getElementName(), new String("PRINT"));
@@ -135,7 +136,7 @@ public class CModelElementsTests extends TestCase {
 		checkLineNumbers((CElement)mac1, 5, 5);
 	}
 	
-	private void checkClass(IParent namespace){
+	private void checkClass(IParent namespace) throws CModelException{
 		// MyPackage ---> class: Hello
 		List nsClasses = namespace.getChildrenOfType(ICElement.C_CLASS);		
 		IStructure classHello = (IStructure) nsClasses.get(0);
@@ -172,7 +173,7 @@ public class CModelElementsTests extends TestCase {
 		
 		checkNestedNamespace(classHello);
 	}
-	private void checkNestedNamespace(IParent classHello){
+	private void checkNestedNamespace(IParent classHello) throws CModelException{
 		// Hello ---> namespace: MyNestedPackage 
 		List helloNamespaces = classHello.getChildrenOfType(ICElement.C_NAMESPACE);
 		INamespace myNestedPackage = (INamespace) helloNamespaces.get(0);
@@ -183,7 +184,7 @@ public class CModelElementsTests extends TestCase {
 		checkParentNestedClass(myNestedPackage);	
 		checkDerivedNestedClass(myNestedPackage);
 	}
-	private void checkParentNestedClass(IParent myNestedPackage){
+	private void checkParentNestedClass(IParent myNestedPackage) throws CModelException{
 		// MyNestedPackage ---> class: Y  
 		List nestedClasses = myNestedPackage.getChildrenOfType(ICElement.C_CLASS);		
 		IStructure classY = (IStructure) nestedClasses.get(0);
@@ -209,7 +210,7 @@ public class CModelElementsTests extends TestCase {
 		
 	}
 	
-	private void checkDerivedNestedClass(IParent myNestedPackage){
+	private void checkDerivedNestedClass(IParent myNestedPackage) throws CModelException{
 		// MyNestedPackage ---> class: X public Y 
 		List nestedClasses = myNestedPackage.getChildrenOfType(ICElement.C_CLASS);		
 		IStructure classX = (IStructure) nestedClasses.get(1);
@@ -246,7 +247,7 @@ public class CModelElementsTests extends TestCase {
 		checkLineNumbers((CElement)xDoNothing, 50, 50);
 	}
 	
-	private void checkEnums(IParent namespace){
+	private void checkEnums(IParent namespace) throws CModelException{
 		// MyPackage ---> enum: Noname
 		List nsEnums = namespace.getChildrenOfType(ICElement.C_ENUMERATION);		
 		IEnumeration enum = (IEnumeration) nsEnums.get(0);
@@ -291,7 +292,7 @@ public class CModelElementsTests extends TestCase {
 		checkElementOffset((CElement)t);
 	}
 
-	private void checkVariables(IParent namespace){
+	private void checkVariables(IParent namespace) throws CModelException{
 		// MyPackage ---> int v
 		List nsVars = namespace.getChildrenOfType(ICElement.C_VARIABLE);
 		IVariable var1 = (IVariable) nsVars.get(0);
@@ -322,7 +323,7 @@ public class CModelElementsTests extends TestCase {
 		checkLineNumbers((CElement)vDecl2, 81, 81);
 	}
 
-	private void checkVariableDeclarations(IParent namespace){
+	private void checkVariableDeclarations(IParent namespace) throws CModelException{
 		// MyPackage ---> extern int evar
 		List nsVarDecls = namespace.getChildrenOfType(ICElement.C_VARIABLE_DECLARATION);
 		IVariableDeclaration vDecl1 = (IVariableDeclaration) nsVarDecls.get(0);
@@ -332,7 +333,7 @@ public class CModelElementsTests extends TestCase {
 		checkLineNumbers((CElement)vDecl1, 79, 79);
 	}
 	
-	private void checkFunctions(IParent namespace){
+	private void checkFunctions(IParent namespace) throws CModelException{
 		List nsFunctionDeclarations = namespace.getChildrenOfType(ICElement.C_FUNCTION_DECLARATION);
 
 		//	MyPackage ---> function: void foo()
@@ -364,7 +365,7 @@ public class CModelElementsTests extends TestCase {
 		checkLineNumbers((CElement)f3, 90, 92);
 	}
 
-	private void checkStructs(IParent namespace){
+	private void checkStructs(IParent namespace) throws CModelException{
 		// struct with name
 		List nsStructs = namespace.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure struct1 = (IStructure) nsStructs.get(0);
@@ -424,15 +425,15 @@ public class CModelElementsTests extends TestCase {
 			fail("field visibility should be public!");
 	}
 
-	private void checkTemplates(IParent namespace){
+	private void checkTemplates(IParent namespace) throws CModelException{
 		// template function
 		List functionTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION);
 		FunctionTemplate ft = (FunctionTemplate)functionTemplates.get(0);
 		assertEquals(ft.getElementName(), new String("aTemplatedFunction"));
-		checkElementOffset((CElement)ft);
-		String sig = ft.getTemplateSignature();
+		checkElementOffset(ft);
+		ft.getTemplateSignature();
 		assertEquals(ft.getTemplateSignature(), new String("aTemplatedFunction<A, B>(B) : A"));
-		checkLineNumbers((CElement)ft, 112, 113);
+		checkLineNumbers(ft, 112, 113);
 		
 		// template method
 		List nsClasses = namespace.getChildrenOfType(ICElement.C_CLASS);
@@ -441,26 +442,26 @@ public class CModelElementsTests extends TestCase {
 		List methodTemplates = enclosingClass.getChildrenOfType(ICElement.C_TEMPLATE_METHOD);
 		MethodTemplate mt = (MethodTemplate)methodTemplates.get(0);
 		assertEquals(mt.getElementName(), new String("aTemplatedMethod"));
-		checkElementOffset((CElement)mt);
+		checkElementOffset(mt);
 		assertEquals(mt.getTemplateSignature(), new String("aTemplatedMethod<A, B>(B) : A"));
-		checkLineNumbers((CElement)mt, 118, 119 );
+		checkLineNumbers(mt, 118, 119 );
 		assertEquals(mt.getVisibility(), ASTAccessVisibility.PUBLIC);
 		
 		// template class
 		List classTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_CLASS);
 		StructureTemplate ct = (StructureTemplate)classTemplates.get(0);
 		assertEquals(ct.getElementName(), new String("myarray"));
-		checkElementOffset((CElement)ct);
+		checkElementOffset(ct);
 		assertEquals(ct.getTemplateSignature(), new String("myarray<T, Tibor>"));
-		checkLineNumbers((CElement)ct, 122, 123);
+		checkLineNumbers(ct, 122, 123);
 
 		// template struct
 		List structTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT);
 		StructureTemplate st = (StructureTemplate)structTemplates.get(0);
 		assertEquals(st.getElementName(), new String("mystruct"));
-		checkElementOffset((CElement)st);
+		checkElementOffset(st);
 		assertEquals(st.getTemplateSignature(), new String("mystruct<T, Tibor>"));
-		checkLineNumbers((CElement)st, 125, 126);
+		checkLineNumbers(st, 125, 126);
 
 		// moved to failed tests
 		// also commented in the source file
@@ -473,7 +474,7 @@ public class CModelElementsTests extends TestCase {
 //		checkLineNumbers((CElement)vt, 128, 129);
 	}
 	
-	private void checkArrays(IParent tu){
+	private void checkArrays(IParent tu) throws CModelException{
 		// array variable
 		List variables = tu.getChildrenOfType(ICElement.C_VARIABLE);
 		IVariable arrayVar = (IVariable) variables.get(0);

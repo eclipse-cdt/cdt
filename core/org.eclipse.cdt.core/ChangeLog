@@ -1,3 +1,29 @@
+2004-04-19 Alain Magloire
+
+	It has become necessary to add exception in the interface
+	  IParent.getChildren()
+	  IParent.getChildrenOfType()
+	  IArchive.getBinaries()
+	  IBinary.getBinaries()
+	  ...
+	Now they throw CModelException.
+	Lots of files changed, will not bother enumerated them
+	all in the log.
+
+	* model/org/eclipse/cdt/core/IArchive.java
+	* model/org/eclipse/cdt/core/IArchiveContainer.java
+	* model/org/eclipse/cdt/core/IBinaryContainer.java
+	* model/org/eclipse/cdt/core/IBinaryModule.java
+	* model/org/eclipse/cdt/core/ICModel.java
+	* model/org/eclipse/cdt/core/IParent.java
+	* model/org/eclipse/cdt/core/IStructure.java
+
+	* model/org/eclipse/cdt/internal/core/model/*
+	* browser/org/eclipse/cdt/core/model/TypeInfo.java
+	* search/org/eclipse/cdt/internal/core/search/CSearchScope.java
+	* search/org/eclipse/cdt/internal/core/search/CWorkspaceScope.java
+
+
 2004-04-19 David Inglis
 
 	Fixed dead lock - don't fire descriptor events with descriptor lock

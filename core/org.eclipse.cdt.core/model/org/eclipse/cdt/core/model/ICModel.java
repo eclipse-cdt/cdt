@@ -170,7 +170,7 @@ public interface ICModel extends ICElement, IParent, IOpenable {
 	 * Returns the C projects.
 	 * 
 	 */
-	ICProject[] getCProjects();
+	ICProject[] getCProjects() throws CModelException;
 
 	/**
 	 * Returns an array of non-C resources (i.e. non-C projects) in

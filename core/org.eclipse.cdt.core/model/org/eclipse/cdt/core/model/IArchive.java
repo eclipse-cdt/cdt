@@ -14,5 +14,5 @@ public interface IArchive extends ICElement, IParent, IOpenable {
 	 * Return the binaries contain in the archive.
  	 * It does not actually extract the files.
 	 */
-	public IBinary[] getBinaries();
+	public IBinary[] getBinaries() throws CModelException;
 }

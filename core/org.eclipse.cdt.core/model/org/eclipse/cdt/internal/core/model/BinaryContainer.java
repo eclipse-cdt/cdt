@@ -21,7 +21,7 @@ public class BinaryContainer extends Openable implements IBinaryContainer {
 		super (cProject, null, CCorePlugin.getResourceString("CoreModel.BinaryContainer.Binaries"), CElement.C_VCONTAINER); //$NON-NLS-1$
 	}
 
-	public IBinary[] getBinaries() {
+	public IBinary[] getBinaries() throws CModelException {
 		((BinaryContainerInfo)getElementInfo()).sync();
 		ICElement[] e = getChildren();
 		ArrayList list = new ArrayList(e.length);

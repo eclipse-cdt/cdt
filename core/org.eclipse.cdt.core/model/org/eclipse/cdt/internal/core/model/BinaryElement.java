@@ -98,7 +98,7 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ISourceReference#getTranslationUnit()
 	 */
-	public ITranslationUnit getTranslationUnit() {
+	public ITranslationUnit getTranslationUnit()  {
 		ITranslationUnit tu = null;
 		CModelManager mgr = CModelManager.getDefault();
 		ICElement parent = getParent();

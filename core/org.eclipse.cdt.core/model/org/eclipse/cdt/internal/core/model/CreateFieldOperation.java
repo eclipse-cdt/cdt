@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ICModelStatus;
@@ -44,7 +45,7 @@ public class CreateFieldOperation extends CreateMemberOperation {
 	 */
 	protected void initializeDefaultPosition() {
 		IStructure parentElement = getStructure();
-		//try {
+		try {
 			ICElement[] elements = parentElement.getFields();
 			if (elements != null && elements.length > 0) {
 				createAfter(elements[elements.length - 1]);
@@ -54,8 +55,8 @@ public class CreateFieldOperation extends CreateMemberOperation {
 					createBefore(elements[0]);
 				}
 			}
-		//} catch (CModelException e) {
-		//}
+		} catch (CModelException e) {
+		}
 	}
 
 	/**

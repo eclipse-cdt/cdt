@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryModule;
@@ -2027,17 +2028,20 @@ public class CDebugTarget extends CDebugElement
 	private List getCFileGlobals( IParent file )
 	{
 		ArrayList list = new ArrayList();
-		ICElement[] elements = file.getChildren();
-		for ( int i = 0; i < elements.length; ++i )
-		{
-			if ( elements[i] instanceof org.eclipse.cdt.core.model.IVariable )
+		try {
+			ICElement[] elements = file.getChildren();
+			for ( int i = 0; i < elements.length; ++i )
 			{
-				list.add( createGlobalVariable( (org.eclipse.cdt.core.model.IVariable)elements[i] ) );
+				if ( elements[i] instanceof org.eclipse.cdt.core.model.IVariable )
+				{
+					list.add( createGlobalVariable( (org.eclipse.cdt.core.model.IVariable)elements[i] ) );
+				}
+				else if ( elements[i] instanceof org.eclipse.cdt.core.model.IParent )
+				{
+					list.addAll( getCFileGlobals( (org.eclipse.cdt.core.model.IParent)elements[i] ) );
+				}
 			}
-			else if ( elements[i] instanceof org.eclipse.cdt.core.model.IParent )
-			{
-				list.addAll( getCFileGlobals( (org.eclipse.cdt.core.model.IParent)elements[i] ) );
-			}
+		} catch (CModelException e) {
 		}
 		return list;
 	}

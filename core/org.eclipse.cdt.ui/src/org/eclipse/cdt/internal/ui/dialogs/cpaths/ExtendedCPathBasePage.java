@@ -196,7 +196,14 @@ public abstract class ExtendedCPathBasePage extends CPathBasePage {
 
 	public void init(ICProject project, List cPaths) {
 		fCurrCProject = project;
-		List list = new ArrayList(project.getChildrenOfType(ICElement.C_CCONTAINER));
+		List list = new ArrayList();
+		try {
+			List clist = project.getChildrenOfType(ICElement.C_CCONTAINER);
+			list.addAll(clist);
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
+		}
+
 		int i;
 		for (i = 0; i < list.size(); i++) {
 			if (((ISourceRoot) list.get(i)).getResource() == project.getProject()) {

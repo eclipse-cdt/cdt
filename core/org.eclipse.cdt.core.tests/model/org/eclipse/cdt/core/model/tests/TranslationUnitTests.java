@@ -89,7 +89,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
      * Simple sanity tests to make sure TranslationUnit.getChildren seems to 
      * basicly work 
      */
-    public void testGetChildren() {
+    public void testGetChildren() throws CModelException {
         ITranslationUnit myTranslationUnit;
         ICElement[] elements;
         int x;
@@ -142,7 +142,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	/***
 	 * Simple sanity tests for the getInclude call
 	 */
-	public void testBug23478A() {
+	public void testBug23478A() throws CModelException {
 		IInclude myInclude;
 		int x;
 		String includes[]={"stdio.h", "unistd.h"};

@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
@@ -80,18 +81,22 @@ public class BinaryRunner {
 
 	void fireEvents(ICProject cproject, Parent container) {
 		// Fired the event.
-		ICElement[] children = container.getChildren();
-		if (children.length > 0) {
-			CModelManager factory = CModelManager.getDefault();
-			ICElement root = (ICModel) factory.getCModel();
-			CElementDelta cdelta = new CElementDelta(root);
-			cdelta.added(cproject);
-			cdelta.added(container);
-			for (int i = 0; i < children.length; i++) {
-				cdelta.added(children[i]);
+		try {
+			ICElement[] children = container.getChildren();
+			if (children.length > 0) {
+				CModelManager factory = CModelManager.getDefault();
+				ICElement root = (ICModel) factory.getCModel();
+				CElementDelta cdelta = new CElementDelta(root);
+				cdelta.added(cproject);
+				cdelta.added(container);
+				for (int i = 0; i < children.length; i++) {
+					cdelta.added(children[i]);
+				}
+				factory.registerCModelDelta(cdelta);
+				factory.fire(ElementChangedEvent.POST_CHANGE);
 			}
-			factory.registerCModelDelta(cdelta);
-			factory.fire(ElementChangedEvent.POST_CHANGE);
+		} catch (CModelException e) {
+			//
 		}
 	}
 

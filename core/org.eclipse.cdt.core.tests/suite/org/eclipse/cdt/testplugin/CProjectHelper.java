@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
@@ -159,7 +160,7 @@ public class CProjectHelper {
 	/**
 	 * Attempts to find an archive with the given name in the workspace
 	 */
-	public static IArchive findArchive(ICProject testProject, String name) {
+	public static IArchive findArchive(ICProject testProject, String name) throws CModelException {
 		int x;
 		IArchive[] myArchives;
 		IArchiveContainer archCont;
@@ -181,7 +182,7 @@ public class CProjectHelper {
 	/**
 	 * Attempts to find a binary with the given name in the workspace
 	 */
-	public static IBinary findBinary(ICProject testProject, String name) {
+	public static IBinary findBinary(ICProject testProject, String name) throws CModelException {
 		IBinaryContainer binCont;
 		int x;
 		IBinary[] myBinaries;
@@ -199,7 +200,7 @@ public class CProjectHelper {
 	/**
 	 * Attempts to find an object with the given name in the workspace
 	 */
-	public static IBinary findObject(ICProject testProject, String name) {
+	public static IBinary findObject(ICProject testProject, String name) throws CModelException {
 		ICElement[] sourceRoots = testProject.getChildren();
 		for (int i = 0; i < sourceRoots.length; i++) {
 			ISourceRoot root = (ISourceRoot) sourceRoots[i];
@@ -218,7 +219,7 @@ public class CProjectHelper {
 	/**
 	 * Attempts to find a TranslationUnit with the given name in the workspace
 	 */
-	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name) {
+	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name) throws CModelException {
 		ICElement[] sourceRoots = testProject.getChildren();
 		for (int i = 0; i < sourceRoots.length; i++) {
 			ISourceRoot root = (ISourceRoot) sourceRoots[i];
@@ -237,7 +238,7 @@ public class CProjectHelper {
 	/**
 	 * Attempts to find an element with the given name in the workspace
 	 */
-	public static ICElement findElement(ICProject testProject, String name) {
+	public static ICElement findElement(ICProject testProject, String name) throws CModelException {
 		ICElement[] sourceRoots = testProject.getChildren();
 		for (int i = 0; i < sourceRoots.length; i++) {
 			ISourceRoot root = (ISourceRoot) sourceRoots[i];

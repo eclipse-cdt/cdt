@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorOperation;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -216,7 +217,7 @@ public class BinaryTests extends TestCase {
     /***
      * A quick check to make sure the getBSS function works as expected.
      */
-    public void testGetBss(){
+    public void testGetBss() throws CModelException{
         IBinary bigBinary,littleBinary;
         bigBinary=CProjectHelper.findBinary(testProject, "exebig_g");
         littleBinary=CProjectHelper.findBinary(testProject, "test_g");
@@ -227,7 +228,7 @@ public class BinaryTests extends TestCase {
     /***
      * A quick check to make sure the getBSS function works as expected.
      */
-    public void testGetData(){
+    public void testGetData() throws CModelException{
         IBinary bigBinary,littleBinary;
         bigBinary=CProjectHelper.findBinary(testProject, "exebig_g");
         littleBinary=CProjectHelper.findBinary(testProject, "test_g");
@@ -241,7 +242,7 @@ public class BinaryTests extends TestCase {
      * something sane for the most common exe type (x86) and one other (ppc)
      * This is not a in depth test at all.
      */
-    public void testGetCpu() {
+    public void testGetCpu() throws CModelException {
         IBinary myBinary;
         myBinary=CProjectHelper.findBinary(testProject, "exebig_g");
 
@@ -254,7 +255,7 @@ public class BinaryTests extends TestCase {
     /****
      * A set of simple tests to make sute getNeededSharedLibs seems to be sane
      */
-    public void testGetNeededSharedLibs() {
+    public void testGetNeededSharedLibs() throws CModelException {
         IBinary myBinary;
         String[] exelibs={"libsocket.so.2", "libc.so.2"};
         String[] bigexelibs={"libc.so.2"};
@@ -294,7 +295,7 @@ public class BinaryTests extends TestCase {
     /****
      * Simple tests for the getSoname method;
      */
-    public void testGetSoname() {
+    public void testGetSoname() throws CModelException {
         IBinary myBinary;
         String name;
         myBinary=CProjectHelper.findBinary(testProject, "test_g");
@@ -311,7 +312,7 @@ public class BinaryTests extends TestCase {
     /*** 
      * Simple tests for getText
      */
-    public void testGetText() {
+    public void testGetText() throws CModelException {
         IBinary bigBinary,littleBinary;
         bigBinary=CProjectHelper.findBinary(testProject, bigexe.getLocation().lastSegment());
         littleBinary=CProjectHelper.findBinary(testProject, exefile.getLocation().lastSegment());
@@ -323,7 +324,7 @@ public class BinaryTests extends TestCase {
     /***
      * Simple tests for the hadDebug call
      */
-    public void testHasDebug() {
+    public void testHasDebug() throws CModelException {
         IBinary myBinary;
         myBinary = CProjectHelper.findBinary(testProject, "test_g");
         assertTrue(myBinary.hasDebug());
@@ -336,7 +337,7 @@ public class BinaryTests extends TestCase {
     /***
      * Sanity - isBinary and isReadonly should always return true;
      */
-    public void testisBinRead() {
+    public void testisBinRead() throws CModelException {
         IBinary myBinary;
         myBinary =CProjectHelper.findBinary(testProject, "test_g");
         assertTrue(myBinary != null);
@@ -347,7 +348,7 @@ public class BinaryTests extends TestCase {
     /***
      * Quick tests to make sure isObject works as expected.
      */
-    public void testIsObject() {
+    public void testIsObject() throws CModelException {
         IBinary myBinary;
         myBinary=CProjectHelper.findObject(testProject, "exetest.o");
         assertTrue(myBinary.isObject());
@@ -367,7 +368,7 @@ public class BinaryTests extends TestCase {
     /***
      * Quick tests to make sure isSharedLib works as expected.
      */
-    public void testIsSharedLib() {
+    public void testIsSharedLib() throws CModelException {
         IBinary myBinary;
 
         myBinary=CProjectHelper.findObject(testProject, "exetest.o");
@@ -388,7 +389,7 @@ public class BinaryTests extends TestCase {
     /***
      * Quick tests to make sure isExecutable works as expected.
      */
-    public void testIsExecutable() throws InterruptedException {
+    public void testIsExecutable() throws InterruptedException, CModelException {
         IBinary myBinary;
         myBinary=CProjectHelper.findObject(testProject, "exetest.o");
         assertTrue(!myBinary.isExecutable());

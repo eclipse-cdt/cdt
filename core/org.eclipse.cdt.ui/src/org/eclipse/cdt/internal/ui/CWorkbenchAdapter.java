@@ -8,9 +8,11 @@ package org.eclipse.cdt.internal.ui;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * An imlementation of the IWorkbenchAdapter for CElements.
@@ -31,9 +33,13 @@ public class CWorkbenchAdapter implements IWorkbenchAdapter {
 	 */
 	public Object[] getChildren(Object o) {
 		if (o instanceof IParent) {
-			Object[] members = ((IParent) o).getChildren();
-			if (members != null) {
-				return members;
+			try {
+				Object[] members = ((IParent) o).getChildren();
+				if (members != null) {
+					return members;
+				}
+			} catch (CModelException e) {
+				CUIPlugin.getDefault().log(e);
 			}
 		}
 		return fgEmptyArray;

@@ -12,12 +12,14 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.events.KeyEvent;
@@ -52,8 +54,12 @@ public class IncludesSymbolsTabBlock extends AbstractPathOptionBlock {
 		public Object[] getChildren(TreeListDialogField field, Object element) {
 			List children = new ArrayList();
 			if (element instanceof ICContainer) {
-				children.addAll(((ICContainer) element).getChildrenOfType(ICElement.C_CCONTAINER));
-				children.addAll(((ICContainer) element).getChildrenOfType(ICElement.C_UNIT));
+				try {
+					children.addAll(((ICContainer) element).getChildrenOfType(ICElement.C_CCONTAINER));
+					children.addAll(((ICContainer) element).getChildrenOfType(ICElement.C_UNIT));
+				} catch (CModelException e) {
+					CUIPlugin.getDefault().log(e);
+				}
 			}
 			return children.toArray();
 		}

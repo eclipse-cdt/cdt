@@ -20,7 +20,7 @@ public class ArchiveContainer extends Openable implements IArchiveContainer {
 		super (cProject, null, CCorePlugin.getResourceString("CoreModel.ArchiveContainer.Archives"), CElement.C_VCONTAINER); //$NON-NLS-1$
 	}
 
-	public IArchive[] getArchives() {
+	public IArchive[] getArchives() throws CModelException {
 		((ArchiveContainerInfo)getElementInfo()).sync();
 		ICElement[] e = getChildren();
 		IArchive[] a = new IArchive[e.length];

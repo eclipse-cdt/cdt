@@ -1,3 +1,9 @@
+2004-04-19 Alain Magloire
+	Core Model interface throws Exception
+
+	* src/org/eclipse/cdt/launch/internal/CApplicationLaunchShortcut.java
+	* sr/org/eclipse/cdt/launch/ui/CMaintab.java
+
 2004-04-06 Mikhail Khodjaiants
 
 	Do not remove debugger process from launch.

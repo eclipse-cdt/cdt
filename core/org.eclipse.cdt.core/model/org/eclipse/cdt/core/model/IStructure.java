@@ -11,10 +11,22 @@ package org.eclipse.cdt.core.model;
  */
 public interface IStructure extends IInheritance, IParent, IVariableDeclaration {
 	public IField getField(String name);
-	public IField[] getFields();
+	
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	public IField[] getFields() throws CModelException;
 
 	public IMethodDeclaration getMethod(String name);
-	public IMethodDeclaration [] getMethods();
+	
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	public IMethodDeclaration [] getMethods() throws CModelException;
 
 	public boolean isUnion();
 
@@ -22,6 +34,11 @@ public interface IStructure extends IInheritance, IParent, IVariableDeclaration 
 
 	public boolean isStruct();
 
-	public boolean isAbstract();
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	public boolean isAbstract() throws CModelException;
 	
 }

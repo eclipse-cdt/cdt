@@ -1,3 +1,18 @@
+2004-04-19 Alain Magloire
+
+	The Core Model interfaces now is throwing CModelException
+	we have to catch them and take appropriate actions.
+
+	* refactor/org/eclipse/cdt/internal/corext/refactorin/rename/RenameElementProcessor.java
+	* src/org/eclipse/cdt/internal/ui/BaseCElementContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/CWorkbenchAdapter.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewContentProvider.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/CPathProjectsEntryPage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/ExtendedCPathBasePage.java
+	* src/org/eclipse/cdt/internal/ui/dialogs/cpaths/IncludesSymbolsTabBlock.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResult.java
+	* src/org/eclipse/cdt/ui/wizards/NewClasWizardPage.java
+
 2004-04-18 Alain Magloire
 
 	First part to move to Eclipse-3.0 new DocumentProvider scheme

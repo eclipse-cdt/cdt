@@ -19,12 +19,12 @@ public interface IParent {
 	 * @exception CModelException if this element does not exist or if an
 	 *      exception occurs while accessing its corresponding resource
 	 */
-	ICElement[] getChildren();
+	ICElement[] getChildren() throws CModelException;
 	
 	/**
 	 * returns the children of a certain type
 	 */
-	public List getChildrenOfType(int type);
+	public List getChildrenOfType(int type) throws CModelException;
 	/**
 	 * Returns whether this element has one or more immediate children.
 	 * This is a convenience method, and may be more efficient than

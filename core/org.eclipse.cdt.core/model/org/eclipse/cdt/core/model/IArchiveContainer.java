@@ -10,5 +10,10 @@ package org.eclipse.cdt.core.model;
  * while inspecting the project.
  */
 public interface IArchiveContainer extends ICElement, IParent, IOpenable {
-	public IArchive[] getArchives();
+	/**
+	 * 
+	 * @return
+	 * @throws CModelException
+	 */
+	public IArchive[] getArchives() throws CModelException;
 }

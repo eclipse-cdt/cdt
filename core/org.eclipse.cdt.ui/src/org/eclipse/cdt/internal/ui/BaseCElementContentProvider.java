@@ -123,7 +123,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object element) {
 		if (!exists(element))
 			return NO_CHILDREN;
-			
+
+		try {
 		if (element instanceof ICModel) {
 			return  getCProjects((ICModel)element);
 		} else if  (element instanceof ICProject ) {
@@ -158,6 +159,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		} else if (element instanceof IFolder) {
 			return getResources((IFolder)element);
 		}
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
+			return NO_CHILDREN;
+		}
 		return NO_CHILDREN;
 	}
 
@@ -189,9 +194,13 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 
 		if (element instanceof IBinaryContainer) {
-			IBinaryContainer cont = (IBinaryContainer)element;
-			IBinary[] bins = getExecutables(cont);
-			return (bins != null) && bins.length > 0;
+			try {
+				IBinaryContainer cont = (IBinaryContainer)element;
+				IBinary[] bins = getExecutables(cont);
+				return (bins != null) && bins.length > 0;
+			} catch (CModelException e) {
+				return false;
+			}
 		}
 
 		if (element instanceof IParent) {
@@ -244,7 +253,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return parent;
 	}
 	
-	protected Object[] getCProjects(ICModel cModel) {
+	protected Object[] getCProjects(ICModel cModel) throws CModelException {
 		Object[] objects = cModel.getCProjects();
 		try {
 			Object[] nonC = cModel.getNonCResources();
@@ -257,44 +266,37 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return objects;
 	}
 
-	protected Object[] getSourceRoots(ICProject cproject) {
+	protected Object[] getSourceRoots(ICProject cproject) throws CModelException {
 		if (!cproject.getProject().isOpen())
 			return NO_CHILDREN;
 			
 		List list= new ArrayList();
-		try {
-			ISourceRoot[] roots = cproject.getSourceRoots();
-			// filter out source roots that correspond to projects and
-			// replace them with the package fragments directly
-			for (int i= 0; i < roots.length; i++) {
-				ISourceRoot root= roots[i];
-				if (isProjectSourceRoot(root)) {
-					Object[] children= root.getChildren();
-					for (int k= 0; k < children.length; k++) { 
-						list.add(children[k]);
-					}
-				} else {
-					list.add(root);
+		ISourceRoot[] roots = cproject.getSourceRoots();
+		// filter out source roots that correspond to projects and
+		// replace them with the package fragments directly
+		for (int i= 0; i < roots.length; i++) {
+			ISourceRoot root= roots[i];
+			if (isProjectSourceRoot(root)) {
+				Object[] children= root.getChildren();
+				for (int k= 0; k < children.length; k++) { 
+					list.add(children[k]);
 				}
+			} else {
+				list.add(root);
 			}
-		} catch (CModelException e1) {
 		}
 
 		Object[] objects = list.toArray();
-		try {
-			Object[] nonC = cproject.getNonCResources();
-			if (nonC != null && nonC.length > 0) {
-				nonC = filterNonCResources(nonC, cproject);
-				objects = concatenate(objects, nonC);
-			}
-		} catch (CModelException e) {
-			//
+		Object[] nonC = cproject.getNonCResources();
+		if (nonC != null && nonC.length > 0) {
+			nonC = filterNonCResources(nonC, cproject);
+			objects = concatenate(objects, nonC);
 		}
 
 		return objects;
 	}
 
-	protected Object[] getCResources(ICContainer container) {
+	protected Object[] getCResources(ICContainer container) throws CModelException {
 		Object[] objects = null;
 		Object[] children = container.getChildren();
 		try {
@@ -318,7 +320,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return NO_CHILDREN;
 	}
 
-	private Object[] getResources(IFolder folder) {
+	private Object[] getResources(IFolder folder) throws CModelException {
 		ICProject cproject = CoreModel.getDefault().create(folder.getProject());
 		Object[] members = null;
 		try {
@@ -332,7 +334,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return filterNonCResources(members, cproject);
 	}
 	
-	private Object[] filterNonCResources(Object[] objects, ICProject cproject) {
+	private Object[] filterNonCResources(Object[] objects, ICProject cproject) throws CModelException {
 		ICElement[] binaries = getBinaries(cproject);
 		ICElement[] archives = getArchives(cproject);
 		ISourceRoot[] roots = null;
@@ -410,12 +412,12 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return true;
 	}
 
-	protected IBinary[] getExecutables(ICProject cproject) {
+	protected IBinary[] getExecutables(ICProject cproject) throws CModelException {
 		IBinaryContainer container = cproject.getBinaryContainer();
 		return getExecutables(container);
 	}
 	
-	protected IBinary[] getExecutables(IBinaryContainer container) {
+	protected IBinary[] getExecutables(IBinaryContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
 		ArrayList list = new ArrayList(celements.length);
 		for (int i = 0; i < celements.length; i++) {
@@ -431,12 +433,12 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return bins;
 	}
 
-	protected IBinary[] getBinaries(ICProject cproject) {
+	protected IBinary[] getBinaries(ICProject cproject) throws CModelException {
 		IBinaryContainer container = cproject.getBinaryContainer();
 		return getBinaries(container);
 	}
 
-	protected IBinary[] getBinaries(IBinaryContainer container) {
+	protected IBinary[] getBinaries(IBinaryContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
 		ArrayList list = new ArrayList(celements.length);
 		for (int i = 0; i < celements.length; i++) {
@@ -450,12 +452,12 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		return bins;
 	}
 
-	protected IArchive[] getArchives(ICProject cproject) {
+	protected IArchive[] getArchives(ICProject cproject) throws CModelException {
 		IArchiveContainer container = cproject.getArchiveContainer();
 		return getArchives(container);
 	}
 
-	protected IArchive[] getArchives(IArchiveContainer container) {
+	protected IArchive[] getArchives(IArchiveContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
 		ArrayList list = new ArrayList(celements.length);
 		for (int i = 0; i < celements.length; i++) {

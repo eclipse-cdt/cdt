@@ -8,6 +8,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorOperation;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IArchiveContainer;
 import org.eclipse.cdt.core.model.IBinary;
@@ -105,7 +106,7 @@ public class CProjectHelper {
 	/**
 	 * Attempts to find an archive with the given name in the workspace
 	 */
-	public static IArchive findArchive(ICProject testProject,String name) {
+	public static IArchive findArchive(ICProject testProject,String name) throws CModelException {
 		int x;
 		IArchive[] myArchives;
 		IArchiveContainer archCont;
@@ -122,7 +123,7 @@ public class CProjectHelper {
 	/**
 	 * Attempts to find a binary with the given name in the workspace
 	 */
-	public static IBinary findBinary(ICProject testProject,String name) {
+	public static IBinary findBinary(ICProject testProject,String name) throws CModelException {
 		IBinaryContainer binCont;
 		int x;
 		IBinary[] myBinaries;
@@ -141,7 +142,7 @@ public class CProjectHelper {
 	/**
 	 * Attempts to find an object with the given name in the workspace
 	 */
-	public static IBinary findObject(ICProject testProject,String name) {
+	public static IBinary findObject(ICProject testProject,String name) throws CModelException {
 		int x;
 		ICElement[] myElements;
 		myElements=testProject.getChildren();
@@ -149,18 +150,16 @@ public class CProjectHelper {
 			return(null);
 		for (x=0;x<myElements.length;x++) {
 			if (myElements[x].getElementName().equals(name))
-				if (myElements[x] instanceof ICElement) {
-					if (myElements[x] instanceof IBinary) {
-						 return((IBinary) myElements[x]);
-					}
-				} 				
+				if (myElements[x] instanceof IBinary) {
+					 return((IBinary) myElements[x]);
+				}
 		}
 		return(null);
 	}	
 	/**
 	 * Attempts to find a TranslationUnit with the given name in the workspace
 	 */
-	public static ITranslationUnit findTranslationUnit(ICProject testProject,String name) {
+	public static ITranslationUnit findTranslationUnit(ICProject testProject,String name) throws CModelException {
 		int x;
 		ICElement[] myElements;
 		myElements=testProject.getChildren();
@@ -168,11 +167,9 @@ public class CProjectHelper {
 			return(null);
 		for (x=0;x<myElements.length;x++) {
 			if (myElements[x].getElementName().equals(name))
-				if (myElements[x] instanceof ICElement) {
-					if (myElements[x] instanceof ITranslationUnit) {
-						 return((ITranslationUnit) myElements[x]);
-					}
-				} 				
+				if (myElements[x] instanceof ITranslationUnit) {
+					return((ITranslationUnit) myElements[x]);
+				}
 		}
 		return(null);
 	}	
@@ -182,7 +179,7 @@ public class CProjectHelper {
 	/**
 	 * Attempts to find an element with the given name in the workspace
 	 */
-	public static ICElement findElement(ICProject testProject,String name) {
+	public static ICElement findElement(ICProject testProject,String name) throws CModelException {
 		int x;
 		ICElement[] myElements;
 		myElements=testProject.getChildren();
@@ -190,11 +187,7 @@ public class CProjectHelper {
 			return(null);
 		for (x=0;x<myElements.length;x++) {
 			if (myElements[x].getElementName().equals(name))
-				if (myElements[x] instanceof ICElement) {
-					return((ICElement) myElements[x]);
-				} 
-				
-				
+				return myElements[x];
 		}
 		return(null);
 	}	

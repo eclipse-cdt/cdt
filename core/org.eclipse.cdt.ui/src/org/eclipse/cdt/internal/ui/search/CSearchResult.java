@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IParent;
@@ -61,10 +62,13 @@ public class CSearchResult extends AbstractTextSearchResult {
 		}
 		if (element instanceof IParent) {
 			IParent parent= (IParent) element;
-		
-			ICElement[] children= parent.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				collectMatches(matches, children[i]);
+			try {
+				ICElement[] children= parent.getChildren();
+				for (int i= 0; i < children.length; i++) {
+					collectMatches(matches, children[i]);
+				}
+			} catch (CModelException e) {
+				// we will not be tracking these results
 			}
 			
 		}

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
@@ -360,7 +361,11 @@ public class CMainTab extends CLaunchConfigurationTab {
 		final Object[] ret = new Object[1];
 		BusyIndicator.showWhile(display, new Runnable() {
 			public void run() {
-				ret[0] = cproject.getBinaryContainer().getBinaries();
+				try {
+					ret[0] = cproject.getBinaryContainer().getBinaries();
+				} catch (CModelException e) {
+					LaunchUIPlugin.errorDialog("Launch UI internal error", e); //$NON-NLS-1$
+				}
 			}
 		});
 
@@ -387,21 +392,24 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * or null if there was none.
 	 */
 	protected ICProject chooseCProject() {
-		ICProject[] projects;
-		projects = getCProjects();
+		try {
+			ICProject[] projects = getCProjects();
 
-		ILabelProvider labelProvider = new CElementLabelProvider();
-		ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
-		dialog.setTitle(LaunchUIPlugin.getResourceString("CMainTab.Project_Selection")); //$NON-NLS-1$
-		dialog.setMessage(LaunchUIPlugin.getResourceString("CMainTab.Choose_project_to_constrain_search_for_program")); //$NON-NLS-1$
-		dialog.setElements(projects);
+			ILabelProvider labelProvider = new CElementLabelProvider();
+			ElementListSelectionDialog dialog = new ElementListSelectionDialog(getShell(), labelProvider);
+			dialog.setTitle(LaunchUIPlugin.getResourceString("CMainTab.Project_Selection")); //$NON-NLS-1$
+			dialog.setMessage(LaunchUIPlugin.getResourceString("CMainTab.Choose_project_to_constrain_search_for_program")); //$NON-NLS-1$
+			dialog.setElements(projects);
 
-		ICProject cProject = getCProject();
-		if (cProject != null) {
-			dialog.setInitialSelections(new Object[] { cProject });
-		}
-		if (dialog.open() == ElementListSelectionDialog.OK) {
-			return (ICProject) dialog.getFirstResult();
+			ICProject cProject = getCProject();
+			if (cProject != null) {
+				dialog.setInitialSelections(new Object[] { cProject });
+			}
+			if (dialog.open() == ElementListSelectionDialog.OK) {
+				return (ICProject) dialog.getFirstResult();
+			}
+		} catch (CModelException e) {
+			LaunchUIPlugin.errorDialog("Launch UI internal error", e); //$NON-NLS-1$			
 		}
 		return null;
 	}
@@ -410,7 +418,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	 * Return an array a ICProject whose platform match that of the runtime env.
 	 **/
 
-	protected ICProject[] getCProjects() {
+	protected ICProject[] getCProjects() throws CModelException {
 		ICProject cproject[] = CoreModel.getDefault().getCModel().getCProjects();
 		ArrayList list = new ArrayList(cproject.length);
 		boolean isNative = filterPlatform.equals(BootLoader.getOS());

@@ -331,7 +331,6 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					IPath rootPath = root.getPath();
 					IPath resourcePath = file.getFullPath();
 					IPath path = resourcePath.removeFirstSegments(rootPath.segmentCount());
-					String fileName = path.lastSegment();
 					path = path.removeLastSegments(1);
 					String[] segments = path.segments();
 					ICContainer cfolder = root;
@@ -427,23 +426,31 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				ArrayList list = new ArrayList(5);
 				if (pinfo != null && pinfo.vBin != null) {
 					if (peekAtInfo(pinfo.vBin) != null) {
-						ICElement[] bins = pinfo.vBin.getChildren();
-						for (int i = 0; i < bins.length; i++) {
-							if (celement.getPath().isPrefixOf(bins[i].getPath())) {
-								//pinfo.vBin.removeChild(bins[i]);
-								list.add(bins[i]);
+						try {
+							ICElement[] bins = pinfo.vBin.getChildren();
+							for (int i = 0; i < bins.length; i++) {
+								if (celement.getPath().isPrefixOf(bins[i].getPath())) {
+									//pinfo.vBin.removeChild(bins[i]);
+									list.add(bins[i]);
+								}
 							}
+						} catch (CModelException e) {
+							// ..
 						}
 					}
 				}
 				if (pinfo != null && pinfo.vLib != null) {
 					if (peekAtInfo(pinfo.vLib) != null) {
-						ICElement[] ars = pinfo.vLib.getChildren();
-						for (int i = 0; i < ars.length; i++) {
-							if (celement.getPath().isPrefixOf(ars[i].getPath())) {
-								//pinfo.vLib.removeChild(ars[i]);
-								list.add(ars[i]);
+						try {
+							ICElement[] ars = pinfo.vLib.getChildren();
+							for (int i = 0; i < ars.length; i++) {
+								if (celement.getPath().isPrefixOf(ars[i].getPath())) {
+									//pinfo.vLib.removeChild(ars[i]);
+									list.add(ars[i]);
+								}
 							}
+						} catch (CModelException e) {
+							// ..
 						}
 					}
 				}
@@ -979,7 +986,10 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		switch (resource.getType()) {
 			case IResource.ROOT :
 			if (this.cProjectsCache == null) {
-				this.cProjectsCache = this.getCModel().getCProjects();
+				try {
+					this.cProjectsCache = this.getCModel().getCProjects();
+				} catch (CModelException e) {
+				}
 			}
 				
 			IResourceDelta[] children = delta.getAffectedChildren();

@@ -4,6 +4,7 @@
  */
 package org.eclipse.cdt.core.model.tests;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IMacro;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -53,7 +54,7 @@ public class IMacroTests extends IntegratedCModelTest {
 		return "IMacroTest.h";
 	}
 
-	public void testGetElementName() {
+	public void testGetElementName() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List arrayElements = tu.getChildrenOfType( ITranslationUnit.C_MACRO );
 
@@ -70,7 +71,7 @@ public class IMacroTests extends IntegratedCModelTest {
 		}
 	}
 		
-	public void testGetIdentifierList() {
+	public void testGetIdentifierList() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List arrayElements = tu.getChildrenOfType( ITranslationUnit.C_MACRO );
 
@@ -87,7 +88,7 @@ public class IMacroTests extends IntegratedCModelTest {
 		}
 	}
 
-	public void testGetTokenSequence() {
+	public void testGetTokenSequence() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List arrayElements = tu.getChildrenOfType( ITranslationUnit.C_MACRO );
 

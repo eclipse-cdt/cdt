@@ -69,7 +69,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		return suite;
 	}
 
-	public void testGetChildrenOfTypeStruct() {
+	public void testGetChildrenOfTypeStruct() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List arrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		String[] myExpectedStructs = {
@@ -84,7 +84,7 @@ public class IStructureTests extends IntegratedCModelTest {
 			assertEquals(myExpectedStructs[i], myIStruct.getElementName());
 		}
 	}
-	public void testGetChildrenOfTypeClass() {
+	public void testGetChildrenOfTypeClass() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List arrayClasses = tu.getChildrenOfType(ICElement.C_CLASS);
 		String[] myExpectedClasses = {
@@ -98,7 +98,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		}
 	}
 
-	public void testGetFields() {
+	public void testGetFields() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
@@ -116,7 +116,7 @@ public class IStructureTests extends IntegratedCModelTest {
 	}
 
 	// TODO Bug# 38985: remove testGetFieldsHack()
-	public void testGetFieldsHack() {
+	public void testGetFieldsHack() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
@@ -133,7 +133,7 @@ public class IStructureTests extends IntegratedCModelTest {
 				myExpectedFields[i], myIField.getElementName());
 		}		
 	}
-	public void testGetField() {
+	public void testGetField() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
@@ -154,7 +154,7 @@ public class IStructureTests extends IntegratedCModelTest {
 			assertNull( "Failed on "+i, myIField);
 		}		
 	}
-	public void testGetMethods() {
+	public void testGetMethods() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
@@ -170,7 +170,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		}		
 	}
 	// TODO Bug# 38985: remove testGetMethodsHack()
-	public void testGetMethodsHack() {
+	public void testGetMethodsHack() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
@@ -187,7 +187,7 @@ public class IStructureTests extends IntegratedCModelTest {
 				myExpectedMethods[i], myIMethod.getElementName());
 		}		
 	}
-	public void testGetMethod() {
+	public void testGetMethod() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List myArrayStructs = tu.getChildrenOfType(ICElement.C_STRUCT);
 		IStructure myIStruct = (IStructure) myArrayStructs.get(0);
@@ -282,7 +282,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		assertFalse( myStructNonClass.isClass() );
 	}
 	
-	public void testIsAbstract() {
+	public void testIsAbstract() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ICElement myElementAbstract = null;
 		ICElement myElementNonAbstract = null;
@@ -394,7 +394,7 @@ public class IStructureTests extends IntegratedCModelTest {
 		assertEquals( ICElement.C_VARIABLE, myElement.getElementType() );
 	}
 	
-	public void testInnerStruct() {
+	public void testInnerStruct() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ICElement myElement = null;
 		try {

@@ -8,6 +8,7 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 
 public abstract class Parent extends CElement {
@@ -43,7 +44,7 @@ public abstract class Parent extends CElement {
 	 * Returns null if the element does not support children
 	 * Implementations override this method to support children
 	 */		
-	public ICElement[] getChildren() {
+	public ICElement[] getChildren() throws CModelException {
 		CElementInfo info = getElementInfo();
 		if (info != null)
 			return info.getChildren();
@@ -56,7 +57,7 @@ public abstract class Parent extends CElement {
 	 * @param type
 	 * @return ArrayList
 	 */
-	public List getChildrenOfType(int type){
+	public List getChildrenOfType(int type) throws CModelException {
 		ICElement[] children = getChildren();
 		int size = children.length;
 		ArrayList list = new ArrayList(size);

@@ -184,21 +184,27 @@ public class DeltaProcessor {
 			CProjectInfo pinfo = (CProjectInfo)factory.peekAtInfo(cproject);
 			if (pinfo != null && pinfo.vBin != null) {
 				if (factory.peekAtInfo(pinfo.vBin) != null) {
-					ICElement[] bins = pinfo.vBin.getChildren();
-					for (int i = 0; i < bins.length; i++) {
-						if (celement.getPath().isPrefixOf(bins[i].getPath())) {
-							fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
+					try {
+						ICElement[] bins = pinfo.vBin.getChildren();
+						for (int i = 0; i < bins.length; i++) {
+							if (celement.getPath().isPrefixOf(bins[i].getPath())) {
+								fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
+							}
 						}
+					} catch (CModelException e) {
 					}
 				}
 			}
 			if (pinfo != null && pinfo.vLib != null) {
 				if (factory.peekAtInfo(pinfo.vLib) != null) {
-					ICElement[] ars = pinfo.vLib.getChildren();
-					for (int i = 0; i < ars.length; i++) {
-						if (celement.getPath().isPrefixOf(ars[i].getPath())) {
-							fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
+					try {
+						ICElement[] ars = pinfo.vLib.getChildren();
+						for (int i = 0; i < ars.length; i++) {
+							if (celement.getPath().isPrefixOf(ars[i].getPath())) {
+								fCurrentDelta.changed(pinfo.vBin, ICElementDelta.CHANGED);
+							}
 						}
+					} catch (CModelException e) {
 					}
 				}
 			}

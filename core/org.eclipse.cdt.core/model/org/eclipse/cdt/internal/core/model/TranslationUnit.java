@@ -79,23 +79,29 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public ICElement getElement(String name ) {
-		ICElement[] celements = getChildren();
-		for (int i = 0; i < celements.length; i++) {
-			if (name.equals(celements[i].getElementName())) {
-				return celements[i];
+		try {
+			ICElement[] celements = getChildren();
+			for (int i = 0; i < celements.length; i++) {
+				if (name.equals(celements[i].getElementName())) {
+					return celements[i];
+				}
 			}
+		} catch (CModelException e) {		
 		}
 		return null;
 	}
 
 	public IInclude getInclude(String name) {
-		ICElement[] celements = getChildren();
-		for (int i = 0; i < celements.length; i++) {
-			if (celements[i].getElementType() == ICElement.C_INCLUDE) {
-				if (name.equals(celements[i].getElementName())) {
-					return (IInclude)celements[i];
+		try {
+			ICElement[] celements = getChildren();
+			for (int i = 0; i < celements.length; i++) {
+				if (celements[i].getElementType() == ICElement.C_INCLUDE) {
+					if (name.equals(celements[i].getElementName())) {
+						return (IInclude)celements[i];
+					}
 				}
 			}
+		} catch (CModelException e) {		
 		}
 		return null;
 	}
@@ -112,14 +118,17 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	}
 
 	public IUsing getUsing(String name) {
-		ICElement[] celements = getChildren();
-		for (int i = 0; i < celements.length; i++) {
-			if (celements[i].getElementType() == ICElement.C_USING) {
-				if (name.equals(celements[i].getElementName())) {
-					return (IUsing)celements[i];
+		try {
+			ICElement[] celements = getChildren();
+			for (int i = 0; i < celements.length; i++) {
+				if (celements[i].getElementType() == ICElement.C_USING) {
+					if (name.equals(celements[i].getElementName())) {
+						return (IUsing)celements[i];
+					}
 				}
 			}
-		}
+		} catch (CModelException e) {		
+		}		
 		return null;
 	}
 
@@ -474,10 +483,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * Parse the buffer contents of this element.
 	 */
 	public Map parse(){
-		removeChildren(this);
-		CModelBuilder modelBuilder = new CModelBuilder(this);
-		boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
 		try {
+			removeChildren(this);
+			CModelBuilder modelBuilder = new CModelBuilder(this);
+			boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
 			return modelBuilder.parse(quickParseMode);
 		} catch (Exception e) {
 			// use the debug log for this exception.
@@ -486,7 +495,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		}							
 	}
 	
-	public void removeChildren(ICElement element){
+	public void removeChildren(ICElement element) throws CModelException{
 		if (element instanceof Parent){
 			Parent parent = (Parent) element;
 			ICElement[] children = parent.getChildren();

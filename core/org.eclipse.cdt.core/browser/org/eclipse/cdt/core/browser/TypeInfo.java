@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -226,14 +227,17 @@ public class TypeInfo implements ITypeInfo, Comparable
 	private ICElement findCElement(ICElement celement, String name) {
 		if (isValidType(celement.getElementType()) && celement.getElementName().equals(name))
 			return celement;
-		
-		if (celement instanceof IParent) {
-			ICElement[] children = ((IParent)celement).getChildren();
-			for (int i = 0; i < children.length; i++) {
-				ICElement child= children[i];
-				if (isValidType(child.getElementType()) && child.getElementName().equals(name))
-					return child;
+		try {
+			if (celement instanceof IParent) {
+				ICElement[] children = ((IParent)celement).getChildren();
+				for (int i = 0; i < children.length; i++) {
+					ICElement child= children[i];
+					if (isValidType(child.getElementType()) && child.getElementName().equals(name))
+						return child;
+				}
 			}
+		} catch (CModelException e) {
+			
 		}
 		return null;
 	}

@@ -27,7 +27,7 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IBinaryModule#getBinaryElements()
 	 */
-	public IBinaryElement[] getBinaryElements() {
+	public IBinaryElement[] getBinaryElements() throws CModelException {
 		ICElement[] e = getChildren();
 		IBinaryElement[] b = new IBinaryElement[e.length];
 		System.arraycopy(e, 0, b, 0, e.length);

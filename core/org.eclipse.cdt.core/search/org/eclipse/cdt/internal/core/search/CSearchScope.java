@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IMember;
@@ -61,7 +62,7 @@ public class CSearchScope implements ICSearchScope {
 	  this.enclosingProjects[length] = path;
     }
 
-	public void add(ICProject cProject, boolean includesPrereqProjects, HashSet visitedProjects) {
+	public void add(ICProject cProject, boolean includesPrereqProjects, HashSet visitedProjects) throws CModelException {
 		IProject project = cProject.getProject();
 		if (!project.isAccessible() || !visitedProjects.add(project)) return;
 	
@@ -90,7 +91,7 @@ public class CSearchScope implements ICSearchScope {
 	* @param b
 	* @param set
 	*/
-   public void add(IProject project, boolean includesPrereqProjects, HashSet visitedProjects) {
+   public void add(IProject project, boolean includesPrereqProjects, HashSet visitedProjects) throws CModelException {
 	
 		if (!project.isAccessible() || !visitedProjects.add(project)) return;
 		

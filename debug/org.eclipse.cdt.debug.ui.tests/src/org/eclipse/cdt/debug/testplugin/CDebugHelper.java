@@ -3,6 +3,7 @@ package org.eclipse.cdt.debug.testplugin;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -50,7 +51,7 @@ public class CDebugHelper {
 	/**
 	 * Creates a ICDISession.
 	 */	
-	public static ICDISession createSession(String exe, ICProject project) throws IOException, MIException  {
+	public static ICDISession createSession(String exe, ICProject project) throws IOException, MIException, CModelException  {
 		MIPlugin mi;
 		String  workspacePath= Platform.getLocation().toOSString();
 		ICDISession session;

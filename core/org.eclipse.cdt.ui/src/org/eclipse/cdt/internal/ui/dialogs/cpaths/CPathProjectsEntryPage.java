@@ -11,6 +11,7 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -20,6 +21,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -111,33 +113,36 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 	void updateProjectsList(ICProject currCProject) {
 		ICModel cmodel = currCProject.getCModel();
-		ICProject[] cprojects = cmodel.getCProjects();
 
-		List projects = new ArrayList(cprojects.length);
-
-		// a vector remembering all projects that dont have to be added anymore
-		List existingProjects = new ArrayList(cprojects.length);
-		existingProjects.add(currCProject.getProject());
-
-		final List checkedProjects = new ArrayList(cprojects.length);
-		// add the projects-cpentries that are already on the C Path
-		List cpelements = fCPathList.getElements();
-		for (int i = cpelements.size() - 1; i >= 0; i--) {
-			CPListElement cpelem = (CPListElement) cpelements.get(i);
-			if (isEntryKind(cpelem.getEntryKind())) {
-				existingProjects.add(cpelem.getResource());
-				projects.add(cpelem);
-				checkedProjects.add(cpelem);
+		List projects = new ArrayList();
+		final List checkedProjects = new ArrayList();
+		try {
+			ICProject[] cprojects = cmodel.getCProjects();
+			
+			// a vector remembering all projects that dont have to be added anymore
+			List existingProjects = new ArrayList(cprojects.length);
+			existingProjects.add(currCProject.getProject());
+			
+			// add the projects-cpentries that are already on the C Path
+			List cpelements = fCPathList.getElements();
+			for (int i = cpelements.size() - 1; i >= 0; i--) {
+				CPListElement cpelem = (CPListElement) cpelements.get(i);
+				if (isEntryKind(cpelem.getEntryKind())) {
+					existingProjects.add(cpelem.getResource());
+					projects.add(cpelem);
+					checkedProjects.add(cpelem);
+				}
 			}
-		}
-
-		for (int i = 0; i < cprojects.length; i++) {
-			IProject proj = cprojects[i].getProject();
-			if (!existingProjects.contains(proj)) {
-				projects.add(new CPListElement(fCurrCProject, IPathEntry.CDT_PROJECT, proj.getFullPath(), proj));
+			
+			for (int i = 0; i < cprojects.length; i++) {
+				IProject proj = cprojects[i].getProject();
+				if (!existingProjects.contains(proj)) {
+					projects.add(new CPListElement(fCurrCProject, IPathEntry.CDT_PROJECT, proj.getFullPath(), proj));
+				}
 			}
+		} catch (CModelException e) {
+			CUIPlugin.getDefault().log(e);
 		}
-
 		fProjectsList.setElements(projects);
 		fProjectsList.setCheckedElements(checkedProjects);
 		fCurrCProject = currCProject;

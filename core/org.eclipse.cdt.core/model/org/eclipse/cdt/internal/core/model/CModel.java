@@ -38,7 +38,7 @@ public class CModel extends Openable implements ICModel {
 		return super.equals(o);
 	}
 
-	public ICProject[] getCProjects() {
+	public ICProject[] getCProjects() throws CModelException {
 		List list = getChildrenOfType(C_PROJECT);
 		ICProject[] array= new ICProject[list.size()];
 		list.toArray(array);

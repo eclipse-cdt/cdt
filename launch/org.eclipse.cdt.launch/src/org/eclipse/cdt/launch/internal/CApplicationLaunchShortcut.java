@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
@@ -351,12 +352,15 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut, ILaunchFilte
 									if (r != null) {
 										ICProject cproject = CoreModel.getDefault().create(r.getProject());
 										if (cproject != null) {
-											IBinary[] bins = cproject.getBinaryContainer().getBinaries();
+											try {
+												IBinary[] bins = cproject.getBinaryContainer().getBinaries();
 
-											for (int j = 0; j < bins.length; j++) {
-												if (bins[j].isExecutable()) {
-													results.add(bins[j]);
+												for (int j = 0; j < bins.length; j++) {
+													if (bins[j].isExecutable()) {
+														results.add(bins[j]);
+													}
 												}
+											} catch (CModelException e) {
 											}
 										}
 									}

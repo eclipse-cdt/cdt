@@ -5,6 +5,7 @@
 package org.eclipse.cdt.core.model.tests;
 
 import org.eclipse.cdt.core.model.*;
+
 import junit.framework.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 		return suite;
 	}
 
-	public List getTemplateMethods(ITranslationUnit tu)
+	public List getTemplateMethods(ITranslationUnit tu) throws CModelException
 	{
 		IStructure myElem = null;
 		try {
@@ -69,7 +70,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 		return myElem.getChildrenOfType(ICElement.C_TEMPLATE_METHOD);
 	}
 
-	public void testGetChildrenOfTypeTemplate() {
+	public void testGetChildrenOfTypeTemplate() throws CModelException {
 		ITranslationUnit tu = getTU();
 		{
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT);
@@ -150,7 +151,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 */	}
 
 
-	public void testGetNumberOfTemplateParameters()
+	public void testGetNumberOfTemplateParameters() throws CModelException
 	{
 		ITranslationUnit tu = getTU();
 		ArrayList arrayElements = new ArrayList();
@@ -174,7 +175,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 				myTemplate.getNumberOfTemplateParameters());
 		}
 	}
-	public void testGetTemplateParameterTypes()
+	public void testGetTemplateParameterTypes() throws CModelException
 	{
 		ITranslationUnit tu = getTU();
 		ArrayList arrayElements = new ArrayList();
@@ -219,7 +220,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 			}
 		}
 	}
-	public void testGetTemplateSignature()
+	public void testGetTemplateSignature() throws CModelException
 	{
 		ITranslationUnit tu = getTU();
 		ArrayList arrayElements = new ArrayList();

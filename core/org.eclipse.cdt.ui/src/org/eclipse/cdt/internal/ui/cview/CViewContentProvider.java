@@ -45,18 +45,21 @@ public class CViewContentProvider extends CElementContentProvider {
 	public Object[] getChildren(Object element) {
 		Object[] objs = super.getChildren(element);
 		Object[] extras = null;
-		if (element instanceof ICProject) {
-			extras = getProjectChildren((ICProject)element);
-		} else if (element instanceof IBinaryContainer) {
-			extras = getExecutables((IBinaryContainer)element);
-		} else if (element instanceof IArchiveContainer) {
-			extras = getArchives((IArchiveContainer)element);
-		} else if (element instanceof LibraryRefContainer) {
-			extras = ((LibraryRefContainer)element).getChildren(element);
-		} else if (element instanceof IncludeRefContainer) {
-			extras = ((IncludeRefContainer)element).getChildren(element);
+		try {
+			if (element instanceof ICProject) {
+				extras = getProjectChildren((ICProject)element);
+			} else if (element instanceof IBinaryContainer) {
+				extras = getExecutables((IBinaryContainer)element);
+			} else if (element instanceof IArchiveContainer) {
+				extras = getArchives((IArchiveContainer)element);
+			} else if (element instanceof LibraryRefContainer) {
+				extras = ((LibraryRefContainer)element).getChildren(element);
+			} else if (element instanceof IncludeRefContainer) {
+				extras = ((IncludeRefContainer)element).getChildren(element);
+			}
+		} catch (CModelException e) {
+			extras = null;
 		}
-
 		if (extras != null && extras.length > 0) {
 			objs = concatenate(objs, extras);
 		}
@@ -66,7 +69,7 @@ public class CViewContentProvider extends CElementContentProvider {
 	/**
 	 * @return
 	 */
-	private Object[] getProjectChildren(ICProject cproject) {
+	private Object[] getProjectChildren(ICProject cproject) throws CModelException {
 		Object[] extras = null;
 		IArchiveContainer archive = cproject.getArchiveContainer(); 
 		if (getArchives(archive).length > 0) {

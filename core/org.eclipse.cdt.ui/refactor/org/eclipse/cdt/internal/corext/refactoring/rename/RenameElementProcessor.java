@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IEnumeration;
@@ -249,7 +250,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	 * @see org.eclipse.cdt.internal.corext.refactoring.IRefactoringProcessor#checkActivation()
 	 */
 	public RefactoringStatus checkActivation() throws CoreException {
-		RefactoringStatus result= null;
+		//RefactoringStatus result= null;
 		if (!eligibleForRefactoring(fCElement)) { 
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("RenameTypeRefactoring.wrong_element")); //$NON-NLS-1$
 		}		
@@ -366,9 +367,9 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			
 			ITranslationUnit tu = CModelUtil.toWorkingCopy(cu);
 			
-			if((tu == null) || (!( tu instanceof ITranslationUnit)))
+			if(tu == null)
 				return;
-			ITranslationUnit wc = (ITranslationUnit)tu;
+			ITranslationUnit wc = tu;
 			String name= RefactoringCoreMessages.getString("RenameTypeRefactoring.update_reference"); //$NON-NLS-1$
 			BasicSearchMatch[] results= fReferences[i].getSearchResults();
 
@@ -513,16 +514,20 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	}
 	private RefactoringStatus checkSiblingsCollision() {		
 		RefactoringStatus result= new RefactoringStatus();
-		// get the siblings of the CElement and check if it has the same name
-		ICElement[] siblings= ((IParent)fCElement.getParent()).getChildren();
-		for (int i = 0; i <siblings.length; ++i ){
-			ICElement sibling = (ICElement)siblings[i];
-			if ((sibling.getElementName().equals(fNewElementName)) 
-			&& (sibling.getElementType() == fCElement.getElementType())  ) {
-				String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.member_type_exists", //$NON-NLS-1$
-						new String[]{fNewElementName, fCElement.getParent().getElementName()});
-				result.addError(msg);
+		try {
+			// get the siblings of the CElement and check if it has the same name
+			ICElement[] siblings= ((IParent)fCElement.getParent()).getChildren();
+			for (int i = 0; i <siblings.length; ++i ){
+				ICElement sibling = siblings[i];
+				if ((sibling.getElementName().equals(fNewElementName)) 
+						&& (sibling.getElementType() == fCElement.getElementType())  ) {
+					String msg= RefactoringCoreMessages.getFormattedString("RenameTypeRefactoring.member_type_exists", //$NON-NLS-1$
+							new String[]{fNewElementName, fCElement.getParent().getElementName()});
+					result.addError(msg);
+				}
 			}
+		} catch (CModelException e) {
+			result.addFatalError(e.getMessage());
 		}
 		return result;
 	}

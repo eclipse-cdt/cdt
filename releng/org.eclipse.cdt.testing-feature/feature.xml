@@ -30,7 +30,6 @@
       <import plugin="org.eclipse.jface.text"/>
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.swt"/>
-      <import plugin="org.apache.xerces"/>
       <import plugin="org.eclipse.cdt.managedbuilder.core"/>
       <import plugin="org.eclipse.cdt.make.core"/>
    </requires>

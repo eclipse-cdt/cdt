@@ -268,7 +268,7 @@ public class Variable extends VariableObject implements ICDIVariable {
 				throw new MI2CDIException(e);
 			}
 		}
-		return (editable == null) ? false : Boolean.getBoolean(editable);
+		return (editable == null) ? false : editable.equalsIgnoreCase("true");
 	}
 
 	/**

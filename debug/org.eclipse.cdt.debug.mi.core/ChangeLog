@@ -1,3 +1,9 @@
+2003-08-06 Mikhail Khodjaiants
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java:
+	Fix for 'isEditable'.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/VariableObject.java:
+	Use correct expression in 'sizeof'.
+	
 2003-08-06 Alain Magloire
 
 	First framework to deal with breaking the arrays in ranges.

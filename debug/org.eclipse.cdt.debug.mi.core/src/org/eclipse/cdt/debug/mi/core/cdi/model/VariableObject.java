@@ -111,7 +111,7 @@ public class VariableObject extends CObject implements ICDIVariableObject {
 			MISession mi = session.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			String exp = "sizeof(" + getTypeName() + ")";
-			MIDataEvaluateExpression evaluate = factory.createMIDataEvaluateExpression("sizeof(" + getName());
+			MIDataEvaluateExpression evaluate = factory.createMIDataEvaluateExpression(exp);
 			try {
 				mi.postCommand(evaluate);
 				MIDataEvaluateExpressionInfo info = evaluate.getMIDataEvaluateExpressionInfo();

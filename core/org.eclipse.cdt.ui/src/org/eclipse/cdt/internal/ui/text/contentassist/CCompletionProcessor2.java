@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 import org.eclipse.core.resources.IFile;
@@ -42,6 +43,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 
 	private IEditorPart editor;
 	private String errorMessage;
+	
 	
 	public CCompletionProcessor2(IEditorPart editor) {
 		this.editor = editor;
@@ -152,8 +154,7 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
 	 */
 	public IContextInformationValidator getContextInformationValidator() {
-		// TODO Auto-generated method stub
-		return null;
+		return new CParameterListValidator();
 	}
 
 }

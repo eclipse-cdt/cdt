@@ -10,11 +10,14 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.ASTUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
@@ -23,7 +26,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
 
 public class DOMCompletionContributor implements ICompletionContributor {
@@ -33,20 +35,73 @@ public class DOMCompletionContributor implements ICompletionContributor {
 											  ASTCompletionNode completionNode,
 											  List proposals) {
 		if (completionNode != null) {
-			int repLength = completionNode.getLength();
-			int repOffset = offset - repLength;
-			
 			IASTName[] names = completionNode.getNames();
 			for (int i = 0; i < names.length; ++i) {
-				IBinding [] bindings = names[i].resolvePrefix();
-				if (bindings != null)
-					for (int j = 0; j < bindings.length; ++j)
-						proposals.add(createBindingCompletionProposal(bindings[j], repOffset, repLength));
+				IBinding[] bindings = names[i].resolvePrefix();
+				for (int j = 0; j < bindings.length; ++j)
+					handleBinding(names[i], bindings[j], completionNode, offset, viewer, proposals);
 			}
 		}
 	}
 
-	private ICompletionProposal createBindingCompletionProposal(IBinding binding, int offset, int length) {
+	private void handleBinding(IASTName name, IBinding binding, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
+		if (binding instanceof IFunction)
+			handleFunction(name, (IFunction)binding, completionNode, offset, viewer, proposals);
+		else
+			proposals.add(createProposal(binding.getName(), binding.getName(), getImage(binding), completionNode, offset, viewer));
+	}
+	
+	private void handleFunction(IASTName name, IFunction function, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
+		Image image = getImage(CElementImageProvider.getFunctionImageDescriptor());
+		
+		String repString = new String(name.toCharArray()) + "("; //$NON-NLS-1$
+		
+		StringBuffer args = new StringBuffer();
+		try {
+			IParameter[] params = function.getParameters();
+			if (params != null)
+				for (int i = 0; i < params.length; ++i) {
+					IType paramType = params[i].getType();
+					if (i > 0)
+						args.append(',');
+					
+					args.append(ASTUtil.getType(paramType));
+					String paramName = params[i].getName();
+					if (paramName != null) {
+						args.append(' ');
+						args.append(paramName);
+					}
+				}
+		} catch (DOMException e) {
+		}
+		String argString = args.toString();
+		
+		String descString = repString + argString + ")"; //$NON-NLS-1$
+		repString = repString + ")"; //$NON-NLS-1$
+		
+		CCompletionProposal proposal = createProposal(repString, descString, image, completionNode, offset, viewer);
+		proposal.setCursorPosition(repString.length() - 1);
+		
+		if (argString.length() > 0) {
+			CProposalContextInformation info = new CProposalContextInformation(repString, argString);
+			info.setContextInformationPosition(offset);
+			proposal.setContextInformation(info);
+		}
+		
+		proposals.add(proposal);
+	}
+	
+	private CCompletionProposal createProposal(String repString, String dispString, Image image, ASTCompletionNode completionNode, int offset, ITextViewer viewer) {
+		int repLength = completionNode.getLength();
+		int repOffset = offset - repLength;
+		return new CCompletionProposal(repString, repOffset, repLength, image, dispString, 1, viewer);
+	}
+
+	private Image getImage(ImageDescriptor desc) {
+		return desc != null ? CUIPlugin.getImageDescriptorRegistry().get(desc) : null;
+	}
+	
+	private Image getImage(IBinding binding) {
 		ImageDescriptor imageDescriptor = null;
 		
 		try {
@@ -67,11 +122,9 @@ public class DOMCompletionContributor implements ICompletionContributor {
 		} catch (DOMException e) {
 		}
 		
-		Image image = imageDescriptor != null
+		return imageDescriptor != null
 			? CUIPlugin.getImageDescriptorRegistry().get( imageDescriptor )
 			: null;
-
-		return new CCompletionProposal(binding.getName(), offset, length, image, binding.getName(), 1);
 	}
-
+	
 }

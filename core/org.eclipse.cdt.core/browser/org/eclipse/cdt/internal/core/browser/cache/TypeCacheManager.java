@@ -343,7 +343,7 @@ public class TypeCacheManager implements ITypeCacheChangedListener {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.browser.ITypeCacheChangedListener#typeCacheChanged(org.eclipse.core.resources.IProject)
      */
-    public void typeCacheChanged(final IProject project) {
+    public synchronized void typeCacheChanged(final IProject project) {
     	// clone so that a listener cannot have a side-effect on this list when being notified
 		ArrayList listeners;
         synchronized(fChangeListeners) {

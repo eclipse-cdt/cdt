@@ -145,8 +145,13 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#createArgument(ICDIArgumentObject)
 	 */
 	public ICDIArgument createArgument(ICDIArgumentObject a) throws CDIException {
+		ArgumentObject argObj = null;
 		if (a instanceof ArgumentObject) {
-			ArgumentObject argObj = (ArgumentObject)a;
+			argObj = (ArgumentObject)a;
+		} else if (a instanceof Argument) {
+			argObj = ((Argument)a).getArgumentObject();
+		}
+		if (argObj != null) {
 			Variable variable = findVariable(argObj);
 			Argument argument = null;
 			if (variable != null && variable instanceof Argument) {
@@ -287,8 +292,13 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjectAsArray(ICDIVariableObject, String, int, int)
 	 */
 	public ICDIVariableObject getVariableObjectAsArray(ICDIVariableObject object, String type, int start, int end) throws CDIException {
+		VariableObject obj = null;
 		if (object instanceof VariableObject) {
-			VariableObject obj = (VariableObject)object;
+			obj = (VariableObject)object;
+		} else if (object instanceof Variable) {
+			obj = ((Variable)object).getVariableObject();
+		}
+		if (obj != null) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("*(");
 			buffer.append('(');
@@ -324,8 +334,13 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObjectAsArray(ICDIVariableObject, String, int, int)
 	 */
 	public ICDIVariableObject getVariableObjectAsType(ICDIVariableObject object, String type) throws CDIException {
+		VariableObject obj = null;
 		if (object instanceof VariableObject) {
-			VariableObject obj = (VariableObject)object;
+			obj = (VariableObject)object;
+		} else if (object instanceof Variable) {
+			obj = ((Variable)object).getVariableObject();
+		}
+		if (obj != null) {
 			StringBuffer buffer = new StringBuffer();
 			if (type != null && type.length() > 0) {
 				// Check if the type is valid.
@@ -405,8 +420,14 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#createVariable(ICDIVariableObject)
 	 */
 	public ICDIVariable createVariable(ICDIVariableObject v) throws CDIException {
+		VariableObject varObj = null;
 		if (v instanceof VariableObject) {
-			VariableObject varObj = (VariableObject)v;
+			varObj = (VariableObject)v;
+		}
+		if (v instanceof Variable) {
+			varObj = ((Variable)v).getVariableObject();
+		}
+		if (varObj != null) {
 			Variable variable = findVariable(varObj);
 			if (variable == null) {
 				String name = varObj.getName();

@@ -72,12 +72,18 @@ public class ParserSymbolTable {
 		
 	public Declaration Lookup( String name ) throws ParserSymbolTableException {
 		LookupData data = new LookupData( name, -1 );
-		return Lookup( data, (Declaration) _contextStack.peek() );
+		
+		Lookup( data, (Declaration) _contextStack.peek() );
+		
+		return ResolveAmbiguities( data ); 
 	}
 	
 	public Declaration ElaboratedLookup( int type, String name ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name, type );
-		return Lookup( data, (Declaration) _contextStack.peek() );
+		
+		Lookup( data, (Declaration) _contextStack.peek() );
+		
+		return ResolveAmbiguities( data ); 
 	}
 
 	/**
@@ -101,8 +107,12 @@ public class ParserSymbolTable {
 		LookupData data = new LookupData( name, TypeInfo.t_namespace );
 		data.upperType = TypeInfo.t_union;
 		
-		foundDeclaration = LookupInContained( data, inDeclaration );
-			
+		LookupInContained( data, inDeclaration );
+		
+		if( data.foundItems != null ){
+			foundDeclaration = ResolveAmbiguities( data );//, data.foundItems );
+		}
+				
 		if( foundDeclaration == null && inDeclaration._containingScope != null ){
 			foundDeclaration = LookupNestedNameSpecifier( name, inDeclaration._containingScope );
 		}
@@ -142,7 +152,9 @@ public class ParserSymbolTable {
 		LookupData data = new LookupData( name, -1 );
 		data.qualified = true;
 	
-		return LookupInContained( data, (Declaration) _contextStack.peek() );
+		LookupInContained( data, (Declaration) _contextStack.peek() );
+		
+		return ResolveAmbiguities( data );
 	}
 	
 	/**
@@ -155,7 +167,9 @@ public class ParserSymbolTable {
 	public Declaration QualifiedLookup( String name ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name, -1 );
 		data.qualified = true;
-		return Lookup( data, (Declaration) _contextStack.peek() );
+		Lookup( data, (Declaration) _contextStack.peek() );
+		
+		return ResolveAmbiguities( data ); 
 	}
 	
 	/**
@@ -168,9 +182,13 @@ public class ParserSymbolTable {
 	public Declaration QualifiedFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name, TypeInfo.t_function );
 		data.qualified = true;
-		data.parameters = parameters;
+		//if parameters == null, thats no parameters, but we need to distinguish that from
+		//no parameter information at all, so make an empty list.
+		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
 		
-		return Lookup( data, (Declaration) _contextStack.peek() );
+		Lookup( data, (Declaration) _contextStack.peek() );
+		
+		return ResolveAmbiguities( data ); 
 	}
 	
 	/**
@@ -185,9 +203,12 @@ public class ParserSymbolTable {
 	 */
 	public Declaration MemberFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name, TypeInfo.t_function );
-		data.parameters = parameters;
+		//if parameters == null, thats no parameters, but we need to distinguish that from
+		//no parameter information at all, so make an empty list.
+		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
 			
-		return Lookup( data, (Declaration) _contextStack.peek() );
+		Lookup( data, (Declaration) _contextStack.peek() );
+		return ResolveAmbiguities( data ); 
 	}
 	
 	/**
@@ -216,16 +237,19 @@ public class ParserSymbolTable {
 		//figure out the set of associated scopes first, so we can remove those that are searched
 		//during the normal lookup to avoid doing them twice
 		HashSet associated = new HashSet();
+		
 		//collect associated namespaces & classes.
 		int size = ( parameters == null ) ? 0 : parameters.size();
 		Iterator iter = ( parameters == null ) ? null : parameters.iterator();
+		
 		TypeInfo param = null;
 		Declaration paramType = null;
 		for( int i = size; i > 0; i-- ){
 			param = (TypeInfo) iter.next();
-			paramType = param.getTypeDeclaration();
+			paramType = getFlatTypeInfo( param ).getTypeDeclaration();
 			
 			getAssociatedScopes( paramType, associated );
+			
 			//if T is a pointer to a data member of class X, its associated namespaces and classes
 			//are those associated with the member type together with those associated with X
 			if( param.getPtrOperator() != null && 
@@ -237,21 +261,22 @@ public class ParserSymbolTable {
 		}
 		
 		LookupData data = new LookupData( name, TypeInfo.t_function );
-		data.parameters = parameters;
+		//if parameters == null, thats no parameters, but we need to distinguish that from
+		//no parameter information at all, so make an empty list.
+		data.parameters = ( parameters == null ) ? new LinkedList() : parameters;
 		data.associated = associated;
 		
-		Declaration found = Lookup( data, (Declaration) _contextStack.peek() );
+		Lookup( data, (Declaration) _contextStack.peek() );
+		
+		Declaration found = ResolveAmbiguities( data );
 		
 		//if we haven't found anything, or what we found is not a class member, consider the 
 		//associated scopes
 		if( found == null || found._containingScope.getType() != TypeInfo.t_class ){
-			HashSet foundSet = new HashSet();
-			
 			if( found != null ){
-				foundSet.add( found );
+				data.foundItems.add( found );
 			}
-			
-						
+									
 			Declaration decl;
 			Declaration temp;
 
@@ -267,14 +292,11 @@ public class ParserSymbolTable {
 				if( associated.contains( decl ) ){
 					data.qualified = true;
 					data.ignoreUsingDirectives = true;
-					temp = Lookup( data, decl );
-					if( temp != null ){
-						foundSet.add( temp );
-					}	
+					Lookup( data, decl );
 				}
 			}
 			
-			found = ResolveAmbiguities( data, foundSet );
+			found = ResolveAmbiguities( data );
 		}
 		
 		return found;
@@ -307,7 +329,9 @@ public class ParserSymbolTable {
 
 		data.stopAt = enclosing;
 		
-		return Lookup( data, (Declaration) _contextStack.peek() );
+		Lookup( data, (Declaration) _contextStack.peek() );
+		
+		return ResolveAmbiguities( data ); 
 	}
 		
 	public void addUsingDirective( Declaration namespace ) throws ParserSymbolTableException{
@@ -340,38 +364,48 @@ public class ParserSymbolTable {
 	 * class being defined, or shall refer to an enumerator for an enumeration
 	 * type that is a member of a base class of the class being defined.
 	 */
-	public Declaration addUsingDeclaration( Declaration obj ) throws ParserSymbolTableException{
+	public Declaration addUsingDeclaration( String name ) throws ParserSymbolTableException {
+		return addUsingDeclaration( name, null );
+	}
+	
+	public Declaration addUsingDeclaration( String name, Declaration declContext ) throws ParserSymbolTableException{
+		LookupData data = new LookupData( name, -1 );
+		
+		if( declContext != null ){				
+			push( declContext );
+			data.qualified = true;
+			Lookup( data, (Declaration) _contextStack.peek() );
+			pop();
+		} else {
+			Lookup( data, (Declaration) _contextStack.peek() );
+		}
+		
+		//figure out which declaration we are talking about, if it is a set of functions,
+		//then they will be in data.foundItems (since we provided no parameter info);
+		Declaration obj = ResolveAmbiguities( data );
+		
+		if( data.foundItems == null ){
+			throw new ParserSymbolTableException();				
+		}
+
 		Declaration clone = null;
-		Declaration context = (Declaration) _contextStack.peek();
-		boolean okToAdd = false;
-		
-		//7.3.3-4
-		if( context.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
-			//a member of a base class
-			if( obj.getContainingScope().getType() == context.getType() ){
-				okToAdd = ( hasBaseClass( context, obj.getContainingScope() ) > 0 );		
-			} 
-			//TBD : a member of an _anonymous_ union
-			else if ( obj.getContainingScope().getType() == TypeInfo.t_union ) {
-				Declaration union = obj.getContainingScope();
-				okToAdd = ( hasBaseClass( context, union.getContainingScope() ) > 0 ); 
+
+		//if obj != null, then that is the only object to consider, so size is 1,
+		//otherwise we consider the foundItems set				
+		int size = ( obj == null ) ? data.foundItems.size() : 1;
+		Iterator iter = data.foundItems.iterator();
+		for( int i = size; i > 0; i-- ){
+			obj = ( obj != null && size == 1 ) ? obj : (Declaration) iter.next();
+			
+			if( okToAddUsingDeclaration( obj, (Declaration) _contextStack.peek() ) ){
+				clone = (Declaration) obj.clone(); //7.3.3-9
+				addDeclaration( clone );
+			} else {
+				throw new ParserSymbolTableException();
 			}
-			//an enumerator for an enumeration
-			else if ( obj.getType() == TypeInfo.t_enumerator ){
-				Declaration enumeration = obj.getContainingScope();
-				okToAdd = ( hasBaseClass( context, enumeration.getContainingScope() ) > 0 );
-			}
-		} else {
-			okToAdd = true;
 		}
 		
-		if( okToAdd ){
-			clone = (Declaration) obj.clone(); //7.3.3-9
-			addDeclaration( clone );
-		} else {
-			throw new ParserSymbolTableException();
-		}
-		return clone;
+		return ( size == 1 ) ? clone : null;
 	}
 	
 	public void addDeclaration( Declaration obj ) throws ParserSymbolTableException{
@@ -500,7 +534,10 @@ public class ParserSymbolTable {
 			//check to see if there is already a this object, since using declarations
 			//of function will have them from the original declaration
 			LookupData data = new LookupData( "this", -1 );
-			if( LookupInContained( data, obj ) == null ){
+			LookupInContained( data, obj );
+			//if we didn't find "this" then foundItems will still be null, no need to actually
+			//check its contents 
+			if( data.foundItems == null ){
 				Declaration thisObj = new Declaration("this");
 				thisObj.setType( TypeInfo.t_type );
 				thisObj.setTypeDeclaration( obj._containingScope );
@@ -521,24 +558,18 @@ public class ParserSymbolTable {
 	 * @return Declaration
 	 * @throws ParserSymbolTableException
 	 */
-	static private Declaration Lookup( LookupData data, Declaration inDeclaration ) throws ParserSymbolTableException
+	static private void Lookup( LookupData data, Declaration inDeclaration ) throws ParserSymbolTableException
 	{
 		if( data.type != -1 && data.type < TypeInfo.t_class && data.upperType > TypeInfo.t_union ){
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 		}
 		
 		Declaration decl = null;					//the return value
-		LinkedList tempList = null;
-		LinkedList foundNames = new LinkedList();	//list of names found
 		LinkedList transitives = new LinkedList();	//list of transitive using directives
 		
-		
 		//if this name define in this scope?
-		decl = LookupInContained( data, inDeclaration );
-		if( decl != null ){
-			foundNames.add( decl );		 
-		}
-			
+		LookupInContained( data, inDeclaration );
+		
 		if( !data.ignoreUsingDirectives ){
 			//check nominated namespaces
 			//the transitives list is populated in LookupInNominated, and then 
@@ -546,15 +577,11 @@ public class ParserSymbolTable {
 			
 			data.visited.clear(); //each namesapce is searched at most once, so keep track
 			
-			tempList = LookupInNominated( data, inDeclaration, transitives );
-					
-			if( tempList != null ){
-				foundNames.addAll( tempList );
-			}
-				
+			LookupInNominated( data, inDeclaration, transitives );
+
 			//if we are doing a qualified lookup, only process using directives if
 			//we haven't found the name yet (and if we aren't ignoring them). 
-			if( !data.qualified || foundNames.size() == 0 ){
+			if( !data.qualified || data.foundItems == null ){
 				ProcessDirectives( inDeclaration, data, transitives );
 				
 				if( inDeclaration._usingDirectives != null ){
@@ -564,34 +591,36 @@ public class ParserSymbolTable {
 				while( data.usingDirectives != null && data.usingDirectives.get( inDeclaration ) != null ){
 					transitives.clear();
 					
-					tempList = LookupInNominated( data, inDeclaration, transitives );
-					
-					if( tempList != null ){
-						foundNames.addAll( tempList );
-					}
+					LookupInNominated( data, inDeclaration, transitives );
 	
-					if( !data.qualified || foundNames.size() == 0 ){
+					if( !data.qualified || data.foundItems == null ){
 						ProcessDirectives( inDeclaration, data, transitives );
 					}
 				}
 			}
 		}
 		
-		decl = ResolveAmbiguities( data, new HashSet( foundNames ) );
-		if( decl != null || data.stopAt == inDeclaration ){
-			return decl;
+		if( data.foundItems != null || data.stopAt == inDeclaration ){
+			return;
 		}
 			
 		//if we still havn't found it, check any parents we have
 		data.visited.clear();	//each virtual base class is searched at most once	
-		decl = LookupInParents( data, inDeclaration );	
+		decl = LookupInParents( data, inDeclaration );
+		
+		//there is a resolveAmbiguities inside LookupInParents, which means if we found
+		//something the foundItems set will be non-null, but empty.  So, add the decl into
+		//the foundItems set
+		if( decl != null ){
+			data.foundItems.add( decl );	
+		}
 					
 		//if still not found, check our containing scope.			
-		if( decl == null && inDeclaration._containingScope != null ){ 
-			decl = Lookup( data, inDeclaration._containingScope );
+		if( data.foundItems == null && inDeclaration._containingScope != null ){ 
+			Lookup( data, inDeclaration._containingScope );
 		}
 
-		return decl;
+		return;
 	}
 	
 	/**
@@ -613,29 +642,28 @@ public class ParserSymbolTable {
 	 * directives, the effect is as if the using-directives from the second
 	 * namespace also appeared in the first.
 	 */
-	static private LinkedList LookupInNominated( LookupData data, Declaration declaration, LinkedList transitiveDirectives ) throws ParserSymbolTableException{
+	static private void LookupInNominated( LookupData data, Declaration declaration, LinkedList transitiveDirectives ) throws ParserSymbolTableException{
 		//if the data.usingDirectives is empty, there is nothing to do.
 		if( data.usingDirectives == null ){
-			return null;
+			return;
 		}
 			
-		LinkedList found = null;	//list of found names to return
-		
 		//local variables
-		LinkedList  list = null;
+		LinkedList  directives = null; //using directives association with declaration
 		Iterator    iter = null;
 		Declaration decl = null;
-		Declaration temp = null;
+		
+		boolean foundSomething = false;
 		int size = 0;
 		
-		list = (LinkedList) data.usingDirectives.remove( declaration );
+		directives = (LinkedList) data.usingDirectives.remove( declaration );
 		
-		if( list == null ){
-			return null;
+		if( directives == null ){
+			return;
 		}
 		
-		iter = list.iterator();
-		size = list.size();
+		iter = directives.iterator();
+		size = directives.size();
 		for( int i = size; i > 0; i-- ){
 			decl = (Declaration) iter.next();
 
@@ -643,26 +671,18 @@ public class ParserSymbolTable {
 			if( !data.visited.contains( decl ) ){
 				data.visited.add( decl );
 				
-				temp = LookupInContained( data, decl );
-										
-				//if we found something, add it to the list of found names
-				if( temp != null ){
-					if( found == null ){ 
-						found = new LinkedList();
-					}
-					found.add( temp );
-				}	
-				
+				foundSomething = LookupInContained( data, decl );
+													
 				//only consider the transitive using directives if we are an unqualified
 				//lookup, or we didn't find the name in decl
-				if( (!data.qualified || temp == null) && decl._usingDirectives != null ){
+				if( (!data.qualified || !foundSomething ) && decl._usingDirectives != null ){
 					//name wasn't found, add transitive using directives for later consideration
 					transitiveDirectives.addAll( decl._usingDirectives );
 				}
 			}
 		}
 		
-		return found;
+		return;
 	}
 	
 	/**
@@ -673,8 +693,8 @@ public class ParserSymbolTable {
 	 * 
 	 * Look for data.name in our collection _containedDeclarations
 	 */
-	private static Declaration LookupInContained( LookupData data, Declaration lookIn ) throws ParserSymbolTableException{
-		HashSet found = null;
+	private static boolean LookupInContained( LookupData data, Declaration lookIn ) throws ParserSymbolTableException{
+		boolean foundSomething = false;
 		Declaration temp  = null;
 		Object obj = null;
 	
@@ -685,24 +705,27 @@ public class ParserSymbolTable {
 		
 		Map declarations = lookIn.getContainedDeclarations();
 		if( declarations == null )
-			return null;
+			return foundSomething;
 		
 		obj = declarations.get( data.name );
 	
 		if( obj == null ){
 			//not found
-			return null;
+			return foundSomething;
 		}
-					
+		
 	 	//the contained declarations map either to a Declaration object, or to a list
 	 	//of declaration objects.
 		if( obj.getClass() == Declaration.class ){	
 			if( ((Declaration)obj).isType( data.type, data.upperType ) ){
-				return (Declaration) obj;
+				if( data.foundItems == null ){
+					data.foundItems = new HashSet();
+				}
+				data.foundItems.add( obj );
+				foundSomething = true;
 			}
 		} else {
-			found = new HashSet();
-			
+			//we have to filter on type so can't just add the list whole to the fount set
 			LinkedList objList = (LinkedList)obj;
 			Iterator iter  = objList.iterator();
 			int size = objList.size();
@@ -711,17 +734,16 @@ public class ParserSymbolTable {
 				temp = (Declaration) iter.next();
 		
 				if( temp.isType( data.type, data.upperType ) ){
-					found.add(temp);
+					if( data.foundItems == null ){
+						data.foundItems = new HashSet();
+					}
+					data.foundItems.add(temp);
+					foundSomething = true;
 				} 
 			}
 		}
 
-		//if none of the found items made it through the type filtering, just
-		//return null instead of an empty list.
-		if( found == null || found.size() == 0 )			
-			return null;
-		
-		return ResolveAmbiguities( data, found );
+		return foundSomething;
 	}
 	
 	/**
@@ -733,6 +755,7 @@ public class ParserSymbolTable {
 	 */
 	private static Declaration LookupInParents( LookupData data, Declaration lookIn ) throws ParserSymbolTableException{
 		LinkedList scopes = lookIn.getParentScopes();
+		boolean foundSomething = false;
 		Declaration temp = null;
 		Declaration decl = null;
 		
@@ -764,8 +787,8 @@ public class ParserSymbolTable {
 				//is circular inheritance
 				if( ! data.inheritanceChain.contains( wrapper.parent ) ){
 					//is this name define in this scope?
-					temp =  LookupInContained( data, wrapper.parent );
-					
+					LookupInContained( data, wrapper.parent );
+					temp = ResolveAmbiguities( data );
 					if( temp == null ){
 						temp = LookupInParents( data, wrapper.parent );
 					}
@@ -880,85 +903,136 @@ public class ParserSymbolTable {
 		return true;
 	}
 	
-	static private Declaration ResolveAmbiguities( LookupData data, HashSet items ) throws ParserSymbolTableException{
-		int size = items.size(); 
-		Iterator iter = items.iterator();
+	/**
+	 * 
+	 * @param data
+	 * @return Declaration
+	 * @throws ParserSymbolTableException
+	 * 
+	 * Resolve the foundItems set down to one declaration and return that
+	 * declaration.  
+	 * If we successfully resolve, then the data.foundItems list will be
+	 * cleared.  If however, we were not able to completely resolve the set,
+	 * then the data.foundItems set will be left with those items that
+	 * survived the partial resolution and we will return null.  (currently,
+	 * this case applies to when we have overloaded functions and no parameter
+	 * information)
+	 * 
+	 * NOTE: data.parameters == null means there is no parameter information at
+	 * all, when looking for functions with no parameters, an empty list must be
+	 * provided in data.parameters.
+	 */
+	static private Declaration ResolveAmbiguities( LookupData data ) throws ParserSymbolTableException{
+		Declaration decl = null;
+		Declaration obj	= null;
+		Declaration cls = null;
+		
+		if( data.foundItems == null ){
+			return null;
+		}
+		
+		int size = data.foundItems.size(); 
+		Iterator iter = data.foundItems.iterator();
+		
+		boolean needDecl = true;
 		
 		if( size == 0){
 			return null;
 		} else if (size == 1) {
-			return (Declaration) iter.next();
-		} else	{
-			LinkedList functionList = null;	
-
-			Declaration decl = null;
-			Declaration obj	= null;
-			Declaration cls = null;
-			
-			for( int i = size; i > 0; i-- ){
-				decl = (Declaration) iter.next();
-				
-				if( decl.isType( TypeInfo.t_function ) ){
-					if( functionList == null){
-						functionList = new LinkedList();
-					}
-					functionList.add( decl );
-				} else {
-					//if this is a class-name, other stuff hides it
-					if( decl.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) ){
-						if( cls == null ) {
-							cls = decl;
-						} else {
-							throw new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName ); 
-						}
-					} else {
-						//an object, can only have one of these
-						if( obj == null ){
-							obj = decl;	
-						} else {
-							throw new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName ); 
-						}
-					}
-				}
+			decl = (Declaration) iter.next();
+			//if it is a function we need to check its parameters
+			if( !decl.isType( TypeInfo.t_function ) ){
+				data.foundItems.clear();
+				return decl;
 			}
+			needDecl = false;
+		} 
 		
-			int numFunctions = ( functionList == null ) ? 0 : functionList.size();
+		LinkedList functionList = null;	
+
+		for( int i = size; i > 0; i-- ){
+			//if we
+			if( needDecl ){
+				decl = (Declaration) iter.next();
+			} else {
+				needDecl = true;
+			}
 			
-			boolean ambiguous = false;
-			
-			if( cls != null ){
-				//the class is only hidden by other stuff if they are from the same scope
-				if( obj != null && cls._containingScope != obj._containingScope ){
-					ambiguous = true;	
+			if( decl.isType( TypeInfo.t_function ) ){
+				if( functionList == null){
+					functionList = new LinkedList();
 				}
-				if( functionList != null ){
-					Iterator fnIter = functionList.iterator();
-					Declaration fn = null;
-					for( int i = numFunctions; i > 0; i-- ){
-						fn = (Declaration) fnIter.next();
-						if( cls._containingScope != fn._containingScope ){
-							ambiguous = true;
-							break;
-						}
+				functionList.add( decl );
+			} else {
+				//if this is a class-name, other stuff hides it
+				if( decl.isType( TypeInfo.t_class, TypeInfo.t_enumeration ) ){
+					if( cls == null ) {
+						cls = decl;
+					} else {
+						throw new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName ); 
+					}
+				} else {
+					//an object, can only have one of these
+					if( obj == null ){
+						obj = decl;	
+					} else {
+						throw new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName ); 
 					}
 				}
 			}
 			
-			if( obj != null && !ambiguous ){
-				if( numFunctions > 0 ){
-					ambiguous = true;
-				} else {
-					return obj;
+			decl = null;
+		}
+	
+		data.foundItems.clear();
+		
+		int numFunctions = ( functionList == null ) ? 0 : functionList.size();
+		
+		boolean ambiguous = false;
+		
+		if( cls != null ){
+			//the class is only hidden by other stuff if they are from the same scope
+			if( obj != null && cls._containingScope != obj._containingScope ){
+				ambiguous = true;	
+			}
+			if( functionList != null ){
+				Iterator fnIter = functionList.iterator();
+				Declaration fn = null;
+				for( int i = numFunctions; i > 0; i-- ){
+					fn = (Declaration) fnIter.next();
+					if( cls._containingScope != fn._containingScope ){
+						ambiguous = true;
+						break;
+					}
 				}
-			} else if( numFunctions > 0 ) {
+			}
+		}
+		
+		if( obj != null && !ambiguous ){
+			if( numFunctions > 0 ){
+				ambiguous = true;
+			} else {
+				return obj;
+			}
+		} else if( numFunctions > 0 ) {
+			if( data.parameters == null ){
+				//we have no parameter information, if we only have one function, return
+				//that, otherwise we can't decide between them
+				if( numFunctions == 1){
+					return (Declaration) functionList.getFirst();
+				} else {
+					data.foundItems.addAll( functionList );
+					return null;
+				}
+			} else {
 				return ResolveFunction( data, functionList );
 			}
-			
-			if( ambiguous ){
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName );
-			} else {
-				return cls;
-			}
+		}
+		
+		if( ambiguous ){
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_AmbiguousName );
+		} else {
+			return cls;
 		}
 	}
 
@@ -1023,15 +1097,10 @@ public class ParserSymbolTable {
 				if( source.equals( target ) ){
 					cost = 0;	//exact match, no cost
 				} else {
-					if( !canDoQualificationConversion( source, target ) ){
-						//matching qualification is at no cost, but not matching is a failure 
-						cost = -1;	
-					} else if( (temp = canPromote( source, target )) >= 0 ){
-						cost = temp;	
-					} else if( (temp = canConvert( source, target )) >= 0 ){
-						cost = temp;	//cost for conversion has to do with "distance" between source and target
-					} else {
-						cost = -1;		//failure
+					cost = checkStandardConversionSequence( source, target );
+					
+					if( cost == -1){
+						cost = checkUserDefinedConversionSequence( source, target );
 					}
 				}
 				
@@ -1269,6 +1338,32 @@ public class ParserSymbolTable {
 		}
 	}
 
+	static private boolean okToAddUsingDeclaration( Declaration obj, Declaration context ){
+		boolean okToAdd = false;
+			
+		//7.3.3-4
+		if( context.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
+			//a member of a base class
+			if( obj.getContainingScope().getType() == context.getType() ){
+				okToAdd = ( hasBaseClass( context, obj.getContainingScope() ) > 0 );		
+			} 
+			//TBD : a member of an _anonymous_ union
+			else if ( obj.getContainingScope().getType() == TypeInfo.t_union ) {
+				Declaration union = obj.getContainingScope();
+				okToAdd = ( hasBaseClass( context, union.getContainingScope() ) > 0 ); 
+			}
+			//an enumerator for an enumeration
+			else if ( obj.getType() == TypeInfo.t_enumerator ){
+				Declaration enumeration = obj.getContainingScope();
+				okToAdd = ( hasBaseClass( context, enumeration.getContainingScope() ) > 0 );
+			}
+		} else {
+			okToAdd = true;
+		}	
+		
+		return okToAdd;
+	}
+	
 	/**
 	 * 
 	 * @param source
@@ -1391,6 +1486,50 @@ public class ParserSymbolTable {
 		return -1;
 	}
 	
+	static private int checkStandardConversionSequence( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException {
+		int cost = -1;
+		int temp = 0;
+		
+		if( !canDoQualificationConversion( source, target ) ){
+			//matching qualification is at no cost, but not matching is a failure 
+			cost = -1;	
+		} else if( (temp = canPromote( source, target )) >= 0 ){
+			cost = temp;	
+		} else if( (temp = canConvert( source, target )) >= 0 ){
+			cost = temp;	//cost for conversion has to do with "distance" between source and target
+		} else {
+			cost = -1;		//failure
+		}
+		
+		return cost;	
+	}
+	
+	static private int checkUserDefinedConversionSequence( TypeInfo source, TypeInfo target ) throws ParserSymbolTableException {
+		int cost = -1;
+		Declaration targetDecl = null;
+		Declaration constructor = null;
+		
+		if( target.getType() == TypeInfo.t_type ){
+			targetDecl = target.getTypeDeclaration();
+			if( targetDecl.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
+				LookupData data = new LookupData( "", TypeInfo.t_function );
+				LinkedList params = new LinkedList();
+				params.add( source );
+				data.parameters = params;
+				LookupInContained( data, targetDecl );
+				constructor = ResolveAmbiguities( data );
+				if( constructor != null ){
+					cost = checkStandardConversionSequence( new TypeInfo( TypeInfo.t_type, constructor._containingScope ), target );
+					if( cost != -1 ){
+						cost++;	
+					}
+				}
+			}
+			
+		}
+		return cost;
+	}
+	
 	static private boolean canDoQualificationConversion( TypeInfo source, TypeInfo target ){
 		return (  source.getCVQualifier() == source.getCVQualifier() ||
 		 		  (source.getCVQualifier() - source.getCVQualifier()) > 1 );	
@@ -1411,7 +1550,7 @@ public class ParserSymbolTable {
 		if( topInfo.getType() == TypeInfo.t_type ){
 			returnInfo = new TypeInfo();
 			
-			Declaration typeDecl = null;
+			Declaration typeDecl = topInfo.getTypeDeclaration();
 			
 			info = topInfo.getTypeDeclaration().getTypeInfo();
 			
@@ -1441,7 +1580,7 @@ public class ParserSymbolTable {
 	private Stack _contextStack = new Stack();
 	private Declaration _compilationUnit;
 	
-	private class LookupData
+	static private class LookupData
 	{
 		
 		public String name;
@@ -1459,6 +1598,8 @@ public class ParserSymbolTable {
 		public boolean qualified = false;
 		public boolean ignoreUsingDirectives = false;
 
+		public HashSet foundItems = null;
+		
 		public LookupData( String n, int t ){
 			name = n;
 			type = t;

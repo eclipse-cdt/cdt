@@ -1,3 +1,9 @@
+2003-04-01 Andrew Niefer
+	Parser Symbol Table, modified lookup with respect to resolving ambiguous names,
+	reducing the number of temporary lists/sets.  Modified adding using declarations
+	to properly support overloaded functions.  Added initial support for user defined
+	conversion sequences when resolving overloaded functions.
+
 2003-04-01 John Camelon
 	Fixed bug35906
 	Udated Scanner to not puke on certain control characters.

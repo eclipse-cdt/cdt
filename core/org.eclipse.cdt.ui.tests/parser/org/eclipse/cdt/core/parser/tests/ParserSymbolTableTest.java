@@ -1146,34 +1146,19 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		Declaration lookB = table.LookupNestedNameSpecifier("B");
 		assertEquals( lookB, B );
-		table.push( lookB );
-		look = table.QualifiedLookup( "f" );
-		table.pop();
+
+		table.addUsingDeclaration( "f", lookB );
 		
-		assertEquals( look, f );
-		table.addUsingDeclaration( look );
-		
-		table.push( lookB );
-		look = table.QualifiedLookup( "e" );
-		table.pop();
-		assertEquals( look, e );
-		table.addUsingDeclaration( look );
+		table.addUsingDeclaration( "e", lookB );
 		  
 		//TBD anonymous union
-		//table.push( lookB );
-		//look = table.QualifiedLookup( "x")
-		//table.pop();
-		//table.addUsingDeclaration( look );
+		//table.addUsingDeclaration( "x", lookB );
 		
 		look = table.LookupNestedNameSpecifier("C");
 		assertEquals( look, C );
-		table.push( look );
-		look = table.QualifiedLookup("g");
-		table.pop();
-		assertEquals( look, g );
 		
 		try{
-			table.addUsingDeclaration( look );
+			table.addUsingDeclaration( "g", look );
 			assertTrue( false );
 		}
 		catch ( ParserSymbolTableException exception ){
@@ -1204,10 +1189,6 @@ public class ParserSymbolTableTest extends TestCase {
 	 * 	  using A::f;
 	 * 	  f('a');    //calls f( char );
 	 * }	
-	 *
-	 * TBD: we need to support using declarations for overloaded functions.
-	 * TBD: function overload resolution is not done yet, so the call to f in
-	 * bar() can't be tested yet.
 	 */
 	public void testUsingDeclaration_2() throws Exception{
 		newTable();
@@ -1228,12 +1209,8 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		Declaration look = table.LookupNestedNameSpecifier("A");
 		assertEquals( look, A );
-		table.push( A );
-		look = table.QualifiedLookup("f");
-		assertEquals( look, f1 );
-		table.pop();
 		
-		Declaration usingF = table.addUsingDeclaration( look );
+		Declaration usingF = table.addUsingDeclaration( "f", look );
 		
 		look = table.Lookup("A");
 		assertEquals( look, A );
@@ -1258,7 +1235,23 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		look = table.UnqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, usingF );
+		assertTrue( look.hasSameParameters( f1 ) );
 		
+		Declaration bar = new Declaration( "bar" );
+		bar.setType( TypeInfo.t_function );
+		bar.addParameter( TypeInfo.t_char, 0, null, false );
+		table.addDeclaration( bar );
+		table.push( bar );
+		
+		look = table.LookupNestedNameSpecifier( "A" );
+		assertEquals( look, A );
+		table.addUsingDeclaration( "f", A );
+		
+		look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertTrue( look != null );
+		assertTrue( look.hasSameParameters( f2 ) );
+		
+		table.pop();
 	}
 	
 	/**
@@ -1389,8 +1382,8 @@ public class ParserSymbolTableTest extends TestCase {
 		LinkedList paramList = new LinkedList();
 		look = table.Lookup( "parm" );
 		assertEquals( look, param );
-		
-		paramList.add( look.getTypeInfo() );
+		TypeInfo p = new TypeInfo( TypeInfo.t_type, look, 0, null, false );
+		paramList.add( p );
 		
 		look = table.UnqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f );
@@ -1764,6 +1757,61 @@ public class ParserSymbolTableTest extends TestCase {
 		look = table.UnqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 *
+	 *  class A {};
+	 *
+	 *	class B
+	 *	{
+	 *	   B( A a ){ };
+	 *	};
+	 *	
+	 *	void f( B b ){};
+	 *	
+	 *  A a;
+	 *	f( a );
+	 */
+	public void testUserDefinedConversionSequences() throws Exception{
+		newTable();
+		
+		Declaration A = new Declaration( "A" );
+		A.setType( TypeInfo.t_class );
+		table.addDeclaration( A );
+		
+		Declaration B = new Declaration( "B" );
+		B.setType( TypeInfo.t_class );
+		table.addDeclaration( B );
+		
+		table.push( B );
+		
+		//12.1-1 "Constructors do not have names"
+		Declaration constructor = new Declaration("");
+		constructor.setType( TypeInfo.t_function );
+		constructor.addParameter( A, 0, null, false );
+		table.addDeclaration( constructor );
+		
+		table.pop();
+		
+		Declaration f = new Declaration( "f" );
+		f.setType( TypeInfo.t_function );
+		f.addParameter( B, 0, null, false );
+		table.addDeclaration( f );
+		
+		Declaration a = new Declaration( "a" );
+		a.setType( TypeInfo.t_type );
+		a.setTypeDeclaration( A );
+		table.addDeclaration( a );
+		
+		LinkedList paramList = new LinkedList();
+		TypeInfo p = new TypeInfo( TypeInfo.t_type, a, 0, null, false );
+		paramList.add( p );
+		
+		Declaration look = table.UnqualifiedFunctionLookup( "f", paramList );
+		assertEquals( look, f );	
 	}
 }
 

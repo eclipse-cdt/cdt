@@ -1,3 +1,7 @@
+2003-04-01 Andrew Niefer
+	ParserSymbolTableTest. modifications to using declaration tests to reflect changes in the
+	symbol table.  Also added testUserDefinedConversionSequences()
+
 2003-04-01
 	Added testBug35906() to DOMTests.
 

@@ -14,8 +14,6 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IFunction;
-import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
@@ -317,15 +315,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		IRegion region; 
 		String frag = "";
 		int pos = startPos;
-		// TODO: Do all possible scopes
-		// possible scopes include IStructure, INamespace, and ITranslationUnit
-		if(	( !(currentScope instanceof IMethod))
-		&&  ( !(currentScope instanceof IMethodDeclaration)) 
-		&&  ( !(currentScope instanceof IFunction)) 
-		&&  ( !(currentScope instanceof IFunctionDeclaration)) 
-		){		
-			return null;
-		}
+
 		// Move back the pos by one the position is 0-based
 		if (pos > 0) {
 			pos--;

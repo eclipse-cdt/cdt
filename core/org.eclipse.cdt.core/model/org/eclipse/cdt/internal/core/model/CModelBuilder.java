@@ -428,14 +428,15 @@ public class CModelBuilder {
 
 	private VariableDeclaration createVariableSpecification(Parent parent, IASTVariable varDeclaration, boolean isTemplate)throws ASTNotImplementedException
     {
-    	IASTAbstractDeclaration abstractDeclaration = varDeclaration.getAbstractDeclaration();
-    	CElement abstractElement = createAbstractElement (parent, abstractDeclaration , isTemplate);
-    	
 		String variableName = varDeclaration.getName(); 
-		if(variableName == null){
+		if((variableName == null) || (variableName.length() <= 0)){
 			// something is wrong, skip this element
 			return null;
 		}
+		
+		IASTAbstractDeclaration abstractDeclaration = varDeclaration.getAbstractDeclaration();
+    	CElement abstractElement = createAbstractElement (parent, abstractDeclaration , isTemplate);
+
 		VariableDeclaration element = null;
 		if(varDeclaration instanceof IASTField){
 			IASTField fieldDeclaration = (IASTField) varDeclaration;
@@ -484,7 +485,7 @@ public class CModelBuilder {
 	private FunctionDeclaration createFunctionSpecification(Parent parent, IASTFunction functionDeclaration, boolean isTemplate)
     {    	
 		String name = functionDeclaration.getName();
-        if (name == null) {
+        if ((name == null) || (name.length() <= 0)) {
             // Something is wrong, skip this element
             return null;             
         } 

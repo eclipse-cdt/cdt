@@ -197,15 +197,15 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 		assertAllReferences( 1, createTaskList( new Task( foo )));
 	}
 	
-//	// Kind POSTFIX_TYPENAME_IDENTIFIER
-//	public void testPostfixTypenameIdentifier() throws Exception{
-//		Iterator i = parse( "class A {}; \n int foo(); int foo( A a ); \n int x = foo( typename A() );").getDeclarations();
-//		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
-//		IASTFunction f1 = (IASTFunction) i.next();
-//		IASTFunction f2 = (IASTFunction) i.next();
-//		IASTVariable x  = (IASTVariable) i.next();
-//		assertAllReferences( 3, createTaskList( new Task( cl, 2 ), new Task( f2)  ) );
-//	}
+	// Kind POSTFIX_TYPENAME_IDENTIFIER
+	public void testPostfixTypenameIdentifier() throws Exception{
+		Iterator i = parse( "class A {}; \n int foo(); int foo( A a ); \n int x = foo( typename A() );").getDeclarations();
+		IASTClassSpecifier cl = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTFunction f1 = (IASTFunction) i.next();
+		IASTFunction f2 = (IASTFunction) i.next();
+		IASTVariable x  = (IASTVariable) i.next();
+		assertAllReferences( 3, createTaskList( new Task( cl, 2 ), new Task( f2)  ) );
+	}
 	
 	// Kind POSTFIX_TYPENAME_TEMPLATEID
 	
@@ -235,6 +235,7 @@ public class CompleteParseASTExpressionTest extends CompleteParseBaseTest{
 	}
 	// Kind POSTFIX_DOT_TEMPL_IDEXPRESS 
 	// Kind POSTFIX_ARROW_TEMPL_IDEXP
+	
 	// Kind POSTFIX_DOT_DESTRUCTOR
 	// Kind POSTFIX_ARROW_DESTRUCTOR
 	

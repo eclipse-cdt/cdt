@@ -1,3 +1,9 @@
+2003-09-25 Hoda Amer
+	- Last part of solution to bug#42453: Expression result types not computed 
+	Added the handling of POSTFIX_TYPENAME_IDENTIFIER
+	Completed bug#43221: POSTFIX_TYPENAME_IDENTIFIER not implemented
+	- Solution to bug#43644 : 6 triangle icons appearing in outline viewer when typing ... 
+	
 2003-09-24 Hoda Amer
 	Partial solution to bug#42453: Expression result types not computed 
 	Added the handling of the NEW_TYPEID, CASTEXPRESSION, POSTFIX_DYNAMIC_CAST,

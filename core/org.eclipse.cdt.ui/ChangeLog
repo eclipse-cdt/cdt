@@ -1,3 +1,6 @@
+2003-09-25 Hoda Amer
+	Solution to bug#43646: Code Assist won't work if missing end bracket
+
 2003-09-25 Alain Magloire
 
 	Add HelpContext IDs in the preference page.

@@ -1,3 +1,6 @@
+2003-07-28 Victor Mozgin
+	Fixed PR 39537 : Parser fails if template parameters contain '>' or '<'  characters.
+
 2003-07-25 Victor Mozgin
 	Fixed PR 39553 : Macros are not expanded in #include statements.
 

@@ -107,10 +107,6 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("template<class E> class X { inline X<E>(int); };");
     }
-    public void testBug39537() throws Exception
-    {
-        assertCodeFailsParse("typedef foo<(U::id > 0)> foobar;");
-    }
     public void testBug39538() throws Exception
     {
         assertCodeFailsParse("template C::operator int<float> ();");

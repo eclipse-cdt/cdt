@@ -1,3 +1,6 @@
+2003-07-28 Victor Mozgin
+	Moved testBug39537() from ASTFailedTests.java to QuickParseASTTests.java.
+
 2003-07-27 John Camelon
 	Fixed failedTests::testBug40714() to fail properly.  
 

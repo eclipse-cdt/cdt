@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.EndOfFile;
@@ -1496,17 +1497,38 @@ public class Parser implements IParser
         {
             last = consume(IToken.tLT);
             // until we get all the names sorted out
-            int depth = 1;
-            while (depth > 0)
+            Stack scopes = new Stack();
+            scopes.push(new Integer(IToken.tLT));
+            
+            while (!scopes.empty())
             {
+				int top;
                 last = consume();
-                switch (last.getType())
-                {
+                
+                switch (last.getType()) {
                     case IToken.tGT :
-                        --depth;
+                        if (((Integer)scopes.peek()).intValue() == IToken.tLT) {
+							scopes.pop();
+						}
                         break;
+					case IToken.tRBRACKET :
+						do {
+							top = ((Integer)scopes.pop()).intValue();
+						} while (!scopes.empty() && (top == IToken.tGT || top == IToken.tLT));
+						if (top != IToken.tLBRACKET) throw backtrack;
+						
+						break;
+					case IToken.tRPAREN :
+						do {
+							top = ((Integer)scopes.pop()).intValue();
+						} while (!scopes.empty() && (top == IToken.tGT || top == IToken.tLT));
+						if (top != IToken.tLPAREN) throw backtrack;
+							
+						break;
                     case IToken.tLT :
-                        ++depth;
+					case IToken.tLBRACKET:
+					case IToken.tLPAREN:
+						scopes.push(new Integer(last.getType()));
                         break;
                 }
             }

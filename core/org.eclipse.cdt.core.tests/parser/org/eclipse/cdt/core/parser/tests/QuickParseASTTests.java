@@ -1709,4 +1709,10 @@ public class QuickParseASTTests extends BaseASTTest
 		parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC");
 		assertTrue( quickParseCallback.getInclusions().hasNext() );
 	}
+	
+	public void testBug39537() throws Exception
+	{
+		parse("typedef foo<(U::id > 0)> foobar;");
+		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
+	}
 }

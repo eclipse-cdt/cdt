@@ -101,6 +101,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointerToMember;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
@@ -1175,8 +1177,12 @@ public class CPPVisitor {
 	private static IType getPointerTypes( IType type, IASTDeclarator declarator ){
 	    IASTPointerOperator [] ptrOps = declarator.getPointerOperators();
 		for( int i = 0; i < ptrOps.length; i++ ){
-			if( ptrOps[i] instanceof ICPPASTPointerToMember )
+		    if( ptrOps[i] instanceof IGPPASTPointerToMember )
+		        type = new GPPPointerToMemberType( type, (IGPPASTPointerToMember) ptrOps[i] );
+			else if( ptrOps[i] instanceof ICPPASTPointerToMember )
 				type = new CPPPointerToMemberType( type, (ICPPASTPointerToMember) ptrOps[i] );
+			else if( ptrOps[i] instanceof IGPPASTPointer )
+			    type = new GPPPointerType( type, (IGPPASTPointer) ptrOps[i] );
 		    else if( ptrOps[i] instanceof IASTPointer )
 		        type = new CPPPointerType( type, (IASTPointer) ptrOps[i] );
 		    else if( ptrOps[i] instanceof ICPPASTReferenceOperator )

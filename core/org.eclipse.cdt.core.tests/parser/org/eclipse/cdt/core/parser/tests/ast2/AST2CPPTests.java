@@ -63,6 +63,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerToMemberType;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPPointerType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
@@ -1518,7 +1520,7 @@ public class AST2CPPTests extends AST2BaseTest {
         IType t = pm.getType();
         assertNotNull(t);
         assertTrue(t instanceof ICPPPointerToMemberType);
-        ICPPClassType cls = (ICPPClassType) ((ICPPPointerToMemberType) t).getMemberOfClass();
+        ICPPClassType cls = ((ICPPPointerToMemberType) t).getMemberOfClass();
         assertSame(S, cls);
         assertTrue(((ICPPPointerToMemberType) t).getType() instanceof IBasicType);
     }
@@ -1565,8 +1567,7 @@ public class AST2CPPTests extends AST2BaseTest {
         assertTrue(t instanceof ICPPPointerToMemberType);
         IFunctionType ft = (IFunctionType) ((ICPPPointerToMemberType) t)
                 .getType();
-        ICPPClassType ST = (ICPPClassType) ((ICPPPointerToMemberType) t)
-                .getMemberOfClass();
+        ICPPClassType ST = ((ICPPPointerToMemberType) t).getMemberOfClass();
 
         assertTrue(ft.getReturnType() instanceof IPointerType);
         assertSame(ST, ((IPointerType) ft.getReturnType()).getType());
@@ -2849,6 +2850,26 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame( result[7], A_implicit[1] );
         assertSame( result[8], A_implicit[2] );
         assertSame( result[9], A_implicit[3] );
+    }
+    
+    public void testBug87424() throws Exception{
+        IASTTranslationUnit tu = parse( "int * restrict x;", ParserLanguage.CPP, true ); //$NON-NLS-1$
+        CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        IVariable x = (IVariable) col.getName(0).resolveBinding();
+        IType t = x.getType();
+        assertTrue( t instanceof IGPPPointerType );
+        assertTrue( ((IGPPPointerType) t).isRestrict() );
+        
+        tu = parse( "class A {}; int A::* restrict x;", ParserLanguage.CPP, true ); //$NON-NLS-1$
+        col = new CPPNameCollector();
+        tu.accept(col);
+        
+        x = (IVariable) col.getName(3).resolveBinding();
+        t = x.getType();
+        assertTrue( t instanceof IGPPPointerToMemberType );
+        assertTrue( ((IGPPPointerToMemberType) t).isRestrict() );
     }
 }
 

@@ -23,22 +23,30 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  * @author aniefer
  */
 public class CPPPointerType implements IPointerType, ITypeContainer {
-	protected IASTPointer operator = null;
 	protected IType type = null;
+	private boolean isConst = false;
+	private boolean isVolatile = false;
 	/**
 	 * @param type
 	 * @param operator
 	 */
 	public CPPPointerType(IType type, IASTPointer operator) {
 		this.type = type;
-		this.operator = operator;
+		this.isConst = operator.isConst();
+		this.isVolatile = operator.isVolatile();
 	}
 
 	/**
 	 * @param type2
 	 */
-	public CPPPointerType(IType type) {
+	public CPPPointerType(IType type, boolean isConst, boolean isVolatile ) {
 		this.type = type;
+		this.isConst = isConst;
+		this.isVolatile = isVolatile;
+	}
+	
+	public CPPPointerType( IType type ){
+	    this.type = type;
 	}
 
 	public boolean equals( Object o ){
@@ -51,7 +59,7 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	        return false;
 	    
 	    CPPPointerType pt = (CPPPointerType) o;
-	    if( isConst() == pt.isConst() && isVolatile() == pt.isVolatile() )
+	    if( isConst == pt.isConst && isVolatile == pt.isVolatile )
 	        return type.equals( pt.getType() );
 	    return false;
 	}
@@ -71,14 +79,14 @@ public class CPPPointerType implements IPointerType, ITypeContainer {
 	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#isConst()
 	 */
 	public boolean isConst() {
-		return ( operator != null ) ? operator.isConst() : false;
+		return isConst;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IPointerType#isVolatile()
 	 */
 	public boolean isVolatile() {
-		return ( operator != null ) ? operator.isVolatile() : false;
+		return isVolatile;
 	}
 	
     public Object clone(){

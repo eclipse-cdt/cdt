@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
  */
 public class CPPPointerToMemberType extends CPPPointerType implements
 		ICPPPointerToMemberType {
-
+    private ICPPASTPointerToMember operator = null;
 	private ICPPClassType clsType = null;
 	/**
 	 * @param type
@@ -36,6 +36,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements
 	 */
 	public CPPPointerToMemberType(IType type, ICPPASTPointerToMember operator) {
 		super(type, operator);
+		this.operator = operator;
 	}
 
 	public boolean equals( Object o ){
@@ -62,7 +63,7 @@ public class CPPPointerToMemberType extends CPPPointerType implements
 	 */
 	public ICPPClassType getMemberOfClass() {
 		if( clsType == null ){ 
-			ICPPASTPointerToMember pm = (ICPPASTPointerToMember) operator;
+			ICPPASTPointerToMember pm = operator;
 			IASTName name = pm.getName();
 			if( name instanceof ICPPASTQualifiedName ){
 				IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();

@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.IPath;
 public class Symbol implements ISymbol, Comparable {
 
 	BinaryObject binary;
+	long timestamp;
+	Addr2line addr2line;
 
 	public IPath filename;
 	public int startLine;
@@ -78,12 +80,11 @@ public class Symbol implements ISymbol, Comparable {
 	public int getLineNumber(long offset) {
 		int line = -1;
 		try {
-			Addr2line addr2line = binary.getAddr2Line();
-			if (addr2line != null) {
-				line = addr2line.getLineNumber(addr + offset);
-				addr2line.dispose();
+			Addr2line addressToLine = startAddr2Line();
+			if (addressToLine != null) {
+				line = addressToLine.getLineNumber(addr + offset);
 			}
-		} catch (IOException e) {
+		} catch (IOException e) {		
 		}
 		return line;
 	}
@@ -102,4 +103,39 @@ public class Symbol implements ISymbol, Comparable {
 		}
 		return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
 	}
+
+	synchronized Addr2line startAddr2Line () {
+		if (addr2line == null) {
+			addr2line = binary.getAddr2Line();
+			if (addr2line != null) {
+				timestamp = System.currentTimeMillis();
+				Runnable worker = new Runnable () {
+					public void run() {
+						long diff = System.currentTimeMillis() - timestamp;
+						while (diff < 10000) {
+							try {
+								Thread.sleep(10000);
+							} catch (InterruptedException e) {
+								break;
+							}
+							diff = System.currentTimeMillis() - timestamp;						
+						}
+						stopAddr2Line();
+					}
+				};
+				new Thread(worker, "Addr2line Reaper").start();
+			}
+		} else {
+			timestamp = System.currentTimeMillis();
+		}
+		return addr2line;
+	}
+
+	synchronized void stopAddr2Line() {
+		if (addr2line != null) {
+			addr2line.dispose();
+		}
+		addr2line = null;
+	}
+
 }

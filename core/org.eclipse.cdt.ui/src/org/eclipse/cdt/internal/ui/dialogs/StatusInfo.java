@@ -18,7 +18,25 @@ public class StatusInfo implements IStatus {
 	
 	private String fStatusMessage;
 	private int fSeverity;
-	
+
+	/**
+	 * Creates a status set to OK (no message)
+	 */
+	public StatusInfo() {
+		this(OK, null);
+	}
+
+	/**
+	 * Creates a status .
+	 * @param severity The status severity: ERROR, WARNING, INFO and OK.
+	 * @param message The message of the status. Applies only for ERROR,
+	 * WARNING and INFO.
+	 */	
+	public StatusInfo(int severity, String message) {
+		fStatusMessage= message;
+		fSeverity= severity;
+	}		
+
 	/**
 	 * @see IStatus#getChildren()
 	 */
@@ -94,9 +112,5 @@ public class StatusInfo implements IStatus {
 	public void setWarning(String warningMessage) {
 		fStatusMessage= warningMessage;
 		fSeverity= IStatus.WARNING;
-	}
-	public StatusInfo() {
-		fStatusMessage= null;
-		fSeverity= OK;
 	}
 }

@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
 public class CPluginImages {
 	
 	// The plugin registry
-	private static ImageRegistry imageRegistry = new ImageRegistry();
+	private static ImageRegistry imageRegistry = new ImageRegistry(CUIPlugin.getStandardDisplay());
 
 	// Subdirectory (under the package containing this class) where 16 color images are
 	private static URL fgIconBaseURL;
@@ -55,6 +55,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_FUNCTION= NAME_PREFIX + "function_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PUBLIC_METHOD= NAME_PREFIX + "method_public_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PROTECTED_METHOD= NAME_PREFIX + "method_protected_obj.gif"; //$NON-NLS-1$
+
 	public static final String IMG_OBJS_PRIVATE_METHOD= NAME_PREFIX + "method_private_obj.gif";	 //$NON-NLS-1$
 	public static final String IMG_OBJS_PUBLIC_FIELD= NAME_PREFIX + "field_public_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PROTECTED_FIELD= NAME_PREFIX + "field_protected_obj.gif"; //$NON-NLS-1$
@@ -67,7 +68,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_TUNIT_HEADER= NAME_PREFIX + "h_file_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TUNIT_ASM= NAME_PREFIX + "s_file_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TUNIT_RESOURCE= NAME_PREFIX + "c_resource_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_SOURCE_ROOT=  NAME_PREFIX + "cfolder_obj.gif"; // $NON-NLS-1$ 
+	public static final String IMG_OBJS_SOURCE_ROOT=  NAME_PREFIX + "cfolder_obj.gif"; // $NON-NLS-1$  //$NON-NLS-1$
 	public static final String IMG_OBJS_ARCHIVE= NAME_PREFIX + "ar_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_BINARY= NAME_PREFIX + "bin_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SHLIB= NAME_PREFIX + "shlib_obj.gif"; //$NON-NLS-1$
@@ -76,7 +77,10 @@ public class CPluginImages {
 	public static final String IMG_OBJS_CORE= NAME_PREFIX + "core_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CONTAINER= NAME_PREFIX + "container_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_LIBRARY= NAME_PREFIX + "lib_obj.gif"; //$NON-NLS-1$
-
+	public static final String IMG_OBJS_ORDER= NAME_PREFIX + "cp_order_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_EXCLUDSION_FILTER_ATTRIB= NAME_PREFIX + "exclusion_filter_attrib.gif"; //$NON-NLS-1$
+	
+	public static final String IMG_OBJS_ARCHIVE_WSRC= NAME_PREFIX + "ar_src_obj.gif"; //$NON-NLS-1$
 
 	// Breakpoint images
 	public static final String IMG_OBJS_BREAKPOINT = NAME_PREFIX + "breakpoint.gif"; //$NON-NLS-1$
@@ -112,6 +116,7 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_TUNIT_RESOURCE= createManaged(T_OBJ, IMG_OBJS_TUNIT_RESOURCE);
 	public static final ImageDescriptor DESC_OBJS_SOURCE_ROOT= createManaged(T_OBJ, IMG_OBJS_SOURCE_ROOT);
 	public static final ImageDescriptor DESC_OBJS_ARCHIVE= createManaged(T_OBJ, IMG_OBJS_ARCHIVE);
+	public static final ImageDescriptor DESC_OBJS_ARCHIVE_WSRC= createManaged(T_OBJ, IMG_OBJS_ARCHIVE);
 	public static final ImageDescriptor DESC_OBJS_BINARY= createManaged(T_OBJ, IMG_OBJS_BINARY);
 	public static final ImageDescriptor DESC_OBJS_SHLIB= createManaged(T_OBJ, IMG_OBJS_SHLIB);
 	public static final ImageDescriptor DESC_OBJS_CEXEC= createManaged(T_OBJ, IMG_OBJS_CEXEC);
@@ -119,7 +124,9 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_CORE= createManaged(T_OBJ, IMG_OBJS_CORE);
 	public static final ImageDescriptor DESC_OBJS_CONTAINER= createManaged(T_OBJ, IMG_OBJS_CONTAINER);
 	public static final ImageDescriptor DESC_OBJS_LIBRARY= createManaged(T_OBJ, IMG_OBJS_LIBRARY);
-	
+	public static final ImageDescriptor DESC_OBJS_ORDER= createManaged(T_OBJ, IMG_OBJS_ORDER);
+	public static final ImageDescriptor DESC_OBJS_EXCLUSION_FILTER_ATTRIB = createManaged(T_OBJ, IMG_OBJS_EXCLUDSION_FILTER_ATTRIB);
+
 	// Breakpoint image descriptors
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT );
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT_DISABLED );
@@ -155,15 +162,13 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_WIZABAN_NEW_PROJ= create(T_WIZBAN, "newcprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_NEWCLASS= create(T_WIZBAN, "newclass_wiz.gif");	 //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZABAN_C_APP= create(T_WIZBAN, "c_app_wiz.gif"); //$NON-NLS-1$
-	public static final String IMG_OBJS_PROJECT = NAME_PREFIX + "prj_obj.gif"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_PROJECT= createManaged(T_WIZBAN, IMG_OBJS_PROJECT);
 
 	public static final ImageDescriptor DESC_TOOL_NEWCLASS= create(T_TOOL, "newclass_wiz.gif"); 				//$NON-NLS-1$
 
 	// For the build image
 	public static final String IMG_OBJS_BUILD= NAME_PREFIX + "build_menu.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_MENU = createManaged(T_OBJ, IMG_OBJS_BUILD);
-	
+
 	//for search
 	public static final String IMG_OBJS_SEARCH_REF  = NAME_PREFIX + "search_ref_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SEARCH_DECL = NAME_PREFIX + "search_decl_obj.gif"; //$NON-NLS-1$

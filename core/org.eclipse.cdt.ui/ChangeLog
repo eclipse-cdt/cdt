@@ -1,3 +1,11 @@
+2004-03-26 David Inglis
+
+	WORKING PROGRESS new C Path entry UI - Project property page to add/remove/reorder
+	src paths, output paths, project references and export/order.
+	UI not enabled yet
+	no many file to list here.....
+	
+	
 2004-03-25 Hoda Amer
 	Added the timeout capability for content assist.
 	Added a preference for the user to set up the timeout limit for content assist

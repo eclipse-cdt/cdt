@@ -550,5 +550,21 @@
          </description>
       </fontDefinition>
    </extension>
-
+<!--
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
+            name="C/C++ Project Paths"
+            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathPropertyPage"
+            nameFilter="*"
+            id="org.eclipse.cdt.internal.ui.dialogs.cpath.CPathPropertyPage">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.core.cnature">
+         </filter>
+      </page>
+   </extension>
+-->
 </plugin>

@@ -13,7 +13,6 @@ package org.eclipse.cdt.ui.dialogs;
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
@@ -34,6 +33,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -53,7 +54,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 	}
 
 	public Image getImage() {
-		return CPluginImages.get(CPluginImages.IMG_OBJS_PROJECT);
+		return PlatformUI.getWorkbench().getSharedImages().getImage(IDE.SharedImages.IMG_OBJ_PROJECT);
 	}
 
 	/**

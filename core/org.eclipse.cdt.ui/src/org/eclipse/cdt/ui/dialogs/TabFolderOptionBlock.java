@@ -39,7 +39,7 @@ public abstract class TabFolderOptionBlock {
 	private boolean bIsValid = true;
 
 	private Label messageLabel;
-	private ArrayList pages;
+	private ArrayList pages = new ArrayList();
 	protected ICOptionContainer fParent;
 	private ICOptionPage fCurrentPage;
 
@@ -66,9 +66,6 @@ public abstract class TabFolderOptionBlock {
 	}
 
 	protected void addOptionPage(ICOptionPage page) {
-		if (pages == null) {
-			pages = new ArrayList();
-		}
 		if (!pages.contains(page)) {
 			pages.add(page);
 		}

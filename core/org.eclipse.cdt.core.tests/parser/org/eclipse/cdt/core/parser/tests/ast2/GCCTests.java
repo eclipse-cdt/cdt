@@ -287,7 +287,7 @@ public class GCCTests extends AST2BaseTest {
         CNameCollector collector = new CNameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
-        assertEquals( collector.size(), 9 );
+        assertEquals( collector.size(), 7 );
         IVariable winds = (IVariable) collector.getName( 1 ).resolveBinding();
 
         assertInstances( collector, winds, 6 );
@@ -313,7 +313,7 @@ public class GCCTests extends AST2BaseTest {
         CNameCollector collector = new CNameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
-        assertEquals( collector.size(), 16 );
+        assertEquals( collector.size(), 15 );
         ITypedef uint64 = (ITypedef) collector.getName( 0 ).resolveBinding();
         IVariable bigconst = (IVariable) collector.getName( 2 ).resolveBinding();
         IVariable a = (IVariable) collector.getName( 3 ).resolveBinding();
@@ -351,7 +351,7 @@ public class GCCTests extends AST2BaseTest {
         CNameCollector collector = new CNameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
-        assertEquals( collector.size(), 37 );
+        assertEquals( collector.size(), 34 );
         IVariable aa = (IVariable) collector.getName( 0 ).resolveBinding();
         IVariable bb = (IVariable) collector.getName( 1 ).resolveBinding();
         IFunction seqgt = (IFunction) collector.getName( 2 ).resolveBinding();
@@ -422,7 +422,7 @@ public class GCCTests extends AST2BaseTest {
         CNameCollector collector = new CNameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
-        assertEquals( collector.size(), 15 );
+        assertEquals( collector.size(), 14 );
         IFunction f = (IFunction) collector.getName( 0 ).resolveBinding();
         IParameter a = (IParameter) collector.getName( 1 ).resolveBinding();
         IParameter y = (IParameter) collector.getName( 2 ).resolveBinding();
@@ -624,7 +624,7 @@ public class GCCTests extends AST2BaseTest {
         CNameCollector collector = new CNameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
-        assertEquals( collector.size(), 7 );
+        assertEquals( collector.size(), 6 );
         IFunction sub = (IFunction) collector.getName( 0 ).resolveBinding();
         IParameter a = (IParameter) collector.getName( 1 ).resolveBinding();
         
@@ -706,7 +706,7 @@ public class GCCTests extends AST2BaseTest {
         CNameCollector collector = new CNameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
-        assertEquals( collector.size(), 23 );
+        assertEquals( collector.size(), 22 );
         ICompositeType s1 = (ICompositeType) collector.getName( 0 ).resolveBinding();
         IField d1 = (IField) collector.getName( 1 ).resolveBinding();
         ICompositeType s2 = (ICompositeType) collector.getName( 2 ).resolveBinding();
@@ -744,15 +744,15 @@ public class GCCTests extends AST2BaseTest {
         CNameCollector collector = new CNameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
-        assertEquals( collector.size(), 28 );
+        assertEquals( collector.size(), 27 );
         ICompositeType F = (ICompositeType) collector.getName( 0 ).resolveBinding();
         IField i = (IField) collector.getName( 1 ).resolveBinding();
         IFunction f1 = (IFunction) collector.getName( 2 ).resolveBinding();
         IParameter px = (IParameter) collector.getName( 4 ).resolveBinding();
         IParameter py = (IParameter) collector.getName( 6 ).resolveBinding();
         IVariable timeout = (IVariable) collector.getName( 7 ).resolveBinding();
-        IVariable x = (IVariable) collector.getName( 20 ).resolveBinding();
-        IVariable y = (IVariable) collector.getName( 21 ).resolveBinding();
+        IVariable x = (IVariable) collector.getName( 18 ).resolveBinding();
+        IVariable y = (IVariable) collector.getName( 19 ).resolveBinding();
         
         assertInstances( collector, F, 5 );
         assertInstances( collector, i, 6 );

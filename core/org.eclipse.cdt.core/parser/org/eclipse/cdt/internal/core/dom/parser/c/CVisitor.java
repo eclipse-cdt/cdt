@@ -90,6 +90,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAction;
 
 /**
  * Created on Nov 5, 2004
@@ -109,27 +110,37 @@ public class CVisitor {
 		public boolean processEnumerators    = false;
 		
 		/**
-		 * @return true to continue visiting, return false to stop
+		 * @return true to continue visiting, abort to stop, skip to not descend into this node. 
 		 */
-		public boolean processName( IASTName name ) 					{ return true; }
-		public boolean processDeclaration( IASTDeclaration declaration ){ return true; }
-		public boolean processInitializer( IASTInitializer initializer ){ return true; }
-		public boolean processParameterDeclaration( IASTParameterDeclaration parameterDeclaration ) { return true; }
-		public boolean processDeclarator( IASTDeclarator declarator )   { return true; }
-		public boolean processDeclSpecifier( IASTDeclSpecifier declSpec ){return true; }
-		public boolean processExpression( IASTExpression expression )   { return true; }
-		public boolean processStatement( IASTStatement statement )      { return true; }
-		public boolean processTypeId( IASTTypeId typeId )               { return true; }
-		public boolean processEnumerator( IASTEnumerator enumerator )   { return true; }
+		public final static int PROCESS_SKIP     = 1;
+		public final static int PROCESS_ABORT    = 2;
+		public final static int PROCESS_CONTINUE = 3;
+		
+		public int processName( IASTName name ) 					{ return PROCESS_CONTINUE; }
+		public int processDeclaration( IASTDeclaration declaration ){ return PROCESS_CONTINUE; }
+		public int processInitializer( IASTInitializer initializer ){ return PROCESS_CONTINUE; }
+		public int processParameterDeclaration( IASTParameterDeclaration parameterDeclaration ) { return PROCESS_CONTINUE; }
+		public int processDeclarator( IASTDeclarator declarator )   { return PROCESS_CONTINUE; }
+		public int processDeclSpecifier( IASTDeclSpecifier declSpec ){return PROCESS_CONTINUE; }
+		public int processExpression( IASTExpression expression )   { return PROCESS_CONTINUE; }
+		public int processStatement( IASTStatement statement )      { return PROCESS_CONTINUE; }
+		public int processTypeId( IASTTypeId typeId )               { return PROCESS_CONTINUE; }
+		public int processEnumerator( IASTEnumerator enumerator )   { return PROCESS_CONTINUE; }
 	}
 	
 	public static class ClearBindingAction extends CBaseVisitorAction {
 		{
 			processNames = true;
 		}
-		public boolean processName(IASTName name) {
-			((CASTName) name ).setBinding( null );
-			return true;
+		public int processName(IASTName name) {
+			if ( ((CASTName)name).hasBinding() ) {
+				 ICScope scope = (ICScope)name.resolveBinding().getScope();
+				 if ( scope != null )
+				 	scope.removeBinding(name.resolveBinding());
+				 ((CASTName) name ).setBinding( null );
+			}
+			
+			return PROCESS_CONTINUE;
 		}
 	}
 	
@@ -181,55 +192,41 @@ public class CVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclaration(org.eclipse.cdt.core.dom.ast.IASTDeclaration)
 		 */
-		public boolean processDeclaration(IASTDeclaration declaration) {
+		public int processDeclaration(IASTDeclaration declaration) {
 			if ( declaration instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)declaration).getProblem());
 
-			return true;
+			return PROCESS_CONTINUE;
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processExpression(org.eclipse.cdt.core.dom.ast.IASTExpression)
 		 */
-		public boolean processExpression(IASTExpression expression) {
+		public int processExpression(IASTExpression expression) {
 			if ( expression instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)expression).getProblem());
 
-			return true;
+			return PROCESS_CONTINUE;
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
-		public boolean processStatement(IASTStatement statement) {
+		public int processStatement(IASTStatement statement) {
 			if ( statement instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)statement).getProblem());
 
-			return true;
+			return PROCESS_CONTINUE;
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processTypeId(org.eclipse.cdt.core.dom.ast.IASTTypeId)
 		 */
-		public boolean processTypeId(IASTTypeId typeId) {
+		public int processTypeId(IASTTypeId typeId) {
 			if ( typeId instanceof IASTProblemHolder )
 				addProblem(((IASTProblemHolder)typeId).getProblem());
 
-			return true;
-		}
-	}
-
-	public static class ClearBindingFromScopeAction extends CBaseVisitorAction {
-		{
-			processNames = true;
-		}
-		public boolean processName(IASTName name) {
-			if ( ((CASTName)name).hasBinding() ) {
-				 ICScope scope = (ICScope)name.resolveBinding().getScope();
-				 if ( scope != null )
-				 	scope.removeBinding(name.resolveBinding()); 
-			}
-			return true;
+			return PROCESS_CONTINUE;
 		}
 	}
 
@@ -285,8 +282,14 @@ public class CVisitor {
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclarator(org.eclipse.cdt.core.dom.ast.IASTDeclarator)
 		 */
-		public boolean processDeclarator(IASTDeclarator declarator) {
-			if ( declarator == null ) return true;
+		public int processDeclarator(IASTDeclarator declarator) {
+			//GCC allows declarations in expressions, so we have to continue from the 
+			//declarator in case there is something in the initializer expression
+			if ( declarator == null ) return PROCESS_CONTINUE;
+			
+			//if the binding is something not declared in a declarator, continue
+			if( binding instanceof ICompositeType ) return PROCESS_CONTINUE;
+			if( binding instanceof IEnumeration ) return PROCESS_CONTINUE;
 			
 			IASTNode parent = declarator.getParent();
 			while (parent != null && !(parent instanceof IASTDeclaration))
@@ -300,8 +303,8 @@ public class CVisitor {
 					}
 				} else if ( parent instanceof IASTSimpleDeclaration ) {
 					// prototype parameter with no identifier isn't a declaration of the K&R C parameter 
-					if ( binding instanceof CKnRParameter && declarator.getName().toString() == null)
-						return true;
+					if ( binding instanceof CKnRParameter && declarator.getName().toCharArray().length == 0 )
+						return PROCESS_CONTINUE;
 					
 					if ( (declarator.getName() != null && declarator.getName().resolveBinding() == binding) ) {
 						if ( declarator instanceof IASTStandardFunctionDeclarator ||
@@ -311,22 +314,26 @@ public class CVisitor {
 						
 						addName(declarator.getName());
 					}
-				} else if ( parent instanceof IASTParameterDeclaration ) {
-					if ( declarator.getName() != null && declarator.getName().resolveBinding() == binding ) {
-						addName(declarator.getName());
-					}
+				} 
+			} else if ( parent instanceof IASTParameterDeclaration && binding instanceof IParameter ) {
+				if ( declarator.getName() != null && declarator.getName().resolveBinding() == binding ) {
+					addName(declarator.getName());
 				}
 			}
 			
-			return true;
+			return PROCESS_CONTINUE;
 		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processDeclSpecifier(org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier)
 		 */
-		public boolean processDeclSpecifier(IASTDeclSpecifier declSpec) {
-			if ( declSpec instanceof IASTSimpleDeclSpecifier ||
-					declSpec instanceof ICASTTypedefNameSpecifier ) return true;
+		public int processDeclSpecifier(IASTDeclSpecifier declSpec) {
+			if ( declSpec instanceof IASTSimpleDeclSpecifier ||	declSpec instanceof ICASTTypedefNameSpecifier ) 
+				return PROCESS_CONTINUE;
+			
+			//if the binding isn't declared in a decl spec, skip it
+			if( !(binding instanceof ICompositeType) &&	!(binding instanceof IEnumeration) )
+				return PROCESS_CONTINUE;
 			
 			if ( !compositeTypeDeclared && declSpec != null && declSpec instanceof IASTCompositeTypeSpecifier ) {
 				if (((IASTCompositeTypeSpecifier)declSpec).getName().resolveBinding() == binding) { 
@@ -343,38 +350,33 @@ public class CVisitor {
 					compositeTypeDeclared = true;
 					addName(((IASTEnumerationSpecifier)declSpec).getName());
 				}
-			} else if ( declSpec instanceof IASTNamedTypeSpecifier ) {
-				if (((IASTNamedTypeSpecifier)declSpec).getName().resolveBinding() == binding) 
-					addName(((IASTNamedTypeSpecifier)declSpec).getName());
 			}
 			
-			return true;
+			return PROCESS_CONTINUE;
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processEnumerator(org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator)
 		 */
-		public boolean processEnumerator(IASTEnumerator enumerator) {
-			if (enumerator.getName().resolveBinding() == binding) {
-				IASTNode parent = enumerator.getParent();
-				while (parent != null && !(parent instanceof IASTDeclaration))
-					parent = parent.getParent();
-				
-				if (parent != null && parent instanceof IASTDeclaration) addName(enumerator.getName());
+		public int processEnumerator(IASTEnumerator enumerator) {
+			if( binding instanceof IEnumerator && enumerator.getName().resolveBinding() == binding ){
+				addName( enumerator.getName() );
 			}
 			
-			return true;
+			return PROCESS_CONTINUE;
 		}
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction#processStatement(org.eclipse.cdt.core.dom.ast.IASTStatement)
 		 */
-		public boolean processStatement(IASTStatement statement) {
-			if ( statement instanceof IASTLabelStatement )
+		public int processStatement(IASTStatement statement) {
+			if ( statement instanceof IASTLabelStatement && binding instanceof ILabel ){
 				if ( ((IASTLabelStatement)statement).getName().resolveBinding() == binding ) 
 					addName(((IASTLabelStatement)statement).getName());
+				return PROCESS_SKIP;
+			}
 
-			return true;
+			return PROCESS_CONTINUE;
 		}
 	}
 
@@ -1085,7 +1087,6 @@ public class CVisitor {
 	}
 	
 	public static void clearBindings( IASTTranslationUnit tu ){
-		visitTranslationUnit( tu, new ClearBindingFromScopeAction() );
 		visitTranslationUnit( tu, new ClearBindingAction() );
 	}
 	
@@ -1097,14 +1098,24 @@ public class CVisitor {
 	}
 	
 	public static boolean visitName( IASTName name, CBaseVisitorAction action ){
-		if( action.processNames )
-			return action.processName( name );
+		if( action.processNames ) {
+		    switch( action.processName( name ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 		return true;
 	}
 	
 	public static boolean visitDeclaration( IASTDeclaration declaration, CBaseVisitorAction action ){
-		if( action.processDeclarations )
-			if( !action.processDeclaration( declaration ) ) return false;
+		if( action.processDeclarations ) {
+		    switch( action.processDeclaration( declaration ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 		
 		if( declaration instanceof IASTSimpleDeclaration ){
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) declaration;
@@ -1122,10 +1133,17 @@ public class CVisitor {
 		return true;
 	}
 	public static boolean visitDeclarator( IASTDeclarator declarator, CBaseVisitorAction action ){
-		if( action.processDeclarators )
-			if( !action.processDeclarator( declarator ) ) return false;
+		if( action.processDeclarators ){
+			switch( action.processDeclarator( declarator ) ){
+	            case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+	            case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+	            default : break;
+	        }
+		}
 		
-		if( !visitName( declarator.getName(), action ) ) return false;
+		if( declarator.getPropertyInParent() != IASTTypeId.ABSTRACT_DECLARATOR ){
+			if( !visitName( declarator.getName(), action ) ) return false;
+		}
 		
 		if( declarator.getNestedDeclarator() != null )
 			if( !visitDeclarator( declarator.getNestedDeclarator(), action ) ) return false;
@@ -1136,21 +1154,18 @@ public class CVisitor {
 		if( declarator instanceof IASTStandardFunctionDeclarator ){
 		    IASTParameterDeclaration [] list = ((IASTStandardFunctionDeclarator)declarator).getParameters();
 			for( int i = 0; i < list.length; i++ ){
-				IASTParameterDeclaration param = list[i];
-				if( !visitDeclSpecifier( param.getDeclSpecifier(), action ) ) return false;
-				if( !visitDeclarator( param.getDeclarator(), action ) ) return false;
+				if( !visitParameterDeclaration( list[i], action ) ) return false;
 			}
 		} else if ( declarator instanceof ICASTKnRFunctionDeclarator ) {
-			IASTDeclaration[] parmDeclarations = ((ICASTKnRFunctionDeclarator)declarator).getParameterDeclarations();
+			ICASTKnRFunctionDeclarator knr = (ICASTKnRFunctionDeclarator) declarator;
+			IASTName [] names = knr.getParameterNames();
+			for( int i = 0; i < names.length; i++ ){
+				if( !visitName( names[i], action ) ) return false;
+			}
+			
+			IASTDeclaration[] parmDeclarations = knr.getParameterDeclarations();
 			for( int i = 0; i < parmDeclarations.length; i++ ){
-				if ( parmDeclarations[i] instanceof IASTSimpleDeclaration ) {
-					IASTSimpleDeclaration parmDeclaration = (IASTSimpleDeclaration)parmDeclarations[i];
-					if( !visitDeclSpecifier( parmDeclaration.getDeclSpecifier(), action ) ) return false;
-					IASTDeclarator[] decltors = parmDeclaration.getDeclarators();
-					for ( int j = 0; j < decltors.length; j++ ) {
-						if( !visitDeclarator( decltors[j], action ) ) return false;		
-					}
-				}
+				if( !visitDeclaration( parmDeclarations[i], action ) ) return false;
 			}
 		}
 		return true;
@@ -1159,8 +1174,15 @@ public class CVisitor {
 	public static boolean visitInitializer( IASTInitializer initializer, CBaseVisitorAction action ){
 	    if( initializer == null )
 	        return true;
-	    if( action.processInitializers )
-	        if( !action.processInitializer( initializer ) ) return false;
+	    
+	    if( action.processInitializers ){
+			switch( action.processInitializer( initializer ) ){
+		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        default : break;
+		    }
+	    }
+	    
 	    if( initializer instanceof IASTInitializerExpression ){
 	        if( !visitExpression( ((IASTInitializerExpression) initializer).getExpression(), action ) ) return false;
 	    } else if( initializer instanceof IASTInitializerList ){
@@ -1172,8 +1194,13 @@ public class CVisitor {
 	    return true;
 	}
 	public static boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, CBaseVisitorAction action ){
-	    if( action.processParameterDeclarations )
-	        if( !action.processParameterDeclaration( parameterDeclaration ) ) return false;
+	    if( action.processParameterDeclarations ){
+	    	switch( action.processParameterDeclaration( parameterDeclaration ) ){
+		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        default : break;
+		    }
+	    }
 	    
 	    if( !visitDeclSpecifier( parameterDeclaration.getDeclSpecifier(), action ) ) return false;
 	    if( !visitDeclarator( parameterDeclaration.getDeclarator(), action ) ) return false;
@@ -1181,8 +1208,13 @@ public class CVisitor {
 	}
 	
 	public static boolean visitDeclSpecifier( IASTDeclSpecifier declSpec, CBaseVisitorAction action ){
-		if( action.processDeclSpecifiers )
-			if( !action.processDeclSpecifier( declSpec ) ) return false;
+		if( action.processDeclSpecifiers ){
+	    	switch( action.processDeclSpecifier( declSpec ) ){
+		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        default : break;
+		    }
+	    }
 		
 		if( declSpec instanceof ICASTCompositeTypeSpecifier ){
 			ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) declSpec;
@@ -1207,17 +1239,28 @@ public class CVisitor {
 		return true;
 	}
 	public static boolean visitEnumerator( IASTEnumerator enumerator, CBaseVisitorAction action ){
-	    if( action.processEnumerators )
-	        if( !action.processEnumerator( enumerator ) ) return false;
+	    if( action.processEnumerators ){
+		    switch( action.processEnumerator( enumerator ) ){
+		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        default : break;
+		    }
+	    }
 	        
 	    if( !visitName( enumerator.getName(), action ) ) return false;
 	    if( enumerator.getValue() != null )
 	        if( !visitExpression( enumerator.getValue(), action ) ) return false;
 	    return true;
 	}
+	
 	public static boolean visitStatement( IASTStatement statement, CBaseVisitorAction action ){
-		if( action.processStatements )
-			if( !action.processStatement( statement ) ) return false;
+		if( action.processStatements ){
+		    switch( action.processStatement( statement ) ){
+		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        default : break;
+		    }
+	    }
 		
 		if( statement instanceof IASTCompoundStatement ){
 			IASTStatement [] list = ((IASTCompoundStatement) statement).getStatements();
@@ -1263,16 +1306,26 @@ public class CVisitor {
 		return true;
 	}
 	public static boolean visitTypeId( IASTTypeId typeId, CBaseVisitorAction action ){
-		if( action.processTypeIds )
-			if( !action.processTypeId( typeId ) ) return false;
+		if( action.processTypeIds ){
+		    switch( action.processTypeId( typeId ) ){
+		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        default : break;
+		    }
+	    }
 		
 		if( !visitDeclarator( typeId.getAbstractDeclarator(), action ) ) return false;
 		if( !visitDeclSpecifier( typeId.getDeclSpecifier(), action ) ) return false;
 		return true;
 	}
 	public static boolean visitExpression( IASTExpression expression, CBaseVisitorAction action ){
-		if( action.processExpressions )
-		    if( !action.processExpression( expression ) ) return false;
+		if( action.processExpressions ){
+		    switch( action.processExpression( expression ) ){
+		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        default : break;
+		    }
+	    }
 		
 		if( expression instanceof IASTArraySubscriptExpression ){
 		    if( !visitExpression( ((IASTArraySubscriptExpression)expression).getArrayExpression(), action ) ) return false;

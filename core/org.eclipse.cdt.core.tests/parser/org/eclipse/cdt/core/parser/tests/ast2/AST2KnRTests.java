@@ -262,7 +262,7 @@ public class AST2KnRTests extends AST2BaseTest {
     	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
     	buffer.append( "int f(x) char\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
-    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true );
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
     	
     	IASTFunctionDefinition f = (IASTFunctionDefinition)tu.getDeclarations()[0];
     	assertTrue(f.getDeclarator() instanceof ICASTKnRFunctionDeclarator);
@@ -293,7 +293,7 @@ public class AST2KnRTests extends AST2BaseTest {
     	buffer.append( "int i=0;\n" ); //$NON-NLS-1$
     	buffer.append( "int f(x) i++;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
-    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true );
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
     	
     	IASTFunctionDefinition f = (IASTFunctionDefinition)tu.getDeclarations()[1];
     	assertTrue(f.getDeclarator() instanceof ICASTKnRFunctionDeclarator);
@@ -324,7 +324,7 @@ public class AST2KnRTests extends AST2BaseTest {
     	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
     	buffer.append( "int f(x) char y;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
-    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true );
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
 
     	IASTFunctionDefinition f = (IASTFunctionDefinition)tu.getDeclarations()[0];
     	assertTrue(f.getDeclarator() instanceof ICASTKnRFunctionDeclarator);
@@ -349,7 +349,7 @@ public class AST2KnRTests extends AST2BaseTest {
     	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
     	buffer.append( "int f(x,y,z) char x,y,z; int a;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
-    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true );
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
 
     	IASTFunctionDefinition f = (IASTFunctionDefinition)tu.getDeclarations()[0];
     	assertTrue(f.getDeclarator() instanceof ICASTKnRFunctionDeclarator);
@@ -399,7 +399,7 @@ public class AST2KnRTests extends AST2BaseTest {
     	StringBuffer buffer = new StringBuffer(); //$NON-NLS-1$
     	buffer.append( "int f(x) char x,a;\n" ); //$NON-NLS-1$
     	buffer.append( "{ return x == 0; }\n" ); //$NON-NLS-1$
-    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true );
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C, true, false );
 
     	IASTFunctionDefinition f = (IASTFunctionDefinition)tu.getDeclarations()[0];
     	assertTrue(f.getDeclarator() instanceof ICASTKnRFunctionDeclarator);

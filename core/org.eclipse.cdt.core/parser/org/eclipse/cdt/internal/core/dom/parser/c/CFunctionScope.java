@@ -100,17 +100,16 @@ public class CFunctionScope implements ICFunctionScope {
 	
 	static private class FindLabelsAction extends CBaseVisitorAction {
         public List labels = new ArrayList();
-        public boolean ambiguous = false;
         
         public FindLabelsAction(){
             processStatements = true;
         }
         
-        public boolean processStatement( IASTStatement statement ) {
+        public int processStatement( IASTStatement statement ) {
             if( statement instanceof IASTLabelStatement ){
                labels.add( statement );
             }
-            return true;
+            return PROCESS_CONTINUE;
         }
 	}
 

@@ -67,16 +67,19 @@ public class AST2BaseTest extends TestCase {
     private static final IParserLogService NULL_LOG = new NullLogService();
 
     protected IASTTranslationUnit parse( String code, ParserLanguage lang ) throws ParserException {
-    	return parse(code, lang, false);
+    	return parse(code, lang, false, true );
     }
     
+    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions ) throws ParserException {
+    	return parse( code, lang, useGNUExtensions, true );
+    }
     /**
      * @param string
      * @param c
      * @return
      * @throws ParserException
      */
-    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions ) throws ParserException {
+    protected IASTTranslationUnit parse( String code, ParserLanguage lang, boolean useGNUExtensions, boolean expectNoProblems ) throws ParserException {
         CodeReader codeReader = new CodeReader(code
                 .toCharArray());
         ScannerInfo scannerInfo = new ScannerInfo();
@@ -117,12 +120,12 @@ public class AST2BaseTest extends TestCase {
         if( parser2.encounteredError() )
             throw new ParserException( "FAILURE"); //$NON-NLS-1$
          
-        if( lang == ParserLanguage.C )
+        if( lang == ParserLanguage.C && expectNoProblems )
         {
         	IASTProblem [] problems = CVisitor.getProblems(tu);
         	assertEquals( problems.length, 0 );
         }
-        else if ( lang == ParserLanguage.CPP )
+        else if ( lang == ParserLanguage.CPP && expectNoProblems )
         {
         	IASTProblem [] problems = CPPVisitor.getProblems(tu);
         	assertEquals( problems.length, 0 );
@@ -225,9 +228,9 @@ public class AST2BaseTest extends TestCase {
             processNames = true;
         }
         public List nameList = new ArrayList();
-        public boolean processName( IASTName name ){
+        public int processName( IASTName name ){
             nameList.add( name );
-            return true;
+            return PROCESS_CONTINUE;
         }
         public IASTName getName( int idx ){
             if( idx < 0 || idx >= nameList.size() )

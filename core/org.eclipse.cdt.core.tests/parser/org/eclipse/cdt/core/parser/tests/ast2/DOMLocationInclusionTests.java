@@ -125,8 +125,8 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
 		assertEquals(locations.length, 1);
 		IASTFileLocation nodeLocation = (IASTFileLocation) locations[0];
 		assertTrue(nodeLocation.getFileName().endsWith(pathEndsWith));
-		assertEquals(nodeLocation.getNodeOffset(), offset);
-		assertEquals(nodeLocation.getNodeLength(), length);
+		assertEquals(offset, nodeLocation.getNodeOffset());
+		assertEquals(length, nodeLocation.getNodeLength());
 	}
 
 	public void testSimpleInclusion() throws Exception {
@@ -191,7 +191,7 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
 	}
 
 	public void testMacrosInIncludeFile() throws Exception {
-		String c_file_code = "#define X 4\n\n#include \"blarg.h\"\n\n"; //$NON-NLS-1$
+		String c_file_code = "#define X 4\n\n#include \"blarg.h\"\n\n#define POST_INCLUDE\n\n"; //$NON-NLS-1$
 		String h_file_code = "#ifndef _BLARG_H_\r\n#define _BLARG_H_\r\n// macro\r\n#define PRINT(s,m)  printf(s,m)\r\n#endif //_BLARG_H_\r\n"; //$NON-NLS-1$
 		importFile( "blarg.h", h_file_code ); //$NON-NLS-1$
 		IFile c_file = importFile( "blarg.c", c_file_code ); //$NON-NLS-1$
@@ -201,14 +201,45 @@ public class DOMLocationInclusionTests extends FileBasePluginTest {
 			assertEquals( tu.getDeclarations().length, 0 );
 			IASTPreprocessorMacroDefinition[] macroDefinitions = tu.getMacroDefinitions();
 			assertNotNull( macroDefinitions );
-			assertEquals( macroDefinitions.length, 3 );
+			assertEquals( macroDefinitions.length, 4 );
 			assertSoleFileLocation( macroDefinitions[0], "blarg.c", c_file_code.indexOf( "#define"), c_file_code.indexOf( "4" ) + 1- c_file_code.indexOf( "#define" ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			assertSoleFileLocation( macroDefinitions[0].getName(), "blarg.c", c_file_code.indexOf( "X"), 1 ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			assertSoleFileLocation( macroDefinitions[1], "blarg.h", h_file_code.indexOf( "#define _BLARG_H_"), "#define _BLARG_H_\r".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			assertSoleFileLocation( macroDefinitions[1].getName(), "blarg.h", h_file_code.indexOf( "e _BLARG_H_") + 2, "_BLARG_H_".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			assertSoleFileLocation( macroDefinitions[2], "blarg.h", h_file_code.indexOf( "#define PRINT(s,m)  printf(s,m)\r"), "#define PRINT(s,m)  printf(s,m)".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		}
-		
+			assertSoleFileLocation( macroDefinitions[2].getName(), "blarg.h", h_file_code.indexOf( "PRINT"), "PRINT".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			assertSoleFileLocation( macroDefinitions[3], "blarg.c", c_file_code.indexOf( "#define POST_INCLUDE"), "#define POST_INCLUDE".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			assertSoleFileLocation( macroDefinitions[3].getName(), "blarg.c", c_file_code.indexOf( "POST_INCLUDE"), "POST_INCLUDE".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}		
 	}
 
+//	public void testMacrosInIncludeFile2() throws Exception {
+//		String c_file_code = "#define X 4\n\n#include \"blarg.h\"\n\n#define POST_INCLUDE\n#include \"second.h\"\n#define POST_SECOND\n"; //$NON-NLS-1$
+//		String h_file_code = "#ifndef _BLARG_H_\r\n#define _BLARG_H_\r\n// macro\r\n#define PRINT(s,m)  printf(s,m)\r\n#endif //_BLARG_H_\r\n"; //$NON-NLS-1$
+//		String h_file2_code = "#ifndef _SECOND_H_ \n#define _SECOND_H_\n#endif\n"; //$NON-NLS-1$
+//		importFile( "blarg.h", h_file_code ); //$NON-NLS-1$
+//		importFile( "second.h", h_file2_code ); //$NON-NLS-1$
+//		IFile c_file = importFile( "blarg.c", c_file_code ); //$NON-NLS-1$
+//		for (ParserLanguage p = ParserLanguage.C; p != null; p = (p == ParserLanguage.C) ? ParserLanguage.CPP
+//				: null) {
+//			IASTTranslationUnit tu = parse(c_file, p); //$NON-NLS-1$
+//			assertEquals( tu.getDeclarations().length, 0 );
+//			IASTPreprocessorMacroDefinition[] macroDefinitions = tu.getMacroDefinitions();
+//			assertNotNull( macroDefinitions );
+//			assertEquals( macroDefinitions.length, 6 );
+//			assertSoleFileLocation( macroDefinitions[0], "blarg.c", c_file_code.indexOf( "#define"), c_file_code.indexOf( "4" ) + 1- c_file_code.indexOf( "#define" ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+//			assertSoleFileLocation( macroDefinitions[0].getName(), "blarg.c", c_file_code.indexOf( "X"), 1 ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+//			assertSoleFileLocation( macroDefinitions[1], "blarg.h", h_file_code.indexOf( "#define _BLARG_H_"), "#define _BLARG_H_\r".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//			assertSoleFileLocation( macroDefinitions[1].getName(), "blarg.h", h_file_code.indexOf( "e _BLARG_H_") + 2, "_BLARG_H_".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//			assertSoleFileLocation( macroDefinitions[2], "blarg.h", h_file_code.indexOf( "#define PRINT(s,m)  printf(s,m)\r"), "#define PRINT(s,m)  printf(s,m)".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+//			assertSoleFileLocation( macroDefinitions[2].getName(), "blarg.h", h_file_code.indexOf( "PRINT"), "PRINT".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+//			assertSoleFileLocation( macroDefinitions[3], "blarg.c", c_file_code.indexOf( "#define POST_INCLUDE"), "#define POST_INCLUDE".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//			assertSoleFileLocation( macroDefinitions[3].getName(), "blarg.c", c_file_code.indexOf( "POST_INCLUDE"), "POST_INCLUDE".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//			assertSoleFileLocation( macroDefinitions[4], "second.h", h_file2_code.indexOf( "#define _SECOND_H_"), "#define _SECOND_H_".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+//			assertSoleFileLocation( macroDefinitions[5], "blarg.c", c_file_code.indexOf( "#define POST_SECOND"), "#define POST_SECOND".length() ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+//		}		
+//	}
+	
 	public static Test suite() {
 		TestSuite suite = new TestSuite(DOMLocationInclusionTests.class);
 		suite.addTest(new DOMLocationInclusionTests("cleanupProject")); //$NON-NLS-1$

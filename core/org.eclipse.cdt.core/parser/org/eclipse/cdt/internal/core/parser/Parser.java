@@ -341,7 +341,7 @@ c, quick);
 					classSpecifier(decl);
 					return;
 				case Token.t_enum:
-					// enumSpecifier();
+					enumSpecifier(decl);
 					break;
 				default:
 					break declSpecifiers;
@@ -465,9 +465,6 @@ c, quick);
 					}
 				}
 			}
-			else
-			{
-			}
 		}
 		
 		callback.declaratorEnd( declarator );
@@ -588,6 +585,46 @@ c, quick);
 		
 		backup(mark);
 		throw backtrack;
+	}
+
+
+	/**
+	 * enumSpecifier
+	 * 		"enum" (name)? "{" (enumerator-list) "}" 
+	 */
+	public void enumSpecifier( Object owner ) throws Exception
+	{
+		if( LT(1) != Token.t_enum )
+			throw backtrack; 
+		consume();
+
+		// insert beginEnum callback here
+
+		if( LT(1) == Token.tIDENTIFIER ) 
+			consume(); 
+		
+
+		if( LT(1) == Token.tLBRACE )
+		{
+			consume(); 
+			// for the time being to get the CModel working ignore the enumerator list
+			int depth = 1;
+			while (depth > 0) {
+				switch (consume().getType()) {
+					case Token.tRBRACE:
+						--depth;
+						break;
+					case Token.tLBRACE:
+						++depth;
+						break;
+					case Token.tEOF:
+						// Oops, no match
+						throw backtrack;
+				}
+			}
+		}
+
+		// insert endEnum callback here
 	}
 
 	/**
@@ -1232,12 +1269,16 @@ c, quick);
 	}
 	
 	public void primaryExpression() throws Exception {
-		switch (LT(1)) {
+		int type = LT(1);
+		switch (type) {
 			// TO DO: we need more literals...
 			case Token.tINTEGER:
 				callback.expressionTerminal(consume());
 				return;
 			case Token.tSTRING:
+				callback.expressionTerminal(consume());
+				return;
+			case Token.tIDENTIFIER:
 				callback.expressionTerminal(consume());
 				return;
 			case Token.t_this:

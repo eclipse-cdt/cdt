@@ -811,6 +811,38 @@ public class ScannerTestCase extends TestCase
 		}
 	}
 
+	public void testQuickScan()
+	{
+		try
+		{
+			initializeScanner( "#if X + 5 < 7\n  int found = 1;\n#endif" );
+			scanner.setQuickScan( true );
+			validateToken( Token.t_int ); 
+			validateIdentifier( "found" ); 
+			validateToken( Token.tASSIGN ); 
+			validateInteger( "1"); 
+			validateToken( Token.tSEMI );
+			validateEOF(); 
+			 	
+		} 
+		catch( ScannerException se )
+		{
+			fail( EXCEPTION_THROWN + se.getMessage() );
+		}
+		
+		try
+		{
+			initializeScanner( "#if 0\n  int error = 666;\n#endif" ); 
+			scanner.setQuickScan( true ); 
+			validateEOF(); 
+		}
+		catch( ScannerException se )
+		{
+			fail( EXCEPTION_THROWN + se.getMessage() );
+		}
+		
+	}
+
 	public void testInclusions()
 	{
 		try

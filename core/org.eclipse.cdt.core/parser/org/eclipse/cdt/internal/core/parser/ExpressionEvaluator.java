@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class ExpressionEvaluator extends NullParserCallback {
@@ -104,7 +105,7 @@ public class ExpressionEvaluator extends NullParserCallback {
 		}
 	}
 	
-	public Object getResult() {
+	public Object getResult() throws EmptyStackException {
 		return stack.peek();
 	}
 

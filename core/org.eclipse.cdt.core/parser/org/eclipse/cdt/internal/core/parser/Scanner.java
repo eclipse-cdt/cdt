@@ -526,13 +526,13 @@ public class Scanner implements IScanner {
 						case PreprocessorDirectives.IF :
 							// get the rest of the line		
 							String expression = getRestOfPreprocessorLine();
-
-							boolean expressionEvalResult =
-								evaluateExpression(expression);
 							
+							boolean expressionEvalResult =	evaluateExpression(expression);
 							passOnToClient = branches.poundif( expressionEvalResult ); 
 							c = getChar();
 							continue;
+
+
 
 						case PreprocessorDirectives.IFDEF :
 							skipOverWhitespace();
@@ -588,7 +588,7 @@ public class Scanner implements IScanner {
 									throw new ScannerException("Malformed #elsif clause");
 
 							boolean elsifResult =
-									evaluateExpression(elsifExpression);
+									evaluateExpression(elsifExpression );
 
 							passOnToClient = branches.poundelif( elsifResult ); 
 							c = getChar();
@@ -1089,42 +1089,59 @@ public class Scanner implements IScanner {
 		return branches.getDepth(); 
 	}
 
-	protected boolean evaluateExpression(String expression)
+	protected boolean evaluateExpression(String expression )
 		throws ScannerException {
-		Object expressionEvalResult = null;
-		try {
-			ExpressionEvaluator evaluator = new ExpressionEvaluator();
-			Scanner trial =
-				new Scanner(
-					new StringReader(expression),
-					EXPRESSION,
-					definitions);
-			Parser parser = new Parser(trial, evaluator);
-			parser.expression();
-			expressionEvalResult = evaluator.getResult();
-		} catch (Exception e) {
-			System.out.println("Exception from Parser : " + e.toString());
+			
+		if( quickScan )
+		{
+			if( expression.trim().equals( "0" ) )
+				return false; 
+			return true; 
 		}
-
-		if (expressionEvalResult == null)
-			throw new ScannerException(
-				"Expression "
-					+ expression
-					+ " evaluates to an undefined value");
-
-		if (expressionEvalResult.getClass() == java.lang.Integer.class) {
-			int i = ((Integer) expressionEvalResult).intValue();
-			if (i == 0) {
-				return false;
+		else
+		{	
+			Object expressionEvalResult = null;
+			try {
+				ExpressionEvaluator evaluator = new ExpressionEvaluator();
+				Scanner trial =
+					new Scanner(
+						new StringReader(expression),
+						EXPRESSION,
+						definitions);
+				Parser parser = new Parser(trial, evaluator);
+				parser.expression();
+				
+				expressionEvalResult = evaluator.getResult();
+	
+			} catch (Exception e ) {
+				throw new ScannerException(
+					"Expression "
+						+ expression
+						+ " evaluates to an undefined value");			
+			} finally
+			{
+				if (expressionEvalResult == null)
+					throw new ScannerException(
+						"Expression "
+							+ expression
+							+ " evaluates to an undefined value");			
 			}
-			return true;
-		} else if (
-			expressionEvalResult.getClass() == java.lang.Boolean.class) {
-			return ((Boolean) expressionEvalResult).booleanValue();
-		} else {
-			throw new ScannerException(
-				"Unexpected expression type - we do not expect "
-					+ expressionEvalResult.getClass().getName());
+	
+			
+			if (expressionEvalResult.getClass() == java.lang.Integer.class) {
+				int i = ((Integer) expressionEvalResult).intValue();
+				if (i == 0) {
+					return false;
+				}
+				return true;
+			} else if (
+				expressionEvalResult.getClass() == java.lang.Boolean.class) {
+				return ((Boolean) expressionEvalResult).booleanValue();
+			} else {
+				throw new ScannerException(
+					"Unexpected expression type - we do not expect "
+						+ expressionEvalResult.getClass().getName());
+			}
 		}
 	}
 

@@ -15,7 +15,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.math.BigInteger;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
@@ -112,7 +111,7 @@ public class Addr2line {
 		// this for validation.
 		
 		//IPF_TODO: check 
-		for (int i = 0; i <= 20; i += 4, address = address.add(BigInteger.valueOf(i))) {
+		for (int i = 0; i <= 20; i += 4, address = address.add(i)) {
 			String line = getLine(address);
 			if (line != null) {
 				int colon = line.lastIndexOf(':');

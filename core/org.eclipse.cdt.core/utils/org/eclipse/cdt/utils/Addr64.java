@@ -1,129 +1,130 @@
 /*******************************************************************************
- * Copyright (c) 2004 Intel Corporation and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2004 Intel Corporation and others. All rights reserved. This
+ * program and the accompanying materials are made available under the terms of
+ * the Common Public License v1.0 which accompanies this distribution, and is
+ * available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     Intel Corporation - Initial API and implementation
- *******************************************************************************/
+ * Contributors: Intel Corporation - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.utils;
 
 import java.math.BigInteger;
 
 import org.eclipse.cdt.core.IAddress;
 
-/*
- */
-final public class Addr64 implements IAddress 
-{
-	public static final Addr64 ZERO=new Addr64("0");
-	public static final Addr64 MAX=new Addr64("ffffffffffffffff",16);
+public class Addr64 implements IAddress {
 
-	public static final BigInteger MAX_OFFSET = new BigInteger("ffffffffffffffff",16);
-	
-    public static final int BYTES_NUM = 8;
-    public static final int DIGITS_NUM = BYTES_NUM * 2;
-	public static final int CHARS_NUM = DIGITS_NUM + 2; 
-	
-	private BigInteger address;
+	public static final Addr64 ZERO = new Addr64("0"); //$NON-NLS-1$
+	public static final Addr64 MAX = new Addr64("ffffffffffffffff", 16); //$NON-NLS-1$
 
-	public Addr64(byte [] addrBytes)
-	{
-		if( addrBytes.length != 8)
-			throw(new NumberFormatException("Invalid address array"));
-		this.address = new BigInteger(1, addrBytes);
+	public static final BigInteger MAX_OFFSET = new BigInteger("ffffffffffffffff", 16); //$NON-NLS-1$
+
+	public static final int BYTES_NUM = 8;
+	public static final int DIGITS_NUM = BYTES_NUM * 2;
+	public static final int CHARS_NUM = DIGITS_NUM + 2;
+
+	private final BigInteger address;
+
+	public Addr64(byte[] addrBytes) {
+		address = checkAddress(new BigInteger(1, addrBytes));
 	}
-	
-	public Addr64(BigInteger rawaddress) 
-	{
-		this.address=rawaddress;		
-	}	
-	
-	public Addr64(String addr) 
-	{
+
+	public Addr64(BigInteger rawaddress) {
+		address = checkAddress(rawaddress);
+	}
+
+	public Addr64(String addr) {
 		addr = addr.toLowerCase();
-		if ( addr.startsWith( "0x" ) )
-		{		
-			this.address = new BigInteger(addr.substring(2), 16);
+		if (addr.startsWith("0x")) { //$NON-NLS-1$
+			address = checkAddress(new BigInteger(addr.substring(2), 16));
+		} else {
+			address = checkAddress(new BigInteger(addr, 10));
 		}
-		else
-		{
-			this.address = new BigInteger(addr, 10);
-		}
-	}
-	
-	public Addr64(String addr, int radix) 
-	{
-		this.address=new BigInteger(addr, radix);
 	}
 
-	final public IAddress add(BigInteger offset) 
-	{
+	public Addr64(String addr, int radix) {
+		this(new BigInteger(addr, radix));
+	}
+
+	private BigInteger checkAddress(BigInteger addr) {
+		if (addr.signum() == -1) {
+			throw new IllegalArgumentException("Invalid Address, must be positive value"); //$NON-NLS-1$
+		}
+		if (addr.bitLength() > 64 ) {
+			return addr.and(MAX.getValue()); // truncate
+		}
+		return addr;
+	}
+	
+	
+	public IAddress add(BigInteger offset) {
 		return new Addr64(this.address.add(offset));
 	}
 
-	final public BigInteger getMaxOffset()
-	{
+	public IAddress add(long offset) {
+		return new Addr64(this.address.add(BigInteger.valueOf(offset)));
+	}
+
+	public BigInteger getMaxOffset() {
 		return MAX_OFFSET;
 	}
 
-	final public BigInteger distance(IAddress other)
-	{
-		return address.add(((Addr64)other).address.negate());
+	public BigInteger distanceTo(IAddress other) {
+		if (! (other instanceof Addr64)) {
+			throw new IllegalArgumentException();
+		}
+		return ((Addr64)other).address.add(address.negate());
 	}
 
-	final public boolean isMax() 
-	{
+	public boolean isMax() {
 		return address.equals(MAX);
 	}
 
-	final public boolean isZero() 
-	{
+	public boolean isZero() {
 		return address.equals(ZERO);
 	}
 
-	final public int compareTo(IAddress addr) 
-	{
-		return this.address.compareTo(((Addr64)addr).address);
+	public BigInteger getValue() {
+		return address;
 	}
 
-	final public boolean equals(IAddress x) 
-	{
+	public int compareTo(Object other) {
+		return this.address.compareTo(((Addr64)other).address);
+	}
+
+	public boolean equals(Object x) {
 		if (x == this)
 			return true;
-		if (!(x instanceof Addr64))
+		if (! (x instanceof Addr64))
 			return false;
 		return this.address.equals(((Addr64)x).address);
 	}
 
-	final public String toString() 
-	{
-		return toString(10);		
+	public int hashCode() {
+		return address.hashCode();
 	}
-	
-	final public String toString(int radix) 
-	{
+
+	public String toString() {
+		return toString(10);
+	}
+
+	public String toString(int radix) {
 		return address.toString(radix);
 	}
-	
-	final public String toHexAddressString( )
-	{
+
+	public String toHexAddressString() {
 		String addressString = address.toString(16);
-		StringBuffer sb = new StringBuffer( CHARS_NUM  );
-        int count = DIGITS_NUM - addressString.length();
-		sb.append( "0x" );
-		for ( int i = 0; i < count; ++i ) 
-		{
-			sb.append( '0' );
+		StringBuffer sb = new StringBuffer(CHARS_NUM);
+		int count = DIGITS_NUM - addressString.length();
+		sb.append("0x"); //$NON-NLS-1$
+		for (int i = 0; i < count; ++i) {
+			sb.append('0');
 		}
-		sb.append( addressString );
+		sb.append(addressString);
 		return sb.toString();
 	}
-	
-	final public int getCharsNum()
-	{
+
+	public int getCharsNum() {
 		return CHARS_NUM;
 	}
 }

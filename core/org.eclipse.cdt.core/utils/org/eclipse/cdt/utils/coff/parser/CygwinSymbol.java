@@ -7,7 +7,6 @@
 package org.eclipse.cdt.utils.coff.parser;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.utils.Addr2line;
@@ -57,7 +56,7 @@ class CygwinSymbol extends Symbol {
 		Addr2line addr2line = ((CygwinPEBinaryObject)binary).getAddr2line(true);
 		if (addr2line != null) {
 			try {
-				return addr2line.getLineNumber(getAddress().add(BigInteger.valueOf(offset)));
+				return addr2line.getLineNumber(getAddress().add(offset));
 			} catch (IOException e) {
 				// ignore
 			}

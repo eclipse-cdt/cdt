@@ -13,7 +13,6 @@ package org.eclipse.cdt.utils.som.parser;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -217,7 +216,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 
 						IPath file = filename != null ? new Path(filename) : Path.EMPTY;
 						int startLine = addr2line.getLineNumber(addr);
-						int endLine = addr2line.getLineNumber(addr.add(BigInteger.valueOf(size - 1)));
+						int endLine = addr2line.getLineNumber(addr.add(size - 1));
 						list.add(new SomSymbol(this, name, type, addr, size, file, startLine, endLine));
 					} catch (IOException e) {
 						addr2line = null;

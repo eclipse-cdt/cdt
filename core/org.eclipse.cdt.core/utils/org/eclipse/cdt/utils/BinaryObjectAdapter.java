@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.IAddress;
@@ -61,7 +60,7 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 		}
 		insertion = -insertion - 1;
 		ISymbol symbol =  syms[insertion - 1];
-		if (addr.compareTo(symbol.getAddress().add(BigInteger.valueOf(symbol.getSize()))) < 0) {
+		if (addr.compareTo(symbol.getAddress().add(symbol.getSize())) < 0) {
 			return syms[insertion - 1];
 		}
 		return null;

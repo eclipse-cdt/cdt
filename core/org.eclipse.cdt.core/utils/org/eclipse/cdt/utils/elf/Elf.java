@@ -978,8 +978,9 @@ public class Elf {
 			numSyms = (int)section.sh_size / (int)section.sh_entsize;
 		}
 		ArrayList symList = new ArrayList(numSyms);
-		for (int c = 0; c < numSyms; c++) {
-			efile.seek(section.sh_offset + (section.sh_entsize * c));
+		long offset = section.sh_offset;
+		for (int c = 0; c < numSyms; offset += section.sh_entsize, c++) {
+			efile.seek(offset);
 			Symbol symbol = new Symbol(section);
 			switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {
 				case ELFhdr.ELFCLASS32 : {

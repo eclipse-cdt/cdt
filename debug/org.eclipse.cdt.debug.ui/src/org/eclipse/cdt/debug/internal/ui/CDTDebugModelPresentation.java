@@ -132,6 +132,7 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 */
 	public void computeDetail( IValue value, IValueDetailListener listener )
 	{
+		CDTValueDetailProvider.getDefault().computeDetail( value, listener );
 	}
 
 	/* (non-Javadoc)

@@ -5,6 +5,11 @@ package org.eclipse.cdt.core;
  * All Rights Reserved.
  */
  
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.cdt.core.resources.IBuildInfo;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -15,8 +20,6 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Plugin;
-
-import org.eclipse.cdt.core.resources.IBuildInfo;
 
 
 
@@ -40,6 +43,10 @@ public class CProjectNature implements IProjectNature {
 		addNature(project, C_NATURE_ID, mon);
 	}
 
+	public static void removeCNature(IProject project, IProgressMonitor mon) throws CoreException {
+		removeNature(project, C_NATURE_ID, mon);
+	}
+	
 	/**
 	 * Utility method for adding a nature to a project.
 	 * 
@@ -63,6 +70,22 @@ public class CProjectNature implements IProjectNature {
 		project.setDescription(description, monitor);
 	}
 
+	/**
+	 * Utility method for removing a project nature from a project.
+	 * 
+	 * @param proj the project to remove the nature from
+	 * @param natureId the nature id to remove
+	 * @param monitor a progress monitor to indicate the duration of the operation, or
+	 * <code>null</code> if progress reporting is not required.
+	 */
+	public static void removeNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
+		IProjectDescription description = project.getDescription();
+		String[] prevNatures= description.getNatureIds();
+		List newNatures = new ArrayList(Arrays.asList(prevNatures));
+		newNatures.remove(natureId);
+		description.setNatureIds((String[])newNatures.toArray(new String[newNatures.size()]));
+		project.setDescription(description, monitor);
+	}
 
     /**
      * Sets the path of the build command executable.

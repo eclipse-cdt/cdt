@@ -8,6 +8,10 @@
  ******************************************************************************/
 package org.eclipse.cdt.debug.internal.core;
 
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.util.Date;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.model.ICProject;
@@ -27,8 +31,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IProcess;
 
 public class CDebugAdapter implements ICDIDebugger {
 
@@ -58,15 +64,29 @@ public class CDebugAdapter implements ICDIDebugger {
 		ICDISession session;
 		try {
 			if (pid == -1 && coreFile == null) {
-				return fDebugger.createLaunchSession(config, exeFile[0]);
+				session = fDebugger.createLaunchSession(config, exeFile[0]);
 			} else if (pid != -1) {
-				return fDebugger.createAttachSession(config, exeFile[0], pid);
+				session = fDebugger.createAttachSession(config, exeFile[0], pid);
+			} else {
+				session = fDebugger.createCoreSession(config, exeFile[0], new Path(coreFile));
 			}
-			return fDebugger.createCoreSession(config, exeFile[0], new Path(coreFile));
+			Process debugger = session.getSessionProcess();
+			if (debugger != null) {
+				IProcess debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
+				launch.addProcess(debuggerProcess);
+			}
+			
 		} catch (CDIException e) {
 			abort(e.getLocalizedMessage(), e, -1);
 		}
 		throw new IllegalStateException(); // should never happen
+	}
+
+	protected String renderDebuggerProcessLabel() {
+		String format = "{0} ({1})"; //$NON-NLS-1$
+		String timestamp = DateFormat.getInstance().format(new Date(System.currentTimeMillis()));
+		String message = InternalDebugCoreMessages.getString("CDebugAdapter.1");
+		return MessageFormat.format(format, new String[]{message, timestamp}); //$NON-NLS-1$
 	}
 
 	protected void abort(String message, Throwable exception, int code) throws CoreException {

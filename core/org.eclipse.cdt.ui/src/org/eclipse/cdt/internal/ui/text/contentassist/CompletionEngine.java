@@ -622,6 +622,21 @@ public class CompletionEngine implements RelevanceConstants {
 		List result = lookupMacros(completionNode.getCompletionPrefix());
 		addMacrosToCompletions(result.iterator());
 	}
+	private void completionOnNewTypeReference(IASTCompletionNode completionNode){
+		// 1. Get the search scope node 
+		IASTScope searchNode = completionNode.getCompletionScope();
+		// look for the specific type being newed and the scope
+		IASTNode context = completionNode.getCompletionContext();
+		if ((context != null) && (context instanceof IASTClassSpecifier)){
+			IASTClassSpecifier classContext = (IASTClassSpecifier) context;
+			IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+			kinds[0] = IASTNode.LookupKind.STRUCTURES; 
+			ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, null);
+			addToCompletions(result);			
+		}
+		// basic completion on all types
+		completionOnTypeReference(completionNode);
+	}
 		// TODO: complete the lookups
 	private void completionOnConstructorReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
@@ -699,7 +714,7 @@ public class CompletionEngine implements RelevanceConstants {
 			completionOnSingleNameReference(completionNode);
 		}
 		else if(kind == CompletionKind.TYPE_REFERENCE){
-			// CompletionOnStructureReference
+			// CompletionOnTypeReference
 			completionOnTypeReference(completionNode);
 		}
 		else if(kind == CompletionKind.CLASS_REFERENCE){
@@ -717,6 +732,10 @@ public class CompletionEngine implements RelevanceConstants {
 		else if(kind == CompletionKind.MACRO_REFERENCE){
 			// CompletionOnMacroReference
 			completionOnMacroReference(completionNode);
+		}
+		else if(kind == CompletionKind.NEW_TYPE_REFERENCE){
+			// completionOnNewTypeReference
+			completionOnNewTypeReference(completionNode);
 		}
 		else if(kind == CompletionKind.CONSTRUCTOR_REFERENCE){
 			// completionOnConstructorReference

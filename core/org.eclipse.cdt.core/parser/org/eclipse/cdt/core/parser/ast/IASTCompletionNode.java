@@ -70,6 +70,9 @@ public interface IASTCompletionNode {
 		// the beginning of a statement
 		public static final CompletionKind STATEMENT_START = new CompletionKind( 16 );
 		
+		// after a new expression
+		public static final CompletionKind NEW_TYPE_REFERENCE = new CompletionKind( 17 );
+		
 		// error condition -- a place in the grammar where there is nothing to lookup
 		public static final CompletionKind NO_SUCH_KIND = new CompletionKind( 200 );
 		/**

@@ -15,13 +15,10 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
-import org.eclipse.cdt.debug.mi.core.IMIConstants;
 import org.eclipse.cdt.debug.mi.core.MIException;
-import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
 import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterDescriptor;
@@ -54,7 +51,8 @@ public class RegisterManager extends Manager {
 	public RegisterManager(Session session) {
 		super(session, true);
 		regsMap = new Hashtable();
-		setAutoUpdate( MIPlugin.getDefault().getPluginPreferences().getBoolean( IMIConstants.PREF_REGISTERS_AUTO_REFRESH ) );
+		// The register bookkeeping provides better update control.
+		setAutoUpdate( true );
 	}
 
 	synchronized List getRegistersList(Target target) {

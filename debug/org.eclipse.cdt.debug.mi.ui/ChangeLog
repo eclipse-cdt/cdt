@@ -1,3 +1,10 @@
+2005-03-09 Mikhail Khodjaiants
+	Fix for bug 87546: Obsolete debug MI settings in Preference need to be removed.
+	* MIPreferencePage.java
+	* PreferenceMessages.properties
+	* OptionsPropertyPage.java
+	* PropertyMessages.properties
+
 2005-03-03 Mikhail Khodjaiants
 	Conflicting methods.
 	* SolibSearchPathBlock.java

@@ -27,7 +27,6 @@ public class MIPreferenceInitializer extends AbstractPreferenceInitializer {
 	public void initializeDefaultPreferences() {
 		MIPlugin.getDefault().getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_TIMEOUT, IMIConstants.DEF_REQUEST_TIMEOUT);
 		MIPlugin.getDefault().getPluginPreferences().setDefault(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT, IMIConstants.DEF_REQUEST_LAUNCH_TIMEOUT);
-		MIPlugin.getDefault().getPluginPreferences().setDefault(IMIConstants.PREF_REGISTERS_AUTO_REFRESH, IMIConstants.DEF_PREF_REGISTERS_AUTO_REFRESH);
 		MIPlugin.getDefault().getPluginPreferences().setDefault(IMIConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, IMIConstants.DEF_PREF_SHARED_LIBRARIES_AUTO_REFRESH);
 	}
 }

@@ -28,8 +28,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
  */
 public class OptionsPropertyPage extends PropertyPage {
 
-	private Button fRefreshRegistersButton;
-
 	private Button fRefreshSolibsButton;
 
 	/** 
@@ -44,7 +42,6 @@ public class OptionsPropertyPage extends PropertyPage {
 	 */
 	protected Control createContents( Composite parent ) {
 		Composite comp = ControlFactory.createComposite( parent, 1 );
-		fRefreshRegistersButton = createCheckButton( comp, PropertyMessages.getString( "OptionsPropertyPage.0" ) ); //$NON-NLS-1$
 		fRefreshSolibsButton = createCheckButton( comp, PropertyMessages.getString( "OptionsPropertyPage.1" ) ); //$NON-NLS-1$
 		initialize();
 		return comp;
@@ -60,14 +57,11 @@ public class OptionsPropertyPage extends PropertyPage {
 	}
 
 	private void initialize() {
-		boolean regUpdate = true;
 		boolean solibUpdate = true;
 		ICDISession session = (ICDISession)getElement().getAdapter( ICDISession.class );
 		if ( session instanceof Session ) {
-			regUpdate = ((Session)session).getRegisterManager().isAutoUpdate();
 			solibUpdate = ((Session)session).getSharedLibraryManager().isAutoUpdate();
 		}
-		fRefreshRegistersButton.setSelection( regUpdate );
 		fRefreshSolibsButton.setSelection( solibUpdate );
 		
 	}
@@ -86,23 +80,14 @@ public class OptionsPropertyPage extends PropertyPage {
 		ICDISession session = (ICDISession)getElement().getAdapter( ICDISession.class );
 		final ICDITarget target = (ICDITarget)getElement().getAdapter( ICDITarget.class );
 		if ( session instanceof Session ) {
-			final boolean regUpdate = fRefreshRegistersButton.getSelection();
 			final boolean solibUpdate = fRefreshSolibsButton.getSelection();
 			final Session miSession = ((Session)session);
-			miSession.getRegisterManager().setAutoUpdate( regUpdate );
 			miSession.getSharedLibraryManager().setAutoUpdate( solibUpdate );
-			if ( target.isSuspended() && (regUpdate || solibUpdate) ) {
+			if ( target.isSuspended() && solibUpdate ) {
 				DebugPlugin.getDefault().asyncExec( new Runnable() {
 					
 					public void run() {
 						if ( target.isSuspended() ) {
-							if ( regUpdate ) {
-								try {
-									miSession.getRegisterManager().update();
-								}
-								catch( CDIException e ) {
-								}
-							}
 							if ( solibUpdate ) {
 								try {
 									miSession.getSharedLibraryManager().update();

@@ -1,3 +1,9 @@
+2005-03-09 Mikhail Khodjaiants
+	Fix for bug 87546: Obsolete debug MI settings in Preference need to be removed.
+	* RegisterManager.java
+	* IMIConstants.java
+	* MIPreferenceInitializer.java
+
 2005-03-07 Alain Magloire
 	Fix for 87230: base on  Jayaprakash ideas/patch
 	On HP statck-list-frames answer contain not kosher strings

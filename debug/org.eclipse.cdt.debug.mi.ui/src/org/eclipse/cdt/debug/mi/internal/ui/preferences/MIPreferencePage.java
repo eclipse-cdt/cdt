@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Page for preferences that apply specifically to GDB MI.
@@ -291,15 +290,13 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		}
 	}
 
-	private final static String GDB_MI_HELP_CONTEXT = MIUIPlugin.PLUGIN_ID + "mi_preference_page_context"; //$NON-NLS-1$
+	private IWorkbench fWorkbench;
 
 	// Debugger timeout preference widgets
 	private IntegerFieldEditor fDebugTimeoutText;
 
 	// Launch timeout preference widgets
 	private IntegerFieldEditor fLaunchTimeoutText;
-
-	private BooleanFieldEditor fRefreshRegistersButton;
 
 	private BooleanFieldEditor fRefreshSolibsButton;
 
@@ -320,7 +317,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents( Composite parent ) {
-		WorkbenchHelp.setHelp( getControl(), IMIHelpContextIds.MI_PREFERENCE_PAGE );
+		getWorkbench().getHelpSystem().setHelp( getControl(), IMIHelpContextIds.MI_PREFERENCE_PAGE );
 		//The main composite
 		Composite composite = new Composite( parent, SWT.NULL );
 		GridLayout layout = new GridLayout();
@@ -334,7 +331,6 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 		composite.setLayoutData( data );
 		createSpacer( composite, 1 );
 		createCommunicationPreferences( composite );
-		WorkbenchHelp.setHelp( composite, GDB_MI_HELP_CONTEXT );
 		return composite;
 	}
 
@@ -374,7 +370,6 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	private void setDefaultValues() {
 		fDebugTimeoutText.loadDefault();
 		fLaunchTimeoutText.loadDefault();
-		fRefreshRegistersButton.loadDefault();
 		fRefreshSolibsButton.loadDefault();
 	}
 
@@ -384,6 +379,7 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init( IWorkbench workbench ) {
+		fWorkbench = workbench;
 	}
 
 	protected void createSpacer( Composite composite, int columnSpan ) {
@@ -418,7 +414,6 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 					setValid( getLaunchTimeoutText().isValid() );
 			}
 		} );
-		fRefreshRegistersButton = createRefreshField( IMIConstants.PREF_REGISTERS_AUTO_REFRESH, PreferenceMessages.getString( "MIPreferencePage.5" ), spacingComposite ); //$NON-NLS-1$
 		fRefreshSolibsButton = createRefreshField( IMIConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH, PreferenceMessages.getString( "MIPreferencePage.6" ), spacingComposite ); //$NON-NLS-1$
 	}
 
@@ -428,7 +423,6 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	private void storeValues() {
 		fDebugTimeoutText.store();
 		fLaunchTimeoutText.store();
-		fRefreshRegistersButton.store();
 		fRefreshSolibsButton.store();
 	}
 
@@ -466,7 +460,6 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	public void dispose() {
 		fDebugTimeoutText.dispose();
 		fLaunchTimeoutText.dispose();
-		fRefreshRegistersButton.dispose();
 		fRefreshSolibsButton.dispose();
 		super.dispose();
 	}
@@ -478,4 +471,10 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 	protected IntegerFieldEditor getDebugTimeoutText() {
 		return fDebugTimeoutText;
 	}
+
+	
+	private IWorkbench getWorkbench() {
+		return fWorkbench;
+	}
+	
 }

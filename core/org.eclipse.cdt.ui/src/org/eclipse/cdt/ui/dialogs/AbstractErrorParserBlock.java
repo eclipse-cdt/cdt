@@ -37,7 +37,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-public abstract class ErrorParserBlock extends AbstractCOptionPage {
+public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 
 	private static final String PREFIX = "ErrorParserBlock"; // $NON-NLS-1$
 	private static final String LABEL = PREFIX + ".label"; // $NON-NLS-1$
@@ -60,7 +60,7 @@ public abstract class ErrorParserBlock extends AbstractCOptionPage {
 
 	}
 
-	public ErrorParserBlock(Preferences prefs) {
+	public AbstractErrorParserBlock(Preferences prefs) {
 		super(CUIPlugin.getResourceString(LABEL));
 		setDescription(CUIPlugin.getResourceString(DESC));
 		fPrefs = prefs;

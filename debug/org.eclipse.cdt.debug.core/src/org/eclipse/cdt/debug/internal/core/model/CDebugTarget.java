@@ -50,7 +50,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IThread;
 
 /**
@@ -1048,12 +1047,20 @@ public class CDebugTarget extends CDebugElement
 		setCurrentStateId( IState.EXITED );
 		setCurrentStateInfo( event.getExitInfo() );
 		fireChangeEvent( DebugEvent.CONTENT );
+		try
+		{
+			terminate();
+		}
+		catch( DebugException e )
+		{
+				CDebugCorePlugin.log( e.getStatus() );
+		}
 	}
 
 	private void handleTerminatedEvent( ICDIDestroyedEvent event )
 	{
-		setCurrentStateId( IState.TERMINATED );
-		setCurrentStateInfo( null );
+//		setCurrentStateId( IState.TERMINATED );
+//		setCurrentStateInfo( null );
 		IProcess process = getProcess();
 		if ( process != null )
 		{

@@ -1,3 +1,8 @@
+2004-06-15 Mikhail Khodjaiants
+	Breakpoint and expression related actions enablemnt should not depend 
+	on the activation of the debuggger plugin.
+	* plugin.xml	
+
 2004-06-14 Mikhail Khodjaiants
 	Implementation of the "Toggle Method Breakpoint" retargettable action.
 	* plugin.properties

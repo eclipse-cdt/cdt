@@ -85,8 +85,8 @@ public final class BufferedDocumentScanner implements ICharacterScanner {
         fRangeLength= length;
         
         // Clamp at end of the real document
-        if (fRangeLength > fDocument.getLength())
-           fRangeLength = fDocument.getLength();
+        if (fRangeLength + fRangeOffset > fDocument.getLength())
+            fRangeLength = fDocument.getLength() - fRangeOffset;
 
         String[] delimiters= document.getLegalLineDelimiters();
         fDelimiters= new char[delimiters.length][];

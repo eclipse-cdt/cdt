@@ -163,8 +163,7 @@ public class EditorUtility {
 			}
                         
 			if (element instanceof IBinary) {
-				//return new InternalClassFileEditorInput((IBinary) element);
-				return new ExternalEditorInput(getStorage((IBinary)element));
+				return new ExternalEditorInput(getStorage((IBinary)element), null);
 			}
                         
 			element= element.getParent();
@@ -183,8 +182,7 @@ public class EditorUtility {
 		}
 
 		if (input instanceof IStorage) { 
-			//return new JarEntryEditorInput((IStorage)input);
-			return new ExternalEditorInput((IStorage)input);
+			return new ExternalEditorInput((IStorage)input, null);
 		}
 		return null;
 	}
@@ -224,28 +222,28 @@ public class EditorUtility {
 	}
 
 
-	/**
-	 * Returns the translation unit for the given c element.
-	 * @param element the c element whose compilation unit is searched for
-	 * @return the compilation unit of the given java element
-	 */
-	private static ITranslationUnit getTranslationUnit(ICElement element) {
-                
-		if (element == null)
-			return null;
-
-		int type= element.getElementType();
-		if (ICElement.C_UNIT == type) {
-			return (ITranslationUnit) element;
-		}
-		if (ICElement.C_BINARY == type) {
-			return null;
-		}
-		if (element instanceof ISourceReference) {
-			return ((ISourceReference) element).getTranslationUnit();
-		}
-		return getTranslationUnit(element.getParent());
-	}
+//	/**
+//	 * Returns the translation unit for the given c element.
+//	 * @param element the c element whose compilation unit is searched for
+//	 * @return the compilation unit of the given java element
+//	 */
+//	private static ITranslationUnit getTranslationUnit(ICElement element) {
+//                
+//		if (element == null)
+//			return null;
+//
+//		int type= element.getElementType();
+//		if (ICElement.C_UNIT == type) {
+//			return (ITranslationUnit) element;
+//		}
+//		if (ICElement.C_BINARY == type) {
+//			return null;
+//		}
+//		if (element instanceof ISourceReference) {
+//			return ((ISourceReference) element).getTranslationUnit();
+//		}
+//		return getTranslationUnit(element.getParent());
+//	}
 
 
 //	public static IEditorPart openInEditor (IFile file) throws PartInitException {

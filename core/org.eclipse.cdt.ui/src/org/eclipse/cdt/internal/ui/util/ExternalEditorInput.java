@@ -26,6 +26,7 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
            
 	private IStorage externalFile;
 	private ITranslationUnit unit;
+	private IPath location;
 
 	/*
 	*/
@@ -105,15 +106,6 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 		return externalFile.getFullPath().toString();
 	}
 
-	public ExternalEditorInput(IStorage exFile) {
-		externalFile = exFile;
-	}
-
-	public ExternalEditorInput(ITranslationUnit unit, IStorage exFile) {
-		this(exFile);
-		this.unit = unit;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput#getTranslationUnit()
 	 */
@@ -125,6 +117,21 @@ public class ExternalEditorInput implements ITranslationUnitEditorInput {
 	 * @see org.eclipse.ui.editors.text.ILocationProvider#getPath(java.lang.Object)
 	 */
 	public IPath getPath(Object element) {
-		return externalFile.getFullPath();
+		return location;
 	}
+
+	public ExternalEditorInput(ITranslationUnit unit, IStorage exFile) {
+		this(exFile, exFile.getFullPath());
+		this.unit = unit;
+	}
+
+	public ExternalEditorInput(IStorage exFile) {
+		this(exFile, exFile.getFullPath());
+	}
+
+	public ExternalEditorInput(IStorage exFile, IPath location) {
+		externalFile = exFile;
+		this.location = location;
+	}
+
 }

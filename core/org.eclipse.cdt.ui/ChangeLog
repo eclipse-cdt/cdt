@@ -1,3 +1,9 @@
+2004-05-13 Alain Magloire
+
+	Fix for PR 62064
+	* src/org/eclipse/cdt/internal/ui/util/EditorUtility.java
+	* src/org/eclipse/cdt/internal/ui/util/ExternalEditorInput.java
+
 2004-05-12 Bogdan Gheorghe
 
 	Removed FileSearchAction, FileSearchActionInWorkingSet + related properties

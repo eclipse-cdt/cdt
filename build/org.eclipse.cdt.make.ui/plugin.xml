@@ -249,5 +249,17 @@
          </action>
       </actionSet>
    </extension>
+   <extension
+         id="org.eclipse.cdt.make.editor"
+         name="MakeEditor"
+         point="org.eclipse.ui.editors">
+      <editor
+            name="MakeFile Editor"
+            icon="icons/full/ctool16/makefile.gif"
+            filenames="Makefile"
+            class="org.eclipse.cdt.make.internal.ui.editor.MakeTextEditor"
+            id="org.eclipse.cdt.make.editor">
+      </editor>
+   </extension>
 
 </plugin>

@@ -5,8 +5,8 @@ package org.eclipse.cdt.make.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.cdt.make.core.BuildInfoFactory;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.AbstractCOptionPage;
 import org.eclipse.cdt.ui.ICOptionContainer;
@@ -43,33 +43,35 @@ public class SettingsBlock extends AbstractCOptionPage {
 
 	private static final String MAKE_CMD_GROUP = PREFIX + ".makeCmd.group_label"; //$NON-NLS-1$
 	private static final String MAKE_CMD_USE_DEFAULT = PREFIX + ".makeCmd.use_default"; //$NON-NLS-1$
-	private static final String MAKE_CMD_LABEL = PREFIX + ".makeCmd.label";
+	private static final String MAKE_CMD_LABEL = PREFIX + ".makeCmd.label"; //$NON-NLS-1$
 
-	private static final String MAKE_WORKBENCH_BUILD_GROUP = PREFIX + ".makeWorkbench.group_label";
-	private static final String MAKE_WORKBENCH_BUILD_TYPE = PREFIX + ".makeWorkbench.type";
-	private static final String MAKE_WORKBENCH_BUILD_TARGET = PREFIX + ".makeWorkbench.target";
-	private static final String MAKE_WORKBENCH_BUILD_AUTO = PREFIX + ".makeWorkbench.auto";
-	private static final String MAKE_WORKBENCH_BUILD_INCR = PREFIX + ".makeWorkbench.incremental";
-	private static final String MAKE_WORKBENCH_BUILD_FULL = PREFIX + ".makeWorkbench.full";
+	private static final String MAKE_WORKBENCH_BUILD_GROUP = PREFIX + ".makeWorkbench.group_label"; //$NON-NLS-1$
+	private static final String MAKE_WORKBENCH_BUILD_TYPE = PREFIX + ".makeWorkbench.type"; //$NON-NLS-1$
+	private static final String MAKE_WORKBENCH_BUILD_TARGET = PREFIX + ".makeWorkbench.target"; //$NON-NLS-1$
+	private static final String MAKE_WORKBENCH_BUILD_AUTO = PREFIX + ".makeWorkbench.auto"; //$NON-NLS-1$
+	private static final String MAKE_WORKBENCH_BUILD_INCR = PREFIX + ".makeWorkbench.incremental"; //$NON-NLS-1$
+	private static final String MAKE_WORKBENCH_BUILD_FULL = PREFIX + ".makeWorkbench.full"; //$NON-NLS-1$
 
-	private static final String MAKE_BUILD_DIR_GROUP = PREFIX + ".makeDir.group_label";
-	private static final String MAKE_BUILD_DIR_LABEL = PREFIX + ".makeDir.label";
-	private static final String MAKE_BUILD_DIR_BROWSE = PREFIX + ".makeDir.browse";
+	private static final String MAKE_BUILD_DIR_GROUP = PREFIX + ".makeDir.group_label"; //$NON-NLS-1$
+	private static final String MAKE_BUILD_DIR_LABEL = PREFIX + ".makeDir.label"; //$NON-NLS-1$
+	private static final String MAKE_BUILD_DIR_BROWSE = PREFIX + ".makeDir.browse"; //$NON-NLS-1$
 
 	private static final String KEEP_ARG = "keep"; //$NON-NLS-1$
 	private static final String STOP_ARG = "stop"; //$NON-NLS-1$
 
-	private RadioButtonsArea stopRadioButtons;
-	private Button defButton;
-	private Text buildCommand;
-	private Text buildLocation;
+	RadioButtonsArea stopRadioButtons;
 
-	private Text targetFull;
-	private Text targetIncr;
-	private Text targetAuto;
-	private Button fullButton;
-	private Button incrButton;
-	private Button autoButton;
+	Button defButton;
+	Text buildCommand;
+
+	Text buildLocation;
+
+	Text targetFull;
+	Text targetIncr;
+	Text targetAuto;
+	Button fullButton;
+	Button incrButton;
+	Button autoButton;
 
 	private IMakeBuilderInfo fBuildInfo;
 	private Preferences fPrefs;
@@ -137,8 +139,8 @@ public class SettingsBlock extends AbstractCOptionPage {
 			StringBuffer cmd = new StringBuffer(fBuildInfo.getBuildCommand().toOSString());
 			if (!fBuildInfo.isDefaultBuildCmd()) {
 				String args = fBuildInfo.getBuildArguments();
-				if (args != null && !args.equals("")) {
-					cmd.append(" ");
+				if (args != null && !args.equals("")) { //$NON-NLS-1$
+					cmd.append(" "); //$NON-NLS-1$
 					cmd.append(args);
 				}
 			}
@@ -257,12 +259,12 @@ public class SettingsBlock extends AbstractCOptionPage {
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		monitor.beginTask("Settings", 1);
+		monitor.beginTask("Applying Settings...", 1);
 		IMakeBuilderInfo info;
 		if (getContainer().getProject() != null) {
-			info = BuildInfoFactory.create(getContainer().getProject(), fBuilderID);
+			info = MakeCorePlugin.create(getContainer().getProject(), fBuilderID);
 		} else {
-			info = BuildInfoFactory.create(fPrefs, fBuilderID, false);
+			info = MakeCorePlugin.create(fPrefs, fBuilderID, false);
 		}
 		info.setStopOnError(isStopOnError());
 		info.setUseDefaultBuildCmd(useDefaultBuildCmd());
@@ -270,7 +272,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 			String bldLine = getBuildLine();
 			int start = 0;
 			int end = -1;
-			if (!bldLine.startsWith("\"")) {
+			if (!bldLine.startsWith("\"")) { //$NON-NLS-1$
 				end = bldLine.indexOf(' ');
 			} else {
 				start = 1;
@@ -283,7 +285,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 				path = new Path(bldLine.substring(start, end));
 			}
 			info.setBuildCommand(path);
-			String args = "";
+			String args = ""; //$NON-NLS-1$
 			if (end != -1) {
 				args = bldLine.substring(end + 1);
 			}
@@ -303,9 +305,9 @@ public class SettingsBlock extends AbstractCOptionPage {
 	public void performDefaults() {
 		IMakeBuilderInfo info;
 		if (getContainer().getProject() != null) {
-			info = BuildInfoFactory.create(fPrefs, fBuilderID, false);
+			info = MakeCorePlugin.create(fPrefs, fBuilderID, false);
 		} else {
-			info = BuildInfoFactory.create(fPrefs, fBuilderID, true);
+			info = MakeCorePlugin.create(fPrefs, fBuilderID, true);
 		}
 		if (info.isStopOnError())
 			stopRadioButtons.setSelectValue(STOP_ARG);
@@ -315,8 +317,8 @@ public class SettingsBlock extends AbstractCOptionPage {
 			StringBuffer cmd = new StringBuffer(info.getBuildCommand().toOSString());
 			if (!info.isDefaultBuildCmd()) {
 				String args = info.getBuildArguments();
-				if (args != null && !args.equals("")) {
-					cmd.append(" ");
+				if (args != null && !args.equals("")) { //$NON-NLS-1$
+					cmd.append(" "); //$NON-NLS-1$
 					cmd.append(args);
 				}
 			}
@@ -357,11 +359,11 @@ public class SettingsBlock extends AbstractCOptionPage {
 		super.setContainer(container);
 		if (getContainer().getProject() != null) {
 			try {
-				fBuildInfo = BuildInfoFactory.create(getContainer().getProject(), fBuilderID);
+				fBuildInfo = MakeCorePlugin.create(getContainer().getProject(), fBuilderID);
 			} catch (CoreException e) {
 			}
 		} else {
-			fBuildInfo = BuildInfoFactory.create(fPrefs, fBuilderID, false);
+			fBuildInfo = MakeCorePlugin.create(fPrefs, fBuilderID, false);
 		}
 	}
 

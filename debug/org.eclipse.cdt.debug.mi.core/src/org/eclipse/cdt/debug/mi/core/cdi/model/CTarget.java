@@ -491,7 +491,7 @@ public class CTarget  implements ICDITarget {
 		} else if (location.getFunction() != null) {
 			loc = location.getFunction();
 		} else if (location.getAddress() != 0) {
-			loc = "" + location.getAddress();
+			loc = "*" + location.getAddress();
 		}
 		MIExecUntil until = factory.createMIExecUntil(loc);
 		try {

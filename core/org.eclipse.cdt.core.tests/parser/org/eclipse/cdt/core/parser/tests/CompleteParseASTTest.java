@@ -651,7 +651,10 @@ public class CompleteParseASTTest extends TestCase
 		IASTVariable v = (IASTVariable)declarations.next();
 		assertEquals( v.getName(), "x");
 		assertEquals( ((IASTSimpleTypeSpecifier)v.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), classA );
-		assertEquals( callback.getReferences().size(), 3 );  
+		assertEquals( callback.getReferences().size(), 3 ); 
+		Iterator i = callback.getReferences().iterator();
+		while( i.hasNext() )
+			assertEquals( ((IASTReference)i.next()).getReferencedElement(), classA ); 
 	}
 	
 	public void testSimpleField() throws Exception
@@ -777,8 +780,18 @@ public class CompleteParseASTTest extends TestCase
 		assertEquals( enumeratorE_1.getOwnerEnumerationSpecifier(), enumE1 );
 		IASTVariable variableX = (IASTVariable)subB.next(); 
 		IASTClassSpecifier classC = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)subB.next()).getTypeSpecifier();
-				
-		
+	}
+	
+	public void testAndrewsExample() throws Exception
+	{
+		Iterator declarations = parse( "namespace N{ class A {}; }	using namespace N;	class B: public A{};").getDeclarations();
+		IASTNamespaceDefinition namespaceN = (IASTNamespaceDefinition)declarations.next();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)getDeclarations( namespaceN ).next()).getTypeSpecifier(); 
+		IASTUsingDirective usingClause = (IASTUsingDirective)declarations.next();
+		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTBaseSpecifier baseSpec = (IASTBaseSpecifier)classB.getBaseClauses().next();
+		assertEquals( baseSpec.getParentClassSpecifier(), classA );
+		assertEquals( callback.getReferences().size(), 2 );
 	}
 	
 //	public void testSimpleTypedef() throws Exception

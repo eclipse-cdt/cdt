@@ -397,7 +397,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( t.getType() == IToken.tCOLONCOLON ) continue; 
 			try
 			{
-				symbol = symbol.LookupNestedNameSpecifier( t.getImage() );
+				if( t == parentClassName.getLastToken())
+					symbol = (IContainerSymbol)symbol.Lookup( t.getImage() );
+				else
+					symbol = symbol.LookupNestedNameSpecifier( t.getImage() );
 				references.add( createReference( symbol, t.getImage(), t.getOffset() ));
 			}
 			catch( ParserSymbolTableException pste )

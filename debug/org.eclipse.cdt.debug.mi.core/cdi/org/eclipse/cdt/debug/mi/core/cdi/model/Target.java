@@ -91,6 +91,9 @@ public class Target extends SessionObject implements ICDITarget {
 		return miSession;
 	}
 
+	public void setConfiguration(ICDITargetConfiguration configuration) {
+		fConfiguration = configuration;
+	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIObject#getTarget()
 	 */
@@ -950,7 +953,7 @@ public class Target extends SessionObject implements ICDITarget {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getConfiguration()
 	 */
 	public ICDITargetConfiguration getConfiguration() {
-		if (fConfiguration != null) {
+		if (fConfiguration == null) {
 			if (miSession.isProgramSession()) {
 				fConfiguration = new TargetConfiguration(this);
 			}  else if (miSession.isAttachSession()){
@@ -960,7 +963,7 @@ public class Target extends SessionObject implements ICDITarget {
 			} else {
 				fConfiguration = new TargetConfiguration(this);				
 			}
-		}
+		}		
 		return fConfiguration;
 	}
 

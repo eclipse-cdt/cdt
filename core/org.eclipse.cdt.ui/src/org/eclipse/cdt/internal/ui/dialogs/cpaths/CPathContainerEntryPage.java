@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
@@ -396,13 +397,13 @@ public class CPathContainerEntryPage extends CPathBasePage {
 	}
 
 	private CPElement[] openContainerSelectionDialog(CPElement existing) {
-		IPathEntry elem = null;
+		IContainerEntry elem = null;
 		String title;
 		if (existing == null) {
 			title = CPathEntryMessages.getString("ContainerEntryPage.ContainerDialog.new.title"); //$NON-NLS-1$
 		} else {
 			title = CPathEntryMessages.getString("ContainerEntryPage.ContainerDialog.edit.title"); //$NON-NLS-1$
-			elem = existing.getPathEntry();
+			elem = (IContainerEntry)existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, fCurrCProject, getRawClasspath());
 		wizard.setWindowTitle(title);

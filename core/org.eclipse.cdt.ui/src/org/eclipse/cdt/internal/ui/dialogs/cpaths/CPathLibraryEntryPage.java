@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.CPluginImages;
@@ -505,13 +506,13 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 	}
 
 	protected CPElement[] openContainerSelectionDialog(CPElement existing) {
-		IPathEntry elem = null;
+		IContainerEntry elem = null;
 		String title;
 		if (existing == null) {
 			title = CPathEntryMessages.getString("LibrariesEntryPage.ContainerDialog.new.title"); //$NON-NLS-1$
 		} else {
 			title = CPathEntryMessages.getString("LibrariesEntryPage.ContainerDialog.edit.title"); //$NON-NLS-1$
-			elem = existing.getPathEntry();
+			elem = (IContainerEntry)existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, fCurrCProject, getRawPathEntries(),
 				new int[] {IPathEntry.CDT_LIBRARY});

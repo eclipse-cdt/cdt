@@ -39,7 +39,7 @@ import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.scannerconfig.DiscoveredElement;
 import org.eclipse.cdt.make.internal.ui.scannerconfig.DiscoveredElementLabelProvider;
 import org.eclipse.cdt.make.internal.ui.scannerconfig.DiscoveredElementSorter;
-import org.eclipse.cdt.ui.wizards.ICPathContainerPage;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -71,7 +71,7 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
  * 
  * @author vhirsl
  */
-public class DiscoveredPathContainerPage extends WizardPage	implements ICPathContainerPage {
+public class DiscoveredPathContainerPage extends WizardPage	implements IPathEntryContainerPage {
 	private static final String PREFIX = "DiscoveredScannerConfigurationContainerPage"; //$NON-NLS-1$
 
 	private static final String DISC_COMMON_PREFIX = "ManageScannerConfigDialogCommon"; //$NON-NLS-1$
@@ -214,18 +214,16 @@ public class DiscoveredPathContainerPage extends WizardPage	implements ICPathCon
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#getContainerEntries()
 	 */
-	public IPathEntry[] getContainerEntries() {
-		return new IPathEntry[] { fPathEntry }; 
+	public IContainerEntry[] getNewContainers() {
+		return new IContainerEntry[] { fPathEntry }; 
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.ui.wizards.ICPathContainerPage#setSelection(org.eclipse.cdt.core.model.IPathEntry)
 	 */
-	public void setSelection(IPathEntry containerEntry) {
+	public void setSelection(IContainerEntry containerEntry) {
 		if (containerEntry != null) {
-			if (containerEntry.getEntryKind() == IPathEntry.CDT_CONTAINER) {
-				fPathEntry = (IContainerEntry) containerEntry;
-			}
+			fPathEntry = containerEntry;
 		}
 		else {
 			fPathEntry = CoreModel.newContainerEntry(DiscoveredPathContainer.CONTAINER_ID);		

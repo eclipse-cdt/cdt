@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
@@ -20,7 +21,7 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
-import org.eclipse.cdt.ui.wizards.ICPathContainerPage;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
@@ -30,7 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  */
-public class CPathContainerDefaultPage extends NewElementWizardPage implements ICPathContainerPage {
+public class CPathContainerDefaultPage extends NewElementWizardPage implements IPathEntryContainerPage {
 
 	private StringDialogField fEntryField;
 	private ArrayList fUsedPaths;
@@ -103,8 +104,8 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 	/* (non-Javadoc)
 	 * @see IClasspathContainerPage#getSelection()
 	 */
-	public IPathEntry[] getContainerEntries() {
-		return new IPathEntry[] {CoreModel.newContainerEntry(new Path(fEntryField.getText()))};
+	public IContainerEntry[] getNewContainers() {
+		return new IContainerEntry[] {CoreModel.newContainerEntry(new Path(fEntryField.getText()))};
 	}
 	
 	/* (non-Javadoc)
@@ -122,7 +123,7 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 	/* (non-Javadoc)
 	 * @see IClasspathContainerPage#setSelection(IClasspathEntry)
 	 */
-	public void setSelection(IPathEntry containerEntry) {
+	public void setSelection(IContainerEntry containerEntry) {
 		if (containerEntry != null) {
 			fUsedPaths.remove(containerEntry.getPath());
 			fEntryField.setText(containerEntry.getPath().toString());

@@ -14,11 +14,13 @@ import java.util.List;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.util.SelectionUtil;
 import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
-import org.eclipse.cdt.ui.wizards.ICPathContainerPage;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -34,7 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class ProjectContainerPage extends WizardPage implements ICPathContainerPage {
+public class ProjectContainerPage extends WizardPage implements IPathEntryContainerPage {
 
 	private int[] fFilterType;
 	private TableViewer viewer;
@@ -57,21 +59,28 @@ public class ProjectContainerPage extends WizardPage implements ICPathContainerP
 		return true;
 	}
 
-	public IPathEntry[] getContainerEntries() {
+	public IContainerEntry[] getNewContainers() {
+		return new IContainerEntry[0];
+	}
+	
+	IProjectEntry getProjectEntry() {
 		if (viewer != null) {
 			ISelection selection = viewer.getSelection();
 			ICProject project = (ICProject)SelectionUtil.getSingleElement(selection);
 			if (project != null) {
-				return new IPathEntry[]{CoreModel.newProjectEntry(project.getPath())};
+				return CoreModel.newProjectEntry(project.getPath());
 			}
 		}
-		return new IPathEntry[0];
-
+		return null;
 	}
-	public void setSelection(IPathEntry containerEntry) {
-		if (containerEntry != null) {
-			viewer.setSelection(new StructuredSelection(containerEntry));
+	
+	void setProjectEntry(IProjectEntry entry) {
+		if (entry != null) {
+			viewer.setSelection(new StructuredSelection(entry));
 		}
+	}
+	
+	public void setSelection(IContainerEntry containerEntry) {
 	}
 
 	public void createControl(Composite parent) {
@@ -147,6 +156,6 @@ public class ProjectContainerPage extends WizardPage implements ICPathContainerP
 	}
 
 	private IPathEntry getSelected() {
-		return getContainerEntries().length > 0 ? getContainerEntries()[0] : null;
+		return getProjectEntry();
 	}
 }

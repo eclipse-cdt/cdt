@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
@@ -991,13 +992,13 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 	}
 
 	protected CPElement[] openContainerSelectionDialog(CPElement existing) {
-		IPathEntry elem = null;
+		IContainerEntry elem = null;
 		String title;
 		if (existing == null) {
 			title = CPathEntryMessages.getString("IncludeSymbolEntryPage.ContainerDialog.new.title"); //$NON-NLS-1$
 		} else {
 			title = CPathEntryMessages.getString("IncludeSymbolEntryPage.ContainerDialog.edit.title"); //$NON-NLS-1$
-			elem = existing.getPathEntry();
+			elem = (IContainerEntry)existing.getPathEntry();
 		}
 		CPathContainerWizard wizard = new CPathContainerWizard(elem, null, fCurrCProject, getRawPathEntries(), new int[]{
 				IPathEntry.CDT_INCLUDE, IPathEntry.CDT_MACRO});

@@ -13,10 +13,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IProjectEntry;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.internal.ui.util.PixelConverter;
-import org.eclipse.cdt.ui.wizards.ICPathContainerPage;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
@@ -28,11 +30,13 @@ import org.eclipse.swt.widgets.Shell;
 public class CPathContainerWizard extends Wizard {
 
 	private IContainerDescriptor fPageDesc;
-	private IPathEntry fEntryToEdit;
+	private IContainerEntry fEntryToEdit;
 
 	private IPathEntry[] fNewEntries;
-	private IPathEntry[] fContainerEntries;
-	private ICPathContainerPage fContainerPage;
+	private IContainerEntry[] fContainerEntries;
+	private IProjectEntry fProjectEntry;
+
+	private IPathEntryContainerPage fContainerPage;
 	private ICElement fCurrElement;
 	private IPathEntry[] fCurrCPath;
 	private CPathFilterPage fFilterPage;
@@ -43,7 +47,7 @@ public class CPathContainerWizard extends Wizard {
 	/**
 	 * Constructor for ClasspathContainerWizard.
 	 */
-	public CPathContainerWizard(IPathEntry entryToEdit, ICElement currElement, IPathEntry[] currEntries) {
+	public CPathContainerWizard(IContainerEntry entryToEdit, ICElement currElement, IPathEntry[] currEntries) {
 		this(entryToEdit, null, currElement, currEntries, null);
 	}
 
@@ -54,7 +58,7 @@ public class CPathContainerWizard extends Wizard {
 		this(null, pageDesc, currElement, currEntries, null);
 	}
 
-	public CPathContainerWizard(IPathEntry entryToEdit, IContainerDescriptor pageDesc, ICElement currElement,
+	public CPathContainerWizard(IContainerEntry entryToEdit, IContainerDescriptor pageDesc, ICElement currElement,
 			IPathEntry[] currEntries, int[] filterType) {
 		fEntryToEdit = entryToEdit;
 		fPageDesc = pageDesc;
@@ -66,6 +70,9 @@ public class CPathContainerWizard extends Wizard {
 	}
 
 	public IPathEntry getEntriesParent() {
+		if (fProjectEntry != null) {
+			return fProjectEntry;
+		}
 		return fContainerEntries[0];
 	}
 
@@ -73,7 +80,7 @@ public class CPathContainerWizard extends Wizard {
 		return fNewEntries;
 	}
 
-	public IPathEntry[] getContainers() {
+	public IContainerEntry[] getContainers() {
 		return fContainerEntries;
 	}
 
@@ -85,7 +92,11 @@ public class CPathContainerWizard extends Wizard {
 	public boolean performFinish() {
 		if (fContainerPage != null) {
 			if (fContainerPage.finish()) {
-				fContainerEntries = fContainerPage.getContainerEntries();
+				if (fContainerPage instanceof ProjectContainerPage) {
+					fProjectEntry = ((ProjectContainerPage)fContainerPage).getProjectEntry();
+				} else {
+					fContainerEntries = fContainerPage.getNewContainers();
+				}
 				if (fFilterPage != null && fFilterPage.isPageComplete()) {
 					fNewEntries = fFilterPage.getSelectedEntries();
 				}
@@ -131,8 +142,8 @@ public class CPathContainerWizard extends Wizard {
 		super.addPages();
 	}
 
-	private ICPathContainerPage getContainerPage(IContainerDescriptor pageDesc) {
-		ICPathContainerPage containerPage = null;
+	private IPathEntryContainerPage getContainerPage(IContainerDescriptor pageDesc) {
+		IPathEntryContainerPage containerPage = null;
 		if (pageDesc != null) {
 			try {
 				containerPage = pageDesc.createPage();
@@ -145,7 +156,9 @@ public class CPathContainerWizard extends Wizard {
 			containerPage = new CPathContainerDefaultPage();
 		}
 		containerPage.initialize(fCurrElement.getCProject(), fCurrCPath);
-		containerPage.setSelection(fEntryToEdit);
+		if (!(containerPage instanceof ProjectContainerPage)) {
+			containerPage.setSelection(fEntryToEdit);
+		}
 		containerPage.setWizard(this);
 		return containerPage;
 	}
@@ -162,9 +175,15 @@ public class CPathContainerWizard extends Wizard {
 			fContainerPage = getContainerPage(selected);
 			return fContainerPage;
 		} else if (page == fContainerPage && fFilterPage != null) {
-			if (fContainerPage.finish() && fContainerPage.getContainerEntries().length > 0
-					&& fContainerPage.getContainerEntries()[0] != null) {
-				fFilterPage.setParentEntry(fContainerPage.getContainerEntries()[0]);
+			if (fContainerPage.finish() && fContainerPage.getNewContainers().length > 0
+					&& fContainerPage.getNewContainers()[0] != null) {
+				IPathEntry entry;
+				if (fContainerPage instanceof ProjectContainerPage) {
+					entry = ((ProjectContainerPage)fContainerPage).getProjectEntry();
+				} else {
+					entry = fContainerPage.getNewContainers()[0];
+				}
+				fFilterPage.setParentEntry(entry);
 			}
 			return fFilterPage;
 		}

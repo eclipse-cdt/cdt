@@ -9,13 +9,13 @@
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.wizards.ICPathContainerPage;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
 
 public interface IContainerDescriptor {
 
-	public ICPathContainerPage createPage() throws CoreException;
+	public IPathEntryContainerPage createPage() throws CoreException;
 	public String getName();
 	public Image getImage();
 	public boolean canEdit(IPathEntry entry);

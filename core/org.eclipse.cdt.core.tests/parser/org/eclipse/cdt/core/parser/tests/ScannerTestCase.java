@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.internal.core.parser.token.Token;
+import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
  * @author jcamelon
@@ -734,11 +734,11 @@ public class ScannerTestCase extends BaseScannerTest
 			List expansion= descriptor.getTokenizedExpansion();
 			assertNotNull(parms);
 			assertTrue(expansion.size() == 3);
-			assertTrue(((Token) expansion.get(0)).type == IToken.tIDENTIFIER);
-			assertTrue(((Token) expansion.get(0)).getImage().equals("x"));
-			assertTrue(((Token) expansion.get(1)).type == IToken.tPLUS);
-			assertTrue(((Token) expansion.get(2)).type == IToken.tINTEGER);
-			assertTrue(((Token) expansion.get(2)).getImage().equals("1"));
+			assertTrue(((SimpleToken) expansion.get(0)).getType() == IToken.tIDENTIFIER);
+			assertTrue(((SimpleToken) expansion.get(0)).getImage().equals("x"));
+			assertTrue(((SimpleToken) expansion.get(1)).getType() == IToken.tPLUS);
+			assertTrue(((SimpleToken) expansion.get(2)).getType() == IToken.tINTEGER);
+			assertTrue(((SimpleToken) expansion.get(2)).getImage().equals("1"));
 
 			validateIdentifier("y");
 			validateToken(IToken.tASSIGN);

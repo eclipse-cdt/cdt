@@ -1,4 +1,10 @@
 2004-04-10 John Camelon
+	Removed unused methods from IToken.
+	Restructured Token implementation to be more memory efficient.
+	Tightened up visibility of different members in the implementation.
+	Added TokenFactory construct to isolate Token clients from the particulars of which IToken implementation to instantiate.
+
+2004-04-10 John Camelon
 	Partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=57898
 
 2004-04-09 Andrew Niefer

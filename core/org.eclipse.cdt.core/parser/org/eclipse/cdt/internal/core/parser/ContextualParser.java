@@ -26,8 +26,8 @@ import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
-import org.eclipse.cdt.internal.core.parser.token.Token;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
+import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 
 /**
@@ -107,7 +107,7 @@ public class ContextualParser extends CompleteParser {
 		setCompletionKind(kind);
 		setCompletionContext(null);
 		setCompletionFunctionName( );
-		setCompletionToken( new Token( IToken.tIDENTIFIER, prefix ) );
+		setCompletionToken( TokenFactory.createToken( IToken.tIDENTIFIER, prefix ) );
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class ContextualParser extends CompleteParser {
 	}
 
 	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTNode node, String prefix) throws EndOfFileException {
-		setCompletionToken( new Token( IToken.tIDENTIFIER, prefix ) );
+		setCompletionToken( TokenFactory.createToken( IToken.tIDENTIFIER, prefix ) );
 		setCompletionValues(scope, kind, key, node );
 	}
 

@@ -58,7 +58,8 @@ import org.eclipse.cdt.internal.core.parser.IExpressionParser;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
-import org.eclipse.cdt.internal.core.parser.token.Token;
+import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
+import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
@@ -487,25 +488,14 @@ public class Scanner implements IScanner {
 			storageBuffer = null; 
 	}
 
-	protected IToken newToken(int t, String i, IScannerContext c) {
-		setCurrentToken(new Token(t, i, c, scannerData.getContextStack().getCurrentLineNumber()));
+	protected IToken newToken(int t, String i) {
+		IToken theToken = TokenFactory.createToken( t, i, scannerData );
+		setCurrentToken(theToken);
 		return currentToken;
 	}
 
 	protected IToken newConstantToken(int t) {
-		setCurrentToken(
-				new Token(
-						t, 
-						scannerData.getContextStack().getCurrentContext(),
-						scannerData.getContextStack().getCurrentLineNumber()
-						)
-				);
-		return currentToken;
-	}
-
-
-	protected IToken newToken(int t, String i) {
-		setCurrentToken(new Token(t, i));
+		setCurrentToken( TokenFactory.createToken(t,scannerData));
 		return currentToken;
 	}
 	
@@ -1017,7 +1007,7 @@ public class Scanner implements IScanner {
 		//If the next token is going to be a string as well, we need to concatenate
 		//it with this token.  This will be recursive for as many strings as need to be concatenated
 		
-		IToken returnToken = newToken( type, buff.toString(), scannerData.getContextStack().getCurrentContext());
+		IToken returnToken = newToken( type, buff.toString());
 			
 		IToken next = null;
 		try{
@@ -1177,8 +1167,7 @@ public class Scanner implements IScanner {
 		
 		return newToken(
 			tokenType,
-			result,
-			scannerData.getContextStack().getCurrentContext());
+			result);
 	}
 	public IToken processPreprocessor() throws ScannerException, EndOfFileException
 	{
@@ -1573,7 +1562,7 @@ public class Scanner implements IScanner {
 		if (tokenTypeObject != null)
 			return newConstantToken(((Integer) tokenTypeObject).intValue());
 		else
-			return newToken(IToken.tIDENTIFIER, ident, scannerData.getContextStack().getCurrentContext());
+			return newToken(IToken.tIDENTIFIER, ident);
 	}
 	
 	/**
@@ -2143,7 +2132,7 @@ public class Scanner implements IScanner {
         	c = getChar(true);
         }
         
-        return newToken( type, buffer.toString(), scannerData.getContextStack().getCurrentContext());                      
+        return newToken( type, buffer.toString());                      
     }
 
 
@@ -2196,7 +2185,7 @@ public class Scanner implements IScanner {
 
                 if (c != NOCHAR ) 
                 {
-                    return newToken( IToken.tSTRING, buff.toString(), scannerData.getContextStack().getCurrentContext());
+                    return newToken( IToken.tSTRING, buff.toString());
     
                 } else {
                 	handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
@@ -2211,13 +2200,13 @@ public class Scanner implements IScanner {
 	                    return processCharacterLiteral( c, false );
                     case ',' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
-                        return newToken(IToken.tCOMMA, ",", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
+                        return newToken(IToken.tCOMMA, ","); //$NON-NLS-1$
                     case '(' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
-                        return newToken(IToken.tLPAREN, "(", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
+                        return newToken(IToken.tLPAREN, "("); //$NON-NLS-1$
                     case ')' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
-                        return newToken(IToken.tRPAREN, ")", scannerData.getContextStack().getCurrentContext()); //$NON-NLS-1$
+                        return newToken(IToken.tRPAREN, ")"); //$NON-NLS-1$
                     case '/' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
                         c = getChar();
@@ -2247,7 +2236,7 @@ public class Scanner implements IScanner {
         
         // return completed token
         if (tokenImage.length() > 0) {
-            return newToken(IToken.tIDENTIFIER, tokenImage.toString(), scannerData.getContextStack().getCurrentContext());
+            return newToken(IToken.tIDENTIFIER, tokenImage.toString());
         }
         
         // we're done
@@ -2678,16 +2667,9 @@ public class Scanner implements IScanner {
 	}
 	
 	protected IMacroDescriptor createObjectMacroDescriptor(String key, String value ) {
-		Token t = null;
+		IToken t = null;
 		if( !value.trim().equals( "" ) )  //$NON-NLS-1$
-		{	
-			t = new Token(
-					IToken.tIDENTIFIER, 
-					value, 
-					scannerData.getContextStack().getCurrentContext(),
-					scannerData.getContextStack().getCurrentLineNumber()
-					);
-		}
+			t = TokenFactory.createToken( IToken.tIDENTIFIER, value, scannerData );
 	
 		return new ObjectMacroDescriptor( key,  
 				t, 
@@ -2883,7 +2865,7 @@ public class Scanner implements IScanner {
         
         tokenizer.setThrowExceptionOnBadCharacterRead(false);
         Vector parameterValues = new Vector();
-        Token t = null;
+        SimpleToken t = null;
         StringBuffer buffer = new StringBuffer();
         boolean space = false;
         int nParen = 0;
@@ -2896,12 +2878,12 @@ public class Scanner implements IScanner {
 				}
 				if (c != NOCHAR) tokenizer.ungetChar(c);
 				
-                t = (Token)(forStringizing ? tokenizer.nextTokenForStringizing() : tokenizer.nextToken(false));
-                if (t.type == IToken.tLPAREN) {
+                t = (SimpleToken)(forStringizing ? tokenizer.nextTokenForStringizing() : tokenizer.nextToken(false));
+                if (t.getType() == IToken.tLPAREN) {
                     nParen++;
-                } else if (t.type == IToken.tRPAREN) {
+                } else if (t.getType() == IToken.tRPAREN) {
                     nParen--;
-                } else if (t.type == IToken.tCOMMA && nParen == 0) {
+                } else if (t.getType() == IToken.tCOMMA && nParen == 0) {
                     parameterValues.add(buffer.toString());
                     buffer = new StringBuffer();
                     space = false;
@@ -2911,7 +2893,7 @@ public class Scanner implements IScanner {
                 if (space)
                     buffer.append( ' ' );
 
-                switch (t.type) {
+                switch (t.getType()) {
                     case IToken.tSTRING :
                     	buffer.append('\"');
                     	buffer.append(t.getImage());
@@ -3002,7 +2984,7 @@ public class Scanner implements IScanner {
                 
                 Vector parameterValues = getMacroParameters(betweenTheBrackets, false);
                 Vector parameterValuesForStringizing = getMacroParameters(betweenTheBrackets, true);
-                Token t = null;
+                SimpleToken t = null;
                 
 				// create a string that represents what needs to be tokenized
 				buffer = new StringBuffer();
@@ -3019,8 +3001,8 @@ public class Scanner implements IScanner {
 				int numberOfTokens = tokens.size();
 
 				for (int i = 0; i < numberOfTokens; ++i) {
-					t = (Token) tokens.get(i);
-					if (t.type == IToken.tIDENTIFIER) {
+					t = (SimpleToken) tokens.get(i);
+					if (t.getType() == IToken.tIDENTIFIER) {
 
 						// is this identifier in the parameterNames
 						// list? 
@@ -3033,10 +3015,10 @@ public class Scanner implements IScanner {
 							buffer.append(
 								(String) parameterValues.elementAt(index) );
 						}
-					} else if (t.type == tPOUND) {
+					} else if (t.getType() == tPOUND) {
 						//next token should be a parameter which needs to be turned into
 						//a string literal
-						t = (Token) tokens.get( ++i );
+						t = (SimpleToken) tokens.get( ++i );
 						int index = parameterNames.indexOf(t.getImage());
 						if( index == -1 ){
 							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true );
@@ -3067,7 +3049,7 @@ public class Scanner implements IScanner {
 							buffer.append('\"');
 						}
 					} else {
-						switch( t.type )
+						switch( t.getType() )
 						{
 							case IToken.tSTRING:
 								buffer.append('\"');

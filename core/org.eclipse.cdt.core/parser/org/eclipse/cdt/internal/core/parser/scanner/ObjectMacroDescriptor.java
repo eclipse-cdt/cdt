@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
-import org.eclipse.cdt.internal.core.parser.token.Token;
+import org.eclipse.cdt.core.parser.IToken;
 
 /**
  * @author jcamelon
@@ -24,7 +24,7 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	private static final ArrayList EMPTY_LIST = new ArrayList();
 	private final String expansionSignature;
 	private final String name;
-	private final Token token;
+	private final IToken token;
 
 	public ObjectMacroDescriptor( String name, String expansionSignature )
 	{
@@ -33,7 +33,7 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 		token = null;
 	}
 	
-	public ObjectMacroDescriptor( String name, Token t, String expansionSignature )
+	public ObjectMacroDescriptor( String name, IToken t, String expansionSignature )
 	{
 		this.name = name;
 		this.token = t;

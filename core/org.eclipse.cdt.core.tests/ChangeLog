@@ -1,3 +1,6 @@
+2004-04-10 John Camelon
+	Updated ScannerTestCase to correspond with changes to IToken and its implementations. 
+
 2004-04-09 Andrew Niefer
 	added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTemplateTest.testTemplateMemberTemplateDefinition()
 

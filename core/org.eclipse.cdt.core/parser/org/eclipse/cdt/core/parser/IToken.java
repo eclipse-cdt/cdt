@@ -16,24 +16,30 @@ package org.eclipse.cdt.core.parser;
  *
  */
 public interface IToken {
-	public abstract String toString();
-	public abstract int getType();
-	public abstract String getImage();
-	public void setImage( String i ); 
-	public abstract int getOffset();
-	public abstract int getLength();
-	public abstract int getEndOffset();
 	
+	// getters
+	public int getType();
+	public String getImage();
+	public int getOffset();
+	public int getLength();
+	public int getEndOffset();
 	// NOTE:if the token spans lines due to escaped newlines then 
 	// the line number returned is the last one 
-	public int getLineNumber();  
-	public abstract int getDelta(IToken other);
-	public abstract IToken getNext();
-	public abstract void setNext(IToken t);
-	public abstract void setType(int i);	
-	public abstract boolean looksLikeExpression();
-	public abstract boolean isPointer();
-	public abstract boolean isOperator();
+	public int getLineNumber();
+	public IToken getNext();
+	
+	// setters
+	public void setImage( String i ); 
+	public void setNext(IToken t);
+	public void setType(int i);	
+
+	// queries
+	public boolean looksLikeExpression();
+	public boolean isPointer();
+	public boolean isOperator();
+	public boolean isKeywordOrOperator();
+	
+	
 	// Token types
 	static public final int tIDENTIFIER = 1;
 
@@ -306,10 +312,5 @@ public interface IToken {
 	static public final int t_restrict = 137;
 
 	static public final int tLAST = t_restrict;
-
-	/**
-	 * @return
-	 */
-	public abstract boolean isKeywordOrOperator();
 
 }

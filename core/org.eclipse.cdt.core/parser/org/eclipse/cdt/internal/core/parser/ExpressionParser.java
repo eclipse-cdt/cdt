@@ -40,7 +40,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeId;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
-import org.eclipse.cdt.internal.core.parser.token.Token;
+import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
@@ -2674,7 +2674,7 @@ public class ExpressionParser implements IExpressionParser {
 	 *  
 	 */
 	protected void backup(IToken mark) {
-	    currToken = (Token)mark;
+	    currToken = (SimpleToken)mark;
 	    lastToken = null; // this is not entirely right ... 
 	}
 

@@ -1,6 +1,11 @@
 2003-04-30 Alain Magloire
 
-	* src/org/eclipse/cdt/debug/mi/core/cdt/Configuration.java (supportsTerminate):
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java:
+	Call MIInferior.update() if attaching session.
+
+2003-04-30 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/Configuration.java (supportsTerminate):
 	Returns true.
 
 2003-04-25 Alain Magloire

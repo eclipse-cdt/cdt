@@ -194,36 +194,6 @@
             </enablement>
          </action>
          <action
-               label="%AddAddressBreakpointAction.label"
-               icon="icons/full/obj16/addrbrkp_obj.gif"
-               helpContextId="add_address_breakpoint_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddAddressBreakpointActionDelegate"
-               menubarPath="org.eclipse.ui.run/cBreakpointGroup"
-               enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddAddressBreakpointActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
-               label="%GlobalManageWatchpointAction.label"
-               icon="icons/full/obj16/readwrite_obj.gif"
-               helpContextId="manage_watchpoint_action_context"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointActionDelegate"
-               menubarPath="org.eclipse.ui.run/cBreakpointGroup"
-               disabledIcon="icons/full/obj16/readwrite_obj_disabled.gif"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ManageWatchpointActionDelegate">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-         <action
                id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"
                hoverIcon="icons/full/clcl16/signal0_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroWorkbenchActionDelegate"

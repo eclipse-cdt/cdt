@@ -1,3 +1,9 @@
+2004-06-16 Mikhail Khodjaiants
+	Removed the "Add Address Breakpoint" and "Add Watchpoint" global actions.
+	* plugin.properties
+	* plugin.xml	
+	* AddAddressBreakpointActionDelegate.java
+	
 2004-06-15 Mikhail Khodjaiants
 	Added the "Toggle Watchpoint" object contribution action.
 	* plugin.properties

@@ -680,7 +680,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                                 declarator.getPointerOperators(),
                                 declarator.getArrayModifiers(),
                                 null, null, 
-								declarator.getName() == null ? "" : declarator.getName(), //$NON-NLS-1$
+								declarator.getName(), 
                                 declarator.getInitializerClause(), 
 								wrapper.getStartingOffset(), wrapper.getStartingLine(), 
 								declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), 

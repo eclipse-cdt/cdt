@@ -10,12 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,15 +37,15 @@ public class GCCScannerExtension implements IScannerExtension {
 	protected static final ObjectMacroDescriptor STDC_VERSION_MACRO = new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L"); //$NON-NLS-1$
 	protected static final ObjectMacroDescriptor STDC_HOSTED_MACRO = new ObjectMacroDescriptor( IScanner.__STDC_HOSTED__, "0"); //$NON-NLS-1$
 	protected static final ObjectMacroDescriptor CPLUSPLUS_MACRO = new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1"); //$NON-NLS-1$
-	private static final List simpleIdentifiersDeclSpec;
-	private static final List simpleIdentifiersAttribute;
+	private static final String [] simpleIdentifiersDeclSpec;
+	private static final String [] simpleIdentifiersAttribute;
 	static
 	{
-		simpleIdentifiersDeclSpec = new ArrayList( 1 );
-		simpleIdentifiersDeclSpec.add( "x" ); //$NON-NLS-1$
+		simpleIdentifiersDeclSpec = new String[ 1 ];
+		simpleIdentifiersDeclSpec[0]= "x"; //$NON-NLS-1$
 		
-		simpleIdentifiersAttribute = new ArrayList( 1 );
-		simpleIdentifiersAttribute.add( "xyz"); //$NON-NLS-1$
+		simpleIdentifiersAttribute = new String[ 1 ];
+		simpleIdentifiersAttribute[0] = "xyz"; //$NON-NLS-1$
 	}
 
 
@@ -77,8 +74,10 @@ public class GCCScannerExtension implements IScannerExtension {
 	
 	private static final String __ATTRIBUTE__ = "__attribute__";  //$NON-NLS-1$
 	private static final String __DECLSPEC = "__declspec"; //$NON-NLS-1$
-	protected static final FunctionMacroDescriptor DECLSPEC_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  Collections.EMPTY_LIST, "" ); //$NON-NLS-1$
-	protected static final FunctionMacroDescriptor ATTRIBUTE_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersAttribute,  Collections.EMPTY_LIST, "" ); //$NON-NLS-1$
+	private static final IToken [] EMPTY_TOKEN_ARRAY = new IToken[0];
+	protected static final FunctionMacroDescriptor DECLSPEC_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_TOKEN_ARRAY, "" ); //$NON-NLS-1$
+	
+	protected static final FunctionMacroDescriptor ATTRIBUTE_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersAttribute,  EMPTY_TOKEN_ARRAY, "" ); //$NON-NLS-1$
 	
 	private static final String __EXTENSION__ = "__extension__"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$

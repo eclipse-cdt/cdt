@@ -12,6 +12,7 @@
 import java.io.File;
 import java.io.Reader;
 import java.io.StringReader;
+
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -37,7 +38,7 @@ public class ScannerUtility {
 		
 		String [] segments = originalPath.split( "[/\\\\]" ); //$NON-NLS-1$
 		if( segments.length == 1 ) return originalPath;
-		Vector results = new Vector(); 
+		Vector results = new Vector(segments.length); 
 		for( int i = 0; i < segments.length; ++i )
 		{
 			String segment = segments[i];
@@ -51,11 +52,10 @@ public class ScannerUtility {
 				results.add( segment );
 		}
 		strbuff.startString(); 
-		Iterator i = results.iterator();
-		while( i.hasNext() )
+		for( int i = 0; i < results.size(); ++i )
 		{
-			strbuff.append( (String)i.next() );
-			if( i.hasNext() )
+			strbuff.append( (String)results.elementAt(i) );
+			if( i != results.size() - 1  )
 				strbuff.append( File.separatorChar );
 		}
 		return strbuff.toString();

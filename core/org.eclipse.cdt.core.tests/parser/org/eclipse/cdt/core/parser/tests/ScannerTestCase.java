@@ -26,7 +26,6 @@ import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 
 /**
  * @author jcamelon
@@ -688,19 +687,19 @@ public class ScannerTestCase extends BaseScannerTest
 
 			IMacroDescriptor descriptor=
 				scanner.getDefinition("GO"); //$NON-NLS-1$
-			List parms= descriptor.getParameters();
+			String [] parms= descriptor.getParameters();
 			assertNotNull(parms);
-			assertTrue(parms.size() == 1);
-			String parm1= (String) parms.get(0);
+			assertTrue(parms.length == 1);
+			String parm1= parms[0];
 			assertTrue(parm1.equals("x")); //$NON-NLS-1$
-			List expansion= descriptor.getTokenizedExpansion();
+			IToken [] expansion= descriptor.getTokenizedExpansion();
 			assertNotNull(parms);
-			assertTrue(expansion.size() == 3);
-			assertTrue(((SimpleToken) expansion.get(0)).getType() == IToken.tIDENTIFIER);
-			assertTrue(((SimpleToken) expansion.get(0)).getImage().equals("x")); //$NON-NLS-1$
-			assertTrue(((SimpleToken) expansion.get(1)).getType() == IToken.tPLUS);
-			assertTrue(((SimpleToken) expansion.get(2)).getType() == IToken.tINTEGER);
-			assertTrue(((SimpleToken) expansion.get(2)).getImage().equals("1")); //$NON-NLS-1$
+			assertTrue(expansion.length == 3);
+			assertTrue((expansion[0]).getType() == IToken.tIDENTIFIER);
+			assertTrue((expansion[0]).getImage().equals("x")); //$NON-NLS-1$
+			assertTrue((expansion[1]).getType() == IToken.tPLUS);
+			assertTrue((expansion[2]).getType() == IToken.tINTEGER);
+			assertTrue((expansion[2]).getImage().equals("1")); //$NON-NLS-1$
 
 			validateIdentifier("y"); //$NON-NLS-1$
 			validateToken(IToken.tASSIGN);
@@ -737,13 +736,13 @@ public class ScannerTestCase extends BaseScannerTest
 			validateEOF();
 
 			IMacroDescriptor macro= scanner.getDefinition("SUM"); //$NON-NLS-1$
-			List params= macro.getParameters();
+			String [] params= macro.getParameters();
 			assertNotNull(params);
-			assertTrue(params.size() == 7);
+			assertTrue(params.length == 7);
 
-			List tokens= macro.getTokenizedExpansion();
+			IToken [] tokens= macro.getTokenizedExpansion();
 			assertNotNull(tokens);
-			assertTrue(tokens.size() == 15);
+			assertTrue(tokens.length == 15);
 
 			initializeScanner("#define LOG( format, var1)   printf( format, var1 )\nLOG( \"My name is %s\", \"Bogdan\" );\n"); //$NON-NLS-1$
 			validateIdentifier("printf"); //$NON-NLS-1$
@@ -1090,9 +1089,9 @@ public class ScannerTestCase extends BaseScannerTest
 		validateEOF();
 		IMacroDescriptor macro = scanner.getDefinition( "X" ); //$NON-NLS-1$
 		assertNotNull( macro ); 
-		assertEquals( macro.getParameters().size(), 1 );
-		assertEquals( (String)macro.getParameters().get(0), "Y" ); //$NON-NLS-1$
-		assertEquals( macro.getTokenizedExpansion().size(), 0 );
+		assertEquals( macro.getParameters().length, 1 );
+		assertEquals( macro.getParameters()[0], "Y" ); //$NON-NLS-1$
+		assertEquals( macro.getTokenizedExpansion().length, 0 );
 	}
 	
 	public void testBug36047() throws Exception

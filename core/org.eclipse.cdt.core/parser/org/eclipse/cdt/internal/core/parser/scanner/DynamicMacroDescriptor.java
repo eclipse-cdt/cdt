@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.core.parser.IToken;
 
 /**
  * @author jcamelon
@@ -25,6 +23,8 @@ public class DynamicMacroDescriptor implements IMacroDescriptor {
 
 	private final String name;
 	private final DynamicMacroEvaluator proxy;
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+	private static final IToken[] EMPTY_TOKEN_ARRAY = new IToken[0];
 	
 	public DynamicMacroDescriptor( String name, DynamicMacroEvaluator proxy )
 	{
@@ -41,15 +41,15 @@ public class DynamicMacroDescriptor implements IMacroDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getParameters()
 	 */
-	public List getParameters() {
-		return Collections.EMPTY_LIST;
+	public String[] getParameters() {
+		return EMPTY_STRING_ARRAY;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getTokenizedExpansion()
 	 */
-	public List getTokenizedExpansion() {
-		return Collections.EMPTY_LIST;
+	public IToken[] getTokenizedExpansion() {
+		return EMPTY_TOKEN_ARRAY;
 	}
 
 	/* (non-Javadoc)

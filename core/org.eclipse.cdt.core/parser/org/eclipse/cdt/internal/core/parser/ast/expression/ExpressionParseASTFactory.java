@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.expression;
 
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -475,7 +474,7 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		boolean isTypename,
 		boolean isComplex,
 		boolean isImaginary,
-		boolean isGlobal, Hashtable extensionParms)
+		boolean isGlobal, Map extensionParms)
 		throws ASTSemanticException {
 		// TODO Auto-generated method stub
 		return null;

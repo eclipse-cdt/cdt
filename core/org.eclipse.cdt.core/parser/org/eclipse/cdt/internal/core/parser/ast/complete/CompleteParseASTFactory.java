@@ -12,10 +12,10 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.cdt.core.parser.Enum;
@@ -1885,7 +1885,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		boolean isTypename, 
 		boolean isComplex, 
 		boolean isImaginary,
-		boolean isGlobal, Hashtable extensionParms ) throws ASTSemanticException
+		boolean isGlobal, Map extensionParms ) throws ASTSemanticException
     {
     	if( extension.overrideCreateSimpleTypeSpecifierMethod( kind ))
     		return extension.createSimpleTypeSpecifier(pst, scope, kind, typeName, isShort, isLong, isSigned, isUnsigned, isTypename, isComplex, isImaginary, isGlobal, extensionParms );

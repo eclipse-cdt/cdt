@@ -11,7 +11,6 @@
 package org.eclipse.cdt.internal.core.parser.ast;
 
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IToken;
@@ -159,7 +158,7 @@ public class GCCASTExtension implements IASTFactoryExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IASTFactoryExtension#createSimpleTypeSpecifier(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type, org.eclipse.cdt.core.parser.ITokenDuple, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean)
 	 */
-	public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(ParserSymbolTable pst, IASTScope scope, Type kind, ITokenDuple typeName, boolean isShort, boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, boolean isComplex, boolean isImaginary, boolean isGlobal, Hashtable extensionParms) {
+	public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(ParserSymbolTable pst, IASTScope scope, Type kind, ITokenDuple typeName, boolean isShort, boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, boolean isComplex, boolean isImaginary, boolean isGlobal, Map extensionParms) {
 		if( kind == IASTGCCSimpleTypeSpecifier.Type.TYPEOF )
 		{
 			ASTExpression typeOfExpression = (ASTExpression) extensionParms.get( IASTGCCSimpleTypeSpecifier.TYPEOF_EXRESSION );

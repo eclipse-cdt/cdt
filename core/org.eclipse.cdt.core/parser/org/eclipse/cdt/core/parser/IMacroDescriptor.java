@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.parser;
 
-import java.util.List;
 /**
  * @author jcamelon
  *
@@ -42,10 +41,10 @@ public interface IMacroDescriptor {
 	public MacroType getMacroType();
 	
 	// parameters for macros of type FUNCTION_LIKE
-	public List getParameters();
+	public String[] getParameters();
 	
 	// the RHS side of the macro separated into ITokens
-	public List getTokenizedExpansion();
+	public IToken[] getTokenizedExpansion();
 	
 	// the symbol name
 	public String getName();

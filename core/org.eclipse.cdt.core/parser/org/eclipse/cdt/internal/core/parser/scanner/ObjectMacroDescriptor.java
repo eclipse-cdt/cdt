@@ -10,11 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IToken;
 
@@ -26,8 +21,9 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	private final String expansionSignature;
 	private final String name;
 	private final IToken token;
-	private Boolean isCircular = null;
-	private List tokenizedExpansion = null;
+	private IToken[] tokenizedExpansion = null;
+	private static final String[] EMPTY_STRING_ARRAY  = new String[0];
+	private static final IToken[] EMPTY_TOKEN_ARRAY = new IToken[0];
 
 	public ObjectMacroDescriptor( String name, String expansionSignature )
 	{
@@ -53,19 +49,19 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getParameters()
 	 */
-	public List getParameters() {
-		return Collections.EMPTY_LIST;
+	public String[] getParameters() {
+		return EMPTY_STRING_ARRAY ;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getTokenizedExpansion()
 	 */
-	public List getTokenizedExpansion() {
-		if( token == null ) return Collections.EMPTY_LIST;
+	public IToken[] getTokenizedExpansion() {
+		if( token == null ) return EMPTY_TOKEN_ARRAY;
 		if( tokenizedExpansion == null )
 		{
-			tokenizedExpansion = new ArrayList(1);
-			tokenizedExpansion.add(token);
+			tokenizedExpansion = new IToken[1];
+			tokenizedExpansion[0]= token;
 		}
 		return tokenizedExpansion;
 	}
@@ -112,23 +108,13 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 		return expansionSignature;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#isCircular()
-	 */
-	public boolean isCircular() {
-		if( isCircular == null )
-			isCircular = new Boolean( checkIsCircular() );
-		return isCircular.booleanValue();
-	}
-
 	/**
 	 * @return
 	 */
-	protected boolean checkIsCircular() {
-		Iterator i = getTokenizedExpansion().iterator();
-		while( i.hasNext() )
+	public boolean isCircular() {
+		for( int i = 0; i < getTokenizedExpansion().length; ++i)
 		{
-			IToken t = (IToken) i.next();
+			IToken t = tokenizedExpansion[i];
 			if( t.getType() == IToken.tIDENTIFIER && t.getImage().equals(getName()))
 				return true;
 		}

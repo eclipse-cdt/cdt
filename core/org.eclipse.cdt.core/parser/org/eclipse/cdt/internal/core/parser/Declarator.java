@@ -353,7 +353,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     public DeclarationWrapper getDeclarationWrapper()
     {
     	Declarator d = this;
-    	while( d.getOwner() instanceof IDeclarator )
+    	while( d.getOwner() instanceof Declarator )
     		d = (Declarator)d.getOwner();
     	return (DeclarationWrapper)d.getOwner(); 
     }

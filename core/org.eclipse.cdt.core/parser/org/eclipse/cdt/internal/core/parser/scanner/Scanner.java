@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.EmptyStackException;
@@ -305,7 +306,7 @@ public class Scanner implements IScanner {
 
 	public void overwriteIncludePath(String [] newIncludePaths) {
 		if( newIncludePaths == null ) return;
-		scannerData.setIncludePathNames(new ArrayList());
+		scannerData.setIncludePathNames(new ArrayList(newIncludePaths.length));
 		
 		for( int i = 0; i < newIncludePaths.length; ++i )
 		{
@@ -2644,6 +2645,9 @@ public class Scanner implements IScanner {
 	protected boolean forInclusion = false;
 	private final static IParserLogService NULL_LOG_SERVICE = new NullLogService();
 	private static final String [] STRING_ARRAY = new String[0];
+	private static final IToken [] EMPTY_TOKEN_ARRAY = new IToken[0];
+	private static final int START_BUFFER_SIZE = 8;
+	private IToken[] tokenArrayBuffer = new IToken[START_BUFFER_SIZE];
 	/**
 	 * @param b
 	 */
@@ -2652,12 +2656,12 @@ public class Scanner implements IScanner {
 		forInclusion = b;
 	}
 
-	protected List tokenizeReplacementString( int beginning, String key, String replacementString, List parameterIdentifiers ) 
+	protected IToken[] tokenizeReplacementString( int beginning, String key, String replacementString, String[] parameterIdentifiers ) 
 	{
-		
 		if( replacementString.trim().equals( "" ) )  //$NON-NLS-1$
-			return Collections.EMPTY_LIST;
-		List macroReplacementTokens = new ArrayList();
+			return EMPTY_TOKEN_ARRAY;
+		IToken [] macroReplacementTokens = getTokenBuffer();
+		int currentIndex = 0;
 		IScanner helperScanner=null;
 		try {
 			helperScanner = new Scanner( 
@@ -2679,18 +2683,24 @@ public class Scanner implements IScanner {
 		}
 		
 		if( t == null )
-			return macroReplacementTokens;
+			return EMPTY_TOKEN_ARRAY;
 		
 		try {
 			while (true) {
 				//each # preprocessing token in the replacement list shall be followed
 				//by a parameter as the next reprocessing token in the list
 				if( t.getType() == tPOUND ){
-					macroReplacementTokens.add( t );
+					if( currentIndex == macroReplacementTokens.length )
+					{
+						IToken [] doubled = new IToken[macroReplacementTokens.length * 2];
+						System.arraycopy( macroReplacementTokens, 0, doubled, 0, macroReplacementTokens.length );
+						macroReplacementTokens = doubled;
+					}
+					macroReplacementTokens[currentIndex++] = t;
 					t = helperScanner.nextToken(false);
 					if( parameterIdentifiers != null )
 					{	
-						int index = parameterIdentifiers.indexOf(t.getImage());
+						int index = findIndex( parameterIdentifiers, t.getImage());
 						if (index == -1 ) {
 							//not found
 							
@@ -2703,13 +2713,19 @@ public class Scanner implements IScanner {
 								strbuff.append( replacementString );
 								handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, strbuff.toString(),
 										beginning, false, true ); 									
-								return Collections.EMPTY_LIST;
+								return EMPTY_TOKEN_ARRAY;
 							}
 						}
 					}
 				}
 				
-				macroReplacementTokens.add(t);
+				if( currentIndex == macroReplacementTokens.length )
+				{
+					IToken [] doubled = new IToken[macroReplacementTokens.length * 2];
+					System.arraycopy( macroReplacementTokens, 0, doubled, 0, macroReplacementTokens.length );
+					macroReplacementTokens = doubled;
+				}
+				macroReplacementTokens[currentIndex++] = t;
 				t = helperScanner.nextToken(false);
 			}
 		}
@@ -2720,9 +2736,19 @@ public class Scanner implements IScanner {
 		{
 		}
 		
-		return macroReplacementTokens;
+		IToken [] result = new IToken[ currentIndex ];
+		System.arraycopy( macroReplacementTokens, 0, result, 0, currentIndex );
+		return result;
 	}
 	
+	/**
+	 * @return
+	 */
+	IToken[] getTokenBuffer() {
+		Arrays.fill( tokenArrayBuffer, null );
+		return tokenArrayBuffer;
+	}
+
 	protected IMacroDescriptor createObjectMacroDescriptor(String key, String value ) {
 		IToken t = null;
 		if( !value.trim().equals( "" ) )  //$NON-NLS-1$
@@ -2788,21 +2814,21 @@ public class Scanner implements IScanner {
 
 			// replace StringTokenizer later -- not performant
 			StringTokenizer tokenizer = new StringTokenizer(parameters, ","); //$NON-NLS-1$
-			ArrayList parameterIdentifiers =
-				new ArrayList(tokenizer.countTokens());
+			String []parameterIdentifiers =	new String[tokenizer.countTokens()];
+			int ct = 0;
 			while (tokenizer.hasMoreTokens()) {
-				parameterIdentifiers.add(tokenizer.nextToken().trim());
+				parameterIdentifiers[ ct++ ] = tokenizer.nextToken().trim();
 			}
 
 			skipOverWhitespace();
 
-			List macroReplacementTokens = null;
+			IToken [] macroReplacementTokens = null;
 			String replacementString = getRestOfPreprocessorLine();
 			// TODO:  This tokenization could be done live, instead of using a sub-scanner.
 			
 			macroReplacementTokens = ( ! replacementString.equals( "" ) ) ?  //$NON-NLS-1$
 										tokenizeReplacementString( beginning, key, replacementString, parameterIdentifiers ) :
-											Collections.EMPTY_LIST;
+											EMPTY_TOKEN_ARRAY;
 			
 			descriptor = new FunctionMacroDescriptor(
 				key,
@@ -3059,10 +3085,10 @@ public class Scanner implements IScanner {
                 
 				// create a string that represents what needs to be tokenized
 				
-				List tokens = expansion.getTokenizedExpansion();
-				List parameterNames = expansion.getParameters();
+				IToken [] tokens = expansion.getTokenizedExpansion();
+				String [] parameterNames = expansion.getParameters();
 
-				if (parameterNames.size() != parameterValues.size())
+				if (parameterNames.length != parameterValues.size())
 				{ 
 					handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, symbol, getCurrentOffset(), false, true  );	
 					consumeUntilOutOfMacroExpansion();
@@ -3071,15 +3097,15 @@ public class Scanner implements IScanner {
 
 				strbuff.startString();
 				
-				int numberOfTokens = tokens.size();
+				int numberOfTokens = tokens.length;
 
 				for (int i = 0; i < numberOfTokens; ++i) {
-					t = (SimpleToken) tokens.get(i);
+					t = (SimpleToken) tokens[i];
 					if (t.getType() == IToken.tIDENTIFIER) {
 
 						// is this identifier in the parameterNames
 						// list? 
-						int index = parameterNames.indexOf(t.getImage());
+						int index = findIndex( parameterNames, t.getImage() );
 						if (index == -1 ) {
 							// not found
 							// just add image to buffer
@@ -3099,13 +3125,13 @@ public class Scanner implements IScanner {
 							strbuff.append(cache);
 						}
 						++i;
-						if( tokens.size() == i ){
+						if( tokens.length == i ){
 							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true );
 							return;
 						} 
 							
-						t = (SimpleToken) tokens.get( i );
-						int index = parameterNames.indexOf(t.getImage());
+						t = (SimpleToken) tokens[ i ];
+						int index = findIndex( parameterNames, t.getImage());
 						if( index == -1 ){
 							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true );
 							return;
@@ -3163,7 +3189,7 @@ public class Scanner implements IScanner {
 					
 					if( i != numberOfTokens - 1)
 					{
-						IToken t2 = (IToken) tokens.get(i+1);
+						IToken t2 = tokens[i+1];
 						if( t2.getType() == tPOUNDPOUND ) {
 							pastingNext = true;
 							i++;
@@ -3202,6 +3228,19 @@ public class Scanner implements IScanner {
 			TraceUtil.outputTrace(scannerData.getLogService(), "Unexpected type of MacroDescriptor stored in definitions table: ", null, expansion.getMacroType().toString(), null, null); //$NON-NLS-1$
 		}
 
+	}
+
+	/**
+	 * @param parameterNames
+	 * @param image
+	 * @return
+	 */
+	private int findIndex(String[] parameterNames, String image) {
+		for( int i = 0; i < parameterNames.length; ++i )
+			if( parameterNames[i].equals( image ) )
+				return i;
+
+		return -1;
 	}
 
 	protected String handleDefinedMacro() throws ScannerException {

@@ -10,8 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.Arrays;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IToken;
@@ -27,7 +26,7 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 	 * RHS expansion in the macro definition.
 	 * @param sig			The complete signature of the macro, as a string.
 	 */
-	public FunctionMacroDescriptor( String name, List identifiers, List tokens, String expansionSignature )
+	public FunctionMacroDescriptor( String name, String[] identifiers, IToken[] tokens, String expansionSignature )
 	{
 		this.name = name; 
 		identifierParameters = identifiers; 
@@ -36,15 +35,15 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 	}
 
 	private String name; 
-	private List identifierParameters; 
-	private List tokenizedExpansion; 
+	private String [] identifierParameters; 
+	private IToken [] tokenizedExpansion; 
 	private String expansionSignature;
-	private Boolean isCircular = null;
+	
 	/**
 	 * Returns the identifiers.
 	 * @return List
 	 */
-	public final List getParameters() {
+	public final String[] getParameters() {
 		return identifierParameters;
 	}
 
@@ -52,7 +51,7 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 	 * Returns the tokens.
 	 * @return List
 	 */
-	public final List getTokenizedExpansion() {
+	public final IToken[] getTokenizedExpansion() {
 		return tokenizedExpansion;
 	}
 
@@ -71,25 +70,23 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 	public String toString()
 	{
 		StringBuffer buffer = new StringBuffer( 128 ); 
-		int count = getParameters().size(); 
+		
+		int count = identifierParameters.length; 
 		
 		buffer.append( "MacroDescriptor with name=" + getName() + "\n" );  //$NON-NLS-1$//$NON-NLS-2$
 		buffer.append( "Number of parameters = " + count + "\n" );   //$NON-NLS-1$//$NON-NLS-2$
-		Iterator iter = getParameters().iterator(); 
-		int current = 0; 
-		while( iter.hasNext() )
-		{
-			buffer.append( "Parameter #" + current++ + " with name=" + (String) iter.next() + "\n" );   //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
-		}
+		 
+		for( int current = 0;  current < count; ++current)
+			buffer.append( "Parameter #" + current + " with name=" + identifierParameters[current] + "\n" );   //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 		
-		count = getTokenizedExpansion().size();
-		iter = getTokenizedExpansion().iterator(); 
+		
+		count = tokenizedExpansion.length;
+		 
 		
 		buffer.append( "Number of tokens = " + count + "\n" );   //$NON-NLS-1$//$NON-NLS-2$
-		current = 0; 
-		while( iter.hasNext() )
+		for( int current = 0; current < count; ++current )
 		{
-			buffer.append( "Token #" + current++ + " is " + ((IToken)iter.next()).toString() + "\n" );   //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
+			buffer.append( "Token #" + current++ + " is " + tokenizedExpansion[current].toString() + "\n" );   //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
 		}
 		
 		return buffer.toString(); 
@@ -104,13 +101,11 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 		StringBuffer fullSignature = new StringBuffer( "#define " ); //$NON-NLS-1$
 		fullSignature.append( name );
 		fullSignature.append( '(');
-		Iterator iter = getParameters().iterator(); 
-		int current = 0; 
-		while( iter.hasNext() )
+		
+		for( int current = 0; current < identifierParameters.length; ++current )
 		{
 			if (current > 0) fullSignature.append(',');
-			fullSignature.append((String)iter.next() );  
-			current++;
+			fullSignature.append(identifierParameters[current] );  
 		}
 		fullSignature.append( ") "); //$NON-NLS-1$
 		fullSignature.append( expansionSignature );
@@ -126,11 +121,33 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 		if( descriptor.getParameters() == null ) return false;
 		if( descriptor.getMacroType() != getMacroType() ) return false;
 		if( ! name.equals( descriptor.getName() )) return false;
-		if( descriptor.getParameters().size() != identifierParameters.size() ) return false; 
-		if( descriptor.getTokenizedExpansion().size() != tokenizedExpansion.size() ) return false;
+		if( descriptor.getParameters().length != identifierParameters.length ) return false; 
+		if( descriptor.getTokenizedExpansion().length != tokenizedExpansion.length ) return false;
 		
-		if( ! (descriptor.getParameters().containsAll( identifierParameters ) )) return false;
-		if( ! (descriptor.getTokenizedExpansion().containsAll( tokenizedExpansion ))) return false;
+		if( ! equivalentArrayContents( descriptor.getParameters(), getParameters() ) ) return false;
+		if( ! equivalentArrayContents( descriptor.getTokenizedExpansion(), getTokenizedExpansion() ) ) return false;
+		return true;
+	}
+
+	/**
+	 * @param list1
+	 * @param list2 
+	 * @return
+	 */
+	private boolean equivalentArrayContents(Object[] list1, Object[] list2 ) {
+		if( Arrays.equals( list1, list2  )) return true;
+		// otherwise
+		topLoop: for( int i = 0; i < list1.length; ++i )
+		{
+			Object key = list1[i];
+			for( int j = 0; j < list2 .length; ++j )
+			{
+				if( key.equals( list2 [j]) )
+					continue topLoop;
+					
+			}
+			return false;
+		}
 		return true;
 	}
 
@@ -152,23 +169,12 @@ public class FunctionMacroDescriptor implements IMacroDescriptor {
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#isCircular()
 	 */
 	public boolean isCircular() {
-		if( isCircular == null )
-			isCircular = new Boolean( checkIsCircular() );
-		return isCircular.booleanValue();
-	}
-
-	/**
-	 * @return
-	 */
-	protected boolean checkIsCircular() {
-		Iterator i = getTokenizedExpansion().iterator();
-		while( i.hasNext() )
+		for( int i = 0; i < tokenizedExpansion.length; ++i )
 		{
-			IToken t = (IToken) i.next();
+			IToken t = tokenizedExpansion[i];
 			if( t.getType() == IToken.tIDENTIFIER && t.getImage().equals(getName()))
 				return true;
 		}
 		return false;
 	}
-
 }

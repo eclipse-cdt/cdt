@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IToken;
@@ -2039,28 +2038,28 @@ public class QuickParseASTTests extends BaseASTTest
 		assertFalse( macros.hasNext() );
 		assertEquals( swap.getName(), "SWAP"); //$NON-NLS-1$
 		assertEquals( swap.getMacroType(), IMacroDescriptor.MacroType.FUNCTION_LIKE );
-		List params = swap.getParameters();
-		assertEquals( params.size(), 2 );
-		assertEquals( params.get(0), "x"); //$NON-NLS-1$
-		assertEquals( params.get(1), "y"); //$NON-NLS-1$
-		assertEquals( swap.getCompleteSignature().trim(), "#define SWAP(x,y) {x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
+		String [] params = swap.getParameters();
+		assertEquals( params.length, 2 );
+		assertEquals( params[0], "x"); //$NON-NLS-1$
+		assertEquals( params[1], "y"); //$NON-NLS-1$
+		String completeSignature = swap.getCompleteSignature().trim();
+		assertEquals( completeSignature, "#define SWAP(x,y) {x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
 		assertEquals( swap.getExpansionSignature().trim(),"{x|=y;y|=x;x|=y;}"); //$NON-NLS-1$
-		Iterator tokens = swap.getTokenizedExpansion().iterator();
-		validateToken( (IToken)tokens.next(), IToken.tLBRACE);
-		validateIdentifier( (IToken)tokens.next(), "x"); //$NON-NLS-1$
-		validateToken( (IToken) tokens.next(), IToken.tBITORASSIGN );
-		validateIdentifier( (IToken) tokens.next(), "y"); //$NON-NLS-1$
-		validateToken( (IToken) tokens.next(), IToken.tSEMI );
-		validateIdentifier( (IToken) tokens.next(), "y"); //$NON-NLS-1$
-		validateToken( (IToken) tokens.next(), IToken.tBITORASSIGN );
-		validateIdentifier( (IToken)tokens.next(), "x"); //$NON-NLS-1$
-		validateToken( (IToken) tokens.next(), IToken.tSEMI );
-		validateIdentifier( (IToken)tokens.next(), "x"); //$NON-NLS-1$
-		validateToken( (IToken) tokens.next(), IToken.tBITORASSIGN );
-		validateIdentifier( (IToken) tokens.next(), "y"); //$NON-NLS-1$
-		validateToken( (IToken) tokens.next(), IToken.tSEMI );
-		validateToken( (IToken) tokens.next(), IToken.tRBRACE );
-		assertFalse( tokens.hasNext() );
+		IToken [] tokens = swap.getTokenizedExpansion();
+		validateToken( tokens[0], IToken.tLBRACE);
+		validateIdentifier( tokens[1], "x"); //$NON-NLS-1$
+		validateToken( tokens[2], IToken.tBITORASSIGN );
+		validateIdentifier( tokens[3], "y"); //$NON-NLS-1$
+		validateToken( tokens[4], IToken.tSEMI );
+		validateIdentifier( tokens[5], "y"); //$NON-NLS-1$
+		validateToken( tokens[6], IToken.tBITORASSIGN );
+		validateIdentifier( tokens[7], "x"); //$NON-NLS-1$
+		validateToken( tokens[8], IToken.tSEMI );
+		validateIdentifier( tokens[9], "x"); //$NON-NLS-1$
+		validateToken( tokens[10], IToken.tBITORASSIGN );
+		validateIdentifier( tokens[11], "y"); //$NON-NLS-1$
+		validateToken( tokens[12], IToken.tSEMI );
+		validateToken( tokens[13], IToken.tRBRACE );
 	}
 	/**
 	 * @param token

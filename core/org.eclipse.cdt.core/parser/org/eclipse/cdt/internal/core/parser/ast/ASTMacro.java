@@ -10,10 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast;
 
-import java.util.List;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 
 /**
@@ -133,13 +133,13 @@ public class ASTMacro implements IASTMacro {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getParameters()
 	 */
-	public List getParameters() {
+	public String[] getParameters() {
 		return innerMacro.getParameters();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IMacroDescriptor#getTokenizedExpansion()
 	 */
-	public List getTokenizedExpansion() {
+	public IToken[] getTokenizedExpansion() {
 		return innerMacro.getTokenizedExpansion();
 	}
 	/* (non-Javadoc)

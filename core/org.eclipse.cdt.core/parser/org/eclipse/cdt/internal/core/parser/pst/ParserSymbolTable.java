@@ -1859,7 +1859,7 @@ public class ParserSymbolTable {
 			}
 			if( targetDecl.isType( TypeInfo.t_class, TypeInfo.t_union ) ){
 				LookupData data = new LookupData( EMPTY_NAME){
-					public List getParameters() { return parameters; };
+					public List getParameters() { return parameters; }
 					public TypeFilter getFilter() { return CONSTRUCTOR_FILTER; }
 					private List parameters = new ArrayList( 1 );
 				};
@@ -1892,7 +1892,7 @@ public class ParserSymbolTable {
 				
 				if( !name.equals(EMPTY_NAME) ){
 					LookupData data = new LookupData( "operator " + name ){ //$NON-NLS-1$
-						public List getParameters() { return Collections.EMPTY_LIST; };
+						public List getParameters() { return Collections.EMPTY_LIST; }
 						public TypeFilter getFilter() { return FUNCTION_FILTER; }
 					};
 					data.forUserDefinedConversion = true;
@@ -2040,10 +2040,7 @@ public class ParserSymbolTable {
 	private IContainerSymbol _compilationUnit;
 	private ParserLanguage   _language;
 	private ParserMode		 _mode;
-//	private ArrayList undoList = new ArrayList();
-	private HashSet markSet = new HashSet();
-	
-	public void setLanguage( ParserLanguage language ){
+public void setLanguage( ParserLanguage language ){
 		_language = language;
 	}
 	
@@ -2133,7 +2130,7 @@ public class ParserSymbolTable {
 		//this LookupData
 		public boolean isPrefixLookup(){ return false;}       //prefix lookup
 		public Set getAmbiguities()    { return null; }       
-		public void addAmbiguity(String name) {	}
+		public void addAmbiguity(String n ) {	}
 		public List getParameters()    { return null; }       //parameter info for resolving functions
 		public HashSet getAssociated() { return null; }       //associated namespaces for argument dependant lookup
 		public ISymbol getStopAt()     { return null; }       //stop looking along the stack once we hit this declaration

@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.IProblem;
@@ -338,10 +339,10 @@ public class DeclarationWrapper implements IDeclaratorOwner
     public List createASTNodes(IASTFactory astFactoryToWorkWith) throws ASTSemanticException, BacktrackException
     {
         this.astFactory = astFactoryToWorkWith;
-        Iterator i = declarators.iterator();
-        List l = new ArrayList();
-        while (i.hasNext())
-            l.add(createASTNode((Declarator)i.next()));
+        if( declarators.isEmpty() ) return Collections.EMPTY_LIST;
+        List l = new ArrayList(declarators.size());
+        for( int i = 0; i < declarators.size(); ++i )
+            l.add(createASTNode((Declarator)declarators.get(i)));
         return l;
     }
     /**
@@ -538,11 +539,11 @@ public class DeclarationWrapper implements IDeclaratorOwner
 
     private List createParameterList(List currentParameters) throws ASTSemanticException
     {
-        List result = new ArrayList();
-        Iterator i = currentParameters.iterator();
-        while (i.hasNext())
+    	if( currentParameters.isEmpty() ) return Collections.EMPTY_LIST;
+        List result = new ArrayList(currentParameters.size());
+        for( int i = 0; i < currentParameters.size(); ++i )
         {
-            DeclarationWrapper wrapper = (DeclarationWrapper)i.next();
+            DeclarationWrapper wrapper = (DeclarationWrapper)currentParameters.get(i);
             Iterator j = wrapper.getDeclarators();
             while (j.hasNext())
             {
@@ -555,9 +556,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         wrapper.getTypeSpecifier(),
                         declarator.getPointerOperators(),
                         declarator.getArrayModifiers(),
-                        null, null, declarator.getName() == null
-                                        ? "" //$NON-NLS-1$
-                                        : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), getEndLine()));
+                        null, null, declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), getEndLine()));
             }
         }
         return result;
@@ -765,16 +764,18 @@ public class DeclarationWrapper implements IDeclaratorOwner
 		return checkBit( IS_GLOBAL );
 	}
 	
-	private Hashtable extensionParameters = new Hashtable();
+	private Map extensionParameters = Collections.EMPTY_MAP;
 	/**
 	 * @param key
 	 * @param typeOfExpression
 	 */
 	public void setExtensionParameter(String key, Object value) {
+		if( extensionParameters == Collections.EMPTY_MAP )
+			extensionParameters = new Hashtable( 4 );
 		extensionParameters.put( key, value );
 	}
 	
-	public Hashtable getExtensionParameters()
+	public Map getExtensionParameters()
 	{
 		return extensionParameters;
 	}

@@ -454,11 +454,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		LookupData data = new LookupData( name ){
 			public TypeFilter getFilter() {
 				if( t == TypeInfo.t_any ) return ANY_FILTER;
-				else {
-					if( filter == null ) filter = new TypeFilter( t );
-					return filter;
-				}
-			};
+				if( filter == null ) filter = new TypeFilter( t );
+				return filter;
+			}
 			private TypeFilter filter = null;
 			private final TypeInfo.eType t = type;
 		};
@@ -554,7 +552,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 
 	public IParameterizedSymbol lookupMethodForDefinition( String name, final List parameters ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name ){
-			public List getParameters() { return params; };
+			public List getParameters() { return params; }
 			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
 		};
 		data.qualified = true;
@@ -642,14 +640,13 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		LookupData data = new LookupData( name ){
 			public TypeFilter getFilter() { 
 				if( t == TypeInfo.t_any ) return ANY_FILTER;
-				else {
-					if( filter == null )
-						filter = new TypeFilter( t );
-					return filter;
-				}
+				
+				if( filter == null )
+					filter = new TypeFilter( t );
+				return filter;
+				
 			}
 			private TypeFilter filter = null;
-			private final TypeInfo.eType type = t;
 		};
 		data.qualified = true;
 		ParserSymbolTable.lookup( data, this );
@@ -776,7 +773,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 */
 	public IParameterizedSymbol memberFunctionLookup( String name, final List parameters ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name ){
-			public List getParameters() { return params; };
+			public List getParameters() { return params; }
 			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
 			public TypeFilter getFilter() { return FUNCTION_FILTER; }
 		};
@@ -789,7 +786,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	 */
 	public IParameterizedSymbol qualifiedFunctionLookup( String name, final List parameters ) throws ParserSymbolTableException{
 		LookupData data = new LookupData( name ){
-			public List getParameters() { return params; };
+			public List getParameters() { return params; }
 			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
 			public TypeFilter getFilter() { return FUNCTION_FILTER; }
 		};
@@ -857,11 +854,11 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			public Set 		getAmbiguities(){ return ambiguities; }
 			public TypeFilter getFilter() { return typeFilter; }
 			
-			public void addAmbiguity( String name ){
+			public void addAmbiguity( String n ){
 				if( ambiguities == Collections.EMPTY_SET ){
 					ambiguities = new HashSet();
 				}
-				ambiguities.add( name );
+				ambiguities.add( n );
 			}
 			
 			final private List params = paramList;

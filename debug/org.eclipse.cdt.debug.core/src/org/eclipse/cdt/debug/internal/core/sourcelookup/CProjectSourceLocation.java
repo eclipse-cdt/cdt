@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -25,7 +26,7 @@ import org.eclipse.core.runtime.Path;
  * 
  * @since Sep 23, 2002
  */
-public class CProjectSourceLocation implements ICSourceLocation
+public class CProjectSourceLocation implements IProjectSourceLocation
 {
 	/**
 	 * The project associated with this source location

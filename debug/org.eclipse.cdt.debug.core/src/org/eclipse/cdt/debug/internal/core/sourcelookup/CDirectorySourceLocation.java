@@ -9,6 +9,7 @@ import java.io.File;
 
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
+import org.eclipse.cdt.debug.core.sourcelookup.IDirectorySourceLocation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -23,7 +24,7 @@ import org.eclipse.core.runtime.Path;
  * 
  * @since Sep 23, 2002
  */
-public class CDirectorySourceLocation implements ICSourceLocation
+public class CDirectorySourceLocation implements IDirectorySourceLocation
 {
 	/**
 	 * The root directory of this source location
@@ -87,7 +88,7 @@ public class CDirectorySourceLocation implements ICSourceLocation
 	 * 
 	 * @param directory a directory
 	 */
-	protected void setDirectory( IPath directory )
+	private void setDirectory( IPath directory )
 	{
 		fDirectory = directory;
 	}
@@ -102,7 +103,7 @@ public class CDirectorySourceLocation implements ICSourceLocation
 		return fDirectory;
 	}
 
-	protected void setAssociation( IPath association )
+	private void setAssociation( IPath association )
 	{
 		fAssociation = association;
 	}
@@ -149,18 +150,15 @@ public class CDirectorySourceLocation implements ICSourceLocation
 		IPath path = getDirectory();
 		if ( path != null )
 		{
-			path = path.append( fileName );
-	
-			// Try for a file in another workspace project
-			IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
-			if ( f != null ) 
-			{
-				return f;
-			} 
-	
+			path = path.append( fileName );	
 			File file = path.toFile();
 			if ( file.exists() )
 			{
+				IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
+				if ( f != null ) 
+				{
+					return f;
+				} 
 				return createExternalFileStorage( path );
 			}
 		}

@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
@@ -159,7 +160,7 @@ public class CSourceLocator implements ICSourceLocator
 	/**
 	 * Returns a default collection of source locations for
 	 * the given project. Default source locations consist
-	 * of the given project and all of its referenced projects .
+	 * of the given project and all of its referenced projects.
 	 * 
 	 * @param project a project
 	 * @return a collection of source locations for all required
@@ -171,13 +172,23 @@ public class CSourceLocator implements ICSourceLocator
 		ArrayList list = new ArrayList();
 		if ( project != null )
 		{
+			list.add( new CProjectSourceLocation( project ) );
+			addReferencedSourceLocations( list, project );
+		}
+		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
+	}
+
+	private static void addReferencedSourceLocations( List list, IProject project )
+	{
+		if ( project != null )
+		{
 			try
 			{
 				IProject[] projects = project.getReferencedProjects();
-				list.add( new CProjectSourceLocation( project ) );
 				for ( int i = 0; i < projects.length; i++ )
 				{
 					list.add( new CProjectSourceLocation( projects[i] ) );
+					addReferencedSourceLocations( list, projects[i] );
 				}
 			}
 			catch( CoreException e )
@@ -185,9 +196,8 @@ public class CSourceLocator implements ICSourceLocator
 				// do nothing
 			}
 		}
-		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
 	}
-	
+ 	
 	private Object findFileByAbsolutePath( String fileName )
 	{
 		Path path = new Path( fileName );

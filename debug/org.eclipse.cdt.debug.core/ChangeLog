@@ -1,3 +1,11 @@
+2002-12-18 Mikhail Khodjaiants
+	Implementation of the 'Source Lookup' property page.
+	* IDirectorySourceLocation.java: new interface
+	* IProjectSourceLocation.java: new interface
+	* CDirectorySourceLocation.java
+	* CProjectSourceLocation.java
+	* CSourceLocator.java
+
 2002-12-29 Mikhail Khodjaiants
 	 Fix in the 'supportsBreakpoints' method of CDebugTarget
 	 * CDebugTarget.java: No need to check if the breakpoint file belongs to the source locator.

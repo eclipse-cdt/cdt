@@ -1,3 +1,7 @@
+2003-07-04 Victor Mozgin
+	Added CTaskTagsReconciler.
+	Extended ParserFactory with createProblemReporter() and createTranslationResult().
+	
 2003-07-02 Victor Mozgin
 	Fixed PR 39501 : Parser problems with throw clauses.
 

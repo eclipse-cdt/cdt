@@ -1,3 +1,6 @@
+2003-07-04 Victor Mozgin
+	Added CTaskTagsReconciler.
+
 2003-07-03 Bogdan Gheorghe
 	Added support for adding individual source files to the
 	index.

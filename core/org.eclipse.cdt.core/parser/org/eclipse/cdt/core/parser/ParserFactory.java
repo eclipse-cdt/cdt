@@ -14,14 +14,20 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Map;
 
+//import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.internal.core.parser.DefaultErrorHandlingPolicies;
 import org.eclipse.cdt.internal.core.parser.LineOffsetReconciler;
 import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.Preprocessor;
 import org.eclipse.cdt.internal.core.parser.Scanner;
+import org.eclipse.cdt.internal.core.parser.TranslationOptions;
+import org.eclipse.cdt.internal.core.parser.TranslationResult;
 import org.eclipse.cdt.internal.core.parser.ast.full.FullParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
+import org.eclipse.cdt.internal.core.parser.problem.DefaultProblemFactory;
+import org.eclipse.cdt.internal.core.parser.problem.ProblemReporter;
 
 
 /**
@@ -83,5 +89,20 @@ public class ParserFactory {
 		return new LineOffsetReconciler( input ); 
 	}
 	
+	public static IProblemReporter createProblemReporter( Map options )
+	{			 
+		ITranslationOptions cOptions = new TranslationOptions(options);
+		IProblemReporter problemReporter = new ProblemReporter(
+				DefaultErrorHandlingPolicies.proceedWithAllProblems(), 
+				cOptions, 
+				new DefaultProblemFactory()
+		);
+		
+		return problemReporter; 
+	}
 	
+	public static ITranslationResult createTranslationResult( String fileName/*ITranslationUnit tu*/ )
+	{
+		return new TranslationResult( fileName /* tu */ );
+	}
 }

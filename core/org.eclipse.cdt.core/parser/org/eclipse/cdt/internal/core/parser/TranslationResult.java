@@ -21,7 +21,7 @@ package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.parser.*;
 import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.core.model.ITranslationUnit;
+//import org.eclipse.cdt.core.model.ITranslationUnit;
 
 public class TranslationResult implements ITranslationResult {
 	
@@ -29,7 +29,7 @@ public class TranslationResult implements ITranslationResult {
 	public IProblem tasks[];
 	public int problemCount;
 	public int taskCount;
-	public ITranslationUnit translationUnit;
+//	public ITranslationUnit translationUnit;
 	private int maxProblemPerUnit;
 
 	public int unitIndex, totalUnitsKnown;
@@ -49,12 +49,17 @@ public class TranslationResult implements ITranslationResult {
 	}
 
     public static final int DEFAULT_MAX_PROBLEMS_PER_UNIT = 100;
-    
+/*    
     public TranslationResult(
         ITranslationUnit translationUnit) {           
             this(translationUnit, 1, 1, DEFAULT_MAX_PROBLEMS_PER_UNIT);
     }
-	
+*/  
+	public TranslationResult(
+		String fileName) {           
+			this(fileName.toCharArray(), 1, 1, DEFAULT_MAX_PROBLEMS_PER_UNIT);
+	}
+/*	
 	public TranslationResult(
 		ITranslationUnit translationUnit,
 		int unitIndex, 
@@ -67,7 +72,7 @@ public class TranslationResult implements ITranslationResult {
 		this.totalUnitsKnown = totalUnitsKnown;
 		this.maxProblemPerUnit = maxProblemPerUnit;
 	}
-
+*/
 
 	private int computePriority(IProblem problem) {
 				
@@ -141,9 +146,9 @@ public class TranslationResult implements ITranslationResult {
 	/**
 	 * Answer the initial translation unit corresponding to the present translation result
 	 */
-	public ITranslationUnit getTranslationUnit() {
-		return translationUnit;
-	}
+//	public ITranslationUnit getTranslationUnit() {
+//		return translationUnit;
+//	}
 
 	/**
 	 * Answer the initial file name

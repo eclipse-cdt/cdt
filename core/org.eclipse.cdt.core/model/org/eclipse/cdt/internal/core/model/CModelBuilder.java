@@ -17,20 +17,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashSet;
 
-import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CTaskTagsReconciler;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.ITranslationResult;
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.IProblemReporter;
+import org.eclipse.cdt.core.parser.ITranslationResult;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
@@ -57,20 +55,11 @@ import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
-import org.eclipse.cdt.internal.core.parser.DefaultErrorHandlingPolicies;
-import org.eclipse.cdt.internal.core.parser.TranslationResult;
-import org.eclipse.cdt.internal.core.parser.TranslationOptions;
-import org.eclipse.cdt.internal.core.parser.ITranslationResultRequestor;
 import org.eclipse.cdt.internal.core.parser.Name;
-import org.eclipse.cdt.internal.core.parser.problem.DefaultProblemFactory;
-import org.eclipse.cdt.internal.core.parser.problem.ProblemReporter;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 
 
-public class CModelBuilder implements ITranslationResultRequestor {
+public class CModelBuilder {
 	
 	protected org.eclipse.cdt.internal.core.model.TranslationUnit translationUnit;
 	protected Map newElements;
@@ -83,22 +72,22 @@ public class CModelBuilder implements ITranslationResultRequestor {
 	public Map parse() throws Exception {
 		
 		DOMBuilder domBuilder = new DOMBuilder();
-		  
-		 // create a problem reporter
-        Map options = null;
-        if (translationUnit != null && translationUnit.getCProject() != null) {
-            options = translationUnit.getCProject().getOptions(true);
-        }
-        TranslationOptions cOptions = new TranslationOptions(options);
-        ProblemReporter problemReporter = new ProblemReporter(
-                DefaultErrorHandlingPolicies.proceedWithAllProblems(), 
-                cOptions, 
-                new DefaultProblemFactory()
-        );
+		
+		Map options = null;
+		IProject currentProject = null;
+		
+		if (translationUnit != null && translationUnit.getCProject() != null) {
+			options = translationUnit.getCProject().getOptions(true);
+			currentProject = translationUnit.getCProject().getProject();
+		}		
+		  		
+        // create problem reporter
+		IProblemReporter problemReporter = ParserFactory.createProblemReporter(options);
         
         // create translation result       
-        TranslationResult unitResult = new TranslationResult(translationUnit);
+        ITranslationResult unitResult = ParserFactory.createTranslationResult(translationUnit.getPath().lastSegment());
   
+  		// create parser
         IParser parser = ParserFactory.createParser(
                 ParserFactory.createScanner( 
                         new StringReader( 
@@ -113,12 +102,12 @@ public class CModelBuilder implements ITranslationResultRequestor {
                 problemReporter, unitResult
         );
         
-		if( translationUnit.getCProject() != null )
+		if( currentProject != null )
 		{
-			IProject currentProject = translationUnit.getCProject().getProject();
 			boolean hasCppNature = CoreModel.getDefault().hasCCNature(currentProject);
 			parser.setCppNature(hasCppNature);
 		}
+		
 		try
 		{
 			parser.parse();
@@ -140,7 +129,7 @@ public class CModelBuilder implements ITranslationResultRequestor {
 		}
 		
         // process translation results
-		acceptResult(unitResult);
+		CTaskTagsReconciler.getInstance().acceptResult(translationUnit, unitResult);
 		 
 		// For the debuglog to take place, you have to call
 		// Util.setDebugging(true);
@@ -1054,101 +1043,5 @@ public class CModelBuilder implements ITranslationResultRequestor {
         }
         
         return name;
-    }
-    
-    
-    /**
-     * @see ITranslatorRequestor#acceptResult(ITranslationResult)
-     */
-	public void acceptResult(ITranslationResult result) {
-		ITranslationUnit translationUnit = result.getTranslationUnit();
-        
-		try {
-			updateTasksFor(translationUnit, result); // record tasks
-		} catch (CoreException e) {
-			System.out.println("Exception while accepting parse results");
-			e.printStackTrace();
-		}
-	}
-	
-	protected void updateTasksFor(ITranslationUnit sourceFile, ITranslationResult result) throws CoreException {
-		IProblem[] tasks = result.getTasks();
-
-		storeTasksFor(sourceFile, tasks);
-	}
-	
-	protected void storeTasksFor(ITranslationUnit sourceFile, IProblem[] tasks) throws CoreException {
-		if (sourceFile == null) return;
-		
-		if (tasks == null) tasks = new IProblem[0];
-
-		IResource resource = sourceFile.getResource();
-		IMarker[] existingTaskMarkers = resource.findMarkers(ICModelMarker.TASK_MARKER, false, IResource.DEPTH_ONE);
-		HashSet taskSet = new HashSet();
-		
-		if (existingTaskMarkers != null)
-			for (int i=0; i<existingTaskMarkers.length; i++) 
-				taskSet.add(existingTaskMarkers[i]);
-
-		taskLoop:
-		for (int i = 0, l = tasks.length; i < l; i++) {
-			IProblem task = tasks[i];
-			if (task.getID() == IProblem.Task) {
-				
-				int priority = IMarker.PRIORITY_NORMAL;
-				String compilerPriority = task.getArguments()[2];
-				if (CCorePlugin.TRANSLATION_TASK_PRIORITY_HIGH.equals(compilerPriority))
-					priority = IMarker.PRIORITY_HIGH;
-				else if (CCorePlugin.TRANSLATION_TASK_PRIORITY_LOW.equals(compilerPriority))
-					priority = IMarker.PRIORITY_LOW;
-				
-				/*
-				 * Try to find matching markers and don't put in duplicates
-				 */
-				if ((existingTaskMarkers != null) && (existingTaskMarkers.length > 0)) {
-					for (int j = 0; j < existingTaskMarkers.length; j++) {
-						if (
-							   (((Integer) existingTaskMarkers[j].getAttribute(IMarker.LINE_NUMBER)).intValue() == task.getSourceLineNumber())
-							&& (((Integer) existingTaskMarkers[j].getAttribute(IMarker.PRIORITY)).intValue() == priority)
-						    && (((Integer) existingTaskMarkers[j].getAttribute(IMarker.CHAR_START)).intValue() == task.getSourceStart())
-						    && (((Integer) existingTaskMarkers[j].getAttribute(IMarker.CHAR_END)).intValue() == task.getSourceEnd()+1)
-							&& (((String) existingTaskMarkers[j].getAttribute(IMarker.MESSAGE)).equals(task.getMessage()))
-							) {
-								taskSet.remove(existingTaskMarkers[j]);
-								continue taskLoop;
-						}
-					}
-				}
-							
-				IMarker marker = resource.createMarker(ICModelMarker.TASK_MARKER);
-
-				marker.setAttributes(
-					new String[] {
-						IMarker.MESSAGE, 
-						IMarker.PRIORITY, 
-						IMarker.DONE, 
-						IMarker.CHAR_START, 
-						IMarker.CHAR_END, 
-						IMarker.LINE_NUMBER,
-						IMarker.USER_EDITABLE, 
-					}, 
-					new Object[] { 
-						task.getMessage(),
-						new Integer(priority),
-						new Boolean(false),
-						new Integer(task.getSourceStart()),
-						new Integer(task.getSourceEnd() + 1),
-						new Integer(task.getSourceLineNumber()),
-						new Boolean(false),
-					});
-			}
-		}
-		
-        // Remove all obsolete markers
-		Iterator setI = taskSet.iterator();
-		while (setI.hasNext()) {
-			IMarker marker = (IMarker)setI.next();
-			marker.delete();
-		}
-	}
+    }       
 }

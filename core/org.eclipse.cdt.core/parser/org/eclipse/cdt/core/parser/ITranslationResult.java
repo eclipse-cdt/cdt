@@ -7,7 +7,7 @@
  
 package org.eclipse.cdt.core.parser;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
+//import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * @author vmozgin
@@ -23,7 +23,7 @@ public interface ITranslationResult {
     /**
      * Answer the initial translation unit corresponding to the present translation result
      */
-    public abstract ITranslationUnit getTranslationUnit();
+//    public abstract ITranslationUnit getTranslationUnit();
     
     /**
      * Answer the initial file name

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.problem;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
+//import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IProblem;
 
 
@@ -43,7 +43,7 @@ public class DefaultProblem implements IProblem {
 		this.line = line;
 	}
 
-	public String errorReportSource(ITranslationUnit translationUnit) {
+	public String errorReportSource(char[] source) {
 		//extra from the source the innacurate     token
 		//and "highlight" it using some underneath ^^^^^
 		//put some context around too.
@@ -58,7 +58,7 @@ public class DefaultProblem implements IProblem {
 		final char SPACE = '\u0020';
 		final char MARK = '^';
 		final char TAB = '\t';
-		char[] source = translationUnit.getContents();
+		//char[] source = translationUnit.getContents();
 		//the next code tries to underline the token.....
 		//it assumes (for a good display) that token source does not
 		//contain any \r \n. This is false on statements ! 

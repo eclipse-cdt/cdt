@@ -1,3 +1,7 @@
+2004-11-15 Mikhail Khodjaiants
+	Fix for bug 78604: Disassembly causes Java exception when disassembling beyond fn(?).
+	* DisassemblyEditorInput.java
+
 2004-11-11 Mikhail Khodjaiants
 	Fix for bug 73801: Function breakpoints set from C View aren't shown in editor.
 	* ToggleBreakpointAdapter.java

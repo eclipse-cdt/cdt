@@ -11,7 +11,6 @@
 package org.eclipse.cdt.debug.internal.ui.views.disassembly;
 
 import java.util.Arrays;
-
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
 import org.eclipse.cdt.debug.core.model.IAsmInstruction;
@@ -219,8 +218,7 @@ public class DisassemblyEditorInput implements IEditorInput {
 					}
 				}
 			}
-			int instrPos = calculateInstructionPosition( maxFunctionName, maxOffset,
-														 fBlock.getSourceLines()[0].getInstructions()[0].getAdress().getCharsNum());
+			int instrPos = calculateInstructionPosition( maxFunctionName, maxOffset );
 			int argPosition = instrPos + maxOpcodeLength + 1;
 			if ( fBlock.isMixedMode() )
 				fSourceRegions = new IRegion[mi.length]; 
@@ -266,8 +264,9 @@ public class DisassemblyEditorInput implements IEditorInput {
 		return sb.toString();
 	}
 
-	private int calculateInstructionPosition( int maxFunctionName, long maxOffset, int addressLength ) {
+	private int calculateInstructionPosition( int maxFunctionName, long maxOffset ) {
 	    //(Address prefix address representation in chars) + (space) + (<) + (+) + (>) + (:) + (space)
+		int addressLength = getDisassembly().getAddressFactory().getMax().getCharsNum();
 	    return ( addressLength + 6 + maxFunctionName + Long.toString( maxOffset ).length() );
 	}
 

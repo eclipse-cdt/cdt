@@ -515,7 +515,7 @@ public class AST2Tests extends TestCase {
     	
     	//struct A;
     	IASTSimpleDeclaration decl1 = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
-    	IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) decl1.getDeclSpecifier();
+    	IASTElaboratedTypeSpecifier compTypeSpec = (IASTElaboratedTypeSpecifier) decl1.getDeclSpecifier();
     	assertEquals( 0, decl1.getDeclarators().size() );
     	IASTName nameA1 = compTypeSpec.getName();
     	
@@ -530,7 +530,7 @@ public class AST2Tests extends TestCase {
     	//   struct A * a;
     	IASTDeclarationStatement declStatement = (IASTDeclarationStatement) compoundStatement.getStatements().get(0);
     	IASTSimpleDeclaration decl2 = (IASTSimpleDeclaration) declStatement.getDeclaration();
-    	compTypeSpec = (IASTCompositeTypeSpecifier) decl2.getDeclSpecifier();
+    	compTypeSpec = (IASTElaboratedTypeSpecifier) decl2.getDeclSpecifier();
     	IASTName nameA2 = compTypeSpec.getName();  	
     	IASTDeclarator dtor = (IASTDeclarator) decl2.getDeclarators().get(0);
     	IASTName namea = dtor.getName();

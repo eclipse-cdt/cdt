@@ -233,4 +233,19 @@ public class CSearchScope implements ICSearchScope {
 			}
 		}
 	}
+
+	/**
+	 * @param finalPath
+	 */
+	public void addFile(IPath filePath, IProject fileProject) {
+		//Add the file 
+		this.add(filePath, true);
+		//Add the files' containing project - unless it's an external file
+		//in which case this is null
+		if (fileProject != null){
+			this.addEnclosingProject(fileProject.getFullPath());
+		}
+	
+	}
+
 }

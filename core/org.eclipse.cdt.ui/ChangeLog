@@ -1,3 +1,10 @@
+2003-10-08 Bogdan Gheorghe
+
+	- Modified CCompletionProcessor.java to create a file scope
+	  instead of a project scope
+	  
+	  * src/org/eclipse/cdt/internal/ui/txt/CCompletionProcessor.java
+	  
 2003-10-01 Andrew Niefer
 	-bug44032 - deleting/moving files breaks search
 		* modified src/org/eclipse/cdt/ui/CSearchResultLabelProvider getText to return empty string instead of null

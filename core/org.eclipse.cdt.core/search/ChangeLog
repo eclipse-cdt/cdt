@@ -1,3 +1,7 @@
+2003-10-06 Bogdan Gheorghe
+	- added createCFileSearchScope() to SearchEngine.java to improve
+	  code complete performance
+	  
 2003-10-01 Andrew Niefer
 	- fix bug 44026 by checking scope before reporting match in MatchLocator.report
 

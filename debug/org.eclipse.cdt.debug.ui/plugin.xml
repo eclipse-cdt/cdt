@@ -237,6 +237,21 @@
                </pluginState>
             </enablement>
          </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
+               enablesFor="1"
+               label="%ShowDebuggerConsoleAction.label"
+               menubarPath="renderGroup"
+               helpContextId="show_debugger_console_action_context"
+               icon="icons/full/clcl16/debugger_console.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
       </viewerContribution>
       <viewerContribution
             targetID="#CEditorRulerContext"
@@ -355,14 +370,14 @@
                tooltip="%RestartAction.tooltip">
          </action>
          <action
-               label="%ShowFullPathsAction.label"
-               toolbarPath="renderGroup"
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
-               disabledIcon="icons/full/dlcl16/show_paths.gif"
+               toolbarPath="renderGroup"
                hoverIcon="icons/full/clcl16/show_paths.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               disabledIcon="icons/full/dlcl16/show_paths.gif"
                icon="icons/full/elcl16/show_parents.gif"
                helpContextId="show_full_paths_action_context"
+               label="%ShowFullPathsAction.label"
                tooltip="%ShowFullPathsAction.tooltip">
          </action>
          <action
@@ -376,6 +391,18 @@
                helpContextId="switch_to_disassembly_action_context"
                label="%SwitchToDisassemblyAction.label"
                tooltip="%SwitchToDisassemblyAction.tooltip">
+         </action>
+         <action
+               toolbarPath="renderGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
+               hoverIcon="icons/full/clcl16/debugger_console.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate"
+               disabledIcon="icons/full/dlcl16/debugger_console.gif"
+               enablesFor="1"
+               icon="icons/full/elcl16/debugger_console.gif"
+               helpContextId="show_debugger_console_action_context"
+               label="%ShowDebuggerConsoleAction.label"
+               tooltip="%ShowDebuggerConsoleAction.tooltip">
          </action>
       </viewContribution>
       <viewContribution
@@ -459,6 +486,9 @@
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate">
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.DebuggerConsoleActionDelegate">
          </action>
       </debugActionGroup>
    </extension>

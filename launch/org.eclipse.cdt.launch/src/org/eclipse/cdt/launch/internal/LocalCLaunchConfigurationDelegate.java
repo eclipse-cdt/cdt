@@ -170,7 +170,9 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 				dialog.setElements(plist.getProcessList());
 				if (dialog.open() == ElementListSelectionDialog.OK) {
 					IProcessInfo info = (IProcessInfo) dialog.getFirstResult();
-					pid[0] = info.getPid();
+					if ( info != null ) {
+						pid[0] = info.getPid();
+					}
 				}
 			}
 		});

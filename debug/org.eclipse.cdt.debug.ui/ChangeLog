@@ -1,5 +1,13 @@
 2005-02-14 Mikhail Khodjaiants
 	Bug 82264: Enhance the Shared Libraries view.
+	New images for the "Load Symbols" action.
+	* plugin.xml
+	* icons/full/clcl16/load_symbols_co.gif
+	* icons/full/dlcl16/load_symbols_co.gif
+	* icons/full/elcl16/load_symbols_co.gif
+
+2005-02-14 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
 	Added the "Load Symbols" action.
 	* LoadModuleSymbolsActionDelegate.java: new
 	* ActionMessages.properties

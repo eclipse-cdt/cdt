@@ -737,7 +737,7 @@
                enablesFor="1"
                label="%LoadSymbolsAction.label"
                tooltip="%LoadSymbolsAction.tooltip"
-               icon="icons/full/clcl16/load_symbols_co.gif"
+               icon="icons/full/elcl16/load_symbols_co.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.LoadModuleSymbolsActionDelegate"
                menubarPath="modulesGroup"
                id="org.eclipse.cdt.debug.ui.LoadSymbolsAction"/>

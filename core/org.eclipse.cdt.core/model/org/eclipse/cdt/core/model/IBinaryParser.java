@@ -85,4 +85,6 @@ public interface IBinaryParser {
 	}
 
 	public IBinaryFile getBinary(IFile file) throws IOException;
+	
+	public String getFormat();
 }

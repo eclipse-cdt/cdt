@@ -176,6 +176,8 @@ public abstract class CVariable extends CDebugElement
 
 		private ICType fType = null;
 
+		private String fQualifiedName = null;
+
 		public InternalVariable( ICDIVariableObject varObject )
 		{
 			setCDIVariableObject( varObject );
@@ -292,7 +294,11 @@ public abstract class CVariable extends CDebugElement
 
 		protected String getQualifiedName() throws CDIException
 		{
-			return ( fCDIVariableObject != null ) ? fCDIVariableObject.getQualifiedName() : null;
+			if ( fQualifiedName == null )
+			{
+				fQualifiedName = ( fCDIVariableObject != null ) ? fCDIVariableObject.getQualifiedName() : null;
+			}
+			return fQualifiedName;
 		}
 	}
 
@@ -320,11 +326,6 @@ public abstract class CVariable extends CDebugElement
 	 * The name of this variable.
 	 */
 	private String fName = null;
-
-	/**
-	 * The full name of this variable.
-	 */
-	protected String fQualifiedName = null;
 
 	/**
 	 * Change flag.
@@ -902,18 +903,16 @@ public abstract class CVariable extends CDebugElement
 
 	protected String getQualifiedName() throws DebugException
 	{
-		if ( fQualifiedName == null )
+		String result = null;
+		try
 		{
-			try
-			{
-				fQualifiedName = getInternalVariable().getQualifiedName();
-			}
-			catch( CDIException e )
-			{
-				requestFailed( "Qualified name is not available.", e );
-			}
+			result = getInternalVariable().getQualifiedName();
 		}
-		return fQualifiedName;
+		catch( CDIException e )
+		{
+			requestFailed( "Qualified name is not available.", e );
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)

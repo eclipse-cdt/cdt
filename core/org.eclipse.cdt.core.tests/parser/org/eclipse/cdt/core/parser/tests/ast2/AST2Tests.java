@@ -47,6 +47,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.parser.CodeReader;
@@ -272,7 +273,6 @@ public class AST2Tests extends TestCase {
 		IASTLiteralExpression lit_5 = (IASTLiteralExpression)assexpr.getOperand2();
 		assertEquals("5", lit_5.toString()); //$NON-NLS-1$
 
-
 		//Logical Bindings In Test
 		ICompositeType type_struct = (ICompositeType) name_struct.resolveBinding();
 		ITypedef typedef_S = (ITypedef) name_S.resolveBinding();
@@ -283,6 +283,7 @@ public class AST2Tests extends TestCase {
 		assertEquals(typedef_S, typedef_myS);
 		// get the real type for S which is our anonymous struct
 		ICompositeType type_myS = (ICompositeType)typedef_myS.getType();
+		assertEquals( type_myS, type_struct );
 		// the variable myS
 		IVariable var_myS = (IVariable)name_myS.resolveBinding();
 		assertEquals(typedef_S, var_myS.getType());
@@ -438,7 +439,6 @@ public class AST2Tests extends TestCase {
     public void testMultipleDeclarators() throws Exception {
 		IASTTranslationUnit tu = parse( "int r, s;" , ParserLanguage.C ); //$NON-NLS-1$
 		IASTSimpleDeclaration decl = (IASTSimpleDeclaration)tu.getDeclarations().get(0);
-		IASTSimpleDeclSpecifier type = (IASTSimpleDeclSpecifier)decl.getDeclSpecifier();
 		List declarators = decl.getDeclarators();
 		assertEquals( 2, declarators.size() );
 		
@@ -448,8 +448,8 @@ public class AST2Tests extends TestCase {
 		IASTName name1 = dtor1.getName();
 		IASTName name2 = dtor2.getName();
 		
-		assertEquals( name1.resolveBinding().getName(), "r" );
-		assertEquals( name2.resolveBinding().getName(), "s" );
+		assertEquals( name1.resolveBinding().getName(), "r" ); //$NON-NLS-1$
+		assertEquals( name2.resolveBinding().getName(), "s" ); //$NON-NLS-1$
     }
     
     public void testStructureTagScoping_1() throws Exception{
@@ -470,9 +470,6 @@ public class AST2Tests extends TestCase {
     	
     	//void f() {
     	IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
-    	IASTDeclarator fndtor = fndef.getDeclarator();
-    	IASTName namef = fndtor.getName();
-    	
     	IASTCompoundStatement compoundStatement = (IASTCompoundStatement) fndef.getBody();
     	assertEquals( 2, compoundStatement.getStatements().size() );
     	
@@ -491,7 +488,7 @@ public class AST2Tests extends TestCase {
     	IASTDeclarator dtor = (IASTDeclarator) decl3.getDeclarators().get(0);
     	IASTName namea = dtor.getName();
     	assertEquals( 1, dtor.getPointerOperators().size() );
-    	ICASTPointer ptrOp = (ICASTPointer) dtor.getPointerOperators().get(0);
+    	assertTrue( dtor.getPointerOperators().get(0) instanceof ICASTPointer );
 
     	//bindings
     	ICompositeType str1 = (ICompositeType) nameA1.resolveBinding();
@@ -499,6 +496,8 @@ public class AST2Tests extends TestCase {
     	IVariable var = (IVariable) namea.resolveBinding();
     	ICompositeType str3 = (ICompositeType) var.getType();
     	ICompositeType str4 = (ICompositeType) nameA3.resolveBinding();
+    	assertNotNull( str1 );
+    	assertNotNull( str2 );
     	assertNotSame( str1, str2 );
     	assertSame( str2, str3 );
     	assertSame( str3, str4 );
@@ -506,10 +505,10 @@ public class AST2Tests extends TestCase {
     
     public void testStructureTagScoping_2() throws Exception{
     	StringBuffer buffer = new StringBuffer();
-    	buffer.append( "struct A;             \n" );
-    	buffer.append( "void f(){             \n" );
-    	buffer.append( "   struct A * a;      \n" );
-    	buffer.append( "}                     \n" );
+    	buffer.append( "struct A;             \n" ); //$NON-NLS-1$
+    	buffer.append( "void f(){             \n" ); //$NON-NLS-1$
+    	buffer.append( "   struct A * a;      \n" ); //$NON-NLS-1$
+    	buffer.append( "}                     \r\n" ); //$NON-NLS-1$
 
     	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
     	
@@ -521,9 +520,6 @@ public class AST2Tests extends TestCase {
     	
     	//void f() {
     	IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu.getDeclarations().get(1);
-    	IASTDeclarator fndtor = fndef.getDeclarator();
-    	IASTName namef = fndtor.getName();
-    	
     	IASTCompoundStatement compoundStatement = (IASTCompoundStatement) fndef.getBody();
     	assertEquals( 1, compoundStatement.getStatements().size() );
     	  	
@@ -535,14 +531,81 @@ public class AST2Tests extends TestCase {
     	IASTDeclarator dtor = (IASTDeclarator) decl2.getDeclarators().get(0);
     	IASTName namea = dtor.getName();
     	assertEquals( 1, dtor.getPointerOperators().size() );
-    	ICASTPointer ptrOp = (ICASTPointer) dtor.getPointerOperators().get(0);
+    	assertTrue( dtor.getPointerOperators().get(0) instanceof ICASTPointer );
 
     	//bindings
     	ICompositeType str1 = (ICompositeType) nameA1.resolveBinding();
     	ICompositeType str2 = (ICompositeType) nameA2.resolveBinding();
     	IVariable var = (IVariable) namea.resolveBinding();
     	ICompositeType str3 = (ICompositeType) var.getType();
+    	assertNotNull( str1 );
     	assertSame( str1, str2 );
     	assertSame( str2, str3 );
+    }
+    
+    public void testStructureDef() throws Exception{
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "struct A;                \r\n"); //$NON-NLS-1$
+    	buffer.append( "struct A * a;            \n"); //$NON-NLS-1$
+    	buffer.append( "struct A { int i; };     \n"); //$NON-NLS-1$
+    	buffer.append( "void f() {               \n"); //$NON-NLS-1$
+    	buffer.append( "   a->i;                 \n"); //$NON-NLS-1$
+    	buffer.append( "}                        \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+    	
+    	//struct A;
+    	IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations().get(0);
+    	IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) decl.getDeclSpecifier();
+    	assertEquals( 0, decl.getDeclarators().size() );
+    	IASTName name_A1 = elabTypeSpec.getName();
+    	
+    	//struct A * a;
+    	decl = (IASTSimpleDeclaration) tu.getDeclarations().get(1);
+    	elabTypeSpec = (IASTElaboratedTypeSpecifier) decl.getDeclSpecifier();
+    	IASTName name_A2 = elabTypeSpec.getName();  	
+    	IASTDeclarator dtor = (IASTDeclarator) decl.getDeclarators().get(0);
+    	IASTName name_a = dtor.getName();
+    	assertEquals( 1, dtor.getPointerOperators().size() );
+    	assertTrue( dtor.getPointerOperators().get(0) instanceof ICASTPointer );
+    	
+    	//struct A {
+    	decl = (IASTSimpleDeclaration) tu.getDeclarations().get(2);
+    	ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) decl.getDeclSpecifier();
+    	IASTName name_Adef = compTypeSpec.getName();
+    	
+    	//   int i;
+    	decl = (IASTSimpleDeclaration) compTypeSpec.getMembers().get(0);
+    	dtor = (IASTDeclarator) decl.getDeclarators().get(0);
+    	IASTName name_i = dtor.getName();
+    
+    	//void f() {
+    	IASTFunctionDefinition fndef = (IASTFunctionDefinition) tu.getDeclarations().get(3);
+    	IASTCompoundStatement compoundStatement = (IASTCompoundStatement) fndef.getBody();
+    	assertEquals( 1, compoundStatement.getStatements().size() );
+    	
+    	//   a->i;
+		IASTExpressionStatement exprstmt = (IASTExpressionStatement)compoundStatement.getStatements().get(0);
+		IASTFieldReference fieldref = (IASTFieldReference)exprstmt.getExpression();
+		IASTIdExpression id_a = (IASTIdExpression) fieldref.getFieldOwner();
+		IASTName name_aref = id_a.getName();
+		IASTName name_iref = fieldref.getFieldName();
+
+		//bindings
+		IVariable var_a1 = (IVariable) name_aref.resolveBinding();
+		IVariable var_i1 = (IVariable) name_iref.resolveBinding();
+		ICompositeType structA_1 = (ICompositeType) var_a1.getType();
+		ICompositeType structA_2 = (ICompositeType) name_A1.resolveBinding();
+		ICompositeType structA_3 = (ICompositeType) name_A2.resolveBinding();
+		ICompositeType structA_4 = (ICompositeType) name_Adef.resolveBinding();
+		
+		IVariable var_a2 = (IVariable) name_a.resolveBinding();
+		IVariable var_i2 = (IVariable) name_i.resolveBinding();
+		
+		assertSame( var_a1, var_a2 );
+		assertSame( var_i1, var_i2 );
+		assertSame( structA_1, structA_2 );
+		assertSame( structA_2, structA_3 );
+		assertSame( structA_3, structA_4 );
     }
 }

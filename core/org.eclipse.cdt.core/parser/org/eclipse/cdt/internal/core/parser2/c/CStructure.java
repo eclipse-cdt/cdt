@@ -14,7 +14,9 @@ package org.eclipse.cdt.internal.core.parser2.c;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -28,30 +30,54 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
  * @author aniefer
  */
 public class CStructure implements ICompositeType {
-	private final ICASTCompositeTypeSpecifier compositeTypeSpec;
+	private IASTDeclSpecifier declSpec;
 	
-	public CStructure( ICASTCompositeTypeSpecifier compositeTypeSpec ){
-		this.compositeTypeSpec = compositeTypeSpec;
+	public CStructure( IASTDeclSpecifier declSpec ){
+		this.declSpec = declSpec;
+		checkForDefinition();
+	}
+	
+	private void checkForDefinition(){
+		if( declSpec instanceof ICASTCompositeTypeSpecifier )
+			return;
+		
+		IASTDeclSpecifier spec = CVisitor.findDefinition( (IASTElaboratedTypeSpecifier) declSpec );
+		if( spec != null && spec instanceof ICASTCompositeTypeSpecifier ){
+			this.declSpec = spec;
+			ICASTCompositeTypeSpecifier compTypeSpec = (ICASTCompositeTypeSpecifier) spec;
+			((CASTName)compTypeSpec.getName()).setBinding( this );
+		}
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return compositeTypeSpec.getName().toString();
+		if( declSpec instanceof ICASTCompositeTypeSpecifier )
+			return ((ICASTCompositeTypeSpecifier)declSpec).getName().toString();
+		else if( declSpec instanceof IASTElaboratedTypeSpecifier )
+			return ((IASTElaboratedTypeSpecifier)declSpec).getName().toString();
+		
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CVisitor.getContainingScope( compositeTypeSpec );
+		return CVisitor.getContainingScope( declSpec );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
 	public List getFields() {
+		if( !( declSpec instanceof ICASTCompositeTypeSpecifier ) ){
+			//error
+			return null;
+		}
+		
+		ICASTCompositeTypeSpecifier compositeTypeSpec = (ICASTCompositeTypeSpecifier) declSpec;
 		List members = compositeTypeSpec.getMembers();
 		int size = members.size();
 		List fields = new ArrayList( size );
@@ -78,6 +104,12 @@ public class CStructure implements ICompositeType {
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#findField(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public IField findField(String name) {
+		if( !( declSpec instanceof ICASTCompositeTypeSpecifier ) ){
+			//error
+			return null;
+		}
+		
+		ICASTCompositeTypeSpecifier compositeTypeSpec = (ICASTCompositeTypeSpecifier) declSpec;
 		List members = compositeTypeSpec.getMembers();
 		int size = members.size();
 		if( size > 0 ){

@@ -14,6 +14,7 @@ package org.eclipse.cdt.internal.core.parser2.c;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
@@ -42,6 +43,9 @@ public class CVariable implements IVariable {
 		if( declSpec instanceof ICASTTypedefNameSpecifier ){
 			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
 			return (IType) nameSpec.getName().resolveBinding();
+		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
+			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
+			return (IType) elabTypeSpec.getName().resolveBinding();
 		}
 		return null;
 	}

@@ -22,7 +22,13 @@ import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -231,16 +237,56 @@ public class ManagedProject extends BuildObject implements IManagedProject {
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedProject#removeConfiguration(java.lang.String)
 	 */
 	public void removeConfiguration(String id) {
-		// Remove the specified configuration from the list and map
-		Iterator iter = getConfigurationList().listIterator();
-		while (iter.hasNext()) {
-			 IConfiguration config = (IConfiguration)iter.next();
-			 if (config.getId().equals(id)) {
-			 	getConfigurationList().remove(config);
-				getConfigurationMap().remove(id);
-			 	break;
-			 }
+		final String removeId = id;
+		IWorkspaceRunnable remover = new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				// Remove the specified configuration from the list and map
+				Iterator iter = getConfigurationList().listIterator();
+				while (iter.hasNext()) {
+					 IConfiguration config = (IConfiguration)iter.next();
+					 if (config.getId().equals(removeId)) {
+						// TODO:  For now we clean the entire project.  This may be overkill, but
+						//        it avoids a problem with leaving the configuration output directory
+					 	//        around and having the outputs try to be used by the makefile generator code.
+					 	IResource proj = config.getOwner();
+						IManagedBuildInfo info = null;
+					 	if (proj instanceof IProject) {
+							info = ManagedBuildManager.getBuildInfo(proj);
+					 	}
+						IConfiguration currentConfig = null;
+						boolean isCurrent = true;
+			 			if (info != null) {
+			 				currentConfig = info.getDefaultConfiguration();
+			 				if (!currentConfig.getId().equals(removeId)) {
+			 					info.setDefaultConfiguration(config);
+			 					isCurrent = false;
+			 				}
+			 			}
+			 			((IProject)proj).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+					 	
+					 	getConfigurationList().remove(config);
+						getConfigurationMap().remove(removeId);
+
+						if (info != null) {
+							if (!isCurrent) {
+			 					info.setDefaultConfiguration(currentConfig);								
+							} else {
+								// If the current default config is the one being removed, reset the default config
+								String[] configs = info.getConfigurationNames();
+								if (configs.length > 0) {
+									info.setDefaultConfiguration(configs[0]);
+								}
+							}
+			 			}
+						break;
+					}
+				}
+			}
+		};
+		try {
+			ResourcesPlugin.getWorkspace().run( remover, null );
 		}
+		catch( CoreException e ) {}
 		setDirty(true);
 	}
 

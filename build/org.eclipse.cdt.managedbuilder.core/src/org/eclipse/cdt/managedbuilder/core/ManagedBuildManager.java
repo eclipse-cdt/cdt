@@ -79,6 +79,10 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -807,7 +811,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			ManagedBuildInfo buildInfo = (ManagedBuildInfo) getBuildInfo(project);
 
 			// Save the build info
-			if (buildInfo != null && !buildInfo.isReadOnly() && (force == true || buildInfo.isDirty())) {
+			if (buildInfo != null && 
+					!buildInfo.isReadOnly() &&
+					buildInfo.isValid() &&
+					(force == true || buildInfo.isDirty())) {
 				// For post-2.0 projects, there will be a version
 				String projectVersion = buildInfo.getVersion();
 				if (projectVersion != null) {
@@ -1158,8 +1165,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				}
 			}
 		} catch (Exception e) {
-			buildInfo = null;
-			// TODO:  Issue an error message that the managed build project file (.cdtbuild) is invalid
+			throw e;
 		}
 		
 		try {
@@ -1198,8 +1204,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 					try{
 						UpdateManagedProjectManager.updateProject(project,buildInfo);
 					} catch(CoreException e){
-						//TODO: error occured while updating the project,
-						//handle error, log error or display the message
+						throw e;
 					}
 				}
 				project.setSessionProperty(buildInfoProperty, buildInfo);
@@ -1207,6 +1212,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		} catch (Exception e) {
 			throw e;
 		}
+		
+		buildInfo.setValid(true);
 		return buildInfo;
 	}
 
@@ -1529,7 +1536,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 *   
 	 * @param resource The resource the build information is associated with
 	 */
-	public static void createBuildInfo(IResource resource) {
+	public static ManagedBuildInfo createBuildInfo(IResource resource) {
 		ManagedBuildInfo buildInfo = new ManagedBuildInfo(resource);
 		try {
 			// Associate the build info with the project for the duration of the session
@@ -1538,6 +1545,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			// There is no point in keeping the info around if it isn't associated with the project
 			buildInfo = null;
 		}
+		return buildInfo;
 	}
 	
 	private static IManagedConfigElementProvider createConfigProvider(
@@ -1673,7 +1681,28 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				try {
 					buildInfo = loadBuildInfo(project);
 				} catch (Exception e) {
-					// TODO:  Issue error reagarding not being able to load the project file (.cdtbuild)
+					// Issue error regarding not being able to load the project file (.cdtbuild)
+					if (buildInfo == null) {
+						buildInfo = createBuildInfo(project); 
+					}
+					buildInfo.setValid(false);
+					//  Display error message
+					IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+					if(window == null){
+						IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+						window = windows[0];
+					}
+
+					final Shell shell = window.getShell();
+					final String exceptionMsg = e.getMessage(); 
+					shell.getDisplay().syncExec( new Runnable() {
+						public void run() {
+							MessageDialog.openError(shell, 
+									ManagedMakeMessages.getResourceString("ManagedBuildManager.error.open_failed_title"),	//$NON-NLS-1$
+									ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.open_failed",			//$NON-NLS-1$
+											exceptionMsg));
+						}
+					} );
 				}
 				
 				try {

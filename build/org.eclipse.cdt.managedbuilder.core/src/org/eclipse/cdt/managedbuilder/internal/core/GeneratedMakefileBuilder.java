@@ -222,7 +222,11 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			outputError(getProject().getName(), "Build information was not found");	//$NON-NLS-1$
 			return referencedProjects;
 		}
-
+		if (!info.isValid()) {
+			outputError(getProject().getName(), "Build information is not valid");	//$NON-NLS-1$
+			return referencedProjects;
+		}
+		
 		// Create a makefile generator for the build
 		IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 		generator.initialize(getProject(), info, monitor);
@@ -281,6 +285,10 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 		if (info == null) {
 			outputError(getProject().getName(), "Build information was not found");	//$NON-NLS-1$
+			return;
+		}
+		if (!info.isValid()) {
+			outputError(getProject().getName(), "Build information is not valid");	//$NON-NLS-1$
 			return;
 		}
 		IPath buildDirPath = getProject().getLocation().append(info.getConfigurationName());

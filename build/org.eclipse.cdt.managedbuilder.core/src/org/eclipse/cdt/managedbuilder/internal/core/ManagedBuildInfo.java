@@ -72,6 +72,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	private IConfiguration defaultConfig;
 	private String defaultConfigId;
 	private boolean isDirty;
+	private boolean isValid = false;
 	private IResource owner;
 	private boolean rebuildNeeded;
 	private String version;
@@ -390,31 +391,33 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		if (location == null) {
 			location = new Path("."); //$NON-NLS-1$
 		}
-		IPath root = location.addTrailingSeparator().append(config.getName());
-		ITool[] tools = config.getFilteredTools();
-		for (int i = 0; i < tools.length; i++) {
-			ITool tool = tools[i];
-			// The tool checks out for this project, get its options
-			IOption[] opts = tool.getOptions();
-			for (int j = 0; j < opts.length; j++) {
-				IOption option = opts[j];
-				try {
-					if (option.getValueType() == IOption.INCLUDE_PATH) {
-						// Get all the user-defined paths from the option as absolute paths
-						String[] userPaths = option.getIncludePaths();
-						for (int index = 0; index < userPaths.length; ++index) {
-							IPath userPath = new Path(userPaths[index]);
-							if (userPath.isAbsolute()) {
-								paths.add(userPath.toOSString());
-							} else {
-								IPath absPath = root.addTrailingSeparator().append(userPath);
-								paths.add(absPath.makeAbsolute().toOSString());
+		if (config != null) {
+			IPath root = location.addTrailingSeparator().append(config.getName());
+			ITool[] tools = config.getFilteredTools();
+			for (int i = 0; i < tools.length; i++) {
+				ITool tool = tools[i];
+				// The tool checks out for this project, get its options
+				IOption[] opts = tool.getOptions();
+				for (int j = 0; j < opts.length; j++) {
+					IOption option = opts[j];
+					try {
+						if (option.getValueType() == IOption.INCLUDE_PATH) {
+							// Get all the user-defined paths from the option as absolute paths
+							String[] userPaths = option.getIncludePaths();
+							for (int index = 0; index < userPaths.length; ++index) {
+								IPath userPath = new Path(userPaths[index]);
+								if (userPath.isAbsolute()) {
+									paths.add(userPath.toOSString());
+								} else {
+									IPath absPath = root.addTrailingSeparator().append(userPath);
+									paths.add(absPath.makeAbsolute().toOSString());
+								}
 							}
 						}
+					} catch (BuildException e) {
+						// TODO: report error
+						continue;
 					}
-				} catch (BuildException e) {
-					// TODO: report error
-					continue;
 				}
 			}
 		}
@@ -670,9 +673,27 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		
 		// Check if the project is dirty
-		return managedProject.isDirty();
+		if (managedProject != null) {
+			return managedProject.isDirty();
+		}
+		return false;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#isValid()
+	 */
+	public boolean isValid() {
+		// If the info has been flagged as valid, answer true
+		return isValid;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#isReadOnly()
+	 */
+	public boolean isReadOnly(){
+		return isReadOnly;
+	}
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#isHeaderFile(java.lang.String)
 	 */
@@ -773,8 +794,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#setDefaultConfiguration(org.eclipse.cdt.core.build.managed.IConfiguration)
 	 */
 	public void setDefaultConfiguration(IConfiguration configuration) {
+		// TODO:  This is probably wrong.  I'll bet we don't handle the case where all configs are deleted...
+		//        But, at least, our UI does not allow the last config to be deleted.		
 		// Sanity
 		if (configuration == null) return;
+
 		if (!configuration.equals(getDefaultConfiguration())) {
 			// Save it
 			defaultConfig = configuration;
@@ -812,6 +836,23 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		if (managedProject != null) {
 			managedProject.setDirty(isDirty);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#setValid(boolean)
+	 */
+	public void setValid(boolean isValid) {
+		// Reset the valid status
+		this.isValid = isValid;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#setReadOnly(boolean)
+	 */
+	public void setReadOnly(boolean readOnly){
+		if(!readOnly && isReadOnly)
+			setDirty(true);
+		isReadOnly = readOnly;
 	}
 
 	/* (non-Javadoc)
@@ -931,15 +972,5 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			targetList = new ArrayList();
 		}
 		return targetList;	
-	}
-
-	public void setReadOnly(boolean readOnly){
-		if(!readOnly && isReadOnly)
-			setDirty(true);
-		isReadOnly = readOnly;
-	}
-	
-	public boolean isReadOnly(){
-		return isReadOnly;
 	}
 }

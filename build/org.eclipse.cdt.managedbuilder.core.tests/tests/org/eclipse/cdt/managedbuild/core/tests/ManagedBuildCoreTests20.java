@@ -733,7 +733,8 @@ public class ManagedBuildCoreTests20 extends TestCase {
 	
 	private void addManagedBuildNature (IProject project) {
 		// Create the buildinformation object for the project
-		ManagedBuildManager.createBuildInfo(project);
+		IManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+		info.setValid(true);
 		
 		// Add the managed build nature
 		try {

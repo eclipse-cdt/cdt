@@ -141,6 +141,7 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			invalidInfo.setFont(parent.getFont());
 			invalidInfo.setText(ManagedBuilderUIMessages.getResourceString("BuildPropertyPage.error.version_low"));	//$NON-NLS-1$
 			invalidInfo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING, GridData.VERTICAL_ALIGN_CENTER, true, true));
+			noDefaultAndApplyButton();
 			return;
 		}
 		projectTypes = ManagedBuildManager.getDefinedProjectTypes();

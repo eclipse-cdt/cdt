@@ -95,7 +95,10 @@ public interface ITool extends IBuildObject {
 	public IOption getOptionById(String id);
 	
 	/**
-	 * Answers the options that may be customized for this tool.
+	 * Returns the complete list of options that are available for this tool.
+	 * The list is a merging of the options specified for this tool with the 
+	 * options of its superclasses.  The lowest option instance in the hierarchy
+	 * takes precedence.  
 	 * 
 	 * @return IOption[]
 	 */

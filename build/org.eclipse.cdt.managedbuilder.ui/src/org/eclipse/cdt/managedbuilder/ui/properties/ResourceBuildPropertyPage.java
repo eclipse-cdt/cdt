@@ -152,6 +152,9 @@ public class ResourceBuildPropertyPage extends PropertyPage implements
 			invalidInfo.setFont(composite.getFont());
 			invalidInfo.setText(ManagedBuilderUIMessages.getResourceString("ResourceBuildPropertyPage.error.version_low")); //$NON-NLS-1$
 			invalidInfo.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING,GridData.VERTICAL_ALIGN_CENTER, true, true));
+			noContentOnPage = true;
+			noDefaultAndApplyButton();
+			return;
 		}
 		
 		// Add a config selection area

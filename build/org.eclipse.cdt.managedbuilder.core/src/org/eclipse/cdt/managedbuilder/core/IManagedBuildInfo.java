@@ -272,13 +272,21 @@ public interface IManagedBuildInfo {
 	public boolean isHeaderFile(String ext);
 	
 	/**
-	 * gets the read only status of Managed Build Info
+	 * Gets the read only status of Managed Build Info
 	 * 
 	 * @return <code>true</code> if Managed Build Info is read only
 	 * otherwise returns <code>false</code>
 	 */
 	public boolean isReadOnly();
-
+	
+	/**
+	 * Gets the "valid" status of Managed Build Info.  Managed Build Info is invalid
+	 * if the loading of, or conversion to, the Managed Build Info failed. 
+	 * 
+	 * @return <code>true</code> if Managed Build Info is valid,
+	 * otherwise returns <code>false</code>
+	 */
+	public boolean isValid();
 	
 	/**
 	 * Answers whether the receiver has been changed and requires the 
@@ -314,11 +322,18 @@ public interface IManagedBuildInfo {
 	public boolean setDefaultConfiguration(String configName);
 	
 	/**
-	 * Set the dirty flag for the build model to the value of the argument.
+	 * Sets the dirty flag for the build model to the value of the argument.
 	 * 
 	 * @param isDirty
 	 */
 	public void setDirty(boolean isDirty);
+	
+	/**
+	 * Sets the valid flag for the build model to the value of the argument.
+	 * 
+	 * @param isValid
+	 */
+	public void setValid(boolean isValid);
 
 	/**
 	 * Sets the ManagedProject associated with this build info

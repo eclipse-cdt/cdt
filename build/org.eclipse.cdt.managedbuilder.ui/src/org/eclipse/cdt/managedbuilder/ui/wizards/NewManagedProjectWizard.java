@@ -21,6 +21,7 @@ import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
@@ -122,8 +123,9 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		
 		// Add the ManagedProject to the project
 		IManagedProject newManagedProject = null;
+		IManagedBuildInfo info = null;
 		try {
-			ManagedBuildManager.createBuildInfo(newProject);
+			info = ManagedBuildManager.createBuildInfo(newProject);
 			IProjectType parent = projectConfigurationPage.getSelectedProjectType();
 			newManagedProject = ManagedBuildManager.createManagedProject(newProject, parent);
 			if (newManagedProject != null) {
@@ -168,7 +170,10 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 
 		// Save the build options
 		monitor.subTask(ManagedBuilderUIMessages.getResourceString(MSG_SAVE));
-		ManagedBuildManager.saveBuildInfo(newProject, true);
+		if (info != null) {
+			info.setValid(true);
+			ManagedBuildManager.saveBuildInfo(newProject, true);
+		}
 		monitor.done();
 	}
 

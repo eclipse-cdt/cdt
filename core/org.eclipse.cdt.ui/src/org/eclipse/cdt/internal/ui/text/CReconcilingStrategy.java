@@ -10,6 +10,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -68,19 +69,23 @@ public class CReconcilingStrategy implements IReconcilingStrategy {
 	}
 	
 	private void reconcile() {
-		boolean doUpdate = false;
+		boolean somethingHasChanged = false;
 		try {
 			ITranslationUnit tu = fManager.getWorkingCopy(fEditor.getEditorInput());		
 			if (tu != null && tu.isWorkingCopy()) {
 				IWorkingCopy workingCopy = (IWorkingCopy)tu;
 				// reconcile
 				synchronized (workingCopy) {
-					doUpdate = workingCopy.reconcile(true, fProgressMonitor);
+					somethingHasChanged = workingCopy.reconcile(true, fProgressMonitor);
 				}
 			}
-			if(doUpdate){				
-				fOutliner.contentUpdated();
+			
+			// update participants
+			if (fEditor instanceof IReconcilingParticipant /*&& !fProgressMonitor.isCanceled()*/) {
+				IReconcilingParticipant p= (IReconcilingParticipant) fEditor;
+				p.reconciled(somethingHasChanged);
 			}
+			
 		} catch(CModelException e) {
 				
 		}

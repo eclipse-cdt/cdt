@@ -13,11 +13,11 @@ import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.ArchiveContainer;
 import org.eclipse.cdt.internal.core.model.BinaryContainer;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
@@ -52,8 +52,7 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		fViewer = (StructuredViewer)viewer;
 
 		if (oldInput == null && newInput != null) {
-			if (newInput instanceof ICModel)
-				CoreModel.getDefault().addElementChangedListener(this);
+			CoreModel.getDefault().addElementChangedListener(this);
 		} else if (oldInput != null && newInput == null) {
 			CoreModel.getDefault().removeElementChangedListener(this);
 		}
@@ -264,14 +263,20 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 		});
 	}
 
-	private void postRefresh(final Object root) {
+	private void postRefresh(final Object element) {
 		//System.out.println("UI refresh:" + root);
 		postRunnable(new Runnable() {
 			public void run() {
 				// 1GF87WR: ITPUI:ALL - SWTEx + NPE closing a workbench window.
 				Control ctrl= fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed())
-					fViewer.refresh(root);
+				if (ctrl != null && !ctrl.isDisposed()){
+					fViewer.refresh(element);
+					if(element instanceof IWorkingCopy){
+						fViewer.refresh(((IWorkingCopy)element).getOriginalElement());
+					}
+					
+					
+				}
 			}
 		});
 	}
@@ -282,9 +287,14 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			public void run() {
 				// 1GF87WR: ITPUI:ALL - SWTEx + NPE closing a workbench window.
 				Control ctrl= fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed())
+				if (ctrl != null && !ctrl.isDisposed()){
 //					fViewer.add(parent, element);
 					fViewer.refresh(parent);
+					if(parent instanceof IWorkingCopy){
+						fViewer.refresh(((IWorkingCopy)parent).getOriginalElement());
+					}
+					
+				}
 			}
 		});
 	}
@@ -295,17 +305,25 @@ public class CElementContentProvider extends BaseCElementContentProvider impleme
 			public void run() {
 				// 1GF87WR: ITPUI:ALL - SWTEx + NPE closing a workbench window.
 				Control ctrl= fViewer.getControl();
-				if (ctrl != null && !ctrl.isDisposed())
-//			fViewer.remove(element);
-			fViewer.refresh(internalGetParent(element));
+				if (ctrl != null && !ctrl.isDisposed()) {
+//					fViewer.remove(element);
+					Object parent = internalGetParent(element);
+					fViewer.refresh(parent);
+					if(parent instanceof IWorkingCopy){
+						fViewer.refresh(((IWorkingCopy)parent).getOriginalElement());
+					}
+					
+				}
+
 			}
 		});
 	}
 
 	private void postRunnable(final Runnable r) {
 		Control ctrl= fViewer.getControl();
-		if (ctrl != null && !ctrl.isDisposed())
-			ctrl.getDisplay().asyncExec(r);
+		if (ctrl != null && !ctrl.isDisposed()) {
+			ctrl.getDisplay().asyncExec(r); 
+		}
 	}
 
 	/**

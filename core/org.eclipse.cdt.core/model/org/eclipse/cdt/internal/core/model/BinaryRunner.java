@@ -5,7 +5,9 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -14,7 +16,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.cdt.core.CCorePlugin;
 
 public class BinaryRunner {
 	IProject project;
@@ -92,7 +93,7 @@ public class BinaryRunner {
 				cdelta.added(children[i]);
 			}
 			factory.registerCModelDelta(cdelta);
-			factory.fire();
+			factory.fire(ElementChangedEvent.POST_CHANGE);
 		}
 	}
 

@@ -1,3 +1,8 @@
+2004-02-27 Hoda Amer
+	Fixed [Bug 53074] The CView to update with each reconcile
+	Added the ability for CView to update based on the translation unit working copy
+	if one exists.
+	
 2004-02-26 Andrew Niefer
 	externalized strings for all packages
 

@@ -21,6 +21,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -58,7 +60,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	
 	public BaseCElementContentProvider(boolean provideMembers, boolean provideWorkingCopy) {
 		fProvideMembers= provideMembers;
-		//fProvideWorkingCopy= provideWorkingCopy;
+		fProvideWorkingCopy= provideWorkingCopy;
 	}
 	
 	/**
@@ -82,7 +84,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	 * a working copy of a compilation unit
 	 */
 	public void setProvideWorkingCopy(boolean b) {
-		//fProvideWorkingCopy= b;
+		fProvideWorkingCopy= b;
 	}
 
 	/**
@@ -124,9 +126,20 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 				return getCProjectResources((ICProject)celement);
 			} else if (celement instanceof ICContainer) {
 				return getCResources((ICContainer)celement);
-			} else if (celement.getElementType() == ICElement.C_UNIT) {
+			} else if (celement instanceof ITranslationUnit) {
+				// if we want to get the chidren of a translation unit
 				if (fProvideMembers) {
-					return ((IParent)element).getChildren();
+					// if we want to use the working copy of it
+					if(fProvideWorkingCopy){
+						// if it is not already a working copy
+						if(!(celement instanceof IWorkingCopy)){
+							// if it has a valid working copy
+							IWorkingCopy copy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy((ITranslationUnit)celement);
+								if(copy != null)
+									return ((IParent)copy).getChildren();
+						}
+					}
+					return ((IParent)celement).getChildren();
 				}
 			} else if (celement instanceof IParent) {
 				return (Object[])((IParent)celement).getChildren();

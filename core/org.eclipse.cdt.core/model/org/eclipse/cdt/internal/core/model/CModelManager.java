@@ -439,7 +439,7 @@ public class CModelManager implements IResourceChangeListener {
 				CElementDelta delta = new CElementDelta(getCModel());
 				delta.binaryParserChanged(celement);
 				registerCModelDelta(delta);
-				fire();
+				fire(ElementChangedEvent.POST_CHANGE);
 			}
 		}
 	}
@@ -705,7 +705,7 @@ public class CModelManager implements IResourceChangeListener {
 									registerCModelDelta(translatedDeltas[i]);
 								}
 							}
-							fire();
+							fire(ElementChangedEvent.POST_CHANGE);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -719,29 +719,31 @@ public class CModelManager implements IResourceChangeListener {
 	 * Fire C Model deltas, flushing them after the fact. 
 	 * If the firing mode has been turned off, this has no effect. 
 	 */
-	public synchronized void fire() {
+	public synchronized void fire(int eventType) {
 		if (fFire) {
 			mergeDeltas();
 			try {
 				Iterator iterator = fCModelDeltas.iterator();
 				while (iterator.hasNext()) {
 					ICElementDelta delta= (ICElementDelta) iterator.next();
-
 					// Refresh internal scopes
-
-					ElementChangedEvent event= new ElementChangedEvent(delta);
-	// Clone the listeners since they could remove themselves when told about the event 
-	// (eg. a type hierarchy becomes invalid (and thus it removes itself) when the type is removed
-					ArrayList listeners= (ArrayList) fElementChangedListeners.clone();
-					for (int i= 0; i < listeners.size(); i++) {
-						IElementChangedListener listener= (IElementChangedListener) listeners.get(i);
-						listener.elementChanged(event);
-					}
+					fire(delta, eventType);
 				}
 			} finally {
 				// empty the queue
 				this.flush();
 			}
+		}
+	}
+
+	public synchronized void fire(ICElementDelta delta, int eventType) {
+		ElementChangedEvent event= new ElementChangedEvent(delta, eventType);
+		// Clone the listeners since they could remove themselves when told about the event 
+		// (eg. a type hierarchy becomes invalid (and thus it removes itself) when the type is removed
+		ArrayList listeners= (ArrayList) fElementChangedListeners.clone();
+		for (int i= 0; i < listeners.size(); i++) {
+			IElementChangedListener listener= (IElementChangedListener) listeners.get(i);
+			listener.elementChanged(event);
 		}
 	}
 
@@ -814,7 +816,7 @@ public class CModelManager implements IResourceChangeListener {
 // fire only if there were no awaiting deltas (if there were, they would come from a resource modifying operation)
 // and the operation has not modified any resource
 			if (!hadAwaitingDeltas && !operation.hasModifiedResource()) {
-				fire();
+				fire(ElementChangedEvent.POST_CHANGE);
 			} // else deltas are fired while processing the resource delta
 		}
 	}

@@ -293,13 +293,11 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 	 */
 	public boolean reconcile(boolean forceProblemDetection, IProgressMonitor monitor)
 		throws CModelException {
-			
-		boolean somethingChanged = false;
 		
 		if (this.useCount == 0) throw newNotPresentException(); //was destroyed
 
 		if (monitor != null){
-			if (monitor.isCanceled()) return somethingChanged;
+			if (monitor.isCanceled()) return false;
 			monitor.beginTask("element.reconciling", 10); //$NON-NLS-1$
 		}
 
@@ -314,14 +312,13 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 				// update the element infos with the content of the working copy
 				this.makeConsistent(monitor);
 				deltaBuilder.buildDeltas();
-				somethingChanged = true;
 			}
 
 			if (monitor != null) monitor.worked(2);
 	
 			// force problem detection? - if structure was consistent
 			if (forceProblemDetection && wasConsistent){
-				if (monitor != null && monitor.isCanceled()) return somethingChanged;
+				if (monitor != null && monitor.isCanceled()) return (!wasConsistent);
 
 				//IProblemRequestor problemRequestor = this.getProblemRequestor();
 				//if (problemRequestor != null && problemRequestor.isActive()){
@@ -332,15 +329,17 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			}
 	
 			// fire the deltas
-			//if (deltaBuilder != null){
-			//	if ((deltaBuilder.delta != null) && (deltaBuilder.delta.getAffectedChildren().length > 0)) {
-			//		CModelManager.getDefault().fire(deltaBuilder.delta, ElementChangedEvent.POST_RECONCILE);
-			//	}
-			//}
+			if (deltaBuilder != null){
+				if ((deltaBuilder.delta != null) && (deltaBuilder.delta.getAffectedChildren().length > 0)) {
+					CModelManager.getDefault().fire(deltaBuilder.delta, ElementChangedEvent.POST_RECONCILE);
+				}
+			}
 		} finally {
 			if (monitor != null) monitor.done();
 		}
-		return somethingChanged;	
+		
+		// An indication if something has changed
+		return (!wasConsistent);	
 	}
 	/**
 	 * @see org.eclipse.cdt.core.model.IWorkingCopy#restore()

@@ -68,6 +68,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -103,7 +104,7 @@ import org.eclipse.ui.views.tasklist.TaskList;
 /**
  * C specific text editor.
  */
-public class CEditor extends TextEditor implements ISelectionChangedListener, IShowInSource {
+public class CEditor extends TextEditor implements ISelectionChangedListener, IShowInSource , IReconcilingParticipant{
 
 	/** The outline page */
 	protected CContentOutlinePage fOutlinePage;
@@ -959,4 +960,13 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
     	if (statusLine != null)
     		statusLine.setMessage(true, msg, null);	
     }    
+ 
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.ui.editor.IReconcilingParticipant#reconciled()
+	 */
+	public void reconciled(boolean somethingHasChanged) {
+		if(somethingHasChanged)
+			fOutlinePage.contentUpdated();
+	}
 }

@@ -32,6 +32,36 @@ public class CConventions {
 	private final static char fgDot= '.';
 	private final static char fgColon= ':';
 	
+	private static boolean isValidIdentifier(String name) {
+		if (name == null) {
+			return false;
+		}
+		String trimmed = name.trim();
+		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){
+			return false;
+		}
+
+		int index = name.lastIndexOf(scopeResolutionOperator);
+		char[] scannedID;
+		if (index != -1) {
+			return false;			
+		}
+		scannedID = name.toCharArray();
+		
+		if (scannedID != null) {
+			IStatus status = ResourcesPlugin.getWorkspace().validateName(new String(scannedID), IResource.FILE);
+			if (!status.isOK()) {
+				return false;
+			}
+			if (CharOperation.contains('$', scannedID)) {
+				return false;
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/**
 	 * Validate the given CPP class name, either simple or qualified.
 	 * For example, <code>"A::B::C"</code>, or <code>"C"</code>.
@@ -134,4 +164,56 @@ public class CConventions {
 		}
 		return CModelStatus.VERIFIED_OK;
 	}
+	/**
+	 * Validate the given field name.
+	 * <p>
+	 * Syntax of a field name corresponds to VariableDeclaratorId (JLS2 8.3).
+	 * For example, <code>"x"</code>.
+	 *
+	 * @param name the name of a field
+	 * @return a status object with code <code>IStatus.OK</code> if
+	 *		the given name is valid as a field name, otherwise a status 
+	 *		object indicating what is wrong with the name
+	 */
+	public static IStatus validateFieldName(String name) {
+		return validateIdentifier(name);
+	}
+	
+	/**
+	 * Validate the given C identifier.
+	 * The identifier must not have the same spelling as a C keyword,
+	 * boolean literal (<code>"true"</code>, <code>"false"</code>), or null literal (<code>"null"</code>).
+	 * See section 3.8 of the <em>C Language Specification, Second Edition</em> (JLS2).
+	 * A valid identifier can act as a simple type name, method name or field name.
+	 *
+	 * @param id the C identifier
+	 * @return a status object with code <code>IStatus.OK</code> if
+	 *		the given identifier is a valid C identifier, otherwise a status 
+	 *		object indicating what is wrong with the identifier
+	 */
+	public static IStatus validateIdentifier(String id) {
+		if (isValidIdentifier(id)) {
+			return CModelStatus.VERIFIED_OK;
+		} else {
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.illegalIdentifier", id), null); //$NON-NLS-1$
+		}
+	}
+	
+	/**
+	 * Validate the given method name.
+	 * The special names "&lt;init&gt;" and "&lt;clinit&gt;" are not valid.
+	 * <p>
+	 * The syntax for a method  name is defined by Identifier
+	 * of MethodDeclarator (JLS2 8.4). For example "println".
+	 *
+	 * @param name the name of a method
+	 * @return a status object with code <code>IStatus.OK</code> if
+	 *		the given name is valid as a method name, otherwise a status 
+	 *		object indicating what is wrong with the name
+	 */
+	public static IStatus validateMethodName(String name) {
+
+		return validateIdentifier(name);
+	}
+	
 }

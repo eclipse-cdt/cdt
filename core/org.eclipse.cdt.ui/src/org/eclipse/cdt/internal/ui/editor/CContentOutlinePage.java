@@ -8,7 +8,12 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.WorkingCopy;
 import org.eclipse.cdt.internal.ui.CFileElementWorkingCopy;
@@ -37,12 +42,14 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -95,16 +102,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 	 * Called by the editor to signal that the content has updated.
 	 */
 	public void contentUpdated() {
-		if (fInput != null) {
-			try {
-				//fInput.update();
-				fInput.reconcile();				
-			} catch (CoreException e) {
-				CUIPlugin.getDefault().log(e.getStatus());
-				fInput= null;
-				return;
-			}
-				
+		if (fInput != null) {				
 			final TreeViewer treeViewer= getTreeViewer();
 			if (treeViewer != null && !treeViewer.getControl().isDisposed()) {
 				treeViewer.getControl().getDisplay().asyncExec(new Runnable() {
@@ -168,7 +166,6 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		treeViewer = new ProblemTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		treeViewer.addSelectionChangedListener(this);
 		
-		//treeViewer.setContentProvider(new CModelContentProvider());
 		treeViewer.setContentProvider(new CElementContentProvider(true, true));
 		treeViewer.setLabelProvider(new StandardCElementLabelProvider());
 		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);

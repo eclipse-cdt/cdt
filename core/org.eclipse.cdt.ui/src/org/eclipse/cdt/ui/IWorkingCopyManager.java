@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorInput;
@@ -66,6 +67,17 @@ public interface IWorkingCopyManager {
 	 *   copy for this translation unit
 	 */
 	IWorkingCopy getWorkingCopy(IEditorInput input);
+
+	/**
+	 * Returns the working copy remembered for the given translation unit if one exists 
+	 * in the current list of the working copy manager
+	 *
+	 * @param unit : the Translation unit
+	 * @return the working copy of the translation unit, or <code>null</code> if the
+	 *   unit was not seen by the manager before. 
+	 *   
+	 */
+	IWorkingCopy getWorkingCopy(ITranslationUnit unit);
 	
 	/**
 	 * Shuts down this working copy manager. All working copies still remembered

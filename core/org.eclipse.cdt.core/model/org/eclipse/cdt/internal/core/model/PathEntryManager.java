@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.ICModelStatus;
@@ -248,7 +249,7 @@ public class PathEntryManager {
 						//affectedProject.setRawPathEntries(affectedProject.getRawPathEntries(), progressMonitor);
 					}
 					if (shouldFire) {
-						mgr.fire();
+						mgr.fire(ElementChangedEvent.POST_CHANGE);
 					}
 				}
 			}, monitor);

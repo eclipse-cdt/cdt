@@ -456,9 +456,15 @@ public class CModelBuilder {
 			if (simpleDeclaration.isFunctionDefinition())
 			{
 				// method
-				Method newElement = new Method( parent, declaratorName );
-				newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
-				element = newElement;				
+				if(!isTemplate){
+					Method newElement = new Method( parent, declaratorName );
+					newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
+					element = newElement;				
+				}else {
+					MethodTemplate newElement = new MethodTemplate(parent, declaratorName);
+					newElement.setVisibility(simpleDeclaration.getAccessSpecifier().getAccess());
+					element = newElement;				
+				}
 			}
 			else
 			{

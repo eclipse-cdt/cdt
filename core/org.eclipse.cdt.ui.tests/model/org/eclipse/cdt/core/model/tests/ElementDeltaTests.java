@@ -134,7 +134,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		wcBuf.setContents ("\n class Hello{\n int x; \n void setValue(int val); \n};");
 		wc.reconcile();		
 		wc.commit(true, monitor);
-		assertAddedElement(ICElement.C_METHOD, "setValue");
+		assertAddedElement(ICElement.C_METHOD_DECLARATION, "setValue");
 		
 		// rename x to y
 		// this is not a change, this is add and remove
@@ -148,7 +148,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		wcBuf.setContents ("\n class Hello{\n String y; \n};");
 		wc.reconcile();		
 		wc.commit(true, monitor);
-		assertRemovedElement(ICElement.C_METHOD, "setValue");
+		assertRemovedElement(ICElement.C_METHOD_DECLARATION, "setValue");
 				
 		// remove the field		
 		wcBuf.setContents ("\n class Hello{ \n};");

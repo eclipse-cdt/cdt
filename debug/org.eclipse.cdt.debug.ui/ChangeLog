@@ -1,3 +1,7 @@
+2003-01-02 Mikhail Khodjaiants
+	Adapter for 'IResource' in 'DisassemblyEditorInput'.
+	* DisassemblyEditorInput.java
+
 2002-12-29 Mikhail Khodjaiants
 	Implementation of the 'Source Lookup' property page.
 	* AddDirectorySourceLocationBlock.java (new)

@@ -7,6 +7,7 @@
 package org.eclipse.cdt.debug.internal.ui.editors;
 
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -95,6 +96,21 @@ public class DisassemblyEditorInput implements IStorageEditorInput
 	 */
 	public Object getAdapter( Class adapter )
 	{
+		if ( adapter.equals( IResource.class ) )
+		{
+			try
+			{
+				IStorage storage = getStorage();
+				if (  storage != null )
+				{
+					return storage.getAdapter( adapter );
+				}
+			}
+			catch( CoreException e )
+			{
+				// ignore
+			}
+		}
 		return null;
 	}
 

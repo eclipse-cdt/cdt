@@ -1,4 +1,8 @@
 2005-02-15 Alain Magloire
+	Fix PR 82322, PR 78330
+	* plugin.xml
+
+2005-02-15 Alain Magloire
 	Fix PR 82856
 	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchAnnotationModel.java
 	* src/org/eclipse/cdt/internal/ui/editor/ExternalSearchDocumentProvider.java

@@ -466,8 +466,24 @@
          name="%cDocumentSetupParticipant"
          point="org.eclipse.core.filebuffers.documentSetup">
       <participant
-            extensions="*"
-            class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant">
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
+            contentTypeId="org.eclipse.cdt.core.cSource">
+      </participant>
+      <participant
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
+            contentTypeId="org.eclipse.cdt.core.cHeader">
+      </participant>
+      <participant
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
+            contentTypeId="org.eclipse.cdt.core.cxxSource">
+      </participant>
+      <participant
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
+            contentTypeId="org.eclipse.cdt.core.cxxHeader">
+      </participant>
+      <participant
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant"
+            contentTypeId="org.eclipse.cdt.core.asmSource">
       </participant>
    </extension>
    <extension
@@ -475,8 +491,24 @@
          name="%cDocumentFactory"
          point="org.eclipse.core.filebuffers.documentCreation">
       <factory
-            extensions="*"
-            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory">
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory"
+            contentTypeId="org.eclipse.cdt.core.cSource">
+      </factory>
+      <factory
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory"
+            contentTypeId="org.eclipse.cdt.core.cHeader">
+      </factory>
+      <factory
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory"
+            contentTypeId="org.eclipse.cdt.core.cxxSource">
+      </factory>
+      <factory
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory"
+            contentTypeId="org.eclipse.cdt.core.cxxHeader">
+      </factory>
+      <factory
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory"
+            contentTypeId="org.eclipse.cdt.core.asmSource">
       </factory>
    </extension>
    <extension

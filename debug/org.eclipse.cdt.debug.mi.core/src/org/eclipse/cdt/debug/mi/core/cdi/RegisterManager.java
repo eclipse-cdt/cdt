@@ -71,8 +71,13 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#createRegister()
 	 */
 	public ICDIRegister createRegister(ICDIRegisterObject regObject) throws CDIException {
+		RegisterObject regObj = null;
 		if (regObject instanceof RegisterObject) {
-			RegisterObject regObj = (RegisterObject)regObject;
+			regObj = (RegisterObject)regObject;
+		} else if (regObject instanceof Register) {
+			regObj = ((Register)regObject).getRegisterObject();
+		}
+		if (regObj != null) {
 			Register reg = getRegister(regObject);
 			if (reg == null) {
 				try {

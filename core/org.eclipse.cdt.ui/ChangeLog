@@ -1,3 +1,8 @@
+2002-11-15 Alain Magloire
+
+	* plugin.xml:  Typo when doing the Ruler contibution
+	for Task and bookmarks, it should #CEditorRulerContext.
+
 2002-11-14 Alain Magloire
 
 	* src/.../internal/ui/cview/CView.java (addBuildMenu):

@@ -1870,4 +1870,27 @@ public class Scanner2Test extends BaseScanner2Test
         validateIdentifier( "boo" );  //$NON-NLS-1$
         validateEOF();
     }
+    
+    public void testBug75083() throws Exception
+    {
+        String code = "#define blah() { extern foo\n blah()\n"; //$NON-NLS-1$
+        initializeScanner( code );
+        
+        int idx = code.indexOf( "\n blah()" ) + 2; //$NON-NLS-1$
+        IToken t = scanner.nextToken();
+        assertEquals( t.getType(), IToken.tLBRACE );
+        assertEquals( t.getOffset(), idx );
+        assertEquals( t.getEndOffset(), idx + 6 );
+        
+        t = scanner.nextToken();
+        assertEquals( t.getType(), IToken.t_extern );
+        assertEquals( t.getOffset(), idx );
+        assertEquals( t.getEndOffset(), idx + 6 );
+        
+        t = scanner.nextToken();
+        assertEquals( t.getType(), IToken.tIDENTIFIER );
+        assertEquals( t.getOffset(), idx );
+        assertEquals( t.getEndOffset(), idx + 6 );
+    }
+    
 }

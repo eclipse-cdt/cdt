@@ -13,13 +13,13 @@ package org.eclipse.cdt.make.internal.core.scannerconfig;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
@@ -32,8 +32,6 @@ import org.eclipse.core.runtime.Path;
 
 public class PerFileDiscoveredPathContainer extends AbstractDiscoveredPathContainer 
                                             implements IPathEntryContainerExtension {
-    private static final IIncludeEntry[] NO_INCLUDENTRIES = new IIncludeEntry[0];
-    private static final IMacroEntry[] NO_SYMBOLENTRIES = new IMacroEntry[0];
 
     static Map fgPathEntries;
 
@@ -68,42 +66,46 @@ public class PerFileDiscoveredPathContainer extends AbstractDiscoveredPathContai
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.model.IPathEntryContainerExtension#getIncludeEntries(org.eclipse.core.runtime.IPath)
+     * @see org.eclipse.cdt.core.model.IPathEntryContainerExtension#getPathEntries(org.eclipse.core.runtime.IPath, int)
      */
-    public IIncludeEntry[] getIncludeEntries(IPath path) {
+    public IPathEntry[] getPathEntries(IPath path, int mask) {
         IDiscoveredPathInfo info;
-        try {
-            info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
-            IPath[] includes = info.getIncludePaths(path);
-            List entries = new ArrayList(includes.length);
-            for (int i = 0; i < includes.length; i++) {
-                entries.add(CoreModel.newIncludeEntry(path, Path.EMPTY, includes[i])); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            return (IIncludeEntry[])entries.toArray(new IIncludeEntry[entries.size()]);
-        }
-        catch (CoreException e) {
-            return NO_INCLUDENTRIES;
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.model.IPathEntryContainerExtension#getMacroEntries(org.eclipse.core.runtime.IPath)
-     */
-    public IMacroEntry[] getMacroEntries(IPath path) {
-        IDiscoveredPathInfo info;
-        try {
-            info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
-            Map syms = info.getSymbols(path);
-            List entries = new ArrayList(syms.size());
-            for (Iterator iter = syms.entrySet().iterator(); iter.hasNext(); ) {
-                Entry entry = (Entry)iter.next();
-                entries.add(CoreModel.newMacroEntry(path, (String)entry.getKey(), (String)entry.getValue())); //$NON-NLS-1$
-            }
-            return (IMacroEntry[])entries.toArray(new IMacroEntry[entries.size()]);
-        }
-        catch (CoreException e) {
-            return NO_SYMBOLENTRIES;
-        }
+		ArrayList entries = new ArrayList();
+		if ((mask & IPathEntry.CDT_INCLUDE_FILE) != 0) {
+			// TODO: not implemented
+		}
+		if ((mask & IPathEntry.CDT_INCLUDE) != 0) {
+			// TODO: Vlad how do we differentiate local includes from system includes
+			try {
+				info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
+				IPath[] includes = info.getIncludePaths(path);
+				for (int i = 0; i < includes.length; i++) {
+					entries.add(CoreModel.newIncludeEntry(path, Path.EMPTY, includes[i], true));
+				}
+				return (IIncludeEntry[])entries.toArray(new IIncludeEntry[entries.size()]);
+			}
+			catch (CoreException e) {
+				// 
+			}
+		}
+		if ((mask & IPathEntry.CDT_MACRO_FILE) != 0) {
+			// TODO: not implemented
+		}
+		if ((mask & IPathEntry.CDT_MACRO) != 0) {
+			try {
+				info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
+				Map syms = info.getSymbols(path);
+				for (Iterator iter = syms.entrySet().iterator(); iter.hasNext(); ) {
+					Entry entry = (Entry)iter.next();
+					entries.add(CoreModel.newMacroEntry(path, (String)entry.getKey(), (String)entry.getValue())); //$NON-NLS-1$
+				}
+				return (IMacroEntry[])entries.toArray(new IMacroEntry[entries.size()]);
+			}
+			catch (CoreException e) {
+				//
+			}
+		}
+		return (IPathEntry[]) entries.toArray(new IPathEntry[entries.size()]);
     }
 
     /* (non-Javadoc)

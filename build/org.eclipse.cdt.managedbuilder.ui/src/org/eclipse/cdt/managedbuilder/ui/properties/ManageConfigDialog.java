@@ -177,7 +177,12 @@ public class ManageConfigDialog extends Dialog {
 				buildArtifactName = null;
 			}
 		});
-		
+		buildArtifactName.getAccessible().addAccessibleListener(new AccessibleAdapter(){
+			public void getName(AccessibleEvent e) {
+				e.result = ManagedBuilderUIMessages.getResourceString(OUTPUT_NAME);
+			}
+		});
+
 		final Label dotLabel = new Label(outputGroup, SWT.CENTER);
 		dotLabel.setFont(outputGroup.getFont());
 		dotLabel.setText(new String(".")); //$NON-NLS-1$

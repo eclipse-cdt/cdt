@@ -6,17 +6,22 @@
 **  All Rights Reserved * Licensed Materials - Property of IBM
 ******************************************************************
 -->
-
+<!DOCTYPE contexts [
+	<!ENTITY defaultCSHelp "Default Context Sensitive Help">
+	<!ENTITY gdbmiPrefs "GDB MI Preference Page">
+]>
 <contexts>
 
 <context id ="default_cs_help">
    <description>Click below to see help.</description>
    <topic href="default_cs_help.htm"
-   	label="Default Context Sensitive Help"/>
+   	label="&defaultCSHelp;"/>
 </context>
 
-<context id ="reference/cdt_u_gdb_mi_pref">
+<context id ="mi_preference_page_context">
    <description>Enter a timeout value in milliseconds. </description>
+   <topic href="reference/cdt_u_gdb_mi_pref.htm"
+   	label="&gdbmiPrefs;"/>
 </context>
 
 </contexts>

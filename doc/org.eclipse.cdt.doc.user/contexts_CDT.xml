@@ -6,67 +6,85 @@
 **  All Rights Reserved * Licensed Materials - Property of IBM
 ******************************************************************
 -->
-
+<!DOCTYPE contexts 	[
+	<!ENTITY defaultCSHelp "Default Context Sensitive Help">
+	
+	<!ENTITY errorParsers "Error Parsers, C/C++ Properties window">
+	<!ENTITY binaryParser "Binary Parser page, C/C++ Properties window">
+	<!ENTITY targetPlatform "Target platform, C/C++ Properties window">
+	
+	<!ENTITY generalPage "General page, Preferences window">
+	<!ENTITY annotationsPage "Annotations page, Preferences window">
+	<!ENTITY colorsPage "Colors page, Preferences window">
+	<!ENTITY contentAssist "Content Assist page, Preferences window">
+	<!ENTITY codeTemplates "Code Templates page, Preferences window">
+	<!ENTITY searchPage "C/C++ Search page, Search dialog box">
+	
+	<!ENTITY outlineView "Outline view">
+	<!ENTITY projectsView "C/C++ Projects view">
+	<!ENTITY commonPage "Common page, Run/Debug dialog box">
+	
+]>
 <contexts>
 
 <context id ="default_cs_help">
    <description>Click below to see help.</description>
    <topic href="default_cs_help.htm"
-   	label="Default Context Sensitive Help"/>
+   	label="&defaultCSHelp;"/>
 </context>
 
 <context id ="cdt_error_parsers_page">
    <description>Control the build messages displayed in the Tasks view. </description>
    <topic href="reference/cdt_u_newproj_parser_error.htm"
-   	label="Error Parsers, C/C++ Properties window"/>
+   	label="&errorParsers;"/>
 </context>
 
 <context id ="cdt_binary_parser_page">
    <description>Select a binary parser for the target platform. </description>
    <topic href="reference/cdt_u_newproj_parser_binary.htm"
-   	label="Binary Parser page, C/C++ Properties window"/>
+   	label="&binaryParser;"/>
 </context>
 
 <context id ="man_proj_platform_help">
    <description>Select a target deployment platform. </description>
    <topic href="reference/cdt_u_newproj_platf.htm"
-   	label="Target platform, C/C++ Properties window"/>
+   	label="&targetPlatform;"/>
 </context>
 
 <context id ="new_c_editor_pref_page_context">
    <description>Customize the appearance of the C/C++ Editor. </description>
    <topic href="reference/cdt_u_c_editor_gen.htm"
-   	label="General page, Preferences window"/>
+   	label="&generalPage;"/>
 </context>
 
 <context id ="new_c_editor_annotations_pref_page_context">
    <description>Customize the appearance of the C/C++ Editor. </description>
    <topic href="reference/cdt_u_c_editor_anno.htm"
-   	label="Annotations page, Preferences window"/>
+   	label="&annotationsPage;"/>
 </context>
 
 <context id ="new_c_editor_colors_pref_page_context">
    <description>Customize the appearance of the C/C++ editor. </description>
    <topic href="reference/cdt_u_c_editor_color.htm"
-   	label="Colors page, Preferences window"/>
+   	label="&colorsPage;"/>
 </context>
 
 <context id ="new_c_editor_content_assist_pref_page_context">
    <description>Customize how the Content Assist feature works. </description>
    <topic href="reference/cdt_u_c_editor_con_assist.htm"
-   	label="Content Assist page, Preferences window"/>
+   	label="&contentAssist;"/>
 </context>
 
 <context id ="new_c_templates_pref_page_context">
    <description>Create, edit, remove, import, or export code templates. </description>
    <topic href="reference/cdt_u_code_temp.htm"
-   	label="Code Templates page, Preferences window"/>
+   	label="&codeTemplates;"/>
 </context>
 
 <context id ="c_search_page">
    <description>Search for C/C++ elements. </description>
    <topic href="reference/cdt_u_search.htm"
-   	label="C/C++ Search page, Search dialog box"/>
+   	label="&searchPage;"/>
 </context>
 
 </contexts>

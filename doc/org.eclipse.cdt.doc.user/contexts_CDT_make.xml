@@ -6,25 +6,29 @@
 **  All Rights Reserved * Licensed Materials - Property of IBM
 ******************************************************************
 -->
-
+<!DOCTYPE contexts 	[
+	<!ENTITY defaultCSHelp "Default Context Sensitive Help">
+	<!ENTITY makeBuilder "Make Builder page, C/C++ Properties window">
+	<!ENTITY pathsSymbols "Paths and Symbols page, C/C++ Properties window">
+]>
 <contexts>
 
 <context id ="default_cs_help">
    <description>Click below to see help.</description>
    <topic href="default_cs_help.htm"
-   	label="Default Context Sensitive Help"/>
+   	label="&defaultCSHelp;"/>
 </context>
 
 <context id ="cdt_make_builder_page">
    <description>Define the build settings for the current project. </description>
    <topic href="reference/cdt_u_newproj_buildset.htm"
-   	label="Make Builder page, C/C++ Properties window"/>
+   	label="&makeBuilder;"/>
 </context>
 
 <context id ="cdt_paths_symbols_page">
    <description>Enter include paths and symbols. </description>
    <topic href="reference/cdt_u_newproj_pathsymb.htm"
-   	label="Paths and Symbols page, C/C++ Properties window"/>
+   	label="&pathsSymbols;"/>
 </context>
 
 </contexts>

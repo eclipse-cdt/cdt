@@ -10,8 +10,7 @@ import org.eclipse.debug.core.DebugException;
 /**
  * A plugable  exception handler.
  */
-public interface IDebugExceptionHandler
-{
+public interface IDebugExceptionHandler {
 	/**
 	 * Handles the given debug exception.
 	 * 

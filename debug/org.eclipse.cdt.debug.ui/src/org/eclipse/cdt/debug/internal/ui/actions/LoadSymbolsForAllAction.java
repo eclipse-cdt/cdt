@@ -1,13 +1,10 @@
 /*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
- * 
+ * (c) Copyright QNX Software Systems Ltd. 2002. All Rights Reserved.
+ *  
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
-import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.IAdaptable;
@@ -22,33 +19,31 @@ import org.eclipse.ui.texteditor.IUpdate;
  * 
  * @since: Feb 11, 2003
  */
-public class LoadSymbolsForAllAction extends Action implements IUpdate
-{
+public class LoadSymbolsForAllAction extends Action implements IUpdate {
+
 	private Viewer fViewer = null;
 
 	/**
 	 * Constructor for LoadSymbolsForAllAction.
 	 */
-	public LoadSymbolsForAllAction( Viewer viewer )
-	{
-		super( CDebugUIPlugin.getResourceString("internal.ui.actions.LoadSymbolsForAllAction.Load_Symbols_For_all") ); //$NON-NLS-1$
+	public LoadSymbolsForAllAction( Viewer viewer ) {
+		super( ActionMessages.getString( "LoadSymbolsForAllAction.Load_Symbols_For_All_1" ) ); //$NON-NLS-1$
 		fViewer = viewer;
-		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_LOAD_ALL_SYMBOLS );
-		setDescription( CDebugUIPlugin.getResourceString("internal.ui.actions.LoadSymbolsForAllAction.Load_symbols_for_all_shared_libraries.") ); //$NON-NLS-1$
-		setToolTipText( CDebugUIPlugin.getResourceString("internal.ui.actions.LoadSymbolsForAllAction.Load_Symbols_For_All") ); //$NON-NLS-1$
+//		CDebugImages.setLocalImageDescriptors( this, ICDebugUIConstants.IMG_LCL_LOAD_ALL_SYMBOLS );
+		setDescription( ActionMessages.getString( "LoadSymbolsForAllAction.Load_symbols_for_all_shared_libraries_1" ) ); //$NON-NLS-1$
+		setToolTipText( ActionMessages.getString( "LoadSymbolsForAllAction.Load_Symbols_For_All_2" ) ); //$NON-NLS-1$
 		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.LOAD_SYMBOLS_FOR_ALL );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
-	public void update()
-	{
-		if ( fViewer != null && fViewer.getInput() instanceof IAdaptable )
-		{
-			ICDebugTarget target = (ICDebugTarget)((IAdaptable)fViewer.getInput()).getAdapter( ICDebugTarget.class );
-			if ( target != null )
-			{
+	public void update() {
+		if ( fViewer != null && fViewer.getInput() instanceof IAdaptable ) {
+			ICDebugTarget target = (ICDebugTarget)((IAdaptable)fViewer.getInput()).getAdapter(ICDebugTarget.class);
+			if ( target != null ) {
 				setEnabled( target.isSuspended() );
 				return;
 			}
@@ -56,23 +51,20 @@ public class LoadSymbolsForAllAction extends Action implements IUpdate
 		setEnabled( false );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
-	public void run()
-	{
-		if ( fViewer != null && fViewer.getInput() instanceof IAdaptable )
-		{
-			ICSharedLibraryManager slm = (ICSharedLibraryManager)((IAdaptable)fViewer.getInput()).getAdapter( ICSharedLibraryManager.class );
-			if ( slm != null )
-			{
-				try
-				{
-					slm.loadSymbolsForAll();
+	public void run() {
+		if ( fViewer != null && fViewer.getInput() instanceof IAdaptable ) {
+			ICDebugTarget target = (ICDebugTarget)((IAdaptable)fViewer.getInput()).getAdapter(ICDebugTarget.class);
+			if ( target != null ) {
+				try {
+					target.loadSymbols();
 				}
-				catch( DebugException e )
-				{
-					CDebugUIPlugin.errorDialog( CDebugUIPlugin.getResourceString("internal.ui.actions.LoadSymbolsForAllAction.Unable_to_load_symbols."), e.getStatus() ); //$NON-NLS-1$
+				catch( DebugException e ) {
+					CDebugUIPlugin.errorDialog( ActionMessages.getString( "LoadSymbolsForAllAction.Unable_to_load_symbols_1" ), e.getStatus() ); //$NON-NLS-1$
 				}
 			}
 		}

@@ -24,8 +24,8 @@
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.ui"/>
       <import plugin="org.eclipse.cdt.core"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
 
 
@@ -743,6 +743,21 @@
                <pluginState
                      value="activated"
                      id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.SignalPropertiesActionDelegate"
+               label="%SignalPropertiesAction.label"
+               enablesFor="1"
+               style="pulldown"
+               id="org.eclipse.cdt.debug.ui.SignalPropertiesAction"
+               tooltip="%SignalPropertiesAction.tooltip"
+               helpContextId="signal_properties_action_context">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
                </pluginState>
             </enablement>
          </action>

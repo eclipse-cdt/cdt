@@ -1,58 +1,57 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
+
 package org.eclipse.cdt.debug.internal.ui.views.signals;
 
-import org.eclipse.cdt.debug.core.ICSignalManager;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
+
 /**
- * Enter type comment.
- * 
- * @since: Jan 30, 2003
+ * Provides content for the signals view.
+ *
+ * @since: Mar 8, 2004
  */
-public class SignalsViewContentProvider implements IStructuredContentProvider
-{
+public class SignalsViewContentProvider implements IStructuredContentProvider {
+
 	/**
 	 * Handler for exceptions as content is retrieved
 	 */
 	private IDebugExceptionHandler fExceptionHandler = null;
 
-	/**
-	 * Constructor for SignalsViewContentProvider.
-	 */
-	public SignalsViewContentProvider()
-	{
-		super();
+	public SignalsViewContentProvider() {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
-	public Object[] getElements( Object inputElement )
-	{
-		if ( inputElement instanceof ICSignalManager )
-		{
-			try
-			{
-				return ((ICSignalManager)inputElement).getSignals();
+	public Object[] getElements( Object inputElement ) {
+		if ( inputElement instanceof ICDebugTarget ) {
+			ICDebugTarget target = (ICDebugTarget)inputElement;
+			try {
+				if ( target != null ) {
+					Object[] signals = target.getSignals();
+					if ( signals != null )
+						return signals;
+				}
 			}
-			catch( DebugException e )
-			{
+			catch( DebugException e ) {
 				if ( getExceptionHandler() != null )
-				{
 					getExceptionHandler().handleException( e );
-				}
 				else
-				{
 					CDebugUIPlugin.log( e );
-				}
 			}
 		}
 		return new Object[0];
@@ -61,15 +60,13 @@ public class SignalsViewContentProvider implements IStructuredContentProvider
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
-	public void dispose()
-	{
+	public void dispose() {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(Viewer, Object, Object)
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
-	public void inputChanged( Viewer viewer, Object oldInput, Object newInput )
-	{
+	public void inputChanged( Viewer viewer, Object oldInput, Object newInput ) {
 	}
 
 	/**
@@ -77,8 +74,7 @@ public class SignalsViewContentProvider implements IStructuredContentProvider
 	 * 
 	 * @param handler debug exception handler or <code>null</code>
 	 */
-	protected void setExceptionHandler( IDebugExceptionHandler handler ) 
-	{
+	protected void setExceptionHandler(IDebugExceptionHandler handler) {
 		fExceptionHandler = handler;
 	}
 	
@@ -87,8 +83,7 @@ public class SignalsViewContentProvider implements IStructuredContentProvider
 	 * 
 	 * @return debug exception handler or <code>null</code>
 	 */
-	protected IDebugExceptionHandler getExceptionHandler() 
-	{
+	protected IDebugExceptionHandler getExceptionHandler() {
 		return fExceptionHandler;
 	}	
 }

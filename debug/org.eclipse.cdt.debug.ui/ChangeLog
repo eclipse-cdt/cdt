@@ -1,4 +1,33 @@
 2004-04-01 Mikhail Khodjaiants
+	Changes in the Shared Libraries and the Signals views.
+	* ActionMessages.properties
+	* ActionMessages.java
+	* LoadSymbolsActionDelegate.java
+	* LoadSymbolsForAllAction.java
+	* ShowFullPathsAction.java
+	* SignalActionDelegate.java
+	* SignalPropertiesActionDelegate.java
+	* SignalPropertiesDialog.java
+	* ViewFilterAction.java
+	* AbstractDebugEventHandler.java
+	* AbstractDebugEventHandlerView.java
+	* IDebugExceptionHandler.java
+	* SharedLibrariesMessages.properties
+	* SharedLibrariesMessages.java
+	* SharedLibrariesView.java
+	* SharedLibrariesViewContentProvider.java
+	* SharedLibrariesViewEventHandler.java
+	* SignalsMessages.properties
+	* SignalsMessages.java
+	* SignalsView.java
+	* SignalsViewContentProvider.java
+	* SignalsViewer.java
+	* SignalsViewEventHandler.java
+	* CDebugUIPluginResources.properties
+	* plugin.properties
+	* plugin.xml
+
+2004-04-01 Mikhail Khodjaiants
 	Moved the "Show Full Paths" action from toolbars to view's menus.
 	* CDebugModelPresentation.java - new (will replace CDTDebugModelPresentation)
 	* CDebugUIMessages.java - new

@@ -1,8 +1,13 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/**********************************************************************
+ * Copyright (c) 2004 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+ ***********************************************************************/
 package org.eclipse.cdt.debug.internal.ui.views.sharedlibs;
 
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
@@ -12,35 +17,33 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.ui.AbstractDebugView;
 
 /**
- * Enter type comment.
+ * Updates the shared libraries view.
  * 
  * @since: Jan 21, 2003
  */
-public class SharedLibrariesViewEventHandler extends AbstractDebugEventHandler
-{
+public class SharedLibrariesViewEventHandler extends AbstractDebugEventHandler {
+
 	/**
-	 * Constructor for SharedLibrariesViewEventHandler.
-	 * @param view
+	 * Constructs a new event handler on the given view
+	 * 
+	 * @param view shared libraries view
 	 */
-	public SharedLibrariesViewEventHandler( AbstractDebugView view )
-	{
+	public SharedLibrariesViewEventHandler( AbstractDebugView view ) {
 		super( view );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler#doHandleDebugEvents(DebugEvent[])
 	 */
-	protected void doHandleDebugEvents( DebugEvent[] events )
-	{
-		for( int i = 0; i < events.length; i++ )
-		{
+	protected void doHandleDebugEvents( DebugEvent[] events ) {
+		for ( int i = 0; i < events.length; i++ ) {
 			DebugEvent event = events[i];
-			switch( event.getKind() )
-			{
+			switch( event.getKind() ) {
 				case DebugEvent.CREATE:
 				case DebugEvent.TERMINATE:
-					if ( event.getSource() instanceof IDebugTarget ||
-						 event.getSource() instanceof ICSharedLibrary )
+					if ( event.getSource() instanceof IDebugTarget || event.getSource() instanceof ICSharedLibrary )
 						refresh();
 					break;
 				case DebugEvent.CHANGE :
@@ -51,25 +54,25 @@ public class SharedLibrariesViewEventHandler extends AbstractDebugEventHandler
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler#refresh()
 	 */
-	public void refresh()
-	{
-		if ( isAvailable() )
-		{
+	public void refresh() {
+		if ( isAvailable() ) {
 			getView().showViewer();
 			getTableTreeViewer().refresh();
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler#refresh(java.lang.Object)
 	 */
-	protected void refresh( Object element )
-	{
-		if ( isAvailable() )
-		{
+	protected void refresh( Object element ) {
+		if ( isAvailable() ) {
 			getView().showViewer();
 			getTableTreeViewer().refresh( element );
 		}

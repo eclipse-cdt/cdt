@@ -52,7 +52,7 @@ public class SignalActionDelegate implements IObjectActionDelegate
 		{
 			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
 													DebugException.REQUEST_FAILED, 
-													MessageFormat.format( CDebugUIPlugin.getResourceString("internal.ui.actions.SignalActionDelegate.Unable_to_deliver_signal_to_target"), new String[] { getSignal().getName() } ),  //$NON-NLS-1$
+													CDebugUIPlugin.getResourceString( "internal.ui.actions.SignalActionDelegate.Unable_to_deliver_signal_to_target" ),  //$NON-NLS-1$
 													null ); 
 			BusyIndicator.showWhile( Display.getCurrent(), 
 									new Runnable()

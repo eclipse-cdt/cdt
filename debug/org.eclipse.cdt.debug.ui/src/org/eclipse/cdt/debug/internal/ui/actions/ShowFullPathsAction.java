@@ -20,8 +20,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 
 /**
  * An action delegate that toggles the state of its viewer to show/hide full paths.
- *
- * @since: Feb 23, 2004
  */
 public class ShowFullPathsAction extends ViewFilterAction {
 

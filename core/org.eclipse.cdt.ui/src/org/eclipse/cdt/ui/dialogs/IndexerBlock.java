@@ -9,11 +9,10 @@
  *     IBM Corp. - Rational Software - initial implementation
  ******************************************************************************/
 
-package org.eclipse.cdt.ui.properties;
+package org.eclipse.cdt.ui.dialogs;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;

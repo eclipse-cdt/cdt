@@ -129,7 +129,9 @@
          id="GCCStandardMakePerProjectProfile"
          name="%extensionGCCPerProjectProfile.name"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
-      <scannerInfoCollector class="org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector"/>
+      <scannerInfoCollector
+            class="org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector"
+            scope="project"/>
       <buildOutputProvider>
          <open/>
          <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerInfoConsoleParser"/>
@@ -146,7 +148,9 @@
          id="GCCStandardMakePerFileProfile"
          name="%extensionGCCPerFileProfile.name"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
-      <scannerInfoCollector class="org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector"/>
+      <scannerInfoCollector
+            class="org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector"
+            scope="file"/>
       <buildOutputProvider>
          <open/>
          <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCPerFileBOPConsoleParser"/>

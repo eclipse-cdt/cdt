@@ -65,6 +65,21 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="scope" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="project">
+                  </enumeration>
+                  <enumeration value="file">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 

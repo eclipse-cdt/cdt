@@ -22,8 +22,10 @@ import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathContainer;
+import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.preferences.TabFolderLayout;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
@@ -55,7 +57,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     private static final String MISSING_BUILDER_MSG = "ScannerConfigOptionsDialog.label.missingBuilderInformation"; //$NON-NLS-1$
 
-    private static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
     private static final String DIALOG_TITLE = PREFIX + ".title"; //$NON-NLS-1$
     private static final String DIALOG_DESCRIPTION = PREFIX + ".description"; //$NON-NLS-1$
     private static final String SC_GROUP_LABEL = PREFIX + ".scGroup.label"; //$NON-NLS-1$
@@ -73,6 +74,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     private boolean needsSCNature = false;
     private boolean fCreatePathContainer = false;
     private boolean isValid = true;
+    private boolean persistedProfileChanged = false; // new persisted selected profile different than the old one
 
     /**
      * 
@@ -227,6 +229,16 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
      * @see org.eclipse.jface.dialogs.IDialogPage#setVisible(boolean)
      */
     public void setVisible(boolean visible) {
+        if (!visible) {
+            if (!checkDialogForChanges()) {
+                createBuildInfo();
+                restoreFromBuildinfo(getBuildInfo());
+                enableAllControls();
+                handleDiscoveryProfileChanged();
+                
+                getCurrentPage().performDefaults();
+            }
+        }
         super.setVisible(visible);
         enableAllControls();
     }
@@ -267,6 +279,10 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
                 configureProject(project, monitor);
             }
             getBuildInfo().save();
+            if (isProfileDifferentThenPersisted()) {
+                changeDiscoveryContainer(project);
+                updatePersistedProfile();
+            }
         }        
         monitor.done();
     }
@@ -308,17 +324,21 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
         MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
    }
 
+    /**
+     * @param project
+     */
+    private void changeDiscoveryContainer(IProject project) {
+        String profileId = getBuildInfo().getSelectedProfileId();
+        ScannerConfigScope profileScope = ScannerConfigProfileManager.getInstance().
+                getSCProfileConfiguration(profileId).getProfileScope();
+        MakeCorePlugin.getDefault().getDiscoveryManager().changeDiscoveredContainer(project, profileScope);
+    }
+
     private void populateBuildInfo(IScannerConfigBuilderInfo2 buildInfo) {
         if (buildInfo != null) {
             buildInfo.setAutoDiscoveryEnabled(scEnabledButton.getSelection());
             String profileName = profileComboBox.getItem(profileComboBox.getSelectionIndex());
-            String oldProfileId = buildInfo.getSelectedProfileId();
             buildInfo.setSelectedProfileId(getDiscoveryProfileId(profileName));
-            String newProfileId = buildInfo.getSelectedProfileId();
-            if (!oldProfileId.equals(newProfileId) && getProject() != null) {
-                // invalidate scanner config store and reload
-//                MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(getProject());
-            }
             buildInfo.setProblemReportingEnabled(scProblemReportingEnabledButton.getSelection());
         }
     }
@@ -345,7 +365,7 @@ public class DiscoveryOptionsBlock extends AbstractDiscoveryOptionsBlock {
     private void restoreFromBuildinfo(IScannerConfigBuilderInfo2 buildInfo) {
         if (buildInfo != null) {
             scEnabledButton.setSelection(buildInfo.isAutoDiscoveryEnabled());
-            String profileId = buildInfo.getSelectedProfileId(); 
+            String profileId = buildInfo.getSelectedProfileId();
             profileComboBox.setText(getDiscoveryProfileName(profileId));
             scProblemReportingEnabledButton.setSelection(buildInfo.isProblemReportingEnabled());
         }

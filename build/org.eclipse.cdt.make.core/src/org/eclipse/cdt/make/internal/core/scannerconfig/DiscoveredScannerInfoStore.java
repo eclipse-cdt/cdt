@@ -11,6 +11,7 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,12 +29,17 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -48,28 +54,8 @@ import org.xml.sax.SAXException;
  * @author vhirsl
  */
 public class DiscoveredScannerInfoStore {
-	public interface IDiscoveredScannerInfoSerializable {
-	    /**
-	     * Serialize discovered scanner info to an XML element
-	     * 
-	     * @param root
-	     */
-	    public void serialize(Element root);
-	    
-	    /**
-	     * Deserialize discovered scanner info from an XML element
-	     * 
-	     * @param root
-	     */
-	    public void deserialize(Element root);
-	    
-	    /**
-	     * @return an id of the collector
-	     */
-	    public String getCollectorId();
-	}
-	
-	
+	private static final QualifiedName dscFileNameProperty = new 
+            QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "discoveredScannerConfigFileName"); //$NON-NLS-1$
 	private static final String CDESCRIPTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".discoveredScannerInfo"; //$NON-NLS-1$
     public static final String SCD_STORE_VERSION = "scdStore"; //$NON-NLS-1$
 	public static final String SI_ELEM = "scannerInfo"; //$NON-NLS-1$
@@ -124,7 +110,7 @@ public class DiscoveredScannerInfoStore {
 		if (document == null) {
 		    try {
 		        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		        IPath path = ScannerConfigUtil.getDiscoveredScannerConfigStore(project, false);
+		        IPath path = getDiscoveredScannerConfigStore(project);
 		        if (path.toFile().exists()) {
 		            // read form file
 		            FileInputStream file = new FileInputStream(path.toFile());
@@ -241,7 +227,7 @@ public class DiscoveredScannerInfoStore {
 		
 			// Save the document
 			try {
-				IPath path = ScannerConfigUtil.getDiscoveredScannerConfigStore(project, false);
+				IPath path = getDiscoveredScannerConfigStore(project);
 				FileOutputStream file = new FileOutputStream(path.toFile());
 				file.write(stream.toByteArray());
 				file.close();
@@ -262,5 +248,106 @@ public class DiscoveredScannerInfoStore {
 					MakeMessages.getString("DiscoveredPathManager.File_Error_Message"), e)); //$NON-NLS-1$
 		}
 	}
+
+    public IPath getDiscoveredScannerConfigStore(IProject project) {
+        String fileName = project.getName() + ".sc"; //$NON-NLS-1$
+        String storedFileName = null;
+        try {
+            storedFileName = project.getPersistentProperty(dscFileNameProperty);
+        } catch (CoreException e) {
+            MakeCorePlugin.log(e.getStatus());
+        }
+        if (storedFileName != null && !storedFileName.equals(fileName)) {
+            // try to move 2.x file name format to 3.x file name format
+            movePluginStateFile(storedFileName, fileName);
+        }
+        try {
+            project.setPersistentProperty(dscFileNameProperty, fileName);
+        } catch (CoreException e) {
+            MakeCorePlugin.log(e.getStatus());
+        }
+
+        return MakeCorePlugin.getWorkingDirectory().append(fileName);
+    }
+
+    /**
+     * @param delta
+     */
+    public void updateScannerConfigStore(IResourceDelta delta) {
+        try {
+            delta.accept(new IResourceDeltaVisitor() {
+
+                public boolean visit(IResourceDelta delta) throws CoreException {
+                    IResource resource = delta.getResource();
+                    if (resource instanceof IProject) {
+                        IProject project = (IProject) resource;
+                        int kind = delta.getKind();
+                        switch (kind) {
+                        case IResourceDelta.REMOVED:
+                            if ((delta.getFlags() & IResourceDelta.MOVED_TO) != 0) {
+                                // project renamed
+                                IPath newPath = delta.getMovedToPath();
+                                IProject newProject = delta.getResource().getWorkspace().
+                                        getRoot().getProject(newPath.toString());
+                                scProjectRenamed(project, newProject);
+                            }
+                            else {
+                                // project deleted
+                                scProjectDeleted(project);
+                            }
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+
+            });
+        }
+        catch (CoreException e) {
+            MakeCorePlugin.log(e);
+        }
+    }
+
+    private void scProjectDeleted(IProject project) {
+        String scFileName = project.getName() + ".sc"; //$NON-NLS-1$
+        deletePluginStateFile(scFileName);
+    }
+
+    /**
+     * @param scFileName
+     */
+    private void deletePluginStateFile(String scFileName) {
+        IPath path = MakeCorePlugin.getWorkingDirectory().append(scFileName);
+        File file = path.toFile();
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    private void scProjectRenamed(IProject project, IProject newProject) {
+        String scOldFileName = project.getName() + ".sc"; //$NON-NLS-1$
+        String scNewFileName = newProject.getName() + ".sc"; //$NON-NLS-1$
+        movePluginStateFile(scOldFileName, scNewFileName);
+        try {
+            newProject.setPersistentProperty(dscFileNameProperty, scNewFileName);
+        }
+        catch (CoreException e) {
+            MakeCorePlugin.log(e);
+        }
+    }
+
+    /**
+     * @param oldFileName
+     * @param newFileName
+     */
+    private void movePluginStateFile(String oldFileName, String newFileName) {
+        IPath oldPath = MakeCorePlugin.getWorkingDirectory().append(oldFileName);
+        IPath newPath = MakeCorePlugin.getWorkingDirectory().append(newFileName);
+        File oldFile = oldPath.toFile();
+        File newFile = newPath.toFile();
+        if (oldFile.exists()) {
+            oldFile.renameTo(newFile);
+        }
+    }
 
 }

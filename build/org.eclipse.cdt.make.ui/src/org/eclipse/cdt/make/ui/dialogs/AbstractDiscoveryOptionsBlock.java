@@ -10,12 +10,15 @@
  ***********************************************************************/
 package org.eclipse.cdt.make.ui.dialogs;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathEntryMessages;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
@@ -26,8 +29,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Composite;
 
@@ -37,10 +44,21 @@ import org.eclipse.swt.widgets.Composite;
  * @author vhirsl
  */
 public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage {
+    protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
+    private static final String UNSAVEDCHANGES_TITLE = PREFIX + ".unsavedchanges.title"; //$NON-NLS-1$
+    private static final String UNSAVEDCHANGES_MESSAGE = PREFIX + ".unsavedchanges.message"; //$NON-NLS-1$
+    private static final String UNSAVEDCHANGES_BSAVE = PREFIX + ".unsavedchanges.button.save"; //$NON-NLS-1$
+    private static final String UNSAVEDCHANGES_BCANCEL = PREFIX + ".unsavedchanges.button.cancel"; //$NON-NLS-1$
+    private static final String ERROR_TITLE = PREFIX + ".error.title"; //$NON-NLS-1$
+    private static final String ERROR_MESSAGE = PREFIX + ".error.message"; //$NON-NLS-1$
+    private static final String PROFILE_PAGE = "profilePage"; //$NON-NLS-1$
+    private static final String PROFILE_ID = "profileId"; //$NON-NLS-1$
+    
     private Preferences fPrefs;
     private IScannerConfigBuilderInfo2 fBuildInfo;
     private boolean fInitialized = false;
-
+    private String fPersistedProfileId = null;
+    
     private Map fProfilePageMap = null;
 
     // Composite parent provided by the block.
@@ -77,6 +95,41 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     protected void setInitialized(boolean initialized) {
         fInitialized = initialized;
     }
+
+    /**
+     * @return true - OK to continue
+     */
+    public boolean checkDialogForChanges() {
+        boolean rc = true;
+        if (isProfileDifferentThenPersisted()) {
+            String title = MakeUIPlugin.getResourceString(UNSAVEDCHANGES_TITLE);
+            String message = MakeUIPlugin.getResourceString(UNSAVEDCHANGES_MESSAGE);
+            String[] buttonLabels = new String[]{
+                    MakeUIPlugin.getResourceString(UNSAVEDCHANGES_BSAVE),
+                    MakeUIPlugin.getResourceString(UNSAVEDCHANGES_BCANCEL),
+            };
+            MessageDialog dialog = new MessageDialog(getShell(), title, null, message, MessageDialog.QUESTION,
+                    buttonLabels, 0);
+            int res = dialog.open();
+            if (res == 0) { // OK
+                callPerformApply();
+                rc = true;
+            } else if (res == 1) { // CANCEL
+                rc = false;
+            }
+        }
+        return rc;
+    }
+    
+    public boolean isProfileDifferentThenPersisted() {
+        return (fPersistedProfileId != null && 
+                !fPersistedProfileId.equals(getBuildInfo().getSelectedProfileId()));
+    }
+    
+    public void updatePersistedProfile() {
+        fPersistedProfileId = getBuildInfo().getSelectedProfileId();
+    }
+    
     /**
      * Create a profile page only on request
      * 
@@ -128,8 +181,8 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
         IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(MakeUIPlugin.getPluginId(), "DiscoveryProfilePage"); //$NON-NLS-1$
         IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
         for (int i = 0; i < infos.length; i++) {
-            if (infos[i].getName().equals("profilePage")) { //$NON-NLS-1$
-                String id = infos[i].getAttribute("profileId"); //$NON-NLS-1$
+            if (infos[i].getName().equals(PROFILE_PAGE)) { //$NON-NLS-1$
+                String id = infos[i].getAttribute(PROFILE_ID); //$NON-NLS-1$
                 fProfilePageMap.put(id, new DiscoveryProfilePageConfiguration(infos[i]));
             }
         }
@@ -155,6 +208,9 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
             }
         } else {
             fBuildInfo = ScannerConfigProfileManager.createScannerConfigBuildInfo2(fPrefs, false);
+        }
+        if (fBuildInfo != null) {
+            fPersistedProfileId = fBuildInfo.getSelectedProfileId();
         }
     }
 
@@ -215,7 +271,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     }
 
     /**
-     * Notification that the user changed the selection of the Binary Parser.
+     * Notification that the user changed the selection of the SCD profile.
      */
     protected void handleDiscoveryProfileChanged() {
         if (getCompositeParent() == null) {
@@ -297,5 +353,31 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
     }
     
     protected abstract String getCurrentProfileId();
+
+    /**
+     * 
+     */
+    public void callPerformApply() {
+        try {
+            new ProgressMonitorDialog(getShell()).run(false, false, new IRunnableWithProgress() {
     
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    try {
+                        performApply(monitor);
+                    }
+                    catch (CoreException e) {
+                        throw new InvocationTargetException(e);
+                    }
+                }
+                
+            });
+        } catch (InvocationTargetException e) {
+            String title = CPathEntryMessages.getString(ERROR_TITLE); //$NON-NLS-1$
+            String message = CPathEntryMessages.getString(ERROR_MESSAGE); //$NON-NLS-1$
+            ExceptionHandler.handle(e, getShell(), title, message);
+        } catch (InterruptedException e) {
+            // cancelled
+        }
+    }
+
 }

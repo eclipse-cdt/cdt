@@ -88,7 +88,9 @@
          id="GCCManagedMakePerProjectProfile"
          name="GNU C/C++ managed make per project SCD profile"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
-      <scannerInfoCollector class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"/>
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+            scope="project"/>
       <scannerInfoProvider providerId="specsFile">
          <run
                arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}"
@@ -101,7 +103,9 @@
          id="GCCWinManagedMakePerProjectProfile"
          name="GNU C/C++ managed make per project SCD profile (Windows)"
          point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
-      <scannerInfoCollector class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"/>
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
+            scope="project"/>
       <scannerInfoProvider providerId="specsFile">
          <run
                arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}"

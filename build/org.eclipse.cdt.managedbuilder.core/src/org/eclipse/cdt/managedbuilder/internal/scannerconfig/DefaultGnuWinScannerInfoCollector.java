@@ -70,7 +70,7 @@ public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoColl
 	 */
 	private String convertPath(String includePath) {
 		// Convert a POSIX-style path to Win32
-		String translatedPath = new CygpathTranslator(project, includePath).run();
+		String translatedPath = new CygpathTranslator(includePath).run();
 		return translatedPath;
 	}
 

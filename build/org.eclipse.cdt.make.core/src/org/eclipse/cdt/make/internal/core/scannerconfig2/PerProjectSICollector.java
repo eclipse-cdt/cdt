@@ -26,17 +26,17 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollectorCleaner;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.MakeMessages;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInfo;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.w3c.dom.Element;
 
 /**
@@ -233,7 +233,7 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
             addedIncludes = addItemsWithOrder(sumDiscoveredIncludes, discoveredIncludes, true);
 
             // try to translate cygpaths to absolute paths
-			List finalSumIncludes = translateIncludePaths(sumDiscoveredIncludes);
+			List finalSumIncludes = CygpathTranslator.translateIncludePaths(sumDiscoveredIncludes);
 			
 			// Step 2. Get project's scanner config
 			LinkedHashMap persistedIncludes = discPathInfo.getIncludeMap();
@@ -296,49 +296,6 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
 			discPathInfo.setSymbolMap(candidateSymbols);
 		}
 		return addedSymbols;
-	}
-
-	/**
-	 * @param sumIncludes
-	 * @return
-	 */
-	private List translateIncludePaths(List sumIncludes) {
-		List translatedIncludePaths = new ArrayList();
-		for (Iterator i = sumIncludes.iterator(); i.hasNext(); ) {
-			String includePath = (String) i.next();
-			IPath realPath = new Path(includePath);
-			if (!realPath.toFile().exists()) {
-				String translatedPath = includePath;
-				if (Platform.getOS().equals(Platform.OS_WIN32)) {
-					translatedPath = new CygpathTranslator(project, includePath).run();
-				}
-				if (translatedPath != null) {
-					if (!translatedPath.equals(includePath)) {
-						// Check if the translated path exists
-						IPath transPath = new Path(translatedPath);
-						if (transPath.toFile().exists()) {
-							translatedIncludePaths.add(translatedPath);
-						}
-						else {
-							// TODO VMIR for now add even if it does not exist
-							translatedIncludePaths.add(translatedPath);
-						}
-					}
-					else {
-						// TODO VMIR for now add even if it does not exist
-						translatedIncludePaths.add(translatedPath);
-					}
-				}
-				else {
-					TraceUtil.outputError("CygpathTranslator unable to translate path: ",//$NON-NLS-1$
-							includePath);
-				}
-			}
-			else {
-				translatedIncludePaths.add(includePath);
-			}
-		}
-		return translatedIncludePaths;
 	}
 
     /* (non-Javadoc)
@@ -438,6 +395,20 @@ public class PerProjectSICollector implements IScannerInfoCollector2, IScannerIn
             // remove it from the Map of SymbolEntries 
             ScannerConfigUtil.removeSymbolEntryValue(symbol, sumDiscoveredSymbols);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2#createPathInfoObject()
+     */
+    public IDiscoveredPathInfo createPathInfoObject() {
+        DiscoveredPathInfo pathInfo = new DiscoveredPathInfo(project);
+        try {
+            DiscoveredScannerInfoStore.getInstance().loadDiscoveredScannerInfoFromState(project, pathInfo);
+        }
+        catch (CoreException e) {
+            MakeCorePlugin.log(e);
+        }
+        return pathInfo; 
     }
 
 }

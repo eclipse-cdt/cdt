@@ -10,6 +10,7 @@
  ***********************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,6 +32,15 @@ public interface IScannerInfoCollector2 extends IScannerInfoCollector {
 	 * @throws CoreException
 	 */
 	public void updateScannerConfiguration(IProgressMonitor monitor) throws CoreException;
+
+    /**
+     * Create and return new IDiscoveredPathInfo that can hopefully serialize
+     * discovered scanner config to a file
+     * 
+     * @return pathInfo
+     * @throws CoreException 
+     */
+    public IDiscoveredPathInfo createPathInfoObject();
     
 //    /**
 //     * Answers a map of collected defines that the the compiler uses by default. 

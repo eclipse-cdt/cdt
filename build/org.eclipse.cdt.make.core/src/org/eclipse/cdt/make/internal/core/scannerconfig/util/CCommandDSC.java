@@ -25,9 +25,16 @@ import org.w3c.dom.NodeList;
  */
 public class CCommandDSC {
     private final static String SINGLE_SPACE = " "; //$NON-NLS-1$
+    private final static String CMD_DESCRIPTION_ELEM = "commandDescription"; //$NON-NLS-1$
+    private final static String CMD_SI_ELEM = "commandScannerInfo"; //$NON-NLS-1$
+    private final static String OPTION_ELEM = "option"; //$NON-NLS-1$
+    private final static String SI_ITEM_ELEM = "siItem"; //$NON-NLS-1$
+    private final static String KEY_ATTR = "key"; //$NON-NLS-1$
+    private final static String VALUE_ATTR = "value"; //$NON-NLS-1$
+    private final static String KIND_ATTR = "kind"; //$NON-NLS-1$
     
 	private int commandId;
-	private List compilerCommand;	// members are KVPair objects
+	private List compilerCommand;	// members are KVStringPair objects
 	private boolean discovered;
 	private boolean cppFileType;	// C or C++ file type
 
@@ -40,7 +47,6 @@ public class CCommandDSC {
 	public CCommandDSC(boolean cppFileType) {
 		compilerCommand = new ArrayList();
 		discovered = false;
-//		files = null;
 		this.cppFileType = cppFileType;
         
         symbols = new ArrayList();
@@ -51,7 +57,7 @@ public class CCommandDSC {
         return cppFileType;
     }
     
-	public void addSCOption(KVPair option) {
+	public void addSCOption(KVStringPair option) {
 		compilerCommand.add(option);
 	}
 	
@@ -74,28 +80,11 @@ public class CCommandDSC {
         this.commandId = commandId;
     }
     
-//	public void addFile(String fileName) {
-//		if (files == null) {
-//			files = new ArrayList();
-//		}
-//		if (!files.contains(fileName)) {
-//			files.add(fileName);
-//			if (!cppFileType && !fileName.endsWith(".c")) { //$NON-NLS-1$
-//				cppFileType = true;
-//			}
-//		}
-//	}
-	
-//	public int getNumberOfFiles() {
-//		if (files == null) return 0;
-//		return files.size();
-//	}
-	
 	public String toString() {
 		String commandAsString = new String();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
-			KVPair optionPair = (KVPair)i.next();
-			commandAsString += optionPair.getKey().toString() + SINGLE_SPACE + 
+			KVStringPair optionPair = (KVStringPair)i.next();
+			commandAsString += optionPair.getKey() + SINGLE_SPACE + 
                                optionPair.getValue() + SINGLE_SPACE;
 		}
 		return commandAsString.trim();
@@ -112,15 +101,15 @@ public class CCommandDSC {
 	public String getSCDRunnableCommand() {
 		String commandAsString = new String();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
-			KVPair optionPair = (KVPair)i.next();
-            if (optionPair.getKey().equals(SCDOptionsEnum.COMMAND)) {
+			KVStringPair optionPair = (KVStringPair)i.next();
+            if (optionPair.getKey().equals(SCDOptionsEnum.COMMAND.toString())) {
                 commandAsString += optionPair.getValue() + SINGLE_SPACE;
             }
             else {
-//    			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE) ||
-//    					optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE))
+//    			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString()) ||
+//    					optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString()))
 //    				continue;
-    			commandAsString += optionPair.getKey().toString() + SINGLE_SPACE + 
+    			commandAsString += optionPair.getKey() + SINGLE_SPACE + 
                                    optionPair.getValue() + SINGLE_SPACE;
             }
 		}
@@ -130,8 +119,8 @@ public class CCommandDSC {
 	public String[] getImacrosFile() {
 		List imacrosFiles = new ArrayList();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
-			KVPair optionPair = (KVPair)i.next();
-			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE)) {
+			KVStringPair optionPair = (KVStringPair)i.next();
+			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString())) {
 				imacrosFiles.add(optionPair.getValue());
 			}
 		}
@@ -141,8 +130,8 @@ public class CCommandDSC {
 	public String[] getIncludeFile() {
 		List includeFiles = new ArrayList();
 		for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
-			KVPair optionPair = (KVPair)i.next();
-			if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE)) {
+			KVStringPair optionPair = (KVStringPair)i.next();
+			if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString())) {
 				includeFiles.add(optionPair.getValue());
 			}
 		}
@@ -214,27 +203,27 @@ public class CCommandDSC {
     public void serialize(Element cmdElem) {
         Document doc = cmdElem.getOwnerDocument();
         // serialize the command
-        Element cmdDescElem = doc.createElement("commandDescription"); //$NON-NLS-1$
+        Element cmdDescElem = doc.createElement(CMD_DESCRIPTION_ELEM);
         for (Iterator i = compilerCommand.iterator(); i.hasNext(); ) {
-            Element optionElem = doc.createElement("option"); //$NON-NLS-1$
-            KVPair option = (KVPair) i.next();
-            optionElem.setAttribute("key", option.getKey().toString()); //$NON-NLS-1$
-            optionElem.setAttribute("value", option.getValue()); //$NON-NLS-1$
+            Element optionElem = doc.createElement(OPTION_ELEM); 
+            KVStringPair option = (KVStringPair) i.next();
+            optionElem.setAttribute(KEY_ATTR, option.getKey()); 
+            optionElem.setAttribute(VALUE_ATTR, option.getValue()); 
             cmdDescElem.appendChild(optionElem);
         }
         cmdElem.appendChild(cmdDescElem);
         // serialize includes and symbols
-        Element siElem = doc.createElement("commandScannerInfo"); //$NON-NLS-1$
+        Element siElem = doc.createElement(CMD_SI_ELEM);
         for (Iterator j = includes.iterator(); j.hasNext(); ) {
-            Element siItem = doc.createElement("siItem"); //$NON-NLS-1$
-            siItem.setAttribute("kind", "INCLUDE_PATH"); //$NON-NLS-1$ //$NON-NLS-2$
-            siItem.setAttribute("value", (String) j.next()); //$NON-NLS-1$
+            Element siItem = doc.createElement(SI_ITEM_ELEM); 
+            siItem.setAttribute(KIND_ATTR, "INCLUDE_PATH");  //$NON-NLS-1$
+            siItem.setAttribute(VALUE_ATTR, (String) j.next());
             siElem.appendChild(siItem);
         }
         for (Iterator j = symbols.iterator(); j.hasNext(); ) {
-            Element siItem = doc.createElement("siItem"); //$NON-NLS-1$
-            siItem.setAttribute("kind", "SYMBOL_DEFINITION"); //$NON-NLS-1$ //$NON-NLS-2$
-            siItem.setAttribute("value", (String) j.next()); //$NON-NLS-1$
+            Element siItem = doc.createElement(SI_ITEM_ELEM);
+            siItem.setAttribute(KIND_ATTR, "SYMBOL_DEFINITION"); //$NON-NLS-1$
+            siItem.setAttribute(VALUE_ATTR, (String) j.next()); 
             siElem.appendChild(siItem);
         }
         cmdElem.appendChild(siElem);
@@ -245,32 +234,31 @@ public class CCommandDSC {
      */
     public void deserialize(Element cmdElem) {
         // read command options
-        NodeList descList = cmdElem.getElementsByTagName("commandDescription");
+        NodeList descList = cmdElem.getElementsByTagName(CMD_DESCRIPTION_ELEM);
         if (descList.getLength() > 0) {
             Element descElem = (Element) descList.item(0);
-            NodeList optionList = descElem.getElementsByTagName("option");
+            NodeList optionList = descElem.getElementsByTagName(OPTION_ELEM);
             for (int i = 0; i < optionList.getLength(); ++i) {
                 Element optionElem = (Element) optionList.item(i);
-                String key = optionElem.getAttribute("key");
-                SCDOptionsEnum eKey = SCDOptionsEnum.getSCDOptionsEnum(key);
-                String value = optionElem.getAttribute("value");
-                KVPair option = new KVPair(eKey, value);
+                String key = optionElem.getAttribute(KEY_ATTR);
+                String value = optionElem.getAttribute(VALUE_ATTR);
+                KVStringPair option = new KVStringPair(key, value);
                 addSCOption(option);
             }
         }
         // read associated scanner info
-        NodeList siList = cmdElem.getElementsByTagName("commandScannerInfo");
+        NodeList siList = cmdElem.getElementsByTagName(CMD_SI_ELEM);
         if (siList.getLength() > 0) {
             Element siElem = (Element) siList.item(0);
-            NodeList siItemList = siElem.getElementsByTagName("siItem");
+            NodeList siItemList = siElem.getElementsByTagName(SI_ITEM_ELEM);
             for (int i = 0; i < siItemList.getLength(); ++i) {
                 Element siItemElem = (Element) siItemList.item(i);
-                String kind = siItemElem.getAttribute("kind");
-                String value = siItemElem.getAttribute("value");
-                if (kind.equals("INCLUDE_PATH")) {
+                String kind = siItemElem.getAttribute(KIND_ATTR);
+                String value = siItemElem.getAttribute(VALUE_ATTR);
+                if (kind.equals("INCLUDE_PATH")) { //$NON-NLS-1$
                     includes.add(value);
                 }
-                else if (kind.equals("SYMBOL_DEFINITION")) {
+                else if (kind.equals("SYMBOL_DEFINITION")) { //$NON-NLS-1$
                     symbols.add(value);
                 }
             }

@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.KVPair;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.KVStringPair;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SCDOptionsEnum;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IProject;
@@ -93,10 +93,10 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      * 
      */
     void generateReport() {
-        TraceUtil.metricsTrace("Stats for directory ",
-                   "Generic command: '", "' applicable for:", 
+        TraceUtil.metricsTrace("Stats for directory ", //$NON-NLS-1$
+                   "Generic command: '", "' applicable for:",  //$NON-NLS-1$ //$NON-NLS-2$
                    directoryCommandListMap);
-        TraceUtil.summaryTrace("Discovery summary", workingDirsN, commandsN, filesN);
+        TraceUtil.summaryTrace("Discovery summary", workingDirsN, commandsN, filesN); //$NON-NLS-1$
     }
 
     /**
@@ -130,8 +130,8 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      */
     public CCommandDSC getNewCCommandDSC(String genericLine, boolean cppFileType) {
         CCommandDSC command = new CCommandDSC(cppFileType);
-        String[] tokens = genericLine.split("\\s+");
-        command.addSCOption(new KVPair(SCDOptionsEnum.COMMAND, tokens[0]));
+        String[] tokens = genericLine.split("\\s+"); //$NON-NLS-1$
+        command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[0]));
         for (int i = 1; i < tokens.length; ++i) {
             for (int j = SCDOptionsEnum.MIN; j <= SCDOptionsEnum.MAX; ++j) {
                 if (tokens[i].startsWith(SCDOptionsEnum.getSCDOptionsEnum(j).toString())) {
@@ -144,7 +144,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                         // ex. -I /dir
                         // take a next token
                         ++i;
-                        if (i < tokens.length && !tokens[i].startsWith("-")) {
+                        if (i < tokens.length && !tokens[i].startsWith("-")) { //$NON-NLS-1$
                             option = tokens[i];
                         }
                         else break;
@@ -157,7 +157,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
                         option = (getAbsolutePath(option)).toString();
                     }
                     // add the pair
-                    command.addSCOption(new KVPair(SCDOptionsEnum.getSCDOptionsEnum(j), option));
+                    command.addSCOption(new KVStringPair(SCDOptionsEnum.getSCDOptionsEnum(j).toString(), option));
                     break;
                 }
             }
@@ -171,8 +171,8 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
      */
     IPath getAbsolutePath(String filePath) {
         IPath pFilePath;
-        if (filePath.startsWith("/") || filePath.startsWith("\\") ||
-            (!filePath.startsWith(".") &&
+        if (filePath.startsWith("/") || filePath.startsWith("\\") || //$NON-NLS-1$ //$NON-NLS-2$
+            (!filePath.startsWith(".") && //$NON-NLS-1$
              filePath.length() > 2 && filePath.charAt(1) == ':' && 
              (filePath.charAt(2) == '\\' || filePath.charAt(2) == '/'))) {
             // absolute path

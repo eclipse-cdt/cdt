@@ -15,15 +15,15 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
- * TODO Provide description
+ * Abstract SCD profile page
  * 
  * @author vhirsl
  */
 public abstract class AbstractDiscoveryPage extends DialogPage {
     protected static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
     protected static final String PROFILE_GROUP_LABEL = PREFIX + ".profile.group.label"; //$NON-NLS-1$
-
-    protected AbstractDiscoveryOptionsBlock fContainer;
+    
+    protected AbstractDiscoveryOptionsBlock fContainer; // parent
     
     /**
      * @return Returns the fContainer.

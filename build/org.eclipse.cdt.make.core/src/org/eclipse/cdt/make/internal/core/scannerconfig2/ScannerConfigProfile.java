@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -29,7 +30,7 @@ import org.eclipse.core.runtime.Platform;
  * @author vhirsl
  */
 public class ScannerConfigProfile {
-	/**
+    /**
 	 * scannerInfoCollector element
 	 * 
 	 * @author vhirsl
@@ -48,6 +49,9 @@ public class ScannerConfigProfile {
 				return null;
 			}
 		}
+        public String getScope() {
+            return configElem.getAttribute("scope"); //$NON-NLS-1$
+        }
 	}
 	/**
 	 * scannerInfoConsoleParser element
@@ -296,6 +300,20 @@ public class ScannerConfigProfile {
 	public ScannerInfoCollector getScannerInfoCollectorElement() {
 		return scannerInfoCollector;
 	}
+    
+    public ScannerConfigScope getProfileScope() {
+        ScannerConfigScope scope = null;
+        if (scannerInfoCollector != null) { 
+            if (scannerInfoCollector.getScope().equals(ScannerConfigScope.PROJECT_SCOPE.toString())) {
+                scope = ScannerConfigScope.PROJECT_SCOPE;
+            }
+            else if (scannerInfoCollector.getScope().equals(ScannerConfigScope.FILE_SCOPE.toString())) {
+                scope = ScannerConfigScope.FILE_SCOPE;
+            }
+        }
+        return scope;
+    }
+    
 	/**
 	 * @return Returns the scannerInfoProviders.
 	 */

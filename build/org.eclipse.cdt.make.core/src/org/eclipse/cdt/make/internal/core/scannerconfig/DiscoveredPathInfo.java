@@ -15,8 +15,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigScope;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
-import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredScannerInfoStore.IDiscoveredScannerInfoSerializable;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
 import org.eclipse.core.resources.IProject;
@@ -196,5 +197,39 @@ public class DiscoveredPathInfo implements IDiscoveredPathInfo, IDiscoveredScann
 	public String getCollectorId() {
 		return PerProjectSICollector.COLLECTOR_ID;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getIncludePaths(org.eclipse.core.runtime.IPath)
+     */
+    public IPath[] getIncludePaths(IPath path) {
+        if (project.getFile(path) != null) {
+            return getIncludePaths();
+        }
+        return new IPath[0];
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSymbols(org.eclipse.core.runtime.IPath)
+     */
+    public Map getSymbols(IPath path) {
+        if (project.getFile(path) != null) {
+            return getSymbols();
+        }
+        return new HashMap(0);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getSerializable()
+     */
+    public IDiscoveredScannerInfoSerializable getSerializable() {
+        return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo#getScope()
+     */
+    public ScannerConfigScope getScope() {
+        return ScannerConfigScope.PROJECT_SCOPE;
+    }
 	
 }

@@ -454,10 +454,10 @@ public class ScannerConfigInfoFactory2 {
                         		((Element)sc).getAttribute(PROBLEM_REPORTING_ENABLED)).booleanValue();
                     }
                     else if (sc.getNodeName().equals(PROFILE)) {
-						//if (selectedProfile.equals(((Element)sc).getAttribute(ID))) {
+						if (profileIds.contains(((Element)sc).getAttribute(ID))) {
 							load(sc);
                             loadedProfiles.add(((Element)sc).getAttribute(ID));
-						//}
+						}
 					}
 				}
 				if (loadedProfiles.size() < 1) {

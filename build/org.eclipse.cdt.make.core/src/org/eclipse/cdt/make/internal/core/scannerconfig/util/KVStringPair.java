@@ -11,23 +11,23 @@
 package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
 /**
- * Key - Value Pair
+ * Key - Value String Pair
  * 
  * @author vhirsl
  */
-public class KVPair {
-	private SCDOptionsEnum key;
+public class KVStringPair {
+	private String key;
 	private String value;
 	
 	/**
 	 * 
 	 */
-	public KVPair(SCDOptionsEnum key, String value) {
+	public KVStringPair(String key, String value) {
 		this.key = key;
 		this.value = value;
 	}
 	
-	public SCDOptionsEnum getKey() {
+	public String getKey() {
 		return key;
 	}
 	
@@ -39,7 +39,7 @@ public class KVPair {
 	 */
 	public boolean equals(Object arg0) {
 		if (arg0 != null && arg0.getClass().equals(this.getClass())) {
-			KVPair arg = (KVPair) arg0;
+			KVStringPair arg = (KVStringPair) arg0;
 			return (key.equals(arg.getKey()) && value.equals(arg.getValue()));
 		}
 		return false;
@@ -54,6 +54,6 @@ public class KVPair {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return key + " -> " + value;
+		return key + " -> " + value; //$NON-NLS-1$
 	}
 }

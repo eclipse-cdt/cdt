@@ -337,7 +337,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return null;
 	}
 
-	protected IPathEntry[] removeCachedResovedPathEntries(ICProject cproject) {
+	protected IPathEntry[] removeCachedResolvedPathEntries(ICProject cproject) {
 		ArrayList resolvedListEntries = (ArrayList)resolvedMap.remove(cproject);
 		if (resolvedListEntries != null) {
 			try {
@@ -742,7 +742,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				continue;
 			}
 			remaining++;
-			oldResolvedEntries[i] = removeCachedResovedPathEntries(affectedProject);
+			oldResolvedEntries[i] = removeCachedResolvedPathEntries(affectedProject);
 //			ArrayList listEntries = (ArrayList)resolvedMap.remove(affectedProject);
 //			if (listEntries != null) {
 //				oldResolvedEntries[i] = (IPathEntry[])listEntries.toArray(NO_PATHENTRIES);
@@ -1460,7 +1460,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		if (project.isAccessible()) {
 			try {
 				// Clear the old cache entries.
-				IPathEntry[] oldResolvedEntries = removeCachedResovedPathEntries(cproject);
+				IPathEntry[] oldResolvedEntries = removeCachedResolvedPathEntries(cproject);
 				IPathEntry[] newResolvedEntries = getResolvedPathEntries(cproject);
 				ICElementDelta[] deltas = generatePathEntryDeltas(cproject, oldResolvedEntries, newResolvedEntries);
 				if (deltas.length > 0) {

@@ -294,6 +294,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
     }
 
     private void handleBOPLoadFileButtonSelected() {
+        if (!getContainer().checkDialogForChanges()) return;
         loadButtonInitialEnabled = false;
         bopLoadButton.setEnabled(false);
         

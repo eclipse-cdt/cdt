@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.CLaunchConfigurationTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
+import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -33,9 +34,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 public class CDebuggerTab extends CLaunchConfigurationTab {
-	Combo fDCombo;
-	Button stopInMain;
-
+	protected Combo fDCombo;
+	protected Button fStopInMain;
 	protected Button fAttachButton;
 	protected Button fCoreButton;
 	protected Button fRunButton;
@@ -49,9 +49,11 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 	protected ILaunchConfiguration fLaunchConfiguration;
 
 	public void createControl(Composite parent) {
+		GridData gd;
+
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		GridLayout topLayout = new GridLayout(3, false);
+		GridLayout topLayout = new GridLayout(2, false);
 		comp.setLayout(topLayout);
 		Label dlabel = new Label(comp, SWT.NONE);
 		dlabel.setText("Debugger:");
@@ -61,23 +63,43 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 				handleDebuggerComboBoxModified();
 			}
 		});
-		stopInMain = new Button(comp, SWT.CHECK);
-		stopInMain.setText("Stop at main() on startup.");
-		GridData gd = new GridData();
-		gd.horizontalIndent = 10;
-		stopInMain.setLayoutData(gd);
-
 		Composite radioComp = new Composite(comp, SWT.NONE);
 		GridLayout radioLayout = new GridLayout(3, true);
 		radioLayout.marginHeight = 0;
 		radioLayout.marginWidth = 0;
 		radioComp.setLayout(radioLayout);
 		gd = new GridData();
-		gd.horizontalSpan = 3;
+		gd.horizontalSpan = 2;
 		radioComp.setLayoutData(gd);
 		fRunButton = createRadioButton(radioComp, "Run program in debugger.");
+		fRunButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if ( fRunButton.getSelection() == true ) {
+					fStopInMain.setEnabled(true);
+				} else {
+					fStopInMain.setEnabled(false);
+				}
+				updateLaunchConfigurationDialog();
+			}
+		});
 		fAttachButton = createRadioButton(radioComp, "Attach to running process.");
+		fAttachButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
 		fCoreButton = createRadioButton(radioComp, "View Corefile.");
+		fCoreButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+
+		fStopInMain = new Button(comp, SWT.CHECK);
+		fStopInMain.setText("Stop at main() on startup.");
+		gd = new GridData();
+		gd.horizontalSpan = 2;
+		fStopInMain.setLayoutData(gd);
 
 		Group debuggerGroup = new Group(comp, SWT.SHADOW_ETCHED_IN);
 		debuggerGroup.setText("Debugger Options");
@@ -88,8 +110,9 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		tabHolderLayout.numColumns = 1;
 		getDynamicTabHolder().setLayout(tabHolderLayout);
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 3;
+		gd.horizontalSpan = 2;
 		getDynamicTabHolder().setLayoutData(gd);
+		LaunchUIPlugin.setDebugDialogShell(parent.getShell());
 	}
 
 	protected void setDynamicTabHolder(Composite tabHolder) {
@@ -163,16 +186,20 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		int x = 0;
 		int selndx = 0;
 		for (int i = 0; i < debugConfigs.length; i++) {
-			String supported[] = debugConfigs[i].getPlatforms();
-			for (int j = 0; j < supported.length; j++) {
-				if (supported[j].equals("*") || supported[j].equalsIgnoreCase(platform)) {
-					fDCombo.add(debugConfigs[i].getName());
-					fDCombo.setData(Integer.toString(x), debugConfigs[i]);
-					if (selection.equals(debugConfigs[i].getID())) {
-						selndx = x;
+			if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)
+				|| debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)
+				|| debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
+				String supported[] = debugConfigs[i].getPlatforms();
+				for (int j = 0; j < supported.length; j++) {
+					if (supported[j].equals("*") || supported[j].equalsIgnoreCase(platform)) {
+						fDCombo.add(debugConfigs[i].getName());
+						fDCombo.setData(Integer.toString(x), debugConfigs[i]);
+						if (selection.equals(debugConfigs[i].getID())) {
+							selndx = x;
+						}
+						x++;
+						break;
 					}
-					x++;
-					break;
 				}
 			}
 		}
@@ -204,20 +231,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 				dynamicTab.initializeFrom(config);
 			}
 			if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false) == true) {
-				stopInMain.setSelection(true);
-			}
-			String mode =
-				config.getAttribute(
-					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
-			if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
-				fAttachButton.setSelection(true);
-			}
-			else if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
-				fCoreButton.setSelection(true);
-			}
-			else {
-				fRunButton.setSelection(true);
+				fStopInMain.setSelection(true);
 			}
 		}
 		catch (CoreException e) {
@@ -235,7 +249,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			else {
 				dynamicTab.performApply(config);
 			}
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, stopInMain.getSelection());
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
 			if (fAttachButton.getSelection() == true) {
 				config.setAttribute(
 					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
@@ -247,6 +261,7 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
 			}
 			else {
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, fStopInMain.getSelection());
 				config.setAttribute(
 					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
@@ -262,7 +277,12 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 			setErrorMessage("No debugger avalible");
 			return false;
 		}
-
+		if ( !fRunButton.getSelection() 
+			&& !fAttachButton.getSelection()
+			&& !fCoreButton.getSelection() ) {
+				setErrorMessage("Select a Debug mode.");
+				return false;
+		}
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();
 		if (dynamicTab != null) {
 			return dynamicTab.isValid(config);
@@ -308,8 +328,34 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		getDynamicTab().getControl().setVisible(true);
 		getDynamicTabHolder().layout(true);
 
+		fRunButton.setEnabled(debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN));
+		fRunButton.setSelection(false);
 		fAttachButton.setEnabled(debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH));
+		fAttachButton.setSelection(false);
 		fCoreButton.setEnabled(debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE));
+		fCoreButton.setSelection(false);
+		try {
+			String mode =
+				getLaunchConfiguration().getAttribute(
+					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+			if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN) && fRunButton.isEnabled()) {
+				fRunButton.setSelection(true);
+			}
+			else if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH) && fAttachButton.isEnabled()) {
+				fAttachButton.setSelection(true);
+			}
+			else if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE) && fCoreButton.isEnabled()) {
+				fCoreButton.setSelection(true);
+			}
+			if ( fRunButton.getSelection() == true ) {
+				fStopInMain.setEnabled(true);
+			} else {
+				fStopInMain.setEnabled(false);
+			}
+		}
+		catch (CoreException e) {
+		}
 	}
 
 	/**

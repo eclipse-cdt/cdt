@@ -19,7 +19,8 @@ public class LaunchUIPlugin extends AbstractUIPlugin {
 	 * Launch UI plug-in instance
 	 */
 	private static LaunchUIPlugin fgPlugin;
-
+	private static Shell debugDialogShell;
+	
 	/**
 	 * Constructor for LaunchUIPlugin.
 	 * @param descriptor
@@ -47,12 +48,24 @@ public class LaunchUIPlugin extends AbstractUIPlugin {
 	}
 	
 	public static Shell getShell() {
+		Shell shell = null;
 		if (getActiveWorkbenchWindow() != null) {
-			return getActiveWorkbenchWindow().getShell();
+			shell = getActiveWorkbenchWindow().getShell();
+		} 
+		if ( shell == null ) {
+			if ( debugDialogShell != null ) {
+				if (!debugDialogShell.isDisposed() )
+					return debugDialogShell;
+				debugDialogShell = null;
+			}
 		}
-		return null;
+		return shell;
 	}
 
+	public static void setDebugDialogShell(Shell shell) {
+		debugDialogShell = shell;
+	}
+	
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */

@@ -12,7 +12,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -120,10 +119,18 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 				}
 				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
 					int pid = getProcessID();
+					if ( pid == -1 ) {
+						monitor.setCanceled(true);
+						return;
+					}
 					dsession = cdebugger.createAttachSession(config, exe, pid);
 				}
 				else if (debugMode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE)) {
 					IPath corefile = getCoreFilePath((IProject)cproject.getResource());
+					if ( corefile == null ) {
+						monitor.setCanceled(true);
+						return;
+					}
 					dsession = cdebugger.createCoreSession(config, exe, corefile);
 				}
 			}
@@ -167,26 +174,33 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		monitor.done();
 	}
 
-	private IPath getCoreFilePath(IProject project) {
-		Shell shell = LaunchUIPlugin.getShell();
+	private IPath getCoreFilePath(final IProject project) {
+		final Shell shell = LaunchUIPlugin.getShell();
+		final String res[] = {null};
 		if ( shell == null ) 
 			return null;
-		FileDialog dialog = new FileDialog( shell );
-		dialog.setText( "Select Corefile" );
+		Display display = shell.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				FileDialog dialog = new FileDialog( shell );
+				dialog.setText( "Select Corefile" );
 		
-		String initPath = null;
-		try {
-			initPath = project.getPersistentProperty(new QualifiedName(LaunchUIPlugin.getUniqueIdentifier(), "SavePath"));
+				String initPath = null;
+				try {
+					initPath = project.getPersistentProperty(new QualifiedName(LaunchUIPlugin.getUniqueIdentifier(), "SavePath"));
+				}
+				catch (CoreException e) {
+				}
+				if ( initPath == null || initPath.equals("") ) {
+					initPath = project.getLocation().toString();
+				}
+				dialog.setFilterPath( initPath );
+				res[0] = dialog.open();
+			}
+		});
+		if ( res[0] != null ) {
+			return new Path( res[0] );
 		}
-		catch (CoreException e) {
-		}
-		if ( initPath == null || initPath.equals("") ) {
-			initPath = project.getLocation().toString();
-		}
-		dialog.setFilterPath( initPath );
-		String res = dialog.open();
-		if ( res != null )
-			return new Path( res );
 		return null;		
 	}
 

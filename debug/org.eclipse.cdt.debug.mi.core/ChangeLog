@@ -1,3 +1,19 @@
+2003-06-02 Alain Magloire
+
+	Enable the new type parsing with the class GDBTypeParser.
+	This class takes the output of GDB/MI
+	(gdb) whatis
+	or
+	(gdb) ptype
+	And parse it.
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ArrayType.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/DerivedType.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/PointerType.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/FunctionType.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SourceManager.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
 2003-05-25 Alain Magloire
 
 	Do extra parsing.

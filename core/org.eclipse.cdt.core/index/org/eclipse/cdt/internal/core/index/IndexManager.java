@@ -78,7 +78,7 @@ public class IndexManager implements IElementChangedListener {
 		return projectsMap;
 	}
 
-	protected void init () {
+	public void startup () {
 		requestList = new RequestList();
 		projectsMap = Collections.synchronizedMap(new HashMap());
 		CTagsRunner ctags = new CTagsRunner(this);
@@ -155,7 +155,9 @@ public class IndexManager implements IElementChangedListener {
 
 	public void clearRequestList(IResource resource) {
 		if (resource instanceof IFile) {
-			requestList.removeItem(resource);
+			if (requestList != null) {
+				requestList.removeItem(resource);
+			}
 		} else if (resource instanceof IContainer) {
 			try {
 				IContainer container = (IContainer)resource;
@@ -189,7 +191,9 @@ public class IndexManager implements IElementChangedListener {
 	public void addFile(IFile file) {
 		if (CoreModel.getDefault().isTranslationUnit(file) &&
 			IndexModel.getDefault().isEnabled(file.getProject())) {
-			requestList.addItem(file);
+			if (requestList != null) {
+				requestList.addItem(file);
+			}
 		}
 	}
 
@@ -248,7 +252,6 @@ public class IndexManager implements IElementChangedListener {
 	public static IndexManager getDefault() {
 		if (indexManager == null) {
 			indexManager = new IndexManager();
-			indexManager.init();
 			// Register to the C Core Model for C specific changes.
 			CoreModel.getDefault().addElementChangedListener(indexManager);
 		}

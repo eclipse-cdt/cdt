@@ -89,6 +89,20 @@ public class IndexModel {
 	}
 
 	/**
+	 * 
+	 */
+	public void startup() {
+		manager.startup();
+	}
+
+	/**
+	 * 
+	 */
+	public void shutdown() {
+		manager.shutdown();		
+	}
+
+	/**
 	 * Initialize default index Model.
 	 */
 	public static IndexModel getDefault() {
@@ -101,4 +115,5 @@ public class IndexModel {
 
 	private IndexModel () {
 	}
+
 }

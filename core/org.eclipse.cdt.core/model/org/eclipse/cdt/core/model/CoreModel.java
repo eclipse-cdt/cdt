@@ -185,6 +185,17 @@ public class CoreModel {
 		manager.removeElementChangedListener(listener);
 	}
 
+	/**
+	 * @see Plugin#startup
+	 */
+	public void startup() {
+		manager.startup();
+	}
+
+	public void shutdown() {
+		manager.shutdown();
+	}
+
 	private CoreModel() {
 	}
 

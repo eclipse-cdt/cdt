@@ -747,5 +747,25 @@ public class CModelManager implements IResourceChangeListener {
 	protected void removeInfo(ICElement element) {
 		this.cache.removeInfo(element);
 	}
+
+	/**
+	 * 
+	 */
+	public void startup() {
+		// Do any initialization.	
+	}
+
+	/**
+	 * 
+	 */
+	public void shutdown() {
+		// Do any shutdown of services.
+		BinaryRunner[] runners = (BinaryRunner[])binaryRunners.values().toArray(new BinaryRunner[0]);
+		for (int i = 0; i < runners.length; i++) {
+			if (runners[i].isAlive()) {
+				runners[i].interrupt();
+			}
+		}
+	}
 	
 }

@@ -128,6 +128,7 @@ public class DisassemblyManager
 				String fileName = frameInfo.getFile();
 				int lineNumber = frameInfo.getFrameLineNumber();
 				ICDIInstruction[] instructions = new ICDIInstruction[0];
+				long address = frameInfo.getAddress();				
 				if ( fileName != null && fileName.length() > 0 )
 				{
 					try
@@ -138,9 +139,10 @@ public class DisassemblyManager
 					{
 					}
 				}
-				if ( instructions.length == 0 )
+				if ( instructions.length == 0 || 
+					 // Double check if debugger returns correct address range.
+					 !containsAddress( instructions, address ) )
 				{
-					long address = frameInfo.getAddress();
 					if ( address >= 0 )
 					{
 						try
@@ -212,5 +214,15 @@ public class DisassemblyManager
 			return (ICDIInstruction[])list.toArray( new ICDIInstruction[list.size()] );
 		}
 		return rawInstructions;
+	}
+
+	private boolean containsAddress( ICDIInstruction[] instructions, long address )
+	{
+		for ( int i = 0; i < instructions.length; ++i )
+		{
+			if ( instructions[i].getAdress() == address )
+				return true;
+		}
+		return false;
 	}
 }

@@ -1,3 +1,10 @@
+2003-05-12 Mikhail Khodjaiants
+	When generating disassembly instructions by file name and line number check 
+	if the frame address is in the address range of the instruction set.
+	If the instruction set doesn't contain the frame address generate a new instruction set 
+	based on the frame address. 
+	* DisassemblyManager.java
+ 
 2003-05-08 Mikhail Khodjaiants
 	In the "terminate" event handler of the session manager check the targets that 
 	belong to the current session.

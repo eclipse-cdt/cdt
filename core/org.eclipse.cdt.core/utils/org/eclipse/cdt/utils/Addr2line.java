@@ -83,17 +83,21 @@ public class Addr2line {
 	 *  hello.c:39
 	 */
 	public int getLineNumber(long address) throws IOException {
-		int lineno = -1;
-		String line = getLine(address);
-		int colon;
-		if (line != null && (colon = line.lastIndexOf(':')) != -1) {
-			try {
-				lineno = Integer.parseInt(line.substring(colon + 1));
-				lineno = (lineno == 0) ? -1 : lineno;
-			} catch(Exception e) {
+		// We try to get the nearest match
+		// since the symbol may not exactly align with debug info.
+		// In C line number 0 is invalid, line starts at 1 for file, we use
+		// this for validation.
+		for (int i = 0; i <= 20; i += 4, address += i) {
+			String line = getLine(address);
+			if (line != null) {
+				int colon = line.lastIndexOf(':');
+				String number = line.substring(colon + 1);
+				if (!number.startsWith("0")) {
+					return Integer.parseInt(number);
+				}
 			}
 		}
-		return lineno;
+		return -1;
 	}
 
 	public void dispose() {

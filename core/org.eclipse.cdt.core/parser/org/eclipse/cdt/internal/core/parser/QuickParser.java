@@ -65,6 +65,5 @@ public class QuickParser extends Parser {
 	public IASTNode parse(int startingOffset, int endingOffset) throws ParseError {
 		throw new ParseError( ParseErrorKind.METHOD_NOT_IMPLEMENTED );
 	}
-	
-	
+		
 }

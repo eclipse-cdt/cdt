@@ -793,7 +793,7 @@ public abstract class Parser implements IParser
             simpleDeclaration(
                 SimpleDeclarationStrategy.TRY_CONSTRUCTOR,
                 scope,
-                ownerTemplate, overide);
+                ownerTemplate, overide, false);
             // try it first with the original strategy
         }
         catch (BacktrackException bt)
@@ -806,7 +806,7 @@ public abstract class Parser implements IParser
             	simpleDeclaration(
                 	SimpleDeclarationStrategy.TRY_FUNCTION,
 	                scope,
-    	            ownerTemplate, overide);
+    	            ownerTemplate, overide, false);
             }
             catch( BacktrackException bt2 )
             {
@@ -817,7 +817,7 @@ public abstract class Parser implements IParser
 					simpleDeclaration(
 						SimpleDeclarationStrategy.TRY_VARIABLE,
 						scope,
-						ownerTemplate, overide);
+						ownerTemplate, overide, false);
 				}
 				catch( BacktrackException b3 )
 				{
@@ -948,7 +948,7 @@ public abstract class Parser implements IParser
     protected void simpleDeclaration(
         SimpleDeclarationStrategy strategy,
         IASTScope scope,
-        IASTTemplate ownerTemplate, CompletionKind overideKind)
+        IASTTemplate ownerTemplate, CompletionKind overideKind, boolean fromCatchHandler)
         throws BacktrackException, EndOfFileException
     {
     	IToken firstToken = LA(1);
@@ -1009,6 +1009,10 @@ public abstract class Parser implements IParser
                 break;
             case IToken.tLBRACE: 
             	break;
+            case IToken.tRPAREN:
+            	if( ! fromCatchHandler )
+            		throw backtrack;
+            	break;
             default: 
             	throw backtrack;
         }
@@ -1022,6 +1026,9 @@ public abstract class Parser implements IParser
 	            declarator.setHasFunctionBody(true);
 	            hasFunctionBody = true;
 	        }
+	        
+	        if( fromCatchHandler )
+	        	return;
 	        
 	        if( hasFunctionTryBlock && ! hasFunctionBody )
 	        	throw backtrack;
@@ -3093,25 +3100,23 @@ public abstract class Parser implements IParser
 
     }
     protected void catchHandlerSequence(IASTScope scope)
-        throws EndOfFileException, BacktrackException
-    {
+	throws EndOfFileException, BacktrackException {
     	if( LT(1) != IToken.t_catch )
     		throw backtrack; // error, need at least one of these
-        while (LT(1) == IToken.t_catch)
-        {
-            consume(IToken.t_catch);
-            setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
-            consume(IToken.tLPAREN);
-            setCompletionValues(scope,CompletionKind.EXCEPTION_REFERENCE,Key.DECL_SPECIFIER_SEQUENCE );
-            if( LT(1) == IToken.tELLIPSIS )
-            	consume( IToken.tELLIPSIS );
-            else 
-            	declaration(scope, null, CompletionKind.EXCEPTION_REFERENCE); // was exceptionDeclaration
-            consume(IToken.tRPAREN);
-            
-            catchBlockCompoundStatement(scope);
-        }
+    	while (LT(1) == IToken.t_catch)
+    	{
+    		consume(IToken.t_catch);
+    		consume(IToken.tLPAREN);
+    		if( LT(1) == IToken.tELLIPSIS )
+    			consume( IToken.tELLIPSIS );
+    		else 
+    			simpleDeclaration( SimpleDeclarationStrategy.TRY_VARIABLE, scope, null, CompletionKind.EXCEPTION_REFERENCE, true); // was exceptionDeclaration
+    		consume(IToken.tRPAREN);
+    		
+    		catchBlockCompoundStatement(scope);
+    	}
     }
+    
     
     protected abstract void catchBlockCompoundStatement(IASTScope scope) throws BacktrackException, EndOfFileException; 
     
@@ -5267,7 +5272,7 @@ public abstract class Parser implements IParser
     }
 
     // the static instance we always use
-    private static BacktrackException backtrack = new BacktrackException();
+    protected static BacktrackException backtrack = new BacktrackException();
 
     // Token management    
     protected IScanner scanner;

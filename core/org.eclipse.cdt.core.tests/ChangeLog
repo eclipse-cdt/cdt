@@ -1,3 +1,6 @@
+2004-01-30 John Camelon
+	Added QuickParseASTTest::testBug47752.  
+
 2004-01-28 John Camelon
 	Added ScannerTestCase::testBug50821().  
 

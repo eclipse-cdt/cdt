@@ -2080,4 +2080,9 @@ public class QuickParseASTTests extends BaseASTTest
 	private void validateToken(IToken token, int signal) {
 		assertEquals( token.getType(), signal );
 	}
+	
+	public void testBug47752() throws Exception
+	{
+		parse("void func( cFoo bar ) try {	} catch ( const char * error ){	}" );
+	}
 }

@@ -1,4 +1,7 @@
 2004-01-30 John Camelon
+	Partial fix for Bug 47752 - Outline does not recognize functions with full body try/catch blocks 
+
+2004-01-30 John Camelon
 	Updated Scanner to allow for more robust completion in #if directives. 
 
 2004-01-30 John Camelon

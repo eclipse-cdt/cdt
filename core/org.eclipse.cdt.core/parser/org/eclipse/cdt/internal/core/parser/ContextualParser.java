@@ -297,4 +297,25 @@ public class ContextualParser extends Parser implements IParser {
 		setCompletionValues(scope,kind,key, getCompletionContextForExpression(firstExpression,isTemplate) );
 	}
 
+	protected void catchHandlerSequence(IASTScope scope)
+	throws EndOfFileException, BacktrackException {
+		if( LT(1) != IToken.t_catch )
+			throw backtrack; // error, need at least one of these
+		while (LT(1) == IToken.t_catch)
+		{
+			consume(IToken.t_catch);
+			setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
+			consume(IToken.tLPAREN);
+			setCompletionValues(scope,CompletionKind.EXCEPTION_REFERENCE,Key.DECL_SPECIFIER_SEQUENCE );
+			if( LT(1) == IToken.tELLIPSIS )
+				consume( IToken.tELLIPSIS );
+			else 
+				declaration(scope, null, CompletionKind.EXCEPTION_REFERENCE); // was exceptionDeclaration
+			consume(IToken.tRPAREN);
+			
+			catchBlockCompoundStatement(scope);
+		}
+	}
+	
+	
 }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="org.eclipse.cdt.ui" default="plugin.zip" basedir=".">
+  <target name="init">
+    <initTemplate/>
+    <property name="plugin" value="org.eclipse.cdt.ui"/>
+    <property name="version" value="0.5.4"/>
+  </target>
+
+  <target name="plugin.zip" depends="init">
+    <property name="destroot" value="${basedir}/_temp___"/>
+    <delete dir="${destroot}"/>
+    <mkdir dir="${destroot}"/>
+    <antcall target="jar"/>
+    <antcall target="bin"/>
+    <zip zipfile="${plugin}_${version}.zip" basedir="${destroot}"/>
+    <delete dir="${destroot}"/>
+  </target>
+
+  <target name="cdtui.jar" depends="init">
+    <property name="out" value="${basedir}/cdtui.jar.bin"/>
+    <delete dir="${out}"/>
+    <mkdir dir="${out}"/>
+    <ant antfile="${template}" target="jar">
+      <property name="includes" value="src/"/>
+      <property name="excludes" value=""/>
+      <property name="compilePath" value="/export/WebSphere/eclipse/plugins/org.eclipse.search/search.jar;/export/WebSphere/eclipse/plugins/org.eclipse.debug.core/dtcore.jar;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.debug/bin;/export/WebSphere/eclipse/plugins/org.apache.xerces/xerces.jar;../CDTCore/bin;/export/WebSphere/eclipse/plugins/org.eclipse.ui/bin;../CMake/cdtmake.jar;/export/WebSphere/eclipse/plugins/org.eclipse.help/help.jar;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.ui/bin;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.launching/bin;/export/WebSphere/eclipse/plugins/org.eclipse.core.boot/boot.jar;/export/WebSphere/eclipse/plugins/org.eclipse.debug.core/bin;/export/WebSphere/eclipse/plugins/org.eclipse.debug.ui/dtui.jar;/export/WebSphere/eclipse/plugins/org.eclipse.help/bin;/export/WebSphere/eclipse/plugins/org.eclipse.core.resources/resources.jar;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.core/bin;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.debug/jdimodel.jar;/export/WebSphere/eclipse/plugins/org.eclipse.compare/bin;../CMake/bin;/export/WebSphere/eclipse/plugins/org.eclipse.compare/compare.jar;../CDTCore/cdt.jar;/export/WebSphere/eclipse/plugins/org.eclipse.core.runtime/bin;/export/WebSphere/eclipse/plugins/org.apache.xerces/bin;/export/WebSphere/eclipse/plugins/org.eclipse.debug.ui/bin;/export/WebSphere/eclipse/plugins/org.eclipse.ui/workbench.jar;/export/WebSphere/eclipse/plugins/org.eclipse.core.resources/bin;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.ui/jdt.jar;/export/WebSphere/eclipse/plugins/org.eclipse.core.runtime/runtime.jar;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.core/jdtcore.jar;/export/WebSphere/eclipse/plugins/org.eclipse.swt/swt.jar;/export/WebSphere/eclipse/plugins/org.eclipse.core.boot/bin;/export/WebSphere/eclipse/plugins/org.eclipse.search/bin;/export/WebSphere/eclipse/plugins/org.eclipse.swt/bin;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.debug/jdi.jar;/export/WebSphere/eclipse/plugins/org.eclipse.jdt.launching/launching.jar"/>
+    </ant>
+    <copy todir="${out}">
+      <fileset dir="src">
+        <include name="**"/>
+        <exclude name="**/*.java"/>
+      </fileset>
+    </copy>
+    <property name="dest" value="${destroot}/plugins/${plugin}_${version}"/>
+    <jar jarfile="cdtui.jar" basedir="${out}"/>
+    <delete dir="${out}"/>
+  </target>
+
+  <target name="jar" depends="init,cdtui.jar">
+  </target>
+
+  <target name="cdtui.src" depends="init">
+    <property name="auto.includes" value="src/**/*.java"/>
+    <property name="auto.excludes" value=""/>
+    <ant antfile="${template}" target="src">
+      <property name="includes" value="${auto.includes}"/>
+      <property name="excludes" value="${auto.excludes}"/>
+      <property name="dest" value="${destroot}/plugins/${plugin}_${version}"/>
+    </ant>
+  </target>
+
+  <target name="src" depends="init,cdtui.src">
+  </target>
+
+  <target name="bin" depends="init">
+    <property name="auto.includes" value="**"/>
+    <property name="auto.excludes" value="src/"/>
+    <ant antfile="${template}" target="bin">
+      <property name="includes" value="${auto.includes}"/>
+      <property name="excludes" value="${auto.excludes}"/>
+      <property name="dest" value="${destroot}/plugins/${plugin}_${version}"/>
+    </ant>
+  </target>
+
+  <target name="log" depends="init">
+    <ant antfile="${template}" target="log">
+      <property name="dest" value="${destroot}/plugins/${plugin}_${version}"/>
+    </ant>
+  </target>
+
+  <target name="clean" depends="init">
+    <ant antfile="${template}" target="clean">
+      <property name="jar" value="cdtui.jar"/>
+      <property name="srczips" value="cdtuisource.jar"/>
+    </ant>
+    <delete file="${plugin}_${version}.zip"/>
+  </target>
+</project>

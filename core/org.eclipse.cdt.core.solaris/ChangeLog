@@ -1,5 +1,10 @@
 2002-10-15 Alain Magloire
 
+	* src/../internal/core/solaris/ProcessList.java:
+	(getProcessList): Trim the line before parsing it.
+
+2002-10-15 Alain Magloire
+
 	Implement the ProcessList extension point for Solaris, by
 	spawning "ps -e -o pid,arg".  This is use when
 	attaching to a running process with gdb.

@@ -27,7 +27,6 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IIncludeEntry;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
-import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IProjectEntry;
@@ -87,84 +86,6 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		return pathEntryManager;
 	}
 
-	public IOutputEntry[] getOutputEntries(ICProject cproject) throws CModelException {
-		IPathEntry[] entries = getResolvedPathEntries(cproject);
-		ArrayList list = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; ++i) {
-			if (entries[i].getEntryKind() == IPathEntry.CDT_OUTPUT) {
-				list.add(entries[i]);
-			}
-		}
-		IOutputEntry[] outs = new IOutputEntry[list.size()];
-		list.toArray(outs);
-		return outs;
-	}
-
-	public IProjectEntry[] getProjectEntries(ICProject cproject) throws CModelException {
-		IPathEntry[] entries = getResolvedPathEntries(cproject);
-		ArrayList list = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; ++i) {
-			if (entries[i].getEntryKind() == IPathEntry.CDT_PROJECT) {
-				list.add(entries[i]);
-			}
-		}
-		IProjectEntry[] projects = new IProjectEntry[list.size()];
-		list.toArray(projects);
-		return projects;
-	}
-
-	public ISourceEntry[] getSourceEntries(ICProject cproject) throws CModelException {
-		IPathEntry[] entries = getResolvedPathEntries(cproject);
-		ArrayList list = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; ++i) {
-			if (entries[i].getEntryKind() == IPathEntry.CDT_SOURCE) {
-				list.add(entries[i]);
-			}
-		}
-		ISourceEntry[] sources = new ISourceEntry[list.size()];
-		list.toArray(sources);
-		return sources;
-	}
-
-	public ILibraryEntry[] getLibraryEntries(ICProject cproject) throws CModelException {
-		IPathEntry[] entries = getResolvedPathEntries(cproject);
-		ArrayList list = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; ++i) {
-			if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
-				list.add(entries[i]);
-			}
-		}
-		ILibraryEntry[] libs = new ILibraryEntry[list.size()];
-		list.toArray(libs);
-		return libs;
-	}
-
-	public IMacroEntry[] getMacroEntries(ICProject cproject) throws CModelException {
-		IPathEntry[] entries = getResolvedPathEntries(cproject);
-		ArrayList list = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; ++i) {
-			if (entries[i].getEntryKind() == IPathEntry.CDT_MACRO) {
-				list.add(entries[i]);
-			}
-		}
-		IMacroEntry[] macros = new IMacroEntry[list.size()];
-		list.toArray(macros);
-		return macros;
-	}
-	
-	public IIncludeEntry[] getIncludeEntries(ICProject cproject) throws CModelException {
-		IPathEntry[] entries = getResolvedPathEntries(cproject);
-		ArrayList list = new ArrayList(entries.length);
-		for (int i = 0; i < entries.length; ++i) {
-			if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
-				list.add(entries[i]);
-			}
-		}
-		IIncludeEntry[] includes = new IIncludeEntry[list.size()];
-		list.toArray(includes);
-		return includes;
-	}
-
 	public IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
 		IPathEntry[] entries = (IPathEntry[]) resolvedMap.get(cproject);
 		if (entries == null) {
@@ -202,9 +123,9 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		switch(entry.getEntryKind()) {
 			case IPathEntry.CDT_INCLUDE: {
 				IIncludeEntry includeEntry = (IIncludeEntry)entry;
-				IPath includePath = includeEntry.getIncludePath();
 				IPath refPath = includeEntry.getBaseReference();
 				if (refPath != null && !refPath.isEmpty()) {
+					IPath includePath = includeEntry.getIncludePath();
 					if (refPath.isAbsolute()) {
 						IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
 						if (res != null && res.getType() == IResource.PROJECT) {
@@ -240,8 +161,93 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 				}
 				break;
 			}
-			case IPathEntry.CDT_MACRO:
+
+			case IPathEntry.CDT_MACRO: {
+				IMacroEntry macroEntry = (IMacroEntry)entry;
+				IPath refPath = macroEntry.getBaseReference();
+				if (refPath != null && !refPath.isEmpty()) {
+					String name = macroEntry.getMacroName();
+					if (refPath.isAbsolute()) {
+						IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
+						if (res != null && res.getType() == IResource.PROJECT) {
+							ICProject refCProject = CoreModel.getDefault().create((IProject)res);
+							if (refCProject != null) {
+								IPathEntry[] entries = getResolvedPathEntries(refCProject);
+								for (int i = 0; i < entries.length; i++) {
+									if (entries[i].getEntryKind() == IPathEntry.CDT_MACRO) {
+										IMacroEntry refEntry = (IMacroEntry)entries[i];
+										if (refEntry.getMacroName().equals(name)) {
+											String value = refEntry.getMacroValue();
+											return CoreModel.newMacroEntry(macroEntry.getPath(), name, value);											
+										}
+									}
+								}
+							}
+						}
+					} else { // Container ref
+						IPathEntryContainer container = getPathEntryContainer(refPath, cproject);
+						if (container != null) {
+							IPathEntry[] entries = container.getPathEntries();
+							for (int i = 0; i < entries.length; i++) {
+								if (entries[i].getEntryKind() == IPathEntry.CDT_MACRO) {
+									IMacroEntry refEntry = (IMacroEntry)entries[i];
+									if (refEntry.getMacroName().equals(name)) {
+										String value = refEntry.getMacroValue();
+										return CoreModel.newMacroEntry(macroEntry.getPath(), name, value);											
+									}
+								}
+							}
+						}
+					}
+				}
 				break;
+			}
+
+			case IPathEntry.CDT_LIBRARY: {
+				ILibraryEntry libEntry = (ILibraryEntry)entry;
+				IPath refPath = libEntry.getBaseReference();
+				if (refPath != null && !refPath.isEmpty()) {
+					IPath libraryPath = libEntry.getPath();
+					if (refPath.isAbsolute()) {
+						IResource res = cproject.getCModel().getWorkspace().getRoot().findMember(refPath);
+						if (res != null && res.getType() == IResource.PROJECT) {
+							ICProject refCProject = CoreModel.getDefault().create((IProject)res);
+							if (refCProject != null) {
+								IPathEntry[] entries = getResolvedPathEntries(refCProject);
+								for (int i = 0; i < entries.length; i++) {
+									if (entries[i].getEntryKind() == IPathEntry.CDT_LIBRARY) {
+										ILibraryEntry refEntry = (ILibraryEntry)entries[i];
+										if (refEntry.getPath().equals(libraryPath)) {
+											return CoreModel.newLibraryEntry(refEntry.getBasePath(),
+													refEntry.getPath(), refEntry.getSourceAttachmentPath(),
+													refEntry.getSourceAttachmentRootPath(),
+													refEntry.getSourceAttachmentPrefixMapping(), false);											
+										}
+									}
+								}
+							}
+						}
+					} else { // Container ref
+						IPathEntryContainer container = getPathEntryContainer(refPath, cproject);
+						if (container != null) {
+							IPathEntry[] entries = container.getPathEntries();
+							for (int i = 0; i < entries.length; i++) {
+								if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
+									ILibraryEntry refEntry = (ILibraryEntry)entries[i];
+									if (refEntry.getPath().equals(libraryPath)) {
+										return CoreModel.newLibraryEntry(refEntry.getBasePath(),
+												refEntry.getPath(), refEntry.getSourceAttachmentPath(),
+												refEntry.getSourceAttachmentRootPath(),
+												refEntry.getSourceAttachmentPrefixMapping(), false);											
+									}
+								}
+							}
+						}
+					}
+				}
+				break;
+			}
+
 		}
 		return entry;
 	}
@@ -275,7 +281,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 		boolean foundSource = false;
 		boolean foundOutput = false;
 		for (int i = 0; i < pathEntries.length; i++) {
-			IPathEntry rawEntry = (IPathEntry) pathEntries[i];
+			IPathEntry rawEntry = pathEntries[i];
 			if (rawEntry.getEntryKind() == IPathEntry.CDT_SOURCE) {
 				foundSource = true;
 			}

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -33,7 +34,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 
-public class ScannerProvider implements IScannerInfoProvider, IElementChangedListener {
+public class ScannerProvider extends AbstractCExtension implements IScannerInfoProvider, IElementChangedListener {
 
 	// Listeners interested in build model changes
 	private static Map listeners;
@@ -43,7 +44,7 @@ public class ScannerProvider implements IScannerInfoProvider, IElementChangedLis
 	/*
 	 * @return
 	 */
-	private synchronized static Map getListeners() {
+	private static Map getListeners() {
 		if (listeners == null) {
 			listeners = new HashMap();
 		}
@@ -54,15 +55,47 @@ public class ScannerProvider implements IScannerInfoProvider, IElementChangedLis
 	 * @param project
 	 * @param info
 	 */
-	private static void notifyInfoListeners(IProject project, IScannerInfo info) {
+	protected static void notifyInfoListeners(IProject project, IScannerInfo info) {
 		// Call in the cavalry
 		List listeners = (List)getListeners().get(project);
 		if (listeners == null) {
 			return;
 		}
 		ListIterator iter = listeners.listIterator();
-		while (iter.hasNext()) {
-			((IScannerInfoChangeListener)iter.next()).changeNotification(project, info);
+		IScannerInfoChangeListener[] observers = new IScannerInfoChangeListener[listeners.size()];
+		listeners.toArray(observers);
+		for (int i = 0; i < observers.length; i++) {
+			observers[i].changeNotification(project, info);
+		}
+	}
+
+	private void addInfoFromEntry(IPathEntry entry, IPath resPath, List includeList, Map symbolMap) {
+		switch(entry.getEntryKind()) {
+			case IPathEntry.CDT_INCLUDE: {
+				IIncludeEntry include = (IIncludeEntry)entry;
+				IPath entryPath = include.getPath();
+				if (entryPath.equals(resPath) ||
+						entryPath.isPrefixOf(resPath) && include.isExported()) {
+					includeList.add(include.getFullIncludePath().toOSString());
+				}
+				break;
+			}
+			case IPathEntry.CDT_MACRO: {
+				IMacroEntry macro = (IMacroEntry)entry;
+				IPath entryPath = macro.getPath();
+				if (entryPath.equals(resPath) ||
+						entryPath.isPrefixOf(resPath) && macro.isExported()) {
+					String name = macro.getMacroName();
+					if (name != null && name.length() > 0) {
+						String value = macro.getMacroValue();
+						if (value == null) {
+							value = new String();
+						}
+						symbolMap.put(name, value);
+					}
+				}
+				break;
+			}
 		}
 	}
 
@@ -74,44 +107,40 @@ public class ScannerProvider implements IScannerInfoProvider, IElementChangedLis
 	public IScannerInfo getScannerInformation(IResource resource) {
 		IPath resPath = resource.getFullPath();
 		ICProject cproject = CoreModel.getDefault().create(resource.getProject());
-		ScannerInfo info = new ScannerInfo();
 		try {
 			if (cproject != null) {
 				ArrayList includeList = new ArrayList();
 				Map symbolMap = new HashMap();
 				IPathEntry[] entries = cproject.getResolvedPathEntries();
 				for (int i = 0; i < entries.length; i++) {
-					int kind = entries[i].getEntryKind();
-					if (kind == IPathEntry.CDT_INCLUDE) {
-						IIncludeEntry include = (IIncludeEntry)entries[i];
-						IPath entryPath = include.getPath();
-						if (entryPath.equals(resPath) ||
-							entryPath.isPrefixOf(resPath) && include.isExported()) {
-							includeList.add(include.getIncludePath().toOSString());
-						}
-					} else if (kind == IPathEntry.CDT_MACRO) {
-						IMacroEntry macro = (IMacroEntry)entries[i];
-						IPath entryPath = macro.getPath();
-						if (entryPath.equals(resPath) ||
-							entryPath.isPrefixOf(resPath) && macro.isExported()) {
-							String name = macro.getMacroName();
-							if (name != null && name.length() > 0) {
-								String value = macro.getMacroValue();
-								if (value == null) {
-									value = new String();
+					switch (entries[i].getEntryKind()) {
+						case IPathEntry.CDT_PROJECT: {
+							IResource res = resource.getWorkspace().getRoot().findMember(entries[i].getPath());
+							if (res != null && res.getType() == IResource.PROJECT) {
+								ICProject refCProject = CoreModel.getDefault().create((IProject)res);
+								if (refCProject != null) {
+									IPathEntry[] projEntries = refCProject.getResolvedPathEntries();
+									for (int j = 0; j < projEntries.length; j++) {
+										if (entries[i].getEntryKind() == IPathEntry.CDT_INCLUDE) {
+											addInfoFromEntry(projEntries[j], resPath, includeList, symbolMap);
+										}
+									}
 								}
-								symbolMap.put(name, value);
 							}
+							break;
 						}
+						default:
+							addInfoFromEntry(entries[i], resPath, includeList, symbolMap);
 					}
 				}
-				info.setDefinedSymbols(symbolMap);
-				info.setIncludePaths((String[])includeList.toArray());
+				String[] includes = new String[includeList.size()];
+				includeList.toArray(includes);
+				return new ScannerInfo(includes, symbolMap);
 			}
 		} catch (CModelException e) {
 			//
 		}
-		return info;
+		return new ScannerInfo(null, null);
 	}
 
 	/*

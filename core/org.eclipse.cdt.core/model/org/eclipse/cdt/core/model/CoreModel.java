@@ -359,6 +359,22 @@ public class CoreModel {
 	 * Creates and returns a new entry of kind <code>CDT_LIBRARY</code>
 	 * for the archive or folder identified by the given absolute path.
 	 * 
+	 * @param baseRef
+	 *            the base reference path to find the library
+	 * @param libraryPath
+	 *            the library name.
+	 * @return a new library entry
+	 *  
+	 */
+	public static ILibraryEntry newLibraryRefEntry(IPath baseRef, IPath libraryPath) {
+		return new LibraryEntry(null, baseRef, libraryPath, null, null, null, false);
+	}
+
+
+	/**
+	 * Creates and returns a new entry of kind <code>CDT_LIBRARY</code>
+	 * for the archive or folder identified by the given absolute path.
+	 * 
 	 * Note that this operation does not attempt to validate or access the
 	 * resources at the given paths.
 	 * <p>
@@ -383,21 +399,6 @@ public class CoreModel {
 	public static ILibraryEntry newLibraryEntry(IPath basePath, IPath libraryPath, IPath sourceAttachmentPath, IPath sourceAttachmentRootPath,
 			IPath sourceAttachmentPrefixMapping, boolean isExported) {
 		return new LibraryEntry(basePath, null, libraryPath, sourceAttachmentPath, sourceAttachmentRootPath, sourceAttachmentPrefixMapping, isExported);
-	}
-
-	/**
-	 * Creates and returns a new entry of kind <code>CDT_LIBRARY</code>
-	 * for the archive or folder identified by the given absolute path.
-	 * 
-	 * @param baseRef
-	 *            the base reference path to find the library
-	 * @param libraryPath
-	 *            the library name.
-	 * @return a new library entry
-	 *  
-	 */
-	public static ILibraryEntry newLibraryRefEntry(IPath baseRef, IPath libraryPath) {
-		return new LibraryEntry(null, baseRef, libraryPath, null, null, null, false);
 	}
 
 	/**

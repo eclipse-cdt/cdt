@@ -75,4 +75,11 @@ public class IncludeEntry extends APathEntry implements IIncludeEntry {
 		}
 		return super.equals(obj);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.IIncludeEntry#getFullIncludePath()
+	 */
+	public IPath getFullIncludePath() {
+		return basePath.append(includePath);
+	}
 }

@@ -17,24 +17,13 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 
 public class ScannerInfo implements IScannerInfo {
 
-	private Map macroMap;
-	private String[] includePaths;
+	private final Map macroMap;
+	private final String[] includePaths;
 	final static String[] EMPTY_ARRAY_STRING = new String[0];
-
-	protected ScannerInfo() {		
-	}
 
 	protected ScannerInfo(String[] includePaths, Map macroMap) {
 		this.includePaths = includePaths;
 		this.macroMap = macroMap;
-	}
-
-	public synchronized void setIncludePaths(String[] paths) {
-		includePaths = paths;
-	}
-
-	public synchronized void setDefinedSymbols(Map map) {
-		macroMap = map;
 	}
 
 	/*

@@ -118,4 +118,8 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 		}
 		return super.equals(obj);
 	}
+
+	public IPath getFullLibaryPath() {
+		return basePath.append(getPath());
+	}
 }

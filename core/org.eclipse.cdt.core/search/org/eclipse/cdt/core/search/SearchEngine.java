@@ -53,6 +53,7 @@ public class SearchEngine implements ICSearchConstants{
 	 * compilation units.
 	 */
 	private IWorkingCopy[] workingCopies = null;
+	private int waitingPolicy = ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH;
 	
 	/**
 	 * 
@@ -66,6 +67,19 @@ public class SearchEngine implements ICSearchConstants{
 		this.workingCopies = workingCopies;
 	}
 	
+	/**
+	 * Policy is one of ICSearchConstants.FORCE_IMMEDIATE_SEARCH, ICSearchConstants.CANCEL_IF_NOT_READY_TO_SEARCH
+	 * or ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH
+	 * @param policy
+	 */
+	public void setWaitingPolicy( int policy ){
+		if( policy == FORCE_IMMEDIATE_SEARCH ||
+			policy == CANCEL_IF_NOT_READY_TO_SEARCH ||
+			policy == WAIT_UNTIL_READY_TO_SEARCH )
+		{
+			waitingPolicy = policy;
+		}
+	}
 	/**
 	 * @return
 	 */
@@ -193,7 +207,7 @@ public class SearchEngine implements ICSearchConstants{
 				pathCollector,
 				indexManager
 			),
-		    ICSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+		    waitingPolicy,
 			subMonitor,
 			null );
 		

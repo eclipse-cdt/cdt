@@ -133,6 +133,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		resultCollector = new ResultCollector();
 		completionEngine = new CompletionEngine(resultCollector);
 		searchEngine = new SearchEngine();
+		searchEngine.setWaitingPolicy( ICSearchConstants.FORCE_IMMEDIATE_SEARCH );
 		setupTemplateEngine();
 		
 		fRestrictToMatchingCase = false;

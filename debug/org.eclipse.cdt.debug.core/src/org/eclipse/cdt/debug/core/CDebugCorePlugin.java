@@ -6,9 +6,7 @@
 
 package org.eclipse.cdt.debug.core;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.eclipse.cdt.debug.internal.core.DebugConfiguration;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;

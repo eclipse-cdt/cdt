@@ -16,6 +16,7 @@
  */
 package org.eclipse.cdt.internal.core.parser.pst;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
@@ -32,6 +33,10 @@ public interface IDerivableContainerSymbol extends IContainerSymbol {
 	public void addParent( ISymbol parent, boolean virtual, ASTAccessVisibility visibility, int offset, List references );
 	public List getParents();
 	public boolean hasParents();
+	
+	public void addConstructor( IParameterizedSymbol constructor ) throws ParserSymbolTableException;
+	public IParameterizedSymbol lookupConstructor( LinkedList parameters ) throws ParserSymbolTableException;
+	public LinkedList getConstructors();
 	
 	public interface IParentSymbol{
 		public void setParent( ISymbol parent );

@@ -1,3 +1,13 @@
+2003-08-05 Andrew Niefer
+	- Refactor symbol table functions to start with lower case letters
+	- Added better constructor support :
+		IDerivableContainerSymbol.addConstructor
+		IDerivableContainerSymbol.lookupConstructor
+		IDerivableContainerSymbol.getConstructors
+	- Changed ParserSymbolTableException.r_Unspecified to r_InternalError
+	- implicit user-defined conversion sequences now only use constructors not marked explicit
+	- user-defined conversion sequences are now only applied at most once (12.3-4 in spec)
+
 2003-07-31 Andrew Niefer
 	Added better support to the parser symbol table for forward declarations
 

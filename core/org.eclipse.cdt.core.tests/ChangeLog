@@ -1,3 +1,7 @@
+2003-08-05 Andrew Niefer
+	- refactoring Parser Symbol Table function names
+	- added ParserSymbolTableTest.testConstructors() 
+
 2003-08-01 Andrew Niefer
 	Added resources/search/header.h
 	Added ClassDeclarationPatternTests.testHeadersVisitedTwice()

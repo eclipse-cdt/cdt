@@ -41,14 +41,14 @@ public interface IContainerSymbol extends ISymbol {
 			
 	public Map getContainedSymbols();
 	
-	public ISymbol ElaboratedLookup( TypeInfo.eType type, String name ) throws ParserSymbolTableException; 
-	public ISymbol Lookup( String name ) throws ParserSymbolTableException;
-	public ISymbol LookupMemberForDefinition( String name ) throws ParserSymbolTableException;
-	public IContainerSymbol LookupNestedNameSpecifier( String name ) throws ParserSymbolTableException;
-	public ISymbol QualifiedLookup( String name ) throws ParserSymbolTableException;
-	public IParameterizedSymbol UnqualifiedFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException;
-	public IParameterizedSymbol MemberFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException;
-
-	public TemplateInstance TemplateLookup( String name, LinkedList arguments ) throws ParserSymbolTableException;
+	public ISymbol elaboratedLookup( TypeInfo.eType type, String name ) throws ParserSymbolTableException; 
+	public ISymbol lookup( String name ) throws ParserSymbolTableException;
+	public ISymbol lookupMemberForDefinition( String name ) throws ParserSymbolTableException;
+	public IContainerSymbol lookupNestedNameSpecifier( String name ) throws ParserSymbolTableException;
+	public ISymbol qualifiedLookup( String name ) throws ParserSymbolTableException;
+	public IParameterizedSymbol unqualifiedFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException;
+	public IParameterizedSymbol memberFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException;
+	public IParameterizedSymbol qualifiedFunctionLookup( String name, LinkedList parameters ) throws ParserSymbolTableException;
+	public TemplateInstance templateLookup( String name, LinkedList arguments ) throws ParserSymbolTableException;
 	public TemplateInstance instantiate( LinkedList arguments ) throws ParserSymbolTableException;
 }

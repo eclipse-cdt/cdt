@@ -111,7 +111,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if( t.getType() == IToken.tCOLONCOLON ) continue; 
 			try
 			{
-				symbol = symbol.LookupNestedNameSpecifier( t.getImage() );
+				symbol = symbol.lookupNestedNameSpecifier( t.getImage() );
 				references.add( createReference( symbol, t.getImage(), t.getOffset() ));
 			}
 			catch( ParserSymbolTableException pste )
@@ -178,9 +178,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         	try
             {
             	if( t != name.getLastToken() )
-                	symbol = ((IContainerSymbol)symbol).LookupNestedNameSpecifier( t.getImage() );
+                	symbol = ((IContainerSymbol)symbol).lookupNestedNameSpecifier( t.getImage() );
                 else
-                	symbol = ((IContainerSymbol)symbol).Lookup( t.getImage() );
+                	symbol = ((IContainerSymbol)symbol).lookup( t.getImage() );
             }
             catch (ParserSymbolTableException e)
             {
@@ -229,7 +229,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	ISymbol namespaceSymbol  = null; 
     	try
         {
-            namespaceSymbol = pstScope.Lookup( identifier );
+            namespaceSymbol = pstScope.lookup( identifier );
         }
         catch (ParserSymbolTableException e)
         {
@@ -396,9 +396,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			try
 			{
 				if( t == parentClassName.getLastToken())
-					symbol = (IContainerSymbol)symbol.Lookup( t.getImage() );
+					symbol = (IContainerSymbol)symbol.lookup( t.getImage() );
 				else
-					symbol = symbol.LookupNestedNameSpecifier( t.getImage() );
+					symbol = symbol.lookupNestedNameSpecifier( t.getImage() );
 				references.add( createReference( symbol, t.getImage(), t.getOffset() ));
 			}
 			catch( ParserSymbolTableException pste )
@@ -672,9 +672,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				try
                 {
                 	if( current != typeName.getLastToken() )
-                    	typeSymbol = ((IContainerSymbol)typeSymbol).LookupNestedNameSpecifier( current.getImage());
+                    	typeSymbol = ((IContainerSymbol)typeSymbol).lookupNestedNameSpecifier( current.getImage());
                     else
-						typeSymbol = ((IContainerSymbol)typeSymbol).Lookup( current.getImage());
+						typeSymbol = ((IContainerSymbol)typeSymbol).lookup( current.getImage());
 						
                     references.add( createReference( typeSymbol, current.getImage(), current.getOffset() ));
                 }

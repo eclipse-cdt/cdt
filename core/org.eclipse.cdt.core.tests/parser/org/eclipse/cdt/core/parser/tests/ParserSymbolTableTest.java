@@ -90,7 +90,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol x = table.new Declaration( "x" );
 		table.getCompilationUnit().addSymbol( x );
 		
-		ISymbol look = table.getCompilationUnit().Lookup( "x" );
+		ISymbol look = table.getCompilationUnit().lookup( "x" );
 		
 		assertEquals( x, look );
 	}
@@ -98,7 +98,7 @@ public class ParserSymbolTableTest extends TestCase {
 	public void testLookupNonExistant() throws Exception{
 		newTable();
 		
-		ISymbol look = table.getCompilationUnit().Lookup("boo");
+		ISymbol look = table.getCompilationUnit().lookup("boo");
 		assertEquals( look, null );
 	}
 	
@@ -113,7 +113,7 @@ public class ParserSymbolTableTest extends TestCase {
 				
 		table.getCompilationUnit().addSymbol( x );
 		
-		ISymbol look = table.getCompilationUnit().Lookup( "x" );
+		ISymbol look = table.getCompilationUnit().lookup( "x" );
 		
 		assertEquals( look.getASTExtension(), extension );
 	}
@@ -134,16 +134,16 @@ public class ParserSymbolTableTest extends TestCase {
 		firstClass.setType( TypeInfo.t_class );
 		table.getCompilationUnit().addSymbol( firstClass );
 
-		ISymbol look = firstClass.Lookup( "x" );
+		ISymbol look = firstClass.lookup( "x" );
 		assertEquals( look, firstX );
 		
 		ISymbol secondX = table.newSymbol("x");
 		firstClass.addSymbol( secondX );
 		
-		look = firstClass.Lookup( "x" );
+		look = firstClass.lookup( "x" );
 		assertEquals( look, secondX );
 		
-		look = table.getCompilationUnit().Lookup( "x" );
+		look = table.getCompilationUnit().lookup( "x" );
 		assertEquals( look, firstX );
 	}
 	
@@ -162,7 +162,7 @@ public class ParserSymbolTableTest extends TestCase {
 		decl.setType( TypeInfo.t_class );
 		table.getCompilationUnit().addSymbol( decl );
 		
-		ISymbol look = decl.Lookup( "x" );
+		ISymbol look = decl.lookup( "x" );
 		
 		assertEquals( x, look );
 	}
@@ -189,7 +189,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.getCompilationUnit().addSymbol( parent );
 		table.getCompilationUnit().addSymbol( class1 );
 		
-		ISymbol look = class1.Lookup( "x" );
+		ISymbol look = class1.lookup( "x" );
 		assertEquals( look, decl );
 	}
 
@@ -208,14 +208,14 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol parent2 = table.newDerivableContainerSymbol("parent2");
 		table.getCompilationUnit().addSymbol( parent2 );
 		
-		IDerivableContainerSymbol class1 = (IDerivableContainerSymbol) table.getCompilationUnit().Lookup( "class" );
+		IDerivableContainerSymbol class1 = (IDerivableContainerSymbol) table.getCompilationUnit().lookup( "class" );
 		class1.addParent( parent2 );
 		
 		ISymbol decl = table.new Declaration("x");
 		parent2.addSymbol( decl );
 				
 		try{
-			class1.Lookup( "x" );
+			class1.lookup( "x" );
 			assertTrue( false );
 		}
 		catch ( ParserSymbolTableException e ){
@@ -241,7 +241,7 @@ public class ParserSymbolTableTest extends TestCase {
 		a.addParent( b );
 		 
 		try{
-			ISymbol look = a.Lookup("foo");
+			ISymbol look = a.lookup("foo");
 			assertTrue( false );
 		} catch ( ParserSymbolTableException e) {
 			assertEquals( e.reason, ParserSymbolTableException.r_CircularInheritance );
@@ -285,7 +285,7 @@ public class ParserSymbolTableTest extends TestCase {
 		compUnit.addSymbol( a );
 		compUnit.addSymbol( b );
 		
-		ISymbol look = decl.Lookup( "x" ); 
+		ISymbol look = decl.lookup( "x" ); 
 		
 		assertEquals( look, x );
 	}
@@ -306,8 +306,8 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IContainerSymbol compUnit = table.getCompilationUnit();
 		
-		IDerivableContainerSymbol cls = (IDerivableContainerSymbol) compUnit.Lookup("class");
-		IDerivableContainerSymbol c   = (IDerivableContainerSymbol) compUnit.Lookup("C");
+		IDerivableContainerSymbol cls = (IDerivableContainerSymbol) compUnit.lookup("class");
+		IDerivableContainerSymbol c   = (IDerivableContainerSymbol) compUnit.lookup("C");
 		IDerivableContainerSymbol d   = table.newDerivableContainerSymbol("D");
 		
 		d.addParent( c );
@@ -316,7 +316,7 @@ public class ParserSymbolTableTest extends TestCase {
 		compUnit.addSymbol( d );
 		
 		try{
-			cls.Lookup( "x" );
+			cls.lookup( "x" );
 			assertTrue( false );
 		}
 		catch( ParserSymbolTableException e){
@@ -375,7 +375,7 @@ public class ParserSymbolTableTest extends TestCase {
 		c.addParent( d );
 		
 		try{
-			a.Lookup( "enumerator" );
+			a.lookup( "enumerator" );
 			assertTrue( true );	
 		}
 		catch ( ParserSymbolTableException e){
@@ -383,7 +383,7 @@ public class ParserSymbolTableTest extends TestCase {
 		}
 		
 		try{
-			a.Lookup( "static" );
+			a.lookup( "static" );
 			assertTrue( true );	
 		}
 		catch ( ParserSymbolTableException e){
@@ -391,7 +391,7 @@ public class ParserSymbolTableTest extends TestCase {
 		}
 		
 		try{
-			a.Lookup( "x" );
+			a.lookup( "x" );
 			assertTrue( false );	
 		}
 		catch ( ParserSymbolTableException e){
@@ -436,11 +436,11 @@ public class ParserSymbolTableTest extends TestCase {
 		table.getCompilationUnit().addSymbol( a );
 		table.getCompilationUnit().addSymbol( b );
 		
-		ISymbol look = a.ElaboratedLookup( TypeInfo.t_class, "class" );
+		ISymbol look = a.elaboratedLookup( TypeInfo.t_class, "class" );
 		assertEquals( look, cls );
-		look = a.ElaboratedLookup( TypeInfo.t_struct, "struct" );
+		look = a.elaboratedLookup( TypeInfo.t_struct, "struct" );
 		assertEquals( look, struct );
-		look = a.ElaboratedLookup( TypeInfo.t_union, "union" );
+		look = a.elaboratedLookup( TypeInfo.t_union, "union" );
 		assertEquals( look, union );
 	}
 	
@@ -465,19 +465,19 @@ public class ParserSymbolTableTest extends TestCase {
 		A.addSymbol(member);
 				
 		//at time of "A a;"
-		ISymbol look = compUnit.Lookup("A");
+		ISymbol look = compUnit.lookup("A");
 		assertEquals( look, A );
 		ISymbol a = table.newSymbol("a");
 		a.setTypeSymbol( look );
 		compUnit.addSymbol( a );
 		
 		//later "a.member"
-		look = compUnit.Lookup("a");
+		look = compUnit.lookup("a");
 		assertEquals( look, a );
 		IContainerSymbol type = (IContainerSymbol) look.getTypeSymbol();
 		assertEquals( type, A );
 		
-		look = type.Lookup("member");
+		look = type.lookup("member");
 		assertEquals( look, member );
 	}
 	
@@ -512,10 +512,10 @@ public class ParserSymbolTableTest extends TestCase {
 		f.setType( TypeInfo.t_function );
 		compUnit.addSymbol( f );
 				
-		ISymbol look = f.ElaboratedLookup( TypeInfo.t_struct, "stat" );
+		ISymbol look = f.elaboratedLookup( TypeInfo.t_struct, "stat" );
 		assertEquals( look, struct );
 		
-		look = f.Lookup( "stat" );
+		look = f.lookup( "stat" );
 		assertEquals( look, function );
 	}
 	
@@ -571,7 +571,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol nsC_i = table.newSymbol("i");
 		nsC.addSymbol( nsC_i );
 		
-		ISymbol look = nsB.Lookup("C");
+		ISymbol look = nsB.lookup("C");
 		assertEquals( look, nsC );
 		nsB.addUsingDirective( nsC );
 		
@@ -580,18 +580,18 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		nsB.addSymbol( f1 );
 		
-		look = f1.Lookup( "i" );
+		look = f1.lookup( "i" );
 		assertEquals( look, nsC_i ); //C::i visible and hides A::i
 		
 		IContainerSymbol nsD = table.newContainerSymbol("D");
 		nsD.setType( TypeInfo.t_namespace );
 		nsA.addSymbol( nsD );
 		
-		look = nsD.Lookup("B");
+		look = nsD.lookup("B");
 		assertEquals( look, nsB );
 		nsD.addUsingDirective( nsB );
 		
-		look = nsD.Lookup("C");
+		look = nsD.lookup("C");
 		assertEquals( look, nsC );
 		nsD.addUsingDirective( nsC );
 		
@@ -601,7 +601,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		try
 		{
-			look = f2.Lookup( "i" );
+			look = f2.lookup( "i" );
 			assertTrue( false );
 		}
 		catch ( ParserSymbolTableException e )
@@ -614,14 +614,14 @@ public class ParserSymbolTableTest extends TestCase {
 		f3.setType( TypeInfo.t_function );
 		nsA.addSymbol( f3 );
 		
-		look = f3.Lookup("i");
+		look = f3.lookup("i");
 		assertEquals( look, nsA_i );  //uses A::i
 		
 		IParameterizedSymbol f4 = table.newParameterizedSymbol("f4");
 		f4.setType( TypeInfo.t_function );
 		table.getCompilationUnit().addSymbol( f4 );
 		
-		look = f4.Lookup("i");
+		look = f4.lookup("i");
 		assertEquals( look, null );//neither i is visible here.
 	}
 	/**
@@ -675,7 +675,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = null;
 		try
 		{
-			look = f.Lookup( "i" );
+			look = f.lookup( "i" );
 			assertTrue( false );
 		}
 		catch ( ParserSymbolTableException e )
@@ -684,8 +684,8 @@ public class ParserSymbolTableTest extends TestCase {
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
 		}
 		
-		look = f.LookupNestedNameSpecifier("N");
-		look = ((IContainerSymbol) look).QualifiedLookup("i"); //ok
+		look = f.lookupNestedNameSpecifier("N");
+		look = ((IContainerSymbol) look).qualifiedLookup("i"); //ok
 		assertEquals( look, nsN_i );
 	}
 	
@@ -745,9 +745,9 @@ public class ParserSymbolTableTest extends TestCase {
 		f.setType(TypeInfo.t_function);
 		compUnit.addSymbol( f );
 		
-		ISymbol look = f.LookupNestedNameSpecifier("BC");
+		ISymbol look = f.lookupNestedNameSpecifier("BC");
 		assertEquals( look, nsBC );
-		look = ((IContainerSymbol)look).QualifiedLookup("a");
+		look = ((IContainerSymbol)look).qualifiedLookup("a");
 		assertEquals( look, a );
 	}
 	
@@ -800,18 +800,18 @@ public class ParserSymbolTableTest extends TestCase {
 		IParameterizedSymbol f = table.newParameterizedSymbol("f");
 		compUnit.addSymbol(f);
 		
-		IContainerSymbol lookA = f.LookupNestedNameSpecifier("A");
-		ISymbol look = lookA.QualifiedLookup("a");
+		IContainerSymbol lookA = f.lookupNestedNameSpecifier("A");
+		ISymbol look = lookA.qualifiedLookup("a");
 		assertEquals( look, a );
 		
-		look = lookA.QualifiedLookup("b");
+		look = lookA.qualifiedLookup("b");
 		assertEquals( look, b );
 		
-		IContainerSymbol lookB = f.LookupNestedNameSpecifier("B");
-		look = lookB.QualifiedLookup("a");
+		IContainerSymbol lookB = f.lookupNestedNameSpecifier("B");
+		look = lookB.qualifiedLookup("a");
 		assertEquals( look, a );
 		
-		look = lookB.QualifiedLookup("b");
+		look = lookB.qualifiedLookup("b");
 		assertEquals( look, b );
 	}
 	
@@ -858,7 +858,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f.addUsingDirective(nsA);
 		f.addUsingDirective(nsB);
 		
-		ISymbol look = f.Lookup("i");
+		ISymbol look = f.lookup("i");
 		assertEquals( look, null );
 	}
 	
@@ -920,26 +920,26 @@ public class ParserSymbolTableTest extends TestCase {
 		nsC.setType( TypeInfo.t_namespace);
 		compUnit.addSymbol( nsC );
 		
-		ISymbol look = nsC.Lookup("A");
+		ISymbol look = nsC.lookup("A");
 		assertEquals( look, nsA );
 		nsC.addUsingDirective( nsA );
 		
-		look = nsC.Lookup("B");
+		look = nsC.lookup("B");
 		assertEquals( look, nsB );
 		nsC.addUsingDirective( nsB );
 		
 		//lookup C::x
-		look = nsC.LookupNestedNameSpecifier("C");
+		look = nsC.lookupNestedNameSpecifier("C");
 		assertEquals( look, nsC );
-		look = ((IContainerSymbol)look).QualifiedLookup( "x" );
+		look = ((IContainerSymbol)look).qualifiedLookup( "x" );
 		assertEquals( look, intX );
 		
 		//lookup C::y
-		look = nsC.LookupNestedNameSpecifier("C");
+		look = nsC.lookupNestedNameSpecifier("C");
 		assertEquals( look, nsC );
 
 		try{
-			look = ((IContainerSymbol)look).QualifiedLookup( "y" );
+			look = ((IContainerSymbol)look).qualifiedLookup( "y" );
 			assertTrue(false);
 		} catch ( ParserSymbolTableException e ) {
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
@@ -979,14 +979,14 @@ public class ParserSymbolTableTest extends TestCase {
 	
 		nsA.addUsingDirective( nsB );
 	
-		IContainerSymbol lookA = compUnit.LookupNestedNameSpecifier( "A" );
+		IContainerSymbol lookA = compUnit.lookupNestedNameSpecifier( "A" );
 		assertEquals( nsA, lookA );
 	
-		ISymbol look = lookA.LookupMemberForDefinition( "f1" );
+		ISymbol look = lookA.lookupMemberForDefinition( "f1" );
 		assertEquals( look, null );
 	
 		//but notice if you wanted to do A::f1 as a function call, it is ok
-		look = lookA.QualifiedLookup( "f1" );
+		look = lookA.qualifiedLookup( "f1" );
 		assertEquals( look, f1 );
 	}
 	
@@ -1049,13 +1049,13 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IDerivableContainerSymbol D = table.newDerivableContainerSymbol( "D" );
 		D.setType( TypeInfo.t_struct );
-		ISymbol look = compUnit.Lookup( "B" );
+		ISymbol look = compUnit.lookup( "B" );
 		assertEquals( look, B );
 		D.addParent( B );
 		
 		compUnit.addSymbol( D );
 		
-		IContainerSymbol lookB = D.LookupNestedNameSpecifier("B");
+		IContainerSymbol lookB = D.lookupNestedNameSpecifier("B");
 		assertEquals( lookB, B );
 
 		D.addUsingDeclaration( "f", lookB );
@@ -1064,7 +1064,7 @@ public class ParserSymbolTableTest extends TestCase {
 		//TBD anonymous union
 		//D.addUsingDeclaration( "x", lookB );
 		
-		look = D.LookupNestedNameSpecifier("C");
+		look = D.lookupNestedNameSpecifier("C");
 		assertEquals( look, C );
 		
 		try{
@@ -1115,12 +1115,12 @@ public class ParserSymbolTableTest extends TestCase {
 		f1.addParameter( TypeInfo.t_int, 0, null, false );
 		A.addSymbol( f1 );
 		
-		ISymbol look = compUnit.LookupNestedNameSpecifier("A");
+		ISymbol look = compUnit.lookupNestedNameSpecifier("A");
 		assertEquals( look, A );
 		
 		IParameterizedSymbol usingF = (IParameterizedSymbol) compUnit.addUsingDeclaration( "f", A );
 		
-		look = compUnit.Lookup("A");
+		look = compUnit.lookup("A");
 		assertEquals( look, A );
 		
 		IParameterizedSymbol f2 = table.newParameterizedSymbol("f");
@@ -1138,7 +1138,7 @@ public class ParserSymbolTableTest extends TestCase {
 		TypeInfo param = new TypeInfo( TypeInfo.t_char, 0, null );
 		paramList.add( param );
 		
-		look = foo.UnqualifiedFunctionLookup( "f", paramList );
+		look = foo.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, usingF );
 		assertTrue( usingF.hasSameParameters( f1 ) );
 		
@@ -1147,11 +1147,11 @@ public class ParserSymbolTableTest extends TestCase {
 		bar.addParameter( TypeInfo.t_char, 0, null, false );
 		compUnit.addSymbol( bar );
 		
-		look = bar.LookupNestedNameSpecifier( "A" );
+		look = bar.lookupNestedNameSpecifier( "A" );
 		assertEquals( look, A );
 		bar.addUsingDeclaration( "f", A );
 		
-		look = bar.UnqualifiedFunctionLookup( "f", paramList );
+		look = bar.unqualifiedFunctionLookup( "f", paramList );
 		assertTrue( look != null );
 		assertTrue( ((IParameterizedSymbol) look).hasSameParameters( f2 ) );
 	}
@@ -1178,7 +1178,7 @@ public class ParserSymbolTableTest extends TestCase {
 		table.getCompilationUnit().addSymbol( cls );
 		cls.addSymbol( fn );
 		
-		ISymbol look = fn.Lookup("this");
+		ISymbol look = fn.lookup("this");
 		assertTrue( look != null );
 		
 		assertEquals( look.getType(), TypeInfo.t_type );
@@ -1212,7 +1212,7 @@ public class ParserSymbolTableTest extends TestCase {
 		enumerator.setType( TypeInfo.t_enumerator );
 		enumeration.addSymbol( enumerator );
 		
-		ISymbol look = cls.Lookup( "enumerator" );
+		ISymbol look = cls.lookup( "enumerator" );
 		assertEquals( look, enumerator );
 		assertEquals( look.getContainingSymbol(), cls );
 		assertEquals( look.getTypeSymbol(), enumeration );
@@ -1250,15 +1250,15 @@ public class ParserSymbolTableTest extends TestCase {
 		f.setType( TypeInfo.t_function );
 		f.setReturnType( table.newSymbol( "", TypeInfo.t_void ) );
 		
-		ISymbol look = NS.Lookup( "T" );
+		ISymbol look = NS.lookup( "T" );
 		assertEquals( look, T );				
 		f.addParameter( look, null, false );
 		
 		NS.addSymbol( f );	
 				
-		look = compUnit.LookupNestedNameSpecifier( "NS" );
+		look = compUnit.lookupNestedNameSpecifier( "NS" );
 		assertEquals( look, NS );
-		look = NS.QualifiedLookup( "T" );
+		look = NS.qualifiedLookup( "T" );
 		assertEquals( look, T );
 		
 		ISymbol param = table.newSymbol("parm");
@@ -1272,12 +1272,12 @@ public class ParserSymbolTableTest extends TestCase {
 		compUnit.addSymbol( main );
 
 		LinkedList paramList = new LinkedList();
-		look = main.Lookup( "parm" );
+		look = main.lookup( "parm" );
 		assertEquals( look, param );
 		TypeInfo p = new TypeInfo( TypeInfo.t_type, 0, look );
 		paramList.add( p );
 		
-		look = main.UnqualifiedFunctionLookup( "f", paramList );
+		look = main.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f );
 	}
 	
@@ -1325,7 +1325,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		compUnit.addSymbol( NS2 );
 		
-		ISymbol look = NS2.Lookup( "NS1" );
+		ISymbol look = NS2.lookup( "NS1" );
 		assertEquals( look, NS1 );
 		NS2.addUsingDirective( NS1 );
 		
@@ -1341,16 +1341,16 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A" );
 		A.setType( TypeInfo.t_class );
-		look = compUnit.LookupNestedNameSpecifier( "NS2" );
+		look = compUnit.lookupNestedNameSpecifier( "NS2" );
 		assertEquals( look, NS2 );
 		
-		look = NS2.QualifiedLookup( "B" );
+		look = NS2.qualifiedLookup( "B" );
 		assertEquals( look, B );
 		A.addParent( B );
 		
 		compUnit.addSymbol( A );
 		
-		look = compUnit.Lookup( "A" );
+		look = compUnit.lookup( "A" );
 		assertEquals( look, A );
 		ISymbol a = table.newSymbol( "a" );
 		a.setType( TypeInfo.t_type );
@@ -1358,12 +1358,12 @@ public class ParserSymbolTableTest extends TestCase {
 		compUnit.addSymbol( a );
 		
 		LinkedList paramList = new LinkedList();
-		look = compUnit.Lookup( "a" );
+		look = compUnit.lookup( "a" );
 		assertEquals( look, a );
 		TypeInfo param = new TypeInfo( look.getType(), 0, look, new PtrOp( PtrOp.t_reference ), false );
 		paramList.add( param );
 		
-		look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f2 );
 	}
 	
@@ -1417,7 +1417,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f3.addParameter( C, new PtrOp( PtrOp.t_pointer ), false );
 		C.addSymbol( f3 );
 		
-		ISymbol look = compUnit.Lookup("C");
+		ISymbol look = compUnit.lookup("C");
 		assertEquals( look, C );
 		
 		ISymbol c = table.newSymbol("c");
@@ -1426,7 +1426,7 @@ public class ParserSymbolTableTest extends TestCase {
 		c.addPtrOperator( new PtrOp( PtrOp.t_pointer, false, false ) );
 		compUnit.addSymbol( c );
 		
-		look = compUnit.Lookup( "c" );
+		look = compUnit.lookup( "c" );
 		assertEquals( look, c );
 		assertEquals( look.getTypeSymbol(), C );
 		
@@ -1437,15 +1437,15 @@ public class ParserSymbolTableTest extends TestCase {
 		TypeInfo p3 = new TypeInfo( TypeInfo.t_type, 0, c );
 		
 		paramList.add( p1 );
-		look = C.MemberFunctionLookup( "foo", paramList );
+		look = C.memberFunctionLookup( "foo", paramList );
 		assertEquals( look, f1 );
 		
 		paramList.add( p2 );
-		look = C.MemberFunctionLookup( "foo", paramList );
+		look = C.memberFunctionLookup( "foo", paramList );
 		assertEquals( look, f2 );
 				
 		paramList.add( p3 );
-		look = C.MemberFunctionLookup( "foo", paramList );
+		look = C.memberFunctionLookup( "foo", paramList );
 		assertEquals( look, f3 );
 	}
 	
@@ -1480,22 +1480,22 @@ public class ParserSymbolTableTest extends TestCase {
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_int, 0, null );
 		paramList.add( p1 );
 		
-		ISymbol look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		ISymbol look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
 		paramList.clear();
 		TypeInfo p2 = new TypeInfo( TypeInfo.t_char, 0, null );
 		paramList.add( p2 );
-		look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f2 );
 		
 		paramList.clear();
 		TypeInfo p3 = new TypeInfo( TypeInfo.t_bool, 0, null );
 		paramList.add( p3 );
-		look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
-		look = compUnit.UnqualifiedFunctionLookup( "f", null );
+		look = compUnit.unqualifiedFunctionLookup( "f", null );
 		assertEquals( look, f2 );
 	}
 	
@@ -1558,13 +1558,13 @@ public class ParserSymbolTableTest extends TestCase {
 		LinkedList paramList = new LinkedList();
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, 0, a );
 		paramList.add( p1 );
-		ISymbol look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		ISymbol look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
 		paramList.clear();
 		TypeInfo p2 = new TypeInfo( TypeInfo.t_type, 0, c );
 		paramList.add( p2 );
-		look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f2 );
 	}
 	
@@ -1633,25 +1633,25 @@ public class ParserSymbolTableTest extends TestCase {
 		TypeInfo p = new TypeInfo( TypeInfo.t_type, 0, a );
 		paramList.add( p );
 		
-		ISymbol look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		ISymbol look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f2 );
 		
 		p.addPtrOperator( new PtrOp( PtrOp.t_reference, false, false ) );
-		look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
 		p.setTypeSymbol( b );
 		p.getPtrOperators().clear();
-		look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
 		p.addPtrOperator( new PtrOp( PtrOp.t_pointer, false, false ) );
-		look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f2 );
 		
 		p.setTypeSymbol( array );
 		p.getPtrOperators().clear();
-		look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f1 );
 		
 	}
@@ -1685,11 +1685,10 @@ public class ParserSymbolTableTest extends TestCase {
 		B.setType( TypeInfo.t_class );
 		compUnit.addSymbol( B );
 		
-		//12.1-1 "Constructors do not have names"
-		IParameterizedSymbol constructor = table.newParameterizedSymbol("");
-		constructor.setType( TypeInfo.t_function );
+		IParameterizedSymbol constructor = table.newParameterizedSymbol("B");
+		constructor.setType( TypeInfo.t_constructor );
 		constructor.addParameter( A, null, false );
-		B.addSymbol( constructor );
+		B.addConstructor( constructor );
 		
 		IParameterizedSymbol f = table.newParameterizedSymbol( "f" );
 		f.setType( TypeInfo.t_function );
@@ -1705,7 +1704,7 @@ public class ParserSymbolTableTest extends TestCase {
 		TypeInfo p = new TypeInfo( TypeInfo.t_type, 0, a );
 		paramList.add( p );
 		
-		ISymbol look = compUnit.UnqualifiedFunctionLookup( "f", paramList );
+		ISymbol look = compUnit.unqualifiedFunctionLookup( "f", paramList );
 		assertEquals( look, f );	
 	}
 	
@@ -1770,7 +1769,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = null;
 		
 		try{
-			look = main.UnqualifiedFunctionLookup( "f", params );
+			look = main.unqualifiedFunctionLookup( "f", params );
 			assertTrue( false );
 		} catch ( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous );
@@ -1780,21 +1779,21 @@ public class ParserSymbolTableTest extends TestCase {
 		TypeInfo p3 = new TypeInfo( TypeInfo.t_int, TypeInfo.isLong, null );
 		params.add( p1 );
 		params.add( p3 );
-		look = main.UnqualifiedFunctionLookup( "f", params );
+		look = main.unqualifiedFunctionLookup( "f", params );
 		assertEquals( look, f2 );
 		
 		params.clear();
 		TypeInfo p4 = new TypeInfo( TypeInfo.t_char, 0, null );
 		params.add( p1 );
 		params.add( p4 );
-		look = main.UnqualifiedFunctionLookup( "f", params );
+		look = main.unqualifiedFunctionLookup( "f", params );
 		assertEquals( look, f2 );
 		
 		params.clear();
 		((PtrOp)p1.getPtrOperators().getFirst()).setConst( true );
 		params.add( p1 );
 		params.add( p3 );
-		look = main.UnqualifiedFunctionLookup( "f", params );
+		look = main.unqualifiedFunctionLookup( "f", params );
 		assertEquals( look, f1 );
 		
 	}
@@ -1837,10 +1836,10 @@ public class ParserSymbolTableTest extends TestCase {
 		A.setType( TypeInfo.t_class );
 		compUnit.addSymbol( A );
 		
-		IParameterizedSymbol constructA = table.newParameterizedSymbol( "" );
-		constructA.setType( TypeInfo.t_function );
+		IParameterizedSymbol constructA = table.newParameterizedSymbol( "A" );
+		constructA.setType( TypeInfo.t_constructor );
 		constructA.addParameter( B, new PtrOp( PtrOp.t_reference ), false );
-		A.addSymbol( constructA );
+		A.addConstructor( constructA );
 		
 		IParameterizedSymbol operator = table.newParameterizedSymbol( "operator A" );
 		operator.setType( TypeInfo.t_function );
@@ -1862,7 +1861,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol look = null;
 		
 		try{
-			look = compUnit.UnqualifiedFunctionLookup( "f", params );
+			look = compUnit.unqualifiedFunctionLookup( "f", params );
 			assertTrue( false );
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous ); 
@@ -1872,10 +1871,10 @@ public class ParserSymbolTableTest extends TestCase {
 		C.setType( TypeInfo.t_class );
 		compUnit.addSymbol( C );
 		
-		IParameterizedSymbol constructC = table.newParameterizedSymbol("");
-		constructC.setType( TypeInfo.t_function );
+		IParameterizedSymbol constructC = table.newParameterizedSymbol("C");
+		constructC.setType( TypeInfo.t_constructor );
 		constructC.addParameter( B, new PtrOp( PtrOp.t_reference ), false );
-		C.addSymbol( constructC );
+		C.addConstructor( constructC );
 
 		IParameterizedSymbol f2 = table.newParameterizedSymbol( "f" );
 		f2.setType( TypeInfo.t_function );
@@ -1883,7 +1882,7 @@ public class ParserSymbolTableTest extends TestCase {
 		compUnit.addSymbol( f2 );
 		
 		try{
-			look = compUnit.UnqualifiedFunctionLookup( "f", params );
+			look = compUnit.unqualifiedFunctionLookup( "f", params );
 			assertTrue( false );
 		} catch( ParserSymbolTableException e ){
 			assertEquals( e.reason, ParserSymbolTableException.r_Ambiguous ); 
@@ -1894,7 +1893,7 @@ public class ParserSymbolTableTest extends TestCase {
 		f3.addParameter(  B, null, false );
 		compUnit.addSymbol( f3 );
 		
-		look = compUnit.UnqualifiedFunctionLookup( "f", params );
+		look = compUnit.unqualifiedFunctionLookup( "f", params );
 		assertEquals( look, f3 );
 	}
 	
@@ -1910,12 +1909,12 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol f = table.newSymbol("f");
 		A.addSymbol( f );
 		
-		ISymbol look = A.Lookup("f");
+		ISymbol look = A.lookup("f");
 		assertEquals( look, f );
 		
 		assertTrue( table.rollBack( mark ) );
 		
-		look = A.Lookup("f");
+		look = A.lookup("f");
 		assertEquals( look, null );
 		
 		IDerivableContainerSymbol B = table.newDerivableContainerSymbol("B");
@@ -1984,7 +1983,7 @@ public class ParserSymbolTableTest extends TestCase {
 		LinkedList args = new LinkedList();
 		args.add( type );
 		
-		ParserSymbolTable.TemplateInstance instance = table.getCompilationUnit().TemplateLookup( "A", args );
+		ParserSymbolTable.TemplateInstance instance = table.getCompilationUnit().templateLookup( "A", args );
 		assertEquals( instance.getInstantiatedSymbol(), A );
 		
 		ISymbol a = table.newSymbol( "a", TypeInfo.t_type );
@@ -1992,14 +1991,14 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		table.getCompilationUnit().addSymbol( a );
 		
-		ISymbol look = table.getCompilationUnit().Lookup( "a" );
+		ISymbol look = table.getCompilationUnit().lookup( "a" );
 		
 		assertEquals( look, a );
 		
 		ISymbol symbol = a.getTypeSymbol();
 		assertEquals( symbol, instance );
 
-		look = ((IContainerSymbol)instance.getInstantiatedSymbol()).Lookup( "i" );
+		look = ((IContainerSymbol)instance.getInstantiatedSymbol()).lookup( "i" );
 		assertEquals( look, i );
 	}
 	
@@ -2023,7 +2022,7 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol A = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
 		ISymbol t = table.newSymbol( "t", TypeInfo.t_type );
 		
-		ISymbol look = template.Lookup( "T" );
+		ISymbol look = template.lookup( "T" );
 		assertEquals( look, param );
 		
 		t.setTypeSymbol( param );
@@ -2038,7 +2037,7 @@ public class ParserSymbolTableTest extends TestCase {
 		LinkedList args = new LinkedList();
 		args.add( type );
 		
-		look = table.getCompilationUnit().TemplateLookup( "A", args );
+		look = table.getCompilationUnit().templateLookup( "A", args );
 		assertTrue( look instanceof ParserSymbolTable.TemplateInstance );
 		
 		B.addParent( look );
@@ -2048,10 +2047,10 @@ public class ParserSymbolTableTest extends TestCase {
 		b.setTypeSymbol( B );
 		table.getCompilationUnit().addSymbol( b );
 		
-		look = table.getCompilationUnit().Lookup( "b" );
+		look = table.getCompilationUnit().lookup( "b" );
 		assertEquals( look, b );
 		
-		look = ((IDerivableContainerSymbol) b.getTypeSymbol()).Lookup( "t" );
+		look = ((IDerivableContainerSymbol) b.getTypeSymbol()).lookup( "t" );
 		assertTrue( look instanceof TemplateInstance );
 		
 		TemplateInstance instance = (TemplateInstance) look;
@@ -2084,7 +2083,7 @@ public class ParserSymbolTableTest extends TestCase {
 		ISymbol paramT = table.newSymbol( "T", TypeInfo.t_undef );
 		template.addParameter( paramT );
 		
-		ISymbol look = template.Lookup( "T" );
+		ISymbol look = template.lookup( "T" );
 		assertEquals( look, paramT );
 		ISymbol paramU = table.newSymbol( "U", TypeInfo.t_undef );
 		paramU.getTypeInfo().setDefault( new TypeInfo( TypeInfo.t_type, 0, look ) );
@@ -2093,13 +2092,13 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol X = table.newDerivableContainerSymbol( "X", TypeInfo.t_class );
 		template.addSymbol( X );
 		
-		look = X.Lookup( "T" );
+		look = X.lookup( "T" );
 		assertEquals( look, paramT );
 		ISymbol t = table.newSymbol( "t", TypeInfo.t_type );
 		t.setTypeSymbol( look );
 		X.addSymbol( t );
 		
-		look = X.Lookup( "U" );
+		look = X.lookup( "U" );
 		assertEquals( look, paramU );
 		ISymbol u = table.newSymbol( "u", TypeInfo.t_type );
 		u.setTypeSymbol( look );
@@ -2110,16 +2109,16 @@ public class ParserSymbolTableTest extends TestCase {
 		TypeInfo type = new TypeInfo( TypeInfo.t_char, 0, null );
 		LinkedList args = new LinkedList();
 		args.add( type );
-		look = table.getCompilationUnit().TemplateLookup( "X", args );
+		look = table.getCompilationUnit().templateLookup( "X", args );
 		assertTrue( look instanceof TemplateInstance );
 				
 		TemplateInstance instance = (TemplateInstance) look;
-		look = ((IDerivableContainerSymbol) instance.getInstantiatedSymbol()).Lookup( "t" );
+		look = ((IDerivableContainerSymbol) instance.getInstantiatedSymbol()).lookup( "t" );
 		
 		assertTrue( look instanceof TemplateInstance );
 		assertTrue( ((TemplateInstance) look).isType( TypeInfo.t_char ) );
 		
-		look = ((IDerivableContainerSymbol) instance.getInstantiatedSymbol()).Lookup( "u" );
+		look = ((IDerivableContainerSymbol) instance.getInstantiatedSymbol()).lookup( "u" );
 		assertTrue( look instanceof TemplateInstance );
 		assertTrue( ((TemplateInstance) look).isType( TypeInfo.t_char ) );
 	}
@@ -2158,7 +2157,7 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol B = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
 		table.getCompilationUnit().addSymbol( B );
 		
-		IParameterizedSymbol temp = (IParameterizedSymbol) table.getCompilationUnit().Lookup( "A" );
+		IParameterizedSymbol temp = (IParameterizedSymbol) table.getCompilationUnit().lookup( "A" );
 		assertEquals( temp, template );
 		
 		LinkedList args = new LinkedList();
@@ -2184,7 +2183,7 @@ public class ParserSymbolTableTest extends TestCase {
 		LinkedList params = new LinkedList();
 		params.add( new TypeInfo( TypeInfo.t_type, 0, a ) );
 				
-		ISymbol look = table.getCompilationUnit().UnqualifiedFunctionLookup( "f", params );
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", params );
 		assertEquals( look, f2 );		
 			
 	}
@@ -2288,7 +2287,7 @@ public class ParserSymbolTableTest extends TestCase {
 		template5.addSymbol( cls5 );
 		template1.addSpecialization( template5 );
 		
-		IParameterizedSymbol a = (IParameterizedSymbol) table.getCompilationUnit().Lookup( "A" );
+		IParameterizedSymbol a = (IParameterizedSymbol) table.getCompilationUnit().lookup( "A" );
 		
 		LinkedList args = new LinkedList();
 		
@@ -2352,8 +2351,8 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		/*...*/
 		
-		ISymbol lookup = table.getCompilationUnit().Lookup( "A" );
-		ISymbol otherLookup = table.getCompilationUnit().ElaboratedLookup( TypeInfo.t_class, "A" );
+		ISymbol lookup = table.getCompilationUnit().lookup( "A" );
+		ISymbol otherLookup = table.getCompilationUnit().elaboratedLookup( TypeInfo.t_class, "A" );
 		
 		assertEquals( lookup, otherLookup );
 		assertEquals( lookup, forwardSymbol );
@@ -2366,21 +2365,21 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		/*...*/
 		
-		lookup = table.getCompilationUnit().Lookup( "A" );
+		lookup = table.getCompilationUnit().lookup( "A" );
 		IDerivableContainerSymbol classA = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
 		assertTrue( lookup.isForwardDeclaration() );
 		lookup.setTypeSymbol( classA ); 
 		
 		table.getCompilationUnit().addSymbol( classA );
 		
-		lookup = table.getCompilationUnit().Lookup( "a" );
+		lookup = table.getCompilationUnit().lookup( "a" );
 		assertEquals( lookup, a );
 		assertEquals( a.getTypeSymbol(), classA );
 		
-		lookup = table.getCompilationUnit().Lookup( "A" );
+		lookup = table.getCompilationUnit().lookup( "A" );
 		assertEquals( lookup, classA );
 		
-		lookup = table.getCompilationUnit().ElaboratedLookup( TypeInfo.t_class, "A" );
+		lookup = table.getCompilationUnit().elaboratedLookup( TypeInfo.t_class, "A" );
 		assertEquals( lookup, classA );
 	}
 	
@@ -2418,7 +2417,7 @@ public class ParserSymbolTableTest extends TestCase {
 		IDerivableContainerSymbol classB = table.newDerivableContainerSymbol( "B", TypeInfo.t_class );
 			
 		IParameterizedSymbol fn1 = table.newParameterizedSymbol( "f", TypeInfo.t_function );
-		ISymbol lookup = table.getCompilationUnit().Lookup( "A" );
+		ISymbol lookup = table.getCompilationUnit().lookup( "A" );
 		assertEquals( lookup, forwardSymbol );
 		fn1.addParameter( lookup, new PtrOp( PtrOp.t_pointer ), false );
 		fn1.getTypeInfo().setBit( true, TypeInfo.isStatic );
@@ -2434,7 +2433,7 @@ public class ParserSymbolTableTest extends TestCase {
 		/*...*/
 		
 		ISymbol a1 = table.newSymbol( "a1", TypeInfo.t_type );
-		lookup = table.getCompilationUnit().Lookup( "A" );
+		lookup = table.getCompilationUnit().lookup( "A" );
 		assertEquals( lookup, forwardSymbol );
 		a1.setTypeSymbol( lookup );
 		a1.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
@@ -2443,7 +2442,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		/*...*/
 		
-		lookup = table.getCompilationUnit().Lookup( "A" );
+		lookup = table.getCompilationUnit().lookup( "A" );
 		IDerivableContainerSymbol classA = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
 		assertTrue( lookup.isForwardDeclaration() );
 		lookup.setTypeSymbol( classA ); 
@@ -2451,7 +2450,7 @@ public class ParserSymbolTableTest extends TestCase {
 		
 		/*..*/
 		ISymbol a2 = table.newSymbol( "a2", TypeInfo.t_type );
-		lookup = table.getCompilationUnit().Lookup( "A" );
+		lookup = table.getCompilationUnit().lookup( "A" );
 		assertEquals( lookup, classA );
 		a2.setTypeSymbol( lookup );
 		a2.addPtrOperator( new PtrOp( PtrOp.t_pointer ) );
@@ -2463,14 +2462,45 @@ public class ParserSymbolTableTest extends TestCase {
 		LinkedList paramList = new LinkedList();
 		TypeInfo p1 = new TypeInfo( TypeInfo.t_type, 0, a1 );
 		paramList.add( p1 );
-		ISymbol look = classB.MemberFunctionLookup( "f", paramList );
+		ISymbol look = classB.memberFunctionLookup( "f", paramList );
 		assertEquals( look, fn1 );
 		
 		paramList.clear();
 		p1 = new TypeInfo( TypeInfo.t_type, 0, a2 );
 		paramList.add( p1 );
-		look = classB.MemberFunctionLookup( "f", paramList );
+		look = classB.memberFunctionLookup( "f", paramList );
 		assertEquals( look, fn1 );
+	}
+	
+	public void testConstructors() throws Exception{
+		newTable();
+		
+		IDerivableContainerSymbol classA = table.newDerivableContainerSymbol( "A", TypeInfo.t_class );
+		
+		IParameterizedSymbol constructor1 = table.newParameterizedSymbol( "A", TypeInfo.t_constructor );
+		constructor1.addParameter( classA, new PtrOp( PtrOp.t_reference ), false );
+		
+		IParameterizedSymbol constructor2 = table.newParameterizedSymbol( "A", TypeInfo.t_constructor );
+		constructor2.addParameter( TypeInfo.t_int, 0, null, false );
+		
+		classA.addConstructor( constructor1 );
+		classA.addConstructor( constructor2 );
+		
+		assertEquals( classA.getConstructors().size(), 2 );
+		
+		IParameterizedSymbol cloned = (IParameterizedSymbol) constructor2.clone();
+		try{
+			classA.addConstructor( cloned );
+		} catch ( ParserSymbolTableException e ) {
+			assertEquals( e.reason, ParserSymbolTableException.r_InvalidOverload );
+		}
+		
+		LinkedList paramList = new LinkedList();
+		paramList.add( new TypeInfo( TypeInfo.t_int, 0, null ) );
+		
+		ISymbol lookup = classA.lookupConstructor( paramList );
+		
+		assertEquals( lookup, constructor2 );
 	}
 }
 

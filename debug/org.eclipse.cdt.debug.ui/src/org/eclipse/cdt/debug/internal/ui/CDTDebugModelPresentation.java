@@ -457,17 +457,22 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			String label = new String();
 			label += info.getLevel() + " ";
-			if ( info.getFunction() != null )
-				label += info.getFunction() + "() ";
-
-			if ( info.getFile() != null )
+			if ( info.getFunction() != null && info.getFunction().trim().length() > 0 )
 			{
-				IPath path = new Path( info.getFile() );
-				if ( !path.isEmpty() )
-					label += "at " + ( qualified ? path.toOSString() : path.lastSegment() ) + ":";
+				label += info.getFunction() + "() ";
+				if ( info.getFile() != null )
+				{
+					IPath path = new Path( info.getFile() );
+					if ( !path.isEmpty() )
+					{
+						label += "at " + ( qualified ? path.toOSString() : path.lastSegment() ) + ":";
+						if ( info.getFrameLineNumber() != 0 )
+							label += info.getFrameLineNumber();
+					}
+				}
 			}
-			if ( info.getFrameLineNumber() != 0 )
-				label += info.getFrameLineNumber();
+			else
+				label += "<symbol not available>";
 			return label;
 		}
 		IDummyStackFrame dummy = (IDummyStackFrame)stackFrame.getAdapter( IDummyStackFrame.class );

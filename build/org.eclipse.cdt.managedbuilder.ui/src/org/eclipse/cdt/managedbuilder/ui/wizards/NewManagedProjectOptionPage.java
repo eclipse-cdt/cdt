@@ -13,6 +13,7 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedProjectOptionBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
@@ -22,13 +23,15 @@ import org.eclipse.core.resources.IProject;
 public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 
 	public class ManagedWizardOptionBlock extends ManagedProjectOptionBlock {
-
+		IndexerBlock indexBlock;
+		
 		public ManagedWizardOptionBlock(ICOptionContainer parent) {
 			super(parent);
 		}
 
 		protected void addTabs() {
 			addTab(new ReferenceBlock());
+			addTab(indexBlock = new IndexerBlock());
 		}
 	}
 

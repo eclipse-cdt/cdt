@@ -27,9 +27,9 @@
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="Binary Parser Page"/>
 <!-- =========================================================================== -->
-<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
 
@@ -130,8 +130,8 @@
             id="org.eclipse.cdt.ui.CView">
       </view>
    </extension>
-<!-- For C Wizards -->
 <!-- The wizards -->
+<!-- For C Wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -482,6 +482,15 @@
             class="org.eclipse.cdt.ui.dialogs.GNUElfBinaryParserPage"
             id="ElfBinaryParserPage">
       </parserPage>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            name="%CDTIndexerProperty.name"
+            class="org.eclipse.cdt.ui.dialogs.IndexerOptionPropertyPage"
+            id="org.eclipse.cdt.ui.indexer">
+      </page>
    </extension>
 
 </plugin>

@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.zip.CRC32;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.Index;
@@ -37,7 +39,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.QualifiedName;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 
 public class IndexManager extends JobManager implements IIndexConstants {
@@ -66,6 +72,16 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public static Integer REBUILDING_STATE = new Integer(3);
 
 	public static boolean VERBOSE = false;
+	
+	public final static String INDEX_MODEL_ID = CCorePlugin.PLUGIN_ID + ".newindexmodel"; //$NON-NLS-1$
+	public final static String ACTIVATION = "enable"; //$NON-NLS-1$
+	public final static QualifiedName activationKey = new QualifiedName(INDEX_MODEL_ID, ACTIVATION);
+	
+	public static final String INDEXER_ENABLED = "indexEnabled"; //$NON-NLS-1$
+	public static final String INDEXER_PROBLEMS_ENABLED = "indexerProblemsEnabled"; //$NON-NLS-1$
+	public static final String CDT_INDEXER = "cdt_indexer"; //$NON-NLS-1$
+	public static final String INDEXER_VALUE = "indexValue"; //$NON-NLS-1$
+	
 	
 	public synchronized void aboutToUpdateIndex(IPath path, Integer newIndexState) {
 		// newIndexState is either UPDATING_STATE or REBUILDING_STATE
@@ -105,6 +121,16 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * Note: the actual operation is performed in background
 	 */
 	public void addSource(IFile resource, IPath indexedContainer){
+		
+		IProject project = resource.getProject();
+		
+		boolean indexEnabled = false;
+		if (project != null)
+			indexEnabled = isIndexEnabled(project);
+		else
+			org.eclipse.cdt.internal.core.model.Util.log(null, "IndexManager addSource: File has no project associated : " + resource.getName(), ICLogConstants.CDT); //$NON-NLS-1$ 
+		
+			
 		if (CCorePlugin.getDefault() == null) return;	
 		AddCompilationUnitToIndex job = new AddCompilationUnitToIndex(resource, indexedContainer, this);
 		if (this.awaitingJobsCount() < MAX_FILES_IN_MEMORY) {
@@ -115,7 +141,9 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	}
 	
 	public void updateDependencies(IResource resource){
-		if (CCorePlugin.getDefault() == null) return;	
+		if (CCorePlugin.getDefault() == null || !isIndexEnabled( resource.getProject()) ) 
+			return;	
+			
 			UpdateDependency job = new UpdateDependency(resource);
 		
 			request(job);
@@ -240,18 +268,26 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public void indexAll(IProject project) {
 		if (CCorePlugin.getDefault() == null) return;
 	
-		// check if the same request is not already in the queue
-		IndexRequest request = new IndexAllProject(project, this);
-		for (int i = this.jobEnd; i > this.jobStart; i--) // NB: don't check job at jobStart, as it may have already started (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=32488)
-			if (request.equals(this.awaitingJobs[i])) return;
-		this.request(request);
+		//check to see if indexing isEnabled for this project
+		boolean indexEnabled = isIndexEnabled(project);
+	
+		if (indexEnabled){
+			// check if the same request is not already in the queue
+			IndexRequest request = new IndexAllProject(project, this);
+			for (int i = this.jobEnd; i > this.jobStart; i--) // NB: don't check job at jobStart, as it may have already started (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=32488)
+				if (request.equals(this.awaitingJobs[i])) return;
+			this.request(request);
+		}
 	}
 	/**
 	 * Index the content of the given source folder.
 	 */
 	public void indexSourceFolder(CProject javaProject, IPath sourceFolder, final char[][] exclusionPattern) {
 		IProject project = javaProject.getProject();
-
+		
+		if( !isIndexEnabled( project ) )
+					return;
+					
 		if (this.jobEnd > this.jobStart) {
 			// check if a job to index the project is not already in the queue
 			IndexRequest request = new IndexAllProject(project, this);
@@ -308,7 +344,8 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		IndexRequest request = null;
 		if (target instanceof IProject) {
 			IProject p = (IProject) target;
-			request = new IndexAllProject(p, this);
+			if( p.exists() && isIndexEnabled( p ) )
+				request = new IndexAllProject(p, this);
 		}
 	
 		if (request != null)
@@ -347,7 +384,10 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * Note: the actual operation is performed in background
 	 */
 	public void remove(String resourceName, IPath indexedContainer){
-		request(new RemoveFromIndex(resourceName, indexedContainer, this));
+		IProject project = CCorePlugin.getWorkspace().getRoot().getProject(indexedContainer.toString());
+		
+		if( isIndexEnabled( project ) )
+			request(new RemoveFromIndex(resourceName, indexedContainer, this));
 	}
 	/**
 	 * Removes the index for a given path. 
@@ -390,7 +430,10 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 */
 	public void removeSourceFolderFromIndex(CProject javaProject, IPath sourceFolder, char[][] exclusionPatterns) {
 		IProject project = javaProject.getProject();
-	
+		
+		if( !isIndexEnabled( project ) )
+			return;
+			
 		if (this.jobEnd > this.jobStart) {
 			// check if a job to index the project is not already in the queue
 			IndexRequest request = new IndexAllProject(project, this);
@@ -573,4 +616,60 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			JobManager.verbose("-> index state updated to: " + state + " for: "+indexName); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}	
+	
+	/**
+		 * @param project
+		 * @return
+		 */
+		public boolean isIndexEnabled(IProject project) {
+			if( project == null || !project.exists() || !project.isOpen() )
+				return false;
+		
+			Boolean indexValue = null;
+		
+			try {
+				indexValue = (Boolean) project.getSessionProperty(activationKey);
+			} catch (CoreException e) {
+			}
+		
+			if (indexValue != null)
+				return indexValue.booleanValue();
+		
+			try {
+				//Load value for project
+				indexValue = loadIndexerEnabledFromCDescriptor(project);
+				if (indexValue != null){
+					project.setSessionProperty(IndexManager.activationKey, indexValue);
+					return indexValue.booleanValue();
+				}
+			
+//				TODO: Indexer Block Place holder for Managed Make - take out
+				indexValue = new Boolean(true);
+				project.setSessionProperty(IndexManager.activationKey, indexValue);
+				return indexValue.booleanValue();
+			} catch (CoreException e1) {
+			}
+		
+			return false;
+		}
+		
+	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
+		// Check if we have the property in the descriptor
+		// We pass false since we do not want to create the descriptor if it does not exists.
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		Boolean strBool = null;
+		if (descriptor != null) {
+			Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
+		
+			while (child != null) {
+				if (child.getNodeName().equals(INDEXER_ENABLED)) 
+					strBool = Boolean.valueOf(((Element)child).getAttribute(INDEXER_VALUE));
+			
+			
+				child = child.getNextSibling();
+			}
+		}
+		
+		return strBool;
+	}
 }

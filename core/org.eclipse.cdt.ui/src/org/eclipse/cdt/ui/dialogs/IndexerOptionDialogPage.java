@@ -66,15 +66,6 @@ public class IndexerOptionDialogPage extends DialogPage {
 
 		indexerEnabled = createCheckButton(group, ENABLE_INDEXING );
 		
-		Group problemsGroup = new Group(result, SWT.NONE );
-		problemsGroup.setLayout(new GridLayout());
-		problemsGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		problemsGroup.setText( INDEXER_PROBLEMS );
-		
-		preprocessorProblemsEnabled = createCheckButton( problemsGroup, ENABLE_PREPROCESSOR_PROBLEMS );
-		semanticProblemsEnabled = createCheckButton( problemsGroup, ENABLE_SEMANTIC_PROBLEMS );
-		//uncomment when we want to report syntax problems
-		syntacticProblemsEnabled = createCheckButton( problemsGroup, ENABLE_SYNTACTIC_PROBLEMS );
 		setControl(result);
 	}
 	
@@ -95,26 +86,11 @@ public class IndexerOptionDialogPage extends DialogPage {
 	public void setIndexerValue(boolean value){
 		indexerEnabled.setSelection(value);
 	}
-	
-	public void setIndexerProblemValues( int value ){
-		preprocessorProblemsEnabled.setSelection( (value & IndexManager.PREPROCESSOR_PROBLEMS_BIT) != 0 );
-		if( syntacticProblemsEnabled != null ) 
-			syntacticProblemsEnabled.setSelection( (value & IndexManager.SYNTACTIC_PROBLEMS_BIT) != 0 );
-		semanticProblemsEnabled.setSelection( (value & IndexManager.SEMANTIC_PROBLEMS_BIT) != 0 );
-	}
-	
+		
 	public boolean getIndexerValue(){
 		return indexerEnabled.getSelection();
 	}
 	
-	public int getIndexerProblemsValues(){
-		int result = 0;
-		result |= preprocessorProblemsEnabled.getSelection() ? IndexManager.PREPROCESSOR_PROBLEMS_BIT : 0;
-		if( syntacticProblemsEnabled != null )
-			result |= syntacticProblemsEnabled.getSelection() ? IndexManager.SYNTACTIC_PROBLEMS_BIT : 0;
-		result |= semanticProblemsEnabled.getSelection() ? IndexManager.SEMANTIC_PROBLEMS_BIT : 0;
-		return result;
-	}
 	
 	public void persistIndexerValues(IProject project){
 		ICDescriptor descriptor = null;
@@ -123,7 +99,7 @@ public class IndexerOptionDialogPage extends DialogPage {
 		
 		try {
 			newProject = project;
-			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject, true);
+			descriptor = CCorePlugin.getDefault().getCProjectDescription(newProject);
 			rootElement = descriptor.getProjectData(IndexManager.CDT_INDEXER);
 		
 			// Clear out all current children
@@ -135,17 +111,14 @@ public class IndexerOptionDialogPage extends DialogPage {
 			Document doc = rootElement.getOwnerDocument();
 	
 			boolean indexProject = getIndexerValue();
-			int problemValues = getIndexerProblemsValues();
 					
 			saveIndexerEnabled(indexProject, rootElement, doc);
-			saveIndexerProblemsEnabled( problemValues, rootElement, doc );
 			
 			descriptor.saveProjectData();
 			
 			//Update project session property
 			
 			project.setSessionProperty(IndexManager.activationKey,new Boolean(indexProject));
-			project.setSessionProperty(IndexManager.problemsActivationKey, new Integer( problemValues ));	
 	
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -161,12 +134,5 @@ public class IndexerOptionDialogPage extends DialogPage {
 		rootElement.appendChild(indexEnabled);
 
 	}
-	private static void saveIndexerProblemsEnabled ( int problemValues, Element rootElement, Document doc ) {
-		
-		Element enabled = doc.createElement(IndexManager.INDEXER_PROBLEMS_ENABLED);
-		Integer tempValue= new Integer( problemValues );
-		
-		enabled.setAttribute(IndexManager.INDEXER_PROBLEMS_VALUE, tempValue.toString());
-		rootElement.appendChild(enabled);
-	}
+
 }

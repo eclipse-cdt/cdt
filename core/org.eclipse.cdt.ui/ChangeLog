@@ -1,3 +1,14 @@
+2004-12-07 Bogdan Gheorghe
+	
+	Added Index Enablement block
+	
+	* src/org/eclipse/cdt/ui/dialogs/IndexerBlock.java
+	* src/org/eclipse/cdt/ui/dialogs/IndexerOptionDialogPage.java
+	* src/org/eclipse/cdt/ui/dialogs/IndexerOptionPropertyPage.java
+	* src/org/eclipse/cdt/internal/ui/CUIMessages.properties
+	* plugin.properties
+	* plugin.xml
+	
 2004-05-31 Alain Magloire
 
 	Thomas patch dealing with memory leaks.

@@ -1,3 +1,10 @@
+2004-12-07 Bogdan Gheorghe
+	- Added Index Enablement checking
+
+	* index/org/eclipse/cdt/internal/core/index/search/indexing/IndexManager.java
+	* index/org/eclipse/cdt/internal/core/index/search/indexing/IndexRequest.java
+	
+	 
 2004-02-13 Bogdan Gheorghe
 	PR 51232
 

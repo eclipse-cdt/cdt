@@ -7,6 +7,7 @@ package org.eclipse.cdt.make.ui.wizards;
 
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
@@ -30,7 +31,8 @@ import org.eclipse.core.resources.IProject;
 public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 
 	public class MakeWizardOptionBlock extends MakeProjectOptionBlock {
-
+		IndexerBlock indexBlock;
+		
 		public MakeWizardOptionBlock(ICOptionContainer parent) {
 			super(parent);
 		}
@@ -38,6 +40,7 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 		protected void addTabs() {
 			addTab(new ReferenceBlock());
 			super.addTabs();
+			addTab(indexBlock = new IndexerBlock());
 		}
 	}
 

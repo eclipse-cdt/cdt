@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -161,8 +160,13 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 					editorPart = EditorUtility.openInEditor(storage);
 				}
 			}
-			if (editorPart == null)
-				return false;
+
+			// highlight the type in the editor
+			if (editorPart != null && editorPart instanceof ITextEditor) {
+				ITextEditor editor = (ITextEditor) editorPart;
+				editor.selectAndReveal(location.getOffset(), location.getLength());
+				return true;
+			}
 		} catch (CModelException ex) {
 			ex.printStackTrace();
 			return false;
@@ -171,16 +175,6 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 			return false;
 		}
 		
-		// highlight the type in the editor
-		if (cElement != null && editorPart instanceof CEditor) {
-			CEditor editor = (CEditor) editorPart;
-			editor.setSelection(cElement);
-			return true;
-		} else if (editorPart instanceof ITextEditor) {
-			ITextEditor editor = (ITextEditor) editorPart;
-			editor.selectAndReveal(location.getOffset(), location.getLength());
-			return true;
-		}
 		return false;
 	}
 

@@ -5,6 +5,8 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
  
+import java.util.Map;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IOpenable;
@@ -161,4 +163,21 @@ public class SourceManipulation extends Parent implements ISourceManipulation, I
 		return (this.equals(other) 
 		&& (this.getSourceManipulationInfo().hasSameContentsAs(other.getSourceManipulationInfo())));
 	}
+
+	/*
+	 * @see JavaElement#generateInfos
+	 */
+	protected void generateInfos(Object info, Map newElements, IProgressMonitor pm) throws CModelException {
+		Openable openableParent = (Openable)getOpenableParent();
+		if (openableParent == null) {
+			return;
+		}
+		
+		CElementInfo openableParentInfo = (CElementInfo) CModelManager.getDefault().getInfo(openableParent);
+		if (openableParentInfo == null) {
+			openableParent.generateInfos(openableParent.createElementInfo(), newElements, pm);
+		}
+		newElements.put(this, info);
+	}
+
 }

@@ -61,34 +61,23 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 			CModelManager.getDefault().getElementsOutOfSynchWithBuffers().put(this, this);
 		}
 	}	
-	/**
-	 * Updates the info objects for this element and all of its children by
-	 * removing the current infos, generating new infos, and then placing
-	 * the new infos into the C Model cache tables.
-	 */
-	protected void buildStructure(OpenableInfo info, HashMap newElements, IProgressMonitor monitor) throws CModelException {
 
-		if (monitor != null && monitor.isCanceled()) return;
-	
-		// remove existing (old) infos
-		removeInfo();
-		info.setIsStructureKnown(generateInfos(info, monitor, newElements, getResource()));
-		CModelManager.getDefault().getElementsOutOfSynchWithBuffers().remove(this);
-		for (Iterator iter = newElements.keySet().iterator(); iter.hasNext();) {
-			ICElement key = (ICElement) iter.next();
-			Object value = newElements.get(key);
-			CModelManager.getDefault().putInfo(key, value);
-		}
-		
-		// add the info for this at the end, to ensure that a getInfo cannot reply null in case the LRU cache needs
-		// to be flushed. Might lead to performance issues.
-		CModelManager.getDefault().putInfo(this, info);	
-	}
+	/**
+	 * Builds this element's structure and properties in the given
+	 * info object, based on this element's current contents (reuse buffer
+	 * contents if this element has an open buffer, or resource contents
+	 * if this element does not have an open buffer). Children
+	 * are placed in the given newElements table (note, this element
+	 * has already been placed in the newElements table). Returns true
+	 * if successful, or false if an error is encountered while determining
+	 * the structure of this element.
+	 */
+	protected abstract boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException;
 
 	/**
 	 * Close the buffer associated with this element, if any.
 	 */
-	protected void closeBuffer(OpenableInfo info) {
+	protected void closeBuffer() {
 		if (!hasBuffer()) return; // nothing to do
 		IBuffer buffer = null;
 		buffer = getBufferManager().getBuffer(this);
@@ -102,25 +91,8 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	 * This element is being closed.  Do any necessary cleanup.
 	 */
 	protected void closing(Object info) throws CModelException {
-		if (info instanceof OpenableInfo) {
-			closeBuffer((OpenableInfo)info);
-		} else {
-			closeBuffer(null);
-		}
+		closeBuffer();
 	}
-
-
-	/**
-	 * Builds this element's structure and properties in the given
-	 * info object, based on this element's current contents (i.e. buffer
-	 * contents if this element has an open buffer, or resource contents
-	 * if this element does not have an open buffer). Children
-	 * are placed in the given newElements table (note, this element
-	 * has already been placed in the newElements table). Returns true
-	 * if successful, or false if an error is encountered while determining
-	 * the structure of this element.
-	 */
-	protected abstract boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException;
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IOpenable#getBuffer()
@@ -225,28 +197,46 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 		makeConsistent(pm, false);
 	}
 	
-	public void makeConsistent(IProgressMonitor pm, boolean forced) throws CModelException {
-		if (!isConsistent() || forced) {
-			CModelManager manager = CModelManager.getDefault();
-			boolean hadTemporaryCache = manager.hasTemporaryCache();
-			try {
-				HashMap newElements = manager.getTemporaryCache();
-				buildStructure((OpenableInfo)getElementInfo(), newElements, pm);
-			} finally {
-				if (!hadTemporaryCache) {
-					manager.resetTemporaryCache();
-				}				
+	public void makeConsistent(IProgressMonitor monitor, boolean forced) throws CModelException {
+		if (isConsistent()) {
+			return;
+		}
+		
+		// create a new info and make it the current info
+		// (this will remove the info and its children just before storing the new infos)
+		CModelManager manager = CModelManager.getDefault();
+		boolean hadTemporaryCache = manager.hasTemporaryCache();
+		try {
+			HashMap newElements = manager.getTemporaryCache();
+			CElementInfo info = createElementInfo();
+			openWhenClosed(info, monitor);
+			if (newElements.get(this) == null) {
+				// close any buffer that was opened for the new elements
+				Iterator iterator = newElements.keySet().iterator();
+				while (iterator.hasNext()) {
+					ICElement element = (ICElement)iterator.next();
+					if (element instanceof Openable) {
+						((Openable)element).closeBuffer();
+					}
+				}
+				throw newNotPresentException();
+			}
+			if (!hadTemporaryCache) {
+				manager.putInfos(this, newElements);
+			}
+		} finally {
+			if (!hadTemporaryCache) {
+				manager.resetTemporaryCache();
 			}
 		}
+
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IOpenable#open(IProgressMonitor)
 	 */
 	public void open(IProgressMonitor pm) throws CModelException {
-		if (!isOpen()) {
-			this.openWhenClosed(pm);
-		}
+		getElementInfo(pm);
 	}
 
 	/**
@@ -260,56 +250,49 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	}
 
 	/**
-	 * 	Open the parent element if necessary
-	 * 
+	 * Open the parent element if necessary.
 	 */
-	protected void openParent(IProgressMonitor pm) throws CModelException {
+	protected void openParent(Object childInfo, Map newElements, IProgressMonitor pm) throws CModelException {
 
 		Openable openableParent = (Openable)getOpenableParent();
-		if (openableParent != null) {
-			if (!openableParent.isOpen()){
-				openableParent.openWhenClosed(pm);
-			}
+		if (openableParent != null && !openableParent.isOpen()){
+			openableParent.generateInfos(openableParent.createElementInfo(), newElements, pm);
 		}
 	}
 
-	/**
-	 * Open a <code>IOpenable</code> that is known to be closed (no check for
-	 * <code>isOpen()</code>).
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void openWhenClosed(IProgressMonitor pm) throws CModelException {
-		CModelManager manager = CModelManager.getDefault();
-		boolean hadTemporaryCache = manager.hasTemporaryCache();
-		try {
-			HashMap newElements = manager.getTemporaryCache();
-			// 1) Parent must be open - open the parent if necessary
-			openParent(pm);
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
 
-			// 2) create the new element info and open a buffer if needed
-			OpenableInfo info = (OpenableInfo) createElementInfo();
-			IResource resource = getResource();
-			if (resource != null && isSourceElement()) {
-				this.openBuffer(pm);
-			} 
-
-			// 3) build the structure of the openable
-			buildStructure(info, newElements, pm);
-
-			//if (!hadTemporaryCache) {
-			//	manager.putInfos(this, newElements);
-			//}
-
-			// if any problems occuring openning the element, ensure that it's info
-			// does not remain in the cache	(some elements, pre-cache their info
-			// as they are being opened).
-		} catch (CModelException e) {
-			CModelManager.getDefault().removeInfo(this);
-			throw e;
-		} finally {
-			if (!hadTemporaryCache) {
-				manager.resetTemporaryCache();
-			}
+		if (CModelManager.VERBOSE){
+			System.out.println("OPENING Element ("+ Thread.currentThread()+"): " + this); //$NON-NLS-1$//$NON-NLS-2$
 		}
+		
+		// open the parent if necessary
+		openParent(info, newElements, monitor);
+		if (monitor != null && monitor.isCanceled()) return;
+
+		 // puts the info before building the structure so that questions to the handle behave as if the element existed
+		 // (case of compilation units becoming working copies)
+		newElements.put(this, info);
+
+		// build the structure of the openable (this will open the buffer if needed)
+		try {
+			OpenableInfo openableInfo = (OpenableInfo)info;
+			boolean isStructureKnown = buildStructure(openableInfo, monitor, newElements, getResource());
+			openableInfo.setIsStructureKnown(isStructureKnown);
+		} catch (CModelException e) {
+			newElements.remove(this);
+			throw e;
+		}
+		
+		// remove out of sync buffer for this element
+		CModelManager.getDefault().getElementsOutOfSynchWithBuffers().remove(this);
+
 	}
 
 	/**
@@ -326,25 +309,4 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 		}
 	}
 		
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.CElement#createElementInfo()
-	 */
-	protected CElementInfo createElementInfo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object o) {
-		if (o instanceof Openable) {
-			IResource otherRes = ((Openable)o).getResource();
-			IResource res = this.getResource();
-			if (otherRes != null && res != null) {
-				return otherRes.equals(res);
-			}
-		}
-		return super.equals(o);
-	}
 }

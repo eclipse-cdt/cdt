@@ -53,15 +53,11 @@ public class Archive extends Openable implements IArchive {
 	protected ArchiveInfo getArchiveInfo() throws CModelException {
 		return (ArchiveInfo)getElementInfo();
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#generateInfos(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
-	 */
-	protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
+
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
 		throws CModelException {
-		CModelManager.getDefault().putInfo(this, info);
 		return computeChildren(info, underlyingResource);
 	}
-
 
 	public boolean computeChildren(OpenableInfo info, IResource res) {
 		IBinaryArchive ar = getBinaryArchive();
@@ -100,4 +96,5 @@ public class Archive extends Openable implements IArchive {
 		}
 		super.closing(info);
 	}
+
 }

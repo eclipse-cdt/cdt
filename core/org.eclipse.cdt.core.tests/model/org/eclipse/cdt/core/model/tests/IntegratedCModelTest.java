@@ -6,14 +6,13 @@ package org.eclipse.cdt.core.model.tests;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
@@ -79,12 +78,15 @@ public abstract class IntegratedCModelTest extends TestCase {
 	}	
 
 	protected ITranslationUnit getTU() {
-		TranslationUnit tu = new TranslationUnit(fCProject, sourceFile);
+		ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(sourceFile);
 		if(isStructuralParse()) {
 			CCorePlugin.getDefault().setStructuralParseMode(true);
+		} else {
+			CCorePlugin.getDefault().setStructuralParseMode(false);
 		}
 		// parse the translation unit to get the elements tree		
-		Map newElement = tu.parse();
+		// Force the parsing now to do this in the right ParseMode.
+		tu.parse();
 		CCorePlugin.getDefault().setStructuralParseMode(false);
 		return tu;
 	}

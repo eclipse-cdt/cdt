@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IEnumeration;
@@ -33,6 +34,7 @@ import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
@@ -41,7 +43,6 @@ import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.model.FunctionTemplate;
 import org.eclipse.cdt.internal.core.model.MethodTemplate;
 import org.eclipse.cdt.internal.core.model.StructureTemplate;
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
@@ -92,8 +93,8 @@ public class CModelElementsTests extends TestCase {
 	}	
 			
 	public void testCModelElements() throws CModelException{
-		TranslationUnit tu = new TranslationUnit(fCProject, headerFile);
-		TranslationUnit included = new TranslationUnit(fCProject, includedFile);
+		ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(headerFile);
+		//ITranslationUnit included = (ITranslationUnit)CoreModel.getDefault().create(includedFile);
 
 		// parse the translation unit to get the elements tree		
 		tu.parse(); 

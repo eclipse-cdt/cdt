@@ -1017,13 +1017,56 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		return this.cache.peekAtInfo(element);
 	}
 
-	/**
-	 * Puts the info for a C Model Element
+	/*
+	 * Puts the infos in the given map (keys are ICElements and values are CElementInfos)
+	 * in the C model cache in an atomic way.
+	 * First checks that the info for the opened element (or one of its ancestors) has not been 
+	 * added to the cache. If it is the case, another thread has opened the element (or one of
+	 * its ancestors). So returns without updating the cache.
 	 */
-	protected synchronized void putInfo(ICElement element, Object info) {
-		this.cache.putInfo(element, info);
-	}
+	protected synchronized void putInfos(ICElement openedElement, Map newElements) {
+		// remove children
+		Object existingInfo = this.cache.peekAtInfo(openedElement);
+		if (openedElement instanceof IParent && existingInfo instanceof CElementInfo) {
+			ICElement[] children = ((CElementInfo)existingInfo).getChildren();
+			for (int i = 0, size = children.length; i < size; ++i) {
+				CElement child = (CElement) children[i];
+				try {
+					child.close();
+				} catch (CModelException e) {
+					// ignore
+				}
+			}
+		}
 	
+		Iterator iterator = newElements.keySet().iterator();
+		while (iterator.hasNext()) {
+			ICElement element = (ICElement)iterator.next();
+			Object info = newElements.get(element);
+			this.cache.putInfo(element, info);
+		}
+	}
+
+	/**
+	 * Removes all cached info from the C Model, including all children,
+	 * but does not close this element.
+	 */
+	protected synchronized void removeChildrenInfo(ICElement openedElement) {
+		// remove children
+		Object existingInfo = this.cache.peekAtInfo(openedElement);
+		if (openedElement instanceof IParent && existingInfo instanceof CElementInfo) {
+			ICElement[] children = ((CElementInfo)existingInfo).getChildren();
+			for (int i = 0, size = children.length; i < size; ++i) {
+				CElement child = (CElement) children[i];
+				try {
+					child.close();
+				} catch (CModelException e) {
+					// ignore
+				}
+			}
+		}
+	}
+
 	/** 
 	 * Removes the info of this model element.
 	 */

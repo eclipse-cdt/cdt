@@ -18,11 +18,11 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.cdt.testplugin.TestPluginLauncher;
@@ -80,7 +80,7 @@ public class WorkingCopyTests extends TestCase {
 		
 		
 	public void testWorkingCopy() throws Exception {
-		ITranslationUnit tu = new TranslationUnit(fCProject, headerFile);		
+		ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(headerFile);
 		// CreateWorkingCopy		
 		assertNotNull (tu);
 		IWorkingCopy wc = tu.getWorkingCopy();

@@ -4,6 +4,10 @@ package org.eclipse.cdt.internal.core.model;
  * All Rights Reserved.
  */
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementVisitor;
@@ -231,18 +235,20 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		}
 		return false;
 	}
-	
-	public CElementInfo getElementInfo () throws CModelException {
+
+	public CElementInfo getElementInfo() throws CModelException {
+		return getElementInfo(null);
+	}
+
+	public CElementInfo getElementInfo (IProgressMonitor monitor) throws CModelException {
 		CModelManager manager = CModelManager.getDefault();
-		Object info = manager.getInfo(this);
-		if (info == null) {
-			openHierarchy();
-			info= manager.getInfo(this);
-			if (info == null) {
-				throw newNotPresentException();
-			}
+		CElementInfo info = (CElementInfo)manager.getInfo(this);
+		if (info != null) {
+			return info;
 		}
-		return (CElementInfo)info;
+		info = createElementInfo();
+		openWhenClosed(info, monitor);
+		return info;
 	}
 
 	public String toString() {
@@ -331,28 +337,53 @@ public abstract class CElement extends PlatformObject implements ICElement {
 		return null;
 	}
 
+	/**
+	 * Builds this element's structure and properties in the given
+	 * info object, based on this element's current contents (i.e. buffer
+	 * contents if this element has an open buffer, or resource contents
+	 * if this element does not have an open buffer). Children
+	 * are placed in the given newElements table (note, this element
+	 * has already been placed in the newElements table). Returns true
+	 * if successful, or false if an error is encountered while determining
+	 * the structure of this element.
+	 */
+	protected abstract void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException;
 
 	/**
-	 * Opens this element and all parents that are not already open.
-	 *
-	 * @exception CModelException this element is not present or accessible
+	 * Open a <code>IOpenable</code> that is known to be closed (no check for
+	 * <code>isOpen()</code>).
 	 */
-	protected void openHierarchy() throws CModelException {
-		if (this instanceof IOpenable) {
-			((Openable) this).openWhenClosed(null);
-		} else {
-			Openable openableParent = (Openable)getOpenableParent();
-			if (openableParent != null) {
-				CElementInfo openableParentInfo = (CElementInfo) CModelManager.getDefault().getInfo(openableParent);
-				if (openableParentInfo == null) {
-					openableParent.openWhenClosed(null);
-				} 
-				//else {
-					CModelManager.getDefault().putInfo( this, createElementInfo());
-				//}
+	protected void openWhenClosed(CElementInfo info, IProgressMonitor pm) throws CModelException {
+		CModelManager manager = CModelManager.getDefault();
+		boolean hadTemporaryCache = manager.hasTemporaryCache();
+		try {
+			HashMap newElements = manager.getTemporaryCache();
+			generateInfos(info, newElements, pm);
+			if (info == null) {
+				info = (CElementInfo)newElements.get(this);
+			}
+			if (info == null) { // a source ref element could not be opened
+				// close any buffer that was opened for the openable parent
+				Iterator iterator = newElements.keySet().iterator();
+				while (iterator.hasNext()) {
+					ICElement element = (ICElement)iterator.next();
+					if (element instanceof Openable) {
+						((Openable)element).closeBuffer();
+					}
+				}
+				throw newNotPresentException();
+			}
+			if (!hadTemporaryCache) {
+				manager.putInfos(this, newElements);
+			}
+
+		} finally {
+			if (!hadTemporaryCache) {
+				manager.resetTemporaryCache();
 			}
 		}
 	}
+
 
 	/**
 	 * @see ICElement
@@ -385,27 +416,6 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 */
 	protected CModelException newNotPresentException() {
 		return new CModelException(new CModelStatus(ICModelStatusConstants.ELEMENT_DOES_NOT_EXIST, this));
-	}
-	/**
-	 * Removes all cached info from the C Model, including all children,
-	 * but does not close this element.
-	 */
-	protected void removeInfo() {
-		Object info = CModelManager.getDefault().peekAtInfo(this);
-		if (info != null) {
-			if (this instanceof IParent) {
-				ICElement[] children = ((CElementInfo)info).getChildren();
-				for (int i = 0, size = children.length; i < size; ++i) {
-					CElement child = (CElement) children[i];
-					child.removeInfo();
-				}
-				// we have to remove children here 
-				// to clear the children list before 
-				// removing the entry from the cache.
-				((CElementInfo)info).removeChildren();
-			}
-			CModelManager.getDefault().removeInfo(this);
-		}
 	}
 	
 	/**

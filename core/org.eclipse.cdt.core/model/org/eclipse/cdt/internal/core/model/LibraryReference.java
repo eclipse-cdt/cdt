@@ -6,11 +6,15 @@
  */
 package org.eclipse.cdt.internal.core.model;
 
+import java.util.Map;
+
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @author alain
@@ -50,6 +54,12 @@ public class LibraryReference extends Parent implements ILibraryReference {
 	 */
 	public ILibraryEntry getLibraryEntry() {
 		return entry;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
 	}
 
 }

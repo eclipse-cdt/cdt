@@ -464,7 +464,7 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	public IOutputEntry[] getOutputEntries() throws CModelException {
-		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(this);
+		CProjectInfo pinfo = (CProjectInfo) CModelManager.getDefault().peekAtInfo(this);
 		IOutputEntry[] outs = null;
 		if (pinfo != null) {
 			if (pinfo.outputEntries != null) {
@@ -528,17 +528,15 @@ public class CProject extends Openable implements ICProject {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#generateInfos(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
-	protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm,
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm,
 			Map newElements, IResource underlyingResource)
 			throws CModelException {
 		boolean validInfo = false;
 		try {
 			IResource res = getResource();
 			if (res != null && res.isAccessible()) {
-				// put the info now, because computing the roots requires it
-				CModelManager.getDefault().putInfo(this, info);
 				validInfo = computeSourceRoots(info, res);
 			} else {
 				throw newNotPresentException();

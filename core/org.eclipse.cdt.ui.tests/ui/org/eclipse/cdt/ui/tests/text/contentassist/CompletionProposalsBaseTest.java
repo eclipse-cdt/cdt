@@ -23,12 +23,13 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
 import org.eclipse.cdt.testplugin.CProjectHelper;
@@ -51,7 +52,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	private IFile fCFile;
 	private IFile fHeaderFile;
 	private NullProgressMonitor monitor;
-	private TranslationUnit tu = null;
+	private ITranslationUnit tu = null;
 	private String buffer = EMPTY_STRING;
 	private Document document = null;
 	
@@ -120,8 +121,8 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	public void testCompletionProposals(){
 		try{
 			// setup the translation unit, the buffer and the document
-			TranslationUnit header = new TranslationUnit(fCProject, fHeaderFile);
-			tu = new TranslationUnit(fCProject, fCFile);
+			//ITranslationUnit header = (ITranslationUnit)CoreModel.getDefault().create(fHeaderFile);
+			ITranslationUnit tu = (ITranslationUnit)CoreModel.getDefault().create(fCFile);
 			buffer = tu.getBuffer().getContents();
 			document = new Document(buffer);
 			
@@ -200,7 +201,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	/**
 	 * @return Returns the tu.
 	 */
-	public TranslationUnit getTranslationUnit() {
+	public ITranslationUnit getTranslationUnit() {
 		return tu;
 	}
 

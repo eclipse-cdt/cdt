@@ -241,8 +241,8 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 			addedElements.clear();
 			removedElements.clear();
 			changedElements.clear();
-			
-			processDelta(event.getDelta());
+			ICElementDelta delta = event.getDelta();
+			processDelta(delta);
 		} catch(CModelException e) {
 		}		
 	}

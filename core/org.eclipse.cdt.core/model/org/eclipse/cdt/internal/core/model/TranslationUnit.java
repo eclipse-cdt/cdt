@@ -7,7 +7,6 @@ package org.eclipse.cdt.internal.core.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -237,41 +236,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	protected CElementInfo createElementInfo () {
 		return new TranslationUnitInfo(this);
 	}
-	
-	/**
-	 * @param info
-	 * @param monitor
-	 * @throws CModelException
-	 */
-	protected void buildStructure(OpenableInfo info, IProgressMonitor monitor) throws CModelException {
-		if (monitor != null && monitor.isCanceled()) return;
-
-		// remove existing (old) infos
-		removeInfo();
-
-		HashMap newElements = new HashMap(11);
-		info.setIsStructureKnown(generateInfos(info, monitor, newElements, getResource()));
-		CModelManager.getDefault().getElementsOutOfSynchWithBuffers().remove(this);
-		for (Iterator iter = newElements.keySet().iterator(); iter.hasNext();) {
-			ICElement key = (ICElement) iter.next();
-			Object value = newElements.get(key);
-			CModelManager.getDefault().putInfo(key, value);
-		}
-		// problem detection 
-		if (monitor != null && monitor.isCanceled()) return;
-
-		//IProblemRequestor problemRequestor = this.getProblemRequestor();
-		//if (problemRequestor != null && problemRequestor.isActive()){
-		//	problemRequestor.beginReporting();
-		//	CompilationUnitProblemFinder.process(this, problemRequestor, monitor);
-		//	problemRequestor.endReporting();
-		//}
-	
-		// add the info for this at the end, to ensure that a getInfo cannot reply null in case the LRU cache needs
-		// to be flushed. Might lead to performance issues.
-		CModelManager.getDefault().putInfo(this, info);	
-		
-	}
 
 	/**
 	 * Returns true if this handle represents the same Java element
@@ -309,7 +273,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * @param newElements
 	 * @param element
 	 */
-	private void getNewElements(Map newElements, CElement element){
+	private void getNewElements(Map mapping, CElement element){
 		Object info = null;
 		try {
 			info = element.getElementInfo();
@@ -321,30 +285,27 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 				int size = children.length;
 				for (int i = 0; i < size; ++i) {
 					CElement child = (CElement) children[i];
-					getNewElements(newElements, child);		
+					getNewElements(mapping, child);		
 				}		
 			}
 		}
-		newElements.put(element, info);		
+		mapping.put(element, info);		
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.internal.core.model.Openable#generateInfos(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
+	 * @see org.eclipse.cdt.internal.core.model.Openable#buildStructure(org.eclipse.cdt.internal.core.model.OpenableInfo, org.eclipse.core.runtime.IProgressMonitor, java.util.Map, org.eclipse.core.resources.IResource)
 	 */
-	protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
-		// put the info now, because getting the contents requires it
-		CModelManager.getDefault().putInfo(this, info);
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource) throws CModelException {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
-		
+
+		// We reuse the general info cache in the CModelBuilder, We should not do this
+		// and instead create the info explicitely(see JDT).
+		// So to get by we need to remove in the LRU all the info of this handle
+		CModelManager.getDefault().removeChildrenInfo(this);
+
 		// generate structure
-		Map mapping = this.parse(); 
+		this.parse(newElements); 
 		
-		// this is temporary until the New Model Builder is implemented
-		if(mapping == null) {
-			getNewElements(newElements, this);
-		} else {
-			newElements.putAll(mapping);
-		}
 		///////////////////////////////////////////////////////////////
 		
 		if (isWorkingCopy()) {
@@ -436,6 +397,20 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return true;
 	}
 
+	/*
+	 * @see Openable#openParent
+	 */
+	protected void openParent(Object childInfo, Map newElements, IProgressMonitor pm) throws CModelException {
+		try {
+			super.openParent(childInfo, newElements, pm);
+		} catch(CModelException e){
+			// allow parent to not exist for working copies defined outside
+			if (!isWorkingCopy()){ 
+				throw e;
+			}
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IOpenable#isConsistent()
 	 */
@@ -455,21 +430,6 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 */
 	public boolean isWorkingCopy() {
 		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.model.IOpenable#makeConsistent(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void makeConsistent(IProgressMonitor pm) throws CModelException {
-		makeConsistent(pm, false);
-	}
-
-	public void makeConsistent(IProgressMonitor pm, boolean forced) throws CModelException {
-		if (!isConsistent() || forced) {
-			// create a new info and make it the current info
-			OpenableInfo info = (OpenableInfo) createElementInfo();
-			buildStructure(info, pm);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -500,33 +460,29 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return buffer;
 	}
 
+	public Map parse() {
+		Map map = new HashMap();
+		try {
+			getNewElements(map, this);
+		} catch (Exception e) {
+		}
+		return map;
+	}
+
 	/**
 	 * Parse the buffer contents of this element.
 	 */
-	public Map parse(){
+	private void parse(Map newElements){
 		try {
-			removeChildren(this);
-			CModelBuilder modelBuilder = new CModelBuilder(this);
+			CModelBuilder modelBuilder = new CModelBuilder(this, newElements);
 			boolean quickParseMode = ! (CCorePlugin.getDefault().useStructuralParseMode());
-			return modelBuilder.parse(quickParseMode);
+			modelBuilder.parse(quickParseMode);
 		} catch (Exception e) {
 			// use the debug log for this exception.
 			Util.debugLog( "Exception in CModelBuilder", IDebugLogConstants.MODEL);  //$NON-NLS-1$
-			return null;
 		}							
 	}
 	
-	public void removeChildren(ICElement element) throws CModelException{
-		if (element instanceof Parent){
-			Parent parent = (Parent) element;
-			ICElement[] children = parent.getChildren();
-			for(int i =0; i< children.length; ++i){
-				removeChildren(children[i]);
-			}
-			parent.removeChildren();
-		}
-	}
-
 	public IProblemRequestor getProblemRequestor() {
 		return problemRequestor;
 	}
@@ -587,6 +543,5 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			return res.exists();
 		return super.exists();
 	}
-
 	
 }

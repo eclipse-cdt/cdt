@@ -48,7 +48,14 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 				// update the element infos with the content of the working copy
 				workingCopy.makeConsistent(fMonitor);
 				deltaBuilder.buildDeltas();
-		
+
+				// register the deltas
+				if (deltaBuilder != null){
+					if ((deltaBuilder.delta != null) && (deltaBuilder.delta.getAffectedChildren().length > 0)) {
+						addReconcileDelta(workingCopy, deltaBuilder.delta);
+					}
+				}
+
 			}
 	
 			if (fMonitor != null) fMonitor.worked(2);
@@ -58,12 +65,6 @@ public class ReconcileWorkingCopyOperation extends CModelOperation {
 				if (fMonitor != null && fMonitor.isCanceled()) return;		
 			}
 			
-			// register the deltas
-			if (deltaBuilder != null){
-				if ((deltaBuilder.delta != null) && (deltaBuilder.delta.getAffectedChildren().length > 0)) {
-					addReconcileDelta(workingCopy, deltaBuilder.delta);
-				}
-			}
 		} finally {
 			if (fMonitor != null) fMonitor.done();
 		}

@@ -26,9 +26,6 @@ public class Include extends SourceManipulation implements IInclude {
 		return standard;
 	}
 
-	protected CElementInfo createElementInfo () {
-		return new SourceManipulationInfo(this);
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IInclude#getFullFileName()
 	 */

@@ -5,6 +5,7 @@
 package org.eclipse.cdt.internal.core.model;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
@@ -164,6 +165,12 @@ public class BinaryElement extends CElement implements IBinaryElement, ISourceMa
 			}
 		} while ((current = current.getParent()) != null);
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
 	}
 
 }

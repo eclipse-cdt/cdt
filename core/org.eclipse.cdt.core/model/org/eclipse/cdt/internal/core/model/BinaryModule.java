@@ -5,6 +5,8 @@
 
 package org.eclipse.cdt.internal.core.model;
 
+import java.util.Map;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryElement;
@@ -12,6 +14,7 @@ import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  */
@@ -74,6 +77,12 @@ public class BinaryModule extends Parent implements IBinaryModule {
 	 */
 	public IPath getPath() {
 		return path;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.model.CElement#generateInfos(java.lang.Object, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void generateInfos(Object info, Map newElements, IProgressMonitor monitor) throws CModelException {
 	}
 
 }

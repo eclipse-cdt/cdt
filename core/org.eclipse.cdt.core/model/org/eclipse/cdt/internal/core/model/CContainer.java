@@ -159,14 +159,12 @@ public class CContainer extends Openable implements ICContainer {
 	/**
 	 * @see Openable
 	 */
-	protected boolean generateInfos(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
+	protected boolean buildStructure(OpenableInfo info, IProgressMonitor pm, Map newElements, IResource underlyingResource)
 			throws CModelException {
 		boolean validInfo = false;
 		try {
 			IResource res = getResource();
 			if (res != null && res.isAccessible()) {
-				// put the info now, because computing the roots requires it
-				CModelManager.getDefault().putInfo(this, info);
 				validInfo = computeChildren(info, res);
 			} else {
 				throw newNotPresentException();

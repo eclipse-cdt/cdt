@@ -10,9 +10,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -95,9 +93,9 @@ public class CModelBuilder {
 		}
 	}
 
-	public CModelBuilder(org.eclipse.cdt.internal.core.model.TranslationUnit tu) {
+	public CModelBuilder(org.eclipse.cdt.internal.core.model.TranslationUnit tu, Map newElements) {
 		this.translationUnit = tu ;
-		this.newElements = new HashMap();
+		this.newElements = newElements;
 	}
 
 	private IASTCompilationUnit parse(boolean quickParseMode, boolean throwExceptionOnError) throws ParserException

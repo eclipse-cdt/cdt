@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
 import org.eclipse.core.resources.IProject;
 
@@ -146,15 +147,58 @@ public interface ITypeInfo extends Comparable {
 	public ITypeReference getResolvedReference();
 	
 	/**
-	 * Returns the corresponding CElement or <code>null</code> if not found.
-	 */
-	public ICElement getCElement();
-	
-	/**
 	 * Returns true if the type can be substituted.
 	 */
 	public boolean canSubstituteFor(ITypeInfo info);
 
 	public ITypeCache getCache();
 	public void setCache(ITypeCache typeCache);
+	
+	/**
+	 * Returns true if other types extend this type.
+	 */
+	public boolean hasSubTypes();
+	
+	/** Gets all types which extend this type.
+	 * @return array of types, or <code>null</code> if none found.
+	 */
+	public ITypeInfo[] getSubTypes();
+	
+	/**
+	 * Returns true if this type has base classes.
+	 */
+	public boolean hasSuperTypes();
+	
+	/** Gets the base classes.
+	 * @return array of types, or <code>null</code> if none found.
+	 */
+	public ITypeInfo[] getSuperTypes();
+	
+	/**
+	 * Gets the base class access visibility (PRIVATE, PROTECTED, PUBLIC)
+	 */
+	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo subType);
+
+	/**
+	 * Adds a derived class reference, i.e. this type is used as
+	 * a base class at the given location.
+	 */
+	public void addDerivedReference(ITypeReference location);
+
+	/** Gets the originating locations where this type was
+	 * used as a base class.
+	 * @return all known source references, or an empty
+	 * array if none found.
+	 */
+	public ITypeReference[] getDerivedReferences();
+	
+	/**
+	 * Returns true if the type is a class or struct.
+	 */
+	public boolean isClass();
+
+	/**
+	 * Returns true if type is referenced in the given scope.
+	 */
+	public boolean isReferenced(ITypeSearchScope scope);
 }

@@ -15,6 +15,7 @@ import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeInfoVisitor;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -39,6 +40,22 @@ public interface ITypeCache extends ISchedulingRule {
 	 * @param info
 	 */
 	public void insert(ITypeInfo info);
+
+	/** Adds subtype to type.
+	 * 
+	 * @param type
+	 * @param subtype
+	 */
+	public void addSubtype(ITypeInfo type, ITypeInfo subtype);
+
+	/** Adds supertype to type.
+	 * 
+	 * @param type the type
+	 * @param supertype the supertype
+	 * @param the access visibility (PUBLIC, PROTECTED, PRIVATE)
+	 * @param isVirtual <code>true</code> if virtual base class
+	 */
+	public void addSupertype(ITypeInfo type, ITypeInfo supertype, ASTAccessVisibility access, boolean isVirtual);
 
 	/** Removes type from cache.
 	 * 
@@ -134,6 +151,29 @@ public interface ITypeCache extends ISchedulingRule {
 	 */
 	public ITypeInfo[] getEnclosedTypes(ITypeInfo info, int kinds[]);
 	
+	/** Returns all types in the cache are supertypes of the given type.
+	 * 
+	 * @param info the given type
+	 * @return Array of supertypes, or <code>null</code> if none found.
+	 */
+	public ITypeInfo[] getSupertypes(ITypeInfo info);
+	
+	/** Returns the supertype access visiblity.
+	 * 
+	 * @param type the given type
+	 * @param supertype the supertype
+	 * @return the visibility (PRIVATE, PROTECTED, PUBLIC) or <code>null</code> if none found.
+	 */
+	public ASTAccessVisibility getSupertypeAccess(ITypeInfo type, ITypeInfo superType);
+	
+
+	/** Returns all types in the cache which extend the given type.
+	 * 
+	 * @param info the given type
+	 * @return Array of subtypes, or <code>null</code> if none found.
+	 */
+	public ITypeInfo[] getSubtypes(ITypeInfo info);
+
 	/** Returns the project associated with this cache.
 	 * 
 	 * @return the project
@@ -154,5 +194,11 @@ public interface ITypeCache extends ISchedulingRule {
 	public void locateType(ITypeInfo info, int priority, int delay);
 	public ITypeReference locateTypeAndWait(ITypeInfo info, int priority, IProgressMonitor monitor);
 	
+	public void locateSupertypes(ITypeInfo info, int priority, int delay);
+	public ITypeInfo[] locateSupertypesAndWait(ITypeInfo info, int priority, IProgressMonitor monitor);
+
+	public void locateSubtypes(ITypeInfo info, int priority, int delay);
+	public ITypeInfo[] locateSubtypesAndWait(ITypeInfo info, int priority, IProgressMonitor monitor);
+
 	public ITypeInfo getGlobalNamespace();
 }

@@ -30,6 +30,7 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 public class IndexerTypesJob extends IndexerJob {
 	
@@ -108,6 +109,14 @@ public class IndexerTypesJob extends IndexerJob {
 						String[] enclosingNames = getEnclosingNames(word, slash);
 						addType(input, project, entry, type, name, enclosingNames, monitor);
 					}
+				} else if (decodedType == IIndexConstants.DERIVED_SUFFIX) {
+					firstSlash += 2;
+					int slash = CharOperation.indexOf(IIndexConstants.SEPARATOR, word, firstSlash + 1);
+					String name = String.valueOf(CharOperation.subarray(word, firstSlash + 1, slash));
+					if (name.length() != 0) {  // skip anonymous structs
+						String[] enclosingNames = getEnclosingNames(word, slash);
+						addSuperTypeReference(input, project, entry, name, enclosingNames, monitor);
+					}
 				}
 			}
 		}
@@ -171,6 +180,39 @@ public class IndexerTypesJob extends IndexerJob {
 				if (file != null && file.getPath() != null) {
 					IPath path = PathUtil.getWorkspaceRelativePath(file.getPath());
 					info.addReference(new TypeReference(path, project));
+				}
+			}
+		}
+	}
+
+	private void addSuperTypeReference(IndexInput input, IProject project, IEntryResult entry, String name, String[] enclosingNames, IProgressMonitor monitor) throws InterruptedException, IOException {
+		QualifiedTypeName qualifiedName = new QualifiedTypeName(name, enclosingNames);
+		ITypeInfo info = fTypeCache.getType(ICElement.C_CLASS, qualifiedName);
+		if (info == null)
+			info = fTypeCache.getType(ICElement.C_STRUCT, qualifiedName);
+		if (info == null) {
+			// add dummy type to cache
+			info = new TypeInfo(0, qualifiedName);
+			fTypeCache.insert(info);
+		}
+		int[] references = entry.getFileReferences();
+		if (references != null && references.length > 0) {
+			for (int i = 0; i < references.length; ++i) {
+				if (monitor.isCanceled())
+					throw new InterruptedException();
+
+				IndexedFile file = input.getIndexedFile(references[i]);
+				if (file != null && file.getPath() != null) {
+					IPath path = PathUtil.getWorkspaceRelativePath(file.getPath());
+					info.addDerivedReference(new TypeReference(path, project));
+//
+//					// get absolute path
+//					IPath path = new Path(file.getPath());
+//					IPath projectPath = project.getFullPath();
+//					if (projectPath.isPrefixOf(path)) {
+//						path = project.getLocation().append(path.removeFirstSegments(projectPath.segmentCount()));
+//					}
+//					info.addDerivedReference(new TypeReference(path, project));
 				}
 			}
 		}

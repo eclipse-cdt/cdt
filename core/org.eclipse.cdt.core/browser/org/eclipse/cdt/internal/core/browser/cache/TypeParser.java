@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.browser.ITypeInfo;
@@ -49,7 +50,12 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -113,6 +119,8 @@ public class TypeParser implements ISourceElementRequestor {
 	private final SimpleStack fScopeStack = new SimpleStack();
 	private final SimpleStack fResourceStack = new SimpleStack();
 	private ITypeInfo fTypeToFind;
+	private ITypeInfo fSuperTypeToFind;
+	private Set fProcessedTypes = new HashSet();
 	private boolean fFoundType;
 
 	public TypeParser(ITypeCache typeCache, IWorkingCopyProvider provider) {
@@ -238,6 +246,75 @@ public class TypeParser implements ISourceElementRequestor {
 
 				if (fFoundType)
 					return true;
+			}
+		} finally {
+			fTypeToFind = null;
+			fFoundType = false;
+			monitor.done();
+		}
+		return false;
+	}
+
+	public boolean findSubTypes(ITypeInfo info, IProgressMonitor monitor) throws InterruptedException {
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+
+		if (monitor.isCanceled())
+			throw new InterruptedException();
+		
+		fScope = new TypeSearchScope();
+		ITypeReference[] refs = info.getDerivedReferences();
+		if (refs == null || refs.length == 0)
+			return false;	// no source references
+		
+		for (int i = 0; i < refs.length; ++i) {
+			ITypeReference location = refs[i];
+			IPath path = location.getPath();
+			fScope.add(path, false, null);
+		}
+
+		Map workingCopyMap = null;
+		if (fWorkingCopyProvider != null) {
+			IWorkingCopy[] workingCopies = fWorkingCopyProvider.getWorkingCopies();
+			if (workingCopies != null && workingCopies.length > 0) {
+				workingCopyMap = new HashMap(workingCopies.length);
+				for (int i = 0; i < workingCopies.length; ++i) {
+					IWorkingCopy workingCopy = workingCopies[i];
+					IPath wcPath = workingCopy.getOriginalElement().getPath();
+					if (fScope.encloses(wcPath)) {
+//						// always flush working copies from cache?
+//						fTypeCache.flush(wcPath);
+						fScope.add(wcPath, false, null);
+						workingCopyMap.put(wcPath, workingCopy);
+					}
+				}
+			}
+		}
+		
+		fProject = fTypeCache.getProject();
+		IPath[] searchPaths = fTypeCache.getPaths(fScope);
+		Collection workingCopyPaths = new HashSet();
+		if (workingCopyMap != null) {
+			collectWorkingCopiesInProject(workingCopyMap, fProject, workingCopyPaths);
+			//TODO what about working copies outside the workspace?
+		}
+		
+		monitor.beginTask("", searchPaths.length + workingCopyPaths.size()); //$NON-NLS-1$
+		try {
+			fTypeToFind = null;
+			fSuperTypeToFind = info;
+			fFoundType = false;
+			for (Iterator pathIter = workingCopyPaths.iterator(); pathIter.hasNext(); ) {
+				IPath path = (IPath) pathIter.next();
+				parseSource(path, fProject, workingCopyMap, new SubProgressMonitor(monitor, 1));
+			}
+			for (int i = 0; i < searchPaths.length; ++i) {
+				IPath path = searchPaths[i];
+				if (!workingCopyPaths.contains(path)) {
+					parseSource(path, fProject, workingCopyMap, new SubProgressMonitor(monitor, 1));
+				} else {
+					monitor.worked(1);
+				}
 			}
 		} finally {
 			fTypeToFind = null;
@@ -582,76 +659,6 @@ public class TypeParser implements ISourceElementRequestor {
 			throw new OperationCanceledException();
 		fResourceStack.pop();
 	}
-
-	private void acceptType(ISourceElementCallbackDelegate node) {
-		if (fProgressMonitor.isCanceled())
-			throw new OperationCanceledException();
-
-		// skip local declarations
-		IASTScope currentScope = (IASTScope) fScopeStack.top();
-		if (currentScope instanceof IASTFunction || currentScope instanceof IASTMethod) {
-			return;
-		}
-
-		int offset = 0;
-		int end = 0;
-		IASTOffsetableNamedElement offsetable = null;
-		String name = null;
-		int type = 0;
-		
-		if (node instanceof IASTReference) {
-			IASTReference reference = (IASTReference) node;
-			offset = reference.getOffset();
-			end = offset + reference.getName().length();
-		} else if (node instanceof IASTOffsetableNamedElement) {
-			offsetable = (IASTOffsetableNamedElement) node;
-			offset = offsetable.getNameOffset() != 0 ? offsetable.getNameOffset() : offsetable.getStartingOffset();
-			end = offsetable.getNameEndOffset();
-			if (end == 0) {
-				end = offset + offsetable.getName().length();
-			}
-		}
-		
-		if (node instanceof IASTReference)
-			node = fLastDeclaration;
-		if (node instanceof IASTReference) {
-			offsetable = (IASTOffsetableNamedElement) ((IASTReference) node).getReferencedElement();
-			name = ((IASTReference) node).getName();
-		} else if (node instanceof IASTOffsetableNamedElement) {
-			offsetable = (IASTOffsetableNamedElement) node;
-			name = offsetable.getName();
-		} else {
-			return;
-		}
-		
-		// skip unnamed structs
-		if (name == null || name.length() == 0)
-			return;
-
-		// skip unused types
-		type = getElementType(offsetable);
-		if (type == 0) {
-			return;
-		}
-		
-		if (fTypeToFind != null) {
-			if ((fTypeToFind.getCElementType() == type || fTypeToFind.isUndefinedType()) && name.equals(fTypeToFind.getName())) {
-				String[] enclosingNames = getEnclosingNames(offsetable);
-				QualifiedTypeName qualifiedName = new QualifiedTypeName(name, enclosingNames);
-				if (qualifiedName.equals(fTypeToFind.getQualifiedTypeName())) {
-					fFoundType = true;
-
-					// add types to cache
-					addType(type, name, enclosingNames, fResourceStack.bottom(), fResourceStack.top(), offset, end - offset);
-					fProgressMonitor.worked(1);
-				}
-			}
-		} else {
-			// add types to cache
-			addType(type, name, getEnclosingNames(offsetable), fResourceStack.bottom(), fResourceStack.top(), offset, end - offset);
-			fProgressMonitor.worked(1);
-		}
-	}
 	
 	private String[] getEnclosingNames(IASTOffsetableNamedElement elem) {
 		String[] enclosingNames = null;
@@ -663,6 +670,140 @@ public class TypeParser implements ISourceElementRequestor {
 			}
 		}
 		return enclosingNames;
+	}
+
+
+	private class NodeTypeInfo {
+		int type;
+		String name;
+		String[] enclosingNames;
+		int offset;
+		int end;
+		IASTOffsetableNamedElement offsetable;
+		
+		void init() {
+			type = 0;
+			name = null;
+			enclosingNames = null;
+			offset = 0;
+			end = 0;
+			offsetable = null;
+		}
+		
+		boolean parseNodeForTypeInfo(ISourceElementCallbackDelegate node) {
+			init();
+			
+			if (node instanceof IASTReference) {
+				IASTReference reference = (IASTReference) node;
+				offset = reference.getOffset();
+				end = offset + reference.getName().length();
+			} else if (node instanceof IASTOffsetableNamedElement) {
+				offsetable = (IASTOffsetableNamedElement) node;
+				offset = offsetable.getNameOffset() != 0 ? offsetable.getNameOffset() : offsetable.getStartingOffset();
+				end = offsetable.getNameEndOffset();
+				if (end == 0) {
+					end = offset + offsetable.getName().length();
+				}
+			}
+			
+			if (node instanceof IASTReference)
+				node = fLastDeclaration;
+			if (node instanceof IASTReference) {
+				offsetable = (IASTOffsetableNamedElement) ((IASTReference) node).getReferencedElement();
+				name = ((IASTReference) node).getName();
+			} else if (node instanceof IASTOffsetableNamedElement) {
+				offsetable = (IASTOffsetableNamedElement) node;
+				name = offsetable.getName();
+			} else {
+				return false;
+			}
+			
+			// skip unnamed structs
+			if (name == null || name.length() == 0)
+				return false;
+
+			// skip unused types
+			type = getElementType(offsetable);
+			if (type == 0) {
+				return false;
+			}
+			
+			// collect enclosing names
+			if (offsetable instanceof IASTQualifiedNameElement) {
+				String[] names = ((IASTQualifiedNameElement) offsetable).getFullyQualifiedName();
+				if (names != null && names.length > 1) {
+					enclosingNames = new String[names.length - 1];
+					System.arraycopy(names, 0, enclosingNames, 0, names.length - 1);
+				}
+			}
+			
+			return true;
+		}
+
+	}
+
+	private void acceptType(ISourceElementCallbackDelegate node) {
+		if (fProgressMonitor.isCanceled())
+			throw new OperationCanceledException();
+
+		// skip local declarations
+		IASTScope currentScope = (IASTScope) fScopeStack.top();
+		if (currentScope instanceof IASTFunction || currentScope instanceof IASTMethod) {
+			return;
+		}
+		
+		NodeTypeInfo nodeInfo = new NodeTypeInfo();
+		if (nodeInfo.parseNodeForTypeInfo(node)) {
+			TypeReference originalLocation = null;
+			Object originalRef = fResourceStack.bottom();
+			if (originalRef instanceof IWorkingCopy) {
+				IWorkingCopy workingCopy = (IWorkingCopy) originalRef;
+				originalLocation = new TypeReference(workingCopy, fProject);
+			} else if (originalRef instanceof IResource) {
+				IResource resource = (IResource) originalRef;
+				originalLocation = new TypeReference(resource, fProject);
+			} else if (originalRef instanceof IPath) {
+				IPath path = PathUtil.getProjectRelativePath((IPath)originalRef, fProject);
+				originalLocation = new TypeReference(path, fProject);
+			}
+			
+			TypeReference resolvedLocation = null;
+			Object resolvedRef = fResourceStack.top();
+			if (resolvedRef instanceof IWorkingCopy) {
+				IWorkingCopy workingCopy = (IWorkingCopy) resolvedRef;
+				resolvedLocation = new TypeReference(workingCopy, fProject, nodeInfo.offset, nodeInfo.end - nodeInfo.offset);
+			} else if (resolvedRef instanceof IResource) {
+				IResource resource = (IResource) resolvedRef;
+				resolvedLocation = new TypeReference(resource, fProject, nodeInfo.offset, nodeInfo.end - nodeInfo.offset);
+			} else if (resolvedRef instanceof IPath) {
+				IPath path = PathUtil.getProjectRelativePath((IPath)resolvedRef, fProject);
+				resolvedLocation = new TypeReference(path, fProject, nodeInfo.offset, nodeInfo.end - nodeInfo.offset);
+			}
+			
+			if (fTypeToFind != null) {
+				if ((fTypeToFind.getCElementType() == nodeInfo.type || fTypeToFind.isUndefinedType()) && nodeInfo.name.equals(fTypeToFind.getName())) {
+					QualifiedTypeName qualifiedName = new QualifiedTypeName(nodeInfo.name, nodeInfo.enclosingNames);
+					if (qualifiedName.equals(fTypeToFind.getQualifiedTypeName())) {
+						fFoundType = true;
+
+						// add types to cache
+						ITypeInfo newType = addType(nodeInfo.type, qualifiedName, originalLocation, resolvedLocation);
+						if (newType != null && node instanceof IASTClassSpecifier) {
+							addSuperClasses(newType, (IASTClassSpecifier)node, originalLocation, fProcessedTypes);
+						}
+						fProgressMonitor.worked(1);
+					}
+				}
+			} else {
+				// add types to cache
+				QualifiedTypeName qualifiedName = new QualifiedTypeName(nodeInfo.name, nodeInfo.enclosingNames);
+				ITypeInfo newType = addType(nodeInfo.type, qualifiedName, originalLocation, resolvedLocation);
+				if (newType != null && node instanceof IASTClassSpecifier) {
+					addSuperClasses(newType, (IASTClassSpecifier)node, originalLocation, fProcessedTypes);
+				}
+				fProgressMonitor.worked(1);
+			}
+		}
 	}
 
 	private int getElementType(IASTOffsetableNamedElement offsetable) {
@@ -690,8 +831,40 @@ public class TypeParser implements ISourceElementRequestor {
 		return 0;
 	}
 	
-	private void addType(int type, String name, String[] enclosingNames, Object originalRef, Object resolvedRef, int offset, int length) {
-		QualifiedTypeName qualifiedName = new QualifiedTypeName(name, enclosingNames);
+	private void addSuperClasses(ITypeInfo type, IASTClassSpecifier classSpec, TypeReference location, Set processedClasses) {
+		Iterator baseIter = classSpec.getBaseClauses();
+		if (baseIter != null) {
+			while (baseIter.hasNext()) {
+				IASTBaseSpecifier baseSpec = (IASTBaseSpecifier) baseIter.next();
+				try {
+					String baseName = baseSpec.getParentClassName();
+					ASTAccessVisibility baseAccess = baseSpec.getAccess();
+					
+					IASTClassSpecifier parentClass = null;
+					IASTTypeSpecifier parentSpec = baseSpec.getParentClassSpecifier();
+					if (parentSpec instanceof IASTClassSpecifier)
+						parentClass = (IASTClassSpecifier) parentSpec;
+					
+					if (parentClass != null) {
+						NodeTypeInfo nodeInfo = new NodeTypeInfo();
+						if (nodeInfo.parseNodeForTypeInfo(parentClass)) {
+							// add type to cache
+							ITypeInfo superType = addSuperType(type, nodeInfo.type, nodeInfo.name, nodeInfo.enclosingNames, location, baseAccess, baseSpec.isVirtual());
+
+							// recursively process super super classes
+							if (!processedClasses.contains(parentClass)) {
+								processedClasses.add(parentClass);
+								addSuperClasses(superType, parentClass, location, processedClasses);
+							}
+						}
+					}
+				} catch (ASTNotImplementedException e) {
+				}
+			}
+		}
+	}
+
+	private ITypeInfo addType(int type, QualifiedTypeName qualifiedName, TypeReference originalLocation, TypeReference resolvedLocation) {
 		ITypeInfo info = fTypeCache.getType(type, qualifiedName);
 		if (info == null || info.isUndefinedType()) {
 			// add new type to cache
@@ -702,32 +875,35 @@ public class TypeParser implements ISourceElementRequestor {
 				fTypeCache.insert(info);
 			}
 			
-			TypeReference location;
-			if (originalRef instanceof IWorkingCopy) {
-				IWorkingCopy workingCopy = (IWorkingCopy) originalRef;
-				location = new TypeReference(workingCopy, fProject);
-			} else if (originalRef instanceof IResource) {
-				IResource resource = (IResource) originalRef;
-				location = new TypeReference(resource, fProject);
-			} else {
-				IPath path = (IPath) originalRef;
-				location = new TypeReference(path, fProject);
-			}
-			info.addReference(location);
+			info.addReference(originalLocation);
 		}
 		
-		TypeReference location;
-		if (resolvedRef instanceof IWorkingCopy) {
-			IWorkingCopy workingCopy = (IWorkingCopy) resolvedRef;
-			location = new TypeReference(workingCopy, fProject, offset, length);
-		} else if (resolvedRef instanceof IResource) {
-			IResource resource = (IResource) resolvedRef;
-			location = new TypeReference(resource, fProject, offset, length);
-		} else {
-			IPath path = (IPath) resolvedRef;
-			location = new TypeReference(path, fProject, offset, length);
+		info.addReference(resolvedLocation);
+		
+		return info;
+	}
+
+	private ITypeInfo addSuperType(ITypeInfo addToType, int type, String name, String[] enclosingNames, TypeReference location, ASTAccessVisibility access, boolean isVirtual) {
+		QualifiedTypeName qualifiedName = new QualifiedTypeName(name, enclosingNames);
+		ITypeInfo superType = fTypeCache.getType(type, qualifiedName);
+		if (superType == null || superType.isUndefinedType()) {
+			if (superType != null) {
+				// merge with existing type
+				superType.setCElementType(type);
+			} else {
+				// add new type to cache
+				superType = new TypeInfo(type, qualifiedName);
+				fTypeCache.insert(superType);
+			}
 		}
-		info.addReference(location);
+		superType.addDerivedReference(location);
+		
+		if (fSuperTypeToFind != null && fSuperTypeToFind.equals(superType)) {
+			//TODO don't need to do anything here?
+		}
+		fTypeCache.addSupertype(addToType, superType, access, isVirtual);
+		fTypeCache.addSubtype(superType, addToType);
+		return superType;
 	}
 
 	/* (non-Javadoc)

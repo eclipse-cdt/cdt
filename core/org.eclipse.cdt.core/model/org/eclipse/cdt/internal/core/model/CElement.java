@@ -441,7 +441,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * Returns true if this element is an ancestor of the given element,
 	 * otherwise false.
 	 */
-	protected boolean isAncestorOf(ICElement e) {
+	public boolean isAncestorOf(ICElement e) {
 		ICElement parent= e.getParent();
 		while (parent != null && !parent.equals(this)) {
 			parent= parent.getParent();

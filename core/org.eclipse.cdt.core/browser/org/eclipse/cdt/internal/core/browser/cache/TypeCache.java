@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeInfo;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -49,6 +50,29 @@ public class TypeCache implements ITypeCache {
 	private final IWorkingCopyProvider fWorkingCopyProvider;
 	private final Collection fDeltas = new ArrayList();
 	private final ITypeInfo fGlobalNamespace;
+	private final Map fTypeToSubTypes = new HashMap();
+	private final Map fTypeToSuperTypes = new HashMap();
+
+	private static final class SuperTypeEntry {
+		ITypeInfo superType;
+		ASTAccessVisibility access;
+		boolean isVirtual;
+		SuperTypeEntry(ITypeInfo superType, ASTAccessVisibility access, boolean isVirtual) {
+			this.superType = superType;
+			this.access = access;
+			this.isVirtual = isVirtual;
+		}
+	}
+	
+	private SuperTypeEntry findSuperTypeEntry(Collection entryCollection, ITypeInfo superType) {
+		for (Iterator i = entryCollection.iterator(); i.hasNext(); ) {
+			SuperTypeEntry e = (SuperTypeEntry) i.next();
+			if (e.superType.equals(superType)) {
+				return e;
+			}
+		}
+		return null;
+	}
 	
 	private static final int[] ENCLOSING_TYPES = {ICElement.C_NAMESPACE, ICElement.C_CLASS, ICElement.C_STRUCT, 0};
 	
@@ -330,6 +354,62 @@ public class TypeCache implements ITypeCache {
 		fTypeKeyMap.clear();
 	}
 
+	public synchronized void addSupertype(ITypeInfo type, ITypeInfo supertype, ASTAccessVisibility access, boolean isVirtual) {
+		Collection entryCollection = (Collection) fTypeToSuperTypes.get(type);
+		if (entryCollection == null) {
+			entryCollection = new ArrayList();
+			fTypeToSuperTypes.put(type, entryCollection);
+		}
+		if (findSuperTypeEntry(entryCollection, supertype) == null) {
+			entryCollection.add(new SuperTypeEntry(supertype, access, isVirtual));
+			supertype.setCache(this);
+		}
+	}
+
+	public synchronized ITypeInfo[] getSupertypes(ITypeInfo type) {
+		Collection entryCollection = (Collection) fTypeToSuperTypes.get(type);
+		if (entryCollection != null && !entryCollection.isEmpty()) {
+			ITypeInfo[] superTypes = new ITypeInfo[entryCollection.size()];
+			int count = 0;
+			for (Iterator i = entryCollection.iterator(); i.hasNext(); ) {
+				SuperTypeEntry e = (SuperTypeEntry) i.next();
+				superTypes[count++] = e.superType;
+			}
+			return superTypes;
+		}
+		return null;
+	}
+
+	public ASTAccessVisibility getSupertypeAccess(ITypeInfo type, ITypeInfo superType) {
+		Collection entryCollection = (Collection) fTypeToSuperTypes.get(type);
+		if (entryCollection != null && !entryCollection.isEmpty()) {
+			SuperTypeEntry e = findSuperTypeEntry(entryCollection, superType);
+			if (e != null)
+				return e.access;
+		}
+		return null;
+	}
+	
+	public synchronized void addSubtype(ITypeInfo type, ITypeInfo subtype) {
+		Collection typeCollection = (Collection) fTypeToSubTypes.get(type);
+		if (typeCollection == null) {
+			typeCollection = new ArrayList();
+			fTypeToSubTypes.put(type, typeCollection);
+		}
+		if (!typeCollection.contains(subtype)) {
+			typeCollection.add(subtype);
+			subtype.setCache(this);
+		}
+	}
+	
+	public synchronized ITypeInfo[] getSubtypes(ITypeInfo type) {
+		Collection typeCollection = (Collection) fTypeToSubTypes.get(type);
+		if (typeCollection != null && !typeCollection.isEmpty()) {
+			return (ITypeInfo[]) typeCollection.toArray(new ITypeInfo[typeCollection.size()]);
+		}
+		return null;
+	}
+
 	public synchronized void accept(ITypeInfoVisitor visitor) {
 		for (Iterator mapIter = fTypeKeyMap.entrySet().iterator(); mapIter.hasNext(); ) {
 			Map.Entry entry = (Map.Entry) mapIter.next();
@@ -579,6 +659,13 @@ public class TypeCache implements ITypeCache {
 				locatorJob.cancel();
 			}
 		}
+		jobs = jobManager.find(SubTypeLocatorJob.FAMILY);
+		for (int i = 0; i < jobs.length; ++i) {
+			SubTypeLocatorJob locatorJob = (SubTypeLocatorJob) jobs[i];
+			if (locatorJob.getType().getEnclosingProject().equals(fProject)) {
+				locatorJob.cancel();
+			}
+		}
 	}
 	
 	public void locateType(ITypeInfo info, int priority, int delay) {
@@ -625,5 +712,78 @@ public class TypeCache implements ITypeCache {
 		}
 		
 		return info.getResolvedReference();
+	}
+	
+	public void locateSupertypes(ITypeInfo info, int priority, int delay) {
+		ITypeInfo[] superTypes = getSupertypes(info);
+		if (superTypes != null)
+			return;	// nothing to do
+		
+		locateType(info, priority, delay);
+	}
+
+	public ITypeInfo[] locateSupertypesAndWait(ITypeInfo info, int priority, IProgressMonitor monitor) {
+		locateSupertypes(info, priority, 0);
+
+		// wait for jobs to complete
+		IJobManager jobManager = Platform.getJobManager();
+		Job[] jobs = jobManager.find(SubTypeLocatorJob.FAMILY);
+		for (int i = 0; i < jobs.length; ++i) {
+			SubTypeLocatorJob locatorJob = (SubTypeLocatorJob) jobs[i];
+			if (locatorJob.getType().equals(info)) {
+				try {
+					locatorJob.join(monitor);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		
+		return getSupertypes(info);
+	}
+
+	public void locateSubtypes(ITypeInfo info, int priority, int delay) {
+		ITypeInfo[] subTypes = getSubtypes(info);
+		if (subTypes != null)
+			return;	// nothing to do
+
+		// cancel any scheduled or running jobs for this type
+		IJobManager jobManager = Platform.getJobManager();
+		Job[] jobs = jobManager.find(SubTypeLocatorJob.FAMILY);
+		for (int i = 0; i < jobs.length; ++i) {
+			SubTypeLocatorJob locatorJob = (SubTypeLocatorJob) jobs[i];
+			if (locatorJob.getType().equals(info)) {
+				locatorJob.cancel();
+			}
+		}
+		
+		// check again, in case some jobs finished in the meantime
+		subTypes = getSubtypes(info);
+		if (subTypes != null)
+			return;	// nothing to do
+		
+		// create a new job
+		SubTypeLocatorJob locatorJob = new SubTypeLocatorJob(info, this, fWorkingCopyProvider);
+		// schedule the new job
+		locatorJob.setPriority(priority);
+		locatorJob.schedule(delay);
+	}
+
+	public ITypeInfo[] locateSubtypesAndWait(ITypeInfo info, int priority, IProgressMonitor monitor) {
+		locateSubtypes(info, priority, 0);
+
+		// wait for jobs to complete
+		IJobManager jobManager = Platform.getJobManager();
+		Job[] jobs = jobManager.find(SubTypeLocatorJob.FAMILY);
+		for (int i = 0; i < jobs.length; ++i) {
+			SubTypeLocatorJob locatorJob = (SubTypeLocatorJob) jobs[i];
+			if (locatorJob.getType().equals(info)) {
+				try {
+					locatorJob.join(monitor);
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		
+		return getSubtypes(info);
 	}
 }

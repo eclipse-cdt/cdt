@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
+import java.util.Iterator;
+
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
 import org.eclipse.core.resources.IProject;
@@ -22,6 +25,8 @@ public class TypeInfo implements ITypeInfo
 	protected IQualifiedTypeName fQualifiedName;
 	protected ITypeReference[] fSourceRefs = null;
 	protected int fSourceRefsCount = 0;
+	protected ITypeReference[] fDerivedSourceRefs = null;
+	protected int fDerivedSourceRefsCount = 0;
 
 	protected final static int INITIAL_REFS_SIZE = 1;
 	protected final static int REFS_GROW_BY = 2;
@@ -54,26 +59,6 @@ public class TypeInfo implements ITypeInfo
 		return null;
 	}
 	
-	public ICElement getCElement() {
-		ITypeReference ref = getResolvedReference();
-		if (ref != null) {
-			ICElement[] elems = ref.getCElements();
-			if (elems != null && elems.length > 0) {
-				if (elems.length == 1)
-					return elems[0];
-
-				for (int i = 0; i < elems.length; ++i) {
-					ICElement elem = elems[i];
-					if (elem.getElementType() == fElementType && elem.getElementName().equals(getName())) {
-						//TODO should check fully qualified name
-						return elem;
-					}
-				}
-			}
-		}
-		return null;
-	}
-
 	public ITypeReference getResolvedReference() {
 		for (int i = 0; i < fSourceRefsCount; ++i) {
 			ITypeReference location = fSourceRefs[i];
@@ -85,9 +70,28 @@ public class TypeInfo implements ITypeInfo
 	}
 
 	public boolean isReferenced() {
-		return (fSourceRefs != null);
+		return (fSourceRefs != null || fDerivedSourceRefs != null);
 	}
 	
+	public boolean isReferenced(ITypeSearchScope scope) {
+		if (scope == null || scope.isWorkspaceScope())
+			return true;
+
+		// check if path is in scope
+		for (int i = 0; i < fSourceRefsCount; ++i) {
+			ITypeReference location = fSourceRefs[i];
+			if (scope.encloses(location.getPath()))
+				return true;
+		}
+		for (int i = 0; i < fDerivedSourceRefsCount; ++i) {
+			ITypeReference location = fDerivedSourceRefs[i];
+			if (scope.encloses(location.getPath()))
+				return true;
+		}
+		
+		return false;
+	}
+
 	public boolean isUndefinedType() {
 		return fElementType == 0;
 	}
@@ -255,5 +259,65 @@ public class TypeInfo implements ITypeInfo
 
 	public void setCache(ITypeCache typeCache) {
 		fTypeCache = typeCache;
+	}
+	
+	public void addDerivedReference(ITypeReference location) {
+		if (fDerivedSourceRefs == null) {
+		    fDerivedSourceRefs = new ITypeReference[INITIAL_REFS_SIZE];
+		    fDerivedSourceRefsCount = 0;
+		} else if (fDerivedSourceRefsCount == fDerivedSourceRefs.length) {
+			ITypeReference[] refs = new ITypeReference[fDerivedSourceRefs.length + REFS_GROW_BY];
+			System.arraycopy(fDerivedSourceRefs, 0, refs, 0, fDerivedSourceRefsCount);
+			fDerivedSourceRefs = refs;
+		}
+		fDerivedSourceRefs[fDerivedSourceRefsCount] = location;
+		++fDerivedSourceRefsCount;
+	}
+	
+	public ITypeReference[] getDerivedReferences() {
+		if (fDerivedSourceRefs != null) {
+			ITypeReference[] refs = new ITypeReference[fDerivedSourceRefsCount];
+			System.arraycopy(fDerivedSourceRefs, 0, refs, 0, fDerivedSourceRefsCount);
+			return refs;
+		}
+		return null;
+	}
+	
+	public boolean hasSubTypes() {
+		return (fDerivedSourceRefs != null);
+	}
+	
+	public ITypeInfo[] getSubTypes() {
+		if (fTypeCache != null) {
+			return fTypeCache.getSubtypes(this);
+		}
+		return null;
+	}
+	
+	public boolean hasSuperTypes() {
+		if (fTypeCache != null) {
+			return (fTypeCache.getSupertypes(this) != null);
+		}
+		return false;
+//		return true;	//TODO can't know this until we parse
+	}
+	
+	public ITypeInfo[] getSuperTypes() {
+		if (fTypeCache != null) {
+			return fTypeCache.getSupertypes(this);
+		}
+		return null;
+	}
+
+	public ASTAccessVisibility getSuperTypeAccess(ITypeInfo superType) {
+		if (fTypeCache != null) {
+			return fTypeCache.getSupertypeAccess(this, superType);
+		}
+		return null;
+	}
+
+	public boolean isClass() {
+		return (fElementType == ICElement.C_CLASS
+				|| fElementType == ICElement.C_STRUCT);
 	}
 }

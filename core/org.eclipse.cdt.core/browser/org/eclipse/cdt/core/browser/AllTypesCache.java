@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.browser.typehierarchy.ITypeHierarchy;
+import org.eclipse.cdt.core.browser.typehierarchy.TypeHierarchyBuilder;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -48,7 +50,7 @@ public class AllTypesCache {
 
 	private static final int INITIAL_DELAY = 5000;
 	private static IWorkingCopyProvider fgWorkingCopyProvider;
-	private static TypeCacheManager fgTypeCacheManager;
+	private static TypeHierarchyBuilder fgTypeHierarchyBuilder;
 	private static IElementChangedListener fgElementChangedListener;
 	private static IPropertyChangeListener fgPropertyChangeListener;
 	private static boolean fgEnableIndexing = true;
@@ -63,7 +65,8 @@ public class AllTypesCache {
 	 */
 	public static void initialize(IWorkingCopyProvider workingCopyProvider) {
 		fgWorkingCopyProvider = workingCopyProvider;
-		fgTypeCacheManager = new TypeCacheManager(fgWorkingCopyProvider);
+		TypeCacheManager.getInstance().setWorkingCopyProvider(fgWorkingCopyProvider);
+		fgTypeHierarchyBuilder = new TypeHierarchyBuilder();
 
 		// load prefs
 		Preferences prefs = CCorePlugin.getDefault().getPluginPreferences();
@@ -77,13 +80,13 @@ public class AllTypesCache {
 		}
 		
 		// start jobs in background after INITIAL_DELAY
-		fgTypeCacheManager.reconcile(fgEnableIndexing, Job.BUILD, INITIAL_DELAY);
+		TypeCacheManager.getInstance().reconcile(fgEnableIndexing, Job.BUILD, INITIAL_DELAY);
 
 		// add delta listener
 		fgElementChangedListener = new IElementChangedListener() {
 			public void elementChanged(ElementChangedEvent event) {
-				fgTypeCacheManager.processDelta(event.getDelta());
-				fgTypeCacheManager.reconcile(fgEnableIndexing, Job.BUILD, 0);
+				TypeCacheManager.getInstance().processDelta(event.getDelta());
+				TypeCacheManager.getInstance().reconcile(fgEnableIndexing, Job.BUILD, 0);
 			}
 		};
 		CoreModel.getDefault().addElementChangedListener(fgElementChangedListener);
@@ -96,9 +99,9 @@ public class AllTypesCache {
 					String value = (String) event.getNewValue();
 					fgEnableIndexing = Boolean.valueOf(value).booleanValue();
 					if (!fgEnableIndexing) {
-						fgTypeCacheManager.cancelJobs();
+						TypeCacheManager.getInstance().cancelJobs();
 					} else {
-						fgTypeCacheManager.reconcile(fgEnableIndexing, Job.BUILD, 0);
+						TypeCacheManager.getInstance().reconcile(fgEnableIndexing, Job.BUILD, 0);
 					}
 				}
 			}
@@ -119,8 +122,8 @@ public class AllTypesCache {
 			CCorePlugin.getDefault().getPluginPreferences().removePropertyChangeListener(fgPropertyChangeListener);
 
 		// terminate all running jobs
-		if (fgTypeCacheManager != null) {
-			fgTypeCacheManager.cancelJobs();
+		if (TypeCacheManager.getInstance() != null) {
+			TypeCacheManager.getInstance().cancelJobs();
 		}
 	}
 	
@@ -139,7 +142,7 @@ public class AllTypesCache {
 			public boolean shouldContinue() { return true; }
 		};
 		for (int i = 0; i < projects.length; ++i) {
-			fgTypeCacheManager.getCache(projects[i]).accept(visitor);
+			TypeCacheManager.getInstance().getCache(projects[i]).accept(visitor);
 		}
 		return (ITypeInfo[]) fAllTypes.toArray(new ITypeInfo[fAllTypes.size()]);
 	}
@@ -167,7 +170,7 @@ public class AllTypesCache {
 			public boolean shouldContinue() { return true; }
 		};
 		for (int i = 0; i < projects.length; ++i) {
-			fgTypeCacheManager.getCache(projects[i]).accept(visitor);
+			TypeCacheManager.getInstance().getCache(projects[i]).accept(visitor);
 		}
 		return (ITypeInfo[]) fTypesFound.toArray(new ITypeInfo[fTypesFound.size()]);
 	}
@@ -198,7 +201,7 @@ public class AllTypesCache {
 			public boolean shouldContinue() { return true; }
 		};
 		for (int i = 0; i < projects.length; ++i) {
-			fgTypeCacheManager.getCache(projects[i]).accept(visitor);
+			TypeCacheManager.getInstance().getCache(projects[i]).accept(visitor);
 		}
 		return (ITypeInfo[]) fTypesFound.toArray(new ITypeInfo[fTypesFound.size()]);
 	}
@@ -224,7 +227,7 @@ public class AllTypesCache {
 			public boolean shouldContinue() { return true; }
 		};
 		for (int i = 0; i < projects.length; ++i) {
-			ITypeCache cache = fgTypeCacheManager.getCache(projects[i]);
+			ITypeCache cache = TypeCacheManager.getInstance().getCache(projects[i]);
 			cache.accept(visitor);
 			if (includeGlobalNamespace) {
 				fTypesFound.add(cache.getGlobalNamespace());
@@ -243,7 +246,7 @@ public class AllTypesCache {
 		for (int i = 0; i < projects.length; ++i) {
 			IProject project = projects[i];
 			if (project.exists() && project.isOpen()) {
-				if (!fgTypeCacheManager.getCache(project).isUpToDate())
+				if (!TypeCacheManager.getInstance().getCache(project).isUpToDate())
 					return false;
 			}
 		}
@@ -277,7 +280,7 @@ public class AllTypesCache {
 		for (int i = 0; i < projects.length; ++i) {
 			IProject project = projects[i];
 			// wait for any running jobs to finish
-			fgTypeCacheManager.getCache(project).reconcileAndWait(true, Job.SHORT, monitor);
+			TypeCacheManager.getInstance().getCache(project).reconcileAndWait(true, Job.SHORT, monitor);
 		}
 		monitor.done();
 	}
@@ -293,17 +296,36 @@ public class AllTypesCache {
 		if (location == null) {
 			// cancel background jobs
 			IProject project = info.getEnclosingProject();
-			fgTypeCacheManager.getCache(project).cancelJobs();
+			TypeCacheManager.getInstance().getCache(project).cancelJobs();
 
 			// start the search job
-			fgTypeCacheManager.getCache(project).locateTypeAndWait(info, Job.SHORT, monitor);
+			TypeCacheManager.getInstance().getCache(project).locateTypeAndWait(info, Job.SHORT, monitor);
 
 			// get the newly parsed location
 			location = info.getResolvedReference();
 
 			// resume background jobs
-			fgTypeCacheManager.reconcile(fgEnableIndexing, Job.BUILD, 0);
+			TypeCacheManager.getInstance().reconcile(fgEnableIndexing, Job.BUILD, 0);
 		}
 		return location;
+	}
+	
+	public static ITypeInfo getTypeForElement(ICElement elem) {
+	    return TypeUtil.getTypeForElement(elem);
+	}
+
+	/**
+	 * Creates and returns a type hierarchy for this type containing
+	 * this type and all of its supertypes and subtypes in the workspace.
+	 *
+	 * @param info the given type
+	 * @param monitor the given progress monitor
+	 * @return a type hierarchy for the given type
+	 */
+	public static ITypeHierarchy createTypeHierarchy(ICElement type, IProgressMonitor monitor) throws CModelException {
+	    ITypeInfo info = TypeUtil.getTypeForElement(type);
+	    if (info != null)
+	        return fgTypeHierarchyBuilder.createTypeHierarchy(info, fgEnableIndexing, monitor);
+	    return null;
 	}
 }

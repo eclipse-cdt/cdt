@@ -1,3 +1,8 @@
+2004-07-15 Chris Wiebe
+
+	Initial draft for the type hierarchy view.
+	* browser/*
+
 2004-07-06 Bogdan Gheorghe
 	Handled the case of CContainer in both updateIndexAddResource and
 	updateIndexRemoveResource.

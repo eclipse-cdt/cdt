@@ -13,7 +13,10 @@ package org.eclipse.cdt.internal.core.browser.cache;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.browser.IQualifiedTypeName;
+import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
+import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
@@ -23,16 +26,26 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 
 public class TypeCacheManager {
 	
-	private Map fCacheMap = new HashMap();
+	private static final TypeCacheManager fgInstance = new TypeCacheManager();
+	private Map fCacheMap;
 	private IWorkingCopyProvider fWorkingCopyProvider;
 
-	public TypeCacheManager(IWorkingCopyProvider workingCopyProvider) {
-		fWorkingCopyProvider = workingCopyProvider;
+	private TypeCacheManager() {
+		fCacheMap = new HashMap();
 	}
 	
+	public static TypeCacheManager getInstance() {
+		return fgInstance;
+	}
+	
+	public void setWorkingCopyProvider(IWorkingCopyProvider workingCopyProvider) {
+		fWorkingCopyProvider = workingCopyProvider;
+	}
+
 	public synchronized void updateProject(IProject project) {
 		TypeCacheDelta cacheDelta = new TypeCacheDelta(project);
 		getCache(project).addDelta(cacheDelta);
@@ -193,5 +206,41 @@ public class TypeCacheManager {
 		IJobManager jobManager = Platform.getJobManager();
 		jobManager.cancel(TypeCacherJob.FAMILY);
 		jobManager.cancel(TypeLocatorJob.FAMILY);
+	}
+	
+	public ITypeInfo[] locateSuperTypesAndWait(ITypeInfo info, boolean enableIndexing, int priority, IProgressMonitor monitor) {
+		ITypeInfo[] superTypes = info.getSuperTypes();
+		if (superTypes == null) {
+			// cancel background jobs
+			IProject project = info.getEnclosingProject();
+			getCache(project).cancelJobs();
+
+			// start the search job
+			getCache(project).locateSupertypesAndWait(info, priority, monitor);
+			
+			superTypes = info.getSuperTypes();
+
+			// resume background jobs
+			reconcile(enableIndexing, Job.BUILD, 0);
+		}
+		return superTypes;
+	}
+
+	public ITypeInfo[] locateSubTypesAndWait(ITypeInfo info, boolean enableIndexing, int priority, IProgressMonitor monitor) {
+		ITypeInfo[] subTypes = info.getSubTypes();
+		if (subTypes == null) {
+			// cancel background jobs
+			IProject project = info.getEnclosingProject();
+			getCache(project).cancelJobs();
+
+			// start the search job
+			getCache(project).locateSubtypesAndWait(info, priority, monitor);
+			
+			subTypes = info.getSubTypes();
+
+			// resume background jobs
+			reconcile(enableIndexing, Job.BUILD, 0);
+		}
+		return subTypes;
 	}
 }

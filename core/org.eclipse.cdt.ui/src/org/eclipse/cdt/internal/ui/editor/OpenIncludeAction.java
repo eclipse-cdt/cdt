@@ -27,13 +27,14 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.internal.core.CommonMkInfo;
 
 import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.builder.ICBuilder;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 
@@ -83,48 +84,30 @@ public class OpenIncludeAction extends Action {
 			
 			if (fileToOpen != null) {
 				EditorUtility.openInEditor(fileToOpen);
-				//IWorkbenchWindow window= CPlugin.getActiveWorkbenchWindow();
-				//if (window != null) {
-				//	IWorkbenchPage p= window.getActivePage();
-				//	if (p != null) {
-				//		p.openEditor(fileToOpen);
-				//	}
-				//}
 			} else { // Try to get via the include path.
 
-
-				CommonMkInfo mk = null;
-				if (res != null)
-					mk = new CommonMkInfo(res.getProject().getLocation());
-				else
-					mk = new CommonMkInfo();
-				IPath[] paths = mk.getIncludePaths();
-
-
+				ICBuilder[] builders = CCorePlugin.getDefault().getBuilders(res.getProject());
+				
 				IPath includePath = null;
-				for (int i = 0; i < paths.length; i++) {
-					if (res != null) {
-						// We've already scan the project.
-						if (paths[i].isPrefixOf(res.getProject().getLocation()))
-							continue;
-					}
-					IPath path = paths[i].append(include.getElementName());
-					if (path.toFile().exists()) {
-						includePath = path;
-						break;
+				for( int j = 0; includePath == null && j < builders.length; j++ ) {				
+					IPath[] paths = builders[j].getIncludePaths();
+
+					for (int i = 0; i < paths.length; i++) {
+						if (res != null) {
+							// We've already scan the project.
+							if (paths[i].isPrefixOf(res.getProject().getLocation()))
+								continue;
+						}
+						IPath path = paths[i].append(include.getElementName());
+						if (path.toFile().exists()) {
+							includePath = path;
+							break;
+						}
 					}
 				}
+
 				if (includePath != null) {
 					EditorUtility.openInEditor(includePath);
-					//IStorage s = new FileStorage(includePath);
-					//IEditorInput ei = new ExternalEditorInput(s);
-					//IWorkbenchWindow window= CPlugin.getActiveWorkbenchWindow();
-					//if (window != null) {
-					//	IWorkbenchPage p = window.getActivePage();
-					//	if (p != null) {
-					//		p.openEditor(ei, getEditorID(include.getName()));
-					//	}
-					//}
 				}
 			}
 		} catch (CModelException e) {

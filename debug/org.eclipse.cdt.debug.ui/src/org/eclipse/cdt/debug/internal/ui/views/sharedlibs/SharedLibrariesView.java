@@ -156,6 +156,8 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
 	protected void fillContextMenu( IMenuManager menu ) {
+		menu.add( new Separator( ICDebugUIConstants.EMPTY_SHARED_LIBRARIES_GROUP ) );
+		menu.add( new Separator( ICDebugUIConstants.SHARED_LIBRARIES_GROUP ) );
 		menu.add( new Separator( ICDebugUIConstants.EMPTY_REFRESH_GROUP ) );
 		menu.add( new Separator( ICDebugUIConstants.REFRESH_GROUP ) );
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
@@ -166,6 +168,7 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(IToolBarManager)
 	 */
 	protected void configureToolBar( IToolBarManager tbm ) {
+		tbm.add( new Separator( ICDebugUIConstants.SHARED_LIBRARIES_GROUP ) );
 		tbm.add( new Separator( ICDebugUIConstants.REFRESH_GROUP ) );
 	}
 

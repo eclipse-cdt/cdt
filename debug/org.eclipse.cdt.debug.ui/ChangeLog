@@ -1,4 +1,15 @@
 2004-06-11 Mikhail Khodjaiants
+	New implementation of the "Load Symbols For All" action of the Shared Libraries view.
+	Fixes for the "Auto-Refresh" and "refresh" actions.
+	* AbstractAutoRefreshActionDelegate.java
+	* AbstractRefreshActionDelegate.java
+	* LoadSymbolsForAllAction.java: removed
+	* LoadSymbolsForAllActionDelegate.java: new
+	* SharedLibrariesView.java
+	* plugin.properties
+	* plugin.xml	
+	
+2004-06-11 Mikhail Khodjaiants
 	New implementation of the "Auto-Refresh" actions for registers and shared libraries.
 	* plugin.properties
 	* plugin.xml	

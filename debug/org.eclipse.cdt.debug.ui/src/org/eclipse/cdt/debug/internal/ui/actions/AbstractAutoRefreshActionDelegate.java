@@ -11,83 +11,48 @@
 package org.eclipse.cdt.debug.internal.ui.actions; 
 
 import org.eclipse.cdt.debug.core.ICUpdateManager;
-import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.actions.ActionDelegate;
-import org.eclipse.ui.texteditor.IUpdate;
- 
+import org.eclipse.jface.viewers.IStructuredSelection;
+
 /**
  * The superclass for all "Auto-Refresh" action delegates.
  */
-public abstract class AbstractAutoRefreshActionDelegate extends ActionDelegate implements IViewActionDelegate, IUpdate {
-
-	private IAction fAction;
-	private IDebugView fView;
+public abstract class AbstractAutoRefreshActionDelegate extends AbstractRefreshActionDelegate {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionDelegate#init(org.eclipse.jface.action.IAction)
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractRefreshActionDelegate#doAction()
 	 */
-	public void init( IAction action ) {
-		setAction( action );
-		super.init( action );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
-	public void init( IViewPart view ) {
-		setView( view );
-		if ( getView() != null ) {
-			getView().add( this );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
-	public void update() {
+	protected void doAction() throws DebugException {
 		IAction action = getAction();
-		if ( getView() != null && action != null ) {
-			ICUpdateManager um = getUpdateManager( getView().getViewer().getInput() );
-			action.setEnabled( ( um != null ) ? um.canUpdate() : false );
-			action.setChecked( ( um != null ) ? um.getAutoModeEnabled() : false );
+		if ( action != null ) {
+			IStructuredSelection selection = getSelection();
+			if ( !selection.isEmpty() ) {
+				ICUpdateManager um = getUpdateManager( selection.getFirstElement() );
+				if ( um != null )
+					um.setAutoModeEnabled( action.isChecked() );
+			}
 		}
-	}
-
-	public void run( IAction action ) {
-		if ( getView() != null ) { 
-			ICUpdateManager um = getUpdateManager( getView().getViewer().getInput() );
-			if ( um != null )
-				um.setAutoModeEnabled( action.isChecked() );
-		}
-	}
-
-	protected IAction getAction() {
-		return fAction;
-	}
-
-	private void setAction( IAction action ) {
-		fAction = action;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionDelegate#dispose()
+	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractRefreshActionDelegate#update()
 	 */
-	public void dispose() {
-		if ( getView() != null )
-			getView().remove( this );
-		super.dispose();
+	protected void update() {
+		IAction action = getAction();
+		if ( action != null ) {
+			boolean enabled = false;
+			boolean checked = false;
+			IStructuredSelection selection = getSelection();
+			if ( !selection.isEmpty() ) {
+				ICUpdateManager um = getUpdateManager( selection.getFirstElement() );
+				if ( um != null && um.canUpdate() )
+					enabled = true;
+				if ( um != null && um.getAutoModeEnabled() )
+					checked = true;
+			}
+			action.setEnabled( enabled );
+			action.setChecked( checked );
+		}
 	}
-
-	protected IDebugView getView() {
-		return fView;
-	}
-
-	private void setView( IViewPart view ) {
-		fView = ( view instanceof IDebugView ) ? (IDebugView)view : null;
-	}
-
-	protected abstract ICUpdateManager getUpdateManager( Object element );
 }

@@ -66,16 +66,17 @@
           <topic label="Writing code" href="cdt_o_write_code.htm">
                <topic label="Customizing the C/C++ editor" href="cdt_t_cust_cpp_editor.htm"/>
                <topic label="Adding #include directives" href="cdt_t_addincludedirectives.htm"/>
+               <topic label="Commenting out code" href="cdt_t_comment_out.htm"/>
                <topic label="Working with content assist" href="cdt_o_con_assist.htm">
                     <topic label="Using Content Assist" href="cdt_t_contentassist.htm"/>
-                    <topic label="Creating code templates" href="cdt_t_add_codetemp.htm"/>
+                    <topic label="Creating and editing code templates" href="cdt_t_add_codetemp.htm"/>
                     <topic label="Importing and exporting code templates" href="cdt_t_imp_code_temp.htm"/>
                </topic>
                <topic label="Shifting lines of code to the right or left" href="cdt_t_shift_code.htm"/>
           </topic>
           <topic label="Building" href="cdt_o_build_task.htm">
                <topic label="Setting a build order" href="cdt_t_setbuildorder.htm"/>
-               <topic label="Automatically building open projects" href="cdt_t_autobuild.htm"/>
+               <topic label="Automatically building when resources are modified" href="cdt_t_autobuild.htm"/>
                <topic label="Manually building" href="cdt_t_manualbuild.htm"/>
                <topic label="Autosaving on a manual build" href="cdt_t_autosave.htm"/>
                <topic label="Specifying build settings" href="cdt_t_build_set.htm"/>

@@ -79,6 +79,8 @@ public class CLIProcessor {
 			type = MIRunningEvent.CONTINUE;
 		} else if (operation.startsWith("sig") && "signal".indexOf(operation) != -1) {
 			type = MIRunningEvent.CONTINUE;
+		} else if (operation.startsWith("j") && "jump".indexOf(operation) != -1) {
+			type = MIRunningEvent.CONTINUE;
 		}
 		return type;
 	}

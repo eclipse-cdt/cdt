@@ -202,30 +202,30 @@ public class AllTypesCache {
 			for (int i= 0; i < types.length; ++i) {
 				switch (types[i]) {
 					case ICElement.C_NAMESPACE:
-						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, false));
+						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
 					break;
 
 					case ICElement.C_CLASS: // fall through
 					case ICElement.C_TEMPLATE_CLASS:
-						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.CLASS, ICSearchConstants.DECLARATIONS, false));
+						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.CLASS, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
 					break;
 					
 					case ICElement.C_STRUCT: // fall through
 					case ICElement.C_TEMPLATE_STRUCT:
-						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.STRUCT, ICSearchConstants.DECLARATIONS, false));
+						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.STRUCT, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
 					break;
 
 					case ICElement.C_UNION: // fall through
 					case ICElement.C_TEMPLATE_UNION:
-						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.UNION, ICSearchConstants.DECLARATIONS, false));
+						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.UNION, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
 					break;
 
 					case ICElement.C_ENUMERATION:
-						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false));
+						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
 					break;
 
 					case ICElement.C_TYPEDEF:
-						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.TYPEDEF, ICSearchConstants.DECLARATIONS, false));
+						pattern.addPattern(SearchEngine.createSearchPattern("*", ICSearchConstants.TYPEDEF, ICSearchConstants.DECLARATIONS, false)); //$NON-NLS-1$
 					break;
 					
 					default:

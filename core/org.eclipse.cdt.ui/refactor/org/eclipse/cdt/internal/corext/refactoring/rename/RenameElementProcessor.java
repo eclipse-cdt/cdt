@@ -58,7 +58,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	private ICElement fCElement = null;
 	private SearchResultGroup[] fReferences;
 	private TextChangeManager fChangeManager;
-	private final String QUALIFIER = "::";
+	private final String QUALIFIER = "::"; //$NON-NLS-1$
 	
 	private boolean fUpdateReferences;
 	
@@ -117,7 +117,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	 */
 	public String getCurrentElementName() {
 		if(fCElement == null)
-			return "";	
+			return "";	 //$NON-NLS-1$
 		String name = fCElement.getElementName();
 		if (name.indexOf(QUALIFIER) != -1){
 			return (name.substring(name.lastIndexOf(QUALIFIER) + 2, name.length()));
@@ -148,7 +148,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	
 	public RefactoringStatus checkNewElementName(String newName){
 		if ((fCElement == null) || (!(fCElement instanceof ISourceReference)) || (fCElement instanceof ITranslationUnit)) { 
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("RenameTypeRefactoring.wrong_element"));
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("RenameTypeRefactoring.wrong_element")); //$NON-NLS-1$
 		}
 
 		Assert.isNotNull(newName, "new name"); //$NON-NLS-1$
@@ -209,7 +209,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 	public RefactoringStatus checkActivation() throws CoreException {
 		RefactoringStatus result= null;
 		if ((fCElement == null) || (!(fCElement instanceof ISourceReference)) || (fCElement instanceof ITranslationUnit)) { 
-			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("RenameTypeRefactoring.wrong_element"));
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.getString("RenameTypeRefactoring.wrong_element")); //$NON-NLS-1$
 		}		
 		return Checks.checkIfTuBroken(fCElement);
 		
@@ -346,7 +346,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			if(structure.getElementType() == ICElement.C_CLASS){
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
 						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( "~"+ searchPrefix,	
+				orPattern.addPattern(SearchEngine.createSearchPattern( "~"+ searchPrefix,	 //$NON-NLS-1$
 						ICSearchConstants.METHOD, ICSearchConstants.ALL_OCCURRENCES, false ));				
 			}
 		}

@@ -279,7 +279,7 @@ public class OpenDeclarationsAction extends Action implements IUpdate {
  		progressMonitor.run(true, true, runnable);
 
  		if (elementsFound.isEmpty() == true) {
- 			MessageDialog.openInformation(getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message")); //$NON-NLS-1$ 
+ 			MessageDialog.openInformation(getShell(),CSearchMessages.getString("CSearchOperation.operationUnavailable.title"), CSearchMessages.getString("CSearchOperation.operationUnavailable.message")); //$NON-NLS-1$ //$NON-NLS-2$ 
  			return;
  		}
 

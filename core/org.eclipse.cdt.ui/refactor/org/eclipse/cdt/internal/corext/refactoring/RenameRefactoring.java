@@ -151,6 +151,6 @@ public class RenameRefactoring extends Refactoring implements IProcessorBasedRef
 		if (isAvailable())
 			return getName();
 		else
-			return "No refactoring available to process: " + fElement;
+			return "No refactoring available to process: " + fElement; //$NON-NLS-1$
 	}
 }

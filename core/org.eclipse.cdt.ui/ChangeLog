@@ -4,6 +4,9 @@
 2004-03-16 Hoda Amer
 	Fix for bug#54324 Refactor: Invoke rename refactoring from editor
 	
+2004-03-16 Tanya Wolff
+	Externalized strings and marked non-translatable ones.
+
 2004-03-15 Hoda Amer
 	Fix for [Bug 54323] Refactor: Menu item from outline view
 	

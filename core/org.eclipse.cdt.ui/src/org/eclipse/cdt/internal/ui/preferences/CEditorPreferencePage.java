@@ -925,7 +925,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		item.setControl(createContentAssistPage(folder));
 
 		item = new TabItem(folder, SWT.NONE);
-		item.setText("Navigation");
+		item.setText(PreferencesMessages.getString("CEditorPreferencePage.Navigation")); //$NON-NLS-1$
 		item.setImage(CPluginImages.get(CPluginImages.IMG_OBJS_TUNIT));
 		item.setControl(createNavPage(folder));
 		
@@ -945,7 +945,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		navComposite.setLayout(layout);
 
 		Button navCheck = new Button(navComposite,SWT.CHECK);
-		navCheck.setText("Enable Hyperlink Navigation");
+		navCheck.setText(PreferencesMessages.getString("CEditorPreferencePage.Enable_Hyperlink_Navigation")); //$NON-NLS-1$
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		navCheck.setLayoutData(gd);

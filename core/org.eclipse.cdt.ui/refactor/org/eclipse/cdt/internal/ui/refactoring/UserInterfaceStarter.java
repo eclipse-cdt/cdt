@@ -70,7 +70,7 @@ public class UserInterfaceStarter {
 		{	
 		MessageDialog.openInformation(parent, 
 			refactoring.getName(), 
-			"No user interface found");
+			RefactoringMessages.getString("UserInterfaceStarter.No_ui_found")); //$NON-NLS-1$
 		}
 	}
 		

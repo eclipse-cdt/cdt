@@ -152,7 +152,7 @@ public class ContentAssistPreference {
 			boolean useDotAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOT);
 			boolean useArrowAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_ARROW);
 			boolean useDoubleColonAsTrigger = store.getBoolean(AUTOACTIVATION_TRIGGERS_DOUBLECOLON);
-			String triggers = "";
+			String triggers = ""; //$NON-NLS-1$
 			if (useDotAsTrigger){
 				triggers += "."; //$NON-NLS-1$
 			}

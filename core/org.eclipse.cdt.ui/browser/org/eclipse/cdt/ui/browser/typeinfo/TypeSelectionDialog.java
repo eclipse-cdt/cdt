@@ -31,7 +31,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 		private static final char END_SYMBOL= '<';
 		private static final char ANY_STRING= '*';
-		private final static String scopeResolutionOperator= "::";
+		private final static String scopeResolutionOperator= "::"; //$NON-NLS-1$
 
 		private StringMatcher fMatcher;
 		private StringMatcher fQualifierMatcher;

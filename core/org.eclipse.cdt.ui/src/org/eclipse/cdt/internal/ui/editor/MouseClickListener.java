@@ -137,7 +137,7 @@ IPropertyChangeListener{
 			try {
 				text.redrawRange(offset, length, true);
 			} catch (IllegalArgumentException x) {
-				org.eclipse.cdt.internal.core.model.Util.log(x, "Error in CEditor.MouseClickListener.repairRepresentation", ICLogConstants.CDT);
+				org.eclipse.cdt.internal.core.model.Util.log(x, "Error in CEditor.MouseClickListener.repairRepresentation", ICLogConstants.CDT); //$NON-NLS-1$
 			}
 		}
 		
@@ -408,9 +408,9 @@ IPropertyChangeListener{
 			else{
 				String selWord = null;
 				String slas = document.get(start,1);
-				if (slas.equals("\n") ||
-					slas.equals("\t") ||
-				   slas.equals(" "))	
+				if (slas.equals("\n") || //$NON-NLS-1$
+					slas.equals("\t") || //$NON-NLS-1$
+				   slas.equals(" "))	 //$NON-NLS-1$
 				 {
 					
 					selWord =document.get(start+1, end - start - 1);
@@ -429,7 +429,7 @@ IPropertyChangeListener{
 					charX == '>')
 					return null;
 				
-				if (selWord.equals("#include"))
+				if (selWord.equals("#include")) //$NON-NLS-1$
 				{
 					//get start of next identifier
 					

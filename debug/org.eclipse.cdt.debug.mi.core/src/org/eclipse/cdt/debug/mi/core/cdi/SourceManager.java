@@ -5,8 +5,6 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
-import java.io.File;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
@@ -33,25 +31,6 @@ public class SourceManager extends SessionObject implements ICDISourceManager {
 
 	public SourceManager(CSession session) {
 		super(session);
-	}
-	
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getDirectories()
-	 */
-	public File[] getDirectories() throws CDIException {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#reset()
-	 */
-	public void reset() throws CDIException {
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#set(File[])
-	 */
-	public void set(File[] directories) throws CDIException {
 	}
 
 	/**

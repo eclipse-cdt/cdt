@@ -88,7 +88,7 @@ public class IndexManagerTests extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(IndexManagerTests.class.getName());
 
 		suite.addTest(new IndexManagerTests("testAddNewFileToIndex"));
 		suite.addTest(new IndexManagerTests("testRemoveProjectFromIndex"));

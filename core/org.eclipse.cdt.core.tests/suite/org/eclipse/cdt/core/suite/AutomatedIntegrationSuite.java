@@ -90,10 +90,11 @@ public class AutomatedIntegrationSuite extends TestSuite
 		suite.addTestSuite(ClassDeclarationPatternTests.class );
 		suite.addTestSuite(FunctionMethodPatternTests.class );
 		suite.addTestSuite(OtherPatternTests.class );		
-		suite.addTest(IndexManagerTests.suite());
 		suite.addTestSuite( ParseTestOnSearchFiles.class);
 		suite.addTestSuite( CompletionProposalsTest.class);
-		
+		//Indexer Tests need to be run after any indexer client tests
+		//as the last test shuts down the indexing thread
+		suite.addTest(IndexManagerTests.suite());
 		// Last test to trigger report generation
 		suite.addTest(suite.new GenerateReport("startFailedTests"));
 		

@@ -1,3 +1,8 @@
+2003-08-12 Bogdan Gheorghe
+	Changed the order of tests in AutomatedIntegrationSuite to have
+	the indexing tests run last (the last indexing test shuts down
+	the indexing thread).
+	
 2003-08-12 John Camelon
 	Added CompleteParseASTTest::testForewardDeclarationWithUsage(). 
 

@@ -40,7 +40,7 @@ public class MakeRecon extends OutputStream {
 
 	public MakeRecon(IPath buildCommand, String[] buildArguments,
 		String[] env, IPath workingDirectory, IProgressMonitor mon, OutputStream cos) {
-		this(buildCommand, new String[]{"-n"}, buildArguments, env, workingDirectory, mon, cos);
+		this(buildCommand, new String[]{"-n"}, buildArguments, env, workingDirectory, mon, cos); //$NON-NLS-1$
 	}
 
 	public MakeRecon(IPath buildCommand, String[] options, String[] buildArguments,
@@ -102,7 +102,7 @@ public class MakeRecon extends OutputStream {
 		} catch (IOException e1) {
 			i = IProgressMonitor.UNKNOWN;
 		}
-		monitor.beginTask("", i);
+		monitor.beginTask("", i); //$NON-NLS-1$
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class MakeRecon extends OutputStream {
 	private void checkProgress(boolean flush) {
 		String buffer = currentLine.toString();
 		int i = 0;
-		while ((i = buffer.indexOf("\n")) != -1) {
+		while ((i = buffer.indexOf("\n")) != -1) { //$NON-NLS-1$
 			String line = buffer.substring(0, i).trim(); // get rid of any trailing \r
 			processLine(line);
 			buffer = buffer.substring(i + 1); // skip the \n and advance

@@ -169,7 +169,7 @@ public class MakeBuilder extends ACBuilder {
 //					MakeRecon recon = new MakeRecon(buildCommand, buildArguments, env, workingDirectory, makeMonitor, cos);
 //					recon.invokeMakeRecon();
 //					cos = recon;
-				QualifiedName qName = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "progressMonitor");
+				QualifiedName qName = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "progressMonitor"); //$NON-NLS-1$
 				Integer last = (Integer)getProject().getSessionProperty(qName);
 				if (last == null) {
 					last = new Integer(100);

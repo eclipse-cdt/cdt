@@ -17,6 +17,6 @@ public interface IComment  extends IDirective {
 
 	final public static char POUND = '#';
 
-	final public static String POUND_STRING = "#";
+	final public static String POUND_STRING = "#"; //$NON-NLS-1$
 
 }

@@ -37,13 +37,13 @@ public class ProjectTargets {
 	private static final String BUILD_TARGET_ELEMENT = "buildTargets"; //$NON-NLS-1$
 	private static final String TARGET_ELEMENT = "target"; //$NON-NLS-1$
 	private static final String TARGET_ATTR_ID = "targetID"; //$NON-NLS-1$
-	private static final String TARGET_ATTR_PATH = "path";
-	private static final String TARGET_ATTR_NAME = "name";
-	private static final String TARGET_STOP_ON_ERROR = "stopOnError";
-	private static final String TARGET_USE_DEFAULT_CMD = "useDefaultCommand";
-	private static final String TARGET_ARGUMENTS = "buildArguments";
-	private static final String TARGET_COMMAND = "buildCommand";
-	private static final String TARGET = "buidlTarget";
+	private static final String TARGET_ATTR_PATH = "path"; //$NON-NLS-1$
+	private static final String TARGET_ATTR_NAME = "name"; //$NON-NLS-1$
+	private static final String TARGET_STOP_ON_ERROR = "stopOnError"; //$NON-NLS-1$
+	private static final String TARGET_USE_DEFAULT_CMD = "useDefaultCommand"; //$NON-NLS-1$
+	private static final String TARGET_ARGUMENTS = "buildArguments"; //$NON-NLS-1$
+	private static final String TARGET_COMMAND = "buildCommand"; //$NON-NLS-1$
+	private static final String TARGET = "buidlTarget"; //$NON-NLS-1$
 
 	private HashMap targetMap = new HashMap();
 
@@ -74,7 +74,7 @@ public class ProjectTargets {
 					IContainer container = null;
 					NamedNodeMap attr = node.getAttributes();
 					String path = attr.getNamedItem(TARGET_ATTR_PATH).getNodeValue();
-					if (path != null && !path.equals("")) {
+					if (path != null && !path.equals("")) { //$NON-NLS-1$
 						container = project.getFolder(path);
 					} else {
 						container = project;
@@ -236,7 +236,7 @@ public class ProjectTargets {
 		format.setPreserveSpace(true);
 		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
 		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(output, "UTF8"), format);
+			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(output, "UTF8"), format); //$NON-NLS-1$
 		serializer.asDOMSerializer().serialize(doc);
 	}
 }

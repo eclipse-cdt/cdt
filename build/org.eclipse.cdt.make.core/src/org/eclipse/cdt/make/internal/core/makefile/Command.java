@@ -25,7 +25,7 @@ public class Command extends Directive implements ICommand {
 
 	final public static char NL = '\n';
 
-	String command = "";
+	String command = ""; //$NON-NLS-1$
 	char prefix = '\0';
 
 	public Command(Directive parent, String cmd) {
@@ -108,7 +108,7 @@ public class Command extends Directive implements ICommand {
 	 * @see org.eclipse.cdt.make.core.makefile.ICommand#execute(java.lang.String[], java.io.File)
 	 */
 	public Process execute(String shell, String[] envp, File dir) throws IOException {
-		String[] cmdArray = new String[] { shell, "-c", command};
+		String[] cmdArray = new String[] { shell, "-c", command}; //$NON-NLS-1$
 		return Runtime.getRuntime().exec(cmdArray, envp, dir);
 	}
 

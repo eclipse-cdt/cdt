@@ -187,7 +187,7 @@ public class BuildInfoFactory {
 		public String[] getErrorParsers() {
 			String parsers = getString(ErrorParserManager.PREF_ERROR_PARSER);
 			if (parsers != null && parsers.length() > 0) {
-				StringTokenizer tok = new StringTokenizer(parsers, ";");
+				StringTokenizer tok = new StringTokenizer(parsers, ";"); //$NON-NLS-1$
 				List list = new ArrayList(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
@@ -239,10 +239,10 @@ public class BuildInfoFactory {
 			Iterator entries = values.entrySet().iterator();
 			while (entries.hasNext()) {
 				Entry entry = (Entry) entries.next();
-				str.append(escapeChars((String) entry.getKey(), "=|"));
-				str.append("=");
-				str.append(escapeChars((String) entry.getValue(), "=|)"));
-				str.append("|");
+				str.append(escapeChars((String) entry.getKey(), "=|")); //$NON-NLS-1$
+				str.append("="); //$NON-NLS-1$
+				str.append(escapeChars((String) entry.getValue(), "=|)")); //$NON-NLS-1$
+				str.append("|"); //$NON-NLS-1$
 			}
 			return str.toString();
 		}

@@ -23,15 +23,15 @@ public interface ICommand extends IDirective {
 	
 	final public static char HYPHEN = '-';
 
-	final public static String HYPHEN_STRING = "-";
+	final public static String HYPHEN_STRING = "-"; //$NON-NLS-1$
 
 	final public static char AT = '@';
 
-	final public static String AT_STRING = "@";
+	final public static String AT_STRING = "@"; //$NON-NLS-1$
 
 	final public static char PLUS = '+';
 
-	final public static String PLUS_STRING = "+";
+	final public static String PLUS_STRING = "+"; //$NON-NLS-1$
 
 	final public static char TAB = '\t';
 

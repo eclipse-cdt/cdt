@@ -251,7 +251,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 			projectTargets.saveTargets(file);
 		} catch (IOException e) {
 			throw new CoreException(
-				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, "Error writing target file", e));
+				new Status(IStatus.ERROR, MakeCorePlugin.getUniqueIdentifier(), -1, MakeCorePlugin.getResourceString("MakeTargetManager.error_writing_file"), e)); //$NON-NLS-1$
 		}
 	}
 

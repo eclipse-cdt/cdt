@@ -30,7 +30,7 @@ public class StreamMonitor extends OutputStream {
 		console = cos;
 		fTotalWork = totalWork;
 		halfWay = fTotalWork / 2;
-		monitor.beginTask("", fTotalWork);
+		monitor.beginTask("", fTotalWork); //$NON-NLS-1$
 	}
 
 	private void progressUpdate() {

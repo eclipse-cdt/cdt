@@ -77,7 +77,7 @@ public class MakeTarget implements IMakeTarget {
 	}
 
 	public IPath getBuildCommand() {
-		return buildCommand != null ? buildCommand: new Path("");
+		return buildCommand != null ? buildCommand: new Path(""); //$NON-NLS-1$
 	}
 
 	public void setBuildCommand(IPath command) {
@@ -85,7 +85,7 @@ public class MakeTarget implements IMakeTarget {
 	}
 
 	public String getBuildArguments() {
-		return buildArguments != null ? buildArguments : "";
+		return buildArguments != null ? buildArguments : ""; //$NON-NLS-1$
 	}
 
 	public void setBuildArguments(String arguments) {

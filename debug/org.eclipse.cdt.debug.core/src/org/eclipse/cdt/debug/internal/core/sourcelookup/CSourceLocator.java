@@ -23,7 +23,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.dom.DocumentImpl;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
@@ -317,13 +316,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 */
 	public void initializeDefaults( ILaunchConfiguration configuration ) throws CoreException
 	{
-		ICSourceLocation[] defaultLocations = getDefaultSourceLocations(); 
-		ICSourceLocation[] commonLocations = CDebugCorePlugin.getDefault().getCommonSourceLocations(); 
-		List list = new ArrayList( defaultLocations.length + commonLocations.length );
-		list.addAll( Arrays.asList( defaultLocations ) );
-		list.addAll( Arrays.asList( commonLocations ) );
-		setSourceLocations( (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] ) );
-		fDuplicateFiles = CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_SEARCH_DUPLICATE_FILES );
+		setSourceLocations( getDefaultSourceLocations() );
 	}
 
 	/* (non-Javadoc)
@@ -669,7 +662,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			IProject project = (IProject)it.next();
 			if ( project != null && project.exists() && project.isOpen() )
 				list.add( SourceLocationFactory.createProjectSourceLocation( project ) );
-		}		
+		}
 		return (ICSourceLocation[])list.toArray( new ICSourceLocation[list.size()] );
 	}
 

@@ -6,7 +6,6 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -84,11 +83,13 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup
 				fRegisters.add( new CRegister( this, regs[i] ) );
 			}
 		}
+/*
 		else if ( fRefresh )
 		{
 			updateRegisters();
 		}
 		fRefresh = false;
+*/
 		return fRegisters;
 	}
 	

@@ -22,4 +22,9 @@ public class CValueFactory
 	{
 		return new CValue( parent, cdiValue );
 	}
+
+	static public ICValue createGlobalValue( CVariable parent, ICDIValue cdiValue ) throws DebugException
+	{
+		return new CGlobalValue( parent, cdiValue );
+	}
 }

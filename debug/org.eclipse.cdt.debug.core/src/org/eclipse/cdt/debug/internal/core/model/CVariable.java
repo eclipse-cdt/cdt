@@ -5,8 +5,6 @@
  */
 package org.eclipse.cdt.debug.internal.core.model;
 
-import java.text.MessageFormat;
-
 import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
@@ -44,7 +42,7 @@ public abstract class CVariable extends CDebugElement
 	/**
 	 * Cache of current value - see #getValue().
 	 */
-	private ICValue fValue;
+	protected ICValue fValue;
 
 	/**
 	 * Counter corresponding to this variable's debug target
@@ -59,6 +57,11 @@ public abstract class CVariable extends CDebugElement
 	 * Change flag.
 	 */
 	private boolean fChanged = false;
+
+	/**
+	 * The type name of this variable.
+	 */
+	private String fTypeName = null;
 
 	/**
 	 * Constructor for CVariable.
@@ -81,10 +84,9 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public IValue getValue() throws DebugException
 	{
-		ICDIValue currentValue = getCurrentValue();
 		if ( fValue == null )
 		{
-			fValue = CValueFactory.createValue( this, currentValue );
+			fValue = CValueFactory.createValue( this, getCurrentValue() );
 		}
 		return fValue;
 	}
@@ -321,16 +323,18 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public String getReferenceTypeName() throws DebugException
 	{
-		String type = null;
-		try
+		if ( fTypeName == null )
 		{
-			type = getCDIVariable().getTypeName();
+			try
+			{
+				fTypeName = getCDIVariable().getTypeName();
+			}
+			catch( CDIException e )
+			{
+				targetRequestFailed( e.getMessage(), null );
+			}
 		}
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), null );
-		}
-		return type;
+		return fTypeName;
 	}
 
 	protected void updateParentVariable( CValue parentValue ) throws DebugException

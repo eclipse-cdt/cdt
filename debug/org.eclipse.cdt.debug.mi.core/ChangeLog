@@ -1,5 +1,12 @@
 2003-01-28 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/command/MIInfoSignals.java:
+	* src/org/eclipse/cdt/debug/mi/core/output/MIInfoSignalsInfo.java:
+	* src/org/eclipse/cdt/debug/mi/core/output/MISignal.java:
+	New files.
+
+2003-01-28 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/ArgumentObject.java:
 	Use ICDIStackFrame in the constructor.
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/RegisterObject.java:

@@ -1,3 +1,10 @@
+2003-04-17 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java:
+	setCurrentThread(), calls VariableManager.update();
+	* src/org/eclipse/cdt/debug/micore/cdt/model/Thread.java:
+	setCurrentStackFrame() calls VariableManager.update();
+
 2003-04-07 Mikhail Khodjaiants
 	Changed the messages of CDI exceptions.
 	* MISession.java

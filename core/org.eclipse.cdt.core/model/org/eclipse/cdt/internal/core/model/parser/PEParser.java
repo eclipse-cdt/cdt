@@ -12,6 +12,7 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PEArchive;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  */
@@ -21,6 +22,9 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IFile)
 	 */
 	public IBinaryFile getBinary(IPath path) throws IOException {
+		if (path == null) {
+			path = new Path("");
+		}
 		try {
 			PE pe = new PE(path.toOSString());
 			pe.dispose();

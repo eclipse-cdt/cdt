@@ -6,13 +6,16 @@ package org.eclipse.cdt.core;
  */
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.index.IndexModel;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -64,7 +67,11 @@ public class CCorePlugin extends Plugin {
 	public final static String PREF_BINARY_PARSER = "binaryparser";
 	public final static String DEFAULT_BINARY_PARSER_SIMPLE_ID = "ELF";
 	public final static String DEFAULT_BINARY_PARSER_UNIQ_ID = PLUGIN_ID + "." + DEFAULT_BINARY_PARSER_SIMPLE_ID;
+
 	public final static String PREF_USE_NEW_PARSER = "useNewParser";
+
+	public final static String ERROR_PARSER_SIMPLE_ID = "ErrorParser"; //$NON-NLS-1$
+	public final static String PREF_ERROR_PARSER = "errorOutputParser"; // $NON-NLS-1$
 	
 	// Build Model Interface Discovery
 	public final static String BUILD_SCANNER_INFO_SIMPLE_ID = "ScannerInfoProvider";
@@ -690,14 +697,11 @@ public class CCorePlugin extends Plugin {
 		this.convertProjectToCC(projectHandle, monitor, projectID, true);
 	}
 
-	// Extract the builder from the .cdtproject.  
-	//	public ICBuilder[] getBuilders(IProject project) throws CoreException {
-	//		ICExtension extensions[] = fDescriptorManager.createExtensions(BUILDER_MODEL_ID, project);
-	//		ICBuilder builders[] = new ICBuilder[extensions.length];
-	//		System.arraycopy(extensions, 0, builders, 0, extensions.length);
-	//		return builders;
-	//	}
-
+	/**
+	 *  Instanciate the class from the extension point "ProcessList"
+	 * responsable of returning a list of process for this platform.
+	 * @return
+	 */
 	public IProcessList getProcessList() {
 		IExtensionPoint extension = getDescriptor().getExtensionPoint("ProcessList");
 		if (extension != null) {
@@ -713,7 +717,67 @@ public class CCorePlugin extends Plugin {
 		return null;
 	}
 	
-	
+	/**
+	 * Array of error parsers extensions.
+	 * @return
+	 */
+	public IErrorParser[] getErrorParsers() {
+		IExtensionPoint extension = getDescriptor().getExtensionPoint(ERROR_PARSER_SIMPLE_ID);
+		IErrorParser[] empty = new IErrorParser[0];
+		if (extension != null) {
+			IExtension[] extensions = extension.getExtensions();
+			IConfigurationElement[] configElements = extensions[0].getConfigurationElements();
+			ArrayList list = new ArrayList(configElements.length);
+			for (int i = 0; i < configElements.length; i++) {
+				try {
+					IErrorParser parser = (IErrorParser) configElements[i].createExecutableExtension("class");
+					list.add(parser);
+				} catch (CoreException e) {
+				}
+			}
+			return (IErrorParser[]) list.toArray(empty);
+		}
+		return empty;
+	}
+
+	public IErrorParser[] getErrorParser(String id) {
+		IErrorParser[] empty = new IErrorParser[0];
+		try {
+			IExtensionPoint extension = getDescriptor().getExtensionPoint(ERROR_PARSER_SIMPLE_ID);
+			if (extension != null) {
+				IExtension[] extensions = extension.getExtensions();
+				List list = new ArrayList(extensions.length);
+				for (int i = 0; i < extensions.length; i++) {
+					String parserID = extensions[i].getUniqueIdentifier();
+					if ((id == null && parserID == null) || (id != null && parserID.equals(id))) {
+						IConfigurationElement[] configElements = extensions[i]. getConfigurationElements();
+						for (int j = 0; j < configElements.length; j++) {
+							IErrorParser parser = (IErrorParser)configElements[j].createExecutableExtension("class");
+							list.add(parser);
+						}
+					}
+				}
+				return (IErrorParser[]) list.toArray(empty);
+			}
+		} catch (CoreException e) {
+		}
+		return empty;
+	}
+
+	public String[] getPreferenceErrorParserIDs() {
+		String parserIDs = CCorePlugin.getDefault().getPluginPreferences().getString(PREF_USE_NEW_PARSER);
+		String[] empty = new String[0];
+		if (parserIDs != null && parserIDs.length() > 0) {
+			StringTokenizer tok = new StringTokenizer(parserIDs, ";");
+			List list = new ArrayList(tok.countTokens());
+			while (tok.hasMoreElements()) {
+				list.add(tok.nextToken());
+			}
+			return (String[]) list.toArray(empty);
+		}
+		return empty;
+	}
+
 	public IScannerInfoProvider getScannerInfoProvider(IProject project) {
 		IScannerInfoProvider provider = null;
 		if (project != null) {

@@ -218,13 +218,17 @@ public class ProjectTargets {
 		elem.appendChild(
 			doc.createTextNode(target.getBuildCommand().toString()));
 
-		elem = doc.createElement(TARGET_ARGUMENTS);
-		elem.appendChild(doc.createTextNode(target.getBuildArguments()));
-		targetElem.appendChild(elem);
+		if (target.getBuildArguments().length() > 0) {
+			elem = doc.createElement(TARGET_ARGUMENTS);
+			elem.appendChild(doc.createTextNode(target.getBuildArguments()));
+			targetElem.appendChild(elem);
+		}
 
-		elem = doc.createElement(TARGET);
-		elem.appendChild(doc.createTextNode(target.getBuildTarget()));
-		targetElem.appendChild(elem);
+		if (target.getBuildTarget().length() > 0) {
+			elem = doc.createElement(TARGET);
+			elem.appendChild(doc.createTextNode(target.getBuildTarget()));
+			targetElem.appendChild(elem);
+		}
 
 		elem = doc.createElement(TARGET_STOP_ON_ERROR);
 		elem.appendChild(

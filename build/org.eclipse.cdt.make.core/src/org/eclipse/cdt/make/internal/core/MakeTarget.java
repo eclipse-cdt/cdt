@@ -143,6 +143,6 @@ public class MakeTarget implements IMakeTarget {
 	}
 
 	public String getBuildTarget() {
-		return target;
+		return target != null ? target : "";
 	}
 }

@@ -1,3 +1,9 @@
+2003-09-30 Alain Magloire
+
+	PR 39339, a definition is missing the CPluginResource.properties file.
+
+	* src/org/eclipse/cdt/internal/ui/CPluginResource.properties.
+
 2003-09-30 Hoda Amer
 	- Fix for bug#43524 : Removing a define from a .c file causes issues in the outline
 	

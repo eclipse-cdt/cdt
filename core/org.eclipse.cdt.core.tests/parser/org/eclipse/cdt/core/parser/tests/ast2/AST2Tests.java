@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
@@ -183,19 +184,21 @@ public class AST2Tests extends TestCase {
 		// the declaration for myS
 		IASTSimpleDeclaration decl_myS = (IASTSimpleDeclaration)declstmt_myS.getDeclaration();
 		// the type specifier for myS
-		IASTCompositeTypeSpecifier type_spec_myS = (IASTCompositeTypeSpecifier)decl_myS.getDeclSpecifier();
+		IASTTypedefNameSpecifier type_spec_myS = (IASTTypedefNameSpecifier)decl_myS.getDeclSpecifier();
 		// the type name for myS
 		IASTName name_type_myS = type_spec_myS.getName();
-		// the type for myS
-		ICompositeType type_myS = (ICompositeType)name_type_myS.resolveBinding();
-		// this should be type typedef of S as seen above
-		assertEquals(typedef_S, type_myS);
+		// the typedef S for myS
+		ITypedef typedef_myS = (ITypedef)name_type_myS.resolveBinding();
+		assertEquals(typedef_S, typedef_myS);
+		// get the real type for S which is our anonymous struct
+		ICompositeType type_myS = (ICompositeType)typedef_myS.getType();
 		// the declarator for myS
 		IASTDeclarator tor_myS = (IASTDeclarator)decl_myS.getDeclarators().get(0);
 		// the name for myS
 		IASTName name_myS = tor_myS.getName();
 		// the variable myS
 		IVariable var_myS = (IVariable)name_myS.resolveBinding();
+		assertEquals(type_myS, var_myS.getType());
 		// the assignment expression statement
 		IASTExpressionStatement exprstmt = (IASTExpressionStatement)body_f.getStatements().get(1);
 		// the assignment expression

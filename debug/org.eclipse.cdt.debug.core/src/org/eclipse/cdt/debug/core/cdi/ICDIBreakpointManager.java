@@ -50,8 +50,26 @@ public interface ICDIBreakpointManager extends ICDISessionObject
 
 	/**
 	 * Sets a breakpoint at the given location.
+	 * The breakpoint is set acording to the choices:
+	 * <pre>
+	 * if location.getFile() != null then
+	 *    if location.getFunction() != null then
+	 *       breakpoint = file:function
+	 *    else
+	 *       breakpoint = file:line
+	 * else if (location.getFuntion() != null) then
+	 *    breakpoint = function
+	 * else if (location.getLineNumber() != 0 then
+	 *    breakpoint = line
+	 * else
+	 *    breakpoint = address
+	 * end
+	 * </pre> 
+	 * @see ICDIBreakpoint.TEMPORARY
+	 * @see ICDIBreakpoint.HARDWARE
+	 * @see ICDIBreakpoint.REGULAR
 	 * 
-	 * @param type - a combination of TEMPORARY and HARDWARE or 0
+	 * @param type - a combination of TEMPORARY and HARDWARE or REGULAR
 	 * @param location - the location 
 	 * @param condition - the condition or <code>null</code>
 	 * @param threadId - the thread identifier if this is 

@@ -98,6 +98,7 @@ import org.eclipse.cdt.internal.core.parser.pst.TemplateSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
+import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 
@@ -364,7 +365,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					
 					if( templateArgLists != null && templateArgLists[ idx ] != null ){
 						if( iter.hasNext() && t.getNext().getType() == IToken.tLT )
-							t = name.consumeTemplateIdArguments( (IToken) iter.next(), iter );
+							t = TokenFactory.consumeTemplateIdArguments( (IToken) iter.next(), iter );
 					}
 					
 					try
@@ -1936,7 +1937,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				
 				if( argLists != null && argLists[ idx ] != null ){
 					if( i.hasNext() && current.getNext().getType() == IToken.tLT )
-						current = typeName.consumeTemplateIdArguments( (IToken) i.next(), i );
+						current = TokenFactory.consumeTemplateIdArguments( (IToken) i.next(), i );
 				}
 				
 				if( typeSymbol instanceof IDeferredTemplateInstance ){

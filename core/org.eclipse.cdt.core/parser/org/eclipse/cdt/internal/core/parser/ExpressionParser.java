@@ -41,7 +41,6 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
-import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
@@ -1711,7 +1710,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	    {
 			String signature = "";//$NON-NLS-1$
 			if( lastToken != null )
-				signature = TokenDuple.createStringRepresentation(mark, lastToken);
+				signature = TokenFactory.createStringRepresentation(mark, lastToken);
 	        return astFactory.createTypeId( scope, kind, isConst, isVolatile, isShort, isLong, isSigned, isUnsigned, isTypename, name, id.getPointerOperators(), id.getArrayModifiers(), signature);
 	    }
 	    catch (ASTSemanticException e)

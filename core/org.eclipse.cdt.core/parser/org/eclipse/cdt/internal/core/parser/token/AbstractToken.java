@@ -56,7 +56,6 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 	protected int type;
 	protected int lineNumber = 1;
 	protected IToken next = null;
-	private String [] qualifiedName = null;
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -172,12 +171,6 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 	public final IToken getNext() { return next; }
 	public void setNext(IToken t) { next = t; }
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ITokenDuple#consumeTemplateIdArguments(org.eclipse.cdt.core.parser.IToken, java.util.Iterator)
-	 */
-	public IToken consumeTemplateIdArguments(IToken name, Iterator iter) {
-		return this;
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#contains(org.eclipse.cdt.core.parser.ITokenDuple)
 	 */
@@ -310,11 +303,8 @@ public abstract class AbstractToken implements IToken, ITokenDuple {
 	 * @see org.eclipse.cdt.core.parser.ITokenDuple#toQualifiedName()
 	 */
 	public String[] toQualifiedName() {
-		if( qualifiedName == null )
-		{
-			qualifiedName = new String[1];
-			qualifiedName[0] = getImage();
-		}
+		String [] qualifiedName = new String[1];
+		qualifiedName[0] = getImage();
 		return qualifiedName;
 	}
 }

@@ -272,7 +272,6 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		writer.write( "foo(1); \n }" ); //$NON-NLS-1$
 		String code = writer.toString();
 		int startIndex = code.indexOf( "foo(1)"); //$NON-NLS-1$
-		IASTNode node = parse( code, startIndex, startIndex + 3 );
-		
+		parse( code, startIndex, startIndex + 3 );
 	}
 }

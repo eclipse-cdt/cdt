@@ -18,7 +18,6 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
-import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 
 /**
  * @author johnc
@@ -54,7 +53,7 @@ public class SelectionParseBaseTest extends CompleteParseBaseTest {
 							callback,
 							ParserMode.SELECTION_PARSE,
 							ParserLanguage.CPP,
-							InternalParserUtil.createDefaultLogService());
+							ParserFactory.createDefaultLogService());
 		
 		IParser.ISelectionParseResult result =parser.parse( offset1, offset2 );
 		if( expectedToPass )

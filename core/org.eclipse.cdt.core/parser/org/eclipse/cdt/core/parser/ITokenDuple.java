@@ -28,7 +28,6 @@ public interface ITokenDuple {
 	public abstract IToken getLastToken();
 	
 	public List [] getTemplateIdArgLists();
-	public IToken consumeTemplateIdArguments( IToken name, Iterator iter );
 	
 	public ITokenDuple getLastSegment();
 	public ITokenDuple getLeadingSegments();

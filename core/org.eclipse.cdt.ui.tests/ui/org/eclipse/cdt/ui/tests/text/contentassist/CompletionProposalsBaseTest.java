@@ -32,7 +32,6 @@ import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
 import org.eclipse.cdt.testplugin.CProjectHelper;
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -113,11 +112,7 @@ public abstract class CompletionProposalsBaseTest  extends TestCase{
 	}
 	
 	protected void tearDown() {
-		try{
-			CProjectHelper.delete(fCProject);
-		} 
-		catch (ResourceException e) {} 
-		catch (CoreException e) {} 
+		CProjectHelper.delete(fCProject);
 	}	
 	
 	public void testCompletionProposals(){

@@ -5,6 +5,9 @@
 		ParserSymbolTableTest.testPrefixLookup_Qualified
 		ParserSymbolTableTest.testPrefixLookup_Inheritance
 
+2003-11-27 Andrew Niefer
+	add CompleteParseASTTest.testBug47624()
+
 2003-11-18 Andrew Niefer
 	update ParserSymbolTableTest to reflect refactoring of Declaration into 4 separate classes.
 

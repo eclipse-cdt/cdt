@@ -1055,4 +1055,23 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertFalse(i.hasNext());
 	}
 
+	public void testBug47624() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "struct s { }; \n" );
+		buffer.append( "void f ( int s ) { \n" );
+		buffer.append( "   struct s sInstance; \n" );
+		buffer.append( "}\n");
+		
+		Iterator i = parse( buffer.toString() ).getDeclarations();
+		IASTClassSpecifier structS = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTFunction function = (IASTFunction) i.next();
+		Iterator fnIter = getDeclarations( function );
+		IASTVariable sInstance = (IASTVariable) fnIter.next();
+		IASTElaboratedTypeSpecifier elaborated = (IASTElaboratedTypeSpecifier) sInstance.getAbstractDeclaration().getTypeSpecifier();
+		assertFalse( fnIter.hasNext() );
+		
+		assertAllReferences( 1, createTaskList( new Task( structS ) ) );
+		assertFalse( i.hasNext() );
+	}
 }

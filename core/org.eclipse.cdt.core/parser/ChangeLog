@@ -1,3 +1,6 @@
+2003-11-27 Andrew Niefer
+	fix bug 47264: Parse fails when using  struct s foo; and int s; in function bodies
+
 2003-11-18 Andrew Niefer
 	Refactor PST: Split Declaration into 4 classes : ContainerSymbol, DerivableContainerSymbol, ParameterizedContainerSymbol,
 	SpecializedSymbol.  Move these along with BasicSymbol & TemplateInstance to no longer be nested in ParserSymbolTable.

@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ICResource;
 import org.eclipse.cdt.core.model.ICRoot;
 import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.utils.elf.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.core.resources.IFile;

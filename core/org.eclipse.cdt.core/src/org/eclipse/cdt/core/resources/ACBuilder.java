@@ -6,15 +6,14 @@ package org.eclipse.cdt.core.resources;
  */
 
 
-import org.eclipse.cdt.core.*;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 
 public abstract class ACBuilder extends IncrementalProjectBuilder implements IMarkerGenerator {
 

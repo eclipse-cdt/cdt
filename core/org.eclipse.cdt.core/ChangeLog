@@ -1,0 +1,14 @@
+2002-10-13
+
+	Boosting the compiler error level to get unused imports.
+
+	* model/../internal/core/model/ArchiveContainer.java:
+	* model/../core/model/BinaryContainer.java:
+	* model/../core/model/CElementDelta.java:
+	* model/../core/model/CModelManager.java:
+	* model/../core/model/CResourceInfo.java:
+	Remove unused imports.
+
+	* src/../core/resources/ACBuilder.java:
+	* src/../internal/core/CBuilder.java:
+	Remove unused imports.

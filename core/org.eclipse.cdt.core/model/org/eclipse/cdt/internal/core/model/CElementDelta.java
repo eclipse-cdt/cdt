@@ -6,7 +6,6 @@ package org.eclipse.cdt.internal.core.model;
  */
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;

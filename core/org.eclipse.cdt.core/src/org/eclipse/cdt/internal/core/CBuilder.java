@@ -11,10 +11,18 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.CommandLauncher;
+import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.resources.ACBuilder;
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.MakeUtil;
+import org.eclipse.cdt.internal.errorparsers.ErrorParserManager;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
@@ -23,13 +31,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
-import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.resources.ACBuilder;
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.internal.errorparsers.ErrorParserManager;
-import org.eclipse.cdt.core.*;
-import org.eclipse.cdt.core.resources.*;
 
 
 
@@ -52,7 +53,6 @@ public class CBuilder extends ACBuilder {
 	 * @see IncrementalProjectBuilder#build
 	 */	
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {	
-		IResourceDelta delta= getDelta(getProject());
 		boolean isFullBuild= (kind == IncrementalProjectBuilder.FULL_BUILD);
 		if (isFullBuild) {
 			invokeMake(true, monitor);

@@ -223,7 +223,7 @@ public class CIndexedValue extends AbstractCValue implements IIndexedValue {
 	private IVariable[] getVariables0( int offset, int length ) throws DebugException {
 		IVariable[] result = new IVariable[length];
 		int firstIndex = getPartitionIndex( offset );
-		int lastIndex = getPartitionIndex( offset + length );
+		int lastIndex = getPartitionIndex( offset + Math.max( length - 1, 0 ) );
 		for ( int i = firstIndex; i <= lastIndex; ++i ) {
 			synchronized( this ) {
 				if ( !isPartitionLoaded( i ) ) {

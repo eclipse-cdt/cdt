@@ -1,3 +1,7 @@
+2004-12-02 Mikhail Khodjaiants
+	Fix for bug 80055: ArrayIndexOutOfBoundsException in DisassemblyView.
+	* DisassemblyEditorInput.java
+
 2004-11-26 Mikhail Khodjaiants
 	Do not use "void" if parameter's list is empty when constructing a function or 
 	method name for function breakpoints. Name mapping should be done on the implementation level.

@@ -8,6 +8,9 @@
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.Viewer;
@@ -57,15 +60,24 @@ public class CPElementSorter extends ViewerSorter {
 
 	public void sort(Viewer viewer, Object[] elements) {
 		// include paths and symbol definitions must not be sorted
-		if (elements.length > 0 && elements[0] instanceof CPElement) {
-			CPElement firstElement = (CPElement)elements[0];
-			switch (firstElement.getEntryKind()) {
-				case IPathEntry.CDT_INCLUDE :
-				case IPathEntry.CDT_MACRO :
-					return;
+		List sort = new ArrayList(elements.length);
+		List dontSort = new ArrayList(elements.length);
+		for(int i = 0; i < elements.length; i++) {
+			if (elements[i] instanceof CPElement) {
+				CPElement element = (CPElement)elements[i];
+				if ( element.getEntryKind() == IPathEntry.CDT_INCLUDE || element.getEntryKind() == IPathEntry.CDT_MACRO) {
+					dontSort.add(elements[i]);
+				} else {
+					sort.add(elements[i]);
+				}
+			} else {
+				sort.add(elements[i]);
 			}
 		}
-		super.sort(viewer, elements);
+		Object[] sorted = new Object[elements.length];
+		System.arraycopy(sort.toArray(), 0, sorted, 0, sort.size());
+		super.sort(viewer, sorted);
+		System.arraycopy(dontSort.toArray(), 0, sorted, sort.size(), dontSort.size());
 	}
 
 }

@@ -14,6 +14,8 @@ package org.eclipse.cdt.debug.mi.core.cdi.event;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDisconnectedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
+import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 
 /**
  */
@@ -21,8 +23,9 @@ public class DisconnectedEvent implements ICDIDisconnectedEvent {
 
 	ICDIObject source;
 
-	public DisconnectedEvent(Session session) {
-		source = session.getCurrentTarget();
+	public DisconnectedEvent(Session session, MIDetachedEvent detach) {
+		Target target = session.getTarget(detach.getMISession());
+		source = target;
 	}
 
 	/**

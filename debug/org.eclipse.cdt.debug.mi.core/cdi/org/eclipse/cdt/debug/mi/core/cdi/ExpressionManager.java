@@ -131,12 +131,11 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 	public ICDIExpression createExpression(ICDIStackFrame frame, String name) throws CDIException {
 		Expression expression = null;
 		Session session = (Session)getSession();
-		ICDITarget currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = currentTarget.getCurrentThread();
+		Target target = (Target)frame.getTarget();
+		ICDIThread currentThread = target.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
-			Target target = (Target)frame.getThread().getTarget();
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			MIVarCreate var = factory.createMIVarCreate(name);

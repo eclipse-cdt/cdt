@@ -11,8 +11,6 @@
  
 package org.eclipse.cdt.debug.mi.core.cdi;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
@@ -42,6 +40,7 @@ public class Session implements ICDISession, ICDISessionObject {
 
 	public final static Target[] EMPTY_TARGETS = {};
 	Properties props;
+	ProcessManager processManager;
 	EventManager eventManager;
 	BreakpointManager breakpointManager;
 	ExpressionManager expressionManager;
@@ -52,8 +51,6 @@ public class Session implements ICDISession, ICDISessionObject {
 	SignalManager signalManager;
 	SourceManager sourceManager;
 	ICDIConfiguration configuration;
-	Target[] debugTargets = EMPTY_TARGETS;
-	Target currentTarget;
 
 	public Session(MISession miSession, boolean attach) {
 		commonSetup();
@@ -79,6 +76,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	private void commonSetup() {
 		props = new Properties();
 
+		processManager = new ProcessManager(this);
 		breakpointManager = new BreakpointManager(this);
 		eventManager = new EventManager(this);
 		expressionManager = new ExpressionManager(this);
@@ -91,44 +89,27 @@ public class Session implements ICDISession, ICDISessionObject {
 	}
 
 	public void addTargets(Target[] targets, Target current) {
-		Target[] newTargets = new Target[debugTargets.length + targets.length];
-		System.arraycopy(debugTargets, 0, newTargets, 0, debugTargets.length);
-		System.arraycopy(targets, 0, newTargets, debugTargets.length, targets.length);
-		if (current != null) {
-			currentTarget = current;
-		}
-		for (int i = 0; i < targets.length; ++i) {
-			MISession miSession = targets[i].getMISession();
-			if (miSession != null) {
-				miSession.addObserver((EventManager)getEventManager());
-			}
-		}
+		ProcessManager pMgr = getProcessManager();
+		pMgr.addTargets(targets, current);
 	}
 
 	public void removeTargets(Target[] targets) {
-		ArrayList list = new ArrayList(Arrays.asList(debugTargets));
-		for (int i = 0; i < targets.length; ++i) {
-			MISession miSession = targets[i].getMISession();
-			if (miSession != null) {
-				miSession.deleteObserver((EventManager)getEventManager());
-			}
-			if (currentTarget != null && currentTarget.equals(targets[i])) {
-				currentTarget = null;
-			}
-			list.remove(targets[i]);
-		}
-		debugTargets = (Target[]) list.toArray(new Target[list.size()]);
+		ProcessManager pMgr = getProcessManager();
+		pMgr.removeTargets(targets);
 	}
 
 	public Target getTarget(MISession miSession) {
-		for (int i = 0; i < debugTargets.length; ++i) {
-			MISession mi = debugTargets[i].getMISession();
-			if (mi.equals(miSession)) {
-				return debugTargets[i];
-			}
-		}
-		// ASSERT: it should not happen.
-		return null;
+		ProcessManager pMgr = getProcessManager();
+		return pMgr.getTarget(miSession);
+	}
+
+	/**
+	 * @deprecated
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getCurrentTarget()
+	 */
+	public ICDITarget getCurrentTarget() {
+		ProcessManager pMgr = getProcessManager();
+		return pMgr.getCurrentTarget();
 	}
 
 	/**
@@ -136,6 +117,10 @@ public class Session implements ICDISession, ICDISessionObject {
 	 */
 	public String getAttribute(String key) {
 		return props.getProperty(key);
+	}
+
+	public ProcessManager getProcessManager() {
+		return processManager;
 	}
 
 	/**
@@ -205,22 +190,17 @@ public class Session implements ICDISession, ICDISessionObject {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getTargets()
 	 */
 	public ICDITarget[] getTargets() {
-		return debugTargets;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getCurrentTarget()
-	 */
-	public ICDITarget getCurrentTarget() {
-		return currentTarget;
+		ProcessManager pMgr = getProcessManager();
+		return pMgr.getCDITargets();
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#setCurrentTarget()
 	 */
 	public void setCurrentTarget(ICDITarget target) throws CDIException {
+		ProcessManager pMgr = getProcessManager();
 		if (target instanceof Target) {
-			currentTarget = (Target)target;
+			pMgr.setCurrentTarget((Target)target);
 		} else {
 			throw new CDIException(CdiResources.getString("cdi.Session.Unknown_target")); //$NON-NLS-1$
 		}
@@ -262,8 +242,10 @@ public class Session implements ICDISession, ICDISessionObject {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#terminate(ICDITarget)
 	 */
 	public void terminate() throws CDIException {
-		for (int i = 0; i < debugTargets.length; ++i) {
-			debugTargets[i].terminate();
+		ProcessManager pMgr = getProcessManager();
+		Target[] targets = pMgr.getTargets();
+		for (int i = 0; i < targets.length; ++i) {
+			targets[i].terminate();
 		}
 		//TODO: the ExitEvent is sent by MISession.terminate()
 		// We nee move it here.
@@ -281,7 +263,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#addSearchPaths(String[])
 	 */
 	public void addSearchPaths(String[] dirs) throws CDIException {
-		addSearchPaths(currentTarget, dirs);
+		addSearchPaths(getCurrentTarget(), dirs);
 	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#addSearchPaths(String[])
@@ -303,7 +285,7 @@ public class Session implements ICDISession, ICDISessionObject {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getSessionProcess()
 	 */
 	public Process getSessionProcess() throws CDIException {
-		return getSessionProcess(currentTarget);
+		return getSessionProcess(getCurrentTarget());
 	}
 	
 	/**

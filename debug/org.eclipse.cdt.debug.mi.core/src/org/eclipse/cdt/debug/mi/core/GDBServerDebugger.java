@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -77,21 +78,24 @@ public class GDBServerDebugger implements ICDebugger {
 				String remote = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV, "invalid"); //$NON-NLS-1$
 				String remoteBaud = config.getAttribute(IGDBServerMILaunchConfigurationConstants.ATTR_DEV_SPEED, "invalid"); //$NON-NLS-1$
 				session = (Session)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), -1, null, cwd, gdbinit);
-				Target target = (Target)session.getCurrentTarget();
-				MISession miSession = target.getMISession();
-				CommandFactory factory = miSession.getCommandFactory();
-				MIGDBSet setRemoteBaud = factory.createMIGDBSet(new String[]{"remotebaud", remoteBaud}); //$NON-NLS-1$
-				// Set serial line parameters
-				miSession.postCommand(setRemoteBaud, launchTimeout);
-				MIInfo info = setRemoteBaud.getMIInfo();
-				if (info == null) {
-					throw new MIException (MIPlugin.getResourceString("src.GDBServerDebugger.Can_not_set_Baud")); //$NON-NLS-1$
-				}
-				MITargetSelect select = factory.createMITargetSelect(new String[] {"remote", remote}); //$NON-NLS-1$
-				miSession.postCommand(select, launchTimeout);
-				select.getMIInfo();
-				if (info == null) {
-					throw new MIException (MIPlugin.getResourceString("src.common.No_answer")); //$NON-NLS-1$
+				ICDITarget[] targets = session.getTargets();
+				for (int i = 0; i < targets.length; ++i) {
+					Target target = (Target)targets[i];
+					MISession miSession = target.getMISession();
+					CommandFactory factory = miSession.getCommandFactory();
+					MIGDBSet setRemoteBaud = factory.createMIGDBSet(new String[]{"remotebaud", remoteBaud}); //$NON-NLS-1$
+					// Set serial line parameters
+					miSession.postCommand(setRemoteBaud, launchTimeout);
+					MIInfo info = setRemoteBaud.getMIInfo();
+					if (info == null) {
+						throw new MIException (MIPlugin.getResourceString("src.GDBServerDebugger.Can_not_set_Baud")); //$NON-NLS-1$
+					}
+					MITargetSelect select = factory.createMITargetSelect(new String[] {"remote", remote}); //$NON-NLS-1$
+					miSession.postCommand(select, launchTimeout);
+					select.getMIInfo();
+					if (info == null) {
+						throw new MIException (MIPlugin.getResourceString("src.common.No_answer")); //$NON-NLS-1$
+					}
 				}
 			}
 			initializeLibraries(config, session);

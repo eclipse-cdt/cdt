@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.event;
 import org.eclipse.cdt.debug.core.cdi.event.ICDICreatedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.MemoryManager;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointCreatedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIInferiorCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISharedLibCreatedEvent;
@@ -37,47 +39,61 @@ public class CreatedEvent implements ICDICreatedEvent {
 
 	public CreatedEvent(Session s, MIBreakpointCreatedEvent bpoint) {
 		session = s;
-		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
+		BreakpointManager mgr = session.getBreakpointManager();
+		MISession miSession = bpoint.getMISession();
 		int number = bpoint.getNumber();
-		source = mgr.getBreakpoint(bpoint.getMISession(), number);
+		source = mgr.getBreakpoint(miSession, number);
 		if (source == null) {
-			source = new CObject((Target)session.getCurrentTarget());
+			Target target = session.getTarget(miSession);
+			source = new CObject(target);
 		}
 	}
 
 	public CreatedEvent(Session s, MIVarCreatedEvent var) {
 		session = s;
 		VariableManager mgr = (VariableManager)session.getVariableManager();
+		MISession miSession = var.getMISession();
 		String varName = var.getVarName();
-		source = mgr.getVariable(var.getMISession(), varName);
+		source = mgr.getVariable(miSession, varName);
 		if (source == null) {
-			source = new CObject((Target)session.getCurrentTarget());
+			Target target = session.getTarget(miSession);
+			source = new CObject(target);
 		}
 	}
 
-	public CreatedEvent(Session s, MIRegisterCreatedEvent var) {
+	public CreatedEvent(Session s, MIRegisterCreatedEvent reg) {
 		session = s;
 		RegisterManager mgr = (RegisterManager)session.getRegisterManager();
-		int regno = var.getNumber();
-		source = mgr.getRegister(var.getMISession(), regno);
+		MISession miSession = reg.getMISession();
+		int regno = reg.getNumber();
+		source = mgr.getRegister(miSession, regno);
 		if (source == null) {
-			source = new CObject((Target)session.getCurrentTarget());
+			Target target = session.getTarget(miSession);
+			source = new CObject(target);
 		}
 	}
 
-	public CreatedEvent(Session s, MIThreadCreatedEvent ethread) {
+	public CreatedEvent(Session s, MIThreadCreatedEvent cthread) {
 		session = s;
-		Target target = (Target)session.getCurrentTarget();
-		source = target.getThread(ethread.getId());
+		MISession miSession = cthread.getMISession();
+		Target target = session.getTarget(miSession);
+		source = target.getThread(cthread.getId());
 		if (source == null) {
-			source = new CObject((Target)session.getCurrentTarget());
+			source = new CObject(target);
 		}
+	}
+
+	public CreatedEvent(Session s, MIInferiorCreatedEvent inferior) {
+		session  = s;
+		MISession miSession = inferior.getMISession();
+		source = session.getTarget(miSession);
 	}
 
 	public CreatedEvent(Session s, MIMemoryCreatedEvent mblock) {
 		session = s;
 		MemoryManager mgr = (MemoryManager)session.getMemoryManager();
-		ICDIMemoryBlock[] blocks = mgr.getMemoryBlocks(mblock.getMISession());
+		MISession miSession = mblock.getMISession();
+		ICDIMemoryBlock[] blocks = mgr.getMemoryBlocks(miSession);
 		for (int i = 0; i < blocks.length; i++) {
 			if (blocks[i].getStartAddress() == mblock.getAddress() &&
 			    blocks[i].getLength() == mblock.getLength()) {
@@ -86,17 +102,20 @@ public class CreatedEvent implements ICDICreatedEvent {
 			}
 		}
 		if (source == null) {
-			source = new CObject((Target)session.getCurrentTarget());
+			Target target = session.getTarget(miSession);
+			source = new CObject(target);
 		}
 	}
 
 	public CreatedEvent(Session s, MISharedLibCreatedEvent slib) {
 		session = s;
 		SharedLibraryManager mgr = (SharedLibraryManager)session.getSharedLibraryManager();
+		MISession miSession = slib.getMISession();
 		String name = slib.getName();
-		source = mgr.getSharedLibrary(slib.getMISession(), name);
+		source = mgr.getSharedLibrary(miSession, name);
 		if (source == null) {
-			source = new CObject((Target)session.getCurrentTarget());
+			Target target = session.getTarget(miSession);
+			source = new CObject(target);
 		}
 	}
 

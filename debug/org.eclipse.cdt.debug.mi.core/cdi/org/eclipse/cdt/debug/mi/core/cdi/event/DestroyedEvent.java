@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
+import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointManager;
 import org.eclipse.cdt.debug.mi.core.cdi.ExpressionManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
@@ -36,60 +37,67 @@ public class DestroyedEvent implements ICDIDestroyedEvent {
 	Session session;
 	ICDIObject source;
 	
-	public DestroyedEvent(Session s, MIThreadExitEvent ethread) {
+	public DestroyedEvent(Session s, MIThreadExitEvent cthread) {
 		session = s;
-		source = new Thread((Target)session.getCurrentTarget(), ethread.getId());
+		Target target = session.getTarget(cthread.getMISession());
+		source = new Thread(target, cthread.getId());
 	}
 
 	public DestroyedEvent(Session s, MIVarDeletedEvent var) {
 		session = s;
 		VariableManager varMgr = (VariableManager)session.getVariableManager();
+		MISession miSession = var.getMISession();
 		String varName = var.getVarName();
-		Variable variable = varMgr.getVariable(var.getMISession(), varName);
+		Variable variable = varMgr.getVariable(miSession, varName);
 		if (variable!= null) {
 			source = variable;
 			try {
-				varMgr.removeVariable(var.getMISession(), variable.getMIVar().getVarName());
+				varMgr.removeVariable(miSession, variable.getMIVar().getVarName());
 			} catch (CDIException e) {
 			}
 		} else {
 			ExpressionManager expMgr = (ExpressionManager)session.getExpressionManager();
-			variable = expMgr.getExpression(var.getMISession(), varName);
+			variable = expMgr.getExpression(miSession, varName);
 			if (variable != null) {
 				source = variable;
 				try {
-					expMgr.removeExpression(var.getMISession(), variable.getMIVar().getVarName());
+					expMgr.removeExpression(miSession, variable.getMIVar().getVarName());
 				} catch (CDIException e) {
 				}
 			} else {
-				source = new CObject((Target)session.getCurrentTarget());
+				Target target = session.getTarget(miSession);
+				source = new CObject(target);
 			}
 		}
 	}
 
 	public DestroyedEvent(Session s, MIBreakpointDeletedEvent bpoint) {
 		session = s;
-		BreakpointManager mgr = (BreakpointManager)session.getBreakpointManager();
+		BreakpointManager mgr = session.getBreakpointManager();
+		MISession miSession = bpoint.getMISession();
 		int number = bpoint.getNumber();
-		Breakpoint breakpoint = mgr.getBreakpoint(bpoint.getMISession(), number);
+		Breakpoint breakpoint = mgr.getBreakpoint(miSession, number);
 		if (breakpoint != null) {
 			source = breakpoint;
-			mgr.deleteBreakpoint(bpoint.getMISession(), number);
+			mgr.deleteBreakpoint(miSession, number);
 		} else {
-			source = new CObject((Target)session.getCurrentTarget());
+			Target target = session.getTarget(miSession);
+			source = new CObject(target);
 		}
 	}
 
 	public DestroyedEvent(Session s, MISharedLibUnloadedEvent slib) {
 		session = s;
 		SharedLibraryManager mgr = (SharedLibraryManager)session.getSharedLibraryManager();
+		MISession miSession = slib.getMISession();
 		String name = slib.getName();
-		ICDISharedLibrary lib = mgr.getSharedLibrary(slib.getMISession(), name);
+		ICDISharedLibrary lib = mgr.getSharedLibrary(miSession, name);
 		if (lib != null) {
-			mgr.deleteSharedLibrary(slib.getMISession(), lib);
+			mgr.deleteSharedLibrary(miSession, lib);
 			source = lib;
 		} else {
-			source = new CObject((Target)session.getCurrentTarget());
+			Target target = session.getTarget(miSession);
+			source = new CObject(target);
 		}
 	}
 

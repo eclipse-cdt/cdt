@@ -54,6 +54,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIDestroyedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIInferiorCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorSignalExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
@@ -163,7 +164,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			} else if (miEvent instanceof MIGDBExitEvent) {
 				cdiList.add(new DestroyedEvent(session));
 			} else if (miEvent instanceof MIDetachedEvent) {
-				cdiList.add(new DisconnectedEvent(session));
+				cdiList.add(new DisconnectedEvent(session, (MIDetachedEvent)miEvent));
 			} else if (miEvent instanceof MIBreakpointDeletedEvent) {
 				MIBreakpointDeletedEvent bpoint = (MIBreakpointDeletedEvent)miEvent;
 				if (bpoint.getNumber() > 0) {
@@ -204,6 +205,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 				cdiList.add(new CreatedEvent(session, (MIMemoryCreatedEvent)miEvent));
 			} else if (miEvent instanceof MISharedLibCreatedEvent) {
 				cdiList.add(new CreatedEvent(session, (MISharedLibCreatedEvent)miEvent));
+			} else if (miEvent instanceof MIInferiorCreatedEvent) {
+				cdiList.add(new CreatedEvent(session, (MIInferiorCreatedEvent)miEvent));
 			}
 		}
 

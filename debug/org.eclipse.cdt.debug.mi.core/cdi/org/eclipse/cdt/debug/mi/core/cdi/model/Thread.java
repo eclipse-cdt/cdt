@@ -107,10 +107,8 @@ public class Thread extends CObject implements ICDIThread {
 		if (currentFrames == null || currentFrames.size() < depth) {
 			currentFrames = new ArrayList();
 			Target target = (Target)getTarget();
-			Session session = (Session) target.getSession();
-			Target currentTarget = (Target) session.getCurrentTarget();
-			ICDIThread currentThread = currentTarget.getCurrentThread();
-			currentTarget.setCurrentThread(this, false);
+			ICDIThread currentThread = target.getCurrentThread();
+			target.setCurrentThread(this, false);
 			try {
 				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
@@ -131,7 +129,7 @@ public class Thread extends CObject implements ICDIThread {
 				//throw e;
 				//System.out.println(e);
 			} finally {
-				currentTarget.setCurrentThread(currentThread, false);
+				target.setCurrentThread(currentThread, false);
 			}
 			// assign the currentFrame if it was not done yet.
 			if (currentFrame == null) {
@@ -152,10 +150,8 @@ public class Thread extends CObject implements ICDIThread {
 	public int getStackFrameCount() throws CDIException {
 		if (stackdepth == 0) {
 			Target target = (Target)getTarget();
-			Session session = (Session) (target.getSession());
-			Target currentTarget = (Target) session.getCurrentTarget();
-			ICDIThread currentThread = currentTarget.getCurrentThread();
-			currentTarget.setCurrentThread(this, false);
+			ICDIThread currentThread = target.getCurrentThread();
+			target.setCurrentThread(this, false);
 			try {
 				MISession mi = target.getMISession();
 				CommandFactory factory = mi.getCommandFactory();
@@ -185,7 +181,7 @@ public class Thread extends CObject implements ICDIThread {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
-				currentTarget.setCurrentThread(currentThread, false);
+				target.setCurrentThread(currentThread, false);
 			}
 		}
 		return stackdepth;
@@ -198,10 +194,8 @@ public class Thread extends CObject implements ICDIThread {
 		if (currentFrames == null || currentFrames.size() < high) {
 			currentFrames = new ArrayList();
 			Target target = (Target) getTarget();
-			Session session = (Session) target.getSession();
-			Target currentTarget = (Target) session.getCurrentTarget();
-			ICDIThread currentThread = currentTarget.getCurrentThread();
-			currentTarget.setCurrentThread(this, false);
+			ICDIThread currentThread = target.getCurrentThread();
+			target.setCurrentThread(this, false);
 			try {
 				int depth = getStackFrameCount();
 				int upperBound;
@@ -233,7 +227,7 @@ public class Thread extends CObject implements ICDIThread {
 				//throw e;
 				//System.out.println(e);
 			} finally {
-				currentTarget.setCurrentThread(currentThread, false);
+				target.setCurrentThread(currentThread, false);
 			}
 			// take time to assign the currentFrame, if it is in the set
 			if (currentFrame == null) {
@@ -266,15 +260,18 @@ public class Thread extends CObject implements ICDIThread {
 		}
 
 		// Check to see if we are already at this level
-		ICDIStackFrame current = getCurrentStackFrame();
-		if (current != null && current.getLevel() == frameLevel) {
-			// noop
-			return;
+		if (currentFrame != null && currentFrame.getLevel() == frameLevel) {
+			if (stackframe != null) {
+				Thread aThread = (Thread)stackframe.getThread();
+				if (aThread != null && aThread.getId() == getId()) {
+					// noop
+					return;
+				}
+			}
 		}
 
 		try {
 			Target target = (Target)getTarget();
-			Session session = (Session) target.getSession();
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			// Need the GDB/MI view of level which is the reverse, i.e. the highest level is 0
@@ -282,7 +279,7 @@ public class Thread extends CObject implements ICDIThread {
 			int miLevel = getStackFrameCount() - frameLevel;
 			MIStackSelectFrame frame = factory.createMIStackSelectFrame(miLevel);
 			// Set ourself as the current thread first.
-			 ((Target) getTarget()).setCurrentThread(this, doUpdate);
+			target.setCurrentThread(this, doUpdate);
 			mi.postCommand(frame);
 			MIInfo info = frame.getMIInfo();
 			if (info == null) {
@@ -293,6 +290,7 @@ public class Thread extends CObject implements ICDIThread {
 			// some variables like registers. Call an update()
 			// To generate changeEvents.
 			if (doUpdate) {
+				Session session = (Session) target.getSession();
 				RegisterManager regMgr = (RegisterManager) session.getRegisterManager();
 				if (regMgr.isAutoUpdate()) {
 					regMgr.update(target);

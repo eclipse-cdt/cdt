@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.mi.core.cdi.ExitInfo;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalExitInfo;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorSignalExitEvent;
@@ -53,7 +54,8 @@ public class ExitedEvent implements ICDIExitedEvent {
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
 	public ICDIObject getSource() {
-		return session.getCurrentTarget();
+		Target target = session.getTarget(event.getMISession());
+		return target;
 	}
 
 }

@@ -11,20 +11,17 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDICatchEvent;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.model.ICDICatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExceptionpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
@@ -361,13 +358,6 @@ public class BreakpointManager extends Manager {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#deleteAllBreakpoints()
-	 */
-	public void deleteAllBreakpoints() throws CDIException {
-		deleteBreakpoints(getBreakpoints());
-	}
-
 	public void deleteAllBreakpoints(Target target) throws CDIException {
 		List bList = (List)breakMap.get(target);
 		if (bList != null) {
@@ -383,15 +373,6 @@ public class BreakpointManager extends Manager {
 		deleteBreakpoints((Target)breakpoint.getTarget(), new ICDIBreakpoint[] { breakpoint });
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#deleteBreakpoints(ICDIBreakpoint[])
-	 */
-	public void deleteBreakpoints(ICDIBreakpoint[] breakpoints) throws CDIException {
-		for (int i = 0; i < breakpoints.length; ++i) {
-			deleteBreakpoint(breakpoints[i]);
-		}
-	}
-	
 	public void deleteBreakpoints(Target target, ICDIBreakpoint[] breakpoints) throws CDIException {
 		int[] numbers = new int[breakpoints.length];
 		List bList = (List)breakMap.get(target);
@@ -444,17 +425,6 @@ public class BreakpointManager extends Manager {
 		return EMPTY_BREAKPOINTS;
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#getBreakpoints()
-	 */
-	public ICDIBreakpoint[] getBreakpoints() throws CDIException {
-		Collection col = breakMap.values();
-		Iterator itr = breakMap.values().iterator();
-		ICDIBreakpoint[] bps = new ICDIBreakpoint[col.size()];
-		col.toArray(bps);
-		return bps;
-	}
-
 	public ICDIBreakpoint[] getDeferredBreakpoints(Target target) throws CDIException {
 		List dlist = (List)deferredMap.get(target);
 		if (dlist != null) {
@@ -463,33 +433,6 @@ public class BreakpointManager extends Manager {
 			return bps;
 		}
 		return EMPTY_BREAKPOINTS;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#setCatchpoint(int, ICDICatchEvent, String, ICDICondition, boolean)
-	 */
-	public ICDICatchpoint setCatchpoint( int type, ICDICatchEvent event, String expression,
-		ICDICondition condition) throws CDIException {
-		throw new CDIException(CdiResources.getString("cdi.BreakpointManager.Not_Supported")); //$NON-NLS-1$
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#setLocationBreakpoint(int, ICDILocation, ICDICondition, boolean, String)
-	 */
-	public ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
-		ICDICondition condition, String threadId) throws CDIException {
-		return setLocationBreakpoint(type, location, condition, threadId, false);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#setLocationBreakpoint(int, ICDILocation, ICDICondition, boolean, String)
-	 */
-	public ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
-		ICDICondition condition, String threadId, boolean deferred) throws CDIException {
-
-		Session session = (Session)getSession();
-		Target target = (Target)session.getCurrentTarget();
-		return setLocationBreakpoint(target, type, location, condition, threadId, deferred);
 	}
 
 	public ICDILocationBreakpoint setLocationBreakpoint(Target target, int type, ICDILocation location,
@@ -598,14 +541,6 @@ public class BreakpointManager extends Manager {
 		bkpt.setMIBreakpoint(points[0]);
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager#setWatchpoint(int, int, String, ICDICondition, boolean)
-	 */
-	public ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
-		ICDICondition condition) throws CDIException {
-		Target target = (Target)getSession().getCurrentTarget();
-		return setWatchpoint(target, type, watchType, expression, condition);
-	}
 	public ICDIWatchpoint setWatchpoint(Target target, int type, int watchType, String expression,
 			ICDICondition condition) throws CDIException {
 
@@ -642,6 +577,11 @@ public class BreakpointManager extends Manager {
 		// Fire a created Event.
 		miSession.fireEvent(new MIBreakpointCreatedEvent(miSession, bkpt.getMIBreakpoint().getNumber()));
 		return bkpt;
+	}
+
+	public ICDIExceptionpoint setExceptionpoint(Target target, String clazz, boolean stopOnThrow,
+			boolean stopOnCatch) throws CDIException {
+		return null;
 	}
 
 	/**

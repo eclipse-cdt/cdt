@@ -21,7 +21,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgumentObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
@@ -29,6 +28,7 @@ import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Argument;
 import org.eclipse.cdt.debug.mi.core.cdi.model.ArgumentObject;
+import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
@@ -148,9 +148,14 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 	/**
 	 * Check the type
 	 */
-	public void checkType(MISession miSession, String type) throws CDIException {
+	public void checkType(StackFrame frame, String type) throws CDIException {
 		if (type != null && type.length() > 0) {
+			Target target = (Target)frame.getTarget();
+			ICDIThread currentThread = target.getCurrentThread();
+			ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+			frame.getThread().setCurrentStackFrame(frame, false);
 			try {
+				MISession miSession = target.getMISession();
 				CommandFactory factory = miSession.getCommandFactory();
 				MIPType ptype = factory.createMIPType(type);
 				miSession.postCommand(ptype);
@@ -160,6 +165,8 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 				}
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
+			} finally {
+				currentThread.setCurrentStackFrame(currentFrame, false);
 			}
 		} else {
 			throw new CDIException(CdiResources.getString("cdi.VariableManager.Unknown_type")); //$NON-NLS-1$
@@ -222,14 +229,13 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 				Session session = (Session) getSession();
 				ICDIThread currentThread = null;
 				ICDIStackFrame currentFrame = null;
+				Target target = (Target)argObj.getTarget();
 				if (stack != null) {
-					ICDITarget currentTarget = session.getCurrentTarget();
-					currentThread = currentTarget.getCurrentThread();
+					currentThread = target.getCurrentThread();
 					currentFrame = currentThread.getCurrentStackFrame();
 					stack.getThread().setCurrentStackFrame(stack, false);
 				}
 				try {
-					Target target = (Target)argObj.getTarget();
 					MISession mi = target.getMISession();
 					CommandFactory factory = mi.getCommandFactory();
 					MIVarCreate var = factory.createMIVarCreate(name);
@@ -260,12 +266,11 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 	public ICDIArgumentObject[] getArgumentObjects(ICDIStackFrame frame) throws CDIException {
 		List argObjects = new ArrayList();
 		Session session = (Session) getSession();
-		ICDITarget currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = currentTarget.getCurrentThread();
+		Target target = (Target)frame.getTarget();
+		ICDIThread currentThread = target.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
-			Target target = (Target)frame.getTarget();
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			int depth = frame.getThread().getStackFrameCount();
@@ -361,7 +366,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 		if (obj != null) {
 			// throw an exception if not a good type.
 			Target target = (Target)obj.getTarget();
-			checkType(target.getMISession(), type);
+			checkType((StackFrame)obj.getStackFrame(), type);
 			VariableObject vo =
 				new VariableObject(
 					target,
@@ -386,12 +391,11 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 	public ICDIVariableObject[] getLocalVariableObjects(ICDIStackFrame frame) throws CDIException {
 		List varObjects = new ArrayList();
 		Session session = (Session) getSession();
-		ICDITarget currentTarget = session.getCurrentTarget();
-		ICDIThread currentThread = currentTarget.getCurrentThread();
+		Target target = (Target)frame.getTarget();
+		ICDIThread currentThread = target.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
-			Target target = (Target)frame.getTarget();
 			MISession mi = target.getMISession();
 			CommandFactory factory = mi.getCommandFactory();
 			int level = frame.getLevel();
@@ -445,14 +449,13 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 				ICDIStackFrame stack = varObj.getStackFrame();
 				ICDIThread currentThread = null;
 				ICDIStackFrame currentFrame = null;
+				Target target = (Target)varObj.getTarget();
 				if (stack != null) {
-					ICDITarget currentTarget = session.getCurrentTarget();
-					currentThread = currentTarget.getCurrentThread();
+					currentThread = target.getCurrentThread();
 					currentFrame = currentThread.getCurrentStackFrame();
 					stack.getThread().setCurrentStackFrame(stack, false);
 				}
 				try {
-					Target target = (Target)varObj.getTarget();
 					MISession mi = target.getMISession();
 					CommandFactory factory = mi.getCommandFactory();
 					MIVarCreate var = factory.createMIVarCreate(name);

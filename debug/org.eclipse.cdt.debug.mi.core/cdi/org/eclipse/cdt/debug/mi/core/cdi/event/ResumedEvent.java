@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.event;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 
 /**
@@ -31,7 +32,12 @@ public class ResumedEvent implements ICDIResumedEvent {
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
 	public ICDIObject getSource() {
-		return session.getCurrentTarget();
+		// We can send the target as the Source.  CDI
+		// Will assume that all threads are supended for this.
+		// This is true for gdb when it suspend the inferior
+		// all threads are suspended.
+		Target target = session.getTarget(event.getMISession());
+		return target;
 	}
 
 	/**

@@ -7,6 +7,7 @@ package org.eclipse.cdt.debug.mi.core;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
@@ -34,22 +35,25 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		boolean failed = false;
 		try {
 			session = (Session) super.createLaunchSession(config, exe);
-			Target target = (Target)session.getCurrentTarget();
-			MISession miSession = target.getMISession();
-			miSession.setCommandFactory(commandFactory);
-			// For windows we need to start the inferior in a new console window
-			// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
-			try {
-				CommandFactory factory = miSession.getCommandFactory();
-				MIGDBSet set = factory.createMIGDBSet(new String[] { "new-console" }); //$NON-NLS-1$
-				miSession.postCommand(set);
-				MIInfo info = set.getMIInfo();
-				if (info == null) {
-					throw new MIException(MIPlugin.getResourceString("src.common.No_answer")); //$NON-NLS-1$
+			ICDITarget[] targets = session.getTargets();
+			for (int i = 0; i < targets.length; ++i) {
+				Target target = (Target)targets[i];
+				MISession miSession = target.getMISession();
+				miSession.setCommandFactory(commandFactory);
+				// For windows we need to start the inferior in a new console window
+				// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
+				try {
+					CommandFactory factory = miSession.getCommandFactory();
+					MIGDBSet set = factory.createMIGDBSet(new String[] { "new-console" }); //$NON-NLS-1$
+					miSession.postCommand(set);
+					MIInfo info = set.getMIInfo();
+					if (info == null) {
+						throw new MIException(MIPlugin.getResourceString("src.common.No_answer")); //$NON-NLS-1$
+					}
+				} catch (MIException e) {
+					// We ignore this exception, for example
+					// on GNU/Linux the new-console is an error.
 				}
-			} catch (MIException e) {
-				// We ignore this exception, for example
-				// on GNU/Linux the new-console is an error.
 			}
 			return session;
 		} catch (CDIException e) {
@@ -73,8 +77,11 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		boolean failed = false;
 		try {
 			session = (Session) super.createAttachSession(config, exe, pid);
-			Target target = (Target)session.getCurrentTarget();
-			target.getMISession().setCommandFactory(commandFactory);
+			ICDITarget[] targets = session.getTargets();
+			for (int i = 0; i < targets.length; ++i) {
+				Target target = (Target)targets[i];
+				target.getMISession().setCommandFactory(commandFactory);
+			}
 			initializeLibraries(config, session);
 			return session;
 		} catch (CDIException e) {
@@ -98,8 +105,11 @@ public class CygwinGDBDebugger extends GDBDebugger {
 		boolean failed = false;
 		try {
 			session = (Session) super.createCoreSession(config, exe, corefile);
-			Target target = (Target)session.getCurrentTarget();
-			target.getMISession().setCommandFactory(commandFactory);
+			ICDITarget[] targets = session.getTargets();
+			for (int i = 0; i < targets.length; ++i) {
+				Target target = (Target)targets[i];
+				target.getMISession().setCommandFactory(commandFactory);
+			}
 			initializeLibraries(config, session);
 			return session;
 		} catch (CDIException e) {

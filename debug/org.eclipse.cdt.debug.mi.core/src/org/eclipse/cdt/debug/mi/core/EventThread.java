@@ -54,7 +54,6 @@ public class EventThread extends Thread {
 	void processSuspendedEvent(MIStoppedEvent stopped) {
 		// give a chance also to the underlying inferior.
 		session.getMIInferior().update();
-
 	}
 
 }

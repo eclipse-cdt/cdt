@@ -13,7 +13,6 @@ package org.eclipse.cdt.debug.mi.core.cdi.event;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.cdi.BreakpointHit;
 import org.eclipse.cdt.debug.mi.core.cdi.EndSteppingRange;
 import org.eclipse.cdt.debug.mi.core.cdi.ErrorInfo;
@@ -22,6 +21,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.SharedLibraryEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalReceived;
 import org.eclipse.cdt.debug.mi.core.cdi.WatchpointScope;
 import org.eclipse.cdt.debug.mi.core.cdi.WatchpointTrigger;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointHitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIErrorEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
@@ -73,7 +73,7 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
 	public ICDIObject getSource() {
-		ICDITarget target = session.getCurrentTarget();
+		Target target = session.getTarget(event.getMISession()); 
 		// We can send the target as the Source.  CDI
 		// Will assume that all threads are supended for this.
 		// This is true for gdb when it suspend the inferior

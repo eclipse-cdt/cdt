@@ -28,7 +28,7 @@ public class CommandLauncher {
 	protected boolean fShowCommand;
 	protected String[] fCommandArgs;
 	
-	protected String fErrorMessage;
+	protected String fErrorMessage = "";
 	
 	private String lineSeparator;
 	
@@ -59,7 +59,11 @@ public class CommandLauncher {
 	public String getErrorMessage() {
 		return fErrorMessage;
 	}
-	
+
+	public void setErrorMessage(String error) {
+		fErrorMessage = error;
+	}
+
 	public String[] getCommandArgs() {
 		return fCommandArgs;
 	}	
@@ -88,7 +92,7 @@ public class CommandLauncher {
 			fProcess= ProcessFactory.getFactory().exec(fCommandArgs, env, changeToDirectory.toFile());
 			fErrorMessage= "";
 		} catch (IOException e) {
-			fErrorMessage= e.getMessage();
+			setErrorMessage(e.getMessage());
 			fProcess= null;
 		}
 		return fProcess;
@@ -117,9 +121,9 @@ public class CommandLauncher {
 	 * Destroys the process if the monitor becomes canceled
 	 * override to implement a different way to read the process inputs
 	 */
-	public int waitAndRead(OutputStream out, OutputStream err, IProgressMonitor monitor) {
+	public int waitAndRead(OutputStream output, OutputStream err, IProgressMonitor monitor) {
 		if (fShowCommand) {
-			printCommandLine(fCommandArgs, out);
+			printCommandLine(fCommandArgs, output);
 		}	
 
 		if (fProcess == null) {
@@ -130,9 +134,42 @@ public class CommandLauncher {
 		PipedOutputStream outputPipe = new PipedOutputStream();
 		PipedInputStream errInPipe, inputPipe;
 		try {
-			errInPipe = new PipedInputStream(errOutPipe);
-			inputPipe = new PipedInputStream(outputPipe);
+			errInPipe = new PipedInputStream(errOutPipe) {
+				/**
+				 * FIXME: To remove when j9 is fix.
+				 * The overloading here corrects a bug in J9
+				 * When the ring buffer when full it returns 0 .
+				 */
+				public synchronized int available() throws IOException {
+					if(in < 0)
+						return 0;
+					else if(in == out)
+						return buffer.length;
+					else if (in > out)
+						return in - out;
+					else
+						return in + buffer.length - out;
+				}
+			};
+			inputPipe = new PipedInputStream(outputPipe) {
+				/**
+				 * FIXME: To remove when j9 is fix.
+				 * The overloading here corrects a bug in J9
+				 * When the ring buffer when full returns 0.
+				 */
+				public synchronized int available() throws IOException {
+					if(in < 0)
+						return 0;
+					else if(in == out)
+						return buffer.length;
+					else if (in > out)
+						return in - out;
+					else
+						return in + buffer.length - out;
+				}
+			};
 		} catch( IOException e ) {
+			setErrorMessage("Command canceled");
 			return COMMAND_CANCELED;
 		}
 						
@@ -149,8 +186,8 @@ public class CommandLauncher {
 				}
 				if ( inputPipe.available() > 0 ) {
 					nbytes = inputPipe.read(buffer);
-					out.write(buffer, 0, nbytes);
-					out.flush();
+					output.write(buffer, 0, nbytes);
+					output.flush();
 				}
 			} catch( IOException e) {
 			}
@@ -167,6 +204,7 @@ public class CommandLauncher {
 		if (monitor.isCanceled()) {
 			closure.terminate();
 			state = COMMAND_CANCELED;
+			setErrorMessage("Command canceled");
 		}
 
 		try {
@@ -186,8 +224,8 @@ public class CommandLauncher {
 				}
 				if ( inputPipe.available() > 0 ) {
 					nbytes = inputPipe.read(buffer);
-					out.write(buffer, 0, nbytes);
-					out.flush();
+					output.write(buffer, 0, nbytes);
+					output.flush();
 				}
 			}
 			errInPipe.close();

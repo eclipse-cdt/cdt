@@ -765,6 +765,28 @@ public class CompleteParseASTTest extends TestCase
 		assertEquals( f.getName(),"foo");
 	}
 	
+
+	public void testBogdansExample() throws Exception
+	{
+		IASTNamespaceDefinition namespaceA = (IASTNamespaceDefinition)parse( "namespace A { namespace B {	enum e1{e_1,e_2};	int x;	class C	{	static int y = 5;	}; }} ").getDeclarations().next();
+		IASTNamespaceDefinition namespaceB = (IASTNamespaceDefinition)(getDeclarations(namespaceA).next());
+		Iterator subB = getDeclarations( namespaceB );
+		IASTEnumerationSpecifier enumE1 = (IASTEnumerationSpecifier)((IASTAbstractTypeSpecifierDeclaration)subB.next()).getTypeSpecifier();
+		Iterator enumerators = enumE1.getEnumerators();
+		IASTEnumerator enumeratorE_1 = (IASTEnumerator)enumerators.next();
+		assertEquals( enumeratorE_1.getOwnerEnumerationSpecifier(), enumE1 );
+		IASTVariable variableX = (IASTVariable)subB.next(); 
+		IASTClassSpecifier classC = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)subB.next()).getTypeSpecifier();
+				
+		
+	}
+	
+//	public void testSimpleTypedef() throws Exception
+//	{
+//		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration)parse( "typedef int myInt;").getDeclarations().next();
+//		assertEquals( typedef.getName(), "myInt");
+//	}
+	
 	protected void assertQualifiedName(String [] fromAST, String [] theTruth)
 	 {
 		 assertNotNull( fromAST );

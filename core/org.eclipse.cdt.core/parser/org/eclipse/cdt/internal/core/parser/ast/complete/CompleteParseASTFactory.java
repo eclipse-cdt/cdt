@@ -529,7 +529,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
 			throw new ASTSemanticException();
         }
-        ASTEnumerator enumerator = new ASTEnumerator( enumeratorSymbol, startingOffset, endingOffset, initialValue ); 
+        ASTEnumerator enumerator = new ASTEnumerator( enumeratorSymbol, enumeration, startingOffset, endingOffset, initialValue ); 
         ((ASTEnumerationSpecifier)enumeration).addEnumerator( enumerator );
         try
         {

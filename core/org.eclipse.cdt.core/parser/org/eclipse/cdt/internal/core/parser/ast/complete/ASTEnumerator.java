@@ -24,26 +24,28 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
 public class ASTEnumerator extends ASTSymbol implements IASTEnumerator
 {
 	private Offsets offsets = new Offsets(); 
-	private final IASTExpression initialValue; 
+	private final IASTExpression initialValue;
+	private final IASTEnumerationSpecifier owner; 
     /**
      * @param enumeratorSymbol
      * @param startingOffset
      * @param endingOffset
      * @param initialValue
      */
-    public ASTEnumerator(ISymbol enumeratorSymbol, int startingOffset, int endingOffset, IASTExpression initialValue)
+    public ASTEnumerator(ISymbol enumeratorSymbol, IASTEnumerationSpecifier owner, int startingOffset, int endingOffset, IASTExpression initialValue)
     {
         super( enumeratorSymbol );
         setStartingOffset(startingOffset);
         setEndingOffset( endingOffset );
         this.initialValue = initialValue;
+        this.owner = owner;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTEnumerator#getOwnerEnumerationSpecifier()
      */
     public IASTEnumerationSpecifier getOwnerEnumerationSpecifier()
     {
-        return (IASTEnumerationSpecifier)getSymbol().getContainingSymbol().getASTExtension();
+        return owner;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTEnumerator#getInitialValue()

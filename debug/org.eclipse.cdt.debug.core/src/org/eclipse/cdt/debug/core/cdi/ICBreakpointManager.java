@@ -52,17 +52,15 @@ public interface ICBreakpointManager extends ICSessionObject
 	 * @param type - a combination of TEMPORARY and HARDWARE or 0
 	 * @param location - the location 
 	 * @param condition - the condition or <code>null</code>
-	 * @param enabled - whether this breakpoint should be enabled
 	 * @param threadId - the thread identifier if this is 
 	 * a thread-specific breakpoint or <code>null</code>
 	 * @return a breakpoint
 	 * @throws CDIException on failure. Reasons include:
 	 */
 	ICLocationBreakpoint setLocationBreakpoint( int type,
-												  ICLocation location,
-												  ICCondition condition,
-												  boolean enabled,
-												  String threadId ) throws CDIException;
+												ICLocation location,
+												ICCondition condition,
+												String threadId ) throws CDIException;
 	
 	/**
 	 * Sets a watchpoint for the given expression.
@@ -70,28 +68,24 @@ public interface ICBreakpointManager extends ICSessionObject
 	 * @param watchType - a combination of READ and WRITE
 	 * @param expression - the expression to watch
 	 * @param condition - the condition or <code>null</code>
-	 * @param enabled - whether this watchpoint should be enabled
 	 * @return a watchpoint
 	 * @throws CDIException on failure. Reasons include:
 	 */
 	ICWatchpoint setWatchpoint( int type,
-								  int watchType,
-								  String expression,
-								  ICCondition condition,
-								  boolean enabled ) throws CDIException;
+								int watchType,
+								String expression,
+								ICCondition condition ) throws CDIException;
 	
 	/**
 	 * Sets a catchpoint for the given catch event.
 	 * @param type - a combination of TEMPORARY and HARDWARE or 0
 	 * @param event - the event to catch
 	 * @param condition - the condition or <code>null</code>
-	 * @param enabled - whether this catchpoint should be enabled
 	 * @return a catchpoint
 	 * @throws CDIException on failure. Reasons include:
 	 */
 	ICCatchpoint setCatchpoint( int type,
-								  ICCatchEvent event,
-								  String expression,
-								  ICCondition condition,
-								  boolean enabled ) throws CDIException;
+								ICCatchEvent event,
+								String expression,
+								ICCondition condition ) throws CDIException;
 }

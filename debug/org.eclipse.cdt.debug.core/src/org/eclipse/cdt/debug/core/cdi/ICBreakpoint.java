@@ -21,6 +21,7 @@ package org.eclipse.cdt.debug.core.cdi;
  */
 public interface ICBreakpoint extends ICSessionObject
 {
+	final static public int REGULAR = 0x0;
 	final static public int TEMPORARY = 0x1;
 	final static public int HARDWARE = 0x2;
 

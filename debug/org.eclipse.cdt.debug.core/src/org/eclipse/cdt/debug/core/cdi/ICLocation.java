@@ -5,8 +5,6 @@
  */
 package org.eclipse.cdt.debug.core.cdi;
 
-import java.io.File;
-
 import org.eclipse.cdt.debug.core.cdi.model.ICInstruction;
 
 /**
@@ -30,7 +28,7 @@ public interface ICLocation
 	 *  
 	 * @return the source file of this location
 	 */
-	File getFile();
+	String getFile();
 
 	/**
 	 * Returns the function of this location or <code>null</code>

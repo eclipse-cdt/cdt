@@ -34,8 +34,8 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
       <launchConfigurationTypeImage
-            icon="icon/localCLaunch.gif"
-            configTypeID="org.eclipse.cdt.launch.LocalCLaunch"
+            icon="icons/c_app.gif"
+            configTypeID="org.eclipse.cdt.launch.localCLaunch"
             id="org.eclipse.cdt.launch.localCLaunchImage">
       </launchConfigurationTypeImage>
    </extension>
@@ -47,15 +47,4 @@
             id="org.eclipse.cdt.launch.localClaunchConfigurationTabGroup">
       </launchConfigurationTabGroup>
    </extension>
-   <extension
-         point="org.eclipse.debug.ui.launchShortcuts">
-      <shortcut
-            label="org.eclipse.cdt.launch.shortcut1"
-            icon="org.eclipse.cdt.launch.shortcut1"
-            modes="run,debug"
-            class="org.eclipse.cdt.launch.LaunchShortcut1"
-            id="org.eclipse.cdt.launch.localCShortcut">
-      </shortcut>
-   </extension>
-
 </plugin>

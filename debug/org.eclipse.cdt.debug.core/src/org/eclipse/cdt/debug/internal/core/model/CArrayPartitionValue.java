@@ -136,4 +136,20 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 			((CVariable)it.next()).setChanged( changed );
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#getUnderlyingValueString()
+	 */
+	public String getUnderlyingValueString()
+	{
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#computeDetail()
+	 */
+	public String computeDetail()
+	{
+		return null;
+	}
 }

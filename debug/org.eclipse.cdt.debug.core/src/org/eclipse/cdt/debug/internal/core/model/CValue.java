@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortValue;
+import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
@@ -272,7 +273,7 @@ public class CValue extends CDebugElement implements ICValue
 		}
 	}
 
-	protected CVariable getParentVariable()
+	public CVariable getParentVariable()
 	{
 		return fParent;
 	}
@@ -511,5 +512,47 @@ public class CValue extends CDebugElement implements ICValue
 		{
 		}
 		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#getUnderlyingValueString()
+	 */
+	public String getUnderlyingValueString()
+	{
+		String valueString = null;
+		if ( getUnderlyingValue() != null )
+		{
+			try
+			{
+				valueString = getUnderlyingValue().getValueString();
+			}
+			catch( CDIException e )
+			{
+				valueString = e.getMessage();
+			}
+		}
+		return valueString;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#computeDetail()
+	 */
+	public String computeDetail()
+	{
+		ICExpressionEvaluator ee = (ICExpressionEvaluator)getDebugTarget().getAdapter( ICExpressionEvaluator.class );
+		String valueString = null; 
+		if ( ee != null && ee.canEvaluate() )
+		{
+			try
+			{
+				if ( getParentVariable() != null && !getParentVariable().isAccessSpecifier() )
+					valueString = ee.evaluateExpressionToString( getParentVariable().getQualifiedName() );
+			}
+			catch( DebugException e )
+			{
+				valueString = e.getMessage();
+			}
+		}
+		return valueString;
 	}
 }

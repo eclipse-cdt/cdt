@@ -5,6 +5,8 @@
  */
 package org.eclipse.cdt.debug.internal.core.model;
 
+import java.util.LinkedList;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
@@ -20,6 +22,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.core.model.ICValue;
@@ -610,9 +613,9 @@ public abstract class CVariable extends CDebugElement
 		return ( fEditable != null ) ? fEditable.booleanValue() : false;
 	}
 	
-	protected boolean isPointer()
+	public boolean isPointer()
 	{
-		return isEditable() && hasChildren();
+		return ( getType() instanceof ICDIPointerType );
 	}
 
 	public boolean isArray()
@@ -688,5 +691,41 @@ public abstract class CVariable extends CDebugElement
 	public boolean isFloatingPointType() 
 	{
 		return  ( getType() instanceof ICDIFloatingPointType );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getQualifiedName()
+	 */
+	public String getQualifiedName() throws DebugException
+	{
+		LinkedList list = new LinkedList();
+		list.add( this );
+		CVariable var = null;
+		CDebugElement element = getParent();
+		while ( element instanceof CValue )
+		{
+			var = ((CValue)element).getParentVariable();
+			if ( var == null )
+				break;
+			if ( !( var instanceof CArrayPartition ) && !var.isAccessSpecifier() )
+				list.addFirst( var );
+			element = var.getParent();
+		}
+		StringBuffer sb = new StringBuffer();
+		CVariable[] vars = (CVariable[])list.toArray( new CVariable[list.size()] );
+		for ( int i = 0; i < vars.length; ++i )
+		{
+			sb.insert( 0, '(' );
+			if ( i > 0 )
+				sb.append( ( vars[i - 1].isPointer() ) ? "->" : "." );
+			sb.append( vars[i].getName() );
+			sb.append( ')' );
+		}
+		return sb.toString();
+	}
+
+	protected boolean isAccessSpecifier() throws DebugException
+	{
+		return ( "public".equals( getName() ) || "protected".equals( getName() ) || "private".equals( getName() ) );
 	}
 }

@@ -23,5 +23,12 @@ public interface ICValue extends IValue
 	 */
 	ICDIValue getUnderlyingValue();
 	
+	/**
+	 * Returns the string representation of the underlying CDI value for this value.
+	 */
+	String getUnderlyingValueString();
+
+	String computeDetail();
+
 	void setChanged(  boolean changed ) throws DebugException;
 }

@@ -37,4 +37,8 @@ public interface ICVariable extends IVariable
 	boolean isFloatingPointType();
 
 	boolean isNaN();
+
+	boolean isPointer();
+
+	String getQualifiedName() throws DebugException;
 }

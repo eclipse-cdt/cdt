@@ -68,7 +68,7 @@ class PTYInputStream extends InputStream {
 	}
 
 	private native int read0(int fd, byte[] buf, int len) throws IOException;
-	native int close0(int fd);
+	private native int close0(int fd) throws IOException;
 
 	static {
 		System.loadLibrary("pty");

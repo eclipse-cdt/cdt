@@ -20,7 +20,6 @@ import java.util.Set;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
@@ -460,15 +459,8 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 				}
 				catch( CoreException e ) {
 				}
-				getBreakpointNotifier().breakpointRemoved( getDebugTarget(), breakpoint );
 			}
-			else {
-				try {
-					breakpoint.decrementInstallCount();
-				}
-				catch( CoreException e ) {
-				}
-			}
+			getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), new IBreakpoint[] { breakpoint } );
 		}
 	}
 
@@ -508,18 +500,12 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			cdiTarget.deleteAllBreakpoints();
 		}
 		catch( CDIException e ) {
-			// Do we care ? 
-			CDebugCorePlugin.log( e.getMessage() );
+			// Do we care ?
+			// No, we don't.
+//			CDebugCorePlugin.log( e.getMessage() );
 		}
 		ICBreakpoint[] breakpoints = getBreakpointMap().getAllCBreakpoints();
-		for( int i = 0; i < breakpoints.length; ++i ) {
-			try {
-				((CBreakpoint)breakpoints[i]).decrementInstallCount();
-			}
-			catch( CoreException e ) {
-				CDebugCorePlugin.log( e.getMessage() );
-			}
-		}
+		getBreakpointNotifier().breakpointsRemoved( getDebugTarget(), breakpoints );
 	}
 
 	private void setLocationBreakpointOnTarget( final ICBreakpoint breakpoint, final ICDITarget target, final ICDILocation location, final ICDICondition condition, final boolean enabled ) {

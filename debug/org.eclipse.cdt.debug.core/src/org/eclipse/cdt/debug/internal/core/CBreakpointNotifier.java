@@ -70,12 +70,12 @@ public class CBreakpointNotifier implements ICBreakpointListener {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IDebugTarget,
-	 *      org.eclipse.debug.core.model.IBreakpoint)
+	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointsRemoved(org.eclipse.debug.core.model.IDebugTarget,
+	 *      org.eclipse.debug.core.model.IBreakpoint[])
 	 */
-	public void breakpointRemoved( IDebugTarget target, IBreakpoint breakpoint ) {
+	public void breakpointsRemoved( IDebugTarget target, IBreakpoint[] breakpoints ) {
 		Object[] listeners = CDebugCorePlugin.getDefault().getCBreakpointListeners();
 		for( int i = 0; i < listeners.length; ++i )
-			((ICBreakpointListener)listeners[i]).breakpointRemoved( target, breakpoint );
+			((ICBreakpointListener)listeners[i]).breakpointsRemoved( target, breakpoints );
 	}
 }

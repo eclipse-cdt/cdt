@@ -1,5 +1,20 @@
 2003-02-04 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ExitedEvent.java:
+	Catch MIInferiorSignalExitEvent.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ExitedEvent.java:
+	Catch MIInferiorSignalExitEvent.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SignalExitInfo.java:
+	New File.
+	* src/org/eclipse/cdt/debug/mi/core/event/MIInferiorSignalExitEvent.java:
+	New File
+	* src/org/eclipse/cdt/debug/mi/core/event/CLIProcessir.java:
+	"signal" command is like continue.
+	* src/org/eclipse/cdt/debug/mi/core/event/RxThread.java:
+	Catch MIInferiorSignalExitEvent.
+
+2003-02-04 Alain Magloire
+
 	Refactor MISignal in MISigHandle to not confus with 
 	CLI command "signal SIGNAL".
 

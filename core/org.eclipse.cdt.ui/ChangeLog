@@ -1,5 +1,6 @@
 2004-04-16 Hoda Amer
 	Fix for bug#58563 : [RenameRefactoring] renaming #include statements
+	Fix for bug#55764 : [Content Assist] trigger needs more then one character per trigger
 	
 2004-04-15 Alain Magloire
 

@@ -39,6 +39,7 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContextInformation;
@@ -228,7 +229,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	public String getErrorMessage() {
 		if (fNumberOfComputedResults == 0) {
 			String errorMsg= resultCollector.getErrorMessage();
-			if (errorMsg == null || errorMsg.trim().length() == 0)
+			if (errorMsg == null || errorMsg.length() == 0)
 				errorMsg= CUIMessages.getString("CEditor.contentassist.noCompletions"); //$NON-NLS-1$
 			return errorMsg;
 		}
@@ -325,6 +326,24 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		IWorkingCopy unit = fManager.getWorkingCopy(fEditor.getEditorInput());
 		
 		IDocument document = viewer.getDocument();
+		// check for :: and ->
+		int pos = offset -1;
+		try{
+			//While we aren't on a space, then go back and look for :: or a ->
+			while(document.getChar(pos) == ' ') {	
+				pos--;
+			}			
+			if ((document.getChar(pos) == ':') && (document.getChar(pos -1) != ':')) {
+				// ignore this request
+				return null;
+			} else if ((document.getChar(pos) == '>') && (document.getChar(pos - 1) != '-')) {
+				// ignore this request
+				return null;
+			}
+		} catch ( BadLocationException ex ){
+			// ignore this request
+			return null;
+		}
 		
 		ICCompletionProposal[] results = null;
 

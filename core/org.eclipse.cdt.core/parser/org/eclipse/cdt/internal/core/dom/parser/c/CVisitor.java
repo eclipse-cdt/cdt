@@ -298,6 +298,10 @@ public class CVisitor {
 						addName(declarator.getName());
 					}
 				} else if ( parent instanceof IASTSimpleDeclaration ) {
+					// prototype parameter with no identifier isn't a declaration of the K&R C parameter 
+					if ( binding instanceof CKnRParameter && declarator.getName().toString() == null)
+						return true;
+					
 					if ( (declarator.getName() != null && declarator.getName().resolveBinding() == binding) ) {
 						if ( declarator instanceof IASTStandardFunctionDeclarator ||
 								declarator instanceof ICASTKnRFunctionDeclarator ) {
@@ -489,6 +493,12 @@ public class CVisitor {
 			IBinding binding = resolveBinding( id );
 			if( binding != null && binding instanceof IType ){
 				return (IType) binding;
+			}
+	    } else if( expression instanceof IASTFieldReference ){ 
+	        IBinding binding = ((IASTFieldReference)expression).getFieldName().resolveBinding();
+		        
+			if( binding instanceof IVariable ){
+				return ((IVariable)binding).getType();
 			}
 	    }
 	    return null;
@@ -1128,6 +1138,18 @@ public class CVisitor {
 				IASTParameterDeclaration param = list[i];
 				if( !visitDeclSpecifier( param.getDeclSpecifier(), action ) ) return false;
 				if( !visitDeclarator( param.getDeclarator(), action ) ) return false;
+			}
+		} else if ( declarator instanceof ICASTKnRFunctionDeclarator ) {
+			IASTDeclaration[] parmDeclarations = ((ICASTKnRFunctionDeclarator)declarator).getParameterDeclarations();
+			for( int i = 0; i < parmDeclarations.length; i++ ){
+				if ( parmDeclarations[i] instanceof IASTSimpleDeclaration ) {
+					IASTSimpleDeclaration parmDeclaration = (IASTSimpleDeclaration)parmDeclarations[i];
+					if( !visitDeclSpecifier( parmDeclaration.getDeclSpecifier(), action ) ) return false;
+					IASTDeclarator[] decltors = parmDeclaration.getDeclarators();
+					for ( int j = 0; j < decltors.length; j++ ) {
+						if( !visitDeclarator( decltors[j], action ) ) return false;		
+					}
+				}
 			}
 		}
 		return true;

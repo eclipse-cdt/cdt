@@ -1792,41 +1792,38 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 																   // less)
 							try {
 								boolean hasValidDecltors = true;
-								IASTStatement stmt = parseDeclarationOrExpressionStatement();
-								if (stmt instanceof IASTDeclarationStatement) {
-									IASTDeclaration declaration = ((IASTDeclarationStatement) stmt)
-											.getDeclaration();
 
-									if (declaration instanceof IASTSimpleDeclaration) {
-										IASTDeclarator[] decltors = ((IASTSimpleDeclaration) declaration)
-												.getDeclarators();
-										for (int k = 0; k < decltors.length; k++) {
-											boolean decltorOk = false;
-											for (int j = 0; j < parmNames.length; j++) {
-												if (CharArrayUtils.equals(
-														decltors[k].getName()
-																.toCharArray(),
-														parmNames[j]
-																.toCharArray())) {
-													decltorOk = true;
-													break;
-												}
+								IASTDeclaration decl = simpleDeclaration();
+								IASTSimpleDeclaration declaration = null;
+								if (decl instanceof IASTSimpleDeclaration) {
+									declaration = ((IASTSimpleDeclaration) decl);
+
+									IASTDeclarator[] decltors = declaration.getDeclarators();
+									for (int k = 0; k < decltors.length; k++) {
+										boolean decltorOk = false;
+										for (int j = 0; j < parmNames.length; j++) {
+											if (CharArrayUtils.equals(
+													decltors[k].getName()
+															.toCharArray(),
+													parmNames[j]
+															.toCharArray())) {
+												decltorOk = true;
+												break;
 											}
-											if (!decltorOk)
-												hasValidDecltors = false;
 										}
+										if (!decltorOk)
+											hasValidDecltors = false;
 									}
 								} else {
 									hasValidDecltors = false;
 								}
 
 								if (hasValidDecltors) {
-									parmDeclarations[i] = ((IASTDeclarationStatement) stmt)
-											.getDeclaration();
+									parmDeclarations[i] = declaration;
 								} else {
 									parmDeclarations[i] = createKnRCProblemDeclaration(
-											((ASTNode) stmt).getLength(),
-											((ASTNode) stmt).getOffset());
+											((ASTNode) declaration).getLength(),
+											((ASTNode) declaration).getOffset());
 								}
 							} catch (BacktrackException b) {
 								parmDeclarations[i] = createKnRCProblemDeclaration(

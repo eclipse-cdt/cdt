@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * Created on Nov 5, 2004
@@ -98,15 +100,19 @@ public class CFunction implements IFunction {
 			}
 		} else if (dtor instanceof ICASTKnRFunctionDeclarator) {
 			IASTDeclaration[] params = ((ICASTKnRFunctionDeclarator)dtor).getParameterDeclarations();
-			int size = params.length;
-			result = new ArrayList( size );
-			if( size > 0 ){
-				for( int i = 0; i < size; i++ ){
-					IASTDeclaration p = params[i];
-					if ( p instanceof IASTSimpleDeclaration ) {
-						IASTDeclarator[] decltors = ((IASTSimpleDeclaration)p).getDeclarators();
-						for( int j=0; j<decltors.length; j++ ){
-							result.add( decltors[j].getName().resolveBinding() );				
+			IASTName[] names = ((ICASTKnRFunctionDeclarator)dtor).getParameterNames();
+			result = new ArrayList( names.length );
+			if( names.length > 0 ){
+				// ensures that the List of parameters is created in the same order as the K&R C parameter names
+				for( int i=0; i<names.length; i++ ) {
+					for( int j=0; j<params.length; j++) {
+						if ( params[j] instanceof IASTSimpleDeclaration ) {
+							IASTDeclarator[] decltors = ((IASTSimpleDeclaration)params[j]).getDeclarators();
+							for (int k=0; k<decltors.length; k++) {
+								if ( CharArrayUtils.equals(names[i].toCharArray(), decltors[k].getName().toCharArray()) ) {
+									result.add( decltors[k].getName().resolveBinding() );
+								}
+							}
 						}
 					}
 				}

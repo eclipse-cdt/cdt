@@ -499,7 +499,6 @@ public class PE {
 				int size = memory.getInt();
 				dataDirectories[i] = new ImageDataDirectory(rva, size);
 			}
-			dispose();
 		}
 		return dataDirectories;
 	}
@@ -515,7 +514,6 @@ public class PE {
 			for (int i = 0; i < scnhdrs.length; i++, offset += SectionHeader.SCNHSZ) {
 				scnhdrs[i] = new SectionHeader(accessFile, offset);
 			}
-			dispose();
 		}
 		return scnhdrs;
 	}
@@ -527,8 +525,11 @@ public class PE {
 			symbolTable = new Symbol[fileHeader.f_nsyms];
 			for (int i = 0; i < symbolTable.length; i++, offset += Symbol.SYMSZ) {
 				symbolTable[i] = new Symbol(accessFile, offset);
+				NTOptionalHeader ntHeader = getNTOptionalHeader();
+				// FIXME: What is this again ?
+				if (ntHeader != null)
+					symbolTable[i].n_value += ntHeader.ImageBase + ntHeader.FileAlignment;
 			}
-			dispose();
 		}
 		return symbolTable;
 	}
@@ -551,7 +552,6 @@ public class PE {
 				} else {
 					stringTable = new byte[0];
 				}
-				dispose();
 			} else {
 				stringTable = new byte[0];
 			}

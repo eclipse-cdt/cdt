@@ -8,7 +8,7 @@
  ******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
-import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -16,6 +16,6 @@ import org.eclipse.debug.core.ILaunch;
 
 
 public interface ICDIDebugger {
-	public ICDISession createDebuggerSession(ILaunch launch, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException;
+	public ICDISession createDebuggerSession(ILaunch launch, IBinaryObject exe, IProgressMonitor monitor) throws CoreException;
 
 }

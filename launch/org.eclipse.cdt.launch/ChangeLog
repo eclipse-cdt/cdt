@@ -1,3 +1,12 @@
+2004-11-17 David Inglis
+
+	Change to use IBinaryObject instead of IBinayExecutable
+
+	* src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/CoreFileLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/LocalAttachLaunchDelegate.java
+	* src/org/eclipse/cdt/launch/internal/LocalRunLaunchDelegate.java
+	
 2004-11-11 Alain Magloire
 	Fix for PR 78441
 	* src/org/eclipse/cdt/launch/internal/CPropertyTester.java

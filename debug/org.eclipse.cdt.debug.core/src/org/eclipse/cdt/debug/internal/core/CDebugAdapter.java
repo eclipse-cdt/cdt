@@ -13,7 +13,7 @@ import java.text.MessageFormat;
 import java.util.Date;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDIDebugger;
@@ -53,7 +53,7 @@ public class CDebugAdapter implements ICDIDebugger {
 	 *      org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public ICDISession createDebuggerSession(ILaunch launch, IBinaryExecutable exe, IProgressMonitor monitor) throws CoreException {
+	public ICDISession createDebuggerSession(ILaunch launch, IBinaryObject exe, IProgressMonitor monitor) throws CoreException {
 		ILaunchConfiguration config = launch.getLaunchConfiguration();
 		IFile[] exeFile = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(exe.getPath());
 		if (exeFile.length == 0) {

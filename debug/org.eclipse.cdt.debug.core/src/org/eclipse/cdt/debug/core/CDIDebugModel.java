@@ -13,12 +13,14 @@ package org.eclipse.cdt.debug.core;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
@@ -85,7 +87,7 @@ public class CDIDebugModel {
 	 * @return a debug target
 	 * @throws DebugException
 	 */
-	public static IDebugTarget newDebugTarget( final ILaunch launch, final IProject project, final ICDITarget cdiTarget, final String name, final IProcess debuggeeProcess, final IBinaryExecutable file, final boolean allowTerminate, final boolean allowDisconnect, final boolean stopInMain, final boolean resumeTarget ) throws DebugException {
+	public static IDebugTarget newDebugTarget( final ILaunch launch, final IProject project, final ICDITarget cdiTarget, final String name, final IProcess debuggeeProcess, final IBinaryObject file, final boolean allowTerminate, final boolean allowDisconnect, final boolean stopInMain, final boolean resumeTarget ) throws DebugException {
 		final IDebugTarget[] target = new IDebugTarget[1];
 		IWorkspaceRunnable r = new IWorkspaceRunnable() {
 
@@ -127,7 +129,7 @@ public class CDIDebugModel {
 	 * @return a debug target
 	 * @throws DebugException
 	 */
-	public static IDebugTarget newDebugTarget( ILaunch launch, IProject project, ICDITarget cdiTarget, final String name, IProcess debuggeeProcess, IBinaryExecutable file, boolean allowTerminate, boolean allowDisconnect, boolean resumeTarget ) throws DebugException {
+	public static IDebugTarget newDebugTarget( ILaunch launch, IProject project, ICDITarget cdiTarget, final String name, IProcess debuggeeProcess, IBinaryObject file, boolean allowTerminate, boolean allowDisconnect, boolean resumeTarget ) throws DebugException {
 		return newDebugTarget( launch, project, cdiTarget, name, debuggeeProcess, file, allowTerminate, allowDisconnect, false, resumeTarget );
 	}
 

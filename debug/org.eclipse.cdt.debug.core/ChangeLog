@@ -1,3 +1,13 @@
+2004-11-17 David Inglis
+	
+	Change debug target to use IBinaryObject instead of IBinaryExecutable
+	
+	* src/org/eclipse/cdt/debug/core/CDIDebugModel.java
+	* src/org/eclipse/cdt/debug/core/ICDIDebugger.java
+	* src/org/eclipse/cdt/debug/core/model/IExecFileInfo.java
+	* src/org/eclipse/cdt/debug/internal/core/CDebugAdapter.java
+	* src/org/eclipse/cdt/debug/internal/core/model/CDebugTarget.java
+	
 2004-11-16 Alain Magloire
 	Optimize things by providing a new method
 	ICDIRegisterGroup.hasRegisters();

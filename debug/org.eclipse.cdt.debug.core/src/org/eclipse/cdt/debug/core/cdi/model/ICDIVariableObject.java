@@ -48,7 +48,26 @@ public interface ICDIVariableObject extends ICDIObject {
 	String getTypeName() throws CDIException;
 
 	/**
-	 * @return
+	 * Returns the size of this variable.
+	 * 
+	 * @return the size of this variable
+	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	int sizeof() throws CDIException;
+
+	/**
+	 * Returns true if the value of this variable could be changed.
+	 * 
+	 * @return true if the value of this variable could be changed
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	boolean isEditable() throws CDIException;
+
+	/**
+	 * Returns the qualified name of this variable.
+	 * 
+	 * @return the qualified name of this variable
+	 * @throws CDIException if this method fails.  Reasons include:
+	 */
+	String getQualifiedName() throws CDIException;
 }

@@ -29,5 +29,7 @@ public interface ICType extends IAdaptable
 
 	boolean isPointer();
 
+	boolean isReference();
+
 	void dispose();
 }

@@ -17,4 +17,6 @@ import org.eclipse.debug.core.model.IValue;
 public interface ICValue extends IValue
 {
 	String evaluateAsExpression();
+
+	void dispose();
 }

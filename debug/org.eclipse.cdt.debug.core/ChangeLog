@@ -1,3 +1,18 @@
+2003-08-13 Mikhail Khodjaiants
+	* ICDIVariable.java: removed the 'isEditable' method
+	* ICDIVariableObject.java: added the 'isEditable', 'getQualifiedName' and 'sizeof' methods
+	* ICDIArrayValue.java: added the 'getVariables(int start, int length)' method
+	* ICType.java: added the 'isReference' method
+	* ICValue.java: added the 'dispose' method
+	* CArrayPartition.java
+	* CArrayPartitionValue.java
+	* CGlobalVariable.java
+	* CType.java
+	* CValue.java
+	* CValueFactory.java
+	* CVariable.java
+	Create 'var-objects' only for the requested array partitions. 
+
 2003-08-07 Alain Magloire
 
 	* ICDIVariableManager.java:

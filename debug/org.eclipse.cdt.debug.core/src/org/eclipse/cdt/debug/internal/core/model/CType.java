@@ -11,6 +11,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.core.model.ICType;
@@ -110,6 +111,14 @@ public class CType implements ICType
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICType#isReference()
+	 */
+	public boolean isReference()
+	{
+		return ( getCDIType() instanceof ICDIReferenceType );
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.type.ICType#isStructure()
 	 */
 	public boolean isStructure()
@@ -125,5 +134,14 @@ public class CType implements ICType
 	protected void setCDIType( ICDIType type )
 	{
 		fCDIType = type;
+	}
+
+	protected boolean hasChildren()
+	{
+		ICDIType type = getCDIType();
+		if ( type instanceof ICDIStructType || type instanceof ICDIArrayType || 
+			 type instanceof ICDIPointerType || type instanceof ICDIReferenceType )
+			return true;
+		return false;
 	}
 }

@@ -13,6 +13,8 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
+import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 
@@ -28,7 +30,8 @@ public class CArrayPartition extends CVariable
 
 	private int fStart;
 	private int fEnd;
-	private List fCDIVariables;
+	private ICDIVariable fCDIVariable;
+	private ICType fType = null;
 
 	/**
 	 * Cache of value.
@@ -39,12 +42,12 @@ public class CArrayPartition extends CVariable
 	 * Constructor for CArrayPartition.
 	 * @param target
 	 */
-	public CArrayPartition( CDebugElement parent, List cdiVariables, int start, int end )
+	public CArrayPartition( CDebugElement parent, ICDIVariable cdiVariable, int start, int end )
 	{
 		super( parent, null );
 		fStart = start;
 		fEnd = end;
-		fCDIVariables = cdiVariables;
+		fCDIVariable = cdiVariable;
 	}
 
 	/* (non-Javadoc)
@@ -91,38 +94,49 @@ public class CArrayPartition extends CVariable
 	{
 		if ( fArrayPartitionValue == null )
 		{
-			fArrayPartitionValue = new CArrayPartitionValue( this, fCDIVariables, getStart(), getEnd() );
+			fArrayPartitionValue = new CArrayPartitionValue( this, fCDIVariable, getStart(), getEnd() );
 		}
 		return fArrayPartitionValue;
 	}
 
-	static public List splitArray( CDebugElement parent, List cdiVars, int start, int end )
+	static public List splitArray( CDebugElement parent, ICDIVariable cdiVariable, int start, int end ) throws DebugException
 	{
 		ArrayList children = new ArrayList();
+		int len = end - start + 1;
 		int perSlot = 1;
-		int len = end - start;
-		while( perSlot * SLOT_SIZE < len )
+		while( len > perSlot * SLOT_SIZE )
 		{
-			perSlot = perSlot * SLOT_SIZE;
+			perSlot *= SLOT_SIZE;
 		}
-		
-		while( start <= end )
+		if ( perSlot == 1 )
 		{
-			if ( start + perSlot > end )
+			try
 			{
-				perSlot = end - start + 1;
+				ICDIValue value = cdiVariable.getValue();
+				if ( value instanceof ICDIArrayValue )
+				{
+					ICDIVariable[] cdiVars = ((ICDIArrayValue)value).getVariables( start, len );
+					for ( int i = 0; i < cdiVars.length; ++i )
+						children.add( new CModificationVariable( parent, cdiVars[i] ) );
+				}
 			}
-			CVariable var = null;
-			if ( perSlot == 1 )
+			catch( CDIException e )
 			{
-				var = new CModificationVariable( parent, (ICDIVariable)cdiVars.get( start ) );
+				children.add( new CModificationVariable( parent, new CVariable.ErrorVariable( null, e ) ) );
 			}
-			else
+		}
+		else
+		{
+			int pos = start;
+			while( pos <= end )
 			{
-				var = new CArrayPartition( parent, cdiVars.subList( start, start + perSlot ), start, start + perSlot - 1 );
+				if ( pos + perSlot > end )
+				{
+					perSlot = end - pos + 1;
+				}
+				children.add( new CArrayPartition( parent, cdiVariable, pos, pos + perSlot - 1 ) );
+				pos += perSlot;
 			}
-			children.add( var );
-			start += perSlot;
 		}
 		return children;
 	}
@@ -143,5 +157,33 @@ public class CArrayPartition extends CVariable
 	public boolean canEnableDisable()
 	{
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getType()
+	 */
+	public ICType getType() throws DebugException
+	{
+		if ( fType == null )
+		{
+			try
+			{
+				if ( fCDIVariable != null && !(fCDIVariable instanceof ErrorVariable) )
+					fType = new CType( fCDIVariable.getType() );
+			}
+			catch (CDIException e)
+			{
+				requestFailed( "Type is not available.", e );
+			}
+		}
+		return fType;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#hasChildren()
+	 */
+	public boolean hasChildren()
+	{
+		return true;
 	}
 }

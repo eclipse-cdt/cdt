@@ -6,12 +6,12 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IVariable;
@@ -25,9 +25,9 @@ import org.eclipse.debug.core.model.IVariable;
 public class CArrayPartitionValue extends CDebugElement implements ICValue
 {
 	/**
-	 * The underlying CDI variables.
+	 * The underlying CDI variable.
 	 */
-	private List fCDIVariables;
+	private ICDIVariable fCDIVariable;
 
 	/**
 	 * Parent variable.
@@ -47,10 +47,10 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	 * Constructor for CArrayPartitionValue.
 	 * @param target
 	 */
-	public CArrayPartitionValue( CVariable parent, List cdiVariables, int start, int end )
+	public CArrayPartitionValue( CVariable parent, ICDIVariable cdiVariable, int start, int end )
 	{
 		super( (CDebugTarget)parent.getDebugTarget() );
-		fCDIVariables = cdiVariables;
+		fCDIVariable = cdiVariable;
 		fParent = parent;
 		fStart = start;
 		fEnd = end;
@@ -85,15 +85,19 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	 */
 	public IVariable[] getVariables() throws DebugException
 	{
-		if ( fVariables.isEmpty() )
+		List list = getVariables0();
+		return (IVariable[])list.toArray( new IVariable[list.size()] );
+	}
+
+	protected synchronized List getVariables0() throws DebugException 
+	{
+		if ( !isAllocated() || !hasVariables() )
+			return Collections.EMPTY_LIST;
+		if ( fVariables.size() == 0 )
 		{
-			fVariables = new ArrayList( getEnd() - getStart() + 1 );
-			for ( int i = getStart(); i <= getEnd(); ++i ) 
-			{
-				fVariables.add( new CModificationVariable( this, (ICDIVariable)fCDIVariables.get( i - getStart() ) ) );
-			}
+			fVariables = CArrayPartition.splitArray( this, getCDIVariable(), getStart(), getEnd() );
 		}
-		return (IVariable[])fVariables.toArray( new IVariable[fVariables.size()] );
+		return fVariables;
 	}
 
 	/* (non-Javadoc)
@@ -128,7 +132,21 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	 */
 	public String evaluateAsExpression()
 	{
-		return null;
+		ICExpressionEvaluator ee = (ICExpressionEvaluator)getDebugTarget().getAdapter( ICExpressionEvaluator.class );
+		String valueString = null; 
+		if ( ee != null && ee.canEvaluate() )
+		{
+			try
+			{
+				if ( getParentVariable() != null && !getParentVariable().isAccessSpecifier() )
+					valueString = ee.evaluateExpressionToString( getParentVariable().getQualifiedName() );
+			}
+			catch( DebugException e )
+			{
+				valueString = e.getMessage();
+			}
+		}
+		return valueString;
 	}
 
 	public CVariable getParentVariable()
@@ -136,27 +154,17 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 		return fParent;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICValue#isNaN()
-	 */
-	public boolean isNaN()
+	protected ICDIVariable getCDIVariable()
 	{
-		return false;
+		return fCDIVariable;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICValue#isNegativeInfinity()
-	 */
-	public boolean isNegativeInfinity()
+	public void dispose()
 	{
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICValue#isPositiveInfinity()
-	 */
-	public boolean isPositiveInfinity()
-	{
-		return false;
+		Iterator it = fVariables.iterator();
+		while( it.hasNext() )
+		{
+			((CVariable)it.next()).dispose();
+		}
 	}
 }

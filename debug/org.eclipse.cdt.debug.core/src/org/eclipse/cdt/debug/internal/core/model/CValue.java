@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.core.cdi.model.type.ICDILongValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceValue;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIShortValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIWCharValue;
 import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
 import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.model.ICValue;
@@ -77,19 +78,7 @@ public class CValue extends CDebugElement implements ICValue
 	 */
 	public String getReferenceTypeName() throws DebugException
 	{
-		String typeName = null;
-		try
-		{
-			if ( getUnderlyingValue() != null )
-			{
-				typeName = getUnderlyingValue().getTypeName();
-			}
-		}
-		catch( CDIException e )
-		{
-			logError( e );
-		}
-		return typeName;
+		return ( getParentVariable() != null ) ? getParentVariable().getReferenceTypeName() : null;
 	}
 
 	/* (non-Javadoc)
@@ -136,18 +125,12 @@ public class CValue extends CDebugElement implements ICValue
 		{
 			try
 			{
-				List vars = getCDIVariables();
-				
-				if ( vars.size() > 1 )
-					fVariables = CArrayPartition.splitArray( this, vars, 0, vars.size() - 1 );
-				else
+				List vars = getCDIVariables();				
+				fVariables = new ArrayList( vars.size() );
+				Iterator it = vars.iterator();
+				while( it.hasNext() )
 				{
-					fVariables = new ArrayList( vars.size() );
-					Iterator it = vars.iterator();
-					while( it.hasNext() )
-					{
-						fVariables.add( new CModificationVariable( this, (ICDIVariable)it.next() ) );
-					}
+					fVariables.add( new CModificationVariable( this, (ICDIVariable)it.next() ) );
 				}
 			}
 			catch( DebugException e )
@@ -208,42 +191,6 @@ public class CValue extends CDebugElement implements ICValue
 		return Arrays.asList( vars );
 	}
 
-	protected String processCDIValue( String cdiValue )
-	{
-		String result = null;
-		if ( cdiValue != null )
-		{
-			result = cdiValue.trim();
-			if ( result.startsWith( "@" ) ) // Reference
-			{
-				int end = result.indexOf( ':' );
-				if ( end == -1 )
-					end = result.length();
-				result = result.substring( 1, end );
-			}
-			else if ( result.startsWith( "0x" ) )
-			{
-				int end = result.indexOf( ' ' );
-				if ( end == -1 )
-					end = result.length();
-				result = result.substring( 0, end );
-			}
-			else if ( result.endsWith( "\'" ) )
-			{
-				int start = result.indexOf( '\'' );
-				if ( start != -1 && result.length() - start == 3 )
-				{
-					result = result.substring( start );
-				}
-				else
-				{
-					result = null;
-				}
-			}
-		}
-		return result;
-	}
-
 	public synchronized void setChanged( boolean changed ) throws DebugException
 	{
 		if ( changed )
@@ -257,7 +204,7 @@ public class CValue extends CDebugElement implements ICValue
 		}
 	}
 
-	protected void dispose()
+	public void dispose()
 	{
 		Iterator it = fVariables.iterator();
 		while( it.hasNext() )
@@ -293,6 +240,8 @@ public class CValue extends CDebugElement implements ICValue
 				return getPointerValueString( (ICDIPointerValue)cdiValue );
 			else if ( cdiValue instanceof ICDIReferenceValue )
 				return getReferenceValueString( (ICDIReferenceValue)cdiValue );
+			else if ( cdiValue instanceof ICDIWCharValue )
+				return getWCharValueString( (ICDIWCharValue)cdiValue );
 			else
 				return cdiValue.getValueString();
 		}
@@ -499,6 +448,47 @@ public class CValue extends CDebugElement implements ICValue
 			}
 		}
 		return null;
+	}
+
+	private String getWCharValueString( ICDIWCharValue value ) throws CDIException
+	{
+		if ( getParentVariable() != null )
+		{
+			int size = getParentVariable().sizeof();
+			if ( size == 16 )
+			{
+				switch( getParentVariable().getFormat() )
+				{
+					case ICDIFormat.NATURAL:
+					case ICDIFormat.DECIMAL:
+						return ( isUnsigned() ) ? Integer.toString( value.intValue() ) : Short.toString( value.shortValue() );
+					case ICDIFormat.HEXADECIMAL:
+					{
+						StringBuffer sb = new StringBuffer( "0x" ); 
+						String stringValue = Integer.toHexString( ( isUnsigned() ) ? value.intValue() : value.shortValue() );
+						sb.append( ( stringValue.length() > 4 ) ? stringValue.substring( stringValue.length() - 4 ) : stringValue );
+						return sb.toString();
+					}
+				}
+			}
+			if ( size == 32 )
+			{
+				switch( getParentVariable().getFormat() )
+				{
+					case ICDIFormat.NATURAL:
+					case ICDIFormat.DECIMAL:
+						return ( isUnsigned() ) ? Long.toString( value.longValue() ) : Integer.toString( value.intValue() );
+					case ICDIFormat.HEXADECIMAL:
+					{
+						StringBuffer sb = new StringBuffer( "0x" ); 
+						String stringValue = ( isUnsigned() ) ? Long.toHexString( value.longValue() ) : Integer.toHexString( value.intValue() );
+						sb.append( ( stringValue.length() > 8 ) ? stringValue.substring( stringValue.length() - 8 ) : stringValue );
+						return sb.toString();
+					}
+				}
+			}
+		}
+		return value.getValueString();
 	}
 
 	private boolean isUnsigned()

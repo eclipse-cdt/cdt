@@ -6,7 +6,6 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
-import java.util.LinkedList;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -157,6 +156,14 @@ public abstract class CVariable extends CDebugElement
 		{
 			return 0;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getQualifiedName()
+		 */
+		public String getQualifiedName() throws CDIException
+		{
+			return ( fVariableObject != null ) ? fVariableObject.getQualifiedName() : null;
+		}
 	}
 
 	class InternalVariable
@@ -206,7 +213,7 @@ public abstract class CVariable extends CDebugElement
 			if ( fType == null )
 			{
 				ICDIVariable var = getCDIVariable();
-				if ( var != null )
+				if ( var != null && !(var instanceof ErrorVariable) )
 					fType = new CType( var.getType() );
 			}
 			return fType;
@@ -216,11 +223,17 @@ public abstract class CVariable extends CDebugElement
 		{
 			if ( fEditable == null )
 			{
-				ICDIVariable var = getCDIVariable();
-				if ( var != null )
-					fEditable = new Boolean( var.isEditable() );
+				ICDIVariableObject varObject = getCDIVariableObject();
+				if ( varObject != null && !(varObject instanceof ErrorVariable) )
+					fEditable = new Boolean( varObject.isEditable() );
 			}
 			return ( fEditable != null ) ? fEditable.booleanValue() : false;
+		}
+
+		protected boolean hasChildren() throws CDIException
+		{
+			CType type = (CType)getType();
+			return ( type != null ) ? type.hasChildren() : false;
 		}
 
 		private void setCDIVariable( ICDIVariable variable )
@@ -261,6 +274,26 @@ public abstract class CVariable extends CDebugElement
 		{
 			return ( fCDIVariable != null ) ? fCDIVariable.equals( cdiVar ) : false; 
 		}
+
+		protected int sizeof()
+		{
+			if ( getCDIVariableObject() != null )
+			{
+				try
+				{
+					return getCDIVariableObject().sizeof();
+				}
+				catch( CDIException e )
+				{
+				}
+			}
+			return 0;
+		}
+
+		protected String getQualifiedName() throws CDIException
+		{
+			return ( fCDIVariableObject != null ) ? fCDIVariableObject.getQualifiedName() : null;
+		}
 	}
 
 	/**
@@ -281,7 +314,7 @@ public abstract class CVariable extends CDebugElement
 	/**
 	 * Cache of current value - see #getValue().
 	 */
-	protected CValue fValue;
+	protected ICValue fValue;
 
 	/**
 	 * The name of this variable.
@@ -368,6 +401,9 @@ public abstract class CVariable extends CDebugElement
 		fIsEnabled = !enableVariableBookkeeping();
 		fOriginal = createOriginal( cdiVariableObject );
 		fShadow = null;
+		if ( cdiVariableObject instanceof ErrorVariable )
+			setStatus( ICDebugElementErrorStatus.ERROR, 
+					   MessageFormat.format( "not available: {0}", new String[] { ((ErrorVariable)cdiVariableObject).getException().getMessage() } ) );
 		fFormat = CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT );
 		getCDISession().getEventManager().addEventListener( this );
 	}
@@ -390,9 +426,27 @@ public abstract class CVariable extends CDebugElement
 			return fDisabledValue;
 		if ( fValue == null )
 		{
-			ICDIValue cdiValue = getCurrentValue();
-			if ( cdiValue != null )
-				fValue = CValueFactory.createValue( this, cdiValue );
+			if ( getType() != null && getType().isArray() )
+			{
+				ICDIVariable var = null;
+				try
+				{
+					var = getInternalVariable().getCDIVariable();
+				}
+				catch( CDIException e )
+				{
+					requestFailed( "", e );
+				}
+				int[] dims = getType().getArrayDimensions();
+				if ( dims.length > 0 && dims[0] > 0 )
+					fValue = CValueFactory.createArrayValue( this, var, 0, dims[0] - 1 );
+			}
+			else
+			{
+				ICDIValue cdiValue = getCurrentValue();
+				if ( cdiValue != null )
+					fValue = CValueFactory.createValue( this, cdiValue );
+			}
 		}
 		return fValue;
 	}
@@ -485,14 +539,14 @@ public abstract class CVariable extends CDebugElement
 	 */
 	protected ICDIValue getLastKnownValue()
 	{
-		return ( fValue != null ) ? fValue.getUnderlyingValue() : null;
+		return ( fValue instanceof CValue ) ? ((CValue)fValue).getUnderlyingValue() : null;
 	}
 	
 	protected void dispose()
 	{
 		if ( fValue != null )
 		{
-			((CValue)fValue).dispose();
+			fValue.dispose();
 		}
 		getCDISession().getEventManager().removeEventListener( this );
 		if ( getShadow() != null )
@@ -822,15 +876,20 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public boolean hasChildren()
 	{
+		if ( !isEnabled() )
+			return false;
+		boolean result = false;
 		try
 		{
-			return ( getValue() != null && getValue().hasVariables() );
+			InternalVariable var = getInternalVariable();
+			if ( var != null )
+				result = var.hasChildren();
 		}
-		catch( DebugException e )
+		catch( CDIException e )
 		{
 			logError( e );
 		}
-		return false;
+		return result;
 	}
 
 	/* (non-Javadoc)
@@ -858,45 +917,14 @@ public abstract class CVariable extends CDebugElement
 	{
 		if ( fQualifiedName == null )
 		{
-			LinkedList list = new LinkedList();
-			list.add( this );
-			CVariable var = getParentVariable();
-			while( var != null )
+			try
 			{
-				if ( !( var.getType().isArray() ) && !( var instanceof CArrayPartition ) && !var.isAccessSpecifier() )
-					list.addFirst( var );
-				var = var.getParentVariable();
+				fQualifiedName = getInternalVariable().getQualifiedName();
 			}
-			StringBuffer sb = new StringBuffer();
-			CVariable[] vars = (CVariable[])list.toArray( new CVariable[list.size()] );
-			for ( int i = 0; i < vars.length; ++i )
+			catch( CDIException e )
 			{
-				sb.insert( 0, '(' );
-				if ( i > 0 )
-				{
-					if ( vars[i - 1].getType().isPointer() )
-					{
-						if ( vars[i].getName().charAt( 0 ) == '*' && vars[i-1].getName().equals( vars[i].getName().substring( 1 ) ) )
-						{
-							sb.insert( 0, '*' );
-						}
-						else
-						{
-							sb.append( "->" );
-							sb.append( vars[i].getName() );
-						}
-					}
-					else
-					{
-						sb.append( '.' );
-						sb.append( vars[i].getName() );
-					}
-				}
-				else
-					sb.append( vars[i].getName() );
-				sb.append( ')' );
+				requestFailed( "Qualified name is not available.", e );
 			}
-			fQualifiedName = sb.toString();
 		}
 		return fQualifiedName;
 	}
@@ -968,7 +996,7 @@ public abstract class CVariable extends CDebugElement
 	{
 		if ( fValue != null )
 		{
-			((CValue)fValue).dispose();
+			fValue.dispose();
 			fValue = null;
 		}
 	}
@@ -1013,5 +1041,10 @@ public abstract class CVariable extends CDebugElement
 	private InternalVariable getInternalVariable()
 	{
 		return ( getShadow() != null ) ? getShadow() : fOriginal;
+	}
+
+	protected int sizeof()
+	{
+		return getInternalVariable().sizeof();
 	}
 }

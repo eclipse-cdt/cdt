@@ -5,6 +5,9 @@
  */
 package org.eclipse.cdt.debug.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+
 
 /**
  * 
@@ -13,4 +16,5 @@ package org.eclipse.cdt.debug.core.cdi.model.type;
  * @since April 15, 2003
  */
 public interface ICDIArrayValue extends ICDIDerivedValue {
+	ICDIVariable[] getVariables(int index, int length) throws CDIException;		
 }

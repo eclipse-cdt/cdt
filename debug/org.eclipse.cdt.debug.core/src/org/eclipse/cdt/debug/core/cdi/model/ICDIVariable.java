@@ -27,12 +27,6 @@ public interface ICDIVariable extends ICDIVariableObject {
 	ICDIValue getValue() throws CDIException;
 
 	/**
-	 * Returns true if the value could be changed.
-	 * @trhows CDIException if the method fails.
-	 */
-	boolean isEditable() throws CDIException;
-
-	/**
 	 * Attempts to set the value of this variable to the value of 
 	 * the given expression.
 	 * 

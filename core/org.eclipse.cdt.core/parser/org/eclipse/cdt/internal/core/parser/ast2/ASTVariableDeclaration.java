@@ -8,20 +8,24 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.parser.ast2;
+package org.eclipse.cdt.internal.core.parser.ast2;
+
+import org.eclipse.cdt.core.parser.ast2.IASTVariable;
+import org.eclipse.cdt.core.parser.ast2.IASTVariableDeclaration;
 
 /**
  * @author Doug Schaefer
  */
-public interface IASTScope {
+public class ASTVariableDeclaration extends ASTDeclaration implements IASTVariableDeclaration{
 
-	/**
-	 * @return the first declaration in the scope.
-	 */
-	public IASTDeclaration getFirstDeclaration();
+	private IASTVariable variable;
+	
+	public IASTVariable getVariable() {
+		return variable;
+	}
 
-	/**
-	 * @return the container scope of this scope
-	 */
-	public IASTScope getParentScope();
+	public void setVariable(IASTVariable variable) {
+		this.variable = variable;
+	}
+	
 }

@@ -8,20 +8,21 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.parser.ast2;
+package org.eclipse.cdt.internal.core.parser.ast2;
 
 /**
  * @author Doug Schaefer
  */
-public interface IASTScope {
+public class ASTBuiltinType extends ASTType {
 
-	/**
-	 * @return the first declaration in the scope.
-	 */
-	public IASTDeclaration getFirstDeclaration();
-
-	/**
-	 * @return the container scope of this scope
-	 */
-	public IASTScope getParentScope();
+	private char[] name;
+	
+	public char[] getName() {
+		return name;
+	}
+	
+	public void setName(char[] name) {
+		this.name = name;
+	}
+	
 }

@@ -13,15 +13,6 @@ package org.eclipse.cdt.core.parser.ast2;
 /**
  * @author Doug Schaefer
  */
-public interface IASTScope {
+public interface IASTTranslationUnit extends IASTScope {
 
-	/**
-	 * @return the first declaration in the scope.
-	 */
-	public IASTDeclaration getFirstDeclaration();
-
-	/**
-	 * @return the container scope of this scope
-	 */
-	public IASTScope getParentScope();
 }

@@ -8,20 +8,31 @@
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
-package org.eclipse.cdt.core.parser.ast2;
+package org.eclipse.cdt.internal.core.parser.ast2;
+
+import org.eclipse.cdt.core.parser.ast2.IASTNode;
 
 /**
  * @author Doug Schaefer
  */
-public interface IASTScope {
+public class ASTNode implements IASTNode {
 
-	/**
-	 * @return the first declaration in the scope.
-	 */
-	public IASTDeclaration getFirstDeclaration();
+	public String getFilename() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public int getLength() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int getOffset() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-	/**
-	 * @return the container scope of this scope
-	 */
-	public IASTScope getParentScope();
+	public Object adapt(Class cls) {
+		return this;
+	}
 }

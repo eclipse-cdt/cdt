@@ -3244,10 +3244,12 @@ public class Parser implements IParser
             {
                 switch (LT(1))
                 {
-                    case IToken.t_short :
-                    case IToken.t_unsigned :
-                    case IToken.t_long :
-                    case IToken.t_const :
+					 case IToken.t_signed :
+					 case IToken.t_unsigned :
+					 case IToken.t_short :
+					 case IToken.t_long :
+					 case IToken.t_const :
+					 case IToken.t_volatile :
                         end = consume();
                         break;
                     case IToken.tAMPER :

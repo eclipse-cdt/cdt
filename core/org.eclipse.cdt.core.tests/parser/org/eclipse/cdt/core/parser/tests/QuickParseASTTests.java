@@ -1715,4 +1715,10 @@ public class QuickParseASTTests extends BaseASTTest
 		parse("typedef foo<(U::id > 0)> foobar;");
 		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
 	}
+	
+	public void testBug39546() throws Exception
+	{
+		parse("signed char c = (signed char) 0xffffffff;");
+		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
+	}
 }

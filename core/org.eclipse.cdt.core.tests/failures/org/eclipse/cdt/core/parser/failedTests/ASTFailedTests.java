@@ -119,10 +119,7 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("void f(int a, struct {int b[a];} c) {}");
     }
-    public void testBug39546() throws Exception
-    {
-        assertCodeFailsParse("signed char c = (signed char) 0xffffffff;");
-    }
+
     //Here starts C99-specific section
     public void testBug39549() throws Exception
     {

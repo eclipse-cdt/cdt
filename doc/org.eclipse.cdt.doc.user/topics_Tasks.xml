@@ -4,21 +4,13 @@
 
      <toc label="Tasks">
           <topic label="Updating the CDT" href="tasks/cdt_t_update_man.htm"/>
-          <topic label="Creating a project" href="tasks/cdt_t_proj_new.htm"/>
-          <topic label="Defining project properties" href="tasks/cdt_o_proj_prop.htm">
-               <topic label="Renaming a project" href="tasks/cdt_t_proj_rename.htm"/>
-               <topic label="Selecting referenced projects" href="tasks/cdt_t_proj_ref.htm"/>
-               <topic label="Defining build settings" href="tasks/cdt_t_proj_build_set.htm"/>
-               <topic label="Filtering errors" href="tasks/cdt_t_proj_error_parser.htm"/>
-               <topic label="Selecting a binary parser" href="tasks/cdt_t_proj_parser.htm"/>
-               <topic label="Including paths and symbols" href="tasks/cdt_t_proj_paths.htm"/>
-               <topic label="Select a deployment platform" href="tasks/cdt_t_proj_platf.htm"/>
-          </topic>
           <topic label="Working with C/C++ project files" href="tasks/cdt_o_proj_files.htm">
-               <topic label="Displaying C/C++ file components in the C/C++ Projects view" href="tasks/cdt_t_show_proj_files.htm"/>
-               <topic label="Assigning a C or C++ nature to a project" href="tasks/cdt_t_conv_proj.htm"/>
+	         <topic label="Creating a project" href="tasks/cdt_t_proj_new.htm"/>
+		   <topic label="Renaming a project" href="tasks/cdt_t_proj_rename.htm"/>
                <topic label="Creating a C/C++ file" href="tasks/cdt_t_new_cpp.htm"/>
                <topic label="Creating a makefile" href="tasks/cdt_t_new_make.htm"/>
+		   <topic label="Assigning a C or C++ nature to a project" href="tasks/cdt_t_conv_proj.htm"/>
+               <topic label="Displaying C/C++ file components in the C/C++ Projects view" href="tasks/cdt_t_show_proj_files.htm"/>
                <topic label="Hiding files by type in the C/C++ Projects view" href="tasks/cdt_t_prvw_hide_files.htm"/>
           </topic>
           <topic label="Writing code" href="tasks/cdt_o_write_code.htm">
@@ -34,6 +26,11 @@
                </topic>
           </topic>
           <topic label="Building projects" href="tasks/cdt_o_build_task.htm">
+               <topic label="Selecting referenced projects" href="tasks/cdt_t_proj_ref.htm"/>
+               <topic label="Defining build settings" href="tasks/cdt_t_proj_build_set.htm"/>
+               <topic label="Filtering errors" href="tasks/cdt_t_proj_error_parser.htm"/>
+               <topic label="Including paths and symbols" href="tasks/cdt_t_proj_paths.htm"/>
+               <topic label="Select a deployment platform" href="tasks/cdt_t_proj_platf.htm"/>
                <topic label="Setting a build order" href="tasks/cdt_t_setbuildorder.htm"/>
                <topic label="Manually building" href="tasks/cdt_t_manualbuild.htm"/>
                <topic label="Autosaving on a manual build" href="tasks/cdt_t_autosave.htm"/>
@@ -45,9 +42,10 @@
                     <topic label="Setting reminders" href="tasks/cdt_t_setreminder.htm"/>
                </topic>
           </topic>
-          <topic label="Running and Debugging" href="tasks/cdt_o_run.htm">
+          <topic label="Running and Debugging Projects" href="tasks/cdt_o_run.htm">
                <topic label="Selecting a run or debug configuration" href="tasks/cdt_t_run_config.htm"/>
                <topic label="Creating or editing a run/debug configuration" href="tasks/cdt_o_run_config.htm">
+               <topic label="Selecting a binary parser" href="tasks/cdt_t_proj_parser.htm"/>
                     <topic label="Creating a run or debug configuration" href="tasks/cdt_t_new_run_config.htm"/>
                     <topic label="Selecting an application to run" href="tasks/cdt_t_run_main.htm"/>
                     <topic label="Specifying execution arguments" href="tasks/cdt_t_run_arg.htm"/>

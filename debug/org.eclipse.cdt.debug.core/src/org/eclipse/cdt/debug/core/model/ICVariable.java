@@ -22,27 +22,11 @@ public interface ICVariable extends IVariable
 	
 	void reset() throws DebugException;
 	
+	ICType getType() throws DebugException;
+	
 	boolean isEditable();
 	
 	boolean hasChildren();
-
-	boolean isArray();
-
-	int[] getArrayDimensions();
-
-	boolean isStructure();
-
-	boolean isCharacter();
-
-	boolean isFloatingPointType();
-
-	boolean isNaN();
-
-	boolean isPositiveInfinity();
-
-	boolean isNegativeInfinity();
-
-	boolean isPointer();
 
 	String getQualifiedName() throws DebugException;
 }

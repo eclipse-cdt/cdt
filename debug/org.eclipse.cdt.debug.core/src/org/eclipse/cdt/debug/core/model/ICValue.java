@@ -31,4 +31,10 @@ public interface ICValue extends IValue
 	String evaluateAsExpression();
 
 	void setChanged(  boolean changed ) throws DebugException;
+
+	boolean isNaN();
+
+	boolean isPositiveInfinity();
+
+	boolean isNegativeInfinity();
 }

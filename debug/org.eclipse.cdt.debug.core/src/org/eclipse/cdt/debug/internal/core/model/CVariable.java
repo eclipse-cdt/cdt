@@ -19,15 +19,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDICharType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDerivedType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIDoubleValue;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatValue;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatingPointType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIStructType;
-import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
+import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICastToArray;
@@ -97,9 +89,9 @@ public abstract class CVariable extends CDebugElement
 	protected boolean fChanged = false;
 
 	/**
-	 * The type name of this variable.
+	 * The type of this variable.
 	 */
-	private String fTypeName = null;
+	private ICType fType = null;
 
 	/**
 	 * The current format of this variable.
@@ -363,7 +355,7 @@ public abstract class CVariable extends CDebugElement
 				{
 					parent = parent.getParentVariable();
 				}
-				if ( parent instanceof CVariable && parent.getType() instanceof ICDIArrayType )
+				if ( parent instanceof CVariable && parent.getType().isArray() )
 				{
 					fName = parent.getName() + '[' + cdiName + ']';
 				}
@@ -377,18 +369,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public String getReferenceTypeName() throws DebugException
 	{
-		if ( fTypeName == null )
-		{
-			try
-			{
-				fTypeName = getCDIVariable().getTypeName();
-			}
-			catch( CDIException e )
-			{
-				targetRequestFailed( e.getMessage(), null );
-			}
-		}
-		return fTypeName;
+		return getType().getName();
 	}
 
 	protected void updateParentVariable( CValue parentValue ) throws DebugException
@@ -447,7 +428,9 @@ public abstract class CVariable extends CDebugElement
 				fValue = null;
 			}
 			fEditable = null;
-			fTypeName = null;
+			if ( fType != null )
+				fType.dispose();
+			fType = null;
 			fireChangeEvent( DebugEvent.STATE );
 		}
 	}
@@ -483,7 +466,9 @@ public abstract class CVariable extends CDebugElement
 			fValue = null;
 		}
 		fEditable = null;
-		fTypeName = null;
+		if ( fType != null )
+			fType.dispose();
+		fType = null;
 		fireChangeEvent( DebugEvent.STATE );
 	}
 	
@@ -584,7 +569,9 @@ public abstract class CVariable extends CDebugElement
 				fValue = null;
 			}
 			fEditable = null;
-			fTypeName = null;
+			if ( fType != null )
+				fType.dispose();
+			fType = null;
 			fireChangeEvent( DebugEvent.STATE );
 		}
 	}
@@ -632,143 +619,6 @@ public abstract class CVariable extends CDebugElement
 		}
 		return ( fEditable != null ) ? fEditable.booleanValue() : false;
 	}
-	
-	public boolean isPointer()
-	{
-		return ( getType() instanceof ICDIPointerType );
-	}
-
-	public boolean isArray()
-	{
-		return ( getType() instanceof ICDIArrayType );
-	}
-
-	public int[] getArrayDimensions()
-	{
-		int length = 0;
-		ICDIType type = getType();
-		while( type instanceof ICDIArrayType )
-		{
-			++length;
-			type = ( type instanceof ICDIDerivedType ) ? ((ICDIDerivedType)type).getComponentType() : null;
-		}
-		int[] dims = new int[length];
-		type = getType();
-		for ( int i = length; i > 0; --i )
-		{
-			dims[i - 1] = ((ICDIArrayType)type).getDimension();
-			type = ((ICDIDerivedType)type).getComponentType();
-		}
-		return dims;
-	}
-
-	public boolean isStructure()
-	{
-		return ( getType() instanceof ICDIStructType );
-	}
-
-	private ICDIType getType()
-	{
-		ICDIType type = null;
-		try
-		{
-			if ( getCDIVariable() != null )
-				type = getCDIVariable().getType();
-		}
-		catch( CDIException e )
-		{
-		}
-		return type;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isCharacter()
-	 */
-	public boolean isCharacter()
-	{
-		return ( getType() instanceof ICDICharType );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isNaN()
-	 */
-	public boolean isNaN() 
-	{
-		try 
-		{
-			ICDIValue value = getCDIVariable().getValue();
-			if ( value instanceof ICDIDoubleValue )
-			{
-				return Double.isNaN( ((ICDIDoubleValue)value).doubleValue() );
-			}
-			if ( value instanceof ICDIFloatValue )
-			{
-				return Float.isNaN( ((ICDIFloatValue)value).floatValue() );
-			}
-		}
-		catch( CDIException e ) 
-		{
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isNegativeInfinity()
-	 */
-	public boolean isNegativeInfinity()
-	{
-		try 
-		{
-			ICDIValue value = getCDIVariable().getValue();
-			if ( value instanceof ICDIDoubleValue )
-			{
-				double dbl = ((ICDIDoubleValue)value).doubleValue();
-				return ( Double.isInfinite( dbl ) && Double.NEGATIVE_INFINITY == dbl );
-			}
-			if ( value instanceof ICDIFloatValue )
-			{
-				float flt = ((ICDIFloatValue)value).floatValue();
-				return ( Float.isInfinite( flt ) && Float.NEGATIVE_INFINITY == flt );
-			}
-		}
-		catch( CDIException e ) 
-		{
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isPositiveInfinity()
-	 */
-	public boolean isPositiveInfinity()
-	{
-		try 
-		{
-			ICDIValue value = getCDIVariable().getValue();
-			if ( value instanceof ICDIDoubleValue )
-			{
-				double dbl = ((ICDIDoubleValue)value).doubleValue();
-				return ( Double.isInfinite( dbl ) && Double.POSITIVE_INFINITY == dbl );
-			}
-			if ( value instanceof ICDIFloatValue )
-			{
-				float flt = ((ICDIFloatValue)value).floatValue();
-				return ( Float.isInfinite( flt ) && Float.POSITIVE_INFINITY == flt );
-			}
-		}
-		catch( CDIException e ) 
-		{
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ICVariable#isFloatingPointType()
-	 */
-	public boolean isFloatingPointType() 
-	{
-		return  ( getType() instanceof ICDIFloatingPointType );
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getQualifiedName()
@@ -782,7 +632,7 @@ public abstract class CVariable extends CDebugElement
 			CVariable var = getParentVariable();
 			while( var != null )
 			{
-				if ( !( var.getType() instanceof ICDIArrayType ) && !( var instanceof CArrayPartition ) && !var.isAccessSpecifier() )
+				if ( !( var.getType().isArray() ) && !( var instanceof CArrayPartition ) && !var.isAccessSpecifier() )
 					list.addFirst( var );
 				var = var.getParentVariable();
 			}
@@ -793,7 +643,7 @@ public abstract class CVariable extends CDebugElement
 				sb.insert( 0, '(' );
 				if ( i > 0 )
 				{
-					if ( vars[i - 1].isPointer() )
+					if ( vars[i - 1].getType().isPointer() )
 					{
 						if ( vars[i].getName().charAt( 0 ) == '*' && vars[i-1].getName().equals( vars[i].getName().substring( 1 ) ) )
 						{
@@ -832,5 +682,24 @@ public abstract class CVariable extends CDebugElement
 		if ( getParent() instanceof CArrayPartitionValue )
 			return ((CArrayPartitionValue)getParent()).getParentVariable();
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICVariable#getType()
+	 */
+	public ICType getType() throws DebugException
+	{
+		if ( fType == null && getCDIVariable() != null )
+		{
+			try
+			{
+				fType = new CType( getCDIVariable().getType() );
+			}
+			catch( CDIException e )
+			{
+				requestFailed( "Type is not available.", e );
+			}
+		}
+		return fType;
 	}
 }

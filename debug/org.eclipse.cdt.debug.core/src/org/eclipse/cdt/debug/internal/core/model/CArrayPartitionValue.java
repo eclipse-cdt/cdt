@@ -163,4 +163,28 @@ public class CArrayPartitionValue extends CDebugElement implements ICValue
 	{
 		return fParent;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#isNaN()
+	 */
+	public boolean isNaN()
+	{
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#isNegativeInfinity()
+	 */
+	public boolean isNegativeInfinity()
+	{
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#isPositiveInfinity()
+	 */
+	public boolean isPositiveInfinity()
+	{
+		return false;
+	}
 }

@@ -25,6 +25,8 @@ import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
+import org.eclipse.cdt.debug.core.model.ICType;
+import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
@@ -542,15 +544,16 @@ public class CDTDebugModelPresentation extends LabelProvider
 		StringBuffer label = new StringBuffer();
 		if ( var instanceof ICVariable )
 		{
-			if ( isShowVariableTypeNames() )
+			ICType type = ((ICVariable)var).getType();
+			if ( type != null && isShowVariableTypeNames() )
 			{
-				String type = getVariableTypeName( var );
-				if ( type != null && type.length() > 0 )
+				String typeName = getVariableTypeName( type );
+				if ( typeName != null && typeName.length() > 0 )
 				{
-					label.append( type );
-					if ( ((ICVariable)var).isArray() )
+					label.append( typeName );
+					if ( type.isArray() )
 					{
-						int[] dims = ((ICVariable)var).getArrayDimensions();
+						int[] dims = type.getArrayDimensions();
 						for ( int i = 0; i < dims.length; ++i )
 						{
 							label.append( '[' );					
@@ -563,31 +566,29 @@ public class CDTDebugModelPresentation extends LabelProvider
 			}
 			label.append( var.getName() );
 			IValue value = var.getValue();
-			if ( value != null )
+			if ( value instanceof ICValue && value.getValueString() != null )
 			{
-				if ( ((ICVariable)var).isCharacter() && value.getValueString() != null )
+				String valueString = value.getValueString().trim();
+				if ( type != null && type.isCharacter() )
 				{
-					String valueString = value.getValueString().trim();
 					if ( valueString.length() == 0 )
 						valueString = ".";
 					label.append( "= " );
 					label.append( valueString );
 				}
-				else if ( ((ICVariable)var).isFloatingPointType() && value.getValueString() != null )
+				else if ( type != null && type.isFloatingPointType() )
 				{
-					String valueString = value.getValueString().trim();
-					if ( ((ICVariable)var).isNaN() )
+					if ( ((ICValue)value).isNaN() )
 						valueString = "NAN";
-					if ( ((ICVariable)var).isPositiveInfinity() )
+					if ( ((ICValue)value).isPositiveInfinity() )
 						valueString = "Infinity";
-					if ( ((ICVariable)var).isNegativeInfinity() )
+					if ( ((ICValue)value).isNegativeInfinity() )
 						valueString = "-Infinity";
 					label.append( "= " );
 					label.append( valueString );
 				}
-				else if ( !((ICVariable)var).isArray() && !((ICVariable)var).isStructure() && value.getValueString() != null )
+				else if ( type == null || ( !type.isArray() && !type.isStructure() ) )
 				{
-					String valueString = value.getValueString().trim();
 					if ( valueString.length() > 0 )
 					{
 						label.append( "= " );
@@ -937,23 +938,16 @@ public class CDTDebugModelPresentation extends LabelProvider
 		return null;
 	}
 
-	private String getVariableTypeName( IVariable variable )
+	private String getVariableTypeName( ICType type )
 	{
-		String type = null;
-		try
+		String typeName = type.getName();
+		if ( type.isArray() && typeName != null )
 		{
-			type = variable.getReferenceTypeName();
-			if ( type != null )
-			{
-				int index = type.indexOf( '[' );
-				if ( index != -1 )
-					return type.substring( 0, index ).trim();
-			}
+			int index = typeName.indexOf( '[' );
+			if ( index != -1 )
+				return typeName.substring( 0, index ).trim();
 		}
-		catch( DebugException e )
-		{
-		}
-		return type;
+		return typeName;
 	}
 
 	/* (non-Javadoc)

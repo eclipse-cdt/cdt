@@ -79,9 +79,9 @@ public class CValue extends CDebugElement implements ICValue
 		String typeName = null;
 		try
 		{
-			if ( fCDIValue != null )
+			if ( getUnderlyingValue() != null )
 			{
-				typeName = fCDIValue.getTypeName();
+				typeName = getUnderlyingValue().getTypeName();
 			}
 		}
 		catch( CDIException e )
@@ -566,5 +566,78 @@ public class CValue extends CDebugElement implements ICValue
 		{
 			((CVariable)it.next()).reset();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#isNaN()
+	 */
+	public boolean isNaN()
+	{
+		try 
+		{
+			ICDIValue value = getUnderlyingValue();
+			if ( value instanceof ICDIDoubleValue )
+			{
+				return Double.isNaN( ((ICDIDoubleValue)value).doubleValue() );
+			}
+			if ( value instanceof ICDIFloatValue )
+			{
+				return Float.isNaN( ((ICDIFloatValue)value).floatValue() );
+			}
+		}
+		catch( CDIException e ) 
+		{
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#isNegativeInfinity()
+	 */
+	public boolean isNegativeInfinity()
+	{
+		try 
+		{
+			ICDIValue value = getUnderlyingValue();
+			if ( value instanceof ICDIDoubleValue )
+			{
+				double dbl = ((ICDIDoubleValue)value).doubleValue();
+				return ( Double.isInfinite( dbl ) && Double.NEGATIVE_INFINITY == dbl );
+			}
+			if ( value instanceof ICDIFloatValue )
+			{
+				float flt = ((ICDIFloatValue)value).floatValue();
+				return ( Float.isInfinite( flt ) && Float.NEGATIVE_INFINITY == flt );
+			}
+		}
+		catch( CDIException e ) 
+		{
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICValue#isPositiveInfinity()
+	 */
+	public boolean isPositiveInfinity()
+	{
+		try 
+		{
+			ICDIValue value = getUnderlyingValue();
+			if ( value instanceof ICDIDoubleValue )
+			{
+				double dbl = ((ICDIDoubleValue)value).doubleValue();
+				return ( Double.isInfinite( dbl ) && Double.POSITIVE_INFINITY == dbl );
+			}
+			if ( value instanceof ICDIFloatValue )
+			{
+				float flt = ((ICDIFloatValue)value).floatValue();
+				return ( Float.isInfinite( flt ) && Float.POSITIVE_INFINITY == flt );
+			}
+		}
+		catch( CDIException e ) 
+		{
+		}
+		return false;
 	}
 }

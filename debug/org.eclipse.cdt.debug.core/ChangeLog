@@ -1,3 +1,13 @@
+2003-06-10 Mikhail Khodjaiants
+	Refactoring: moved the type and value related methods from ICVariable to ICType and ICValue.
+	* ICType.java: new
+	* ICVariable.java
+	* ICValue.java
+	* CArrayPartitionValue.java
+	* CType.java
+	* CValue.java
+	* CVariable.java
+
 2003-06-09 Mikhail Khodjaiants
 	Added default format preferences for variables, registers and expressions.
 	* CExpression.java

@@ -1,4 +1,10 @@
-2004-0813 Alex Chapiro
+2004-09-06 Alex Chapiro
+
+	Fix for PR 75677
+	* os/win32/x86/spawner.dll
+	* library/Win32ProcessEx.c
+
+2004-08-13 Alex Chapiro
 
 	Fix for PR PR 71601
 

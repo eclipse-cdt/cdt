@@ -263,6 +263,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 				(*env) -> ReleaseStringChars(env, item, str);
 				}
 			}
+			szEnvBlock[nPos] = _T('\0');
 		}
 
 

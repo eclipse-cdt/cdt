@@ -49,4 +49,14 @@ public class STLFailedTests extends BaseDOMTest  {
 		code.write("{}\n");
 		failTest(code.toString());
 	}
+	
+	public void testBug36805() throws Exception{
+		Writer code = new StringWriter();
+		code.write("__STL_BEGIN_NAMESPACE\n");
+		code.write("template <class _CharT> class char_traits\n");
+		code.write(": public __char_traits_base<_CharT, _CharT>\n");
+		code.write("{};\n");
+		failTest(code.toString());
+	}
+	
 }

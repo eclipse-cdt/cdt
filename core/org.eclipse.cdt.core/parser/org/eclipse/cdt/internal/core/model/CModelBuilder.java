@@ -638,9 +638,13 @@ public class CModelBuilder {
 		type.append(getDeclarationType(declaration));
 		// add pointerr or reference from declarator if any
 		type.append(getDeclaratorPointerOperation(declarator));
-		// pointer to function or array of functions
-		if(declarator.getDeclarator() != null)
-		type.append("(*)");
+		if(declarator.getDeclarator() != null){
+			// pointer to function or array of functions
+			type.append("(");
+			// add pointerr or reference from declarator if any
+			type.append(getDeclaratorPointerOperation(declarator.getDeclarator()));
+			type.append(")");
+		}
 		// arrays
 		type.append(getDeclaratorArrayQualifiers(declarator));
 		return type.toString();		
@@ -729,7 +733,7 @@ public class CModelBuilder {
 		}
 		return pointerString.toString();
 	}
-	
+
 	private String getDeclaratorArrayQualifiers(Declarator declarator){		
 		StringBuffer arrayString = new StringBuffer();
 		List arrayQualifiers = declarator.getArrayQualifiers(); 

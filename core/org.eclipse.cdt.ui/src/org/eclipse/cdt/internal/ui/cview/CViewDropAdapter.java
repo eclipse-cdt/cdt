@@ -10,6 +10,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -39,10 +42,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;;
+import org.eclipse.ui.wizards.datatransfer.ImportOperation;;
 
 /**
  * Implements drop behaviour for drag and drop operations
@@ -413,7 +413,7 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 	 */
 	public String queryOverwrite(String pathString) {
 		final String returnCode[] = {CANCEL};
-		final String msg = "overwrite Query"; //$NON-NLS-1$
+		final String msg = pathString + " " + CPlugin.getResourceString("CViewDragNDrop.txt") ; //$NON-NLS-1$
 		final String[] options = {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL};
 		getDisplay().syncExec(new Runnable() {
 			public void run() {

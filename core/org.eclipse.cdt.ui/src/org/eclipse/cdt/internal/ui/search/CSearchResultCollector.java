@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.IMatch;
 import org.eclipse.cdt.ui.CSearchResultLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -28,6 +29,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
@@ -128,34 +130,46 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 			}
 	    }
 	    else {
-	    	//Create Link in referring file's project
-	    	IPath refLocation = searchMatch.getReferenceLocation();
-	    	IFile refFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(refLocation);
-	    	IProject refProject = refFile.getProject();
-	    	IPath externalMatchLocation = searchMatch.getLocation();
-	    	IFile linksFile = refProject.getFile(externalMatchLocation.lastSegment());
-	    
-	    	//Check to see if the file already exists - create if doesn't, mark team private 
-	    	if (!linksFile.exists()){
-	    		linksFile.createLink(externalMatchLocation,IResource.NONE,null);
-	    		//linksFile.setTeamPrivateMember(true);
-	    		linksFile.setDerived(true);
-	    	}
-	    	
-	    	IMarker marker =  linksFile.createMarker( SearchUI.SEARCH_MARKER );
-			
-			HashMap markerAttributes = new HashMap( 2 );
-			
-			markerAttributes.put( IMarker.CHAR_START, new Integer( Math.max( searchMatch.startOffset, 0 ) ) );		
-			markerAttributes.put( IMarker.CHAR_END,   new Integer( Math.max( searchMatch.endOffset, 0 ) ) );
-			markerAttributes.put( IMATCH, searchMatch );
-
-			marker.setAttributes( markerAttributes );
-			
-			if( _view != null ){
-				_view.addMatch( searchMatch.name, _computer.computeGroupByKey( marker ), linksFile, marker );		
-			}
-	    		
+	    	//Check to see if external markers are enabled
+	    	IPreferenceStore store =  CUIPlugin.getDefault().getPreferenceStore();
+	    	if (store.getBoolean(CSearchPage.EXTERNALMATCH_ENABLED)){
+		    	//Create Link in referring file's project
+		    	IPath refLocation = searchMatch.getReferenceLocation();
+		    	IFile refFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(refLocation);
+		    	IProject refProject = refFile.getProject();
+		    	IPath externalMatchLocation = searchMatch.getLocation();
+		    	IFile linksFile = refProject.getFile(externalMatchLocation.lastSegment());
+		        //Delete links file to keep up to date with latest prefs
+		    	if (linksFile.exists())
+		    		linksFile.delete(true,null);
+		    	
+		    	//Check to see if the file already exists - create if doesn't, mark team private 
+		    	if (!linksFile.exists()){
+		    		linksFile.createLink(externalMatchLocation,IResource.NONE,null);
+		    		int number = store.getInt(CSearchPage.EXTERNALMATCH_VISIBLE);
+		    		if (number==0){
+		    			linksFile.setDerived(true);
+		    		}
+		    		else{
+		    			linksFile.setTeamPrivateMember(true);
+		    		}
+		    		
+		    	}
+		    	
+		    	IMarker marker =  linksFile.createMarker( SearchUI.SEARCH_MARKER );
+				
+				HashMap markerAttributes = new HashMap( 2 );
+				
+				markerAttributes.put( IMarker.CHAR_START, new Integer( Math.max( searchMatch.startOffset, 0 ) ) );		
+				markerAttributes.put( IMarker.CHAR_END,   new Integer( Math.max( searchMatch.endOffset, 0 ) ) );
+				markerAttributes.put( IMATCH, searchMatch );
+	
+				marker.setAttributes( markerAttributes );
+				
+				if( _view != null ){
+					_view.addMatch( searchMatch.name, _computer.computeGroupByKey( marker ), linksFile, marker );		
+				}
+	    	}	
 	    }
 		_matchCount++;
 		

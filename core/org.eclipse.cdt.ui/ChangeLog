@@ -1,3 +1,17 @@
+2004-03-31 Bogdan Gheorghe
+	Fixed the overview annotations in the Overview bar in the CEditor
+	Modified the CEditorPreferencePage to add the Index Marker annotation
+	Created a new Preference Page to contain the options for placing markers
+	on external files
+	Modified CSearchResultCollector to use external marker search prefs
+	
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CEditorPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/WorkInProgressPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultCollector.java
+	* plugin.xml
+	
 2004-03-30 Bogdan Gheorghe
 	
 	Modified the AnnotationModel to solve all annotation refresh problems.

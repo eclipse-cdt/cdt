@@ -39,6 +39,7 @@ import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CEditorPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
+import org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage;
 import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
@@ -68,6 +69,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 public class CUIPlugin extends AbstractUIPlugin {
 
@@ -345,6 +347,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(final IPreferenceStore store) {
 		super.initializeDefaultPreferences(store);
+		MarkerAnnotationPreferences.initializeDefaultValues(store);	
         PreferenceConstants.initializeDefaultValues(store);
         
 		runUI(new Runnable() {
@@ -353,6 +356,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 				CEditorPreferencePage.initDefaults(store);
 				CView.initDefaults(store);
 				BuildConsolePreferencePage.initDefaults(store);
+				WorkInProgressPreferencePage.initDefaults(store);
 			}
 		});
 	}

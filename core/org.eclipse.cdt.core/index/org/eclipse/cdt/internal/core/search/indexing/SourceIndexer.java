@@ -73,7 +73,8 @@ public class SourceIndexer extends AbstractIndexer {
 		// Add the name of the file to the index
 		output.addDocument(document);
 		// Create a new Parser
-		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, document);
+		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, resourceFile);
+		requestor.removeMarkers(resourceFile);
 		
 		//Get the scanner info
 		IProject currentProject = resourceFile.getProject();

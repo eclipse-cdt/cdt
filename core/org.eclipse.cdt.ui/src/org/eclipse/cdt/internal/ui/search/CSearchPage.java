@@ -638,6 +638,11 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private final static String PAGE_NAME= "CSearchPage"; //$NON-NLS-1$
 	private final static String STORE_CASE_SENSITIVE= PAGE_NAME + "CASE_SENSITIVE"; //$NON-NLS-1$
 
+	/** Preference key for external marker enablement */
+    public final static String EXTERNALMATCH_ENABLED = "externMatchEnable"; //$NON-NLS-1$
+    /** Preference key for external marker visibilty */
+    public final static String EXTERNALMATCH_VISIBLE = "externMatchVisible"; //$NON-NLS-1$
+
 	private static List fgPreviousSearchPatterns = new ArrayList(20);
 
 	private Button[] fSearchFor;

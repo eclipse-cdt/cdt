@@ -18,6 +18,8 @@ package org.eclipse.cdt.internal.core.search.indexing;
 import java.io.Reader;
 import java.util.LinkedList;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.DefaultProblemHandler;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -58,7 +60,12 @@ import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
-import org.eclipse.cdt.internal.core.index.IDocument;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author bgheorgh
@@ -69,7 +76,7 @@ import org.eclipse.cdt.internal.core.index.IDocument;
 public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexConstants {
 	
 	SourceIndexer indexer;
-	IDocument document;
+	IFile resourceFile;
 
 	char[] packageName;
 	char[][] enclosingTypeNames = new char[5][];
@@ -79,15 +86,39 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	private IASTInclusion currentInclude = null;
 	private LinkedList includeStack = new LinkedList();
 	
-	public SourceIndexerRequestor(SourceIndexer indexer, IDocument document) {
+	public SourceIndexerRequestor(SourceIndexer indexer, IFile resourceFile) {
 		super();
 		this.indexer = indexer;
-		this.document= document;
+		this.resourceFile = resourceFile;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
 	 */
 	public boolean acceptProblem(IProblem problem) {
+	
+		  IASTInclusion include = peekInclude();
+		  IFile tempFile = resourceFile;
+		  int lineNumber = problem.getSourceLineNumber();
+		  
+		  //If we are in an include file, get the include file
+		  if (include != null){
+			
+			 IPath newPath = new Path(include.getFullFileName());
+			 IPath problemPath = new Path(new String(problem.getOriginatingFileName()));
+			 
+		
+				 tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(newPath);
+				 //Needed for external files
+				 if (tempFile == null)
+				 	tempFile = resourceFile;
+			 
+			 if (!newPath.equals(problemPath)){
+				 lineNumber = include.getStartingLine();
+			 }
+		  }
+		  
+	    addMarkers(tempFile,problem, lineNumber); 
+	      
 		return DefaultProblemHandler.ruleOnProblem( problem, ParserMode.COMPLETE_PARSE );
 	}
 
@@ -188,6 +219,15 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	 */
 	public void enterInclusion(IASTInclusion inclusion) {
 		// TODO Auto-generated method stub
+		IPath newPath = new Path(inclusion.getFullFileName());
+		IFile tempFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(newPath);
+		if (tempFile !=null){
+			removeMarkers(tempFile);
+		}
+		else{
+		 //File is out of workspace
+		 
+		}
 		
 		IASTInclusion parent = peekInclude();
 		indexer.addInclude(inclusion, parent);
@@ -491,6 +531,59 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	public Reader createReader(String finalPath) {
 		return ParserUtil.createReader(finalPath);
 	}
+
+	/**
+	 * 
+	 */
+	public void removeMarkers(IFile resource) {
+		 int depth = IResource.DEPTH_INFINITE;
+	   try {
+	      resource.deleteMarkers(ICModelMarker.INDEXER_MARKER, true, depth); 
+	   } catch (CoreException e) {
+	      // something went wrong
+	   }
+
+	}
+	
+	private void addMarkers(IFile tempFile, IProblem problem, int lineNumber){
+		 try {
+	      	IMarker[] markers = tempFile.findMarkers(ICModelMarker.INDEXER_MARKER, true,IResource.DEPTH_INFINITE);
+	      	
+	      	boolean newProblem = true;
+	      	
+	      	if (markers.length > 0){
+	      		IMarker tempMarker = null;
+	      		Integer tempInt = null;	
+	      		String tempMsgString = null;
+	      		
+	      		for (int i=0; i<markers.length; i++){
+	      			tempMarker = markers[i];
+	      			tempInt = (Integer) tempMarker.getAttribute(IMarker.LINE_NUMBER);
+	      			tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
+	      			if (tempInt.intValue()==problem.getSourceLineNumber() &&
+	      				tempMsgString.equals(problem.getMessage())){
+	      				newProblem = false;
+	      				break;
+	      			}
+	      		}
+	      	}
+	      	
+	      	if (newProblem){
+		        IMarker marker = tempFile.createMarker(ICModelMarker.INDEXER_MARKER);
+		 		
+				marker.setAttribute(IMarker.LOCATION, problem.getSourceLineNumber());
+				marker.setAttribute(IMarker.MESSAGE, /*"Resource File: " + resourceFile.getName() + " - " +*/ problem.getMessage());
+				marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
+				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+				marker.setAttribute(IMarker.CHAR_START,-1);
+				marker.setAttribute(IMarker.CHAR_END, -1);
+	      	}
+			
+	      } catch (CoreException e) {
+	         // You need to handle the cases where attribute value is rejected
+	      }
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#parserTimeout()
 	 */
@@ -498,4 +591,5 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
 }

@@ -96,14 +96,6 @@
             class="org.eclipse.cdt.internal.ui.filters.NonCElementFilter"
             id="org.eclipse.cdt.internal.ui.CView.NonCElementFilter">
       </filter>
-      <!--filter
-            targetId="org.eclipse.cdt.ui.CView"
-            name="%HideHeaderFilter.label"
-            enabled="false"
-            description="%HideHeaderFilter.description"
-            class="org.eclipse.cdt.internal.ui.filters.HeaderFilter"
-            id="org.eclipse.cdt.internal.ui.CView.HeaderFilter">
-      </filter-->
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -196,35 +188,35 @@
          id="org.eclipse.cdt.ui.ceditor"
          point="org.eclipse.ui.editors">
       <editor
-            name="%CEditor.name"
             default="true"
-            icon="icons/full/obj16/c_file_obj.gif"
+            name="%CEditor.name"
             extensions="c, cc, cpp, cxx"
-            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
+            icon="icons/full/obj16/c_file_obj.gif"
             class="org.eclipse.cdt.internal.ui.editor.CEditor"
+            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
             id="org.eclipse.cdt.ui.editor.CEditor">
       </editor>
       <editor
-            name="%CEditor.name"
             default="true"
-            icon="icons/full/obj16/h_file_obj.gif"
+            name="%CEditor.name"
             extensions="h, hh, hpp"
-            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
+            icon="icons/full/obj16/h_file_obj.gif"
             class="org.eclipse.cdt.internal.ui.editor.CEditor"
+            contributorClass="org.eclipse.cdt.internal.ui.editor.CEditorActionContributor"
             id="org.eclipse.cdt.ui.editor.CEditor">
       </editor>
       <editor
             name="%Editors.DefaultTextEditor"
-            icon="icons/full/obj16/file_obj.gif"
             extensions="mk"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            icon="icons/full/obj16/file_obj.gif"
             class="org.eclipse.ui.editors.text.TextEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             id="org.eclipse.ui.DefaultTextEditor">
       </editor>
       <editor
             name="%AsmEditor.name"
-            icon="icons/full/obj16/c_file_obj.gif"
             extensions="s"
+            icon="icons/full/obj16/c_file_obj.gif"
             class="org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor"
             id="org.eclipse.cdt.ui.editor.asm.AsmEditor">
       </editor>
@@ -293,16 +285,16 @@
          <action
                label="%AddTask.label"
                helpContextId="org.eclipse.ui.AddTask_action_context"
-               tooltip="%AddTask.tooltip"
                class="org.eclipse.ui.texteditor.TaskRulerAction"
+               tooltip="%AddTask.tooltip"
                menubarPath="add"
                id="org.eclipse.ui.texteditor.TaskRulerAction">
          </action>
          <action
                label="%AddBookmark.label"
                helpContextId="org.eclipse.ui.bookmark_action_context"
-               tooltip="%AddBookmark.tooltip"
                class="org.eclipse.ui.texteditor.BookmarkRulerAction"
+               tooltip="%AddBookmark.tooltip"
                menubarPath="add"
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
@@ -313,16 +305,16 @@
          <action
                label="%AddTask.label"
                helpContextId="org.eclipse.ui.AddTask_action_context"
-               tooltip="%AddTask.tooltip"
                class="org.eclipse.ui.texteditor.TaskRulerAction"
+               tooltip="%AddTask.tooltip"
                menubarPath="add"
                id="org.eclipse.ui.texteditor.TaskRulerAction">
          </action>
          <action
                label="%AddBookmark.label"
                helpContextId="org.eclipse.ui.bookmark_action_context"
-               tooltip="%AddBookmark.tooltip"
                class="org.eclipse.ui.texteditor.BookmarkRulerAction"
+               tooltip="%AddBookmark.tooltip"
                menubarPath="add"
                id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
@@ -352,24 +344,24 @@
          <action
                label="%OpenNewFileWizardAction.label"
                icon="icons/full/ctool16/newfile_wiz.gif"
-               tooltip="%OpenNewFileWizardAction.tooltip"
                class="org.eclipse.cdt.internal.ui.wizards.OpenNewFileWizardAction"
+               tooltip="%OpenNewFileWizardAction.tooltip"
                toolbarPath="Normal/FolderWizards"
                id="org.eclipse.cdt.ui.actions.OpenNewFileWizardAction">
          </action>
          <action
                label="%OpenNewFolderWizardAction.label"
                icon="icons/full/ctool16/newfolder_wiz.gif"
-               tooltip="%OpenNewFolderWizardAction.tooltip"
                class="org.eclipse.cdt.internal.ui.wizards.OpenNewFolderWizardAction"
+               tooltip="%OpenNewFolderWizardAction.tooltip"
                toolbarPath="Normal/FolderWizards"
                id="org.eclipse.cdt.ui.actions.OpenNewFolderWizardAction">
          </action>
          <action
                label="%OpenClassWizardAction.label"
                icon="icons/full/ctool16/newclass_wiz.gif"
-               tooltip="%OpenClassWizardAction.tooltip"
                class="org.eclipse.cdt.ui.actions.OpenClassWizardAction"
+               tooltip="%OpenClassWizardAction.tooltip"
                toolbarPath="Normal/FolderWizards"
                id="org.eclipse.cdt.ui.actions.OpenClassWizardAction">
             <enablement>
@@ -410,8 +402,8 @@
       </category>
       <command
             name="%ActionDefinition.comment.name"
-            description="%ActionDefinition.comment.description"
             category="org.eclipse.cdt.ui.category.source"
+            description="%ActionDefinition.comment.description"
             id="org.eclipse.cdt.ui.edit.text.c.comment">
       </command>
       <keyBinding
@@ -422,8 +414,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.uncomment.name"
-            description="%ActionDefinition.uncomment.description"
             category="org.eclipse.cdt.ui.category.source"
+            description="%ActionDefinition.uncomment.description"
             id="org.eclipse.cdt.ui.edit.text.c.uncomment">
       </command>
       <keyBinding
@@ -434,8 +426,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.opendecl.name"
-            description="%ActionDefinition.opendecl.description"
             category="org.eclipse.cdt.ui.category.source"
+            description="%ActionDefinition.opendecl.description"
             id="org.eclipse.cdt.ui.edit.opendecl">
       </command>
       <keyBinding
@@ -446,8 +438,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.openType.name"
-            description="%ActionDefinition.openType.description"
             category="org.eclipse.cdt.ui.category.source"
+            description="%ActionDefinition.openType.description"
             id="org.eclipse.cdt.ui.navigate.opentype">
       </command>
       <keyBinding
@@ -458,8 +450,8 @@
       </keyBinding>
       <command
             name="%ActionDefinition.opencview.name"
-            category="org.eclipse.cdt.ui.category.source"
             description="%ActionDefinition.opencview.description"
+            category="org.eclipse.cdt.ui.category.source"
             id="org.eclipse.cdt.ui.edit.opencview">
       </command>
    </extension>
@@ -470,8 +462,8 @@
       <page
             showScopeSection="true"
             label="%CSearchPage.label"
-            icon="icons/full/obj16/csearch_obj.gif"
             extensions="c:90,cpp:90, cxx:90, cc:90,C:90, h:90, hh:90, hpp:90, H:90"
+            icon="icons/full/obj16/csearch_obj.gif"
             class="org.eclipse.cdt.internal.ui.search.CSearchPage"
             sizeHint="460, 160"
             id="org.eclipse.cdt.ui.CSearchPage">
@@ -483,24 +475,24 @@
             pageId="org.eclipse.cdt.ui.CSearchPage"
             label="%ElementNameSorter.label"
             icon="icons/full/clcl16/search_sortmatch.gif"
-            tooltip="%ElementNameSorter.tooltip"
             class="org.eclipse.cdt.internal.ui.search.ElementNameSorter"
+            tooltip="%ElementNameSorter.tooltip"
             id="org.eclipse.cdt.search.internal.ui.ElementNameSorter">
       </sorter>
       <sorter
             pageId="org.eclipse.cdt.ui.CSearchPage"
             label="%ParentNameSorter.label"
             icon="icons/full/clcl16/search_sortmatch.gif"
-            tooltip="%ParentNameSorter.tooltip"
             class="org.eclipse.cdt.internal.ui.search.ParentNameSorter"
+            tooltip="%ParentNameSorter.tooltip"
             id="org.eclipse.cdt.search.internal.ui.ParentNameSorter">
       </sorter>
       <sorter
             pageId="org.eclipse.cdt.ui.CSearchPage"
             label="%PathNameSorter.label"
             icon="icons/full/clcl16/search_sortmatch.gif"
-            tooltip="%PathNameSorter.tooltip"
             class="org.eclipse.cdt.internal.ui.search.PathNameSorter"
+            tooltip="%PathNameSorter.tooltip"
             id="org.eclipse.cdt.search.internal.ui.PathNameSorter">
       </sorter>
    </extension>
@@ -553,16 +545,16 @@
    <extension
          point="org.eclipse.cdt.ui.BinaryParserPage">
       <parserPage
-            parserID="org.eclipse.cdt.core.GNU_ELF"
             class="org.eclipse.cdt.ui.dialogs.GNUElfBinaryParserPage"
+            parserID="org.eclipse.cdt.core.GNU_ELF"
             id="ElfBinaryParserPage">
       </parserPage>
    </extension>
    <extension
          point="org.eclipse.cdt.ui.BinaryParserPage">
       <parserPage
-            parserID="org.eclipse.cdt.core.Cygwin_PE"
             class="org.eclipse.cdt.ui.dialogs.CygwinPEBinaryParserPage"
+            parserID="org.eclipse.cdt.core.Cygwin_PE"
             id="PEBinaryParserPage">
       </parserPage>
    </extension>
@@ -586,6 +578,43 @@
          </description>
       </fontDefinition>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors.markerAnnotationSpecification">
+      <specification
+            colorPreferenceValue="192,192,192"
+            annotationType="org.eclipse.cdt.ui.indexmarker"
+            verticalRulerPreferenceValue="false"
+            colorPreferenceKey="indexResultIndicationColor"
+            contributesToHeader="false"
+            overviewRulerPreferenceValue="false"
+            presentationLayer="3"
+            textStylePreferenceValue="NONE"
+            symbolicIcon="warning"
+            icon="icons/full/obj16/unknown_obj.gif"
+            label="Index Markers"
+            textPreferenceValue="false"
+            textPreferenceKey="indexResultIndication"
+            verticalRulerPreferenceKey="indexResultIndicationInVerticalRuler"
+            overviewRulerPreferenceKey="indexResultIndicationInOverviewRuler">
+      </specification>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors.annotationTypes">
+      <type
+            markerType="org.eclipse.cdt.core.indexermarker"
+            name="org.eclipse.cdt.ui.indexmarker">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%WorkInProgress.name"
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage"
+            id="org.eclipse.cdt.ui.preferneces.WorkInProgressPreferencePage">
+      </page>
+   </extension>
+
 <!--
    <extension
          point="org.eclipse.ui.propertyPages">

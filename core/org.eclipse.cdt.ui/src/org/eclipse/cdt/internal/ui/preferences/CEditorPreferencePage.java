@@ -138,6 +138,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 	private ColorEditor fAnnotationForegroundColorEditor;
 	private List fAnnotationList;
 	private Button fShowInOverviewRulerCheckBox;
+	private Button fShowInVerticalRulerCheckBox;
 	private Button fShowInTextCheckBox;
 
 	public CEditorPreferencePage() {
@@ -157,6 +158,12 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getTextPreferenceKey()));
 			overlayKeys.add(
 				new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getOverviewRulerPreferenceKey()));
+			
+			String verticalKey = info.getVerticalRulerPreferenceKey();
+			if (verticalKey != null){
+			overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, verticalKey));
+			}
+			
 		}
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, CEditor.PREFERENCE_COLOR_FOREGROUND));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,CEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT));
@@ -208,7 +215,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PreferenceConstants.EDITOR_TASK_INDICATION_IN_OVERVIEW_RULER));
         overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, CEditor.HYPERLINK_ENABLED));
-       
+      
         OverlayPreferenceStore.OverlayKey[] keys = new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
 		return new OverlayPreferenceStore(getPreferenceStore(), keys);
@@ -225,6 +232,14 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 			AnnotationPreference info = (AnnotationPreference) e.next();
 			store.setDefault(info.getTextPreferenceKey(), info.getTextPreferenceValue());
 			store.setDefault(info.getOverviewRulerPreferenceKey(), info.getOverviewRulerPreferenceValue());
+			
+			String verticalRulerKey = info.getVerticalRulerPreferenceKey();
+			boolean verticalRulerPreference = info.getVerticalRulerPreferenceValue();
+			
+			if (verticalRulerKey != null){
+				store.setDefault(verticalRulerKey,verticalRulerPreference);
+			}
+			
 			PreferenceConverter.setDefault(store, info.getColorPreferenceKey(), info.getColorPreferenceValue());
 		}
 		store.setDefault(CEditor.MATCHING_BRACKETS, true);
@@ -369,6 +384,13 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 2;
 		fShowInOverviewRulerCheckBox.setLayoutData(gd);
+		
+		fShowInVerticalRulerCheckBox = new Button(optionsComposite, SWT.CHECK);
+		fShowInVerticalRulerCheckBox.setText(PreferencesMessages.getString("CEditorPreferencePage.annotationsPage.showInVertical")); //$NON-NLS-1$
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment = GridData.BEGINNING;
+		gd.horizontalSpan = 2;
+		fShowInVerticalRulerCheckBox.setLayoutData(gd);
 
 		label = new Label(optionsComposite, SWT.LEFT);
 		label.setText(PreferencesMessages.getString("CEditorPreferencePage.annotationsPage.color")); //$NON-NLS-1$
@@ -415,6 +437,18 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 				fOverlayStore.setValue(key, fShowInOverviewRulerCheckBox.getSelection());
 			}
 		});
+		
+		fShowInVerticalRulerCheckBox.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				int i = fAnnotationList.getSelectionIndex();
+				String key = fAnnotationColorListModel[i][4];
+				fOverlayStore.setValue(key, fShowInVerticalRulerCheckBox.getSelection());
+			}
+		});
 
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -444,6 +478,11 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		key = fAnnotationColorListModel[i][3];
 		fShowInOverviewRulerCheckBox.setSelection(fOverlayStore.getBoolean(key));
+		
+		key = fAnnotationColorListModel[i][4];
+		if (key != null){
+			fShowInVerticalRulerCheckBox.setSelection(fOverlayStore.getBoolean(key));
+		}
 	}
 
 	private String[][] createAnnotationTypeListModel(MarkerAnnotationPreferences preferences) {
@@ -456,7 +495,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 					info.getPreferenceLabel(),
 					info.getColorPreferenceKey(),
 					info.getTextPreferenceKey(),
-					info.getOverviewRulerPreferenceKey()});
+					info.getOverviewRulerPreferenceKey(),
+					info.getVerticalRulerPreferenceKey()});
 		}
 		String[][] items = new String[listModelItems.size()][];
 		listModelItems.toArray(items);
@@ -761,6 +801,7 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 		label = PreferencesMessages.getString("CEditorPreferencePage.behaviorPage.printMargin"); //$NON-NLS-1$
 		addCheckBox(behaviorComposite, label, ExtendedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, 0);
 
+	
 		Label l = new Label(behaviorComposite, SWT.LEFT);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan = 2;

@@ -39,6 +39,8 @@ public interface ICModelMarker {
 	 * option <code>"org.eclipse.cdt.core.translation.taskTag"</code>.
 	 */
 	public static final String TASK_MARKER = CCorePlugin.PLUGIN_ID + ".task"; //$NON-NLS-1$
+	
+	public static final String INDEXER_MARKER = CCorePlugin.PLUGIN_ID + ".indexermarker"; //$NON-NLS-1$
 }
 
 

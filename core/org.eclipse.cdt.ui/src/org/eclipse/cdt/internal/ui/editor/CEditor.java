@@ -150,7 +150,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
     /** Preference key for hyperlink enablement */
     public final static String HYPERLINK_ENABLED = "hyperlinkEnable"; //$NON-NLS-1$
-       
+
     private class PropertyChangeListener implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener, org.eclipse.jface.util.IPropertyChangeListener {      
         /*
          * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
@@ -902,7 +902,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		fSourceViewerDecorationSupport =
 			new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		
-		getSourceViewerDecorationSupport(sourceViewer);	
+		configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
 		
 		return sourceViewer;
 	}

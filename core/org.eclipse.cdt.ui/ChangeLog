@@ -1,3 +1,18 @@
+2003-04-27 Alain Magloire
+
+	PR 36759, the outline does not update
+	when the input is reset by the Debugger.  The debugger
+	reuse the same editor with different input.
+
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinet.java (setInput):
+	New method to reset the input of the viewer.
+
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java (setOutlinePageInput):
+	New method to reset the input of the outliner.
+
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java (createElementInfo):
+	Use the getBufferFactory() method it may been overloaded.
+
 2003-04-26 Alain Magloire
 
 	ClastCastException in CView see PR 36876

@@ -93,7 +93,6 @@ public class CBuilder extends ACBuilder {
 
 	private boolean invokeMake(boolean fullBuild, IProgressMonitor monitor) {
 		boolean isClean = false;
-		boolean isCanceled = false;
 		IProject currProject = getProject();
 		SubProgressMonitor subMonitor = null;
 
@@ -157,13 +156,13 @@ public class CBuilder extends ACBuilder {
 					if (launcher.waitAndRead(stdout, stderr, subMonitor) != CommandLauncher.OK)
 						errMsg = launcher.getErrorMessage();
 
-					isCanceled = monitor.isCanceled();
-					monitor.setCanceled(false);
-					subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
-					subMonitor.subTask("Refresh From Local");
+					subMonitor.setTaskName("Refresh From Local");
 
 					try {
-						currProject.refreshLocal(IResource.DEPTH_INFINITE, subMonitor);
+						// do not allow the cancel of the refresh, since the builder is external
+						// to Eclipse files may have been created/modified and we will be out-of-sync
+						// The caveat is for hugue projects, it may take sometimes at every build.
+						currProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 					} catch (CoreException e) {
 					}
 
@@ -188,7 +187,6 @@ public class CBuilder extends ACBuilder {
 				epm.reportProblems();
 
 				subMonitor.done();
-				monitor.setCanceled(isCanceled);
 			}
 		} catch (Exception e) {
 			CCorePlugin.log(e);

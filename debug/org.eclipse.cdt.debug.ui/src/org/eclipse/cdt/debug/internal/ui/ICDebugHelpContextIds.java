@@ -26,6 +26,7 @@ public interface ICDebugHelpContextIds
 	public static final String CHANGE_REGISTER_VALUE_ACTION = PREFIX + "change_register_value_action_context"; //$NON-NLS-1$
 	public static final String SHOW_TYPES_ACTION = PREFIX + "show_types_action_context"; //$NON-NLS-1$
 	public static final String REFRESH_MEMORY_ACTION = PREFIX + "refresh_memory_action_context"; //$NON-NLS-1$
+	public static final String AUTO_REFRESH_MEMORY_ACTION = PREFIX + "auto_refresh_memory_action_context"; //$NON-NLS-1$
 
 	// Views
 	public static final String REGISTERS_VIEW = PREFIX + "registers_view_context"; //$NON-NLS-1$

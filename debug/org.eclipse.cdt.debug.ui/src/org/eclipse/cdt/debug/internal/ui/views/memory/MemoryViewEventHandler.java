@@ -42,6 +42,7 @@ public class MemoryViewEventHandler extends AbstractDebugEventHandler
 					if ( event.getSource() instanceof IFormattedMemoryBlock && event.getDetail() == DebugEvent.CONTENT )
 					{
 						refresh( event.getSource() );
+						getView().updateObjects();
 						return;
 					}
 					break;

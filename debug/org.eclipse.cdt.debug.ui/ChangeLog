@@ -1,3 +1,13 @@
+2002-10-21 Mikhail Khodjaiants
+	Implementation of the "Auto-Refresh" and "Refresh" actions for the memory view.
+	* AutoRefreshMemoryAction.java
+	* RefreshMemoryAction.java
+	* ICDebugHelpContextIds.java
+	* MemoryControlArea.java
+	* MemoryView.java
+	* MemoryViewer.java
+	* MemoryViewEventHandler.java
+
 2002-10-20 Mikhail Khodjaiants
 	Display the memory changes in different color in the memory view.
 	* MemoryControlArea.java

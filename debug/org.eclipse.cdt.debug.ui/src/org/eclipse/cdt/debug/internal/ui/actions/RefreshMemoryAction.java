@@ -11,14 +11,17 @@ import org.eclipse.cdt.debug.internal.ui.views.memory.MemoryViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Enter type comment.
  * 
  * @since: Oct 18, 2002
  */
-public class RefreshMemoryAction extends SelectionProviderAction
+public class RefreshMemoryAction extends SelectionProviderAction implements IUpdate
 {
+	private MemoryViewer fMemoryViewer;
+
 	/**
 	 * Constructor for RefreshMemoryAction.
 	 * @param provider
@@ -26,8 +29,11 @@ public class RefreshMemoryAction extends SelectionProviderAction
 	 */
 	public RefreshMemoryAction( MemoryViewer viewer )
 	{
-		super( viewer, "Refresh Memory Block" );
+		super( viewer, "Refresh" );
+		fMemoryViewer = viewer;
 		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_REFRESH_MEMORY );
+		setDescription( "Refresh Memory Block" );
+		setToolTipText( "Refresh" );
 		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.REFRESH_MEMORY_ACTION );
 	}
 
@@ -37,5 +43,13 @@ public class RefreshMemoryAction extends SelectionProviderAction
 	public void selectionChanged( IStructuredSelection selection )
 	{
 		super.selectionChanged( selection );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 */
+	public void update()
+	{
+		setEnabled( fMemoryViewer.canUpdate() );
 	}
 }

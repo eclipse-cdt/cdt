@@ -30,6 +30,7 @@ public class MemoryViewer extends ContentViewer
 {
 	static final private int NUMBER_OF_TABS = 4;
  
+ 	protected MemoryView fView = null;
 	protected Composite fParent = null;
 	protected CTabFolder fTabFolder = null;
 	private Composite fControl = null;
@@ -38,10 +39,11 @@ public class MemoryViewer extends ContentViewer
 	/**
 	 * Constructor for MemoryViewer.
 	 */
-	public MemoryViewer( Composite parent )
+	public MemoryViewer( Composite parent, MemoryView view )
 	{
 		super();
 		fParent = parent;
+		fView = view;
 	}
 
 	/* (non-Javadoc)
@@ -63,17 +65,19 @@ public class MemoryViewer extends ContentViewer
 			{
 				CTabItem tabItem = new CTabItem( fTabFolder, SWT.NONE );
 				tabItem.setText( "Memory " + (i + 1) );
-				fMemoryControlAreas[i] = new MemoryControlArea( fTabFolder, SWT.NONE, i );
+				fMemoryControlAreas[i] = new MemoryControlArea( fTabFolder, SWT.NONE, i, fView );
 				tabItem.setControl( fMemoryControlAreas[i] );			
 			}
 			fTabFolder.addSelectionListener( new SelectionListener()
 			 									 {
 													public void widgetSelected( SelectionEvent e )
 													{
+														fView.updateObjects();
 													}
 													
 													public void widgetDefaultSelected( SelectionEvent e )
 													{
+														fView.updateObjects();
 													}
 			 									 } );
 			fTabFolder.setSelection( 0 );				
@@ -157,5 +161,25 @@ public class MemoryViewer extends ContentViewer
 				}
 		}
 		return null;
+	}
+	
+	public boolean canUpdate()
+	{
+		return ( ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock() != null );
+	}
+	
+	public boolean isFrozen()
+	{
+		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
+		return ( block != null ) ? block.isFrozen() : true;
+	}
+	
+	public void setFrozen( boolean frozen )
+	{
+		IFormattedMemoryBlock block = ((MemoryControlArea)fTabFolder.getSelection().getControl()).getMemoryBlock();
+		if ( block != null )
+		{
+			block.setFrozen( frozen );
+		}
 	}
 }

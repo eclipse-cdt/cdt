@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class MemoryControlArea extends Composite
 {
+	private MemoryView fMemoryView;
 	private MemoryPresentation fPresentation;
 	private int fIndex = 0;
 	private ICMemoryManager fMemoryManager = null;
@@ -49,9 +50,10 @@ public class MemoryControlArea extends Composite
 	 * @param parent
 	 * @param style
 	 */
-	public MemoryControlArea( Composite parent, int style, int index )
+	public MemoryControlArea( Composite parent, int style, int index, MemoryView view )
 	{
 		super( parent, style );
+		fMemoryView = view;
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -130,6 +132,7 @@ public class MemoryControlArea extends Composite
 				CDebugUIPlugin.errorDialog( "Unable to get memory block.", e.getStatus() );
 			}
 			refresh();
+			fMemoryView.updateObjects();
 		}
 	}
 
@@ -244,9 +247,6 @@ public class MemoryControlArea extends Composite
 																				   getNumberOfColumns(),
 																				   getPaddingChar() ) );
 			getPresentation().setMemoryBlock( getMemoryBlock() );
-
-//getMemoryBlock().setFrozen( false );
-
 		}
 		setMemoryTextState();
 	}

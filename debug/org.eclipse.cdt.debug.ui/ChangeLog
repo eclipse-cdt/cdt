@@ -1,3 +1,9 @@
+2003-01-20 Mikhail Khodjaiants
+	Changed the icon for the 'Load Symbols' action.
+	icons/full/clcl16/load_symbols_co.gif
+	icons/full/dlcl16/load_symbols_co.gif
+	icons/full/elcl16/load_symbols_co.gif
+
 2003-01-19 Mikhail Khodjaiants
 	Set the start or end address value in the shared libraries view to 'Not available' if the address value is 0.
 	* CDTDebugModelPresentation.java

@@ -12,7 +12,6 @@ package org.eclipse.cdt.make.core.scannerconfig;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -268,13 +267,18 @@ public final class ScannerConfigUtil {
 	 * @param String
 	 * @return String[] 
 	 */
-	public static String[] tokenizeStringWithQuotes(String line) {
+	public static String[] tokenizeStringWithQuotes(String line, String quoteStyle) {
 		ArrayList allTokens = new ArrayList();
-		String[] tokens = line.split("\"");	//$NON-NLS-1$
+		String[] tokens = line.split(quoteStyle);
 		for (int i = 0; i < tokens.length; ++i) {
 			if (i % 2 == 0) { // even tokens need further tokenization
 				String[] sTokens = tokens[i].split("\\s"); //$NON-NLS-1$
-				allTokens.addAll(Arrays.asList(sTokens));
+				// remove empty strings
+				for (int j = 0; j < sTokens.length; ++j) {
+					if (sTokens[j].length() > 0) {
+						allTokens.add(sTokens[j]);
+					}
+				}
 			}
 			else {
 				allTokens.add(tokens[i]);

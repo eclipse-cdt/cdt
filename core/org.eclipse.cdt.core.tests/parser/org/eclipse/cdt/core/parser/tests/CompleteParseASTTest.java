@@ -1680,4 +1680,19 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
     	
     	assertEquals( convert.getOwnerClassSpecifier(), num_put );
    	}
+    
+    public void testGloballyQualifiedUsingDeclaration() throws Exception
+	{
+		Iterator declarations = parse( "int iii; namespace N { using ::iii; }" ).getDeclarations();
+		
+		IASTVariable iii = (IASTVariable) declarations.next();
+		IASTNamespaceDefinition namespaceN = (IASTNamespaceDefinition)declarations.next();
+		
+		IASTUsingDeclaration using = (IASTUsingDeclaration)(getDeclarations(namespaceN).next()); 
+
+		assertEquals( callback.getReferences().size(), 1 );
+		
+		Iterator references = callback.getReferences().iterator();
+		assertEquals( ((IASTReference)references.next()).getReferencedElement(), iii );
+	}
 }

@@ -527,12 +527,18 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         if(name.getSegmentCount() > 1)
         {
         	ITokenDuple duple = name.getLeadingSegments();
-        	ISymbol symbol = lookupQualifiedName( scopeToSymbol(scope), duple, references, true );
         	IContainerSymbol containerSymbol = null;
-        	if( symbol instanceof IContainerSymbol )
-        		containerSymbol = (IContainerSymbol) symbol;
-        	else if ( symbol instanceof IDeferredTemplateInstance )
-        		containerSymbol = ((IDeferredTemplateInstance)symbol).getTemplate().getTemplatedSymbol();
+        	if( duple == null ){
+        		//null leading segment means globally qualified
+        		containerSymbol = scopeToSymbol( scope ).getSymbolTable().getCompilationUnit();
+        	} else {
+	        	ISymbol symbol = lookupQualifiedName( scopeToSymbol(scope), duple, references, true );
+	        	
+	        	if( symbol instanceof IContainerSymbol )
+	        		containerSymbol = (IContainerSymbol) symbol;
+	        	else if ( symbol instanceof IDeferredTemplateInstance )
+	        		containerSymbol = ((IDeferredTemplateInstance)symbol).getTemplate().getTemplatedSymbol();
+        	}
 	        try
 	        {
 	            endResult = scopeToSymbol(scope).addUsingDeclaration( name.getLastToken().getImage(), containerSymbol );
@@ -1939,6 +1945,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			|| (parentScope.getType() == TypeInfo.t_struct)
 			|| (parentScope.getType() == TypeInfo.t_union))
 			){
+				if( parentScope.getASTExtension().getPrimaryDeclaration() instanceof IASTElaboratedTypeSpecifier ){
+					//we are trying to define a member of a class for which we only have a forward declaration
+					handleProblem( scope, IProblem.SEMANTICS_RELATED, name.toString(), startOffset, nameEndOffset, startLine );
+				}
 				IASTScope methodParentScope = (IASTScope)parentScope.getASTExtension().getPrimaryDeclaration();
 				ITokenDuple newName = name.getLastSegment();
                 return createMethod(
@@ -2703,11 +2713,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     {
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
 
+		String image = ( name != null ) ? name.toString() : EMPTY_STRING;
+		
 		if(references == null)
 			references = new ArrayList();
-		ISymbol newSymbol = cloneSimpleTypeSymbol(name.toString(), abstractDeclaration, references);
+		ISymbol newSymbol = cloneSimpleTypeSymbol(image, abstractDeclaration, references);
 		if( newSymbol == null )
-			handleProblem( IProblem.SEMANTICS_RELATED, name.toString() );
+			handleProblem( IProblem.SEMANTICS_RELATED, image );
 			
 		
 		setVariableTypeInfoBits(
@@ -2722,9 +2734,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		
 		newSymbol.setIsForwardDeclaration(isStatic);
 		boolean previouslyDeclared = false;
-		if(!isStatic){
+		if( !isStatic && !image.equals( EMPTY_STRING ) ){
 			List fieldReferences = new ArrayList();		
-			ISymbol fieldDeclaration = lookupQualifiedName(ownerScope, name.toString(), fieldReferences, false, LookupType.FORDEFINITION);                
+			ISymbol fieldDeclaration = lookupQualifiedName(ownerScope, image, fieldReferences, false, LookupType.FORDEFINITION);                
 			
 			if( fieldDeclaration != null && newSymbol.getType() == fieldDeclaration.getType() )
 			{
@@ -2745,7 +2757,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		catch (ParserSymbolTableException e)
 		{
-			handleProblem(e.createProblemID(), name.toString() );
+			handleProblem(e.createProblemID(), image );
 		}
 		
 		ASTField field = new ASTField( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, startingLine, nameOffset, nameEndOffset, nameLine, references, previouslyDeclared, constructorExpression, visibility );
@@ -2941,8 +2953,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if (name.getSegmentCount() != 1) // qualified name
 		{
 			ITokenDuple containerSymbolName = name.getLeadingSegments();
-			currentScopeSymbol = (IContainerSymbol) lookupQualifiedName(
-					currentScopeSymbol, containerSymbolName, references, true);
+			if( containerSymbolName == null ){
+				//null means globally qualified
+				currentScopeSymbol = currentScopeSymbol.getSymbolTable().getCompilationUnit();
+			} else {
+				currentScopeSymbol = (IContainerSymbol) lookupQualifiedName(
+						currentScopeSymbol, containerSymbolName, references, true);
+			}
 			if (currentScopeSymbol == null)
 				handleProblem(IProblem.SEMANTIC_NAME_NOT_FOUND,
 						containerSymbolName.toString(), containerSymbolName
@@ -3027,6 +3044,9 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if (scope instanceof IASTTemplateInstantiation) {
 				addReference(references, createReference(checkSymbol,
 						newSymbolName, nameToken.getOffset()));
+			}
+			if( checkSymbol instanceof ITemplateSymbol ){
+				checkSymbol = ((ITemplateSymbol)checkSymbol).getTemplatedSymbol();
 			}
 			if (checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTClassSpecifier
 					|| checkSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTEnumerationSpecifier) {

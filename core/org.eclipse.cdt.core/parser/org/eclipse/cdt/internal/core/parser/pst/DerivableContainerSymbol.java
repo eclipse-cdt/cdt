@@ -67,8 +67,11 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		ParentWrapper wrapper = null, newWrapper = null;
 		while( parents.hasNext() ){
 			wrapper = (ParentWrapper) parents.next();
+			ISymbol parent = wrapper.getParent();
+			if( parent == null )
+				continue; 
+			
 			newWrapper = new ParentWrapper( wrapper.getParent(), wrapper.isVirtual(), wrapper.getAccess(), wrapper.getOffset(), wrapper.getReferences() );
-			ISymbol parent = newWrapper.getParent();
 			if( parent instanceof IDeferredTemplateInstance ){
 				template.registerDeferredInstatiation( newSymbol, newWrapper, ITemplateSymbol.DeferredKind.PARENT, argMap );
 			} else 	if( parent.isType( TypeInfo.t_templateParameter ) && argMap.containsKey( parent ) ){

@@ -224,19 +224,6 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getArgumentObject(ICDIStackFrame, String)
-	 */
-	public ICDIArgumentObject getArgumentObject(ICDIStackFrame stack, String name) throws CDIException {
-		ICDIArgumentObject[] argsObjects = getArgumentObjects(stack);
-		for (int i = 0; i < argsObjects.length; i++) {
-			if (argsObjects[i].getName().equals(name)) {
-				return argsObjects[i];
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getArgumentObjects(ICDIStackFrame)
 	 */
 	public ICDIArgumentObject[] getArgumentObjects(ICDIStackFrame frame) throws CDIException {
@@ -280,22 +267,9 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObject(ICDIStackFrame, String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getGlobalVariableObject(String, String, String)
 	 */
-	public ICDIVariableObject getVariableObject(ICDIStackFrame stack, String name) throws CDIException {
-		ICDIVariableObject[] varObjects = getVariableObjects(stack);
-		for (int i = 0; i < varObjects.length; i++) {
-			if (varObjects[i].getName().equals(name)) {
-				return varObjects[i];
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getVariableObject(String, String, String)
-	 */
-	public ICDIVariableObject getVariableObject(String filename, String function, String name) throws CDIException {
+	public ICDIVariableObject getGlobalVariableObject(String filename, String function, String name) throws CDIException {
 		if (filename == null) {
 			filename = new String();
 		}

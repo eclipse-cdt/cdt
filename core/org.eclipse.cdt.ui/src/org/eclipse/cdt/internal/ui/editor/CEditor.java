@@ -38,8 +38,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewerExtension;
@@ -574,27 +576,49 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 		}
 	}
 	
+	/**
+	 * Sets the current editor selection to the source range. Optionally
+	 * sets the current editor position.
+	 *
+	 * @param element the source range to be shown in the editor, can be null.
+	 * @param moveCursor if true the editor is scrolled to show the range.
+	 */
 	private void setSelection(ISourceRange element, boolean moveCursor) {
 		if (element != null) {
 			try {
+				IRegion alternateRegion = null;
 				int start= element.getStartPos();
 				int length= element.getLength();
+
+				// 0 length and start and non-zero start line says we know
+				// the line for some reason, but not the offset.
+				if (length == 0 && start == 0 && element.getStartLine() != 0) {
+					alternateRegion = getDocumentProvider().getDocument(getEditorInput()).getLineInformation(element.getStartLine());
+					if (alternateRegion != null) {
+						start = alternateRegion.getOffset();
+						length = alternateRegion.getLength();
+					}
+				}
+
 				setHighlightRange(start, length, moveCursor);
 				
 				if (moveCursor) {
 					start= element.getIdStartPos();
-					if (start > -1) {
-						length= element.getIdLength();
-						if (getSourceViewer() != null) {
-							getSourceViewer().revealRange(start, length);
-							getSourceViewer().setSelectedRange(start, length);
-						}
+					length= element.getIdLength();
+					if (start == 0 && length == 0 && alternateRegion != null) {
+						start = alternateRegion.getOffset();
+						length = alternateRegion.getLength();
+					}
+					if (start > -1 && getSourceViewer() != null) {
+						getSourceViewer().revealRange(start, length);
+						getSourceViewer().setSelectedRange(start, length);
 					}
 					updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
 				}
 				return;
 				
 			} catch (IllegalArgumentException x) {
+			} catch (BadLocationException e ) {
 			}
 		}
 		

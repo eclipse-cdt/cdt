@@ -15,8 +15,9 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIVariable extends ICDIObject {
+public interface ICDIVariable extends ICDIVariableObject {
 
+	
 	/**
 	 * Returns the stackframe where the variable was found
 	 * may return null.
@@ -32,7 +33,7 @@ public interface ICDIVariable extends ICDIObject {
 	 * @return the name of this variable
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
-	String getName() throws CDIException;
+	String getName();
 
 	/**
 	 * Returns the type of data this variable is declared.

@@ -9,19 +9,22 @@ import java.util.ResourceBundle;
 
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 import org.eclipse.ui.texteditor.TextEditorAction;
@@ -87,9 +90,8 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	protected SelectionAction fShiftLeft;
 	protected SelectionAction fShiftRight;
 	private TogglePresentationAction fTogglePresentation;
-	//private ToggleTextHoverAction fToggleTextHover;
-	private GotoErrorAction fPreviousError;
-	private GotoErrorAction fNextError;
+	private GotoAnnotationAction fPreviousAnnotation;
+	private GotoAnnotationAction fNextAnnotation;
 	
 	
 	public CEditorActionContributor() {
@@ -122,13 +124,10 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		//fToggleTextHover= new ToggleTextHoverAction();
 
-		fPreviousError= new GotoErrorAction("PreviousError.", false); //$NON-NLS-1$
-		fPreviousError.setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$	
-		CPluginImages.setImageDescriptors(fPreviousError, CPluginImages.T_TOOL, CPluginImages.IMG_TOOL_GOTO_PREV_ERROR);
+		fPreviousAnnotation= new GotoAnnotationAction("PreviousAnnotation.", false); //$NON-NLS-1$
+		fNextAnnotation= new GotoAnnotationAction("NextAnnotation.", true); //$NON-NLS-1$
 
-		fNextError= new GotoErrorAction("NextError.", true); //$NON-NLS-1$
-		fNextError.setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
-		CPluginImages.setImageDescriptors(fNextError, CPluginImages.T_TOOL, CPluginImages.IMG_TOOL_GOTO_NEXT_ERROR);
+		//fToggleTextHover= new ToggleTextHoverAction();
 	}	
 
 
@@ -149,9 +148,9 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 			editMenu.add(fShiftRight);
 			editMenu.add(fShiftLeft);
 					 		
-			editMenu.add(new Separator(IContextMenuConstants.GROUP_OPEN));
-			editMenu.add(fNextError);
-			editMenu.add(fPreviousError);
+//			editMenu.add(new Separator(IContextMenuConstants.GROUP_OPEN));
+//			editMenu.add(fNextError);
+//			editMenu.add(fPreviousError);
 			
 			editMenu.add(new Separator(IContextMenuConstants.GROUP_GENERATE));
 			editMenu.appendToGroup(IContextMenuConstants.GROUP_GENERATE, fContentAssist);
@@ -166,18 +165,15 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	 */
 	public void init(IActionBars bars) {
 		super.init(bars);
+
+		// register actions that have a dynamic editor. 
+		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_NEXT_ANNOTATION, fNextAnnotation);
+		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_PREVIOUS_ANNOTATION, fPreviousAnnotation);
+		bars.setGlobalActionHandler(ITextEditorActionConstants.NEXT, fNextAnnotation);
+		bars.setGlobalActionHandler(ITextEditorActionConstants.PREVIOUS, fPreviousAnnotation);
 		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
 	}
 
-	/**
-	 * @see EditorActionBarContributor#contributeToToolBar(IToolBarManager)
-	 */
-	public void contributeToToolBar(IToolBarManager tbm) {
-		super.contributeToToolBar(tbm);
-		tbm.add(new Separator());
-		tbm.add(fNextError);
-		tbm.add(fPreviousError);		
-	}
 	
 	/**
 	 * @see IEditorActionBarContributor#setActiveEditor(IEditorPart)
@@ -192,9 +188,9 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 		
 		fShiftRight.setEditor(textEditor);
 		fShiftLeft.setEditor(textEditor);
-		fNextError.setEditor(textEditor);
-		fPreviousError.setEditor(textEditor);
 		fTogglePresentation.setEditor(textEditor);
+		fPreviousAnnotation.setEditor(textEditor);
+		fNextAnnotation.setEditor(textEditor);
 
 		//caAction.setEditor(textEditor);
 		//caAction.update();

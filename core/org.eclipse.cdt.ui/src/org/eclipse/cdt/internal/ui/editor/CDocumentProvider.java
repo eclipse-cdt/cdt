@@ -403,6 +403,39 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			return super.createMarkerAnnotation(marker);
 		}
 		
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#createPositionFromMarker(org.eclipse.core.resources.IMarker)
+		 */
+		protected Position createPositionFromMarker(IMarker marker) {
+			int start= MarkerUtilities.getCharStart(marker);
+			int end= MarkerUtilities.getCharEnd(marker);
+			
+			if (start > end) {
+				end= start + end;
+				start= end - start;
+				end= end - start;
+			}
+			
+			if (start == -1 && end == -1) {
+				// marker line number is 1-based
+				int line= MarkerUtilities.getLineNumber(marker);
+				if (line > 0 && fDocument != null) {
+					try {
+						start= fDocument.getLineOffset(line - 1);
+						String ld = fDocument.getLineDelimiter(line - 1);
+						int lineDelimiterLegnth = ld != null ? ld.length(): 0;
+						end= fDocument.getLineLength(line - 1) + start - lineDelimiterLegnth;
+					} catch (BadLocationException x) {
+					}
+				}
+			}
+			
+			if (start > -1 && end > -1)
+				return new Position(start, end - start);
+			
+			return null;
+		}
 		/*
 		 * @see org.eclipse.jface.text.source.AnnotationModel#createAnnotationModelEvent()
 		 */

@@ -36,7 +36,9 @@ public interface ICHelpContextIds {
 	public static final String PREVIOUS_CHANGE_ACTION=PREFIX + "previous_change_action"; //$NON-NLS-1$
 	public static final String NEXT_PROBLEM_ACTION=	 PREFIX + "next_problem_action"; //$NON-NLS-1$
 	public static final String PREVIOUS_PROBLEM_ACTION= PREFIX + "previous_problem_action";	//$NON-NLS-1$
-	
+	public static final String GOTO_NEXT_ERROR_ACTION= PREFIX + "goto_next_error_action"; 	 //$NON-NLS-1$	
+	public static final String GOTO_PREVIOUS_ERROR_ACTION=	PREFIX + "goto_previous_error_action"; 	 //$NON-NLS-1$	
+
 	// Preference/property pages
 	public static final String C_PREF_PAGE = PREFIX + "c_pref"; //$NON-NLS-1$
 	public static final String C_EDITOR_PREF_PAGE = PREFIX + "c_editor_gen"; //$NON-NLS-1$

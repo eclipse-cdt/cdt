@@ -1,3 +1,26 @@
+2005-01-28 David Inglis
+
+	Implement Eclipse 3.0 Next/Prev Annonation retargetable actions for CEditor with Problems
+	view highlighting.
+	
+	* plugin.xml
+	* src/org/eclipse/cdt/internal/ui/ICHelpContextIds.java
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorActionContributor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+
+	+ src/org/eclipse/cdt/internal/ui/editor/GotoAnnotationAction.java
+
+	- icons/full/ctool16/next_error_nav.gif
+	- icons/full/ctool16/prev_error_nav.gif
+	- icons/full/dtool16/next_error_nav.gif
+	- icons/full/dtool16/prev_error_nav.gif
+	- icons/full/etool16/next_error_nav.gif
+	- icons/full/etool16/prev_error_nav.gif
+ 	- src/org/eclipse/cdt/internal/ui/editor/GotoErrorAction.java
+	
+	
 2005-01-26 Alain Magloire
 	Part of implementing PR 83112
 	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java

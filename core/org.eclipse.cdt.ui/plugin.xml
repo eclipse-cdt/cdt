@@ -1053,6 +1053,12 @@
                id="org.eclipse.search.SearchResultView">
          </part>
       </actionSetPartAssociation>
+      <actionSetPartAssociation
+            targetID="org.eclipse.ui.edit.text.actionSet.annotationNavigation">
+         <part
+               id="org.eclipse.cdt.ui.editor.CEditor">
+         </part>
+      </actionSetPartAssociation>      
    </extension>
    <extension
          point="org.eclipse.cdt.ui.BinaryParserPage">
@@ -1108,7 +1114,13 @@
             textPreferenceValue="true"
             textPreferenceKey="indexResultIndication"
             verticalRulerPreferenceKey="indexResultIndicationInVerticalRuler"
-            overviewRulerPreferenceKey="indexResultIndicationInOverviewRuler">
+            overviewRulerPreferenceKey="indexResultIndicationInOverviewRuler"
+            showInNextPrevDropdownToolbarActionKey="isIndexResultInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="isIndexResultGoToNextNavigationTarget"
+	        isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isIndexResultGoToPreviousNavigationTarget"
+	        isGoToPreviousNavigationTarget="false">
       </specification>
    </extension>
    <extension

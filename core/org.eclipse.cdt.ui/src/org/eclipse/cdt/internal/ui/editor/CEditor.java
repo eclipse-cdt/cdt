@@ -5,6 +5,8 @@ package org.eclipse.cdt.internal.ui.editor;
  * All Rights Reserved.
  */
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -75,7 +77,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -88,11 +89,11 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -104,13 +105,36 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-import org.eclipse.ui.views.tasklist.TaskList;
 
 
 /**
  * C specific text editor.
  */
 public class CEditor extends TextEditor implements ISelectionChangedListener, IShowInSource , IReconcilingParticipant{
+
+	/**
+	 * Updates the Java outline page selection and this editor's range indicator.
+	 * 
+	 * @since 3.0
+	 */
+	private class EditorSelectionChangedListener extends AbstractSelectionChangedListener {
+		
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+		 */
+		public void selectionChanged(SelectionChangedEvent event) {
+			// XXX: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56161
+			CEditor.this.selectionChanged();
+		}
+	}
+	
+	/**
+	 * The editor selection changed listener.
+	 * 
+	 * @since 3.0
+	 */
+	private EditorSelectionChangedListener fEditorSelectionChangedListener;
+	
 
 	/** The outline page */
 	protected CContentOutlinePage fOutlinePage;
@@ -169,6 +193,16 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 	 */
 	private FoldingActionGroup fFoldingGroup;
 
+	/**
+	 * Indicates whether this editor is about to update any annotation views.
+	 * @since 3.0
+	 */
+	private boolean fIsUpdatingAnnotationViews= false;
+	/**
+	 * The marker that served as last target for a goto marker request.
+	 * @since 3.0
+	 */
+	private IMarker fLastMarkerTarget= null;
 
     private class PropertyChangeListener implements org.eclipse.core.runtime.Preferences.IPropertyChangeListener, org.eclipse.jface.util.IPropertyChangeListener {      
         /*
@@ -351,6 +385,21 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		} finally {
 			super.handlePreferenceStoreChanged(event);
 		}
+	}
+
+	/**
+	 * React to changed selection.
+	 * 
+	 * @since 3.0
+	 */
+	protected void selectionChanged() {
+		if (getSelectionProvider() == null)
+			return;
+//		ISourceReference element= computeHighlightRangeSourceReference();
+//		if (getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_SYNC_OUTLINE_ON_CURSOR_MOVE))
+//			synchronizeOutlinePage(element);
+//		setSelection(element, false);
+		updateStatusLine();
 	}
 
 	/* (non-Javadoc)
@@ -550,6 +599,11 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			fSelectionSearchGroup = null;
 		}
 
+		if (fEditorSelectionChangedListener != null)  {
+			fEditorSelectionChangedListener.uninstall(getSelectionProvider());
+			fEditorSelectionChangedListener= null;
+		}
+
 		stopTabConversion();
 		disableBrowserLikeLinks();
 		
@@ -735,22 +789,10 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		
 
 		WorkbenchHelp.setHelp(parent, ICHelpContextIds.CEDITOR_VIEW);	
-		fSelectionUpdateListener = new ISelectionChangedListener() {
-			private Runnable fRunnable = new Runnable() {
-				public void run() {
-					updateStatusField(CTextEditorActionConstants.STATUS_CURSOR_POS);
-				}
-			};
 
-			private Display fDisplay;
-
-			public void selectionChanged(SelectionChangedEvent event) {
-				if (fDisplay == null)
-					fDisplay = getSite().getShell().getDisplay();
-				fDisplay.asyncExec(fRunnable);
-			}
-		};
-		getSelectionProvider().addSelectionChangedListener(fSelectionUpdateListener);
+		fEditorSelectionChangedListener= new EditorSelectionChangedListener();
+		fEditorSelectionChangedListener.install(getSelectionProvider());
+		
 
 		if (isTabConversionEnabled())
 			startTabConversion();
@@ -807,44 +849,219 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		return nextError;
 	}
 
-	public void gotoError(boolean forward) {
-
-		ISelectionProvider provider = getSelectionProvider();
-
-		if (fStatusLineClearer != null) {
-			provider.removeSelectionChangedListener(fStatusLineClearer);
-			fStatusLineClearer = null;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#gotoMarker(org.eclipse.core.resources.IMarker)
+	 */
+	public void gotoMarker(IMarker marker) {
+		fLastMarkerTarget= marker;
+		if (!fIsUpdatingAnnotationViews) {
+		    super.gotoMarker(marker);
 		}
-
-		ITextSelection s = (ITextSelection) provider.getSelection();
-		IMarker nextError = getNextError(s.getOffset(), forward);
-
-		if (nextError != null) {
-
-			IDE.gotoMarker(this, nextError);
-
-			IWorkbenchPage page = getSite().getPage();
-
-			IViewPart view = view = page.findView("org.eclipse.ui.views.TaskList"); //$NON-NLS-1$
-			if (view instanceof TaskList) {
-				StructuredSelection ss = new StructuredSelection(nextError);
-				((TaskList) view).setSelection(ss, true);
+	}
+	
+	/**
+	 * Jumps to the next enabled annotation according to the given direction.
+	 * An annotation type is enabled if it is configured to be in the
+	 * Next/Previous tool bar drop down menu and if it is checked.
+	 * 
+	 * @param forward <code>true</code> if search direction is forward, <code>false</code> if backward
+	 */
+	public void gotoAnnotation(boolean forward) {
+		ITextSelection selection= (ITextSelection) getSelectionProvider().getSelection();
+		Position position= new Position(0, 0);
+		if (false /* delayed - see bug 18316 */) {
+			getNextAnnotation(selection.getOffset(), selection.getLength(), forward, position);
+			selectAndReveal(position.getOffset(), position.getLength());
+		} else /* no delay - see bug 18316 */ {
+			Annotation annotation= getNextAnnotation(selection.getOffset(), selection.getLength(), forward, position);
+			setStatusLineErrorMessage(null);
+			setStatusLineMessage(null);
+			if (annotation != null) {
+				updateAnnotationViews(annotation);
+				selectAndReveal(position.getOffset(), position.getLength());
+				setStatusLineMessage(annotation.getText());
 			}
-
-			getStatusLineManager().setErrorMessage(nextError.getAttribute(IMarker.MESSAGE, "")); //$NON-NLS-1$
-			fStatusLineClearer = new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent event) {
-					getSelectionProvider().removeSelectionChangedListener(fStatusLineClearer);
-					fStatusLineClearer = null;
-					getStatusLineManager().setErrorMessage(""); //$NON-NLS-1$
-				}
-			};
-			provider.addSelectionChangedListener(fStatusLineClearer);
-		} else {
-			getStatusLineManager().setErrorMessage(""); //$NON-NLS-1$
 		}
 	}
 
+	/**
+	 * Returns whether the given annotation is configured as a target for the
+	 * "Go to Next/Previous Annotation" actions
+	 * 
+	 * @param annotation the annotation
+	 * @return <code>true</code> if this is a target, <code>false</code>
+	 *         otherwise
+	 * @since 3.0
+	 */
+	private boolean isNavigationTarget(Annotation annotation) {
+		Preferences preferences= EditorsUI.getPluginPreferences();
+		AnnotationPreference preference= getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
+//		See bug 41689
+//		String key= forward ? preference.getIsGoToNextNavigationTargetKey() : preference.getIsGoToPreviousNavigationTargetKey();
+		String key= preference == null ? null : preference.getIsGoToNextNavigationTargetKey();
+		return (key != null && preferences.getBoolean(key));
+	}
+	
+	/**
+	 * Returns the annotation closest to the given range respecting the given
+	 * direction. If an annotation is found, the annotations current position
+	 * is copied into the provided annotation position.
+	 * 
+	 * @param offset the region offset
+	 * @param length the region length
+	 * @param forward <code>true</code> for forwards, <code>false</code> for backward
+	 * @param annotationPosition the position of the found annotation
+	 * @return the found annotation
+	 */
+	private Annotation getNextAnnotation(final int offset, final int length, boolean forward, Position annotationPosition) {
+		
+		Annotation nextAnnotation= null;
+		Position nextAnnotationPosition= null;
+		Annotation containingAnnotation= null;
+		Position containingAnnotationPosition= null;
+		boolean currentAnnotation= false;
+		
+		IDocument document= getDocumentProvider().getDocument(getEditorInput());
+		int endOfDocument= document.getLength(); 
+		int distance= Integer.MAX_VALUE;
+		
+		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
+		Iterator e= new CAnnotationIterator(model, true, true);
+		while (e.hasNext()) {
+			Annotation a= (Annotation) e.next();
+			if ((a instanceof ICAnnotation) && ((ICAnnotation)a).hasOverlay() || !isNavigationTarget(a))
+				continue;
+				
+			Position p= model.getPosition(a);
+			if (p == null)
+				continue;
+			
+			if (forward && p.offset == offset || !forward && p.offset + p.getLength() == offset + length) {// || p.includes(offset)) {
+				if (containingAnnotation == null || (forward && p.length >= containingAnnotationPosition.length || !forward && p.length >= containingAnnotationPosition.length)) { 
+					containingAnnotation= a;
+					containingAnnotationPosition= p;
+					currentAnnotation= (p.length == length) || (p.length - 1 == length);
+				}
+			} else {
+				int currentDistance= 0;
+				
+				if (forward) {
+					currentDistance= p.getOffset() - offset;
+					if (currentDistance < 0)
+						currentDistance= endOfDocument + currentDistance;
+					
+					if (currentDistance < distance || currentDistance == distance && p.length < nextAnnotationPosition.length) {
+						distance= currentDistance;
+						nextAnnotation= a;
+						nextAnnotationPosition= p;
+					}
+				} else {
+					currentDistance= offset + length - (p.getOffset() + p.length);
+					if (currentDistance < 0)
+						currentDistance= endOfDocument + currentDistance;
+					
+					if (currentDistance < distance || currentDistance == distance && p.length < nextAnnotationPosition.length) {
+						distance= currentDistance;
+						nextAnnotation= a;
+						nextAnnotationPosition= p;
+					}
+				}
+			}
+		}
+		if (containingAnnotationPosition != null && (!currentAnnotation || nextAnnotation == null)) {
+			annotationPosition.setOffset(containingAnnotationPosition.getOffset());
+			annotationPosition.setLength(containingAnnotationPosition.getLength());
+			return containingAnnotation;
+		}
+		if (nextAnnotationPosition != null) {
+			annotationPosition.setOffset(nextAnnotationPosition.getOffset());
+			annotationPosition.setLength(nextAnnotationPosition.getLength());
+		}
+		
+		return nextAnnotation;
+	}
+
+	protected void updateStatusLine() {
+		ITextSelection selection= (ITextSelection) getSelectionProvider().getSelection();
+		Annotation annotation= getAnnotation(selection.getOffset(), selection.getLength());
+		setStatusLineErrorMessage(null);
+		setStatusLineMessage(null);
+		if (annotation != null) {
+			try {
+				fIsUpdatingAnnotationViews= true;
+				updateAnnotationViews(annotation);
+			} finally {
+				fIsUpdatingAnnotationViews= false;
+			}
+			if (annotation instanceof ICAnnotation && ((ICAnnotation) annotation).isProblem())
+				setStatusLineMessage(annotation.getText());
+		}
+	}
+
+	/**
+	 * Updates the annotation views that show the given annotation.
+	 * 
+	 * @param annotation the annotation
+	 */
+	private void updateAnnotationViews(Annotation annotation) {
+		IMarker marker= null;
+		if (annotation instanceof MarkerAnnotation)
+			marker= ((MarkerAnnotation) annotation).getMarker();
+		else if (annotation instanceof ICAnnotation) {
+			Iterator e= ((ICAnnotation) annotation).getOverlaidIterator();
+			if (e != null) {
+				while (e.hasNext()) {
+					Object o= e.next();
+					if (o instanceof MarkerAnnotation) {
+						marker= ((MarkerAnnotation) o).getMarker();
+						break;
+					}
+				}
+			}
+		}
+			
+		if (marker != null && !marker.equals(fLastMarkerTarget)) {
+			try {
+				boolean isProblem= marker.isSubtypeOf(IMarker.PROBLEM);
+				IWorkbenchPage page= getSite().getPage();
+				IViewPart view= page.findView(isProblem ? IPageLayout.ID_PROBLEM_VIEW: IPageLayout.ID_TASK_LIST); //$NON-NLS-1$  //$NON-NLS-2$
+				if (view != null) {
+					Method method= view.getClass().getMethod("setSelection", new Class[] { IStructuredSelection.class, boolean.class}); //$NON-NLS-1$
+					method.invoke(view, new Object[] {new StructuredSelection(marker), Boolean.TRUE });
+				}
+			} catch (CoreException x) {
+			} catch (NoSuchMethodException x) {
+			} catch (IllegalAccessException x) {
+			} catch (InvocationTargetException x) {
+			}
+			// ignore exceptions, don't update any of the lists, just set status line
+		}			
+	}
+
+	/**
+	 * Returns the annotation overlapping with the given range or <code>null</code>.
+	 * 
+	 * @param offset the region offset
+	 * @param length the region length
+	 * @return the found annotation or <code>null</code>
+	 * @since 3.0
+	 */
+	private Annotation getAnnotation(int offset, int length) {
+		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
+		Iterator e= new CAnnotationIterator(model, true, true);
+		while (e.hasNext()) {
+			Annotation a= (Annotation) e.next();
+			if (!isNavigationTarget(a))
+				continue;
+				
+			Position p= model.getPosition(a);
+			if (p != null && p.overlapsWith(offset, length))
+				return a;
+		}
+		
+		return null;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
 	 *
@@ -1119,7 +1336,19 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
     }  
 
-    /**
+	/**
+	 * Sets the given message as message to this editor's status line.
+	 * 
+	 * @param msg message to be set
+	 * @since 3.0
+	 */
+	protected void setStatusLineMessage(String msg) {
+		IEditorStatusLine statusLine= (IEditorStatusLine) getAdapter(IEditorStatusLine.class);
+		if (statusLine != null)
+			statusLine.setMessage(false, msg, null);	
+	}
+
+	/**
      * Enables browser like links, requires disable to clean up 
      */
     private void enableBrowserLikeLinks() {
@@ -1129,8 +1358,8 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
     		fMouseListener.install();
     	}
     }
-    
-   	/**
+
+	/**
 	 * Disable browser like links, clean up resources  
 	 */
 	private void disableBrowserLikeLinks() {

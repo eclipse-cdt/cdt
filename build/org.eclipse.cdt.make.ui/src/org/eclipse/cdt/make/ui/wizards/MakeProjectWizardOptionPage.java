@@ -5,9 +5,14 @@ package org.eclipse.cdt.make.ui.wizards;
  * All Rights Reserved.
  */
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
+import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 import org.eclipse.cdt.ui.dialogs.ReferenceBlock;
 import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
@@ -15,6 +20,7 @@ import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizardOptionPage;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Standard main page for a wizard that is creates a project resource.
@@ -45,6 +51,26 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 			super.addTabs();
 			addTab(indexBlock = new IndexerBlock()); 
 		}
+		
+		public void setupHelpContextIds(){
+			List pages = getOptionPages();
+			
+			Iterator iter = pages.iterator();
+			for( int i = 0; i < 6 && iter.hasNext(); i++ ) {
+				ICOptionPage page = (ICOptionPage) iter.next();
+				
+				String id = null;
+				switch( i ){
+					case 0 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_PROJECTS_TAB;     break;
+					case 1 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_MAKEBUILDER_TAB;  break;
+					case 2 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_ERRORPARSER_TAB;  break;
+					case 3 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_BINARYPARSER_TAB; break;
+					case 4 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_DISCOVERY_TAB;    break;
+					case 5 : id = IMakeHelpContextIds.MAKE_PROJ_WIZ_INDEXER_TAB;      break;
+				}
+				WorkbenchHelp.setHelp(page.getControl(), id);	
+			}
+		}
 	}
 
 	public MakeProjectWizardOptionPage(String title, String description) {
@@ -72,4 +98,7 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 	  return	makeWizardBlock.indexBlock.isIndexEnabled();
 	}
 
+	public void setupHelpContextIds(){
+		makeWizardBlock.setupHelpContextIds();
+	}
 }

@@ -4,7 +4,9 @@ package org.eclipse.cdt.make.ui.views;
  * (c) Copyright QNX Software Systems Ltd. 2002. All Rights Reserved.
  */
 
-import org.eclipse.cdt.make.ui.*;
+import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
+import org.eclipse.cdt.make.ui.MakeContentProvider;
+import org.eclipse.cdt.make.ui.MakeLabelProvider;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -24,8 +26,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 public class MakeView extends ViewPart {
 
@@ -51,6 +56,7 @@ public class MakeView extends ViewPart {
 	 * @see ContentOutlinePage#createControl
 	 */
 	public void createPartControl(Composite parent) {
+		WorkbenchHelp.setHelp(parent, IMakeHelpContextIds.MAKE_VIEW);
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(new MakeContentProvider());

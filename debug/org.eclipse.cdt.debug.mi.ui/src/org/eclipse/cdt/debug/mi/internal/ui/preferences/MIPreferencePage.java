@@ -36,6 +36,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class MIPreferencePage extends PreferencePage implements IWorkbenchPreferencePage
 {
+	private final static String GDB_MI_HELP_CONTEXT = MIUIPlugin.PLUGIN_ID + "mi_preference_page_context"; //$NON-NLS-1$
 	// Debugger timeout preference widgets
 	IntegerFieldEditor fDebugTimeoutText;
 
@@ -76,6 +77,8 @@ public class MIPreferencePage extends PreferencePage implements IWorkbenchPrefer
 
 		setValues();
 
+		WorkbenchHelp.setHelp(composite, GDB_MI_HELP_CONTEXT);	
+		
 		return composite;
 	}
 

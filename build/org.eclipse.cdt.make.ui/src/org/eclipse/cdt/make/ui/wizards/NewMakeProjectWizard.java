@@ -9,11 +9,15 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  */
@@ -52,5 +56,18 @@ public abstract class NewMakeProjectWizard extends NewCProjectWizard {
 	
 	public String getProjectID() {
 		return MakeCorePlugin.MAKE_PROJECT_ID;
+	}
+	
+	public void createPageControls(Composite pageContainer) {
+		super.createPageControls( pageContainer );
+		
+		IWizardPage [] pages = getPages();
+		
+		if( pages != null && pages.length == 2 ){
+			WorkbenchHelp.setHelp(pages[0].getControl(), IMakeHelpContextIds.MAKE_PROJ_WIZ_NAME_PAGE);
+	
+			MakeProjectWizardOptionPage optionPage = (MakeProjectWizardOptionPage) pages[1];
+			optionPage.setupHelpContextIds();
+		}
 	}
 }

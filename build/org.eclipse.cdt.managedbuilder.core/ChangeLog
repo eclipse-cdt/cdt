@@ -1,3 +1,29 @@
+2003-10-03 Sean Evoy
+	Fix for critical bug 44134. 
+	
+	The problem lies in how the makefile is generated when a build target 
+	references other projects. The makefile creates a command to change to 
+	the build directory of the referenced project and call $(MAKE) there, i.e.
+		cd <dep_project_build_dir>; $(MAKE) clean all 
+
+	The problem arises when the directory change fails. As of RC0, the command 
+	after the semi-colon is evaluated. Unfortunately, it evaluates to a recursive 
+	make call in the build directory of the build target and 'make' will keep 
+	invoking more 'make's until Eclipse runs out of memory. With a manual build, 
+	the user can still cancel the build. When autobuild is turned on, they cannot. 
+	The only way to shut down Eclipse under that scenario is to kill it, and when 
+	it restarts, autobuild is still enabled and the problem repeats.
+
+	The solution is to NOT perform the 'make' command if the 'cd' fails, i.e.
+		cd <dep_project_build_dir> && $(MAKE) clean all 
+
+	When the dependencies are generated this way, the 'cd' will fail as will the 
+	build. The final tweak is to ignore the 'cd' failure and allow the rest of 
+	the build to continue, i.e.
+		-cd <dep_project_build_dir> && $(MAKE) clean all 
+		
+	*  src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+
 2003-10-01 Sean Evoy
 	Final fix for bugs 44020.
 	The problem lay with the way that new projects were being created when the 

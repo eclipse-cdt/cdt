@@ -68,7 +68,7 @@ public class MakefileGenerator {
 	protected static final String MODFILE_NAME = "subdir.mk";	//$NON-NLS-1$
 	protected static final String LINEBREAK = "\\";
 	protected static final String NEWLINE = System.getProperty("line.separator");
-	protected static final String SEMI_COLON = ";";
+	protected static final String LOGICAL_AND = "&&";
 	protected static final String SEPARATOR = "/";
 	protected static final String TAB = "\t";	
 	protected static final String WHITESPACE = " ";
@@ -562,7 +562,7 @@ public class MakefileGenerator {
 						}
 						managedProjectOutputs.add(buildDir + SEPARATOR + depPrefix + depTarget);
 					}
-					buffer.append(TAB + "cd" + WHITESPACE + buildDir + SEMI_COLON + WHITESPACE + "$(MAKE) " + depTargets + NEWLINE);
+					buffer.append(TAB + "-cd" + WHITESPACE + buildDir + WHITESPACE + LOGICAL_AND + WHITESPACE + "$(MAKE) " + depTargets + NEWLINE);
 				}
 			}
 			buffer.append(NEWLINE);

@@ -61,6 +61,7 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDebuggerProcessSupport;
@@ -697,7 +698,11 @@ public class CDebugTarget extends CDebugElement
 		{
 			try
 			{
-				if ( breakpoint instanceof ICAddressBreakpoint )
+				if ( breakpoint instanceof ICFunctionBreakpoint )
+				{
+					setFunctionBreakpoint( (ICFunctionBreakpoint)breakpoint );
+				}
+				else if ( breakpoint instanceof ICAddressBreakpoint )
 				{
 					if ( supportsAddressBreakpoint( (ICAddressBreakpoint)breakpoint ) )
 						setAddressBreakpoint( (ICAddressBreakpoint)breakpoint );
@@ -1933,6 +1938,45 @@ public class CDebugTarget extends CDebugElement
 	{
 		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
 		ICDILocation location = bm.createLocation( Long.parseLong( breakpoint.getAddress() ) );
+		ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
+		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
+		getBreakpoints().put( breakpoint, cdiBreakpoint );
+		return cdiBreakpoint;
+	}
+	
+	private void setFunctionBreakpoint( ICFunctionBreakpoint breakpoint ) throws DebugException
+	{
+		try
+		{
+			ICDIBreakpoint cdiBreakpoint = (ICDIBreakpoint)getBreakpoints().get( breakpoint );
+			if ( cdiBreakpoint == null )
+			{
+				cdiBreakpoint = setFunctionBreakpoint0( breakpoint );
+			}
+			((CBreakpoint)breakpoint).incrementInstallCount();
+			if ( !breakpoint.isEnabled() )
+			{
+				cdiBreakpoint.setEnabled( false );
+			}
+		}
+		catch( CoreException ce )
+		{
+			requestFailed( "Operation failed. Reason: ", ce );
+		}
+		catch( CDIException e )
+		{
+			requestFailed( "Operation failed. Reason: ", e );
+		}
+		catch( NumberFormatException e )
+		{
+			requestFailed( "Operation failed. Reason: ", e );
+		}
+	}
+ 	
+	private synchronized ICDIBreakpoint setFunctionBreakpoint0( ICFunctionBreakpoint breakpoint ) throws CDIException, CoreException
+	{
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		ICDILocation location = bm.createLocation( null, breakpoint.getFunction(), -1 );
 		ICDICondition condition = bm.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
 		ICDIBreakpoint cdiBreakpoint = bm.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null );
 		getBreakpoints().put( breakpoint, cdiBreakpoint );

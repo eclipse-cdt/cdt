@@ -16,6 +16,13 @@ import org.eclipse.core.runtime.CoreException;
 public interface ICFunctionBreakpoint extends ICLineBreakpoint
 {
 	/**
+	 * Breakpoint attribute storing the function this breakpoint suspends 
+	 * execution at (value <code>"org.eclipse.cdt.debug.core.function"</code>).
+	 * This attribute is a <code>String</code>.
+	 */
+	public static final String FUNCTION = "org.eclipse.cdt.debug.core.function"; //$NON-NLS-1$	
+
+	/**
 	 * Returns the function this breakpoint suspends execution in.
 	 * 
 	 * @return the function this breakpoint suspends execution in

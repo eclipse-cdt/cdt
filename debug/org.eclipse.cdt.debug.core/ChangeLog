@@ -1,3 +1,9 @@
+2003-04-09 Mikhail Khodjaiants
+	Core support of function breakpoints.
+	* CDebugModel.java
+	* ICFunctionBreakpoint.java
+	* CDebugTarget.java
+
 2003-04-07 Mikhail Khodjaiants
 	Changed the message text in the 'getStackDepth' method.
 	* CThread.java

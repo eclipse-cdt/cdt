@@ -9,6 +9,10 @@ package org.eclipse.cdt.debug.core;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IFunction;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
@@ -21,12 +25,14 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint;
+import org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
@@ -352,11 +358,76 @@ public class CDebugModel
 		attributes.put( IMarker.CHAR_START, new Integer( 0 ) );
 		attributes.put( IMarker.CHAR_END, new Integer( 0 ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
+		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
 		attributes.put( ICAddressBreakpoint.ADDRESS, Long.toString( address ) );
 		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );
 		return new CAddressBreakpoint( resource, attributes, add );
+	}
+
+	public static ICFunctionBreakpoint functionBreakpointExists( IFunction function ) throws CoreException
+	{
+		String modelId = getPluginIdentifier();
+		String markerType = CFunctionBreakpoint.getMarkerType();
+		IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
+		IBreakpoint[] breakpoints = manager.getBreakpoints( modelId );
+		for ( int i = 0; i < breakpoints.length; i++ )
+		{
+			if ( !( breakpoints[i] instanceof ICFunctionBreakpoint ) )
+			{
+				continue;
+			}
+			ICFunctionBreakpoint breakpoint = (ICFunctionBreakpoint)breakpoints[i];
+			if ( breakpoint.getMarker().getType().equals( markerType ) )
+			{
+				if ( breakpoint.getMarker().getResource().equals( getFunctionResource( function ) ) )
+				{
+					if ( breakpoint.getFunction() != null && breakpoint.getFunction().equals( function.getElementName() ) )
+					{
+						return breakpoint;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	public static ICFunctionBreakpoint createFunctionBreakpoint( IFunction function, 
+																 boolean enabled,
+																 int ignoreCount, 
+																 String condition, 
+																 boolean add ) throws DebugException
+	{
+		HashMap attributes = new HashMap( 10 );
+		attributes.put( ICBreakpoint.ID, getPluginIdentifier() );
+		int lineNumber = -1;
+		int charStart = -1;
+		int charEnd = -1;
+		try
+		{
+			ISourceRange sourceRange = function.getSourceRange();
+			if ( sourceRange != null )
+			{
+				charStart = sourceRange.getStartPos();
+				charEnd = charStart + sourceRange.getLength();
+				// for now
+				if ( charEnd == 0 )
+					lineNumber = sourceRange.getStartLine();
+			}
+		}
+		catch( CModelException e )
+		{
+			CDebugCorePlugin.log( e.getStatus() );
+		}
+		attributes.put( IMarker.CHAR_START, new Integer( charStart ) );
+		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
+		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
+		attributes.put( ICFunctionBreakpoint.FUNCTION, function.getElementName() );
+		attributes.put( ICBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
+		attributes.put( ICBreakpoint.CONDITION, condition );
+		return new CFunctionBreakpoint( getFunctionResource( function ), attributes, add );
 	}
 
 	public static ICWatchpoint watchpointExists( IResource resource, boolean write, boolean read, String expression ) throws CoreException
@@ -526,5 +597,11 @@ public class CDebugModel
 													  null ) );
 			}
 		}
+	}
+
+	private static IResource getFunctionResource( IFunction function )
+	{
+		ITranslationUnit tu = function.getTranslationUnit();
+		return ( tu != null ) ? tu.getResource() : null;
 	}
 }

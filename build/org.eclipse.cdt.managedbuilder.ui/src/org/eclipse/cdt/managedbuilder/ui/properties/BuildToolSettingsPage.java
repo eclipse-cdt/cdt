@@ -29,26 +29,26 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.graphics.Point;
 
 public class BuildToolSettingsPage extends BuildSettingsPage {
-	// Field editor label
-	private static final String COMMAND = "FieldEditors.tool.command"; //$NON-NLS-1$
-	// option names that stores additional options
-	private static final String COMPILER_FLAGS = ManagedBuilderUIMessages.getResourceString("BuildToolSettingsPage.compilerflags"); //$NON-NLS-1$
-	private static final String LINKER_FLAGS = ManagedBuilderUIMessages.getResourceString("BuildToolSettingsPage.linkerflags"); //$NON-NLS-1$
 	// all build options field editor label
 	private static final String ALL_OPTIONS = ManagedBuilderUIMessages.getResourceString("BuildToolSettingsPage.alloptions"); //$NON-NLS-1$
+	// Field editor label
+	private static final String COMMAND = "FieldEditors.tool.command"; //$NON-NLS-1$
+
+	private static final String DEFAULT_SEPERATOR = ";"; //$NON-NLS-1$
 	// Whitespace character
 	private static final String WHITESPACE = " "; //$NON-NLS-1$
 	// field editor that displays all the build options for a particular tool
 	private MultiLineTextFieldEditor allOptionFieldEditor;
-	private static final String DEFAULT_SEPERATOR = ";"; //$NON-NLS-1$
-	// Map that holds all string options and its values
-	private HashMap stringOptionsMap;
-	// Map that holds all user object options and its values
-	private HashMap userObjsMap;
-	// Tool the settings belong to
-	private ITool tool;
 	// all build options preference store id
 	private String allOptionsId = ""; //$NON-NLS-1$
+	// A list of safe options to put unrecognized values in
+	private Vector defaultOptionNames;
+	// Map that holds all string options and its values
+	private HashMap stringOptionsMap;
+	// Tool the settings belong to
+	private ITool tool;
+	// Map that holds all user object options and its values
+	private HashMap userObjsMap;
 
 	BuildToolSettingsPage(IConfiguration configuration, ITool tool) {
 		// Cache the configuration and tool this page is for
@@ -86,25 +86,76 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		getPreferenceStore().setValue(allOptionsId, ""); //$NON-NLS-1$
 		addField(allOptionFieldEditor);
 	}
-	
+
 	/**
-	 * Update the field editor that displays all the build options
+	 * Creates single string from the string array with a separator
+	 * 
+	 * @param items
+	 * @return
 	 */
-	public void updateAllOptionField() {
-		try {
-			if (getToolFlags() != null) {
-				getPreferenceStore().setValue(allOptionsId, getToolFlags());
-				allOptionFieldEditor.load();
+	private String createList(String[] items) {
+		StringBuffer path = new StringBuffer(""); //$NON-NLS-1$
+		for (int i = 0; i < items.length; i++) {
+			path.append(items[i]);
+			if (i < (items.length - 1)) {
+				path.append(DEFAULT_SEPERATOR);
 			}
-		} catch (BuildException e) {
 		}
+		return path.toString();
 	}
 	
 	/**
-	 * saves all field editors
+	 * @return
 	 */
-	public void storeSettings() {
-		super.performOk();
+	private Vector getDefaultOptionNames() {
+		if (defaultOptionNames == null) {
+			defaultOptionNames = new Vector();
+			defaultOptionNames.add("Other flags"); //$NON-NLS-1$
+			defaultOptionNames.add("Linker flags"); //$NON-NLS-1$
+			defaultOptionNames.add("Archiver flags"); //$NON-NLS-1$
+			defaultOptionNames.add("Assembler flags"); //$NON-NLS-1$
+		}
+		return defaultOptionNames;
+	}
+
+	/**
+	 * The raw option string can contain path information that has spaces 
+	 * in them. For example, 
+	 * <p> <pre>
+	 * -I"path\with a\couple of spaces" -O2 -g -fPIC
+	 * </pre><p>
+	 * would yeild
+	 * <p><pre>-I"path\with | a\couple | of | spaces" | -O2 | -g | -fPIC</pre>
+	 * <p>
+	 * As you can see, simply splitting at the whitespaces will yeild a result 
+	 * containing garbage, so the logic of this method must consider whether a 
+	 * token contains the &quot; character. If so, then add it and all of the 
+	 * subsequent tokens until the enclosing &quot; is found. 
+	 *  
+	 * @param rawOptionString
+	 * @return Vector containing all options
+	 */
+	private Vector getOptionVector(String rawOptionString){
+		Vector tokens = new Vector(Arrays.asList(rawOptionString.split("\\s")));	//$NON-NLS-1$
+		Vector output = new Vector(tokens.size());
+
+		Iterator iter = tokens.iterator();
+		while(iter.hasNext()){
+			String token = (String)iter.next();
+			int firstIndex = token.indexOf("\"");	//$NON-NLS-1$
+			int lastIndex = token.lastIndexOf("\"");	//$NON-NLS-1$
+			if (firstIndex != -1 && firstIndex == lastIndex) {
+				// Keep looking
+				while (iter.hasNext()) {
+					String nextToken = (String) iter.next();
+					token += WHITESPACE + nextToken;
+					if (nextToken.indexOf("\"") != -1) break;	//$NON-NLS-1$
+				}
+			}
+			output.add(token);
+		}
+		
+		return output;
 	}
 
 	/**
@@ -181,60 +232,17 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 	}
 
 	/**
-	 * Creates single string from the string array with a separator
+	 * Answers <code>true</code> if the receiver manages settings for the
+	 * argument
 	 * 
-	 * @param items
+	 * @param tool
 	 * @return
 	 */
-	private String createList(String[] items) {
-		StringBuffer path = new StringBuffer(""); //$NON-NLS-1$
-		for (int i = 0; i < items.length; i++) {
-			path.append(items[i]);
-			if (i < (items.length - 1)) {
-				path.append(DEFAULT_SEPERATOR);
-			}
+	public boolean isForTool(ITool tool) {
+		if (tool != null) {
+			return tool.equals(this.tool);
 		}
-		return path.toString();
-	}
-
-	/* (non-Javadoc)
-	 * The raw option string can contain path information that has spaces 
-	 * in them. For example, 
-	 * <p> <pre>
-	 * -I"path\with a\couple of spaces" -O2 -g -fPIC
-	 * </pre><p>
-	 * would yeild
-	 * <p><pre>-I"path\with | a\couple | of | spaces" | -O2 | -g | -fPIC</pre>
-	 * <p>
-	 * As you can see, simply splitting at the whitespaces will yeild a result 
-	 * containing garbage, so the logic of this method must consider whether a 
-	 * token contains the &quot; character. If so, then add it and all of the 
-	 * subsequent tokens until the enclosing &quot; is found. 
-	 *  
-	 * @param rawOptionString
-	 * @return Vector containing all options
-	 */
-	private Vector getOptionVector(String rawOptionString){
-		Vector tokens = new Vector(Arrays.asList(rawOptionString.split("\\s")));	//$NON-NLS-1$
-		Vector output = new Vector(tokens.size());
-
-		Iterator iter = tokens.iterator();
-		while(iter.hasNext()){
-			String token = (String)iter.next();
-			int firstIndex = token.indexOf("\"");	//$NON-NLS-1$
-			int lastIndex = token.lastIndexOf("\"");	//$NON-NLS-1$
-			if (firstIndex != -1 && firstIndex == lastIndex) {
-				// Keep looking
-				while (iter.hasNext()) {
-					String nextToken = (String) iter.next();
-					token += WHITESPACE + nextToken;
-					if (nextToken.indexOf("\"") != -1) break;	//$NON-NLS-1$
-				}
-			}
-			output.add(token);
-		}
-		
-		return output;
+		return false;
 	}
 	
 	/**
@@ -382,16 +390,14 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 			String[] listVal = null;
 			switch (opt.getValueType()) {
 				case IOption.BOOLEAN :
-					ArrayList optsList = new ArrayList(/*Arrays.asList(*/optionsArr)/*)*/;
+					ArrayList optsList = new ArrayList(optionsArr);
 					if (opt.getCommand() != null
 							&& !optsList.contains(opt.getCommand()))
 						getPreferenceStore().setValue(opt.getId(), false);
 					break;
 				case IOption.STRING :
-					// put the additional options in the compiler flag or
-					// linker flag field
-					if (opt.getName().equals(COMPILER_FLAGS)
-							|| opt.getName().equals(LINKER_FLAGS)) {
+					// TODO create a lst of valid default string options for the tool
+					if (getDefaultOptionNames().contains(opt.getName())) {
 						String newOptions = getPreferenceStore().getString(
 								opt.getId());
 						if (addnOptions.length() > 0) {
@@ -426,20 +432,6 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		}
 	}
 
-	/**
-	 * Answers <code>true</code> if the receiver manages settings for the
-	 * argument
-	 * 
-	 * @param tool
-	 * @return
-	 */
-	public boolean isForTool(ITool tool) {
-		if (tool != null) {
-			return tool.equals(this.tool);
-		}
-		return false;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
 	 */
@@ -505,5 +497,25 @@ public class BuildToolSettingsPage extends BuildSettingsPage {
 		ManagedBuildManager.setToolCommand(configuration, tool, command);
 		
 		return result;
+	}
+	
+	/**
+	 * saves all field editors
+	 */
+	public void storeSettings() {
+		super.performOk();
+	}
+	
+	/**
+	 * Update the field editor that displays all the build options
+	 */
+	public void updateAllOptionField() {
+		try {
+			if (getToolFlags() != null) {
+				getPreferenceStore().setValue(allOptionsId, getToolFlags());
+				allOptionFieldEditor.load();
+			}
+		} catch (BuildException e) {
+		}
 	}
 }

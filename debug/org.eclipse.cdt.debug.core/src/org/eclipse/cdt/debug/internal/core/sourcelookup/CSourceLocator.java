@@ -248,7 +248,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		{
 			// Try for a file in another workspace project
 			IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( path );
-			if ( f != null ) 
+			if ( f != null && f.exists() ) 
 			{
 				return f;
 			} 

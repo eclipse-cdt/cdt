@@ -164,7 +164,7 @@ public class CDirectorySourceLocation implements IDirectorySourceLocation
 		}
 		// Try for a file in another workspace project
 		IFile f = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation( filePath );
-		if ( f != null ) 
+		if ( f != null && f.exists() ) 
 		{
 			return f;
 		} 

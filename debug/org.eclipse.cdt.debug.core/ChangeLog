@@ -1,5 +1,5 @@
 2003-03-28 Mikhail Khodjaiants
-	Use the 'exists' method of the 'IFile' interface instead of using toFile().exists() for IPath.
+	Use the 'exists' method of the 'IFile' interface instead of using 'toFile().exists()' for 'IPath'.
 	* CDirectorySourceLocation.java
 	* CSourceLocator.java
 

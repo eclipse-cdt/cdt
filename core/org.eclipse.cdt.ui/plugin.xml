@@ -731,9 +731,5 @@
          markerType="org.eclipse.cdt.core.problem"
          markerSeverity="0">
       </type>
-      <type
-         name="org.eclipse.cdt.ui.occurrences">
-      </type>
    </extension>
-
 </plugin>

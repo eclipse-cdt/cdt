@@ -1,3 +1,12 @@
+2004-05-21 Alain Magloire
+
+	$&#*$(^#&^$(^#
+	Eclipse-3.0 change the way things are done
+	for the preferences we have, for the CEditor
+	merge the Preference settings: the CUIPlugin store
+	and the Editor store since now the settings is
+	on the TextEditor(see annotation).
+
 2004-05-19 Alain Magloire
 
 	Contribution from Sam Robb, for PR 52864.

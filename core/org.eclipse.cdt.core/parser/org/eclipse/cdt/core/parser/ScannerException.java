@@ -39,6 +39,7 @@ public class ScannerException extends Exception {
 		public static final ErrorCode MACRO_USAGE_ERROR = new ErrorCode( 14 );
 		public static final ErrorCode MACRO_PASTING_ERROR = new ErrorCode( 15 );
 		public static final ErrorCode CIRCULAR_INCLUSION = new ErrorCode( 16 );
+		public static final ErrorCode BAD_CHARACTER = new ErrorCode( 17 );
         /**
          * @param enumValue
          */
@@ -73,6 +74,8 @@ public class ScannerException extends Exception {
          */
         public boolean isSeriousError(ParserMode mode)
         {
+        	if(this == ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE)
+        		return true;
         	if( mode == ParserMode.COMPLETE_PARSE )
 				if( this == ErrorCode.POUND_ERROR ||
 					this == ErrorCode.DEFINITION_NOT_FOUND ||
@@ -81,8 +84,7 @@ public class ScannerException extends Exception {
 					this == ErrorCode.UNEXPECTED_EOF  ||
 					this == ErrorCode.MACRO_USAGE_ERROR  ||
 					this == ErrorCode.MACRO_PASTING_ERROR ||
-					this == ErrorCode.EXPRESSION_EVALUATION_ERROR ||
-					this == ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE || 
+					this == ErrorCode.EXPRESSION_EVALUATION_ERROR || 
 					this == ErrorCode.ATTEMPTED_REDEFINITION )
 						return true;
 			return false;
@@ -123,7 +125,8 @@ public class ScannerException extends Exception {
 		errorMessages.put( ErrorCode.BAD_HEXIDECIMAL_FORMAT, "Invalid hexidecimal format " );
 		errorMessages.put( ErrorCode.INVALID_PREPROCESSOR_DIRECTIVE, "Invalid preprocessor directive format " );
 		errorMessages.put( ErrorCode.UNEXPECTED_EOF, "Unexpected End Of File " );		
-		errorMessages.put( ErrorCode.MACRO_PASTING_ERROR, "Invalid use of macro pasting " );		
+		errorMessages.put( ErrorCode.MACRO_PASTING_ERROR, "Invalid use of macro pasting " );
+		errorMessages.put( ErrorCode.BAD_CHARACTER, "Bad character sequence encountered:");		
 	}
 	
 	
@@ -166,4 +169,12 @@ public class ScannerException extends Exception {
     {
     	return getErrorCode().isSeriousError( mode );
     }
+    /**
+     * @return
+     */
+    public String getInfoString()
+    {
+        return info;
+    }
+
 }

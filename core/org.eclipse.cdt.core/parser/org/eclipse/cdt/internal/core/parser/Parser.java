@@ -773,7 +773,6 @@ public class Parser implements IParser
         {
             simpleDeclaration(
                 SimpleDeclarationStrategy.TRY_CONSTRUCTOR,
-                false,
                 scope,
                 ownerTemplate);
             // try it first with the original strategy
@@ -787,9 +786,8 @@ public class Parser implements IParser
             {  
             	simpleDeclaration(
                 	SimpleDeclarationStrategy.TRY_FUNCTION,
-	                false,
-    	            scope,
-        	        ownerTemplate);
+	                scope,
+    	            ownerTemplate);
             }
             catch( Backtrack bt2 )
             {
@@ -799,7 +797,6 @@ public class Parser implements IParser
 				{
 					simpleDeclaration(
 						SimpleDeclarationStrategy.TRY_VARIABLE,
-						false,
 						scope,
 						ownerTemplate);
 				}
@@ -889,11 +886,11 @@ public class Parser implements IParser
 				throw backtrack;
 
         	ITokenDuple duple = name();
-        	
+        	consume( IToken.tSEMI );
         	try
             {
                 astFactory.createNamespaceAlias( 
-                	scope, identifier.toString(), duple, first.getOffset(), 
+                	scope, identifier.getImage(), duple, first.getOffset(), 
                 	identifier.getOffset(), identifier.getEndOffset(), duple.getLastToken().getEndOffset() );
             }
             catch (Exception e1)
@@ -926,7 +923,6 @@ public class Parser implements IParser
      */
     protected void simpleDeclaration(
         SimpleDeclarationStrategy strategy,
-        boolean forKR,
         IASTScope scope,
         IASTTemplate ownerTemplate)
         throws Backtrack
@@ -935,7 +931,7 @@ public class Parser implements IParser
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, firstToken.getOffset(), ownerTemplate);
 
-        declSpecifierSeq(false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR, sdw, forKR );
+        declSpecifierSeq(false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR, sdw );
         if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED )
             try
             {
@@ -957,40 +953,55 @@ public class Parser implements IParser
         Declarator declarator = null;
         if (LT(1) != IToken.tSEMI)
         {
-            declarator = initDeclarator(sdw, forKR, strategy);
+            declarator = initDeclarator(sdw, strategy);
                 
             while (LT(1) == IToken.tCOMMA)
             {
                 consume();
-                initDeclarator(sdw, forKR, strategy);
+                initDeclarator(sdw, strategy);
             }
         }
 
         boolean hasFunctionBody = false;
+        boolean hasFunctionTryBlock = false;
+        boolean consumedSemi = false;
+        
         switch (LT(1))
         {
             case IToken.tSEMI :
                 consume(IToken.tSEMI);
+                consumedSemi = true;
                 break;
+            case IToken.t_try : 
+            	consume( IToken.t_try );
+            	if( LT(1) == IToken.tCOLON )
+            		ctorInitializer( declarator );
+        		hasFunctionTryBlock = true;
+        		declarator.setFunctionTryBlock( true );    	
+            	break;       	
             case IToken.tCOLON :
-                if (forKR)
-                    throw backtrack;
                 ctorInitializer(declarator);
-                // Falling through on purpose
-            case IToken.tLBRACE :
-                if (forKR)
-                    throw backtrack;
-                if( firstToken == LA(1) )
-					throw backtrack;
-                declarator.setHasFunctionBody(true);
-                hasFunctionBody = true;
                 break;
-            default :
-                throw backtrack;
+            case IToken.tLBRACE: 
+            	break;
+            default: 
+            	throw backtrack;
         }
         
-        if( forKR ) return;
-        
+        if( ! consumedSemi )
+		{        
+	        if( LT(1) == IToken.tLBRACE )
+	        {
+	        	if( firstToken == LA(1) )
+					throw backtrack;
+	            declarator.setHasFunctionBody(true);
+	            hasFunctionBody = true;
+	        }
+	        
+	        if( hasFunctionTryBlock && ! hasFunctionBody )
+	        	throw backtrack;
+		}
+		        
         List l = null; 
         try
         {
@@ -1031,6 +1042,10 @@ public class Parser implements IParser
 					lastToken.getEndOffset());
   
   				declaration.exitScope( requestor );
+  				
+  				if( hasFunctionTryBlock )
+					catchHandlerSequence( scope );
+  				
             }
         }
         else
@@ -1057,26 +1072,30 @@ public class Parser implements IParser
     {
         if ( mode == ParserMode.QUICK_PARSE || isInlineFunction ) 
         {
-            // speed up the parser by skiping the body
-            // simply look for matching brace and return
-            consume(IToken.tLBRACE);
-            int depth = 1;
-            while (depth > 0)
-            {
-                switch (consume().getType())
-                {
-                    case IToken.tRBRACE :
-                        --depth;
-                        break;
-                    case IToken.tLBRACE :
-                        ++depth;
-                        break;
-                }
-            }
+            skipOverCompoundStatement();
         }
         else
         {
             functionBody(scope);
+        }
+    }
+    protected void skipOverCompoundStatement() throws Backtrack, EndOfFile
+    {
+        // speed up the parser by skiping the body
+        // simply look for matching brace and return
+        consume(IToken.tLBRACE);
+        int depth = 1;
+        while (depth > 0)
+        {
+            switch (consume().getType())
+            {
+                case IToken.tRBRACE :
+                    --depth;
+                    break;
+                case IToken.tLBRACE :
+                    ++depth;
+                    break;
+            }
         }
     }
     /**
@@ -1090,7 +1109,7 @@ public class Parser implements IParser
      * @param declarator	IParserCallback object that represents the declarator (constructor) that owns this initializer
      * @throws Backtrack	request a backtrack
      */
-    protected void ctorInitializer(Declarator d)
+    protected void ctorInitializer(Declarator d )
         throws Backtrack
     {
         consume(IToken.tCOLON);
@@ -1149,7 +1168,7 @@ public class Parser implements IParser
  
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, current.getOffset(), null);
-        declSpecifierSeq(true, false, sdw, false);
+        declSpecifierSeq(true, false, sdw);
         if (sdw.getTypeSpecifier() == null
             && sdw.getSimpleType()
                 != IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
@@ -1175,7 +1194,7 @@ public class Parser implements IParser
             }
         
         if (LT(1) != IToken.tSEMI)
-           initDeclarator(sdw, false, SimpleDeclarationStrategy.TRY_FUNCTION );
+           initDeclarator(sdw, SimpleDeclarationStrategy.TRY_FUNCTION );
  
  		if( lastToken != null )
  			sdw.setEndingOffset( lastToken.getEndOffset() );
@@ -1250,70 +1269,57 @@ public class Parser implements IParser
      * @return                 whether or not this looks like a constructor (true or false)
      * @throws EndOfFile       we could encounter EOF while looking ahead
      */
-    private boolean lookAheadForConstructorOrConversion(Flags flags)
+    private boolean lookAheadForConstructorOrConversion(Flags flags, DeclarationWrapper sdw )
         throws EndOfFile
     {
         if (flags.isForParameterDeclaration())
             return false;
         if (LT(2) == IToken.tLPAREN && flags.isForConstructor())
             return true;
-        boolean continueProcessing = true;
-        // Portions of qualified name
-        // ...::secondLastID<template-args>::lastID ...
-        int secondLastIDTokenPos = -1;
-        int lastIDTokenPos = 1;
-        int tokenPos = 2;
-        do
+        
+        IToken mark = mark(); 
+        Declarator d = new Declarator( sdw );
+        try
         {
-            if (LT(tokenPos) == IToken.tLT)
-            {
-                // a case for template instantiation, like CFoobar<A,B>::CFoobar
-                tokenPos++;
-                // until we get all the names sorted out
-                int depth = 1;
-                while (depth > 0)
-                {
-                    switch (LT(tokenPos++))
-                    {
-                        case IToken.tGT :
-                            --depth;
-                            break;
-                        case IToken.tLT :
-                            ++depth;
-                            break;
-                    }
-                }
-            }
-            if (LT(tokenPos) == IToken.tCOLONCOLON)
-            {
-                tokenPos++;
-                switch (LT(tokenPos))
-                {
-                    case IToken.tCOMPL : // for destructors
-                    case IToken.t_operator : // for conversion operators
-                        return true;
-                    case IToken.tIDENTIFIER :
-                        secondLastIDTokenPos = lastIDTokenPos;
-                        lastIDTokenPos = tokenPos;
-                        tokenPos++;
-                        break;
-                    default :
-                        // Something unexpected after ::
-                        return false;
-                }
-            }
-            else
-            {
-                continueProcessing = false;
-            }
+            consumeTemplatedOperatorName( d );
         }
-        while (continueProcessing);
-        // for constructors
-        if (secondLastIDTokenPos < 0)
+        catch (Backtrack e)
+        {
+            backup( mark ); 
             return false;
-        String secondLastID = LA(secondLastIDTokenPos).getImage();
-        String lastID = LA(lastIDTokenPos).getImage();
-        return secondLastID.equals(lastID);
+        }
+        
+        ITokenDuple duple = d.getNameDuple(); 
+       	if( duple == null )
+       	{
+       		backup( mark ); 
+       		return false; 
+       	} 
+       	
+       	int lastColon = duple.findLastTokenType(IToken.tCOLON);
+       	if( lastColon == -1  ) 
+       	{
+       		int lt1 = LT(1);
+       		backup( mark );
+       		return flags.isForConstructor() && (lt1 == IToken.tLPAREN);
+       	} 
+       	
+       	IToken className = null;
+       	int index = lastColon - 1;
+        if( duple.getToken( index ).getType() == IToken.tGT )
+       	{
+       		int depth = -1; 
+       		while( depth == -1 )
+       		{
+       			if( duple.getToken( --index ).getType() == IToken.tLT )
+       				++depth;
+       		}
+       		className = duple.getToken( index );
+       	}
+       	
+       	boolean result = className.getImage().equals( duple.getLastToken());
+       	backup( mark );
+       	return result;
     }
     /**
      * @param flags			input flags that are used to make our decision 
@@ -1359,8 +1365,7 @@ public class Parser implements IParser
     protected void declSpecifierSeq(
         boolean parm,
         boolean tryConstructor,
-        DeclarationWrapper sdw, 
-        boolean forKR )
+        DeclarationWrapper sdw )
         throws Backtrack
     {
         Flags flags = new Flags(parm, tryConstructor);
@@ -1536,7 +1541,7 @@ public class Parser implements IParser
                                 new TokenDuple(typeNameBegin, typeNameEnd));
                         return;
                     }
-                    if (lookAheadForConstructorOrConversion(flags))
+                    if (lookAheadForConstructorOrConversion(flags, sdw))
                     {
                         if (typeNameBegin != null)
                             sdw.setTypeName(
@@ -1559,7 +1564,7 @@ public class Parser implements IParser
                 case IToken.t_class :
                 case IToken.t_struct :
                 case IToken.t_union :
-                    if (!parm && !forKR )
+                    if (!parm )
                     {
                         try
                         {
@@ -1581,7 +1586,7 @@ public class Parser implements IParser
                         break;
                     }
                 case IToken.t_enum :
-                    if (!parm || !forKR )
+                    if (!parm )
                     {
                         try
                         {
@@ -1675,7 +1680,7 @@ public class Parser implements IParser
      * @return				Last consumed token, or <code>previousLast</code> if nothing was consumed
      * @throws Backtrack	request a backtrack
      */
-    private IToken consumeTemplateParameters(IToken previousLast)
+    protected IToken consumeTemplateParameters(IToken previousLast)
         throws Backtrack
     {
         IToken last = previousLast;
@@ -1874,10 +1879,10 @@ public class Parser implements IParser
      * @throws Backtrack	request a backtrack
      */
     protected Declarator initDeclarator(
-        DeclarationWrapper sdw, boolean forKR, SimpleDeclarationStrategy strategy )
+        DeclarationWrapper sdw, SimpleDeclarationStrategy strategy )
         throws Backtrack
     {
-        Declarator d = declarator(sdw, sdw.getScope(), forKR, strategy );
+        Declarator d = declarator(sdw, sdw.getScope(), strategy );
         // handle = initializerClause
         if (LT(1) == IToken.tASSIGN)
         {
@@ -1998,7 +2003,7 @@ public class Parser implements IParser
      * @throws Backtrack	request a backtrack
      */
     protected Declarator declarator(
-        IDeclaratorOwner owner, IASTScope scope, boolean forKR, SimpleDeclarationStrategy strategy )
+        IDeclaratorOwner owner, IASTScope scope, SimpleDeclarationStrategy strategy )
         throws Backtrack
     {
         Declarator d = null;
@@ -2012,56 +2017,17 @@ public class Parser implements IParser
             if (LT(1) == IToken.tLPAREN)
             {
                 consume();
-                declarator(d, scope, forKR, strategy );
+                declarator(d, scope, strategy );
                 consume(IToken.tRPAREN);
             }
-            else if (LT(1) == IToken.t_operator)
-                operatorId(d, null);
             else
-            {
-                try
-                {
-                    ITokenDuple duple = name();
-                    d.setName(duple);
-
-                }
-                catch (Backtrack bt)
-                {
-                    IToken start = null;
-                    IToken mark = mark();
-                    if (LT(1) == IToken.tCOLONCOLON
-                        || LT(1) == IToken.tIDENTIFIER)
-                    {
-                        start = consume();
-                        IToken end = null;
-                        if (start.getType() == IToken.tIDENTIFIER)
-                            end = consumeTemplateParameters(end);
-                            while (LT(1) == IToken.tCOLONCOLON
-                                || LT(1) == IToken.tIDENTIFIER)
-                            {
-                                end = consume();
-                                if (end.getType() == IToken.tIDENTIFIER)
-                                    end = consumeTemplateParameters(end);
-                            }
-                        if (LT(1) == IToken.t_operator)
-                            operatorId(d, start);
-                        else
-                        {
-                            backup(mark);
-                            throw backtrack;
-                        }
-                    }
-                }
-            }
+	            consumeTemplatedOperatorName(d);
+            
             for (;;)
             {
                 switch (LT(1))
                 {
                     case IToken.tLPAREN :
-                    	if( forKR )
-                    		throw backtrack;
-                    
-                    	
                     	
                         // temporary fix for initializer/function declaration ambiguity
                         if (!LA(2).looksLikeExpression() && strategy != SimpleDeclarationStrategy.TRY_VARIABLE  )
@@ -2120,10 +2086,9 @@ public class Parser implements IParser
 	                            }
 							}
 
-                            if (LT(1) == IToken.tCOLON)
-                            {
+                            if (LT(1) == IToken.tCOLON || LT(1) == IToken.t_try )
                                 break overallLoop;
-                            }
+                            
                             IToken beforeCVModifier = mark();
                             IToken cvModifier = null;
                             IToken afterCVModifier = beforeCVModifier;
@@ -2222,36 +2187,6 @@ public class Parser implements IParser
                                 // In this case (method) we can't expect K&R parameter declarations,
                                 // but we'll check anyway, for errorhandling
                             }
-                            else
-                            {
-                                // let's try this modifier as part of K&R parameter declaration
-                                if (cvModifier != null)
-                                    backup(beforeCVModifier);
-                            }
-                            if (LT(1) != IToken.tSEMI)
-                            {
-                                // try K&R-style parameter declarations
-  
-                                try
-                                {
-                                    do
-                                    {
-                                        simpleDeclaration(
-                                            null,
-                                            true,
-                                            sdw.getScope(),
-                                            sdw.getOwnerTemplate());
-                                    }
-                                    while (LT(1) != IToken.tLBRACE);
-                                }
-                                catch (Backtrack bt)
-                                {
-                                    // Something is wrong, 
-                                    // this is not a proper K&R declaration clause
-                                    backup(afterCVModifier);
-                                }
-
-                            }
                         }
                         break;
                     case IToken.tLBRACKET :
@@ -2276,7 +2211,50 @@ public class Parser implements IParser
              ((Declarator)d.getOwner()).setOwnedDeclarator(d);
         return d;
     }
-    
+    protected void consumeTemplatedOperatorName(Declarator d)
+        throws EndOfFile, Backtrack
+    {
+        if (LT(1) == IToken.t_operator)
+            operatorId(d, null);
+        else
+        {
+            try
+            {
+                ITokenDuple duple = name();
+                d.setName(duple);
+        
+            }
+            catch (Backtrack bt)
+            {
+                Declarator d1 = d;
+                Declarator d11 = d1;
+                IToken start = null;
+                IToken mark = mark();
+                if (LT(1) == IToken.tCOLONCOLON
+                    || LT(1) == IToken.tIDENTIFIER)
+                {
+                    start = consume();
+                    IToken end = null;
+                    if (start.getType() == IToken.tIDENTIFIER)
+                        end = consumeTemplateParameters(end);
+                        while (LT(1) == IToken.tCOLONCOLON
+                            || LT(1) == IToken.tIDENTIFIER)
+                        {
+                            end = consume();
+                            if (end.getType() == IToken.tIDENTIFIER)
+                                end = consumeTemplateParameters(end);
+                        }
+                    if (LT(1) == IToken.t_operator)
+                        operatorId(d11, start);
+                    else
+                    {
+                        backup(mark);
+                        throw backtrack;
+                    }
+                }
+            }
+        }
+    }
     protected void consumeArrayModifiers( IDeclarator d, IASTScope scope )
         throws EndOfFile, Backtrack
     {
@@ -2886,14 +2864,7 @@ public class Parser implements IParser
             case IToken.t_try :
                 consume();
                 compoundStatement(scope,true);
-                while (LT(1) == IToken.t_catch)
-                {
-                    consume();
-                    consume(IToken.tLPAREN);
-                    declaration(scope, null); // was exceptionDeclaration
-                    consume(IToken.tRPAREN);
-                    compoundStatement(scope, true);
-                }
+                catchHandlerSequence(scope);
                 return;
             case IToken.tSEMI :
                 consume();
@@ -2925,6 +2896,27 @@ public class Parser implements IParser
                 }
                 // declarationStatement
                 declaration(scope, null);
+        }
+    }
+    protected void catchHandlerSequence(IASTScope scope)
+        throws EndOfFile, Backtrack
+    {
+    	if( LT(1) != IToken.t_catch )
+    		throw backtrack; // error, need at least one of these
+        while (LT(1) == IToken.t_catch)
+        {
+            consume(IToken.t_catch);
+            consume(IToken.tLPAREN);
+            if( LT(1) == IToken.tELIPSE )
+            	consume( IToken.tELIPSE );
+            else 
+            	declaration(scope, null); // was exceptionDeclaration
+            consume(IToken.tRPAREN);
+            
+            if( mode == ParserMode.COMPLETE_PARSE )
+            	compoundStatement(scope, true);
+            else
+            	skipOverCompoundStatement();
         }
     }
     protected void singleStatementScope(IASTScope scope) throws Backtrack
@@ -3923,7 +3915,11 @@ public class Parser implements IParser
     		throw backtrack;
     	
     	TypeId id = new TypeId(); 
-    	IToken last = lastToken; 
+    	IToken last = lastToken;
+    	
+		lastToken = consumeTemplateParameters( last );
+		if( lastToken == null ) lastToken = last;
+		
     	consumePointerOperators( id );
     	if( lastToken == null ) lastToken = last;
 		
@@ -4869,8 +4865,46 @@ public class Parser implements IParser
                 }
             case IToken.tIDENTIFIER :
             case IToken.tCOLONCOLON :
-                ITokenDuple duple = name();                
-                //TODO should be an ID Expression really
+            case IToken.t_operator : 
+                ITokenDuple duple = null; 
+                
+
+                try
+                {
+					duple = name();
+                }
+                catch( Backtrack bt )
+                {
+                	Declarator d = new Declarator( new DeclarationWrapper(scope, 0, null) );
+
+					IToken mark = mark();
+					if (LT(1) == IToken.tCOLONCOLON || LT(1) == IToken.tIDENTIFIER)
+					{
+						IToken start = consume();
+						IToken end = null;
+						if (start.getType() == IToken.tIDENTIFIER)
+							 end = consumeTemplateParameters(end);
+						while (LT(1) == IToken.tCOLONCOLON || LT(1) == IToken.tIDENTIFIER)
+						{
+						   end = consume();
+						   if (end.getType() == IToken.tIDENTIFIER)
+						      end = consumeTemplateParameters(end);
+						}
+						if (LT(1) == IToken.t_operator)
+							operatorId(d, start);
+						else
+						{
+						   backup(mark);
+						   throw backtrack;
+						}
+					 }
+					 else if( LT(1) == IToken.t_operator )
+					 	 operatorId( d, null);
+					 
+					 duple = d.getNameDuple();
+                }
+                                
+                
                 try
                 {
                     return astFactory.createExpression(

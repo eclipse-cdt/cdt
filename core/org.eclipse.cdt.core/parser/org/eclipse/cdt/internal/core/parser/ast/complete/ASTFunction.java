@@ -53,7 +53,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
      * @param ownerTemplate
      * @param references
      */
-    public ASTFunction(IParameterizedSymbol symbol, int nameEndOffset, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared )
+    public ASTFunction(IParameterizedSymbol symbol, int nameEndOffset, List parameters, IASTAbstractDeclaration returnType, IASTExceptionSpecification exception, int startOffset, int nameOffset, IASTTemplate ownerTemplate, List references, boolean previouslyDeclared, boolean hasFunctionTryBlock )
     {
     	super( symbol );
     	this.parameters = parameters;
@@ -67,6 +67,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     	this.references = new ASTReferenceStore( references );
     	qualifiedName = new ASTQualifiedNamedElement( getOwnerScope(), symbol.getName() );
     	this.previouslyDeclared =previouslyDeclared;
+    	this.hasFunctionTryBlock = hasFunctionTryBlock;
     }
 
 
@@ -299,4 +300,22 @@ public class ASTFunction extends ASTScope implements IASTFunction
 	{
 		offsets.setNameEndOffset(o);
 	}
+
+
+	private boolean hasFunctionTryBlock = false;
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#setHasFunctionTryBlock(boolean)
+     */
+    public void setHasFunctionTryBlock(boolean b)
+    {
+		hasFunctionTryBlock = b;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTFunction#hasFunctionTryBlock()
+     */
+    public boolean hasFunctionTryBlock()
+    {
+        return hasFunctionTryBlock;
+    }
 }

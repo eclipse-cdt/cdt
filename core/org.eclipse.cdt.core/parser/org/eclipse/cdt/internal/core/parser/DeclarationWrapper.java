@@ -482,7 +482,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                     virtual,
                     explicit,
                     declarator.isPureVirtual(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), 
-                    declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody());
+                    declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody(), declarator.hasFunctionTryBlock());
         }
         catch (ASTSemanticException e)
         {
@@ -503,7 +503,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         {
             return astFactory.createFunction(
                 scope,
-            	nested ? declarator.getOwnedDeclarator().getNamedDuple() : declarator.getNamedDuple(),
+            	nested ? declarator.getOwnedDeclarator().getNameDuple() : declarator.getNameDuple(),
                 createParameterList(declarator.getParameters()),
                 astFactory.createAbstractDeclaration(
                     constt,
@@ -523,7 +523,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
             virtual,
             explicit,
             declarator.isPureVirtual(),
-            declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody() );
+            declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody(), declarator.hasFunctionTryBlock() );
         }
         catch (ASTSemanticException e)
         {

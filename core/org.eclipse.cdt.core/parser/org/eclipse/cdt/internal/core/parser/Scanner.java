@@ -443,32 +443,7 @@ public class Scanner implements IScanner {
 			// past the end of file
 			return c;
 
-		boolean done;
-		do {
-			done = true;
-
-			if (contextStack.getCurrentContext().undoStackSize() != 0 ) {
-				c = contextStack.getCurrentContext().popUndo();
-			} else {
-				try {
-					c = contextStack.getCurrentContext().read();
-					if (c == NOCHAR) {
-						if (contextStack.rollbackContext(requestor) == false) {
-							c = NOCHAR;
-							break;
-						} else {
-							done = false;
-						}
-					}
-				} catch (IOException e) {
-					if (contextStack.rollbackContext(requestor) == false) {
-						c = NOCHAR;
-					} else {
-						done = false;
-					}
-				}
-			}
-		} while (!done);
+        c = accountForUndo(c);
 		
 		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
 		
@@ -597,6 +572,39 @@ public class Scanner implements IScanner {
 		return c;
 	}
 
+
+
+    protected int accountForUndo(int c)
+    {
+        boolean done;
+        do {
+        	done = true;
+        
+        	if (contextStack.getCurrentContext().undoStackSize() != 0 ) {
+        		c = contextStack.getCurrentContext().popUndo();
+        	} else {
+        		try {
+        			c = contextStack.getCurrentContext().read();
+        			if (c == NOCHAR) {
+        				if (contextStack.rollbackContext(requestor) == false) {
+        					c = NOCHAR;
+        					break;
+        				} else {
+        					done = false;
+        				}
+        			}
+        		} catch (IOException e) {
+        			if (contextStack.rollbackContext(requestor) == false) {
+        				c = NOCHAR;
+        			} else {
+        				done = false;
+        			}
+        		}
+        	}
+        } while (!done);
+        return c;
+    }
+
 	private void ungetChar(int c) throws ScannerException{
 		contextStack.getCurrentContext().pushUndo(c);
 		contextStack.undoRollback( lastContext, requestor );
@@ -700,6 +708,10 @@ public class Scanner implements IScanner {
 				for( ; ; )
 				{
 					if ( ( c =='"' ) && ( previous != '\\' || beforePrevious == '\\') ) break;
+					if ( ( c == '\n' ) && ( previous != '\\' || beforePrevious == '\\') )
+						if (throwExceptionOnUnboundedString)
+							throw new ScannerException( ScannerException.ErrorCode.UNBOUNDED_STRING, getCurrentFile(), getCurrentOffset() );
+						
 					if( c == NOCHAR) break;  
 					buff.append((char) c);
 					beforePrevious = previous;
@@ -862,7 +874,7 @@ public class Scanner implements IScanner {
 				} else if (c == 'x') {
 					if( ! firstCharZero ) 
 						throw new ScannerException( ScannerException.ErrorCode.BAD_HEXIDECIMAL_FORMAT, getCurrentFile(), getCurrentOffset() );
-					
+					buff.append( (char)c );
 					hex = true;
 					c = getChar();
 				}
@@ -958,7 +970,7 @@ public class Scanner implements IScanner {
 							contextStack.updateContext( new StringReader( buff.toString()), PASTING, IScannerContext.MACROEXPANSION, null, requestor );
 							storageBuffer = null;  
 							c = getChar(); 
-							continue; 
+							continue;
 						}
 					}
 				}
@@ -1189,21 +1201,7 @@ public class Scanner implements IScanner {
 			} else {
 				switch (c) {
 					case '\'' :
-						int type = wideLiteral ? IToken.tLCHAR : IToken.tCHAR;
-						c = getChar( true ); 
-						int next = getChar( true );
-						if( c == '\\' ){
-							c = next;
-							next = getChar( true );
-							if( next == '\'' )
-								return newToken( type, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
-							else if( throwExceptionOnBadCharacterRead )
-								throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, getCurrentFile(), getCurrentOffset() );
-						} else if( next == '\'' )
-							return newToken( type, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
-						else
-							if( throwExceptionOnBadCharacterRead )
-								throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, getCurrentFile(), getCurrentOffset() );
+						return processCharacterLiteral( c, wideLiteral );
 					case ':' :
 						c = getChar();
 						switch (c) {
@@ -1515,9 +1513,8 @@ public class Scanner implements IScanner {
 									contextStack.getCurrentContext());
 						}
 					default :
-						// Bad character
 						if( throwExceptionOnBadCharacterRead )
-							throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, getCurrentFile(), getCurrentOffset() );
+							throw new ScannerException( ScannerException.ErrorCode.BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentFile(), getCurrentOffset() );
 						else
 						{
 							c = ' ';
@@ -1538,6 +1535,72 @@ public class Scanner implements IScanner {
 		// we're done
 		throw Parser.endOfFile;
 	}
+
+
+
+    /**
+     * @param c
+     * @param wideLiteral
+     */
+    protected IToken processCharacterLiteral(int c, boolean wideLiteral)
+        throws ScannerException
+    {
+        int type = wideLiteral ? IToken.tLCHAR : IToken.tCHAR;
+        
+        StringBuffer buffer = new StringBuffer(); 
+        int prev = c; 
+        int prevPrev = c;        
+        c = getChar(true);
+        
+        for( ; ; )
+        {
+        	// error conditions
+        	if( ( c == '\n' ) || 
+        		( ( c == '\\' || c =='\'' )&& prev == '\\' ) || 
+        	    ( c == NOCHAR ) )
+        		if( throwExceptionOnBadCharacterRead )
+					throw new ScannerException( ScannerException.ErrorCode.BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentFile(), getCurrentOffset() );
+				else
+					c = ' ';
+			
+			// exit condition
+			if ( ( c =='\'' ) && ( prev != '\\' || prevPrev == '\\' ) ) break;
+			
+//			System.out.println( "Adding character " + (char)c + " to buffer");
+        	buffer.append( (char)c);
+        	prevPrev = prev;
+        	prev = c;
+        	c = getChar(true);
+        }
+        
+        return newToken( type, buffer.toString(), contextStack.getCurrentContext());       
+        
+//        int next = getChar(true);
+//        
+//        if (c == '\\')
+//        {
+//            c = next;
+//            next = getChar(true);
+//            if (next == '\'')
+//                return newToken( type, '\\' + new Character((char)c).toString(), contextStack.getCurrentContext());
+//            else 
+//				if( throwExceptionOnBadCharacterRead )
+//                	throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE,
+//                    	getCurrentFile(),
+//                    	getCurrentOffset());
+//        }
+//        else if (next == '\'')
+//            return newToken(
+//                type,
+//                new Character((char)c).toString(),
+//                contextStack.getCurrentContext());
+//
+//        throw new ScannerException(
+//            ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE,
+//            getCurrentFile(),
+//            getCurrentOffset());
+               
+    }
 
 
 
@@ -1610,21 +1673,8 @@ public class Scanner implements IScanner {
             } else {
                 switch (c) {
                     case '\'' :
-                    if (tokenImage.length() > 0) throw endOfMacroToken;
-                        c = getChar( true ); 
-                        int next = getChar( true );
-                        if( c == '\\' ){
-                            c = next;
-                            next = getChar( true );
-                            if( next == '\'' )
-                                return newToken( IToken.tCHAR, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
-                            else if( throwExceptionOnBadCharacterRead )
-                                throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, getCurrentFile(), getCurrentOffset());
-                        } else if( next == '\'' )
-                            return newToken( IToken.tCHAR, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
-                        else
-                            if( throwExceptionOnBadCharacterRead )
-                                throw new ScannerException( ScannerException.ErrorCode.INVALID_ESCAPE_CHARACTER_SEQUENCE, getCurrentFile(), getCurrentOffset());
+	                    if (tokenImage.length() > 0) throw endOfMacroToken;
+	                    return processCharacterLiteral( c, false );
                     case ',' :
                         if (tokenImage.length() > 0) throw endOfMacroToken;
                         return newToken(IToken.tCOMMA, ",", contextStack.getCurrentContext());
@@ -2224,6 +2274,7 @@ public class Scanner implements IScanner {
     protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
         Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), problemReporter, translationResult, new NullSourceElementRequestor(), mode, language);
+        tokenizer.setThrowExceptionOnBadCharacterRead(false);
         Vector parameterValues = new Vector();
         Token t = null;
         String str = new String();

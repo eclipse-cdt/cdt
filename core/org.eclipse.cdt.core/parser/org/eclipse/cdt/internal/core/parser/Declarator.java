@@ -29,7 +29,8 @@ import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
  */
 public class Declarator implements IParameterCollection, IDeclaratorOwner, IDeclarator
 {
-	private ITokenDuple pointerOperatorNameDuple;
+	private boolean hasFunctionTryBlock;
+    private ITokenDuple pointerOperatorNameDuple;
     private ITokenDuple namedDuple;
     private boolean isFunction;
     private boolean hasFunctionBody;
@@ -371,7 +372,7 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     /**
      * @return
      */
-    public ITokenDuple getNamedDuple()
+    public ITokenDuple getNameDuple()
     {
         return namedDuple;
     }
@@ -406,6 +407,30 @@ public class Declarator implements IParameterCollection, IDeclaratorOwner, IDecl
     public void setHasFunctionBody(boolean b)
     {
         hasFunctionBody = b;
+    }
+
+    /**
+     * @param b
+     */
+    public void setFunctionTryBlock(boolean b)
+    {
+        hasFunctionTryBlock = true;
+    }
+
+    /**
+     * @return
+     */
+    public boolean hasFunctionTryBlock()
+    {
+        return hasFunctionTryBlock;
+    }
+
+    /**
+     * @param b
+     */
+    public void setHasFunctionTryBlock(boolean b)
+    {
+        hasFunctionTryBlock = b;
     }
 
 }

@@ -1,3 +1,16 @@
+2003-10-21 John Camelon
+	Fixed Bug 40007 : Parser reports success when it fails
+	Fixed Bug 44305 : Scanner/preprocessor fails on conditionals using hexidecimal 
+	Fixed Bug 41935 : parser provides wrong name on namespace aliases 
+	Fixed Bug 39525 : Parser fails on expressions that take address of overloaded operators 
+	Fixed Bug 45287 : Scanner does not accept character sequence literals 
+	Fixed Bug 36550 : Error recovery with unterminated string is weak 
+	Fixed Bug 41063 : Remove unused K&R C support from ANSI Parser 
+	Fixed Bug 39528 : Function try-blocks are not supported by the parser (ANSI C++) 
+	Fixed Bug 39538 : Parser fails on explicit instantiation of templated operators 
+	Fixed Bug 39536 : Parser fails on templated constructors/conversion operators 
+	Refactored Scanner to make it easier to debug.  
+
 2003-10-01 John Camelon
 	Fixed Bug 43987 : Search results: Declaration of class not highlighted when selected 
 	Fixed Bug 43997 : Search results: selection includes preceding whitespace 

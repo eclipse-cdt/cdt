@@ -70,7 +70,8 @@ public class ASTMethod extends ASTFunction implements IASTMethod
         boolean isDestructor,
         boolean isVirtual,
         boolean isExplicit,
-        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChainElements )
+        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChainElements, 
+        boolean hasFunctionTryBlock )
     {
         super(
             scope,
@@ -84,7 +85,7 @@ public class ASTMethod extends ASTFunction implements IASTMethod
             isStatic,
             startOffset,
             nameOffset,
-            ownerTemplate);
+            ownerTemplate, hasFunctionTryBlock);
         this.isVirtual = isVirtual;
         this.isPureVirtual = isPureVirtual;
         this.isConstructor = isConstructor;

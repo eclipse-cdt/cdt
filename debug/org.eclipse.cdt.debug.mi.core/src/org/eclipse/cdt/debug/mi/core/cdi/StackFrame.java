@@ -5,6 +5,9 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
@@ -45,7 +48,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame#getArguments()
 	 */
 	public ICDIArgument[] getArguments() throws CDIException {
-		ICDIArgument[] cdiArgs = null;
+		List cdiList = new ArrayList();
 		if (frame != null) {
 			CSession session = getCTarget().getCSession();
 			VariableManager mgr = (VariableManager)session.getVariableManager();
@@ -68,13 +71,12 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 					args = miFrames[0].getArgs();
 				}
 				if (args != null) {
-					cdiArgs = new ICDIArgument[args.length];
-					for (int i = 0; i < cdiArgs.length; i++) {
-						cdiArgs[i] =
-							mgr.createArgument(this, args[i].getName());
+					for (int i = 0; i < args.length; i++) {
+						try {
+							cdiList.add(mgr.createArgument(this, args[i].getName()));
+						} catch (CDIException e) {
+						}
 					}
-				} else {
-					cdiArgs = new ICDIArgument[0];
 				}
 			} catch (MIException e) {
 				//throw new CDIException(e.getMessage());
@@ -84,10 +86,7 @@ public class StackFrame extends CObject implements ICDIStackFrame {
 				//System.err.println(e);
 			}
 		}
-		if (cdiArgs == null) {
-			cdiArgs = new ICDIArgument[0];
-		}
-		return cdiArgs;
+		return (ICDIArgument[])cdiList.toArray(new ICDIArgument[0]);
 	}
 
 	/**

@@ -1,3 +1,7 @@
+2004-12-06 Alain Magloire
+	Fix for 79865
+	* src/org/eclipse/cdt/internal/ui/text/CHelpProviderDescriptor.java
+
 2004-12-03 Chris Wiebe
 	fix for 74098
 	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCodeGenerator.java

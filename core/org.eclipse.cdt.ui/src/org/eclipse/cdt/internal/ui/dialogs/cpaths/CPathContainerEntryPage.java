@@ -238,15 +238,13 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		}
 		for (int i = 0; i < selElements.size(); i++) {
 			Object elem = selElements.get(i);
-			if (elem instanceof CPElementAttribute) {
-				if ( ((CPElementAttribute)elem).getValue() == null) {
-					return false;
-				}
-			} else if (elem instanceof CPElement) {
+			if (elem instanceof CPElement) {
 				CPElement curr = (CPElement)elem;
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
+			} else {
+				return false;
 			}
 		}
 		return true;
@@ -254,20 +252,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 	private void removeEntry() {
 		List selElements = fContainersList.getSelectedElements();
-		for (int i = selElements.size() - 1; i >= 0; i--) {
-			Object elem = selElements.get(i);
-			if (elem instanceof CPElementAttribute) {
-				CPElementAttribute attrib = (CPElementAttribute)elem;
-				attrib.getParent().setAttribute(attrib.getKey(), null);
-				selElements.remove(i);
-			}
-		}
-		if (selElements.isEmpty()) {
-			fContainersList.refresh();
-			fCPathList.dialogFieldChanged(); // validate
-		} else {
-			fContainersList.removeElements(selElements);
-		}
+		fContainersList.removeElements(selElements);
 	}
 
 	private boolean canExport(List selElements) {
@@ -281,6 +266,8 @@ public class CPathContainerEntryPage extends CPathBasePage {
 				if (curr.getParentContainer() != null) {
 					return false;
 				}
+			} else {
+				return false;
 			}
 		}
 		return true;
@@ -288,14 +275,16 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 	private void exportEntry() {
 		List selElements = fContainersList.getSelectedElements();
-		if (selElements.size() != 1) {
+		if (selElements.size() == 0) {
 			return;
 		}
-		Object elem = selElements.get(0);
-		if (fContainersList.getIndexOfElement(elem) != -1) {
-			((CPElement)elem).setExported(! ((CPElement)elem).isExported()); // toggle export
-			fContainersList.refresh(elem);
+		for (int i = 0; i < selElements.size(); i++) {
+			Object elem = selElements.get(i);
+			if (elem instanceof CPElement) {
+				((CPElement)elem).setExported(! ((CPElement)elem).isExported()); // toggle export
+			}
 		}
+		fContainersList.refresh();
 	}
 
 	/**

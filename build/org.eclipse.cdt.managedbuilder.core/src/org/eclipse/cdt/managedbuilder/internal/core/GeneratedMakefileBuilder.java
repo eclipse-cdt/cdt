@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 IBM Corporation and others.
+ * Copyright (c) 2002,2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -169,7 +169,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	public static boolean VERBOSE = false;
 	
 	// Local variables
-	private IConsole console;
 	protected Vector generationProblems;
 	protected IProject[] referencedProjects;
 	protected List resourcesToBuild;
@@ -304,6 +303,28 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			status = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.clean.deleting.output", buildDir.getName());	//$NON-NLS-1$
 			monitor.subTask(status);
 			workspace.delete(new IResource[]{buildDir}, true, monitor);
+			StringBuffer buf = new StringBuffer();
+			// write to the console
+			IConsole console = CCorePlugin.getDefault().getConsole();
+			console.start(getProject());
+			ConsoleOutputStream consoleOutStream = console.getOutputStream();
+			String[] consoleHeader = new String[3];
+			consoleHeader[0] = ManagedMakeMessages.getResourceString(TYPE_CLEAN);
+			consoleHeader[1] = info.getConfigurationName();
+			consoleHeader[2] = getProject().getName();
+			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			buf.append(ManagedMakeMessages.getFormattedString(CONSOLE_HEADER, consoleHeader));
+			buf.append(System.getProperty("line.separator", "\n"));	//$NON-NLS-1$	//$NON-NLS-2$
+			consoleOutStream.write(buf.toString().getBytes());
+			consoleOutStream.flush();
+			buf = new StringBuffer();
+			// Report a successful clean
+			String successMsg = ManagedMakeMessages.getFormattedString(BUILD_FINISHED, getProject().getName());
+			buf.append(successMsg);
+			buf.append(System.getProperty("line.separator", "\n"));  //$NON-NLS-1$//$NON-NLS-2$
+			consoleOutStream.write(buf.toString().getBytes());
+			consoleOutStream.flush();
+			consoleOutStream.close();
 		} catch (CoreException e) {
 			// Create a makefile generator for the build
 			status = ManagedMakeMessages.getFormattedString("ManagedMakeBuilder.message.clean.build.clean", buildDir.getName());	//$NON-NLS-1$
@@ -311,7 +332,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 			generator.initialize(getProject(), info, monitor);
 			cleanBuild(info, generator, monitor);
-		}
+		}  catch (IOException io) {}	//  Ignore console failures...		
 	}
 	
 	/* (non-Javadoc)
@@ -558,7 +579,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 
 				// Get a build console for the project
 				StringBuffer buf = new StringBuffer();
-				ConsoleOutputStream consoleOutStream = getConsole().getOutputStream();
+				IConsole console = CCorePlugin.getDefault().getConsole();
+				console.start(currentProject);
+				ConsoleOutputStream consoleOutStream = console.getOutputStream();
 				String[] consoleHeader = new String[3];
 				switch (buildType) {
 					case FULL_BUILD:
@@ -673,23 +696,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				monitor.subTask(ManagedMakeMessages.getResourceString(MARKERS));
 				addBuilderMarkers(epm);
 				epm.reportProblems();
+				consoleOutStream.close();
 			}
 		} catch (Exception e) {
 			forgetLastBuiltState();
 		} finally {
 			getGenerationProblems().clear();
 		}
-	}
-
-	/**
-	 * @return
-	 */
-	private IConsole getConsole() {
-		if (console == null) {
-			console = CCorePlugin.getDefault().getConsole();
-			console.start(getProject());
-		}
-		return console;
 	}
 
 	/* (non-Javadoc)

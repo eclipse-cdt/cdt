@@ -333,9 +333,13 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 				if (!cwd.isAbsolute()) {
 					cwd = fProject.getLocation().append(cwd);
 				}
-				// check if the cwd is the right one
-				// appending fileName to cwd should yield file path
-				IPath filePath = cwd.append(fileName);
+				
+				IPath filePath = new Path(fileName);
+				if (!filePath.isAbsolute()) {
+					// check if the cwd is the right one
+					// appending fileName to cwd should yield file path
+					filePath = cwd.append(fileName);
+				}
 				if (!filePath.toString().equalsIgnoreCase(file.getLocation().toString())) {
 					// must be the cwd is wrong
 					// check if file name starts with ".."
@@ -409,6 +413,7 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 			int ddot = buf.indexOf("..", ssp);//$NON-NLS-1$
 			if (sdot < ddot || ddot == -1) {
 				newBuf.append(buf.substring(scp, sdot));
+				scp = sdot;
 				ssp = sdot + 1;
 				if (ssp < len) {
 					if (sdot == 0 || buf.charAt(sdot - 1) == '/' || buf.charAt(sdot - 1) == '\\') {

@@ -730,5 +730,11 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#endBitfield(java.lang.Object)
 	 */
 	public void endBitfield(Object bitfield) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierType(java.lang.Object, java.lang.Object)
+	 */
+	public void simpleDeclSpecifierType(Object declaration, Object type) {
 	} 
 }

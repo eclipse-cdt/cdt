@@ -29,5 +29,20 @@ public class ElaboratedTypeSpecifier extends TypeSpecifier {
 	public void setName(Name n) { name = n; }
 	public Name getName() { return name; }
 	
+	private ClassSpecifier classSpec = null;
+
+	/**
+	 * @return
+	 */
+	public ClassSpecifier getClassSpec() {
+		return classSpec;
+	}
+
+	/**
+	 * @param specifier
+	 */
+	public void setClassSpec(ClassSpecifier specifier) {
+		classSpec = specifier;
+	}
 
 }

@@ -1,3 +1,6 @@
+2003-05-05 John Camelon/Andrew Niefer
+	Added Symboltable infrastructure into main parser.  
+
 2003-05-05 Andrew Niefer
 	Structural changes to ParserSymbolTable:
 		- moved TypeInfo & Declaration inside ParserSymbolTable

@@ -635,4 +635,10 @@ public class NullParserCallback implements IParserCallback {
 	public void endBitfield(Object bitfield) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifierType(java.lang.Object, java.lang.Object)
+	 */
+	public void simpleDeclSpecifierType(Object declaration, Object type) {
+	}
+
 }

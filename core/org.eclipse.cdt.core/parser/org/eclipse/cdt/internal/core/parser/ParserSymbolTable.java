@@ -1323,7 +1323,7 @@ public class ParserSymbolTable {
 		}
 	}
 
-	public class Declaration implements Cloneable {
+	public class Declaration implements Cloneable, ISymbol {
 
 		/**
 		 * Constructor for Declaration.

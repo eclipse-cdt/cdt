@@ -24,6 +24,7 @@ public interface IParserCallback {
 	public Object simpleDeclarationBegin(Object Container, Token firstToken);
 	public void simpleDeclSpecifier(Object Container, Token specifier);
 	public void simpleDeclSpecifierName( Object declaration );
+	public void simpleDeclSpecifierType( Object declaration, Object type );
 	public void simpleDeclarationEnd(Object declaration, Token lastToken);
 
 	public Object parameterDeclarationBegin( Object Container ); 

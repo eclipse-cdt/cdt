@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 public class TCPSettingsBlock extends Observable
 {
 	private final static String DEFAULT_HOST_NAME = "localhost";
-	private final static String DEFAULT_PORT_NUMBER = "8000";
+	private final static String DEFAULT_PORT_NUMBER = "10000";
 
 	private Shell fShell;
 

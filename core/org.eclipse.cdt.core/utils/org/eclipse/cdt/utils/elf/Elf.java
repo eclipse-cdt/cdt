@@ -691,7 +691,7 @@ public class Elf {
 		Section [] sec = getSections();
 		for (int i = 0; i < sec.length; i++) {
 			String s = sec[i].toString();
-			attrib.bDebug = (s.equals(".debug") || s. equals(".stab"));
+			attrib.bDebug = (s.startsWith(".debug") || s. equals(".stab"));
 			if (attrib.bDebug) {
 				break;
 			}

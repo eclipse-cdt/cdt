@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
-import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -249,9 +249,9 @@ public class CElementLabels {
 	public final static int DEFAULT_POST_QUALIFIED= F_POST_QUALIFIED | M_POST_QUALIFIED | I_POST_QUALIFIED | T_POST_QUALIFIED | D_POST_QUALIFIED | CF_POST_QUALIFIED | CU_POST_QUALIFIED;
 
 
-	public final static String CONCAT_STRING= CSearchMessages.getString("CElementLabels.concat_string"); // " - "; //$NON-NLS-1$
-	public final static String COMMA_STRING = CSearchMessages.getString("CElementLabels.comma_string"); // ", "; //$NON-NLS-1$
-	public final static String DECL_STRING  = CSearchMessages.getString("CElementLabels.declseparator_string"); // "  "; // use for return type //$NON-NLS-1$
+	public final static String CONCAT_STRING= CUIMessages.getString("CElementLabels.concat_string"); // " - "; //$NON-NLS-1$
+	public final static String COMMA_STRING = CUIMessages.getString("CElementLabels.comma_string"); // ", "; //$NON-NLS-1$
+	public final static String DECL_STRING  = CUIMessages.getString("CElementLabels.declseparator_string"); // "  "; // use for return type //$NON-NLS-1$
 
 	public static String getTextLabel(Object obj, int flags) {
 		if (obj instanceof ICElement) {
@@ -467,13 +467,7 @@ public class CElementLabels {
 		
 		String typeName= elem.getElementName();
 		if (typeName.length() == 0) { // anonymous
-//			try {
-//				String superclassName= Signature.getSimpleName(type.getSuperclassName());
-//				typeName= CUIMessages.getFormattedString("JavaElementLabels.anonym_type" , superclassName); //$NON-NLS-1$
-//			} catch (CModelException e) {
-//				//ignore
-//				typeName= CUIMessages.getString("JavaElementLabels.anonym"); //$NON-NLS-1$
-//			}
+		    typeName = CUIMessages.getString("CElementLabels.anonymous");	//$NON-NLS-1$
 		}
 		buf.append(typeName);
 		

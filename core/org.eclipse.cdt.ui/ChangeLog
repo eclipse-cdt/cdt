@@ -1,3 +1,10 @@
+2004-09-16 Chris Wiebe
+
+	refactor messages out of internal.ui.search.CSearchMessages
+	add default label for anonymous structs
+	* src/org/eclipse/cdt/internal/ui/CUIMessages.properties
+	* src/org/eclipse/cdt/internal/ui/viewsupport/CElementLabels.java
+
 2004-09-15 Chris Wiebe
 
 	Allow sorting categories to be accessed from subclass.

@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A launch configuration tab that displays and edits program arguments,
@@ -46,6 +47,9 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
+		
+		WorkbenchHelp.setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ARGUMNETS_TAB);
+		
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);
 		GridData gd;

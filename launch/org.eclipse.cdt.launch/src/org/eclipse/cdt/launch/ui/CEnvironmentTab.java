@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CEnvironmentTab extends CLaunchConfigurationTab {
 
@@ -193,6 +194,10 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		fElements = new Properties();
 		Composite control = new Composite(parent, SWT.NONE);
+		setControl(control);
+
+		WorkbenchHelp.setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
+
 		GridLayout gl = new GridLayout(2, false);
 
 		createVerticalSpacer(control, 2);
@@ -200,7 +205,6 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 		control.setLayout(gl);
 		createVariableList(control);
 		createButtons(control);
-		setControl(control);
 		fVariableList.setInput(fElements);
 		fVariableList.getTable().setFocus();
 	}

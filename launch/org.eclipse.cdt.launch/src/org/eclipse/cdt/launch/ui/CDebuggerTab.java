@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CDebuggerTab extends AbstractCDebuggerTab {
 
@@ -45,6 +46,9 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
+		
+		WorkbenchHelp.setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB);
+		
 		GridLayout layout = new GridLayout(2, false);
 		comp.setLayout(layout);
 		

@@ -23,7 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class LaunchUIPlugin extends AbstractUIPlugin
 	implements IDebugEventSetListener {
-	public static final String PLUGIN_ID = "org.eclipse.cdt.launch";
+	public static final String PLUGIN_ID = LaunchUIPlugin.getUniqueIdentifier();
 
 	/**
 	 * Launch UI plug-in instance
@@ -39,7 +39,8 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 		super(descriptor);
 		setDefault(this);
 	}
-/**
+
+	/**
 	 * Sets the Java Debug UI plug-in instance
 	 * 
 	 * @param plugin the plugin instance

@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Enter type comment.
@@ -36,10 +37,13 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 	{
 		Composite control = new Composite( parent, SWT.NONE );
 		control.setLayout( new GridLayout() );
+		setControl( control );
+
+		WorkbenchHelp.setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_SOURCELOOKUP_TAB);
+		
 		fBlock = new SourceLookupBlock();
 		fBlock.createControl( control );
 		fBlock.setLaunchConfigurationDialog( getLaunchConfigurationDialog() );
-		setControl( control );
 	}
 
 	/* (non-Javadoc)

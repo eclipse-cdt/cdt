@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * A launch configuration tab that displays and edits project and
@@ -73,8 +74,12 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
+
+		WorkbenchHelp.setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
+
 		GridLayout topLayout = new GridLayout();
 		comp.setLayout(topLayout);
+
 
 		createVerticalSpacer(comp, 1);
 

@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 	protected Combo fDCombo;
@@ -33,6 +34,9 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 	public void createControl(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
+
+		WorkbenchHelp.setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB);
+				
 		GridLayout topLayout = new GridLayout(2, false);
 		comp.setLayout(topLayout);
 		Label dlabel = new Label(comp, SWT.NONE);

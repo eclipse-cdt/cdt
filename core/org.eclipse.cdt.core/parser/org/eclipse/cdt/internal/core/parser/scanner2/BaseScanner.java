@@ -4297,9 +4297,10 @@ abstract class BaseScanner implements IScanner {
 		words.put(Keywords.cVOID, IToken.t_void); //$NON-NLS-1$
 		words.put(Keywords.cVOLATILE, IToken.t_volatile); //$NON-NLS-1$
 		words.put(Keywords.cWHILE, IToken.t_while); //$NON-NLS-1$
-
+		words.put(Keywords.cASM, IToken.t_asm); //$NON-NLS-1$
+		
 		// ANSI C keywords
-		ckeywords = (CharArrayIntMap) words.clone();
+		ckeywords = (CharArrayIntMap) words.clone();		
 		ckeywords.put(Keywords.cRESTRICT, IToken.t_restrict); //$NON-NLS-1$
 		ckeywords.put(Keywords.c_BOOL, IToken.t__Bool); //$NON-NLS-1$
 		ckeywords.put(Keywords.c_COMPLEX, IToken.t__Complex); //$NON-NLS-1$
@@ -4307,7 +4308,6 @@ abstract class BaseScanner implements IScanner {
 
 		// C++ Keywords
 		cppkeywords = words;
-		cppkeywords.put(Keywords.cASM, IToken.t_asm); //$NON-NLS-1$
 		cppkeywords.put(Keywords.cBOOL, IToken.t_bool); //$NON-NLS-1$
 		cppkeywords.put(Keywords.cCATCH, IToken.t_catch); //$NON-NLS-1$
 		cppkeywords.put(Keywords.cCLASS, IToken.t_class); //$NON-NLS-1$

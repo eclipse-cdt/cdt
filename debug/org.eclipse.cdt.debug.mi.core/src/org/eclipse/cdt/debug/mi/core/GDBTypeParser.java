@@ -1,8 +1,13 @@
-/*
- *(c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- */
+ * Contributors:
+ *     QNX Software Systems - Initial API and implementation
+ *******************************************************************************/
 
 package org.eclipse.cdt.debug.mi.core;
 
@@ -55,8 +60,6 @@ public class GDBTypeParser {
 		if (s == null) {
 			s = new String();
 		}
-
-
 		// The branch should compile with 1.3.1
 		// use a hack
 		//s = Pattern.compile("\\bconst\\b").matcher(s).replaceAll("");
@@ -76,10 +79,12 @@ public class GDBTypeParser {
 		// Initialize.
 		line = s;
 		index = 0;
+		tokenType = -1;
 		token = ""; //$NON-NLS-1$
 		dataType = ""; //$NON-NLS-1$
 		name = ""; //$NON-NLS-1$
 		gdbDerivedType = null;
+		genericType = null;
 
 		// Fetch the datatype.
 		while (getToken() == NAME) {
@@ -254,15 +259,22 @@ public class GDBTypeParser {
 		return false;
 	}
 
-	void prependChild(int kind) {
-		prependChild(kind, 0);
+	void insertingChild(int kind) {
+		insertingChild(kind, 0);
 	}
 
-	void prependChild(int kind, int d) {
+	void insertingChild(int kind, int d) {
 		if (gdbDerivedType == null) {
 			gdbDerivedType = new GDBDerivedType(genericType, kind, d);
 		} else {
-			gdbDerivedType = new GDBDerivedType(gdbDerivedType, kind, d);
+			GDBDerivedType dType = gdbDerivedType;
+			GDBType gdbType = gdbDerivedType.getChild();
+			while (gdbType instanceof GDBDerivedType) {
+				dType = (GDBDerivedType)gdbType;
+				gdbType = dType.getChild();
+			}				
+			gdbType = new GDBDerivedType(gdbType, kind, d);
+			dType.setChild(gdbType);
 		}
 	}
 
@@ -338,10 +350,10 @@ public class GDBTypeParser {
 		}
 		dirdcl();
 		while (nstar-- > 0) {
-			prependChild(GDBType.POINTER);
+			insertingChild(GDBType.POINTER);
 		}
 		while (namp-- > 0) {
-			prependChild(GDBType.REFERENCE);
+			insertingChild(GDBType.REFERENCE);
 		}
 	}
 
@@ -359,7 +371,7 @@ public class GDBTypeParser {
 			// Useless we do not need the name of the variable
 			name = " " + token; //$NON-NLS-1$
 		} else if (tokenType == PARENS) {
-			prependChild(GDBType.FUNCTION);
+			insertingChild(GDBType.FUNCTION);
 		} else if (tokenType == BRACKETS) {			
 			int len = 0;
 			if (token.length() > 0) {
@@ -368,7 +380,7 @@ public class GDBTypeParser {
 				} catch (NumberFormatException e) {
 				}
 			}
-			prependChild(GDBType.ARRAY, len);
+			insertingChild(GDBType.ARRAY, len);
 		} else {
 			// oops bad declaration ?
 			return;
@@ -379,7 +391,7 @@ public class GDBTypeParser {
 				return;
 			}
 			if (type == PARENS) {
-				prependChild(GDBType.FUNCTION);
+				insertingChild(GDBType.FUNCTION);
 			} else {
 				int len = 0;
 				if (token.length() > 0) {
@@ -388,7 +400,7 @@ public class GDBTypeParser {
 					} catch (NumberFormatException e) {
 					}
 				}
-				prependChild(GDBType.ARRAY, len);
+				insertingChild(GDBType.ARRAY, len);
 			}
 		}
 	}
@@ -397,40 +409,55 @@ public class GDBTypeParser {
 
 		GDBTypeParser parser = new GDBTypeParser();
 
-		System.out.println("struct link { int i; int j; struct link * next} *"); //$NON-NLS-1$
+		System.out.println("struct link { int i; int j; struct link * next;} *"); //$NON-NLS-1$
 		parser.parse("struct link { int i; int j; struct link * next} *"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
 
 		System.out.println("char **argv"); //$NON-NLS-1$
-		parser.parse("unsigned long long int **argv"); //$NON-NLS-1$
+		parser.parse("char **argv"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
 
 		System.out.println("int (*daytab)[13]"); //$NON-NLS-1$
 		parser.parse("int (*daytab)[13]"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
 
 		System.out.println("int *daytab[13]"); //$NON-NLS-1$
 		parser.parse("int *daytab[13]"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
 
 		System.out.println("void *comp()"); //$NON-NLS-1$
 		parser.parse("void *comp()"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
 
 		System.out.println("void (*comp)()"); //$NON-NLS-1$
 		parser.parse("void (*comp)()"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
 
 		System.out.println("int (*func[15])()"); //$NON-NLS-1$
 		parser.parse("int (*func[15])()"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
 
 		System.out.println("char (*(*x())[])()"); //$NON-NLS-1$
 		parser.parse("char (*(*x())[])()"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
 
 		System.out.println("char (*(*x[3])())[5]"); //$NON-NLS-1$
 		parser.parse("char (*(*x[3])())[5]"); //$NON-NLS-1$
 		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
+
+		System.out.println("char *[5]"); //$NON-NLS-1$
+		parser.parse("char *[5]"); //$NON-NLS-1$
+		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
+
 	}
 }

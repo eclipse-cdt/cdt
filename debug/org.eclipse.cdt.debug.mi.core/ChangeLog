@@ -1,3 +1,8 @@
+2004-07-22 Alain Magloire
+
+	fix for PR 70688
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+
 2004-06-24 Alain Magloire
 
 	Fix 68226, the stackinfodepth was call in

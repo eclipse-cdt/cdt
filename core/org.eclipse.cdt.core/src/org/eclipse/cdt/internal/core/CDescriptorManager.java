@@ -91,7 +91,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 
 			public boolean visit(IResource resource) {
 				if (resource.getType() == IResource.PROJECT) {
-					IProject project = (IProject) resource;
+					IProject project = (IProject)resource;
 					try { // seed in memory descriptor map
 						if (project.isAccessible() && project.findMember(CDescriptor.DESCRIPTION_FILE_NAME) != null) {
 							getDescriptor(project);
@@ -121,7 +121,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 				case IResourceChangeEvent.PRE_DELETE :
 				case IResourceChangeEvent.PRE_CLOSE :
 					if (resource.getType() == IResource.PROJECT) {
-						CDescriptor descriptor = (CDescriptor) fDescriptorMap.remove(resource);
+						CDescriptor descriptor = (CDescriptor)fDescriptorMap.remove(resource);
 						if (descriptor != null) {
 							fireEvent(new CDescriptorEvent(descriptor, CDescriptorEvent.CDTPROJECT_REMOVED, 0));
 						}
@@ -139,12 +139,12 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 								IResource dResource = delta.getResource();
 								if (dResource.getType() == IResource.PROJECT) {
 									if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
-										IProject project = (IProject) dResource;
+										IProject project = (IProject)dResource;
 										if (project.isAccessible() && project.findMember(CDescriptor.DESCRIPTION_FILE_NAME) != null
 												&& fDescriptorMap.get(project) == null) {
 											getDescriptor(project); // file on disk but not in memory...read
 										} else {
-											CDescriptor descriptor = (CDescriptor) fDescriptorMap.remove(project);
+											CDescriptor descriptor = (CDescriptor)fDescriptorMap.remove(project);
 											if (descriptor != null) {
 												fireEvent(new CDescriptorEvent(descriptor, CDescriptorEvent.CDTPROJECT_REMOVED, 0));
 											}
@@ -154,13 +154,13 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 									return true;
 								} else if (dResource.getType() == IResource.FILE) {
 									if (dResource.getName().equals(CDescriptor.DESCRIPTION_FILE_NAME)) {
-										CDescriptor descriptor = (CDescriptor) fDescriptorMap.get(dResource.getProject());
+										CDescriptor descriptor = (CDescriptor)fDescriptorMap.get(dResource.getProject());
 										if (descriptor != null) {
-											if ((delta.getKind() & IResourceDelta.REMOVED) != 0) {
+											if ( (delta.getKind() & IResourceDelta.REMOVED) != 0) {
 												// the file got deleted lets try
 												// and restore for memory.
 												descriptor.updateOnDisk();
-											} else if ((delta.getFlags() & IResourceDelta.CONTENT) != 0) {
+											} else if ( (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
 												// content change lets try to
 												// read and update
 												descriptor.updateFromDisk();
@@ -203,7 +203,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 		if (fOwnerConfigMap == null) {
 			initializeOwnerConfiguration();
 		}
-		COwnerConfiguration config = (COwnerConfiguration) fOwnerConfigMap.get(id);
+		COwnerConfiguration config = (COwnerConfiguration)fOwnerConfigMap.get(id);
 		if (config == null) { // no install owner, lets create place holder config for it.
 			config = new COwnerConfiguration(id, CCorePlugin.getResourceString("CDescriptorManager.owner_not_Installed")); //$NON-NLS-1$
 			fOwnerConfigMap.put(id, config);
@@ -219,8 +219,8 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 		String natureIDs[] = description.getNatureIds();
 		Iterator configs = fOwnerConfigMap.entrySet().iterator();
 		while (configs.hasNext()) {
-			Entry entry = (Entry) configs.next();
-			COwnerConfiguration config = (COwnerConfiguration) entry.getValue();
+			Entry entry = (Entry)configs.next();
+			COwnerConfiguration config = (COwnerConfiguration)entry.getValue();
 			if (config.getNature() != null) {
 				if (Arrays.asList(natureIDs).lastIndexOf(config.getNature()) != -1) {
 					return config;
@@ -231,7 +231,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	}
 
 	synchronized public ICDescriptor getDescriptor(IProject project) throws CoreException {
-		CDescriptor descriptor = (CDescriptor) fDescriptorMap.get(project);
+		CDescriptor descriptor = (CDescriptor)fDescriptorMap.get(project);
 		if (descriptor == null) {
 			descriptor = new CDescriptor(this, project);
 			fDescriptorMap.put(project, descriptor);
@@ -244,11 +244,11 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 		if (id.equals(NULLCOwner.getOwnerID())) { //$NON-NLS-1$
 			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
 					CCorePlugin.getResourceString("CDescriptorManager.exception.invalid_ownerID"), //$NON-NLS-1$
-					(Throwable) null);
+					(Throwable)null);
 			throw new CoreException(status);
 		}
 		synchronized (this) {
-			descriptor = (CDescriptor) fDescriptorMap.get(project);
+			descriptor = (CDescriptor)fDescriptorMap.get(project);
 			if (descriptor != null) {
 				if (descriptor.getProjectOwner().getID().equals(NULLCOwner.getOwnerID())) { //$NON-NLS-1$
 					// non owned descriptors are simply configure to the new owner no questions ask!
@@ -256,7 +256,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 				} else if (!descriptor.getProjectOwner().getID().equals(id)) {
 					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS,
 							CCorePlugin.getResourceString("CDescriptorManager.exception.alreadyConfigured"), //$NON-NLS-1$
-							(Throwable) null);
+							(Throwable)null);
 					throw new CoreException(status);
 				} else {
 					return; // already configured with same owner.
@@ -306,32 +306,34 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 			} else if (event.getType() == CDescriptorEvent.CDTPROJECT_REMOVED) {
 				fOperationMap.put(event.getDescriptor(), event);
 			} else {
-				CDescriptorEvent ev = (CDescriptorEvent) fOperationMap.get(event.getDescriptor());
+				CDescriptorEvent ev = (CDescriptorEvent)fOperationMap.get(event.getDescriptor());
 				if (ev == null) {
 					fOperationMap.put(event.getDescriptor(), event);
-				} else if ((ev.getFlags() & event.getFlags()) != event.getFlags()) {
+				} else if ( (ev.getFlags() & event.getFlags()) != event.getFlags()) {
 					fOperationMap.put(event.getDescriptor(), new CDescriptorEvent(event.getDescriptor(), event.getType(),
 							ev.getFlags() | event.getFlags()));
 				}
 			}
 			return;
 		}
+		final ICDescriptorListener[] listener;
 		synchronized (listeners) {
-			final Iterator iterator = listeners.iterator();
-			while (iterator.hasNext()) {
-				Platform.run(new ISafeRunnable() {
+			listener = (ICDescriptorListener[])listeners.toArray(new ICDescriptorListener[listeners.size()]);
+		}
+		for (int i = 0; i < listener.length; i++) {
+			final int index = i;
+			Platform.run(new ISafeRunnable() {
 
-					public void handleException(Throwable exception) {
-						IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
-								CCorePlugin.getResourceString("CDescriptorManager.exception.listenerError"), exception); //$NON-NLS-1$
-						CCorePlugin.log(status);
-					}
+				public void handleException(Throwable exception) {
+					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+							CCorePlugin.getResourceString("CDescriptorManager.exception.listenerError"), exception); //$NON-NLS-1$
+					CCorePlugin.log(status);
+				}
 
-					public void run() throws Exception {
-						((ICDescriptorListener) iterator.next()).descriptorChanged(event);
-					}
-				});
-			}
+				public void run() throws Exception {
+					listener[index].descriptorChanged(event);
+				}
+			});
 		}
 	}
 
@@ -356,7 +358,7 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	}
 
 	private CDescriptorEvent endOperation(ICDescriptor descriptor) {
-		return (CDescriptorEvent) fOperationMap.remove(descriptor);
+		return (CDescriptorEvent)fOperationMap.remove(descriptor);
 	}
 
 	/*

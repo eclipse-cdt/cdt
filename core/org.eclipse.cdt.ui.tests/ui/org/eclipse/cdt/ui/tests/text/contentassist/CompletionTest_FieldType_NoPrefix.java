@@ -18,10 +18,10 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Class scope, declaration start, with NO prefix
+ * Testing Field_Type, with NO prefix
  *
  */
-public class CompletionProposalsTest12  extends CompletionProposalsBaseTest{
+public class CompletionTest_FieldType_NoPrefix  extends CompletionProposalsBaseTest{
 	private final String fileName = "CompletionTestStart12.h";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
@@ -33,13 +33,13 @@ public class CompletionProposalsTest12  extends CompletionProposalsBaseTest{
 	private final String[] expectedResults = {
 	};
 	
-	public CompletionProposalsTest12(String name) {
+	public CompletionTest_FieldType_NoPrefix(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsTest12.class.getName());
-		suite.addTest(new CompletionProposalsTest12("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_FieldType_NoPrefix.class.getName());
+		suite.addTest(new CompletionTest_FieldType_NoPrefix("testCompletionProposals"));
 		return suite;
 	}		
 	/* (non-Javadoc)

@@ -8,49 +8,47 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
+package org.eclipse.cdt.ui.tests.text.contentassist;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
  * 
- * Testing Function/Method scope, Namespace context, with a prefix
- * Bug#50152: Wrong context sent after a "::"
+ * Testing Member_Reference completion kind, with a prefix
+ * After a .
  *
  */
-public class CompletionProposalsFailedTest2  extends CompletionProposalsBaseTest{
-	
-	private final String fileName = "CompletionFailedTestStart2.cpp";
-	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
+public class CompletionTest_MemberReference_Dot_Prefix  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart2.cpp";
+	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "null"; // should be "ASTNamespaceDefinition";
-	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE; // should be CompletionKind.SCOPED_REFERENCE;
+	private final String expectedContextName = "ASTClassSpecifier";
+	private final CompletionKind expectedKind = CompletionKind.MEMBER_REFERENCE;
 	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
-			// shoud be "aNamespaceFunction() void"
+			"aField : int",
+			"aMethod() int"
 	};
 	
-	public CompletionProposalsFailedTest2(String name) {
+	public CompletionTest_MemberReference_Dot_Prefix(String name) {
 		super(name);
 	}
-
+	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsFailedTest2.class.getName());
-		suite.addTest(new CompletionProposalsFailedTest2("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_MemberReference_Dot_Prefix.class.getName());
+		suite.addTest(new CompletionTest_MemberReference_Dot_Prefix("testCompletionProposals"));
 		return suite;
 	}		
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("::a ") + 3;
+		return getBuffer().indexOf(" c.a ") + 4;
 	}
 
 	/* (non-Javadoc)

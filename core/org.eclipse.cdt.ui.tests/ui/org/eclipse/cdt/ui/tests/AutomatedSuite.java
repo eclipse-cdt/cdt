@@ -36,23 +36,23 @@ public class AutomatedSuite extends TestSuite {
 		// Success Tests
 		addTest(PartitionTokenScannerTest.suite());
 		addTest(TextBufferTest.suite());
-		addTest(CompletionProposalsTest1.suite());
-		addTest(CompletionProposalsTest2.suite());
-		addTest(CompletionProposalsTest3.suite());
-		addTest(CompletionProposalsTest4.suite());
-		addTest(CompletionProposalsTest5.suite());
-		addTest(CompletionProposalsTest6.suite());
-		addTest(CompletionProposalsTest7.suite());
-		addTest(CompletionProposalsTest8.suite());
-		addTest(CompletionProposalsTest9.suite());
-		addTest(CompletionProposalsTest10.suite());
-		addTest(CompletionProposalsTest11.suite());
-		addTest(CompletionProposalsTest12.suite());
+		addTest(CompletionTest_StatementStart_Prefix.suite());
+		addTest(CompletionTest_MemberReference_Dot_Prefix.suite());
+		addTest(CompletionTest_VariableType_Prefix.suite());
+		addTest(CompletionTest_FieldType_Prefix.suite());
+		addTest(CompletionTest_StatementStart_NoPrefix.suite());
+		addTest(CompletionTest_MemberReference_Arrow_Prefix.suite());
+		addTest(CompletionTest_MemberReference_Arrow_Prefix2.suite());
+		addTest(CompletionTest_SingleName_Prefix.suite());
+		addTest(CompletionTest_MemberReference_Dot_NoPrefix.suite());
+		addTest(CompletionTest_MemberReference_Arrow_NoPrefix.suite());
+		addTest(CompletionTest_VariableType_NoPrefix.suite());
+		addTest(CompletionTest_FieldType_NoPrefix.suite());
 		
 		// Failed Tests
-		addTest(CompletionProposalsFailedTest1.suite());
-		addTest(CompletionProposalsFailedTest2.suite());
-		addTest(CompletionProposalsFailedTest3.suite());
+		addTest(CompletionFailedTest_ScopedReference_NoPrefix_Bug50152.suite());
+		addTest(CompletionFailedTest_ScopedReference_Prefix_Bug50152.suite());
+		addTest(CompletionFailedTest_FieldType_NoPrefix_Bug50344.suite());
 		
 	}
 	

@@ -8,44 +8,49 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist;
+package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
  * 
- * Testing Global scope, declaration start, with NO prefix
+ * Testing Scoped_Reference, with no prefix
+ * Bug#50152: Wrong context sent after a "::"
  *
  */
-public class CompletionProposalsTest11  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart11.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+public class CompletionFailedTest_ScopedReference_NoPrefix_Bug50152  extends CompletionProposalsBaseTest{
+	
+	private final String fileName = "CompletionFailedTestStart1.cpp";
+	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCompilationUnit";
-	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE;
-	private final String expectedPrefix = "";
+	private final String expectedScopeName = "ASTMethod";
+	private final String expectedContextName = "null"; // should be "ASTNamespaceDefinition";
+	private final CompletionKind expectedKind = CompletionKind.SINGLE_NAME_REFERENCE; // should be CompletionKind.SCOPED_REFERENCE;
+	private final String expectedPrefix = "::"; // should be "";
 	private final String[] expectedResults = {
+			// shoud be "aNamespaceFunction() void"
 	};
 	
-	public CompletionProposalsTest11(String name) {
+	public CompletionFailedTest_ScopedReference_NoPrefix_Bug50152(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsTest11.class.getName());
-		suite.addTest(new CompletionProposalsTest11("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionFailedTest_ScopedReference_NoPrefix_Bug50152.class.getName());
+		suite.addTest(new CompletionFailedTest_ScopedReference_NoPrefix_Bug50152("testCompletionProposals"));
 		return suite;
 	}		
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("     ") + 2;
+		return getBuffer().indexOf(":: ") + 2;
 	}
 
 	/* (non-Javadoc)

@@ -17,40 +17,40 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Function/Method scope, a class context, with NO prefix
- * After a .
+ * Testing Variable_type completion kind, with a prefix
  *
  */
-public class CompletionProposalsTest9  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart9.cpp";
+public class CompletionTest_VariableType_Prefix  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart3.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "ASTClassSpecifier";
-	private final CompletionKind expectedKind = CompletionKind.MEMBER_REFERENCE;
-	private final String expectedPrefix = "";
+	private final String expectedScopeName = "ASTCompilationUnit";
+	private final String expectedContextName = "null";
+	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE;
+	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
-			"aField : int",
-			"xAClassField : float",
-			"aMethod() int",
-			"xAClassMethod(int) void"
+			"aClass",
+			"anotherClass",
+			"aNamespace",
+			"anEnumeration",
+			"AStruct"
 	};
 	
-	public CompletionProposalsTest9(String name) {
+	public CompletionTest_VariableType_Prefix(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsTest9.class.getName());
-		suite.addTest(new CompletionProposalsTest9("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_VariableType_Prefix.class.getName());
+		suite.addTest(new CompletionTest_VariableType_Prefix("testCompletionProposals"));
 		return suite;
 	}		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" c. ") + 3;
+		return getBuffer().indexOf(" a ") + 2;
 	}
 
 	/* (non-Javadoc)

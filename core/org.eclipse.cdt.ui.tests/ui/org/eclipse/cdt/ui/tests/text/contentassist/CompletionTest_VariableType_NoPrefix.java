@@ -1,13 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2004 Rational Software Corp. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v0.5 
+/**********************************************************************
+ * Copyright (c) 2004 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v05.html
  * 
- * Contributors:
- *     Rational Software - initial implementation
- ******************************************************************************/
+ * Contributors: 
+ * IBM Rational Software - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -17,48 +17,35 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Function/Method scope, statement start, with a prefix
+ * Testing Variable_type, with NO prefix
  *
  */
-public class CompletionProposalsTest1  extends CompletionProposalsBaseTest{
-		
-	private final String fileName = "CompletionTestStart1.cpp";
+public class CompletionTest_VariableType_NoPrefix  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart11.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTMethod";
+	private final String expectedScopeName = "ASTCompilationUnit";
 	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.STATEMENT_START;
-	private final String expectedPrefix = "a";
+	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE;
+	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-			"anotherField : int",
-			"aVariable : int",
-			"anotherMethod() void",
-			"aFunction() bool",
-			"anotherFunction() void",
-			"aClass",
-			"anotherClass",
-			"aNamespace",
-			"anEnumeration",
-			"AStruct",
-			"AMacro(x)"
 	};
 	
-	public CompletionProposalsTest1(String name) {
+	public CompletionTest_VariableType_NoPrefix(String name) {
 		super(name);
 	}
-
+	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsTest1.class.getName());
-		suite.addTest(new CompletionProposalsTest1("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_VariableType_NoPrefix.class.getName());
+		suite.addTest(new CompletionTest_VariableType_NoPrefix("testCompletionProposals"));
 		return suite;
 	}		
-		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" a ") + 2;
+		return getBuffer().indexOf("     ") + 2;
 	}
 
 	/* (non-Javadoc)

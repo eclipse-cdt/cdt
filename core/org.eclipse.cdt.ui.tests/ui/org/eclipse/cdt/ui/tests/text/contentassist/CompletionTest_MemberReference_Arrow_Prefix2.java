@@ -17,41 +17,38 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Class scope, declaration start, with a prefix
+ * Testing Member_Reference, with a prefix
+ * Complex Context: Function return value: foo()->a(CTRL+SPACE)
  *
  */
-public class CompletionProposalsTest4  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart4.h";
+public class CompletionTest_MemberReference_Arrow_Prefix2  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart7.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTClassSpecifier";
-	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.FIELD_TYPE;
+	private final String expectedScopeName = "ASTMethod";
+	private final String expectedContextName = "ASTClassSpecifier";
+	private final CompletionKind expectedKind = CompletionKind.MEMBER_REFERENCE;
 	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
-			"aClass",
-			"anotherClass",
-			"aThirdClass",
-			"aNamespace",
-			"anEnumeration",
-			"AStruct"
+			"aField : int",
+			"aMethod() int"
 	};
 	
-	public CompletionProposalsTest4(String name) {
+	public CompletionTest_MemberReference_Arrow_Prefix2(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsTest4.class.getName());
-		suite.addTest(new CompletionProposalsTest4("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_MemberReference_Arrow_Prefix2.class.getName());
+		suite.addTest(new CompletionTest_MemberReference_Arrow_Prefix2("testCompletionProposals"));
 		return suite;
 	}		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" a ") + 2;
+		return getBuffer().indexOf("->a ") + 3;
 	}
 
 	/* (non-Javadoc)

@@ -17,38 +17,38 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Function/Method scope, statement start, with no prefix
- * Lookup.THIS
+ * Testing Member_Reference, with a prefix
+ * After an ->
  *
  */
-public class CompletionProposalsTest5  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart5.cpp";
+public class CompletionTest_MemberReference_Arrow_Prefix  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart6.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.STATEMENT_START;
-	private final String expectedPrefix = "";
+	private final String expectedContextName = "ASTClassSpecifier";
+	private final CompletionKind expectedKind = CompletionKind.MEMBER_REFERENCE;
+	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
-			"anotherField : int",
-			"anotherMethod() void"
+			"aField : int",
+			"aMethod() int"
 	};
 	
-	public CompletionProposalsTest5(String name) {
+	public CompletionTest_MemberReference_Arrow_Prefix(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsTest5.class.getName());
-		suite.addTest(new CompletionProposalsTest5("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_MemberReference_Arrow_Prefix.class.getName());
+		suite.addTest(new CompletionTest_MemberReference_Arrow_Prefix("testCompletionProposals"));
 		return suite;
 	}		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("    ") + 2;
+		return getBuffer().indexOf(" c->a ") + 5;
 	}
 
 	/* (non-Javadoc)

@@ -17,38 +17,41 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Function/Method scope, a class context, with a prefix
- * After a .
+ * Testing Field_Type completion kind , with a prefix
  *
  */
-public class CompletionProposalsTest2  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart2.cpp";
+public class CompletionTest_FieldType_Prefix  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart4.h";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "ASTClassSpecifier";
-	private final CompletionKind expectedKind = CompletionKind.MEMBER_REFERENCE;
+	private final String expectedScopeName = "ASTClassSpecifier";
+	private final String expectedContextName = "null";
+	private final CompletionKind expectedKind = CompletionKind.FIELD_TYPE;
 	private final String expectedPrefix = "a";
 	private final String[] expectedResults = {
-			"aField : int",
-			"aMethod() int"
+			"aClass",
+			"anotherClass",
+			"aThirdClass",
+			"aNamespace",
+			"anEnumeration",
+			"AStruct"
 	};
 	
-	public CompletionProposalsTest2(String name) {
+	public CompletionTest_FieldType_Prefix(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsTest2.class.getName());
-		suite.addTest(new CompletionProposalsTest2("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_FieldType_Prefix.class.getName());
+		suite.addTest(new CompletionTest_FieldType_Prefix("testCompletionProposals"));
 		return suite;
 	}		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" c.a ") + 4;
+		return getBuffer().indexOf(" a ") + 2;
 	}
 
 	/* (non-Javadoc)

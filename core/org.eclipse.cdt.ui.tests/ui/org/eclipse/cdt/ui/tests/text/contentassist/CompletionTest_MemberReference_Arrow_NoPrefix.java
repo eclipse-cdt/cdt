@@ -17,12 +17,12 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 /**
  * @author hamer
  * 
- * Testing Function/Method scope, a class context, with NO prefix
+ * Testing Member_Reference, with NO prefix
  * After an ->
  *
  */
 
-public class CompletionProposalsTest10  extends CompletionProposalsBaseTest{
+public class CompletionTest_MemberReference_Arrow_NoPrefix  extends CompletionProposalsBaseTest{
 	private final String fileName = "CompletionTestStart10.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
@@ -38,13 +38,13 @@ public class CompletionProposalsTest10  extends CompletionProposalsBaseTest{
 			"xAClassMethod(int) void"
 	};
 	
-	public CompletionProposalsTest10(String name) {
+	public CompletionTest_MemberReference_Arrow_NoPrefix(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsTest10.class.getName());
-		suite.addTest(new CompletionProposalsTest10("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_MemberReference_Arrow_NoPrefix.class.getName());
+		suite.addTest(new CompletionTest_MemberReference_Arrow_NoPrefix("testCompletionProposals"));
 		return suite;
 	}		
 	/* (non-Javadoc)

@@ -8,47 +8,48 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist;
+package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
+import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
  * 
- * Testing Function/Method scope, a class context, with a prefix
- * After an ->
+ * Testing Class scope, declaration start, with NO prefix
+ * Bug#50344 :Wrong completion in Class scope if before the first declaration
  *
  */
-public class CompletionProposalsTest6  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart6.cpp";
-	private final String fileFullPath ="resources/contentassist/" + fileName;
+public class CompletionFailedTest_FieldType_NoPrefix_Bug50344  extends CompletionProposalsBaseTest{
+	
+	private final String fileName = "CompletionFailedTestStart3.h";
+	private final String fileFullPath ="resources/contentassist/failedtests/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTMethod";
-	private final String expectedContextName = "ASTClassSpecifier";
-	private final CompletionKind expectedKind = CompletionKind.MEMBER_REFERENCE;
-	private final String expectedPrefix = "a";
+	private final String expectedScopeName = "ASTCompilationUnit"; // should be "ASTClassSpecifier";
+	private final String expectedContextName = "null";
+	private final CompletionKind expectedKind =CompletionKind.USER_SPECIFIED_NAME; // should be CompletionKind.FIELD_TYPE;
+	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-			"aField : int",
-			"aMethod() int"
 	};
 	
-	public CompletionProposalsTest6(String name) {
+	public CompletionFailedTest_FieldType_NoPrefix_Bug50344(String name) {
 		super(name);
 	}
-	
+
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionProposalsTest6.class.getName());
-		suite.addTest(new CompletionProposalsTest6("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionFailedTest_FieldType_NoPrefix_Bug50344.class.getName());
+		suite.addTest(new CompletionFailedTest_FieldType_NoPrefix_Bug50344("testCompletionProposals"));
 		return suite;
 	}		
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" c->a ") + 5;
+		return getBuffer().indexOf("      ") + 3;
 	}
 
 	/* (non-Javadoc)

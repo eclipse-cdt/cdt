@@ -1,5 +1,12 @@
 2003-01-29 Alain Magloire
 
+	* utils/org/eclipse/cdt/utils/elf/Elf.java:
+	* utils/org/eclipse/cdt/utils/coff/Coff.java
+	* utils/org/eclipse/cdt/utils/coff/PE.java
+	Cleanup some warnings when accessing static fields.
+	
+2003-01-29 Alain Magloire
+
 	* model/org/eclipse/cdt/core/model/CoreModel.java (addElementChangedListeners):
 	remove static qualifier.
 	(removeElementChangedListeners): remove static qualifier.

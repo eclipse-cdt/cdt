@@ -5,9 +5,7 @@
  */
 package org.eclipse.cdt.debug.internal.ui.actions;
 
-import java.text.MessageFormat;
-
-import org.eclipse.cdt.debug.core.model.ICSignal;
+import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
@@ -23,17 +21,18 @@ import org.eclipse.ui.IWorkbenchWindow;
 /**
  * Enter type comment.
  * 
- * @since: Jan 31, 2003
+ * @since: Feb 4, 2003
  */
-public class SignalActionDelegate implements IObjectActionDelegate
+public class SignalZeroActionDelegate implements IObjectActionDelegate
 {
-	private ICSignal fSignal = null;
+	private IResumeWithoutSignal fTarget = null;
 
 	/**
-	 * Constructor for SignalActionDelegate.
+	 * Constructor for SignalZeroActionDelegate.
 	 */
-	public SignalActionDelegate()
+	public SignalZeroActionDelegate()
 	{
+		super();
 	}
 
 	/* (non-Javadoc)
@@ -48,11 +47,11 @@ public class SignalActionDelegate implements IObjectActionDelegate
 	 */
 	public void run( IAction action )
 	{
-		if ( getSignal() != null )
+		if ( getTarget() != null )
 		{
 			final MultiStatus ms = new MultiStatus( CDebugUIPlugin.getUniqueIdentifier(), 
 													DebugException.REQUEST_FAILED, 
-													MessageFormat.format( "Unable to deliver the signal ''{0}'' to the target.", new String[] { getSignal().getName() } ), 
+													"Unable to resume ignoring signal.", 
 													null ); 
 			BusyIndicator.showWhile( Display.getCurrent(), 
 									new Runnable()
@@ -61,7 +60,7 @@ public class SignalActionDelegate implements IObjectActionDelegate
 											{
 												try
 												{
-													doAction( getSignal() );
+													doAction( getTarget() );
 												}
 												catch( DebugException e )
 												{
@@ -92,38 +91,33 @@ public class SignalActionDelegate implements IObjectActionDelegate
 		if ( selection instanceof IStructuredSelection )
 		{
 			Object element = ((IStructuredSelection)selection).getFirstElement();
-			if ( element instanceof ICSignal )
+			if ( element instanceof IResumeWithoutSignal )
 			{
-				boolean enabled = enablesFor( (ICSignal)element );
+				boolean enabled = ((IResumeWithoutSignal)element).canResumeWithoutSignal();
 				action.setEnabled( enabled );
 				if ( enabled )
 				{
-					setSignal( (ICSignal)element );
+					setTarget( (IResumeWithoutSignal)element );
 					return;
 				}
 			}
 		}
 		action.setEnabled( false );
-		setSignal( null );
+		setTarget( null );
 	}
 
-	protected void doAction( ICSignal signal ) throws DebugException
+	protected void doAction( IResumeWithoutSignal target ) throws DebugException
 	{
-		signal.signal();
+		target.resumeWithoutSignal();
 	}
 
-	private boolean enablesFor( ICSignal signal )
+	protected IResumeWithoutSignal getTarget()
 	{
-		return ( signal != null );
+		return fTarget;
 	}
-	
-	private void setSignal( ICSignal signal )
+
+	protected void setTarget( IResumeWithoutSignal target )
 	{
-		fSignal = signal;
-	}
-	
-	protected ICSignal getSignal()
-	{
-		return fSignal;
+		fTarget = target;
 	}
 }

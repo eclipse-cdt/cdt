@@ -1,4 +1,13 @@
 2003-02-04 Mikhail Khodjaiants
+	Implementation of the 'Resume Without Signal' action.
+	* SignalZeroActionDelegate.java
+	* plugin.properties
+	* plugin.xml
+	icons/full/clcl16/signal0_co.gif
+	icons/full/dlcl16/signal0_co.gif
+	icons/full/elcl16/signal0_co.gif
+	
+2003-02-04 Mikhail Khodjaiants
 	'DebugException' handling in the 'Signals' view.
 	* SignalsView.java
 	* SignalsViewer.java

@@ -698,6 +698,25 @@
             </enablement>
          </action>
       </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.cdt.debug.core.model.IResumeWithoutSignal"
+            id="org.eclipse.cdt.debug.ui.DebugTargetActions">
+         <action
+               label="%SignalZeroAction.label"
+               icon="icons/full/clcl16/signal0_co.gif"
+               helpContextId="signal_zero_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroActionDelegate"
+               menubarPath="threadGroup"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.SignalZeroActionDelegate">
+            <enablement>
+               <pluginState
+                     id="org.eclipse.cdt.debug.ui"
+                     value="activated">
+               </pluginState>
+            </enablement>
+         </action>
+      </objectContribution>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

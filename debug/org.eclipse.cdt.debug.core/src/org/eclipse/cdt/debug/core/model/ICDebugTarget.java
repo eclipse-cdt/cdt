@@ -21,6 +21,7 @@ public interface ICDebugTarget extends IDebugTarget,
 									   IRestart,
 									   IRunToLine,
 									   IRunToAddress,
+									   IResumeWithoutSignal,
 									   IState,
 									   ISwitchToThread,
 									   ICBreakpointManager

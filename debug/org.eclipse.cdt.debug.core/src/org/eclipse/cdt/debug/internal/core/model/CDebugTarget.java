@@ -2443,4 +2443,28 @@ public class CDebugTarget extends CDebugElement
 	{
 		fSetBreakpoints = retry;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#canResumeWithoutSignal()
+	 */
+	public boolean canResumeWithoutSignal()
+	{
+		// Check if the configuration supports this!!!
+		return ( isSuspended() && getCurrentStateInfo() instanceof ICDISignalReceived );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#resumeWithoutSignal()
+	 */
+	public void resumeWithoutSignal() throws DebugException
+	{
+		try
+		{
+			getCDITarget().signal();
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.toString(), e );
+		}
+	}
 }

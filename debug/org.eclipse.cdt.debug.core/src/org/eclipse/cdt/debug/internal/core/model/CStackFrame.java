@@ -20,6 +20,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.model.IRestart;
+import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.core.runtime.IAdaptable;
@@ -39,7 +40,8 @@ import org.eclipse.debug.core.model.IVariable;
 public class CStackFrame extends CDebugElement
 						 implements IStackFrame,
 						 			IStackFrameInfo,
-						 			IRestart, 
+						 			IRestart,
+						 			IResumeWithoutSignal, 
 						 			ICDIEventListener
 {
 	/**
@@ -751,5 +753,25 @@ public class CStackFrame extends CDebugElement
 	private boolean refreshVariables()
 	{
 		return fRefreshVariables;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#canResumeWithoutSignal()
+	 */
+	public boolean canResumeWithoutSignal()
+	{
+		return ( getDebugTarget() instanceof IResumeWithoutSignal && 
+				 ((IResumeWithoutSignal)getDebugTarget()).canResumeWithoutSignal() );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#resumeWithoutSignal()
+	 */
+	public void resumeWithoutSignal() throws DebugException
+	{
+		if ( canResumeWithoutSignal() )
+		{
+			((IResumeWithoutSignal)getDebugTarget()).resumeWithoutSignal();
+		}
 	}
 }

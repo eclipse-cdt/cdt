@@ -32,6 +32,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.model.IInstructionStep;
 import org.eclipse.cdt.debug.core.model.IRestart;
+import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
@@ -61,6 +62,7 @@ public class CThread extends CDebugElement
 					 			IRestart,
 					 			IRunToLine,
 					 			IInstructionStep,
+					 			IResumeWithoutSignal,
 					 			ISwitchToFrame,
 					 			ICDIEventListener
 {
@@ -1157,5 +1159,25 @@ public class CThread extends CDebugElement
 	protected boolean isDisposed()
 	{
 		return fDisposed;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#canResumeWithoutSignal()
+	 */
+	public boolean canResumeWithoutSignal()
+	{
+		return ( getDebugTarget() instanceof IResumeWithoutSignal && 
+				 ((IResumeWithoutSignal)getDebugTarget()).canResumeWithoutSignal() );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.IResumeWithoutSignal#resumeWithoutSignal()
+	 */
+	public void resumeWithoutSignal() throws DebugException
+	{
+		if ( canResumeWithoutSignal() )
+		{
+			((IResumeWithoutSignal)getDebugTarget()).resumeWithoutSignal();
+		}
 	}
 }

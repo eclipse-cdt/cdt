@@ -102,7 +102,7 @@ public class CSignal extends CDebugElement implements ICSignal, ICDIEventListene
 	{
 		try
 		{
-			getCDISignal().signal();
+			getCDITarget().signal( getCDISignal() );
 		}
 		catch( CDIException e )
 		{

@@ -13,6 +13,8 @@ import java.util.Observable;
 
 import org.eclipse.cdt.debug.mi.core.command.Command;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
+import org.eclipse.cdt.debug.mi.core.command.MIExecAbort;
+import org.eclipse.cdt.debug.mi.core.command.MIExecInterrupt;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBExit;
 import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
@@ -85,11 +87,11 @@ public class MISession extends Observable {
 			postCommand(confirm);
 			info = confirm.getMIInfo(); 
 
-			MIGDBSet width = new MIGDBSet(new String[]{"width", "99999999"});
+			MIGDBSet width = new MIGDBSet(new String[]{"width", "0"});
 			postCommand(width);
 			info = confirm.getMIInfo(); 
 
-			MIGDBSet height = new MIGDBSet(new String[]{"height", "99999999"});
+			MIGDBSet height = new MIGDBSet(new String[]{"height", "0"});
 			postCommand(height);
 			info = confirm.getMIInfo(); 
 		} catch (MIException e) {
@@ -174,6 +176,14 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		// Test if we are in a sane state.
 		if (!txThread.isAlive() || !rxThread.isAlive()) {
 			throw new MIException("{R,T}xThread terminated");
+		}
+
+		// Test if we are in the right state?
+		if (inferior.isRunning()) {
+			if ( !((cmd instanceof MIExecInterrupt) ||
+					cmd instanceof MIExecAbort)) {
+				throw new MIException("Target running");
+			}
 		}
 
 		txQueue.addCommand(cmd);

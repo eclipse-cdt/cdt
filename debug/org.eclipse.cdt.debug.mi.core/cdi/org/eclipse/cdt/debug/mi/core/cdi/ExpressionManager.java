@@ -120,15 +120,24 @@ public class ExpressionManager extends Manager {
 			String varName = variable.getMIVar().getVarName();
 			MIVarChange[] changes = noChanges;
 			MIVarUpdate update = factory.createMIVarUpdate(varName);
+			MIVarUpdateInfo info = null;
 			try {
 				mi.postCommand(update);
-				MIVarUpdateInfo info = update.getMIVarUpdateInfo();
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
+			}
+			boolean timedout = false;
+			try {
+				info = update.getMIVarUpdateInfo();
 				if (info == null) {
+					timedout = true;
 					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
 				}
 				changes = info.getMIVarChanges();
 			} catch (MIException e) {
-				//throw new MI2CDIException(e);
+				if (timedout) {
+					throw new MI2CDIException(e);
+				}
 				eventList.add(new MIVarDeletedEvent(mi, varName));
 			}
 			for (int j = 0; j < changes.length; j++) {

@@ -1,3 +1,10 @@
+2004-11-24 Alain Magloire
+	Make the terminate() more responsive when gdb is shuting down.
+	See long discussion part of the 77435 fixes and 40087.
+	
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/ExpressionManager.java
+	* mi/org/eclipse/cdt/debug/core/MIInferior.java
+
 2004-11-23 Alain Magloire
 	Tentative fix for 77435
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/SourceManager.java

@@ -35,6 +35,7 @@ public class MIInferior extends Process {
 
 	boolean connected = false;
 
+	boolean exitCodeKnown = false;
 	int exitCode = 0;
 	int state = 0;
 
@@ -132,14 +133,17 @@ public class MIInferior extends Process {
 	public int exitValue() {
 		if (isTerminated()) {
 			if (!session.isTerminated()) {
-				CommandFactory factory = session.getCommandFactory();
-				MIGDBShowExitCode code = factory.createMIGDBShowExitCode();
-				try {
-					session.postCommand(code);
-					MIGDBShowExitCodeInfo info = code.getMIGDBShowExitCodeInfo();
-					exitCode = info.getCode();
-				} catch (MIException e) {
-					// no rethrown.
+				if (!exitCodeKnown) {
+					CommandFactory factory = session.getCommandFactory();
+					MIGDBShowExitCode code = factory.createMIGDBShowExitCode();
+					try {
+						session.postCommand(code);
+						MIGDBShowExitCodeInfo info = code.getMIGDBShowExitCodeInfo();
+						exitCode = info.getCode();
+					} catch (MIException e) {
+						// no rethrown.
+					}
+					exitCodeKnown = true;
 				}
 			}
 			return exitCode;
@@ -174,11 +178,16 @@ public class MIInferior extends Process {
 			}
 			int token = 0;
 			if (isSuspended()) {
-				CommandFactory factory = session.getCommandFactory();
-				MIExecAbort abort = factory.createMIExecAbort();
-				session.postCommand0(abort, session.getCommandTimeout());
-				abort.getMIInfo();
-				token = abort.getToken();
+				try {
+					CommandFactory factory = session.getCommandFactory();
+					MIExecAbort abort = factory.createMIExecAbort();
+					session.postCommand0(abort, -1);
+					// do not wait for the answer.
+					//abort.getMIInfo();
+					token = abort.getToken();
+				} catch (MIException e) {
+					// ignore the error
+				}
 			}
 			setTerminated(token, true);
 		} else if (session.isCoreSession() && !isTerminated()){

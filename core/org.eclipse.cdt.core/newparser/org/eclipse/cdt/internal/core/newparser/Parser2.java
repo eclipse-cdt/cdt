@@ -608,6 +608,512 @@ public class Parser2 {
 		return classSpecifier;
 	}
 	
+	// Expressions
+	public void commaExpression() throws Backtrack {
+		expression();
+		
+		while (LT(1) == Token.tCOMMA) {
+			consume();
+			expression();
+		}
+	}
+	
+	public void expression() throws Backtrack {
+		conditionalExpression();
+		
+		switch (LT(1)) {
+			case Token.tASSIGN:
+			case Token.tSTARASSIGN:
+			case Token.tDIVASSIGN:
+			case Token.tMODASSIGN:
+			case Token.tPLUSASSIGN:
+			case Token.tMINUSASSIGN:
+			case Token.tSHIFTRASSIGN:
+			case Token.tSHIFTLASSIGN:
+			case Token.tAMPERASSIGN:
+			case Token.tXORASSIGN:
+			case Token.tBITORASSIGN:
+				expression();
+				break;
+		}
+	}
+	
+	public void conditionalExpression() throws Backtrack {
+		logicalOrExpression();
+		
+		if (LT(1) == Token.tQUESTION) {
+			consume();
+			commaExpression();
+			consume(Token.tCOLON);
+			conditionalExpression();
+		}
+	}
+	
+	public void logicalOrExpression() throws Backtrack {
+		logicalAndExpression();
+		
+		while (LT(1) == Token.tOR) {
+			consume();
+			logicalAndExpression();
+		}
+	}
+	
+	public void logicalAndExpression() throws Backtrack {
+		inclusiveOrExpression();
+		
+		while (LT(1) == Token.tAND) {
+			consume();
+			inclusiveOrExpression();
+		}
+	}
+	
+	public void inclusiveOrExpression() throws Backtrack {
+		exclusiveOrExpression();
+		
+		while (LT(1) == Token.tBITOR) {
+			consume();
+			exclusiveOrExpression();
+		}
+	}
+	
+	public void exclusiveOrExpression() throws Backtrack {
+		andExpression();
+		
+		while (LT(1) == Token.tXOR) {
+			consume();
+			andExpression();
+		}
+	}
+	
+	public void andExpression() throws Backtrack {
+		equalityExpression();
+		
+		while (LT(1) == Token.tAMPER) {
+			consume();
+			equalityExpression();
+		}
+	}
+	
+	public void equalityExpression() throws Backtrack {
+		relationalExpression();
+		
+		for (;;) {
+			switch (LT(1)) {
+				case Token.tEQUAL:
+				case Token.tNOTEQUAL:
+					consume();
+					relationalExpression();
+					break;
+				default:
+					return;
+			}
+		}
+	}
+	
+	public void relationalExpression() throws Backtrack {
+		shiftExpression();
+		
+		for (;;) {
+			switch (LT(1)) {
+				case Token.tGT:
+					// For template args, the GT means end of args
+					//if (templateArgs)
+					//	return;
+				case Token.tLT:
+				case Token.tLTEQUAL:
+				case Token.tGTEQUAL:
+					consume();
+					shiftExpression();
+					break;
+				default:
+					return;
+			}
+		}
+	}
+	
+	public void shiftExpression() throws Backtrack {
+		additiveExpression();
+		
+		for (;;) {
+			switch (LT(1)) {
+				case Token.tSHIFTL:
+				case Token.tSHIFTR:
+					consume();
+					additiveExpression();
+					break;
+				default:
+					return;
+			}
+		}
+	}
+	
+	public void additiveExpression() throws Backtrack {
+		multiplyExpression();
+		
+		for (;;) {
+			switch (LT(1)) {
+				case Token.tPLUS:
+				case Token.tMINUS:
+					consume();
+					multiplyExpression();
+					break;
+				default:
+					return;
+			}
+		}
+	}
+	
+	public void multiplyExpression() throws Backtrack {
+		pmExpression();
+		
+		for (;;) {
+			switch (LT(1)) {
+				case Token.tSTAR:
+				case Token.tDIV:
+				case Token.tMOD:
+					consume();
+					pmExpression();
+					break;
+				default:
+					return;
+			}
+		}
+	}
+	
+	public void pmExpression() throws Backtrack {
+		castExpression();
+		
+		for (;;) {
+			switch (LT(1)) {
+				case Token.tDOTSTAR:
+				case Token.tARROWSTAR:
+					consume();
+					castExpression();
+					break;
+				default:
+					return;
+			}
+		}
+	}
+		
+	public void castExpression() throws Backtrack {
+		// TODO: expression incomplete
+		if (LT(1) == Token.tLPAREN) {
+			Token mark = mark();
+			consume();
+			
+			try {
+				typeName();
+
+				if (LT(1) == Token.tRPAREN)
+					consume();
+				else
+					throw backtrack;
+				
+				castExpression();
+				return;
+			} catch (Backtrack b) {
+				backup(mark);
+			}
+		}
+
+		unaryExpression();
+	}
+	
+	public void typeName() throws Backtrack {
+		try {
+			name();
+			return;
+		} catch (Backtrack b) {
+		}
+		
+		//rDeclarator(kCastDeclarator, false, false, false);
+	}
+	
+	// unaryExpr
+	// : postfixExpr
+	// | ("*" | "&" | "+" | "-" | "!" | "~" | "++" | "--" ) castExpr
+	// | sizeofExpr
+	// | allocateExpr
+	// | throwExpr
+	public void unaryExpression() throws Backtrack {
+		switch (LT(1)) {
+			case Token.tSTAR:
+			case Token.tAMPER:
+			case Token.tPLUS:
+			case Token.tMINUS:
+			case Token.tNOT:
+			case Token.tCOMPL:
+			case Token.tINCR:
+			case Token.tDECR:
+				consume();
+				castExpression();
+				return;
+			case Token.t_sizeof:
+				sizeofExpression();
+				return;
+			case Token.t_throw:
+				throwExpression();
+				return;
+			default:
+				if (isAllocateExpr())
+					rAllocateExpr();
+				else
+					postfixExpression();
+		}
+	}
+	
+	public void throwExpression() throws Backtrack {
+		consume(Token.t_throw);
+		
+		switch (LT(1)) {
+			case Token.tCOLON:
+			case Token.tSEMI:
+				return;
+			default:
+				expression();
+		}
+	}
+	
+	public void sizeofExpression() throws Backtrack {
+		consume(Token.t_sizeof);
+		
+		if (LT(1) == Token.tLPAREN) {
+			Token mark = mark();
+			consume();
+
+			try {
+				typeName();
+				
+				if (LT(1) == Token.tRPAREN)
+					consume();
+				else
+					throw backtrack;
+				
+				castExpression();
+				return;
+			} catch (Backtrack b) {
+				backup(mark);
+			}
+		}
+
+		unaryExpression();
+	}
+	
+	public boolean isAllocateExpr() throws Backtrack {
+		int t = LT(1);
+		
+		if (t == Token.tCOLONCOLON)
+			t = LT(2);
+		
+		return t == Token.t_new || t == Token.t_delete;
+	}
+	
+	public void rAllocateExpr() throws Backtrack {
+		int t = LT(1);
+		
+		if (t == Token.tCOLONCOLON) {
+			consume();
+			t = LT(1);
+		}
+		
+		if (t == Token.t_delete) {
+			consume();
+			
+			if (LT(1) == Token.tLBRACKET) {
+				consume();
+				consume(Token.tRBRACKET);
+			}
+			
+			castExpression();
+			return;
+		} else if (t == Token.t_new) {
+			consume();
+			allocateType();
+			return;
+		} else
+			throw backtrack;
+	}
+	
+	// allocateType
+	// : ("(" functionArguments ")")? typeSpecifier newDeclarator (allocateInitializer)?
+	// | ("(" functionArguments ")")? "(" typeName ")" (allocateInitializer)?
+	public void allocateType() throws Backtrack {
+		if (LT(1) == Token.tLPAREN) {
+			consume();
+			
+			Token mark = mark();
+			try {
+				typeName();
+				
+				if (LT(1) == Token.tRPAREN) {
+					consume();
+					if (LT(1) != Token.tLPAREN) {
+						//if (isTypeSpecifier())
+						//	return;
+						//else
+							throw backtrack;
+					} else {
+						rAllocateInitializer();
+						
+						if (LT(1) != Token.tLPAREN)
+							return;
+						else
+							throw backtrack;
+					}
+				}
+			} catch (Backtrack b) {
+				backup(mark);
+			}
+			
+			//rFunctionArguments();
+			consume(Token.tRPAREN);
+		}
+		
+		if (LT(1) == Token.tLPAREN) {
+			consume();
+			typeName();
+			consume(Token.tRPAREN);
+		} else {
+			//typeSpecifier();
+			//rNewDeclarator();
+		}
+		
+		if (LT(1) == Token.tLPAREN)
+			rAllocateInitializer();
+		
+		return;
+	}
+	
+	public void rNewDeclarator() throws Backtrack {
+		if (LT(1) != Token.tLBRACKET) {
+			//if (!optPtrOperator())
+			//	throw new ParserException(LA(1));
+		}
+		
+		while (LT(1) == Token.tLBRACKET) {
+			consume();
+			commaExpression();
+			consume(Token.tRBRACKET);
+		}
+	}
+	
+	public void rAllocateInitializer() throws Backtrack {
+		consume(Token.tLPAREN);
+		
+		if (LT(1) == Token.tRPAREN) {
+			consume();
+			return;
+		}
+		
+		for (;;) {
+			//initializeExpression();
+			
+			if (LT(1) == Token.tCOMMA)
+				consume();
+			else
+				break;
+		}
+
+		consume(Token.tRPAREN);
+	}
+	
+	public void postfixExpression() throws Backtrack {
+		primaryExpression();
+		
+		for (;;) {
+			switch (LT(1)) {
+				case Token.tLBRACKET:
+					consume();
+					commaExpression();
+					consume(Token.tRBRACKET);
+					break;
+				case Token.tLPAREN:
+					consume();
+					//rFunctionArguments();
+					consume(Token.tRPAREN);
+					break;
+				case Token.tINCR:
+				case Token.tDECR:
+					consume();
+					break;
+				case Token.tDOT:
+				case Token.tARROW:
+					consume();
+					varName();
+					break;
+				default:
+					return;
+			}
+		}
+	}
+	
+	public void primaryExpression() throws Backtrack {
+		switch (LT(1)) {
+			case Token.tINTEGER:
+			case Token.tSTRING:
+			case Token.t_this:
+				return;
+			case Token.tLPAREN:
+				consume();
+				commaExpression();
+				consume(Token.tRPAREN);
+				return;
+			case Token.t_typeid:
+				//rTypeidExpr();
+				return;
+			default:
+				//if (optIntegralTypeOrClassSpec()) {
+				//	consume(Token.tLPAREN);
+				//	rFunctionArguments();
+				//	consume(Token.tRPAREN);
+				//	return;
+				//} else {
+				//	rVarName();
+				//	return;
+				//}
+		}
+	}
+	
+	public void varName() throws Backtrack {
+		if (LT(1) == Token.tCOLONCOLON)
+			consume();
+		
+		for (;;) {
+			switch (LT(1)) {
+				case Token.tIDENTIFIER:
+					consume();
+					//if (isTemplateArgs()) {
+					//	rTemplateArgs();
+					//}
+					
+					if (LT(1) == Token.tCOLONCOLON) {
+						switch (LT(2)) {
+							case Token.tIDENTIFIER:
+							case Token.tCOMPL:
+							case Token.t_operator:
+								consume();
+								break;
+							default:
+								return;
+						}
+					} else
+						return;
+					break;
+				case Token.tCOMPL:
+					consume();
+					consume(Token.tIDENTIFIER);
+					return;
+				case Token.t_operator:
+					consume();
+					//rOperatorName();
+					return;
+				default:
+					throw backtrack;
+			}
+		}
+	}
+	
 	// Backtracking
 	private static class Backtrack extends Exception {
 	}

@@ -1,0 +1,4 @@
+iostream.o
+libspawner.so
+libspawnerS.a
+spawner.o

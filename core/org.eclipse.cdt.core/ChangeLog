@@ -1,5 +1,26 @@
 2004-08-18 Alain Magloire
 
+	Work on the ResolverModel, we make the Core Model aware of the changes.
+	Noticeable changes ICFileTypeResolver is tied to a container, this change
+	things considerably when extending the implementations.  Sam orignal works
+	did not with some pros && cons .. this also has pros and cons.
+
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/ResolverProcessor.java
+
+	* src/org/eclipse/cdt/core/filetype/ICFielTypeResolver.java
+	* src/org/eclipse/cdt/core/filetype/IResolverChangeListener.java
+	* src/org/eclipse/cdt/core/filetype/IResolverModel.java
+	* src/org/eclipse/cdt/core/filetype/ResolverChangeEvent.java
+	* src/org/eclipse/cdt/core/filetype/ResolverDelta.java
+
+	* src/org/eclipse/cdt/core/internal/filetype/CFileTypeResolver.java
+	* src/org/eclipse/cdt/core/internal/filetype/CustomResolver.java
+	* src/org/eclipse/cdt/core/internal/filetype/ResolverModel.java
+	* src/org/eclipse/cdt/core/internal/filetype/WorkspaceResolver.java
+	
+2004-08-18 Alain Magloire
+
 	When running the CDescriptorOperation make sure we have an ICDescriptor.
 
 	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java

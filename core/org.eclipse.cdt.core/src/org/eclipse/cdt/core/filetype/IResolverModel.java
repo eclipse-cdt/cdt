@@ -47,38 +47,41 @@ public interface IResolverModel {
 	public ICFileType getFileTypeById(String typeId);
 
 	/**
-	 * Set the resolver for the current workspace.
-	 * 
-	 * The workspace resolver is set to the specified
-	 * resolver, and the resolver data is persisted
-	 * in the workspace.
-	 * 
-	 * @param resolver new workspace resolver.
-	 */
-	public void setResolver(ICFileTypeResolver resolver);
-
-	/**
 	 * Get the resolver for the current workspace.
-	 * 
-	 * If the workspace resolver is unavailable (or
-	 * identical to the default resolver), then the
-	 * default resolver is returned.
 	 * 
 	 * @return workspace resolver
 	 */
 	public ICFileTypeResolver getResolver();
 	
 	/**
-	 * Set the resolver for the specified project.
+	 * Create a custom resolver for the specified project.
 	 *
-	 * The project resolver is set to the specified
+	 * The project resolver is set to a custom
 	 * resolver, and the resolver data is persisted
 	 * in the project (in the .cdtproject file).
-	 * 
- 	 * @param project project this resolver applied to
-	 * @param resolver new project resolver
+	 *
+	 * This method fires changed event
+	 *  
+ 	 * @param project - project this resolver applied to
+	 * @param copyResolver - retrieve associations for the copy to populate the custom resolver.
 	 */
-	public void setResolver(IProject project, ICFileTypeResolver resolver);
+	public ICFileTypeResolver createCustomResolver(IProject project, ICFileTypeResolver copyResolver);
+
+	/**
+	 * Remove the custom resolver on the project.
+	 * This method fires changed event 
+	 * 
+	 * @param project
+	 */
+	public void removeCustomResolver(IProject project);
+
+	/**
+	 * Return true if the project has a custom resolver.
+	 * 
+	 * @param project
+	 * @return true if a custom resolver
+	 */
+	public boolean hasCustomResolver(IProject project);
 
 	/**
 	 * Get the resolver for the specified project.

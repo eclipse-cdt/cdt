@@ -15,5 +15,5 @@ package org.eclipse.cdt.core.filetype;
  * individual resolver.
  */
 public interface IResolverChangeListener {
-	public void resolverChanged(ResolverChangeEvent[] events);
+	public void resolverChanged(ResolverChangeEvent event);
 }

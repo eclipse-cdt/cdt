@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.filetype;
 
+import org.eclipse.core.resources.IContainer;
+
 /**
  * Class responsible for resolving a file name into the
  * associated file type.
@@ -33,15 +35,8 @@ public interface ICFileTypeResolver {
 	public ICFileType getFileType(String fileName);
 
 	/**
-	 * Add a new file type association to the resolver's list.
-	 * @param assoc file name pattern to add.
-	 * 
-	 * @return true if the file type association was added.
-	 */
-	public boolean addAssociation(ICFileTypeAssociation assoc);
-
-	/**
 	 * Add multiple file type associations to the resolver's list.
+	 * This method does not fire delta changes use adjustAssociations.
 	 * 
 	 * @param assocs array of file type associations to add; may be null.
 	 *
@@ -50,16 +45,8 @@ public interface ICFileTypeResolver {
 	public boolean addAssociations(ICFileTypeAssociation[] assocs);
 	
 	/**
-	 * Remove a file type association from the resolver's list.
-	 * 
-	 * @param assoc file type association to remove.
-	 *
-	 * @return true if the file type association was removed.
-	 */
-	public boolean removeAssociation(ICFileTypeAssociation assoc);
-
-	/**
 	 * Remove multiple file type associations from the resolver's list.
+	 * This method does not fire delta changes use adjustAssociations.
 	 * 
 	 * @param assoc array of file type association to remove; may be null
 	 *
@@ -70,7 +57,7 @@ public interface ICFileTypeResolver {
 	/**
 	 * Add and/or remove associations from the resolver in a
 	 * batch operation.  Either (or both) of the parameters
-	 * may be null.
+	 * may be null. This method fires delta change events.
 	 *  
 	 * @param add associations to add to the resolver; may be null
 	 * @param rem associations to remove from the resolver; may be null
@@ -88,4 +75,11 @@ public interface ICFileTypeResolver {
 	 * @return working copy of this file type resolver
 	 */
 	public ICFileTypeResolver createWorkingCopy();
+
+	/**
+	 * The container of the resolver can be IWorkspaceRoot or IProject.
+	 * 
+	 * @return
+	 */
+	public IContainer getContainer();
 }

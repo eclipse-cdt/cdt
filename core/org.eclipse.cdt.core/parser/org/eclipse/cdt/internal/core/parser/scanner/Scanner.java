@@ -2447,7 +2447,7 @@ public class Scanner implements IScanner {
 		
         parser = InternalParserUtil.createExpressionParser(trial, scannerData.getLanguage(), NULL_LOG_SERVICE);
 		try {
-			IASTExpression exp = parser.expression(null);
+			IASTExpression exp = parser.expression(null, null);
 			if( exp.evaluateExpression() == 0 )
 				return false;
 			return true;

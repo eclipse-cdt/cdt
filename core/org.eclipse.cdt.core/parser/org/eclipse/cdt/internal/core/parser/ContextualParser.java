@@ -132,6 +132,8 @@ public class ContextualParser extends CompleteParser {
 		setCompletionValues(scope, kind, key, null );
 	}
 
+	
+	
 	protected void setCompletionValues(IASTScope scope, CompletionKind kind, Key key, IASTNode node) throws EndOfFileException {
 		setCompletionScope(scope);
 		setCompletionKeywords(key);
@@ -140,22 +142,18 @@ public class ContextualParser extends CompleteParser {
 		checkEndOfFile();
 	}
 
+	
+	
 	protected void setCompletionValues( IASTScope scope, CompletionKind kind, IToken first, IToken last ) throws EndOfFileException{		
-		if( !queryLookaheadCapability() )
-		{
-			setCompletionScope( scope );
-			setCompletionKind( kind );
-			setCompletionKeywords( Key.EMPTY );
-			ITokenDuple duple = new TokenDuple( first, last );
-			ITokenDuple realDuple = duple.getSubrange( 0, duple.length() - 3 );
-			IASTNode node = null;
-			try {
-				node = astFactory.lookupSymbolInContext( scope, realDuple );
-				setCompletionContext( node );
-			} catch (ASTNotImplementedException e) {
-				// assert false;
-			}
+		setCompletionScope( scope );
+		setCompletionKind( kind );
+		setCompletionKeywords( Key.EMPTY );
+		ITokenDuple duple = new TokenDuple( first, last );
+		try {
+			setCompletionContext( astFactory.lookupSymbolInContext( scope, duple ) );
+		} catch (ASTNotImplementedException e) {
 		}
+	
 	}
 
 	
@@ -167,4 +165,21 @@ public class ContextualParser extends CompleteParser {
 		this.scope = scope;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setCompletionValues(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind)
+	 */
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind) throws EndOfFileException {
+		setCompletionScope(scope);
+		setCompletionKind(kind);
+		checkEndOfFile();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setCompletionValues(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind, org.eclipse.cdt.core.parser.ast.IASTNode)
+	 */
+	protected void setCompletionValues(IASTScope scope, CompletionKind kind,
+			IASTNode context) throws EndOfFileException {
+		setCompletionScope(scope);
+		setCompletionKind(kind);
+		setCompletionContext(context);
+		checkEndOfFile();	}
 }

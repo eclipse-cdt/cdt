@@ -245,7 +245,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             
             setCompletionValues(scope, CompletionKind.NAMESPACE_REFERENCE, Key.EMPTY );
             // optional :: and nested classes handled in name
-            TokenDuple duple = null;
+            ITokenDuple duple = null;
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
                 duple = name(scope, CompletionKind.NAMESPACE_REFERENCE);
             else
@@ -284,7 +284,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             }
 
             setCompletionValues(scope, CompletionKind.TYPE_REFERENCE, Key.NAMESPACE_ONLY );
-            TokenDuple name = null;
+            ITokenDuple name = null;
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
             {
                 //	optional :: and nested classes handled in name
@@ -573,7 +573,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                         if (LT(1) == IToken.tASSIGN) // optional = type-id
                         {
                             consume(IToken.tASSIGN);
-                            typeId = typeId(parameterScope, false); // type-id
+                            typeId = typeId(parameterScope, false, CompletionKind.TYPE_REFERENCE); // type-id
                         }
                     }
 
@@ -616,7 +616,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     if (LT(1) == IToken.tASSIGN) // optional = type-id
                     {
                         consume(IToken.tASSIGN);
-                        optionalTypeId = typeId(parameterScope, false);
+                        optionalTypeId = typeId(parameterScope, false, CompletionKind.TYPE_REFERENCE);
     
                     }
                 }
@@ -947,8 +947,9 @@ public abstract class Parser extends ExpressionParser implements IParser
             new DeclarationWrapper(scope, firstToken.getOffset(), firstToken.getLineNumber(), ownerTemplate);
         firstToken = null; // necessary for scalability
 
-        setCompletionValues( scope, getCompletionKindForDeclaration(scope, overideKind), Key.DECL_SPECIFIER_SEQUENCE );
-        declSpecifierSeq(sdw, false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR );
+        CompletionKind completionKindForDeclaration = getCompletionKindForDeclaration(scope, overideKind);
+		setCompletionValues( scope, completionKindForDeclaration, Key.DECL_SPECIFIER_SEQUENCE );
+        declSpecifierSeq(sdw, false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR, completionKindForDeclaration );
         if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED )
             try
             {
@@ -974,12 +975,13 @@ public abstract class Parser extends ExpressionParser implements IParser
         Declarator declarator = null;
         if (LT(1) != IToken.tSEMI)
         {
-            declarator = initDeclarator(sdw, strategy);
+            declarator = initDeclarator(sdw, strategy, completionKindForDeclaration
+            		);
                 
             while (LT(1) == IToken.tCOMMA)
             {
                 consume();
-                initDeclarator(sdw, strategy);
+                initDeclarator(sdw, strategy, completionKindForDeclaration );
             }
         }
 
@@ -1142,7 +1144,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 consume(IToken.tLPAREN);
                 IASTExpression expressionList = null;
 
-                expressionList = expression(d.getDeclarationWrapper().getScope());
+                expressionList = expression(d.getDeclarationWrapper().getScope(), CompletionKind.SINGLE_NAME_REFERENCE);
 
                 consume(IToken.tRPAREN);
 
@@ -1183,7 +1185,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, current.getOffset(), current.getLineNumber(), null);
-        declSpecifierSeq(sdw, true, false);
+        declSpecifierSeq(sdw, true, false, CompletionKind.ARGUMENT_TYPE);
         if (sdw.getTypeSpecifier() == null
             && sdw.getSimpleType()
                 != IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
@@ -1214,7 +1216,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         
         setCompletionValues(scope,CompletionKind.USER_SPECIFIED_NAME,Key.EMPTY );     
         if (LT(1) != IToken.tSEMI)
-           initDeclarator(sdw, SimpleDeclarationStrategy.TRY_FUNCTION );
+           initDeclarator(sdw, SimpleDeclarationStrategy.TRY_FUNCTION, CompletionKind.VARIABLE_TYPE );
  
  		if( lastToken != null )
  			sdw.setEndingOffsetAndLineNumber( lastToken.getEndOffset(), lastToken.getLineNumber() );
@@ -1289,19 +1291,19 @@ public abstract class Parser extends ExpressionParser implements IParser
      * @return                 whether or not this looks like a constructor (true or false)
      * @throws EndOfFileException       we could encounter EOF while looking ahead
      */
-    private boolean lookAheadForConstructorOrConversion(Flags flags, DeclarationWrapper sdw )
+    private boolean lookAheadForConstructorOrConversion(Flags flags, DeclarationWrapper sdw, CompletionKind kind )
         throws EndOfFileException
     {
         if (flags.isForParameterDeclaration())
             return false;
-        if (LT(2) == IToken.tLPAREN && flags.isForConstructor())
+        if (queryLookaheadCapability(2) && LT(2) == IToken.tLPAREN && flags.isForConstructor())
             return true;
         
         IToken mark = mark(); 
         Declarator d = new Declarator( sdw );
         try
         {
-            consumeTemplatedOperatorName( d );
+            consumeTemplatedOperatorName( d, kind );
         }
         catch (BacktrackException e)
         {
@@ -1380,7 +1382,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     protected void declSpecifierSeq(
         DeclarationWrapper sdw,
         boolean parm,
-        boolean tryConstructor )
+        boolean tryConstructor, CompletionKind kind )
         throws BacktrackException, EndOfFileException
     {
         Flags flags = new Flags(parm, tryConstructor);
@@ -1591,7 +1593,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                                 new TokenDuple(typeNameBegin, typeNameEnd));
                         return;
                     }
-                    if (lookAheadForConstructorOrConversion(flags, sdw))
+                    if (lookAheadForConstructorOrConversion(flags, sdw, kind))
                     {
                         if (typeNameBegin != null)
                             sdw.setTypeName(
@@ -1607,7 +1609,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                         return;
                     }
  
-                    ITokenDuple d = name(sdw.getScope(), CompletionKind.TYPE_REFERENCE );
+                    ITokenDuple d = name(sdw.getScope(), kind );
                     sdw.setTypeName(d);
                     sdw.setSimpleType( IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME ); 
                     flags.setEncounteredTypename(true);
@@ -1747,10 +1749,10 @@ public abstract class Parser extends ExpressionParser implements IParser
      * @throws BacktrackException	request a backtrack
      */
     protected Declarator initDeclarator(
-        DeclarationWrapper sdw, SimpleDeclarationStrategy strategy )
+        DeclarationWrapper sdw, SimpleDeclarationStrategy strategy, CompletionKind kind )
         throws EndOfFileException, BacktrackException
     {
-        Declarator d = declarator(sdw, sdw.getScope(), strategy );
+        Declarator d = declarator(sdw, sdw.getScope(), strategy, kind );
         if( language == ParserLanguage.CPP )
         	optionalCPPInitializer(d);
         else if( language == ParserLanguage.C )
@@ -1782,7 +1784,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 consume(IToken.tLPAREN); // EAT IT!
                 setCompletionValues(scope,CompletionKind.SINGLE_NAME_REFERENCE,Key.EMPTY);
                 IASTExpression astExpression = null;
-                astExpression = expression(scope);
+                astExpression = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
                 setCompletionValues(scope,CompletionKind.NO_SUCH_KIND,Key.EMPTY);
                 consume(IToken.tRPAREN);
                 d.setConstructorExpression(astExpression);
@@ -1854,7 +1856,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         // assignmentExpression 
         try
         {
-            IASTExpression assignmentExpression = assignmentExpression(scope);
+            IASTExpression assignmentExpression = assignmentExpression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
             try
             {
                 return astFactory.createInitializerClause(
@@ -1931,7 +1933,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         try
         {
             IASTExpression assignmentExpression =
-                assignmentExpression(scope);
+                assignmentExpression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
    
             try
             {
@@ -1979,7 +1981,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     			else if( LT(1) == IToken.tLBRACKET )
     			{
     				consume( IToken.tLBRACKET );
-    				constantExpression = expression( scope );
+    				constantExpression = expression( scope, CompletionKind.SINGLE_NAME_REFERENCE );
     				consume( IToken.tRBRACKET );
 					kind = IASTDesignator.DesignatorKind.SUBSCRIPT; 	
     			}
@@ -2014,7 +2016,7 @@ public abstract class Parser extends ExpressionParser implements IParser
      * @throws BacktrackException	request a backtrack
      */
     protected Declarator declarator(
-        IDeclaratorOwner owner, IASTScope scope, SimpleDeclarationStrategy strategy )
+        IDeclaratorOwner owner, IASTScope scope, SimpleDeclarationStrategy strategy, CompletionKind kind )
         throws EndOfFileException, BacktrackException
     {
         Declarator d = null;
@@ -2028,11 +2030,11 @@ public abstract class Parser extends ExpressionParser implements IParser
             if (LT(1) == IToken.tLPAREN)
             {
                 consume();
-                declarator(d, scope, strategy );
+                declarator(d, scope, strategy, kind );
                 consume(IToken.tRPAREN);
             }
             else
-	            consumeTemplatedOperatorName(d);
+	            consumeTemplatedOperatorName(d, kind);
             
             for (;;)
             {
@@ -2143,13 +2145,13 @@ public abstract class Parser extends ExpressionParser implements IParser
                                         String image = LA(1).getImage();
                                         try
                                         {
-                                            duple = typeId(scope, false);
+                                            duple = typeId(scope, false, CompletionKind.EXCEPTION_REFERENCE );
                                             exceptionSpecIds.add(duple);
                                         }
                                         catch (BacktrackException e)
                                         {
                                             failParse();
-                                            TraceUtil.outputTrace( log, "Unexpected Token =", null, image, null, null ); //$NON-NLS-1$
+                                            TraceUtil.outputTrace( log, "Unexpected Token =", null, image, null, null );
                                             consume();
                                             // eat this token anyway
                                             continue;
@@ -2207,8 +2209,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                         continue;
                     case IToken.tCOLON :
                         consume(IToken.tCOLON);
-                        IASTExpression exp = null;
-                        exp = constantExpression(scope);
+                        IASTExpression exp = constantExpression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
                         d.setBitFieldExpression(exp);
                     default :
                         break;
@@ -2224,7 +2225,8 @@ public abstract class Parser extends ExpressionParser implements IParser
              ((Declarator)d.getOwner()).setOwnedDeclarator(d);
         return d;
     }
-    protected void consumeTemplatedOperatorName(Declarator d)
+    
+    protected void consumeTemplatedOperatorName(Declarator d, CompletionKind kind)
         throws EndOfFileException, BacktrackException
     {
         if (LT(1) == IToken.t_operator)
@@ -2233,7 +2235,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         {
             try
             {
-                ITokenDuple duple = name(d.getDeclarationWrapper().getScope(), CompletionKind.SINGLE_NAME_REFERENCE );
+                ITokenDuple duple = name(d.getDeclarationWrapper().getScope(), kind );
                 d.setName(duple);
         
             }
@@ -2347,7 +2349,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 if (LT(1) == IToken.tASSIGN)
                 {
                     consume(IToken.tASSIGN);
-                    initialValue = constantExpression(sdw.getScope());
+                    initialValue = constantExpression(sdw.getScope(), CompletionKind.SINGLE_NAME_REFERENCE);
                 }
   
                 if (LT(1) == IToken.tRBRACE)
@@ -2598,7 +2600,7 @@ public abstract class Parser extends ExpressionParser implements IParser
            			break;
                 case IToken.tCOLONCOLON :
                 case IToken.tIDENTIFIER :
-                    nameDuple = name(astClassSpec, CompletionKind.CLASS_REFERENCE );
+                    nameDuple = name(astClassSpec.getOwnerScope(), CompletionKind.CLASS_REFERENCE );
                     break;
                 case IToken.tCOMMA :
                     try
@@ -2667,7 +2669,7 @@ public abstract class Parser extends ExpressionParser implements IParser
         {
             case IToken.t_case :
                 consume(IToken.t_case);
-                IASTExpression constant_expression = constantExpression(scope);
+                IASTExpression constant_expression = constantExpression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
 				constant_expression.acceptElement(requestor);
                 consume(IToken.tCOLON);
                 statement(scope);
@@ -2735,7 +2737,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 consume(IToken.tSEMI);
                 if (LT(1) != IToken.tRPAREN)
                 {  
-                    IASTExpression finalExpression = expression(scope);
+                    IASTExpression finalExpression = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
                     finalExpression.acceptElement(requestor);
                 }
                 consume(IToken.tRPAREN);
@@ -2753,7 +2755,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 consume();
                 if (LT(1) != IToken.tSEMI)
                 {
-                    IASTExpression retVal = expression(scope);
+                    IASTExpression retVal = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
                     retVal.acceptElement(requestor);
                 }
                 consume(IToken.tSEMI);
@@ -2794,9 +2796,9 @@ public abstract class Parser extends ExpressionParser implements IParser
                 IToken mark = mark();
                 try
                 {
-                    IASTExpression thisExpression = expression(scope);
+                    IASTExpression expressionStatement = expression(scope, CompletionKind.SINGLE_NAME_REFERENCE);
                    	consume(IToken.tSEMI);
-                    thisExpression.acceptElement( requestor );
+                   	expressionStatement.acceptElement( requestor );
                     return;
                 }
                 catch (BacktrackException b)
@@ -2857,7 +2859,7 @@ public abstract class Parser extends ExpressionParser implements IParser
      */
     protected void condition( IASTScope scope ) throws BacktrackException, EndOfFileException
     {
-        IASTExpression someExpression = expression( scope );
+        IASTExpression someExpression = expression( scope, CompletionKind.SINGLE_NAME_REFERENCE );
         someExpression.acceptElement(requestor);
         //TODO type-specifier-seq declarator = assignment expression 
     }
@@ -2870,7 +2872,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     	IToken mark = mark();
     	try
     	{
-    		IASTExpression e = expression( scope );
+    		IASTExpression e = expression( scope, CompletionKind.SINGLE_NAME_REFERENCE );
 			e.acceptElement(requestor);
 			
 			consume( IToken.tSEMI );
@@ -3011,6 +3013,7 @@ public abstract class Parser extends ExpressionParser implements IParser
     
     protected void setCompletionToken( IToken token )
 	{
+    	// do nothing!
     }
     
     protected IToken getCompletionToken()
@@ -3023,28 +3026,33 @@ public abstract class Parser extends ExpressionParser implements IParser
 	 */
 	public IASTNode parse(int startingOffset, int endingOffset)
 		throws ParseError {
-		// TODO Auto-generated method stub
-		return null;
+		throw new ParseError( ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParser#parse(int)
 	 */
 	public IASTCompletionNode parse(int offset) throws ParseError {
-		// TODO Auto-generated method stub
-		return null;
+		throw new ParseError( ParseError.ParseErrorKind.METHOD_NOT_IMPLEMENTED );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setupASTFactory(org.eclipse.cdt.core.parser.IScanner, org.eclipse.cdt.core.parser.ParserLanguage)
 	 */
 	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
+		// do nothing as of yet
+		// subclasses will need to implement this method
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#parserTimeout()
 	 */
 	protected boolean parserTimeout() {
-		// TODO Auto-generated method stub
 		return requestor.parserTimeout();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#getCompliationUnit()
+	 */
+	protected IASTNode getCompliationUnit() {
+		return compilationUnit;
 	}
 }

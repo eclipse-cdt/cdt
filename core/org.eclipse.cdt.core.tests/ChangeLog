@@ -1,4 +1,9 @@
-2004-04-05 Andrew Niefer
+2004-04-07 John Camelon
+	Updated test cases that used IExpressionParser::expression().  
+	Added CompletionParseTest::testCompletionInFunctionBodyFullyQualified(). 
+	Added CompletionParseTest::testCompletionInFunctionBodyQualifiedName().  
+
+2004-04-06 Andrew Niefer
 	added parser/org/eclipse/cdt/core/parser/tests/CompleteParseASTTest.testBug47625()
 	
 2004-04-06 John Camelon

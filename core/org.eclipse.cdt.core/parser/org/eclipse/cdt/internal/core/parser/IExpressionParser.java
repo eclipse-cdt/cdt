@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser;
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IFilenameProvider;
+import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 
@@ -30,6 +31,6 @@ public interface IExpressionParser extends IFilenameProvider {
 	 * @throws BacktrackException	thrown if the Scanner/Stream provided does not yield a valid
 	 * 						expression	
 	 */
-	public IASTExpression expression(IASTScope scope) throws BacktrackException, EndOfFileException;
+	public IASTExpression expression(IASTScope scope, IASTCompletionNode.CompletionKind kind) throws BacktrackException, EndOfFileException;
 	
 }

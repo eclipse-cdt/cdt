@@ -9,7 +9,9 @@ package org.eclipse.cdt.core.parser.tests;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.NullLogService;
@@ -20,17 +22,21 @@ import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
+import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTField;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * @author jcamelon
@@ -687,6 +693,118 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 		
 		assertEquals( name.getName(), "name" );
 		assertFalse( iter.hasNext() );
+	}
+	
+	public void testCompletionInFunctionBodyFullyQualified() throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		writer.write( "int aInteger = 5;\n");
+		writer.write( "namespace NMS { \n");
+		writer.write( " int foo() { \n");
+		writer.write( "::A ");
+		writer.write( "}\n}\n");
+		String code = writer.toString();
+		
+		for( int i = 0; i < 2; ++i )
+		{
+			String stringToCompleteAfter = ( i == 0 ) ? "::" : "::A";
+			IASTCompletionNode node = parse( code, code.indexOf( stringToCompleteAfter) + stringToCompleteAfter.length() );
+			
+			validateCompletionNode(node, ( i == 0 ? "" : "A"), IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE, getCompilationUnit() );
+			
+			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+	                new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
+	                node.getCompletionContext() );
+	
+			Set results = new HashSet();
+			results.add( "aInteger");
+			if( i == 0 )
+				results.add( "NMS");
+			validateLookupResult(result, results );
+		}
+
+	}
+
+	/**
+	 * @param result
+	 */
+	private void validateLookupResult(ILookupResult result, Set matches) {
+		
+		assertNotNull( matches );
+		assertEquals( result.getResultsSize(), matches.size() );
+		
+		Iterator iter = result.getNodes();
+		int assertionCount = 0;
+		while( iter.hasNext() )
+		{
+			IASTOffsetableNamedElement element = (IASTOffsetableNamedElement) iter.next();
+			assertTrue( matches.contains( element.getName() ));
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	protected IASTCompilationUnit getCompilationUnit() {
+		CompleteParseBaseTest.Scope s = (Scope) callback.getCompilationUnit();
+		IASTCompilationUnit compilationUnit = (IASTCompilationUnit) ((Scope) callback.getCompilationUnit()).getScope();
+		return compilationUnit;
+	}
+
+	/**
+	 * @param node
+	 */
+	protected void validateCompletionNode(IASTCompletionNode node, String prefix, CompletionKind kind, IASTNode context ) {
+		assertNotNull( node );
+		assertEquals( node.getCompletionPrefix(), prefix);
+		assertEquals( node.getCompletionKind(), kind );
+		assertEquals( node.getCompletionContext(), context );
+		assertFalse( node.getKeywords().hasNext() );
+	}
+	
+	public void testCompletionInFunctionBodyQualifiedName() throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		writer.write( "namespace ABC {\n");
+		writer.write( "  struct DEF { int x; }; \n" );
+		writer.write( "  struct GHI { float y;};\n");
+		writer.write( "}\n");
+		writer.write( "int main() { ABC::D }\n");
+		String code = writer.toString();
+		
+		for( int j = 0; j< 2; ++j )
+		{
+			String stringToCompleteAfter = (j == 0 ) ? "::" : "::D";
+			IASTCompletionNode node = parse( code, code.indexOf( stringToCompleteAfter) + stringToCompleteAfter.length() );
+			
+			IASTNamespaceDefinition namespaceDefinition = null;
+			Iterator i = callback.getCompilationUnit().getDeclarations();
+			while( i.hasNext() )
+			{
+				IASTDeclaration d = (IASTDeclaration) i.next();
+				if( d instanceof IASTNamespaceDefinition ) 
+					if( ((IASTNamespaceDefinition)d).getName().equals( "ABC") )
+					{
+						namespaceDefinition = (IASTNamespaceDefinition) d;
+						break;
+					}
+			}
+			assertNotNull( namespaceDefinition );
+			validateCompletionNode( node, 
+					( j == 0 ) ? "" : "D", 
+					IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE, namespaceDefinition ); 
+	
+			ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+	                new IASTNode.LookupKind[]{ IASTNode.LookupKind.ALL },
+	                node.getCompletionContext() );
+			
+			Set results = new HashSet();
+			results.add( "DEF");
+			if( j == 0 )
+				results.add( "GHI");
+			validateLookupResult(result, results );
+		}
+
 	}
 	
 }

@@ -1,3 +1,8 @@
+2004-04-07 John Camelon
+	Updated CompletionFailedTest_ScopedReference_Prefix_Bug50152, moved it out of failed tests package and renamed it to CompletionTest_ScopedReference_Prefix_Bug50152.
+	Updated CompletionFailedTest_TypeDef_Bug52948, moved it out of failed tests package and renamed it to CompletionTest_TypeDef_Bug52948. 
+	Updated CompletionFailedTest_ScopedReference_NoPrefix_Bug50152 to show Hoda/Andrew what is still broken.  	
+
 2004-03-08 Hoda Amer
 	Added one failed test: CompletionFailedTest_TypeDef_Bug52948
 

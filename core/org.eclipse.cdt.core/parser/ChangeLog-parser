@@ -1,3 +1,7 @@
+2004-04-07 John Camelon
+	Provided a partial fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=50152
+	Updated IExpressionParser::expression() interface necessitated by this fix, and updated its clients appropriately.  
+
 2004-04-06 David Daoust
 	Removed some temporary objects that the scanner was producing.
 	Fixed small bug in GCCScannerExtension.

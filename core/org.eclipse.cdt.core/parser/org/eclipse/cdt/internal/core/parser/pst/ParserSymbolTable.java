@@ -2245,7 +2245,8 @@ public class ParserSymbolTable {
 		}
 		
 		if( ! (qualifyingSymbol instanceof IDerivableContainerSymbol) ){
-			throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );	
+//			throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError ); //TODO - Andrew, why is this an error?
+			return ASTAccessVisibility.PUBLIC;
 		}
 		
 		List parents = ((IDerivableContainerSymbol) qualifyingSymbol).getParents();

@@ -29,7 +29,7 @@ public class ExprEvalTest extends TestCase {
 		
 		final NullSourceElementRequestor nullCallback = new NullSourceElementRequestor();
         IExpressionParser parser = InternalParserUtil.createExpressionParser(ParserFactory.createScanner( new StringReader( code ), getClass().getName(), new ScannerInfo(), null, ParserLanguage.CPP, nullCallback, new NullLogService() ), ParserLanguage.CPP, null );
-		IASTExpression expression = parser.expression(null);
+		IASTExpression expression = parser.expression(null,null);
 		assertEquals(expectedValue, expression.evaluateExpression());
 	}
 	

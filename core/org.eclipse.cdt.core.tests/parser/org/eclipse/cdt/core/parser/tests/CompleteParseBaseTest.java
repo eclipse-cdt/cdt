@@ -300,7 +300,8 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void enterCompilationUnit(IASTCompilationUnit compilationUnit)
         {
-            pushScope( compilationUnit );            
+            pushScope( compilationUnit );
+            this.compilationUnit = getCurrentScope();
         }
     
         /* (non-Javadoc)
@@ -478,7 +479,6 @@ public class CompleteParseBaseTest extends TestCase
          */
         public void exitCompilationUnit(IASTCompilationUnit compilationUnit)
         {
-            this.compilationUnit = popScope();
         }
     
         

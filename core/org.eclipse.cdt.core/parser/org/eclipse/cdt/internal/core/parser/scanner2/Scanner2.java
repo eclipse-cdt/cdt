@@ -1276,7 +1276,11 @@ public class Scanner2 implements IScanner, IScannerData {
 							handleInvalidCompletion();
 						return;
 					case ppError:
-						throw new ScannerException(null);
+						start = bufferPos[bufferStackPos];
+						skipToNewLine();
+						len = bufferPos[bufferStackPos] - start;
+						handleProblem( IProblem.PREPROCESSOR_POUND_ERROR, start, CharArrayUtils.extract( buffer, start, len ));
+						break;
 					case ppEndif:
 					    if( !branchState( BRANCH_END ) )
 					        handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, start, ppKeywords.findKey( buffer, start, len ) );

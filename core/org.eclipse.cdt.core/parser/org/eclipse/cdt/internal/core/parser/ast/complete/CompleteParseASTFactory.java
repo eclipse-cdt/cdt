@@ -1806,11 +1806,14 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		if(kind == IASTExpression.Kind.EXPRESSIONLIST){
 			result = new ExpressionResultList();
 			if(lhs != null){
-				ITypeInfo leftType = ((ASTExpression)lhs).getResultType().getResult();
-				result.setResult(leftType);	
+			    ExpressionResult resultType = ((ASTExpression)lhs).getResultType();
+			    if( resultType instanceof ExpressionResultList )
+			        ((ExpressionResultList)result).setResult( (ExpressionResultList) resultType );
+			    else
+			        result.setResult( resultType.getResult() );	
 			}
 			if(rhs != null){
-				ITypeInfo rightType = ((ASTExpression)rhs).getResultType().getResult();
+			    ITypeInfo rightType = ((ASTExpression)rhs).getResultType().getResult();
 				result.setResult(rightType);
 			}
 			return result;			

@@ -347,4 +347,23 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		assertTrue( node instanceof IASTField );
 		assertEquals( ((IASTField)node).getName(), "stInt" ); //$NON-NLS-1$
 	}
+	
+	public void testBug68739() throws Exception
+	{
+	    Writer writer = new StringWriter();
+	    writer.write( "int fprintf( int *, const char *, ... );               \n" ); //$NON-NLS-1$
+	    writer.write( "void boo( int * lcd ) {                                \n" ); //$NON-NLS-1$
+	    writer.write( "  /**/fprintf( lcd, \"%c%s 0x%x\", ' ', \"bbb\", 2 );  \n" ); //$NON-NLS-1$
+	    writer.write( "}                                                      \n" ); //$NON-NLS-1$
+	    
+	    String code = writer.toString();
+		int startIndex = code.indexOf( "/**/fprintf") + 4; //$NON-NLS-1$
+
+		IASTNode node = parse( code, startIndex, startIndex+ 7 );
+		
+		assertTrue( node instanceof IASTFunction );
+		assertEquals( ((IASTFunction)node).getName(), "fprintf" ); //$NON-NLS-1$
+
+	    
+	}
 }

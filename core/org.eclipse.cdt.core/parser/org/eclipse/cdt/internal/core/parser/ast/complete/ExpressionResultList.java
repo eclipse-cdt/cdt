@@ -40,6 +40,14 @@ public class ExpressionResultList extends ExpressionResult {
 		resultList.add(info);
 	}
 
+	public void setResult( ExpressionResultList result ){
+	    List list = result.getResultList();
+	    int size = list.size();
+	    for( int i = 0; i < size; i++ ){
+	        resultList.add( list.get( i ) );    
+	    }
+	}
+	
 	/**
 	 * @return
 	 */

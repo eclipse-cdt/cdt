@@ -335,7 +335,7 @@ public class MemoryPresentation
 				if (address.compareTo( firstRow.getAddress()) >=0 && address.compareTo( lastRow.getAddress()) <=0)
 				
 				{
-					BigInteger asciiOffset = address.distance( firstRow.getAddress());
+					BigInteger asciiOffset = firstRow.getAddress().distanceTo(address);
 					int asciiRowlength = getMemoryBlock().getWordSize() * getMemoryBlock().getNumberOfColumns();
 					int numberOfRows = asciiOffset.intValue()  / asciiRowlength;
 					int offsetInRow = asciiOffset.intValue()  % asciiRowlength;

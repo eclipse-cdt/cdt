@@ -1,5 +1,13 @@
 2003-01-16 Alain Magloire
 
+	* src/.../mi/core/cdi/EventManager.java (processSuspended):
+	Also process the Shared lib by calling update on the manager.
+
+	* src/.../mi/core/cdi/CSession.java: Create a shared
+	library manager.
+
+2003-01-16 Alain Magloire
+
 	* src/.../mi/core/event/MISharedLibCreatedEvent.java: New file.
 	* src/.../mi/core/event/MISharedLibChangedEvent.java: New file.
 	* src/.../mi/core/event/MISharedLibUndloadedEvent.java: New file.

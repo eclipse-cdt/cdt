@@ -75,14 +75,8 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		}
 	}
 
-	boolean containsBreakpoint(int number) {
-		return (getBreakpoint(number) != null);
-	}
-
-	boolean hasBreakpointChanged(MIBreakpoint miBreakpoint) {
+	boolean hasBreakpointChanged(Breakpoint point, MIBreakpoint miBreakpoint) {
 		boolean changed = false;
-		int no = miBreakpoint.getNumber();
-		Breakpoint point = getBreakpoint(no);
 		if (point != null) {
 			MIBreakpoint miBreak = point.getMIBreakpoint();
 			changed = (miBreak.isEnabled() != miBreakpoint.isEnabled()) ||
@@ -266,9 +260,11 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		List eventList = new ArrayList(newMIBreakpoints.length);
 		for (int i = 0; i < newMIBreakpoints.length; i++) {
 			int no = newMIBreakpoints[i].getNumber();
-			if (containsBreakpoint(no)) {
-				if (hasBreakpointChanged(newMIBreakpoints[i])) {
+			Breakpoint bp = getBreakpoint(no);
+			if (bp != null) {
+				if (hasBreakpointChanged(bp, newMIBreakpoints[i])) {
 					// Fire ChangedEvent
+					bp.setMIBreakpoint(newMIBreakpoints[i]);
 					eventList.add(new MIBreakpointChangedEvent(no)); 
 				}
 			} else {

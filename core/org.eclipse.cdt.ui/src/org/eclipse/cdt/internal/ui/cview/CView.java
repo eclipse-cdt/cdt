@@ -34,7 +34,6 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
@@ -242,25 +241,12 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 */
 	protected void handleDoubleClick(DoubleClickEvent event) {
 		IStructuredSelection s = (IStructuredSelection) event.getSelection();
-		IEditorPart part = null;
 		Object o = s.getFirstElement();
-		if (o instanceof IAdaptable) {
-			IAdaptable element = (IAdaptable) o;
-			//System.out.println ("Double click on " + element);
-
-			try {
-				part = EditorUtility.openInEditor(element);
-				if (part != null) {
-					IWorkbenchPage page = getSite().getPage();
-					page.bringToTop(part);
-					if (element instanceof ISourceReference) {
-						EditorUtility.revealInEditor(part, (ICElement) element);
-					}
-				}
-			} catch (Exception e) {
+		if (viewer.isExpandable(o)) {
+			// Do not drill in to translation units of binaries.
+			if (o instanceof ITranslationUnit || o instanceof IBinary || o instanceof IArchive) {
+				return;
 			}
-		}
-		if (part == null && viewer.isExpandable(o)) {
 			viewer.setExpandedState(o, !viewer.getExpandedState(o));
 		}
 	}

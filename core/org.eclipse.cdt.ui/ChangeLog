@@ -1,3 +1,11 @@
+2004-03-03 Alain Magloire
+
+	Fix to the CView.  It was opening the file twice.
+	This would show when opening a binary.
+
+	* src/org/eclipse/cdt/internal/cview/CView.java
+	* src/org/eclipse/cdt/internal/cview/OpenFileGroup.java
+
 2004-03-03 Hoda Amer
 	Added a couple of APIs to CUIPlugin + some cleanup
 	

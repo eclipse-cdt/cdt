@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -19,6 +22,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenInNewWindowAction;
 import org.eclipse.ui.actions.OpenWithMenu;
@@ -120,13 +125,27 @@ public class OpenFileGroup extends CViewActionGroup {
 	 */
 	public void runDefaultAction(IStructuredSelection selection) {
 		Object obj = selection.getFirstElement();
-		if (obj instanceof IAdaptable) {
+		if (obj instanceof ICElement) {
+			ICElement celement = (ICElement) obj;
+			//System.out.println ("Double click on " + element);
+			try {
+				IEditorPart part = EditorUtility.openInEditor(celement);
+				if (part != null) {
+					IWorkbenchPage page = getCView().getSite().getPage();
+					page.bringToTop(part);
+					if (celement instanceof ISourceReference) {
+						EditorUtility.revealInEditor(part, celement);
+					}
+				}
+			} catch (Exception e) {
+			}
+		} else if (obj instanceof IAdaptable) {
 			IResource element = (IResource)((IAdaptable)obj).getAdapter(IResource.class);
 			if (element instanceof IFile) {
 				openFileAction.selectionChanged(selection);
 				openFileAction.run();
 			}
 		}
-        }
+	}
 
 }

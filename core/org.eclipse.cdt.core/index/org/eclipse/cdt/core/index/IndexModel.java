@@ -5,15 +5,42 @@ package org.eclipse.cdt.core.index;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.internal.core.index.IndexManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-
-import org.eclipse.cdt.internal.core.index.IndexManager;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 
 public class IndexModel {
 
 	static IndexModel indexModel = null;
 	static IndexManager manager = null;
+	final static String INDEX_MODEL_ID = CCorePlugin.PLUGIN_ID + ".indexmodel";
+	final static String ACTIVATION = "enable";
+
+	static QualifiedName activationKey = new QualifiedName(INDEX_MODEL_ID, ACTIVATION);
+
+	public boolean isEnabled(IProject project) {
+		String prop = null;
+		try {
+			if (project != null) {
+				prop = project.getPersistentProperty(activationKey);
+			}
+		} catch (CoreException e) {
+		}
+		return ((prop != null) && prop.equalsIgnoreCase("true"));
+	}
+
+	public void setEnabled(IProject project, boolean on) {
+		String prop = new Boolean(on).toString();
+		try {
+			if (project != null) {
+				project.setPersistentProperty(activationKey, prop);
+			}
+		} catch (CoreException e) {
+		}
+	}
 
 	/**
 	 * Search Project for tag symbol.

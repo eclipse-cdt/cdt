@@ -161,7 +161,7 @@ public class CompletionEngine implements RelevanceConstants {
 		} 			
 	
 		//C or CPP?
-		ParserLanguage language = CoreModel.getDefault().hasCCNature(project) ? ParserLanguage.CPP : ParserLanguage.C;
+		ParserLanguage language = CoreModel.hasCCNature(project) ? ParserLanguage.CPP : ParserLanguage.C;
 	
 		IParser parser = null;
 		IScanner scanner = null;
@@ -205,10 +205,10 @@ public class CompletionEngine implements RelevanceConstants {
 		}	 	
 	}
 	
-	private void addNodeToCompletions(IASTNode node, String prefix, int totalNumberOfResults, boolean addStaticMembersOnly){
+	private void addNodeToCompletions(IASTNode node, String prefix, int totalNumberOfResults, boolean addStaticMethodsOnly, boolean addStaticFieldsOnly){
 		if(node instanceof IASTField){
 			IASTField field = (IASTField)node;
-			if(addStaticMembersOnly && (!field.isStatic()))
+			if(addStaticFieldsOnly && (!field.isStatic()))
 				return;
 			int relevance = computeRelevance(ICElement.C_FIELD, prefix, field.getName());
 			
@@ -237,7 +237,7 @@ public class CompletionEngine implements RelevanceConstants {
 						completionStart, completionLength, relevance);
 			}else {
 			// global variable	
-			if(addStaticMembersOnly && (!variable.isStatic()))
+			if(addStaticFieldsOnly && (!variable.isStatic()))
 				return;
 
 			int relevance = computeRelevance(ICElement.C_VARIABLE, prefix, variable.getName());
@@ -249,7 +249,7 @@ public class CompletionEngine implements RelevanceConstants {
 		}
 		else if(node instanceof IASTMethod) {
 			IASTMethod method = (IASTMethod)node;
-			if(addStaticMembersOnly && (!method.isStatic()))
+			if(addStaticMethodsOnly && (!method.isStatic()))
 				return;
 			
 			int relevance = computeRelevance(ICElement.C_METHOD, prefix, method.getName());
@@ -262,7 +262,7 @@ public class CompletionEngine implements RelevanceConstants {
 		}
 		else if(node instanceof IASTFunction){
 			IASTFunction function = (IASTFunction)node;
-			if(addStaticMembersOnly && (!function.isStatic()))
+			if(addStaticMethodsOnly && (!function.isStatic()))
 				return;
 			
 			int relevance = computeRelevance(ICElement.C_FUNCTION, prefix, function.getName());
@@ -386,10 +386,10 @@ public class CompletionEngine implements RelevanceConstants {
 	}
 
 	private void addToCompletions (ILookupResult result){
-		addToCompletions(result, false);
+		addToCompletions(result, false, false);
 	}	
 	
-	private void addToCompletions (ILookupResult result, boolean addStaticMembersOnly){
+	private void addToCompletions (ILookupResult result, boolean addStaticMethodsOnly, boolean addStaticFieldsOnly){
 		if(result == null){
 			log("Lookup Results       = null ................. !!! No Lookup Results found !!! "); //$NON-NLS-1$
 			return;
@@ -401,7 +401,7 @@ public class CompletionEngine implements RelevanceConstants {
 		
 		while (nodes.hasNext()){
 			IASTNode node = (IASTNode) nodes.next();
-			addNodeToCompletions(node, result.getPrefix(), numberOfElements, addStaticMembersOnly);	
+			addNodeToCompletions(node, result.getPrefix(), numberOfElements, addStaticMethodsOnly, addStaticFieldsOnly);	
 		}
 		return ;
 	}
@@ -472,7 +472,9 @@ public class CompletionEngine implements RelevanceConstants {
 		IASTScope searchNode = completionNode.getCompletionScope();
 		// here we have to look for anything that could be referenced within this scope
 		// 1. lookup local variables, global variables, functions, methods, structures, enums, and namespaces
-		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[9];
+		IASTNode.LookupKind[] kinds = new IASTNode.LookupKind[1];
+		kinds[0] = IASTNode.LookupKind.ALL; 
+/*
 		kinds[0] = IASTNode.LookupKind.VARIABLES; 
 		kinds[1] = IASTNode.LookupKind.STRUCTURES; 
 		kinds[2] = IASTNode.LookupKind.ENUMERATIONS; 
@@ -482,13 +484,19 @@ public class CompletionEngine implements RelevanceConstants {
 		kinds[6] = IASTNode.LookupKind.METHODS; 
 		kinds[7] = IASTNode.LookupKind.FUNCTIONS; 
 		kinds[8] = IASTNode.LookupKind.ENUMERATORS; 
-		
+		kinds[9] = IASTNode.LookupKind.CONSTRUCTORS; 
+*/		
 		ILookupResult result = lookup(searchNode, completionNode.getCompletionPrefix(), kinds, completionNode.getCompletionContext());
 		// lookup static members (field / methods) in types
 		if( (completionNode.getCompletionContext() != null)
 			&& (completionNode.getCompletionContext() instanceof IASTClassSpecifier) 
-			&& (((IASTClassSpecifier) completionNode.getCompletionContext()).getClassKind() != ASTClassKind.ENUM)){
-				addToCompletions(result, true);
+			&& (((IASTClassSpecifier) completionNode.getCompletionContext()).getClassKind() != ASTClassKind.ENUM) ){
+				if (completionNode.getCompletionScope() instanceof IASTCodeScope){
+					addToCompletions(result, true, true);
+				}
+				else {
+					addToCompletions(result, false, true);					
+				}
 		} else {
 			addToCompletions(result);
 		}
@@ -727,12 +735,20 @@ public class CompletionEngine implements RelevanceConstants {
 			completionOnMemberReference(completionNode);
 		}
 		else if(kind == CompletionKind.FIELD_TYPE){
-			// CompletionOnFieldType
-			completionOnFieldType(completionNode);
+			if (completionNode.getCompletionContext() == null){
+				// CompletionOnFieldType
+				completionOnFieldType(completionNode);
+			}else {
+				completionOnScopedReference(completionNode);
+			}				
 		}
 		else if(kind == CompletionKind.VARIABLE_TYPE) {
-			// CompletionOnVariableType
-			completionOnVariableType(completionNode);
+			if (completionNode.getCompletionContext() == null){
+				// CompletionOnVariableType
+				completionOnVariableType(completionNode);
+			}else {
+				completionOnScopedReference(completionNode);
+			}
 		}
 		else if(kind == CompletionKind.ARGUMENT_TYPE){
 			// CompletionOnArgumentType

@@ -1,3 +1,6 @@
+2004-04-30 Hoda Amer
+	Partial fix for bug#60298 : [Content Assist] "No completions available" when using Content Assist during class definitions
+	
 2004-04-23 Alain Magloire
 
 	Tentative fix for PR 59098.

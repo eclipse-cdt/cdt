@@ -1,3 +1,7 @@
+2004-04-30 Hoda Amer
+	Added CompletionFailedTest_ScopedReference_ConstructorDefinition
+	Added CompletionTest_ScopedReference_NonCodeScope
+	
 2004-04-12 Hoda Amer
 	Updated CompletionFailedTest_ScopedReference_NoPrefix_Bug50152, renamed it to CompletionTest_ScopedReference_NoPrefix and moved it out of the failed tests folder.
 	

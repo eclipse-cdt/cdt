@@ -66,9 +66,6 @@ public class TargetListViewerPart extends StructuredViewerPart {
 		tableViewer.setLabelProvider(new MakeLabelProvider(fContainer.getProjectRelativePath()));
 		tableViewer.setInput(fContainer);
 
-		if (fSelectedTarget != null) {
-			tableViewer.setSelection(new StructuredSelection(fSelectedTarget), true);
-		}
 		return tableViewer;
 	}
 
@@ -107,10 +104,9 @@ public class TargetListViewerPart extends StructuredViewerPart {
 	}
 
 	public void setSelectedTarget(IMakeTarget target) {
+		fSelectedTarget = target;
 		if (tableViewer != null) {
 			tableViewer.setSelection(new StructuredSelection(fSelectedTarget), true);
-		} else {
-			fSelectedTarget = target;
 		}
 	}
 
@@ -132,6 +128,9 @@ public class TargetListViewerPart extends StructuredViewerPart {
 	public void createControl(Composite parent, int style, int span) {
 		super.createControl(parent, style, span);
 		updateEnabledState();
+		if (fSelectedTarget != null) {
+			tableViewer.setSelection(new StructuredSelection(fSelectedTarget), true);
+		}
 	}
 
 }

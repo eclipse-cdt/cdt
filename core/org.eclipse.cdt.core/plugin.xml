@@ -51,7 +51,7 @@
          point="org.eclipse.cdt.core.BinaryParser">
       <cextension>
          <run
-               class="org.eclipse.cdt.internal.core.model.parser.ElfParser">
+               class="org.eclipse.cdt.utils.elf.parser.ElfParser">
          </run>
       </cextension>
    </extension>
@@ -71,7 +71,7 @@
          point="org.eclipse.cdt.core.BinaryParser">
       <cextension>
          <run
-               class="org.eclipse.cdt.internal.core.model.parser.PEParser">
+               class="org.eclipse.cdt.utils.coff.parser.PEParser">
          </run>
       </cextension>
    </extension>

@@ -6,6 +6,7 @@ package org.eclipse.cdt.internal.core.model;
  */
 
 import java.io.IOException;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.core.runtime.IPath;
@@ -18,6 +19,13 @@ public class NullBinaryParser implements IBinaryParser {
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
 	 */
 	public IBinaryFile getBinary(byte[] data, IPath path) throws IOException {
+		throw new IOException(CCorePlugin.getResourceString("CoreModel.NullBinaryParser.Not_binary_file")); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
+	 */
+	public IBinaryFile getBinary(IPath path) throws IOException {
 		throw new IOException(CCorePlugin.getResourceString("CoreModel.NullBinaryParser.Not_binary_file")); //$NON-NLS-1$
 	}
 

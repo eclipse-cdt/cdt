@@ -5,6 +5,25 @@
 
 2004-02-27 Alain Magloire
 
+	By "popular" demand, put back
+		IBinaryParser.getBinary(IPath path)
+	method on the binary parser.
+
+	* model/org/eclpse/cdt/internal/core/model/CProject.java
+	* model/org/eclpse/cdt/internal/core/model/NullBinaryParser.java
+	* src/org/eclipse/cdt/core/IBinaryParser.java
+	* utils/org/eclipse/cdt/utils/coff/parser/PEParser.java
+	* utils/org/eclipse/cdt/utils/elf/parser/ElfParser.java
+
+	Removed the unused ElfParsers id.
+
+	* model/org/eclipse/cdt/internal/core/model/parser/ElfParser.java
+	* model/org/eclipse/cdt/internal/core/model/parser/PEParser.java
+	
+	* plugin.xml
+
+2004-02-27 Alain Magloire
+
 	Performance improvement in the IBinaryParser and
 	changes in the API according to the specs.
 	Now we have:

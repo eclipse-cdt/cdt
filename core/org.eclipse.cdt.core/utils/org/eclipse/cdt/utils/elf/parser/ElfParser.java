@@ -24,6 +24,14 @@ import org.eclipse.core.runtime.IPath;
  */
 public class ElfParser extends AbstractCExtension implements IBinaryParser {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
+	 */
+	public IBinaryFile getBinary(IPath path) throws IOException {
+		return getBinary(null, path);
+	}
+
+
 	public IBinaryFile getBinary(byte[] hints, IPath path) throws IOException {
 		if (path == null) {
 			throw new IOException("path is null");

@@ -101,6 +101,15 @@ public interface IBinaryParser {
 	IBinaryFile getBinary(byte[] hints, IPath path) throws IOException;
 
 	/**
+	 * Creates an IBinaryFile.
+	 * 
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	IBinaryFile getBinary(IPath path) throws IOException;
+
+	/**
 	 * Returns the name of the Format.
 	 * @return
 	 */

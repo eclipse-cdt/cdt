@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.utils.debug.DebugType;
 import org.eclipse.cdt.utils.debug.DebugUnknownType;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.debug.tools.DebugSym;

@@ -26,6 +26,13 @@ import org.eclipse.core.runtime.IPath;
  */
 public class PEParser extends AbstractCExtension implements IBinaryParser {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(org.eclipse.core.runtime.IPath)
+	 */
+	public IBinaryFile getBinary(IPath path) throws IOException {
+		return getBinary(null, path);
+	}
+
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getBinary(IFile)
 	 */

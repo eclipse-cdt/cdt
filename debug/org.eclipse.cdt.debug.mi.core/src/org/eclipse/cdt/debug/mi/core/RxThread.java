@@ -134,9 +134,7 @@ MIPlugin.getDefault().debugLog(line);
 					MIEvent event = new MIRunningEvent(type);
 					session.fireEvent(event);
 				} else if ("exit".equals(state)) {
-					//session.getMIInferior().setTerminated();
-					//MIEvent event = new MIGDBExitEvent();
-					//fireEvent(event);
+					// No need to do anything, terminate() will.
 				} else if ("connected".equals(state)) {
 					session.getMIInferior().setConnected();
 				}
@@ -155,24 +153,24 @@ MIPlugin.getDefault().debugLog(line);
 						cmd.setMIOutput(response);
 						cmd.notifyAll();
 					}
-				}
-
+				} 
 				// Some result record contains informaton specific to oob.
 				// This will happen when CLI-Command is use, for example
 				// doing "run" will block and return a breakpointhit
 				processMIOOBRecord(rr, list);
 
-			}
+			} else {
 
-			// Process OOBs
-			MIOOBRecord[] oobs = response.getMIOOBRecords();
-			for (int i = 0; i < oobs.length; i++) {
-				processMIOOBRecord(oobs[i], list);
+				// Process OOBs
+				MIOOBRecord[] oobs = response.getMIOOBRecords();
+				for (int i = 0; i < oobs.length; i++) {
+					processMIOOBRecord(oobs[i], list);
+				}
 			}
 
 			MIEvent[] events = (MIEvent[])list.toArray(new MIEvent[list.size()]);
 			session.fireEvents(events);
-		}
+		} // if response != null
 	}
 
 	/**

@@ -14,8 +14,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * @author Doug Schaefer
- *
  * Cygwin GDB Debugger overrides the GDB Debugger to apply the Cygwin
  * Command Factory to the MI Session.
  */

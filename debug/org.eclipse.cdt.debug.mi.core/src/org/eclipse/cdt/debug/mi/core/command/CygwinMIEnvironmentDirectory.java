@@ -12,8 +12,6 @@ import org.eclipse.cdt.core.CommandLauncher;
 import org.eclipse.core.runtime.Path;
 
 /**
- * @author Doug Schaefer
- *
  * Cygwin implementation of the MIEnvironmentDirectory command.  In the cygwin
  * environment, the paths are DOS paths and need to be converted to cygwin
  * style paths before passing them to gdb.

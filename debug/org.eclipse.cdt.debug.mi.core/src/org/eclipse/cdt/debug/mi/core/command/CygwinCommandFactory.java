@@ -7,8 +7,6 @@
 package org.eclipse.cdt.debug.mi.core.command;
 
 /**
- * @author Doug Schaefer
- *
  * Cygwin Command Factory overrides the regular Command Factory to allow for
  * commands to take into account the cygwin environment.
  */

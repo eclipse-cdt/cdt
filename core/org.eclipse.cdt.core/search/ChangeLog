@@ -1,3 +1,7 @@
+2004-04-12 Bogdan Gheorghe
+	Modified FieldDeclarationPattern to work with new Enumerator type, added 
+	DerivedTypesPattern.
+	
 2004-04-05 Andrew Niefer
 	fix bug 54169, TYPE includes enum & typedef, handle that in ClassDeclarationPattern.matchLevel
 

@@ -50,6 +50,13 @@ public interface IIndexConstants {
 	char[] FIELD_ALL= "field".toCharArray(); //$NON-NLS-1$
 	int FIELD_DECL_LENGTH = 10;
 	
+	char[] ENUMTOR_REF= "enumtorRef/".toCharArray(); //$NON-NLS-1$
+	int ENUMTOR_REF_LENGTH=11;
+	
+	char[] ENUMTOR_DECL = "enumtorDecl/".toCharArray(); //$NON-NLS-1$
+	char[] ENUMTOR_ALL = "enumtor".toCharArray(); //$NON-NLS-1$
+	int ENUMTOR_DECL_LENGTH = 12;
+	
 	char[] METHOD_REF= "methodRef/".toCharArray(); //$NON-NLS-1$
 	int METHOD_REF_LENGTH = 10;
 	
@@ -96,6 +103,7 @@ public interface IIndexConstants {
 	char ENUM_SUFFIX = 'E';
 	char UNION_SUFFIX = 'U';
 	char TYPEDEF_SUFFIX = 'T';
+	char DERIVED_SUFFIX = 'D';
 	
 	char TYPE_SUFFIX = 0;
 	char SEPARATOR= '/';

@@ -114,12 +114,14 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 		CSearchPattern pattern = null;
 		if( searchFor == TYPE || searchFor == CLASS || searchFor == STRUCT || 
 			searchFor == ENUM || searchFor == UNION || searchFor == CLASS_STRUCT  ||
-			searchFor == TYPEDEF )
+			searchFor == TYPEDEF  )
 		{
 			pattern = createClassPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
+		} else if ( searchFor == DERIVED){
+			pattern = createDerivedPattern(patternString, searchFor, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == METHOD || searchFor == FUNCTION ){
 			pattern = createMethodPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
-		} else if ( searchFor == FIELD || searchFor == VAR ){
+		} else if ( searchFor == FIELD || searchFor == VAR || searchFor == ENUMTOR){
 			pattern = createFieldPattern( patternString, searchFor, limitTo, matchMode, caseSensitive );
 		} else if ( searchFor == NAMESPACE ){
 			pattern = createNamespacePattern( patternString, limitTo, matchMode, caseSensitive );
@@ -397,7 +399,31 @@ public abstract class CSearchPattern implements ICSearchConstants, ICSearchPatte
 	}
 
 
-
+	private static CSearchPattern createDerivedPattern(String patternString, SearchFor searchFor, LimitTo limitTo, int matchMode, boolean caseSensitive) {
+		
+		
+		IScanner scanner =null;
+		try {
+			scanner =
+				ParserFactory.createScanner(
+					new StringReader(patternString),
+					"TEXT", //$NON-NLS-1$
+					new ScannerInfo(),
+					ParserMode.QUICK_PARSE,
+					ParserLanguage.CPP,
+					callback, nullLog, null);
+		} catch (ParserFactoryError e1) {
+		}
+		
+		searchFor = DERIVED;
+		
+		LinkedList list = scanForNames( scanner, null );
+		
+		char[] name = (char [])list.removeLast();
+		char [][] qualifications = new char[0][];
+		
+		return new DerivedTypesPattern( name, (char[][])list.toArray( qualifications ), searchFor, limitTo, matchMode, caseSensitive );
+	}
 	/**
 	 * @param scanner
 	 * @param object

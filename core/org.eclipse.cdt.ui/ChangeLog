@@ -1,3 +1,6 @@
+2004-04-12 Bogdan Gheorghe
+	Added Enumerator, Derived types to search dialog
+	
 2004-04-12 Hoda Amer
 	From Chris Wiebe
 	This patch updates the class wizard to use the type cache & type

@@ -146,10 +146,10 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		return classKind;
 	}
 
-	private char[] 	  simpleName;
-	private char[][]  qualifications;
-	private ASTClassKind classKind;
-	private SearchFor    searchFor;
+	protected char[] 	  simpleName;
+	protected char[][]  qualifications;
+	protected ASTClassKind classKind;
+	protected SearchFor    searchFor;
 	
 	protected char[] decodedSimpleName;
 	private char[][] decodedContainingTypes;

@@ -64,7 +64,7 @@ public class FieldDeclarationPattern extends CSearchPattern {
 			if( searchFor != VAR || !canAccept( limit ) )
 				return IMPOSSIBLE_MATCH;			
 		} else if ( node instanceof IASTEnumerator ){
-			if( searchFor != FIELD || !canAccept( limit ) )
+			if( searchFor != ENUMTOR || !canAccept( limit ) )
 				return IMPOSSIBLE_MATCH;
 		} else if( node instanceof IASTParameterDeclaration ){
 			if( searchFor != VAR || !canAccept( limit ) )
@@ -127,6 +127,8 @@ public class FieldDeclarationPattern extends CSearchPattern {
 							simpleName, qualifications,
 							_matchMode, _caseSensitive
 			);
+		} else if (searchFor == ENUMTOR) {
+			return AbstractIndexer.bestEnumeratorPrefix(_limitTo, simpleName, qualifications, _matchMode, _caseSensitive );
 		}
 		return null;		
 	}
@@ -148,6 +150,9 @@ public class FieldDeclarationPattern extends CSearchPattern {
 		} else if( searchFor == VAR ) {
 			int realStart = CharOperation.indexOf( SEPARATOR, word, 0 );
 			firstSlash = CharOperation.indexOf( SEPARATOR, word, realStart + 1);
+			slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
+		} else if ( searchFor == ENUMTOR ){
+			firstSlash = CharOperation.indexOf( SEPARATOR, word, 0 );
 			slash = CharOperation.indexOf(SEPARATOR, word, firstSlash + 1);
 		}
 				

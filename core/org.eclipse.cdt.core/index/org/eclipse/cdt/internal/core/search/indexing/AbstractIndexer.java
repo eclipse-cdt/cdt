@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
+import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
@@ -45,6 +47,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	final static int ENUM = 4;
 	final static int VAR = 5;
 	final static int TYPEDEF = 6;
+	final static int DERIVED = 7;
 	
 	public static boolean VERBOSE = false;
 	
@@ -60,10 +63,38 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 
 		if (classSpecification.getClassKind().equals(ASTClassKind.CLASS))
 		{
+			//Get base clauses
+			Iterator i = classSpecification.getBaseClauses();
+			while (i.hasNext()){
+				IASTBaseSpecifier baseSpec = (IASTBaseSpecifier) i.next();
+				try {
+					IASTTypeSpecifier typeSpec =  baseSpec.getParentClassSpecifier();
+					if (typeSpec instanceof IASTClassSpecifier){
+						IASTClassSpecifier baseClassSpec = (IASTClassSpecifier) typeSpec;
+						String[] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedName();
+						this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,DERIVED,ICSearchConstants.DECLARATIONS));
+					}
+				} catch (ASTNotImplementedException e) {}
+			}
+			
 			this.output.addRef(encodeTypeEntry(classSpecification.getFullyQualifiedName(),CLASS, ICSearchConstants.DECLARATIONS));
 		}		
 		else if (classSpecification.getClassKind().equals(ASTClassKind.STRUCT))
 		{
+			//Get base clauses
+			Iterator i = classSpecification.getBaseClauses();
+			while (i.hasNext()){
+				IASTBaseSpecifier baseSpec = (IASTBaseSpecifier) i.next();
+				try {
+					IASTTypeSpecifier typeSpec =  baseSpec.getParentClassSpecifier();
+					if (typeSpec instanceof IASTClassSpecifier){
+						IASTClassSpecifier baseClassSpec = (IASTClassSpecifier) typeSpec;
+						String[] baseFullyQualifiedName = baseClassSpec.getFullyQualifiedName();
+						this.output.addRef(encodeTypeEntry(baseFullyQualifiedName,DERIVED,ICSearchConstants.DECLARATIONS));
+					}
+				} catch (ASTNotImplementedException e) {}
+			}
+			
 			this.output.addRef(encodeTypeEntry(classSpecification.getFullyQualifiedName(),STRUCT, ICSearchConstants.DECLARATIONS));
 		}
 		else if (classSpecification.getClassKind().equals(ASTClassKind.UNION))
@@ -82,7 +113,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			String[] enumeratorFullName =
 				createEnumeratorFullyQualifiedName(en);
 			
-			this.output.addRef(encodeEntry( enumeratorFullName, FIELD_DECL, FIELD_DECL_LENGTH ));
+			this.output.addRef(encodeEntry( enumeratorFullName, ENUMTOR_DECL, ENUMTOR_DECL_LENGTH ));
 
 		}
 	}
@@ -101,7 +132,7 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 	}
 
 	public void addEnumeratorReference(IASTEnumerator enumerator) {
-		this.output.addRef(encodeEntry(createEnumeratorFullyQualifiedName(enumerator),FIELD_REF,FIELD_REF_LENGTH));	
+		this.output.addRef(encodeEntry(createEnumeratorFullyQualifiedName(enumerator),ENUMTOR_REF,ENUMTOR_REF_LENGTH));	
 	}
 		
 	public void addMacro(IASTMacro macro) {
@@ -281,6 +312,9 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			case (TYPEDEF):
 			result[pos++] = TYPEDEF_SUFFIX;
 			break;
+			
+			case(DERIVED):
+			result[pos++]= DERIVED_SUFFIX;
 		}
 		result[pos++] = SEPARATOR;
 		//Encode in the following manner
@@ -392,6 +426,8 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 			classType = ENUM_SUFFIX;
 		} else if ( searchFor == ICSearchConstants.TYPEDEF ){
 			classType = TYPEDEF_SUFFIX;
+		} else if ( searchFor == ICSearchConstants.DERIVED){
+			classType = DERIVED_SUFFIX;
 		} else {
 			//could be TYPE or CLASS_STRUCT, best we can do for these is the prefix
 			return prefix;
@@ -437,6 +473,19 @@ public abstract class AbstractIndexer implements IIndexer, IIndexConstants, ICSe
 		}
 		
 		return bestPrefix( prefix, (char)0, fieldName, containingTypes, matchMode, isCaseSensitive );
+	}  
+	
+	public static final char[] bestEnumeratorPrefix( LimitTo limitTo, char[] enumeratorName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {
+		char [] prefix = null;
+		if( limitTo == REFERENCES ){
+			prefix = ENUMTOR_REF;
+		} else if( limitTo == DECLARATIONS ){
+			prefix = ENUMTOR_DECL;
+		} else {
+			return ENUMTOR_ALL;
+		}
+		
+		return bestPrefix( prefix, (char)0, enumeratorName, containingTypes, matchMode, isCaseSensitive );
 	}  
 
 	public static final char[] bestMethodPrefix( LimitTo limitTo, char[] methodName,char[][] containingTypes, int matchMode, boolean isCaseSensitive) {

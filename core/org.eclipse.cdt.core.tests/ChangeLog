@@ -1,3 +1,5 @@
+2004-04-12
+	Updated search tests to work with new Enumerator type, added a derived search test
 2004-04-11 John Camelon
 	Updated clients for ISourceElementRequestor.createReader() updates.
 

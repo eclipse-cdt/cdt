@@ -207,8 +207,21 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertEquals( matches.size(), 1 );
 	}
 	
+	public void testDerived(){
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "A", DERIVED, DECLARATIONS, true );
+		search( workspace, pattern, scope, resultCollector );
+		
+		Set matches = resultCollector.getSearchResults();
+		assertEquals( matches.size(), 1 );
+		IMatch match = (IMatch) matches.iterator().next();
+		assertTrue( match.getName().equals( "B" ) );
+		assertTrue( match.getParentName().equals( "NS" ));
+		
+
+	}
+	
 	public void testEnumerators(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "One", FIELD, DECLARATIONS, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "One", ENUMTOR, DECLARATIONS, true );
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -218,7 +231,7 @@ public class OtherPatternTests extends BaseSearchTest {
 		assertTrue( match.getName().equals( "One" ) );
 		assertTrue( match.getParentName().equals( "NS::B" ));
 		
-		pattern = SearchEngine.createSearchPattern( "NS::B::Two", FIELD, DECLARATIONS, true );
+		pattern = SearchEngine.createSearchPattern( "NS::B::Two", ENUMTOR, DECLARATIONS, true );
 		
 		search( workspace, pattern, scope, resultCollector );
 		
@@ -230,7 +243,7 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 	
 	public void testEnumeratorReferences(){
-		ICSearchPattern pattern = SearchEngine.createSearchPattern( "One", FIELD, REFERENCES, true );
+		ICSearchPattern pattern = SearchEngine.createSearchPattern( "One", ENUMTOR, REFERENCES, true );
 		
 		search( workspace, pattern, scope, resultCollector );
 		

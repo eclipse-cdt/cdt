@@ -101,7 +101,10 @@ public interface ICSearchConstants {
 	
 	public static final SearchFor INCLUDE = new SearchFor( 13 );
 	
-
+	public static final SearchFor DERIVED = new SearchFor( 14 );
+	
+	public static final SearchFor ENUMTOR = new SearchFor( 15 );
+	
 	/* Nature of match */
 	
 	/**

@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.ui.search;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -317,6 +318,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 				set.add( DEFINITIONS );
 				break;
 			}
+			
 		}
 		
 		for( int i = 0; i < fLimitTo.length; i++ )
@@ -646,7 +648,7 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 	private static List fgPreviousSearchPatterns = new ArrayList(20);
 
 	private Button[] fSearchFor;
-	private SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, NAMESPACE, UNKNOWN_SEARCH_FOR };
+	private SearchFor[] fSearchForValues = { CLASS_STRUCT, FUNCTION, VAR, UNION, METHOD, FIELD, ENUM, ENUMTOR, NAMESPACE, DERIVED, UNKNOWN_SEARCH_FOR };
 	
 	private String[] fSearchForText= {
 		CSearchMessages.getString("CSearchPage.searchFor.classStruct"), //$NON-NLS-1$
@@ -656,7 +658,9 @@ public class CSearchPage extends DialogPage implements ISearchPage, ICSearchCons
 		CSearchMessages.getString("CSearchPage.searchFor.method"), 		//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.field"),		//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.enum"),		//$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.searchFor.enumr"),		//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.namespace"),	//$NON-NLS-1$
+		CSearchMessages.getString("CSearchPage.searchFor.derived"),		//$NON-NLS-1$
 		CSearchMessages.getString("CSearchPage.searchFor.any") }; 		//$NON-NLS-1$
 		
 		

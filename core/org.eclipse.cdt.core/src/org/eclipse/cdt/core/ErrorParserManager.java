@@ -311,11 +311,11 @@ public class ErrorParserManager extends OutputStream {
 	 */
 	public void close() throws IOException {
 		if (nOpens > 0 && --nOpens == 0) {
+			checkLine(true);
 			fDirectoryStack.removeAllElements();
 			fBaseDirectory = null;
 			if (outputStream != null)
 				outputStream.close();
-			checkLine(true);
 		}
 	}
 

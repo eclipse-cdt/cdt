@@ -4,6 +4,7 @@
  */
 package org.eclipse.cdt.debug.mi.core;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -33,6 +34,9 @@ public class MIPlugin extends Plugin {
 
 	//The shared instance.
 	private static MIPlugin plugin;
+
+	// GDB init command file
+	private static final String GDBINIT = ".gdbinit";
 
 	/**
 	 * The constructor
@@ -84,13 +88,13 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws MIException
 	 */
-	public ICDISession createCSession(String cwd, String gdbinit, String gdb, String program) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit) throws IOException, MIException {
 		PTY pty = null;
 		try {
 			pty = new PTY();
 		} catch (IOException e) {
 		}
-		return createCSession(cwd, gdbinit, gdb, program, pty);
+		return createCSession(gdb, program, cwd, gdbinit, pty);
 	}
 
 	/**
@@ -99,16 +103,28 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String cwd, String gdbinit, String gdb, String program, PTY pty) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, File cwd, String gdbinit, PTY pty) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  "gdb";
+		}
+		
+		if (gdbinit == null || gdbinit.length() == 0) {
+			gdbinit = GDBINIT;
 		}
 
 		String[] args;
 		if (pty != null) {
-			args = new String[] {gdb, "--cd="+cwd, "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1", program};
+			if (program == null) {
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1"};
+			} else {
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-tty", pty.getSlaveName(), "-i", "mi1", program.getAbsolutePath()};
+			}
 		} else {
-			args = new String[] {gdb, "--cd="+cwd, "--command="+gdbinit, "-q", "-nw", "-i", "mi1", program};
+			if (program == null) {
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi1"};
+			} else {
+				args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "-q", "-nw", "-i", "mi1", program.getAbsolutePath()};
+			}
 		}
 
 		Process pgdb = ProcessFactory.getFactory().exec(args);
@@ -138,11 +154,21 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String cwd, String gdbinit, String gdb, String program, String core) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, File core, File cwd, String gdbinit) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  "gdb";
 		}
-		String[] args = new String[] {gdb, "--cd="+cwd, "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program, core};
+		
+		if (gdbinit == null || gdbinit.length() == 0) {
+			gdbinit = GDBINIT;
+		}
+		
+		String[] args;
+		if (program == null) {
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath()};
+		} else {
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", "-c", core.getAbsolutePath(), program.getAbsolutePath()};
+		}
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb, null, MISession.CORE);
 		return new CSession(session);
@@ -155,11 +181,21 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String cwd, String gdbinit, String gdb, String program, int pid, String[] targetParams) throws IOException, MIException {
+	public ICDISession createCSession(String gdb, File program, int pid, String[] targetParams, File cwd, String gdbinit) throws IOException, MIException {
 		if (gdb == null || gdb.length() == 0) {
 			gdb =  "gdb";
 		}
-		String[] args = new String[] {gdb, "--cd="+cwd, "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program};
+
+		if (gdbinit == null || gdbinit.length() == 0) {
+			gdbinit = GDBINIT;
+		}
+
+		String[] args;
+		if (program == null) {
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1"};
+		} else {
+			args = new String[] {gdb, "--cd="+cwd.getAbsolutePath(), "--command="+gdbinit, "--quiet", "-nw", "-i", "mi1", program.getAbsolutePath()};
+		}
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb, null, MISession.ATTACH);
 		MIInfo info = null;

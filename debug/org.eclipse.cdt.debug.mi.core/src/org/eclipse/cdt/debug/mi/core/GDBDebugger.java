@@ -4,6 +4,7 @@
  */
 package org.eclipse.cdt.debug.mi.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +39,9 @@ public class GDBDebugger implements ICDebugger {
 	public ICDISession createLaunchSession(ILaunchConfiguration config, IFile exe) throws CDIException {
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-			String cwd = exe.getProject().getLocation().toOSString();
+			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
-			CSession session = (CSession)MIPlugin.getDefault().createCSession(cwd, gdbinit, gdb, exe.getLocation().toOSString());
+			CSession session = (CSession)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), cwd, gdbinit);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
@@ -55,9 +56,9 @@ public class GDBDebugger implements ICDebugger {
 	public ICDISession createAttachSession(ILaunchConfiguration config, IFile exe, int pid) throws CDIException {
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-			String cwd = exe.getProject().getLocation().toOSString();
+			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
-			CSession session = (CSession)MIPlugin.getDefault().createCSession(cwd, gdbinit, gdb, exe.getLocation().toOSString(), pid, null);
+			CSession session = (CSession)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), pid, null, cwd, gdbinit);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
@@ -73,9 +74,9 @@ public class GDBDebugger implements ICDebugger {
 	public ICDISession createCoreSession(ILaunchConfiguration config, IFile exe, IPath corefile) throws CDIException {
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-			String cwd = exe.getProject().getLocation().toOSString();
+			File cwd = exe.getProject().getLocation().toFile();
 			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
-			CSession session = (CSession)MIPlugin.getDefault().createCSession(cwd, gdbinit, gdb, exe.getLocation().toOSString(), corefile.toOSString());
+			CSession session = (CSession)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toFile(), corefile.toFile(), cwd, gdbinit);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {

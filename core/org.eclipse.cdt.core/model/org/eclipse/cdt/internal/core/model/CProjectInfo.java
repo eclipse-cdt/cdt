@@ -18,7 +18,7 @@ class CProjectInfo extends CResourceInfo {
 	private BinaryContainer vBin;
 	private ArchiveContainer vLib;
 
-	public IBinaryContainer getBinaryContainer() {
+	synchronized public IBinaryContainer getBinaryContainer() {
 		if (vBin == null) {
 			vBin = new BinaryContainer((CProject)getElement());
 			addChild(vBin);
@@ -26,7 +26,7 @@ class CProjectInfo extends CResourceInfo {
 		return vBin;
 	}
 
-	public IArchiveContainer getArchiveContainer() {
+	synchronized public IArchiveContainer getArchiveContainer() {
 		if (vLib == null) {
 			vLib = new ArchiveContainer((CProject)getElement());
 			addChild(vLib);

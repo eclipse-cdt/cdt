@@ -25,7 +25,7 @@ import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
-import org.eclipse.cdt.debug.core.model.ICValue;
+import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.model.IExecFileInfo;
@@ -489,29 +489,9 @@ public class CDTDebugModelPresentation extends LabelProvider
 			}
 			label += var.getName();
 			IValue value = var.getValue();
-			if ( value != null && value.getValueString() != null )
+			if ( value != null && value.getValueString() != null && value.getValueString().trim().length() > 0 )
 			{
-				if ( value instanceof ICValue )
-				{
-					switch( ((ICValue)value).getType() )
-					{
-						case ICValue.TYPE_ARRAY:
-							label += value.getValueString();
-							break;
-						case ICValue.TYPE_STRUCTURE:
-							break;
-						case ICValue.TYPE_KEYWORD:
-							break;
-						default:
-							label += "= " + value.getValueString();
-							break;
-							
-					}
-				}
-				else
-				{
-					label += "= " + value.getValueString();
-				}
+				label += "= " + value.getValueString();
 			}
 		}
 		return label;
@@ -787,24 +767,11 @@ public class CDTDebugModelPresentation extends LabelProvider
 
 	protected Image getVariableImage( IVariable element ) throws DebugException
 	{
-		if ( element != null )
+		if ( element instanceof ICVariable )
 		{
-			IValue value = element.getValue();
-			if ( value instanceof ICValue )
-				return getValueTypeImage( (ICValue)value );
-		}
-		return null;
-	}
-
-	protected Image getValueTypeImage( ICValue element )
-	{
-		if ( element != null )
-		{
-			if ( element.getType() == ICValue.TYPE_ARRAY ||
-				 element.getType() == ICValue.TYPE_STRUCTURE ||
-				 element.getType() == ICValue.TYPE_KEYWORD )
+			if ( !((ICVariable)element).isEditable() )
 				return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE,  0 ) );
-			else if ( element.getType() == ICValue.TYPE_POINTER )
+			else if ( ((ICVariable)element).hasChildren() )
 				return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_VARIABLE_POINTER,  0 ) );
 			else
 				return fDebugImageRegistry.get( new CImageDescriptor( CDebugImages.DESC_OBJS_VARIABLE_SIMPLE, 0 ) );

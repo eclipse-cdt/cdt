@@ -107,7 +107,7 @@ public class CStackFrame extends CDebugElement
 			Iterator it = vars.iterator();
 			while( it.hasNext() )
 			{
-				fVariables.add( new CLocalVariable( this, (ICDIVariable)it.next() ) );
+				fVariables.add( new CModificationVariable( this, (ICDIVariable)it.next() ) );
 			}
 		}
 		else if ( refreshVariables() )
@@ -128,7 +128,7 @@ public class CStackFrame extends CDebugElement
 		int index = 0;
 		while( index < fVariables.size() )
 		{
-			CLocalVariable local = (CLocalVariable)fVariables.get( index );
+			CVariable local = (CVariable)fVariables.get( index );
 			ICDIVariable var = findVariable( locals, local.getOriginalCDIVariable() );
 			if ( var != null )
 			{
@@ -146,7 +146,7 @@ public class CStackFrame extends CDebugElement
 		Iterator newOnes = locals.iterator();
 		while( newOnes.hasNext() )
 		{
-			fVariables.add( new CLocalVariable( this, (ICDIVariable)newOnes.next() ) );
+			fVariables.add( new CModificationVariable( this, (ICDIVariable)newOnes.next() ) );
 		}
 	}
 
@@ -683,8 +683,8 @@ public class CStackFrame extends CDebugElement
 		}
 		for ( int i = 0; i < vars.length; ++i )
 		{
-			if ( vars[i] instanceof CLocalVariable &&
-				 ((CLocalVariable)vars[i]).getOriginalCDIVariable() instanceof ICDIArgument )
+			if ( vars[i] instanceof CVariable &&
+				 ((CVariable)vars[i]).getOriginalCDIVariable() instanceof ICDIArgument )
 			{
 				 list.add( vars[i] );
 			}

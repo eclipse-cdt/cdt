@@ -1,3 +1,15 @@
+2003-03-18 Mikhail Khodjaiants
+	Removed the gdb-specific variable parsing.
+	* ICValue.java
+	* CArrayPartition.java
+	* CArrayPartitionValue.java
+	* CModificationVariable.java
+	* CStackFrame.java
+	* CValue.java
+	* CVariable.java
+	* CArrayEntryVariable.java: removed
+	* CLocalVariable.java: removed
+
 2003-03-17 Mikhail Khodjaiants
 	Replace range by start index and length in 'Display As Array' action.
 	* ICDIVariableManager.java

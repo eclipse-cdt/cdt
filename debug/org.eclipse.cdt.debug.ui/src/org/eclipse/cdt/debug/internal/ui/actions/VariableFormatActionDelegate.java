@@ -6,12 +6,10 @@
 package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
-import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IValue;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -114,28 +112,7 @@ public class VariableFormatActionDelegate implements IObjectActionDelegate
 	
 	private boolean enablesFor( ICVariable var )
 	{
-		boolean enabled = false;
-		try
-		{
-			IValue value = var.getValue();
-			if ( value != null && value instanceof ICValue )
-			{
-				switch( ((ICValue)value).getType() )
-				{
-//					case ICValue.TYPE_ARRAY:
-					case ICValue.TYPE_SIMPLE:
-					case ICValue.TYPE_POINTER:
-					case ICValue.TYPE_CHAR:
-						enabled = true;
-						break;
-				}
-			}
-	
-		}
-		catch( DebugException e )
-		{
-		}
-		return enabled;
+		return var.isEditable();
 	}
 	
 	private void setVariable( ICVariable var )

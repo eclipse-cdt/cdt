@@ -96,7 +96,7 @@ public class CArrayPartition extends CVariable
 		return fArrayPartitionValue;
 	}
 
-	static public List splitArray( CDebugTarget target, List cdiVars, int start, int end )
+	static public List splitArray( CDebugElement parent, List cdiVars, int start, int end )
 	{
 		ArrayList children = new ArrayList();
 		int perSlot = 1;
@@ -115,11 +115,11 @@ public class CArrayPartition extends CVariable
 			CVariable var = null;
 			if ( perSlot == 1 )
 			{
-				var = new CArrayEntryVariable( target, (ICDIVariable)cdiVars.get( start ), start );
+				var = new CModificationVariable( parent, (ICDIVariable)cdiVars.get( start ) );
 			}
 			else
 			{
-				var = new CArrayPartition( target, cdiVars.subList( start, start + perSlot ), start, start + perSlot - 1 );
+				var = new CArrayPartition( parent, cdiVars.subList( start, start + perSlot ), start, start + perSlot - 1 );
 			}
 			children.add( var );
 			start += perSlot;

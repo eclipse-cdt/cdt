@@ -126,11 +126,12 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public boolean hasValueChanged() throws DebugException
 	{
+		// ??
+		if ( isPointer() )
+			return false; 
 		IValue value = getValue();
 		if ( value != null )
 		{
-			if ( value instanceof CValue && ((CValue)getValue()).getType() == ICValue.TYPE_POINTER )
-				return false; 
 			return ( value.hasVariables() ) ? false : fChanged;
 		}
 		return false;
@@ -270,7 +271,7 @@ public abstract class CVariable extends CDebugElement
 		if ( getValue() != null && getValue() instanceof ICValue )
 		{
 			((ICValue)getValue()).setChanged( changed );
-			if ( !getValue().hasVariables() || ((ICValue)getValue()).getType() == ICValue.TYPE_POINTER )
+			if ( !hasChildren() )
 			{
 				fChanged = changed;
 			}
@@ -303,12 +304,6 @@ public abstract class CVariable extends CDebugElement
 		try
 		{
 			setChanged( true );
-			if ( getValue() != null && 
-				 ((CValue)getValue()).getType() == ICValue.TYPE_CHAR &&
-				 getParent() instanceof CValue )
-			{
-				updateParentVariable( (CValue)getParent() );
-			}
 			getParent().fireChangeEvent( DebugEvent.CONTENT );
 		}
 		catch( DebugException e )
@@ -611,7 +606,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public boolean isEditable()
 	{
-		if ( fEditable == null )
+		if ( fEditable == null && getCDIVariable() != null )
 		{
 			try
 			{
@@ -623,5 +618,10 @@ public abstract class CVariable extends CDebugElement
 			}
 		}
 		return ( fEditable != null ) ? fEditable.booleanValue() : false;
+	}
+	
+	protected boolean isPointer()
+	{
+		return isEditable() && hasChildren();
 	}
 }

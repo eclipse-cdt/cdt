@@ -48,11 +48,6 @@ public class CValue extends CDebugElement implements ICValue
 	private List fVariables = Collections.EMPTY_LIST;
 
 	/**
-	 * Type (simple, array, structure or string) of this value.
-	 */
-	private int fType = TYPE_UNKNOWN;
-
-	/**
 	 * Constructor for CValue.
 	 * @param target
 	 */
@@ -127,18 +122,16 @@ public class CValue extends CDebugElement implements ICValue
 		if ( fVariables.size() == 0 )
 		{
 			List vars = getCDIVariables();
-			if ( getType() == ICValue.TYPE_ARRAY )
-			{
-				if ( vars.size() > 0 )
-					fVariables = CArrayPartition.splitArray( (CDebugTarget)getDebugTarget(), vars, 0, vars.size() - 1 );
-			}
+
+			if ( vars.size() > 1 )
+				fVariables = CArrayPartition.splitArray( this, vars, 0, vars.size() - 1 );
 			else
 			{
 				fVariables = new ArrayList( vars.size() );
 				Iterator it = vars.iterator();
 				while( it.hasNext() )
 				{
-					fVariables.add( new CLocalVariable( this, (ICDIVariable)it.next() ) );
+					fVariables.add( new CModificationVariable( this, (ICDIVariable)it.next() ) );
 				}
 			}
 		}
@@ -196,46 +189,6 @@ public class CValue extends CDebugElement implements ICValue
 		return Arrays.asList( vars );
 	}
 	
-	protected void calculateType( String stringValue )
-	{
-		if ( fType == TYPE_UNKNOWN && stringValue != null )
-		{
-			stringValue = stringValue.trim();
-			if ( stringValue.length() == 0 )
-			{
-				fType = TYPE_KEYWORD;
-			}
-			else if ( stringValue.charAt( stringValue.length() - 1 ) == '\'' )
-			{
-				fType = TYPE_CHAR;
-			}
-			else if ( stringValue.charAt( 0 ) == '[' )
-			{
-				fType = TYPE_ARRAY;
-			}
-			else if ( stringValue.charAt( 0 ) == '{' )
-			{
-				fType = TYPE_STRUCTURE;
-			}
-			else if ( stringValue.startsWith( "0x" ) )
-			{
-				fType = TYPE_POINTER;
-			}
-			else
-			{
-				fType = TYPE_SIMPLE;
-			}
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICValue#getType()
-	 */
-	public int getType()
-	{
-		return fType;
-	}
-	
 	protected int getNumberOfChildren() throws DebugException
 	{
 		int result = 0;
@@ -256,11 +209,6 @@ public class CValue extends CDebugElement implements ICValue
 		if ( cdiValue != null )
 		{
 			result = cdiValue.trim();
-			calculateType( result );
-			if ( getType() == TYPE_CHAR )
-			{
-				result = getCharValue( result );
-			}
 		}
 		return result;
 	}
@@ -286,38 +234,7 @@ public class CValue extends CDebugElement implements ICValue
 			((CVariable)it.next()).dispose();
 		}
 	}
-	
-	private String getCharValue( String value )
-	{
-		String result = ""; 
-		int index = value.indexOf( ' ' );
-		if ( index > 0 )
-		{
-			char resultChar = '.';
-			try
-			{
-				short shortValue = Short.parseShort( value.substring( 0, index ), 10 );
-				if ( shortValue >= 0 )
-				{
-					resultChar = (char)shortValue;
-					if ( Character.isISOControl( resultChar ) )
-					{
-						resultChar = '.';
-					}
-				}
-			}
-			catch( NumberFormatException e )
-			{
-			}
-			result = String.valueOf( resultChar );
-		}
-		else
-		{
-			result = value;
-		}
-		return result;
-	}
-	
+
 	protected CVariable getParentVariable()
 	{
 		return fParent;

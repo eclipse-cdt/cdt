@@ -18,24 +18,6 @@ import org.eclipse.debug.core.model.IValue;
  */
 public interface ICValue extends IValue
 {
-	static final public int TYPE_UNKNOWN = -1;
-	static final public int TYPE_SIMPLE = 0;
-	static final public int TYPE_ARRAY = 1;
-	static final public int TYPE_STRUCTURE = 2;
-	static final public int TYPE_STRING = 3;
-	static final public int TYPE_POINTER = 4;
-	static final public int TYPE_ARRAY_PARTITION = 5;
-	static final public int TYPE_ARRAY_ENTRY = 7;
-	static final public int TYPE_CHAR = 8;
-	static final public int TYPE_KEYWORD = 9;
-
-	/**
-	 * Returns the type of this value.
-	 * 
-	 * @return the type of this value
-	 */
-	int getType();
-
 	/**
 	 * Returns the underlying CDI value for this value.
 	 */

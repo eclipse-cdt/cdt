@@ -6,13 +6,9 @@
 
 package org.eclipse.cdt.debug.internal.core.model;
 
-import java.text.MessageFormat;
-
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIFormat;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
-import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
 
@@ -22,7 +18,7 @@ import org.eclipse.debug.core.model.IValue;
  * 
  * @since Aug 9, 2002
  */
-public abstract class CModificationVariable extends CVariable
+public class CModificationVariable extends CVariable
 {
 	/**
 	 * Constructor for CModificationVariable.
@@ -109,6 +105,7 @@ public abstract class CModificationVariable extends CVariable
 	
 	private String processExpression( String oldExpression ) throws DebugException
 	{
+/*
 		CValue value = (CValue)getValue();
 		if ( value == null )
 		{
@@ -126,6 +123,7 @@ public abstract class CModificationVariable extends CVariable
 			}
 			return Short.toString( (short)chars[0] );
 		}
+*/
 		return oldExpression;
 	}
 }

@@ -1,3 +1,8 @@
+2003-03-18 Mikhail Khodjaiants
+	Removed the gdb-specific variable parsing.
+	* VariableFormatActionDelegate.java
+	* CDTDebugModelPresentation.java
+
 2003-03-17 Mikhail Khodjaiants
 	Replace range by start index and length in 'Display As Array' action.
 	* CastToArrayActionDelegate.java

@@ -12,6 +12,7 @@ import org.eclipse.cdt.debug.core.ICBreakpointListener;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -53,6 +54,7 @@ public class CBreakpointUpdater implements ICBreakpointListener
 								try
 								{
 									((ICBreakpoint)breakpoint).incrementInstallCount();
+									DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( breakpoint );
 								}
 								catch( CoreException e )
 								{

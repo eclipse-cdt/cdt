@@ -1,3 +1,8 @@
+2004-04-23 Mikhail Khodjaiants
+	Fix for bug 58711: Breakpoint race condition.
+	Notify the Breakpoint Manager when the install count of breakpoint is changed.
+	* CBreakpointUpdater.java
+
 2004-04-15 Mikhail Khodjaiants
 	Fix for bug 58711: Breakpoint race condition.
 	To avoid race condition all breakpoint marker updates (like increment/decrement the install count, 

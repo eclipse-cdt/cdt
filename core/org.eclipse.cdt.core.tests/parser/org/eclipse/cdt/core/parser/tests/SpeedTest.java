@@ -31,16 +31,31 @@ import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
  */
 public class SpeedTest extends TestCase {
 
+	public static void main(String[] args) {
+		try {
+			new SpeedTest().runTest(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void test() throws Exception {
-		String code =
-			"#include <windows.h>\n" +
-			"#include <stdio.h>\n" +
-			"#include <iostream>\n";
-		
-		Reader reader = new StringReader(code);
-		IScannerInfo info = mingwScannerInfo(false);
-		//IScannerInfo info = msvcScannerInfo(quick);
-		testParse(reader, "text", false, info, ParserLanguage.CPP);
+		runTest(1);
+	}
+	
+	public void runTest(int n) throws Exception {
+		for (int i = 0; i < n; ++i) {
+			System.gc();
+			String code =
+				"#include <windows.h>\n" +
+				"#include <stdio.h>\n" +
+				"#include <iostream>\n";
+			
+			Reader reader = new StringReader(code);
+			IScannerInfo info = mingwScannerInfo(false);
+			//IScannerInfo info = msvcScannerInfo(quick);
+			testParse(reader, "text", false, info, ParserLanguage.CPP);
+		}
 	}
 
 	/**

@@ -698,6 +698,11 @@
             parserID="org.eclipse.cdt.core.Cygwin_PE"
             id="PEBinaryParserPage">
       </parserPage>
+      <parserPage
+            class="org.eclipse.cdt.ui.dialogs.GNUXCoffBinaryParserPage"
+            parserID="org.eclipse.cdt.core.XCOFF32"
+            id="XcoffBinaryParserPage">
+      </parserPage>
    </extension>
    <extension
          point="org.eclipse.ui.workingSets">

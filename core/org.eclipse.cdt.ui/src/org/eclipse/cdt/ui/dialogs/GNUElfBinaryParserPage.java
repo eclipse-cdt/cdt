@@ -75,7 +75,7 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 				for (int i = 0; i < infos.length; i++) {
 					String id = infos[i].getAttribute("parserID"); //$NON-NLS-1$
 					String clazz = infos[i].getAttribute("class"); //$NON-NLS-1$
-					String ego = getClass().getName();
+					String ego = getRealBinaryParserPage().getClass().getName();
 					if (clazz != null && clazz.equals(ego)) {
 						parserID = id;
 						break;
@@ -102,6 +102,14 @@ public class GNUElfBinaryParserPage extends AbstractCOptionPage {
 				store.setValue(PREF_CPPFILT_PATH, cppfilt);
 			}
 		}
+	}
+
+	/**
+	 * If this class is inherited from then this method MUST be implemented
+	 * in the derived class.
+	 */
+	protected Object getRealBinaryParserPage() {
+		return this;
 	}
 
 	/*

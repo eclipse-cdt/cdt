@@ -97,6 +97,16 @@
          </run>
       </cextension>
    </extension>
+   <extension
+         id="XCOFF32"
+         name="%XCOFF32Parser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.xcoff.parser.XCOFF32Parser">
+         </run>
+      </cextension>
+   </extension>
    <!-- This is for backward compatibility: an Typo was introduce in on of the realease
         and "ELF" instead of "Elf" -->
    <extension

@@ -1,5 +1,11 @@
 2004-06-21 Alain Magloire
 
+	Big Patch from Vladimir Hirsl
+	This patch contains a binary parser core and UI elements to 'support' AIX
+	XCOFF32 binaries.
+	
+2004-06-21 Alain Magloire
+
 	The PathEntryManager was returning the array instead
 	of making a copy.  Potentially clients could have
 	modified the contents.

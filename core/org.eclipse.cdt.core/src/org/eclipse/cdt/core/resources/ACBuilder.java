@@ -33,7 +33,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			IMarker marker= file.createMarker(ICModelMarker.C_MODEL_PROBLEM_MARKER);
 			marker.setAttribute(IMarker.LOCATION, lineNumber);
 			marker.setAttribute(IMarker.MESSAGE, errorDesc);
-			marker.setAttribute(IMarker.SEVERITY, severity);
+			marker.setAttribute(IMarker.SEVERITY, mapMarkerSeverity(severity));
 			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
 			marker.setAttribute(IMarker.CHAR_START, -1);
 			marker.setAttribute(IMarker.CHAR_END, -1);
@@ -44,6 +44,19 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			CCorePlugin.log(e.getStatus());
 		}
 		
+	}
+	
+	int mapMarkerSeverity (int severity) {
+		switch (severity) {
+			case SEVERITY_ERROR_BUILD:
+			case SEVERITY_ERROR_RESOURCE:
+				return IMarker.SEVERITY_ERROR;
+			case SEVERITY_INFO:
+				return IMarker.SEVERITY_INFO;
+			case SEVERITY_WARNING:
+				return IMarker.SEVERITY_WARNING;
+		}
+		return IMarker.SEVERITY_ERROR;
 	}
 
     public abstract IPath getWorkingDirectory();

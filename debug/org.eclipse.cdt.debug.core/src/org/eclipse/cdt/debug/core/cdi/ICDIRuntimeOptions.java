@@ -20,7 +20,7 @@ public interface ICDIRuntimeOptions {
 	 *
 	 * @param args the string representing the arguments.
 	 */
-	void setArguments(String args);
+	void setArguments(String[] args);
 
 	/**
 	 * Program/Inferior environment settings.

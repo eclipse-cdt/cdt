@@ -144,8 +144,8 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 						e);
 				throw new CoreException(status);
 			}
-			ICDIRuntimeOptions opt = dsession.getRuntimeOptions();
-			opt.setArguments(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, ""));
+			ICDIRuntimeOptions opt = dsession.getRuntimeOptions();			
+			opt.setArguments(getProgramArgumentsArray(config));
 			File wd = getWorkingDir(config);
 			if (wd != null) {
 				opt.setWorkingDirectory(wd.toString());

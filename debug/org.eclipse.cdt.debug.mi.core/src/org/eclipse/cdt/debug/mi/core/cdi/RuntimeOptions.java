@@ -36,13 +36,13 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions#setArguments(String)
 	 */
-	public void setArguments(String args) {
-		if (args == null || args.length() == 0) {
+	public void setArguments(String[] args) {
+		if (args == null || args.length == 0) {
 			return;
 		}
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
-		MIExecArguments arguments =  factory.createMIExecArguments(new String[]{args});
+		MIExecArguments arguments =  factory.createMIExecArguments(args);
 		try {
 			mi.postCommand(arguments);
 			MIInfo info = arguments.getMIInfo();

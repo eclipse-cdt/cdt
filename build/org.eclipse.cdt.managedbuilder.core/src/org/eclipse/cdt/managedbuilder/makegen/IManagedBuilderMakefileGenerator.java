@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IManagedBuilderMakefileGenerator {
 
 	public final String AT = "@";	//$NON-NLS-1$
-	public final String CC_MACRO = "$(CC)"; 	//$NON-NLS-1$ 
 	public final String COLON = ":";	//$NON-NLS-1$
 	public final int COLS_PER_LINE = 80;
 	public final String COMMENT_SYMBOL = "#";	//$NON-NLS-1$
@@ -31,7 +30,6 @@ public interface IManagedBuilderMakefileGenerator {
 	public final String DEPFILE_NAME = "subdir.dep";	//$NON-NLS-1$
 	public final String DOT = ".";	//$NON-NLS-1$
 	public final String ECHO = "echo";	//$NON-NLS-1$
-	public final String FLAG_MACRO = "$(CC_FLAGS)";	//$NON-NLS-1$
 	public final String IN_MACRO = "$<";	//$NON-NLS-1$
 	public final String LINEBREAK = "\\\n";	//$NON-NLS-1$
 	public final String LOGICAL_AND = "&&";	//$NON-NLS-1$

@@ -10,6 +10,7 @@ import junit.framework.TestSuite;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -19,6 +20,7 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.MakeScannerInfo;
 import org.eclipse.cdt.make.core.MakeScannerProvider;
+import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -185,7 +187,7 @@ public class StandardBuildTests extends TestCase {
 		if (!project.isOpen()) {
 			project.open(null);
 		}
-
+		CCorePlugin.getDefault().convertProjectToC(project, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
 		return project;	
 	}
 
@@ -266,7 +268,6 @@ public class StandardBuildTests extends TestCase {
 		try {
 			project = createProject(PROJECT_NAME); 
 			// Convert the new project to a standard make project
-			CCorePlugin.getDefault().convertProjectToCC(project, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
 			MakeProjectNature.addNature(project, null);
 		} catch (CoreException e) {
 			fail("StandardBuildTest testProjectCreation failed creating project: " + e.getLocalizedMessage());

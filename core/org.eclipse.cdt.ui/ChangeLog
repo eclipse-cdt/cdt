@@ -1,5 +1,19 @@
 2003-08-30 Alain Magloire
 
+	Deal with the annoying warnings from eclipse about syntetic methods.
+	All the fix are in the wizard.dialogfields package. A new addition
+	CheckedListDialogField.java
+
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/ComboDialogField.java
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/LinkToFileGroup.java
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/ListDialogField.java
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/SelectionButtonDialogField.java
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/SelectionButtonDialogFieldGroup.java
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/StringDialogField.java
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/CheckedListDialogField.java
+
+2003-08-30 Alain Magloire
+
 	Remove completely the Old C Parser references and the ComparatorBuilder class.
 	The Struture comparator is now base entirely on ISourceElemenRequestor.
 	Making things more stable: Fix part of 39090, Fix 39725, 41006 

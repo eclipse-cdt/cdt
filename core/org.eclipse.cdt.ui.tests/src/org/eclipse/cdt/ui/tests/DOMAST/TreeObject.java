@@ -12,6 +12,7 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -22,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorObjectStyleMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
@@ -32,17 +34,25 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTArrayDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTPointer;
 import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * @author dsteffle
  */
 public class TreeObject implements IAdaptable {
+	private static final String CAST = "cast"; //$NON-NLS-1$
+	private static final String STATIC_CAST = "static_cast"; //$NON-NLS-1$
+	private static final String REINTERPRET_CAST = "reinterpret_cast"; //$NON-NLS-1$
+	private static final String DYNAMIC_CAST = "dynamic_cast"; //$NON-NLS-1$
+	private static final String CONST_CAST = "const_cast"; //$NON-NLS-1$
 	private static final String OP_BRACKETEDPRIMARY = "( )"; //$NON-NLS-1$
 	private static final String OP_TILDE = "~"; //$NON-NLS-1$
 	private static final String OP_SIZEOF = "sizeof"; //$NON-NLS-1$
@@ -209,6 +219,9 @@ public class TreeObject implements IAdaptable {
 		} else if ( node instanceof IASTLiteralExpression ) {
 			buffer.append(START_OF_LIST);
 			buffer.append(node.toString());
+		} else if ( node instanceof IASTCastExpression ) {
+			buffer.append(START_OF_LIST);
+			buffer.append( getCastOperatorString( (IASTCastExpression)node ) );
 		} else if ( node instanceof IASTUnaryExpression ) {
 			buffer.append(START_OF_LIST);
 			buffer.append( getUnaryOperatorString( (IASTUnaryExpression)node ) );
@@ -245,11 +258,80 @@ public class TreeObject implements IAdaptable {
 				if (!started) buffer.append(START_OF_LIST);
 				buffer.append(((IASTIdExpression)constantExpression).getName().toString());
 			}
+		} else if ( node instanceof IASTPointer ) {
+			boolean started = false;
+			
+			if (node instanceof ICASTPointer) {
+				if (((ICASTPointer)node).isRestrict()) {
+					started = true;
+					buffer.append(START_OF_LIST);
+					buffer.append(RESTRICT_);
+				}
+			} else if (node instanceof IGPPASTPointer) {
+				if (((IGPPASTPointer)node).isRestrict()) {
+					started = true;
+					buffer.append(START_OF_LIST);
+					buffer.append(RESTRICT_);
+				}
+			}
+			
+			if (((IASTPointer)node).isConst()) {
+				if (!started) {
+					started = true;
+					buffer.append(START_OF_LIST);
+				}
+				buffer.append(CONST_);
+			}
+			
+			if (((IASTPointer)node).isVolatile()) {
+				if (!started) {
+					started = true;
+					buffer.append(START_OF_LIST);
+				}
+				buffer.append(VOLATILE_);
+			}
 		}
 		
 		return buffer.toString();
 	}
 	
+	/**
+	 * @param expression
+	 * @return
+	 */
+	private String getCastOperatorString(IASTCastExpression expression) {
+		int op = expression.getOperator();
+		String opString = BLANK_STRING;
+		
+		if (expression instanceof ICPPASTCastExpression) {
+			switch (op) {
+				case ICPPASTCastExpression.op_const_cast:
+					opString = CONST_CAST;
+					break;
+				case ICPPASTCastExpression.op_dynamic_cast:
+					opString = DYNAMIC_CAST;
+					break;
+				case ICPPASTCastExpression.op_reinterpret_cast:
+					opString = REINTERPRET_CAST;
+					break;
+				case ICPPASTCastExpression.op_static_cast:
+					opString = STATIC_CAST;
+					break;
+				default:
+					break;
+			}
+		}
+		
+		if (!opString.equals(BLANK_STRING)) return opString;
+		
+		switch(op) {
+			case IASTCastExpression.op_cast:
+				opString = CAST;
+				break;
+		}
+		
+		return opString;
+	}
 	private String getUnaryOperatorString(IASTUnaryExpression be) {
 		int op = be.getOperator();
 		String opString = BLANK_STRING;

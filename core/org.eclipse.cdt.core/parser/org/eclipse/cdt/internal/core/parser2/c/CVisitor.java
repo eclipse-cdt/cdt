@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTConditionalExpression;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -49,17 +50,20 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypeIdInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
@@ -81,6 +85,7 @@ public class CVisitor {
 		public boolean processExpressions    = false;
 		public boolean processStatements     = false;
 		public boolean processTypeIds        = false;
+		public boolean processEnumerators    = false;
 		
 		/**
 		 * @return true to continue visiting, return false to stop
@@ -94,6 +99,7 @@ public class CVisitor {
 		public boolean processExpression( IASTExpression expression )   { return true; }
 		public boolean processStatement( IASTStatement statement )      { return true; }
 		public boolean processTypeId( IASTTypeId typeId )               { return true; }
+		public boolean processEnumerator( IASTEnumerator enumerator )   { return true; }
 	}
 	
 	public static class ClearBindingAction extends BaseVisitorAction {
@@ -133,10 +139,20 @@ public class CVisitor {
 			binding = createBinding( (ICASTElaboratedTypeSpecifier) parent );
 		} else if( parent instanceof IASTStatement ){
 		    binding = createBinding ( (IASTStatement) parent );
+		} else if( parent instanceof ICASTEnumerationSpecifier ){
+		    binding = createBinding( (ICASTEnumerationSpecifier) parent );
+		} else if( parent instanceof IASTEnumerator ) {
+		    binding = createBinding( (IASTEnumerator) parent );
 		}
 		name.setBinding( binding );
 	}
 
+	private static IBinding createBinding( ICASTEnumerationSpecifier enumeration ){
+	    return new CEnumeration( enumeration );
+	}
+	private static IBinding createBinding( IASTEnumerator enumerator ){
+	    return new CEnumerator( enumerator );
+	}
 	private static IBinding createBinding( IASTStatement statement ){
 	    if( statement instanceof IASTGotoStatement ){
 	        IScope scope = getContainingScope( statement );
@@ -170,7 +186,7 @@ public class CVisitor {
 				return binding;
 			} 
 			return resolveBinding( elabTypeSpec, COMPLETE | TAGS );
-		} else if( parent instanceof IASTTypeId ){
+		} else if( parent instanceof IASTTypeId || parent instanceof IASTParameterDeclaration ){
 			IASTNode blockItem = getContainingBlockItem( parent );
 			return findBinding( blockItem, (CASTName) elabTypeSpec.getName(), COMPLETE | TAGS );
 		}
@@ -178,31 +194,36 @@ public class CVisitor {
 	}
 	private static IBinding findBinding( IASTFieldReference fieldReference ){
 		IASTExpression fieldOwner = fieldReference.getFieldOwner();
-		ICompositeType compositeType = null;
-		if( fieldOwner instanceof IASTIdExpression ){
-			IBinding binding = resolveBinding( fieldOwner );
-			if( binding instanceof IVariable ){
-				binding = ((IVariable)binding).getType();
-				while( binding != null && binding instanceof ITypedef )
-					binding = ((ITypedef)binding).getType();
-			}
-			if( binding instanceof ICompositeType )
-				compositeType = (ICompositeType) binding;
-		} else if( fieldOwner instanceof IASTCastExpression ){
-			IASTTypeId id = ((IASTCastExpression)fieldOwner).getTypeId();
-			IBinding binding = resolveBinding( id );
-			if( binding != null && binding instanceof ICompositeType ){
-				compositeType = (ICompositeType) binding;
-			}
+		IType type = null;
+		if( fieldOwner instanceof IASTArraySubscriptExpression ){
+		    type = getExpressionType( ((IASTArraySubscriptExpression) fieldOwner).getArrayExpression() );
+		} else {
+		    type = getExpressionType( fieldOwner );
 		}
-
-		IBinding binding = null;
-		if( compositeType != null ){
-			binding = compositeType.findField( fieldReference.getFieldName().toString() );
+	    while( type != null && type instanceof ITypedef )
+			type = ((ITypedef)type).getType();
+		
+		if( type != null && type instanceof ICompositeType ){
+			return ((ICompositeType) type).findField( fieldReference.getFieldName().toString() );
 		}
-		return binding;
+		return null;
 	}
 	
+	private static IType getExpressionType( IASTExpression expression ) {
+	    if( expression instanceof IASTIdExpression ){
+	        IBinding binding = resolveBinding( expression );
+			if( binding instanceof IVariable ){
+				return ((IVariable)binding).getType();
+			}
+	    } else if( expression instanceof IASTCastExpression ){
+	        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();
+			IBinding binding = resolveBinding( id );
+			if( binding != null && binding instanceof IType ){
+				return (IType) binding;
+			}
+	    }
+	    return null;
+	}
 	/**
 	 * @param parent
 	 * @return
@@ -397,8 +418,8 @@ public class CVisitor {
 						binding = checkForBinding( (IASTDeclaration) node, name );
 					}
 					if( binding != null ){
-					    if( (bits & TAGS) != 0 && !(binding instanceof ICompositeType) ||
-					        (bits & TAGS) == 0 &&  (binding instanceof ICompositeType) )
+					    if( (bits & TAGS) != 0 && !(binding instanceof ICompositeType || binding instanceof IEnumeration) ||
+					        (bits & TAGS) == 0 &&  (binding instanceof ICompositeType || binding instanceof IEnumeration) )
 					    {
 					        binding = null;
 					    } else {
@@ -458,6 +479,22 @@ public class CVisitor {
 				if( CharArrayUtils.equals( compName.toCharArray(), name.toCharArray() ) ){
 					return compName.resolveBinding();
 				}
+			} else if( declSpec instanceof ICASTEnumerationSpecifier ){
+			    ICASTEnumerationSpecifier enumeration = (ICASTEnumerationSpecifier) declSpec;
+			    CASTName eName = (CASTName) enumeration.getName();
+			    if( CharArrayUtils.equals( eName.toCharArray(), name.toCharArray() ) ){
+					return eName.resolveBinding();
+				}
+			    //check enumerators too
+			    List list = enumeration.getEnumerators();
+			    for( int i = 0; i < list.size(); i++ ) {
+			        IASTEnumerator enumerator = (IASTEnumerator) list.get(i);
+			        eName = (CASTName) enumerator.getName();
+			        if( CharArrayUtils.equals( eName.toCharArray(), name.toCharArray() ) ){
+						return eName.resolveBinding();
+					}
+			    }
+			    
 			}
 		} else if( declaration instanceof IASTFunctionDefinition ){
 			IASTFunctionDefinition functionDef = (IASTFunctionDefinition) declaration;
@@ -658,8 +695,25 @@ public class CVisitor {
 			if( !visitName( ((ICASTElaboratedTypeSpecifier) declSpec).getName(), action ) ) return false;
 		} else if( declSpec instanceof ICASTTypedefNameSpecifier ){
 			if( !visitName( ((ICASTTypedefNameSpecifier) declSpec).getName(), action ) ) return false;
+		} else if( declSpec instanceof ICASTEnumerationSpecifier ){
+		    ICASTEnumerationSpecifier enumSpec = (ICASTEnumerationSpecifier) declSpec;
+		    if( !visitName( enumSpec.getName(), action ) ) return false;
+		    List list = enumSpec.getEnumerators();
+		    for( int i = 0; i < list.size(); i++ ){
+		        if( !visitEnumerator( (IASTEnumerator) list.get(i), action ) ) return false;
+		    }
+		    
 		}
 		return true;
+	}
+	public static boolean visitEnumerator( IASTEnumerator enumerator, BaseVisitorAction action ){
+	    if( action.processEnumerators )
+	        if( !action.processEnumerator( enumerator ) ) return false;
+	        
+	    if( !visitName( enumerator.getName(), action ) ) return false;
+	    if( enumerator.getValue() != null )
+	        if( !visitExpression( enumerator.getValue(), action ) ) return false;
+	    return true;
 	}
 	public static boolean visitStatement( IASTStatement statement, BaseVisitorAction action ){
 		if( action.processStatements )
@@ -744,11 +798,11 @@ public class CVisitor {
 		    if( !visitName( ((IASTIdExpression)expression).getName(), action ) ) return false;
 		} else if( expression instanceof IASTTypeIdExpression ){
 		    if( !visitTypeId( ((IASTTypeIdExpression)expression).getTypeId(), action ) ) return false;
+		} else if( expression instanceof IASTCastExpression ){
+		    if( !visitTypeId( ((IASTCastExpression)expression).getTypeId(), action ) ) return false;
+		    if( !visitExpression( ((IASTCastExpression)expression).getOperand(), action ) ) return false;
 		} else if( expression instanceof IASTUnaryExpression ){
 		    if( !visitExpression( ((IASTUnaryExpression)expression).getOperand(), action ) ) return false;
-		} else if( expression instanceof IASTCastExpression ){
-		    if( !visitExpression( ((IASTCastExpression)expression).getOperand(), action ) ) return false;
-		    if( !visitTypeId( ((IASTCastExpression)expression).getTypeId(), action ) ) return false;
 		} else if( expression instanceof ICASTTypeIdInitializerExpression ){
 		    if( !visitTypeId( ((ICASTTypeIdInitializerExpression)expression).getTypeId(), action ) ) return false;
 		    if( !visitInitializer( ((ICASTTypeIdInitializerExpression)expression).getInitializer(), action ) ) return false;

@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -36,8 +38,9 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
-import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.ILabel;
@@ -45,7 +48,9 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -722,6 +727,93 @@ public class AST2Tests extends AST2BaseTest {
     public void testLongLong() throws ParserException
     {
         parse( "long long x;\n", ParserLanguage.C ); //$NON-NLS-1$
+    }
+    
+    public void testEnumerations() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "enum hue { red, blue, green };     \n" ); //$NON-NLS-1$
+        buffer.append( "enum hue col, *cp;                 \n" ); //$NON-NLS-1$
+        buffer.append( "void f() {                         \n" ); //$NON-NLS-1$
+        buffer.append( "   col = blue;                     \n" ); //$NON-NLS-1$
+        buffer.append( "   cp = &col;                      \n" ); //$NON-NLS-1$
+        buffer.append( "   if( *cp != red )                \n" ); //$NON-NLS-1$
+        buffer.append( "      return;                      \n" ); //$NON-NLS-1$
+        buffer.append( "}                                  \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        
+        IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations().get( 0 );
+        assertEquals( decl.getDeclarators().size(), 0 );
+        ICASTEnumerationSpecifier enumSpec = (ICASTEnumerationSpecifier) decl.getDeclSpecifier();
+        IASTEnumerator e1 = (IASTEnumerator) enumSpec.getEnumerators().get(0);
+        IASTEnumerator e2 = (IASTEnumerator) enumSpec.getEnumerators().get(1);
+        IASTEnumerator e3 = (IASTEnumerator) enumSpec.getEnumerators().get(2);
+        IASTName name_hue = enumSpec.getName();
+        
+        decl = (IASTSimpleDeclaration) tu.getDeclarations().get(1);
+        IASTDeclarator dtor = (IASTDeclarator) decl.getDeclarators().get(0);
+        IASTName name_col = dtor.getName();
+        dtor = (IASTDeclarator) decl.getDeclarators().get(1);
+        IASTName name_cp = dtor.getName();
+        IASTElaboratedTypeSpecifier spec = (IASTElaboratedTypeSpecifier) decl.getDeclSpecifier();
+        assertEquals( spec.getKind(), IASTElaboratedTypeSpecifier.k_enum );
+        IASTName name_hue2 = spec.getName();
+        
+        IASTFunctionDefinition fn = (IASTFunctionDefinition) tu.getDeclarations().get(2);
+        IASTCompoundStatement compound = (IASTCompoundStatement) fn.getBody();
+        IASTExpressionStatement expStatement = (IASTExpressionStatement) compound.getStatements().get(0);
+        IASTBinaryExpression exp = (IASTBinaryExpression) expStatement.getExpression();
+        assertEquals( exp.getOperator(), IASTBinaryExpression.op_assign );
+        IASTIdExpression id1 = (IASTIdExpression) exp.getOperand1();
+        IASTIdExpression id2 = (IASTIdExpression) exp.getOperand2();
+        IASTName r_col = id1.getName();
+        IASTName r_blue = id2.getName();
+        
+        expStatement = (IASTExpressionStatement) compound.getStatements().get(1);
+        exp = (IASTBinaryExpression) expStatement.getExpression();
+        assertEquals( exp.getOperator(), IASTBinaryExpression.op_assign );
+        id1 = (IASTIdExpression) exp.getOperand1();
+        IASTUnaryExpression ue = (IASTUnaryExpression) exp.getOperand2();
+        id2 = (IASTIdExpression) ue.getOperand();
+        IASTName r_cp = id1.getName();
+        IASTName r_col2 = id2.getName();
+        
+        IASTIfStatement ifStatement = (IASTIfStatement) compound.getStatements().get(2);
+        exp = (IASTBinaryExpression) ifStatement.getCondition();
+        ue = (IASTUnaryExpression) exp.getOperand1();
+        id1 = (IASTIdExpression) ue.getOperand();
+        id2 = (IASTIdExpression) exp.getOperand2();
+        
+        IASTName r_cp2 = id1.getName();
+        IASTName r_red = id2.getName();
+        
+        IEnumeration hue = (IEnumeration) name_hue.resolveBinding();
+        IEnumerator red = (IEnumerator) e1.getName().resolveBinding();
+        IEnumerator blue = (IEnumerator) e2.getName().resolveBinding();
+        IEnumerator green = (IEnumerator) e3.getName().resolveBinding();
+        IVariable col = (IVariable) name_col.resolveBinding();
+        IVariable cp = (IVariable) name_cp.resolveBinding();
+        IEnumeration hue_2 = (IEnumeration) name_hue2.resolveBinding();
+        IVariable col2 = (IVariable) r_col.resolveBinding();
+        IEnumerator blue2 = (IEnumerator) r_blue.resolveBinding();
+        IVariable cp2 = (IVariable) r_cp.resolveBinding();
+        IVariable col3 = (IVariable) r_col2.resolveBinding();
+        IVariable cp3 = (IVariable) r_cp2.resolveBinding();
+        IEnumerator red2 = (IEnumerator) r_red.resolveBinding();
+        
+        assertNotNull( hue );
+        assertSame( hue, hue_2 );
+        assertNotNull( red );
+        assertNotNull( green );
+        assertNotNull( blue );
+        assertNotNull( col );
+        assertNotNull( cp );
+        assertSame( col, col2 );
+        assertSame( blue, blue2);
+        assertSame( cp, cp2 );
+        assertSame( col, col3 );
+        assertSame( cp, cp3 );
+        assertSame( red, red2 );
     }
 }
 

@@ -11,6 +11,7 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.parser2.c;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -67,6 +68,9 @@ public class CVariable implements IVariable {
 		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
 			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
 			return (IType) elabTypeSpec.getName().resolveBinding();
+		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
+			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
+			return (IType) compTypeSpec.getName().resolveBinding();
 		}
 		return null;
 	}

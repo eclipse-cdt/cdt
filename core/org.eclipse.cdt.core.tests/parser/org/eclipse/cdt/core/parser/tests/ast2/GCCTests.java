@@ -16,8 +16,11 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
+import org.eclipse.cdt.core.dom.ast.IEnumeration;
+import org.eclipse.cdt.core.dom.ast.IEnumerator;
 import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
@@ -284,7 +287,7 @@ public class GCCTests extends AST2BaseTest {
         NameCollector collector = new NameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
-        assertEquals( collector.size(), 7 );
+        assertEquals( collector.size(), 9 );
         IVariable winds = (IVariable) collector.getName( 1 ).resolveBinding();
 
         assertInstances( collector, winds, 6 );
@@ -348,7 +351,7 @@ public class GCCTests extends AST2BaseTest {
         NameCollector collector = new NameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
-        assertEquals( collector.size(), 36 );
+        assertEquals( collector.size(), 37 );
         IVariable aa = (IVariable) collector.getName( 0 ).resolveBinding();
         IVariable bb = (IVariable) collector.getName( 1 ).resolveBinding();
         IFunction seqgt = (IFunction) collector.getName( 2 ).resolveBinding();
@@ -419,7 +422,7 @@ public class GCCTests extends AST2BaseTest {
         NameCollector collector = new NameCollector();
         CVisitor.visitTranslationUnit( tu, collector );
         
-        assertEquals( collector.size(), 14 );
+        assertEquals( collector.size(), 15 );
         IFunction f = (IFunction) collector.getName( 0 ).resolveBinding();
         IParameter a = (IParameter) collector.getName( 1 ).resolveBinding();
         IParameter y = (IParameter) collector.getName( 2 ).resolveBinding();
@@ -532,5 +535,293 @@ public class GCCTests extends AST2BaseTest {
         assertInstances( collector, exc_rad, 3 );
         assertInstances( collector, N2, 2 );
         assertInstances( collector, i2, 5 );
+    }
+    
+    public void testGCC20000412_5() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "int main( void ) {                                      \n"); //$NON-NLS-1$
+        buffer.append( "   struct {                                             \n"); //$NON-NLS-1$
+        buffer.append( "      int node;                                         \n"); //$NON-NLS-1$
+        buffer.append( "      int type;                                         \n"); //$NON-NLS-1$
+        buffer.append( "   } lastglob[1] = { { 0, 1 } };                        \n"); //$NON-NLS-1$
+        buffer.append( "   if( lastglob[0].node != 0 || lastglob[0].type != 1 ) \n"); //$NON-NLS-1$
+        buffer.append( "      return -1;                                        \n"); //$NON-NLS-1$
+        buffer.append( "   return 0;                                            \n"); //$NON-NLS-1$
+        buffer.append( "}                                                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 10 );
+        IField node = (IField) collector.getName( 3 ).resolveBinding();
+        IField type = (IField) collector.getName( 4 ).resolveBinding();
+        IVariable lastglob = (IVariable) collector.getName( 5 ).resolveBinding();
+        
+        assertInstances( collector, node, 2 );
+        assertInstances( collector, type, 2 );
+        assertInstances( collector, lastglob, 3 );
+    }
+    
+    public void testGCC20000419() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct foo { int a, b, c; };                            \n"); //$NON-NLS-1$
+        buffer.append( "void brother( int a, int b, int c ) {                   \n"); //$NON-NLS-1$
+        buffer.append( "   if( a ) return;                                      \n"); //$NON-NLS-1$
+        buffer.append( "}                                                       \n"); //$NON-NLS-1$
+        buffer.append( "void sister( struct foo f, int b, int c ) {             \n"); //$NON-NLS-1$
+        buffer.append( "   brother( (f.b == b), b, c );                         \n"); //$NON-NLS-1$
+        buffer.append( "}                                                       \n"); //$NON-NLS-1$
+        buffer.append( "int main() {                                            \n"); //$NON-NLS-1$
+        buffer.append( "   struct foo f = { 7, 8, 9 };                          \n"); //$NON-NLS-1$
+        buffer.append( "   sister( f, 1, 2 );                                   \n"); //$NON-NLS-1$
+        buffer.append( "   return 0;                                            \n"); //$NON-NLS-1$
+        buffer.append( "}                                                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 25 );
+        ICompositeType foo = (ICompositeType) collector.getName( 0 ).resolveBinding();
+        IField fa = (IField) collector.getName( 1 ).resolveBinding();
+        IField fb = (IField) collector.getName( 2 ).resolveBinding();
+        IField fc = (IField) collector.getName( 3 ).resolveBinding();
+        IFunction brother =  (IFunction) collector.getName( 4 ).resolveBinding();
+        IParameter pa =  (IParameter) collector.getName( 5 ).resolveBinding();
+        IParameter pb =  (IParameter) collector.getName( 6 ).resolveBinding();
+        IParameter pc =  (IParameter) collector.getName( 7 ).resolveBinding();
+        IFunction sister = (IFunction) collector.getName( 9 ).resolveBinding();
+        IParameter sf =  (IParameter) collector.getName( 11 ).resolveBinding();
+        IParameter sb =  (IParameter) collector.getName( 12 ).resolveBinding();
+        IParameter sc =  (IParameter) collector.getName( 13 ).resolveBinding();
+        IVariable f = (IVariable) collector.getName( 22 ).resolveBinding();
+        
+        assertInstances( collector, foo, 3 );
+        assertInstances( collector, fa, 1 );
+        assertInstances( collector, fb, 2 );
+        assertInstances( collector, fc, 1 );
+        assertInstances( collector, brother, 2 );
+        assertInstances( collector, pa, 2 );
+        assertInstances( collector, pb, 1 );
+        assertInstances( collector, pc, 1 );
+        assertInstances( collector, sister, 2 );
+        assertInstances( collector, sf, 2 );
+        assertInstances( collector, sb, 3 );
+        assertInstances( collector, sc, 2 );
+        assertInstances( collector, f, 2 );
+    }
+    public void testGCC20000503() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("unsigned long sub( int a ) {                          \n"); //$NON-NLS-1$
+        buffer.append("   return ((0 > a - 2) ? 0 : a - 2) * sizeof(long);   \n"); //$NON-NLS-1$
+        buffer.append("}                                                     \n"); //$NON-NLS-1$
+        buffer.append("main(){                                               \n"); //$NON-NLS-1$
+        buffer.append("   return ( sub(0) != 0 );                            \n"); //$NON-NLS-1$
+        buffer.append("}                                                     \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 7 );
+        IFunction sub = (IFunction) collector.getName( 0 ).resolveBinding();
+        IParameter a = (IParameter) collector.getName( 1 ).resolveBinding();
+        
+        assertInstances( collector, sub, 2 );
+        assertInstances( collector, a, 3 );
+    }
+    
+    public void testGCC20000511() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int  f( int value, int expect ) {                     \n"); //$NON-NLS-1$
+        buffer.append("   return ( value == expect );                        \n"); //$NON-NLS-1$
+        buffer.append("}                                                     \n"); //$NON-NLS-1$
+        buffer.append("main(){                                               \n"); //$NON-NLS-1$
+        buffer.append("   int a = 7, b = 6, c = 4, d = 7, e = 2;             \n"); //$NON-NLS-1$
+        buffer.append("   f( a || b % c, 1 );                                \n"); //$NON-NLS-1$
+        buffer.append("   f( a ? b % c : 0, 2 );                             \n"); //$NON-NLS-1$
+        buffer.append("   f( a = b % c, 2);                                  \n"); //$NON-NLS-1$
+        buffer.append("   f( a *= b % c, 4 );                                \n"); //$NON-NLS-1$
+        buffer.append("   f( a /= b % c, 2 );                                \n"); //$NON-NLS-1$
+        buffer.append("   f( a %= b % c, 0 );                                \n"); //$NON-NLS-1$
+        buffer.append("   f( a += b % c, 2 );                                \n"); //$NON-NLS-1$
+        buffer.append("   f( d || c && e, 1 );                               \n"); //$NON-NLS-1$
+        buffer.append("   f( d ? c && e : 0, 1 );                            \n"); //$NON-NLS-1$
+        buffer.append("   f( d = c && e, 1 );                                \n"); //$NON-NLS-1$
+        buffer.append("   f( d *= c && e, 1 );                               \n"); //$NON-NLS-1$
+        buffer.append("   f( d %= c && e, 0);                                \n"); //$NON-NLS-1$
+        buffer.append("   f( d += c && e, 1);                                \n"); //$NON-NLS-1$
+        buffer.append("   f( d -= c && e, 0);                                \n"); //$NON-NLS-1$
+        buffer.append("   f( d || c || e, 1);                                \n"); //$NON-NLS-1$
+        buffer.append("   f( d ? c || e : 0, 0);                             \n"); //$NON-NLS-1$
+        buffer.append("   f( d = c || e, 1 );                                \n"); //$NON-NLS-1$
+        buffer.append("   f( d *= c || e, 1);                                \n"); //$NON-NLS-1$
+        buffer.append("   f( d %= c || e, 0);                                \n"); //$NON-NLS-1$
+        buffer.append("   f( d += c || e, 1);                                \n"); //$NON-NLS-1$
+        buffer.append("   f( d -= c || e, 0 );                               \n"); //$NON-NLS-1$
+        buffer.append("}                                                     \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 95 );
+        IFunction f = (IFunction) collector.getName( 0 ).resolveBinding();
+        IParameter v = (IParameter) collector.getName( 1 ).resolveBinding();
+        IParameter ex = (IParameter) collector.getName( 2 ).resolveBinding();
+        IVariable a = (IVariable) collector.getName( 6 ).resolveBinding();
+        IVariable b = (IVariable) collector.getName( 7 ).resolveBinding();
+        IVariable c = (IVariable) collector.getName( 8 ).resolveBinding();
+        IVariable d = (IVariable) collector.getName( 9 ).resolveBinding();
+        IVariable e = (IVariable) collector.getName( 10).resolveBinding();
+        
+        
+        assertInstances( collector, f, 22 );
+        assertInstances( collector, v, 2 );
+        assertInstances( collector, ex, 2 );
+        assertInstances( collector, a, 8 );
+        assertInstances( collector, b, 8 );
+        assertInstances( collector, c, 22 );
+        assertInstances( collector, d, 15 );
+        assertInstances( collector, e, 15 );
+    }
+    public void testGCC20000603() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct s1 { double d; };                                \n"); //$NON-NLS-1$
+        buffer.append( "struct s2 { double d; };                                \n"); //$NON-NLS-1$
+        buffer.append( "double f( struct s1 * a, struct s2 *b) {                \n"); //$NON-NLS-1$
+        buffer.append( "   a->d = 1.0;                                          \n"); //$NON-NLS-1$
+        buffer.append( "   return b->d + 1.0;                                   \n"); //$NON-NLS-1$
+        buffer.append( "}                                                       \n"); //$NON-NLS-1$
+        buffer.append( "int main() {                                            \n"); //$NON-NLS-1$
+        buffer.append( "   struct s1 a;                                         \n"); //$NON-NLS-1$
+        buffer.append( "   a.d = 0.0;                                           \n"); //$NON-NLS-1$
+        buffer.append( "   if( f( &a, (struct s2 *)&a ) != 2.0 )                \n"); //$NON-NLS-1$
+        buffer.append( "      return -1;                                        \n"); //$NON-NLS-1$
+        buffer.append( "   return 0;                                            \n"); //$NON-NLS-1$
+        buffer.append( "}                                                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 23 );
+        ICompositeType s1 = (ICompositeType) collector.getName( 0 ).resolveBinding();
+        IField d1 = (IField) collector.getName( 1 ).resolveBinding();
+        ICompositeType s2 = (ICompositeType) collector.getName( 2 ).resolveBinding();
+        IField d2 = (IField) collector.getName( 3 ).resolveBinding();
+        IFunction f = (IFunction) collector.getName( 4 ).resolveBinding();
+        IParameter pa = (IParameter) collector.getName( 6 ).resolveBinding();
+        IParameter pb = (IParameter) collector.getName( 8 ).resolveBinding();
+        IVariable a = (IVariable) collector.getName( 15 ).resolveBinding();
+        
+        assertInstances( collector, s1, 3 );
+        assertInstances( collector, s2, 3 );
+        assertInstances( collector, d1, 3 );
+        assertInstances( collector, d2, 2 );
+        assertInstances( collector, f, 2 );
+        assertInstances( collector, pa, 2 );
+        assertInstances( collector, pb, 2 );
+        assertInstances( collector, a, 4 );
+    }
+    public void testGCC20000605_2() throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct F { int i; };                                    \n"); //$NON-NLS-1$
+        buffer.append( "void f1( struct F *x, struct F * y ) {                  \n"); //$NON-NLS-1$
+        buffer.append( "   int timeout = 0;                                     \n"); //$NON-NLS-1$
+        buffer.append( "   for( ; ((const struct F*)x)->i < y->i; x->i++ )      \n"); //$NON-NLS-1$
+        buffer.append( "      if( ++timeout > 5 )                               \n"); //$NON-NLS-1$
+        buffer.append( "         return;                                        \n"); //$NON-NLS-1$
+        buffer.append( "}                                                       \n"); //$NON-NLS-1$
+        buffer.append( "main() {                                                \n"); //$NON-NLS-1$
+        buffer.append( "   struct F x, y;                                       \n"); //$NON-NLS-1$
+        buffer.append( "   x.i = 0;   y.i = 1;                                  \n"); //$NON-NLS-1$
+        buffer.append( "   f1( &x, &y );                                        \n"); //$NON-NLS-1$
+        buffer.append( "}                                                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 28 );
+        ICompositeType F = (ICompositeType) collector.getName( 0 ).resolveBinding();
+        IField i = (IField) collector.getName( 1 ).resolveBinding();
+        IFunction f1 = (IFunction) collector.getName( 2 ).resolveBinding();
+        IParameter px = (IParameter) collector.getName( 4 ).resolveBinding();
+        IParameter py = (IParameter) collector.getName( 6 ).resolveBinding();
+        IVariable timeout = (IVariable) collector.getName( 7 ).resolveBinding();
+        IVariable x = (IVariable) collector.getName( 20 ).resolveBinding();
+        IVariable y = (IVariable) collector.getName( 21 ).resolveBinding();
+        
+        assertInstances( collector, F, 5 );
+        assertInstances( collector, i, 6 );
+        assertInstances( collector, f1, 2 );
+        assertInstances( collector, px, 3 );
+        assertInstances( collector, py, 2 );
+        assertInstances( collector, timeout, 2 );
+        assertInstances( collector, x, 3 );
+        assertInstances( collector, y, 3 );
+    }
+    public void testGCC20000605_3() throws Exception{
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct F { int x; int y; };                             \n"); //$NON-NLS-1$
+        buffer.append( "int main() {                                            \n"); //$NON-NLS-1$
+        buffer.append( "   int timeout = 0, x = 0;                              \n"); //$NON-NLS-1$
+        buffer.append( "   while( 1 ) {                                         \n"); //$NON-NLS-1$
+        buffer.append( "      const struct F i = { x++, };                      \n"); //$NON-NLS-1$
+        buffer.append( "      if( i.x > 0 )                                     \n"); //$NON-NLS-1$
+        buffer.append( "         break;                                         \n"); //$NON-NLS-1$
+        buffer.append( "      if( ++timeout > 5 )                                \n"); //$NON-NLS-1$
+        buffer.append( "         goto die;                                      \n"); //$NON-NLS-1$
+        buffer.append( "   }                                                    \n"); //$NON-NLS-1$
+        buffer.append( "   die: return 0;                                       \n"); //$NON-NLS-1$
+        buffer.append( "}                                                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 14 );
+        ICompositeType F = (ICompositeType) collector.getName( 0 ).resolveBinding();
+        IField fx = (IField) collector.getName( 1 ).resolveBinding();
+        IField fy = (IField) collector.getName( 2 ).resolveBinding();
+        IVariable timeout = (IVariable) collector.getName( 4 ).resolveBinding();
+        IVariable x = (IVariable) collector.getName( 5 ).resolveBinding();
+        IVariable i = (IVariable) collector.getName( 7 ).resolveBinding();
+        ILabel die = (ILabel) collector.getName( 13 ).resolveBinding();
+        
+        assertInstances( collector, F, 2 );
+        assertInstances( collector, fx, 2 );
+        assertInstances( collector, fy, 1 );
+        assertInstances( collector, timeout, 2 );
+        assertInstances( collector, x, 2 );
+        assertInstances( collector, i, 2 );
+        assertInstances( collector, die, 2 );
+    }
+    public void testGCCenum_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "enum foo { FOO, BAR };                                  \n"); //$NON-NLS-1$
+        buffer.append( "int main() {                                            \n"); //$NON-NLS-1$
+        buffer.append( "   int i;                                               \n"); //$NON-NLS-1$
+        buffer.append( "   for( i = BAR; i >= FOO; --i )                        \n"); //$NON-NLS-1$
+        buffer.append( "      if( i == -1 ) return -1;                          \n"); //$NON-NLS-1$
+        buffer.append( "   return 0;                                            \n"); //$NON-NLS-1$
+        buffer.append( "}                                                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        NameCollector collector = new NameCollector();
+        CVisitor.visitTranslationUnit( tu, collector );
+        
+        assertEquals( collector.size(), 11 );
+        IEnumeration foo = (IEnumeration) collector.getName( 0 ).resolveBinding();
+        IEnumerator FOO = (IEnumerator) collector.getName( 1 ).resolveBinding();
+        IEnumerator BAR = (IEnumerator) collector.getName( 2 ).resolveBinding();
+        IVariable i = (IVariable) collector.getName( 4 ).resolveBinding();
+
+        assertInstances( collector, foo, 1 );
+        assertInstances( collector, FOO, 2 );
+        assertInstances( collector, BAR, 2 );
+        assertInstances( collector, i, 5 );
     }
 }

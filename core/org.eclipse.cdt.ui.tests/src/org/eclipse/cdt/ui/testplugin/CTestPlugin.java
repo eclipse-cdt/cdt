@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Plugin;
 
 public class CTestPlugin extends Plugin {
 	
+	public static String PLUGIN_ID = "org.eclipse.cdt.ui.tests"; //$NON-NLS-1$
 	private static CTestPlugin fgDefault;
 	
 	public CTestPlugin() {
@@ -47,6 +48,10 @@ public class CTestPlugin extends Plugin {
 		} catch (IOException e) {
 			return null;
 		}
+	}
+	
+	public static String getPluginId() {
+		return PLUGIN_ID;
 	}
 
 }

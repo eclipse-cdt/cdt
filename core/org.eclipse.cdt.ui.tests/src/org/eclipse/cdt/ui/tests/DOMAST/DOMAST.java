@@ -67,6 +67,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -418,22 +419,12 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
      collapseAllAction.setToolTipText(COLLAPSE_ALL);
      collapseAllAction.setImageDescriptor(DOMASTPluginImages.DESC_COLLAPSE_ALL);
       
-      openDeclarationsAction = new Action() {
-         public void run() {
-            showMessage("Action 1 executed"); // TODO open declarations action //$NON-NLS-1$
-                                              // ... use annotations
-         }
-      };
+      openDeclarationsAction = new DisplayDeclarationsAction();
       openDeclarationsAction.setText(OPEN_DECLARATIONS);
       openDeclarationsAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
             .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
-      openReferencesAction = new Action() {
-         public void run() {
-            showMessage("Action 2 executed"); // TODO open references action ... //$NON-NLS-1$
-                                              // use annotations
-         }
-      };
+      openReferencesAction = new DisplayReferencesAction();
       openReferencesAction.setText(OPEN_REFERENCES);
       openReferencesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
             .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
@@ -504,6 +495,48 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
       }
    }
 
+   private class DisplayDeclarationsAction extends DisplaySearchResultAction {
+    public void run() {
+     	ISelection selection = viewer.getSelection();
+     	if (selection instanceof IStructuredSelection &&
+     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
+     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTName) {
+     		
+     		if (lang == ParserLanguage.CPP) {
+     			// TODO Devin when implemented in CPPVisitor
+     		} else {
+     			IASTName[] names = CVisitor.getDeclarations( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), ((IASTName)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()).resolveBinding() );
+     			displayNames(names, OPEN_DECLARATIONS);
+     		}
+     	}
+     }
+   }
+   
+   private class DisplayReferencesAction extends DisplaySearchResultAction {
+    public void run() {
+     	ISelection selection = viewer.getSelection();
+     	if (selection instanceof IStructuredSelection &&
+     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
+     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() instanceof IASTName) {
+     		
+     		if (lang == ParserLanguage.CPP) {
+     			// TODO Devin when implemented in CPPVisitor
+     		} else {
+     			IASTName[] names = CVisitor.getReferences( ((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode().getTranslationUnit(), ((IASTName)((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()).resolveBinding() );
+     			displayNames(names, OPEN_REFERENCES);
+     		}
+     	}
+     }
+   }
+   
+   private class DisplaySearchResultAction extends Action {
+	   	protected void displayNames(IASTName[] names, String queryLabel) {
+	        DOMQuery job = new DOMQuery(names, queryLabel);
+	        NewSearchUI.activateSearchResultView();
+	        NewSearchUI.runQuery(job);
+	     }
+   }
+   
    // TODO need to create a new action with the following for annotations (get
    // declarations/references)
    //	ISelection selection = viewer.getSelection();
@@ -552,7 +585,6 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
    private void hookSingleClickAction() {
       viewer.addSelectionChangedListener(new ISelectionChangedListener() {
          public void selectionChanged(SelectionChangedEvent event) {
-            // TODO Auto-generated method stub
             singleClickAction.run();
          }
       });

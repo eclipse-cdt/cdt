@@ -65,7 +65,7 @@ public class TreeObject implements IAdaptable {
 	}
 	
 	public String toString() {
-	    if( node == null ) return BLANK_FILENAME; //$NON-NLS-1$ //TODO Devin is this the best way???
+	    if( node == null ) return BLANK_FILENAME; //$NON-NLS-1$
 		StringBuffer buffer = new StringBuffer();
 		
 		Class[] classes = node.getClass().getInterfaces();

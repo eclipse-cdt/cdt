@@ -1,10 +1,10 @@
 /*******************************************************************************
  * Copyright (c) 2001 Rational Software Corp. and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v0.5 
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v05.html
- * 
+ *
  * Contributors:
  *     Rational Software - initial implementation
  ******************************************************************************/
@@ -13,6 +13,7 @@ package org.eclipse.cdt.core;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.core.parser.CodeReader;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -24,55 +25,56 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
 /**
  * @author hamer
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
-
 public class CConventions {
 	private final static String scopeResolutionOperator= "::"; //$NON-NLS-1$
 	private final static char fgDot= '.';
-	//private final static char fgColon= ':';
-	
+
 	private static boolean isLegalIdentifier(String name) {
 		if (name == null) {
 			return false;
 		}
-		String trimmed = name.trim();
-		if ((!name.equals(trimmed)) || (name.indexOf(" ") != -1) ){ //$NON-NLS-1$
+
+		if (name.indexOf(' ') != -1) {
 			return false;
 		}
 
 		int length = name.length();
-		if (length > 0) {
-			char first = name.charAt(0);
-			if( (! Character.isLetter(first) ) && (first != '_')){
+		char c;
+
+		if (length == 0) {
+			return false;
+		}
+
+		c = name.charAt(0);
+		if ((!Character.isLetter(c)) && (c != '_')) {
+			return false;
+		}
+
+		for (int i = 1; i < length; ++i) {
+			c = name.charAt(i);
+			if ((!Character.isLetterOrDigit(c)) && (c != '_')) {
 				return false;
 			}
-
-			for (int i = 1; i < length; i++) {
-				char c = name.charAt(i);
-				if((! Character.isLetterOrDigit(c)) && (c != '_') ){
-					return false;					
-				}
-			}
 		}
-		return true;		
+
+		return true;
 	}
-	
+
 	/**
-	 * Validate the given CPP class name, either simple or qualified.
-	 * For example, <code>"A::B::C"</code>, or <code>"C"</code>.
+	 * Validate the given CPP class name, either simple or qualified. For
+	 * example, <code>"A::B::C"</code>, or <code>"C"</code>.
 	 * <p>
 	 *
 	 * @param name the name of a class
 	 * @return a status object with code <code>IStatus.OK</code> if
-	 *		the given name is valid as a CPP class name, 
+	 *		the given name is valid as a CPP class name,
 	 *      a status with code <code>IStatus.WARNING</code>
-	 *		indicating why the given name is discouraged, 
-	 *      otherwise a status object indicating what is wrong with 
+	 *		indicating why the given name is discouraged,
+	 *      otherwise a status object indicating what is wrong with
 	 *      the name
 	 */
 	public static IStatus validateClassName(String name) {
@@ -89,9 +91,9 @@ public class CConventions {
 			// simple name
 			IStatus status = validateIdentifier(name);
 			if (!status.isOK()){
-				return status;				
+				return status;
 			}
-			
+
 			scannedID = name.toCharArray();
 		} else {
 			// qualified name
@@ -103,11 +105,11 @@ public class CConventions {
 			String type = name.substring(index + scopeResolutionOperator.length()).trim();
 			status = validateIdentifier(type);
 			if (!status.isOK()){
-				return status;				
+				return status;
 			}
 			scannedID = type.toCharArray();
 		}
-			
+
 		if (scannedID != null) {
 			if (CharOperation.contains('$', scannedID)) {
 				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.dollarName"), null); //$NON-NLS-1$
@@ -124,11 +126,11 @@ public class CConventions {
 	 * Validate the given scope name.
 	 * <p>
 	 * @return a status object with code <code>IStatus.OK</code> if
-	 *		the given name is valid as a class name, otherwise a status 
+	 *		the given name is valid as a class name, otherwise a status
 	 *		object indicating what is wrong with the name
 	 */
 	public static IStatus validateScopeName(String name) {
-	
+
 		if (name == null) {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.scope.nullName"), null); //$NON-NLS-1$
 		}
@@ -148,7 +150,7 @@ public class CConventions {
 		while (st.hasMoreTokens()) {
 			String typeName = st.nextToken();
 			typeName = typeName.trim(); // grammar allows spaces
-			char[] scannedID = typeName.toCharArray(); 
+			char[] scannedID = typeName.toCharArray();
 			if (scannedID == null) {
 				return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.illegalIdentifier", typeName), null); //$NON-NLS-1$
 			}
@@ -167,13 +169,13 @@ public class CConventions {
 	 *
 	 * @param name the name of a field
 	 * @return a status object with code <code>IStatus.OK</code> if
-	 *		the given name is valid as a field name, otherwise a status 
+	 *		the given name is valid as a field name, otherwise a status
 	 *		object indicating what is wrong with the name
 	 */
 	public static IStatus validateFieldName(String name) {
 		return validateIdentifier(name);
 	}
-	
+
 	/**
 	 * Validate the given C identifier.
 	 * The identifier must not have the same spelling as a C keyword,
@@ -183,21 +185,21 @@ public class CConventions {
 	 *
 	 * @param id the C identifier
 	 * @return a status object with code <code>IStatus.OK</code> if
-	 *		the given identifier is a valid C identifier, otherwise a status 
+	 *		the given identifier is a valid C identifier, otherwise a status
 	 *		object indicating what is wrong with the identifier
 	 */
 	public static IStatus validateIdentifier(String id) {
-		if (isLegalIdentifier(id)) {
-			if(!isValidIdentifier(id)){
-				return CModelStatus.VERIFIED_OK;
-			} else {
-				return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.invalid", id), null); //$NON-NLS-1$				
-			}
-		} else {
+		if (!isLegalIdentifier(id)) {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.illegalIdentifier", id), null); //$NON-NLS-1$
 		}
+
+		if (!isValidIdentifier(id)) {
+			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.invalid", id), null); //$NON-NLS-1$
+		}
+
+		return CModelStatus.VERIFIED_OK;
 	}
-	
+
 	/**
 	 * Validate the given method name.
 	 * The special names "&lt;init&gt;" and "&lt;clinit&gt;" are not valid.
@@ -207,36 +209,44 @@ public class CConventions {
 	 *
 	 * @param name the name of a method
 	 * @return a status object with code <code>IStatus.OK</code> if
-	 *		the given name is valid as a method name, otherwise a status 
+	 *		the given name is valid as a method name, otherwise a status
 	 *		object indicating what is wrong with the name
 	 */
 	public static IStatus validateMethodName(String name) {
-		if(name.startsWith("~"))
-			return validateIdentifier(name.substring(1, name.length()));
+		if(name.startsWith("~")) //$NON-NLS-1$
+			return validateIdentifier(name.substring(1));
 		else
 			return validateIdentifier(name);
 	}
-	
+
 	public static boolean isValidIdentifier(String name){
 		// create a scanner and get the type of the token
 		// assuming that you are given a valid identifier
 		IToken token = null;
 		IScanner scanner = ParserFactory.createScanner(
 				new CodeReader(name.toCharArray()),
-				new ScannerInfo(), 
-				ParserMode.QUICK_PARSE, 
-				ParserLanguage.CPP, 
-				null, 
-				null, 
+				new ScannerInfo(),
+				ParserMode.QUICK_PARSE,
+				ParserLanguage.CPP,
+				null,
+				null,
 				null
 				);
-		try{
+
+		try {
 			token = scanner.nextToken();
 		} catch (Exception e) {
 		}
-		if((token != null) && (token.getType() != IToken.tIDENTIFIER))
-			return true;
-		return false;		
+
+		if ((token != null) && (token.getType() == IToken.tIDENTIFIER)) {
+			try {
+				scanner.nextToken();
+			} catch (EndOfFileException e) {
+				return true;
+			} catch (Exception e) {
+			}
+		}
+
+		return false;
 	}
-	
 }

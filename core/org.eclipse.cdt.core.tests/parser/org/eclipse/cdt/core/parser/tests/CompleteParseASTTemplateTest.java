@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTableError;
 
 /**
  * @author aniefer
@@ -966,5 +967,14 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		
 		parent = (IASTBaseSpecifier) A3.getBaseClauses().next();
 		assertEquals( parent.getParentClassSpecifier(), A2 );
+	}
+	
+	public void testBug64939() throws Exception
+	{
+		try{
+			parse( "template < class T > class A : public A< T * > {}; A<int> a;" ).getDeclarations(); //NON-NLS-1$
+			assertTrue( false );
+		} catch ( ParserSymbolTableError e ){
+		}
 	}
 }

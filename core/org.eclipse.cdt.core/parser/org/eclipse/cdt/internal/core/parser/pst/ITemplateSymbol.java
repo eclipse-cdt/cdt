@@ -67,6 +67,7 @@ public interface ITemplateSymbol extends IParameterizedSymbol {
 	 * @param kind
 	 */
 	public void registerDeferredInstatiation( Object obj0, Object obj1, DeferredKind kind, Map argMap );
+	public int getNumberDeferredInstantiations();
 	
 	public static class DeferredKind{
 		private DeferredKind( int v ){

@@ -145,6 +145,9 @@ public class Problem implements IProblem {
 		errorMessages.put(
 				new Integer( IProblem.SEMANTIC_REDECLARED_TEMPLATE_PARAMETER ),
 				ParserMessages.getString("ASTProblemFactory.error.semantic.pst.redeclaredTemplateParameter")); //$NON-NLS-1$
+		errorMessages.put( 
+		        new Integer( IProblem.SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION ),
+				ParserMessages.getString("ASTProblemFactory.error.semantic.pst.recursiveTemplateInstantiation")); //$NON-NLS-1$
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_POUND_ERROR),
 			ParserMessages.getString("ScannerProblemFactory.error.preproc.error")); //$NON-NLS-1$

@@ -40,6 +40,7 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 public class ParserSymbolTable {
 
 	public static final int    TYPE_LOOP_THRESHOLD = 50;
+	public static final int    TEMPLATE_LOOP_THRESHOLD = 10;
 	public static final String EMPTY_NAME = ""; //$NON-NLS-1$
 	public static final String THIS = "this";	//$NON-NLS-1$
 	

@@ -45,7 +45,9 @@ public class ParserSymbolTableException extends Exception {
 	public static final int r_BadTemplateArgument     =  8;
 	public static final int r_BadTemplateParameter    =  9;
 	public static final int r_RedeclaredTemplateParam = 10;
+	public static final int r_RecursiveTemplate       = 11;
 	public int reason = -1;
+	
 	/**
 	 * @return
 	 */
@@ -74,6 +76,8 @@ public class ParserSymbolTableException extends Exception {
 				return IProblem.SEMANTIC_INVALID_TEMPLATE_PARAMETER;
 			case r_RedeclaredTemplateParam:
 				return IProblem.SEMANTIC_REDECLARED_TEMPLATE_PARAMETER;
+			case r_RecursiveTemplate:
+				return IProblem.SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION;
 			default:
 //				assert false : this;
 				return -1;

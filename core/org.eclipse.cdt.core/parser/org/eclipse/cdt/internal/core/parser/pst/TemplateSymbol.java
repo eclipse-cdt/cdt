@@ -421,27 +421,44 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		_deferredInstantiations.add( new Object [] { obj0, obj1, kind, argMap } );
 	}
 
+	public int getNumberDeferredInstantiations(){
+		return _deferredInstantiations.size();
+	}
 	
 	protected void processDeferredInstantiations() throws ParserSymbolTableException{
 		if( _deferredInstantiations == Collections.EMPTY_LIST )
 			return;
 		
-		int size = _deferredInstantiations.size();
-		for( int i = 0; i < size; i++ ){
-			Object [] objs = (Object [])_deferredInstantiations.get(i);
-			
-			DeferredKind kind = (DeferredKind) objs[2];
-			
-			if( kind == DeferredKind.PARENT ){
-				DerivableContainerSymbol d = (DerivableContainerSymbol) objs[0];
-				d.instantiateDeferredParent( (ISymbol) objs[ 1 ], this, (Map) objs[3] );
-			} else if( kind == DeferredKind.RETURN_TYPE ){
-				ParameterizedSymbol p = (ParameterizedSymbol) objs[0];
-				p.instantiateDeferredReturnType( (ISymbol) objs[1], this, (Map) objs[3] );
-			} else if( kind == DeferredKind.TYPE_SYMBOL ){
-				TemplateEngine.instantiateDeferredTypeInfo( (TypeInfo) objs[0], this, (Map) objs[3] );
-			}
+		if( _processingDeferred ){
+			return;
 		}
+		_processingDeferred = true;
+		int numDeferred = _deferredInstantiations.size();
+		int loopCount = 0;
+		while( numDeferred > 0 ){
+			while( numDeferred > 0 ) {
+				Object [] objs = (Object [])_deferredInstantiations.get(0);
+				
+				DeferredKind kind = (DeferredKind) objs[2];
+				
+				if( kind == DeferredKind.PARENT ){
+					DerivableContainerSymbol d = (DerivableContainerSymbol) objs[0];
+					d.instantiateDeferredParent( (ISymbol) objs[ 1 ], this, (Map) objs[3] );
+				} else if( kind == DeferredKind.RETURN_TYPE ){
+					ParameterizedSymbol p = (ParameterizedSymbol) objs[0];
+					p.instantiateDeferredReturnType( (ISymbol) objs[1], this, (Map) objs[3] );
+				} else if( kind == DeferredKind.TYPE_SYMBOL ){
+					TemplateEngine.instantiateDeferredTypeInfo( (TypeInfo) objs[0], this, (Map) objs[3] );
+				}
+				
+				_deferredInstantiations.remove( 0 );
+				numDeferred--;
+			}
+			numDeferred = _deferredInstantiations.size();
+			if( ++loopCount > ParserSymbolTable.TEMPLATE_LOOP_THRESHOLD )
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_RecursiveTemplate );
+		}
+		_processingDeferred = false;
 	}
 	
 	private		List  _specializations         = Collections.EMPTY_LIST;	//template specializations
@@ -449,6 +466,7 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 	private		Map	  _defnParameterMap        = Collections.EMPTY_MAP;		//members could be defined with different template parameter names
 	private 	Map	  _instantiations          = Collections.EMPTY_MAP;
 	private     List  _deferredInstantiations  = Collections.EMPTY_LIST;	//used to avoid recursive loop
+	private     boolean _processingDeferred = false;
 		
 	
 }

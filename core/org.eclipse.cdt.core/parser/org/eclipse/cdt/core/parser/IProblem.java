@@ -429,4 +429,6 @@ public interface IProblem
 	public static final int SEMANTIC_MALFORMED_EXPRESSION = SEMANTICS_RELATED | 0x010;
 
 	public static final int SEMANTIC_ILLFORMED_FRIEND = SEMANTICS_RELATED | 0x011;
+	
+	public static final int SEMANTIC_RECURSIVE_TEMPLATE_INSTANTIATION = SEMANTICS_RELATED | 0x012;
 }

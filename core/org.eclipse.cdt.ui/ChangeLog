@@ -1,3 +1,8 @@
+2003-09-04 John Camelon
+    First pass of parsing function bodies with X-Reference information.
+    Updated IASTFactory/ISourceElementRequestor to include IASTCodeScope
+    constructs, clients should keep this in mind and update their implementations.
+
 2003-09-04 Alain Magloire
 
 	Faulty logic when checking the build console preferences.

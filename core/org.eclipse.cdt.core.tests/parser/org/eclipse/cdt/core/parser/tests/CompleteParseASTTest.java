@@ -506,7 +506,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 
 	public void testBug41520() throws Exception 
 	{
-		Iterator i = parse( "const int x = 666, y( x );").getDeclarations();
+		Iterator i = parse( "const int x = 666; const int y( x );").getDeclarations();
 		IASTVariable variableX = (IASTVariable)i.next();
 		IASTVariable variableY = (IASTVariable)i.next();
 		assertFalse( i.hasNext() );
@@ -552,7 +552,7 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 
 	public void testIsDestructor() throws Exception
 	{
-		Iterator i = parse( "class A{ public: A(); }; \n  A::~A() {}; \n" ).getDeclarations();
+		Iterator i = parse( "class A{ public: ~A(); }; \n  A::~A() {}; \n" ).getDeclarations();
 		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
 		IASTMethod method = (IASTMethod)i.next();
 		assertTrue (method.isDestructor()); 
@@ -567,4 +567,34 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		IASTClassSpecifier classB = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)sub.next()).getTypeSpecifier();
 		IASTClassSpecifier structA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)( getDeclarations( classB ).next())).getTypeSpecifier();
 	}
+	
+	public void testSimpleFunctionBody() throws Exception
+	{
+		Iterator i = parse( "class A { int f1(); }; const int x = 4; int f() { return x; } int A::f1() { return x; }").getDeclarations();
+		IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTMethod method_prototype = (IASTMethod)getDeclarations(classA).next();
+		IASTVariable x = (IASTVariable) i.next();
+		IASTFunction function_f = (IASTFunction) i.next();
+		IASTMethod method_f = (IASTMethod)i.next();
+		assertEquals( method_f.getName(), method_prototype.getName() );
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 3 );
+		IASTVariableReference referenceX = (IASTVariableReference) callback.getReferences().get(0);
+		assertEquals( referenceX.getReferencedElement(), x );
+		IASTClassReference referenceA = (IASTClassReference) callback.getReferences().get(1);
+		assertEquals( referenceA.getReferencedElement(), classA );
+		referenceX = (IASTVariableReference) callback.getReferences().get(2);
+		assertEquals( referenceX.getReferencedElement(), x );
+	}
+
+
+	public void testSimpleForLoop() throws Exception
+	{
+		Iterator i = parse( "const int FIVE = 5;  void f() {  int x = 0; for( int i = 0; i < FIVE; ++i ) { x += i; }  }").getDeclarations();
+		IASTVariable five = (IASTVariable) i.next();
+		IASTFunction f = (IASTFunction) i.next();
+		assertFalse( i.hasNext() );
+		assertEquals( callback.getReferences().size(), 5 );
+	}
+	
 }

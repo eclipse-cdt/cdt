@@ -33,6 +33,7 @@ import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
@@ -704,11 +705,19 @@ public class Parser implements IParser
             {
             	backup( mark ); 
 
-				simpleDeclaration(
-					SimpleDeclarationStrategy.TRY_VARIABLE,
-					false,
-					scope,
-					ownerTemplate);
+				try
+				{
+					simpleDeclaration(
+						SimpleDeclarationStrategy.TRY_VARIABLE,
+						false,
+						scope,
+						ownerTemplate);
+				}
+				catch( Backtrack b3 )
+				{
+					backup( mark );
+					throw b3;
+				}
             }
         }
     }
@@ -853,7 +862,6 @@ public class Parser implements IParser
 	                    sdw.isUnsigned(), sdw.isTypeNamed()));
         } catch( ASTSemanticException se )
         {
-			failParse();
 			throw backtrack;
         }
         
@@ -902,13 +910,11 @@ public class Parser implements IParser
         }
         catch (ASTSemanticException e)
         {
-			failParse();
 			throw backtrack;
         }
         Iterator i = l.iterator();
         if (hasFunctionBody && l.size() != 1)
         {
-            failParse();
             throw backtrack; //TODO Should be an IProblem
         }
         if (i.hasNext()) // no need to do this unless we have a declarator
@@ -928,7 +934,7 @@ public class Parser implements IParser
                 IASTDeclaration declaration = (IASTDeclaration)i.next();
                 declaration.enterScope( requestor );
    
-                handleFunctionBody(declarator);
+                handleFunctionBody((IASTScope)declaration);
 				((IASTOffsetableElement)declaration).setEndingOffset(
 					lastToken.getEndOffset());
   
@@ -948,7 +954,7 @@ public class Parser implements IParser
         }
         
     }
-    protected void handleFunctionBody(Declarator d) throws Backtrack, EndOfFile
+    protected void handleFunctionBody(IASTScope scope) throws Backtrack, EndOfFile
     {
         if ( mode == ParserMode.QUICK_PARSE ) // TODO - Enable parsing within function bodies i.e. mode == ParserMode.QUICK_PARSE)
         {
@@ -971,7 +977,7 @@ public class Parser implements IParser
         }
         else
         {
-            functionBody();
+            functionBody(scope);
         }
     }
     /**
@@ -1668,15 +1674,22 @@ public class Parser implements IParser
         IToken mark = mark();
  
         if (LT(1) == IToken.tCOLONCOLON)
-            last = consume();
+            last = consume( IToken.tCOLONCOLON );
         // TODO - whacky way to deal with destructors, please revisit
         if (LT(1) == IToken.tCOMPL)
             consume();
         switch (LT(1))
         {
             case IToken.tIDENTIFIER :
-                last = consume();
-                last = consumeTemplateParameters(last);
+                last = consume(IToken.tIDENTIFIER);
+                IToken secondMark = mark(); 
+                try
+                {
+                	last = consumeTemplateParameters(last);
+                } catch( Backtrack bt )
+                {
+                	backup( secondMark );
+                }
                 break;
             default :
                 backup(mark);
@@ -1753,12 +1766,20 @@ public class Parser implements IParser
         }
         else if (LT(1) == IToken.tLPAREN)
         {
+        	IToken mark = mark(); 
             // initializer in constructor
-            consume(IToken.tLPAREN); // EAT IT!
-            IASTExpression astExpression = null;
-            astExpression = expression(sdw.getScope());
-            consume(IToken.tRPAREN);
-            d.setConstructorExpression(astExpression);
+            try
+            {
+	            consume(IToken.tLPAREN); // EAT IT!
+	            IASTExpression astExpression = null;
+	            astExpression = expression(sdw.getScope());
+	            consume(IToken.tRPAREN);
+	            d.setConstructorExpression(astExpression);
+            } catch( Backtrack bt )
+            {
+            	backup( mark ); 
+            	throw bt;
+            }
         }
         sdw.addDeclarator(d);
         return d;
@@ -1902,35 +1923,57 @@ public class Parser implements IParser
                     	if( forKR )
                     		throw backtrack;
                     
+                    	
+                    	
                         // temporary fix for initializer/function declaration ambiguity
                         if (!LA(2).looksLikeExpression() && strategy != SimpleDeclarationStrategy.TRY_VARIABLE  )
                         {
-                            // parameterDeclarationClause
-                            d.setIsFunction(true);
-							// TODO need to create a temporary scope object here 
-                            consume();
-                            boolean seenParameter = false;
-                            parameterDeclarationLoop : for (;;)
-                            {
-                                switch (LT(1))
-                                {
-                                    case IToken.tRPAREN :
-                                        consume();
-                                        break parameterDeclarationLoop;
-                                    case IToken.tELIPSE :
-                                        consume();
-                                        break;
-                                    case IToken.tCOMMA :
-                                        consume();
-                                        seenParameter = false;
-                                        break;
-                                    default :
-                                        if (seenParameter)
-                                            throw backtrack;
-                                        parameterDeclaration(d, scope);
-                                        seenParameter = true;
-                                }
-                            }
+							boolean failed = false;
+                        	if( LT(2) == IToken.tIDENTIFIER )
+                        	{
+								IToken newMark = mark();
+								consume( IToken.tLPAREN );
+
+	                        	try
+	                        	{
+	                        		if( ! astFactory.queryIsTypeName( scope, name() ) )
+	                        			failed = true;
+	                        	} catch( Backtrack b )
+	                        	{ 
+	                        		failed = true; 
+	                        	}
+	                        	
+								backup( newMark );
+                        	}
+							if( !failed )
+							{  									
+	                            // parameterDeclarationClause
+	                            d.setIsFunction(true);
+								// TODO need to create a temporary scope object here 
+	                            consume(IToken.tLPAREN);
+	                            boolean seenParameter = false;
+	                            parameterDeclarationLoop : for (;;)
+	                            {
+	                                switch (LT(1))
+	                                {
+	                                    case IToken.tRPAREN :
+	                                        consume();
+	                                        break parameterDeclarationLoop;
+	                                    case IToken.tELIPSE :
+	                                        consume();
+	                                        break;
+	                                    case IToken.tCOMMA :
+	                                        consume();
+	                                        seenParameter = false;
+	                                        break;
+	                                    default :
+	                                        if (seenParameter)
+	                                            throw backtrack;
+	                                        parameterDeclaration(d, scope);
+	                                        seenParameter = true;
+	                                }
+	                            }
+							}
 
                             if (LT(1) == IToken.tCOLON)
                             {
@@ -2550,9 +2593,9 @@ public class Parser implements IParser
      * 
      * @throws Backtrack	request a backtrack
      */
-    protected void functionBody() throws Backtrack
+    protected void functionBody( IASTScope scope ) throws Backtrack
     {
-        compoundStatement();
+        compoundStatement( scope, false );
     }
     /**
      * Parses a statement. 
@@ -2565,67 +2608,80 @@ public class Parser implements IParser
         switch (LT(1))
         {
             case IToken.t_case :
-                consume();
-                constantExpression(scope);
+                consume(IToken.t_case);
+                IASTExpression constant_expression = constantExpression(scope);
+				constant_expression.acceptElement(requestor);
                 consume(IToken.tCOLON);
-                statement(null);
+                statement(scope);
                 return;
             case IToken.t_default :
-                consume();
+                consume(IToken.t_default);
                 consume(IToken.tCOLON);
-                statement(null);
+                statement(scope);
                 return;
             case IToken.tLBRACE :
-                compoundStatement();
+                compoundStatement(scope, true);
                 return;
             case IToken.t_if :
-                consume();
+                consume( IToken.t_if );
                 consume(IToken.tLPAREN);
-                condition();
+                condition( scope );
                 consume(IToken.tRPAREN);
-                statement(null);
+                if( LT(1) != IToken.tLBRACE )
+					statement( astFactory.createNewCodeBlock( scope ) );
+                else
+                	statement(scope);
                 if (LT(1) == IToken.t_else)
                 {
-                    consume();
-                    statement(null);
+                    consume( IToken.t_else );
+                    if( LT(1) != IToken.tLBRACE )
+                    	statement( astFactory.createNewCodeBlock( scope ) );
+                    else
+                    	statement( scope );
                 }
                 return;
             case IToken.t_switch :
                 consume();
                 consume(IToken.tLPAREN);
-                condition();
+                condition(scope);
                 consume(IToken.tRPAREN);
-                statement(null);
+                statement(scope);
                 return;
             case IToken.t_while :
-                consume();
-                consume(IToken.tLPAREN);
-                condition();
-                consume(IToken.tRPAREN);
-                statement(null);
-                return;
-            case IToken.t_do :
-                consume();
-                statement(null);
                 consume(IToken.t_while);
                 consume(IToken.tLPAREN);
-                condition();
+                condition(scope);
+                consume(IToken.tRPAREN);
+                if( LT(1) != IToken.tLBRACE )
+                	statement(astFactory.createNewCodeBlock(scope));
+                else
+                	statement(scope);
+                return;
+            case IToken.t_do :
+                consume(IToken.t_do);
+				if( LT(1) != IToken.tLBRACE )
+					statement(astFactory.createNewCodeBlock(scope));
+				else
+					statement(scope);
+                consume(IToken.t_while);
+                consume(IToken.tLPAREN);
+                condition(scope);
                 consume(IToken.tRPAREN);
                 return;
             case IToken.t_for :
                 consume();
                 consume(IToken.tLPAREN);
-                forInitStatement();
+                forInitStatement(scope);
                 if (LT(1) != IToken.tSEMI)
-                    condition();
+                    condition(scope);
                 consume(IToken.tSEMI);
                 if (LT(1) != IToken.tRPAREN)
-                {
-                    //TODO get rid of NULL  
-                    expression(scope);
+                {  
+                    IASTExpression finalExpression = expression(scope);
+                    finalExpression.acceptElement(requestor);
                 }
                 consume(IToken.tRPAREN);
-                statement(null);
+                statement(scope);
                 return;
             case IToken.t_break :
                 consume();
@@ -2639,8 +2695,8 @@ public class Parser implements IParser
                 consume();
                 if (LT(1) != IToken.tSEMI)
                 {
-                    //TODO get rid of NULL  
-                    expression(scope);
+                    IASTExpression retVal = expression(scope);
+                    retVal.acceptElement(requestor);
                 }
                 consume(IToken.tSEMI);
                 return;
@@ -2651,14 +2707,14 @@ public class Parser implements IParser
                 return;
             case IToken.t_try :
                 consume();
-                compoundStatement();
+                compoundStatement(scope,true);
                 while (LT(1) == IToken.t_catch)
                 {
                     consume();
                     consume(IToken.tLPAREN);
-                    declaration(null, null); // was exceptionDeclaration
+                    declaration(scope, null); // was exceptionDeclaration
                     consume(IToken.tRPAREN);
-                    compoundStatement();
+                    compoundStatement(scope, true);
                 }
                 return;
             case IToken.tSEMI :
@@ -2669,50 +2725,97 @@ public class Parser implements IParser
                 // label
                 if (LT(1) == IToken.tIDENTIFIER && LT(2) == IToken.tCOLON)
                 {
-                    consume();
-                    consume();
-                    statement(null);
+                    consume(IToken.tIDENTIFIER);
+                    consume(IToken.tCOLON);
+                    statement(scope);
                     return;
                 }
                 // expressionStatement
                 // Note: the function style cast ambiguity is handled in expression
                 // Since it only happens when we are in a statement
+                IToken mark = mark();
                 try
                 {
-                    expression(scope);
+                    IASTExpression thisExpression = expression(scope);
                     consume(IToken.tSEMI);
+                    thisExpression.acceptElement( requestor );
                     return;
                 }
                 catch (Backtrack b)
                 {
+                	backup( mark );
                 }
                 // declarationStatement
-                declaration(null, null);
+                declaration(scope, null);
         }
     }
+
     /**
      * @throws Backtrack
      */
-    protected void condition() throws Backtrack
+    protected void condition( IASTScope scope ) throws Backtrack
     {
-        // TO DO
+        IASTExpression someExpression = expression( scope );
+        someExpression.acceptElement(requestor);
+        //TODO type-specifier-seq declarator = assignment expression 
+    }
+    
+    /**
+     * @throws Backtrack
+     */
+    protected void forInitStatement( IASTScope scope ) throws Backtrack
+    {
+    	try
+    	{
+        	simpleDeclarationStrategyUnion(scope,null);
+    	}
+    	catch( Backtrack bt )
+    	{
+    		try
+    		{
+    			IASTExpression e = expression( scope );
+    			e.acceptElement(requestor);
+    		}
+    		catch( Backtrack b )
+    		{
+    			failParse(); 
+    			throw b;
+    		}
+    	}
+        
     }
     /**
      * @throws Backtrack
      */
-    protected void forInitStatement() throws Backtrack
-    {
-        // TO DO
-    }
-    /**
-     * @throws Backtrack
-     */
-    protected void compoundStatement() throws Backtrack
+    protected void compoundStatement( IASTScope scope, boolean createNewScope ) throws Backtrack
     {
         consume(IToken.tLBRACE);
+        
+		IASTCodeScope newScope = null;
+        if( createNewScope )
+        {
+        	newScope = astFactory.createNewCodeBlock(scope);        
+        	newScope.enterScope( requestor );
+        }
+        IToken checkToken = null;
         while (LT(1) != IToken.tRBRACE)
-            statement(null);
-        consume();
+        {
+        	checkToken = LA(1);
+        	try
+        	{
+            	statement(createNewScope ? newScope : scope );
+        	}
+        	catch( Backtrack b )
+        	{
+        		failParse(); 
+        		if( LA(1) == checkToken )
+        			errorHandling();
+        	}
+        }
+            
+        consume(IToken.tRBRACE);
+        if( createNewScope )
+        	newScope.exitScope( requestor );
     }
     /**
      * @param expression
@@ -2757,61 +2860,79 @@ public class Parser implements IParser
      * @param expression
      * @throws Backtrack
      */
-    protected IASTExpression assignmentExpression( IASTScope scope )
-        throws Backtrack
-    {
-        if (LT(1) == IToken.t_throw)
-        {
-            return throwExpression(scope);
-        }
-        IASTExpression conditionalExpression =
-            conditionalExpression(scope);
-        // if the condition not taken, try assignment operators
-        if (conditionalExpression != null
-            && conditionalExpression.getExpressionKind()
-                == IASTExpression.Kind.CONDITIONALEXPRESSION_HARD)
-            return conditionalExpression;
-        switch (LT(1))
-        {
-            case IToken.tASSIGN :
-                return assignmentOperatorExpression( scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_NORMAL);
-            case IToken.tSTARASSIGN :
-                return assignmentOperatorExpression(scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_MULT);
-            case IToken.tDIVASSIGN :
-                return assignmentOperatorExpression(scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_DIV);
-            case IToken.tMODASSIGN :
-                return assignmentOperatorExpression(scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_MOD);
-            case IToken.tPLUSASSIGN :
-                return assignmentOperatorExpression(scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_PLUS);
-            case IToken.tMINUSASSIGN :
-                return assignmentOperatorExpression(scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_MINUS);
-            case IToken.tSHIFTRASSIGN :
-                return assignmentOperatorExpression(scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_RSHIFT);
-            case IToken.tSHIFTLASSIGN :
-                return assignmentOperatorExpression(scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_LSHIFT);
-            case IToken.tAMPERASSIGN :
-                return assignmentOperatorExpression(scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_AND);
-            case IToken.tXORASSIGN :
-                return assignmentOperatorExpression(scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_XOR);
-            case IToken.tBITORASSIGN :
-                return assignmentOperatorExpression(scope,
-                    IASTExpression.Kind.ASSIGNMENTEXPRESSION_OR);
-        }
-        return conditionalExpression;
-    }
+	protected IASTExpression assignmentExpression(IASTScope scope)
+		throws Backtrack {
+		if (LT(1) == IToken.t_throw) {
+			return throwExpression(scope);
+		}
+		IASTExpression conditionalExpression = conditionalExpression(scope);
+		// if the condition not taken, try assignment operators
+		if (conditionalExpression != null
+			&& conditionalExpression.getExpressionKind()
+				== IASTExpression.Kind.CONDITIONALEXPRESSION_HARD)
+			return conditionalExpression;
+		switch (LT(1)) {
+			case IToken.tASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_NORMAL,
+					conditionalExpression);
+			case IToken.tSTARASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_MULT,
+					conditionalExpression);
+			case IToken.tDIVASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_DIV,
+					conditionalExpression);
+			case IToken.tMODASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_MOD,
+					conditionalExpression);
+			case IToken.tPLUSASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_PLUS,
+					conditionalExpression);
+			case IToken.tMINUSASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_MINUS,
+					conditionalExpression);
+			case IToken.tSHIFTRASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_RSHIFT,
+					conditionalExpression);
+			case IToken.tSHIFTLASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_LSHIFT,
+					conditionalExpression);
+			case IToken.tAMPERASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_AND,
+					conditionalExpression);
+			case IToken.tXORASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_XOR,
+					conditionalExpression);
+			case IToken.tBITORASSIGN :
+				return assignmentOperatorExpression(
+					scope,
+					IASTExpression.Kind.ASSIGNMENTEXPRESSION_OR,
+					conditionalExpression);
+		}
+		return conditionalExpression;
+	}
     protected IASTExpression assignmentOperatorExpression(
     	IASTScope scope,
-        IASTExpression.Kind kind)
+        IASTExpression.Kind kind, IASTExpression lhs )
         throws EndOfFile, Backtrack
     {
         IToken t = consume();
@@ -2822,8 +2943,8 @@ public class Parser implements IParser
             return astFactory.createExpression(
                 scope,
                 kind,
-                assignmentExpression,
-                null,
+                lhs,
+				assignmentExpression,
                 null,
                 null,
                 "", null);

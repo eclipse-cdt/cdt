@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
@@ -416,4 +417,18 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
     public void acceptElaboratedForewardDeclaration(IASTElaboratedTypeSpecifier elaboratedType){
         indexer.addElaboratedForwardDeclaration(elaboratedType);       
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
+	 */
+	public void enterCodeBlock(IASTScope scope) {
+		// TODO Auto-generated method stub
+		
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
+	 */
+	public void exitCodeBlock(IASTScope scope) {
+		// TODO Auto-generated method stub
+		
+	}
 }

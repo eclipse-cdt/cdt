@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
@@ -102,7 +103,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					// looking for a function
 					result = startingScope.qualifiedFunctionLookup(name, new LinkedList(parameters));
 				}else{
-					// looking for a class
+					// looking for something else
 					result = startingScope.qualifiedLookup(name, type);
 				}
 				if( result != null ) 
@@ -1008,7 +1009,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					(IParameterizedSymbol) lookupQualifiedName(parentScope, functionName, TypeInfo.t_function, parameters, 0, functionReferences, false);
 				if(methodDeclaration != null){
 					ASTMethodReference reference = (ASTMethodReference) functionReferences.iterator().next();
-				visibility = ((IASTMethod)reference.getReferencedElement()).getVisiblity();		
+					visibility = ((IASTMethod)reference.getReferencedElement()).getVisiblity();		
 				}
 				return createMethod(scope, functionName, parameters, returnType,
 				exception, isInline, isFriend, isStatic, startOffset, offset,
@@ -1246,27 +1247,34 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	if( returnType.getTypeSpecifier() != null )
 			setParameter( symbol, returnType, false, references );
 		setParameters( symbol, references, parameters.iterator() );
-    	
-		try
-		{
-			ownerScope.addSymbol( symbol );
-		}
-		catch (ParserSymbolTableException e)
-		{
-			throw new ASTSemanticException();   
-		}
-		
+  
 		// check constructor / destructor if no return type
 		if ( returnType.getTypeSpecifier() == null ){
 			if(parentName.indexOf(DOUBLE_COLON) != -1){				
 				parentName = parentName.substring(parentName.lastIndexOf(DOUBLE_COLON) + DOUBLE_COLON.length());
 			}    	
-	    	if( parentName.equals(name) ){
+			if( parentName.equals(name) ){
 				isConstructor = true; 
-	    	} else if(name.startsWith(TELTA) && parentName.equals(name.substring(1))){
-	    		isDestructor = true;
-	    	}
+			} else if(name.startsWith(TELTA) && parentName.equals(name.substring(1))){
+				isDestructor = true;
+			}
 		}
+		
+		try
+		{
+			if( !isConstructor )
+				ownerScope.addSymbol( symbol );
+			else
+			{
+				symbol.setType( TypeInfo.t_constructor );
+				((IDerivableContainerSymbol)ownerScope).addConstructor( symbol );
+			}
+		}
+		catch (ParserSymbolTableException e)
+		{
+			throw new ASTSemanticException();   
+		}
+
   
         ASTMethod method = new ASTMethod( symbol, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain );
         try
@@ -1642,4 +1650,36 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         }
         return astAlias;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNewCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
+	 */
+	public IASTCodeScope createNewCodeBlock(IASTScope scope) {
+		IContainerSymbol symbol = scopeToSymbol( scope );
+		
+		IContainerSymbol newScope = pst.newContainerSymbol("");
+		newScope.setContainingSymbol(symbol);
+		
+		return new ASTCodeScope( newScope );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#queryIsTypeName(org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public boolean queryIsTypeName(IASTScope scope, ITokenDuple nameInQuestion) {
+		ISymbol lookupSymbol = null;
+		try {
+			lookupSymbol =
+				lookupQualifiedName(
+					scopeToSymbol(scope),
+					nameInQuestion,
+					new ArrayList(),
+					false);
+		} catch (ASTSemanticException e) {
+			// won't get thrown
+		} 
+		if( lookupSymbol == null ) return false;
+		if( lookupSymbol.isType( TypeInfo.t_type, TypeInfo.t_enumeration ) ) return true;
+		return false;
+	}
 }

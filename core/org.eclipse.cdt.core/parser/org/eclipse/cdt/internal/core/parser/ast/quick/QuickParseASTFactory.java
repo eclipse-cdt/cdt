@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
@@ -22,6 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
@@ -276,4 +276,18 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
     {
     	return new ASTNamespaceAlias( scope, identifier, alias.toString(), startingOffset, nameOffset, endOffset );
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createNewCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
+	 */
+	public IASTCodeScope createNewCodeBlock(IASTScope scope) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#queryIsTypeName(org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public boolean queryIsTypeName(IASTScope scope, ITokenDuple nameInQuestion) {
+		return true;  // we have no information to say that it is not
+	}
 }

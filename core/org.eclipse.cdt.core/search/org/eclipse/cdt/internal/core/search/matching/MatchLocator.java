@@ -453,4 +453,20 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	  System.out.println("(" + Thread.currentThread() + ") " + log); 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
+	 */
+	public void enterCodeBlock(IASTScope scope) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#exitCodeBlock(org.eclipse.cdt.core.parser.ast.IASTScope)
+	 */
+	public void exitCodeBlock(IASTScope scope) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

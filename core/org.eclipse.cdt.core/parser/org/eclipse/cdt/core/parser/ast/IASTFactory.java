@@ -11,7 +11,6 @@
 package org.eclipse.cdt.core.parser.ast;
 import java.util.List;
 
-import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
@@ -191,8 +190,15 @@ public interface IASTFactory
 	public IASTTypedefDeclaration createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset ) throws ASTSemanticException;
 
 	public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration( IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int endingOffset);
+	
+	public boolean queryIsTypeName( IASTScope scope, ITokenDuple nameInQuestion );
 
 	static final String DOUBLE_COLON = "::";
 	static final String TELTA = "~";
+	/**
+	 * @param scope
+	 * @return
+	 */
+	public IASTCodeScope createNewCodeBlock(IASTScope scope);
 
 }

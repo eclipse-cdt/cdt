@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
+import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
@@ -60,6 +61,8 @@ public interface ISourceElementRequestor {
 
 	public void enterFunctionBody( IASTFunction function );
 	public void exitFunctionBody( IASTFunction function );
+	public void enterCodeBlock( IASTScope scope );
+	public void exitCodeBlock( IASTScope scope );
 
 	public void enterCompilationUnit( IASTCompilationUnit compilationUnit ); 
 	public void enterInclusion( IASTInclusion inclusion ); 

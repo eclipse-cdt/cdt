@@ -272,9 +272,7 @@ public class ASTFailedTests extends BaseASTTest
         catch (IOException ioe)
         {
         }
-        Iterator declarations =  parse(code.toString()).getDeclarations();
-        IASTDeclaration d = (IASTDeclaration)declarations.next(); 
-		assertFalse( "Should be 1 declaration, not 2", !declarations.hasNext() );
+        assertCodeFailsFullParse(code.toString());
     }
     public void testBug39703() throws Exception
     {

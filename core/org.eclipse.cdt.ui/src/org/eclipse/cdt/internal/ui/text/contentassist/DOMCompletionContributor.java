@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
@@ -146,6 +148,18 @@ public class DOMCompletionContributor implements ICompletionContributor {
 					imageDescriptor = CElementImageProvider.getUnionImageDescriptor();
 			} else if (binding instanceof IFunction) {
 				imageDescriptor = CElementImageProvider.getFunctionImageDescriptor();
+			} else if (binding instanceof ICPPField) {
+				switch (((ICPPField)binding).getVisibility()) {
+				case ICPPField.v_private:
+					imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PRIVATE);
+					break;
+				case ICPPField.v_protected:
+					imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PROTECTED);
+					break;
+				default:
+					imageDescriptor = CElementImageProvider.getFieldImageDescriptor(ASTAccessVisibility.PUBLIC);
+					break;
+				}
 			} else if (binding instanceof IVariable) {
 				imageDescriptor = CElementImageProvider.getVariableImageDescriptor();
 			}

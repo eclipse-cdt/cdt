@@ -375,6 +375,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                   throwBacktrack(first.getOffset(), l.getEndOffset()
                         - first.getOffset());
                case IToken.tIDENTIFIER:
+	           case IToken.tCOMPLETION:
+	           case IToken.tEOC:
                   last = consume();
                   last = consumeTemplateArguments(last, argumentList);
                   if (last.getType() == IToken.tGT)
@@ -4533,6 +4535,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
     */
    protected IASTName createName(IToken token) {
       CPPASTName n = new CPPASTName(token.getCharImage());
+	  switch (token.getType()) {
+	  case IToken.tCOMPLETION:
+	  case IToken.tEOC:
+		  createCompletionNode(token).addName(n);
+		  break;
+	  }
       n.setOffsetAndLength(token.getOffset(), token.getLength());
       return n;
    }

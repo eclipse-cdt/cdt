@@ -1517,6 +1517,8 @@ abstract class BaseScanner implements IScanner {
 
         if (finished) {
         	if (contentAssistMode) {
+				if (lastToken != null)
+					lastToken.setNext(nextToken);
         		lastToken = nextToken;
         		nextToken = eocToken;
        			return lastToken;

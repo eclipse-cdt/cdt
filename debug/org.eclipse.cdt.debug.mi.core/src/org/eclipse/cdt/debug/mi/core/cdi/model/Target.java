@@ -19,6 +19,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
 import org.eclipse.cdt.debug.mi.core.command.MIExecContinue;
@@ -127,12 +128,16 @@ public class Target  implements ICDITarget {
 			}
 
 			// Resetting threads may change the value of
-			// some variables like Register.  Send an update
+			// some variables like Register.  Call an update()
 			// To generate changeEvents.
 			if (doUpdate) {
 				RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
 				if (regMgr.isAutoUpdate()) {
 					regMgr.update();
+				}
+				VariableManager varMgr = (VariableManager)session.getVariableManager();
+				if (varMgr.isAutoUpdate()) {
+					varMgr.update();
 				}
 			}
 		}

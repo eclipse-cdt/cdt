@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIStackInfoDepth;
 import org.eclipse.cdt.debug.mi.core.command.MIStackListFrames;
@@ -219,12 +220,16 @@ public class Thread extends CObject implements ICDIThread {
 			}
 			currentFrame = stackframe;
 			// Resetting stackframe may change the value of
-			// some variables like registers.  Send an update
+			// some variables like registers.  Call an update()
 			// To generate changeEvents.
 			if (doUpdate) {
 				RegisterManager regMgr = (RegisterManager)session.getRegisterManager();
 				if (regMgr.isAutoUpdate()) {
 					regMgr.update();
+				}
+				VariableManager varMgr = (VariableManager)session.getVariableManager();
+				if (varMgr.isAutoUpdate()) {
+					varMgr.update();
 				}
 			}
 		} catch (MIException e) {

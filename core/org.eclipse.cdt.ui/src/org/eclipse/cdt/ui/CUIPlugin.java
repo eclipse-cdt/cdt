@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -107,6 +108,17 @@ public class CUIPlugin extends AbstractUIPlugin {
 
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}
+
+	/**
+	 * @return
+	 */
+	public static IWorkbenchPage getActivePage() {
+		IWorkbenchWindow window = getDefault().getActiveWorkbenchWindow();
+		if (window != null) {
+			return window.getActivePage();
+		}
+		return null;
 	}
 
 	public Shell getActiveWorkbenchShell() {
@@ -274,4 +286,5 @@ public class CUIPlugin extends AbstractUIPlugin {
 			fProblemMarkerManager = new ProblemMarkerManager();
 		return fProblemMarkerManager;
 	}
+
 }

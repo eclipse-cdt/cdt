@@ -327,7 +327,11 @@ public class SettingsBlock extends AbstractCOptionPage {
 				}
 			}
 		};
-		workspace.run(operation, monitor);
+		if (getContainer().getProject() != null) {
+			workspace.run(operation, monitor);
+		} else {
+			operation.run(monitor);
+		}
 	}
 
 	public void performDefaults() {

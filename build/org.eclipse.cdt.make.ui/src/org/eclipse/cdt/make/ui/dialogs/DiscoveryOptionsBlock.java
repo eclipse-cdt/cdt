@@ -33,6 +33,7 @@ import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -66,11 +67,13 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * @author vhirsl
  */
 public class DiscoveryOptionsBlock extends AbstractCOptionPage {
+
 	private static final String PREFIX_BP = "BuildPathInfoBlock"; //$NON-NLS-1$
-	private static final String SC_GROUP_LABEL = PREFIX_BP + ".scGroup.label";	//$NON-NLS-1$
-	private static final String SC_ENABLED_LABEL = PREFIX_BP + ".scGroup.enabled.label";	//$NON-NLS-1$
-//	private static final String SC_OPTIONS_LABEL = PREFIX + ".scGroup.options.label";	//$NON-NLS-1$
-	private static final String MISSING_BUILDER_MSG = "ScannerConfigOptionsDialog.label.missingBuilderInformation";	//$NON-NLS-1$
+	private static final String SC_GROUP_LABEL = PREFIX_BP + ".scGroup.label"; //$NON-NLS-1$
+	private static final String SC_ENABLED_LABEL = PREFIX_BP + ".scGroup.enabled.label"; //$NON-NLS-1$
+	//	private static final String SC_OPTIONS_LABEL = PREFIX +
+	// ".scGroup.options.label"; //$NON-NLS-1$
+	private static final String MISSING_BUILDER_MSG = "ScannerConfigOptionsDialog.label.missingBuilderInformation"; //$NON-NLS-1$
 
 	private static final String PREFIX = "ScannerConfigOptionsDialog"; //$NON-NLS-1$
 	private static final String DIALOG_TITLE = PREFIX + ".title"; //$NON-NLS-1$
@@ -79,7 +82,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	private static final String ENABLE_SI_BUILD_PARSER = PREFIX + ".siBuilder.parser.enable.label"; //$NON-NLS-1$
 	private static final String SI_BUILD_PARSER_LABEL = PREFIX + ".siBuilder.parser.label"; //$NON-NLS-1$
 	private static final String SI_PROVIDER_CMD_GROUP = PREFIX + ".siProvider.cmd.group_label"; //$NON-NLS-1$
-	private static final String ENABLE_SI_PROVIDER_COMMAND = PREFIX + ".siProvider.cmd.enable.label";	//$NON-NLS-1$
+	private static final String ENABLE_SI_PROVIDER_COMMAND = PREFIX + ".siProvider.cmd.enable.label"; //$NON-NLS-1$
 	private static final String SI_PROVIDER_CMD_USE_DEFAULT = PREFIX + ".siProvider.cmd.use_default"; //$NON-NLS-1$
 	private static final String SI_PROVIDER_CMD_LABEL = PREFIX + ".siProvider.cmd.label"; //$NON-NLS-1$
 	private static final String SI_PROVIDER_PARSER_LABEL = PREFIX + ".siProvider.parser.label"; //$NON-NLS-1$
@@ -103,14 +106,15 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	private Map providerParsers = new HashMap();
 	private String initialProviderParserId = null;
 	private boolean fCreatePathContainer = false;
-	
 
 	public DiscoveryOptionsBlock() {
 		super(MakeUIPlugin.getResourceString(DIALOG_TITLE));
 		setDescription(MakeUIPlugin.getResourceString(DIALOG_DESCRIPTION));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#setContainer(org.eclipse.cdt.ui.dialogs.ICOptionContainer)
 	 */
 	public void setContainer(ICOptionContainer container) {
@@ -123,61 +127,70 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		if (project != null) {
 			try {
 				fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
-			}
-			catch (CoreException e) {
+			} catch (CoreException e) {
 				fInitialized = false;
 				fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, true);
 			}
 			fCreatePathContainer = true;
-		}
-		else {
+		} else {
 			fBuildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);
 		}
 		retrieveSIConsoleParsers();
-		initialBuilderParserId = fBuildInfo.getMakeBuilderConsoleParserId();	//$NON-NLS-1$
-		initialProviderParserId = fBuildInfo.getESIProviderConsoleParserId();	//$NON-NLS-1$
+		initialBuilderParserId = fBuildInfo.getMakeBuilderConsoleParserId(); //$NON-NLS-1$
+		initialProviderParserId = fBuildInfo.getESIProviderConsoleParserId(); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		IProject project = getContainer().getProject();
-		IScannerConfigBuilderInfo buildInfo;
-		if (project != null) {
-			buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
-			if (fCreatePathContainer) {
-				createDiscoveredPathContainer(project);
-				// create a new discovered scanner config store
-				MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
-			}
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
 		}
-		else {
-			buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);
-		}
+		IWorkspace workspace = MakeUIPlugin.getWorkspace();
 
-		final IScannerConfigBuilderInfo fInfo = buildInfo;
-		MakeUIPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+		// To avoid multi-build
+		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
+
 			public void run(IProgressMonitor monitor) throws CoreException {
-				fInfo.setAutoDiscoveryEnabled(isScannerConfigDiscoveryEnabled());
-				if (isScannerConfigDiscoveryEnabled()) {
-					fInfo.setMakeBuilderConsoleParserEnabled(isBuilderParserEnabled());
-					if (isBuilderParserEnabled()) {
-						fInfo.setMakeBuilderConsoleParserId((String) builderParsers.get(makeBuilderSIParserComboBox.getText()));
+				IScannerConfigBuilderInfo buildInfo;
+				IProject project = getContainer().getProject();
+				if (project != null) {
+					buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(project, ScannerConfigBuilder.BUILDER_ID);
+					if (fCreatePathContainer) {
+						createDiscoveredPathContainer(project);
+						// create a new discovered scanner config store
+						MakeCorePlugin.getDefault().getDiscoveryManager().removeDiscoveredInfo(project);
 					}
-					fInfo.setESIProviderCommandEnabled(isProviderCommandEnabled());
+				} else {
+					buildInfo = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);
+				}
+
+				buildInfo.setAutoDiscoveryEnabled(isScannerConfigDiscoveryEnabled());
+				if (isScannerConfigDiscoveryEnabled()) {
+					buildInfo.setMakeBuilderConsoleParserEnabled(isBuilderParserEnabled());
+					if (isBuilderParserEnabled()) {
+						buildInfo.setMakeBuilderConsoleParserId((String)builderParsers.get(makeBuilderSIParserComboBox.getText()));
+					}
+					buildInfo.setESIProviderCommandEnabled(isProviderCommandEnabled());
 					if (isProviderCommandEnabled()) {
-						fInfo.setUseDefaultESIProviderCmd(useDefaultESIProviderCmd());
+						buildInfo.setUseDefaultESIProviderCmd(useDefaultESIProviderCmd());
 						if (!useDefaultESIProviderCmd()) {
-							storeSIProviderCommandLine(fInfo);
+							storeSIProviderCommandLine(buildInfo);
 						}
-						fInfo.setESIProviderConsoleParserId((String) providerParsers.get(esiProviderParserComboBox.getText()));
+						buildInfo.setESIProviderConsoleParserId((String)providerParsers.get(esiProviderParserComboBox.getText()));
 					}
 				}
 			}
-		} /* IWorkspaceRunnable */, monitor);
+		};
+		if (getContainer().getProject() != null) {
+			workspace.run(operation, monitor);
+		} else {
+			operation.run(monitor);
+		}
 	}
-
 	/**
 	 * @param project
 	 * @throws CModelException
@@ -190,13 +203,15 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 			List newEntries = new ArrayList(Arrays.asList(entries));
 			if (!newEntries.contains(container)) {
 				newEntries.add(container);
-				cProject.setRawPathEntries((IPathEntry[])newEntries.
-						toArray(new IPathEntry[newEntries.size()]), new NullProgressMonitor());
+				cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]),
+						new NullProgressMonitor());
 			}
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	public void performDefaults() {
@@ -205,12 +220,11 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		if (getContainer().getProject() != null) {
 			// get the preferences
 			info = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, false);
-		}
-		else {
+		} else {
 			// get the defaults
 			info = MakeCorePlugin.createScannerConfigBuildInfo(fPrefs, ScannerConfigBuilder.BUILDER_ID, true);
 		}
-		
+
 		setScannerConfigDiscoveryEnabled(info.isAutoDiscoveryEnabled());
 		enableBuilderParserButton.setSelection(info.isMakeBuilderConsoleParserEnabled());
 		makeBuilderSIParserComboBox.setText(getParserName(builderParsers, info.getMakeBuilderConsoleParserId()));
@@ -218,7 +232,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		defESIProviderCommandButton.setSelection(info.isDefaultESIProviderCmd());
 		setESIProviderCommandFrom(info);
 		esiProviderParserComboBox.setText(getParserName(providerParsers, info.getESIProviderConsoleParserId()));
-		
+
 		enableAllControls();
 	}
 
@@ -228,9 +242,9 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	 * @return
 	 */
 	private String getParserName(Map parsers, String consoleParserId) {
-		for (Iterator i = parsers.keySet().iterator(); i.hasNext(); ) {
-			String parserName = (String) i.next();
-			String parserId = (String) parsers.get(parserName);
+		for (Iterator i = parsers.keySet().iterator(); i.hasNext();) {
+			String parserName = (String)i.next();
+			String parserId = (String)parsers.get(parserName);
 			if (parserId.equals(consoleParserId)) {
 				return parserName;
 			}
@@ -238,7 +252,9 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		return consoleParserId;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -246,7 +262,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		int tabColumns = 2;
 		Font font = parent.getFont();
 		Composite composite = ControlFactory.createComposite(parent, tabColumns);
-		((GridLayout) composite.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout)composite.getLayout()).makeColumnsEqualWidth = false;
 		composite.setFont(font);
 		setControl(composite);
 
@@ -269,40 +285,39 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		IProject project = getContainer().getProject();
 		boolean showMissingBuilder = false;
 		try {
-			if (project != null &&
-					project.hasNature(MakeProjectNature.NATURE_ID) &&
-					!project.hasNature(ScannerConfigNature.NATURE_ID)) {
-				needsSCNature = true;	// an old project
+			if (project != null && project.hasNature(MakeProjectNature.NATURE_ID)
+					&& !project.hasNature(ScannerConfigNature.NATURE_ID)) {
+				needsSCNature = true; // an old project
 			}
-		} 
-		catch (CoreException e) {
+		} catch (CoreException e) {
 			showMissingBuilder = true;
 		}
-		
+
 		Group scGroup = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(SC_GROUP_LABEL), numColumns);
 		scGroup.setFont(parent.getFont());
-		((GridData) scGroup.getLayoutData()).grabExcessHorizontalSpace = true;
-		((GridData) scGroup.getLayoutData()).horizontalSpan = numColumns;
-		((GridData) scGroup.getLayoutData()).horizontalAlignment = GridData.FILL;
-		
+		((GridData)scGroup.getLayoutData()).grabExcessHorizontalSpace = true;
+		((GridData)scGroup.getLayoutData()).horizontalSpan = numColumns;
+		((GridData)scGroup.getLayoutData()).horizontalAlignment = GridData.FILL;
+
 		if (showMissingBuilder || (!needsSCNature && !fInitialized)) {
 			ControlFactory.createLabel(scGroup, MakeUIPlugin.getResourceString(MISSING_BUILDER_MSG));
 			return false;
 		}
-		
+
 		// Add checkbox
 		scEnabledButton = ControlFactory.createCheckBox(scGroup, MakeUIPlugin.getResourceString(SC_ENABLED_LABEL));
 		scEnabledButton.setFont(parent.getFont());
-		((GridData) scEnabledButton.getLayoutData()).horizontalSpan = numColumns;
-		((GridData) scEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
+		((GridData)scEnabledButton.getLayoutData()).horizontalSpan = numColumns;
+		((GridData)scEnabledButton.getLayoutData()).grabExcessHorizontalSpace = true;
 		// VMIR* old projects will have discovery disabled by default
 		scEnabledButton.setSelection(needsSCNature ? false : fBuildInfo.isAutoDiscoveryEnabled());
 		scEnabledButton.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				handleScannerConfigEnable();
 			}
 		});
-//		handleScannerConfigEnable(); Only if true in VMIR*
+		//		handleScannerConfigEnable(); Only if true in VMIR*
 		return true;
 	}
 
@@ -316,8 +331,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 			try {
 				ScannerConfigNature.addScannerConfigNature(getContainer().getProject());
 				needsSCNature = false;
-			} 
-			catch (CoreException e) {
+			} catch (CoreException e) {
 				MakeCorePlugin.log(e.getStatus());
 			}
 		}
@@ -328,19 +342,19 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	 * Fills console parser maps
 	 */
 	private void retrieveSIConsoleParsers() {
-		IExtensionPoint ep = Platform.getExtensionRegistry().
-			getExtensionPoint(MakeCorePlugin.getUniqueIdentifier(), MakeCorePlugin.SI_CONSOLE_PARSER_SIMPLE_ID);
+		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(MakeCorePlugin.getUniqueIdentifier(),
+				MakeCorePlugin.SI_CONSOLE_PARSER_SIMPLE_ID);
 		if (ep != null) {
 			IExtension[] extensions = ep.getExtensions();
 			for (int i = 0; i < extensions.length; ++i) {
 				String parserId = extensions[i].getUniqueIdentifier();
 				String label = extensions[i].getLabel();
 				IConfigurationElement[] elements = extensions[i].getConfigurationElements();
-				String commandId = elements[0].getAttribute("commandId");	//$NON-NLS-1$
-				if (commandId.equals("makeBuilder") || commandId.equals("all")) {	//$NON-NLS-1$//$NON-NLS-2$
+				String commandId = elements[0].getAttribute("commandId"); //$NON-NLS-1$
+				if (commandId.equals("makeBuilder") || commandId.equals("all")) { //$NON-NLS-1$//$NON-NLS-2$
 					builderParsers.put(label, parserId);
 				}
-				if (commandId.equals("externalScannerInfoProvider") || commandId.equals("all")) {	//$NON-NLS-1$//$NON-NLS-2$
+				if (commandId.equals("externalScannerInfoProvider") || commandId.equals("all")) { //$NON-NLS-1$//$NON-NLS-2$
 					providerParsers.put(label, parserId);
 				}
 			}
@@ -348,34 +362,32 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	}
 
 	private void createBuildOutputParserControls(Composite parent) {
-//		ControlFactory.insertSpace(parent, 1, 10);
-		Group bopGroup = ControlFactory.createGroup(parent, 
-			MakeUIPlugin.getResourceString(SI_BUILD_PARSER_GROUP), 2);
+		//		ControlFactory.insertSpace(parent, 1, 10);
+		Group bopGroup = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(SI_BUILD_PARSER_GROUP), 2);
 		((GridLayout)bopGroup.getLayout()).marginHeight = 5;
 		((GridLayout)bopGroup.getLayout()).marginWidth = 5;
 		((GridData)bopGroup.getLayoutData()).verticalAlignment = GridData.FILL;
 		((GridData)bopGroup.getLayoutData()).horizontalSpan = 2;
 
-		enableBuilderParserButton = ControlFactory.createCheckBox(bopGroup, 
-			MakeUIPlugin.getResourceString(ENABLE_SI_BUILD_PARSER));
+		enableBuilderParserButton = ControlFactory.createCheckBox(bopGroup, MakeUIPlugin.getResourceString(ENABLE_SI_BUILD_PARSER));
 		((GridData)enableBuilderParserButton.getLayoutData()).horizontalSpan = 2;
 		boolean enabledBuilderParser = fBuildInfo.isMakeBuilderConsoleParserEnabled();
 		enableBuilderParserButton.setSelection(enabledBuilderParser);
 		enableBuilderParserButton.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				makeBuilderSIParserComboBox.setEnabled(isBuilderParserEnabled());
 			}
 		});
-			
-		Label label = ControlFactory.createLabel(bopGroup, 
-				MakeUIPlugin.getResourceString(SI_BUILD_PARSER_LABEL));
+
+		Label label = ControlFactory.createLabel(bopGroup, MakeUIPlugin.getResourceString(SI_BUILD_PARSER_LABEL));
 		((GridData)label.getLayoutData()).grabExcessHorizontalSpace = false;
-		
+
 		makeBuilderSIParserComboBox = new Combo(bopGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 
 		// fill the combobox and set the initial value
-		for (Iterator items = builderParsers.keySet().iterator(); items.hasNext(); ) {
-			String parser = (String) items.next();
+		for (Iterator items = builderParsers.keySet().iterator(); items.hasNext();) {
+			String parser = (String)items.next();
 			makeBuilderSIParserComboBox.add(parser);
 			if (initialBuilderParserId.equals(builderParsers.get(parser))) {
 				makeBuilderSIParserComboBox.setText(parser);
@@ -383,19 +395,19 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		}
 		makeBuilderSIParserComboBox.setEnabled(enabledBuilderParser);
 	}
-	
+
 	private void createAfterBuildCmdControls(Composite parent) {
-		Group abcGroup = ControlFactory.createGroup(parent, 
-				MakeUIPlugin.getResourceString(SI_PROVIDER_CMD_GROUP), 2);
+		Group abcGroup = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(SI_PROVIDER_CMD_GROUP), 2);
 		((GridData)abcGroup.getLayoutData()).horizontalSpan = 2;
-		
-		enableProviderCommandButton = ControlFactory.createCheckBox(abcGroup, 
+
+		enableProviderCommandButton = ControlFactory.createCheckBox(abcGroup,
 				MakeUIPlugin.getResourceString(ENABLE_SI_PROVIDER_COMMAND));
 		((GridData)enableProviderCommandButton.getLayoutData()).horizontalSpan = 2;
 		((GridData)enableProviderCommandButton.getLayoutData()).horizontalAlignment = GridData.FILL_HORIZONTAL;
 		boolean enabledProviderCommand = fBuildInfo.isESIProviderCommandEnabled();
 		enableProviderCommandButton.setSelection(enabledProviderCommand);
 		enableProviderCommandButton.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				defESIProviderCommandButton.setEnabled(isProviderCommandEnabled());
 				esiProviderCommand.setEnabled(isProviderCommandEnabled() && !useDefaultESIProviderCmd());
@@ -403,18 +415,17 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 				getContainer().updateContainer();
 			}
 		});
-		
+
 		createESIProviderCmdControls(abcGroup);
 
-		Label label = ControlFactory.createLabel(abcGroup, 
-				MakeUIPlugin.getResourceString(SI_PROVIDER_PARSER_LABEL));
+		Label label = ControlFactory.createLabel(abcGroup, MakeUIPlugin.getResourceString(SI_PROVIDER_PARSER_LABEL));
 		((GridData)label.getLayoutData()).grabExcessHorizontalSpace = false;
-		
+
 		esiProviderParserComboBox = new Combo(abcGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
 
 		// fill the combobox and set the initial value
-		for (Iterator items = providerParsers.keySet().iterator(); items.hasNext(); ) {
-			String parser = (String) items.next();
+		for (Iterator items = providerParsers.keySet().iterator(); items.hasNext();) {
+			String parser = (String)items.next();
 			esiProviderParserComboBox.add(parser);
 			if (initialProviderParserId.equals(providerParsers.get(parser))) {
 				esiProviderParserComboBox.setText(parser);
@@ -424,11 +435,12 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		esiProviderCommand.setEnabled(enabledProviderCommand && !useDefaultESIProviderCmd());
 		esiProviderParserComboBox.setEnabled(enabledProviderCommand);
 	}
-	
+
 	private void createESIProviderCmdControls(Composite parent) {
-		defESIProviderCommandButton = ControlFactory.createCheckBox(parent, 
+		defESIProviderCommandButton = ControlFactory.createCheckBox(parent,
 				MakeUIPlugin.getResourceString(SI_PROVIDER_CMD_USE_DEFAULT));
 		defESIProviderCommandButton.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				esiProviderCommand.setEnabled(!useDefaultESIProviderCmd());
 				getContainer().updateContainer();
@@ -436,8 +448,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		});
 		((GridData) (defESIProviderCommandButton.getLayoutData())).horizontalAlignment = GridData.FILL_HORIZONTAL;
 		((GridData) (defESIProviderCommandButton.getLayoutData())).horizontalSpan = 2;
-		Label label = ControlFactory.createLabel(parent, 
-				MakeUIPlugin.getResourceString(SI_PROVIDER_CMD_LABEL));
+		Label label = ControlFactory.createLabel(parent, MakeUIPlugin.getResourceString(SI_PROVIDER_CMD_LABEL));
 		((GridData) (label.getLayoutData())).horizontalAlignment = GridData.BEGINNING;
 		((GridData) (label.getLayoutData())).grabExcessHorizontalSpace = false;
 		esiProviderCommand = ControlFactory.createTextField(parent, SWT.SINGLE | SWT.BORDER);
@@ -448,6 +459,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 			esiProviderCommand.setEnabled(false);
 		}
 		esiProviderCommand.addListener(SWT.Modify, new Listener() {
+
 			public void handleEvent(Event e) {
 				getContainer().updateContainer();
 			}
@@ -456,14 +468,14 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	}
 
 	/**
-	 * 
+	 *  
 	 */
 	private void setESIProviderCommandFrom(IScannerConfigBuilderInfo buildInfo) {
 		IPath sCommand = buildInfo.getESIProviderCommand();
 		if (sCommand != null) {
 			StringBuffer cmd = new StringBuffer(sCommand.toOSString());
 			String args = buildInfo.getESIProviderArguments();
-			if (args != null && args.length() > 0) { 
+			if (args != null && args.length() > 0) {
 				cmd.append(' ');
 				cmd.append(args);
 			}
@@ -479,7 +491,8 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		makeBuilderSIParserComboBox.setEnabled(isScannerConfigDiscoveryEnabled() && isBuilderParserEnabled());
 		enableProviderCommandButton.setEnabled(isScannerConfigDiscoveryEnabled());
 		defESIProviderCommandButton.setEnabled(isScannerConfigDiscoveryEnabled() && isProviderCommandEnabled());
-		esiProviderCommand.setEnabled(isScannerConfigDiscoveryEnabled() && isProviderCommandEnabled() && !useDefaultESIProviderCmd());
+		esiProviderCommand.setEnabled(isScannerConfigDiscoveryEnabled() && isProviderCommandEnabled()
+				&& !useDefaultESIProviderCmd());
 		esiProviderParserComboBox.setEnabled(isScannerConfigDiscoveryEnabled() && isProviderCommandEnabled());
 	}
 
@@ -507,11 +520,12 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	private boolean isScannerConfigDiscoveryEnabled() {
 		return scEnabledButton.getSelection();
 	}
-	
+
 	/**
 	 * Enables or disables the scanner config discovery
 	 * 
-	 * @param enabled (boolean)
+	 * @param enabled
+	 *            (boolean)
 	 */
 	private void setScannerConfigDiscoveryEnabled(boolean enabled) {
 		scEnabledButton.setSelection(enabled);
@@ -528,8 +542,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		if (esiProviderLine.startsWith("\"")) { //$NON-NLS-1$
 			start = 1;
 			end = esiProviderLine.indexOf('"', 1);
-		}
-		else {
+		} else {
 			end = esiProviderLine.indexOf(' ');
 		}
 		IPath path;
@@ -545,12 +558,13 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		}
 		buildInfo.setESIProviderArguments(args);
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#isValid()
 	 */
 	public boolean isValid() {
-		if (isProviderCommandEnabled() == true && 
-				useDefaultESIProviderCmd() == false) {
+		if (isProviderCommandEnabled() == true && useDefaultESIProviderCmd() == false) {
 			String cmd = getSIProviderCommandLine();
 			if (cmd == null || cmd.length() == 0) {
 				return false;
@@ -558,7 +572,9 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		}
 		return true;
 	}
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.IDialogPage#getErrorMessage()
 	 */
 	public String getErrorMessage() {

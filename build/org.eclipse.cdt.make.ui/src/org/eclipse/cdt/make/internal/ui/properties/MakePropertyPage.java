@@ -19,15 +19,16 @@ import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class MakePropertyPage extends PropertyPage implements ICOptionContainer {
@@ -82,9 +83,8 @@ public class MakePropertyPage extends PropertyPage implements ICOptionContainer 
 				fOptionBlock.performApply(monitor);
 			}
 		};
-		IRunnableWithProgress op = new WorkspaceModifyDelegatingOperation(runnable);
 		try {
-			new ProgressMonitorDialog(getShell()).run(false, true, op);
+			PlatformUI.getWorkbench().getProgressService().runInUI(PlatformUI.getWorkbench().getProgressService() ,runnable, MakeUIPlugin.getWorkspace().getRoot());
 		} catch (InvocationTargetException e) {
 			Throwable e1 = e.getTargetException();
 			MakeUIPlugin.errorDialog(getShell(), MakeUIPlugin.getResourceString("MakeProjectPropertyPage.internalError"),e1.toString(), e1); //$NON-NLS-1$

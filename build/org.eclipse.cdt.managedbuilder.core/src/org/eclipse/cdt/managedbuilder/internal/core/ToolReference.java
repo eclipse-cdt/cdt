@@ -11,6 +11,7 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class ToolReference implements IToolReference {
 	private boolean isDirty = false;
 	private List optionReferences;
 	private IBuildObject owner;
-	private List outputExtensions;
+	private String outputExtensions;
 	private String outputFlag;
 	private String outputPrefix;
 	protected ITool parent;
@@ -85,11 +86,7 @@ public class ToolReference implements IToolReference {
 		
 		// Get the output extensions the reference produces 
 		if (element.hasAttribute(ITool.OUTPUTS)) {
-			String output = element.getAttribute(ITool.OUTPUTS);
-			String[] outputs = output.split(DEFAULT_SEPARATOR);
-			for (int index = outputs.length - 1; index >= 0; --index) {
-				getOutputsList().add(outputs[index].trim());				
-			}
+			outputExtensions = element.getAttribute(ITool.OUTPUTS);
 		}
 		// Get the flag to control output
 		if (element.hasAttribute(ITool.OUTPUT_FLAG))
@@ -133,10 +130,7 @@ public class ToolReference implements IToolReference {
 		// Get the overridden output extensions (if any)
 		String output = element.getAttribute(ITool.OUTPUTS);
 		if (output != null) {
-			String[] outputs = output.split(DEFAULT_SEPARATOR);
-			for (int index = outputs.length - 1; index >= 0; --index) {
-				getOutputsList().add(outputs[index].trim());				
-			}
+			outputExtensions = output;
 		}
 
 		// Get the flag to control output
@@ -318,6 +312,18 @@ public class ToolReference implements IToolReference {
 	}
 
 	/* (non-Javadoc)
+	 * @return
+	 */
+	private List getOutputsList() {
+		ArrayList answer = new ArrayList();
+		if (outputExtensions != null) {
+			String[] exts = outputExtensions.split(DEFAULT_SEPARATOR);
+			answer.addAll(Arrays.asList(exts));
+		}
+		return answer;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#getTool()
 	 */
 	public ITool getTool() {
@@ -482,13 +488,6 @@ public class ToolReference implements IToolReference {
 		return parent.getOutputExtension(inputExtension);
 	}
 	
-	private List getOutputsList() {
-		if (outputExtensions == null) {
-			outputExtensions = new ArrayList();
-		}
-		return outputExtensions;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getOutputFlag()
 	 */
@@ -561,11 +560,14 @@ public class ToolReference implements IToolReference {
 		}
 		
 		// Save the output flag
-		if (outputPrefix != null) {
+		if (outputFlag != null) {
 			element.setAttribute(ITool.OUTPUT_FLAG, getOutputFlag());
 		}
 		
 		// Save the outputs
+		if (outputExtensions != null) {
+			element.setAttribute(ITool.OUTPUTS, outputExtensions);
+		}
 		
 		// Output the option references
 		Iterator iter = getOptionReferenceList().listIterator();

@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
@@ -66,13 +65,12 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 					project = ((ICProject) elem).getProject();
 				}
 				if (project != null) {
+					projects.add(project);
 				}
 			}
 
 			final IProject[] projectArray = (IProject[]) projects.toArray(new IProject[projects.size()]);
 
-			ProgressMonitorDialog pd = new ProgressMonitorDialog(MakeUIPlugin.getActiveWorkbenchShell());
-			run(true, pd, projectArray);
 			UpdateMakeProjectWizard wizard = new UpdateMakeProjectWizard(projectArray);
 			WizardDialog dialog = new WizardDialog(MakeUIPlugin.getActiveWorkbenchShell(), wizard);
 			dialog.open();
@@ -114,12 +112,19 @@ public class UpdateMakeProjectAction implements IWorkbenchWindowActionDelegate {
 					project[i],
 					MakeCorePlugin.OLD_BUILDER_ID,
 					new SubProgressMonitor(monitor, 1));
+				
+				// convert .cdtproject
+				CCorePlugin.getDefault().mapCProjectOwner(project[i], MakeCorePlugin.getUniqueIdentifier() + ".make", true);
 				// add new nature
 				MakeProjectNature.addNature(project[i], new SubProgressMonitor(monitor, 1));
+				
+				// move existing build properties to new
 				IMakeBuilderInfo newInfo = MakeCorePlugin.createBuildInfo(project[i], MakeBuilder.BUILDER_ID);
 				QualifiedName qlocation = new QualifiedName(CCorePlugin.PLUGIN_ID, "buildLocation");
 				String location = project[i].getPersistentProperty(qlocation);
-				newInfo.setBuildCommand(new Path(location));
+				if ( location != null) {
+					newInfo.setBuildCommand(new Path(location));
+				}
 				
 				//remove old properties
 				QualifiedName[] qName = 

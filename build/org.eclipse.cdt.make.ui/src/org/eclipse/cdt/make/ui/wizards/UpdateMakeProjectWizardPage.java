@@ -117,12 +117,14 @@ public class UpdateMakeProjectWizardPage extends StatusWizardPage {
 		Vector result = new Vector();
 		try {
 			for (int i = 0; i < project.length; i++) {
-				IProjectDescription desc = project[i].getDescription();
-				ICommand builder[] = desc.getBuildSpec();
-				for( int j = 0; j < builder.length; j++ ) {
-					if (builder[j].getBuilderName().equals(MakeCorePlugin.OLD_BUILDER_ID)) {
-						result.add(project[i]);
-						break;
+				if (project[i].isAccessible()) {
+					IProjectDescription desc = project[i].getDescription();
+					ICommand builder[] = desc.getBuildSpec();
+					for (int j = 0; j < builder.length; j++) {
+						if (builder[j].getBuilderName().equals(MakeCorePlugin.OLD_BUILDER_ID)) {
+							result.add(project[i]);
+							break;
+						}
 					}
 				}
 			}

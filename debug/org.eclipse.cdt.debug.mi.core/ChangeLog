@@ -1,3 +1,9 @@
+2003-12-16 Mikhail Khodjaiants
+
+	Fix for PR 48870: Terminate gdb if attach to process fails.
+
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
 2003-12-09 Alain Magloire
 
 	Do not try to interrupt if the target was suspended.

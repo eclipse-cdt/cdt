@@ -30,10 +30,7 @@ import org.eclipse.cdt.core.parser.extension.IScannerExtension;
  */
 public class ScannerUtility {
 
-	/**
-	 * @param string
-	 * @return
-	 */
+	static ScannerStringBuffer strbuff = new ScannerStringBuffer(100);
 	static String reconcilePath(String originalPath ) {
 		if( originalPath == null ) return null;
 		originalPath = removeQuotes( originalPath );
@@ -53,15 +50,15 @@ public class ScannerUtility {
 			else
 				results.add( segment );
 		}
-		StringBuffer buffer = new StringBuffer(); 
+		strbuff.startString(); 
 		Iterator i = results.iterator();
 		while( i.hasNext() )
 		{
-			buffer.append( (String)i.next() );
+			strbuff.append( (String)i.next() );
 			if( i.hasNext() )
-				buffer.append( File.separatorChar );
+				strbuff.append( File.separatorChar );
 		}
-		return buffer.toString();
+		return strbuff.toString();
 	}
 
 	
@@ -72,11 +69,11 @@ public class ScannerUtility {
 	private static String removeQuotes(String originalPath) {
 		String [] segments = originalPath.split( "\""); //$NON-NLS-1$
 		if( segments.length == 1 ) return originalPath;
-		StringBuffer result = new StringBuffer();
+		strbuff.startString();
 		for( int i = 0; i < segments.length; ++ i )
 			if( segments[i] != null )
-				result.append( segments[i]);
-		return result.toString();
+				strbuff.append( segments[i]);
+		return strbuff.toString();
 	}
 
 
@@ -152,7 +149,7 @@ public class ScannerUtility {
 		try
 		{
 			boolean useIncludePath = true;
-			StringBuffer fileNameBuffer = new StringBuffer();
+			strbuff.startString();
 			int startOffset = baseOffset, endOffset = baseOffset;
 			
 			if (! includeLine.equals("")) { //$NON-NLS-1$
@@ -174,7 +171,7 @@ public class ScannerUtility {
 	
 				try {
 					if (t.getType() == IToken.tSTRING) {
-						fileNameBuffer.append(t.getImage());
+						strbuff.append(t.getImage());
 						startOffset = baseOffset + t.getOffset();
 						endOffset = baseOffset + t.getEndOffset();
 						useIncludePath = false;
@@ -190,10 +187,13 @@ public class ScannerUtility {
 							startOffset = baseOffset + t.getOffset();
 							
 							while (t.getType() != IToken.tGT) {
-								fileNameBuffer.append(t.getImage());
+								strbuff.append(t.getImage());
 								helperScanner.skipOverWhitespace();
 								int c = helperScanner.getChar();
-								if (c == '\\') fileNameBuffer.append('\\'); else helperScanner.ungetChar(c);
+								if (c == '\\') 
+									strbuff.append('\\'); 
+								else 
+									helperScanner.ungetChar(c);
 								t = helperScanner.nextToken(false);
 							}
 							
@@ -218,7 +218,7 @@ public class ScannerUtility {
 			} else
 				throw INCLUSION_PARSE_EXCEPTION ;
 	
-			return new InclusionDirective( fileNameBuffer.toString(), useIncludePath, startOffset, endOffset );
+			return new InclusionDirective( strbuff.toString(), useIncludePath, startOffset, endOffset );
 		}
 		catch( ScannerException se )
 		{

@@ -68,6 +68,7 @@ import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 public class Scanner implements IScanner {
 
+	static ScannerStringBuffer strbuff = new ScannerStringBuffer(100);
 	protected static final String HEX_PREFIX = "0x"; //$NON-NLS-1$
 	private static final ObjectMacroDescriptor CPLUSPLUS_MACRO = new ObjectMacroDescriptor( __CPLUSPLUS, "199711L"); //$NON-NLS-1$
 	private static final ObjectMacroDescriptor STDC_VERSION_MACRO = new ObjectMacroDescriptor( __STDC_VERSION__, "199001L"); //$NON-NLS-1$
@@ -314,11 +315,11 @@ public class Scanner implements IScanner {
 			if( !file.exists() && path.indexOf('\"') != -1 )
 			{
 				StringTokenizer tokenizer = new StringTokenizer(path, "\"" );	//$NON-NLS-1$
-				StringBuffer buffer = new StringBuffer(path.length() );
+				strbuff.startString();
 				while( tokenizer.hasMoreTokens() ){
-					buffer.append( tokenizer.nextToken() );
+					strbuff.append( tokenizer.nextToken() );
 				}
-				file = new File( buffer.toString() );
+				file = new File( strbuff.toString() );
 			}
 
 			if( file.exists() && file.isDirectory() )
@@ -366,7 +367,7 @@ public class Scanner implements IScanner {
 		int c = getChar();
 		if (c == '\n') 
 			return ""; //$NON-NLS-1$
-		StringBuffer buffer = new StringBuffer();
+		strbuff.startString();
 		boolean inString = false;
 		boolean inChar = false;
 		while (true) {
@@ -377,14 +378,14 @@ public class Scanner implements IScanner {
 				&& (c != '"' || ( c == '"' && inChar ) )
 				&& (c != '\'' || ( c == '\'' && inString ) )
 				&& (c != NOCHAR)) {
-				buffer.append((char) c);
+				strbuff.append(c);
 				c = getChar( true );
 			}
 			
 			if (c == '/') {
 				//only care about comments outside of a quote
 				if( inString || inChar ){
-					buffer.append( (char) c );
+					strbuff.append( c );
 					c = getChar( true );
 					continue;
 				}
@@ -404,18 +405,18 @@ public class Scanner implements IScanner {
 					continue;
 				} else {
 					// we are not in a comment
-					buffer.append((char) c);
+					strbuff.append(c);
 					c = next;
 					continue;
 				}
 			} else if( c == '"' ){
 				inString = !inString;
-				buffer.append((char) c);
+				strbuff.append(c);
 				c = getChar( true );
 				continue;
 			} else if( c == '\'' ){
 				inChar = !inChar;
-				buffer.append((char) c);
+				strbuff.append(c);
 				c = getChar( true );
 				continue;
 			} else if( c == '\\' ){
@@ -428,9 +429,9 @@ public class Scanner implements IScanner {
 				} else if( c == '\n' ){ 
 					c = getChar(true);
 				} else {
-					buffer.append('\\');
+					strbuff.append('\\');
 					if( c == '"' || c == '\'' ){
-						buffer.append((char)c);
+						strbuff.append(c);
 						c = getChar( true );
 					}
 				}
@@ -441,7 +442,7 @@ public class Scanner implements IScanner {
 			}
 		}
 
-		return buffer.toString();
+		return strbuff.toString();
 	}
 
 	protected void skipOverTextUntilNewline() throws ScannerException {
@@ -481,26 +482,26 @@ public class Scanner implements IScanner {
 	}
 	
 	protected String getNextIdentifier() throws ScannerException {
-		StringBuffer buffer = new StringBuffer();
+		strbuff.startString();
 		skipOverWhitespace();
 		int c = getChar();
 
 		if (((c >= 'a') && (c <= 'z'))
 			|| ((c >= 'A') && (c <= 'Z')) | (c == '_')) {
-			buffer.append((char) c);
+			strbuff.append(c);
 
 			c = getChar();
 			while (((c >= 'a') && (c <= 'z'))
 				|| ((c >= 'A') && (c <= 'Z'))
 				|| ((c >= '0') && (c <= '9'))
 				|| (c == '_')) {
-				buffer.append((char) c);
+				strbuff.append(c);
 				c = getChar();
 			}
 		}
 		ungetChar(c);
 
-		return buffer.toString();
+		return strbuff.toString();
 	}
 
 	protected void handleInclusion(String fileName, boolean useIncludePaths, int beginOffset, int startLine, int nameOffset, int nameLine, int endOffset, int endLine ) throws ScannerException {
@@ -863,15 +864,15 @@ public class Scanner implements IScanner {
 		return nextToken( true ); 
 	}
 	
-	public boolean pasteIntoInputStream(StringBuffer buff) throws ScannerException, EndOfFileException
+	public boolean pasteIntoInputStream(String buff) throws ScannerException, EndOfFileException
 	{
 		// we have found ## in the input stream -- so save the results
 		if( lookAheadForTokenPasting() )
 		{
 			if( storageBuffer == null )
-				storageBuffer = buff;
+				storageBuffer = new StringBuffer(buff);
 			else
-				storageBuffer.append( buff.toString() ); 
+				storageBuffer.append( buff ); 
 			return true;
 		}
 
@@ -928,7 +929,7 @@ public class Scanner implements IScanner {
 	public IToken processStringLiteral(boolean wideLiteral) throws ScannerException, EndOfFileException
 	{
 		int beginOffset = getCurrentOffset();
-		StringBuffer buff = new StringBuffer(); 
+		strbuff.startString(); 
 		int beforePrevious = NOCHAR;
 		int previous = '"';
 		int c = getChar(true);
@@ -947,7 +948,7 @@ public class Scanner implements IScanner {
 				return null;
 			}
 
-			buff.append((char) c);
+			strbuff.append(c);
 			beforePrevious = previous;
 			previous = c;
 			c = getChar(true);
@@ -958,7 +959,8 @@ public class Scanner implements IScanner {
 		//If the next token is going to be a string as well, we need to concatenate
 		//it with this token.  This will be recursive for as many strings as need to be concatenated
 		
-		IToken returnToken = newToken( type, buff.toString());
+		String result = strbuff.toString();
+		IToken returnToken = newToken( type, result );
 			
 		IToken next = null;
 		try{
@@ -966,15 +968,13 @@ public class Scanner implements IScanner {
 			if ( next != null && 
 					(next.getType() == IToken.tSTRING || 
 				     next.getType() == IToken.tLSTRING ))  {
-				buff.append( next.getImage() );
+				returnToken.setImage(result + next.getImage());
 			}	
 			else
 				cachedToken = next;
 		} catch( EndOfFileException e ){ 
 			next = null;
 		}
-		
-		returnToken.setImage(buff.toString());
 		
 		currentToken = returnToken;
 		returnToken.setNext( null );									
@@ -991,19 +991,20 @@ public class Scanner implements IScanner {
 		// int x = F2;
 
 		int beginOffset = getCurrentOffset();
-		StringBuffer buff = new StringBuffer();
+		strbuff.startString();
 		
 		boolean hex = false;
 		boolean floatingPoint = ( c == '.' ) ? true : false;
 		boolean firstCharZero = ( c== '0' )? true : false; 
 			
-		buff.append((char) c);
+		strbuff.append(c);
 
+		int firstChar = c;
 		c = getChar();
 		
 		if( ! firstCharZero && floatingPoint && !(c >= '0' && c <= '9') ){
 			//if pasting, there could actually be a float here instead of just a .
-			if( buff.toString().equals( "." ) ){ //$NON-NLS-1$
+			if( firstChar == '.' ) { 
 				if( c == '*' ){
 					return newConstantToken( IToken.tDOTSTAR );
 				} else if( c == '.' ){
@@ -1023,7 +1024,7 @@ public class Scanner implements IScanner {
 //				c = getChar(); 
 //				continue;
 			}
-			buff.append( (char)c );
+			strbuff.append(c);
 			hex = true;
 			c = getChar();
 		}
@@ -1031,13 +1032,13 @@ public class Scanner implements IScanner {
 		while ((c >= '0' && c <= '9')
 			|| (hex
 				&& ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))) {
-			buff.append((char) c);
+			strbuff.append(c);
 			c = getChar();
 		}
 		
 		if( c == '.' )
 		{
-			buff.append( (char)c);
+			strbuff.append(c);
 			
 			floatingPoint = true;
 			c= getChar(); 
@@ -1045,7 +1046,7 @@ public class Scanner implements IScanner {
 			|| (hex
 				&& ((c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))))
 			{
-				buff.append((char) c);
+				strbuff.append(c);
 				c = getChar();
 			}
 		}
@@ -1055,27 +1056,27 @@ public class Scanner implements IScanner {
 		{
 			if( ! floatingPoint ) floatingPoint = true; 
 			// exponent type for floating point 
-			buff.append((char)c);
+			strbuff.append(c);
 			c = getChar(); 
 			
 			// optional + or - 
 			if( c == '+' || c == '-' )
 			{
-				buff.append( (char)c );
+				strbuff.append(c );
 				c = getChar(); 
 			}
 			
 			// digit sequence of exponent part 
 			while ((c >= '0' && c <= '9') )
 			{
-				buff.append((char) c);
+				strbuff.append(c);
 				c = getChar();
 			}
 			
 			// optional suffix 
 			if( c == 'l' || c == 'L' || c == 'f' || c == 'F' )
 			{
-				buff.append( (char)c );
+				strbuff.append(c );
 				c = getChar(); 
 			}
 		} else {
@@ -1103,13 +1104,12 @@ public class Scanner implements IScanner {
 		}
 
 		ungetChar( c );
+	
+		String result = strbuff.toString(); 
 		
-		if( pasting && pasteIntoInputStream(buff))
+		if( pasting && pasteIntoInputStream(result))
 			return null;
-		
-		
-		String result = buff.toString(); 
-		
+
 		if( floatingPoint && result.equals(".") ) //$NON-NLS-1$
 			return newConstantToken( IToken.tDOT );
 		
@@ -1149,17 +1149,17 @@ public class Scanner implements IScanner {
 			return newConstantToken( tPOUND ); //$NON-NLS-1$
 		}
 		
-		StringBuffer buff = new StringBuffer();
-		buff.append('#');		
+		strbuff.startString();
+		strbuff.append('#');		
 		while (((c >= 'a') && (c <= 'z'))
 			|| ((c >= 'A') && (c <= 'Z')) || (c == '_') ) {
-			buff.append((char) c);
+			strbuff.append(c);
 			c = getChar();
 		}
 		
 		ungetChar(c);
 
-		String token = buff.toString();
+		String token = strbuff.toString();
 
 		if( isLimitReached() )
 			handleCompletionOnPreprocessorDirective(token);
@@ -1254,9 +1254,10 @@ public class Scanner implements IScanner {
 				
 				if( ! restOfLine.equals( "" )  ) //$NON-NLS-1$
 				{	
-					StringBuffer buffer = new StringBuffer("#endif "); //$NON-NLS-1$
-					buffer.append( restOfLine );
-					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+					strbuff.startString();
+					strbuff.append("#endif "); //$NON-NLS-1$
+					strbuff.append( restOfLine );
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, strbuff.toString(), beginningOffset, false, true );
 				}
 				try{
 					passOnToClient = scannerData.getBranchTracker().poundEndif();
@@ -1328,11 +1329,12 @@ public class Scanner implements IScanner {
 				}
 				catch( EmptyStackException ese )
 				{
-					StringBuffer buffer = new StringBuffer( token );
-					buffer.append( ' ' );
-					buffer.append( elifExpression );
+					strbuff.startString();
+					strbuff.append( token );
+					strbuff.append( ' ' );
+					strbuff.append( elifExpression );
 					handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
-						buffer.toString(), 
+						strbuff.toString(), 
 						beginningOffset, 
 						false, true );  
 				}
@@ -1368,30 +1370,32 @@ public class Scanner implements IScanner {
 				String remainderOfLine =
 					getRestOfPreprocessorLine().trim();
 				if (!remainderOfLine.equals("")) { //$NON-NLS-1$
-					StringBuffer buffer = new StringBuffer( "# "); //$NON-NLS-1$
-					buffer.append( remainderOfLine );
-					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true);
+					strbuff.startString();
+					strbuff.append( "# "); //$NON-NLS-1$
+					strbuff.append( remainderOfLine );
+					handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, strbuff.toString(), beginningOffset, false, true);
 				}
 				return null;
 				
 			default :
-				StringBuffer buffer = new StringBuffer( "# "); //$NON-NLS-1$
-				buffer.append( token );
-				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
+				strbuff.startString();
+				strbuff.append( "# "); //$NON-NLS-1$
+				strbuff.append( token );
+				handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, strbuff.toString(), beginningOffset, false, true );
 				return null;
 		}
 	}
 	
 	// buff contains \\u or \\U
-	protected StringBuffer processUniversalCharacterName( StringBuffer buff ) throws ScannerException
+	protected boolean processUniversalCharacterName() throws ScannerException
 	{
 		// first octet is mandatory
 		for( int i = 0; i < 4; ++i )
 		{
 			int c = getChar();
 			if( ! isHex( c ))
-				return null;
-			buff.append( (char) c );
+				return false;
+			strbuff.append( c );
 		}
 		
 		Vector v = new Vector();
@@ -1409,14 +1413,14 @@ public class Scanner implements IScanner {
 		if( v.size() == 4 )
 		{
 			for( int i = 0; i < 4; ++i )
-				buff.append( ((Character)v.get(i)).charValue());
+				strbuff.append( ((Character)v.get(i)).charValue());
 		}
 		else
 		{
 			for( int i = v.size() - 1; i >= 0; --i )
 				ungetChar( ((Character)v.get(i)).charValue() );
 		}
-		return buff;
+		return true;
 	}
 	
 	/**
@@ -1455,7 +1459,7 @@ public class Scanner implements IScanner {
 		}
 	}
 
-	protected IToken processKeywordOrIdentifier(StringBuffer buff, boolean pasting) throws ScannerException, EndOfFileException
+	protected IToken processKeywordOrIdentifier(boolean pasting) throws ScannerException, EndOfFileException
 	{ 
         int baseOffset = lastContext.getOffset() - 1;
 				
@@ -1468,7 +1472,7 @@ public class Scanner implements IScanner {
 			while (	( scannerExtension.offersDifferentIdentifierCharacters() && 
 					  scannerExtension.isValidIdentifierCharacter(c) ) || 
 					  isValidIdentifierCharacter(c) ) {
-				buff.append((char) c);
+				strbuff.append(c);
 				c = getChar();
 				if (c == '\\') {
 					c = consumeNewlineAfterSlash();
@@ -1479,10 +1483,10 @@ public class Scanner implements IScanner {
 				int next = getChar();
 				if( next == 'u' || next == 'U')
 				{
-					buff.append( '\\');
-					buff.append( (char)next );
-					buff = processUniversalCharacterName(buff);
-					if( buff == null )	return null;
+					strbuff.append( '\\');
+					strbuff.append( next );
+					if( !processUniversalCharacterName() )	
+						return null;
 					continue; // back to top of loop
 				}
 				ungetChar( next );
@@ -1492,7 +1496,7 @@ public class Scanner implements IScanner {
 			
 		ungetChar(c);
 
-		String ident = buff. toString();
+		String ident = strbuff. toString();
 
 		if (ident.equals(DEFINED))
 			return newToken(IToken.tINTEGER, handleDefinedMacro());
@@ -1511,7 +1515,7 @@ public class Scanner implements IScanner {
 				return null;
 			}
 
-		if( pasting && pasteIntoInputStream(buff))
+		if( pasting && pasteIntoInputStream(ident))
 			return null;
 		
 		Object tokenTypeObject;
@@ -1761,9 +1765,10 @@ public class Scanner implements IScanner {
 						case ':' : return newConstantToken(IToken.tLBRACKET); 
 								
 						default :
-							StringBuffer buff = new StringBuffer( "<"); //$NON-NLS-1$
-							buff.append( (char)c);
-							String query =buff.toString();
+							strbuff.startString();
+							strbuff.append('<');
+							strbuff.append(c);
+							String query = strbuff.toString();
 							if( scannerExtension.isExtensionOperator( scannerData.getLanguage(), query ) )
 								return newExtensionToken( scannerExtension.createExtensionToken( scannerData, query ));
 							ungetChar(c);
@@ -1784,9 +1789,10 @@ public class Scanner implements IScanner {
 							}
 						case '=' : return newConstantToken(IToken.tGTEQUAL);
 						default :
-							StringBuffer buff = new StringBuffer( ">");  //$NON-NLS-1$
-							buff.append( (char)c);
-							String query =buff.toString();
+							strbuff.startString();
+							strbuff.append('>');
+							strbuff.append( (char)c);
+							String query = strbuff.toString();
 							if( scannerExtension.isExtensionOperator( scannerData.getLanguage(), query ) )
 								return newExtensionToken( scannerExtension.createExtensionToken( scannerData, query ));
 							ungetChar(c);
@@ -1880,7 +1886,9 @@ public class Scanner implements IScanner {
 					{
 						// This is not a wide literal -- it must be a token or keyword
 						ungetChar(c);
-						token = processKeywordOrIdentifier(new StringBuffer( "L"), pasting);//$NON-NLS-1$
+						strbuff.startString();
+						strbuff.append('L');
+						token = processKeywordOrIdentifier(pasting);
 					}
 					if (token == null) 
 					{
@@ -1941,9 +1949,9 @@ public class Scanner implements IScanner {
 				case 'Y':
 				case 'Z':
 				case '_':
-					StringBuffer sBuffer = new StringBuffer( );
-					sBuffer.append( (char) c );
-					token = processKeywordOrIdentifier(sBuffer, pasting);
+					strbuff.startString();
+					strbuff.append( c );
+					token = processKeywordOrIdentifier(pasting);
 					if (token == null) 
 					{
 						c = getChar();
@@ -1977,9 +1985,9 @@ public class Scanner implements IScanner {
 							  scannerExtension.isValidIdentifierStartCharacter(c) ) || 
 							 isValidIdentifierStartCharacter(c)  ) 
 					{
-						StringBuffer startBuffer = new StringBuffer( );
-						startBuffer.append( (char) c );
-						token = processKeywordOrIdentifier(startBuffer, pasting);
+						strbuff.startString();
+						strbuff.append( c );
+						token = processKeywordOrIdentifier(pasting);
 						if (token == null) 
 						{
 							c = getChar();
@@ -1990,19 +1998,19 @@ public class Scanner implements IScanner {
 					else if( c == '\\' )
 					{
 						int next = getChar();
-						StringBuffer ucnBuffer = new StringBuffer( "\\");//$NON-NLS-1$
-						ucnBuffer.append( (char) next );
+						strbuff.startString();
+						strbuff.append( '\\');
+						strbuff.append( next );
 
 						if( next == 'u' || next =='U' )
 						{
-							StringBuffer secondBuffer = processUniversalCharacterName(ucnBuffer);
-							if( secondBuffer == null )
+							if( !processUniversalCharacterName() )
 							{
-								handleProblem( IProblem.SCANNER_BAD_CHARACTER, ucnBuffer.toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead );
+								handleProblem( IProblem.SCANNER_BAD_CHARACTER, strbuff.toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead );
 								c = getChar();
 								continue;
 							}
-							token = processKeywordOrIdentifier( secondBuffer, pasting );
+							token = processKeywordOrIdentifier( pasting );
 							if (token == null) 
 							{
 								c = getChar();
@@ -2011,7 +2019,7 @@ public class Scanner implements IScanner {
 							return token;
 						}
 						ungetChar( next );
-						handleProblem( IProblem.SCANNER_BAD_CHARACTER, ucnBuffer.toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead );
+						handleProblem( IProblem.SCANNER_BAD_CHARACTER, strbuff.toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead );
 					}
 					
 					handleProblem( IProblem.SCANNER_BAD_CHARACTER, new Character( (char)c ).toString(), getCurrentOffset(), false, true, throwExceptionOnBadCharacterRead ); 
@@ -2153,7 +2161,7 @@ public class Scanner implements IScanner {
     	int beginOffset = getCurrentOffset();
         int type = wideLiteral ? IToken.tLCHAR : IToken.tCHAR;
         
-        StringBuffer buffer = new StringBuffer(); 
+        strbuff.startString(); 
         int prev = c; 
         int prevPrev = c;        
         c = getChar(true);
@@ -2171,13 +2179,13 @@ public class Scanner implements IScanner {
 			// exit condition
 			if ( ( c =='\'' ) && ( prev != '\\' || prevPrev == '\\' ) ) break;
 			
-        	buffer.append( (char)c);
+        	strbuff.append(c);
         	prevPrev = prev;
         	prev = c;
         	c = getChar(true);
         }
         
-        return newToken( type, buffer.toString());                      
+        return newToken( type, strbuff.toString());                      
     }
 
     
@@ -2202,57 +2210,56 @@ public class Scanner implements IScanner {
     {     
     	int beginOffset = getCurrentOffset();
         int c = getChar();
-        StringBuffer tokenImage = new StringBuffer();
+        strbuff.startString();
 
         try {
-        while (c != NOCHAR) {
-
-            if ((c == ' ') || (c == '\r') || (c == '\t') || (c == '\n')) {
-                
-                if (tokenImage.length() > 0) throw endOfMacroToken;                
-                c = getChar();
-                continue;
-            } else if (c == '"') {
-       
-                if (tokenImage.length() > 0) throw endOfMacroToken;
-                 
-                // string
-                StringBuffer buff = new StringBuffer(); 
-                c = getChar(true);
-
-                for( ; ; )
-                {
-                    if ( c =='"' ) break;
-                    if( c == NOCHAR) break;  
-                    buff.append((char) c);
-                    c = getChar(true);
-                }
-
-                if (c != NOCHAR ) 
-                {
-                    return newToken( IToken.tSTRING, buff.toString());
-    
-                }
-                handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
-                c = getChar(); 
-                continue;
-        
-            } else {
+        	while (c != NOCHAR) {
                 switch (c) {
+                	case ' ' :
+                	case '\r' :
+                	case '\t' :
+                	case '\n' :
+                		 if (strbuff.length() > 0) throw endOfMacroToken;                
+                         c = getChar();
+                         continue;
+                	case '"' :
+    	                if (strbuff.length() > 0) throw endOfMacroToken;
+    	                 
+    	                // string
+    	                strbuff.startString(); 
+    	                c = getChar(true);
+
+    	                for( ; ; )
+    	                {
+    	                    if ( c =='"' ) break;
+    	                    if( c == NOCHAR) break;  
+    	                    strbuff.append(c);
+    	                    c = getChar(true);
+    	                }
+
+    	                if (c != NOCHAR ) 
+    	                {
+    	                    return newToken( IToken.tSTRING, strbuff.toString());
+    	    
+    	                }
+    	                handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
+    	                c = getChar(); 
+    	                continue;
+    	        
                     case '\'' :
-	                    if (tokenImage.length() > 0) throw endOfMacroToken;
+	                    if (strbuff.length() > 0) throw endOfMacroToken;
 	                    return processCharacterLiteral( c, false );
                     case ',' :
-                        if (tokenImage.length() > 0) throw endOfMacroToken;
+                        if (strbuff.length() > 0) throw endOfMacroToken;
                         return newToken(IToken.tCOMMA, ","); //$NON-NLS-1$
                     case '(' :
-                        if (tokenImage.length() > 0) throw endOfMacroToken;
+                        if (strbuff.length() > 0) throw endOfMacroToken;
                         return newToken(IToken.tLPAREN, "("); //$NON-NLS-1$
                     case ')' :
-                        if (tokenImage.length() > 0) throw endOfMacroToken;
+                        if (strbuff.length() > 0) throw endOfMacroToken;
                         return newToken(IToken.tRPAREN, ")"); //$NON-NLS-1$
                     case '/' :
-                        if (tokenImage.length() > 0) throw endOfMacroToken;
+                        if (strbuff.length() > 0) throw endOfMacroToken;
                         c = getChar();
                         switch (c) {
                             case '/' :
@@ -2264,23 +2271,22 @@ public class Scanner implements IScanner {
                                 c = getChar();
                                 continue;
                             default:
-                                tokenImage.append('/');
+                                strbuff.append('/');
                                 continue;
                         }
                     default :
-                        tokenImage.append((char)c);
+                        strbuff.append(c);
                         c = getChar();
                 }
             }
-        }
         } catch (endOfMacroTokenException e) {
             // unget the first character after the end of token
             ungetChar(c);            
         }
         
         // return completed token
-        if (tokenImage.length() > 0) {
-            return newToken(IToken.tIDENTIFIER, tokenImage.toString());
+        if (strbuff.length() > 0) {
+            return newToken(IToken.tIDENTIFIER, strbuff.toString());
         }
         
         // we're done
@@ -2465,11 +2471,12 @@ public class Scanner implements IScanner {
 		throws ScannerException {
 			
 		IExpressionParser parser = null;
-		StringBuffer expressionBuffer = new StringBuffer( expression );
-		expressionBuffer.append( ';');
+		strbuff.startString();
+		strbuff.append(expression);
+		strbuff.append(';');
 		   
 		IScanner trial = new Scanner( 
-				new StringReader(expressionBuffer.toString()), 
+				new StringReader(strbuff.toString()), 
 				EXPRESSION, 
 				scannerData.getPublicDefinitions(), 
 				scannerData.getIncludePathNames(),					
@@ -2579,9 +2586,10 @@ public class Scanner implements IScanner {
 		}
 		catch( ScannerUtility.InclusionParseException ipe )
 		{
-			StringBuffer potentialErrorLine = new StringBuffer( "#include "); //$NON-NLS-1$
-			potentialErrorLine.append( includeLine );
-			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, potentialErrorLine.toString(), beginningOffset, false, true );
+			strbuff.startString();
+			strbuff.append( "#include "); //$NON-NLS-1$
+			strbuff.append( includeLine );
+			handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, strbuff.toString(), beginningOffset, false, true );
 			return;
 		}
 		
@@ -2686,11 +2694,12 @@ public class Scanner implements IScanner {
 							
 							if( beginning != NO_OFFSET_LIMIT )
 							{	
-								StringBuffer buffer = new StringBuffer( POUND_DEFINE );
-								buffer.append( key );
-								buffer.append( ' ' );
-								buffer.append( replacementString );
-								handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, buffer.toString(),
+								strbuff.startString();
+								strbuff.append( POUND_DEFINE );
+								strbuff.append( key );
+								strbuff.append( ' ' );
+								strbuff.append( replacementString );
+								handleProblem( IProblem.PREPROCESSOR_MACRO_PASTING_ERROR, strbuff.toString(),
 										beginning, false, true ); 									
 								return null;
 							}
@@ -2737,7 +2746,7 @@ public class Scanner implements IScanner {
 		// identifier and the opening parenthesis
 		int c = getChar();
 		if (c == '(') {
-			StringBuffer buffer = new StringBuffer();
+			strbuff.startString();
 			c = getChar(true);
 			while (c != ')') {
 				if( c == '\\' ){
@@ -2749,27 +2758,31 @@ public class Scanner implements IScanner {
 						c = getChar();
 						continue;
 					} 
-					StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
 					ungetChar( c );
-					potentialErrorMessage.append( buffer );
-					potentialErrorMessage.append( '\\');
-					potentialErrorMessage.append( (char)c );
-					handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true);
+					String line = strbuff.toString();
+					strbuff.startString();
+					strbuff.append( POUND_DEFINE );
+					strbuff.append( line );
+					strbuff.append( '\\');
+					strbuff.append( c );
+					handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, strbuff.toString(), beginning, false, true);
 					return;
 				} else if( c == '\r' || c == '\n' || c == NOCHAR ){
-					StringBuffer potentialErrorMessage = new StringBuffer( POUND_DEFINE );
-					potentialErrorMessage.append( buffer );
-					potentialErrorMessage.append( '\\');
-					potentialErrorMessage.append( (char)c );
-					handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, potentialErrorMessage.toString(), beginning, false, true );
+					String line = strbuff.toString();
+					strbuff.startString();
+					strbuff.append( POUND_DEFINE );
+					strbuff.append( line );
+					strbuff.append( '\\');
+					strbuff.append( c );
+					handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, strbuff.toString(), beginning, false, true );
 					return;
 				}
 				
-				buffer.append((char) c);
+				strbuff.append(c);
 				c = getChar(true);
 			}
             
-			String parameters = buffer.toString();
+			String parameters = strbuff.toString();
 
 			// replace StringTokenizer later -- not performant
 			StringTokenizer tokenizer = new StringTokenizer(parameters, ","); //$NON-NLS-1$
@@ -2897,7 +2910,7 @@ public class Scanner implements IScanner {
 		// split params up into single arguments
         int nParen = 0;
         Vector parameters = new Vector();
-        StringBuffer parBuffer = new StringBuffer();         //$NON-NLS-1$
+        strbuff.startString();
 		for (int i = 0; i < params.length(); i++) {
 			char c = params.charAt(i);
 			switch (c) {
@@ -2909,17 +2922,17 @@ public class Scanner implements IScanner {
 					break;
 				case ',' :
 					if (nParen == 0) {
-						parameters.add(parBuffer.toString());
-						parBuffer = new StringBuffer(); //$NON-NLS-1$
+						parameters.add(strbuff.toString());
+						strbuff.startString();
 						continue;
 					}
 					break;					
 				default :
 					break;
 			}
-			parBuffer.append( c );
+			strbuff.append( c );
 		}
-		parameters.add(parBuffer.toString());
+		parameters.add(strbuff.toString());
 		
         Vector parameterValues = new Vector();
 		for (int i = 0; i < parameters.size(); i++) {
@@ -2935,7 +2948,7 @@ public class Scanner implements IScanner {
 					scannerExtension );
 	        tokenizer.setThrowExceptionOnBadCharacterRead(false);
 	        IToken t = null;
-	        StringBuffer buffer = new StringBuffer();
+	        StringBuffer strbuff = new StringBuffer();
 	        boolean space = false;
 	       
 	        try {
@@ -2948,26 +2961,26 @@ public class Scanner implements IScanner {
 					t = (forStringizing ? tokenizer.nextTokenForStringizing() : tokenizer.nextToken(false));
 	
 	                if (space)
-	                    buffer.append( ' ' );
+	                    strbuff.append( ' ' );
 	
 	                switch (t.getType()) {
 	                    case IToken.tSTRING :
-	                    	buffer.append('\"');
-	                    	buffer.append(t.getImage());
-	                    	buffer.append('\"'); 
+	                    	strbuff.append('\"');
+	                    	strbuff.append(t.getImage());
+	                    	strbuff.append('\"'); 
 	                    	break;
 	                    case IToken.tLSTRING :
-	                    	buffer.append( "L\""); //$NON-NLS-1$
-	                    	buffer.append(t.getImage());
-	                    	buffer.append('\"');	
+	                    	strbuff.append( "L\""); //$NON-NLS-1$
+	                    	strbuff.append(t.getImage());
+	                    	strbuff.append('\"');	
 	                    	break;
 	                    case IToken.tCHAR :    
-	                    	buffer.append('\'');
-	                    	buffer.append(t.getImage());
-	                    	buffer.append('\''); 
+	                    	strbuff.append('\'');
+	                    	strbuff.append(t.getImage());
+	                    	strbuff.append('\''); 
 	                    	break;
 	                    default :             
-	                    	buffer.append( t.getImage()); 
+	                    	strbuff.append( t.getImage()); 
 	                    	break;
 	                }
 	                space = true;
@@ -2975,7 +2988,7 @@ public class Scanner implements IScanner {
 	        }
 	        catch (EndOfFileException e) {
 	            // Good
-	            parameterValues.add(buffer.toString());
+	            parameterValues.add(strbuff.toString());
 	        }
 		}
         
@@ -3017,7 +3030,7 @@ public class Scanner implements IScanner {
 			int c = getChar();
 
 			if (c == '(') {
-				StringBuffer buffer = new StringBuffer();
+				strbuff.startString();
 				int bracketCount = 1;
 				c = getChar();
 
@@ -3029,21 +3042,21 @@ public class Scanner implements IScanner {
 
 					if(bracketCount == 0 || c == NOCHAR)
 						break;
-					buffer.append((char) c);
+					strbuff.append(c);
 					c = getChar( true );
 				}
                 
                 // Position of the closing ')'
                 int endMacroOffset = lastContext.getOffset()  - 1;
 				
-				String betweenTheBrackets = buffer.toString().trim();
+				String betweenTheBrackets = strbuff.toString().trim();
                 
                 Vector parameterValues = getMacroParameters(betweenTheBrackets, false);
                 Vector parameterValuesForStringizing = null;
                 SimpleToken t = null;
                 
 				// create a string that represents what needs to be tokenized
-				buffer = new StringBuffer();
+				
 				List tokens = expansion.getTokenizedExpansion();
 				List parameterNames = expansion.getParameters();
 
@@ -3054,6 +3067,8 @@ public class Scanner implements IScanner {
 					return;
 				}				
 
+				strbuff.startString();
+				
 				int numberOfTokens = tokens.size();
 
 				for (int i = 0; i < numberOfTokens; ++i) {
@@ -3066,23 +3081,28 @@ public class Scanner implements IScanner {
 						if (index == -1 ) {
 							// not found
 							// just add image to buffer
-							buffer.append(t.getImage() );
+							strbuff.append(t.getImage() );
 						} else {
-							buffer.append(
+							strbuff.append(
 								(String) parameterValues.elementAt(index) );
 						}
 					} else if (t.getType() == tPOUND) {
 						//next token should be a parameter which needs to be turned into
 						//a string literal
 						if( parameterValuesForStringizing == null)
+						{
+							String cache = strbuff.toString();
 							parameterValuesForStringizing = getMacroParameters(betweenTheBrackets, true);
+							strbuff.startString();
+							strbuff.append(cache);
+						}
 						t = (SimpleToken) tokens.get( ++i );
 						int index = parameterNames.indexOf(t.getImage());
 						if( index == -1 ){
 							handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, expansion.getName(), getCurrentOffset(), false, true );
 							return;
 						} 
-						buffer.append('\"');
+						strbuff.append('\"');
 						String value = (String)parameterValuesForStringizing.elementAt(index);
 						char val [] = value.toCharArray();
 						char ch;
@@ -3094,39 +3114,39 @@ public class Scanner implements IScanner {
 								while( ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n' ){
 									ch = val[++j];
 								}
-								buffer.append(' ');
+								strbuff.append(' ');
 							} 
 							//a \ character is inserted before each " and \
 							if( ch == '\"' || ch == '\\' ){
-								buffer.append('\\');
-								buffer.append(ch);
+								strbuff.append('\\');
+								strbuff.append(ch);
 							} else {
-								buffer.append(ch);
+								strbuff.append(ch);
 							}
 						}
-						buffer.append('\"');
+						strbuff.append('\"');
 						
 					} else {
 						switch( t.getType() )
 						{
 							case IToken.tSTRING:
-								buffer.append('\"');
-								buffer.append(t.getImage());
-								buffer.append('\"');  
+								strbuff.append('\"');
+								strbuff.append(t.getImage());
+								strbuff.append('\"');  
 								break;
 							case IToken.tLSTRING: 
-								buffer.append("L\""); //$NON-NLS-1$
-								buffer.append(t.getImage());
-								buffer.append('\"');  
+								strbuff.append("L\""); //$NON-NLS-1$
+								strbuff.append(t.getImage());
+								strbuff.append('\"');  
 								break;
 							case IToken.tCHAR:	 
-								buffer.append('\'');
-								buffer.append(t.getImage());
-								buffer.append('\'');  
+								strbuff.append('\'');
+								strbuff.append(t.getImage());
+								strbuff.append('\'');  
 								
 								break;
 							default:			 
-								buffer.append(t.getImage());				
+								strbuff.append(t.getImage());				
 								break;
 						}
 					}
@@ -3144,9 +3164,9 @@ public class Scanner implements IScanner {
 					
 					if( t.getType() != tPOUNDPOUND && ! pastingNext )
 						if (i < (numberOfTokens-1)) // Do not append to the last one 
-                        	buffer.append( " " );  //$NON-NLS-1$
+                        	strbuff.append( ' ' ); 
 				}
-				String finalString = buffer.toString();
+				String finalString = strbuff.toString();
 				try
 				{
 					scannerData.getContextStack().updateMacroContext(

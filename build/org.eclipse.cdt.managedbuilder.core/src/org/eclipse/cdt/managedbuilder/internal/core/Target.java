@@ -880,6 +880,7 @@ public class Target extends BuildObject implements ITarget {
 	public void setArtifactName(String name) {
 		if (name != null) {
 			artifactName = name;
+			setRebuildState(true);
 			isDirty = true;
 		}
 	}
@@ -904,6 +905,7 @@ public class Target extends BuildObject implements ITarget {
 	public void setMakeArguments(String makeArgs) {
 		if (makeArgs != null && !getMakeArguments().equals(makeArgs)) {
 			makeArguments = makeArgs;
+			setRebuildState(true);
 			isDirty = true;
 		}
 	}
@@ -914,6 +916,7 @@ public class Target extends BuildObject implements ITarget {
 	public void setMakeCommand(String command) {
 		if (command != null && !getMakeCommand().equals(command)) {
 			makeCommand = command;
+			setRebuildState(true);
 			isDirty = true;
 		}
 	}

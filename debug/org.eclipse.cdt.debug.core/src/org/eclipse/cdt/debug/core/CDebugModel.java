@@ -563,9 +563,10 @@ public class CDebugModel
 	{
 		if ( target != null && target instanceof CDebugTarget )
 		{
+			ICDIVariableObject vo = null;
 			try
 			{
-				ICDIVariableObject vo = ((CDebugTarget)target).getCDISession().getVariableManager().getGlobalVariableObject( fileName.lastSegment(), null, name );
+				vo = ((CDebugTarget)target).getCDISession().getVariableManager().getGlobalVariableObject( fileName.lastSegment(), null, name );
 				ICDIVariable cdiVariable = ((CDebugTarget)target).getCDISession().getVariableManager().createVariable( vo );
 				return new CExpression( (CDebugTarget)target, cdiVariable );
 			}
@@ -574,7 +575,7 @@ public class CDebugModel
 				throw new DebugException( new Status( IStatus.ERROR, 
 													  getPluginIdentifier(),
 													  DebugException.TARGET_REQUEST_FAILED, 
-													  e.getMessage(), 
+													  ( vo != null ) ? vo.getName() + ": " + e.getMessage() : e.getMessage(), 
 													  null ) );
 			}
 		}

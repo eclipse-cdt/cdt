@@ -68,7 +68,7 @@ public class ProjectTargets {
 
 	private IProject project;
 
-	public ProjectTargets(MakeTargetManager manager, IProject project) throws CoreException {
+	public ProjectTargets(MakeTargetManager manager, IProject project) {
 		boolean writeTargets = false;
 		File targetFile = null;
 

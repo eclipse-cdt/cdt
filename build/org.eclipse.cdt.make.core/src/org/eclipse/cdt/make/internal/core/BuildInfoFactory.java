@@ -25,6 +25,7 @@ import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -54,8 +55,10 @@ public class BuildInfoFactory {
 	static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild"; //$NON-NLS-1$
 	static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments"; //$NON-NLS-1$
 	static final String ENVIRONMENT = PREFIX + ".environment"; //$NON-NLS-1$
+	static final String BUILD_APPEND_ENVIRONMENT = ".append_environment"; //$NON-NLS-1$ 
 
-	private abstract static class Store implements IMakeBuilderInfo {
+	private abstract static class AbstractBuildInfo implements IMakeBuilderInfo {
+
 
 		public void setUseDefaultBuildCmd(boolean on) throws CoreException {
 			putString(USE_DEFAULT_BUILD_CMD, new Boolean(on).toString());
@@ -232,6 +235,17 @@ public class BuildInfoFactory {
 			putString(ENVIRONMENT, encodeMap(env));
 		}
 
+		public boolean appendEnvironment() {
+			if (getString(BUILD_APPEND_ENVIRONMENT).length() > 0) {
+				return getBoolean(BUILD_APPEND_ENVIRONMENT);
+			}
+			return true;
+		}
+		
+		public void setAppendEnvironment(boolean append) throws CoreException {
+			putString(BUILD_APPEND_ENVIRONMENT, new Boolean(append).toString());
+		}
+		
 		protected Map decodeMap(String value) {
 			Map map = new HashMap();
 			StringBuffer envStr = new StringBuffer(value);
@@ -298,12 +312,12 @@ public class BuildInfoFactory {
 		}
 	}
 
-	private static class Preference extends Store {
+	private static class BuildInfoPreference extends AbstractBuildInfo {
 		private Preferences prefs;
 		private String builderID;
 		private boolean useDefaults;
 
-		Preference(Preferences prefs, String builderID, boolean useDefaults) {
+		BuildInfoPreference(Preferences prefs, String builderID, boolean useDefaults) {
 			this.prefs = prefs;
 			this.builderID = builderID;
 			this.useDefaults = useDefaults;
@@ -329,12 +343,12 @@ public class BuildInfoFactory {
 		}
 	}
 
-	private static class BuildProperty extends Store {
+	private static class BuildInfoProject extends AbstractBuildInfo {
 		private IProject project;
 		private String builderID;
 		private Map args;
 
-		BuildProperty(IProject project, String builderID) throws CoreException {
+		BuildInfoProject(IProject project, String builderID) throws CoreException {
 			this.project = project;
 			this.builderID = builderID;
 			ICommand builder;
@@ -354,6 +368,10 @@ public class BuildInfoFactory {
 			ICommand builder = MakeProjectNature.getBuildSpec(description, builderID);
 			args.put(name, value);
 			builder.setArguments(args);
+			builder.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, isAutoBuildEnable());
+			builder.setBuilding(IncrementalProjectBuilder.FULL_BUILD, isFullBuildEnabled());
+			builder.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, isIncrementalBuildEnabled());
+			builder.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, isCleanBuildEnabled());
 			MakeProjectNature.setBuildSpec(description, builder);
 			project.setDescription(description, null);
 		}
@@ -368,11 +386,11 @@ public class BuildInfoFactory {
 		}
 	}
 
-	private static class BuildArguments extends Store {
+	private static class BuildInfoMap extends AbstractBuildInfo {
 		private Map args;
 		private String builderID;
 
-		BuildArguments(Map args, String builderID) {
+		BuildInfoMap(Map args, String builderID) {
 			this.args = args;
 			this.builderID = builderID;
 		}
@@ -391,14 +409,14 @@ public class BuildInfoFactory {
 	}
 
 	public static IMakeBuilderInfo create(Preferences prefs, String builderID, boolean useDefaults) {
-		return new BuildInfoFactory.Preference(prefs, builderID, useDefaults);
+		return new BuildInfoFactory.BuildInfoPreference(prefs, builderID, useDefaults);
 	}
 
 	public static IMakeBuilderInfo create(IProject project, String builderID) throws CoreException {
-		return new BuildInfoFactory.BuildProperty(project, builderID);
+		return new BuildInfoFactory.BuildInfoProject(project, builderID);
 	}
 
 	public static IMakeBuilderInfo create(Map args, String builderID) {
-		return new BuildInfoFactory.BuildArguments(args, builderID);
+		return new BuildInfoFactory.BuildInfoMap(args, builderID);
 	}
 }

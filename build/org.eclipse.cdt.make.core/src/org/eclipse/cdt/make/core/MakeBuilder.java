@@ -13,9 +13,10 @@ package org.eclipse.cdt.make.core;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncher;
@@ -40,10 +41,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.osgi.service.environment.Constants;
 
 public class MakeBuilder extends ACBuilder {
 
@@ -144,20 +148,39 @@ public class MakeBuilder extends ACBuilder {
 				launcher.showCommand(true);
 
 				// Set the environmennt, some scripts may need the CWD var to be set.
-				Properties props = launcher.getEnvironment();
-				props.putAll(info.getEnvironment());
-				props.put("CWD", workingDirectory.toOSString()); //$NON-NLS-1$
-				props.put("PWD", workingDirectory.toOSString()); //$NON-NLS-1$
-				String[] env = null;
-				ArrayList envList = new ArrayList();
-				Enumeration names = props.propertyNames();
-				if (names != null) {
-					while (names.hasMoreElements()) {
-						String key = (String) names.nextElement();
-						envList.add(key + "=" + props.getProperty(key)); //$NON-NLS-1$
-					}
-					env = (String[]) envList.toArray(new String[envList.size()]);
+				HashMap envMap = new HashMap();
+				if (info.appendEnvironment()) {
+					envMap.putAll(launcher.getEnvironment());
 				}
+				envMap.put("CWD", workingDirectory.toOSString()); //$NON-NLS-1$
+				envMap.put("PWD", workingDirectory.toOSString()); //$NON-NLS-1$
+				// Add variables from build info
+				Map userEnv = info.getEnvironment();
+				Iterator iter= userEnv.entrySet().iterator();
+				boolean win32= Platform.getOS().equals(Constants.OS_WIN32);
+				while (iter.hasNext()) {
+					Map.Entry entry= (Map.Entry) iter.next();
+					String key= (String) entry.getKey();
+					if (win32) {
+						// Win32 vars are case insensitive. Uppercase everything so
+						// that (for example) "pAtH" will correctly replace "PATH"
+						key= key.toUpperCase();
+					}
+					String value = (String) entry.getValue();
+					// translate any string substitution variables
+					String translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
+					envMap.put(key, translated);
+				}		
+				
+				iter= envMap.entrySet().iterator();
+				List strings= new ArrayList(envMap.size());
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					StringBuffer buffer= new StringBuffer((String) entry.getKey());
+					buffer.append('=').append((String) entry.getValue());
+					strings.add(buffer.toString());
+				}
+				String[] env = (String[]) strings.toArray(new String[strings.size()]);
 				String[] buildArguments = targets;
 				if (info.isDefaultBuildCmd()) {
 					if (!info.isStopOnError()) {
@@ -168,7 +191,8 @@ public class MakeBuilder extends ACBuilder {
 				} else {
 					String args = info.getBuildArguments();
 					if (args != null && !args.equals("")) { //$NON-NLS-1$
-						String[] newArgs = makeArray(args);
+						String translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(args);
+						String[] newArgs = makeArray(translated);
 						buildArguments = new String[targets.length + newArgs.length];
 						System.arraycopy(newArgs, 0, buildArguments, 0, newArgs.length);
 						System.arraycopy(targets, 0, buildArguments, newArgs.length, targets.length);
@@ -273,7 +297,7 @@ public class MakeBuilder extends ACBuilder {
 		return true;
 	}
 
-	protected String[] getTargets(int kind, IMakeBuilderInfo info) {
+	protected String[] getTargets(int kind, IMakeBuilderInfo info) throws CoreException {
 		String targets = ""; //$NON-NLS-1$
 		switch (kind) {
 			case IncrementalProjectBuilder.AUTO_BUILD :
@@ -289,7 +313,8 @@ public class MakeBuilder extends ACBuilder {
 				targets = info.getCleanBuildTarget();
 				break;
 		}
-		return makeArray(targets);
+		String translated = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(targets);
+		return makeArray(translated);
 	}
 
 	// Turn the string into an array.

@@ -60,4 +60,7 @@ public interface IMakeBuilderInfo {
 
 	Map getEnvironment();
 	void setEnvironment(Map env) throws CoreException;
+	
+	boolean appendEnvironment();
+	void setAppendEnvironment(boolean append) throws CoreException;
 }

@@ -16,6 +16,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.variables"/>
    </requires>
 
 
@@ -52,9 +53,9 @@
          name="%builderMake.name"
          point="org.eclipse.core.resources.builders">
       <builder
-            hasNature="true">
-         <run
-               class="org.eclipse.cdt.make.core.MakeBuilder">
+            hasNature="true"
+            isConfigurable="true">
+         <run class="org.eclipse.cdt.make.core.MakeBuilder">
             <parameter
                   name="defaultCommand"
                   value="make">

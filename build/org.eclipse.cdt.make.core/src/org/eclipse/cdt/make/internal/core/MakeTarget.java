@@ -11,6 +11,7 @@
 package org.eclipse.cdt.make.internal.core;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
@@ -41,6 +42,8 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	boolean runAllBuidlers = true;
 	private String targetBuilderID;
 	private IContainer container;
+	private boolean appendEnvironment;
+	private Map buildEnvironment;
 
 	MakeTarget(MakeTargetManager manager, IProject project, String targetBuilderID, String name) throws CoreException {
 		this.manager = manager;
@@ -51,6 +54,8 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		buildArguments = info.getBuildArguments();
 		isDefaultBuildCmd = info.isDefaultBuildCmd();
 		isStopOnError = info.isStopOnError();
+		appendEnvironment = info.appendEnvironment();
+		buildEnvironment = info.getEnvironment();
 	}
 
 	public void setContainer(IContainer container) {
@@ -105,6 +110,24 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		manager.updateTarget(this);
 	}
 
+	public Map getBuildEnvironment() {
+		return buildEnvironment;
+	}
+	
+	public void setBuildEnvironment(Map env) throws CoreException {
+		buildEnvironment = new HashMap(env);
+		manager.updateTarget(this);
+	}	
+	
+	public boolean isAppendEnvironment() {
+		return appendEnvironment;
+	}
+	
+	public void setAppendEnvironment(boolean append) throws CoreException {	
+		appendEnvironment = append;
+		manager.updateTarget(this);
+	}	
+	
 	public IContainer getContainer() {
 		return container;
 	}
@@ -120,7 +143,7 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 	}
 
 	public int hashCode() {
-		return container.hashCode() * 17 + name.hashCode();
+		return container.hashCode() * 17 + name != null ? name.hashCode(): 0;
 	}
 
 	public void build(IProgressMonitor monitor) throws CoreException {
@@ -139,6 +162,8 @@ public class MakeTarget extends PlatformObject implements IMakeTarget {
 		info.setStopOnError(isStopOnError);
 		info.setFullBuildEnable(true);
 		info.setFullBuildTarget(target);
+		info.setEnvironment(buildEnvironment);
+		info.setAppendEnvironment(appendEnvironment);
 		if (container != null) {
 			info.setBuildLocation(container.getFullPath());
 		}

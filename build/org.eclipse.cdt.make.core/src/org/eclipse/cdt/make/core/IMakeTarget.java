@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core;
 
+import java.util.Map;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,11 +33,18 @@ public interface IMakeTarget extends IAdaptable {
 	
 	IPath getBuildCommand();
 	void setBuildCommand(IPath command) throws CoreException;
+
 	String getBuildArguments();
 	void setBuildArguments(String arguments) throws CoreException;
 
 	void setRunAllBuilders(boolean runAllBuilders);
 	boolean runAllBuilders();
+	
+	void setBuildEnvironment(Map env) throws CoreException;
+	Map getBuildEnvironment();
+	
+	void setAppendEnvironment(boolean append) throws CoreException;
+	boolean isAppendEnvironment(); 
 	
 	/**
 	 * Get the target build container.

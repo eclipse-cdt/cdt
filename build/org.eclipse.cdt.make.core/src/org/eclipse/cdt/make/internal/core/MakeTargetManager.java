@@ -128,7 +128,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		return projectTargets.findTarget(container, name);
 	}
 
-	public IProject[] getTargetBuilderProjects() throws CoreException {
+	public IProject[] getTargetBuilderProjects() {
 		return (IProject[])fProjects.toArray(new IProject[fProjects.size()]);
 	}
 
@@ -264,7 +264,7 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 		projectTargets.saveTargets();
 	}
 
-	protected ProjectTargets readTargets(IProject project) throws CoreException {
+	protected ProjectTargets readTargets(IProject project) {
 		ProjectTargets projectTargets = new ProjectTargets(this, project);
 		projectMap.put(project, projectTargets);
 		return projectTargets;

@@ -41,6 +41,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 			info.setFullBuildTarget("clean all"); //$NON-NLS-1$
 			info.setCleanBuildEnable(true);
 			info.setCleanBuildTarget("clean"); //$NON-NLS-1$
+			info.setAppendEnvironment(true);
 			info.setErrorParsers(CCorePlugin.getDefault().getAllErrorParsersIDs());
 		} catch (CoreException e) {
 		}

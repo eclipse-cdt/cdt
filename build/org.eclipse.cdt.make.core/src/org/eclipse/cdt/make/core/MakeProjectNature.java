@@ -36,7 +36,7 @@ public class MakeProjectNature implements IProjectNature {
 		project.setDescription(description, monitor);
 	}
 
-	public static ICommand getBuildSpec(IProjectDescription description, String builderID) throws CoreException {
+	public static ICommand getBuildSpec(IProjectDescription description, String builderID) {
 		ICommand[] commands = description.getBuildSpec();
 		for (int i = 0; i < commands.length; ++i) {
 			if (commands[i].getBuilderName().equals(builderID)) {
@@ -50,8 +50,7 @@ public class MakeProjectNature implements IProjectNature {
 	 * Update the Java command in the build spec (replace existing one if present,
 	 * add one first if none).
 	 */
-	public static IProjectDescription setBuildSpec(IProjectDescription description, ICommand newCommand)
-		throws CoreException {
+	public static IProjectDescription setBuildSpec(IProjectDescription description, ICommand newCommand) {
 
 		ICommand[] oldCommands = description.getBuildSpec();
 		ICommand oldCommand = getBuildSpec(description, newCommand.getBuilderName());
@@ -149,6 +148,8 @@ public class MakeProjectNature implements IProjectNature {
 		projectInfo.setCleanBuildEnable(info.isCleanBuildEnabled());
 		projectInfo.setCleanBuildTarget(info.getCleanBuildTarget());
 		projectInfo.setErrorParsers(info.getErrorParsers());
+		projectInfo.setAppendEnvironment(info.appendEnvironment());
+		projectInfo.setEnvironment(info.getEnvironment());
 	}
 
 	public void removeBuildSpec() throws CoreException {

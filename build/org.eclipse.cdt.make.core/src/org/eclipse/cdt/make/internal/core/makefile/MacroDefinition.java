@@ -22,7 +22,7 @@ public class MacroDefinition extends Statement implements IMacroDefinition {
 		value = new StringBuffer();
 		int index = line.indexOf('=');
 		if (index != -1) {
-			name = line.substring(0, index);
+			name = line.substring(0, index).trim();
 			value.append(line.substring(index + 1));
 		} else {
 			name = line;
@@ -39,11 +39,11 @@ public class MacroDefinition extends Statement implements IMacroDefinition {
 	}
 
 	public void setName(String n) {
-		name = n;
+		name = (n == null) ? "" : n.trim() ;
 	}
 
 	public String getValue() {
-		return value.toString();
+		return value.toString().trim();
 	}
 
 	public void setValue(String val) {
@@ -59,7 +59,7 @@ public class MacroDefinition extends Statement implements IMacroDefinition {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(name).append(" = ").append(value).append('\n');
+		buffer.append(getName()).append(" = ").append(getValue()).append('\n');
 		return buffer.toString();
 	}
 

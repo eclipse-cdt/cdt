@@ -75,7 +75,7 @@ public class CDebugAdapter implements ICDIDebugger {
 				IProcess debuggerProcess = DebugPlugin.newProcess(launch, debugger, renderDebuggerProcessLabel());
 				launch.addProcess(debuggerProcess);
 			}
-			
+			return session;
 		} catch (CDIException e) {
 			abort(e.getLocalizedMessage(), e, -1);
 		}

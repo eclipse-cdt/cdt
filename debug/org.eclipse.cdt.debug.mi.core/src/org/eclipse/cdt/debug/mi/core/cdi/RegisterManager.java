@@ -113,7 +113,7 @@ public class RegisterManager extends SessionObject {
 			for (int i = 0 ; i < regnos.length; i++) {
 				Register reg = getRegister(regnos[i]);
 				if (reg != null) {
-					eventList.add(new MIRegisterChangedEvent(reg.getName(), regnos[i]));
+					eventList.add(new MIRegisterChangedEvent(changed.getToken(), reg.getName(), regnos[i]));
 				}
 			}
 			MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);

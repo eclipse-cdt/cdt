@@ -93,8 +93,7 @@ public class Variable extends CObject implements ICDIVariable {
 		}
 		
 		// If the assign was succesfull fire a MIVarChangedEvent()
-		// FIXME: Is this necessary?
-		MIVarChangedEvent change = new MIVarChangedEvent(miVar.getVarName(), true);
+		MIVarChangedEvent change = new MIVarChangedEvent(var.getToken(), miVar.getVarName(), true);
 		mi.fireEvent(change);
 	}
 

@@ -105,7 +105,7 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 				String varName = changes[i].getVarName();
 				Element element = getElement(varName);
 				if (element != null) {
-					eventList.add( new MIVarChangedEvent(varName, changes[i].isInScope()));
+					eventList.add(new MIVarChangedEvent(update.getToken(), varName, changes[i].isInScope()));
 				}
 				if (! changes[i].isInScope()) {
 					// Only remove ICDIVariables.

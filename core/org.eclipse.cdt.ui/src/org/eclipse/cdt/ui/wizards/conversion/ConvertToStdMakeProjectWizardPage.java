@@ -58,20 +58,12 @@ public class ConvertToStdMakeProjectWizardPage extends ConvertProjectWizardPage 
     }
        
     /**
-     * Method isCandidate returns projects that have
-     * no "C" or "C++" Nature, but are Projects in the Eclipse sense.
+     * Method isCandidate returns true for all projects.
      * 
      * @param project
      * @return boolean
      */
-    public boolean isCandidate(IProject project) {       
-        boolean noCNature = false;
-        try {
-            noCNature =  !project.hasNature(CProjectNature.C_NATURE_ID)
-            || !project.hasNature(CCProjectNature.CC_NATURE_ID);
-       } catch (CoreException e) {
-           noCNature = true;
-       }
-        return noCNature;
+    public boolean isCandidate(IProject project) { 
+		return true; // all 
     }    
 }

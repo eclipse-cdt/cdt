@@ -46,7 +46,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class BinaryParserBlock extends AbstractBinaryParserPage {
@@ -156,7 +155,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	}
 
 	private boolean isExtensionVisible(IExtension ext) {
-		IConfigurationElement[] elements = ext.getConfigurationElements();
+ 		IConfigurationElement[] elements = ext.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement[] children = elements[i].getChildren(ATTR_FILTER);
 			for (int j = 0; j < children.length; j++) {
@@ -168,8 +167,9 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 					}
 				}
 			}
+			return true;
 		}
-		return true;
+		return false; // invalid extension definition (must have at least cextension elements)
 	}
 
 	public void createControl(Composite parent) {
@@ -272,7 +272,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 		if (getContainer().getProject() != null) {
 			try {
-				ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(getContainer().getProject());
+				ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(getContainer().getProject(), true);
 				ICExtensionReference[] ref = desc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID);
 				initialSelected = new ArrayList(ref.length);
 				for (int i = 0; i < ref.length; i++) {

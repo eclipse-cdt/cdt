@@ -151,7 +151,9 @@ public abstract class AbstractErrorParserBlock extends AbstractCOptionPage {
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
 			for (int i = 0; i < exts.length; i++) {
-				mapParsers.put(exts[i].getUniqueIdentifier(), exts[i].getLabel());
+				if (exts[i].getConfigurationElements().length > 0) {
+					mapParsers.put(exts[i].getUniqueIdentifier(), exts[i].getLabel());
+				}
 			}
 		}
 	}

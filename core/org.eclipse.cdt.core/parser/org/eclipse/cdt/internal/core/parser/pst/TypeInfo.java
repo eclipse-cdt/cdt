@@ -114,7 +114,7 @@ public class TypeInfo {
 	//public static final eType t_templateParameter = new eType( 18 );
 	
 	public static class eType implements Comparable{
-		private eType( int v ){
+		protected eType( int v ){
 			_val = v;
 		}
 		

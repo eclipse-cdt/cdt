@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
-import org.eclipse.cdt.internal.core.parser.ast.Offsets;
+import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
  * @author jcamelon
@@ -25,7 +25,7 @@ import org.eclipse.cdt.internal.core.parser.ast.Offsets;
 public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
 {
 
-	private Offsets offsets = new Offsets();
+	private NamedOffsets offsets = new NamedOffsets();
 	private final String typeName;
 	private final ASTClassKind classKind;
 	private final ASTQualifiedNamedElement qualifiedName;   
@@ -35,12 +35,13 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
      * @param startingOffset
      * @param endOffset
      */
-    public ASTElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int endOffset)
+    public ASTElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, String typeName, int startingOffset, int nameOffset, int endOffset)
     {
     	classKind = elaboratedClassKind; 
     	this.typeName = typeName;
-    	offsets.setStartingOffset( startingOffset );
-    	offsets.setEndingOffset( endOffset );
+    	setStartingOffset( startingOffset );
+    	setNameOffset( nameOffset );
+    	setEndingOffset( endOffset );
     	qualifiedName = new ASTQualifiedNamedElement( scope, typeName );
     }
     /* (non-Javadoc)
@@ -119,4 +120,16 @@ public class ASTElaboratedTypeSpecifier implements IASTElaboratedTypeSpecifier
     public void exitScope(ISourceElementRequestor requestor)
     {
     }
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#getNameOffset()
+	 */
+	public int getNameOffset() {
+		return offsets.getNameOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement#setNameOffset(int)
+	 */
+	public void setNameOffset(int o) {
+		offsets.setNameOffset(o);
+	}
 }

@@ -1344,7 +1344,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
  		{
 			if( checkSymbol == null ) 
 			{ 
-				
 				checkSymbol  = pst.newDerivableContainerSymbol( lastToken.getImage(), pstType );
 				checkSymbol.setIsForwardDeclaration( true );
 				try
@@ -1357,7 +1356,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	            }
 	            
 	            ASTElaboratedTypeSpecifier elab = 
-	            	new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, endOffset, references, isForewardDecl );
+	            	new ASTElaboratedTypeSpecifier( checkSymbol, kind, startingOffset, name.getFirstToken().getOffset(), endOffset, references, isForewardDecl );
 	            	
 	            try
                 {

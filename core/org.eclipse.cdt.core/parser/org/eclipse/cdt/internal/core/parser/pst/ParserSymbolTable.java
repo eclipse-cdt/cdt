@@ -82,7 +82,7 @@ public class ParserSymbolTable {
 	 * @return Declaration
 	 * @throws ParserSymbolTableException
 	 */
-	static private void lookup( LookupData data, IContainerSymbol inSymbol ) throws ParserSymbolTableException
+	static protected void lookup( LookupData data, IContainerSymbol inSymbol ) throws ParserSymbolTableException
 	{
 		if( data.type != TypeInfo.t_any && data.type.compareTo(TypeInfo.t_class) < 0 && data.upperType.compareTo(TypeInfo.t_union) > 0 ){
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
@@ -218,7 +218,7 @@ public class ParserSymbolTable {
 	 * 
 	 * Look for data.name in our collection _containedDeclarations
 	 */
-	private static boolean lookupInContained( LookupData data, IContainerSymbol lookIn ){
+	protected static boolean lookupInContained( LookupData data, IContainerSymbol lookIn ){
 	
 		boolean foundSomething = false;
 		ISymbol temp  = null;
@@ -436,7 +436,7 @@ public class ParserSymbolTable {
 	 * 3.4-1 "Name lookup may associate more than one declaration with a name if
 	 * it finds the name to be a function name"
 	 */
-	private static boolean isValidOverload( ISymbol origSymbol, ISymbol newSymbol ){
+	protected static boolean isValidOverload( ISymbol origSymbol, ISymbol newSymbol ){
 		TypeInfo.eType origType = origSymbol.getType();
 		TypeInfo.eType newType  = newSymbol.getType();
 		
@@ -460,7 +460,7 @@ public class ParserSymbolTable {
 		return false;
 	}
 	
-	private static boolean isValidOverload( LinkedList origList, ISymbol newSymbol ){
+	protected static boolean isValidOverload( LinkedList origList, ISymbol newSymbol ){
 		if( origList.size() == 1 ){
 			return isValidOverload( (ISymbol)origList.getFirst(), newSymbol );
 		} else if ( origList.size() > 1 ){
@@ -534,7 +534,7 @@ public class ParserSymbolTable {
 	 * all, when looking for functions with no parameters, an empty list must be
 	 * provided in data.parameters.
 	 */
-	static private ISymbol resolveAmbiguities( LookupData data ) throws ParserSymbolTableException{
+	static protected ISymbol resolveAmbiguities( LookupData data ) throws ParserSymbolTableException{
 		ISymbol decl = null;
 		ISymbol obj	= null;
 		IContainerSymbol cls = null;
@@ -655,7 +655,7 @@ public class ParserSymbolTable {
 		}
 	}
 
-	static private IParameterizedSymbol resolveFunction( LookupData data, LinkedList functions ) throws ParserSymbolTableException{
+	static protected IParameterizedSymbol resolveFunction( LookupData data, LinkedList functions ) throws ParserSymbolTableException{
 		if( functions == null ){
 			return null;
 		}
@@ -983,7 +983,7 @@ public class ParserSymbolTable {
 		return -1;
 	}
 
-	static private void getAssociatedScopes( ISymbol symbol, HashSet associated ){
+	static protected void getAssociatedScopes( ISymbol symbol, HashSet associated ){
 		if( symbol == null ){
 			return;
 		}
@@ -1027,7 +1027,7 @@ public class ParserSymbolTable {
 		}
 	}
 	
-	static private boolean okToAddUsingDeclaration( ISymbol obj, IContainerSymbol context ){
+	static protected boolean okToAddUsingDeclaration( ISymbol obj, IContainerSymbol context ){
 		boolean okToAdd = false;
 			
 		//7.3.3-5  A using-declaration shall not name a template-id
@@ -1426,7 +1426,7 @@ public class ParserSymbolTable {
 	 * remaining TypeInfo's represent the object.
 	 */
 	// TODO move this to ITypeInfo ?
-	static private TypeInfo getFlatTypeInfo( TypeInfo topInfo ){
+	static protected TypeInfo getFlatTypeInfo( TypeInfo topInfo ){
 		TypeInfo returnInfo = topInfo;
 		TypeInfo info = null;
 		
@@ -1794,7 +1794,7 @@ public class ParserSymbolTable {
 	private LinkedList undoList = new LinkedList();
 	private HashSet markSet = new HashSet();
 	
-	private void pushCommand( Command command ){
+	protected void pushCommand( Command command ){
 		undoList.addFirst( command );
 	}
 	
@@ -3257,7 +3257,7 @@ public class ParserSymbolTable {
 			}
 			
 			private boolean isVirtual = false;
-			private ISymbol parent = null;
+			protected ISymbol parent = null;
 			private final ASTAccessVisibility access;
 			private final int offset; 
 			private final List references; 

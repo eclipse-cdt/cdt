@@ -1,4 +1,7 @@
 2003-08-14 John Camelon
+	Removed warnings from AutomatedIntegrationSuite.java (removing implicit accessor generation).
+
+2003-08-14 John Camelon
 	Added CompleteParseASTTest::testArrayModExpression(), testPointerVariable() & 
 	testExceptionSpecification().  
 

@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
  * @author jcamelon
  *
  */
-public interface IASTElaboratedTypeSpecifier extends IASTTypeSpecifier, IASTOffsetableElement, IASTQualifiedNameElement, ISourceElementCallbackDelegate {
+public interface IASTElaboratedTypeSpecifier extends IASTTypeSpecifier, IASTOffsetableElement, IASTQualifiedNameElement, ISourceElementCallbackDelegate, IASTOffsetableNamedElement {
 
 	public String getName(); 
 	public ASTClassKind getClassKind();

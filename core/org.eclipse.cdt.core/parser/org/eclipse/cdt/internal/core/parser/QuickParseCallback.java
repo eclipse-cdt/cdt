@@ -27,9 +27,9 @@ import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
 
 public class QuickParseCallback extends NullSourceElementRequestor implements IQuickParseCallback
 {
-	private IASTCompilationUnit compilationUnit = null;
-	private List inclusions = new ArrayList(); 
-	private List macros = new ArrayList(); 
+	protected IASTCompilationUnit compilationUnit = null;
+	protected List inclusions = new ArrayList(); 
+	protected List macros = new ArrayList(); 
 	
 	public Iterator getInclusions()
 	{

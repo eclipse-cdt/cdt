@@ -265,6 +265,6 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(IASTScope scope, ASTClassKind elaboratedClassKind, ITokenDuple typeName, int startingOffset, int endOffset, boolean isForewardDecl)
     {
-        return new ASTElaboratedTypeSpecifier( scope, elaboratedClassKind, typeName.toString(), startingOffset, endOffset );
+        return new ASTElaboratedTypeSpecifier( scope, elaboratedClassKind, typeName.toString(), startingOffset, typeName.getFirstToken().getOffset(), endOffset );
     }
 }

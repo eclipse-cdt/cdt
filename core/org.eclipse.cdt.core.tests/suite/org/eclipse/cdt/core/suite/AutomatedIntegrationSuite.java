@@ -55,8 +55,8 @@ public class AutomatedIntegrationSuite extends TestSuite
 	private int numberOfFailedTests = 0;
 	private int numberOfFailedFailedTests = 0;
 	// switching to failed tests
-	private boolean failedTests = false;
-	private boolean skipTest = false;
+	protected boolean failedTests = false;
+	protected boolean skipTest = false;
 	
 
 	public AutomatedIntegrationSuite() {}
@@ -220,14 +220,14 @@ public class AutomatedIntegrationSuite extends TestSuite
 		System.out.println();
 	}
 	
-		private void startSuccessTests() {
+		protected void startSuccessTests() {
 			failedTests = false;
 			System.out.println();
 			System.out.println("*** Starting success tests ***");
 			System.out.println();
 		}
 	
-		private void startFailedTests() {
+		protected void startFailedTests() {
 			failedTests = true;
 			System.out.println();
 			System.out.println("*** Starting failed tests ***");

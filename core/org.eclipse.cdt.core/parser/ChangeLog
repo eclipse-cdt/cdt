@@ -1,4 +1,8 @@
 2003-08-14 John Camelon
+	Removed warnings from SymbolTable & QuickParseCallback (removing implicit accessor generation).
+	Made IASTElaboratedTypeSpecifier derive from IASTOffsetableNamedElement (as it should).  
+
+2003-08-14 John Camelon
 	Added X-Reference support for ArrayModifiers and Exception Specifications.  
 	Fixed Bug 41551  -  HandleInclusion always throws ScannerException on local includes.
 

@@ -27,7 +27,7 @@ public class TokenDuple implements ITokenDuple {
 		firstToken = first; 
 		lastToken = last; 
 	}
-	private final IToken firstToken, lastToken; 
+	protected final IToken firstToken, lastToken; 
 	/**
 	 * @return
 	 */

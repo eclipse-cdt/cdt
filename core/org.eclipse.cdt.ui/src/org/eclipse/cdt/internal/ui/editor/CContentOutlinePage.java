@@ -131,9 +131,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
 		
 		if (SelectionSearchGroup.canActionBeAdded(getSelection())){
-			MenuManager search = new MenuManager(CViewMessages.getString("SearchAction.label"), IContextMenuConstants.GROUP_SEARCH); //$NON-NLS-1$	
-			fSelectionSearchGroup.fillContextMenu(search);
-			menu.add(search);
+			fSelectionSearchGroup.fillContextMenu(menu);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		}
 		

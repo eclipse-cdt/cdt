@@ -1,3 +1,20 @@
+2004-07-08 Bogdan Gheorghe
+	Fix for 64177: [Search] Clean up Selection Search UI
+	Fix for 57121: [Search] Searching when all of the "Search For" checkboxes are unchecked causes an exception
+	Fix for 68249: Accessibility: Project Settings Indexer description chopped
+	
+	* src/org/eclipse/cdt/internal/ui/CPluginResources.properties
+	* src/org/eclipse/cdt/internal/ui/cview/MainActionGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewMessages.properties
+	* src/org/eclipse/cdt/internal/ui/editor/CContentOutlinePage.java
+	* src/org/eclipse/cdt/internal/ui/editor/ICEditorActionDefintionIds.java
+	* src/org/eclipse/cdt/internal/ui/search/CSearchPage.java
+	* src/org/eclipse/cdt/internal/ui/search/NewSearchResultCollector.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/DeclarationsSearchGroup.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/ReferencesSearchGroup.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/SelectionSearchGroup.java
+	* plugin.xml
+
 2004-07-08 Bogdan Gheorghe	
 	Add some fixes from head branch: Added support for search name grouping.
 	

@@ -462,13 +462,7 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		if ( !fConfig.supportsStepping() || !canResume() ) {
 			return false;
 		}
-		try {
-			List c = computeStackFrames();
-			return ( c.size() > 1 );
-		}
-		catch( DebugException e ) {
-		}
-		return false;
+		return ( fStackFrames.size() > 1 );
 	}
 
 	/**
@@ -477,12 +471,10 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 * @return whether this thread is in a valid state to step
 	 */
 	protected boolean canStep() {
-		try {
-			return fConfig.supportsStepping() && isSuspended() && getTopStackFrame() != null;
-		}
-		catch( DebugException e ) {
+		if ( !fConfig.supportsStepping() || !isSuspended() ) {
 			return false;
 		}
+		return !fStackFrames.isEmpty();
 	}
 
 	/* (non-Javadoc)

@@ -63,6 +63,7 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -241,6 +242,43 @@ public class CDebugTarget extends CDebugElement
 		setBreakpoints( new HashMap( 5 ) );
 		setTemporaryBreakpoints( new ArrayList() );
 		getLaunch().setSourceLocator( createSourceLocator( project ) );
+		setConfiguration( cdiTarget.getSession().getConfiguration() );
+		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
+		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();
+		setThreadList( new ArrayList( 5 ) );
+		initialize();
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener( this );
+		DebugPlugin.getDefault().getExpressionManager().addExpressionListener( this );
+		getCDISession().getEventManager().addEventListener( this );
+	}
+
+	/**
+	 * Constructor for CDebugTarget.
+	 * @param target
+	 */
+	public CDebugTarget( ILaunch launch,
+						 int targetType, 
+						 ICDITarget cdiTarget, 
+						 String name,
+						 IProcess debuggeeProcess,
+						 IProcess debuggerProcess,
+						 IFile file,
+						 boolean allowsTerminate,
+						 boolean allowsDisconnect )
+	{
+		super( null );
+		setLaunch( launch );
+		setTargetType( targetType );
+		setDebugTarget( this );
+		setName( name );
+		setProcesses( debuggeeProcess, debuggerProcess );
+		setCDITarget( cdiTarget );
+		setBreakpoints( new HashMap( 5 ) );
+		setTemporaryBreakpoints( new ArrayList() );
+		if ( file != null )
+		{
+			getLaunch().setSourceLocator( createSourceLocator( file.getProject() ) );
+		}
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
 		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();

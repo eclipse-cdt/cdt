@@ -1,4 +1,9 @@
 2002-10-31 Mikhail Khodjaiants
+	Replaced the 'IProject' argument by 'IFile' in the debug target factory methods.
+	* CDebugModel.java
+	* CDebugTarget.java
+
+2002-10-31 Mikhail Khodjaiants
 	Fixed the synchronization bug.
 	* CFormattedMemoryBlock.java
 

@@ -25,6 +25,7 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CExpression;
 import org.eclipse.cdt.debug.internal.core.model.CFormattedMemoryBlock;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -91,6 +92,7 @@ public class CDebugModel
 	 * @param stopInMain whether to set a temporary breakpoint in main.
 	 * @return a debug target
 	 */
+/*
 	public static IDebugTarget newDebugTarget( final ILaunch launch,
 											   final ICDITarget cdiTarget,
 											   final String name,
@@ -141,7 +143,7 @@ public class CDebugModel
 
 		return target[0];
 	}
-
+*/
 	public static IDebugTarget newDebugTarget( final ILaunch launch,
 											   final ICDITarget cdiTarget,
 											   final String name,
@@ -194,6 +196,58 @@ public class CDebugModel
 		return target[0];
 	}
 
+	public static IDebugTarget newDebugTarget( final ILaunch launch,
+											   final ICDITarget cdiTarget,
+											   final String name,
+											   final IProcess debuggeeProcess,
+											   final IProcess debuggerProcess,
+											   final IFile file,
+											   final boolean allowTerminate,
+											   final boolean allowDisconnect,
+											   final boolean stopInMain ) throws DebugException
+	{
+		final IDebugTarget[] target = new IDebugTarget[1];
+
+		IWorkspaceRunnable r = new IWorkspaceRunnable()
+		{
+			public void run( IProgressMonitor m )
+			{
+				target[0] = new CDebugTarget( launch,
+											  ICDebugTargetType.TARGET_TYPE_LOCAL_RUN, 
+											  cdiTarget, 
+											  name,
+											  debuggeeProcess,
+											  debuggerProcess,
+											  file,
+											  allowTerminate,
+											  allowDisconnect );
+			}
+		};
+		try
+		{
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e )
+		{
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+
+		ICDIConfiguration config = cdiTarget.getSession().getConfiguration();
+
+		if ( config.supportsBreakpoints() && stopInMain )
+		{
+			stopInMain( (CDebugTarget)target[0] );
+		}
+
+		if ( config.supportsResume() )
+		{
+			target[0].resume();
+		}
+
+		return target[0];
+	}
+/*
 	public static IDebugTarget newAttachDebugTarget( final ILaunch launch,
 													 final ICDITarget cdiTarget,
 													 final String name,
@@ -242,7 +296,7 @@ public class CDebugModel
 
 		return target[0];
 	}
-
+*/
 	public static IDebugTarget newAttachDebugTarget( final ILaunch launch,
 													 final ICDITarget cdiTarget,
 													 final String name,
@@ -293,6 +347,56 @@ public class CDebugModel
 		return target[0];
 	}
 
+	public static IDebugTarget newAttachDebugTarget( final ILaunch launch,
+													 final ICDITarget cdiTarget,
+													 final String name,
+													 final IProcess debuggerProcess,
+													 final IFile file ) throws DebugException
+	{
+		final IDebugTarget[] target = new IDebugTarget[1];
+
+		IWorkspaceRunnable r = new IWorkspaceRunnable()
+		{
+			public void run( IProgressMonitor m )
+			{
+				target[0] = new CDebugTarget( launch, 
+											  ICDebugTargetType.TARGET_TYPE_LOCAL_ATTACH, 
+											  cdiTarget, 
+											  name,
+											  null,
+											  debuggerProcess,
+											  file,
+											  false,
+											  true );
+			}
+		};
+		try
+		{
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e )
+		{
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+
+		((CDebugTarget)target[0]).handleDebugEvent( new ICDISuspendedEvent()
+														{
+															public ICDISessionObject getReason()
+															{
+																return null;
+															}
+	
+															public ICDIObject getSource()
+															{
+																return cdiTarget;
+															}
+
+														} );
+
+		return target[0];
+	}
+/*
 	public static IDebugTarget newCoreFileDebugTarget( final ILaunch launch,
 													   final ICDITarget cdiTarget,
 													   final String name,
@@ -341,7 +445,7 @@ public class CDebugModel
 
 		return target[0];
 	}
-
+*/
 	public static IDebugTarget newCoreFileDebugTarget( final ILaunch launch,
 													   final ICDITarget cdiTarget,
 													   final String name,
@@ -361,6 +465,56 @@ public class CDebugModel
 											  null,
 											  debuggerProcess,
 											  project,
+											  true,
+											  false );
+			}
+		};
+		try
+		{
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e )
+		{
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+
+		((CDebugTarget)target[0]).handleDebugEvent( new ICDISuspendedEvent()
+														{
+															public ICDISessionObject getReason()
+															{
+																return null;
+															}
+	
+															public ICDIObject getSource()
+															{
+																return cdiTarget;
+															}
+
+														} );
+
+		return target[0];
+	}
+
+	public static IDebugTarget newCoreFileDebugTarget( final ILaunch launch,
+													   final ICDITarget cdiTarget,
+													   final String name,
+													   final IProcess debuggerProcess,
+													   final IFile file ) throws DebugException
+	{
+		final IDebugTarget[] target = new IDebugTarget[1];
+
+		IWorkspaceRunnable r = new IWorkspaceRunnable()
+		{
+			public void run( IProgressMonitor m )
+			{
+				target[0] = new CDebugTarget( launch, 
+											  ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP, 
+											  cdiTarget, 
+											  name,
+											  null,
+											  debuggerProcess,
+											  file,
 											  true,
 											  false );
 			}

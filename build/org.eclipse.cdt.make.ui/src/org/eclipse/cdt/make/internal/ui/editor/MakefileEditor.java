@@ -58,7 +58,6 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 	public MakefileEditor() {
 		super();
-		initializeEditor();
 	}
 
 	/**
@@ -71,6 +70,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 		setEditorContextMenuId("#MakefileEditorContext"); //$NON-NLS-1$
 		setRulerContextMenuId("#MakefileRulerContext"); //$NON-NLS-1$
 		setDocumentProvider(MakeUIPlugin.getDefault().getMakefileDocumentProvider());
+		setPreferenceStore(MakeUIPlugin.getDefault().getPreferenceStore());
 	}
 
 	/* (non-Javadoc)

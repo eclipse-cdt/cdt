@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.cdt.core"
    name="%pluginName"
-   version="1.0.0"
+   version="1.0.1"
    provider-name="%providerName"
    class="org.eclipse.cdt.core.CCorePlugin">
 
@@ -31,11 +31,19 @@
    <extension-point id="ProcessList" name="%ProcessList.name" schema="schema/ProcessList.exsd"/>
    <extension-point id="BinaryParser" name="BinaryParser"/>
 
-   <extension point="org.eclipse.cdt.core.BinaryParser">
-      <parser name="Elf Parser" format="ELF" class="org.eclipse.cdt.internal.core.model.parser.ElfParser"/>
-      <parser name="PE Windows Parser" format="PE"  class="org.eclipse.cdt.internal.core.model.parser.PEParser"/>
+   <extension
+         point="org.eclipse.cdt.core.BinaryParser">
+      <parser
+            name="Elf Parser"
+            class="org.eclipse.cdt.internal.core.model.parser.ElfParser"
+            format="ELF">
+      </parser>
+      <parser
+            name="PE Windows Parser"
+            class="org.eclipse.cdt.internal.core.model.parser.PEParser"
+            format="PE">
+      </parser>
    </extension>
-   
    <extension
          id="cbuilder"
          name="C Builder"

@@ -1,3 +1,10 @@
+2002-11-06 Alain Magloire
+
+	Fix for Bugzilla 25869.
+	
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java (getDefaultPrefixes):
+	New Method to return the prefix use to comment out code.
+
 2002-11-06 Tom Tromey
 
 	Fix for Bugzilla 25784.

@@ -496,7 +496,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		ICDICondition condition = cdiTarget.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
 		ICDIBreakpoint cdiBreakpoint = null;
 		synchronized ( getBreakpointMap() ) {
-			cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null, true );
+			cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
 			getBreakpointMap().put( breakpoint, cdiBreakpoint );
 		}
 		return cdiBreakpoint;
@@ -510,7 +510,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			ICDILocation location = cdiTarget.createLocation( new BigInteger ( breakpoint.getAddress().substring( 2 ), 16 ) );
 			ICDICondition condition = cdiTarget.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
 			synchronized ( getBreakpointMap() ) {
-				cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null, true );
+				cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
 				getBreakpointMap().put( breakpoint, cdiBreakpoint );
 			}
 		}
@@ -523,7 +523,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		ICDICondition condition = cdiTarget.createCondition( breakpoint.getIgnoreCount(), breakpoint.getCondition() );
 		ICDIBreakpoint cdiBreakpoint = null;
 		synchronized ( getBreakpointMap() ) {
-			cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, null, true );
+			cdiBreakpoint = cdiTarget.setLocationBreakpoint( ICDIBreakpoint.REGULAR, location, condition, true );
 			getBreakpointMap().put( breakpoint, cdiBreakpoint );
 		}
 		return cdiBreakpoint;

@@ -24,7 +24,7 @@ public interface ICDIBreakpointManagement {
 	ICDIBreakpoint[] getBreakpoints() throws CDIException;
 
 	ICDILocationBreakpoint setLocationBreakpoint(int type, ICDILocation location,
-		ICDICondition condition, String threadId, boolean deferred) throws CDIException;		
+		ICDICondition condition, boolean deferred) throws CDIException;		
 
 	ICDIWatchpoint setWatchpoint(int type, int watchType, String expression,
 		ICDICondition condition) throws CDIException;

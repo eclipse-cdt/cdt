@@ -170,11 +170,16 @@ public interface ICDITarget extends ICDIThreadGroup, ICDISessionObject {
 	 * @throws CDIException
 	 */
 	void signal(ICDISignal signal) throws CDIException;
-	
+
 	/**
 	 * Return a ICDICondition
 	 */
 	ICDICondition createCondition(int ignoreCount, String expression);
+
+	/**
+	 * Return a ICDICondition
+	 */
+	ICDICondition createCondition(int ignoreCount, String expression, String[] threadIds);
 
 	/**
 	 * Returns a ICDILocation

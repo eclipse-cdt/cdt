@@ -1,3 +1,14 @@
+2004-10-15 Alain Magloire
+	Adjustment to changes in CDI interface concerning breakpoints.
+	Now the thread ids for a breakpoint is specified in the ICDICondition.
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDICondition.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIBreakpoint.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIBreakpointManagement.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java
+
+	* CBreakpointManager.java
+	* CDebugTarget.java
+
 2004-10-14 Mikhail Khodjaiants
 	Partial fix for bug 39936 GDB hits modified conditional breakpoints when condition not satisfied.
 	Condition has to be set at the mi level.

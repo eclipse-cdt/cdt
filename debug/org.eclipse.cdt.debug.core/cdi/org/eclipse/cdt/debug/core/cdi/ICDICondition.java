@@ -31,5 +31,11 @@ public interface ICDICondition {
 	 * @return the ignore count of this condition
 	 */
 	int getIgnoreCount();
-	
+
+	/**
+	 * Returns the thread Ids for this condition.
+	 * 
+	 * @return  the thread Ids for this condition.
+	 */
+	String[] getThreadIds();
 }

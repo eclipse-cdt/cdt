@@ -1321,7 +1321,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	public void setInternalTemporaryBreakpoint( ICDILocation location ) throws DebugException {
 		try {
-			getCDITarget().setLocationBreakpoint( ICDIBreakpoint.TEMPORARY, location, null, null, false );
+			getCDITarget().setLocationBreakpoint( ICDIBreakpoint.TEMPORARY, location, null, false );
 		}
 		catch( CDIException e ) {
 			targetRequestFailed( e.getMessage(), null );

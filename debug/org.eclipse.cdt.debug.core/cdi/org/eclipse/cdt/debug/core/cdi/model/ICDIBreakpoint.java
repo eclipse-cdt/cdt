@@ -81,12 +81,4 @@ public interface ICDIBreakpoint extends ICDIObject {
 	 */
 	void setCondition( ICDICondition condition ) throws CDIException;
 	
-	/**
-	 * Returns a thread identifier or <code>null</code> is the breakpoint 
-	 * is not thread-specific.
-	 * 
-	 * @return a thread identifier
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	String getThreadId() throws CDIException;
 }

@@ -10,17 +10,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
@@ -93,6 +89,9 @@ import org.eclipse.core.runtime.Platform;
 		super.setUp();
 		//Create temp project
 		testProject = createProject("DepTestProject");
+		
+		testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+		
 		if (testProject==null)
 			fail("Unable to create project");	
 		

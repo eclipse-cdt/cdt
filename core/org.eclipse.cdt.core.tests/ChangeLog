@@ -1,3 +1,6 @@
+2004-05-03 Bogdan Gheorghe
+	Changed search and indexer tests to work with new index enablement
+	
 2004-04-30 Hoda Amer
 	Final fix for bug#57526 : [CModel] CModelElementsTest needs to test STRUCTURAL_PARSE mode as well
 	Now All CModel tests run twice, once for quick mode and once for Structural mode (Except for IIncludeTests.java

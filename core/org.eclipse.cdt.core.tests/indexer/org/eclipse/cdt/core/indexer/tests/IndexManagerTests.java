@@ -69,6 +69,9 @@ public class IndexManagerTests extends TestCase {
 		
 		//Create temp project
 		testProject = createProject("IndexerTestProject");
+		
+		testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+		
 		if (testProject==null)
 			fail("Unable to create project");	
 		

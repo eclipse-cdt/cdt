@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.CRC32;
-
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.Index;
@@ -38,8 +38,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.QualifiedName;
 
 
 public class IndexManager extends JobManager implements IIndexConstants {
@@ -70,6 +72,11 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public static boolean VERBOSE = false;
 	
 	private  TimeOut timeoutThread = null; 
+	
+	public final static String INDEX_MODEL_ID = CCorePlugin.PLUGIN_ID + ".newindexmodel"; //$NON-NLS-1$
+	public final static String ACTIVATION = "enable"; //$NON-NLS-1$
+	public final static QualifiedName activationKey = new QualifiedName(INDEX_MODEL_ID, ACTIVATION);
+	
 	
 	public synchronized void aboutToUpdateIndex(IPath path, Integer newIndexState) {
 		// newIndexState is either UPDATING_STATE or REBUILDING_STATE
@@ -109,17 +116,29 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 * Note: the actual operation is performed in background
 	 */
 	public void addSource(IFile resource, IPath indexedContainer){
+		
+		IProject project = resource.getProject();
+		
+		boolean indexEnabled = false;
+		if (project != null)
+			indexEnabled = isIndexEnabled(project);
+		else
+			org.eclipse.cdt.internal.core.model.Util.log(null, "IndexManager addSource: File has no project associated : " + resource.getName(), ICLogConstants.CDT); //$NON-NLS-1$ 
+			
 		if (CCorePlugin.getDefault() == null) return;	
-		AddCompilationUnitToIndex job = new AddCompilationUnitToIndex(resource, indexedContainer, this);
 		
-		if (!jobSet.add(job.resource.getLocation()))
-			return;
-		
-		if (this.awaitingJobsCount() < MAX_FILES_IN_MEMORY) {
-			// reduces the chance that the file is open later on, preventing it from being deleted
-			if (!job.initializeContents()) return;
+		if (indexEnabled){
+			AddCompilationUnitToIndex job = new AddCompilationUnitToIndex(resource, indexedContainer, this);
+			
+			if (!jobSet.add(job.resource.getLocation()))
+				return;
+			
+			if (this.awaitingJobsCount() < MAX_FILES_IN_MEMORY) {
+				// reduces the chance that the file is open later on, preventing it from being deleted
+				if (!job.initializeContents()) return;
+			}
+			request(job);
 		}
-		request(job);
 	}
 	
 	public void updateDependencies(IResource resource){
@@ -247,12 +266,36 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	 */
 	public void indexAll(IProject project) {
 		if (CCorePlugin.getDefault() == null) return;
-	
-		// check if the same request is not already in the queue
-		IndexRequest request = new IndexAllProject(project, this);
-		for (int i = this.jobEnd; i > this.jobStart; i--) // NB: don't check job at jobStart, as it may have already started (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=32488)
-			if (request.equals(this.awaitingJobs[i])) return;
-		this.request(request);
+	 
+		//check to see if indexing isEnabled for this project
+		boolean indexEnabled = isIndexEnabled(project);
+		
+		if (indexEnabled){
+			// check if the same request is not already in the queue
+			IndexRequest request = new IndexAllProject(project, this);
+			for (int i = this.jobEnd; i > this.jobStart; i--) // NB: don't check job at jobStart, as it may have already started (see http://bugs.eclipse.org/bugs/show_bug.cgi?id=32488)
+				if (request.equals(this.awaitingJobs[i])) return;
+			this.request(request);
+		}
+	}
+	/**
+	 * @param project
+	 * @return
+	 */
+	private boolean isIndexEnabled(IProject project) {
+		Boolean indexValue = null;
+		
+		try {
+			indexValue = (Boolean) project.getSessionProperty(activationKey);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if (indexValue != null)
+			return indexValue.booleanValue();
+		
+		return false;
 	}
 	/**
 	 * Index the content of the given source folder.

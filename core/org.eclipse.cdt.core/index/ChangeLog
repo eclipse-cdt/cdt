@@ -1,3 +1,6 @@
+2004-05-03 Bogdan Gheorghe
+	Added index enablement checking to index manager
+	
 2004-04-20 Bogdan Gheorghe
 	Fix for Bug 54155
 	

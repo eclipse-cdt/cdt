@@ -14,9 +14,7 @@
 package org.eclipse.cdt.core.search.tests;
 
 import java.io.FileInputStream;
-
 import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
@@ -25,6 +23,7 @@ import org.eclipse.cdt.core.search.ICSearchPattern;
 import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.cdt.testplugin.FileManager;
@@ -67,7 +66,9 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 		
 		//Create temp project
 		testProject = createProject("SearchTestProject");
-
+		
+		testProject.setSessionProperty(IndexManager.activationKey,new Boolean(true));
+		
 		if (testProject == null)
 			fail("Unable to create project");
 

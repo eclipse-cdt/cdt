@@ -33,7 +33,6 @@
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="%binaryParserPage"/>
    <extension-point id="PathContainerPage" name="%pathContainerPage" schema="schema/PathContainerPage.exsd"/>
-   
 <!-- =========================================================================== -->
 <!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
@@ -41,19 +40,25 @@
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
 
-   <extension point="org.eclipse.core.runtime.adapters">
-		<factory 
-            class="org.eclipse.cdt.internal.ui.CElementAdapterFactory" 
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.eclipse.cdt.internal.ui.CElementAdapterFactory"
             adaptableType="org.eclipse.cdt.core.model.ICElement">
-            
-            <adapter type="org.eclipse.core.resources.IResource"/>
-            <adapter type="org.eclipse.core.resources.IProject"/>
-                       
-            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-            <adapter type="org.eclipse.ui.views.properties.IPropertySource"/>
-		</factory>
-   </extension>     	
-
+         <adapter
+               type="org.eclipse.core.resources.IResource">
+         </adapter>
+         <adapter
+               type="org.eclipse.core.resources.IProject">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.model.IWorkbenchAdapter">
+         </adapter>
+         <adapter
+               type="org.eclipse.ui.views.properties.IPropertySource">
+         </adapter>
+      </factory>
+   </extension>
 <!-- Implement our filters for C-View.  -->
    <extension
          point="org.eclipse.cdt.ui.CElementFilters">
@@ -205,7 +210,6 @@
          </description>
       </wizard>
    </extension>
-  
 <!-- Define the document provider and partitionner for the CEditor -->
    <extension
          id="org.eclipse.cdt.ui.CDocumentSetupParticipant"
@@ -225,7 +229,6 @@
             class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory">
       </factory>
    </extension>
-
    <extension
          id="org.eclipse.cdt.ui.ceditor"
          point="org.eclipse.ui.editors">
@@ -636,13 +639,23 @@
             id="org.eclipse.cdt.ui.preferneces.WorkInProgressPreferencePage">
       </page>
    </extension>
-    <extension
+   <extension
          point="org.eclipse.search.searchResultViewPages">
       <viewPage
             targetClass="org.eclipse.cdt.internal.ui.search.CSearchResult"
             class="org.eclipse.cdt.internal.ui.search.CSearchResultPage"
             id="org.eclipse.cdt.ui.CSearchResultPage">
       </viewPage>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            name="%CDTIndexerProperty.name"
+            class="org.eclipse.cdt.internal.ui.properties.IndexerOptionPropertyPage"
+            id="org.eclipse.cdt.ui.indexer">
+      </page>
    </extension>
 <!--
    <extension
@@ -683,7 +696,7 @@
       </page>
    </extension>
 -->
-      <extension
+   <extension
          point="org.eclipse.cdt.ui.PathContainerPage">
       <PathContainerPage
             name="%defaultPathContainerPage"
@@ -691,4 +704,5 @@
             id="*">
       </PathContainerPage>
    </extension>
+
 </plugin>

@@ -56,14 +56,11 @@ public abstract class CCProjectWizard extends CProjectWizard {
 	}
 
 
-	protected void doRun(IProgressMonitor monitor) {
+	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		super.doRun(monitor);
 		// Add C++ Nature.
 		if (newProject != null) {
-			try {
-				CCProjectNature.addCCNature(newProject, monitor);
-			} catch (CoreException e) {
-			}
+			CCProjectNature.addCCNature(newProject, monitor);
 		}
 	}
 }

@@ -5,6 +5,9 @@ package org.eclipse.cdt.ui.wizards;
  * All Rights Reserved.
  */
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -13,9 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.internal.ui.CPlugin;
 
 
 /**
@@ -70,26 +70,28 @@ public abstract class StdMakeProjectWizard extends CProjectWizard {
 	protected void doRunEpilogue(IProgressMonitor monitor) {
 	}
 
-	protected void doRun(IProgressMonitor monitor) {
+	protected void doRun(IProgressMonitor monitor) throws CoreException {
 		super.doRun(monitor);
 		if (newProject != null) {
 			if (monitor == null) {
 				monitor = new NullProgressMonitor();
 			}
 			monitor.beginTask("Standard Make", 3);
-			try {
-				// Update the referenced project if provided.
-				if (referenceBlock != null) {
-					referenceBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
-				}
-				// Update the settings.
-				if (settingsBlock != null) {
-					settingsBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
-				}
-				// Set the Default C Builder.
-				CProjectNature.addCBuildSpec(newProject, new SubProgressMonitor(monitor, 1));
-			} catch (CoreException e) {
+			// Update the referenced project if provided.
+			if (referenceBlock != null) {
+				referenceBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
 			}
+			// Update the settings.
+			if (settingsBlock != null) {
+				settingsBlock.doRun(newProject, new SubProgressMonitor(monitor, 1));
+			}
+			// Set the Default C Builder.
+			CProjectNature.addCBuildSpec(newProject, new SubProgressMonitor(monitor, 1));
 		}
 	}
+	
+	public String getProjectID() {
+		return CCorePlugin.getDefault().PLUGIN_ID + ".make";
+	}
+
 }

@@ -5,9 +5,8 @@ package org.eclipse.cdt.ui.wizards;
  * All Rights Reserved.
  */
 
-import org.eclipse.swt.widgets.TabFolder;
-
 import org.eclipse.cdt.internal.ui.CPlugin;
+import org.eclipse.swt.widgets.TabFolder;
 
 /**
  */

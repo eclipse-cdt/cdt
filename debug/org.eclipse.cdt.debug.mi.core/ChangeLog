@@ -1,5 +1,22 @@
 2003-01-28 Alain Magloire
 
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/ArgumentObject.java:
+	Use ICDIStackFrame in the constructor.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/RegisterObject.java:
+	Use ICDIStackFrame in the constructor.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/VariableObject.java:
+	Use ICDIStackFrame in the constructor.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Value.java (getVariables):
+	No need to cast to StackFrame.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Thread.java (setCurrentFrame):
+	Implement new method, takes a boolean as the second method.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/ExpressionManager.java:
+	No need to cast to StackFrame.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
+	No need to cast to StackFrame.
+
+2003-01-28 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Breakpoint.java (getCondition):
 	Condition was initialize with the wrong parameter.
 	(setMIBreakpoint): reset location and condition.

@@ -14,6 +14,7 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -2037,6 +2039,14 @@ public class AST2CPPTests extends AST2BaseTest {
         
         assertSame( printf, r1 );
         assertSame( printf, r2 );
+    }
+    
+    public void testBug86288() throws Exception
+    {
+    	String code = "int *foo( int *b ) { return (int *)(b); }"; //$NON-NLS-1$
+    	IASTTranslationUnit tu = parse( code, ParserLanguage.CPP );
+    	IASTReturnStatement r = (IASTReturnStatement) ((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody()).getStatements()[0];
+    	assertTrue( r.getReturnValue() instanceof IASTCastExpression );
     }
 }
 

@@ -880,6 +880,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                   typeId, castExpression, startingOffset,
                   calculateEndOffset(castExpression));
          } catch (BacktrackException b) {
+         	backup( mark );
             if (templateIdScopes.size() > 0 && !popped) {
                templateIdScopes.pop();
             }

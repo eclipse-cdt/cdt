@@ -14,4 +14,11 @@ package org.eclipse.cdt.debug.core.model;
  * Represents a global C/C++ variable.
  */
 public interface ICGlobalVariable extends ICVariable {
+
+	/**
+	 * Returns the descriptor of this variable.
+	 * 
+	 * @return the descriptor of this variable
+	 */
+	public IGlobalVariableDescriptor getDescriptor();
 }

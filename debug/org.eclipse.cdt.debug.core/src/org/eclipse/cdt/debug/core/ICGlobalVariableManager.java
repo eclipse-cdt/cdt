@@ -38,11 +38,4 @@ public interface ICGlobalVariableManager {
 	 * Removes all global variables from this manager.
 	 */
 	public void removeAllGlobals();
-
-	/**
-	 * Returns the array of the global variables descriptors registered with this manager.
-	 * 
-	 * @return the array of the global variables descriptors registered with this manager
-	 */
-	public IGlobalVariableDescriptor[] getDescriptors();
 }

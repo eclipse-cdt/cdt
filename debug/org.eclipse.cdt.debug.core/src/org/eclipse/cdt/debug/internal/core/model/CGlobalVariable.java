@@ -16,24 +16,29 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.model.ICGlobalVariable;
+import org.eclipse.cdt.debug.core.model.IGlobalVariableDescriptor;
 
 /**
  * Represents a global variable.
  */
 public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 
+	private IGlobalVariableDescriptor fDescriptor;
+
 	/**
 	 * Constructor for CGlobalVariable.
 	 */
-	protected CGlobalVariable( CDebugElement parent, ICDIVariableObject cdiVariableObject ) {
+	protected CGlobalVariable( CDebugElement parent, IGlobalVariableDescriptor descriptor, ICDIVariableObject cdiVariableObject ) {
 		super( parent, cdiVariableObject );
+		fDescriptor = descriptor;
 	}
 
 	/**
 	 * Constructor for CGlobalVariable.
 	 */
-	protected CGlobalVariable( CDebugElement parent, ICDIVariableObject cdiVariableObject, String message ) {
+	protected CGlobalVariable( CDebugElement parent, IGlobalVariableDescriptor descriptor, ICDIVariableObject cdiVariableObject, String message ) {
 		super( parent, cdiVariableObject, message );
+		fDescriptor = descriptor;
 	}
 
 	/* (non-Javadoc)
@@ -60,5 +65,12 @@ public class CGlobalVariable extends CVariable implements ICGlobalVariable {
 			}
 		}
 		super.handleDebugEvents( events );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.model.ICGlobalVariable#getDescriptor()
+	 */
+	public IGlobalVariableDescriptor getDescriptor() {
+		return fDescriptor;
 	}
 }

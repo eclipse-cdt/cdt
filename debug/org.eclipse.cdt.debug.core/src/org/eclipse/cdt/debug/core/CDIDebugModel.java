@@ -542,7 +542,7 @@ public class CDIDebugModel {
 			ICDIVariableObject vo = null;
 			try {
 				vo = ((CDebugTarget)target).getCDISession().getVariableManager().getGlobalVariableObject( info.getPath().lastSegment(), null, info.getName() );
-				return CVariableFactory.createGlobalVariable( (CDebugTarget)target, vo );
+				return CVariableFactory.createGlobalVariable( (CDebugTarget)target, info, vo );
 			}
 			catch( CDIException e ) {
 				throw new DebugException( new Status( IStatus.ERROR, getPluginIdentifier(), DebugException.TARGET_REQUEST_FAILED, (vo != null) ? vo.getName() + ": " + e.getMessage() : e.getMessage(), null ) ); //$NON-NLS-1$

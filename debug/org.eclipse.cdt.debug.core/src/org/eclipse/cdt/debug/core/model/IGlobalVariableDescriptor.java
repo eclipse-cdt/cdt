@@ -13,12 +13,22 @@ package org.eclipse.cdt.debug.core.model;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * Enter type comment.
- * 
- * @since: Nov 4, 2002
+ * Provides the description of a global variable.
  */
-public interface IGlobalVariableDescriptor
-{
-	String getName();
-	IPath getPath();
+public interface IGlobalVariableDescriptor {
+
+	/**
+	 * Returns the name of the global variable
+	 * 
+	 * @return the name of the global variable
+	 */
+	public String getName();
+
+	/**
+	 * Returns the path of the source file that contains 
+	 * the definition of the global variable.
+	 *  
+	 * @return the path of the source file
+	 */
+	public IPath getPath();
 }

@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.IBinaryModule;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -92,10 +91,8 @@ import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
@@ -1015,6 +1012,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
 		DebugPlugin.getDefault().getExpressionManager().removeExpressionListener( this );
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
+		saveGlobalVariables();
 		disposeGlobalVariableManager();
 		disposeMemoryManager();
 		disposeSharedLibraryManager();
@@ -1471,7 +1469,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			ICElement[] elements = file.getChildren();
 			for( int i = 0; i < elements.length; ++i ) {
 				if ( elements[i] instanceof org.eclipse.cdt.core.model.IVariable ) {
-					list.add( createGlobalVariable( (org.eclipse.cdt.core.model.IVariable)elements[i] ) );
+					list.add( CVariableFactory.createGlobalVariableDescriptor( (org.eclipse.cdt.core.model.IVariable)elements[i] ) );
 				}
 				else if ( elements[i] instanceof org.eclipse.cdt.core.model.IParent ) {
 					list.addAll( getCFileGlobals( (org.eclipse.cdt.core.model.IParent)elements[i] ) );
@@ -1482,24 +1480,6 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			requestFailed( CoreModelMessages.getString( "CDebugTarget.Unable_to_get_globals_1" ) + e.getMessage(), e ); //$NON-NLS-1$
 		}
 		return list;
-	}
-
-	private IGlobalVariableDescriptor createGlobalVariable( final org.eclipse.cdt.core.model.IVariable var ) {
-		return new IGlobalVariableDescriptor() {
-
-			public String getName() {
-				return var.getElementName();
-			}
-
-			public IPath getPath() {
-				IPath path = new Path( "" ); //$NON-NLS-1$
-				ICElement parent = var.getParent();
-				if ( parent instanceof IBinaryModule ) {
-					path = ((IBinaryModule)parent).getPath();
-				}
-				return path;
-			}
-		};
 	}
 
 	protected void setSharedLibraryManager( CSharedLibraryManager libman ) {
@@ -1528,6 +1508,10 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 
 	protected void disposeRegisterManager() {
 		fRegisterManager.dispose();
+	}
+
+	protected void saveGlobalVariables() {
+		fGlobalVariableManager.save();
 	}
 
 	protected void disposeGlobalVariableManager() {

@@ -1,3 +1,17 @@
+2004-09-03 Mikhail Khodjaiants
+	Made global variables persistent.
+	* CDIDebugModel.java
+	* ICDTLaunchConfigurationConstants.java
+	* ICGlobalVariableManager.java
+	* ICGlobalVariable.java
+	* IGlobalVariableDescriptor.java
+	* InternalDebugCoreMessages.properties
+	* CGlobalVariableManager.java
+	* CDebugTarget.java
+	* CGlobalVariable.java
+	* CRegister.java
+	* CVariableFactory.java
+
 2004-09-01 Mikhail Khodjaiants
 	Breakpoint filtering by targets (core).
 	* ICBreakpoint.java

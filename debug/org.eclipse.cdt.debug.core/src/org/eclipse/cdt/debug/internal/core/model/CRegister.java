@@ -28,7 +28,7 @@ public class CRegister extends CGlobalVariable implements IRegister {
 	 * Constructor for CRegister.
 	 */
 	protected CRegister( CRegisterGroup parent, ICDIRegister cdiRegister ) {
-		super( parent, cdiRegister );
+		super( parent, null, cdiRegister );
 		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
 	}
 
@@ -36,7 +36,7 @@ public class CRegister extends CGlobalVariable implements IRegister {
 	 * Constructor for CRegister.
 	 */
 	protected CRegister( CRegisterGroup parent, ICDIRegisterObject registerObject, String message ) {
-		super( parent, registerObject, message );
+		super( parent, null, registerObject, message );
 		setFormat( CVariableFormat.getFormat( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
 	}
 

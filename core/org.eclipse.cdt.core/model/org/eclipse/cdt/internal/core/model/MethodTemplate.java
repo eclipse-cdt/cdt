@@ -50,6 +50,15 @@ public class MethodTemplate extends MethodDeclaration implements ITemplate{
 	/**
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateSignature()
 	 */	
+	/*
+	 * The signature in the outline view will be: 
+	 * The class X followed by its template parameters, 
+	 * then the scope resolution, then the function name, 
+	 * followed by its template parameters, folowed by its 
+	 * normal parameter list, then a colon then the function's 
+	 * return type.
+	 */	
+
 	public String getTemplateSignature() {
 		StringBuffer sig = new StringBuffer(getElementName());
 		if(getNumberOfTemplateParameters() > 0){

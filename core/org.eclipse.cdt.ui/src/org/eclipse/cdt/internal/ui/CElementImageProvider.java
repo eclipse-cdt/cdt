@@ -212,6 +212,7 @@ public class CElementImageProvider {
 				return CPluginImages.DESC_OBJS_CLASS;
 				
 			case ICElement.C_UNION:
+			case ICElement.C_TEMPLATE_UNION:
 				return CPluginImages.DESC_OBJS_UNION;
 
 			case ICElement.C_TYPEDEF:

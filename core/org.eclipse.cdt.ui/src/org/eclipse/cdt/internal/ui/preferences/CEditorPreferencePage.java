@@ -277,8 +277,8 @@ public class CEditorPreferencePage extends PreferencePage implements IWorkbenchP
 
 		store.setDefault(ExtendedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER, true);
 
-		store.setDefault(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, false);
-		store.setDefault(ContentAssistPreference.PROJECT_SEARCH_SCOPE, true);
+		store.setDefault(ContentAssistPreference.CURRENT_FILE_SEARCH_SCOPE, true);
+		store.setDefault(ContentAssistPreference.PROJECT_SEARCH_SCOPE, false);
 		store.setDefault(ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE, false);
 		
 		store.setDefault(ContentAssistPreference.AUTOACTIVATION_TRIGGERS_DOT, true);

@@ -1,3 +1,6 @@
+2003-12-22 Hoda Amer
+	Temporary disabled completion proposal test until a better test is written.
+	
 2003-12-17 Andrew Niefer
 	test changes for content assist
 	added ContextualParseTest.testCompletionLookup_FriendClass_1() 

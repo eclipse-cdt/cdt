@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
+import org.eclipse.cdt.internal.corext.template.ITemplateEditor;
 import org.eclipse.cdt.internal.corext.template.Template;
 import org.eclipse.cdt.internal.corext.template.TemplateMessages;
 import org.eclipse.cdt.internal.corext.template.TemplateSet;
@@ -357,7 +358,7 @@ public class TemplatePreferencePage extends PreferencePage implements IWorkbench
 		Template template= new Template();
 
 		ContextTypeRegistry registry=ContextTypeRegistry.getInstance();
-		ContextType type= registry.getContextType("C");
+		ContextType type= registry.getContextType(ITemplateEditor.TemplateContextKind.C_GLOBAL_CONTEXT_TYPE);
 		
 		String contextTypeName;
 		if (type != null)

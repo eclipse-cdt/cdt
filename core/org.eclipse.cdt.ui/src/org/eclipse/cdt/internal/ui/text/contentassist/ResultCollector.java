@@ -181,12 +181,24 @@ public class ResultCollector extends CompletionRequestorAdaptor {
 		int completionLength,
 		int relevance) {
 		
-		super.acceptLocalVariable(
-			name,
-			returnType,
-			completionStart,
-			completionLength,
-			relevance);
+		String replaceString = "";
+		String displayString = "";
+		Image image = null;
+		StringBuffer infoString = new StringBuffer();
+		
+		// fill the replace, display and info strings
+		replaceString = name;
+		displayString = name;
+		if(returnType != null)
+			displayString+= " : " + returnType;
+		
+		// get the image 	
+		ImageDescriptor imageDescriptor = CElementImageProvider.getLocalVariableImageDescriptor();
+		image = registry.get( imageDescriptor );
+
+		// create proposal and add it to completions list
+		ICompletionProposal proposal = createProposal(replaceString, displayString, infoString.toString(), null, image, completionStart, completionLength, relevance);
+		completions.add(proposal);		
 	}
 
 	/* (non-Javadoc)

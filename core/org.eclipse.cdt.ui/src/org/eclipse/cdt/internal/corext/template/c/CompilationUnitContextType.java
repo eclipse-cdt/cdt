@@ -23,7 +23,7 @@ public abstract class CompilationUnitContextType extends ContextType {
 
 	/** the associated compilation unit, may be <code>null</code> */
 	protected ICompilationUnit fCompilationUnit;
-
+	
 	protected static class ReturnType extends TemplateVariable {
 	 	public ReturnType() {
 	 	 	super("return_type", TemplateMessages.getString("JavaContextType.variable.description.return.type"));

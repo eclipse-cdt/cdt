@@ -5,19 +5,20 @@ package org.eclipse.cdt.internal.corext.template.c;
  * All Rights Reserved.
  */
  
+import org.eclipse.cdt.internal.corext.template.ITemplateEditor;
 import org.eclipse.cdt.internal.corext.template.TemplateContext;
 
 
 /**
  * A context type for javadoc.
  */
-public class CContextType extends CompilationUnitContextType {
+public class CGlobalContextType extends CompilationUnitContextType {
 
 	/**
 	 * Creates a C context type.
 	 */
-	public CContextType() {
-		super("C");
+	public CGlobalContextType() {
+		super(ITemplateEditor.TemplateContextKind.C_GLOBAL_CONTEXT_TYPE);
 		
 		// global
 		addVariable(new GlobalVariables.Cursor());

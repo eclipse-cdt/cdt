@@ -1,3 +1,8 @@
+2003-12-22 Hoda Amer
+	Content Assist work : Added context information to templates.
+	Added scope information into relevance calculations
+	Added special icon to indicate a local variable
+
 2003-12-19 Alain Magloire
 
 	Fix for PR 40247.

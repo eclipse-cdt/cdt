@@ -219,7 +219,7 @@ public class TemplateProposal implements ICCompletionProposal {
 	 * @see IJavaCompletionProposal#getRelevance()
 	 */
 	public int getRelevance() {
-		return 90;
+		return 9;
 	}
 
 }

@@ -9,25 +9,25 @@ All Rights Reserved.
 
 <!-- C++ -->
 
-<template description="for loop" name="for" context="C">
+<template description="for loop" name="for" context="C Function">
 for (${var} = 0; ${var} &lt; ${max}; ${var}++) {
 	${cursor}
 }
 </template>
 
-<template description="for loop with temporary variable" name="for" context="C">
+<template description="for loop with temporary variable" name="for" context="C Function">
 for (int ${var} = 0; ${var} &lt; ${max}; ${var}++) {
 	${cursor}
 }
 </template>
 
-<template description="do while statement" name="do" context="C">
+<template description="do while statement" name="do" context="C Function">
 do {
 	${cursor}
 } while (${condition});
 </template>
 
-<template description="switch case statement" name="switch" context="C">
+<template description="switch case statement" name="switch" context="C Function">
 switch (${key}) {
 	case ${value}:
 		${cursor}
@@ -37,13 +37,13 @@ switch (${key}) {
 }
 </template>
 
-<template description="if statement" name="if" context="C">
+<template description="if statement" name="if" context="C Function">
 if (${condition}) {
 	${cursor}
 }
 </template>
 
-<template description="if else statement" name="ifelse" context="C">
+<template description="if else statement" name="ifelse" context="C Function">
 if (${condition}) {
 	${cursor}
 } else {
@@ -51,75 +51,75 @@ if (${condition}) {
 }
 </template>
 
-<template description="else if block" name="elseif" context="C">
+<template description="else if block" name="elseif" context="C Function">
 else if (${condition}) {
 	${cursor}
 }
 </template>
 
-<template description="else block" name="else" context="C">
+<template description="else block" name="else" context="C Function">
 else {
 	${cursor}
 }
 </template>
 
-<template description="try catch block" name="try" context="C++">
+<template description="try catch block" name="try" context="C++ Function">
 try {
 	${cursor}
 } catch (${Exception} e) {
 }
 </template>
 
-<template description="catch block" name="catch" context="C++">
+<template description="catch block" name="catch" context="C++ Function">
 catch (${Exception} e) {
 	${cursor}
 }
 </template>
 
-<template description="main method" name="main" context="C">
+<template description="main method" name="main" context="C Global">
 int
 main(int argc, char **argv) {
 	${cursor}
 }
 </template>
 
-<template description="class declaration" name="class" context="C++">
+<template description="class declaration" name="class" context="C++ Global">
 class ${name} {
 	${cursor}
 private:
 };
 </template>
 
-<template description="using a namespace" name="using" context="C++">
+<template description="using a namespace" name="using" context="C++ Global">
 using namespace ${namespace};
 </template>
 
-  <template description="namespace declaration" name="namespace" context="C++"
+  <template description="namespace declaration" name="namespace" context="C++ Global"
  >namespace ${namespace} {
 	${cursor}
 }</template>
 
-  <template description="create new object" name="new" context="C++"
+  <template description="create new object" name="new" context="C++ Function"
 >${type} ${name} = new ${type}(${arguments});
 </template>
 
 
-<template name="comment" description="default multiline comment" context="C" enabled="true">/*
+<template name="comment" description="default multiline comment" context="C Global" enabled="true">/*
  * author ${user}
  *
  * To change this generated comment edit the template variable &quot;comment&quot;:
  * Window&gt;Preferences&gt;C&gt;Templates.
  */</template> 
 
-  <template description="print to standard out" name="stdout" context="C"
+  <template description="print to standard out" name="stdout" context="C Function"
   >printf(${cursor});</template>
 
-  <template description="print to standard error" name="stderr" context="C"
+  <template description="print to standard error" name="stderr" context="C Function"
   >fprintf(stderr, ${cursor});</template>
 
   <!-- javadoc -->
 
-  <template description="author name" name="author" context="C"
+  <template description="author name" name="author" context="C Global"
   >author ${user}</template>
 
 </templates>

@@ -86,20 +86,24 @@ public class ASTNode implements IASTNode {
 		
 		SymbolIterator iterator = new SymbolIterator( lookupResults.iterator() );
 
-		return new Result( prefix, iterator );
+		return new Result( prefix, iterator, lookupResults.size() );
 	}
 	
 	private class Result implements LookupResult{
 		private String prefix;
 		private Iterator iterator;
+		private int resultsNumber;
 
-		public Result( String pref, Iterator iter ){
+		public Result( String pref, Iterator iter, int resultsSize ){
 			prefix = pref;
 			iterator = iter;
+			resultsNumber = resultsSize;
+			
 		}
 		
 		public String getPrefix() 	{	return prefix;	 }
 		public Iterator getNodes() 	{	return iterator; }
+		public int getResultsSize() { return resultsNumber; } 
 	}
 	
 	private class SymbolIterator implements Iterator{

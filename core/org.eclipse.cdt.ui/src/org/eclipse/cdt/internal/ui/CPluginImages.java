@@ -43,7 +43,8 @@ public class CPluginImages {
 	public static final String T_OVR= T + "ovr16/";
 
 	public static final String IMG_OBJS_TEMPLATE= NAME_PREFIX + "template_obj.gif";
-	public static final String IMG_OBJS_FIELD= NAME_PREFIX + "field_obj.gif";
+	public static final String IMG_OBJS_VARIABLE= NAME_PREFIX + "variable_obj.gif";
+	public static final String IMG_OBJS_LOCAL_VARIABLE= NAME_PREFIX + "variable_local_obj.gif";
 	public static final String IMG_OBJS_CLASS= NAME_PREFIX + "class_obj.gif";
 	public static final String IMG_OBJS_STRUCT= NAME_PREFIX + "struct_obj.gif";
 	public static final String IMG_OBJS_UNION= NAME_PREFIX + "union_obj.gif";
@@ -77,7 +78,8 @@ public class CPluginImages {
 	public static final String IMG_OBJS_BREAKPOINT_DISABLED = NAME_PREFIX + "breakpoint_disabled.gif";
 	public static final String IMG_OBJS_BREAKPOINT_ACTIVE = NAME_PREFIX + "breakpoint_active.gif";
 
-	public static final ImageDescriptor DESC_OBJS_FIELD= createManaged(T_OBJ, IMG_OBJS_FIELD);
+	public static final ImageDescriptor DESC_OBJS_VARIABLE= createManaged(T_OBJ, IMG_OBJS_VARIABLE);
+	public static final ImageDescriptor DESC_OBJS_LOCAL_VARIABLE= createManaged(T_OBJ, IMG_OBJS_LOCAL_VARIABLE);
 	public static final ImageDescriptor DESC_OBJS_CLASS= createManaged(T_OBJ, IMG_OBJS_CLASS);
 	public static final ImageDescriptor DESC_OBJS_STRUCT= createManaged(T_OBJ, IMG_OBJS_STRUCT);
 	public static final ImageDescriptor DESC_OBJS_UNION= createManaged(T_OBJ, IMG_OBJS_UNION);

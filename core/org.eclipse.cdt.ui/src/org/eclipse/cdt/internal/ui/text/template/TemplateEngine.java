@@ -6,6 +6,9 @@ package org.eclipse.cdt.internal.ui.text.template;
  */
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.Template;
 import org.eclipse.cdt.internal.corext.template.Templates;
@@ -13,10 +16,6 @@ import org.eclipse.cdt.internal.corext.template.c.CompilationUnitContext;
 import org.eclipse.cdt.internal.corext.template.c.CompilationUnitContextType;
 import org.eclipse.cdt.internal.corext.template.c.ICompilationUnit;
 import org.eclipse.cdt.internal.ui.text.link.LinkedPositionManager;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-
-import java.util.ArrayList;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
@@ -53,8 +52,9 @@ public class TemplateEngine {
 	/**
 	 * Returns the array of matching templates.
 	 */
-	public ICCompletionProposal[] getResults() {
-		return (ICCompletionProposal[]) fProposals.toArray(new ICCompletionProposal[fProposals.size()]);
+	public List getResults() {
+		// return (ICCompletionProposal[]) fProposals.toArray(new ICCompletionProposal[fProposals.size()]);
+		return fProposals;	
 	}
 
 	/**

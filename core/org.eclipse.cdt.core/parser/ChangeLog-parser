@@ -1,3 +1,9 @@
+2003-12-22 Hoda Amer
+	Content Assist Work : Returned the results size of the IASTNode lookup
+	to help in determining the scope relevance
+	- Added the variable type to a search match result to be compatible with the 
+	results found by the completion engine
+	 
 2003-12-17 Andrew Niefer
 	Content Assist work: 
 	- change parser & symbol table to handle handle friend classes

@@ -24,6 +24,7 @@ import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
 import org.eclipse.cdt.internal.corext.template.ContextType;
 import org.eclipse.cdt.internal.corext.template.ContextTypeRegistry;
+import org.eclipse.cdt.internal.corext.template.ITemplateEditor;
 import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
@@ -56,7 +57,9 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	private CCompletionProposalComparator fComparator;
 	private IContextInformationValidator fValidator;
 
-	private TemplateEngine[] fTemplateEngine;
+	private TemplateEngine[] fGlobalContextTemplateEngine;
+	private TemplateEngine[] fFunctionContextTemplateEngine;
+	private TemplateEngine[] fStructureContextTemplateEngine;
 	
 	private boolean fRestrictToMatchingCase;
 	private boolean fAllowAddIncludes;
@@ -80,50 +83,87 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		resultCollector = new ResultCollector();
 		completionEngine = new CompletionEngine(resultCollector);
 		searchEngine = new SearchEngine();
+		setupTemplateEngine();
 		
-		//Determine if this is a C or a C++ file for the context completion       +        //This is _totally_ ugly and likely belongs in the main editor class.
-		String contextNames[] = new String[2];
-		ArrayList templateList = new ArrayList(2);
-		String filename = null;
-		if (fEditor != null && fEditor.getEditorInput() != null) {
-			filename = fEditor.getEditorInput().getName();
-		}
-		if (filename == null) {
-			contextNames[0] = "C"; //$NON-NLS-1$
-			contextNames[1] = "C++"; //$NON-NLS-1$
-		} else if (filename.endsWith(".c")) { //Straight C files are always C
-			contextNames[0] = "C"; //$NON-NLS-1$
-		} else if (
-			filename.endsWith(".cpp")
-				|| filename.endsWith(".cc")
-				|| filename.endsWith(".cxx")
-				|| filename.endsWith(".C")
-				|| filename.endsWith(".hxx")) {
-			contextNames[0] = "C++"; //$NON-NLS-1$
-			contextNames[1] = "C"; //$NON-NLS-1$
-		} else { //Defer to the nature of the project
-			IFile file = fEditor.getInputFile();
-			if (file != null && CoreModel.getDefault().hasCCNature(file.getProject())) {
-				contextNames[0] = "C++"; //$NON-NLS-1$
-				contextNames[1] = "C"; //$NON-NLS-1$
-			} else {
-				contextNames[0] = "C"; //$NON-NLS-1$
-			}
-		}
-		ContextType contextType;
-		for (int i = 0; i < contextNames.length; i++) {
-			contextType = ContextTypeRegistry.getInstance().getContextType(contextNames[i]);
-			if (contextType != null) {
-				templateList.add(new TemplateEngine(contextType));
-			}
-		}
-		fTemplateEngine = (TemplateEngine[]) templateList.toArray(new TemplateEngine[templateList.size()]);
 		fRestrictToMatchingCase = false;
 		fAllowAddIncludes = true;
 
 		fComparator = new CCompletionProposalComparator();
 	}
 
+	private boolean isCppContext(){
+		String filename = null;
+		if (fEditor != null && fEditor.getEditorInput() != null) {
+			filename = fEditor.getEditorInput().getName();
+		}
+		if (filename == null) {
+			return true;
+		} else if (filename.endsWith(".c")) { 
+			//Straight C files are always C
+			return false;
+		} else if (
+				filename.endsWith(".cpp")
+				|| filename.endsWith(".cc")
+				|| filename.endsWith(".cxx")
+				|| filename.endsWith(".C")
+				|| filename.endsWith(".hxx")) {
+				return true;
+		} else { 
+			//Defer to the nature of the project
+			IFile file = fEditor.getInputFile();
+			if (file != null && CoreModel.getDefault().hasCCNature(file.getProject())) {
+					return true;
+			} else {
+				return false;
+			}
+		}
+	}
+	
+	private void setupTemplateEngine(){
+		//Determine if this is a C or a C++ file for the context completion       +        //This is _totally_ ugly and likely belongs in the main editor class.
+		String globalContextNames[] = new String[2];
+		String functionContextNames[] = new String[2];
+		String structureContextNames[] = new String[2];
+		ArrayList globalTemplateList = new ArrayList(2);
+		ArrayList functionTemplateList = new ArrayList(2);
+		ArrayList structureTemplateList = new ArrayList(2);
+		if(isCppContext()){
+			// CPP context
+			globalContextNames[0] = ITemplateEditor.TemplateContextKind.CPP_GLOBAL_CONTEXT_TYPE; //$NON-NLS-1$
+			globalContextNames[1] = ITemplateEditor.TemplateContextKind.C_GLOBAL_CONTEXT_TYPE; //$NON-NLS-1$
+			functionContextNames[0] = ITemplateEditor.TemplateContextKind.CPP_FUNCTION_CONTEXT_TYPE; //$NON-NLS-1$
+			functionContextNames[1] = ITemplateEditor.TemplateContextKind.C_FUNCTION_CONTEXT_TYPE; //$NON-NLS-1$
+			structureContextNames[0] = ITemplateEditor.TemplateContextKind.CPP_STRUCTURE_CONTEXT_TYPE; //$NON-NLS-1$
+			structureContextNames[1] = ITemplateEditor.TemplateContextKind.C_STRUCTURE_CONTEXT_TYPE; //$NON-NLS-1$
+		}else {
+			// C context
+			globalContextNames[0] = ITemplateEditor.TemplateContextKind.C_GLOBAL_CONTEXT_TYPE; //$NON-NLS-1$
+			structureContextNames[0] = ITemplateEditor.TemplateContextKind.C_STRUCTURE_CONTEXT_TYPE; //$NON-NLS-1$
+			functionContextNames[0] = ITemplateEditor.TemplateContextKind.C_FUNCTION_CONTEXT_TYPE; //$NON-NLS-1$
+		}
+		ContextType contextType;
+		for (int i = 0; i < globalContextNames.length; i++) {
+			contextType = ContextTypeRegistry.getInstance().getContextType(globalContextNames[i]);
+			if (contextType != null) {
+				globalTemplateList.add(new TemplateEngine(contextType));
+			}
+		}
+		for (int i = 0; i < functionContextNames.length; i++) {
+			contextType = ContextTypeRegistry.getInstance().getContextType(functionContextNames[i]);
+			if (contextType != null) {
+				functionTemplateList.add(new TemplateEngine(contextType));
+			}
+		}
+		for (int i = 0; i < structureContextNames.length; i++) {
+			contextType = ContextTypeRegistry.getInstance().getContextType(structureContextNames[i]);
+			if (contextType != null) {
+				structureTemplateList.add(new TemplateEngine(contextType));
+			}
+		}
+		fGlobalContextTemplateEngine = (TemplateEngine[]) globalTemplateList.toArray(new TemplateEngine[globalTemplateList.size()]);
+		fFunctionContextTemplateEngine = (TemplateEngine[]) functionTemplateList.toArray(new TemplateEngine[functionTemplateList.size()]);
+		fStructureContextTemplateEngine = (TemplateEngine[]) structureTemplateList.toArray(new TemplateEngine[structureTemplateList.size()]);
+	}
 	/**
 	 * Tells this processor to order the proposals alphabetically.
 	 * 
@@ -225,7 +265,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 //					length = selection.y;
 //				}
 
-				results = evalProposals(document, documentOffset, unit);
+				results = evalProposals(document, documentOffset, unit, viewer);
 //			}
 		} catch (Exception e) {
 			CUIPlugin.getDefault().log(e);
@@ -233,29 +273,6 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 
 		if (results == null)
 			results = new ICCompletionProposal[0];
-
-		for (int i = 0; i < fTemplateEngine.length; i++) {
-			if (fTemplateEngine[i] == null) {
-				continue;
-			}
-			try {
-				fTemplateEngine[i].reset();
-				fTemplateEngine[i].complete(viewer, documentOffset, null);
-			} catch (Exception x) {
-				CUIPlugin.getDefault().log(x);
-			}
-
-			ICCompletionProposal[] templateResults = fTemplateEngine[i].getResults();
-			if (results.length == 0) {
-				results = templateResults;
-			} else {
-				// concatenate arrays
-				ICCompletionProposal[] total = new ICCompletionProposal[results.length + templateResults.length];
-				System.arraycopy(templateResults, 0, total, 0, templateResults.length);
-				System.arraycopy(results, 0, total, templateResults.length, results.length);
-				results = total;
-			}
-		}
 
 		/*
 		 * Order here and not in result collector to make sure that the order
@@ -277,20 +294,66 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	/**
 	 * Evaluate the actual proposals for C
 	 */
-		// TODO: Check to see if we are trying to open for a structure/class, then
-		//@@@ TODO: Implement the structure member completion
-	public ICCompletionProposal[] evalProposals(IDocument document, int documentOffset, IWorkingCopy unit) {
+	public ICCompletionProposal[] evalProposals(IDocument document, int documentOffset, IWorkingCopy unit, ITextViewer viewer) {
 		
 		currentOffset = documentOffset;		
 		currentSourceUnit = unit;
 		ArrayList completions = new ArrayList();
 		
-		addProposalsFromModel(completions);
+		if (currentSourceUnit == null)
+			return null;
+		
+		// clear the completion list at the result collector
+		resultCollector.clearCompletions();
+		
+		IASTCompletionNode completionNode = addProposalsFromModel(completions);
+		addProposalsFromSearch(completionNode, completions);
+		addProposalsFromCompletionContributors(completionNode, completions);
+		addProposalsFromTemplates(viewer, completionNode, completions);
 		
 		return order ( (ICCompletionProposal[]) completions.toArray(new ICCompletionProposal[0]) );		
 	}
+	
+	private void addProposalsFromTemplates(ITextViewer viewer, IASTCompletionNode completionNode, List completions){
+		if(completionNode == null)
+			return;
 
-	private void addProposalsFromCompletionContributors(String prefix, int offset, int length, List completions) {
+		if(viewer == null)
+			return;
+		
+		IASTCompletionNode.CompletionKind kind = completionNode.getCompletionKind();
+		
+		if(kind == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)
+			addProposalsFromTemplateEngine(viewer, fGlobalContextTemplateEngine, completions);
+		if(kind == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE)
+			addProposalsFromTemplateEngine(viewer, fFunctionContextTemplateEngine, completions);
+		if(kind == IASTCompletionNode.CompletionKind.FIELD_TYPE)
+			addProposalsFromTemplateEngine(viewer, fStructureContextTemplateEngine, completions);
+	}
+
+	private void addProposalsFromTemplateEngine(ITextViewer viewer, TemplateEngine[] fTemplateEngine, List completions){
+		for (int i = 0; i < fTemplateEngine.length; i++) {
+			if (fTemplateEngine[i] == null) {
+				continue;
+			}
+			try {
+				fTemplateEngine[i].reset();
+				fTemplateEngine[i].complete(viewer, currentOffset, null);
+			} catch (Exception x) {
+				CUIPlugin.getDefault().log(x);
+			}
+			
+            completions.addAll(fTemplateEngine[i].getResults());
+		}		
+		
+	}
+	private void addProposalsFromCompletionContributors(IASTCompletionNode completionNode, List completions) {
+		if(completionNode == null)
+			return;
+		String prefix = completionNode.getCompletionPrefix();
+		int offset = currentOffset - prefix.length();
+		int length = prefix.length();
+		
 		IFunctionSummary[] summary;
 
 		summary = CCompletionContributorManager.getDefault().getMatchingFunctions(prefix);
@@ -339,16 +402,13 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 	}
 	
 
-	private void addProposalsFromModel (List completions) {
-		
-		if (currentSourceUnit == null)
-		   return;
-		
-		// clear the completion list at the result collector
-		resultCollector.clearCompletions();
-		
+	private IASTCompletionNode addProposalsFromModel(List completions){
 		//invoke the completion engine
 		IASTCompletionNode completionNode = completionEngine.complete(currentSourceUnit, currentOffset);
+		return completionNode;
+	}
+	
+	private void addProposalsFromSearch (IASTCompletionNode completionNode, List completions) {
 		if(completionNode == null)
 			return;
 		String prefix = completionNode.getCompletionPrefix();
@@ -364,7 +424,11 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		boolean projectScopeAndDependency = store.getBoolean(ContentAssistPreference.PROJECT_AND_DEPENDENCY_SEARCH_SCOPE);
 		ICSearchScope scope = null;
 	
-		if ((projectScope) || (projectScopeAndDependency)){
+		if (((projectScope) || (projectScopeAndDependency))
+				&& ( (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.SINGLE_NAME_REFERENCE) 
+				    || (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.VARIABLE_TYPE)
+					|| (completionNode.getCompletionKind() == IASTCompletionNode.CompletionKind.FIELD_TYPE) )
+				&& (prefix.length() > 0)){
 			List elementsFound = new LinkedList();
 			
 			ICElement[] projectScopeElement = new ICElement[1];
@@ -373,13 +437,20 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 
 			OrPattern orPattern = new OrPattern();
 			// search for global variables, functions, classes, structs, unions, enums, macros, and namespaces
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, false ));
-			orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix, ICSearchConstants.NAMESPACE, ICSearchConstants.DEFINITIONS, false ));
+			orPattern.addPattern(SearchEngine.createSearchPattern( 
+					searchPrefix, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, false ));
+			orPattern.addPattern(SearchEngine.createSearchPattern( 
+					searchPrefix, ICSearchConstants.FUNCTION, ICSearchConstants.DEFINITIONS, false ));
+			orPattern.addPattern(SearchEngine.createSearchPattern( 
+					searchPrefix, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, false ));
+			orPattern.addPattern(SearchEngine.createSearchPattern( 
+					searchPrefix, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, false ));
+			orPattern.addPattern(SearchEngine.createSearchPattern( 
+					searchPrefix, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false ));
+			orPattern.addPattern(SearchEngine.createSearchPattern( 
+					searchPrefix, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, false ));
+			orPattern.addPattern(SearchEngine.createSearchPattern( 
+					searchPrefix, ICSearchConstants.NAMESPACE, ICSearchConstants.DEFINITIONS, false ));
 			searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, searchResultCollector, true);
 			elementsFound.addAll(searchResultCollector.getSearchResults());
 			
@@ -387,9 +458,6 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		}
 		
 		completions.addAll(resultCollector.getCompletions());		
-		
-		// Loot in the contributed completions
-		addProposalsFromCompletionContributors(prefix, offset, length, completions);
 		
 	}
 	
@@ -415,7 +483,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 					};
 					resultCollector.acceptField(
 							match.getName(), 
-							null, 
+							match.getReturnType(), 
 							visibility, 
 							completionStart, 
 							completionLength, 
@@ -426,7 +494,7 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 				case ICElement.C_VARIABLE_DECLARATION:
 					resultCollector.acceptVariable(
 							match.getName(), 
-							null, 
+							match.getReturnType(), 
 							completionStart, 
 							completionLength, 
 							relevance);

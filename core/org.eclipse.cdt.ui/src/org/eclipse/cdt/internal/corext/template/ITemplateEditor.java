@@ -20,5 +20,15 @@ public interface ITemplateEditor {
 	 * @throws CoreException if the buffer cannot be successfully modified
 	 */
 	void edit(TemplateBuffer buffer, TemplateContext context) throws CoreException;
+	
+	public class TemplateContextKind {
+		public static final String C_GLOBAL_CONTEXT_TYPE = "C Global";
+		public static final String C_FUNCTION_CONTEXT_TYPE = "C Function";
+		public static final String C_STRUCTURE_CONTEXT_TYPE = "C Structure";
+		public static final String CPP_GLOBAL_CONTEXT_TYPE = "C++ Global";
+		public static final String CPP_FUNCTION_CONTEXT_TYPE = "C++ Function";
+		public static final String CPP_STRUCTURE_CONTEXT_TYPE = "C++ Structure"; 
+		
+	}
 
 }

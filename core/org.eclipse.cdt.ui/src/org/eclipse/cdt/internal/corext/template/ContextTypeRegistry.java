@@ -9,8 +9,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
-import org.eclipse.cdt.internal.corext.template.c.CppContextType;
+import org.eclipse.cdt.internal.corext.template.c.CFunctionContextType;
+import org.eclipse.cdt.internal.corext.template.c.CGlobalContextType;
+import org.eclipse.cdt.internal.corext.template.c.CStructureContextType;
+import org.eclipse.cdt.internal.corext.template.c.CppFunctionContextType;
+import org.eclipse.cdt.internal.corext.template.c.CppGlobalContextType;
+import org.eclipse.cdt.internal.corext.template.c.CppStructureContextType;
 
 
 /**
@@ -64,8 +68,12 @@ public class ContextTypeRegistry {
 
 	// XXX bootstrap with C and C++ types
 	private ContextTypeRegistry() {
-		add(new CContextType());
-		add(new CppContextType());
+		add(new CGlobalContextType());
+		add(new CStructureContextType());
+		add(new CFunctionContextType());
+		add(new CppGlobalContextType());
+		add(new CppStructureContextType());
+		add(new CppFunctionContextType());
 	}
 
 }

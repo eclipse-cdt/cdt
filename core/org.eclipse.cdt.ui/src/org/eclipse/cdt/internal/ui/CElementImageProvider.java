@@ -159,7 +159,7 @@ public class CElementImageProvider {
 			
 			case ICElement.C_VARIABLE:
 			case ICElement.C_TEMPLATE_VARIABLE:
-				return CPluginImages.DESC_OBJS_FIELD;
+				return CPluginImages.DESC_OBJS_VARIABLE;
 
 			case ICElement.C_METHOD:  
 			case ICElement.C_METHOD_DECLARATION:
@@ -446,7 +446,11 @@ public class CElementImageProvider {
 	}
 		
 	public static ImageDescriptor getVariableImageDescriptor(){
-		return CPluginImages.DESC_OBJS_FIELD;	
+		return CPluginImages.DESC_OBJS_VARIABLE;	
+	}
+
+	public static ImageDescriptor getLocalVariableImageDescriptor(){
+		return CPluginImages.DESC_OBJS_LOCAL_VARIABLE;	
 	}
 	
 	public static ImageDescriptor getFunctionImageDescriptor(){

@@ -15,23 +15,21 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
  *
  */
 public interface RelevanceConstants {
-	final int KEYWORD_TYPE_RELEVANCE = 30;
-	final int LOCAL_VARIABLE_TYPE_RELEVANCE = 12;
-	final int FIELD_TYPE_RELEVANCE = 11;
-	final int VARIABLE_TYPE_RELEVANCE = 10;
-	final int METHOD_TYPE_RELEVANCE = 9;
-	final int FUNCTION_TYPE_RELEVANCE = 8;
-	final int CLASS_TYPE_RELEVANCE = 7;
-	final int STRUCT_TYPE_RELEVANCE = 6;
-	final int UNION_TYPE_RELEVANCE = 5;
-	final int NAMESPACE_TYPE_RELEVANCE = 4;
-	final int MACRO_TYPE_RELEVANCE = 3;
-	final int ENUMERATION_TYPE_RELEVANCE = 2;
-	final int ENUMERATOR_TYPE_RELEVANCE = 1;
+	final int CASE_MATCH_RELEVANCE = 150;
+	final int EXACT_NAME_MATCH_RELEVANCE = 40;
+	
+	final int LOCAL_VARIABLE_TYPE_RELEVANCE = 130;
+	final int FIELD_TYPE_RELEVANCE = 120;
+	final int VARIABLE_TYPE_RELEVANCE = 110;
+	final int METHOD_TYPE_RELEVANCE = 100;
+	final int FUNCTION_TYPE_RELEVANCE = 90;
+	final int CLASS_TYPE_RELEVANCE = 80;
+	final int STRUCT_TYPE_RELEVANCE = 70;
+	final int UNION_TYPE_RELEVANCE = 60;
+	final int NAMESPACE_TYPE_RELEVANCE = 50;
+	final int MACRO_TYPE_RELEVANCE = 40;
+	final int ENUMERATION_TYPE_RELEVANCE = 30;
+	final int ENUMERATOR_TYPE_RELEVANCE = 20;
+	final int KEYWORD_TYPE_RELEVANCE = 10;
 	final int DEFAULT_TYPE_RELEVANCE = 0;
-	
-	final int CASE_MATCH_RELEVANCE = 10;
-	final int EXACT_NAME_MATCH_RELEVANCE = 4;
-
-	
 }

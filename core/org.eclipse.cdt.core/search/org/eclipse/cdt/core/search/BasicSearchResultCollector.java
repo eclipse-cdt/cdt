@@ -108,7 +108,9 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 				result.parentName += names[ i ];
 			}
 		}
-		
+		if (offsetable instanceof IASTVariable){
+			result.returnType = ASTUtil.getType(((IASTVariable)offsetable).getAbstractDeclaration());
+		}
 		if( offsetable instanceof IASTFunction ){
 			result.name += getParameterString( (IASTFunction) offsetable );
 			result.returnType = ASTUtil.getType(((IASTFunction)offsetable).getReturnType());

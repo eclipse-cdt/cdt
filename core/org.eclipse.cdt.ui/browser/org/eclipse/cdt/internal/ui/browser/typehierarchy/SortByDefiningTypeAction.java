@@ -23,7 +23,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class SortByDefiningTypeAction extends Action {
 	
-	private MethodsViewer fMethodsViewer;
+	MethodsViewer fMethodsViewer;
 	
 	/** 
 	 * Creates the action.

@@ -88,7 +88,7 @@ public class SelectionProviderMediator implements IPostSelectionProvider {
 		}
 	}
 	
-	private void doFocusChanged(Widget control) {
+	void doFocusChanged(Widget control) {
 		for (int i= 0; i < fViewers.length; i++) {
 			if (fViewers[i].getControl() == control) {
 				propagateFocusChanged(fViewers[i]);

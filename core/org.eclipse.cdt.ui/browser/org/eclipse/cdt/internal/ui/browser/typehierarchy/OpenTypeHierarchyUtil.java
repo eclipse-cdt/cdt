@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.typehierarchy;
 
-import java.security.Signature;
-
 import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMember;
-import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
@@ -91,7 +87,7 @@ public class OpenTypeHierarchyUtil {
 			result.setInputElement(input);
 			
 			if (input instanceof IMember) {
-				result.selectMember((IMember) input);
+				result.selectMember(input);
 			}	
 			return result;
 		} catch (CoreException e) {
@@ -125,7 +121,7 @@ public class OpenTypeHierarchyUtil {
 		part= (TypeHierarchyViewPart) page.showView(CUIPlugin.ID_TYPE_HIERARCHY);
 		part.setInputElement(perspectiveInput);
 		if (input instanceof IMember) {
-			part.selectMember((IMember) input);
+			part.selectMember(input);
 			
 			if (page.getEditorReferences().length == 0) {
 				openEditor(input, false); // only open when the perspecive has been created

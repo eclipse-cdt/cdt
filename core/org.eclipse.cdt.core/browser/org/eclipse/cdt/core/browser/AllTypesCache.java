@@ -53,7 +53,7 @@ public class AllTypesCache {
 	private static TypeHierarchyBuilder fgTypeHierarchyBuilder;
 	private static IElementChangedListener fgElementChangedListener;
 	private static IPropertyChangeListener fgPropertyChangeListener;
-	private static boolean fgEnableIndexing = true;
+	static boolean fgEnableIndexing = true;
 
 	/** Preference key for enabling background cache */
 	public final static String ENABLE_BACKGROUND_TYPE_CACHE = "enableBackgroundTypeCache"; //$NON-NLS-1$

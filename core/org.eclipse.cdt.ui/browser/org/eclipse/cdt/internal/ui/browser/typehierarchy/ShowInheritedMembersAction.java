@@ -24,7 +24,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class ShowInheritedMembersAction extends Action {
 	
-	private MethodsViewer fMethodsViewer;
+	MethodsViewer fMethodsViewer;
 	
 	/** 
 	 * Creates the action.

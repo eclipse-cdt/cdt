@@ -1,3 +1,7 @@
+2004-07-16 Chris Wiebe
+
+	Fixing numerous warnings.
+
 2004-07-15 Tanya Wolff
 
 	Fix for 70124: unexternalized strings

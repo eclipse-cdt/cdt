@@ -10,31 +10,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.typehierarchy;
 
+import org.eclipse.cdt.core.browser.TypeUtil;
+import org.eclipse.cdt.core.browser.typehierarchy.ITypeHierarchy;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IMethod;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.internal.ui.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
+import org.eclipse.cdt.ui.CElementImageDescriptor;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.resource.CompositeImageDescriptor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.cdt.core.browser.TypeUtil;
-import org.eclipse.cdt.core.browser.typehierarchy.ITypeHierarchy;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.Flags;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IMethod;
-import org.eclipse.cdt.core.model.IMethodDeclaration;
-import org.eclipse.cdt.core.model.IStructure;
-import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
-import org.eclipse.cdt.internal.ui.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
-import org.eclipse.cdt.internal.ui.browser.cbrowsing.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.ui.CElementImageDescriptor;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.jface.resource.CompositeImageDescriptor;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * Label provider for the hierarchy viewers. Types in the hierarchy that are not belonging to the
@@ -160,7 +156,7 @@ public class HierarchyLabelProvider extends StandardCElementLabelProvider // App
 		
 		ImageDescriptor desc;
 		if (isDifferentScope(type)) {
-			desc = fImageLabelProvider.getClassImageDescriptor();
+			desc = CElementImageProvider.getClassImageDescriptor();
 		} else {
 			desc= fImageLabelProvider.getBaseImageDescriptor(type, 0);
 		}

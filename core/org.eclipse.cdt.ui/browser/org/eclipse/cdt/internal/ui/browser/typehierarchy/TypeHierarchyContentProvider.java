@@ -13,15 +13,12 @@ package org.eclipse.cdt.internal.ui.browser.typehierarchy;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.browser.typehierarchy.ITypeHierarchy;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMember;
-import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;

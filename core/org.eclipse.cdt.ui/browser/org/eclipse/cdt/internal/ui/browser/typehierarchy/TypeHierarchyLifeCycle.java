@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,7 +37,6 @@ public class TypeHierarchyLifeCycle implements ITypeHierarchyChangedListener, IE
 	private boolean fHierarchyRefreshNeeded;
 	private ITypeHierarchy fHierarchy;
 	private ICElement fInputElement;
-	private boolean fIsSuperTypesOnly;
 	
 	private List fChangeListeners;
 	
@@ -49,7 +47,6 @@ public class TypeHierarchyLifeCycle implements ITypeHierarchyChangedListener, IE
 	public TypeHierarchyLifeCycle(boolean isSuperTypesOnly) {
 		fHierarchy= null;
 		fInputElement= null;
-		fIsSuperTypesOnly= isSuperTypesOnly;
 		fChangeListeners= new ArrayList(2);
 	}
 	
@@ -118,15 +115,7 @@ public class TypeHierarchyLifeCycle implements ITypeHierarchyChangedListener, IE
 	    if (element.getElementType() == ICElement.C_CLASS
 	            || element.getElementType() == ICElement.C_STRUCT) {
             return AllTypesCache.createTypeHierarchy(element, pm);
-	    }
-//		if (element.getElementType() == ICElement.TYPE) {
-//			IType type= (IType) element;
-//			if (fIsSuperTypesOnly) {
-//				return type.newSupertypeHierarchy(pm);
-//			} else {
-//				return type.newTypeHierarchy(pm);
-//			}
-//		} else {
+	    } else {
 //			IRegion region= JavaCore.newRegion();
 //			if (element.getElementType() == ICElement.JAVA_PROJECT) {
 //				// for projects only add the contained source folders
@@ -150,8 +139,8 @@ public class TypeHierarchyLifeCycle implements ITypeHierarchyChangedListener, IE
 //			}
 //			ICProject jproject= element.getCProject();
 //			return jproject.newTypeHierarchy(region, pm);
-//		}
-	return null;
+	    	return null;
+	    }
 	}
 	
 	
@@ -215,7 +204,7 @@ public class TypeHierarchyLifeCycle implements ITypeHierarchyChangedListener, IE
 //			case ICElement.TYPE:
 			case ICElement.C_CLASS:
 			case ICElement.C_STRUCT:
-				processTypeDelta((ICElement) element, changedTypes);
+				processTypeDelta(element, changedTypes);
 				processChildrenDelta(delta, changedTypes); // (inner types)
 				break;
 			case ICElement.C_MODEL:

@@ -48,8 +48,8 @@ public class TypeCache implements ITypeCache {
 	private final Map fTypeKeyMap = new HashMap(INITIAL_TYPE_COUNT);
 	private final IProject fProject;
 	private final IWorkingCopyProvider fWorkingCopyProvider;
-	private final Collection fDeltas = new ArrayList();
-	private final ITypeInfo fGlobalNamespace;
+	final Collection fDeltas = new ArrayList();
+	final ITypeInfo fGlobalNamespace;
 	private final Map fTypeToSubTypes = new HashMap();
 	private final Map fTypeToSuperTypes = new HashMap();
 
@@ -297,7 +297,6 @@ public class TypeCache implements ITypeCache {
 		IQualifiedTypeName enclosingName = newType.getQualifiedTypeName().getEnclosingTypeName();
 		if (enclosingName != null) {
 			while (!enclosingName.isEmpty()) {
-				boolean foundType = false;
 				// try namespace, class, struct, then undefined
 				ITypeInfo enclosingType = null;
 				for (int i = 0; enclosingType == null && i < ENCLOSING_TYPES.length; ++i) {

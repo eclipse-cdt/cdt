@@ -25,18 +25,15 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
-
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.Window;
-
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class HistoryListAction extends Action {
@@ -107,18 +104,18 @@ public class HistoryListAction extends Action {
 		/**
 		 * Method doCustomButtonPressed.
 		 */
-		private void doCustomButtonPressed() {
+		void doCustomButtonPressed() {
 			fHistoryList.removeElements(fHistoryList.getSelectedElements());
 		}
 		
-		private void doDoubleClicked() {
+		void doDoubleClicked() {
 			if (fHistoryStatus.isOK()) {
 				okPressed();
 			}
 		}
 		
 		
-		private void doSelectionChanged() {
+		void doSelectionChanged() {
 			StatusInfo status= new StatusInfo();
 			List selected= fHistoryList.getSelectedElements();
 			if (selected.size() != 1) {

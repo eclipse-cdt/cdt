@@ -207,7 +207,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private static final TypeInfoLabelProvider fElementRenderer = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_TYPE_ONLY);
 	private static final TypeInfoLabelProvider fQualifierRenderer = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_ENCLOSING_TYPE_ONLY + TypeInfoLabelProvider.SHOW_PATH);
 	
-	private static final TypeFilterMatcher fFilterMatcher = new TypeFilterMatcher();
+	static final TypeFilterMatcher fFilterMatcher = new TypeFilterMatcher();
 	private static final StringComparator fStringComparator = new StringComparator();
 
 	private static final int[] fAllTypes = { ICElement.C_NAMESPACE, ICElement.C_CLASS,
@@ -427,7 +427,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	/**
 	 * Forces redraw of elements list.
 	 */
-	private void updateElements() {
+	void updateElements() {
 		fNewFilteredList.setFilter(fTextWidget.getText());
 	}
 	

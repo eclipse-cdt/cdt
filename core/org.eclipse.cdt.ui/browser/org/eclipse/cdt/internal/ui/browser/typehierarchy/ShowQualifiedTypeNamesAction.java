@@ -23,7 +23,7 @@ import org.eclipse.jface.action.Action;
  */
 public class ShowQualifiedTypeNamesAction extends Action {
 
-	private TypeHierarchyViewPart fView;	
+	TypeHierarchyViewPart fView;	
 	
 	public ShowQualifiedTypeNamesAction(TypeHierarchyViewPart v, boolean initValue) {
 		super(TypeHierarchyMessages.getString("ShowQualifiedTypeNamesAction.label")); //$NON-NLS-1$

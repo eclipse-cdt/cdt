@@ -134,6 +134,7 @@ public interface ICHelpContextIds {
 
 	public static final String SORT_BY_DEFINING_TYPE_ACTION = PREFIX + "sort_by_defining_type_action"; //$NON-NLS-1$	
 	public static final String SHOW_QUALIFIED_NAMES_ACTION = PREFIX + "show_qualified_names_action"; //$NON-NLS-1$	
+	public static final String ENABLE_METHODFILTER_ACTION = PREFIX + "enable_methodfilter_action"; //$NON-NLS-1$
 	
 	public static final String LEXICAL_SORTING_BROWSING_ACTION = PREFIX + "lexical_sorting_browsing_action"; //$NON-NLS-1$
 	

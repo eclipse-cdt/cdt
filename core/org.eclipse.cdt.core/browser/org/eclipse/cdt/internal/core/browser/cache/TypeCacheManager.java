@@ -13,10 +13,8 @@ package org.eclipse.cdt.internal.core.browser.cache;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
-import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;

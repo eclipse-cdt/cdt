@@ -13,19 +13,13 @@ package org.eclipse.cdt.internal.ui.browser.typehierarchy;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.browser.typehierarchy.ITypeHierarchy;
-import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.ui.CElementContentProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
  * Content provider used for the method view.

@@ -31,8 +31,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.search.ICSearchScope;
-import org.eclipse.cdt.internal.core.browser.cache.TypeCacheManager;
-import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.model.Util;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -55,7 +53,6 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 	private static final int INITIAL_SUPER_TYPES = 1;
 	private static final int INITIAL_SUB_TYPES = 1;
 	private static final ITypeInfo[] NO_TYPES = new ITypeInfo[0];
-	private ArrayList fAllTypes = new ArrayList();
 	private ArrayList fRootTypes = new ArrayList();
 	private Map fTypeToSuperTypes = new HashMap();
 	private Map fTypeToSubTypes = new HashMap();
@@ -90,10 +87,10 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
 	 * Whether this hierarchy needs refresh
 	 */
 	public boolean fNeedsRefresh = true;
-	/*
-	 * Collects changes to types
-	 */
-	protected ChangeCollector fChangeCollector;
+//	/*
+//	 * Collects changes to types
+//	 */
+//	protected ChangeCollector fChangeCollector;
 	
 	
 	
@@ -268,7 +265,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
      * Returns true if the given delta could change this type hierarchy
      */
     public synchronized boolean isAffected(ICElementDelta delta) {
-    	ICElement element= delta.getElement();
+//    	ICElement element= delta.getElement();
 //    	switch (element.getElementType()) {
 //    		case ICElement.C_MODEL:
 //    			return isAffectedByCModel(delta, element);
@@ -519,7 +516,7 @@ public class TypeHierarchy implements ITypeHierarchy, IElementChangedListener {
     		compute();
 //    		initializeRegions();
     		fNeedsRefresh = false;
-    		fChangeCollector = null;
+//    		fChangeCollector = null;
 
     		if (DEBUG) {
     			if (fComputeSubtypes) {

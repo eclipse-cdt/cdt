@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
-import java.util.Iterator;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;

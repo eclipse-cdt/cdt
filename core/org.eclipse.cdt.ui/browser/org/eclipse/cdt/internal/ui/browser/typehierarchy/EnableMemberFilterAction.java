@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.typehierarchy;
 
-import org.eclipse.swt.custom.BusyIndicator;
-
 import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.jface.action.Action;
-
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -23,7 +21,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class EnableMemberFilterAction extends Action {
 
-	private TypeHierarchyViewPart fView;	
+	TypeHierarchyViewPart fView;	
 	
 	public EnableMemberFilterAction(TypeHierarchyViewPart v, boolean initValue) {
 		super(TypeHierarchyMessages.getString("EnableMemberFilterAction.label")); //$NON-NLS-1$
@@ -35,7 +33,7 @@ public class EnableMemberFilterAction extends Action {
 		fView= v;
 		setChecked(initValue);
 		
-//		WorkbenchHelp.setHelp(this, ICHelpContextIds.ENABLE_METHODFILTER_ACTION);
+		WorkbenchHelp.setHelp(this, ICHelpContextIds.ENABLE_METHODFILTER_ACTION);
 	}
 
 	/*

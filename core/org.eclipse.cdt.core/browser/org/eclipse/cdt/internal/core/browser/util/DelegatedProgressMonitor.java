@@ -26,12 +26,12 @@ public class DelegatedProgressMonitor implements IProgressMonitor, IProgressMoni
 
 	private static int INITIAL_DELEGATE_COUNT = 2;
 	private final ArrayList fDelegateList = new ArrayList(INITIAL_DELEGATE_COUNT);
-	private String fTaskName;
-	private String fSubTask;
-	private int fTotalWork;
+	String fTaskName;
+	String fSubTask;
+	int fTotalWork;
 	private double fWorked;
 	private boolean fIsBlocked;
-	private boolean fIsCanceled;
+	boolean fIsCanceled;
 	
 	/**
 	 * Creates a new delegated monitor.

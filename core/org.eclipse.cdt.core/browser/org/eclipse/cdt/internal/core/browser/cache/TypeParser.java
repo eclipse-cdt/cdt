@@ -53,11 +53,9 @@ import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
-import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
-import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
@@ -87,6 +85,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
+import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
@@ -115,7 +114,7 @@ public class TypeParser implements ISourceElementRequestor {
 	private IProject fProject;
 	private IWorkingCopyProvider fWorkingCopyProvider;
 	private IProgressMonitor fProgressMonitor;
-	private ISourceElementCallbackDelegate fLastDeclaration;
+	ISourceElementCallbackDelegate fLastDeclaration;
 	private final SimpleStack fScopeStack = new SimpleStack();
 	private final SimpleStack fResourceStack = new SimpleStack();
 	private ITypeInfo fTypeToFind;
@@ -660,19 +659,6 @@ public class TypeParser implements ISourceElementRequestor {
 		fResourceStack.pop();
 	}
 	
-	private String[] getEnclosingNames(IASTOffsetableNamedElement elem) {
-		String[] enclosingNames = null;
-		if (elem instanceof IASTQualifiedNameElement) {
-			String[] names = ((IASTQualifiedNameElement) elem).getFullyQualifiedName();
-			if (names != null && names.length > 1) {
-				enclosingNames = new String[names.length - 1];
-				System.arraycopy(names, 0, enclosingNames, 0, names.length - 1);
-			}
-		}
-		return enclosingNames;
-	}
-
-
 	private class NodeTypeInfo {
 		int type;
 		String name;
@@ -806,7 +792,7 @@ public class TypeParser implements ISourceElementRequestor {
 		}
 	}
 
-	private int getElementType(IASTOffsetableNamedElement offsetable) {
+	int getElementType(IASTOffsetableNamedElement offsetable) {
 		if (offsetable instanceof IASTClassSpecifier || offsetable instanceof IASTElaboratedTypeSpecifier) {
 			ASTClassKind kind = null;
 			if (offsetable instanceof IASTClassSpecifier) {
@@ -837,7 +823,6 @@ public class TypeParser implements ISourceElementRequestor {
 			while (baseIter.hasNext()) {
 				IASTBaseSpecifier baseSpec = (IASTBaseSpecifier) baseIter.next();
 				try {
-					String baseName = baseSpec.getParentClassName();
 					ASTAccessVisibility baseAccess = baseSpec.getAccess();
 					
 					IASTClassSpecifier parentClass = null;

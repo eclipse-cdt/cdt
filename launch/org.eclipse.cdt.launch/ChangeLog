@@ -1,10 +1,14 @@
+2003-12-17 Mikhail Khodjaiants
+	Fix for PR 49051: Launcher: Debugger tab: variable tracking.
+	* CDebuggerTab.java
+ 
 2003-12-16  Alain Magloire
-
+ 
 	Choose a debugger base on the Eclipse platform
-
+ 
 	* plugin.xml
 	* src/org/eclipse/cdt/launch/internal/CApplicationlaunchShortcut.java
-
+ 
 2003-10-27 
 	Fixed 46129
 	

@@ -1,3 +1,6 @@
+2004-06-10 Andrew Niefer
+	fix bug 64986 - handle Containers in CSearchScope
+
 2004-05-26 Andrew Niefer
 	Modified search to use ASTUtil.getFunctionParameterTypes to get the strings to search for
 	functions with specific parameters.

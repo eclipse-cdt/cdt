@@ -16,6 +16,7 @@ import java.util.HashSet;
 
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IMember;
@@ -191,15 +192,13 @@ public class CSearchScope implements ICSearchScope {
 			  while (searchedElement != null) {
 				  if (searchedElement.equals(scopeElement)) {
 					  return true;
-				  } else {
-					  searchedElement = searchedElement.getParent();
-				  }
+				  } 
+				  searchedElement = searchedElement.getParent();
 			  }
 		  }
 		  return false;
-	   } else {
-		   return this.encloses(this.fullPath(element));
 	   }
+	   return this.encloses(this.fullPath(element));
    }
 
    public IPath[] enclosingProjects() {
@@ -215,6 +214,9 @@ public class CSearchScope implements ICSearchScope {
 		case ICElement.C_PROJECT:
 			// a workspace scope should be used
 		break; 
+		case ICElement.C_CCONTAINER:
+			add( (ICContainer) element );
+		break;
 		default:
 			if (element instanceof IMember) {
 				if (this.elements == null) {
@@ -235,6 +237,17 @@ public class CSearchScope implements ICSearchScope {
 		}
 	}
 
+   	public void add( ICContainer container ){
+   		ICElement [] children = null;
+		try {
+			children = container.getChildren();
+		} catch (CModelException e) {
+			return;
+		}
+		for( int i = 0; i < children.length; i++ ){
+   			add( children[i] );
+   		}	
+   	}
 	/**
 	 * @param finalPath
 	 */

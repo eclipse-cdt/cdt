@@ -1,3 +1,9 @@
+2003-09-04 Alain Magloire
+
+	Faulty logic when checking the build console preferences.
+
+	* src/org/eclipse/cdt/internal/ui/BuildConsoleManager.java
+
 2003-09-03 Andrew Niefer
 	C++ Search: Changed default sort order to be by path
 	changed search dialog to have checkboxes for Search For items.

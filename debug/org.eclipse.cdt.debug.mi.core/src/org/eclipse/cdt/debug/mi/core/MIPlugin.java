@@ -77,4 +77,11 @@ public class MIPlugin extends Plugin {
 		}
 		return new CSession(session);
 	}
+	
+	public static void debugLog(String message) {
+		if ( getDefault().isDebugging() ) {
+	//		getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));
+			System.err.println(message);
+		}
+	}
 }

@@ -236,6 +236,8 @@ public class CPPSemantics {
             if( astName == null ) return false;
             if( astName.getPropertyInParent() == STRING_LOOKUP_PROPERTY ) return true;
             ASTNodeProperty prop = astName.getPropertyInParent();
+            if( prop == ICPPASTQualifiedName.SEGMENT_NAME )
+                prop = astName.getParent().getPropertyInParent();
             if( prop == IASTIdExpression.ID_NAME || 
 				prop == IASTFieldReference.FIELD_NAME || 
 				prop == ICASTFieldDesignator.FIELD_NAME ||

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.IEnumeration;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
+import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.IMethod;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
@@ -540,7 +541,8 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		if((element == null) 
 			|| (!(element instanceof ISourceReference)) 
 			|| (element instanceof ITranslationUnit) 
-			|| (element instanceof IMacro)){
+			|| (element instanceof IMacro)
+			|| (element instanceof IInclude)){
 			return false;
 		} else {
 			return true;

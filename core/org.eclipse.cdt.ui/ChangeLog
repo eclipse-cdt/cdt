@@ -1,3 +1,6 @@
+2004-04-16 Hoda Amer
+	Fix for bug#58563 : [RenameRefactoring] renaming #include statements
+	
 2004-04-15 Alain Magloire
 
 	Added Properties for the Binaries.

@@ -7,8 +7,12 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 
 /**
@@ -38,4 +42,21 @@ public class ArrayValue extends DerivedValue implements ICDIArrayValue {
 		return variable.getChildren(timeout);
 	}
 
+	/**
+	 * 
+	 * an Array of range[index, index + length - 1]
+	 */
+	public ICDIVariable[] getVariables(int index, int length) throws CDIException {
+		int children = getChildrenNumber();
+		//if (index >= children || index + length >= children) {
+		//	throw new CDIException("Index out of bound");
+		//}
+
+		//String subarray = "*(" + variable.getName() + "+" + index + ")@" + length;
+		ICDITarget target = getTarget();
+		Session session = (Session) (target.getSession());
+		ICDIVariableManager mgr = session.getVariableManager();
+		ICDIVariableObject vo = mgr.getVariableObjectAsArray(variable, null, index, length);
+		return mgr.createVariable(vo).getValue().getVariables();
+	}
 }

@@ -92,13 +92,17 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		int depth = v.getStackDepth();
 		Variable[] vars = getVariables();
 		for (int i = 0; i < vars.length; i++) {
-			if (vars[i].getName().equals(name)) {
+			if (vars[i].getName().equals(name) &&
+			    vars[i].casting_index == v.casting_index &&
+			    vars[i].casting_length == v.casting_length &&
+			    ((vars[i].casting_type == null && v.casting_type == null) ||
+			     (vars[i].casting_type != null && v.casting_type != null && vars[i].casting_type.equals(v.casting_type)))) {
 				ICDIStackFrame frame = vars[i].getStackFrame();
 				if (stack == null && frame == null) {
 					return vars[i];
 				} else if (frame != null && stack != null && frame.equals(stack)) {
-					if (vars[i].getVariableObject().getPosition() == position) {
-						if (vars[i].getVariableObject().getStackDepth() == depth) {
+					if (vars[i].getPosition() == position) {
+						if (vars[i].getStackDepth() == depth) {
 							return vars[i];
 						}
 					}
@@ -133,23 +137,23 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		}
 	}
 
-	public String createStringEncoding(VariableObject varObj) {
+	public static String encodeVariable(VariableObject varObj) {
 		StringBuffer buffer = new StringBuffer();
-		if (varObj.length > 0) {
+		if (varObj.casting_length > 0 || varObj.casting_index > 0) {
 			buffer.append("*(");
 			buffer.append('(');
-			if (varObj.type != null && varObj.type.length() > 0) {
-				buffer.append('(').append(varObj.type).append(')');
+			if (varObj.casting_type != null && varObj.casting_type.length() > 0) {
+				buffer.append('(').append(varObj.casting_type).append(')');
 			}
 			buffer.append(varObj.getName());
 			buffer.append(')');
-			if (varObj.index != 0) {
-					buffer.append('+').append(varObj.index);
+			if (varObj.casting_index != 0) {
+					buffer.append('+').append(varObj.casting_index);
 			}
 			buffer.append(')');
-			buffer.append('@').append(varObj.length - varObj.index);
-		} else if (varObj.type != null && varObj.type.length() > 0) {
-			buffer.append('(').append(varObj.type).append(')');
+			buffer.append('@').append(varObj.casting_length - varObj.casting_index);
+		} else if (varObj.casting_type != null && varObj.casting_type.length() > 0) {
+			buffer.append('(').append(varObj.casting_type).append(')');
 			buffer.append('(').append(varObj.getName()).append(')');
 		} else {
 			buffer.append(varObj.getName());
@@ -195,8 +199,6 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		ArgumentObject argObj = null;
 		if (a instanceof ArgumentObject) {
 			argObj = (ArgumentObject)a;
-		} else if (a instanceof Argument) {
-			argObj = ((Argument)a).getArgumentObject();
 		}
 		if (argObj != null) {
 			Variable variable = findVariable(argObj);
@@ -205,7 +207,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				argument = (Argument)variable;
 			}
 			if (argument == null) {
-				String name = argObj.getName();
+				String name = encodeVariable(argObj);
 				ICDIStackFrame stack = argObj.getStackFrame();
 				Session session = (Session)getSession();
 				ICDIThread currentThread = null;
@@ -344,15 +346,10 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		VariableObject obj = null;
 		if (object instanceof VariableObject) {
 			obj = (VariableObject)object;
-		} else if (object instanceof Variable) {
-			obj = ((Variable)object).getVariableObject();
 		}
 		if (obj != null) {
-			StringBuffer buffer = new StringBuffer();
-			buffer.append("*(");
-			buffer.append('(');
+			// Check if the type is valid.
 			if (type != null && type.length() > 0) {
-				// Check if the type is valid.
 				try {
 					MISession mi = ((Session)getSession()).getMISession();
 					CommandFactory factory = mi.getCommandFactory();
@@ -365,20 +362,32 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				} catch (MIException e) {
 					throw new MI2CDIException(e);
 				}
-				buffer.append('(').append(type).append(')');
 			}
+
+			// Should we provide a getRegisterObjectAsArray ?
+			StringBuffer buffer = new StringBuffer();
 			if (obj instanceof ICDIRegisterObject) {
 				buffer.append("$" + obj.getName());
 			} else {
 				buffer.append(obj.getName());
 			}
-			buffer.append(')');
-			if (start != 0) {
-				buffer.append('+').append(start);
+			VariableObject vo = new VariableObject(obj, buffer.toString());
+
+			// Carry the the old casting type over
+			buffer.setLength(0);
+			if (obj.casting_type != null && obj.casting_type.length() > 0) {
+				buffer.append("(").append(obj.casting_type).append(")");
 			}
-			buffer.append(')');
-			buffer.append('@').append(length - start);
-			return new VariableObject(obj, buffer.toString());
+			if (type != null && type.length() > 0) {
+				buffer.append(type);
+			}
+			vo.casting_type = buffer.toString();
+
+			// Carry any other info to the new VariableObject
+			vo.casting_index = obj.casting_index + start;
+			vo.casting_length = obj.casting_length + length;
+
+			return vo;
 		}
 		throw new CDIException("Unknown variable object");
 	}
@@ -390,8 +399,6 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		VariableObject obj = null;
 		if (object instanceof VariableObject) {
 			obj = (VariableObject)object;
-		} else if (object instanceof Variable) {
-			obj = ((Variable)object).getVariableObject();
 		}
 		if (obj != null) {
 			StringBuffer buffer = new StringBuffer();
@@ -481,13 +488,10 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		if (v instanceof VariableObject) {
 			varObj = (VariableObject)v;
 		}
-		if (v instanceof Variable) {
-			varObj = ((Variable)v).getVariableObject();
-		}
 		if (varObj != null) {
 			Variable variable = findVariable(varObj);
 			if (variable == null) {
-				String name = varObj.getName();
+				String name = encodeVariable(varObj);
 				Session session = (Session)getSession();
 				ICDIStackFrame stack = varObj.getStackFrame();
 				ICDIThread currentThread = null;

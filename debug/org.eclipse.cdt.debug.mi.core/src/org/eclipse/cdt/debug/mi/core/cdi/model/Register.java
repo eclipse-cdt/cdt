@@ -25,13 +25,6 @@ public class Register extends Variable implements ICDIRegister {
 		super(obj, var);
 	}
 
-	public RegisterObject getRegisterObject() {
-		return (RegisterObject)super.getVariableObject();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.mi.core.cdi.model.Variable#getChildren()
-	 */
 	public ICDIVariable[] getChildren() throws CDIException {
 			Session session = (Session)(getTarget().getSession());
 			MISession mi = session.getMISession();
@@ -49,7 +42,7 @@ public class Register extends Variable implements ICDIRegister {
 				children = new Register[vars.length];
 				for (int i = 0; i < vars.length; i++) {
 					RegisterObject regObj = new RegisterObject(getTarget(),
-					 vars[i].getExp(), getVariableObject().getPosition());
+					 vars[i].getExp(), getPosition());
 					children[i] = mgr.createRegister(regObj, vars[i]);
 				}
 			} catch (MIException e) {

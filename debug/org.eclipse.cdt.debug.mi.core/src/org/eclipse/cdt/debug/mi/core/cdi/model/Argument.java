@@ -15,7 +15,4 @@ public class Argument extends Variable implements ICDIArgument {
 		super(obj, var);
 	}
 
-	public ArgumentObject getArgumentObject() {
-		return (ArgumentObject)super.getVariableObject();
-	}
 }

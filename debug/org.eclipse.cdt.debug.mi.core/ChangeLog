@@ -1,3 +1,22 @@
+2003-08-06 Alain Magloire
+
+	First framework to deal with breaking the arrays in ranges.
+
+	*  src/org/eclipse/cdt/debug/mi/core/cdi/model/Argument.java:
+	Remove unused getArgumentObject().
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java:
+	Remove unuse getRegisterObject().
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java:
+	Move methods to VariableObject to comply with the interface.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/VariableObject.java:
+	Implement new methods of ICDIVariableObject.java
+	Save the castin information.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/type/ArrayValue.java:
+	New method getVariables(int, int).
+	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
+	New method encodeVariable(), to get the encode specific string
+	for gdb casting of arrays.
+
 2003-07-28 Mikhail Khodjaiants
 
 	Minimize the number of the "evaluate expression" requests when changing the value of the floating point types.

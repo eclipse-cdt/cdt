@@ -9,8 +9,6 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
-import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayType;
@@ -34,7 +32,6 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.Format;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
-import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ArrayValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.BoolValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.CharValue;
@@ -42,7 +39,6 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.type.DoubleValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.EnumValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.FloatValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.FunctionValue;
-import org.eclipse.cdt.debug.mi.core.cdi.model.type.IncompleteType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.IntValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.LongLongValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.LongValue;
@@ -65,26 +61,23 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarShowAttributesInfo;
 
 /**
  */
-public class Variable extends CObject implements ICDIVariable {
+public class Variable extends VariableObject implements ICDIVariable {
 
 	MIVar miVar;
 	Value value;
 	VariableObject varObj;
 	ICDIVariable[] children = new ICDIVariable[0];
 	Type type;
+	String editable = null;
 
 	public Variable(VariableObject obj, MIVar v) {
-		super(obj.getTarget());
+		super(obj, obj.getName());
 		miVar = v;
 		varObj = obj;
 	}
 
 	public MIVar getMIVar() {
 		return miVar;
-	}
-
-	public VariableObject getVariableObject() {
-		return varObj;
 	}
 
 	public Variable getChild(String name) {
@@ -108,6 +101,10 @@ public class Variable extends CObject implements ICDIVariable {
 		return getChildren(-1);
 	}
 
+	/**
+	 * This can be a potentially long operation for GDB.
+	 * allow the override of the timeout.
+	 */
 	public ICDIVariable[] getChildren(int timeout) throws CDIException {
 		Session session = (Session)(getTarget().getSession());
 		MISession mi = session.getMISession();
@@ -129,8 +126,7 @@ public class Variable extends CObject implements ICDIVariable {
 			for (int i = 0; i < vars.length; i++) {
 				VariableObject varObj = new VariableObject(getTarget(),
 				 vars[i].getExp(), getStackFrame(),
-				 getVariableObject().getPosition(),
-				 getVariableObject().getStackDepth());
+				 getPosition(),getStackDepth());
 				children[i] = new Variable(varObj, vars[i]);
 			}
 		} catch (MIException e) {
@@ -144,16 +140,13 @@ public class Variable extends CObject implements ICDIVariable {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getName()
-	 */
-	public String getName() {
-		return varObj.getName();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getTypeName()
+	 * We overload the VariableObject since the gdb-varobject already knows
+	 * the type and its probably more accurate.
+	 * 
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject#getTypeName()
 	 */
 	public String getTypeName() throws CDIException {
+		// We overload here not to use the whatis command.
 		return miVar.getType();
 	}
 
@@ -260,19 +253,22 @@ public class Variable extends CObject implements ICDIVariable {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#isEditable()
 	 */
 	public boolean isEditable() throws CDIException {
-		MISession mi = ((Session)(getTarget().getSession())).getMISession();
-		CommandFactory factory = mi.getCommandFactory();
-		MIVarShowAttributes var = factory.createMIVarShowAttributes(miVar.getVarName());
-		try {
-			mi.postCommand(var);
-			MIVarShowAttributesInfo info = var.getMIVarShowAttributesInfo();
-			if (info == null) {
-				throw new CDIException("No answer");
+		if (editable == null) {
+			MISession mi = ((Session)(getTarget().getSession())).getMISession();
+			CommandFactory factory = mi.getCommandFactory();
+			MIVarShowAttributes var = factory.createMIVarShowAttributes(miVar.getVarName());
+			try {
+				mi.postCommand(var);
+				MIVarShowAttributesInfo info = var.getMIVarShowAttributesInfo();
+				if (info == null) {
+					throw new CDIException("No answer");
+				}
+				editable = String.valueOf(info.isEditable());
+			} catch (MIException e) {
+				throw new MI2CDIException(e);
 			}
-			return info.isEditable();
-		} catch (MIException e) {
-			throw new MI2CDIException(e);
 		}
+		return (editable == null) ? false : Boolean.getBoolean(editable);
 	}
 
 	/**
@@ -305,37 +301,4 @@ public class Variable extends CObject implements ICDIVariable {
 		return super.equals(var);
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getStackFrame()
-	 */
-	public ICDIStackFrame getStackFrame() throws CDIException {
-		return varObj.getStackFrame();
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getType()
-	 */
-	public ICDIType getType() throws CDIException {
-		if (type == null) {
-			ICDITarget target = getTarget();
-			Session session = (Session)(target.getSession());
-			SourceManager sourceMgr = (SourceManager)session.getSourceManager();
-			String typename = getTypeName();
-			try {
-				type = sourceMgr.getType(target, typename);
-			} catch (CDIException e) {
-				// Try with ptype.
-				try {
-					String ptype = sourceMgr.getDetailTypeName(typename);
-					type = sourceMgr.getType(target, ptype);
-				} catch (CDIException ex) {
-				}
-			}
-			if (type == null) {
-				type = new IncompleteType(target, typename);
-			}
-		}
-		return type;
-	}
-	
 }

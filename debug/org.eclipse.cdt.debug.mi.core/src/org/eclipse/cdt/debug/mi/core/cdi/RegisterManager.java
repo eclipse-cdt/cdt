@@ -79,8 +79,6 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 		RegisterObject regObj = null;
 		if (regObject instanceof RegisterObject) {
 			regObj = (RegisterObject)regObject;
-		} else if (regObject instanceof Register) {
-			regObj = ((Register)regObject).getRegisterObject();
 		}
 		if (regObj != null) {
 			Register reg = getRegister(regObject);
@@ -160,7 +158,7 @@ public class RegisterManager extends SessionObject implements ICDIRegisterManage
 	public Register getRegister(int regno) {
 		Register[] regs = getRegisters();
 		for (int i = 0; i < regs.length; i++) {
-			if (regs[i].getVariableObject().getPosition() == regno) {
+			if (regs[i].getPosition() == regno) {
 				return regs[i];
 			}
 		}

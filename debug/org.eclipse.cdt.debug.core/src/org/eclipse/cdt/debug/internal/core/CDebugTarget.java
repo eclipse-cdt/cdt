@@ -141,6 +141,11 @@ public class CDebugTarget extends CDebugElement
 	private Object fCurrentStateInfo = null;
 
 	/**
+	 * Count of the number of suspend events in this target
+	 */
+	private int fSuspendCount = 0;
+
+	/**
 	 * Constructor for CDebugTarget.
 	 * @param target
 	 */
@@ -1104,5 +1109,37 @@ public class CDebugTarget extends CDebugElement
 	private void setCurrentStateInfo( Object info )
 	{
 		fCurrentStateInfo = info;
+	}
+
+	/**
+	 * Returns the number of suspend events that have occurred in this
+	 * target.
+	 * 
+	 * @return the number of suspend events that have occurred in this
+	 * target
+	 */
+	protected int getSuspendCount()
+	{
+		return fSuspendCount;
+	}
+
+	/**
+	 * Increments the suspend counter for this target.
+	 */
+	protected void incrementSuspendCount()
+	{
+		fSuspendCount++;
+	}
+
+	/**
+	 * Overrides the superclass method by incrementing the suspend counter.
+	 * 
+	 * @param detail The int detail of the event
+	 * @see org.eclipse.debug.core.DebugEvent
+	 */
+	public void fireSuspendEvent( int detail )
+	{
+		incrementSuspendCount();
+		super.fireSuspendEvent( detail );
 	}
 }

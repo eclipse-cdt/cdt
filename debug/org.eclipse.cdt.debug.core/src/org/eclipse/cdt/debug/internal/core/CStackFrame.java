@@ -254,8 +254,8 @@ public class CStackFrame extends CDebugElement
 		catch( DebugException e )
 		{
 			logError( e );
-			return false;
 		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -299,9 +299,8 @@ public class CStackFrame extends CDebugElement
 	{
 		if ( !canStepInto() )
 		{
-			return;
+			getThread().stepInto();
 		}
-		getThread().stepInto();
 	}
 
 	/* (non-Javadoc)
@@ -504,6 +503,7 @@ public class CStackFrame extends CDebugElement
 	protected void dispose()
 	{
 		getCDISession().getEventManager().removeEventListener( this );
+		disposeAllVariables();
 	}
 	
 	/**
@@ -556,5 +556,14 @@ public class CStackFrame extends CDebugElement
 	{
 		IStackFrame tos = getThread().getTopStackFrame();
 		return tos != null && tos.equals( this );
+	}
+	
+	protected void disposeAllVariables()
+	{
+		Iterator it = fVariables.iterator();
+		while( it.hasNext() )
+		{
+			((CVariable)it.next()).dispose();
+		}
 	}
 }

@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.debug.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.cdt.debug.core" id="CDebugger" name="CDebugger"/>
-   </appInfo>
-   <documentation>
-      [Enter description of this extension point]
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.debug.core" id="CDebugger" name="CDebugger"/>
+      </appInfo>
+      <documentation>
+         [Enter description of this extension point]
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -80,6 +80,13 @@
             </annotation>
          </attribute>
          <attribute name="cpu" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="coreFileFilter" type="string">
             <annotation>
                <documentation>
                   

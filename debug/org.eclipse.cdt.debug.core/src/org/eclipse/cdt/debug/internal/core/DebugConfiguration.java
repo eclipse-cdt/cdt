@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -31,6 +33,7 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	private IConfigurationElement fElement;
 	private HashSet fModes;
 	private HashSet fCPUs;
+	private String[] fCoreExt;
 
 	public DebugConfiguration(IConfigurationElement element) {
 		fElement = element;
@@ -136,4 +139,22 @@ public class DebugConfiguration implements ICDebugConfiguration {
 		return fCPUs;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.ICDebugConfiguration#getCoreFileExtensions()
+	 */
+	public String[] getCoreFileExtensions() {
+		if (fCoreExt == null) {
+			String cexts = getConfigurationElement().getAttribute("coreFileFilter"); //$NON-NLS-1$
+			StringTokenizer tokenizer = new StringTokenizer(cexts, ","); //$NON-NLS-1$
+			List exts = new ArrayList();
+			while (tokenizer.hasMoreTokens()) {
+				String ext = tokenizer.nextToken().trim();
+				exts.add(ext);
+			}
+			exts.add("*.*"); //$NON-NLS-1$
+			fCoreExt = (String[])exts.toArray(new String[exts.size()]);
+		}
+		return fCoreExt;
+	}
 }

@@ -28,6 +28,7 @@ public interface ICDebugConfiguration {
 	String getPlatform();
 	String[] getCPUList();
 	String[] getModeList();
+	String[] getCoreFileExtensions();
 	boolean supportsCPU(String cpu);
 	boolean supportsMode(String mode);
 }

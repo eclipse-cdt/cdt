@@ -650,8 +650,13 @@ public class CThread extends CDebugElement
 	 * 
 	 * @see computeStackFrames()
 	 */
-	protected void preserveStackFrames()
+	protected synchronized void preserveStackFrames()
 	{
+		Iterator it = fStackFrames.iterator();
+		while( it.hasNext() )
+		{
+			((CStackFrame)it.next()).preserveVariables();
+		}
 		setRefreshChildren( true );
 	}
 

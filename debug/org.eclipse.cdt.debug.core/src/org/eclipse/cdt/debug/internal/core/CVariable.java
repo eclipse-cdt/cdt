@@ -39,6 +39,11 @@ public abstract class CVariable extends CDebugElement
 	private int fLastChangeIndex = -1;
 
 	/**
+	 * Change flag.
+	 */
+	private boolean fChanged = false;
+
+	/**
 	 * Constructor for CVariable.
 	 * @param target
 	 */
@@ -62,24 +67,6 @@ public abstract class CVariable extends CDebugElement
 		{
 			fValue = CValue.createValue( (CDebugTarget)getDebugTarget(), currentValue );
 		}
-		else
-		{
-			ICDIValue previousValue = fValue.getUnderlyingValue();
-			if ( currentValue == previousValue )
-			{
-				return fValue;
-			}
-			if ( previousValue == null || currentValue == null )
-			{
-				fValue = CValue.createValue( (CDebugTarget)getDebugTarget(), currentValue );
-				setChangeCount( ((CDebugTarget)getDebugTarget()).getSuspendCount());
-			}
-			else if ( !previousValue.equals( currentValue ) )
-			{
-				fValue = CValue.createValue( (CDebugTarget)getDebugTarget(), currentValue );
-				setChangeCount( ((CDebugTarget)getDebugTarget()).getSuspendCount());
-			}
-		}
 		return fValue;
 	}
 
@@ -88,7 +75,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public boolean hasValueChanged() throws DebugException
 	{
-		return getChangeCount() == ((CDebugTarget)getDebugTarget()).getSuspendCount();
+		return ( getValue().hasVariables() ) ? false : fChanged;
 	}
 
 	/* (non-Javadoc)
@@ -208,5 +195,21 @@ public abstract class CVariable extends CDebugElement
 	protected void dispose()
 	{
 		getCDISession().getEventManager().removeEventListener( this );
+	}
+	
+	protected synchronized void setChanged( boolean changed ) throws DebugException
+	{
+		if ( getValue().hasVariables() )
+		{
+			IVariable[] vars = getValue().getVariables();
+			for ( int i = 0; i < vars.length; ++i )
+			{
+				((CVariable)vars[i]).setChanged( changed );
+			}
+		}
+		else
+		{
+			fChanged = changed;
+		}
 	}
 }

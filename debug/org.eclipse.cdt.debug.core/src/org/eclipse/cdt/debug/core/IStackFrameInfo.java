@@ -6,6 +6,8 @@
 
 package org.eclipse.cdt.debug.core;
 
+import org.eclipse.debug.core.model.IVariable;
+
 /**
  * 
  * Provides the access to the stack frame information.
@@ -51,4 +53,11 @@ public interface IStackFrameInfo
 	 * @return the level of this stack frame 
 	 */
 	int getLevel();
+
+	/**
+	 * Returns the arguments of this stack frame.
+	 * 
+	 * @return the arguments of this stack frame 
+	 */
+	IVariable[] getArguments();
 }

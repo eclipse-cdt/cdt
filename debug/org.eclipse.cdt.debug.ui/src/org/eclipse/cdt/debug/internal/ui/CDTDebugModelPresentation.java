@@ -24,6 +24,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
+import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -151,6 +152,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 		StringBuffer label = new StringBuffer();
 		try
 		{
+			if ( element instanceof IVariable )
+			{
+				label.append( getVariableText( (IVariable)element ) );
+				return label.toString();
+			}
+
 			if ( element instanceof IStackFrame )
 			{
 				label.append( getStackFrameText( (IStackFrame)element, showQualified ) );
@@ -266,6 +273,19 @@ public class CDTDebugModelPresentation extends LabelProvider
 			return label;
 		}
 		return stackFrame.getName();
+	}
+
+	protected String getVariableText( IVariable var ) throws DebugException
+	{
+		// temporary
+		String label = new String();
+		if ( var != null )
+		{
+			label += var.getName();
+			IValue value = var.getValue();
+			label += "= " + value.getValueString();
+		}
+		return label;
 	}
 
 	/**

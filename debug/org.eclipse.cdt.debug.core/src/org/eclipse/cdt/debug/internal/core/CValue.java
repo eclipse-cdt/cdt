@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.internal.core;
 
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValue;
@@ -47,7 +48,20 @@ public class CValue extends CDebugElement implements IValue
 	 */
 	public String getValueString() throws DebugException
 	{
-		return null;
+		String result = null;
+		if ( getUnderlyingValue() != null )
+		{
+			try
+			{
+				result = getUnderlyingValue().getValueString();
+			}
+			catch( CDIException e )
+			{
+				// change this
+				requestFailed( "", e );
+			}
+		}
+		return result;
 	}
 
 	/* (non-Javadoc)

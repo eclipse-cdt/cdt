@@ -12,11 +12,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.debug.core.DebugException;
@@ -52,7 +54,7 @@ public class CStackFrame extends CDebugElement
 	private CThread fThread;
 
 	/**
-	 * Visible variables.
+	 * List of visible variable (includes arguments).
 	 */
 	private List fVariables;
 
@@ -68,7 +70,7 @@ public class CStackFrame extends CDebugElement
 	public CStackFrame( CThread thread, ICDIStackFrame cdiFrame )
 	{
 		super( (CDebugTarget)thread.getDebugTarget() );
-		fCDIStackFrame = cdiFrame;
+		setCDIStackFrame( cdiFrame );
 		setThread( thread );
 		getCDISession().getEventManager().addEventListener( this );
 	}
@@ -116,18 +118,21 @@ public class CStackFrame extends CDebugElement
 	 */
 	protected void updateVariables() throws DebugException 
 	{
-		List locals = null;
-		locals = getAllCDIVariables();
+		List locals = getAllCDIVariables();
 		int localIndex = -1;
 		int index = 0;
 		while( index < fVariables.size() )
 		{
 			CLocalVariable local = (CLocalVariable)fVariables.get( index );
-			localIndex = locals.indexOf( local.getCDIVariable() );
-			if ( localIndex >= 0 )
+			ICDIVariable var = findVariable( locals, local.getCDIVariable() );
+			if ( var != null )
 			{
 				// update variable with new underling CDI LocalVariable
-				locals.remove( localIndex );
+				if ( !var.equals( local.getCDIVariable() ) )
+				{
+					local.setCDIVariable( var );
+				}
+				locals.remove( var );
 				index++;
 			}
 			else
@@ -480,7 +485,40 @@ public class CStackFrame extends CDebugElement
 	 */
 	protected static boolean equalFrame( ICDIStackFrame frameOne, ICDIStackFrame frameTwo )
 	{
-		return ( frameOne != null && frameTwo != null && frameOne.getLocation().equals( frameTwo.getLocation() ) );
+		if ( frameOne == null || frameTwo == null )
+			return false;
+		ICDILocation loc1 = frameOne.getLocation();
+		ICDILocation loc2 = frameTwo.getLocation();
+		if ( loc1 == null || loc2 == null )
+			return false;
+		if ( loc1.getFile() != null && loc1.getFile().length() > 0 &&
+			 loc2.getFile() != null && loc2.getFile().length() > 0 &&
+			 loc1.getFile().equals( loc2.getFile() ) )
+			 
+		{
+			if ( loc1.getFunction() != null && loc1.getFunction().length() > 0 &&
+				 loc2.getFunction() != null && loc2.getFunction().length() > 0 &&
+				 loc1.getFunction().equals( loc2.getFunction() ) )
+				return true;
+		}
+		if ( ( loc1.getFile() == null || loc1.getFile().length() < 1 ) &&
+			 ( loc2.getFile() == null || loc2.getFile().length() < 1 ) )
+			 
+		{
+			if ( loc1.getFunction() != null && loc1.getFunction().length() > 0 &&
+				 loc2.getFunction() != null && loc2.getFunction().length() > 0 &&
+				 loc1.getFunction().equals( loc2.getFunction() ) )
+				return true;
+		}
+		if ( ( loc1.getFile() == null || loc1.getFile().length() < 1 ) &&
+			 ( loc2.getFile() == null || loc2.getFile().length() < 1 ) &&
+			 ( loc1.getFunction() == null || loc1.getFunction().length() < 1 ) &&
+			 ( loc2.getFunction() == null || loc2.getFunction().length() < 1 ) )
+		{
+			if ( loc1.getAddress() == loc2.getAddress() )
+				return true;
+		}
+		return  false;
 	}
 
 	protected boolean exists() throws DebugException
@@ -575,6 +613,7 @@ public class CStackFrame extends CDebugElement
 		{
 			((CVariable)it.next()).dispose();
 		}
+		fVariables = null;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getAddress()
@@ -613,5 +652,68 @@ public class CStackFrame extends CDebugElement
 	public int getFrameLineNumber()
 	{
 		return getCDIStackFrame().getLocation().getLineNumber();
+	}
+
+	/*
+	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getArguments()
+	 */
+	public IVariable[] getArguments()
+	{
+		ArrayList list = new ArrayList();
+		IVariable[] vars = new IVariable[0];
+		try
+		{
+			vars = getVariables();
+		}
+		catch( DebugException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
+		for ( int i = 0; i < vars.length; ++i )
+		{
+			if ( vars[i] instanceof CLocalVariable &&
+				 ((CLocalVariable)vars[i]).getCDIVariable() instanceof ICDIArgument )
+			{
+				 list.add( vars[i] );
+			}
+		}
+		return (IVariable[])list.toArray( new IVariable[list.size()] );
+	}
+	
+	protected synchronized void preserveVariables()
+	{
+		if ( fVariables == null )
+			return;
+		try
+		{
+			Iterator it = fVariables.iterator();
+			while( it.hasNext() )
+			{
+				((CVariable)it.next()).setChanged( false );
+			}
+		}
+		catch( DebugException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
+	}
+	
+	// temporary solution
+	protected ICDIVariable findVariable( List list, ICDIVariable var )
+	{
+		Iterator it = list.iterator();
+		while( it.hasNext() )
+		{
+			ICDIVariable newVar = (ICDIVariable)it.next();
+			try
+			{
+				if ( newVar.getName().equals( var.getName() ) )
+					return newVar;
+			}
+			catch( CDIException e )
+			{
+			}
+		}
+		return null;
 	}
 }

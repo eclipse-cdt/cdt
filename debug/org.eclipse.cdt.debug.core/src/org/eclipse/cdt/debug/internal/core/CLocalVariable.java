@@ -116,6 +116,11 @@ public class CLocalVariable extends CModificationVariable
 		return fCDIVariable;
 	}
 
+	protected void setCDIVariable( ICDIVariable newVar )
+	{
+		fCDIVariable = newVar;
+	}
+
 	/**
 	 * Returns the stack frame this variable is contained in.
 	 * 
@@ -152,7 +157,11 @@ public class CLocalVariable extends CModificationVariable
 		try
 		{
 			setValue( getCurrentValue() );
-			fireChangeEvent( DebugEvent.CONTENT );
+			if ( !getValue().hasVariables() )
+			{
+				setChanged( true );
+				getStackFrame().fireChangeEvent( DebugEvent.CONTENT );
+			}
 		}
 		catch( DebugException e )
 		{

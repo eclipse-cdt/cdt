@@ -21,6 +21,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISharedLibraryManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
+import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CSharedLibrary;
 import org.eclipse.debug.core.DebugEvent;
@@ -168,7 +169,7 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 			}
 			catch( CDIException e )
 			{
-				getDebugTarget().targetRequestFailed( e.getMessage(), null );
+				CDebugElement.targetRequestFailed( e.getMessage(), null );
 			}
 		}
 	}
@@ -187,7 +188,7 @@ public class CSharedLibraryManager extends CUpdateManager implements ICSharedLib
 			}
 			catch( CDIException e )
 			{
-				getDebugTarget().targetRequestFailed( e.getMessage(), null );
+				CDebugElement.targetRequestFailed( e.getMessage(), null );
 			}
 		}
 	}

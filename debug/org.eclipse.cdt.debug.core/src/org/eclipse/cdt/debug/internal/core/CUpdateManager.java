@@ -16,6 +16,7 @@ import org.eclipse.cdt.debug.core.ICUpdateManager;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIManager;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
+import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugException;
@@ -77,7 +78,7 @@ public abstract class CUpdateManager extends Observable implements ICUpdateManag
 			}
 			catch( CDIException e )
 			{
-				getDebugTarget().targetRequestFailed( e.getMessage(), null );
+				CDebugElement.targetRequestFailed( e.getMessage(), null );
 			}
 		}
 	}

@@ -1,4 +1,9 @@
 2004-08-05 Mikhail Khodjaiants
+	Warning cleanup.
+	* CSharedLibraryManager.java
+	* CUpdateManager.java
+
+2004-08-05 Mikhail Khodjaiants
 	Display the error message in the array label, if the attempt to get array values fails.
 	* CArrayPartition.java
 	* CArrayPartitionValue.java

@@ -1,3 +1,8 @@
+2003-02-12 Mikhail Khodjaiants
+	The gdb-specific 'setAutoSolibMethod' method is removed from ICDISharedLibraryManager.
+	* ICDISharedLibraryManager.java
+	* CSharedLibraryManager.java
+
 2003-02-12 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/core/cdi/mode/ICDITarget.java (getSharedLibraries):

@@ -22,9 +22,5 @@ public interface ICSharedLibraryManager extends ICUpdateManager, IAdaptable
 
 	void loadSymbols( ICSharedLibrary[] libraries ) throws DebugException;
 
-	void setAutoLoadSymbols( boolean set ) throws DebugException;
-
-	boolean getAutoLoadSymbols();
-
 	void dispose();
 }

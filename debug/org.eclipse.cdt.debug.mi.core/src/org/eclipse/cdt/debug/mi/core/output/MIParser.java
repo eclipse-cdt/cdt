@@ -82,7 +82,11 @@ import java.util.StringTokenizer;
 public class MIParser {
 
 	/**
-	 * Construct the AST for MI.
+	 * Point of entry to create an AST for MI.
+	 *
+	 * @param buffer Output from MI Channel.
+	 * @return MIOutput
+	 * @see MIOutput
 	 */
 	public MIOutput parse(String buffer) {
 		MIOutput mi = new MIOutput();
@@ -98,19 +102,22 @@ public class MIParser {
 			if (Character.isDigit(token.charAt(0))) {
 				int i = 1;
 				while (Character.isDigit(token.charAt(i)) && i < token.length()) {
-					 i++;
+					i++;
 				}
 				String numbers = token.substring(i);
 				try {
 					id = Integer.parseInt(numbers);
 				} catch(NumberFormatException e) {
 				}
+				// Consume the token.
 				token = token.substring(i);
 			}
 
 			// Process ResultRecord | Out-Of-Band Records
 			if (token.charAt(0) == '^') {
 					rr = processMIResultRecord(token.substring(1), id);
+			//} else if(token.startsWith(MIOutput.terminator)) {
+			//  break;
 			} else {
 					MIOOBRecord band = processMIOOBRecord(token.substring(1), id);
 					if (band != null) {
@@ -156,6 +163,8 @@ public class MIParser {
 		return rr;
 	}
 
+	/**
+     */
 	MIOOBRecord processMIOOBRecord(String buffer, int id) {
 		MIOOBRecord oob = null;
 		char c = buffer.charAt(0);
@@ -180,6 +189,7 @@ public class MIParser {
 			if (i != -1) {
 				String asyncClass = buffer.substring(1, i);
 				async.setAsyncClass(asyncClass);
+				// Consume the async-class and the comma
 				buffer = buffer.substring(i + 1);
 			}
 			MIResult[] res = processMIResults(buffer);
@@ -200,13 +210,16 @@ public class MIParser {
 					stream = new MILogStreamOutput();
 				break;
 			}
-			stream.setCString(translate (new StringBuffer(buffer.substring(1))));
+			stream.setCString(translateCString(buffer.substring(1)));
 			oob = stream;
 		}
 		return oob;
 	}
 
 	
+	/**
+	 * Assuming that the usual leading comma was consume.
+	 */
 	MIResult[] processMIResults(String buffer) {
 		List aList = new ArrayList();
 		StringBuffer sb = new StringBuffer(buffer);
@@ -251,9 +264,8 @@ public class MIParser {
 			sb.deleteCharAt(0);
 			value = processMIList(sb);
 		} else if (sb.charAt(0) == '"') {
-			sb.deleteCharAt(0);
 			MIConst cnst = new MIConst();
-			cnst.setCString(translate(sb));
+			cnst.setCString(translateCString(sb));
 			value = cnst;
 		}
 		return value;
@@ -279,13 +291,20 @@ public class MIParser {
 		return new MIList();
 	}
 
+	String translateCString(String str) {
+		return translateCString(new StringBuffer(str));
+	}
+
 	// FIXME: TODO
 	// FIXME: Side effect in the loop
 	// FIXME: Deal with <repeat>
-	String translate(StringBuffer sb) {
+	String translateCString(StringBuffer sb) {
 		boolean escape = false;
-		boolean quoteFound = false;
-		for (int i = 0; i < sb.length() || quoteFound; i++) {
+		boolean termination = false;
+		if (sb.charAt(0) == '"') {
+			sb.deleteCharAt(0);
+		}
+		for (int i = 0; i < sb.length() || termination; i++) {
 			switch (sb.charAt(i)) {
 				case '\\':
 					if (escape) {
@@ -318,7 +337,7 @@ public class MIParser {
 						sb.deleteCharAt(i - 1);
 						escape = false;
 					} else {
-						quoteFound = true;
+						termination = true;
 					}
 				break;
 

@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -22,9 +23,19 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
 
 /**
  * @author aniefer
@@ -75,15 +86,34 @@ public class CPPTemplateDefinition implements ICPPTemplateDefinition {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplate#instantiate(org.eclipse.cdt.core.dom.ast.IASTNode[])
 	 */
-	public IBinding instantiate(IASTNode[] arguments) {
-		if( arguments != null ) {}
-		return null;
+	public IBinding instantiate(ICPPASTTemplateId templateId ) {//IASTNode[] arguments) {
+		IBinding decl = getTemplatedDeclaration();
+		ICPPTemplateParameter [] params = getParameters();
+		IASTNode [] arguments = templateId.getTemplateArguments();
+		
+		ObjectMap map = new ObjectMap(params.length);
+		if( arguments.length == params.length ){
+			for( int i = 0; i < arguments.length; i++ ){
+				IType t = CPPVisitor.createType( arguments[i] );
+				map.put( params[i], t );
+			}
+		}
+		
+		return CPPTemplates.createInstance( templateId, (ICPPScope) getScope(), decl, map );
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplate#getTemplatedDeclaration()
 	 */
 	public IBinding getTemplatedDeclaration() {
-		// TODO Auto-generated method stub
+		if( primaryDecl instanceof IASTSimpleDeclaration ){
+			IASTSimpleDeclaration simple = (IASTSimpleDeclaration) primaryDecl;
+			if( simple.getDeclarators().length == 0 && simple.getDeclSpecifier() instanceof IASTCompositeTypeSpecifier ){
+				IASTCompositeTypeSpecifier compSpec = (IASTCompositeTypeSpecifier) simple.getDeclSpecifier();
+				return compSpec.getName().resolveBinding();
+			}
+		} else if( primaryDecl instanceof IASTFunctionDefinition ){
+			
+		}
 		return null;
 	}
 	/* (non-Javadoc)
@@ -114,8 +144,24 @@ public class CPPTemplateDefinition implements ICPPTemplateDefinition {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition#getParameters()
 	 */
 	public ICPPTemplateParameter[] getParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		ICPPASTTemplateDeclaration template = (ICPPASTTemplateDeclaration) primaryDecl.getParent();
+		ICPPASTTemplateParameter [] params = template.getTemplateParameters();
+		ICPPTemplateParameter p = null;
+		ICPPTemplateParameter [] result = null;
+		for (int i = 0; i < params.length; i++) {
+			if( params[i] instanceof ICPPASTSimpleTypeTemplateParameter ){
+				p = (ICPPTemplateParameter) ((ICPPASTSimpleTypeTemplateParameter)params[i]).getName().resolveBinding();
+			} else if( params[i] instanceof ICPPASTParameterDeclaration ) {
+				p = (ICPPTemplateParameter) ((ICPPASTParameterDeclaration)params[i]).getDeclarator().getName().resolveBinding();
+			} else if( params[i] instanceof ICPPASTTemplatedTypeTemplateParameter ){
+				p = (ICPPTemplateParameter) ((ICPPASTTemplatedTypeTemplateParameter)params[i]).getName().resolveBinding();
+			}
+			
+			if( p != null ){
+				result = (ICPPTemplateParameter[]) ArrayUtil.append( ICPPTemplateParameter.class, result, p );
+			}
+		}
+		return (ICPPTemplateParameter[]) ArrayUtil.trim( ICPPTemplateParameter.class, result );
 	}
 
 }

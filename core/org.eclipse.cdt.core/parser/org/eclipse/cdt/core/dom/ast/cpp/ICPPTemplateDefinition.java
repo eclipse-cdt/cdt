@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
@@ -31,7 +30,7 @@ public interface ICPPTemplateDefinition extends ICPPBinding{
 	 * @param arguments
 	 * @return
 	 */
-	public IBinding instantiate( IASTNode [] arguments );
+	public IBinding instantiate( ICPPASTTemplateId id );
 	
 	/**
 	 * returns the templated declaration for this template,

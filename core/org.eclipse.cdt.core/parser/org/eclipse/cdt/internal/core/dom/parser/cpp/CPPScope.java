@@ -19,6 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -86,6 +87,9 @@ abstract public class CPPScope implements ICPPScope{
 	public void addName(IASTName name) {
 		if( bindings == null )
 			bindings = new CharArrayObjectMap(1);
+		if( name instanceof ICPPASTTemplateId )
+			name = ((ICPPASTTemplateId)name).getTemplateName();
+		
 		char [] c = name.toCharArray();
 		Object o = bindings.get( c );
 		if( o != null ){
@@ -129,7 +133,7 @@ abstract public class CPPScope implements ICPPScope{
         		return CPPSemantics.resolveAmbiguities( name,  bs );
 	        } else if( obj instanceof IASTName ){
 	        	IBinding binding = null;
-	        	if( forceResolve && obj != name )
+	        	if( forceResolve && obj != name && obj != name.getParent())
 	        		binding = ((IASTName)obj).resolveBinding();
 	        	else {
 	        		IASTName n = (IASTName) obj;

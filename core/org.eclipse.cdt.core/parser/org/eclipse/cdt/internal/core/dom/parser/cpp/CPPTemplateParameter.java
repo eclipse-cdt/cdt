@@ -14,15 +14,17 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDelegate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 
 /**
  * @author aniefer
  */
-public class CPPTemplateParameter implements ICPPTemplateParameter, IType {
+public class CPPTemplateParameter implements ICPPTemplateParameter, IType, ICPPInternalBinding {
 	private IASTName [] declarations;
 	
 	public CPPTemplateParameter( IASTName name ){
@@ -99,5 +101,27 @@ public class CPPTemplateParameter implements ICPPTemplateParameter, IType {
 	public boolean isGloballyQualified() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDeclarations()
+	 */
+	public IASTNode[] getDeclarations() {
+		return declarations;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#getDefinition()
+	 */
+	public IASTNode getDefinition() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding#createDelegate(org.eclipse.cdt.core.dom.ast.IASTName)
+	 */
+	public ICPPDelegate createDelegate(IASTName name) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

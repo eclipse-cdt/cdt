@@ -125,4 +125,10 @@ public class ObjectMap extends ObjectTable {
             }
         }
     }
+
+	public Object [] valueArray(){
+		Object [] vals = new Object[ size() ];
+		System.arraycopy( valueTable, 0, vals, 0, vals.length );
+	    return vals;
+	}
 }

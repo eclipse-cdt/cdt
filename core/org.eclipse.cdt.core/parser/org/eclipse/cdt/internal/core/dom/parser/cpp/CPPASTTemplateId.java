@@ -125,10 +125,10 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
      * @see org.eclipse.cdt.core.dom.ast.IASTName#toCharArray()
      */
     public char[] toCharArray() {
-        return EMPTY_CHAR_ARRAY;
+        return templateName.toCharArray();
     }
     public String toString() {
-        return EMPTY_STRING;
+        return templateName.toString();
     }
 
     public boolean accept( ASTVisitor action ){

@@ -1274,6 +1274,7 @@ public class CPPSemantics {
 			if( node instanceof ICPPASTQualifiedName )
 				node = node.getParent();
 			if( node instanceof ICPPASTFunctionDeclarator ){
+				if( binding instanceof CPPFunction )
 				((CPPFunction)binding).addDefinition( (ICPPASTFunctionDeclarator) node );
 			}
 		}

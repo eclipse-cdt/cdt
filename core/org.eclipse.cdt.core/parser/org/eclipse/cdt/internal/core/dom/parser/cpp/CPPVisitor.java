@@ -1204,6 +1204,7 @@ public class CPPVisitor {
 	    
 	    return new CPPFunctionType( returnType, pTypes );
 	}
+	
 	private static IType createType( IType returnType, ICPPASTFunctionDeclarator fnDtor ){
 	    IASTParameterDeclaration [] params = fnDtor.getParameters();
 	    IType [] pTypes = new IType [ params.length ];
@@ -1291,6 +1292,13 @@ public class CPPVisitor {
 	    return type;
 	}
 	
+	public static IType createType( IASTNode node ){
+		if( node instanceof IASTExpression )
+			return getExpressionType( (IASTExpression) node );
+		if( node instanceof IASTTypeId )
+			return createType( ((IASTTypeId) node).getAbstractDeclarator() );
+		return null;
+	}
 	/**
 	 * @param declarator
 	 * @return

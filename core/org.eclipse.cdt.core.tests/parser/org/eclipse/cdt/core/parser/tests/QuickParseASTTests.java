@@ -1975,5 +1975,37 @@ public class QuickParseASTTests extends BaseASTTest
 		parse("template<class E> class X { inline X<E>(int); };");
 	}
 
+	public void testBug39542() throws Exception
+	{
+		parse("void f(int a, struct {int b[a];} c) {}");
+	}
+
+	//Here starts C99-specific section
+	public void testBug39549() throws Exception
+	{
+		parse("struct X x = { .b = 40, .z = { sizeof(X), 42 }, .t[3] = 2, .t.f[3].x = A * B };", true, true, ParserLanguage.C);
+		// with trailing commas
+		parse("struct X x = { .b = 40, .z = { sizeof(X), 42,}, .t[3] = 2, .t.f[3].x = A * B  ,};", true, true, ParserLanguage.C);
+	}
+	
+	public void testBug39551A() throws Exception
+	{
+		IASTFunction function = (IASTFunction)parse("extern float _Complex conjf (float _Complex);", true, true, ParserLanguage.C).getDeclarations().next();
+		assertEquals( function.getName(), "conjf");
+		assertTrue( ((IASTSimpleTypeSpecifier)function.getReturnType().getTypeSpecifier()).isComplex() );
+	}
+
+	public void testBug39551B() throws Exception
+	{
+		IASTVariable variable = (IASTVariable)parse("_Imaginary double id = 99.99 * __I__;", true, true, ParserLanguage.C).getDeclarations().next();
+		assertEquals( variable.getName(), "id");
+		assertTrue( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).isImaginary() );
+	}
+	
+	public void testCBool() throws Exception
+	{
+		IASTVariable variable = (IASTVariable)assertSoleDeclaration( "_Bool x;", ParserLanguage.C );
+		assertSimpleType( variable, IASTSimpleTypeSpecifier.Type._BOOL );
+	}
 
 }

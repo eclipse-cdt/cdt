@@ -70,7 +70,7 @@ public class TypeInfo {
 		_hasDefaultValue = info._hasDefaultValue;
 	}
 
-	public static final int typeMask   = 0x001f;
+    public static final int typeMask   = 0x001f;
 	public static final int isAuto     = 0x0020;
 	public static final int isRegister = 0x0040;
 	public static final int isStatic   = 0x0080;
@@ -87,6 +87,8 @@ public class TypeInfo {
 	public static final int isShort    = 0x40000;
 	public static final int isLong     = 0x80000;
 	public static final int isForward  = 0x100000;
+	public static final int isComplex  = 0x200000;
+	public static final int isImaginary= 0x400000;
 	
 	// Types (maximum type is typeMask
 	// Note that these should be considered ordered and if you change
@@ -113,6 +115,7 @@ public class TypeInfo {
 	public static final TypeInfo.eType t_template    = new TypeInfo.eType( 18 );
 	public static final TypeInfo.eType t_asm         = new TypeInfo.eType( 19 );
 	public static final TypeInfo.eType t_linkage     = new TypeInfo.eType( 20 );
+	public static final TypeInfo.eType t__Bool       = new TypeInfo.eType( 21 ); 
 	//public static final eType t_templateParameter = new eType( 18 );
 	
 	public static class eType implements Comparable{

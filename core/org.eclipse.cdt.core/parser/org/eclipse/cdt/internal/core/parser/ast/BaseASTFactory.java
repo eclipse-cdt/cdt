@@ -12,14 +12,16 @@ package org.eclipse.cdt.internal.core.parser.ast;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
-import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTDesignator.DesignatorKind;
 
 
 /**
@@ -49,14 +51,16 @@ public class BaseASTFactory  {
         return new ASTAbstractDeclaration( isConst, isVolatile, typeSpecifier, pointerOperators, arrayModifiers, parameters, pointerOperator );
     }
 
-    public IASTInitializerClause createInitializerClause(IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses)
-    {
-    	return new ASTInitializerClause( kind, assignmentExpression, initializerClauses );
-    }
-
     public IASTArrayModifier createArrayModifier(IASTExpression exp)
     {
         return new ASTArrayModifier( exp );
+    }
+
+    public IASTDesignator createDesignator(DesignatorKind kind, IASTExpression constantExpression, IToken fieldIdentifier)
+    {
+        return new ASTDesignator( kind, constantExpression, 
+        		fieldIdentifier == null ? "" : fieldIdentifier.getImage(), 
+        		fieldIdentifier == null ? -1 : fieldIdentifier.getOffset() );
     }
 
 

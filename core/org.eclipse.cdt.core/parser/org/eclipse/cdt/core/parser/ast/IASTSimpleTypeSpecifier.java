@@ -20,7 +20,7 @@ public interface IASTSimpleTypeSpecifier extends IASTTypeSpecifier
 {
 	public static class Type extends Enum 
 	{
-		public static final Type UNSPECIFIED  = new Type( 1 );
+        public static final Type UNSPECIFIED  = new Type( 1 );
 		public static final Type CHAR         = new Type( 1 );
 		public static final Type WCHAR_T      = new Type( 2 );
 		public static final Type BOOL         = new Type( 3 );
@@ -30,7 +30,7 @@ public interface IASTSimpleTypeSpecifier extends IASTTypeSpecifier
 		public static final Type VOID         = new Type( 7 );
 		public static final Type CLASS_OR_TYPENAME     = new Type( 8 );
 		public static final Type TEMPLATE     = new Type( 9 );
-		
+		public static final Type _BOOL        = new Type( 10 );	
         /**
          * @param enumValue
          */
@@ -49,6 +49,8 @@ public interface IASTSimpleTypeSpecifier extends IASTTypeSpecifier
 	public boolean    isSigned(); 
 	public boolean    isUnsigned();
 	public boolean    isTypename();
+	public boolean    isComplex(); 
+	public boolean    isImaginary();
 	
 	public IASTTypeSpecifier getTypeSpecifier() throws ASTNotImplementedException;   
 }

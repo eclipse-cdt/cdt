@@ -1,3 +1,8 @@
+2003-10-22 John Camelon
+	Fixed Bug 39542 : Parser fails on 'struct' parameter types 
+	Fixed Bug 39549 : Designated initializers are not supported (ANSI C99) 
+	Fixed Bug 39551 : Complex and imaginary numbers are not supported (ANSI C99) 
+
 2003-10-21 John Camelon
 	Fixed Bug 40007 : Parser reports success when it fails
 	Fixed Bug 44305 : Scanner/preprocessor fails on conditionals using hexidecimal 

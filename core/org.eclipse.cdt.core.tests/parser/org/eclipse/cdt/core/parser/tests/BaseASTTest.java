@@ -73,10 +73,15 @@ public class BaseASTTest extends TestCase
 	
 	protected IASTDeclaration assertSoleDeclaration( String code ) throws ParserException
 	{
+		return assertSoleDeclaration( code, ParserLanguage.CPP );
+	}	
+	
+	protected IASTDeclaration assertSoleDeclaration( String code, ParserLanguage language ) throws ParserException
+	{
 		Iterator declarationIter = null;
         try
         {
-            declarationIter = parse(code).getDeclarations();
+            declarationIter = parse(code, true, true, language).getDeclarations();
         }
         catch (ASTNotImplementedException e1)
         {
@@ -90,10 +95,15 @@ public class BaseASTTest extends TestCase
 		return returnValue;
 	}
 	
-	public void assertCodeFailsParse(String code) {
+	public void assertCodeFailsParse( String code )
+	{
+		assertCodeFailsParse( code, true, true, ParserLanguage.CPP ); 
+	}
+	
+	public void assertCodeFailsParse(String code, boolean quick, boolean throwOnError, ParserLanguage CPP ) {
 		boolean testPassed = false;
 		try {
-			parse(code);
+			parse(code, quick, throwOnError, CPP );
 			testPassed = true;
 			fail( "We should not reach this point");
 		} catch (Throwable e) {

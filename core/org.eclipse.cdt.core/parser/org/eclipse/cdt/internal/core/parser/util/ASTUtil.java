@@ -24,7 +24,6 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
 import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
-import org.eclipse.cdt.internal.core.parser.ast.ASTArrayModifier;
 
 /**
  * This is a utility class to help convert AST elements to Strings.
@@ -172,7 +171,7 @@ public class ASTUtil {
 		StringBuffer arrayString = new StringBuffer();
 		Iterator i  = declaration.getArrayModifiers(); 
 		while (i.hasNext()){
-			ASTArrayModifier q = (ASTArrayModifier) i.next();
+			i.next();
 			arrayString.append("[]");				
 		}
 		return arrayString.toString();

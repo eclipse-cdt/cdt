@@ -16,7 +16,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.internal.core.parser.ast.*;
+import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
 
 /**
@@ -58,6 +58,8 @@ public class ASTVariable extends ASTDeclaration implements IASTVariable
 		setStartingOffset(startingOffset);
 		setNameOffset(nameOffset);
 		setNameEndOffset( nameEndOffset );
+		if( initializerClause != null )
+			initializerClause.setOwnerVariableDeclaration(this);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTVariable#isAuto()

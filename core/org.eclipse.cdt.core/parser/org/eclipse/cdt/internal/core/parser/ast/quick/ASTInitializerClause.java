@@ -8,7 +8,7 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.ast;
+package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +16,8 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTInitializerClause;
+import org.eclipse.cdt.core.parser.ast.IASTVariable;
+import org.eclipse.cdt.internal.core.parser.ast.EmptyIterator;
 
 /**
  * @author jcamelon
@@ -25,15 +27,18 @@ public class ASTInitializerClause implements IASTInitializerClause {
 	private final IASTInitializerClause.Kind kind; 
 	private final IASTExpression assignmentExpression; 
 	private final List initializerClauses; 
+	private final List designators;
+	private IASTVariable ownerDeclaration = null;
 	/**
 	 * @param kind
 	 * @param assignmentExpression
 	 * @param initializerClauses
 	 */
-	public ASTInitializerClause(Kind kind, IASTExpression assignmentExpression, List initializerClauses) {
+	public ASTInitializerClause(Kind kind, IASTExpression assignmentExpression, List initializerClauses, List designators ) {
 		this.kind = kind; 
 		this.assignmentExpression = assignmentExpression;
 		this.initializerClauses = initializerClauses; 
+		this.designators = designators; 
 	}
 
 	/* (non-Javadoc)
@@ -64,14 +69,6 @@ public class ASTInitializerClause implements IASTInitializerClause {
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-    	Iterator i = getInitializers(); 
-    	while( i.hasNext() )
-    	{
-    		IASTInitializerClause initializerClause = (IASTInitializerClause)i.next();
-    		initializerClause.acceptElement(requestor);
-    	}
-    	if( assignmentExpression != null )
-    		assignmentExpression.acceptElement( requestor );
     }
 
     /* (non-Javadoc)
@@ -86,6 +83,30 @@ public class ASTInitializerClause implements IASTInitializerClause {
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#getDesignators()
+     */
+    public Iterator getDesignators()
+    {
+        return designators.iterator();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#setOwnerDeclaration(org.eclipse.cdt.core.parser.ast.IASTDeclaration)
+     */
+    public void setOwnerVariableDeclaration(IASTVariable declaration)
+    {
+        ownerDeclaration = declaration;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTInitializerClause#getOwnerDeclaration()
+     */
+    public IASTVariable getOwnerVariableDeclaration()
+    {
+        return ownerDeclaration;
     }
 
 }

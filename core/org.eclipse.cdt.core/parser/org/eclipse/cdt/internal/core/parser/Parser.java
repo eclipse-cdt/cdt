@@ -38,6 +38,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
@@ -72,6 +73,7 @@ import org.eclipse.cdt.internal.core.model.Util;
  */
 public class Parser implements IParser
 {
+    private static final List EMPTY_LIST = new ArrayList();
     private static int DEFAULT_OFFSET = -1;
     // sentinel initial value for offsets 
     private int firstErrorOffset = DEFAULT_OFFSET;
@@ -943,7 +945,7 @@ public class Parser implements IParser
                         sdw.isShort(),
                         sdw.isLong(),
                         sdw.isSigned(),
-                        sdw.isUnsigned(), sdw.isTypeNamed()));
+                        sdw.isUnsigned(), sdw.isTypeNamed(), sdw.isComplex(), sdw.isImaginary()));
             }
             catch (Exception e1)
             {
@@ -1182,7 +1184,7 @@ public class Parser implements IParser
                         sdw.isShort(),
                         sdw.isLong(),
                         sdw.isSigned(),
-                        sdw.isUnsigned(), sdw.isTypeNamed()));
+                        sdw.isUnsigned(), sdw.isTypeNamed(), sdw.isComplex(), sdw.isImaginary()));
             }
             catch (ASTSemanticException e)
             {
@@ -1455,6 +1457,20 @@ public class Parser implements IParser
 					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
                     sdw.setLong(true);
                     break;
+                case IToken.t__Complex :
+					consume( IToken.t__Complex );
+					if (typeNameBegin == null)
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1);
+					sdw.setComplex( true );
+					break;
+				case IToken.t__Imaginary :
+					consume( IToken.t__Imaginary );
+					if (typeNameBegin == null)
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1);
+					sdw.setImaginary( true );
+					break;                
                 case IToken.t_char :
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
@@ -1477,13 +1493,20 @@ public class Parser implements IParser
                     callbackSimpleDeclToken(flags);
                     sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.BOOL);
                     break;
+                case IToken.t__Bool: 
+					if (typeNameBegin == null)
+						typeNameBegin = LA(1);
+					typeNameEnd = LA(1);
+					callbackSimpleDeclToken(flags);
+					sdw.setSimpleType(IASTSimpleTypeSpecifier.Type._BOOL);
+					break;                
                 case IToken.t_int :
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
                     typeNameEnd = LA(1);
                     callbackSimpleDeclToken(flags);
                     sdw.setSimpleType(IASTSimpleTypeSpecifier.Type.INT);
-                    break;
+                    break;					
                 case IToken.t_float :
                     if (typeNameBegin == null)
                         typeNameBegin = LA(1);
@@ -1523,10 +1546,8 @@ public class Parser implements IParser
                     break;
                 case IToken.tCOLONCOLON :
                     consume(IToken.tCOLONCOLON);
-                    // handle nested later:
                 case IToken.tIDENTIFIER :
                     // TODO - Kludgy way to handle constructors/destructors
-                    // handle nested later:
                     if (flags.haveEncounteredRawType())
                     {
                         if (typeNameBegin != null)
@@ -1564,46 +1585,28 @@ public class Parser implements IParser
                 case IToken.t_class :
                 case IToken.t_struct :
                 case IToken.t_union :
-                    if (!parm )
+                    try
                     {
-                        try
-                        {
-                            classSpecifier(sdw);
-							flags.setEncounteredTypename(true);
-                            break;
-                        }
-                        catch (Backtrack bt)
-                        {
-                            elaboratedTypeSpecifier(sdw);
-                            flags.setEncounteredTypename(true);
-                            break;
-                        }
+                        classSpecifier(sdw);
+						flags.setEncounteredTypename(true);
+                        break;
                     }
-                    else
+                    catch (Backtrack bt)
                     {
                         elaboratedTypeSpecifier(sdw);
                         flags.setEncounteredTypename(true);
                         break;
                     }
                 case IToken.t_enum :
-                    if (!parm )
+                    try
                     {
-                        try
-                        {
-                            enumSpecifier(sdw);
-							flags.setEncounteredTypename(true);
-                            break;
-                        }
-                        catch (Backtrack bt)
-                        {
-                            // this is an elaborated class specifier
-                            elaboratedTypeSpecifier(sdw);
-                            flags.setEncounteredTypename(true);
-                            break;
-                        }
+                        enumSpecifier(sdw);
+   					    flags.setEncounteredTypename(true);
+                        break;
                     }
-                    else
+                    catch (Backtrack bt)
                     {
+                        // this is an elaborated class specifier
                         elaboratedTypeSpecifier(sdw);
                         flags.setEncounteredTypename(true);
                         break;
@@ -1883,31 +1886,119 @@ public class Parser implements IParser
         throws Backtrack
     {
         Declarator d = declarator(sdw, sdw.getScope(), strategy );
-        // handle = initializerClause
+        if( language == ParserLanguage.CPP )
+        	optionalCPPInitializer(d);
+        else if( language == ParserLanguage.C )
+        	optionalCInitializer(d);
+        sdw.addDeclarator(d);
+        return d;
+    }
+    
+    protected void optionalCPPInitializer(Declarator d)
+        throws EndOfFile, Backtrack
+    {
+        // handle initializer
         if (LT(1) == IToken.tASSIGN)
         {
             consume(IToken.tASSIGN);
-            d.setInitializerClause(initializerClause(sdw.getScope()));
+            d.setInitializerClause(initializerClause(d.getDeclarationWrapper().getScope()));
         }
-        else if (LT(1) == IToken.tLPAREN)
+        else if (LT(1) == IToken.tLPAREN )
         {
         	IToken mark = mark(); 
             // initializer in constructor
             try
             {
-	            consume(IToken.tLPAREN); // EAT IT!
-	            IASTExpression astExpression = null;
-	            astExpression = expression(sdw.getScope());
-	            consume(IToken.tRPAREN);
-	            d.setConstructorExpression(astExpression);
+                consume(IToken.tLPAREN); // EAT IT!
+                IASTExpression astExpression = null;
+                astExpression = expression(d.getDeclarationWrapper().getScope());
+                consume(IToken.tRPAREN);
+                d.setConstructorExpression(astExpression);
             } catch( Backtrack bt )
             {
             	backup( mark ); 
             	throw bt;
             }
         }
-        sdw.addDeclarator(d);
-        return d;
+    }
+    
+    protected void optionalCInitializer( Declarator d ) throws Backtrack
+    {
+    	if( LT(1) == IToken.tASSIGN )
+    	{
+    		consume( IToken.tASSIGN );
+    		d.setInitializerClause( cInitializerClause(d.getDeclarationWrapper().getScope(), EMPTY_LIST ) );
+    	}
+    }
+    /**
+     * @param scope
+     * @return
+     */
+    protected IASTInitializerClause cInitializerClause(
+        IASTScope scope,
+        List designators)
+        throws Backtrack
+    {    	
+        if (LT(1) == IToken.tLBRACE)
+        {
+            consume(IToken.tLBRACE);
+            List initializerList = new ArrayList();
+            for (;;)
+            {
+                // required at least one initializer list
+                // get designator list
+                List newDesignators = designatorList(scope);
+                if( newDesignators.size() != 0 )
+                	consume( IToken.tASSIGN );
+                IASTInitializerClause initializer =
+                    cInitializerClause(scope, newDesignators );
+                initializerList.add(initializer);
+                // can end with just a '}'
+                if (LT(1) == IToken.tRBRACE)
+                    break;
+                // can end with ", }"
+                if (LT(1) == IToken.tCOMMA)
+                    consume(IToken.tCOMMA);
+                if (LT(1) == IToken.tRBRACE)
+                    break;
+                // otherwise, its another initializer in the list
+            }
+            // consume the closing brace
+            consume(IToken.tRBRACE);
+            return astFactory.createInitializerClause(
+                scope,
+                (
+				( designators.size() == 0 ) ? 
+					IASTInitializerClause.Kind.INITIALIZER_LIST : 
+					IASTInitializerClause.Kind.DESIGNATED_INITIALIZER_LIST ),
+                null, initializerList, designators );
+        }
+        // if we get this far, it means that we have not yet succeeded
+        // try this now instead
+        // assignmentExpression 
+        try
+        {
+            IASTExpression assignmentExpression = assignmentExpression(scope);
+            try
+            {
+                return astFactory.createInitializerClause(
+                    scope,
+                    (
+				( designators.size() == 0 ) ? 
+					IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION : 
+					IASTInitializerClause.Kind.DESIGNATED_ASSIGNMENT_EXPRESSION ),
+                    assignmentExpression, null, designators );
+            }
+            catch (Exception e)
+            {
+                throw backtrack;
+            }
+        }
+        catch (Backtrack b)
+        {
+            // do nothing
+        }
+        throw backtrack;
     }
     /**
      * 
@@ -1924,16 +2015,17 @@ public class Parser implements IParser
                 try
                 {
                     return astFactory.createInitializerClause(
+                        scope,
                         IASTInitializerClause.Kind.EMPTY,
-                        null,
-                        null);
+                        null, null, EMPTY_LIST );
                 }
                 catch (Exception e)
                 {
                     throw backtrack;
                 }
             }
-            // otherwise it is a list of initializers
+            
+            // otherwise it is a list of initializer clauses
             List initializerClauses = new ArrayList();
             for (;;)
             {
@@ -1947,17 +2039,19 @@ public class Parser implements IParser
             try
             {
                 return astFactory.createInitializerClause(
+                    scope,
                     IASTInitializerClause.Kind.INITIALIZER_LIST,
-                    null,
-                    initializerClauses);
+                    null, initializerClauses, EMPTY_LIST );
             }
             catch (Exception e)
             {
                 throw backtrack;
             }
         }
+        
+        // if we get this far, it means that we did not 
         // try this now instead
-        // assignmentExpression || { initializerList , } || { }
+        // assignmentExpression 
         try
         {
             IASTExpression assignmentExpression =
@@ -1966,9 +2060,9 @@ public class Parser implements IParser
             try
             {
                 return astFactory.createInitializerClause(
+                    scope,
                     IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION,
-                    assignmentExpression,
-                    null);
+                    assignmentExpression, null, EMPTY_LIST );
             }
             catch (Exception e)
             {
@@ -1980,6 +2074,43 @@ public class Parser implements IParser
 			// do nothing
         }
         throw backtrack;
+    }
+    
+    protected List designatorList(IASTScope scope) throws EndOfFile, Backtrack
+    {
+        List designatorList = new ArrayList();
+        // designated initializers for C
+        
+    	if( LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET )
+    	{
+    
+    		while( LT(1) == IToken.tDOT || LT(1) == IToken.tLBRACKET )
+    		{
+    			IToken id = null; 
+    			IASTExpression constantExpression = null;
+    			IASTDesignator.DesignatorKind kind = null;
+    			
+    			if( LT(1) == IToken.tDOT )
+    			{
+    				consume( IToken.tDOT );
+    				id = identifier();
+    				kind = IASTDesignator.DesignatorKind.FIELD;
+    			}
+    			else if( LT(1) == IToken.tLBRACKET )
+    			{
+    				consume( IToken.tLBRACKET );
+    				constantExpression = expression( scope );
+    				consume( IToken.tRBRACKET );
+					kind = IASTDesignator.DesignatorKind.SUBSCRIPT; 	
+    			}
+    			
+    			IASTDesignator d = 
+    				astFactory.createDesignator( kind, constantExpression, id );
+    			designatorList.add( d );
+    				
+    		}
+    	}
+		return designatorList;
     }
     /**
      * Parse a declarator, as according to the ANSI C++ specification. 

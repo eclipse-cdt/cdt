@@ -10,8 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.pst;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.TemplateInstance;
 /**

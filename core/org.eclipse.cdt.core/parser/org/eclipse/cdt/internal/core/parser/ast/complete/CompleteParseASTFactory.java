@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTConstructorMemberInitializer;
+import org.eclipse.cdt.core.parser.ast.IASTDesignator;
 import org.eclipse.cdt.core.parser.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
@@ -90,6 +91,13 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      * 
      */
     
+    private final static List SUBSCRIPT;
+    static 
+    {
+    	SUBSCRIPT = new ArrayList();
+    	SUBSCRIPT.add( TypeInfo.OperatorExpression.subscript );
+    }
+
     public CompleteParseASTFactory( ParserLanguage language )
     {
         super();
@@ -1333,42 +1341,26 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         boolean isShort,
         boolean isLong,
         boolean isSigned,
-        boolean isUnsigned, boolean isTypename) throws ASTSemanticException
+        boolean isUnsigned, boolean isTypename, boolean isComplex, boolean isImaginary) throws ASTSemanticException
     {
     	TypeInfo.eType type = null;
     	
     	if( kind == IASTSimpleTypeSpecifier.Type.CLASS_OR_TYPENAME )
-    	{
     		type = TypeInfo.t_type;
-    	}
 	    else if( kind == IASTSimpleTypeSpecifier.Type.BOOL )
-        {
         	type = TypeInfo.t_bool;
-        }
         else if( kind == IASTSimpleTypeSpecifier.Type.CHAR )
-        {
 			type = TypeInfo.t_char;
-        }
-		else if( kind == IASTSimpleTypeSpecifier.Type.DOUBLE )
-		{
+		else if( kind == IASTSimpleTypeSpecifier.Type.DOUBLE ||kind == IASTSimpleTypeSpecifier.Type.FLOAT  ) 
 			type = TypeInfo.t_double;
-		}
-		else if( kind == IASTSimpleTypeSpecifier.Type.FLOAT )
-		{
-			type = TypeInfo.t_double;
-		}
 		else if( kind == IASTSimpleTypeSpecifier.Type.INT )
-		{
 			type = TypeInfo.t_int;
-		}
 		else if( kind == IASTSimpleTypeSpecifier.Type.VOID )
-		{
 			type = TypeInfo.t_void;
-		}
 		else if( kind == IASTSimpleTypeSpecifier.Type.WCHAR_T)
-		{
 			type = TypeInfo.t_wchar_t;
-		}
+		else if( kind == IASTSimpleTypeSpecifier.Type._BOOL )
+			type = TypeInfo.t__Bool;
 	
 		List references = new ArrayList(); 
 		ISymbol s = pst.newSymbol( "", type );
@@ -1405,10 +1397,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			s.setTypeSymbol( typeSymbol );
 		}
 		
-		
 		s.getTypeInfo().setBit( isLong, TypeInfo.isLong );
 		s.getTypeInfo().setBit( isShort, TypeInfo.isShort);
 		s.getTypeInfo().setBit( isUnsigned, TypeInfo.isUnsigned );
+		s.getTypeInfo().setBit( isComplex, TypeInfo.isComplex );
+		s.getTypeInfo().setBit( isImaginary, TypeInfo.isImaginary );
 			
 		return new ASTSimpleTypeSpecifier( s, false, typeName.toString(), references );
 
@@ -1441,7 +1434,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IContainerSymbol ownerScope = scopeToSymbol( scope );		
 		
 		// check if this is a method in a body file
-		Iterator tokenizer = name.iterator();
 		if(name.length() > 1){
 			IContainerSymbol parentScope = (IContainerSymbol)
 				lookupQualifiedName( 
@@ -1898,7 +1890,6 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			}
 				
 			String fieldName = oneToken;
-			String parentName = name.substring(0, name.lastIndexOf(DOUBLE_COLON));
 			
 			int numOfTokens = 1;
 			int offset = nameOffset;
@@ -1968,6 +1959,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
         
         ASTVariable variable = new ASTVariable( newSymbol, abstractDeclaration, initializerClause, bitfieldExpression, startingOffset, nameOffset, nameEndOffset, references, constructorExpression, previouslyDeclared );
+        if( variable.getInitializerClause() != null )
+        {
+        	variable.getInitializerClause().setOwnerVariableDeclaration(variable);
+        	addDesignatorReferences( (ASTInitializerClause)variable.getInitializerClause() );
+        }
+        
         try
         {
             attachSymbolExtension(newSymbol, variable );
@@ -1978,6 +1975,72 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         }
         return variable;        
     }
+    
+    
+    /**
+     * @param clause
+     */
+    protected void addDesignatorReferences( ASTInitializerClause clause )
+    {
+        if( clause.getKind() == IASTInitializerClause.Kind.DESIGNATED_INITIALIZER_LIST || 
+        	clause.getKind() == IASTInitializerClause.Kind.DESIGNATED_ASSIGNMENT_EXPRESSION )
+        {
+			ISymbol variableSymbol = ((ASTVariable)clause.getOwnerVariableDeclaration()).getSymbol();
+			ISymbol currentSymbol = variableSymbol.getTypeSymbol();
+				
+			TypeInfo currentTypeInfo = new TypeInfo( currentSymbol.getTypeInfo() ); 
+			Iterator designators = clause.getDesignators();
+			while( designators.hasNext() )
+			{
+				IASTDesignator designator = (IASTDesignator)designators.next();
+				if( designator.getKind() == IASTDesignator.DesignatorKind.FIELD )
+				{
+					ISymbol lookup = null;
+					if( ! ( currentSymbol instanceof IContainerSymbol ) ) 
+						break;
+					
+					try
+                    {
+                        lookup = ((IContainerSymbol)currentSymbol).lookup( designator.fieldName() );
+                    }
+                    catch (ParserSymbolTableException e){
+                        break;
+                    }
+                    
+                    if( lookup == null || lookup.getContainingSymbol() != currentSymbol )  
+                        break;
+                        
+                    try
+                    {
+                        clause.getReferences().add( createReference( lookup, designator.fieldName(), designator.fieldOffset() ));
+                    }
+                    catch (ASTSemanticException e1)
+                    {
+                        // error
+                    }
+                    
+					// we have found the correct field
+					currentTypeInfo = new TypeInfo( lookup.getTypeInfo() );
+					if( lookup.getTypeInfo() == null )
+						break;
+					currentSymbol = lookup.getTypeSymbol();
+
+				}
+				else if( designator.getKind() == IASTDesignator.DesignatorKind.SUBSCRIPT )
+					currentTypeInfo.applyOperatorExpressions( SUBSCRIPT );		
+			}
+			
+        }			
+        
+        if( clause.getKind() == IASTInitializerClause.Kind.DESIGNATED_INITIALIZER_LIST || 
+        	clause.getKind() == IASTInitializerClause.Kind.INITIALIZER_LIST )
+        {	
+        	Iterator subInitializers = clause.getInitializers();
+        	while( subInitializers.hasNext() )
+        		addDesignatorReferences( (ASTInitializerClause)subInitializers.next() );
+        }
+    }
+
     protected void setVariableTypeInfoBits(
         boolean isAuto,
         IASTAbstractDeclaration abstractDeclaration,
@@ -2016,8 +2079,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		else if( abstractDeclaration.getTypeSpecifier() instanceof ASTElaboratedTypeSpecifier ) 
 		{
+			ASTElaboratedTypeSpecifier elab = ((ASTElaboratedTypeSpecifier)abstractDeclaration.getTypeSpecifier());
 			symbolToBeCloned = pst.newSymbol(name, TypeInfo.t_type);
-			symbolToBeCloned.setTypeSymbol(((ASTElaboratedTypeSpecifier)abstractDeclaration.getTypeSpecifier()).getSymbol());
+			symbolToBeCloned.setTypeSymbol(elab.getSymbol());
+			references.add( createReference( elab.getSymbol(), elab.getName(), elab.getNameOffset()) );
 		}
 		newSymbol = (ISymbol) symbolToBeCloned.clone(); 
 		newSymbol.setName( name );
@@ -2463,5 +2528,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         {
         	// do nothing, this is best effort
         }
+    }
+
+    public IASTInitializerClause createInitializerClause(IASTScope scope, IASTInitializerClause.Kind kind, IASTExpression assignmentExpression, List initializerClauses, List designators)
+    {
+    	return new ASTInitializerClause( kind, assignmentExpression, initializerClauses, designators );
     }
 }

@@ -35,30 +35,6 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("FUNCTION_MACRO( 1, a )\n	int i;");
     }
-
-
-    public void testBug39542() throws Exception
-    {
-        assertCodeFailsParse("void f(int a, struct {int b[a];} c) {}");
-    }
-
-    //Here starts C99-specific section
-    public void testBug39549() throws Exception
-    {
-        assertCodeFailsParse("struct X x = { .b = 40, .z = {} };");
-    }
-
-    public void testBug39551A() throws Exception
-    {
-        IASTFunction function = (IASTFunction)parse("extern float _Complex conjf (float _Complex);").getDeclarations().next();
-        assertEquals( function.getName(), "conjf");
-    }
-
-    public void testBug39551B() throws Exception
-    {
-        IASTVariable variable = (IASTVariable)parse("_Imaginary double id = 99.99 * __I__;").getDeclarations().next();
-        assertEquals( variable.getName(), "id");
-    }
     
     public void testBug39554() throws Exception
     {

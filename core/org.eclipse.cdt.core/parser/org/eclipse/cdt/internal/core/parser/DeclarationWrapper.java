@@ -37,6 +37,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
  */
 public class DeclarationWrapper implements IDeclaratorOwner
 { 
+    private boolean imaginary, complex;
     private boolean restrict;
     private int endOffset;
     private ITokenDuple name;
@@ -773,5 +774,35 @@ public class DeclarationWrapper implements IDeclaratorOwner
     {
         return restrict;
     }
+    /**
+     * @param b
+     */
+    public void setImaginary(boolean b)
+    {
+        imaginary = b;
+    }
 
+    /**
+     * @return
+     */
+    public boolean isComplex()
+    {
+        return complex;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isImaginary()
+    {
+        return imaginary;
+    }
+
+    /**
+     * @param b
+     */
+    public void setComplex(boolean b)
+    {
+        complex = b;
+    }
 }

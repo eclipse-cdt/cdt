@@ -63,6 +63,8 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
 			return IASTSimpleTypeSpecifier.Type.VOID;
 		if( symbol.getType() == TypeInfo.t_wchar_t)
 			return IASTSimpleTypeSpecifier.Type.WCHAR_T;
+		if( symbol.getType() == TypeInfo.t__Bool )
+			return IASTSimpleTypeSpecifier.Type._BOOL;
 			
         return IASTSimpleTypeSpecifier.Type.UNSPECIFIED;
         
@@ -128,6 +130,22 @@ public class ASTSimpleTypeSpecifier implements IASTSimpleTypeSpecifier
     public IASTTypeSpecifier getTypeSpecifier() throws ASTNotImplementedException
     {
         return (IASTTypeSpecifier)getSymbol().getTypeSymbol().getASTExtension().getPrimaryDeclaration();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#isComplex()
+     */
+    public boolean isComplex()
+    {
+		return symbol.getTypeInfo().checkBit( TypeInfo.isComplex );
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier#isImaginary()
+     */
+    public boolean isImaginary()
+    {
+		return symbol.getTypeInfo().checkBit( TypeInfo.isImaginary );		        
     }
 
 }

@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTSymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
 
 /**
  * @author jcamelon

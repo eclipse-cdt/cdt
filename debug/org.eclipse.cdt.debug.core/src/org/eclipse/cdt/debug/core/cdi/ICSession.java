@@ -83,6 +83,13 @@ public interface ICSession
 	ICEventManager getEventManager();
 
 	/**
+	 * Returns the configuration description of this debug session.
+	 * 
+	 * @return the configuration description
+	 */
+	ICDebugConfiguration getConfiguration();
+
+	/**
 	 * Returns whether this element is terminated.
 	 *
 	 * @return whether this element is terminated

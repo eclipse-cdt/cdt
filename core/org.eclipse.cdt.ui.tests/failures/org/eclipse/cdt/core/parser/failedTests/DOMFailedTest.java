@@ -21,15 +21,12 @@ public class DOMFailedTest extends BaseDOMTest  {
 		super(name);
 	}
 	
-	public void testBug36730(){
-		failTest("FUNCTION_MACRO( 1, a );\n	int i;");
-	}
-
-	public void testBug37019(){
-		failTest("static const A a( 1, 0 );");
-	}
-	
 	public void testBug36932() {
 		failTest("A::A( ) : var( new char [ (unsigned)bufSize ] ) {}");
 	}
+
+	public void testBug36730()throws Exception {
+		failTest("FUNCTION_MACRO( 1, a )\n	int i;");
+	}
+
 }

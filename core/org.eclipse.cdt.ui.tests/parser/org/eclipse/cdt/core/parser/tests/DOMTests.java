@@ -1779,5 +1779,9 @@ public class DOMTests extends BaseDOMTest {
 		assertFalse( i.hasNext() );
 	}
 
+	public void testBug37019() throws Exception {
+		parse("static const A a( 1, 0 );");
+	}	
+
 }
 

@@ -32,9 +32,42 @@ import org.eclipse.swt.widgets.Control;
  * @since Jul 25, 2002
  */
 public class MemoryText
-{
+{	
+	/**
+	 * 
+	 * The instance of this class specifies the text replacement 
+	 * that has to be applied to the StyledText widget.
+	 * 
+	 * @since Oct 29, 2002
+	 */
+	public static class TextReplacement
+	{
+		private int fStart;
+		private String fText;
+
+		/**
+		 * Constructor for TextReplacement.
+		 */
+		public TextReplacement( int start, String text )
+		{
+			fStart = start;
+			fText = text;
+		}
+		
+		public int getStart()
+		{
+			return fStart;
+		}
+		
+		public String getText()
+		{
+			return fText;
+		}
+	}
+
 	private StyledText fText = null;
 	private MemoryPresentation fPresentation = null;
+	private boolean fUpdating = false;
 
 	/**
 	 * Constructor for MemoryText.
@@ -81,13 +114,15 @@ public class MemoryText
 
 	protected void handleExtendedModify( ExtendedModifyEvent event )
 	{
+		if ( fUpdating )
+			return;
 		if ( event.length != 1 )
 			return;
+		TextReplacement[] trs = fPresentation.textChanged( event.start, 
+														   fText.getText().charAt( event.start ),
+														   event.replacedText.toCharArray() );
 		int caretOffset = fText.getCaretOffset();
-		fPresentation.textChanged( event.start, 
-								   fText.getText().charAt( event.start ),
-								   event.replacedText.toCharArray() );
-		refresh();
+		update( trs );
 		fText.setCaretOffset( caretOffset );
 	}
 	
@@ -114,15 +149,8 @@ public class MemoryText
 												 getAddressColor(),
 												 getBackgroundColor() ) );
 		}
-		zones = fPresentation.getDirtyZones();
-		for ( int i = 0; i < zones.length; ++i )
-		{
-			fText.setStyleRange( new StyleRange( zones[i].x,
-												 zones[i].y - zones[i].x + 1,
-												 getDirtyColor(),
-												 getBackgroundColor() ) );
-		}
 		fText.redraw();
+		updateTitle();
 	}
 	
 	private void refresh( Point[] zones, String[] items )
@@ -133,12 +161,15 @@ public class MemoryText
 			fText.replaceTextRange( zones[i].x, 
 							  		zones[i].y - zones[i].x + 1,
 							  		items[i] );
+/*
 			fText.setStyleRange( new StyleRange( zones[i].x, 
 										   		 zones[i].y - zones[i].x + 1,
 										   		 getDirtyColor(),
 										   		 getBackgroundColor() ) );
+*/
 			fText.redrawRange( zones[i].x, zones[i].y - zones[i].x + 1, false );
 		}
+		updateTitle();
 	}
 
 	protected void handleVerifyKey( VerifyEvent event ) 
@@ -237,6 +268,7 @@ public class MemoryText
 	
 	public void setDirtyColor()
 	{
+/*
 		Point[] zones = fPresentation.getDirtyZones();
 		for ( int i = 0; i < zones.length; ++i )
 		{
@@ -245,6 +277,7 @@ public class MemoryText
 												 getDirtyColor(),
 												 getBackgroundColor() ) );
 		}
+*/
 	}
 	
 	protected void setEditable( boolean editable )
@@ -260,5 +293,42 @@ public class MemoryText
 	protected Control getControl()
 	{
 		return fText;
+	}
+	
+	protected void update( TextReplacement[] trs )
+	{
+		fUpdating = true;
+		for ( int i = 0; i < trs.length; ++i )
+		{
+			fText.replaceTextRange( trs[i].getStart(), 
+							  		trs[i].getText().length(),
+							  		trs[i].getText() );
+/*
+			fText.setStyleRange( new StyleRange( trs[i].getStart(), 
+							  					 trs[i].getText().length(),
+										   		 getDirtyColor(),
+										   		 getBackgroundColor() ) );
+*/
+			fText.redrawRange( trs[i].getStart(), trs[i].getText().length(), false );
+		}
+		fUpdating = false;
+		updateTitle();
+	}
+
+	private void updateTitle()
+	{
+		if ( fText.getParent() instanceof MemoryControlArea )
+		{
+			String title = ((MemoryControlArea)fText.getParent()).getTitle();
+			if ( title.charAt( 0 ) == '*' )
+			{
+				title = title.substring( 1 );
+			}
+			if ( fPresentation.isDirty() )
+			{
+				title = '*' + title;
+			}
+			((MemoryControlArea)fText.getParent()).setTitle( title );
+		}
 	}
 }

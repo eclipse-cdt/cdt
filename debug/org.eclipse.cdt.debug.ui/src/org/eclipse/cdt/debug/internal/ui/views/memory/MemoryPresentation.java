@@ -39,7 +39,7 @@ public class MemoryPresentation
 	private List fChangedZones;
 
 	private boolean fDisplayAscii = true;
-		
+
 	/**
 	 * Constructor for MemoryPresentation.
 	 */
@@ -121,35 +121,6 @@ public class MemoryPresentation
 		return (Point[])fChangedZones.toArray( new Point[fChangedZones.size()] );
 	}
 	
-	public Point[] getDirtyZones()
-	{
-		ArrayList dirtyZones = new ArrayList();
-		if ( fBlock != null )
-		{
-			IFormattedMemoryBlockRow[] rows = fBlock.getRows();
-			for ( int i = 0; i < rows.length; ++i )
-			{
-				int rowOffset = i * getRowLength();
-				Integer[] dirtyItems = rows[i].getDirtyItems();
-				for ( int j = 0; j < dirtyItems.length; ++j )
-				{
-					int offset = rowOffset + 
-								 getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
-								 dirtyItems[j].intValue() * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS);
-					dirtyZones.add( new Point( offset, offset + getDataItemLength() ) );
-					if ( displayASCII() )
-					{
-						offset = rowOffset + 
-								 getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
-								 getNumberOfDataItemsInRow() * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS);
-						dirtyZones.add( new Point( offset, offset + (getDataItemLength() / 2) ) );
-					}
-				}
-			}
-		}
-		return (Point[])dirtyZones.toArray( new Point[dirtyZones.size()] );
-	}
-	
 	public String getStartAddress()
 	{
 		return ( fBlock != null ) ? getAddressString( fBlock.getStartAddress() ) : ""; 
@@ -192,85 +163,6 @@ public class MemoryPresentation
 		return result.toString();
 	}
 
-/*	
-	private String getItemString( int offset )
-	{
-		byte[] data = getDataBytes();
-		String item = new String( data, offset, getSize() );
-		String result = "";
-		switch( fFormat )
-		{
-			case ICDebugUIInternalConstants.MEMORY_FORMAT_HEX:
-				for ( int i = 0; i < getSize(); ++i )
-					result += new String( charToBytes( item.charAt( i ) ) );
-				break;
-			case ICDebugUIInternalConstants.MEMORY_FORMAT_BINARY:
-				for ( int i = 0; i < getSize(); ++i )
-					result += prepend( Integer.toBinaryString( data[offset + i] ), '0', 8 );
-				break;
-			case ICDebugUIInternalConstants.MEMORY_FORMAT_OCTAL:
-				for ( int i = 0; i < getSize(); ++i )
-					result += Integer.toOctalString( data[offset + i] );
-				break;
-		}
-		return result;
-	}
-	
-	private String getASCIIString( int offset )
-	{
-		byte[] data = getDataBytes();
-		char[] ascii = new char[getBytesPerRow()];
-		for ( int i = 0; i < ascii.length; ++i )
-		{
-			ascii[i] = ( data.length > offset + i ) ? getChar( data[offset + i] ) : fNotAvailableChar;			
-		}
-		return new String( ascii );
-	}
-	
-	private char getChar( byte charByte )
-	{
-		char ch = (char)charByte;
-		if ( ch == fNotAvailableChar )
-			return fNotAvailableChar;
-		return ( Character.isISOControl( ch ) ) ? fPaddingChar : ch;
-	}
-
-	private char[] charToBytes( char ch )
-	{
-		return new char[]{ charFromByte( (char)(ch >>> 4) ),
-						   charFromByte( (char)(ch & 0x0f) ) };
-	}
-
-	private char charFromByte( char value )
-	{
-		if ( value >= 0x0 && value <= 0x9 )
-			return (char)(value + '0');
-		if ( value >= 0xa && value <= 0xf )
-			return (char)(value - 0xa + 'a');
-		return '0';
-	}
-	
-	private byte[] getDataBytes()
-	{
-		return new byte[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-/*
-		byte[] result =  new byte[0];
-		if ( fBlock != null )
-		{
-			try
-			{
-				result = fBlock.getBytes();
-			}
-			catch( DebugException e )
-			{
-				// ignore
-			}
-		}
-		return result;
-*/
-/*
-	}
-*/	
 	private String resize( String item, char ch, int size )
 	{
 		char[] chars = new char[size - item.length()];
@@ -355,6 +247,13 @@ public class MemoryPresentation
 		if ( getMemoryBlock() != null )
 			return getMemoryBlock().getNumberOfColumns();
 		return 0;
+	}
+
+	private char getPaddingCharacter()
+	{
+		if ( getMemoryBlock() != null )
+			return getMemoryBlock().getPaddingCharacter();
+		return '.';
 	}
 	
 	protected boolean displayASCII()
@@ -470,8 +369,9 @@ public class MemoryPresentation
 		return false;
 	}
 	
-	protected void textChanged( int offset, char newChar, char[] replacedText )
+	protected MemoryText.TextReplacement[] textChanged( int offset, char newChar, char[] replacedText )
 	{
+		ArrayList list = new ArrayList();
 		if ( getMemoryBlock() != null )
 		{
 			int index = getDataItemIndex( offset );
@@ -489,7 +389,14 @@ public class MemoryPresentation
 				}
 				try
 				{
-					getMemoryBlock().setItemValue( index, new String( chars ) );
+					String text = new String( chars );
+					getMemoryBlock().setItemValue( index, text );
+					list.add( new MemoryText.TextReplacement( getDataItemOffset( index ), text ) );
+					if ( displayASCII() )
+					{
+						// Ascii is enabled only when the word size is one byte
+						list.add( getAsciiTextReplacement( index, chars ) );
+					}
 				}
 				catch( DebugException e )
 				{
@@ -497,6 +404,7 @@ public class MemoryPresentation
 				}
 			}
 		}
+		return (MemoryText.TextReplacement[])list.toArray( new MemoryText.TextReplacement[list.size()] );
 	}
 
 	private int getDataItemIndex( int offset )
@@ -553,5 +461,39 @@ public class MemoryPresentation
 			return offset - getDataItemOffset( index );
 		}
 		return -1;
+	}
+	
+	private MemoryText.TextReplacement getAsciiTextReplacement( int itemIndex, char[] chars )
+	{
+		int row = itemIndex / getNumberOfDataItemsInRow();
+		int col = itemIndex % getNumberOfDataItemsInRow();
+		int offset = row * getRowLength() +
+					 getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
+					 getNumberOfDataItemsInRow() * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) + 
+					 INTERVAL_BETWEEN_DATA_AND_ASCII + col;
+		byte newValue = CDebugUtils.textToByte( chars );
+		char ch = ( Character.isISOControl( (char)newValue ) || newValue < 0 ) ? getPaddingCharacter() : (char)newValue;
+		return new MemoryText.TextReplacement( offset, new String( new char[]{ ch } ) );
+	}
+	
+	public void dispose()
+	{
+		if ( fAddressZones != null )
+		{
+			fAddressZones.clear();
+		}
+		if ( fChangedZones != null )
+		{
+			fChangedZones.clear();
+		}
+	}
+	
+	protected boolean isDirty()
+	{
+		if ( getMemoryBlock() != null )
+		{
+			return getMemoryBlock().isDirty();
+		}
+		return false;
 	}
 }

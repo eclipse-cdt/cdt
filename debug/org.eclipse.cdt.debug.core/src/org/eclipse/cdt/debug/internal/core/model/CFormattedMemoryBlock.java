@@ -6,7 +6,6 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -38,7 +37,6 @@ public class CFormattedMemoryBlock extends CDebugElement
 		private long fAddress;
 		private String[] fData;
 		private String fAscii;
-		private boolean[] fDirtyItems;
 
 		/**
 		 * Constructor for CFormattedMemoryBlockRow.
@@ -48,8 +46,6 @@ public class CFormattedMemoryBlock extends CDebugElement
 			fAddress = address;
 			fData = data;
 			fAscii = ascii;
-			fDirtyItems = new boolean[fData.length];
-			Arrays.fill( fDirtyItems, false );
 		}
 
 		/* (non-Javadoc)
@@ -75,30 +71,11 @@ public class CFormattedMemoryBlock extends CDebugElement
 		{
 			return fData;
 		}
-
-		protected void setData( int colIndex, String newValue )
-		{
-			if ( colIndex < fData.length )
-			{
-				fData[colIndex] = newValue;
-				fDirtyItems[colIndex] = true;
-			}
-		}
-		
-		public Integer[] getDirtyItems()
-		{
-			ArrayList list = new ArrayList( fDirtyItems.length );
-			for ( int i = 0; i < fDirtyItems.length; ++i )
-			{
-				if ( fDirtyItems[i] )
-					list.add( new Integer( i ) );
-			}
-			return (Integer[])list.toArray( new Integer[list.size()] );
-		}
 	}
 
 	private String fAddressExpression;
 	private ICDIMemoryBlock fCDIMemoryBlock;
+	private byte[] fBytes = null;
 	private int fFormat;
 	private int fWordSize;
 	private int fNumberOfRows;
@@ -107,6 +84,8 @@ public class CFormattedMemoryBlock extends CDebugElement
 	private char fPaddingChar = '.';
 	private List fRows = null;
 	private Long[] fChangedAddresses = new Long[0];
+	// temporary
+	private boolean fIsDirty = false;
 
 	/**
 	 * Constructor for CFormattedMemoryBlock.
@@ -200,7 +179,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 			{
 				int offset = 0;
 				byte[] bytes = getBytes();
-				while( offset < bytes.length )
+				while( bytes != null && offset < bytes.length )
 				{
 					int length = Math.min( fWordSize * fNumberOfColumns, bytes.length - offset );
 					fRows.add( new CFormattedMemoryBlockRow( getStartAddress() + offset, 
@@ -216,7 +195,13 @@ public class CFormattedMemoryBlock extends CDebugElement
 		}
 		return (IFormattedMemoryBlockRow[])fRows.toArray( new IFormattedMemoryBlockRow[fRows.size()] );
 	}
-	
+
+	private void resetBytes()
+	{
+		fBytes = null;
+		fIsDirty = false;
+	}
+
 	private void resetRows()
 	{
 		fRows = null;
@@ -313,18 +298,21 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public byte[] getBytes() throws DebugException
 	{
-		if ( fCDIMemoryBlock != null )
-		{
-			try
+		if ( fBytes == null )
+		{ 
+			if ( fCDIMemoryBlock != null )
 			{
-				return fCDIMemoryBlock.getBytes();
-			}
-			catch( CDIException e )
-			{
-				targetRequestFailed( e.getMessage(), null );
+				try
+				{
+					fBytes = fCDIMemoryBlock.getBytes();
+				}
+				catch( CDIException e )
+				{
+					targetRequestFailed( e.getMessage(), null );
+				}
 			}
 		}
-		return new byte[0];
+		return fBytes;
 	}
 
 	/* (non-Javadoc)
@@ -454,6 +442,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	
 	private void handleChangedEvent( ICDIMemoryChangedEvent event )
 	{
+		resetBytes();
 		resetRows();
 		setChangedAddresses( event.getAddresses() );
 		fireChangeEvent( DebugEvent.CONTENT );
@@ -495,15 +484,52 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public void setItemValue( int index, String newValue ) throws DebugException
 	{
-		int rowIndex = index / getNumberOfColumns();
-		if ( rowIndex < getRows().length )
+		byte[] bytes = itemToBytes( newValue.toCharArray() );
+		setBytes( index * getWordSize(), bytes );
+		fIsDirty = true;
+		resetRows();
+	}
+	
+	private void setBytes( int index, byte[] newBytes )
+	{
+		try
 		{
-			CFormattedMemoryBlockRow row = (CFormattedMemoryBlockRow)getRows()[rowIndex];
-			int colIndex = index % getNumberOfColumns();
-			if ( colIndex < row.getData().length )
+			byte[] bytes = getBytes();
+			for ( int i = index; i < index + newBytes.length; ++i )
 			{
-				row.setData( colIndex, newValue );
-			}			
+				bytes[i] = newBytes[i - index];
+			}
 		}
+		catch( DebugException e )
+		{
+		}
+	}
+	
+	private byte[] itemToBytes( char[] chars )
+	{
+		switch( getFormat() )
+		{
+			case IFormattedMemoryBlock.MEMORY_FORMAT_HEX:
+				return hexItemToBytes( chars );
+		}
+		return new byte[0];
+	}
+	
+	private byte[] hexItemToBytes( char[] chars )
+	{
+		byte[] result = new byte[chars.length / 2];
+		for ( int i = 0; i < result.length; ++i )
+		{ 
+			result[i] = CDebugUtils.textToByte( new char[] { chars[2 * i], chars[2 * i + 1] } );
+		}
+		return result;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#isDirty()
+	 */
+	public boolean isDirty()
+	{
+		return fIsDirty;
 	}
 }

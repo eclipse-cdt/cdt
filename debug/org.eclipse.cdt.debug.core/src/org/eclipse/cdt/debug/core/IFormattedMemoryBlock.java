@@ -124,4 +124,6 @@ public interface IFormattedMemoryBlock extends IMemoryBlock
 	boolean isFrozen();
 	
 	void setFrozen( boolean frozen );
+	
+	boolean isDirty();
 }

@@ -15,6 +15,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
@@ -337,5 +339,36 @@ public class MemoryControlArea extends Composite
 	{
 		fAddressText.setText( "" );
 		handleAddressEnter();
+	}
+
+	/**
+	 * @see org.eclipse.swt.widgets.Widget#dispose()
+	 */
+	public void dispose()
+	{
+		if ( getPresentation() != null )
+		{
+			getPresentation().dispose();
+		}
+		super.dispose();
+	}
+
+	protected String getTitle()
+	{
+		if ( getParent() instanceof CTabFolder )
+		{
+			CTabItem[] tabItems = ((CTabFolder)getParent()).getItems();
+			return tabItems[fIndex].getText();
+		}
+		return "";
+	}
+
+	protected void setTitle( String title )
+	{
+		if ( getParent() instanceof CTabFolder )
+		{
+			CTabItem[] tabItems = ((CTabFolder)getParent()).getItems();
+			tabItems[fIndex].setText( title );
+		}
 	}
 }

@@ -34,6 +34,4 @@ public interface IFormattedMemoryBlockRow
 	 * @return the ASCII dump for this row
 	 */
 	String getASCII();
-	
-	Integer[] getDirtyItems();
 }

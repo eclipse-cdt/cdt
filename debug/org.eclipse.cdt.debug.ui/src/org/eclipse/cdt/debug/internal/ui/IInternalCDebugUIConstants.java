@@ -25,7 +25,7 @@ public interface IInternalCDebugUIConstants {
 	 * The name of the font to use for disassembly view. This font is managed via
 	 * the workbench font preference page.
 	 */ 
-	public static final String DISASSEMBLY_FONT = PREFIX + "DisassemblyFont"; //$NON-NLS-1$	
+	public static final String DISASSEMBLY_FONT = PREFIX + "disassemblyFont"; //$NON-NLS-1$	
 
 	//Current stack frame instruction pointer
 	public static final String DISASM_INSTRUCTION_POINTER = PREFIX + "disassemblyInstructionPointer"; //$NON-NLS-1$

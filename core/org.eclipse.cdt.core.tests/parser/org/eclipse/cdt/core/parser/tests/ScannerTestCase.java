@@ -1572,4 +1572,10 @@ public class ScannerTestCase extends BaseScannerTest
     	fullyTokenize();
     	assertTrue( callback.problems.isEmpty() );
 	}
+    
+    public void testBug62378() throws Exception
+	{
+    	initializeScanner( "\"\\?\\?<\""); //$NON-NLS-1$
+    	validateString("\\?\\?<" ); //$NON-NLS-1$
+	}
 }

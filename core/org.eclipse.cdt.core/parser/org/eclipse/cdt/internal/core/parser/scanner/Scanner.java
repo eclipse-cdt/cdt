@@ -958,7 +958,6 @@ public class Scanner implements IScanner {
 			{
 				// TODO : we could probably return the partial string -- it might cause 
 				// the parse to get by...
-				
 				handleProblem( IProblem.SCANNER_UNBOUNDED_STRING, null, beginOffset, false, true );
 				return null;
 			}

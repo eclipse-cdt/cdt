@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 
 public class ScannerContextInclusion implements IScannerContext
 {
+	public static final int UNDO_BUFFER_SIZE = 4;
 	protected Reader reader;
 	private String filename;
 	private IASTInclusion inc;
@@ -52,7 +53,7 @@ public class ScannerContextInclusion implements IScannerContext
 		}
 	}
 	protected int pos = 0;
-	protected int undo[] = new int[2];  
+	protected int undo[] = new int[UNDO_BUFFER_SIZE];  
 	public final void ungetChar(int c) {
 		undo[pos++] = c; 
 	}

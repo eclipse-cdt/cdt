@@ -47,7 +47,7 @@ public class BaseScannerTest extends TestCase {
 
 	protected void initializeScanner( String input, ParserMode mode, ISourceElementRequestor requestor ) throws ParserFactoryError
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, requestor, null, null );
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, requestor, null, null ); //$NON-NLS-1$
 	}
 
 	protected void initializeScanner(String input) throws ParserFactoryError
@@ -65,10 +65,10 @@ public class BaseScannerTest extends TestCase {
 			while (t != null)
 			{
 				if (verbose)
-					System.out.println("Token t = " + t);
+					System.out.println("Token t = " + t); //$NON-NLS-1$
 
 				if ((t.getType()> IToken.tLAST))
-					System.out.println("Unknown type for token " + t);
+					System.out.println("Unknown type for token " + t); //$NON-NLS-1$
 				t= scanner.nextToken();
 			}
 		}
@@ -208,10 +208,10 @@ public class BaseScannerTest extends TestCase {
 		assertNull(scanner.getDefinition(name));
 	}
 
-	public static final String EXCEPTION_THROWN = "Exception thrown ";
+	public static final String EXCEPTION_THROWN = "Exception thrown "; //$NON-NLS-1$
 
-	public static final String EXPECTED_FAILURE = "This statement should not be reached "
-				+ "as we sent in bad preprocessor input to the scanner";
+	public static final String EXPECTED_FAILURE = "This statement should not be reached " //$NON-NLS-1$
+				+ "as we sent in bad preprocessor input to the scanner"; //$NON-NLS-1$
 
 	public static final boolean verbose = false;
 

@@ -557,6 +557,15 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public void breakpointRemoved( IBreakpoint breakpoint, IMarkerDelta delta )
 	{
+		try
+		{
+			if ( breakpoint instanceof CBreakpoint )
+				removeBreakpoint( (CBreakpoint)breakpoint );
+		}
+		catch( DebugException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -946,7 +955,14 @@ public class CDebugTarget extends CDebugElement
 		getCDISession().getEventManager().removeEventListener( this );
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointListener( this );
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener( this );
-		removeAllBreakpoints();
+		try
+		{
+			removeAllBreakpoints();
+		}
+		catch( DebugException e )
+		{
+			CDebugCorePlugin.log( e );
+		}
 	}
 	
 	/**
@@ -969,8 +985,50 @@ public class CDebugTarget extends CDebugElement
 	 * Removes all breakpoints from this target.
 	 * 
 	 */
-	protected void removeAllBreakpoints() 
+	protected void removeAllBreakpoints() throws DebugException
 	{
+		ICDIBreakpoint[] cdiBreakpoints = (ICDIBreakpoint[])getBreakpoints().values().toArray( new ICDIBreakpoint[0] );
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		try
+		{
+			bm.deleteBreakpoints( cdiBreakpoints );
+			Iterator it = getBreakpoints().keySet().iterator();
+			while( it.hasNext() )
+			{
+				((CBreakpoint)it.next()).decrementInstallCount();
+			}
+			getBreakpoints().clear();
+		}
+		catch( CoreException ce )
+		{
+			requestFailed( "Operation failed. Reason: ", ce );
+		}
+		catch( CDIException e )
+		{
+			requestFailed( "Operation failed. Reason: ", e );
+		}		
+	}
+
+	protected void removeBreakpoint( CBreakpoint breakpoint ) throws DebugException
+	{
+		ICDIBreakpoint cdiBreakpoint = findCDIBreakpoint( breakpoint );
+		if ( cdiBreakpoint == null )
+			return;
+		ICDIBreakpointManager bm = getCDISession().getBreakpointManager();
+		try
+		{
+			bm.deleteBreakpoints( new ICDIBreakpoint[] { cdiBreakpoint } );
+			getBreakpoints().remove( breakpoint );
+			breakpoint.decrementInstallCount();
+		}
+		catch( CoreException ce )
+		{
+			requestFailed( "Operation failed. Reason: ", ce );
+		}
+		catch( CDIException e )
+		{
+			requestFailed( "Operation failed. Reason: ", e );
+		}
 	}
 
 	/**
@@ -1370,6 +1428,7 @@ public class CDebugTarget extends CDebugElement
 			if ( !getBreakpoints().containsKey( breakpoint ) )
 			{
 				getBreakpoints().put( breakpoint, cdiBreakpoint );
+				((CBreakpoint)breakpoint).incrementInstallCount();
 			}
 		}
 		catch( CoreException ce )
@@ -1380,5 +1439,10 @@ public class CDebugTarget extends CDebugElement
 		{
 			requestFailed( "Operation failed. Reason: ", e );
 		}
+	}
+	
+	private ICDIBreakpoint findCDIBreakpoint( IBreakpoint breakpoint )
+	{
+		return (ICDIBreakpoint)getBreakpoints().get( breakpoint );
 	}
 }

@@ -192,4 +192,34 @@ public abstract class CBreakpoint extends Breakpoint
 	{
 		return null;
 	}
+
+	/**
+	 * Increments the install count of this breakpoint
+	 */
+	public void incrementInstallCount() throws CoreException
+	{
+		int count = getInstallCount();
+		setAttribute( INSTALL_COUNT, count + 1 );
+	}
+
+	/**
+	 * Returns the <code>INSTALL_COUNT</code> attribute of this breakpoint
+	 * or 0 if the attribute is not set.
+	 */
+	public int getInstallCount() throws CoreException
+	{
+		return ensureMarker().getAttribute( INSTALL_COUNT, 0 );
+	}
+
+	/**
+	 * Decrements the install count of this breakpoint.
+	 */
+	public void decrementInstallCount() throws CoreException
+	{
+		int count = getInstallCount();
+		if ( count > 0 )
+		{
+			setAttribute( INSTALL_COUNT, count - 1 );
+		}
+	}
 }

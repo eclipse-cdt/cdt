@@ -1,3 +1,8 @@
+2004-11-23 Mikhail Khodjaiants
+	Workaround for bug 69728: IndexOutOfBoundsException in TextPresentation.
+	This bug is fixed in Eclipse 3.1.
+	* DisassemblyView.java
+
 2004-11-18 Mikhail Khodjaiants
 	Fix for bug 69184: Activate the Expression view when expression is added.
 	* AddExpressionEditorActionDelegate.java

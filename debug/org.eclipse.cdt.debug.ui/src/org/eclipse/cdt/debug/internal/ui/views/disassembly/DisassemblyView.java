@@ -459,8 +459,13 @@ public class DisassemblyView extends AbstractDebugEventHandlerView
 		}
 		getSourceViewer().setDocument( getDocumentProvider().getDocument( input ), 
 									   getDocumentProvider().getAnnotationModel( input ) );
-		if ( input instanceof DisassemblyEditorInput )
-			getSourceViewer().changeTextPresentation( createTextPresentation( ((DisassemblyEditorInput)input).getSourceRegions() ), true );
+		if ( input instanceof DisassemblyEditorInput ) {
+			// Workaround for bug #69728
+			IRegion[] sourceRegions = ((DisassemblyEditorInput)input).getSourceRegions();
+			if ( sourceRegions.length > 0 ) {
+				getSourceViewer().changeTextPresentation( createTextPresentation( sourceRegions ), true );
+			}
+		}
 		updateObjects();
 	}
 

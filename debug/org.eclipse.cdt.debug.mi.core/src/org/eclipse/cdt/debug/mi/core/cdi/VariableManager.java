@@ -303,9 +303,13 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		if (obj != null) {
 			// Check if the type is valid.
 			checkType(type);
-			VariableObject vo = new VariableObject(obj.getTarget(),
-			 obj.getQualifiedName(), obj.getStackFrame(), obj.getPosition(), obj.getStackDepth());
-			vo.setCastingType(type);
+			VariableObject vo =
+				new VariableObject(
+					obj.getTarget(),
+					obj.getQualifiedName(),
+					obj.getStackFrame(),
+					obj.getPosition(),
+					obj.getStackDepth());
 			vo.setCastingArrayStart(start);
 			vo.setCastingArrayEnd(length);
 			return vo;

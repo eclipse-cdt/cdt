@@ -13,11 +13,11 @@ import java.util.StringTokenizer;
 
 public class Spawner extends Process {
 
-	private int NOOP = 0;
-	private int HUP = 1;
-	private int INT = 2;
-	private int KILL = 9;
-	private int TERM = 15;
+	public int NOOP = 0;
+	public int HUP = 1;
+	public int INT = 2;
+	public int KILL = 9;
+	public int TERM = 15;
 
 	int pid = 0;
 	int status;
@@ -235,7 +235,7 @@ public class Spawner extends Process {
 
 	native int exec0( String[] cmdarray, String[] envp, String dir, int[] chan) throws IOException;
 	native int exec1( String[] cmdarray, String[] envp, String dir) throws IOException;
-	native int raise(int pid, int sig);
+	public native int raise(int pid, int sig);
 	native int waitFor(int pid);
 
 	static {

@@ -145,4 +145,10 @@ public class Configuration implements ICDIConfiguration {
 		return false;
 	}
 
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#terminateSessionOnExit()
+	 */
+	public boolean terminateSessionOnExit() {
+		return true;
+	}
 }

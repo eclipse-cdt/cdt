@@ -1,3 +1,13 @@
+2003-02-10 Mikhail Khodjaiants
+	The 'Auto-Refresh' and 'Refresh' actions added to the 'Shared Libraries' view.
+	* RefreshAction.java: new
+	* AutoRefreshAction.java: new
+	* RefreshMemoryAction.java
+	* AutoRefreshMemoryAction.java
+	* SharedLibrariesView.java
+	* CDebugImages.java
+	* ICDebugHelpContextIds.java
+
 2003-02-09 Alain Magloire
 
 	Changing the scope of methods to protected to let inner class

@@ -30,7 +30,7 @@ public class RefreshMemoryAction extends SelectionProviderAction implements IUpd
 	{
 		super( viewer, "Refresh" );
 		fMemoryViewer = viewer;
-		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_REFRESH_MEMORY );
+		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_REFRESH );
 		setDescription( "Refresh Memory Block" );
 		setToolTipText( "Refresh" );
 		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.REFRESH_MEMORY_ACTION );

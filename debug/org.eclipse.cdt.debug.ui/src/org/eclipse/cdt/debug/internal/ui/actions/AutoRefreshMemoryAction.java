@@ -30,7 +30,7 @@ public class AutoRefreshMemoryAction extends SelectionProviderAction implements 
 	{
 		super( viewer, "Auto-Refresh" );
 		fMemoryViewer = viewer;
-		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_AUTO_REFRESH_MEMORY );
+		CDebugImages.setLocalImageDescriptors( this, CDebugImages.IMG_LCL_AUTO_REFRESH );
 		setDescription( "Automatically Refresh Memory Block" );
 		setToolTipText( "Auto-Refresh" );
 		WorkbenchHelp.setHelp( this, ICDebugHelpContextIds.AUTO_REFRESH_MEMORY_ACTION );

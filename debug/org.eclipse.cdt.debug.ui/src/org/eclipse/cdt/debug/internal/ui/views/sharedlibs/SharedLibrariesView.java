@@ -9,14 +9,21 @@ import org.eclipse.cdt.debug.core.ICSharedLibraryManager;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
+import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
+import org.eclipse.cdt.debug.internal.ui.actions.AutoRefreshAction;
+import org.eclipse.cdt.debug.internal.ui.actions.RefreshAction;
+import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -35,6 +42,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Enter type comment.
@@ -132,6 +140,25 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	 */
 	protected void createActions()
 	{
+		IAction action = new AutoRefreshAction( getViewer(), "Auto-Refresh" );
+		CDebugImages.setLocalImageDescriptors( action, CDebugImages.IMG_LCL_AUTO_REFRESH );
+		action.setDescription( "Automatically Refresh Shared Libraries View" );
+		action.setToolTipText( "Auto-Refresh" );
+		WorkbenchHelp.setHelp( action, ICDebugHelpContextIds.AUTO_REFRESH_SHARED_LIBRARIES_ACTION );
+		action.setEnabled( false );
+		action.setChecked( CDebugUIPlugin.getDefault().getPreferenceStore().getBoolean( ICDebugPreferenceConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
+		setAction( "AutoRefresh", action ); //$NON-NLS-1$
+		add( (AutoRefreshAction)action );
+
+		action = new RefreshAction( getViewer(), "Refresh" );
+		CDebugImages.setLocalImageDescriptors( action, CDebugImages.IMG_LCL_REFRESH );
+		action.setDescription( "Refresh Shared Libraries View" );
+		action.setToolTipText( "Refresh" );
+		WorkbenchHelp.setHelp( action, ICDebugHelpContextIds.REFRESH_SHARED_LIBRARIES_ACTION );
+		action.setEnabled( false );
+		setAction( "Refresh", action ); //$NON-NLS-1$
+		add( (RefreshAction)action );
+
 		// set initial content here, as viewer has to be set
 		setInitialContent();
 	}
@@ -149,7 +176,13 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	 */
 	protected void fillContextMenu( IMenuManager menu )
 	{
+		menu.add( new Separator( ICDebugUIConstants.EMPTY_REFRESH_GROUP ) );
+		menu.add( new Separator( ICDebugUIConstants.REFRESH_GROUP ) );
+
 		menu.add( new Separator( IWorkbenchActionConstants.MB_ADDITIONS ) );
+
+		menu.appendToGroup( ICDebugUIConstants.REFRESH_GROUP, getAction( "AutoRefresh" ) ); //$NON-NLS-1$
+		menu.appendToGroup( ICDebugUIConstants.REFRESH_GROUP, getAction( "Refresh" ) ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -158,6 +191,9 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	protected void configureToolBar( IToolBarManager tbm )
 	{
 		tbm.add( new Separator( this.getClass().getName() ) );
+		tbm.add( new Separator( ICDebugUIConstants.REFRESH_GROUP ) );
+		tbm.add( getAction( "AutoRefresh" ) ); //$NON-NLS-1$
+		tbm.add( getAction( "Refresh" ) ); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

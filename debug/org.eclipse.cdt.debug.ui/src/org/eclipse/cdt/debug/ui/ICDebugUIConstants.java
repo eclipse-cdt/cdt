@@ -70,4 +70,16 @@ public interface ICDebugUIConstants
 	 * Identifier for a format group in a menu (value <code>"formatGroup"</code>).
 	 */
 	public static final String FORMAT_GROUP = "formatGroup"; //$NON-NLS-1$
+
+	/** 
+	 * Identifier for an empty group preceeding a
+	 * refresh group in a menu (value <code>"emptyRefreshGroup"</code>).
+	 */
+	public static final String EMPTY_REFRESH_GROUP = "emptyRefreshGroup"; //$NON-NLS-1$
+	
+	/**
+	 * Identifier for a refresh group in a menu (value <code>"refreshGroup"
+	 * </code>).
+	 */
+	public static final String REFRESH_GROUP = "refreshGroup"; //$NON-NLS-1$
 }

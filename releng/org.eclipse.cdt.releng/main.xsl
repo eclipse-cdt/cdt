@@ -30,7 +30,7 @@
 	
 				<!-- Download source from CVS -->
 				<xsl:for-each select="projects/plugin">
-					<cvs cvsroot=":pserver:anonymous@dev.eclipse.org:/home/tools" dest="build/plugins" quiet="true">
+					<cvs cvsroot=":pserver:anonymous@dev.eclipse.org:/home/tools" dest="build/plugins" quiet="true" tag="${{build.tag}}">
 						<xsl:attribute name="package">
 							<xsl:value-of select="@name"/>
 						</xsl:attribute>
@@ -38,7 +38,7 @@
 				</xsl:for-each>
 	
 				<xsl:for-each select="projects/feature">
-					<cvs cvsroot=":pserver:anonymous@dev.eclipse.org:/home/tools" dest="build/features" quiet="true">
+					<cvs cvsroot=":pserver:anonymous@dev.eclipse.org:/home/tools" dest="build/features" quiet="true" tag="${{build.tag}}">
 						<xsl:attribute name="package">
 							<xsl:value-of select="@name"/>
 							<xsl:text>-feature</xsl:text>
@@ -251,7 +251,9 @@
 				<move file="s" tofile="site.xml"/>
 		
 				<!-- Generate the site home page -->
-				<xslt in="site.xml" out="index.html" style="index.xsl"/>
+				<xslt in="site.xml" out="index.html" style="index.xsl">
+					<param name="branch" expression="${{build.branch}}"/>
+				</xslt>
 		
 			</target>
 	

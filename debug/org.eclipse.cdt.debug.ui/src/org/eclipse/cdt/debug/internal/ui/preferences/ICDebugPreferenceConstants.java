@@ -13,16 +13,11 @@ package org.eclipse.cdt.debug.internal.ui.preferences;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 
 /**
- * 
  * Constants defining the keys to be used for accessing preferences inside the debug ui plugin's preference bundle.
- * 
- * In descriptions (of the keys) below describe the preference stored at the given key. The type indicates type of the stored preferences
- * 
+ * In descriptions (of the keys) below describe the preference stored at the given key. 
+ * The type indicates type of the stored preferences
  * The preference store is loaded by the plugin (CDebugUIPlugin).
- * 
  * @see CDebugUIPlugin.initializeDefaultPreferences(IPreferenceStore) - for initialization of the store
- * 
- * @since Jul 23, 2002
  */
 public interface ICDebugPreferenceConstants {
 
@@ -40,4 +35,15 @@ public interface ICDebugPreferenceConstants {
 	 * Boolean preference controlling whether primitive types types display char values.
 	 */
 	public static final String PREF_SHOW_CHAR_VALUES = ICDebugUIConstants.PLUGIN_ID + ".cDebug.showCharValues"; //$NON-NLS-1$
+
+	/**
+	 * The orientation of the detail view in the ModulesView
+	 */
+	public static final String MODULES_DETAIL_PANE_ORIENTATION = "Modules.detail.orientation"; //$NON-NLS-1$
+
+	public static final String MODULES_DETAIL_PANE_RIGHT = "Modules.detail.orientation.right"; //$NON-NLS-1$
+
+	public static final String MODULES_DETAIL_PANE_UNDERNEATH = "Modules.detail.orientation.underneath"; //$NON-NLS-1$
+
+	public static final String MODULES_DETAIL_PANE_HIDDEN = "Modules.detail.orientation.hidden"; //$NON-NLS-1$
 }

@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
-import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
+import org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
 import org.eclipse.cdt.debug.internal.ui.EvaluationContextManager;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
@@ -100,8 +100,8 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		return ColorManager.getDefault().getColor( PreferenceConverter.getColor( getDefault().getPreferenceStore(), type ) );
 	}
 
-	public static CDTDebugModelPresentation getDebugModelPresentation() {
-		return CDTDebugModelPresentation.getDefault();
+	public static CDebugModelPresentation getDebugModelPresentation() {
+		return CDebugModelPresentation.getDefault();
 	}
 
 	/**

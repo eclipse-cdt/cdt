@@ -1,4 +1,29 @@
 2005-02-07 Mikhail Khodjaiants
+	Bug 82264: Enhance the Shared Libraries view.
+	* CDebugUIMessages.properties
+	* CDebugImages.java
+	* CDebugModelPresentation.java
+	* CDTDebugModelPresentation.java: removed
+	* ICDebugHelpContextIds.java
+	* ActionMessages.properties
+	* CollapseAllModulesAction.java: new
+	* ToggleDetailPaneAction.java: new
+	* ICDebugPreferenceConstants.java
+	* DebugViewDecoratingLabelProvider.java: new
+	* DebugViewInterimLabelProvider.java: new
+	* DebugViewLabelDecorator.java: new
+	* org.eclipse.cdt.debug.internal.ui.views.modules: new package
+	* ModulesMessages.properties: new
+	* ModulesMessages.java: new
+	* ModulesView.java: new
+	* ModulesViewContentProvider.java: new
+	* ModulesViewer.java: new
+	* ModulesViewEventHandler.java: new
+	* CDebugUIPlugin.java
+	* plugin.xml
+	* plugin.properties
+
+2005-02-07 Mikhail Khodjaiants
 	Added images for the "Collapse All" action of the modules view.
 	* icons\full\clcl16\collapseall.gif
 	* icons\full\dlcl16\collapseall.gif

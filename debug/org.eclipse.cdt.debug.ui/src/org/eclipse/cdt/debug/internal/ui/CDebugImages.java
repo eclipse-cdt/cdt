@@ -95,7 +95,9 @@ public class CDebugImages
 	public static final String IMG_OBJS_PROJECT = NAME_PREFIX + "project_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_CLOSED_PROJECT = NAME_PREFIX + "cproject_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_FOLDER = NAME_PREFIX + "folder_obj.gif";	//$NON-NLS-1$
-	public static final String IMG_OBJS_LOADED_SHARED_LIBRARY = NAME_PREFIX + "library_syms_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_EXECUTABLE_WITH_SYMBOLS = NAME_PREFIX + "exec_dbg_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_EXECUTABLE = NAME_PREFIX + "exec_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_SHARED_LIBRARY_WITH_SYMBOLS = NAME_PREFIX + "library_syms_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_SHARED_LIBRARY = NAME_PREFIX + "library_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_SIGNAL = NAME_PREFIX + "signal_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_WORKSPACE_SOURCE_FILE = NAME_PREFIX + "prj_file_obj.gif";	//$NON-NLS-1$
@@ -112,6 +114,10 @@ public class CDebugImages
 	public static final String IMG_LCL_CAST_TO_TYPE = NAME_PREFIX + "casttotype_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_DISPLAY_AS_ARRAY = NAME_PREFIX + "showasarray_co.gif";	//$NON-NLS-1$
 	public static final String IMG_LCL_RESUME_AT_LINE = NAME_PREFIX + "jump_co.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_DETAIL_PANE_UNDER = NAME_PREFIX + "det_pane_under.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_DETAIL_PANE_RIGHT = NAME_PREFIX + "det_pane_right.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_DETAIL_PANE_HIDE = NAME_PREFIX + "det_pane_hide.gif";	//$NON-NLS-1$
+	public static final String IMG_LCL_COLLAPSE_ALL = NAME_PREFIX + "collapseall.gif";	//$NON-NLS-1$
 
 	public static final String IMG_TOOLS_ADD_DIR_SOURCE_LOCATION = NAME_PREFIX + "adddirsource_wiz.gif";	//$NON-NLS-1$
 	public static final String IMG_TOOLS_ADD_PRJ_SOURCE_LOCATION = NAME_PREFIX + "addprjsource_wiz.gif";	//$NON-NLS-1$
@@ -128,6 +134,7 @@ public class CDebugImages
 	private static final String T_WIZBAN = "wizban"; //$NON-NLS-1$
 	private static final String T_LCL = "lcl16"; //$NON-NLS-1$
 	private static final String T_CLCL = "clcl16"; //$NON-NLS-1$
+	private static final String T_ELCL = "elcl16"; //$NON-NLS-1$
 	private static final String T_DLCL = "dlcl16"; //$NON-NLS-1$
 	private static final String T_CTOOL = "ctool16"; //$NON-NLS-1$
 //	private static final String T_CVIEW = "cview16"; //$NON-NLS-1$
@@ -171,7 +178,9 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OBJS_PROJECT = createManaged( T_OBJ, IMG_OBJS_PROJECT );
 	public static final ImageDescriptor DESC_OBJS_CLOSED_PROJECT = createManaged( T_OBJ, IMG_OBJS_CLOSED_PROJECT );
 	public static final ImageDescriptor DESC_OBJS_FOLDER = createManaged( T_OBJ, IMG_OBJS_FOLDER );
-	public static final ImageDescriptor DESC_OBJS_LOADED_SHARED_LIBRARY = createManaged( T_OBJ, IMG_OBJS_LOADED_SHARED_LIBRARY );
+	public static final ImageDescriptor DESC_OBJS_EXECUTABLE_WITH_SYMBOLS = createManaged( T_OBJ, IMG_OBJS_EXECUTABLE_WITH_SYMBOLS );
+	public static final ImageDescriptor DESC_OBJS_EXECUTABLE = createManaged( T_OBJ, IMG_OBJS_EXECUTABLE );
+	public static final ImageDescriptor DESC_OBJS_SHARED_LIBRARY_WITH_SYMBOLS = createManaged( T_OBJ, IMG_OBJS_SHARED_LIBRARY_WITH_SYMBOLS );
 	public static final ImageDescriptor DESC_OBJS_SHARED_LIBRARY = createManaged( T_OBJ, IMG_OBJS_SHARED_LIBRARY );
 	public static final ImageDescriptor DESC_OBJS_SIGNAL = createManaged( T_OBJ, IMG_OBJS_SIGNAL );
 	public static final ImageDescriptor DESC_OBJS_WORKSPACE_SOURCE_FILE = createManaged( T_OBJ, IMG_OBJS_WORKSPACE_SOURCE_FILE );
@@ -185,6 +194,14 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_LCL_DISPLAY_AS_ARRAY = createManaged( T_CLCL, IMG_LCL_DISPLAY_AS_ARRAY );
 	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE = createManaged( T_CLCL, IMG_LCL_RESUME_AT_LINE );
 	public static final ImageDescriptor DESC_LCL_RESUME_AT_LINE_DISABLED = createManaged( T_DLCL, IMG_LCL_RESUME_AT_LINE );
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_UNDER = createManaged( T_ELCL, IMG_LCL_DETAIL_PANE_UNDER );
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_UNDER_DISABLED = createManaged( T_DLCL, IMG_LCL_DETAIL_PANE_UNDER );
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_RIGHT = createManaged( T_ELCL, IMG_LCL_DETAIL_PANE_RIGHT );
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_RIGHT_DISABLED = createManaged( T_DLCL, IMG_LCL_DETAIL_PANE_RIGHT );
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_HIDE = createManaged( T_ELCL, IMG_LCL_DETAIL_PANE_HIDE );
+	public static final ImageDescriptor DESC_LCL_DETAIL_PANE_HIDE_DISABLED = createManaged( T_DLCL, IMG_LCL_DETAIL_PANE_HIDE );
+	public static final ImageDescriptor DESC_LCL_COLLAPSE_ALL = createManaged( T_ELCL, IMG_LCL_COLLAPSE_ALL );
+	public static final ImageDescriptor DESC_LCL_COLLAPSE_ALL_DISABLED = createManaged( T_DLCL, IMG_LCL_COLLAPSE_ALL );
 
 	/**
 	 * Returns the image managed under the given key in this registry.

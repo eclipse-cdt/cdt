@@ -48,10 +48,12 @@ public interface ICDebugHelpContextIds
 	public static final String TOGGLE_BREAKPOINT_ACTION = PREFIX + "manage_breakpoint_action_context"; //$NON-NLS-1$
 	public static final String ENABLE_DISABLE_BREAKPOINT_ACTION = PREFIX + "enable_disable_breakpoint_action_context"; //$NON-NLS-1$
 	public static final String BREAKPOINT_PROPERTIES_ACTION = PREFIX + "breakpoint_properties_action_context"; //$NON-NLS-1$
+	public static final String SHOW_DETAIL_PANE_ACTION = PREFIX + "show_detail_pane_action_context"; //$NON-NLS-1$
 
 	// Views
 	public static final String MEMORY_VIEW = PREFIX + "memory_view_context"; //$NON-NLS-1$
 	public static final String SHARED_LIBRARIES_VIEW = PREFIX + "shared_libraries_view_context"; //$NON-NLS-1$
+	public static final String MODULES_VIEW = PREFIX + "modules_view_context"; //$NON-NLS-1$
 	public static final String SIGNALS_VIEW = PREFIX + "signals_view_context"; //$NON-NLS-1$
 	public static final String DISASSEMBLY_VIEW = PREFIX + "disassembly_view_context"; //$NON-NLS-1$
 

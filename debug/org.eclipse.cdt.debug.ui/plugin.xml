@@ -34,7 +34,7 @@
    <extension
          point="org.eclipse.debug.ui.debugModelPresentations">
       <debugModelPresentation
-            class="org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation"
+            class="org.eclipse.cdt.debug.internal.ui.CDebugModelPresentation"
             id="org.eclipse.cdt.debug.core">
       </debugModelPresentation>
    </extension>
@@ -61,6 +61,12 @@
             class="org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView"
             id="org.eclipse.cdt.debug.ui.DisassemblyView">
       </view>
+      <view
+            icon="icons/full/cview16/modules_view.gif"
+            class="org.eclipse.cdt.debug.internal.ui.views.modules.ModulesView"
+            category="org.eclipse.debug.ui"
+            name="%ModulesView.name"
+            id="org.eclipse.cdt.debug.ui.ModulesView"/>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -102,6 +108,12 @@
          <actionSet
                id="org.eclipse.cdt.debug.ui.debugActionSet">
          </actionSet>
+         <view
+               visible="false"
+               relative="org.eclipse.debug.ui.VariableView"
+               relationship="stack"
+               id="org.eclipse.cdt.debug.ui.ModulesView"/>
+         <viewShortcut id="org.eclipse.cdt.debug.ui.ModulesView"/>
       </perspectiveExtension>
    </extension>
    <extension
@@ -885,6 +897,21 @@
             <separator name="refreshGroup"/>
             <separator name="emptyRefreshGroup"/>
          </menu>
+      </viewContribution>
+      <viewContribution
+            targetID="org.eclipse.cdt.debug.ui.ModulesView"
+            id="org.eclipse.debug.ui.modulesView.toolbar">
+         <action
+               helpContextId="collapse_all_modules_context"
+               disabledIcon="icons/full/dlcl16/collapseall.gif"
+               hoverIcon="icons/full/clcl16/collapseall.gif"
+               toolbarPath="additions"
+               label="%CollapseAllModulesAction.label"
+               tooltip="%CollapseAllModulesAction.tooltip"
+               icon="icons/full/elcl16/collapseall.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.CollapseAllModulesAction"
+               style="push"
+               id="org.eclipse.cdt.debug.ui.CollapseAllModulesAction"/>
       </viewContribution>
    </extension>
    <extension

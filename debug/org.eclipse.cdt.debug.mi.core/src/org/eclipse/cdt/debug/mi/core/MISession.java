@@ -288,7 +288,7 @@ public class MISession extends Observable {
 			// REMINDER: if we support -exec-interrupt
 			// Let it throught:
 			// if (cmd instanceof MIExecInterrupt) { }
-			throw new MIException("Target running");
+			throw new MIException("Target is not suspended");
 		}
 
 		txQueue.addCommand(cmd);
@@ -301,7 +301,7 @@ public class MISession extends Observable {
 				try {
 					cmd.wait(timeout);
 					if (cmd.getMIOutput() == null) {
-						throw new MIException("Timedout");
+						throw new MIException("Target is not responding (timed out)");
 					}
 				} catch (InterruptedException e) {
 				}

@@ -1,3 +1,8 @@
+2003-04-07 Mikhail Khodjaiants
+	Changed the messages of CDI exceptions.
+	* MISession.java
+	* Target.java
+
 2003-04-04 Alain Magloire
 
 	Code from Monta Vista to add a Session via GDBServer.

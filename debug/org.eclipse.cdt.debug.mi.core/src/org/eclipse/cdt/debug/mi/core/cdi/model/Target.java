@@ -87,7 +87,7 @@ public class Target  implements ICDITarget {
 		if (cthread instanceof Thread) {
 			setCurrentThread(cthread, true);
 		} else {
-			throw new CDIException("unknown thread");
+			throw new CDIException("Unknown thread");
 		}
 	}
 	
@@ -95,7 +95,7 @@ public class Target  implements ICDITarget {
 		if (cthread instanceof Thread) {
 			setCurrentThread((Thread)cthread, doUpdate);
 		} else {
-			throw new CDIException("unknown thread");
+			throw new CDIException("Unknown thread");
 		}
 	}
 
@@ -119,7 +119,7 @@ public class Target  implements ICDITarget {
 				mi.postCommand(select);
 				MIThreadSelectInfo info = select.getMIThreadSelectInfo();
 				if (info == null) {
-					throw new CDIException("No Answer");
+					throw new CDIException("Target is not responding");
 				}
 				currentThreadId = info.getNewThreadId();
 			} catch (MIException e) {
@@ -307,7 +307,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(run);
 			MIInfo info = run.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -321,7 +321,7 @@ public class Target  implements ICDITarget {
 	public void resume() throws CDIException {
 		MISession mi = session.getMISession();
 		if (mi.getMIInferior().isRunning()) {
-			throw new CDIException("Inferior already running");
+			throw new CDIException("Inferior is already running");
 		} else if (mi.getMIInferior().isSuspended()) {
 			CommandFactory factory = mi.getCommandFactory();
 			MIExecContinue cont = factory.createMIExecContinue();
@@ -329,7 +329,7 @@ public class Target  implements ICDITarget {
 				mi.postCommand(cont);
 				MIInfo info = cont.getMIInfo();
 				if (info == null) {
-					throw new CDIException("No answer");
+					throw new CDIException("Target is not responding");
 				}
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
@@ -353,7 +353,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(step);
 			MIInfo info = step.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -372,7 +372,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(stepi);
 			MIInfo info = stepi.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -391,7 +391,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(next);
 			MIInfo info = next.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -410,7 +410,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(nexti);
 			MIInfo info = nexti.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -446,7 +446,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(finish);
 			MIInfo info = finish.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -464,7 +464,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(ret);
 			MIInfo info = ret.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -488,7 +488,7 @@ public class Target  implements ICDITarget {
 				}
 			}
 			if (isRunning()) {
-				throw new CDIException("Failed to suspend");
+				throw new CDIException("Unable to suspend target");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -506,7 +506,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(detach);
 			MIInfo info = detach.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -537,7 +537,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(until);
 			MIInfo info = until.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -565,7 +565,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(jump);
 			MIInfo info = jump.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -587,7 +587,7 @@ public class Target  implements ICDITarget {
 			MIDataEvaluateExpressionInfo info =
 				evaluate.getMIDataEvaluateExpressionInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 			return info.getExpression();
 		} catch (MIException e) {
@@ -646,7 +646,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(signal);
 			MIInfo info = signal.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
@@ -665,7 +665,7 @@ public class Target  implements ICDITarget {
 			mi.postCommand(sig);
 			MIInfo info = sig.getMIInfo();
 			if (info == null) {
-				throw new CDIException("No answer");
+				throw new CDIException("Target is not responding");
 			}
 		} catch (MIException e) {
 			throw new MI2CDIException(e);

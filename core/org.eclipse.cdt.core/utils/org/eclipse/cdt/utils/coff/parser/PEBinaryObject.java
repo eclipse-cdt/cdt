@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
+import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.Symbol;
@@ -31,18 +34,36 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 
 	BinaryObjectInfo info;
 	ISymbol[] symbols;
+	AR.ARHeader header;
 
-	public PEBinaryObject(IBinaryParser parser, IPath path) {
-		super(parser, path);
+	public PEBinaryObject(IBinaryParser parser, IPath path, AR.ARHeader header) {
+		super(parser, path, IBinaryFile.OBJECT);
 	}
-
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getType()
+	
+	public PEBinaryObject(IBinaryParser parser, IPath p, int type) {
+		super(parser, p, type);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
 	 */
-	public int getType() {
-		return IBinaryFile.OBJECT;
-	}
+	public String getName() {
+		if (header != null) {
+			return header.getObjectName();
+		}
+		return super.getName();
+	}	
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
+	 */
+	public InputStream getContents() throws IOException {
+		if (getPath() != null && header != null) {
+			return new ByteArrayInputStream(header.getObjectData());
+		}
+		return super.getContents();
+	}
+	
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getSymbols()
 	 */
@@ -74,6 +95,9 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected PE getPE() throws IOException {
+		if (header != null) {
+			return new PE(getPath().toOSString(), header.getObjectDataOffset());
+		}
 		return new PE(getPath().toOSString());
 	}
 

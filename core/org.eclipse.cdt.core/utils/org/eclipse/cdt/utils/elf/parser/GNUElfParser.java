@@ -12,19 +12,16 @@ package org.eclipse.cdt.utils.elf.parser;
 
 import java.io.IOException;
 
-import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.utils.Addr2line;
-import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.DefaultGnuToolFactory;
 import org.eclipse.cdt.utils.IGnuToolFactory;
-import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * GNUElfParser
  */
-public class GNUElfParser extends ElfParser implements IGnuToolFactory {
-
+public class GNUElfParser extends ElfParser {
+	private IGnuToolFactory toolFactory; 
+	
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser#getFormat()
 	 */
@@ -36,147 +33,56 @@ public class GNUElfParser extends ElfParser implements IGnuToolFactory {
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryCore(org.eclipse.core.runtime.IPath)
 	 */
 	protected IBinaryObject createBinaryCore(IPath path) throws IOException {
-		return new GNUElfBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.CORE;
-			}
-		};
+		return new GNUElfBinaryObject(this, path, IBinaryFile.CORE);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryExecutable(org.eclipse.core.runtime.IPath)
 	 */
 	protected IBinaryExecutable createBinaryExecutable(IPath path) throws IOException {
-		return new GNUElfBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.EXECUTABLE;
-			}
-		};
+		return new GNUElfBinaryExecutable(this, path);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryObject(org.eclipse.core.runtime.IPath)
 	 */
 	protected IBinaryObject createBinaryObject(IPath path) throws IOException {
-		return new GNUElfBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.OBJECT;
-			}
-		};
+		return new GNUElfBinaryObject(this, path, IBinaryFile.OBJECT);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryShared(org.eclipse.core.runtime.IPath)
 	 */
 	protected IBinaryShared createBinaryShared(IPath path) throws IOException {
-		return new GNUElfBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.SHARED;
-			}
-		};
+		return new GNUElfBinaryShared(this, path);
 	}
 
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getAddr2line(org.eclipse.core.runtime.IPath)
+	 * @see org.eclipse.cdt.utils.elf.parser.ElfParser#createBinaryArchive(org.eclipse.core.runtime.IPath)
 	 */
-	public Addr2line getAddr2line(IPath path) {
-		IPath addr2LinePath = getAddr2linePath();
-		Addr2line addr2line = null;
-		if (addr2LinePath != null && !addr2LinePath.isEmpty()) {
-			try {
-				addr2line = new Addr2line(addr2LinePath.toOSString(), path.toOSString());
-			} catch (IOException e1) {
-			}
-		}
-		return addr2line;
+	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
+		return new GNUElfBinaryArchive(this, path);
 	}
-
+	
+	/**
+	 * @return
+	 */
+	protected IGnuToolFactory createGNUToolFactory() {
+		return new DefaultGnuToolFactory(this);
+	}
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getCPPFilt()
+	 * @see org.eclipse.core.runtime.PlatformObject#getAdapter(java.lang.Class)
 	 */
-	public CPPFilt getCPPFilt() {
-		IPath cppFiltPath = getCPPFiltPath();
-		CPPFilt cppfilt = null;
-		if (cppFiltPath != null && ! cppFiltPath.isEmpty()) {
-			try {
-				cppfilt = new CPPFilt(cppFiltPath.toOSString());
-			} catch (IOException e2) {
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(IGnuToolFactory.class)) {
+			if (toolFactory == null) {
+				toolFactory = createGNUToolFactory();
 			}
+			return toolFactory;
 		}
-		return cppfilt;
+		// TODO Auto-generated method stub
+		return super.getAdapter(adapter);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolProvider#getObjdump(org.eclipse.core.runtime.IPath)
-	 */
-	public Objdump getObjdump(IPath path) {
-		IPath objdumpPath = getObjdumpPath();
-		String objdumpArgs = getObjdumpArgs();
-		Objdump objdump = null;
-		if (objdumpPath != null && !objdumpPath.isEmpty()) {
-			try {
-				objdump = new Objdump(objdumpPath.toOSString(), objdumpArgs, path.toOSString());
-			} catch (IOException e1) {
-			}
-		}
-		return objdump;
-	}
-	
-	protected IPath getAddr2linePath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("addr2line"); //$NON-NLS-1$
-		if (value == null || value.length() == 0) {
-			value = "addr2line"; //$NON-NLS-1$
-		}
-		return new Path(value);
-	}
-
-	protected IPath getObjdumpPath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("objdump"); //$NON-NLS-1$
-		if (value == null || value.length() == 0) {
-			value = "objdump"; //$NON-NLS-1$
-		}
-		return new Path(value);
-	}
-	
-	protected String getObjdumpArgs() {
-		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("objdumpArgs"); //$NON-NLS-1$
-		if (value == null || value.length() == 0) {
-			value = ""; //$NON-NLS-1$
-		}
-		return value;
-	}
-	
-	protected IPath getCPPFiltPath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1$
-		if (value == null || value.length() == 0) {
-			value = "c++filt"; //$NON-NLS-1$
-		}
-		return new Path(value);
-	}
-
-	protected IPath getStripPath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value = ref.getExtensionData("strip"); //$NON-NLS-1$
-		if (value == null || value.length() == 0) {
-			value = "strip"; //$NON-NLS-1$
-		}
-		return new Path(value);
-	}
-	
 }

@@ -14,23 +14,23 @@ package org.eclipse.cdt.utils.coff.parser;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.BinaryFile;
-import org.eclipse.cdt.utils.coff.PEArchive;
+import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class BinaryArchive extends BinaryFile implements IBinaryArchive {
+public class PEBinaryArchive extends BinaryFile implements IBinaryArchive {
 
 	ArrayList children;
 	
-	public BinaryArchive(IBinaryParser parser, IPath path) throws IOException {
-		super(parser, path);
-		new PEArchive(path.toOSString()).dispose(); // check file type
+	public PEBinaryArchive(PEParser parser, IPath path) throws IOException {
+		super(parser, path, IBinaryFile.ARCHIVE);
+		new AR(path.toOSString()).dispose(); // check file type
 		children = new ArrayList(5);
 	}
 
@@ -40,14 +40,11 @@ public class BinaryArchive extends BinaryFile implements IBinaryArchive {
 	public IBinaryObject[] getObjects() {
 		if (hasChanged()) {
 			children.clear();
-			PEArchive ar = null;
+			AR ar = null;
 			try {
-				ar = new PEArchive(getPath().toOSString());
-				PEArchive.ARHeader[] headers = ar.getHeaders();
-				for (int i = 0; i < headers.length; i++) {
-					IBinaryObject bin = new ARMember(getBinaryParser(), path, headers[i]);
-					children.add(bin);
-				}
+				ar = new AR(getPath().toOSString());
+				AR.ARHeader[] headers = ar.getHeaders();
+				addArchiveMembers(headers, children);
 			} catch (IOException e) {
 				//e.printStackTrace();
 			}
@@ -56,13 +53,17 @@ public class BinaryArchive extends BinaryFile implements IBinaryArchive {
 			}
 			children.trimToSize();
 		}
-		return (IBinaryObject[])children.toArray(new IBinaryObject[0]);
+		return (IBinaryObject[]) children.toArray(new IBinaryObject[0]);
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getType()
+	 * @param headers
+	 * @param children2
 	 */
-	public int getType() {
-		return IBinaryFile.ARCHIVE;
+	protected void addArchiveMembers(ARHeader[] headers, ArrayList children2) {
+		for (int i = 0; i < headers.length; i++) {
+			IBinaryObject bin = new PEBinaryObject(getBinaryParser(), getPath(), headers[i]);
+			children.add(bin);
+		}
 	}
 }

@@ -24,7 +24,9 @@ import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
+import org.eclipse.cdt.utils.xcoff.AR;
 import org.eclipse.cdt.utils.xcoff.XCoff32;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -38,15 +40,27 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	Addr2line addr2line;
 	BinaryObjectInfo info;
 	ISymbol[] symbols;
+	long starttime;
+	private AR.MemberHeader header;
 
 	/**
 	 * @param parser
 	 * @param path
+	 * @param type
 	 */
-	public XCOFFBinaryObject(IBinaryParser parser, IPath path) {
-		super(parser, path);
+	public XCOFFBinaryObject(IBinaryParser parser, IPath path, int type) {
+		super(parser, path, type);
 	}
 
+	/**
+	 * @param parser
+	 * @param path
+	 * @param header
+	 */
+	public XCOFFBinaryObject(IBinaryParser parser, IPath path, AR.MemberHeader header) {
+		super(parser, path, IBinaryFile.OBJECT);
+		this.header = header;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -78,29 +92,31 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		}
 		return info;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getType()
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
 	 */
-	public int getType() {
-		return IBinaryFile.OBJECT;
+	public String getName() {
+		if (header != null) {
+			return header.getObjectName();
+		}
+		return super.getName();
 	}
 	
 	/**
+	 * @throws IOException
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
 	 */
-	public InputStream getContents() {
+	public InputStream getContents() throws IOException {
 		InputStream stream = null;
+		if (getPath() != null && header != null) {
+			return new ByteArrayInputStream(header.getObjectData());
+		}
 		Objdump objdump = getObjdump();
 		if (objdump != null) {
-			try {
-				byte[] contents = objdump.getOutput();
-				stream = new ByteArrayInputStream(contents);
-			} catch (IOException e) {
-				// Nothing
-			}
+			byte[] contents = objdump.getOutput();
+			stream = new ByteArrayInputStream(contents);
 		}
 		if (stream == null) {
 			stream = super.getContents();
@@ -109,6 +125,9 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected XCoff32 getXCoff32() throws IOException {
+		if (header != null) {
+			return new XCoff32(getPath().toOSString(), header.getObjectDataOffset());
+		}
 		return new XCoff32(getPath().toOSString());
 	}
 
@@ -210,25 +229,24 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 
 	public Addr2line getAddr2line(boolean autodisposing) {
 		if (!autodisposing) {
-			XCOFF32Parser parser = (XCOFF32Parser) getBinaryParser();
-			return parser.getAddr2line(getPath());
+			return getAddr2line();
 		}
 		if (addr2line == null) {
 			XCOFF32Parser parser = (XCOFF32Parser) getBinaryParser();
-			addr2line = parser.getAddr2line(getPath());
+			addr2line = getAddr2line();
 			if (addr2line != null) {
-				timestamp = System.currentTimeMillis();
+				starttime = System.currentTimeMillis();
 				Runnable worker = new Runnable() {
 
 					public void run() {
-						long diff = System.currentTimeMillis() - timestamp;
+						long diff = System.currentTimeMillis() - starttime;
 						while (diff < 10000) {
 							try {
 								Thread.sleep(10000);
 							} catch (InterruptedException e) {
 								break;
 							}
-							diff = System.currentTimeMillis() - timestamp;
+							diff = System.currentTimeMillis() - starttime;
 						}
 						stopAddr2Line();
 					}
@@ -236,7 +254,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 				new Thread(worker, "Addr2line Reaper").start(); //$NON-NLS-1$
 			}
 		} else {
-			timestamp = System.currentTimeMillis();
+			starttime = System.currentTimeMillis();
 		}
 		return addr2line;
 	}
@@ -248,14 +266,31 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		addr2line = null;
 	}
 
-	protected CPPFilt getCPPFilt() {
-		XCOFF32Parser parser = (XCOFF32Parser) getBinaryParser();
-		return parser.getCPPFilt();
+	/**
+	 * @return
+	 */
+	private Addr2line getAddr2line() {
+		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		if (factory != null) {
+			return factory.getAddr2line(getPath());
+		}
+		return null;
 	}
 
-	protected Objdump getObjdump() {
-		XCOFF32Parser parser = (XCOFF32Parser) getBinaryParser();
-		return parser.getObjdump(getPath());
+	private CPPFilt getCPPFilt() {
+		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		if (factory != null) {
+			return factory.getCPPFilt();
+		}
+		return null;
+	}
+
+	private Objdump getObjdump() {
+		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		if (factory != null) {
+			return factory.getObjdump(getPath());
+		}
+		return null;
 	}
 	
 	/*
@@ -265,7 +300,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == Addr2line.class) {
-			return getAddr2line(false);
+			return getAddr2line();
 		} else if (adapter == CPPFilt.class) {
 			return getCPPFilt();
 		}

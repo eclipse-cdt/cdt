@@ -16,16 +16,13 @@ import java.util.Arrays;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryExecutable;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
-import org.eclipse.cdt.core.IBinaryParser.IBinaryShared;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
 import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryObject,
-	IBinaryExecutable, IBinaryShared {
+public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryObject {
 
 	protected ISymbol[] NO_SYMBOLS = new ISymbol[0];
 
@@ -46,8 +43,8 @@ public abstract class BinaryObjectAdapter extends BinaryFile implements IBinaryO
 		}
 	}
 
-	public BinaryObjectAdapter(IBinaryParser parser, IPath path) {
-		super(parser, path);
+	public BinaryObjectAdapter(IBinaryParser parser, IPath path, int type) {
+		super(parser, path, type);
 	}
 
 	/* (non-Javadoc)

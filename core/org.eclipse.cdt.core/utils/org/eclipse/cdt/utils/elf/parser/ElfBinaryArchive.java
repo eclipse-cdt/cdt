@@ -17,18 +17,19 @@ import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.BinaryFile;
-import org.eclipse.cdt.utils.elf.AR;
+import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class BinaryArchive extends BinaryFile implements IBinaryArchive {
+public class ElfBinaryArchive extends BinaryFile implements IBinaryArchive {
 
 	ArrayList children;
 
-	public BinaryArchive(IBinaryParser parser, IPath p) throws IOException {
-		super(parser, p);
+	public ElfBinaryArchive(IBinaryParser parser, IPath p) throws IOException {
+		super(parser, p, IBinaryFile.ARCHIVE);
 		new AR(p.toOSString()).dispose(); // check file type
 		children = new ArrayList(5);
 	}
@@ -43,10 +44,7 @@ public class BinaryArchive extends BinaryFile implements IBinaryArchive {
 			try {
 				ar = new AR(getPath().toOSString());
 				AR.ARHeader[] headers = ar.getHeaders();
-				for (int i = 0; i < headers.length; i++) {
-					IBinaryObject bin = new ARMember(getBinaryParser(), getPath(), headers[i]);
-					children.add(bin);
-				}
+				addArchiveMembers(headers, children);
 			} catch (IOException e) {
 				//e.printStackTrace();
 			}
@@ -59,9 +57,13 @@ public class BinaryArchive extends BinaryFile implements IBinaryArchive {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getType()
+	 * @param headers
+	 * @param children2
 	 */
-	public int getType() {
-		return IBinaryFile.ARCHIVE;
+	protected void addArchiveMembers(ARHeader[] headers, ArrayList children2) {
+		for (int i = 0; i < headers.length; i++) {
+			IBinaryObject bin = new ElfBinaryObject(getBinaryParser(), getPath(), headers[i]);
+			children.add(bin);
+		}
 	}
 }

@@ -15,10 +15,14 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
+import org.eclipse.cdt.utils.AR.ARHeader;
 import org.eclipse.cdt.utils.elf.Elf;
+import org.eclipse.cdt.utils.elf.ElfHelper;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -27,37 +31,49 @@ import org.eclipse.core.runtime.Path;
  */
 public class GNUElfBinaryObject extends ElfBinaryObject {
 
-	private Addr2line addr2line;
+	private Addr2line autoDisposeAddr2line;
+	private Addr2line symbolLoadingAddr2line;
+	private CPPFilt symbolLoadingCPPFilt;
+	long starttime;
+	
+	/**
+	 * @param parser
+	 * @param path
+	 * @param header
+	 */
+	public GNUElfBinaryObject(IBinaryParser parser, IPath path, ARHeader header) {
+		super(parser, path, header);
+	}
 
 	/**
 	 * @param parser
 	 * @param path
+	 * @param type
 	 */
-	public GNUElfBinaryObject(GNUElfParser parser, IPath path) {
-		super(parser, path);
+	public GNUElfBinaryObject(IBinaryParser parser, IPath path, int type) {
+		super(parser, path, type);
 	}
 
 	public Addr2line getAddr2line(boolean autodisposing) {
 		if (!autodisposing) {
-			GNUElfParser parser = (GNUElfParser) getBinaryParser();
-			return parser.getAddr2line(getPath());
+			return getAddr2line();
 		}
-		if (addr2line == null) {
-			GNUElfParser parser = (GNUElfParser) getBinaryParser();
-			addr2line = parser.getAddr2line(getPath());
-			if (addr2line != null) {
-				timestamp = System.currentTimeMillis();
+		if (autoDisposeAddr2line == null) {
+			autoDisposeAddr2line = getAddr2line();
+			if (autoDisposeAddr2line != null) {
+				starttime = System.currentTimeMillis();
 				Runnable worker = new Runnable() {
 
 					public void run() {
-						long diff = System.currentTimeMillis() - timestamp;
+
+						long diff = System.currentTimeMillis() - starttime;
 						while (diff < 10000) {
 							try {
 								Thread.sleep(10000);
 							} catch (InterruptedException e) {
 								break;
 							}
-							diff = System.currentTimeMillis() - timestamp;
+							diff = System.currentTimeMillis() - starttime;
 						}
 						stopAddr2Line();
 					}
@@ -65,32 +81,47 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 				new Thread(worker, "Addr2line Reaper").start(); //$NON-NLS-1$
 			}
 		} else {
-			timestamp = System.currentTimeMillis();
+			starttime = System.currentTimeMillis(); // reset autodispose timeout
 		}
-		return addr2line;
+		return autoDisposeAddr2line;
 	}
 
 	synchronized void stopAddr2Line() {
-		if (addr2line != null) {
-			addr2line.dispose();
+		if (autoDisposeAddr2line != null) {
+			autoDisposeAddr2line.dispose();
 		}
-		addr2line = null;
+		autoDisposeAddr2line = null;
 	}
 
+	private Addr2line getAddr2line() {
+		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		if (factory != null) {
+			return factory.getAddr2line(getPath());
+		}
+		return null;
+	}
+ 
 	protected CPPFilt getCPPFilt() {
-		GNUElfParser parser = (GNUElfParser) getBinaryParser();
-		return parser.getCPPFilt();
+		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		if (factory != null) {
+			return factory.getCPPFilt();
+		}
+		return null;
 	}
 
 	protected Objdump getObjdump() {
-		GNUElfParser parser = (GNUElfParser) getBinaryParser();
-		return parser.getObjdump(getPath());
+		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		if (factory != null) {
+			return factory.getObjdump(getPath());
+		}
+		return null;
 	}
 
 	/**
+	 * @throws IOException
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
 	 */
-	public InputStream getContents() {
+	public InputStream getContents() throws IOException {
 		InputStream stream = null;
 		Objdump objdump = getObjdump();
 		if (objdump != null) {
@@ -108,6 +139,24 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 		return stream;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#loadSymbols(org.eclipse.cdt.utils.elf.ElfHelper)
+	 */
+	protected void loadSymbols(ElfHelper helper) throws IOException {
+		symbolLoadingAddr2line = getAddr2line(false);
+		symbolLoadingCPPFilt = getCPPFilt();
+		super.loadSymbols(helper);
+		if (symbolLoadingAddr2line != null) {
+			symbolLoadingAddr2line.dispose();
+			symbolLoadingAddr2line = null;
+		}
+		if (symbolLoadingCPPFilt != null) {
+			symbolLoadingCPPFilt.dispose();
+			symbolLoadingCPPFilt =  null;
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -115,42 +164,36 @@ public class GNUElfBinaryObject extends ElfBinaryObject {
 	 *      int, java.util.List)
 	 */
 	protected void addSymbols(Elf.Symbol[] array, int type, List list) {
-		CPPFilt cppfilt = getCPPFilt();
-		Addr2line addr2line = getAddr2line(false);
 		for (int i = 0; i < array.length; i++) {
 			String name = array[i].toString();
-			if (cppfilt != null) {
+			if (symbolLoadingCPPFilt != null) {
 				try {
-					name = cppfilt.getFunction(name);
+					name = symbolLoadingCPPFilt.getFunction(name);
 				} catch (IOException e1) {
-					cppfilt = null;
+					symbolLoadingCPPFilt.dispose();
+					symbolLoadingCPPFilt = null;
 				}
 			}
 			IAddress addr = array[i].st_value;
 			long size = array[i].st_size;
-			if (addr2line != null) {
+			if (symbolLoadingAddr2line != null) {
 				try {
-					String filename = addr2line.getFileName(addr);
+					String filename = symbolLoadingAddr2line.getFileName(addr);
 					// Addr2line returns the funny "??" when it can not find
 					// the file.
 					IPath file = (filename != null && !filename.equals("??")) ? new Path(filename) : Path.EMPTY; //$NON-NLS-1$
-					int startLine = addr2line.getLineNumber(addr);
-					int endLine = addr2line.getLineNumber(addr.add(BigInteger.valueOf(size - 1)));
+					int startLine = symbolLoadingAddr2line.getLineNumber(addr);
+					int endLine = symbolLoadingAddr2line.getLineNumber(addr.add(BigInteger.valueOf(size - 1)));
 					list.add(new GNUSymbol(this, name, type, addr, size, file, startLine, endLine));
 				} catch (IOException e) {
-					addr2line = null;
+					symbolLoadingAddr2line.dispose();
+					symbolLoadingAddr2line = null;
 					// the symbol still needs to be added
 					list.add(new GNUSymbol(this, name, type, addr, size));
 				}
 			} else {
 				list.add(new GNUSymbol(this, name, type, addr, size));
 			}
-		}
-		if (cppfilt != null) {
-			cppfilt.dispose();
-		}
-		if (addr2line != null) {
-			addr2line.dispose();
 		}
 	}
 

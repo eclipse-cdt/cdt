@@ -16,7 +16,7 @@ import java.io.IOException;
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.utils.elf.AR;
+import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Attribute;
 import org.eclipse.core.runtime.IPath;
@@ -105,43 +105,22 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 	 * @return
 	 */
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
-		return new BinaryArchive(this, path);
+		return new ElfBinaryArchive(this, path);
 	}
 
 	protected IBinaryObject createBinaryObject(IPath path) throws IOException {
-		return new ElfBinaryObject(this, path);
+		return new ElfBinaryObject(this, path, IBinaryFile.OBJECT);
 	}
 
 	protected IBinaryExecutable createBinaryExecutable(IPath path) throws IOException {
-		return new ElfBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.EXECUTABLE;
-			}
-		};
+		return new ElfBinaryExecutable(this, path);
 	}
 
 	protected IBinaryShared createBinaryShared(IPath path) throws IOException {
-		return new ElfBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.SHARED;
-			}
-		};
+		return new ElfBinaryShared(this, path);
 	}
 
 	protected IBinaryObject createBinaryCore(IPath path) throws IOException {
-		return new ElfBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.elf.parser.ElfBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.CORE;
-			}
-		};
+		return new ElfBinaryObject(this, path, IBinaryFile.CORE);
 	}
 }

@@ -1,9 +1,15 @@
-package org.eclipse.cdt.utils.macho;
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 QNX Software Systems and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     QNX Software Systems - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.utils;
 
-/*
- * (c) Copyright QNX Software Systems Ltd. 2002.
- * All Rights Reserved.
- */
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +19,7 @@ import java.util.Vector;
 import org.eclipse.cdt.core.CCorePlugin;
 
 /**
- *  The <code>AR</code> class is used for parsing standard archive (ar) files.
+ *  The <code>AR</code> class is used for parsing standard ELF archive (ar) files.
  *
  *  Each object within the archive is represented by an ARHeader class.  Each of
  *  of these objects can then be turned into an Elf object for performing Elf
@@ -47,7 +53,7 @@ public class AR {
 
 	/**
 	 * The <code>ARHeader</code> class is used to store the per-object file 
-	 *  archive headers.  It can also create an Mach-O object for inspecting
+	 *  archive headers.  It can also create an Elf object for inspecting
 	 *  the object file data.
 	 */
 	public class ARHeader {
@@ -58,8 +64,7 @@ public class AR {
 		private String gid;
 		private String mode;
 		private long size;
-		private long file_offset;
-		private long macho_offset;
+		private long obj_offset;
 
 		/**
 		 * Remove the padding from the archive header strings.
@@ -107,7 +112,7 @@ public class AR {
 		 * @throws IOException 
 		 *    There was an error processing the header data from the file.
 		 */
-		public ARHeader() throws IOException {
+		ARHeader() throws IOException {
 			byte[] object_name = new byte[16];
 			byte[] modification_time = new byte[12];
 			byte[] uid = new byte[6];
@@ -128,9 +133,9 @@ public class AR {
 			efile.read(trailer);
 
 			//
-			// Save this location so we can create the Mach-O object later.
+			// Save this location so we can create the Elf object later.
 			//
-			macho_offset = efile.getFilePointer();
+			obj_offset = efile.getFilePointer();
 
 			//
 			// Convert the raw bytes into strings and numbers.
@@ -143,21 +148,13 @@ public class AR {
 			this.size = Long.parseLong(removeBlanks(new String(size)));
 
 			//
-			// If the name is of the format "#1/<number>", real name directly follows the
-			// header.
+			// If the name is of the format "/<number>", get name from the
+			// string table.
 			//
-			if (this.object_name.length() > 3 
-					&& this.object_name.charAt(0) == '#' 
-					&& this.object_name.charAt(1) == '1' 
-					&& this.object_name.charAt(2) == '/') {
+			if (strtbl_pos != -1 && this.object_name.length() > 1 && this.object_name.charAt(0) == '/') {
 				try {
-					int len = Integer.parseInt(this.object_name.substring(3));
-					byte[] real_name = new byte[len];
-					efile.read(real_name);
-					this.object_name = new String(real_name);
-					long pos = efile.getFilePointer();
-					efile.seek(macho_offset);
-					macho_offset = pos;
+					long offset = Long.parseLong(this.object_name.substring(1));
+					this.object_name = nameFromStringTable(offset);
 				} catch (java.lang.Exception e) {
 				}
 			}
@@ -169,7 +166,6 @@ public class AR {
 			if (len > 2 && this.object_name.charAt(len - 1) == '/') {
 				this.object_name = this.object_name.substring(0, len - 1);
 			}
-
 		}
 
 		/** Get the name of the object file */
@@ -186,26 +182,18 @@ public class AR {
 			return filename;
 		}
 
-		/**
-		 *  Create an new MachO object for the object file.
-		 *
-		 * @throws IOException 
-		 *    Not a valid MachO object file.
-		 * @return A new MachO object.  
-		 * @see MachO#MachO( String, long )
-		 */
-		public long getObjectDataOffset() throws IOException {
-			return macho_offset;
+		public long	getObjectDataOffset() {
+			return obj_offset;
 		}
-
+				
 		public byte[] getObjectData() throws IOException {
 			byte[] temp = new byte[(int) size];
 			if (efile != null) {
-				efile.seek(macho_offset);
+				efile.seek(obj_offset);
 				efile.read(temp);
 			} else {
 				efile = new ERandomAccessFile(filename, "r"); //$NON-NLS-1$
-				efile.seek(macho_offset);
+				efile.seek(obj_offset);
 				efile.read(temp);
 				efile.close();
 				efile = null;
@@ -260,7 +248,17 @@ public class AR {
 
 				long pos = efile.getFilePointer();
 
-				v.add(header);
+				//
+				// If the name starts with a / it is specical.
+				//
+				if (name.charAt(0) != '/')
+					v.add(header);
+
+				//
+				// If the name is "//" then this is the string table section.
+				//
+				if (name.compareTo("//") == 0) //$NON-NLS-1$
+					strtbl_pos = pos;
 
 				//
 				// Compute the location of the next header in the archive.
@@ -273,7 +271,6 @@ public class AR {
 			}
 		} catch (IOException e) {
 		}
-		// strtbl_pos = ???;
 		headers = (ARHeader[]) v.toArray(new ARHeader[0]);
 	}
 

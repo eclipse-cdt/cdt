@@ -37,7 +37,6 @@ public class XCoffSymbol extends Symbol {
 	public XCoffSymbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size, IPath sourceFile, int startLine,
 			int endLine) {
 		super(binary, name, type, addr, size, sourceFile, startLine, endLine);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -49,7 +48,6 @@ public class XCoffSymbol extends Symbol {
 	 */
 	public XCoffSymbol(BinaryObjectAdapter binary, String name, int type, IAddress addr, long size) {
 		super(binary, name, type, addr, size);
-		// TODO Auto-generated constructor stub
 	}
 
 	/* (non-Javadoc)

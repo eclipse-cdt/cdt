@@ -104,8 +104,8 @@ public class AR {
 		 * @return A new SOM object.  
 		 * @see SOM#SOM( String, long )
 		 */
-		public SOM getSOM() throws IOException {
-			return new SOM(filename, somOffset);
+		public long getObjectDataOffset() {
+			return somOffset;
 		}
 	}
 
@@ -227,7 +227,7 @@ public class AR {
 		return true;
 	}
 
-	private RandomAccessFile getRandomAccessFile () throws IOException {
+	protected RandomAccessFile getRandomAccessFile () throws IOException {
 		if (file == null) {
 			file = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 		}

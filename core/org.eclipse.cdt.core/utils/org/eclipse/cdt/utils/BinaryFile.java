@@ -25,41 +25,43 @@ import org.eclipse.core.runtime.PlatformObject;
  */
 public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 
-	protected IPath path;
-	protected long timestamp;
-	protected IBinaryParser parser;
+	private final IPath path;
+	private final IBinaryParser parser;
+	private final int type;
+	private long timestamp;
 
-	public BinaryFile(IBinaryParser parser, IPath path) {
+	public BinaryFile(IBinaryParser parser, IPath path, int type) {
 		this.path = path;
 		this.parser = parser;
+		this.type = type;
 	}
 
-	public IBinaryParser getBinaryParser() {
+	public final IBinaryParser getBinaryParser() {
 		return parser;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getFile()
 	 */
-	public IPath getPath() {
+	public final IPath getPath() {
 		return path;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getType()
 	 */
-	public abstract int getType();
+	public final int getType() {
+		return type;
+	}
 
 	/**
+	 * @throws IOException
 	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getContents()
 	 */
-	public InputStream getContents() {
+	public InputStream getContents() throws IOException {
 		InputStream stream = null;
 		if (path != null) {
-			try {
-				stream = new FileInputStream(path.toFile());
-			} catch (IOException e) {
-			}
+			stream = new FileInputStream(path.toFile());
 		}
 		if (stream == null) {
 			stream = new ByteArrayInputStream(new byte[0]);
@@ -70,7 +72,9 @@ public abstract class BinaryFile extends PlatformObject implements IBinaryFile {
 	protected boolean hasChanged() {
 		long modification = getPath().toFile().lastModified();
 		boolean changed = modification != timestamp;
-		timestamp = modification;
+		if (changed) {
+			timestamp = modification;
+		}
 		return changed;
 	}
  

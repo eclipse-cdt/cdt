@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.CCorePlugin;
  *  Each object within the archive is represented by an ARHeader class.  Each of
  *  of these objects can then be turned into an PE object for performing PE
  *  class operations.
+ *  @deprecated - use org.eclipse.cdt.ui.utils.AR
  *  @see ARHeader
  */
 public class PEArchive {

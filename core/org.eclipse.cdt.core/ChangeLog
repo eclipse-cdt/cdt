@@ -1,3 +1,13 @@
+2004-09-21 David Inglis
+
+	Lots of changes to the binary parsers
+	 - major clean up
+	 - remove lots of duplication
+	 	- reuse of AR class
+	 	- common GnuToolsFactory
+	 - fixed IBinaryExecutable/IBinaryShared implementors
+	 - improved symbol loading preformance for gnu type parsers.
+	 
 2004-09-15 Alain Magloire
 
 	Jumbo patch from Artyom Kuanbekov

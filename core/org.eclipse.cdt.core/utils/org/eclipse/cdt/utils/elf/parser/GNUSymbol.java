@@ -20,12 +20,11 @@ import org.eclipse.core.runtime.IPath;
 
 public class GNUSymbol extends Symbol {
 
-	public GNUSymbol(GNUElfBinaryObject binary, String name, int type, IAddress addr, long size, IPath sourceFile, int startLine, int endLine) {
+	public GNUSymbol(ElfBinaryObject binary, String name, int type, IAddress addr, long size, IPath sourceFile, int startLine, int endLine) {
 		super(binary, name, type, addr, size, sourceFile, startLine, endLine);
-		// TODO Auto-generated constructor stub
 	}
 
-	public GNUSymbol(GNUElfBinaryObject binary, String name, int type, IAddress addr, long size) {
+	public GNUSymbol(ElfBinaryObject binary, String name, int type, IAddress addr, long size) {
 		super(binary, name, type, addr, size);
 	}
 		

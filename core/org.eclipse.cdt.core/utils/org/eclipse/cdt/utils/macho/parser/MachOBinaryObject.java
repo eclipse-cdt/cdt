@@ -10,7 +10,9 @@
 ***********************************************************************/
 package org.eclipse.cdt.utils.macho.parser;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +24,7 @@ import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.Symbol;
+import org.eclipse.cdt.utils.macho.AR;
 import org.eclipse.cdt.utils.macho.MachO;
 import org.eclipse.cdt.utils.macho.MachOHelper;
 import org.eclipse.core.runtime.IPath;
@@ -34,16 +37,24 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 
 	private BinaryObjectInfo info;
 	private ISymbol[] symbols;
+	private AR.ARHeader header;
 
-	public MachOBinaryObject(IBinaryParser parser, IPath path) {
-		super(parser, path);
+	/**
+	 * @param parser
+	 * @param path
+	 * @param header
+	 */
+	public MachOBinaryObject(IBinaryParser parser, IPath path, AR.ARHeader header) {
+		super(parser, path, IBinaryFile.OBJECT);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getType()
+	/**
+	 * @param parser
+	 * @param path
+	 * @param type
 	 */
-	public int getType() {
-		return IBinaryFile.OBJECT;
+	public MachOBinaryObject(IBinaryParser parser, IPath path, int type) {
+		super(parser, path, type);
 	}
 
 	/* (non-Javadoc)
@@ -76,8 +87,32 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 		return info;
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
+	 */
+	public InputStream getContents() throws IOException {
+		if (getPath() != null && header != null) {
+			return new ByteArrayInputStream(header.getObjectData());
+		}
+		return super.getContents();
+	}
+	
 	protected MachOHelper getMachOHelper() throws IOException {
+		if (header != null) {
+			return new MachOHelper(getPath().toOSString(), header.getObjectDataOffset());
+		}
 		return new MachOHelper(getPath().toOSString());
+	}
+	
+	/**
+	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryObject#getName()
+	 */
+	public String getName() {
+		if (header != null) {
+			return header.getObjectName();
+		}
+		return super.getName();
 	}
 
 	protected void loadAll() throws IOException {

@@ -338,7 +338,7 @@ public class SOM {
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("SYMBOL TABLE ENTRY").append(NL); //$NON-NLS-1$
-			buffer.append("symbol_name  = ");
+			buffer.append("symbol_name  = "); //$NON-NLS-1$
 			try {
 				buffer.append(getName(getStringTable())).append(NL);
 			}
@@ -393,7 +393,7 @@ public class SOM {
 
 	public SOM(String filename, long offset) throws IOException {
 		this.filename = filename;
-		commonSetup(new RandomAccessFile(filename, "r"), offset);
+		commonSetup(new RandomAccessFile(filename, "r"), offset); //$NON-NLS-1$
 	}
 
 	void commonSetup(RandomAccessFile file, long offset) throws IOException {

@@ -26,8 +26,11 @@ import org.eclipse.cdt.utils.Addr2line;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
+import org.eclipse.cdt.utils.som.AR;
 import org.eclipse.cdt.utils.som.SOM;
+import org.eclipse.cdt.utils.som.AR.ARHeader;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -37,19 +40,35 @@ import org.eclipse.core.runtime.Path;
  * @author vhirsl
  */
 public class SOMBinaryObject extends BinaryObjectAdapter {
+
 	Addr2line addr2line;
 	BinaryObjectInfo info;
 	ISymbol[] symbols;
+	long starttime;
+	private ARHeader header;
 
 	/**
 	 * @param parser
 	 * @param path
+	 * @param header
 	 */
-	public SOMBinaryObject(IBinaryParser parser, IPath path) {
-		super(parser, path);
+	public SOMBinaryObject(IBinaryParser parser, IPath path, AR.ARHeader header) {
+		super(parser, path, IBinaryFile.OBJECT);
+		this.header = header;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * @param parser
+	 * @param path
+	 * @param type
+	 */
+	public SOMBinaryObject(IBinaryParser parser, IPath path, int type) {
+		super(parser, path, type);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
 	public ISymbol[] getSymbols() {
@@ -63,7 +82,9 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		return symbols;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
 	protected BinaryObjectInfo getBinaryObjectInfo() {
@@ -77,18 +98,28 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		return info;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getType()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
 	 */
-	public int getType() {
-		return IBinaryFile.OBJECT;
+	public String getName() {
+		if (header != null) {
+			return header.getObjectName();
+		}
+		return super.getName();
 	}
-
-	/* (non-Javadoc)
+	
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
 	 */
-	public InputStream getContents() {
+	public InputStream getContents() throws IOException {
 		InputStream stream = null;
+		if (getPath() != null && header != null) {
+			return new ByteArrayInputStream(header.getObjectData());
+		}
 		Objdump objdump = getObjdump();
 		if (objdump != null) {
 			try {
@@ -103,8 +134,11 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		}
 		return stream;
 	}
-	
+
 	protected SOM getSOM() throws IOException {
+		if (header != null) {
+			return new SOM(getPath().toOSString(), header.getObjectDataOffset());
+		}
 		return new SOM(getPath().toOSString());
 	}
 
@@ -159,8 +193,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		for (int i = 0; i < peSyms.length; i++) {
 			if (peSyms[i].isFunction() || peSyms[i].isVariable()) {
 				String name = peSyms[i].getName(table);
-				if (name == null || name.trim().length() == 0 || 
-				    !Character.isJavaIdentifierStart(name.charAt(0))) {
+				if (name == null || name.trim().length() == 0 || !Character.isJavaIdentifierStart(name.charAt(0))) {
 					continue;
 				}
 				int type = peSyms[i].isFunction() ? ISymbol.FUNCTION : ISymbol.VARIABLE;
@@ -175,8 +208,9 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 				}
 				if (addr2line != null) {
 					try {
-						String filename =  addr2line.getFileName(addr);
-						// Addr2line returns the funny "??" when it can not find the file.
+						String filename = addr2line.getFileName(addr);
+						// Addr2line returns the funny "??" when it can not find
+						// the file.
 						if (filename != null && filename.equals("??")) { //$NON-NLS-1$
 							filename = null;
 						}
@@ -205,25 +239,23 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 
 	public Addr2line getAddr2line(boolean autodisposing) {
 		if (!autodisposing) {
-			SOMParser parser = (SOMParser) getBinaryParser();
-			return parser.getAddr2line(getPath());
+			return getAddr2line();
 		}
 		if (addr2line == null) {
-			SOMParser parser = (SOMParser) getBinaryParser();
-			addr2line = parser.getAddr2line(getPath());
+			addr2line = getAddr2line();
 			if (addr2line != null) {
-				timestamp = System.currentTimeMillis();
+				starttime = System.currentTimeMillis();
 				Runnable worker = new Runnable() {
 
 					public void run() {
-						long diff = System.currentTimeMillis() - timestamp;
+						long diff = System.currentTimeMillis() - starttime;
 						while (diff < 10000) {
 							try {
 								Thread.sleep(10000);
 							} catch (InterruptedException e) {
 								break;
 							}
-							diff = System.currentTimeMillis() - timestamp;
+							diff = System.currentTimeMillis() - starttime;
 						}
 						stopAddr2Line();
 					}
@@ -231,7 +263,7 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 				new Thread(worker, "Addr2line Reaper").start(); //$NON-NLS-1$
 			}
 		} else {
-			timestamp = System.currentTimeMillis();
+			starttime = System.currentTimeMillis();
 		}
 		return addr2line;
 	}
@@ -243,17 +275,36 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		addr2line = null;
 	}
 
+	/**
+	 * @return
+	 */
+	private Addr2line getAddr2line() {
+		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		if (factory != null) {
+			return factory.getAddr2line(getPath());
+		}
+		return null;
+	}
+
 	protected CPPFilt getCPPFilt() {
-		SOMParser parser = (SOMParser)getBinaryParser();
-		return parser.getCPPFilt();
+		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		if (factory != null) {
+			return factory.getCPPFilt();
+		}
+		return null;
 	}
 
 	protected Objdump getObjdump() {
-		SOMParser parser = (SOMParser)getBinaryParser();
-		return parser.getObjdump(getPath());
+		IGnuToolFactory factory = (IGnuToolFactory)getBinaryParser().getAdapter(IGnuToolFactory.class);
+		if (factory != null) {
+			return factory.getObjdump(getPath());
+		}
+		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {

@@ -131,43 +131,22 @@ public class MachOParser extends AbstractCExtension implements IBinaryParser {
 	 * @return
 	 */
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
-		return new BinaryArchive(this, path);
+		return new MachOBinaryArchive(this, path);
 	}
 
 	protected IBinaryObject createBinaryObject(IPath path) throws IOException {
-		return new MachOBinaryObject(this, path);
+		return new MachOBinaryObject(this, path, IBinaryFile.OBJECT);
 	}
 
 	protected IBinaryExecutable createBinaryExecutable(IPath path) throws IOException {
-		return new MachOBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.macho.parser.MachOBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.EXECUTABLE;
-			}
-		};
+		return new MachOBinaryExecutable(this, path);
 	}
 
 	protected IBinaryShared createBinaryShared(IPath path) throws IOException {
-		return new MachOBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.macho.parser.MachOBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.SHARED;
-			}
-		};
+		return new MachOBinaryShared(this, path);
 	}
 
 	protected IBinaryObject createBinaryCore(IPath path) throws IOException {
-		return new MachOBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.macho.parser.MachOBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.CORE;
-			}
-		};
+		return new MachOBinaryObject(this, path, IBinaryFile.CORE);
 	}
 }

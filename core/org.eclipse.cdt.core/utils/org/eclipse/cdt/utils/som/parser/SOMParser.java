@@ -16,22 +16,19 @@ import java.io.IOException;
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ICExtensionReference;
-import org.eclipse.cdt.utils.Addr2line;
-import org.eclipse.cdt.utils.CPPFilt;
+import org.eclipse.cdt.utils.DefaultGnuToolFactory;
 import org.eclipse.cdt.utils.IGnuToolFactory;
-import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.cdt.utils.som.AR;
 import org.eclipse.cdt.utils.som.SOM;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 /**
  * HP-UX SOM binary parser
  * 
  * @author vhirsl
  */
-public class SOMParser extends AbstractCExtension implements IBinaryParser, IGnuToolFactory {
+public class SOMParser extends AbstractCExtension implements IBinaryParser {
+	private DefaultGnuToolFactory toolFactory;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.IBinaryParser#getBinary(byte[], org.eclipse.core.runtime.IPath)
@@ -116,53 +113,32 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser, IGnu
 	 * @param path
 	 * @return
 	 */
-	private IBinaryFile createBinaryExecutable(IPath path) {
-		return new SOMBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.EXECUTABLE;
-			}
-		};
+	private IBinaryExecutable createBinaryExecutable(IPath path) {
+		return new SOMBinaryExecutable(this, path);
 	}
 
 	/**
 	 * @param path
 	 * @return
 	 */
-	private IBinaryFile createBinaryShared(IPath path) {
-		return new SOMBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.SHARED;
-			}
-		};
+	private IBinaryShared createBinaryShared(IPath path) {
+		return new SOMBinaryShared(this, path);
 	}
 
 	/**
 	 * @param path
 	 * @return
 	 */
-	private IBinaryFile createBinaryObject(IPath path) {
-		return new SOMBinaryObject(this, path);
+	private IBinaryObject createBinaryObject(IPath path) {
+		return new SOMBinaryObject(this, path, IBinaryFile.OBJECT);
 	}
 
 	/**
 	 * @param path
 	 * @return
 	 */
-	private IBinaryFile createBinaryCore(IPath path) {
-		return new SOMBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.CORE;
-			}
-		};
+	private IBinaryObject createBinaryCore(IPath path) {
+		return new SOMBinaryObject(this, path, IBinaryFile.CORE);
 	}
 
 	/**
@@ -170,98 +146,27 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser, IGnu
 	 * @return
 	 * @throws IOException
 	 */
-	private IBinaryFile createBinaryArchive(IPath path) throws IOException {
-		return new BinaryArchive(this, path);
+	private IBinaryArchive createBinaryArchive(IPath path) throws IOException {
+		return new SOMBinaryArchive(this, path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolFactory#getAddr2line(org.eclipse.core.runtime.IPath)
+	/**
+	 * @return
 	 */
-	public Addr2line getAddr2line(IPath path) {
-		IPath addr2LinePath = getAddr2linePath();
-		Addr2line addr2line = null;
-		if (addr2LinePath != null && !addr2LinePath.isEmpty()) {
-			try {
-				addr2line = new Addr2line(addr2LinePath.toOSString(), path.toOSString());
-			} catch (IOException e1) {
-			}
-		}
-		return addr2line;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolFactory#getCPPFilt()
-	 */
-	public CPPFilt getCPPFilt() {
-		IPath cppFiltPath = getCPPFiltPath();
-		CPPFilt cppfilt = null;
-		if (cppFiltPath != null && ! cppFiltPath.isEmpty()) {
-			try {
-				cppfilt = new CPPFilt(cppFiltPath.toOSString());
-			} catch (IOException e2) {
-			}
-		}
-		return cppfilt;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.utils.IGnuToolFactory#getObjdump(org.eclipse.core.runtime.IPath)
-	 */
-	public Objdump getObjdump(IPath path) {
-		IPath objdumpPath = getObjdumpPath();
-		String objdumpArgs = getObjdumpArgs();
-		Objdump objdump = null;
-		if (objdumpPath != null && !objdumpPath.isEmpty()) {
-			try {
-				objdump = new Objdump(objdumpPath.toOSString(), objdumpArgs, path.toOSString());
-			} catch (IOException e1) {
-			}
-		}
-		return objdump;
-	}
-
-	protected IPath getAddr2linePath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("addr2line"); //$NON-NLS-1$
-		if (value == null || value.length() == 0) {
-			value = "addr2line"; //$NON-NLS-1$
-		}
-		return new Path(value);
-	}
-
-	protected IPath getObjdumpPath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("objdump"); //$NON-NLS-1$
-		if (value == null || value.length() == 0) {
-			value = "objdump"; //$NON-NLS-1$
-		}
-		return new Path(value);
+	protected DefaultGnuToolFactory createGNUToolFactory() {
+		return new DefaultGnuToolFactory(this);
 	}
 	
-	protected String getObjdumpArgs() {
-		ICExtensionReference ref = getExtensionReference();
-		String value =  ref.getExtensionData("objdumpArgs"); //$NON-NLS-1$
-		if (value == null || value.length() == 0) {
-			value = ""; //$NON-NLS-1$
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(IGnuToolFactory.class)) {
+			if (toolFactory == null) {
+				toolFactory = createGNUToolFactory();
+			}
+			return toolFactory;
 		}
-		return value;
-	}
-	
-	protected IPath getCPPFiltPath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1$
-		if (value == null || value.length() == 0) {
-			value = "c++filt"; //$NON-NLS-1$
-		}
-		return new Path(value);
-	}
-
-	protected IPath getStripPath() {
-		ICExtensionReference ref = getExtensionReference();
-		String value = ref.getExtensionData("strip"); //$NON-NLS-1$
-		if (value == null || value.length() == 0) {
-			value = "strip"; //$NON-NLS-1$
-		}
-		return new Path(value);
+		return super.getAdapter(adapter);
 	}
 }

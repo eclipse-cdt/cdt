@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.CCorePlugin;
  */
 public class AR {
 	protected String filename;
-	protected RandomAccessFile file;
+	private RandomAccessFile file;
 	private ARHeader header;
 	private MemberHeader[] memberHeaders;
 
@@ -55,7 +55,7 @@ public class AR {
 		
 		public ARHeader() throws IOException {
 			try {
-				getRandomAccessFile();
+				RandomAccessFile file = getRandomAccessFile();
 				file.seek(0);
 				file.read(fl_magic);
 				if (isARHeader(fl_magic)) {
@@ -210,6 +210,7 @@ public class AR {
 			//
 			// Read in the archive header data. Fixed sizes.
 			//
+			RandomAccessFile file = getRandomAccessFile();
 			file.read(ar_size);
 			file.read(ar_nxtmem);
 			file.read(ar_prvmem);
@@ -251,21 +252,13 @@ public class AR {
 			return filename;
 		}
 
-		/**
-		 *  Create a new XCOFF32 object for the object file.
-		 *
-		 * @throws IOException 
-		 *    Not a valid XCOFF32 object file.
-		 * @return A new XCOFF32 object.  
-		 * @see XCoff32#XCoff32( String, long )
-		 */
-		public XCoff32 getXCoff() throws IOException {
-			return new XCoff32(filename, file_offset);
+		public long getObjectDataOffset() {
+			return file_offset;
 		}
-
+		
 		public byte[] getObjectData() throws IOException {
 			byte[] temp = new byte[(int) size];
-			file = getRandomAccessFile();
+			RandomAccessFile file = getRandomAccessFile();
 			file.seek(file_offset);
 			file.read(temp);
 			dispose();
@@ -349,7 +342,7 @@ public class AR {
 	/**
 	 * Remove the padding from the archive header strings.
 	 */
-	private String removeBlanks(String str) {
+	protected String removeBlanks(String str) {
 		while (str.charAt(str.length() - 1) == ' ')
 			str = str.substring(0, str.length() - 1);
 		return str;
@@ -359,7 +352,7 @@ public class AR {
 		return extractFiles(outdir, null);
 	}
 
-	private RandomAccessFile getRandomAccessFile () throws IOException {
+	protected RandomAccessFile getRandomAccessFile () throws IOException {
 		if (file == null) {
 			file = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 		}

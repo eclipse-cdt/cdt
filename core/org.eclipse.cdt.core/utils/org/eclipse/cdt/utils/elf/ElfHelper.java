@@ -10,23 +10,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Vector;
 
 /**
- *  <code>ElfHelper</code> is a wrapper class for the <code>Elf</code> class
- *  to provide higher level API for sorting/searching the ELF data.
- *
- *  @see Elf
+ * <code>ElfHelper</code> is a wrapper class for the <code>Elf</code> class
+ * to provide higher level API for sorting/searching the ELF data.
+ * 
+ * @see Elf
  */
 public class ElfHelper {
 
 	private Elf elf;
-	private Elf.ELFhdr hdr;
-	private Elf.Attribute attrib;
 	private Elf.Symbol[] dynsyms;
 	private Elf.Symbol[] symbols;
 	private Elf.Section[] sections;
@@ -40,6 +37,7 @@ public class ElfHelper {
 	}
 
 	public class Sizes {
+
 		public long text;
 		public long data;
 		public long bss;
@@ -81,34 +79,45 @@ public class ElfHelper {
 		}
 	}
 
-	/** Common code used by all constructors */
-	private void commonSetup() throws IOException {
-		hdr = elf.getELFhdr();
-		attrib = elf.getAttributes();
-	}
-
 	/**
 	 * Create a new <code>ElfHelper</code> using an existing <code>Elf</code>
 	 * object.
-	 * @param elf An existing Elf object to wrap.
-	 * @throws IOException Error processing the Elf file.
+	 * 
+	 * @param elf
+	 *            An existing Elf object to wrap.
+	 * @throws IOException
+	 *             Error processing the Elf file.
 	 */
 	public ElfHelper(Elf elf) throws IOException {
 		this.elf = elf;
-		commonSetup();
 	}
 
 	/**
 	 * Create a new <code>ElfHelper</code> based on the given filename.
 	 * 
-	 * @param filename The file to use for creating a new Elf object.
-	 * @throws IOException Error processing the Elf file.
+	 * @param filename
+	 *            The file to use for creating a new Elf object.
+	 * @throws IOException
+	 *             Error processing the Elf file.
 	 * @see Elf#Elf( String )
 	 */
 	public ElfHelper(String filename) throws IOException {
 		elf = new Elf(filename);
-		commonSetup();
 	}
+
+	/**
+	 * Create a new <code>ElfHelper</code> based on the given filename.
+	 * 
+	 * @param filename
+	 *            The file to use for creating a new Elf object.
+	 * @throws IOException
+	 *             Error processing the Elf file.
+	 * @see Elf#Elf( String )
+	 */
+	public ElfHelper(String filename, long fileoffset) throws IOException {
+		elf = new Elf(filename, fileoffset);
+	}
+
 
 	/** Give back the Elf object that this helper is wrapping */
 	public Elf getElf() {
@@ -134,7 +143,7 @@ public class ElfHelper {
 			}
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[]) v.toArray(new Elf.Symbol[0]);
+		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
 		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
@@ -158,7 +167,7 @@ public class ElfHelper {
 			}
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[]) v.toArray(new Elf.Symbol[0]);
+		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
 		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
@@ -173,7 +182,7 @@ public class ElfHelper {
 				v.add(dynsyms[i]);
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[]) v.toArray(new Elf.Symbol[0]);
+		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
 		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
@@ -185,7 +194,7 @@ public class ElfHelper {
 		loadSections();
 
 		for (int i = 0; i < symbols.length; i++) {
-			if (symbols[i].st_bind() == Elf.Symbol.STB_GLOBAL && symbols[i].st_type() == Elf.Symbol.STT_FUNC) {
+			if ( symbols[i].st_type() == Elf.Symbol.STT_FUNC) {
 				int idx = symbols[i].st_shndx;
 				if (idx < Elf.Symbol.SHN_HIPROC && idx > Elf.Symbol.SHN_LOPROC) {
 					String name = symbols[i].toString();
@@ -197,7 +206,7 @@ public class ElfHelper {
 			}
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[]) v.toArray(new Elf.Symbol[0]);
+		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
 		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
@@ -209,7 +218,7 @@ public class ElfHelper {
 		loadSections();
 
 		for (int i = 0; i < symbols.length; i++) {
-			if (symbols[i].st_bind() == Elf.Symbol.STB_GLOBAL && symbols[i].st_type() == Elf.Symbol.STT_OBJECT) {
+			if ( symbols[i].st_type() == Elf.Symbol.STT_OBJECT) {
 				int idx = symbols[i].st_shndx;
 				if (idx < Elf.Symbol.SHN_HIPROC && idx > Elf.Symbol.SHN_LOPROC) {
 					String name = symbols[i].toString();
@@ -221,7 +230,7 @@ public class ElfHelper {
 			}
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[]) v.toArray(new Elf.Symbol[0]);
+		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
 		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
@@ -241,7 +250,7 @@ public class ElfHelper {
 			}
 		}
 
-		Elf.Symbol[] ret = (Elf.Symbol[]) v.toArray(new Elf.Symbol[0]);
+		Elf.Symbol[] ret = (Elf.Symbol[])v.toArray(new Elf.Symbol[v.size()]);
 		Arrays.sort(ret, new SymbolSortCompare());
 		return ret;
 	}
@@ -255,7 +264,7 @@ public class ElfHelper {
 			if (dynamics[i].d_tag == Elf.Dynamic.DT_NEEDED)
 				v.add(dynamics[i]);
 		}
-		return (Elf.Dynamic[]) v.toArray(new Elf.Dynamic[0]);
+		return (Elf.Dynamic[])v.toArray(new Elf.Dynamic[v.size()]);
 	}
 
 	public String getSoname() throws IOException {
@@ -344,7 +353,7 @@ public class ElfHelper {
 			if (sections[i].sh_type != Elf.Section.SHT_NOBITS) {
 				if (sections[i].sh_flags == (Elf.Section.SHF_WRITE | Elf.Section.SHF_ALLOC)) {
 					data += sections[i].sh_size;
-				} else if ((sections[i].sh_flags & Elf.Section.SHF_ALLOC) != 0) {
+				} else if ( (sections[i].sh_flags & Elf.Section.SHF_ALLOC) != 0) {
 					text += sections[i].sh_size;
 				}
 			} else {

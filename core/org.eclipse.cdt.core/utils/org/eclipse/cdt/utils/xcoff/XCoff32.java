@@ -687,7 +687,7 @@ public class XCoff32 {
 
 	public XCoff32(String filename, long offset) throws IOException {
 		this.filename = filename;
-		commonSetup(new RandomAccessFile(filename, "r"), offset);
+		commonSetup(new RandomAccessFile(filename, "r"), offset); //$NON-NLS-1$
 	}
 
 	void commonSetup(RandomAccessFile file, long offset) throws IOException {

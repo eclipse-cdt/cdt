@@ -17,6 +17,7 @@ import java.io.RandomAccessFile;
 import java.util.Vector;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.utils.ERandomAccessFile;
 
 /**
  *  The <code>AR</code> class is used for parsing standard ELF archive (ar) files.
@@ -24,6 +25,7 @@ import org.eclipse.cdt.core.CCorePlugin;
  *  Each object within the archive is represented by an ARHeader class.  Each of
  *  of these objects can then be turned into an Elf object for performing Elf
  *  class operations.
+ *  @deprecated use org.eclipse.cdt.utils.AR
  *  @see ARHeader
  */
 public class AR {

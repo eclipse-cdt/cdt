@@ -23,12 +23,12 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  */
-public class BinaryArchive extends BinaryFile implements IBinaryArchive {
+public class MachOBinaryArchive extends BinaryFile implements IBinaryArchive {
 
 	ArrayList children;
 
-	public BinaryArchive(IBinaryParser parser, IPath p) throws IOException {
-		super(parser, p);
+	public MachOBinaryArchive(IBinaryParser parser, IPath p) throws IOException {
+		super(parser, p, IBinaryFile.ARCHIVE);
 		new AR(p.toOSString()).dispose(); // check file type
 		children = new ArrayList(5);
 	}
@@ -44,7 +44,7 @@ public class BinaryArchive extends BinaryFile implements IBinaryArchive {
 				ar = new AR(getPath().toOSString());
 				AR.ARHeader[] headers = ar.getHeaders();
 				for (int i = 0; i < headers.length; i++) {
-					IBinaryObject bin = new ARMember(getBinaryParser(), getPath(), headers[i]);
+					IBinaryObject bin = new MachOBinaryObject(getBinaryParser(), getPath(), headers[i]);
 					children.add(bin);
 				}
 			} catch (IOException e) {
@@ -56,25 +56,5 @@ public class BinaryArchive extends BinaryFile implements IBinaryArchive {
 			children.trimToSize();
 		}
 		return (IBinaryObject[]) children.toArray(new IBinaryObject[0]);
-	}
-
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryFile#getType()
-	 */
-	public int getType() {
-		return IBinaryFile.ARCHIVE;
-	}
-
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryArchive#add(IBinaryObject[])
-	 */
-	public void add(IBinaryObject[] objs) throws IOException {
-	}
-
-	/**
-	 * @see org.eclipse.cdt.core.model.IBinaryParser.IBinaryArchive#delete(IBinaryObject[])
-	 */
-	public void delete(IBinaryObject[] objs) throws IOException {
-	}
-
+	}	
 }

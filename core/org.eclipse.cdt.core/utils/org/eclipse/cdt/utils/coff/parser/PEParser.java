@@ -17,8 +17,8 @@ import java.io.IOException;
 import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.coff.PE;
-import org.eclipse.cdt.utils.coff.PEArchive;
 import org.eclipse.cdt.utils.coff.PEConstants;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.core.resources.IFile;
@@ -96,7 +96,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 * @see org.eclipse.cdt.core.IBinaryParser#isBinary(byte[], org.eclipse.core.runtime.IPath)
 	 */
 	public boolean isBinary(byte[] array, IPath path) {
-		boolean isBin = PE.isExeHeader(array) || PEArchive.isARHeader(array);
+		boolean isBin = PE.isExeHeader(array) || AR.isARHeader(array);
 		// It maybe an object file try the known machine types.
 		if (!isBin && array.length > 1) {
 			int f_magic = (((array[1] & 0xff) << 8) | (array[0] & 0xff));
@@ -137,14 +137,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 * @return
 	 */
 	protected IBinaryExecutable createBinaryExecutable(IPath path) {
-		return new PEBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.EXECUTABLE;
-			}
-		};
+		return new PEBinaryExecutable(this, path);
 	}
 
 	/**
@@ -152,14 +145,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 * @return
 	 */
 	protected IBinaryObject createBinaryCore(IPath path) {
-		return new PEBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.CORE;
-			}
-		};
+		return new PEBinaryObject(this, path, IBinaryFile.CORE);
 	}
 
 	/**
@@ -167,14 +153,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 * @return
 	 */
 	protected IBinaryObject createBinaryObject(IPath path) {
-		return new PEBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.OBJECT;
-			}
-		};
+		return new PEBinaryObject(this, path, IBinaryFile.OBJECT);
 	}
 
 	/**
@@ -182,14 +161,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 * @return
 	 */
 	protected IBinaryShared createBinaryShared(IPath path) {
-		return new PEBinaryObject(this, path) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#getType()
-			 */
-			public int getType() {
-				return IBinaryFile.SHARED;
-			}
-		};
+		return new PEBinaryShared(this, path);
 	}
 
 	/**
@@ -197,7 +169,7 @@ public class PEParser extends AbstractCExtension implements IBinaryParser {
 	 * @return
 	 */
 	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
-		return new BinaryArchive(this, path);
+		return new PEBinaryArchive(this, path);
 	}
 
 }

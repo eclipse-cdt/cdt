@@ -8,7 +8,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.utils.elf;
+package org.eclipse.cdt.utils;
 
 
 import java.io.EOFException;
@@ -85,7 +85,7 @@ public class ERandomAccessFile extends RandomAccessFile {
 		super.readFully(bytes);
 		byte tmp = 0;
 		if( isle )
-			for(int i=0; i <= bytes.length / 2; i++)
+			for(int i=0; i < (bytes.length / 2); i++)
 			{
 				tmp = bytes[i];
 				bytes[i] = bytes[bytes.length - i -1];

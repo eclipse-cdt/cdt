@@ -18,8 +18,6 @@ import java.util.Vector;
 public class MachOHelper {
 
 	private MachO macho;
-	private MachO.MachOhdr hdr;
-	private MachO.Attribute attrib;
 	private MachO.Symbol[] dynsyms;
 	private MachO.Symbol[] symbols;
 	private MachO.Section[] sections;
@@ -60,11 +58,6 @@ public class MachOHelper {
 		}
 	}
 
-	/** Common code used by all constructors */
-	private void commonSetup() throws IOException {
-		hdr = macho.getMachOhdr();
-		attrib = macho.getAttributes();
-	}
 
 	/**
 	 * Create a new <code>MachOHelper</code> using an existing <code>MachO</code>
@@ -74,7 +67,6 @@ public class MachOHelper {
 	 */
 	public MachOHelper(MachO macho) throws IOException {
 		this.macho = macho;
-		commonSetup();
 	}
 
 	/**
@@ -86,12 +78,22 @@ public class MachOHelper {
 	 */
 	public MachOHelper(String filename) throws IOException {
 		macho = new MachO(filename);
-		commonSetup();
 	}
+
+	/**
+	 * Create a new <code>MachOHelper</code> based on the given filename.
+	 * 
+	 * @param filename The file to use for creating a new MachO object.
+	 * @throws IOException Error processing the MachO file.
+	 * @see MachO#MachO( String )
+	 */
+	public MachOHelper(String filename, long offset) throws IOException {
+		macho = new MachO(filename, offset);
+	}
+
 
 	public MachOHelper(String filename, boolean filton) throws IOException {
 		macho = new MachO(filename, filton);
-		commonSetup();
 	}
 
 	/** Give back the MachO object that this helper is wrapping */

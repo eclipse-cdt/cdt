@@ -16,9 +16,9 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IGnuToolFactory {
 
-	public abstract Addr2line getAddr2line(IPath path);
+	Addr2line getAddr2line(IPath path);
 
-	public abstract CPPFilt getCPPFilt();
+	CPPFilt getCPPFilt();
 
-	public abstract Objdump getObjdump(IPath path);
+	Objdump getObjdump(IPath path);
 }

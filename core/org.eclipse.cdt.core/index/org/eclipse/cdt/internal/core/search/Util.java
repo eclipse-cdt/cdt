@@ -318,12 +318,6 @@ public class Util {
 		} else if (existingExternalFiles.contains(externalFile)) {
 			return externalFile;
 		} else {
-			//TODO: BOG do we need to add something here?  ANSWER YES!
-			/*
-			if (JavaModelManager.ZIP_ACCESS_VERBOSE) {
-				System.out.println("(" + Thread.currentThread() + ") [JavaModel.getTarget(...)] Checking existence of " + path.toString()); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			*/
 			if (externalFile.exists()) {
 				// cache external file
 				existingExternalFiles.add(externalFile);

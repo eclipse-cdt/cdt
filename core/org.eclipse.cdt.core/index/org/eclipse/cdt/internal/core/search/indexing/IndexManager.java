@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.cdt.internal.core.search.processing.IJob;
+import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
+import org.eclipse.cdt.internal.core.search.IndexSelector;
 import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
 import org.eclipse.cdt.internal.core.search.CharOperation;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -51,12 +53,12 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	/* need to save ? */
 	private boolean needToSave = false;
 	private static final CRC32 checksumCalculator = new CRC32();
-	private IPath javaPluginLocation = null;
+	private IPath cCorePluginLocation = null;
 
 	/* can only replace a current state if its less than the new one */
 	private SimpleLookupTable indexStates = null;
 	private File savedIndexNamesFile =
-		new File(getJavaPluginWorkingLocation().append("savedIndexNames.txt").toOSString()); //$NON-NLS-1$
+		new File(getCCorePluginWorkingLocation().append("savedIndexNames.txt").toOSString()); //$NON-NLS-1$
 	public static Integer SAVED_STATE = new Integer(0);
 	public static Integer UPDATING_STATE = new Integer(1);
 	public static Integer UNKNOWN_STATE = new Integer(2);
@@ -126,7 +128,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			String fileName = Long.toString(checksumCalculator.getValue()) + ".index"; //$NON-NLS-1$
 			if (VERBOSE)
 				JobManager.verbose("-> index name for " + pathString + " is " + fileName); //$NON-NLS-1$ //$NON-NLS-2$
-			name = getJavaPluginWorkingLocation().append(fileName).toOSString();
+			name = getCCorePluginWorkingLocation().append(fileName).toOSString();
 			indexNames.put(path, name);
 		}
 		return name;
@@ -216,10 +218,10 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		return this.indexStates;
 	}
 	
-	private IPath getJavaPluginWorkingLocation() {
-		if (this.javaPluginLocation != null) return this.javaPluginLocation;
+	private IPath getCCorePluginWorkingLocation() {
+		if (this.cCorePluginLocation != null) return this.cCorePluginLocation;
 
-		return this.javaPluginLocation = CCorePlugin.getDefault().getStateLocation();
+		return this.cCorePluginLocation = CCorePlugin.getDefault().getStateLocation();
 	}
 	/**
 	 * Index access is controlled through a read-write monitor so as
@@ -430,7 +432,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			this.indexStates = null;
 		}
 		this.indexNames = new SimpleLookupTable();
-		this.javaPluginLocation = null;
+		this.cCorePluginLocation = null;
 	}
 	
 	public void saveIndex(IIndex index) throws IOException {
@@ -492,26 +494,28 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	public void shutdown() {
 		if (VERBOSE)
 			JobManager.verbose("Shutdown"); //$NON-NLS-1$
-//TODO: BOG Put in Shutdown
-/*
-		IndexSelector indexSelector = new IndexSelector(new JavaWorkspaceScope(), null, false, this);
+		//Get index entries for all projects in the workspace, store their absolute paths
+		IndexSelector indexSelector = new IndexSelector(new CWorkspaceScope(), null, false, this);
 		IIndex[] selectedIndexes = indexSelector.getIndexes();
 		SimpleLookupTable knownPaths = new SimpleLookupTable();
 		for (int i = 0, max = selectedIndexes.length; i < max; i++) {
 			String path = selectedIndexes[i].getIndexFile().getAbsolutePath();
 			knownPaths.put(path, path);
 		}
-
+		//Any index entries that are in the index state must have a corresponding
+		//path entry - if not they are removed from the saved indexes file
 		if (indexStates != null) {
 			Object[] indexNames = indexStates.keyTable;
 			for (int i = 0, l = indexNames.length; i < l; i++) {
 				String key = (String) indexNames[i];
-				if (key != null && !knownPaths.containsKey(key))
+				if (key != null && !knownPaths.containsKey(key)) //here is an index that is in t
 					updateIndexState(key, null);
 			}
 		}
 
-		File indexesDirectory = new File(getJavaPluginWorkingLocation().toOSString());
+		//Clean up the .metadata folder - if there are any files in the directory that
+		//are not associated to an index we delete them
+		File indexesDirectory = new File(getCCorePluginWorkingLocation().toOSString());
 		if (indexesDirectory.isDirectory()) {
 			File[] indexesFiles = indexesDirectory.listFiles();
 			if (indexesFiles != null) {
@@ -525,7 +529,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 				}
 			}
 		}
-*/
+		
 		super.shutdown();
 	}
 

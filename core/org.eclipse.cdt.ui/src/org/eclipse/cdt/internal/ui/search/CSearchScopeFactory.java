@@ -13,8 +13,13 @@
  */
 package org.eclipse.cdt.internal.ui.search;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkingSet;
 
@@ -26,8 +31,7 @@ import org.eclipse.ui.IWorkingSet;
  */
 public class CSearchScopeFactory {
 	private static CSearchScopeFactory fgInstance;
-	private static ICSearchScope EMPTY_SCOPE= SearchEngine.createCSearchScope(new Object[] {});
-	
+	private static ICSearchScope EMPTY_SCOPE= SearchEngine.createCSearchScope(new ICElement[]{});
 	/**
 	 * 
 	 */
@@ -40,14 +44,60 @@ public class CSearchScopeFactory {
 			fgInstance = new CSearchScopeFactory();
 		return fgInstance;
 	}
-
 	/**
 	 * @param sets
 	 * @return
 	 */
 	public ICSearchScope createCSearchScope(IWorkingSet[] sets) {
-		// TODO Auto-generated method stub
-		return null;
+		if (sets == null || sets.length < 1)
+		return EMPTY_SCOPE;
+
+		Set cElements= new HashSet(sets.length * 10);
+		for (int i= 0; i < sets.length; i++)
+			addCElements(cElements, sets[i]);
+		return createCSearchScope(cElements);
+	}
+	/**
+	 * @param cElements
+	 * @return
+	 */
+	private ICSearchScope createCSearchScope(Set cElements) {
+		return SearchEngine.createCSearchScope((ICElement[])cElements.toArray(new ICElement[cElements.size()]));
+	}
+	/**
+	 * @param cElements
+	 * @param set
+	 */
+	private void addCElements(Set cElements, IWorkingSet set) {
+		if (set == null)
+			return;
+				
+		IAdaptable[] elements= set.getElements();
+		for (int i= 0; i < elements.length; i++) {
+			if (elements[i] instanceof ICElement)
+				addCElements(cElements, (ICElement)elements[i]);
+			else
+				addCElements(cElements, elements[i]);
+		}
+	}
+	/**
+	 * @param cElements
+	 * @param adaptable
+	 */
+	private void addCElements(Set cElements, IAdaptable resource) {
+		ICElement cElement= (ICElement)resource.getAdapter(ICElement.class);
+		if (cElement == null)
+			// not an ICElement resource
+			return;
+				
+		addCElements(cElements, cElement);
+	}
+	/**
+	 * @param cElements
+	 * @param element
+	 */
+	private void addCElements(Set cElements, ICElement element) {
+				cElements.add(element);
 	}
 
 	/**
@@ -58,5 +108,5 @@ public class CSearchScopeFactory {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 }

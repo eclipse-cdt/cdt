@@ -10,7 +10,10 @@
  */
 package org.eclipse.cdt.core.indexer.tests;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -85,7 +88,7 @@ public class IndexManagerTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		suite.addTest(new IndexManagerTests("testRefs"));
+		suite.addTest(new IndexManagerTests("testIndexShutdown"));
 		return suite;
 		//return new TestSuite(IndexManagerTests.class);
 	}
@@ -420,6 +423,45 @@ public class IndexManagerTests extends TestCase {
 		  }
 	}
 	
+  public void testIndexShutdown() throws Exception{
+	//Add a new file to the project, give it some time to index
+	 importFile("reftest.cpp","resources/indexer/reftest.cpp");
+	 //Enable indexing on the created project
+	 //By doing this, we force the Index Manager to indexAll()
+	 indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+	 indexManager.setEnabled(testProject,true);
+	 Thread.sleep(TIMEOUT);
+	 //Make sure project got added to index
+	 IPath testProjectPath = testProject.getFullPath();
+	 IIndex ind = indexManager.getIndex(testProjectPath,true,true);
+	 assertTrue("Index exists for project",ind != null);
+	 
+	 //Create an empty index file
+	 String badIndexFile = CCorePlugin.getDefault().getStateLocation().append("badIndex.index").toOSString();
+	 FileWriter writer = null;
+	 try {
+		writer = new FileWriter(badIndexFile);
+		writer.flush();
+		writer.close();
+	 }
+	 catch (IOException e){}
+	 
+	File indexesDirectory = new File(CCorePlugin.getDefault().getStateLocation().toOSString());
+
+	//This should get rid of the empty index file from the metadata and 
+	//remove the index from the indexes (since its .index file is missing)
+	indexManager.shutdown();
+	
+	File[] indexesFiles = indexesDirectory.listFiles();
+	if (indexesFiles != null) {
+		for (int i = 0, indexesFilesLength = indexesFiles.length; i < indexesFilesLength; i++) {
+				if(indexesFiles[i].getName().equals("badIndex.index")){
+					fail("Shutdown did not delete .index file");
+				}
+		}
+   	}
+  }
+  
   public void testDependencyTree() throws Exception{
 	//Add a file to the project
 	IFile depTest = importFile("DepTest.cpp","resources/dependency/DepTest.cpp");

@@ -1,3 +1,7 @@
+2003-08-08 Bogdan Gheorghe
+	- Filled out CSearchScopeFactory to translate working sets
+	  into CElements
+	
 2003-08-01 Andrew Niefer
 	- Modified CSearchResultCollector to reflect changes in BasicSearchResultCollector, 
 	  acceptMatch will return false if the match was not accepted because it has already

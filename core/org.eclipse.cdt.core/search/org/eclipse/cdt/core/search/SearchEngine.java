@@ -13,9 +13,13 @@
  */
 package org.eclipse.cdt.core.search;
 
+import java.util.HashSet;
+
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.search.CSearchScope;
 import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
 import org.eclipse.cdt.internal.core.search.PathCollector;
 import org.eclipse.cdt.internal.core.search.PatternSearchJob;
@@ -64,13 +68,31 @@ public class SearchEngine implements ICSearchConstants{
 		return new CWorkspaceScope();
 	}
 
+	public static ICSearchScope createCSearchScope(ICElement[] elements) {
+		return createCSearchScope(elements, true);
+	}
 	/**
 	 * @param objects
 	 * @return
 	 */
-	public static ICSearchScope createCSearchScope(Object[] objects) {
-		// TODO Auto-generated method stub
-		return null;
+	public static ICSearchScope createCSearchScope(ICElement[] elements, boolean includeReferencedProjects) {
+		CSearchScope scope = new CSearchScope();
+		HashSet visitedProjects = new HashSet(2);
+		for (int i = 0, length = elements.length; i < length; i++) {
+			ICElement element = elements[i];
+			if (element != null) {
+				try {
+					if (element instanceof ICProject) {
+						scope.add((ICProject)element, includeReferencedProjects, visitedProjects);
+					} else {
+						scope.add(element);
+					}
+				} catch (Exception e) {
+					// ignore
+				}
+			}
+		}
+		return scope;
 	}
 
 	public static ICSearchPattern createSearchPattern( String stringPattern, SearchFor searchFor, LimitTo limitTo, boolean isCaseSensitive){

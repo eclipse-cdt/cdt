@@ -1,3 +1,10 @@
+2003-08-08 Bogdan Gheorghe
+	- Added CreateSearchScope to create a search scope out of
+	  CElements
+	- Filled out CSearchScope to enable:
+	   - adding a project to scope, include referenced projects
+	   - adding individual CElements to scope
+	
 2003-08-06 Andrew Niefer
 	- Create OrPattern which matches for search if any of its constituent patterns matches
 	- modified MatchLocator to support the OrPattern

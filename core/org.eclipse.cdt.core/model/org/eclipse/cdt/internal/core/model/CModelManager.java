@@ -758,6 +758,10 @@ public class CModelManager implements IResourceChangeListener {
 	 * 
 	 */
 	public void shutdown() {
+		if (this.fDeltaProcessor.indexManager != null){ // no more indexing
+					this.fDeltaProcessor.indexManager.shutdown();
+		}
+		
 		// Do any shutdown of services.
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(factory);	
 

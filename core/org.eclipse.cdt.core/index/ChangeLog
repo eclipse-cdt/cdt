@@ -1,3 +1,6 @@
+2003-08-07 Bogdan Gheorghe
+	- Added shutdown cleanup routine in IndexManager
+	
 2003-07-28 Andrew Niefer
 	- added support for '?' wildcards in AbstractIndexer.bestPrefix
 

@@ -1,3 +1,15 @@
+2004-03-08 Alain Magloire
+
+	In the Editor if the changes are discarded i.e.
+	closing the editor whitout saving.  We do not update
+	the working copy or rathe we do not discard the change
+	and fire an event to the listeners.  Now we do but it
+	can still be a problem since the destroy becomes heavy
+	wieght and it is not wrap around a Workspace operation.
+	Fire the event at destroy will have to do for now.
+
+	* model/org/eclipse/cdt/internal/core/model/WorkingCopy.java
+
 2004-03-08 Hoda Amer
 	Partial fix for bug#52948 : Content Assist: typedef-ed types do not appear in the completion list.
 	

@@ -132,11 +132,10 @@ public class WorkingCopy extends TranslationUnit implements IWorkingCopy {
 			Map perFactoryWorkingCopies = (Map) sharedWorkingCopies.get(this.bufferFactory);
 			if (perFactoryWorkingCopies != null){
 				if (perFactoryWorkingCopies.remove(originalElement) != null) {
-	
-					// report removed java delta
-					//CElementDelta delta = new CElementDelta(this.getCoreModel());
-					//delta.removed(this);
-					//manager.fire(delta, CModelManager.DEFAULT_CHANGE_EVENT);
+					// report C deltas
+					CElementDelta delta = new CElementDelta(this.getCModel());
+					delta.removed(this);
+					CModelManager.getDefault().fire(delta, ElementChangedEvent.POST_RECONCILE);
 				}
 			}		
 		} catch (CModelException e) {

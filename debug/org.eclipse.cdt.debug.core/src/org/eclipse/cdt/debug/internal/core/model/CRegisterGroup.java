@@ -71,7 +71,12 @@ public class CRegisterGroup extends CDebugElement implements IRegisterGroup, IEn
 	 * @see org.eclipse.debug.core.model.IRegisterGroup#hasRegisters()
 	 */
 	public boolean hasRegisters() throws DebugException {
-		return getRegisters().length > 0;
+		try {
+			return fCDIRegisterGroup.hasRegisters();
+		} catch( CDIException e ) {
+			requestFailed( e.getMessage(), null );
+		}
+		return false;
 	}
 
 	public void dispose() {

@@ -35,4 +35,13 @@ public interface ICDIRegisterGroup extends ICDIObject {
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDIRegisterDescriptor[] getRegisterDescriptors() throws CDIException;
+
+	/**
+	 * Returns whether this register group currently contains any registers.
+	 * 
+	 * @return whether this register group currently contains any registers
+	 * @exception CDIException if this method fails.  Reasons include:
+	 */
+	public boolean hasRegisters() throws CDIException;	
+
 }

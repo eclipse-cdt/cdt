@@ -1,3 +1,9 @@
+2004-11-16 Alain Magloire
+	Optimize things by providing a new method
+	ICDIRegisterGroup.hasRegisters();
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDIRegisterGroup.java
+	* src/org/eclipse/cdt/debug/internal/core/model/CRegisterGroup.java
+
 2004-11-15 Mikhail Khodjaiants
 	Fix for bug 78604: Disassembly causes Java exception when disassembling beyond fn(?).
 	Added the "getAddressFactory" method to the "IDisassembly" interface.

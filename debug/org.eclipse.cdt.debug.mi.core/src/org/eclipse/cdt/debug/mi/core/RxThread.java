@@ -68,7 +68,7 @@ public class RxThread extends Thread {
 		try {
 			String line;
 			while ((line = reader.readLine()) != null) {
-//MIPlugin.getDefault().debugLog(line);
+MIPlugin.getDefault().debugLog(line);
 				processMIOutput(line + "\n");
 			}
 		} catch (IOException e) {

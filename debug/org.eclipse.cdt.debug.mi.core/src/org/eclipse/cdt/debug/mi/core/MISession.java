@@ -182,7 +182,7 @@ public class MISession extends Observable {
 	static int number = 1;
 	public synchronized void postCommand(Command cmd, long timeout) throws MIException {
 
-//MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
+MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 
 		// Test if we are in a sane state.
 		if (!txThread.isAlive() || !rxThread.isAlive()) {

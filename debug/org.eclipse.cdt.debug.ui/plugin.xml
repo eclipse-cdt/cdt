@@ -17,6 +17,7 @@
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.debug.core"/>
       <import plugin="org.eclipse.cdt.debug.core"/>
+      <import plugin="org.eclipse.cdt.ui"/>
    </requires>
 
 
@@ -221,5 +222,13 @@
          </action>
       </editorContribution>
    </extension>
-
+   <extension
+         point="org.eclipse.cdt.ui.textHovers">
+      <textHover
+            name="%DebugTextHover"
+            perspective="org.eclipse.debug.ui.DebugPerspective"
+            class="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover"
+            id="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover">
+      </textHover>
+   </extension>
 </plugin>

@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -170,7 +171,11 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	
 	private boolean isConstructorReference( IASTName name ){
 	    IASTNode node = name.getParent();
-	    
+	    if( node instanceof ICPPASTQualifiedName ){
+	    	IASTName [] ns = ((ICPPASTQualifiedName)node).getNames();
+	    	if( ns[ ns.length - 1 ] == name )
+	    		node = node.getParent();
+	    }
 	    if( node instanceof IASTDeclSpecifier ){
 	        IASTNode parent = node.getParent();
 	        if( parent instanceof IASTTypeId && parent.getParent() instanceof ICPPASTNewExpression )

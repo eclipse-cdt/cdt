@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
@@ -1393,7 +1394,19 @@ public class CompleteParser2Tests extends TestCase {
 		buffer.append( "void f ( int s ) { \n" ); //$NON-NLS-1$
 		buffer.append( "   struct s sInstance; \n" ); //$NON-NLS-1$
 		buffer.append( "}\n"); //$NON-NLS-1$		
-		parse( buffer.toString() );
+		IASTTranslationUnit tu = parse( buffer.toString() );	
+		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 5 );
+		ICPPClassType s = (ICPPClassType) col.getName(0).resolveBinding();
+		IParameter s2 = (IParameter) col.getName(2).resolveBinding();
+		IVariable instance = (IVariable) col.getName(4).resolveBinding();
+
+		assertInstances( col, s, 2 );
+		assertInstances( col, s2, 1 );
+		assertSame( instance.getType(), s );
 	}
 	
 	public void testQualifiedLookup() throws Exception{
@@ -1405,7 +1418,22 @@ public class CompleteParser2Tests extends TestCase {
 		buffer.append( "   class A { }; \n" ); //$NON-NLS-1$
 		buffer.append( "}" ); //$NON-NLS-1$
 		buffer.append( "void main() { N::A * a = new N::A();  a->f(); } "); //$NON-NLS-1$		
-		parse( buffer.toString() );
+		IASTTranslationUnit tu = parse( buffer.toString() );	
+		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 13 );
+		ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
+		IFunction f = (IFunction) col.getName(1).resolveBinding();
+		ICPPClassType A = (ICPPClassType) col.getName(2).resolveBinding();
+		
+		ICPPConstructor ctor = A.getConstructors()[0];
+		
+		assertInstances( col, N, 3 );
+		assertInstances( col, f, 2 );
+		assertInstances( col, A, 3 );
+		assertInstances( col, ctor, 2 );
 	}
 	
 	public void testBug43110() throws Exception
@@ -1414,7 +1442,18 @@ public class CompleteParser2Tests extends TestCase {
 		buffer.append("void x( int y, ... );\n"); //$NON-NLS-1$
 		buffer.append("void y( int x... );\n"); //$NON-NLS-1$
 		buffer.append("void z(...);"); //$NON-NLS-1$
-		parse(buffer.toString() );
+		IASTTranslationUnit tu = parse( buffer.toString() );	
+		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 5 );
+		IFunction x = (IFunction) col.getName(0).resolveBinding();
+		IFunction y = (IFunction) col.getName(2).resolveBinding();
+		IFunction z = (IFunction) col.getName(4).resolveBinding();
+		assertNotNull(x);
+		assertNotNull(y);
+		assertNotNull(z);
 	}
 	
 	public void testBug43110_XRef() throws Exception
@@ -1423,17 +1462,50 @@ public class CompleteParser2Tests extends TestCase {
 		buffer.append( "void foo( ... ) {}\n" ); //$NON-NLS-1$
 		buffer.append( "void main( ){ foo( 1 ); }\n" ); //$NON-NLS-1$
 		
-		parse( buffer.toString() );
+		IASTTranslationUnit tu = parse( buffer.toString() );	
+		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 3 );
+		IFunction foo = (IFunction) col.getName(0).resolveBinding();
+		assertInstances( col, foo, 2 );
 	}
 	
 	public void testErrorHandling_1() throws Exception
 	{
-		parse( "A anA; int x = c; class A {}; A * anotherA = &anA; int b;", false ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "A anA; int x = c; class A {}; A * anotherA = &anA; int b;", false ); //$NON-NLS-1$
+		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 9 );
+		IProblemBinding p = (IProblemBinding) col.getName(0).resolveBinding();
+		IVariable anA = (IVariable) col.getName(1).resolveBinding();
+		assertNotNull( col.getName(2).resolveBinding() );
+		IProblemBinding p2 = (IProblemBinding) col.getName(3).resolveBinding();
+		ICPPClassType A = (ICPPClassType) col.getName(4).resolveBinding();
+		
+		assertInstances( col, anA, 2 );
+		assertInstances( col, A, 2 );
+		
+		assertNotNull( p );
+		assertNotNull( p2 );
+		
+		assertSame( anA.getType(), p );
 	}
 	
 	public void testBug44340() throws Exception {
 		// inline function with reference to variables declared after them
-		parse ("class A{ int getX() {return x[1];} int x[10];};", false ); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse ("class A{ int getX() {return x[1];} int x[10];};"); //$NON-NLS-1$
+		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 4 );
+		
+		ICPPField x = (ICPPField) col.getName(2).resolveBinding();
+		assertInstances( col, x, 2 );
 	}
 	
 	public void testBug47628() throws Exception
@@ -1451,7 +1523,17 @@ public class CompleteParser2Tests extends TestCase {
 		Writer writer = new StringWriter();
 		writer.write( "void f( char [] ); \n" ); //$NON-NLS-1$
 		writer.write( "void f( char * ){} \n" ); //$NON-NLS-1$
-		parse( writer.toString() );		
+		IASTTranslationUnit tu = parse( writer.toString() );		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 4 );
+		IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+		IParameter p1 = (IParameter)col.getName(1).resolveBinding();
+		IFunction f2 = (IFunction) col.getName(2).resolveBinding();
+		IParameter p2 = (IParameter)col.getName(3).resolveBinding();
+		assertSame( f1, f2 );
+		assertSame( p1, p2 );
 	}
 	
 	public void testBug45697() throws Exception
@@ -1460,7 +1542,18 @@ public class CompleteParser2Tests extends TestCase {
 		writer.write( " int f( bool ); \n"); //$NON-NLS-1$
 		writer.write( " int f( char ){ } "); //$NON-NLS-1$
 		
-		parse( writer.toString() );
+		IASTTranslationUnit tu = parse( writer.toString() );		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 4 );
+		IFunction f1 = (IFunction) col.getName(0).resolveBinding();
+		IParameter p1 = (IParameter)col.getName(1).resolveBinding();
+		IFunction f2 = (IFunction) col.getName(2).resolveBinding();
+		IParameter p2 = (IParameter)col.getName(3).resolveBinding();
+		
+		assertNotSame( f1, f2 );
+		assertNotSame( p1, p2 );
 	}
 
 	public void testBug54639() throws Exception
@@ -1468,7 +1561,20 @@ public class CompleteParser2Tests extends TestCase {
 		Writer writer = new StringWriter();
 		writer.write( "typedef enum _A { } A, *pA; " ); //$NON-NLS-1$
 		
-		parse( writer.toString() );
+		IASTTranslationUnit tu = parse( writer.toString() );		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 3 );
+		
+		IEnumeration _A = (IEnumeration) col.getName(0).resolveBinding();
+		ITypedef A = (ITypedef) col.getName(1).resolveBinding();
+		ITypedef pA = (ITypedef)col.getName(2).resolveBinding();
+		
+		assertNotNull( _A );
+		assertSame( A.getType(), _A );
+		assertTrue( pA.getType() instanceof IPointerType );
+		assertSame( ((IPointerType)pA.getType()).getType(), _A );
 	}
 	
 	public void testBug55163() throws Exception
@@ -1480,13 +1586,34 @@ public class CompleteParser2Tests extends TestCase {
 		writer.write( "   for( i = n - 1, di = (double)( i + i ); i > 0; i-- ){ } \n"); //$NON-NLS-1$
 		writer.write( "}\n"); //$NON-NLS-1$
 		
-		parse( writer.toString() );
+		IASTTranslationUnit tu = parse( writer.toString() );		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 11 );
+		IVariable i = (IVariable)col.getName(1).resolveBinding();
+		IVariable n = (IVariable)col.getName(2).resolveBinding();
+		IVariable di = (IVariable)col.getName(3).resolveBinding();
+		
+		assertInstances( col, i, 6 );
+		assertInstances( col, n, 2 );
+		assertInstances( col, di, 2 );
 	}
 	public void testBug55673() throws Exception{
 		Writer writer = new StringWriter();
 		writer.write( "struct Example { int i;  int ( * pfi ) ( int ); }; "); //$NON-NLS-1$
 		
 		parse( writer.toString() );
+		IASTTranslationUnit tu = parse( writer.toString() );		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 5 );
+		ICPPField pfi = (ICPPField)col.getName(3).resolveBinding();
+		
+		assertNotNull( pfi );
+		assertTrue( pfi.getType() instanceof IPointerType );
+		assertTrue( ((IPointerType)pfi.getType()).getType() instanceof IFunctionType );
 	}
 	
 	public void testBug54531() throws Exception
@@ -1496,7 +1623,15 @@ public class CompleteParser2Tests extends TestCase {
 	
 	public void testBug56516() throws Exception
 	{
-		parse( "typedef struct blah sb;"); //$NON-NLS-1$
+		IASTTranslationUnit tu = parse( "typedef struct blah sb;"); //$NON-NLS-1$		
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 2 );
+		
+		IProblemBinding blah = (IProblemBinding) col.getName(0).resolveBinding();
+		ITypedef sb = (ITypedef) col.getName(1).resolveBinding();
+		assertSame( sb.getType(), blah );
 	}
 	
 	public void testBug53786() throws Exception
@@ -1530,7 +1665,18 @@ public class CompleteParser2Tests extends TestCase {
 		writer.write( "   void f( T );     " ); //$NON-NLS-1$
 		writer.write( "};                  " ); //$NON-NLS-1$
 		writer.write( "void X::f( T ) { }  " ); //$NON-NLS-1$
-		parse( writer.toString() );		
+		IASTTranslationUnit tu = parse( writer.toString() );
+		CPPNameCollector col = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, col );
+		
+		assertEquals( col.size(), 10 );
+		ICPPClassType X = (ICPPClassType) col.getName(0).resolveBinding();
+		ITypedef T = (ITypedef) col.getName(1).resolveBinding();
+		ICPPMethod f = (ICPPMethod) col.getName(2).resolveBinding();
+		
+		assertInstances( col, X, 2 );
+		assertInstances( col, T, 3 );
+		assertInstances( col, f, 3 );
 	}	
 	
 	public void testBug57800() throws Exception

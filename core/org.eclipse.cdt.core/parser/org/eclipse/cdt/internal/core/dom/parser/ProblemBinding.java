@@ -19,13 +19,14 @@ import java.text.MessageFormat;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.ParserMessages;
 
 /**
  * @author aniefer
  */
-public class ProblemBinding implements IProblemBinding {
+public class ProblemBinding implements IProblemBinding, IType {
     private final int id;
     private final char [] arg;
     
@@ -111,4 +112,8 @@ public class ProblemBinding implements IProblemBinding {
         return null;
     }
 
+    public Object clone(){
+    	//don't clone problems
+        return this;
+    }
 }

@@ -73,6 +73,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -127,17 +128,22 @@ public class CPPVisitor {
 	 */
 	public static IBinding createBinding(IASTName name) {
 		IASTNode parent = name.getParent();
+		IBinding binding = null;
 		if( parent instanceof IASTNamedTypeSpecifier  ||
 		    parent instanceof ICPPASTQualifiedName    ||
 			parent instanceof ICPPASTBaseSpecifier 	  ||
 			parent instanceof ICPPASTConstructorChainInitializer ) 
 		{
-			IBinding binding = CPPSemantics.resolveBinding( name ); 
-			if( binding == null && parent instanceof ICPPASTQualifiedName ){
-				binding = createBinding( (IASTName) parent );
+			binding = CPPSemantics.resolveBinding( name ); 
+			if( binding instanceof IProblemBinding && parent instanceof ICPPASTQualifiedName ){
+				if( ((IProblemBinding)binding).getID() == IProblemBinding.SEMANTIC_NAME_NOT_FOUND ){
+					parent = parent.getParent();
+				}
+			} else {
+				return binding;
 			}
-			return binding;
-		} else if( parent instanceof IASTIdExpression ){
+		} 
+		if( parent instanceof IASTIdExpression ){
 			return resolveBinding( parent );
 		} else if( parent instanceof ICPPASTFieldReference ){
 			return resolveBinding( parent );
@@ -497,20 +503,14 @@ public class CPPVisitor {
 	 * @return
 	 */
 	public static IScope getContainingScope(IASTParameterDeclaration parameterDeclaration) {
-		IASTNode parent = parameterDeclaration.getParent();
-		if( parent instanceof IASTStandardFunctionDeclarator ){
-			IASTStandardFunctionDeclarator functionDeclarator = (IASTStandardFunctionDeclarator) parent;
-			if( functionDeclarator.getNestedDeclarator() != null ){
-				return getContainingScope( functionDeclarator );
-			}
-			IASTName fnName = functionDeclarator.getName();
-			IBinding binding = fnName.resolveBinding();
-			if( binding instanceof IFunction )
-				return ((IFunction)binding).getFunctionScope();
-			return binding.getScope();
-		}
-		
-		return null;
+		ICPPASTFunctionDeclarator dtor = (ICPPASTFunctionDeclarator) parameterDeclaration.getParent();
+		IASTName name = dtor.getName();
+		if( name instanceof ICPPASTQualifiedName ) {
+			IASTName[] ns = ((ICPPASTQualifiedName) name).getNames();
+			if( ns.length > 0 )
+				return getContainingScope( ns [ ns.length - 1 ] );
+		} 
+		return getContainingScope( dtor );
 	}
 	
 	public static IASTNode getContainingBlockItem( IASTNode node ){
@@ -1283,6 +1283,10 @@ public class CPPVisitor {
 	    		type = (IType) binding;
 		} else if( declSpec instanceof ICPPASTElaboratedTypeSpecifier ){
 			IBinding binding = ((ICPPASTElaboratedTypeSpecifier)declSpec).getName().resolveBinding();
+			if( binding instanceof IType )
+				type = (IType) binding;
+		} else if( declSpec instanceof IASTEnumerationSpecifier ){
+			IBinding binding = ((IASTEnumerationSpecifier)declSpec).getName().resolveBinding();
 			if( binding instanceof IType )
 				type = (IType) binding;
 		} else if( declSpec instanceof ICPPASTSimpleDeclSpecifier ){

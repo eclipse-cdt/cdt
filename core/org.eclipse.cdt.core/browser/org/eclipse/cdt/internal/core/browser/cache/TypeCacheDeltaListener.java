@@ -90,20 +90,11 @@ public class TypeCacheDeltaListener implements IElementChangedListener {
 		ICElement elem= delta.getElement();
 		int pathEntryChanged= ICElementDelta.F_ADDED_PATHENTRY_SOURCE | ICElementDelta.F_REMOVED_PATHENTRY_SOURCE |
 								ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE | ICElementDelta.F_CHANGED_PATHENTRY_MACRO;
-		boolean isAddedOrRemoved= (delta.getKind() != ICElementDelta.CHANGED)
-		 || ((delta.getFlags() & pathEntryChanged) != 0);
-		
+		boolean isAddedOrRemoved= (((delta.getKind() != ICElementDelta.CHANGED)
+		 || ((delta.getFlags() & pathEntryChanged) != 0)) && (delta.getFlags() & ICElementDelta.F_CHILDREN) == 0);
 		switch (elem.getElementType()) {
 			case ICElement.C_MODEL:
-			{
-				if (isAddedOrRemoved) {
-					// CModel has changed
-					// flush the entire cache
-					fFlushAll= true;
-					return true;
-				}
 				return processDeltaChildren(delta);
-			}
 			
 			case ICElement.C_PROJECT:
 			case ICElement.C_CCONTAINER:

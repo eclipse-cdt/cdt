@@ -4,7 +4,7 @@ package org.eclipse.cdt.internal.core.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.BinaryParserConfig;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CDescriptorEvent;
@@ -25,6 +24,7 @@ import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICDescriptorListener;
+import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
@@ -70,11 +70,11 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Unique handle onto the CModel
 	 */
 	final CModel cModel = new CModel();
-    
+
 	public static HashSet OptionNames = new HashSet(20);
 
 	public static final int DEFAULT_CHANGE_EVENT = 0; // must not collide with ElementChangedEvent event masks
-	
+
 	/**
 	 * Used to convert <code>IResourceDelta</code>s into <code>ICElementDelta</code>s.
 	 */
@@ -93,7 +93,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * This is a table form IWorkingCopy to IJavaElementDelta
 	 */
 	HashMap reconcileDeltas = new HashMap();
- 
+
 	/**
 	 * Turns delta firing on/off. By default it is on.
 	 */
@@ -114,9 +114,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	protected Map elementsOutOfSynchWithBuffers = new HashMap(11);
 
 	/*
-     * Temporary cache of newly opened elements
-     */
-    private ThreadLocal temporaryCache = new ThreadLocal();
+	 * Temporary cache of newly opened elements
+	 */
+	private ThreadLocal temporaryCache = new ThreadLocal();
 
 	/**
 	 * Infos cache.
@@ -137,16 +137,16 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Map of the binary parser for each project.
 	 */
 	private HashMap binaryParsersMap = new HashMap();
-	
+
 	/**
 	 * The lis of the SourceMappers on projects.
 	 */
 	private HashMap sourceMappers = new HashMap();
-   
+
 	public static final IWorkingCopy[] NoWorkingCopy = new IWorkingCopy[0];
 
 	static CModelManager factory = null;
-	
+
 	private CModelManager() {
 	}
 
@@ -156,9 +156,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 			// Register to the workspace;
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(factory,
-				IResourceChangeEvent.POST_CHANGE
-				| IResourceChangeEvent.PRE_DELETE
-				| IResourceChangeEvent.PRE_CLOSE);
+																		IResourceChangeEvent.POST_CHANGE
+																				| IResourceChangeEvent.PRE_DELETE
+																				| IResourceChangeEvent.PRE_CLOSE);
 
 			// Register the Core Model on the Descriptor
 			// Manager, it needs to know about changes.
@@ -182,7 +182,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		return cModel;
 	}
 
-	public ICElement create (IPath path) {
+	public ICElement create(IPath path) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		// Assume it is fullpath relative to workspace
 		IResource res = root.findMember(path);
@@ -203,7 +203,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		return create(res, null);
 	}
 
-	public ICElement create (IResource resource, ICProject cproject) {
+	public ICElement create(IResource resource, ICProject cproject) {
 		if (resource == null) {
 			return null;
 		}
@@ -287,7 +287,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					for (int j = 0; j < segments.length; j++) {
 						cfolder = cfolder.getCContainer(segments[j]);
 					}
-					
+
 					if (CoreModel.isValidTranslationUnitName(cproject.getProject(), fileName)) {
 						celement = cfolder.getTranslationUnit(fileName);
 					} else if (cproject.isOnOutputEntry(file)) {
@@ -328,7 +328,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		} catch (CModelException e) {
 			//
 		}
-		return celement;	
+		return celement;
 	}
 
 	public ICElement create(IFile file, IBinaryFile bin, ICProject cproject) {
@@ -356,7 +356,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					for (int j = 0; j < segments.length; j++) {
 						cfolder = cfolder.getCContainer(segments[j]);
 					}
-					
+
 					if (bin.getType() == IBinaryFile.ARCHIVE) {
 						celement = new Archive(cfolder, file, (IBinaryArchive)bin);
 						ArchiveContainer vlib = (ArchiveContainer)cproject.getArchiveContainer();
@@ -386,7 +386,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		} catch (CModelException e) {
 			//
 		}
-		return celement;	
+		return celement;
 	}
 
 	public ITranslationUnit createTranslationUnitFrom(ICProject cproject, IPath path) {
@@ -418,9 +418,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					}
 				}
 			} catch (CModelException e) {
-			}			
+			}
 		}
-		return null;	
+		return null;
 	}
 
 	public void releaseCElement(ICElement celement) {
@@ -429,7 +429,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (celement == null)
 			return;
 
-//System.out.println("RELEASE " + celement.getElementName());
+		//System.out.println("RELEASE " + celement.getElementName());
 
 		// Remove from the containers.
 		if (celement instanceof IParent) {
@@ -505,30 +505,50 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	public BinaryParserConfig[] getBinaryParser(IProject project) {
-		try {
-			BinaryParserConfig[] parsers =  (BinaryParserConfig[])binaryParsersMap.get(project);
+		BinaryParserConfig[] parsers = (BinaryParserConfig[])binaryParsersMap.get(project);
+		if (parsers == null) {
+			try {
+				ICDescriptor cdesc = CCorePlugin.getDefault().getCProjectDescription(project, false);
+				if (cdesc != null) {
+					ICExtensionReference[] cextensions = cdesc.get(CCorePlugin.BINARY_PARSER_UNIQ_ID, true);
+					if (cextensions.length > 0) {
+						ArrayList list = new ArrayList(cextensions.length);
+						for (int i = 0; i < cextensions.length; i++) {
+							BinaryParserConfig config = new BinaryParserConfig(cextensions[i]);
+							list.add(config);
+						}
+						parsers = new BinaryParserConfig[list.size()];
+						list.toArray(parsers);
+					}
+				}
+			} catch (CoreException e) {
+			}
 			if (parsers == null) {
-				parsers = CCorePlugin.getDefault().getBinaryParserConfigs(project);
+				try {
+					BinaryParserConfig config = new BinaryParserConfig(CCorePlugin.getDefault().getDefaultBinaryParser(), CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID);
+					parsers = new BinaryParserConfig[]{config};
+				} catch (CoreException e1) {
+				}
 			}
-			if (parsers != null) {
-				binaryParsersMap.put(project, parsers);
-				return parsers;
-			}
-		} catch (CoreException e) {
 		}
-		IBinaryParser nullParser = new NullBinaryParser();
-		BinaryParserConfig config = new BinaryParserConfig(nullParser, ""); //$NON-NLS-1$
-		BinaryParserConfig[] configs = new BinaryParserConfig[] {config};
-		return configs;
+		if (parsers != null) {
+			binaryParsersMap.put(project, parsers);
+			return parsers;
+		}
+		return new BinaryParserConfig[0];
 	}
 
 	public IBinaryFile createBinaryFile(IFile file) {
 		BinaryParserConfig[] parsers = getBinaryParser(file.getProject());
 		int hints = 0;
 		for (int i = 0; i < parsers.length; i++) {
-			IBinaryParser  parser = parsers[i].getBinaryParser();
-			if (parser.getHintBufferSize() > hints) {
-				hints = parser.getHintBufferSize();
+			IBinaryParser parser = null;
+			try {
+				parser = parsers[i].getBinaryParser();
+				if (parser.getHintBufferSize() > hints) {
+					hints = parser.getHintBufferSize();
+				}
+			} catch (CoreException e) {
 			}
 		}
 		byte[] bytes = new byte[hints];
@@ -550,20 +570,20 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 
 		IPath location = file.getLocation();
-		
+
 		for (int i = 0; i < parsers.length; i++) {
 			try {
-				IBinaryFile bin = parsers[i].getBinaryParser().getBinary(bytes, location);
-				if (bin != null) {
-					return bin;
+				IBinaryParser parser = parsers[i].getBinaryParser();
+				IBinaryFile binFile = parser.getBinary(bytes, location);
+				if (binFile != null) {
+					return binFile;
 				}
 			} catch (IOException e) {
-				//
+			} catch (CoreException e) {
 			}
 		}
 		return null;
 	}
-
 	/**
 	 * TODO: this is a temporary hack until, the CDescriptor manager is
 	 * in place and could fire deltas of Parser change.
@@ -590,10 +610,10 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			}
 		}
 	}
-	
+
 	public BinaryRunner getBinaryRunner(ICProject project, boolean start) {
 		BinaryRunner runner = null;
-		synchronized(binaryRunners) {
+		synchronized (binaryRunners) {
 			runner = (BinaryRunner)binaryRunners.get(project.getProject());
 			if (runner == null) {
 				runner = new BinaryRunner(project.getProject());
@@ -609,9 +629,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	public void removeBinaryRunner(ICProject cproject) {
 		removeBinaryRunner(cproject.getProject());
 	}
-	
+
 	public void removeBinaryRunner(IProject project) {
-		BinaryRunner runner = (BinaryRunner) binaryRunners.remove(project);
+		BinaryRunner runner = (BinaryRunner)binaryRunners.remove(project);
 		if (runner != null) {
 			runner.stop();
 		}
@@ -619,8 +639,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 	public SourceMapper getSourceMapper(ICProject cProject) {
 		SourceMapper mapper = null;
-		synchronized(sourceMappers) {
-			mapper = (SourceMapper) sourceMappers.get(cProject);
+		synchronized (sourceMappers) {
+			mapper = (SourceMapper)sourceMappers.get(cProject);
 			if (mapper == null) {
 				mapper = new SourceMapper(cProject);
 				sourceMappers.put(cProject, mapper);
@@ -632,7 +652,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * addElementChangedListener method comment.
 	 */
 	public void addElementChangedListener(IElementChangedListener listener) {
-		synchronized(fElementChangedListeners) {
+		synchronized (fElementChangedListeners) {
 			if (!fElementChangedListeners.contains(listener)) {
 				fElementChangedListeners.add(listener);
 			}
@@ -643,7 +663,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * removeElementChangedListener method comment.
 	 */
 	public void removeElementChangedListener(IElementChangedListener listener) {
-		synchronized(fElementChangedListeners) {
+		synchronized (fElementChangedListeners) {
 			int i = fElementChangedListeners.indexOf(listener);
 			if (i != -1) {
 				fElementChangedListeners.remove(i);
@@ -666,32 +686,32 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * on the platform, and that the C Model should update any required
 	 * internal structures such that its elements remain consistent.
 	 * Translates <code>IResourceDeltas</code> into <code>ICElementDeltas</code>.
-	 *
+	 * 
 	 * @see IResourceDelta
-	 * @see IResource 
+	 * @see IResource
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 
 		if (event.getSource() instanceof IWorkspace) {
 			IResourceDelta delta = event.getDelta();
 			IResource resource = event.getResource();
-			switch(event.getType()){
+			switch (event.getType()) {
 				case IResourceChangeEvent.PRE_DELETE :
-				try{
+					try {
 					if (resource.getType() == IResource.PROJECT && 	
 					    ( ((IProject)resource).hasNature(CProjectNature.C_NATURE_ID) ||
 					      ((IProject)resource).hasNature(CCProjectNature.CC_NATURE_ID) )){
 						this.deleting((IProject) resource);}
-				}catch (CoreException e){
-				}
-				break;
+					} catch (CoreException e) {
+					}
+					break;
 
 				case IResourceChangeEvent.POST_CHANGE :
 					try {
 						if (delta != null) {
 							ICElementDelta[] translatedDeltas = fDeltaProcessor.processResourceDelta(delta);
 							if (translatedDeltas.length > 0) {
-								for (int i= 0; i < translatedDeltas.length; i++) {
+								for (int i = 0; i < translatedDeltas.length; i++) {
 									registerCModelDelta(translatedDeltas[i]);
 								}
 							}
@@ -699,8 +719,8 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
-					}					
-				break;
+					}
+					break;
 			}
 		}
 	}
@@ -710,27 +730,26 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 */
 	public void descriptorChanged(CDescriptorEvent event) {
 		int flags = event.getFlags();
-		if ((flags & CDescriptorEvent.EXTENSION_CHANGED) != 0) {
+		if ( (flags & CDescriptorEvent.EXTENSION_CHANGED) != 0) {
 			ICDescriptor cdesc = event.getDescriptor();
 			if (cdesc != null) {
 				IProject project = cdesc.getProject();
 				try {
-					String[] newIds = CCorePlugin.getDefault().getBinaryParserIds(project);
+					ICExtensionReference[] newExts = CCorePlugin.getDefault().getBinaryParserExtensions(project);
 					BinaryParserConfig[] currentConfigs = getBinaryParser(project);
 					// anything added/removed
-					if (newIds.length != currentConfigs.length) {
+					if (newExts.length != currentConfigs.length) {
 						resetBinaryParser(project);
 					} else { // may reorder
-						for (int i = 0; i < newIds.length; i++) {
-							String id = newIds[i];
-							if (!id.equals(currentConfigs[i].getId())) {
+						for (int i = 0; i < newExts.length; i++) {
+							if (!newExts[i].getID().equals(currentConfigs[i].getId())) {
 								resetBinaryParser(project);
 								break;
 							}
 						}
 					}
 				} catch (CoreException e) {
-					//
+					resetBinaryParser(project);
 				}
 			}
 		}
@@ -759,32 +778,32 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			} else {
 				deltaToNotify = customDeltas;
 			}
-                         
+
 			IElementChangedListener[] listeners;
-			int listenerCount; 
-			int [] listenerMask;
+			int listenerCount;
+			int[] listenerMask;
 			// Notification
-			synchronized(fElementChangedListeners) {
-				listeners =  new IElementChangedListener[fElementChangedListeners.size()];
+			synchronized (fElementChangedListeners) {
+				listeners = new IElementChangedListener[fElementChangedListeners.size()];
 				fElementChangedListeners.toArray(listeners);
-				listenerCount = listeners.length; 
+				listenerCount = listeners.length;
 				listenerMask = null;
 			}
 
 			switch (eventType) {
-				case DEFAULT_CHANGE_EVENT:
+				case DEFAULT_CHANGE_EVENT :
 					firePreAutoBuildDelta(deltaToNotify, listeners, listenerMask, listenerCount);
 					firePostChangeDelta(deltaToNotify, listeners, listenerMask, listenerCount);
 					fireReconcileDelta(listeners, listenerMask, listenerCount);
 					break;
-				case ElementChangedEvent.PRE_AUTO_BUILD:
+				case ElementChangedEvent.PRE_AUTO_BUILD :
 					firePreAutoBuildDelta(deltaToNotify, listeners, listenerMask, listenerCount);
 					break;
-				case ElementChangedEvent.POST_CHANGE:
+				case ElementChangedEvent.POST_CHANGE :
 					firePostChangeDelta(deltaToNotify, listeners, listenerMask, listenerCount);
 					fireReconcileDelta(listeners, listenerMask, listenerCount);
 					break;
-				case ElementChangedEvent.POST_RECONCILE:
+				case ElementChangedEvent.POST_RECONCILE :
 					fireReconcileDelta(listeners, listenerMask, listenerCount);
 					break;
 			}
@@ -793,9 +812,9 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 	private void firePreAutoBuildDelta(ICElementDelta deltaToNotify,
 		IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
-                                                                                                                             
+
 		if (VERBOSE) {
-			System.out.println("FIRING PRE_AUTO_BUILD Delta ["+Thread.currentThread()+"]:"); //$NON-NLS-1$//$NON-NLS-2$
+			System.out.println("FIRING PRE_AUTO_BUILD Delta [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
 		}
 		if (deltaToNotify != null) {
@@ -804,23 +823,23 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	private void firePostChangeDelta(ICElementDelta deltaToNotify, IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
-                         
+
 		// post change deltas
-		if (VERBOSE){
-			System.out.println("FIRING POST_CHANGE Delta ["+Thread.currentThread()+"]:"); //$NON-NLS-1$//$NON-NLS-2$
+		if (VERBOSE) {
+			System.out.println("FIRING POST_CHANGE Delta [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
 		}
 		if (deltaToNotify != null) {
 				// flush now so as to keep listener reactions to post their own deltas for subsequent iteration
-				this.flush();
-				notifyListeners(deltaToNotify, ElementChangedEvent.POST_CHANGE, listeners, listenerMask, listenerCount);
+			this.flush();
+			notifyListeners(deltaToNotify, ElementChangedEvent.POST_CHANGE, listeners, listenerMask, listenerCount);
 		}
 	}
 
 	private void fireReconcileDelta(IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
 		ICElementDelta deltaToNotify = mergeDeltas(this.reconcileDeltas.values());
-		if (VERBOSE){
-			System.out.println("FIRING POST_RECONCILE Delta ["+Thread.currentThread()+"]:"); //$NON-NLS-1$//$NON-NLS-2$
+		if (VERBOSE) {
+			System.out.println("FIRING POST_RECONCILE Delta [" + Thread.currentThread() + "]:"); //$NON-NLS-1$//$NON-NLS-2$
 			System.out.println(deltaToNotify == null ? "<NONE>" : deltaToNotify.toString()); //$NON-NLS-1$
 		}
 		if (deltaToNotify != null) {
@@ -834,16 +853,17 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		IElementChangedListener[] listeners, int[] listenerMask, int listenerCount) {
 
 		final ElementChangedEvent extraEvent = new ElementChangedEvent(deltaToNotify, eventType);
-		for (int i= 0; i < listenerCount; i++) {
+		for (int i = 0; i < listenerCount; i++) {
 			if (listenerMask == null || (listenerMask[i] & eventType) != 0) {
 				final IElementChangedListener listener = listeners[i];
 				long start = -1;
 				if (VERBOSE) {
-					System.out.print("Listener #" + (i+1) + "=" + listener.toString());//$NON-NLS-1$//$NON-NLS-2$
+					System.out.print("Listener #" + (i + 1) + "=" + listener.toString());//$NON-NLS-1$//$NON-NLS-2$
 					start = System.currentTimeMillis();
 				}
 				// wrap callbacks with Safe runnable for subsequent listeners to be called when some are causing grief
 				Platform.run(new ISafeRunnable() {
+
 					public void handleException(Throwable exception) {
 						//CCorePlugin.log(exception, "Exception occurred in listener of C element change notification"); //$NON-NLS-1$
 						CCorePlugin.log(exception);
@@ -853,7 +873,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 					}
 				});
 				if (VERBOSE) {
-					System.out.println(" -> " + (System.currentTimeMillis()-start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println(" -> " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}
@@ -868,14 +888,14 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 	private ICElementDelta mergeDeltas(Collection deltas) {
 
-		synchronized(deltas) {
+		synchronized (deltas) {
 			if (deltas.size() == 0)
 				return null;
 			if (deltas.size() == 1)
 				return (ICElementDelta)deltas.iterator().next();
 			if (deltas.size() <= 1)
 				return null;
-			
+
 			Iterator iterator = deltas.iterator();
 			ICElement cRoot = getCModel();
 			CElementDelta rootDelta = new CElementDelta(cRoot);
@@ -886,7 +906,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				if (cRoot.equals(element)) {
 					ICElementDelta[] children = delta.getAffectedChildren();
 					for (int j = 0; j < children.length; j++) {
-						CElementDelta projectDelta = (CElementDelta) children[j];
+						CElementDelta projectDelta = (CElementDelta)children[j];
 						rootDelta.insertDeltaTree(projectDelta.getElement(), projectDelta);
 						insertedTree = true;
 					}
@@ -919,30 +939,30 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 			if (ce instanceof CModelException) {
 				throw (CModelException)ce;
 			} else if (ce.getStatus().getCode() == IResourceStatus.OPERATION_FAILED) {
-				Throwable e= ce.getStatus().getException();
+				Throwable e = ce.getStatus().getException();
 				if (e instanceof CModelException) {
-					throw (CModelException) e;
+					throw (CModelException)e;
 				}
 			}
 			throw new CModelException(ce);
 		} finally {
 // fire only if there were no awaiting deltas (if there were, they would come from a resource modifying operation)
-// and the operation has not modified any resource
+			// and the operation has not modified any resource
 			if (!hadAwaitingDeltas && !operation.hasModifiedResource()) {
 				fire(ElementChangedEvent.POST_CHANGE);
 			} // else deltas are fired while processing the resource delta
 		}
 	}
-	
-	/** 
+
+	/**
 	 * Returns the set of elements which are out of synch with their buffers.
 	 */
 	protected Map getElementsOutOfSynchWithBuffers() {
 		return this.elementsOutOfSynchWithBuffers;
 	}
-	
+
 	/**
-	 *  Returns the info for the element.
+	 * Returns the info for the element.
 	 */
 	public synchronized Object getInfo(ICElement element) {
 		HashMap tempCache = (HashMap)this.temporaryCache.get();
@@ -983,7 +1003,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (openedElement instanceof IParent && existingInfo instanceof CElementInfo) {
 			ICElement[] children = ((CElementInfo)existingInfo).getChildren();
 			for (int i = 0, size = children.length; i < size; ++i) {
-				CElement child = (CElement) children[i];
+				CElement child = (CElement)children[i];
 				try {
 					child.close();
 				} catch (CModelException e) {
@@ -991,7 +1011,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 				}
 			}
 		}
-	
+
 		Iterator iterator = newElements.keySet().iterator();
 		while (iterator.hasNext()) {
 			ICElement element = (ICElement)iterator.next();
@@ -1010,7 +1030,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (openedElement instanceof IParent && existingInfo instanceof CElementInfo) {
 			ICElement[] children = ((CElementInfo)existingInfo).getChildren();
 			for (int i = 0, size = children.length; i < size; ++i) {
-				CElement child = (CElement) children[i];
+				CElement child = (CElement)children[i];
 				try {
 					child.close();
 				} catch (CModelException e) {
@@ -1020,7 +1040,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		}
 	}
 
-	/** 
+	/**
 	 * Removes the info of this model element.
 	 */
 	protected synchronized void removeInfo(ICElement element) {
@@ -1055,14 +1075,14 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	}
 
 	/**
-	 * 
+	 *  
 	 */
 	public void startup() {
-		// Do any initialization.	
+		// Do any initialization.
 	}
 
 	/**
-	 * 
+	 *  
 	 */
 	public void shutdown() {
 		if (this.fDeltaProcessor.indexManager != null) { // no more indexing
@@ -1075,19 +1095,19 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		CCorePlugin.getDefault().getResolverModel().removeResolverChangeListener(factory);
 
 		// Do any shutdown of services.
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(factory);	
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(factory);
 
 		BinaryRunner[] runners = (BinaryRunner[])binaryRunners.values().toArray(new BinaryRunner[0]);
 		for (int i = 0; i < runners.length; i++) {
 			runners[i].stop();
 		}
 	}
-	
+
 	public IndexManager getIndexManager() {
 		return this.fDeltaProcessor.indexManager;
 	}
-	
-	public void deleting(IProject project){
+
+	public void deleting(IProject project) {
 		//	discard all indexing jobs for this project
 		this.getIndexManager().discardJobs(project.getName());
 		removeBinaryRunner(project);

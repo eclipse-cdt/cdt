@@ -1,16 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 QNX Software Systems and others.
- * All rights reserved. This program and the accompanying materials 
- * are made available under the terms of the Common Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v10.html
+ * Copyright (c) 2000, 2004 QNX Software Systems and others. All rights
+ * reserved. This program and the accompanying materials are made available
+ * under the terms of the Common Public License v1.0 which accompanies this
+ * distribution, and is available at http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors:
- *     QNX Software Systems - Initial API and implementation
- *******************************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import org.eclipse.cdt.core.CDescriptorEvent;
+import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.core.runtime.CoreException;
@@ -36,6 +35,10 @@ public class CExtensionReference implements ICExtensionReference {
 		return fId;
 	}
 
+	public ICDescriptor getCDescriptor() {
+		return fDescriptor;
+	}
+
 	private CExtensionInfo getInfo() {
 		return fDescriptor.getInfo(this);
 	}
@@ -45,7 +48,7 @@ public class CExtensionReference implements ICExtensionReference {
 			return true;
 		}
 		if (obj instanceof CExtensionReference) {
-			CExtensionReference ext = (CExtensionReference) obj;
+			CExtensionReference ext = (CExtensionReference)obj;
 			if (ext.fExtPoint.equals(fExtPoint) && ext.fId.equals(fId)) {
 				return true;
 			}
@@ -56,7 +59,7 @@ public class CExtensionReference implements ICExtensionReference {
 	public int hashCode() {
 		return fExtPoint.hashCode() + fId.hashCode();
 	}
-	
+
 	public void setExtensionData(String key, String value) throws CoreException {
 		getInfo().setAttribute(key, value);
 		fDescriptor.updateOnDisk();

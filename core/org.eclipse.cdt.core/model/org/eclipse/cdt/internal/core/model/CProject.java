@@ -19,10 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.BinaryParserConfig;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
@@ -202,7 +202,8 @@ public class CProject extends Openable implements ICProject {
 			for (int i = 0; i < binConfigs.length; i++) {
 				IBinaryFile bin;
 				try {
-					bin = binConfigs[i].getBinaryParser().getBinary(entry.getFullLibraryPath());
+					IBinaryParser parser = binConfigs[i].getBinaryParser();
+					bin = parser.getBinary(entry.getFullLibraryPath());
 					if (bin != null) {
 						if (bin.getType() == IBinaryFile.ARCHIVE) {
 							lib = new LibraryReferenceArchive(cproject, entry, (IBinaryArchive)bin);
@@ -211,7 +212,8 @@ public class CProject extends Openable implements ICProject {
 						}
 						break;
 					}
-				} catch (IOException e1) {
+				} catch (IOException e) {
+				} catch (CoreException e) {
 				}
 			}
 		}

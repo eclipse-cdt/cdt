@@ -8,26 +8,39 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.core;
+package org.eclipse.cdt.internal.core.model;
+
+import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.ICExtensionReference;
+import org.eclipse.core.runtime.CoreException;
 
 /*
  * BinaryParserConfig 
  */
 public class BinaryParserConfig {
-
-	IBinaryParser parser;
-	String id;
+	private IBinaryParser parser;
+	private final String id;
+	private final ICExtensionReference ref;
 
 	public BinaryParserConfig(IBinaryParser parser, String id) {
 		this.parser = parser;
 		this.id = id;
+		this.ref = null;
+	}
+	
+	public BinaryParserConfig(ICExtensionReference ref) {
+		this.ref = ref;
+		this.id = ref.getID();
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public IBinaryParser getBinaryParser() {
+	public IBinaryParser getBinaryParser() throws CoreException {
+		if (parser == null) {
+			parser = (IBinaryParser)ref.createExtension();
+		}
 		return parser;
 	}
 }

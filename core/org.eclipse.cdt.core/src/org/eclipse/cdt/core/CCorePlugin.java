@@ -467,8 +467,8 @@ public class CCorePlugin extends Plugin {
 		return getConsole(null);
 	}
 
-	public BinaryParserConfig[] getBinaryParserConfigs(IProject project) throws CoreException {
-		BinaryParserConfig configs[] = null;
+	public ICExtensionReference[] getBinaryParserExtensions(IProject project) throws CoreException {
+		ICExtensionReference ext[] = new ICExtensionReference[0];
 		if (project != null) {
 			try {
 				ICDescriptor cdesc = getCProjectDescription(project);
@@ -476,57 +476,15 @@ public class CCorePlugin extends Plugin {
 				if (cextensions.length > 0) {
 					ArrayList list = new ArrayList(cextensions.length);
 					for (int i = 0; i < cextensions.length; i++) {
-						IBinaryParser parser = null;
-						try {
-							parser = (IBinaryParser) cextensions[i].createExtension();
-							BinaryParserConfig config = new BinaryParserConfig(parser, cextensions[i].getID());
-							list.add(config);
-						} catch (CoreException e) {
-							Status s = new Status(IStatus.WARNING, PLUGIN_ID, -1, "Binary Parser failure", e); //$NON-NLS-1$
-							log(s); 
-						} catch (ClassCastException e) {
-							log(e);
-						}
+						list.add(cextensions[i]);
 					}
-					configs = new BinaryParserConfig[list.size()];
-					list.toArray(configs);
-				}
-			} catch (CoreException e) {
-				// ignore
-			}
-		}
-		if (configs == null) {
-			IBinaryParser parser = getDefaultBinaryParser();
-			if (parser != null) {
-				BinaryParserConfig config = new BinaryParserConfig(parser, DEFAULT_BINARY_PARSER_UNIQ_ID);
-				configs = new BinaryParserConfig[] {config};
-			}
-		}
-		return configs;
-	}
-
-	public String[] getBinaryParserIds(IProject project) throws CoreException {
-		String ids[] = null;
-		if (project != null) {
-			try {
-				ICDescriptor cdesc = getCProjectDescription(project);
-				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
-				if (cextensions.length > 0) {
-					ArrayList list = new ArrayList(cextensions.length);
-					for (int i = 0; i < cextensions.length; i++) {
-						list.add(cextensions[i].getID());
-					}
-					ids = new String[list.size()];
-					list.toArray(ids);
+					ext = (ICExtensionReference[])list.toArray(ext);
 				}
 			} catch (CoreException e) {
 				log(e);
 			}
 		}
-		if (ids == null) {
-			ids = new String[] {DEFAULT_BINARY_PARSER_UNIQ_ID};
-		}
-		return ids;
+		return ext;
 	}
 
 	public IBinaryParser[] getBinaryParser(IProject project) throws CoreException {

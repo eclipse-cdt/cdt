@@ -1,3 +1,18 @@
+2004-10-14 David Inglis
+
+	Move BinaryConfig into internal.model was no need to be public, also fixed it to
+	be lazy when creating parser interface.
+	
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* src/org/eclipse/cdt/core/BinaryParserConfig.java
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/ICExtensionReference.java	
+	* src/org/eclipse/cdt/internal/core/CExtensionReference.java
+
+	Removed 
+	* model/org/eclipse/cdt/internal/core/model/BinaryParserConfig.java
+	
 2004-10-12 Vladimir Hirsl
 
 	Fix for PR 69604 [Templates] Instantiating template with deferred template instance

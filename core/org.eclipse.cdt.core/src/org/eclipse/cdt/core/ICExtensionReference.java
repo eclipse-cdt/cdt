@@ -12,6 +12,7 @@ package org.eclipse.cdt.core;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
 
 public interface ICExtensionReference {
 
@@ -40,6 +41,12 @@ public interface ICExtensionReference {
      */
     public String getExtensionData(String key);
 
+    /**
+     * Returns the project descriptor which this extension reference belongs to.
+     * @return the ICDescriptor
+     */
+    public ICDescriptor getCDescriptor();
+    
 	/**
 	 * Creates and returns a new instance of the cextension executable 
 	 * identified by the &lt;run&gt; attribute of the cextension.

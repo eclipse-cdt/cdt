@@ -80,6 +80,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -169,7 +170,8 @@ public class CPPSemantics {
 			IASTNode p2 = p1.getParent();
 			
 			return ( ( p1 instanceof ICPPASTQualifiedName && p2 instanceof IASTDeclarator ) ||
-				     ( p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration) );
+				     ( p1 instanceof IASTDeclarator && p2 instanceof IASTSimpleDeclaration) ||
+				     ( p1 instanceof IASTDeclarator && p2 instanceof IASTFunctionDefinition));
 		}
 		public boolean considerConstructors(){
 			if( astName == null ) return false;
@@ -1146,7 +1148,7 @@ public class CPPSemantics {
 	            temp = ((IASTName) o).resolveBinding();
 	        else if( o instanceof IBinding ){
 	            temp = (IBinding) o;
-	            if( !declaredBefore( temp, name ) )
+	            if( !( temp instanceof ICPPMember ) && !declaredBefore( temp, name ) )
 	                continue;
 	        } else
 	            continue;
@@ -1286,7 +1288,12 @@ public class CPPSemantics {
 	}
 
 	static private IType getSourceParameterType( Object [] params, int idx ){
-		if( params instanceof IASTExpression [] ){
+	    if( params instanceof IType[] ){
+	        IType [] types = (IType[]) params;
+	        if( idx < types.length )
+	            return types[idx];
+	        return (idx == 0 ) ? VOID_TYPE : null;
+	    } else if( params instanceof IASTExpression [] ){
 			IASTExpression [] exps = (IASTExpression[]) params;
 			if( idx < exps.length)
 				return CPPVisitor.getExpressionType( exps[ idx ] );
@@ -1301,7 +1308,7 @@ public class CPPSemantics {
 		return null;
 	}
 	static private IBinding resolveFunction( CPPSemantics.LookupData data, IBinding[] fns ) throws DOMException{
-	    fns = (IBinding[]) ArrayUtil.trim( IBinding.class, fns );
+	    fns = (IBinding[]) ArrayUtil.trim( IBinding.class, fns, true );
 	    if( fns == null || fns.length == 0 )
 	        return null;
 	    
@@ -1348,7 +1355,7 @@ public class CPPSemantics {
 			numSourceParams = 1;
 		sourceParameters = data.functionParameters;
 		
-		for( int fnIdx = 0; fnIdx < numFns; fnIdx++ ){
+		outer: for( int fnIdx = 0; fnIdx < numFns; fnIdx++ ){
 			currFn = (IFunction) fns[fnIdx];
 			
 			if( currFn == null || bestFn == currFn )
@@ -1379,6 +1386,8 @@ public class CPPSemantics {
 			
 			for( int j = 0; j < numSourceParams || j == 0; j++ ){
 				source = getSourceParameterType( sourceParameters, j );
+				if( source == null )
+				    continue outer;
 				if( source instanceof IProblemBinding )
 					return (IBinding) source;
 				
@@ -1742,7 +1751,7 @@ public class CPPSemantics {
 		if( t instanceof ICPPClassType ){
 			LookupData data = new LookupData( EMPTY_NAME_ARRAY );
 			data.forUserDefinedConversion = true;
-			data.functionParameters = new Object [] { source };
+			data.functionParameters = new IType [] { source };
 			ICPPConstructor [] constructors = ((ICPPClassType)t).getConstructors();
 			
 			if( constructors.length > 0 ){

@@ -34,10 +34,11 @@ public class Name {
 	}
 
 	public String toString() {
-		String name = nameStart.getImage();
+		Token t = nameStart;
+		String name = t.getImage();
 		
-		for (Token t = nameStart; nameStart != nameEnd;) {
-			t = nameStart.getNext();
+		while (t != nameEnd) {
+			t = t.getNext();
 			name += t.getImage();
 		}
 		

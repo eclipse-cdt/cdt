@@ -1,3 +1,14 @@
+/**********************************************************************
+ * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors: 
+ * Rational Software - Initial API and implementation
+***********************************************************************/
+
 package org.eclipse.cdt.internal.core.parser;
 
 import java.io.InputStream;
@@ -6,10 +17,6 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * This is an attempt at a copyright clean parser.  The grammar is based
- * on the ISO C++ standard
- */
 public class Parser {
 
 	private IParserCallback callback;
@@ -185,6 +192,16 @@ c, quick);
 			case Token.tSEMI:
 				consume();
 				break;
+			case Token.tCOLON:
+				// TODO - Initializer for constructor, for now consume
+				// and look for the left brace;
+				consume();
+				while (LT(1) != Token.tLBRACE) {
+					if (consume().getType() == Token.tEOF)
+						// Oops, couldn't find it
+						throw backtrack;
+				}
+				// Falling through on purpose
 			case Token.tLBRACE:
 				callback.functionBodyBegin();
 				if (quickParse) {
@@ -333,19 +350,32 @@ c, quick);
 	 * - Handle unqualifiedId
 	 */
 	public boolean name() throws Exception {
+		Token first = LA(1);
 		Token last = null;
 		
-		callback.nameBegin(LA(1));
+		callback.nameBegin(first);
 		
 		if (LT(1) == Token.tCOLONCOLON)
 			last = consume();
 
-		last = consume(Token.tIDENTIFIER);
+		// TODO - whacky way to deal with destructors, please revisit
+		switch (LT(1)) {
+			case Token.tIDENTIFIER:
+			case Token.tCOMPL:
+				last = consume();
+				break;
+			default:
+				throw backtrack;
+		}
 
 		while (LT(1) == Token.tCOLONCOLON) {
 			last = consume();
 			
-			last = consume(Token.tIDENTIFIER);
+			switch (LT(1)) {
+				case Token.tIDENTIFIER:
+				case Token.tCOMPL:
+					last = consume();
+			}
 		}
 
 		callback.nameEnd(last);
@@ -377,6 +407,29 @@ c, quick);
 	 */
 	public void initDeclarator( Object owner ) throws Exception {
 		declarator( owner );
+		
+		if (LT(1) == Token.tASSIGN) {
+			consume();
+			
+			if (LT(1) == Token.tLBRACE) {
+				// for now, just consume to matching brace
+				consume();
+				int depth = 1;
+				while (depth > 0) {
+					switch (consume().getType()) {
+						case Token.tRBRACE:
+							--depth;
+							break;
+						case Token.tLBRACE:
+							++depth;
+							break;
+						case Token.tEOF:
+							// Oops, no match
+							throw backtrack;
+					}
+				}
+			}
+		}
 	}
 	
 	/**

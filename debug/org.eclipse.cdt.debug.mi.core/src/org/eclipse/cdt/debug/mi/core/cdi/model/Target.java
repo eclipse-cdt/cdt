@@ -164,7 +164,11 @@ public class Target  implements ICDITarget {
 		currentThreadId = newThreadId;
 
 		// get the new Threads.
-		currentThreads = getCThreads();
+		try {
+			currentThreads = getCThreads();
+		} catch (CDIException e) {
+			currentThreads = noThreads;
+		}
 
 		// Fire CreatedEvent for new threads.
 		// Replace the new threads with the old thread object
@@ -222,7 +226,7 @@ public class Target  implements ICDITarget {
 	/**
 	 * Do the real work of call -thread-list-ids.
 	 */
-	public Thread[] getCThreads() { //throws CDIException {
+	public Thread[] getCThreads() throws CDIException {
 		Thread[] cthreads = noThreads;
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -259,7 +263,7 @@ public class Target  implements ICDITarget {
 			}
 		} catch (MIException e) {
 			// Do not throw anything in this case.
-			//throw new CDIException(e.getMessage());
+			throw new CDIException(e.getMessage());
 		}
 		return cthreads;
 	}

@@ -72,6 +72,10 @@ public class CoreFileLaunchDelegate extends AbstractCLaunchDelegate {
 			renderTargetLabel(debugConfig),
 			debuggerProcess,
 			exe);
+		
+		// set the default source locator if required
+		setDefaultSourceLocator(launch, config);
+		monitor.done();
 	}
 
 	protected IPath getCoreFilePath(final IProject project) throws CoreException {

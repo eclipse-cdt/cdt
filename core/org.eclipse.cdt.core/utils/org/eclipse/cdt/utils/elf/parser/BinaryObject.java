@@ -1,7 +1,13 @@
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors: 
+ * QNX Software Systems - Initial API and implementation
+***********************************************************************/
 package org.eclipse.cdt.utils.elf.parser;
 
 import java.io.FileInputStream;
@@ -258,7 +264,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 
 	protected void addSymbols(Elf.Symbol[] array, int type, Addr2line addr2line, CPPFilt cppfilt) {
 		for (int i = 0; i < array.length; i++) {
-			Symbol sym = new Symbol();
+			Symbol sym = new Symbol(this);
 			sym.type = type;
 			sym.name = array[i].toString();
 			if (cppfilt != null) {
@@ -268,55 +274,16 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 				}
 			}
 			sym.addr = array[i].st_value;
-			try {
-				// This can fail if we use addr2line
-				// but we can safely ignore the error.
-				long value = sym.addr;
-				int lineno = -1;
-				String filename = null; 
-				if (addr2line != null) {
-					// We try to get the nearest match
-					// since the symbol may not exactly align with debug info.
-					// In C line number 0 is invalid, line starts at 1 for file, we use
-					// this for validation.
-					String line = null;
-					for (int j = 0; j <= 20; j += 4, value += j) {
-						line = addr2line.getLine(value);
-						if (line != null) {
-							int colon = line.lastIndexOf(':');
-							if (colon != -1) {
-								String number = line.substring(colon + 1);
-								if (!number.startsWith("0")) {
-									break; // potential candidate bail out
-								}
-							}
-						}
-					}
-
-					int index1, index2;
-					if (line != null && (index1 = line.lastIndexOf(':')) != -1) {
-						// we do this because addr2line on win produces
-						// <cygdrive/pathtoexc/C:/pathtofile:##>
-						index2 = line.indexOf(':');
-						if ( index1 == index2 ) {
-							index2 = 0;
-						} else {
-							index2--;
-						}
-						filename = line.substring(index2, index1);
-						try {
-							lineno = Integer.parseInt(line.substring(index1 + 1));
-							lineno = (lineno == 0) ? -1 : lineno;
-						} catch(Exception e) {
-							lineno = -1;
-						}
-					}
+			sym.filename = null;
+			sym.startLine =  -1;
+			sym.endLine = sym.startLine;
+			if (addr2line != null) {
+				try {
+					sym.filename =  addr2line.getFileName(sym.addr);
+					sym.startLine = addr2line.getLineNumber(sym.addr);
+					sym.endLine = addr2line.getLineNumber(sym.addr + array[i].st_size - 1);
+				} catch (IOException e) {
 				}
-				sym.filename =  filename;
-				sym.startLine = lineno;
-				sym.endLine = sym.startLine;
-			} catch (IOException e) {
-				//e.printStackTrace();
 			}
 			addSymbol(sym);
 		}

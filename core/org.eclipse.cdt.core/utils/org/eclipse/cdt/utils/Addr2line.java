@@ -50,14 +50,58 @@ public class Addr2line {
 		return lastsymbol;
 	}	
 
+	/**
+	 * The format of the output:
+	 *  addr2line -C -f -e hello
+	 *  08048442
+	 *  main
+	 *  hello.c:39
+	 */
+	public String getFileName(long address) throws IOException {
+		String filename = null;
+		String line = getLine(address);
+		int index1, index2;
+		if (line != null && (index1 = line.lastIndexOf(':')) != -1) {
+			// we do this because addr2line on win produces
+			// <cygdrive/pathtoexc/C:/pathtofile:##>
+			index2 = line.indexOf(':');
+			if (index1 == index2) {
+				index2 = 0;
+			} else {
+				index2--;
+			}
+			filename = line.substring(index2, index1);
+		}
+		return filename;
+	}
+
+	/**
+	 * The format of the output:
+	 *  addr2line -C -f -e hello
+	 *  08048442
+	 *  main
+	 *  hello.c:39
+	 */
+	public int getLineNumber(long address) throws IOException {
+		int lineno = -1;
+		String line = getLine(address);
+		int colon;
+		if (line != null && (colon = line.lastIndexOf(':')) != -1) {
+			try {
+				lineno = Integer.parseInt(line.substring(colon + 1));
+				lineno = (lineno == 0) ? -1 : lineno;
+			} catch(Exception e) {
+			}
+		}
+		return lineno;
+	}
+
 	public void dispose() {
 		try {
-			//stdin.write(-1);
 			stdout.close();
 			stdin.close();
 			addr2line.getErrorStream().close();		
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 		}
 		addr2line.destroy();
 	}

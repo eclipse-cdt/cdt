@@ -293,6 +293,10 @@ public class CommandFactory {
 		return new MIPType(name);
 	}
 
+	public MIInfoProgram createMIInfoProgram() {
+		return new MIInfoProgram();
+	}
+
 	public MIVarCreate createMIVarCreate(String expression) {
 		return new MIVarCreate(expression);
 	}

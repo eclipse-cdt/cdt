@@ -12,6 +12,9 @@ package org.eclipse.cdt.debug.mi.internal.ui;
 
 import org.eclipse.swt.widgets.TabFolder;
 
+/**
+ * CygWin-specific extension of <code>GDBDebuggerPage</code>.
+ */
 public class CygwinDebuggerPage extends GDBDebuggerPage {
 
 	public String getName() {

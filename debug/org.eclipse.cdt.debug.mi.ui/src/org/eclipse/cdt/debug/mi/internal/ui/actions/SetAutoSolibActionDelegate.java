@@ -36,251 +36,217 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * Enter type comment.
- * 
- * @since: Feb 11, 2003
+ * The delegate for the "Automatically Load Symbols" action.
  */
-public class SetAutoSolibActionDelegate implements IViewActionDelegate, 
-												   ISelectionListener,
-												   IPartListener
-{
+public class SetAutoSolibActionDelegate implements IViewActionDelegate, ISelectionListener, IPartListener {
+
 	private IViewPart fView = null;
+
 	private IAction fAction;
+
 	private IStatus fStatus = null;
 
 	/**
 	 * Constructor for SetAutoSolibActionDelegate.
 	 */
-	public SetAutoSolibActionDelegate()
-	{
+	public SetAutoSolibActionDelegate() {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IViewActionDelegate#init(IViewPart)
 	 */
-	public void init( IViewPart view )
-	{
+	public void init( IViewPart view ) {
 		fView = view;
 		view.getSite().getPage().addPartListener( this );
 		view.getSite().getPage().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
-	public void selectionChanged( IWorkbenchPart part, ISelection selection )
-	{
-		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) )
-		{
+	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
+		if ( part.getSite().getId().equals( IDebugUIConstants.ID_DEBUG_VIEW ) ) {
 			update( getAction() );
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
-	public void run( IAction action )
-	{
-		BusyIndicator.showWhile( Display.getCurrent(), 
-								 new Runnable() 
-									 {
-										 public void run() 
-										 {
-											 try 
-											 {
-												 doAction( DebugUITools.getDebugContext() );
-												 setStatus( null );
-											 } 
-											 catch( DebugException e ) 
-											 {
-												setStatus( e.getStatus() );
-											 }
-										 }
-									 } );
-		if ( getStatus() != null && !getStatus().isOK() ) 
-		{
-			IWorkbenchWindow window= CDebugUIPlugin.getActiveWorkbenchWindow();
-			if ( window != null ) 
-			{
+	public void run( IAction action ) {
+		BusyIndicator.showWhile( Display.getCurrent(), new Runnable() {
+
+			public void run() {
+				try {
+					doAction( DebugUITools.getDebugContext() );
+					setStatus( null );
+				}
+				catch( DebugException e ) {
+					setStatus( e.getStatus() );
+				}
+			}
+		} );
+		if ( getStatus() != null && !getStatus().isOK() ) {
+			IWorkbenchWindow window = CDebugUIPlugin.getActiveWorkbenchWindow();
+			if ( window != null ) {
 				CDebugUIPlugin.errorDialog( getErrorDialogMessage(), getStatus() );
-			} 
-			else 
-			{
+			}
+			else {
 				CDebugUIPlugin.log( getStatus() );
 			}
 		}
-		update( action );		
+		update( action );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void selectionChanged( IAction action, ISelection selection )
-	{
+	public void selectionChanged( IAction action, ISelection selection ) {
 		setAction( action );
-		if ( getView() != null )
-		{
+		if ( getView() != null ) {
 			update( action );
 		}
 	}
 
-	protected void update( IAction action )
-	{
-		if ( action != null )
-		{
+	protected void update( IAction action ) {
+		if ( action != null ) {
 			IAdaptable element = DebugUITools.getDebugContext();
 			action.setEnabled( getEnableStateForSelection( element ) );
 			action.setChecked( getCheckStateForSelection( element ) );
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partActivated(IWorkbenchPart)
 	 */
-	public void partActivated( IWorkbenchPart part )
-	{
+	public void partActivated( IWorkbenchPart part ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partBroughtToTop(IWorkbenchPart)
 	 */
-	public void partBroughtToTop( IWorkbenchPart part )
-	{
+	public void partBroughtToTop( IWorkbenchPart part ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partClosed(IWorkbenchPart)
 	 */
-	public void partClosed( IWorkbenchPart part )
-	{
-		if ( part.equals( getView() ) )
-		{
+	public void partClosed( IWorkbenchPart part ) {
+		if ( part.equals( getView() ) ) {
 			dispose();
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partDeactivated(IWorkbenchPart)
 	 */
-	public void partDeactivated( IWorkbenchPart part )
-	{
+	public void partDeactivated( IWorkbenchPart part ) {
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IPartListener#partOpened(IWorkbenchPart)
 	 */
-	public void partOpened( IWorkbenchPart part )
-	{
+	public void partOpened( IWorkbenchPart part ) {
 	}
-	
-	protected IViewPart getView()
-	{
+
+	protected IViewPart getView() {
 		return fView;
 	}
 
-	protected void setView( IViewPart viewPart )
-	{
+	protected void setView( IViewPart viewPart ) {
 		fView = viewPart;
 	}
-	
-	protected void setAction( IAction action )
-	{
+
+	protected void setAction( IAction action ) {
 		fAction = action;
 	}
 
-	protected IAction getAction()
-	{
+	protected IAction getAction() {
 		return fAction;
 	}
 
-	protected void dispose()
-	{
-		if ( getView() != null ) 
-		{
+	protected void dispose() {
+		if ( getView() != null ) {
 			getView().getViewSite().getPage().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 			getView().getViewSite().getPage().removePartListener( this );
 		}
 	}
 
-	protected boolean getCheckStateForSelection( IAdaptable element )
-	{		
+	protected boolean getCheckStateForSelection( IAdaptable element ) {
 		SharedLibraryManager slm = getSharedLibraryManager( element );
-		if ( slm != null )
-		{
-			try
-			{
+		if ( slm != null ) {
+			try {
 				return slm.isAutoLoadSymbols();
 			}
-			catch( CDIException e )
-			{
+			catch( CDIException e ) {
 			}
 		}
 		return false;
 	}
 
-	protected boolean getEnableStateForSelection( IAdaptable element )
-	{
-		return ( element instanceof IDebugElement && 
-				 ((IDebugElement)element).getDebugTarget().isSuspended() &&
-				 getSharedLibraryManager( element ) != null );
+	protected boolean getEnableStateForSelection( IAdaptable element ) {
+		return (element instanceof IDebugElement && ((IDebugElement)element).getDebugTarget().isSuspended() && getSharedLibraryManager( element ) != null);
 	}
 
-	protected String getStatusMessage()
-	{
+	protected String getStatusMessage() {
 		return ActionMessages.getString( "SetAutoSolibActionDelegate.0" ); //$NON-NLS-1$
 	}
 
 	/**
 	 * @see AbstractDebugActionDelegate#getErrorDialogMessage()
 	 */
-	protected String getErrorDialogMessage()
-	{
+	protected String getErrorDialogMessage() {
 		return ActionMessages.getString( "SetAutoSolibActionDelegate.1" ); //$NON-NLS-1$
 	}
-	
-	protected void setStatus( IStatus status )
-	{
+
+	protected void setStatus( IStatus status ) {
 		fStatus = status;
 	}
-	
-	protected IStatus getStatus()
-	{
+
+	protected IStatus getStatus() {
 		return fStatus;
 	}
 
-	protected void doAction( IAdaptable element ) throws DebugException
-	{
+	protected void doAction( IAdaptable element ) throws DebugException {
 		if ( getView() == null )
 			return;
 		SharedLibraryManager slm = getSharedLibraryManager( element );
-		if ( slm != null && getAction() != null )
-		{
-			try
-			{
+		if ( slm != null && getAction() != null ) {
+			try {
 				slm.setAutoLoadSymbols( getAction().isChecked() );
 			}
-			catch( CDIException e )
-			{
+			catch( CDIException e ) {
 				getAction().setChecked( !getAction().isChecked() );
-				throw new DebugException( new Status( IStatus.ERROR, 
-													  MIPlugin.getUniqueIdentifier(),
-													  DebugException.TARGET_REQUEST_FAILED, 
-													  e.getMessage(), 
-													  null ) );
+				throw new DebugException( new Status( IStatus.ERROR, MIPlugin.getUniqueIdentifier(), DebugException.TARGET_REQUEST_FAILED, e.getMessage(), null ) );
 			}
 		}
 	}
-	
-	private SharedLibraryManager getSharedLibraryManager( IAdaptable element )
-	{
-		if ( element != null )
-		{
+
+	private SharedLibraryManager getSharedLibraryManager( IAdaptable element ) {
+		if ( element != null ) {
 			ICDISession session = (ICDISession)element.getAdapter( ICDISession.class );
 			if ( session instanceof Session && ((Session)session).getSharedLibraryManager() instanceof SharedLibraryManager )
 				return (SharedLibraryManager)((Session)session).getSharedLibraryManager();
 		}
-		return null;		
+		return null;
 	}
 }
-

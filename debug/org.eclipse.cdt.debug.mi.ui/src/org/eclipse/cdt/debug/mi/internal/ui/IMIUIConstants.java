@@ -11,13 +11,10 @@
 package org.eclipse.cdt.debug.mi.internal.ui;
 
 /**
- * 
  * Constant definitions for MI UI plug-in.
- * 
- * @since Oct 4, 2002
  */
-public interface IMIUIConstants
-{
+public interface IMIUIConstants {
+
 	/**
 	 * Plug-in identifier (value <code>"org.eclipse.cdt.debug.mi.ui"</code>).
 	 */

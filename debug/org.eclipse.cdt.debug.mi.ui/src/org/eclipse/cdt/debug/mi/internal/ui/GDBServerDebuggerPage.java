@@ -8,7 +8,6 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.mi.internal.ui;
 
 import java.io.File;
@@ -37,24 +36,27 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 /**
- * Enter type comment.
- * 
- * @since Nov 20, 2003
+ * The dynamic debugger tab for remote launches using gdb server.
  */
-public class GDBServerDebuggerPage extends GDBDebuggerPage
-{
+public class GDBServerDebuggerPage extends GDBDebuggerPage {
+
 	private final static String CONNECTION_TCP = MIUIMessages.getString( "GDBServerDebuggerPage.0" ); //$NON-NLS-1$
+
 	private final static String CONNECTION_SERIAL = MIUIMessages.getString( "GDBServerDebuggerPage.1" ); //$NON-NLS-1$
 
 	private ComboDialogField fConnectionField;
 
-	private String[] fConnections = new String[] { CONNECTION_TCP, CONNECTION_SERIAL };
+	private String[] fConnections = new String[]{ CONNECTION_TCP, CONNECTION_SERIAL };
+
 	private TCPSettingsBlock fTCPBlock;
+
 	private SerialPortSettingsBlock fSerialBlock;
+
 	private Composite fConnectionStack;
 
-	public GDBServerDebuggerPage()
-	{
+	private boolean fIsInitializing = false;
+
+	public GDBServerDebuggerPage() {
 		super();
 		fConnectionField = createConnectionField();
 		fTCPBlock = new TCPSettingsBlock();
@@ -63,118 +65,101 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 		fSerialBlock.addObserver( this );
 	}
 
-	public void createMainTab( TabFolder tabFolder )
-	{
+	public void createMainTab( TabFolder tabFolder ) {
 		TabItem tabItem = new TabItem( tabFolder, SWT.NONE );
 		tabItem.setText( MIUIMessages.getString( "GDBServerDebuggerPage.2" ) ); //$NON-NLS-1$
-
 		Composite comp = ControlFactory.createCompositeEx( fTabFolder, 1, GridData.FILL_BOTH );
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
-		tabItem.setControl( comp );			
-
+		tabItem.setControl( comp );
 		Composite subComp = ControlFactory.createCompositeEx( comp, 3, GridData.FILL_HORIZONTAL );
 		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
-
 		Label label = ControlFactory.createLabel( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.3" ) ); //$NON-NLS-1$
 		GridData gd = new GridData();
-//		gd.horizontalSpan = 2;
+		//		gd.horizontalSpan = 2;
 		label.setLayoutData( gd );
-
 		fGDBCommandText = ControlFactory.createTextField( subComp, SWT.SINGLE | SWT.BORDER );
-		fGDBCommandText.addModifyListener( 
-						new ModifyListener() 
-							{
-								public void modifyText( ModifyEvent evt ) 
-								{
-									updateLaunchConfigurationDialog();
-								}
-							} );
+		fGDBCommandText.addModifyListener( new ModifyListener() {
 
+			public void modifyText( ModifyEvent evt ) {
+				if ( !isInitializing() )
+					updateLaunchConfigurationDialog();
+			}
+		} );
 		Button button = createPushButton( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.4" ), null ); //$NON-NLS-1$
-		button.addSelectionListener( 
-						new SelectionAdapter() 
-							{
-								public void widgetSelected( SelectionEvent evt ) 
-								{
-									handleGDBButtonSelected();
-									updateLaunchConfigurationDialog();
-								}
-								
-								private void handleGDBButtonSelected() 
-								{
-									FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
-									dialog.setText( MIUIMessages.getString( "GDBServerDebuggerPage.5" ) ); //$NON-NLS-1$
-									String gdbCommand = fGDBCommandText.getText().trim();
-									int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
-									if ( lastSeparatorIndex != -1 ) 
-									{
-										dialog.setFilterPath( gdbCommand.substring( 0, lastSeparatorIndex ) );
-									}
-									String res = dialog.open();
-									if ( res == null ) 
-									{
-										return;
-									}
-									fGDBCommandText.setText( res );
-								}
-							} );
+		button.addSelectionListener( new SelectionAdapter() {
 
+			public void widgetSelected( SelectionEvent evt ) {
+				if ( !isInitializing() ) {
+					handleGDBButtonSelected();
+					updateLaunchConfigurationDialog();
+				}
+			}
+
+			private void handleGDBButtonSelected() {
+				FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
+				dialog.setText( MIUIMessages.getString( "GDBServerDebuggerPage.5" ) ); //$NON-NLS-1$
+				String gdbCommand = fGDBCommandText.getText().trim();
+				int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
+				if ( lastSeparatorIndex != -1 ) {
+					dialog.setFilterPath( gdbCommand.substring( 0, lastSeparatorIndex ) );
+				}
+				String res = dialog.open();
+				if ( res == null ) {
+					return;
+				}
+				fGDBCommandText.setText( res );
+			}
+		} );
 		label = ControlFactory.createLabel( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.6" ) ); //$NON-NLS-1$
 		gd = new GridData();
-//		gd.horizontalSpan = 2;
+		//		gd.horizontalSpan = 2;
 		label.setLayoutData( gd );
-
 		fGDBInitText = ControlFactory.createTextField( subComp, SWT.SINGLE | SWT.BORDER );
 		gd = new GridData( GridData.FILL_HORIZONTAL );
 		fGDBInitText.setLayoutData( gd );
-		fGDBInitText.addModifyListener( new ModifyListener() 
-											{
-												public void modifyText( ModifyEvent evt ) 
-												{
-													updateLaunchConfigurationDialog();
-												}
-											} );
-		button = createPushButton( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.7" ), null ); //$NON-NLS-1$
-		button.addSelectionListener(
-						new SelectionAdapter() 
-						{
-							public void widgetSelected( SelectionEvent evt ) 
-							{
-								handleGDBInitButtonSelected();
-								updateLaunchConfigurationDialog();
-							}
-							
-							private void handleGDBInitButtonSelected() 
-							{
-								FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
-								dialog.setText( MIUIMessages.getString( "GDBServerDebuggerPage.8" ) ); //$NON-NLS-1$
-								String gdbCommand = fGDBInitText.getText().trim();
-								int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
-								if ( lastSeparatorIndex != -1 ) 
-								{
-									dialog.setFilterPath( gdbCommand.substring( 0, lastSeparatorIndex ) );
-								}
-								String res = dialog.open();
-								if ( res == null ) 
-								{
-									return;
-								}
-								fGDBInitText.setText( res );
-							}
-						} );
+		fGDBInitText.addModifyListener( new ModifyListener() {
 
+			public void modifyText( ModifyEvent evt ) {
+				if ( !isInitializing() )
+					updateLaunchConfigurationDialog();
+			}
+		} );
+		button = createPushButton( subComp, MIUIMessages.getString( "GDBServerDebuggerPage.7" ), null ); //$NON-NLS-1$
+		button.addSelectionListener( new SelectionAdapter() {
+
+			public void widgetSelected( SelectionEvent evt ) {
+				if ( !isInitializing() ) {
+					handleGDBInitButtonSelected();
+					updateLaunchConfigurationDialog();
+				}
+			}
+
+			private void handleGDBInitButtonSelected() {
+				FileDialog dialog = new FileDialog( getShell(), SWT.NONE );
+				dialog.setText( MIUIMessages.getString( "GDBServerDebuggerPage.8" ) ); //$NON-NLS-1$
+				String gdbCommand = fGDBInitText.getText().trim();
+				int lastSeparatorIndex = gdbCommand.lastIndexOf( File.separator );
+				if ( lastSeparatorIndex != -1 ) {
+					dialog.setFilterPath( gdbCommand.substring( 0, lastSeparatorIndex ) );
+				}
+				String res = dialog.open();
+				if ( res == null ) {
+					return;
+				}
+				fGDBInitText.setText( res );
+			}
+		} );
 		extendMainTab( comp );
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#extendMainTab(org.eclipse.swt.widgets.Composite)
 	 */
-	protected void extendMainTab( Composite parent )
-	{
+	protected void extendMainTab( Composite parent ) {
 		Composite comp = ControlFactory.createCompositeEx( parent, 2, GridData.FILL_BOTH );
 		((GridLayout)comp.getLayout()).makeColumnsEqualWidth = false;
-
-
 		fConnectionField.doFillIntoGrid( comp, 2 );
 		((GridData)fConnectionField.getComboControl( null ).getLayoutData()).horizontalAlignment = GridData.BEGINNING;
 		PixelConverter converter = new PixelConverter( comp );
@@ -185,31 +170,31 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 		((GridData)fConnectionStack.getLayoutData()).horizontalSpan = 2;
 		fTCPBlock.createBlock( fConnectionStack );
 		fSerialBlock.createBlock( fConnectionStack );
-		connectionTypeChanged();
 	}
 
-	private ComboDialogField createConnectionField()
-	{
+	private ComboDialogField createConnectionField() {
 		ComboDialogField field = new ComboDialogField( SWT.DROP_DOWN | SWT.READ_ONLY );
 		field.setLabelText( MIUIMessages.getString( "GDBServerDebuggerPage.9" ) ); //$NON-NLS-1$
 		field.setItems( fConnections );
-		field.setDialogFieldListener( 
-						new IDialogFieldListener()
-							{
-								public void dialogFieldChanged( DialogField f )
-								{
-									connectionTypeChanged();
-								}
-							} );
+		field.setDialogFieldListener( new IDialogFieldListener() {
+
+			public void dialogFieldChanged( DialogField f ) {
+				if ( !isInitializing() )
+					connectionTypeChanged();
+			}
+		} );
 		return field;
 	}
 
-	protected void connectionTypeChanged()
-	{
+	protected void connectionTypeChanged() {
+		connectionTypeChanged0();
+		updateLaunchConfigurationDialog();
+	}
+
+	private void connectionTypeChanged0() {
 		((StackLayout)fConnectionStack.getLayout()).topControl = null;
 		int index = fConnectionField.getSelectionIndex();
-		if ( index >= 0 && index < fConnections.length )
-		{
+		if ( index >= 0 && index < fConnections.length ) {
 			String[] connTypes = fConnectionField.getItems();
 			if ( CONNECTION_TCP.equals( connTypes[index] ) )
 				((StackLayout)fConnectionStack.getLayout()).topControl = fTCPBlock.getControl();
@@ -217,32 +202,23 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 				((StackLayout)fConnectionStack.getLayout()).topControl = fSerialBlock.getControl();
 		}
 		fConnectionStack.layout();
-		updateLaunchConfigurationDialog();
 	}
 
-	public boolean isValid( ILaunchConfiguration launchConfig )
-	{
-		if ( super.isValid( launchConfig ) )
-		{
+	public boolean isValid( ILaunchConfiguration launchConfig ) {
+		if ( super.isValid( launchConfig ) ) {
 			setErrorMessage( null );
 			setMessage( null );
-
 			int index = fConnectionField.getSelectionIndex();
-			if ( index >= 0 && index < fConnections.length )
-			{
+			if ( index >= 0 && index < fConnections.length ) {
 				String[] connTypes = fConnectionField.getItems();
-				if ( CONNECTION_TCP.equals( connTypes[index] ) )
-				{
-					if ( !fTCPBlock.isValid( launchConfig ) )
-					{
+				if ( CONNECTION_TCP.equals( connTypes[index] ) ) {
+					if ( !fTCPBlock.isValid( launchConfig ) ) {
 						setErrorMessage( fTCPBlock.getErrorMessage() );
 						return false;
 					}
 				}
-				else if ( CONNECTION_SERIAL.equals( connTypes[index] ) )
-				{
-					if ( !fSerialBlock.isValid( launchConfig ) )
-					{
+				else if ( CONNECTION_SERIAL.equals( connTypes[index] ) ) {
+					if ( !fSerialBlock.isValid( launchConfig ) ) {
 						setErrorMessage( fSerialBlock.getErrorMessage() );
 						return false;
 					}
@@ -253,27 +229,23 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 		return false;
 	}
 
-	public void initializeFrom( ILaunchConfiguration configuration )
-	{
+	public void initializeFrom( ILaunchConfiguration configuration ) {
+		setInitializing( true );
 		super.initializeFrom( configuration );
-
 		boolean isTcp = false;
-		try 
-		{
+		try {
 			isTcp = configuration.getAttribute( IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false );
-		} 
-		catch( CoreException e ) 
-		{
 		}
-
+		catch( CoreException e ) {
+		}
 		fTCPBlock.initializeFrom( configuration );
 		fSerialBlock.initializeFrom( configuration );
-
-		fConnectionField.selectItem( ( isTcp ) ? 0 : 1 );
+		fConnectionField.selectItem( (isTcp) ? 0 : 1 );
+		connectionTypeChanged0();
+		setInitializing( false );
 	}
 
-	public void performApply( ILaunchConfigurationWorkingCopy configuration )
-	{
+	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
 		super.performApply( configuration );
 		if ( fConnectionField != null )
 			configuration.setAttribute( IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, fConnectionField.getSelectionIndex() == 0 );
@@ -281,12 +253,18 @@ public class GDBServerDebuggerPage extends GDBDebuggerPage
 		fSerialBlock.performApply( configuration );
 	}
 
-	public void setDefaults( ILaunchConfigurationWorkingCopy configuration )
-	{
+	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
 		super.setDefaults( configuration );
 		configuration.setAttribute( IGDBServerMILaunchConfigurationConstants.ATTR_REMOTE_TCP, false );
 		fTCPBlock.setDefaults( configuration );
 		fSerialBlock.setDefaults( configuration );
 	}
-}
 
+	protected boolean isInitializing() {
+		return fIsInitializing;
+	}
+
+	private void setInitializing( boolean isInitializing ) {
+		fIsInitializing = isInitializing;
+	}
+}

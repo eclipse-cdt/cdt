@@ -8,7 +8,6 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.cdt.debug.mi.internal.ui;
 
 import java.util.Map;
@@ -16,6 +15,7 @@ import java.util.Observable;
 import java.util.Observer;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
+import org.eclipse.cdt.debug.mi.ui.IMILaunchConfigurationComponent;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -26,74 +26,75 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
- * Enter type comment.
- * 
- * @since Sep 3, 2003
+ * The content of the <code>Shared Libraries</code> tab of the <code>GDBDebuggerPage</code>.
  */
-public class GDBSolibBlock extends Observable implements Observer 
-{
-	private SolibSearchPathBlock fSolibSearchPathBlock;
+public class GDBSolibBlock extends Observable implements IMILaunchConfigurationComponent, Observer {
+
+	private IMILaunchConfigurationComponent fSolibSearchPathBlock;
+
 	private Button fAutoSoLibButton;
+
 	private Button fStopOnSolibEventsButton;
+	
 	private Composite fControl;
+	
+	private boolean fAutoSolib = false;
 
-	public GDBSolibBlock()
-	{
+	private boolean fStopOnSolibEvents = false;
+
+	public GDBSolibBlock( IMILaunchConfigurationComponent solibSearchBlock, boolean autoSolib, boolean stopOnSolibEvents ) {
 		super();
+		fSolibSearchPathBlock = solibSearchBlock;
+		fAutoSolib = autoSolib;
+		fStopOnSolibEvents = stopOnSolibEvents;
 	}
 
-	public void createBlock( Composite parent, boolean solibPath, boolean autoSolib, boolean stopOnSolibEvents )
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl( Composite parent ) {
 		Composite subComp = ControlFactory.createCompositeEx( parent, 1, GridData.FILL_HORIZONTAL );
-		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false; 
-		((GridLayout)subComp.getLayout()).marginHeight = 0; 
-		((GridLayout)subComp.getLayout()).marginWidth = 0; 
-
-		if ( solibPath )
-		{
-			fSolibSearchPathBlock = new SolibSearchPathBlock();
-			fSolibSearchPathBlock.createBlock( subComp );
-			fSolibSearchPathBlock.addObserver( this );
+		((GridLayout)subComp.getLayout()).makeColumnsEqualWidth = false;
+		((GridLayout)subComp.getLayout()).marginHeight = 0;
+		((GridLayout)subComp.getLayout()).marginWidth = 0;
+		if ( fSolibSearchPathBlock != null ) {
+			fSolibSearchPathBlock.createControl( subComp );
+			if ( fSolibSearchPathBlock instanceof Observable )
+				((Observable)fSolibSearchPathBlock).addObserver( this );
 		}
-				
-		if ( autoSolib )
-		{	
+		if ( fAutoSolib ) {
 			fAutoSoLibButton = ControlFactory.createCheckBox( subComp, MIUIMessages.getString( "GDBSolibBlock.0" ) ); //$NON-NLS-1$
-			fAutoSoLibButton.addSelectionListener( 
-										new SelectionAdapter()
-											{
-												public void widgetSelected( SelectionEvent e )
-												{
-													updateButtons();
-													changed();
-												}
-											} );
-		}
+			fAutoSoLibButton.addSelectionListener( new SelectionAdapter() {
 
-		if ( stopOnSolibEvents )
-		{
-			fStopOnSolibEventsButton = ControlFactory.createCheckBox( subComp, MIUIMessages.getString( "GDBSolibBlock.1" ) ); //$NON-NLS-1$
-			fStopOnSolibEventsButton.addSelectionListener( 
-										new SelectionAdapter()
-											{
-												public void widgetSelected( SelectionEvent e )
-												{
-													updateButtons();
-													changed();
-												}
-											} );
+				public void widgetSelected( SelectionEvent e ) {
+					updateButtons();
+					changed();
+				}
+			} );
 		}
-		setControl( subComp );
+		if ( fStopOnSolibEvents ) {
+			fStopOnSolibEventsButton = ControlFactory.createCheckBox( subComp, MIUIMessages.getString( "GDBSolibBlock.1" ) ); //$NON-NLS-1$
+			fStopOnSolibEventsButton.addSelectionListener( new SelectionAdapter() {
+
+				public void widgetSelected( SelectionEvent e ) {
+					updateButtons();
+					changed();
+				}
+			} );
+		}
+		fControl = subComp;
 	}
 
-	public void initializeFrom( ILaunchConfiguration configuration )
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void initializeFrom( ILaunchConfiguration configuration ) {
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.initializeFrom( configuration );
-		try
-		{
+		try {
 			if ( fAutoSoLibButton != null )
 				fAutoSoLibButton.setSelection( configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT ) );
 			if ( fStopOnSolibEventsButton != null )
@@ -101,18 +102,17 @@ public class GDBSolibBlock extends Observable implements Observer
 			initializeButtons( configuration );
 			updateButtons();
 		}
-		catch( CoreException e )
-		{
-			return;
+		catch( CoreException e ) {
 		}
 	}
 
-	public void performApply( ILaunchConfigurationWorkingCopy configuration )
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void performApply( ILaunchConfigurationWorkingCopy configuration ) {
 		if ( fSolibSearchPathBlock != null )
-			fSolibSearchPathBlock.performApply( configuration );		
-		try
-		{
+			fSolibSearchPathBlock.performApply( configuration );
+		try {
 			Map attrs = configuration.getAttributes();
 			if ( fAutoSoLibButton != null )
 				attrs.put( IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, new Boolean( fAutoSoLibButton.getSelection() ) );
@@ -120,80 +120,73 @@ public class GDBSolibBlock extends Observable implements Observer
 				attrs.put( IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, new Boolean( fStopOnSolibEventsButton.getSelection() ) );
 			configuration.setAttributes( attrs );
 		}
-		catch( CoreException e )
-		{
+		catch( CoreException e ) {
 		}
 	}
 
-	public void setDefaults( ILaunchConfigurationWorkingCopy configuration )
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 */
+	public void setDefaults( ILaunchConfigurationWorkingCopy configuration ) {
 		if ( fSolibSearchPathBlock != null )
 			fSolibSearchPathBlock.setDefaults( configuration );
-		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, 
-									IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT );
-		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, 
-									IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, IMILaunchConfigurationConstants.DEBUGGER_AUTO_SOLIB_DEFAULT );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, IMILaunchConfigurationConstants.DEBUGGER_STOP_ON_SOLIB_EVENTS_DEFAULT );
 	}
 
-	protected void updateButtons()
-	{
+	protected void updateButtons() {
 	}
 
-	public void dispose()
-	{
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#dispose()
+	 */
+	public void dispose() {
 		deleteObservers();
-		if ( fSolibSearchPathBlock != null )
-		{
-			fSolibSearchPathBlock.deleteObserver( this );
+		if ( fSolibSearchPathBlock != null ) {
+			if ( fSolibSearchPathBlock instanceof Observable )
+				((Observable)fSolibSearchPathBlock).deleteObserver( this );
 			fSolibSearchPathBlock.dispose();
 		}
 	}
 
-	public void disable()
-	{
-		if ( fAutoSoLibButton != null )
-			fAutoSoLibButton.setEnabled( false );
-		if ( fStopOnSolibEventsButton != null )
-			fStopOnSolibEventsButton.setEnabled( false );
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
-	public void update( Observable o, Object arg )
-	{
+	public void update( Observable o, Object arg ) {
 		changed();
 	}
 
-	protected void changed()
-	{
+	protected void changed() {
 		setChanged();
 		notifyObservers();
 	}
 
-	public Composite getControl()
-	{
-		return fControl;
-	}
-
-	protected void setControl( Composite composite )
-	{
-		fControl = composite;
-	}
-
-	protected void initializeButtons( ILaunchConfiguration configuration )
-	{
-		try
-		{
+	protected void initializeButtons( ILaunchConfiguration configuration ) {
+		try {
 			boolean enable = !ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE.equals( configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE, "" ) ); //$NON-NLS-1$
 			if ( fAutoSoLibButton != null )
 				fAutoSoLibButton.setEnabled( enable );
 			if ( fStopOnSolibEventsButton != null )
 				fStopOnSolibEventsButton.setEnabled( enable );
 		}
-		catch( CoreException e )
-		{
+		catch( CoreException e ) {
 		}
 	}
-}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#getControl()
+	 */
+	public Control getControl() {
+		return fControl;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.mi.internal.ui.IMILaunchConfigurationComponent#isValid(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public boolean isValid( ILaunchConfiguration launchConfig ) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+}

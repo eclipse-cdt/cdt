@@ -1,3 +1,24 @@
+2004-08-23 Mikhail Khodjaiants
+	Added API to allow the access to the internal MI UI components by client plugins.
+	Changed the "Solib search path" component.
+	Reformatting and cleanup.
+	* MIUIMessages.properties
+	* CygwinDebuggerPage.java
+	* GDBDebuggerPage.java
+	* GDBServerDebuggerPage.java
+	* GDBSolibBlock.java
+	* IMIHelpContextIds.java
+	* IMILaunchConfigurationComponent.java: new
+	* IMIUIConstants.java
+	* IPathProvider.java: new
+	* MIUIUtils.java: new
+	* PixelConverter.java
+	* SerialPortSettingsBlock.java
+	* SolibSearchPathBlock.java
+	* TCPSettingsBlock.java
+	* SetAutoSolibActionDelegate.java
+	* MIPreferencePage.java
+
 2004-07-14 Mikhail Khodjaiants
 	Wrong fix. Falling back.
 	* GDBSolibBlock.java

@@ -1,3 +1,12 @@
+2003-03-11 Alain Magloire
+
+	* utils/org/eclipse/cdt/utils/elf/Elf.java (Symbol:getLineInfo):
+	The address value may not align with the debug information, for example when
+	adding Profiling etc .. we try to get the nearest symbol as a fallback.
+	We've seen this behaviour on PPC and ARM boards.
+	* utils/org/eclipse/cdt/utils/CPPFilt.java:
+	Remove unused fields.
+
 2003-02-26 Alain Magloire
 
 	The second part to finish the cdt-core-home/docs/binaryparser.html

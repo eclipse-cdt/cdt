@@ -56,33 +56,23 @@ public class Scanner2 implements IScanner, IScannerData {
 	 * @author jcamelon
 	 *
 	 */
-	private static class ReaderInclusionDuple {
+	private static class InclusionData {
 
-		private final IASTInclusion inclusion;
-		private final CodeReader reader;
+		public final IASTInclusion inclusion;
+		public final CodeReader reader;
+		public final int index;
 
 		/**
 		 * @param reader
 		 * @param inclusion
 		 */
-		public ReaderInclusionDuple(CodeReader reader, IASTInclusion inclusion) {
+		public InclusionData(CodeReader reader, IASTInclusion inclusion, int index ) {
 			this.reader = reader; 
 			this.inclusion = inclusion;
-		}
-
-		/**
-		 * @return Returns the inclusion.
-		 */
-		public final IASTInclusion getInclusion() {
-			return inclusion;
-		}
-		/**
-		 * @return Returns the reader.
-		 */
-		public final CodeReader getReader() {
-			return reader;
+			this.index = index;
 		}
 	}
+	
 	private ISourceElementRequestor requestor;
 	
 	private ParserLanguage language;
@@ -142,6 +132,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			fileCache.put(reader.filename, reader);
 		
 		pushContext(reader.buffer, reader);
+		addToFileIndex( reader.filename.toCharArray() );
 
 		setupBuiltInMacros();
 		
@@ -193,14 +184,14 @@ public class Scanner2 implements IScanner, IScannerData {
 	private void pushContext(char[] buffer, Object data) {
 		pushContext(buffer);
 		bufferData[bufferStackPos] = data;
-		if( data instanceof ReaderInclusionDuple )
-			requestor.enterInclusion( ((ReaderInclusionDuple)data).getInclusion() ); 
+		if( data instanceof InclusionData )
+			requestor.enterInclusion( ((InclusionData)data).inclusion ); 
 	}
 	
 	private void popContext() {
 		bufferStack[bufferStackPos] = null;
-		if( bufferData[bufferStackPos] instanceof ReaderInclusionDuple )
-			requestor.enterInclusion( ((ReaderInclusionDuple)bufferData[bufferStackPos]).getInclusion() );
+		if( bufferData[bufferStackPos] instanceof InclusionData )
+			requestor.enterInclusion( ((InclusionData)bufferData[bufferStackPos]).inclusion );
 		bufferData[bufferStackPos] = null;
 		--bufferStackPos;
 	}
@@ -1199,7 +1190,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				for (int i = 0; i < includePaths.length; ++i) {
 					String finalPath = ScannerUtility.createReconciledPath(includePaths[i], filename);
 					if (!foundme) {
-						if (finalPath.equals(((ReaderInclusionDuple)bufferData[bufferStackPos]).getReader().filename)) {
+						if (finalPath.equals(((InclusionData)bufferData[bufferStackPos]).reader.filename)) {
 							foundme = true;
 							continue;
 						}
@@ -1212,7 +1203,7 @@ public class Scanner2 implements IScanner, IScannerData {
 								fileCache.put(reader.filename, reader);
 							if (dlog != null) dlog.println("#include <" + finalPath + ">"); //$NON-NLS-1$ //$NON-NLS-2$
 							IASTInclusion inclusion = getASTFactory().createInclusion( new String( filename ), new String( reader.filename ), local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine );
-							pushContext(reader.buffer, new ReaderInclusionDuple( reader, inclusion ));
+							pushContext(reader.buffer, new InclusionData( reader, inclusion, addToFileIndex( reader.filename.toCharArray() ) ));
 							return;
 						}
 					}
@@ -2510,26 +2501,53 @@ public class Scanner2 implements IScanner, IScannerData {
 		// TODO Auto-generated method stub
 
 	}
+	
+	protected static final int STARTING_FILECACHE_SIZE = 32;
+	protected char [][] fileNames = new char[STARTING_FILECACHE_SIZE][];
+	protected int fileIndexCounter = 0;
+	
+	/**
+	 * @param cs
+	 * @return
+	 */
+	private int addToFileIndex(char[] cs) {
+		if( fileIndexCounter >= fileNames.length )
+		{
+			char [][] prev = fileNames;
+			fileNames = new char[ prev.length * 2 ][];
+			System.arraycopy( prev, 0, fileNames, 0, prev.length );
+		}
+		int result = fileIndexCounter;
+		fileNames[ fileIndexCounter ] = cs;
+		++fileIndexCounter;
+		return result;
+	}
+
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getCurrentFileIndex()
 	 */
-	public int getCurrentFileIndex() {
-		// TODO Auto-generated method stub
+	public final int getCurrentFileIndex() {
+		for( int i = bufferStackPos; i >= 0; --i )
+		{
+			if( bufferData[i] instanceof InclusionData )
+				return ((InclusionData)bufferData[i]).index;
+		}
 		return 0;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getCurrentFilename()
 	 */
-	public char[] getCurrentFilename() {
-		// TODO Auto-generated method stub
-		return null;
+	public final char[] getCurrentFilename() {
+		return fileNames[ getCurrentFileIndex() ];
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getFilenameForIndex(int)
 	 */
 	public String getFilenameForIndex(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		if( index >= 0 && index < fileNames.length )
+			return new String( fileNames[index] );
+		return EMPTY_STRING;
 	}
 	
 	private static CharArrayIntMap keywords;

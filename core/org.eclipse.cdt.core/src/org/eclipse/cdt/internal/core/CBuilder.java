@@ -172,9 +172,9 @@ public class CBuilder extends ACBuilder {
 					cos.flush();
 					fatalBuild = true;
 				}
-
 				subMonitor.done();
 				monitor.setCanceled(isCanceled);
+				cos.close();
 			}
 		}
 		catch (Exception e) {

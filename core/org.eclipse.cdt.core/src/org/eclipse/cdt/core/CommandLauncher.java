@@ -7,13 +7,15 @@ package org.eclipse.cdt.core;
  
 import java.io.IOException;
 import java.io.OutputStream;
-
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Properties;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.cdt.internal.core.ProcessClosure;
 import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
-import org.eclipse.cdt.internal.core.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 
 public class CommandLauncher {
@@ -120,12 +122,38 @@ public class CommandLauncher {
 		if (fProcess == null) {
 			return ILLEGAL_COMMAND;
 		}
-				
-		ProcessClosure closure= new ProcessClosure(fProcess, out, err);
+
+		PipedOutputStream errOutPipe = new PipedOutputStream();
+		PipedOutputStream outputPipe = new PipedOutputStream();
+		PipedInputStream errInPipe, inputPipe;
+		try {
+			errInPipe = new PipedInputStream(errOutPipe);
+			inputPipe = new PipedInputStream(outputPipe);
+		} catch( IOException e ) {
+			return COMMAND_CANCELED;
+		}
+						
+		ProcessClosure closure= new ProcessClosure(fProcess, outputPipe, errOutPipe);
 		closure.runNonBlocking();
+		byte buffer[] = new byte[1024];
+		int nbytes;
 		while (!monitor.isCanceled() && closure.isAlive()) {
 			try {
-				Thread.sleep(DELAY);
+				if ( errInPipe.available() > 0 ) {
+					nbytes = errInPipe.read(buffer);
+					err.write(buffer, 0, nbytes);
+					err.flush();
+				}
+				if ( inputPipe.available() > 0 ) {
+					nbytes = inputPipe.read(buffer);
+					out.write(buffer, 0, nbytes);
+					out.flush();
+				}
+			} catch( IOException e) {
+			}
+			monitor.worked(0);
+			try {
+					Thread.sleep(DELAY);
 			} catch (InterruptedException ie) {
 			}
 		}

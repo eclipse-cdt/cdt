@@ -1,7 +1,9 @@
 package org.eclipse.cdt.internal.core.parser;
 
+import org.eclipse.cdt.core.parser.DefaultProblemHandler;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassReference;
@@ -37,14 +39,22 @@ import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 
 public class NullSourceElementRequestor implements ISourceElementRequestor 
 {
+    private ParserMode mode = ParserMode.COMPLETE_PARSE;
 
-    /* (non-Javadoc)
+	public NullSourceElementRequestor()
+	{
+	}
+
+	public NullSourceElementRequestor( ParserMode mode )
+	{
+		this.mode = mode;
+	}
+	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
      */
-    public void acceptProblem(IProblem problem)
+    public boolean acceptProblem(IProblem problem)
     {
-        // TODO Auto-generated method stub
-        
+		return DefaultProblemHandler.ruleOnProblem( problem, mode );
     }
 
     /* (non-Javadoc)

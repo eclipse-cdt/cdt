@@ -234,11 +234,12 @@ public class CParseTreeBuilder extends SourceElementRequestorAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
 	 */
-	public void acceptProblem(IProblem problem) {
+	public boolean acceptProblem(IProblem problem) {
 		int problemId = problem.getID();
-		if (problem.isError() && ((problemId & IProblem.Syntax) != 0)) {
+		if (problem.isError() && ((problemId & IProblem.SYNTAX_RELATED) != 0)) {
 			throw new ParseError();
 		}
+		return true;
 	}
 
 	/* (non-Javadoc)

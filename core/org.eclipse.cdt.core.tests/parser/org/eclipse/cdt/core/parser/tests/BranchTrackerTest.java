@@ -1,5 +1,7 @@
 package org.eclipse.cdt.core.parser.tests;
 
+import java.util.EmptyStackException;
+
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.ScannerException;
@@ -135,7 +137,7 @@ public class BranchTrackerTest extends TestCase {
 				assertFalse( bt.poundendif() ); 
 			assertTrue( bt.poundendif() ); 
 			assertEquals(0, bt.getDepth());
-		} catch (ScannerException se) {
+		} catch (EmptyStackException se) {
 				fail("Unexpected Scanner exception thrown");
 			}
 		}
@@ -191,7 +193,7 @@ public class BranchTrackerTest extends TestCase {
 			
 			
 		}
-		catch( ScannerException se )
+		catch( EmptyStackException se )
 		{
 			fail( "Exception" ); 
 		}

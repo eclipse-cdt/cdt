@@ -26,6 +26,7 @@ public interface IASTFactory
         int startingOffset,
         int nameOffset,
         int nameEndOffset, int endingOffset) ;
+        
     public IASTInclusion createInclusion(
         String name,
         String fileName,
@@ -33,19 +34,23 @@ public interface IASTFactory
         int startingOffset,
         int nameOffset,
         int nameEndOffset, int endingOffset) ;
+        
     public IASTUsingDirective createUsingDirective(
         IASTScope scope,
         ITokenDuple duple, int startingOffset, int endingOffset)
         throws ASTSemanticException;
+        
     public IASTUsingDeclaration createUsingDeclaration(
         IASTScope scope,
         boolean isTypeName,
         ITokenDuple name, int startingOffset, int endingOffset) throws ASTSemanticException;
+        
     public IASTASMDefinition createASMDefinition(
         IASTScope scope,
         String assembly,
         int first,
         int last);
+
     public IASTNamespaceDefinition createNamespaceDefinition(
         IASTScope scope,
         String identifier,
@@ -61,9 +66,11 @@ public interface IASTFactory
     	int nameEndOffset, int endOffset ) throws ASTSemanticException;
         
     public IASTCompilationUnit createCompilationUnit() ;
+
     public IASTLinkageSpecification createLinkageSpecification(
         IASTScope scope,
         String spec, int startingOffset) ;
+
     public IASTClassSpecifier createClassSpecifier(
         IASTScope scope,
         ITokenDuple name,
@@ -72,6 +79,7 @@ public interface IASTFactory
         ASTAccessVisibility access,
         int startingOffset,
         int nameOffset, int nameEndOffset) throws ASTSemanticException;
+
     /**
      * @param astClassSpec
      * @param isVirtual
@@ -83,20 +91,24 @@ public interface IASTFactory
         boolean isVirtual,
         ASTAccessVisibility visibility,
         ITokenDuple parentClassName) throws ASTSemanticException;
+
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(
         IASTScope scope,
         ASTClassKind elaboratedClassKind,
         ITokenDuple typeName,
         int startingOffset, int endOffset, boolean isForewardDecl) throws ASTSemanticException;
+
     public IASTEnumerationSpecifier createEnumerationSpecifier(
         IASTScope scope,
         String name,
         int startingOffset, int nameOffset, int nameEndOffset) throws ASTSemanticException;
+
     public void addEnumerator(
         IASTEnumerationSpecifier enumeration,
         String string,
         int startingOffset,
         int nameOffset, int nameEndOffset, int endingOffset, IASTExpression initialValue)throws ASTSemanticException;
+
     public IASTExpression createExpression(
         IASTScope scope,
         IASTExpression.Kind kind,
@@ -105,24 +117,31 @@ public interface IASTFactory
         IASTExpression thirdExpression,
         IASTTypeId typeId,
         ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException;
+
     public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor(List newPlacementExpressions,List newTypeIdExpressions,List newInitializerExpressions);
+
     public IASTInitializerClause createInitializerClause(
         IASTScope scope,
         IASTInitializerClause.Kind kind,
         IASTExpression assignmentExpression, List initializerClauses, List designators) ;
+
     public IASTExceptionSpecification createExceptionSpecification(IASTScope scope, List typeIds) throws ASTSemanticException;
+
     /**
      * @param exp
      */
     public IASTArrayModifier createArrayModifier(IASTExpression exp) ;
+
     /**
      * @param duple
      * @param expressionList
      * @return
      */
+
     public IASTConstructorMemberInitializer createConstructorMemberInitializer(
         IASTScope scope,
         ITokenDuple duple, IASTExpression expressionList) throws ASTSemanticException;
+
     public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(
         IASTScope scope,
         IASTSimpleTypeSpecifier.Type kind,
@@ -131,6 +150,7 @@ public interface IASTFactory
         boolean isLong,
         boolean isSigned,
         boolean isUnsigned, boolean isTypename, boolean isComplex, boolean isImaginary) throws ASTSemanticException;
+
     public IASTFunction createFunction(
         IASTScope scope,
         ITokenDuple name,
@@ -149,11 +169,14 @@ public interface IASTFactory
 		boolean isVirtual,
 		boolean isExplicit,
 		boolean isPureVirtual, List constructorChain, boolean isDefinition, boolean hasFunctionTryBlock ) throws ASTSemanticException;
+    
+    
     public IASTAbstractDeclaration createAbstractDeclaration(
         boolean isConst,
         boolean isVolatile,
         IASTTypeSpecifier typeSpecifier,
         List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOperator);
+    
     public IASTMethod createMethod(
         IASTScope scope,
         String name,
@@ -209,7 +232,5 @@ public interface IASTFactory
     /**
      * @param astClassSpecifier
      */
-    public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier); 
-						
-
+    public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier); 						
 }

@@ -9,7 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser;
- 
+
+import java.util.Map;
+
 /**
  * Description of a C/C++ problem, as detected by the translation or some of the underlying
  * technology reusing it. 
@@ -21,13 +23,8 @@ package org.eclipse.cdt.core.parser;
  * as constants on this interface. </li>
  * </ul>
  */
-public interface IProblem extends ISourceElementCallbackDelegate { 
-	
-	/**
-	 * Answer back the original arguments recorded into the problem.
-	 * @return the original arguments recorded into the problem
-	 */
-	String[] getArguments();
+public interface IProblem
+{
 
 	/**
 	 * Returns the problem id
@@ -44,12 +41,22 @@ public interface IProblem extends ISourceElementCallbackDelegate {
 	String getMessage();
 
 	/**
+	 * Return to the client a map between parameter names and values.  
+	 * 
+	 * The keys and values are all Strings.  
+	 * 
+	 *
+	 * @return a map between parameter names and values.
+	 */
+	Map getArguments();
+
+	/**
 	 * Answer the file name in which the problem was found.
 	 * 
 	 * @return the file name in which the problem was found
 	 */
 	char[] getOriginatingFileName();
-	
+
 	/**
 	 * Answer the end position of the problem (inclusive), or -1 if unknown.
 	 * 
@@ -60,7 +67,7 @@ public interface IProblem extends ISourceElementCallbackDelegate {
 	/**
 	 * Answer the line number in source where the problem begins.
 	 * 
-	 * @return the line number in source where the problem begins
+	 * @return the line number in source where the problem begins, or -1 if unknown
 	 */
 	int getSourceLineNumber();
 
@@ -86,28 +93,15 @@ public interface IProblem extends ISourceElementCallbackDelegate {
 	boolean isWarning();
 
 	/**
-	 * Set the end position of the problem (inclusive), or -1 if unknown.
-	 * Used for shifting problem positions.
-	 * 
-	 * @param sourceEnd the given end position
+	 * Unknown Numeric Value for line numbers and offsets; use this constant
 	 */
-	void setSourceEnd(int sourceEnd);
-
-	/**
-	 * Set the line number in source where the problem begins.
-	 * 
-	 * @param lineNumber the given line number
-	 */
-	void setSourceLineNumber(int lineNumber);
-
-	/**
-	 * Set the start position of the problem (inclusive), or -1 if unknown.
-	 * Used for shifting problem positions.
-	 * 
-	 * @param the given start position
-	 */
-	void setSourceStart(int sourceStart);
+	public final static int INT_VALUE_NOT_PROVIDED = -1;
 	
+	/**
+	 * Unknown filename sentinel value
+	 */
+	public final static String FILENAME_NOT_PROVIDED = "<unknown>";
+
 	/**
 	 * Problem Categories
 	 * The high bits of a problem ID contains information about the category of a problem. 
@@ -119,30 +113,237 @@ public interface IProblem extends ISourceElementCallbackDelegate {
 	 * When a problem is tagged as Internal, it means that no change other than a local source code change
 	 * can  fix the corresponding problem.
 	 */
-	int TypeRelated = 0x01000000;
-	int FieldRelated = 0x02000000;
-	int MethodRelated = 0x04000000;
-	int ConstructorRelated = 0x08000000;
-	int ImportRelated = 0x10000000;
-	int Internal = 0x20000000;
-	int Syntax =  0x40000000;
 	
+	/**
+	 * IProblem relates to a valid error on the Scanner
+	 */
+	public final static int SCANNER_RELATED = 0x01000000;
+	
+	/**
+	 * IProblem relates to a valid error on the preprocessor 
+	 */
+	public final static int PREPROCESSOR_RELATED = 0x02000000;
+	
+	/**
+	 * IProblem relates to a valid syntax error in the parser
+	 */
+	public final static int SYNTAX_RELATED = 0x04000000;
+	
+	/**
+	 * IProblem relates to a valid semantical error in the parser
+	 */
+	public final static int SEMANTICS_RELATED = 0x08000000;
+	
+	/**
+	 * IProblem relates to an implementation of design limitation
+	 */
+	public final static int INTERNAL_RELATED = 0x10000000;
+
+
+	/**
+	 * Check the parameter bitmask against an IProblem's ID to broadly segregate the 
+	 * types of problems.  
+	 * 
+	 * @param bitmask
+	 * @return true if ( (id & bitmask ) != 0 )
+	 */
+	public boolean checkCategory(int bitmask);
+
 	/**
 	 * Mask to use in order to filter out the category portion of the problem ID.
 	 */
-	int IgnoreCategoriesMask = 0xFFFFFF;
+	public final static int IGNORE_CATEGORIES_MASK = 0xFFFFFF;
+
+	/**
+	 * Below are listed all available problem attributes.  The JavaDoc for each  problem ID indicates
+	 * when they should be contributed to creating a problem of that type.  
+	 */
+
+	// Preprocessor IProblem attributes	 
+	/**
+	 * The text that follows a #error preprocessor directive 
+	 */
+	public final static String A_PREPROC_POUND_ERROR = "#error text";
+
+	/**
+	 * The filename that failed somehow in an preprocessor include directive
+	 */
+	public final static String A_PREPROC_INCLUDE_FILENAME = "include file";
+
+	/**
+	 * A preprocessor macro name
+	 */
+	public final static String A_PREPROC_MACRO_NAME = "macro name";
+
+	/**
+	 * A preprocessor conditional that could not be evaluated
+	 * 
+	 * #if X + Y == Z       <== that one, if X, Y or Z are not defined 
+	 * #endif 
+	 */
+	public final static String A_PREPROC_CONDITION = "preprocessor condition";
+
+	/**
+	 * A preprocessor directive that could not be interpretted
+	 * 
+	 * e.g.  #blah 
+	 */
+	public final static String A_PREPROC_UNKNOWN_DIRECTIVE = "bad preprocessor directive";
+
+	/**
+	 * The preprocessor conditional statement that caused an unbalanced mismatch.  
+	 * 
+	 * #if X 
+	 * #else
+	 * #else		<=== that one
+	 * #endif 
+	 */
+	public final static String A_PREPROC_CONDITIONAL_MISMATCH = "conditional mismatch";
+
+	/**
+	 * The Bad character encountered in scanner 
+	 */
+	public static final String A_SCANNER_BADCHAR = null;
 
 	/**
 	 * Below are listed all available problem IDs. Note that this list could be augmented in the future, 
 	 * as new features are added to the C/C++ core implementation.
 	 */
 
+	/*
+	 * Scanner Problems
+	 */
+	 
+	/** 
+	 * Bad character encountered by Scanner. 
+	 * Required attributes: A_SCANNER_BADCHAR
+	 * @see #A_SCANNER_BADCHAR  
+	 */
+	public final static int SCANNER_BAD_CHARACTER = SCANNER_RELATED | 0x001;
+	
+	/** 
+	 * Unbounded literal string encountered by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_UNBOUNDED_STRING = SCANNER_RELATED | 0x002;
+	
+	/** 
+	 * Invalid escape sequence encountered by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_INVALID_ESCAPECHAR = SCANNER_RELATED | 0x003;
+	
+	/** 
+	 * Bad floating point encountered by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_BAD_FLOATING_POINT = SCANNER_RELATED | 0x004;
+	
+	/** 
+	 * Bad hexidecimal encountered by Scanner. 
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_BAD_HEX_FORMAT = SCANNER_RELATED | 0x005;
+	
+	/** 
+	 * Unexpected EOF encountered by Scanner.   
+	 * Required attributes: none.  
+	 */
+	public final static int SCANNER_UNEXPECTED_EOF = SCANNER_RELATED | 0x006;
+
+	/*
+	 * Preprocessor Problems
+	 */
+	 
+	/**
+	 *	#error encountered by Preprocessor.  
+	 * Required attributes:  A_PREPROC_POUND_ERROR
+	 * @see #A_PREPROC_POUND_ERROR
+	 */
+	public final static int PREPROCESSOR_POUND_ERROR = PREPROCESSOR_RELATED | 0x001;
+	
+	/**
+	 *	Inclusion not found by Preprocessor.  
+	 * Required attributes: A_PREPROC_INCLUDE_FILENAME
+	 * @see #A_PREPROC_INCLUDE_FILENAME
+	 */	
+	public final static int PREPROCESSOR_INCLUSION_NOT_FOUND = PREPROCESSOR_RELATED | 0x002;
+	
+	/**
+	 *	Macro definition not found by Preprocessor.  
+	 * Required attributes:  A_PREPROC_MACRO_NAME
+	 * @see #A_PREPROC_MACRO_NAME
+	 */ 
+	public final static int PREPROCESSOR_DEFINITION_NOT_FOUND = PREPROCESSOR_RELATED | 0x003;
+	
+	/**
+	 *	Preprocessor conditionals seem unbalanced.  
+	 * Required attributes:  A_PREPROC_CONDITIONAL_MISMATCH
+	 * @see #A_PREPROC_CONDITIONAL_MISMATCH
+	 */
+	
+	public final static int PREPROCESSOR_UNBALANCE_CONDITION = PREPROCESSOR_RELATED | 0x004;
+	
+	/**
+	 *	Invalid format to Macro definition.    
+	 * Required attributes:  A_PREPROC_MACRO_NAME
+	 * @see #A_PREPROC_MACRO_NAME
+	 */	
+	public final static int PREPROCESSOR_INVALID_MACRO_DEFN = PREPROCESSOR_RELATED | 0x005;
+	
+	/**
+	 *	Invalid or unknown preprocessor directive encountered by Preprocessor.  
+	 * Required attributes: A_PREPROC_UNKNOWN_DIRECTIVE
+	 * @see #A_PREPROC_UNKNOWN_DIRECTIVE
+	 */	
+	public final static int PREPROCESSOR_INVALID_DIRECTIVE = PREPROCESSOR_RELATED | 0x006;
+	
+	/**
+	 *	Invalid macro redefinition encountered by Preprocessor.    
+	 * Required attributes: A_PREPROC_MACRO_NAME
+	 * @see #A_PREPROC_MACRO_NAME
+	 */	
+	public final static int PREPROCESSOR_INVALID_MACRO_REDEFN = PREPROCESSOR_RELATED | 0x007;
+	
+	/**
+	 *	Preprocessor Conditional cannot not be evaluated due.    
+	 * Required attributes: A_PREPROC_CONDITION
+	 * @see #A_PREPROC_CONDITION
+	 */	
+	public final static int PREPROCESSOR_CONDITIONAL_EVAL_ERROR = PREPROCESSOR_RELATED | 0x008;
+	
+	/**
+	 * Invalid macro usage encountered by Preprocessor.  
+	 * Required attributes: A_PREPROC_MACRO_NAME
+	 * @see #A_PREPROC_MACRO_NAME
+	 */	
+	public final static int PREPROCESSOR_MACRO_USAGE_ERROR = PREPROCESSOR_RELATED | 0x009;
+	
+	/**
+	 *	Invalid Macro Pasting encountered by Preprocessor. 
+	 * Required attributes: A_PREPROC_MACRO_NAME
+	 * @see #A_PREPROC_MACRO_NAME
+	 */
+	public final static int PREPROCESSOR_MACRO_PASTING_ERROR = PREPROCESSOR_RELATED | 0x00A;
+	
+	/**
+	 *	Circular inclusion encountered by Preprocessor.  
+	 * Required attributes: A_PREPROC_INCLUDE_FILENAME
+	 * @see #A_PREPROC_INCLUDE_FILENAME
+	 */	
+	public final static int PREPROCESSOR_CIRCULAR_INCLUSION = PREPROCESSOR_RELATED | 0x00B;
+
+	/*
+	 * Parser Syntactic Problems
+	 */
+
+	/*
+	 * Parser Semantic Problems
+	 */
+
 	/**
 	 * ID reserved for referencing an internal error inside the CCorePlugin implementation which
 	 * may be surfaced as a problem associated with the translation unit which caused it to occur.
 	 */
-	int Unclassified = 0;
-
-	// detected task
-	int Task = Internal + 450;
+	public final static int UNCLASSIFIED_ERROR = 0;
 }

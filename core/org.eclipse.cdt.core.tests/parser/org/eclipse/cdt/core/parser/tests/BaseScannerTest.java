@@ -40,7 +40,7 @@ public class BaseScannerTest extends TestCase {
 
 	protected void initializeScanner( String input, ParserMode mode )
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, callback );
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo(), mode, ParserLanguage.CPP, new NullSourceElementRequestor( mode ) );
 	}
 
 
@@ -205,7 +205,6 @@ public class BaseScannerTest extends TestCase {
 
 	public static final boolean verbose = false;
 
-    protected NullSourceElementRequestor callback = new NullSourceElementRequestor();
 
     /**
          * @param string

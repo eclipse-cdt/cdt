@@ -18,12 +18,10 @@ import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.Backtrack;
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IProblemReporter;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
-import org.eclipse.cdt.core.parser.ITranslationResult;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -88,8 +86,6 @@ public class Parser implements IParser
     private ISourceElementRequestor requestor = null;
     // new callback mechanism
     private IASTFactory astFactory = null; // ast factory
-    private IProblemReporter problemReporter = null;
-    private ITranslationResult unitResult = null;
     /**
      * This is the single entry point for setting parsePassed to 
      * false, and also making note what token offset we failed upon. 
@@ -123,13 +119,9 @@ public class Parser implements IParser
         IScanner scanner,
         ISourceElementRequestor callback,
         ParserMode mode,
-        ParserLanguage language,
-        IProblemReporter problemReporter,
-        ITranslationResult unitResult)
+        ParserLanguage language )
     {
         this.scanner = scanner;
-        this.problemReporter = problemReporter;
-        this.unitResult = unitResult;
         requestor = callback;
         this.mode = mode;
         this.language = language;
@@ -145,7 +137,6 @@ public class Parser implements IParser
     {
         long startTime = System.currentTimeMillis();
         translationUnit();
-        onParseEnd();
         // For the debuglog to take place, you have to call
         // Util.setDebugging(true);
         // Or set debug to true in the core plugin preference 
@@ -158,10 +149,7 @@ public class Parser implements IParser
                 + (parsePassed ? "" : " - parse failure"), IDebugLogConstants.PARSER);
         return parsePassed;
     }
-    public void onParseEnd()
-    {
-        scanner.onParseEnd();
-    }
+
     /**
      * This is the top-level entry point into the ANSI C++ grammar.  
      * 
@@ -5156,11 +5144,7 @@ public class Parser implements IParser
         {
             Util.debugLog( "ScannerException thrown : " + e.getMessage(), IDebugLogConstants.PARSER );
 			org.eclipse.cdt.internal.core.model.Util.log(e, "Scanner Exception: " + e.getMessage() , ICLogConstants.CDT); //$NON-NLS-1$h
-            if( e.isSeriousError(mode) )
-            {
-            	failParse(); 
-            	throw endOfFile;
-            }
+            failParse(); 
             return fetchToken();
         }
     }
@@ -5262,8 +5246,6 @@ public class Parser implements IParser
     public void setLanguage( ParserLanguage l )
     {
         language = l;
-        if (scanner != null) 
-            scanner.setLanguage( l );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.IParser#getLastErrorOffset()

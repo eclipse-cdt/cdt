@@ -18,8 +18,8 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.Stack;
 
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
 import org.eclipse.cdt.internal.core.model.Util;
@@ -36,11 +36,11 @@ public class ContextStack {
 		super();
 	}
 
-    public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ScannerException {
+    public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor) throws ContextException {
         updateContext(reader, filename, type, inclusion, requestor, -1, -1);
     }
   
-	public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor, int macroOffset, int macroLength) throws ScannerException 
+	public void updateContext(Reader reader, String filename, int type, IASTInclusion inclusion, ISourceElementRequestor requestor, int macroOffset, int macroLength) throws ContextException 
     {
 		int startLine = 1;
 		
@@ -61,18 +61,18 @@ public class ContextStack {
 		push( context, requestor );	
 	}
 	
-	protected void push( IScannerContext context, ISourceElementRequestor requestor ) throws ScannerException
+	protected void push( IScannerContext context, ISourceElementRequestor requestor ) throws ContextException
 	{
 		if( context.getKind() == IScannerContext.INCLUSION )
 		{
 			if( !inclusions.add( context.getFilename() ) )
-				throw new ScannerException( ScannerException.ErrorCode.CIRCULAR_INCLUSION,  context.getFilename()  );
+				throw new ContextException( IProblem.PREPROCESSOR_CIRCULAR_INCLUSION );
 			context.getExtension().enterScope( requestor );				
 
 		} else if( context.getKind() == IScannerContext.MACROEXPANSION )
 		{
 			if( !defines.add( context.getFilename() ) )
-				throw new ScannerException( ScannerException.ErrorCode.MALFORMED_MACRO_DEFN, context.getFilename() );
+				throw new ContextException( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN );
 		}
 		if( currentContext != null )
 			contextStack.push(currentContext);
@@ -109,7 +109,7 @@ public class ContextStack {
 		return true;
 	}
 	
-	public void undoRollback( IScannerContext undoTo, ISourceElementRequestor requestor ) throws ScannerException {
+	public void undoRollback( IScannerContext undoTo, ISourceElementRequestor requestor ) throws ContextException {
 		if( currentContext == undoTo ){
 			return;
 		}
@@ -158,5 +158,34 @@ public class ContextStack {
 	public IScannerContext getTopContext() {
 		return topContext;
 	}
+
+	public IScannerContext getMostRelevantFileContext()
+	{
+		if( currentContext != null )
+		{
+			if( currentContext.getKind() == IScannerContext.TOP ) return currentContext;
+			if( currentContext.getKind() == IScannerContext.INCLUSION ) return currentContext;
+		}
+				
+		IScannerContext context = null;
+		for( int i = contextStack.size() - 1; i >= 0; --i )
+		{
+			context = (IScannerContext)contextStack.get(i);
+			if( context.getKind() == IScannerContext.INCLUSION || context.getKind() == IScannerContext.TOP )
+				break;
+			if( i == 0 ) context = null;
+		}
+		
+		return context;
+	}
 	
+	public int getCurrentLineNumber()
+	{
+		return getMostRelevantFileContext() != null ? getMostRelevantFileContext().getLine() : -1;
+	}
+	
+	public int getTopFileLineNumber()
+	{
+		return topContext.getLine();
+	}
 }

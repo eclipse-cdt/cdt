@@ -26,6 +26,7 @@ import java.util.LinkedList;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.parser.DefaultProblemHandler;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -113,7 +114,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 		progressMonitor = monitor;		
 	}
 
-	public void acceptProblem(IProblem problem) 								{	}
+	public boolean acceptProblem(IProblem problem) 								{ return DefaultProblemHandler.ruleOnProblem(problem, ParserMode.COMPLETE_PARSE );	}
 	public void acceptUsingDirective(IASTUsingDirective usageDirective) 		{	}
 	public void acceptUsingDeclaration(IASTUsingDeclaration usageDeclaration) 	{	}
 	public void acceptASMDefinition(IASTASMDefinition asmDefinition) 			{	}

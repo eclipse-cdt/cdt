@@ -3,8 +3,6 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
-import org.eclipse.cdt.core.parser.ScannerException;
-
 /**
  * @author jcamelon
  *
@@ -65,7 +63,7 @@ public class BranchTracker {
 		}
 	}	
 	
-	public boolean poundelif( boolean taken ) throws ScannerException 
+	public boolean poundelif( boolean taken ) throws EmptyStackException 
 	{
 		if( ignore != IGNORE_SENTINEL && ignore < branches.size() )
 		{
@@ -79,14 +77,7 @@ public class BranchTracker {
 		//		--> ignore >= branches.size()
 		// check the branch queue to see whether or not the branch has already been taken 
 		Boolean branchAlreadyTaken;
-		try
-		{
-			branchAlreadyTaken = (Boolean) branches.peek();
-		}
-		catch( EmptyStackException ese )
-		{
-			throw new ScannerException( ScannerException.ErrorCode.UNBALANCED_CONDITIONALS ); 
-		}
+		branchAlreadyTaken = (Boolean) branches.peek();
 		
 		if( ignore == IGNORE_SENTINEL )
 		{	
@@ -119,7 +110,7 @@ public class BranchTracker {
 		return false;
 	}
 	
-	public boolean poundelse() throws ScannerException
+	public boolean poundelse() throws EmptyStackException
 	{
 		if( ignore != IGNORE_SENTINEL && ignore < branches.size() )
 		{
@@ -129,15 +120,8 @@ public class BranchTracker {
 		}
 				
 		Boolean branchAlreadyTaken;
-		try
-		{
-			branchAlreadyTaken = (Boolean) branches.peek();
-		}
-		catch( EmptyStackException ese )
-		{
-			throw new ScannerException( ScannerException.ErrorCode.UNBALANCED_CONDITIONALS );
-		}
-		
+		branchAlreadyTaken = (Boolean) branches.peek();
+				
 		if( ignore == IGNORE_SENTINEL )
 		{
 			if( branchAlreadyTaken.booleanValue() )

@@ -1,3 +1,6 @@
+2003-11-05 John Camelon
+	Updated parser clients to use new IProblem strategy.  
+
 2003-10-28 Andrew Niefer
 	fix bug 44337 : Disabling of "definition" not making sense in Search dialog 
 	fix bug 44947 : Navigate from Outline: Enumeration type not pre-populated 

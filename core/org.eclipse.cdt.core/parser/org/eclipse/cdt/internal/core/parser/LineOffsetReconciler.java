@@ -22,7 +22,8 @@ import org.eclipse.cdt.core.parser.IOffsetDuple;
  */
 public class LineOffsetReconciler implements ILineOffsetReconciler
 {
-	private Reader ourReader; 
+	private Reader ourReader;
+	int currentOffset = 0; 
     /**
      * @param input
      */
@@ -36,11 +37,14 @@ public class LineOffsetReconciler implements ILineOffsetReconciler
      */
     public int getLineNumberForOffset(int offset)
     {
-        resetReader();
+    	if( offset < currentOffset )
+        	resetReader();
         int lineNumber = 1; 
-        for( int i = 0; i < offset; ++i )
+        for( int i = currentOffset; i < offset; ++i )
         {
             int c = getChar();
+            if( c == -1 )
+            	return -1;
         	if( c == '\n' )
         		++lineNumber;
         }
@@ -53,11 +57,11 @@ public class LineOffsetReconciler implements ILineOffsetReconciler
         try
         {
            c = ourReader.read();
+           ++currentOffset;
         }
         catch (IOException e)
         {
-           throw new Error( "Could not read");
-               
+        	return -1;
         }
         return c;
     }
@@ -66,6 +70,7 @@ public class LineOffsetReconciler implements ILineOffsetReconciler
         try
         {
             ourReader.reset();
+            currentOffset = 0;
         }
         catch (IOException e)
         {

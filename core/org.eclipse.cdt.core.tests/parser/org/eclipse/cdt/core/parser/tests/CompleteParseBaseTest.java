@@ -498,13 +498,18 @@ public class CompleteParseBaseTest extends TestCase
 		}
         
     
+    	List problems = new ArrayList();
+    	
+    	public Iterator getProblems() { 
+    		return problems.iterator(); 
+    	}
         /* (non-Javadoc)
          * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
          */
-        public void acceptProblem(IProblem problem)
+        public boolean acceptProblem(IProblem problem)
         {
-            // TODO Auto-generated method stub
-            
+            problems.add( problem );
+            return true;
         }
     
         /* (non-Javadoc)

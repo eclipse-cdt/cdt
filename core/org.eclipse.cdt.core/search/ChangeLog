@@ -1,3 +1,6 @@
+2004-04-19 Andrew Niefer
+	speed up BasicSearchMatch.compareTo and .hashCode by reducing number of string objects created.
+
 2004-04-12 Bogdan Gheorghe
 	Modified FieldDeclarationPattern to work with new Enumerator type, added 
 	DerivedTypesPattern.

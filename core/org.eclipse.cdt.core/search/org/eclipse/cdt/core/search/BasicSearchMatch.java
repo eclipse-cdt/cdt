@@ -38,20 +38,32 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		referringElement = basicMatch.referringElement;
 	}
 	
+	final static private String HASH_SEPERATOR = ":"; //$NON-NLS-1$
 	public int hashCode(){
-		String hashString = ""; //$NON-NLS-1$
-		
-		hashString += name;
-		hashString += ":" + parentName; //$NON-NLS-1$
-		hashString += ":" + returnType; //$NON-NLS-1$
-		
-		if( getLocation() != null)
-			hashString += ":" + getLocation().toString(); //$NON-NLS-1$
+		if( hashCode == 0 )
+		{			
+			StringBuffer hashBuffer = new StringBuffer();
+			hashBuffer.append( name );
+			hashBuffer.append( HASH_SEPERATOR );			
+			hashBuffer.append( parentName );
+			hashBuffer.append( HASH_SEPERATOR );
+			hashBuffer.append( returnType );
+			if( getLocation() != null){
+				hashBuffer.append( HASH_SEPERATOR );
+				hashBuffer.append( getLocation().toString() );
+			}
+			hashBuffer.append( HASH_SEPERATOR );
+			hashBuffer.append( startOffset );
+			hashBuffer.append( HASH_SEPERATOR ); 
+			hashBuffer.append( endOffset );
+			hashBuffer.append( HASH_SEPERATOR ); 
+			hashBuffer.append( type );
+			hashBuffer.append( HASH_SEPERATOR ); 
+			hashBuffer.append( visibility ); 
 			
-		hashString += ":" + startOffset + ":" + endOffset; //$NON-NLS-1$ //$NON-NLS-2$
-		hashString += ":" + type + ":" + visibility; //$NON-NLS-1$ //$NON-NLS-2$
-		
-		return hashString.hashCode();
+			hashCode = hashBuffer.toString().hashCode();
+		}
+		return hashCode;
 	}
 	
 	public boolean equals(Object obj){
@@ -106,16 +118,20 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		
 		BasicSearchMatch match = (BasicSearchMatch) o;
 		
-		String str1 = getLocation().toString();
-		String str2 = match.getLocation().toString();
+		int result = getLocation().toString().compareTo( match.getLocation().toString() );
+		if( result != 0 ) return result;
 		
-		str1 += " " + getStartOffset()+ " "; //$NON-NLS-1$ //$NON-NLS-2$
-		str2 += " " + match.getStartOffset()+ " "; //$NON-NLS-1$ //$NON-NLS-2$
+		result = getStartOffset() - match.getStartOffset();
+		if( result != 0 ) return result;
 		
-		str1 += getName() + " " + getParentName()+ " " + getReturnType(); //$NON-NLS-1$ //$NON-NLS-2$
-		str2 += match.getName() + " " + match.getParentName()+ " " + getReturnType(); //$NON-NLS-1$ //$NON-NLS-2$
+		result = getName().compareTo( match.getName() );
+		if( result != 0 ) return result;
 		
-		return str1.compareTo( str2 );
+		result = getParentName().compareTo( match.getParentName() );
+		if( result != 0 ) return result;
+		
+		result = getReturnType().compareTo( match.getReturnType() );
+		return result;
 	}
 	
 	public String name 		  = null;
@@ -134,6 +150,8 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	boolean isConst			  = false;
 	boolean isVolatile		  = false;		
 	boolean isStatic		  = false;
+	
+	private int hashCode = 0;
 
 	public IPath referringElement = null;
 	

@@ -6,12 +6,6 @@ import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 
 /**
- * @author alain
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class ExpressionManager extends SessionObject implements ICDIExpressionManager {
 
@@ -23,7 +17,7 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createCondition(int, String)
 	 */
 	public ICDICondition createCondition(int ignoreCount, String expression) {
-		return null;
+		return new Condition(ignoreCount, expression);
 	}
 
 	/**
@@ -37,21 +31,19 @@ public class ExpressionManager extends SessionObject implements ICDIExpressionMa
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpressions()
 	 */
 	public ICDIExpression[] getExpressions() throws CDIException {
-		return null;
+		return new ICDIExpression[0];
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpression(ICDIExpression)
 	 */
-	public void removeExpression(ICDIExpression expression)
-		throws CDIException {
+	public void removeExpression(ICDIExpression expression) throws CDIException {
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpressions(ICDIExpression[])
 	 */
-	public void removeExpressions(ICDIExpression[] expressions)
-		throws CDIException {
+	public void removeExpressions(ICDIExpression[] expressions) throws CDIException {
 	}
 
 }

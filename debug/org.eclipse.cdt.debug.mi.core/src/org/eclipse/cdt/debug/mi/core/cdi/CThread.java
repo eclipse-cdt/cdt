@@ -17,7 +17,6 @@ import org.eclipse.cdt.debug.mi.core.output.MIStackListFramesInfo;
 public class CThread extends CObject implements ICDIThread {
 
 	int id;
-	StackFrame currentStackFrame;
 	
 	public CThread(CTarget target, int threadId) {
 		super(target);
@@ -56,9 +55,6 @@ public class CThread extends CObject implements ICDIThread {
 			StackFrame[] stack = new StackFrame[miFrames.length];
 			for (int i = 0; i < stack.length; i++) {
 				stack[i] = new StackFrame(this, miFrames[i]);
-				if (i == 0) {
-					currentStackFrame = stack[i];
-				}
 			}
 			return stack;
 		} catch (MIException e) {
@@ -81,16 +77,9 @@ public class CThread extends CObject implements ICDIThread {
 			if (info == null) {
 				throw new CDIException("No answer");
 			}
-			currentStackFrame = (StackFrame)stackframe;
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
 		}
-	}
-
-	/**
-	 */
-	public StackFrame getCurrentStackFrame() throws CDIException {
-		return currentStackFrame;
 	}
 
 	/**

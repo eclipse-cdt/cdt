@@ -1,11 +1,10 @@
 package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
@@ -13,7 +12,6 @@ import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISteppingRangeEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIWatchpointEvent;
-import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
 
 /**
  *
@@ -79,16 +77,17 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 			threadId = funcEvent.getThreadId();
 		}
 
-		// If it came from a thread return it as the source.
-		CThread[] cthreads = target.getCThreads();
-		for (int i = 0; i < cthreads.length; i++) {
-			if (cthreads[i].getId() == threadId) {
-				return cthreads[i];
+		try {
+			// If it came from a thread return it as the source.
+			ICDIThread[] cthreads = target.getThreads();
+			for (int i = 0; i < cthreads.length; i++) {
+				if (((CThread)cthreads[i]).getId() == threadId) {
+					return cthreads[i];
+				}
 			}
+		} catch (CDIException e) {
 		}
-		// Not found?? new thread created?
-		CThread cthread = new CThread(session.getCTarget(), threadId);
-		target.addCThread(cthread);
-		return cthread;
+		
+		return null;
 	}
 }

@@ -2,7 +2,6 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 
 /**
  * @author alain
@@ -15,18 +14,18 @@ import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 public class ChangedEvent implements ICDIChangedEvent {
 
 	CSession session;
-	MIEvent event;
+	ICDIObject source;
 
-	public ChangedEvent(CSession s, MIEvent e) {
+	public ChangedEvent(CSession s, ICDIObject src) {
 		session = s;
-		event = e;
+		source = src;
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
 	public ICDIObject getSource() {
-		return null;
+		return source;
 	}
 
 }

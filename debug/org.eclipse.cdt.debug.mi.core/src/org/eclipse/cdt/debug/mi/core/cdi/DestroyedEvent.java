@@ -2,7 +2,6 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.event.ICDIDestroyedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
 
 /**
  * @author alain
@@ -14,19 +13,19 @@ import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
  */
 public class DestroyedEvent implements ICDIDestroyedEvent {
 
-	MIExitEvent event;
 	CSession session;
+	ICDIObject source;
 	
-	public DestroyedEvent(CSession s, MIExitEvent e) {
+	public DestroyedEvent(CSession s, ICDIObject src) {
 		session = s;
-		event = e;
+		source = src;
 	}
 	
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEvent#getSource()
 	 */
 	public ICDIObject getSource() {
-		return null;
+		return source;
 	}
 
 }

@@ -42,60 +42,15 @@ import org.eclipse.cdt.debug.mi.core.output.MIThreadSelectInfo;
  */
 public class CTarget  implements ICDITarget {
 
-	List threadList;
 	CSession session;
-	CThread dummyThread; // Dummy for non multi-thread programs.
-	CThread currentThread;
+	//CThread dummyThread = new CThread(this, 0); // Dummy for non multi-thread programs.
 	
 	public CTarget(CSession s) {
 		session = s;
-		threadList = new ArrayList(1);
-		dummyThread = new CThread(this, 1);
-		currentThread = dummyThread;
-		threadList.add(dummyThread);
 	}
 	
 	CSession getCSession() {
 		return session;
-	}
-
-	void addCThread(CThread cthread) {
-		threadList.add(cthread);
-	}
-
-	void removeCThread(CThread cthread) {
-		threadList.remove(cthread);
-	}
-
-	void setCurrentThread(int id) {
-		CThread cthread = null;
-		if (containsCThread(id)) {
-			for (int i = 0; i < threadList.size(); i++) {
-				CThread thread = (CThread)threadList.get(i);
-				if (thread.getId() == id) {
-					cthread  = thread;
-					break;
-				}
-			}
-		} else {
-			cthread = new CThread(this, id);
-			addCThread(cthread);
-		}
-		currentThread = cthread;
-	}
-
-	boolean containsCThread(int id) {
-		for (int i = 0; i < threadList.size(); i++) {
-			CThread cthread = (CThread)threadList.get(i);
-			if (cthread.getId() == id) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	CThread[] getCThreads() {
-		return (CThread[])threadList.toArray(new CThread[threadList.size()]);
 	}
 
 	/**
@@ -172,16 +127,13 @@ public class CTarget  implements ICDITarget {
 
 	/**
 	 */
-	public CThread getCurrentThread() throws CDIException {
-		return currentThread;
-	}
-
-	/**
-	 */
 	public void setCurrentThread(CThread cthread) throws CDIException {
 		session.setCurrentTarget(this);
 		int id = cthread.getId();
-		session.setCurrentTarget(this);
+		// No need to set thread id 0, it is a dummy thread.
+		if (id == 0) {
+			return;
+		}
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIThreadSelect select = factory.createMIThreadSelect(id);
@@ -192,13 +144,13 @@ public class CTarget  implements ICDITarget {
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
 		}
-		setCurrentThread(id);
 	}
 
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#getThreads()
 	 */
 	public ICDIThread[] getThreads() throws CDIException {
+		ICDIThread[] cdiThreads;
 		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIThreadListIds tids = factory.createMIThreadListIds();
@@ -207,18 +159,18 @@ public class CTarget  implements ICDITarget {
 			MIThreadListIdsInfo info = tids.getMIThreadListIdsInfo();
 			int[] ids = info.getThreadIds();
 			if (ids != null && ids.length > 0) {
+				cdiThreads = new ICDIThread[ids.length];
 				// Ok that means it is a multiThreaded, remove the dummy Thread
-				//removeCThread(dummyThread);
 				for (int i = 0; i < ids.length; i++) {
-					if (! containsCThread(ids[i])) {
-						addCThread(new CThread(this, ids[i]));
-					}
+					cdiThreads[i] = new CThread(this, ids[i]);
 				}
+			} else {
+				cdiThreads = new ICDIThread[]{new CThread(this, 0)};
 			}
 		} catch (MIException e) {
 			throw new CDIException(e.toString());
 		}
-		return (ICDIThread[])getCThreads();
+		return cdiThreads;
 	}
 
 	/**
@@ -437,9 +389,7 @@ public class CTarget  implements ICDITarget {
 	 */
 	public ICDIValue evaluateExpressionToValue(String expressionText)
 		throws CDIException {
-		VariableManager mgr = session.getVariableManager();
-		ICDIVariable var = mgr.createVariable(expressionText);
-		return var.getValue();
+		return null;
 	}
 
 	/**

@@ -2822,5 +2822,27 @@ public class ParserSymbolTableTest extends TestCase {
 		returned = ParserSymbolTable.getConditionalOperand( secondOp, thirdOp );
 		assertEquals( returned, secondOp );	
 	}
+	
+	public void testbug43834() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol f = table.newParameterizedSymbol( "f", TypeInfo.t_function );
+		table.getCompilationUnit().addSymbol( f );
+		
+		LinkedList parameters = new LinkedList();
+		TypeInfo param = new TypeInfo( TypeInfo.t_void, 0, null );
+		parameters.add( param );
+		
+		
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", parameters );
+		assertEquals( look, f );
+		
+		f.addParameter( TypeInfo.t_void, 0, null, false );
+		
+		parameters.clear();
+		
+		look = table.getCompilationUnit().unqualifiedFunctionLookup( "f", parameters );
+		assertEquals( look, f );
+	}
 }
 

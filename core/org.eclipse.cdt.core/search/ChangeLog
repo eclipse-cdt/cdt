@@ -1,3 +1,6 @@
+2003-09-29 Andrew Niefer
+	-fix NPE if IScannerInfoProvider returns null IScannerInfo
+
 2003-09-25 Andrew Niefer
 	- bug43129 - Cannot search for definitions of global variables
 		- check definitions for variables, fields, enumerators and namespaces

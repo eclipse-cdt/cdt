@@ -1,3 +1,6 @@
+2003-09-29 Andrew Niefer
+	added testbug43834() to ParserSymbolTableTest
+
 2003-09-29 John Camelon
 	Added testErrorHandling_1() to CompleteParseASTTest.java.  
 

@@ -418,7 +418,8 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 			if (provider != null){
 				IScannerInfo buildScanInfo = provider.getScannerInformation(project);
-				scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
+				if( buildScanInfo != null )
+					scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
 			}
 			
 			ParserLanguage language = null;

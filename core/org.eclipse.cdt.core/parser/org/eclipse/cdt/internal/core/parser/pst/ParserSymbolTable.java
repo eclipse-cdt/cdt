@@ -721,10 +721,20 @@ public class ParserSymbolTable {
 			currFn = (IParameterizedSymbol) iterFns.next();
 			
 			sourceParams = data.parameters.iterator();
-			targetParams = currFn.getParameterList().iterator();
 			
-			//number of parameters in the current function
-			numTargetParams = currFn.getParameterList().size();
+			List parameterList = null;
+			if( currFn.getParameterList() == null ){
+				//the only way we get here and have no parameters, is if we are looking
+				//for a function that takes void parameters ie f( void )
+				parameterList = new LinkedList();
+				parameterList.add( currFn.getSymbolTable().newSymbol( "", TypeInfo.t_void ) );
+				targetParams = parameterList.iterator();
+			} else {
+				parameterList = currFn.getParameterList();
+			}
+			
+			targetParams = parameterList.iterator();
+			numTargetParams = parameterList.size();
 			
 			//we only need to look at the smaller number of parameters
 			//(a larger number in the Target means default parameters, a larger
@@ -825,9 +835,21 @@ public class ParserSymbolTable {
 			if( num == numParameters ){
 				continue;
 			} 
+			//check for void
+			else if( numParameters == 0 && num == 1 ){
+				ISymbol param = (ISymbol)function.getParameterList().iterator().next();
+				if( param.isType( TypeInfo.t_void ) )
+					continue;
+			}
+			else if( numParameters == 1 && num == 0 ){
+				TypeInfo paramType = (TypeInfo) data.parameters.iterator().next();
+				if( paramType.isType( TypeInfo.t_void ) )
+					continue;
+			}
+			
 			//A candidate function having fewer than m parameters is viable only if it has an 
 			//ellipsis in its parameter list.
-			else if( num < numParameters ) {
+			if( num < numParameters ) {
 				//TODO ellipsis
 				//not enough parameters, remove it
 				iter.remove();		

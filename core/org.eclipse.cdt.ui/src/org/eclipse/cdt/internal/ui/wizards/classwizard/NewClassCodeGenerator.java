@@ -393,7 +393,7 @@ public class NewClassCodeGenerator {
                 isSystemIncludePath = true;
             } else if (projectLocation.isPrefixOf(baseClassLocation)
                     && projectLocation.isPrefixOf(headerLocation)) {
-                includePath = PathUtil.makeRelativePath(baseClassLocation, headerLocation);
+                includePath = PathUtil.makeRelativePath(baseClassLocation, headerLocation.removeLastSegments(1));
             }
             if (includePath == null)
                 includePath = baseClassLocation;
@@ -605,7 +605,7 @@ public class NewClassCodeGenerator {
             isSystemIncludePath = true;
         } else if (projectLocation.isPrefixOf(headerLocation)
                 && projectLocation.isPrefixOf(sourceLocation)) {
-            includePath = PathUtil.makeRelativePath(headerLocation, sourceLocation);
+            includePath = PathUtil.makeRelativePath(headerLocation, sourceLocation.removeLastSegments(1));
         }
         if (includePath == null)
             includePath = headerLocation;

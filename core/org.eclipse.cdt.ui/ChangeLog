@@ -1,4 +1,4 @@
-2004-08-25 Chris Wiebe
+2004-08-27 Chris Wiebe
 
 	class wizard fixes
 	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java

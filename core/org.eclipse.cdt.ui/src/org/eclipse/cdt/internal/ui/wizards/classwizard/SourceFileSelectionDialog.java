@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
@@ -81,7 +82,6 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 	private String fCurrentFileString = null;
     private String fInitialFolderName = null;
     private String fInitialFileName = null;
-    
     
     private final class FieldsAdapter extends SelectionAdapter
     	implements ISelectionChangedListener, IDoubleClickListener, IDialogFieldListener {
@@ -506,60 +506,54 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
     /**
      * Sets the initial selection. Convenience method.
      * 
-     * @param selection
+     * @param initialPath
      *            the initial selection.
      */
-    public void setInitialFields(String folderName, String fileName) {
-        fInitialFolderName = folderName;
-        fInitialFileName = fileName;
-        
-        final IPath folderPath;
-        final IPath filePath;
+    public void setInitialSelection(String folderName, String fileName) {
+        fInitialFileName = (fileName != null && fileName.length() > 0) ? fileName : null;
+        fInitialFolderName = null;
         if (folderName != null && folderName.length() > 0) {
-            folderPath = new Path(folderName);
-        } else {
-            folderPath = null;
-        }
-        if (folderPath != null && fileName != null && fileName.length() > 0) {
-            filePath = folderPath.append(fileName);
-        } else {
-            filePath = null;
-        }
-
-        if (fInput != null && folderPath != null) {
-            final ICElement[] foundElem = {/*base_folder*/ null, /*exact_folder*/ null, /*exact_file*/ null};
-            try {
-	            fInput.accept(new ICElementVisitor() {
-	                public boolean visit(ICElement elem) {
-	                    IPath path = elem.getPath();
-	                    if (path.isPrefixOf(folderPath)) {
-	                        if (foundElem[0] == null || path.segmentCount() > foundElem[0].getPath().segmentCount()) {
-	                            foundElem[0] = elem; /*base_folder*/
-	                        }
-                            if (path.equals(folderPath)) {
-                                foundElem[1] = elem; /*exact_folder*/
-	                            if (filePath == null)
-	                                return false; // no need to search children
-                            } else if (filePath != null && path.equals(filePath)) {
-                                foundElem[2] = elem; /*exact_file*/
-                                return false; // no need to search children
-                            }
-                            return true;
-	                    }
-	                    return false;
-	                }
-	            });
-
-	            ICElement selectedElement = foundElem[2]; /*exact_file*/
-	            if (selectedElement == null)
-	                selectedElement = foundElem[1]; /*exact_folder*/
-	            if (selectedElement == null)
-	                selectedElement = foundElem[0]; /*base_folder*/
-
-	            if (selectedElement != null) {
-	                setInitialSelections(new Object[] { selectedElement });
-	            }
-	        } catch (CoreException e) {
+	        // find a folder that actually exists
+            IPath initialFolderPath = new Path(folderName);
+            final IPath folderPath = PathUtil.getValidEnclosingFolder(initialFolderPath);
+            if (folderPath != null) {
+                fInitialFolderName = folderPath.toString();
+				if (fInput != null) {
+		            final ICElement[] foundElem = {/*base_folder*/ null, /*exact_folder*/ null, /*exact_file*/ null};
+		            try {
+			            fInput.accept(new ICElementVisitor() {
+			                public boolean visit(ICElement elem) {
+			                    IPath path = elem.getPath();
+			                    if (path.isPrefixOf(folderPath)) {
+			                        if (foundElem[0] == null || path.segmentCount() > foundElem[0].getPath().segmentCount()) {
+			                            foundElem[0] = elem; /*base_folder*/
+			                        }
+		                            if (path.equals(folderPath)) {
+		                                foundElem[1] = elem; /*exact_folder*/
+			                            if (fInitialFileName == null)
+			                                return false; // no need to search children
+		                            } else if (fInitialFileName != null && elem.getElementName().equals(fInitialFileName)) {
+		                                foundElem[2] = elem; /*exact_file*/
+		                                return false; // no need to search children
+		                            }
+		                            return true;
+			                    }
+			                    return false;
+			                }
+			            });
+		
+			            ICElement selectedElement = foundElem[2]; /*exact_file*/
+			            if (selectedElement == null)
+			                selectedElement = foundElem[1]; /*exact_folder*/
+			            if (selectedElement == null)
+			                selectedElement = foundElem[0]; /*base_folder*/
+		
+			            if (selectedElement != null) {
+			                setInitialSelections(new Object[] { selectedElement });
+			            }
+			        } catch (CoreException e) {
+			        }
+		        }
 	        }
         }
     }

@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.core;
  * All Rights Reserved.
  */
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -141,9 +142,11 @@ public class CBuilder extends ACBuilder {
 				}
 				ErrorParserManager epm = new ErrorParserManager(this);
 				epm.setOutputStream(cos);
+				OutputStream stdout = epm.getOutputStream();
+				OutputStream stderr = epm.getOutputStream();
 
 				launcher.execute(makepath, userArgs, env, workingDirectory);
-				if (launcher.waitAndRead(epm.getOutputStream(), epm.getOutputStream(), subMonitor) != CommandLauncher.OK)
+				if (launcher.waitAndRead(stdout, stderr, subMonitor) != CommandLauncher.OK)
 					errMsg = launcher.getErrorMessage();
 
 				isCanceled = monitor.isCanceled();
@@ -160,8 +163,6 @@ public class CBuilder extends ACBuilder {
 				subMonitor = new SubProgressMonitor(monitor, IProgressMonitor.UNKNOWN);
 				subMonitor.subTask("Parsing");
 
-				epm.reportProblems();
-
 				if (errMsg != null) {
 					String errorDesc = CCorePlugin.getFormattedString(BUILD_ERROR, makepath.toString());
 					StringBuffer buf = new StringBuffer(errorDesc);
@@ -170,12 +171,16 @@ public class CBuilder extends ACBuilder {
 					cos.write(buf.toString().getBytes());
 					cos.flush();
 				}
+
+				stdout.close();
+				stderr.close();				
+
+				epm.reportProblems();
+
 				subMonitor.done();
 				monitor.setCanceled(isCanceled);
-				cos.close();
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			CCorePlugin.log(e);
 		}
 		monitor.done();

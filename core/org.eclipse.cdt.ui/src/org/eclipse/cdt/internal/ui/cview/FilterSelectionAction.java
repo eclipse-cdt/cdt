@@ -9,6 +9,7 @@ import java.io.StringWriter;
 
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
@@ -56,7 +57,7 @@ class FilterSelectionAction extends SelectionProviderAction {
 	
 		dialog.setInitialSelections(contentProvider.getInitialSelections());
 		dialog.open();
-		if (dialog.getReturnCode() == dialog.OK) {
+		if (dialog.getReturnCode() == Window.OK) {
 			Object[] results= dialog.getResult();
 			String[] selectedPatterns= new String[results.length];
 			System.arraycopy(results, 0, selectedPatterns, 0, results.length);

@@ -25,6 +25,7 @@ import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextListener;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -85,8 +86,8 @@ public class BuildConsoleView extends ViewPart implements ISelectionListener, IB
 
 		IActionBars actionBars = getViewSite().getActionBars();
 		fClearOutputAction = new ClearConsoleAction(this);
-		fCopyAction = new BuildConsoleAction(bundle, "Editor.Copy.", fTextViewer, fTextViewer.COPY);
-		fSelectAllAction = new BuildConsoleAction(bundle, "Editor.SelectAll.", fTextViewer, fTextViewer.SELECT_ALL);
+		fCopyAction = new BuildConsoleAction(bundle, "Editor.Copy.", fTextViewer, ITextOperationTarget.COPY);
+		fSelectAllAction = new BuildConsoleAction(bundle, "Editor.SelectAll.", fTextViewer, ITextOperationTarget.SELECT_ALL);
 
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, fCopyAction);
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, fSelectAllAction);

@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
@@ -147,7 +148,7 @@ public class OpenIncludeAction extends Action {
 		dialog.setMessage(CUIPlugin.getResourceString(DIALOG_MESSAGE));
 		dialog.setElements(filesFound);
 		
-		if (dialog.open() == dialog.OK) {
+		if (dialog.open() == Window.OK) {
 			return (IFile) dialog.getSelectedElement();
 		}
 		return null;

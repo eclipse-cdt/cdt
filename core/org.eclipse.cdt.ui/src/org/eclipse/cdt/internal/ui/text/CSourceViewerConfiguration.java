@@ -172,7 +172,7 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 		assistant.setContentAssistProcessor(new CCompletionProcessor(fEditor), IDocument.DEFAULT_CONTENT_TYPE);
 		assistant.enableAutoActivation(true);
 		assistant.setAutoActivationDelay(500);
-		assistant.setProposalPopupOrientation(assistant.PROPOSAL_OVERLAY);
+		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);
 		return assistant;
 	}
 	

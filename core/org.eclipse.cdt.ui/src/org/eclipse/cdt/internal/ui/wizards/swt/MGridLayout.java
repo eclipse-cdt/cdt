@@ -634,14 +634,14 @@ public final class MGridLayout extends Layout {
 					widgetX= columnX;
 
 					// Calculate the x and width values for the widget.
-					if (hAlign == spec.CENTER) {
+					if (hAlign == MGridData.CENTER) {
 						widgetX= widgetX + (spannedWidth / 2) - (childExtent.x / 2);
-					} else if (hAlign == spec.END) {
+					} else if (hAlign == MGridData.END) {
 						widgetX= widgetX + spannedWidth - childExtent.x - spec.horizontalIndent;
 					} else {
 						widgetX= widgetX + spec.horizontalIndent;
 					}
-					if (hAlign == spec.FILL) {
+					if (hAlign == MGridData.FILL) {
 						widgetW= spannedWidth - spec.horizontalIndent;
 						widgetX= columnX + spec.horizontalIndent;
 					} else {
@@ -651,14 +651,14 @@ public final class MGridLayout extends Layout {
 					// Calculate the y and height values for the widget.
 					vAlign= spec.verticalAlignment;
 					widgetY= rowY;
-					if (vAlign == spec.CENTER) {
+					if (vAlign == MGridData.CENTER) {
 						widgetY= widgetY + (spannedHeight / 2) - (childExtent.y / 2);
-					} else if (vAlign == spec.END) {
+					} else if (vAlign == MGridData.END) {
 						widgetY= widgetY + spannedHeight - childExtent.y;
 					} else {
 						widgetY= widgetY;
 					}
-					if (vAlign == spec.FILL) {
+					if (vAlign == MGridData.FILL) {
 						widgetH= spannedHeight;
 						widgetY= rowY;
 					} else {

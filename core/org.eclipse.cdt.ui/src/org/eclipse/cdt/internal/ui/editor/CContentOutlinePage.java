@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -133,7 +134,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		//treeViewer.setContentProvider(new CModelContentProvider());
 		treeViewer.setContentProvider(new CContentProvider(true, true));
 		treeViewer.setLabelProvider(new StandardCElementLabelProvider());
-		treeViewer.setAutoExpandLevel(treeViewer.ALL_LEVELS);
+		treeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		treeViewer.addSelectionChangedListener(this);
 		
 		CUIPlugin.getDefault().getProblemMarkerManager().addListener(treeViewer);

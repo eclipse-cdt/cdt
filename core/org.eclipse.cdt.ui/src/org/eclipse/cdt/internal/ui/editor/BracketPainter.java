@@ -88,7 +88,7 @@ public final class BracketPainter implements IPainter, PaintListener {
 		
 		if (region.getOffset() <= offset && region.getOffset() + region.getLength() >= offset + length) {
 			offset -= region.getOffset();
-			if (fMatcher.RIGHT == fAnchor)
+			if (CPairMatcher.RIGHT == fAnchor)
 				draw(gc, offset, 1);
 			else 
 				draw(gc, offset + length -1, 1);					

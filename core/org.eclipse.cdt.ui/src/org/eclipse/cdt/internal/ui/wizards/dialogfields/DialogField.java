@@ -33,7 +33,7 @@ public class DialogField {
 	public static Control createEmptySpace(Composite parent, int span) {
 		Label label= new Label(parent, SWT.LEFT);
 		MGridData gd= new MGridData();
-		gd.horizontalAlignment= gd.BEGINNING;
+		gd.horizontalAlignment= MGridData.BEGINNING;
 		gd.grabExcessHorizontalSpace= false;
 		gd.horizontalSpan= span;
 		gd.horizontalIndent= 0;

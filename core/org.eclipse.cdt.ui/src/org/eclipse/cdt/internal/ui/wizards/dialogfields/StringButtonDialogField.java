@@ -77,7 +77,7 @@ public class StringButtonDialogField extends StringDialogField {
 	}
 	protected static MGridData gridDataForControl(int span) {
 		MGridData gd= new MGridData();
-		gd.horizontalAlignment= gd.FILL;
+		gd.horizontalAlignment= MGridData.FILL;
 		gd.grabExcessHorizontalSpace= false;
 		gd.horizontalSpan= span;
 		return gd;

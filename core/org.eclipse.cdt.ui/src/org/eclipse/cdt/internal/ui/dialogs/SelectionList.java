@@ -69,8 +69,8 @@ public class SelectionList extends Composite {
 		GridData spec= new GridData();
 		spec.grabExcessVerticalSpace= false;
 		spec.grabExcessHorizontalSpace= true;
-		spec.horizontalAlignment= spec.FILL;
-		spec.verticalAlignment= spec.BEGINNING;
+		spec.horizontalAlignment= GridData.FILL;
+		spec.verticalAlignment= GridData.BEGINNING;
 		fText.setLayoutData(spec);
 		Listener l= new Listener() {
 			public void handleEvent(Event evt) {

@@ -86,8 +86,8 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		spec.heightHint= initialSize.y;
 		spec.grabExcessVerticalSpace= true;
 		spec.grabExcessHorizontalSpace= true;
-		spec.horizontalAlignment= spec.FILL;
-		spec.verticalAlignment= spec.FILL;
+		spec.horizontalAlignment= GridData.FILL;
+		spec.verticalAlignment= GridData.FILL;
 		fSelectionList.setLayoutData(spec);
 				
 		return contents;
@@ -101,8 +101,8 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		GridData spec= new GridData();
 		spec.grabExcessVerticalSpace= false;
 		spec.grabExcessHorizontalSpace= true;
-		spec.horizontalAlignment= spec.FILL;
-		spec.verticalAlignment= spec.BEGINNING;
+		spec.horizontalAlignment= GridData.FILL;
+		spec.verticalAlignment= GridData.BEGINNING;
 		text.setLayoutData(spec);
 		return text;
 	}

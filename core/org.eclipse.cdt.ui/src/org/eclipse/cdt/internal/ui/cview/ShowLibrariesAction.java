@@ -56,7 +56,7 @@ class ShowLibrariesAction extends SelectionProviderAction {
 		CUIPlugin plugin = CUIPlugin.getDefault();
 		Boolean b = new Boolean (cview.getLibraryFilter().getShowLibraries());
 	
-		plugin.getPreferenceStore().putValue(cview.TAG_SHOWLIBRARIES, b.toString());
+		plugin.getPreferenceStore().putValue(CView.TAG_SHOWLIBRARIES, b.toString());
 	}
 
 	private void updateToolTipText() {

@@ -109,17 +109,25 @@ namespace MyPackage
 
 	// check templates
 	// template function
-	template<class A, typename B=C> A aTemplatedFunction( B bInstance );
+	template<class A, typename B=C> 
+	A aTemplatedFunction( B bInstance );
 	// template method
 	class enclosing {
 		// public visibility
 		public:
-		template<class A, typename B=C> A aTemplatedMethod( B bInstance );
+		template<class A, typename B=C> 
+		A aTemplatedMethod( B bInstance );
 	};
 	// template class
-	template<class T, typename Tibor = junk> class myarray { /* */ };
+	template<class T, typename Tibor = junk> 
+	class myarray { /* */ };
+	// template struct
+	template<class T, typename Tibor = junk> 
+	struct mystruct { /* */ };
+	// template variable
+	template <bool __threads, int __inst>
+	char* default_alloc_template<__threads, __inst>::_S_start_free = 0;
 };
-
 	// check arrays
 	// arrays
 	int myArray [5][];

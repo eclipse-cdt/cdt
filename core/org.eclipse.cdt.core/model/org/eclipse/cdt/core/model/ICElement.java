@@ -155,6 +155,21 @@ public interface ICElement extends IAdaptable {
 	static final int C_TEMPLATE_METHOD = 81;
 
 	/**
+	 * C++ template struct.
+	 */
+	static final int C_TEMPLATE_STRUCT = 82;
+
+	/**
+	 * C++ template union.
+	 */
+	static final int C_TEMPLATE_UNION = 83;
+
+	/**
+	 * C++ template variable.
+	 */
+	static final int C_TEMPLATE_VARIABLE = 84;
+
+	/**
 	 * Modifier indicating a class constructor
 	 */
 	static final int C_CLASS_CTOR = 0x100;

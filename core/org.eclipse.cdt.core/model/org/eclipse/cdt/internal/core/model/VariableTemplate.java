@@ -1,5 +1,4 @@
 package org.eclipse.cdt.internal.core.model;
-
 /**********************************************************************
  * Copyright (c) 2002,2003 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
@@ -13,42 +12,40 @@ package org.eclipse.cdt.internal.core.model;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITemplate;
 
-public class ClassTemplate extends Structure implements ITemplate{
-	
+public class VariableTemplate extends Variable implements ITemplate {
+
 	protected static final String[] fgEmptyList= new String[] {};
 	protected String[] templateParameterTypes;
-	
-	public ClassTemplate(ICElement parent, String name) {
-		super(parent, CElement.C_TEMPLATE_CLASS, name);
-		templateParameterTypes= fgEmptyList;
-	}
-	/**
-	 * Returns the parameterTypes.
-	 * @see org.eclipse.cdt.core.model.ITemplate#getParameters()
-	 * @return String[]
-	 */
-	public String[] getTemplateParameterTypes() {
-		return templateParameterTypes;
+		
+	public VariableTemplate(ICElement parent, String name) {
+		super(parent, name, CElement.C_TEMPLATE_VARIABLE);
+		templateParameterTypes= fgEmptyList;		
 	}
 
-	/**
-	 * Sets the fParameterTypes.
-	 * @param fParameterTypes The fParameterTypes to set
-	 */
-	public void setTemplateParameterTypes(String[] templateParameterTypes) {
-		this.templateParameterTypes = templateParameterTypes;
-	}
-
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITemplate#getNumberOfTemplateParameters()
 	 */
 	public int getNumberOfTemplateParameters() {
 		return templateParameterTypes == null ? 0 : templateParameterTypes.length;
 	}
 
-	/**
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateParameterTypes()
+	 */
+	public String[] getTemplateParameterTypes() {
+		return templateParameterTypes;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.model.ITemplate#setTemplateParameterTypes(java.lang.String[])
+	 */
+	public void setTemplateParameterTypes(String[] templateParameterTypes) {
+		this.templateParameterTypes = templateParameterTypes;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.ITemplate#getTemplateSignature()
-	 */	
+	 */
 	public String getTemplateSignature() {
 		StringBuffer sig = new StringBuffer(getElementName());
 		if(getNumberOfTemplateParameters() > 0){
@@ -65,7 +62,10 @@ public class ClassTemplate extends Structure implements ITemplate{
 		else{
 			sig.append("<>");
 		}
+		
+		sig.append(" : ");
+		sig.append(this.getTypeName());
+		
 		return sig.toString();
 	}
-
 }

@@ -14,6 +14,10 @@ public class Variable extends VariableDeclaration implements IVariable {
 		super(parent, name, CElement.C_VARIABLE);
 	}
 
+	public Variable(ICElement parent, String name, int kind) {
+		super(parent, name, kind);
+	}
+
 	public String getInitializer() {
 		return "";
 	}

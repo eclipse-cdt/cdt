@@ -174,7 +174,7 @@ public class CModelBuilder {
 			TypeSpecifier typeSpec = simpleDeclaration.getTypeSpecifier();
 			if (typeSpec instanceof ClassSpecifier){
 				ClassSpecifier classSpecifier = (ClassSpecifier) typeSpec;
-				ITemplate classTemplate = (ClassTemplate)createClass(parent, simpleDeclaration, classSpecifier, true);
+				ITemplate classTemplate = (StructureTemplate)createClass(parent, simpleDeclaration, classSpecifier, true);
 				CElement element = (CElement) classTemplate;
 				// set the element position		
 				element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getTotalLength());	
@@ -211,7 +211,7 @@ public class CModelBuilder {
 			ParameterDeclarationClause pdc = declarator.getParms();
 			// variable or field
 			if (pdc == null){	
-				createVariableSpecification(parent, simpleDeclaration, declarator); 
+				createVariableSpecification(parent, simpleDeclaration, declarator, false); 
 			}
 			else{
 				// pointer to function 
@@ -227,9 +227,16 @@ public class CModelBuilder {
 
 	protected void createTemplateElement(Parent parent, TemplateDeclaration templateDeclaration, SimpleDeclaration simpleDeclaration, Declarator declarator){
 		ParameterDeclarationClause pdc = declarator.getParms();
-		if (pdc != null){
+		ITemplate template = null;
+		if (pdc == null){	
+			template = (ITemplate) createVariableSpecification(parent, simpleDeclaration, declarator, true); 
+		}
+		else{
 			// template of function or method
-			ITemplate template = (ITemplate) createFunctionSpecification(parent, simpleDeclaration, declarator, pdc, true);
+			template = (ITemplate) createFunctionSpecification(parent, simpleDeclaration, declarator, pdc, true);
+		}
+
+		if(template != null){
 			CElement element = (CElement)template;
 			// set the element position		
 			element.setPos(templateDeclaration.getStartingOffset(), templateDeclaration.getTotalLength());	
@@ -338,13 +345,22 @@ public class CModelBuilder {
 		switch( classSpecifier.getClassKey() )
 		{
 			case ClassKey.t_class:
-				kind = ICElement.C_CLASS;
+				if(!isTemplate)
+					kind = ICElement.C_CLASS;
+				else
+					kind = ICElement.C_TEMPLATE_CLASS;
 				break;
 			case ClassKey.t_struct:
-				kind = ICElement.C_STRUCT;
+				if(!isTemplate)
+					kind = ICElement.C_STRUCT;
+				else
+					kind = ICElement.C_TEMPLATE_STRUCT;
 				break;	
 			default:
-				kind = ICElement.C_UNION;
+				if(!isTemplate)
+					kind = ICElement.C_UNION;
+				else
+					kind = ICElement.C_TEMPLATE_UNION;
 				break;
 		}
 		
@@ -353,7 +369,7 @@ public class CModelBuilder {
 			Structure classElement = new Structure( (CElement)parent, kind, className );
 			element = classElement;
 		} else {
-			ClassTemplate classTemplate = new ClassTemplate( (CElement)parent, className );
+			StructureTemplate classTemplate = new StructureTemplate( (CElement)parent, kind, className );
 			element = classTemplate;
 		}
 		
@@ -408,7 +424,7 @@ public class CModelBuilder {
 		return element;	
 	}
 
-	protected VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator){
+	protected VariableDeclaration createVariableSpecification(Parent parent, SimpleDeclaration simpleDeclaration, Declarator declarator, boolean isTemplate){
 		Name domName = ( declarator.getDeclarator() != null ) ? 
 			declarator.getDeclarator().getName() : 
 			declarator.getName(); 
@@ -425,15 +441,21 @@ public class CModelBuilder {
 			element = newElement;			
 		}
 		else {
-			if(declSpecifier.isExtern()){
-				// variableDeclaration
-				VariableDeclaration newElement = new VariableDeclaration( parent, variableName );
-				element = newElement;
-			}
-			else {
+			if(isTemplate){
 				// variable
-				Variable newElement = new Variable( parent, variableName );
-				element = newElement;				
+				VariableTemplate newElement = new VariableTemplate( parent, variableName );
+				element = newElement;									
+			}else {
+				if(declSpecifier.isExtern()){
+					// variableDeclaration
+					VariableDeclaration newElement = new VariableDeclaration( parent, variableName );
+					element = newElement;
+				}
+				else {
+					// variable
+					Variable newElement = new Variable( parent, variableName );
+					element = newElement;				
+				}
 			}
 		}
 		element.setTypeName ( getType(simpleDeclaration, declarator) );
@@ -445,9 +467,12 @@ public class CModelBuilder {
 
 		// set position
 		element.setIdPos( domName.getStartOffset(), domName.length() );
-		element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
-		// set the element lines
-		element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
+		if(!isTemplate){
+			// set element position
+			element.setPos(simpleDeclaration.getStartingOffset(), simpleDeclaration.getTotalLength());
+			// set the element lines
+			element.setLines(simpleDeclaration.getTopLine(), simpleDeclaration.getBottomLine());
+		}
 			
 		this.newElements.put(element, element.getElementInfo());
 		return element;

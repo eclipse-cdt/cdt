@@ -39,10 +39,11 @@ import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariable;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.internal.core.model.CElement;
-import org.eclipse.cdt.internal.core.model.ClassTemplate;
+import org.eclipse.cdt.internal.core.model.StructureTemplate;
 import org.eclipse.cdt.internal.core.model.FunctionTemplate;
 import org.eclipse.cdt.internal.core.model.MethodTemplate;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.internal.core.model.VariableTemplate;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.TestPluginLauncher;
 import org.eclipse.core.resources.IFile;
@@ -411,7 +412,7 @@ public class CModelElementsTests extends TestCase {
 		FunctionTemplate ft = (FunctionTemplate)functionTemplates.get(0);
 		assertEquals(ft.getElementName(), new String("aTemplatedFunction"));
 		assertEquals(ft.getTemplateSignature(), new String("aTemplatedFunction<A, B>(B) : A"));
-		checkLineNumbers((CElement)ft, 112, 112);
+		checkLineNumbers((CElement)ft, 112, 113);
 		
 		// template method
 		ArrayList nsClasses = namespace.getChildrenOfType(ICElement.C_CLASS);
@@ -421,15 +422,29 @@ public class CModelElementsTests extends TestCase {
 		MethodTemplate mt = (MethodTemplate)methodTemplates.get(0);
 		assertEquals(mt.getElementName(), new String("aTemplatedMethod"));
 		assertEquals(mt.getTemplateSignature(), new String("aTemplatedMethod<A, B>(B) : A"));
-		checkLineNumbers((CElement)mt, 117, 117);
+		checkLineNumbers((CElement)mt, 118, 119);
 		assertEquals(mt.getVisibility(), IMember.V_PUBLIC);
 		
 		// template class
 		ArrayList classTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_CLASS);
-		ClassTemplate ct = (ClassTemplate)classTemplates.get(0);
+		StructureTemplate ct = (StructureTemplate)classTemplates.get(0);
 		assertEquals(ct.getElementName(), new String("myarray"));
 		assertEquals(ct.getTemplateSignature(), new String("myarray<T, Tibor>"));
-		checkLineNumbers((CElement)ct, 120, 120);
+		checkLineNumbers((CElement)ct, 122, 123);
+
+		// template struct
+		ArrayList structTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT);
+		StructureTemplate st = (StructureTemplate)structTemplates.get(0);
+		assertEquals(st.getElementName(), new String("mystruct"));
+		assertEquals(st.getTemplateSignature(), new String("mystruct<T, Tibor>"));
+		checkLineNumbers((CElement)st, 125, 126);
+
+		// template variable
+		ArrayList variableTemplates = namespace.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE);
+		VariableTemplate vt = (VariableTemplate)variableTemplates.get(0);
+		assertEquals(vt.getElementName(), new String("default_alloc_template<__threads,__inst>::_S_start_free"));
+		assertEquals(vt.getTemplateSignature(), new String("default_alloc_template<__threads,__inst>::_S_start_free<bool, int> : char*"));
+		checkLineNumbers((CElement)vt, 128, 129);
 	}
 	
 	private void checkArrays(IParent tu){
@@ -438,14 +453,14 @@ public class CModelElementsTests extends TestCase {
 		IVariable arrayVar = (IVariable) variables.get(0);
 		assertEquals(arrayVar.getElementName(), new String("myArray"));
 		assertEquals(arrayVar.getTypeName(), new String("int[][]"));
-		checkLineNumbers((CElement)arrayVar, 125, 125);
+		checkLineNumbers((CElement)arrayVar, 133, 133);
 		
 		// array parameter in function main
 		ArrayList functions = tu.getChildrenOfType(ICElement.C_FUNCTION);
 		IFunction mainFunction  = (IFunction) functions.get(0);
 		assertEquals(mainFunction.getElementName(), new String("main"));
 		assertEquals(mainFunction.getReturnType(), new String("int"));
-		checkLineNumbers((CElement)mainFunction, 126, 128);
+		checkLineNumbers((CElement)mainFunction, 134, 136);
 		int NumOfParam = mainFunction.getNumberOfParameters();
 		if(NumOfParam != 2)
 			fail("main should have two parameter!");

@@ -113,6 +113,9 @@ public class CElementLabelProvider extends LabelProvider {
 				case ICElement.C_TEMPLATE_CLASS:
 				case ICElement.C_TEMPLATE_FUNCTION:
 				case ICElement.C_TEMPLATE_METHOD:
+				case ICElement.C_TEMPLATE_STRUCT:
+				case ICElement.C_TEMPLATE_UNION:
+				case ICElement.C_TEMPLATE_VARIABLE:
 					ITemplate template = (ITemplate) celem;
 					String signature = template.getTemplateSignature();
 					name.append(signature);

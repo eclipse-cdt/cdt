@@ -204,6 +204,7 @@ public class CElementImageProvider {
 					return DESC_OBJ_PROJECT_CLOSED;
 					
 			case ICElement.C_STRUCT:
+			case ICElement.C_TEMPLATE_STRUCT:
 				return CPluginImages.DESC_OBJS_STRUCT;
 				
 			case ICElement.C_CLASS:
@@ -234,6 +235,7 @@ public class CElementImageProvider {
 			}
 			
 			case ICElement.C_VARIABLE:
+			case ICElement.C_TEMPLATE_VARIABLE:
 				return CPluginImages.DESC_OBJS_FIELD;
 
 			case ICElement.C_METHOD:  

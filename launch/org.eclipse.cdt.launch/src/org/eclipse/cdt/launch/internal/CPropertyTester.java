@@ -40,9 +40,11 @@ public class CPropertyTester extends PropertyTester {
 	 */
 	private boolean isExecutable(Object receiver) {
 		ICElement celement = null;
-		IFile file = (IFile) ((IAdaptable)receiver).getAdapter(IResource.class);
-		if (file != null) {
-			celement = CoreModel.getDefault().create(file);
+		if (receiver instanceof IAdaptable) {
+			IFile file = (IFile) ((IAdaptable)receiver).getAdapter(IResource.class);
+			if (file != null) {
+				celement = CoreModel.getDefault().create(file);
+			}
 		}
 		return (celement != null && celement instanceof IBinary);
 	}

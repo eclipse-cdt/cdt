@@ -1,3 +1,8 @@
+2004-12-20 Alain Magloire
+
+	PR 81321
+	* src/org/eclipse/cdt/launch/internal/CPropertyTester.java
+
 2004-12-06 Mikhail Khodjaiants
 	The last character is missing in the launch configuration name generated 
 	from the binary file name.

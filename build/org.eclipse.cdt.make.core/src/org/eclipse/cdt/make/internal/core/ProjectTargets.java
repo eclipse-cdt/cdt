@@ -174,7 +174,7 @@ public class ProjectTargets {
 
 	public void remove(IMakeTarget target) {
 		ArrayList list = (ArrayList) targetMap.get(target.getContainer());
-		if (list != null && !list.contains(target)) {
+		if (list == null || !list.contains(target)) {
 			return;
 		}
 		list.remove(target);

@@ -1,3 +1,8 @@
+2002-10-25 Mikhail Khodjaiants
+	Remove the 'setWordSize' method from 'IFormattedMemoryBlock' and use 'reformat' instead.
+	* IFormattedMemoryBlock.java: removed the 'setWordSize' method.
+	* CFormattedMemoryBlock.java: removed the implementation of 'setWordSize' method.
+
 2002-10-24 Mikhail Khodjaiants
 	Support of the "Memory Unit Size" action.
 	* IFormattedMemoryBlock.java: added the 'setWordsize' method.

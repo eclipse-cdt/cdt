@@ -247,6 +247,10 @@ public class CFormattedMemoryBlock extends CDebugElement
 						  int numberOfRows,
 						  int numberOfColumns ) throws DebugException
 	{
+		resetRows();
+		fWordSize = wordSize;
+		fNumberOfRows = numberOfRows;
+		fNumberOfColumns = numberOfColumns;
 	}
 
 	/* (non-Javadoc)
@@ -258,6 +262,11 @@ public class CFormattedMemoryBlock extends CDebugElement
 						  int numberOfColumns,
 						  char paddingChar ) throws DebugException
 	{
+		resetRows();
+		fWordSize = wordSize;
+		fNumberOfRows = numberOfRows;
+		fNumberOfColumns = numberOfColumns;
+		fPaddingChar = paddingChar;
 	}
 
 	/* (non-Javadoc)
@@ -464,14 +473,5 @@ public class CFormattedMemoryBlock extends CDebugElement
 	public void setFrozen( boolean frozen )
 	{
 		getCDIMemoryBlock().setFrozen( frozen );
-	}
-
-	/**
-	 * @see org.eclipse.cdt.debug.core.IFormattedMemoryBlock#setWordSize(int)
-	 */
-	public void setWordSize( int size )
-	{
-		resetRows();
-		fWordSize = size;
 	}
 }

@@ -104,7 +104,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		});
 		
 		fVarBookKeeping = new Button(optionComp, SWT.CHECK);
-		fVarBookKeeping.setText("Enable variable bookkeeping.");
+		fVarBookKeeping.setText("Automatically track the values of variables.");
 		fVarBookKeeping.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -233,7 +233,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, DEFAULT_STOP_AT_MAIN) == true) {
 				fStopInMain.setSelection(true);
 			}
-			if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false) == true) {
+			if (config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false) == false) {
 				fVarBookKeeping.setSelection(true);
 			}
 		} catch (CoreException e) {
@@ -245,7 +245,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		if (isValid(config)) {
 			super.performApply(config);
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, fVarBookKeeping.getSelection());
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, !fVarBookKeeping.getSelection());
 			if (fAttachButton.getSelection() == true) {
 				config.setAttribute(
 					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,

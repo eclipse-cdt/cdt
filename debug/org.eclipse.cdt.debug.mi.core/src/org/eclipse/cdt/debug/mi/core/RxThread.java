@@ -65,16 +65,17 @@ public class RxThread extends Thread {
 		BufferedReader reader =
 			new BufferedReader(new InputStreamReader(session.getChannelInputStream()));
 		try {
-			while (true) {
-				String line;
-				while ((line = reader.readLine()) != null) {
+			String line;
+			while ((line = reader.readLine()) != null) {
 MIPlugin.getDefault().debugLog(line);
-					processMIOutput(line + "\n");
-				}
+				processMIOutput(line + "\n");
 			}
 		} catch (IOException e) {
-			fireEvent(new MIExitEvent());
 			//e.printStackTrace();
+		} finally {
+			session.getMIInferior().setTerminated();
+			session.terminate();
+			fireEvent(new MIExitEvent());
 		}
 	}
 

@@ -35,7 +35,7 @@ public abstract class CharArrayMap {
 	}
 	
 	private int hash(char[] buffer, int start, int len) {
-		return CharArrayUtils.hash(buffer, start, len) & (keyTable.length - 1); 
+		return CharArrayUtils.hash(buffer, start, len) & (hashTable.length - 1); 
 	}
 	
 	private int hash(char[] buffer) {
@@ -80,8 +80,12 @@ public abstract class CharArrayMap {
 		int hash = hash(buffer, start, len);
 		
 		if (hashTable[hash] == 0) {
-			if (++currEntry >= keyTable.length)
+			if( (currEntry + 1) >= keyTable.length){
+			    //need to recompute hash for this add, recurse.
 				resize();
+				return add( buffer, start, len );
+			}
+			currEntry++;
 			keyTable[currEntry] = CharArrayUtils.extract(buffer, start, len);
 			insert(currEntry, hash);
 			return currEntry;
@@ -102,8 +106,12 @@ public abstract class CharArrayMap {
 		}
 		
 		// nope, add it in
-		if (++currEntry >= keyTable.length)
+		if (++currEntry >= keyTable.length){
+		    //need to recompute hash for this add, recurse
 			resize();
+			return add( buffer, start, len );
+		}
+		currEntry++;
 		keyTable[currEntry] = CharArrayUtils.extract(buffer, start, len);
 		nextTable[last] = currEntry + 1;
 		return currEntry;

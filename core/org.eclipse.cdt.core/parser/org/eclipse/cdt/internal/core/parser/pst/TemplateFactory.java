@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateInstantiation;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTemplateSpecialization;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -575,7 +576,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#getContainedSymbols()
 	 */
-	public Map getContainedSymbols() {
+	public ObjectMap getContainedSymbols() {
 		return null;
 	}
 

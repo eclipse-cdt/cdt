@@ -15,8 +15,8 @@ package org.eclipse.cdt.internal.core.parser.pst;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -40,7 +40,7 @@ public interface IContainerSymbol extends ISymbol {
 	
 	public void addTemplateId( ISymbol symbol, List args ) throws ParserSymbolTableException;
 
-	public boolean removeSymbol( ISymbol symbol );
+//	public boolean removeSymbol( ISymbol symbol );
 	
 	public boolean hasUsingDirectives();
 	public List getUsingDirectives();
@@ -73,7 +73,7 @@ public interface IContainerSymbol extends ISymbol {
 	public IUsingDeclarationSymbol addUsingDeclaration( String name ) throws ParserSymbolTableException;
 	public IUsingDeclarationSymbol addUsingDeclaration( String name, IContainerSymbol declContext ) throws ParserSymbolTableException;
 			
-	public Map getContainedSymbols();
+	public ObjectMap getContainedSymbols();
 	
 	/**
 	 * Lookup symbols matching the given prefix

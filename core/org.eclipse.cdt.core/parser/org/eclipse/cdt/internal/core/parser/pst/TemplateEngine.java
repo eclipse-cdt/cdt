@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Cost;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
 
 /**
  * @author aniefer
@@ -891,16 +892,17 @@ public final class TemplateEngine {
 		return info;
 	}
 	
-	static protected List selectTemplateFunctions( Set templates, List functionArguments, List templateArguments ) throws ParserSymbolTableException{
+	static protected List selectTemplateFunctions( ObjectSet templates, List functionArguments, List templateArguments ) throws ParserSymbolTableException{
 		if( templates == null || templates.size() == 0 )
 			return null;
 		
 		List instances = null;
 		
-		Iterator iter = templates.iterator();
+		//Iterator iter = templates.iterator();
+		int size = templates.size();
 		
-		outer: while( iter.hasNext() ){
-			IParameterizedSymbol fn = (IParameterizedSymbol) iter.next();
+		outer: for( int idx = 0; idx < size; idx++ ){
+			IParameterizedSymbol fn = (IParameterizedSymbol) templates.keyAt( idx );
 			ITemplateSymbol template = (ITemplateSymbol) fn.getContainingSymbol();
 			
 			Map map = deduceTemplateArguments( template, functionArguments );

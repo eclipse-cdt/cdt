@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -31,6 +30,8 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParentSymbol;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
 
 /**
  * @author aniefer
@@ -247,8 +248,8 @@ public class ParserSymbolTable {
 			temp = (IContainerSymbol) directives.get(i);
 
 			//namespaces are searched at most once
-			if( !data.visited.contains( temp ) ){
-				data.visited.add( temp );
+			if( !data.visited.containsKey( temp ) ){
+				data.visited.put( temp );
 				
 				Map map = lookupInContained( data, temp );
 				foundSomething = ( map != null && !map.isEmpty() );
@@ -322,18 +323,19 @@ public class ParserSymbolTable {
 			data.getAssociated().remove( lookIn );
 		}
 		
-		Map declarations = lookIn.getContainedSymbols();
+		ObjectMap declarations = lookIn.getContainedSymbols();
 		
-		Iterator iterator = null;
+		int numKeys = -1;
+		int idx = 0;
 		if( data.isPrefixLookup() && declarations != Collections.EMPTY_MAP ){
-		    iterator = declarations.keySet().iterator();
+		    numKeys = declarations.size();//iterator = declarations.keySet().iterator();
 		}
 		
-		String name = ( iterator != null && iterator.hasNext() ) ? (String) iterator.next() : data.name;
+		String name = ( numKeys > 0 ) ? (String) declarations.keyAt( idx++ ) : data.name;
 		
 		while( name != null ) {
 			if( nameMatches( data, name ) ){
-				obj = ( !declarations.isEmpty() ) ? declarations.get( name ) : null;
+				obj = ( declarations.size() > 0 ) ? declarations.get( name ) : null;
 				if( obj != null ){
 					obj = collectSymbol( data, obj );
 					
@@ -348,12 +350,10 @@ public class ParserSymbolTable {
 					}
 				}
 			}
-						
-			if( iterator != null && iterator.hasNext() ){
-				name = (String) iterator.next();
-			} else {
-				name = null;
-			}
+			if( idx < numKeys )
+			    name = (String) declarations.keyAt( idx++ );
+			else 
+			    name = null;
 		} 
 		if( found != null && data.isPrefixLookup() )
 		    found = new LinkedHashMap( found );
@@ -478,8 +478,8 @@ public class ParserSymbolTable {
 		int objListSize = ( objList != null ) ? objList.size() : 0;
 		ISymbol symbol = ( objList != null ) ? (ISymbol) objList.get( 0 ) : (ISymbol) object;
 	
-		Set functionSet = new HashSet();
-		Set templateFunctionSet = new HashSet();
+		ObjectSet functionSet = ObjectSet.EMPTY_SET;
+		ObjectSet templateFunctionSet = ObjectSet.EMPTY_SET;
 		
 		ISymbol obj	= null;
 		IContainerSymbol cls = null;
@@ -500,9 +500,13 @@ public class ParserSymbolTable {
 						foundSymbol = foundSymbol.getForwardSymbol();
 					}
 					if( foundSymbol.getContainingSymbol().isType( ITypeInfo.t_template ) ){
-						templateFunctionSet.add( foundSymbol );
+					    if( templateFunctionSet == ObjectSet.EMPTY_SET )
+					        templateFunctionSet = new ObjectSet( 2 );
+						templateFunctionSet.put( foundSymbol );
 					} else {
-						functionSet.add( foundSymbol );	
+					    if( functionSet == ObjectSet.EMPTY_SET )
+					        functionSet = new ObjectSet( 2 );
+						functionSet.put( foundSymbol );	
 					}
 					
 				} else {
@@ -561,24 +565,19 @@ public class ParserSymbolTable {
 				ambiguous = true;	
 			}
 			
-			Iterator fnIter = null;
 			IParameterizedSymbol fn = null;
-			if( !templateFunctionSet.isEmpty() ){
-				fnIter = templateFunctionSet.iterator();
-			
-				for( int i = numTemplateFunctions; i > 0; i-- ){
-					fn = (IParameterizedSymbol) fnIter.next();
+			if( numTemplateFunctions > 0 ){			    
+			    for( int i = 0; i < numTemplateFunctions; i++ ){
+					fn = (IParameterizedSymbol) templateFunctionSet.keyAt( i );
 					if( cls.getContainingSymbol()!= fn.getContainingSymbol()){
 						ambiguous = true;
 						break;
 					}
 				}
 			}
-			if( !functionSet.isEmpty() ){
-				fnIter = functionSet.iterator();
-				
-				for( int i = numFunctions; i > 0; i-- ){
-					fn = (IParameterizedSymbol) fnIter.next();
+			if( numFunctions > 0 ){
+				for( int i = 0; i < numFunctions; i++ ){
+					fn = (IParameterizedSymbol) functionSet.keyAt( i );
 					if( cls.getContainingSymbol()!= fn.getContainingSymbol()){
 						ambiguous = true;
 						break;
@@ -590,10 +589,15 @@ public class ParserSymbolTable {
 		if( numTemplateFunctions > 0 ){
 			if( data.getParameters() != null && ( !data.exactFunctionsOnly || data.getTemplateParameters() != null ) ){
 				List fns  = TemplateEngine.selectTemplateFunctions( templateFunctionSet, data.getParameters(), data.getTemplateParameters() );
-				if( fns != null )
+				if( fns != null ){
+				    if( functionSet == ObjectSet.EMPTY_SET )
+				        functionSet = new ObjectSet( fns.size() );
 					functionSet.addAll( fns );
+				}
 				numFunctions = functionSet.size();
 			} else {
+			    if( functionSet == ObjectSet.EMPTY_SET )
+			        functionSet = new ObjectSet( templateFunctionSet.size() );
 				functionSet.addAll( templateFunctionSet );
 				numFunctions += numTemplateFunctions;
 			}
@@ -606,7 +610,7 @@ public class ParserSymbolTable {
 				return obj;
 			}
 		} else if( numFunctions > 0 ) {
-			return new ArrayList( functionSet );
+			return functionSet.toList();
 		}
 		
 		if( ambiguous ){
@@ -648,9 +652,9 @@ public class ParserSymbolTable {
 				
 		//use data to detect circular inheritance
 		if( data.inheritanceChain == null )
-			data.inheritanceChain = new HashSet();
+			data.inheritanceChain = new ObjectSet( 2 );
 		
-		data.inheritanceChain.add( container );
+		data.inheritanceChain.put( container );
 			
 		int size = scopes.size();
 		for( int i = 0; i < size; i++ )
@@ -660,9 +664,9 @@ public class ParserSymbolTable {
 			if( parent == null )
 				continue;
 
-			if( !wrapper.isVirtual() || !data.visited.contains( parent ) ){
+			if( !wrapper.isVirtual() || !data.visited.containsKey( parent ) ){
 				if( wrapper.isVirtual() ){
-					data.visited.add( parent );
+					data.visited.put( parent );
 				}
 
 				if( parent instanceof IDeferredTemplateInstance ){
@@ -673,7 +677,7 @@ public class ParserSymbolTable {
 
 				//if the inheritanceChain already contains the parent, then that 
 				//is circular inheritance
-				if( ! data.inheritanceChain.contains( parent ) ){
+				if( ! data.inheritanceChain.containsKey( parent ) ){
 					//is this name define in this scope?
 					if( parent instanceof IDerivableContainerSymbol ){
 						temp = lookupInContained( data, (IDerivableContainerSymbol) parent );
@@ -1383,7 +1387,7 @@ public class ParserSymbolTable {
 			temp = ((IUsingDirectiveSymbol) directives.get(i)).getNamespace();
 		
 			//namespaces are searched at most once
-			if( !data.visited.contains( temp ) ){
+			if( !data.visited.containsKey( temp ) ){
 				enclosing = getClosestEnclosingDeclaration( symbol, temp );
 						
 				//the data.usingDirectives is a map from enclosing declaration to 
@@ -1494,7 +1498,7 @@ public class ParserSymbolTable {
 		return -1;
 	}
 
-	static protected void getAssociatedScopes( ISymbol symbol, HashSet associated ){
+	static protected void getAssociatedScopes( ISymbol symbol, ObjectSet associated ){
 		if( symbol == null ){
 			return;
 		}
@@ -1503,19 +1507,19 @@ public class ParserSymbolTable {
 		//namespaces in which its associated classes are defined	
 		//if( symbol.getType() == TypeInfo.t_class ){
 		if( symbol instanceof IDerivableContainerSymbol ){
-			associated.add( symbol );
-			associated.add( symbol.getContainingSymbol() );
+			associated.put( symbol );
+			associated.put( symbol.getContainingSymbol() );
 			getBaseClassesAndContainingNamespaces( (IDerivableContainerSymbol) symbol, associated );
 		} 
 		//if T is a union or enumeration type, its associated namespace is the namespace in 
 		//which it is defined. if it is a class member, its associated class is the member's
 		//class
 		else if( symbol.getType() == ITypeInfo.t_union || symbol.getType() == ITypeInfo.t_enumeration ){
-			associated.add( symbol.getContainingSymbol() );
+			associated.put( symbol.getContainingSymbol() );
 		}
 	}
 	
-	static private void getBaseClassesAndContainingNamespaces( IDerivableContainerSymbol obj, HashSet classes ){
+	static private void getBaseClassesAndContainingNamespaces( IDerivableContainerSymbol obj, ObjectSet classes ){
 		if( obj.getParents() != null ){
 			if( classes == null ){
 				return;
@@ -1531,9 +1535,9 @@ public class ParserSymbolTable {
 				base = wrapper.getParent();
 				//TODO: what about IDeferredTemplateInstance parents?
 				if( base instanceof IDerivableContainerSymbol ){
-					classes.add( base );
+					classes.put( base );
 					if( base.getContainingSymbol().getType() == ITypeInfo.t_namespace ){
-						classes.add( base.getContainingSymbol());
+						classes.put( base.getContainingSymbol());
 					}
 					
 					getBaseClassesAndContainingNamespaces( (IDerivableContainerSymbol) base, classes );	
@@ -2221,8 +2225,8 @@ public class ParserSymbolTable {
 		
 		public String name;
 		public Map usingDirectives; 
-		public Set visited = new HashSet();	//used to ensure we don't visit things more than once
-		public HashSet inheritanceChain;	//used to detect circular inheritance
+		public ObjectSet visited = new ObjectSet(0);	//used to ensure we don't visit things more than once
+		public ObjectSet inheritanceChain;	//used to detect circular inheritance
 		public ISymbol templateMember;  	//to assit with template member defs
 		
 		public boolean qualified = false;
@@ -2244,7 +2248,7 @@ public class ParserSymbolTable {
 		public Set getAmbiguities()    { return null; }       
 		public void addAmbiguity(String n ) { /*nothing*/ }
 		public List getParameters()    { return null; }       //parameter info for resolving functions
-		public HashSet getAssociated() { return null; }       //associated namespaces for argument dependant lookup
+		public ObjectSet getAssociated() { return null; }     //associated namespaces for argument dependant lookup
 		public ISymbol getStopAt()     { return null; }       //stop looking along the stack once we hit this declaration
 		public List getTemplateParameters() { return null; }  //template parameters
 		public TypeFilter getFilter() { return ANY_FILTER; }

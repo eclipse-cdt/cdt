@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.core.parser.pst;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -101,8 +100,7 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 		IContainerSymbol symbol = null;
 			
 		if( getContainedSymbols().size() == 1 ){
-			Iterator iter = getContainedSymbols().keySet().iterator();
-			symbol = (IContainerSymbol)getContainedSymbols().get( iter.next() );
+			symbol = (IContainerSymbol)getContainedSymbols().getAt( 0 );
 		}
 			
 		instance = (IContainerSymbol) symbol.instantiate( this, argMap );

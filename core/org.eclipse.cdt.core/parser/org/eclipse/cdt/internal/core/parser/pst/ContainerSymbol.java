@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -32,6 +31,8 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTMember;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.LookupData;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectMap;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
 
 /**
  * @author aniefer
@@ -53,7 +54,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		ContainerSymbol copy = (ContainerSymbol)super.clone();
 			
 		copy._usingDirectives  =  (_usingDirectives != Collections.EMPTY_LIST) ? (List) ((ArrayList)_usingDirectives).clone() : _usingDirectives;
-		copy._containedSymbols = ( _containedSymbols != Collections.EMPTY_MAP )? (Map)((HashMap) _containedSymbols).clone() : _containedSymbols;
+		copy._containedSymbols = (ObjectMap) ( ( _containedSymbols != ObjectMap.EMPTY_MAP )? _containedSymbols.clone() : _containedSymbols );
 		copy._contents = (_contents != Collections.EMPTY_LIST) ? (List) ((ArrayList)_contents).clone() : _contents;
 		
 		return copy;	
@@ -242,41 +243,41 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 //		getSymbolTable().pushCommand( command );
 	}
 
-	public boolean removeSymbol( ISymbol symbol ){
-		boolean removed = false;
-		
-		Map contained = getContainedSymbols();
-		
-		if( symbol != null && contained.containsKey( symbol.getName() ) ){
-			Object obj = contained.get( symbol.getName() );
-			if( obj instanceof ISymbol ){
-				if( obj == symbol ){
-					contained.remove( symbol.getName() );
-					removed = true;
-				}
-			} else if ( obj instanceof List ){
-				List list = (List) obj;
-				if( list.remove( symbol ) ){
-					if( list.size() == 1 ){
-						contained.put( symbol.getName(), list.get( 0 ) );
-					}
-					removed = true;
-				}
-			}
-		}
-		
-		if( removed ){
-			ListIterator iter = getContents().listIterator( getContents().size() );
-			while( iter.hasPrevious() ){
-				if( iter.previous() == symbol ){
-					iter.remove();
-					break;
-				}
-			}
-		}
-		
-		return removed;
-	}
+//	public boolean removeSymbol( ISymbol symbol ){
+//		boolean removed = false;
+//		
+//		StringObjectMap contained = getContainedSymbols();
+//		
+//		if( symbol != null && contained.containsKey( symbol.getName() ) ){
+//			Object obj = contained.get( symbol.getName() );
+//			if( obj instanceof ISymbol ){
+//				if( obj == symbol ){
+//					contained.remove( symbol.getName() );
+//					removed = true;
+//				}
+//			} else if ( obj instanceof List ){
+//				List list = (List) obj;
+//				if( list.remove( symbol ) ){
+//					if( list.size() == 1 ){
+//						contained.put( symbol.getName(), list.get( 0 ) );
+//					}
+//					removed = true;
+//				}
+//			}
+//		}
+//		
+//		if( removed ){
+//			ListIterator iter = getContents().listIterator( getContents().size() );
+//			while( iter.hasPrevious() ){
+//				if( iter.previous() == symbol ){
+//					iter.remove();
+//					break;
+//				}
+//			}
+//		}
+//		
+//		return removed;
+//	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#hasUsingDirectives()
@@ -422,13 +423,13 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#getContainedSymbols()
 	 */
-	public Map getContainedSymbols(){
+	public ObjectMap getContainedSymbols(){
 		return _containedSymbols;
 	}
 	
 	protected void putInContainedSymbols( String key, Object obj ){
-		if( _containedSymbols == Collections.EMPTY_MAP ){
-			_containedSymbols = new HashMap( );
+		if( _containedSymbols == ObjectMap.EMPTY_MAP ){
+			_containedSymbols = new ObjectMap( 4 );
 		}
 		_containedSymbols.put( key, obj );
 	}
@@ -667,7 +668,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	public IParameterizedSymbol unqualifiedFunctionLookup( String name, final List parameters ) throws ParserSymbolTableException{
 		//figure out the set of associated scopes first, so we can remove those that are searched
 		//during the normal lookup to avoid doing them twice
-		final HashSet associated = new HashSet();
+		final ObjectSet associated = new ObjectSet(0);
 	
 		//collect associated namespaces & classes.
 		int size = ( parameters == null ) ? 0 : parameters.size();
@@ -699,11 +700,11 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		}
 	
 		LookupData data = new LookupData( name ){
-			public HashSet getAssociated() { return assoc; }
-			public List    getParameters() { return params; }
-			public TypeFilter getFilter()  { return FUNCTION_FILTER; }
+			public ObjectSet getAssociated() { return assoc; }
+			public List      getParameters() { return params; }
+			public TypeFilter getFilter()    { return FUNCTION_FILTER; }
 			
-			final private HashSet assoc = associated;
+			final private ObjectSet assoc = associated;
 			final private List params = ( parameters == null ) ? Collections.EMPTY_LIST : parameters;
 		};
 		
@@ -722,13 +723,13 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			//dump the hash to an array and iterate over the array because we
 			//could be removing items from the collection as we go and we don't
 			//want to get ConcurrentModificationExceptions			
-			Object [] scopes = associated.toArray();
+			Object [] scopes = associated.keyArray();
 		
 			size = associated.size();
 
 			for( int i = 0; i < size; i++ ){
 				associatedScope  = (IContainerSymbol) scopes[ i ];
-				if( associated.contains( associatedScope ) ){
+				if( associated.containsKey( associatedScope ) ){
 					data.qualified = true;
 					data.ignoreUsingDirectives = true;
 					data.usingDirectivesOnly = false;
@@ -1191,7 +1192,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 
 	private 	List _contents = Collections.EMPTY_LIST;				//ordered list of all contents of this symbol
 	private		List _usingDirectives = Collections.EMPTY_LIST;		//collection of nominated namespaces
-	private		Map  _containedSymbols = Collections.EMPTY_MAP;		//declarations contained by us.
+	private		ObjectMap _containedSymbols = ObjectMap.EMPTY_MAP;		//declarations contained by us.
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addTemplateId(org.eclipse.cdt.internal.core.parser.pst.ISymbol, java.util.List)
 	 */

@@ -367,7 +367,10 @@ public abstract class Parser extends ExpressionParser implements IParser
             catch (Exception e1)
             {
             	logException( "usingClause:createUsingDeclaration", e1 ); //$NON-NLS-1$
-                throwBacktrack(firstToken.getOffset(), last.getEndOffset(), firstToken.getLineNumber());
+            	if( e1 instanceof ASTSemanticException && ((ASTSemanticException)e1).getProblem() != null )
+            	    throwBacktrack(((ASTSemanticException)e1).getProblem());
+            	else
+            	    throwBacktrack(firstToken.getOffset(), last.getEndOffset(), firstToken.getLineNumber());
             }
             declaration.acceptElement( requestor, astFactory.getReferenceManager() );
             setCompletionValues(scope, getCompletionKindForDeclaration(scope, null), KeywordSetKey.DECLARATION );

@@ -1547,7 +1547,7 @@ public class ParserSymbolTable {
 		boolean okToAdd = false;
 			
 		//7.3.3-5  A using-declaration shall not name a template-id
-		if( obj.isTemplateMember() && obj.getContainingSymbol().isType( ITypeInfo.t_template ) ){
+		if( obj.isTemplateInstance() && obj.getInstantiatedSymbol().getContainingSymbol().isType( ITypeInfo.t_template ) ){
 			okToAdd = false;
 		}
 		//7.3.3-4

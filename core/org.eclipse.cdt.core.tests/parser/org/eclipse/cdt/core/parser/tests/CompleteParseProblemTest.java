@@ -115,4 +115,25 @@ public class CompleteParseProblemTest extends CompleteParseBaseTest {
 	    IASTFunction f = (IASTFunction) i.next();
 	    IASTVariable varI = (IASTVariable) i.next();
 	}
+	
+	public void testBug69745() throws Exception
+	{
+	    StringBuffer buffer = new StringBuffer();
+	    buffer.append( "namespace NS{ template < class T > int foo(){};  }   \n" ); //$NON-NLS-1$
+	    buffer.append( "void f() { using NS::foo;  using NS::foo<int>;   }   \n" ); //$NON-NLS-1$
+	    
+	    String code = buffer.toString();
+	    
+	    parse( code, false );
+	    
+	    int start = code.indexOf( "using NS::foo<int>;" ); //$NON-NLS-1$
+	    int end = start + "using NS::foo<int>;".length(); //$NON-NLS-1$
+	    
+	    assertEquals( callback.problems.size(), 1 );
+	    IProblem p = (IProblem) callback.problems.get( 0 );
+	    
+	    assertEquals( p.getSourceStart(), start );
+	    assertEquals( p.getSourceEnd(), end );
+	    assertEquals( p.getID(), IProblem.SEMANTIC_INVALID_USING );
+	}
 }

@@ -1,3 +1,10 @@
+2003-11-21 Alain Magloire
+
+	The wrong MIPlugin.createCSession() method was used.
+	Problem noted by Ashish.
+
+	* src/org/eclipse/cdt/debu/mi/core/GDBServerDebugger.java
+
 2003-11-21 Mikhail Khodjaiants
 
 	* src/org/eclipse/cdt/debug/mi/core/output/MIFrame.java

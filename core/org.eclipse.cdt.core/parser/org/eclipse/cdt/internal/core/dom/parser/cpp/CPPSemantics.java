@@ -149,7 +149,8 @@ public class CPPSemantics {
 		public boolean typesOnly(){
 			if( astName == null ) return false;
 			IASTNode parent = astName.getParent();
-			if( parent instanceof ICPPASTBaseSpecifier || parent instanceof ICPPASTElaboratedTypeSpecifier )
+			if( parent instanceof ICPPASTBaseSpecifier || parent instanceof ICPPASTElaboratedTypeSpecifier || 
+			    parent instanceof ICPPASTCompositeTypeSpecifier )
 			    return true;
 			if( parent instanceof ICPPASTQualifiedName ){
 			    IASTName [] ns = ((ICPPASTQualifiedName)parent).getNames();
@@ -364,10 +365,7 @@ public class CPPSemantics {
 		}
 	}
 	
-	static protected IBinding resolveBinding( IASTName name ){
-//	    if( name instanceof ICPPASTQualifiedName && ((ICPPASTQualifiedName)name).isFullyQualified() ) 
-//	       return ((ICPPASTTranslationUnit)name.getTranslationUnit()).resolveBinding();
-	       
+	static protected IBinding resolveBinding( IASTName name ){      
 		//1: get some context info off of the name to figure out what kind of lookup we want
 		LookupData data = createLookupData( name, true );
 		
@@ -437,8 +435,26 @@ public class CPPSemantics {
             binding = new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_TYPE, data.name );
         }
         
-		if( binding != null && data.forDefinition() && !( binding instanceof IProblemBinding ) ){
-			addDefinition( binding, data.astName );
+		if( binding != null && !( binding instanceof IProblemBinding ) ){
+		    if( data.forDefinition() ){
+		        addDefinition( binding, data.astName );
+		    } else if( data.forUsingDeclaration() ){
+		        IASTNode node = CPPVisitor.getContainingBlockItem( data.astName );
+		        ICPPScope scope = (ICPPScope) CPPVisitor.getContainingScope( node );
+                try {
+			        if( binding instanceof ICPPCompositeBinding ){
+			            IBinding [] bs = ((ICPPCompositeBinding)binding).getBindings();
+                        for( int i = 0; i < bs.length; i++ ) {
+   	                        scope.addBinding( binding );
+    		            }
+			        } else {
+                        scope.addBinding( binding );
+			        }
+                } catch ( DOMException e ) {
+                }    
+
+		    }
+			
 		}
 		if( binding == null )
 			binding = new ProblemBinding(IProblemBinding.SEMANTIC_NAME_NOT_FOUND, data.name );
@@ -831,7 +847,7 @@ public class CPPSemantics {
 	 * @return List of encountered using directives
 	 * @throws DOMException
 	 */
-	static private IASTName[] lookupInScope( CPPSemantics.LookupData data, ICPPScope scope, IASTNode blockItem, ArrayWrapper usingDirectives ) throws DOMException {
+	static protected IASTName[] lookupInScope( CPPSemantics.LookupData data, ICPPScope scope, IASTNode blockItem, ArrayWrapper usingDirectives ) throws DOMException {
 		IASTName possible = null;
 		IASTNode [] nodes = null;
 		IASTNode parent = scope.getPhysicalNode();
@@ -1121,6 +1137,8 @@ public class CPPSemantics {
 	}
 	
 	static public boolean declaredBefore( Object obj, IASTNode node ){
+	    if( node == null ) return true;
+	    
 	    ASTNode nd = null;
 	    if( obj instanceof ICPPBinding ){
 	        ICPPBinding cpp = (ICPPBinding) obj;

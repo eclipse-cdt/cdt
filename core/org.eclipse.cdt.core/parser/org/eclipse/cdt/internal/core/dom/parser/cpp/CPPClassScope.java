@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics.LookupData;
 
 /**
  * @author aniefer
@@ -38,10 +39,11 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 public class CPPClassScope extends CPPScope implements ICPPClassScope {
     private CharArrayObjectMap bindings = CharArrayObjectMap.EMPTY_MAP;
     private ICPPConstructor [] constructors = null;
+    boolean checkForAdditionalBindings = true;
     
 	public CPPClassScope( ICPPASTCompositeTypeSpecifier physicalNode ) {
 		super( physicalNode );
-		
+		((CPPASTCompositeTypeSpecifier)physicalNode).setScope( this );
 		createImplicitMembers();
 	}
 
@@ -60,6 +62,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
         
         char [] className = compTypeSpec.getName().toCharArray();
         
+        checkForAdditionalBindings = false;
+        
         //default constructor: A()
 	    addBinding( new CPPImplicitConstructor( this, className, IParameter.EMPTY_PARAMETER_ARRAY ) );
 	    
@@ -77,6 +81,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	    //destructor: ~A()
 	    char [] dtorName = CharArrayUtils.concat( "~".toCharArray(), className );  //$NON-NLS-1$
 	    addBinding( new CPPImplicitMethod( this, dtorName, new CPPBasicType( IBasicType.t_unspecified, 0 ), IParameter.EMPTY_PARAMETER_ARRAY ) );
+	    
+	    checkForAdditionalBindings = true;
 	}
 	
 	/* (non-Javadoc)
@@ -99,6 +105,22 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		    }
 		} else {
 		    bindings.put( c, binding );
+		    if( checkForAdditionalBindings ){
+		        //need to ensure we have all bindings that correspond to this char[]
+		        checkForAdditionalBindings = false;
+		        LookupData data = new LookupData( c );
+				try {
+                    data.foundItems = CPPSemantics.lookupInScope( data, this, null, null );
+                } catch ( DOMException e ) {
+                }
+                if( data.foundItems != null ){
+                    IASTName [] ns = (IASTName[]) data.foundItems;
+                    for( int i = 0; i < ns.length && ns[i] != null; i++ ){
+                        ns[i].resolveBinding();
+                    }
+                }
+                checkForAdditionalBindings = true;
+		    }
 		}
 	}
 

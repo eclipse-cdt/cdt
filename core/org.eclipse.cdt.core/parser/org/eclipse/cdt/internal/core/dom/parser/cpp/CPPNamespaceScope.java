@@ -13,19 +13,21 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics.LookupData;
 
 /**
  * @author aniefer
  */
 public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	private CharArrayObjectMap bindings = CharArrayObjectMap.EMPTY_MAP;
+	private boolean checkForAdditionalBindings = true;
 	
 	public CPPNamespaceScope( IASTNode physicalNode ) {
 		super( physicalNode );
@@ -46,6 +48,22 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 		    }
 		} else {
 		    bindings.put( c, binding );
+		    if( checkForAdditionalBindings ){
+		        //need to ensure we have all bindings that correspond to this char[]
+		        checkForAdditionalBindings = false;
+		        LookupData data = new LookupData( c );
+				try {
+                    data.foundItems = CPPSemantics.lookupInScope( data, this, null, null );
+                } catch ( DOMException e ) {
+                }
+                if( data.foundItems != null ){
+                    IASTName [] ns = (IASTName[]) data.foundItems;
+                    for( int i = 0; i < ns.length && ns[i] != null; i++ ){
+                        ns[i].resolveBinding();
+                    }
+                }
+                checkForAdditionalBindings = true;
+		    }
 		}
 	}
 
@@ -69,12 +87,5 @@ public class CPPNamespaceScope extends CPPScope implements ICPPNamespaceScope{
 	public IBinding[] find(String name) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope#getUsingDirectives()
-	 */
-	public ICPPASTUsingDirective[] getUsingDirectives() {
-		// TODO Auto-generated method stub
-		return ICPPASTUsingDirective.EMPTY_USINGDIRECTIVE_ARRAY;
 	}
 }

@@ -161,5 +161,9 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier
     	
         return scope;
     }
+    
+    public void setScope( IScope scope ){
+        this.scope = scope;
+    }
 
 }

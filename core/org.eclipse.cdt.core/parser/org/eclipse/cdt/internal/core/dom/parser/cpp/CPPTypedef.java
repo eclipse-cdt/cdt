@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -25,14 +26,15 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
  * @author aniefer
  */
 public class CPPTypedef implements ITypedef, ITypeContainer, ICPPBinding {
-	private IASTDeclarator declarator = null;
+	private IASTName typedefName = null;
 	private IType type = null;
 	
 	/**
 	 * @param declarator
 	 */
-	public CPPTypedef(IASTDeclarator declarator) {
-		this.declarator = declarator;
+	public CPPTypedef(IASTName name) {
+		this.typedefName = name;
+		((CPPASTName)name).setBinding( this );
 		
 		// TODO Auto-generated constructor stub
 	}
@@ -48,7 +50,7 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPBinding {
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
      */
     public IASTNode getDefinition() {
-        return declarator;
+        return typedefName;
     }
 
     public boolean equals( Object o ){
@@ -70,7 +72,7 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPBinding {
 	 */
 	public IType getType() {
 	    if( type == null )
-	        type = CPPVisitor.createType( declarator );
+	        type = CPPVisitor.createType( (IASTDeclarator) typedefName.getParent() );
 		return type;
 	}
 	
@@ -82,28 +84,28 @@ public class CPPTypedef implements ITypedef, ITypeContainer, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return declarator.getName().toString();
+		return typedefName.toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return declarator.getName().toCharArray();
+		return typedefName.toCharArray();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( declarator );
+		return CPPVisitor.getContainingScope( typedefName.getParent() );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
 	 */
 	public IASTNode getPhysicalNode() {
-		return declarator;
+		return typedefName;
 	}
 	
     public Object clone(){

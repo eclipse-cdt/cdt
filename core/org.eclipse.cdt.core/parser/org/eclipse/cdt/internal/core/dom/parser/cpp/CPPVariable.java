@@ -49,10 +49,16 @@ public class CPPVariable implements IVariable, ICPPBinding {
 	private IType type = null;
 	
 	public CPPVariable( IASTName name ){
+	    if( name instanceof ICPPASTQualifiedName ){
+	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+	        name = ns[ ns.length - 1 ];
+	    }
+	    
 	    if( isDefinition( name ) )
 	        definition = name;
 	    else 
 	        declarations = new IASTName [] { name };
+	    ((CPPASTName)name).setBinding( this );
 	}
 	
 	protected boolean isDefinition( IASTName name ){

@@ -15,7 +15,9 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -99,14 +101,21 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
         }
     }
 	
-	private ICPPASTCompositeTypeSpecifier definition;
-	private ICPPASTElaboratedTypeSpecifier [] declarations;
+	private IASTName definition;
+	private IASTName [] declarations;
 	
-	public CPPClassType( IASTDeclSpecifier declSpec ){
-		if( declSpec instanceof ICPPASTCompositeTypeSpecifier )
-			definition = (ICPPASTCompositeTypeSpecifier) declSpec;
+	public CPPClassType( IASTName name ){
+	    ASTNodeProperty prop = name.getPropertyInParent();
+	    if( name instanceof ICPPASTQualifiedName ){
+	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+	        name = ns[ ns.length - 1 ];
+	    }
+	    
+	    if( prop == IASTCompositeTypeSpecifier.TYPE_NAME )
+			definition = name;
 		else 
-			declarations = new ICPPASTElaboratedTypeSpecifier[] { (ICPPASTElaboratedTypeSpecifier) declSpec };
+			declarations = new IASTName[] { name };
+		((CPPASTName)name).setBinding( this );
 	}
 	
     /* (non-Javadoc)
@@ -125,7 +134,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
     
 	private class FindDefinitionAction extends CPPVisitor.CPPBaseVisitorAction {
 	    private char [] nameArray = CPPClassType.this.getNameCharArray();
-	    public ICPPASTCompositeTypeSpecifier result = null;
+	    public IASTName result = null;
 	    
 	    {
 	        processNames          = true;
@@ -141,7 +150,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	        {
 	            IBinding binding = name.resolveBinding();
 	            if( binding == CPPClassType.this ){
-	                result = (ICPPASTCompositeTypeSpecifier) name.getParent();
+	                result = name;
 	                return PROCESS_ABORT;
 	            }
 	        }
@@ -178,6 +187,17 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 		return;
 	}
 	
+	private ICPPASTCompositeTypeSpecifier getCompositeTypeSpecifier(){
+	    if( definition != null ){
+	        return (ICPPASTCompositeTypeSpecifier) definition.getParent();
+	    }
+	    return null;
+	}
+	private ICPPASTElaboratedTypeSpecifier getElaboratedTypeSpecifier() {
+	    if( declarations != null )
+	        return (ICPPASTElaboratedTypeSpecifier) declarations[0].getParent();
+	    return null;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getFields()
 	 */
@@ -188,7 +208,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	            return new IField [] { new CPPField.CPPFieldProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
 	    }
 
-		IASTDeclaration[] members = definition.getMembers();
+		IASTDeclaration[] members = getCompositeTypeSpecifier().getMembers();
 		int size = members.length;
 		IField[] fields = null;
 		if( size > 0 ){
@@ -222,31 +242,28 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return ( definition != null ) ? definition.getName().toString() : declarations[0].getName().toString();
+		return ( definition != null ) ? definition.toString() : declarations[0].toString();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return ( definition != null ) ? definition.getName().toCharArray() : declarations[0].getName().toCharArray();
+		return ( definition != null ) ? definition.toCharArray() : declarations[0].toCharArray();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		IASTName name = definition != null ? definition.getName() : declarations[0].getName();
-		if( name instanceof ICPPASTQualifiedName ){
-			IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
-			name = ns[ ns.length - 1 ];
-		}
+		IASTName name = definition != null ? definition : declarations[0];
+
 		IScope scope = CPPVisitor.getContainingScope( name );
 		if( definition == null && name.getPropertyInParent() != ICPPASTQualifiedName.SEGMENT_NAME ){
-		    IASTNode node = declarations[0].getParent();
+		    IASTNode node = declarations[0].getParent().getParent();
 		    if( node instanceof IASTFunctionDefinition || node instanceof IASTParameterDeclaration ||
 		        ( node instanceof IASTSimpleDeclaration && 
-		          ( ((IASTSimpleDeclaration) node).getDeclarators().length > 0 || declarations[0].isFriend() ) ) )
+		          ( ((IASTSimpleDeclaration) node).getDeclarators().length > 0 || getElaboratedTypeSpecifier().isFriend() ) ) )
 		    {
 	            while( scope instanceof ICPPClassScope || scope instanceof ICPPFunctionScope ){
 					try {
@@ -263,7 +280,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getCompositeScope()
 	 */
 	public IScope getCompositeScope() {
-		return (definition != null ) ? definition.getScope() : null;
+		return (definition != null ) ? getCompositeTypeSpecifier().getScope() : null;
 	}
 	
 	/* (non-Javadoc)
@@ -277,27 +294,30 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.ICompositeType#getKey()
 	 */
 	public int getKey() {
-		return (definition != null ) ? definition.getKey() : declarations[0].getKind();
+	    if( definition != null )
+	        return getCompositeTypeSpecifier().getKey();
+	    
+		return getElaboratedTypeSpecifier().getKind();
 	}
 
 	public void addDefinition( ICPPASTCompositeTypeSpecifier compSpec ){
-		definition = compSpec;
+		definition = compSpec.getName();
 	}
 	public void addDeclaration( ICPPASTElaboratedTypeSpecifier elabSpec ) {
 		if( declarations == null ){
-			declarations = new ICPPASTElaboratedTypeSpecifier [] { elabSpec };
+			declarations = new IASTName[] { elabSpec.getName() };
 			return;
 		}
 
         for( int i = 0; i < declarations.length; i++ ){
             if( declarations[i] == null ){
-                declarations[i] = elabSpec;
+                declarations[i] = elabSpec.getName();
                 return;
             }
         }
-        ICPPASTElaboratedTypeSpecifier tmp [] = new ICPPASTElaboratedTypeSpecifier[ declarations.length * 2 ];
+        IASTName tmp [] = new IASTName[ declarations.length * 2 ];
         System.arraycopy( declarations, 0, tmp, 0, declarations.length );
-        tmp[ declarations.length ] = elabSpec;
+        tmp[ declarations.length ] = elabSpec.getName();
         declarations = tmp;
 	}
 
@@ -311,7 +331,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
                 return new ICPPBase [] { new CPPBaseClause.CPPBaseProblem( IProblemBinding.SEMANTIC_DEFINITION_NOT_FOUND, getNameCharArray() ) };
             }
         }
-		ICPPASTBaseSpecifier [] bases = definition.getBaseSpecifiers();
+		ICPPASTBaseSpecifier [] bases = getCompositeTypeSpecifier().getBaseSpecifiers();
 		if( bases.length == 0 )
 		    return ICPPBase.EMPTY_BASE_ARRAY;
 		
@@ -377,7 +397,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
         }
         
         ICPPClassScope scope = (ICPPClassScope) getCompositeScope();
-        IASTDeclaration [] members = definition.getMembers();
+        IASTDeclaration [] members = getCompositeTypeSpecifier().getMembers();
         for( int i = 0; i < members.length; i++ ){
 			if( members[i] instanceof IASTSimpleDeclaration ){
 			    IASTDeclarator [] dtors = ((IASTSimpleDeclaration)members[i]).getDeclarators();
@@ -407,7 +427,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
             }
         }
         ObjectSet resultSet = new ObjectSet(2);
-        IASTDeclaration [] members = definition.getMembers();
+        IASTDeclaration [] members = getCompositeTypeSpecifier().getMembers();
         for( int i = 0; i < members.length; i++ ){
 			if( members[i] instanceof IASTSimpleDeclaration ){
 			    ICPPASTDeclSpecifier declSpec = (ICPPASTDeclSpecifier) ((IASTSimpleDeclaration)members[i]).getDeclSpecifier();

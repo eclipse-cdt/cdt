@@ -33,6 +33,7 @@ public class CPPEnumerator implements IEnumerator, ICPPBinding {
      */
     public CPPEnumerator( IASTName enumerator ) {
         this.enumName = enumerator;
+        ((CPPASTName)enumerator).setBinding( this );
     }
 
     /* (non-Javadoc)

@@ -418,6 +418,15 @@ public class AST2CPPTests extends AST2BaseTest {
         assertSame(a.getType(), cA);
         assertInstances(collector, vA, 2);
         assertInstances(collector, cA, 2);
+        
+        tu = parse(buffer.toString(), ParserLanguage.CPP);
+        collector = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit( collector);
+
+        cA = (ICompositeType) collector.getName(1).resolveBinding();
+        IBinding A = collector.getName(3).resolveBinding();
+        vA = (IVariable) collector.getName(0).resolveBinding();
+        assertSame(vA, A);
     }
 
     public void testBlockTraversal() throws Exception {
@@ -2335,6 +2344,35 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( decls.length, 2 );
         assertSame( decls[0], col.getName(2) );
         assertSame( decls[1], col.getName(5) );
+    }
+    
+    public void test86371() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("struct B {                          \n"); //$NON-NLS-1$
+        buffer.append("   void f ( char );                 \n"); //$NON-NLS-1$
+        buffer.append("   void g ( char );                 \n"); //$NON-NLS-1$
+        buffer.append("};                                  \n"); //$NON-NLS-1$
+        buffer.append("struct D : B {                      \n"); //$NON-NLS-1$
+        buffer.append("   using B::f;                      \n"); //$NON-NLS-1$
+        buffer.append("   void f( int ) { f('c'); }        \n"); //$NON-NLS-1$
+        buffer.append("   void g( int ) { g('c'); }        \n"); //$NON-NLS-1$
+        buffer.append("};                                  \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IFunction f_ref = (IFunction) col.getName(12).resolveBinding(); 
+        IFunction g_ref = (IFunction) col.getName(15).resolveBinding();
+        
+        IFunction f = (IFunction) col.getName(1).resolveBinding();
+        assertSame( f_ref, f );
+        
+        IFunction g = (IFunction) col.getName(13).resolveBinding();
+        assertSame( g, g_ref );
+        
+        assertInstances( col, f_ref, 4 );
+        assertInstances( col, g_ref, 2 );
     }
 }
 

@@ -79,6 +79,13 @@ public class CPPFunction implements IFunction, ICPPBinding {
 				definition = declarator;
 			else
 				declarations = new ICPPASTFunctionDeclarator [] { declarator };
+	    
+		    IASTName name = declarator.getName();
+		    if( name instanceof ICPPASTQualifiedName ){
+		        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+		        name = ns[ ns.length - 1 ];
+		    }
+		    ((CPPASTName)name).setBinding( this );
 	    }
 	}
 	

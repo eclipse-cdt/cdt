@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -25,12 +26,13 @@ import org.eclipse.cdt.core.dom.ast.IType;
  * @author aniefer
  */
 public class CPPEnumeration implements IEnumeration, ICPPBinding {
-    private IASTEnumerationSpecifier enumSpecifier;
+    private IASTName enumName;
     /**
      * @param specifier
      */
-    public CPPEnumeration( IASTEnumerationSpecifier specifier ) {
-        this.enumSpecifier = specifier;
+    public CPPEnumeration( IASTName name ) {
+        this.enumName = name;
+        ((CPPASTName)name).setBinding( this );
     }
 
     /* (non-Javadoc)
@@ -44,35 +46,35 @@ public class CPPEnumeration implements IEnumeration, ICPPBinding {
      * @see org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPBinding#getDefinition()
      */
     public IASTNode getDefinition() {
-        return enumSpecifier;
+        return enumName;
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
-        return enumSpecifier.getName().toString();
+        return enumName.toString();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
     public char[] getNameCharArray() {
-        return enumSpecifier.getName().toCharArray();
+        return enumName.toCharArray();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
      */
     public IScope getScope() {
-        return CPPVisitor.getContainingScope( enumSpecifier );
+        return CPPVisitor.getContainingScope( enumName );
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
      */
     public IASTNode getPhysicalNode() {
-        return enumSpecifier;
+        return enumName;
     }
     
     public Object clone(){
@@ -89,7 +91,7 @@ public class CPPEnumeration implements IEnumeration, ICPPBinding {
      * @see org.eclipse.cdt.core.dom.ast.IEnumeration#getEnumerators()
      */
     public IEnumerator[] getEnumerators() {
-        IASTEnumerationSpecifier.IASTEnumerator[] enums = enumSpecifier.getEnumerators();
+        IASTEnumerationSpecifier.IASTEnumerator[] enums = ((IASTEnumerationSpecifier)enumName.getParent()).getEnumerators();
         IEnumerator [] bindings = new IEnumerator [ enums.length ];
         
         for( int i = 0; i < enums.length; i++ ){

@@ -191,7 +191,7 @@ public class CPPVisitor implements ICPPASTVisitor {
         try {
             binding = functionScope.getBinding( name );
             if( binding == null ){
-    	        binding = new CPPLabel( gotoStatement );
+    	        binding = new CPPLabel( gotoStatement.getName() );
     	        functionScope.addBinding( binding );
     	    }
         } catch ( DOMException e ) {
@@ -208,10 +208,10 @@ public class CPPVisitor implements ICPPASTVisitor {
         try {
             binding = functionScope.getBinding( name );
             if( binding == null ){
-    	        binding = new CPPLabel( labelStatement );
+    	        binding = new CPPLabel( labelStatement.getName() );
     	        functionScope.addBinding( binding );
     	    } else {
-    	        ((CPPLabel)binding).setLabelStatement( labelStatement );
+    	        ((CPPLabel)binding).setLabelStatement( labelStatement.getName() );
     	    }
         } catch ( DOMException e ) {
             binding = e.getProblem();
@@ -243,7 +243,7 @@ public class CPPVisitor implements ICPPASTVisitor {
         try {
             enumeration = scope.getBinding( specifier.getName() );
             if( enumeration == null ){
-                enumeration = new CPPEnumeration( specifier );
+                enumeration = new CPPEnumeration( specifier.getName() );
                 scope.addBinding( enumeration );
             }
         } catch ( DOMException e ) {
@@ -309,7 +309,7 @@ public class CPPVisitor implements ICPPASTVisitor {
             binding = scope.getBinding( elabType.getName() );
             if( binding == null ){
     			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum )
-    				binding = new CPPClassType( elabType );
+    				binding = new CPPClassType( elabType.getName() );
     			scope.addBinding( binding );
     		} else {
     			((CPPClassType)binding).addDeclaration( elabType );
@@ -331,7 +331,7 @@ public class CPPVisitor implements ICPPASTVisitor {
         try {
             binding = scope.getBinding( compType.getName() );
             if( binding == null || !(binding instanceof ICPPClassType) ){
-    			binding = new CPPClassType( compType );
+    			binding = new CPPClassType( compType.getName() );
     			scope.addBinding( binding );
     		} else {
     			((CPPClassType)binding).addDefinition( compType );
@@ -446,7 +446,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		    
 			IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) parent;			
 			if( simpleDecl.getDeclSpecifier().getStorageClass() == IASTDeclSpecifier.sc_typedef ){
-				binding = new CPPTypedef( declarator );
+				binding = new CPPTypedef( declarator.getName() );
 			} else {
 			    IType t1 = null, t2 = null;
 			    

@@ -14,10 +14,9 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
+import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
@@ -25,12 +24,13 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * @author aniefer
  */
 public class CPPLabel implements ILabel, ICPPBinding {
-    private IASTStatement statement;
+    private IASTName statement;
     /**
      * @param gotoStatement
      */
-    public CPPLabel( IASTStatement statement ) {
+    public CPPLabel( IASTName statement ) {
         this.statement = statement;
+        ((CPPASTName)statement).setBinding( this );
     }
 
     /* (non-Javadoc)
@@ -62,20 +62,14 @@ public class CPPLabel implements ILabel, ICPPBinding {
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
      */
     public String getName() {
-        if( statement instanceof IASTLabelStatement )
-            return ((IASTLabelStatement) statement).getName().toString();
-
-        return ((IASTGotoStatement) statement).getName().toString();
+        return statement.toString();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
      */
     public char[] getNameCharArray() {
-        if( statement instanceof IASTLabelStatement )
-            return ((IASTLabelStatement) statement).getName().toCharArray();
-
-        return ((IASTGotoStatement) statement).getName().toCharArray();    
+        return statement.toCharArray();
     }
 
     /* (non-Javadoc)
@@ -95,7 +89,7 @@ public class CPPLabel implements ILabel, ICPPBinding {
     /**
      * @param labelStatement
      */
-    public void setLabelStatement( IASTLabelStatement labelStatement ) {
+    public void setLabelStatement( IASTName labelStatement ) {
         statement = labelStatement;
     }
 

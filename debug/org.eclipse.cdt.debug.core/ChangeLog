@@ -1,3 +1,8 @@
+2002-10-16 Alain Magloire
+
+	* src/.../core/cdi/model/ICDIMemoryBlock.java (refresh):
+	New method.
+
 2002-10-25 Mikhail Khodjaiants
 	* CDebugUtils.java: Added utilities to convert textual presentation of memory to bytes.
 

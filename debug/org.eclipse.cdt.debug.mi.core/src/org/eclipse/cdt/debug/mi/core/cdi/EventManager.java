@@ -103,7 +103,7 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 			} else if (miEvent instanceof MIDetachedEvent) {
 				cdiList.add(new DisconnectedEvent(session));
 			} else if (miEvent instanceof MIBreakPointDeletedEvent) {
-				cdiList.add(new DestroyedEvent(session));
+				cdiList.add(new DestroyedEvent(session, (MIBreakPointDeletedEvent)miEvent));
 			}
 		} else if (miEvent instanceof MICreatedEvent) {
 			if (miEvent instanceof MIBreakPointCreatedEvent) {

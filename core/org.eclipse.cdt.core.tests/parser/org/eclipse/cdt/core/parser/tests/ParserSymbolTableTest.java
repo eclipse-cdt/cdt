@@ -2484,10 +2484,14 @@ public class ParserSymbolTableTest extends TestCase {
 		IParameterizedSymbol constructor2 = table.newParameterizedSymbol( "A", TypeInfo.t_constructor );
 		constructor2.addParameter( TypeInfo.t_int, 0, null, false );
 		
+		IParameterizedSymbol constructor3 = table.newParameterizedSymbol( "A", TypeInfo.t_constructor );
+		constructor3.addParameter( TypeInfo.t_char, 0, null, false );
+		
 		classA.addConstructor( constructor1 );
 		classA.addConstructor( constructor2 );
+		classA.addConstructor( constructor3 );
 		
-		assertEquals( classA.getConstructors().size(), 2 );
+		assertEquals( classA.getConstructors().size(), 3 );
 		
 		IParameterizedSymbol cloned = (IParameterizedSymbol) constructor2.clone();
 		try{

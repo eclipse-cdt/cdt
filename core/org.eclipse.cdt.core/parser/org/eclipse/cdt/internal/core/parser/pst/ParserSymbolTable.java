@@ -476,7 +476,7 @@ public class ParserSymbolTable {
 			//the first thing can be a class-name or enumeration name, but the rest
 			//must be functions.  So make sure the newDecl is a function before even
 			//considering the list
-			if( newSymbol.getType() != TypeInfo.t_function ){
+			if( newSymbol.getType() != TypeInfo.t_function && newSymbol.getType() != TypeInfo.t_constructor ){
 				return false;
 			}
 			

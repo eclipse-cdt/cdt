@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -41,7 +42,6 @@ public class CModelTests extends TestCase {
     IWorkspaceRoot root;
     IProject project_c, project_cc;
     NullProgressMonitor monitor;
-    String pluginRoot;
 
     /**
      * Constructor for CModelTests.
@@ -73,7 +73,6 @@ public class CModelTests extends TestCase {
             fail("Workspace was not setup");
         if (root==null)
             fail("Workspace root was not setup");
-		pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
 		desc=workspace.getDescription();
 		desc.setAutoBuilding(false);
 		workspace.setDescription(desc);
@@ -144,8 +143,9 @@ public class CModelTests extends TestCase {
 
         IFile file = testProject.getProject().getFile("exetest_g");
         if (!file.exists()) {
-            file.create(new FileInputStream(pluginRoot+"resources/exe/x86/o.g/exe_g"),false, monitor);
-        
+            file.create(new FileInputStream(
+            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/exe/x86/o.g/exe_g"))),
+            		false, monitor);
         }
         /***
          * file should be a binary, executable, not shared or archive
@@ -160,8 +160,9 @@ public class CModelTests extends TestCase {
         
         file = testProject.getProject().getFile("exetest.c");
         if (!file.exists()) {
-            file.create(new FileInputStream(pluginRoot+"resources/exe/main.c"),false, monitor);
-        
+            file.create(new FileInputStream(
+            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/exe/main.c"))),
+					false, monitor);
         }
         /***
          * file should be a translation unit
@@ -175,8 +176,9 @@ public class CModelTests extends TestCase {
         
         file = testProject.getProject().getFile("exetest.o");
         if (!file.exists()) {
-            file.create(new FileInputStream(pluginRoot+"resources/exe/x86/o.g/main.o"),false, monitor);
-        
+            file.create(new FileInputStream(
+            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/exe/x86/o.g/main.o"))),
+					false, monitor);
         }
         /***
          * file should be a object file unit
@@ -190,8 +192,9 @@ public class CModelTests extends TestCase {
 
         file = testProject.getProject().getFile("liblibtest_g.so");
         if (!file.exists()) {
-            file.create(new FileInputStream(pluginRoot+"resources/testlib/x86/so.g/libtestlib_g.so"),false, monitor);
-        
+            file.create(new FileInputStream(
+            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/testlib/x86/so.g/libtestlib_g.so"))),
+					false, monitor);
         }
         /***
          * file should be a sharedlib/binary file
@@ -205,8 +208,9 @@ public class CModelTests extends TestCase {
 
         file = testProject.getProject().getFile("liblibtest_g.a");
         if (!file.exists()) {
-            file.create(new FileInputStream(pluginRoot+"resources/testlib/x86/a.g/libtestlib_g.a"),false, monitor);
-        
+            file.create(new FileInputStream(
+            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/testlib/x86/a.g/libtestlib_g.a"))),
+					false, monitor);
         } else {
             fail("Does not exist?");
         }

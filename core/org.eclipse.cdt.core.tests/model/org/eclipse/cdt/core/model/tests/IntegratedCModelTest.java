@@ -14,10 +14,11 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author bnicolle
@@ -56,14 +57,12 @@ public abstract class IntegratedCModelTest extends TestCase {
 
 	public void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
-
 		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
-	
 		sourceFile = fCProject.getProject().getFile( getSourcefileResource() );
 		if (!sourceFile.exists()) {
 			try{
-				FileInputStream fileIn = new FileInputStream(pluginRoot+ getSourcefileSubdir() + getSourcefileResource() ); 
+				FileInputStream fileIn = new FileInputStream(
+						CTestPlugin.getDefault().getFileInPlugin(new Path(getSourcefileSubdir() + getSourcefileResource()))); 
 				sourceFile.create(fileIn,false, monitor);        
 			} catch (CoreException e) {
 				e.printStackTrace();

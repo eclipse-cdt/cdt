@@ -17,6 +17,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
@@ -80,7 +81,6 @@ public class TranslationUnitBaseTest extends TestCase
          * so we need to get them setup first.
          */
         IWorkspaceDescription desc;
-		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
         workspace= ResourcesPlugin.getWorkspace();
         root= workspace.getRoot();
         monitor = new NullProgressMonitor();
@@ -104,36 +104,41 @@ public class TranslationUnitBaseTest extends TestCase
     
         cfile = testProject.getProject().getFile("exetest.c");
         if (!cfile.exists()) {
-            cfile.create(new FileInputStream(pluginRoot+"resources/cfiles/TranslationUnits.c"),false, monitor);
-        
+            cfile.create(new FileInputStream(
+            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/cfiles/TranslationUnits.c"))),
+					false, monitor);
         }
         cpath=new Path(workspace.getRoot().getLocation()+"/filetest/main.c");
     
         objfile = testProject.getProject().getFile("exetest.o");
         if (!objfile.exists()) {
-            objfile.create(new FileInputStream(pluginRoot+"resources/exe/x86/o.g/main.o"),false, monitor);
-        
+            objfile.create(new FileInputStream(
+            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/exe/x86/o.g/main.o"))),
+					false, monitor);
         }
         objpath=new Path(workspace.getRoot().getLocation()+"/filetest/main.o");
         
         exefile = testProject.getProject().getFile("test_g");
         if (!exefile.exists()) {
-            exefile.create(new FileInputStream(pluginRoot+"resources/exe/x86/o.g/exe_g"),false, monitor);
-        
+            exefile.create(new FileInputStream(
+            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/exe/x86/o.g/exe_g"))),
+					false, monitor);
         }
         exepath=new Path(workspace.getRoot().getLocation()+"/filetest/exe_g");
         
         archfile = testProject.getProject().getFile("libtestlib_g.a");
         if (!archfile.exists()) {
-            archfile.create(new FileInputStream(pluginRoot+"resources/testlib/x86/a.g/libtestlib_g.a"),false, monitor);
-        
+            archfile.create(new FileInputStream(
+            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/testlib/x86/a.g/libtestlib_g.a"))),
+					false, monitor);
         }
         libpath=new Path(workspace.getRoot().getLocation()+"/filetest/libtestlib_g.so");
         
         libfile = testProject.getProject().getFile("libtestlib_g.so");
         if (!libfile.exists()) {
-            libfile.create(new FileInputStream(pluginRoot+"resources/testlib/x86/so.g/libtestlib_g.so"),false, monitor);
-        
+            libfile.create(new FileInputStream(
+            		CTestPlugin.getDefault().getFileInPlugin(new Path("resources/testlib/x86/so.g/libtestlib_g.so"))),
+					false, monitor);
         }
         archpath=new Path(workspace.getRoot().getLocation()+"/filetest/libtestlib_g.a");
     

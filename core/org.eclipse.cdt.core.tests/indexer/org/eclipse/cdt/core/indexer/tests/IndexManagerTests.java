@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -35,7 +36,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author bgheorgh
@@ -132,13 +133,11 @@ public class IndexManagerTests extends TestCase {
 	private IFile importFile(String fileName, String resourceLocation)throws Exception {
 		//Obtain file handle
 		file = testProject.getProject().getFile(fileName);
-		String pluginRoot = Platform.asLocalURL(
-				Platform.getPlugin("org.eclipse.cdt.core.tests")
-						.getDescriptor().getInstallURL()).getFile();
 		//Create file input stream
 		monitor = new NullProgressMonitor();
 		if (!file.exists()) {
-			file.create(new FileInputStream(pluginRoot + resourceLocation),
+			file.create(new FileInputStream(
+					CTestPlugin.getDefault().getFileInPlugin(new Path(resourceLocation))),
 					false, monitor);
 		}
 		fileDoc = new IFileDocument(file);

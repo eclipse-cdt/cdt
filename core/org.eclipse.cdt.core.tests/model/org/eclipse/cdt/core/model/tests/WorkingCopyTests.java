@@ -24,11 +24,12 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.cdt.testplugin.TestPluginLauncher;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Contains unit test cases for Working Copies. Run using JUnit Plugin Test
@@ -56,14 +57,14 @@ public class WorkingCopyTests extends TestCase {
 	
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
-
+	
 		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
 		//Path filePath = new Path(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString()+ fCProject.getPath().toString()+ "/WorkingCopyTest.h");
 		headerFile = fCProject.getProject().getFile("WorkingCopyTest.h");
 		if (!headerFile.exists()) {
 			try{
-				FileInputStream fileIn = new FileInputStream(pluginRoot+ "resources/cfiles/WorkingCopyTestStart.h"); 
+				FileInputStream fileIn = new FileInputStream(
+						CTestPlugin.getDefault().getFileInPlugin(new Path("resources/cfiles/WorkingCopyTestStart.h"))); 
 				headerFile.create(fileIn,false, monitor);        
 			} catch (CoreException e) {
 				e.printStackTrace();

@@ -29,7 +29,9 @@ import org.eclipse.cdt.internal.core.search.matching.FieldDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.MatchLocator;
 import org.eclipse.cdt.internal.core.search.matching.NamespaceDeclarationPattern;
 import org.eclipse.cdt.internal.core.search.matching.OrPattern;
+import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 /**
@@ -318,8 +320,7 @@ public class OtherPatternTests extends BaseSearchTest {
 	}
 	
 	public void testNoResourceSearching() throws Exception {
-		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
-		String path = pluginRoot + "resources/search/include.h";
+		String path = CTestPlugin.getDefault().getFileInPlugin(new Path("resources/search/include.h")).getAbsolutePath();
 		
 		ICSearchPattern pattern = SearchEngine.createSearchPattern( "Head", CLASS, REFERENCES, true );
 		

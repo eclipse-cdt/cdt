@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.search.ICSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.cdt.core.search.SearchEngine;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.cdt.testplugin.FileManager;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
@@ -34,7 +35,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author aniefer
@@ -109,11 +110,12 @@ public class BaseSearchTest extends TestCase implements ICSearchConstants {
 	private void importFile(String fileName, String resourceLocation) throws Exception{
 		//Obtain file handle
 		file = testProject.getProject().getFile(fileName); 
-		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
 		//Create file input stream
 		
 		if (!file.exists()){
-			file.create(new FileInputStream(pluginRoot + resourceLocation),false,monitor);
+			file.create(new FileInputStream(
+					CTestPlugin.getDefault().getFileInPlugin(new Path(resourceLocation))),
+					false,monitor);
 			fileManager.addFile(file);
 		}
 	

@@ -24,7 +24,8 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.cdt.testplugin.CTestPlugin;
+import org.eclipse.core.runtime.Path;
 
 /**
  * @author jcamelon
@@ -32,7 +33,6 @@ import org.eclipse.core.runtime.Platform;
  */
 public class ParseTestOnSearchFiles extends TestCase
 {
-    private String pluginRoot;
     private FileInputStream fileIn;
     private String name;
     /**
@@ -51,9 +51,8 @@ public class ParseTestOnSearchFiles extends TestCase
     }
     
 	protected void setUp() throws Exception {	
-		pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL()).getFile();
-        name = pluginRoot+ "resources/search/classDecl.cpp";
-        fileIn = new FileInputStream(name);
+		name = "resources/search/classDecl.cpp";
+        fileIn = new FileInputStream(CTestPlugin.getDefault().getFileInPlugin(new Path(name)));
 	}
 	
 	public void testParseOfAndrewsFile() throws Exception

@@ -42,9 +42,11 @@ import org.eclipse.cdt.internal.core.model.MethodTemplate;
 import org.eclipse.cdt.internal.core.model.StructureTemplate;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 public class CModelElementsTests extends TestCase {	
@@ -64,14 +66,12 @@ public class CModelElementsTests extends TestCase {
 		
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
-		String pluginRoot = Platform.asLocalURL(Platform.getPlugin("org.eclipse.cdt.core.tests").getDescriptor().getInstallURL())
-			.getFile();
-	
 		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
 		headerFile = fCProject.getProject().getFile("CModelElementsTest.h");
 		if (!headerFile.exists()) {
 			try{
-				FileInputStream fileIn = new FileInputStream(pluginRoot+ "resources/cfiles/CModelElementsTestStart.h"); 
+				FileInputStream fileIn = new FileInputStream(
+						CTestPlugin.getDefault().getFileInPlugin(new Path("resources/cfiles/CModelElementsTestStart.h"))); 
 				headerFile.create(fileIn,false, monitor);        
 			} catch (CoreException e) {
 				e.printStackTrace();

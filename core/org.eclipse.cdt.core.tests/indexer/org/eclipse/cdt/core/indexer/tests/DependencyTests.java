@@ -35,6 +35,7 @@ import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
 import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -667,13 +668,11 @@ import org.eclipse.core.runtime.Platform;
    		String testCaseName = this.getName();
 		//Obtain file handle
 		file = testProject.getProject().getFile(fileName);
-		String pluginRoot = Platform.asLocalURL(
-				Platform.getPlugin("org.eclipse.cdt.core.tests")
-						.getDescriptor().getInstallURL()).getFile();
 		//Create file input stream
 		monitor = new NullProgressMonitor();
 		if (!file.exists()) {
-			file.create(new FileInputStream(pluginRoot + resourceLocation),
+			file.create(new FileInputStream(
+					CTestPlugin.getDefault().getFileInPlugin(new Path(resourceLocation))),
 					false, monitor);
 		}
 		fileDoc = new IFileDocument(file);

@@ -1,3 +1,7 @@
+2004-05-14 Bogdan Gheorghe
+	fix bug 48020, Duplicate Mnemonics in Search Dialog
+	* src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties
+	
 2004-05-14 Andrew Niefer
 	fix bug 62344, change completionOnTypeReference to lookup with empty prefix if
 	we have a context.
@@ -17,7 +21,7 @@
 	* src/org/eclipse/cdt/internal/ui/editor/FileSearchActionInWorkingSet.java
 	* src/org/eclipse/cdt/internal/ui/cview/MainActionGroup.java
 	* src/org/eclipse/cdt/internal/ui/cview/CViewMessages.properties
-	* src/org/eclipse/cdt/internal/ui/CPluginResources.proerties
+	* src/org/eclipse/cdt/internal/ui/CPluginResources.properties
 	
 2004-05-11 Andrew Niefer
 	- content assist bug 60298:

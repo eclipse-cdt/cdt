@@ -18,7 +18,7 @@ public interface IParserLogService
 {
 
 	public void traceLog( String message );
-	public void errorLog( String message );
+//	public void errorLog( String message );
 	
 	public boolean isTracing();
 

@@ -1097,7 +1097,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	 * @param e
 	 */
 	public void logException(String methodName, Exception e) {
-		if (!(e instanceof EndOfFileException) && e != null) {
+		if (!(e instanceof EndOfFileException) && e != null && log.isTracing()) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("Parser: Unexpected exception in "); //$NON-NLS-1$
 			buffer.append(methodName);
@@ -1107,9 +1107,8 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 			buffer.append(e.getMessage());
 			buffer.append(". w/"); //$NON-NLS-1$
 			buffer.append(scanner.toString());
-			if (log.isTracing())
-				log.traceLog(buffer.toString());
-			log.errorLog(buffer.toString());
+			log.traceLog(buffer.toString());
+//			log.errorLog(buffer.toString());
 		}
 	}
 
@@ -2593,7 +2592,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 					.outputTrace(
 							log,
 							"ScannerException thrown : ", e.getProblem(), null, null, null); //$NON-NLS-1$
-			log.errorLog("Scanner Exception: " + e.getProblem().getMessage()); //$NON-NLS-1$
+//			log.errorLog("Scanner Exception: " + e.getProblem().getMessage()); //$NON-NLS-1$
 			return fetchToken();
 		}
 	}

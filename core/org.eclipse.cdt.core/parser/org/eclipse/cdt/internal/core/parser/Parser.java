@@ -243,7 +243,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	 * @param e
 	 */
 	private void logThrowable(String methodName, Throwable e) {
-		if( e != null )
+		if( e != null && log.isTracing())
 		{
 			StringBuffer buffer = new StringBuffer();
 			buffer.append( "Parser: Unexpected throwable in "); //$NON-NLS-1$
@@ -254,9 +254,8 @@ public abstract class Parser extends ExpressionParser implements IParser
 			buffer.append( e.getMessage() );
 			buffer.append( ". w/"); //$NON-NLS-1$
 			buffer.append( scanner.toString() );
-			if( log.isTracing() )
-				log.traceLog( buffer.toString() );
-			log.errorLog( buffer.toString() );
+			log.traceLog( buffer.toString() );
+//			log.errorLog( buffer.toString() );
 		}
 }
 

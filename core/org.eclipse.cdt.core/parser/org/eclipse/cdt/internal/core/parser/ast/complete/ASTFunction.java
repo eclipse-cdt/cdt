@@ -45,7 +45,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
 	private final ASTQualifiedNamedElement qualifiedName;
 	private final List parameters;
 	protected List references;
-	private List declarations = new ArrayList();	
+	private List declarations = null;	
     /**
      * @param symbol
      * @param parameters
@@ -328,12 +328,20 @@ public class ASTFunction extends ASTScope implements IASTFunction
 
     public Iterator getDeclarations()
     {
-    	return declarations.iterator();
+    	if(declarations != null)
+    		return declarations.iterator();
+    	else
+    		return super.getDeclarations();
     }
+    
     public void addDeclaration(IASTDeclaration declaration)
     {
     	declarations.add(declaration);
     }
+    public void initDeclarations()
+	{
+    	declarations = new ArrayList(0);
+	}
 
 
 	/* (non-Javadoc)

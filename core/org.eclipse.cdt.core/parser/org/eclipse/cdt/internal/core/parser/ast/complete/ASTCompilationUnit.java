@@ -28,7 +28,7 @@ public class ASTCompilationUnit
     extends ASTScope
     implements IASTCompilationUnit
 {
-	private List declarations = new ArrayList();
+	private List declarations = null;
 	/**
      * @param symbol
      */
@@ -77,7 +77,7 @@ public class ASTCompilationUnit
     	//If a callback (ie StructuralParseCallback) populates the declarations list
     	//then return that iterator, otherwise use the ASTScope implementation which
     	//gets one from the symbol table.
-    	if( !declarations.isEmpty() )
+    	if( declarations != null )
     		return declarations.iterator();
     	
     	return super.getDeclarations();
@@ -87,4 +87,8 @@ public class ASTCompilationUnit
     {
     	declarations.add(declaration);
     }
+    public void initDeclarations()
+	{
+    	declarations = new ArrayList(0);
+	}    
 }

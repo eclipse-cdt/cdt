@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
  */
 public class ASTCodeScope extends ASTScope implements IASTCodeScope {
 
-	private List declarations = new ArrayList();	
+	private List declarations = null;	
 	private final IASTCodeScope ownerCodeScope;
 
     /**
@@ -80,13 +80,20 @@ public class ASTCodeScope extends ASTScope implements IASTCodeScope {
 
     public Iterator getDeclarations()
     {
-    	return declarations.iterator();
+    	if(declarations != null)
+    		return declarations.iterator();
+    	else
+    		return super.getDeclarations();
     }
     
     public void addDeclaration(IASTDeclaration declaration)
     {
     	declarations.add(declaration);
     }
+    public void initDeclarations()
+	{
+    	declarations = new ArrayList(0);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTCodeScope#getContainingFunction()

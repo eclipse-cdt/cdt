@@ -1,3 +1,6 @@
+2004-06-10 Hoda Amer
+	Fix for PR 65970: [Outline View] Contents of Includes displayed in Outline for STRUCTURAL_PARSE mode
+	
 2004-06-09 Alain Magloire
 
 	Patch from Sam Rob to resolve 64022

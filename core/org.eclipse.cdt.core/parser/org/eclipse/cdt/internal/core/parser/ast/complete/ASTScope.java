@@ -52,4 +52,7 @@ public abstract class ASTScope extends ASTSymbol implements IASTScope
 	{
 	}
 	
+	public void initDeclarations()
+	{	
+	}
 }

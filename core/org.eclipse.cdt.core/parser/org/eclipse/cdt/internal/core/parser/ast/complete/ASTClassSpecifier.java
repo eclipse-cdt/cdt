@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol.IParen
  */
 public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 {
-	private List declarations = new ArrayList();	
+	private List declarations = null;	
 	public class BaseIterator implements Iterator
 	{
 
@@ -271,7 +271,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     	//If a callback (ie StructuralParseCallback) populates the declarations list
     	//then return that iterator, otherwise use the ASTScope implementation which
     	//gets one from the symbol table.
-    	if( !declarations.isEmpty() ){
+    	if( declarations != null ){
     		return declarations.iterator();	
     	}
     	return super.getDeclarations();
@@ -281,6 +281,12 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
     {
     	declarations.add(declaration);
     }
+
+    public void initDeclarations()
+	{
+    	declarations = new ArrayList(0);
+	}
+    
     
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#getStartingLine()

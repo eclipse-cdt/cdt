@@ -57,6 +57,9 @@ public class StructuralParseCallback extends QuickParseCallback{
 	
 	private void enterScope(IASTNode node){
 		if(node instanceof IASTScope){
+			if(node instanceof ASTScope){
+				((ASTScope)node).initDeclarations();
+			}
 			pushScope((IASTScope)node);
 		}
 	}

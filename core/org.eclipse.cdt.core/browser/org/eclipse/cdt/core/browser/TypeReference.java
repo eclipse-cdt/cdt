@@ -10,19 +10,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.browser;
 
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 
 public class TypeReference implements ITypeReference {
@@ -195,27 +191,9 @@ public class TypeReference implements ITypeReference {
 	public IPath getRelativeIncludePath(IProject project) {
 		IPath path = getLocation();
 		if (path != null) {
-			IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
-			if (provider != null) {
-				IScannerInfo info = provider.getScannerInformation(project);
-				if (info != null) {
-					String[] includePaths = info.getIncludePaths();
-					IPath relativePath = null;
-					int mostSegments = 0;
-					for (int i = 0; i < includePaths.length; ++i) {
-						IPath includePath = new Path(includePaths[i]);
-						if (includePath.isPrefixOf(path)) {
-							int segments = includePath.matchingFirstSegments(path);
-							if (segments > mostSegments) {
-								relativePath = path.removeFirstSegments(segments).setDevice(null);
-								mostSegments = segments;
-							}
-						}
-					}
-					if (relativePath != null)
-						path = relativePath;
-				}
-			}
+		    IPath relativePath = PathUtil.makeRelativePathToProjectIncludes(path, project);
+		    if (relativePath != null)
+		        return relativePath;
 		}
 		return path;
 	}
@@ -223,20 +201,13 @@ public class TypeReference implements ITypeReference {
 	public IPath getRelativePath(IPath relativeToPath) {
 		IPath path = getPath();
 		if (path != null) {
-			int segments = relativeToPath.matchingFirstSegments(path);
-			if (segments > 0) {
-				IPath prefix = relativeToPath.removeFirstSegments(segments).removeLastSegments(1);
-				IPath suffix = path.removeFirstSegments(segments);
-				IPath relativePath = new Path(""); //$NON-NLS-1$
-				for (int i = 0; i < prefix.segmentCount(); ++i) {
-					relativePath = relativePath.append(".." + IPath.SEPARATOR); //$NON-NLS-1$
-				}
-				return relativePath.append(suffix);
-			}
+		    IPath relativePath = PathUtil.makeRelativePath(path, relativeToPath);
+		    if (relativePath != null)
+		        return relativePath;
 		}
 		return path;
 	}
-
+	
 	public String toString() {
 		IPath path = getLocation();
 		if (path != null) {

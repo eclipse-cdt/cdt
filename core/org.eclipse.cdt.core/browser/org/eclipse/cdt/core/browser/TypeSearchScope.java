@@ -52,6 +52,10 @@ public class TypeSearchScope implements ITypeSearchScope {
 		add(scope);
 	}
 	
+	public TypeSearchScope(IProject project) {
+		add(project);
+	}
+
 	public Collection pathSet() {
 		return fPathSet;
 	}

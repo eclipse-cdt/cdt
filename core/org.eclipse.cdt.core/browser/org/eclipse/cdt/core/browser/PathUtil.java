@@ -8,12 +8,16 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *******************************************************************************/
-package org.eclipse.cdt.internal.core.browser.util;
+package org.eclipse.cdt.core.browser;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,18 +26,9 @@ import org.eclipse.core.runtime.Path;
 
 public class PathUtil {
 	
-	private static boolean fGotOS = false;
-	private static boolean fIsWindows = false;
-
-	public static boolean isWindowsSystem() {
-		if (!fGotOS) {
-			String os = System.getProperty("os.name"); //$NON-NLS-1$
-			if (os != null && os.startsWith("Win")) { //$NON-NLS-1$
-				fIsWindows= true;
-			}
-			fGotOS = true;
-		}
-		return fIsWindows;
+	public static boolean isWindowsFileSystem() {
+		String os = System.getProperty("os.name"); //$NON-NLS-1$
+		return (os != null && os.startsWith("Win")); //$NON-NLS-1$
 	}
 	
 	public static IWorkspaceRoot getWorkspaceRoot() {
@@ -44,20 +39,16 @@ public class PathUtil {
 		return null;
 	}
 	
-	public static IPath getCanonicalPath(String fullPath) {
-		File file = new File(fullPath);
+	public static IPath getCanonicalPath(IPath fullPath) {
+	    File file = fullPath.toFile();
 		try {
 			String canonPath = file.getCanonicalPath();
 			return new Path(canonPath);
 		} catch (IOException ex) {
 		}
-		return new Path(fullPath);
+		return null;
 	}
 
-	public static IPath getCanonicalPath(IPath fullPath) {
-		return getCanonicalPath(fullPath.toString());
-	}
-	
 	public static IPath getWorkspaceRelativePath(IPath fullPath) {
 		IWorkspaceRoot workspaceRoot = getWorkspaceRoot();
 		if (workspaceRoot != null) {
@@ -87,10 +78,6 @@ public class PathUtil {
 		return getWorkspaceRelativePath(new Path(fullPath));
 	}
 
-	public static IPath getProjectRelativePath(String fullPath, IProject project) {
-		return getProjectRelativePath(new Path(fullPath), project);
-	}
-
 	public static IPath getRawLocation(IPath wsRelativePath) {
 		IWorkspaceRoot workspaceRoot = getWorkspaceRoot();
 		if (workspaceRoot != null && wsRelativePath != null) {
@@ -101,4 +88,58 @@ public class PathUtil {
 		}
 		return wsRelativePath;
 	}
+
+    public static IPath makeRelativePath(IPath path, IPath relativeTo) {
+        int segments = relativeTo.matchingFirstSegments(path);
+        if (segments > 0) {
+            IPath prefix = relativeTo.removeFirstSegments(segments).removeLastSegments(1);
+            IPath suffix = path.removeFirstSegments(segments);
+            IPath relativePath = new Path(""); //$NON-NLS-1$
+            for (int i = 0; i < prefix.segmentCount(); ++i) {
+                relativePath = relativePath.append(".." + IPath.SEPARATOR); //$NON-NLS-1$
+            }
+            return relativePath.append(suffix);
+        }
+        return null;
+    }
+
+    public static IPath makeRelativePathToProjectIncludes(IPath fullPath, IProject project) {
+        IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+        if (provider != null) {
+            IScannerInfo info = provider.getScannerInformation(project);
+            if (info != null) {
+                String[] includePaths = info.getIncludePaths();
+                IPath relativePath = null;
+                int mostSegments = 0;
+                for (int i = 0; i < includePaths.length; ++i) {
+                    IPath includePath = new Path(includePaths[i]);
+                    if (includePath.isPrefixOf(fullPath)) {
+                        int segments = includePath.matchingFirstSegments(fullPath);
+                        if (segments > mostSegments) {
+                            relativePath = fullPath.removeFirstSegments(segments).setDevice(null);
+                            mostSegments = segments;
+                        }
+                    }
+                }
+                if (relativePath != null)
+                    return relativePath;
+            }
+        }
+        return null;
+    }
+    
+    public static IProject getEnclosingProject(IPath fullPath) {
+		IWorkspaceRoot root = getWorkspaceRoot();
+		if (root != null) {
+			IPath path = getWorkspaceRelativePath(fullPath);
+			while (!path.isEmpty()) {
+				IResource res = root.findMember(path);
+				if (res != null)
+				    return res.getProject();
+
+				path = path.removeLastSegments(1);
+			}
+		}
+		return null;
+    }
 }

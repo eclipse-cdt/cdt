@@ -14,12 +14,12 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeSearchScope;
+import org.eclipse.cdt.core.browser.PathUtil;
 import org.eclipse.cdt.core.browser.QualifiedTypeName;
 import org.eclipse.cdt.core.browser.TypeInfo;
 import org.eclipse.cdt.core.browser.TypeReference;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.core.CharOperation;
-import org.eclipse.cdt.internal.core.browser.util.PathUtil;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.BlocksIndexInput;

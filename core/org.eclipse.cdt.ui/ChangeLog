@@ -1,3 +1,12 @@
+2004-04-12 Alain Magloire
+	This patch changes the default filter so an empty string does not show
+	any matches. The reason for this is to speed up performance when a lot
+	of types are initially visible. Note this makes the behaviour consistent
+	with the JDT Open Type.
+
+	* browser/org/eclipse/cdt/internal/ui/browser/opentype//OpentTypeDialog.java
+	* browser/org/eclipse/cdt/ui/browser/typeinfo/TypeSelectionDialog.java
+
 2004-04-12 Bogdan Gheorghe
 	Added Enumerator, Derived types to search dialog
 	

@@ -206,6 +206,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	 */
 	public TypeSelectionDialog(Shell parent) {
 		super(parent, fElementRenderer, fQualifierRenderer);
+		setMatchEmptyString(false);
 		setUpperListLabel(TypeInfoMessages.getString("TypeSelectionDialog.upperLabel")); //$NON-NLS-1$
 		setLowerListLabel(TypeInfoMessages.getString("TypeSelectionDialog.lowerLabel")); //$NON-NLS-1$
 		setVisibleTypes(fAllTypes);

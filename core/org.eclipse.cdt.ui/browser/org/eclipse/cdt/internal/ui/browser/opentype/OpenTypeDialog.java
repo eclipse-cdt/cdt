@@ -30,7 +30,6 @@ public class OpenTypeDialog extends TypeSelectionDialog {
 		super(parent);
 		setTitle(OpenTypeMessages.getString("OpenTypeDialog.title")); //$NON-NLS-1$
 		setMessage(OpenTypeMessages.getString("OpenTypeDialog.message")); //$NON-NLS-1$
-		setMatchEmptyString(true);
 		setDialogSettings(DIALOG_SETTINGS);
 	}
 }

@@ -56,19 +56,14 @@ public class CBuilder extends ACBuilder {
 	 */	
 	protected IProject[] build(int kind, Map args, IProgressMonitor monitor) throws CoreException {	
 		IResourceDelta delta= getDelta(getProject());
-		boolean isFullBuild= (kind == IncrementalProjectBuilder.FULL_BUILD) || (delta == null);
+		boolean isFullBuild= (kind == IncrementalProjectBuilder.FULL_BUILD);
 		if (isFullBuild) {
 			invokeMake(true, monitor);
 		} else {
-			IResource res= delta.getResource();
-			//if (res != null && delta.getKind() != 0) {
-			if (res != null) {
-				IProject currProject= getProject();
-				if (currProject.equals(res.getProject())) {
-					invokeMake(false, monitor);
-				}
-			}
+			/* Take the code in the QNX Builder todo project dependencies.  */
+			invokeMake(false, monitor);
 		}
+		forgetLastBuiltState();
 		return null;
 	}
 	

@@ -2575,5 +2575,45 @@ public class AST2CPPTests extends AST2BaseTest {
         IFunction printf = (IFunction) col.getName(6).resolveBinding();
         assertInstances( col, printf, 3 );
     }
+    
+    public void testBug86554() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int max( int a, int b, int c ) {                  \n"); //$NON-NLS-1$
+        buffer.append("   int m = ( a > b ) ? a : b;                     \n"); //$NON-NLS-1$
+        buffer.append("   return ( m > c ) ? m : c;                      \n"); //$NON-NLS-1$
+        buffer.append("}                                                 \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IVariable m = (IVariable) col.getName(11).resolveBinding();
+        IParameter a = (IParameter) col.getName(1).resolveBinding();
+        IParameter b = (IParameter) col.getName(2).resolveBinding();
+        IParameter c = (IParameter) col.getName(3).resolveBinding();
+        
+        assertInstances( col, m, 3 );
+        assertInstances( col, a, 3 );
+        assertInstances( col, b, 3 );
+        assertInstances( col, c, 3 );
+    }
+    
+    public void testBug86621() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("int g();                               \n"); //$NON-NLS-1$
+        buffer.append("struct X { static int g(); };          \n"); //$NON-NLS-1$
+        buffer.append("struct Y : X { static int i ; };       \n"); //$NON-NLS-1$
+        buffer.append("int Y::i = g();                        \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        IFunction g1 = (IFunction) col.getName(0).resolveBinding();
+        ICPPMethod g2 = (ICPPMethod) col.getName(9).resolveBinding();
+        
+        assertInstances( col, g1, 1 );
+        assertInstances( col, g2, 2 );
+    }
 }
 

@@ -547,6 +547,13 @@ public class CPPVisitor implements ICPPASTVisitor {
 				    return dtor.getFunctionScope();
 				else if( prop == IASTFunctionDefinition.DECLARATOR )
 				    return ((IASTCompoundStatement)((IASTFunctionDefinition)dtor.getParent()).getBody()).getScope();
+			} else if( node instanceof IASTInitializerExpression ){
+	    	    IASTDeclarator dtor = (IASTDeclarator) node.getParent();
+	    	    IASTName name = dtor.getName();
+	    	    if( name instanceof ICPPASTQualifiedName ){
+	    	        IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+	    	        return getContainingScope( ns[ ns.length - 1 ] );
+	    	    }
 			} else if( node instanceof IASTExpression ){
 		    	IASTNode parent = node.getParent();
 			    if( parent instanceof IASTForStatement ){

@@ -181,7 +181,7 @@
          <option
                name="%Option.Posix.Linker.XLinker"
                category="gnu.c.link.category.other"
-               command="-Xlinker,"
+               command="-Xlinker"
                valueType="stringList"
                id="gnu.c.link.option.other">
          </option>

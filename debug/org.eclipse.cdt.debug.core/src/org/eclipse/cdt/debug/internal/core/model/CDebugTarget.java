@@ -654,7 +654,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 			ICDebugTarget[] tfs = b.getTargetFilters();
 			install = Arrays.asList( tfs ).contains( this );
 		}
-		catch( CoreException e1 ) {
+		catch( CoreException e ) {
 		}
 		boolean registered = getBreakpointManager().isCDIRegistered( b );
 		if ( registered && !install ) {

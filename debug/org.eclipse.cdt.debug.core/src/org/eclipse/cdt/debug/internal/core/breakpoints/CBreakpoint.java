@@ -304,7 +304,6 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	public void removeTargetFilter( ICDebugTarget target ) throws CoreException {
 		if ( fFilteredThreadsByTarget.containsKey( target ) ) {
 			fFilteredThreadsByTarget.remove( target );
-			fireChanged();
 		}
 	}
 
@@ -331,7 +330,6 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	 */
 	public void setTargetFilter( ICDebugTarget target ) throws CoreException {
 		fFilteredThreadsByTarget.put( target, null );
-		fireChanged();
 	}
 
 	/* (non-Javadoc)
@@ -348,7 +346,7 @@ public abstract class CBreakpoint extends Breakpoint implements ICBreakpoint, ID
 	 * does not exist, do not fire a change notificaiton (the marker may not
 	 * exist if the associated project was closed).
 	 */
-	protected void fireChanged() {
+	public void fireChanged() {
 		if ( markerExists() ) {
 			DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( this );
 		}

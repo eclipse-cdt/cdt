@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.internal.ui;
 import java.util.Map;
 import org.eclipse.cdt.debug.core.ICBreakpointListener;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -51,19 +52,22 @@ public class CBreakpointUpdater implements ICBreakpointListener {
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointInstalled(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
-	public void breakpointInstalled( IDebugTarget target, final IBreakpoint breakpoint ) {
-		asyncExec( new Runnable() {
-
-			public void run() {
-				try {
-					if ( ((ICBreakpoint)breakpoint).incrementInstallCount() == 1 )
-						DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( breakpoint );
-				}
-				catch( CoreException e ) {
-					CDebugUIPlugin.log( e.getStatus() );
-				}
-			}
-		} );
+	public void breakpointInstalled( final IDebugTarget target, IBreakpoint breakpoint ) {
+		if ( breakpoint instanceof ICBreakpoint && target instanceof ICDebugTarget ) {
+			final ICBreakpoint b = (ICBreakpoint)breakpoint;
+			asyncExec( new Runnable() {
+	
+				public void run() {
+						try {
+							if ( b.incrementInstallCount() == 1 )
+								DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( b );
+						}
+						catch( CoreException e ) {
+							CDebugUIPlugin.log( e.getStatus() );
+						}
+					}
+			} );
+		}
 	}
 
 	/*

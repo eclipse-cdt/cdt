@@ -1,3 +1,8 @@
+2004-09-10 Mikhail Khodjaiants
+	Fixes for breakpoint filtering.
+	* CBreakpointUpdater.java
+	* ThreadFilterEditor.java
+
 2004-09-01 Mikhail Khodjaiants
 	Fix for bug 73197: DisassemblyEditorInput.getAddress can crash.
 	* DisassemblyEditorInput.java

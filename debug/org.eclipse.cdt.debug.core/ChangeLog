@@ -1,3 +1,9 @@
+2004-09-10 Mikhail Khodjaiants
+	Fixes for breakpoint filtering.
+	* CBreakpointManager.java
+	* CBreakpoint.java
+	* CDebugTarget.java
+
 2004-09-09 Alain Magloire
 	Introduction of new classes in the CDI interface
 	* ICDIExecuteStep.java

@@ -320,6 +320,7 @@ public class ThreadFilterEditor {
 				else {
 					breakpoint.removeTargetFilter( (ICDebugTarget)targets[i] );
 				}
+				DebugPlugin.getDefault().getBreakpointManager().fireBreakpointChanged( breakpoint );
 			}
 			catch( CoreException e ) {
 				DebugUIPlugin.log( e );

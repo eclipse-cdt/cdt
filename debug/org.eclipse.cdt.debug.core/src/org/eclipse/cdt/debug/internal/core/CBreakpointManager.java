@@ -291,7 +291,6 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			}
 			if ( cdiBreakpoint == null )
 				return;
-			breakpoint.setTargetFilter( getDebugTarget() );
 			boolean enabled = breakpoint.isEnabled();
 			setBreakpointCondition( breakpoint );
 			if ( !enabled )
@@ -318,13 +317,9 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			ICDITarget cdiTarget = getCDITarget();
 			try {
 				cdiTarget.deleteBreakpoints( new ICDIBreakpoint[]{ cdiBreakpoint } );
-				breakpoint.removeTargetFilter( getDebugTarget() );
 			}
 			catch( CDIException e ) {
 				targetRequestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.3" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
-			}
-			catch( CoreException e ) {
-				DebugPlugin.log( e );
 			}
 		}
 	}
@@ -384,6 +379,11 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			breakpoint = createLocationBreakpoint( cdiBreakpoint );
 		}
 		if ( breakpoint != null ) {
+			try {
+				breakpoint.setTargetFilter( getDebugTarget() );
+			}
+			catch( CoreException e ) {
+			}
 			getBreakpointNotifier().breakpointInstalled( getDebugTarget(), breakpoint );
 		}
 	}
@@ -409,6 +409,11 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		getBreakpointMap().removeCDIBreakpoint( cdiBreakpoint );
 		if ( breakpoint != null ) {
 			if ( isFilteredByTarget( breakpoint, getDebugTarget() ) ) {
+				try {
+					breakpoint.removeTargetFilter( getDebugTarget() );
+				}
+				catch( CoreException e ) {
+				}
 				getBreakpointNotifier().breakpointRemoved( getDebugTarget(), breakpoint );
 			}
 			else {
@@ -695,7 +700,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 		boolean result = false;
 		try {
 			ICDebugTarget[] tfs = breakpoint.getTargetFilters();
-			result = Arrays.asList( tfs ).contains( this );
+			result = Arrays.asList( tfs ).contains( target );
 		}
 		catch( CoreException e1 ) {
 		}

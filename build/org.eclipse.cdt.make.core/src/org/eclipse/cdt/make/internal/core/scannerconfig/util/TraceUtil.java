@@ -103,11 +103,11 @@ public class TraceUtil {
 	public static void metricsTrace(String title, String subtitlePrefix, String subtitlePostfix, Map directoryCommandListMap) {
 		try {
 			logger.writeln();
-			logger.writeln(" *** NEW METRICS TRACE ***");
+			logger.writeln(" *** NEW METRICS TRACE ***"); //$NON-NLS-1$
 			logger.writeln();
 			for (Iterator k = directoryCommandListMap.keySet().iterator(); k.hasNext(); ) { 
 				String dir = (String) k.next();
-				logger.writeln(title + dir + ":");
+				logger.writeln(title + dir + ":"); //$NON-NLS-1$
 				List directoryCommandList = (List) directoryCommandListMap.get(dir);
 				if (directoryCommandList == null) {
 					logger.writeln("  --- empty ---" + EOL); //$NON-NLS-1$
@@ -138,12 +138,12 @@ public class TraceUtil {
 	public static void summaryTrace(String title, int workingDirsN, int commandsN, int filesN) {
 		try {
 			logger.writeln();
-			logger.writeln(" *** METRICS SUMMARY ***");
+			logger.writeln(" *** METRICS SUMMARY ***"); //$NON-NLS-1$
 			logger.writeln();
 			logger.writeln(title);
-			logger.writeln("  Number of directories visited: " + Integer.toString(workingDirsN));
-			logger.writeln("  Number of generic commands:    " + Integer.toString(commandsN));
-			logger.writeln("  Number of compiled files:      " + Integer.toString(filesN));
+			logger.writeln("  Number of directories visited: " + Integer.toString(workingDirsN)); //$NON-NLS-1$
+			logger.writeln("  Number of generic commands:    " + Integer.toString(commandsN)); //$NON-NLS-1$
+			logger.writeln("  Number of compiled files:      " + Integer.toString(filesN)); //$NON-NLS-1$
 			logger.flushLog();
 		}
 		catch (IOException e) {}
@@ -155,7 +155,7 @@ public class TraceUtil {
 	public static void metricsTrace(String trace) {
 		try {
 			logger.writeln();
-			logger.writeln(" *** NEW METRICS TRACE 2 ***");
+			logger.writeln(" *** NEW METRICS TRACE 2 ***"); //$NON-NLS-1$
 			logger.writeln();
 			logger.writeln(trace);
 			logger.flushLog();

@@ -35,8 +35,20 @@ public final class SCDOptionsEnum {
 	public static final int MAX = 13;
 	
 	private static final String[] SCDOPTION_STRING_VALS = {
-		"cc", "-D", "-U", "-I", "-I-", "-nostdinc", "-nostdinc++", "-include", "-imacros",
-		"-idirafter", "-isystem", "-iprefix", "-iwithprefix", "-iwithprefixbefore"  
+		"cc", //$NON-NLS-1$
+        "-D", //$NON-NLS-1$
+        "-U", //$NON-NLS-1$
+        "-I", //$NON-NLS-1$
+        "-I-", //$NON-NLS-1$
+        "-nostdinc", //$NON-NLS-1$
+        "-nostdinc++", //$NON-NLS-1$
+        "-include", //$NON-NLS-1$
+        "-imacros", //$NON-NLS-1$
+		"-idirafter", //$NON-NLS-1$
+        "-isystem", //$NON-NLS-1$
+        "-iprefix", //$NON-NLS-1$
+        "-iwithprefix", //$NON-NLS-1$
+        "-iwithprefixbefore"   //$NON-NLS-1$
 	};
 	private static final SCDOptionsEnum SCDOPTIONS[] = {
 		COMMAND, DEFINE, UNDEFINE, INCLUDE, IDASH, NOSTDINC, NOSTDINCPP, INCLUDE_FILE, IMACROS_FILE,

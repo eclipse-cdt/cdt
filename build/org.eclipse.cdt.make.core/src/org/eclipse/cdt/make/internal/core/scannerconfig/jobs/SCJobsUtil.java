@@ -48,7 +48,7 @@ public class SCJobsUtil {
         }
         
         public String toString() {
-            return rc ? "true" : "false"; //$NON-NLS-1$ //$$NON-NLS-2$
+            return rc ? "true" : "false"; //$NON-NLS-1$ //$NON-NLS-2$
         }
         private boolean rc;
     }

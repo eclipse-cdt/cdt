@@ -33,10 +33,10 @@ import org.eclipse.core.runtime.IPath;
  */
 public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
     private final static String[] FILE_EXTENSIONS = {
-        ".c", ".cc", ".cpp", ".cxx", ".C", ".CC", ".CPP", ".CXX"
+        ".c", ".cc", ".cpp", ".cxx", ".C", ".CC", ".CPP", ".CXX" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     };
     private final static String[] COMPILER_INVOCATION = {
-        "gcc", "g++", "cc", "c++"
+        "gcc", "g++", "cc", "c++" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     };
     private final static List FILE_EXTENSIONS_LIST = Arrays.asList(FILE_EXTENSIONS);
     
@@ -74,7 +74,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
             return rc;
 
         // expecting that compiler invocation is the first token in the line
-        String[] split = line.split("\\s+");
+        String[] split = line.split("\\s+"); //$NON-NLS-1$
         String command = split[0];
         // verify that it is compiler invocation
         int cii2 = -1;
@@ -84,7 +84,7 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
                 break;
         }
         if (cii2 == -1) {
-            TraceUtil.outputTrace("Error identifying compiler command", line, TraceUtil.EOL);
+            TraceUtil.outputTrace("Error identifying compiler command", line, TraceUtil.EOL); //$NON-NLS-1$
             return rc;
         }
         // find a file name
@@ -113,20 +113,20 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 //              }
 //              if (found) break;
         if (!found) {
-            TraceUtil.outputTrace("Error identifying file name :1", line, TraceUtil.EOL);
+            TraceUtil.outputTrace("Error identifying file name :1", line, TraceUtil.EOL); //$NON-NLS-1$
             return rc;
         }
         // sanity check
         if (filePath.indexOf(FILE_EXTENSIONS[extensionsIndex]) == -1) {
-            TraceUtil.outputTrace("Error identifying file name :2", line, TraceUtil.EOL);
+            TraceUtil.outputTrace("Error identifying file name :2", line, TraceUtil.EOL); //$NON-NLS-1$
             return rc;
         }
         if (fUtil != null) {
             IPath pFilePath = fUtil.getAbsolutePath(filePath);
             String longFileName = pFilePath.toString();
             String shortFileName = pFilePath.removeFileExtension().lastSegment();
-            String genericLine = line.replaceAll(filePath, "LONG_NAME");
-            genericLine = genericLine.replaceAll(shortFileName+"\\.", "SHORT_NAME\\.");
+            String genericLine = line.replaceAll(filePath, "LONG_NAME"); //$NON-NLS-1$
+            genericLine = genericLine.replaceAll(shortFileName+"\\.", "SHORT_NAME\\."); //$NON-NLS-1$ //$NON-NLS-2$
 
             CCommandDSC cmd = fUtil.getNewCCommandDSC(genericLine, extensionsIndex > 0);
             List cmdList = new ArrayList();

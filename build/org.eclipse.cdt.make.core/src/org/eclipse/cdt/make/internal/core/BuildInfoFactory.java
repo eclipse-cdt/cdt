@@ -235,7 +235,7 @@ public class BuildInfoFactory {
 		protected Map decodeMap(String value) {
 			Map map = new HashMap();
 			StringBuffer envStr = new StringBuffer(value);
-			String escapeChars = "|\\";
+			String escapeChars = "|\\"; //$NON-NLS-1$
 			char escapeChar = '\\';
 			try {
 				while (envStr.length() > 0) {

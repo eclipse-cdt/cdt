@@ -1,5 +1,10 @@
 2003-01-08 Alain Magloire
 
+	* src/.../mi/core/cdi/EventManager.java (update): bug fix
+	was calling DestroedEvent() incorrectly.
+
+2003-01-08 Alain Magloire
+
 	CLIProcessor a new class to recognise the CLI(Command Line Interface)
 	of gdb example:
 	 (gdb) next

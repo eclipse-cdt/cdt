@@ -5,6 +5,12 @@
 	*org.eclipse.cdt.ui.wizards/NewWizardMessages.properties
 	
 2004-06-18 Bogdan Gheorghe
+	Fix for Bug 66933: [Selection Search] Working set name is {0} in search results
+	
+	* src/org/eclipse/cdt/internal/ui/search/actions/FindDeclarationsInWorkingSetAction.java
+	* src/org/eclipse/cdt/internal/ui/search/actions/FindRefsInWorkingSetAction.java
+	
+2004-06-18 Bogdan Gheorghe
 	Part 2 of Fix for Bug 62668: [Search] Search results rely on case of file names in include statement
 	rather then the filesystem
 	

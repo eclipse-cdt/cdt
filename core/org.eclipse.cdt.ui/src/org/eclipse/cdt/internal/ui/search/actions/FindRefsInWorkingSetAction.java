@@ -65,7 +65,7 @@ public class FindRefsInWorkingSetAction extends FindAction {
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScopeDescription()
 	 */
 	protected String getScopeDescription() {
-		return CSearchMessages.getString("WorkingSetScope"); //$NON-NLS-1$
+		return CSearchMessages.getFormattedString("WorkingSetScope", CSearchUtil.toString(fWorkingSet)); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.editor.selsearch.FindAction#getScope()
@@ -76,6 +76,7 @@ public class FindRefsInWorkingSetAction extends FindAction {
 			workingSets= CSearchScopeFactory.getInstance().queryWorkingSets();
 			if (workingSets == null)
 				return null;
+			fWorkingSet = workingSets;
 		}
 		ICSearchScope scope= CSearchScopeFactory.getInstance().createCSearchScope(workingSets);
 		CSearchUtil.updateLRUWorkingSets(workingSets);

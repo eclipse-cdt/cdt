@@ -1,3 +1,12 @@
+2003-02-03 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SharedLibraryManager.java:
+	(loadSymbols): set the read flag to true.
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/SharedLibrary.java:
+	(getMIShared): New method.
+	* src/org/eclipse/cdt/debug/mi/core/output/MIShared.java:
+	(setSymbolsRead): New method.
+
 2003-02-01 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ChangedEvent.java:

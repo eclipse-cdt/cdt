@@ -11,7 +11,6 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointHit;
-import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.ICDISignalExitInfo;
@@ -235,6 +234,15 @@ public class CDTDebugModelPresentation extends LabelProvider
 			if ( type == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP )
 			{
 				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED ) );
+			}
+			IDebugTarget target = (IDebugTarget)element;
+			if ( target.isTerminated() || target.isDisconnected() )
+			{
+				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED ) );
+			}
+			else
+			{
+				return fDebugImageRegistry.get( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET ) );
 			}
 		}
 		if ( element instanceof IThread )
@@ -461,10 +469,6 @@ public class CDTDebugModelPresentation extends LabelProvider
 					if ( info != null && info instanceof ICDIBreakpointHit )
 					{
 						return target.getName() + " (Breakpoint hit)";
-					}
-					if ( info != null && info instanceof ICDIErrorInfo )
-					{
-						return MessageFormat.format( "{0} (Error: {1})", new String[] { target.getName(), ((ICDIErrorInfo)info).getMessage() } );
 					}
 					if ( info != null && info instanceof ICDISession )
 					{

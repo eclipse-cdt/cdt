@@ -1,3 +1,8 @@
+2003-05-07 Mikhail Khodjaiants
+	Display the error message and error image in the debug target's label 
+	if the error status is set.
+	* CDTDebugModelPresentation.java
+
 2003-05-06 Mikhail Khodjaiants
 	Ruler tooltips in the dissassembly editor.
 	* DisassemblyEditor.java

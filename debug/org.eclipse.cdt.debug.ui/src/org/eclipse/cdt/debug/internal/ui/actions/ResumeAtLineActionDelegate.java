@@ -222,6 +222,9 @@ public class ResumeAtLineActionDelegate implements IWorkbenchWindowActionDelegat
 			if ( input == null ) {
 				return false;
 			}
+			if ( !(editorPart instanceof ITextEditor) ) {
+				return false;
+			}
 			ITextEditor textEditor = (ITextEditor)editorPart;
 			IDocument document = textEditor.getDocumentProvider().getDocument( input );
 			if ( document == null ) {

@@ -31,7 +31,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
@@ -50,14 +49,13 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	 */
 	public void runToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) throws CoreException {
 		String errorMessage = null;
-		if ( part instanceof IEditorPart ) {
-			IEditorPart editorPart = (IEditorPart)part;
-			IEditorInput input = editorPart.getEditorInput();
+		if ( part instanceof ITextEditor ) {
+			ITextEditor textEditor = (ITextEditor)part;
+			IEditorInput input = textEditor.getEditorInput();
 			if ( input == null ) {
 				errorMessage = ActionMessages.getString( "RunToLineAdapter.Empty_editor_1" ); //$NON-NLS-1$
 			}
 			else {
-				ITextEditor textEditor = (ITextEditor)editorPart;
 				IDocument document = textEditor.getDocumentProvider().getDocument( input );
 				if ( document == null ) {
 					errorMessage = ActionMessages.getString( "RunToLineAdapter.Missing_document_1" ); //$NON-NLS-1$
@@ -107,7 +105,9 @@ public class RunToLineAdapter implements IRunToLineTarget {
 	 *      org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	public boolean canRunToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
-		return target instanceof IDebugElement && ((IDebugElement)target).getModelIdentifier().equals( CDIDebugModel.getPluginIdentifier() );
+		if ( part instanceof DisassemblyView || part instanceof ITextEditor )
+			return target instanceof IDebugElement && ((IDebugElement)target).getModelIdentifier().equals( CDIDebugModel.getPluginIdentifier() );
+		return false;
 	}
 
 	private String getFileName( IEditorInput input ) throws CoreException {

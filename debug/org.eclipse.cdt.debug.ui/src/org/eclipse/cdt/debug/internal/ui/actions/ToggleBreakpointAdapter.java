@@ -55,14 +55,13 @@ public class ToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 	 */
 	public void toggleLineBreakpoints( IWorkbenchPart part, ISelection selection ) throws CoreException {
 		String errorMessage = null;
-		if ( part instanceof IEditorPart ) {
-			IEditorPart editorPart = (IEditorPart)part;
-			IEditorInput input = editorPart.getEditorInput();
+		if ( part instanceof ITextEditor ) {
+			ITextEditor textEditor = (ITextEditor)part;
+			IEditorInput input = textEditor.getEditorInput();
 			if ( input == null ) {
 				errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Empty_editor_1" ); //$NON-NLS-1$
 			}
 			else {
-				ITextEditor textEditor = (ITextEditor)editorPart;
 				IDocument document = textEditor.getDocumentProvider().getDocument( input );
 				if ( document == null ) {
 					errorMessage = ActionMessages.getString( "ToggleBreakpointAdapter.Missing_document_1" ); //$NON-NLS-1$

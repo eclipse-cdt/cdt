@@ -1,4 +1,10 @@
 2004-09-20 Mikhail Khodjaiants
+	Fix for bug 73920: Stopping CDT debug at a break point and using a non-text editor throws an error.
+	* ResumeAtLineActionDelegate.java
+	* RunToLineAdapter.java
+	* ToggleBreakpointAdapter.java
+
+2004-09-20 Mikhail Khodjaiants
 	Evaluate expressions on stack frame instead of target to provide evaluation context.
 	Evaluate the hovering expression for the selected context only.
 	* DebugTextHover.java

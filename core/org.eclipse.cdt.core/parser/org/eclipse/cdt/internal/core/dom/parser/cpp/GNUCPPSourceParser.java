@@ -1747,9 +1747,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			 idExpression.setName(name);
 			 name.setParent(idExpression);
 			 name.setPropertyInParent(IASTIdExpression.ID_NAME);
-			 if (completionNode == null)
-				 completionNode = new ASTCompletionNode(token);
-			 completionNode.addName(name);
+			 createCompletionNode(token).addName(name);
 			 return idExpression;
 		 }
          default:
@@ -2607,8 +2605,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	  switch (token.getType()) {
 	  case IToken.tCOMPLETION:
 	  case IToken.tEOC:
-		  createCompletionNode(token);
-		  completionNode.addName(name);
+		  createCompletionNode(token).addName(name);
+		  break;
 	  }
 
       name.setOffsetAndLength(duple.getStartOffset(), duple.getEndOffset()

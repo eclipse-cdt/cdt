@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +99,7 @@ import org.eclipse.cdt.internal.core.parser.pst.StandardSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TemplateSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.TypeInfoProvider;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbolASTExtension.ExtensionException;
+import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.parser.scanner2.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
@@ -120,8 +120,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	private final ParserMode mode;
 	private final ReferenceCache cache = new ReferenceCache();
 	private static final int BUILTIN_TYPE_SIZE = 64;
-	private final Hashtable typeIdCache = new Hashtable( BUILTIN_TYPE_SIZE );
-	private final Hashtable simpleTypeSpecCache = new Hashtable( BUILTIN_TYPE_SIZE );
+	private final CharArrayObjectMap typeIdCache = new CharArrayObjectMap( BUILTIN_TYPE_SIZE );
+	private final CharArrayObjectMap simpleTypeSpecCache = new CharArrayObjectMap( BUILTIN_TYPE_SIZE );
 	private static final int DEFAULT_QUALIFIEDNAME_REFERENCE_SIZE = 4;
 	private char[] filename;
 	

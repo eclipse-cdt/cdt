@@ -37,4 +37,5 @@ public interface IScanner  {
 	public boolean isOnTopContext();
 	public CharArrayObjectMap getRealDefinitions();
 	public void cancel();
+	public char[] getMainFilename();
 }

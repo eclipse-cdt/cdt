@@ -14,6 +14,8 @@
  */
 package org.eclipse.cdt.core.parser.tests;
 
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +23,9 @@ import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.core.resources.IFile;
 
@@ -187,4 +192,34 @@ public class CompleteParsePluginTest extends FileBasePluginTest {
         assertEquals( i.next(), CallbackTracker.EXIT_COMPILATION_UNIT );
         assertFalse( i.hasNext() );
     }
+    
+	public void testBug79339() throws Exception{
+	    Writer writer = new StringWriter();
+	    writer.write("#ifndef _HEADER_\n"); //$NON-NLS-1$
+	    writer.write("#define _HEADER_\n"); //$NON-NLS-1$
+	    writer.write("#define ONE 1\n"); //$NON-NLS-1$
+	    writer.write("int foo(int);\n"); //$NON-NLS-1$
+	    writer.write("#endif // _HEADER_\n"); //$NON-NLS-1$
+	    String header = writer.toString();
+	    importFile( "header.h", header ); //$NON-NLS-1$
+	    
+	    writer = new StringWriter();
+	    writer.write( "#include \"header.h\"  \n"); //$NON-NLS-1$
+	    writer.write( "int foo2(){\n"); //$NON-NLS-1$
+	    writer.write( "   return foo(ONE);\n"); //$NON-NLS-1$
+	    writer.write( "}\n"); //$NON-NLS-1$
+	    String source = writer.toString();
+	    IFile cpp = importFile( "test.cpp", source ); //$NON-NLS-1$
+	    
+	    int start = source.indexOf( "foo(ONE)" ); //$NON-NLS-1$
+	    
+	    List calls = new ArrayList();
+	    IASTNode node = parse( cpp, calls, start, start + 3 ); //$NON-NLS-1$
+	    assertTrue(node instanceof IASTFunction);
+	    IASTFunction foo = (IASTFunction)node;
+	    assertEquals(foo.getStartingLine(), 4);
+	    assertEquals(foo.getNameOffset(), 52);
+	    assertEquals(foo.getName(), "foo"); //$NON-NLS-1$
+	    assertTrue(new String(foo.getFilename()).indexOf("header.h") > 0); //$NON-NLS-1$
+	}
 }

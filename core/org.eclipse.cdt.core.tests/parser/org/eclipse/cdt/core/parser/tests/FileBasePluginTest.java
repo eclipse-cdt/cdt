@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.NullLogService;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -58,6 +60,7 @@ import org.eclipse.cdt.core.parser.ast.IASTMethod;
 import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
+import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTParameterReference;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
@@ -332,5 +335,30 @@ public class FileBasePluginTest extends TestCase {
 		}
         return callback.getCompilationUnit();
     }
-	
+
+    protected IASTNode parse(IFile code, List callbacks, int start, int end) throws Exception
+    {
+    	return parse(code, callbacks, start, end, true, ParserLanguage.CPP);
+    	
+    }
+    
+    protected IASTNode parse(IFile code, List callbacks, int offset1, int offset2, boolean expectedToPass, ParserLanguage language) throws Exception {
+    	callback = new CallbackTracker( callbacks ); 
+   	
+		IParser parser = ParserFactory.createParser( 
+	    		ParserFactory.createScanner( new CodeReader( code.getLocation().toOSString(), code.getCharset() ), new ScannerInfo(), //$NON-NLS-1$
+	    			ParserMode.SELECTION_PARSE, language, callback, new NullLogService(), null ), callback, ParserMode.SELECTION_PARSE, language, null 	
+	    		);
+		
+		IParser.ISelectionParseResult result =parser.parse( offset1, offset2 );
+		if( expectedToPass )
+		{
+			assertNotNull( result );
+			String filename = result.getFilename();
+			assertNotNull( filename );
+			assertTrue( !filename.equals( "")); //$NON-NLS-1$
+			return (IASTNode) result.getOffsetableNamedElement();
+		}
+		return null;
+	}
 }

@@ -37,6 +37,8 @@ public class ScannerContextInclusion implements IScannerContext
         this.index = index;
     }
 		
+    public boolean isFinal() { return false; }
+    
 	public final String getContextName()
 	{
 		return filename;

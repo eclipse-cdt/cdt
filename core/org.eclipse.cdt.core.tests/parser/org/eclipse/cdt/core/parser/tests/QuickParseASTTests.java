@@ -1156,7 +1156,7 @@ public class QuickParseASTTests extends BaseASTTest
 		
 		String code = "#include <stdio.h>\n#define DEF VALUE\n"; //$NON-NLS-1$
 		
-		IASTCompilationUnit tu = parse( code.toString()  );
+		IASTCompilationUnit tu = parse( code  );
 		assertFalse( tu.getDeclarations().hasNext());
 		Iterator inclusions = quickParseCallback.getInclusions();
 		Iterator macros = quickParseCallback.getMacros();
@@ -1166,8 +1166,8 @@ public class QuickParseASTTests extends BaseASTTest
 		
 		assertEquals( i.getName(), "stdio.h"); //$NON-NLS-1$
 		assertEquals( i.getStartingOffset(), 0 ); 
-		assertEquals( i.getNameOffset(), 10 ); 
-		assertEquals( i.getEndingOffset(), 19 );
+		assertEquals( i.getNameOffset(), code.indexOf("stdio.h") );  //$NON-NLS-1$
+		assertEquals( i.getEndingOffset(), code.indexOf(">") + 1); //$NON-NLS-1$
 		
 		
 		IASTMacro m = (IASTMacro)macros.next();

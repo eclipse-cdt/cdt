@@ -29,6 +29,7 @@ public interface IScannerContext {
 	public int getChar();
 	public void ungetChar(int undo);
 	
+	public boolean isFinal();
 	public String getContextName();
 	public int getOffset();   
 	public void close();

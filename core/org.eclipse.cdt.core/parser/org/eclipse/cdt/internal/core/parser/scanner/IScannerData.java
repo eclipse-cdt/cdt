@@ -23,6 +23,8 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
+import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionDirective;
+import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
 
 /**
  * @author jcamelon
@@ -84,4 +86,10 @@ public interface IScannerData {
 	public abstract void setDefinitions(Map map);
 	
 	public Iterator getWorkingCopies();
+	/**
+	 * @param restOfLine
+	 * @param offset
+	 * @return
+	 */
+	public abstract InclusionDirective parseInclusionDirective(String restOfLine, int offset) throws InclusionParseException;
 }

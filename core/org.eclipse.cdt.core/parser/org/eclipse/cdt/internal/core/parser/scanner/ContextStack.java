@@ -33,6 +33,7 @@ public class ContextStack {
 		public String getContextName() { return ""; } //$NON-NLS-1$
 		public int getOffset() { return 0; }
 		public void ungetChar(int undo) { }
+		public boolean isFinal() { return false; }
 		public int getKind() { return IScannerContext.ContextKind.SENTINEL; }
 		public void close() { }
 	}
@@ -83,7 +84,7 @@ public class ContextStack {
 	 
 	private IScanner scanner;
 
-	private final void cs_push(IScannerContext c) {
+	public final void cs_push(IScannerContext c) {
 		try {
 			cs[cs_pos++] = c;
 		}
@@ -98,7 +99,7 @@ public class ContextStack {
 		}
 		scanner.setScannerContext(c);
 	}
-	private final IScannerContext cs_pop() {
+	public final IScannerContext cs_pop() {
 		IScannerContext context = cs[--cs_pos];
 		scanner.setScannerContext((cs_pos == 0) ? sentinel : cs[cs_pos -1]);
 		return context;

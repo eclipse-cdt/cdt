@@ -158,19 +158,19 @@ public class GCCScannerExtension implements IScannerExtension {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#handlePreprocessorDirective(java.lang.String, java.lang.String)
 	 */
-	public void handlePreprocessorDirective(IScannerData scannerData, String directive, String restOfLine) {
+	public void handlePreprocessorDirective(IScannerData iscanner, String directive, String restOfLine) {
 		if( directive.equals(POUND_INCLUDE_NEXT) ) 
 		{
-			TraceUtil.outputTrace(scannerData.getLogService(), "GCCScannerExtension handling #include_next directive", null, null, null, null); //$NON-NLS-1$
+			TraceUtil.outputTrace(iscanner.getLogService(), "GCCScannerExtension handling #include_next directive", null, null, null, null); //$NON-NLS-1$
 			// figure out the name of the current file and its path
-			IScannerContext context = scannerData.getContextStack().getCurrentContext();
+			IScannerContext context = iscanner.getContextStack().getCurrentContext();
 			if( context == null || context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
 				return;
 			
 			String fullInclusionPath = context.getContextName();
 			IASTInclusion inclusion = ((ScannerContextInclusion)context).getExtension();
 			
-			Iterator iter = scannerData.getIncludePathNames().iterator();
+			Iterator iter = iscanner.getIncludePathNames().iterator();
 			
 			while (iter.hasNext()) {
 				String path = (String)iter.next();
@@ -181,7 +181,7 @@ public class GCCScannerExtension implements IScannerExtension {
 			
 			ScannerUtility.InclusionDirective parsedDirective = null;
 			try {
-				parsedDirective = ScannerUtility.parseInclusionDirective( scannerData, this, restOfLine, scannerData.getContextStack().getCurrentContext().getOffset() );
+				parsedDirective = iscanner.parseInclusionDirective( restOfLine, iscanner.getContextStack().getCurrentContext().getOffset() );
 			} catch (InclusionParseException e) {
 				return;
 			}
@@ -189,7 +189,7 @@ public class GCCScannerExtension implements IScannerExtension {
 			// search through include paths
 			while (iter.hasNext()) {	
 				String path = (String)iter.next();
-				duple = ScannerUtility.createReaderDuple( path, parsedDirective.getFilename(), scannerData.getClientRequestor(), scannerData.getWorkingCopies() );
+				duple = ScannerUtility.createReaderDuple( path, parsedDirective.getFilename(), iscanner.getClientRequestor(), iscanner.getWorkingCopies() );
 				if( duple != null )
 					break;
 			}
@@ -198,8 +198,8 @@ public class GCCScannerExtension implements IScannerExtension {
 			{
 				try			
 				{
-					scannerData.getContextStack().updateInclusionContext(duple.getUnderlyingReader(), duple.getFilename(), inclusion, scannerData.getClientRequestor() );
-					TraceUtil.outputTrace( scannerData.getLogService(), "GCCScannerExtension handling #include_next directive successfully pushed on new include file" ); //$NON-NLS-1$
+					iscanner.getContextStack().updateInclusionContext(duple.getUnderlyingReader(), duple.getFilename(), inclusion, iscanner.getClientRequestor() );
+					TraceUtil.outputTrace( iscanner.getLogService(), "GCCScannerExtension handling #include_next directive successfully pushed on new include file" ); //$NON-NLS-1$
 				}
 				catch (ContextException e1)
 				{

@@ -14,19 +14,15 @@ import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeTargetEvent;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 
-public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener, IResourceChangeListener {
+public class MakeContentProvider implements ITreeContentProvider, IMakeTargetListener {
+
 	protected boolean bFlatten;
 
 	protected StructuredViewer viewer;
@@ -52,13 +48,13 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		} else if (obj instanceof IContainer) {
 			ArrayList children = new ArrayList();
 			try {
-				IResource[] resource = ((IContainer) obj).members();
+				IResource[] resource = ((IContainer)obj).members();
 				for (int i = 0; i < resource.length; i++) {
 					if (resource[i] instanceof IContainer) {
 						children.add(resource[i]);
 					}
 				}
-				children.addAll(Arrays.asList(MakeCorePlugin.getDefault().getTargetManager().getTargets((IContainer) obj)));
+				children.addAll(Arrays.asList(MakeCorePlugin.getDefault().getTargetManager().getTargets((IContainer)obj)));
 			} catch (CoreException e) {
 				// ignore
 			}
@@ -69,9 +65,9 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 
 	public Object getParent(Object obj) {
 		if (obj instanceof IMakeTarget) {
-			return ((IMakeTarget) obj).getContainer();
+			return ((IMakeTarget)obj).getContainer();
 		} else if (obj instanceof IContainer) {
-			return ((IContainer) obj).getParent();
+			return ((IContainer)obj).getParent();
 		}
 		return null;
 	}
@@ -103,27 +99,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 		if (this.viewer == null) {
 			MakeCorePlugin.getDefault().getTargetManager().addListener(this);
 		}
-		this.viewer = (StructuredViewer) viewer;
-		IWorkspace oldWorkspace = null;
-		IWorkspace newWorkspace = null;
-		if (oldInput instanceof IWorkspace) {
-			oldWorkspace = (IWorkspace) oldInput;
-		} else if (oldInput instanceof IContainer) {
-			oldWorkspace = ((IContainer) oldInput).getWorkspace();
-		}
-		if (newInput instanceof IWorkspace) {
-			newWorkspace = (IWorkspace) newInput;
-		} else if (newInput instanceof IContainer) {
-			newWorkspace = ((IContainer) newInput).getWorkspace();
-		}
-		if (oldWorkspace != newWorkspace) {
-			if (oldWorkspace != null) {
-				oldWorkspace.removeResourceChangeListener(this);
-			}
-			if (newWorkspace != null) {
-				newWorkspace.addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
-			}
-		}
+		this.viewer = (StructuredViewer)viewer;
 	}
 
 	public void targetChanged(final MakeTargetEvent event) {
@@ -133,6 +109,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				case MakeTargetEvent.PROJECT_ADDED :
 				case MakeTargetEvent.PROJECT_REMOVED :
 					ctrl.getDisplay().syncExec(new Runnable() {
+
 						public void run() {
 							if (ctrl != null && !ctrl.isDisposed()) {
 								viewer.refresh();
@@ -144,6 +121,7 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 				case MakeTargetEvent.TARGET_CHANGED :
 				case MakeTargetEvent.TARGET_REMOVED :
 					ctrl.getDisplay().syncExec(new Runnable() {
+
 						public void run() {
 							if (ctrl != null && !ctrl.isDisposed()) {
 								if (bFlatten) {
@@ -156,82 +134,6 @@ public class MakeContentProvider implements ITreeContentProvider, IMakeTargetLis
 					});
 					break;
 			}
-		}
-	}
-
-	void processDelta(IResourceDelta delta) {
-		// Bail out if the widget was disposed.
-		Control ctrl = viewer.getControl();
-		if (ctrl == null || ctrl.isDisposed() || delta == null) {
-			return;
-		}
-
-		IResourceDelta[] affectedChildren = delta.getAffectedChildren(IResourceDelta.CHANGED);
-
-		// Not interested in Content changes.
-		for (int i = 0; i < affectedChildren.length; i++) {
-			if ((affectedChildren[i].getFlags() & IResourceDelta.TYPE) != 0) {
-				return;
-			}
-		}
-
-		// Handle changed children recursively.
-		for (int i = 0; i < affectedChildren.length; i++) {
-			processDelta(affectedChildren[i]);
-		}
-
-		// Get the affected resource
-		IResource resource = delta.getResource();
-
-		// Handle removed children. Issue one update for all removals.
-		affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
-		if (affectedChildren.length > 0) {
-			ArrayList affected = new ArrayList(affectedChildren.length);
-			for (int i = 0; i < affectedChildren.length; i++) {
-				if (affectedChildren[i].getResource() instanceof IContainer) {
-					affected.add(affectedChildren[i].getResource());
-				}
-			}
-			if (affected.size() != 0) {
-				if (viewer instanceof AbstractTreeViewer) {
-					((AbstractTreeViewer) viewer).remove(affected.toArray());
-				} else {
-					viewer.refresh(resource);
-				}
-			}
-		}
-
-		// Handle added children. Issue one update for all insertions.
-		affectedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
-		if (affectedChildren.length > 0) {
-			ArrayList affected = new ArrayList(affectedChildren.length);
-			for (int i = 0; i < affectedChildren.length; i++) {
-				if (affectedChildren[i].getResource() instanceof IContainer) {
-					affected.add(affectedChildren[i].getResource());
-				}
-			}
-			if (affected.size() != 0) {
-				if (viewer instanceof AbstractTreeViewer) {
-					((AbstractTreeViewer) viewer).add(resource, affected.toArray());
-				} else {
-					viewer.refresh(resource);
-				}
-			}
-		}
-	}
-
-	public void resourceChanged(IResourceChangeEvent event) {
-		final IResourceDelta delta = event.getDelta();
-		Control ctrl = viewer.getControl();
-		if (ctrl != null && !ctrl.isDisposed()) {
-			// Do a sync exec, not an async exec, since the resource delta
-			// must be traversed in this method. It is destroyed
-			// when this method returns.
-			ctrl.getDisplay().syncExec(new Runnable() {
-				public void run() {
-					processDelta(delta);
-				}
-			});
 		}
 	}
 }

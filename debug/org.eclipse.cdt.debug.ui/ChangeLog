@@ -1,3 +1,9 @@
+2002-10-28 Mikhail Khodjaiants
+	Implementing editing features of the memory view.
+	* MemoryPresentation.java
+	* MemoryControlArea.java
+	* MemoryText.java
+	
 2002-10-27 Mikhail Khodjaiants
 	* MemoryPresentation.java: adding editing features to the memory view.
 

@@ -181,6 +181,7 @@ public class MemoryControlArea extends Composite
 	{
 		fAddressText.setText( ( getPresentation() != null ) ? getPresentation().getAddressExpression() : "" );
 		fMemoryText.refresh();
+		fMemoryView.updateObjects();
 	}
 	
 	protected void setMemoryManager( ICMemoryManager mm )

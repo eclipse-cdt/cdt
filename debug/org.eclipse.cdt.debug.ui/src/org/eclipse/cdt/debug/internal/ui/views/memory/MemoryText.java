@@ -83,11 +83,12 @@ public class MemoryText
 	{
 		if ( event.length != 1 )
 			return;
+		int caretOffset = fText.getCaretOffset();
 		fPresentation.textChanged( event.start, 
 								   fText.getText().charAt( event.start ),
 								   event.replacedText.toCharArray() );
-		Point[] zones = fPresentation.getDirtyZones();
-		refresh( zones, fPresentation.getText( zones ) );
+		refresh();
+		fText.setCaretOffset( caretOffset );
 	}
 	
 	public void refresh()

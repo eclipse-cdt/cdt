@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.memory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.ICMemoryManager;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlock;
 import org.eclipse.cdt.debug.core.IFormattedMemoryBlockRow;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.ui.CDebugUIUtils;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.swt.graphics.Point;
@@ -35,7 +37,6 @@ public class MemoryPresentation
 	
 	private List fAddressZones;
 	private List fChangedZones;
-	private List fDirtyZones;
 
 	private boolean fDisplayAscii = true;
 		
@@ -46,7 +47,6 @@ public class MemoryPresentation
 	{		
 		fAddressZones = new LinkedList();
 		fChangedZones = new LinkedList();
-		fDirtyZones = new LinkedList();
 	}
 
 	public IFormattedMemoryBlock getMemoryBlock()
@@ -123,7 +123,31 @@ public class MemoryPresentation
 	
 	public Point[] getDirtyZones()
 	{
-		return (Point[])fDirtyZones.toArray( new Point[fDirtyZones.size()] );
+		ArrayList dirtyZones = new ArrayList();
+		if ( fBlock != null )
+		{
+			IFormattedMemoryBlockRow[] rows = fBlock.getRows();
+			for ( int i = 0; i < rows.length; ++i )
+			{
+				int rowOffset = i * getRowLength();
+				Integer[] dirtyItems = rows[i].getDirtyItems();
+				for ( int j = 0; j < dirtyItems.length; ++j )
+				{
+					int offset = rowOffset + 
+								 getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
+								 dirtyItems[j].intValue() * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS);
+					dirtyZones.add( new Point( offset, offset + getDataItemLength() ) );
+					if ( displayASCII() )
+					{
+						offset = rowOffset + 
+								 getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
+								 getNumberOfDataItemsInRow() * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS);
+						dirtyZones.add( new Point( offset, offset + (getDataItemLength() / 2) ) );
+					}
+				}
+			}
+		}
+		return (Point[])dirtyZones.toArray( new Point[dirtyZones.size()] );
 	}
 	
 	public String getStartAddress()
@@ -159,9 +183,9 @@ public class MemoryPresentation
 			result.append( items[i] );
 			result.append( getInterval( INTERVAL_BETWEEN_DATA_ITEMS ) );
 		}
-		result.append( getInterval( INTERVAL_BETWEEN_DATA_AND_ASCII ) );
 		if ( displayASCII() )
 		{
+			result.append( getInterval( INTERVAL_BETWEEN_DATA_AND_ASCII ) );
 			result.append( row.getASCII() );
 		}
 		result.append( '\n' );
@@ -450,20 +474,19 @@ public class MemoryPresentation
 	{
 		if ( getMemoryBlock() != null )
 		{
-			int index = -1;
-			if ( isInDataArea( offset ) )
-			{
-				index = getDataItemIndex( offset );
-			}
-			if ( isInAsciiArea( offset ) )
-			{
-				index = offset;
-			}
+			int index = getDataItemIndex( offset );
 			if ( index != -1 )
 			{
 				char[] chars = getDataItemChars( index );
-				int itemOffset = getDataItemOffset( index );
-				chars[offset - itemOffset] = newChar;
+				if ( isInDataArea( offset ) )
+				{
+					int charIndex = getOffsetInDataItem( offset, index );
+					chars[charIndex] = newChar;
+				}
+				if ( isInAsciiArea( offset ) )
+				{
+					chars = CDebugUtils.getByteText( (byte)newChar );
+				}
 				try
 				{
 					getMemoryBlock().setItemValue( index, new String( chars ) );
@@ -479,7 +502,7 @@ public class MemoryPresentation
 	private int getDataItemIndex( int offset )
 	{
 		int row = offset / getRowLength();
-		int pos = offset % getRowLength();
+		int pos = offset % getRowLength() - getAddressLength() - INTERVAL_BETWEEN_ADDRESS_AND_DATA;
 		for ( int i = 0; i < getNumberOfDataItemsInRow(); ++i )
 		{
 			if ( pos < i * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) )
@@ -488,13 +511,17 @@ public class MemoryPresentation
 				 pos < (i * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS)) + getDataItemLength() )
 				return i + (row * getNumberOfDataItemsInRow());
 		}
+		if ( displayASCII() && pos >= getNumberOfDataItemsInRow() * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) + INTERVAL_BETWEEN_DATA_AND_ASCII )
+		{
+			return ((pos - ((getNumberOfDataItemsInRow() * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS) + INTERVAL_BETWEEN_DATA_AND_ASCII))) * 2 / getDataItemLength()) + row * getNumberOfDataItemsInRow();
+		}
 		return -1;
 	}
 
 	private int getDataItemOffset( int index )
 	{
 		int row = index / getNumberOfDataItemsInRow();
-		int pos = index % getDataItemLength();
+		int pos = index % getNumberOfDataItemsInRow();
 		return row * getRowLength() + 
 			   getAddressLength() + INTERVAL_BETWEEN_ADDRESS_AND_DATA +
 			   pos * (getDataItemLength() + INTERVAL_BETWEEN_DATA_ITEMS); 
@@ -504,8 +531,8 @@ public class MemoryPresentation
 	{
 		if ( getMemoryBlock() != null )
 		{
-			int rowNumber = index / (getMemoryBlock().getNumberOfColumns() * getMemoryBlock().getWordSize());
-			int pos = index % (getMemoryBlock().getNumberOfColumns() * getMemoryBlock().getWordSize());
+			int rowNumber = index / getMemoryBlock().getNumberOfColumns();
+			int pos = index % getMemoryBlock().getNumberOfColumns();
 			IFormattedMemoryBlockRow[] rows = getMemoryBlock().getRows();
 			if ( rowNumber < rows.length )
 			{
@@ -517,5 +544,14 @@ public class MemoryPresentation
 			}
 		}
 		return new char[0];
+	}
+	
+	private int getOffsetInDataItem( int offset, int index )
+	{
+		if ( isInDataArea( offset ) )
+		{
+			return offset - getDataItemOffset( index );
+		}
+		return -1;
 	}
 }

@@ -1,3 +1,8 @@
+2002-10-28 Mikhail Khodjaiants
+	Implementing editing features of the memory view.
+	* IFormattedMemoryBlockRow.java
+	* CFormattedMemoryBlock.java
+	
 2002-10-27 Mikhail Khodjaiants
 	* IFormattedMemoryBlock.java: added the 'setItemValue' method.
 	* CFormattedMemoryBlock.java: implementation of the 'setItemValue' method.

@@ -1,3 +1,7 @@
+2004-04-23 Alain Magloire
+	Possible NPE.
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
+
 2004-04-23 Hoda Amer
 	Fix for bug#59631 : Macros do not appear in the completion list when no prefix is provided
 	Fix for bug#59686 : [Content Assist] Class references are not completing

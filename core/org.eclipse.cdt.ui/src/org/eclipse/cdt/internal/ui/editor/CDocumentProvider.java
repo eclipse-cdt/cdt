@@ -100,7 +100,10 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			}
 		} else if (element instanceof ITranslationUnitEditorInput) {
 			ITranslationUnitEditorInput input = (ITranslationUnitEditorInput)element;
-			copy = new CFileElementWorkingCopy(input.getTranslationUnit());
+			ITranslationUnit u = input.getTranslationUnit();
+			if (u != null) {
+				copy = new CFileElementWorkingCopy(u);
+			}
 		}
 		
 		if (copy == null) {

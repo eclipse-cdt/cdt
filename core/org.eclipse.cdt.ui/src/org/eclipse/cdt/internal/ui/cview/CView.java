@@ -291,32 +291,23 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	*/
 	protected void handleDoubleClick(DoubleClickEvent event) {
 		IStructuredSelection s = (IStructuredSelection)event.getSelection();
-		//Object element = s.getFirstElement();
 		IAdaptable element = (IAdaptable)s.getFirstElement();
-		IResource resource = null;
-
-		if (element instanceof IAdaptable) {
-			resource = (IResource)((IAdaptable)element).getAdapter(IResource.class);
-		}
-
-		if (resource == null)
-			return;
-
+		IEditorPart part = null;
 		//System.out.println ("Double click on " + element);
-		if (resource instanceof IFile) {
-			if (element instanceof ICElement) {
-				try {
-					EditorUtility.openInEditor((ICElement)element);
-				} catch (Exception e) {
+
+		try {
+			part = EditorUtility.openInEditor(element);
+			if (part != null) {
+				IWorkbenchPage page = getSite().getPage();
+				page.bringToTop(part);
+				if (element instanceof ISourceReference) {
+					EditorUtility.revealInEditor(part, (ICElement)element);
 				}
-			} else {
-				openFileAction.selectionChanged(s);
-				openFileAction.run();
 			}
-		} else {
-			if (viewer.isExpandable(element)) {
-				viewer.setExpandedState(element, !viewer.getExpandedState(element));
-			}
+		} catch (Exception e) {
+		}		
+		if (part == null && viewer.isExpandable(element)) {
+			viewer.setExpandedState(element, !viewer.getExpandedState(element));
 		}
 	}
 

@@ -12,8 +12,6 @@ package org.eclipse.cdt.core.parser;
 
 import java.util.Map;
 
-import org.eclipse.cdt.core.parser.IScannerInfo;
-
 /**
  * @author jcamelon
  *
@@ -32,8 +30,15 @@ public class ScannerInfo implements IScannerInfo
 		definedSymbols = d; 
 		includePaths = incs;
 	}
-	
-    /* (non-Javadoc)
+		
+    /**
+	 * @param definitions
+	 */
+	public ScannerInfo(Map definitions) {
+		this( definitions, (String [])null);
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.IScannerInfo#getDefinedSymbols()
      */
     public Map getDefinedSymbols()

@@ -16,6 +16,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -66,6 +67,7 @@ import org.eclipse.cdt.internal.core.parser.token.Token;
 
 public class Scanner implements IScanner {
 
+	private static final NullSourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
 	private final static String SCRATCH = "<scratch>"; //$NON-NLS-1$
 	protected final IScannerData scannerData;
 
@@ -102,6 +104,32 @@ public class Scanner implements IScanner {
 			throw new ScannerException( problem );
 	}
 
+	private Scanner( Reader reader, String filename, Map definitions, List includePaths, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService log, IScannerExtension extension )
+	{
+		String [] incs = (String [])includePaths.toArray(STRING_ARRAY);
+    	scannerData = new ScannerData( this, log, requestor, mode, filename, reader, language, new ScannerInfo( definitions, incs ), new ContextStack( this, log ) );
+    	
+		scannerExtension = extension;
+		if( scannerExtension instanceof GCCScannerExtension )
+			((GCCScannerExtension)scannerExtension).setScannerData( scannerData );	 
+		
+		scannerData.setDefinitions( definitions );
+		scannerData.setIncludePathNames( includePaths );
+		scannerData.setASTFactory( ParserFactory.createASTFactory( this, scannerData.getParserMode(), language ) );
+		try {
+			//this is a hack to get around a sudden EOF experience
+			scannerData.getContextStack().push(
+						new ScannerContext(
+						new StringReader("\n"), //$NON-NLS-1$
+						START,
+						ScannerContext.ContextKind.SENTINEL, null), requestor);
+
+		} catch( ContextException ce ) {
+			//won't happen since we aren't adding an include or a macro
+		} 
+		
+	}
+	
     public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtension extension ) {
     	
     	scannerData = new ScannerData( this, log, requestor, parserMode, filename, reader, language, info, new ContextStack( this, log ) );
@@ -121,6 +149,7 @@ public class Scanner implements IScanner {
 
 		} catch( ContextException ce ) {
 			//won't happen since we aren't adding an include or a macro
+			// assert false
 		} 
 		
 		
@@ -1925,7 +1954,7 @@ public class Scanner implements IScanner {
 		
 		if( ! expression.trim().equals("")) //$NON-NLS-1$
 		{	
-			IScanner subScanner = ParserFactory.createScanner( new StringReader(expression), SCRATCH, EMPTY_INFO, ParserMode.QUICK_PARSE, scannerData.getLanguage(), new NullSourceElementRequestor(), new NullLogService());
+			IScanner subScanner = new Scanner( new StringReader(expression), SCRATCH, EMPTY_MAP, EMPTY_LIST, NULL_REQUESTOR, ParserMode.QUICK_PARSE, scannerData.getLanguage(), NULL_LOG_SERVICE, scannerExtension );
 			IToken lastToken = null;
 			while( true )
 			{	
@@ -2324,19 +2353,19 @@ public class Scanner implements IScanner {
 			IExpressionParser parser = null;
 			StringBuffer expressionBuffer = new StringBuffer( expression );
 			expressionBuffer.append( ';');
-			try
-			{
-				IScanner trial =
-					ParserFactory.createScanner(
-						new StringReader(expressionBuffer.toString()),
-							EXPRESSION,
-							new ScannerInfo( scannerData.getDefinitions(), scannerData.getOriginalConfig().getIncludePaths()), 
-							ParserMode.QUICK_PARSE, scannerData.getLanguage(), new NullSourceElementRequestor(), nullLogService );
-	            parser = InternalParserUtil.createExpressionParser(trial, scannerData.getLanguage(), nullLogService);
-			} catch( ParserFactoryError pfe )
-			{
-				handleInternalError();
-			}
+		   
+			IScanner trial = new Scanner( 
+					new StringReader(expressionBuffer.toString()), 
+					EXPRESSION, 
+					scannerData.getDefinitions(), 
+					scannerData.getIncludePathNames(),					
+					NULL_REQUESTOR,
+					ParserMode.QUICK_PARSE, 
+					scannerData.getLanguage(),  
+					NULL_LOG_SERVICE,
+					scannerExtension );
+			
+	        parser = InternalParserUtil.createExpressionParser(trial, scannerData.getLanguage(), NULL_LOG_SERVICE);
 			try {
 				IASTExpression exp = parser.expression(null);
 				if( exp.evaluateExpression() == 0 )
@@ -2435,10 +2464,10 @@ public class Scanner implements IScanner {
 			Scanner helperScanner = new Scanner(
 										new StringReader(includeLine), 
 										null, 
-										new ScannerInfo(scannerData.getDefinitions(), scannerData.getOriginalConfig().getIncludePaths()), 
-										new NullSourceElementRequestor(),
+										scannerData.getDefinitions(), scannerData.getIncludePathNames(),
+										NULL_REQUESTOR,
 										scannerData.getParserMode(),
-										scannerData.getLanguage(), nullLogService, (IScannerExtension)(scannerExtension.clone()) );
+										scannerData.getLanguage(), NULL_LOG_SERVICE, (IScannerExtension)(scannerExtension.clone()) );
 			helperScanner.setForInclusion( true );
 			IToken t = null;
 			
@@ -2552,7 +2581,8 @@ public class Scanner implements IScanner {
 
 
 	protected boolean forInclusion = false;
-	private final static IParserLogService nullLogService = new NullLogService();
+	private final static IParserLogService NULL_LOG_SERVICE = new NullLogService();
+	private static final String [] STRING_ARRAY = new String[0];
 	/**
 	 * @param b
 	 */
@@ -2568,14 +2598,14 @@ public class Scanner implements IScanner {
 			return macroReplacementTokens;
 		IScanner helperScanner=null;
 		try {
-			helperScanner =
-				ParserFactory.createScanner(
+			helperScanner = new Scanner( 
 						new StringReader(replacementString),
 						SCRATCH,
-						new ScannerInfo(),
+						EMPTY_MAP, EMPTY_LIST, 
+						NULL_REQUESTOR, 
 						scannerData.getParserMode(),
 						scannerData.getLanguage(),
-						new NullSourceElementRequestor(), nullLogService);
+						NULL_LOG_SERVICE, scannerExtension);
 		} catch (ParserFactoryError e1) {
 		}
 		helperScanner.setTokenizingMacroReplacementList( true );
@@ -2843,7 +2873,7 @@ public class Scanner implements IScanner {
 
 	protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( scannerData.getDefinitions(), scannerData.getOriginalConfig().getIncludePaths() ), new NullSourceElementRequestor(), scannerData.getParserMode(), scannerData.getLanguage(), nullLogService, (IScannerExtension)scannerExtension.clone() );
+        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, scannerData.getDefinitions(), scannerData.getIncludePathNames(), NULL_REQUESTOR, scannerData.getParserMode(), scannerData.getLanguage(), NULL_LOG_SERVICE, (IScannerExtension)scannerExtension.clone() );
         tokenizer.setThrowExceptionOnBadCharacterRead(false);
         Vector parameterValues = new Vector();
         Token t = null;
@@ -3155,7 +3185,7 @@ public class Scanner implements IScanner {
 	 * @see org.eclipse.cdt.core.parser.IScanner#getDefinitions()
 	 */
 	public Map getDefinitions() {
-		return scannerData.getDefinitions();
+		return Collections.unmodifiableMap(scannerData.getDefinitions());
 	}
 
 	/**

@@ -36,7 +36,7 @@ public class PreprocessorConditionalTest extends BaseScannerTest
 
     protected void initializeScanner(String input, Map definitions ) throws Exception
 	{
-		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions, null), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, nullSourceElementRequestor, null );
+		scanner= ParserFactory.createScanner( new StringReader(input),"TEXT", new ScannerInfo( definitions ), ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, nullSourceElementRequestor, null );
 	}
 
 

@@ -1827,7 +1827,7 @@ public class Scanner implements IScanner {
 	 */
 	private void handleCompletionOnDefinition(String definition) throws EndOfFileException {
 		IASTCompletionNode node = new ASTCompletionNode( IASTCompletionNode.CompletionKind.MACRO_REFERENCE, 
-				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.MACRO, language) );
+				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.EMPTY, language) );
 		
 		throwEOF( node ); 
 	}
@@ -1836,32 +1836,48 @@ public class Scanner implements IScanner {
 	 * @param expression2
 	 */
 	private void handleCompletionOnExpression(String expression) throws EndOfFileException {
-		int completionPoint = expression.length();
-		IScanner subScanner = ParserFactory.createScanner( new StringReader(expression), SCRATCH, EMPTY_INFO, ParserMode.QUICK_PARSE, language, new NullSourceElementRequestor(), new NullLogService());
-		IToken lastToken = null;
-		try
-		{
-			lastToken = subScanner.nextToken();
-		}
-		catch( EndOfFileException eof )
-		{
-			// ok
-		} catch (ScannerException e) {
-			handleInternalError();
-		}
-				
+		int completionPoint = expression.length() + 2;
+		IASTCompletionNode.CompletionKind kind = IASTCompletionNode.CompletionKind.MACRO_REFERENCE;
+		
 		String prefix = "";
-		if( ( lastToken != null ))
-		{
-			if( ( lastToken.getType() == IToken.tIDENTIFIER ) 
-				&& ( lastToken.getEndOffset() == completionPoint ) )
+		
+		if( ! expression.trim().equals(""))
+		{	
+			IScanner subScanner = ParserFactory.createScanner( new StringReader(expression), SCRATCH, EMPTY_INFO, ParserMode.QUICK_PARSE, language, new NullSourceElementRequestor(), new NullLogService());
+			IToken lastToken = null;
+			while( true )
+			{	
+				try
+				{
+					lastToken = subScanner.nextToken();
+				}
+				catch( EndOfFileException eof )
+				{
+					// ok
+					break;
+				} catch (ScannerException e) {
+					handleInternalError();
+					break;
+				}
+			}
+					
+			
+			if( ( lastToken != null ))
 			{
-				prefix = lastToken.getImage(); 
-			}	
+				if( ( lastToken.getType() == IToken.tIDENTIFIER ) 
+					&& ( lastToken.getEndOffset() == completionPoint ) )
+					prefix = lastToken.getImage();
+				else if( ( lastToken.getEndOffset() == completionPoint ) && 
+					( lastToken.getType() != IToken.tIDENTIFIER ) )
+					kind = IASTCompletionNode.CompletionKind.NO_SUCH_KIND;
+
+					
+			}
 		}
 		
-		IASTCompletionNode node = new ASTCompletionNode( IASTCompletionNode.CompletionKind.MACRO_REFERENCE, 
-				null, null, prefix, KeywordSets.getKeywords(KeywordSets.Key.MACRO, language) );
+		IASTCompletionNode node = new ASTCompletionNode( kind, 
+				null, null, prefix, 
+				KeywordSets.getKeywords(((kind == IASTCompletionNode.CompletionKind.NO_SUCH_KIND )? KeywordSets.Key.EMPTY : KeywordSets.Key.MACRO), language) );
 		
 		throwEOF( node );
 	}

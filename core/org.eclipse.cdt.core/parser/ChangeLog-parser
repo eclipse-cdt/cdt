@@ -1,4 +1,7 @@
 2004-01-30 John Camelon
+	Updated Scanner to allow for more robust completion in #if directives. 
+
+2004-01-30 John Camelon
 	Fixed Bug 50487 - Wrong completion kind and prefix after "#ifdef" 
 	
 2004-01-29 Hoda Amer

@@ -238,6 +238,7 @@ public class GDBTypeParser {
 	}
 
 	void prependChild(int kind, int d) {
+/*
 		GDBDerivedType dType = new GDBDerivedType(genericType, kind, d);
 		if (gdbDerivedType != null) {
 			// get to the last node in the list and add the new to it
@@ -255,6 +256,12 @@ public class GDBTypeParser {
 			node.setChild(dType);
 		} else {
 			gdbDerivedType = dType;
+		}
+*/
+		if (gdbDerivedType == null) {
+			gdbDerivedType = new GDBDerivedType(genericType, kind, d);
+		} else {
+			gdbDerivedType = new GDBDerivedType(gdbDerivedType, kind, d);
 		}
 	}
 

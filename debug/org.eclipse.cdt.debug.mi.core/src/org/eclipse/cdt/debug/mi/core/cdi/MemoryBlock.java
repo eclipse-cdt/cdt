@@ -95,6 +95,14 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	}
 
 	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#refresh()
+	 */
+	public void refresh() throws CDIException {
+		MemoryManager mgr = (MemoryManager)getCTarget().getCSession().getMemoryManager();
+		mgr.update(this, null);
+	}
+
+	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock#getLength()
 	 */
 	public long getLength() {

@@ -31,6 +31,8 @@ import org.eclipse.jface.text.ITextViewer;
  */
 public class DebugTextHover implements ITextHover
 {
+	static final private int MAX_HOVER_INFO_SIZE = 100;
+
 	/**
 	 * Constructor for DebugTextHover.
 	 */
@@ -82,36 +84,17 @@ public class DebugTextHover implements ITextHover
 				StringBuffer buffer = new StringBuffer();
 				boolean showDebugTarget = targetList.size() > 1;
 				Iterator iterator = targetList.iterator();
-				boolean first = true;
 				while ( iterator.hasNext() )
 				{
 					IDebugTarget target = (IDebugTarget)iterator.next();
 					ICExpressionEvaluator ee = (ICExpressionEvaluator)target.getAdapter( ICExpressionEvaluator.class );
 					if ( ee.canEvaluate() )
 					{
-						String result = evaluateExpression( ee, expression );
+						String result = evaluateExpression( ee, expression ).trim();
 						try
 						{
 							if ( result != null )
-							{
-								if ( first )
-								{
-									first = false;
-								}
-								else
-								{
-									buffer.append( '\n' );
-								}
-								if ( showDebugTarget )
-								{
-									buffer.append( '[' );
-									buffer.append( target.getName() );
-									buffer.append( "]: " );
-								}
-								buffer.append( expression );
-								buffer.append( '=' );
-								buffer.append( result );
-							}
+								appendVariable( buffer, expression, result, showDebugTarget ? target.getName() : null );
 						}
 						catch( DebugException x )
 						{
@@ -162,5 +145,62 @@ public class DebugTextHover implements ITextHover
 			// ignore
 		}
 		return result;
+	}
+
+	/**
+	 * A variable gets one line for each debug target it appears in.
+	 */
+	private static void appendVariable( StringBuffer buffer, 
+										String expression, 
+										String value,
+										String debugTargetName ) throws DebugException 
+	{
+		if ( value.length() > MAX_HOVER_INFO_SIZE )
+			value = value.substring( 0, MAX_HOVER_INFO_SIZE ) + " ...";
+		buffer.append( "<p>" ); //$NON-NLS-1$
+		if ( debugTargetName != null ) 
+		{
+			buffer.append( '[' + debugTargetName + "]&nbsp;" ); //$NON-NLS-1$ 
+		}
+		buffer.append( makeHTMLSafe( expression ) );
+		buffer.append( " = " ); //$NON-NLS-1$
+		
+		String safeValue = "<b>" + makeHTMLSafe( value ) + "</b>"; //$NON-NLS-1$ //$NON-NLS-2$
+		buffer.append( safeValue );			
+		buffer.append( "</p>" ); //$NON-NLS-1$
+	}
+
+	/**
+	 * Replace any characters in the given String that would confuse an HTML 
+	 * parser with their escape sequences.
+	 */
+	private static String makeHTMLSafe( String string ) 
+	{
+		StringBuffer buffer = new StringBuffer( string.length() );
+	
+		for ( int i = 0; i != string.length(); i++ ) 
+		{
+			char ch = string.charAt( i );
+			
+			switch( ch ) 
+			{
+				case '&':
+					buffer.append( "&amp;" ); //$NON-NLS-1$
+					break;
+					
+				case '<':
+					buffer.append( "&lt;" ); //$NON-NLS-1$
+					break;
+
+				case '>':
+					buffer.append( "&gt;" ); //$NON-NLS-1$
+					break;
+
+				default:
+					buffer.append( ch );
+					break;
+			}
+		}
+		return buffer.toString();		
 	}
 }

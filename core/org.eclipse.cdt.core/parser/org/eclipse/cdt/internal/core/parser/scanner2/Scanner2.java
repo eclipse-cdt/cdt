@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -41,6 +42,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.BranchTracker;
 import org.eclipse.cdt.internal.core.parser.scanner.ContextStack;
 import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
+import org.eclipse.cdt.internal.core.parser.scanner.ScannerProblemFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionDirective;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
@@ -443,6 +445,19 @@ public class Scanner2 implements IScanner, IScannerData {
 						continue;
 					return t;
 				
+				case '\\':
+					if (pos + 1 < limit && ( buffer[pos + 1] == 'u' || buffer[pos+1] == 'U' ) )
+					{
+						t = scanIdentifier();
+						if( t instanceof MacroExpansionToken )
+							continue;
+						return t;
+					}
+					//TODO - handle problem invalid char sequence
+					//error handling
+					bufferPos[ bufferStackPos ] += 2;
+					continue;
+					
 				case '0':
 				case '1':
 				case '2':
@@ -726,12 +741,21 @@ public class Scanner2 implements IScanner, IScannerData {
 				++len;
 				continue;
 			}
-			else if( c == '\\' && bufferPos[bufferStackPos] + 1 < buffer.length && buffer[ bufferPos[bufferStackPos] + 1 ] == '\n')
+			else if( c == '\\' && bufferPos[bufferStackPos] + 1 < limit && buffer[ bufferPos[bufferStackPos] + 1 ] == '\n')
 			{
 				// escaped newline
 				++bufferPos[bufferStackPos];
 				len += 2;
 				continue;
+			}
+			else if( c == '\\' && ( bufferPos[bufferStackPos] + 1 < limit ) )  
+			{
+				if (( buffer[ bufferPos[bufferStackPos] + 1 ] == 'u') || buffer[ bufferPos[bufferStackPos] + 1 ] == 'U')
+				{
+					++bufferPos[bufferStackPos];
+					len += 2;
+					continue;
+				}
 			}
 			break;
 		}
@@ -842,6 +866,11 @@ public class Scanner2 implements IScanner, IScannerData {
 			escaped = false;
 		}
 		
+		if( bufferPos[ bufferStackPos ] == limit )
+		{
+			handleProblem( IProblem.SCANNER_BAD_CHARACTER, start,  CharArrayUtils.extract(buffer, start, length) );
+			return newToken( tokenType, emptyCharArray );
+		}
 		
 		char[] image = length > 0
 			? CharArrayUtils.extract(buffer, start, length)
@@ -850,6 +879,16 @@ public class Scanner2 implements IScanner, IScannerData {
 		return newToken(tokenType, image );
 	}
 	
+	private static final ScannerProblemFactory spf = new ScannerProblemFactory();
+	/**
+	 * @param scanner_bad_character
+	 */
+	private void handleProblem(int id, int startOffset, char [] arg ) {
+		
+		IProblem p = spf.createProblem( id, startOffset, bufferPos[bufferStackPos], bufferLineNums[bufferStackPos], getCurrentFilename(), arg != null ? arg : emptyCharArray, false, true );
+		requestor.acceptProblem( p );
+	}
+
 	private IToken scanNumber() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int start = bufferPos[bufferStackPos];
@@ -1214,17 +1253,23 @@ public class Scanner2 implements IScanner, IScannerData {
 			
 			if (local) {
 				// create an include path reconciled to the current directory
-				String finalPath = ScannerUtility.createReconciledPath( new File( new String( getCurrentFilename() ) ).getParentFile().getAbsolutePath(), filename );
-				reader = (CodeReader)fileCache.get(finalPath);
-				if (reader == null)
-					reader = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
-				if (reader != null) {
-					if (reader.filename != null)
-						fileCache.put(reader.filename, reader);
-					if (dlog != null) dlog.println("#include \"" + finalPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-					IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), reader.filename, local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
-					pushContext(reader.buffer, new InclusionData( reader, inclusion ));
-					return;
+				File file = new File( String.valueOf( getCurrentFilename() ) );
+				File parentFile = file.getParentFile();
+				if( parentFile != null )
+				{
+					String absolutePath = parentFile.getAbsolutePath();
+					String finalPath = ScannerUtility.createReconciledPath( absolutePath, filename );
+					reader = (CodeReader)fileCache.get(finalPath);
+					if (reader == null)
+						reader = ScannerUtility.createReaderDuple( finalPath, requestor, getWorkingCopies() );
+					if (reader != null) {
+						if (reader.filename != null)
+							fileCache.put(reader.filename, reader);
+						if (dlog != null) dlog.println("#include \"" + finalPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+						IASTInclusion inclusion = getASTFactory().createInclusion( filename.toCharArray(), reader.filename, local, startOffset, startLine, nameOffset, nameEndOffset, nameLine, endOffset, endLine, getCurrentFilename() );
+						pushContext(reader.buffer, new InclusionData( reader, inclusion ));
+						return;
+					}
 				}
 			}
 			

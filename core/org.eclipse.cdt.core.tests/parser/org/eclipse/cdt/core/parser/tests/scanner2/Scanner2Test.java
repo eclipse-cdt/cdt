@@ -1473,7 +1473,6 @@ public class Scanner2Test extends BaseScanner2Test
     	initializeScanner("#if !defined FOO || FOO < 3\nprintf\n#endif\n"); //$NON-NLS-1$
     	validateIdentifier("printf"); //$NON-NLS-1$
     	validateEOF();
-
     }
     
     public void testBug56517() throws Exception

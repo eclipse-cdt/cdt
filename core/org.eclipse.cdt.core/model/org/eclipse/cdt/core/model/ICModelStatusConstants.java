@@ -18,6 +18,11 @@ package org.eclipse.cdt.core.model;
 public interface ICModelStatusConstants {
 
 	/**
+	 * Status constant indicating that a pathentry was invalid
+	 */
+	public static final int INVALID_PATHENTRY = 964;
+
+	/**
 	 * Status constant indicating that a variable path was not resolvable
 	 * indicating either the referred variable is undefined, unbound or the resolved
 	 * variable path does not correspond to an existing file or folder.

@@ -821,10 +821,24 @@ public class CoreModel {
 	 *		the entries location are compatible, otherwise a status 
 	 *		object indicating what is wrong with them
 	 */
-	//private static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {
-		//pathEntryManager.validatePathEntry(cproject, entries)
-	//	return null;
-	//}
+	public static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry[] entries) {
+		return pathEntryManager.validatePathEntry(cProject, entries);
+	}
+
+	/**
+	 * Returns a C model status describing the problem related to this entry if any, 
+	 * a status object with code <code>IStatus.OK</code> if the entry is fine (that is, if the
+	 * given entry denotes a valid element).
+	 * 
+	 * @param cProject the given C project
+	 * @param entry the given entry
+	 * @param checkSourceAttachment a flag to determine if source attachement should be checked
+	 * @param recurseInContainers flag indicating whether validation should be applied to container entries recursively
+	 * @return a c model status describing the problem related to this entry if any, a status object with code <code>IStatus.OK</code> if the entry is fine
+	 */
+	public static ICModelStatus validatePathEntry(ICProject cProject, IPathEntry entry, boolean checkSourceAttachment, boolean recurseInContainers){
+		return pathEntryManager.validatePathEntry(cProject, entry, checkSourceAttachment, recurseInContainers);
+	}
 
 	public static IPathEntryStore getPathEntryStore(IProject project) throws CoreException {
 		return CCorePlugin.getDefault().getPathEntryStore(project);

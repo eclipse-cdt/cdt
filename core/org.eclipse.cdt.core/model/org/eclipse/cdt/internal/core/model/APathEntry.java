@@ -118,4 +118,14 @@ public abstract class APathEntry extends PathEntry {
 		return super.equals(obj);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(super.toString());
+		sb.append(" base-path:").append(basePath.toString()); //$NON-NLS-1$
+		sb.append(" base-ref:").append(baseRef.toString()); //$NON-NLS-1$
+		return sb.toString();
+	}
 }

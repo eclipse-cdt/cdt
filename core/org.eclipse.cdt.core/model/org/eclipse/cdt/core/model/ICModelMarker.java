@@ -41,6 +41,22 @@ public interface ICModelMarker {
 	public static final String TASK_MARKER = CCorePlugin.PLUGIN_ID + ".task"; //$NON-NLS-1$
 	
 	public static final String INDEXER_MARKER = CCorePlugin.PLUGIN_ID + ".indexermarker"; //$NON-NLS-1$
+
+	/**
+	 * PatheEtnry problem marker type (value <code>"org.eclipse.cdt.core.pathentry_problem"</code>).
+	 * This can be used to recognize those markers in the workspace that flag problems 
+	 * detected by the C tooling during pathEntry setting.
+	 */
+	public static final String PATHENTRY_PROBLEM_MARKER = CCorePlugin.PLUGIN_ID + ".pathentry_problem"; //$NON-NLS-1$
+	
+	/** 
+	 * PathEntry file format marker attribute (value <code>"PathEntryFileFormat"</code>).
+	 * Used only on pathentry store problem markers.
+	 * The value of this attribute is either "true" or "false".
+	 * 
+	 */
+	 public static final String PATHENTRY_FILE_FORMAT = "pathEntryFileFormat"; //$NON-NLS-1$
+
 }
 
 

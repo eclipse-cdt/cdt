@@ -156,4 +156,13 @@ public class LibraryEntry extends APathEntry implements ILibraryEntry {
 	public IPath getLibraryPath() {
 		return libraryPath;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(super.toString());
+		sb.append(" librarypath:").append(libraryPath.toString()); //$NON-NLS-1$
+		return sb.toString();
+	}
 }

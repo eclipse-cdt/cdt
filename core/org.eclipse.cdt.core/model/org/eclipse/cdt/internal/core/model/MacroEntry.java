@@ -74,4 +74,14 @@ public class MacroEntry extends APathEntry implements IMacroEntry {
 		return super.equals(obj);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(super.toString());
+		sb.append(" name:").append(macroName); //$NON-NLS-1$
+		sb.append(" value:").append(macroValue); //$NON-NLS-1$
+		return sb.toString();
+	}
 }

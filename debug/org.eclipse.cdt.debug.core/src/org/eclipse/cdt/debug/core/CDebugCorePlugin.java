@@ -6,6 +6,7 @@
 
 package org.eclipse.cdt.debug.core;
 
+import org.eclipse.cdt.debug.internal.core.CDebuggerManager;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -26,6 +27,8 @@ public class CDebugCorePlugin extends Plugin
 
 	//The shared instance.
 	private static CDebugCorePlugin plugin;
+
+	private CDebuggerManager debuggerManager;
 
 	/**
 	 * The constructor.
@@ -103,5 +106,12 @@ public class CDebugCorePlugin extends Plugin
 	public static void log( IStatus status )
 	{
 		getDefault().getLog().log( status );
+	}
+	
+	public ICDebuggerManager getDebuggerManager() {
+		if ( debuggerManager == null ) {
+			debuggerManager = new CDebuggerManager();
+		} 
+		return debuggerManager;
 	}
 }

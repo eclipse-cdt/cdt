@@ -10,9 +10,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.BinaryParserConfig;
@@ -80,7 +82,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	 * Queue of deltas created explicily by the C Model that
 	 * have yet to be fired.
 	 */
-	ArrayList fCModelDeltas = new ArrayList();
+	List fCModelDeltas = Collections.synchronizedList(new ArrayList());
 
 	/**
 	 * Queue of reconcile deltas on working copies that have yet to be fired.
@@ -96,7 +98,7 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/**
 	 * Collection of listeners for C element deltas
 	 */
-	protected ArrayList fElementChangedListeners = new ArrayList();
+	protected List fElementChangedListeners = Collections.synchronizedList(new ArrayList());
 
 	/**
 	 * A map from ITranslationUnit to IWorkingCopy of the shared working copies.
@@ -622,19 +624,23 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 	/**
 	 * addElementChangedListener method comment.
 	 */
-	public synchronized void addElementChangedListener(IElementChangedListener listener) {
-		if (fElementChangedListeners.indexOf(listener) < 0) {
-			fElementChangedListeners.add(listener);
+	public void addElementChangedListener(IElementChangedListener listener) {
+		synchronized(fElementChangedListeners) {
+			if (!fElementChangedListeners.contains(listener)) {
+				fElementChangedListeners.add(listener);
+			}
 		}
 	}
 
 	/**
 	 * removeElementChangedListener method comment.
 	 */
-	public synchronized void removeElementChangedListener(IElementChangedListener listener) {
-		int i = fElementChangedListeners.indexOf(listener);
-		if (i != -1) {
-			fElementChangedListeners.remove(i);
+	public void removeElementChangedListener(IElementChangedListener listener) {
+		synchronized(fElementChangedListeners) {
+			int i = fElementChangedListeners.indexOf(listener);
+			if (i != -1) {
+				fElementChangedListeners.remove(i);
+			}
 		}
 	}
 
@@ -742,16 +748,21 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 		if (fFire) {
 			ICElementDelta deltaToNotify;
 			if (customDeltas == null) {
-				deltaToNotify = this.mergeDeltas(this.fCModelDeltas);
+				deltaToNotify = mergeDeltas(this.fCModelDeltas);
 			} else {
 				deltaToNotify = customDeltas;
 			}
                          
+			IElementChangedListener[] listeners;
+			int listenerCount; 
+			int [] listenerMask;
 			// Notification
-			IElementChangedListener[] listeners =  new IElementChangedListener[fElementChangedListeners.size()];
-			fElementChangedListeners.toArray(listeners);
-        	int listenerCount = listeners.length; 
-			int [] listenerMask = null;
+			synchronized(fElementChangedListeners) {
+				listeners =  new IElementChangedListener[fElementChangedListeners.size()];
+				fElementChangedListeners.toArray(listeners);
+				listenerCount = listeners.length; 
+				listenerMask = null;
+			}
 
 			switch (eventType) {
 				case DEFAULT_CHANGE_EVENT:
@@ -850,39 +861,38 @@ public class CModelManager implements IResourceChangeListener, ICDescriptorListe
 
 	private ICElementDelta mergeDeltas(Collection deltas) {
 
-		if (deltas.size() == 0)
-			return null;
-		if (deltas.size() == 1)
-			return (ICElementDelta)deltas.iterator().next();
-		if (deltas.size() <= 1)
-			return null;
-
-		Iterator iterator = deltas.iterator();
-		ICElement cRoot = getCModel();
-		CElementDelta rootDelta = new CElementDelta(cRoot);
-		boolean insertedTree = false;
-		while (iterator.hasNext()) {
-			CElementDelta delta = (CElementDelta)iterator.next();
-			ICElement element = delta.getElement();
-			if (cRoot.equals(element)) {
-				ICElementDelta[] children = delta.getAffectedChildren();
-				for (int j = 0; j < children.length; j++) {
-					CElementDelta projectDelta = (CElementDelta) children[j];
-					rootDelta.insertDeltaTree(projectDelta.getElement(), projectDelta);
+		synchronized(deltas) {
+			if (deltas.size() == 0)
+				return null;
+			if (deltas.size() == 1)
+				return (ICElementDelta)deltas.iterator().next();
+			if (deltas.size() <= 1)
+				return null;
+			
+			Iterator iterator = deltas.iterator();
+			ICElement cRoot = getCModel();
+			CElementDelta rootDelta = new CElementDelta(cRoot);
+			boolean insertedTree = false;
+			while (iterator.hasNext()) {
+				CElementDelta delta = (CElementDelta)iterator.next();
+				ICElement element = delta.getElement();
+				if (cRoot.equals(element)) {
+					ICElementDelta[] children = delta.getAffectedChildren();
+					for (int j = 0; j < children.length; j++) {
+						CElementDelta projectDelta = (CElementDelta) children[j];
+						rootDelta.insertDeltaTree(projectDelta.getElement(), projectDelta);
+						insertedTree = true;
+					}
+				} else {
+					rootDelta.insertDeltaTree(element, delta);
 					insertedTree = true;
 				}
-			} else {
-				rootDelta.insertDeltaTree(element, delta);
-				insertedTree = true;
 			}
-		}
-		if (insertedTree) {
-			//fCModelDeltas = new ArrayList(1);
-			//fCModelDeltas.add(rootDelta);
-			return rootDelta;
-		} else {
-			//fCModelDeltas = new ArrayList(0);
-			return null;
+			if (insertedTree) {
+				return rootDelta;
+			} else {
+				return null;
+			}
 		}
 	}
 

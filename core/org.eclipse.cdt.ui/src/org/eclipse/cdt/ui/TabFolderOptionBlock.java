@@ -12,6 +12,7 @@ package org.eclipse.cdt.ui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
@@ -30,23 +31,81 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
 public abstract class TabFolderOptionBlock {
+	private boolean initializingTabs = true;
+	private Composite composite;
+	private boolean bShowMessageArea;
 	private String fErrorMessage;
 	private boolean bIsValid;
 
 	private Label messageLabel;
-	private TabItem fCurrentItem;
-	private TabFolder fFolder;
-	private ArrayList tabs;
-	private ICOptionContainer fParent;
+	private ArrayList pages;
+	protected ICOptionContainer fParent;
+	private ICOptionPage fCurrentPage;
 
-	public TabFolderOptionBlock(ICOptionContainer parent) {
+	private TabFolder fFolder;
+
+	public TabFolderOptionBlock(ICOptionContainer parent, boolean showMessageArea) {
 		fParent = parent;
+		bShowMessageArea = showMessageArea;
+	}
+	
+	public TabFolderOptionBlock(ICOptionContainer parent) {
+		this(parent, true);
 	}
 
-	protected TabItem addTab(ICOptionPage tab) {
-		if (tabs == null) {
-			tabs = new ArrayList();
+	protected void addOptionPage(ICOptionPage page) {
+		if (pages == null) {
+			pages = new ArrayList();
 		}
+		if (!pages.contains(page)) {
+			pages.add(page);
+		}
+	}
+
+	protected List getOptionPages() {
+		return pages;
+	}
+	
+	public Control createContents(Composite parent) {
+
+		composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout(1, false));
+
+		if (bShowMessageArea) {
+			messageLabel = new Label(composite, SWT.LEFT);
+			messageLabel.setFont(composite.getFont());
+			messageLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+			Label separator = new Label(composite, SWT.HORIZONTAL);
+			separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		}
+	
+		createFolder(composite);
+
+		addTabs();
+		setCurrentPage((ICOptionPage) pages.get(0));
+		initializingTabs = false;		
+		String desc = ((ICOptionPage) pages.get(0)).getDescription();
+		if (desc != null) {
+			messageLabel.setText(desc);
+		}
+		return composite;
+	}
+
+	protected void createFolder(Composite parent) {
+		fFolder = new TabFolder(parent, SWT.NONE);
+		fFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+		fFolder.setLayout(new TabFolderLayout());
+
+		fFolder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				setCurrentPage((ICOptionPage) ((TabItem) e.item).getData());
+				fParent.updateContainer();
+			}
+		});
+	}
+
+	protected void addTab(ICOptionPage tab) {
 		TabItem item = new TabItem(fFolder, SWT.NONE);
 		item.setText(tab.getTitle());
 		Image img = tab.getImage();
@@ -56,49 +115,21 @@ public abstract class TabFolderOptionBlock {
 		tab.setContainer(fParent);
 		tab.createControl(item.getParent());
 		item.setControl(tab.getControl());
-		tabs.add(tab);
-		return item;
+		addOptionPage(tab);
 	}
 
-	public Control createContents(Composite parent) {
-		
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayout(new GridLayout(1, false));
+	abstract protected void addTabs();
 
-		messageLabel = new Label(composite, SWT.LEFT);
-		messageLabel.setFont(composite.getFont());
-		messageLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Label separator = new Label(composite, SWT.HORIZONTAL);
-		separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		fFolder = new TabFolder(composite, SWT.NONE);
-		fFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fFolder.setLayout(new TabFolderLayout());
-
-		fCurrentItem = addTabs();
-
-		fFolder.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				fCurrentItem = (TabItem) e.item;
-				fParent.updateContainer();
-			}
-		});
-
-		messageLabel.setText(((ICOptionPage) tabs.get(0)).getDescription());
-		return composite;
-	}
-	
-	abstract protected TabItem addTabs();
-
-	public boolean performOk(IProgressMonitor monitor) {
-		Iterator iter = tabs.iterator();
+	public boolean performApply(IProgressMonitor monitor) {
+		if ( initializingTabs ) 
+			return false;
+		Iterator iter = pages.iterator();
 		while (iter.hasNext()) {
 			ICOptionPage tab = (ICOptionPage) iter.next();
 			try {
 				tab.performApply(new NullProgressMonitor());
 			} catch (CoreException e) {
-				CUIPlugin.errorDialog(fFolder.getShell(), "Error", "Error setting options", e);
+				CUIPlugin.errorDialog(composite.getShell(), "Error", "Error setting options", e);
 				return false;
 			}
 		}
@@ -109,18 +140,21 @@ public abstract class TabFolderOptionBlock {
 	 * @see DialogPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		Iterator iter = tabs.iterator();
+		if ( initializingTabs ) 
+			return;
+		Iterator iter = pages.iterator();
 		while (iter.hasNext()) {
 			ICOptionPage tab = (ICOptionPage) iter.next();
 			tab.setVisible(visible);
 		}
 		update();
-		fFolder.setFocus();
 	}
 
 	public void update() {
+		if ( initializingTabs ) 
+			return;
 		boolean ok = true;
-		Iterator iter = tabs.iterator();
+		Iterator iter = pages.iterator();
 		while (iter.hasNext()) {
 			ICOptionPage tab = (ICOptionPage) iter.next();
 			ok = tab.isValid();
@@ -129,10 +163,11 @@ public abstract class TabFolderOptionBlock {
 				break;
 			}
 		}
-		if (ok && fCurrentItem != null) {
+		if (ok) {
 			setErrorMessage(null);
-			ICOptionPage tab = (ICOptionPage) fCurrentItem.getData();
-			messageLabel.setText(tab.getDescription());
+			ICOptionPage tab = getCurrentPage();
+			if (bShowMessageArea && tab.getDescription() != null)
+				messageLabel.setText(tab.getDescription());
 		}
 		setValid(ok);
 	}
@@ -154,8 +189,17 @@ public abstract class TabFolderOptionBlock {
 	}
 
 	public void performDefaults() {
-		ICOptionPage tab = (ICOptionPage) fCurrentItem.getData();
-		tab.performDefaults();
+		if ( initializingTabs ) 
+			return;
+		getCurrentPage().performDefaults();
+	}
+
+	public ICOptionPage getCurrentPage() {
+		return fCurrentPage;
+	}
+
+	public void setCurrentPage(ICOptionPage page) {
+		fCurrentPage = page;
 	}
 
 }

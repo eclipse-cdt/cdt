@@ -246,7 +246,7 @@ public class CProjectNature implements IProjectNature {
 				System.arraycopy(commands, 0, newCommands, 0, i);
 				System.arraycopy(commands, i + 1, newCommands, i, commands.length - i - 1);
 				description.setBuildSpec(newCommands);
-				return;
+				break;
 			}
 		}
 		getProject().setDescription(description, mon);

@@ -1,4 +1,8 @@
 2003-04-14 Mikhail Khodjaiants
+	Commented default format preferences.
+	* CDebugPreferencePage.java
+
+2003-04-14 Mikhail Khodjaiants
 	Fixes for toggle actions.
 	* plugin.xml
 	* MemoryFormatAction.java

@@ -4,9 +4,6 @@
       label="%featureName"
       version="2.0.0"
       provider-name="%providerName"
-      os=""
-      ws=""
-      nl=""
       image="eclipse_update_120.jpg">
 
    <description>
@@ -18,7 +15,7 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://update.eclipse.org/updates"/>
+      <update label="%updateSiteName" url="http://update.eclipse.org/tools/cdt/updates/release"/>
    </url>
 
    <requires>

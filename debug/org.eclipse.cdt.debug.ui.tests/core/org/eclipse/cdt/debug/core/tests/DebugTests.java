@@ -14,7 +14,6 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.testplugin.CDebugHelper;
@@ -116,14 +115,11 @@ public class DebugTests extends TestCase {
      * It's not ment to be a real proper test.
      */
     public void testDebug() throws CoreException, MIException, IOException, CDIException {
-        ICDISourceManager source;
         ICDITarget cdiTarget;
         ICDILocation location;
 	
 		session=CDebugHelper.createSession("main",testProject);
         assertNotNull(session);
-        source=session.getSourceManager();
-        assertNotNull(source);
 		ICDITarget[] targets = session.getTargets();
 		assertNotNull(targets);
 		assertTrue(targets.length > 0);

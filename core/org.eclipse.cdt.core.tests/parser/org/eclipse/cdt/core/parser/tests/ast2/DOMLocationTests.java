@@ -47,6 +47,9 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionTryBlockDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
@@ -459,4 +462,42 @@ public class DOMLocationTests extends AST2BaseTest {
             assertNull( for_stmt.getInitDeclaration() );
         }
 	}
+	
+    public void testBug86698_1() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+        buffer.append( "struct C;\n"); //$NON-NLS-1$
+		buffer.append( "void no_opt(C*);\n"); //$NON-NLS-1$
+		buffer.append( "struct C {\n"); //$NON-NLS-1$
+		buffer.append( "int c;\n"); //$NON-NLS-1$
+		buffer.append( "C() : c(0) { no_opt(this); }\n"); //$NON-NLS-1$
+		buffer.append( "};\n"); //$NON-NLS-1$
+		
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+		ICPPASTFunctionDeclarator funC = (ICPPASTFunctionDeclarator)((IASTFunctionDefinition)((ICPPASTCompositeTypeSpecifier)((IASTSimpleDeclaration)tu.getDeclarations()[2]).getDeclSpecifier()).getMembers()[1]).getDeclarator();
+		assertSoleLocation( funC, buffer.toString().indexOf("C() : c(0)"), "C() : c(0)".length() );  //$NON-NLS-1$//$NON-NLS-2$
+	}
+
+    public void testBug86698_2() throws Exception {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "void foo() {\n"); //$NON-NLS-1$
+		buffer.append( "int f(int);\n"); //$NON-NLS-1$
+		buffer.append( "class C {\n"); //$NON-NLS-1$
+		buffer.append( "int i;\n"); //$NON-NLS-1$
+		buffer.append( "double d;\n"); //$NON-NLS-1$
+		buffer.append( "public:\n"); //$NON-NLS-1$
+		buffer.append( "C(int, double);\n"); //$NON-NLS-1$
+		buffer.append( "};\n"); //$NON-NLS-1$
+		buffer.append( "C::C(int ii, double id)\n"); //$NON-NLS-1$
+		buffer.append( "try\n"); //$NON-NLS-1$
+		buffer.append( ": i(f(ii)), d(id)\n"); //$NON-NLS-1$
+		buffer.append( "{\n }\n"); //$NON-NLS-1$
+		buffer.append( "catch (...)\n"); //$NON-NLS-1$
+		buffer.append( "{\n }\n"); //$NON-NLS-1$
+		buffer.append( "}\n"); //$NON-NLS-1$
+		
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+		ICPPASTFunctionTryBlockDeclarator funC = (ICPPASTFunctionTryBlockDeclarator)((IASTFunctionDefinition)((IASTDeclarationStatement)((IASTCompoundStatement)((IASTFunctionDefinition)tu.getDeclarations()[0]).getBody()).getStatements()[2]).getDeclaration()).getDeclarator();
+		assertSoleLocation( funC, buffer.toString().indexOf("C::C(int ii, double id)\ntry\n: i(f(ii)), d(id)"), "C::C(int ii, double id)\ntry\n: i(f(ii)), d(id)".length() );  //$NON-NLS-1$//$NON-NLS-2$
+	}
+
 }

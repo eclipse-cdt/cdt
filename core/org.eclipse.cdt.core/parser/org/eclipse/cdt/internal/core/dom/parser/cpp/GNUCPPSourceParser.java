@@ -2708,7 +2708,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
          if (!constructorChain.isEmpty()
                && declarator instanceof ICPPASTFunctionDeclarator) {
             ICPPASTFunctionDeclarator fd = (ICPPASTFunctionDeclarator) declarator;
-            for (int i = 0; i < constructorChain.size(); ++i) {
+			
+			int size = constructorChain.size();
+			for (int i = 0; i < size; ++i) {
                ICPPASTConstructorChainInitializer initializer = (ICPPASTConstructorChainInitializer) constructorChain
                      .get(i);
                fd.addConstructorToChain(initializer);
@@ -2716,6 +2718,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                initializer
                      .setPropertyInParent(ICPPASTFunctionDeclarator.CONSTRUCTOR_CHAIN_MEMBER);
             }
+			
+			// fix for 86698, now that the constructorChain is established, update the declarator's length
+			if (fd instanceof ASTNode && constructorChain.get(size-1) instanceof ASTNode) {
+				ASTNode init = (ASTNode) constructorChain.get(size-1);
+				((ASTNode)fd).setLength(init.getOffset() + init.getLength() - ((ASTNode)fd).getOffset());				
+			}
          }
 
          IASTFunctionDefinition funcDefinition = createFunctionDefinition();

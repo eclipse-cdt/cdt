@@ -174,7 +174,6 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 	public void startup() throws CoreException {
 		super.startup();
 		DebugPlugin.getDefault().addDebugEventListener(this);
-		LaunchImages.initialize();
 	}
 	
 	/**

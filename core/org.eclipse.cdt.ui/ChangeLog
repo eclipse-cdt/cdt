@@ -1,5 +1,10 @@
 2004-02-11 Alain Magloire
 
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	Register the part listener.
+
+2004-02-11 Alain Magloire
+
 	Reorganize the CView to better deal with the menu actions.
 
 	* src/org/eclipse/cdt/internal/ui/cview/CopyAction.java

@@ -435,7 +435,7 @@ public class CView extends ViewPart implements ISetSelectionTarget,
 	protected void initListeners(TreeViewer viewer) {
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-			handleDoubleClick(event);
+				handleDoubleClick(event);
 			}
 		});
 
@@ -468,6 +468,7 @@ public class CView extends ViewPart implements ISetSelectionTarget,
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 
 		initFilters(viewer);
+		initListeners(viewer);
 		initCElementSorter();
 		initFrameList();
 		initDragAndDrop();

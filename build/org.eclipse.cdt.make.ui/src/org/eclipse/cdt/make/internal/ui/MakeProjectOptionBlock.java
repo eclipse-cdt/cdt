@@ -10,7 +10,7 @@ package org.eclipse.cdt.make.internal.ui;
 
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.ui.dialogs.BuildPathInfoBlock;
+import org.eclipse.cdt.make.ui.dialogs.DiscoveryOptionsBlock;
 import org.eclipse.cdt.make.ui.dialogs.SettingsBlock;
 import org.eclipse.cdt.ui.dialogs.BinaryParserBlock;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
@@ -30,7 +30,7 @@ public class MakeProjectOptionBlock extends TabFolderOptionBlock {
 		addTab(new SettingsBlock(MakeCorePlugin.getDefault().getPluginPreferences(), MakeBuilder.BUILDER_ID));
 		addTab(new ErrorParserBlock(MakeCorePlugin.getDefault().getPluginPreferences()));
 		addTab(new BinaryParserBlock());
-		addTab(new BuildPathInfoBlock());
+		addTab(new DiscoveryOptionsBlock());
 	}
 
 }

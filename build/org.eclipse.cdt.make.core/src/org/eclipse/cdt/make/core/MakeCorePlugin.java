@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.make.core.makefile.IMakefile;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager;
 import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
@@ -25,6 +26,7 @@ import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
 import org.eclipse.cdt.make.internal.core.BuildInfoFactory;
 import org.eclipse.cdt.make.internal.core.MakeTargetManager;
 import org.eclipse.cdt.make.internal.core.makefile.gnu.GNUMakefile;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathManager;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerConfigInfoFactory;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IFile;
@@ -49,7 +51,6 @@ import org.osgi.framework.BundleContext;
 public class MakeCorePlugin extends Plugin {
 	public static final String PLUGIN_ID = "org.eclipse.cdt.make.core"; //$NON-NLS-1$
 	public static final String MAKE_PROJECT_ID = MakeCorePlugin.getUniqueIdentifier() + ".make"; //$NON-NLS-1$
-	private MakeTargetManager fTargetManager;
 	public static final String OLD_BUILDER_ID = "org.eclipse.cdt.core.cbuilder"; //$NON-NLS-1$
 
 	public static final String EXTERNAL_SI_PROVIDER_SIMPLE_ID = "ExternalScannerInfoProvider"; //$NON-NLS-1$
@@ -58,6 +59,8 @@ public class MakeCorePlugin extends Plugin {
 	public static final String GCC_SPECS_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCSpecsConsoleParser"; //$NON-NLS-1$
 	public static final String GCC_SCANNER_INFO_CONSOLE_PARSER_ID = MakeCorePlugin.getUniqueIdentifier() + ".GCCScannerInfoConsoleParser"; //$NON-NLS-1$
 	
+	private MakeTargetManager fTargetManager;
+	private DiscoveredPathManager fDiscoveryPathManager;
 	//The shared instance.
 	private static MakeCorePlugin plugin;
 
@@ -206,6 +209,13 @@ public class MakeCorePlugin extends Plugin {
 	
 	public static IPath getWorkingDirectory() {
 		return MakeCorePlugin.getDefault().getStateLocation();
+	}
+
+	public IDiscoveredPathManager getDiscoveryManager() {
+		if ( fDiscoveryPathManager == null) {
+			fDiscoveryPathManager = new DiscoveredPathManager();
+		}
+		return fDiscoveryPathManager;
 	}
 
 	/**

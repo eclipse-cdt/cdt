@@ -7,47 +7,51 @@
  * 
  * Contributors: 
  * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ ***********************************************************************/
 package org.eclipse.cdt.make.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.eclipse.cdt.core.AbstractCExtension;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IIncludeEntry;
+import org.eclipse.cdt.core.model.IMacroEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.cdt.core.resources.ScannerProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class MakeScannerProvider extends AbstractCExtension implements IScannerInfoProvider {
+/**
+ * @deprecated @author DInglis
+ *  
+ */
+public class MakeScannerProvider extends ScannerProvider {
 
 	// This is the id of the IScannerInfoProvider extension point entry
 	public static final String INTERFACE_IDENTITY = MakeCorePlugin.getUniqueIdentifier() + ".MakeScannerProvider"; //$NON-NLS-1$
 
 	// Name we will use to store build property with the project
-	private static final QualifiedName scannerInfoProperty = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(), "makeBuildInfo"); //$NON-NLS-1$
+	private static final QualifiedName scannerInfoProperty = new QualifiedName(MakeCorePlugin.getUniqueIdentifier(),
+			"makeBuildInfo"); //$NON-NLS-1$
 	private static final String CDESCRIPTOR_ID = MakeCorePlugin.getUniqueIdentifier() + ".makeScannerInfo"; //$NON-NLS-1$
 
 	public static final String INCLUDE_PATH = "includePath"; //$NON-NLS-1$
 	public static final String PATH = "path"; //$NON-NLS-1$
 	public static final String DEFINED_SYMBOL = "definedSymbol"; //$NON-NLS-1$
 	public static final String SYMBOL = "symbol"; //$NON-NLS-1$
-
-	// Listeners interested in build model changes
-	private static Map listeners;
 
 	private static MakeScannerProvider defaultProvider;
 
@@ -67,6 +71,8 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 		// Try to load one for the project
 		if (scannerInfo == null) {
 			scannerInfo = loadScannerInfo(project);
+		} else {
+			return scannerInfo;
 		}
 
 		// There is nothing persisted for the session, or saved in a file so
@@ -74,34 +80,15 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 		if (scannerInfo != null && cacheInfo == true) {
 			project.setSessionProperty(scannerInfoProperty, scannerInfo);
 		}
+
+		// migrate to new C Path Entries
+		if (scannerInfo != null) {
+			updateScannerInfo(scannerInfo);
+		}
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		descriptor.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID); // remove scanner provider which will fallback to default cpath
+		// provider.
 		return scannerInfo;
-	}
-
-	/*
-	 * @return
-	 */
-	private synchronized static Map getListeners() {
-		if (listeners == null) {
-			listeners = new HashMap();
-		}
-		return listeners;
-	}
-
-	/**
-	 * @param project
-	 * @param info
-	 */
-	private static void notifyInfoListeners(IProject project, IScannerInfo info) {
-		// Call in the cavalry
-		List listeners = (List)getListeners().get(project);
-		if (listeners == null) {
-			return;
-		}
-		ListIterator iter = listeners.listIterator();
-		while (iter.hasNext()) {
-			((IScannerInfoChangeListener)iter.next()).changeNotification(project, info);
-		}
-
 	}
 
 	/*
@@ -110,20 +97,18 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
 	 */
 	public IScannerInfo getScannerInformation(IResource resource) {
-		IScannerInfo info = null;
 		try {
-			info = getMakeScannerInfo(resource.getProject(), true);
+			getMakeScannerInfo(resource.getProject(), true);
 		} catch (CoreException e) {
 		}
-		return info;
+		return super.getScannerInformation(resource);
 	}
 
 	/*
-	 * Loads the build file and parses the nodes for build information. The
-	 * information is then associated with the resource for the duration of the
-	 * session.
+	 * Loads the build file and parses the nodes for build information. The information is then associated with the resource for the
+	 * duration of the session.
 	 */
-	public MakeScannerInfo loadScannerInfo(IProject project) throws CoreException {
+	private MakeScannerInfo loadScannerInfo(IProject project) throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 		Node child = descriptor.getProjectData(CDESCRIPTOR_ID).getFirstChild();
 		ArrayList includes = new ArrayList();
@@ -131,10 +116,10 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 		while (child != null) {
 			if (child.getNodeName().equals(INCLUDE_PATH)) {
 				// Add the path to the property list
-				includes.add(((Element)child).getAttribute(PATH));
+				includes.add( ((Element)child).getAttribute(PATH));
 			} else if (child.getNodeName().equals(DEFINED_SYMBOL)) {
 				// Add the symbol to the symbol list
-				symbols.add(((Element)child).getAttribute(SYMBOL));
+				symbols.add( ((Element)child).getAttribute(SYMBOL));
 			}
 			child = child.getNextSibling();
 		}
@@ -144,13 +129,36 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 		return info;
 	}
 
+	private static void migrateToCPathEntries(MakeScannerInfo info) throws CoreException {
+		Map symbols = info.getDefinedSymbols();
+		String[] includes = info.getIncludePaths();
+		ICProject cProject = CoreModel.getDefault().create(info.getProject());
+		IPathEntry[] entries = cProject.getRawPathEntries();
+		List cPaths = new ArrayList(Arrays.asList(entries));
+
+		for (int i = 0; i < includes.length; i++) {
+			IIncludeEntry include = CoreModel.newIncludeEntry(info.getProject().getFullPath(), null, new Path(includes[i]));
+			if (!cPaths.contains(include)) {
+				cPaths.add(include);
+			}
+		}
+		Iterator syms = symbols.entrySet().iterator();
+		while (syms.hasNext()) {
+			Map.Entry entry = (Entry)syms.next();
+			IMacroEntry sym = CoreModel.newMacroEntry(info.getProject().getFullPath(), (String)entry.getKey(),
+					(String)entry.getValue());
+			if (!cPaths.contains(sym)) {
+				cPaths.add(sym);
+			}
+		}
+		cProject.setRawPathEntries((IPathEntry[])cPaths.toArray(new IPathEntry[cPaths.size()]), null);
+	}
+
 	/**
-	 * The build model manager for standard builds only caches the build
-	 * information for a resource on a per-session basis. This method allows
-	 * clients of the build model manager to programmatically remove the
-	 * association between the resource and the information while the reource
-	 * is still open or in the workspace. The Eclipse core will take care of
-	 * removing it if a resource is closed or deleted.
+	 * The build model manager for standard builds only caches the build information for a resource on a per-session basis. This
+	 * method allows clients of the build model manager to programmatically remove the association between the resource and the
+	 * information while the reource is still open or in the workspace. The Eclipse core will take care of removing it if a resource
+	 * is closed or deleted.
 	 * 
 	 * @param resource
 	 */
@@ -162,21 +170,13 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 	}
 
 	/**
-	 * Persists build-specific information in the build file. Build information
-	 * for standard make projects consists of preprocessor symbols and includes
-	 * paths. Other project-related information is stored in the persistent
-	 * properties of the project.
+	 * Persists build-specific information in the build file. Build information for standard make projects consists of preprocessor
+	 * symbols and includes paths. Other project-related information is stored in the persistent properties of the project.
 	 * 
 	 * @param project
 	 */
 	public static void updateScannerInfo(MakeScannerInfo scannerInfo) throws CoreException {
 		IProject project = scannerInfo.getProject();
-
-		// See if there's already one associated with the resource for this
-		// session
-		if (project.getSessionProperty(scannerInfoProperty) != null) {
-			project.setSessionProperty(scannerInfoProperty, scannerInfo);
-		}
 
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 
@@ -190,79 +190,7 @@ public class MakeScannerProvider extends AbstractCExtension implements IScannerI
 			child = rootElement.getFirstChild();
 		}
 
-		// Save the build info
-		if (scannerInfo != null) {
-			// Serialize the include paths
-			Document doc = rootElement.getOwnerDocument();
-			ListIterator iter = Arrays.asList(scannerInfo.getIncludePaths()).listIterator();
-			while (iter.hasNext()) {
-				Element pathElement = doc.createElement(INCLUDE_PATH);
-				pathElement.setAttribute(PATH, (String)iter.next());
-				rootElement.appendChild(pathElement);
-			}
-			// Now do the same for the symbols
-			iter = Arrays.asList(scannerInfo.getPreprocessorSymbols()).listIterator();
-			while (iter.hasNext()) {
-				Element symbolElement = doc.createElement(DEFINED_SYMBOL);
-				symbolElement.setAttribute(SYMBOL, (String)iter.next());
-				rootElement.appendChild(symbolElement);
-			}
-			descriptor.saveProjectData();
-		}
-		notifyInfoListeners(project, scannerInfo);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
-	 */
-	public synchronized void subscribe(IResource resource, IScannerInfoChangeListener listener) {
-		IResource project = null;
-		if (resource instanceof IProject) {
-			project = resource;
-		} else if (resource instanceof IFile) {
-			project = ((IFile)resource).getProject();
-		} else {
-			return;
-		}
-		// Get listeners for this resource
-		Map map = getListeners();
-		List list = (List)map.get(project);
-		if (list == null) {
-			// Create a new list
-			list = new ArrayList();
-		}
-		if (!list.contains(listener)) {
-			// Add the new listener for the resource
-			list.add(listener);
-			map.put(project, list);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
-	 */
-	public synchronized void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
-		IResource project = null;
-		if (resource instanceof IProject) {
-			project = resource;
-		} else if (resource instanceof IFile) {
-			project = ((IFile)resource).getProject();
-		} else {
-			return;
-		}
-		// Remove the listener
-		Map map = getListeners();
-		List list = (List)map.get(project);
-		if (list != null && !list.isEmpty()) {
-			// The list is not empty so try to remove listener
-			list.remove(listener);
-			map.put(project, list);
-		}
+		descriptor.saveProjectData();
+		migrateToCPathEntries(scannerInfo);
 	}
 }

@@ -300,7 +300,7 @@
       <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
-            name="%ProjectPathProperies.name"
+            name="%ProjectPathProperties.name"
             nameFilter="*"
             class="org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathPropertyPage"
             id="org.eclipse.cdt.internal.ui.dialogs.cpath.CPathPropertyPage">
@@ -308,7 +308,26 @@
                name="nature"
                value="org.eclipse.cdt.make.core.makeNature">
          </filter>
-      </page>      
+      </page>    
+      <page
+            objectClass="org.eclipse.cdt.core.model.ICContainer"
+            adaptable="true"
+            name="%IncludeSymbolProperties.name"
+            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
+            id="org.eclipse.cdt.internal.ui.dialogs.cpath.IncludeSymbolsPropertyPage">
+      </page>
+      <page
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            name="%IncludeSymbolProperties.name"
+            class="org.eclipse.cdt.internal.ui.dialogs.cpaths.IncludesSymbolsPropertyPage"
+            id="org.eclipse.cdt.internal.ui.dialogs.cpath.IncludeSymbolsPropertyPage">
+         <filter
+               name="nature"
+               value="org.eclipse.cdt.core.cnature">
+         </filter>
+      </page>
+        
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -437,4 +456,11 @@
       </perspectiveExtension>
    </extension>
 
-</plugin>
+
+   <extension
+         point="org.eclipse.cdt.ui.PathContainerPage">
+      <PathContainerPage
+            class="org.eclipse.cdt.make.ui.dialogs.DiscoveredPathContainerPage"
+            name="%DiscoveredScannerInfoContainer.name"
+            id="org.eclipse.cdt.make.core.DISCOVERED_SCANNER_INFO"/>
+   </extension></plugin>

@@ -19,9 +19,8 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.MakeScannerInfo;
-import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfo;
-import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfoProvider;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.SymbolEntry;
@@ -30,14 +29,11 @@ import org.eclipse.cdt.make.internal.ui.MessageLine;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontData;
@@ -94,7 +90,6 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 	
 	boolean alreadyCreated;	// Set when dialog is created for the first time (vs. reopened)
 	private ArrayList returnSymbols;
-	private ArrayList userSymbols;
 	private ArrayList deletedDiscoveredSymbols;
 	private LinkedHashMap discoveredSymbols;
 	private LinkedHashMap workingDiscoveredSymbols; // working copy of discoveredSymbols, until either OK or CANCEL is pressed
@@ -106,11 +101,6 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 	private Shell fShell;
 	private MessageLine fStatusLine;
 
-	private List userList;
-	private Button addSymbol;
-	private Button editSymbol;
-	private Button removeSymbol;
-	
 	private Group discoveredGroup;
 	private Label selectedLabel;
 	private Label removedLabel;
@@ -129,19 +119,18 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 		fShell = parentShell;
 		fContainer = container;
 		fProject = fContainer.getProject();
-		DiscoveredScannerInfo scanInfo;
+		IDiscoveredPathInfo scanInfo;
 		if (fProject != null) {
-			scanInfo = (DiscoveredScannerInfo) DiscoveredScannerInfoProvider.getDefault().getScannerInformation(fProject);
+			try {
+				scanInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject); 
+			} catch (CoreException e) {
+				scanInfo = new DiscoveredPathInfo(fProject);
+			}
 		}
 		else {
-			scanInfo = new DiscoveredScannerInfo(null);
-			MakeScannerInfo makeInfo = new MakeScannerInfo(null);
-			Preferences store = MakeCorePlugin.getDefault().getPluginPreferences();
-			makeInfo.setPreprocessorSymbols(BuildPathInfoBlock.getSymbols(store));
-			scanInfo.setUserScannerInfo(makeInfo);
+			scanInfo = new DiscoveredPathInfo(fProject);
 		}
-		userSymbols = new ArrayList(Arrays.asList(scanInfo.getUserSymbolDefinitions()));
-		discoveredSymbols = scanInfo.getDiscoveredSymbolDefinitions();
+		discoveredSymbols = scanInfo.getSymbolMap();
 		setDirty(false);
 		fDirty = false;
 	}
@@ -179,13 +168,10 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 		fStatusLine.setLayoutData(gd);
 		fStatusLine.setMessage(getTitle(DIALOG_TITLE));
 		
-		createUserControls(composite);
 		createOptionsControls(composite);
 		createDiscoveredControls(composite);
 		
 		setListContents();
-		userList.select(0);
-		enableUserButtons();
 		discActiveList.select(0);
 		enableDiscoveredButtons();
 		
@@ -198,7 +184,6 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 	private void setListContents() {
 		workingDiscoveredSymbols = new LinkedHashMap(discoveredSymbols);
 		
-		userList.setItems((String[]) userSymbols.toArray(new String[userSymbols.size()]));
 		discActiveList.setItems(getDiscDefinedSymbols(workingDiscoveredSymbols, ACTIVE));
 		discRemovedList.setItems(getDiscDefinedSymbols(workingDiscoveredSymbols, REMOVED));
 	}
@@ -233,141 +218,6 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 			return (String[]) list.toArray(new String[list.size()]);
 		}
 		return new String[0];
-	}
-
-	/**
-	 * @param composite
-	 */
-	private void createUserControls(Composite composite) {
-		// Create group
-		Group userGroup = ControlFactory.createGroup(composite, getTitle(USER_GROUP), 3);
-		((GridData) userGroup.getLayoutData()).horizontalSpan = 2;
-		((GridData) userGroup.getLayoutData()).grabExcessHorizontalSpace = false;
-		
-		// Create list
-		userList = new List(userGroup, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
-		userList.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				enableUserButtons();
-			}
-		});
-		userList.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent e) {
-				editUserListItem();
-			}
-		});
-
-		// Make it occupy the first column
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalSpan = 1;
-		gd.heightHint = getDefaultFontHeight(userList, PROJECT_LIST_MULTIPLIER);
-		gd.widthHint = convertWidthInCharsToPixels(INITIAL_LIST_WIDTH);
-		userList.setLayoutData(gd);
-
-		// Create buttons
-		// Create a composite for the buttons
-		Composite pathButtonComp = ControlFactory.createComposite(userGroup, 1);
-
-		// Add the buttons
-		addSymbol = ControlFactory.createPushButton(pathButtonComp, getTitle(NEW));
-		addSymbol.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleAddSymbol();
-			}
-		});
-		addSymbol.setEnabled(true);
-		SWTUtil.setButtonDimensionHint(addSymbol);
-
-		editSymbol = ControlFactory.createPushButton(pathButtonComp, getTitle(EDIT));
-		editSymbol.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				editUserListItem();
-			}
-		});
-		editSymbol.setEnabled(true);
-		SWTUtil.setButtonDimensionHint(editSymbol);
-
-		removeSymbol = ControlFactory.createPushButton(pathButtonComp, getTitle(REMOVE));
-		removeSymbol.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleRemoveSymbol();
-			}
-		});
-		SWTUtil.setButtonDimensionHint(removeSymbol);
-	}
-
-	protected void handleAddSymbol() {
-		// Popup an entry dialog
-		InputDialog dialog = new InputDialog(fShell, getTitle(SYMBOL_TITLE),
-				getTitle(SYMBOL_LABEL), "", null); //$NON-NLS-1$
-		String symbol = null;
-		if (dialog.open() == Window.OK) {
-			symbol = dialog.getValue();
-			if (symbol != null && symbol.length() > 0) {
-				setDirty(true);
-				userList.add(symbol);
-				userList.select(userList.getItemCount() - 1);
-				enableUserButtons();
-			}
-		}
-	}
-
-	/*
-	 * Double-click handler to allow edit of path information
-	 */
-	protected void editUserListItem() {
-		// Edit the selection index
-		int index = userList.getSelectionIndex();
-		if (index != -1) {
-			String selItem = userList.getItem(index);
-			if (selItem != null) {
-				InputDialog dialog = new InputDialog(fShell, getTitle(EDIT_SYMBOL_TITLE),
-						getTitle(SYMBOL_LABEL), selItem, null);
-				String newItem = null;
-				if (dialog.open() == Window.OK) {
-					newItem = dialog.getValue();
-					if (newItem != null && !newItem.equals(selItem)) {
-						userList.setItem(index, newItem);
-						setDirty(true);
-					}
-				}
-			}
-		}
-	}
-
-	protected void handleRemoveSymbol() {
-		// Get the selection index
-		int index = userList.getSelectionIndex();
-		if (index == -1) {
-			return;
-		}
-
-		// Remove the element at that index
-		userList.remove(index);
-		index = index - 1 < 0 ? 0 : index - 1;
-		userList.select(index);
-		setDirty(true);
-
-		// Check if the buttons should still be enabled
-		enableUserButtons();
-	}
-
-	/*
-	 * Enables the buttons on the path control if the right conditions are met
-	 */
-	protected void enableUserButtons() {
-		// Enable the remove button if there is at least 1 item in the list
-		int items = userList.getItemCount();
-		if (items > 0) {
-			editSymbol.setEnabled(true);
-			removeSymbol.setEnabled(true);
-			// Enable the up/down buttons depending on what item is selected
-			int index = userList.getSelectionIndex();
-		} else {
-			editSymbol.setEnabled(false);
-			removeSymbol.setEnabled(false);
-		}
 	}
 
 	/**
@@ -630,13 +480,10 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 	 */
 	protected void buttonPressed(int buttonId) {
 		if (IDialogConstants.OK_ID == buttonId) {
-			// Store user part
-			userSymbols = new ArrayList(Arrays.asList(userList.getItems()));
 			// Store discovered part
 			discoveredSymbols = workingDiscoveredSymbols;
 			// Return sum of user and active discovered paths
-			returnSymbols = new ArrayList(userSymbols.size() + discActiveList.getItemCount());
-			returnSymbols.addAll(userSymbols);
+			returnSymbols = new ArrayList(discActiveList.getItemCount());
 			returnSymbols.addAll(new ArrayList(Arrays.asList(discActiveList.getItems())));
 
 			fDirty = fWorkingDirty;
@@ -656,11 +503,11 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 	/**
 	 * Called by BuildPathInfoBlock.performApply
 	 * @param info
+	 * @return boolean - true if changed
 	 */
-	public void saveTo(DiscoveredScannerInfo info) {
+	public boolean saveTo(IDiscoveredPathInfo info) {
 		if (fDirty || (fProject == null && fContainer.getProject() != null)) {// New Standard Make project wizard
-			info.setUserDefinedSymbols(userSymbols);
-			info.setDiscoveredSymbolDefinitions(discoveredSymbols);
+			info.setSymbolMap(discoveredSymbols);
 			// remove deleted symbols from discovered SC
 			if (deletedDiscoveredSymbols != null) {
 				for (Iterator i = deletedDiscoveredSymbols.iterator(); i.hasNext(); ) {
@@ -670,7 +517,9 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 			}
 		}
 		setDirty(false);
+		boolean rc = fDirty;
 		fDirty = false;
+		return rc;
 	}
 
 	/**
@@ -678,13 +527,8 @@ public class ManageDefinedSymbolsDialog extends Dialog {
 	 */
 	public void restore() {
 		if (fProject != null) {
-			userSymbols = new ArrayList(Arrays.asList(BuildPathInfoBlock.getSymbols(
-					MakeCorePlugin.getDefault().getPluginPreferences())));
 			// remove discovered symbols
 			ScannerInfoCollector.getInstance().deleteAllSymbols(fProject);
-		}
-		else {
-			userSymbols = new ArrayList();
 		}
 		discoveredSymbols = new LinkedHashMap();
 		deletedDiscoveredSymbols = null;

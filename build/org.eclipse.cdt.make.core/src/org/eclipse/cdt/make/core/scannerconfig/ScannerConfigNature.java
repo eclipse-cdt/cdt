@@ -10,15 +10,12 @@
  **********************************************************************/
 package org.eclipse.cdt.make.core.scannerconfig;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.MakeScannerProvider;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * @see IProjectNature
@@ -93,8 +90,6 @@ public class ScannerConfigNature implements IProjectNature {
 		description.setNatureIds(newIds);
 		project.setDescription(description, null);
 		
-		// set DiscoveredScannerInfoProvider as a default one for the project
-		updateProjectsScannerInfoProvider(project, true);
 	}
 	
 	public static void removeScannerConfigNature(IProject project) throws CoreException {
@@ -112,8 +107,6 @@ public class ScannerConfigNature implements IProjectNature {
 			}
 		}
 
-		// fall back to MakeScannerProvider
-		updateProjectsScannerInfoProvider(project, false);
 	}
 
 	/**
@@ -135,19 +128,4 @@ public class ScannerConfigNature implements IProjectNature {
 		return null;
 	}
 
-	/**
-	 * @param project
-	 * @param b
-	 */
-	private static void updateProjectsScannerInfoProvider(IProject project, boolean discovered) {
-		try {
-			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project);
-			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
-			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, (discovered)?
-					DiscoveredScannerInfoProvider.INTERFACE_IDENTITY:
-					MakeScannerProvider.INTERFACE_IDENTITY);
-		} catch (CoreException e) {
-			MakeCorePlugin.log(e.getStatus());
-		}
-	}
 }

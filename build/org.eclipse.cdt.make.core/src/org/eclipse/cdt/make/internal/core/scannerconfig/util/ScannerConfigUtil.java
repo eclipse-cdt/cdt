@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
+
 /**
  * Utility class that handles some Scanner Config specifig collection conversions
  * 
@@ -269,5 +271,19 @@ public final class ScannerConfigUtil {
 			}
 		}
 		return (String[]) allTokens.toArray(new String[allTokens.size()]);
+	}
+
+	/**
+	 * Converts array of IPath-s to array of String-s
+	 * 
+	 * @param paths
+	 * @return
+	 */
+	public static String[] iPathArray2StringArray(IPath[] paths) {
+		String[] rv = new String[paths.length];
+		for (int i = 0; i < paths.length; ++i) {
+			rv[i] = paths[i].toString(); 
+		}
+		return rv;
 	}
 }

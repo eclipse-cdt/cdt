@@ -18,23 +18,19 @@ import java.util.StringTokenizer;
 
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.MakeScannerInfo;
-import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfo;
-import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfoProvider;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
+import org.eclipse.cdt.make.internal.core.scannerconfig.DiscoveredPathInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.ScannerInfoCollector;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.MessageLine;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontData;
@@ -95,7 +91,6 @@ public class ManageIncludePathsDialog extends Dialog {
 	private static final int DISC_DOWN = 1;
 	
 	private ArrayList returnPaths;
-	private ArrayList userPaths;
 	private ArrayList deletedDiscoveredPaths;
 	private LinkedHashMap discoveredPaths;
 	private LinkedHashMap workingDiscoveredPaths; // working copy of discoveredPaths, until either OK or CANCEL is pressed
@@ -107,13 +102,6 @@ public class ManageIncludePathsDialog extends Dialog {
 	private Shell fShell;
 	private MessageLine fStatusLine;
 
-	private List userList;
-	private Button addPath;
-	private Button editPath;
-	private Button removePath;
-	private Button pathUp;
-	private Button pathDown;
-	
 	private Group discoveredGroup;
 	private Label selectedLabel;
 	private Label removedLabel;
@@ -134,19 +122,18 @@ public class ManageIncludePathsDialog extends Dialog {
 		fShell = parentShell;
 		fContainer = container;
 		fProject = fContainer.getProject();
-		DiscoveredScannerInfo scanInfo;
+		IDiscoveredPathInfo scanInfo;
 		if (fProject != null) {
-			scanInfo = (DiscoveredScannerInfo) DiscoveredScannerInfoProvider.getDefault().getScannerInformation(fProject);
+			try {
+				scanInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject); 
+			} catch (CoreException e) {
+				scanInfo = new DiscoveredPathInfo(fProject);
+			}
 		}
 		else {
-			scanInfo = new DiscoveredScannerInfo(null);
-			MakeScannerInfo makeInfo = new MakeScannerInfo(null);
-			Preferences store = MakeCorePlugin.getDefault().getPluginPreferences();
-			makeInfo.setIncludePaths(BuildPathInfoBlock.getIncludes(store));
-			scanInfo.setUserScannerInfo(makeInfo);
+			scanInfo = new DiscoveredPathInfo(fProject);
 		}
-		userPaths = new ArrayList(Arrays.asList(scanInfo.getUserIncludePaths()));
-		discoveredPaths = scanInfo.getDiscoveredIncludePaths();
+		discoveredPaths = scanInfo.getIncludeMap();
 		setDirty(false);
 		fDirty = false;
 	}
@@ -183,14 +170,10 @@ public class ManageIncludePathsDialog extends Dialog {
 		fStatusLine.setLayoutData(gd);
 		fStatusLine.setMessage(getTitle(DIALOG_TITLE));
 		
-		createUserControls(composite);
 		createOptionsControls(composite);
 		createDiscoveredControls(composite);
 		
 		setListContents();
-		userList.select(0);
-		userList.setFocus();
-		enableUserButtons();
 		discActiveList.select(0);
 		discActiveList.setFocus();
 		enableDiscoveredButtons();
@@ -204,7 +187,6 @@ public class ManageIncludePathsDialog extends Dialog {
 	private void setListContents() {
 		workingDiscoveredPaths = new LinkedHashMap(discoveredPaths);
 
-		userList.setItems((String[]) userPaths.toArray(new String[userPaths.size()]));
 		discActiveList.setItems(getDiscIncludePaths(workingDiscoveredPaths, ACTIVE));
 		discRemovedList.setItems(getDiscIncludePaths(workingDiscoveredPaths, REMOVED));
 	}
@@ -240,200 +222,6 @@ public class ManageIncludePathsDialog extends Dialog {
 			return (String[]) list.toArray(new String[list.size()]);
 		}
 		return new String[0];
-	}
-
-	/**
-	 * @param composite
-	 */
-	private void createUserControls(Composite composite) {
-		// Create group
-		Group userGroup = ControlFactory.createGroup(composite, getTitle(USER_GROUP), 3);
-		((GridData) userGroup.getLayoutData()).horizontalSpan = 2;
-		((GridData) userGroup.getLayoutData()).grabExcessHorizontalSpace = false;
-		
-		// Create list
-		userList = new List(userGroup, SWT.BORDER | SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
-		userList.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				enableUserButtons();
-			}
-		});
-		userList.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent e) {
-				editUserListItem();
-			}
-		});
-
-		// Make it occupy the first column
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalSpan = 1;
-		gd.heightHint = getDefaultFontHeight(userList, PROJECT_LIST_MULTIPLIER);
-		gd.widthHint = convertWidthInCharsToPixels(INITIAL_LIST_WIDTH);
-		userList.setLayoutData(gd);
-
-		// Create buttons
-		// Create a composite for the buttons
-		Composite pathButtonComp = ControlFactory.createComposite(userGroup, 1);
-
-		// Add the buttons
-		addPath = ControlFactory.createPushButton(pathButtonComp, getTitle(NEW));
-		addPath.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleAddPath();
-			}
-		});
-		addPath.setEnabled(true);
-		SWTUtil.setButtonDimensionHint(addPath);
-
-		editPath = ControlFactory.createPushButton(pathButtonComp, getTitle(EDIT));
-		editPath.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				editUserListItem();
-			}
-		});
-		editPath.setEnabled(true);
-		SWTUtil.setButtonDimensionHint(editPath);
-
-		removePath = ControlFactory.createPushButton(pathButtonComp, getTitle(REMOVE));
-		removePath.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleRemovePath();
-			}
-		});
-		SWTUtil.setButtonDimensionHint(removePath);
-
-		pathUp = ControlFactory.createPushButton(pathButtonComp, getTitle(UP));
-		pathUp.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handlePathUp();
-			}
-		});
-		SWTUtil.setButtonDimensionHint(pathUp);
-
-		pathDown = ControlFactory.createPushButton(pathButtonComp, getTitle(DOWN));
-		pathDown.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handlePathDown();
-			}
-		});
-		SWTUtil.setButtonDimensionHint(pathDown);
-	}
-
-	protected void handleAddPath() {
-		// Popup an entry dialog
-		InputDialog dialog = new BuildPathInfoBlock.
-			SelectPathInputDialog(fShell, getTitle(PATH_TITLE), getTitle(PATH_LABEL), "", null); //$NON-NLS-1$
-		String path = null;
-		if (dialog.open() == Window.OK) {
-			path = dialog.getValue();
-			if (path != null && path.length() > 0) {
-				setDirty(true);
-				userList.add(path);
-				userList.select(userList.getItemCount() - 1);
-				enableUserButtons();
-			}
-		}
-	}
-
-	/*
-	 * Double-click handler to allow edit of path information
-	 */
-	protected void editUserListItem() {
-		// Edit the selection index
-		int index = userList.getSelectionIndex();
-		if (index != -1) {
-			String selItem = userList.getItem(index);
-			if (selItem != null) {
-				InputDialog dialog = new BuildPathInfoBlock.SelectPathInputDialog(
-						fShell, getTitle(EDIT_PATH_TITLE), getTitle(PATH_LABEL), selItem, null);
-				String newItem = null;
-				if (dialog.open() == Window.OK) {
-					newItem = dialog.getValue();
-					if (newItem != null && !newItem.equals(selItem)) {
-						userList.setItem(index, newItem);
-						setDirty(true);
-					}
-				}
-			}
-		}
-	}
-
-	protected void handleRemovePath() {
-		// Get the selection index
-		int index = userList.getSelectionIndex();
-		if (index == -1) {
-			return;
-		}
-
-		// Remove the element at that index
-		userList.remove(index);
-		index = index - 1 < 0 ? 0 : index - 1;
-		userList.select(index);
-		setDirty(true);
-
-		// Check if the buttons should still be enabled
-		enableUserButtons();
-	}
-
-	protected void handlePathUp() {
-		// Get the selection index
-		int index = userList.getSelectionIndex();
-		if (index == -1 || index == 0) {
-			return;
-		}
-		// Swap the items in the list
-		String selItem = userList.getItem(index);
-		userList.remove(index);
-		userList.add(selItem, --index);
-		setDirty(true);
-
-		// Keep the index selected
-		userList.select(index);
-		enableUserButtons();
-	}
-
-	protected void handlePathDown() {
-		// Get the selection index
-		int index = userList.getSelectionIndex();
-		int items = userList.getItemCount();
-		if (index == -1 || index == items - 1) {
-			return;
-		}
-		// Swap the items in the list
-		String selItem = userList.getItem(index);
-		userList.remove(index);
-		if (index + 1 == items) {
-			userList.add(selItem);
-		} else {
-			userList.add(selItem, ++index);
-		}
-		setDirty(true);
-
-		// Keep the swapped item selected
-		userList.select(index);
-		enableUserButtons();
-	}
-
-	/*
-	 * Enables the buttons on the path control if the right conditions are met
-	 */
-	protected void enableUserButtons() {
-		// Enable the remove button if there is at least 1 item in the list
-		int items = userList.getItemCount();
-		if (items > 0) {
-			editPath.setEnabled(true);
-			removePath.setEnabled(true);
-			// Enable the up/down buttons depending on what item is selected
-			int index = userList.getSelectionIndex();
-			pathUp.setEnabled(items > 1 && index > 0);
-			pathDown.setEnabled(items > 1 && index < (items - 1));
-		} else {
-			editPath.setEnabled(false);
-			removePath.setEnabled(false);
-			pathUp.setEnabled(false);
-			pathDown.setEnabled(false);
-		}
 	}
 
 	/**
@@ -753,13 +541,10 @@ public class ManageIncludePathsDialog extends Dialog {
 	 */
 	protected void buttonPressed(int buttonId) {
 		if (IDialogConstants.OK_ID == buttonId) {
-			// Store user part
-			userPaths = new ArrayList(Arrays.asList(userList.getItems()));
 			// Store discovered part
 			discoveredPaths = workingDiscoveredPaths;
 			// Return sum of user and active discovered paths
-			returnPaths = new ArrayList(userPaths.size() + discActiveList.getItemCount());
-			returnPaths.addAll(userPaths);
+			returnPaths = new ArrayList(discActiveList.getItemCount());
 			returnPaths.addAll(new ArrayList(Arrays.asList(discActiveList.getItems())));
 			
 			fDirty = fWorkingDirty;
@@ -779,11 +564,11 @@ public class ManageIncludePathsDialog extends Dialog {
 	/**
 	 * Called by BuildPathInfoBlock.performApply
 	 * @param info
+	 * @return boolean - true if changed
 	 */
-	public void saveTo(DiscoveredScannerInfo info) {
+	public boolean saveTo(IDiscoveredPathInfo info) {
 		if (fDirty || (fProject == null && fContainer.getProject() != null)) {// New Standard Make project wizard
-			info.setUserIncludePaths(userPaths);
-			info.setDiscoveredIncludePaths(discoveredPaths);
+			info.setIncludeMap(discoveredPaths);
 			// remove deleted paths from discovered SC
 			if (deletedDiscoveredPaths != null) {
 				for (Iterator i = deletedDiscoveredPaths.iterator(); i.hasNext(); ) {
@@ -793,7 +578,9 @@ public class ManageIncludePathsDialog extends Dialog {
 			}
 		}
 		setDirty(false);
+		boolean rc = fDirty;
 		fDirty = false;
+		return rc;
 	}
 
 	/**
@@ -801,13 +588,8 @@ public class ManageIncludePathsDialog extends Dialog {
 	 */
 	public void restore() {
 		if (fProject != null) {
-			userPaths = new ArrayList(Arrays.asList(BuildPathInfoBlock.getIncludes(
-					MakeCorePlugin.getDefault().getPluginPreferences())));
 			// remove discovered paths
 			ScannerInfoCollector.getInstance().deleteAllPaths(fProject);
-		}
-		else {
-			userPaths = new ArrayList();
 		}
 		discoveredPaths = new LinkedHashMap();
 		deletedDiscoveredPaths = null;

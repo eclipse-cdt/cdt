@@ -18,10 +18,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.make.core.MakeCorePlugin;
+import org.eclipse.cdt.make.core.MakeProjectNature;
+import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
+import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -31,18 +39,6 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.cdt.make.core.MakeProjectNature;
-
-import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfo;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo;
-import org.eclipse.cdt.make.core.scannerconfig.IExternalScannerInfoProvider;
-import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
-import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigBuilder;
-import org.eclipse.cdt.make.internal.core.MakeMessages;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
-import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 
 
 /**
@@ -152,27 +148,21 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 	 * @param project
 	 * @param monitor
 	 */
-	private void updateScannerConfig(IProject project, IProgressMonitor monitor) {
-		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
+	private void updateScannerConfig(IProject project, IProgressMonitor monitor) throws CoreException {
+		IDiscoveredPathInfo pathInfo = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project);
 		monitor.beginTask(MakeMessages.getString("ScannerInfoCollector.Processing"), 100); //$NON-NLS-1$
-		if (provider != null) {
-			IScannerInfo scanInfo = provider.getScannerInformation(project);
-			if (scanInfo != null) {
-				if (scanInfo instanceof DiscoveredScannerInfo) {
-					DiscoveredScannerInfo discScanInfo = (DiscoveredScannerInfo)scanInfo;
-					String projectName = project.getName();
-					monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
-					if (scannerConfigNeedsUpdate(discScanInfo, projectName)) {
-						monitor.worked(50);
-						monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + projectName); //$NON-NLS-1$
-						try {
-							// update scanner configuration
-							discScanInfo.update();
-							monitor.worked(50);
-						} catch (CoreException e) {
-							MakeCorePlugin.log(e);
-						}
-					}
+		if (pathInfo != null) {
+			String projectName = project.getName();
+			monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Processing")); //$NON-NLS-1$
+			if (scannerConfigNeedsUpdate(pathInfo)) {
+				monitor.worked(50);
+				monitor.subTask(MakeMessages.getString("ScannerInfoCollector.Updating") + projectName); //$NON-NLS-1$
+				try {
+					// update scanner configuration
+					MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(pathInfo);
+					monitor.worked(50);
+				} catch (CoreException e) {
+					MakeCorePlugin.log(e);
 				}
 			}
 		}
@@ -186,12 +176,12 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 	 * @param projectName
 	 * @return
 	 */
-	private boolean scannerConfigNeedsUpdate(DiscoveredScannerInfo discScanInfo, String projectName) {
-		List includes = (List) discoveredIncludes.get(projectName);
-		List symbols = (List) discoveredSymbols.get(projectName);
+	private boolean scannerConfigNeedsUpdate(IDiscoveredPathInfo discPathInfo) {
+		List includes = (List) discoveredIncludes.get(discPathInfo.getProject().getName());
+		List symbols = (List) discoveredSymbols.get(discPathInfo.getProject().getName());
 		
-		boolean addedIncludes = includePathsNeedUpdate(discScanInfo, projectName, includes);
-		boolean addedSymbols = definedSymbolsNeedUpdate(discScanInfo, projectName, symbols);
+		boolean addedIncludes = includePathsNeedUpdate(discPathInfo, includes);
+		boolean addedSymbols = definedSymbolsNeedUpdate(discPathInfo, symbols);
 		
 		return (addedIncludes | addedSymbols);
 	}
@@ -199,13 +189,14 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 	/**
 	 * Compare include paths with already discovered.
 	 * 
-	 * @param discScanInfo
+	 * @param discPathInfo
 	 * @param projectName
 	 * @param includes
 	 * @return
 	 */
-	private boolean includePathsNeedUpdate(DiscoveredScannerInfo discScanInfo, String projectName, List includes) {
+	private boolean includePathsNeedUpdate(IDiscoveredPathInfo discPathInfo, List includes) {
 		boolean addedIncludes = false;
+		String projectName = discPathInfo.getProject().getName();
 		if (includes != null) {
 			// Step 1. Add discovered scanner config to the existing discovered scanner config 
 			// add the includes from the latest discovery
@@ -222,7 +213,7 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 			List finalSumIncludes = translateIncludePaths(sumIncludes);
 			
 			// Step 2. Get project's scanner config
-			LinkedHashMap persistedIncludes = discScanInfo.getDiscoveredIncludePaths();
+			LinkedHashMap persistedIncludes = discPathInfo.getIncludeMap();
 	
 			// Step 3. Merge scanner config from steps 1 and 2
 			// order is important, use list to preserve it
@@ -248,7 +239,7 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 			}
 			
 			// Step 4. Set resulting scanner config
-			discScanInfo.setDiscoveredIncludePaths(newPersistedIncludes);
+			discPathInfo.setIncludeMap(newPersistedIncludes);
 			
 			// Step 5. Invalidate discovered include paths
 			discoveredIncludes.put(projectName, null);
@@ -259,13 +250,14 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 	/**
 	 * Compare symbol definitions with already discovered.
 	 * 
-	 * @param discScanInfo
+	 * @param discPathInfo
 	 * @param projectName
 	 * @param symbols
 	 * @return
 	 */
-	private boolean definedSymbolsNeedUpdate(DiscoveredScannerInfo discScanInfo, String projectName, List symbols) {
+	private boolean definedSymbolsNeedUpdate(IDiscoveredPathInfo discPathInfo, List symbols) {
 		boolean addedSymbols = false;
+		String projectName = discPathInfo.getProject().getName();
 		if (symbols != null) {
 			// Step 1. Add discovered scanner config to the existing discovered scanner config 
 			// add the symbols from the latest discovery
@@ -277,14 +269,14 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 			addedSymbols = ScannerConfigUtil.scAddSymbolsList2SymbolEntryMap(sumSymbols, symbols, false);
 			
 			// Step 2. Get project's scanner config
-			LinkedHashMap persistedSymbols = discScanInfo.getDiscoveredSymbolDefinitions();
+			LinkedHashMap persistedSymbols = discPathInfo.getSymbolMap();
 			
 			// Step 3. Merge scanner config from steps 1 and 2
 			LinkedHashMap candidateSymbols = new LinkedHashMap(persistedSymbols);
 			addedSymbols |= ScannerConfigUtil.scAddSymbolEntryMap2SymbolEntryMap(candidateSymbols, sumSymbols);
 			
 			// Step 4. Set resulting scanner config
-			discScanInfo.setDiscoveredSymbolDefinitions(candidateSymbols);
+			discPathInfo.setSymbolMap(candidateSymbols);
 			
 			// Step 5. Invalidate discovered symbol definitions
 			discoveredSymbols.put(projectName, null);
@@ -376,7 +368,7 @@ public class ScannerInfoCollector implements IScannerInfoCollector {
 	 * @param project
 	 * @param monitor
 	 */
-	public synchronized void updateScannerConfiguration(IProject project, IProgressMonitor monitor) {
+	public synchronized void updateScannerConfiguration(IProject project, IProgressMonitor monitor) throws CoreException {
 		currentProject = project;
 		String projectName = project.getName();
 		// check TSO for the project

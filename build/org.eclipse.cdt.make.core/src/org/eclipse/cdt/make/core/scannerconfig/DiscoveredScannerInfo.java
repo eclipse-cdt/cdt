@@ -17,14 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.make.core.MakeScannerInfo;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
 /**
  * Discovered portion of scanner configuration
- * 
+ * @deprecated
  * @author vhirsl
  */
 public class DiscoveredScannerInfo implements IScannerInfo {
@@ -38,7 +37,7 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 	private ArrayList activeSymbols;
 	private ArrayList removedSymbols;
 
-	private MakeScannerInfo userInfo;
+	private  org.eclipse.cdt.make.core.MakeScannerInfo userInfo;
 	
 	/**
 	 * @param project
@@ -69,10 +68,11 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 		return iPaths;
 	}
 
-	public MakeScannerInfo getUserScannerInfo() {
+	public  org.eclipse.cdt.make.core.MakeScannerInfo getUserScannerInfo() {
 		return userInfo;
 	}
-	public synchronized void setUserScannerInfo(MakeScannerInfo info) {
+
+	public synchronized void setUserScannerInfo( org.eclipse.cdt.make.core.MakeScannerInfo info) {
 		userInfo = info;
 	}
 	

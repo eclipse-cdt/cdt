@@ -12,16 +12,15 @@
 package org.eclipse.cdt.make.ui.dialogs;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.StringTokenizer;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
-import org.eclipse.cdt.make.core.MakeScannerInfo;
-import org.eclipse.cdt.make.core.scannerconfig.DiscoveredScannerInfo;
+import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredPathInfo;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
+import org.eclipse.cdt.make.internal.core.scannerconfig.util.ScannerConfigUtil;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.IMakeHelpContextIds;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
@@ -243,26 +242,17 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		if (project != null) {
 			// Store the paths and symbols 
 			monitor.beginTask(MakeUIPlugin.getResourceString("BuildPathInfoBlock.monitor.settingScannerInfo"), 3); //$NON-NLS-1$
-			IScannerInfo info = CCorePlugin.getDefault().getScannerInfoProvider(project).getScannerInformation(project);
-			if (info instanceof MakeScannerInfo) {
-				MakeScannerInfo mInfo = (MakeScannerInfo) info;
-				mInfo.setIncludePaths(getPathListContents());
-				monitor.worked(1);
-				mInfo.setPreprocessorSymbols(getSymbolListContents());
-				monitor.worked(1);
-				mInfo.update();
-				monitor.done();
+			IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project);
+			boolean changed = manageIncludesDialog.saveTo(info);
+			monitor.worked(1);
+			changed |= manageSymbolsDialog.saveTo(info);
+			monitor.worked(1);
+			if (changed) {
+				MakeCorePlugin.getDefault().getDiscoveryManager().updateDiscoveredInfo(info);
 			}
-			else if (info instanceof DiscoveredScannerInfo) {
-				DiscoveredScannerInfo dInfo = (DiscoveredScannerInfo) info;
-				manageIncludesDialog.saveTo(dInfo);
-				monitor.worked(1);
-				manageSymbolsDialog.saveTo(dInfo);
-				monitor.worked(1);
-				dInfo.update();
-				monitor.done();
-			}
-		} else {
+			monitor.done();
+		} 
+		else {
 			setIncludes(MakeCorePlugin.getDefault().getPluginPreferences());
 			setSymbols(MakeCorePlugin.getDefault().getPluginPreferences());
 		}
@@ -276,10 +266,10 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		
 		pathList.removeAll();
 		symbolList.removeAll();
-		if (getContainer().getProject() != null) {
-			pathList.setItems(getIncludes(MakeCorePlugin.getDefault().getPluginPreferences()));
-			symbolList.setItems(getSymbols(MakeCorePlugin.getDefault().getPluginPreferences()));
-		}
+//		if (getContainer().getProject() != null) {
+//			pathList.setItems(getIncludes(MakeCorePlugin.getDefault().getPluginPreferences()));
+//			symbolList.setItems(getSymbols(MakeCorePlugin.getDefault().getPluginPreferences()));
+//		}
 		manageIncludesDialog.restore();
 		manageSymbolsDialog.restore();
 		getContainer().updateContainer();
@@ -475,20 +465,25 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	private void setListContents() {
 		IProject project = getContainer().getProject();
 		if (project != null) {
-			IScannerInfo info = CCorePlugin.getDefault().getScannerInfoProvider(project).getScannerInformation(project);
-			if (info instanceof MakeScannerInfo) {
-				MakeScannerInfo mInfo = (MakeScannerInfo) info;
-				pathList.setItems(mInfo.getIncludePaths());
-				symbolList.setItems(mInfo.getPreprocessorSymbols());
+//			IScannerInfo info = CCorePlugin.getDefault().getScannerInfoProvider(project).getScannerInformation(project);
+//			if (info != null) {
+//				pathList.setItems(info.getIncludePaths());
+//				symbolList.setItems(info.getPreprocessorSymbols());
+//			}
+			try {
+				IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(project);
+				pathList.setItems(ScannerConfigUtil.iPathArray2StringArray(info.getIncludePaths()));
+				LinkedHashMap discoveredSymbols = info.getSymbolMap();
+				ArrayList activeSymbols = new ArrayList();
+				activeSymbols.addAll(ScannerConfigUtil.scSymbolsSymbolEntryMap2List(discoveredSymbols, true));
+				symbolList.setItems((String[]) activeSymbols.toArray(new String[activeSymbols.size()]));
+			} catch (CoreException e) {
+				MakeCorePlugin.log(e);
 			}
-			else if (info instanceof DiscoveredScannerInfo) {
-				DiscoveredScannerInfo dInfo = (DiscoveredScannerInfo) info;
-				pathList.setItems(dInfo.getIncludePaths());
-				symbolList.setItems(dInfo.getPreprocessorSymbols());
-			}
-		} else {
-			pathList.setItems(getIncludes(MakeCorePlugin.getDefault().getPluginPreferences()));
-			symbolList.setItems(getSymbols(MakeCorePlugin.getDefault().getPluginPreferences()));
 		}
+//		else {
+//			pathList.setItems(getIncludes(MakeCorePlugin.getDefault().getPluginPreferences()));
+//			symbolList.setItems(getSymbols(MakeCorePlugin.getDefault().getPluginPreferences()));
+//		}
 	}
 }

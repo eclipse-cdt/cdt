@@ -20,6 +20,12 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * @deprecated
+ * @author DInglis
+ *
+ */
+
 public class MakeScannerInfo implements IScannerInfo {
 
 	private IProject project;

@@ -220,7 +220,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		}
 	}
 
-	private void libraryPageCustomButtonPressed(DialogField field, int index) {
+	protected void libraryPageCustomButtonPressed(DialogField field, int index) {
 		CPElement[] libentries= null;
 		switch (index) {
 		case IDX_ADD_LIB: /* add jar */
@@ -404,7 +404,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		}					
 	}
 
-	private void libraryPageSelectionChanged(DialogField field) {
+	protected void libraryPageSelectionChanged(DialogField field) {
 		List selElements= fLibrariesList.getSelectedElements();
 		fLibrariesList.enableButton(IDX_EDIT, canEdit(selElements));
 		fLibrariesList.enableButton(IDX_REMOVE, canRemove(selElements));

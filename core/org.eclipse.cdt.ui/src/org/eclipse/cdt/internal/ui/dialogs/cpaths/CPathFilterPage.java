@@ -126,7 +126,7 @@ public class CPathFilterPage extends WizardPage {
 	/**
 	 * Method validatePage.
 	 */
-	private void validatePage() {
+	void validatePage() {
 		setPageComplete(getSelectedEntries().length > 0);
 	}
 

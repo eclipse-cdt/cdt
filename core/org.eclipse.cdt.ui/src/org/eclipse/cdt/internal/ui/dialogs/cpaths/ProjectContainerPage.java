@@ -40,7 +40,7 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 
 	private int[] fFilterType;
 	private TableViewer viewer;
-	private ICProject fCProject;
+	ICProject fCProject;
 
 	protected ProjectContainerPage(int[] filterType) {
 		super("projectContainerPage"); //$NON-NLS-1$
@@ -151,7 +151,7 @@ public class ProjectContainerPage extends WizardPage implements IPathEntryContai
 	/**
 	 * Method validatePage.
 	 */
-	private void validatePage() {
+	protected void validatePage() {
 		setPageComplete(getSelected() != null);
 	}
 

@@ -178,7 +178,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		}
 	}
 
-	private void containerPageCustomButtonPressed(DialogField field, int index) {
+	void containerPageCustomButtonPressed(DialogField field, int index) {
 		CPElement[] containers = null;
 		switch (index) {
 			case IDX_ADD :
@@ -343,7 +343,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 	}
 
-	private void containerPageSelectionChanged(DialogField field) {
+	void containerPageSelectionChanged(DialogField field) {
 		List selElements = fContainersList.getSelectedElements();
 		fContainersList.enableButton(IDX_EDIT, canEdit(selElements));
 		fContainersList.enableButton(IDX_REMOVE, canRemove(selElements));
@@ -365,7 +365,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		return false;
 	}
 
-	private void containerPageDialogFieldChanged(DialogField field) {
+	void containerPageDialogFieldChanged(DialogField field) {
 		if (fCurrCProject != null) {
 			// already initialized
 			updateCPathList();

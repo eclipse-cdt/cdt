@@ -115,7 +115,7 @@ public class CPathContainerSelectionPage extends WizardPage {
 	/**
 	 * Method validatePage.
 	 */
-	private void validatePage() {
+	void validatePage() {
 		setPageComplete(getSelected() != null);
 	}
 

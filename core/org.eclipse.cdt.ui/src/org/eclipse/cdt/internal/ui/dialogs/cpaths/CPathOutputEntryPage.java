@@ -373,7 +373,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		return false;
 	}
 
-	private void outputPageDialogFieldChanged(DialogField field) {
+	protected void outputPageDialogFieldChanged(DialogField field) {
 		if (fCurrCProject == null) {
 			// not initialized
 			return;

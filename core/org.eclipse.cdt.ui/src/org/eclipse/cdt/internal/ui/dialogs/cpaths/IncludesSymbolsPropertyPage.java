@@ -162,7 +162,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage implements IStatus
 		return null;
 	}
 
-	private ICElement getCElement() {
+	protected ICElement getCElement() {
 		IAdaptable adaptable = getElement();
 		if (adaptable != null) {
 			ICElement elem = (ICElement)adaptable.getAdapter(ICElement.class);

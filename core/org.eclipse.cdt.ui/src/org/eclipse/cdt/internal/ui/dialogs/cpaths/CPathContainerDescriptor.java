@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.model.IContainerEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.internal.ui.util.CoreUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.ICPathContainerPage;
 import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -43,11 +44,11 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 	 * @deprecated
 	 */
 	public class PathEntryContainerPageAdapter implements IWizardPage, IPathEntryContainerPage {
-		private final org.eclipse.cdt.ui.wizards.ICPathContainerPage fPage;
+		private final ICPathContainerPage fPage;
 		/**
 		 * @param pageName
 		 */
-		protected PathEntryContainerPageAdapter(org.eclipse.cdt.ui.wizards.ICPathContainerPage page) {
+		protected PathEntryContainerPageAdapter(ICPathContainerPage page) {
 			fPage = page;
 		}
 
@@ -264,8 +265,8 @@ public class CPathContainerDescriptor implements IContainerDescriptor {
 		Object elem = CoreUtility.createExtension(fConfigElement, ATT_PAGE_CLASS);
 		if (elem instanceof IPathEntryContainerPage) {
 			return (IPathEntryContainerPage) elem;
-		} else if (elem instanceof org.eclipse.cdt.ui.wizards.ICPathContainerPage) {
-			return new PathEntryContainerPageAdapter((org.eclipse.cdt.ui.wizards.ICPathContainerPage)elem);
+		} else if (elem instanceof ICPathContainerPage) {
+			return new PathEntryContainerPageAdapter((ICPathContainerPage)elem);
 		}
 		String id = fConfigElement.getAttribute(ATT_ID);
 		throw new CoreException(new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, 0,

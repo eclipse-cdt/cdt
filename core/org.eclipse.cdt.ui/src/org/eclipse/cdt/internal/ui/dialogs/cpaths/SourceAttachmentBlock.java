@@ -230,7 +230,7 @@ public class SourceAttachmentBlock {
 		}
 	}
 
-	private void attachmentChangeControlPressed(DialogField field) {
+	void attachmentChangeControlPressed(DialogField field) {
 		if (field == fFileNameField) {
 			IPath jarFilePath = chooseExtJarFile();
 			if (jarFilePath != null) {
@@ -241,7 +241,7 @@ public class SourceAttachmentBlock {
 
 	// ---------- IDialogFieldListener --------
 
-	private void attachmentDialogFieldChanged(DialogField field) {
+	void attachmentDialogFieldChanged(DialogField field) {
 		if (field == fFileNameField) {
 			fNameStatus = updateFileNameStatus();
 		} else if (field == fWorkspaceButton) {

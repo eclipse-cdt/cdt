@@ -57,7 +57,7 @@ public class CPathContainerDefaultPage extends NewElementWizardPage implements I
 		validatePath();
 	}
 
-	private void validatePath() {
+	protected void validatePath() {
 		StatusInfo status= new StatusInfo();
 		String str= fEntryField.getText();
 		if (str.length() == 0) {

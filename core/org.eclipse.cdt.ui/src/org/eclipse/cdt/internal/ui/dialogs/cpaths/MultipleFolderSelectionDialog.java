@@ -47,7 +47,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  */
 public class MultipleFolderSelectionDialog extends SelectionStatusDialog implements ISelectionChangedListener {
 
-	private CheckboxTreeViewer fViewer;
+	CheckboxTreeViewer fViewer;
 
 	private ILabelProvider fLabelProvider;
 	private ITreeContentProvider fContentProvider;
@@ -56,7 +56,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	private Object fInput;
 	private Button fNewFolderButton;
 	private IContainer fSelectedContainer;
-	private Set fExisting;
+	Set fExisting;
 	private Object fFocusElement;
 
 	public MultipleFolderSelectionDialog(Shell parent, ILabelProvider labelProvider, ITreeContentProvider contentProvider) {

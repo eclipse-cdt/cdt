@@ -131,12 +131,12 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 									{
 										public void focusGained( FocusEvent e )
 										{
-											fMemoryView.updateObjects();
+											getMemoryView().updateObjects();
 										}
 
 										public void focusLost( FocusEvent e )
 										{
-											fMemoryView.updateObjects();
+											getMemoryView().updateObjects();
 										}
 									} );		
 		text.addModifyListener( new ModifyListener()
@@ -150,29 +150,29 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 									{
 										public void keyPressed( KeyEvent e )
 										{
-											fMemoryView.updateObjects();
+											getMemoryView().updateObjects();
 										}
 
 										public void keyReleased( KeyEvent e )
 										{
-											fMemoryView.updateObjects();
+											getMemoryView().updateObjects();
 										}
 									} );
 		text.addMouseListener( new MouseListener()
 									{
 										public void mouseDoubleClick( MouseEvent e )
 										{
-											fMemoryView.updateObjects();
+											getMemoryView().updateObjects();
 										}
 
 										public void mouseDown( MouseEvent e )
 										{
-											fMemoryView.updateObjects();
+											getMemoryView().updateObjects();
 										}
 
 										public void mouseUp( MouseEvent e )
 										{
-											fMemoryView.updateObjects();
+											getMemoryView().updateObjects();
 										}
 									} );
 
@@ -214,7 +214,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 				CDebugUIPlugin.errorDialog( "Unable to get memory block.", e.getStatus() );
 			}
 			refresh();
-			fMemoryView.updateObjects();
+			getMemoryView().updateObjects();
 		}
 	}
 
@@ -264,7 +264,7 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 	{
 		fAddressText.setText( ( getPresentation() != null ) ? getPresentation().getAddressExpression() : "" );
 		fMemoryText.refresh();
-		fMemoryView.updateObjects();
+		getMemoryView().updateObjects();
 		updateToolTipText();
 	}
 	
@@ -563,5 +563,10 @@ public class MemoryControlArea extends Composite implements ITextOperationTarget
 				fAddressText.selectAll();
 				break;
 		}
+	}
+
+	protected MemoryView getMemoryView()
+	{
+		return fMemoryView;
 	}
 }

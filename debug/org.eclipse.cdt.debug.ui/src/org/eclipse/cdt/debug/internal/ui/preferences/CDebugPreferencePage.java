@@ -153,7 +153,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 
 		fPathsButton.setSelection( store.getBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fAutoDisassemblyButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY ) );
-		fMaxNumberOfInstructionsText.setStringValue( new Integer( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) ).toString() );
+		getMaxNumberOfInstructionsText().setStringValue( new Integer( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) ).toString() );
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
 		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
@@ -245,7 +245,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 							public void propertyChange( PropertyChangeEvent event )
 							{
 								if ( event.getProperty().equals( FieldEditor.IS_VALID ) )
-									setValid( fMaxNumberOfInstructionsText.isValid() );
+									setValid( getMaxNumberOfInstructionsText().isValid() );
 							}
 						} );
 	}
@@ -356,7 +356,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		IPreferenceStore store = getPreferenceStore();
 		store.setValue( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS, fPathsButton.getSelection() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_AUTO_DISASSEMBLY, fAutoDisassemblyButton.getSelection() );
-		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, fMaxNumberOfInstructionsText.getIntValue() );
+		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS, getMaxNumberOfInstructionsText().getIntValue() );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT, getFormatId( fVariableFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT, getFormatId( fExpressionFormatCombo.getSelectionIndex() ) );
 		CDebugCorePlugin.getDefault().getPluginPreferences().setValue( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT, getFormatId( fRegisterFormatCombo.getSelectionIndex() ) );
@@ -377,7 +377,7 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 		IPreferenceStore store = getPreferenceStore();
 		fPathsButton.setSelection( store.getDefaultBoolean( ICDebugPreferenceConstants.PREF_SHOW_FULL_PATHS ) );
 		fAutoDisassemblyButton.setSelection( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY ) );
-		fMaxNumberOfInstructionsText.setStringValue( new Integer( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) ).toString() );
+		getMaxNumberOfInstructionsText().setStringValue( new Integer( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) ).toString() );
 		fVariableFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_VARIABLE_FORMAT ) ) );
 		fExpressionFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_EXPRESSION_FORMAT ) ) );
 		fRegisterFormatCombo.select( getFormatIndex( CDebugCorePlugin.getDefault().getPluginPreferences().getDefaultInt( ICDebugConstants.PREF_DEFAULT_REGISTER_FORMAT ) ) );
@@ -394,5 +394,10 @@ public class CDebugPreferencePage extends PreferencePage implements IWorkbenchPr
 			if ( fFormatIds[i] == id )
 				return i;
 		return -1;
+	}
+
+	protected IntegerFieldEditor getMaxNumberOfInstructionsText()
+	{
+		return fMaxNumberOfInstructionsText;
 	}
 }

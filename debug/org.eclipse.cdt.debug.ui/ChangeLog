@@ -1,3 +1,8 @@
+2003-06-24 Mikhail Khodjaiants
+	Warnings cleanup.
+	* CDebugPreferencePage.java
+	* MemoryControlArea.java
+
 2003-06-20 Mikhail Khodjaiants
 	In the 'getVariableText' and 'getVariableImage' methods of CDTDebugModelPresentation
 	ignore exceptions thrown by getType.

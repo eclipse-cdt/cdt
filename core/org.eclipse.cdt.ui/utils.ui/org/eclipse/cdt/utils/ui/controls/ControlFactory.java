@@ -389,7 +389,7 @@ public class ControlFactory {
 	public static CheckboxTableViewer createListViewer(Composite parent, String[] opt_list, 
 	    int width, int height, int style) {
 	    	
-	    Table table = new Table(parent, SWT.BORDER);
+	    Table table = new Table(parent, SWT.BORDER | SWT.CHECK);
 	    CheckboxTableViewer listViewer = new CheckboxTableViewer(table);
 		GridData data = new GridData(style);
 		data.widthHint = width;

@@ -1072,6 +1072,16 @@ public class ScannerTestCase extends TestCase
 			assertTrue(false);
 		}		
 	}
+	public void validateChar( String expected ) throws ScannerException
+	{
+		try {
+			Token t= scanner.nextToken();
+			assertTrue(t.getType() == Token.tCHAR );
+			assertEquals( t.getImage(), expected ); 
+		} catch (Parser.EndOfFile e) {
+			assertTrue(false);
+		}		
+	}
 
 	public void validateString( String expectedImage ) throws ScannerException
 	{
@@ -1219,8 +1229,7 @@ public class ScannerTestCase extends TestCase
 		buffer.append( '"');
 		buffer.append( "\n\n");
 		initializeScanner( buffer.toString());
-		validateString( "\\\"");
-		validateString( "\\\\");
+		validateString( "\\\"\\\\");
 	}
 
 	public void testConditionalWithBraces()
@@ -1343,15 +1352,68 @@ public class ScannerTestCase extends TestCase
 		writer.write( "MAD_VERSION\n" );
 		initializeScanner( writer.toString() );
 		  
-		validateString( "2" );
-		validateString( "." );
-		validateString( "1" );
-		validateString( "." );
-		validateString( "3" );
-		validateString( "." );
-		validateString( "boo" );
+		validateString( "2.1.3.boo" );
 		
 		validateEOF(); 
 	}
-
+	
+	public void testBug36475() throws Exception
+	{
+		StringWriter writer = new StringWriter(); 
+		writer.write( " \"A\" \"B\" \"C\" " ); 
+		
+		initializeScanner( writer.toString() );
+		  
+		validateString( "ABC" );
+		validateEOF(); 
+	}
+	
+	public void testBug36509() throws Exception 
+	{ 
+		StringWriter writer = new StringWriter(); 
+		writer.write("#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\\n"); 
+		writer.write("                    x ## s, x ## t) \n"); 
+		writer.write("debug(1, 2);");
+		   
+		initializeScanner( writer.toString() ); 
+		//printf("x1=%d, x2= %s", x1, x2); 
+		validateIdentifier( "printf" ); 
+		validateToken( Token.tLPAREN ); 
+		validateString("x1= %d, x2= %s"); 
+		validateToken(Token.tCOMMA); 
+		validateIdentifier("x1"); 
+		validateToken(Token.tCOMMA); 
+		validateIdentifier("x2"); 
+		validateToken(Token.tRPAREN); 
+		validateToken(Token.tSEMI); 
+		validateEOF();
+	}
+	
+	public void testBug36695() throws Exception
+	{
+		StringWriter writer = new StringWriter();
+		writer.write("\'\\4\'  \'\\n\'");
+		initializeScanner( writer.toString() );
+		
+		validateChar( "\\4" );
+		validateChar( "\\n" );
+		validateEOF();
+	}
+	
+	public void testBug36521() throws Exception 
+	{ 
+		StringWriter writer = new StringWriter(); 
+		writer.write("#define str(s)      # s\n"); 
+		writer.write("fputs(str(strncmp(\"abc\\0d\", \"abc\", \'\\4\')\n"); 
+		writer.write("        == 0), s);\n"); 
+		                         
+		initializeScanner( writer.toString() ); 
+		validateIdentifier("fputs"); 
+		validateToken(Token.tLPAREN); 
+		validateString("strncmp ( \\\"abc\\\\0d\\\" , \\\"abc\\\" , '\\\\4' ) == 0"); 
+		validateToken(Token.tCOMMA); 
+		validateIdentifier("s"); 
+		validateToken(Token.tRPAREN); 
+		validateToken(Token.tSEMI); 
+	}
 }

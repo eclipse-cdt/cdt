@@ -1,3 +1,9 @@
+2003-04-21 Andrew Niefer
+	Fixed Bug36475 - Scanner does not concatenate strings
+	Fixed Bug36509 - Scanner turns strings into identifiers when expanding macros
+	Fixed Bug36521 - Scanner gets confused over commas in function like macros
+	Fixed Bug36695 - Scanner looses escaping on chars (ie '\4' to '4')
+
 2003-04-17 John Camelon
 	Fixed error in Elaborated Enumeration Types.  
 	Fixed Bug36559  - Parsing Templates... 

@@ -17,6 +17,10 @@ public class Token {
 		image = i;
 		filename = context.getFilename();
 		offset = context.getOffset() - image.length() - context.undoStackSize();
+		
+		if( type == tLSTRING || type == tSTRING || type == tCHAR ){
+			offset--;
+		}
 	}
 	
 	public Token(int t, String i) {

@@ -300,6 +300,7 @@ public class Scanner implements IScanner {
 	private static HashMap ppDirectives = new HashMap();
 
 	private Token currentToken = null;
+	private Token cachedToken = null;
 
 	private boolean passOnToClient = true; 
 	private BranchTracker branches = new BranchTracker();
@@ -436,7 +437,12 @@ public class Scanner implements IScanner {
 
 	protected Token nextToken( boolean pasting ) throws ScannerException, Parser.EndOfFile
 	{
-	
+		if( cachedToken != null ){
+			setCurrentToken( cachedToken );
+			cachedToken = null;
+			return currentToken;	
+		}
+		
 		count++;
 		boolean madeMistake = false; 
 		int c = getChar();
@@ -510,10 +516,33 @@ public class Scanner implements IScanner {
 				if (c != NOCHAR ) 
 				{
 					int type = wideString ? Token.tLSTRING : Token.tSTRING;
-					return newToken(
-						type,
-						buff.toString(),
-						contextStack.getCurrentContext());
+					
+					//If the next token is going to be a string as well, we need to concatenate
+					//it with this token.
+					Token returnToken = newToken( type, buff.toString(), contextStack.getCurrentContext());
+					Token next = null;
+					try{
+						next = nextToken( true );
+					} catch( Parser.EndOfFile e ){ 
+						next = null;
+					}
+					
+					while( next != null && next.type == returnToken.type ){
+						returnToken.image += next.image;
+						returnToken.setNext( null );
+						currentToken = returnToken; 
+						try{ 
+							next = nextToken( true ); 
+						} catch( Parser.EndOfFile e ){ 
+							next = null;
+						}
+					}
+					
+					cachedToken = next;
+					currentToken = returnToken;
+					returnToken.setNext( null );
+									
+					return returnToken; 
 	
 				} else {
 					if (throwExceptionOnUnboundedString)
@@ -916,9 +945,16 @@ public class Scanner implements IScanner {
 			} else {
 				switch (c) {
 					case '\'' :
-						c = getChar(); 
-						int next = getChar(); 
-						if( next == '\'' )
+						c = getChar( true ); 
+						int next = getChar( true );
+						if( c == '\\' ){
+							c = next;
+							next = getChar( true );
+							if( next == '\'' )
+								return newToken( Token.tCHAR, '\\' + new Character( (char)c ).toString(), contextStack.getCurrentContext() );
+							else if( throwExceptionOnBadCharacterRead )
+								throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + contextStack.getCurrentContext().getOffset() + " of file " + contextStack.getCurrentContext().getFilename() );
+						} else if( next == '\'' )
 							return newToken( Token.tCHAR, new Character( (char)c ).toString(), contextStack.getCurrentContext() ); 
 						else
 							if( throwExceptionOnBadCharacterRead )
@@ -1714,7 +1750,7 @@ public class Scanner implements IScanner {
 					if (bracketCount == 0)
 						break;
 					buffer.append((char) c);
-					c = getChar();
+					c = getChar( true );
 				}
 				
 				String betweenTheBrackets = buffer.toString().trim();
@@ -1724,11 +1760,15 @@ public class Scanner implements IScanner {
 				Token t = null;
 				String str = new String();
 				boolean space = false;
+				int nParen = 0;
 				try{
 					while (true) {
 						t = tokenizer.nextToken(false);
-						if( t.type == Token.tCOMMA )
-						{
+						if( t.type == Token.tLPAREN ){
+							nParen++;
+						} else if ( t.type == Token.tRPAREN ){
+							nParen--;
+						} else if( t.type == Token.tCOMMA && nParen == 0 ){
 							parameterValues.add( str );
 							str = "";
 							space = false;
@@ -1738,11 +1778,13 @@ public class Scanner implements IScanner {
 						if( space )
 							str += ' ';
 							
-						if( t.type == Token.tSTRING )	
-							str += '\"' + t.image + '\"';							
-						else 
-							str += t.image;
-							
+						switch( t.type )
+						{
+							case Token.tSTRING:  str += '\"' + t.image + '\"';  break;
+							case Token.tLSTRING: str += "L\"" + t.image + '\"';	break;
+							case Token.tCHAR:	 str += '\'' + t.image + '\''; 	break;
+							default:			 str += t.image;				break;
+						}
 						space = true;
 					}
 				} catch (Parser.EndOfFile e) {
@@ -1812,7 +1854,13 @@ public class Scanner implements IScanner {
 							buffer.append('\"');
 						}
 					} else {
-						buffer.append(t.image);
+						switch( t.type )
+						{
+							case Token.tSTRING:  buffer.append('\"' + t.image + '\"');  break;
+							case Token.tLSTRING: buffer.append("L\"" + t.image + '\"');	break;
+							case Token.tCHAR:	 buffer.append('\'' + t.image + '\''); 	break;
+							default:			 buffer.append(t.image);				break;
+						}
 					}
 					
 					boolean pastingNext = false;

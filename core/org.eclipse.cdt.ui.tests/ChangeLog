@@ -1,3 +1,11 @@
+2003-04-17 Andrew Niefer
+	Added ScannerTestCase::testBug36695()
+	Moved ScannerFailedTest::testBug36521 to ScannerTestCase::testBug36521()
+	Moved ScannerFailedTest::testBug36509 to ScannerTestCase::testBug36509()
+	Moved ScannerFailedTest::testBug36475 to ScannerTestCase::testBug36475() 
+	Updated ScannerTestCase::testBug36047
+	Updated ScannerTestCase::testBug36045
+
 2003-04-17 John Camelon
 	Updated DOMTests::testBug36600().
 	Updated LineNumberTest::testDOMLineNos().  

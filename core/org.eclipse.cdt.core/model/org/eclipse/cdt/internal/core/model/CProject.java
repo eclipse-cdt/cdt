@@ -312,7 +312,7 @@ public class CProject extends CContainer implements ICProject {
 	 * @see org.eclipse.cdt.core.model.ICProject#getResolvedCPathEntries()
 	 */
 	public IPathEntry[] getResolvedPathEntries() throws CModelException {
-		return CoreModel.getDefault().getResolvedClasspathEntries(this);
+		return CoreModel.getDefault().getResolvedPathEntries(this);
 	}
 
 	/* (non-Javadoc)
@@ -453,7 +453,7 @@ public class CProject extends CContainer implements ICProject {
 	/*
 	 * @see ICProject
 	 */
-	public boolean isOnClasspath(ICElement element) {
+	public boolean isOnSourceRoot(ICElement element) {
 		try {
 			ISourceRoot[] roots = getSourceRoots();
 			for (int i = 0; i < roots.length; i++) {
@@ -470,7 +470,7 @@ public class CProject extends CContainer implements ICProject {
 	/*
 	 * @see ICProject
 	 */
-	public boolean isOnClasspath(IResource resource) {
+	public boolean isOnSourceRoot(IResource resource) {
 		try {
 			ISourceRoot[] roots = getSourceRoots();
 			for (int i = 0; i < roots.length; i++) {

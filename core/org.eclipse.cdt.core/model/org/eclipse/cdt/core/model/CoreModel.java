@@ -629,7 +629,7 @@ public class CoreModel implements ICDescriptorListener {
 	 * @exception CModelException
 	 * @see IPathEntry
 	 */
-	public IPathEntry[] getResolvedClasspathEntries(ICProject cproject) throws CModelException {
+	public IPathEntry[] getResolvedPathEntries(ICProject cproject) throws CModelException {
 		return pathEntryManager.getResolvedPathEntries(cproject);
 	}
 

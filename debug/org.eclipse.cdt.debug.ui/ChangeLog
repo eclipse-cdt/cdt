@@ -1,3 +1,12 @@
+2003-02-04 Mikhail Khodjaiants
+	'DebugException' handling in the 'Signals' view.
+	* SignalsView.java
+	* SignalsViewer.java
+
+2003-02-04 Mikhail Khodjaiants
+	Changed the 'Signal' action name to 'Deliver Signal'.
+	* plugin.properties
+
 2003-02-03 Mikhail Khodjaiants
 	Implementing the 'Signals' view.
 	* SignalActionDelegate.java

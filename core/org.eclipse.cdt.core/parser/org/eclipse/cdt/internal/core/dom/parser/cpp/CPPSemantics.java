@@ -76,6 +76,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -465,7 +466,7 @@ public class CPPSemantics {
         ObjectSet classes = new ObjectSet(2);
         for( int i = 0; i < ps.length; i++ ){
             IType p = getSourceParameterType( ps, i );
-            p = getUltimateType( p );
+            p = getUltimateType( p, true );
             try {
                 getAssociatedScopes( p, namespaces, classes );
             } catch ( DOMException e ) {
@@ -492,11 +493,16 @@ public class CPPSemantics {
 		} else if( t instanceof IFunctionType ){
 		    IFunctionType ft = (IFunctionType) t;
 		    
-		    getAssociatedScopes( getUltimateType( ft.getReturnType() ), namespaces, classes );
+		    getAssociatedScopes( getUltimateType( ft.getReturnType(), true ), namespaces, classes );
 		    IType [] ps = ft.getParameterTypes();
 		    for( int i = 0; i < ps.length; i++ ){
-		        getAssociatedScopes( getUltimateType( ps[i] ), namespaces, classes );
+		        getAssociatedScopes( getUltimateType( ps[i], true ), namespaces, classes );
 		    }
+		} else if( t instanceof ICPPPointerToMemberType ){
+		    IBinding binding = ((ICPPPointerToMemberType)t).getMemberOfClass();
+		    if( binding instanceof IType )
+		        getAssociatedScopes( (IType)binding, namespaces, classes );
+		    getAssociatedScopes( getUltimateType( ((ICPPPointerToMemberType)t).getType(), true ), namespaces, classes );
 		}
 		return;
     }
@@ -1413,8 +1419,8 @@ public class CPPSemantics {
 		}
 		
 		//was the qualification conversion enough?
-		IType s = getUltimateType( cost.source );
-		IType t = getUltimateType( cost.target );
+		IType s = getUltimateType( cost.source, true );
+		IType t = getUltimateType( cost.target, true );
 		if( s.equals( t ) ){
 			return cost;
 		}
@@ -1439,8 +1445,8 @@ public class CPPSemantics {
 		Cost constructorCost = null;
 		Cost conversionCost = null;
 
-		IType s = getUltimateType( source );
-		IType t = getUltimateType( target );
+		IType s = getUltimateType( source, true );
+		IType t = getUltimateType( target, true );
 
 		ICPPConstructor constructor = null;
 		ICPPMethod conversion = null;
@@ -1453,7 +1459,9 @@ public class CPPSemantics {
 			ICPPConstructor [] constructors = ((ICPPClassType)t).getConstructors();
 			
 			if( constructors.length > 0 ){
-				constructor = (ICPPConstructor) resolveFunction( data, Arrays.asList( constructors ) );
+			    //the list out of Arrays.asList does not support remove, which we need
+			    ArrayList list = new ArrayList( Arrays.asList( constructors ) );
+				constructor = (ICPPConstructor) resolveFunction( data, list );
 			}
 			if( constructor != null && constructor.isExplicit() ){
 				constructor = null;
@@ -1503,13 +1511,15 @@ public class CPPSemantics {
 		return cost;
 	}
 
-	static protected IType getUltimateType( IType type ){
+	static protected IType getUltimateType( IType type, boolean stopAtPointerToMember ){
 	    try {
 	        while( true ){
 				if( type instanceof ITypedef )
 				    type = ((ITypedef)type).getType();
 	            else if( type instanceof IQualifierType )
 					type = ((IQualifierType)type).getType();
+	            else if( stopAtPointerToMember && type instanceof ICPPPointerToMemberType )
+	                return type;
 				else if( type instanceof IPointerType )
 					type = ((IPointerType) type).getType();
 				else if( type instanceof ICPPReferenceType )
@@ -1523,7 +1533,7 @@ public class CPPSemantics {
 	}
 	
 	static private boolean isCompleteType( IType type ){
-		type = getUltimateType( type );
+		type = getUltimateType( type, false );
 		if( type instanceof ICPPClassType && ((ICPPBinding)type).getDefinition() == null ){
 			return false;
 		}
@@ -1583,7 +1593,10 @@ public class CPPSemantics {
 			 else if( op1 == null ^ op2 == null) {
 			 	canConvert = false; 
 			 	break;
-			 }
+			 } else if( op1 instanceof ICPPPointerToMemberType ^ op2 instanceof ICPPPointerToMemberType ){
+			     canConvert = false;
+			     break;
+			 } 
 			 
 			 //if const is in cv1,j then const is in cv2,j.  Similary for volatile
 			if( ( op1.isConst() && !op2.isConst() ) || ( op1.isVolatile() && !op2.isVolatile() ) ) {
@@ -1634,8 +1647,8 @@ public class CPPSemantics {
 	 * @throws DOMException
 	 */
 	static private void promotion( Cost cost ) throws DOMException{
-		IType src = getUltimateType( cost.source );
-		IType trg = getUltimateType( cost.target );
+		IType src = getUltimateType( cost.source, true );
+		IType trg = getUltimateType( cost.target, true );
 		 
 		if( src.equals( trg ) )
 			return;
@@ -1666,15 +1679,10 @@ public class CPPSemantics {
 		
 		cost.conversion = 0;
 		cost.detail = 0;
-		
-//		if( !src.hasSamePtrs( trg ) ){
-//			return;
-//		} 
-//		
-		IType s = getUltimateType( src );
-		IType t = getUltimateType( trg );
-		
-		
+
+		IType s = getUltimateType( src, true );
+		IType t = getUltimateType( trg, true );
+				
 		if( s instanceof ICPPClassType ){
 			//4.10-2 an rvalue of type "pointer to cv T", where T is an object type can be
 			//converted to an rvalue of type "pointer to cv void"
@@ -1698,32 +1706,24 @@ public class CPPSemantics {
 			//An rvalue of an enumeration type can be converted to an rvalue of an integer type.
 			cost.rank = Cost.CONVERSION_RANK;
 			cost.conversion = 1;	
-		}
-		
-		//TODO
-//		else if( ptr.getType() == ITypeInfo.PtrOp.t_memberPointer ){
-//			//4.11-2 An rvalue of type "pointer to member of B of type cv T", where B is a class type, 
-//			//can be converted to an rvalue of type "pointer to member of D of type cv T" where D is a
-//			//derived class of B
-//			ITypeInfo.PtrOp srcPtr =  trg.hasPtrOperators() ? (ITypeInfo.PtrOp)trg.getPtrOperators().get(0) : null;
-//			if( trgDecl.isType( srcDecl.getType() ) && srcPtr != null && srcPtr.getType() == ITypeInfo.PtrOp.t_memberPointer ){
-//				try {
-//					temp = hasBaseClass( ptr.getMemberOf(), srcPtr.getMemberOf() );
-//				} catch (ParserSymbolTableException e) {
-//					//not going to happen since we didn't ask for the visibility exception
-//				}
-//				cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
-//				cost.detail = 1;
-//				cost.conversion = ( temp > -1 ) ? temp : 0;
-//				return; 
-//			}
-//		}
-		
+		} else if( s instanceof ICPPPointerToMemberType && t instanceof ICPPPointerToMemberType ){
+		    //4.11-2 An rvalue of type "pointer to member of B of type cv T", where B is a class type, 
+			//can be converted to an rvalue of type "pointer to member of D of type cv T" where D is a
+			//derived class of B
+		    ICPPPointerToMemberType spm = (ICPPPointerToMemberType) s;
+		    ICPPPointerToMemberType tpm = (ICPPPointerToMemberType) t;
+		    if( spm.getType().equals( tpm.getType() ) ){
+		        temp = hasBaseClass( tpm.getMemberOfClass(), spm.getMemberOfClass(), false );
+		        cost.rank = ( temp > -1 ) ? Cost.CONVERSION_RANK : Cost.NO_MATCH_RANK;
+				cost.conversion = ( temp > -1 ) ? temp : 0;
+				cost.detail = 1;
+		    }
+		}		
 	}
 	
 	static private void derivedToBaseConversion( Cost cost ) throws DOMException {
-		IType s = getUltimateType( cost.source );
-		IType t = getUltimateType( cost.target );
+		IType s = getUltimateType( cost.source, true );
+		IType t = getUltimateType( cost.target, true );
 		
 		if( cost.targetHadReference && s instanceof ICPPClassType && t instanceof ICPPClassType ){
 			int temp = hasBaseClass( (ICPPClassType) s, (ICPPClassType) t, true );
@@ -1735,24 +1735,48 @@ public class CPPSemantics {
 		}
 	}
 
-	static private int hasBaseClass( ICPPClassType symbol, ICPPClassType base, boolean needVisibility ) throws DOMException {
+	static private int hasBaseClass( IBinding symbol, IBinding base, boolean needVisibility ) throws DOMException {
 		if( symbol == base ){
 			return 0;
 		}
+		ICPPClassType clsSymbol = null;
+		ICPPClassType clsBase = null;
+		IType temp = null;
+		while( symbol instanceof ITypedef ){
+		    temp = ((ITypedef)symbol).getType();
+		    if( temp instanceof IBinding )
+		        symbol = (IBinding) temp;
+		    else return -1;
+		}
+		if( symbol instanceof ICPPClassType )
+		    clsSymbol = (ICPPClassType) symbol;
+		else return -1;
+		
+		while( base instanceof ITypedef ){
+		    temp = ((ITypedef)base).getType();
+		    if( temp instanceof IBinding )
+		        base= (IBinding) temp;
+		    else return -1;
+		}
+		if( base instanceof ICPPClassType )
+		    clsBase = (ICPPClassType) base;
+		else return -1;
+		
+		
 		ICPPClassType parent = null;
-		ICPPBase [] bases = symbol.getBases();
+		ICPPBase [] bases = clsSymbol.getBases();
 		
 		for( int i = 0; i < bases.length; i ++ ){
 			ICPPBase wrapper = bases[i];	
 			parent = bases[i].getBaseClass();
 			boolean isVisible = ( wrapper.getVisibility() == ICPPBase.v_public);
 
-			if( parent == base ){
+			if( parent == clsBase ){
 				if( needVisibility && !isVisible )
 					return -1;
 				return 1;
 			} 
-			int n = hasBaseClass( parent, base, needVisibility );
+			int n = hasBaseClass( parent, clsBase, needVisibility );
 			if( n > 0 )
 				return n + 1;
 		}

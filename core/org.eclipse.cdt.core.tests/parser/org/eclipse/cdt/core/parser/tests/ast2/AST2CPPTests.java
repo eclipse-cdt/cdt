@@ -1500,7 +1500,7 @@ public class AST2CPPTests extends AST2BaseTest {
         IType t = pm.getType();
         assertNotNull(t);
         assertTrue(t instanceof ICPPPointerToMemberType);
-        ICPPClassType cls = ((ICPPPointerToMemberType) t).getMemberOfClass();
+        ICPPClassType cls = (ICPPClassType) ((ICPPPointerToMemberType) t).getMemberOfClass();
         assertSame(S, cls);
         assertTrue(((ICPPPointerToMemberType) t).getType() instanceof IBasicType);
     }
@@ -1547,7 +1547,7 @@ public class AST2CPPTests extends AST2BaseTest {
         assertTrue(t instanceof ICPPPointerToMemberType);
         IFunctionType ft = (IFunctionType) ((ICPPPointerToMemberType) t)
                 .getType();
-        ICPPClassType ST = ((ICPPPointerToMemberType) t)
+        ICPPClassType ST = (ICPPClassType) ((ICPPPointerToMemberType) t)
                 .getMemberOfClass();
 
         assertTrue(ft.getReturnType() instanceof IPointerType);
@@ -1619,5 +1619,90 @@ public class AST2CPPTests extends AST2BaseTest {
 //        assertTrue( body.getStatements()[0] instanceof IASTDeclarationStatement );
 //    }
     
+
+    public void testPMConversions() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class A { public: int i; };             \n"); //$NON-NLS-1$
+        buffer.append("class B : public A {};                  \n"); //$NON-NLS-1$
+        buffer.append("void f( int B::* );                     \n"); //$NON-NLS-1$
+        buffer.append("void g() {                              \n"); //$NON-NLS-1$
+        buffer.append("   int A::* pm = &A::i;                 \n"); //$NON-NLS-1$
+        buffer.append("   f( pm );                             \n"); //$NON-NLS-1$
+        buffer.append("}                                       \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IFunction f = (IFunction) col.getName(15).resolveBinding();
+        ICPPClassType A = (ICPPClassType) col.getName(0).resolveBinding();
+        ICPPField i = (ICPPField) col.getName(1).resolveBinding();
+        ICPPClassType B = (ICPPClassType) col.getName(2).resolveBinding();
+        IVariable pm = (IVariable) col.getName(11).resolveBinding();
+        
+        assertInstances( col, f, 2 );
+        assertInstances( col, A, 4 );
+        assertInstances( col, i, 3 );
+        assertInstances( col, B, 2 );
+        assertInstances( col, pm, 2 );
+    }
+    
+    public void testPMKoenig() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "namespace N {                            \n" ); //$NON-NLS-1$
+        buffer.append( "   class A { public: int i; };           \n" ); //$NON-NLS-1$
+        buffer.append( "   void f( int A::* );                   \n" ); //$NON-NLS-1$
+        buffer.append( "}                                        \n" ); //$NON-NLS-1$
+        buffer.append( "int N::A::* pm = &N::A::i;               \n" ); //$NON-NLS-1$
+        buffer.append( "void g() {                               \n" ); //$NON-NLS-1$
+        buffer.append( "   f( pm );                              \n" ); //$NON-NLS-1$
+        buffer.append( "}                                        \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IFunction f = (IFunction) col.getName(16).resolveBinding();
+        ICPPNamespace N = (ICPPNamespace) col.getName(0).resolveBinding();
+        ICPPClassType A = (ICPPClassType) col.getName(1).resolveBinding();
+        
+        assertInstances( col, f, 2 );
+        assertInstances( col, N, 3 );
+        assertInstances( col, A, 4 );
+    }
+    
+    public void testPMKoenig_2() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append( "namespace M {                            \n" ); //$NON-NLS-1$
+        buffer.append( "   class B { };                          \n" ); //$NON-NLS-1$
+        buffer.append( "   void f( B* );                         \n" ); //$NON-NLS-1$
+        buffer.append( "}                                        \n" ); //$NON-NLS-1$
+        buffer.append( "namespace N {                            \n" ); //$NON-NLS-1$
+        buffer.append( "   class A { public: M::B * b; };        \n" ); //$NON-NLS-1$
+        buffer.append( "}                                        \n" ); //$NON-NLS-1$
+        buffer.append( "M::B* N::A::* pm = &N::A::b;             \n" ); //$NON-NLS-1$
+        buffer.append( "void g() {                               \n" ); //$NON-NLS-1$
+        buffer.append( "   N::A * a;                             \n" ); //$NON-NLS-1$
+        buffer.append( "   f( a->*pm );                          \n" ); //$NON-NLS-1$
+        buffer.append( "}                                        \n" ); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        CPPVisitor.visitTranslationUnit(tu, col);
+        
+        IFunction f = (IFunction) col.getName(27).resolveBinding();
+        ICPPNamespace M = (ICPPNamespace) col.getName(0).resolveBinding();
+        ICPPClassType B = (ICPPClassType) col.getName(1).resolveBinding();
+        ICPPNamespace N = (ICPPNamespace) col.getName(5).resolveBinding();
+        ICPPClassType A = (ICPPClassType) col.getName(6).resolveBinding();
+        IVariable pm = (IVariable) col.getName(17).resolveBinding();
+        
+        assertInstances( col, f, 2 );
+        assertInstances( col, M, 3 );
+        assertInstances( col, B, 6 );
+        assertInstances( col, N, 4 );
+        assertInstances( col, A, 5 );
+        assertInstances( col, pm, 2 );
+    }
 }
 

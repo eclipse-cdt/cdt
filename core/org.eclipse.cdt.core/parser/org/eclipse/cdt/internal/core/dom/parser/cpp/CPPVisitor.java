@@ -88,6 +88,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
@@ -122,12 +123,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPPointerToMemberType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 
 /**
  * @author aniefer
@@ -537,7 +540,7 @@ public class CPPVisitor {
 				}
 			} else if( parent instanceof ICPPASTFieldReference ){
 				IASTExpression owner = ((ICPPASTFieldReference)parent).getFieldOwner();
-				IType type = CPPSemantics.getUltimateType( getExpressionType( owner ) );
+				IType type = CPPSemantics.getUltimateType( getExpressionType( owner ), false );
 				if( type instanceof ICPPClassType ){
 					return ((ICPPClassType) type).getCompositeScope();
 				}
@@ -1571,7 +1574,7 @@ public class CPPVisitor {
 
 	private static IType getPointerTypes( IType type, IASTDeclarator declarator ){
 	    IASTPointerOperator [] ptrOps = declarator.getPointerOperators();
-		for( int i = ptrOps.length - 1; i >= 0; i-- ){
+		for( int i = 0; i < ptrOps.length; i++ ){
 			if( ptrOps[i] instanceof ICPPASTPointerToMember )
 				type = new CPPPointerToMemberType( type, (ICPPASTPointerToMember) ptrOps[i] );
 		    else if( ptrOps[i] instanceof IASTPointer )
@@ -1751,6 +1754,22 @@ public class CPPVisitor {
 	        		return e.getProblem();
 	        	} 
 	        }
+	    } else if( expression instanceof IASTBinaryExpression ){
+	        IASTBinaryExpression binary = (IASTBinaryExpression) expression;
+	        IType type = getExpressionType( ((IASTBinaryExpression) expression).getOperand2() );
+	        if( binary.getOperator() == ICPPASTBinaryExpression.op_pmarrow ||
+	            binary.getOperator() == ICPPASTBinaryExpression.op_pmdot )
+	        {
+	            if( type instanceof ICPPPointerToMemberType ){
+	                try {
+                        return ((ICPPPointerToMemberType)type).getType();
+                    } catch ( DOMException e ) {
+                        return e.getProblem();
+                    }
+	            }
+	            return new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_TYPE, new char[0] );
+	        }
+	        return type;
 	    }
 	    else if( expression instanceof IASTUnaryExpression )
 	    {

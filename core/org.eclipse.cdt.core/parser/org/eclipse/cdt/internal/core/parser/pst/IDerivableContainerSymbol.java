@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 public interface IDerivableContainerSymbol extends IContainerSymbol {
 
 	public void addParent( ISymbol parent );
-	public void addParent( ISymbol parent, boolean virtual, ASTAccessVisibility visibility );
+	public void addParent( ISymbol parent, boolean virtual, ASTAccessVisibility visibility, int offset, List references );
 	public List getParents();
 	public boolean hasParents();
 	

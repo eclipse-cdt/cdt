@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
@@ -25,17 +27,19 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
 {
 	private final IASTNamespaceDefinition namespace; 
 	private Offsets offsets = new Offsets();
+	private final ASTReferenceStore referenceDelegate;
     /**
      * @param namespaceDefinition
      * @param startingOffset
      * @param endingOffset
      */
-    public ASTUsingDirective(IContainerSymbol ownerSymbol, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int endingOffset)
+    public ASTUsingDirective(IContainerSymbol ownerSymbol, IASTNamespaceDefinition namespaceDefinition, int startingOffset, int endingOffset, List references )
     {
     	super( ownerSymbol );
         namespace = namespaceDefinition;
         setStartingOffset(startingOffset);
         setEndingOffset(endingOffset);
+        referenceDelegate = new ASTReferenceStore( references );
     }
 
     /* (non-Javadoc)
@@ -87,21 +91,20 @@ public class ASTUsingDirective extends ASTAnonymousDeclaration implements IASTUs
      */
     public void acceptElement(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
+        requestor.acceptUsingDirective( this );
+        referenceDelegate.processReferences(requestor);
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */
     public void exitScope(ISourceElementRequestor requestor)
     {
-        // TODO Auto-generated method stub
     }
 
     /* (non-Javadoc)

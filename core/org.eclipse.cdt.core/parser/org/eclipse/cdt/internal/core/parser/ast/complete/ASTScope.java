@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
@@ -38,9 +39,9 @@ public abstract class ASTScope extends ASTSymbol implements IASTScope
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTScope#getDeclarations()
 	 */
-	public Iterator getDeclarations()
+	public Iterator getDeclarations() throws ASTNotImplementedException
 	{
-		return new ScopeIterator( getContainerSymbol().getContainedSymbols() );
+		throw new ASTNotImplementedException();
 	}
 	
 }

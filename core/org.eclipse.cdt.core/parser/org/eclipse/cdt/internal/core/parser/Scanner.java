@@ -313,7 +313,7 @@ public class Scanner implements IScanner {
 		{
 			String currentFilename = contextStack.getCurrentContext().getFilename(); 
 			File currentIncludeFile = new File( currentFilename );
-			String parentDirectory = currentIncludeFile.getParent();
+			String parentDirectory = currentIncludeFile.getParentFile().getAbsolutePath();
 			currentIncludeFile = null; 
 			newPath = parentDirectory + File.separatorChar + fileName;
 			File includeFile = new File( newPath );

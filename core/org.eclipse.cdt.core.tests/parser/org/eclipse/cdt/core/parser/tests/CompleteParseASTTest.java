@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -19,21 +20,31 @@ import java.util.Stack;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.parser.IParser;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
+import org.eclipse.cdt.core.parser.ast.IASTClassReference;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompilationUnit;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationReference;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTField;
+import org.eclipse.cdt.core.parser.ast.IASTFieldReference;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
+import org.eclipse.cdt.core.parser.ast.IASTFunctionReference;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.ast.IASTLinkageSpecification;
+import org.eclipse.cdt.core.parser.ast.IASTMacro;
 import org.eclipse.cdt.core.parser.ast.IASTMethod;
+import org.eclipse.cdt.core.parser.ast.IASTMethodReference;
 import org.eclipse.cdt.core.parser.ast.IASTNamespaceDefinition;
+import org.eclipse.cdt.core.parser.ast.IASTNamespaceReference;
 import org.eclipse.cdt.core.parser.ast.IASTPointerToFunction;
 import org.eclipse.cdt.core.parser.ast.IASTPointerToMethod;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -41,10 +52,11 @@ import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTypedefReference;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDirective;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
-import org.eclipse.cdt.internal.core.parser.NullSourceElementRequestor;
+import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.ScannerInfo;
 
@@ -73,11 +85,20 @@ public class CompleteParseASTTest extends TestCase
 		{
 			return decls.iterator();
 		}
+
+        /**
+         * @return
+         */
+        public IASTScope getScope()
+        {
+         
+            return scope;
+        }
 	}
 
-	public class FullParseCallback extends NullSourceElementRequestor implements ISourceElementRequestor 
+	public class FullParseCallback implements ISourceElementRequestor 
 	{
-		
+		private List references = new ArrayList(); 
         private Stack inclusions = new Stack();
         private Scope compilationUnit;
         
@@ -378,7 +399,9 @@ public class CompleteParseASTTest extends TestCase
         
         protected Scope popScope()
         {
-        	return (Scope)scopes.pop(); 
+        	Scope s = (Scope)scopes.pop();
+        	h.put( s.getScope(), s );
+        	return s; 
         }
         
         protected void pushScope( IASTScope scope )
@@ -386,6 +409,113 @@ public class CompleteParseASTTest extends TestCase
         	scopes.push( new Scope( scope ));
         }
         
+        Hashtable h = new Hashtable();
+        
+        public Scope lookup( IASTScope s)
+        {
+        	return (Scope)h.get(s);
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptProblem(org.eclipse.cdt.core.parser.IProblem)
+         */
+        public void acceptProblem(IProblem problem)
+        {
+            // TODO Auto-generated method stub
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMacro(org.eclipse.cdt.core.parser.ast.IASTMacro)
+         */
+        public void acceptMacro(IASTMacro macro)
+        {
+            // TODO Auto-generated method stub
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptClassReference(org.eclipse.cdt.core.parser.ast.IASTClassReference)
+         */
+        public void acceptClassReference(IASTClassReference reference)
+        {
+            references.add( reference );
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptTypedefReference(org.eclipse.cdt.core.parser.ast.IASTTypedefReference)
+         */
+        public void acceptTypedefReference(IASTTypedefReference reference)
+        {
+			references.add( reference );
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptNamespaceReference(org.eclipse.cdt.core.parser.ast.IASTNamespaceReference)
+         */
+        public void acceptNamespaceReference(IASTNamespaceReference reference)
+        {
+			references.add( reference );
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptEnumerationReference(org.eclipse.cdt.core.parser.ast.IASTEnumerationReference)
+         */
+        public void acceptEnumerationReference(IASTEnumerationReference reference)
+        {
+			references.add( reference );
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptVariableReference(org.eclipse.cdt.core.parser.ast.IASTVariableReference)
+         */
+        public void acceptVariableReference(IASTVariableReference reference)
+        {
+			references.add( reference );
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFunctionReference(org.eclipse.cdt.core.parser.ast.IASTFunctionReference)
+         */
+        public void acceptFunctionReference(IASTFunctionReference reference)
+        {
+			references.add( reference );
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptFieldReference(org.eclipse.cdt.core.parser.ast.IASTFieldReference)
+         */
+        public void acceptFieldReference(IASTFieldReference reference)
+        {
+			references.add( reference );
+            
+        }
+
+        /* (non-Javadoc)
+         * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#acceptMethodReference(org.eclipse.cdt.core.parser.ast.IASTMethodReference)
+         */
+        public void acceptMethodReference(IASTMethodReference reference)
+        {
+			references.add( reference );
+            
+        }
+        
+        public List getReferences()
+        {
+        	return references;
+        }
+	}
+	
+	protected Iterator getDeclarations( IASTScope scope )
+	{
+		Scope s = callback.lookup( scope ); 
+		if( s != null )
+			return s.getDeclarations();
+		return null;
 	}
 	
 	
@@ -422,7 +552,7 @@ public class CompleteParseASTTest extends TestCase
     	Iterator declarations = parse( "namespace A { }").getDeclarations();
     	IASTNamespaceDefinition namespaceDefinition = (IASTNamespaceDefinition)declarations.next(); 
     	assertEquals( namespaceDefinition.getName(), "A" ); 
-    	assertFalse( namespaceDefinition.getDeclarations().hasNext() );
+    	assertFalse( getDeclarations( namespaceDefinition ).hasNext() );
     }
 
 	public void testMultipleNamespaceDefinitions() throws Exception
@@ -432,7 +562,7 @@ public class CompleteParseASTTest extends TestCase
 		assertEquals( namespaceDefinition.getName(), "A" );
 		namespaceDefinition = (IASTNamespaceDefinition)declarations.next(); 
 		assertEquals( namespaceDefinition.getName(), "A" ); 
-		assertFalse( namespaceDefinition.getDeclarations().hasNext() );
+		assertFalse( getDeclarations( namespaceDefinition ).hasNext() );
 	}
 
     public void testNestedNamespaceDefinitions() throws Exception
@@ -441,18 +571,46 @@ public class CompleteParseASTTest extends TestCase
 		IASTNamespaceDefinition namespaceDefinition = (IASTNamespaceDefinition)declarations.next(); 
 		assertEquals( namespaceDefinition.getName(), "A" );
 		assertFalse( declarations.hasNext() );
-		Iterator subDeclarations = namespaceDefinition.getDeclarations();
+		Iterator subDeclarations = getDeclarations( namespaceDefinition );
 		IASTNamespaceDefinition subDeclaration = (IASTNamespaceDefinition)subDeclarations.next();
 		assertEquals( subDeclaration.getName(), "B" );
 		assertFalse( subDeclarations.hasNext() );
     }
     
-//    public void testEmptyClassDeclaration() throws Exception
-//    {
-//    	Iterator declarations = parse( "class A { };").getDeclarations();
-//    	IASTClassSpecifier classSpec = (IASTClassSpecifier)declarations.next();
-//    	assertEquals( classSpec.getName(), "A");
-//    	assertFalse( classSpec.getDeclarations().hasNext() ); 
-//    	assertFalse( declarations.hasNext() );
-//    }
+    public void testEmptyClassDeclaration() throws Exception
+    {
+    	Iterator declarations = parse( "class A { };").getDeclarations();
+    	IASTAbstractTypeSpecifierDeclaration abs = (IASTAbstractTypeSpecifierDeclaration)declarations.next();
+    	IASTClassSpecifier classSpec = (IASTClassSpecifier)abs.getTypeSpecifier();
+    	assertEquals( classSpec.getName(), "A");
+    	assertFalse( getDeclarations( classSpec ).hasNext() ); 
+    	assertFalse( declarations.hasNext() );
+    }
+    
+    public void testSimpleSubclass() throws Exception
+    {
+    	Iterator declarations = parse( "class A { };  class B : public A { };").getDeclarations();
+    	IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		Iterator parentClasses = classB.getBaseClauses();
+		IASTBaseSpecifier baseClass = (IASTBaseSpecifier)parentClasses.next();
+		assertEquals( classA, baseClass.getParentClassSpecifier() );
+		assertEquals( baseClass.getParentClassName(), "A");
+		assertEquals( baseClass.getAccess(), ASTAccessVisibility.PUBLIC);
+		assertFalse( baseClass.isVirtual() );
+    }
+    
+    public void testNestedSubclass() throws Exception
+    {
+    	Iterator declarations = parse( "namespace N { class A { }; } class B : protected virtual N::A { };").getDeclarations();
+    	IASTNamespaceDefinition namespaceDefinition = (IASTNamespaceDefinition)declarations.next();
+    	IASTClassSpecifier classA = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)getDeclarations( namespaceDefinition).next() ).getTypeSpecifier(); 
+		IASTClassSpecifier classB = (IASTClassSpecifier)((IASTAbstractTypeSpecifierDeclaration)declarations.next()).getTypeSpecifier();
+		Iterator baseClauses = classB.getBaseClauses(); 
+		IASTBaseSpecifier baseClass = (IASTBaseSpecifier)baseClauses.next();
+		assertEquals( classA, baseClass.getParentClassSpecifier() );
+		assertEquals( callback.getReferences().size(), 2 );
+    }
+    
+    
 }

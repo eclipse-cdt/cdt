@@ -2343,11 +2343,18 @@ public class Parser implements IParser
                     nameDuple = name();
                     break;
                 case IToken.tCOMMA :
-                    astFactory.addBaseSpecifier(
-                        astClassSpec,
-                        isVirtual,
-                        visibility,
-                        nameDuple.toString());
+                    try
+                    {
+                        astFactory.addBaseSpecifier(
+                            astClassSpec,
+                            isVirtual,
+                            visibility,
+                            nameDuple );
+                    }
+                    catch (ASTSemanticException e)
+                    {
+                        // TODO Auto-generated catch block
+                    }
                     isVirtual = false;
                     visibility = ASTAccessVisibility.PUBLIC;
                     nameDuple = null;                        
@@ -2358,11 +2365,18 @@ public class Parser implements IParser
             }
         }
 
-        astFactory.addBaseSpecifier(
-            astClassSpec,
-            isVirtual,
-            visibility,
-            nameDuple.toString());
+        try
+        {
+            astFactory.addBaseSpecifier(
+                astClassSpec,
+                isVirtual,
+                visibility,
+                nameDuple );
+        }
+        catch (ASTSemanticException e)
+        {
+            // TODO Auto-generated catch block
+        }
     }
     /**
      * Parses a function body. 

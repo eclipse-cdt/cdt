@@ -10,16 +10,19 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
+
 
 /**
  * @author jcamelon
  *
  */
-public interface IASTBaseSpecifier {
+public interface IASTBaseSpecifier extends ISourceElementCallbackDelegate {
 
 	public ASTAccessVisibility getAccess(); 
 	public boolean isVirtual(); 
 	public String getParentClassName(); 
 	public IASTClassSpecifier getParentClassSpecifier() throws ASTNotImplementedException;
+	public int                getNameOffset(); 
 
 }

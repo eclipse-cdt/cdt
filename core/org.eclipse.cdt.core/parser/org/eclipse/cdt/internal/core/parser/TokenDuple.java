@@ -55,7 +55,7 @@ public class TokenDuple implements ITokenDuple {
 		 * @see java.util.Iterator#hasNext()
 		 */
 		public boolean hasNext() {
-			return ( iter != TokenDuple.this.lastToken);
+			return ( iter != null );
 		}
 
 		/* (non-Javadoc)
@@ -65,7 +65,10 @@ public class TokenDuple implements ITokenDuple {
 			if( ! hasNext() )
 				throw new NoSuchElementException();
 			IToken temp = iter;
-			iter = iter.getNext();
+			if( iter == lastToken )
+				iter = null; 
+			else
+				iter = iter.getNext();
 			return temp;
 		}
 

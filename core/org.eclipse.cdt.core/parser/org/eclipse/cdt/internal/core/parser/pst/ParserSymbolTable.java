@@ -2336,14 +2336,14 @@ public class ParserSymbolTable {
 		}
 	
 		public void addParent( ISymbol parent ){
-			addParent( parent, false, ASTAccessVisibility.PUBLIC );
+			addParent( parent, false, ASTAccessVisibility.PUBLIC, -1, null );
 		}
-		public void addParent( ISymbol parent, boolean virtual, ASTAccessVisibility visibility ){
+		public void addParent( ISymbol parent, boolean virtual, ASTAccessVisibility visibility, int offset, List references ){
 			if( _parentScopes == null ){
 				_parentScopes = new LinkedList();
 			}
 			
-			ParentWrapper wrapper = new ParentWrapper( parent, virtual, visibility );
+			ParentWrapper wrapper = new ParentWrapper( parent, virtual, visibility, offset, references );
 			_parentScopes.add( wrapper );
 			
 			Command command = new AddParentCommand( this, wrapper );
@@ -3103,10 +3103,12 @@ public class ParserSymbolTable {
 		
 		public class ParentWrapper implements IDerivableContainerSymbol.IParentSymbol
 		{
-			public ParentWrapper( ISymbol p, boolean v, ASTAccessVisibility s ){
+			public ParentWrapper( ISymbol p, boolean v, ASTAccessVisibility s, int offset, List r ){
 				parent    = p;
 				isVirtual = v;
 				access = s;
+				this.offset = offset;
+				this.references = r;
 			}
 		
 			public void setParent( ISymbol parent ){
@@ -3127,13 +3129,31 @@ public class ParserSymbolTable {
 			
 			private boolean isVirtual = false;
 			private ISymbol parent = null;
-			private final ASTAccessVisibility access; 
+			private final ASTAccessVisibility access;
+			private final int offset; 
+			private final List references; 
 			/**
 			 * @return
 			 */
 			public ASTAccessVisibility getAccess() {
 				return access;
 			}
+
+            /**
+             * 
+             */
+            public int getOffset()
+            {
+                return offset;
+            }
+
+            /**
+             * 
+             */
+            public List getReferences()
+            {
+                return references;
+            }
 
 		}
 	}

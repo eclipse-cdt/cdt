@@ -1,4 +1,7 @@
 2003-07-21 John Camelon
+	Addded in support for BaseSpecifier & class/namespace reference callbacks upon those.  
+
+2003-07-21 John Camelon
 	Fleshed out basic declarations for FullParse AST.
 	Fixed Bug 40554  - Fields coming back as Vars 
 	Fixed Bug 40555  - Methods come back as Functions 

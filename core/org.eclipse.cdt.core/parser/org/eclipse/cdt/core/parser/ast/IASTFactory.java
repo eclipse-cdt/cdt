@@ -73,7 +73,7 @@ public interface IASTFactory
         IASTClassSpecifier astClassSpec,
         boolean isVirtual,
         ASTAccessVisibility visibility,
-        String string);
+        ITokenDuple parentClassName) throws ASTSemanticException;
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(
         ASTClassKind elaboratedClassKind,
         String typeName,

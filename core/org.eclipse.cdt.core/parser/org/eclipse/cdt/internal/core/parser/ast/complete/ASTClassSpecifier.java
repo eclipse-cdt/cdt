@@ -11,15 +11,20 @@
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.IASTBaseSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.internal.core.parser.ast.ASTQualifiedNamedElement;
 import org.eclipse.cdt.internal.core.parser.ast.NamedOffsets;
+import org.eclipse.cdt.internal.core.parser.pst.IDerivableContainerSymbol;
 import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable;
+import org.eclipse.cdt.internal.core.parser.pst.ParserSymbolTable.Declaration.ParentWrapper;
 
 /**
  * @author jcamelon
@@ -27,6 +32,54 @@ import org.eclipse.cdt.internal.core.parser.pst.ISymbol;
  */
 public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
 {
+	
+	public class BaseIterator implements Iterator
+	{
+
+		private final Iterator parents; 
+		/**
+		 * @param symbol
+		 */
+		public BaseIterator(IDerivableContainerSymbol symbol)
+		{
+			if( symbol.getParents() != null )
+				parents = symbol.getParents().iterator();
+			else
+				parents = null;  
+		}
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#hasNext()
+		 */
+		public boolean hasNext()
+		{
+			if( parents == null )
+				return false;
+			return parents.hasNext();
+		}
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#next()
+		 */
+		public Object next()
+		{
+			if( ! hasNext() )
+				throw new NoSuchElementException();
+    		
+			ParserSymbolTable.Declaration.ParentWrapper pw = (ParentWrapper)parents.next();
+        
+			return new ASTBaseSpecifier( pw.getParent(), pw.isVirtual(), pw.getAccess(), pw.getOffset(), pw.getReferences() );
+         
+		}
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#remove()
+		 */
+		public void remove()
+		{
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	
+	
 	private NamedOffsets offsets = new NamedOffsets();
 	private final ClassNameType classNameType; 
 	private final ASTClassKind  classKind;
@@ -65,8 +118,7 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
      */
     public Iterator getBaseClauses()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return new BaseIterator( (IDerivableContainerSymbol)getSymbol() );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTClassSpecifier#getCurrentVisibilityMode()
@@ -116,8 +168,13 @@ public class ASTClassSpecifier extends ASTScope implements IASTClassSpecifier
      */
     public void enterScope(ISourceElementRequestor requestor)
     {
-    	//TODO Iterate baseClauses and callback on their references
         requestor.enterClassSpecifier(this); 
+        Iterator i = getBaseClauses();
+        while( i.hasNext() )
+        {
+        	IASTBaseSpecifier baseSpec = (IASTBaseSpecifier)i.next();
+        	baseSpec.acceptElement(requestor);
+        }
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#exitScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

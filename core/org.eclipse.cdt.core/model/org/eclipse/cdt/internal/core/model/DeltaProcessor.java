@@ -282,15 +282,10 @@ public class DeltaProcessor {
 
 		if (element.getElementType() == ICElement.C_PROJECT) {
 			// treat project opening as addition
-			if (hasCNature(delta.getResource())) {
-				elementAdded(element, delta);
-			}
 			CModelInfo rootInfo = (CModelInfo)CModelManager.getDefault().getCModel().getElementInfo();
 			rootInfo.setNonCResources(null);
-
-		} else {
-			fCurrentDelta.opened(element);
 		}
+		fCurrentDelta.opened(element);
 	}
 
 	/*

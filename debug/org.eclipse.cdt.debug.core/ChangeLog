@@ -1,4 +1,13 @@
 2004-10-26 Alain Magloire
+	Remove of ICDISourceManager in CDI
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISourceManager.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDITarget.java
+	* cdi/org/eclipse/cdt/debug/core/cdi/model/ICDISourceManagement.java
+
+	* Disassembly.java
+
+2004-10-26 Alain Magloire
 	Remove of ICDISignalManager in CDI
 	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISession.java
 	* cdi/org/eclipse/cdt/debug/core/cdi/ICDISignalManager.java

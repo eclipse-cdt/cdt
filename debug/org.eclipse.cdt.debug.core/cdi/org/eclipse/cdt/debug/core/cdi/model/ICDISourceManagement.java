@@ -9,22 +9,19 @@
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.cdt.debug.core.cdi;
+package org.eclipse.cdt.debug.core.cdi.model;
 
 import java.math.BigInteger;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
+import org.eclipse.cdt.debug.core.cdi.CDIException;
 
 /**
  * 
  * Maintains the list of directories to search for source files.
  * Auto update is off by default.
  * 
- * @since Jul 9, 2002
  */
-public interface ICDISourceManager extends ICDIManager {
-
+public interface ICDISourceManagement {
 	/**
 	 * Set the source search paths for the debug session.
 	 * @param String array of search paths
@@ -92,5 +89,6 @@ public interface ICDISourceManager extends ICDIManager {
 		int linenum,
 		int lines)
 		throws CDIException;
+
 
 }

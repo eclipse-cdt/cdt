@@ -25,7 +25,8 @@ import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
  * 
  * @since Jul 8, 2002
  */
-public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement, ICDISessionObject {
+public interface ICDITarget extends ICDIThreadGroup, ICDIExpressionManagement, 
+	ICDISourceManagement, ICDISessionObject {
 
 	/**
 	 * Gets the target process.

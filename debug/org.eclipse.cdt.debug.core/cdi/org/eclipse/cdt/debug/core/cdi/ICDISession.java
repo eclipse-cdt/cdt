@@ -68,13 +68,6 @@ public interface ICDISession {
 	ICDIMemoryManager getMemoryManager();
 
 	/**
-	 * Returns the source manager of this debug session.
-	 * 
-	 * @return the source manager
-	 */
-	ICDISourceManager getSourceManager();
-
-	/**
 	 * Returns the event manager of this debug session.
 	 * 
 	 * @return the event manager

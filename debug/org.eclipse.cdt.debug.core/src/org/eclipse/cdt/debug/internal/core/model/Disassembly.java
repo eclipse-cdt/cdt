@@ -16,10 +16,9 @@ import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
+import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.model.ICStackFrame;
 import org.eclipse.cdt.debug.core.model.IDisassembly;
 import org.eclipse.cdt.debug.core.model.IDisassemblyBlock;
@@ -56,39 +55,36 @@ public class Disassembly extends CDebugElement implements IDisassembly {
 	}
 
 	private DisassemblyBlock createBlock( ICStackFrame frame ) throws DebugException {
-		ICDISession session = (ICDISession)getDebugTarget().getAdapter( ICDISession.class );
-		if ( session != null ) {
-			ICDISourceManager sm = session.getSourceManager();
-			if ( sm != null ) {
-				String fileName = frame.getFile();
-				int lineNumber = frame.getLineNumber();
-				ICDIMixedInstruction[] mixedInstrs = new ICDIMixedInstruction[0];
-				IAddress address = frame.getAddress();				
-				if ( fileName != null && fileName.length() > 0 ) {
-					try {
-						mixedInstrs = sm.getMixedInstructions( fileName, 
-															   lineNumber, 
-															   CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) );
-					}
-					catch( CDIException e ) {
-						targetRequestFailed( e.getMessage(), e );
-					}
+		ICDITarget target = (ICDITarget)getDebugTarget().getAdapter( ICDITarget.class );
+		if ( target != null ) {
+			String fileName = frame.getFile();
+			int lineNumber = frame.getLineNumber();
+			ICDIMixedInstruction[] mixedInstrs = new ICDIMixedInstruction[0];
+			IAddress address = frame.getAddress();				
+			if ( fileName != null && fileName.length() > 0 ) {
+				try {
+					mixedInstrs = target.getMixedInstructions( fileName, 
+							lineNumber, 
+							CDebugCorePlugin.getDefault().getPluginPreferences().getInt( ICDebugConstants.PREF_MAX_NUMBER_OF_INSTRUCTIONS ) );
 				}
-				// Double check if debugger returns correct address range.
-				if ( mixedInstrs.length == 0 ||
-						!containsAddress( mixedInstrs, address ) ) {
-						try {
-							BigInteger addr = new BigInteger( address.toString() );
-							ICDIInstruction[] instructions = getFunctionInstructions( sm.getInstructions( addr, addr.add( BigInteger.valueOf( DISASSEMBLY_BLOCK_SIZE ) ) ) );
-							return DisassemblyBlock.create( this, instructions );
-						}
-						catch( CDIException e ) {
-							targetRequestFailed( e.getMessage(), e );
-						}
-					}
-				else {
-					return DisassemblyBlock.create( this, mixedInstrs );
+				catch( CDIException e ) {
+					targetRequestFailed( e.getMessage(), e );
 				}
+			}
+			// Double check if debugger returns correct address range.
+			if ( mixedInstrs.length == 0 ||
+					!containsAddress( mixedInstrs, address ) ) {
+				try {
+					BigInteger addr = new BigInteger( address.toString() );
+					ICDIInstruction[] instructions = getFunctionInstructions( target.getInstructions( addr, addr.add( BigInteger.valueOf( DISASSEMBLY_BLOCK_SIZE ) ) ) );
+					return DisassemblyBlock.create( this, instructions );
+				}
+				catch( CDIException e ) {
+					targetRequestFailed( e.getMessage(), e );
+				}
+			}
+			else {
+				return DisassemblyBlock.create( this, mixedInstrs );
 			}
 		}
 		return null;

@@ -1,4 +1,9 @@
 2005-02-25 Alain Magloire
+	Fix PR 86718: Dialog shows twice
+	* src/org/eclipse/cdt/internal/ui/cview/OpenProjectGroup.java
+	* src/org/eclipse/cdt/internal/ui/cview/RefactorActionGroup.java
+
+2005-02-25 Alain Magloire
 	Fix for PR 45666: Adding Block comment mneu in the CEditor "/* */"
 	* src/org/eclipse/cdt/internal/ui/actions/RemoveBlockCommentAction.java
 	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java

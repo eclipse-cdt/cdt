@@ -121,6 +121,8 @@ public class OpenProjectGroup extends CViewActionGroup {
 			if (refreshAction.isEnabled()) {
 				refreshAction.refreshAll();
 			}
+			// Swallow the event
+			event.doit = false;
 		}
 	}
 

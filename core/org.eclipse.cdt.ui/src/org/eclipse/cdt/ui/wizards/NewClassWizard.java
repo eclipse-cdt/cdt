@@ -30,6 +30,8 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 public class NewClassWizard extends BasicNewResourceWizard implements INewWizard {
 	private NewClassWizardPage fPage;
 	private String wz_title;
+	// a boolean to programatically control opening the sources in the editor
+	private boolean openInEditor = true;
 
 	private static final String WZ_TITLE = "NewClassWizard.title"; //$NON-NLS-1$
 	private static final String WZ_DESC = "NewClassWizard.description"; //$NON-NLS-1$
@@ -58,12 +60,16 @@ public class NewClassWizard extends BasicNewResourceWizard implements INewWizard
 			if (headerTU != null) {
 				IResource resource= headerTU.getResource();
 				selectAndReveal(resource);
-				openResource((IFile) resource);
+				if(doOpenInEditor()){
+					openResource((IFile) resource);
+				}
 			}	
 			if (bodyTU != null) {
 				IResource resource= bodyTU.getResource();
 				selectAndReveal(resource);
-				openResource((IFile) resource);
+				if(doOpenInEditor()){
+					openResource((IFile) resource);
+				}
 			}	
 		}
 	}
@@ -127,5 +133,17 @@ public class NewClassWizard extends BasicNewResourceWizard implements INewWizard
 	
 	public ICElement getCreatedClassElement(){
 		return fPage.getCreatedClassElement();
+	}
+	/**
+	 * @return Returns the openInEditor.
+	 */
+	public boolean doOpenInEditor() {
+		return openInEditor;
+	}
+	/**
+	 * @param openInEditor The openInEditor to set.
+	 */
+	public void setOpenInEditor(boolean openInEditor) {
+		this.openInEditor = openInEditor;
 	}
 }

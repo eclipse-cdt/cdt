@@ -364,16 +364,16 @@ public class CompletionEngine implements RelevanceConstants {
 		log("No of Keywords       = " + numOfKeywords); //$NON-NLS-1$
 	}
 	
-	private void addMacroToCompletions (String macroName){
-		int relevance = MACRO_TYPE_RELEVANCE;
+	private void addMacroToCompletions (String prefix, String macroName){
+		int relevance = computeRelevance(ICElement.C_MACRO, prefix, macroName);
 		requestor.acceptMacro(macroName, completionStart, completionLength, relevance);		
 	}
 
-	private void addMacrosToCompletions(Iterator macros){
+	private void addMacrosToCompletions(String prefix, Iterator macros){
 		int numOfMacros = 0;
 		while (macros.hasNext()){
 			String macro = (String) macros.next();
-			addMacroToCompletions(macro);
+			addMacroToCompletions(prefix, macro);
 			numOfMacros++;
 		}
 		log("No of Macros         = " + numOfMacros); //$NON-NLS-1$
@@ -547,7 +547,7 @@ public class CompletionEngine implements RelevanceConstants {
 			addToCompletions(result);
 		
 			List macros = lookupMacros(completionNode.getCompletionPrefix());
-			addMacrosToCompletions(macros.iterator());
+			addMacrosToCompletions(prefix, macros.iterator());
 		} 
 		else // prefix is empty
 		{
@@ -602,7 +602,7 @@ public class CompletionEngine implements RelevanceConstants {
 		IASTScope searchNode = completionNode.getCompletionScope();
 		// only look for macros
 		List result = lookupMacros(completionNode.getCompletionPrefix());
-		addMacrosToCompletions(result.iterator());
+		addMacrosToCompletions(completionNode.getCompletionPrefix(), result.iterator());
 	}
 	private void completionOnNewTypeReference(IASTCompletionNode completionNode){
 		// 1. Get the search scope node 
@@ -643,7 +643,7 @@ public class CompletionEngine implements RelevanceConstants {
 		addToCompletions(result);
 	
 		List macros = lookupMacros(completionNode.getCompletionPrefix());
-		addMacrosToCompletions(macros.iterator());
+		addMacrosToCompletions(prefix, macros.iterator());
 
 	}
 	

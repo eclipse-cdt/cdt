@@ -925,7 +925,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 						handleChangedEvent( (ICDIChangedEvent)event );
 					}
 					if ( source instanceof ICDISharedLibrary ) {
-						getSharedLibraryManager().symbolsLoaded( (ICDISharedLibrary)source );
+						handleSymbolsLoaded( (ICDISharedLibrary)source );
 					}
 					if ( source instanceof ICDISignal ) {
 						getSignalManager().signalChanged( (ICDISignal)source );
@@ -1885,5 +1885,9 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		while( it.hasNext() ) {
 			((CThread)it.next()).restoreState();
 		}
+	}
+
+	private void handleSymbolsLoaded( ICDISharedLibrary library ) {
+		getSharedLibraryManager().symbolsLoaded( library );
 	}
 }

@@ -355,23 +355,21 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		for( int i = 0; i < events.length; i++ ) {
 			ICDIEvent event = events[i];
 			ICDIObject source = event.getSource();
-			if ( source == null )
-				continue;
 			if ( source instanceof ICDIThread && source.equals( getCDIThread() ) ) {
 				if ( event instanceof ICDISuspendedEvent ) {
-						handleSuspendedEvent( (ICDISuspendedEvent)event );
+					handleSuspendedEvent( (ICDISuspendedEvent)event );
 				}
 				else if ( event instanceof ICDIResumedEvent ) {
-						handleResumedEvent( (ICDIResumedEvent)event );
+					handleResumedEvent( (ICDIResumedEvent)event );
 				}
 				else if ( event instanceof ICDIDestroyedEvent ) {
-						handleTerminatedEvent( (ICDIDestroyedEvent)event );
+					handleTerminatedEvent( (ICDIDestroyedEvent)event );
 				}
 				else if ( event instanceof ICDIDisconnectedEvent ) {
-						handleDisconnectedEvent( (ICDIDisconnectedEvent)event );
+					handleDisconnectedEvent( (ICDIDisconnectedEvent)event );
 				}
 				else if ( event instanceof ICDIChangedEvent ) {
-						handleChangedEvent( (ICDIChangedEvent)event );
+					handleChangedEvent( (ICDIChangedEvent)event );
 				}
 			}
 		}

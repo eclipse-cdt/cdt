@@ -1,4 +1,8 @@
 2003-08-06 Mikhail Khodjaiants
+	Added the implementation of the 'getType' and 'getTypeName' methods of the 'CVaraible:ErrorVariable' class.
+	* CVariable.java
+
+2003-08-06 Mikhail Khodjaiants
 	Uncommented the 'sizeof' method of 'ICDIVariableObject'.
 	* ICDIVariableObject.java
 	* CVariable.java

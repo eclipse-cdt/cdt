@@ -89,8 +89,7 @@ public abstract class CVariable extends CDebugElement
 		 */
 		public String getTypeName() throws CDIException
 		{
-			// TODO When the 'getType' method is moved to 'ICDIVariableObject'
-			return null;
+			return ( fVariableObject != null ) ? fVariableObject.getTypeName() : "";
 		}
 
 		/* (non-Javadoc)
@@ -98,8 +97,7 @@ public abstract class CVariable extends CDebugElement
 		 */
 		public ICDIType getType() throws CDIException
 		{
-			// TODO When the 'getType' method is moved to 'ICDIVariableObject'
-			return null;
+			return ( fVariableObject != null ) ? fVariableObject.getType() : null;
 		}
 
 		/* (non-Javadoc)

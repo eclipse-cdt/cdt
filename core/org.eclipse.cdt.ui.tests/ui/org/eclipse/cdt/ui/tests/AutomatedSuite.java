@@ -42,10 +42,10 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionTest_FieldType_NoPrefix2.suite());
 		addTest(CompletionTest_VariableType_Prefix.suite());
 		addTest(CompletionTest_VariableType_NoPrefix.suite());
-		addTest(CompletionTest_ArgumentType_NoPrefix_Bug50642.suite());
-		addTest(CompletionTest_ArgumentType_NoPrefix2_Bug50642.suite());
-		addTest(CompletionTest_ArgumentType_Prefix_Bug50642.suite());
-		addTest(CompletionTest_ArgumentType_NoPrefix2_Bug50642.suite());
+		addTest(CompletionTest_ArgumentType_NoPrefix.suite());
+		addTest(CompletionTest_ArgumentType_NoPrefix2.suite());
+		addTest(CompletionTest_ArgumentType_Prefix.suite());
+		addTest(CompletionTest_ArgumentType_NoPrefix2.suite());
 		addTest(CompletionTest_SingleName_Method_Prefix.suite());
 		addTest(CompletionTest_SingleName_Method_NoPrefix.suite());
 		addTest(CompletionTest_SingleName_Prefix.suite());

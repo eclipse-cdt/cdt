@@ -1,3 +1,9 @@
+2004-01-29 John Camelon
+	Updated CompletionTest_ArgumentType_Prefix_Bug50642, renamed it to CompletionTest_ArgumentType_Prefix and moved to passed test package.
+	Updated CompletionTest_ArgumentType_Prefix2_Bug50642, renamed it to CompletionTest_ArgumentType_Prefix2 and moved to passed test package.
+	Updated CompletionTest_ArgumentType_NoPrefix_Bug50642, renamed it to CompletionTest_ArgumentType_NoPrefix and moved to passed test package.
+	Updated CompletionTest_ArgumentType_NoPrefix2_Bug50642, renamed it to CompletionTest_ArgumentType_NoPrefix2 and moved to passed test package.
+
 2004-01-29 Hoda Amer
 	Added two more tests, namely Function_Reference and Constructor_Reference.
 	Moved tests starts resources all to one directory.

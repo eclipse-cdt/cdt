@@ -33,6 +33,8 @@ public class KeywordSets {
 		public static final Key STATEMENT = new Key(3);
 		public static final Key BASE_SPECIFIER = new Key(4);
 		public static final Key POST_USING = new Key( 5 );
+		public static final Key FUNCTION_MODIFIER = new Key( 6 );
+		public static final Key NAMESPACE_ONLY = new Key(6);
 		/**
 		 * @param enumValue
 		 */
@@ -56,12 +58,23 @@ public class KeywordSets {
 			return BASE_SPECIFIER_CPP;
 		if( kind == Key.POST_USING )
 			return POST_USING_CPP;
+		if( kind == Key.FUNCTION_MODIFIER )
+			return (Set) FUNCTION_MODIFIER.get( language );
+		if( kind == Key.NAMESPACE_ONLY )	
+			return NAMESPACE_ONLY;
 		
 		//TODO finish this
 		return null;
 	}
 	
 	private static final Set EMPTY = new HashSet();
+	
+	private static final Set NAMESPACE_ONLY;
+	static 
+	{
+		NAMESPACE_ONLY = new HashSet();
+		NAMESPACE_ONLY.add(Keywords.NAMESPACE );
+	}
 	
 	private static final Set DECL_SPECIFIER_SEQUENCE_C;
 	static
@@ -188,5 +201,28 @@ public class KeywordSets {
 		POST_USING_CPP = new TreeSet();
 		POST_USING_CPP.add(Keywords.NAMESPACE);
 		POST_USING_CPP.add(Keywords.TYPENAME);
-	}	
+	}
+	
+	private static final Set FUNCTION_MODIFIER_C; 
+	static
+	{
+		FUNCTION_MODIFIER_C = new TreeSet();
+	}
+	private static final Set FUNCTION_MODIFIER_CPP;
+	static
+	{
+		FUNCTION_MODIFIER_CPP = new TreeSet( FUNCTION_MODIFIER_C );
+		FUNCTION_MODIFIER_CPP.add( Keywords.CONST );
+		FUNCTION_MODIFIER_CPP.add( Keywords.THROW);
+		FUNCTION_MODIFIER_CPP.add( Keywords.TRY );
+		FUNCTION_MODIFIER_CPP.add( Keywords.VOLATILE );
+	}
+	
+	private static final Hashtable FUNCTION_MODIFIER;
+	static
+	{
+		FUNCTION_MODIFIER= new Hashtable();
+		FUNCTION_MODIFIER.put( ParserLanguage.CPP, FUNCTION_MODIFIER_CPP );
+		FUNCTION_MODIFIER.put( ParserLanguage.C, FUNCTION_MODIFIER_C );
+	}
 }

@@ -301,13 +301,16 @@ public abstract class Parser implements IParser
         else
         {
             boolean typeName = false;
+            setCompletionValues(scope, CompletionKind.TYPE_REFERENCE, Key.POST_USING );
+            
             if (LT(1) == IToken.t_typename)
             {
                 typeName = true;
                 consume(IToken.t_typename);
                 
             }
-            setCompletionValues(scope, CompletionKind.TYPE_REFERENCE, Key.EMPTY );
+
+            setCompletionValues(scope, CompletionKind.TYPE_REFERENCE, Key.NAMESPACE_ONLY );
             TokenDuple name = null;
             if (LT(1) == IToken.tIDENTIFIER || LT(1) == IToken.tCOLONCOLON)
             {
@@ -337,6 +340,7 @@ public abstract class Parser implements IParser
                     throw backtrack;
                 }
                 declaration.acceptElement( requestor );
+                setCompletionValues(scope, getCompletionKindForDeclaration(scope, null), Key.DECLARATION );
             }
             else
             {
@@ -1178,7 +1182,7 @@ public abstract class Parser implements IParser
         throws BacktrackException, EndOfFileException
     {
         IToken current = LA(1);
- 
+        
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, current.getOffset(), current.getLineNumber(), null);
         declSpecifierSeq(sdw, true, false);
@@ -1206,6 +1210,7 @@ public abstract class Parser implements IParser
                 throw backtrack;
             }
         
+        setCompletionValues(scope,CompletionKind.USER_SPECIFIED_NAME,Key.EMPTY );     
         if (LT(1) != IToken.tSEMI)
            initDeclarator(sdw, SimpleDeclarationStrategy.TRY_FUNCTION );
  
@@ -2188,11 +2193,11 @@ public abstract class Parser implements IParser
                 {
                     case IToken.tLPAREN :
                     	
+                    	boolean failed = false;
                         // temporary fix for initializer/function declaration ambiguity
-                        if (!LA(2).looksLikeExpression() && strategy != SimpleDeclarationStrategy.TRY_VARIABLE  )
+                        if ( queryLookaheadCapability(2) && !LA(2).looksLikeExpression() && strategy != SimpleDeclarationStrategy.TRY_VARIABLE  )
                         {
-							boolean failed = false;
-                        	if( LT(2) == IToken.tIDENTIFIER )
+                        	if(  LT(2) == IToken.tIDENTIFIER )
                         	{
 								IToken newMark = mark();
 								consume( IToken.tLPAREN );
@@ -2215,138 +2220,141 @@ public abstract class Parser implements IParser
 	                        	
 								backup( newMark );
                         	}
-							if( !failed )
-							{  									
-	                            // parameterDeclarationClause
-	                            d.setIsFunction(true);
-								// TODO need to create a temporary scope object here 
-	                            consume(IToken.tLPAREN);
-	                            boolean seenParameter = false;
-	                            parameterDeclarationLoop : for (;;)
-	                            {
-	                                switch (LT(1))
-	                                {
-	                                    case IToken.tRPAREN :
-	                                        consume();
-	                                        break parameterDeclarationLoop;
-	                                    case IToken.tELLIPSIS :
-	                                        consume();
-	                                        d.setIsVarArgs( true );
-	                                        break;
-	                                    case IToken.tCOMMA :
-	                                        consume();
-	                                        seenParameter = false;
-	                                        break;
-	                                    default :
-	                                        if (seenParameter)
-	                                            throw backtrack;
-	                                        parameterDeclaration(d, scope);
-	                                        seenParameter = true;
-	                                }
-	                            }
-							}
+                        }
+						if( ( queryLookaheadCapability(2) && !LA(2).looksLikeExpression() && strategy != SimpleDeclarationStrategy.TRY_VARIABLE && !failed) || ! queryLookaheadCapability(3) )
+						{  									
+                            // parameterDeclarationClause
+                            d.setIsFunction(true);
+							// TODO need to create a temporary scope object here 
+                            consume(IToken.tLPAREN);
+                            setCompletionValues( scope, CompletionKind.ARGUMENT_TYPE, Key.DECL_SPECIFIER_SEQUENCE );
+                            boolean seenParameter = false;
+                            parameterDeclarationLoop : for (;;)
+                            {
+                                switch (LT(1))
+                                {
+                                    case IToken.tRPAREN :
+                                        consume();
+                                        setCompletionValues( scope, CompletionKind.NO_SUCH_KIND, KeywordSets.Key.FUNCTION_MODIFIER );
+                                        break parameterDeclarationLoop;
+                                    case IToken.tELLIPSIS :
+                                        consume();
+                                        d.setIsVarArgs( true );
+                                        break;
+                                    case IToken.tCOMMA :
+                                        consume();
+                                        setCompletionValues( scope, CompletionKind.ARGUMENT_TYPE, Key.DECL_SPECIFIER_SEQUENCE );            
+                                        seenParameter = false;
+                                        break;
+                                    default :
+                                        if (seenParameter)
+                                            throw backtrack;
+                                        parameterDeclaration(d, scope);
+                                        seenParameter = true;
+                                }
+                            }
+						}
 
-                            if (LT(1) == IToken.tCOLON || LT(1) == IToken.t_try )
-                                break overallLoop;
-                            
-                            IToken beforeCVModifier = mark();
-                            IToken cvModifier = null;
-                            IToken afterCVModifier = beforeCVModifier;
-                            // const-volatile
-                            // 2 options: either this is a marker for the method,
-                            // or it might be the beginning of old K&R style parameter declaration, see
-                            //      void getenv(name) const char * name; {}
-                            // This will be determined further below
-                            if (LT(1) == IToken.t_const
-                                || LT(1) == IToken.t_volatile)
+                        if (LT(1) == IToken.tCOLON || LT(1) == IToken.t_try )
+                            break overallLoop;
+                        
+                        IToken beforeCVModifier = mark();
+                        IToken cvModifier = null;
+                        IToken afterCVModifier = beforeCVModifier;
+                        // const-volatile
+                        // 2 options: either this is a marker for the method,
+                        // or it might be the beginning of old K&R style parameter declaration, see
+                        //      void getenv(name) const char * name; {}
+                        // This will be determined further below
+                        if (LT(1) == IToken.t_const
+                            || LT(1) == IToken.t_volatile)
+                        {
+                            cvModifier = consume();
+                            afterCVModifier = mark();
+                        }
+                        //check for throws clause here 
+                        List exceptionSpecIds = null;
+                        if (LT(1) == IToken.t_throw)
+                        {
+                            exceptionSpecIds = new ArrayList();
+                            consume(); // throw
+                            consume(IToken.tLPAREN); // (
+                            boolean done = false;
+                            IASTTypeId duple = null;
+                            while (!done)
                             {
-                                cvModifier = consume();
-                                afterCVModifier = mark();
-                            }
-                            //check for throws clause here 
-                            List exceptionSpecIds = null;
-                            if (LT(1) == IToken.t_throw)
-                            {
-                                exceptionSpecIds = new ArrayList();
-                                consume(); // throw
-                                consume(IToken.tLPAREN); // (
-                                boolean done = false;
-                                IASTTypeId duple = null;
-                                while (!done)
+                                switch (LT(1))
                                 {
-                                    switch (LT(1))
-                                    {
-                                        case IToken.tRPAREN :
+                                    case IToken.tRPAREN :
+                                        consume();
+                                        done = true;
+                                        break;
+                                    case IToken.tCOMMA :
+                                        consume();
+                                        break;
+                                    default :
+                                        String image = LA(1).getImage();
+                                        try
+                                        {
+                                            duple = typeId(scope, false);
+                                            exceptionSpecIds.add(duple);
+                                        }
+                                        catch (BacktrackException e)
+                                        {
+                                            failParse();
+                                            log.traceLog(
+                                                "Unexpected Token ="
+                                                    + image );
                                             consume();
-                                            done = true;
-                                            break;
-                                        case IToken.tCOMMA :
-                                            consume();
-                                            break;
-                                        default :
-                                            String image = LA(1).getImage();
-                                            try
-                                            {
-                                                duple = typeId(scope, false);
-                                                exceptionSpecIds.add(duple);
-                                            }
-                                            catch (BacktrackException e)
-                                            {
-                                                failParse();
-                                                log.traceLog(
-                                                    "Unexpected Token ="
-                                                        + image );
-                                                consume();
-                                                // eat this token anyway
-                                                continue;
-                                            }
-                                            break;
-                                    }
+                                            // eat this token anyway
+                                            continue;
+                                        }
+                                        break;
                                 }
-                                if (exceptionSpecIds != null)
-                                    try
-                                    {
-                                        d.setExceptionSpecification(
-                                            astFactory
-                                                .createExceptionSpecification(
-                                                d.getDeclarationWrapper().getScope(), exceptionSpecIds));
-                                    }
-                                    catch (ASTSemanticException e)
-                                    {
-                                        failParse();
-                                        throw backtrack;
-                                    } catch (Exception e)
-                                    {
-                                        throw backtrack;
-                                    }
                             }
-                            // check for optional pure virtual							
-                            if (LT(1) == IToken.tASSIGN
-                                && LT(2) == IToken.tINTEGER
-                                && LA(2).getImage().equals("0"))
-                            {
-                                consume(IToken.tASSIGN);
-                                consume(IToken.tINTEGER);
-                                d.setPureVirtual(true);
-                            }
-                            if (afterCVModifier != LA(1)
-                                || LT(1) == IToken.tSEMI)
-                            {
-                                // There were C++-specific clauses after const/volatile modifier
-                                // Then it is a marker for the method
-                                if (cvModifier != null)
+                            if (exceptionSpecIds != null)
+                                try
                                 {
-               
-                                    if (cvModifier.getType() == IToken.t_const)
-                                        d.setConst(true);
-                                    if (cvModifier.getType()
-                                        == IToken.t_volatile)
-                                        d.setVolatile(true);
+                                    d.setExceptionSpecification(
+                                        astFactory
+                                            .createExceptionSpecification(
+                                            d.getDeclarationWrapper().getScope(), exceptionSpecIds));
                                 }
-                                afterCVModifier = mark();
-                                // In this case (method) we can't expect K&R parameter declarations,
-                                // but we'll check anyway, for errorhandling
+                                catch (ASTSemanticException e)
+                                {
+                                    failParse();
+                                    throw backtrack;
+                                } catch (Exception e)
+                                {
+                                    throw backtrack;
+                                }
+                        }
+                        // check for optional pure virtual							
+                        if (LT(1) == IToken.tASSIGN
+                            && LT(2) == IToken.tINTEGER
+                            && LA(2).getImage().equals("0"))
+                        {
+                            consume(IToken.tASSIGN);
+                            consume(IToken.tINTEGER);
+                            d.setPureVirtual(true);
+                        }
+                        if (afterCVModifier != LA(1)
+                            || LT(1) == IToken.tSEMI)
+                        {
+                            // There were C++-specific clauses after const/volatile modifier
+                            // Then it is a marker for the method
+                            if (cvModifier != null)
+                            {
+           
+                                if (cvModifier.getType() == IToken.t_const)
+                                    d.setConst(true);
+                                if (cvModifier.getType()
+                                    == IToken.t_volatile)
+                                    d.setVolatile(true);
                             }
+                            afterCVModifier = mark();
+                            // In this case (method) we can't expect K&R parameter declarations,
+                            // but we'll check anyway, for errorhandling
                         }
                         break;
                     case IToken.tLBRACKET :

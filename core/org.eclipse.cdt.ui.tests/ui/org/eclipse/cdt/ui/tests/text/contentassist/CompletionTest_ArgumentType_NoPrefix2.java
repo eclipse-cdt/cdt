@@ -8,52 +8,46 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
+package org.eclipse.cdt.ui.tests.text.contentassist;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
  * 
- * Testing Argument_Type completion kind , with a prefix
+ * Testing Argument_Type completion kind , with No prefix
  * Bug#50642 : Wrong completion kind when declaring an argument type
  *
  */
-public class CompletionTest_ArgumentType_Prefix_Bug50642  extends CompletionProposalsBaseTest{
-	private final String fileName = "CompletionTestStart16.cpp";
+public class CompletionTest_ArgumentType_NoPrefix2  extends CompletionProposalsBaseTest{
+	private final String fileName = "CompletionTestStart19.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
-	private final String expectedScopeName = "ASTCompilationUnit";
+	private final String expectedScopeName = "ASTClassSpecifier";
 	private final String expectedContextName = "null";
-	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE; // should be CompletionKind.ARGUMENT_TYPE;
-	private final String expectedPrefix = "a";
+	private final CompletionKind expectedKind = CompletionKind.ARGUMENT_TYPE;
+	private final String expectedPrefix = "";
 	private final String[] expectedResults = {
-			"aClass",
-			"anotherClass",
-			"aNamespace",
-			"anEnumeration",
-			"AStruct"
 	};
 	
-	public CompletionTest_ArgumentType_Prefix_Bug50642(String name) {
+	public CompletionTest_ArgumentType_NoPrefix2(String name) {
 		super(name);
 	}
 	
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionTest_ArgumentType_Prefix_Bug50642.class.getName());
-		suite.addTest(new CompletionTest_ArgumentType_Prefix_Bug50642("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_ArgumentType_NoPrefix2.class.getName());
+		suite.addTest(new CompletionTest_ArgumentType_NoPrefix2("testCompletionProposals"));
 		return suite;
 	}		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf(" a ") + 2;
+		return getBuffer().indexOf("      ") + 2;
 	}
 
 	/* (non-Javadoc)

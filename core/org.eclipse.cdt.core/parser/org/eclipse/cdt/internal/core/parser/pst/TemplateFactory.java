@@ -253,24 +253,22 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		if( previous == null ) {
 			//could happen in trying to define something for which we don't have a declaration
 			throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
-		} else {
-			IContainerSymbol originalContainer = previous.getContainingSymbol();
-			
-			if( previous.isForwardDeclaration() ){
-				doDefinitionParameterMaps( symbol );
-									
-				originalContainer.addSymbol( symbol );
-				
-				if( getASTExtension() != null ){
-					ASTTemplateDeclaration templateDecl = (ASTTemplateDeclaration) getASTExtension().getPrimaryDeclaration();
-					templateDecl.releaseFactory();
-					templateDecl.setOwnedDeclaration( symbol );
-				}
-			} else {
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidOverload );
-			}
-		}
+		} 
+		IContainerSymbol originalContainer = previous.getContainingSymbol();
 		
+		if( previous.isForwardDeclaration() ){
+			doDefinitionParameterMaps( symbol );
+								
+			originalContainer.addSymbol( symbol );
+			
+			if( getASTExtension() != null ){
+				ASTTemplateDeclaration templateDecl = (ASTTemplateDeclaration) getASTExtension().getPrimaryDeclaration();
+				templateDecl.releaseFactory();
+				templateDecl.setOwnedDeclaration( symbol );
+			}
+		} else {
+			throw new ParserSymbolTableException( ParserSymbolTableException.r_InvalidOverload );
+		}		
 	}
 	
 	private void doDefinitionParameterMaps( ISymbol newSymbol ) throws ParserSymbolTableException {
@@ -357,9 +355,8 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		}
 		if( look instanceof ITemplateSymbol ){
 			return ((ITemplateSymbol)look).getTemplatedSymbol();
-		} else {
-			return look;
-		}
+		} 
+		return look;
 	}
 
 	/* (non-Javadoc)
@@ -530,8 +527,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		
 		if( !tIter.hasNext() )
 			return null;
-		else
-			return (ITemplateSymbol) tIter.next();
+		return (ITemplateSymbol) tIter.next();
 	}
 
 	

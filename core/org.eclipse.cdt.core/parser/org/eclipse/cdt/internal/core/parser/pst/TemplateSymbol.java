@@ -139,23 +139,22 @@ public class TemplateSymbol	extends ParameterizedSymbol	implements ITemplateSymb
 		IContainerSymbol instance = findInstantiation( actualArgs );
 		if( instance != null ){
 			return instance;
-		} else {
-			if( template.isType( TypeInfo.t_templateParameter ) ){
-				//template template parameter.  must defer instantiation
-				return deferredInstance( arguments );
-			} 
+		} 
+		if( template.isType( TypeInfo.t_templateParameter ) ){
+			//template template parameter.  must defer instantiation
+			return deferredInstance( arguments );
+		} 
+		
+		IContainerSymbol symbol = template.getTemplatedSymbol(); 
+		ISymbol temp = TemplateEngine.checkForTemplateExplicitSpecialization( template, symbol, actualArgs );
+		symbol = (IContainerSymbol) ( temp != null ? temp : symbol);
 			
-			IContainerSymbol symbol = template.getTemplatedSymbol(); 
-			ISymbol temp = TemplateEngine.checkForTemplateExplicitSpecialization( template, symbol, actualArgs );
-			symbol = (IContainerSymbol) ( temp != null ? temp : symbol);
-				
-			instance = (IContainerSymbol) symbol.instantiate( template, map );
-			addInstantiation( instance, actualArgs );
-			
-			processDeferredInstantiations();
-			
-			return instance;
-		}
+		instance = (IContainerSymbol) symbol.instantiate( template, map );
+		addInstantiation( instance, actualArgs );
+		
+		processDeferredInstantiations();
+		
+		return instance;		
 	}
 	
 	public ISymbol instantiate( ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException{

@@ -60,7 +60,7 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
-import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
+import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
@@ -1629,7 +1629,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     }
                     if( sdw.getName() != null )
                     	first = sdw.getName().getFirstToken();
-                    ITokenDuple duple = new TokenDuple(first, last);
+                    ITokenDuple duple = TokenFactory.createTokenDuple(first, last);
                     sdw.setTypeName(duple);
 					flags.setEncounteredTypename(true);
                     break;
@@ -1725,7 +1725,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	private void setTypeName(DeclarationWrapper sdw, IToken typeNameBegin, IToken typeNameEnd) {
 		if (typeNameBegin != null)
 		    sdw.setTypeName(
-		        new TokenDuple(typeNameBegin, typeNameEnd));
+		    		TokenFactory.createTokenDuple(typeNameBegin, typeNameEnd));
 	}
 
 

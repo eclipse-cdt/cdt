@@ -2948,7 +2948,7 @@ public class Scanner implements IScanner {
 					scannerExtension );
 	        tokenizer.setThrowExceptionOnBadCharacterRead(false);
 	        IToken t = null;
-	        StringBuffer strbuff = new StringBuffer();
+	        StringBuffer strBuff2 = new StringBuffer();
 	        boolean space = false;
 	       
 	        try {
@@ -2961,26 +2961,26 @@ public class Scanner implements IScanner {
 					t = (forStringizing ? tokenizer.nextTokenForStringizing() : tokenizer.nextToken(false));
 	
 	                if (space)
-	                    strbuff.append( ' ' );
+	                    strBuff2.append( ' ' );
 	
 	                switch (t.getType()) {
 	                    case IToken.tSTRING :
-	                    	strbuff.append('\"');
-	                    	strbuff.append(t.getImage());
-	                    	strbuff.append('\"'); 
+	                    	strBuff2.append('\"');
+	                    	strBuff2.append(t.getImage());
+	                    	strBuff2.append('\"'); 
 	                    	break;
 	                    case IToken.tLSTRING :
-	                    	strbuff.append( "L\""); //$NON-NLS-1$
-	                    	strbuff.append(t.getImage());
-	                    	strbuff.append('\"');	
+	                    	strBuff2.append( "L\""); //$NON-NLS-1$
+	                    	strBuff2.append(t.getImage());
+	                    	strBuff2.append('\"');	
 	                    	break;
 	                    case IToken.tCHAR :    
-	                    	strbuff.append('\'');
-	                    	strbuff.append(t.getImage());
-	                    	strbuff.append('\''); 
+	                    	strBuff2.append('\'');
+	                    	strBuff2.append(t.getImage());
+	                    	strBuff2.append('\''); 
 	                    	break;
 	                    default :             
-	                    	strbuff.append( t.getImage()); 
+	                    	strBuff2.append( t.getImage()); 
 	                    	break;
 	                }
 	                space = true;
@@ -2988,7 +2988,7 @@ public class Scanner implements IScanner {
 	        }
 	        catch (EndOfFileException e) {
 	            // Good
-	            parameterValues.add(strbuff.toString());
+	            parameterValues.add(strBuff2.toString());
 	        }
 		}
         

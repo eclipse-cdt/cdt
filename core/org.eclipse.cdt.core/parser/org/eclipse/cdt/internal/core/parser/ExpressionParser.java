@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
+import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
@@ -458,7 +459,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 	            }
 	        }
 	
-	        ITokenDuple tokenDuple = new TokenDuple(first, last, ( hasTemplateId ? argumentList.getTemplateArgumentsList() : null ) );
+	        ITokenDuple tokenDuple = TokenFactory.createTokenDuple(first, last, ( hasTemplateId ? argumentList.getTemplateArgumentsList() : null ) );
 	        setGreaterNameContext( tokenDuple );
 			return tokenDuple;
 		}
@@ -672,7 +673,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 		    }
 		    
 		    ITokenDuple duple =
-		        new TokenDuple( originalToken == null ? operatorToken : originalToken, toSend, (hasTemplateId ? templateArgs.getTemplateArgumentsList() : null ) );
+		    	TokenFactory.createTokenDuple( originalToken == null ? operatorToken : originalToken, toSend, (hasTemplateId ? templateArgs.getTemplateArgumentsList() : null ) );
 		
 		    d.setName(duple);
 		}
@@ -2127,7 +2128,7 @@ public class ExpressionParser implements IExpressionParser, IParserData {
 				ITokenDuple templateId = null;
 				try
 				{
-					templateId = new TokenDuple( current, templateId(scope, CompletionKind.SINGLE_NAME_REFERENCE ) ); 
+					templateId = TokenFactory.createTokenDuple( current, templateId(scope, CompletionKind.SINGLE_NAME_REFERENCE ) ); 
 				}
 				catch( BacktrackException bt )
 				{

@@ -14,7 +14,7 @@ public class ScannerStringBuffer {
 	public ScannerStringBuffer(int initialSize) {
 		current_size = initialSize;
 		s_buff = new char[current_size];
-		int s_pos = 0;
+		s_pos = 0;
 	}
 	public final void startString(){ 
 		s_pos = 0; 

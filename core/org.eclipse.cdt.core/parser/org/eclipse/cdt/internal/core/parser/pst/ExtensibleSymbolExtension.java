@@ -58,8 +58,7 @@ public class ExtensibleSymbolExtension implements ISymbolASTExtension {
 	public ISymbol getSymbol() {
 		if( extensibleSymbol instanceof ISymbol )
 			return (ISymbol) extensibleSymbol;
-		else 
-			return null;
+		return null;
 	}
 	
 	public IExtensibleSymbol getExtensibleSymbol(){

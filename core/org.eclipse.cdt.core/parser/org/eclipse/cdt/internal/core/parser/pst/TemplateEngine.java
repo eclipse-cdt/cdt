@@ -28,42 +28,42 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfo.PtrOp;
 public final class TemplateEngine {
 
 	static protected TypeInfo instantiateTypeInfo( TypeInfo info, ITemplateSymbol template, Map  argMap ) throws ParserSymbolTableException{
-		if( argMap == null ){
+		if( argMap == null )
 			return info;
-		} else {
-			if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() == null )
-				return info;
-			if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() instanceof IDeferredTemplateInstance ){
-				IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) info.getTypeSymbol();
-				TypeInfo newInfo = new TypeInfo( info );
-				//newInfo.setTypeSymbol( deferred.instantiate( template, argMap ) );
-				template.registerDeferredInstatiation( newInfo, deferred, ITemplateSymbol.DeferredKind.TYPE_SYMBOL, argMap );
-				newInfo.setTypeSymbol( deferred );
-				return newInfo;
-			} else if( info.isType( TypeInfo.t_type ) && 
-					   info.getTypeSymbol().isType( TypeInfo.t_templateParameter ) &&
-					   argMap.containsKey( info.getTypeSymbol() ) )
-			{
-				TypeInfo targetInfo = new TypeInfo( (TypeInfo) argMap.get( info.getTypeSymbol() ) );
-				if( info.hasPtrOperators() ){
-					List infoOperators = new LinkedList( info.getPtrOperators() );
-					targetInfo.addPtrOperator( infoOperators );
-				}
-				
-				if( info.checkBit( TypeInfo.isConst ) )
-					targetInfo.setBit( true, TypeInfo.isConst );
-				
-				if( info.checkBit( TypeInfo.isVolatile ) )
-					targetInfo.setBit( true, TypeInfo.isVolatile );
-				
-				return targetInfo;
-			} else if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol().isType( TypeInfo.t_function ) ){
-				TypeInfo newInfo = new TypeInfo( info );
-				newInfo.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
-				return newInfo;
+
+		if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() == null )
+			return info;
+		if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol() instanceof IDeferredTemplateInstance ){
+			IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) info.getTypeSymbol();
+			TypeInfo newInfo = new TypeInfo( info );
+			//newInfo.setTypeSymbol( deferred.instantiate( template, argMap ) );
+			template.registerDeferredInstatiation( newInfo, deferred, ITemplateSymbol.DeferredKind.TYPE_SYMBOL, argMap );
+			newInfo.setTypeSymbol( deferred );
+			return newInfo;
+		} else if( info.isType( TypeInfo.t_type ) && 
+				   info.getTypeSymbol().isType( TypeInfo.t_templateParameter ) &&
+				   argMap.containsKey( info.getTypeSymbol() ) )
+		{
+			TypeInfo targetInfo = new TypeInfo( (TypeInfo) argMap.get( info.getTypeSymbol() ) );
+			if( info.hasPtrOperators() ){
+				List infoOperators = new LinkedList( info.getPtrOperators() );
+				targetInfo.addPtrOperator( infoOperators );
 			}
-			return info;
+			
+			if( info.checkBit( TypeInfo.isConst ) )
+				targetInfo.setBit( true, TypeInfo.isConst );
+			
+			if( info.checkBit( TypeInfo.isVolatile ) )
+				targetInfo.setBit( true, TypeInfo.isVolatile );
+			
+			return targetInfo;
+		} else if( info.isType( TypeInfo.t_type ) && info.getTypeSymbol().isType( TypeInfo.t_function ) ){
+			TypeInfo newInfo = new TypeInfo( info );
+			newInfo.setTypeSymbol( info.getTypeSymbol().instantiate( template, argMap ) );
+			return newInfo;
 		}
+		return info;
+	
 	}
 	
 	static protected void instantiateDeferredTypeInfo( TypeInfo info, ITemplateSymbol template, Map argMap ) throws ParserSymbolTableException {
@@ -349,27 +349,25 @@ public final class TemplateEngine {
 		if( symbol instanceof IDeferredTemplateInstance ){
 			IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) symbol;
 			return deferred.getArguments();
-		} else {
-			ISymbol instantiated = symbol.getInstantiatedSymbol();
-			template = (ITemplateSymbol) instantiated.getContainingSymbol();
-		}
+		} 
+		ISymbol instantiated = symbol.getInstantiatedSymbol();
+		template = (ITemplateSymbol) instantiated.getContainingSymbol();
+		
 		
 		if( template instanceof ISpecializedSymbol ){
 			return ((ISpecializedSymbol)template).getArgumentList();
-		} else {
-			return template.getParameterList();
-		}
+		} 
+		return template.getParameterList();
 	}
 	
 	static private List getTargetList( ISymbol symbol ){
 		if( symbol instanceof IDeferredTemplateInstance ){
 			IDeferredTemplateInstance deferred = (IDeferredTemplateInstance) symbol;
 			return deferred.getArguments();
-		} else {
-			ISymbol instantiated = symbol.getInstantiatedSymbol();
-			ITemplateSymbol template = (ITemplateSymbol) instantiated.getContainingSymbol();
-			return template.findArgumentsFor( (IContainerSymbol) symbol );
-		}
+		} 
+		ISymbol instantiated = symbol.getInstantiatedSymbol();
+		ITemplateSymbol template = (ITemplateSymbol) instantiated.getContainingSymbol();
+		return template.findArgumentsFor( (IContainerSymbol) symbol );
 	}
 	
 	/**
@@ -445,120 +443,113 @@ public final class TemplateEngine {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
 			if( symbol instanceof IDeferredTemplateInstance || symbol.isTemplateInstance() ){
 				return deduceFromTemplateTemplateArguments(map, symbol, aSymbol);	
-			} else {
-				if( symbol.isType( TypeInfo.t_templateParameter ) ){
-					if( symbol.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ){
-						//a = getFlatTypeInfo( a );
-						List aPtrs = a.getPtrOperators();
-						List pPtrs = p.getPtrOperators();
-						
-						if( pPtrs != null && pPtrs.size() > 0){
-							if( aPtrs == null ){
-								return false;
-							}
-							
-							Iterator pIter = pPtrs.iterator();
-							ListIterator aIter = aPtrs.listIterator();
-							PtrOp pOp = null;
-							PtrOp aOp = null;
-							while( pIter.hasNext() ){
-								pOp = (PtrOp) pIter.next();
-								if( !aIter.hasNext() ){
-									return false;
-								} else {
-									aOp = (PtrOp) aIter.next();
-									if( pOp.getType() == aOp.getType() ){
-										if( !pOp.equals( aOp ) ){
-											return false;
-										} else {
-											aIter.remove();
-										}	
-									} else {
-										return false;
-									}
-								}
-							} 
-						}
-						//cvlist T
-						if( p.checkBit( TypeInfo.isConst ) ){
-							if( !a.checkBit( TypeInfo.isConst ) )
-								return false;
-							a.setBit( false, TypeInfo.isConst);
-						}
-						if( p.checkBit( TypeInfo.isVolatile ) ){
-							if( !a.checkBit( TypeInfo.isVolatile ) )
-								return false;
-							a.setBit( false, TypeInfo.isVolatile);
-						}
-						
-						//T
-						return deduceArgument( map, symbol, a );
-							
-					} else if ( symbol.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ){
-						
-					} else {
-						//non-type parameter
-						if( symbol.getTypeInfo().getTemplateParameterType() == a.getType() ){
-							return deduceArgument( map, symbol, a );
-						} else {
+			} 
+			if( symbol.isType( TypeInfo.t_templateParameter ) ){
+				if( symbol.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ){
+					//a = getFlatTypeInfo( a );
+					List aPtrs = a.getPtrOperators();
+					List pPtrs = p.getPtrOperators();
+					
+					if( pPtrs != null && pPtrs.size() > 0){
+						if( aPtrs == null ){
 							return false;
 						}
 						
-					}
-				} 
-				//T (*) ( ), T ( T::* ) ( T ), & variations
-				else if( symbol.isType( TypeInfo.t_function ) ){
-					if( !(aSymbol instanceof IParameterizedSymbol)|| 
-							!aSymbol.isType( TypeInfo.t_function ) )
-					{
-						return false;
-					}
-					
-					IParameterizedSymbol pFunction = (IParameterizedSymbol)symbol;
-					IParameterizedSymbol aFunction = (IParameterizedSymbol)aSymbol;
-
-					if( !deduceTemplateArgument( map, pFunction.getReturnType(), aFunction.getReturnType().getTypeInfo() ) ){
-						return false;
-					}
-					
-					List pPtrs = p.getPtrOperators();
-					if( pPtrs.size() != 0 ){
-						PtrOp op = (PtrOp) pPtrs.iterator().next();
-						if( op.getType() == PtrOp.t_memberPointer ){
-							TypeInfo info = new TypeInfo( TypeInfo.t_type, 0, aFunction.getContainingSymbol() );
-							if( !deduceTemplateArgument( map, op.getMemberOf(), info ) ){
-								return false;
-							}
-						}
-					}
-
-					List pParams = pFunction.getParameterList();
-					List aParams = aFunction.getParameterList();
-					if( pParams.size() != aParams.size() ){
-						return false;
-					} else {
-						Iterator pIter = pParams.iterator();
-						Iterator aIter = aParams.iterator();
+						Iterator pIter = pPtrs.iterator();
+						ListIterator aIter = aPtrs.listIterator();
+						PtrOp pOp = null;
+						PtrOp aOp = null;
 						while( pIter.hasNext() ){
-							TypeInfo info = ((ISymbol)aIter.next()).getTypeInfo();
-							if( !deduceTemplateArgument( map, (ISymbol) pIter.next(), info ) ){
+							pOp = (PtrOp) pIter.next();
+							if( !aIter.hasNext() ){
+								return false;
+							} 
+							aOp = (PtrOp) aIter.next();
+							if( pOp.getType() == aOp.getType() ){
+								if( !pOp.equals( aOp ) )
+									return false;
+								aIter.remove();
+							} else {
 								return false;
 							}
+						} 
+					}
+					//cvlist T
+					if( p.checkBit( TypeInfo.isConst ) ){
+						if( !a.checkBit( TypeInfo.isConst ) )
+							return false;
+						a.setBit( false, TypeInfo.isConst);
+					}
+					if( p.checkBit( TypeInfo.isVolatile ) ){
+						if( !a.checkBit( TypeInfo.isVolatile ) )
+							return false;
+						a.setBit( false, TypeInfo.isVolatile);
+					}
+					
+					//T
+					return deduceArgument( map, symbol, a );
+						
+				} else if ( symbol.getTypeInfo().getTemplateParameterType() == TypeInfo.t_template ){
+					
+				} else {
+					//non-type parameter
+					if( symbol.getTypeInfo().getTemplateParameterType() == a.getType() ){
+						return deduceArgument( map, symbol, a );
+					} 
+					return false;
+				}
+			} 
+			//T (*) ( ), T ( T::* ) ( T ), & variations
+			else if( symbol.isType( TypeInfo.t_function ) ){
+				if( !(aSymbol instanceof IParameterizedSymbol)|| 
+						!aSymbol.isType( TypeInfo.t_function ) )
+				{
+					return false;
+				}
+				
+				IParameterizedSymbol pFunction = (IParameterizedSymbol)symbol;
+				IParameterizedSymbol aFunction = (IParameterizedSymbol)aSymbol;
+
+				if( !deduceTemplateArgument( map, pFunction.getReturnType(), aFunction.getReturnType().getTypeInfo() ) ){
+					return false;
+				}
+				
+				List pPtrs = p.getPtrOperators();
+				if( pPtrs.size() != 0 ){
+					PtrOp op = (PtrOp) pPtrs.iterator().next();
+					if( op.getType() == PtrOp.t_memberPointer ){
+						TypeInfo info = new TypeInfo( TypeInfo.t_type, 0, aFunction.getContainingSymbol() );
+						if( !deduceTemplateArgument( map, op.getMemberOf(), info ) ){
+							return false;
 						}
 					}
-					return true;
+				}
+
+				List pParams = pFunction.getParameterList();
+				List aParams = aFunction.getParameterList();
+				if( pParams.size() != aParams.size() ){
+					return false;
 				} 
-			} 
-		} else {
-			if( p.isType( TypeInfo.t_templateParameter ) ){
-				return deduceArgument( map, pSymbol, a );
-			}
-			if( p.getType() == a.getType() ){
-				if( p.getDefault() != null ){
-					return ( p.getDefault().equals( a.getDefault() ) );
+				Iterator pIter = pParams.iterator();
+				Iterator aIter = aParams.iterator();
+				while( pIter.hasNext() ){
+					TypeInfo info = ((ISymbol)aIter.next()).getTypeInfo();
+					if( !deduceTemplateArgument( map, (ISymbol) pIter.next(), info ) ){
+						return false;
+					}
 				}
 				return true;
+			} 
+			 
+		} 
+		if( p.isType( TypeInfo.t_templateParameter ) ){
+			return deduceArgument( map, pSymbol, a );
+		}
+		if( p.getType() == a.getType() ){
+			if( p.getDefault() != null ){
+				return ( p.getDefault().equals( a.getDefault() ) );
 			}
+			return true;
 		}
 		
 		return false;
@@ -668,7 +659,7 @@ public final class TemplateEngine {
 			return null;
 		}
 
-		ISymbol templateSymbol = (ISymbol) template.getTemplatedSymbol();
+		ISymbol templateSymbol = template.getTemplatedSymbol();
 		if( !templateSymbol.isType( TypeInfo.t_function ) ){
 			return null;
 		}
@@ -706,10 +697,9 @@ public final class TemplateEngine {
 		if( map.containsKey( p ) ){
 			TypeInfo current = (TypeInfo)map.get( p );
 			return current.equals( a );
-		} else {
-			map.put( p, a );
-			return true;
-		}
+		} 
+		map.put( p, a );
+		return true;
 	}
 	/**
 	 * Compare spec1 to spec2.  Return > 0 if spec1 is more specialized, < 0 if spec2
@@ -723,7 +713,7 @@ public final class TemplateEngine {
 			return -1;	
 		}
 		
-		ISymbol decl = (ISymbol) spec1.getTemplatedSymbol();
+		ISymbol decl = spec1.getTemplatedSymbol();
 		
 		//to order class template specializations, we need to transform them into function templates
 		ITemplateSymbol template1 = spec1;
@@ -961,9 +951,8 @@ public final class TemplateEngine {
 				//make sure parameters match up with found template
 				if( checkTemplateParameterListsAreEquivalent( primary.getParameterList(), parameters ) ){
 					return template;
-				} else {
-					throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateParameter );
-				}
+				} 
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplateParameter );
 			}
 			
 			//specialization 
@@ -1208,28 +1197,25 @@ public final class TemplateEngine {
 			Map map = deduceTemplateArgumentsUsingParameterList( tmpl, (IParameterizedSymbol) symbol );
 			
 			if( map == null )
-				continue;
-			else {
-				Iterator pIter = tmpl.getParameterList().iterator();
-				Iterator aIter = args.iterator();
-				while( pIter.hasNext() && aIter.hasNext() ){
-					ISymbol param = (ISymbol) pIter.next();
-					TypeInfo arg = (TypeInfo) aIter.next();
-					if( map.containsKey( param ) ) {
-						if( !map.get( param ).equals( arg )){
-							continue outer;
-						}
-					} else if( !matchTemplateParameterAndArgument( param, arg )){
+				continue;			 
+			Iterator pIter = tmpl.getParameterList().iterator();
+			Iterator aIter = args.iterator();
+			while( pIter.hasNext() && aIter.hasNext() ){
+				ISymbol param = (ISymbol) pIter.next();
+				TypeInfo arg = (TypeInfo) aIter.next();
+				if( map.containsKey( param ) ) {
+					if( !map.get( param ).equals( arg )){
 						continue outer;
 					}
-				}
-				//made it this far, its a match
-				if( template != null ){
-					throw new ParserSymbolTableException(ParserSymbolTableException.r_Ambiguous );
-				} else {
-					template = tmpl;
+				} else if( !matchTemplateParameterAndArgument( param, arg )){
+					continue outer;
 				}
 			}
+			//made it this far, its a match
+			if( template != null ){
+				throw new ParserSymbolTableException(ParserSymbolTableException.r_Ambiguous );
+			} 
+			template = tmpl;
 		}
 		
 		return template;

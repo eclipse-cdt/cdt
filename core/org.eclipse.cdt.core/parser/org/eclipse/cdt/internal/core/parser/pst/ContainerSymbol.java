@@ -721,8 +721,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 	
 		if( found instanceof IParameterizedSymbol )
 			return (IParameterizedSymbol) found;
-		else 
-			return null;
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -828,54 +827,53 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				if( paramList != null ){
 					ParserSymbolTable.resolveFunction( data, constructors );
 					return constructors;
-				} else {
-					return constructors;
-				}
-			} else
-				return null;
-		} else {
-			//remove any ambiguous symbols
-			if( data.ambiguities != null && !data.ambiguities.isEmpty() ){
-				Iterator iter = data.ambiguities.iterator();
-				while( iter.hasNext() ){
-					data.foundItems.remove( iter.next() );
-				}
-			}
-			
-			List list = new LinkedList();
-			
-			Iterator iter = data.foundItems.keySet().iterator();
-			Object obj = null;
-			List tempList = null;
-			while( iter.hasNext() ){
-				obj = data.foundItems.get( iter.next() );
-				
-				if( obj instanceof List ){
-					//a list must be all functions?
-					if( paramList != null )
-						ParserSymbolTable.resolveFunction( data, (List) obj );
-					list.addAll( (List) obj );
-				} else{
-					if( paramList != null && ((ISymbol)obj).isType( TypeInfo.t_function ) )
-					{
-						if( tempList == null )
-							tempList = new LinkedList();
-						else 
-							tempList.clear();
-						tempList.add( obj );
-						ParserSymbolTable.resolveFunction( data, tempList );
-						list.addAll( tempList );
-					} else {
-						list.add( obj );
-					}
-				}
-			}
-
-			if( constructors != null )
-				list.addAll( constructors );
-			
-			return list;
+				} 
+				return constructors;
+			} 
+			return null;
 		}
+		//remove any ambiguous symbols
+		if( data.ambiguities != null && !data.ambiguities.isEmpty() ){
+			Iterator iter = data.ambiguities.iterator();
+			while( iter.hasNext() ){
+				data.foundItems.remove( iter.next() );
+			}
+		}
+		
+		List list = new LinkedList();
+		
+		Iterator iter = data.foundItems.keySet().iterator();
+		Object obj = null;
+		List tempList = null;
+		while( iter.hasNext() ){
+			obj = data.foundItems.get( iter.next() );
+			
+			if( obj instanceof List ){
+				//a list must be all functions?
+				if( paramList != null )
+					ParserSymbolTable.resolveFunction( data, (List) obj );
+				list.addAll( (List) obj );
+			} else{
+				if( paramList != null && ((ISymbol)obj).isType( TypeInfo.t_function ) )
+				{
+					if( tempList == null )
+						tempList = new LinkedList();
+					else 
+						tempList.clear();
+					tempList.add( obj );
+					ParserSymbolTable.resolveFunction( data, tempList );
+					list.addAll( tempList );
+				} else {
+					list.add( obj );
+				}
+			}
+		}
+
+		if( constructors != null )
+			list.addAll( constructors );
+		
+		return list;
+		
 	}
 	
 	public boolean isVisible( ISymbol symbol, IContainerSymbol qualifyingSymbol ){
@@ -918,9 +916,8 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 				} catch (ParserSymbolTableException e) {
 					return false;
 				}
-			} else { //PRIVATE
-				return false; 
 			}
+			return false; 
 		}
 		return true;
 	}

@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
-import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
 import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.token.KeywordSets.Key;
 
@@ -155,7 +154,7 @@ public class ContextualParser extends CompleteParser {
 		setCompletionScope( scope );
 		setCompletionKind( kind );
 		setCompletionKeywords(key);
-		ITokenDuple duple = new TokenDuple( first, last );
+		ITokenDuple duple = TokenFactory.createTokenDuple( first, last );
 		try {
 			setCompletionContext( astFactory.lookupSymbolInContext( scope, duple, null ) );
 		} catch (ASTNotImplementedException e) {

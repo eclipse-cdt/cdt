@@ -451,9 +451,8 @@ public class ParserSymbolTable {
 	private static boolean nameMatches( LookupData data, String name ){
 		if( data.mode == LookupMode.PREFIX ){
 			return name.regionMatches( true, 0, data.name, 0, data.name.length() );
-		} else {
-			return name.equals( data.name );
-		}
+		} 
+		return name.equals( data.name );
 	}
 	private static boolean checkType( LookupData data, ISymbol symbol ) { //, TypeInfo.eType type, TypeInfo.eType upperType ){
 		if( data.filter == null ){
@@ -804,20 +803,18 @@ public class ParserSymbolTable {
 		
 		if( origType == TypeInfo.t_template ){
 			ITemplateSymbol template = (ITemplateSymbol) origSymbol;
-			origSymbol = (ISymbol) template.getTemplatedSymbol();
+			origSymbol = template.getTemplatedSymbol();
 			if( origSymbol == null )
 				return true;
-			else 
-				origType = origSymbol.getType();
+			origType = origSymbol.getType();
 		}
 		
 		if( newType == TypeInfo.t_template ){
 			ITemplateSymbol template = (ITemplateSymbol) newSymbol;
-			newSymbol = (ISymbol) template.getTemplatedSymbol();
+			newSymbol = template.getTemplatedSymbol();
 			if( newSymbol == null )
 				return true;
-			else 
-				newType = newSymbol.getType();
+			newType = newSymbol.getType();
 		}	
 		
 		//handle forward decls
@@ -841,7 +838,6 @@ public class ParserSymbolTable {
 		//allowable thing is if they are both functions.
 		if( origSymbol instanceof IParameterizedSymbol && newSymbol instanceof IParameterizedSymbol )
 			return isValidFunctionOverload( (IParameterizedSymbol) origSymbol, (IParameterizedSymbol) newSymbol );
-		else 
 		return false;
 	}
 	
@@ -875,7 +871,7 @@ public class ParserSymbolTable {
 				symbol = (ISymbol) iter.next();
 				if( symbol.isType( TypeInfo.t_template ) ){
 					ITemplateSymbol template = (ITemplateSymbol) symbol;
-					symbol = (ISymbol) template.getTemplatedSymbol();	
+					symbol = template.getTemplatedSymbol();	
 				}
 				valid = ( symbol instanceof IParameterizedSymbol) && isValidFunctionOverload( (IParameterizedSymbol)symbol, (IParameterizedSymbol)newSymbol );
 			}
@@ -1288,10 +1284,9 @@ public class ParserSymbolTable {
 			if( num < numParameters ){
 				if( function.hasVariableArgs() ) {
 					continue;
-				} else {
-					//not enough parameters, remove it
-					iter.remove();
-				}
+				} 
+				//not enough parameters, remove it
+				iter.remove();
 			} 
 			//a candidate function having more than m parameters is viable only if the (m+1)-st
 			//parameter has a default argument
@@ -1438,14 +1433,11 @@ public class ParserSymbolTable {
 				if( parent == base ){
 					if( throwIfNotVisible && !isVisible )
 						throw new ParserSymbolTableException( ParserSymbolTableException.r_BadVisibility );
-					else 
-						return 1;
-				} else {
-					int n = hasBaseClass( parent, base, throwIfNotVisible );
-					if( n > 0 ){
-						return n + 1;
-					}
-				}	 
+					return 1;
+				} 
+				int n = hasBaseClass( parent, base, throwIfNotVisible );
+				if( n > 0 )
+					return n + 1;
 			}
 		}
 		
@@ -2001,17 +1993,14 @@ public class ParserSymbolTable {
 				if( secondCost.userDefined == Cost.AMBIGUOUS_USERDEFINED_CONVERSION ){
 					//conversion is ambiguous -> ill-formed
 					throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
-				} else {
-					return thirdOp;
-				}
-			} else {
-				if( thirdCost.userDefined == Cost.AMBIGUOUS_USERDEFINED_CONVERSION ){
-					//conversion is ambiguous -> ill-formed
-					throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
-				} else {
-					return secondOp;
-				}
-			}
+				} 
+				return thirdOp;
+			} 
+			if( thirdCost.userDefined == Cost.AMBIGUOUS_USERDEFINED_CONVERSION )
+				//conversion is ambiguous -> ill-formed
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+		 
+			return secondOp;
 		}
 	}
 	
@@ -2227,15 +2216,14 @@ public class ParserSymbolTable {
 			if( userDefined != 0 || cost.userDefined != 0 ){
 				if( userDefined == 0 || cost.userDefined == 0 ){
 					return cost.userDefined - userDefined;
-				} else {
-					if( (userDefined == AMBIGUOUS_USERDEFINED_CONVERSION || cost.userDefined == AMBIGUOUS_USERDEFINED_CONVERSION) ||
-						(userDefined != cost.userDefined ) )
-					{
+				} 
+				if( (userDefined == AMBIGUOUS_USERDEFINED_CONVERSION || cost.userDefined == AMBIGUOUS_USERDEFINED_CONVERSION) ||
+					(userDefined != cost.userDefined ) )
 						return 0;
-					} 
+		 
 					// else they are the same constructor/conversion operator and are ranked
 					//on the standard conversion sequence
-				}
+		
 			}
 			
 			if( promotion > 0 || cost.promotion > 0 ){
@@ -2307,9 +2295,8 @@ public class ParserSymbolTable {
 			IASTNode node = extension != null ? extension.getPrimaryDeclaration() : null;
 			if( node != null && node instanceof IASTMember ){
 				return ((IASTMember)node).getVisiblity();
-			} else {
-				throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );
-			}
+			} 
+			throw new ParserSymbolTableError( ParserSymbolTableError.r_InternalError );
 		}
 		
 		if( ! (qualifyingSymbol instanceof IDerivableContainerSymbol) ){

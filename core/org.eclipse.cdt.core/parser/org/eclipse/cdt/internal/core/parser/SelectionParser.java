@@ -39,7 +39,7 @@ import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.extension.IParserExtension;
 import org.eclipse.cdt.internal.core.parser.token.OffsetDuple;
-import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
+import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
@@ -133,7 +133,7 @@ public class SelectionParser extends ContextualParser {
 		if( getCompletionKind() == IASTCompletionNode.CompletionKind.UNREACHABLE_CODE )
 			throw new ParseError( ParseError.ParseErrorKind.OFFSETDUPLE_UNREACHABLE );
 		
-		ITokenDuple duple = new TokenDuple( firstTokenOfDuple, lastTokenOfDuple );
+		ITokenDuple duple = TokenFactory.createTokenDuple( firstTokenOfDuple, lastTokenOfDuple );
 		
 		if( ! duple.syntaxOfName() )
 			throw new ParseError( ParseError.ParseErrorKind.OFFSET_RANGE_NOT_NAME );

@@ -307,9 +307,8 @@ public class TypeInfo {
 		//upperType of 0 means no range
 		if( upperType == TypeInfo.t_undef ){
 			return ( getType() == type );
-		} else {
-			return ( getType().compareTo( type ) >= 0 && getType().compareTo( upperType ) <= 0 );
-		}
+		} 
+		return ( getType().compareTo( type ) >= 0 && getType().compareTo( upperType ) <= 0 );
 	}
 	
 	public ISymbol getTypeSymbol(){	
@@ -450,10 +449,9 @@ public class TypeInfo {
 	public boolean canHold( TypeInfo type ){
 		if( getType().compareTo( type.getType()) > 0 ){
 			return true;
-		} else {
-			int mask = TypeInfo.isShort | TypeInfo.isLong | TypeInfo.isLongLong;
-			return ( getTypeInfo() & mask ) >= ( type.getTypeInfo() & mask );
-		}	
+		} 
+		int mask = TypeInfo.isShort | TypeInfo.isLong | TypeInfo.isLongLong;
+		return ( getTypeInfo() & mask ) >= ( type.getTypeInfo() & mask );
 	}
 
 	public boolean equals( Object t ){
@@ -528,9 +526,8 @@ public class TypeInfo {
 	public String toString(){
 		if( isType( TypeInfo.t_type ) ){
 			return _typeDeclaration.getName();
-		} else {
-			return TypeInfo._image[ getType().toInt() ];
-		}
+		} 
+		return TypeInfo._image[ getType().toInt() ];
 	}
 
 	private int 	_typeInfo = 0;

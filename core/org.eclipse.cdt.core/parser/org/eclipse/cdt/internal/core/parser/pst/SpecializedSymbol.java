@@ -103,20 +103,20 @@ public class SpecializedSymbol extends TemplateSymbol implements ISpecializedSym
 		IContainerSymbol instance = findInstantiation( actualArgs );
 		if( instance != null ){
 			return instance;
-		} else {
-			IContainerSymbol symbol = null;
+		} 
+		IContainerSymbol symbol = null;
 			
-			if( getContainedSymbols().size() == 1 ){
-				Iterator iter = getContainedSymbols().keySet().iterator();
-				symbol = (IContainerSymbol)getContainedSymbols().get( iter.next() );
-			}
-			
-			instance = (IContainerSymbol) symbol.instantiate( this, argMap );
-			addInstantiation( instance, actualArgs );
-			processDeferredInstantiations();
-			
-			return instance;
+		if( getContainedSymbols().size() == 1 ){
+			Iterator iter = getContainedSymbols().keySet().iterator();
+			symbol = (IContainerSymbol)getContainedSymbols().get( iter.next() );
 		}
+			
+		instance = (IContainerSymbol) symbol.instantiate( this, argMap );
+		addInstantiation( instance, actualArgs );
+		processDeferredInstantiations();
+			
+		return instance;
+		
 	}
 	
 	/* (non-Javadoc)

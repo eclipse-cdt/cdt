@@ -25,7 +25,7 @@ import org.eclipse.cdt.core.parser.ITokenDuple;
  */
 public class TokenDuple implements ITokenDuple {
 
-	public TokenDuple( IToken first, IToken last )
+	TokenDuple( IToken first, IToken last )
 	{
 //		assert ( first != null && last != null ) : this; 
 		firstToken = first; 
@@ -33,7 +33,7 @@ public class TokenDuple implements ITokenDuple {
 		argLists = null;
 	}
 	
-	public TokenDuple( IToken first, IToken last, List templateArgLists ){
+	TokenDuple( IToken first, IToken last, List templateArgLists ){
 		firstToken = first;
 		lastToken = last;
 		if( templateArgLists != null && !templateArgLists.isEmpty() ){
@@ -43,7 +43,7 @@ public class TokenDuple implements ITokenDuple {
 		}
 	}
 	
-	public TokenDuple( ITokenDuple firstDuple, ITokenDuple secondDuple ){
+	TokenDuple( ITokenDuple firstDuple, ITokenDuple secondDuple ){
 		firstToken = firstDuple.getFirstToken();
 		lastToken = secondDuple.getLastToken();
 		

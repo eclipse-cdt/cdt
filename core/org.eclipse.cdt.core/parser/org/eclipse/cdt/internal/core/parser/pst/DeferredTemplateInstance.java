@@ -75,8 +75,7 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 		ISymbol symbol = _template.getTemplatedSymbol();
 		if( symbol != null )
 			return symbol.isType( type, upperType );
-		else 
-			return super.isType( type, upperType );
+		return super.isType( type, upperType );
 		
 	}
 	
@@ -84,16 +83,14 @@ public class DeferredTemplateInstance extends BasicSymbol implements IDeferredTe
 		ISymbol symbol = _template.getTemplatedSymbol();
 		if( symbol != null )
 			return symbol.getType();
-		else 
-			return super.getType();
+		return super.getType();
 	}
 	
 	public TypeInfo getTypeInfo(){
 		ISymbol symbol = _template.getTemplatedSymbol();
 		if( symbol != null )
 			return symbol.getTypeInfo();
-		else 
-			return super.getTypeInfo();
+		return super.getTypeInfo();
 	}
 
 	public boolean isType( TypeInfo.eType type ){

@@ -10,13 +10,17 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.token;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ITokenDuple;
 
 
 /**
  * @author johnc
  */
-public abstract class AbstractToken implements IToken {
+public abstract class AbstractToken implements IToken, ITokenDuple {
 
 	public AbstractToken( int type, int lineNumber )
 	{
@@ -30,7 +34,7 @@ public abstract class AbstractToken implements IToken {
 	}
 	
 	public String toString() {
-		return "Token=" + getType() + " \"" + getImage() + " @ line:" + getLineNumber() + " offset=" + getOffset(); 	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return getImage();
 	}
 	
 	public abstract String getImage();
@@ -52,6 +56,7 @@ public abstract class AbstractToken implements IToken {
 	protected int type;
 	protected int lineNumber = 1;
 	protected IToken next = null;
+	private String [] qualifiedName = null;
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
@@ -167,4 +172,149 @@ public abstract class AbstractToken implements IToken {
 	public final IToken getNext() { return next; }
 	public void setNext(IToken t) { next = t; }
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#consumeTemplateIdArguments(org.eclipse.cdt.core.parser.IToken, java.util.Iterator)
+	 */
+	public IToken consumeTemplateIdArguments(IToken name, Iterator iter) {
+		return this;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#contains(org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public boolean contains(ITokenDuple duple) {
+		return ( duple.getFirstToken() == duple.getLastToken() ) && ( duple.getFirstToken() == this );
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#extractNameFromTemplateId()
+	 */
+	public String extractNameFromTemplateId(){
+		return getImage();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#findLastTokenType(int)
+	 */
+	public int findLastTokenType(int t) {
+		if( getType() == t ) return 0;
+		return -1;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getFirstToken()
+	 */
+	public IToken getFirstToken() {
+		return this;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getLastSegment()
+	 */
+	public ITokenDuple getLastSegment() {
+		return this;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getLastToken()
+	 */
+	public IToken getLastToken() {
+		return this;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getLeadingSegments()
+	 */
+	public ITokenDuple getLeadingSegments() {
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getSegmentCount()
+	 */
+	public int getSegmentCount() {
+		return 1;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getStartOffset()
+	 */
+	public int getStartOffset() {
+		return 0;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getSubrange(int, int)
+	 */
+	public ITokenDuple getSubrange(int startIndex, int endIndex) {
+		if( startIndex == 0 && endIndex == 0 ) return this;
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getTemplateIdArgLists()
+	 */
+	public List[] getTemplateIdArgLists() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getToken(int)
+	 */
+	public IToken getToken(int index) {
+		if( index == 0 ) return this;
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#isIdentifier()
+	 */
+	public boolean isIdentifier() {
+		return ( getType() == IToken.tIDENTIFIER );
+	}
+	
+	
+	private class SingleIterator implements Iterator
+	{
+		boolean hasNext = true;
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#remove()
+		 */
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#hasNext()
+		 */
+		public boolean hasNext() {
+			return hasNext;
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#next()
+		 */
+		public Object next() {
+			hasNext = false;
+			return AbstractToken.this;
+		}
+		
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#iterator()
+	 */
+	public Iterator iterator() {
+		return new SingleIterator();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#length()
+	 */
+	public int length() {
+		return 1;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#syntaxOfName()
+	 */
+	public boolean syntaxOfName() {
+		return ( getType() == IToken.tIDENTIFIER );
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#toQualifiedName()
+	 */
+	public String[] toQualifiedName() {
+		if( qualifiedName == null )
+		{
+			qualifiedName = new String[1];
+			qualifiedName[0] = getImage();
+		}
+		return qualifiedName;
+	}
 }

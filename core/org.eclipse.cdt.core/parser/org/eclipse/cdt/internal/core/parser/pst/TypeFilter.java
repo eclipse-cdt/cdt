@@ -75,18 +75,16 @@ public class TypeFilter {
 				( acceptedKinds.contains( LookupKind.METHODS )   &&  symbolIsMember ) )
 			{
 				return true;
-			} else {
-				return false;
-			}
+			} 
+			return false;
 		} 
 		else if ( typeInfo.isType( TypeInfo.t_type ) && typeInfo.checkBit( TypeInfo.isTypedef ) ){
 			if( acceptedKinds.contains( LookupKind.TYPEDEFS ) ||
 				acceptedKinds.contains( LookupKind.TYPES ) )
 			{
 				return true;
-			} else {
-				return false;
-			}
+			} 
+			return false;
 		}
 		else if ( typeInfo.isType( TypeInfo.t_type ) || typeInfo.isType( TypeInfo.t__Bool, TypeInfo.t_void ) )
 		{
@@ -95,9 +93,8 @@ public class TypeFilter {
 				( acceptedKinds.contains( LookupKind.FIELDS )          && symbolIsMember ) )
 			{
 				return true;
-			} else {
-				return false;
-			}
+			} 
+			return false;
 		}
 		else 
         {

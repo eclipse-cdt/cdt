@@ -35,7 +35,7 @@ import org.eclipse.cdt.core.parser.ast.IASTTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
-import org.eclipse.cdt.internal.core.parser.token.TokenDuple;
+import org.eclipse.cdt.internal.core.parser.token.TokenFactory;
 /**
  * @author jcamelon
  *
@@ -435,7 +435,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         convertedParms,
                         (ASTPointerOperator)i.next());
             
-        	ITokenDuple nameDuple = ( d.getPointerOperatorNameDuple() != null ) ? new TokenDuple( d.getPointerOperatorNameDuple(), d.getNameDuple() ) : d.getNameDuple(); 
+        	ITokenDuple nameDuple = ( d.getPointerOperatorNameDuple() != null ) ? TokenFactory.createTokenDuple( d.getPointerOperatorNameDuple(), d.getNameDuple() ) : d.getNameDuple(); 
         	
         	if( typedef )
 				return astFactory.createTypedef(scope, nameDuple.toString(), abs,

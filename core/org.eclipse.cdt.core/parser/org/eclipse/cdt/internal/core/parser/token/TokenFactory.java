@@ -10,7 +10,10 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.token;
 
+import java.util.List;
+
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
 
@@ -48,5 +51,21 @@ public class TokenFactory {
 	public static IToken createStandAloneToken( int type, String image )
 	{
 		return new ImagedToken( type, image);
+	}
+
+	public static ITokenDuple createTokenDuple( IToken first, IToken last )
+	{
+		if( (first == last) && ( first instanceof ITokenDuple )) return (ITokenDuple) first;
+		return new TokenDuple( first, last );
+	}
+
+	public static ITokenDuple createTokenDuple( IToken first, IToken last, List templateArgLists )
+	{
+		if( (first == last) && ( templateArgLists == null ) && ( first instanceof ITokenDuple )) return (ITokenDuple) first;
+		return new TokenDuple( first, last, templateArgLists );
+	}
+
+	public static ITokenDuple createTokenDuple( ITokenDuple firstDuple, ITokenDuple secondDuple ){
+		return new TokenDuple( firstDuple, secondDuple );
 	}
 }

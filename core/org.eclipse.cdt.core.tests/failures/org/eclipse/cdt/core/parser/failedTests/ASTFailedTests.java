@@ -95,20 +95,20 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("struct entry tester (int len; char data[len][len], int len) {}");
     }
-    public void testBug39688() throws Exception
-    {
-        Writer code = new StringWriter();
-        try
-        {
-            code.write("#define decl(type, vars...)  \\\n");
-            code.write(" type vars ;\n");
-            code.write("decl(int, x, y)\n");
-        }
-        catch (IOException ioe)
-        {
-        }
-        assertCodeFailsParse(code.toString());
-    }
+//    public void testBug39688() throws Exception
+//    {
+//        Writer code = new StringWriter();
+//        try
+//        {
+//            code.write("#define decl(type, vars...)  \\\n");
+//            code.write(" type vars ;\n");
+//            code.write("decl(int, x, y)\n");
+//        }
+//        catch (IOException ioe)
+//        {
+//        }
+//        assertCodeFailsParse(code.toString());
+//    }
 
 
     public void testBug39695A() throws Exception

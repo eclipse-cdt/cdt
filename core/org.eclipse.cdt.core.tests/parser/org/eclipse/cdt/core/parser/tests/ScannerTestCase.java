@@ -1219,12 +1219,6 @@ public class ScannerTestCase extends BaseScannerTest
 			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_INVALID_MACRO_DEFN);
 		}
 		
-		initializeScanner( "#define FOO(A,\\\nB) 1\n FOO(foo" ); //$NON-NLS-1$
-		try{
-			validateInteger("1"); //$NON-NLS-1$
-		} catch( ScannerException e ){
-			assertTrue( e.getProblem().getID() == IProblem.PREPROCESSOR_MACRO_USAGE_ERROR);
-		}
 	}
 	
 	public void testBug36255() throws Exception

@@ -145,12 +145,14 @@ public class DebugConfiguration implements ICDebugConfiguration {
 	 */
 	public String[] getCoreFileExtensions() {
 		if (fCoreExt == null) {
-			String cexts = getConfigurationElement().getAttribute("coreFileFilter"); //$NON-NLS-1$
-			StringTokenizer tokenizer = new StringTokenizer(cexts, ","); //$NON-NLS-1$
 			List exts = new ArrayList();
-			while (tokenizer.hasMoreTokens()) {
-				String ext = tokenizer.nextToken().trim();
-				exts.add(ext);
+			String cexts = getConfigurationElement().getAttribute("coreFileFilter"); //$NON-NLS-1$
+			if (cexts != null) {
+				StringTokenizer tokenizer = new StringTokenizer(cexts, ","); //$NON-NLS-1$
+				while (tokenizer.hasMoreTokens()) {
+					String ext = tokenizer.nextToken().trim();
+					exts.add(ext);
+				}
 			}
 			exts.add("*.*"); //$NON-NLS-1$
 			fCoreExt = (String[])exts.toArray(new String[exts.size()]);

@@ -1,3 +1,7 @@
+2004-10-19 Alain Magloire
+	Fix NPE.
+	* src/org/eclipse/cdt/debug/internal/core/DebugConfiguration.java
+
 2004-10-19 Mikhail Khodjaiants
 	Support of the thread-specific breakpoints. 
 	Fix for the error handling of the asynchronous operations.

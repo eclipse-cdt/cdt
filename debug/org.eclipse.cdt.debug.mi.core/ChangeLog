@@ -1,3 +1,17 @@
+2003-12-18 Alain Magloire
+
+	PR 49148
+	Set environment variable value to give the program.
+	Arguments are VAR VALUE where VAR is variable name and VALUE is value.
+	VALUES of environment variables are uninterpreted strings.
+	This does not affect the program until the next "run" command.
+	
+	So pass the string raw.
+
+	* src/org/eclipse/cdt/debug/mi/core/command/MIGDBSetEnvironment.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/RuntimeOptions.java
+	* src/org/eclipse/cdt/debug/mi/core/CommandFactory.java
+
 2003-12-17 Mikhail Khodjaiants
 
 	Fix for bug 49061: Different values are used as default for the "Load shared library symbols automatically" option.

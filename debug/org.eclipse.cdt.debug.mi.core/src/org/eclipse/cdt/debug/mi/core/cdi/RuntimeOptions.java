@@ -15,7 +15,7 @@ import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIEnvironmentCD;
 import org.eclipse.cdt.debug.mi.core.command.MIExecArguments;
-import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
+import org.eclipse.cdt.debug.mi.core.command.MIGDBSetEnvironment;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
 
 /**
@@ -64,12 +64,11 @@ public class RuntimeOptions implements ICDIRuntimeOptions {
 			String value = props.getProperty(key);
 			String params[] = null;
 			if (value == null || value.length() == 0) {
-				params = new String[] {"environment", key}; 
+				params = new String[] {key}; 
 			} else {
-				String var = key + "=" + value;
-				params = new String[] {"environment", var}; 
+				params = new String[] {key, value}; 
 			}
-			MIGDBSet set =  factory.createMIGDBSet(params);
+			MIGDBSetEnvironment set =  factory.createMIGDBSetEnvironment(params);
 			try {
 				mi.postCommand(set);
 				MIInfo info = set.getMIInfo();

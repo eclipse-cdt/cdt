@@ -22,7 +22,9 @@
       <import plugin="org.eclipse.text"/>
    </requires>
 
-
+<!-- =================================================================================== -->
+<!-- Obsolete extension point no longer in use, will be remove.                          -->
+<!-- =================================================================================== -->
    <extension-point id="CProject" name="%CProject.name" schema="schema/CProject.exsd"/>
 <!-- =================================================================================== -->
 <!-- Extension Point:(work in progress) IConsole, customize a C Build console output     -->
@@ -45,6 +47,7 @@
 <!-- =================================================================================== -->
    <extension-point id="PathEntryStore" name="PathEntryStore"/>
 <!-- =================================================================================== -->
+<!-- Obsolete extension point, use the IPathEntry mechanism to provide include/macros    -->
 <!-- =================================================================================== -->
    <extension-point id="ScannerInfoProvider" name="Scanner Information Provider"/>
 <!-- =================================================================================== -->
@@ -53,6 +56,9 @@
    <extension-point id="CLanguage" name="CLanguage" schema="schema/CLanguage.exsd"/>
    <extension-point id="CFileType" name="CFileType" schema="schema/CFileType.exsd"/>
    <extension-point id="CFileTypeAssociation" name="CFileTypeAssociation" schema="schema/CFileTypeAssociation.exsd"/>
+<!-- =================================================================================== -->
+<!-- PathEntryContainer initialization, this is part of the IPathEntry framework         -->
+<!-- =================================================================================== -->
    <extension-point id="PathEntryContainerInitializer" name="%PathEntryContainerInitializer" schema="schema/PathEntryContainerInitializer.exsd"/>
    <extension-point id="CodeFormatter" name="%CodeFormatter.name" schema="schema/CodeFormatter.exsd"/>
 
@@ -403,6 +409,7 @@
       </ignore>
    </extension>
 <!-- =================================================================================== -->
+<!-- C/C++ Task marker(disable for now)                                                  -->
 <!-- =================================================================================== -->
    <extension
          id="task"
@@ -415,6 +422,9 @@
             value="true">
       </persistent>
    </extension>
+<!-- =================================================================================== -->
+<!-- C/C++ indexer marker                                                                -->
+<!-- =================================================================================== -->
    <extension
          id="indexermarker"
          name="%IndexerMarker"
@@ -429,6 +439,7 @@
             type="org.eclipse.core.resources.textmarker">
       </super>
    </extension>
+
 <!-- =================================================================================== -->
 <!-- Marker for problems in the PathEntries                                             -->
 <!-- =================================================================================== -->
@@ -440,6 +451,10 @@
             type="org.eclipse.core.resources.problemmarker">
       </super>
    </extension>
+
+<!-- =================================================================================== -->
+<!-- Code Formatter extension point                                                      -->
+<!-- =================================================================================== -->
    <!--extension
          id="codeFormatters"
          name="%CodeFormatters.name"
@@ -451,10 +466,66 @@
    </extension-->
 
 <!-- =================================================================================== -->
+<!-- Define C/C++ files ContentTypes                                                     -->
+<!-- =================================================================================== -->
+  <extension point="org.eclipse.core.runtime.contentTypes">
+	  <!-- declares a content type for C source files -->
+	  <content-type id="cSource" name="%cSourceName" 
+		  base-type="org.eclipse.core.runtime.text"
+		  priority="high"/>
+	  <!-- declares a content type for C header files -->
+      <content-type id="cHeader" name="%cHeaderName" 
+          base-type="org.eclipse.core.runtime.text"
+          priority="high"/>
+	  <!-- declares a content type for C++ source files -->
+      <content-type id="cxxSource" name="%cxxSourceName" 
+          base-type="org.eclipse.core.runtime.text"
+          priority="high"/>
+	  <!-- declares a content type for C++ header files -->
+      <content-type id="cxxHeader" name="%cxxHeaderName" 
+          base-type="org.eclipse.core.runtime.text"
+          priority="high"/>
+	  <!-- declares a content type for ASM Source files -->
+      <content-type id="asmSource" name="%asmSourceName" 
+          base-type="org.eclipse.core.runtime.text"
+          priority="high"/>
+  </extension>
+
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cSource"
+       file-extensions="c"/>
+   </extension> 
+
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxSource"
+       file-extensions="cpp,cxx,cc"/>
+   </extension> 
+
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-extensions="hpp,hh"/>
+   </extension> 
+
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cHeader"
+       file-extensions="h"/>
+   </extension> 
+
+   <extension point="org.eclipse.core.runtime.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.asmSource"
+       file-extensions="asm,s"/>
+   </extension> 
+
+<!-- =================================================================================== -->
 <!-- Initialize the preference for the Core Plugin                                       -->
 <!-- =================================================================================== -->
    <extension point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.internal.core.CCorePreferenceInitializer"/>
    </extension>
-
+ 
 </plugin>

@@ -1,3 +1,12 @@
+2004-09-14 Alain Magloire
+
+	Define for the contentType extensions for
+	type of files.  Note this is incomplete
+	We have to wait for 3.1 when the ContentTypeManger
+	to be fully functionnal.
+
+	* plugin.xml
+
 2004-09-10 Alain Magloire
 
 	Remove annoying warnings and prevent the PathEntryManger

@@ -6,9 +6,10 @@ package org.eclipse.cdt.debug.mi.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -26,21 +27,26 @@ public class GDBDebugger implements ICDebugger {
 		try {
 			ICDISharedLibraryManager mgr = session.getSharedLibraryManager();
 			if (mgr instanceof SharedLibraryManager) {
-				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_AUTO_SOLIB, false);
+				boolean autolib = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_AUTO_SOLIB, false);
+				boolean stopOnSolibEvents = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_STOP_ON_SOLIB_EVENTS, false);
 				try {
 					((SharedLibraryManager)mgr).setAutoLoadSymbols(autolib);
+					((SharedLibraryManager)mgr).setStopOnSolibEvents(stopOnSolibEvents);
 				} catch (CDIException e) {
 					// Ignore this error
 					// it seems to be a real problem on many gdb platform
 				}
 			}
-			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_SOLIB_PATH, new ArrayList(1));
+			List p = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
 			if (p.size() > 0) {
-				String[] paths = (String[])p.toArray(new String[0]);
+				String[] oldPaths = mgr.getSharedLibraryPaths();
+				String[] paths = new String[oldPaths.length + p.size()];
+				System.arraycopy((String[])p.toArray(new String[p.size()]), 0, paths, 0, p.size());
+				System.arraycopy(oldPaths, 0, paths, p.size(), oldPaths.length);
 				mgr.setSharedLibraryPaths(paths);
 			}
 		} catch (CoreException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException("Error initializing shared library options: " + e.getMessage());
 		}
 	}
 
@@ -53,11 +59,11 @@ public class GDBDebugger implements ICDebugger {
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException("Error creating session: " + e.getMessage());
 		} catch (MIException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException("Error creating session: " + e.getMessage());
 		} catch (CoreException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException("Error creating session: " + e.getMessage());
 		}
 	}
 
@@ -70,11 +76,11 @@ public class GDBDebugger implements ICDebugger {
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException("Error creating session: " + e.getMessage());
 		} catch (MIException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException("Error creating session: " + e.getMessage());
 		} catch (CoreException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException("Error creating session: " + e.getMessage());
 		}
 
 	}
@@ -88,11 +94,11 @@ public class GDBDebugger implements ICDebugger {
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException("Error creating session: " + e.getMessage());
 		} catch (MIException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException("Error creating session: " + e.getMessage());
 		} catch (CoreException e) {
-			throw new CDIException("Error initializing: " + e.getMessage());
+			throw new CDIException("Error creating session: " + e.getMessage());
 		}
 	}
 

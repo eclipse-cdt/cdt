@@ -6,28 +6,26 @@ package org.eclipse.cdt.ui;
  */
 
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Control;
-
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICFile;
-import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.ICFile;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ICRoot;
-import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
-import org.eclipse.cdt.ui.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Control;
 
 public class CElementContentProvider extends BaseCElementContentProvider implements ITreeContentProvider, IElementChangedListener {
 

@@ -53,6 +53,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -884,7 +885,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 	public void collapseAll() {
 		viewer.getControl().setRedraw(false);
-		viewer.collapseToLevel(getViewPartInput(), TreeViewer.ALL_LEVELS);
+		viewer.collapseToLevel(getViewPartInput(), AbstractTreeViewer.ALL_LEVELS);
 		viewer.getControl().setRedraw(true);
 	}
 

@@ -58,10 +58,9 @@ public class BaseClassesListDialogField extends ListDialogField {
                     return INDEX_PUBLIC;
                 }
             } else if (property.equals(CP_VIRTUAL)) {
-                if (baseClass.isVirtual())
-                    return INDEX_YES;
-                else
-                    return INDEX_NO;
+            	if (baseClass.isVirtual())
+            		return INDEX_YES;
+            	return INDEX_NO;
             }
             return null;
         }

@@ -122,9 +122,8 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 		IDocument document= fDocumentProvider.getDocument(input);
 		if (document != null) {
 			return new TextBuffer(new Document(document.get()));
-		} else {
-			return createFromFile(file);
 		}
+		return createFromFile(file);
 	}
 
 	private TextBuffer createFromFile(IFile file) throws CoreException {

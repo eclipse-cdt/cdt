@@ -73,10 +73,9 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 			if (fCOffset != -1 && fTokenOffset + fTokenLength != fCOffset + fCLength) {
 				fTokenOffset += fTokenLength;		
 				return fTokens[CCODE];	
-			} else {
-				fCOffset= -1;
-				fCLength= 0;	
 			}
+			fCOffset= -1;
+			fCLength= 0;	
 		}		
 
 		fTokenOffset += fTokenLength;
@@ -92,11 +91,10 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 		 			fLast= NONE; // ignore last
 		 			return preFix(fState, CCODE, NONE, 0);
 
-		 		} else {
-		 			fLast= NONE;
-		 			fPrefixLength= 0;
-					return Token.EOF;
 		 		}
+		 		fLast= NONE;
+		 		fPrefixLength= 0;
+		 		return Token.EOF;
 
 	 		case '\r':
 	 			// emulate CPartitionScanner
@@ -105,38 +103,36 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 						fTokenLength++;
 	 					continue;
 
-	 			} else {
-	 				
-					switch (fState) {
-					case SINGLE_LINE_COMMENT:
-					case CHARACTER:
-					case STRING:
-						if (fTokenLength > 0) {
-							IToken token= fTokens[fState];
-							
-				 			// emulate CPartitionScanner
-							if (fgEmulate) {
-								fTokenLength++;
-								fLast= NONE;
-								fPrefixLength= 0;
-							} else {								
-								fLast= CARRIAGE_RETURN;	
-								fPrefixLength= 1;
-							}
-							
-							fState= CCODE;
-							return token;
-
-						} else {
-							consume();
-							continue;	
-						}
-
-					default:
-						consume();
-						continue;
-					}	 				
 	 			}
+	 				
+	 			switch (fState) {
+	 			case SINGLE_LINE_COMMENT:
+	 			case CHARACTER:
+	 			case STRING:
+	 				if (fTokenLength > 0) {
+	 					IToken token= fTokens[fState];
+	 					
+	 					// emulate CPartitionScanner
+	 					if (fgEmulate) {
+	 						fTokenLength++;
+	 						fLast= NONE;
+	 						fPrefixLength= 0;
+	 					} else {								
+	 						fLast= CARRIAGE_RETURN;	
+	 						fPrefixLength= 1;
+	 					}
+	 					
+	 					fState= CCODE;
+	 					return token;
+	 					
+	 				}
+	 				consume();
+	 				continue;	
+	 				
+	 			default:
+	 				consume();
+	 			continue;
+	 		}
 	
 	 		case '\n': 		 		
 				switch (fState) {
@@ -214,56 +210,48 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 					if (fLast == SLASH) {
 						if (fTokenLength - getLastLength(fLast) > 0) {
 							return preFix(CCODE, SINGLE_LINE_COMMENT, NONE, 2);
-						} else {							
-							preFix(CCODE, SINGLE_LINE_COMMENT, NONE, 2);
-							fTokenOffset += fTokenLength;
-							fTokenLength= fPrefixLength;
-							break;
-						}
-	
-					} else {
-						fTokenLength++;
-						fLast= SLASH;
+						}							
+						preFix(CCODE, SINGLE_LINE_COMMENT, NONE, 2);
+						fTokenOffset += fTokenLength;
+						fTokenLength= fPrefixLength;
 						break;
+	
 					}
+					fTokenLength++;
+					fLast= SLASH;
+					break;
 	
 				case '*':
 					if (fLast == SLASH) {
 						if (fTokenLength - getLastLength(fLast) > 0)
 							return preFix(CCODE, MULTI_LINE_COMMENT, SLASH_STAR, 2);
-						else {
-							preFix(CCODE, MULTI_LINE_COMMENT, SLASH_STAR, 2);
-							fTokenOffset += fTokenLength;
-							fTokenLength= fPrefixLength;
-							break;
-						}
-
-					} else {
-						consume();
+			
+						preFix(CCODE, MULTI_LINE_COMMENT, SLASH_STAR, 2);
+						fTokenOffset += fTokenLength;
+						fTokenLength= fPrefixLength;
 						break;
+
 					}
+					consume();
+					break;
 					
 				case '\'':
 					fLast= NONE; // ignore fLast
 					if (fTokenLength > 0)
 						return preFix(CCODE, CHARACTER, NONE, 1);
-					else {						
-						preFix(CCODE, CHARACTER, NONE, 1);
-						fTokenOffset += fTokenLength;
-						fTokenLength= fPrefixLength;
-						break;
-					}
+					preFix(CCODE, CHARACTER, NONE, 1);
+					fTokenOffset += fTokenLength;
+					fTokenLength= fPrefixLength;
+					break;
 
 				case '"':
 					fLast= NONE; // ignore fLast				
 					if (fTokenLength > 0)
 						return preFix(CCODE, STRING, NONE, 1);
-					else {
-						preFix(CCODE, STRING, NONE, 1);
-						fTokenOffset += fTokenLength;
-						fTokenLength= fPrefixLength;
-						break;
-					}
+					preFix(CCODE, STRING, NONE, 1);
+					fTokenOffset += fTokenLength;
+					fTokenLength= fPrefixLength;
+					break;
 	
 				default:
 					consume();
@@ -285,10 +273,9 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 				case '/':
 					if (fLast == STAR) {
 						return postFix(MULTI_LINE_COMMENT);
-					} else {
-						consume();
-						break;
 					}
+					consume();
+					break;
 	
 				default:
 					consume();
@@ -307,10 +294,9 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 	 				if (fLast != BACKSLASH) {
 	 					return postFix(STRING);
 
-		 			} else {
-						consume();
-						break; 					
-	 				}
+		 			}
+	 				consume();
+	 				break; 					
 		 		
 		 		default:
 					consume();
@@ -329,10 +315,9 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 	 				if (fLast != BACKSLASH) {
 	 					return postFix(CHARACTER);
 	
-	 				} else {
-						consume();
-		 				break;
 	 				}
+	 				consume();
+	 				break;
 	
 	 			default:
 					consume();
@@ -388,14 +373,13 @@ public class FastCPartitionScanner implements IPartitionTokenScanner, ICPartitio
 			fLast= last;
 			return fTokens[state];
 
-		} else {
-			fTokenLength -= getLastLength(fLast);
-			fLast= last;
-			fPrefixLength= prefixLength;
-			IToken token= fTokens[state];		
-			fState= newState;
-			return token;
 		}
+		fTokenLength -= getLastLength(fLast);
+		fLast= last;
+		fPrefixLength= prefixLength;
+		IToken token= fTokens[state];		
+		fState= newState;
+		return token;
 	}
 
 	private static int getState(String contentType) {

@@ -115,11 +115,11 @@ public class PreprocessorRule extends WordRule implements IRule {
 
 			return fDefaultToken;
 
-		} else { // Doesn't start with '#', roll back scanner
-
-			for (int i = 0; i < nCharsToRollback; i++) {
-				scanner.unread();
-			}
+		}
+		// Doesn't start with '#', roll back scanner
+		
+		for (int i = 0; i < nCharsToRollback; i++) {
+			scanner.unread();
 		}
 
 		return Token.UNDEFINED;

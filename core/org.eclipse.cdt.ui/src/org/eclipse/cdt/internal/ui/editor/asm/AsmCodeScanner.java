@@ -109,12 +109,11 @@ public final class AsmCodeScanner extends AbstractCScanner {
 						if(c != ':') {
 							unreadBuffer(scanner);
 							return fDefaultToken;
-						} else {
-							fBuffer.append((char) c);
-							IToken token= (IToken) fWords.get(":"); //$NON-NLS-1$
-							if (token != null)
-								return token;
 						}
+						fBuffer.append((char) c);
+						IToken token= (IToken) fWords.get(":"); //$NON-NLS-1$
+						if (token != null)
+							return token;
 							
 						return fDefaultToken;
 					}

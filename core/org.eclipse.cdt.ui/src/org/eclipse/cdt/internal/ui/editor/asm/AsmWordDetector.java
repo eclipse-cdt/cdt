@@ -40,9 +40,8 @@ public class AsmWordDetector implements IWordDetector {
 		}
 		if(fStrictStart) {
 			return (Character.isJavaIdentifierStart(c) || (c == fExtra));
-		} else {
-			return (Character.isJavaIdentifierPart(c) || (c == fExtra));
 		}
+		return (Character.isJavaIdentifierPart(c) || (c == fExtra));
 	}
 	
 	/**

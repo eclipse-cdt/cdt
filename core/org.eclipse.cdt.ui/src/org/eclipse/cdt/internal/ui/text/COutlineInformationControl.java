@@ -1,7 +1,7 @@
 /*
  * COutlineInformationControl.java 2004-12-14 / 08:17:41
 
- * $Revision:$ $Date:$
+ * $Revision: 1.1 $ $Date: 2004/12/14 18:46:19 $
  *
  * @author P.Tomaszewski
  */
@@ -83,37 +83,37 @@ public class COutlineInformationControl implements IInformationControl,
     private static final int MIN_WIDTH = 300;
 
     /** Source viewer which shows this control. */
-    private CEditor fEditor;
+    CEditor fEditor;
 
     /** Shell for this control. */
-    private Shell fShell;
+    Shell fShell;
 
     /** Control's composite. */
-    private Composite fComposite;
+    Composite fComposite;
 
     /** Tree viewer used to display outline. */
-    private TreeViewer fTreeViewer;
+    TreeViewer fTreeViewer;
 
     /** Text control for filter. */
     private Text fFilterText;
 
     /** Content provider for tree control. */
-    private IContentProvider fTreeContentProvider;
+    IContentProvider fTreeContentProvider;
 
     /** Sorter for tree viewer. */
     private OutlineSorter fSorter;
 
     /** Control bounds. */
-    private Rectangle fBounds;
+    Rectangle fBounds;
 
     /** Control trim. */
-    private Rectangle fTrim;
+    Rectangle fTrim;
 
     /** Deactivation adapter. */
     private Listener fDeactivateListener;
 
     /** This prevents to notify listener when it is adding. */
-    private boolean fIsDeactivationActive;
+    boolean fIsDeactivationActive;
 
     /** Shell adapter, used for control deactivation. */
     private ShellListener fShellListener;
@@ -122,7 +122,7 @@ public class COutlineInformationControl implements IInformationControl,
     private ControlListener fControlListener;
 
     /** Should outline be sorted. */
-    private boolean fSort = true;
+    boolean fSort = true;
 
     /**
      * Creates new outline control.

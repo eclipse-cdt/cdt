@@ -23,6 +23,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -99,8 +100,12 @@ public class Resources {
 		List readOnlyFiles= new ArrayList();
 		for (int i= 0; i < resources.length; i++) {
 			IResource resource= resources[i];
-			if (resource.getType() == IResource.FILE && resource.isReadOnly())	
-				readOnlyFiles.add(resource);
+			if (resource.getType() == IResource.FILE) {
+				ResourceAttributes attributes = resource.getResourceAttributes();
+				if (attributes.isReadOnly()) {	
+					readOnlyFiles.add(resource);
+				}
+			}
 		}
 		if (readOnlyFiles.size() == 0)
 			return new Status(IStatus.OK, CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$

@@ -80,9 +80,8 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress {
 					Throwable cause= e.getCause();
 					if (cause instanceof CoreException) {
 						return ((CoreException) cause).getStatus();
-					} else {
-						return CUIStatus.createError(IStatus.ERROR, cause);
 					}
+					return CUIStatus.createError(IStatus.ERROR, cause);
 				} catch (InterruptedException e) {
 					return Status.CANCEL_STATUS;
 				} finally {

@@ -125,9 +125,8 @@ public abstract class OptionsConfigurationBlock {
 	protected Map getOptions(boolean inheritCCoreOptions) {
 		if (fProject != null) {
 			return fProject.getOptions(inheritCCoreOptions);
-		} else {
-			return CCorePlugin.getOptions();
-		}	
+		}
+		return CCorePlugin.getOptions();
 	}
 	
 	protected Map getDefaultOptions() {

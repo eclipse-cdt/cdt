@@ -86,7 +86,7 @@ public class ProblemMarkerManager implements IResourceChangeListener, IAnnotatio
 		}
 	}
 
-	private ListenerList fListeners;
+	ListenerList fListeners;
 
 	public ProblemMarkerManager() {
 		fListeners = new ListenerList(5);

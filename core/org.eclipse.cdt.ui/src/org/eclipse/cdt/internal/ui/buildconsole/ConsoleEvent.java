@@ -17,6 +17,11 @@ import org.eclipse.core.resources.IProject;
 
 public class ConsoleEvent extends EventObject implements IBuildConsoleEvent {
 
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private IProject fProject;
 	private int fType;
 

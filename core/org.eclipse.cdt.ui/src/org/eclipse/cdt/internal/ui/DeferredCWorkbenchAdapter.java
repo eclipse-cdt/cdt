@@ -78,9 +78,8 @@ public class DeferredCWorkbenchAdapter extends CWorkbenchAdapter
 	    if (fSerializeFetching) {
 	        // only one ICElement parent can fetch children at a time
 	        return mutexRule;
-	    } else {
-			// allow several ICElement parents to fetch children concurrently
-	        return null;
-	    }
+	    } 
+	    // allow several ICElement parents to fetch children concurrently
+	    return null;
 	}
 }

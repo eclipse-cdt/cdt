@@ -127,9 +127,8 @@ public class BinaryPropertySource extends FilePropertySource implements IPropert
 		} else if (name.equals(ICElementPropertyConstants.P_ELF_HAS_DEBUG)) {
 			 if (binary.hasDebug()) {
 				return "true";//$NON-NLS-1$
-			} else {
-				return "false";//$NON-NLS-1$
 			}
+			return "false";//$NON-NLS-1$
 		} else if (name.equals(ICElementPropertyConstants.P_ELF_NEEDED)) {
 			String[] needed = binary.getNeededSharedLibs();
 			String need = ""; //$NON-NLS-1$

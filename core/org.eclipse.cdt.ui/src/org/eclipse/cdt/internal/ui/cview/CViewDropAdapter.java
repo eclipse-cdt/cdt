@@ -16,6 +16,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -139,11 +140,11 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 					IResource tempResourceParent = tempResource.getParent();
 					//Apples to apples...
 					IResource resourceCurrentContainer = currentContainer.getResource();
-				
+					ResourceAttributes attributes = tempResource.getResourceAttributes();
 					if (tempResourceParent.equals(resourceCurrentContainer) ||
 						tempResource.equals(resourceCurrentContainer) ||
 						tempResource.equals(resourceCurrentContainer.getParent()) ||
-						tempResource.isReadOnly()){
+						attributes.isReadOnly()){
 						event.detail = DND.DROP_NONE;
 						break;
 					}
@@ -303,8 +304,8 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 
 		// loop through list and look for matching items
-		for (Iterator enum = structuredSelection.iterator(); enum.hasNext();) {
-			Object object = enum.next();
+		for (Iterator enumarator = structuredSelection.iterator(); enumarator.hasNext();) {
+			Object object = enumarator.next();
 			IResource resource = null;
 
 			if (object instanceof IResource) {

@@ -160,16 +160,16 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 		//TextAttribute attr = new TextAttribute(manager.getColor(ICColorConstants.C_DEFAULT));
 		
 		dr= new DefaultDamagerRepairer(getSinglelineCommentScanner());		
-		reconciler.setDamager(dr, CPartitionScanner.C_SINGLE_LINE_COMMENT);
-		reconciler.setRepairer(dr, CPartitionScanner.C_SINGLE_LINE_COMMENT);
+		reconciler.setDamager(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
+		reconciler.setRepairer(dr, ICPartitions.C_SINGLE_LINE_COMMENT);
 		
 		dr= new DefaultDamagerRepairer(getStringScanner());
-		reconciler.setDamager(dr, CPartitionScanner.C_STRING);
-		reconciler.setRepairer(dr, CPartitionScanner.C_STRING);
+		reconciler.setDamager(dr, ICPartitions.C_STRING);
+		reconciler.setRepairer(dr, ICPartitions.C_STRING);
 		
 		dr= new DefaultDamagerRepairer(getMultilineCommentScanner());		
-		reconciler.setDamager(dr, CPartitionScanner.C_MULTILINE_COMMENT);
-		reconciler.setRepairer(dr, CPartitionScanner.C_MULTILINE_COMMENT);
+		reconciler.setDamager(dr, ICPartitions.C_MULTILINE_COMMENT);
+		reconciler.setRepairer(dr, ICPartitions.C_MULTILINE_COMMENT);
 
 		return reconciler;
 	}
@@ -192,7 +192,7 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 		ContentAssistPreference.configure(assistant, getPreferenceStore());
 		
 		assistant.setProposalPopupOrientation(IContentAssistant.PROPOSAL_OVERLAY);		
-		assistant.setContextInformationPopupOrientation(ContentAssistant.CONTEXT_INFO_ABOVE);
+		assistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		assistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 
 		return assistant;
@@ -226,8 +226,9 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @see SourceViewerConfiguration#getAutoIndentStrategy(ISourceViewer, String)
 	 */
 	public IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
-		if(CPartitionScanner.C_MULTILINE_COMMENT.equals(contentType))
+		if(ICPartitions.C_MULTILINE_COMMENT.equals(contentType)) {
 			return new CCommentAutoIndentStrategy();
+		}
 		return new CAutoIndentStrategy();
 	}
 
@@ -252,10 +253,12 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	public String getDefaultPrefix(ISourceViewer sourceViewer, String contentType) {
 		if(IDocument.DEFAULT_CONTENT_TYPE.equals(contentType))
 			return "//"; //$NON-NLS-1$
-		if(CPartitionScanner.C_SINGLE_LINE_COMMENT.equals(contentType))
+		if(ICPartitions.C_SINGLE_LINE_COMMENT.equals(contentType)) {
 			return "//"; //$NON-NLS-1$
-		if(CPartitionScanner.C_MULTILINE_COMMENT.equals(contentType))
+		}
+		if(ICPartitions.C_MULTILINE_COMMENT.equals(contentType)) {
 			return "//"; //$NON-NLS-1$
+		}
 		return null;
 	}
 
@@ -371,9 +374,9 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] { 	IDocument.DEFAULT_CONTENT_TYPE, 
-								CPartitionScanner.C_MULTILINE_COMMENT,
-								CPartitionScanner.C_SINGLE_LINE_COMMENT,
-								CPartitionScanner.C_STRING };
+								ICPartitions.C_MULTILINE_COMMENT,
+								ICPartitions.C_SINGLE_LINE_COMMENT,
+								ICPartitions.C_STRING };
 	}
 	
 	/**

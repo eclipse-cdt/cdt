@@ -16,6 +16,11 @@ import org.eclipse.core.runtime.IStatus;
 
 public class CUIException extends CoreException {
 	
+	/**
+	 * Comment for <code>serialVersionUID</code>
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public CUIException(IStatus status) {
 		super(status);
 	}	

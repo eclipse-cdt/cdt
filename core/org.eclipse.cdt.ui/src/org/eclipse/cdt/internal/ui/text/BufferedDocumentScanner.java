@@ -105,10 +105,8 @@ public final class BufferedDocumentScanner implements ICharacterScanner {
         if (fOffset >= fBufferLength) {
             if (fBufferOffset + fBufferLength >= fRangeOffset + fRangeLength)
                 return EOF;
-            else {
-                updateBuffer(fBufferOffset + fBufferLength);
-                fOffset= 0;
-            }
+            updateBuffer(fBufferOffset + fBufferLength);
+            fOffset= 0;
         }
                     
         return fBuffer[fOffset++];

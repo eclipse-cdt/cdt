@@ -206,9 +206,8 @@ public class EditorUtility {
 				IResource resource= unit.getResource();
 				if (resource instanceof IFile) {
 					return new FileEditorInput((IFile) resource);
-				} else {
-					return new ExternalEditorInput(unit, getStorage(unit));					
 				}
+				return new ExternalEditorInput(unit, getStorage(unit));					
 			}
                         
 			if (element instanceof IBinary) {
@@ -267,7 +266,7 @@ public class EditorUtility {
 		if (cu.isWorkingCopy())
 			return cu;
 
-		return (ITranslationUnit)cu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
+		return cu.findSharedWorkingCopy(CUIPlugin.getDefault().getBufferFactory());
 	}
 
 
@@ -300,9 +299,8 @@ public class EditorUtility {
 			IEditorDescriptor descriptor = registry.getDefaultEditor(name);
 			if (descriptor != null) {
 				return descriptor.getId();
-			} else {
-				return registry.findEditor(DEFAULT_TEXT_EDITOR_ID).getId();
 			}
+			return registry.findEditor(DEFAULT_TEXT_EDITOR_ID).getId();
 		}
 		return null;
 	}

@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
-import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;

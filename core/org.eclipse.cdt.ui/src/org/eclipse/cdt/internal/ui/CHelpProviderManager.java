@@ -14,8 +14,6 @@ package org.eclipse.cdt.internal.ui;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,7 +48,7 @@ public class CHelpProviderManager {
 	final private static String C_HELP_SETTINGS_FILE_NAME = "cHelpSettings.xml"; //$NON-NLS-1$
 	final private static String ELEMENT_ROOT = "cHelpSettings"; //$NON-NLS-1$
 
-	private static Map fProjectHelpSettings = null;
+	//private static Map fProjectHelpSettings = null;
 	private static CHelpSettings fDefaultHelpSettings = null;
 	
 	private static File fSettingsFile = null;
@@ -69,11 +67,11 @@ public class CHelpProviderManager {
 		return fSettingsFile;
 	}
 	
-	private static Map getSettingsMap(){
-		if(fProjectHelpSettings == null)
-			fProjectHelpSettings = new HashMap();
-		return fProjectHelpSettings;
-	}
+//	private static Map getSettingsMap(){
+//		if(fProjectHelpSettings == null)
+//			fProjectHelpSettings = new HashMap();
+//		return fProjectHelpSettings;
+//	}
 	
 	private static CHelpSettings getDefaultHelpSettings(){
 		if(fDefaultHelpSettings == null){

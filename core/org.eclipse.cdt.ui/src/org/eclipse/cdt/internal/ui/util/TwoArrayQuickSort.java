@@ -50,8 +50,7 @@ public class TwoArrayQuickSort {
 	private static boolean smaller(String left, String right, boolean ignoreCase) {
 		if (ignoreCase)
 			return left.compareToIgnoreCase(right) < 0;
-		else
-			return left.compareTo(right) < 0;	
+		return left.compareTo(right) < 0;	
 	}
 	/**
 	 * Sorts keys and values in parallel.

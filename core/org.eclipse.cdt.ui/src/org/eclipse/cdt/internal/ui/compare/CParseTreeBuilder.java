@@ -40,7 +40,12 @@ public class CParseTreeBuilder extends SourceElementRequestorAdapter {
 	/**
 	 *  Syntax Error.
 	 */
-	public class ParseError extends Error {			
+	public class ParseError extends Error {
+
+		/**
+		 * Comment for <code>serialVersionUID</code>
+		 */
+		private static final long serialVersionUID = 1L;			
 	}
 
 	public CParseTreeBuilder(CNode root, IDocument doc) {

@@ -27,9 +27,8 @@ public abstract class SingleCharReader extends Reader {
 			if (ch == -1) {
 				if (i == off) {
 					return -1;
-				} else {
-					return i - off;
 				}
+				return i - off;
 			}
 			cbuf[i]= (char)ch;
 		}

@@ -146,9 +146,8 @@ public class CEditorTextHoverDescriptor implements Comparable {
 		int lastDot= label.lastIndexOf('.');
 		if (lastDot >= 0 && lastDot < label.length() - 1) {
 			return label.substring(lastDot + 1);
-		} else {
-			return label;
 		}
+		return label;
 	}
 
 	/**

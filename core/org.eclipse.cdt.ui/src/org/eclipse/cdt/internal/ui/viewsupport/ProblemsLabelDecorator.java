@@ -337,7 +337,7 @@ public class ProblemsLabelDecorator implements ILabelDecorator, ILightweightLabe
 		}
 	}
 	
-	private void fireProblemsChanged(IResource[] changedResources, boolean isMarkerChange) {
+	void fireProblemsChanged(IResource[] changedResources, boolean isMarkerChange) {
 		if (fListeners != null && !fListeners.isEmpty()) {
 			LabelProviderChangedEvent event= new ProblemsLabelChangedEvent(this, changedResources, isMarkerChange);
 			Object[] listeners= fListeners.getListeners();

@@ -35,9 +35,8 @@ public class LineBreakingReader {
 			if (nextWidth > fMaxWidth) {
 				if (currWidth > 0) {
 					return currOffset;
-				} else {
-					return nextOffset;
 				}
+				return nextOffset;
 			}
 			currWidth= nextWidth;
 			currOffset= nextOffset;

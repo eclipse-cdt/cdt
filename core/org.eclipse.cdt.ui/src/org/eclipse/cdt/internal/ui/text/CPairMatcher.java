@@ -114,15 +114,13 @@ public class CPairMatcher implements ICharacterPairMatcher {
 				fStartPos= searchForOpeningPeer(fEndPos, fPairs[pairIndex2 - 1], fPairs[pairIndex2], fDocument);
 				if (fStartPos > -1)
 					return true;
-				else
-					fEndPos= -1;
+				fEndPos= -1;
 			}	else if (fStartPos > -1) {
 				fAnchor= LEFT;
 				fEndPos= searchForClosingPeer(fStartPos, fPairs[pairIndex1], fPairs[pairIndex1 + 1], fDocument);
 				if (fEndPos > -1)
 					return true;
-				else
-					fStartPos= -1;
+				fStartPos= -1;
 			}
 
 		} catch (BadLocationException x) {

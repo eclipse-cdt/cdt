@@ -68,9 +68,8 @@ public final class SingleTokenCScanner extends AbstractCScanner{
 			size = end - position;
 			position = end;
 			return fDefaultReturnToken;
-		} else {
-			return Token.EOF;
 		}
+		return Token.EOF;
 	}
 	
 	public int getTokenLength() {

@@ -420,62 +420,59 @@ IPropertyChangeListener{
 			//Allow for new lines
 			if (start == end)
 				return new Region(start, 0);
-			else{
-				String selWord = null;
-				String slas = document.get(start,1);
-				if (slas.equals("\n") || //$NON-NLS-1$
+
+			String selWord = null;
+			String slas = document.get(start,1);
+			if (slas.equals("\n") || //$NON-NLS-1$
 					slas.equals("\t") || //$NON-NLS-1$
-				   slas.equals(" "))	 //$NON-NLS-1$
-				 {
-					
-					selWord =document.get(start+1, end - start - 1);
-				}
-				else{
-					selWord =document.get(start, end - start);  	
-				}
-				//Check for keyword
-				if (isKeyWord(selWord))
-					return null;
-				//Avoid selecting literals, includes etc.
-				char charX = selWord.charAt(0);
-				if (charX == '"' ||
+					slas.equals(" "))	 //$NON-NLS-1$
+			{
+				
+				selWord =document.get(start+1, end - start - 1);
+			}
+			else{
+				selWord =document.get(start, end - start);  	
+			}
+			//Check for keyword
+			if (isKeyWord(selWord))
+				return null;
+			//Avoid selecting literals, includes etc.
+			char charX = selWord.charAt(0);
+			if (charX == '"' ||
 					charX == '.' ||
 					charX == '<' ||
 					charX == '>')
-					return null;
+				return null;
+			
+			if (selWord.equals("#include")) //$NON-NLS-1$
+			{
+				//get start of next identifier
 				
-				if (selWord.equals("#include")) //$NON-NLS-1$
-				{
-					//get start of next identifier
+				
+				int end2 = end;
+				
+				while (!Character.isJavaIdentifierPart(document.getChar(end2))){
+					++end2;
 					
-				 
-				  int end2 = end;
-	
-				  while (!Character.isJavaIdentifierPart(document.getChar(end2))){
-				    	++end2;
-				    	
-				  }
-				  
-				  while (end2 < length){
-				  	c = document.getChar(end2);
-				  	
-				  	if (!Character.isJavaIdentifierPart(c) &&
-				  		 c != '.')
-				  		break;
-				  	++end2;
-				  }
-				  
-				  int finalEnd = end2;
-				  selWord =document.get(start, finalEnd - start);
-				  end = finalEnd + 1;
-				  start--;
-				  fIncludeMode = true;
 				}
 				
-				  
+				while (end2 < length){
+					c = document.getChar(end2);
+					
+					if (!Character.isJavaIdentifierPart(c) &&
+							c != '.')
+						break;
+					++end2;
+				}
 				
-				return new Region(start + 1, end - start - 1);
+				int finalEnd = end2;
+				selWord =document.get(start, finalEnd - start);
+				end = finalEnd + 1;
+				start--;
+				fIncludeMode = true;
 			}
+			
+			return new Region(start + 1, end - start - 1);
 			
 		} catch (BadLocationException x) {
 			return null;
@@ -509,9 +506,8 @@ IPropertyChangeListener{
 			if (viewer instanceof ITextViewerExtension5) {
 				ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 				return extension.widgetOffset2ModelOffset(widgetOffset);
-			} else {
-				return widgetOffset + viewer.getVisibleRegion().getOffset();
 			}
+			return widgetOffset + viewer.getVisibleRegion().getOffset();
 
 		} catch (IllegalArgumentException e) {
 			return -1;

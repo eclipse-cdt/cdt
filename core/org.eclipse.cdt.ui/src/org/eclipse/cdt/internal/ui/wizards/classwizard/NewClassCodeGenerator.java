@@ -675,33 +675,32 @@ public class NewClassCodeGenerator {
 	        int includePos = contents.indexOf(include, startPos);
 	        if (includePos == -1) {
 	            return false;
-	        } else {
-	            if (includePos == startPos) {
-	                return true;
-	            }
-	            
-	            // TODO detect if it's commented out
-
-	            // make sure it's on a line by itself
-	            int linePos = findFirstLineChar(contents, includePos);
-	            if (linePos == -1 || linePos == includePos) {
-	                return true;
-	            }
-	            boolean badLine = false;
-	            for (int pos = linePos; pos < includePos; ++pos) {
-	                char c = contents.charAt(pos);
-	                if (!Character.isWhitespace(c)) {
-	                    badLine = true;
-	                    break;
-	                }
-	            }
-	            if (!badLine) {
-	                return true;
-	            }
-
-	            // keep searching
-	            startPos = includePos + include.length();
 	        }
+	        if (includePos == startPos) {
+	        	return true;
+	        }
+	        
+	        // TODO detect if it's commented out
+	        
+	        // make sure it's on a line by itself
+	        int linePos = findFirstLineChar(contents, includePos);
+	        if (linePos == -1 || linePos == includePos) {
+	        	return true;
+	        }
+	        boolean badLine = false;
+	        for (int pos = linePos; pos < includePos; ++pos) {
+	        	char c = contents.charAt(pos);
+	        	if (!Character.isWhitespace(c)) {
+	        		badLine = true;
+	        		break;
+	        	}
+	        }
+	        if (!badLine) {
+	        	return true;
+	        }
+	        
+	        // keep searching
+	        startPos = includePos + include.length();
         }
         return false;
     }
@@ -802,9 +801,8 @@ public class NewClassCodeGenerator {
             if (c == '\n' || c == '\r') {
                 if (linePos + 1 < startPos) {
                     return linePos + 1;
-                } else {
-                    return -1;
                 }
+                return -1;
             }
             --linePos;
         }

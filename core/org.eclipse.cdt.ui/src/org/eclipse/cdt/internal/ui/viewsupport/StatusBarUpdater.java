@@ -58,15 +58,14 @@ public class StatusBarUpdater implements ISelectionChangedListener {
 			int nElements= selection.size();
 			if (nElements > 1) {
 				return CUIMessages.getFormattedString("StatusBarUpdater.num_elements_selected", String.valueOf(nElements)); //$NON-NLS-1$
-			} else { 
-				Object elem= selection.getFirstElement();
-				if (elem instanceof ICElement) {
-					return formatCElementMessage((ICElement) elem);
-				} else if (elem instanceof ITypeInfo) {
-					return formatTypeInfoMessage((ITypeInfo) elem);
-				} else if (elem instanceof IResource) {
-					return formatResourceMessage((IResource) elem);
-				}
+			} 
+			Object elem= selection.getFirstElement();
+			if (elem instanceof ICElement) {
+				return formatCElementMessage((ICElement) elem);
+			} else if (elem instanceof ITypeInfo) {
+				return formatTypeInfoMessage((ITypeInfo) elem);
+			} else if (elem instanceof IResource) {
+				return formatResourceMessage((IResource) elem);
 			}
 		}
 		return "";  //$NON-NLS-1$
@@ -84,8 +83,7 @@ public class StatusBarUpdater implements ISelectionChangedListener {
 		IContainer parent= element.getParent();
 		if (parent != null && parent.getType() != IResource.ROOT)
 			return element.getName() + CElementLabels.CONCAT_STRING + parent.getFullPath().makeRelative().toString();
-		else
-			return element.getName();
+		return element.getName();
 	}	
 
 }

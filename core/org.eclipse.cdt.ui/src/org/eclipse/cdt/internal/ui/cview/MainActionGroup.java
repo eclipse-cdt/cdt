@@ -168,7 +168,7 @@ public class MainActionGroup extends CViewActionGroup {
 		IStructuredSelection resources = SelectionConverter.convertSelectionToResources(celements);
 
 		if (resources.isEmpty()) {
-			new NewWizardMenu(menu, getCView().getSite().getWorkbenchWindow(), false);
+			new NewWizardMenu(getCView().getSite().getWorkbenchWindow());
 			menu.add(new Separator(IContextMenuConstants.GROUP_REORGANIZE));
 			refactoringActionGroup.fillContextMenu(menu);						
 			menu.add(new Separator());
@@ -223,7 +223,7 @@ public class MainActionGroup extends CViewActionGroup {
 
 	void addNewMenu(IMenuManager menu, IStructuredSelection selection) {
 		MenuManager newMenu = new MenuManager(CViewMessages.getString("NewWizardsActionGroup.new")); //$NON-NLS-1$
-		new NewWizardMenu(newMenu, getCView().getSite().getWorkbenchWindow(), false);
+		new NewWizardMenu(getCView().getSite().getWorkbenchWindow());
 		menu.add(newMenu);
 	}
 

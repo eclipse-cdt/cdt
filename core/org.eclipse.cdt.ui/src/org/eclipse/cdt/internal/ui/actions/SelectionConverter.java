@@ -150,8 +150,7 @@ public class SelectionConverter {
 			ICElement ref = tunit.getElementAtOffset(selection.getOffset());
 			if (ref == null)
 				return input;
-			else
-				return ref;
+			return ref;
 		}
 		return null;
 	}
@@ -169,8 +168,7 @@ public class SelectionConverter {
 			ICElement[] refs = tunit.getElementsAtOffset(selection.getOffset());
 			if (refs == null)
 				return new ICElement[] { input };
-			else
-				return refs;
+			return refs;
 		}
 		return null;
 	}

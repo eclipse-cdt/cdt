@@ -333,15 +333,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 				}
 
 				if (PreferenceConstants.EDITOR_FOLDING_PROVIDER.equals(property)) {
-					if (asv instanceof ProjectionViewer) {
-						ProjectionViewer projectionViewer= (ProjectionViewer) asv;
-						if (fProjectionModelUpdater != null)
-							fProjectionModelUpdater.uninstall();
-						// either freshly enabled or provider changed
-						fProjectionModelUpdater= CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
-						if (fProjectionModelUpdater != null) {
-							fProjectionModelUpdater.install(this, projectionViewer);
-						}
+					if (fProjectionModelUpdater != null)
+						fProjectionModelUpdater.uninstall();
+					// either freshly enabled or provider changed
+					fProjectionModelUpdater= CUIPlugin.getDefault().getFoldingStructureProviderRegistry().getCurrentFoldingProvider();
+					if (fProjectionModelUpdater != null) {
+						fProjectionModelUpdater.install(this, asv);
 					}
 					return;
 				}

@@ -69,15 +69,13 @@ public class MethodStubsListDialogField extends CheckedListDialogField {
                     return INDEX_PUBLIC;
                 }
             } else if (property.equals(CP_VIRTUAL)) {
-                if (stub.isVirtual())
-                    return INDEX_YES;
-                else
-                    return INDEX_NO;
+            	if (stub.isVirtual())
+            		return INDEX_YES;
+            	return INDEX_NO;
 	        } else if (property.equals(CP_INLINE)) {
-	            if (stub.isInline())
-	                return INDEX_YES;
-	            else
-	                return INDEX_NO;
+	        	if (stub.isInline())
+	        		return INDEX_YES;
+        		return INDEX_NO;
 	        }
             return null;
         }

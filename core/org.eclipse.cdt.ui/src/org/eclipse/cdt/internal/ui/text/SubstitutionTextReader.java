@@ -64,24 +64,23 @@ public abstract class SubstitutionTextReader extends SingleCharReader {
 				fIndex= 0;
 			}
 			return ch;
-		} else {
-			int ch= fCharAfterWhiteSpace;
-			if (ch == -1) {
-				ch= fReader.read();
-			}
-			if (Character.isWhitespace((char)ch)) {
-				do {
-					ch= fReader.read();
-				} while (Character.isWhitespace((char)ch));
-				if (ch != -1) {
-					fCharAfterWhiteSpace= ch;
-					return ' ';
-				}
-			} else {
-				fCharAfterWhiteSpace= -1;
-			}
-			return ch;
 		}
+		int ch= fCharAfterWhiteSpace;
+		if (ch == -1) {
+			ch= fReader.read();
+		}
+		if (Character.isWhitespace((char)ch)) {
+			do {
+				ch= fReader.read();
+			} while (Character.isWhitespace((char)ch));
+			if (ch != -1) {
+				fCharAfterWhiteSpace= ch;
+				return ' ';
+			}
+		} else {
+			fCharAfterWhiteSpace= -1;
+		}
+		return ch;
 	}
 	
 	/**

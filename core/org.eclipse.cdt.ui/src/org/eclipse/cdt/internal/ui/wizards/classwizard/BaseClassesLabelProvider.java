@@ -34,8 +34,7 @@ public final class BaseClassesLabelProvider implements ITableLabelProvider {
             return ACCESS_PRIVATE;
         if (access == ASTAccessVisibility.PROTECTED)
             return ACCESS_PROTECTED;
-        else
-            return ACCESS_PUBLIC;
+           return ACCESS_PUBLIC;
     }
 
     private static TypeInfoLabelProvider fTypeInfoLabelProvider = new TypeInfoLabelProvider(TypeInfoLabelProvider.SHOW_FULLY_QUALIFIED);

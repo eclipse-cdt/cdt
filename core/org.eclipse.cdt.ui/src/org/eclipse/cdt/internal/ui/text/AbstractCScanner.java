@@ -207,8 +207,7 @@ public abstract class AbstractCScanner extends BufferedRuleBasedScanner {
 			}
 			if (read() == EOF)
 				return Token.EOF;
-			else
-				return fDefaultToken;
+			return fDefaultToken;
 		}
 	}
 	

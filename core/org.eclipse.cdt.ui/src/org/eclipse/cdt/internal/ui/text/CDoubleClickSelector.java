@@ -87,14 +87,12 @@ public class CDoubleClickSelector implements ITextDoubleClickStrategy {
 				fEndPos= searchForClosingBracket(fStartPos, prevChar, fgBrackets[bracketIndex1 + 1], doc);
 				if (fEndPos > -1)
 					return true;
-				else
-					fStartPos= -1;
+				fStartPos= -1;
 			} else if (fEndPos > -1) {
 				fStartPos= searchForOpenBracket(fEndPos, fgBrackets[bracketIndex2 - 1], nextChar, doc);
 				if (fStartPos > -1)
 					return true;
-				else
-					fEndPos= -1;
+				fEndPos= -1;
 			}
 		} catch (BadLocationException x) {
 		}
@@ -161,8 +159,7 @@ public class CDoubleClickSelector implements ITextDoubleClickStrategy {
 
 		if (stack == 0)
 			return closePos - 1;
-		else
-			return -1;
+		return -1;
 	}
 
 
@@ -183,8 +180,7 @@ public class CDoubleClickSelector implements ITextDoubleClickStrategy {
 
 		if (stack == 0)
 			return openPos + 1;
-		else
-			return -1;
+		return -1;
 	}
 
 

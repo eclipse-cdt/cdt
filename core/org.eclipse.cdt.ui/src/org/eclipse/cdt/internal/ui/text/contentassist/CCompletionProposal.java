@@ -283,8 +283,8 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 			if (event.character == fExitCharacter) {
 				if (environment.anyPositionContains(offset))
 					return new ExitFlags(ILinkedModeListener.UPDATE_CARET, false);
-				else
-					return new ExitFlags(ILinkedModeListener.UPDATE_CARET, true);
+				
+				return new ExitFlags(ILinkedModeListener.UPDATE_CARET, true);
 			}	
 			
 			switch (event.character) {			
@@ -420,8 +420,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 		int pos= string.indexOf('(');
 		if (pos > 0)
 			return string.subSequence(0, pos);
-		else
-			return string;
+		return string;
 	}
 
 	/**

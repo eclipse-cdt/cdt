@@ -119,10 +119,9 @@ public class CWizardRegistry {
 				}
 			}
 			return false;
-		} else {
-			// fall back, if no <class> element found then assume it's a project wizard
-			return true;
 		}
+		// fall back, if no <class> element found then assume it's a project wizard
+		return true;
     }
     
     public static IAction[] getProjectWizardActions() {

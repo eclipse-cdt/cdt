@@ -23,10 +23,6 @@ import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Position;
-import org.eclipse.text.edits.DeleteEdit;
-import org.eclipse.text.edits.InsertEdit;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 
 public class CodeFormatterUtil {
@@ -82,31 +78,31 @@ public class CodeFormatterUtil {
 	}
 	
 			
-	private static TextEdit shifEdit(TextEdit oldEdit, int diff) {
-		TextEdit newEdit;
-		if (oldEdit instanceof ReplaceEdit) {
-			ReplaceEdit edit= (ReplaceEdit) oldEdit;
-			newEdit= new ReplaceEdit(edit.getOffset() - diff, edit.getLength(), edit.getText());
-		} else if (oldEdit instanceof InsertEdit) {
-			InsertEdit edit= (InsertEdit) oldEdit;
-			newEdit= new InsertEdit(edit.getOffset() - diff,  edit.getText());
-		} else if (oldEdit instanceof DeleteEdit) {
-			DeleteEdit edit= (DeleteEdit) oldEdit;
-			newEdit= new DeleteEdit(edit.getOffset() - diff,  edit.getLength());
-		} else if (oldEdit instanceof MultiTextEdit) {
-			newEdit= new MultiTextEdit();			
-		} else {
-			return null; // not supported
-		}
-		TextEdit[] children= oldEdit.getChildren();
-		for (int i= 0; i < children.length; i++) {
-			TextEdit shifted= shifEdit(children[i], diff);
-			if (shifted != null) {
-				newEdit.addChild(shifted);
-			}
-		}
-		return newEdit;
-	}
+//	private static TextEdit shifEdit(TextEdit oldEdit, int diff) {
+//		TextEdit newEdit;
+//		if (oldEdit instanceof ReplaceEdit) {
+//			ReplaceEdit edit= (ReplaceEdit) oldEdit;
+//			newEdit= new ReplaceEdit(edit.getOffset() - diff, edit.getLength(), edit.getText());
+//		} else if (oldEdit instanceof InsertEdit) {
+//			InsertEdit edit= (InsertEdit) oldEdit;
+//			newEdit= new InsertEdit(edit.getOffset() - diff,  edit.getText());
+//		} else if (oldEdit instanceof DeleteEdit) {
+//			DeleteEdit edit= (DeleteEdit) oldEdit;
+//			newEdit= new DeleteEdit(edit.getOffset() - diff,  edit.getLength());
+//		} else if (oldEdit instanceof MultiTextEdit) {
+//			newEdit= new MultiTextEdit();			
+//		} else {
+//			return null; // not supported
+//		}
+//		TextEdit[] children= oldEdit.getChildren();
+//		for (int i= 0; i < children.length; i++) {
+//			TextEdit shifted= shifEdit(children[i], diff);
+//			if (shifted != null) {
+//				newEdit.addChild(shifted);
+//			}
+//		}
+//		return newEdit;
+//	}
 		
 	private static Document createDocument(String string, Position[] positions) throws IllegalArgumentException {
 		Document doc= new Document(string);

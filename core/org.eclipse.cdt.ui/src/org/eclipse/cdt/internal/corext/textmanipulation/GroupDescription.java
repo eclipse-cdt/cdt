@@ -64,9 +64,8 @@ public class GroupDescription {
 		int size= fEdits.size();
 		if (size == 1) {
 			return ((TextEdit)fEdits.get(0)).getRegion();
-		} else {
-			return TextEdit.getCoverage((TextEdit[])fEdits.toArray(new TextEdit[fEdits.size()]));
 		}
+		return TextEdit.getCoverage((TextEdit[])fEdits.toArray(new TextEdit[fEdits.size()]));
 	}
 	
 	public String getName() {

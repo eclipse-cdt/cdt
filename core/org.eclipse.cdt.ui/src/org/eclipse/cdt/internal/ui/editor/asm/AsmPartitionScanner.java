@@ -8,8 +8,8 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.ui.text.CPartitionScanner;
 import org.eclipse.cdt.internal.ui.text.ICColorConstants;
+import org.eclipse.cdt.internal.ui.text.ICPartitions;
 import org.eclipse.jface.text.rules.EndOfLineRule;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IPredicateRule;
@@ -95,9 +95,9 @@ public class AsmPartitionScanner extends RuleBasedPartitionScanner {
 	public AsmPartitionScanner() {
 		super();
 		
-		IToken comment= new Token(CPartitionScanner.C_MULTILINE_COMMENT);
-		IToken single_comment= new Token(CPartitionScanner.C_SINGLE_LINE_COMMENT);
-		IToken string= new Token(CPartitionScanner.C_STRING);
+		IToken comment= new Token(ICPartitions.C_MULTILINE_COMMENT);
+		IToken single_comment= new Token(ICPartitions.C_SINGLE_LINE_COMMENT);
+		IToken string= new Token(ICPartitions.C_STRING);
 		// IToken skip= new Token(SKIP);
 
 

@@ -53,23 +53,21 @@ public class CoreUtility {
 		Bundle bundle = Platform.getBundle(id);
 		if(bundle.getState() == org.osgi.framework.Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
-		} else {
-			final Object[] ret = new Object[1];
-			final CoreException[] exc = new CoreException[1];
-			BusyIndicator.showWhile(null, new Runnable() {
-				public void run() {
-					try {
-						ret[0] = element.createExecutableExtension(classAttribute);
-					} catch (CoreException e) {
-						exc[0] = e;
-					}
-				}
-			});
-			if (exc[0] != null)
-				throw exc[0];
-			else
-				return ret[0];
 		}
+		final Object[] ret = new Object[1];
+		final CoreException[] exc = new CoreException[1];
+		BusyIndicator.showWhile(null, new Runnable() {
+			public void run() {
+				try {
+					ret[0] = element.createExecutableExtension(classAttribute);
+				} catch (CoreException e) {
+					exc[0] = e;
+				}
+			}
+		});
+		if (exc[0] != null)
+			throw exc[0];
+		return ret[0];
 	}	
 
 }

@@ -62,9 +62,9 @@ public class BuildConsolePartitioner
 	 * Intentionally a vector to obtain synchronization as entries are added and
 	 * removed.
 	 */
-	private Vector fQueue = new Vector(5);
+	Vector fQueue = new Vector(5);
 
-	private boolean fAppending;
+	//private boolean fAppending;
 
 	class StreamEntry {
 
@@ -167,7 +167,7 @@ public class BuildConsolePartitioner
 		}
 	}
 
-	private void warnOfContentChange(BuildConsoleStream stream) {
+	void warnOfContentChange(BuildConsoleStream stream) {
 		if (stream != null) {
 			ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(stream.getConsole());
 		}

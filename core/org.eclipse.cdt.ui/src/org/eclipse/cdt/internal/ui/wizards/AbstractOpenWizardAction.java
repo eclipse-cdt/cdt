@@ -123,16 +123,15 @@ public abstract class AbstractOpenWizardAction extends Action implements IWorkbe
 			ISelection selection= window.getSelectionService().getSelection();
 			if (selection instanceof IStructuredSelection) {
 				return (IStructuredSelection) selection;
-			} else {
-				// Build the selection from the IFile of the editor
-				IWorkbenchPart part = window.getPartService().getActivePart();
-				if (part instanceof IEditorPart) {
-					IEditorInput input = ((IEditorPart) part).getEditorInput();
-					if (input instanceof IFileEditorInput) {
-					    IFile file = ((IFileEditorInput) input).getFile();
-					    if (file != null)
-					        return new StructuredSelection(file);
-					}
+			}
+			// Build the selection from the IFile of the editor
+			IWorkbenchPart part = window.getPartService().getActivePart();
+			if (part instanceof IEditorPart) {
+				IEditorInput input = ((IEditorPart) part).getEditorInput();
+				if (input instanceof IFileEditorInput) {
+					IFile file = ((IFileEditorInput) input).getFile();
+					if (file != null)
+						return new StructuredSelection(file);
 				}
 			}
 		}

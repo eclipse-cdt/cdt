@@ -14,6 +14,7 @@ import java.util.Map;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleEvent;
 import org.eclipse.cdt.ui.IBuildConsoleListener;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IProject;
@@ -47,8 +48,8 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	ListenerList listeners = new ListenerList(1);
 	BuildConsole fConsole;
 	private Map fConsoleMap = new HashMap();
-	private Color infoColor, outputColor, errorColor;
-	private BuildConsoleStream infoStream, outputStream, errorStream;
+	Color infoColor, outputColor, errorColor;
+	BuildConsoleStream infoStream, outputStream, errorStream;
 
 	static public final int BUILD_STREAM_TYPE_INFO = 0;
 	static public final int BUILD_STREAM_TYPE_OUTPUT = 1;
@@ -68,7 +69,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		if (list.length > 0) {
 			for (int i = 0; i < list.length; i++) {
 				IBuildConsoleListener listener = (IBuildConsoleListener)list[i];
-				ConsoleEvent event = new ConsoleEvent(BuildConsoleManager.this, project, ConsoleEvent.CONSOLE_START);
+				ConsoleEvent event = new ConsoleEvent(BuildConsoleManager.this, project, IBuildConsoleEvent.CONSOLE_START);
 				listener.consoleChange(event);
 			}
 		}
@@ -134,7 +135,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 					if (list.length > 0) {
 						for (int i = 0; i < list.length; i++) {
 							IBuildConsoleListener listener = (IBuildConsoleListener)list[i];
-							ConsoleEvent consoleEvent = new ConsoleEvent(this, (IProject)resource, ConsoleEvent.CONSOLE_CLOSE);
+							ConsoleEvent consoleEvent = new ConsoleEvent(this, (IProject)resource, IBuildConsoleEvent.CONSOLE_CLOSE);
 							listener.consoleChange(consoleEvent);
 						}
 					}
@@ -237,7 +238,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	/**
 	 * Returns a color instance based on data from a preference field.
 	 */
-	private Color createColor(Display display, String preference) {
+	Color createColor(Display display, String preference) {
 		RGB rgb = PreferenceConverter.getColor(CUIPlugin.getDefault().getPreferenceStore(), preference);
 		return new Color(display, rgb);
 	}

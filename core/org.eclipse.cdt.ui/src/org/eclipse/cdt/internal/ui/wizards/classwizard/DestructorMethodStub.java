@@ -45,22 +45,21 @@ public final class DestructorMethodStub extends AbstractMethodStub {
 
     public String createMethodImplementation(IQualifiedTypeName className, IBaseClassInfo[] baseClasses, String lineDelimiter) {
         //TODO should use code templates
-        if (fIsInline)
-            return ""; //$NON-NLS-1$
-        else {
-            StringBuffer buf = new StringBuffer();
-            buf.append(className.toString());
-            buf.append("::~"); //$NON-NLS-1$
-            buf.append(className.toString());
-            buf.append("()"); //$NON-NLS-1$
-            buf.append(lineDelimiter);
-            buf.append('{');
-            buf.append(lineDelimiter);
-            //buf.append("// TODO Auto-generated destructor stub");
-            //buf.append(lineDelimiter);
-            buf.append('}');
-            return buf.toString();
-        }
+    	if (fIsInline) {
+    		return ""; //$NON-NLS-1$
+    	}
+    	StringBuffer buf = new StringBuffer();
+    	buf.append(className.toString());
+    	buf.append("::~"); //$NON-NLS-1$
+    	buf.append(className.toString());
+    	buf.append("()"); //$NON-NLS-1$
+    	buf.append(lineDelimiter);
+    	buf.append('{');
+    	buf.append(lineDelimiter);
+    	//buf.append("// TODO Auto-generated destructor stub");
+    	//buf.append(lineDelimiter);
+    	buf.append('}');
+    	return buf.toString();
     }
 
     public boolean isDestructor() {

@@ -54,7 +54,7 @@ public class PasteAction extends SelectionListenerAction {
 	/**
 	 * System clipboard
 	 */
-	private Clipboard clipboard;
+	Clipboard clipboard;
 
 	/**
 	 * Creates a new action.
@@ -153,8 +153,7 @@ public class PasteAction extends SelectionListenerAction {
 		List selection = getSelectedResources();
 		if (selection.get(0) instanceof IFile)
 			return ((IFile) selection.get(0)).getParent();
-		else
-			return (IContainer) selection.get(0);
+		return (IContainer) selection.get(0);
 	}
 	/**
 	 * The <code>PasteAction</code> implementation of this

@@ -7,7 +7,7 @@ package org.eclipse.cdt.internal.ui;
  
 import org.eclipse.cdt.internal.ui.wizards.CWizardRegistry;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -48,7 +48,7 @@ public class CPerspectiveFactory implements IPerspectiveFactory {
 		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
 		
 		// views - searching
-		layout.addShowViewShortcut(SearchUI.SEARCH_RESULT_VIEW_ID);
+		layout.addShowViewShortcut(NewSearchUI.SEARCH_VIEW_ID);
 		
 		// views - standard workbench
 		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);

@@ -41,22 +41,21 @@ public final class ConstructorMethodStub extends AbstractMethodStub {
 
     public String createMethodImplementation(IQualifiedTypeName className, IBaseClassInfo[] baseClasses, String lineDelimiter) {
         //TODO should use code templates
-        if (fIsInline)
+        if (fIsInline) {
             return ""; //$NON-NLS-1$
-        else {
-            StringBuffer buf = new StringBuffer();
-            buf.append(className.toString());
-            buf.append("::"); //$NON-NLS-1$
-            buf.append(className.toString());
-            buf.append("()"); //$NON-NLS-1$
-            buf.append(lineDelimiter);
-            buf.append('{');
-            buf.append(lineDelimiter);
-            //buf.append("// TODO Auto-generated constructor stub");
-            //buf.append(lineDelimiter);
-            buf.append('}');
-            return buf.toString();
         }
+        StringBuffer buf = new StringBuffer();
+        buf.append(className.toString());
+        buf.append("::"); //$NON-NLS-1$
+        buf.append(className.toString());
+        buf.append("()"); //$NON-NLS-1$
+        buf.append(lineDelimiter);
+        buf.append('{');
+        buf.append(lineDelimiter);
+        //buf.append("// TODO Auto-generated constructor stub");
+        //buf.append(lineDelimiter);
+        buf.append('}');
+        return buf.toString();
     }
 
     public boolean isConstructor() {

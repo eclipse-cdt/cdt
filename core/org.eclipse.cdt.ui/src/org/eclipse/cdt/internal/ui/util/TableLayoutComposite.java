@@ -69,7 +69,7 @@ public class TableLayoutComposite extends Composite {
 	
 	//---- Helpers -------------------------------------------------------------------------------------
 	
-	private Point computeTableSize(Table table) {
+	Point computeTableSize(Table table) {
 		Point result= table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		
 		int width= 0;
@@ -91,7 +91,7 @@ public class TableLayoutComposite extends Composite {
 		return result;
 	}
 	
-	private void layoutTable(Table table, int width, Rectangle area, boolean increase) {
+	void layoutTable(Table table, int width, Rectangle area, boolean increase) {
 		// XXX: Layout is being called with an invalid value the first time
 		// it is being called on Linux. This method resets the
 		// Layout to null so we make sure we run it only when

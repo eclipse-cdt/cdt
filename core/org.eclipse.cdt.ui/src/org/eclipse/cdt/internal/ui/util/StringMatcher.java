@@ -178,10 +178,9 @@ public class StringMatcher {
 		if (!fHasLeadingStar) {
 			if (!regExpRegionMatches(text, start, current, 0, segLength)) {
 				return false;
-			} else {
-				++i;
-				tCurPos= tCurPos + segLength;
 			}
+			++i;
+			tCurPos= tCurPos + segLength;
 		}
 
 		/* process middle segments */

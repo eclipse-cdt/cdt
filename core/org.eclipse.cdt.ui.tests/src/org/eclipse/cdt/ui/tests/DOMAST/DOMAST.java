@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -32,6 +33,8 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.filetype.ICFileType;
+import org.eclipse.cdt.core.filetype.ICFileTypeConstants;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserUtil;
@@ -44,6 +47,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor.CPPBaseVisitorAct
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -77,6 +81,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -100,7 +105,13 @@ import org.eclipse.ui.part.ViewPart;
  */
 
 public class DOMAST extends ViewPart {
-   private static final String COLLAPSE_ALL = "Collapse ALL"; //$NON-NLS-1$
+   private static final String EXTENSION_CXX = "CXX"; //$NON-NLS-1$
+private static final String EXTENSION_CPP = "CPP"; //$NON-NLS-1$
+private static final String EXTENSION_CC = "CC"; //$NON-NLS-1$
+private static final String EXTENSION_C = "C"; //$NON-NLS-1$
+private static final String NOT_VALID_COMPILATION_UNIT = "The active editor does not contain a valid compilation unit."; //$NON-NLS-1$
+private static final String LOAD_ACTIVE_EDITOR = "Load Active Editor"; //$NON-NLS-1$
+private static final String COLLAPSE_ALL = "Collapse ALL"; //$NON-NLS-1$
 private static final String EXPAND_ALL = "Expand All"; //$NON-NLS-1$
 private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1$
    private static final String VIEW_NAME         = "DOM View";         //$NON-NLS-1$
@@ -112,6 +123,7 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
    private Action              openDeclarationsAction;
    private Action              openReferencesAction;
    private Action              singleClickAction;
+   private Action              loadActiveEditorAction;
    private Action              refreshAction;
    private Action			   expandAllAction;
    private Action			   collapseAllAction;
@@ -384,12 +396,70 @@ private static final String REFRESH_DOM_AST   = "Refresh DOM AST";  //$NON-NLS-1
       manager.add(expandAllAction);
       manager.add(collapseAllAction);
    	  manager.add(refreshAction);
+   	  manager.add(loadActiveEditorAction);
       manager.add(new Separator());
       drillDownAdapter.addNavigationActions(manager);
    }
 
    private void makeActions() {
-   	  refreshAction = new Action() {
+ 	  loadActiveEditorAction = new Action() {
+        public void run() {
+        	// get the active editor
+        	IEditorPart editor = null;
+        	if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() != null &&
+        			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages() != null) {			
+	        	IWorkbenchPage[] pages = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages();
+	
+	        	outerLoop: for(int i=0; i<pages.length; i++) {
+	        		editor = pages[i].getActiveEditor();
+	        		if (editor instanceof CEditor) {
+	        			break outerLoop;
+	        		}
+	        	}
+        	}
+
+        	if (editor instanceof CEditor) {
+	    		IViewPart tempView = null;
+	
+	    		try {
+	    			tempView = getSite().getPage().showView(OpenDOMViewAction.VIEW_ID);
+	    		} catch (PartInitException pie) {}
+	    		
+	    		if (tempView != null) {
+	    			if (tempView instanceof DOMAST) {
+	    				IFile aFile = ((CEditor)editor).getInputFile();
+	    				
+	    				// check if the file is a valid "compilation unit" (based on file extension)
+	    				String ext = aFile.getFileExtension().toUpperCase();
+	    				if (!(ext.equals(EXTENSION_C) || ext.equals(EXTENSION_CC) || ext.equals(EXTENSION_CPP) || ext.equals(EXTENSION_CXX))) {
+	    					showMessage(NOT_VALID_COMPILATION_UNIT);
+	    					return;
+	    				}
+	    				
+	    				((DOMAST)tempView).setFile(aFile);
+	    				((DOMAST)tempView).setPart(editor);
+	    				
+	    				IProject project = aFile.getProject();
+	    				ICFileType type = CCorePlugin.getDefault().getFileType(project, aFile.getFullPath().lastSegment());
+	    				String lid = type.getLanguage().getId();
+	    				if ( lid != null && lid.equals(ICFileTypeConstants.LANG_CXX) ) {
+	    					((DOMAST)tempView).setLang(ParserLanguage.CPP);
+	    				} else {
+	    					((DOMAST)tempView).setLang(ParserLanguage.C);
+	    				}
+	    				((DOMAST)tempView).setContentProvider(((DOMAST)tempView).new ViewContentProvider(((CEditor)editor).getInputFile()));
+	    			}
+	    		}
+	
+	    		getSite().getPage().activate(tempView);
+        	}
+        }
+     };
+     loadActiveEditorAction.setText(LOAD_ACTIVE_EDITOR);
+     loadActiveEditorAction.setToolTipText(LOAD_ACTIVE_EDITOR);
+     loadActiveEditorAction.setImageDescriptor(DOMASTPluginImages.DESC_DEFAULT);
+   	
+     refreshAction = new Action() {
          public void run() {
             // TODO take a snapshot of the tree expansion
          	

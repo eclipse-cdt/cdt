@@ -1,3 +1,11 @@
+2003-15-10 Mikhail Khodjaiants
+	Fix for PR 43101: Breakpoint exception when source doesn't exist.
+	The 'fireBreakpointChanged' method of 'BreakpointManager' is used to notify 
+	the UI components that a breakpoint is added. This is a part of new implementation 
+	to support deffered breakpoints. For new breakpoints the 'delta' argument is null. 
+	Check if delta is not null to avoid this problem.
+	* CDebugTarget.java
+
 2003-11-10 Mikhail Khodjaiants
 	Detail Pane values for casted variables.
 	* CVariable.java: the qualified name should be chached in the InternalVariable instance

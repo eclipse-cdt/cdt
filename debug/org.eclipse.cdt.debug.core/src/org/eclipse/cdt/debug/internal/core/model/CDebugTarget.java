@@ -796,7 +796,7 @@ public class CDebugTarget extends CDebugElement
 			return;
 		try
 		{
-			if ( breakpoint instanceof CBreakpoint )
+			if ( breakpoint instanceof CBreakpoint && delta != null )
 				changeBreakpointProperties( (CBreakpoint)breakpoint, delta );
 		}
 		catch( DebugException e )

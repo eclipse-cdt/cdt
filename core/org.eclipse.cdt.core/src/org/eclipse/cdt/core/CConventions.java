@@ -10,8 +10,15 @@
  ******************************************************************************/
 package org.eclipse.cdt.core;
 
+import java.io.StringReader;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.ParserFactory;
+import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
@@ -32,7 +39,7 @@ public class CConventions {
 	private final static char fgDot= '.';
 	private final static char fgColon= ':';
 	
-	private static boolean isValidIdentifier(String name) {
+	private static boolean isLegalIdentifier(String name) {
 		if (name == null) {
 			return false;
 		}
@@ -41,25 +48,21 @@ public class CConventions {
 			return false;
 		}
 
-		int index = name.lastIndexOf(scopeResolutionOperator);
-		char[] scannedID;
-		if (index != -1) {
-			return false;			
-		}
-		scannedID = name.toCharArray();
-		
-		if (scannedID != null) {
-			IStatus status = ResourcesPlugin.getWorkspace().validateName(new String(scannedID), IResource.FILE);
-			if (!status.isOK()) {
+		int length = name.length();
+		if (length > 0) {
+			char first = name.charAt(0);
+			if( (! Character.isLetter(first) ) && (first != '_')){
 				return false;
 			}
-			if (CharOperation.contains('$', scannedID)) {
-				return false;
+
+			for (int i = 1; i < length; i++) {
+				char c = name.charAt(i);
+				if((! Character.isLetterOrDigit(c)) && (c != '_') ){
+					return false;					
+				}
 			}
-			return true;
-		} else {
-			return false;
 		}
+		return true;		
 	}
 	
 	/**
@@ -87,6 +90,11 @@ public class CConventions {
 		char[] scannedID;
 		if (index == -1) {
 			// simple name
+			IStatus status = validateIdentifier(name);
+			if (!status.isOK()){
+				return status;				
+			}
+			
 			scannedID = name.toCharArray();
 		} else {
 			// qualified name
@@ -96,14 +104,14 @@ public class CConventions {
 				return status;
 			}
 			String type = name.substring(index + scopeResolutionOperator.length()).trim();
+			status = validateIdentifier(type);
+			if (!status.isOK()){
+				return status;				
+			}
 			scannedID = type.toCharArray();
 		}
-	
+			
 		if (scannedID != null) {
-			IStatus status = ResourcesPlugin.getWorkspace().validateName(new String(scannedID), IResource.FILE);
-			if (!status.isOK()) {
-				return status;
-			}
 			if (CharOperation.contains('$', scannedID)) {
 				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.class.dollarName"), null); //$NON-NLS-1$
 			}
@@ -137,12 +145,7 @@ public class CConventions {
 		if (CharOperation.isWhitespace(name.charAt(0)) || CharOperation.isWhitespace(name.charAt(name.length() - 1))) {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.scope.nameWithBlanks"), null); //$NON-NLS-1$
 		}
-//		int dot = 0;
-//		while (dot != -1 && dot < length-1) {
-//			if ((dot = name.indexOf(fgDot, dot+1)) != -1 && dot < length-1 && name.charAt(dot+1) == fgDot) {
-//				return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.package.consecutiveDotsName"), null); //$NON-NLS-1$
-//				}
-//		}
+
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		StringTokenizer st = new StringTokenizer(name, scopeResolutionOperator);
 		boolean firstToken = true;
@@ -152,10 +155,6 @@ public class CConventions {
 			char[] scannedID = typeName.toCharArray(); 
 			if (scannedID == null) {
 				return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.illegalIdentifier", typeName), null); //$NON-NLS-1$
-			}
-			IStatus status = workspace.validateName(new String(scannedID), IResource.FOLDER);
-			if (!status.isOK()) {
-				return status;
 			}
 			if (firstToken && scannedID.length > 0 && Character.isLowerCase(scannedID[0])) {
 				return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.scope.lowercaseName"), null); //$NON-NLS-1$
@@ -192,8 +191,12 @@ public class CConventions {
 	 *		object indicating what is wrong with the identifier
 	 */
 	public static IStatus validateIdentifier(String id) {
-		if (isValidIdentifier(id)) {
-			return CModelStatus.VERIFIED_OK;
+		if (isLegalIdentifier(id)) {
+			if(!isValidIdentifier(id)){
+				return CModelStatus.VERIFIED_OK;
+			} else {
+				return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.invalid", id), null); //$NON-NLS-1$				
+			}
 		} else {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.illegalIdentifier", id), null); //$NON-NLS-1$
 		}
@@ -212,8 +215,33 @@ public class CConventions {
 	 *		object indicating what is wrong with the name
 	 */
 	public static IStatus validateMethodName(String name) {
-
-		return validateIdentifier(name);
+		if(name.startsWith("~"))
+			return validateIdentifier(name.substring(1, name.length()));
+		else
+			return validateIdentifier(name);
+	}
+	
+	public static boolean isValidIdentifier(String name){
+		// create a scanner and get the type of the token
+		// assuming that you are given a valid identifier
+		IToken token = null;
+		IScanner scanner = ParserFactory.createScanner(
+				new StringReader( name ), 
+				"", 
+				new ScannerInfo(), 
+				ParserMode.QUICK_PARSE, 
+				ParserLanguage.CPP, 
+				null, 
+				null, 
+				null
+				);
+		try{
+			token = scanner.nextToken();
+		} catch (Exception e) {
+		}
+		if((token != null) && (token.getType() != IToken.tIDENTIFIER))
+			return true;
+		return false;		
 	}
 	
 }

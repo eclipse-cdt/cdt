@@ -10,7 +10,6 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.corext.refactoring.rename;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,15 +31,6 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariable;
-import org.eclipse.cdt.core.parser.IQuickParseCallback;
-import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.IToken;
-import org.eclipse.cdt.core.parser.NullLogService;
-import org.eclipse.cdt.core.parser.ParserFactory;
-import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ScannerException;
-import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchScope;
@@ -193,7 +183,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		if (fCElement instanceof IStructure){
 			result= Checks.checkClassName(newName);	
 		}
-		else if (fCElement instanceof IMethodDeclaration) {
+		else if ((fCElement instanceof IMethodDeclaration) || (fCElement instanceof IFunctionDeclaration)){
 			result= Checks.checkMethodName(newName);
 		}
 		else if (fCElement instanceof IField){
@@ -222,6 +212,7 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 		
 		if (Checks.isAlreadyNamed(fCElement, newName))
 			result.addFatalError(RefactoringCoreMessages.getString("RenameTypeRefactoring.choose_another_name"));	 //$NON-NLS-1$
+		
 		return result;
 	}
 	//---- IReferenceUpdating --------------------------------------

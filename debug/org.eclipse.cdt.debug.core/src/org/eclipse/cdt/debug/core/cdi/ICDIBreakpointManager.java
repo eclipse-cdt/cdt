@@ -5,17 +5,20 @@
 
 package org.eclipse.cdt.debug.core.cdi;
 
-import org.eclipse.cdt.debug.core.cdi.model.*;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDICatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 
 /**
  * 
  * The breakpoint manager manages the collection of breakpoints 
  * in the debug session.
- * 
+ * Auto update is off by default. 
  * @since Jul 9, 2002
  */
-public interface ICDIBreakpointManager extends ICDISessionObject
-{
+public interface ICDIBreakpointManager extends ICDIManager {
+
 	/**
 	 * Returns a collection of all breakpoints set for this session. 
 	 * Returns an empty array if no breakpoints are set.
@@ -31,7 +34,7 @@ public interface ICDIBreakpointManager extends ICDISessionObject
 	 * @param breakpoint - a breakpoint to be deleted
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	void deleteBreakpoint( ICDIBreakpoint breakpoint ) throws CDIException;
+	void deleteBreakpoint(ICDIBreakpoint breakpoint) throws CDIException;
 
 	/**
 	 * Deletes the given array of breakpoints.
@@ -39,7 +42,7 @@ public interface ICDIBreakpointManager extends ICDISessionObject
 	 * @param breakpoints - the array of breakpoints to be deleted
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	void deleteBreakpoints( ICDIBreakpoint[] breakpoints ) throws CDIException;
+	void deleteBreakpoints(ICDIBreakpoint[] breakpoints) throws CDIException;
 
 	/**
 	 * Deletes all breakpoints.
@@ -77,11 +80,13 @@ public interface ICDIBreakpointManager extends ICDISessionObject
 	 * @return a breakpoint
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	ICDILocationBreakpoint setLocationBreakpoint( int type,
-												ICDILocation location,
-												ICDICondition condition,
-												String threadId ) throws CDIException;
-	
+	ICDILocationBreakpoint setLocationBreakpoint(
+		int type,
+		ICDILocation location,
+		ICDICondition condition,
+		String threadId)
+		throws CDIException;
+
 	/**
 	 * Sets a watchpoint for the given expression.
 	 * @param type - a combination of TEMPORARY and HARDWARE or 0
@@ -91,11 +96,13 @@ public interface ICDIBreakpointManager extends ICDISessionObject
 	 * @return a watchpoint
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	ICDIWatchpoint setWatchpoint( int type,
-								int watchType,
-								String expression,
-								ICDICondition condition ) throws CDIException;
-	
+	ICDIWatchpoint setWatchpoint(
+		int type,
+		int watchType,
+		String expression,
+		ICDICondition condition)
+		throws CDIException;
+
 	/**
 	 * Sets a catchpoint for the given catch event.
 	 * @param type - a combination of TEMPORARY and HARDWARE or 0
@@ -104,18 +111,24 @@ public interface ICDIBreakpointManager extends ICDISessionObject
 	 * @return a catchpoint
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	ICDICatchpoint setCatchpoint( int type,
-								ICDICatchEvent event,
-								String expression,
-								ICDICondition condition ) throws CDIException;
+	ICDICatchpoint setCatchpoint(
+		int type,
+		ICDICatchEvent event,
+		String expression,
+		ICDICondition condition)
+		throws CDIException;
 
+	/**
+	 * Allow the manager to interrupt the target
+	 * if when setting the breakopoint the program was running.
+	 */
+	void allowProgramInterruption(boolean allow);
 
 	/**
 	 * Return a ICDICondition
 	 */
 	ICDICondition createCondition(int ignoreCount, String expression);
 
-	
 	/**
 	 * Returns a ICDILocation
 	 */

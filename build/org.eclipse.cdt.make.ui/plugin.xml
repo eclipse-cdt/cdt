@@ -421,7 +421,8 @@
 
    <extension
          point="org.eclipse.ui.startup">
-      <startup>
+      <startup
+            class="org.eclipse.cdt.make.internal.ui.MakeStartup">
       </startup>
    </extension>
    <extension

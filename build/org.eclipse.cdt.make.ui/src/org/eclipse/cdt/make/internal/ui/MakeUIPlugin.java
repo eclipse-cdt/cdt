@@ -9,8 +9,6 @@ import org.eclipse.cdt.make.internal.ui.editor.MakefileDocumentProvider;
 import org.eclipse.cdt.make.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.make.internal.ui.preferences.MakeTargetsPreferencePage;
 import org.eclipse.cdt.make.ui.IWorkingCopyManager;
-import org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -18,12 +16,9 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -31,7 +26,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class MakeUIPlugin extends AbstractUIPlugin implements IStartup {
+public class MakeUIPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static MakeUIPlugin plugin;
 	//Resource bundle.
@@ -213,27 +208,6 @@ public class MakeUIPlugin extends AbstractUIPlugin implements IStartup {
 			status = new Status(IStatus.ERROR, MakeUIPlugin.getUniqueIdentifier(), -1, "Internal Error: ", t); //$NON-NLS-1$	
 		}
 		ErrorDialog.openError(shell, title, message, status);
-	}
-
-	public void earlyStartup() {
-		final IProject[] oldProject = UpdateMakeProjectAction.getOldProjects();
-		if (oldProject.length > 0) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					if (MessageDialog
-						.openQuestion(
-							getShell(),
-							MakeUIPlugin.getResourceString("MakeUIPlugin.update_project"), //$NON-NLS-1$
-							MakeUIPlugin.getResourceString("MakeUIPlugin.update_project_message")) //$NON-NLS-1$
-						== true) {
-						ProgressMonitorDialog pd = new ProgressMonitorDialog(getShell());
-						UpdateMakeProjectAction.run(false, pd, oldProject);
-					}
-				}
-			});
-		}
-		return;
-
 	}
 
 	protected Shell getShell() {

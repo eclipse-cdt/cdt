@@ -45,21 +45,21 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	}
 
 	/*
-	 * @see org.eclipse.jdt.ui.IWorkingCopyManager#connect(org.eclipse.ui.IEditorInput)
+	 * @see org.eclipse.cdt.make.ui.IWorkingCopyManager#connect(org.eclipse.ui.IEditorInput)
 	 */
 	public void connect(IEditorInput input) throws CoreException {
 		fDocumentProvider.connect(input);
 	}
 	
 	/*
-	 * @see org.eclipse.jdt.ui.IWorkingCopyManager#disconnect(org.eclipse.ui.IEditorInput)
+	 * @see org.eclipse.cdt.make.ui.IWorkingCopyManager#disconnect(org.eclipse.ui.IEditorInput)
 	 */
 	public void disconnect(IEditorInput input) {
 		fDocumentProvider.disconnect(input);
 	}
 	
 	/*
-	 * @see org.eclipse.jdt.ui.IWorkingCopyManager#shutdown()
+	 * @see org.eclipse.cdt.make.ui.IWorkingCopyManager#shutdown()
 	 */
 	public void shutdown() {
 		if (!fIsShuttingDown) {
@@ -77,7 +77,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	}
 
 	/*
-	 * @see org.eclipse.jdt.ui.IWorkingCopyManager#getWorkingCopy(org.eclipse.ui.IEditorInput)
+	 * @see org.eclipse.cdt.make.ui.IWorkingCopyManager#getWorkingCopy(org.eclipse.ui.IEditorInput)
 	 */
 	public IMakefile getWorkingCopy(IEditorInput input) {
 		IMakefile unit= fMap == null ? null : (IMakefile) fMap.get(input);
@@ -85,7 +85,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	}
 	
 	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IWorkingCopyManagerExtension#setWorkingCopy(org.eclipse.ui.IEditorInput, org.eclipse.jdt.core.ICompilationUnit)
+	 * @see org.eclipse.cdt.make.ui.IWorkingCopyManagerExtension#setWorkingCopy(org.eclipse.ui.IEditorInput, org.eclipse.cdt.make.core.makefile.IMakefile)
 	 */
 	public void setWorkingCopy(IEditorInput input, IMakefile workingCopy) {
 		if (fDocumentProvider.getDocument(input) != null) {
@@ -96,7 +96,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	}
 	
 	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.IWorkingCopyManagerExtension#removeWorkingCopy(org.eclipse.ui.IEditorInput)
+	 * @see org.eclipse.cdt.make.internal.ui.javaeditor.IWorkingCopyManagerExtension#removeWorkingCopy(org.eclipse.ui.IEditorInput)
 	 */
 	public void removeWorkingCopy(IEditorInput input) {
 		fMap.remove(input);

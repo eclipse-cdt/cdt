@@ -161,7 +161,7 @@ public class MakefileDocumentProvider extends FileDocumentProvider implements IM
 	}
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider#getWorkingCopy(java.lang.Object)
+	 * @see org.eclipse.cdt.make.internal.ui.editor.ICompilationUnitDocumentProvider#getWorkingCopy(java.lang.Object)
 	 */
 	public IMakefile getWorkingCopy(Object element) {
 

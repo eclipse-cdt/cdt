@@ -197,10 +197,12 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 	/**
 	 * @author jcamelon
 	 */
-	protected static class ASTInclusionStatement extends ScannerASTNode
+	public static class ASTInclusionStatement extends ScannerASTNode
 			implements IASTPreprocessorIncludeStatement {
 
 		private final char[] path;
+		public int startOffset;
+		public int endOffset;
 
 		/**
 		 * @param cs
@@ -815,6 +817,8 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 			((ScannerASTNode) result[i]).setOffsetAndLength(
 					inc.context_directive_start, inc.context_directive_end
 							- inc.context_directive_start);
+			((ASTInclusionStatement)result[i]).startOffset = inc.context_directive_end;
+			((ASTInclusionStatement)result[i]).endOffset = inc.context_ends;
 		}
 		return result;
 	}

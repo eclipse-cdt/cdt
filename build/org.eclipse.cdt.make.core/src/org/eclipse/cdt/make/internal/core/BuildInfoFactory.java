@@ -215,19 +215,36 @@ public class BuildInfoFactory {
 
 		protected Map decodeMap(String value) {
 			Map map = new HashMap();
+			StringBuffer envStr = new StringBuffer(value);
+			String escapeChars = "|\\";
+			char escapeChar = '\\';
 			try {
-				while (value != null && value.length() > 0) {
+				while (envStr.length() > 0) {
 					int ndx = 0;
-					while (value.charAt(ndx) != '|' || (ndx != 0 && value.charAt(ndx - 1) == '\\')) {
+					while (ndx < envStr.length() ) {
+						if (escapeChars.indexOf(envStr.charAt(ndx)) != -1) {
+							if (envStr.charAt(ndx - 1) == escapeChar) { // escaped '|' - remove '\' and continue on.
+								envStr.deleteCharAt(ndx - 1);
+							} else {
+								break;
+							}
+						}
 						ndx++;
 					}
-					StringBuffer line = new StringBuffer(value.substring(0, ndx));
+					StringBuffer line = new StringBuffer(envStr.substring(0, ndx));
 					int lndx = 0;
-					while (line.charAt(lndx) != '=' || (lndx != 0 && line.charAt(lndx - 1) == '\\')) {
+					while (lndx < line.length() ) {
+						if (line.charAt(lndx) == '=') {
+							if (line.charAt(lndx - 1) == escapeChar) { // escaped '=' - remove '\' and continue on.
+								line.deleteCharAt(lndx - 1);
+							} else {
+								break;
+							}
+						}
 						lndx++;
 					}
 					map.put(line.substring(0, lndx), line.substring(lndx + 1));
-					value = value.substring(ndx+1);
+					envStr.delete(0, ndx+1);
 				}
 			} catch (StringIndexOutOfBoundsException e) {
 			}
@@ -239,19 +256,20 @@ public class BuildInfoFactory {
 			Iterator entries = values.entrySet().iterator();
 			while (entries.hasNext()) {
 				Entry entry = (Entry) entries.next();
-				str.append(escapeChars((String) entry.getKey(), "=|"));
-				str.append("=");
-				str.append(escapeChars((String) entry.getValue(), "=|)"));
-				str.append("|");
+				str.append(escapeChars((String) entry.getKey(), "=|\\", '\\')); //$NON-NLS-1$
+				str.append("="); //$NON-NLS-1$
+				str.append(escapeChars((String) entry.getValue(), "|\\", '\\')); //$NON-NLS-1$
+				str.append("|"); //$NON-NLS-1$
 			}
 			return str.toString();
 		}
 
-		protected String escapeChars(String string, String escapeChars) {
+		protected String escapeChars(String string, String escapeChars, char escapeChar) {
 			StringBuffer str = new StringBuffer(string);
 			for(int i = 0; i < str.length(); i++) {
 				if ( escapeChars.indexOf(str.charAt(i)) != -1) {
-					str.insert(i-1, '\\');
+					str.insert(i, escapeChar);
+					i++;
 				}
 			}
 			return str.toString();
@@ -340,7 +358,7 @@ public class BuildInfoFactory {
 		}
 
 		protected String getString(String name) {
-			return (String) args.get(name);
+			return args.get(name) != null ? (String)args.get(name) : ""; //$NON-NLS-1$
 		}
 
 		protected String getBuilderID() {

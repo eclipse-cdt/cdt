@@ -17,11 +17,11 @@ import java.util.Map.Entry;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.debug.core.*;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
-import org.eclipse.cdt.launch.sourcelookup.DefaultSourceLocator;
 import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -297,7 +297,7 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 				if (cProject == null) {
 					abort("Project does not exist", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 				}
-				sourceLocator = new DefaultSourceLocator();
+				sourceLocator = CDebugUIPlugin.createDefaultSourceLocator();
 				sourceLocator.initializeDefaults(configuration);
 			} else {
 				sourceLocator = DebugPlugin.getDefault().getLaunchManager().newSourceLocator(id);

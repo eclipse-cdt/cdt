@@ -6,10 +6,9 @@
 package org.eclipse.cdt.launch.ui;
 
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
-import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.sourcelookup.SourceLookupBlock;
 import org.eclipse.cdt.launch.internal.ui.LaunchImages;
-import org.eclipse.cdt.launch.sourcelookup.DefaultSourceLocator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -51,7 +50,7 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 	 */
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration )
 	{
-		configuration.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, DefaultSourceLocator.ID_DEFAULT_SOURCE_LOCATOR );
+		configuration.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, CDebugUIPlugin.getDefaultSourceLocatorID() );
 	}
 
 	/* (non-Javadoc)
@@ -59,35 +58,7 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 	 */
 	public void initializeFrom( ILaunchConfiguration configuration )
 	{
-		IProject project = getProject( configuration );
-		IProject oldProject = fBlock.getProject();
-		fBlock.setProject( getProject( configuration ) );
-		if ( project != null )
-		{
-			try
-			{
-				String id = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, "" );
-				if ( isEmpty( id ) || DefaultSourceLocator.ID_DEFAULT_SOURCE_LOCATOR.equals( id ) )
-				{
-					DefaultSourceLocator locator = new DefaultSourceLocator();
-					String memento = configuration.getAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, "" );
-					if ( project.equals( oldProject ) && !isEmpty( memento ) )
-					{
-						locator.initializeFromMemento( memento );				
-					}
-					else
-					{
-						locator.initializeDefaults( configuration );
-					}
-					ICSourceLocator clocator = (ICSourceLocator)locator.getAdapter( ICSourceLocator.class );
-					if ( clocator != null )
-						fBlock.initialize( clocator );
-				}
-			}
-			catch( CoreException e )
-			{
-			}
-		}
+		fBlock.initialize( configuration );
 	}
 
 	/* (non-Javadoc)
@@ -95,28 +66,10 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 	 */
 	public void performApply( ILaunchConfigurationWorkingCopy configuration )
 	{
-		configuration.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, DefaultSourceLocator.ID_DEFAULT_SOURCE_LOCATOR );
+		configuration.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, CDebugUIPlugin.getDefaultSourceLocatorID() );
 		IProject project = getProject( configuration );
 		if ( project != null )
-		{
-			DefaultSourceLocator locator = new DefaultSourceLocator();
-			try
-			{
-				locator.initializeDefaults( configuration );
-				ICSourceLocator clocator = (ICSourceLocator)locator.getAdapter( ICSourceLocator.class );
-				if ( clocator != null )
-				{
-					if ( !project.equals( fBlock.getProject() ) )
-						fBlock.initialize( clocator );
-					clocator.setSourceLocations( fBlock.getSourceLocations() );
-					clocator.setSearchForDuplicateFiles( fBlock.searchForDuplicateFiles() );
-				}
-				configuration.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, locator.getMemento() );
-			}
-			catch( CoreException e )
-			{
-			}
-		}
+			fBlock.performApply( configuration );
 	}
 
 	/* (non-Javadoc)

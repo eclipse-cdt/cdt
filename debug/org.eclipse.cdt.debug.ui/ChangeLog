@@ -1,3 +1,9 @@
+2003-04-08 Mikhail Khodjaiants
+	Preserving the registers tree structure during the debug session.
+	* ViewerState.java: new
+	* RegistersView.java
+	* RegistersViewEventHandler.java
+	
 2003-04-07 Mikhail Khodjaiants
 	No dialog if switch to frame failed.
 	* CDebugUIPlugin.java

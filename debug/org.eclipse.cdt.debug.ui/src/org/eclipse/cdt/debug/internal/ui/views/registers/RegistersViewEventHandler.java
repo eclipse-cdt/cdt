@@ -5,8 +5,10 @@
  */
 package org.eclipse.cdt.debug.internal.ui.views.registers;
 
+import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.ui.AbstractDebugView;
 
@@ -38,6 +40,13 @@ public class RegistersViewEventHandler extends AbstractDebugEventHandler
 			DebugEvent event = events[i];
 			switch( event.getKind() )
 			{
+				case DebugEvent.TERMINATE :
+					if ( event.getSource() instanceof IDebugTarget &&
+						 ((IDebugTarget)event.getSource()).getAdapter( ICRegisterManager.class ) != null )
+					{
+						getRegistersView().clearExpandedRegisters( (ICRegisterManager)(((IDebugTarget)event.getSource()).getAdapter( ICRegisterManager.class )) );
+					}
+					break;
 				case DebugEvent.SUSPEND :
 					if ( event.getDetail() != DebugEvent.EVALUATION_IMPLICIT )
 					{
@@ -64,6 +73,11 @@ public class RegistersViewEventHandler extends AbstractDebugEventHandler
 					}
 					break;
 			}
-		}
+		}		
+	}
+
+	protected RegistersView getRegistersView()
+	{
+		return (RegistersView)getView();
 	}
 }

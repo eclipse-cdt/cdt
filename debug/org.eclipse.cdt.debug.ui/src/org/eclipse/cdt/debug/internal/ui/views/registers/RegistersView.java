@@ -6,6 +6,8 @@
 
 package org.eclipse.cdt.debug.internal.ui.views.registers;
 
+import java.util.HashMap;
+
 import org.eclipse.cdt.debug.core.ICRegisterManager;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
@@ -17,6 +19,7 @@ import org.eclipse.cdt.debug.internal.ui.preferences.ICDebugPreferenceConstants;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.cdt.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.cdt.debug.internal.ui.views.IDebugExceptionHandler;
+import org.eclipse.cdt.debug.internal.ui.views.ViewerState;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.debug.core.DebugException;
@@ -59,6 +62,14 @@ public class RegistersView extends AbstractDebugEventHandlerView
 	private IDebugModelPresentation fModelPresentation;
 
 	protected static final String VARIABLES_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Registers"; //$NON-NLS-1$
+
+	/**
+	 * A map of register managers to <code>ViewerState</code>s.
+	 * Used to restore the expanded state of the registers view on
+	 * re-selection of the register manager. The cache is cleared on
+	 * a frame by frame basis when a thread/target is terminated.
+	 */
+	private HashMap fExpandedRegisters = new HashMap( 10 );
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(Composite)
@@ -262,8 +273,26 @@ public class RegistersView extends AbstractDebugEventHandlerView
 			return;
 		}
 
+		if ( current != null )
+		{
+			// save state
+			ViewerState state = new ViewerState( getRegistersViewer() );
+			fExpandedRegisters.put( current, state );
+		}
+
 		showViewer();
 		getViewer().setInput( rm );
+
+		// restore state
+		if ( rm != null ) 
+		{
+			ViewerState state = (ViewerState)fExpandedRegisters.get( rm );
+			if ( state != null ) 
+			{
+				state.restoreState( getRegistersViewer() );
+			}
+		}
+
 		updateObjects();
 	}
 
@@ -278,5 +307,15 @@ public class RegistersView extends AbstractDebugEventHandlerView
 		{
 			setViewerInput( (IStructuredSelection)selection );
 		}
+	}
+	
+	protected RegistersViewer getRegistersViewer()
+	{
+		return (RegistersViewer)getViewer();
+	}
+
+	protected void clearExpandedRegisters( ICRegisterManager rm ) 
+	{
+		fExpandedRegisters.remove( rm );
 	}
 }

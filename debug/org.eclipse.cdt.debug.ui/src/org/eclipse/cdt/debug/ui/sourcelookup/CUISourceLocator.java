@@ -16,9 +16,15 @@ import org.eclipse.cdt.debug.internal.ui.wizards.AddDirectorySourceLocationWizar
 import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.Window;
@@ -213,7 +219,7 @@ public class CUISourceLocator implements IAdaptable
 			IStackFrameInfo frameInfo = (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class );
 			if ( frameInfo != null && frameInfo.getFile() != null && frameInfo.getFile().length() > 0 )
 			{
-				showDebugSourcePage( frameInfo.getFile() );
+				showDebugSourcePage( stackFrame.getLaunch(), frameInfo.getFile() );
 				if ( fNewLocationAttached )
 				{
 					res = fSourceLocator.getSourceElement( stackFrame );
@@ -229,7 +235,7 @@ public class CUISourceLocator implements IAdaptable
 	 * @param frameInfo the frame information for which source
 	 *  could not be located
 	 */
-	private void showDebugSourcePage( final String fileName )
+	private void showDebugSourcePage( final ILaunch launch, final String fileName )
 	{
 		Runnable prompter = new Runnable()
 								{
@@ -238,7 +244,7 @@ public class CUISourceLocator implements IAdaptable
 										SourceLookupDialog dialog = new SourceLookupDialog( CDebugUIPlugin.getActiveWorkbenchShell(), fileName );
 										if ( dialog.open() == SourceLookupDialog.ATTACH )
 										{
-											attachSourceLocation( fileName );
+											attachSourceLocation( launch, fileName );
 										}
 										fAllowedToAsk = !dialog.isNotAskAgain();
 									}
@@ -246,7 +252,7 @@ public class CUISourceLocator implements IAdaptable
 		CDebugUIPlugin.getStandardDisplay().syncExec( prompter );
 	}
 
-	protected void attachSourceLocation( String fileName )
+	protected void attachSourceLocation( ILaunch launch, String fileName )
 	{
 		IPath path = new Path( fileName );
 		INewSourceLocationWizard wizard = null;
@@ -263,6 +269,11 @@ public class CUISourceLocator implements IAdaptable
 		if ( dialog.open() == Window.OK )
 		{
 			fSourceLocator.addSourceLocation( wizard.getSourceLocation() );
+			if ( launch.getSourceLocator() instanceof IPersistableSourceLocator )
+			{
+				ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+				saveChanges( configuration, (IPersistableSourceLocator)launch.getSourceLocator() );
+			}
 			fNewLocationAttached = true;
 		}
 	}
@@ -280,5 +291,24 @@ public class CUISourceLocator implements IAdaptable
 				return fSourceLocator;
 		}
 		return null;
+	}
+
+	public IProject getProject()
+	{
+		return fProject;
+	}
+
+	protected void saveChanges( ILaunchConfiguration configuration, IPersistableSourceLocator locator )
+	{
+		try
+		{
+			ILaunchConfigurationWorkingCopy copy = configuration.copy( configuration.getName() );
+			copy.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, locator.getMemento() );
+			copy.doSave();
+		}
+		catch( CoreException e )
+		{
+			CDebugUIPlugin.errorDialog( e.getMessage(), (IStatus)null );
+		}
 	}
 }

@@ -15,7 +15,9 @@ import org.eclipse.cdt.debug.internal.ui.dialogfields.IListAdapter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField;
 import org.eclipse.cdt.debug.internal.ui.wizards.AddSourceLocationWizard;
+import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -35,6 +37,20 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SourceLookupBlock
 {
+	private class SourceListDialogField extends ListDialogField
+	{
+		public SourceListDialogField( IListAdapter adapter, String[] buttonLabels, ILabelProvider lprovider )
+		{
+			super( adapter, buttonLabels, lprovider );
+		}
+
+		protected boolean managedButtonPressed( int index )
+		{
+			super.managedButtonPressed( index );
+			return false;
+		}
+	}
+
 	private class SourceLookupAdapter implements IListAdapter
 	{
 		public void customButtonPressed( DialogField field, int index )
@@ -79,7 +95,9 @@ public class SourceLookupBlock
 
 	private Composite fControl = null;
 	private Shell fShell = null;
-	private ListDialogField fSourceListField;
+	private SourceListDialogField fSourceListField;
+	private ILaunchConfigurationDialog fLaunchConfigurationDialog = null;
+	private boolean fIsDirty = false;
 
 	/**
 	 * Constructor for SourceLookupBlock.
@@ -98,7 +116,7 @@ public class SourceLookupBlock
 
 		SourceLookupAdapter adapter = new SourceLookupAdapter();
 
-		fSourceListField = new ListDialogField( adapter, buttonLabels, new SourceLookupLabelProvider() );
+		fSourceListField = new SourceListDialogField( adapter, buttonLabels, new SourceLookupLabelProvider() );
 		fSourceListField.setLabelText( "Source Locations" );
 		fSourceListField.setUpButtonIndex( 2 );
 		fSourceListField.setDownButtonIndex( 3 );
@@ -130,7 +148,7 @@ public class SourceLookupBlock
 		return fControl;
 	}
 	
-	protected void initialize( ICSourceLocation[] locations )
+	public void initialize( ICSourceLocation[] locations )
 	{
 		fSourceListField.removeAllElements();
 		for ( int i = 0; i < locations.length; ++i )
@@ -144,9 +162,17 @@ public class SourceLookupBlock
 		switch( index )
 		{
 			case 0:		// Add...
-				addSourceLocation();
+				if ( addSourceLocation() )
+					fIsDirty = true;
+				break;
+			case 2:
+			case 3:
+			case 5:
+				fIsDirty = true;
 				break;
 		}
+		if ( isDirty() )
+			updateLaunchConfigurationDialog();
 	}
 	
 	protected void doSelectionChanged()
@@ -158,13 +184,39 @@ public class SourceLookupBlock
 		return (ICSourceLocation[])fSourceListField.getElements().toArray( new ICSourceLocation[fSourceListField.getElements().size()] );
 	}
 	
-	private void addSourceLocation()
+	private boolean addSourceLocation()
 	{
 		AddSourceLocationWizard wizard = new AddSourceLocationWizard( getSourceLocations() );
 		WizardDialog dialog = new WizardDialog( fControl.getShell(), wizard );
 		if ( dialog.open() == Window.OK )
 		{
 			fSourceListField.addElement( wizard.getSourceLocation() );
+			return true;
 		}
+		return false;
+	}
+
+	private void updateLaunchConfigurationDialog()
+	{
+		if ( getLaunchConfigurationDialog() != null )
+		{
+			getLaunchConfigurationDialog().updateMessage();
+			getLaunchConfigurationDialog().updateButtons();
+		}
+	}
+
+	public ILaunchConfigurationDialog getLaunchConfigurationDialog()
+	{
+		return fLaunchConfigurationDialog;
+	}
+
+	public void setLaunchConfigurationDialog( ILaunchConfigurationDialog launchConfigurationDialog )
+	{
+		fLaunchConfigurationDialog = launchConfigurationDialog;
+	}
+
+	public boolean isDirty()
+	{
+		return fIsDirty;
 	}
 }

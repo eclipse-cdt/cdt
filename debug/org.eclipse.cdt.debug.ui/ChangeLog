@@ -1,6 +1,7 @@
 2003-02-18 Mikhail Khodjaiants
 	Added persistency to the source locator.
 	* CUISourceLocator.java
+	* SourceLookupBlock.java
 	* SourcePropertyPage.java
 
 2003-02-14 Mikhail Khodjaiants

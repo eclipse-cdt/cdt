@@ -8,7 +8,14 @@ package org.eclipse.cdt.debug.ui.sourcelookup;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
+import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -96,11 +103,22 @@ public class SourcePropertyPage extends PropertyPage
 	 */
 	public boolean performOk()
 	{
-		setSourceLocations( fBlock.getSourceLocations() );
+		if ( fBlock.isDirty() )
+		{
+			try
+			{
+				setSourceLocations( fBlock.getSourceLocations() );
+			}
+			catch( DebugException e )
+			{
+				CDebugUIPlugin.errorDialog( e.getMessage(), (IStatus)null );
+				return false;
+			}
+		}
 		return true;
 	}
 	
-	private void setSourceLocations( ICSourceLocation[] locations )
+	private void setSourceLocations( ICSourceLocation[] locations ) throws DebugException
 	{
 		ICDebugTarget target = getDebugTarget();
 		if ( target != null )
@@ -111,8 +129,27 @@ public class SourcePropertyPage extends PropertyPage
 				if ( locator != null )
 				{
 					locator.setSourceLocations( locations );
+					if ( target.getLaunch().getSourceLocator() instanceof IPersistableSourceLocator )
+					{
+						ILaunchConfiguration configuration = target.getLaunch().getLaunchConfiguration();
+						saveChanges( configuration, (IPersistableSourceLocator)target.getLaunch().getSourceLocator() );
+					}
 				}
 			}
+		}
+	}
+
+	protected void saveChanges( ILaunchConfiguration configuration, IPersistableSourceLocator locator )
+	{
+		try
+		{
+			ILaunchConfigurationWorkingCopy copy = configuration.copy( configuration.getName() );
+			copy.setAttribute( ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, locator.getMemento() );
+			copy.doSave();
+		}
+		catch( CoreException e )
+		{
+			CDebugUIPlugin.errorDialog( e.getMessage(), (IStatus)null );
 		}
 	}
 }

@@ -113,28 +113,35 @@ public class CPListElement {
 	}
 
 	private IPathEntry newPathEntry() {
-		IPath[] exclusionPattern;
+		IPath[] exclusionPattern = (IPath[]) getAttribute(EXCLUSION);
+		IPath base = (IPath) getAttribute(BASE);
+		IPath baseRef = (IPath) getAttribute(BASE_REF);
 		switch (fEntryKind) {
 			case IPathEntry.CDT_OUTPUT:
-				exclusionPattern = (IPath[]) getAttribute(EXCLUSION);
 				return CoreModel.newOutputEntry(fPath, exclusionPattern);
 			case IPathEntry.CDT_SOURCE:
-				exclusionPattern = (IPath[]) getAttribute(EXCLUSION);
 				return CoreModel.newSourceEntry(fPath, exclusionPattern);
 			case IPathEntry.CDT_LIBRARY:
 				IPath attach = (IPath) getAttribute(SOURCEATTACHMENT);
-				return CoreModel.newLibraryEntry(fPath, null, attach, null, null, isExported());
+				return CoreModel.newLibraryEntry(fPath, base, attach, null, null, isExported());
 			case IPathEntry.CDT_PROJECT:
 				return CoreModel.newProjectEntry(fPath, isExported());
 			case IPathEntry.CDT_CONTAINER:
 				return CoreModel.newContainerEntry(fPath, isExported());
 			case IPathEntry.CDT_INCLUDE:
-				exclusionPattern = (IPath[]) getAttribute(EXCLUSION);
-				return CoreModel.newIncludeEntry(fPath, (IPath) getAttribute(INCLUDE), (IPath) getAttribute(BASE_REF),
-						((Boolean) getAttribute(SYSTEM_INCLUDE)).booleanValue(), exclusionPattern);
+				if (base != null) {
+					return CoreModel.newIncludeEntry(fPath, (IPath) getAttribute(INCLUDE), base,
+							((Boolean) getAttribute(SYSTEM_INCLUDE)).booleanValue(), exclusionPattern);
+				} else {
+
+				}
 			case IPathEntry.CDT_MACRO:
-				exclusionPattern = (IPath[]) getAttribute(EXCLUSION);
-				return CoreModel.newMacroEntry(fPath, (String) getAttribute(MACRO_NAME), (String) getAttribute(MACRO_VALUE), exclusionPattern);
+				if (base != null) {
+					return CoreModel.newMacroEntry(fPath, base, (String) getAttribute(MACRO_NAME),
+							(String) getAttribute(MACRO_VALUE), exclusionPattern);
+				} else {
+
+				}
 			default:
 				return null;
 		}
@@ -147,7 +154,7 @@ public class CPListElement {
 		} else {
 			buf.append('[').append(']');
 		}
-		return buf;
+		return buf.append(';');
 	}
 
 	/**
@@ -165,16 +172,36 @@ public class CPListElement {
 				IPath[] exclusion = (IPath[]) getAttribute(EXCLUSION);
 				buf.append('[').append(exclusion.length).append(']');
 				for (int i = 0; i < exclusion.length; i++) {
-					appendEncodePath(exclusion[i], buf).append(';');
+					appendEncodePath(exclusion[i], buf);
+				}
+				switch (fEntryKind) {
+					case IPathEntry.CDT_INCLUDE:
+						IPath baseRef = (IPath) getAttribute(BASE_REF);
+						appendEncodePath(baseRef, buf);
+						IPath base = (IPath) getAttribute(BASE);
+						appendEncodePath(base, buf);
+						IPath include = (IPath) getAttribute(INCLUDE);
+						appendEncodePath(include, buf);
+						break;
+					case IPathEntry.CDT_MACRO:
+						baseRef = (IPath) getAttribute(BASE_REF);
+						appendEncodePath(baseRef, buf);
+						base = (IPath) getAttribute(BASE);
+						appendEncodePath(base, buf);
+						String symbol = (String) getAttribute(MACRO_NAME);
+						buf.append(symbol).append(';');
+					default:
 				}
 				break;
 			case IPathEntry.CDT_LIBRARY:
+				IPath base = (IPath) getAttribute(BASE);
+				appendEncodePath(base, buf);
 				IPath sourceAttach = (IPath) getAttribute(SOURCEATTACHMENT);
-				appendEncodePath(sourceAttach, buf).append(';');
+				appendEncodePath(sourceAttach, buf);
 				break;
 			default:
-
 		}
+		buf.setLength(buf.length()-1);
 		return buf;
 	}
 
@@ -264,18 +291,20 @@ public class CPListElement {
 	public boolean equals(Object other) {
 		if (other != null && other.getClass().equals(getClass())) {
 			CPListElement elem = (CPListElement) other;
-			if ( elem.fEntryKind != fEntryKind || !elem.fPath.equals(fPath)) {
+			if (elem.fEntryKind != fEntryKind || !elem.fPath.equals(fPath)) {
 				return false;
 			}
 			switch (fEntryKind) {
+				case IPathEntry.CDT_LIBRARY:
+					return getAttribute(BASE).equals(elem.getAttribute(BASE));
 				case IPathEntry.CDT_INCLUDE:
-					return (getAttribute(INCLUDE).equals(elem.getAttribute(INCLUDE)) && 
-							getAttribute(BASE_REF).equals(elem.getAttribute(BASE_REF)) &&
-							getAttribute(BASE).equals(elem.getAttribute(BASE)));
+					return (getAttribute(INCLUDE).equals(elem.getAttribute(INCLUDE))
+							&& getAttribute(BASE_REF).equals(elem.getAttribute(BASE_REF)) && getAttribute(BASE).equals(
+							elem.getAttribute(BASE)));
 				case IPathEntry.CDT_MACRO:
-					return (getAttribute(MACRO_NAME).equals(elem.getAttribute(MACRO_NAME)) && 
-							getAttribute(BASE_REF).equals(elem.getAttribute(BASE_REF)) &&
-							getAttribute(BASE).equals(elem.getAttribute(BASE)));
+					return (getAttribute(MACRO_NAME).equals(elem.getAttribute(MACRO_NAME))
+							&& getAttribute(BASE_REF).equals(elem.getAttribute(BASE_REF)) && getAttribute(BASE).equals(
+							elem.getAttribute(BASE)));
 			}
 			return true;
 		}
@@ -286,6 +315,15 @@ public class CPListElement {
 	 * @see Object#hashCode()
 	 */
 	public int hashCode() {
+		int hashCode = 0;
+		switch (fEntryKind) {
+			case IPathEntry.CDT_LIBRARY:
+				hashCode = getAttribute(BASE).hashCode();
+			case IPathEntry.CDT_INCLUDE:
+				hashCode = getAttribute(INCLUDE).hashCode() + getAttribute(BASE_REF).hashCode() + getAttribute(BASE).hashCode();
+			case IPathEntry.CDT_MACRO:
+				hashCode = getAttribute(MACRO_NAME).hashCode() + getAttribute(BASE_REF).hashCode() + getAttribute(BASE).hashCode();
+		}
 		return fPath.hashCode() + fEntryKind;
 	}
 
@@ -371,12 +409,11 @@ public class CPListElement {
 			case IPathEntry.CDT_LIBRARY:
 				res = root.findMember(path);
 				if (res == null) {
-//					if (!ArchiveFileFilter.isArchivePath(path)) {
-//						if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()
-//								&& root.getProject(path.segment(0)).exists()) {
-//							res = root.getFolder(path);
-//						}
-//					}
+					//					if (!ArchiveFileFilter.isArchivePath(path)) {
+					if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()
+							&& root.getProject(path.segment(0)).exists()) {
+						res = root.getFolder(path);
+					}
 					isMissing = !path.toFile().isFile(); // look for external
 				}
 				sourceAttachment = ((ILibraryEntry) curr).getSourceAttachmentPath();
@@ -410,13 +447,15 @@ public class CPListElement {
 					if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
 						res = root.getFolder(path);
 					}
-					isMissing = !path.toFile().isFile(); // look for external
+				}
+				if (res.getType() != IResource.PROJECT) {
+					isMissing = !project.isOnSourceRoot(res);
 				}
 				exclusion = ((IIncludeEntry) curr).getExclusionPatterns();
 				sysInclude = ((IIncludeEntry) curr).isSystemInclude();
 				baseRef = ((IIncludeEntry) curr).getBasePath();
 				base = new Path("");
-//				base = ((IIncludeEntry) curr).getBasePath();
+				//				base = ((IIncludeEntry) curr).getBasePath();
 				include = ((IIncludeEntry) curr).getIncludePath();
 				break;
 			case IPathEntry.CDT_MACRO:
@@ -426,14 +465,16 @@ public class CPListElement {
 					if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
 						res = root.getFolder(path);
 					}
-					isMissing = !path.toFile().isFile(); // look for external
+				}
+				if (res.getType() != IResource.PROJECT) {
+					isMissing = !project.isOnSourceRoot(res);
 				}
 				exclusion = ((IMacroEntry) curr).getExclusionPatterns();
 				macroName = ((IMacroEntry) curr).getMacroName();
 				macroValue = ((IMacroEntry) curr).getMacroValue();
 				baseRef = ((IMacroEntry) curr).getBasePath();
 				base = new Path("");
-//				base = ((IIncludeEntry) curr).getBasePath();
+				//				base = ((IIncludeEntry) curr).getBasePath();
 				break;
 			case IPathEntry.CDT_PROJECT:
 				res = root.findMember(path);

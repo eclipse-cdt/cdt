@@ -18,6 +18,7 @@ import org.eclipse.cdt.internal.core.model.IBufferFactory;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.CStatusConstants;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IEditorInputDelegate;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
@@ -140,16 +141,24 @@ public class CDocumentProvider extends FileDocumentProvider {
 	 * @see AbstractDocumentProvider#createDocument(Object)
 	 */ 
 	protected IDocument createDocument(Object element) throws CoreException {
-		IDocument document;
-			
-		if (element instanceof IStorageEditorInput) {
-			IStorage storage= ((IStorageEditorInput) element).getStorage();
-			
-			document= new CDocument();
-			setDocumentContent(document, storage.getContents(), getDefaultEncoding());
-		} else {
-			return null;
+		IDocument document = null;
+		IStorage storage = null;
+
+		if (element instanceof IEditorInputDelegate) {
+			if (((IEditorInputDelegate) element).getDelegate() != null)
+				return createDocument(((IEditorInputDelegate) element).getDelegate());
+			else
+				storage = ((IEditorInputDelegate) element).getStorage();
 		}
+			
+		if (element instanceof IStorageEditorInput)
+			storage= ((IStorageEditorInput) element).getStorage();
+		
+		if ( storage != null ) {
+			document = new CDocument();
+			setDocumentContent(document, storage.getContents(), getDefaultEncoding());
+		}
+
 		//IDocument document= super.createDocument(element);
 		initializeDocument(document);
 		return document;
@@ -159,6 +168,8 @@ public class CDocumentProvider extends FileDocumentProvider {
 	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
 	 */
 	protected IAnnotationModel createAnnotationModel(Object element) throws CoreException {
+		if ( element instanceof IEditorInputDelegate && ((IEditorInputDelegate)element).getDelegate() != null )
+			return createAnnotationModel( ((IEditorInputDelegate)element).getDelegate() );
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input= (IFileEditorInput) element;
 			return new CMarkerAnnotationModel(input.getFile());
@@ -399,4 +410,16 @@ public class CDocumentProvider extends FileDocumentProvider {
 		return getElementInfo(input) != null;
 	}
 	
+	/**
+	 * @see org.eclipse.ui.texteditor.IDocumentProviderExtension#getStatus(Object)
+	 */
+	public IStatus getStatus(Object element) {
+		if (element instanceof IEditorInputDelegate) {
+			if (((IEditorInputDelegate) element).getDelegate() != null)
+				return super.getStatus(((IEditorInputDelegate) element).getDelegate());
+			else
+				return new Status(IStatus.INFO,CUIPlugin.getPluginId(),0,"",null);
+		}
+		return super.getStatus(element);
+	}
 }

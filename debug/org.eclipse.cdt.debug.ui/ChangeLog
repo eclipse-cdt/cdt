@@ -1,3 +1,10 @@
+2003-05-23 Mikhail Khodjaiants
+	Fix for PR 38047: Unable to save changes in C/C++ debug editor.
+	* CDebugEditor.java
+	* EditorInputDelegate.java
+	* CDebugUIPlugin.java
+	* CDebugDocumentProvider.java: removed
+
 2003-04-29 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/internal/ui/editor/CDebugDocumentProvider.java (doSetInput):

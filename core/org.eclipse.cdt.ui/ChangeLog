@@ -1,3 +1,11 @@
+2003-05-23 Mikhail Khodjaiants
+	PR 38047: Unable to save changes in C/C++ debug editor.
+	* src/org/eclipse/cdt/ui/IEditorInputDelegate.java: new
+	This interface is added to provide support for more flexible editor inputs.
+
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java:
+	Support of the "IEditorInputDelegate" interface.
+
 2003-04-29 Alain Magloire
 
 	PR 36759, Outliner did not update.

@@ -13,7 +13,6 @@ import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
-import org.eclipse.cdt.debug.internal.ui.editors.CDebugDocumentProvider;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyDocumentProvider;
 import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
@@ -75,9 +74,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 
 	// Document provider for disassembly editor	
 	private DisassemblyDocumentProvider fDisassemblyDocumentProvider = null;
-
-	// Document provider for C/C++ debug editor	
-	private CDebugDocumentProvider fDocumentProvider;
 
 	/**
 	 * The constructor.
@@ -511,17 +507,5 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		{
 			display.asyncExec( runnable );
 		}
-	}
-
-	/**
-	 * Returns the used document provider
-	 */
-	public CDebugDocumentProvider getDocumentProvider()
-	{
-		if (fDocumentProvider == null)
-		{
-			fDocumentProvider = new CDebugDocumentProvider();
-		}
-		return fDocumentProvider;
 	}
 }

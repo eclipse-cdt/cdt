@@ -19,7 +19,7 @@ public class EnvironmentReader {
 	public static Properties getEnvVars() {
 
 		if (null != envVars)
-			return envVars;
+			return (Properties)envVars.clone();
 
 		String OS = System.getProperty("os.name").toLowerCase();
 		Process p = null;
@@ -74,7 +74,7 @@ public class EnvironmentReader {
 			}
 		}
 		rawVars.trimToSize();
-		return envVars;
+		return (Properties)envVars.clone();
 	}
 
 	public static String getEnvVar(String key) {

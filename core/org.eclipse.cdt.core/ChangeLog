@@ -1,3 +1,9 @@
+2004-01-29 Alain Magloire
+
+	PR #50846 and patch from Alex Chapiro
+
+	* utils/org/eclipse/cdt/utils/spawner/EnvironmentReader.java
+
 2004-01-26 John Camelon
 	Updated clients to use new Scanner logging service.
 	

@@ -9,10 +9,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -100,9 +99,10 @@ class CViewDragAdapter extends DragSourceAdapter {
 		for (Iterator i = selection.iterator(); i.hasNext();) {
 			Object next = i.next();
 			IResource res = null;
-			if (next instanceof ICElement) {
-				ICElement celement = (ICElement)next;
-				res = celement.getResource();
+			if (next instanceof IResource) {
+				res = (IResource)next;
+			} else if (next instanceof IAdaptable) {
+				res = (IResource)((IAdaptable)next).getAdapter(IResource.class);
 			}
 			if (res == null) {
 				event.doit = false;
@@ -128,15 +128,15 @@ class CViewDragAdapter extends DragSourceAdapter {
 		Iterator enum = structuredSelection.iterator();
 		while (enum.hasNext()) {
 			Object obj = enum.next();
-			if (obj instanceof ICElement) {
-				try {
-					IResource res = ((ICElement)obj).getUnderlyingResource();
-					if (res != null) {
-						if ((res.getType() & resourceTypes) == res.getType()) {
-							resources.add(res);
-						}
-					}
-				} catch (CModelException e) {
+			IResource res = null;
+			if (obj instanceof IResource) {
+				res = (IResource)obj;
+			} else if (obj instanceof IAdaptable) {
+				res = (IResource)((IAdaptable)obj).getAdapter(IResource.class);
+			}
+			if (res != null) {
+				if ((res.getType() & resourceTypes) == res.getType()) {
+					resources.add(res);
 				}
 			}
 		}

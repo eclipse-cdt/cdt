@@ -48,7 +48,6 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.type.PointerValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ReferenceValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.ShortValue;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.StructValue;
-import org.eclipse.cdt.debug.mi.core.cdi.model.type.Type;
 import org.eclipse.cdt.debug.mi.core.cdi.model.type.WCharValue;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarAssign;
@@ -70,7 +69,6 @@ public class Variable extends VariableObject implements ICDIVariable {
 	MIVar miVar;
 	Value value;
 	ICDIVariable[] children = new ICDIVariable[0];
-	Type type;
 	String editable = null;
 	String language;
 	boolean isFake = false;

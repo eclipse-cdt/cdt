@@ -89,7 +89,7 @@ public class GDBTypeParser {
 		public final static int ARRAY = 3;
 		public final static int FUNCTION = 4;
 
-		String name;
+		String nameType;
 		int type;
 
 		public GDBType(String n) {
@@ -101,16 +101,16 @@ public class GDBTypeParser {
 		}
 
 		GDBType(String n, int t) {
-			name = n;
+			nameType = n;
 			type = t;
 		}
 
 		public String toString() {
-			return name;
+			return nameType;
 		}
 
 		public String verbose() {
-			return name;
+			return nameType;
 		}
 
 		public int getType() {

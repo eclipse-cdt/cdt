@@ -113,7 +113,6 @@ public class ASTElaboratedTypeSpecifier extends ASTSymbol implements IASTElabora
                 /* do nothing */
             }
         ASTReferenceStore.processReferences( references, requestor );
-        references = null;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#enterScope(org.eclipse.cdt.core.parser.ISourceElementRequestor)

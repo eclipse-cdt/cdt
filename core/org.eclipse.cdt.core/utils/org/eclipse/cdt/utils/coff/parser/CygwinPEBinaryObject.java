@@ -186,9 +186,11 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 
 		// Add any global symbols
 		NM nm = getNM();
-		NM.AddressNamePair[] pairs = nm.getBSSSymbols();
-		for (int i = 0; i < pairs.length; ++i) {
-			addSymbol(pairs[i], list, ISymbol.VARIABLE);
+		if (nm != null) {
+			NM.AddressNamePair[] pairs = nm.getBSSSymbols();
+			for (int i = 0; i < pairs.length; ++i) {
+				addSymbol(pairs[i], list, ISymbol.VARIABLE);
+			}
 		}
 //		pairs = nm.getTextSymbols();
 //		for (int i = 0; i < pairs.length; ++i) {

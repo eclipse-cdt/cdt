@@ -45,13 +45,6 @@ public interface ICDIStackFrame extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDIArgument[] getArguments() throws CDIException;
-	
-	/**
-	 * Returns the Registers
-	 * @return a collection of registers
-	 * @throws CDIException if this method fails:
-	 */
-	ICDIRegister[] getRegisters(ICDIRegisterObject[] regs) throws CDIException;
 
 	/**
 	 * Returns the level of the stack frame.

@@ -182,6 +182,8 @@ public class SharedLibrariesView extends AbstractDebugEventHandlerView
 	 */
 	protected void fillContextMenu( IMenuManager menu )
 	{
+		updateObjects();
+
 		menu.add( new Separator( ICDebugUIConstants.EMPTY_SHARED_LIBRARIES_GROUP ) );
 		menu.add( new Separator( ICDebugUIConstants.SHARED_LIBRARIES_GROUP ) );
 

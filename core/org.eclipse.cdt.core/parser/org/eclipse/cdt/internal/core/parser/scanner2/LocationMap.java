@@ -1207,7 +1207,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     protected static class _FunctionMacroDefinition extends _MacroDefinition
             implements _IPreprocessorDirective {
 
-        public final char[][] parms;
+        private final char[][] parms;
 
         /**
          * @param parent
@@ -1220,6 +1220,10 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
                 char[] expansion, char[][] parameters) {
             super(parent, startOffset, endOffset, name, nameOffset, expansion);
             this.parms = parameters;
+        }
+
+        public char[][] getParms() {
+            return parms;
         }
     }
 
@@ -1351,7 +1355,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             r = new ASTObjectMacro();
         else if (d instanceof _FunctionMacroDefinition) {
             IASTPreprocessorFunctionStyleMacroDefinition f = new ASTFunctionMacro();
-            char[][] parms = ((_FunctionMacroDefinition) d).parms;
+            char[][] parms = ((_FunctionMacroDefinition) d).getParms();
             for (int j = 0; j < parms.length; ++j) {
                 IASTFunctionStyleMacroParameter parm = new ASTFunctionMacroParameter();
                 parm.setParameter(new String(parms[j]));
@@ -2454,7 +2458,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     }
 
     public IMacroDefinition registerBuiltinFunctionStyleMacro(FunctionStyleMacro macro) {
-        IMacroDefinition result = new _FunctionMacroDefinition( tu, -1, -1, macro.name, -1, macro.expansion, macro.arglist );
+        IMacroDefinition result = new _FunctionMacroDefinition( tu, -1, -1, macro.name, -1, macro.expansion, removeNullArguments( macro.arglist ) );
         tu.addBuiltinMacro( result );
         return result;
     }

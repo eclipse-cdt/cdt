@@ -44,7 +44,6 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -393,7 +392,7 @@ public class DOMLocationTests extends AST2BaseTest {
         IASTBinaryExpression bexp = (IASTBinaryExpression) ((IASTExpressionStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
                 .getDeclarations()[3]).getBody()).getStatements()[0])
                 .getExpression();
-        IASTTypeIdExpression exp = (IASTTypeIdExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
+        IASTUnaryExpression exp = (IASTUnaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
                 .getDeclarations()[3]).getBody()).getStatements()[0])
                 .getExpression()).getOperand1();
 
@@ -402,7 +401,7 @@ public class DOMLocationTests extends AST2BaseTest {
                 code.indexOf("typeid(d1) == typeid(d2)"), "typeid(d1) == typeid(d2)".length()); //$NON-NLS-1$ //$NON-NLS-2$
         assertSoleLocation(exp,
                 code.indexOf("typeid(d1)"), "typeid(d1)".length()); //$NON-NLS-1$ //$NON-NLS-2$
-        exp = (IASTTypeIdExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
+        exp = (IASTUnaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
                 .getDeclarations()[3]).getBody()).getStatements()[0])
                 .getExpression()).getOperand2();
         assertSoleLocation(exp,

@@ -13,6 +13,7 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -31,8 +32,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -3277,6 +3280,8 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( expression.getInitialValue(), null );
         assertEquals( expression.getSimpleType(), ICPPASTSimpleTypeConstructorExpression.t_int );
     }
+    
+  
 	
     public void testBug90498_1() throws Exception {
         IASTTranslationUnit tu = parse( "typedef INT ( FOO ) (INT);", ParserLanguage.CPP ); //$NON-NLS-1$
@@ -3309,14 +3314,50 @@ public class AST2CPPTests extends AST2BaseTest {
         assertNotNull( dtor.getInitializer() );
     }
     
+    
+    public void testBug866274() throws Exception {
+        StringBuffer buffer = new StringBuffer( "class D { /* ... */ };\n" ); //$NON-NLS-1$
+        buffer.append( "D d1;\n"); //$NON-NLS-1$
+        buffer.append( "const D d2;\n"); //$NON-NLS-1$
+        buffer.append( "void foo() {\n"); //$NON-NLS-1$
+        buffer.append( "    typeid(d1) == typeid(d2);\n"); //$NON-NLS-1$
+        buffer.append( "    typeid(D) == typeid(d2);\n"); //$NON-NLS-1$
+        buffer.append( "}\n"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+        IASTFunctionDefinition foo = (IASTFunctionDefinition) tu.getDeclarations()[3];
+        IASTCompoundStatement cs = (IASTCompoundStatement) foo.getBody();
+        IASTStatement [] subs = cs.getStatements();
+        for( int i = 0; i < subs.length; ++i )
+        {
+            IASTBinaryExpression be = (IASTBinaryExpression) ((IASTExpressionStatement)subs[i]).getExpression();
+            if( i == 1 )
+            {
+                IASTTypeIdExpression expression = (IASTTypeIdExpression) be.getOperand1();
+                IASTTypeId typeId = expression.getTypeId();
+                assertTrue( ((IASTNamedTypeSpecifier)typeId.getDeclSpecifier()).getName().resolveBinding() instanceof IType );
+            }
+            else
+            {
+                IASTUnaryExpression expression = (IASTUnaryExpression) be.getOperand1();
+                IASTIdExpression idExpression = (IASTIdExpression) expression.getOperand();
+                assertTrue( idExpression.getName().resolveBinding() instanceof IVariable );
+            }
+            IASTUnaryExpression expression = (IASTUnaryExpression) be.getOperand2();
+            IASTIdExpression idExpression = (IASTIdExpression) expression.getOperand();
+            assertTrue( idExpression.getName().resolveBinding() instanceof IVariable );
+            
+        }
+    }
+
+    
     public void testTypedefFunction() throws Exception {
         IASTTranslationUnit tu = parse( "typedef int foo (int);", ParserLanguage.CPP ); //$NON-NLS-1$
         CPPNameCollector col = new CPPNameCollector();
-    	tu.accept( col );
-    	
-    	IBinding binding = col.getName(0).resolveBinding();
-    	assertTrue( binding instanceof ITypedef );
-    	assertTrue( ((ITypedef)binding).getType() instanceof IFunctionType );
+        tu.accept( col );
+        
+        IBinding binding = col.getName(0).resolveBinding();
+        assertTrue( binding instanceof ITypedef );
+        assertTrue( ((ITypedef)binding).getType() instanceof IFunctionType );
     }
 }
 

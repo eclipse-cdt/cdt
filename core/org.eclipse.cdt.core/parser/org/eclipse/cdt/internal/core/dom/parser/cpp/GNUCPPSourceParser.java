@@ -1444,10 +1444,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
             boolean isTypeId = true;
             IASTExpression lhs = null;
             IASTTypeId typeId = null;
-
+            IToken m = mark();
             try {
-                typeId = typeId(false, false);
+                boolean amb = false;
+                if ( LT(1) == IToken.tIDENTIFIER ) 
+                    amb = true;
+                typeId = typeId(false, false);                
+                if( amb && typeId.getDeclSpecifier() instanceof IASTNamedTypeSpecifier  )
+                {
+                    if( ! queryIsTypeName( ((IASTNamedTypeSpecifier) typeId.getDeclSpecifier()).getName() ) )
+                    {
+                        backup( m );
+                        throwBacktrack( ((CPPASTNode)typeId).getOffset(), ((CPPASTNode)typeId).getLength() );  
+                    }
+                }
             } catch (BacktrackException b) {
+                typeId = null;
                 isTypeId = false;
                 lhs = expression();
             }

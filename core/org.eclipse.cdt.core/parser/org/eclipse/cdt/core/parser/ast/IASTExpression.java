@@ -10,6 +10,7 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.Enum;
@@ -118,6 +119,119 @@ public interface IASTExpression extends ISourceElementCallbackDelegate
         {
             super(enumValue);
         }
+
+        private static final Hashtable names;
+        static
+		{
+        	names = new Hashtable();
+        	names.put( PRIMARY_EMPTY, "PRIMARY_EMPTY" );
+        	names.put( PRIMARY_INTEGER_LITERAL  , "PRIMARY_INTEGER_LITERAL" );
+        	names.put( PRIMARY_CHAR_LITERAL         , "PRIMARY_CHAR_LITERAL" );
+        	names.put( PRIMARY_FLOAT_LITERAL        , "PRIMARY_FLOAT_LITERAL" );
+        	names.put( PRIMARY_STRING_LITERAL       , "PRIMARY_STRING_LITERAL" );
+        	names.put( PRIMARY_BOOLEAN_LITERAL      , "PRIMARY_BOOLEAN_LITERAL" );
+        	names.put( PRIMARY_THIS                 , "PRIMARY_THIS");
+        	names.put( PRIMARY_BRACKETED_EXPRESSION , "PRIMARY_BRACKETED_EXPRESSION");
+        	names.put( ID_EXPRESSION                , "ID_EXPRESSION");
+        	names.put( POSTFIX_SUBSCRIPT            , "POSTFIX_SUBSCRIPT");
+        	names.put( POSTFIX_FUNCTIONCALL         , "POSTFIX_FUNCTIONCALL");
+        	names.put( POSTFIX_SIMPLETYPE_INT       , "POSTFIX_SIMPLETYPE_INT");
+        	names.put( POSTFIX_SIMPLETYPE_SHORT     , "POSTFIX_SIMPLETYPE_SHORT");
+        	names.put( POSTFIX_SIMPLETYPE_DOUBLE    , "POSTFIX_SIMPLETYPE_DOUBLE");
+        	names.put( POSTFIX_SIMPLETYPE_FLOAT     , "POSTFIX_SIMPLETYPE_FLOAT");
+        	names.put( POSTFIX_SIMPLETYPE_CHAR      , "POSTFIX_SIMPLETYPE_CHAR");
+        	names.put( POSTFIX_SIMPLETYPE_WCHART    , "POSTFIX_SIMPLETYPE_WCHART");
+        	names.put( POSTFIX_SIMPLETYPE_SIGNED    , "POSTFIX_SIMPLETYPE_SIGNED");
+        	names.put( POSTFIX_SIMPLETYPE_UNSIGNED  , "POSTFIX_SIMPLETYPE_UNSIGNED");
+        	names.put( POSTFIX_SIMPLETYPE_BOOL      , "POSTFIX_SIMPLETYPE_BOOL");
+        	names.put( POSTFIX_SIMPLETYPE_LONG      , "POSTFIX_SIMPLETYPE_LONG");
+        	names.put( POSTFIX_TYPENAME_IDENTIFIER  , "POSTFIX_TYPENAME_IDENTIFIER");
+        	names.put( POSTFIX_TYPENAME_TEMPLATEID, "POSTFIX_TYPENAME_TEMPLATEID" );
+        	names.put( POSTFIX_DOT_IDEXPRESSION   , "POSTFIX_DOT_IDEXPRESSION");
+        	names.put( POSTFIX_ARROW_IDEXPRESSION , "POSTFIX_ARROW_IDEXPRESSION");
+        	names.put( POSTFIX_DOT_TEMPL_IDEXPRESS , "POSTFIX_DOT_TEMPL_IDEXPRESS");
+        	names.put( POSTFIX_ARROW_TEMPL_IDEXP  , "POSTFIX_ARROW_TEMPL_IDEXP");
+        	names.put( POSTFIX_DOT_DESTRUCTOR     , "POSTFIX_DOT_DESTRUCTOR");
+        	names.put( POSTFIX_ARROW_DESTRUCTOR   , "POSTFIX_ARROW_DESTRUCTOR");
+        	names.put( POSTFIX_INCREMENT          , "POSTFIX_INCREMENT");
+        	names.put( POSTFIX_DECREMENT          , "POSTFIX_DECREMENT");
+        	names.put( POSTFIX_DYNAMIC_CAST       , "POSTFIX_DYNAMIC_CAST");
+        	names.put( POSTFIX_REINTERPRET_CAST   , "POSTFIX_REINTERPRET_CAST");
+        	names.put( POSTFIX_STATIC_CAST        , "POSTFIX_STATIC_CAST");
+        	names.put( POSTFIX_CONST_CAST         , "POSTFIX_CONST_CAST");
+        	names.put( POSTFIX_TYPEID_EXPRESSION  , "POSTFIX_TYPEID_EXPRESSION");
+        	names.put( POSTFIX_TYPEID_TYPEID        , "POSTFIX_TYPEID_TYPEID");
+        	names.put( UNARY_INCREMENT              , "UNARY_INCREMENT");
+        	names.put( UNARY_DECREMENT              , "UNARY_DECREMENT");
+        	names.put( UNARY_STAR_CASTEXPRESSION    , "UNARY_STAR_CASTEXPRESSION");
+        	names.put( UNARY_AMPSND_CASTEXPRESSION  , "UNARY_AMPSND_CASTEXPRESSION");
+        	names.put( UNARY_PLUS_CASTEXPRESSION    , "UNARY_PLUS_CASTEXPRESSION");
+        	names.put( UNARY_MINUS_CASTEXPRESSION   , "UNARY_MINUS_CASTEXPRESSION");
+        	names.put( UNARY_NOT_CASTEXPRESSION     , "UNARY_NOT_CASTEXPRESSION");
+        	names.put( UNARY_TILDE_CASTEXPRESSION   , "UNARY_TILDE_CASTEXPRESSION");
+        	names.put( UNARY_SIZEOF_UNARYEXPRESSION , "UNARY_SIZEOF_UNARYEXPRESSION");
+        	names.put( UNARY_SIZEOF_TYPEID          , "UNARY_SIZEOF_TYPEID");
+        	names.put( NEW_NEWTYPEID                , "NEW_NEWTYPEID");
+        	names.put( NEW_TYPEID                   , "NEW_TYPEID");
+        	names.put( DELETE_CASTEXPRESSION        , "DELETE_CASTEXPRESSION");
+        	names.put( DELETE_VECTORCASTEXPRESSION  , "DELETE_VECTORCASTEXPRESSION");
+        	names.put( CASTEXPRESSION               , "CASTEXPRESSION");
+        	names.put( PM_DOTSTAR                   , "PM_DOTSTAR");
+        	names.put( PM_ARROWSTAR                 , "PM_ARROWSTAR");
+        	names.put( MULTIPLICATIVE_MULTIPLY      , "MULTIPLICATIVE_MULTIPLY");
+        	names.put( MULTIPLICATIVE_DIVIDE        , "MULTIPLICATIVE_DIVIDE");
+        	names.put( MULTIPLICATIVE_MODULUS       , "MULTIPLICATIVE_MODULUS");
+        	names.put( ADDITIVE_PLUS                , "ADDITIVE_PLUS");
+        	names.put( ADDITIVE_MINUS               , "ADDITIVE_MINUS");
+        	names.put( SHIFT_LEFT                   , "SHIFT_LEFT");
+        	names.put( SHIFT_RIGHT                  , "SHIFT_RIGHT");
+        	names.put( RELATIONAL_LESSTHAN          , "RELATIONAL_LESSTHAN");
+        	names.put( RELATIONAL_GREATERTHAN       , "RELATIONAL_GREATERTHAN");
+        	names.put( RELATIONAL_LESSTHANEQUALTO   , "RELATIONAL_LESSTHANEQUALTO");
+        	names.put( RELATIONAL_GREATERTHANEQUALTO, "RELATIONAL_GREATERTHANEQUALTO" );
+        	names.put( EQUALITY_EQUALS              , "EQUALITY_EQUALS");
+        	names.put( EQUALITY_NOTEQUALS           , "EQUALITY_NOTEQUALS");
+        	names.put( ANDEXPRESSION                , "ANDEXPRESSION");
+        	names.put( EXCLUSIVEOREXPRESSION        , "EXCLUSIVEOREXPRESSION");
+        	names.put( INCLUSIVEOREXPRESSION        , "INCLUSIVEOREXPRESSION");
+        	names.put( LOGICALANDEXPRESSION         , "LOGICALANDEXPRESSION");
+        	names.put( LOGICALOREXPRESSION          , "LOGICALOREXPRESSION");
+        	names.put( CONDITIONALEXPRESSION        , "CONDITIONALEXPRESSION");
+        	names.put( THROWEXPRESSION              , "THROWEXPRESSION");
+        	names.put( ASSIGNMENTEXPRESSION_NORMAL  , "ASSIGNMENTEXPRESSION_NORMAL");
+        	names.put( ASSIGNMENTEXPRESSION_PLUS    , "ASSIGNMENTEXPRESSION_PLUS");
+        	names.put( ASSIGNMENTEXPRESSION_MINUS   , "ASSIGNMENTEXPRESSION_MINUS");
+        	names.put( ASSIGNMENTEXPRESSION_MULT    , "ASSIGNMENTEXPRESSION_MULT");
+        	names.put( ASSIGNMENTEXPRESSION_DIV     , "ASSIGNMENTEXPRESSION_DIV");
+        	names.put( ASSIGNMENTEXPRESSION_MOD     , "ASSIGNMENTEXPRESSION_MOD");
+        	names.put( ASSIGNMENTEXPRESSION_LSHIFT  , "ASSIGNMENTEXPRESSION_LSHIFT");
+        	names.put( ASSIGNMENTEXPRESSION_RSHIFT  , "ASSIGNMENTEXPRESSION_RSHIFT");
+        	names.put( ASSIGNMENTEXPRESSION_AND     , "ASSIGNMENTEXPRESSION_AND");
+        	names.put( ASSIGNMENTEXPRESSION_OR      , "ASSIGNMENTEXPRESSION_OR");
+        	names.put( ASSIGNMENTEXPRESSION_XOR     , "ASSIGNMENTEXPRESSION_XOR");
+        	names.put( EXPRESSIONLIST               , "EXPRESSIONLIST");
+        	
+        }
+		/**
+		 * @return
+		 */
+		public String getKindName() {
+			return (String) names.get(this);
+		}
+        
+        public boolean isPostfixMemberReference()
+		{
+        	if( this == IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION ||  
+        		this ==	IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION ||
+        		this ==	IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS ||
+        		this ==	IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP ||	
+        		this ==	IASTExpression.Kind.PM_DOTSTAR ||
+        		this ==	IASTExpression.Kind.PM_ARROWSTAR )
+        		return true;
+        	return false;
+
+        }
+        
         		
 	}
 	

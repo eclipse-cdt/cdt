@@ -26,5 +26,17 @@ public class ASTAccessVisibility extends Enum {
 	{
 		super( constant ); 
 	}
+	
+	public boolean isLessThan( ASTAccessVisibility other )
+	{
+		return getEnumValue() < other.getEnumValue();
+	}
+
+	public boolean isGreaterThan( ASTAccessVisibility other )
+	{
+		return getEnumValue() > other.getEnumValue();
+	}
+	
+	
 	 
 }

@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.ast;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
@@ -243,4 +244,9 @@ public interface IASTFactory
 	public IASTNode getCompletionContext(Kind kind, IASTExpression expression);
 	
 	public IASTNode lookupSymbolInContext( IASTScope scope, ITokenDuple duple ) throws ASTNotImplementedException;
+
+	/**
+	 * @param log
+	 */
+	public void setLogger(IParserLogService log);
 }

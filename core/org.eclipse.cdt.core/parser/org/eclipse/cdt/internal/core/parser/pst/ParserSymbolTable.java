@@ -2205,7 +2205,7 @@ public class ParserSymbolTable {
 				parentAccess = parent.getAccess();
 				symbolAccess = ((IASTMember)symbol.getASTExtension().getPrimaryDeclaration()).getVisiblity();
 				
-				return ( parentAccess.getEnumValue() > symbolAccess.getEnumValue() ) ? parentAccess : symbolAccess;					
+				return ( parentAccess.isGreaterThan( symbolAccess ) )? parentAccess : symbolAccess;					
 			}
 		}
 		
@@ -2221,10 +2221,10 @@ public class ParserSymbolTable {
 			symbolAccess = getVisibility( symbol, (IContainerSymbol) parent.getParent() );
 			
 			if( symbolAccess != null ){
-				symbolAccess = ( parentAccess.getEnumValue() > symbolAccess.getEnumValue() ) ? parentAccess : symbolAccess; 
+				symbolAccess = ( parentAccess.isGreaterThan( symbolAccess ) ) ? parentAccess : symbolAccess; 
 				if( checkAllPaths ){
 					if( resultingAccess != null )
-						resultingAccess = ( resultingAccess.getEnumValue() > symbolAccess.getEnumValue() ) ? symbolAccess : resultingAccess;
+						resultingAccess = resultingAccess.isGreaterThan( symbolAccess ) ? symbolAccess : resultingAccess;
 					else
 						resultingAccess = symbolAccess;
 				} else {

@@ -39,14 +39,14 @@ public class ParserFactory {
 
 	private static IParserExtensionFactory extensionFactory = new ParserExtensionFactory( ExtensionDialect.GCC );
 	
-	public static IASTFactory createASTFactory( ParserMode mode, ParserLanguage language )
+	public static IASTFactory createASTFactory( IFilenameProvider provider, ParserMode mode, ParserLanguage language )
 	{
 		if( mode == ParserMode.QUICK_PARSE )
 			return new QuickParseASTFactory( extensionFactory.createASTExtensionFactory( ParserMode.QUICK_PARSE ) );
 		else if( mode == ParserMode.EXPRESSION_PARSE )
 			return new ExpressionParseASTFactory( extensionFactory.createASTExtensionFactory( ParserMode.EXPRESSION_PARSE ) );
 		else
-			return new CompleteParseASTFactory( language, mode, extensionFactory.createASTExtensionFactory( ParserMode.COMPLETE_PARSE ) ); 
+			return new CompleteParseASTFactory( provider, language, mode, extensionFactory.createASTExtensionFactory( ParserMode.COMPLETE_PARSE ) ); 
 	}
 	
     public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode, ParserLanguage language, IParserLogService log ) throws ParserFactoryError

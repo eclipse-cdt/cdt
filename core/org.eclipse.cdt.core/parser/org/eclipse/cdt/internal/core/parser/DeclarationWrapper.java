@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.ASTSemanticException;
@@ -307,7 +308,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     /**
      * @param requestor
      */
-    public List createASTNodes(IASTFactory astFactory) throws ASTSemanticException
+    public List createASTNodes(IASTFactory astFactory) throws ASTSemanticException, BacktrackException
     {
         this.astFactory = astFactory;
         Iterator i = declarators.iterator();
@@ -319,7 +320,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
     /**
      * @param declarator
      */
-    private IASTDeclaration createASTNode(Declarator declarator) throws ASTSemanticException
+    private IASTDeclaration createASTNode(Declarator declarator) throws ASTSemanticException, BacktrackException
     {
         boolean isWithinClass = (getScope() instanceof IASTClassSpecifier); //TODO fix this for COMPLETE_PARSE
         boolean isFunction = declarator.isFunction();
@@ -350,7 +351,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
      * @param declarator
      * @return
      */
-    private IASTDeclaration createIndirectDeclaration(Declarator declarator) throws ASTSemanticException
+    private IASTDeclaration createIndirectDeclaration(Declarator declarator) throws BacktrackException, ASTSemanticException
     {    
         if( declarator.getOwnedDeclarator().getOwnedDeclarator() == null )
         {
@@ -383,9 +384,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
         	
 			List convertedParms = createParameterList( declarator.getParameters() );        	
         	IASTAbstractDeclaration abs = null;
-            try
-            {
-                abs =
+            abs =
                     astFactory.createAbstractDeclaration(
                         constt,
                         volatil,
@@ -394,44 +393,20 @@ public class DeclarationWrapper implements IDeclaratorOwner
                         declarator.getArrayModifiers(),
                         convertedParms,
                         (ASTPointerOperator)i.next());
-            }
-            catch (Exception e)
-            {
-                throw new ASTSemanticException();
-            }
         	String name = ( d.getPointerOperatorNameDuple() != null ) ? d.getPointerOperatorNameDuple().toString() + d.getName() : d.getName(); 
         	if( typedef )
-				try
-                {
-                    return astFactory.createTypedef(
-                    	scope,
-                    	name,
-                    	abs, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine() );
-                }
-                catch (ASTSemanticException e1)
-                {
-                    throw e1;
-                }
-                catch (Exception e1)
-                {
-                    throw new ASTSemanticException();
-                } 
+				return astFactory.createTypedef(scope, name, abs,
+						getStartingOffset(), getStartingLine(), d
+								.getNameStartOffset(), d.getNameEndOffset(), d
+								.getNameLine());
         	else
-        		try
-                {
-                    return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );
-                }
-                catch (Exception e2)
-                {
-                    throw new ASTSemanticException();
-                }
+        		return astFactory.createVariable( scope, name, auto, d.getInitializerClause(), d.getBitFieldExpression(), abs, mutable, extern, register, staticc, getStartingOffset(), getStartingLine(), d.getNameStartOffset(), d.getNameEndOffset(), d.getNameLine(), d.getConstructorExpression() );
         	
         }
         else
         {
-        	throw new ASTSemanticException(); 	
+        	throw new BacktrackException();
         }
-        
     }
     
     /**
@@ -440,25 +415,14 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     private IASTTypedefDeclaration createTypedef(Declarator declarator, boolean nested ) throws ASTSemanticException
     {
-        try
-        {
-            return astFactory.createTypedef(
-                scope,
-                nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
-                astFactory.createAbstractDeclaration(
-                    constt,
-                    volatil,
-                    getTypeSpecifier(),
-                    declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null), startingOffset, getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine());
-        }
-        catch (ASTSemanticException e)
-        {
-            throw e;
-        }
-        catch (Exception e)
-        {
-            throw new ASTSemanticException();
-        }
+		return astFactory.createTypedef(scope, nested ? declarator
+				.getOwnedDeclarator().getName() : declarator.getName(),
+				astFactory.createAbstractDeclaration(constt, volatil,
+						getTypeSpecifier(), declarator.getPointerOperators(),
+						declarator.getArrayModifiers(), null, null),
+				startingOffset, getStartingLine(), declarator
+						.getNameStartOffset(), declarator.getNameEndOffset(),
+				declarator.getNameLine());
     }
     /**
      * @param declarator
@@ -466,41 +430,24 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     private IASTMethod createMethodASTNode(Declarator declarator, boolean nested) throws ASTSemanticException
     {
-        try
-        {
-            return astFactory
-                .createMethod(
-                    scope,
-                    nested ? declarator.getOwnedDeclarator().getNameDuple() : declarator.getNameDuple(),
-            		createParameterList(declarator.getParameters()),
-                    astFactory.createAbstractDeclaration(
-                        constt,
-            			volatil,
-                        getTypeSpecifier(),
-                        declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null),
-                    declarator.getExceptionSpecification(),
-                    inline,
-                    friend,
-                    staticc,
-                    startingOffset,
-                    getStartingLine(),
-                    declarator.getNameStartOffset(),
-                    declarator.getNameEndOffset(),
-                    declarator.getNameLine(),
-                    templateDeclaration,
-                    declarator.isConst(),
-                    declarator.isVolatile(),
-                    virtual, explicit, 
-                    declarator.isPureVirtual(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode(), declarator.getConstructorMemberInitializers(), declarator.hasFunctionBody(), declarator.hasFunctionTryBlock(), declarator.isVarArgs());
-        }
-        catch (ASTSemanticException e)
-        {
-            throw e;
-        }
-        catch (Exception e)
-        {
-            throw new ASTSemanticException();
-        }
+		return astFactory.createMethod(scope, nested ? declarator
+				.getOwnedDeclarator().getNameDuple() : declarator
+				.getNameDuple(),
+				createParameterList(declarator.getParameters()), astFactory
+						.createAbstractDeclaration(constt, volatil,
+								getTypeSpecifier(), declarator
+										.getPointerOperators(), declarator
+										.getArrayModifiers(), null, null),
+				declarator.getExceptionSpecification(), inline, friend,
+				staticc, startingOffset, getStartingLine(), declarator
+						.getNameStartOffset(), declarator.getNameEndOffset(),
+				declarator.getNameLine(), templateDeclaration, declarator
+						.isConst(), declarator.isVolatile(), virtual, explicit,
+				declarator.isPureVirtual(), ((IASTClassSpecifier) scope)
+						.getCurrentVisibilityMode(), declarator
+						.getConstructorMemberInitializers(), declarator
+						.hasFunctionBody(), declarator.hasFunctionTryBlock(),
+				declarator.isVarArgs());
     }
     /**
      * @param declarator
@@ -508,41 +455,23 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     private IASTFunction createFunctionASTNode(Declarator declarator, boolean nested) throws ASTSemanticException
     {
-        try
-        {
-            return astFactory.createFunction(
-                scope,
-            	nested ? declarator.getOwnedDeclarator().getNameDuple() : declarator.getNameDuple(),
-                createParameterList(declarator.getParameters()),
-                astFactory.createAbstractDeclaration(
-                    constt,
-            		volatil,
-                    getTypeSpecifier(),
-                    declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null),
-                declarator.getExceptionSpecification(),
-                inline,
-                friend,
-                staticc,
-                startingOffset,
-                getStartingLine(),
-                declarator.getNameStartOffset(),
-            declarator.getNameEndOffset(),
-            declarator.getNameLine(),
-            templateDeclaration,
-            declarator.isConst(),
-            declarator.isVolatile(),
-            virtual,
-            explicit, declarator.isPureVirtual(), declarator.getConstructorMemberInitializers(), 
-			declarator.hasFunctionBody(), declarator.hasFunctionTryBlock(), declarator.isVarArgs() );
-        }
-        catch (ASTSemanticException e)
-        {
-            throw e;
-        }
-        catch (Exception e)
-        {
-            throw new ASTSemanticException();
-        }
+		return astFactory.createFunction(scope, nested ? declarator
+				.getOwnedDeclarator().getNameDuple() : declarator
+				.getNameDuple(),
+				createParameterList(declarator.getParameters()), astFactory
+						.createAbstractDeclaration(constt, volatil,
+								getTypeSpecifier(), declarator
+										.getPointerOperators(), declarator
+										.getArrayModifiers(), null, null),
+				declarator.getExceptionSpecification(), inline, friend,
+				staticc, startingOffset, getStartingLine(), declarator
+						.getNameStartOffset(), declarator.getNameEndOffset(),
+				declarator.getNameLine(), templateDeclaration, declarator
+						.isConst(), declarator.isVolatile(), virtual, explicit,
+				declarator.isPureVirtual(), declarator
+						.getConstructorMemberInitializers(), declarator
+						.hasFunctionBody(), declarator.hasFunctionTryBlock(),
+				declarator.isVarArgs());
     }
     /**
      * @param declarator
@@ -550,9 +479,7 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     private IASTField createFieldASTNode(Declarator declarator, boolean nested) throws ASTSemanticException
     {
-        try
-        {
-            return astFactory.createField(
+       return astFactory.createField(
                 scope,
             	nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
                 auto,
@@ -570,16 +497,8 @@ public class DeclarationWrapper implements IDeclaratorOwner
                 startingOffset,
                 getStartingLine(),
             	declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression(), ((IASTClassSpecifier)scope).getCurrentVisibilityMode());
-        }
-        catch (ASTSemanticException e)
-        {
-            throw e;
-        }
-        catch (Exception e)
-        {
-            throw new ASTSemanticException();
-        }
     }
+
     private List createParameterList(List currentParameters) throws ASTSemanticException
     {
         List result = new ArrayList();
@@ -591,23 +510,17 @@ public class DeclarationWrapper implements IDeclaratorOwner
             while (j.hasNext())
             {
                 Declarator declarator = (Declarator)j.next();
-                try
-                {
-                    result.add(
-                        astFactory.createParameterDeclaration(
-                            wrapper.isConst(),
-                            wrapper.isVolatile(),
-                            wrapper.getTypeSpecifier(),
-                            declarator.getPointerOperators(),
-                            declarator.getArrayModifiers(),
-                            null, null, declarator.getName() == null
-                                            ? "" //$NON-NLS-1$
-                                            : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), getEndLine()));
-                }
-                catch (Exception e)
-                {
-                    throw new ASTSemanticException();
-                }
+
+                result.add(
+                    astFactory.createParameterDeclaration(
+                        wrapper.isConst(),
+                        wrapper.isVolatile(),
+                        wrapper.getTypeSpecifier(),
+                        declarator.getPointerOperators(),
+                        declarator.getArrayModifiers(),
+                        null, null, declarator.getName() == null
+                                        ? "" //$NON-NLS-1$
+                                        : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), wrapper.getEndOffset(), getEndLine()));
             }
         }
         return result;
@@ -618,34 +531,24 @@ public class DeclarationWrapper implements IDeclaratorOwner
      */
     private IASTVariable createVariableASTNode(Declarator declarator, boolean nested ) throws ASTSemanticException
     {
-        try
-        {
-            return astFactory.createVariable(
-                scope,
-            	nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
-                isAuto(),
-                declarator.getInitializerClause(),
-                declarator.getBitFieldExpression(),
-                astFactory.createAbstractDeclaration(
-                    constt,
-                    volatil,
-                    getTypeSpecifier(),
-                    declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null),
-                mutable,
-                extern,
-                register,
-                staticc,
-                getStartingOffset(),
-                getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression());
-        }
-        catch (ASTSemanticException e)
-        {
-            throw e;
-        }
-        catch (Exception e)
-        {
-            throw new ASTSemanticException();
-        }
+        return astFactory.createVariable(
+            scope,
+        	nested ? declarator.getOwnedDeclarator().getName() : declarator.getName(),
+            isAuto(),
+            declarator.getInitializerClause(),
+            declarator.getBitFieldExpression(),
+            astFactory.createAbstractDeclaration(
+                constt,
+                volatil,
+                getTypeSpecifier(),
+                declarator.getPointerOperators(), declarator.getArrayModifiers(), null, null),
+            mutable,
+            extern,
+            register,
+            staticc,
+            getStartingOffset(),
+            getStartingLine(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), declarator.getNameLine(), declarator.getConstructorExpression());
+
     }        
     
     /* (non-Javadoc)

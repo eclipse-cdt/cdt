@@ -1,3 +1,6 @@
+2004-03-03 John Camelon
+	Updated tests to deal with IASTUsingDeclaration interface changes.  
+
 2004-03-02 Sean Evoy
 	Added tests to verify that the tool command canbe set through the 
 	IConfiguration interface in the testConfigurations() method, and 

@@ -67,11 +67,12 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
 import org.eclipse.cdt.core.parser.ast.extension.IASTExpressionExtension;
 import org.eclipse.cdt.core.parser.ast.extension.IASTExtensionFactory;
+import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 
 /**
  * @author jcamelon
  */
-public class ExpressionParseASTFactory implements IASTFactory {
+public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFactory {
 
 	private final IASTExtensionFactory extensionFactory;
 
@@ -913,5 +914,6 @@ public class ExpressionParseASTFactory implements IASTFactory {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

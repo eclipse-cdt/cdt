@@ -25,7 +25,7 @@ public class Enum
     /**
      * @return
      */
-    public int getEnumValue()
+    protected int getEnumValue()
     {
         return enumValue;
     }

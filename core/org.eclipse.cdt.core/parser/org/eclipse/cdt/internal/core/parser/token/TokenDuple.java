@@ -28,6 +28,7 @@ public class TokenDuple implements ITokenDuple {
 
 	public TokenDuple( IToken first, IToken last )
 	{
+//		assert ( first != null && last != null ) : this; 
 		firstToken = first; 
 		lastToken = last; 
 	}
@@ -190,4 +191,22 @@ public class TokenDuple implements ITokenDuple {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getEndOffset()
+	 */
+	public int getEndOffset() {
+		return getLastToken().getEndOffset();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getLineNumber()
+	 */
+	public int getLineNumber() {
+		return getFirstToken().getLineNumber();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#getStartOffset()
+	 */
+	public int getStartOffset() {
+		return getFirstToken().getOffset();
+	}
 }

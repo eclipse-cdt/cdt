@@ -12,13 +12,14 @@ package org.eclipse.cdt.internal.core.parser;
 
 import org.eclipse.cdt.core.parser.BacktrackException;
 import org.eclipse.cdt.core.parser.EndOfFileException;
+import org.eclipse.cdt.core.parser.IFilenameProvider;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 
 /**
  * @author jcamelon
  */
-public interface IExpressionParser {
+public interface IExpressionParser extends IFilenameProvider {
 
 	/**
 	 * Request a parse from a pre-configured parser to parse an expression.    

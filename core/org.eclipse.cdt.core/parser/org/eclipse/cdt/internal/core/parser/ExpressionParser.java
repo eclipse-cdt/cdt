@@ -71,8 +71,9 @@ public class ExpressionParser implements IExpressionParser {
 	 * @param language
 	 */
 	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
-		astFactory = ParserFactory.createASTFactory( ParserMode.EXPRESSION_PARSE, language);
+		astFactory = ParserFactory.createASTFactory( this, ParserMode.EXPRESSION_PARSE, language);
 		scanner.setASTFactory(astFactory);
+		astFactory.setLogger(log);
 	}
 
 	/**
@@ -2506,6 +2507,10 @@ public class ExpressionParser implements IExpressionParser {
 	    {
 	        throw backtrack;
 	    }
+	}
+
+	public char[] getCurrentFilename() {
+		return scanner.getCurrentFilename();
 	}
 
 }

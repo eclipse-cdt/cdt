@@ -38,8 +38,7 @@ public class StructuralParser extends Parser implements IParser {
 	 */
 	public StructuralParser(IScanner scanner, ISourceElementRequestor ourCallback, ParserLanguage language, IParserLogService logService) {
 		super(scanner, ourCallback, language, logService);
-		astFactory = ParserFactory.createASTFactory( ParserMode.COMPLETE_PARSE, language);
-		scanner.setASTFactory(astFactory);
+		setupASTFactory(scanner, language );
 	}
 
 	/* (non-Javadoc)
@@ -74,6 +73,13 @@ public class StructuralParser extends Parser implements IParser {
 	}
 	
 
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setupASTFactory(org.eclipse.cdt.core.parser.IScanner, org.eclipse.cdt.core.parser.ParserLanguage)
+	 */
+	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
+		astFactory = ParserFactory.createASTFactory( this, ParserMode.COMPLETE_PARSE, language);
+		scanner.setASTFactory(astFactory);
+		astFactory.setLogger(log);
+	}
 
 }

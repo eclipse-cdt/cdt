@@ -196,11 +196,11 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertEquals( directive.getNamespaceDefinition(), namespaceB );
 		assertEquals( directive.getNamespaceName(), "A::B" );
 		IASTUsingDeclaration declaration = (IASTUsingDeclaration)declarations.next();
-		assertEquals( declaration.getUsingType(), variableX );
+		assertEquals( declaration.getUsingTypes().next(), variableX );
 		declaration = (IASTUsingDeclaration)declarations.next();
-		assertEquals( declaration.getUsingType(), classC );
+		assertEquals( declaration.getUsingTypes().next(), classC );
 		declaration = (IASTUsingDeclaration)declarations.next();
-		assertEquals( declaration.getUsingType(), fieldY );
+		assertEquals( declaration.getUsingTypes().next(), fieldY );
 		assertEquals( callback.getReferences().size(), 12 );
 		
 	}

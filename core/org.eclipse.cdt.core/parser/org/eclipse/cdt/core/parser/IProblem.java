@@ -13,8 +13,11 @@ package org.eclipse.cdt.core.parser;
 import java.util.Map;
 
 /**
- * Description of a C/C++ problem, as detected by the translation or some of the underlying
- * technology reusing it. 
+ * @author jcamelon
+ *
+ * Description of a C/C++ parse/compilation problem, as detected by the parser or some of the underlying
+ * clients of the parser. 
+ * 
  * A problem provides access to:
  * <ul>
  * <li> its location (originating source file name, source position, line number), </li>
@@ -25,6 +28,8 @@ import java.util.Map;
  */
 public interface IProblem
 {
+
+
 
 	/**
 	 * Returns the problem id
@@ -206,6 +211,21 @@ public interface IProblem
 	public static final String A_SCANNER_BADCHAR = null;
 
 	/**
+	 * A_SYMBOL_NAME  - symbol name 
+	 */
+	public static final String A_SYMBOL_NAME = "symbol name";
+	
+	/**
+	 * A_NAMESPACE_NAME = namespace name
+	 */
+	public static final String A_NAMESPACE_NAME = "namespace name";
+	
+	/**
+	 * A_TYPE_NAME - type name 
+	 */
+	public static final String A_TYPE_NAME = "type name";
+	
+	/**
 	 * Below are listed all available problem IDs. Note that this list could be augmented in the future, 
 	 * as new features are added to the C/C++ core implementation.
 	 */
@@ -320,14 +340,14 @@ public interface IProblem
 	public final static int PREPROCESSOR_MACRO_USAGE_ERROR = PREPROCESSOR_RELATED | 0x009;
 	
 	/**
-	 *	Invalid Macro Pasting encountered by Preprocessor. 
+	 * Invalid Macro Pasting encountered by Preprocessor. 
 	 * Required attributes: A_PREPROC_MACRO_NAME
 	 * @see #A_PREPROC_MACRO_NAME
 	 */
 	public final static int PREPROCESSOR_MACRO_PASTING_ERROR = PREPROCESSOR_RELATED | 0x00A;
 	
 	/**
-	 *	Circular inclusion encountered by Preprocessor.  
+	 * Circular inclusion encountered by Preprocessor.  
 	 * Required attributes: A_PREPROC_INCLUDE_FILENAME
 	 * @see #A_PREPROC_INCLUDE_FILENAME
 	 */	
@@ -340,10 +360,72 @@ public interface IProblem
 	/*
 	 * Parser Semantic Problems
 	 */
+	
+	/**
+	 * Attempt to add a unique symbol, yet the value was already defined.
+	 * Require attributes: A_SYMBOL_NAME
+	 * @see #A_SYMBOL_NAME  
+	 */
+	public final static int SEMANTIC_UNIQUE_NAME_PREDEFINED = SEMANTICS_RELATED | 0x001;
+	
+	/**
+	 * Attempt to use a symbol that was not found. 
+	 * Require attributes: A_SYMBOL_NAME
+	 * @see #A_SYMBOL_NAME  
+	 */	
+	public final static int SEMANTIC_NAME_NOT_FOUND = SEMANTICS_RELATED | 0x002;
 
 	/**
-	 * ID reserved for referencing an internal error inside the CCorePlugin implementation which
-	 * may be surfaced as a problem associated with the translation unit which caused it to occur.
+	 * Name not provided in context that it was required.   
+	 * Require attributes: none
 	 */
-	public final static int UNCLASSIFIED_ERROR = 0;
+	public final static int SEMANTIC_NAME_NOT_PROVIDED = SEMANTICS_RELATED | 0x003;
+
+	/**
+	 * Invalid overload of a particular name.
+	 * Required attributes: A_SYMBOL_NAME
+	 * @see #A_SYMBOL_NAME  
+	 */
+	public static final int SEMANTIC_INVALID_OVERLOAD = SEMANTICS_RELATED | 0x004;
+
+	/**
+	 * Invalid using directive.  
+	 * Required attributes: A_NAMESPACE_NAME
+	 * @see #A_NAMESPACE_NAME
+	 */
+	public static final int SEMANTIC_INVALID_USING = SEMANTICS_RELATED | 0x005;
+	
+	/**
+	 * Ambiguous lookup for given name. 
+	 * Required attributes: A_SYMBOL_NAME
+	 * @see #A_SYMBOL_NAME
+	 */
+	public static final int SEMANTIC_AMBIGUOUS_LOOKUP = SEMANTICS_RELATED | 0x006;
+
+	/**
+	 * Invalid type provided
+	 * Required attribugtes: A_TYPE_NAME
+	 * @see #A_TYPE_NAME
+	 */
+	public static final int SEMANTIC_INVALID_TYPE = SEMANTICS_RELATED | 0x007;
+
+	public static final int SEMANTIC_CIRCULAR_INHERITANCE = SEMANTICS_RELATED | 0x008;
+
+	public static final int SEMANTIC_INVALID_TEMPLATE = SEMANTICS_RELATED | 0x009;
+
+	public static final int SEMANTIC_BAD_VISIBILITY = SEMANTICS_RELATED | 0x00A;
+
+	public static final int SEMANTIC_UNABLE_TO_RESOLVE_FUNCTION = SEMANTICS_RELATED | 0x00B;
+
+	public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENT = SEMANTICS_RELATED | 0x00C;
+
+	public static final int SEMANTIC_INVALID_TEMPLATE_PARAMETER = SEMANTICS_RELATED | 0x00D;
+
+	public static final int SEMANTIC_REDECLARED_TEMPLATE_PARAMETER = SEMANTICS_RELATED | 0x00E;
+
+	public static final int SEMANTIC_INVALID_CONVERSION_TYPE = SEMANTICS_RELATED | 0x00F;
+
+	public static final int SEMANTIC_MALFORMED_EXPRESSION = SEMANTICS_RELATED | 0x010;
+
+	public static final int SEMANTIC_ILLFORMED_FRIEND = SEMANTICS_RELATED | 0x011;
 }

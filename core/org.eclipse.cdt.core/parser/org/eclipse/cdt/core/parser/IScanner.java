@@ -8,7 +8,7 @@ import org.eclipse.cdt.core.parser.ast.IASTFactory;
  * @author jcamelon
  *
  */
-public interface IScanner  {
+public interface IScanner  extends IFilenameProvider {
 
 	public static final String __CPLUSPLUS = "__cplusplus"; //$NON-NLS-1$
 	public static final String __STDC_VERSION__ = "__STDC_VERSION__"; //$NON-NLS-1$

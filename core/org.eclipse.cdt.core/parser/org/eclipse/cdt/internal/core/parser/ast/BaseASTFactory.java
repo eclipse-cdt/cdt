@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.parser.ast;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
+import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
@@ -30,6 +31,8 @@ import org.eclipse.cdt.core.parser.ast.IASTDesignator.DesignatorKind;
  *
  */
 public class BaseASTFactory  {
+
+	protected IParserLogService logService;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createMacro(java.lang.String, int, int, int)
@@ -63,6 +66,10 @@ public class BaseASTFactory  {
         		fieldIdentifier == null ? "" : fieldIdentifier.getImage(),  //$NON-NLS-1$
         		fieldIdentifier == null ? -1 : fieldIdentifier.getOffset() );
     }
+
+	public void setLogger(IParserLogService log) {
+		logService = log;
+	}
 
 
 }

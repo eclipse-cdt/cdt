@@ -10,6 +10,8 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser.ast;
 
+import java.util.Iterator;
+
 /**
  * @author jcamelon
  *
@@ -17,7 +19,7 @@ package org.eclipse.cdt.core.parser.ast;
 public interface IASTUsingDeclaration extends IASTDeclaration, IASTOffsetableElement {
 
 	public boolean isTypename(); 
-	public String  usingTypeName(); 
-	public IASTDeclaration getUsingType() throws ASTNotImplementedException; 
+	public String usingTypeName(); 
+	public Iterator getUsingTypes() throws ASTNotImplementedException; 
 			 
 }

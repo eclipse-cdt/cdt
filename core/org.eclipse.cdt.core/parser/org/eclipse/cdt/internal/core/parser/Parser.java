@@ -123,7 +123,6 @@ public abstract class Parser extends ExpressionParser implements IParser
      */
     protected void translationUnit()
     {
-  
         try
         {
             compilationUnit = astFactory.createCompilationUnit();
@@ -1649,7 +1648,8 @@ public abstract class Parser extends ExpressionParser implements IParser
                 eck = ASTClassKind.ENUM;
                 break;
             default :
-                break;
+                backup( t );
+            	throw backtrack;
         }
  
         ITokenDuple d = name(sdw.getScope(), CompletionKind.TYPE_REFERENCE);
@@ -2991,5 +2991,4 @@ public abstract class Parser extends ExpressionParser implements IParser
 	 */
 	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
 	}
-
 }

@@ -160,8 +160,9 @@ public class CompletionParser extends ContextualParser implements IParser {
 	 * @see org.eclipse.cdt.internal.core.parser.ExpressionParser#setupASTFactory(org.eclipse.cdt.core.parser.IScanner, org.eclipse.cdt.core.parser.ParserLanguage)
 	 */
 	protected void setupASTFactory(IScanner scanner, ParserLanguage language) {
-		astFactory = ParserFactory.createASTFactory( ParserMode.COMPLETION_PARSE, language);
+		astFactory = ParserFactory.createASTFactory( this, ParserMode.COMPLETION_PARSE, language);
 		scanner.setASTFactory(astFactory);
+		astFactory.setLogger(log);
 	}
 
 }

@@ -10,14 +10,15 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
-import org.eclipse.cdt.core.parser.ast.IASTOffsetableNamedElement;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration;
 import org.eclipse.cdt.internal.core.parser.ast.Offsets;
+import org.eclipse.cdt.internal.core.parser.ast.SymbolIterator;
 
 /**
  * @author jcamelon
@@ -27,18 +28,20 @@ public class ASTUsingDeclaration extends ASTNode implements IASTUsingDeclaration
 {
 	private final IASTScope ownerScope;
     private final boolean isTypeName;
-	private final IASTDeclaration declaration; 
+	private final List declarations = new ArrayList(); 
 	private Offsets offsets = new Offsets();
-	private final ASTReferenceStore delegate; 
+	private final ASTReferenceStore delegate;
+	private String name; 
 	
     /**
      * 
      */
-    public ASTUsingDeclaration( IASTScope ownerScope, IASTDeclaration declaration, boolean isTypeName, int startingOffset, int startingLine, int endingOffset, int endingLine, List references )
+    public ASTUsingDeclaration( IASTScope ownerScope, String name, List declarations, boolean isTypeName, int startingOffset, int startingLine, int endingOffset, int endingLine, List references )
     {
     	this.ownerScope = ownerScope;
     	this.isTypeName = isTypeName;
-    	this.declaration = declaration;
+    	this.name = name;
+    	this.declarations.addAll( declarations );
     	setStartingOffsetAndLineNumber(startingOffset, startingLine);
     	setEndingOffsetAndLineNumber(endingOffset, endingLine);
     	delegate = new ASTReferenceStore( references );
@@ -55,7 +58,7 @@ public class ASTUsingDeclaration extends ASTNode implements IASTUsingDeclaration
      */
     public String usingTypeName()
     {
-        return ((IASTOffsetableNamedElement)declaration).getName();
+        return name;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTOffsetableElement#setStartingOffset(int)
@@ -122,9 +125,9 @@ public class ASTUsingDeclaration extends ASTNode implements IASTUsingDeclaration
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTUsingDeclaration#getUsingType()
      */
-    public IASTDeclaration getUsingType()
+    public Iterator getUsingTypes()
     {
-        return declaration;
+        return new SymbolIterator( declarations.iterator() );
     }
     
     /* (non-Javadoc)

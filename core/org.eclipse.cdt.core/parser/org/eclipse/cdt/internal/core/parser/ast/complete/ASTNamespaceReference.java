@@ -27,12 +27,12 @@ public class ASTNamespaceReference
 
     /**
      * @param offset
-     * @param string
+     * @param referencedElementName
      * @param definition
      */
-    public ASTNamespaceReference(int offset, String string, IASTNamespaceDefinition definition)
+    public ASTNamespaceReference(int offset, String referencedElementName, IASTNamespaceDefinition definition)
     {
-		super(offset, string);        
+		super(offset, referencedElementName);        
         reference = definition; 
     }
 

@@ -22,8 +22,9 @@ import org.eclipse.cdt.internal.core.parser.problem.*;
  */
 public class ScannerProblemFactory extends BaseProblemFactory implements IProblemFactory
 {
-	protected static Map errorMessages = new HashMap();
+	protected static final Map errorMessages;
 	static {
+		errorMessages = new HashMap();
 		errorMessages.put(
 			new Integer(IProblem.PREPROCESSOR_POUND_ERROR),
 			"#error encountered with text: ");

@@ -189,7 +189,6 @@ public abstract class FindAction extends Action {
 		} 
 		catch (ParseError er){
 			ParseErrorKind per = er.getErrorKind();
-			int val = per.getEnumValue();
 			er.printStackTrace();
 		}
 		catch (Exception ex){

@@ -42,4 +42,7 @@ public interface ITokenDuple {
 	public int findLastTokenType( int type );
 	
 	public IASTNode lookup( IASTFactory factory, IASTScope scope );
+	public int getStartOffset();
+	public int getEndOffset();
+	public int getLineNumber();
 }

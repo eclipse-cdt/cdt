@@ -122,7 +122,7 @@ public class Value extends CObject implements ICDIValue {
 
 			}
 		} catch (MIException e) {
-			//throw new CDIException(e.getMessage());
+			throw new CDIException(e.getMessage());
 		}
 		return variables;
 	}

@@ -449,34 +449,34 @@
          </action>
       </viewerContribution>
       <viewerContribution
-            targetID="#ASMEditorRulerContext"
+            targetID="#ASMEditorContext"
             id="org.eclipse.cdt.debug.ui.AsmEditorPopupActions">
          <action
-               menubarPath="additions"
-               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
-               icon="icons/full/obj16/expression_obj.gif"
                label="%AddExpressionAction.label"
-               id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
-               helpContextId="add_expression_action_context">
+               icon="icons/full/obj16/expression_obj.gif"
+               helpContextId="add_expression_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionActionDelegate">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>
          <action
-               menubarPath="additions"
-               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
-               icon="icons/full/clcl16/runtoline_co.gif"
                label="%RunToLineAction.label"
+               icon="icons/full/clcl16/runtoline_co.gif"
+               helpContextId="run_to_line_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
                enablesFor="1"
-               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate"
-               helpContextId="run_to_line_action_context">
+               id="org.eclipse.cdt.debug.internal.ui.actions.RunToLineActionDelegate">
             <enablement>
                <pluginState
-                     id="org.eclipse.cdt.debug.ui"
-                     value="activated">
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
                </pluginState>
             </enablement>
          </action>

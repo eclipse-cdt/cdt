@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IEnumeration;
+import org.eclipse.cdt.core.model.IEnumerator;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IFunction;
 import org.eclipse.cdt.core.model.IFunctionDeclaration;
@@ -160,13 +161,16 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 				// add the whole signature
 				IFunctionDeclaration function = (IFunctionDeclaration)element;
 				name.append(getElementQualifiedName(element.getParent()));
-				if(name.length() > 0)
-					name.append("::");
+				name.append("::");
 				name.append(function.getSignature());
 			} else {
-				name.append(getElementQualifiedName(element.getParent()));
-				if(name.length() > 0)
-					name.append("::");
+				if (element instanceof IEnumerator) {
+					IEnumeration enum = (IEnumeration) element.getParent();
+					name.append(getElementQualifiedName(enum.getParent()));					
+				}else {
+					name.append(getElementQualifiedName(element.getParent()));
+				}
+				name.append("::");
 				name.append(element.getElementName());				
 			}
 			return name.toString();
@@ -476,6 +480,15 @@ public class RenameElementProcessor extends RenameProcessor implements IReferenc
 			}else {
 				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
 						ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, false ));				
+			}
+		} 		
+		else if(fCElement instanceof IEnumerator){
+			if(updateReferences){
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.ENUMTOR, ICSearchConstants.ALL_OCCURRENCES, false ));
+			}else {
+				orPattern.addPattern(SearchEngine.createSearchPattern( searchPrefix,	
+						ICSearchConstants.ENUMTOR, ICSearchConstants.DECLARATIONS, false ));				
 			}
 		} 		
 		else if(fCElement instanceof IField){

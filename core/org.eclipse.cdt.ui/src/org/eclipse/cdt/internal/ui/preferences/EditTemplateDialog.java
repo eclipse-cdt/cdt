@@ -278,28 +278,19 @@ public class EditTemplateDialog extends StatusDialog {
 		createLabel(parent, TemplateMessages.getString("EditTemplateDialog.description")); //$NON-NLS-1$		
 		fDescriptionText= createText(parent);
 
-		composite= new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		layout= new GridLayout();		
-		layout.marginWidth= 0;
-		layout.marginHeight= 0;
-		composite.setLayout(layout);
-
-		createLabel(composite, TemplateMessages.getString("EditTemplateDialog.pattern")); //$NON-NLS-1$
+		createLabel(parent, TemplateMessages.getString("EditTemplateDialog.pattern")); //$NON-NLS-1$
 		fPatternEditor= createEditor(parent);
 		
-		Label filler= new Label(composite, SWT.NONE);		
-		filler.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+		fInsertVariableButton= new Button(parent, SWT.NONE);
+		GridData data = getButtonGridData(fInsertVariableButton);
 		
-		fInsertVariableButton= new Button(composite, SWT.NONE);
-		fInsertVariableButton.setLayoutData(getButtonGridData(fInsertVariableButton));
+		fInsertVariableButton.setLayoutData(data);
 		fInsertVariableButton.setText(TemplateMessages.getString("EditTemplateDialog.insert.variable")); //$NON-NLS-1$
 		fInsertVariableButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				fPatternEditor.getTextWidget().setFocus();
 				fPatternEditor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);			
 			}
-
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 
@@ -315,7 +306,6 @@ public class EditTemplateDialog extends StatusDialog {
 	private static GridData getButtonGridData(Button button) {
 		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint= SWTUtil.getButtonHeigthHint(button);
-	
 		return data;
 	}
 

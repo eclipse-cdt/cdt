@@ -1,3 +1,7 @@
+2004-06-14 Hoda Amer
+	Fix for PR 61043: Accessibility: Code Templates: New Template Pattern field accesskey broken
+	Fix for PR 63388: [Refactoring] items of an enumeration not working
+	
 2004-06-11 Bogdan Gheorghe
 	Fix for Bug 66016: Moved search related items from work in progress to search page
 	

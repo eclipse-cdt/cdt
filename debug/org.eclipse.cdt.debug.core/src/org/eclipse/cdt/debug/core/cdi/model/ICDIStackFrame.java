@@ -47,6 +47,8 @@ public interface ICDIStackFrame extends ICDIObject
 	
 	/**
 	 * Returns the level of the stack frame.
+	 * 
+	 * @return the level of the stack frame 
 	 */
 	int getLevel();
 }

@@ -3,21 +3,20 @@
  * All Rights Reserved.
  * 
  */
+
 package org.eclipse.cdt.debug.internal.core;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIArgument;
-import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
 import org.eclipse.debug.core.DebugException;
@@ -33,7 +32,8 @@ import org.eclipse.debug.core.model.IVariable;
  * @since Aug 7, 2002
  */
 public class CStackFrame extends CDebugElement
-						 implements IStackFrame, 
+						 implements IStackFrame,
+						 			IStackFrameInfo, 
 						 			ICDIEventListener
 {
 	/**
@@ -484,8 +484,6 @@ public class CStackFrame extends CDebugElement
 	 */
 	protected static boolean equalFrame( ICDIStackFrame frameOne, ICDIStackFrame frameTwo )
 	{
-		//return ( frameOne.getParent().equals( frameTwo.getParent() ) && 
-		//		 frameOne.getLocation().equals( frameTwo.getLocation() ) );
 		return ( frameOne != null && frameTwo != null && frameOne.getLocation().equals( frameTwo.getLocation() ) );
 	}
 
@@ -506,6 +504,10 @@ public class CStackFrame extends CDebugElement
 		if ( adapter == ICDIStackFrame.class )
 		{
 			return getCDIStackFrame();
+		}
+		if ( adapter == IStackFrameInfo.class )
+		{
+			return this;
 		}
 		return super.getAdapter( adapter );
 	}
@@ -575,5 +577,43 @@ public class CStackFrame extends CDebugElement
 		{
 			((CVariable)it.next()).dispose();
 		}
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getAddress()
+	 */
+	public long getAddress()
+	{
+		return getCDIStackFrame().getLocation().getAddress();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getFile()
+	 */
+	public String getFile()
+	{
+		return getCDIStackFrame().getLocation().getFile();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getFunction()
+	 */
+	public String getFunction()
+	{
+		return getCDIStackFrame().getLocation().getFunction();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getLevel()
+	 */
+	public int getLevel()
+	{
+		return getCDIStackFrame().getLevel();
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.IStackFrameInfo#getFrameLineNumber()
+	 */
+	public int getFrameLineNumber()
+	{
+		return getCDIStackFrame().getLocation().getLineNumber();
 	}
 }

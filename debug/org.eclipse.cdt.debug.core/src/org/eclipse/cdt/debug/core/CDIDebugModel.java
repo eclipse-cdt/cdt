@@ -195,7 +195,6 @@ public class CDIDebugModel {
 		attributes.put( IMarker.CHAR_START, new Integer( 0 ) );
 		attributes.put( IMarker.CHAR_END, new Integer( 0 ) );
 		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
-		attributes.put( IMarker.LINE_NUMBER, new Integer( -1 ) );
 		attributes.put( ICLineBreakpoint.ADDRESS, address.toHexAddressString() );
 		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
@@ -229,6 +228,53 @@ public class CDIDebugModel {
 	public static ICWatchpoint createWatchpoint( String sourceHandle, IResource resource, boolean writeAccess, boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
 		HashMap attributes = new HashMap( 10 );
 		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
+		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
+		attributes.put( ICBreakpoint.CONDITION, condition );
+		attributes.put( ICBreakpoint.SOURCE_HANDLE, sourceHandle );
+		attributes.put( ICWatchpoint.EXPRESSION, expression );
+		attributes.put( ICWatchpoint.READ, new Boolean( readAccess ) );
+		attributes.put( ICWatchpoint.WRITE, new Boolean( writeAccess ) );
+		return new CWatchpoint( resource, attributes, register );
+	}
+
+	/**
+	 * Creates and returns a watchpoint for the source defined by the given
+	 * source handle, at the given expression. The marker associated with the
+	 * watchpoint will be created on the specified resource.
+	 * 
+	 * @param sourceHandle the handle to the watchpoint source
+	 * @param resource the resource on which to create the associated watchpoint marker
+	 * @param charStart the first character index associated with the watchpoint, or
+	 *            -1 if unspecified, in the source file in which the watchpoint
+	 *            is set
+	 * @param charEnd the last character index associated with the watchpoint, or -1
+	 *            if unspecified, in the source file in which the watchpoint is
+	 *            set
+	 * @param lineNumber the lineNumber on which the watchpoint is set, or -1 if
+	 *            unspecified - line numbers are 1 based, associated with the
+	 *            source file in which the watchpoint is set
+	 * @param writeAccess whether this is write watchpoint
+	 * @param readAccess whether this is read watchpoint
+	 * @param expression the expression on which the watchpoint is set
+	 * @param enabled whether to enable or disable this breakpoint
+	 * @param ignoreCount the number of times this breakpoint will be ignored
+	 * @param condition the breakpoint condition
+	 * @param register whether to add this breakpoint to the breakpoint manager
+	 * @return a watchpoint
+	 * @throws CoreException if this method fails. Reasons include:
+	 *             <ul>
+	 *             <li>Failure creating underlying marker. The exception's
+	 *             status contains the underlying exception responsible for the
+	 *             failure.</li>
+	 *             </ul>
+	 */
+	public static ICWatchpoint createWatchpoint( String sourceHandle, IResource resource, int charStart, int charEnd, int lineNumber, boolean writeAccess, boolean readAccess, String expression, boolean enabled, int ignoreCount, String condition, boolean register ) throws CoreException {
+		HashMap attributes = new HashMap( 10 );
+		attributes.put( IBreakpoint.ID, getPluginIdentifier() );
+		attributes.put( IMarker.CHAR_START, new Integer( charStart ) );
+		attributes.put( IMarker.CHAR_END, new Integer( charEnd ) );
+		attributes.put( IMarker.LINE_NUMBER, new Integer( lineNumber ) );
 		attributes.put( IBreakpoint.ENABLED, new Boolean( enabled ) );
 		attributes.put( ICBreakpoint.IGNORE_COUNT, new Integer( ignoreCount ) );
 		attributes.put( ICBreakpoint.CONDITION, condition );

@@ -19,8 +19,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.ICSearchConstants;
 import org.eclipse.cdt.core.search.ICSearchPattern;
@@ -34,18 +34,15 @@ import org.eclipse.cdt.internal.core.search.PatternSearchJob;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.cdt.internal.core.search.matching.CSearchPattern;
 import org.eclipse.cdt.internal.core.sourcedependency.DependencyQueryJob;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.core.internal.resources.ResourceException;
+import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -116,11 +113,25 @@ import org.eclipse.core.runtime.Platform;
 		if (testProject.exists()){
 			try {
 				testProject.delete(true,monitor);
-			} catch (ResourceException e) {
 			} catch (CoreException e) {
+				fail(getMessage(e.getStatus()));
 			}
 		}
 	}
+	
+	private String getMessage(IStatus status) {
+		StringBuffer message = new StringBuffer("[");
+		message.append(status.getMessage());
+		if (status.isMultiStatus()) {
+			IStatus children[] = status.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				message.append(getMessage(children[i]));
+			}
+		}
+		message.append("]");
+		return message.toString();
+	}
+	
 	public void testDependencyTree() throws Exception{
    //Add a file to the project
    importFile("c.h","resources/dependency/c.h");
@@ -614,7 +625,8 @@ import org.eclipse.core.runtime.Platform;
 		   fail(e1.getMessage());
 	   }		  
 	   writer.close();
-	
+	   buff.close();
+	   
 	   FileInputStream buff2 = new FileInputStream(tempUtilFile);
 	   tempFile.setContents(buff2,true,false,null);
 	   tempFile.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -646,40 +658,8 @@ import org.eclipse.core.runtime.Platform;
 	*/
    private IProject createProject(String projectName) throws CoreException
    {
-	  IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-	  IProject project= root.getProject(projectName);
-	  IProject cproject = null;
-	  try{
-		  if (!project.exists()) {
-			project.create(null);
-		  } else {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		  }
-		  if (!project.isOpen()) {
-			project.open(null);
-		  }  
-		  
-		  //Fill out a project description
-		  IPath defaultPath = Platform.getLocation();
-		  IPath newPath = project.getFullPath();
-		  if (defaultPath.equals(newPath))
-			newPath = null;
-		  IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		  IProjectDescription description = workspace.newProjectDescription(project.getName());
-		  description.setLocation(newPath);
-		  //Create the project
-		  cproject = CCorePlugin.getDefault().createCProject(description,project,monitor,MakeCorePlugin.MAKE_PROJECT_ID); //.getCoreModel().create(project);
-		    
-		  if( !cproject.hasNature(CCProjectNature.CC_NATURE_ID) ){
-			  addNatureToProject(cproject, CCProjectNature.CC_NATURE_ID, null);
-		  }
-	  }
-	  catch (CoreException e){
-		 cproject = project;
-		 cproject.open(null);
-	  }
-	  
-	  return cproject;
+   		ICProject cproject = CProjectHelper.createCCProject(projectName, "bin");
+   		return cproject.getProject();
 	   
    }
 	
@@ -698,14 +678,4 @@ import org.eclipse.core.runtime.Platform;
 	  
 	  return file;
    }
-	
-   private void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
-		  IProjectDescription description = proj.getDescription();
-		  String[] prevNatures= description.getNatureIds();
-		  String[] newNatures= new String[prevNatures.length + 1];
-		  System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		  newNatures[prevNatures.length]= natureId;
-		  description.setNatureIds(newNatures);
-		  proj.setDescription(description, monitor);
-	}
 }

@@ -19,7 +19,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.util.ExpectedStrings;
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -55,24 +54,7 @@ public class BinaryTests extends TestCase {
         super(name);
         
     }
-    
-    /**
-     * @see java.lang.Object#finalize()
-     */
-    protected void finalize() throws Throwable {
-        super.finalize();
-
-        /**
-         * Make sure we leave the workspace clean for the next set of tests
-         */
-		try{
-		   CProjectHelper.delete(testProject);
-		 } 
-		 catch (ResourceException e) {} 
-		 catch (CoreException e) {}
-    }
-
-    
+        
     /**
      * Sets up the test fixture.
      *
@@ -182,15 +164,7 @@ public class BinaryTests extends TestCase {
      * Called after every test case method.
      */
     protected void tearDown() throws CoreException, InterruptedException {
-    	/* Let everything settle down before we try to delete the project. 
-    	 */
-		Thread.sleep(500);
-		try{
-		  CProjectHelper.delete(testProject);
-		} 
-		catch (ResourceException e) {} 
-		catch (CoreException e) {}
-        
+    	CProjectHelper.delete(testProject);
     }
     
     public static TestSuite suite() {

@@ -8,15 +8,20 @@
 ***********************************************************************/
 package org.eclipse.cdt.testplugin;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICOwner;
 import org.eclipse.core.runtime.CoreException;
 
 public class TestProject implements ICOwner {
 
-	public void configure(ICDescriptor cproject) throws CoreException {
+	public void configure(ICDescriptor cDescriptor) throws CoreException {
+		cDescriptor.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, TestScannerProvider.SCANNER_ID);
 	}
 
-	public void update(ICDescriptor cproject, String extensionID) throws CoreException {
+	public void update(ICDescriptor cDescriptor, String extensionID) throws CoreException {
+		if ( extensionID.equals(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID)) {
+			cDescriptor.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, TestScannerProvider.SCANNER_ID);
+		}
 	}
 }

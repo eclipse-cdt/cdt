@@ -11,6 +11,7 @@ package org.eclipse.cdt.core.model.tests;
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -18,7 +19,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IEnumeration;
@@ -43,12 +43,8 @@ import org.eclipse.cdt.internal.core.model.MethodTemplate;
 import org.eclipse.cdt.internal.core.model.StructureTemplate;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -67,11 +63,11 @@ public class CModelElementsTests extends TestCase {
 		super(name);
 	}
 		
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		monitor = new NullProgressMonitor();
 		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
 	
-		fCProject= CProjectHelper.createCProject("TestProject1", "bin");
+		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
 		headerFile = fCProject.getProject().getFile("CModelElementsTest.h");
 		if (!headerFile.exists()) {
 			try{
@@ -79,29 +75,15 @@ public class CModelElementsTests extends TestCase {
 				headerFile.create(fileIn,false, monitor);        
 			} catch (CoreException e) {
 				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
 			}
-		}
-		if (!fCProject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
-			addNatureToProject(fCProject.getProject(), CCProjectNature.CC_NATURE_ID, null);
 		}
 	}
 
-	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
-		IProjectDescription description = proj.getDescription();
-		String[] prevNatures= description.getNatureIds();
-		String[] newNatures= new String[prevNatures.length + 1];
-		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length]= natureId;
-		description.setNatureIds(newNatures);
-		proj.setDescription(description, monitor);
-	}
 	
 	protected void tearDown() {
-		try{
 		  CProjectHelper.delete(fCProject);
-		} 
-		catch (ResourceException e) {} 
-		catch (CoreException e) {} 
 	}	
 			
 	public void testCModelElements(){

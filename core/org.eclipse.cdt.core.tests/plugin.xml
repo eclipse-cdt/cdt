@@ -244,12 +244,22 @@
          </run>
       </application>
    </extension>
-<extension
+	<extension
          id="TestProject"
-         name="%TestProject.name"
+         name="C/C++ Test Project"
          point="org.eclipse.cdt.core.CProject">
       <cproject
             class="org.eclipse.cdt.testplugin.TestProject">
       </cproject>
-   </extension>
+    </extension>
+    <extension
+    	id="TestScanner"
+    	name="C/C++ Test Scanner"
+    	point="org.eclipse.cdt.core.ScannerInfoProvider">
+    	<cextension>
+        	 <run
+            	   class="org.eclipse.cdt.testplugin.TestScannerProvider">
+    	     </run>
+	     </cextension>
+      </extension>
 </plugin>

@@ -19,29 +19,23 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.index.IEntryResult;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.IQueryResult;
 import org.eclipse.cdt.internal.core.index.impl.IFileDocument;
 import org.eclipse.cdt.internal.core.search.indexing.IIndexConstants;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
-import org.eclipse.cdt.make.core.MakeCorePlugin;
-import org.eclipse.core.internal.resources.ResourceException;
+import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 
 /**
  * @author bgheorgh
@@ -89,13 +83,26 @@ public class IndexManagerTests extends TestCase {
 		} catch (Exception e1) {
 		}
 		//Delete project
-		if (testProject.exists()){
+		if (testProject.exists()) {
 			try {
-				testProject.delete(true,monitor);
-			} catch (ResourceException e) {
+				testProject.delete(true, monitor);
 			} catch (CoreException e) {
+				fail(getMessage(e.getStatus()));
 			}
 		}
+	}
+
+	private String getMessage(IStatus status) {
+		StringBuffer message = new StringBuffer("[");
+		message.append(status.getMessage());
+		if (status.isMultiStatus()) {
+			IStatus children[] = status.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				message.append(getMessage(children[i]));
+			}
+		}
+		message.append("]");
+		return message.toString();
 	}
 
 	public static Test suite() {
@@ -117,43 +124,9 @@ public class IndexManagerTests extends TestCase {
 	/*
 	 * Utils
 	 */
-	private IProject createProject(String projectName) throws CoreException
-	{
-	   IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-	   IProject project= root.getProject(projectName);
-	   IProject cproject = null;
-	   try{
-		   if (!project.exists()) {
-			 project.create(null);
-		   } else {
-			 project.refreshLocal(IResource.DEPTH_INFINITE, null);
-		   }
-		   if (!project.isOpen()) {
-			 project.open(null);
-		   }  
-		  
-		   //Fill out a project description
-		   IPath defaultPath = Platform.getLocation();
-		   IPath newPath = project.getFullPath();
-		   if (defaultPath.equals(newPath))
-			 newPath = null;
-		   IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		   IProjectDescription description = workspace.newProjectDescription(project.getName());
-		   description.setLocation(newPath);
-		   //Create the project
-		   cproject = CCorePlugin.getDefault().createCProject(description,project,monitor,MakeCorePlugin.MAKE_PROJECT_ID); //.getCoreModel().create(project);
-		    
-		   if( !cproject.hasNature(CCProjectNature.CC_NATURE_ID) ){
-			   addNatureToProject(cproject, CCProjectNature.CC_NATURE_ID, null);
-		   }
-	   }
-	   catch (CoreException e){
-		  cproject = project;
-		  cproject.open(null);
-	   }
-	  
-	   return cproject;
-	   
+	private IProject createProject(String projectName) {
+		ICProject cPrj = CProjectHelper.createCCProject(projectName, "bin");
+		return cPrj.getProject();
 	}
 	
 	private IFile importFile(String fileName, String resourceLocation)throws Exception{
@@ -168,16 +141,7 @@ public class IndexManagerTests extends TestCase {
 	   fileDoc = new IFileDocument(file);
 	   return file;
 	}
-	
-	private void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
-		   IProjectDescription description = proj.getDescription();
-		   String[] prevNatures= description.getNatureIds();
-		   String[] newNatures= new String[prevNatures.length + 1];
-		   System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		   newNatures[prevNatures.length]= natureId;
-		   description.setNatureIds(newNatures);
-		   proj.setDescription(description, monitor);
-	 }
+
 	/*
 	 * Start of tests
 	 */ 	
@@ -270,12 +234,12 @@ public class IndexManagerTests extends TestCase {
 	 */
 	private void safeDelete(IProject testProject) throws InterruptedException, CoreException {
 		try {
-			testProject.delete(true,monitor);
+			testProject.delete(true, monitor);
 		} catch (CoreException e) {
 			Thread.sleep(5000);
-			testProject.delete(true,monitor);
+			testProject.delete(true, monitor);
 		}
-		
+
 	}
 
 	public void testRemoveFileFromIndex() throws Exception{

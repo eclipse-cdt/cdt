@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.model.tests;
 ***********************************************************************/
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -20,7 +21,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IBuffer;
@@ -34,12 +34,8 @@ import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.testplugin.CProjectHelper;
 import org.eclipse.cdt.testplugin.TestPluginLauncher;
-import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
@@ -68,11 +64,11 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		super(name);
 	}
 	
-	protected void setUp() throws Exception {
+	protected void setUp() {
 		monitor = new NullProgressMonitor();
 		String pluginRoot=org.eclipse.core.runtime.Platform.getPlugin("org.eclipse.cdt.core.tests").find(new Path("/")).getFile();
 
-		fCProject= CProjectHelper.createCProject("TestProject1", "bin");
+		fCProject= CProjectHelper.createCCProject("TestProject1", "bin");
 		//Path filePath = new Path(ResourcesPlugin.getWorkspace().getRoot().getLocation().toString()+ fCProject.getPath().toString()+ "/WorkingCopyTest.h");
 		headerFile = fCProject.getProject().getFile("WorkingCopyTest.h");
 		if (!headerFile.exists()) {
@@ -81,10 +77,9 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 				headerFile.create(fileIn,false, monitor);        
 			} catch (CoreException e) {
 				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
 			}
-		}
-		if (!fCProject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
-			addNatureToProject(fCProject.getProject(), CCProjectNature.CC_NATURE_ID, null);
 		}
 		
 		// register with the model manager to listen to delta changes
@@ -94,22 +89,8 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		changedElements = new Vector(20);
 	}
 
-	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
-		IProjectDescription description = proj.getDescription();
-		String[] prevNatures= description.getNatureIds();
-		String[] newNatures= new String[prevNatures.length + 1];
-		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length]= natureId;
-		description.setNatureIds(newNatures);
-		proj.setDescription(description, monitor);
-	}
-
 	protected void tearDown()  {
-		try{
 		  CProjectHelper.delete(fCProject);
-		} 
-		catch (ResourceException e) {} 
-		catch (CoreException e) {} 
 	}	
 		
 		

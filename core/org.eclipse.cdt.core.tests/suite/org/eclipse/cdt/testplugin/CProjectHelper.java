@@ -1,6 +1,10 @@
 package org.eclipse.cdt.testplugin;
 import java.lang.reflect.InvocationTargetException;
 import java.util.zip.ZipFile;
+
+import junit.framework.Assert;
+
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.IArchive;
@@ -16,11 +20,14 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
@@ -28,35 +35,77 @@ import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
  * Helper methods to set up a ICProject.
  */
 public class CProjectHelper {
+
 	/**
 	 * Creates a ICProject.
 	 */
-	public static ICProject createCProject(String projectName,
-			String binFolderName) throws CoreException {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(projectName);
-		if (!project.exists()) {
-			project.create(null);
-		} else {
-			project.refreshLocal(IResource.DEPTH_INFINITE, null);
+	public static ICProject createCProject(final String projectName, String binFolderName){
+		final IWorkspace ws = ResourcesPlugin.getWorkspace();
+		final IProject newProject[] = new IProject[1];
+		try {
+			ws.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					IWorkspaceRoot root = ws.getRoot();
+					IProject project = root.getProject(projectName);
+					if (!project.exists()) {
+						project.create(null);
+					} else {
+						project.refreshLocal(IResource.DEPTH_INFINITE, null);
+					}
+					if (!project.isOpen()) {
+						project.open(null);
+					}
+					if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
+						String projectId = CTestPlugin.PLUGIN_ID + ".TestProject";
+						addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
+						CCorePlugin.getDefault().mapCProjectOwner(project, projectId, false);
+					}
+					newProject[0] = project;
+				}
+			}, null);
+		} catch (CoreException e) {
+			Assert.fail(getMessage(e.getStatus()));
 		}
-		if (!project.isOpen()) {
-			project.open(null);
-		}
-		if (!project.hasNature(CProjectNature.C_NATURE_ID)) {
-			String projectId = CTestPlugin.PLUGIN_ID + ".TestProject";
-			CCorePlugin.getDefault()
-					.mapCProjectOwner(project, projectId, false);
-			addNatureToProject(project, CProjectNature.C_NATURE_ID, null);
-		}
-		ICProject cproject = CCorePlugin.getDefault().getCoreModel().create(
-				project);
-		return cproject;
+		
+		return CCorePlugin.getDefault().getCoreModel().create(newProject[0]);
 	}
+	
+	private static String getMessage(IStatus status) {
+		StringBuffer message = new StringBuffer("[");
+		message.append(status.getMessage());
+		if (status.isMultiStatus()) {
+			IStatus children[] = status.getChildren();
+			for( int i = 0; i < children.length; i++) {
+				message.append(getMessage(children[i]));
+			}
+		}
+		message.append("]");
+		return message.toString();
+	}
+
+	public static ICProject createCCProject(final String projectName, final String binFolderName) {
+		final IWorkspace ws = ResourcesPlugin.getWorkspace();
+		final ICProject newProject[] = new ICProject[1];
+		try {
+			ws.run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					ICProject cproject = createCProject(projectName, binFolderName);
+					if (!cproject.getProject().hasNature(CCProjectNature.CC_NATURE_ID)) {
+						addNatureToProject(cproject.getProject(), CCProjectNature.CC_NATURE_ID, null);
+					}
+					newProject[0] = cproject;
+				}
+			}, null);
+		} catch (CoreException e) {
+			Assert.fail(getMessage(e.getStatus()));
+		}
+		return newProject[0];
+	}
+
 	/**
 	 * Removes a ICProject.
 	 */
-	public static void delete(ICProject cproject) throws CoreException {
+	public static void delete(ICProject cproject) {
 		try {
 			cproject.getProject().delete(true, true, null);
 		} catch (CoreException e) {
@@ -64,15 +113,19 @@ public class CProjectHelper {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) {
 			} finally {
-				cproject.getProject().delete(true, true, null);
+				try {
+					cproject.getProject().delete(true, true, null);
+				} catch (CoreException e2) {
+					Assert.fail(getMessage(e2.getStatus()));
+				}
 			}
 		}
 	}
+
 	/**
 	 * Adds a source container to a ICProject.
 	 */
-	public static ICContainer addSourceContainer(ICProject cproject,
-			String containerName) throws CoreException {
+	public static ICContainer addSourceContainer(ICProject cproject, String containerName) throws CoreException {
 		IProject project = cproject.getProject();
 		ICContainer container = null;
 		if (containerName == null || containerName.length() == 0) {
@@ -86,25 +139,26 @@ public class CProjectHelper {
 		}
 		return container;
 	}
+
 	/**
 	 * Adds a source container to a ICProject and imports all files contained
 	 * in the given Zip file.
 	 */
-	public static ICContainer addSourceContainerWithImport(ICProject cproject,
-			String containerName, ZipFile zipFile)
-			throws InvocationTargetException, CoreException {
+	public static ICContainer addSourceContainerWithImport(ICProject cproject, String containerName, ZipFile zipFile)
+		throws InvocationTargetException, CoreException {
 		ICContainer root = addSourceContainer(cproject, containerName);
 		importFilesFromZip(zipFile, root.getPath(), null);
 		return root;
 	}
+
 	/**
 	 * Removes a source folder from a ICProject.
 	 */
-	public static void removeSourceContainer(ICProject cproject,
-			String containerName) throws CoreException {
+	public static void removeSourceContainer(ICProject cproject, String containerName) throws CoreException {
 		IFolder folder = cproject.getProject().getFolder(containerName);
 		folder.delete(true, null);
 	}
+
 	/**
 	 * Attempts to find an archive with the given name in the workspace
 	 */
@@ -128,6 +182,7 @@ public class CProjectHelper {
 		}
 		return (null);
 	}
+
 	/**
 	 * Attempts to find a binary with the given name in the workspace
 	 */
@@ -145,6 +200,7 @@ public class CProjectHelper {
 		}
 		return (null);
 	}
+
 	/**
 	 * Attempts to find an object with the given name in the workspace
 	 */
@@ -157,16 +213,16 @@ public class CProjectHelper {
 		for (x = 0; x < myElements.length; x++) {
 			if (myElements[x].getElementName().equals(name))
 				if (myElements[x] instanceof IBinary) {
-					return ((IBinary) myElements[x]);
+					return ((IBinary)myElements[x]);
 				}
 		}
 		return (null);
 	}
+
 	/**
 	 * Attempts to find a TranslationUnit with the given name in the workspace
 	 */
-	public static ITranslationUnit findTranslationUnit(ICProject testProject,
-			String name) {
+	public static ITranslationUnit findTranslationUnit(ICProject testProject, String name) {
 		int x;
 		ICElement[] myElements;
 		myElements = testProject.getChildren();
@@ -175,11 +231,12 @@ public class CProjectHelper {
 		for (x = 0; x < myElements.length; x++) {
 			if (myElements[x].getElementName().equals(name))
 				if (myElements[x] instanceof ITranslationUnit) {
-					return ((ITranslationUnit) myElements[x]);
+					return ((ITranslationUnit)myElements[x]);
 				}
 		}
 		return (null);
 	}
+
 	/**
 	 * Attempts to find an element with the given name in the workspace
 	 */
@@ -195,8 +252,8 @@ public class CProjectHelper {
 		}
 		return (null);
 	}
-	private static void addNatureToProject(IProject proj, String natureId,
-			IProgressMonitor monitor) throws CoreException {
+
+	private static void addNatureToProject(IProject proj, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = proj.getDescription();
 		String[] prevNatures = description.getNatureIds();
 		String[] newNatures = new String[prevNatures.length + 1];
@@ -205,19 +262,19 @@ public class CProjectHelper {
 		description.setNatureIds(newNatures);
 		proj.setDescription(description, monitor);
 	}
-	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath,
-			IProgressMonitor monitor) throws InvocationTargetException {
-		ZipFileStructureProvider structureProvider = new ZipFileStructureProvider(
-				srcZipFile);
+
+	private static void importFilesFromZip(ZipFile srcZipFile, IPath destPath, IProgressMonitor monitor)
+		throws InvocationTargetException {
+		ZipFileStructureProvider structureProvider = new ZipFileStructureProvider(srcZipFile);
 		try {
-			ImportOperation op = new ImportOperation(destPath,
-					structureProvider.getRoot(), structureProvider,
-					new ImportOverwriteQuery());
+			ImportOperation op =
+				new ImportOperation(destPath, structureProvider.getRoot(), structureProvider, new ImportOverwriteQuery());
 			op.run(monitor);
 		} catch (InterruptedException e) {
 			// should not happen
 		}
 	}
+
 	private static class ImportOverwriteQuery implements IOverwriteQuery {
 		public String queryOverwrite(String file) {
 			return ALL;

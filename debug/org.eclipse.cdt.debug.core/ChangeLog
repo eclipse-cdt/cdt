@@ -1,3 +1,11 @@
+2002-11-15 Mikhail Khodjaiants
+	If the backtrace is very deep the debugger is unable to parse MI output.
+	The limited number of stack frames will be displayed.
+	* IDummyStackFrame.java
+	* CDummyStackFrame.java
+	* CStackFrame.java
+	* CThread.java
+
 2002-11-14 Alain Magloire
 
 	This is needed in post-mortem, application doing a 

@@ -538,6 +538,10 @@ public class CStackFrame extends CDebugElement
 	 */
 	public Object getAdapter( Class adapter )
 	{
+		if ( adapter == CStackFrame.class )
+		{
+			return this;
+		}
 		if ( adapter == IStackFrame.class )
 		{
 			return this;

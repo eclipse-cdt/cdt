@@ -7,10 +7,10 @@
 package org.eclipse.cdt.debug.internal.core.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.debug.core.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.IInstructionStep;
 import org.eclipse.cdt.debug.core.IRestart;
 import org.eclipse.cdt.debug.core.IState;
@@ -33,6 +33,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -53,6 +54,8 @@ public class CThread extends CDebugElement
 					 			ISwitchToFrame,
 					 			ICDIEventListener
 {
+	private final static int MAX_STACK_DEPTH = 100;
+
 	/**
 	 * Underlying CDI thread.
 	 */
@@ -61,7 +64,7 @@ public class CThread extends CDebugElement
 	/**
 	 * Collection of stack frames
 	 */
-	private List fStackFrames;
+	private ArrayList fStackFrames;
 
 	/**
 	 * Whether running.
@@ -96,6 +99,8 @@ public class CThread extends CDebugElement
 	private boolean fIsCurrent = false;
 	
 	private CStackFrame fLastStackFrame = null;	
+	
+	private int fLastStackDepth = 0;
 
 	/**
 	 * Constructor for CThread.
@@ -119,7 +124,7 @@ public class CThread extends CDebugElement
 	 */
 	protected void initialize()
 	{
-		fStackFrames = Collections.EMPTY_LIST;
+		fStackFrames = new ArrayList();
 		setRunning( false );
 //		setRunning( !getCDIThread().isSuspended() );
 	}
@@ -162,70 +167,67 @@ public class CThread extends CDebugElement
 		{
 			if ( isTerminated() )
 			{
-				fStackFrames = Collections.EMPTY_LIST;
+				fStackFrames = new ArrayList();
 			}
 			else if ( refreshChildren )
 			{
+				if ( fStackFrames.size() > 0 )
+				{
+					Object frame = fStackFrames.get( fStackFrames.size() - 1 );
+					if ( frame instanceof IDummyStackFrame )
+					{
+						fStackFrames.remove( frame );
+					}
+				}
+				int depth = getStackDepth();
+				ICDIStackFrame[] frames = ( depth != 0 ) ?
+									getCDIStackFrames( 0, ( depth > getMaxStackDepth() ) ? getMaxStackDepth() - 1 : depth - 1 ) :
+									new ICDIStackFrame[0];
 				if ( fStackFrames.isEmpty() )
 				{
-					fStackFrames = createAllStackFrames();
-					setRefreshChildren( false );
-					return fStackFrames;
+					addStackFrames( frames, 0, frames.length );
 				}
-				ICDIStackFrame[] frames = getCDIStackFrames();
-				// compute new or removed stack frames
-				int offset = 0, length = frames.length;
-				if ( length > fStackFrames.size() )
+				else if ( depth < getLastStackDepth() )
 				{
-					// compute new frames
-					offset = length - fStackFrames.size();
-					for ( int i = offset - 1; i >= 0; i-- )
+					disposeStackFrames( 0, getLastStackDepth() - depth );
+					updateStackFrames( frames, 0, fStackFrames, fStackFrames.size() );
+					if ( fStackFrames.size() < frames.length )
 					{
-						fStackFrames.add( 0, new CStackFrame( this, frames[i] ) );
-					}
-					length = fStackFrames.size() - offset;
-				}
-				else if ( length < fStackFrames.size() )
-				{
-					// compute removed children
-					int removed = fStackFrames.size() - length;
-					for ( int i = 0; i < removed; i++ )
-					{
-						((CStackFrame)fStackFrames.get( 0 )).dispose();
-						fStackFrames.remove( 0 );
+						addStackFrames( frames, fStackFrames.size(), frames.length - fStackFrames.size() );
 					}
 				}
-				else
+				else if ( depth > getLastStackDepth() )
 				{
-					if ( frames.length == 0 )
-					{
-						fStackFrames = Collections.EMPTY_LIST;
-					}
-					else
+					disposeStackFrames( frames.length - depth + getLastStackDepth(), depth - getLastStackDepth() );
+					addStackFrames( frames, 0, depth - getLastStackDepth() );
+					updateStackFrames( frames, depth - getLastStackDepth(), fStackFrames, frames.length - depth + getLastStackDepth() );
+				}
+				else // depth == getLastStackDepth()
+				{
+					if ( depth != 0 )
 					{
 						// same number of frames - if top frames are in different
 						// method, replace all frames
-						ICDIStackFrame newTop = frames[0];
-						ICDIStackFrame oldTop = ((CStackFrame)fStackFrames.get( 0 ) ).getLastCDIStackFrame();
-						if ( !CStackFrame.equalFrame( newTop, oldTop ) )
+						ICDIStackFrame newTopFrame = frames[0];
+						ICDIStackFrame oldTopFrame = ((CStackFrame)fStackFrames.get( 0 ) ).getLastCDIStackFrame();
+						if ( !CStackFrame.equalFrame( newTopFrame, oldTopFrame ) )
 						{
-							disposeStackFrames();
-							fStackFrames = new ArrayList( frames.length );
-							for ( int i = 0; i < frames.length; ++i )
-							{
-								fStackFrames.add( new CStackFrame( this, frames[i] ) );
-							}
-							offset = fStackFrames.size();
+							disposeStackFrames( 0, fStackFrames.size() );
+							addStackFrames( frames, 0, frames.length );
+						}
+						else // we are in the same frame
+						{
+							updateStackFrames( frames, 0, fStackFrames, frames.length );
 						}
 					}
 				}
-				// update preserved frames
-				if ( offset < fStackFrames.size() )
+				if ( depth > getMaxStackDepth() )
 				{
-					updateStackFrames( frames, offset, fStackFrames, length );
+					fStackFrames.add( new CDummyStackFrame( this ) );
 				}
+				setLastStackDepth( depth );
+				setRefreshChildren( false );
 			}
-			setRefreshChildren( false );
 		}
 		return fStackFrames;
 	}
@@ -240,9 +242,23 @@ public class CThread extends CDebugElement
 	 */
 	protected ICDIStackFrame[] getCDIStackFrames() throws DebugException
 	{
+		return new ICDIStackFrame[0];
+	}
+
+	/**
+	 * Retrieves and returns underlying stack frames between <code>lowFrame<code/> 
+	 * and <code>highFrame<code/>.
+	 * 
+	 * @return list of <code>StackFrame</code>
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul>
+	 * </ul>
+	 */
+	protected ICDIStackFrame[] getCDIStackFrames( int lowFrame, int highFrame ) throws DebugException
+	{
 		try
 		{
-			return getCDIThread().getStackFrames();
+			return getCDIThread().getStackFrames( lowFrame, highFrame );
 		}
 		catch( CDIException e )
 		{
@@ -274,6 +290,19 @@ public class CThread extends CDebugElement
 			frame.setCDIStackFrame( newFrames[offset] );
 			frame.fireChangeEvent( DebugEvent.STATE );
 			offset++;
+		}
+	}
+
+	protected void addStackFrames( ICDIStackFrame[] newFrames,
+								   int startIndex,
+								   int length )
+	{
+		if ( newFrames.length >= startIndex + length )
+		{
+			for ( int i = 0; i < length; ++i )
+			{
+				fStackFrames.add( i, new CStackFrame( this, newFrames[startIndex + i] ) );
+			}
 		}
 	}
 
@@ -326,19 +355,17 @@ public class CThread extends CDebugElement
 	 * underlying stack frames.
 	 * 
 	 * @exception DebugException if this method fails.  Reasons include:
-	 * <ul>
-	 * <li>Failure communicating with the VM.  The DebugException's
-	 * status code contains the underlying exception responsible for
-	 * the failure.</li>
-	 * </ul>
 	 */
-	protected List createAllStackFrames() throws DebugException
+	protected List createAllStackFrames( int depth, ICDIStackFrame[] frames ) throws DebugException
 	{
-		ICDIStackFrame[] frames = getCDIStackFrames();
 		List list= new ArrayList( frames.length );
 		for ( int i = 0; i < frames.length; ++i )
 		{
 			list.add( new CStackFrame( this, frames[i] ) );
+		}
+		if ( depth > frames.length )
+		{
+			list.add( new CDummyStackFrame( this ) );
 		}
 		return list;
 	}
@@ -672,7 +699,11 @@ public class CThread extends CDebugElement
 		Iterator it = fStackFrames.iterator();
 		while( it.hasNext() )
 		{
-			((CStackFrame)it.next()).preserve();
+			CStackFrame frame = (CStackFrame)(((IAdaptable)it.next()).getAdapter( CStackFrame.class ));
+			if ( frame != null )
+			{
+				frame.preserve();
+			}
 		}
 		setRefreshChildren( true );
 	}
@@ -689,10 +720,33 @@ public class CThread extends CDebugElement
 		Iterator it = fStackFrames.iterator();
 		while( it.hasNext() )
 		{
-			((CStackFrame)it.next()).dispose();
+			CStackFrame frame = (CStackFrame)(((IAdaptable)it.next()).getAdapter( CStackFrame.class ));
+			if ( frame != null )
+			{
+				((CStackFrame)frame).dispose();
+			}
 		}
 		fStackFrames.clear();
+		setLastStackDepth( 0 );
 		setRefreshChildren( true );
+	}
+
+	protected void disposeStackFrames( int index, int length )
+	{
+		List removeList = new ArrayList( length );
+		Iterator it = fStackFrames.iterator();
+		int counter = 0;
+		while( it.hasNext() )
+		{
+			CStackFrame frame = (CStackFrame)(((IAdaptable)it.next()).getAdapter( CStackFrame.class ));
+			if ( frame != null && counter >= index && counter < index + length )
+			{
+				frame.dispose();
+				removeList.add( frame );
+			}
+			++counter;
+		}
+		fStackFrames.removeAll( removeList );
 	}
 
 	/**
@@ -1003,5 +1057,34 @@ public class CThread extends CDebugElement
 	private CStackFrame getLastStackFrame()
 	{
 		return fLastStackFrame;
+	}
+	
+	protected int getStackDepth() throws DebugException
+	{
+		int depth = 0;
+		try
+		{
+			depth = getCDIThread().getStackFrameCount();
+		}
+		catch( CDIException e )
+		{
+//			targetRequestFailed( e.getMessage(), null );
+		}
+		return depth;
+	}
+	
+	protected int getMaxStackDepth()
+	{
+		return MAX_STACK_DEPTH;
+	}
+	
+	private void setLastStackDepth( int depth )
+	{
+		fLastStackDepth = depth;
+	}
+	
+	private int getLastStackDepth()
+	{
+		return fLastStackDepth;
 	}
 }

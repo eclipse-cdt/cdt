@@ -738,10 +738,7 @@ public class GoToBackProgressMonitorDialog extends IconAndMessageDialog implemen
 	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#getImage()
 	 */
 	protected Image getImage() {
-		if (progressMonitor.locked)
-			return JFaceResources.getImageRegistry().get(org.eclipse.jface.dialogs.Dialog.DLG_IMG_LOCKED);
-		else
-			return JFaceResources.getImageRegistry().get(org.eclipse.jface.dialogs.Dialog.DLG_IMG_INFO);
+		return JFaceResources.getImageRegistry().get(org.eclipse.jface.dialogs.Dialog.DLG_IMG_INFO);
 	}
 
 	/**

@@ -43,9 +43,10 @@ public class IndexerBlock extends AbstractCOptionPage {
 		IProject newProject = null;
 		newProject = getContainer().getProject();
 		
-		optionPage.persistIndexerValue(newProject);
+		optionPage.persistIndexerValues(newProject);
 		
 		boolean indexProject = optionPage.getIndexerValue();
+		
 		if (indexProject && newProject != null)
 			CCorePlugin.getDefault().getCoreModel().getIndexManager().indexAll(newProject);
 	    

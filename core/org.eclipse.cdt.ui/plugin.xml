@@ -619,29 +619,22 @@
    <extension
          point="org.eclipse.ui.editors.markerAnnotationSpecification">
       <specification
-            colorPreferenceValue="192,192,192"
+      		colorPreferenceValue="254,155,0"
             annotationType="org.eclipse.cdt.ui.indexmarker"
-            verticalRulerPreferenceValue="false"
+            verticalRulerPreferenceValue="true"
             colorPreferenceKey="indexResultIndicationColor"
             contributesToHeader="false"
-            overviewRulerPreferenceValue="false"
+            overviewRulerPreferenceValue="true"
             presentationLayer="3"
             textStylePreferenceValue="NONE"
             symbolicIcon="warning"
             icon="icons/full/obj16/unknown_obj.gif"
-            label="Index Markers"
-            textPreferenceValue="false"
+            label="%CDTIndexerMarker.label"
+            textPreferenceValue="true"
             textPreferenceKey="indexResultIndication"
             verticalRulerPreferenceKey="indexResultIndicationInVerticalRuler"
             overviewRulerPreferenceKey="indexResultIndicationInOverviewRuler">
       </specification>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editors.annotationTypes">
-      <type
-            markerType="org.eclipse.cdt.core.indexermarker"
-            name="org.eclipse.cdt.ui.indexmarker">
-      </type>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -730,6 +723,10 @@
          super="org.eclipse.ui.workbench.texteditor.info"
          markerType="org.eclipse.cdt.core.problem"
          markerSeverity="0">
+      </type>
+      <type
+         markerType="org.eclipse.cdt.core.indexermarker"
+         name="org.eclipse.cdt.ui.indexmarker">
       </type>
    </extension>
 </plugin>

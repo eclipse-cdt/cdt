@@ -84,7 +84,11 @@ public class SourceIndexer extends AbstractIndexer {
 		output.addDocument(document);
 		// Create a new Parser
 		SourceIndexerRequestor requestor = new SourceIndexerRequestor(this, resourceFile, timeOut);
-		//requestor.removeMarkers(resourceFile);
+		
+		IndexManager manager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
+		boolean problemsEnabled = manager.isIndexProblemsEnabled( resourceFile.getProject() );
+		requestor.setProblemMarkersEnabled( problemsEnabled );
+		requestor.requestRemoveMarkers( resourceFile, null );
 		
 		//Get the scanner info
 		IProject currentProject = resourceFile.getProject();
@@ -98,7 +102,7 @@ public class SourceIndexer extends AbstractIndexer {
 		}
 		
 		//C or CPP?
-		ParserLanguage language = CoreModel.getDefault().hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
+		ParserLanguage language = CoreModel.hasCCNature(currentProject) ? ParserLanguage.CPP : ParserLanguage.C;
 		
 		IParser parser = null;
 		
@@ -149,6 +153,10 @@ public class SourceIndexer extends AbstractIndexer {
 		}
 		finally{
 			requestor.stopTimer();
+			//if the user disable problem reporting since we last checked, don't report the collected problems
+			if( manager.isIndexProblemsEnabled( resourceFile.getProject() ) )
+				requestor.reportProblems();
+			
 			//Release all resources
 			parser=null;
 			currentProject = null;

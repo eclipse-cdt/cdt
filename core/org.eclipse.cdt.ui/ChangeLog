@@ -1,3 +1,12 @@
+2004-05-21 Andrew Niefer
+	Indexer Problem reporting (bug 43014, 62979)
+	 * plugin.xml
+	 * plugin.properties
+	 * src/org/eclipse/cdt/internal/ui/CUIMessages.properties
+	 * src/org/eclipse/cdt/ui/dialogs/IndexerBlock.java
+	 * src/org/eclipse/cdt/ui/dialogs/IndexerOptionDialogPage.java
+	 * src/org/eclipse/cdt/ui/dialogs/IndexerOptionPropertyPage.java
+
 2004-05-21 Alain Magloire
 
 	$&#*$(^#&^$(^#

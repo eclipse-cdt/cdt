@@ -20,9 +20,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.zip.CRC32;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICLogConstants;
+import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.internal.core.CharOperation;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.Index;
@@ -41,8 +43,12 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -78,11 +84,15 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	
 	public final static String INDEX_MODEL_ID = CCorePlugin.PLUGIN_ID + ".newindexmodel"; //$NON-NLS-1$
 	public final static String ACTIVATION = "enable"; //$NON-NLS-1$
+	public final static String PROBLEM_ACTIVATION = "problemEnable"; //$NON-NLS-1$
 	public final static QualifiedName activationKey = new QualifiedName(INDEX_MODEL_ID, ACTIVATION);
+	public final static QualifiedName problemsActivationKey = new QualifiedName( INDEX_MODEL_ID, PROBLEM_ACTIVATION );
 	
 	public static final String INDEXER_ENABLED = "indexEnabled"; //$NON-NLS-1$
+	public static final String INDEXER_PROBLEMS_ENABLED = "indexerProblemsEnabled"; //$NON-NLS-1$
 	public static final String CDT_INDEXER = "cdt_indexer"; //$NON-NLS-1$
 	public static final String INDEXER_VALUE = "indexValue"; //$NON-NLS-1$
+	public static final String INDEXER_PROBLEMS_VALUE = "indexProblemsValue"; //$NON-NLS-1$
 	
 	public synchronized void aboutToUpdateIndex(IPath path, Integer newIndexState) {
 		// newIndexState is either UPDATING_STATE or REBUILDING_STATE
@@ -309,7 +319,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		
 		try {
 			//Load value for project
-			indexValue = loadIndexerEnabledromCDescriptor(project);
+			indexValue = loadIndexerEnabledFromCDescriptor(project);
 			if (indexValue != null){
 				project.setSessionProperty(IndexManager.activationKey, indexValue);
 				return indexValue.booleanValue();
@@ -325,6 +335,35 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		} catch (CoreException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public boolean isIndexProblemsEnabled(IProject project) {
+		Boolean value = null;
+		
+		try {
+			value = (Boolean) project.getSessionProperty(problemsActivationKey);
+		} catch (CoreException e) {
+		}
+		
+		if (value != null)
+			return value.booleanValue();
+		
+		try {
+			//Load value for project
+			value = loadIndexerProblemsEnabledFromCDescriptor(project);
+			if (value != null){
+				project.setSessionProperty(IndexManager.problemsActivationKey, value);
+				return value.booleanValue();
+			}
+			
+			//TODO: Indexer Block Place holder for Managed Make - take out
+			value = new Boolean(false);
+			project.setSessionProperty(IndexManager.problemsActivationKey, value);
+			return value.booleanValue();
+		} catch (CoreException e1) {
 		}
 		
 		return false;
@@ -685,7 +724,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		}
 	}
 	
-	private Boolean loadIndexerEnabledromCDescriptor(IProject project) throws CoreException {
+	private Boolean loadIndexerEnabledFromCDescriptor(IProject project) throws CoreException {
 		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
 		
 		Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
@@ -701,5 +740,43 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		
 		return strBool;
 	}
-
+	private Boolean loadIndexerProblemsEnabledFromCDescriptor(IProject project) throws CoreException {
+		ICDescriptor descriptor = CCorePlugin.getDefault().getCProjectDescription(project);
+		
+		Node child = descriptor.getProjectData(CDT_INDEXER).getFirstChild();
+		Boolean strBool = null;
+		
+		while (child != null) {
+			if (child.getNodeName().equals(INDEXER_PROBLEMS_ENABLED)) 
+				 strBool = Boolean.valueOf(((Element)child).getAttribute(INDEXER_PROBLEMS_VALUE));
+			child = child.getNextSibling();
+		}
+		
+		return strBool;
+	}
+	
+	static private class RemoveIndexMarkersJob extends Job{
+		private final IProject project;
+		public RemoveIndexMarkersJob( IProject project, String name ){
+			super( name );
+			this.project = project;
+		}
+		protected IStatus run(IProgressMonitor monitor) {
+			try {
+				project.deleteMarkers( ICModelMarker.INDEXER_MARKER, true, IResource.DEPTH_INFINITE );
+			} catch (CoreException e) {
+				return Status.CANCEL_STATUS;
+			}
+			return Status.OK_STATUS;		
+		}
+		
+	};
+	
+	public void removeAllIndexerProblems( IProject project){
+		String jobName = "remove markers";
+		RemoveIndexMarkersJob job = new RemoveIndexMarkersJob( project, jobName );
+		job.setPriority( Job.DECORATE );
+		job.schedule();
+	}
+	
 }

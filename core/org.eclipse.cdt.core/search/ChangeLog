@@ -1,4 +1,7 @@
 2004-05-21 Andrew Niefer
+	Indexer problems reporting: group problems under the indexer job in progress view
+
+2004-05-21 Andrew Niefer
 	bug 62731 - [Search] typedefs are appearing as union declarations
 	* search/org/eclipse/cdt/internal/core/search/matching/ClassDeclarationPattern.java
 	

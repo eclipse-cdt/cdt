@@ -58,6 +58,13 @@ public abstract class JobManager implements Runnable {
 		System.out.println("(" + Thread.currentThread() + ") " + log); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
+	public IProgressMonitor getIndexJobProgressGroup(){
+		if( indexJob == null )
+			return null;
+		
+		return indexJob.getProgressGroup();
+	}
+	
 	/**
 	 * Invoked exactly once, in background, before starting processing any job
 	 */

@@ -14,6 +14,7 @@ package org.eclipse.cdt.ui.dialogs;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.internal.core.search.indexing.IndexManager;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.DialogPage;
@@ -31,7 +32,12 @@ import org.w3c.dom.Node;
 
 public class IndexerOptionDialogPage extends DialogPage {
 	
+	private static final String ENABLE_PROBLEMS = CUIMessages.getString( "IndexerOptions.enableProblems" ); //$NON-NLS-1$
+	private static final String ENABLE_INDEXING = CUIMessages.getString( "IndexerOptions.enableIndexing" ); //$NON-NLS-1$
+	private static final String INDEXER = CUIMessages.getString("IndexerOptions.indexer" ); //$NON-NLS-1$ 
+	
 	private Button indexerEnabled;
+	private Button indexerProblemsEnabled;
 	
 	public IndexerOptionDialogPage(){
 		super();
@@ -51,9 +57,10 @@ public class IndexerOptionDialogPage extends DialogPage {
 		Group group= new Group(result, SWT.NONE);
 		group.setLayout(new GridLayout());
 		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		group.setText("CDT Indexer"); //$NON-NLS-1$
+		group.setText( INDEXER );
 
-		indexerEnabled = createCheckButton(group, "Enable CDT Indexing"); //$NON-NLS-1$
+		indexerEnabled = createCheckButton(group, ENABLE_INDEXING );
+		indexerProblemsEnabled = createCheckButton( group, ENABLE_PROBLEMS );
 		
 		setControl(result);
 	}
@@ -76,11 +83,19 @@ public class IndexerOptionDialogPage extends DialogPage {
 		indexerEnabled.setSelection(value);
 	}
 	
+	public void setIndexerProblemsValue( boolean value ){
+		indexerProblemsEnabled.setSelection( value );
+	}
+	
 	public boolean getIndexerValue(){
 		return indexerEnabled.getSelection();
 	}
 	
-	public void persistIndexerValue(IProject project){
+	public boolean getIndexerProblemsValue(){
+		return indexerProblemsEnabled.getSelection();
+	}
+	
+	public void persistIndexerValues(IProject project){
 		ICDescriptor descriptor = null;
 		Element rootElement = null;
 		IProject newProject = null;
@@ -100,14 +115,17 @@ public class IndexerOptionDialogPage extends DialogPage {
 		Document doc = rootElement.getOwnerDocument();
 
 		boolean indexProject = getIndexerValue();
+		boolean problemsEnabled = getIndexerProblemsValue();
 		
 		saveIndexerEnabled(indexProject, rootElement, doc);
+		saveIndexerProblemsEnabled( problemsEnabled, rootElement, doc );
 		
 		descriptor.saveProjectData();
 		
 		//Update project session property
 		
 		project.setSessionProperty(IndexManager.activationKey,new Boolean(indexProject));
+		project.setSessionProperty(IndexManager.problemsActivationKey, new Boolean( problemsEnabled ));
 	
 	
 		} catch (CoreException e) {
@@ -116,7 +134,6 @@ public class IndexerOptionDialogPage extends DialogPage {
 		}
 	}
 	 
-	
 	private static void saveIndexerEnabled (boolean indexerEnabled, Element rootElement, Document doc ) {
 		
 		Element indexEnabled = doc.createElement(IndexManager.INDEXER_ENABLED);
@@ -124,6 +141,15 @@ public class IndexerOptionDialogPage extends DialogPage {
 		
 		indexEnabled.setAttribute(IndexManager.INDEXER_VALUE,tempValue.toString());
 		rootElement.appendChild(indexEnabled);
+
+	}
+	private static void saveIndexerProblemsEnabled (boolean problemsEnabled, Element rootElement, Document doc ) {
+		
+		Element enabled = doc.createElement(IndexManager.INDEXER_PROBLEMS_ENABLED);
+		Boolean tempValue= new Boolean( problemsEnabled );
+		
+		enabled.setAttribute(IndexManager.INDEXER_PROBLEMS_VALUE,tempValue.toString());
+		rootElement.appendChild(enabled);
 
 	}
 }

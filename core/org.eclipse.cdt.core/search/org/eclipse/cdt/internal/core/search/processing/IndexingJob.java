@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.search.processing;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 
 /**
@@ -26,8 +27,11 @@ public class IndexingJob extends Job {
 	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	IProgressMonitor progressMonitor = null;
+	IProgressMonitor group = null;
 	JobManager jobManager = null;
 	Thread indexThread = null;
+	
+	static final String JOB_NAME = Util.bind( "indexerJob" ); //$NON-NLS-1$
 	
 	int ticks = 0;
 	int maxTicks = 0;
@@ -35,10 +39,17 @@ public class IndexingJob extends Job {
 	
 	public IndexingJob( Thread thread, JobManager manager )
 	{
-		super( "C/C++ Indexer" ); //$NON-NLS-1$
+		super( JOB_NAME ); //$NON-NLS-1$
+		
+		group = Platform.getJobManager().createProgressGroup();
+		group.beginTask( JOB_NAME, 100 );
+		
 		jobManager = manager;
 		indexThread = thread;
+		
 		setPriority( LONG );
+		setProgressGroup( group, 100 );
+		
 		tickUp();
 		schedule();
 	}
@@ -97,9 +108,13 @@ public class IndexingJob extends Job {
 			return;
 		
 		int work = (( maxTicks - ticks ) * 100 / maxTicks ) - workDone;
-		if( work > 0 ){
-			workDone += work;
-			progressMonitor.worked( work );
-		}
+		
+		workDone += work;
+		progressMonitor.worked( work );
+		if( workDone < 0 ) workDone = 0;
+	}
+	
+	public IProgressMonitor getProgressGroup(){
+		return group;
 	}
 }

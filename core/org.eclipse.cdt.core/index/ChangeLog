@@ -1,3 +1,10 @@
+2004-05-21 Andrew Niefer
+	Indexer problem reporting
+		* index/org/eclipse/cdt/internal/core/messages.properties
+		* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java
+		* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexer.java
+		* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexerRequestor.java
+
 2004-05-18 Bogdan Gheorghe
 	IndexAllProject - restored the save request.
 	

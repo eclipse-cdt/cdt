@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.drag;
 
-import org.eclipse.cdt.ui.LocalSelectionTransfer;
+import org.eclipse.cdt.ui.CLocalSelectionTransfer;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -18,12 +18,12 @@ import org.eclipse.swt.dnd.Transfer;
 
 public class LocalSelectionTransferDragAdapter implements TransferDragSourceListener {
 	private final ISelectionProvider provider;
-	private final LocalSelectionTransfer transfer;
+	private final CLocalSelectionTransfer transfer;
 
 	public LocalSelectionTransferDragAdapter(ISelectionProvider provider) {
 		super();
 		this.provider = provider;
-		this.transfer = LocalSelectionTransfer.getInstance();
+		this.transfer = CLocalSelectionTransfer.getInstance();
 		Assert.isNotNull(provider);
 		Assert.isNotNull(transfer);
 	}

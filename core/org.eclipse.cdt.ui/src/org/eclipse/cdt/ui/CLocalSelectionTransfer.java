@@ -10,16 +10,16 @@ import org.eclipse.swt.dnd.TransferData;
 /**
  * @author kcampbell
  */
-public class LocalSelectionTransfer extends ByteArrayTransfer {
-	private static final LocalSelectionTransfer INSTANCE = new LocalSelectionTransfer();
+public class CLocalSelectionTransfer extends ByteArrayTransfer {
+	private static final CLocalSelectionTransfer INSTANCE = new CLocalSelectionTransfer();
 
 	private final String typeName;
 	private final int typeId;
 	private ISelection selection;
 
-	private LocalSelectionTransfer() {
+	private CLocalSelectionTransfer() {
 		super();
-		// Try to ensure that different Eclipse applications use different "types" of <code>LocalSelectionTransfer</code>
+		// Try to ensure that different Eclipse applications use different "types" of <code>CLocalSelectionTransfer</code>
 		typeName = "cdt-local-selection-transfer-format" + System.currentTimeMillis(); //$NON-NLS-1$;
 		typeId = registerType(typeName);
 		selection = null;
@@ -28,7 +28,7 @@ public class LocalSelectionTransfer extends ByteArrayTransfer {
 	/**
 	 * Returns the singleton.
 	 */
-	public static LocalSelectionTransfer getInstance() {
+	public static CLocalSelectionTransfer getInstance() {
 		return INSTANCE;
 	}
 

@@ -1,3 +1,15 @@
+2003-09-23 Alain Magloire
+
+	Remove some warnings in the ErrorParser blocks.
+	Refactor LocalSelectionTransfer vs CLocalSelectionTransfer to minimise
+	clashes.
+
+	* src/org/eclipse/cdt/internal/ui/CLocalSelectionTransfer
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/cview/LocalSelectionTransferDragAdapter.java
+	* src/org/eclipse/cdt/ui/dialogs/AbstractErrorParserBlock.java
+	* src/org/eclipse/cdt/ui/dialogs/BinaryParserBlock.java
+
 2003-09-22 Bogdan Gheorghe
 	Got rid of the C/C++ Project property page (only the indexer tab
 	was left). Here are the changes:

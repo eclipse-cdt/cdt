@@ -26,6 +26,7 @@ import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.StandardCElementLabelProvider;
 import org.eclipse.cdt.internal.ui.drag.DelegatingDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.FileTransferDragAdapter;
+import org.eclipse.cdt.internal.ui.drag.LocalSelectionTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.ResourceTransferDragAdapter;
 import org.eclipse.cdt.internal.ui.drag.TransferDragSourceListener;
 import org.eclipse.cdt.internal.ui.editor.FileSearchAction;
@@ -37,7 +38,7 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CElementContentProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.LocalSelectionTransfer;
+import org.eclipse.cdt.ui.CLocalSelectionTransfer;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
@@ -128,6 +129,7 @@ import org.eclipse.ui.views.framelist.ForwardAction;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.framelist.GoIntoAction;
 import org.eclipse.ui.views.framelist.UpAction;
+import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 
 
@@ -374,13 +376,13 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 			new Transfer[] {
 				ResourceTransfer.getInstance(),
 				FileTransfer.getInstance(),
-				LocalSelectionTransfer.getInstance(),
+				CLocalSelectionTransfer.getInstance(),
 				PluginTransfer.getInstance()};
 
 		TransferDragSourceListener[] dragListeners =
 			new TransferDragSourceListener[] {
 				new ResourceTransferDragAdapter(viewer),
-				new org.eclipse.cdt.internal.ui.drag.LocalSelectionTransferDragAdapter(viewer),
+				new LocalSelectionTransferDragAdapter(viewer),
 				new FileTransferDragAdapter(viewer)};
 
 		viewer.addDragSupport(ops, dragTransfers, new DelegatingDragAdapter(viewer, dragListeners));

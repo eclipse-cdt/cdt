@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ * Copyright (c) 2004,2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,13 @@
  **********************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu;
 
+import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineGenerator;
+import org.eclipse.cdt.managedbuilder.core.IManagedCommandLineInfo;
+import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.core.resources.IContainer;
@@ -21,6 +27,8 @@ import org.eclipse.core.resources.IResource;
  * @since 2.0
  */
 public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerator {
+
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderDependencyCalculator#findDependencies(org.eclipse.core.resources.IResource)
@@ -47,14 +55,18 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 		 * 
 		 */
 		StringBuffer buffer = new StringBuffer();
-		
+
 		// Get what we need to create the dependency generation command
+		IConfiguration config = info.getDefaultConfiguration();
+
+		//	We need to check whether we have any resource specific build information.
+		IResourceConfiguration resConfig = null;
+		if( config != null ) resConfig = config.getResourceConfiguration(resource.getFullPath().toString());
+
 		String inputExtension = resource.getFileExtension();
-		String cmd = info.getToolForSource(inputExtension);
 		String outputExtension = info.getOutputExtension(inputExtension);
-		String buildFlags = info.getFlagsForSource(inputExtension);
 		
-		// Work out the build-relative path
+		// Work out the build-relative path for the output files
 		IContainer resourceLocation = resource.getParent();
 		String relativePath = new String();
 		if (resourceLocation != null) {
@@ -90,20 +102,61 @@ public class DefaultGCCDependencyCalculator implements IManagedDependencyGenerat
 				IManagedBuilderMakefileGenerator.WHITESPACE + 
 				IManagedBuilderMakefileGenerator.LINEBREAK);
 		
-		// Add the line that will do the work
-		buffer.append(IManagedBuilderMakefileGenerator.TAB + 
+		// Add the line that will do the work to calculate dependencies
+		IManagedCommandLineInfo cmdLInfo = null;
+		String buildCmd = null;
+		String[] inputs= new String[1]; inputs[0] = IManagedBuilderMakefileGenerator.IN_MACRO;
+		String outflag = "";  //$NON-NLS-1$
+		String outputPrefix = "";   //$NON-NLS-1$
+		String outputFile = "";   //$NON-NLS-1$
+		if( resConfig != null) {
+			ITool[] tools = resConfig.getTools(); 
+			String cmd = tools[0].getToolCommand();
+			String[] toolFlags = null;
+			try { 
+				toolFlags = tools[0].getCommandFlags();
+			} catch( BuildException ex ) {
+				// TODO add some routines to catch this
+				toolFlags = EMPTY_STRING_ARRAY;
+			}
+			String[] flags = new String[toolFlags.length + 4];
+			flags[0] = "-MM";  //$NON-NLS-1$
+			flags[1] = "-MG";  //$NON-NLS-1$
+			flags[2] = "-P";   //$NON-NLS-1$
+			flags[3] = "-w";   //$NON-NLS-1$
+			for (int i=0; i<toolFlags.length; i++) {
+				flags[4+i] = toolFlags[i];
+			}
+			IManagedCommandLineGenerator cmdLGen = tools[0].getCommandLineGenerator();
+			cmdLInfo = cmdLGen.generateCommandLineInfo( tools[0], cmd, flags, outflag, outputPrefix,
+					outputFile, inputs, tools[0].getCommandLinePattern() );
+			buildCmd = cmdLInfo.getCommandLine();
+		} else {
+			String cmd = info.getToolForSource(inputExtension);
+			String buildFlags = "-MM -MG -P -w " + info.getFlagsForSource(inputExtension); //$NON-NLS-1$
+			String[] flags = buildFlags.split( "\\s" ); //$NON-NLS-1$
+			cmdLInfo = info.generateCommandLineInfo( inputExtension, flags, outflag, outputPrefix, 
+					outputFile, inputs );
+			// The command to build
+			if( cmdLInfo == null ) buildCmd = 
 				cmd + 
-				IManagedBuilderMakefileGenerator.WHITESPACE + 
-				"-MM -MG -P -w" +  //$NON-NLS-1$ 
 				IManagedBuilderMakefileGenerator.WHITESPACE +
+				"-MM -MG -P -w " +  //$NON-NLS-1$
 				buildFlags + 
-				IManagedBuilderMakefileGenerator.WHITESPACE +  
-				IManagedBuilderMakefileGenerator.IN_MACRO + 
+				IManagedBuilderMakefileGenerator.WHITESPACE + 
+				IManagedBuilderMakefileGenerator.IN_MACRO;
+			else {
+				buildCmd = cmdLInfo.getCommandLine();
+			}
+		}
+
+		buffer.append(IManagedBuilderMakefileGenerator.TAB + 
+				buildCmd +
 				IManagedBuilderMakefileGenerator.WHITESPACE + 
 				">>" +  //$NON-NLS-1$
 				IManagedBuilderMakefileGenerator.WHITESPACE + 
 				depRule);
-		
+
 		return buffer.toString();
 	}
 

@@ -1,3 +1,9 @@
+2003-04-21 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/mi/core/GDBDebugger.java:
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerDebugger.java:
+	Ignore exception when doing "set auto-solib-path on".
+
 2003-04-17 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java:

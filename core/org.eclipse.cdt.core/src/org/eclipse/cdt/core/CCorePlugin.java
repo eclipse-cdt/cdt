@@ -718,24 +718,19 @@ public class CCorePlugin extends Plugin {
 	}
 	
 	/**
-	 * Array of error parsers extensions.
+	 * Array of error parsers ids.
 	 * @return
 	 */
-	public IErrorParser[] getErrorParsers() {
+	public String[] getAllErrorParsersIDs() {
 		IExtensionPoint extension = getDescriptor().getExtensionPoint(ERROR_PARSER_SIMPLE_ID);
-		IErrorParser[] empty = new IErrorParser[0];
+		String[] empty = new String[0];
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
-			IConfigurationElement[] configElements = extensions[0].getConfigurationElements();
-			ArrayList list = new ArrayList(configElements.length);
-			for (int i = 0; i < configElements.length; i++) {
-				try {
-					IErrorParser parser = (IErrorParser) configElements[i].createExecutableExtension("class");
-					list.add(parser);
-				} catch (CoreException e) {
-				}
+			ArrayList list = new ArrayList(extensions.length);
+			for (int i = 0; i < extensions.length; i++) {
+				list.add(extensions[i].getUniqueIdentifier());
 			}
-			return (IErrorParser[]) list.toArray(empty);
+			return (String[]) list.toArray(empty);
 		}
 		return empty;
 	}
@@ -765,7 +760,7 @@ public class CCorePlugin extends Plugin {
 	}
 
 	public String[] getPreferenceErrorParserIDs() {
-		String parserIDs = CCorePlugin.getDefault().getPluginPreferences().getString(PREF_USE_NEW_PARSER);
+		String parserIDs = CCorePlugin.getDefault().getPluginPreferences().getString(PREF_ERROR_PARSER);
 		String[] empty = new String[0];
 		if (parserIDs != null && parserIDs.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(parserIDs, ";");
@@ -776,6 +771,14 @@ public class CCorePlugin extends Plugin {
 			return (String[]) list.toArray(empty);
 		}
 		return empty;
+	}
+
+	public void setPreferenceErrorParser(String[] parsersIDs) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < parsersIDs.length; i++) {
+			buf.append(parsersIDs[i]).append(';');
+		}
+		CCorePlugin.getDefault().getPluginPreferences().setValue(PREF_ERROR_PARSER, buf.toString());
 	}
 
 	public IScannerInfoProvider getScannerInfoProvider(IProject project) {

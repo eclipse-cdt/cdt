@@ -20,7 +20,10 @@ public class GDBDebugger implements ICDebugger {
 			return MIPlugin.getDefault().createCSession(exe.getLocation().toOSString());
 		}
 		catch (IOException e) {
-			throw new CDIException("Error initializing");
+			throw new CDIException("Error initializing: " + e.getMessage());
+		}
+		catch (MIException e) {
+			throw new CDIException("Error initializing: " + e.getMessage());
 		}
 	}
 
@@ -29,8 +32,12 @@ public class GDBDebugger implements ICDebugger {
 			return MIPlugin.getDefault().createCSession(exe.getLocation().toOSString(), pid);
 		}
 		catch (IOException e) {
-			throw new CDIException("Error initializing");
+			throw new CDIException("Error initializing: " + e.getMessage());
 		}
+		catch (MIException e) {
+			throw new CDIException("Error initializing: " + e.getMessage());
+		}
+
 	}
 
 	public ICDISession createCoreSession(ILaunchConfiguration config, IFile exe, IPath corefile) throws CDIException {
@@ -38,8 +45,12 @@ public class GDBDebugger implements ICDebugger {
 			return MIPlugin.getDefault().createCSession(exe.getLocation().toOSString(), corefile.toOSString());
 		}
 		catch (IOException e) {
-			throw new CDIException("Error initializing");
+			throw new CDIException("Error initializing: " + e.getMessage());
 		}
+		catch (MIException e) {
+			throw new CDIException("Error initializing: " + e.getMessage());
+		}
+		
 	}
 
 }

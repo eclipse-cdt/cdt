@@ -15,6 +15,7 @@
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.cdt.core"/>
    </requires>
 
 
@@ -22,7 +23,7 @@
          point="org.eclipse.cdt.debug.core.CDebugger">
       <debugger
             name="%GDBDebugger.name"
-            modes="run"
+            modes="run,core"
             class="org.eclipse.cdt.debug.mi.core.GDBDebugger"
             id="org.eclipse.cdt.debug.mi.core.CDebugger">
       </debugger>

@@ -16,7 +16,11 @@ import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
  * Window>Preferences>Java>Code Generation.
  */
 public class Configuration implements ICDIConfiguration {
-
+	protected boolean fAttached;
+	
+	public Configuration(boolean attached) {
+		fAttached = attached;
+	}
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsBreakpoints()
 	 */
@@ -28,7 +32,7 @@ public class Configuration implements ICDIConfiguration {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsDisconnect()
 	 */
 	public boolean supportsDisconnect() {
-		return false;
+		return fAttached ? true :false;
 	}
 
 	/**
@@ -77,7 +81,7 @@ public class Configuration implements ICDIConfiguration {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsRestart()
 	 */
 	public boolean supportsRestart() {
-		return true;
+		return fAttached ? false : true;
 	}
 
 	/**
@@ -98,6 +102,6 @@ public class Configuration implements ICDIConfiguration {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsTerminate()
 	 */
 	public boolean supportsTerminate() {
-		return true;
+		return fAttached ? false : true;
 	}
 }

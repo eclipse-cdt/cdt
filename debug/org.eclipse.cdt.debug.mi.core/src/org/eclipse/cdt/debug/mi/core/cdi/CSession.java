@@ -35,9 +35,20 @@ public class CSession implements ICDISession, ICDISessionObject {
 	MemoryManager memoryManager;
 	SignalManager signalManager;
 	SourceManager sourceManager;
+	ICDIConfiguration configuration;
 	CTarget ctarget;
 
+	public CSession(MISession s, boolean attach) {
+		commonSetup(s);
+		configuration = new Configuration(attach);
+	}
+
 	public CSession(MISession s) {
+		commonSetup(s);
+		configuration = new CoreFileConfiguration();
+	}
+	
+	private void commonSetup(MISession s) {
 		session = s;
 		props = new Properties();
 		breakpointManager = new BreakpointManager(this);
@@ -49,7 +60,6 @@ public class CSession implements ICDISession, ICDISessionObject {
 		sourceManager = new SourceManager(this);
 		ctarget = new CTarget(this);
 	}
-	
 	MISession getMISession() {
 		return session;
 	}
@@ -155,7 +165,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 	 * @see org.eclipse.cdt.debug.core.cdi.ICSuration()
 	 */
 	public ICDIConfiguration getConfiguration() {
-		return new Configuration();
+		return configuration;
 	}
 
 	/**

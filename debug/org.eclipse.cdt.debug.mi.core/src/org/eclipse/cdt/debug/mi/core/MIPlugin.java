@@ -14,6 +14,7 @@ import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakInsert;
 import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
+import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 
@@ -47,8 +48,8 @@ public class MIPlugin extends Plugin {
 	 * @param out
 	 * @return MISession
 	 */
-	public MISession createMISession(InputStream in, OutputStream out) {
-		return new MISession(in, out);
+	public MISession createMISession(Process process) throws MIException {
+		return new MISession(process);
 	}
 
 	/**
@@ -57,10 +58,10 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String program) throws IOException {
+	public ICDISession createCSession(String program) throws IOException, MIException {
 		String[]args = new String[]{"gdb", "-q", "-i", "mi", program};
-		Process gdb = Runtime.getRuntime().exec(args);
-		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
+		Process gdb = ProcessFactory.getFactory().exec(args);
+		MISession session = createMISession(gdb);
 		/*
 		try {
 			CommandFactory factory = session.getCommandFactory();
@@ -74,7 +75,7 @@ public class MIPlugin extends Plugin {
 			throw new IOException("Failed to attach");
 		}
 		*/
-		return new CSession(session);
+		return new CSession(session, false);
 	}
 
 	/**
@@ -84,10 +85,10 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String program, String core) throws IOException {
+	public ICDISession createCSession(String program, String core) throws IOException, MIException {
 		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program, core};
-		Process gdb = Runtime.getRuntime().exec(args);
-		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
+		Process gdb = ProcessFactory.getFactory().exec(args);
+		MISession session = createMISession(gdb);
 		return new CSession(session);
 	}
 
@@ -98,10 +99,10 @@ public class MIPlugin extends Plugin {
 	 * @return ICDISession
 	 * @throws IOException
 	 */
-	public ICDISession createCSession(String program, int pid) throws IOException {
+	public ICDISession createCSession(String program, int pid) throws IOException, MIException {
 		String[]args = new String[]{"gdb", "--quiet", "-i", "mi", program};
-		Process gdb = Runtime.getRuntime().exec(args);
-		MISession session = createMISession(gdb.getInputStream(), gdb.getOutputStream());
+		Process gdb = ProcessFactory.getFactory().exec(args);
+		MISession session = createMISession(gdb);
 		try {
 			CommandFactory factory = session.getCommandFactory();
 			MITargetAttach attach = factory.createMITargetAttach(pid);
@@ -113,7 +114,7 @@ public class MIPlugin extends Plugin {
 		} catch (MIException e) {
 			throw new IOException("Failed to attach");
 		}
-		return new CSession(session);
+		return new CSession(session, true);
 	}
 	
 	

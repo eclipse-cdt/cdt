@@ -30,7 +30,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIParser;
  * there a good change to confuse the parser.
  */
 public class MISession extends Observable {
-
+	Process miProcess;
 	InputStream inChannel;
 	OutputStream outChannel;
 
@@ -59,9 +59,10 @@ public class MISession extends Observable {
 	 * @param i the gdb input channel.
 	 * @param o gdb output channel.
 	 */
-	public MISession(InputStream i, OutputStream o) {
-		inChannel = i;
-		outChannel = o;
+	public MISession(Process process) throws MIException {
+		miProcess = process;
+		inChannel = process.getInputStream();
+		outChannel = process.getOutputStream();
 
 		factory = new CommandFactory();
 
@@ -84,23 +85,19 @@ public class MISession extends Observable {
 
 		// Disable a certain number of irritations from gdb.
 		// Like confirmation and screen size.
-		try {
-			MIInfo info;
+		MIInfo info;
 
-			MIGDBSet confirm = new MIGDBSet(new String[]{"confirm", "off"});
-			postCommand(confirm);
-			info = confirm.getMIInfo(); 
+		MIGDBSet confirm = new MIGDBSet(new String[]{"confirm", "off"});
+		postCommand(confirm);
+		info = confirm.getMIInfo(); 
 
-			MIGDBSet width = new MIGDBSet(new String[]{"width", "0"});
-			postCommand(width);
-			info = confirm.getMIInfo(); 
+		MIGDBSet width = new MIGDBSet(new String[]{"width", "0"});
+		postCommand(width);
+		info = confirm.getMIInfo(); 
 
-			MIGDBSet height = new MIGDBSet(new String[]{"height", "0"});
-			postCommand(height);
-			info = confirm.getMIInfo(); 
-		} catch (MIException e) {
-			// FIXME: Do not catch the exception but pass it up.
-		}
+		MIGDBSet height = new MIGDBSet(new String[]{"height", "0"});
+		postCommand(height);
+		info = confirm.getMIInfo(); 
 	}
 
 	/**

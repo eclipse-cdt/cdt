@@ -136,6 +136,13 @@ public class CThread extends CObject implements ICDIThread {
 	}
 
 	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#stepReturn()
+	 */
+	public void stepReturn() throws CDIException {
+		getTarget().stepReturn();
+	}
+
+	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#suspend()
 	 */
 	public void suspend() throws CDIException {

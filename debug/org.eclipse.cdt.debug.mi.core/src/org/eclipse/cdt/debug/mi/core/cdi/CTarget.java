@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
-import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
@@ -352,6 +351,24 @@ public class CTarget  implements ICDITarget {
 		try {
 			mi.postCommand(nexti);
 			MIInfo info = nexti.getMIInfo();
+			if (info == null) {
+				throw new CDIException("No answer");
+			}
+		} catch (MIException e) {
+			throw new CDIException(e.toString());
+		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDITarget#stepReturn()
+	 */
+	public void stepReturn() throws CDIException {
+		MISession mi = session.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		MIExecFinish finish = factory.createMIExecFinish();
+		try {
+			mi.postCommand(finish);
+			MIInfo info = finish.getMIInfo();
 			if (info == null) {
 				throw new CDIException("No answer");
 			}

@@ -108,7 +108,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
     int ret = 0;
 	_TCHAR  szCmdLine[MAX_CMD_SIZE];
 	int nBlkSize = MAX_ENV_SIZE; 
-	_TCHAR * szEnvBlock = (_TCHAR *)malloc(nBlkSize * sizeof(_TCHAR));
+	_TCHAR * szEnvBlock = NULL;
 	jsize nCmdTokens = 0;
 	jsize nEnvVars = 0;
 	int i;
@@ -220,10 +220,16 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	szCmdLine[nPos] = _T('\0');
 
+
+#ifdef DEBUG_MONITOR
+	_stprintf(buffer, _T("There are  %i environment variables \n"), nEnvVars);
+	OutputDebugStringW(buffer);
+#endif
 	// Prepare environment block
     if (nEnvVars > 0) 
 		{
 		nPos = 0;
+		szEnvBlock = (_TCHAR *)malloc(nBlkSize * sizeof(_TCHAR));
 		for(i = 0; i < nEnvVars; ++i) 
 			{
 			jobject item = (*env) -> GetObjectArrayElement(env, envp, i);
@@ -298,7 +304,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
                         0,                /* thread security attribute */
                         FALSE,            /* inherits system handles */
                         flags,            /* normal attached process */
-                        envBlk,			  /* environment block */
+                        szEnvBlock,		  /* environment block */
                         cwd,              /* change to the new current directory */
                         &si,              /* (in)  startup information */
                         &pi);             /* (out) process information */
@@ -307,8 +313,9 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec0
 
 	if(NULL != cwd)
 		free((void *)cwd);
-	
-	free(szEnvBlock);
+
+	if(NULL != szEnvBlock)
+		free(szEnvBlock);
 
     if (!ret) // Launching error
 		{
@@ -411,7 +418,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 	int nPos;
 	_TCHAR  szCmdLine[MAX_CMD_SIZE];
 	int nBlkSize = MAX_ENV_SIZE; 
-	_TCHAR * szEnvBlock = (_TCHAR *)malloc(nBlkSize * sizeof(_TCHAR));
+	_TCHAR * szEnvBlock = NULL;
 
 
     sa.nLength = sizeof(sa);
@@ -450,6 +457,7 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 	// Prepare environment block
     if (nEnvVars > 0) 
 		{
+		szEnvBlock = (_TCHAR *)malloc(nBlkSize * sizeof(_TCHAR));
 		nPos = 0;
 		for(i = 0; i < nEnvVars; ++i) 
 			{
@@ -516,7 +524,8 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_spawner_Spawner_exec1
 
 	if(NULL != cwd)
 		free(cwd);
-	free(szEnvBlock);
+	if(NULL != szEnvBlock)
+		free(szEnvBlock);
 
     if (!ret)  // error
 		{

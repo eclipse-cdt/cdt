@@ -151,6 +151,27 @@ extern "C" int  _tmain(int argc, _TCHAR * argv[]) {
 		return -1;;
    }
 
+
+ 
+#ifdef DEBUG_MONITOR
+	_TCHAR * lpvEnv = GetEnvironmentStringsW();
+
+	// If the returned pointer is NULL, exit.
+	if (lpvEnv == NULL)
+		OutputDebugStringW(_T("Cannot Read Environment\n"));
+	else {
+		// Variable strings are separated by NULL byte, and the block is 
+		// terminated by a NULL byte. 
+ 
+		OutputDebugStringW(_T("Starter: Environment\n"));
+		for (_TCHAR * lpszVariable = (_TCHAR *) lpvEnv; *lpszVariable; lpszVariable+=_tcslen(lpszVariable) + 1) { 
+			_stprintf(buffer, _T("%s\n"), lpszVariable);
+			OutputDebugStringW(buffer);
+		}
+
+		FreeEnvironmentStringsW(lpvEnv);
+	}
+#endif
 #ifdef DEBUG_MONITOR
 	_stprintf(buffer, _T("Starting: %s\n"), szCmdLine);
 	OutputDebugStringW(buffer);

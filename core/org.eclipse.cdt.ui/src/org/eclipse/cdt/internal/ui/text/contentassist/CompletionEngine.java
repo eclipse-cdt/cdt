@@ -7,7 +7,7 @@
  * 
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
-***********************************************************************/
+ **********************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.io.CharArrayReader;
@@ -73,7 +73,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * and a given completion offset.
  * 
  */
-public class CompletionEngine implements RelevanceConstants{
+public class CompletionEngine implements RelevanceConstants {
 	ICompletionRequestor requestor;
 	int completionStart = 0;
 	int completionLength = 0;
@@ -191,7 +191,7 @@ public class CompletionEngine implements RelevanceConstants{
 		macroMap.clear();
 		try
 		{
-			scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, requestor, ParserUtil.getParserLogService() );
+			scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETION_PARSE, language, requestor, ParserUtil.getScannerLogService() );
 			parser  = ParserFactory.createParser( scanner, requestor, ParserMode.COMPLETION_PARSE, language, ParserUtil.getParserLogService() );
 		}
 		catch( ParserFactoryError pfe )
@@ -824,7 +824,7 @@ public class CompletionEngine implements RelevanceConstants{
 		
 		StringBuffer kindName = new StringBuffer("Looking For ");
 		for(int i = 0; i<kinds.length; i++){
-			LookupKind kind = (LookupKind) kinds[i];
+			LookupKind kind = kinds[i];
 			if(kind == IASTNode.LookupKind.ALL)
 				kindName.append("ALL");
 			else if(kind == IASTNode.LookupKind.STRUCTURES)				

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2003,2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corp. - Rational Software - initial implementation
+ ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
 import java.util.EmptyStackException;
@@ -8,11 +18,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.BranchTracker;
 
 /**
  * @author jcamelon
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class BranchTrackerTest extends TestCase {
 	
@@ -42,13 +47,13 @@ public class BranchTrackerTest extends TestCase {
 			 * #endif
 			 */
 
-			assertFalse( bt.poundif( false ) );  
-			assertFalse( bt.poundif( true ) ); 
-			assertFalse( bt.poundelif( true ) );  
-			assertFalse( bt.poundelse() ); 
-			assertFalse( bt.poundendif() );  
-			assertTrue( bt.poundelse() ); 
-			assertTrue( bt.poundendif() ); 
+			assertFalse( bt.poundIf( false ) );  
+			assertFalse( bt.poundIf( true ) ); 
+			assertFalse( bt.poundElif( true ) );  
+			assertFalse( bt.poundElse() ); 
+			assertFalse( bt.poundEndif() );  
+			assertTrue( bt.poundElse() ); 
+			assertTrue( bt.poundEndif() ); 
 
 			/*
 			 * #if 0	
@@ -67,19 +72,19 @@ public class BranchTrackerTest extends TestCase {
 			 */
 			 
 			bt = new BranchTracker();
-			assertFalse( bt.poundif( false ) );
-			assertFalse( bt.poundif( true ));   
-			assertFalse( bt.poundelif( true ) );  
-			assertFalse( bt.poundelse() );  
-			assertFalse( bt.poundendif() );  
-			assertTrue( bt.poundelse() );  
-			assertFalse( bt.poundif( false ) );  
-			assertTrue( bt.poundelif( true ) );  
-			assertFalse( bt.poundelif( false ) ); 
-			assertFalse( bt.poundelif( true ) ); 
-			assertFalse( bt.poundelse() ); 
-			assertTrue( bt.poundendif() ); 
-			assertTrue( bt.poundendif() ); 
+			assertFalse( bt.poundIf( false ) );
+			assertFalse( bt.poundIf( true ));   
+			assertFalse( bt.poundElif( true ) );  
+			assertFalse( bt.poundElse() );  
+			assertFalse( bt.poundEndif() );  
+			assertTrue( bt.poundElse() );  
+			assertFalse( bt.poundIf( false ) );  
+			assertTrue( bt.poundElif( true ) );  
+			assertFalse( bt.poundElif( false ) ); 
+			assertFalse( bt.poundElif( true ) ); 
+			assertFalse( bt.poundElse() ); 
+			assertTrue( bt.poundEndif() ); 
+			assertTrue( bt.poundEndif() ); 
 			assertEquals( 0, bt.getDepth() ); 
 			
 			/*
@@ -110,31 +115,31 @@ public class BranchTrackerTest extends TestCase {
 			 * #endif
 			 */
 			 
-			assertFalse(bt.poundif(false));
-				assertFalse(bt.poundif(true));
-				assertFalse(bt.poundelif(false));
-				assertFalse(bt.poundelif(true));
-				assertFalse(bt.poundelse());
-				assertFalse( bt.poundendif() ); 
-			assertFalse(bt.poundelif(false));
-				assertFalse(bt.poundif(false));
-				assertFalse(bt.poundelif(false));
-				assertFalse(bt.poundelif(true));
-				assertFalse(bt.poundelse());
-				assertFalse( bt.poundendif());
-			assertTrue(bt.poundelif(true));
-				assertFalse(bt.poundif(false));
-				assertFalse(bt.poundelif(false));
-				assertFalse(bt.poundelif(false));
-				assertTrue(bt.poundelse());
-				assertTrue( bt.poundendif() ); 
-			assertFalse(bt.poundelse());
-				assertFalse(bt.poundif(true));
-				assertFalse(bt.poundelif(false));
-				assertFalse(bt.poundelif(true));
-				assertFalse(bt.poundelse());
-				assertFalse( bt.poundendif() ); 
-			assertTrue( bt.poundendif() ); 
+			assertFalse(bt.poundIf(false));
+				assertFalse(bt.poundIf(true));
+				assertFalse(bt.poundElif(false));
+				assertFalse(bt.poundElif(true));
+				assertFalse(bt.poundElse());
+				assertFalse( bt.poundEndif() ); 
+			assertFalse(bt.poundElif(false));
+				assertFalse(bt.poundIf(false));
+				assertFalse(bt.poundElif(false));
+				assertFalse(bt.poundElif(true));
+				assertFalse(bt.poundElse());
+				assertFalse( bt.poundEndif());
+			assertTrue(bt.poundElif(true));
+				assertFalse(bt.poundIf(false));
+				assertFalse(bt.poundElif(false));
+				assertFalse(bt.poundElif(false));
+				assertTrue(bt.poundElse());
+				assertTrue( bt.poundEndif() ); 
+			assertFalse(bt.poundElse());
+				assertFalse(bt.poundIf(true));
+				assertFalse(bt.poundElif(false));
+				assertFalse(bt.poundElif(true));
+				assertFalse(bt.poundElse());
+				assertFalse( bt.poundEndif() ); 
+			assertTrue( bt.poundEndif() ); 
 			assertEquals(0, bt.getDepth());
 		} catch (EmptyStackException se) {
 				fail("Unexpected Scanner exception thrown");
@@ -152,9 +157,9 @@ public class BranchTrackerTest extends TestCase {
 			 * #endif
 			 */
 			BranchTracker bt = new BranchTracker();
-			assertTrue( bt.poundif( true ) );  
-			assertFalse( bt.poundelse() ); 
-			assertTrue( bt.poundendif() );  
+			assertTrue( bt.poundIf( true ) );  
+			assertFalse( bt.poundElse() ); 
+			assertTrue( bt.poundEndif() );  
 			
 			/*
 			 * code sequence is
@@ -167,13 +172,13 @@ public class BranchTrackerTest extends TestCase {
 			 * #endif
 			 */
 			bt = new BranchTracker(); 
-			assertTrue( bt.poundif( true ));
-			assertFalse( bt.poundif( false ));  
-			assertFalse( bt.poundelif( false ));
-			assertTrue( bt.poundelse());
-			assertTrue( bt.poundendif() );  
-			assertFalse( bt.poundelse() ); 
-			assertTrue( bt.poundendif() ); 
+			assertTrue( bt.poundIf( true ));
+			assertFalse( bt.poundIf( false ));  
+			assertFalse( bt.poundElif( false ));
+			assertTrue( bt.poundElse());
+			assertTrue( bt.poundEndif() );  
+			assertFalse( bt.poundElse() ); 
+			assertTrue( bt.poundEndif() ); 
 			
 			/*
 			 *	#if 1
@@ -184,11 +189,11 @@ public class BranchTrackerTest extends TestCase {
 			 */
 			 
 			bt  = new BranchTracker(); 
-			assertTrue( bt.poundif( true ) ); 
-			assertFalse( bt.poundelif( true )); 
-			assertFalse( bt.poundelif( false )); 
-			assertFalse( bt.poundelse());
-			assertTrue( bt.poundendif() ); 
+			assertTrue( bt.poundIf( true ) ); 
+			assertFalse( bt.poundElif( true )); 
+			assertFalse( bt.poundElif( false )); 
+			assertFalse( bt.poundElse());
+			assertTrue( bt.poundEndif() ); 
 			
 			
 		}
@@ -197,5 +202,4 @@ public class BranchTrackerTest extends TestCase {
 			fail( "Exception" ); 
 		}
 	}
-
 }

@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -982,7 +983,7 @@ public class ManagedBuildTests extends TestCase {
 		ISourceElementRequestor callback = new NullSourceElementRequestor();
 		
 		IScanner scanner = ParserFactory.createScanner( new StringReader( "#include <header.h>\n int A::i = 1;" ), 
-														"TEST", info, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback, null);
+														"TEST", info, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, callback, new NullLogService());
 		
 		IParser parser = ParserFactory.createParser( scanner, callback, ParserMode.COMPLETE_PARSE, ParserLanguage.CPP, null );
 		assertTrue( parser.parse() );

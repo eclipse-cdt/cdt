@@ -34,7 +34,7 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 	 * @param defns
 	 */
 	public Preprocessor(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService logService ) {
-        super(reader, filename, info, requestor, mode, language, logService );
+        super(reader, filename, info, requestor, mode, language, logService  );
     }
 
 	public void process()

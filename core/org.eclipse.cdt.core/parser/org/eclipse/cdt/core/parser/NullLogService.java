@@ -10,28 +10,21 @@
 ***********************************************************************/
 package org.eclipse.cdt.core.parser;
 
-import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
-import org.eclipse.cdt.internal.core.parser.ParserLogService;
-
 /**
  * @author jcamelon
- *
  */
-public class ParserUtil
-{
-	
-	public static IParserLogService getParserLogService()
-	{
-		return parserLogService;
-	}
-		
-	private static IParserLogService parserLogService = new ParserLogService(IDebugLogConstants.PARSER );
-	private static IParserLogService scannerLogService = new ParserLogService(IDebugLogConstants.SCANNER );
+public class NullLogService implements IParserLogService {
 
-	/**
-	 * @return
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IParserLogService#traceLog(java.lang.String)
 	 */
-	public static IParserLogService getScannerLogService() {
-		return scannerLogService;
+	public void traceLog(String message) {
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IParserLogService#errorLog(java.lang.String)
+	 */
+	public void errorLog(String message) {
+	}
+
 }

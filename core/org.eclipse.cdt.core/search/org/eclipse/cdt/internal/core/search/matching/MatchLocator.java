@@ -440,7 +440,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			IParser parser = null;
 			try
 			{
-				IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this, ParserUtil.getParserLogService() );
+				IScanner scanner = ParserFactory.createScanner( reader, realPath.toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, this, ParserUtil.getScannerLogService() );
 				parser  = ParserFactory.createParser( scanner, this, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
 			}
 			catch( ParserFactoryError pfe )

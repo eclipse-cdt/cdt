@@ -6,6 +6,9 @@ org.eclipse.cdt.core/debug/model=false
 # Reports parser activity
 org.eclipse.cdt.core/debug/parser=false
 
+# Reports scanner activity
+org.eclipse.cdt.core/debug/scanner=false
+
 # Reports background indexer activity: indexing, saving index file, index queries
 org.eclipse.cdt.core/debug/indexmanager=false
 

@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTNode;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
@@ -191,4 +192,18 @@ public class ContextualParser extends Parser implements IParser {
 	{ 
 		return finalToken;
 	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCompletionContextForExpression(org.eclipse.cdt.core.parser.ast.IASTExpression, boolean)
+	 */
+	protected void setCompletionContextForExpression(
+		IASTExpression firstExpression,
+		boolean isTemplate) {
+		setCompletionContext( astFactory.getCompletionContext( (isTemplate
+				? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
+				: IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION), 
+				firstExpression ) );
+	}
+
 }

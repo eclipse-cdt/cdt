@@ -1,3 +1,6 @@
+2004-01-26 John Camelon
+	Updated clients to use new Scanner logging service.
+	
 2003-10-23 Bogdan Gheorghe
 
 	- Added AcceptMatchOperation to get around Bug 45324. The search

@@ -12,10 +12,11 @@ import java.io.Writer;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.parser.IParser;
-import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCodeScope;
@@ -28,7 +29,6 @@ import org.eclipse.cdt.core.parser.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.core.parser.ast.IASTNode.ILookupResult;
 import org.eclipse.cdt.core.parser.ast.IASTNode.LookupKind;
-import org.eclipse.cdt.internal.core.parser.ParserLogService;
 
 /**
  * @author jcamelon
@@ -45,7 +45,6 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 
 	protected IASTCompletionNode parse(String code, int offset)
 		throws Exception {
-		IParserLogService log = new ParserLogService();
 		callback = new FullParseCallback();
 		IParser parser = null;
 
@@ -58,11 +57,11 @@ public class ContextualParseTest extends CompleteParseBaseTest {
 					ParserMode.COMPLETION_PARSE,
 					ParserLanguage.CPP,
 					callback,
-					log),
+					new NullLogService()),
 				callback,
 				ParserMode.COMPLETION_PARSE,
 				ParserLanguage.CPP,
-				log);
+				ParserUtil.getParserLogService());
 		
 		return parser.parse( offset );
 

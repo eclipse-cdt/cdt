@@ -1,3 +1,9 @@
+2004-01-26 John Camelon
+	Added traceLogs into Scanner.  
+	Fixed Bug 46402 : expression evaluation error on branch not taken
+	Added beginning of IScannerExtension and GCCScannerExtension support for gcc specific aspects.
+	Added separate Scanner log category for tracing and updated clients to use it.  
+
 2004-01-23 John Camelon
 	Added support for content assist in the scanner..
 

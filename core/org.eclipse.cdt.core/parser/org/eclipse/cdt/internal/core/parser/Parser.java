@@ -4805,11 +4805,8 @@ public abstract class Parser implements IParser
 		            	setCompletionToken( null );
 		            }
             
-                    IASTNode context = astFactory.getCompletionContext( (isTemplate
-                                                                            ? IASTExpression.Kind.POSTFIX_DOT_TEMPL_IDEXPRESS
-                                                                            : IASTExpression.Kind.POSTFIX_DOT_IDEXPRESSION), 
-                                                                        firstExpression );
-                    setCompletionContext( context );
+		            
+                    setCompletionContextForExpression( firstExpression, isTemplate );
                     setCompletionKind( IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
                     															
                     secondExpression = primaryExpression(scope);
@@ -4855,11 +4852,7 @@ public abstract class Parser implements IParser
                     	setCompletionToken( null );
                     }
                     
-                    context = astFactory.getCompletionContext( (isTemplate
-                                                                    ? IASTExpression.Kind.POSTFIX_ARROW_TEMPL_IDEXP
-                                                                    : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION), 
-                                                               firstExpression );
-                    setCompletionContext( context );
+                    setCompletionContextForExpression( firstExpression, isTemplate );
                     setCompletionKind( IASTCompletionNode.CompletionKind.MEMBER_REFERENCE );
                     
                     secondExpression = primaryExpression(scope);
@@ -4897,6 +4890,12 @@ public abstract class Parser implements IParser
     
 
     /**
+	 * @param firstExpression
+	 * @param isTemplate
+	 */
+	protected void setCompletionContextForExpression(IASTExpression firstExpression, boolean isTemplate) {
+	}
+	/**
 	 * @return
 	 * @throws EndOfFileException
 	 */

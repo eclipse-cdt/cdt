@@ -14,6 +14,7 @@ import org.eclipse.cdt.core.ICLogConstants;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.internal.core.model.IDebugLogConstants;
 import org.eclipse.cdt.internal.core.model.Util;
+import org.eclipse.cdt.internal.core.model.IDebugLogConstants.DebugLogConstant;
 
 /**
  * @author jcamelon
@@ -22,12 +23,20 @@ import org.eclipse.cdt.internal.core.model.Util;
 public class ParserLogService implements IParserLogService
 {
 
+	final DebugLogConstant topic; 
+	/**
+	 * @param constant
+	 */
+	public ParserLogService(DebugLogConstant constant) {
+		topic = constant;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IParserLogService#traceLog(java.lang.String)
 	 */
 	public void traceLog(String message)
 	{
-		Util.debugLog( message, IDebugLogConstants.PARSER );
+		Util.debugLog( message, topic );
 	}
 
 	/* (non-Javadoc)

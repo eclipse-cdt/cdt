@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.Status;
 public class Util implements ICLogConstants {
 	
 	public static boolean VERBOSE_PARSER = false;
+	public static boolean VERBOSE_SCANNER = false;
 	public static boolean VERBOSE_MODEL = false;
 	
 	private Util() {
@@ -214,6 +215,8 @@ public class Util implements ICLogConstants {
 		if (client.equals(IDebugLogConstants.PARSER)){
 			return VERBOSE_PARSER;
 		}
+		else if (client.equals(IDebugLogConstants.SCANNER ))
+			return VERBOSE_SCANNER;
 		else if (client.equals(IDebugLogConstants.MODEL)){
 			return VERBOSE_MODEL;
 		}

@@ -41,7 +41,7 @@ public class BranchTracker {
 	 * evaluates to true or false
 	 * @return boolean		- are we set to continue scanning or not? 
 	 */
-	public boolean poundif( boolean taken )
+	public boolean poundIf( boolean taken )
 	{
 		if( ignore == IGNORE_SENTINEL )
 		{	
@@ -63,7 +63,22 @@ public class BranchTracker {
 		}
 	}	
 	
-	public boolean poundelif( boolean taken ) throws EmptyStackException 
+	public boolean queryCurrentBranchForElif()
+	{
+		if( ignore != IGNORE_SENTINEL && ignore < branches.size() )
+			return true;
+		return !((Boolean)branches.peek()).booleanValue();
+	}
+	
+	public boolean queryCurrentBranchForIf()
+	{
+		if( branches.isEmpty() ) return true;
+		if( ignore != IGNORE_SENTINEL & ignore < branches.size() )
+			return false; 
+		return ((Boolean)branches.peek()).booleanValue();
+	}
+	
+	public boolean poundElif( boolean taken ) throws EmptyStackException 
 	{
 		if( ignore != IGNORE_SENTINEL && ignore < branches.size() )
 		{
@@ -110,7 +125,7 @@ public class BranchTracker {
 		return false;
 	}
 	
-	public boolean poundelse() throws EmptyStackException
+	public boolean poundElse() throws EmptyStackException
 	{
 		if( ignore != IGNORE_SENTINEL && ignore < branches.size() )
 		{
@@ -151,7 +166,7 @@ public class BranchTracker {
 	}
 	
 	// taken only on an #endif 
-	public boolean poundendif( )
+	public boolean poundEndif( )
 	{
 		if( ignore == branches.size() )
 			ignore = IGNORE_SENTINEL;

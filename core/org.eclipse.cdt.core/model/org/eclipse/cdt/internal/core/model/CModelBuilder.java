@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IQuickParseCallback;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -126,7 +127,7 @@ public class CModelBuilder {
 					mode, 
 					language, 
 					quickParseCallback, 
-					ParserUtil.getParserLogService())
+					quickParseMode ? new NullLogService() : ParserUtil.getScannerLogService())
 				,quickParseCallback, 
 				mode, 
 				language, 

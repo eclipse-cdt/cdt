@@ -91,7 +91,7 @@ public class SourceIndexer extends AbstractIndexer {
 		try
 		{
 			parser = ParserFactory.createParser( 
-							ParserFactory.createScanner( new StringReader( document.getStringContent() ), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getParserLogService() ), 
+							ParserFactory.createScanner( new StringReader( document.getStringContent() ), resourceFile.getLocation().toOSString(), scanInfo, ParserMode.COMPLETE_PARSE, language, requestor, ParserUtil.getScannerLogService() ), 
 							requestor, ParserMode.COMPLETE_PARSE, language, ParserUtil.getParserLogService() );
 		} catch( ParserFactoryError pfe )
 		{

@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserFactoryError;
 import org.eclipse.cdt.core.parser.ParserLanguage;
@@ -697,7 +698,7 @@ public class CompleteParseBaseTest extends TestCase
     	callback = new FullParseCallback(); 
     	IParser parser = ParserFactory.createParser( 
     		ParserFactory.createScanner( new StringReader( code ), "test-code", new ScannerInfo(),
-    			ParserMode.COMPLETE_PARSE, language, callback, null ), callback, ParserMode.COMPLETE_PARSE, language, null 	
+    			ParserMode.COMPLETE_PARSE, language, callback, new NullLogService() ), callback, ParserMode.COMPLETE_PARSE, language, null 	
     		);
     	if( ! parser.parse() && throwOnError ) throw new ParserException( "FAILURE");
         return callback.getCompilationUnit();

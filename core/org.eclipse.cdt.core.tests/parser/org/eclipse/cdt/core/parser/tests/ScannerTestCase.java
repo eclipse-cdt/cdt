@@ -1,3 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2003,2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ *     IBM Corp. - Rational Software - initial implementation
+ ******************************************************************************/
+
 package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringWriter;
@@ -18,11 +29,6 @@ import org.eclipse.cdt.internal.core.parser.token.Token;
 
 /**
  * @author jcamelon
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
  */
 public class ScannerTestCase extends BaseScannerTest
 {
@@ -1527,5 +1533,18 @@ public class ScannerTestCase extends BaseScannerTest
 		assertEquals( callback.problems.size(), 0 );
 		assertEquals( callback.inclusions.size(), 1 );
 		assertEquals( callback.inclusions.get(0), "stdio.h"); 
+    }
+    
+    public void testBug46402() throws Exception
+	{
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append( "#define X 5\n" );
+    	buffer.append( "#if defined( X )\n" ); 
+    	buffer.append( "// blah\n" );
+    	buffer.append( "#elif Y > 5 \n" );
+    	buffer.append( "// coo\n" );
+    	buffer.append( "#endif\n" );
+    	initializeScanner( buffer.toString(), ParserMode.COMPLETE_PARSE );
+    	validateEOF();
     }
 }

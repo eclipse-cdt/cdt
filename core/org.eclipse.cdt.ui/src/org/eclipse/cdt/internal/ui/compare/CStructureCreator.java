@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserUtil;
 import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IScanner;
@@ -73,7 +74,7 @@ public class CStructureCreator implements IStructureCreator {
 			//are bugs while parsing C files, we might want to create a separate Structure
 			//compare for c files, but we'll never be completely right about .h files
 			IScanner scanner =
-				ParserFactory.createScanner(new StringReader(s), "code", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, builder,ParserUtil.getParserLogService());
+				ParserFactory.createScanner(new StringReader(s), "code", new ScannerInfo(), ParserMode.QUICK_PARSE, ParserLanguage.CPP, builder, new NullLogService());
 			IParser parser = ParserFactory.createParser(scanner, builder, ParserMode.QUICK_PARSE, ParserLanguage.CPP, ParserUtil.getParserLogService() );
 			parser.parse();
 		} catch (Exception e) {

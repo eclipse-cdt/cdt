@@ -33,10 +33,12 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IScannerExtension;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserFactory;
@@ -60,7 +62,6 @@ import org.eclipse.cdt.internal.core.parser.token.Token;
 
 public class Scanner implements IScanner {
    
-
 	protected final IParserLogService log;
 	private final static String SCRATCH = "<scratch>";
 	private IProblemFactory problemFactory = new ScannerProblemFactory();
@@ -68,6 +69,7 @@ public class Scanner implements IScanner {
 	private final String filename;
 	private final Reader reader;
 	protected IToken finalToken;
+	private final IScannerExtension scannerExtension;
 
 	protected void handleProblem( int problemID, String argument, int beginningOffset, boolean warning, boolean error ) throws ScannerException
 	{
@@ -101,6 +103,9 @@ public class Scanner implements IScanner {
 		this.filename = filename;
 		this.reader = reader;
 		this.language = language;
+
+		//support GNU by default for now 
+		scannerExtension = new GCCScannerExtension(); 
 		astFactory = ParserFactory.createASTFactory( mode, language );
 		contextStack = new ContextStack( log );
 		try {
@@ -116,26 +121,48 @@ public class Scanner implements IScanner {
 		} 
 		
 		originalConfig = info;
+		
+		log.traceLog( "Scanner constructed with the following configuration:");
+		log.traceLog( "\tPreprocessor definitions from IScannerInfo: ");
+
 		if( info.getDefinedSymbols() != null )
-		{	
+		{
 			Iterator i = info.getDefinedSymbols().keySet().iterator(); 
 			Map m = info.getDefinedSymbols();
+			int numberOfSymbolsLogged = 0; 
 			while( i.hasNext() )
 			{
 				String symbolName = (String) i.next();
 				Object value = m.get( symbolName );
-	
 				if( value instanceof String )
-					addDefinition( symbolName, (String) value);
+				{	
+					addDefinition( symbolName, scannerExtension.initializeMacroValue((String) value));
+					log.traceLog( "\t\tNAME = " + symbolName + " VALUE = " + value.toString() );
+					++numberOfSymbolsLogged;
+					
+				}
 				else if( value instanceof IMacroDescriptor )
 					addDefinition( symbolName, (IMacroDescriptor)value);
 			}
-		}
+			if( numberOfSymbolsLogged == 0 )
+				log.traceLog( "\t\tNo definitions specified.");
 			
-		if( info.getIncludePaths() != null )
-			overwriteIncludePath( info.getIncludePaths() );
-
+		}
+		else 
+			log.traceLog( "\t\tNo definitions specified.");
 		
+		
+		log.traceLog( "\tInclude paths from IScannerInfo: ");
+		if( info.getIncludePaths() != null )
+		{	
+			overwriteIncludePath( info.getIncludePaths() );
+			for( int i = 0; i < info.getIncludePaths().length; ++i )
+				log.traceLog( "\t\tPATH: " + info.getIncludePaths()[i]);
+		}
+		else 
+			log.traceLog("\t\tNo include paths specified.");
+		
+
     }
 
     private void setupInitialContext()
@@ -174,7 +201,7 @@ public class Scanner implements IScanner {
 		while( i.hasNext() )
 		{
 			String path = (String) i.next();
-			includePaths.add( new File( path )); 
+			includePaths.add( new File( path ));
 		}
 		
 		
@@ -1199,26 +1226,27 @@ public class Scanner implements IScanner {
 							int currentOffset = getCurrentOffset();
 							String expression = getRestOfPreprocessorLine();
 							
-							boolean expressionEvalResult = false;
-							try{
-								expressionEvalResult = evaluateExpression(expression, currentOffset);
-							} catch( ScannerException e ){}
+							if (expression.trim().equals(""))
+								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#if", beginningOffset, false, true  );
 							
-							passOnToClient = branches.poundif( expressionEvalResult ); 
+							boolean expressionEvalResult = false;
+							
+							if( branches.queryCurrentBranchForIf() )
+							    expressionEvalResult = evaluateExpression(expression, currentOffset);
+							
+							passOnToClient = branches.poundIf( expressionEvalResult ); 
 							c = getChar();
 							continue;
-
-
 
 						case PreprocessorDirectives.IFDEF :
 							//TODO add in content assist stuff here
 							skipOverWhitespace();
 							if (getDefinition(getNextIdentifier()) == null) {
 								// not defined	
-								passOnToClient = branches.poundif( false );
+								passOnToClient = branches.poundIf( false );
 								skipOverTextUntilNewline();
 							} else {
-								passOnToClient = branches.poundif( true ); 
+								passOnToClient = branches.poundIf( true ); 
 								// continue along, act like nothing is wrong :-)
 								c = getChar();
 							}
@@ -1231,7 +1259,7 @@ public class Scanner implements IScanner {
 								buffer.append( restOfLine );
 								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, buffer.toString(), beginningOffset, false, true );
 							}
-							passOnToClient = branches.poundendif(); 
+							passOnToClient = branches.poundEndif(); 
 							c = getChar();
 							continue;
 
@@ -1241,9 +1269,9 @@ public class Scanner implements IScanner {
 							if (getDefinition(getNextIdentifier()) != null) {
 								// not defined	
 								skipOverTextUntilNewline();
-								passOnToClient = branches.poundif( false ); 
+								passOnToClient = branches.poundIf( false ); 
 							} else {
-								passOnToClient = branches.poundif( true ); 
+								passOnToClient = branches.poundIf( true ); 
 								// continue along, act like nothing is wrong :-)
 								c = getChar();
 							}
@@ -1253,7 +1281,7 @@ public class Scanner implements IScanner {
 							//TODO add in content assist stuff here
 							try
 							{
-								passOnToClient = branches.poundelse();
+								passOnToClient = branches.poundElse();
 							}
 							catch( EmptyStackException ese )
 							{
@@ -1276,11 +1304,12 @@ public class Scanner implements IScanner {
 								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#elif", beginningOffset, false, true  );
 
 							boolean elsifResult = false;
-							elsifResult = evaluateExpression(elsifExpression, co );
+							if( branches.queryCurrentBranchForElif() )
+								elsifResult = evaluateExpression(elsifExpression, co );
 
 							try
 							{
-								passOnToClient = branches.poundelif( elsifResult );
+								passOnToClient = branches.poundElif( elsifResult );
 							}
 							catch( EmptyStackException ese )
 							{
@@ -2026,8 +2055,8 @@ public class Scanner implements IScanner {
 						new StringReader(expressionBuffer.toString()),
 							EXPRESSION,
 							new ScannerInfo( definitions, originalConfig.getIncludePaths()), 
-							ParserMode.QUICK_PARSE, language, nullCallback, log );
-	            parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE, language, log );
+							ParserMode.QUICK_PARSE, language, nullCallback, nullLogService );
+	            parser = ParserFactory.createParser(trial, nullCallback, ParserMode.QUICK_PARSE, language, nullLogService);
 			} catch( ParserFactoryError pfe )
 			{
 				handleInternalError();
@@ -2129,7 +2158,7 @@ public class Scanner implements IScanner {
 										new ScannerInfo(definitions, originalConfig.getIncludePaths()), 
 										new NullSourceElementRequestor(),
 										mode,
-										language, log );
+										language, nullLogService );
 			helperScanner.setForInclusion( true );
 			IToken t = null;
 			
@@ -2243,6 +2272,7 @@ public class Scanner implements IScanner {
 
 
 	protected boolean forInclusion = false;
+	private final static IParserLogService nullLogService = new NullLogService();
 	/**
 	 * @param b
 	 */
@@ -2265,7 +2295,7 @@ public class Scanner implements IScanner {
 						new ScannerInfo(),
 						mode,
 						language,
-						new NullSourceElementRequestor(), log);
+						new NullSourceElementRequestor(), nullLogService);
 		} catch (ParserFactoryError e1) {
 		}
 		helperScanner.setTokenizingMacroReplacementList( true );
@@ -2533,7 +2563,7 @@ public class Scanner implements IScanner {
 
 	protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), new NullSourceElementRequestor(), mode, language, log);
+        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), new NullSourceElementRequestor(), mode, language, nullLogService );
         tokenizer.setThrowExceptionOnBadCharacterRead(false);
         Vector parameterValues = new Vector();
         Token t = null;

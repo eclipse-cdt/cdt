@@ -78,9 +78,10 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 		command.addAll(Arrays.asList(arguments));
 
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-			ICDebugConfiguration dbgCfg = CDebugCorePlugin.getDefault().getDebugConfiguration(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""));
+			ICDebugConfiguration dbgCfg = null;
 			ICDebugger cdebugger = null;			
 			try {
+				dbgCfg = CDebugCorePlugin.getDefault().getDebugConfiguration(config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""));
 				cdebugger = dbgCfg.getDebugger();
 			}
 			catch (CoreException e) {

@@ -54,10 +54,10 @@
 		<ant antfile="build.xml" dir="${pde.build.scripts}">
 			<property name="builder" value="${basedir}/sdk" />
 		</ant>
-		<concat destfile="${zipsdir}/compile.log">
+		<concat destfile="${zipsdir}/compilelog.txt">
 			<fileset dir="${buildDirectory}/plugins" includes="**/*.bin.log"/>
 		</concat>
-		<loadfile property="compileLog" srcFile="${zipsdir}/compile.log"/>
+		<loadfile property="compileLog" srcFile="${zipsdir}/compilelog.txt"/>
 		<condition property="hasErrors">
 			<contains string="${compileLog}" substring="ERROR"/>
 		</condition>

@@ -1807,7 +1807,7 @@ public class CDebugTarget extends CDebugElement
 			ICDIExpressionManager em = getCDISession().getExpressionManager();
 			try
 			{
-				em.removeExpression( ((CExpression)expression).getCDIExpression() );
+				em.destroyExpression( ((CExpression)expression).getCDIExpression() );
 			}
 			catch( CDIException e )
 			{

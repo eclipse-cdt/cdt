@@ -478,7 +478,7 @@ public class Coff {
 			byte[] bytes = new byte[4];
 			rfile.readFully(bytes);
 			int str_len = ReadMemoryAccess.getIntLE(bytes);
-			if (str_len > 4) {
+			if (str_len > 4 && str_len < rfile.length()) {
 				str_len -= 4;
 				string_table = new byte[str_len];
 				rfile.seek(offset + 4);

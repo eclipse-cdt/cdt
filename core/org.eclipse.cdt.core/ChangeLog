@@ -1,3 +1,16 @@
+2004-02-05 Alain Magloire
+
+	PR 50810
+	Coff format the String Table section may have incorrect value.
+	We should guard against it.
+
+	* utils/org/eclipse/cdt/utils/Coff.java
+	* utils/org/eclipse/cdt/utils/PE.java
+
+	Cache the IBinaryArchive class so not to reload again.
+	* model/org/eclipse/cdt/internal/core/model/Archive.java
+	* model/org/eclipse/cdt/internal/core/model/CModelManager.java
+
 2004-02-03 Alain Magloire
 	PR 51143
 

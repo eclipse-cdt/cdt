@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
 import org.eclipse.cdt.core.model.IArchive;
@@ -229,7 +230,7 @@ public class CModelManager implements IResourceChangeListener {
 			}
 			if (bin != null) {
 				if (bin.getType() == IBinaryFile.ARCHIVE) {
-					cfile = new Archive(parent, file);
+					cfile = new Archive(parent, file, (IBinaryArchive)bin);
 				} else {
 					cfile = new Binary(parent, file, bin);
 				}

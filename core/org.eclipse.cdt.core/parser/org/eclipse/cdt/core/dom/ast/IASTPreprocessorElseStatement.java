@@ -15,11 +15,13 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author jcamelon
  */
-public interface IASTPreprocessorElseStatement extends IASTPreprocessorStatement {
+public interface IASTPreprocessorElseStatement extends
+		IASTPreprocessorStatement {
 
-    /**
-     * Was this #else branch taken?
-     * @return boolean
-     */
-    public boolean taken();
+	/**
+	 * Was this #else branch taken?
+	 * 
+	 * @return boolean
+	 */
+	public boolean taken();
 }

@@ -20,22 +20,24 @@ public interface IASTPreprocessorFunctionStyleMacroDefinition extends
 		IASTPreprocessorMacroDefinition {
 
 	/**
-	 * This property represents the relationship between a function style macro definition and one of its parameters.
+	 * This property represents the relationship between a function style macro
+	 * definition and one of its parameters.
 	 */
 	public static final ASTNodeProperty PARAMETER = new ASTNodeProperty(
 			"Function Macro Parameter"); //$NON-NLS-1$
 
 	/**
-	 * Get the macro parameters. 
+	 * Get the macro parameters.
 	 * 
-	 * @return <code>IASTFunctionStyleMacroParameter[]</code> parameters 
+	 * @return <code>IASTFunctionStyleMacroParameter[]</code> parameters
 	 */
 	public IASTFunctionStyleMacroParameter[] getParameters();
 
 	/**
-	 * Add a function-style macro parameter. 
+	 * Add a function-style macro parameter.
 	 * 
-	 * @param parm <code>IASTFunctionStyleMacroParameter</code>
+	 * @param parm
+	 *            <code>IASTFunctionStyleMacroParameter</code>
 	 */
 	public void addParameter(IASTFunctionStyleMacroParameter parm);
 

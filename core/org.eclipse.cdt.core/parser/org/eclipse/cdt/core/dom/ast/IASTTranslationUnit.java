@@ -17,61 +17,121 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTTranslationUnit extends IASTNode {
 
-   public static final ASTNodeProperty OWNED_DECLARATION      = new ASTNodeProperty(
-                                                                    "Owned");          //$NON-NLS-1$
-   public static final ASTNodeProperty SCANNER_PROBLEM        = new ASTNodeProperty(
-                                                                    "Scanner Problem"); //$NON-NLS-1$
-   public static final ASTNodeProperty PREPROCESSOR_STATEMENT = new ASTNodeProperty(
-                                                                    "Inclusion");      //$NON-NLS-1$
+	/**
+	 * <code>OWNED_DECLARATION</code> represents the relationship between an <code>IASTTranslationUnit</code> and
+	 * it's nested <code>IASTDeclaration</code>'s.
+	 */
+	public static final ASTNodeProperty OWNED_DECLARATION = new ASTNodeProperty(
+			"Owned"); //$NON-NLS-1$
 
-   /**
-    * A translation unit contains an ordered sequence of declarations.
-    * 
-    * @return List of IASTDeclaration
-    */
-   public IASTDeclaration[] getDeclarations();
+	/**
+	 * <code>SCANNER_PROBLEM</code> represents the relationship between an <code>IASTTranslationUnit</code> and
+	 * it's nested <code>IASTProblem</code>.
+	 */
+	public static final ASTNodeProperty SCANNER_PROBLEM = new ASTNodeProperty(
+			"Scanner Problem"); //$NON-NLS-1$
 
-   public void addDeclaration(IASTDeclaration declaration);
+	/**
+	 * <code>PREPROCESSOR_STATEMENT</code> represents the relationship between an <code>IASTTranslationUnit</code> and
+	 * it's nested <code>IASTPreprocessorStatement</code>.
+	 */
+	public static final ASTNodeProperty PREPROCESSOR_STATEMENT = new ASTNodeProperty(
+			"PP Statement"); //$NON-NLS-1$
 
-   /**
-    * This returns the global scope for the translation unit.
-    * 
-    * @return the global scope
-    */
-   public IScope getScope();
+	/**
+	 * A translation unit contains an ordered sequence of declarations.
+	 * 
+	 * @return List of IASTDeclaration
+	 */
+	public IASTDeclaration[] getDeclarations();
 
-   /**
-    * Returns the list of declarations in this translation unit for the given
-    * binding. The list contains the IASTName nodes that declare the binding.
-    * 
-    * @param binding
-    * @return List of IASTName nodes for the binding's declaration
-    */
-   public IASTName[] getDeclarations(IBinding binding);
+	/**
+	 * Add declaration to translation unit. 
+	 * 
+	 * @param declaration <code>IASTDeclaration</code>
+	 */
+	public void addDeclaration(IASTDeclaration declaration);
 
-   /**
-    * Returns the list of references in this translation unit to the given
-    * binding. This list contains the IASTName nodes that represent a use of the
-    * binding.
-    * 
-    * @param binding
-    * @return List of IASTName nodes representing uses of the binding
-    */
-   public IASTName[] getReferences(IBinding binding);
+	/**
+	 * This returns the global scope for the translation unit.
+	 * 
+	 * @return the global scope
+	 */
+	public IScope getScope();
 
-   public IASTNodeLocation[] getLocationInfo(int offset, int length);
+	/**
+	 * Returns the list of declarations in this translation unit for the given
+	 * binding. The list contains the IASTName nodes that declare the binding.
+	 * 
+	 * @param binding
+	 * @return List of IASTName nodes for the binding's declaration
+	 */
+	public IASTName[] getDeclarations(IBinding binding);
 
-   public IASTNode selectNodeForLocation(String path, int offset, int length);
+	/**
+	 * Returns the list of references in this translation unit to the given
+	 * binding. This list contains the IASTName nodes that represent a use of
+	 * the binding.
+	 * 
+	 * @param binding
+	 * @return List of IASTName nodes representing uses of the binding
+	 */
+	public IASTName[] getReferences(IBinding binding);
 
-   public IASTPreprocessorMacroDefinition[] getMacroDefinitions();
+	/**
+	 * @param offset
+	 * @param length
+	 * @return
+	 */
+	public IASTNodeLocation[] getLocationInfo(int offset, int length);
 
-   public IASTPreprocessorIncludeStatement[] getIncludeDirectives();
+	/**
+	 * Select the node in the treet that best fits the offset/length/file path. 
+	 * 
+	 * @param path - file name specified through path
+	 * @param offset - location in the file as an offset
+	 * @param length - length of selection
+	 * @return <code>IASTNode</code> that best fits
+	 */
+	public IASTNode selectNodeForLocation(String path, int offset, int length);
 
-   public IASTPreprocessorStatement[] getAllPreprocessorStatements();
+	/**
+	 * Get the macro definitions encountered in parsing this translation unit. 
+	 * 
+	 * @return <code>IASTPreprocessorMacroDefinition[]</code>
+	 */
+	public IASTPreprocessorMacroDefinition[] getMacroDefinitions();
 
-   public IASTProblem[] getPreprocesorProblems();
-   
-   public String getUnpreprocessedSignature( IASTNodeLocation [] locations );
-   
-   public String getFilePath();
+	/**
+	 * Get the #include directives encountered in parsing this translation unit.
+	 * @return <code>IASTPreprocessorIncludeStatement[]</code>
+	 */
+	public IASTPreprocessorIncludeStatement[] getIncludeDirectives();
+
+	/**
+	 * Get all preprocessor statements.
+	 * 
+	 * @return <code>IASTPreprocessorStatement[]</code>
+	 */
+	public IASTPreprocessorStatement[] getAllPreprocessorStatements();
+
+	/**
+	 * Get all preprocessor and scanner problems.
+	 * @return <code>IASTProblem[]</code>
+	 */
+	public IASTProblem[] getPreprocessorProblems();
+
+	/**
+	 * For a given range of locations, return a String that represents what is there underneath the range.
+	 * 
+	 * @param locations A range of node locations
+	 * @return A String signature.
+	 */
+	public String getUnpreprocessedSignature(IASTNodeLocation[] locations);
+
+	/**
+	 * Get the translation unit's full path.  
+	 * @return String representation of path.
+	 */
+	public String getFilePath();
 }

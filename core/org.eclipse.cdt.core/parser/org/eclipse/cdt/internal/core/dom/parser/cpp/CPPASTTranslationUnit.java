@@ -432,7 +432,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      * 
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getPreprocesorProblems()
      */
-    public IASTProblem[] getPreprocesorProblems() {
+    public IASTProblem[] getPreprocessorProblems() {
         if (resolver == null)
             return EMPTY_PROBLEM_ARRAY;
         IASTProblem[] result = resolver.getScannerProblems();

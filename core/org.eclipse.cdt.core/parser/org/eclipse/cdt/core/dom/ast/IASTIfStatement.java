@@ -17,18 +17,26 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTIfStatement extends IASTStatement {
 
-    /**
-     * <code>CONDITION</code> represents the relationship between an <code>IASTIfStatement</code> and its nested <code>IASTExpression</code>.
-     */
-    public static final ASTNodeProperty CONDITION = new ASTNodeProperty("condition");  //$NON-NLS-1$
-    /**
-     * <code>THEN</code> represents the relationship between an <code>IASTIfStatement</code> and its nested <code>IASTStatement</code> (then).
-     */
-    public static final ASTNodeProperty THEN = new ASTNodeProperty("then");  //$NON-NLS-1$
-    /**
-     * <code>ELSE</code> represents the relationship between an <code>IASTIfStatement</code> and its nested <code>IASTStatement</code> (else).
-     */
-    public static final ASTNodeProperty ELSE = new ASTNodeProperty("else");  //$NON-NLS-1$
+	/**
+	 * <code>CONDITION</code> represents the relationship between an
+	 * <code>IASTIfStatement</code> and its nested <code>IASTExpression</code>.
+	 */
+	public static final ASTNodeProperty CONDITION = new ASTNodeProperty(
+			"condition"); //$NON-NLS-1$
+
+	/**
+	 * <code>THEN</code> represents the relationship between an
+	 * <code>IASTIfStatement</code> and its nested <code>IASTStatement</code>
+	 * (then).
+	 */
+	public static final ASTNodeProperty THEN = new ASTNodeProperty("then"); //$NON-NLS-1$
+
+	/**
+	 * <code>ELSE</code> represents the relationship between an
+	 * <code>IASTIfStatement</code> and its nested <code>IASTStatement</code>
+	 * (else).
+	 */
+	public static final ASTNodeProperty ELSE = new ASTNodeProperty("else"); //$NON-NLS-1$
 
 	/**
 	 * Get the condition in the if statement.
@@ -36,40 +44,44 @@ public interface IASTIfStatement extends IASTStatement {
 	 * @return the condition <code>IASTExpression</code>
 	 */
 	public IASTExpression getCondition();
-	
+
 	/**
 	 * Set the condition in the if statement.
-	 * @param condition <code>IASTExpression</code>
+	 * 
+	 * @param condition
+	 *            <code>IASTExpression</code>
 	 */
 	public void setCondition(IASTExpression condition);
-	
+
 	/**
 	 * Get the statement that is executed if the condition is true.
 	 * 
 	 * @return the then clause <code>IASTStatement</code>
 	 */
 	public IASTStatement getThenClause();
-	
+
 	/**
-	 * Set the statement that is executed if the condition is true. 
+	 * Set the statement that is executed if the condition is true.
 	 * 
-	 * @param thenClause <code>IASTStatement</code>
+	 * @param thenClause
+	 *            <code>IASTStatement</code>
 	 */
 	public void setThenClause(IASTStatement thenClause);
-	
+
 	/**
-	 * Get the statement that is executed if the condition is false. This
-	 * clause is optional and returns null if there is none.
+	 * Get the statement that is executed if the condition is false. This clause
+	 * is optional and returns null if there is none.
 	 * 
 	 * @return the else clause or null <code>IASTStatement</code>
 	 */
 	public IASTStatement getElseClause();
 
 	/**
-	 * Set the else clause. 
+	 * Set the else clause.
 	 * 
-	 * @param elseClause <code>IASTStatement</code>
+	 * @param elseClause
+	 *            <code>IASTStatement</code>
 	 */
 	public void setElseClause(IASTStatement elseClause);
-	
+
 }

@@ -11,10 +11,11 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This interface represents a preprocessor #undef statement. 
+ * This interface represents a preprocessor #undef statement.
  * 
  * @author jcamelon
  */
-public interface IASTPreprocessorUndefStatement extends IASTPreprocessorStatement {
+public interface IASTPreprocessorUndefStatement extends
+		IASTPreprocessorStatement {
 
 }

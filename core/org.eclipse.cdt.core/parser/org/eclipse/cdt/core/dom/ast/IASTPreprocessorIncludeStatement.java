@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represent a preprocessor #include statement.
+ * 
  * @author jcamelon
  */
 public interface IASTPreprocessorIncludeStatement extends
@@ -19,6 +20,7 @@ public interface IASTPreprocessorIncludeStatement extends
 
 	/**
 	 * Get the full path filename of the file found through #include.
+	 * 
 	 * @return
 	 */
 	public String getPath();

@@ -11,7 +11,8 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This interface represents a parse problem where we tried to match against a type-id.
+ * This interface represents a parse problem where we tried to match against a
+ * type-id.
  * 
  * @author jcamelon
  */

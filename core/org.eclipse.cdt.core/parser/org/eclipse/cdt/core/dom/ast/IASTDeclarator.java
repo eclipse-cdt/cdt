@@ -10,61 +10,72 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * Base interface for a declarator.
  * 
  * @author Doug Schaefer
  */
 public interface IASTDeclarator extends IASTNode {
-	
-    /**
-     * Constant - empty declarator array
-     */
-    public static final IASTDeclarator[] EMPTY_DECLARATOR_ARRAY = new IASTDeclarator[0];
 
 	/**
-	 * <code>POINTER_OPERATOR</code> represents the relationship between an <code>IASTDeclarator</code> and an <code>IASTPointerOperator</code>.
+	 * Constant - empty declarator array
 	 */
-	public static final ASTNodeProperty POINTER_OPERATOR = new ASTNodeProperty( "Pointer Operator"); //$NON-NLS-1$
-	/**
-	 * <code>INITIALIZER</code> represents the relationship between an <code>IASTDeclarator</code> and an <code>IASTInitializer</code>.
-	 */
-	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty( "Initializer"); //$NON-NLS-1$
-	/**
-	 * <code>NESTED_DECLARATOR</code> represents the relationship between an <code>IASTDeclarator</code> and a nested <code>IASTDeclarator</code>.
-	 */
-	public static final ASTNodeProperty NESTED_DECLARATOR = new ASTNodeProperty( "Nested Declarator"); //$NON-NLS-1$
-	/**
-	 * <code>DECLARATOR_NAME</code> represents the relationship between an <code>IASTDeclarator</code> and an <code>IASTName</code>.
-	 */
-	public static final ASTNodeProperty DECLARATOR_NAME = new ASTNodeProperty( "Declarator Name"); //$NON-NLS-1$
+	public static final IASTDeclarator[] EMPTY_DECLARATOR_ARRAY = new IASTDeclarator[0];
 
-    /**
-	 * This is the list of pointer operators applied to the type for
-	 * the declarator.
+	/**
+	 * <code>POINTER_OPERATOR</code> represents the relationship between an
+	 * <code>IASTDeclarator</code> and an <code>IASTPointerOperator</code>.
+	 */
+	public static final ASTNodeProperty POINTER_OPERATOR = new ASTNodeProperty(
+			"Pointer Operator"); //$NON-NLS-1$
+
+	/**
+	 * <code>INITIALIZER</code> represents the relationship between an
+	 * <code>IASTDeclarator</code> and an <code>IASTInitializer</code>.
+	 */
+	public static final ASTNodeProperty INITIALIZER = new ASTNodeProperty(
+			"Initializer"); //$NON-NLS-1$
+
+	/**
+	 * <code>NESTED_DECLARATOR</code> represents the relationship between an
+	 * <code>IASTDeclarator</code> and a nested <code>IASTDeclarator</code>.
+	 */
+	public static final ASTNodeProperty NESTED_DECLARATOR = new ASTNodeProperty(
+			"Nested Declarator"); //$NON-NLS-1$
+
+	/**
+	 * <code>DECLARATOR_NAME</code> represents the relationship between an
+	 * <code>IASTDeclarator</code> and an <code>IASTName</code>.
+	 */
+	public static final ASTNodeProperty DECLARATOR_NAME = new ASTNodeProperty(
+			"Declarator Name"); //$NON-NLS-1$
+
+	/**
+	 * This is the list of pointer operators applied to the type for the
+	 * declarator.
 	 * 
 	 * @return array of IASTPointerOperator
 	 */
 	public IASTPointerOperator[] getPointerOperators();
-	
-	/**
-	 * Adds a pointer operator to the declarator.  
-	 * 
-	 * @param operator <code>IASTPointerOperator</code> to be added.
-	 */
-	public void addPointerOperator( IASTPointerOperator operator );
 
 	/**
-	 * If the declarator is nested in parenthesis, this returns the
-	 * declarator as found in those parenethesis.
+	 * Adds a pointer operator to the declarator.
+	 * 
+	 * @param operator
+	 *            <code>IASTPointerOperator</code> to be added.
+	 */
+	public void addPointerOperator(IASTPointerOperator operator);
+
+	/**
+	 * If the declarator is nested in parenthesis, this returns the declarator
+	 * as found in those parenethesis.
 	 * 
 	 * @return the nested declarator or null
 	 */
 	public IASTDeclarator getNestedDeclarator();
-	
-	public void setNestedDeclarator( IASTDeclarator nested );
-	
+
+	public void setNestedDeclarator(IASTDeclarator nested);
+
 	/**
 	 * This returns the name of the declarator. If this is an abstract
 	 * declarator, this will return an empty name.
@@ -72,26 +83,28 @@ public interface IASTDeclarator extends IASTNode {
 	 * @return the name of the declarator
 	 */
 	public IASTName getName();
-	
+
 	/**
 	 * Set the name of he declarator.
 	 * 
-	 * @param name <code>IASTName</code>
+	 * @param name
+	 *            <code>IASTName</code>
 	 */
-	public void setName( IASTName name );
-	
+	public void setName(IASTName name);
+
 	/**
 	 * This is the optional initializer for this declarator.
 	 * 
 	 * @return the initializer expression or null
 	 */
 	public IASTInitializer getInitializer();
-	
+
 	/**
-	 * Set the optional initializer.  
+	 * Set the optional initializer.
 	 * 
-	 * @param initializer <code>IASTInitializer</code>
+	 * @param initializer
+	 *            <code>IASTInitializer</code>
 	 */
-	public void setInitializer( IASTInitializer initializer );
-	
+	public void setInitializer(IASTInitializer initializer);
+
 }

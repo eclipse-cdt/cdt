@@ -11,11 +11,12 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This interface represents an object-style macro definition.
- * e.g. #define ONE_TWO_THREE 123
+ * This interface represents an object-style macro definition. e.g. #define
+ * ONE_TWO_THREE 123
  * 
  * @author jcamelon
  */
-public interface IASTPreprocessorObjectStyleMacroDefinition extends IASTPreprocessorMacroDefinition {
+public interface IASTPreprocessorObjectStyleMacroDefinition extends
+		IASTPreprocessorMacroDefinition {
 
 }

@@ -17,21 +17,25 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTInitializerExpression extends IASTInitializer {
 
-    /**
-     * <code>INITIALIZER_EXPRESSION</code> represents the relationship between an <code>IASTInitializerExpression</code>. and its <code></code>IASTExpression</code>. 
-     */
-    public static final ASTNodeProperty INITIALIZER_EXPRESSION = new ASTNodeProperty( "Initializer Expression"); //$NON-NLS-1$
+	/**
+	 * <code>INITIALIZER_EXPRESSION</code> represents the relationship between
+	 * an <code>IASTInitializerExpression</code>. and its <code></code>IASTExpression</code>.
+	 */
+	public static final ASTNodeProperty INITIALIZER_EXPRESSION = new ASTNodeProperty(
+			"Initializer Expression"); //$NON-NLS-1$
+
 	/**
 	 * Get the expression for the initializer.
 	 * 
 	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getExpression();
-	
+
 	/**
-	 * Set the initializer's expression. 
+	 * Set the initializer's expression.
 	 * 
-	 * @param expression <code>IASTExpression</code>
+	 * @param expression
+	 *            <code>IASTExpression</code>
 	 */
-	public void setExpression( IASTExpression expression );
+	public void setExpression(IASTExpression expression);
 }

@@ -11,8 +11,8 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This class represents a name in the program that represents a semantic
- * object in the program.
+ * This class represents a name in the program that represents a semantic object
+ * in the program.
  * 
  * The toString method produces a string representation of the name as
  * appropriate for the language.
@@ -20,9 +20,9 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IASTName extends IASTNode {
-	
+
 	/**
-	 * Constant sentinel. 
+	 * Constant sentinel.
 	 */
 	public static final IASTName[] EMPTY_NAME_ARRAY = new IASTName[0];
 
@@ -32,15 +32,15 @@ public interface IASTName extends IASTNode {
 	 * @return <code>IBinding</code> binding
 	 */
 	public IBinding resolveBinding();
-	
+
 	/**
-	 * Return a list of bindings in the scope of the name that have the
-	 * name as a prefix.
+	 * Return a list of bindings in the scope of the name that have the name as
+	 * a prefix.
 	 * 
 	 * @return <code>IBinding []</code> bindings that start with this name
 	 */
 	public IBinding[] resolvePrefix();
-	
+
 	/**
 	 * Return a char array representation of the name.
 	 * 

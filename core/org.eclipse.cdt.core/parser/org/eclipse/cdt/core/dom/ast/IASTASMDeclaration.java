@@ -9,7 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * ASM Statement as a Declaration.
  * 
@@ -17,14 +16,17 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTASMDeclaration extends IASTDeclaration {
 
-    /**
-     * Get the assembly value.  
-     * @return
-     */
-    public String getAssembly();
-    /**
-     * Set the assembly value.  
-     * @param assembly
-     */
-    public void setAssembly( String assembly );
+	/**
+	 * Get the assembly value.
+	 * 
+	 * @return
+	 */
+	public String getAssembly();
+
+	/**
+	 * Set the assembly value.
+	 * 
+	 * @param assembly
+	 */
+	public void setAssembly(String assembly);
 }

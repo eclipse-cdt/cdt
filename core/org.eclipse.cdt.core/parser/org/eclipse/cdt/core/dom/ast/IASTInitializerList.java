@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * This is an an initializer that is a list of initializers.
  * 
@@ -18,10 +17,12 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTInitializerList extends IASTInitializer {
 
-    /**
-     * <code>NESTED_INITIALIZER</code> describes the relationship between an <code>IASTInitializerList</code> and its sub-<code>IASTInitializer</code>s.
-     */
-    public static final ASTNodeProperty NESTED_INITIALIZER = new ASTNodeProperty( "Nested Initializer" ); //$NON-NLS-1$
+	/**
+	 * <code>NESTED_INITIALIZER</code> describes the relationship between an
+	 * <code>IASTInitializerList</code> and its sub-<code>IASTInitializer</code>s.
+	 */
+	public static final ASTNodeProperty NESTED_INITIALIZER = new ASTNodeProperty(
+			"Nested Initializer"); //$NON-NLS-1$
 
 	/**
 	 * Get the list of initializers.
@@ -29,11 +30,12 @@ public interface IASTInitializerList extends IASTInitializer {
 	 * @return <code>IASTInitializer[]</code> array of initializers
 	 */
 	public IASTInitializer[] getInitializers();
-	
+
 	/**
 	 * Add an initializer to the initializer list.
 	 * 
-	 * @param initializer <code>IASTInitializer</code>
+	 * @param initializer
+	 *            <code>IASTInitializer</code>
 	 */
-	public void addInitializer( IASTInitializer initializer );
+	public void addInitializer(IASTInitializer initializer);
 }

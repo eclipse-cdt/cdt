@@ -52,9 +52,10 @@ public interface IASTNode {
 	public IASTNode getParent();
 
 	/**
-	 * Set the parent node of this node in the tree. 
+	 * Set the parent node of this node in the tree.
 	 * 
-	 * @param node <code>IASTNode</code>
+	 * @param node
+	 *            <code>IASTNode</code>
 	 */
 	public void setParent(IASTNode node);
 
@@ -67,15 +68,15 @@ public interface IASTNode {
 	public ASTNodeProperty getPropertyInParent();
 
 	/**
-	 * Set the parent property of the node.  
+	 * Set the parent property of the node.
 	 * 
 	 * @param property
 	 */
 	public void setPropertyInParent(ASTNodeProperty property);
 
 	/**
-	 * Abstract method to be overriden by all subclasses.
-	 * Necessary for visitation of the tree using an <code>ASTVisitor</code>.
+	 * Abstract method to be overriden by all subclasses. Necessary for
+	 * visitation of the tree using an <code>ASTVisitor</code>.
 	 * 
 	 * @param visitor
 	 * @return continue on (true) or quit( false )

@@ -124,12 +124,12 @@ public class AST2BaseTest extends TestCase {
         if( lang == ParserLanguage.C && expectNoProblems )
         {
         	assertEquals( CVisitor.getProblems(tu).length, 0 );
-        	assertEquals( tu.getPreprocesorProblems().length, 0 );
+        	assertEquals( tu.getPreprocessorProblems().length, 0 );
         }
         else if ( lang == ParserLanguage.CPP && expectNoProblems )
         {
         	assertEquals( CPPVisitor.getProblems(tu).length, 0 );
-        	assertEquals( tu.getPreprocesorProblems().length, 0 );
+        	assertEquals( tu.getPreprocessorProblems().length, 0 );
         }
         
         return tu;

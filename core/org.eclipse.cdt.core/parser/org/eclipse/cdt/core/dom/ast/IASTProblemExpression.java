@@ -10,12 +10,13 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
- * This interface represents a parse problem where we tried to match against a expression.
+ * This interface represents a parse problem where we tried to match against a
+ * expression.
  * 
  * @author jcamelon
  */
-public interface IASTProblemExpression extends IASTExpression, IASTProblemHolder {
+public interface IASTProblemExpression extends IASTExpression,
+		IASTProblemHolder {
 
 }

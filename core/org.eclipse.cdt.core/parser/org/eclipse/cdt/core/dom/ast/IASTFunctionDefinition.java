@@ -18,19 +18,29 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTFunctionDefinition extends IASTDeclaration {
 
 	/**
-	 * <code>DECL_SPECIFIER</code> represents the relationship between a <code>IASTFunctionDefinition</code> and its <code>IASTDeclSpecifier</code>. 
+	 * <code>DECL_SPECIFIER</code> represents the relationship between a
+	 * <code>IASTFunctionDefinition</code> and its
+	 * <code>IASTDeclSpecifier</code>.
 	 */
-	public static final ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty( "Decl Specifier"); //$NON-NLS-1$
-	/**
-	 * <code>DECLARATOR</code> represents the relationship between a <code>IASTFunctionDefinition</code> and its <code>IASTFunctionDeclarator</code>.
-	 */
-	public static final ASTNodeProperty DECLARATOR = new ASTNodeProperty( "Declarator"); //$NON-NLS-1$
-	/**
-	 * <code>FUNCTION_BODY</code> represents the relationship between a <code>IASTFunctionDefinition</code> and its <code>IASTStatement</code>.
-	 */
-	public static final ASTNodeProperty FUNCTION_BODY = new ASTNodeProperty( "Function Body"); //$NON-NLS-1$
+	public static final ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty(
+			"Decl Specifier"); //$NON-NLS-1$
 
-    /**
+	/**
+	 * <code>DECLARATOR</code> represents the relationship between a
+	 * <code>IASTFunctionDefinition</code> and its
+	 * <code>IASTFunctionDeclarator</code>.
+	 */
+	public static final ASTNodeProperty DECLARATOR = new ASTNodeProperty(
+			"Declarator"); //$NON-NLS-1$
+
+	/**
+	 * <code>FUNCTION_BODY</code> represents the relationship between a
+	 * <code>IASTFunctionDefinition</code> and its <code>IASTStatement</code>.
+	 */
+	public static final ASTNodeProperty FUNCTION_BODY = new ASTNodeProperty(
+			"Function Body"); //$NON-NLS-1$
+
+	/**
 	 * Get the decl specifier for the function.
 	 * 
 	 * @return
@@ -42,40 +52,42 @@ public interface IASTFunctionDefinition extends IASTDeclaration {
 	 * 
 	 * @param declSpec
 	 */
-	public void setDeclSpecifier( IASTDeclSpecifier declSpec );
-	
+	public void setDeclSpecifier(IASTDeclSpecifier declSpec);
+
 	/**
 	 * Get the declarator for the function.
 	 * 
 	 * @return
 	 */
 	public IASTFunctionDeclarator getDeclarator();
-	
+
 	/**
-	 * Set the declarator for the function. 
+	 * Set the declarator for the function.
 	 * 
 	 * @param declarator
 	 */
-	public void setDeclarator( IASTFunctionDeclarator declarator );
-	
+	public void setDeclarator(IASTFunctionDeclarator declarator);
+
 	/**
-	 * Get the body of the function. This is usually a compound statement
-	 * but C++ also has a function try block.
+	 * Get the body of the function. This is usually a compound statement but
+	 * C++ also has a function try block.
 	 * 
 	 * @return
 	 */
 	public IASTStatement getBody();
-	
+
 	/**
-	 * Set the body of the function.  
+	 * Set the body of the function.
+	 * 
 	 * @param statement
 	 */
-	public void setBody( IASTStatement statement );
-	
+	public void setBody(IASTStatement statement);
+
 	/**
 	 * Get the logical IScope that the function definition body represents.
+	 * 
 	 * @return <code>IScope</code> representing function body.
 	 */
 	public IScope getScope();
-	
+
 }

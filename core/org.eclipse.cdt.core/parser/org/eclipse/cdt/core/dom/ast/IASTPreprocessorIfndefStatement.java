@@ -16,11 +16,12 @@ package org.eclipse.cdt.core.dom.ast;
  * @author jcamelon
  */
 public interface IASTPreprocessorIfndefStatement extends
-        IASTPreprocessorStatement {
+		IASTPreprocessorStatement {
 
-    /**
-     * Was this branch taken?
-     * @return
-     */
-    public boolean taken();
+	/**
+	 * Was this branch taken?
+	 * 
+	 * @return
+	 */
+	public boolean taken();
 }

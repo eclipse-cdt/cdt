@@ -9,10 +9,8 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
- * This node represents a null statement. 
- * ';'
+ * This node represents a null statement. ';'
  * 
  * @author jcamelon
  */

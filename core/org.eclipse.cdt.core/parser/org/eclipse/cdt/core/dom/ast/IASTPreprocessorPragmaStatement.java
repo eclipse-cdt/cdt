@@ -16,6 +16,6 @@ package org.eclipse.cdt.core.dom.ast;
  * @author jcamelon
  */
 public interface IASTPreprocessorPragmaStatement extends
-        IASTPreprocessorStatement {
+		IASTPreprocessorStatement {
 
 }

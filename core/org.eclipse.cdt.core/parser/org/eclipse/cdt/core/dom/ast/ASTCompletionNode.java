@@ -13,27 +13,29 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.IToken;
 
 /**
- * This class represents the node that would occur at the point of
- * a context completion.
+ * This class represents the node that would occur at the point of a context
+ * completion.
  * 
- * This node may contain the prefix text of an identifer up to the point.
- * If there is no prefix, the completion occurred at the point where a
- * new token would have begun.
+ * This node may contain the prefix text of an identifer up to the point. If
+ * there is no prefix, the completion occurred at the point where a new token
+ * would have begun.
  * 
- * The node points to the parent node where this node, if replaced by
- * a proper node, would reside in the tree.
+ * The node points to the parent node where this node, if replaced by a proper
+ * node, would reside in the tree.
  * 
  * @author Doug Schaefer
  */
 public class ASTCompletionNode {
 
 	private IToken completionToken;
+
 	private List names = new ArrayList();
 
 	/**
 	 * Only constructor.
 	 * 
-	 * @param completionToken - the completion token
+	 * @param completionToken -
+	 *            the completion token
 	 */
 	public ASTCompletionNode(IToken completionToken) {
 		this.completionToken = completionToken;
@@ -47,10 +49,10 @@ public class ASTCompletionNode {
 	public void addName(IASTName name) {
 		names.add(name);
 	}
-	
+
 	/**
-	 * If the point of completion was at the end of a potential
-	 * identifier, this string contains the text of that identifier.
+	 * If the point of completion was at the end of a potential identifier, this
+	 * string contains the text of that identifier.
 	 * 
 	 * @return the prefix text up to the point of completion
 	 */
@@ -66,15 +68,14 @@ public class ASTCompletionNode {
 	public int getLength() {
 		return completionToken.getLength();
 	}
-	
-	
+
 	/**
 	 * Get a list of names that fit in this context.
 	 * 
 	 * @return array of IASTName's
 	 */
 	public IASTName[] getNames() {
-		return (IASTName[])names.toArray(new IASTName[names.size()]);
+		return (IASTName[]) names.toArray(new IASTName[names.size()]);
 	}
-	
+
 }

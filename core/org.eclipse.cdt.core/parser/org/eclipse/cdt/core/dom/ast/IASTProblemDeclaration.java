@@ -11,11 +11,12 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * This interface represents a parse problem where we tried to match against a declaration.
+ * This interface represents a parse problem where we tried to match against a
+ * declaration.
  * 
  * @author jcamelon
  */
-public interface IASTProblemDeclaration extends IASTDeclaration, IASTProblemHolder {
-    
+public interface IASTProblemDeclaration extends IASTDeclaration,
+		IASTProblemHolder {
 
 }

@@ -9,7 +9,6 @@
  * IBM Rational Software - Initial API and implementation */
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * Expression List (Comma separated list of expressions).
  * 
@@ -17,22 +16,26 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTExpressionList extends IASTExpression {
 
-    /**
-     * <code>NESTED_EXPRESSION</code> describes the relationship between <code>IASTExpressionList</code> and the nested <code>IASTExpression</code>s.
-     */
-    public static final ASTNodeProperty NESTED_EXPRESSION = new ASTNodeProperty( "Nested Expression"); //$NON-NLS-1$
+	/**
+	 * <code>NESTED_EXPRESSION</code> describes the relationship between
+	 * <code>IASTExpressionList</code> and the nested
+	 * <code>IASTExpression</code>s.
+	 */
+	public static final ASTNodeProperty NESTED_EXPRESSION = new ASTNodeProperty(
+			"Nested Expression"); //$NON-NLS-1$
 
-    /**
-     * Get nested expressions.
-     * 
-     * @return <code>IASTExpression [] </code> nested expressions
-     */
-    public IASTExpression [] getExpressions();
-    
-    /**
-     * Add nested expression. 
-     * 
-     * @param expression <code>IASTExpression</code> value to be added.
-     */
-    public void addExpression( IASTExpression expression );
+	/**
+	 * Get nested expressions.
+	 * 
+	 * @return <code>IASTExpression [] </code> nested expressions
+	 */
+	public IASTExpression[] getExpressions();
+
+	/**
+	 * Add nested expression.
+	 * 
+	 * @param expression
+	 *            <code>IASTExpression</code> value to be added.
+	 */
+	public void addExpression(IASTExpression expression);
 }

@@ -12,9 +12,9 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This is the default clause in the switch statement. Note that in the grammar,
- * a statement is part of the clause. For the AST, just go on to the
- * next statement to find it. It's really only there to ensure that there
- * is at least one statement following this clause.
+ * a statement is part of the clause. For the AST, just go on to the next
+ * statement to find it. It's really only there to ensure that there is at least
+ * one statement following this clause.
  * 
  * @author Doug Schaefer
  */

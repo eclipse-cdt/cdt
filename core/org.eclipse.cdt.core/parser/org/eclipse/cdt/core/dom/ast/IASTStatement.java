@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2004 IBM Corporation and others.
+ Z * Copyright (c) 2004 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,9 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IASTStatement extends IASTNode {
-    public static final IASTStatement[] EMPTY_STATEMENT_ARRAY = new IASTStatement[0];
+	/**
+	 * Constant.
+	 */
+	public static final IASTStatement[] EMPTY_STATEMENT_ARRAY = new IASTStatement[0];
 
 }

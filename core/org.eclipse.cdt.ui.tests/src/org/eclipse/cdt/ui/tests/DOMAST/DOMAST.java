@@ -384,7 +384,7 @@ public class DOMAST extends ViewPart {
 	         if (monitor.isCanceled()) return Status.CANCEL_STATUS;
 	         monitor.subTask(RETRIEVING_PREPROCESSOR_PROBLEMS);
 	         start=System.currentTimeMillis();
-	         IASTProblem[] problems = tu.getPreprocesorProblems();
+	         IASTProblem[] problems = tu.getPreprocessorProblems();
 	         monitor.worked(5);
 	         System.out.println("[DOM AST View] done " + RETRIEVING_PREPROCESSOR_PROBLEMS + ": " + (System.currentTimeMillis()- start) );
 	         	         

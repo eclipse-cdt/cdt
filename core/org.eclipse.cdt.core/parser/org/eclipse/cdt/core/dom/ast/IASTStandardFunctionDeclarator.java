@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * This is a declarator for a non K&R C function.
  * 
@@ -18,17 +17,41 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTStandardFunctionDeclarator extends IASTFunctionDeclarator {
 
-    public final static ASTNodeProperty FUNCTION_PARAMETER = new ASTNodeProperty( "Parameter"); //$NON-NLS-1$
+	/**
+	 * <code>FUNCTION_PARAMETER</code> represents the relationship between an
+	 * <code>IASTStandardFunctionDeclarator</code> and it's nested
+	 * <code>IASTParameterDeclaration</code>.
+	 */
+	public final static ASTNodeProperty FUNCTION_PARAMETER = new ASTNodeProperty(
+			"Parameter"); //$NON-NLS-1$
+
 	/**
 	 * Gets the parameter declarations for the function
 	 * 
-	 * @return List of IASTParameterDeclaration
+	 * @return array of IASTParameterDeclaration
 	 */
 	public IASTParameterDeclaration[] getParameters();
-	
-	public void addParameterDeclaration( IASTParameterDeclaration parameter );
-	
+
+	/**
+	 * Add a parameter.
+	 * 
+	 * @param parameter
+	 *            <code>IASTParameterDeclaration</code>
+	 */
+	public void addParameterDeclaration(IASTParameterDeclaration parameter);
+
+	/**
+	 * Does this function take a variable number of arguments?
+	 * 
+	 * @return boolean
+	 */
 	public boolean takesVarArgs();
-	
-	public void setVarArgs( boolean value );
+
+	/**
+	 * Set whether or not this function takes a variable number or arguments.
+	 * 
+	 * @param value
+	 *            boolean
+	 */
+	public void setVarArgs(boolean value);
 }

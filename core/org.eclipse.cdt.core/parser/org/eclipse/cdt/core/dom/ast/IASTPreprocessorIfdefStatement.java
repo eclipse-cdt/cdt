@@ -12,13 +12,16 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represent a preprocessor #ifdef statement.
+ * 
  * @author jcamelon
  */
-public interface IASTPreprocessorIfdefStatement extends IASTPreprocessorStatement {
+public interface IASTPreprocessorIfdefStatement extends
+		IASTPreprocessorStatement {
 
-    /**
-     * Was this #ifdef branch taken?
-     * @return
-     */
-    public boolean taken();
+	/**
+	 * Was this #ifdef branch taken?
+	 * 
+	 * @return
+	 */
+	public boolean taken();
 }

@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * This is a simple declaration which contains a sequence of declSpecifiers
  * followed by a list of declarators.
@@ -19,26 +18,51 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTSimpleDeclaration extends IASTDeclaration, IASTNode {
 
-	ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty( "Decl Specifier"); //$NON-NLS-1$
-    ASTNodeProperty DECLARATOR = new ASTNodeProperty( "Declarator"); //$NON-NLS-1$
+	/**
+	 * <code>DECL_SPECIFIER</code> represents the relationship between an
+	 * <code>IASTSimpleDeclaration</code> and it's nested
+	 * <code>IASTDeclSpecifier</code>.
+	 */
+	public static final ASTNodeProperty DECL_SPECIFIER = new ASTNodeProperty(
+			"Decl Specifier"); //$NON-NLS-1$
 
-    /**
+	/**
+	 * <code>DECLARATOR</code> represents the relationship between an
+	 * <code>IASTSimpleDeclaration</code> and it's nested
+	 * <code>IASTDeclarator</code>s.
+	 */
+	public static final ASTNodeProperty DECLARATOR = new ASTNodeProperty(
+			"Declarator"); //$NON-NLS-1$
+
+	/**
 	 * This returns the object representing the declSpecifiers for this
 	 * declaration.
 	 * 
 	 * @return the declSpecifier object
 	 */
 	public IASTDeclSpecifier getDeclSpecifier();
-	
-	public void setDeclSpecifier( IASTDeclSpecifier declSpec );
+
+	/**
+	 * Set the decl specifier.
+	 * 
+	 * @param declSpec
+	 *            <code>IASTDeclSpecifier</code>
+	 */
+	public void setDeclSpecifier(IASTDeclSpecifier declSpec);
 
 	/**
 	 * This returns the list of declarators in this declaration.
 	 * 
-	 * @return list of IASTDeclarator
+	 * @return <code>IASTDeclarator []</code>
 	 */
 	public IASTDeclarator[] getDeclarators();
-	
-	public void addDeclarator( IASTDeclarator declarator );
-	
+
+	/**
+	 * Add a declarator.
+	 * 
+	 * @param declarator
+	 *            <code>IASTDeclarator</code>
+	 */
+	public void addDeclarator(IASTDeclarator declarator);
+
 }

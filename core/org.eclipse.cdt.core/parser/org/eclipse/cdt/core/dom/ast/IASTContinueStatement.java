@@ -15,6 +15,6 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTContinueStatement extends IASTStatement { 
+public interface IASTContinueStatement extends IASTStatement {
 
 }

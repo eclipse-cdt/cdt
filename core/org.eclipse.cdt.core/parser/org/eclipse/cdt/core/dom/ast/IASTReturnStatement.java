@@ -15,7 +15,13 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTReturnStatement extends IASTStatement {
 
-	public static final ASTNodeProperty RETURNVALUE = new ASTNodeProperty("returnValue");  //$NON-NLS-1$
+	/**
+	 * <code>RETURNVALUE</code> represents the relationship between an
+	 * <code>IASTReturnStatement</code> and it's nested
+	 * <code>IASTExpression</code>.
+	 */
+	public static final ASTNodeProperty RETURNVALUE = new ASTNodeProperty(
+			"returnValue"); //$NON-NLS-1$
 
 	/**
 	 * This is the optional return value for this function.
@@ -23,7 +29,13 @@ public interface IASTReturnStatement extends IASTStatement {
 	 * @return the return expression or null.
 	 */
 	public IASTExpression getReturnValue();
-	
+
+	/**
+	 * Set the return value.
+	 * 
+	 * @param returnValue
+	 *            <code>IASTExpression</code>
+	 */
 	public void setReturnValue(IASTExpression returnValue);
-	
+
 }

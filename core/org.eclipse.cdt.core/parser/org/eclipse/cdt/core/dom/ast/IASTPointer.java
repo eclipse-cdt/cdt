@@ -24,24 +24,28 @@ public interface IASTPointer extends IASTPointerOperator {
 	 * @return boolean
 	 */
 	public boolean isConst();
+
 	/**
-	 * Is this a volatile pointer? 
+	 * Is this a volatile pointer?
 	 * 
 	 * @return boolean
 	 */
 	public boolean isVolatile();
-	
+
 	/**
 	 * Set this to be a const pointer (true/false).
 	 * 
-	 * @param value - the value
+	 * @param value -
+	 *            the value
 	 */
-	public void setConst( boolean value );
+	public void setConst(boolean value);
+
 	/**
 	 * Set this to be a volatile pointer (true/false).
 	 * 
-	 * @param value - the value
+	 * @param value -
+	 *            the value
 	 */
-	public void setVolatile( boolean value );
+	public void setVolatile(boolean value);
 
 }

@@ -17,34 +17,30 @@ package org.eclipse.cdt.core.dom.ast;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSemantics;
 
 /**
- * This is the general purpose exception that is thrown for resolving semantic 
- * aspects of an illegal binding.  
+ * This is the general purpose exception that is thrown for resolving semantic
+ * aspects of an illegal binding.
  * 
  * @author aniefer
  */
 public class DOMException extends Exception {
-    IProblemBinding problemBinding;
+	IProblemBinding problemBinding;
 
-    
-    /**
-     * @param problem binding for throwing
-     * 
-     */
-    public DOMException( IProblemBinding problem ) {
-        super( CPPSemantics.EMPTY_NAME );
-        problemBinding = problem;
-    }
+	/**
+	 * @param problem
+	 *            binding for throwing
+	 * 
+	 */
+	public DOMException(IProblemBinding problem) {
+		super(CPPSemantics.EMPTY_NAME);
+		problemBinding = problem;
+	}
 
-    /**
-     * Get the problem associated w/this exception.
-     * 
-     * @return problem
-     */
-    public IProblemBinding getProblem(){
-        return problemBinding;
-    }
-    
-    public String getMessage() {
-        return problemBinding.getMessage();
-    }
+	/**
+	 * Get the problem associated w/this exception.
+	 * 
+	 * @return problem
+	 */
+	public IProblemBinding getProblem() {
+		return problemBinding;
+	}
 }

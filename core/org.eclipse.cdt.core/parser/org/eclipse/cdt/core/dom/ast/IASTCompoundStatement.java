@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-
 /**
  * This represents a block of statements.
  * 
@@ -19,28 +18,33 @@ package org.eclipse.cdt.core.dom.ast;
 public interface IASTCompoundStatement extends IASTStatement {
 
 	/**
-	 * <code>NESTED_STATEMENT</code> represents the relationship between an <code>IASTCompoundStatement</code> and its nested <code>IASTStatement</code>
+	 * <code>NESTED_STATEMENT</code> represents the relationship between an
+	 * <code>IASTCompoundStatement</code> and its nested
+	 * <code>IASTStatement</code>
 	 */
-	public static final ASTNodeProperty NESTED_STATEMENT = new ASTNodeProperty( "Nested Statement" ); //$NON-NLS-1$
+	public static final ASTNodeProperty NESTED_STATEMENT = new ASTNodeProperty(
+			"Nested Statement"); //$NON-NLS-1$
 
-    /**
+	/**
 	 * Gets the statements in this block.
 	 * 
 	 * @return Array of IASTStatement
 	 */
 	public IASTStatement[] getStatements();
-	
+
 	/**
-	 * Add a statement to the compound block. 
+	 * Add a statement to the compound block.
 	 * 
-	 * @param statement statement to be added
+	 * @param statement
+	 *            statement to be added
 	 */
-	public void addStatement( IASTStatement statement );
-	
+	public void addStatement(IASTStatement statement);
+
 	/**
-	 * Get <code>IScope</code> node that this node eludes to in the logical tree.  
+	 * Get <code>IScope</code> node that this node eludes to in the logical
+	 * tree.
 	 * 
-	 * @return the <code>IScope</code> 
+	 * @return the <code>IScope</code>
 	 */
 	public IScope getScope();
 }

@@ -12,14 +12,15 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represent a preprocessor #if statement.
+ * 
  * @author jcamelon
  */
 public interface IASTPreprocessorIfStatement extends IASTPreprocessorStatement {
 
-    /**
-     * Was this branch taken? 
-     * 
-     * @return boolean
-     */
-    public boolean taken();
+	/**
+	 * Was this branch taken?
+	 * 
+	 * @return boolean
+	 */
+	public boolean taken();
 }

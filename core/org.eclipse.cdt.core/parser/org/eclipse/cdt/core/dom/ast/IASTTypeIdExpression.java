@@ -14,14 +14,46 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IASTTypeIdExpression extends IASTExpression {
 
-    public static final int op_sizeof = 0;
-    public static final int op_last   = op_sizeof;
-    
-    public int getOperator();
-    public void setOperator( int value );
-        
-    public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty( "Type Id"); //$NON-NLS-1$
-    public void setTypeId( IASTTypeId typeId );
-    public IASTTypeId getTypeId();
+	/**
+	 * <code>op_sizeof</code> sizeof( typeId ) expression
+	 */
+	public static final int op_sizeof = 0;
+
+	/**
+	 * <code>op_last</code> defined for sub-interfaces to extend.
+	 */
+	public static final int op_last = op_sizeof;
+
+	/**
+	 * Get the operator for the expression.
+	 * 
+	 * @return int
+	 */
+	public int getOperator();
+
+	/**
+	 * Set the operator for the expression.
+	 * @param value int
+	 */
+	public void setOperator(int value);
+
+	/**
+	 * <code>TYPEID</code> represents the relationship between an <code>IASTTypeIdExpression</code> and
+	 * it's nested <code>IASTTypeId</code>.
+	 */
+	public static final ASTNodeProperty TYPE_ID = new ASTNodeProperty("Type Id"); //$NON-NLS-1$
+
+	/**
+	 * Set the type Id.
+	 * @param typeId
+	 */
+	public void setTypeId(IASTTypeId typeId);
+
+	/**
+	 * Get the type Id.
+	 * 
+	 * @return
+	 */
+	public IASTTypeId getTypeId();
 
 }

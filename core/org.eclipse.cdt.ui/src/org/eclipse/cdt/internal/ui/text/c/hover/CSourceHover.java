@@ -66,7 +66,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 					return null;
 				}
 				String source= ((ISourceReference) curr).getSource();
-				if (source == null)
+				if (source == null || source.trim().length() == 0)
 					return null;
 
 				source= removeLeadingComments(source);

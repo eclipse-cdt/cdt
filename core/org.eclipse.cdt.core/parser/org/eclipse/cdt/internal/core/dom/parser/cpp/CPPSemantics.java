@@ -41,26 +41,28 @@ import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IQualifierType;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
-import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBasicType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
@@ -78,6 +80,7 @@ import org.eclipse.cdt.internal.core.parser.pst.ITypeInfo;
 public class CPPSemantics {
 
 	public static final char[] EMPTY_NAME_ARRAY = new char[0];
+	public static final IType VOID_TYPE = new CPPBasicType( IBasicType.t_void, 0 );
 	
 	static protected class LookupData
 	{
@@ -94,6 +97,7 @@ public class CPPSemantics {
 		public List foundItems = null;
 		public Object [] functionParameters;
 		public boolean forUserDefinedConversion;
+		public boolean forUsingDeclaration;
 		
 		public LookupData( char[] n ){
 			name = n;
@@ -223,9 +227,21 @@ public class CPPSemantics {
 		}
 	}
 	static protected IBinding resolveBinding( IASTName name ){
-	    if( name.toCharArray().length == 0 )
-	        return null;
-	    
+	    if( name.toCharArray().length == 0 ){
+	    	IASTNode node = name.getParent();
+	    	if( node instanceof ICPPASTQualifiedName ){
+	    		ICPPASTQualifiedName qname = (ICPPASTQualifiedName) node;
+	    		if( qname.getNames()[0] == name ){
+	    			//translation unit
+	    			while( ! (node instanceof ICPPASTTranslationUnit ) ){
+	    				node = node.getParent();
+	    			}
+	    			return ((ICPPASTTranslationUnit) node).resolveBinding();
+	    		}
+	    	}
+	    	return null;	    	
+	    }
+
 		//1: get some context info off of the name to figure out what kind of lookup we want
 		LookupData data = createLookupData( name );
 		
@@ -233,15 +249,11 @@ public class CPPSemantics {
 		lookup( data, name );
 		
 		//3: resolve ambiguities
-		IASTName found = resolveAmbiguities( data, name );
-		if( found != null ) {
-			IBinding binding = found.resolveBinding();
-			if( binding != null && data.forDefinition ){
-				addDefinition( binding, name );
-			}
-			return binding;
+		IBinding binding = resolveAmbiguities( data, name );
+		if( binding != null && data.forDefinition ){
+			addDefinition( binding, name );
 		}
-		return null;
+		return binding;
 	}
 
 	static private CPPSemantics.LookupData createLookupData( IASTName name ){
@@ -252,6 +264,9 @@ public class CPPSemantics {
 			parent = parent.getParent();
 			if( parent instanceof IASTDeclarator ){
 				data.forDefinition = true;
+				if( parent instanceof ICPPASTFunctionDeclarator ){
+					data.functionParameters = ((ICPPASTFunctionDeclarator)parent).getParameters();
+				}
 			} else if( parent instanceof IASTIdExpression ){
 				parent = parent.getParent();
 				if( parent instanceof IASTFunctionCallExpression ){
@@ -260,7 +275,11 @@ public class CPPSemantics {
 						data.functionParameters = ((IASTExpressionList) exp ).getExpressions();
 					else if( exp != null )
 						data.functionParameters = new IASTExpression [] { exp };
+					else 
+						data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
 				}
+			} else if( parent instanceof ICPPASTUsingDeclaration ){
+				data.forUsingDeclaration = true;
 			}
 		} else if( parent instanceof IASTDeclarator ){
 		    if( parent.getParent() instanceof IASTSimpleDeclaration )
@@ -277,9 +296,13 @@ public class CPPSemantics {
 					data.functionParameters = ((IASTExpressionList) exp ).getExpressions();
 				else if( exp != null )
 					data.functionParameters = new IASTExpression [] { exp };
+				else
+					data.functionParameters = IASTExpression.EMPTY_EXPRESSION_ARRAY;
 			}
 		} else if( parent instanceof ICPPASTFieldReference ){
 			data.qualified = true;
+		} else if( parent instanceof ICPPASTUsingDeclaration ){
+			data.forUsingDeclaration = true;
 		}
 		return data;
 	}
@@ -646,7 +669,18 @@ public class CPPSemantics {
 				    }
 			    }
 			}
-		} 
+		} else if( declaration instanceof ICPPASTUsingDeclaration ){
+			ICPPASTUsingDeclaration using = (ICPPASTUsingDeclaration) declaration;
+			IASTName name = using.getName();
+			if( name instanceof ICPPASTQualifiedName ){
+				IASTName [] ns = ((ICPPASTQualifiedName)name).getNames();
+				name = ns[ ns.length - 1 ];
+			}
+			if( CharArrayUtils.equals( name.toCharArray(), data.name ) ){
+				return name;
+			}
+			
+		}
 		if( data.typesOnly )
 		    return null;
 		
@@ -702,30 +736,44 @@ public class CPPSemantics {
 	        return (IBinding) bindings.get( 0 );
 	    
 	    LookupData data = createLookupData( name );
-	    
+	    data.foundItems = bindings;
+	    return resolveAmbiguities( data, name );
+	}
+	
+	static private IBinding resolveAmbiguities( CPPSemantics.LookupData data, IASTName name ) {
+	    if( data.foundItems == null || data.foundItems.size() == 0 )
+	        return null;
+	      
 	    IBinding type = null;
 	    IBinding obj  = null;
+	    IBinding temp = null;
 	    List fns = null;
+	    
 	    for( int i = 0; i < data.foundItems.size(); i++ ){
-	        IBinding b = (IBinding) bindings.get( i );
+	        IASTName n = (IASTName) data.foundItems.get( i );
 	        
-	        if( b instanceof IFunction ){
+	        temp = n.resolveBinding();
+	        if( temp instanceof ICPPCompositeBinding ){
+	        	IBinding [] bindings = ((ICPPCompositeBinding) temp).getBindings();
+	        	for( int j = 0; j < bindings.length; j++ )
+	        		data.foundItems.add( bindings[j] );
+	        	continue;
+	        } else if( temp instanceof IType ){
+	        	if( type == null ){
+	                type = temp;
+	            } else {
+	                //TODO
+	            }
+	        } else if( temp instanceof IFunction ){
 	        	if( fns == null )
 	        		fns = new ArrayList(2);
-	        	IASTName n = ((IASTFunctionDeclarator) ((IFunction)b).getPhysicalNode() ).getName();
-	        	fns.add( n );
-	        } else if( b instanceof IVariable ){
-	            if( obj == null ){
-	                obj = b;
-	            } else {
-	                //TODO
-	            }
+	        	fns.add( temp );
 	        } else {
-	            if( type == null ){
-	                type = b;
-	            } else {
-	                //TODO
-	            }
+	        	if( obj == null )
+	        		obj = temp;
+	        	else {
+	        		//TODO
+	        	}
 	        }
 	    }
 	    
@@ -745,98 +793,44 @@ public class CPPSemantics {
 	    if( fns != null){
 	    	if( obj != null )
 	    		return null; //ambiguous
-	    	IASTName n = resolveFunction( data, fns ); 
-	    	return ( n != null ) ? n.resolveBinding() : null;
-	    }
-	    
-	    return obj;
-	}
-	
-	static private IASTName resolveAmbiguities( CPPSemantics.LookupData data, IASTName name ) {
-	    if( data.foundItems == null || data.foundItems.size() == 0 )
-	        return null;
-	    
-	    if( data.foundItems.size() == 1 ){
-			return (IASTName) data.foundItems.get(0);
-		}
-	    
-	    IASTName type = null;
-	    IASTName obj  = null;
-	    List fns = null;
-	    for( int i = 0; i < data.foundItems.size(); i++ ){
-	        IASTName n = (IASTName) data.foundItems.get( i );
-	        IASTNode parent = n.getParent();
-	        if( parent instanceof IASTFunctionDeclarator ){
-	        	if( fns == null )
-	        		fns = new ArrayList(2);
-	        	fns.add( n );
-	        } else if( parent instanceof IASTDeclarator ){
-	            if( obj == null ){
-	                obj = n;
-	            } else {
-	                //TODO
-	            }
-	        } else if( parent instanceof ICPPASTElaboratedTypeSpecifier ||
-	                   parent instanceof IASTEnumerationSpecifier       ||
-	                   parent instanceof ICPPASTCompositeTypeSpecifier )
-	        {
-	            if( type == null ){
-	                type = n;
-	            } else {
-	                //TODO
-	            }
-	        }
-	    }
-	    
-	    if( type != null ) {
-	    	if( obj == null && fns == null )
-	    		return type;
-	    	IScope typeScope = type.resolveBinding().getScope();
-	    	if( obj != null && obj.resolveBinding().getScope() != typeScope ){
-	    		return null;//ambiguous
-	    	} else if( fns != null ){
-	    		for( int i = 0; i < fns.size(); i++ ){
-	    			if( ((IASTName)fns.get(i)).resolveBinding().getScope() != typeScope )
-	    				return null; //ambiguous
-	    		}
-	    	}
-	    }
-	    if( fns != null){
-	    	if( obj != null )
-	    		return null; //ambiguous
 	    	return resolveFunction( data, fns );
 	    }
 	    
 	    return obj;
 	}
 	
-	static private boolean functionHasParameters( ICPPASTFunctionDeclarator function, ICPPASTParameterDeclaration [] params ){
-		return false;
+	static private boolean functionHasParameters( ICPPASTFunctionDeclarator function, IASTParameterDeclaration [] params ){
+		IFunctionType ftype = (IFunctionType) CPPVisitor.createType( function );
+		if( params.length == 0 ){
+			return ftype.getParameterTypes().length == 0;
+		}
+		
+		IASTNode node = params[0].getParent();
+		if( node instanceof ICPPASTFunctionDeclarator ){
+			IFunctionType t2 = (IFunctionType) CPPVisitor.createType( (ICPPASTFunctionDeclarator) node );
+			return ftype.equals( t2 );
+		}
+	 	return false;
 	}
+	
 	static private void reduceToViable( LookupData data, List functions ){
 		Object [] fParams = data.functionParameters;
 		int numParameters = ( fParams != null ) ? fParams.length : 0;		
 		int num;	
 			
 		//Trim the list down to the set of viable functions
-		IASTName fName;
+		IFunction fName;
 		ICPPASTFunctionDeclarator function = null;
 		int size = functions.size();
 		for( int i = 0; i < size; i++ ){
-			fName = (IASTName) functions.get(i);
-			//sanity check
-			if( !( fName.getParent() instanceof IASTFunctionDeclarator ) ){
-				functions.remove( i-- );
-				size--;
-				continue;
-			}
-			function = (ICPPASTFunctionDeclarator) fName.getParent();
+			fName = (IFunction) functions.get(i);
+			function = (ICPPASTFunctionDeclarator) fName.getPhysicalNode();
 			num = function.getParameters().length;
 		
 			//if there are m arguments in the list, all candidate functions having m parameters
 			//are viable	 
 			if( num == numParameters ){
-				if( data.forDefinition && !functionHasParameters( function, (ICPPASTParameterDeclaration[]) data.functionParameters ) ){
+				if( data.forDefinition && !functionHasParameters( function, (IASTParameterDeclaration[]) data.functionParameters ) ){
 					functions.remove( i-- );
 					size--;
 				}
@@ -883,16 +877,29 @@ public class CPPSemantics {
 	static private IType getSourceParameterType( Object [] params, int idx ){
 		if( params instanceof IASTExpression [] ){
 			IASTExpression [] exps = (IASTExpression[]) params;
-			return CPPVisitor.getExpressionType( exps[ idx ] );
-		}
+			if( idx < exps.length)
+				return CPPVisitor.getExpressionType( exps[ idx ] );
+			return ( idx == 0 ) ? VOID_TYPE : null;
+		} else if( params instanceof IASTParameterDeclaration[] ){
+			IASTParameterDeclaration [] decls = (IASTParameterDeclaration[]) params;
+			if( idx < decls.length)
+				return CPPVisitor.createType( decls[idx].getDeclarator() );
+			return ( idx == 0 ) ? VOID_TYPE : null;
+		} else if( params == null && idx == 0 )
+			return VOID_TYPE;
 		return null;
 	}
-	static private IASTName resolveFunction( CPPSemantics.LookupData data, List fns ){
+	static private IBinding resolveFunction( CPPSemantics.LookupData data, List fns ){
+		if( data.forUsingDeclaration ){
+			if( fns.size() == 1 )
+				return (IBinding) fns.get( 0 );
+			return new CPPCompositeBinding( fns );
+		}
 		//reduce our set of candidate functions to only those who have the right number of parameters
 		reduceToViable( data, fns );
 		
-		IASTName bestFn = null;					//the best function
-		IASTName currFn = null;					//the function currently under consideration
+		IFunction bestFn = null;					//the best function
+		IFunction currFn = null;					//the function currently under consideration
 		Cost [] bestFnCost = null;				//the cost of the best function
 		Cost [] currFnCost = null;				//the cost for the current function
 				
@@ -915,34 +922,39 @@ public class CPPSemantics {
 		
 		int numFns = fns.size();
 		int numSourceParams = ( data.functionParameters != null ) ? data.functionParameters.length : 0;
-
+		if( data.functionParameters != null && numSourceParams == 0 )
+			numSourceParams = 1;
 		sourceParameters = data.functionParameters;
 		
 		for( int fnIdx = 0; fnIdx < numFns; fnIdx++ ){
-			currFn = (IASTName) fns.get( fnIdx );
+			currFn = (IFunction) fns.get( fnIdx );
 			
 			if( bestFn != null ){
-				if( bestFn.resolveBinding() == currFn.resolveBinding() )
+				if( bestFn == currFn )
 					continue;
 			}
 			
-			ICPPASTFunctionDeclarator currDtor = (ICPPASTFunctionDeclarator) currFn.getParent();
+			ICPPASTFunctionDeclarator currDtor = (ICPPASTFunctionDeclarator) currFn.getPhysicalNode();
 			targetParameters = currDtor.getParameters();
-			
-			int numTargetParams = targetParameters.length;
+
+			int numTargetParams = ( targetParameters.length == 0 ) ? 1 : targetParameters.length;
 			if( currFnCost == null ){
-				currFnCost = new Cost [ numSourceParams ];	
+				currFnCost = new Cost [ (numSourceParams == 0) ? 1 : numSourceParams ];	
 			}
 			
 			comparison = 0;
 			boolean varArgs = false;
 			
-			for( int j = 0; j < numSourceParams; j++ ){
+			for( int j = 0; j < numSourceParams || j == 0; j++ ){
 				source = getSourceParameterType( sourceParameters, j );
 				
 				if( j < numTargetParams ){
+					if( targetParameters.length == 0  && j == 0 ){
+						target = VOID_TYPE;
+					} else {
 					IParameter param = (IParameter) targetParameters[j].getDeclarator().getName().resolveBinding(); 
 					target = param.getType();
+					}
 				} else 
 					varArgs = true;
 				

@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
 
@@ -23,13 +24,24 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
  * @author aniefer
  */
 public class CPPNamespace implements ICPPNamespace {
+	private static final char[] EMPTY_CHAR_ARRAY = { };
+	
 	ICPPASTNamespaceDefinition [] namespaceDefinitions = null;
-
+	ICPPASTTranslationUnit tu = null;
 	public CPPNamespace( ICPPASTNamespaceDefinition nsDef ){
 		namespaceDefinitions = new ICPPASTNamespaceDefinition[] { nsDef };
 	}
 	
+	/**
+	 * @param unit
+	 */
+	public CPPNamespace(CPPASTTranslationUnit unit) {
+		tu = unit;
+	}
+
 	public void addDefinition( ICPPASTNamespaceDefinition nsDef ){
+		if( namespaceDefinitions == null )
+			return;
 		for( int i = 0; i < namespaceDefinitions.length; i++ ){
 			if( namespaceDefinitions[i] == null ){
 				namespaceDefinitions[i] = nsDef;
@@ -45,35 +57,36 @@ public class CPPNamespace implements ICPPNamespace {
 	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace#getNamespaceScope()
 	 */
 	public ICPPNamespaceScope getNamespaceScope() {
-		return (ICPPNamespaceScope) namespaceDefinitions[0].getScope();
+		
+		return (ICPPNamespaceScope) ( tu != null ? tu.getScope() : namespaceDefinitions[0].getScope() );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getName()
 	 */
 	public String getName() {
-		return namespaceDefinitions[0].getName().toString();
+		return tu != null ? null : namespaceDefinitions[0].getName().toString(); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
 	 */
 	public char[] getNameCharArray() {
-		return namespaceDefinitions[0].getName().toCharArray();
+		return tu != null ? EMPTY_CHAR_ARRAY : namespaceDefinitions[0].getName().toCharArray();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getScope()
 	 */
 	public IScope getScope() {
-		return CPPVisitor.getContainingScope( namespaceDefinitions[0] );
+		return tu != null ? null : CPPVisitor.getContainingScope( namespaceDefinitions[0] );
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getPhysicalNode()
 	 */
 	public IASTNode getPhysicalNode() {
-		return namespaceDefinitions[0];
+		return ( tu != null ? (IASTNode) tu : namespaceDefinitions[0] );
 	}
 
 }

@@ -18,9 +18,10 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.internal.core.dom.parser.IRequiresLocationInformation;
 import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
@@ -29,8 +30,9 @@ import org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver;
  * @author jcamelon
  */
 public class CPPASTTranslationUnit extends CPPASTNode implements
-        IASTTranslationUnit, IRequiresLocationInformation {
+        ICPPASTTranslationUnit, IRequiresLocationInformation {
     private IASTDeclaration [] decls = null;
+    private ICPPNamespace binding = null;
     private ICPPScope scope = null;
     private static final int DEFAULT_CHILDREN_LIST_SIZE = 8;
     private int currentIndex = 0;
@@ -167,5 +169,15 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
     public IASTNode[] selectNodesForLocation(int offset, int length) {
         return selectNodesForLocation( resolver.getTranslationUnitPath(), offset, length ); //$NON-NLS-1$
     }
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit#resolveBinding()
+	 */
+	public IBinding resolveBinding() {
+    	if( binding == null )
+    		binding = new CPPNamespace( this );
+    	return binding;
+	}
 
 }

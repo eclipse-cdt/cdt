@@ -737,6 +737,36 @@ public class AST2CPPTests extends AST2BaseTest {
         assertTrue( ((IPointerType) ft.getReturnType()).getType() instanceof IFunctionType );
         assertEquals( ft.getParameterTypes().length, 1 );
     }
+    
+    public void testUsingDeclaration_1() throws Exception {
+    	StringBuffer buffer = new StringBuffer();
+    	buffer.append("void f();                  \n"); //$NON-NLS-1$
+    	buffer.append("namespace A {              \n"); //$NON-NLS-1$
+    	buffer.append("   void g();               \n"); //$NON-NLS-1$
+    	buffer.append("}                          \n"); //$NON-NLS-1$
+    	buffer.append("namespace X {              \n"); //$NON-NLS-1$
+    	buffer.append("   using ::f;              \n"); //$NON-NLS-1$
+    	buffer.append("   using A::g;             \n"); //$NON-NLS-1$
+    	buffer.append("}                          \n"); //$NON-NLS-1$
+    	buffer.append("void h() {                 \n"); //$NON-NLS-1$
+    	buffer.append("   X::f();                 \n"); //$NON-NLS-1$
+    	buffer.append("   X::g();                 \n"); //$NON-NLS-1$
+    	buffer.append("}                          \n"); //$NON-NLS-1$
+    	
+    	IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.CPP );
+		CPPNameCollector collector = new CPPNameCollector();
+		CPPVisitor.visitTranslationUnit( tu, collector );
+        
+		IFunction f = (IFunction) collector.getName(0).resolveBinding();
+		ICPPNamespace A = (ICPPNamespace) collector.getName(1).resolveBinding();
+		IFunction g = (IFunction) collector.getName(2).resolveBinding();
+		ICPPNamespace X = (ICPPNamespace) collector.getName(3).resolveBinding();
+		
+		assertInstances( collector, f, 5 );
+		assertInstances( collector, A, 2 );
+		assertInstances( collector, X, 3 );
+		assertInstances( collector, g, 5 );
+    }
       
     public void testFunctionDeclarations() throws Exception {
         StringBuffer buffer = new StringBuffer();

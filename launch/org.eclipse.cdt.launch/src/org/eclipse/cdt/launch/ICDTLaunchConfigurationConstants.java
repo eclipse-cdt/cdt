@@ -9,6 +9,11 @@ import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 
 public interface ICDTLaunchConfigurationConstants {
 	/**
+	 * This is the launch type id.
+	 */
+	public static final String ID_LAUNCH_C_APP = "org.eclipse.cdt.launch.localCLaunch";
+	
+	/**
 	 * Launch configuration attribute key. The value is a name of
 	 * a C/C++ project associated with a C/C++ launch configuration.
 	 */
@@ -70,6 +75,15 @@ public interface ICDTLaunchConfigurationConstants {
 	 * Launch configuration attribute key. The value is a boolean specifying whether to stop at main().
 	 */
 	public static final String ATTR_DEBUGGER_STOP_AT_MAIN = LaunchUIPlugin.getUniqueIdentifier() + ".DEBUGGER_STOP_AT_MAIN"; //$NON-NLS-1$
+
+	/**
+	 * Launch configuration attribute key. The value is an int specifying the process id to attach to
+	 * if the ATTR_DEBUGGER_START_MODE is DEBUGGER_MODE_ATTACH.  A non existant value or -1 for this
+	 * entry indicates that the user should be asked to supply this value.  This value is primarily
+	 * designed to be used by programatic users of the debug interface.
+	 */
+	public static final String ATTR_ATTACH_PROCESS_ID = LaunchUIPlugin.getUniqueIdentifier() + ".ATTACH_PROCESS_ID"; //$NON-NLS-1$
+
 
 	/**
 	 * Launch configuration attribute key. The value is the startup mode for the debugger.

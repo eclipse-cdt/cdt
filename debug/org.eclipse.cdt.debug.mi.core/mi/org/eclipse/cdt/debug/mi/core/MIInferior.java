@@ -172,11 +172,15 @@ public class MIInferior extends Process {
 			if (isRunning()) {
 				interrupt();
 			}
-			CommandFactory factory = session.getCommandFactory();
-			MIExecAbort abort = factory.createMIExecAbort();
-			session.postCommand0(abort, session.getCommandTimeout());
-			abort.getMIInfo();
-			setTerminated(abort.getToken(), true);
+			int token = 0;
+			if (isSuspended()) {
+				CommandFactory factory = session.getCommandFactory();
+				MIExecAbort abort = factory.createMIExecAbort();
+				session.postCommand0(abort, session.getCommandTimeout());
+				abort.getMIInfo();
+				token = abort.getToken();
+			}
+			setTerminated(token, true);
 		} else if (session.isCoreSession() && !isTerminated()){
 			setTerminated();
 		}

@@ -1,3 +1,7 @@
+2004-11-17 Alain Magloire
+	Fix for 78816
+	* mi/org/eclipse/cdt/debug/mi/core/MIInferior.java
+
 2004-11-16 Alain Magloire
 	Optimize things by providing a new method
 	ICDIRegisterGroup.hasRegisters();

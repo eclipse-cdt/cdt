@@ -169,9 +169,15 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 
 	protected Attribute getAttribute() {
 		if (hasChanged()) {
+			ElfHelper helper = null;
 			try {
-				loadInformation();
+				helper = getElfHelper();
+				loadAttributes(helper);
 			} catch (IOException e) {
+			} finally {
+				if (helper != null) {
+					helper.dispose();
+				}
 			}
 		}
 		return attribute;
@@ -179,9 +185,15 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 
 	protected Sizes getSizes() {
 		if (hasChanged()) {
+			ElfHelper helper = null;
 			try {
-				loadInformation();
+				helper = getElfHelper();
+				loadAttributes(helper);
 			} catch (IOException e) {
+			} finally {
+				if (helper != null) {
+					helper.dispose();
+				}
 			}
 		}
 		return sizes;
@@ -263,7 +275,8 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 			if (addr2line != null) {
 				try {
 					String filename =  addr2line.getFileName(sym.addr);
-					sym.filename = (filename != null) ? new Path(filename) : null;
+					// Addr2line returns the funny "??" when it can not find the file.
+					sym.filename = (filename != null && !filename.equals("??")) ? new Path(filename) : null;
 					sym.startLine = addr2line.getLineNumber(sym.addr);
 					sym.endLine = addr2line.getLineNumber(sym.addr + array[i].st_size - 1);
 				} catch (IOException e) {

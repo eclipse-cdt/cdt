@@ -169,9 +169,18 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 
 	protected PE.Attribute getAttribute() {
 		if (hasChanged()) {
+			PE pe = null;
 			try {
-				loadInformation(); 
+				pe = getPE();
+				loadAttributes(pe); 
 			} catch (IOException e) {
+			} finally {
+				if (pe != null) {
+					try {
+						pe.dispose();
+					} catch (IOException e1) {
+					}
+				}
 			}
 		}
 		return attribute;
@@ -184,11 +193,11 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	}
 
 	private void loadInformation(PE pe) throws IOException {
-		loadAttribute(pe);
+		loadAttributes(pe);
 		loadSymbols(pe);
 	}
 
-	private void loadAttribute(PE pe) throws IOException {
+	private void loadAttributes(PE pe) throws IOException {
 		attribute = pe.getAttribute();
 	}
 

@@ -162,13 +162,15 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 		}
 
 		if (location != null) {
-			if (location.getFile() != null) {
+			if (location.getFile() != null && location.getFile().length() > 0) {
 				line = location.getFile() + ":";
-				if (location.getFunction() != null) {
+				if (location.getFunction() != null && location.getFunction().length() > 0) {
 					line += location.getFunction();
 				} else {
 					line += Integer.toString(location.getLineNumber());
 				}
+			} else if (location.getFunction() != null && location.getFunction().length() > 0) {
+				line = location.getFunction();
 			} else {
 				line = "*" + Long.toString(location.getAddress());
 			}

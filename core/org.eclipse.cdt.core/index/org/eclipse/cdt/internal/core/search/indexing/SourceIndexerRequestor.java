@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IParser;
@@ -71,6 +72,7 @@ import org.eclipse.cdt.core.parser.ast.IASTVariableReference;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
@@ -265,6 +267,15 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 		pushInclude(inclusion);
 		//Add to traversed files
 		this.filesTraversed.add(inclusion.getFullFileName());
+		
+		IProject resourceProject = resourceFile.getProject();
+		/* Check to see if this is a header file */
+		ICFileType type = CCorePlugin.getDefault().getFileType(resourceProject,
+				inclusion.getFullFileName());
+
+		/* See if this file has been encountered before */
+		if (type.isHeader())
+			CCorePlugin.getDefault().getCoreModel().getIndexManager().haveEncounteredHeader(resourceProject.getFullPath(),new Path(inclusion.getFullFileName()));
 	}
 
 	/* (non-Javadoc)

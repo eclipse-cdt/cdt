@@ -11,6 +11,10 @@
 
 package org.eclipse.cdt.internal.core.search.indexing;
 
+import java.util.ArrayList;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.filetype.ICFileType;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
@@ -28,12 +32,16 @@ class AddFolderToIndex extends IndexRequest {
 	IPath folderPath;
 	IProject project;
 	char[][] exclusionPattern;
+	ArrayList sourceFilesToIndex;
+	ArrayList headerFilesToIndex;
 
 	public AddFolderToIndex(IPath folderPath, IProject project, char[][] exclusionPattern, IndexManager manager) {
 		super(project.getFullPath(), manager);
 		this.folderPath = folderPath;
 		this.project = project;
 		this.exclusionPattern = exclusionPattern;
+		this.sourceFilesToIndex = new ArrayList();
+		this.headerFilesToIndex = new ArrayList();
 	}
 	
 	public boolean execute(IProgressMonitor progressMonitor) {
@@ -62,7 +70,8 @@ class AddFolderToIndex extends IndexRequest {
 								IResource resource = proxy.requestResource();
 								if (CoreModel.isValidTranslationUnitName(resource.getProject(),resource.getName())) {
 									if (pattern == null || !Util.isExcluded(resource, pattern))
-										indexManager.addSource((IFile)resource, container);
+										//indexManager.addSource((IFile)resource, container);
+										sortFiles((IFile) resource);
 								}
 								return false;
 							case IResource.FOLDER :
@@ -74,6 +83,7 @@ class AddFolderToIndex extends IndexRequest {
 				},
 				IResource.NONE
 			);
+			scheduleJobs();
 		} catch (CoreException e) {
 			if (IndexManager.VERBOSE) {
 				JobManager.verbose("-> failed to add " + this.folderPath + " to index because of the following exception:"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -86,8 +96,37 @@ class AddFolderToIndex extends IndexRequest {
 		return true;
 	}
 	
+	/**
+	 * 
+	 */
+	private void scheduleJobs() {
+		//Schedule the source jobs first, then the headers
+		for (int i=0; i<sourceFilesToIndex.size(); i++)
+			this.manager.addSource((IFile)sourceFilesToIndex.get(i), this.indexPath, true);
+		
+		for (int i=0;i<headerFilesToIndex.size(); i++)
+			this.manager.addSource((IFile)headerFilesToIndex.get(i), this.indexPath, true);
+		
+		CleanEncounteredHeaders cleanHeaders = new CleanEncounteredHeaders(this.manager);
+		this.manager.request(cleanHeaders);
+	}
+
 	public String toString() {
 		return "adding " + this.folderPath + " to index " + this.indexPath; //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	protected void sortFiles(IFile file){
+		
+		/* Check to see if this is a header file */ 
+		ICFileType type = CCorePlugin.getDefault().getFileType(file.getProject(), file.getName());
+		
+		/* See if this file has been encountered before */
+		if (type.isHeader())
+			headerFilesToIndex.add(file);
+		
+		if (type.isSource())
+			sourceFilesToIndex.add(file);
+		
 	}
 }
 

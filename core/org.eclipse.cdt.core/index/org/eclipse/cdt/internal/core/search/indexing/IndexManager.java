@@ -35,6 +35,7 @@ import org.eclipse.cdt.internal.core.Util;
 import org.eclipse.cdt.internal.core.index.IIndex;
 import org.eclipse.cdt.internal.core.index.impl.Index;
 import org.eclipse.cdt.internal.core.index.impl.IndexDelta;
+import org.eclipse.cdt.internal.core.parser.scanner2.ObjectSet;
 import org.eclipse.cdt.internal.core.search.CWorkspaceScope;
 import org.eclipse.cdt.internal.core.search.IndexSelector;
 import org.eclipse.cdt.internal.core.search.SimpleLookupTable;
@@ -80,6 +81,9 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	private SimpleLookupTable indexStates = null;
 	private File savedIndexNamesFile =
 		new File(getCCorePluginWorkingLocation().append("savedIndexNames.txt").toOSString()); //$NON-NLS-1$
+	
+	private SimpleLookupTable encounteredHeaders = null;
+	
 	public static Integer SAVED_STATE = new Integer(0);
 	public static Integer UPDATING_STATE = new Integer(1);
 	public static Integer UNKNOWN_STATE = new Integer(2);
@@ -149,8 +153,9 @@ public class IndexManager extends JobManager implements IIndexConstants {
 	/**
 	 * Trigger addition of a resource to an index
 	 * Note: the actual operation is performed in background
+	 * @param checkEncounteredHeaders TODO
 	 */
-	public void addSource(IFile resource, IPath indexedContainer){
+	public void addSource(IFile resource, IPath indexedContainers, boolean checkEncounteredHeaders){
 		
 		IProject project = resource.getProject();
 		
@@ -163,7 +168,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		if (CCorePlugin.getDefault() == null) return;	
 		
 		if (indexEnabled){
-			AddCompilationUnitToIndex job = new AddCompilationUnitToIndex(resource, indexedContainer, this);
+			AddCompilationUnitToIndex job = new AddCompilationUnitToIndex(resource, indexedContainers, this, checkEncounteredHeaders);
 			
 			//If we are in WAITING mode, we need to kick ourselves into enablement
 			if (!jobSet.add(job.resource.getLocation()) &&
@@ -270,6 +275,33 @@ public class IndexManager extends JobManager implements IIndexConstants {
 		return index;
 	}
 	
+	/**
+	 * Returns the index for a given project, according to the following algorithm:
+	 * - if index is already in memory: answers this one back
+	 * - if (reuseExistingFile) then read it and return this index and record it in memory
+	 * - if (createIfMissing) then create a new empty index and record it in memory
+	 * 
+	 * Warning: Does not check whether index is consistent (not being used)
+	 */
+	public synchronized boolean haveEncounteredHeader(IPath projectPath, IPath filePath) {
+		
+		SimpleLookupTable headerTable = getEncounteredHeaders(); 
+		// Path is already canonical per construction
+		ObjectSet headers = (ObjectSet) headerTable.get(projectPath);
+		if (headers == null) {
+			//First time for the project, must create a new ObjectSet
+			headers = new ObjectSet(4);
+			headerTable.put(projectPath, headers);
+		 }
+		
+		if (headers.containsKey(filePath.toOSString()))
+			return true;
+		
+		headers.put(filePath.toOSString());
+		
+		return false;
+	}
+	
 	private SimpleLookupTable getIndexStates() {
 		if (indexStates != null) return indexStates;
 
@@ -284,6 +316,23 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			}
 		}
 		return this.indexStates;
+	}
+	
+	private SimpleLookupTable getEncounteredHeaders(){
+		
+		if (encounteredHeaders == null){
+			this.encounteredHeaders = new SimpleLookupTable();
+		}
+		
+		
+		return this.encounteredHeaders;
+	}
+	
+	/**
+	 * Resets the headers table
+	 */
+	public void resetEncounteredHeaders() {
+		this.encounteredHeaders = null;
 	}
 	
 	private IPath getCCorePluginWorkingLocation() {
@@ -554,6 +603,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			this.indexes = new HashMap(5);
 			this.monitors = new HashMap(5);
 			this.indexStates = null;
+			this.encounteredHeaders = null;
 		}
 		
 		if (this.timeoutThread == null){
@@ -881,6 +931,7 @@ public class IndexManager extends JobManager implements IIndexConstants {
 			}
 		
 		}
+	
 }
 	
 

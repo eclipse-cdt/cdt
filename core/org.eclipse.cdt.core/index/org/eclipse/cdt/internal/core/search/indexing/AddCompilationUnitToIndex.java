@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.IPath;
 public class AddCompilationUnitToIndex extends AddFileToIndex {
 	char[] contents;
 
-	public AddCompilationUnitToIndex(IFile resource, IPath indexedContainer, IndexManager manager) {
-		super(resource, indexedContainer, manager);
+	public AddCompilationUnitToIndex(IFile resource, IPath indexedContainer, IndexManager manager, boolean checkEncounteredHeaders) {
+		super(resource, indexedContainer, manager, checkEncounteredHeaders);
 	}
 	protected boolean indexDocument(IIndex index) throws IOException {
 		if (!initializeContents()) return false;

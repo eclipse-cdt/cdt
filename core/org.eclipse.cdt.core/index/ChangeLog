@@ -1,3 +1,16 @@
+2004-08-19 Bogdan Gheorghe
+	Fix for Bug 71500: [Indexer] all headers get indexed on project open
+	
+	* index/org/eclipse/cdt/internal/core/search/indexing/AddCompilationUnitToIndex.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/AddFileToIndex.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/AddFolderToIndex.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/CleanEncounteredHeaders.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexerModelListener.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/IndexManager.java	
+	* index/org/eclipse/cdt/internal/core/search/indexing/SourceIndexerRequestor.java	
+	* dependency/org/eclipse/cdt/internal/core/sourcedependency/UpdateDependency.java	
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java	
+	
 2004-08-11 Bogdan Gheorghe
 	Fix for Bug 59493: need to refine index query for open-type 
 

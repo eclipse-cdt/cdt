@@ -1,3 +1,8 @@
+2003-03-13 Alain Magloire
+
+	* src/org/eclipse/cdt/utils/ui/controls/RadioButton.java:
+	Clean up of warnings.
+
 2003-03-12 David Inglis
 	* src/org/eclipse/cdt/internal/ui/BuildConsoleManager.java,v
 	Removed buffering of build console as it was preventing output from being

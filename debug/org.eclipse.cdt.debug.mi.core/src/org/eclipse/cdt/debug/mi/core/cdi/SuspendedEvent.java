@@ -29,17 +29,18 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 	}
 
 	public ICDISessionObject getReason() {
-		if (event instanceof MIBreakpointEvent || event instanceof MIWatchpointEvent) {
-			MIBreakpointEvent breakEvent = (MIBreakpointEvent)event;
+		if (event instanceof MIBreakpointEvent
+			|| event instanceof MIWatchpointEvent) {
+			MIBreakpointEvent breakEvent = (MIBreakpointEvent) event;
 			int number = breakEvent.getNumber();
 			ICDIBreakpointManager mgr = session.getBreakpointManager();
 			// Ask the breakpoint manager the array of ICDIBreakpoint(s)
 			// We need to return the same object as the reason.
 			try {
-				ICDIBreakpoint[] bkpts= mgr.getBreakpoints();
+				ICDIBreakpoint[] bkpts = mgr.getBreakpoints();
 				for (int i = 0; i < bkpts.length; i++) {
 					if (bkpts[i] instanceof Breakpoint) {
-						Breakpoint point = (Breakpoint)bkpts[i];
+						Breakpoint point = (Breakpoint) bkpts[i];
 						MIBreakPoint miBreak = point.getMIBreakPoint();
 						if (miBreak.getNumber() == number) {
 							return point;
@@ -51,7 +52,7 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 		} else if (event instanceof MISteppingRangeEvent) {
 			return new EndSteppingRange(session);
 		} else if (event instanceof MISignalEvent) {
-			return new Signal(session, (MISignalEvent)event);
+			return new Signal(session, (MISignalEvent) event);
 		} else if (event instanceof MILocationReachedEvent) {
 			return new EndSteppingRange(session);
 		} else if (event instanceof MIFunctionFinishedEvent) {
@@ -67,38 +68,35 @@ public class SuspendedEvent implements ICDISuspendedEvent {
 		CTarget target = session.getCTarget();
 		int threadId = 0;
 		if (event instanceof MIBreakpointEvent) {
-			MIBreakpointEvent breakEvent = (MIBreakpointEvent)event;
+			MIBreakpointEvent breakEvent = (MIBreakpointEvent) event;
 			threadId = breakEvent.getThreadId();
 		} else if (event instanceof MIWatchpointEvent) {
-			MIWatchpointEvent watchEvent = (MIWatchpointEvent)event;
+			MIWatchpointEvent watchEvent = (MIWatchpointEvent) event;
 			threadId = watchEvent.getThreadId();
 		} else if (event instanceof MISteppingRangeEvent) {
-			MISteppingRangeEvent rangeEvent = (MISteppingRangeEvent)event;
+			MISteppingRangeEvent rangeEvent = (MISteppingRangeEvent) event;
 			threadId = rangeEvent.getThreadId();
 		} else if (event instanceof MISignalEvent) {
-			MISignalEvent sigEvent = (MISignalEvent)event;
+			MISignalEvent sigEvent = (MISignalEvent) event;
 			threadId = sigEvent.getThreadId();
 		} else if (event instanceof MILocationReachedEvent) {
-			MILocationReachedEvent locEvent = (MILocationReachedEvent)event;
+			MILocationReachedEvent locEvent = (MILocationReachedEvent) event;
 			threadId = locEvent.getThreadId();
 		} else if (event instanceof MIFunctionFinishedEvent) {
-			MIFunctionFinishedEvent funcEvent = (MIFunctionFinishedEvent)event;
+			MIFunctionFinishedEvent funcEvent = (MIFunctionFinishedEvent) event;
 			threadId = funcEvent.getThreadId();
 		}
 
 		// If it came from a thread return it as the source.
-		if (threadId > 0) {
-			CThread[] cthreads = target.getCThreads();
-			for (int i = 0; i < cthreads.length; i++) {
-				if (cthreads[i].getId() == threadId) {
-					return cthreads[i];
-				}
+		CThread[] cthreads = target.getCThreads();
+		for (int i = 0; i < cthreads.length; i++) {
+			if (cthreads[i].getId() == threadId) {
+				return cthreads[i];
 			}
-			// Not found?? new thread created?
-			CThread cthread = new CThread(session.getCTarget(), threadId);
-			target.addCThread(cthread);
-			return cthread;
 		}
-		return target;
+		// Not found?? new thread created?
+		CThread cthread = new CThread(session.getCTarget(), threadId);
+		target.addCThread(cthread);
+		return cthread;
 	}
 }

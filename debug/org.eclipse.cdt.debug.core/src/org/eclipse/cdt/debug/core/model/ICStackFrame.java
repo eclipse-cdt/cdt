@@ -15,7 +15,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IValue;
 
 /**
- * C/C++ extension of <code>IStackFrame</code>.
+ * C/C++ specific extension of <code>IStackFrame</code>.
  */
 public interface ICStackFrame extends IStackFrame, ICDebugElement {
 

@@ -102,16 +102,23 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 			if (entries.length > 0 && entries[0].equals(containerEntry)) {
 				
 			} else {
-				Job initJob = new Job("Initializing path container") {	//$NON-NLS-1$
+				Job initJob = new Job(ManagedMakeMessages.getFormattedString("ManagedBuildInfo.message.job.init", getOwner().getName())) {	//$NON-NLS-1$
 					protected IStatus run(IProgressMonitor monitor) {
 						try {
 							// Set the raw path entries
 							cModelElement.setRawPathEntries(new IPathEntry[]{containerEntry}, new NullProgressMonitor());
 						} catch (CModelException e) {
-							return new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1, e.getLocalizedMessage(), e);
+							return new Status(IStatus.ERROR, 
+									ManagedBuilderCorePlugin.getUniqueIdentifier(), 
+									-1, 
+									e.getLocalizedMessage(), 
+									e);
 						}
-						return new Status(IStatus.OK, ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.OK, null, null);
-						
+						return new Status(IStatus.OK, 
+								ManagedBuilderCorePlugin.getUniqueIdentifier(), 
+								IStatus.OK, 
+								ManagedMakeMessages.getFormattedString("ManagedBuildInfo.message.init.ok", getOwner().getName()),	//$NON-NLS-1$ 
+								null);	
 					}
 
 				};

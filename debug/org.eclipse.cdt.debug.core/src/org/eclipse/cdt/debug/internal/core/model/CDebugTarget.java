@@ -442,6 +442,13 @@ public class CDebugTarget extends CDebugElement
 		ISourceLocator locator = getLaunch().getSourceLocator();
 		if ( locator instanceof IAdaptable )
 		{
+			ICSourceLocator clocator = (ICSourceLocator)((IAdaptable)locator).getAdapter( ICSourceLocator.class );
+			if ( clocator instanceof IAdaptable )
+			{
+				CSourceManager sm = (CSourceManager)((IAdaptable)clocator).getAdapter( CSourceManager.class );
+				if ( sm != null )
+					sm.setDebugTarget( this );
+			}
 			IResourceChangeListener listener = (IResourceChangeListener)((IAdaptable)locator).getAdapter( IResourceChangeListener.class );
 			if ( listener != null )
 				CCorePlugin.getWorkspace().addResourceChangeListener( listener );
@@ -2777,6 +2784,26 @@ public class CDebugTarget extends CDebugElement
 		return fRunningInfo;
 	}
 
+	public IFile getCurrentBreakpointFile()
+	{
+		Object info = getCurrentStateInfo();
+		if ( info instanceof ICDIBreakpointHit )
+		{
+			ICDIBreakpoint cdiBreakpoint = ((ICDIBreakpointHit)info).getBreakpoint();
+			if ( cdiBreakpoint != null )
+			{
+				IBreakpoint breakpoint = findBreakpoint( cdiBreakpoint );
+				if ( breakpoint instanceof ICLineBreakpoint )
+				{
+					IResource resource = ((ICLineBreakpoint)breakpoint).getMarker().getResource();
+					if ( resource instanceof IFile )
+						return (IFile)resource;
+				}
+			}
+		}
+		return null;
+	}
+
 	protected void setRunningInfo( RunningInfo info )
 	{
 		fRunningInfo = info;
@@ -2802,6 +2829,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		setRunningInfo( info );
 	}
+
 /*
 	private boolean applyDeferredBreakpoints()
 	{

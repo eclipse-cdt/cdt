@@ -1,3 +1,9 @@
+2003-10-17 Mikhail Khodjaiants
+	If the target is suspended by a line breakpoint the source manager tries to retrieve 
+	the file resource from the breakpoint marker.
+	* CSourceManager.java
+	* CDebugTarget.java
+
 2003-10-15 Mikhail Khodjaiants
 	Improving the source search algorithms.
 	* CDirectorySourceLocation.java

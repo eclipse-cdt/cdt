@@ -282,12 +282,15 @@ public class CPlugin extends AbstractUIPlugin {
 		super.shutdown();
 	}		
 	
-	public static Display getStandardDisplay() {
+	private void runUI(Runnable run) {
 		Display display;
 		display= Display.getCurrent();
-		if (display == null)
+		if (display == null) {
 			display= Display.getDefault();
-		return display;		
+			display.asyncExec(run);
+		} else {
+			run.run();
+		}		
 	}
 
 	/**
@@ -298,23 +301,25 @@ public class CPlugin extends AbstractUIPlugin {
 		IAdapterManager manager= Platform.getAdapterManager();
 		manager.registerAdapters(new ResourceAdapterFactory(), IResource.class);
 		manager.registerAdapters(new CElementAdapterFactory(), ICElement.class);
-		getStandardDisplay().asyncExec(
-			new Runnable() {
-				public void run() {
-					CPluginImages.initialize();
-				}
+		runUI(new Runnable() {
+			public void run() {
+				CPluginImages.initialize();
 			}
-		);
+		});
 	}
 	
 	/**
 	 * @see AbstractUIPlugin#initializeDefaultPreferences
 	 */
-	protected void initializeDefaultPreferences(IPreferenceStore store) {
+	protected void initializeDefaultPreferences(final IPreferenceStore store) {
 		super.initializeDefaultPreferences(store);
-		CPluginPreferencePage.initDefaults(store);
-		CEditorPreferencePage.initDefaults(store);
-		CView.initDefaults(store);
+		runUI(new Runnable() {
+			public void run() {
+				CPluginPreferencePage.initDefaults(store);
+				CEditorPreferencePage.initDefaults(store);
+				CView.initDefaults(store);
+			}
+		});
 	}
 	
 	public IConsole getConsole() {

@@ -53,14 +53,6 @@ public interface ICTarget extends ICObject
     InputStream getErrorStream();
 
 	/**
-	 * Returns the system process associated with this target.
-	 * 
-	 * @return the system process associated with this target
-	 * @throws CDIException if this method fails.  Reasons include:
-	 */
-	Process getProcess() throws CDIException;
-
-	/**
 	 * Returns the shared libraries loaded in this target. 
 	 * An empty collection is returned if no shared libraries
 	 * are loaded in this target. 

@@ -1196,4 +1196,23 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 		}
 		return false;
 	}
+	
+	public void testBug66543() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "struct packet { int a; int b; };\n" ); //$NON-NLS-1$
+		writer.write( "struct packet buffer[5];\n" ); //$NON-NLS-1$
+		writer.write( "int main(int argc, char **argv) {\n" ); //$NON-NLS-1$
+		writer.write( " buffer[2]." ); //$NON-NLS-1$
+		String code = writer.toString();
+		IASTCompletionNode node = parse( code, code.indexOf( "[2].") + 4 ); //$NON-NLS-1$
+		assertNotNull( node );
+		assertNotNull( node.getCompletionContext() );
+		IASTNode.LookupKind [] kinds = new LookupKind[ 1 ];
+		kinds[0] = LookupKind.FIELDS;
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), kinds, node.getCompletionContext(), node.getFunctionParameters() );
+		assertNotNull( result );
+		assertEquals( result.getResultsSize(), 2 );
+	}
+	
 }

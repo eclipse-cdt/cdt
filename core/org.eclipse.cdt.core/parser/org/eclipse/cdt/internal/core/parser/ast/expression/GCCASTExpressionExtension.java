@@ -75,10 +75,10 @@ public class GCCASTExpressionExtension extends GCCASTExtension {
 		{
 			return new ASTBinaryExpression( kind, lhs, rhs ){
 				public String toString(){
-					IASTExpression.Kind kind = getExpressionKind();
+					IASTExpression.Kind k = getExpressionKind();
 					StringBuffer buffer = new StringBuffer();
 					buffer.append( ASTUtil.getExpressionString( getLHSExpression() ) );
-					if( kind == IASTGCCExpression.Kind.RELATIONAL_MAX )
+					if( k == IASTGCCExpression.Kind.RELATIONAL_MAX )
 						buffer.append( " >? " ); //$NON-NLS-1$
 					else 
 						buffer.append( " <? " ); //$NON-NLS-1$
@@ -93,9 +93,9 @@ public class GCCASTExpressionExtension extends GCCASTExtension {
 		{
 			return new ASTUnaryExpression( kind, lhs ){
 				public String toString(){
-					IASTExpression.Kind kind = getExpressionKind();
+					IASTExpression.Kind k = getExpressionKind();
 					StringBuffer buffer = new StringBuffer();
-					if( kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION )
+					if( k == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION )
 						buffer.append( GCCKeywords.__ALIGNOF__ );
 					else
 						buffer.append( GCCKeywords.TYPEOF );
@@ -111,9 +111,9 @@ public class GCCASTExpressionExtension extends GCCASTExtension {
 		{
 			return new ASTTypeIdExpression( kind, typeId ){
 				public String toString(){
-					IASTExpression.Kind kind = getExpressionKind();
+					IASTExpression.Kind k = getExpressionKind();
 					StringBuffer buffer = new StringBuffer();
-					if( kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID )
+					if( k == IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID )
 						buffer.append( GCCKeywords.__ALIGNOF__ );
 					else
 						buffer.append( GCCKeywords.TYPEOF );

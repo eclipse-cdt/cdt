@@ -330,8 +330,7 @@ public class ASTFunction extends ASTScope implements IASTFunction
     {
     	if(declarations != null)
     		return declarations.iterator();
-    	else
-    		return super.getDeclarations();
+    	return super.getDeclarations();
     }
     
     public void addDeclaration(IASTDeclaration declaration)

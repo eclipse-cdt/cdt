@@ -1636,6 +1636,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			if ((info != null))
 			{
 				info.addOperatorExpression( TypeInfo.OperatorExpression.subscript );
+				info = info.getFinalType( null );
 			}else {
 				handleProblem( scope, IProblem.SEMANTIC_MALFORMED_EXPRESSION, null );
 			}

@@ -2137,6 +2137,8 @@ public class ParserSymbolTable {
 				returnInfo.copy( topInfo );
 			} else			
 				returnInfo = new TypeInfo( topInfo );
+			returnInfo.applyOperatorExpressions( topInfo.getOperatorExpressions() );
+			returnInfo.getOperatorExpressions().clear();
 		}
 		
 		return returnInfo;	

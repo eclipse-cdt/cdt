@@ -82,8 +82,7 @@ public class ASTCodeScope extends ASTScope implements IASTCodeScope {
     {
     	if(declarations != null)
     		return declarations.iterator();
-    	else
-    		return super.getDeclarations();
+    	return super.getDeclarations();
     }
     
     public void addDeclaration(IASTDeclaration declaration)

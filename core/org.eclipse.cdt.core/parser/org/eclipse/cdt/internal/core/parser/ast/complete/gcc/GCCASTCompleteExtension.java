@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ParserMode;
-import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTScope;
@@ -29,7 +28,6 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.gcc.IASTGCCExpression;
 import org.eclipse.cdt.internal.core.parser.ast.GCCASTExtension;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTBinaryExpression;
-import org.eclipse.cdt.internal.core.parser.ast.complete.ASTIdExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTTypeIdExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ASTUnaryExpression;
 import org.eclipse.cdt.internal.core.parser.ast.complete.ExpressionFactory;
@@ -59,10 +57,10 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
 		{
 			return new ASTBinaryExpression( kind, references, lhs, rhs ){
 				public String toString(){
-					IASTExpression.Kind kind = getExpressionKind();
+					IASTExpression.Kind k = getExpressionKind();
 					StringBuffer buffer = new StringBuffer();
 					buffer.append( ASTUtil.getExpressionString( getLHSExpression() ) );
-					if( kind == IASTGCCExpression.Kind.RELATIONAL_MAX )
+					if( k == IASTGCCExpression.Kind.RELATIONAL_MAX )
 						buffer.append( " >? " ); //$NON-NLS-1$
 					else 
 						buffer.append( " <? " ); //$NON-NLS-1$
@@ -77,9 +75,9 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
 		{
 			return new ASTUnaryExpression( kind, references, lhs ){
 				public String toString(){
-					IASTExpression.Kind kind = getExpressionKind();
+					IASTExpression.Kind k = getExpressionKind();
 					StringBuffer buffer = new StringBuffer();
-					if( kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION )
+					if( k == IASTGCCExpression.Kind.UNARY_ALIGNOF_UNARYEXPRESSION )
 						buffer.append( GCCKeywords.__ALIGNOF__ );
 					else
 						buffer.append( GCCKeywords.TYPEOF );
@@ -95,9 +93,9 @@ public class GCCASTCompleteExtension extends GCCASTExtension {
 		{
 			return new ASTTypeIdExpression( kind, references, typeId ){
 				public String toString(){
-					IASTExpression.Kind kind = getExpressionKind();
+					IASTExpression.Kind k = getExpressionKind();
 					StringBuffer buffer = new StringBuffer();
-					if( kind == IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID )
+					if( k == IASTGCCExpression.Kind.UNARY_ALIGNOF_TYPEID )
 						buffer.append( GCCKeywords.__ALIGNOF__ );
 					else
 						buffer.append( GCCKeywords.TYPEOF );

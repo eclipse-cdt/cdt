@@ -887,7 +887,7 @@ public class AST2Tests extends AST2BaseTest {
         buffer.append( "const int c; \n" ); //$NON-NLS-1$
         buffer.append( "const char * const d; \n" ); //$NON-NLS-1$
         buffer.append( "const char ** e; \n" ); //$NON-NLS-1$
-        buffer.append( "const char ***** f; \n" ); //$NON-NLS-1$
+        buffer.append( "const char * const * const volatile ** const * f; \n" ); //$NON-NLS-1$
         
         IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
         
@@ -937,8 +937,10 @@ public class AST2Tests extends AST2BaseTest {
         
         IType t_e_1 = e.getType();
         assertTrue( t_e_1 instanceof IPointerType );
+        assertFalse( ((IPointerType)t_e_1).isConst() );
         IType t_e_2 = ((IPointerType)t_e_1).getType();
         assertTrue( t_e_2 instanceof IPointerType );
+        assertFalse( ((IPointerType)t_e_2).isConst() );
         IType t_e_3 = ((IPointerType)t_e_2).getType();
         assertTrue( t_e_3 instanceof IQualifierType );
         assertTrue( ((IQualifierType)t_e_3).isConst() );
@@ -948,14 +950,24 @@ public class AST2Tests extends AST2BaseTest {
         
         IType t_f_1 = f.getType();
         assertTrue( t_f_1 instanceof IPointerType );
+        assertFalse( ((IPointerType)t_f_1).isConst() );
+        assertFalse( ((IPointerType)t_f_1).isVolatile() );
         IType t_f_2 = ((IPointerType)t_f_1).getType();
         assertTrue( t_f_2 instanceof IPointerType );
+        assertTrue( ((IPointerType)t_f_2).isConst() );
+        assertFalse( ((IPointerType)t_f_2).isVolatile() );
         IType t_f_3 = ((IPointerType)t_f_2).getType();
-        assertTrue( t_f_2 instanceof IPointerType );
+        assertTrue( t_f_3 instanceof IPointerType );
+        assertFalse( ((IPointerType)t_f_3).isConst() );
+        assertFalse( ((IPointerType)t_f_3).isVolatile() );
         IType t_f_4 = ((IPointerType)t_f_3).getType();
-        assertTrue( t_f_2 instanceof IPointerType );
+        assertTrue( t_f_4 instanceof IPointerType );
+        assertTrue( ((IPointerType)t_f_4).isConst() );
+        assertTrue( ((IPointerType)t_f_4).isVolatile() );
         IType t_f_5 = ((IPointerType)t_f_4).getType();
-        assertTrue( t_f_2 instanceof IPointerType );
+        assertTrue( t_f_5 instanceof IPointerType );
+        assertTrue( ((IPointerType)t_f_5).isConst() );
+        assertFalse( ((IPointerType)t_f_5).isVolatile() );
         IType t_f_6 = ((IPointerType)t_f_5).getType();
         assertTrue( t_f_6 instanceof IQualifierType );
         assertTrue( ((IQualifierType)t_f_6).isConst() );

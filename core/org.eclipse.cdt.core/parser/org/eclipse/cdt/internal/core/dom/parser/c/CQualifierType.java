@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
@@ -23,14 +24,15 @@ import org.eclipse.cdt.core.dom.ast.c.ICQualifierType;
  */
 public class CQualifierType implements ICQualifierType {
 
-	ICASTDeclSpecifier declSpec = null;
+	IASTDeclSpecifier declSpec = null;
+	IType type = null;
 
 	/**
 	 * CQualifierType has an IBasicType to keep track of the basic type information.
 	 * 
 	 * @param type the CQualifierType's IBasicType
 	 */
-	public CQualifierType(ICASTDeclSpecifier declSpec) {
+	public CQualifierType(IASTDeclSpecifier declSpec) {
 		this.declSpec = declSpec;
 	}
 	
@@ -55,25 +57,28 @@ public class CQualifierType implements ICQualifierType {
 	 */
 	public boolean isRestrict() {
 		if (declSpec == null) return false;
-
-		return declSpec.isRestrict(); 
+		return (declSpec instanceof ICASTDeclSpecifier && ((ICASTDeclSpecifier)declSpec).isRestrict()); 
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IQualifierType#getType()
 	 */
 	public IType getType() {
-		if( declSpec instanceof ICASTTypedefNameSpecifier ){
-			ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
-			return (IType) nameSpec.getName().resolveBinding();			
-		} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
-			IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
-			return (IType) elabTypeSpec.getName().resolveBinding();
-		} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
-			IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
-			return (IType) compTypeSpec.getName().resolveBinding();
-		} 
+		if (type == null) {
+			if( declSpec instanceof ICASTTypedefNameSpecifier ){
+				ICASTTypedefNameSpecifier nameSpec = (ICASTTypedefNameSpecifier) declSpec;
+				type = (IType) nameSpec.getName().resolveBinding();			
+			} else if( declSpec instanceof IASTElaboratedTypeSpecifier ){
+				IASTElaboratedTypeSpecifier elabTypeSpec = (IASTElaboratedTypeSpecifier) declSpec;
+				type = (IType) elabTypeSpec.getName().resolveBinding();
+			} else if( declSpec instanceof IASTCompositeTypeSpecifier ){
+				IASTCompositeTypeSpecifier compTypeSpec = (IASTCompositeTypeSpecifier) declSpec;
+				type = (IType) compTypeSpec.getName().resolveBinding();
+			} 
+			
+			type = new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
+		}
 		
-		return new CBasicType((ICASTSimpleDeclSpecifier)declSpec);
+		return type;
 	}
 }

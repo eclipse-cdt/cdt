@@ -1,3 +1,7 @@
+2003-09-30 John Camelon
+	Fixed Bug 43503 : Search:f_SD_01 cannot be found in ManyClasses20 Project 
+	Fixed Bug 43680 : Fix Parser Error Handling 
+
 2003-09-30 Hoda Amer
 	-Solution to [Bug 43053] require reference cleanup for expressions
 	Added purgeReferences() at the end of ASTExpression::acceptElement()

@@ -24,32 +24,32 @@ public interface IASTFactory
         String name,
         int startingOffset,
         int nameOffset,
-        int nameEndOffset, int endingOffset);
+        int nameEndOffset, int endingOffset) throws Exception;
     public IASTInclusion createInclusion(
         String name,
         String fileName,
         boolean local,
         int startingOffset,
         int nameOffset,
-        int nameEndOffset, int endingOffset);
+        int nameEndOffset, int endingOffset) throws Exception;
     public IASTUsingDirective createUsingDirective(
         IASTScope scope,
         ITokenDuple duple, int startingOffset, int endingOffset)
-        throws ASTSemanticException;
+        throws ASTSemanticException, Exception;
     public IASTUsingDeclaration createUsingDeclaration(
         IASTScope scope,
         boolean isTypeName,
-        ITokenDuple name, int startingOffset, int endingOffset) throws ASTSemanticException;
+        ITokenDuple name, int startingOffset, int endingOffset) throws ASTSemanticException, Exception;
     public IASTASMDefinition createASMDefinition(
         IASTScope scope,
         String assembly,
         int first,
-        int last);
+        int last)throws Exception;
     public IASTNamespaceDefinition createNamespaceDefinition(
         IASTScope scope,
         String identifier,
         int startingOffset,
-        int nameOffset, int nameEndOffset) throws ASTSemanticException;
+        int nameOffset, int nameEndOffset) throws ASTSemanticException, Exception;
         
     public IASTNamespaceAlias    createNamespaceAlias( 
     	IASTScope scope, 
@@ -57,12 +57,12 @@ public interface IASTFactory
     	ITokenDuple alias, 
     	int startingOffset, 
     	int nameOffset, 
-    	int nameEndOffset, int endOffset ) throws ASTSemanticException;
+    	int nameEndOffset, int endOffset ) throws ASTSemanticException, Exception;
         
-    public IASTCompilationUnit createCompilationUnit();
+    public IASTCompilationUnit createCompilationUnit() throws Exception;
     public IASTLinkageSpecification createLinkageSpecification(
         IASTScope scope,
-        String spec, int startingOffset);
+        String spec, int startingOffset) throws Exception;
     public IASTClassSpecifier createClassSpecifier(
         IASTScope scope,
         ITokenDuple name,
@@ -70,7 +70,7 @@ public interface IASTFactory
         ClassNameType type,
         ASTAccessVisibility access,
         int startingOffset,
-        int nameOffset, int nameEndOffset) throws ASTSemanticException;
+        int nameOffset, int nameEndOffset) throws ASTSemanticException, Exception;
     /**
      * @param astClassSpec
      * @param isVirtual
@@ -81,21 +81,21 @@ public interface IASTFactory
         IASTClassSpecifier astClassSpec,
         boolean isVirtual,
         ASTAccessVisibility visibility,
-        ITokenDuple parentClassName) throws ASTSemanticException;
+        ITokenDuple parentClassName) throws ASTSemanticException, Exception;
     public IASTElaboratedTypeSpecifier createElaboratedTypeSpecifier(
         IASTScope scope,
         ASTClassKind elaboratedClassKind,
         ITokenDuple typeName,
-        int startingOffset, int endOffset, boolean isForewardDecl) throws ASTSemanticException;
+        int startingOffset, int endOffset, boolean isForewardDecl) throws ASTSemanticException, Exception;
     public IASTEnumerationSpecifier createEnumerationSpecifier(
         IASTScope scope,
         String name,
-        int startingOffset, int nameOffset, int nameEndOffset) throws ASTSemanticException;
+        int startingOffset, int nameOffset, int nameEndOffset) throws ASTSemanticException, Exception;
     public void addEnumerator(
         IASTEnumerationSpecifier enumeration,
         String string,
         int startingOffset,
-        int nameOffset, int nameEndOffset, int endingOffset, IASTExpression initialValue)throws ASTSemanticException;
+        int nameOffset, int nameEndOffset, int endingOffset, IASTExpression initialValue)throws ASTSemanticException, Exception;
     public IASTExpression createExpression(
         IASTScope scope,
         IASTExpression.Kind kind,
@@ -103,17 +103,17 @@ public interface IASTFactory
         IASTExpression rhs,
         IASTExpression thirdExpression,
         IASTTypeId typeId,
-        ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException;
-    public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor(List newPlacementExpressions,List newTypeIdExpressions,List newInitializerExpressions);
+        ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) throws ASTSemanticException, Exception;
+    public IASTExpression.IASTNewExpressionDescriptor createNewDescriptor(List newPlacementExpressions,List newTypeIdExpressions,List newInitializerExpressions)throws Exception;
     public IASTInitializerClause createInitializerClause(
         IASTInitializerClause.Kind kind,
         IASTExpression assignmentExpression,
-        List initializerClauses);
-    public IASTExceptionSpecification createExceptionSpecification(IASTScope scope, List typeIds) throws ASTSemanticException;
+        List initializerClauses) throws Exception;
+    public IASTExceptionSpecification createExceptionSpecification(IASTScope scope, List typeIds) throws ASTSemanticException, Exception;
     /**
      * @param exp
      */
-    public IASTArrayModifier createArrayModifier(IASTExpression exp);
+    public IASTArrayModifier createArrayModifier(IASTExpression exp) throws Exception;
     /**
      * @param duple
      * @param expressionList
@@ -121,7 +121,7 @@ public interface IASTFactory
      */
     public IASTConstructorMemberInitializer createConstructorMemberInitializer(
         IASTScope scope,
-        ITokenDuple duple, IASTExpression expressionList) throws ASTSemanticException;
+        ITokenDuple duple, IASTExpression expressionList) throws ASTSemanticException, Exception;
     public IASTSimpleTypeSpecifier createSimpleTypeSpecifier(
         IASTScope scope,
         IASTSimpleTypeSpecifier.Type kind,
@@ -129,7 +129,7 @@ public interface IASTFactory
         boolean isShort,
         boolean isLong,
         boolean isSigned,
-        boolean isUnsigned, boolean isTypename) throws ASTSemanticException;
+        boolean isUnsigned, boolean isTypename) throws ASTSemanticException, Exception;
     public IASTFunction createFunction(
         IASTScope scope,
         String name,
@@ -147,12 +147,12 @@ public interface IASTFactory
 		boolean isVolatile,
 		boolean isVirtual,
 		boolean isExplicit,
-		boolean isPureVirtual, List constructorChain, boolean isDefinition ) throws ASTSemanticException;
+		boolean isPureVirtual, List constructorChain, boolean isDefinition ) throws ASTSemanticException, Exception;
     public IASTAbstractDeclaration createAbstractDeclaration(
         boolean isConst,
         boolean isVolatile,
         IASTTypeSpecifier typeSpecifier,
-        List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOperator);
+        List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOperator)throws Exception;
     public IASTMethod createMethod(
         IASTScope scope,
         String name,
@@ -170,28 +170,28 @@ public interface IASTFactory
         boolean isVolatile,
         boolean isVirtual,
         boolean isExplicit,
-        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isDefinition) throws ASTSemanticException;
+        boolean isPureVirtual, ASTAccessVisibility visibility, List constructorChain, boolean isDefinition) throws ASTSemanticException, Exception;
         
 	public IASTVariable createVariable(IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, 
-		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, int nameEndOffset, IASTExpression constructorExpression ) throws ASTSemanticException;
+		   IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, int nameEndOffset, IASTExpression constructorExpression ) throws ASTSemanticException, Exception;
 		   
-	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, int nameEndOffset, IASTExpression constructorExpression, ASTAccessVisibility visibility) throws ASTSemanticException;
+	public IASTField createField( IASTScope scope, String name, boolean isAuto, IASTInitializerClause initializerClause, IASTExpression bitfieldExpression, IASTAbstractDeclaration abstractDeclaration, boolean isMutable, boolean isExtern, boolean isRegister, boolean isStatic, int startingOffset, int nameOffset, int nameEndOffset, IASTExpression constructorExpression, ASTAccessVisibility visibility) throws ASTSemanticException, Exception;
 	
-	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, boolean isVolatile, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset );
+	public IASTParameterDeclaration createParameterDeclaration( boolean isConst, boolean isVolatile, IASTTypeSpecifier getTypeSpecifier, List pointerOperators, List arrayModifiers, List parameters, ASTPointerOperator pointerOp, String parameterName, IASTInitializerClause initializerClause, int startingOffset, int nameOffset, int nameEndOffset, int endingOffset ) throws Exception;
 	
-	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters, boolean exported, int startingOffset ); 
+	public IASTTemplateDeclaration createTemplateDeclaration( IASTScope scope, List templateParameters, boolean exported, int startingOffset ) throws Exception; 
 
-	public IASTTemplateParameter createTemplateParameter( IASTTemplateParameter.ParamKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List parms ); 
+	public IASTTemplateParameter createTemplateParameter( IASTTemplateParameter.ParamKind kind, String identifier, String defaultValue, IASTParameterDeclaration parameter, List parms ) throws Exception; 
 
-	public IASTTemplateInstantiation createTemplateInstantiation(IASTScope scope, int startingOffset); 
+	public IASTTemplateInstantiation createTemplateInstantiation(IASTScope scope, int startingOffset)throws Exception; 
 	
-	public IASTTemplateSpecialization createTemplateSpecialization(IASTScope scope, int startingOffset); 
+	public IASTTemplateSpecialization createTemplateSpecialization(IASTScope scope, int startingOffset)throws Exception; 
 	
-	public IASTTypedefDeclaration createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset, int nameEndOffset ) throws ASTSemanticException;
+	public IASTTypedefDeclaration createTypedef( IASTScope scope, String name, IASTAbstractDeclaration mapping, int startingOffset, int nameOffset, int nameEndOffset ) throws ASTSemanticException, Exception;
 
-	public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration( IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int endingOffset);
+	public IASTAbstractTypeSpecifierDeclaration createTypeSpecDeclaration( IASTScope scope, IASTTypeSpecifier typeSpecifier, IASTTemplate template, int startingOffset, int endingOffset)throws Exception;
 	
-	public boolean queryIsTypeName( IASTScope scope, ITokenDuple nameInQuestion );
+	public boolean queryIsTypeName( IASTScope scope, ITokenDuple nameInQuestion ) throws Exception;
 
 	static final String DOUBLE_COLON = "::";
 	static final String TELTA = "~";
@@ -199,14 +199,14 @@ public interface IASTFactory
 	 * @param scope
 	 * @return
 	 */
-	public IASTCodeScope createNewCodeBlock(IASTScope scope);
+	public IASTCodeScope createNewCodeBlock(IASTScope scope)throws Exception;
 	
 	public IASTTypeId    createTypeId( IASTScope scope, IASTSimpleTypeSpecifier.Type kind, boolean isConst, boolean isVolatile, boolean isShort, 
-			boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods ) throws ASTSemanticException;
+			boolean isLong, boolean isSigned, boolean isUnsigned, boolean isTypename, ITokenDuple name, List pointerOps, List arrayMods ) throws ASTSemanticException, Exception;
     /**
      * @param astClassSpecifier
      */
-    public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier); 
+    public void signalEndOfClassSpecifier(IASTClassSpecifier astClassSpecifier) throws Exception; 
 						
 
 }

@@ -164,8 +164,15 @@ public class Parser implements IParser
      */
     protected void translationUnit()
     {
-        IASTCompilationUnit compilationUnit =
-            astFactory.createCompilationUnit();
+        IASTCompilationUnit compilationUnit;
+        try
+        {
+            compilationUnit = astFactory.createCompilationUnit();
+        }
+        catch (Exception e2)
+        {
+            return;
+        }
 
 		compilationUnit.enterScope( requestor );            
         IToken lastBacktrack = null;
@@ -281,10 +288,9 @@ public class Parser implements IParser
                 {
                     astUD = astFactory.createUsingDirective(scope, duple, firstToken.getOffset(), last.getEndOffset());
                 }
-                catch (ASTSemanticException e)
-                {                	
-                	failParse();
-                	throw backtrack;
+                catch (Exception e1)
+                {
+                    throw backtrack;
                 }
                 astUD.acceptElement(requestor);
                 return;
@@ -326,10 +332,9 @@ public class Parser implements IParser
                             firstToken.getOffset(),
                             last.getEndOffset());
                 }
-                catch (ASTSemanticException e)
+                catch (Exception e1)
                 {
-                	failParse();
-                	throw backtrack;
+                    throw backtrack;
                 }
                 declaration.acceptElement( requestor );
             }
@@ -360,8 +365,19 @@ public class Parser implements IParser
         if (LT(1) == IToken.tLBRACE)
         {
             consume(IToken.tLBRACE);
-            IASTLinkageSpecification linkage =
-                astFactory.createLinkageSpecification(scope, spec.getImage(), firstToken.getOffset());
+            IASTLinkageSpecification linkage;
+            try
+            {
+                linkage =
+                    astFactory.createLinkageSpecification(
+                        scope,
+                        spec.getImage(),
+                        firstToken.getOffset());
+            }
+            catch (Exception e)
+            {
+                throw backtrack;
+            }
             
             linkage.enterScope( requestor );    
             linkageDeclarationLoop : while (LT(1) != IToken.tRBRACE)
@@ -394,8 +410,19 @@ public class Parser implements IParser
         }
         else // single declaration
             {
-            IASTLinkageSpecification linkage =
-                astFactory.createLinkageSpecification(scope, spec.getImage(), firstToken.getOffset());
+            IASTLinkageSpecification linkage;
+            try
+            {
+                linkage =
+                    astFactory.createLinkageSpecification(
+                        scope,
+                        spec.getImage(),
+                        firstToken.getOffset());
+            }
+            catch (Exception e)
+            {
+                throw backtrack;
+            }
 			linkage.enterScope( requestor );
             declaration(linkage, null);
 			linkage.exitScope( requestor );
@@ -429,10 +456,18 @@ public class Parser implements IParser
         if (LT(1) != IToken.tLT)
         {
             // explicit-instantiation
-            IASTTemplateInstantiation templateInstantiation =
-                astFactory.createTemplateInstantiation(
-                    scope,
-                    firstToken.getOffset());
+            IASTTemplateInstantiation templateInstantiation;
+            try
+            {
+                templateInstantiation =
+                    astFactory.createTemplateInstantiation(
+                        scope,
+                        firstToken.getOffset());
+            }
+            catch (Exception e)
+            {
+                throw backtrack;
+            }
             templateInstantiation.enterScope( requestor );
             declaration(scope, templateInstantiation);
             templateInstantiation.setEndingOffset(lastToken.getEndOffset());
@@ -448,10 +483,18 @@ public class Parser implements IParser
                 consume(IToken.tGT);
                 // explicit-specialization
                 
-                IASTTemplateSpecialization templateSpecialization =
-                    astFactory.createTemplateSpecialization(
-                        scope,
-                        firstToken.getOffset());
+                IASTTemplateSpecialization templateSpecialization;
+                try
+                {
+                    templateSpecialization =
+                        astFactory.createTemplateSpecialization(
+                            scope,
+                            firstToken.getOffset());
+                }
+                catch (Exception e)
+                {
+                    throw backtrack;
+                }
 				templateSpecialization.enterScope(requestor);
                 declaration(scope, templateSpecialization);
                 templateSpecialization.setEndingOffset(
@@ -465,7 +508,20 @@ public class Parser implements IParser
         {
             List parms = templateParameterList(scope);
             consume(IToken.tGT);
-            IASTTemplateDeclaration templateDecl = astFactory.createTemplateDeclaration( scope, parms, exported, firstToken.getOffset() );
+            IASTTemplateDeclaration templateDecl;
+            try
+            {
+                templateDecl =
+                    astFactory.createTemplateDeclaration(
+                        scope,
+                        parms,
+                        exported,
+                        firstToken.getOffset());
+            }
+            catch (Exception e)
+            {
+                throw backtrack;
+            }
             templateDecl.enterScope( requestor );
             declaration(scope, templateDecl );
 			templateDecl.setEndingOffset(
@@ -541,13 +597,20 @@ public class Parser implements IParser
                 {
                     throw bt;
                 }
-				returnValue.add(
-					astFactory.createTemplateParameter(
-						kind,
-						( id == null )? "" : id.getImage(),
-						(typeId == null) ? null : typeId.getTypeOrClassName(),
-						null,
-						null));
+				try
+                {
+                    returnValue.add(
+                    	astFactory.createTemplateParameter(
+                    		kind,
+                    		( id == null )? "" : id.getImage(),
+                    		(typeId == null) ? null : typeId.getTypeOrClassName(),
+                    		null,
+                    		null));
+                }
+                catch (Exception e)
+                {
+                    throw backtrack;
+                }
 
             }
             else if (LT(1) == IToken.t_template)
@@ -572,13 +635,20 @@ public class Parser implements IParser
                     }
                 }
  
-                returnValue.add(
-                    astFactory.createTemplateParameter(
-                        IASTTemplateParameter.ParamKind.TEMPLATE_LIST,
-                        ( optionalId == null )? "" : optionalId.getImage(),
-                        ( optionalTypeId == null )  ? "" : optionalTypeId.toString(),
-                        null,
-                        subResult));
+                try
+                {
+                    returnValue.add(
+                        astFactory.createTemplateParameter(
+                            IASTTemplateParameter.ParamKind.TEMPLATE_LIST,
+                            ( optionalId == null )? "" : optionalId.getImage(),
+                            ( optionalTypeId == null )  ? "" : optionalTypeId.toString(),
+                            null,
+                            subResult));
+                }
+                catch (Exception e)
+                {
+                    throw backtrack;
+                }
             }
             else if (LT(1) == IToken.tCOMMA)
             {
@@ -593,21 +663,28 @@ public class Parser implements IParser
                     (DeclarationWrapper)c.getParameters().get(0);
                 Declarator declarator =
                     (Declarator)wrapper.getDeclarators().next();
-                returnValue.add(
-                    astFactory.createTemplateParameter(
-                        IASTTemplateParameter.ParamKind.PARAMETER,
-                        null,
-                        null,
-                        astFactory.createParameterDeclaration(
-                            wrapper.isConst(),
-                            wrapper.isVolatile(),
-                            wrapper.getTypeSpecifier(),
-                            declarator.getPointerOperators(),
-                            declarator.getArrayModifiers(),
-                            null, null, declarator.getName() == null
-                                            ? ""
-                                            : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), wrapper.getEndOffset()),
-                        null));
+                try
+                {
+                    returnValue.add(
+                        astFactory.createTemplateParameter(
+                            IASTTemplateParameter.ParamKind.PARAMETER,
+                            null,
+                            null,
+                            astFactory.createParameterDeclaration(
+                                wrapper.isConst(),
+                                wrapper.isVolatile(),
+                                wrapper.getTypeSpecifier(),
+                                declarator.getPointerOperators(),
+                                declarator.getArrayModifiers(),
+                                null, null, declarator.getName() == null
+                                                ? ""
+                                                : declarator.getName(), declarator.getInitializerClause(), wrapper.getStartingOffset(), declarator.getNameStartOffset(), declarator.getNameEndOffset(), wrapper.getEndOffset()),
+                            null));
+                }
+                catch (Exception e)
+                {
+                    throw backtrack;
+                }
             }
         }
     }
@@ -647,12 +724,20 @@ public class Parser implements IParser
                 String assembly = consume(IToken.tSTRING).getImage();
                 consume(IToken.tRPAREN);
                 IToken last = consume(IToken.tSEMI);
-                IASTASMDefinition asmDefinition =
-                    astFactory.createASMDefinition(
-                        scope,
-                        assembly,
-                        first.getOffset(),
-                        last.getEndOffset());
+                IASTASMDefinition asmDefinition;
+                try
+                {
+                    asmDefinition =
+                        astFactory.createASMDefinition(
+                            scope,
+                            assembly,
+                            first.getOffset(),
+                            last.getEndOffset());
+                }
+                catch (Exception e)
+                {
+                    throw backtrack;
+                }
                 // if we made it this far, then we have all we need 
                 // do the callback
  				asmDefinition.acceptElement(requestor);
@@ -760,10 +845,9 @@ public class Parser implements IParser
                         (identifier == null ? first.getOffset() : identifier.getOffset()), 
                         (identifier == null ? first.getEndOffset() : identifier.getEndOffset() ));
             }
-            catch (ASTSemanticException e)
+            catch (Exception e1)
             {
-				failParse();
-				throw backtrack;
+                throw backtrack;
             }
             namespaceDefinition.enterScope( requestor );
             namepsaceDeclarationLoop : while (LT(1) != IToken.tRBRACE)
@@ -811,9 +895,8 @@ public class Parser implements IParser
                 	scope, identifier.toString(), duple, first.getOffset(), 
                 	identifier.getOffset(), identifier.getEndOffset(), duple.getLastToken().getEndOffset() );
             }
-            catch (ASTSemanticException e)
+            catch (Exception e1)
             {
-                failParse();
                 throw backtrack;
             }
         }
@@ -852,22 +935,23 @@ public class Parser implements IParser
             new DeclarationWrapper(scope, firstToken.getOffset(), ownerTemplate);
 
         declSpecifierSeq(false, strategy == SimpleDeclarationStrategy.TRY_CONSTRUCTOR, sdw, forKR );
-        try
-        {       
-	        if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED )
-	            sdw.setTypeSpecifier(
-	                astFactory.createSimpleTypeSpecifier(
-	                    scope,
-	                    sdw.getSimpleType(),
-	                    sdw.getName(),
-	                    sdw.isShort(),
-	                    sdw.isLong(),
-	                    sdw.isSigned(),
-	                    sdw.isUnsigned(), sdw.isTypeNamed()));
-        } catch( ASTSemanticException se )
-        {
-			throw backtrack;
-        }
+        if (sdw.getTypeSpecifier() == null && sdw.getSimpleType() != IASTSimpleTypeSpecifier.Type.UNSPECIFIED )
+            try
+            {
+                sdw.setTypeSpecifier(
+                    astFactory.createSimpleTypeSpecifier(
+                        scope,
+                        sdw.getSimpleType(),
+                        sdw.getName(),
+                        sdw.isShort(),
+                        sdw.isLong(),
+                        sdw.isSigned(),
+                        sdw.isUnsigned(), sdw.isTypeNamed()));
+            }
+            catch (Exception e1)
+            {
+                throw backtrack;
+            }
         
         Declarator declarator = null;
         if (LT(1) != IToken.tSEMI)
@@ -950,14 +1034,21 @@ public class Parser implements IParser
         }
         else
         {
-            astFactory
-                .createTypeSpecDeclaration(
-                    sdw.getScope(),
-                    sdw.getTypeSpecifier(),
-                    ownerTemplate,
-                    sdw.getStartingOffset(),
-                    lastToken.getEndOffset())
-                .acceptElement(requestor);
+            try
+            {
+                astFactory
+                    .createTypeSpecDeclaration(
+                        sdw.getScope(),
+                        sdw.getTypeSpecifier(),
+                        ownerTemplate,
+                        sdw.getStartingOffset(),
+                        lastToken.getEndOffset())
+                    .acceptElement(requestor);
+            }
+            catch (Exception e1)
+            {
+                throw backtrack;
+            }
         }
         
     }
@@ -1027,9 +1118,8 @@ public class Parser implements IParser
                             d.getDeclarationWrapper().getScope(),
                             duple, expressionList));
                 }
-                catch (ASTSemanticException e)
+                catch (Exception e1)
                 {
-                    failParse();
                     throw backtrack;
                 }
                 if (LT(1) == IToken.tLBRACE)
@@ -1059,24 +1149,29 @@ public class Parser implements IParser
         DeclarationWrapper sdw =
             new DeclarationWrapper(scope, current.getOffset(), null);
         declSpecifierSeq(true, false, sdw, false);
-        try
-        {
-	        if (sdw.getTypeSpecifier() == null
-	            && sdw.getSimpleType()
-	                != IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
-	            sdw.setTypeSpecifier(
-	                astFactory.createSimpleTypeSpecifier(
-	                    scope,
-	                    sdw.getSimpleType(),
-	                    sdw.getName(),
-	                    sdw.isShort(),
-	                    sdw.isLong(),
-	                    sdw.isSigned(),
-	                    sdw.isUnsigned(), sdw.isTypeNamed()));
-        }
-        catch( ASTSemanticException se ) { 
-			throw backtrack;
-		}
+        if (sdw.getTypeSpecifier() == null
+            && sdw.getSimpleType()
+                != IASTSimpleTypeSpecifier.Type.UNSPECIFIED)
+            try
+            {
+                sdw.setTypeSpecifier(
+                    astFactory.createSimpleTypeSpecifier(
+                        scope,
+                        sdw.getSimpleType(),
+                        sdw.getName(),
+                        sdw.isShort(),
+                        sdw.isLong(),
+                        sdw.isSigned(),
+                        sdw.isUnsigned(), sdw.isTypeNamed()));
+            }
+            catch (ASTSemanticException e)
+            {
+                throw backtrack;
+            }
+            catch (Exception e)
+            {
+                throw backtrack;
+            }
         
         if (LT(1) != IToken.tSEMI)
            initDeclarator(sdw, false, SimpleDeclarationStrategy.TRY_FUNCTION );
@@ -1563,6 +1658,9 @@ public class Parser implements IParser
         {
 			failParse();
 			throw backtrack;
+        } catch (Exception e)
+        {
+            throw backtrack;
         }
         sdw.setTypeSpecifier(elaboratedTypeSpec);
         
@@ -1817,10 +1915,17 @@ public class Parser implements IParser
             if (LT(1) == (IToken.tRBRACE))
             {
                 consume(IToken.tRBRACE);
-                return astFactory.createInitializerClause(
-                    IASTInitializerClause.Kind.EMPTY,
-                    null,
-                    null);
+                try
+                {
+                    return astFactory.createInitializerClause(
+                        IASTInitializerClause.Kind.EMPTY,
+                        null,
+                        null);
+                }
+                catch (Exception e)
+                {
+                    throw backtrack;
+                }
             }
             // otherwise it is a list of initializers
             List initializerClauses = new ArrayList();
@@ -1833,10 +1938,17 @@ public class Parser implements IParser
                 consume(IToken.tCOMMA);
             }
             consume(IToken.tRBRACE);
-            return astFactory.createInitializerClause(
-                IASTInitializerClause.Kind.INITIALIZER_LIST,
-                null,
-                initializerClauses);
+            try
+            {
+                return astFactory.createInitializerClause(
+                    IASTInitializerClause.Kind.INITIALIZER_LIST,
+                    null,
+                    initializerClauses);
+            }
+            catch (Exception e)
+            {
+                throw backtrack;
+            }
         }
         // try this now instead
         // assignmentExpression || { initializerList , } || { }
@@ -1845,10 +1957,17 @@ public class Parser implements IParser
             IASTExpression assignmentExpression =
                 assignmentExpression(scope);
    
-            return astFactory.createInitializerClause(
-                IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION,
-                assignmentExpression,
-                null);
+            try
+            {
+                return astFactory.createInitializerClause(
+                    IASTInitializerClause.Kind.ASSIGNMENT_EXPRESSION,
+                    assignmentExpression,
+                    null);
+            }
+            catch (Exception e)
+            {
+                throw backtrack;
+            }
         }
         catch (Backtrack b)
         {
@@ -1954,8 +2073,15 @@ public class Parser implements IParser
 
 	                        	try
 	                        	{
-	                        		if( ! astFactory.queryIsTypeName( scope, name() ) )
-	                        			failed = true;
+	                        		try
+                                    {
+                                        if( ! astFactory.queryIsTypeName( scope, name() ) )
+                                        	failed = true;
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        throw backtrack;
+                                    }
 	                        	} catch( Backtrack b )
 	                        	{ 
 	                        		failed = true; 
@@ -2063,6 +2189,9 @@ public class Parser implements IParser
                                     {
                                         failParse();
                                         throw backtrack;
+                                    } catch (Exception e)
+                                    {
+                                        throw backtrack;
                                     }
                             }
                             // check for optional pure virtual							
@@ -2160,8 +2289,15 @@ public class Parser implements IParser
                 exp = constantExpression(scope);
             }
             consume(IToken.tRBRACKET);
-            IASTArrayModifier arrayMod =
-                astFactory.createArrayModifier(exp);
+            IASTArrayModifier arrayMod;
+            try
+            {
+                arrayMod = astFactory.createArrayModifier(exp);
+            }
+            catch (Exception e)
+            {
+                throw backtrack;
+            }
             d.addArrayModifier(arrayMod);
         }
     }
@@ -2324,6 +2460,9 @@ public class Parser implements IParser
             {
 				failParse();
 				throw backtrack;               
+            } catch (Exception e)
+            {
+                throw backtrack;
             }
             consume(IToken.tLBRACE);
             while (LT(1) != IToken.tRBRACE)
@@ -2359,6 +2498,9 @@ public class Parser implements IParser
                     {
 						failParse();
 						throw backtrack;                   
+                    } catch (Exception e)
+                    {
+                        throw backtrack;
                     }
                     break;
                 }
@@ -2379,6 +2521,9 @@ public class Parser implements IParser
                 {
 					failParse();
 					throw backtrack; 
+                } catch (Exception e)
+                {
+                    throw backtrack;
                 }
                 consume(IToken.tCOMMA);
             }
@@ -2456,12 +2601,15 @@ public class Parser implements IParser
                         access,
                         classKey.getOffset(),
             			duple == null ?  classKey.getOffset() : duple.getFirstToken().getOffset(), 
-						duple == null ?  classKey.getEndOffset() : duple.getFirstToken().getEndOffset() );
+						duple == null ?  classKey.getEndOffset() : duple.getFirstToken().getOffset() );
         }
         catch (ASTSemanticException e)
         {
 			failParse();
 			throw backtrack;
+        } catch (Exception e)
+        {
+            throw backtrack;
         }
         sdw.setTypeSpecifier(astClassSpecifier);
         // base clause
@@ -2516,7 +2664,14 @@ public class Parser implements IParser
             IToken lt = consume(IToken.tRBRACE);
             astClassSpecifier.setEndingOffset(lt.getEndOffset());
             
-            astFactory.signalEndOfClassSpecifier( astClassSpecifier );
+            try
+            {
+                astFactory.signalEndOfClassSpecifier( astClassSpecifier );
+            }
+            catch (Exception e1)
+            {
+                throw backtrack;
+            }
             
             astClassSpecifier.exitScope( requestor );
             
@@ -2579,6 +2734,9 @@ public class Parser implements IParser
                     {
 						failParse();
 						throw backtrack;
+                    } catch (Exception e)
+                    {
+                        throw backtrack;
                     }
                     isVirtual = false;
                     visibility = ASTAccessVisibility.PUBLIC;
@@ -2602,6 +2760,9 @@ public class Parser implements IParser
         {
 			failParse();
 			throw backtrack;
+        } catch (Exception e)
+        {
+            throw backtrack;
         }
     }
     /**
@@ -2767,7 +2928,15 @@ public class Parser implements IParser
     }
     protected void singleStatementScope(IASTScope scope) throws Backtrack
     {
-        IASTCodeScope newScope = astFactory.createNewCodeBlock( scope );
+        IASTCodeScope newScope;
+        try
+        {
+            newScope = astFactory.createNewCodeBlock(scope);
+        }
+        catch (Exception e)
+        {
+            throw backtrack;
+        }
         newScope.enterScope( requestor );
         try
         {
@@ -2823,7 +2992,14 @@ public class Parser implements IParser
 		IASTCodeScope newScope = null;
         if( createNewScope )
         {
-        	newScope = astFactory.createNewCodeBlock(scope);        
+        	try
+            {
+                newScope = astFactory.createNewCodeBlock(scope);
+            }
+            catch (Exception e)
+            {
+                throw backtrack;
+            }        
         	newScope.enterScope( requestor );
         }
         IToken checkToken = null;
@@ -2879,7 +3055,9 @@ public class Parser implements IParser
             }
             catch (ASTSemanticException e)
             {
-                failParse();
+                throw backtrack;
+            } catch (Exception e)
+            {
                 throw backtrack;
             }
         }
@@ -2980,7 +3158,9 @@ public class Parser implements IParser
         }
         catch (ASTSemanticException e)
         {
-            failParse();
+            throw backtrack;
+        } catch (Exception e)
+        {
             throw backtrack;
         }
     }
@@ -3013,7 +3193,9 @@ public class Parser implements IParser
         }
         catch (ASTSemanticException e)
         {
-            failParse();
+            throw backtrack;
+        } catch (Exception e)
+        {
             throw backtrack;
         }
     }
@@ -3045,7 +3227,9 @@ public class Parser implements IParser
             }
             catch (ASTSemanticException e)
             {
-                failParse();
+                throw backtrack;
+            } catch (Exception e)
+            {
                 throw backtrack;
             }
         }
@@ -3079,7 +3263,9 @@ public class Parser implements IParser
             }
             catch (ASTSemanticException e)
             {
-                failParse();
+                throw backtrack;
+            } catch (Exception e)
+            {
                 throw backtrack;
             }
         }
@@ -3111,7 +3297,9 @@ public class Parser implements IParser
             }
             catch (ASTSemanticException e)
             {
-                failParse();
+                throw backtrack;
+            } catch (Exception e)
+            {
                 throw backtrack;
             }
         }
@@ -3144,7 +3332,9 @@ public class Parser implements IParser
             }
             catch (ASTSemanticException e)
             {
-                failParse();
+                throw backtrack;
+            } catch (Exception e)
+            {
                 throw backtrack;
             }
         }
@@ -3177,7 +3367,9 @@ public class Parser implements IParser
             }
             catch (ASTSemanticException e)
             {
-                failParse();
+                throw backtrack;
+            } catch (Exception e)
+            {
                 throw backtrack;
             }
         }
@@ -3209,7 +3401,9 @@ public class Parser implements IParser
             }
             catch (ASTSemanticException e)
             {
-                failParse();
+                throw backtrack;
+            } catch (Exception e)
+            {
                 throw backtrack;
             }
         }
@@ -3249,7 +3443,9 @@ public class Parser implements IParser
                     }
                     catch (ASTSemanticException e)
                     {
-                        failParse();
+                        throw backtrack;
+                    } catch (Exception e)
+                    {
                         throw backtrack;
                     }
                     break;
@@ -3325,7 +3521,9 @@ public class Parser implements IParser
                         }
                         catch (ASTSemanticException e)
                         {
-                            failParse();
+                            throw backtrack;
+                        } catch (Exception e)
+                        {
                             throw backtrack;
                         }
                     }
@@ -3368,7 +3566,9 @@ public class Parser implements IParser
                     }
                     catch (ASTSemanticException e)
                     {
-                        failParse();
+                        throw backtrack;
+                    } catch (Exception e)
+                    {
                         throw backtrack;
                     }
                     break;
@@ -3410,7 +3610,9 @@ public class Parser implements IParser
                     }
                     catch (ASTSemanticException e)
                     {
-                        failParse();
+                        throw backtrack;
+                    } catch (Exception e)
+                    {
                         throw backtrack;
                     }
                     break;
@@ -3463,7 +3665,9 @@ public class Parser implements IParser
                     }
                     catch (ASTSemanticException e)
                     {
-                        failParse();
+                        throw backtrack;
+                    } catch (Exception e)
+                    {
                         throw backtrack;
                     }
                     break;
@@ -3504,7 +3708,9 @@ public class Parser implements IParser
                     }
                     catch (ASTSemanticException e)
                     {
-                        failParse();
+                        throw backtrack;
+                    } catch (Exception e)
+                    {
                         throw backtrack;
                     }
                     break;
@@ -3545,7 +3751,9 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e)
                 {
-                    failParse();
+                    throw backtrack;
+                } catch (Exception e)
+                {
                     throw backtrack;
                 }
             }
@@ -3733,6 +3941,9 @@ public class Parser implements IParser
         {
             backup( mark );
             throw backtrack;
+        } catch (Exception e)
+        {
+            throw backtrack;
         }
     }
     /**
@@ -3772,7 +3983,9 @@ public class Parser implements IParser
         }
         catch (ASTSemanticException e)
         {
-            failParse();
+            throw backtrack;
+        } catch (Exception e)
+        {
             throw backtrack;
         }
     }
@@ -3898,16 +4111,18 @@ public class Parser implements IParser
                             // new-expression ends here.
 							try
 							{
-							return astFactory.createExpression(
-								scope, IASTExpression.Kind.NEW_TYPEID, 
-								null, null, null, typeId, null, 
-								"", astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
+								return astFactory.createExpression(
+									scope, IASTExpression.Kind.NEW_TYPEID, 
+									null, null, null, typeId, null, 
+									"", astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
 							}
 							catch (ASTSemanticException e)
 							{
-								failParse();
-								return null;
-							}
+								throw backtrack;
+							} catch (Exception e)
+                            {
+                                throw backtrack;
+                            }
                         }
                     }
                     catch (Backtrack e)
@@ -3950,9 +4165,11 @@ public class Parser implements IParser
 		}
 		catch (ASTSemanticException e)
 		{
-			failParse();
 			return null;
-		}
+		} catch (Exception e)
+        {
+            throw backtrack;
+        }
     }
     protected IASTExpression unaryOperatorCastExpression( IASTScope scope,
         IASTExpression.Kind kind)
@@ -3972,7 +4189,9 @@ public class Parser implements IParser
         }
         catch (ASTSemanticException e)
         {
-            failParse();
+            throw backtrack;
+        } catch (Exception e)
+        {
             throw backtrack;
         }
     }
@@ -4054,7 +4273,9 @@ public class Parser implements IParser
                     }
                     catch (ASTSemanticException e)
                     {
-                        failParse();
+                        throw backtrack;
+                    } catch (Exception e)
+                    {
                         throw backtrack;
                     }
                 else if (unaryExpression != null && d == null)
@@ -4071,7 +4292,9 @@ public class Parser implements IParser
                     }
                     catch (ASTSemanticException e1)
                     {
-                        failParse();
+                        throw backtrack;
+                    } catch (Exception e)
+                    {
                         throw backtrack;
                     }
                 else
@@ -4141,9 +4364,11 @@ public class Parser implements IParser
 													"", 
 													null );
 				} catch (ASTSemanticException ase ) {
-					failParse();
 					throw backtrack;
-				}
+				} catch (Exception e)
+                {
+                    throw backtrack;
+                }
                 break;                
                 // simple-type-specifier ( assignment-expression , .. )
             case IToken.t_char :
@@ -4250,6 +4475,9 @@ public class Parser implements IParser
                 {
                     failParse();
                     throw backtrack;
+                } catch (Exception e)
+                {
+                    throw backtrack;
                 }
                 break;
             default :
@@ -4281,6 +4509,9 @@ public class Parser implements IParser
                     {
                         failParse();
                         throw backtrack;
+                    } catch (Exception e)
+                    {
+                        throw backtrack;
                     }
                     break;
                 case IToken.tLPAREN :
@@ -4304,6 +4535,9 @@ public class Parser implements IParser
                     {
                         failParse();
                         throw backtrack;
+                    } catch (Exception e)
+                    {
+                        throw backtrack;
                     }
                     break;
                 case IToken.tINCR :
@@ -4324,6 +4558,9 @@ public class Parser implements IParser
                     {
                         failParse();
                         throw backtrack;
+                    } catch (Exception e)
+                    {
+                        throw backtrack;
                     }
                     break;
                 case IToken.tDECR :
@@ -4343,6 +4580,9 @@ public class Parser implements IParser
                     catch (ASTSemanticException e4)
                     {
                         failParse();
+                        throw backtrack;
+                    } catch (Exception e)
+                    {
                         throw backtrack;
                     }
                     break;
@@ -4373,6 +4613,9 @@ public class Parser implements IParser
                     {
                         failParse();
                         throw backtrack;
+                    } catch (Exception e)
+                    {
+                        throw backtrack;
                     }
                     break;
                 case IToken.tARROW :
@@ -4401,6 +4644,9 @@ public class Parser implements IParser
                     catch (ASTSemanticException e)
                     {
                         failParse();
+                        throw backtrack;
+                    } catch (Exception e)
+                    {
                         throw backtrack;
                     }
                     break;
@@ -4433,7 +4679,9 @@ public class Parser implements IParser
         }
         catch (ASTSemanticException e)
         {
-            failParse();
+            throw backtrack;
+        } catch (Exception e)
+        {
             throw backtrack;
         }
     }
@@ -4459,6 +4707,9 @@ public class Parser implements IParser
         catch (ASTSemanticException e)
         {
             failParse();
+            throw backtrack;
+        } catch (Exception e)
+        {
             throw backtrack;
         }
     }
@@ -4488,7 +4739,9 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e1)
                 {
-                    failParse();
+                    throw backtrack;
+                } catch (Exception e)
+                {
                     throw backtrack;
                 }
             case IToken.tFLOATINGPT :
@@ -4506,7 +4759,9 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e2)
                 {
-                    failParse();
+                    throw backtrack;
+                } catch (Exception e)
+                {
                     throw backtrack;
                 }
             case IToken.tSTRING :
@@ -4518,7 +4773,9 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e5)
                 {
-                    failParse();
+                    throw backtrack;
+                } catch (Exception e)
+                {
                     throw backtrack;
                 }
             
@@ -4538,7 +4795,9 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e3)
                 {
-                    failParse();
+                    throw backtrack;
+                } catch (Exception e)
+                {
                     throw backtrack;
                 }
                   
@@ -4559,7 +4818,9 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e4)
                 {
-                    failParse();
+                    throw backtrack;
+                } catch (Exception e)
+                {
                     throw backtrack;
                 }
                     
@@ -4578,7 +4839,9 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e7)
                 {
-                    failParse();
+                    throw backtrack;
+                } catch (Exception e)
+                {
                     throw backtrack;
                 }
             case IToken.tLPAREN :
@@ -4598,7 +4861,9 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e6)
                 {
-                    failParse();
+                    throw backtrack;
+                } catch (Exception e)
+                {
                     throw backtrack;
                 }
             case IToken.tIDENTIFIER :
@@ -4618,7 +4883,9 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e8)
                 {
-                    failParse();
+                    throw backtrack;
+                } catch (Exception e)
+                {
                     throw backtrack;
                 }
             default :
@@ -4635,7 +4902,9 @@ public class Parser implements IParser
                 }
                 catch (ASTSemanticException e)
                 {
-                    failParse();
+                    throw backtrack;
+                } catch (Exception e)
+                {
                     throw backtrack;
                 }
         }

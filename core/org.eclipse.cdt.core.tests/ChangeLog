@@ -1,3 +1,7 @@
+2003-09-30 John Camelon
+	Updated CompleteParseASTTest::testBug42872()
+	Moved FailedCompleteParseASTTest::testBug43503() to CompleteParseASTTest::testBug43503A().  
+	
 2003-09-30 Andrew Niefer
 	added testBug43503_AmbiguousUsing() and testBug43503_UnableToResolveFunction() to
 	ParserSymbolTableTest

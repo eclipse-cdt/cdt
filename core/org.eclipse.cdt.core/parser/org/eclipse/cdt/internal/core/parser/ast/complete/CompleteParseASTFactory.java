@@ -154,7 +154,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				result = startingScope.qualifiedLookup(name, type);
 			}
 		} catch (ParserSymbolTableException e) {
-			throw e;    
+			if( e.reason != ParserSymbolTableException.r_UnableToResolveFunction )
+				throw e;
 		}
 		return result;		
 	}
@@ -215,14 +216,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						try
 		                {
 							result = lookupElement(startingScope, firstSymbol.getImage(), type, parameters);
-/*		                	if(type == TypeInfo.t_function)
-		                		if (validParameterList(parameters))	                	
-									result = startingScope.unqualifiedFunctionLookup( firstSymbol.getImage(), new LinkedList(parameters));
-								else
-									result = null;
-							else
-		                    	result = startingScope.lookup( firstSymbol.getImage());
-*/		                    if( result != null ) 
+		                    if( result != null ) 
 								addReference( references, createReference( result, firstSymbol.getImage(), firstSymbol.getOffset() ));
 							else
 								throw new ASTSemanticException();    
@@ -248,14 +242,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 							{
 								if( t == name.getLastToken() ) 
 									result = lookupElement((IContainerSymbol)result, t.getImage(), type, parameters);
-/*									if((type == TypeInfo.t_function) || (type == TypeInfo.t_constructor))
-										if (validParameterList(parameters))	                	
-											result = ((IContainerSymbol)result).qualifiedFunctionLookup( t.getImage(), new LinkedList(parameters) );
-										else
-											result = null;
-									else						
-										result = ((IContainerSymbol)result).qualifiedLookup( t.getImage() );
-*/								else
+								else
 									result = ((IContainerSymbol)result).lookupNestedNameSpecifier( t.getImage() );
 								addReference( references, createReference( result, t.getImage(), t.getOffset() ));
 							}
@@ -857,7 +844,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 	 * Apply the usual arithmetic conversions to find out the result of an expression 
 	 * that has a lhs and a rhs as indicated in the specs (section 5.Expressions, page 64)
 	 */
-	protected TypeInfo usualArithmeticConversions(TypeInfo lhs, TypeInfo rhs){
+	protected TypeInfo usualArithmeticConversions(TypeInfo lhs, TypeInfo rhs) throws ASTSemanticException{
 		
 		// if you have a variable of type basic type, then we need to go to the basic type first
 		while( (lhs.getType() == TypeInfo.t_type) && (lhs.getTypeSymbol() != null)){
@@ -865,6 +852,12 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
 		while( (rhs.getType() == TypeInfo.t_type) && (rhs.getTypeSymbol() != null)){
 			rhs = rhs.getTypeSymbol().getTypeInfo();  
+		}
+		
+		if( lhs.isType(TypeInfo.t_class, TypeInfo.t_enumeration ) || 
+			rhs.isType(TypeInfo.t_class, TypeInfo.t_enumeration ) ) 
+		{
+			throw new ASTSemanticException(); 
 		}
 
 		TypeInfo info = new TypeInfo();
@@ -929,6 +922,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}		
 	}
 	protected List getExpressionResultType(IASTExpression expression, ISymbol symbol)throws ASTSemanticException{
+		
+		
 		List result = new ArrayList();
 		TypeInfo info = new TypeInfo();
 		try {
@@ -1163,8 +1158,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 				if((left != null ) && (right != null)){
 					TypeInfo leftType =(TypeInfo)left.getResultType().iterator().next();
 					TypeInfo rightType =(TypeInfo)right.getResultType().iterator().next();
-					info = usualArithmeticConversions(leftType, rightType);   
+					info = usualArithmeticConversions(leftType, rightType);
 				}
+				else
+					throw new ASTSemanticException(); 
 				result.add(info);
 				return result;
 			}

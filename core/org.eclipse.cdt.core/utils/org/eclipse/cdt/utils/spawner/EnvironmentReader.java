@@ -35,7 +35,9 @@ public class EnvironmentReader {
 				//The buffered stream doesn't always like windows 98
 				check_ready = true;
  
-			} else if ((OS.indexOf("nt") > -1) || (OS.indexOf("windows 2000") > -1)) {
+			} else if ((OS.indexOf("nt") > -1) 
+                            || (OS.indexOf("windows 2000") > -1)
+                                || (OS.indexOf("windows xp") > -1)) {
 				command = "cmd.exe /c set";
 			}
 			p = ProcessFactory.getFactory().exec(command);

@@ -197,11 +197,17 @@ abstract public class AbstractCLaunchDelegate implements ILaunchConfigurationDel
 		if (name == null) {
 			abort("C project not specified", null, ICDTLaunchConfigurationConstants.ERR_UNSPECIFIED_PROJECT);
 		}
-		ICProject project = getCProject(config);
-		if (project == null) {
-			abort("Project does not exist or is not a C/C++ project", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+		ICProject cproject = getCProject(config);
+		if (cproject == null) {
+			IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+			if (!project.exists()) {
+				abort("Project does not exist", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+			} else if (!project.isOpen()) {
+				abort("Project is closed", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
+			}
+			abort("Project is not a C/C++ project", null, ICDTLaunchConfigurationConstants.ERR_NOT_A_C_PROJECT);
 		}
-		return project;
+		return cproject;
 	}
 
 	protected IPath verifyProgramFile(ILaunchConfiguration config) throws CoreException {

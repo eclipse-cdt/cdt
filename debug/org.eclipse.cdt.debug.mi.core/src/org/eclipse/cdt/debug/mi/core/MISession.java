@@ -356,11 +356,6 @@ public class MISession extends Observable {
 		// Destroy any MI Inferior(Process) and streams.
 		inferior.destroy();
 		
-		// Tell the observers that the session
-		// is finish, but we can not use the Event Thread.
-		// The Event Thread is being kill below.
-		notifyObservers(new MIGDBExitEvent(0));
-		
 		// {in,out}Channel is use as predicate/condition
 		// in the {RX,TX,Event}Thread to detect termination
 		// and bail out.  So they are set to null.
@@ -433,6 +428,15 @@ public class MISession extends Observable {
 		} catch (InterruptedException e) {
 		}
 
+		// Allow (10 secs) for the EventThread  to finish processing the queue.
+		Queue queue = getEventQueue();
+		for (int i = 0; !queue.isEmpty() && i < 5; i++) {
+			try {
+				java.lang.Thread.sleep(2000);
+			} catch (InterruptedException e) {
+			}
+		}
+
 		// Kill the event Thread.
 		try {
 			if (eventThread.isAlive()) {
@@ -441,6 +445,15 @@ public class MISession extends Observable {
 			}
 		} catch (InterruptedException e) {
 		}		
+
+		// Flush the queue.
+		queue.clearItems();
+
+		// Tell the observers that the session
+		// is finish, but we can not use the Event Thread.
+		// The Event Thread was  kill above.
+		notifyObservers(new MIGDBExitEvent(0));
+
 	}
 
 	/**

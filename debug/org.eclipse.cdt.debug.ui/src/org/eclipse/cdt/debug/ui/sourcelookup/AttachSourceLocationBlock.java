@@ -68,9 +68,11 @@ public class AttachSourceLocationBlock
 
 	public void setInitialAssociationPath( IPath path )
 	{
+		fAssociationText.setEnabled( ( path != null ) );
+		fAssocitedCheckButton.setEnabled( ( path != null ) );
+		fAssocitedCheckButton.setSelection( ( path != null ) );
 		if ( path != null )
 		{
-			fAssocitedCheckButton.setSelection( true );
 			fAssociationText.setText( path.toOSString() );
 		}
 	}

@@ -246,7 +246,10 @@ public class CUISourceLocator implements IAdaptable
 	{
 		AttachSourceLocationDialog dialog = new AttachSourceLocationDialog( CDebugUIPlugin.getActiveWorkbenchShell() );
 		Path path = new Path( fileName );
-		dialog.setInitialPath( path.removeLastSegments( 1 ) );
+		if ( path.isAbsolute() )
+		{
+			dialog.setInitialPath( path.removeLastSegments( 1 ) );
+		}
 		if ( dialog.open() == Dialog.OK )
 		{
 			if ( dialog.getLocation() != null )

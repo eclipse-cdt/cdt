@@ -1,4 +1,9 @@
 2002-12-17 Mikhail Khodjaiants
+	Disable the association controls in the 'Attach Source Location" dialog if path is not absolute.
+	* AttachSourceLocationBlock.java
+	* CUISourceLocator.java
+
+2002-12-17 Mikhail Khodjaiants
 	Formatting 'char' types.
 	* VariableFormatActionDelegate.java
 

@@ -85,6 +85,8 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	private static final String SI_PROVIDER_CMD_LABEL = PREFIX + ".siProvider.cmd.label"; //$NON-NLS-1$
 	private static final String SI_PROVIDER_PARSER_LABEL = PREFIX + ".siProvider.parser.label"; //$NON-NLS-1$
 	private static final String SI_PROVIDER_CMD_ERROR_MESSAGE = PREFIX + ".siProvider.cmd.error_message"; //$NON-NLS-1$
+	private static final String SI_PROBLEM_GROUP = PREFIX + ".siProblem.group.label"; //$NON-NLS-1$
+	private static final String ENABLE_SI_PROBLEM_GENERATION = PREFIX + ".siProblem.generation.enable.label"; //$NON-NLS-1$
 
 	private Button scEnabledButton;
 	private boolean needsSCNature = false;
@@ -95,6 +97,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	private Combo makeBuilderSIParserComboBox;
 	private Button enableProviderCommandButton;
 	private Combo esiProviderParserComboBox;
+	private Button enableProblemGenerationButton;
 
 	private Preferences fPrefs;
 	private IScannerConfigBuilderInfo fBuildInfo;
@@ -186,6 +189,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 						}
 						buildInfo.setESIProviderConsoleParserId((String)providerParsers.get(esiProviderParserComboBox.getText()));
 					}
+					buildInfo.setSIProblemGenerationEnabled(isProblemGenerationEnabled());
 				}
 			}
 		};
@@ -276,6 +280,7 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 		if (createScannerConfigControls(composite, tabColumns)) {
 			createBuildOutputParserControls(composite);
 			createAfterBuildCmdControls(composite);
+			createProblemGenerationControls(composite);
 			// enable controls depending on the state of auto discovery
 			enableAllControls();
 		}
@@ -454,7 +459,28 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 	}
 
 	/**
-	 *  
+	 * @param composite
+	 */
+	private void createProblemGenerationControls(Composite parent) {
+		Group problemGroup = ControlFactory.createGroup(parent, MakeUIPlugin.getResourceString(SI_PROBLEM_GROUP), 2);
+		((GridData)problemGroup.getLayoutData()).horizontalSpan = 2;
+
+		enableProblemGenerationButton = ControlFactory.createCheckBox(problemGroup,
+				MakeUIPlugin.getResourceString(ENABLE_SI_PROBLEM_GENERATION));
+		((GridData)enableProblemGenerationButton.getLayoutData()).horizontalSpan = 2;
+		((GridData)enableProblemGenerationButton.getLayoutData()).horizontalAlignment = GridData.FILL_HORIZONTAL;
+		boolean enabledProblemGeneration = fBuildInfo.isSIProblemGenerationEnabled();
+		enableProblemGenerationButton.setSelection(enabledProblemGeneration);
+		enableProblemGenerationButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				getContainer().updateContainer();
+			}
+		});
+		
+	}
+
+	/**
+	 * @param buildInfo
 	 */
 	private void setESIProviderCommandFrom(IScannerConfigBuilderInfo buildInfo) {
 		IPath sCommand = buildInfo.getESIProviderCommand();
@@ -496,6 +522,10 @@ public class DiscoveryOptionsBlock extends AbstractCOptionPage {
 
 	private boolean isProviderCommandEnabled() {
 		return enableProviderCommandButton.getSelection();
+	}
+
+	private boolean isProblemGenerationEnabled() {
+		return enableProblemGenerationButton.getSelection();
 	}
 
 	/**

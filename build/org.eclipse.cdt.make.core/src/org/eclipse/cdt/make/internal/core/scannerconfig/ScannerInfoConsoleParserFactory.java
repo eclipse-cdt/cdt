@@ -95,7 +95,9 @@ public class ScannerInfoConsoleParserFactory {
 						getScannerInfoConsoleParser(scBuildInfo.getMakeBuilderConsoleParserId());			
 					// initialize it with the utility
 					clParser.startup(currentProject, new ScannerInfoConsoleParserUtility(
-						currentProject, workingDirectory, markerGenerator), ScannerInfoCollector.getInstance());
+							currentProject, workingDirectory,
+							scBuildInfo.isSIProblemGenerationEnabled() ? markerGenerator : null),
+							ScannerInfoCollector.getInstance());
 					// create an output stream sniffer
 					return new ConsoleOutputStreamSniffer(outputStream, new 
 						IScannerInfoConsoleParser[] {clParser});

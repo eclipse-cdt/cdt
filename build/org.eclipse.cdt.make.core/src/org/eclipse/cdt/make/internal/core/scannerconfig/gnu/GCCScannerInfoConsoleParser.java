@@ -17,6 +17,7 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigUtil;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 
 import java.util.ArrayList;
@@ -149,7 +150,9 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 						possibleFileName.endsWith(".c") || 		//$NON-NLS-1$
 						possibleFileName.endsWith(".cpp") ||	//$NON-NLS-1$
 						possibleFileName.endsWith(".cc") ||		//$NON-NLS-1$
-						possibleFileName.endsWith(".cxx")) {	//$NON-NLS-1$
+						possibleFileName.endsWith(".cxx") ||	//$NON-NLS-1$
+						possibleFileName.endsWith(".C") ||		//$NON-NLS-1$
+						possibleFileName.endsWith(".CC")) {		//$NON-NLS-1$
 						
 						fileName = token;
 					}
@@ -168,9 +171,13 @@ public class GCCScannerInfoConsoleParser implements IScannerInfoConsoleParser {
 					}
 				}
 				else {
-					TraceUtil.outputError("Unable to find file name: ", line);	//$NON-NLS-1$
-					fUtil.generateMarker(fProject, -1, "Unable to find file name: " + line, //$NON-NLS-1$
-							IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
+					final String error = MakeMessages.getString("ConsoleParser.Filename_Missing_Error_Message"); //$NON-NLS-1$ 
+					TraceUtil.outputError(error, line);	
+					fUtil.generateMarker(fProject, -1, error + line, IMarkerGenerator.SEVERITY_WARNING, null);
+				}
+				if (file == null) {
+					// remove include paths since there was no chance to translate them
+					translatedIncludes.clear();
 				}
 			}
 			// Contribute discovered includes and symbols to the ScannerInfoCollector

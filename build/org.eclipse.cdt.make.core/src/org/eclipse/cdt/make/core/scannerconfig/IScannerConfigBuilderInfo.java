@@ -43,4 +43,7 @@ public interface IScannerConfigBuilderInfo {
 
 	boolean isMakeBuilderConsoleParserEnabled();
 	void setMakeBuilderConsoleParserEnabled(boolean enabled) throws CoreException;
+
+	boolean isSIProblemGenerationEnabled();
+	void setSIProblemGenerationEnabled(boolean enabled) throws CoreException;
 }

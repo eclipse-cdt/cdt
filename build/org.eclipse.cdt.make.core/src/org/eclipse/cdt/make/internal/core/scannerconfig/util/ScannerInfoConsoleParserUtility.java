@@ -22,6 +22,7 @@ import java.util.Vector;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParserUtility;
+import org.eclipse.cdt.make.internal.core.MakeMessages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -126,8 +127,11 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 	 * Called by the console line parsers to generate a problem marker.
 	 */
 	public void generateMarker(IResource file, int lineNumber, String desc, int severity, String varName) {
-		Problem problem = new Problem(file, lineNumber, desc, severity, varName);
-		fErrors.add(problem);
+		// No need to collect markers if marker generator is not present
+		if (fMarkerGenerator != null) {
+			Problem problem = new Problem(file, lineNumber, desc, severity, varName);
+			fErrors.add(problem);
+		}
 	}
 
 	/**
@@ -146,9 +150,9 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 					file = null;
 					
 					// Create a problem marker
-					TraceUtil.outputError("Ambiguous file path: ", fileName);	//$NON-NLS-1$
-					generateMarker(fProject, -1, "Ambiguous file path: "+fileName,	//$NON-NLS-1$
-							IMarkerGenerator.SEVERITY_ERROR_RESOURCE, null);
+					final String error = MakeMessages.getString("ConsoleParser.Ambiguous_Filepath_Error_Message"); //$NON-NLS-1$
+					TraceUtil.outputError(error, fileName);
+					generateMarker(fProject, -1, error+fileName, IMarkerGenerator.SEVERITY_WARNING, null);
 				}
 			}
 		}
@@ -265,6 +269,7 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 				// check if it is a cygpath
 				if (dir.toString().startsWith("/cygdrive/")) {	//$NON-NLS-1$
 					char driveLetter = dir.toString().charAt(10);
+					driveLetter = (Character.isLowerCase(driveLetter)) ? Character.toUpperCase(driveLetter) : driveLetter;
 					StringBuffer buf = new StringBuffer();
 					buf.append(driveLetter);
 					buf.append(':');
@@ -336,9 +341,9 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 					// check if file name starts with ".."
 					if (fileName.startsWith("..")) {	//$NON-NLS-1$
 						// probably multiple choices for cwd, hopeless
-						TraceUtil.outputError("Unable to determine working directory for ", fileName); //$NON-NLS-1$
-						generateMarker(file, -1, "Unable to determine working directory for",	//$NON-NLS-1$
-								IMarkerGenerator.SEVERITY_WARNING, fileName);				
+						final String error = MakeMessages.getString("ConsoleParser.Working_Directory_Error_Message"); //$NON-NLS-1$
+						TraceUtil.outputError(error, fileName); //$NON-NLS-1$
+						generateMarker(file, -1, error,	 IMarkerGenerator.SEVERITY_WARNING, fileName);				
 						break;
 					}
 					else {
@@ -360,9 +365,9 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 				File dir = candidatePath.toFile();
 				include = candidatePath.toString();
 				if (!dir.exists()) {
-					TraceUtil.outputError("Nonexistent include path:  ", include); //$NON-NLS-1$
-					generateMarker(file, -1, "Nonexistent include path: "+include, //$NON-NLS-1$
-							IMarkerGenerator.SEVERITY_WARNING, fileName);				
+					final String error = MakeMessages.getString("ConsoleParser.Nonexistent_Include_Path_Error_Message"); //$NON-NLS-1$
+					TraceUtil.outputError(error, include);
+//					generateMarker(file, -1, error+include, IMarkerGenerator.SEVERITY_WARNING, fileName);				
 				}
 			}
 			// TODO VMIR for now add unresolved paths as well
@@ -375,8 +380,21 @@ public class ScannerInfoConsoleParserUtility implements IScannerInfoConsoleParse
 	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParserUtility#normalizePath(java.lang.String)
 	 */
 	public String normalizePath(String path) {
+		int column = path.indexOf(':');
+		if (column > 0) {
+			char driveLetter = path.charAt(column - 1);
+			if (Character.isLowerCase(driveLetter)) {
+				StringBuffer sb = new StringBuffer();
+				if (column - 1 > 0) {
+					sb.append(path.substring(0, column-1));
+				}
+				sb.append(Character.toUpperCase(driveLetter));
+				sb.append(path.substring(column));
+				path = sb.toString();
+			}
+		}
 		if (path.indexOf('.') == -1 || path.equals(".")) {	//$NON-NLS-1$
-			return path;
+			return (new Path(path)).toString();	// convert separators to '/'
 		}
 		// lose "./" segments since they confuse the Path normalization
 		StringBuffer buf = new StringBuffer(path);

@@ -98,6 +98,7 @@ public class ScannerConfigOptionsDialog extends Dialog {
 		private IPath fESIProviderCommand;
 		private String fESIProviderArguments;
 		private String fESIProviderConsoleParserId;
+		private boolean fSIParserGenerationEnabled;
 
 		public LocalStore(IScannerConfigBuilderInfo info) {
 			try {
@@ -109,6 +110,7 @@ public class ScannerConfigOptionsDialog extends Dialog {
 				setESIProviderCommand(info.getESIProviderCommand());
 				setESIProviderArguments(info.getESIProviderArguments());
 				setESIProviderConsoleParserId(info.getESIProviderConsoleParserId());
+				setSIProblemGenerationEnabled(info.isSIProblemGenerationEnabled());
 			} catch (CoreException e) {
 			}
 		}
@@ -168,6 +170,13 @@ public class ScannerConfigOptionsDialog extends Dialog {
 		}
 		public void setESIProviderConsoleParserId(String parserId) throws CoreException {
 			fESIProviderConsoleParserId = new String(parserId);
+		}
+
+		public boolean isSIProblemGenerationEnabled() {
+			return fSIParserGenerationEnabled;
+		}
+		public void setSIProblemGenerationEnabled(boolean enabled) throws CoreException {
+			fSIParserGenerationEnabled = enabled;
 		}
 	}
 

@@ -46,6 +46,7 @@ public class ScannerConfigInfoFactory {
 	static final String ESI_PROVIDER_COMMAND = PREFIX + ".esiProviderCommand"; //$NON-NLS-1$
 	static final String ESI_PROVIDER_ARGUMENTS = PREFIX + ".esiProviderArguments"; //$NON-NLS-1$
 	static final String ESI_PROVIDER_PARSER_ID = PREFIX + ".esiProviderParserId"; //$NON-NLS-1$
+	static final String SI_PROBLEM_GENERATION_ENABLED = PREFIX + ".siProblemGenerationEnabled"; //$NON-NLS-1$
 	
 	/**
 	 *
@@ -203,6 +204,24 @@ public class ScannerConfigInfoFactory {
 			putString(ESI_PROVIDER_PARSER_ID, parserId);
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#isSIProblemGenerationEnabled()
+		 */
+		public boolean isSIProblemGenerationEnabled() {
+			if (getString(SI_PROBLEM_GENERATION_ENABLED) == null ||
+					getString(SI_PROBLEM_GENERATION_ENABLED).length() == 0) { // if no property then default to true
+					return true;
+			}
+			return getBoolean(SI_PROBLEM_GENERATION_ENABLED);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo#setSIProblemGenerationEnabled(boolean)
+		 */
+		public void setSIProblemGenerationEnabled(boolean enabled) throws CoreException {
+			putString(SI_PROBLEM_GENERATION_ENABLED, Boolean.toString(enabled));
+		}
+		
 		protected boolean getBoolean(String property) {
 			return Boolean.valueOf(getString(property)).booleanValue();
 		}

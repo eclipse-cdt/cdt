@@ -1366,7 +1366,10 @@ public class CEditor extends AbstractTextEditor implements ISelectionChangedList
 			 * Uninstalls this manager.
 			 */
 			private void uninstall() {
-				getTextWidget().removeVerifyKeyListener(this);
+				StyledText textWidget = getTextWidget();
+				if (textWidget != null && !textWidget.isDisposed()) {
+					textWidget.removeVerifyKeyListener(this);
+				}
 			}
 		};
 		

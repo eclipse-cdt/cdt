@@ -8,6 +8,7 @@ package org.eclipse.cdt.launch.ui;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.ui.sourcelookup.SourceLookupBlock;
+import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.sourcelookup.DefaultSourceLocator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -15,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -115,6 +117,13 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 		return "Source";
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
+	 */
+	public Image getImage() {
+		return LaunchImages.get(LaunchImages.IMG_VIEW_SOURCE_TAB);
+	}
+
 	private IProject getProject( ILaunchConfiguration configuration )
 	{
 		IProject project = null;
@@ -134,4 +143,5 @@ public class CSourceLookupTab extends CLaunchConfigurationTab
 	{
 		return string == null || string.length() == 0;
 	}
+
 }

@@ -23,6 +23,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class LaunchUIPlugin extends AbstractUIPlugin
 	implements IDebugEventSetListener {
+	public static final String PLUGIN_ID = "org.eclipse.cdt.launch";
 
 	/**
 	 * Launch UI plug-in instance
@@ -173,6 +174,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin
 	public void startup() throws CoreException {
 		super.startup();
 		DebugPlugin.getDefault().addDebugEventListener(this);
+		LaunchImages.initialize();
 	}
 	
 	/**

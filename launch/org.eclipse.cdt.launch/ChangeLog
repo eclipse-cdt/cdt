@@ -1,3 +1,7 @@
+2003-07-09 David Inglis
+	* src/org/eclipse/cdt/launch/internal/ui/LaunchImages.java
+ 	Filled out this class which previously wasn't loading images ... now it is.
+
 2003-07-03 David Inglis
 	* src/org/eclipse/cdt/launch/AbstractCLaunchDelegate.java
 	* src/org/eclipse/cdt/launch/internal/CoreFileLaunchDelegate.java

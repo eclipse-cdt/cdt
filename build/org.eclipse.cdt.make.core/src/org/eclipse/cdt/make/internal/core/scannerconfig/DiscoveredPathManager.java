@@ -59,14 +59,12 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 	public static final String SYMBOL = "symbol"; //$NON-NLS-1$
 	public static final String REMOVED = "removed"; //$NON-NLS-1$
 
-	private static final String ROOT_ELEM_NAME = "DiscoveredScannerInfo"; //$NON-NLS-1$
-
 	private Map fDiscoveredMap = new HashMap();
 	private List listeners = Collections.synchronizedList(new Vector());
 
 	private static final int INFO_CHANGED = 1;
 	private static final int INFO_REMOVED = 2;
-	
+
 	public IDiscoveredPathInfo getDiscoveredInfo(IProject project) throws CoreException {
 		DiscoveredPathInfo info = (DiscoveredPathInfo)fDiscoveredMap.get(project);
 		if (info == null) {
@@ -98,7 +96,8 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 			fireUpdate(INFO_CHANGED, info);
 			ICProject cProject = CoreModel.getDefault().create(info.getProject());
 			if (cProject != null) {
-				CoreModel.getDefault().setPathEntryContainer(new ICProject[]{cProject}, new DiscoveredPathContainer(info.getProject()), null);
+				CoreModel.getDefault().setPathEntryContainer(new ICProject[]{cProject},
+						new DiscoveredPathContainer(info.getProject()), null);
 			}
 		}
 	}
@@ -247,32 +246,31 @@ public class DiscoveredPathManager implements IDiscoveredPathManager {
 	}
 
 	private void fireUpdate(final int type, final IDiscoveredPathInfo info) {
-		synchronized (listeners) {
-			final Iterator iterator = listeners.iterator();
-			while (iterator.hasNext()) {
-				Platform.run(new ISafeRunnable() {
+		Object[] list = listeners.toArray();
+		for (int i = 0; i < list.length; i++) {
+			final IDiscoveredInfoListener listener = (IDiscoveredInfoListener)list[i];
+			Platform.run(new ISafeRunnable() {
 
-					public void handleException(Throwable exception) {
-						IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
-								CCorePlugin.getResourceString("CDescriptorManager.exception.listenerError"), exception); //$NON-NLS-1$
-						CCorePlugin.log(status);
-					}
+				public void handleException(Throwable exception) {
+					IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+							CCorePlugin.getResourceString("CDescriptorManager.exception.listenerError"), exception); //$NON-NLS-1$
+					CCorePlugin.log(status);
+				}
 
-					public void run() throws Exception {
-						switch (type) {
-							case INFO_CHANGED :
-								((IDiscoveredInfoListener)iterator.next()).infoChanged(info);
-								break;
-							case INFO_REMOVED :
-								((IDiscoveredInfoListener)iterator.next()).infoRemoved(info.getProject());
-								break;
-						}
+				public void run() throws Exception {
+					switch (type) {
+						case INFO_CHANGED :
+							listener.infoChanged(info);
+							break;
+						case INFO_REMOVED :
+							listener.infoRemoved(info.getProject());
+							break;
 					}
-				});
-			}
+				}
+			});
 		}
 	}
-	
+
 	public void addDiscoveredInfoListener(IDiscoveredInfoListener listener) {
 		listeners.add(listener);
 	}

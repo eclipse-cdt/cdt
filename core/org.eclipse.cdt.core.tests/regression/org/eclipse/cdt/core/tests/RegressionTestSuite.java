@@ -41,9 +41,8 @@ public class RegressionTestSuite extends TestSuite {
 		final RegressionTestSuite suite = new RegressionTestSuite();
 
 		suite.addTest( SearchRegressionTests.suite( false ) );
-		suite.addTest( ContentAssistRegressionTests.suite( false ) );
 		
-		suite.addTest( new ContentAssistRegressionTests("cleanupProject") ); //$NON-NLS-1$
+		suite.addTest( new SearchRegressionTests("cleanupProject") ); //$NON-NLS-1$
 		return suite;
 	}
 }

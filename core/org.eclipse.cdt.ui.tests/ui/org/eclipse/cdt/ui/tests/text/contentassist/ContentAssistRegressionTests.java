@@ -12,7 +12,7 @@
 /*
  * Created on Oct 4, 2004
  */
-package org.eclipse.cdt.core.tests;
+package org.eclipse.cdt.ui.tests.text.contentassist;
 
 import java.io.StringWriter;
 
@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.tests.BaseTestFramework;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProcessor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.Document;

@@ -1,3 +1,6 @@
+2004-07-06 Hoda Amer
+	Fix for PR 68933 : [Content Assist] removes asterisks from parameter prompt
+	
 2004-6-29 Alain Magloire
 
 	Extend on the fix by Bogdan PR 67656 and

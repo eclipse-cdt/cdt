@@ -188,6 +188,9 @@ public class ASTUtil {
 		if(po == ASTPointerOperator.VOLATILE_POINTER)
 			pointerString =("* volatile"); //$NON-NLS-1$
 			
+		if(po == ASTPointerOperator.RESTRICT_POINTER)
+			pointerString =("* restrict"); //$NON-NLS-1$
+			
 		return pointerString;						
 	}
 	

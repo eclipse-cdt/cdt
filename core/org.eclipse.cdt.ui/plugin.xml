@@ -34,9 +34,9 @@
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="Binary Parser Page"/>
 <!-- =========================================================================== -->
+<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
 <!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
-<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
 
@@ -426,7 +426,14 @@
             command="org.eclipse.cdt.ui.navigate.opentype"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
+      <command
+            category="org.eclipse.cdt.ui.category.source"
+            name="%ActionDefinition.opencview.name"
+            description="%ActionDefinition.opencview.description"
+            id="org.eclipse.cdt.ui.edit.opencview">
+      </command>
    </extension>
+
    <extension
          id="org.eclipse.cdt.ui.CSearchPage"
          name="CSearchPage"

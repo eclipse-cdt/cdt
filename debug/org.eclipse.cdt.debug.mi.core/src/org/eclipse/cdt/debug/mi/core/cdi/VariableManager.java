@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
-import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
@@ -28,18 +28,18 @@ import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class ExpressionManager
+public class VariableManager
 	extends SessionObject
-	implements ICDIExpressionManager {
+	implements ICDIVariableManager {
 
 	List expList;
-	public ExpressionManager(CSession session) {
+	public VariableManager(CSession session) {
 		super(session);
 		expList = new ArrayList();
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpression(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getExpression(String)
 	 */
 	public ICDIExpression getExpression(String expressionId)
 		throws CDIException {
@@ -53,14 +53,14 @@ public class ExpressionManager
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#getExpressions()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#getExpressions()
 	 */
 	public ICDIExpression[] getExpressions() throws CDIException {
 		return (ICDIExpression[]) expList.toArray(new ICDIExpression[0]);
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpression(ICDIExpression)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#removeExpression(ICDIExpression)
 	 */
 	public void removeExpression(ICDIExpression expression)
 		throws CDIException {
@@ -80,7 +80,7 @@ public class ExpressionManager
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#removeExpressions(ICDIExpression[])
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#removeExpressions(ICDIExpression[])
 	 */
 	public void removeExpressions(ICDIExpression[] expressions)
 		throws CDIException {
@@ -90,7 +90,7 @@ public class ExpressionManager
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createExpression(String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#createExpression(String)
 	 */
 	public ICDIExpression createExpression(String expressionId)
 		throws CDIException {
@@ -113,7 +113,7 @@ public class ExpressionManager
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createCondition(int, String)
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIVariableManager#createCondition(int, String)
 	 */
 	public ICDICondition createCondition(int ignoreCount, String expression) {
 		return new Condition(ignoreCount, expression);

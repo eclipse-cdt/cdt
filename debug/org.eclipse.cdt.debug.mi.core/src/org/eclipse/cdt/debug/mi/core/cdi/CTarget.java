@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIGlobalVariable;
@@ -393,7 +393,7 @@ public class CTarget  implements ICDITarget {
 	 */
 	public ICDIValue evaluateExpressionToValue(String expressionText)
 		throws CDIException {
-		ICDIExpressionManager mgr = session.getExpressionManager();
+		ICDIVariableManager mgr = session.getVariableManager();
 		ICDIExpression cexp = mgr.createExpression(expressionText);
 		ICDIValue value = cexp.getValue();
 		mgr.removeExpression(cexp);

@@ -59,7 +59,7 @@ public interface ICDISession
 	 * 
 	 * @return the expression manager
 	 */
-	ICDIVariableManager getExpressionManager();
+	ICDIVariableManager getVariableManager();
 
 	/**
 	 * Returns the memory manager of this debug session.

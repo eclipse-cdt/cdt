@@ -12,7 +12,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIDebugConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEventManager;
-import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
+import org.eclipse.cdt.debug.core.cdi.ICDIVariableManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIMemoryManager;
 import org.eclipse.cdt.debug.core.cdi.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -31,7 +31,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 	MISession session;
 	BreakpointManager breakpointManager;
 	EventManager eventManager;
-	ExpressionManager expressionManager;
+	VariableManager expressionManager;
 	MemoryManager memoryManager;
 	SignalManager signalManager;
 	SourceManager sourceManager;
@@ -43,7 +43,7 @@ public class CSession implements ICDISession, ICDISessionObject {
 		breakpointManager = new BreakpointManager(this);
 		eventManager = new EventManager(this);
 		s.addObserver(eventManager);
-		expressionManager = new ExpressionManager(this);
+		expressionManager = new VariableManager(this);
 		memoryManager = new MemoryManager(this);
 		signalManager = new SignalManager(this);
 		sourceManager = new SourceManager(this);
@@ -84,9 +84,9 @@ public class CSession implements ICDISession, ICDISessionObject {
 	}
 
 	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getExpressionManager()
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDISession#getVariableManager()
 	 */
-	public ICDIExpressionManager getExpressionManager() {
+	public ICDIVariableManager getVariableManager() {
 		return expressionManager;
 	}
 

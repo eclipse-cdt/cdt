@@ -12,7 +12,6 @@ package org.eclipse.cdt.internal.core.parser.ast.complete;
 
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -325,7 +324,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			case 1:
 				image = name.extractNameFromTemplateId();
 				args = ( templateArgLists != null ) ? getTemplateArgList( templateArgLists[ 0 ] ) : null;
+				try{
 				result = lookupElement(startingScope, image, type, parameters, args, lookup );
+				} catch ( ASTSemanticException e ){
+				    if( e.getProblem() == null || e.getProblem().getSourceLineNumber() == -1 ){
+				        handleProblem(e.getProblem().getID(), image, name.getStartOffset(), name.getEndOffset(), name.getLineNumber(), e.getProblem().isError() );
+				    } else {
+				        throw e;
+				    }
+				}
 				
                 if( result != null )
                 {

@@ -10,7 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
-import java.util.List;
 
 /**
  * 
@@ -33,5 +32,5 @@ public interface IScope {
 	 * @param searchString
 	 * @return List of IBinding
 	 */
-	public List find(String name) throws DOMException;
+	public IBinding[] find(String name) throws DOMException;
 }

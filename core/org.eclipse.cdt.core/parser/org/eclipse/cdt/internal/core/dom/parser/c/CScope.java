@@ -14,8 +14,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -46,7 +44,7 @@ public class CScope implements ICScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-    public List find( String name ) {
+    public IBinding[] find( String name ) {
         // TODO Auto-generated method stub
         return null;
     }

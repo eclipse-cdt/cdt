@@ -13,10 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -32,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
@@ -95,13 +92,10 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 		char [] c = binding.getNameCharArray();
 		Object o = bindings.get( c );
 		if( o != null ){
-		    if( o instanceof List ){
-		        ((List)o).add( binding );
+		    if( o instanceof IBinding[] ){
+		        bindings.put( c, ArrayUtil.append( IBinding.class, (Object[]) o, binding ) );
 		    } else {
-		        List list = new ArrayList(2);
-		        list.add( o );
-		        list.add( binding );
-		        bindings.put( c, list );
+		        bindings.put( c, new IBinding[] { (IBinding) o, binding } );
 		    }
 		} else {
 		    bindings.put( c, binding );
@@ -135,7 +129,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	        if( isConstructorReference( name ) ){
 	            if( constructors == null )
 	                return null;
-	            return CPPSemantics.resolveAmbiguities( name, Arrays.asList( constructors ) );
+	            return CPPSemantics.resolveAmbiguities( name, constructors );
 	        }
             //9.2 ... The class-name is also inserted into the scope of the class itself
             return compType.getName().resolveBinding();
@@ -143,8 +137,8 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	        
 	    Object obj = bindings.get( c );
 	    if( obj != null ){
-	        if( obj instanceof List ){
-	            obj = CPPSemantics.resolveAmbiguities( name, (List) obj );
+	        if( obj instanceof IBinding[] ){
+	            obj = CPPSemantics.resolveAmbiguities( name, (IBinding[]) obj );
 	        }
 	    }
 		return (IBinding) obj;
@@ -172,7 +166,7 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
-	public List find(String name) {
+	public IBinding[] find(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}

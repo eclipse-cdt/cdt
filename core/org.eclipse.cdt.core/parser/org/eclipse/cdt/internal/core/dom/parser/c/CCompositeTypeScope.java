@@ -14,8 +14,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
@@ -68,7 +66,7 @@ public class CCompositeTypeScope implements ICCompositeTypeScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-    public List find( String name ) {
+    public IBinding[] find( String name ) {
         // TODO Auto-generated method stub
         return null;
     }

@@ -14,8 +14,6 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 
-import java.util.ArrayList;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -129,6 +127,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
@@ -1480,7 +1479,6 @@ public class CPPVisitor {
 	    IType [] pTypes = new IType[ parameters.length ];
 	    IType pt = null;
 	    
-	    ArrayList temp = new ArrayList();
 	    for( int i = 0; i < parameters.length; i++ ){
 	        try {
                 pt = parameters[i].getType();
@@ -1488,7 +1486,8 @@ public class CPPVisitor {
                 pt = e.getProblem();
             }
 	        
-	        temp.add( pt.clone() );
+	        IType [] temp = new IType[] { (IType) pt.clone() };
+	        int lastIdx = 0;
 	        while( pt instanceof ITypeContainer){
 	            try {
                     pt = ((ITypeContainer)pt).getType();
@@ -1497,23 +1496,25 @@ public class CPPVisitor {
                 }
 	            if( pt instanceof ITypeContainer && !(pt instanceof ITypedef) ){
 		            IType t = (IType) pt.clone();
-		            ((ITypeContainer) temp.get( temp.size() - 1 )).setType( t );
-		            temp.add( t );
+		            ((ITypeContainer) temp[ lastIdx ]).setType( t );
+		            temp = (IType[]) ArrayUtil.append( IType.class, temp, t );
+		            lastIdx++;
 	            } else {
-	                temp.add( pt );
+	                temp = (IType[]) ArrayUtil.append( IType.class, temp, pt );
+	                lastIdx++;
 	                break;
 	            }
 	        }
-	        int lastIdx = temp.size() - 1;
-	        if( lastIdx > 0 && temp.get( lastIdx - 1 ) instanceof IQualifierType ){
-	            temp.remove( --lastIdx );
+
+	        if( lastIdx > 0 && temp[ lastIdx - 1 ] instanceof IQualifierType ){
+	            temp[lastIdx - 1] = temp[lastIdx--];
 	            if( lastIdx > 0 ){
-	                ITypeContainer cont = (ITypeContainer) temp.get( lastIdx - 1 );
-	                cont.setType( (IType) temp.get( lastIdx ) );
+	                ITypeContainer cont = (ITypeContainer) temp[ lastIdx - 1 ];
+	                cont.setType( temp[ lastIdx ] );
 	            }
 	        }
 	        
-	        IType lastType = (IType) temp.get( lastIdx );
+	        IType lastType = temp[ 0 ];
 	        if( lastType instanceof IArrayType ){
 	            try {
                     lastType = new CPPPointerType( ((IArrayType) lastType).getType() );
@@ -1524,8 +1525,7 @@ public class CPPVisitor {
 	            lastType = new CPPPointerType( lastType );
 	        }
 	        
-	        pTypes[i] = (IType) temp.get( 0 ); 
-	        
+	        pTypes[i] = lastType; 
 	    }
 	    
 	    return new CPPFunctionType( returnType, pTypes );

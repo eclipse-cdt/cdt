@@ -13,8 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -66,7 +64,7 @@ public class CPPFunctionScope extends CPPScope implements ICPPFunctionScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
-	public List find(String name) {
+	public IBinding[] find(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}

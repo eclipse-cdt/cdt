@@ -15,10 +15,10 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -131,7 +131,7 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
      */
-    public List find( String name ) throws DOMException {
+    public IBinding[] find( String name ) throws DOMException {
         throw new DOMException( this );
     }
 }

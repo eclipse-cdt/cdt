@@ -11,9 +11,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
@@ -23,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.c.ICScope;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
 
@@ -80,26 +78,28 @@ public class CFunctionScope implements ICFunctionScope {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.dom.ast.IScope#find(java.lang.String)
 	 */
-	public List find(String name) {
+	public IBinding[] find(String name) {
 		return null;
 	}
 
-	public List getLabels(){
+	public ILabel[] getLabels(){
 	    FindLabelsAction action = new FindLabelsAction();
         CVisitor.visitDeclaration( function, action );
 	    
-	    List list = new ArrayList();
-	    for( int i = 0; i < action.labels.size(); i++ ){
-	        IASTLabelStatement labelStatement = (IASTLabelStatement) action.labels.get(i);
-	        IBinding binding = labelStatement.getName().resolveBinding();
-	        if( binding != null )
-	            list.add( binding );
+	    ILabel [] result = null;
+	    if( action.labels != null ){
+		    for( int i = 0; i < action.labels.length && action.labels[i] != null; i++ ){
+		        IASTLabelStatement labelStatement = action.labels[i];
+		        IBinding binding = labelStatement.getName().resolveBinding();
+		        if( binding != null )
+		            result = (ILabel[]) ArrayUtil.append( ILabel.class, result, binding );
+		    }
 	    }
-	    return list;
+	    return (ILabel[]) ArrayUtil.trim( ILabel.class, result );
 	}
 	
 	static private class FindLabelsAction extends CBaseVisitorAction {
-        public List labels = new ArrayList();
+        public IASTLabelStatement [] labels = null;
         
         public FindLabelsAction(){
             processStatements = true;
@@ -107,7 +107,7 @@ public class CFunctionScope implements ICFunctionScope {
         
         public int processStatement( IASTStatement statement ) {
             if( statement instanceof IASTLabelStatement ){
-               labels.add( statement );
+               labels = (IASTLabelStatement[]) ArrayUtil.append( IASTLabelStatement.class, labels, statement );
             }
             return PROCESS_CONTINUE;
         }

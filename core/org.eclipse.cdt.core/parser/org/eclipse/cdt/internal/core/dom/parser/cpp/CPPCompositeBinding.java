@@ -13,13 +13,12 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPCompositeBinding;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author aniefer
@@ -28,9 +27,8 @@ public class CPPCompositeBinding implements ICPPCompositeBinding {
 
 	IBinding [] bindings = null;
 	
-	public CPPCompositeBinding( List bindingList ){
-		bindings = new IBinding[ bindingList.size() ];
-		bindingList.toArray( bindings );
+	public CPPCompositeBinding( IBinding[] bindingList ){
+		bindings = (IBinding[]) ArrayUtil.trim( IBinding.class, bindingList, true );
 	}
 	
 	/* (non-Javadoc)

@@ -26,6 +26,8 @@ public interface ICPPMember {
 	 */
 	public int getVisibility() throws DOMException;
 	
+	public boolean isStatic() throws DOMException;
+	
 	public static final int v_private = ICPPASTVisiblityLabel.v_private;
 	public static final int v_protected = ICPPASTVisiblityLabel.v_protected;
 	public static final int v_public = ICPPASTVisiblityLabel.v_public;

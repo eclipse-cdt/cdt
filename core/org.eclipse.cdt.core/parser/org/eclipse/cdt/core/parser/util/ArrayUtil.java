@@ -20,6 +20,10 @@ import java.lang.reflect.Array;
  * @author aniefer
  */
 public class ArrayUtil {
+    public static final class ArrayWrapper {
+        public Object [] array = null;
+    }
+    
     public static final int DEFAULT_LENGTH = 2;
     /**
      * Adds obj to array in the first null slot.  
@@ -53,6 +57,10 @@ public class ArrayUtil {
         temp[array.length] = obj;
         array = temp;
         return array;
+    }
+    
+    static public Object [] append( Object[] array, Object obj ){
+        return append( Object.class, array, obj );
     }
     
     /**
@@ -90,5 +98,40 @@ public class ArrayUtil {
      */
     public static Object[] trim( Class c, Object[] array ) {
         return trim( c, array, false );
+    }
+
+    /**
+     * @param transitives
+     * @param usings
+     */
+    public static Object[] addAll( Class c, Object[] dest, Object[] source ) {
+        if( source == null || source.length == 0 )
+            return dest;
+        
+        int numToAdd = 0;
+        while( numToAdd < source.length && source[numToAdd] != null )
+            numToAdd++;
+        
+        if( numToAdd == 0 )
+            return dest;
+        
+        if( dest == null || dest.length == 0 ){
+            dest = (Object[]) Array.newInstance( c, numToAdd );
+            System.arraycopy( source, 0, dest, 0, numToAdd );
+            return dest;
+        }
+        
+        int firstFree = 0;
+        while( firstFree < dest.length && dest[firstFree] != null )
+            firstFree++;
+        
+        if( firstFree + numToAdd <= dest.length ){
+            System.arraycopy( source, 0, dest, firstFree, numToAdd );
+            return dest;
+        }
+        Object [] temp = (Object[]) Array.newInstance( c, firstFree + numToAdd );
+        System.arraycopy( dest, 0, temp, 0, firstFree );
+        System.arraycopy( source, 0, temp, firstFree, numToAdd );
+        return temp;
     }
 }

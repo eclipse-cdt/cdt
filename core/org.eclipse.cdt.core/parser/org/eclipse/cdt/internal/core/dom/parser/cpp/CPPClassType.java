@@ -91,7 +91,7 @@ public class CPPClassType implements ICPPClassType, ICPPBinding {
 		public IScope getParent() throws DOMException {
 			throw new DOMException( this );
 		}
-		public List find(String name) throws DOMException {
+		public IBinding[] find(String name) throws DOMException {
 			throw new DOMException( this );
 		}
         public IBinding[] getFriends() throws DOMException {

@@ -13,8 +13,6 @@
  */
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -43,7 +41,7 @@ abstract public class CPPScope implements ICPPScope{
             throw new DOMException( this );
         }
 
-        public List find( String name ) throws DOMException {
+        public IBinding[] find( String name ) throws DOMException {
             throw new DOMException( this );
         }
     }

@@ -11,8 +11,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
-import java.util.List;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
@@ -550,9 +548,9 @@ public class CVisitor {
 	        IScope scope = getContainingScope( statement );
 	        if( scope != null && scope instanceof ICFunctionScope ){
 	            CFunctionScope functionScope = (CFunctionScope) scope;
-	            List labels = functionScope.getLabels();
-	            for( int i = 0; i < labels.size(); i++ ){
-	                ILabel label = (ILabel) labels.get(i);
+	            ILabel [] labels = functionScope.getLabels();
+	            for( int i = 0; i < labels.length; i++ ){
+	                ILabel label = labels[i];
 	                if( CharArrayUtils.equals( label.getNameCharArray(), gotoName) ){
 	                    return label;
 	                }

@@ -24,7 +24,7 @@
       <import plugin="org.eclipse.cdt.debug.core"/>
       <import plugin="org.eclipse.cdt.debug.ui"/>
       <import plugin="org.eclipse.core.boot"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.runtime"/>
    </requires>
 
 

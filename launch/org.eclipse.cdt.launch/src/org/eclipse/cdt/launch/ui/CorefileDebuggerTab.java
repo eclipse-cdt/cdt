@@ -113,13 +113,22 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		initializingComboBox = false;
 	}
 
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		super.activated(workingCopy);
+		try {
+			String id = workingCopy.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
+			if (getDebugConfig() == null || !getDebugConfig().getID().equals(id) || !validateDebuggerConfig(workingCopy)) {
+				loadDebuggerComboBox(workingCopy, id);
+			}
+		} catch (CoreException e) {
+		}
+	}
+	
 	public void initializeFrom(ILaunchConfiguration config) {
 		super.initializeFrom(config);
 		try {
 			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
-			if (getDebugConfig() == null || !getDebugConfig().getID().equals(id)) {
-				loadDebuggerComboBox(config, id);
-			}
+			loadDebuggerComboBox(config, id);
 		} catch (CoreException e) {
 			return;
 		}
@@ -165,7 +174,6 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 				return true;
 			}
 		}
-		setDebugConfig(null);
 		return false;
 	}
 

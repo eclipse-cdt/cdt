@@ -7,12 +7,12 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -122,7 +122,7 @@ public abstract class CLaunchConfigurationTab extends AbstractLaunchConfiguratio
 	}
 
 	protected String getPlatform(ILaunchConfiguration config) {
-		String platform = BootLoader.getOS();
+		String platform = Platform.getOS();
 		try {
 			return config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PLATFORM, platform);
 		}

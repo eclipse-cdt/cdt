@@ -160,6 +160,14 @@ public abstract class AbstractCDebuggerTab extends CLaunchConfigurationTab {
 	abstract protected ICDebugConfiguration getConfigForCurrentDebugger();
 	abstract public void createControl(Composite parent);
 
+	
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		ILaunchConfigurationTab dynamicTab = getDynamicTab();
+		if (dynamicTab != null) {
+			dynamicTab.activated(workingCopy);
+		}
+	}
+	
 	public void initializeFrom(ILaunchConfiguration config) {
 		setLaunchConfiguration(config);
 		ILaunchConfigurationTab dynamicTab = getDynamicTab();

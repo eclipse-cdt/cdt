@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
@@ -22,11 +23,7 @@ public class LaunchImages {
 	// Subdirectory (under the package containing this class) where 16 color images are
 	private static URL fgIconBaseURL;
 	static {
-		try {
-			fgIconBaseURL= new URL(LaunchUIPlugin.getDefault().getDescriptor().getInstallURL(), "icons/" ); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			//LaunchUIPlugin.getDefault().log(e);
-		}
+		fgIconBaseURL= Platform.getBundle(LaunchUIPlugin.getUniqueIdentifier()).getEntry("/icons/"); //$NON-NLS-1$
 	}	
 
 	private static final String T_TABS = "tabs/"; //$NON-NLS-1$

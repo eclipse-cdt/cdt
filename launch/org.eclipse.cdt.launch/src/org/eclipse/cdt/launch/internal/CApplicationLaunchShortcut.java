@@ -16,11 +16,11 @@ import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -113,7 +113,7 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 			ICDebugConfiguration debugConfig = null;
 			ICDebugConfiguration[] debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
 			List debugList = new ArrayList(debugConfigs.length);
-			String os = BootLoader.getOS();
+			String os = Platform.getOS();
 			for (int i = 0; i < debugConfigs.length; i++) {
 				String platform = debugConfigs[i].getPlatform();
 				if (platform == null || platform.equals(ICDebugConfiguration.PLATFORM_NATIVE) || platform.equals(os)) {

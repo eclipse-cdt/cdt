@@ -1,6 +1,5 @@
 /*
- * (c) Copyright QNX Software System Ltd. 2002.
- * All Rights Reserved.
+ * (c) Copyright QNX Software System Ltd. 2002. All Rights Reserved.
  */
 package org.eclipse.cdt.launch.ui;
 
@@ -14,8 +13,8 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugConfiguration;
 import org.eclipse.cdt.launch.internal.ui.AbstractCDebuggerTab;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
@@ -32,7 +31,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-
 public class CDebuggerTab extends AbstractCDebuggerTab {
 
 	protected Combo fDCombo;
@@ -48,12 +46,12 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		
+
 		WorkbenchHelp.setHelp(getControl(), ICDTLaunchHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_DEBBUGER_TAB);
-		
+
 		GridLayout layout = new GridLayout(2, false);
 		comp.setLayout(layout);
-		
+
 		Composite comboComp = new Composite(comp, SWT.NONE);
 		layout = new GridLayout(2, false);
 		comboComp.setLayout(layout);
@@ -61,6 +59,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		dlabel.setText(LaunchUIPlugin.getResourceString("Launch.common.DebuggerColon")); //$NON-NLS-1$
 		fDCombo = new Combo(comboComp, SWT.DROP_DOWN | SWT.READ_ONLY);
 		fDCombo.addModifyListener(new ModifyListener() {
+
 			public void modifyText(ModifyEvent e) {
 				updateComboFromSelection();
 			}
@@ -73,6 +72,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		radioComp.setLayout(radioLayout);
 		fRunButton = createRadioButton(radioComp, LaunchUIPlugin.getResourceString("CDebuggerTab.Run_program_in_debugger")); //$NON-NLS-1$
 		fRunButton.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				if (fRunButton.getSelection() == true) {
 					fStopInMain.setEnabled(true);
@@ -84,35 +84,37 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		});
 		fAttachButton = createRadioButton(radioComp, LaunchUIPlugin.getResourceString("CDebuggerTab.Attach_to_running_process")); //$NON-NLS-1$
 		fAttachButton.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
 
-		
 		Composite optionComp = new Composite(comp, SWT.NONE);
 		layout = new GridLayout(2, false);
 		optionComp.setLayout(layout);
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		optionComp.setLayoutData(gd);
-		
+
 		fStopInMain = new Button(optionComp, SWT.CHECK);
 		fStopInMain.setText(LaunchUIPlugin.getResourceString("CDebuggerTab.Stop_at_main_on_startup")); //$NON-NLS-1$
 		fStopInMain.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		fVarBookKeeping = new Button(optionComp, SWT.CHECK);
 		fVarBookKeeping.setText(LaunchUIPlugin.getResourceString("CDebuggerTab.Automatically_track_values_of_variables")); //$NON-NLS-1$
 		fVarBookKeeping.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
 			}
 		});
-		
+
 		Group debuggerGroup = new Group(comp, SWT.SHADOW_ETCHED_IN);
 		debuggerGroup.setText(LaunchUIPlugin.getResourceString("CDebuggerTab.Debugger_Options")); //$NON-NLS-1$
 		setDynamicTabHolder(debuggerGroup);
@@ -138,6 +140,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		fDCombo.removeAll();
 		debugConfigs = CDebugCorePlugin.getDefault().getDebugConfigurations();
 		Arrays.sort(debugConfigs, new Comparator() {
+
 			public int compare(Object o1, Object o2) {
 				ICDebugConfiguration ic1 = (ICDebugConfiguration) o1;
 				ICDebugConfiguration ic2 = (ICDebugConfiguration) o2;
@@ -148,17 +151,17 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		int selndx = -1;
 		for (int i = 0; i < debugConfigs.length; i++) {
 			if (debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)
-				|| debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
+					|| debugConfigs[i].supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH)) {
 				String debuggerPlatform = debugConfigs[i].getPlatform();
-				boolean isNative = configPlatform.equals(BootLoader.getOS());
+				boolean isNative = configPlatform.equals(Platform.getOS());
 				if (debuggerPlatform.equalsIgnoreCase(configPlatform)
-					|| (isNative && debuggerPlatform.equalsIgnoreCase(ICDebugConfiguration.PLATFORM_NATIVE))) {
+						|| (isNative && debuggerPlatform.equalsIgnoreCase(ICDebugConfiguration.PLATFORM_NATIVE))) {
 					if (debugConfigs[i].supportsCPU(programCPU)) {
 						fDCombo.add(debugConfigs[i].getName());
 						fDCombo.setData(Integer.toString(x), debugConfigs[i]);
 						// select first exact matching debugger for platform or requested selection
 						if ((selndx == -1 && debuggerPlatform.equalsIgnoreCase(configPlatform))
-							|| selection.equals(debugConfigs[i].getID())) {
+								|| selection.equals(debugConfigs[i].getID())) {
 							selndx = x;
 						}
 						x++;
@@ -185,9 +188,7 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 			fAttachButton.setEnabled(debugConfig.supportsMode(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH));
 			fAttachButton.setSelection(false);
 			try {
-				String mode =
-					getLaunchConfiguration().getAttribute(
-						ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+				String mode = getLaunchConfiguration().getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 						ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 				if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN) && fRunButton.isEnabled()) {
 					fRunButton.setSelection(true);
@@ -209,21 +210,27 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		super.setDefaults(config);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, DEFAULT_STOP_AT_MAIN);
 		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, false);
-		config.setAttribute(
-			ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-			ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+		config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+				ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+	}
+
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		super.activated(workingCopy);
+		try {
+			String id = workingCopy.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
+			if (getDebugConfig() == null || !getDebugConfig().getID().equals(id) || !validateDebuggerConfig(workingCopy)) {
+				loadDebuggerComboBox(workingCopy, id);
+			}
+		} catch (CoreException e) {
+		}
 	}
 
 	public void initializeFrom(ILaunchConfiguration config) {
 		super.initializeFrom(config);
 		try {
 			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, ""); //$NON-NLS-1$
-			if (getDebugConfig() == null || !getDebugConfig().getID().equals(id)) {
-				loadDebuggerComboBox(config, id);
-			}
-			String mode =
-				config.getAttribute(
-					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+			loadDebuggerComboBox(config, id);
+			String mode = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			if (mode.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN)) {
 				fRunButton.setSelection(true);
@@ -247,16 +254,15 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		if (isValid(config)) {
 			super.performApply(config);
 			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, false);
-			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING, !fVarBookKeeping.getSelection());
+			config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ENABLE_VARIABLE_BOOKKEEPING,
+					!fVarBookKeeping.getSelection());
 			if (fAttachButton.getSelection() == true) {
-				config.setAttribute(
-					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH);
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+						ICDTLaunchConfigurationConstants.DEBUGGER_MODE_ATTACH);
 			} else {
 				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_STOP_AT_MAIN, fStopInMain.getSelection());
-				config.setAttribute(
-					ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
-					ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
+				config.setAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
+						ICDTLaunchConfigurationConstants.DEBUGGER_MODE_RUN);
 			}
 		}
 	}
@@ -293,7 +299,8 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 		}
 		String debuggerPlatform = debugConfig.getPlatform();
 		boolean isNative = platform.equals(projectPlatform);
-		if (debuggerPlatform.equalsIgnoreCase(projectPlatform) || (isNative && debuggerPlatform.equalsIgnoreCase(ICDebugConfiguration.PLATFORM_NATIVE))) {
+		if (debuggerPlatform.equalsIgnoreCase(projectPlatform)
+				|| (isNative && debuggerPlatform.equalsIgnoreCase(ICDebugConfiguration.PLATFORM_NATIVE))) {
 			if (debugConfig.supportsCPU(projectCPU)) {
 				return true;
 			}
@@ -302,8 +309,8 @@ public class CDebuggerTab extends AbstractCDebuggerTab {
 	}
 
 	/**
-	 * Return the class that implements <code>ILaunchConfigurationTab</code>
-	 * that is registered against the debugger id of the currently selected debugger.
+	 * Return the class that implements <code>ILaunchConfigurationTab</code> that is registered against the debugger id of the
+	 * currently selected debugger.
 	 */
 	protected ICDebugConfiguration getConfigForCurrentDebugger() {
 		int selectedIndex = fDCombo.getSelectionIndex();

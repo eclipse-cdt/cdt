@@ -23,16 +23,17 @@ import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
@@ -315,16 +316,16 @@ public class CMainTab extends CLaunchConfigurationTab {
 		dialog.setValidator(new ISelectionStatusValidator() {
 			public IStatus validate(Object [] selection) {
 				if(selection.length == 0 || !(selection[0] instanceof IFile)) {
-					return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_file"), null); //$NON-NLS-1$
+					return new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_file"), null); //$NON-NLS-1$
 				} else {
 					try {
 						ICElement celement = cproject.findElement(((IFile)selection[0]).getProjectRelativePath());
 						if(celement == null ||
 						   (celement.getElementType() != ICElement.C_BINARY && celement.getElementType() != ICElement.C_ARCHIVE)) {
-							return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
+							return new Status(IStatus.ERROR, LaunchUIPlugin.getUniqueIdentifier(), 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
 					   }
 					
-						return new Status(IStatus.OK, LaunchUIPlugin.PLUGIN_ID, IStatus.OK, celement.getResource().getName(), null);
+						return new Status(IStatus.OK, LaunchUIPlugin.getUniqueIdentifier(), IStatus.OK, celement.getResource().getName(), null);
 					} catch(Exception ex) {
 						return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, LaunchUIPlugin.getResourceString("CMainTab.Selection_must_be_binary_file"), null); //$NON-NLS-1$
 					}
@@ -421,7 +422,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 	protected ICProject[] getCProjects() throws CModelException {
 		ICProject cproject[] = CoreModel.getDefault().getCModel().getCProjects();
 		ArrayList list = new ArrayList(cproject.length);
-		boolean isNative = filterPlatform.equals(BootLoader.getOS());
+		boolean isNative = filterPlatform.equals(Platform.getOS());
 
 		for (int i = 0; i < cproject.length; i++) {
 			ICDescriptor cdesciptor = null;

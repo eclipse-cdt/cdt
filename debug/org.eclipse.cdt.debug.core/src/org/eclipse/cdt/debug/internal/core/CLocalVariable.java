@@ -156,7 +156,7 @@ public class CLocalVariable extends CModificationVariable
 	{
 		try
 		{
-			setValue( getCurrentValue() );
+			//setValue( getCurrentValue() );
 			if ( !getValue().hasVariables() )
 			{
 				setChanged( true );

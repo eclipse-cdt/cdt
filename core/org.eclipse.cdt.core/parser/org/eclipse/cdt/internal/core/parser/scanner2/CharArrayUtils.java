@@ -16,10 +16,10 @@ public class CharArrayUtils {
 
 	public static final int hash(char[] str, int start, int length) {
 		int h = 0;
+		int end = start + length;
 		
-		int curr = start;
-		for (int i = length; i > 0; --i, curr++)
-			h += str[curr];
+		for (int curr = start; curr < end; ++curr)
+			h += (h << 3) + str[curr];
 
 		return h;
 	}

@@ -541,6 +541,11 @@ public class ExpressionEvaluator {
 						return;
 					
 					case '!':
+						if (pos + 1 < limit && buffer[pos + 1] == '=') {
+							++bufferPos[bufferStackPos];
+							tokenType = tNOTEQUAL;
+							return;
+						}
 						tokenType = tNOT;
 						return;
 					

@@ -1521,6 +1521,234 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 	}
 	
+	private void handleFunctionStyleMacro2(FunctionStyleMacro macro) {
+		char[] buffer = bufferStack[bufferStackPos];
+		int limit = bufferLimit[bufferStackPos];
+
+		skipOverWhiteSpace();
+
+		if (++buffer[bufferStackPos] >= limit
+				|| buffer[bufferPos[bufferStackPos]] != '(')
+			return;
+		
+		char[][] arglist = macro.arglist;
+		int currarg = -1;
+		CharArrayObjectMap argmap = new CharArrayObjectMap(arglist.length);
+		
+		while (bufferPos[bufferStackPos] < limit) {
+			if (++currarg >= arglist.length || arglist[currarg] == null)
+				// too many args
+				break;
+
+			skipOverWhiteSpace();
+			
+			int pos = ++bufferPos[bufferStackPos];
+			char c = buffer[pos];
+			if (c == ')') {
+				// end of macro
+				break;
+			} else if (c == ',') {
+				// empty arg
+				argmap.put(arglist[currarg], emptyCharArray);
+				continue;
+			}
+			
+			// peel off the arg
+			--bufferPos[bufferStackPos];
+			int argend = bufferPos[bufferStackPos];
+			int argstart = argend + 1;
+			
+			// Loop looking for end of argument
+			int argparens = 0;
+			while (bufferPos[bufferStackPos] < limit) {
+				skipOverMacroArg();
+				argend = bufferPos[bufferStackPos];
+				skipOverWhiteSpace();
+				
+				if (++bufferPos[bufferStackPos] >= limit)
+					break;
+				c = buffer[bufferPos[bufferStackPos]];
+				if (c == '(')
+					++argparens;
+				else if (c == ')') {
+					if (argparens == 0)
+						break;
+					--argparens;
+				} else if (c == ',')
+					break;
+			}
+			
+			char[] arg = emptyCharArray;
+			int arglen = argend - argstart + 1;
+			if (arglen > 0) {
+				arg = new char[arglen];
+				System.arraycopy(buffer, argstart, arg, 0, arglen);
+			}
+			argmap.put(arglist[currarg], arg);
+			
+			if (c == ')')
+				break;
+		}
+		
+		int size = expandFunctionStyleMacro(macro.expansion, argmap, null);
+		char[] result = new char[size];
+		expandFunctionStyleMacro(macro.expansion, argmap, result);
+		pushContext(result, macro);
+	}
+
+	private int expandFunctionStyleMacro(
+			char[] expansion,
+			CharArrayObjectMap argmap,
+			char[] result) {
+		
+		int pos = -1;
+		int lastcopy = -1;
+		int outpos = 0;
+		int limit = expansion.length;
+		int wsstart = -1;
+		
+		while (++pos < limit) {
+			boolean hex = false;
+			char c = expansion[pos];
+			
+			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_') {
+
+				int idstart = pos;
+				while (++pos < limit) {
+					c = expansion[pos];
+					if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+							|| (c >= '0' && c <= '9') || c == '_'))
+						break;
+				}
+				
+				Object repObject = argmap.get(expansion, idstart, pos - idstart + 1);
+				if (repObject != null) {
+					// copy what we haven't so far
+					if (++lastcopy < idstart) {
+						int n = idstart - lastcopy;
+						if (result != null)
+							System.arraycopy(expansion, lastcopy, result, outpos, n);
+						outpos += n;
+					}
+					
+					// copy the argument replacement value
+					char[] rep = (char[]) repObject;
+					if (result != null)
+						System.arraycopy(rep, 0, result, outpos, rep.length);
+					outpos += rep.length;
+				}
+				
+			} else if (c >= '0' && c < '9') {
+				
+				while (++pos < limit) {
+					c = expansion[pos];
+					if (!((c >= '0' && c <= '9') || c == '.' || c == '_') 
+							|| (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
+						break;
+				}
+
+			} else if (c == '"') {
+				
+				boolean escaped = false;
+				while (++pos < limit) {
+					c = expansion[pos];
+					if (c == '"') {
+						if (!escaped)
+							break;
+					} else if (c == '\\') {
+						escaped = !escaped;
+					}
+					escaped = false;
+				}
+				
+			} else if (c == '\'') {
+				
+				boolean escaped = false;
+				while (++pos < limit) {
+					c = expansion[pos];
+					if (c == '\'') {
+						if (!escaped)
+							break;
+					} else if (c == '\\') {
+						escaped = !escaped;
+					}
+					escaped = false;
+				}
+				
+			} else if (c == ' ' || c == '\t') {
+				
+				if (wsstart < 0)
+					wsstart = pos;
+				
+			} else if (c == '/' && pos + 1 < limit) {
+				
+				c = expansion[++pos];
+				if (c == '/') {
+					// copy up to here or before the last whitespace
+					++lastcopy;
+					int n = wsstart < 0
+						? pos - 1 - lastcopy
+						: wsstart - lastcopy;
+					if (result != null)
+						System.arraycopy(expansion, lastcopy, result, outpos, n);
+					outpos += n;
+
+					// skip the rest
+					lastcopy = expansion.length - 1;
+				} else if (c == '*') {
+					if (wsstart < 1)
+						wsstart = pos - 1;
+					while (++pos < limit) {
+						if (expansion[pos] == '*'
+								&& pos + 1 < limit
+								&& expansion[pos + 1] == '/') {
+							++pos;
+							break;
+						}
+					}
+				}
+				
+			} else if (c == '\\' && pos + 1 < limit
+					&& expansion[pos + 1] == 'n') {
+				// skip over this
+				++pos;
+				
+			} else if (c == '#') {
+				
+				c = expansion[++pos];
+				if (c == '#') {
+					// skip whitespace
+					if (wsstart < 0)
+						wsstart = pos - 1;
+					while (++pos < limit) {
+						switch (expansion[++pos]) {
+							case ' ':
+							case '\t':
+								continue;
+							
+							case '/':
+								if (pos + 1 < limit) {
+									c = expansion[pos + 1];
+									if (c == '/');
+								}
+						}
+						break;
+					}
+				}
+			}
+			
+		}
+
+		if (wsstart < 0 && ++lastcopy < expansion.length) {
+			int n = expansion.length - lastcopy;
+			if (result != null)
+				System.arraycopy(expansion, lastcopy, result, outpos, n);
+			outpos += n;
+		}
+		
+		return outpos;
+	}
+	
 	private void handleFunctionStyleMacro(FunctionStyleMacro macro) {
 		char[] buffer = bufferStack[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];

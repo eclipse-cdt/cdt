@@ -1,5 +1,12 @@
 2003-10-29 David Inglis
 	
+	Futher changes for 45736
+	
+	* model/org/eclipse/cdt/internal/core/model/DeltaProcessor.java
+	
+	
+2003-10-29 David Inglis
+	
 	Fix for 45734 & 45736, Though this only addresses a small part on the later.
 	
 	Prevents child element creation when releasing parent element

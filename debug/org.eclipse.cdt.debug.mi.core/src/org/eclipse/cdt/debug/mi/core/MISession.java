@@ -277,8 +277,10 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 
 		// Destroy the MI console stream.
 		try {
-			miOutPipe.close();
 			miInPipe = null;
+			if (miOutPipe != null) {
+				miOutPipe.close();
+			}
 		} catch (IOException e) {
 		}
 	}

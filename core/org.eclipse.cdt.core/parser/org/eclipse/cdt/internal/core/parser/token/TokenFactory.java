@@ -40,14 +40,14 @@ public class TokenFactory {
 	 */
 	public static IToken createUniquelyImagedToken(int type, String image, IScannerData scannerData) {
 		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
-			return new ImagedExpansionToken( type, scannerData.getContextStack(), image );
+			return new ImagedExpansionToken( type, scannerData.getContextStack(), image.toCharArray() );
 
-		return new ImagedToken(type, scannerData.getContextStack(), image );
+		return new ImagedToken(type, scannerData.getContextStack(), image.toCharArray() );
 	}
 	
 	public static IToken createStandAloneToken( int type, String image )
 	{
-		return new ImagedToken( type, image, 0);
+		return new ImagedToken( type, image.toCharArray(), 0);
 	}
 
 	public static ITokenDuple createTokenDuple( IToken first, IToken last )

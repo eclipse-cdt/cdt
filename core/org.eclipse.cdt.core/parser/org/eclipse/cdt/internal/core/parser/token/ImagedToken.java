@@ -18,20 +18,20 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
  */
 public class ImagedToken extends SimpleToken {
 
-	protected String image = null;
+	protected char [] image = null;
 	
 	/**
 	 * @param t
 	 * @param contextStack
 	 * @param i
 	 */
-	public ImagedToken(int t, ContextStack contextStack, String i) {
+	public ImagedToken(int t, ContextStack contextStack, char[] i) {
 		super(t, contextStack);
 		setImage( i );
 		setOffsetAndLength(contextStack.getCurrentContext());
 	}
 	
-	public ImagedToken( int t, String i, int endOffset) {
+	public ImagedToken( int t, char[] i, int endOffset) {
 		super( t, 0 );
 		setImage(i);
 		setOffsetAndLength( endOffset );
@@ -42,13 +42,19 @@ public class ImagedToken extends SimpleToken {
 	 * @see org.eclipse.cdt.internal.core.parser.token.AbstractToken#getImage()
 	 */
 	public final String getImage() {
-		return image;
+		if( image == null ) return null;
+		return new String( image );
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IToken#setImage(java.lang.String)
 	 */
 	public void setImage(String i) {
-		image = i;
+		image = i.toCharArray();
+	}
+	
+	public void setImage( char [] image )
+	{
+		this.image = image;
 	}
 	
 	/**

@@ -25,7 +25,7 @@ public class ImagedExpansionToken extends ImagedToken implements IToken {
 	 * @param contextStack
 	 * @param i
 	 */
-	public ImagedExpansionToken(int t, ContextStack contextStack, String i) {
+	public ImagedExpansionToken(int t, ContextStack contextStack, char[] i) {
 		super(t, contextStack, i);
 	}
 	
@@ -34,7 +34,7 @@ public class ImagedExpansionToken extends ImagedToken implements IToken {
 	 * @param contextStack
 	 * @param i
 	 */
-	public ImagedExpansionToken(int t, String i, int macroOffset, int macroLength ) {
+	public ImagedExpansionToken(int t, char[] i, int macroOffset, int macroLength ) {
 		super(t, i, macroOffset );
 		setOffsetAndLength( macroOffset, macroLength );
 	}

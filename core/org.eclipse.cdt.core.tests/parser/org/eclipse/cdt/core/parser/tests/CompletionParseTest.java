@@ -845,7 +845,7 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 	public void testBug59134() throws Exception
 	{
 		String code = "int main(){ siz }"; //$NON-NLS-1$
-		IASTCompletionNode node = parse( code, code.indexOf(" siz") ); //$NON-NLS-1$
+		IASTCompletionNode node = parse( code, code.indexOf("siz") ); //$NON-NLS-1$
 		assertNotNull( node );
 		Iterator keywords = node.getKeywords();
 		boolean passed = false;

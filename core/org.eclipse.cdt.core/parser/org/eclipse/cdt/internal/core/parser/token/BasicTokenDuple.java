@@ -494,5 +494,12 @@ public class BasicTokenDuple implements ITokenDuple {
 	public void acceptElement(ISourceElementRequestor requestor, IReferenceManager manager) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#toCharArray()
+	 */
+	public char[] toCharArray() {
+		return toString().toCharArray(); //TODO fix me!
+	}
+
 	
 }

@@ -37,6 +37,7 @@ public interface ITokenDuple {
 	
 	public abstract Iterator iterator();
 	public abstract String toString();
+	public char [] toCharArray();
 	public abstract boolean isIdentifier();
 	public abstract int length(); 
 	

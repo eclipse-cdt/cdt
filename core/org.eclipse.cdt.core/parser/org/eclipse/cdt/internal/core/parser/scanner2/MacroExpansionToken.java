@@ -131,4 +131,20 @@ public class MacroExpansionToken implements IToken {
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#getCharImage()
+	 */
+	public char[] getCharImage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#setImage(char[])
+	 */
+	public void setImage(char[] i) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

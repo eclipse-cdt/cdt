@@ -329,4 +329,25 @@ public class SimpleToken extends AbstractToken implements IToken {
 		// do nothing
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#getCharImage()
+	 */
+	public char[] getCharImage() {
+		return getImage().toCharArray(); //TODO - fix me!
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.IToken#setImage(char[])
+	 */
+	public void setImage(char[] i) {
+		// do nothing
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ITokenDuple#toCharArray()
+	 */
+	public char[] toCharArray() {
+		return getCharImage();
+	}
+
 }

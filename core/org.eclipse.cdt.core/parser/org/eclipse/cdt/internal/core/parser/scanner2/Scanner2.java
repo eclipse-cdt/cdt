@@ -326,7 +326,7 @@ public class Scanner2 implements IScanner, IScannerData {
 				int tokenType = IToken.tSTRING; 
 				if( lastToken.getType() == IToken.tLSTRING || nextToken.getType() == IToken.tLSTRING )
 					tokenType = IToken.tLSTRING;
-				lastToken = new ImagedToken(tokenType, lastToken.getImage() + nextToken.getImage(), nextToken.getEndOffset()); //TODO Fix this
+				lastToken = new ImagedToken(tokenType, (lastToken.getImage() + nextToken.getImage()).toCharArray(), nextToken.getEndOffset()); //TODO Fix this
 				if (oldToken != null)
 					oldToken.setNext(lastToken);
 				nextToken = fetchToken();
@@ -747,7 +747,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		int tokenType = keywords.get(buffer, start, len);
 		char [] result = removedEscapedNewline( CharArrayUtils.extract( buffer, start, len ) );
 		if (tokenType == keywords.undefined)
-			return new ImagedToken(IToken.tIDENTIFIER, new String( result), bufferPos[bufferStackPos]+ 1);
+			return new ImagedToken(IToken.tIDENTIFIER, result, bufferPos[bufferStackPos]+ 1);
 		return new SimpleToken(tokenType, start + len);
 	}
 	
@@ -782,7 +782,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		// We should really throw an exception if we didn't get the terminating
 		// quote before the end of buffer
 		
-		return new ImagedToken(tokenType, new String(buffer, stringStart, stringLen), stringStart + stringLen+ 1);
+		return new ImagedToken(tokenType, CharArrayUtils.extract(buffer, stringStart, stringLen), stringStart + stringLen+ 1);
 	}
 
 	private IToken scanCharLiteral(boolean b) {
@@ -799,7 +799,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 
 		if (start >= limit) {
-			return new ImagedToken(tokenType, new String(emptyCharArray), start);
+			return new ImagedToken(tokenType, emptyCharArray, start);
 		}
 
 		
@@ -822,7 +822,7 @@ public class Scanner2 implements IScanner, IScannerData {
 			? CharArrayUtils.extract(buffer, start, length)
 			: emptyCharArray;
 
-		return new ImagedToken(tokenType, new String(image), start + length+ 1 );
+		return new ImagedToken(tokenType, image, start + length+ 1 );
 	}
 	
 	private IToken scanNumber() {
@@ -999,7 +999,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		--bufferPos[bufferStackPos];
 		
 		return new ImagedToken(isFloat ? IToken.tFLOATINGPT : IToken.tINTEGER,
-				new String(buffer, start,
+				CharArrayUtils.extract(buffer, start,
 						bufferPos[bufferStackPos] - start + 1), bufferPos[bufferStackPos]+ 1);
 	}
 	

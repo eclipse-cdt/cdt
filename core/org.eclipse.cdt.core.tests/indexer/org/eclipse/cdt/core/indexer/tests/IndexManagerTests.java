@@ -46,6 +46,7 @@ public class IndexManagerTests extends TestCase {
 	IProject testProject;
 	NullProgressMonitor monitor;
     IndexManager indexManager;
+    public static final int TIMEOUT = 1500;
 	/**
 	 * Constructor for IndexManagerTest.
 	 * @param name
@@ -144,7 +145,7 @@ public class IndexManagerTests extends TestCase {
 		//By doing this, we force the Index Manager to indexAll()
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 		indexManager.setEnabled(testProject,true);
-		Thread.sleep(15000);
+		Thread.sleep(1500);
 		IIndex ind = indexManager.getIndex(testProject.getFullPath(),true,true);
 		char[] prefix = "typeDecl/".toCharArray();
 		IQueryResult[] qresults = ind.queryPrefix(prefix);
@@ -177,7 +178,7 @@ public class IndexManagerTests extends TestCase {
 		//By doing this, we force the Index Manager to indexAll()
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 		indexManager.setEnabled(testProject,true);
-		Thread.sleep(15000);
+		Thread.sleep(TIMEOUT);
 		//Make sure project got added to index
 		IPath testProjectPath = testProject.getFullPath();
 		IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -206,7 +207,7 @@ public class IndexManagerTests extends TestCase {
 	  //By doing this, we force the Index Manager to indexAll()
 	  indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	  indexManager.setEnabled(testProject,true);
-	  Thread.sleep(15000);
+	  Thread.sleep(TIMEOUT);
 	  //Make sure project got added to index
 	  IPath testProjectPath = testProject.getFullPath();
 	  IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -225,7 +226,7 @@ public class IndexManagerTests extends TestCase {
 	 //By doing this, we force the Index Manager to indexAll()
 	 indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 	 indexManager.setEnabled(testProject,true);
-	 Thread.sleep(15000);
+	 Thread.sleep(TIMEOUT);
 	 //Make sure project got added to index
 	 IPath testProjectPath = testProject.getFullPath();
 	 IIndex ind = indexManager.getIndex(testProjectPath,true,true);
@@ -269,7 +270,7 @@ public class IndexManagerTests extends TestCase {
 		//By doing this, we force the Index Manager to indexAll()
 		indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 		indexManager.setEnabled(testProject,true);
-		Thread.sleep(15000);
+		Thread.sleep(TIMEOUT);
 		//Make sure project got added to index
 		IPath testProjectPath = testProject.getFullPath();
 		IIndex ind = indexManager.getIndex(testProjectPath,true,true);

@@ -1,5 +1,13 @@
 2004-05-27 Alain Magloire
 
+	Reverse part of a patch from TF concerning
+	memory images. We need to look at this closer.
+	For now it seem to break some icons.
+
+	* src/org/eclipse/cdt/internal/ui/CPluginImages.java
+
+2004-05-27 Alain Magloire
+
 	Patch from Thomas Fletcher
 	- Restore bracket matching behaviour in the editor and use parent
 	class code for setting up the editor's OverviewRuler.

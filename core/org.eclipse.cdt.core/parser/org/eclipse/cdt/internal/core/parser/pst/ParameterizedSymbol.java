@@ -240,6 +240,13 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 		return _specializations;
 	}
 
+	public void setHasVariableArgs( boolean var ){
+		_hasVarArgs = var;
+	}
+	
+	public boolean hasVariableArgs( ){
+		return _hasVarArgs;
+	}
 
 	static private class AddParameterCommand extends Command{
 		public AddParameterCommand( IParameterizedSymbol container, ISymbol parameter ){
@@ -279,4 +286,5 @@ public class ParameterizedSymbol extends ContainerSymbol implements IParameteriz
 	private		LinkedList	_specializations;		//template specializations
 	private		LinkedList	_argumentList;			//template specialization arguments
 	private 	ISymbol		_returnType;
+	private 	boolean		_hasVarArgs = false;	//whether or not this function has variable arguments
 }

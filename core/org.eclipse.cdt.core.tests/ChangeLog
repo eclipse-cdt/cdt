@@ -1,4 +1,10 @@
 2004-01-08 Andrew Niefer
+	Added CompleteParseASTTest.testBug43110_XRef
+	Added ParserSymbolTableTest.testBug43110_Ellipses
+	Added ParserSymbolTableTest.testBug43110_EllipsesRanking
+	Added ParserSymbolTableTest.testBug43110_EllipsesRanking_2
+
+2004-01-08 Andrew Niefer
 	Added CompleteParseASTTest::testBug48307_FriendFunction_1
 	Added CompleteParseASTTest::testBug48307_FriendFunction_2
 	

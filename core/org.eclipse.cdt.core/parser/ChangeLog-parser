@@ -1,4 +1,10 @@
 2004-01-08 Andrew Niefer
+	fixing bug 43110 - Parser support needed for functions with ellipses
+	Added IParameterizedSymbol.setHasVariableArgs() & hasVariableArgs()
+	Modified ParserSymbolTable.resolveFunction & reduceToViable
+	Modified CompleteParseASTFactory.createMethod & createFunction
+
+2004-01-08 Andrew Niefer
 	Fixing 48307 - PST: Friendship needs to be handled better
 	Added IDerivableContainerSymbol.lookupFunctionForFriendship.
 	Modified IASTFactory.createMethod to take an ITokenDuple for the method name.

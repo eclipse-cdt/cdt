@@ -3355,5 +3355,83 @@ public class ParserSymbolTableTest extends TestCase {
 		assertTrue( results.contains( a3_int ) );
 	};
 	
+	/**
+	 * void foo( ... ){ }
+	 * 
+	 * foo( 1 );
+	 *  
+	 * @throws Exception
+	 */
+	public void testBug43110_Ellipses() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol foo = table.newParameterizedSymbol( "foo", TypeInfo.t_function );
+		foo.setHasVariableArgs( true );
+		
+		table.getCompilationUnit().addSymbol( foo );
+		
+		List params = new LinkedList();
+		
+		TypeInfo p1 = new TypeInfo( TypeInfo.t_int, 0, null );
+		params.add( p1 );
+		
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "foo", params );
+		
+		assertEquals( foo, look );
+	}
+	
+	/**
+	 * void foo( ... )   {}; //#1
+	 * void foo( int i ) {}; //#2
+	 * 
+	 * foo( 1 );  // calls foo #2
+	 * @throws Exception
+	 */
+	public void testBug43110_EllipsesRanking() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol foo1 = table.newParameterizedSymbol( "foo", TypeInfo.t_function );
+		foo1.setHasVariableArgs( true );
+		
+		table.getCompilationUnit().addSymbol( foo1 );
+		
+		IParameterizedSymbol foo2 = table.newParameterizedSymbol( "foo", TypeInfo.t_function );
+		foo2.addParameter( TypeInfo.t_int, 0, null, false );
+		table.getCompilationUnit().addSymbol( foo2 );
+		
+		List params = new LinkedList();
+		
+		TypeInfo p1 = new TypeInfo( TypeInfo.t_int, 0, null );
+		params.add( p1 );
+		
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "foo", params );
+		
+		assertEquals( foo2, look );
+	}
+	
+	/**
+	 * void foo( int i = 0 ) {};  //#1
+	 * void foo( ... ) {};        //#2
+	 * 
+	 * foo(); //calls #1
+	 * @throws Exception
+	 */
+	public void testBug43110_ElipsesRanking_2() throws Exception{
+		newTable();
+		
+		IParameterizedSymbol foo1 = table.newParameterizedSymbol( "foo", TypeInfo.t_function );
+		foo1.addParameter( TypeInfo.t_int, 0, null, true );
+		table.getCompilationUnit().addSymbol( foo1 );
+		
+		IParameterizedSymbol foo2 = table.newParameterizedSymbol( "foo", TypeInfo.t_function );
+		foo2.setHasVariableArgs( true );
+		table.getCompilationUnit().addSymbol( foo2 );
+		
+		List params = new LinkedList();
+		
+		ISymbol look = table.getCompilationUnit().unqualifiedFunctionLookup( "foo", params );
+		
+		assertEquals( foo1, look );
+	}
 }
 

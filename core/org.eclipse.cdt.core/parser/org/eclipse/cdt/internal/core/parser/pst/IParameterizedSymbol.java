@@ -45,6 +45,9 @@ public interface IParameterizedSymbol extends IContainerSymbol {
 	public void setReturnType( ISymbol type );
 	public ISymbol getReturnType();
 	
+	public void setHasVariableArgs( boolean var );
+	public boolean hasVariableArgs( );
+	
 	public boolean	hasSpecializations();
 	public void 	addSpecialization( IParameterizedSymbol spec );
 	public List 	getSpecializations();	

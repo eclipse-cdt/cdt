@@ -850,10 +850,10 @@ public class ParserSymbolTable {
 						}
 					}
 				}
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
-			}else{
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 			}
+			
+			if( data.parameters == null )
+				throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
 		}
 		
 		IParameterizedSymbol bestFn = null;				//the best function
@@ -866,7 +866,6 @@ public class ParserSymbolTable {
 		Iterator targetParams = null;
 		
 		int numTargetParams = 0;
-		int numParams = 0;
 		int comparison;
 		Cost cost = null;
 		Cost temp = null;
@@ -880,6 +879,16 @@ public class ParserSymbolTable {
 		boolean currHasAmbiguousParam = false;
 		boolean bestHasAmbiguousParam = false;
 
+		List parameters = null;
+		
+		if( numSourceParams == 0 ){
+			parameters = new LinkedList();
+			parameters.add( new TypeInfo( TypeInfo.t_void, 0, null ) );
+			numSourceParams = 1;
+		} else {
+			parameters = data.parameters;
+		}
+		
 		for( int i = numFns; i > 0; i-- ){
 			currFn = (IParameterizedSymbol) iterFns.next();
 			
@@ -892,15 +901,14 @@ public class ParserSymbolTable {
 				}
 			}
 			
-			sourceParams = data.parameters.iterator();
+			sourceParams = parameters.iterator();
 			
 			List parameterList = null;
-			if( currFn.getParameterList().isEmpty() ){
+			if( currFn.getParameterList().isEmpty() && !currFn.hasVariableArgs() ){
 				//the only way we get here and have no parameters, is if we are looking
 				//for a function that takes void parameters ie f( void )
 				parameterList = new LinkedList();
 				parameterList.add( currFn.getSymbolTable().newSymbol( "", TypeInfo.t_void ) );
-				targetParams = parameterList.iterator();
 			} else {
 				parameterList = currFn.getParameterList();
 			}
@@ -908,24 +916,33 @@ public class ParserSymbolTable {
 			targetParams = parameterList.iterator();
 			numTargetParams = parameterList.size();
 			
-			//we only need to look at the smaller number of parameters
-			//(a larger number in the Target means default parameters, a larger
-			//number in the source means ellipses.)
-			numParams = ( numTargetParams < numSourceParams ) ? numTargetParams : numSourceParams;
-			
 			if( currFnCost == null ){
-				currFnCost = new Cost [ numParams ];	
+				currFnCost = new Cost [ numSourceParams ];	
 			}
 			
 			comparison = 0;
+			boolean varArgs = false;
 			
-			for( int j = 0; j < numParams; j++ ){
+			for( int j = 0; j < numSourceParams; j++ ){
 				source = (TypeInfo) sourceParams.next();
-				target = ((ISymbol)targetParams.next()).getTypeInfo();
-				if( source.equals( target ) ){
+				
+				if( targetParams.hasNext() )
+					target = ((ISymbol)targetParams.next()).getTypeInfo();
+				else 
+					varArgs = true;
+				
+				if( varArgs ){
+					cost = new Cost( source, null );
+					cost.rank = Cost.ELLIPSIS_CONVERSION;
+				} else if ( target.getHasDefault() && source.isType( TypeInfo.t_void ) && !source.hasPtrOperators() ){
+					//source is just void, ie no parameter, if target had a default, then use that
+					cost = new Cost( source, target );
+					cost.rank = Cost.IDENTITY_RANK;
+				} else if( source.equals( target ) ){
 					cost = new Cost( source, target );
 					cost.rank = Cost.IDENTITY_RANK;	//exact match, no cost
 				} else {
+				
 					cost = checkStandardConversionSequence( source, target );
 					
 					//12.3-4 At most one user-defined conversion is implicitly applied to
@@ -947,7 +964,7 @@ public class ParserSymbolTable {
 			//In order for this function to be better than the previous best, it must
 			//have at least one parameter match that is better that the corresponding
 			//match for the other function, and none that are worse.
-			for( int j = 0; j < numParams; j++ ){ 
+			for( int j = 0; j < numSourceParams; j++ ){ 
 				if( currFnCost[ j ].rank < 0 ){
 					hasWorse = true;
 					hasBetter = false;
@@ -1021,10 +1038,13 @@ public class ParserSymbolTable {
 			
 			//A candidate function having fewer than m parameters is viable only if it has an 
 			//ellipsis in its parameter list.
-			if( num < numParameters ) {
-				//TODO ellipsis
-				//not enough parameters, remove it
-				iter.remove();		
+			if( num < numParameters ){
+				if( function.hasVariableArgs() ) {
+					continue;
+				} else {
+					//not enough parameters, remove it
+					iter.remove();
+				}
 			} 
 			//a candidate function having more than m parameters is viable only if the (m+1)-st
 			//parameter has a default argument
@@ -2287,8 +2307,8 @@ public class ParserSymbolTable {
 	{
 		
 		public Cost( TypeInfo s, TypeInfo t ){
-			source = new TypeInfo( s );
-			target = new TypeInfo( t );
+			source = ( s != null ) ? new TypeInfo( s ) : new TypeInfo();
+			target = ( t != null ) ? new TypeInfo( t ) : new TypeInfo();
 		}
 		
 		public TypeInfo source;

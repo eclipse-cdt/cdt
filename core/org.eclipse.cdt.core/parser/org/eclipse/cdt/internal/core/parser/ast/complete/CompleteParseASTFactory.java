@@ -1654,6 +1654,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IParameterizedSymbol symbol = pst.newParameterizedSymbol( name.getLastToken().getImage(), TypeInfo.t_function );
 		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
 		
+		symbol.setHasVariableArgs( hasVariableArguments );
+		
 		setParameter( symbol, returnType, false, references );
 		setParameters( symbol, references, parameters.iterator() );
 		 
@@ -1690,7 +1692,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		{
 			throw new ASTSemanticException();   
 		}
-		ASTFunction function = new ASTFunction( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock, hasVariableArguments );        
+		ASTFunction function = new ASTFunction( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, hasFunctionTryBlock );        
 	    try
 	    {
 	        attachSymbolExtension(symbol, function);
@@ -1935,6 +1937,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		IParameterizedSymbol symbol = pst.newParameterizedSymbol( nameDuple.toString(), TypeInfo.t_function );
 		setFunctionTypeInfoBits(isInline, isFriend, isStatic, symbol);
 		setMethodTypeInfoBits( symbol, isConst, isVolatile, isVirtual, isExplicit );
+		symbol.setHasVariableArgs( hasVariableArguments );
+		
 		if(references == null)
 			references = new ArrayList();
     	
@@ -2027,7 +2031,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 
 		resolveLeftoverConstructorInitializerMembers( symbol, constructorChain );
   
-        ASTMethod method = new ASTMethod( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock, hasVariableArguments );
+        ASTMethod method = new ASTMethod( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock  );
         try
         {
             attachSymbolExtension( symbol, method );

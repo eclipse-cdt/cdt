@@ -1116,6 +1116,51 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 			assertTrue( ((IASTFunction)i.next()).takesVarArgs() );
 	}
 	
+	public void testBug43110_XRef() throws Exception
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append( "void foo( ... ) {}\n" );
+		buffer.append( "void main( ){ foo( 1 ); }\n" );
+		
+		Iterator i = parse( buffer.toString() ).getDeclarations();
+		IASTFunction foo = (IASTFunction)i.next();
+		assertTrue( foo.takesVarArgs() );
+		assertAllReferences( 1, createTaskList( new Task( foo ) ) );
+
+		buffer = new StringBuffer();
+		buffer.append( "void foo( ... )   {}\n" );
+		buffer.append( "void foo( int x ) {}\n" );
+		buffer.append( "void main( ){ foo( 1 ); }\n" );
+		
+		i = parse( buffer.toString() ).getDeclarations();
+		IASTFunction foo1 = (IASTFunction)i.next();
+		IASTFunction foo2 = (IASTFunction)i.next();
+		assertTrue( foo1.takesVarArgs() );
+		assertFalse( foo2.takesVarArgs() );
+		assertAllReferences( 1, createTaskList( new Task( foo2 ) ) );
+		
+		buffer = new StringBuffer();
+		buffer.append( "void foo( ... )      {}\n" );
+		buffer.append( "void foo( int x = 1) {}\n" );
+		buffer.append( "void main( ){ foo(); }\n" );
+		
+		i = parse( buffer.toString() ).getDeclarations();
+		foo1 = (IASTFunction)i.next();
+		foo2 = (IASTFunction)i.next();
+		assertTrue( foo1.takesVarArgs() );
+		assertFalse( foo2.takesVarArgs() );
+		assertAllReferences( 1, createTaskList( new Task( foo2 ) ) );
+		
+		buffer = new StringBuffer();
+		buffer.append( "void foo( int x ... ) {}\n" );
+		buffer.append( "void main( ){ foo( 1, 2, 'a' ); }\n" );
+		
+		i = parse( buffer.toString() ).getDeclarations();
+		foo = (IASTFunction)i.next();
+		assertTrue( foo.takesVarArgs() );
+		assertAllReferences( 1, createTaskList( new Task( foo ) ) );
+	}
+	
 	public void testBug48307_FriendFunction_1() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write( "class A{ public : void foo(); }; " );

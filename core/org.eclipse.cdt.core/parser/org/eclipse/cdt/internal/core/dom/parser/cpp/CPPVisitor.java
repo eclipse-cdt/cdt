@@ -740,6 +740,110 @@ public class CPPVisitor {
 		}
 	}
 	
+	public static class CollectDeclarationsAction extends CPPBaseVisitorAction {
+	    private static final int DEFAULT_LIST_SIZE = 8;
+		private IASTName [] decls;
+		private IBinding binding;
+		private int idx = 0;
+		private int kind;
+		
+		private static final int KIND_LABEL  = 1;
+		private static final int KIND_OBJ_FN = 2;
+		private static final int KIND_TYPE   = 3;
+		private static final int KIND_NAMEPSACE   = 4;
+		
+		
+		public CollectDeclarationsAction( IBinding binding ){
+			this.binding = binding;
+			this.decls = new IASTName[ DEFAULT_LIST_SIZE ];
+			
+			processNames = true;
+			if( binding instanceof ILabel )
+				kind = KIND_LABEL;
+			else if( binding instanceof ICompositeType || 
+					 binding instanceof ITypedef || 
+					 binding instanceof IEnumeration)
+			{
+				kind = KIND_TYPE;
+			}
+			else if( binding instanceof ICPPNamespace) {
+				kind = KIND_NAMEPSACE;
+			} else 
+				kind = KIND_OBJ_FN;
+		}
+		
+		public int processName( IASTName name ){
+			if( name instanceof ICPPASTQualifiedName ) return PROCESS_CONTINUE;
+			
+			ASTNodeProperty prop = name.getPropertyInParent();
+			if( prop == ICPPASTQualifiedName.SEGMENT_NAME )
+				prop = name.getParent().getPropertyInParent();
+			
+			switch( kind ){
+				case KIND_LABEL:
+					if( prop == IASTLabelStatement.NAME )
+						break;
+					return PROCESS_CONTINUE;
+				case KIND_TYPE:
+				    if( prop == IASTCompositeTypeSpecifier.TYPE_NAME ||
+				        prop == IASTEnumerationSpecifier.ENUMERATION_NAME )
+				    {
+				        break;
+				    } else if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ){
+						IASTNode p = name.getParent().getParent();
+						if( p instanceof IASTSimpleDeclaration &&
+							((IASTSimpleDeclaration)p).getDeclarators().length == 0 )
+						{
+							break;
+						}
+					} else if( prop == IASTDeclarator.DECLARATOR_NAME ){
+					    IASTNode p = name.getParent().getParent();
+					    if( p instanceof IASTSimpleDeclaration ){
+					        IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration)p).getDeclSpecifier();
+					        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_typedef )
+					            break;
+					    }
+					}
+        
+				
+					return PROCESS_CONTINUE;
+				case KIND_OBJ_FN:
+					if( prop == IASTDeclarator.DECLARATOR_NAME )
+					{
+						break;
+					}
+					return PROCESS_CONTINUE;
+				case KIND_NAMEPSACE:
+					if( prop == ICPPASTNamespaceDefinition.NAMESPACE_NAME ) 
+					{
+						break;
+					}					
+					return PROCESS_CONTINUE;
+			}
+			
+			if( binding != null &&
+				CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray()) &&
+				name.resolveBinding() == binding )
+			{
+				if( decls.length == idx ){
+					IASTName [] temp = new IASTName[ decls.length * 2 ];
+					System.arraycopy( decls, 0, temp, 0, decls.length );
+					decls = temp;
+				}
+				decls[idx++] = name;
+			}
+			return PROCESS_CONTINUE;
+		}
+		public IASTName[] getDeclarations(){
+			if( idx < decls.length ){
+				IASTName [] temp = new IASTName[ idx ];
+				System.arraycopy( decls, 0, temp, 0, idx );
+				decls = temp;
+			}
+			return decls;
+		}
+
+	}
 	public static class CollectReferencesAction extends CPPBaseVisitorAction {
 		private static final int DEFAULT_LIST_SIZE = 8;
 		private IASTName [] refs;
@@ -776,8 +880,11 @@ public class CPPVisitor {
 			if( name instanceof ICPPASTQualifiedName ) return PROCESS_CONTINUE;
 			
 			ASTNodeProperty prop = name.getPropertyInParent();
-			if( prop == ICPPASTQualifiedName.SEGMENT_NAME )
+			ASTNodeProperty p2 = null;
+			if( prop == ICPPASTQualifiedName.SEGMENT_NAME ){
+			    p2 = prop;
 				prop = name.getParent().getPropertyInParent();
+			}
 			
 			switch( kind ){
 				case KIND_LABEL:
@@ -786,13 +893,15 @@ public class CPPVisitor {
 					return PROCESS_CONTINUE;
 				case KIND_TYPE:
 					if( prop == IASTNamedTypeSpecifier.NAME || 
-							prop == ICPPASTPointerToMember.NAME ||
-							prop == ICPPASTTypenameExpression.TYPENAME ||
-							prop == ICPPASTUsingDeclaration.NAME ||
-							prop == ICPPASTQualifiedName.SEGMENT_NAME ||
-							prop == ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME)
+						prop == ICPPASTPointerToMember.NAME ||
+						prop == ICPPASTTypenameExpression.TYPENAME ||
+						prop == ICPPASTUsingDeclaration.NAME ||
+						prop == ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier.NAME)
+					{
 						break;
-					else if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME ){
+					} 
+					else if( prop == IASTElaboratedTypeSpecifier.TYPE_NAME )
+					{
 						IASTNode p = name.getParent().getParent();
 						if( !(p instanceof IASTSimpleDeclaration) ||
 							((IASTSimpleDeclaration)p).getDeclarators().length > 0 )
@@ -809,7 +918,6 @@ public class CPPVisitor {
 						prop == ICPPASTUsingDeclaration.NAME ||
 						prop == IASTFunctionCallExpression.FUNCTION_NAME ||
 						prop == ICPPASTUsingDeclaration.NAME ||
-						prop == ICPPASTQualifiedName.SEGMENT_NAME ||
 						prop == IASTNamedTypeSpecifier.NAME)
 					{
 						break;
@@ -817,9 +925,10 @@ public class CPPVisitor {
 					return PROCESS_CONTINUE;
 				case KIND_NAMEPSACE:
 					if( prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
-							prop == ICPPASTNamespaceAlias.MAPPING_NAME ||
-							prop == ICPPASTUsingDeclaration.NAME ||
-							prop == ICPPASTQualifiedName.SEGMENT_NAME) {
+						prop == ICPPASTNamespaceAlias.MAPPING_NAME ||
+						prop == ICPPASTUsingDeclaration.NAME ||
+						p2 == ICPPASTQualifiedName.SEGMENT_NAME )
+					{
 						break;
 					}					
 					return PROCESS_CONTINUE;
@@ -1677,5 +1786,11 @@ public class CPPVisitor {
 		CollectReferencesAction action = new CollectReferencesAction( binding );
 		visitTranslationUnit( tu, action );
 		return action.getReferences();
+	}
+	
+	public static IASTName[] getDeclarations( IASTTranslationUnit tu, IBinding binding ){
+	    CollectDeclarationsAction action = new CollectDeclarationsAction( binding );
+	    visitTranslationUnit( tu, action );
+	    return action.getDeclarations();
 	}
 }

@@ -118,8 +118,7 @@ public class CPPASTTranslationUnit extends CPPASTNode implements
      * @see org.eclipse.cdt.core.dom.ast.IASTTranslationUnit#getDeclarations(org.eclipse.cdt.core.dom.ast.IBinding)
      */
     public IASTName[] getDeclarations(IBinding b) {
-        // TODO Auto-generated method stub
-        return null;
+        return CPPVisitor.getDeclarations( this, b );
     }
 
     /*

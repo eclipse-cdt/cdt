@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisiblityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
@@ -112,5 +113,32 @@ public class CPPMethod extends CPPFunction implements ICPPMethod {
 
 	public IScope getScope() {
 		return CPPVisitor.getContainingScope( declarations != null ? declarations[0] : definition  );
+	}
+	
+	public String getName() {
+	    if( definition != null ){
+	        IASTName n = definition.getName();
+	        if( n instanceof ICPPASTQualifiedName ){
+	            IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
+	            return ns[ ns.length - 1 ].toString();
+	        }
+	        return n.toString();
+	    }
+		return declarations[0].getName().toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IBinding#getNameCharArray()
+	 */
+	public char[] getNameCharArray() {
+	    if( definition != null ){
+	        IASTName n = definition.getName();
+	        if( n instanceof ICPPASTQualifiedName ){
+	            IASTName [] ns = ((ICPPASTQualifiedName)n).getNames();
+	            return ns[ ns.length - 1 ].toCharArray();
+	        }
+	        return n.toCharArray();
+	    }
+		return declarations[0].getName().toCharArray();
 	}
 }

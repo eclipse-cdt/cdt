@@ -40,6 +40,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -342,7 +343,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 
 	protected void newEntry() {
 		EntryDialog dialog = new EntryDialog(new String(), new String(), false);
-		if (dialog.open() == EntryDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			fElements.setProperty(dialog.getName(), dialog.getValue());
 			fVariableList.refresh();
 		}
@@ -413,7 +414,7 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 
 	protected void doEdit(Map.Entry entry) {
 		EntryDialog dialog = new EntryDialog(entry.getKey().toString(), entry.getValue().toString(), true);
-		if (dialog.open() == EntryDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			fElements.remove(entry.getKey());
 			fElements.setProperty(dialog.getName(), dialog.getValue());
 			fVariableList.refresh();

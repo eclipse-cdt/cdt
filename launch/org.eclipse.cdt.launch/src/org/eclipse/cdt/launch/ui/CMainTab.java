@@ -38,6 +38,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ModifyEvent;
@@ -127,7 +128,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			}
 		});
 
-		fProjButton = createPushButton(projComp, LaunchUIPlugin.getResourceString("Launch.common.B&rowse..."), null); //$NON-NLS-1$
+		fProjButton = createPushButton(projComp, LaunchUIPlugin.getResourceString("Launch.common.Browse_1"), null); //$NON-NLS-1$
 		fProjButton.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent evt) {
@@ -171,7 +172,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		});
 
 		Button fBrowseForBinaryButton;
-		fBrowseForBinaryButton = createPushButton(mainComp, LaunchUIPlugin.getResourceString("Launch.common.B&rowse..."), null); //$NON-NLS-1$
+		fBrowseForBinaryButton = createPushButton(mainComp, LaunchUIPlugin.getResourceString("Launch.common.Browse_2"), null); //$NON-NLS-1$
 		fBrowseForBinaryButton.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent evt) {
@@ -289,7 +290,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		dialog.setLowerListLabel(LaunchUIPlugin.getResourceString("Launch.common.QualifierColon")); //$NON-NLS-1$
 		dialog.setMultipleSelection(false);
 		//dialog.set
-		if (dialog.open() == ElementListSelectionDialog.OK) {
+		if (dialog.open() == Window.OK) {
 			IBinary binary = (IBinary)dialog.getFirstResult();
 			fProgText.setText(binary.getResource().getProjectRelativePath().toString());
 		}
@@ -343,7 +344,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			}
 		});
 
-		if (dialog.open() == ElementTreeSelectionDialog.CANCEL) {
+		if (dialog.open() == Window.CANCEL) {
 			return;
 		}
 
@@ -418,7 +419,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			if (cProject != null) {
 				dialog.setInitialSelections(new Object[]{cProject});
 			}
-			if (dialog.open() == ElementListSelectionDialog.OK) {
+			if (dialog.open() == Window.OK) {
 				return (ICProject)dialog.getFirstResult();
 			}
 		} catch (CModelException e) {

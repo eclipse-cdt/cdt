@@ -1,3 +1,10 @@
+2004-06-21 Mikhail Khodjaiants
+	Fix for bug 60872. Accessibility: Run/Debug configuration dialog has duplicate mnemonics.
+	Warning cleanup.
+	* LaunchUIPluginResources.properties
+	* CEnvironmentTab.java
+	* CMainTab.java
+
 2004-05-09 Mikhail Khodjaiants
 	Added the rendering method for debugger processes.
 	* src/org/eclise/cdt/launch/AbstractCLaunchDelegate.java

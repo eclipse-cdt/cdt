@@ -302,12 +302,14 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		TranslationUnitInfo unitInfo = (TranslationUnitInfo) info;
 		
 		// generate structure
-		newElements = null;
-		newElements = this.parse();
+		Map mapping = this.parse();
 		
 		// this is temporary until the New Model Builder is implemented
-		if(newElements == null)
-			getNewElements(newElements, this);		
+		if(mapping == null) {
+			getNewElements(newElements, this);
+		} else {
+			newElements.putAll(mapping);
+		}
 		///////////////////////////////////////////////////////////////
 		
 		if (isWorkingCopy()) {

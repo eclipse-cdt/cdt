@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.preferences;
 
+import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeProjectOptionBlock;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
@@ -62,7 +63,11 @@ public class MakePreferencePage extends PreferencePage implements IWorkbenchPref
 	}
 
 	public boolean performOk() {
-		return fOptionBlock.performApply(null);
+		boolean ok = fOptionBlock.performApply(null);
+		if (MakeCorePlugin.getDefault().getPluginPreferences().needsSaving()) {
+			MakeCorePlugin.getDefault().savePluginPreferences();
+		}
+		return ok;
 	}
 
 	/**

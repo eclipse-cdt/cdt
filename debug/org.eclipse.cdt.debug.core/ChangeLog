@@ -1,4 +1,9 @@
 2004-11-12 Mikhail Khodjaiants
+	Apply the breakpoint's condition changes to the associated gdb breakpoint 
+	only if there are differences.
+	* CBreakpointManager.java
+
+2004-11-12 Mikhail Khodjaiants
 	Compare breakpoint source handles as pathes.
 	* CDIDebugModel.java
   

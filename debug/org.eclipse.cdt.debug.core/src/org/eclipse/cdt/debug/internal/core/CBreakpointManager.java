@@ -353,7 +353,7 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			String condition = breakpoint.getCondition();
 			String oldCondition = ( delta != null ) ? delta.getAttribute( ICBreakpoint.CONDITION, "" ) : condition; //$NON-NLS-1$
 			String[] newThreadIs = getThreadNames( breakpoint );
-			if ( enabled != oldEnabled ) {
+			if ( enabled != oldEnabled && enabled != cdiBreakpoint.isEnabled() ) {
 				DebugPlugin.getDefault().asyncExec( new Runnable() {				
 					public void run() {
 						try {
@@ -366,18 +366,23 @@ public class CBreakpointManager implements IBreakpointManagerListener, ICDIEvent
 			}
 			if ( ignoreCount != oldIgnoreCount || condition.compareTo( oldCondition ) != 0 || areThreadFiltersChanged( newThreadIs, cdiBreakpoint ) ) {
 				final ICDICondition cdiCondition = cdiTarget.createCondition( ignoreCount, condition, newThreadIs  );
-				DebugPlugin.getDefault().asyncExec( new Runnable() {				
-					public void run() {
-						try {
-							cdiBreakpoint.setCondition( cdiCondition );
+				if ( ! cdiCondition.equals( cdiBreakpoint.getCondition() ) ) {
+					DebugPlugin.getDefault().asyncExec( new Runnable() {	
+						public void run() {
+							try {
+								cdiBreakpoint.setCondition( cdiCondition );
+							}
+							catch( CDIException e ) {
+							} 
 						}
-						catch( CDIException e ) {
-						} 
-					}
-				} );
+					} );
+				}
 			}
 		}
 		catch( CoreException e ) {
+			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.4" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
+		}
+		catch( CDIException e ) {
 			requestFailed( MessageFormat.format( InternalDebugCoreMessages.getString( "CBreakpointManager.4" ), new String[] { e.getMessage() } ), e ); //$NON-NLS-1$
 		}
 	}

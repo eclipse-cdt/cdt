@@ -387,15 +387,7 @@ public class CFormattedMemoryBlock extends CDebugElement
 	 */
 	public String getAddressExpression()
 	{
-		try
-		{
-			return fAddressExpression.getName();
-		}
-		catch( CDIException e )
-		{
-			// ignore
-		}
-		return "";
+		return fAddressExpression.getName();
 	}
 	
 	private String[] createData( byte[] bytes, int offset, int length )

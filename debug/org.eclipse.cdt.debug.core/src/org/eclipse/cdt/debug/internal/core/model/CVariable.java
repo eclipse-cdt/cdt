@@ -351,16 +351,7 @@ public abstract class CVariable extends CDebugElement
 	 */
 	public String getName() throws DebugException
 	{
-		String name = null;
-		try
-		{
-			name = getOriginalCDIVariable().getName();
-		}
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), null );
-		}
-		return name;
+		return getOriginalCDIVariable().getName();
 	}
 
 	/* (non-Javadoc)

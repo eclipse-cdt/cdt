@@ -1,3 +1,7 @@
+2003-10-14 Mikhail Khodjaiants
+	Improved the source search algorithm.
+	* CProjectSourceLocation.java
+	
 2003-10-13 Mikhail Khodjaiants
 	Fix for bug 43372: changed the source lookup procedures to avoid the usage of 'getCanonicalPath'.
 	* CDirectorySourceLocation.java

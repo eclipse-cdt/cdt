@@ -231,8 +231,12 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	}
 
 	synchronized public ICDescriptor getDescriptor(IProject project) throws CoreException {
+		return getDescriptor(project, true);
+	}
+	
+	synchronized public ICDescriptor getDescriptor(IProject project, boolean create) throws CoreException {
 		CDescriptor descriptor = (CDescriptor)fDescriptorMap.get(project);
-		if (descriptor == null) {
+		if (descriptor == null && create) {
 			descriptor = new CDescriptor(this, project);
 			fDescriptorMap.put(project, descriptor);
 		}
@@ -338,7 +342,10 @@ public class CDescriptorManager implements ICDescriptorManager, IResourceChangeL
 	}
 
 	public void runDescriptorOperation(IProject project, ICDescriptorOperation op, IProgressMonitor monitor) throws CoreException {
-		ICDescriptor descriptor = getDescriptor(project);
+		ICDescriptor descriptor = getDescriptor(project, false);
+		if (descriptor == null) {
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, "Project does not have descriptor", null)); //$NON-NLS-1$
+		}
 		CDescriptorEvent event = null;
 		synchronized (descriptor) {
 			beginOperation(descriptor);

@@ -703,8 +703,27 @@ public class CCorePlugin extends Plugin {
 		return fCoreModel;
 	}
 
+	/**
+	 * @param project
+	 * @return
+	 * @throws CoreException
+	 * @deprecated use getCProjetDescription(IProject project, boolean create)
+	 */
 	public ICDescriptor getCProjectDescription(IProject project) throws CoreException {
 		return fDescriptorManager.getDescriptor(project);
+	}
+
+	/**
+	 * Get the ICDescriptor for the given project, if <b>create</b> is <b>true</b> then a descriptor will be created
+	 * if one does not exist.
+	 * 
+	 * @param project
+	 * @param create
+	 * @return ICDescriptor or <b>null</b> if <b>create</b> is <b>false</b> and no .cdtproject file exists on disk.
+	 * @throws CoreException
+	 */
+	public ICDescriptor getCProjectDescription(IProject project, boolean create) throws CoreException {
+		return fDescriptorManager.getDescriptor(project, create);
 	}
 
 	public void mapCProjectOwner(IProject project, String id, boolean override) throws CoreException {

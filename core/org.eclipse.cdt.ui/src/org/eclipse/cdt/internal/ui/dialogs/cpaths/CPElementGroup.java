@@ -11,8 +11,8 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +30,7 @@ public class CPElementGroup {
 	public CPElementGroup(IResource resource) {
 		this.kind = -1;
 		this.resource = resource;
-		this.childrenListMap = new HashMap(2);
+		this.childrenListMap = new LinkedHashMap(2);
 	}
 
 	public CPElementGroup(CPElement parent, int kind) {
@@ -150,15 +150,14 @@ public class CPElementGroup {
 	public CPElement[] getChildren() {
 		if (childrenList != null) {
 			return (CPElement[])childrenList.toArray(new CPElement[childrenList.size()]);
-		} else {
-			Collection lists = childrenListMap.values();
-			Iterator iter = lists.iterator();
-			List children = new ArrayList();
-			while (iter.hasNext()) {
-				children.addAll((List)iter.next());
-			}
-			return (CPElement[])children.toArray(new CPElement[children.size()]);
 		}
+		Collection lists = childrenListMap.values();
+		Iterator iter = lists.iterator();
+		List children = new ArrayList();
+		while (iter.hasNext()) {
+			children.addAll((List)iter.next());
+		}
+		return (CPElement[])children.toArray(new CPElement[children.size()]);
 	}
 
 	/**

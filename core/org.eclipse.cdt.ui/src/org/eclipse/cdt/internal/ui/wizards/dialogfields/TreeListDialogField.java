@@ -270,7 +270,6 @@ public class TreeListDialogField extends DialogField {
 					handleKeyPressed(e);
 				}
 			});
-			fTree.setAutoExpandLevel(99);
 			fTree.setContentProvider(fTreeViewerAdapter);
 			fTree.setLabelProvider(fLabelProvider);
 			fTree.addSelectionChangedListener(fTreeViewerAdapter);

@@ -92,6 +92,7 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		fOutputList.setViewerSorter(new CPElementSorter());
 		fOutputList.enableButton(IDX_EDIT, false);
 		fOutputList.enableButton(IDX_REMOVE, false);
+		fOutputList.setTreeExpansionLevel(2);
 	}
 
 	public Image getImage() {

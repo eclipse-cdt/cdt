@@ -69,6 +69,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		fContainersList.enableButton(IDX_REMOVE, false);
 		fContainersList.enableButton(IDX_EDIT, false);
 		fContainersList.enableButton(IDX_EXPORT, false);
+		fContainersList.setTreeExpansionLevel(2);
 
 		fContainersList.setViewerSorter(new CPElementSorter());
 

@@ -31,6 +31,7 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 
 	public NewIncludesSymbolsTabBlock(IStatusChangeListener context, int pageToShow) {
 		super(context, pageToShow);
+		fIncludeSymbols = new CPathIncludeSymbolEntryPage(this);
 	}
 
 	protected void addTab(ICOptionPage tab) {
@@ -46,7 +47,6 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 		fComposite = new Composite(parent, SWT.NONE);
 		fComposite.setLayout(new GridLayout(1, false));
 
-		fIncludeSymbols = new CPathIncludeSymbolEntryPage(this);
 		addPage(fIncludeSymbols);
 		setCurrentPage(fIncludeSymbols);
 		initializingTabs = false;

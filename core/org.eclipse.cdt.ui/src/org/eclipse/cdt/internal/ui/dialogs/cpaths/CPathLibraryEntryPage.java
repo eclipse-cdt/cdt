@@ -103,6 +103,7 @@ public class CPathLibraryEntryPage extends CPathBasePage {
 		fLibrariesList.enableButton(IDX_EDIT, false);
 		fLibrariesList.enableButton(IDX_REMOVE, false);
 		fLibrariesList.enableButton(IDX_EXPORT, false);
+		fLibrariesList.setTreeExpansionLevel(2);
 	}
 
 	public Image getImage() {

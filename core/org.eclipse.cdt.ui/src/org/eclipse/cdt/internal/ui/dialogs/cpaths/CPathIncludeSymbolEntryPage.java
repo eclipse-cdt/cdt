@@ -181,7 +181,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		fIncludeSymPathsList.enableButton(IDX_EXPORT, false);
 		fIncludeSymPathsList.enableButton(IDX_UP, false);
 		fIncludeSymPathsList.enableButton(IDX_DOWN, false);
-
+		fIncludeSymPathsList.setTreeExpansionLevel(2);
 		fShowInheritedPaths = new SelectionButtonDialogField(SWT.CHECK);
 		fShowInheritedPaths.setSelection(true);
 		fShowInheritedPaths.setLabelText(CPathEntryMessages.getString("IncludeSymbolsEntryPage.show_inherited.check")); //$NON-NLS-1$
@@ -269,12 +269,18 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		List resourceGroups = new ArrayList(5);
 		fProjectGroup = new CPElementGroup(fCurrCProject.getResource());
 		resourceGroups.add(fProjectGroup);
+		 // add containers first so that they appear at top of list
 		for (int i = 0; i < cPaths.size(); i++) {
 			CPElement element = (CPElement)cPaths.get(i);
 			switch (element.getEntryKind()) {
 				case IPathEntry.CDT_CONTAINER :
 					fProjectGroup.addChild(element);
 					break;
+			}
+		}
+		for (int i = 0; i < cPaths.size(); i++) {
+			CPElement element = (CPElement)cPaths.get(i);
+			switch (element.getEntryKind()) {
 				case IPathEntry.CDT_INCLUDE :
 				case IPathEntry.CDT_MACRO :
 					CPElementGroup resGroup = new CPElementGroup(element.getResource());

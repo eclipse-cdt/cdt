@@ -170,11 +170,12 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 	private String getEncodedSettings() {
 		StringBuffer buf = new StringBuffer();
-
-		int nElements = getCPaths().size();
+		
+		List elements = getCPaths();
+		int nElements = elements.size();
 		buf.append('[').append(nElements).append(']');
 		for (int i = 0; i < nElements; i++) {
-			CPElement elem = (CPElement) getCPaths().get(i);
+			CPElement elem = (CPElement) elements.get(i);
 			elem.appendEncodedSettings(buf);
 		}
 		return buf.toString();

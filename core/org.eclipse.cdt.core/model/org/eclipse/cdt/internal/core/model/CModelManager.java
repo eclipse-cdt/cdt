@@ -215,9 +215,8 @@ public class CModelManager implements IResourceChangeListener {
 		ICElement cfile = null;
 		
 		if (isTranslationUnit(file)) {
-			cfile = new TranslationUnit(parent, file);}
-						
-		if (file.exists()) {
+			cfile = new TranslationUnit(parent, file);
+		} else if (file.exists()) {
 			// Try to create the binaryFile first.
 			if (bin == null) {
 				bin = createBinaryFile(file);
@@ -313,21 +312,23 @@ public class CModelManager implements IResourceChangeListener {
 		}
 
 		if (celement instanceof IParent) {
-			CElementInfo info = ((CElement)celement).getElementInfo();
-			if (info != null) {
-				ICElement[] children = info.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					releaseCElement(children[i]);
-				}
-				// Make sure we destroy the BinaryContainer and ArchiveContainer
-				// Since they are not part of the children.
-				if (info instanceof CProjectInfo) {
-					CProjectInfo pinfo = (CProjectInfo) info;
-					if (pinfo.vBin != null) {
-						releaseCElement(pinfo.vBin);
+			if ( peekAtInfo(celement) != null ) {
+				CElementInfo info = ((CElement)celement).getElementInfo();
+				if (info != null) {
+					ICElement[] children = info.getChildren();
+					for (int i = 0; i < children.length; i++) {
+						releaseCElement(children[i]);
 					}
-					if (pinfo.vLib != null) {
-						releaseCElement(pinfo.vLib);
+					// Make sure we destroy the BinaryContainer and ArchiveContainer
+					// Since they are not part of the children.
+					if (info instanceof CProjectInfo) {
+						CProjectInfo pinfo = (CProjectInfo) info;
+						if (pinfo.vBin != null) {
+							releaseCElement(pinfo.vBin);
+						}
+						if (pinfo.vLib != null) {
+							releaseCElement(pinfo.vLib);
+						}
 					}
 				}
 			}

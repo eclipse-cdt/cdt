@@ -805,7 +805,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 			}
 		}
 		fAnnotationAccess = createAnnotationAccess();
-		ISharedTextColors sharedColors = EditorsPlugin.getDefault().getSharedTextColors();
+		ISharedTextColors sharedColors = CUIPlugin.getDefault().getSharedTextColors();
 
 		fOverviewRuler = new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
 		Iterator e = fAnnotationPreferences.getAnnotationPreferences().iterator();

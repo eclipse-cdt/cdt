@@ -51,7 +51,7 @@ public class CMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
 	 * @param position the associate position
 	 * @param fireModelChange indicates whether to notify all model listeners
 	 */
-	protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged) {
+	protected void addAnnotation(Annotation annotation, Position position, boolean fireModelChanged){ 
 		if (!fAnnotations.containsKey(annotation)) {
 			
 			// @@@ This is an unfortunate hack because we cannot override addAnnotationMarker() and if we
@@ -64,7 +64,10 @@ public class CMarkerAnnotationModel extends ResourceMarkerAnnotationModel {
 				}
 			}
 			fAnnotations.put(annotation, position);
-			addPosition(fDocument, position);
+			try {
+				addPosition(fDocument, position);
+			} catch (Exception e) {
+			}
 
 			if (fireModelChanged)
 				fireModelChanged();

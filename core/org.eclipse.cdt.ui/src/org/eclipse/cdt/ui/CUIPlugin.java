@@ -27,6 +27,7 @@ import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
 import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
+import org.eclipse.cdt.internal.ui.editor.SharedTextColors;
 import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
@@ -46,6 +47,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
@@ -53,6 +55,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class CUIPlugin extends AbstractUIPlugin {
+
+	private ISharedTextColors fSharedTextColors;
 
 	public static final String PLUGIN_ID = "org.eclipse.cdt.ui";
 	public static final String PLUGIN_CORE_ID = "org.eclipse.cdt.core";
@@ -356,7 +360,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 		return fProblemMarkerManager;
 	}
 
-	private void registerAdapters() {
+	protected void registerAdapters() {
 		fResourceAdapterFactory = new ResourceAdapterFactory();
 		fCElementAdapterFactory = new CElementAdapterFactory();
 
@@ -369,5 +373,11 @@ public class CUIPlugin extends AbstractUIPlugin {
 		IAdapterManager manager = Platform.getAdapterManager();
 		manager.unregisterAdapters(fResourceAdapterFactory);
 		manager.unregisterAdapters(fCElementAdapterFactory);
+	}
+
+	public ISharedTextColors getSharedTextColors() {
+		if (fSharedTextColors == null)
+			fSharedTextColors= new SharedTextColors();
+		return fSharedTextColors;
 	}
 }

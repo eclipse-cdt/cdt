@@ -1,3 +1,9 @@
+2005-01-11 David Inglis
+
+	Fix for 82516
+	
+	*/src/org/eclipse/cdt/internal/ui/viewsupport/CElementLabels.java
+	
 2004-12-08 Bogdan Gheorghe
 	Fix for 76123
 	* src/org/eclipse/cdt/internal/ui/search/CSearchResultPage.java

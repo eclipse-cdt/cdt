@@ -53,6 +53,7 @@ public class Keywords {
 	public static final String INLINE = "inline"; //$NON-NLS-1$
 	public static final String INT = "int"; //$NON-NLS-1$
 	public static final String LONG = "long"; //$NON-NLS-1$
+	public static final String LONG_LONG = "long long"; //$NON-NLS-1$
 	public static final String MUTABLE = "mutable"; //$NON-NLS-1$
 	public static final String NAMESPACE = "namespace"; //$NON-NLS-1$
 	public static final String NEW = "new"; //$NON-NLS-1$

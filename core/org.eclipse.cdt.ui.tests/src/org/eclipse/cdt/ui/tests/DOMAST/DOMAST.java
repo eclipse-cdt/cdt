@@ -13,6 +13,7 @@ package org.eclipse.cdt.ui.tests.DOMAST;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
+import org.eclipse.cdt.core.dom.ast.ASTUtil;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -104,6 +105,8 @@ import org.eclipse.ui.part.ViewPart;
  */
 
 public class DOMAST extends ViewPart {
+   private static final String ASTUTIL_MENU_LABEL = "ASTUtil#"; //$NON-NLS-1$
+   private static final String DISPLAY_TYPE = "getNodeType(IASTNode)"; //$NON-NLS-1$
    private static final String NOT_VALID_COMPILATION_UNIT = "The active editor does not contain a valid compilation unit."; //$NON-NLS-1$
    private static final String EXTENSION_CXX = "CXX"; //$NON-NLS-1$
    private static final String EXTENSION_CPP = "CPP"; //$NON-NLS-1$
@@ -125,6 +128,7 @@ public class DOMAST extends ViewPart {
    private DrillDownAdapter    drillDownAdapter;
    private Action              openDeclarationsAction;
    private Action              openReferencesAction;
+   private Action			   displayNodeTypeAction;
    private Action              singleClickAction;
    private Action              loadActiveEditorAction;
    private Action              refreshAction;
@@ -674,6 +678,11 @@ public class DOMAST extends ViewPart {
       manager.add(openDeclarationsAction);
       manager.add(openReferencesAction);
       manager.add(new Separator());
+	  // ASTUtil#... menu
+	  MenuManager astMenu = new MenuManager(ASTUTIL_MENU_LABEL);
+	  astMenu.add(displayNodeTypeAction);
+	  manager.add(astMenu);
+	  manager.add(new Separator());
       drillDownAdapter.addNavigationActions(manager);
       // Other plug-ins can contribute there actions here
       manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -770,6 +779,19 @@ public class DOMAST extends ViewPart {
       openReferencesAction = new DisplayReferencesAction();
       openReferencesAction.setText(OPEN_REFERENCES);
       openReferencesAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+            .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
+	  
+	  displayNodeTypeAction = new Action() { 
+		  public void run() {
+			  ISelection selection = viewer.getSelection();
+		     	if (selection instanceof IStructuredSelection &&
+		     			((IStructuredSelection)selection).getFirstElement() instanceof TreeObject &&
+		     			((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode() != null) {
+					showMessage("ASTUtil#getNodeType(IASTNode): \"" + ASTUtil.getNodeType(((TreeObject)((IStructuredSelection)selection).getFirstElement()).getNode()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+		     	}
+		  } };
+	  displayNodeTypeAction.setText(DISPLAY_TYPE);
+      displayNodeTypeAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
             .getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 
       singleClickAction = new ASTHighlighterAction(part);

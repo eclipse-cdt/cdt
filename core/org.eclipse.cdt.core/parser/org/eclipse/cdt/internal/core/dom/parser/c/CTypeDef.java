@@ -38,8 +38,8 @@ public class CTypeDef implements ITypedef, ITypeContainer {
 	 * @see org.eclipse.cdt.core.dom.ast.ITypedef#getType()
 	 */
 	public IType getType() {
-		if (type == null)
-			type = CVisitor.createType(name);
+		if (type == null && name.getParent() instanceof IASTDeclarator)
+			type = CVisitor.createType((IASTDeclarator)name.getParent());
 		return type;
 	}
 	

@@ -13,6 +13,7 @@ package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -43,6 +44,7 @@ public class CParameter implements IParameter {
     }
     
 	private IASTName [] declarations;
+	private IType type = null;
 	
 	public CParameter( IASTName parameterName ){
 		this.declarations = new IASTName [] { parameterName };
@@ -53,7 +55,10 @@ public class CParameter implements IParameter {
 	 */
 	
     public IType getType() {
-        return CVisitor.createType( declarations[0] );
+		if ( type == null && declarations[0].getParent() instanceof IASTDeclarator)
+			type = CVisitor.createType( (IASTDeclarator)declarations[0].getParent() );
+		
+		return type;
 	}
 
 	/* (non-Javadoc)

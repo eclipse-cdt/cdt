@@ -58,8 +58,8 @@ public class CVariable implements IVariable, ICBinding {
 	 * @see org.eclipse.cdt.core.dom.ast.IVariable#getType()
 	 */
 	public IType getType() {
-		if (type == null)
-			type = CVisitor.createType(declarations[0]);
+		if (type == null && declarations[0].getParent() instanceof IASTDeclarator)
+			type = CVisitor.createType((IASTDeclarator)declarations[0].getParent());
 		return type;
 	}
 	

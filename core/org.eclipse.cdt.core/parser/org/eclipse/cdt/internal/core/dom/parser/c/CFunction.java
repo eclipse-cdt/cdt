@@ -176,7 +176,7 @@ public class CFunction implements IFunction, ICBinding {
         	while (functionName.getNestedDeclarator() != null)
         		functionName = functionName.getNestedDeclarator();
         	
-        	IType tempType = CVisitor.createType( functionName.getName() );
+        	IType tempType = CVisitor.createType( functionName );
         	if (tempType instanceof IFunctionType)
         		type = (IFunctionType)tempType;
         }

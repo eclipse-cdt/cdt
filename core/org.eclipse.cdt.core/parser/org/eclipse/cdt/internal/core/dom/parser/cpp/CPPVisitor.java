@@ -1707,6 +1707,8 @@ public class CPPVisitor {
 			declSpec = ((IASTSimpleDeclaration)node).getDeclSpecifier();
 		else if( node instanceof IASTFunctionDefinition )
 			declSpec = ((IASTFunctionDefinition)node).getDeclSpecifier();
+		else if( node instanceof IASTTypeId )
+			declSpec = ((IASTTypeId)node).getDeclSpecifier();
 	
 		IType type = createType( declSpec );
 		type = createType( type, declarator );

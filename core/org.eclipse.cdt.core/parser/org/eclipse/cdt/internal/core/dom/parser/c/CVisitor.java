@@ -582,7 +582,7 @@ public class CVisitor {
 				}
 		    } else if( expression instanceof IASTCastExpression ){
 		        IASTTypeId id = ((IASTCastExpression)expression).getTypeId();
-		        return createType( id.getAbstractDeclarator().getName() );
+		        return createType( id.getAbstractDeclarator() );
 		    } else if( expression instanceof IASTFieldReference ){ 
 		        IBinding binding = ((IASTFieldReference)expression).getFieldName().resolveBinding();
 				if( binding instanceof IVariable ){
@@ -709,7 +709,7 @@ public class CVisitor {
 			    try{ 
 			        IFunction function = (IFunction) binding;
 				    IFunctionType ftype = function.getType();
-				    IType type = createType( declarator.getName() );
+				    IType type = createType( declarator );
 				    if( ftype.equals( type ) ){
 				        if( parent instanceof IASTSimpleDeclaration )
 				            ((CFunction)function).addDeclarator( (IASTFunctionDeclarator) declarator );
@@ -731,7 +731,7 @@ public class CVisitor {
 			} else {
 			    IType t1 = null, t2 = null;
 			    if( binding != null && binding instanceof IVariable ){
-			        t1 = createType( declarator.getName() );
+			        t1 = createType( declarator );
 			        try {
                         t2 = ((IVariable)binding).getType();
                     } catch ( DOMException e1 ) {
@@ -1666,16 +1666,13 @@ public class CVisitor {
 //	}
 	
 	/**
-	 * Create an IType for an IASTName.
+	 * Create an IType for an IASTDeclarator.
 	 * 
-	 * @param name the IASTName whose IType will be created
-	 * @return the IType of the IASTName parameter
+	 * @param declarator the IASTDeclarator whose IType will be created
+	 * @return the IType of the IASTDeclarator parameter
 	 */
-	public static IType createType(IASTName name) {
-		if (!(name.getParent() instanceof IASTDeclarator)) return null;
-		
+	public static IType createType(IASTDeclarator declarator) {
 	    IASTDeclSpecifier declSpec = null;
-		IASTDeclarator declarator = (IASTDeclarator) name.getParent();
 		
 		IASTNode node = declarator.getParent();
 		while( node instanceof IASTDeclarator ){
@@ -1802,7 +1799,7 @@ public class CVisitor {
 			IType parmTypes[] = new IType[parms.length];
 			
 		    for( int i = 0; i < parms.length; i++ ){
-		    	parmTypes[i] = createType( parms[i].getDeclarator().getName() );
+		    	parmTypes[i] = createType( parms[i].getDeclarator() );
 		    }
 		    return parmTypes;
 		} else if ( decltor instanceof ICASTKnRFunctionDeclarator ) {
@@ -1811,7 +1808,7 @@ public class CVisitor {
 			
 		    for( int i = 0; i < parms.length; i++ ){
 		        IASTDeclarator dtor = getKnRParameterDeclarator( (ICASTKnRFunctionDeclarator) decltor, parms[i] );
-		        parmTypes[i] = createType( dtor.getName() );
+		        parmTypes[i] = createType( dtor );
 		    }
 		    return parmTypes;
 		} else {

@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
@@ -22,6 +24,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.launch.AbstractCLaunchDelegate;
 import org.eclipse.cdt.launch.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.cdt.utils.spawner.EnvironmentReader;
+import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -131,7 +135,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			if (wd == null) {
 				wd = new File(System.getProperty("user.home", ".")); //NON-NLS-1;
 			}
-			Process process = exec(commandArray, getEnvironmentArray(config), wd);
+			Process process = exec(commandArray, getEnvironmentProperty(config), wd);
 			DebugPlugin.getDefault().newProcess(launch, process, renderProcessLabel(commandArray[0]));
 		}
 		monitor.done();
@@ -183,13 +187,26 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 	 *  cancelled
 	 * @see Runtime
 	 */
-	protected Process exec(String[] cmdLine, String[] envp, File workingDirectory) throws CoreException {
+	protected Process exec(String[] cmdLine, Properties environ, File workingDirectory) throws CoreException {
 		Process p = null;
+		Properties props = EnvironmentReader.getEnvVars();
+		props.putAll(environ);
+		String[] envp = null;
+		ArrayList envList = new ArrayList();
+		Enumeration names = props.propertyNames();
+		if (names != null) {
+			while (names.hasMoreElements()) {
+				String key = (String) names.nextElement();
+				envList.add(key + "=" + props.getProperty(key));
+			}
+			envp = (String[]) envList.toArray(new String[envList.size()]);
+		}
 		try {
+
 			if (workingDirectory == null) {
-				p = Runtime.getRuntime().exec(cmdLine, envp);
+				p = ProcessFactory.getFactory().exec(cmdLine, envp);
 			} else {
-				p = Runtime.getRuntime().exec(cmdLine, envp, workingDirectory);
+				p = ProcessFactory.getFactory().exec(cmdLine, envp, workingDirectory);
 			}
 		} catch (IOException e) {
 			if (p != null) {
@@ -211,7 +228,7 @@ public class LocalCLaunchConfigurationDelegate extends AbstractCLaunchDelegate {
 			if (handler != null) {
 				Object result = handler.handleStatus(status, this);
 				if (result instanceof Boolean && ((Boolean) result).booleanValue()) {
-					p = exec(cmdLine, envp, null);
+					p = exec(cmdLine, environ, null);
 				}
 			}
 		}

@@ -1,3 +1,9 @@
+2004-07-15 Tanya Wolff
+	Fix for bug 69939. I18N: Memory view contains unexternalized strings.
+	Externalized Memory View Refresh menu item.
+	* RefreshMemoryAction.java
+	* ActionMessages.properties
+	
 2004-07-09 Mikhail Khodjaiants
 	Fix for bug 69221: "Show full paths" doesn't work for shared libraries.
 	* SharedLibrariesView.java

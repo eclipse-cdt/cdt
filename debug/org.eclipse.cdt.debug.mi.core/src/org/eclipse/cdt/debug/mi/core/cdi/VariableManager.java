@@ -32,6 +32,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIArg;
 import org.eclipse.cdt.debug.mi.core.output.MIFrame;
 import org.eclipse.cdt.debug.mi.core.output.MIStackListArgumentsInfo;
@@ -65,6 +66,10 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 			if (vars[i].getMIVar().getVarName().equals(varName)) {
 				return vars[i];
 			}
+			Variable v = vars[i].getChild(varName);
+			if (v != null) {
+				return v;
+			}
 		}
 		return null;
 	}
@@ -97,30 +102,10 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 	}
 
 	/**
-	 * Make sure an element is not added twice.
-	 */
-	void addVariable(Variable var) {
-		Variable[] vars = getVariables();
-		for (int i = 0; i < vars.length; i++) {
-			String name = vars[i].getMIVar().getVarName();
-			if (name.equals(var.getMIVar().getVarName())) {
-				return;
-			}
-		}
-		variableList.add(var);
-	}
-
-	/**
 	 * Returns all the elements that are in the cache.
 	 */
 	Variable[] getVariables() {
 		return (Variable[]) variableList.toArray(new Variable[0]);
-	}
-
-	public Variable createVariable(VariableObject v, MIVar mivar) throws CDIException {
-		Variable variable = new Variable(v, mivar);
-		addVariable(variable);
-		return variable;
 	}
 
 	/**
@@ -187,7 +172,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 						throw new CDIException("No answer");
 					}
 					argument = new Argument(argObj, info.getMIVar());
-					addVariable(argument);
+					variableList.add(argument);
 				} catch (MIException e) {
 					throw new MI2CDIException(e);
 				} finally {
@@ -387,7 +372,7 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 						throw new CDIException("No answer");
 					}
 					variable = new Variable(varObj, info.getMIVar());
-					addVariable(variable);
+					variableList.add(variable);
 				} catch (MIException e) {
 					throw new MI2CDIException(e);
 				} finally {
@@ -408,10 +393,10 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 		if (var instanceof Variable) {
 			// Fire  a destroyEvent ?
 			Variable variable = (Variable)var;
-			MIVarChangedEvent change = new MIVarChangedEvent(0, variable.getMIVar().getVarName(), false);
+			MIVarDeletedEvent del = new MIVarDeletedEvent(variable.getMIVar().getVarName());
 			Session session = (Session)getSession();
 			MISession mi = session.getMISession();
-			mi.fireEvent(change);
+			mi.fireEvent(del);
 		}
 	}
 
@@ -454,11 +439,15 @@ public class VariableManager extends SessionObject implements ICDIVariableManage
 				changes = info.getMIVarChanges();
 			} catch (MIException e) {
 				//throw new MI2CDIException(e);
-				eventList.add(new MIVarChangedEvent(0, varName, false));
+				eventList.add(new MIVarDeletedEvent(varName));
 			}
 			for (int j = 0 ; j < changes.length; j++) {
 				String n = changes[j].getVarName();
-				eventList.add(new MIVarChangedEvent(0, n, changes[j].isInScope()));
+				if (changes[j].isInScope()) {
+					eventList.add(new MIVarChangedEvent(n));
+				} else {
+					eventList.add(new MIVarDeletedEvent(n));
+				}
 			}
 		}
 		MIEvent[] events = (MIEvent[])eventList.toArray(new MIEvent[0]);

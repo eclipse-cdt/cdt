@@ -1244,7 +1244,7 @@ public class Parser2 {
                 break;
             default:
                 if (language == ParserLanguage.CPP && supportMinAndMaxOperators
-                        && (LT(1) == IGCCToken.tMIN || LT(2) == IGCCToken.tMAX)) {
+                        && (LT(1) == IGCCToken.tMIN || LT(1) == IGCCToken.tMAX)) {
                     IToken m = mark();
                     Object k = null;
                     switch (LT(1)) {
@@ -1489,7 +1489,7 @@ public class Parser2 {
                     backup(mark);
                     //					if (typeId != null)
                     //						typeId.freeReferences();
-                    throw bte;
+                    throwBacktrack(bte);
                 }
 
                 if (templateIdScopes.size() > 0) {
@@ -1679,6 +1679,7 @@ public class Parser2 {
                 break;
 
             if (isShort || isLong || isUnsigned || isSigned) {
+                encountered = true;
                 kind = null; //IASTSimpleTypeSpecifier.Type.INT;
                 break;
             }

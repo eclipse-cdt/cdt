@@ -1,3 +1,10 @@
+2004-02-17 Thomas Fletcher
+
+	Fix to address PR 52085.  We allow the user to import a text file formatted
+	as key=value pairs.
+
+	* src/org/eclipse/cdt/launch/ui/CEnvironmentTab.java
+
 2004-02-12 Thomas Fletcher
 
 	Fix to address PR 39580.  Since we can't do anything short term about the 

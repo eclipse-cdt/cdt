@@ -650,7 +650,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 			
 			IContainerSymbol container = getContainingSymbol();
-			IContainerSymbol symbolContainer = ( qualifyingSymbol != null ) ? qualifyingSymbol : symbol.getContainingSymbol();
+			IContainerSymbol symbolContainer = symbol.getContainingSymbol();
 			
 			if( !symbolContainer.isType( TypeInfo.t_class, TypeInfo.t_union ) ||
 				symbolContainer.equals( container ) )
@@ -659,7 +659,7 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 			}
 
 			//if this is a friend of the symbolContainer, then we are good
-			if( isFriendOf( symbolContainer ) ){
+			if( isFriendOf( ( qualifyingSymbol != null ) ? qualifyingSymbol : symbolContainer ) ){
 				return true;
 			}
 			

@@ -1,3 +1,6 @@
+2004-01-28 Andrew Niefer
+	Fixed bug#50729: Visibility is incorrectly decided in inheritance
+	
 2004-01-27 John Camelon
 	Refactored parser to allow for cleaner content assist implementation.  
 	Removed IASTCompletionNode.CompletionKind.STATEMENT_START as it is redundant.  

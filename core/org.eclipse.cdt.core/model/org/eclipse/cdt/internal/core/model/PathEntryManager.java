@@ -103,7 +103,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						IPathEntry[] containerEntries = container.getPathEntries();
 						if (containerEntries != null) {
 							for (int j = 0; j < containerEntries.length; j++) {
-								list.add(containerEntries[i]);
+								list.add(containerEntries[j]);
 							}
 						}
 					}

@@ -46,6 +46,11 @@ public class TypeFilter {
         acceptedKinds.add( kind );
     }
     
+    public boolean willAccept( TypeInfo.eType type ){
+    	return( acceptedTypes.contains( TypeInfo.t_any ) ||
+    			acceptedTypes.contains( type ) );
+    }
+    
 	public boolean shouldAccept( ISymbol symbol ){
 		return shouldAccept( symbol, symbol.getTypeInfo() );
 	}

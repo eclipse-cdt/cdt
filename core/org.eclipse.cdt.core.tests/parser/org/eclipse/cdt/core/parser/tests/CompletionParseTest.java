@@ -981,5 +981,19 @@ public class CompletionParseTest extends CompletionParseBaseTest {
 			assertEquals( result.getResultsSize(), ( i == 0 ) ? 2 : 1 );
 		}
 	}
+	
+	public void testConstructors() throws Exception
+	{
+		String code = "class Foo{ public: Foo(); };  Foo::SP ";
+		
+		IASTCompletionNode node = parse( code, code.indexOf( "SP" ) );
+		
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+                                                                 new IASTNode.LookupKind[]{ IASTNode.LookupKind.CONSTRUCTORS },
+                                                                 node.getCompletionContext() );
+		assertEquals( result.getResultsSize(), 1 );
+		IASTMethod constructor = (IASTMethod) result.getNodes().next();
+		assertEquals( constructor.getName(), "Foo" );
+	}
 
 }

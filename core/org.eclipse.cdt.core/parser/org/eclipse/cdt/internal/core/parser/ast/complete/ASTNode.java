@@ -82,6 +82,7 @@ public class ASTNode implements IASTNode {
 				s.getASTExtension().getPrimaryDeclaration() == null )
 			{
 				iter.remove();
+				continue;
 			}
 			
 			if( context != null && ((ASTNode)context).shouldFilterLookupResult( s ) )

@@ -816,8 +816,17 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		
 		ParserSymbolTable.lookup( data, this );
 		
+		List constructors = null;
+		if( filter != null && filter.willAccept( TypeInfo.t_constructor ) && (this instanceof IDerivableContainerSymbol) ){
+			if( getName().startsWith( prefix ) )
+				constructors = ((IDerivableContainerSymbol)this).getConstructors();
+		}
+		
 		if( data.foundItems == null || data.foundItems.isEmpty() ){
-			return null;
+			if( constructors != null )
+				return new LinkedList( constructors );
+			else
+				return null;
 		} else {
 			//remove any ambiguous symbols
 			if( data.ambiguities != null && !data.ambiguities.isEmpty() ){
@@ -840,6 +849,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 					list.add( obj );
 				}
 			}
+
+			if( constructors != null )
+				list.addAll( constructors );
 			
 			return list;
 		}

@@ -38,7 +38,13 @@ public class CThread extends CObject implements ICDIThread {
 		return Integer.toString(id);
 	}
 
-	StackFrame getCurrentStackFrame() {
+	StackFrame getCurrentStackFrame() throws CDIException {
+		if (currentFrame == null) {
+			ICDIStackFrame[] frames = getStackFrames();
+			if (frames.length > 0) {
+				currentFrame = (StackFrame)frames[0];
+			}
+		}
 		return currentFrame;
 	}
 

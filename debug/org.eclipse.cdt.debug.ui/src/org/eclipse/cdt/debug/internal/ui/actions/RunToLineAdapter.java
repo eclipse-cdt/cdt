@@ -12,8 +12,10 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -21,7 +23,10 @@ import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -41,11 +46,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class RunToLineAdapter implements IRunToLineTarget {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection,
-	 *      org.eclipse.debug.core.model.ISuspendResume)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#runToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	public void runToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) throws CoreException {
 		String errorMessage = null;
@@ -61,13 +63,24 @@ public class RunToLineAdapter implements IRunToLineTarget {
 					errorMessage = ActionMessages.getString( "RunToLineAdapter.Missing_document_1" ); //$NON-NLS-1$
 				}
 				else {
-					String fileName = getFileName( input );
+					final String fileName = getFileName( input );
 					ITextSelection textSelection = (ITextSelection)selection;
-					int lineNumber = textSelection.getStartLine() + 1;
+					final int lineNumber = textSelection.getStartLine() + 1;
 					if ( target instanceof IAdaptable ) {
-						IRunToLine runToLine = (IRunToLine)((IAdaptable)target).getAdapter( IRunToLine.class );
+						final IRunToLine runToLine = (IRunToLine)((IAdaptable)target).getAdapter( IRunToLine.class );
 						if ( runToLine != null && runToLine.canRunToLine( fileName, lineNumber ) ) {
-							runToLine.runToLine( fileName, lineNumber, DebugUIPlugin.getDefault().getPluginPreferences().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
+							Runnable r = new Runnable() {
+								
+								public void run() {
+									try {
+										runToLine.runToLine( fileName, lineNumber, DebugUIPlugin.getDefault().getPluginPreferences().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
+									}
+									catch( DebugException e ) {
+										failed( e );
+									}								
+								}
+							};
+							runInBackground( r );
 						}
 					}
 					return;
@@ -82,11 +95,22 @@ public class RunToLineAdapter implements IRunToLineTarget {
 			else {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
-				IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
+				final IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
 				if ( target instanceof IAdaptable ) {
-					IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter( IRunToAddress.class );
+					final IRunToAddress runToAddress = (IRunToAddress)((IAdaptable)target).getAdapter( IRunToAddress.class );
 					if ( runToAddress != null && runToAddress.canRunToAddress( address ) ) {
-						runToAddress.runToAddress( address, DebugUIPlugin.getDefault().getPluginPreferences().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
+						Runnable r = new Runnable() {
+							
+							public void run() {
+								try {
+									runToAddress.runToAddress( address, DebugUIPlugin.getDefault().getPluginPreferences().getBoolean( IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE ) );
+								}
+								catch( DebugException e ) {
+									failed( e );
+								}								
+							}
+						};
+						runInBackground( r );
 					}
 				}
 				return;
@@ -98,11 +122,8 @@ public class RunToLineAdapter implements IRunToLineTarget {
 		throw new CoreException( new Status( IStatus.ERROR, CDebugUIPlugin.getUniqueIdentifier(), ICDebugUIConstants.INTERNAL_ERROR, errorMessage, null ) );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection,
-	 *      org.eclipse.debug.core.model.ISuspendResume)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IRunToLineTarget#canRunToLine(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection, org.eclipse.debug.core.model.ISuspendResume)
 	 */
 	public boolean canRunToLine( IWorkbenchPart part, ISelection selection, ISuspendResume target ) {
 		if ( part instanceof DisassemblyView || part instanceof ITextEditor )
@@ -118,5 +139,15 @@ public class RunToLineAdapter implements IRunToLineTarget {
 			return ((IStorageEditorInput)input).getStorage().getName();
 		}
 		return null;
+	}
+
+	private void runInBackground( Runnable r ) {
+		DebugPlugin.getDefault().asyncExec( r );
+	}
+
+	protected void failed( Throwable e ) {
+		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString( "RunToLineAdapter.0" ), null ); //$NON-NLS-1$
+		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
+		CDebugUtils.error( ms, this );
 	}
 }

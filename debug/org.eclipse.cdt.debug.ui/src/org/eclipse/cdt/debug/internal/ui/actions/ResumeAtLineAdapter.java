@@ -11,8 +11,11 @@
 package org.eclipse.cdt.debug.internal.ui.actions; 
 
 import org.eclipse.cdt.core.IAddress;
+import org.eclipse.cdt.debug.core.CDIDebugModel;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.model.IJumpToAddress;
 import org.eclipse.cdt.debug.core.model.IJumpToLine;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.views.disassembly.DisassemblyView;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -20,7 +23,10 @@ import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -54,13 +60,24 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 					errorMessage = ActionMessages.getString( "ResumeAtLineAdapter.1" ); //$NON-NLS-1$
 				}
 				else {
-					String fileName = getFileName( input );
+					final String fileName = getFileName( input );
 					ITextSelection textSelection = (ITextSelection)selection;
-					int lineNumber = textSelection.getStartLine() + 1;
+					final int lineNumber = textSelection.getStartLine() + 1;
 					if ( target instanceof IAdaptable ) {
-						IJumpToLine jumpToLine = (IJumpToLine)((IAdaptable)target).getAdapter( IJumpToLine.class );
+						final IJumpToLine jumpToLine = (IJumpToLine)((IAdaptable)target).getAdapter( IJumpToLine.class );
 						if ( jumpToLine != null && jumpToLine.canJumpToLine( fileName, lineNumber ) ) {
-							jumpToLine.jumpToLine( fileName, lineNumber );
+							Runnable r = new Runnable() {
+								
+								public void run() {
+									try {
+										jumpToLine.jumpToLine( fileName, lineNumber );
+									}
+									catch( DebugException e ) {
+										failed( e );
+									}								
+								}
+							};
+							runInBackground( r );
 						}
 					}
 					return;
@@ -75,11 +92,22 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 			else {
 				ITextSelection textSelection = (ITextSelection)selection;
 				int lineNumber = textSelection.getStartLine() + 1;
-				IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
+				final IAddress address = ((DisassemblyEditorInput)input).getAddress( lineNumber );
 				if ( target instanceof IAdaptable ) {
-					IJumpToAddress jumpToAddress = (IJumpToAddress)((IAdaptable)target).getAdapter( IJumpToAddress.class );
+					final IJumpToAddress jumpToAddress = (IJumpToAddress)((IAdaptable)target).getAdapter( IJumpToAddress.class );
 					if ( jumpToAddress != null && jumpToAddress.canJumpToAddress( address ) ) {
-						jumpToAddress.jumpToAddress( address );
+						Runnable r = new Runnable() {
+							
+							public void run() {
+								try {
+									jumpToAddress.jumpToAddress( address );
+								}
+								catch( DebugException e ) {
+									failed( e );
+								}								
+							}
+						};
+						runInBackground( r );
 					}
 				}
 				return;
@@ -149,5 +177,15 @@ public class ResumeAtLineAdapter implements IResumeAtLineTarget {
 			return ((IStorageEditorInput)input).getStorage().getName();
 		}
 		return null;
+	}
+
+	private void runInBackground( Runnable r ) {
+		DebugPlugin.getDefault().asyncExec( r );
+	}
+
+	protected void failed( Throwable e ) {
+		MultiStatus ms = new MultiStatus( CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, ActionMessages.getString( "ResumeAtLineAdapter.4" ), null ); //$NON-NLS-1$
+		ms.add( new Status( IStatus.ERROR, CDIDebugModel.getPluginIdentifier(), ICDebugInternalConstants.STATUS_CODE_ERROR, e.getMessage(), e ) );
+		CDebugUtils.error( ms, this );
 	}
 }

@@ -1,4 +1,10 @@
 2005-01-20 Mikhail Khodjaiants
+	Fix for bug 83412: Run to line and resume at line should run in the background.
+	* ResumeAtLineAdapter.java
+	* RunToLineAdapter.java
+	* ActionMessages.properties
+
+2005-01-20 Mikhail Khodjaiants
 	Bug 83330: Inconsistent in the label for Add expression.
 	* plugin.properties
 

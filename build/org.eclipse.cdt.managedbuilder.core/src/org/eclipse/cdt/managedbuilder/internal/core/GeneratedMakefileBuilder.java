@@ -58,9 +58,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	private static final String REFRESH = MESSAGE + ".updating";	//$NON-NLS-1$
 	private static final String MARKERS = MESSAGE + ".creating.markers";	//$NON-NLS-1$
 	
-	// Status codes
-	public static final int EMPTY_PROJECT_BUILD_ERROR = 1;
-
 	// Local variables
 	protected List resourcesToBuild;
 	protected List ruleList;
@@ -89,7 +86,6 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 * 
 	 */
 	public GeneratedMakefileBuilder() {
-
 	}
 
 	/* (non-Javadoc)
@@ -100,7 +96,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 		if (statusMsg != null) {
 			monitor.subTask(statusMsg);
 		}
-
+		
+		// Get the build information
 		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(getProject());
 
 		if (kind == IncrementalProjectBuilder.FULL_BUILD || info.isDirty()) {
@@ -123,10 +120,18 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				}
 			}
 		}
+		
+		// Scrub the build info of all the projects participating in the build
 		info.setDirty(false);
+		IProject[] deps = getProject().getReferencedProjects();
+		for (int i = 0; i < deps.length; i++) {
+			IProject project = deps[i];
+			IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(project);
+			depInfo.setDirty(false);
+		} 
 		
 		// Ask build mechanism to compute deltas for project dependencies next time
-		return getProject().getReferencedProjects();
+		return deps;
 	}
 
 	/**
@@ -150,15 +155,8 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 			monitor = new NullProgressMonitor();
 		}
 		
-		// We also need one of these ...
-		IProject currentProject = getProject();
-		if (currentProject == null) {
-			// Flag some sort of error and bail
-			return;
-		}
-
 		// Regenerate the makefiles for any managed projects this project depends on
-		IProject[] deps = currentProject.getReferencedProjects();
+		IProject[] deps = getProject().getReferencedProjects();
 		for (int i = 0; i < deps.length; i++) {
 			IProject depProject = deps[i];
 			if (ManagedBuildManager.manages(depProject)) {
@@ -167,32 +165,23 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				try {
 					generator.regenerateMakefiles();		
 				} catch (CoreException e) {
-					// This may be an empty project exception
-					if (e.getStatus().getCode() == GeneratedMakefileBuilder.EMPTY_PROJECT_BUILD_ERROR) {
-						// Just keep looking for other projects
-						continue;
-					} else {
-						// Throw the exception back to the builder
-						throw e;
-					}
+					// Throw the exception back to the builder
+					throw e;
 				}
 			}
 		}
 
 		// Need to report status to the user
-		String statusMsg = ManagedBuilderCorePlugin.getFormattedString(REBUILD, currentProject.getName());
+		String statusMsg = ManagedBuilderCorePlugin.getFormattedString(REBUILD, getProject().getName());
 		monitor.subTask(statusMsg);
 
 		// Regenerate the makefiles for this project
-		MakefileGenerator generator = new MakefileGenerator(currentProject, info, monitor);		
+		MakefileGenerator generator = new MakefileGenerator(getProject(), info, monitor);		
 		try {
 			generator.regenerateMakefiles();
 		} catch (CoreException e) {
-			// See if this is an empty project
-			if (e.getStatus().getCode() == GeneratedMakefileBuilder.EMPTY_PROJECT_BUILD_ERROR) {
-				monitor.worked(1);
-				return;
-			}
+			// Throw the exception back to the builder
+			throw e;
 		}
 		IPath topBuildDir = generator.getTopBuildDir();
 		
@@ -254,35 +243,43 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	 */
 	protected void incrementalBuild(IResourceDelta delta, IManagedBuildInfo info, IProgressMonitor monitor) throws CoreException {
 		// Rebuild the resource tree in the delta
-		IProject currentProject = getProject();
 		String statusMsg = null;
 		
 		// Need to report status to the user
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();
 		}
-		statusMsg = ManagedBuilderCorePlugin.getFormattedString(INCREMENTAL, currentProject.getName());
+		statusMsg = ManagedBuilderCorePlugin.getFormattedString(INCREMENTAL, getProject().getName());
 		monitor.subTask(statusMsg);
 		
+		// Regenerate the makefiles for any managed projects this project depends on
+		IProject[] deps = getProject().getReferencedProjects();
+		for (int i = 0; i < deps.length; i++) {
+			IProject depProject = deps[i];
+			if (ManagedBuildManager.manages(depProject)) {
+				IManagedBuildInfo depInfo = ManagedBuildManager.getBuildInfo(depProject);
+				MakefileGenerator generator = new MakefileGenerator(depProject, depInfo, monitor);
+				try {
+					generator.regenerateMakefiles();		
+				} catch (CoreException e) {
+					// Throw the exception back to the builder
+					throw e;
+				}
+			}
+		}
+
 		// Ask the makefile generator to generate any makefiles needed to build delta
-		MakefileGenerator generator = new MakefileGenerator(currentProject, info, monitor);
+		MakefileGenerator generator = new MakefileGenerator(getProject(), info, monitor);
 		try {
 			generator.generateMakefiles(delta);
 		} catch (CoreException e) {
-			if (e.getStatus().getCode() == GeneratedMakefileBuilder.EMPTY_PROJECT_BUILD_ERROR) {
-				// There is nothing to build so bail
-				monitor.worked(1);
-				return;		
-			} else {
-				throw e;
-			}
+			// Throw the exception back to the builder
+			throw e;
 		}	
 
-		// Run the build if there is any relevant change
-		if (generator.shouldRunBuild()) {
-			IPath buildDir = new Path(info.getConfigurationName());
-			invokeMake(false, buildDir, info, monitor);
-		}
+		// Run the build
+		IPath buildDir = new Path(info.getConfigurationName());
+		invokeMake(false, buildDir, info, monitor);
 		
 		monitor.worked(1);		
 	}
@@ -310,6 +307,11 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	
 				// Remove all markers for this project
 				removeAllMarkers(currentProject);
+				IProject[] deps = currentProject.getReferencedProjects();
+				for (int i = 0; i < deps.length; i++) {
+					IProject project = deps[i];
+					removeAllMarkers(project);
+				} 
 
 				IPath workingDirectory = getWorkingDirectory().append(buildDir);
 	
@@ -361,12 +363,16 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 						errMsg = launcher.getErrorMessage();
 					}
 				
-					// Force a resync of the project without allowing the user to cancel.
+					// Force a resync of the projects without allowing the user to cancel.
 					// This is probably unkind, but short of this there is no way to insure
 					// the UI is up-to-date with the build results
 					monitor.subTask(ManagedBuilderCorePlugin.getResourceString(REFRESH));
 					try {
 						currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+						for (int j = 0; j < deps.length; ++j) {
+							IProject project = deps[j];
+							project.refreshLocal(IResource.DEPTH_INFINITE, null);
+						}
 					} catch (CoreException e) {
 						monitor.subTask(ManagedBuilderCorePlugin.getResourceString(REFRESH_ERROR));
 					}

@@ -1,4 +1,40 @@
 2003-09-26 Sean Evoy
+	A partial implementation for bug 41826. This patch contains the logic to properly 
+	respond in the face of the following project changes:
+	
+	1. A generated project element, such as the build target or an intermediate file, 
+	is deleted in the build project, or any projects it references.
+	2. The build settings change in the build project or any projects it 
+	references.
+	
+	In order to actually do this correctly, I had to stop being so precious during the 
+	build. The makefile generator was was calculating the "build needed" state as it 
+	walked the change delta. However, the Eclipse core has already determined that I 
+	need to do a build. Further, as I discovered earlier, it doesn't always pass what 
+	has changed in referenced projects as part of the delta. Essentially, that means I 
+	will never be able to fully calculate the change set in the makefile generator's 
+	delta visitor, and to even approximate a decent set of cases, the logic would quickly 
+	bog down in complexity. 
+	
+	The solution is to trust Eclipse and alway invoke make when my incremental builder 
+	is called. At worst, if there is no significant change, make will execute and 
+	report nothing to be done.
+	
+	The modified makefile builder no longer asks the makefile generator if it should 
+	build. It also no longer cares if the change set is empty (make will report that). 
+	Since it responds to changes in referenced project's build information, it also 
+	scrubs all relevant projects after building. Since a build might involve building 
+	referenced project elements, those projects get their project views refreshed after 
+	build. The build markers for referenced projects are removed prior to build.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/GeneratedMakefileBuilder.java
+	
+	The makefile generator has been simplified. The resource delta visitor logic no 
+	longer trie to decide if a build should occur. The method to ask has been removed. 
+	The class no longer throws an exception if the change set is empty. I am also a bit 
+	more careful to call make with the right targets if a referenced project is built.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+	
+2003-09-26 Sean Evoy
 	I added a fix to the builder and makefile generator to properly handle the following case.
 	Project A depends on Project B. Something changes in project B and the user requests 
 	that A be built. Inthis case, the incremental builder is invoked, but it is passed a 

@@ -186,40 +186,6 @@ public class ASTFailedTests extends BaseASTTest
        	IASTAbstractTypeSpecifierDeclaration abs = (IASTAbstractTypeSpecifierDeclaration)assertSoleDeclaration(code.toString());
        	assertEquals( ((IASTClassSpecifier)abs.getTypeSpecifier()).getName(), "G" ); 
     }
-    public void testBug39704A() throws Exception
-    {
-        assertCodeFailsParse("__declspec (dllimport) int foo;");
-    }
-    
-    
-    public void testBug39704B() throws Exception
-    {
-    	try
-    	{
-			IASTVariable d = (IASTVariable)assertSoleDeclaration("extern int (* import) (void) __attribute__((dllimport));");
-			assertEquals( d.getName(), "__attribute__"); // false assertion 
-    	}
-    	catch( ClassCastException cce )
-    	{
-			failedAsExpected();
-    	}
-    }
-    public void testBug39704C() throws Exception
-    {
-    	try
-    	{
-			IASTFunction f = (IASTFunction)assertSoleDeclaration("int func2 (void) __attribute__((dllexport));");
-			assertNotReached();
-			assertEquals( f.getName(), "func2");
-    	} catch( ClassCastException cce )
-    	{
-    	}
-    }
-    public void testBug39704D() throws Exception
-    {
-        assertCodeFailsParse("__declspec(dllexport) int func1 (int a) {}");
-    }
-
 
     
 	public void testBug40422() throws Exception {

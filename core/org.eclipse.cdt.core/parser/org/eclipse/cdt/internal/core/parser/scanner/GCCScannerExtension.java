@@ -10,17 +10,21 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
-import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerUtility.InclusionParseException;
+import org.eclipse.cdt.internal.core.parser.token.Token;
+import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
 
 /**
  * @author jcamelon
@@ -29,7 +33,16 @@ public class GCCScannerExtension implements IScannerExtension {
 
 
 	private IScannerData scannerData;
+	private static final String __ATTRIBUTE__ = "__attribute__";
+	private static final String __DECLSPEC = "__declspec";
+	private static final List EMPTY_LIST = new ArrayList();
 
+	private static final List simpleIdentifiers;
+	static
+	{
+		simpleIdentifiers = new ArrayList();
+		simpleIdentifiers.add( new Token( IToken.tIDENTIFIER, "x")); //$NON-NLS-1
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#initializeMacroValue(java.lang.String)
 	 */
@@ -43,6 +56,18 @@ public class GCCScannerExtension implements IScannerExtension {
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#setupBuiltInMacros()
 	 */
 	public void setupBuiltInMacros(ParserLanguage language) {
+
+		if( scannerData.getScanner().getDefinition( __ATTRIBUTE__) == null )
+		{
+			scannerData.getScanner().addDefinition( __ATTRIBUTE__, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiers,  EMPTY_LIST, "#define __attribute__( x )", "" )); //$NON-NLS-1$ $NON-NLS-2$
+		}
+		
+		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
+		{
+			scannerData.getScanner().addDefinition( __DECLSPEC, new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiers,  EMPTY_LIST, "#define __attribute__( x )", "" )); //$NON-NLS-1$ $NON-NLS-2$
+		}
+
+		
 		if( language == ParserLanguage.CPP )
 			if( scannerData.getScanner().getDefinition( IScanner.__CPLUSPLUS ) == null )
 				scannerData.getScanner().addDefinition( IScanner.__CPLUSPLUS, new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1")); //$NON-NLS-1$

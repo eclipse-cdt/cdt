@@ -1,4 +1,8 @@
 2004-04-06 John Camelon
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=39704 
+	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=29060 
+
+2004-04-06 John Camelon
 		Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=47797
 
 2004-04-05 Andrew Niefer

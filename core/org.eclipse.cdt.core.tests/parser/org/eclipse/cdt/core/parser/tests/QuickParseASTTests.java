@@ -2136,4 +2136,30 @@ public class QuickParseASTTests extends BaseASTTest
         IASTVariable variable = (IASTVariable)parse("int ab$cd = 1;").getDeclarations().next();
         assertEquals( variable.getName(), "ab$cd");
     }
+    
+    
+    public void testBug39704A() throws Exception
+    {
+        IASTVariable foo = (IASTVariable) assertSoleDeclaration("__declspec (dllimport) int foo;");
+        assertEquals( foo.getName(), "foo");
+    }    
+
+
+    public void testBug39704B() throws Exception
+    {
+		IASTVariable d = (IASTVariable)assertSoleDeclaration("extern int (* import) (void) __attribute__((dllimport));");
+		assertEquals( d.getName(), "import"); // false assertion 
+    }
+    public void testBug39704C() throws Exception
+    {
+ 		IASTFunction f = (IASTFunction)assertSoleDeclaration("int func2 (void) __attribute__((dllexport));");
+		assertEquals( f.getName(), "func2");
+    }
+    
+    public void testBug39704D() throws Exception
+    {
+        IASTFunction func1 = (IASTFunction) assertSoleDeclaration("__declspec(dllexport) int func1 (int a) {}");
+        assertEquals( func1.getName(), "func1");
+    }
+
 }

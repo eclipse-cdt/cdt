@@ -152,7 +152,6 @@ public class Scanner implements IScanner {
 			// assert false
 		} 
 		
-		
 		TraceUtil.outputTrace(log, "Scanner constructed with the following configuration:"); //$NON-NLS-1$
 		TraceUtil.outputTrace(log, "\tPreprocessor definitions from IScannerInfo: "); //$NON-NLS-1$
 

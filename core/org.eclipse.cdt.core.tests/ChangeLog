@@ -1,4 +1,7 @@
 2004-04-06 John Camelon
+	Moved testBug39704A(), testBug39704B(), testBug39704C() & testBug39704D() from ASTFailedTests to QuickParseASTTests.	
+
+2004-04-06 John Camelon
 	Added ScannerTestCase::testBug47797().  
 
 2004-04-05 Andrew Niefer

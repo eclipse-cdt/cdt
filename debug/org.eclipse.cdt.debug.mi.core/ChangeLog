@@ -1,3 +1,8 @@
+2005-03-07 Alain Magloire
+	Fix for 87230: base on  Jayaprakash ideas/patch
+	On HP statck-list-frames answer contain not kosher strings
+	* mi/org/eclipse/cdt/debug/mi/core/output/MIParser.java
+
 2005-02-01 Alain Magloire
 	Part of Fix for PR 84165
 	We check in the expression is a number and

@@ -285,6 +285,10 @@ public class MIParser {
 			buffer.delete(0, equal + 1);
 			MIValue value = processMIValue(buffer);
 			result.setMIValue(value);
+		} else if(buffer.length()>0 && buffer.charAt(0)=='"') {
+			// This an error but we just swallow it and move on.
+			MIValue value = processMIValue(buffer);
+			result.setMIValue(value);
 		} else {
 			result.setVariable(buffer.toString());
 			result.setMIValue(new MIConst()); // Empty string:???

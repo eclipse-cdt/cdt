@@ -83,6 +83,7 @@ public class TargetBuild {
 	}
 
 	static public void buildTargets(Shell shell, final IMakeTarget[] targets) {
+		saveAllResources(targets);
 		if (MakeTargetsPreferencePage.isBuildTargetInBackground()) {
 			new Job(MakeUIPlugin.getResourceString("TargetBuild.backgroundTask.name")) { //$NON-NLS-1$
 

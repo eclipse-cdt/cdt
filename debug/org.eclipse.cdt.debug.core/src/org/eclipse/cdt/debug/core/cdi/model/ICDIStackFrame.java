@@ -44,4 +44,9 @@ public interface ICDIStackFrame extends ICDIObject
 	 * @throws CDIException if this method fails.  Reasons include:
 	 */
 	ICDIArgument[] getArguments() throws CDIException;
+	
+	/**
+	 * Returns the level of the stack frame.
+	 */
+	int getLevel();
 }

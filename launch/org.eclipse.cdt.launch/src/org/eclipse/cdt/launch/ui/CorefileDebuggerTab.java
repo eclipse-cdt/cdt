@@ -114,7 +114,9 @@ public class CorefileDebuggerTab extends AbstractCDebuggerTab {
 		super.initializeFrom(config);
 		try {
 			String id = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_ID, "");
-			loadDebuggerComboBox(config, id);
+			if (getDebugConfig() == null || !getDebugConfig().getID().equals(id)) {
+				loadDebuggerComboBox(config, id);
+			}
 		}
 		catch (CoreException e) {
 			return;

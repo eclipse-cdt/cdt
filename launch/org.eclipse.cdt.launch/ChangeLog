@@ -1,4 +1,8 @@
 2003-01-16 David Inglis
+	* src/.../launch/ui/CDebuggerTab.java
+	made 'revert' work properly within the debugger tab.
+
+2003-01-16 David Inglis
 	* src/.../launch/AbstractCLaunchDelegate.java
 	add check for program existance on disk before launch
 		

@@ -2,6 +2,16 @@
 	Fix for bug#Bug 59618 : [Refactoring] Be able to append refactor action group after my own group
 	
 2004-04-23 Alain Magloire
+
+	Adjusting the UI to changes of the core
+	Concerning customization of translation Unit
+	pathc from Sam PR 52864
+
+	* browser/org/eclipse/cdt/ui/browser/typeinfo/TypeInfoLableProvider.java
+	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
+	* src/org/eclipse/cdt/internal/ui/edito/FileSearchAction.java
+
+2004-04-23 Alain Magloire
 	Possible NPE.
 	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java
 

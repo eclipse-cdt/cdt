@@ -127,14 +127,8 @@ public class TypeInfoLabelProvider extends LabelProvider {
 	public static Image getFileIcon(IPath path)
 	{
 		if (path != null) {
-			String ext= path.getFileExtension();
-			if (ext != null) {
-				String[] exts = CoreModel.getDefault().getHeaderExtensions();
-				for (int i = 0; i < exts.length; i++) {
-					if (exts[i].equalsIgnoreCase(ext)) {
-						return HEADER_ICON;
-					}
-				}
+			if (CoreModel.isValidHeaderUnitName(path.lastSegment())) {
+				return HEADER_ICON;
 			}
 		}
 		return SOURCE_ICON;

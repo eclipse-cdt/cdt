@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
@@ -106,8 +107,7 @@ public class CElementImageProvider {
 		} else if (element instanceof IFile) {
 			// Check for Non Translation Unit.
 			IFile file = (IFile)element;
-			CoreModel model = CoreModel.getDefault();
-			if (model.isTranslationUnit(file)) {
+			if (CoreModel.isTranslationUnit(file)) {
 				descriptor = CPluginImages.DESC_OBJS_TUNIT_RESOURCE;
 				Point size= useSmallSize(flags) ? SMALL_SIZE : BIG_SIZE;
 				descriptor = new CElementImageDescriptor(descriptor, 0, size);
@@ -280,23 +280,17 @@ public class CElementImageProvider {
 			case ICElement.C_ARCHIVE:
 				return CPluginImages.DESC_OBJS_ARCHIVE;
 
-			case ICElement.C_UNIT:
-				String ext = celement.getPath().getFileExtension();
-				if (ext != null) {
-					String[] exts = CoreModel.getDefault().getHeaderExtensions();
-					for (int i = 0; i < exts.length; i++) {
-						if (exts[i].equalsIgnoreCase(ext)) {
-							return CPluginImages.DESC_OBJS_TUNIT_HEADER;
-						}
-					}
-					exts = CoreModel.getDefault().getAssemblyExtensions();
-					for (int i = 0; i < exts.length; i++) {
-						if (exts[i].equalsIgnoreCase(ext)) {
-							return CPluginImages.DESC_OBJS_TUNIT_ASM;
-						}
+			case ICElement.C_UNIT: {
+				ITranslationUnit unit = (ITranslationUnit)celement;
+				if (unit.isHeaderUnit()) {
+					return CPluginImages.DESC_OBJS_TUNIT_HEADER;
+				} else if (unit.isSourceUnit()) {
+					if (unit.isASMLanguage()) {
+						return CPluginImages.DESC_OBJS_TUNIT_ASM;
 					}
 				}
 				return CPluginImages.DESC_OBJS_TUNIT;
+			}
 				
 			case ICElement.C_CCONTAINER:
 				if (celement instanceof ISourceRoot) {

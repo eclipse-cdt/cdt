@@ -83,9 +83,10 @@ public class FileSearchAction extends Action {
 			TextSearchScope scope= TextSearchScope.newWorkspaceScope();
 			// Add the extensions from the C editor definition for now
 			// FIXME: For C/C++ not all files rely on extension to be C++ for <cstring>
-			String[] cexts = CoreModel.getDefault().getTranslationUnitExtensions();
-			for (int i = 0; i < cexts.length; i++) {
-				scope.addExtension("*." + cexts[i]); //$NON-NLS-1$
+			String[] patterns = CoreModel.getDefault().getTranslationUnitExtensions();
+			for (int i = 0; i < patterns.length; i++) {
+				//scope.addExtension("*." + cexts[i]); //$NON-NLS-1$
+				scope.addExtension(patterns[i]);
 			}
 //			scope.addExtension("*.c");
 //			scope.addExtension("*.h");

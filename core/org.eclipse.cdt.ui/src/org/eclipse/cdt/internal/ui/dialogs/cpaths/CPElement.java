@@ -25,7 +25,9 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 
 public class CPElement {
 
@@ -49,14 +51,14 @@ public class CPElement {
 	private final ArrayList fChildren = new ArrayList(1);
 
 	private boolean fIsExported;
-	private boolean fIsMissing;
 
 	private IPathEntry fCachedEntry;
 	private CPElement Inherited; // used when the path is duplicated on a child
-	// resource but is inherited from a parent
-	// resource
-	// these are not real path entries
+								 // resource but is inherited from a parent
+								 // resource these are not real path entries
 
+	private IStatus fStatus;
+	
 	// create a inherited element and apply to path/resource
 	public CPElement(CPElement element, IPath path, IResource res) {
 		this(element.getCProject(), element.getEntryKind(), path, res);
@@ -76,7 +78,6 @@ public class CPElement {
 		fResource = res;
 
 		fIsExported = false;
-		fIsMissing = false;
 		fCachedEntry = null;
 
 		switch (entryKind) {
@@ -357,6 +358,7 @@ public class CPElement {
 	
 	private void attributeChanged(String key) {
 		fCachedEntry = null;
+		fStatus = null;
 	}
 
 	/*
@@ -427,15 +429,91 @@ public class CPElement {
 	 * 
 	 * @return Returns a boolean
 	 */
-	public boolean isMissing() {
-		return fIsMissing;
-	}
-
-	/**
-	 * Sets the 'missing' state of the entry.
-	 */
-	public void setIsMissing(boolean isMissing) {
-		fIsMissing = isMissing;
+	public IStatus getStatus() {
+		if (Inherited != null) {
+			return Inherited.getStatus();
+		}
+		if (fStatus == null) {
+			fStatus = Status.OK_STATUS;
+			IResource res = null;
+			IPath path;
+			IWorkspaceRoot root = CUIPlugin.getWorkspace().getRoot();
+			IPathEntry entry = getPathEntry();
+			switch (getEntryKind()) {
+				case IPathEntry.CDT_CONTAINER :
+					try {
+						if ((CoreModel.getPathEntryContainer(fPath, fCProject) == null)) {
+							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1,
+									CPathEntryMessages.getString("CPElement.status.pathContainerMissing"), null); //$NON-NLS-1$
+						}
+					} catch (CModelException e) {
+					}
+					break;
+				case IPathEntry.CDT_LIBRARY :
+					if (!((ILibraryEntry)entry).getFullLibraryPath().toFile().exists()) {
+						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.libraryPathNotFound"), null); //$NON-NLS-1$
+					}
+					break;
+				case IPathEntry.CDT_SOURCE :
+					path = fPath.removeTrailingSeparator();
+					res = root.findMember(path);
+					if (res == null) {
+						if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
+							res = root.getFolder(path);
+						}
+						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.sourcePathMissing"), null); //$NON-NLS-1$
+					}
+					break;
+				case IPathEntry.CDT_OUTPUT :
+					path = fPath.removeTrailingSeparator();
+					res = root.findMember(path);
+					if (res == null) {
+						if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
+							res = root.getFolder(path);
+						}
+						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.outputPathMissing"), null); //$NON-NLS-1$
+					}
+					break;
+				case IPathEntry.CDT_INCLUDE :
+					path = fPath.removeTrailingSeparator();
+					res = root.findMember(path);
+					if (res == null) {
+						if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
+							res = root.getFolder(path);
+						}
+					}
+					if (res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
+						if (!fCProject.isOnSourceRoot(res)) {
+							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.notOnSourcePath"), null); //$NON-NLS-1$
+						}
+					}
+					if (!((IIncludeEntry)entry).getFullIncludePath().toFile().exists()) {
+						fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.includePathNotFound"), null); //$NON-NLS-1$
+					}
+					break;
+				case IPathEntry.CDT_MACRO :
+					path = fPath.removeTrailingSeparator();
+					res = root.findMember(path);
+					if (res == null) {
+						if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
+							res = root.getFolder(path);
+						}
+					}
+					if (res.getType() != IResource.ROOT && res.getType() != IResource.PROJECT && fCProject != null) {
+						if (!fCProject.isOnSourceRoot(res)) {
+							fStatus = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.notOnSourcePath"), null); //$NON-NLS-1$
+						}
+					}
+					break;
+				case IPathEntry.CDT_PROJECT :
+					res = root.findMember(fPath);
+					if (res == null) {
+						fStatus = new Status(IStatus.ERROR, CUIPlugin.PLUGIN_ID, -1, CPathEntryMessages.getString("CPElement.status.missingProjectPath"), null); //$NON-NLS-1$
+					}
+					break;
+			}
+		}
+		return fStatus;
 	}
 
 	/**
@@ -486,26 +564,12 @@ public class CPElement {
 
 		// get the resource
 		IResource res = null;
-		boolean isMissing = false;
 
 		switch (curr.getEntryKind()) {
 			case IPathEntry.CDT_CONTAINER :
 				res = null;
-				try {
-					isMissing = (CoreModel.getPathEntryContainer(path, project) == null);
-				} catch (CModelException e) {
-				}
 				break;
 			case IPathEntry.CDT_LIBRARY :
-				res = root.findMember(path);
-				if (res == null) {
-					//					if (!ArchiveFileFilter.isArchivePath(path)) {
-					if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()
-							&& root.getProject(path.segment(0)).exists()) {
-						res = root.getFolder(path);
-					}
-					isMissing = !path.toFile().isFile(); // look for external
-				}
 				library = ((ILibraryEntry)curr).getLibraryPath();
 				sourceAttachment = ((ILibraryEntry)curr).getSourceAttachmentPath();
 				base = ((ILibraryEntry)curr).getBasePath();
@@ -518,7 +582,6 @@ public class CPElement {
 					if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
 						res = root.getFolder(path);
 					}
-					isMissing = true;
 				}
 				exclusion = ((ISourceEntry)curr).getExclusionPatterns();
 				break;
@@ -529,7 +592,6 @@ public class CPElement {
 					if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
 						res = root.getFolder(path);
 					}
-					isMissing = true;
 				}
 				exclusion = ((IOutputEntry)curr).getExclusionPatterns();
 				break;
@@ -540,9 +602,6 @@ public class CPElement {
 					if (root.getWorkspace().validatePath(path.toString(), IResource.FOLDER).isOK()) {
 						res = root.getFolder(path);
 					}
-				}
-				if (res.getType() != IResource.ROOT && project != null) {
-					isMissing = !project.isOnSourceRoot(res);
 				}
 				exclusion = ((IIncludeEntry)curr).getExclusionPatterns();
 				sysInclude = ((IIncludeEntry)curr).isSystemInclude();
@@ -558,9 +617,6 @@ public class CPElement {
 						res = root.getFolder(path);
 					}
 				}
-				if (res.getType() != IResource.ROOT && project != null) {
-					isMissing = !project.isOnSourceRoot(res);
-				}
 				exclusion = ((IMacroEntry)curr).getExclusionPatterns();
 				macroName = ((IMacroEntry)curr).getMacroName();
 				macroValue = ((IMacroEntry)curr).getMacroValue();
@@ -569,7 +625,6 @@ public class CPElement {
 				break;
 			case IPathEntry.CDT_PROJECT :
 				res = root.findMember(path);
-				isMissing = (res == null);
 				break;
 		}
 		CPElement elem = new CPElement(project, curr.getEntryKind(), path, res);
@@ -583,10 +638,6 @@ public class CPElement {
 		elem.setAttribute(BASE_REF, baseRef);
 		elem.setAttribute(BASE, base);
 		elem.setExported(curr.isExported());
-
-		if (project != null && project.exists()) {
-			elem.setIsMissing(isMissing);
-		}
 		return elem;
 	}
 }

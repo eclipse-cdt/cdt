@@ -10,7 +10,11 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -20,17 +24,19 @@ public class CPElementGroup {
 	private CPElement parent;
 	private final int kind;
 	private IResource resource;
-	private List children = new ArrayList(1);
+	private Map childrenListMap;
+	private List childrenList;
 
 	public CPElementGroup(IResource resource) {
 		this.kind = -1;
 		this.resource = resource;
-		this.children = new ArrayList();
+		this.childrenListMap = new HashMap(2);
 	}
 
 	public CPElementGroup(CPElement parent, int kind) {
 		this.parent = parent;
 		this.kind = kind;
+		this.childrenList = new ArrayList();
 	}
 
 	public IResource getResource() {
@@ -66,16 +72,38 @@ public class CPElementGroup {
 		return hashCode + kind;
 	}
 
+	public int indexof(CPElement element) {
+		List children = getChildrenList(element.getEntryKind(), false);
+		return children != null ? children.indexOf(element) : -1;
+	}
+	
+	public void addChild(CPElement element, int insertIndex) {
+		List children = getChildrenList(element.getEntryKind(), true);
+		children.add(insertIndex, element);
+		element.setParent(this);
+	}
+	
 	public void addChild(CPElement element) {
+		List children = getChildrenList(element.getEntryKind(), true);
 		int indx = children.indexOf(element);
 		if (indx == -1) {
-			children.add(element);
+			indx = children.size();
+			if (element.getInherited() == null) {
+				for (int i = 0; i < children.size(); i++) {
+					CPElement next = (CPElement)children.get(i);
+					if (next.getInherited() != null) {
+						indx = i;
+						break;
+					}
+				}
+			}
+			children.add(indx, element);
 			element.setParent(this);
-		} else { 	// add element with closes matching resource path.
+		} else { // add element with closes matching resource path.
 			CPElement other = (CPElement)children.get(indx);
-			if ( other.getInherited() != null && element.getInherited() != null) {
-				IPath otherPath = other.getInherited().getPath(); 
-				IPath elemPath = element.getInherited().getPath(); 
+			if (other.getInherited() != null && element.getInherited() != null) {
+				IPath otherPath = other.getInherited().getPath();
+				IPath elemPath = element.getInherited().getPath();
 				if (!otherPath.equals(elemPath) && otherPath.isPrefixOf(elemPath)) {
 					children.remove(indx);
 					other.setParent(null);
@@ -87,9 +115,15 @@ public class CPElementGroup {
 	}
 
 	public void setChildren(CPElement[] elements) {
-		children = new ArrayList(Arrays.asList(elements));
+		if (elements.length > 0) {
+			if (childrenListMap != null) {
+				childrenListMap.put(new Integer(elements[0].getEntryKind()), new ArrayList(Arrays.asList(elements)));
+			} else {
+				childrenList = new ArrayList(Arrays.asList(elements));
+			}
+		}
 	}
-	
+
 	public void addChildren(CPElement[] elements) {
 		for (int i = 0; i < elements.length; i++) {
 			addChild(elements[i]);
@@ -97,6 +131,10 @@ public class CPElementGroup {
 	}
 
 	public boolean removeChild(CPElement element) {
+		List children = getChildrenList(element.getEntryKind(), false);
+		if (children == null) {
+			return false;
+		}
 		boolean removed = children.remove(element);
 		if (removed) {
 			element.setParent(null);
@@ -104,19 +142,42 @@ public class CPElementGroup {
 		return removed;
 	}
 
-	public CPElement[] getChildren() {
+	public CPElement[] getChildren(int kind) {
+		List children = getChildrenList(kind, true);
 		return (CPElement[])children.toArray(new CPElement[children.size()]);
+	}
+
+	public CPElement[] getChildren() {
+		if (childrenList != null) {
+			return (CPElement[])childrenList.toArray(new CPElement[childrenList.size()]);
+		} else {
+			Collection lists = childrenListMap.values();
+			Iterator iter = lists.iterator();
+			List children = new ArrayList();
+			while (iter.hasNext()) {
+				children.addAll((List)iter.next());
+			}
+			return (CPElement[])children.toArray(new CPElement[children.size()]);
+		}
 	}
 
 	/**
 	 * @param newPath
 	 * @return
 	 */
-	public boolean contains(CPElement newPath) {
-		return children.contains(newPath);
+	public boolean contains(CPElement element) {
+		List children = getChildrenList(element.getEntryKind(), false);
+		if (children == null) {
+			return false;
+		}
+		return children.contains(element);
 	}
 
 	public void replaceChild(CPElement element, CPElement replaceWith) {
+		List children = getChildrenList(element.getEntryKind(), false);
+		if (children == null) {
+			return;
+		}
 		int idx = children.indexOf(element);
 		if (idx != -1) {
 			children.remove(idx);
@@ -124,4 +185,17 @@ public class CPElementGroup {
 		}
 	}
 
+	private List getChildrenList(int kind, boolean create) {
+		List children = null;
+		if (childrenList != null) {
+			children = childrenList;
+		} else {
+			children = (List)childrenListMap.get(new Integer(kind));
+			if (children == null && create) {
+				children = new ArrayList();
+				childrenListMap.put(new Integer(kind), children);
+			}
+		}
+		return children;
+	}
 }

@@ -97,6 +97,8 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 			case IStatus.WARNING :
 				getPathStatus().setWarning(status.getMessage());
 				break;
+			default:
+				getPathStatus().setOK();
 		}
 		updateBuildPathStatus();
 		doStatusLineUpdate();

@@ -16,13 +16,14 @@ import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 public class CPathTabBlock extends AbstractPathOptionBlock {
 
-	private int[] pathTypes = { IPathEntry.CDT_SOURCE, IPathEntry.CDT_PROJECT, IPathEntry.CDT_OUTPUT, IPathEntry.CDT_LIBRARY,
+	private int[] pathTypes = {IPathEntry.CDT_SOURCE, IPathEntry.CDT_PROJECT, IPathEntry.CDT_OUTPUT, IPathEntry.CDT_LIBRARY,
 			IPathEntry.CDT_CONTAINER};
 	private ListDialogField fCPathList;
 
@@ -50,7 +51,7 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 	public CPathTabBlock(IStatusChangeListener context, int pageToShow) {
 		super(context, pageToShow);
 
-		String[] buttonLabels = new String[] { /* 0 */CPathEntryMessages.getString("CPathsBlock.path.up.button"), //$NON-NLS-1$
+		String[] buttonLabels = new String[]{ /* 0 */CPathEntryMessages.getString("CPathsBlock.path.up.button"), //$NON-NLS-1$
 				/* 1 */CPathEntryMessages.getString("CPathsBlock.path.down.button"), //$NON-NLS-1$
 				/* 2 */null, /* 3 */CPathEntryMessages.getString("CPathsBlock.path.checkall.button"), //$NON-NLS-1$
 				/* 4 */CPathEntryMessages.getString("CPathsBlock.path.uncheckall.button") //$NON-NLS-1$
@@ -97,7 +98,6 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		return control;
 	}
 
-
 	protected void initialize(ICElement element, List cPaths) {
 
 		fCPathList.setElements(cPaths);
@@ -114,11 +114,10 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		initializeTimeStamps();
 	}
 
-	
 	protected int[] getFilteredTypes() {
 		return pathTypes;
 	}
-	
+
 	/**
 	 * Validates the build path.
 	 */
@@ -127,29 +126,28 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 
 		List elements = fCPathList.getElements();
 
-		CPElement entryMissing = null;
-		int nEntriesMissing = 0;
+		CPElement entryError = null;
+		int nErrorEntries = 0;
 		IPathEntry[] entries = new IPathEntry[elements.size()];
 
 		for (int i = elements.size() - 1; i >= 0; i--) {
-			CPElement currElement = (CPElement) elements.get(i);
+			CPElement currElement = (CPElement)elements.get(i);
 
 			entries[i] = currElement.getPathEntry();
-			if (currElement.isMissing()) {
-				nEntriesMissing++;
-				if (entryMissing == null) {
-					entryMissing = currElement;
+			if (currElement.getStatus().getSeverity() != IStatus.OK) {
+				nErrorEntries++;
+				if (entryError == null) {
+					entryError = currElement;
 				}
 			}
 		}
 
-		if (nEntriesMissing > 0) {
-			if (nEntriesMissing == 1) {
-				getPathStatus().setWarning(CPathEntryMessages.getFormattedString("CPathsBlock.warning.EntryMissing", //$NON-NLS-1$
-						entryMissing.getPath().toString()));
+		if (nErrorEntries > 0) {
+			if (nErrorEntries == 1) {
+				getPathStatus().setWarning(entryError.getStatus().getMessage());
 			} else {
-				getPathStatus().setWarning(CPathEntryMessages.getFormattedString("CPathsBlock.warning.EntriesMissing", //$NON-NLS-1$
-						String.valueOf(nEntriesMissing)));
+				getPathStatus().setWarning(CPathEntryMessages.getFormattedString("CPElement.status.multiplePathErrors", //$NON-NLS-1$
+						String.valueOf(nErrorEntries)));
 			}
 		}
 

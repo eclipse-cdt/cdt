@@ -282,4 +282,15 @@ public class SelectionParseTest extends SelectionParseBaseTest {
 		int startIndex = code.indexOf( "foo(1)"); //$NON-NLS-1$
 		parse( code, startIndex, startIndex + 3 );
 	}
+	
+	public void testBug66744() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "enum EColours { RED, GREEN, BLUE };      \n" ); //$NON-NLS-1$
+		writer.write( "void foo() {  EColours color = GREEN; }  \n" ); //$NON-NLS-1$
+		
+		String code = writer.toString();
+		int startIndex = code.indexOf( "EColours color"); //$NON-NLS-1$
+		parse( code, startIndex, startIndex + 8 );
+	}
 }

@@ -2651,6 +2651,7 @@ public abstract class Parser extends ExpressionParser implements IParser
             IToken t = consume(IToken.tRBRACE);
             enumeration.setEndingOffsetAndLineNumber(t.getEndOffset(), t.getLineNumber());
             enumeration.acceptElement( requestor, astFactory.getReferenceManager() );
+            handleEnumeration( enumeration );
             sdw.setTypeSpecifier(enumeration);
         }
         else
@@ -2660,7 +2661,8 @@ public abstract class Parser extends ExpressionParser implements IParser
             throw backtrack;
         }
     }
-    /**
+
+	/**
      * Parse a class/struct/union definition. 
      * 
      * classSpecifier
@@ -3338,6 +3340,11 @@ public abstract class Parser extends ExpressionParser implements IParser
 		handleOffsetableNamedElement( classSpecifier );
 	}
 
+
+	protected void handleEnumeration(IASTEnumerationSpecifier enumeration) throws EndOfFileException {
+		cleanupLastToken();
+		handleOffsetableNamedElement( enumeration );
+	}
 
 	/**
 	 * @param expression

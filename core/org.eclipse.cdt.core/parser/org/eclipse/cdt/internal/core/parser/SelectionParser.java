@@ -27,6 +27,7 @@ import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTEnumerator;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFunction;
@@ -373,6 +374,17 @@ public class SelectionParser extends ContextualParser {
 		{
 			contextNode = classSpecifier;
 			handleOffsetableNamedElement( classSpecifier );
+			throw new EndOfFileException();
+		}
+	}
+	
+	protected void handleEnumeration(IASTEnumerationSpecifier enumeration) throws EndOfFileException {
+		if( ! tokenDupleCompleted() )
+			super.handleEnumeration(enumeration);
+		else
+		{
+			contextNode = enumeration;
+			handleOffsetableNamedElement( enumeration );
 			throw new EndOfFileException();
 		}
 	}

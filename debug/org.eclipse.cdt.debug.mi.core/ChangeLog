@@ -1,3 +1,8 @@
+2002-12-17 Alain Magloire
+
+	* src/.../mi/core/cdi/Register.java (setFormat): bug fix
+	The format variable was not set.
+
 2002-12-05 Alain Magloire
 
 	GDB/MI provides error messages in its log stream, one problem

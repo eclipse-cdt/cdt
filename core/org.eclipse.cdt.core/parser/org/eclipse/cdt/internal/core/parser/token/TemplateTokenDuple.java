@@ -109,7 +109,8 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 			for( int j = 0; j < argLists[i].size(); ++ j )
 			{
 				IASTExpression e = (IASTExpression) argLists[i].get(j);
-				e.freeReferences();
+				if( e != null )
+				    e.freeReferences();
 				
 			}
 		}

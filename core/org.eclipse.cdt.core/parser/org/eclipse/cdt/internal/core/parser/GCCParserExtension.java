@@ -440,9 +440,11 @@ public class GCCParserExtension implements IParserExtension {
 		}
 		catch( EndOfFileException eof )
 		{
+		    //nothing
 		}
 		catch( BacktrackException bt )
 		{
+		    //nothing
 		}
 		parserData.backup( startingPoint );
 		return null;

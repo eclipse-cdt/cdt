@@ -475,4 +475,11 @@ public class SimpleToken extends AbstractToken implements IToken {
 		return getCharImage();
 	}
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.parser.ITokenDuple#isConversion()
+     */
+    public boolean isConversion() {
+        return false;
+    }
+
 }

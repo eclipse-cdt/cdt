@@ -1473,6 +1473,8 @@ public class Scanner implements IScanner {
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
+								if( forInclusion )
+									temporarilyReplaceDefinitionsMap();
 								return newToken(IToken.tLT, "<", contextStack.getCurrentContext());
 						}
 					case '>' :
@@ -1500,6 +1502,8 @@ public class Scanner implements IScanner {
 									contextStack.getCurrentContext());
 							default :
 								ungetChar(c);
+								if( forInclusion )
+									restoreDefinitionsMap();
 								return newToken(IToken.tGT, ">", contextStack.getCurrentContext());
 						}
 					case '.' :
@@ -2000,6 +2004,7 @@ public class Scanner implements IScanner {
 										new NullSourceElementRequestor(),
 										mode,
 										language, log );
+			helperScanner.setForInclusion( true );
 			IToken t = null;
 			
 			try {
@@ -2091,6 +2096,31 @@ public class Scanner implements IScanner {
 		}
 		else
 			handleInclusion(f.trim(), useIncludePath, startOffset, beginningOffset, endOffset); 
+	}
+
+	protected static final Hashtable emptyMap = new Hashtable(); 
+	protected Hashtable holderMap = null; 
+	
+	protected void temporarilyReplaceDefinitionsMap()
+	{
+		holderMap = definitions; 
+		definitions = emptyMap; 
+	}
+	
+	protected void restoreDefinitionsMap()
+	{
+		definitions = holderMap; 
+		holderMap = null;
+	}
+
+
+	protected boolean forInclusion = false;
+	/**
+	 * @param b
+	 */
+	protected void setForInclusion(boolean b)
+	{
+		forInclusion = b;
 	}
 
 	protected void poundDefine(int beginning) throws ScannerException, EndOfFile {

@@ -666,7 +666,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			{
 				return new ASTFieldReference( offset, string, (IASTField)symbol.getASTExtension().getPrimaryDeclaration());
 			}
-			else if( symbol.getContainingSymbol().getType() == TypeInfo.t_function && 
+			else if( ( 	symbol.getContainingSymbol().getType() == TypeInfo.t_function || 
+						symbol.getContainingSymbol().getType() == TypeInfo.t_constructor ) && 
 				symbol.getContainingSymbol() instanceof IParameterizedSymbol && 
 				((IParameterizedSymbol)symbol.getContainingSymbol()).getParameterList() != null && 
 				((IParameterizedSymbol)symbol.getContainingSymbol()).getParameterList().contains( symbol ) )
@@ -1327,11 +1328,25 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         List references = new ArrayList(); 
         
         IContainerSymbol scopeSymbol = scopeToSymbol(scope);
+        
+		boolean requireReferenceResolution = false;
         if( duple != null )
-        	lookupQualifiedName( scopeSymbol, duple, references, false );
+        {
+        	try
+        	{
+        		lookupQualifiedName( scopeSymbol, duple, references, true );
+        	} catch( ASTSemanticException ase )
+        	{
+        		requireReferenceResolution = true;
+        	}
+        }
         
         getExpressionReferences( expressionList, references ); 
-        return new ASTConstructorMemberInitializer( expressionList, duple == null ? "" : duple.toString(), references );
+        return new ASTConstructorMemberInitializer( 
+        	expressionList, 
+        	duple == null ? "" : duple.toString(), 
+			duple == null ? 0 : duple.getFirstToken().getOffset(),
+        	references, requireReferenceResolution );
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createSimpleTypeSpecifier(org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type, org.eclipse.cdt.core.parser.ITokenDuple, boolean, boolean, boolean, boolean, boolean)
@@ -1829,6 +1844,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 			throw new ASTSemanticException();   
 		}
 
+		resolveLeftoverConstructorInitializerMembers( symbol, constructorChain );
   
         ASTMethod method = new ASTMethod( symbol, nameEndOffset, parameters, returnType, exception, startOffset, nameOffset, ownerTemplate, references, previouslyDeclared, isConstructor, isDestructor, isPureVirtual, visibility, constructorChain, hasFunctionTryBlock );
         try
@@ -1842,6 +1858,53 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         return method;
     }
     /**
+	 * @param symbol
+	 * @param constructorChain
+	 */
+	protected void resolveLeftoverConstructorInitializerMembers(IParameterizedSymbol symbol, List constructorChain)
+	{
+		if( constructorChain != null )
+		{
+			Iterator initializers = constructorChain.iterator();
+			while( initializers.hasNext())
+			{
+				IASTConstructorMemberInitializer initializer = (IASTConstructorMemberInitializer)initializers.next();
+				if( !initializer.getName().equals( "") &&
+					initializer instanceof ASTConstructorMemberInitializer && 
+					((ASTConstructorMemberInitializer)initializer).requiresNameResolution() ) 
+				{
+					ASTConstructorMemberInitializer realInitializer = ((ASTConstructorMemberInitializer)initializer);
+					try
+					{
+						lookupQualifiedName( symbol, initializer.getName(), realInitializer.getNameOffset(), realInitializer.getReferences(), false );
+					}
+					catch( ASTSemanticException ase )
+					{
+					}
+				}
+				
+				// TODO try and resolve parameter references now in the expression list
+				
+			}
+		}
+		
+		
+	}
+
+	/**
+	 * @param symbol
+	 * @param string
+	 * @param i
+	 * @param list
+	 * @param b
+	 * @return
+	 */
+	protected ISymbol lookupQualifiedName(IParameterizedSymbol startingScope, String name, int nameOffset, List references, boolean throwOnError) throws ASTSemanticException
+	{
+		return lookupQualifiedName(startingScope, name, TypeInfo.t_any, null, nameOffset, references, throwOnError);
+	}
+
+	/**
      * @param symbol
      * @param isConst
      * @param isVolatile

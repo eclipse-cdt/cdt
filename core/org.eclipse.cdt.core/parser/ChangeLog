@@ -1,4 +1,9 @@
 2003-11-05 John Camelon
+	Fixed Bug 44838 : exception when resolving parameter references in a constructor 
+	Fixed Bug 46165 : fields referenced in constructor chains are not called back upon 
+	Fixed Bug 45551 : Macro replacement in #include <file.h> directives 
+
+2003-11-05 John Camelon
 	Cleaned up the ParserFactory interface to check for validity of input arguments.  
 	Moved NullSourceElementRequestor and ScannerInfo to public interface as requested. 
 	Restructured code so that no Eclipse/CDT source outside the parser source directory is used.

@@ -1,4 +1,9 @@
 2003-11-05 John Camelon
+	Added CompleteParseASTTest::testBug44838().  
+	Added CompleteParseASTTest::testBug46165().  
+	Added ScannerTestCase::testBug45551(). 
+
+2003-11-05 John Camelon
 	Updated parser clients to use new ParserFactory (stand-alone parser work item).  	
 
 2003-11-05 John Camelon

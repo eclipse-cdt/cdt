@@ -2,15 +2,19 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.EndOfFile;
 import org.eclipse.cdt.core.parser.IMacroDescriptor;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactoryException;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
+import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.internal.core.parser.Token;
 
 /**
@@ -1260,7 +1264,6 @@ public class ScannerTestCase extends BaseScannerTest
 		writer.write( "# define foo 2\n");
 		writer.write( "#endif\n");
 		writer.write( "foo\n");
-	
 		initializeScanner( writer.toString() );
 		validateInteger( "2" );
 		validateEOF();
@@ -1483,5 +1486,47 @@ public class ScannerTestCase extends BaseScannerTest
 		buffer.append( "#define SUMXY   X + Y");
 		initializeScanner(buffer.toString());
 		validateEOF(); 
+    }
+
+
+	protected static class Callback extends NullSourceElementRequestor implements ISourceElementRequestor
+	{
+		public List inclusions = new ArrayList();
+		public List problems = new ArrayList(); 
+			/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.parser.ISourceElementRequestor#enterInclusion(org.eclipse.cdt.core.parser.ast.IASTInclusion)
+		 */
+		public void enterInclusion(IASTInclusion inclusion)
+		{
+			inclusions.add( inclusion.getName() );
+		}
+		
+		public boolean acceptProblem( IProblem p )
+		{
+			problems.add( p );
+			return super.acceptProblem(p);
+		}
+		/**
+		 * @param mode
+		 */
+		public Callback(ParserMode mode)
+		{
+			super( mode );
+		}
+
+	}
+    
+    public void testBug45551() throws Exception
+    {
+    	StringBuffer buffer = new StringBuffer(); 
+    	buffer.append( "#define stdio someNonExistantIncludeFile\n" ); 
+		buffer.append( "#include <stdio.h>\n" ); 
+		
+		Callback callback = new Callback( ParserMode.QUICK_PARSE );
+		initializeScanner( buffer.toString(), ParserMode.QUICK_PARSE, callback );
+		validateEOF();
+		assertEquals( callback.problems.size(), 0 );
+		assertEquals( callback.inclusions.size(), 1 );
+		assertEquals( callback.inclusions.get(0), "stdio.h"); 
     }
 }

@@ -58,6 +58,7 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICDebugElementErrorStatus;
 import org.eclipse.cdt.debug.core.model.ICDebugTarget;
 import org.eclipse.cdt.debug.core.model.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.model.ICExpressionEvaluator;
@@ -1461,6 +1462,7 @@ public class CDebugTarget extends CDebugElement
 
 	private void handleErrorInfo( ICDIErrorInfo info )
 	{
+		setStatus( ICDebugElementErrorStatus.ERROR, ( info != null ) ? info.getMessage() : null );
 		if ( info != null )
 		{
 			MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(),

@@ -33,8 +33,10 @@ import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext.ContextKind;
 public class ContextStack {
 
 	private final IParserLogService log;
+	private Scanner scanner;
 	
-	public ContextStack( IParserLogService l ) {
+	public ContextStack( Scanner s, IParserLogService l ) {
+		scanner = s;
 		log = l;
 	}
 
@@ -192,5 +194,10 @@ public class ContextStack {
 	public int getTopFileLineNumber()
 	{
 		return topContext.getLine();
+	}
+	
+	public Scanner getScanner()
+	{
+		return scanner;
 	}
 }

@@ -169,12 +169,35 @@ public class ContextualParser extends Parser implements IParser {
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#handleOffsetLimitException()
 	 */
 	protected void handleOffsetLimitException(OffsetLimitReachedException exception) throws OffsetLimitReachedException {
-		setCompletionToken( exception.getFinalToken() );
-		if( (finalToken!= null )&& (finalToken.isKeywordOrOperator() ))
-			setCompletionToken(null);
+		if( exception.getCompletionNode() == null )
+		{	
+			setCompletionToken( exception.getFinalToken() );
+			if( (finalToken!= null )&& (finalToken.isKeywordOrOperator() ))
+				setCompletionToken(null);
+		}
+		else
+		{
+			ASTCompletionNode node = (ASTCompletionNode) exception.getCompletionNode();
+			setCompletionValues( node.getCompletionKind(), node.getKeywordSet(), node.getCompletionPrefix() );
+		}
 	
 		throw exception;
 	}	
+
+	/**
+	 * @param compilationUnit
+	 * @param kind2
+	 * @param set
+	 * @param object
+	 * @param string
+	 */
+	private void setCompletionValues(CompletionKind kind, Set keywordSet, String prefix ) {
+		setCompletionScope(compilationUnit);
+		this.keywordSet = keywordSet;
+		setCompletionKind(kind);
+		setCompletionContext(null);
+		setCompletionToken( new Token( IToken.tIDENTIFIER, prefix ) );
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.Parser#setCompletionKeywords(java.lang.String[])
@@ -217,8 +240,8 @@ public class ContextualParser extends Parser implements IParser {
 		CompletionKind kind,
 		Key key,
 		IASTNode node, String prefix) throws EndOfFileException {
-		setCompletionValues(scope, kind, key, node );
 		setCompletionToken( new Token( IToken.tIDENTIFIER, prefix ) );
+		setCompletionValues(scope, kind, key, node );
 	}
 
 	/* (non-Javadoc)
@@ -256,7 +279,6 @@ public class ContextualParser extends Parser implements IParser {
 		else if( scope instanceof IASTClassSpecifier )
 			kind = CompletionKind.FIELD_TYPE;
 		else if (scope instanceof IASTCodeScope)
-//			kind = CompletionKind.STATEMENT_START;
 			kind = CompletionKind.SINGLE_NAME_REFERENCE;
 		else
 			kind = CompletionKind.VARIABLE_TYPE;

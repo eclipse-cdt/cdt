@@ -71,8 +71,8 @@ public class AutomatedSuite extends TestSuite {
 		// Failed Tests
 		addTest(CompletionFailedTest_ScopedReference_NoPrefix_Bug50152.suite());
 		addTest(CompletionFailedTest_ScopedReference_Prefix_Bug50152.suite());
-		addTest(CompletionFailedTest_MacroRef_NoPrefix_Bug50487.suite());		
-		addTest(CompletionFailedTest_MacroRef_Prefix_Bug50487.suite());
+		addTest(CompletionTest_MacroRef_NoPrefix.suite());		
+		addTest(CompletionTest_MacroRef_Prefix.suite());
 		addTest(CompletionFailedTest_FunctionReference_Bug50807.suite());
 		addTest(CompletionFailedTest_ConstructorReference_Bug50808.suite());
 	}

@@ -161,7 +161,6 @@ public abstract class Parser implements IParser
      */
     protected void translationUnit()
     {
-        IASTCompilationUnit compilationUnit;
         try
         {
             compilationUnit = astFactory.createCompilationUnit();
@@ -5275,6 +5274,7 @@ public abstract class Parser implements IParser
     protected IToken currToken, // current token we plan to consume next 
     lastToken; // last token we consumed
 	private boolean limitReached = false;
+	protected IASTCompilationUnit compilationUnit;
     
     /**
      * Fetches a token from the scanner. 

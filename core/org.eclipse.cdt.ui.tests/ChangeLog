@@ -1,3 +1,7 @@
+2004-01-30 John Camelon
+	Updated CompletionFailedTest_MacroRef_NoPrefix_Bug50487, renamed it to CompletionTest_MacroRef_NoPrefix and moved to passed test package.
+	Updated CompletionFailedTest_MacroRef_Prefix_Bug50487, renamed it to Y and moved to passed test package.
+	
 2004-01-29 Hoda Amer
 	-Added CompletionTest_SingleName_Parameter test to success tests.
 	-Changed BaseTest to check if the expected values exist in the proposed values

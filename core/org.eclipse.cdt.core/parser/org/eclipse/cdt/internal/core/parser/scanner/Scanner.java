@@ -49,11 +49,14 @@ import org.eclipse.cdt.core.parser.ScannerException;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.IMacroDescriptor.MacroType;
 import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
+import org.eclipse.cdt.core.parser.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
+import org.eclipse.cdt.internal.core.parser.ast.ASTCompletionNode;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
+import org.eclipse.cdt.internal.core.parser.token.KeywordSets;
 import org.eclipse.cdt.internal.core.parser.token.Token;
 
 /**
@@ -109,7 +112,7 @@ public class Scanner implements IScanner {
 		scannerExtension = extension;
 		scannerExtension.setScanner( this ); 
 		astFactory = ParserFactory.createASTFactory( mode, language );
-		contextStack = new ContextStack( log );
+		contextStack = new ContextStack( this, log );
 		try {
 			//this is a hack to get around a sudden EOF experience
 			contextStack.push(
@@ -277,7 +280,7 @@ public class Scanner implements IScanner {
     		if( offsetLimit == NO_OFFSET_LIMIT )
     			context = new ScannerContext(reader, resolvedFilename, ScannerContext.ContextKind.TOP, null );
     		else
-    			context = new LimitedScannerContext( reader, resolvedFilename, ScannerContext.ContextKind.TOP, offsetLimit );
+    			context = new LimitedScannerContext( this, reader, resolvedFilename, ScannerContext.ContextKind.TOP, offsetLimit );
     		contextStack.push( context, requestor ); 
     	} catch( ContextException  ce )
     	{
@@ -633,6 +636,7 @@ public class Scanner implements IScanner {
 	}
 	
 	private final ParserMode mode;
+	private static final IScannerInfo EMPTY_INFO = new ScannerInfo();
 	
 	public int getCharacter() throws ScannerException
 	{
@@ -1328,6 +1332,10 @@ public class Scanner implements IScanner {
 							// get the rest of the line		
 							int currentOffset = getCurrentOffset();
 							String expression = getRestOfPreprocessorLine();
+
+							
+							if( isLimitReached() )
+								handleCompletionOnExpression( expression );
 							
 							if (expression.trim().equals(""))
 								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#if", beginningOffset, false, true  );
@@ -1344,7 +1352,12 @@ public class Scanner implements IScanner {
 						case PreprocessorDirectives.IFDEF :
 							//TODO add in content assist stuff here
 							skipOverWhitespace();
-							if (getDefinition(getNextIdentifier()) == null) {
+							
+							String definition = getNextIdentifier();
+							if( isLimitReached() )
+								handleCompletionOnDefinition( definition );
+								
+							if (getDefinition(definition) == null) {
 								// not defined	
 								passOnToClient = branches.poundIf( false );
 								skipOverTextUntilNewline();
@@ -1369,7 +1382,12 @@ public class Scanner implements IScanner {
 						case PreprocessorDirectives.IFNDEF :
 							//TODO add in content assist stuff here
 							skipOverWhitespace();
-							if (getDefinition(getNextIdentifier()) != null) {
+							
+							String definition2 = getNextIdentifier();
+							if( isLimitReached() )
+								handleCompletionOnDefinition( definition2 );
+							
+							if (getDefinition(definition2) != null) {
 								// not defined	
 								skipOverTextUntilNewline();
 								passOnToClient = branches.poundIf( false ); 
@@ -1401,14 +1419,17 @@ public class Scanner implements IScanner {
 						case PreprocessorDirectives.ELIF :
 							//TODO add in content assist stuff here
 							int co = getCurrentOffset();
-							String elsifExpression = getRestOfPreprocessorLine().trim();
-
-							if (elsifExpression.equals(""))
+							String elifExpression = getRestOfPreprocessorLine();
+							if( isLimitReached() )
+								handleCompletionOnExpression( elifExpression );
+							
+							
+							if (elifExpression.equals(""))
 								handleProblem( IProblem.PREPROCESSOR_INVALID_DIRECTIVE, "#elif", beginningOffset, false, true  );
 
 							boolean elsifResult = false;
 							if( branches.queryCurrentBranchForElif() )
-								elsifResult = evaluateExpression(elsifExpression, co );
+								elsifResult = evaluateExpression(elifExpression, co );
 
 							try
 							{
@@ -1418,7 +1439,7 @@ public class Scanner implements IScanner {
 							{
 								StringBuffer buffer = new StringBuffer( token );
 								buffer.append( ' ' );
-								buffer.append( elsifExpression );
+								buffer.append( elifExpression );
 								handleProblem( IProblem.PREPROCESSOR_UNBALANCE_CONDITION, 
 									buffer.toString(), 
 									beginningOffset, 
@@ -1784,7 +1805,7 @@ public class Scanner implements IScanner {
 						continue;
 				}
 
-				throwEOF();
+				throwEOF(null);
 			}
 		}
 
@@ -1795,13 +1816,57 @@ public class Scanner implements IScanner {
 		}
 
 		// we're done
-		throwEOF();
+		throwEOF(null);
 		return null;
 	}
 
 
 
     /**
+	 * @param definition
+	 */
+	private void handleCompletionOnDefinition(String definition) throws EndOfFileException {
+		IASTCompletionNode node = new ASTCompletionNode( IASTCompletionNode.CompletionKind.MACRO_REFERENCE, 
+				null, null, definition, KeywordSets.getKeywords(KeywordSets.Key.MACRO, language) );
+		
+		throwEOF( node ); 
+	}
+
+	/**
+	 * @param expression2
+	 */
+	private void handleCompletionOnExpression(String expression) throws EndOfFileException {
+		int completionPoint = expression.length();
+		IScanner subScanner = ParserFactory.createScanner( new StringReader(expression), SCRATCH, EMPTY_INFO, ParserMode.QUICK_PARSE, language, new NullSourceElementRequestor(), new NullLogService());
+		IToken lastToken = null;
+		try
+		{
+			lastToken = subScanner.nextToken();
+		}
+		catch( EndOfFileException eof )
+		{
+			// ok
+		} catch (ScannerException e) {
+			handleInternalError();
+		}
+				
+		String prefix = "";
+		if( ( lastToken != null ))
+		{
+			if( ( lastToken.getType() == IToken.tIDENTIFIER ) 
+				&& ( lastToken.getEndOffset() == completionPoint ) )
+			{
+				prefix = lastToken.getImage(); 
+			}	
+		}
+		
+		IASTCompletionNode node = new ASTCompletionNode( IASTCompletionNode.CompletionKind.MACRO_REFERENCE, 
+				null, null, prefix, KeywordSets.getKeywords(KeywordSets.Key.MACRO, language) );
+		
+		throwEOF( node );
+	}
+
+	/**
 	 * @param key
 	 */
 	protected void removeSymbol(String key) {
@@ -1961,7 +2026,7 @@ public class Scanner implements IScanner {
         }
         
         // we're done
-        throwEOF();
+        throwEOF(null);
         return null;
     }
 
@@ -1969,13 +2034,17 @@ public class Scanner implements IScanner {
 	/**
 	 * 
 	 */
-	protected void throwEOF() throws EndOfFileException, OffsetLimitReachedException {
-		if( offsetLimit == NO_OFFSET_LIMIT )
-			throw new EndOfFileException();
-		
-		if( finalToken.getEndOffset() == offsetLimit )
-			throw new OffsetLimitReachedException(finalToken);
-		throw new OffsetLimitReachedException( (IToken)null );
+	protected void throwEOF(IASTCompletionNode node) throws EndOfFileException, OffsetLimitReachedException {
+		if( node == null )
+		{	
+			if( offsetLimit == NO_OFFSET_LIMIT )
+				throw new EndOfFileException();
+			
+			if( finalToken.getEndOffset() == offsetLimit )
+				throw new OffsetLimitReachedException(finalToken);
+			throw new OffsetLimitReachedException( (IToken)null );
+		}
+		throw new OffsetLimitReachedException( node );
 	}
 
 
@@ -2973,7 +3042,8 @@ public class Scanner implements IScanner {
 	private final ISourceElementRequestor requestor;
 	private IASTFactory astFactory = null;
 	private static final int NO_OFFSET_LIMIT = -1;
-	private int offsetLimit = NO_OFFSET_LIMIT; 
+	private int offsetLimit = NO_OFFSET_LIMIT;
+	private boolean limitReached = false; 
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScanner#setASTFactory(org.eclipse.cdt.internal.core.parser.ast.IASTFactory)
@@ -2994,6 +3064,19 @@ public class Scanner implements IScanner {
 	 */
 	public Map getDefinitions() {
 		return definitions;
+	}
+
+	/**
+	 * @param b
+	 */
+	public void setOffsetLimitReached(boolean b) {
+		limitReached = b;
+	}
+	
+	protected boolean isLimitReached()
+	{
+		if( offsetLimit == NO_OFFSET_LIMIT ) return false;
+		return limitReached;
 	}
 
 }

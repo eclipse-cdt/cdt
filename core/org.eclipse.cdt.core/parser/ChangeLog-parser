@@ -1,3 +1,6 @@
+2004-01-30 John Camelon
+	Fixed Bug 50487 - Wrong completion kind and prefix after "#ifdef" 
+	
 2004-01-29 Hoda Amer
 	Removed CompletionKind.KEYWORD.
 	

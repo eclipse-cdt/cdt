@@ -35,6 +35,7 @@ public class KeywordSets {
 		public static final Key POST_USING = new Key( 5 );
 		public static final Key FUNCTION_MODIFIER = new Key( 6 );
 		public static final Key NAMESPACE_ONLY = new Key(6);
+		public static final Key MACRO = new Key( 7 );
 		/**
 		 * @param enumValue
 		 */
@@ -62,6 +63,8 @@ public class KeywordSets {
 			return (Set) FUNCTION_MODIFIER.get( language );
 		if( kind == Key.NAMESPACE_ONLY )	
 			return NAMESPACE_ONLY;
+		if( kind == Key.MACRO )
+			return MACRO_ONLY;
 		
 		//TODO finish this
 		return null;
@@ -75,6 +78,14 @@ public class KeywordSets {
 		NAMESPACE_ONLY = new HashSet();
 		NAMESPACE_ONLY.add(Keywords.NAMESPACE );
 	}
+	
+	private static final Set MACRO_ONLY;
+	static 
+	{
+		MACRO_ONLY = new HashSet();
+		MACRO_ONLY.add("defined()" );
+	}
+	
 	
 	private static final Set DECL_SPECIFIER_SEQUENCE_C;
 	static

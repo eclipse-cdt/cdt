@@ -8,12 +8,11 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.ui.tests.text.contentassist.failedtests;
+package org.eclipse.cdt.ui.tests.text.contentassist;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.parser.ast.IASTCompletionNode.CompletionKind;
-import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
 
 /**
  * @author hamer
@@ -22,30 +21,28 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionProposalsBaseTest;
  * Bug#50487 :Wrong completion kind and prefix after "#ifdef"
  *
  */
-public class CompletionFailedTest_MacroRef_NoPrefix_Bug50487  extends CompletionProposalsBaseTest{
+public class CompletionTest_MacroRef_Prefix  extends CompletionProposalsBaseTest{
 	
-	private final String fileName = "CompletionTestStart26.cpp";
+	private final String fileName = "CompletionTestStart27.cpp";
 	private final String fileFullPath ="resources/contentassist/" + fileName;
 	private final String headerFileName = "CompletionTestStart.h";
 	private final String headerFileFullPath ="resources/contentassist/" + headerFileName;
 	private final String expectedScopeName = "ASTCompilationUnit";
 	private final String expectedContextName = "null"; 
-	private final CompletionKind expectedKind = CompletionKind.VARIABLE_TYPE; // should be CompletionKind.MACRO_REFERENCE;
-	private final String expectedPrefix = ""; 
+	private final CompletionKind expectedKind = CompletionKind.MACRO_REFERENCE;
+	private final String expectedPrefix = "D"; 
 	private final String[] expectedResults = {
 // Should be 			
-//			"aMacro(x)",
-//			"Debug",
-//			"xMacro(x,y)"
+//			"Debug"
 	};
 	
-	public CompletionFailedTest_MacroRef_NoPrefix_Bug50487(String name) {
+	public CompletionTest_MacroRef_Prefix(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite(CompletionFailedTest_MacroRef_NoPrefix_Bug50487.class.getName());
-		suite.addTest(new CompletionFailedTest_MacroRef_NoPrefix_Bug50487("testCompletionProposals"));
+		TestSuite suite= new TestSuite(CompletionTest_MacroRef_Prefix.class.getName());
+		suite.addTest(new CompletionTest_MacroRef_Prefix("testCompletionProposals"));
 		return suite;
 	}		
 	
@@ -53,7 +50,7 @@ public class CompletionFailedTest_MacroRef_NoPrefix_Bug50487  extends Completion
 	 * @see org.eclipse.cdt.core.codeassist.tests.CompletionProposalsTest#getCompletionPosition()
 	 */
 	protected int getCompletionPosition() {
-		return getBuffer().indexOf("#ifdef ") + 7;
+		return getBuffer().indexOf("ifdef D ") + 7;
 	}
 
 	/* (non-Javadoc)

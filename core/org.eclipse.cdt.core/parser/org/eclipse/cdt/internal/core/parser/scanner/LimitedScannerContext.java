@@ -21,6 +21,7 @@ public class LimitedScannerContext
 	implements IScannerContext {
 
 	private final int limit;
+	private final Scanner scanner;
 
 	/**
 	 * @param reader
@@ -29,8 +30,9 @@ public class LimitedScannerContext
 	 * @param object
 	 * @param offsetLimit
 	 */
-	public LimitedScannerContext(Reader reader, String string, ContextKind kind, int offsetLimit) {
+	public LimitedScannerContext(Scanner scanner, Reader reader, String string, ContextKind kind, int offsetLimit) {
 		super( reader, string, kind, null );
+		this.scanner = scanner;
 		limit = offsetLimit;
 	}
 
@@ -40,7 +42,11 @@ public class LimitedScannerContext
 	 * @see org.eclipse.cdt.internal.core.parser.IScannerContext#read()
 	 */
 	public int read() throws IOException {
-		if( getOffset() == limit ) throw new IOException();
+		if( getOffset() == limit )
+		{
+			scanner.setOffsetLimitReached(true);
+			throw new IOException();
+		}
 		return super.read();
 	}
 

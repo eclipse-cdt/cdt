@@ -73,5 +73,11 @@ public class ASTCompletionNode implements IASTCompletionNode {
 			return new EmptyIterator(); 
 		return keywordSet.iterator();
 	}
+	
+	public Set getKeywordSet()
+	{
+		return keywordSet;
+	
+	}
 
 }

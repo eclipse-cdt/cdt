@@ -53,7 +53,7 @@ public class MIGDBShowDirectoriesInfo extends MIInfo {
 		int count = st.countTokens();
 		dirs = new String[count];
 		for (int i = 0; st.hasMoreTokens() && i < count; i++) {
-			dirs[i] = (String)st.nextToken();
+			dirs[i] = st.nextToken();
 		}
 	}
 }

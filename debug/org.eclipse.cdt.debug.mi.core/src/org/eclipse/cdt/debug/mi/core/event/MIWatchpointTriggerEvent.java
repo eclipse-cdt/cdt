@@ -55,7 +55,6 @@ public class MIWatchpointTriggerEvent extends MIStoppedEvent {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("number=").append(number).append('\n');
 		buffer.append("expression=" + exp + "\n");
-		;
 		buffer.append("old=" + oldValue + "\n");
 		buffer.append("new=" + newValue + "\n");
 		buffer.append("thread-id=").append(getThreadId()).append('\n');

@@ -41,7 +41,7 @@ public class MIFunctionFinishedEvent extends MIStoppedEvent {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("gdb-result-var=" + gdbResult + "\n");;
+		buffer.append("gdb-result-var=" + gdbResult + "\n");
 		buffer.append("return-value=" + returnValue + "\n");
 		buffer.append("thread-id=").append(getThreadId()).append('\n');
 		MIFrame f = getFrame();

@@ -22,7 +22,7 @@ public class MIBreakAfter extends MICommand
 {
 	public MIBreakAfter(int brknum, int count) {
 		super("-break-after",new String[]{Integer.toString(brknum),
-		 	 Integer.toString(count)});;
+		 	 Integer.toString(count)});
 		 
 	}
 }

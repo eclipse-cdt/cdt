@@ -292,7 +292,7 @@ public class Target  implements ICDITarget {
 		Thread th = null;
 		if (currentThreads != null) {
 			for (int i = 0; i < currentThreads.length; i++) {
-				Thread cthread = (Thread)currentThreads[i];
+				Thread cthread = currentThreads[i];
 				if (cthread.getId() == tid) {
 					th = cthread;
 					break;

@@ -47,8 +47,8 @@ public class MIInferiorSignalExitEvent extends MIDestroyedEvent {
 
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("signal-name=" + sigName + "\n");;
-		buffer.append("signal-meaning=" + sigMeaning + "\n");;
+		buffer.append("signal-name=" + sigName + "\n");
+		buffer.append("signal-meaning=" + sigMeaning + "\n");
 		return buffer.toString();
 	}
 

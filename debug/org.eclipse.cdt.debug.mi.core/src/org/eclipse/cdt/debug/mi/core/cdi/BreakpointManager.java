@@ -86,7 +86,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	}
 
 	public Breakpoint getBreakpoint(int number) {
-		Breakpoint[] bkpts = (Breakpoint[]) breakList.toArray(new Breakpoint[0]);;
+		Breakpoint[] bkpts = (Breakpoint[]) breakList.toArray(new Breakpoint[0]);
 		for (int i = 0; i < bkpts.length; i++) {
 			MIBreakpoint miBreak = bkpts[i].getMIBreakpoint();
 			if (miBreak.getNumber() == number) {
@@ -126,7 +126,7 @@ public class BreakpointManager extends SessionObject implements ICDIBreakpointMa
 	}
 
 	public void deleteBreakpoint (int no) {
-		Breakpoint[] points = (Breakpoint[]) breakList.toArray(new Breakpoint[0]);;
+		Breakpoint[] points = (Breakpoint[]) breakList.toArray(new Breakpoint[0]);
 		for (int i = 0; i < points.length; i++) {
 			if (points[i].getMIBreakpoint().getNumber() == no) {
 				breakList.remove(points[i]);

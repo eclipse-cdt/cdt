@@ -51,7 +51,7 @@ public class GDBDebugger implements ICDebugger {
 			if (p.size() > 0) {
 				String[] oldPaths = manager.getSharedLibraryPaths();
 				String[] paths = new String[oldPaths.length + p.size()];
-				System.arraycopy((String[])p.toArray(new String[p.size()]), 0, paths, 0, p.size());
+				System.arraycopy(p.toArray(new String[p.size()]), 0, paths, 0, p.size());
 				System.arraycopy(oldPaths, 0, paths, p.size(), oldPaths.length);
 				manager.setSharedLibraryPaths(paths);
 			}

@@ -12,7 +12,7 @@ public class MIList extends MIValue {
 	final static MIResult[] nullResults = new MIResult[0];
 	final static MIValue[] nullValues = new MIValue[0];
 
-	MIResult[] results = nullResults;;
+	MIResult[] results = nullResults;
 	MIValue[] values = nullValues;
 
 	public MIResult[] getMIResults() {

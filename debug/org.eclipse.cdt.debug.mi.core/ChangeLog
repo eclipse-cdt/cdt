@@ -1,3 +1,21 @@
+2003-11-26 Mikhail Khodjaiants
+	Cleanup.
+	
+	* src/org/eclipse/cdt/debug/mi/core/GDBDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBServerDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/CygwinGDBDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/BreakpointManager.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ResumedEvent.java
+	* src/org/eclipse/cdt/debug/mi/core/cdi/model/Target.java
+	* src/org/eclipse/cdt/debug/mi/core/command/MIBreakAfter.java
+	* src/org/eclipse/cdt/debug/mi/core/event/MIFunctionFinishedEvent.java
+	* src/org/eclipse/cdt/debug/mi/core/event/MIInferiorSignalExitEvent.java
+	* src/org/eclipse/cdt/debug/mi/core/event/MISignalEvent.java
+	* src/org/eclipse/cdt/debug/mi/core/event/MIWatchpointTriggerEvent.java
+	* src/org/eclipse/cdt/debug/mi/core/output/MIGDBShowDirectoriesInfo.java
+	* src/org/eclipse/cdt/debug/mi/core/output/MIGDBShowSolibSearchPathInfo.java
+	* src/org/eclipse/cdt/debug/mi/core/output/MIList.java
+
 2003-11-25 Alain Magloire
 
 	Process the suspend event even if there is not threads

@@ -33,7 +33,7 @@ public class ResumedEvent implements ICDIResumedEvent {
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIResumedEvent#getType()
 	 */
 	public int getType() {
-		MIRunningEvent running = (MIRunningEvent)event;
+		MIRunningEvent running = event;
 		int type = running.getType();
 		int cdiType = 0;
 		switch (type) {

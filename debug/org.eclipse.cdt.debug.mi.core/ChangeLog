@@ -1,3 +1,11 @@
+2003-09-26 Alain Magloire
+
+	Second part of PR 43496.
+	On the startup of GDB, we have to wait for "(gdb)" prompt
+	to make sure that gdb is ready to accept command.
+
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
 2003-09-25 Alain Magloire
 
 	Fix for PR 43496.

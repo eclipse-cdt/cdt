@@ -144,26 +144,6 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
 	    return suite;
     }
 
-    public void testMemberCompletion() throws Exception {
-        StringWriter writer = new StringWriter();
-        writer.write("class A {                 \n"); //$NON-NLS-1$
-        writer.write("   int var;               \n"); //$NON-NLS-1$
-        writer.write("   void f();              \n"); //$NON-NLS-1$
-        writer.write("};                        \n"); //$NON-NLS-1$
-        writer.write("void A::f(){              \n"); //$NON-NLS-1$
-        writer.write("   v[^]                   \n"); //$NON-NLS-1$
-        writer.write("}                         \n"); //$NON-NLS-1$
-
-        String code = writer.toString();
-        IFile t = importFile( "testMemberCompletion.cpp", code ); //$NON-NLS-1$
-        ICompletionProposal [] results = getResults( t, code.indexOf( "[^]" ) ); //$NON-NLS-1$
-        
-        assertEquals( 4, results.length);
-        assertEquals( "var : int", results[0].getDisplayString()); //$NON-NLS-1$
-        assertEquals( "virtual", results[1].getDisplayString()); //$NON-NLS-1$
-        assertEquals( "void", results[2].getDisplayString()); //$NON-NLS-1$
-        assertEquals( "volatile", results[3].getDisplayString()); //$NON-NLS-1$
-    }
     public void removeFile(String filename) throws Exception {
     	IResource [] members = project.members();
     	for( int i = 0; i < members.length; i++ ){
@@ -171,6 +151,26 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
             members[i].delete( false, monitor );
         }
     }
+	public void testMemberCompletion() throws Exception {
+	    StringWriter writer = new StringWriter();
+	    writer.write("class A {                 \n"); //$NON-NLS-1$
+	    writer.write("   int var;               \n"); //$NON-NLS-1$
+	    writer.write("   void f();              \n"); //$NON-NLS-1$
+	    writer.write("};                        \n"); //$NON-NLS-1$
+	    writer.write("void A::f(){              \n"); //$NON-NLS-1$
+	    writer.write("   v[^]                   \n"); //$NON-NLS-1$
+	    writer.write("}                         \n"); //$NON-NLS-1$
+	
+	    String code = writer.toString();
+	    IFile t = importFile( "testMemberCompletion.cpp", code ); //$NON-NLS-1$
+	    ICompletionProposal [] results = getResults( t, code.indexOf( "[^]" ) ); //$NON-NLS-1$
+	    
+	    assertEquals( 4, results.length);
+	    assertEquals( "var : int", results[0].getDisplayString()); //$NON-NLS-1$
+	    assertEquals( "virtual", results[1].getDisplayString()); //$NON-NLS-1$
+	    assertEquals( "void", results[2].getDisplayString()); //$NON-NLS-1$
+	    assertEquals( "volatile", results[3].getDisplayString()); //$NON-NLS-1$
+	}
     //test 1 with prefix 'z', inside various scopes
     public void testUnqualifiedWithPrefix() throws Exception {
         StringWriter writer = new StringWriter();
@@ -261,7 +261,7 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
         assertEquals( "zMethod() void",			results[3].getDisplayString()); //$NON-NLS-1$
         
     }
-    //test 2 with prefix 'z', qualified, inside 4 scopes
+	//test 2 with prefix 'z', qualified, inside 4 scopes
     public void testQualifiedWithPrefix() throws Exception {
         StringWriter writer = new StringWriter();
         writer.write("class zClass {				\n"); //$NON-NLS-1$
@@ -425,7 +425,7 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
        assertEquals( "zMethod(int) int", 	results[1].getDisplayString()); //$NON-NLS-1$
        
     }
-    //  test 7 different file types
+	//  test 7 different file types
 	public void testSourceExtensions() throws Exception {
 	   	StringWriter writer = new StringWriter();
 	   	writer.write("int zVar;					\n"); //$NON-NLS-1$
@@ -733,8 +733,6 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
 			writer.write("	 Point &p2 = *(new Point(10));			\n" ); //$NON-NLS-1$
 			writer.write("	 p1->operator=(zero);//vp1: arrow ref 	\n" ); //$NON-NLS-1$
 			writer.write("	 p2.operator=(zero);//vp2: dot ref 		\n" ); //$NON-NLS-1$
-			writer.write("	 Point one(1);					 		\n" ); //$NON-NLS-1$
-			writer.write("	 one.operator=(zero);//vp3: dot ref		\n" ); //$NON-NLS-1$
 			writer.write("	 return (0);							\n" ); //$NON-NLS-1$
 			writer.write("}											\n" ); //$NON-NLS-1$
 			String code = writer.toString();
@@ -743,15 +741,7 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
 		    ICompletionProposal [] results = getResults( f, code.indexOf( "perator=(zero);//vp3" ) ); //$NON-NLS-1$
 		    assertEquals( 1, results.length);
 			assertEquals( "operator=(const Point&) Point&", 	results[0].getDisplayString()); //$NON-NLS-1$
-			//vp2 dot ref on dereferenced initialization 
-			results = getResults( f, code.indexOf( "perator=(zero);//vp2" ) ); //$NON-NLS-1$
-			assertEquals( 1, results.length);
-			assertEquals( "operator=(const Point&) Point&", 	results[0].getDisplayString()); //$NON-NLS-1$
-			//vp3 dot ref on simple initialization 
-		    results = getResults( f, code.indexOf( "perator=(zero);//vp3" ) ); //$NON-NLS-1$
-		    assertEquals( 1, results.length);
-		    assertEquals( "operator=(const Point&) Point&", 	results[0].getDisplayString()); //$NON-NLS-1$
-			
+				
 	}
 	//	defect 72541 on test 33: Complete on const missing suggestions
 	public void test72541() throws Exception {
@@ -1216,52 +1206,6 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
 	    assertEquals( 4, results.length);
 		      
 	}
-	// test 16 template completion
-	// template test framework not implemented
-	public void testCodeTemplate() throws Exception {
-	   	StringWriter writer = new StringWriter();
-	   	writer.write("int main(int argc, char **argv) {	\n" ); //$NON-NLS-1$
-	   	writer.write("	int max=10;						\n" ); //$NON-NLS-1$
-	   	writer.write("	bool condition=false;			\n" ); //$NON-NLS-1$
-	   	writer.write("	int key=1;						\n" ); //$NON-NLS-1$
-	   	writer.write("	const int value=1;				\n" ); //$NON-NLS-1$
-	   	writer.write("	for/*vp1*/ (int var = 0; var < max; ++var) {\n" ); //$NON-NLS-1$
-	   	writer.write("									\n" ); //$NON-NLS-1$
-	   	writer.write("	}								\n" ); //$NON-NLS-1$
-	   	writer.write("	do/*vp2*/ {						\n" ); //$NON-NLS-1$
-	   	writer.write("									\n" ); //$NON-NLS-1$
-	   	writer.write("	} while (condition);			\n" ); //$NON-NLS-1$
-	   	writer.write("	switch/*vp3*/ (key) {			\n" ); //$NON-NLS-1$
-	   	writer.write("	 	case value:					\n" ); //$NON-NLS-1$
-	   	writer.write("	 								\n" ); //$NON-NLS-1$
-	   	writer.write("	  	break;						\n" ); //$NON-NLS-1$
-	   	writer.write("	 	default:					\n" ); //$NON-NLS-1$
-	   	writer.write("	  	break;						\n" ); //$NON-NLS-1$
-	   	writer.write("	}								\n" ); //$NON-NLS-1$
-	   	writer.write("}									\n" ); //$NON-NLS-1$
-		String code = writer.toString();
-	    IFile t = importFile( "testCodeTemplate.cpp", code ); //$NON-NLS-1$
-	    //vp1 for template
-	    ICompletionProposal [] results = getResults( t, code.indexOf( "/*vp1*/" ) ); //$NON-NLS-1$
-	    assertEquals( 3, results.length);
-		assertEquals( "for", 	results[0].getDisplayString()); //$NON-NLS-1$
-	    assertEquals( "for - for loop", 	results[1].getDisplayString()); //$NON-NLS-1$
-	    assertEquals( "for - for loop with temporary variable", 	results[2].getDisplayString()); //$NON-NLS-1$
-	    //vp2 do while loop template
-	    assertEquals( 3, results.length);
-	    results = getResults( t, code.indexOf( "/*vp2*/" ) ); //$NON-NLS-1$
-	    assertEquals( "do", 	results[0].getDisplayString()); //$NON-NLS-1$
-	    assertEquals( "double", results[1].getDisplayString()); //$NON-NLS-1$
-	    assertEquals( "do - do while statement", 	results[2].getDisplayString()); //$NON-NLS-1$
-	    //vp3 switch case statement template
-	    assertEquals( 2, results.length);
-	    results = getResults( t, code.indexOf( "ch/*vp3*/" ) ); //$NON-NLS-1$
-	    assertEquals( "switch", 	results[0].getDisplayString()); //$NON-NLS-1$
-	    assertEquals( "switch - switch case statement", 	results[1].getDisplayString()); //$NON-NLS-1$
-	    
-	}
-	//  test 28 variable type class, struct, typedef struct, union, bool
-	
 	public void testVariable() throws Exception {
 		StringWriter writer = new StringWriter();
 	   	writer.write("namespace N {					\n" ); //$NON-NLS-1$
@@ -1853,5 +1797,49 @@ public class ContentAssistRegressionTests extends BaseTestFramework {
 		assertEquals( "myStruct_c", 	results[0].getDisplayString()); //$NON-NLS-1$
 		assertEquals( "myStruct_cpp", 	results[1].getDisplayString()); //$NON-NLS-1$
 		assertEquals( 2, results.length);
+	}
+	// test 16 template completion
+	// template test framework not implemented
+	public void testCodeTemplate() throws Exception {
+	   	StringWriter writer = new StringWriter();
+	   	writer.write("int main(int argc, char **argv) {	\n" ); //$NON-NLS-1$
+	   	writer.write("	int max=10;						\n" ); //$NON-NLS-1$
+	   	writer.write("	bool condition=false;			\n" ); //$NON-NLS-1$
+	   	writer.write("	int key=1;						\n" ); //$NON-NLS-1$
+	   	writer.write("	const int value=1;				\n" ); //$NON-NLS-1$
+	   	writer.write("	for/*vp1*/ (int var = 0; var < max; ++var) {\n" ); //$NON-NLS-1$
+	   	writer.write("									\n" ); //$NON-NLS-1$
+	   	writer.write("	}								\n" ); //$NON-NLS-1$
+	   	writer.write("	do/*vp2*/ {						\n" ); //$NON-NLS-1$
+	   	writer.write("									\n" ); //$NON-NLS-1$
+	   	writer.write("	} while (condition);			\n" ); //$NON-NLS-1$
+	   	writer.write("	switch/*vp3*/ (key) {			\n" ); //$NON-NLS-1$
+	   	writer.write("	 	case value:					\n" ); //$NON-NLS-1$
+	   	writer.write("	 								\n" ); //$NON-NLS-1$
+	   	writer.write("	  	break;						\n" ); //$NON-NLS-1$
+	   	writer.write("	 	default:					\n" ); //$NON-NLS-1$
+	   	writer.write("	  	break;						\n" ); //$NON-NLS-1$
+	   	writer.write("	}								\n" ); //$NON-NLS-1$
+	   	writer.write("}									\n" ); //$NON-NLS-1$
+		String code = writer.toString();
+	    IFile t = importFile( "testCodeTemplate.cpp", code ); //$NON-NLS-1$
+	    //vp1 for template
+	    ICompletionProposal [] results = getResults( t, code.indexOf( "/*vp1*/" ) ); //$NON-NLS-1$
+	    assertEquals( 3, results.length);
+		assertEquals( "for", 	results[0].getDisplayString()); //$NON-NLS-1$
+	    assertEquals( "for - for loop", 	results[1].getDisplayString()); //$NON-NLS-1$
+	    assertEquals( "for - for loop with temporary variable", 	results[2].getDisplayString()); //$NON-NLS-1$
+	    //vp2 do while loop template
+	    assertEquals( 3, results.length);
+	    results = getResults( t, code.indexOf( "/*vp2*/" ) ); //$NON-NLS-1$
+	    assertEquals( "do", 	results[0].getDisplayString()); //$NON-NLS-1$
+	    assertEquals( "double", results[1].getDisplayString()); //$NON-NLS-1$
+	    assertEquals( "do - do while statement", 	results[2].getDisplayString()); //$NON-NLS-1$
+	    //vp3 switch case statement template
+	    assertEquals( 2, results.length);
+	    results = getResults( t, code.indexOf( "ch/*vp3*/" ) ); //$NON-NLS-1$
+	    assertEquals( "switch", 	results[0].getDisplayString()); //$NON-NLS-1$
+	    assertEquals( "switch - switch case statement", 	results[1].getDisplayString()); //$NON-NLS-1$
+	    
 	}	
 }

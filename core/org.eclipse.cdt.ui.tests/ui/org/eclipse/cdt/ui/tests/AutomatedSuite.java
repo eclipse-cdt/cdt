@@ -8,6 +8,7 @@ package org.eclipse.cdt.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.cdt.ui.tests.regression.RegressionTestsUISuite;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionFailedTest_MemberReference_Arrow_Prefix2;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_ArgumentType_NoPrefix2;
@@ -111,6 +112,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(CompletionTest_VariableType_NestedPrefix.suite());
 		
 		addTest( ContentAssistTests.suite() );
+		addTest( RegressionTestsUISuite.suite() );
 		// Failed Tests
 		addTest(CompletionFailedTest_MemberReference_Arrow_Prefix2.suite());
 	}

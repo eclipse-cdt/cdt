@@ -1,3 +1,9 @@
+2005-02-03 Tanya Wolff
+	Fixed some content assist regression tests.
+	Added Regression tests (content assist, refactoring) to automated suite for nightly builds
+	* ui/org.eclipse.cdt.ui.tests/AutomatedSuite.java
+	* ui/org.eclipse.cdt.ui.tests.regression/ContentAssistRegressionTests.java
+
 2004-12-17 Tanya Wolff
 	Added more Content Assist Regression tests
 

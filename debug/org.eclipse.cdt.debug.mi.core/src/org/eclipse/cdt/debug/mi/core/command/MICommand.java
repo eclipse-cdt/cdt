@@ -117,7 +117,12 @@ public class MICommand extends Command {
 					sb.insert(0, '"');
 					sb.append('"');
 				}
-				buffer.append(' ').append(sb);
+				// In JDK-1.4.x a new method was added to StringBuffer
+				// StringBuffer.append(StringBuffer).  This is not in
+				// JDK-1.3.x, So when compiling with JDK-1.4.x
+				// Running on JDK-1.3.x will not work.
+				// We need to force the toString().
+				buffer.append(' ').append(sb.toString());
 			}
 		}
 		return buffer.toString().trim();

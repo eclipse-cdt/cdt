@@ -1,3 +1,8 @@
+2004-08-30 Alain Magloire
+
+	Fix for 72914
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+
 2004-08-27 Chris Wiebe
 
 	class wizard fixes

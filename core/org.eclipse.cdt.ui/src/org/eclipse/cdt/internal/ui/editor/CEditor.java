@@ -72,6 +72,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -96,6 +97,7 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
@@ -401,6 +403,15 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 
 	public void setSelection(ISourceReference element, boolean moveCursor) {
 		if (element != null) {
+			StyledText  textWidget= null;
+			
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer != null)
+				textWidget= sourceViewer.getTextWidget();
+			
+			if (textWidget == null)
+				return;
+
 			try {
 				setSelection(element.getSourceRange(), moveCursor);
 			} catch (CModelException e) {
@@ -603,12 +614,12 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		markAsStateDependentAction("Format", true); //$NON-NLS-1$
 
 		action = new ContentAssistAction(CEditorMessages.getResourceBundle(), "ContentAssistProposal.", this); //$NON-NLS-1$
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction("ContentAssistProposal", action); //$NON-NLS-1$
 		markAsStateDependentAction("ContentAssistProposal", true); //$NON-NLS-1$
 
 		action = new TextOperationAction(CEditorMessages.getResourceBundle(), "ContentAssistTip.", this, ISourceViewer.CONTENTASSIST_CONTEXT_INFORMATION); //$NON-NLS-1$
-		action.setActionDefinitionId(ICEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		setAction("ContentAssistTip", action); //$NON-NLS-1$
 
 		setAction("AddIncludeOnSelection", new AddIncludeOnSelectionAction(this)); //$NON-NLS-1$
@@ -998,6 +1009,18 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		public String getDisplayLanguage() {
 			return fDisplayLanguage;
 		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.source.ISourceViewer#setRangeIndication(int, int, boolean)
+		 */
+		public void setRangeIndication(int offset, int length, boolean moveCursor) {
+			// Fixin a bug in the ProjectViewer implemenation
+			// PR: https://bugs.eclipse.org/bugs/show_bug.cgi?id=72914
+			if (isProjectionMode()) {
+				super.setRangeIndication(offset, length, moveCursor);
+			} else {
+				super.setRangeIndication(offset, length, false);
+			}
+		}
 	}
 
 	/*
@@ -1034,7 +1057,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 			new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		
 		configureSourceViewerDecorationSupport(fSourceViewerDecorationSupport);
-		
+
 		//Enhance the stock source viewer decorator with a bracket matcher
 		fSourceViewerDecorationSupport.setCharacterPairMatcher(fBracketMatcher);
 		fSourceViewerDecorationSupport.setMatchingCharacterPainterPreferenceKeys(MATCHING_BRACKETS, MATCHING_BRACKETS_COLOR);

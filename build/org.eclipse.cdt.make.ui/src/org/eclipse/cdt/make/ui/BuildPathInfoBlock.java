@@ -253,7 +253,7 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		if (getContainer().getProject() != null) {
 			// Store the paths and symbols 
 			monitor.beginTask("Setting Scanner Info", 3);
-			MakeScannerInfo info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject());
+			MakeScannerInfo info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject(), false);
 			info.setIncludePaths(getPathListContents());
 			monitor.worked(1);
 			info.setPreprocessorSymbols(getSymbolListContents());
@@ -264,12 +264,12 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 	}
 
 	public void performDefaults() {
-		pathList.removeAll();
-		symbolList.removeAll();
 		if (getContainer().getProject() != null) {
+			pathList.removeAll();
+			symbolList.removeAll();
 			// dinglis-TODO: set list to preference settings
+			getContainer().updateContainer();
 		}
-		getContainer().updateContainer();
 	}
 
 	/*
@@ -396,10 +396,9 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		createSymbolListButtons(composite);
 		enableSymbolButtons();
 
-		setPathListContents();
+		setListContents();
 		pathList.select(0);
 		enablePathButtons();
-		setSymbolListContents();
 		symbolList.select(0);
 		enableSymbolButtons();
 		setControl(composite);
@@ -585,22 +584,12 @@ public class BuildPathInfoBlock extends AbstractCOptionPage {
 		return true;
 	}
 
-	private void setPathListContents() {
+	private void setListContents() {
 		if (getContainer().getProject() != null) {
 			MakeScannerInfo info;
 			try {
-				info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject());
+				info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject(), false);
 				pathList.setItems(info.getIncludePaths());
-			} catch (CoreException e) {
-			}
-		}
-	}
-
-	private void setSymbolListContents() {
-		if (getContainer().getProject() != null) {
-			MakeScannerInfo info;
-			try {
-				info = MakeScannerProvider.getDefault().getMakeScannerInfo(getContainer().getProject());
 				symbolList.setItems(info.getPreprocessorSymbols());
 			} catch (CoreException e) {
 			}

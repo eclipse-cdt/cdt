@@ -1,4 +1,11 @@
 2004-10-21 Mikhail Khodjaiants
+	Thread should handle CDI events from the corresponding CDI thread only.
+	"canSuspend" should return true if the thread is stepping.
+	New implementation of "stepReturn" for stack frames.
+	* CThread.java
+	* CStackFrame.java
+
+2004-10-21 Mikhail Khodjaiants
 	Pass the target state to threads on terminate, disconnect, resume, suspend and restart.
 	* CoreModelMessages.properties
 	* CDebugElement.java

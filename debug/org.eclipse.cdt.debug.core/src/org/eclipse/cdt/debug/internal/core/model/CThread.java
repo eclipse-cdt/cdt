@@ -357,31 +357,21 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 			ICDIObject source = event.getSource();
 			if ( source == null )
 				continue;
-			if ( source.getTarget().equals( getCDITarget() ) ) {
+			if ( source instanceof ICDIThread && source.equals( getCDIThread() ) ) {
 				if ( event instanceof ICDISuspendedEvent ) {
-					if ( source instanceof ICDIThread && getCDIThread().equals( (ICDIThread)source ) ) {
 						handleSuspendedEvent( (ICDISuspendedEvent)event );
-					}
 				}
 				else if ( event instanceof ICDIResumedEvent ) {
-					if ( (source instanceof ICDIThread && source.equals( getCDIThread() )) ) {
 						handleResumedEvent( (ICDIResumedEvent)event );
-					}
 				}
 				else if ( event instanceof ICDIDestroyedEvent ) {
-					if ( source instanceof ICDIThread ) {
 						handleTerminatedEvent( (ICDIDestroyedEvent)event );
-					}
 				}
 				else if ( event instanceof ICDIDisconnectedEvent ) {
-					if ( source instanceof ICDIThread ) {
 						handleDisconnectedEvent( (ICDIDisconnectedEvent)event );
-					}
 				}
 				else if ( event instanceof ICDIChangedEvent ) {
-					if ( source instanceof ICDIThread ) {
 						handleChangedEvent( (ICDIChangedEvent)event );
-					}
 				}
 			}
 		}
@@ -398,7 +388,8 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
 	 */
 	public boolean canSuspend() {
-		return ( fConfig.supportsSuspend() && getState().equals( CDebugElementState.RESUMED ) );
+		CDebugElementState state = getState();
+		return ( fConfig.supportsSuspend() && (state.equals( CDebugElementState.RESUMED ) || state.equals( CDebugElementState.STEPPED )) );
 	}
 
 	/* (non-Javadoc)
@@ -566,14 +557,14 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		IStackFrame[] frames = getStackFrames();
 		if ( frames.length == 0 )
 			return;
-		final IStackFrame f = frames[0]; 
+		final CStackFrame f = (CStackFrame)frames[0]; 
 		final CDebugElementState oldState = getState();
 		setState( CDebugElementState.STEPPING );
 		DebugPlugin.getDefault().asyncExec( new Runnable() {
 
 			public void run() {
 				try {
-					f.stepReturn();
+					f.doStepReturn();
 				}
 				catch( DebugException e ) {
 					setState( oldState );

@@ -14,6 +14,7 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -119,7 +120,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 			}
 			setRefreshVariables( false );
 		}
-		return fVariables;
+		return ( fVariables != null ) ? fVariables : Collections.EMPTY_LIST;
 	}
 
 	/**
@@ -308,12 +309,7 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	 */
 	public void stepReturn() throws DebugException {
 		if ( canStepReturn() ) {
-			try {
-				getCDIStackFrame().stepReturn();
-			}
-			catch( CDIException e ) {
-				targetRequestFailed( e.getMessage(), null );
-			}
+			getThread().stepReturn();
 		}
 	}
 
@@ -679,5 +675,14 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	public boolean canEvaluate() {
 		CDebugTarget target = ((CDebugTarget)getDebugTarget());
 		return target.supportsExpressionEvaluation() && target.isSuspended();
+	}
+
+	protected void doStepReturn() throws DebugException {
+		try {
+			getCDIStackFrame().stepReturn();
+		}
+		catch( CDIException e ) {
+			targetRequestFailed( e.getMessage(), null );
+		}
 	}
 }

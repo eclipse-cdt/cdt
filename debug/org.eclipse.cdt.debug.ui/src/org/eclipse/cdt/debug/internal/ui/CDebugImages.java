@@ -62,6 +62,8 @@ public class CDebugImages
 	public static final String IMG_OVRS_SYMBOLS = NAME_PREFIX + "symbols_ovr.gif"; //$NON-NLS-1$
 	public static final String IMG_OVRS_VARIABLE_CASTED = NAME_PREFIX + "casttype_ovr.gif"; //$NON-NLS-1$
 	public static final String IMG_OVRS_ARGUMENT = NAME_PREFIX + "argument_ovr.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_BREAKPOINT_ENABLED = NAME_PREFIX + "brkp_obj.gif";	//$NON-NLS-1$
+	public static final String IMG_OBJS_BREAKPOINT_DISABLED = NAME_PREFIX + "brkpd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_ADDRESS_BREAKPOINT_ENABLED = NAME_PREFIX + "addrbrkp_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_ADDRESS_BREAKPOINT_DISABLED = NAME_PREFIX + "addrbrkpd_obj.gif";	//$NON-NLS-1$
 	public static final String IMG_OBJS_FUNCTION_BREAKPOINT_ENABLED = NAME_PREFIX + "funbrkp_obj.gif";	//$NON-NLS-1$
@@ -135,6 +137,8 @@ public class CDebugImages
 	public static final ImageDescriptor DESC_OVRS_SYMBOLS = createManaged( T_OVR, IMG_OVRS_SYMBOLS );
 	public static final ImageDescriptor DESC_OVRS_VARIABLE_CASTED = createManaged( T_OVR, IMG_OVRS_VARIABLE_CASTED );
 	public static final ImageDescriptor DESC_OVRS_ARGUMENT = createManaged( T_OVR, IMG_OVRS_ARGUMENT );
+	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT_ENABLED );
+	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_BREAKPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_ENABLED );
 	public static final ImageDescriptor DESC_OBJS_WATCHPOINT_DISABLED = createManaged( T_OBJ, IMG_OBJS_WATCHPOINT_DISABLED );
 	public static final ImageDescriptor DESC_OBJS_READ_WATCHPOINT_ENABLED = createManaged( T_OBJ, IMG_OBJS_READ_WATCHPOINT_ENABLED );

@@ -8,9 +8,15 @@ package org.eclipse.cdt.debug.internal.ui;
 
 import java.util.HashMap;
 
+import org.eclipse.cdt.debug.core.model.ICAddressBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
+import org.eclipse.cdt.debug.core.model.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICSharedLibrary;
 import org.eclipse.cdt.debug.core.model.ICSignal;
+import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.DebugException;
@@ -97,6 +103,8 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 			return getRegisterGroupImage( (IRegisterGroup)element );
 		if ( element instanceof ICSignal ) 
 			return getSignalImage( (ICSignal)element );
+		if ( element instanceof ICBreakpoint ) 
+			return getBreakpointImage( (ICBreakpoint)element );
 		return super.getImage( element );
 	}
 
@@ -116,7 +124,53 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	protected Image getRegisterGroupImage( IRegisterGroup element ) {
 		return fDebugImageRegistry.get( CDebugImages.DESC_OBJS_REGISTER_GROUP );
 	}
-	
+
+	protected Image getBreakpointImage( ICBreakpoint breakpoint ) {
+		try {
+			if ( breakpoint instanceof ICLineBreakpoint ) {
+				return getLineBreakpointImage( (ICLineBreakpoint)breakpoint );
+			}
+			if ( breakpoint instanceof ICWatchpoint ) {
+				return getWatchpointImage( (ICWatchpoint)breakpoint );
+			}
+		}
+		catch( CoreException e ) {
+		}
+		return null;
+	}
+
+	protected Image getLineBreakpointImage( ICLineBreakpoint breakpoint ) throws CoreException {
+		ImageDescriptor descriptor = null;
+		if ( breakpoint.isEnabled() ) {
+			descriptor = CDebugImages.DESC_OBJS_BREAKPOINT_ENABLED;
+		}
+		else {
+			descriptor = CDebugImages.DESC_OBJS_BREAKPOINT_DISABLED;
+		}
+		return getImageCache().getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeBreakpointOverlays( breakpoint ) ) );
+	}
+
+	protected Image getWatchpointImage( ICWatchpoint watchpoint ) throws CoreException {
+		ImageDescriptor descriptor = null;
+		if ( watchpoint.isEnabled() ) {
+			if ( watchpoint.isReadType() && !watchpoint.isWriteType() )
+				descriptor = CDebugImages.DESC_OBJS_READ_WATCHPOINT_ENABLED;
+			else if ( !watchpoint.isReadType() && watchpoint.isWriteType() )
+				descriptor = CDebugImages.DESC_OBJS_WRITE_WATCHPOINT_ENABLED;
+			else
+				descriptor = CDebugImages.DESC_OBJS_WATCHPOINT_ENABLED;
+		}
+		else {
+			if ( watchpoint.isReadType() && !watchpoint.isWriteType() )
+				descriptor = CDebugImages.DESC_OBJS_READ_WATCHPOINT_DISABLED;
+			else if ( !watchpoint.isReadType() && watchpoint.isWriteType() )
+				descriptor = CDebugImages.DESC_OBJS_WRITE_WATCHPOINT_DISABLED;
+			else
+				descriptor = CDebugImages.DESC_OBJS_WATCHPOINT_DISABLED;
+		}
+		return fImageCache.getImageFor( new OverlayImageDescriptor( fDebugImageRegistry.get( descriptor ), computeBreakpointOverlays( watchpoint ) ) );
+	}
+
 	public String getText( Object element ) {
 		StringBuffer baseText = new StringBuffer( getBaseText( element ) );
 		return baseText.toString();
@@ -201,5 +255,27 @@ public class CDebugModelPresentation extends LabelProvider implements IDebugMode
 	 */
 	protected Image getDefaultImage(Object element) {
 		return DebugUIPlugin.getDefaultLabelProvider().getImage( element );
+	}
+
+	private ImageDescriptor[] computeBreakpointOverlays( ICBreakpoint breakpoint ) {
+		ImageDescriptor[] overlays = new ImageDescriptor[]{ null, null, null, null };
+		try {
+			if ( breakpoint.isConditional() ) {
+				overlays[OverlayImageDescriptor.TOP_LEFT] = (breakpoint.isEnabled()) ? CDebugImages.DESC_OVRS_BREAKPOINT_CONDITIONAL : CDebugImages.DESC_OVRS_BREAKPOINT_CONDITIONAL_DISABLED;
+			}
+			if ( breakpoint.isInstalled() ) {
+				overlays[OverlayImageDescriptor.BOTTOM_LEFT] = (breakpoint.isEnabled()) ? CDebugImages.DESC_OVRS_BREAKPOINT_INSTALLED : CDebugImages.DESC_OVRS_BREAKPOINT_INSTALLED_DISABLED;
+			}
+			if ( breakpoint instanceof ICAddressBreakpoint ) {
+				overlays[OverlayImageDescriptor.TOP_RIGHT] = (breakpoint.isEnabled()) ? CDebugImages.DESC_OVRS_ADDRESS_BREAKPOINT : CDebugImages.DESC_OVRS_ADDRESS_BREAKPOINT_DISABLED;
+			}
+			if ( breakpoint instanceof ICFunctionBreakpoint ) {
+				overlays[OverlayImageDescriptor.TOP_RIGHT] = (breakpoint.isEnabled()) ? CDebugImages.DESC_OVRS_FUNCTION_BREAKPOINT : CDebugImages.DESC_OVRS_FUNCTION_BREAKPOINT_DISABLED;
+			}
+		}
+		catch( CoreException e ) {
+			CDebugUIPlugin.log( e );
+		}
+		return overlays;
 	}
 }

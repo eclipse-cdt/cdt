@@ -1,3 +1,14 @@
+2004-04-08 Mikhail Khodjaiants
+	Added breakpoint images and implemented the extension points for breakpoint 
+	marker annotations.
+	* plugin.xml
+	* BreakpointImageProvider.java: new
+	* CDebugImages.java
+	* CDebugModelPresentation.java
+	* CDTDebugModelPresentation.java
+	* icons/full/obj16/brkp_obj.gif: new
+	* icons/full/obj16/brkpd_obj.gif: new
+
 2004-04-07 Mikhail Khodjaiants
 	Strings externalization fixes and reformatting.
 	* CDebugUIMessages.properties

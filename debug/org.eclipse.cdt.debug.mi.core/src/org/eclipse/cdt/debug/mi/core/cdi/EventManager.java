@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.event.MemoryChangedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.ResumedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.event.SuspendedEvent;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CTarget;
+import org.eclipse.cdt.debug.mi.core.cdi.model.MemoryBlock;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointDeletedEvent;
@@ -35,11 +36,15 @@ import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIMemoryCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIRegisterCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIStoppedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIThreadCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIVarCreatedEvent;
 
 /**
  */
@@ -138,6 +143,14 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 					} catch (CDIException e) {
 					}
 				}
+			} else if (miEvent instanceof MIVarCreatedEvent) {
+				cdiList.add(new CreatedEvent(session, (MIVarCreatedEvent)miEvent));
+			} else if (miEvent instanceof MIRegisterCreatedEvent) {
+				cdiList.add(new CreatedEvent(session, (MIRegisterCreatedEvent)miEvent));
+			} else if (miEvent instanceof MIThreadCreatedEvent) {
+				cdiList.add(new CreatedEvent(session, (MIThreadCreatedEvent)miEvent));
+			} else if (miEvent instanceof MIMemoryCreatedEvent) {
+				cdiList.add(new CreatedEvent(session, (MIMemoryCreatedEvent)miEvent));
 			}
 		}
 

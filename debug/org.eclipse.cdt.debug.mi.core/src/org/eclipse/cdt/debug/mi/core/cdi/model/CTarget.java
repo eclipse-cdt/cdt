@@ -36,6 +36,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIInfoThreads;
 import org.eclipse.cdt.debug.mi.core.command.MITargetDetach;
 import org.eclipse.cdt.debug.mi.core.command.MIThreadSelect;
 import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIThreadCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIThreadExitEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataEvaluateExpressionInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
@@ -144,12 +145,38 @@ public class CTarget  implements ICDITarget {
 
 		currentThreads = newThreads;
 
+		// Fire CreatedEvent for new threads.
+		if (newThreads != null && newThreads.length > 0) {
+			List cList = new ArrayList(newThreads.length);
+			for (int i = 0; i < newThreads.length; i++) {
+				boolean found = false;
+				for (int j = 0; oldThreads != null && j < oldThreads.length; j++) {
+					if (newThreads[j].getId() == ((CThread)oldThreads[i]).getId()) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					cList.add(new Integer(newThreads[i].getId()));
+				}
+			}
+			if (!cList.isEmpty()) {
+				MIThreadCreatedEvent[] events = new MIThreadCreatedEvent[cList.size()];
+				for (int j = 0; j < events.length; j++) {
+					int id = ((Integer)cList.get(j)).intValue();
+					events[j] = new MIThreadCreatedEvent(id);
+				}
+				MISession miSession = session.getMISession();
+				miSession.fireEvents(events);
+			}
+		}
+
 		// Fire destroyedEvent for old threads.
 		if (oldThreads != null && oldThreads.length > 0) {
 			List dList = new ArrayList(oldThreads.length);
 			for (int i = 0; i < oldThreads.length; i++) {
 				boolean found = false;
-				for (int j = 0; j < newThreads.length; j++) {
+				for (int j = 0; newThreads != null && j < newThreads.length; j++) {
 					if (newThreads[j].getId() == ((CThread)oldThreads[i]).getId()) {
 						found = true;
 						break;
@@ -233,6 +260,20 @@ public class CTarget  implements ICDITarget {
 			currentThreads = getCThreads();
 		}
 		return currentThreads;
+	}
+
+	public ICDIThread getThread(int tid) {
+		CThread th = null;
+		if (currentThreads != null) {
+			for (int i = 0; i < currentThreads.length; i++) {
+				CThread cthread = (CThread)currentThreads[i];
+				if (cthread.getId() == tid) {
+					th = cthread;
+					break;
+				}
+			}
+		}
+		return th;
 	}
 
 	/**

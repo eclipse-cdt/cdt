@@ -82,7 +82,7 @@ public class Register extends CObject implements ICDIRegister, ICDIValue {
 	/**
 	 * return the MI regno.
 	 */
-	public int getId() {
+	public int getID() {
 		return regObject.getId();
 	}
 

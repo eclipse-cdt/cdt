@@ -10,7 +10,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIMemoryChangedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.mi.core.cdi.CSession;
-import org.eclipse.cdt.debug.mi.core.cdi.MemoryBlock;
+import org.eclipse.cdt.debug.mi.core.cdi.model.MemoryBlock;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
 
 /**

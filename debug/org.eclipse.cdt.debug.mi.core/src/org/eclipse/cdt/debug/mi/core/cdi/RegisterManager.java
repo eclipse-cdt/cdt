@@ -18,6 +18,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIDataListChangedRegisters;
 import org.eclipse.cdt.debug.mi.core.command.MIDataListRegisterNames;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIRegisterCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListChangedRegistersInfo;
 import org.eclipse.cdt.debug.mi.core.output.MIDataListRegisterNamesInfo;
 
@@ -64,7 +65,7 @@ public class RegisterManager extends SessionObject {
 	public Register getRegister(int regno) throws CDIException {
 		Register[] regs = getRegisters();
 		for (int i = 0; i < regs.length; i++) {
-			if (regs[i].getId() == regno) {
+			if (regs[i].getID() == regno) {
 				return regs[i];
 			}
 		}
@@ -86,6 +87,8 @@ public class RegisterManager extends SessionObject {
 		if (reg == null) {
 			reg = new Register(getCSession().getCTarget(), regObject);
 			regList.add(reg);
+			MISession mi = getCSession().getMISession();
+			mi.fireEvent(new MIRegisterCreatedEvent(reg.getName(), reg.getID()));
 		}
 		return reg;
 	}

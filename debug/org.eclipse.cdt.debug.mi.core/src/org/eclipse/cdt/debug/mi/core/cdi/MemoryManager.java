@@ -14,10 +14,12 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
 import org.eclipse.cdt.debug.mi.core.MISession;
+import org.eclipse.cdt.debug.mi.core.cdi.model.MemoryBlock;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataReadMemory;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIMemoryCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIDataReadMemoryInfo;
 
 /**
@@ -76,7 +78,7 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 	/**
 	 * @return the registers MemoryBlock.
 	 */
-	MemoryBlock[] listMemoryBlocks() {
+	public MemoryBlock[] listMemoryBlocks() {
 		return (MemoryBlock[])blockList.toArray(new MemoryBlock[0]);
 	}
 
@@ -150,6 +152,8 @@ public class MemoryManager extends SessionObject implements ICDIMemoryManager {
 		MIDataReadMemoryInfo info = createMIDataReadMemoryInfo(address, length);
 		ICDIMemoryBlock block = new MemoryBlock(getCSession().getCTarget(), address, info);
 		blockList.add(block);
+		MISession mi = getCSession().getMISession();
+		mi.fireEvent(new MIMemoryCreatedEvent(block.getStartAddress(), block.getLength()));
 		return block;
 	}
 

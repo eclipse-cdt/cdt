@@ -27,6 +27,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
 import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIVarCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
 import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
@@ -264,6 +265,9 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 			var = new Variable(stack, name, element.miVar);
 			element.variable = var;
 			addElement(element);
+			// Fire an created Event.
+			MISession mi = getCSession().getMISession();
+			mi.fireEvent(new MIVarCreatedEvent(element.miVar.getVarName()));
 		}
 		return var;
 	}
@@ -277,6 +281,9 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 		Variable var = new Variable(stack, name, miVar);
 		element.variable = var;
 		addElement(element);
+		// Fire an created Event.
+		MISession mi = getCSession().getMISession();
+		mi.fireEvent(new MIVarCreatedEvent(miVar.getVarName()));
 		return var;
 	}
 
@@ -289,6 +296,9 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 			carg = new Argument(stack, name,element.miVar);
 			element.variable = carg;
 			addElement(element);
+			// Fire an created Event.
+			MISession mi = getCSession().getMISession();
+			mi.fireEvent(new MIVarCreatedEvent(element.miVar.getVarName()));
 		}
 		return carg;
 	}
@@ -302,6 +312,9 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 			cexp = new Expression(stack, name, element.miVar);
 			element.variable = cexp;
 			addElement(element);
+			// Fire an created Event.
+			MISession mi = getCSession().getMISession();
+			mi.fireEvent(new MIVarCreatedEvent(element.miVar.getVarName()));
 		}
 		return cexp;
 	}

@@ -70,6 +70,7 @@ public class MakeBuilder extends ACBuilder {
 		boolean bPerformBuild = true;
 		IMakeBuilderInfo info = MakeCorePlugin.createBuildInfo(args, MakeBuilder.BUILDER_ID);
 		if (!shouldBuild(kind, info)) {
+			forgetLastBuiltState();
 			return new IProject[0];
 		}
 		if (kind == IncrementalProjectBuilder.AUTO_BUILD) {

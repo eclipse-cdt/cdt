@@ -53,7 +53,6 @@ public class CEnvironmentTab extends CLaunchConfigurationTab {
 
 	protected Properties fElements;
 
-	private Composite fControl;
 	protected TableViewer fVariableList;
 	protected Button fBtnNew;
 	protected Button fBtnEdit;

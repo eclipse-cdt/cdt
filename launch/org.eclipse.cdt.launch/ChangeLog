@@ -1,3 +1,7 @@
+2003-03-19 David Inglis
+	Fixed bug with not showing C Project lists with the launch config, when C UI Plugins was not
+	created yet.
+	
 2003-03-18 Alain Magloire
 
 	* plugin.xml

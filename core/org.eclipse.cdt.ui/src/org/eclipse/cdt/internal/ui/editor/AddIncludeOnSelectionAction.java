@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.ui.CCompletionContributorManager;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
 import org.eclipse.cdt.internal.ui.codemanipulation.AddIncludesOperation;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -53,6 +54,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
@@ -136,20 +138,6 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	private Shell getShell() {
 		return fEditor.getSite().getShell();
 	}
-	
-	private int getNameStart(IDocument doc, int pos) throws BadLocationException {
-		if (pos > 0 && doc.getChar(pos - 1) == '.') {
-			pos--;
-			while (pos > 0) {
-				char ch= doc.getChar(pos - 1);
-				if (!Character.isJavaIdentifierPart(ch) && ch != '.') {
-					return pos;
-				}
-				pos--;
-			}
-		}
-		return pos;
-	}
 
 	/**
 	 * @see IAction#actionPerformed
@@ -185,11 +173,11 @@ public class AddIncludeOnSelectionAction extends Action implements IUpdate {
 	
 		ITextSelection selection= (ITextSelection) s;
 		try {
-			int selStart= selection.getOffset();
-			int nameStart= getNameStart(doc, selStart);
-			int len= selStart - nameStart + selection.getLength();
-					
-			String name = doc.get(nameStart, len).trim();
+			IRegion region = CWordFinder.findWord(doc, selection.getOffset());
+			if (region == null || region.getLength() == 0) {
+				return;
+			}
+			String name = doc.get(region.getOffset(), region.getLength());
 			if (name.length() == 0) {
 				return;
 			}

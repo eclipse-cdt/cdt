@@ -1,3 +1,12 @@
+2004-09-03 Alain Magloire
+
+	Provide key binding for AddInclude action
+	* src/org/eclipse/cdt/internal/ui/editor/AddIncludeOnSelectionAction.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditor.java
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorMessages.properties
+	* plugin.xml
+	* plugin.properties
+
 2004-09-02 Alain Magloire
 	
 	Deal with WorkingCopy vs TranslationUnit in the hashCode.

@@ -622,7 +622,9 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_CONTEXT_INFORMATION);
 		setAction("ContentAssistTip", action); //$NON-NLS-1$
 
-		setAction("AddIncludeOnSelection", new AddIncludeOnSelectionAction(this)); //$NON-NLS-1$
+		action = new AddIncludeOnSelectionAction(this);
+		action.setActionDefinitionId(ICEditorActionDefinitionIds.ADD_INCLUDE);
+		setAction("AddIncludeOnSelection", action); //$NON-NLS-1$
 	
 		action = new OpenDeclarationsAction(this);
 		action.setActionDefinitionId(ICEditorActionDefinitionIds.OPEN_DECL);

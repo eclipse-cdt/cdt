@@ -333,6 +333,7 @@ public class BuildInfoFactory {
 			ICommand builder = MakeProjectNature.getBuildSpec(description, builderID);
 			args.put(name, value);
 			builder.setArguments(args);
+			MakeProjectNature.setBuildSpec(description, builder);
 			project.setDescription(description, null);
 		}
 

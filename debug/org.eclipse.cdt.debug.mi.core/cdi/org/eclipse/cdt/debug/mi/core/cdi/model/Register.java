@@ -67,10 +67,10 @@ public class Register extends Variable implements ICDIRegister {
 						if ((exp.equals("private") || exp.equals("public") || exp.equals("protected"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							fn = getFullName();
 						} else {
-							fn = getFullName() + "." + exp;
+							fn = getFullName() + "." + exp; //$NON-NLS-1$
 						}
 					} else {
-						fn = getFullName() + "." + exp;
+						fn = getFullName() + "." + exp; //$NON-NLS-1$
 					}
 					RegisterObject regObj = new RegisterObject(getTarget(),
 					 exp, fn, getPosition());

@@ -71,7 +71,7 @@ public class Thread extends CObject implements ICDIThread {
 	public String toString() {
 		String str = Integer.toString(id);
 		if (name != null) {
-			str += " " + name;
+			str += " " + name; //$NON-NLS-1$
 		}
 		return str;
 	}

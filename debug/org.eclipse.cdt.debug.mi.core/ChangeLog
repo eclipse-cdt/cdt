@@ -1,3 +1,16 @@
+2004-07-12 Alain Magloire
+
+	Remove some compiler warnings.
+
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Register.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Thread.java
+	* cdi/org/eclipse/cdt/debug/mi/core/cdi/model/Variable.java
+
+	* mi/org/eclipse/cdt/debug/mi/core/command/CygwinMIEnvirnmentDirectory.java
+	* src/org/eclipse/cdt/debug/mi/core/CygwinGDBDebugger.java
+	* src/org/eclipse/cdt/debug/mi/core/GDBTypeParser.java
+	* src/org/eclipse/cdt/debug/mi/core/MIPlugin.java
+
 2004-07-09 Alain Magloire
 
 	Patch from gwatson to deal with Mac

@@ -100,8 +100,8 @@ public class MIPlugin extends Plugin {
 	 * @return MISession
 	 */
 	public MISession createMISession(Process process, PTY pty, int type) throws MIException {
-		MIPlugin plugin = getDefault();
-		Preferences prefs = plugin.getPluginPreferences();
+		MIPlugin miPlugin = getDefault();
+		Preferences prefs = miPlugin.getPluginPreferences();
 		int timeout = prefs.getInt(IMIConstants.PREF_REQUEST_TIMEOUT);
 		int launchTimeout = prefs.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
 		return createMISession(process, pty, timeout, type, launchTimeout);
@@ -389,8 +389,8 @@ public class MIPlugin extends Plugin {
 		syncStartup.start();
 		
 		synchronized (pgdb) {
-			MIPlugin plugin = getDefault();
-			Preferences prefs = plugin.getPluginPreferences();
+			MIPlugin miPlugin = getDefault();
+			Preferences prefs = miPlugin.getPluginPreferences();
 			int launchTimeout = prefs.getInt(IMIConstants.PREF_REQUEST_LAUNCH_TIMEOUT);
 			while (syncStartup.isAlive()) {
 				try {

@@ -25,17 +25,17 @@ public class CygwinMIEnvironmentDirectory extends MIEnvironmentDirectory {
 		for (int i = 0; i < paths.length; i++) {
 			// Use the cygpath utility to convert the path
 			CommandLauncher launcher = new CommandLauncher();
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 			launcher.execute(
 				new Path("cygpath"), //$NON-NLS-1$
 				new String[] { "-u", paths[i] }, //$NON-NLS-1$
 				new String[0],
 				new Path(".")); //$NON-NLS-1$
-			if (launcher.waitAndRead(output, output) != CommandLauncher.OK)
+			if (launcher.waitAndRead(out, out) != CommandLauncher.OK)
 				newpaths[i] = paths[i];
 			else
-				newpaths[i] = output.toString().trim();
+				newpaths[i] = out.toString().trim();
 		}
 
 		setParameters(newpaths);

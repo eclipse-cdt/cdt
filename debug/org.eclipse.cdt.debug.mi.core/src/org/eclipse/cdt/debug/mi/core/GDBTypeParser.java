@@ -60,7 +60,7 @@ public class GDBTypeParser {
 		if (s == null) {
 			s = new String();
 		}
-		s = Pattern.compile("\\bconst\\b").matcher(s).replaceAll("");
+		s = Pattern.compile("\\bconst\\b").matcher(s).replaceAll("");  //$NON-NLS-1$//$NON-NLS-2$
 		s = s.trim();
 
 		// Initialize.

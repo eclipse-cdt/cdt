@@ -489,7 +489,7 @@ public class CEditor extends TextEditor implements ISelectionChangedListener, IS
 		
 		//Selection Search group
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
-		fRefactoringActionGroup = new RefactoringActionGroup(this);
+		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
 		
 		//Search items
 		fFileSearchAction = new FileSearchAction(getSelectionProvider());

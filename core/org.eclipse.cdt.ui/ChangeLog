@@ -1,3 +1,6 @@
+2004-04-23 Hoda Amer
+	Fix for bug#Bug 59618 : [Refactoring] Be able to append refactor action group after my own group
+	
 2004-04-23 Alain Magloire
 	Possible NPE.
 	* src/org/eclipse/cdt/internal/ui/editor/CDocumentProvider.java

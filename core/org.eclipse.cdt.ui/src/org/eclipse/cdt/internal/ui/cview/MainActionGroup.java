@@ -167,7 +167,7 @@ public class MainActionGroup extends CViewActionGroup {
 		fSearchDialogAction = new SearchDialogAction(viewer, getCView().getViewSite().getWorkbenchWindow());
 		
 		selectionSearchGroup = new SelectionSearchGroup(getCView().getSite());
-		refactoringActionGroup = new RefactoringActionGroup(getCView().getSite());	
+		refactoringActionGroup = new RefactoringActionGroup(getCView().getSite(), null);	
 		
 	}
 

@@ -182,7 +182,7 @@ public class CContentOutlinePage extends Page implements IContentOutlinePage, IS
 		registerToolbarActions();
 
 		fSelectionSearchGroup = new SelectionSearchGroup(this);
-		fRefactoringActionGroup = new RefactoringActionGroup(this);
+		fRefactoringActionGroup = new RefactoringActionGroup(this, null);
 		
 		treeViewer.setInput(fInput);
 

@@ -122,8 +122,8 @@ public class RefactoringActionGroup extends ActionGroup {
 	 * 
 	 * @param part the view part that owns this action group
 	 */
-	public RefactoringActionGroup(IViewPart part) {
-		this(part.getSite());
+	public RefactoringActionGroup(IViewPart part, String groupName) {
+		this(part.getSite(), groupName);
 	}	
 	
 	/**
@@ -133,42 +133,43 @@ public class RefactoringActionGroup extends ActionGroup {
 	 * 
 	 * @param page the page that owns this action group
 	 */
-	public RefactoringActionGroup(Page page) {
-		this(page.getSite());
+	public RefactoringActionGroup(Page page, String groupName) {
+		this(page.getSite(), groupName);
 	}
 	
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
 	 */
-	public RefactoringActionGroup(CEditor editor) {
+	public RefactoringActionGroup(CEditor editor, String groupName) {
 		fSite= editor.getEditorSite();		
 		fEditor= editor;
+		if((groupName != null) && (groupName.length() > 0))
+			fGroupName= groupName;
 		
 		ISelectionProvider provider= editor.getSelectionProvider();
 		ISelection selection= provider.getSelection();
 		fEditorActions= new ArrayList();
 		
 		fRenameAction= new RenameRefactoringAction(editor);
-//		fRenameAction.setActionDefinitionId(ICEditorActionDefinitionIds.RENAME_ELEMENT);
 		fRenameAction.update(selection);
 		editor.setAction("RenameElement", fRenameAction); //$NON-NLS-1$
 		fEditorActions.add(fRenameAction);
 
 		fUndoAction= new UndoRefactoringAction(editor);
-//		fUndoAction.setActionDefinitionId(ICEditorActionDefinitionIds.UNDO_ACTION);
 		fUndoAction.update(selection);
 		editor.setAction("UndoAction", fUndoAction); //$NON-NLS-1$
 		fEditorActions.add(fUndoAction);
 
 		fRedoAction= new RedoRefactoringAction(editor);
-//		fRedoAction.setActionDefinitionId(ICEditorActionDefinitionIds.REDO_ACTION);
 		fRedoAction.update(selection);
 		editor.setAction("RedoAction", fRedoAction); //$NON-NLS-1$
 		fEditorActions.add(fRedoAction);
 }
 
-	public RefactoringActionGroup(IWorkbenchSite site) {
+	public RefactoringActionGroup(IWorkbenchSite site, String groupName) {
 		fSite= site;
+		if((groupName != null) && (groupName.length() > 0))
+			fGroupName= groupName;
 		ISelectionProvider provider= fSite.getSelectionProvider();
 		ISelection selection= provider.getSelection();
 

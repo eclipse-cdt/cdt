@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTNamedTypeSpecifier extends IASTDeclSpecifier {
+public interface IASTNamedTypeSpecifier extends IASTDeclSpecifier, IASTNameOwner {
 
 	/**
 	 * <code>NAME</code> describes the relationship between an

@@ -10,9 +10,11 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
@@ -140,4 +142,29 @@ public class CASTDeclarator extends CASTNode implements IASTDeclarator {
         if( initializer != null ) if( !initializer.accept( action ) ) return false;
         return true;
     }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
+	 */
+	public int getRoleForName(IASTName name) {
+		if( name == this.name )
+		{
+			IASTNode getParent = getParent();
+			if( getParent instanceof IASTDeclaration )
+				return r_declaration;
+			if( getParent instanceof IASTTypeId )
+				return r_reference;
+			if( getParent instanceof IASTDeclarator )
+			{
+				IASTNode t = getParent;
+				while ( t instanceof IASTDeclarator )
+					t = t.getParent();
+				if( t instanceof IASTDeclaration )
+					return r_declaration;
+				if( t instanceof IASTTypeId )
+					return r_reference;
+			}
+		}
+		return r_unclear;
+	}
 }

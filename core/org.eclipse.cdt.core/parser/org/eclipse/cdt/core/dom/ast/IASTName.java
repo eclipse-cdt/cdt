@@ -47,4 +47,16 @@ public interface IASTName extends IASTNode {
 	 * @return ~ toString().toCharArray()
 	 */
 	public char[] toCharArray();
+	
+	/**
+	 * Is this name being used in the AST as the introduction of a declaration?
+	 * @return boolean
+	 */
+	public boolean isDeclaration();
+	
+	/**
+	 * Is this name being used in the AST as a reference rather than a declaration?
+	 * @return
+	 */
+	public boolean isReference();
 }

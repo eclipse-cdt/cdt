@@ -15,13 +15,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
  * This is the declarator for a K&R C Function.
  * 
  * @author dsteffle
  */
-public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
+public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator, IASTNameOwner {
 
 	/**
 	 * <code>PARAMETER_NAME</code> refers to the names qualified in a K&R C

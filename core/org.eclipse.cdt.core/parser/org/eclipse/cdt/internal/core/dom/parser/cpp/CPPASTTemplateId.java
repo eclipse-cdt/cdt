@@ -145,4 +145,27 @@ public class CPPASTTemplateId extends CPPASTNode implements ICPPASTTemplateId {
         }
         return true;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#isDeclaration()
+	 */
+	public boolean isDeclaration() {
+		return false; //for now this seems to be true
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#isReference()
+	 */
+	public boolean isReference() {
+		return true; //for now this seems to be true
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
+	 */
+	public int getRoleForName(IASTName n) {
+		if( n == templateName )
+			return r_reference;
+		return r_unclear;
+	}
 }

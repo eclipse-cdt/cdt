@@ -57,4 +57,12 @@ public class CPPASTConstructorChainInitializer extends CPPASTNode implements
         if( value != null ) if( !value.accept( action ) ) return false;
         return true;
     }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
+	 */
+	public int getRoleForName(IASTName n) {
+		if( name == n ) return r_reference;
+		return r_unclear;
+	}
 }

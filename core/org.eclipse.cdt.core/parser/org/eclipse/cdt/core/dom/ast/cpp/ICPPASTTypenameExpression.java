@@ -13,11 +13,12 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
  * @author jcamelon
  */
-public interface ICPPASTTypenameExpression extends IASTExpression {
+public interface ICPPASTTypenameExpression extends IASTExpression, IASTNameOwner {
 
 	/**
 	 * Was template token consumed?

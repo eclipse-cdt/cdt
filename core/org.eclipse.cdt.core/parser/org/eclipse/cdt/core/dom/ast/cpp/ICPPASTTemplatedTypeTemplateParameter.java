@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
  * This is a templated template parameter.
@@ -20,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
  * @author jcamelon
  */
 public interface ICPPASTTemplatedTypeTemplateParameter extends
-		ICPPASTTemplateParameter {
+		ICPPASTTemplateParameter, IASTNameOwner {
 
 	/**
 	 * PARAMETER

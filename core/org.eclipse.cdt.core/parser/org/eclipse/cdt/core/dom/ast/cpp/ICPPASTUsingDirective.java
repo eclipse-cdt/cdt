@@ -13,13 +13,14 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
  * This interface represents a C++ using directive.
  * 
  * @author jcamelon
  */
-public interface ICPPASTUsingDirective extends IASTDeclaration {
+public interface ICPPASTUsingDirective extends IASTDeclaration, IASTNameOwner {
 	/**
 	 * Constant.
 	 */

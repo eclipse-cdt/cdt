@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTLabelStatement extends IASTStatement {
+public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
 
 	public static final ASTNodeProperty NAME = new ASTNodeProperty("name"); //$NON-NLS-1$
 

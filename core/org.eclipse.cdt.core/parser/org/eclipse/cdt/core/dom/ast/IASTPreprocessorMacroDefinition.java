@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
  * @author Doug Schaefer
  */
 public interface IASTPreprocessorMacroDefinition extends
-		IASTPreprocessorStatement {
+		IASTPreprocessorStatement, IASTNameOwner {
 
 	/**
 	 * <code>MACRO_NAME</code> describes the relationship between a macro

@@ -91,4 +91,14 @@ public class CASTKnRFunctionDeclarator extends CASTDeclarator implements ICASTKn
 		
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.parser.c.CASTDeclarator#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
+	 */
+	public int getRoleForName(IASTName name) {
+		IASTName [] n = getParameterNames();
+		for( int i = 0; i < n.length; ++i )
+			if( n[i] == name ) return r_unclear; 
+		return super.getRoleForName(name);
+	}
 }

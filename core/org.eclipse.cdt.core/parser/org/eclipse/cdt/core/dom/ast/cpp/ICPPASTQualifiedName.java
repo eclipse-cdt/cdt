@@ -12,13 +12,14 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
  * This interface is a qualified name in C++.
  * 
  * @author jcamelon
  */
-public interface ICPPASTQualifiedName extends IASTName {
+public interface ICPPASTQualifiedName extends IASTName, IASTNameOwner {
 
 	/**
 	 * Each IASTName segment has property being <code>SEGMENT_NAME</code>.

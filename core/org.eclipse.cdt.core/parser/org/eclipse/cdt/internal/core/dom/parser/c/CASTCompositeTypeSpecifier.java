@@ -135,4 +135,13 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
             
         return true;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
+	 */
+	public int getRoleForName(IASTName name) {
+		if( name == this.name )
+			return r_declaration;
+		return r_unclear;
+	}
 }

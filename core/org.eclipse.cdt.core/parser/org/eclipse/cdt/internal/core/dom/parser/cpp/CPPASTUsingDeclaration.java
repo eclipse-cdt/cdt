@@ -63,4 +63,13 @@ public class CPPASTUsingDeclaration extends CPPASTNode implements
         if( name != null ) if( !name.accept( action ) ) return false;
         return true;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
+	 */
+	public int getRoleForName(IASTName n) {
+		if( n == name )
+			return r_reference;
+		return r_unclear;
+	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
  * This interface represents a namespace alias in C++. e.g. namespace ABC { int
@@ -20,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
  * 
  * @author jcamelon
  */
-public interface ICPPASTNamespaceAlias extends IASTDeclaration {
+public interface ICPPASTNamespaceAlias extends IASTDeclaration, IASTNameOwner {
 
 	/**
 	 * <code>ALIAS_NAME</code> represents the new namespace name being

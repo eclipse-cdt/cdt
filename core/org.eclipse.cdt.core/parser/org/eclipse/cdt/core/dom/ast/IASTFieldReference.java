@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTFieldReference extends IASTExpression {
+public interface IASTFieldReference extends IASTExpression, IASTNameOwner {
 
 	/**
 	 * <code>FIELD_OWNER</code> represents the relationship between a

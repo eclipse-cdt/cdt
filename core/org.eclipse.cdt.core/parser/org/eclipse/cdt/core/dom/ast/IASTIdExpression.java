@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTIdExpression extends IASTExpression {
+public interface IASTIdExpression extends IASTExpression, IASTNameOwner {
 
 	/**
 	 * <code>ID_NAME</code> represents the relationship between an

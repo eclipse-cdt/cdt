@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTPointer;
 
 /**
@@ -19,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
  * 
  * @author Doug Schaefer
  */
-public interface ICPPASTPointerToMember extends IASTPointer {
+public interface ICPPASTPointerToMember extends IASTPointer, IASTNameOwner {
 
 	/**
 	 * This property refers to the nested name.

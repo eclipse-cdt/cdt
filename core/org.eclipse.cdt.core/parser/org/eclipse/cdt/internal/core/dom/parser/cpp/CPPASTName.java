@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
@@ -85,4 +87,30 @@ public class CPPASTName extends CPPASTNode implements IASTName {
 		}
         return true;
     }
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#isDeclaration()
+	 */
+	public boolean isDeclaration() {
+		IASTNode parent = getParent();
+		if (parent instanceof IASTNameOwner) {
+			int role = ((IASTNameOwner) parent).getRoleForName(this);
+			if( role == IASTNameOwner.r_reference ) return false;
+			return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTName#isReference()
+	 */
+	public boolean isReference() {
+		IASTNode parent = getParent();
+		if (parent instanceof IASTNameOwner) {
+			int role = ((IASTNameOwner) parent).getRoleForName(this);
+			if( role == IASTNameOwner.r_reference ) return true;
+			return false;
+		}
+		return false;
+	}
 }

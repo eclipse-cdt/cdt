@@ -14,7 +14,7 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author jcamelon
  */
-public interface IASTElaboratedTypeSpecifier extends IASTDeclSpecifier {
+public interface IASTElaboratedTypeSpecifier extends IASTDeclSpecifier, IASTNameOwner {
 
 	/**
 	 * Enumeration.

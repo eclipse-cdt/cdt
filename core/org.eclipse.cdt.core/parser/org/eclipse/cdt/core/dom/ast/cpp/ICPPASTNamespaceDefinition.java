@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
@@ -20,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
  * 
  * @author jcamelon
  */
-public interface ICPPASTNamespaceDefinition extends IASTDeclaration {
+public interface ICPPASTNamespaceDefinition extends IASTDeclaration, IASTNameOwner {
 
 	/**
 	 * <code>OWNED_DECLARATION</code> is the role served by all the nested

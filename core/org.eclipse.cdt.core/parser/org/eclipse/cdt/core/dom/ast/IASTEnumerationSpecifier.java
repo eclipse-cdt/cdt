@@ -14,14 +14,14 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author jcamelon
  */
-public interface IASTEnumerationSpecifier extends IASTDeclSpecifier {
+public interface IASTEnumerationSpecifier extends IASTDeclSpecifier, IASTNameOwner {
 
 	/**
 	 * This interface represents an enumerator member of an enum specifier.
 	 * 
 	 * @author jcamelon
 	 */
-	public interface IASTEnumerator extends IASTNode {
+	public interface IASTEnumerator extends IASTNode, IASTNameOwner {
 		/**
 		 * Empty array (constant).
 		 */

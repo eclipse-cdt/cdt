@@ -13,13 +13,14 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
  * This interface represents a using declaration.
  * 
  * @author jcamelon
  */
-public interface ICPPASTUsingDeclaration extends IASTDeclaration {
+public interface ICPPASTUsingDeclaration extends IASTDeclaration, IASTNameOwner {
 
 	/**
 	 * <code>NAME</code> is the qualified name brought into scope.

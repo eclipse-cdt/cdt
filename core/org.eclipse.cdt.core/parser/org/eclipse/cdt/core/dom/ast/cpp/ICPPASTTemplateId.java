@@ -13,13 +13,14 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
  * @author jcamelon
  */
-public interface ICPPASTTemplateId extends IASTName {
+public interface ICPPASTTemplateId extends IASTName, IASTNameOwner {
 
 	/**
 	 * TEMPLATE_NAME is the IASTName.

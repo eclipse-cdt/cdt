@@ -104,4 +104,13 @@ public class CASTEnumerationSpecifier extends CASTBaseDeclSpecifier implements
         return true;
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
+	 */
+	public int getRoleForName(IASTName name) {
+		if( this.name == name )
+			return r_declaration;
+		return r_unclear;
+	}
+
 }

@@ -495,6 +495,13 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public void setExpansion(String exp) {
             this.expansion = exp;
         }
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
+		 */
+		public int getRoleForName(IASTName n) {
+			if( name == n ) return r_declaration;
+			return r_unclear;
+		}
 
     }
 
@@ -617,6 +624,22 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
         public String toString() {
             return new String(name);
         }
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTName#isDeclaration()
+		 */
+		public boolean isDeclaration() {
+			if (getParent() instanceof IASTPreprocessorMacroDefinition && getPropertyInParent() == IASTPreprocessorMacroDefinition.MACRO_NAME ) 
+				return true;
+			return false;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTName#isReference()
+		 */
+		public boolean isReference() {
+			return !isDeclaration();
+		}
     }
 
     /**
@@ -626,6 +649,13 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
             IASTPreprocessorObjectStyleMacroDefinition {
 
         private IASTName name;
+		/* (non-Javadoc)
+		 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
+		 */
+		public int getRoleForName(IASTName n) {
+			if( name == n ) return r_declaration;
+			return r_unclear;
+		}
 
         private String expansion;
 

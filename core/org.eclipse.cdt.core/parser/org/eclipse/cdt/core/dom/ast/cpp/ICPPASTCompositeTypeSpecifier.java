@@ -13,6 +13,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
@@ -50,7 +51,7 @@ public interface ICPPASTCompositeTypeSpecifier extends
 	 * 
 	 * @author jcamelon
 	 */
-	public static interface ICPPASTBaseSpecifier extends IASTNode {
+	public static interface ICPPASTBaseSpecifier extends IASTNode, IASTNameOwner  {
 		/**
 		 * Constant.
 		 */

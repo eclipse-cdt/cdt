@@ -241,6 +241,8 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals(IASTDeclSpecifier.sc_typedef, type.getStorageClass());
         // this an anonymous struct
         IASTName name_struct = type.getName();
+		assertTrue( name_struct.isDeclaration() );
+		assertFalse( name_struct.isReference() );
         assertNull("", name_struct.toString()); //$NON-NLS-1$
         // member - x
         IASTSimpleDeclaration decl_x = (IASTSimpleDeclaration) type
@@ -1707,6 +1709,7 @@ public class AST2Tests extends AST2BaseTest {
                 .getDeclSpecifier();
         ICompositeType A = (ICompositeType) elabSpec.getName().resolveBinding();
         IASTName name_A1 = elabSpec.getName();
+		assertTrue( name_A1.isDeclaration() );
 
         decl = (IASTSimpleDeclaration) tu.getDeclarations()[1];
         IFunction f = (IFunction) decl.getDeclarators()[0].getName()

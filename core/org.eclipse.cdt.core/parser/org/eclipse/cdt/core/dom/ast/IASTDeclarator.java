@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
  * 
  * @author Doug Schaefer
  */
-public interface IASTDeclarator extends IASTNode {
+public interface IASTDeclarator extends IASTNode, IASTNameOwner {
 
 	/**
 	 * Constant - empty declarator array

@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
@@ -20,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
  * @author jcamelon
  */
 public interface ICPPASTSimpleTypeTemplateParameter extends
-		ICPPASTTemplateParameter {
+		ICPPASTTemplateParameter, IASTNameOwner {
 
 	/**
 	 * <code>st_class</code> represents a class.

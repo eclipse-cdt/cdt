@@ -108,7 +108,7 @@
 	
 	<target name="upload" depends="init" unless="hasErrors">
 		<exec dir="${buildDirectory}" executable="curl">
-			<arg line="-u${cdtuser}:${cdtpasswd} ${remotedir}/index.html -o index.html"/>
+			<arg line="-s -u${cdtuser}:${cdtpasswd} ${remotedir}/index.html -o index.html"/>
 		</exec>
 		<replace file="${buildDirectory}/index.html">
 			<replacetoken><![CDATA[  <!-- add here -->]]></replacetoken>
@@ -120,7 +120,7 @@
 			<replacefilter token="@buildId@" value="${buildId}"/>
 		</replace>
 		<exec dir="${buildDirectory}" executable="curl">
-			<arg line="-u${cdtuser}:${cdtpasswd} -T index.html ${remotedir}/index.html"/>
+			<arg line="-s -u${cdtuser}:${cdtpasswd} -T index.html ${remotedir}/index.html"/>
 		</exec>
 		<exec dir="${zipsdir}" executable="sh">
 			<arg line="${basedir}/upload.sh ${cdtuser} ${cdtpasswd} ${remotedir}/${buildId}/"/>

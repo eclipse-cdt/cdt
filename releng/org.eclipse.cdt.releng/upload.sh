@@ -7,5 +7,5 @@
 
 for i in *
 do
-	curl --ftp-create-dirs -u$1:$2 -T $i $3
+	curl -s --ftp-create-dirs -u$1:$2 -T $i $3
 done

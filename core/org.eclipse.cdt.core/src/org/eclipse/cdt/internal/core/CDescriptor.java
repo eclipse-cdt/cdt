@@ -1,13 +1,12 @@
-/**********************************************************************
- * Copyright (c) 2002,2003 QNX Software Systems Ltd. and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+/*******************************************************************************
+ * Copyright (c) 2002, 2003, 2004 QNX Software Systems Ltd. and others. All
+ * rights reserved. This program and the accompanying materials are made
+ * available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import java.io.ByteArrayInputStream;
@@ -15,7 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -23,13 +22,15 @@ import java.util.Map.Entry;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
@@ -51,29 +52,42 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
 
 public class CDescriptor implements ICDescriptor {
+
+	final CDescriptorManager fManager;
+	private final IProject fProject;
+
 	private COwner fOwner;
-	private IProject fProject;
+
 	private HashMap extMap = new HashMap(4);
 	private HashMap extInfoMap = new HashMap(4);
 	private Document dataDoc;
 
-	static final String CEXTENSION_NAME = "cextension"; //$NON-NLS-1$
 	static final String DESCRIPTION_FILE_NAME = ".cdtproject"; //$NON-NLS-1$
-	private static final char[][] NO_CHAR_CHAR = new char[0][];
+
+	private static final String CEXTENSION_NAME = "cextension"; //$NON-NLS-1$
+
 	private static final String PROJECT_DESCRIPTION = "cdtproject"; //$NON-NLS-1$
+	private static final String PROJECT_OWNER_ID = "id"; //$NON-NLS-1$
 	private static final String PROJECT_EXTENSION = "extension"; //$NON-NLS-1$
+	private static final String PROJECT_EXTENSION_ATTR_POINT = "point"; //$NON-NLS-1$
+	private static final String PROJECT_EXTENSION_ATTR_ID = "id"; //$NON-NLS-1$
 	private static final String PROJECT_EXTENSION_ATTRIBUTE = "attribute"; //$NON-NLS-1$
+	private static final String PROJECT_EXTENSION_ATTRIBUTE_KEY = "key"; //$NON-NLS-1$
+	private static final String PROJECT_EXTENSION_ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
+
 	private static final String PROJECT_DATA = "data"; //$NON-NLS-1$
 	private static final String PROJECT_DATA_ITEM = "item"; //$NON-NLS-1$
 	private static final String PROJECT_DATA_ID = "id"; //$NON-NLS-1$
 
 	private boolean fDirty;
-	private boolean autoSave;
+	private boolean fAutoSave;
 
-	protected CDescriptor(IProject project, String id) throws CoreException {
+	protected CDescriptor(CDescriptorManager manager, IProject project, String id) throws CoreException {
 		fProject = project;
+		fManager = manager;
 		IPath projectLocation = project.getDescription().getLocation();
 
 		if (projectLocation == null) {
@@ -83,32 +97,23 @@ public class CDescriptor implements ICDescriptor {
 
 		if (descriptionPath.toFile().exists()) {
 			IStatus status;
-			String ownerID = readCDTProject(descriptionPath);
+			String ownerID = readCDTProjectFile(descriptionPath);
 			if (ownerID.equals(id)) {
 				fOwner = new COwner(ownerID);
-				status =
-					new Status(
-						IStatus.WARNING,
-						CCorePlugin.PLUGIN_ID,
-						CCorePlugin.STATUS_CDTPROJECT_EXISTS,
-						CCorePlugin.getResourceString("CDescriptor.exception.projectAlreadyExists"), //$NON-NLS-1$
-						(Throwable) null);
+				status = new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_EXISTS,
+						CCorePlugin.getResourceString("CDescriptor.exception.projectAlreadyExists"), (Throwable) null); //$NON-NLS-1$
 			} else {
-				status =
-					new Status(
-						IStatus.ERROR,
-						CCorePlugin.PLUGIN_ID,
-						CCorePlugin.STATUS_CDTPROJECT_MISMATCH,
-						CCorePlugin.getResourceString("CDescriptor.exception.unmatchedOwnerId"), //$NON-NLS-1$
-						(Throwable) null);
+				status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_CDTPROJECT_MISMATCH,
+						CCorePlugin.getResourceString("CDescriptor.exception.unmatchedOwnerId"), (Throwable) null); //$NON-NLS-1$
 			}
 			throw new CoreException(status);
 		}
 		fOwner = new COwner(id);
 	}
 
-	protected CDescriptor(IProject project) throws CoreException {
+	protected CDescriptor(CDescriptorManager manager, IProject project) throws CoreException {
 		fProject = project;
+		fManager = manager;
 		IPath projectLocation = project.getDescription().getLocation();
 
 		if (projectLocation == null) {
@@ -117,14 +122,16 @@ public class CDescriptor implements ICDescriptor {
 		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
 
 		if (!descriptionPath.toFile().exists()) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CDescriptor.exception.fileNotFound"), (Throwable) null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					CCorePlugin.getResourceString("CDescriptor.exception.fileNotFound"), (Throwable) null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
-		fOwner = new COwner(readCDTProject(descriptionPath));
+		fOwner = new COwner(readCDTProjectFile(descriptionPath));
 	}
 
-	protected CDescriptor(IProject project, COwner owner) throws CoreException {
+	protected CDescriptor(CDescriptorManager manager, IProject project, COwner owner) throws CoreException {
 		fProject = project;
+		fManager = manager;
 		IPath projectLocation = project.getDescription().getLocation();
 
 		if (projectLocation == null) {
@@ -133,10 +140,11 @@ public class CDescriptor implements ICDescriptor {
 		IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
 
 		if (!descriptionPath.toFile().exists()) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CDescriptor.exception.fileNotFound"), (Throwable) null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					CCorePlugin.getResourceString("CDescriptor.exception.fileNotFound"), (Throwable) null); //$NON-NLS-1$
 			throw new CoreException(status);
 		}
-		readCDTProject(descriptionPath);
+		readCDTProjectFile(descriptionPath);
 		fOwner = owner;
 		setDirty();
 	}
@@ -145,26 +153,29 @@ public class CDescriptor implements ICDescriptor {
 		return fOwner;
 	}
 
-	private String readCDTProject(IPath descriptionPath) throws CoreException {
+	private String readCDTProjectFile(IPath descriptionPath) throws CoreException {
 		FileInputStream file = null;
 		try {
 			file = new FileInputStream(descriptionPath.toFile());
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document document = parser.parse(file);
-			Node node = document.getFirstChild();
-			if (node.getNodeName().equals(PROJECT_DESCRIPTION)) {
-				String ownerID = node.getAttributes().getNamedItem("id").getNodeValue(); //$NON-NLS-1$
-				if ( ownerID != null) {
+			NodeList nodeList = document.getElementsByTagName(PROJECT_DESCRIPTION);
+			if (nodeList != null && nodeList.getLength() > 0) {
+				Node node = nodeList.item(0);
+				String ownerID = node.getAttributes().getNamedItem(PROJECT_OWNER_ID).getNodeValue();
+				if (ownerID != null) {
 					readProjectDescription(node);
 					return ownerID;
 				}
-				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CDescriptor.exception.missingOwnerId"), null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+						CCorePlugin.getResourceString("CDescriptor.exception.missingOwnerId"), null); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CDescriptor.exception.missingElement"), null); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					CCorePlugin.getResourceString("CDescriptor.exception.missingElement"), null); //$NON-NLS-1$
 			throw new CoreException(status);
 		} catch (Exception e) {
-			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getLocalizedMessage(), e);
+			IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.toString(), e);
 			throw new CoreException(status);
 		} finally {
 			if (file != null) {
@@ -192,19 +203,19 @@ public class CDescriptor implements ICDescriptor {
 		return fProject;
 	}
 
-	public ICExtensionReference[] get(String extensionID) {
+	synchronized public ICExtensionReference[] get(String extensionID) {
 		CExtensionReference[] refs = (CExtensionReference[]) extMap.get(extensionID);
 		if (refs == null)
 			return new ICExtensionReference[0];
 		return refs;
 	}
 
-	public ICExtensionReference[] get(String extensionID, boolean update) {
+	synchronized public ICExtensionReference[] get(String extensionID, boolean update) {
 		ICExtensionReference[] ext = get(extensionID);
 		if (ext.length == 0 && update) {
 			try {
 				fOwner.update(fProject, this, extensionID);
-				saveInfo();
+				setDirty();
 				ext = get(extensionID);
 			} catch (CoreException e) {
 			}
@@ -212,7 +223,7 @@ public class CDescriptor implements ICDescriptor {
 		return ext;
 	}
 
-	public ICExtensionReference create(String extensionPoint, String extensionID) throws CoreException {
+	synchronized public ICExtensionReference create(String extensionPoint, String extensionID) throws CoreException {
 		CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(extensionPoint);
 		if (extensions == null) {
 			extensions = new CExtensionReference[1];
@@ -225,36 +236,38 @@ public class CDescriptor implements ICDescriptor {
 		}
 		extensions[extensions.length - 1] = new CExtensionReference(this, extensionPoint, extensionID);
 		setDirty();
+		fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 		return extensions[extensions.length - 1];
 	}
 
-	public void remove(ICExtensionReference ext) throws CoreException {
+	synchronized public void remove(ICExtensionReference ext) throws CoreException {
 		CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(ext.getExtension());
 		for (int i = 0; i < extensions.length; i++) {
 			if (extensions[i] == ext) {
 				System.arraycopy(extensions, i, extensions, i + 1, extensions.length - 1 - i);
-				CExtensionReference[] newExtensions = new CExtensionReference[extensions.length - 1];
-				System.arraycopy(extensions, 0, newExtensions, 0, extensions.length);
-				extensions = newExtensions;
-				if (extensions.length == 0) {
-					extMap.put(ext.getExtension(), null);
+				if (extensions.length > 1) {
+					CExtensionReference[] newExtensions = new CExtensionReference[extensions.length - 1];
+					System.arraycopy(extensions, 0, newExtensions, 0, newExtensions.length);
+					extMap.put(ext.getExtension(), newExtensions);
 				} else {
-					extMap.put(ext.getExtension(), extensions);
+					extMap.remove(ext.getExtension());
 				}
 				setDirty();
 			}
 		}
+		fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 	}
 
-	public void remove(String extensionPoint) throws CoreException {
+	synchronized public void remove(String extensionPoint) throws CoreException {
 		CExtensionReference extensions[] = (CExtensionReference[]) extMap.get(extensionPoint);
 		if (extensions != null) {
 			extMap.remove(extensionPoint);
 			setDirty();
 		}
+		fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.EXTENSION_CHANGED));
 	}
 
-	public CExtensionInfo getInfo(CExtensionReference cProjectExtension) {
+	synchronized CExtensionInfo getInfo(CExtensionReference cProjectExtension) {
 		CExtensionInfo info = (CExtensionInfo) extInfoMap.get(cProjectExtension);
 		if (info == null) {
 			info = new CExtensionInfo();
@@ -263,7 +276,7 @@ public class CDescriptor implements ICDescriptor {
 		return info;
 	}
 
-	protected void saveInfo() throws CoreException {
+	synchronized protected void saveInfo() throws CoreException {
 		String xml;
 		if (!isDirty()) {
 			return;
@@ -273,9 +286,15 @@ public class CDescriptor implements ICDescriptor {
 		} catch (IOException e) {
 			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e);
 			throw new CoreException(s);
+		} catch (TransformerException e) {
+			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e);
+			throw new CoreException(s);
+		} catch (ParserConfigurationException e) {
+			IStatus s = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, e.getMessage(), e);
+			throw new CoreException(s);
 		}
 
-		IFile rscFile = getProject().getFile(DESCRIPTION_FILE_NAME);
+		IFile rscFile = getFile();
 		InputStream inputStream = new ByteArrayInputStream(xml.getBytes());
 		// update the resource content
 		if (rscFile.exists()) {
@@ -286,33 +305,103 @@ public class CDescriptor implements ICDescriptor {
 		fDirty = false;
 	}
 
+	protected IFile getFile() {
+		return getProject().getFile(DESCRIPTION_FILE_NAME);
+	}
+
 	public boolean isAutoSave() {
-		return autoSave;
+		return fAutoSave;
 	}
 
 	public void setAutoSave(boolean autoSave) {
-		this.autoSave = autoSave;
+		fAutoSave = autoSave;
 	}
 
 	protected void setDirty() throws CoreException {
 		fDirty = true;
 		if (isAutoSave())
-			saveInfo();
+			fManager.updateDescriptor(this);
 	}
 
 	protected boolean isDirty() {
 		return fDirty;
 	}
 
-	protected String serializeDocument(Document doc) throws IOException {
+	protected String serializeDocument(Document doc) throws IOException, TransformerException {
 		ByteArrayOutputStream s = new ByteArrayOutputStream();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format); //$NON-NLS-1$
-		serializer.asDOMSerializer().serialize(doc);
-		return s.toString("UTF8"); //$NON-NLS-1$		
+
+		TransformerFactory factory = TransformerFactory.newInstance();
+		Transformer transformer = factory.newTransformer();
+		transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+		transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+
+		DOMSource source = new DOMSource(doc);
+		StreamResult outputTarget = new StreamResult(s);
+		transformer.transform(source, outputTarget);
+
+		return s.toString("UTF8"); //$NON-NLS-1$			
+	}
+
+	void updateFromDisk() throws CoreException {
+		synchronized (this) {
+			IPath projectLocation = fProject.getDescription().getLocation();
+
+			if (projectLocation == null) {
+				projectLocation = getProjectDefaultLocation(fProject);
+			}
+			IPath descriptionPath = projectLocation.append(DESCRIPTION_FILE_NAME);
+			if (!descriptionPath.toFile().exists()) {
+				setDirty();
+				return;
+			}
+			COwner origOwner = fOwner;
+			HashMap origExtMap = extMap;
+			HashMap origExtInfoMap = extInfoMap;
+			Document origDataDoc = dataDoc;
+
+			extMap = new HashMap(4);
+			extInfoMap = new HashMap(4);
+			dataDoc = null;
+
+			try {
+				fOwner = new COwner(readCDTProjectFile(descriptionPath));
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fOwner = origOwner;
+				extMap = origExtMap;
+				extInfoMap = origExtInfoMap;
+				dataDoc = origDataDoc;
+			}
+			setDirty();
+			if (!fOwner.equals(origOwner)) {
+				fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, CDescriptorEvent.OWNER_CHANGED));
+			} else {
+				boolean extChanges = true;
+				if (extMap.size() == origExtMap.size() && extInfoMap.size() == origExtInfoMap.size()) {
+					extChanges = false;
+					Iterator entries = extMap.entrySet().iterator();
+					while (entries.hasNext()) {
+						Entry entry = (Entry) entries.next();
+						if (!origExtMap.containsKey(entry.getKey())) {
+							extChanges = true;
+							break;
+						}
+						CExtensionReference origExt[] = (CExtensionReference[]) origExtMap.get(entry.getKey());
+						CExtensionReference newExt[] = (CExtensionReference[]) entry.getValue();
+						if (!Arrays.equals(origExt, newExt)) {
+							extChanges = true;
+							break;
+						}
+					}
+				}
+				if (extChanges) {
+					fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED,
+							CDescriptorEvent.EXTENSION_CHANGED));
+				} else {
+					fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
+				}
+			}
+		}
 	}
 
 	private void readProjectDescription(Node node) {
@@ -329,7 +418,7 @@ public class CDescriptor implements ICDescriptor {
 					}
 				} else if (childNode.getNodeName().equals(PROJECT_DATA)) {
 					try {
-						decodeProjectData((Element)childNode);
+						decodeProjectData((Element) childNode);
 					} catch (CoreException e) {
 						CCorePlugin.log(e);
 					}
@@ -339,22 +428,28 @@ public class CDescriptor implements ICDescriptor {
 	}
 
 	private void decodeProjectExtension(Element element) throws CoreException {
-		ICExtensionReference ext = create(element.getAttribute("point"), element.getAttribute("id")); //$NON-NLS-1$ //$NON-NLS-2$
+		String point = element.getAttribute(PROJECT_EXTENSION_ATTR_POINT);
+		String id = element.getAttribute(PROJECT_EXTENSION_ATTR_ID);
+		ICExtensionReference ext = create(point, id);
 		NodeList extAttrib = element.getChildNodes();
 		for (int j = 0; j < extAttrib.getLength(); j++) {
 			if (extAttrib.item(j).getNodeName().equals(PROJECT_EXTENSION_ATTRIBUTE)) {
 				NamedNodeMap attrib = extAttrib.item(j).getAttributes();
-				ext.setExtensionData(attrib.getNamedItem("key").getNodeValue(), attrib.getNamedItem("value").getNodeValue()); //$NON-NLS-1$ //$NON-NLS-2$
+				ext.setExtensionData(attrib.getNamedItem(PROJECT_EXTENSION_ATTRIBUTE_KEY).getNodeValue(), attrib.getNamedItem(
+						PROJECT_EXTENSION_ATTRIBUTE_VALUE).getNodeValue()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}
 
-
-	protected String getAsXML() throws IOException {
-		Document doc = new DocumentImpl();
+	protected String getAsXML() throws IOException, TransformerException, ParserConfigurationException {
+		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
+		Document doc = docBuilder.newDocument();
+		ProcessingInstruction version = doc.createProcessingInstruction("eclipse-cdt", "version=\"2.0\""); //$NON-NLS-1$ //$NON-NLS-2$
+		doc.appendChild(version);
 		Element configRootElement = doc.createElement(PROJECT_DESCRIPTION);
 		doc.appendChild(configRootElement);
-		configRootElement.setAttribute("id", fOwner.getID()); //$NON-NLS-1$
+		configRootElement.setAttribute(PROJECT_OWNER_ID, fOwner.getID());
 		encodeProjectExtensions(doc, configRootElement);
 		encodeProjectData(doc, configRootElement);
 		return serializeDocument(doc);
@@ -367,16 +462,16 @@ public class CDescriptor implements ICDescriptor {
 			CExtensionReference extension[] = (CExtensionReference[]) extIterator.next();
 			for (int i = 0; i < extension.length; i++) {
 				configRootElement.appendChild(element = doc.createElement(PROJECT_EXTENSION));
-				element.setAttribute("point", extension[i].getExtension()); //$NON-NLS-1$
-				element.setAttribute("id", extension[i].getID()); //$NON-NLS-1$
+				element.setAttribute(PROJECT_EXTENSION_ATTR_POINT, extension[i].getExtension());
+				element.setAttribute(PROJECT_EXTENSION_ATTR_ID, extension[i].getID());
 				CExtensionInfo info = (CExtensionInfo) extInfoMap.get(extension[i]);
 				if (info != null) {
 					Iterator attribIterator = info.getAttributes().entrySet().iterator();
 					while (attribIterator.hasNext()) {
 						Entry entry = (Entry) attribIterator.next();
 						Element extAttributes = doc.createElement(PROJECT_EXTENSION_ATTRIBUTE);
-						extAttributes.setAttribute("key", (String) entry.getKey()); //$NON-NLS-1$
-						extAttributes.setAttribute("value", (String) entry.getValue()); //$NON-NLS-1$
+						extAttributes.setAttribute(PROJECT_EXTENSION_ATTRIBUTE_KEY, (String) entry.getKey());
+						extAttributes.setAttribute(PROJECT_EXTENSION_ATTRIBUTE_VALUE, (String) entry.getValue());
 						element.appendChild(extAttributes);
 					}
 				}
@@ -384,18 +479,18 @@ public class CDescriptor implements ICDescriptor {
 		}
 	}
 
-
 	protected ICExtension createExtensions(ICExtensionReference ext) throws CoreException {
 		InternalCExtension cExtension = null;
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(ext.getExtension());
 		IExtension extension = extensionPoint.getExtension(ext.getID());
-		if ( extension == null) {
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, CCorePlugin.getResourceString("CDescriptor.exception.providerNotFound"), null)); //$NON-NLS-1$
+		if (extension == null) {
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					CCorePlugin.getResourceString("CDescriptor.exception.providerNotFound"), null)); //$NON-NLS-1$
 		}
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for (int i = 0; i < element.length; i++) {
-			if (element[i].getName().equalsIgnoreCase(CEXTENSION_NAME)) {
+			if (element[i].getName().equalsIgnoreCase("cextension")) { //$NON-NLS-1$
 				cExtension = (InternalCExtension) element[i].createExecutableExtension("run"); //$NON-NLS-1$
 				cExtension.setExtenionReference(ext);
 				cExtension.setProject(fProject);
@@ -404,44 +499,40 @@ public class CDescriptor implements ICDescriptor {
 		}
 		return (ICExtension) cExtension;
 	}
-	
+
 	protected IConfigurationElement[] getConfigurationElement(ICExtensionReference ext) throws CoreException {
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		IExtensionPoint extensionPoint = pluginRegistry.getExtensionPoint(ext.getExtension());
 		IExtension extension = extensionPoint.getExtension(ext.getID());
-		if ( extension == null) {
-			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,  CCorePlugin.getResourceString("CDescriptor.exception.providerNotFound"), null)); //$NON-NLS-1$
+		if (extension == null) {
+			throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
+					CCorePlugin.getResourceString("CDescriptor.exception.providerNotFound"), null)); //$NON-NLS-1$
 		}
 		IConfigurationElement element[] = extension.getConfigurationElements();
 		for (int i = 0; i < element.length; i++) {
 			if (element[i].getName().equalsIgnoreCase(CEXTENSION_NAME)) {
-			    return element[i].getChildren();
+				return element[i].getChildren();
 			}
 		}
 		return new IConfigurationElement[0];
 	}
-	
+
 	// The project data allows for the storage of any structured information
 	// into the cdtproject file.
-	private Document getProjectDataDoc() throws CoreException {
+	synchronized private Document getProjectDataDoc() throws CoreException {
 		if (dataDoc == null) {
 			try {
 				dataDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			} catch (ParserConfigurationException e) {
-				throw new CoreException(
-					new Status(
-						IStatus.ERROR,
-						CCorePlugin.PLUGIN_ID,
-						IStatus.ERROR,
-						"getProjectDataDoc", //$NON-NLS-1$
-						e));
+				throw new CoreException(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.ERROR,
+						CCorePlugin.getResourceString("CDescriptor.extension.internalError"), e)); //$NON-NLS-1$
 			}
 			Element rootElem = dataDoc.createElement(PROJECT_DATA);
 			dataDoc.appendChild(rootElem);
 		}
 		return dataDoc;
 	}
-	
+
 	private void decodeProjectData(Element data) throws CoreException {
 		Document doc = getProjectDataDoc();
 		doc.replaceChild(doc.importNode(data, true), doc.getDocumentElement());
@@ -450,9 +541,9 @@ public class CDescriptor implements ICDescriptor {
 	public Element getProjectData(String id) throws CoreException {
 		NodeList nodes = getProjectDataDoc().getDocumentElement().getElementsByTagName(PROJECT_DATA_ITEM);
 		for (int i = 0; i < nodes.getLength(); ++i) {
-			Element element = (Element)nodes.item(i);
+			Element element = (Element) nodes.item(i);
 			if (element.getAttribute(PROJECT_DATA_ID).equals(id))
-				return element; 
+				return element;
 		}
 
 		// Not found, make a new one
@@ -461,14 +552,25 @@ public class CDescriptor implements ICDescriptor {
 		dataDoc.getDocumentElement().appendChild(element);
 		return element;
 	}
-	
+
 	public void saveProjectData() throws CoreException {
 		setDirty();
+		fManager.fireEvent(new CDescriptorEvent(this, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
 	}
-	
+
 	private void encodeProjectData(Document doc, Element root) {
 		// Don't create or encode the doc if it isn't there already
-		if (dataDoc != null)
+		if (dataDoc != null) {
+			Element dataElements = dataDoc.getDocumentElement();
+			NodeList nodes = dataElements.getElementsByTagName(PROJECT_DATA_ITEM);
+			for (int i = 0; i < nodes.getLength(); ++i) {
+				Element item = (Element) nodes.item(i);
+				if (!item.hasChildNodes()) { // remove any empty item tags
+					dataElements.removeChild(item);
+					i--; //nodeList is live.... removeal changes nodelist
+				}
+			}
 			root.appendChild(doc.importNode(dataDoc.getDocumentElement(), true));
+		}
 	}
 }

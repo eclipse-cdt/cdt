@@ -1,3 +1,30 @@
+2004-03-17 David Inglis
+	
+	- Added new ICDescriptorManager providing listerner abilities on ICDescriptor and batch operations
+	- Now listen for ondisk modifications and verify and update ICDescriptor
+	- Restore .cdtproject if deleted.
+	- Handle case where no owner extension exisits for a project.
+	- Update .cdtproject file without notification to prevent deadlocking.
+	
+	Modified
+	* plugin.xml
+	* src/org/eclipse/cdt/core/CCorePlugin.java
+	* src/org/eclipse/cdt/core/ICDescriptor.java
+	* src/org/eclipse/cdt/core/ICExtensionReference.java
+	* src/org/eclipse/cdt/internal/core/CCorePluginResources.properties
+	* src/org/eclipse/cdt/internal/core/CDescriptor.java
+	* src/org/eclipse/cdt/internal/core/CDescriptorManager.java
+	* src/org/eclipse/cdt/internal/core/CExtensionReference.java
+	* src/org/eclipse/cdt/internal/core/COwner.java
+	* src/org/eclipse/cdt/internal/core/InternalCExtension.java
+	
+	New 
+	* src/org/eclipse/cdt/core/CDescriptorEvent.java
+	* src/org/eclipse/cdt/core/ICDescriptorListener.java
+	* src/org/eclipse/cdt/core/ICDescriptorManager.java
+	* src/org/eclipse/cdt/core/ICDescriptorOperation.java
+
+
 2004-03-16 Thomas Fletcher
 
 	- Fix to address PR 45320 where we would mark warnings with

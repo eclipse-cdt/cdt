@@ -32,7 +32,7 @@ public interface ICExtensionReference {
     /**
      * Sets a name/value data pair on this reference in the .cdtproject file
      */
-    public void setExtensionData(String key, String value);
+    public void setExtensionData(String key, String value) throws CoreException;
 
     /**
      * Gets a value of the key from the .cdtproject file set by

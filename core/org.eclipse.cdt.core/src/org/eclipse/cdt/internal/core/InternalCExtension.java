@@ -1,13 +1,12 @@
-/**********************************************************************
- * Copyright (c) 2002,2003 QNX Software Systems Ltd. and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+/*******************************************************************************
+ * Copyright (c) 2002, 2003, 2004 QNX Software Systems Ltd. and others. All
+ * rights reserved. This program and the accompanying materials are made
+ * available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import org.eclipse.cdt.core.ICExtensionReference;
@@ -16,11 +15,11 @@ import org.eclipse.core.runtime.PlatformObject;
 
 public abstract class InternalCExtension extends PlatformObject {
 
-	private IProject project;
+	private IProject fProject;
 	private ICExtensionReference extensionRef;
 		
 	void setProject(IProject project) {
-		this.project = project;
+		fProject = project;
 	}
 
 	void setExtenionReference(ICExtensionReference extReference) {
@@ -28,7 +27,7 @@ public abstract class InternalCExtension extends PlatformObject {
 	}
 		
 	protected IProject getProject() {
-		return project;
+		return fProject;
 	}
 
 	protected ICExtensionReference getExtensionReference() {

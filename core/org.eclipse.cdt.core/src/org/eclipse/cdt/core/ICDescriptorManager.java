@@ -11,20 +11,12 @@ package org.eclipse.cdt.core;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.w3c.dom.Element;
 
-public interface ICDescriptor {
-	public ICOwnerInfo getProjectOwner();
-	public String getPlatform();
-	public IProject getProject();
-	
-	public ICExtensionReference[] get(String extensionPoint);
-	public ICExtensionReference[] get(String extensionPoint, boolean update) throws CoreException;
-	public ICExtensionReference create(String extensionPoint, String id) throws CoreException;
+public interface ICDescriptorManager {
+	public ICDescriptor getDescriptor(IProject project) throws CoreException;
 
-	public void remove(ICExtensionReference extension) throws CoreException;
-	public void remove(String extensionPoint) throws CoreException;
+	public void runDescriptorOperation(ICDescriptor descriptor, ICDescriptorOperation op) throws CoreException;
 	
-	public Element getProjectData(String id) throws CoreException;
-	public void saveProjectData() throws CoreException;
+	public void addDescriptorListener(ICDescriptorListener listener);
+	public void removeDescriptorListener(ICDescriptorListener listener);
 }

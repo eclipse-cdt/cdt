@@ -36,6 +36,7 @@ import org.eclipse.cdt.internal.core.search.processing.JobManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -558,6 +559,10 @@ public class CCorePlugin extends Plugin {
 			fDescriptorManager.convert(project, id);
 		}
 	}
+	
+	public ICDescriptorManager getCDescriptorManager() {
+		return fDescriptorManager;
+	}
 
 	/**
 	 * Creates a C project resource given the project handle and description.
@@ -571,33 +576,39 @@ public class CCorePlugin extends Plugin {
 	 * @exception OperationCanceledException if the operation is canceled
 	 */
 	public IProject createCProject(
-		IProjectDescription description,
-		IProject projectHandle,
+		final IProjectDescription description,
+		final IProject projectHandle,
 		IProgressMonitor monitor,
-		String projectID)
+		final String projectID)
 		throws CoreException, OperationCanceledException {
-		try {
-			if (monitor == null) {
-				monitor = new NullProgressMonitor();
-			}
-			monitor.beginTask("Creating C Project...", 3); //$NON-NLS-1$
-			if (!projectHandle.exists()) {
-				projectHandle.create(description, new SubProgressMonitor(monitor, 1));
-			}
 
-			if (monitor.isCanceled()) {
-				throw new OperationCanceledException();
+		getWorkspace().run(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				try {
+					if (monitor == null) {
+						monitor = new NullProgressMonitor();
+					}
+					monitor.beginTask("Creating C Project...", 3); //$NON-NLS-1$
+					if (!projectHandle.exists()) {
+						projectHandle.create(description, new SubProgressMonitor(monitor, 1));
+					}
+					
+					if (monitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
+					
+					// Open first.
+					projectHandle.open(new SubProgressMonitor(monitor, 1));
+
+					mapCProjectOwner(projectHandle, projectID, false);
+
+					// Add C Nature ... does not add duplicates
+					CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
+				} finally {
+					monitor.done();
+				}
 			}
-
-			// Open first.
-			projectHandle.open(new SubProgressMonitor(monitor, 1));
-
-			// Add C Nature ... does not add duplicates
-			mapCProjectOwner(projectHandle, projectID, false);
-			CProjectNature.addCNature(projectHandle, new SubProgressMonitor(monitor, 1));
-		} finally {
-			monitor.done();
-		}
+		}, getWorkspace().getRoot(), 0, monitor);
 		return projectHandle;
 	}
 
@@ -614,7 +625,7 @@ public class CCorePlugin extends Plugin {
 
 	public void convertProjectFromCtoCC(IProject projectHandle, IProgressMonitor monitor) throws CoreException {
 		if ((projectHandle != null)
-			&& projectHandle.hasNature(CCProjectNature.C_NATURE_ID)
+			&& projectHandle.hasNature(CProjectNature.C_NATURE_ID)
 			&& !projectHandle.hasNature(CCProjectNature.CC_NATURE_ID)) {
 			// Add C++ Nature ... does not add duplicates        
 			CCProjectNature.addCCNature(projectHandle, monitor);

@@ -1,33 +1,33 @@
-/**********************************************************************
- * Copyright (c) 2002,2003 QNX Software Systems Ltd. and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+/*******************************************************************************
+ * Copyright (c) 2002,2003 QNX Software Systems Ltd. and others. All rights
+ * reserved. This program and the accompanying materials are made available
+ * under the terms of the Common Public License v0.5 which accompanies this
+ * distribution, and is available at http://www.eclipse.org/legal/cpl-v05.html
  * 
- * Contributors: 
- * QNX Software Systems - Initial API and implementation
-***********************************************************************/
+ * Contributors: QNX Software Systems - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
+import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.ICExtension;
 import org.eclipse.cdt.core.ICExtensionReference;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 public class CExtensionReference implements ICExtensionReference {
+
 	private CDescriptor fDescriptor;
-	private String fName;
+	private String fExtPoint;
 	private String fId;
-		
-	public CExtensionReference(CDescriptor descriptor, String name, String id) {
+
+	public CExtensionReference(CDescriptor descriptor, String extPoint, String id) {
 		fDescriptor = descriptor;
-		fName = name;
+		fExtPoint = extPoint;
 		fId = id;
 	}
 
 	public String getExtension() {
-		return fName;
+		return fExtPoint;
 	}
 
 	public String getID() {
@@ -38,19 +38,35 @@ public class CExtensionReference implements ICExtensionReference {
 		return fDescriptor.getInfo(this);
 	}
 
-	public void setExtensionData(String key, String value) {
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj instanceof CExtensionReference) {
+			CExtensionReference ext = (CExtensionReference) obj;
+			if (ext.fExtPoint.equals(fExtPoint) && ext.fId.equals(fId)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void setExtensionData(String key, String value) throws CoreException {
 		getInfo().setAttribute(key, value);
+		fDescriptor.setDirty();
+		fDescriptor.fManager.fireEvent(new CDescriptorEvent(fDescriptor, CDescriptorEvent.CDTPROJECT_CHANGED, 0));
+		
 	}
 
 	public String getExtensionData(String key) {
 		return getInfo().getAttribute(key);
 	}
-	
+
 	public ICExtension createExtension() throws CoreException {
 		return fDescriptor.createExtensions(this);
 	}
 
-    public IConfigurationElement[] getExtensionElements() throws CoreException {
+	public IConfigurationElement[] getExtensionElements() throws CoreException {
 		return fDescriptor.getConfigurationElement(this);
-    }
+	}
 }

@@ -235,14 +235,16 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 
 		// Close the input GDB prompt
 		try {
-			inChannel.close();
+			if (inChannel != null)
+				inChannel.close();
 		} catch (IOException e) {
 		}
 		inChannel = null;
 
 		// Close the output GDB prompt
 		try {
-			outChannel.close();
+			if (outChannel != null)
+				outChannel.close();
 		} catch (IOException e) {
 		}
 		// This is __needed__ to stop the txThread and eventThread.
@@ -252,8 +254,8 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		try {
 			if (txThread.isAlive()) {
 				txThread.interrupt();
+				txThread.join(cmdTimeout);
 			}
-			txThread.join(cmdTimeout);
 		} catch (InterruptedException e) {
 		}
 		
@@ -261,8 +263,8 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		try {
 			if (rxThread.isAlive()) {
 				rxThread.interrupt();
+				rxThread.join(cmdTimeout);
 			}
-			rxThread.join(cmdTimeout);
 		} catch (InterruptedException e) {
 		}
 
@@ -270,8 +272,8 @@ MIPlugin.getDefault().debugLog(number++ + " " + cmd.toString());
 		try {
 			if (eventThread.isAlive()) {
 				eventThread.interrupt();
+				eventThread.join(cmdTimeout);
 			}
-			eventThread.join(cmdTimeout);
 		} catch (InterruptedException e) {
 		}
 

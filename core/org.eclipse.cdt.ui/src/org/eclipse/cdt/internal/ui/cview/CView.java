@@ -86,6 +86,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -330,7 +331,13 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * Answer the property defined by key.
 	 */
 	public Object getAdapter(Class key) {
-		if (key.equals(ISelectionProvider.class)) return viewer;
+		if (key.equals(ISelectionProvider.class)) {
+			return viewer;
+		} else if (key == IShowInSource.class) {
+			return getShowInSource();
+		} else if (key == IShowInTarget.class) {
+			return this;
+		}
 		return super.getAdapter(key);
 	}
 
@@ -1064,20 +1071,31 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
 	public boolean show(ShowInContext context) {
-		//@@@ Do something with the selection later?
-		//ISelection selection = context.getSelection();
-		try {
-			IEditorInput input = (IEditorInput) context.getInput();
-			if (input != null) {
-				IResource res = (IResource) input.getAdapter(IResource.class);
-				if (res != null) {
-					selectReveal(new StructuredSelection(res));
-				}
+		IEditorInput input = (IEditorInput) context.getInput();
+		if (input != null) {
+			IResource res = (IResource) input.getAdapter(IResource.class);
+			if (res != null) {
+				selectReveal(new StructuredSelection(res));
+				return true;
 			}
-		} catch (Exception ex) {
-			/* Ignore */
+		}
+		ISelection selection= context.getSelection();
+		if (selection != null) {
+			selectReveal(selection);
+			return true;
 		}
 		return false;
+	}
+ 
+	/**
+	 * Returns the <code>IShowInSource</code> for this view.
+	 */
+	protected IShowInSource getShowInSource() {
+		return new IShowInSource() {
+			public ShowInContext getShowInContext() {
+				return new ShowInContext(getViewer().getInput(), getViewer().getSelection());
+			}
+		};
 	}
 
 }

@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -78,7 +79,10 @@ public class BuildGroup extends CViewActionGroup {
 			if (next instanceof IProject) {
 				project = (IProject) next;
 			} else if (next instanceof IAdaptable) {
-				project = (IProject) ((IAdaptable) next).getAdapter(IProject.class);
+				IResource res = (IResource)((IAdaptable)next).getAdapter(IResource.class);
+				if (res instanceof IProject) {
+					project = (IProject) res;
+				}
 			}
 
 			if (project == null) {

@@ -57,7 +57,6 @@ public class MainActionGroup extends CViewActionGroup {
 	// Actions for Menu context.
 	AddBookmarkAction addBookmarkAction;
 	AddTaskAction addTaskAction;
-
 	PropertyDialogAction propertyDialogAction;
 
 	ImportResourcesAction importAction;
@@ -65,12 +64,9 @@ public class MainActionGroup extends CViewActionGroup {
 
 	// CElement action
 	OpenIncludeAction openIncludeAction;
+	ShowLibrariesAction clibFilterAction;
 	// Collapsing
 	CollapseAllAction collapseAllAction;
-
-	//ToggleLinkingAction toggleLinkingAction;
-
-	ShowLibrariesAction clibFilterAction;
 
 	//Search
 	FileSearchAction fFileSearchAction;
@@ -193,7 +189,6 @@ public class MainActionGroup extends CViewActionGroup {
 			return;
 		}
 
-		//updateActions(resources);
 		addNewMenu(menu, resources);
 		menu.add(new Separator());
 		gotoGroup.fillContextMenu(menu);
@@ -327,11 +322,8 @@ public class MainActionGroup extends CViewActionGroup {
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		toolBar.add(new Separator());
 		toolBar.add(collapseAllAction);
-		//toolBar.add(toggleLinkingAction);
-		//actionBars.updateActionBars();
 
 		IMenuManager menu = actionBars.getMenuManager();
-		//menu.add(toggleLinkingAction);
 		//menu.add (clibFilterAction);
 		menu.add(patternFilterAction);
 

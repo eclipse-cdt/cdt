@@ -65,9 +65,14 @@ public class VariableManager extends SessionObject implements ICDIExpressionMana
 	Element getElement(StackFrame stack, String name) {
 		Element[] elements = getElements();
 		for (int i = 0; i < elements.length; i++) {
-			if (elements[i].stackframe.equals(stack) &&
-				elements[i].name.equals(name)) {
-				return elements[i];
+			if (elements[i].name.equals(name)) {
+				// For the Var object the register is always the same
+				// no need to check the stackframe.
+				if (elements[i].variable instanceof Register) {
+					return elements[i];
+				} else if (elements[i].stackframe.equals(stack)) {
+					return elements[i];
+				}
 			}
 		}
 		return null;

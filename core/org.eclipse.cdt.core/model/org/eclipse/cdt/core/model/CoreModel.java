@@ -118,6 +118,27 @@ public class CoreModel {
 	}
 
 	/**
+	 * Return the list of headers extensions.
+	 */
+	public String[] getHeaderExtensions() {
+		return manager.getHeaderExtensions();
+	}
+
+	/**
+	 * Returns the list of source extensions.
+	 */
+	public String[] getSourceExtensions() {
+		return manager.getSourceExtensions();
+	}
+
+	/**
+	 * Returns the list of headers and sources extensions
+	 */
+	public String[] getTranslationUnitExtensions() {
+		return manager.getTranslationUnitExtensions();
+	}
+
+	/**
 	 * Return true if project has C nature.
 	 */
 	public boolean hasCNature(IProject project){

@@ -77,6 +77,8 @@ public class CLIProcessor {
 		} else if (operation.equals("c") || operation.equals("fg") ||
 			   (operation.startsWith("cont") && "continue".indexOf(operation) != -1)) {
 			type = MIRunningEvent.CONTINUE;
+		} else if (operation.startsWith("sig") && "signal".indexOf(operation) != -1) {
+			type = MIRunningEvent.CONTINUE;
 		}
 		return type;
 	}
@@ -132,8 +134,7 @@ public class CLIProcessor {
 	boolean isSettingSignal(String operation) {
 		boolean isChange = false;
 		/* changing signal: handle, signal */
-		if ((operation.startsWith("ha")  && "handle".indexOf(operation) != -1) ||
-		    (operation.startsWith("sig") && "signal".indexOf(operation) != -1)) {
+		if (operation.startsWith("ha")  && "handle".indexOf(operation) != -1) {
 			isChange = true;
 		}
 		return isChange;

@@ -1,3 +1,7 @@
+2003-01-0e Mikhail Khodjaiants
+	Fix for bug 28977: Unable to set breakpoint properties from the Breakpoint view.
+	* plugin.xml
+
 2003-01-02 Mikhail Khodjaiants
 	Adapter for 'IResource' in 'DisassemblyEditorInput'.
 	* DisassemblyEditorInput.java

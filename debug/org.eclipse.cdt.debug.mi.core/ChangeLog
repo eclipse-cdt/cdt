@@ -1,3 +1,8 @@
+2003-01-24 Alain Magloire
+
+	* src/.../mi/core/CLIProcessor.java (isEnableBreakpoint):
+	Check for "enable", "disable"  cli commands.
+
 2003-01-23 Alain Magloire
 
 	* src/.../mi/core/CLIProcessor.java (isDeletingBreakpoint):

@@ -1,4 +1,8 @@
 2004-03-31 Mikhail Khodjaiants
+	Added default preferences to the C/C++ Debug preference page.
+	* CDebugCorePlugin.java
+	
+2004-03-31 Mikhail Khodjaiants
 	The Registers view has been contibuted and moved to the Eclipse platform.
 	To enable updating set the default value of the auto-refresh flag of the registers to true.
 	Remove it when the "Refresh" and "Auto-Refresh" actions are contributed.

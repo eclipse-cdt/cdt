@@ -218,7 +218,6 @@ public class CDebugCorePlugin extends Plugin
 	public void startup() throws CoreException
 	{
 		super.startup();
-		initDefaultPreferences();
 		resetBreakpointsInstallCount();
 		setSessionManager( new SessionManager() );
 	}
@@ -274,11 +273,5 @@ public class CDebugCorePlugin extends Plugin
 	public ICSourceLocation[] getCommonSourceLocations()
 	{
 		return SourceUtils.getCommonSourceLocationsFromMemento( CDebugCorePlugin.getDefault().getPluginPreferences().getString( ICDebugConstants.PREF_SOURCE_LOCATIONS ) );
-	}
-
-	private void initDefaultPreferences()
-	{
-		// for now
-		CDebugCorePlugin.getDefault().getPluginPreferences().setDefault( ICDebugConstants.PREF_REGISTERS_AUTO_REFRESH, true );		
 	}
 }

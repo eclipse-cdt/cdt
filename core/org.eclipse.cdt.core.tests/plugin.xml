@@ -31,6 +31,40 @@
          id="buildTest"
          name="Tools for Build Test"
          point="org.eclipse.cdt.managedbuilder.core.ManagedBuildInfo">
+      <tool
+            natureFilter="both"
+            name="Target Independent Tool"
+            sources="rc"
+            headerExtensions="h"
+            outputFlag="/fo"
+            command="RC.EXE"
+            outputs="free"
+            id="target.independent.tool">
+         <optionCategory
+               owner="target.independent.tool"
+               name="Free"
+               id="indy.cat.free">
+         </optionCategory>
+         <option
+               defaultValue="Live free or die"
+               name="String in Free"
+               category="indy.cat.free"
+               valueType="string"
+               id="org.eclipse.cdt.core.tests.option1">
+         </option>
+         <optionCategory
+               owner="indy.cat.free"
+               name="Chained"
+               id="indy.cat.chained">
+         </optionCategory>
+         <option
+               defaultValue="false"
+               name="Boolean in Chained"
+               category="indy.cat.chained"
+               valueType="boolean"
+               id="org.eclipse.cdt.core.tests.option2">
+         </option>
+      </tool>
       <target
             name="Test Root"
             id="test.root"
@@ -233,6 +267,9 @@
             defaultExtension="tss"
             makeCommand="nmake"
             id="test.sub.sub">
+         <toolReference
+               id="target.independent.tool">
+         </toolReference>
       </target>
    </extension>
    <extension
@@ -244,22 +281,23 @@
          </run>
       </application>
    </extension>
-	<extension
+   <extension
          id="TestProject"
          name="C/C++ Test Project"
          point="org.eclipse.cdt.core.CProject">
       <cproject
             class="org.eclipse.cdt.testplugin.TestProject">
       </cproject>
-    </extension>
-    <extension
-    	id="TestScanner"
-    	name="C/C++ Test Scanner"
-    	point="org.eclipse.cdt.core.ScannerInfoProvider">
-    	<cextension>
-        	 <run
-            	   class="org.eclipse.cdt.testplugin.TestScannerProvider">
-    	     </run>
-	     </cextension>
-      </extension>
+   </extension>
+   <extension
+         id="TestScanner"
+         name="C/C++ Test Scanner"
+         point="org.eclipse.cdt.core.ScannerInfoProvider">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.testplugin.TestScannerProvider">
+         </run>
+      </cextension>
+   </extension>
+
 </plugin>

@@ -895,6 +895,19 @@ public class ManagedBuildTests extends TestCase {
 	 * @param testSubSub
 	 */
 	private void checkSubSubTarget(ITarget target) {
+		final String indyToolName = "Target Independent Tool";
+		final String indyToolCommand = "RC.EXE";
+		final String indyToolInputExt = "rc";
+		final String indyToolOutputExt = "free";
+		final String indyToolOutFlag = "/fo";
+		final String indyToolHeader = "h";
+		final String indyToolHeaderNot = "j";
+		final String indyCatOne = "Free";
+		final String indyCatTwo = "Chained";
+		final String freeOptName = "String in Free";
+		final String chainedOptName = "Boolean in Chained";
+		final String freeOptValue = "Live free or die";
+		
 		// Check the inherited clean command
 		assertEquals("rm -yourworld", target.getCleanCommand());
 		// Check that the make command is overridden from parent
@@ -904,6 +917,53 @@ public class ManagedBuildTests extends TestCase {
 		// Make sure the list is inherited
 		String[] expectedOSList = {"win32","linux","solaris"};
 		assertTrue(Arrays.equals(expectedOSList, target.getTargetOSList()));
+
+		// Get the 4 configurations
+		IConfiguration[] configs = target.getConfigurations();
+		assertEquals(4, configs.length);
+		
+		// Check the tools. We should have 3 (1 from each parent and the one referenced).
+		ITool[] tools = target.getTools();
+		assertEquals(3, tools.length);
+		// Make sure we get all the tool settings
+		assertEquals(tools[2].getName(), indyToolName);
+		assertEquals(tools[2].getToolCommand(), indyToolCommand);
+		assertTrue(tools[2].buildsFileType(indyToolInputExt));
+		assertEquals(tools[2].getOutputExtension(indyToolInputExt), indyToolOutputExt);
+		assertEquals(tools[2].getOutputFlag(), indyToolOutFlag);
+		assertTrue(tools[2].isHeaderFile(indyToolHeader));
+		assertFalse(tools[2].isHeaderFile(indyToolHeaderNot));
+		assertEquals(tools[2].getNatureFilter(), ITool.FILTER_BOTH);
+		// Check out the referenced tool and make sure we get all option categories
+		IOptionCategory topCategory = tools[2].getTopOptionCategory();
+		IOptionCategory[] categories = topCategory.getChildCategories();
+		assertEquals(1, categories.length);
+		assertEquals(categories[0].getName(), indyCatOne);
+		IOptionCategory[] subCategories = categories[0].getChildCategories();
+		// Is the chained category a subcategory
+		assertEquals(1, subCategories.length);
+		assertEquals(subCategories[0].getName(), indyCatTwo);
+		// Make sure the option in the top category is correct
+		IOption[] optsInCat = categories[0].getOptions(null);
+		assertEquals(1, optsInCat.length);
+		assertEquals(freeOptName, optsInCat[0].getName());
+		assertEquals(IOption.STRING, optsInCat[0].getValueType());
+		try {
+			assertEquals(freeOptValue, optsInCat[0].getStringValue());
+		} catch (BuildException e1) {
+			fail("Failed getting string value in subsubtarget :" + e1.getLocalizedMessage());
+		}
+
+		// Do the same for the options in the child cat
+		IOption[] optsInSubCat = subCategories[0].getOptions(null);
+		assertEquals(1, optsInSubCat.length);
+		assertEquals(chainedOptName, optsInSubCat[0].getName());
+		assertEquals(IOption.BOOLEAN, optsInSubCat[0].getValueType());
+		try {
+			assertFalse(optsInSubCat[0].getBooleanValue());
+		} catch (BuildException e) {
+			fail("Failure getting boolean value in subsubtarget: " + e.getLocalizedMessage());
+		}
 	}
 
 	/*

@@ -16,5 +16,4 @@
       <import plugin="org.eclipse.ui"/>
    </requires>
 
-
 </fragment>

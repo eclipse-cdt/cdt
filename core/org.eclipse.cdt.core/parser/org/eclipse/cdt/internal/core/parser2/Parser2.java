@@ -94,10 +94,7 @@ public class Parser2
 {
 	protected final ParserMode mode;
 	protected static final char[] EMPTY_STRING = "".toCharArray(); //$NON-NLS-1$
-	private static int FIRST_ERROR_UNSET = -1;
 	protected boolean parsePassed = true;
-	protected int firstErrorOffset = FIRST_ERROR_UNSET;
-	protected int firstErrorLine = FIRST_ERROR_UNSET;
 	private BacktrackException backtrack = new BacktrackException();
 	private int backtrackCount = 0;
 
@@ -121,7 +118,6 @@ public class Parser2
 	protected IScanner scanner;
 	protected IToken currToken;
 	protected IToken lastToken;
-	private boolean limitReached = false;
 	private ScopeStack templateIdScopes = new ScopeStack();
 	private TypeId typeIdInstance = new TypeId();
 
@@ -270,16 +266,7 @@ public class Parser2
 	 * @throws EndOfFileException
 	 */
 	protected void failParse() {
-		try {
-			if (firstErrorOffset == FIRST_ERROR_UNSET){
-				firstErrorOffset = LA(1).getOffset();
-				firstErrorLine = LA(1).getLineNumber();
-			}
-		} catch (EndOfFileException eof) {
-			// do nothing
-		} finally {
-			parsePassed = false;
-		}
+		parsePassed = false;
 	}
 
 	/**
@@ -2047,7 +2034,7 @@ public class Parser2
 				}
 				if( LT(1) == IGCCToken.t___alignof__ && supportAlignOfUnaries )
 				{
-					IASTExpression align = alignofExpression( scope );
+					IASTExpression align = unaryAlignofExpression( scope );
 					if( align != null )
 					    return align;
 				}
@@ -2061,7 +2048,7 @@ public class Parser2
 	 * @throws BacktrackException
 	 * @throws EndOfFileException
      */
-    private IASTExpression alignofExpression(IASTScope scope) throws EndOfFileException, BacktrackException {
+    private IASTExpression unaryAlignofExpression(IASTScope scope) throws EndOfFileException, BacktrackException {
 		consume(IGCCToken.t___alignof__ );
 		IASTTypeId d = null;
 		IASTExpression unaryExpression = null;
@@ -2721,14 +2708,10 @@ public class Parser2
 	 * @throws EndOfFileException	thrown when the scanner.nextToken() yields no tokens
 	 */
 	protected IToken fetchToken() throws EndOfFileException {
-		if (limitReached)
-			throw new EndOfFileException();
-
 		try {
 			IToken value = scanner.nextToken();
 			return value;
 		} catch (OffsetLimitReachedException olre) {
-			limitReached = true;
 			handleOffsetLimitException(olre);
 			return null;
 		} 
@@ -6053,18 +6036,6 @@ cleanupLastToken();
 	public void setLanguage(ParserLanguage l) {
 		language = l;
 	}
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.cdt.internal.core.parser.IParser#getLastErrorOffset()
-	 */
-	public int getLastErrorOffset() {
-		return firstErrorOffset;
-	}
-	public int getLastErrorLine() {
-	    return firstErrorLine;
-	}
-
 
 	/*
 	 * (non-Javadoc)

@@ -20,7 +20,7 @@ import org.eclipse.cdt.debug.mi.core.command.MIExecStepInstruction;
 import org.eclipse.cdt.debug.mi.core.command.MIExecUntil;
 import org.eclipse.cdt.debug.mi.core.event.MIBreakpointEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
-import org.eclipse.cdt.debug.mi.core.event.MIExitEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
@@ -72,12 +72,22 @@ MIPlugin.getDefault().debugLog(line);
 			}
 		} catch (IOException e) {
 			//e.printStackTrace();
+			// This code should be executed when gdb been abruptly
+			// or unxepectedly killed.  This is detected by checking
+			// if the channelInputStream is not null.  In normal case
+			// session.terminate() will set the channelInputStream to null.
 			if (session.getChannelInputStream() != null) {
-				session.getMIInferior().setTerminated();
-				session.terminate();
+				Runnable cleanup = new Runnable() {
+					public void run() {
+						// Change the state of the inferior.
+						session.getMIInferior().setTerminated();
+						session.terminate();
+					}
+				};
+				Thread clean = new Thread(cleanup, "GDB Died");
+				clean.setDaemon(true);
+				clean.start();
 			}
-		} finally {
-			//fireEvent(new MIExitEvent());
 		}
 	}
 
@@ -122,10 +132,10 @@ MIPlugin.getDefault().debugLog(line);
 					}
 					session.getMIInferior().setRunning();
 					MIEvent event = new MIRunningEvent(type);
-					fireEvent(event);
+					session.fireEvent(event);
 				} else if ("exit".equals(state)) {
 					//session.getMIInferior().setTerminated();
-					//MIEvent event = new MIExitEvent();
+					//MIEvent event = new MIGDBExitEvent();
 					//fireEvent(event);
 				} else if ("connected".equals(state)) {
 					session.getMIInferior().setConnected();
@@ -161,7 +171,7 @@ MIPlugin.getDefault().debugLog(line);
 			}
 
 			MIEvent[] events = (MIEvent[])list.toArray(new MIEvent[list.size()]);
-			fireEvents(events);
+			session.fireEvents(events);
 		}
 	}
 
@@ -340,13 +350,4 @@ MIPlugin.getDefault().debugLog(line);
 		return event;
 	}
 
-	public void fireEvents(MIEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			fireEvent(events[i]);
-		}
-	}
-
-	public void fireEvent(MIEvent event) {
-		session.getEventQueue().addItem(event);
-	}
 }

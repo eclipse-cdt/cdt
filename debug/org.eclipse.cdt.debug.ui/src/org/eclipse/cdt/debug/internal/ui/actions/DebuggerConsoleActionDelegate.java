@@ -7,10 +7,14 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 
 import org.eclipse.cdt.debug.core.IDebuggerProcessSupport;
 import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.IViewPart;
 
 /**
  * Enter type comment.
@@ -19,6 +23,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class DebuggerConsoleActionDelegate extends AbstractListenerActionDelegate
 {
+	private IViewPart fViewPart = null;
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.ui.actions.AbstractDebugActionDelegate#doAction(Object)
 	 */
@@ -30,6 +36,20 @@ public class DebuggerConsoleActionDelegate extends AbstractListenerActionDelegat
 			if ( dps != null && dps.supportsDebuggerProcess() )
 			{
 				dps.setDebuggerProcessDefault( !dps.isDebuggerProcessDefault() );
+				((CDebugElement)element).fireChangeEvent( DebugEvent.CLIENT_REQUEST );
+				if ( fViewPart != null && fViewPart instanceof AbstractDebugView )
+				{
+					final AbstractDebugView view = (AbstractDebugView)fViewPart;
+					fViewPart.getViewSite().getShell().getDisplay().asyncExec( 
+									new Runnable()
+										{
+											public void run()
+											{
+												Viewer viewer = view.getViewer();
+												viewer.setSelection( viewer.getSelection() );
+											}
+										} );
+				}
 			} 
 		}
 	}
@@ -72,5 +92,14 @@ public class DebuggerConsoleActionDelegate extends AbstractListenerActionDelegat
 			}
 		}
 		action.setChecked( checked );
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewActionDelegate#init(IViewPart)
+	 */
+	public void init( IViewPart view )
+	{
+		super.init( view );
+		fViewPart = view;
 	}
 }

@@ -1,4 +1,7 @@
 2002-10-23 Mikhail Khodjaiants
+	* DebuggerConsoleActionDelegate.java: The debugger/inferrior console should become visible when checking "Show Debug Console".
+
+2002-10-23 Mikhail Khodjaiants
 	"Show Debugger Console" action.
 	Action images:
 		debugger_console.gif (clcl, dlcl, elcl);

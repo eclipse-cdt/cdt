@@ -57,6 +57,8 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
  */
 public class Scanner2 implements IScanner, IScannerData {
 
+	private static final char[] ELLIPSIS_CHARARRAY = "...".toString().toCharArray(); //$NON-NLS-1$
+	private static final char[] VA_ARGS_CHARARRAY = "__VA_ARGS__".toCharArray(); //$NON-NLS-1$
 	/**
 	 * @author jcamelon
 	 *
@@ -504,7 +506,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					if (pos + 1 < limit && buffer[pos + 1] == '"')
 						return scanString();
 					if (pos + 1 < limit && buffer[pos + 1] == '\'')
-						return scanCharLiteral(true);
+						return scanCharLiteral();
 					
 					IToken t = scanIdentifier();
 					if (t instanceof MacroExpansionToken)
@@ -516,7 +518,7 @@ public class Scanner2 implements IScanner, IScannerData {
 					return scanString();
 					
 				case '\'':
-					return scanCharLiteral(false);
+					return scanCharLiteral();
 
 				case 'a':
 				case 'b':
@@ -1064,7 +1066,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		return newToken(tokenType, result);
 	}
 
-	private IToken scanCharLiteral(boolean b) {
+	private IToken scanCharLiteral() {
 		char[] buffer = bufferStack[bufferStackPos];
 		int start = bufferPos[bufferStackPos];
 		int limit = bufferLimit[bufferStackPos];
@@ -1735,11 +1737,19 @@ public class Scanner2 implements IScanner, IScannerData {
 		skipOverWhiteSpace();
 		int textstart = bufferPos[bufferStackPos] + 1;
 		int textend = textstart - 1;
+		int varArgDefinitionInd = -1;
 		
 		boolean encounteredMultilineComment = false;
+	    boolean usesVarArgInDefinition = false;
 		while (bufferPos[bufferStackPos] + 1 < limit
 				&& buffer[bufferPos[bufferStackPos] + 1] != '\n') {
-		    //16.3.2-1 Each # preprocessing token in the replacement list for a function-like-macro shall
+
+			if (CharArrayUtils.equals( buffer, bufferPos[bufferStackPos] + 1, VA_ARGS_CHARARRAY.length, VA_ARGS_CHARARRAY )) {
+				usesVarArgInDefinition = true; // __VA_ARGS__ is in definition, used to check C99 6.10.3-5
+				varArgDefinitionInd = bufferPos[bufferStackPos] + 1;
+			}
+				
+			//16.3.2-1 Each # preprocessing token in the replacement list for a function-like-macro shall
 		    //be followed by a parameter as the next preprocessing token 
 			if( arglist != null && !skipOverNonWhiteSpace( true ) ){
 			    ++bufferPos[bufferStackPos];  //advances us to the #
@@ -1754,7 +1764,17 @@ public class Scanner2 implements IScanner, IScannerData {
 				    {
 				        if( bufferPos[bufferStackPos] + arglist[i].length - 1 < limit )
 				        {
-					        if( CharArrayUtils.equals( buffer, bufferPos[bufferStackPos], arglist[i].length, arglist[i] ) )
+				        	if (arglist[i].length > 3 && arglist[i][arglist[i].length - 3] == '.' && arglist[i][arglist[i].length - 2] == '.' && arglist[i][arglist[i].length - 3] == '.') {
+				        		char[] varArgName = new char[arglist[i].length - 3];
+				        		System.arraycopy(arglist[i], 0, varArgName, 0, arglist[i].length - 3);
+				        		if (CharArrayUtils.equals( buffer, bufferPos[bufferStackPos], varArgName.length, varArgName)) {
+						            isArg = true;
+						            //advance us to the end of the arg
+						            bufferPos[bufferStackPos] += arglist[i].length - 4;
+						            break;
+				        		}
+				        	} else if ( CharArrayUtils.equals( buffer, bufferPos[bufferStackPos], arglist[i].length, arglist[i] ) 
+				        			|| (CharArrayUtils.equals(arglist[i], ELLIPSIS_CHARARRAY) && CharArrayUtils.equals( buffer, bufferPos[bufferStackPos], VA_ARGS_CHARARRAY.length, VA_ARGS_CHARARRAY )))  
 					        {
 					            isArg = true;
 					            //advance us to the end of the arg
@@ -1791,6 +1811,9 @@ public class Scanner2 implements IScanner, IScannerData {
 				? new ObjectStyleMacro(name, text)
 						: new FunctionStyleMacro(name, text, arglist) );
 		 
+		if (usesVarArgInDefinition && definitions.get(name) instanceof FunctionStyleMacro && !((FunctionStyleMacro)definitions.get(name)).hasVarArgs())
+			handleProblem(IProblem.PREPROCESSOR_INVALID_VA_ARGS, varArgDefinitionInd, null);
+		
 		callbackManager.pushCallback( getASTFactory().createMacro( name, startingOffset, startingLineNumber, idstart, idstart + idlen, nameLine, textstart + textlen, endingLine, getCurrentFilename() ) );
 	}
 	
@@ -1805,31 +1828,29 @@ public class Scanner2 implements IScanner, IScannerData {
 	    char[][] arglist = new char[4][];
 		int currarg = -1;
 		while (bufferPos[bufferStackPos] < limit) {
-			int pos = bufferPos[bufferStackPos];
 			skipOverWhiteSpace();
 			if (++bufferPos[bufferStackPos] >= limit)
 				return null;
 			c = buffer[bufferPos[bufferStackPos]];
+			int argstart = bufferPos[bufferStackPos];
 			if (c == ')') {
 				break;
 			} else if (c == ',') {
 				continue;
-			} else if (c == '.'
-					&& pos + 1 < limit && buffer[pos + 1] == '.'
-					&& pos + 2 < limit && buffer[pos + 2] == '.') {
-				// varargs
-				// TODO - something better
-				bufferPos[bufferStackPos] += 2;
-				arglist[++currarg] = "...".toCharArray(); //$NON-NLS-1$
-				continue;
+			} else if (c == '.' 
+	    		&& bufferPos[bufferStackPos] + 1 < limit && buffer[bufferPos[bufferStackPos] + 1] == '.' 
+	    			&& bufferPos[bufferStackPos] + 2 < limit && buffer[bufferPos[bufferStackPos] + 2] == '.') {
+					bufferPos[bufferStackPos]--; // move back and let skipOverIdentifier handle the ellipsis 
 			} else if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || Character.isUnicodeIdentifierPart(c))) {
-			    if( reportProblems )
-			        handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, idstart, name );
-				// yuck
-				skipToNewLine();
-				return null;
+		    		if( reportProblems ) {
+		    			handleProblem( IProblem.PREPROCESSOR_INVALID_MACRO_DEFN, idstart, name );
+					    
+		    			// yuck
+						skipToNewLine();
+						return null;		    		
+		    		}
 			}
-			int argstart = bufferPos[bufferStackPos];
+			
 			skipOverIdentifier();
 			if (++currarg == arglist.length) {
 				char[][] oldarglist = arglist;
@@ -1858,6 +1879,8 @@ public class Scanner2 implements IScanner, IScannerData {
 		{
 			if( text[i] == '\\' && i+ 1 < text.length && text[i+1] == '\n' )
 				++i;
+			else if( text[i] == '\\' && i + 1 < text.length && text[i+1] == '\r' && i + 2 < text.length && text[i+2] == '\n' )
+				i+=2;
 			else
 				result[ counter++ ] = text[i];
 		}
@@ -2223,6 +2246,14 @@ public class Scanner2 implements IScanner, IScannerData {
 						--bufferPos[bufferStackPos];
 						return true;
 					}
+					if( pos + 1 < limit && buffer[ pos + 1 ] == '\r')
+					{
+						if( pos + 2 < limit && buffer[ pos + 2] == '\n' )
+						{
+							bufferPos[bufferStackPos] +=2;
+							continue;
+						}
+					}
 					break;
 				case '"':
 					boolean escaped = false; 
@@ -2355,13 +2386,56 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		while (++bufferPos[bufferStackPos] < limit) {
 			char c = buffer[bufferPos[bufferStackPos]];
-			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+			if (c == '.' && bufferPos[bufferStackPos] + 1 < limit && buffer[bufferPos[bufferStackPos] + 1] == '.'
+					&& bufferPos[bufferStackPos] + 2 < limit && buffer[bufferPos[bufferStackPos] + 2] == '.') {
+						// encountered "..." make sure it's the last argument, if not raise IProblem
+
+						bufferPos[bufferStackPos] += 2;
+						int end = bufferPos[bufferStackPos];
+						
+						while(++bufferPos[bufferStackPos] < limit) {
+							char c2 = buffer[bufferPos[bufferStackPos]];
+
+							if (c2 == ')') { // good
+								bufferPos[bufferStackPos] = end; // point at the end of ... to get the argument
+								return;
+							}
+							
+							switch (c2) {
+								case ' ':
+								case '\t':
+								case '\r':
+									continue;
+								case '\\':
+									if (bufferPos[bufferStackPos] + 1 < limit && buffer[bufferPos[bufferStackPos] + 1] == '\n') {
+										// \n is a whitespace
+										++bufferPos[bufferStackPos];
+										continue;
+									}
+									if( bufferPos[bufferStackPos] + 1 < limit && buffer[ bufferPos[bufferStackPos] + 1 ] == '\r')
+									{
+										if( bufferPos[bufferStackPos] + 2 < limit && buffer[ bufferPos[bufferStackPos] + 2] == '\n' )
+										{
+											bufferPos[bufferStackPos] +=2;
+											continue;
+										}
+									}
+									break;
+								default:
+									// bad
+									handleProblem( IProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST, bufferPos[bufferStackPos], String.valueOf(c2).toCharArray() );
+									return;
+							}
+						}
+						// "..." was the last macro argument
+						break;
+			} else if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 					|| c == '_' || (c >= '0' && c <= '9') || Character.isUnicodeIdentifierPart(c)) {
 				continue;
-			} 
-			break;
-
+			}
+			break; // found the end of the argument
 		}
+
 		--bufferPos[bufferStackPos];
 	}
 
@@ -2466,14 +2540,26 @@ public class Scanner2 implements IScanner, IScannerData {
 			    continue;
 			}
 			
-			if (++currarg >= arglist.length || arglist[currarg] == null){
-				// too many args
+			if ((++currarg >= arglist.length || arglist[currarg] == null) && !macro.hasVarArgs() && !macro.hasGCCVarArgs()) {
+				// too many args and no variable argument 
 			    handleProblem( IProblem.PREPROCESSOR_MACRO_USAGE_ERROR, bufferPos[bufferStackPos], macro.name );
 				break;
 			}
 			
 		    int argstart = bufferPos[bufferStackPos];
-			int argend = skipOverMacroArg(); 
+			
+		    int argend = -1;
+		    if ((macro.hasGCCVarArgs() || macro.hasVarArgs()) && currarg == macro.getVarArgsPosition()) {
+		    	// there are varargs and the other parms have been accounted for, the rest will replace __VA_ARGS__ or name where "name..." is the parm
+		    	while (++bufferPos[bufferStackPos] < limit) {
+		    		if (buffer[bufferPos[bufferStackPos]] == ')') {
+		    			--bufferPos[bufferStackPos];
+		    			break;
+		    		}
+		    	}
+		    	argend = bufferPos[bufferStackPos];
+		    } else
+		    	argend = skipOverMacroArg(); 
 			
 			char[] arg = emptyCharArray;
 			int arglen = argend - argstart + 1;

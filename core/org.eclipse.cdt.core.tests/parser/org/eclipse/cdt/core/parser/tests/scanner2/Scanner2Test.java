@@ -16,6 +16,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
@@ -26,6 +27,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
+import org.eclipse.cdt.internal.core.parser.scanner2.FunctionStyleMacro;
 
 /**
  * @author jcamelon
@@ -2001,5 +2003,181 @@ public class Scanner2Test extends BaseScanner2Test
         validateEOF();
         
         assertEquals( 0, callback.problems.size() );
+    }
+    
+    public void testBug39688A() throws Exception { // test valid IProblems
+    	Writer writer = new StringWriter();
+    	writer.write("#define decl1(type, ...    \\\n  )   type var;\n"); //$NON-NLS-1$
+    	writer.write("decl1(int, x, y, z)\n"); //$NON-NLS-1$
+    	writer.write("#define decl2(type, args...) type args;"); //$NON-NLS-1$
+    	writer.write("decl2(int, a, b, c, x, y, z)\n"); //$NON-NLS-1$
+    	writer.write("#define decl3(type, args...) \\\n   type args;"); //$NON-NLS-1$
+    	writer.write("decl3(int, a, b, c, x, y)\n"); //$NON-NLS-1$
+    	writer.write("#define decl4(type, args... \\\n   ) type args;"); //$NON-NLS-1$
+    	writer.write("decl4(int, a, b, z)\n"); //$NON-NLS-1$
+    	writer.write("#define decl5(type, ...) type __VA_ARGS__;"); //$NON-NLS-1$
+    	writer.write("decl5(int, z)\n"); //$NON-NLS-1$
+    	writer.write("#define decl6(type, ...    \\\n) type __VA_ARGS__;"); //$NON-NLS-1$
+    	writer.write("decl6(int, a, b, c, x)\n"); //$NON-NLS-1$
+    	writer.write("#define foo(a) a __VA_ARGS__;\n");  //$NON-NLS-1$ C99: 6.10.3.5 this should produce an IProblem
+    	writer.write("#define foo2(a) a #__VA_ARGS__;\n"); //$NON-NLS-1$ C99: 6.10.3.5 this should produce an IProblem
+
+    	Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
+    	initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+    	fullyTokenize();
+    	Iterator probs = callback.problems.iterator();
+    	assertTrue( probs.hasNext() );
+    	assertTrue( ((IProblem)probs.next()).getID() == IProblem.PREPROCESSOR_INVALID_VA_ARGS );
+    	assertTrue( probs.hasNext() );
+    	assertTrue( ((IProblem)probs.next()).getID() == IProblem.PREPROCESSOR_MACRO_PASTING_ERROR );
+    	assertFalse( probs.hasNext() );
+    }
+    
+    public void testBug39688B() throws Exception { // test C99
+    	Writer writer = new StringWriter();
+    	writer.write("#define debug(...) fprintf(stderr, __VA_ARGS__)\n"); //$NON-NLS-1$
+    	writer.write("#define showlist(...) puts(#__VA_ARGS__)\n"); //$NON-NLS-1$
+		writer.write("#define report(test, ...) ((test)?puts(#test):\\\n   printf(__VA_ARGS__))\n"); //$NON-NLS-1$
+		writer.write("int main() {\n"); //$NON-NLS-1$
+		writer.write("debug(\"Flag\");\n"); //$NON-NLS-1$
+		writer.write("debug(\"X = %d\\n\", x);\n"); //$NON-NLS-1$
+		writer.write("showlist(The first, second, and third items.);\n"); //$NON-NLS-1$
+		writer.write("report(x>y, \"x is %d but y is %d\", x, y);\n"); //$NON-NLS-1$
+		writer.write("return 0; }\n"); //$NON-NLS-1$
+		
+    	Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
+    	initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+    	fullyTokenize();
+    	Iterator probs = callback.problems.iterator();
+    	assertFalse( probs.hasNext() );		
+
+    	Map defs = scanner.getDefinitions();
+    	assertTrue(defs.containsKey("debug")); //$NON-NLS-1$
+    	assertTrue(defs.containsKey("showlist")); //$NON-NLS-1$
+    	assertTrue(defs.containsKey("report")); //$NON-NLS-1$
+    	FunctionStyleMacro debug = (FunctionStyleMacro)defs.get("debug"); //$NON-NLS-1$
+    	assertTrue(new String(debug.arglist[0]).equals("__VA_ARGS__")); //$NON-NLS-1$
+    	assertTrue(debug.hasVarArgs());
+    	assertFalse(debug.hasGCCVarArgs());
+    	assertTrue(new String(debug.expansion).equals("fprintf(stderr, __VA_ARGS__)") ); //$NON-NLS-1$
+    	FunctionStyleMacro showlist = (FunctionStyleMacro)defs.get("showlist"); //$NON-NLS-1$
+    	assertTrue(new String(showlist.arglist[0]).equals("__VA_ARGS__")); //$NON-NLS-1$
+    	assertTrue(showlist.hasVarArgs());
+    	assertFalse(showlist.hasGCCVarArgs());
+    	assertTrue(new String(showlist.expansion).equals("puts(#__VA_ARGS__)")); //$NON-NLS-1$
+    	FunctionStyleMacro report = (FunctionStyleMacro)defs.get("report"); //$NON-NLS-1$
+    	assertTrue(new String(report.arglist[0]).equals("test")); //$NON-NLS-1$
+    	assertTrue(new String(report.arglist[1]).equals("__VA_ARGS__")); //$NON-NLS-1$
+    	assertTrue(report.hasVarArgs());
+    	assertFalse(report.hasGCCVarArgs());
+    	assertTrue(new String(report.expansion).equals("((test)?puts(#test):   printf(__VA_ARGS__))")); //$NON-NLS-1$
+
+    	validate39688Common(writer, callback);
+    }
+    
+    public void testBug39688C() throws Exception { // test GCC
+    	Writer writer = new StringWriter();
+    	writer.write("#define debug(vars...) fprintf(stderr, vars)\n"); //$NON-NLS-1$
+    	writer.write("#define showlist(vars...) puts(#vars)\n"); //$NON-NLS-1$
+		writer.write("#define report(test, vars...) ((test)?puts(#test):\\\n   printf(vars))\n"); //$NON-NLS-1$
+		writer.write("int main() {\n"); //$NON-NLS-1$
+		writer.write("debug(\"Flag\");\n"); //$NON-NLS-1$
+		writer.write("debug(\"X = %d\\n\", x);\n"); //$NON-NLS-1$
+		writer.write("showlist(The first, second, and third items.);\n"); //$NON-NLS-1$
+		writer.write("report(x>y, \"x is %d but y is %d\", x, y);\n"); //$NON-NLS-1$
+		writer.write("return 0; }\n"); //$NON-NLS-1$
+		
+    	Callback callback = new Callback( ParserMode.COMPLETE_PARSE );
+    	initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+    	fullyTokenize();
+    	Iterator probs = callback.problems.iterator();
+    	assertFalse( probs.hasNext() );		
+
+    	Map defs = scanner.getDefinitions();
+    	assertTrue(defs.containsKey("debug")); //$NON-NLS-1$
+    	assertTrue(defs.containsKey("showlist")); //$NON-NLS-1$
+    	assertTrue(defs.containsKey("report")); //$NON-NLS-1$
+    	FunctionStyleMacro debug = (FunctionStyleMacro)defs.get("debug"); //$NON-NLS-1$
+    	assertTrue(new String(debug.arglist[0]).equals("vars")); //$NON-NLS-1$
+    	assertFalse(debug.hasVarArgs());
+    	assertTrue(debug.hasGCCVarArgs());
+    	assertTrue(new String(debug.expansion).equals("fprintf(stderr, vars)") ); //$NON-NLS-1$
+    	FunctionStyleMacro showlist = (FunctionStyleMacro)defs.get("showlist"); //$NON-NLS-1$
+    	assertTrue(new String(showlist.arglist[0]).equals("vars")); //$NON-NLS-1$
+    	assertFalse(showlist.hasVarArgs());
+    	assertTrue(showlist.hasGCCVarArgs());
+    	assertTrue(new String(showlist.expansion).equals("puts(#vars)")); //$NON-NLS-1$
+    	FunctionStyleMacro report = (FunctionStyleMacro)defs.get("report"); //$NON-NLS-1$
+    	assertTrue(new String(report.arglist[0]).equals("test")); //$NON-NLS-1$
+    	assertTrue(new String(report.arglist[1]).equals("vars")); //$NON-NLS-1$
+    	assertFalse(report.hasVarArgs());
+    	assertTrue(report.hasGCCVarArgs());
+    	assertTrue(new String(report.expansion).equals("((test)?puts(#test):   printf(vars))")); //$NON-NLS-1$
+    	
+    	validate39688Common(writer, callback);
+    }
+    
+    private void validate39688Common(Writer writer, Callback callback) throws Exception {
+    	initializeScanner( writer.toString(), ParserMode.COMPLETE_PARSE, callback );
+    	
+		validateToken(IToken.t_int);
+		validateIdentifier("main"); //$NON-NLS-1$
+		validateToken(IToken.tLPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tLBRACE);
+		
+		validateIdentifier("fprintf"); //$NON-NLS-1$
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("stderr"); //$NON-NLS-1$
+		validateToken(IToken.tCOMMA);
+		validateString("Flag"); //$NON-NLS-1$
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		
+		validateIdentifier("fprintf"); //$NON-NLS-1$
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("stderr"); //$NON-NLS-1$
+		validateToken(IToken.tCOMMA);
+		validateString("X = %d\\n"); //$NON-NLS-1$
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("x"); //$NON-NLS-1$
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		
+		validateIdentifier("puts"); //$NON-NLS-1$
+		validateToken(IToken.tLPAREN);
+		validateString("The first, second, and third items."); //$NON-NLS-1$
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		
+		validateToken(IToken.tLPAREN);
+		validateToken(IToken.tLPAREN);
+		validateIdentifier("x"); //$NON-NLS-1$
+		validateToken(IToken.tGT);
+		validateIdentifier("y"); //$NON-NLS-1$
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tQUESTION);
+		validateIdentifier("puts"); //$NON-NLS-1$
+		validateToken(IToken.tLPAREN);
+		validateString("x>y"); //$NON-NLS-1$
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tCOLON);
+		validateIdentifier("printf"); //$NON-NLS-1$
+		validateToken(IToken.tLPAREN);
+		validateString("x is %d but y is %d"); //$NON-NLS-1$
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("x"); //$NON-NLS-1$
+		validateToken(IToken.tCOMMA);
+		validateIdentifier("y"); //$NON-NLS-1$
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tRPAREN);
+		validateToken(IToken.tSEMI);
+		
+		validateToken(IToken.t_return);
+		validateInteger("0"); //$NON-NLS-1$
+		validateToken(IToken.tSEMI);
+		validateToken(IToken.tRBRACE);
+		
+		validateEOF();
     }
 }

@@ -178,7 +178,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	private void basicTemplateDeclaration( ISymbol symbol ) throws ParserSymbolTableException{
 		ITemplateSymbol template = (ITemplateSymbol)templates.get( 0 );
 
-		
+		if( template == null ) return;
 		if( template.getParameterList().size() == 0 ){
 			//explicit specialization, deduce some arguments and use addTemplateId
 			ISymbol previous = findPreviousSymbol( symbol, new ArrayList() );
@@ -380,7 +380,7 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	    int size = templates.size();
 	    for( int i = size - 1; i >= 0; i-- ){
 			ITemplateSymbol template = (ITemplateSymbol) templates.get(i);
-			
+			if( template == null )continue;
 			ISymbol look = template.lookupMemberForDefinition( name );
 			if( look != null && look.isType( type ) ){
 				return look;
@@ -397,10 +397,12 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 	    int size = templates.size();
 	    for( int i = size - 1; i >= 0; i-- ){
 			ITemplateSymbol template = (ITemplateSymbol) templates.get(i);
-			
-			ISymbol look = template.lookupMemberForDefinition( name );
-			if( look != null ){
-				return look;
+			if( template != null )
+			{
+				ISymbol look = template.lookupMemberForDefinition( name );
+				if( look != null ){
+					return look;
+				}
 			}
 		}
 		

@@ -401,7 +401,19 @@ public interface IProblem
 	 * @see #A_PREPROC_INCLUDE_FILENAME
 	 */	
 	public final static int PREPROCESSOR_CIRCULAR_INCLUSION = PREPROCESSOR_RELATED | 0x00B;
+	
+	/**
+	 * macro argument "..." encountered without the required ')' i.e. must be last argument if used  
+	 * Required attributes: none
+	 */	
+	public final static int PREPROCESSOR_MISSING_RPAREN_PARMLIST = PREPROCESSOR_RELATED | 0x00C;	
 
+	/**
+	 * __VA_ARGS__ encountered in macro definition without the required '...' parameter  
+	 * Required attributes: none
+	 */	
+	public final static int PREPROCESSOR_INVALID_VA_ARGS = PREPROCESSOR_RELATED | 0x00D;
+	
 	/*
 	 * Parser Syntactic Problems
 	 */

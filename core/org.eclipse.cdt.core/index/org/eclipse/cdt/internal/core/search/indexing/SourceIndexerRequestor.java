@@ -644,8 +644,8 @@ public class SourceIndexerRequestor implements ISourceElementRequestor, IIndexCo
 	      			tempMarker = markers[i];
 	      			tempInt = (Integer) tempMarker.getAttribute(IMarker.LINE_NUMBER);
 	      			tempMsgString = (String) tempMarker.getAttribute(IMarker.MESSAGE);
-	      			if (tempInt.intValue()==problem.getSourceLineNumber() &&
-	      				tempMsgString.equalsIgnoreCase( INDEXER_MARKER_PREFIX + problem.getMessage()))
+	      			if (tempInt != null && tempInt.intValue()==problem.getSourceLineNumber() &&
+	      				tempMsgString.equalsIgnoreCase( INDEXER_MARKER_PREFIX + problem.getMessage())) 
 	      			{
 	      				newProblem = false;
 	      				break;

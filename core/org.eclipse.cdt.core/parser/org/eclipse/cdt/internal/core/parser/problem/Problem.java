@@ -182,6 +182,12 @@ public class Problem implements IProblem {
 			new Integer(IProblem.PREPROCESSOR_MACRO_PASTING_ERROR),
 			ParserMessages.getString("ScannerProblemFactory.error.preproc.macroPasting")); //$NON-NLS-1$
 		errorMessages.put(
+				new Integer(IProblem.PREPROCESSOR_MISSING_RPAREN_PARMLIST),
+				ParserMessages.getString("ScannerProblemFactory.error.preproc.missingRParen")); //$NON-NLS-1$		
+		errorMessages.put(
+				new Integer(IProblem.PREPROCESSOR_INVALID_VA_ARGS),
+				ParserMessages.getString("ScannerProblemFactory.error.preproc.invalidVaArgs")); //$NON-NLS-1$		
+		errorMessages.put(
 			new Integer(IProblem.SCANNER_INVALID_ESCAPECHAR),
 			ParserMessages.getString("ScannerProblemFactory.error.scanner.invalidEscapeChar")); //$NON-NLS-1$
 		errorMessages.put(

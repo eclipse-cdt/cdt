@@ -86,6 +86,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.AddBookmarkAction;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.actions.CloseResourceAction;
@@ -374,7 +375,9 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 		boolean showCUChildren= CPluginPreferencePage.showCompilationUnitChildren();
 		viewer.setUseHashlookup (true);
 		viewer.setContentProvider(new CContentProvider (showCUChildren, true));
-		viewer.setLabelProvider (new StandardCElementLabelProvider ());
+		viewer.setLabelProvider (new DecoratingLabelProvider(
+				new StandardCElementLabelProvider (),
+				PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		CUIPlugin.getDefault().getProblemMarkerManager().addListener(viewer);
 		CUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 

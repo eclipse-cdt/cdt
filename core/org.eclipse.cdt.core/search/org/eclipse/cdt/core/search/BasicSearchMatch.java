@@ -35,6 +35,7 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		path 		= basicMatch.path;
 		startOffset = basicMatch.startOffset;
 		endOffset 	= basicMatch.endOffset;
+		referringElement = basicMatch.referringElement;
 	}
 	
 	public int hashCode(){
@@ -134,6 +135,8 @@ public class BasicSearchMatch implements IMatch, Comparable {
 	boolean isVolatile		  = false;		
 	boolean isStatic		  = false;
 
+	public IPath referringElement = null;
+	
 	public int getElementType() {
 		return type;
 	}
@@ -164,6 +167,10 @@ public class BasicSearchMatch implements IMatch, Comparable {
 		else if (path != null)
 			return path;
 		else return null;
+	}
+	
+	public IPath getReferenceLocation() {
+		return referringElement;
 	}
 
 	public int getStartOffset() {

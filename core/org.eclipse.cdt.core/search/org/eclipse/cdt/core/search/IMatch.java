@@ -35,6 +35,8 @@ public interface IMatch {
 	IResource getResource();
 	
 	IPath getLocation();
+	
+	IPath getReferenceLocation();
 
 	int getStartOffset();
 	

@@ -59,16 +59,22 @@ public class RenameRefactoringAction extends SelectionDispatchAction {
 		try {
 			element = SelectionConverter.getElementAtOffset(fEditor);
 		}catch (CModelException e) {
-			enable = false;
+			setEnabled(false);
 		}
 		if((element == null) || (element instanceof ITranslationUnit)){
+			setEnabled(false);
+			return;
+		}
+		ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();
+		
+		if (textSelection == null) {
+			setEnabled(false);
+			return;
+		}
+		
+		if( (((CElement)element).getIdStartPos() != textSelection.getOffset()) 
+		|| (((CElement)element).getIdLength() != textSelection.getLength())) {
 			enable = false;
-		} else {
-			ITextSelection textSelection= (ITextSelection)fEditor.getSelectionProvider().getSelection();			
-			if( (((CElement)element).getIdStartPos() != textSelection.getOffset()) 
-					|| (((CElement)element).getIdLength() != textSelection.getLength())) {
-				enable = false;
-			}
 		}
 		setEnabled(enable);
 	}

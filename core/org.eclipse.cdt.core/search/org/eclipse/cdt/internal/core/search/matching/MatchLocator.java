@@ -389,7 +389,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 			
 			Reader reader = null;
 			
-			IPath realPath = null; 
+			realPath = null; 
 			IProject project = null;
 			
 			if( workspaceRoot != null ){
@@ -525,11 +525,11 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 					object = node;
 				}
 			}
-		
+			
 			if( currentResource != null ){
-				match = resultCollector.createMatch( currentResource, offset, end, object );
+				match = resultCollector.createMatch( currentResource, offset, end, object, null );
 			} else if( currentPath != null ){
-				match = resultCollector.createMatch( currentPath, offset, end, object );
+				match = resultCollector.createMatch( currentPath, offset, end, object, realPath );
 			}
 			if( match != null ){
 				//Save till later
@@ -584,6 +584,7 @@ public class MatchLocator implements ISourceElementRequestor, ICSearchConstants 
 	private IPath					currentPath 	= null;
 	private ICSearchScope 			searchScope;
 	private IWorkspaceRoot 			workspaceRoot;
+	private IPath 					realPath; 
 	
 	private IResource 				currentResource = null;
 	private LinkedList 				resourceStack = new LinkedList();

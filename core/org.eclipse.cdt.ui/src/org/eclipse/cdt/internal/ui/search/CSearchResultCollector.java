@@ -16,13 +16,23 @@ package org.eclipse.cdt.internal.ui.search;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.search.BasicSearchMatch;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
 import org.eclipse.cdt.core.search.IMatch;
-import org.eclipse.cdt.ui.*;
+import org.eclipse.cdt.ui.CSearchResultLabelProvider;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IPathVariableManager;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.ISearchResultView;
 import org.eclipse.search.ui.SearchUI;
@@ -83,28 +93,60 @@ public class CSearchResultCollector extends BasicSearchResultCollector{
 	public boolean acceptMatch( IMatch match ) throws CoreException
 	{
 		BasicSearchMatch searchMatch = (BasicSearchMatch) match;
-							
+				
 		if( !super.acceptMatch( match ) )
 			return false;
 		
-		if( searchMatch.resource == null  )
+		if( searchMatch.resource == null &&
+			searchMatch.path == null)
 			return false;
 			 
-		IMarker marker =  searchMatch.resource.createMarker( SearchUI.SEARCH_MARKER );
-	
-		HashMap markerAttributes = new HashMap( 2 );
+	    if (searchMatch.resource != null){
+			IMarker marker =  searchMatch.resource.createMarker( SearchUI.SEARCH_MARKER );
 		
-		//we can hang any other info we want off the marker
-		markerAttributes.put( IMarker.CHAR_START, new Integer( Math.max( searchMatch.startOffset, 0 ) ) );		
-		markerAttributes.put( IMarker.CHAR_END,   new Integer( Math.max( searchMatch.endOffset, 0 ) ) );
-		markerAttributes.put( IMATCH, searchMatch );
+			HashMap markerAttributes = new HashMap( 2 );
+			
+			//we can hang any other info we want off the marker
+			markerAttributes.put( IMarker.CHAR_START, new Integer( Math.max( searchMatch.startOffset, 0 ) ) );		
+			markerAttributes.put( IMarker.CHAR_END,   new Integer( Math.max( searchMatch.endOffset, 0 ) ) );
+			markerAttributes.put( IMATCH, searchMatch );
 		
-		marker.setAttributes( markerAttributes );
-		
-		if( _view != null ){
-			_view.addMatch( searchMatch.name, _computer.computeGroupByKey( marker ), searchMatch.resource, marker );		
-		}
+			marker.setAttributes( markerAttributes );
+			
+			if( _view != null ){
+				_view.addMatch( searchMatch.name, _computer.computeGroupByKey( marker ), searchMatch.resource, marker );		
+			}
+	    }
+	    else {
+	    	//Create Link in referring file's project
+	    	IPath refLocation = searchMatch.getReferenceLocation();
+	    	IFile refFile = CCorePlugin.getWorkspace().getRoot().getFileForLocation(refLocation);
+	    	IProject refProject = refFile.getProject();
+	    	IPath externalMatchLocation = searchMatch.getLocation();
+	    	IFile linksFile = refProject.getFile(externalMatchLocation.lastSegment());
+	    
+	    	//Check to see if the file already exists - create if doesn't, mark team private 
+	    	if (!linksFile.exists()){
+	    		linksFile.createLink(externalMatchLocation,IResource.NONE,null);
+	    		//linksFile.setTeamPrivateMember(true);
+	    		linksFile.setDerived(true);
+	    	}
+	    	
+	    	IMarker marker =  linksFile.createMarker( SearchUI.SEARCH_MARKER );
+			
+			HashMap markerAttributes = new HashMap( 2 );
+			
+			markerAttributes.put( IMarker.CHAR_START, new Integer( Math.max( searchMatch.startOffset, 0 ) ) );		
+			markerAttributes.put( IMarker.CHAR_END,   new Integer( Math.max( searchMatch.endOffset, 0 ) ) );
+			markerAttributes.put( IMATCH, searchMatch );
 
+			marker.setAttributes( markerAttributes );
+			
+			if( _view != null ){
+				_view.addMatch( searchMatch.name, _computer.computeGroupByKey( marker ), linksFile, marker );		
+			}
+	    		
+	    }
 		_matchCount++;
 		
 		return true;

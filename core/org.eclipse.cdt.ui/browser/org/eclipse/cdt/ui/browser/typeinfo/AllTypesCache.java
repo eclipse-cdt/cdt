@@ -34,10 +34,12 @@ import org.eclipse.cdt.internal.ui.browser.util.ArrayUtil;
 import org.eclipse.cdt.internal.ui.browser.util.ProgressMonitorMultiWrapper;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -98,10 +100,10 @@ public class AllTypesCache {
 				super(monitor);
 			}
 			
-			public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node )
+			public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node, IPath realPath )
 			{
 				TypeInfo result= new TypeInfo();
-				return super.createMatch( result, fileResource, start, end, node );
+				return super.createMatch( result, fileResource, start, end, node, realPath);
 			}
 
 			public boolean acceptMatch(IMatch match) throws CoreException {

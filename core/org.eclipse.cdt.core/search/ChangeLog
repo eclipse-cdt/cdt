@@ -1,3 +1,17 @@
+2004-03-24 Bogdan Gheorghe
+	Modified BasicSearchMatch to keep track of what files contained the match in order
+	to create file links to support external file markers.
+	
+	Modified MatchLocator to pass in the referring file path to BasicSearchMatch if the
+	match has no resource attached to it (ie. the match is external).
+	
+	* search/org/eclipse/cdt/core/search/BasicSearchResultCollector.java
+	* search/org/eclipse/cdt/core/search/BasicSearchMatch.java
+	* search/org/eclipse/cdt/core/search/ICSearchResultCollector.java
+	* search/org/eclipse/cdt/core/search/IMatch.java
+	* search/org/eclipse/cdt/internal/core/search/matching/MatchLocator.java
+
+	
 2004-03-08 Bogdan Gheorghe
 	BasicSearchResultCollector patch from Chris Wiebe - adds setProgressMonitor method,
 	cleans up some of the CoreException warnings

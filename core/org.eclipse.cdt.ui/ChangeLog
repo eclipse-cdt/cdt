@@ -1,3 +1,13 @@
+2004-03-24 Bogdan Gheorghe
+	
+	Modified CSearchResultCollector to create markers on external matches.
+	Modified RenameRefactoringAction to get the openInclude working again (changes approved by Hoda).
+	Updated TypeSearchResultCollector to reflect changes made to BasicSearchResultCollector.
+
+	* src/org/eclipse/cdt/internal/ui/search/CSearchResultCollector.java
+	* refactor/org/eclipse/cdt/internal/ui/refactoring/actions/RenameRefactoringACtion.java
+	* browser/org/eclipse/cdt/ui/browser/typeinfo/AllTypesCache.java
+	
 2004-03-23 Alain Magloire
 
 	Show the objects on the IOuputEntry path should

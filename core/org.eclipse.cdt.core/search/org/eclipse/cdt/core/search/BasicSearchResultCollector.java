@@ -77,13 +77,13 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 	 		 fProgressMonitor = monitor;
 	 }
 
-	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node )
+	public IMatch createMatch(Object fileResource, int start, int end, ISourceElementCallbackDelegate node, IPath referringElement)
 	{
 		BasicSearchMatch result = new BasicSearchMatch();
-		return createMatch( result, fileResource, start, end, node );
+		return createMatch( result, fileResource, start, end, node, referringElement);
 	}
 	
-	 public IMatch createMatch( BasicSearchMatch result, Object fileResource, int start, int end, ISourceElementCallbackDelegate node ) {
+	 public IMatch createMatch( BasicSearchMatch result, Object fileResource, int start, int end, ISourceElementCallbackDelegate node, IPath referringElement ) {
 		if( fileResource instanceof IResource )
 			result.resource = (IResource) fileResource;
 		else if( fileResource instanceof IPath )
@@ -92,6 +92,7 @@ public class BasicSearchResultCollector implements ICSearchResultCollector {
 		result.startOffset = start;
 		result.endOffset = end;
 		result.parentName = ""; //$NON-NLS-1$
+		result.referringElement = referringElement;
 		
 		IASTOffsetableNamedElement offsetable = null;
 	

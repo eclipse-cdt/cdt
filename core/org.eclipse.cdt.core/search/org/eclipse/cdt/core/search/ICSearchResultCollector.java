@@ -15,6 +15,7 @@ package org.eclipse.cdt.core.search;
 
 import org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -47,7 +48,7 @@ public interface ICSearchResultCollector {
 	public void done();
 
 	public IMatch createMatch( Object fileResource, int start, int end, 
-						ISourceElementCallbackDelegate node ) throws CoreException;
+						ISourceElementCallbackDelegate node, IPath referringElement) throws CoreException;
 	
 	//return whether or not the match was accepted
 	public boolean acceptMatch( IMatch match ) throws CoreException;
@@ -58,15 +59,4 @@ public interface ICSearchResultCollector {
 	 * @return a progress monitor or null if no progress monitor is provided
 	 */
 	public IProgressMonitor getProgressMonitor();
-
-
-	/**
-	 * returns an IMatch object that contains any information the client cared
-	 * to extract from the IAST node.  
-	 * Note that clients should not reference information in the node itself so 
-	 * that it can be garbage collected 
-	 * @param node
-	 * @return
-	 */
-	//public IMatch createMatch(ISourceElementCallbackDelegate node, IASTScope parent );
 }

@@ -111,4 +111,11 @@ public class CASTCompositeTypeSpecifier extends CASTBaseDeclSpecifier implements
         return scope;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier#getUnpreprocessedSignature()
+     */
+    public String getUnpreprocessedSignature() {
+       return getName().toString() == null ? "" : getName().toString(); //$NON-NLS-1$
+    }
+
 }

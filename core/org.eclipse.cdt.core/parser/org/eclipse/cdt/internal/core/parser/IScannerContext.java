@@ -28,7 +28,6 @@ public interface IScannerContext {
 	int popUndo();
 	void pushUndo(int undo);
 	
-	
 	int getKind(); 
 	void setKind( int kind ); 
 }

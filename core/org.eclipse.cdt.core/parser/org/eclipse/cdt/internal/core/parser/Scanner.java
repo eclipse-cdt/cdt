@@ -295,7 +295,8 @@ public class Scanner implements IScanner {
 	private StringBuffer storageBuffer = null; 
 	
 	private int count = 0;
-	private static HashMap keywords = new HashMap();
+	private static HashMap cppKeywords = new HashMap();
+	private static HashMap cKeywords = new HashMap(); 
 	private static HashMap ppDirectives = new HashMap();
 
 	private Token currentToken = null;
@@ -378,18 +379,30 @@ public class Scanner implements IScanner {
 				if (c == '\r') {
 					c = getChar(false);
 					if (c == '\n')
+					{
 						c = getChar(false);
+					}
 				} else if (c == '\n')
+				{
+					contextStack.newLine();
 					c = getChar(false);
+					if( c == '\n')
+						contextStack.newLine(); 
+				}
 			}
+			else if( c == '\n' )
+				contextStack.newLine();
+
 		}
+		else if( c == '\n' )
+			contextStack.newLine();
+			
 		return c;
 	}
 
 	private void ungetChar(int c) throws ScannerException{
-		// Should really check whether there already is a char there
-		// If so, we should be using a buffer, instead of a single char
 		contextStack.getCurrentContext().pushUndo(c);
+		if( c == '\n' ) contextStack.recantNewline();
 		contextStack.undoRollback( lastContext );
 	}
 
@@ -544,7 +557,13 @@ public class Scanner implements IScanner {
 					}
 				}
 
-				Object tokenTypeObject = keywords.get(ident);
+				Object tokenTypeObject;
+				
+				if( cppNature )
+				 	tokenTypeObject = cppKeywords.get(ident);
+				else
+					tokenTypeObject = cKeywords.get(ident);
+					
 				int tokenType = Token.tIDENTIFIER;
 				if (tokenTypeObject != null)
 					tokenType = ((Integer) tokenTypeObject).intValue();
@@ -1241,85 +1260,83 @@ public class Scanner implements IScanner {
 	}
 
 	static {
-		keywords.put("and", new Integer(Token.t_and));
-		keywords.put("and_eq", new Integer(Token.t_and_eq));
-		keywords.put("asm", new Integer(Token.t_asm));
-		keywords.put("auto", new Integer(Token.t_auto));
-		keywords.put("bitand", new Integer(Token.t_bitand));
-		keywords.put("bitor", new Integer(Token.t_bitor));
-		keywords.put("bool", new Integer(Token.t_bool));
-		keywords.put("break", new Integer(Token.t_break));
-		keywords.put("case", new Integer(Token.t_case));
-		keywords.put("catch", new Integer(Token.t_catch));
-		keywords.put("char", new Integer(Token.t_char));
-		keywords.put("class", new Integer(Token.t_class));
-		keywords.put("compl", new Integer(Token.t_compl));
-		keywords.put("const", new Integer(Token.t_const));
-		keywords.put("const_cast", new Integer(Token.t_const_cast));
-		keywords.put("continue", new Integer(Token.t_continue));
-		keywords.put("default", new Integer(Token.t_default));
-		keywords.put("delete", new Integer(Token.t_delete));
-		keywords.put("do", new Integer(Token.t_do));
-		keywords.put("double", new Integer(Token.t_double));
-		keywords.put("dynamic_cast", new Integer(Token.t_dynamic_cast));
-		keywords.put("else", new Integer(Token.t_else));
-		keywords.put("enum", new Integer(Token.t_enum));
-		keywords.put("explicit", new Integer(Token.t_explicit));
-		keywords.put("export", new Integer(Token.t_export));
-		keywords.put("extern", new Integer(Token.t_extern));
-		keywords.put("false", new Integer(Token.t_false));
-		keywords.put("float", new Integer(Token.t_float));
-		keywords.put("for", new Integer(Token.t_for));
-		keywords.put("friend", new Integer(Token.t_friend));
-		keywords.put("goto", new Integer(Token.t_goto));
-		keywords.put("if", new Integer(Token.t_if));
-		keywords.put("inline", new Integer(Token.t_inline));
-		keywords.put("int", new Integer(Token.t_int));
-		keywords.put("long", new Integer(Token.t_long));
-		keywords.put("mutable", new Integer(Token.t_mutable));
-		keywords.put("namespace", new Integer(Token.t_namespace));
-		keywords.put("new", new Integer(Token.t_new));
-		keywords.put("not", new Integer(Token.t_not));
-		keywords.put("not_eq", new Integer(Token.t_not_eq));
-		keywords.put("operator", new Integer(Token.t_operator));
-		keywords.put("or", new Integer(Token.t_or));
-		keywords.put("or_eq", new Integer(Token.t_or_eq));
-		keywords.put("private", new Integer(Token.t_private));
-		keywords.put("protected", new Integer(Token.t_protected));
-		keywords.put("public", new Integer(Token.t_public));
-		keywords.put("register", new Integer(Token.t_register));
-		keywords.put("reinterpret_cast", new Integer(Token.t_reinterpret_cast));
-		keywords.put("return", new Integer(Token.t_return));
-		keywords.put("short", new Integer(Token.t_short));
-		keywords.put("signed", new Integer(Token.t_signed));
-		keywords.put("sizeof", new Integer(Token.t_sizeof));
-		keywords.put("static", new Integer(Token.t_static));
-		keywords.put("static_cast", new Integer(Token.t_static_cast));
-		keywords.put("struct", new Integer(Token.t_struct));
-		keywords.put("switch", new Integer(Token.t_switch));
-		keywords.put("template", new Integer(Token.t_template));
-		keywords.put("this", new Integer(Token.t_this));
-		keywords.put("throw", new Integer(Token.t_throw));
-		keywords.put("true", new Integer(Token.t_true));
-		keywords.put("try", new Integer(Token.t_try));
-		keywords.put("typedef", new Integer(Token.t_typedef));
-		keywords.put("typeid", new Integer(Token.t_typeid));
-		keywords.put("typename", new Integer(Token.t_typename));
-		keywords.put("union", new Integer(Token.t_union));
-		keywords.put("unsigned", new Integer(Token.t_unsigned));
-		keywords.put("using", new Integer(Token.t_using));
-		keywords.put("virtual", new Integer(Token.t_virtual));
-		keywords.put("void", new Integer(Token.t_void));
-		keywords.put("volatile", new Integer(Token.t_volatile));
-		keywords.put("wchar_t", new Integer(Token.t_wchar_t));
-		keywords.put("while", new Integer(Token.t_while));
-		keywords.put("xor", new Integer(Token.t_xor));
-		keywords.put("xor_eq", new Integer(Token.t_xor_eq));
+		cppKeywords.put("and", new Integer(Token.t_and));
+		cppKeywords.put("and_eq", new Integer(Token.t_and_eq));
+		cppKeywords.put("asm", new Integer(Token.t_asm));
+		cppKeywords.put("auto", new Integer(Token.t_auto));
+		cppKeywords.put("bitand", new Integer(Token.t_bitand));
+		cppKeywords.put("bitor", new Integer(Token.t_bitor));
+		cppKeywords.put("bool", new Integer(Token.t_bool));
+		cppKeywords.put("break", new Integer(Token.t_break));
+		cppKeywords.put("case", new Integer(Token.t_case));
+		cppKeywords.put("catch", new Integer(Token.t_catch));
+		cppKeywords.put("char", new Integer(Token.t_char));
+		cppKeywords.put("class", new Integer(Token.t_class));
+		cppKeywords.put("compl", new Integer(Token.t_compl));
+		cppKeywords.put("const", new Integer(Token.t_const));
+		cppKeywords.put("const_cast", new Integer(Token.t_const_cast));
+		cppKeywords.put("continue", new Integer(Token.t_continue));
+		cppKeywords.put("default", new Integer(Token.t_default));
+		cppKeywords.put("delete", new Integer(Token.t_delete));
+		cppKeywords.put("do", new Integer(Token.t_do));
+		cppKeywords.put("double", new Integer(Token.t_double));
+		cppKeywords.put("dynamic_cast", new Integer(Token.t_dynamic_cast));
+		cppKeywords.put("else", new Integer(Token.t_else));
+		cppKeywords.put("enum", new Integer(Token.t_enum));
+		cppKeywords.put("explicit", new Integer(Token.t_explicit));
+		cppKeywords.put("export", new Integer(Token.t_export));
+		cppKeywords.put("extern", new Integer(Token.t_extern));
+		cppKeywords.put("false", new Integer(Token.t_false));
+		cppKeywords.put("float", new Integer(Token.t_float));
+		cppKeywords.put("for", new Integer(Token.t_for));
+		cppKeywords.put("friend", new Integer(Token.t_friend));
+		cppKeywords.put("goto", new Integer(Token.t_goto));
+		cppKeywords.put("if", new Integer(Token.t_if));
+		cppKeywords.put("inline", new Integer(Token.t_inline));
+		cppKeywords.put("int", new Integer(Token.t_int));
+		cppKeywords.put("long", new Integer(Token.t_long));
+		cppKeywords.put("mutable", new Integer(Token.t_mutable));
+		cppKeywords.put("namespace", new Integer(Token.t_namespace));
+		cppKeywords.put("new", new Integer(Token.t_new));
+		cppKeywords.put("not", new Integer(Token.t_not));
+		cppKeywords.put("not_eq", new Integer(Token.t_not_eq));
+		cppKeywords.put("operator", new Integer(Token.t_operator));
+		cppKeywords.put("or", new Integer(Token.t_or));
+		cppKeywords.put("or_eq", new Integer(Token.t_or_eq));
+		cppKeywords.put("private", new Integer(Token.t_private));
+		cppKeywords.put("protected", new Integer(Token.t_protected));
+		cppKeywords.put("public", new Integer(Token.t_public));
+		cppKeywords.put("register", new Integer(Token.t_register));
+		cppKeywords.put("reinterpret_cast", new Integer(Token.t_reinterpret_cast));
+		cppKeywords.put("return", new Integer(Token.t_return));
+		cppKeywords.put("short", new Integer(Token.t_short));
+		cppKeywords.put("signed", new Integer(Token.t_signed));
+		cppKeywords.put("sizeof", new Integer(Token.t_sizeof));
+		cppKeywords.put("static", new Integer(Token.t_static));
+		cppKeywords.put("static_cast", new Integer(Token.t_static_cast));
+		cppKeywords.put("struct", new Integer(Token.t_struct));
+		cppKeywords.put("switch", new Integer(Token.t_switch));
+		cppKeywords.put("template", new Integer(Token.t_template));
+		cppKeywords.put("this", new Integer(Token.t_this));
+		cppKeywords.put("throw", new Integer(Token.t_throw));
+		cppKeywords.put("true", new Integer(Token.t_true));
+		cppKeywords.put("try", new Integer(Token.t_try));
+		cppKeywords.put("typedef", new Integer(Token.t_typedef));
+		cppKeywords.put("typeid", new Integer(Token.t_typeid));
+		cppKeywords.put("typename", new Integer(Token.t_typename));
+		cppKeywords.put("union", new Integer(Token.t_union));
+		cppKeywords.put("unsigned", new Integer(Token.t_unsigned));
+		cppKeywords.put("using", new Integer(Token.t_using));
+		cppKeywords.put("virtual", new Integer(Token.t_virtual));
+		cppKeywords.put("void", new Integer(Token.t_void));
+		cppKeywords.put("volatile", new Integer(Token.t_volatile));
+		cppKeywords.put("wchar_t", new Integer(Token.t_wchar_t));
+		cppKeywords.put("while", new Integer(Token.t_while));
+		cppKeywords.put("xor", new Integer(Token.t_xor));
+		cppKeywords.put("xor_eq", new Integer(Token.t_xor_eq));
 
 		ppDirectives.put("#define", new Integer(PreprocessorDirectives.DEFINE));
-		ppDirectives.put(
-			"#undef",
-			new Integer(PreprocessorDirectives.UNDEFINE));
+		ppDirectives.put("#undef",new Integer(PreprocessorDirectives.UNDEFINE));
 		ppDirectives.put("#if", new Integer(PreprocessorDirectives.IF));
 		ppDirectives.put("#ifdef", new Integer(PreprocessorDirectives.IFDEF));
 		ppDirectives.put("#ifndef", new Integer(PreprocessorDirectives.IFNDEF));
@@ -1333,6 +1350,45 @@ public class Scanner implements IScanner {
 		ppDirectives.put("#pragma", new Integer(PreprocessorDirectives.PRAGMA));
 		ppDirectives.put("#elif", new Integer(PreprocessorDirectives.ELIF));
 		ppDirectives.put("#", new Integer(PreprocessorDirectives.BLANK));
+
+		cKeywords.put("auto", new Integer(Token.t_auto));
+		cKeywords.put("break", new Integer(Token.t_break));
+		cKeywords.put("case", new Integer(Token.t_case));
+		cKeywords.put("char", new Integer(Token.t_char));
+		cKeywords.put("const", new Integer(Token.t_const));
+		cKeywords.put("continue", new Integer(Token.t_continue));
+		cKeywords.put("default", new Integer(Token.t_default));
+		cKeywords.put("delete", new Integer(Token.t_delete));
+		cKeywords.put("do", new Integer(Token.t_do));
+		cKeywords.put("double", new Integer(Token.t_double));
+		cKeywords.put("else", new Integer(Token.t_else));
+		cKeywords.put("enum", new Integer(Token.t_enum));
+		cKeywords.put("extern", new Integer(Token.t_extern));
+		cKeywords.put("float", new Integer(Token.t_float));
+		cKeywords.put("for", new Integer(Token.t_for));
+		cKeywords.put("goto", new Integer(Token.t_goto));
+		cKeywords.put("if", new Integer(Token.t_if));
+		cKeywords.put("inline", new Integer(Token.t_inline));
+		cKeywords.put("int", new Integer(Token.t_int));
+		cKeywords.put("long", new Integer(Token.t_long));
+		cKeywords.put("register", new Integer(Token.t_register));
+		cKeywords.put("restrict", new Integer(Token.t_restrict));
+		cKeywords.put("return", new Integer(Token.t_return));
+		cKeywords.put("short", new Integer(Token.t_short));
+		cKeywords.put("signed", new Integer(Token.t_signed));
+		cKeywords.put("sizeof", new Integer(Token.t_sizeof));
+		cKeywords.put("static", new Integer(Token.t_static));
+		cKeywords.put("struct", new Integer(Token.t_struct));
+		cKeywords.put("switch", new Integer(Token.t_switch));
+		cKeywords.put("typedef", new Integer(Token.t_typedef));
+		cKeywords.put("union", new Integer(Token.t_union));
+		cKeywords.put("unsigned", new Integer(Token.t_unsigned));
+		cKeywords.put("void", new Integer(Token.t_void));
+		cKeywords.put("volatile", new Integer(Token.t_volatile));
+		cKeywords.put("while", new Integer(Token.t_while));
+		cKeywords.put("_Bool", new Integer(Token.t__Bool));
+		cKeywords.put("_Complex", new Integer(Token.t__Complex));
+		cKeywords.put("_Imaginary", new Integer(Token.t__Imaginary));
 
 	}
 
@@ -1380,7 +1436,7 @@ public class Scanner implements IScanner {
 						new StringReader(expression + ";"),
 						EXPRESSION,
 						definitions);
-				Parser parser = new Parser(trial, evaluator);
+				IParser parser = new Parser(trial, evaluator);
 				parser.expression(null); 
 				
 				expressionEvalResult = evaluator.getResult();
@@ -1541,35 +1597,41 @@ public class Scanner implements IScanner {
 
 			ArrayList macroReplacementTokens = new ArrayList();
 			String replacementString = getRestOfPreprocessorLine();
-			Scanner helperScanner = new Scanner();
-			helperScanner.initialize(
-				new StringReader(replacementString),
-				null);
-			helperScanner.setTokenizingMacroReplacementList( true );
-			Token t = helperScanner.nextToken(false);
-
-			try {
-				while (true) {
-					//each # preprocessing token in the replacement list shall be followed
-					//by a parameter as the next reprocessing token in the list
-					if( t.type == tPOUND ){
-						macroReplacementTokens.add( t );
-						t = helperScanner.nextToken(false);
-						int index = parameterIdentifiers.indexOf(t.image);
-						if (index == -1 ) {
-							//not found
-							if (throwExceptionOnBadPreprocessorSyntax)
-								throw new ScannerException(
-									BAD_PP + contextStack.getCurrentContext().getOffset());
-							return;
+			
+			if( ! replacementString.equals( "" ) )
+			{
+				Scanner helperScanner = new Scanner();
+				helperScanner.initialize(
+					new StringReader(replacementString),
+					null);
+				helperScanner.setTokenizingMacroReplacementList( true );
+				Token t = helperScanner.nextToken(false);
+	
+				try {
+					while (true) {
+						//each # preprocessing token in the replacement list shall be followed
+						//by a parameter as the next reprocessing token in the list
+						if( t.type == tPOUND ){
+							macroReplacementTokens.add( t );
+							t = helperScanner.nextToken(false);
+							int index = parameterIdentifiers.indexOf(t.image);
+							if (index == -1 ) {
+								//not found
+								if (throwExceptionOnBadPreprocessorSyntax)
+									throw new ScannerException(
+										BAD_PP + contextStack.getCurrentContext().getOffset());
+								return;
+							}
 						}
+						
+						macroReplacementTokens.add(t);
+						t = helperScanner.nextToken(false);
 					}
-					
-					macroReplacementTokens.add(t);
-					t = helperScanner.nextToken(false);
 				}
-			} catch (Parser.EndOfFile e) {
-				// Good
+				catch( Parser.EndOfFile eof )
+				{
+					// good
+				}
 			}
 
 			IMacroDescriptor descriptor = new MacroDescriptor();
@@ -1580,7 +1642,12 @@ public class Scanner implements IScanner {
 				key + "(" + parameters + ")");
 			addDefinition(key, descriptor);
 
-		} else if ((c == ' ') || (c == '\t') || (c == '\n') || (c == '\r')) {
+		}
+		else if ((c == '\n') || (c == '\r'))
+		{
+			addDefinition( key, "" ); 
+		}
+		else if ((c == ' ') || (c == '\t') ) {
 			// this is a simple definition 
 			skipOverWhitespace();
 
@@ -1805,4 +1872,20 @@ public class Scanner implements IScanner {
 
 		return "0";
 	}
+	
+	/**
+	 * @return
+	 */
+	public int getLineNumberForOffset(int offset) {
+		return contextStack.mapOffsetToLineNumber(offset);
+	}
+
+	private boolean cppNature = true; 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IScanner#setCppNature(boolean)
+	 */
+	public void setCppNature(boolean value) {
+		cppNature = value; 
+	}
+
 }

@@ -46,6 +46,7 @@ import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
+import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.core.resources.IProject;
 
@@ -62,14 +63,22 @@ public class CModelBuilder {
 	public Map parse() throws Exception {
 		DOMBuilder domBuilder = new DOMBuilder();
 		String code = translationUnit.getBuffer().getContents();
-		Parser parser = new Parser(code, domBuilder, true);
+		IParser parser = new Parser(code, domBuilder, true);
 		if( translationUnit.getCProject() != null )
 		{
 			IProject currentProject = translationUnit.getCProject().getProject();
 			boolean hasCppNature = CoreModel.getDefault().hasCCNature(currentProject);
 			parser.setCppNature(hasCppNature);
 		}
-		parser.parse();
+		try
+		{
+			parser.parse();
+		}
+		catch( Exception e )
+		{
+			System.out.println( "Parse Exception in Outline View" ); 
+			e.printStackTrace();
+		}
 		long startTime = System.currentTimeMillis(); 
 		generateModelElements(domBuilder.getTranslationUnit());
 		System.out.println("CModel build: "+ ( System.currentTimeMillis() - startTime ) + "ms" );

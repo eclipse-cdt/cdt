@@ -11,6 +11,7 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable
 	private AccessSpecifier access = new AccessSpecifier( AccessSpecifier.v_private );
 	private ClassKey key = new ClassKey();
 	private int startingOffset = 0, totalLength = 0;
+	private int topLine = 0, bottomLine = 0; 
 	private Token classKeyToken = null;
 
 	public int getClassKey() { return key.getClassKey(); }
@@ -96,6 +97,34 @@ public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable
 	 */
 	public void setClassKeyToken(Token classKeyToken) {
 		this.classKeyToken = classKeyToken;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setTopLine(int)
+	 */
+	public void setTopLine(int lineNumber) {
+		topLine = lineNumber;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setBottomLine(int)
+	 */
+	public void setBottomLine(int lineNumber) {
+		bottomLine = lineNumber;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getTopLine()
+	 */
+	public int getTopLine() {
+		return topLine;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getBottomLine()
+	 */
+	public int getBottomLine() {
+		return bottomLine;
 	}
 
 }

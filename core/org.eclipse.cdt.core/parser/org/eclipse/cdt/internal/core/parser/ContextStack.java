@@ -51,7 +51,9 @@ public class ContextStack {
 		if( currentContext != null )
 			contextStack.push(currentContext);
 		
-		currentContext = context;		
+		currentContext = context;
+		if( context.getKind() == IScannerContext.TOP )
+			topContext = context;
 	}
 	
 	public boolean rollbackContext() {
@@ -118,13 +120,35 @@ public class ContextStack {
 		return currentContext;
 	}
 	
-	private IScannerContext currentContext;
-	
+	private IScannerContext currentContext, topContext;
 	private Stack contextStack = new Stack();
 	private LinkedList undoStack = new LinkedList();
-	
-	
 	private Set inclusions = new HashSet(); 
 	private Set defines = new HashSet();
+	private OffsetMapping offsetLineMap = new OffsetMapping(); 
 	
+	/**
+	 * @return
+	 */
+	public IScannerContext getTopContext() {
+		return topContext;
+	}
+	
+	public int mapOffsetToLineNumber( int offset )
+	{
+		return offsetLineMap.getLineNo(offset);
+	}
+	
+	public void newLine()
+	{
+		if( currentContext == topContext )
+			offsetLineMap.newLine( topContext.getOffset() );
+	}
+
+	public void recantNewline()
+	{
+		if( currentContext == topContext )
+			offsetLineMap.recantLastNewLine();
+		
+	}
 }

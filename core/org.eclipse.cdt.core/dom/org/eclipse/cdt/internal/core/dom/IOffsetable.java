@@ -35,4 +35,10 @@ public interface IOffsetable {
 	 * @param i
 	 */
 	public abstract void setTotalLength(int i);
+	
+	public abstract void setTopLine( int lineNumber );
+	public abstract void setBottomLine( int lineNumber );
+	public abstract int  getTopLine();
+	public abstract int  getBottomLine(); 
+	
 }

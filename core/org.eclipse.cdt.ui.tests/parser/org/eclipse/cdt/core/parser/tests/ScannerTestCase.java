@@ -2,6 +2,7 @@ package org.eclipse.cdt.core.parser.tests;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.List;
 
 import junit.framework.Test;
@@ -521,6 +522,17 @@ public class ScannerTestCase extends TestCase
 		{
 			fail(EXCEPTION_THROWN + e.toString());
 		}
+	}
+
+	public void testMultipleLines() throws Exception
+	{
+		Writer code = new StringWriter(); 
+		code.write( "#define COMPLEX_MACRO 33 \\\n");
+		code.write( "	+ 44\n\nCOMPLEX_MACRO");
+		initializeScanner( code.toString() );
+		validateInteger( "33" );
+		validateToken( Token.tPLUS );
+		validateInteger( "44" );
 	}
 
 	public void testSlightlyComplexIfdefStructure()
@@ -1304,6 +1316,17 @@ public class ScannerTestCase extends TestCase
 		validateEOF();
 	}
 	
+	public void testBug36434() throws Exception
+	{
+		initializeScanner( "#define X(Y)");
+		validateEOF();
+		IMacroDescriptor macro = (IMacroDescriptor)scanner.getDefinition( "X" );
+		assertNotNull( macro ); 
+		assertEquals( macro.getParameters().size(), 1 );
+		assertEquals( (String)macro.getParameters().get(0), "Y" );
+		assertEquals( macro.getTokenizedExpansion().size(), 0 );
+	}
+	
 	public void testBug36047() throws Exception
 	{
 		StringWriter writer = new StringWriter(); 
@@ -1330,4 +1353,5 @@ public class ScannerTestCase extends TestCase
 		
 		validateEOF(); 
 	}
+
 }

@@ -1,3 +1,10 @@
+2003-04-15 John Camelon
+	Added ScannerTestCase::testBug36434().
+	Added ScannerTestCase::testMultipleLines(). 
+	Added ParserTestSuite. 
+	Added LineNumberTest.
+	Updated CModelElementsTests to set the Nature of the C++ project appropriately.
+
 2003-04-15 Andrew Niefer
 	Moved ScannerFailedTest::testBug36047 to ScannerTestCase::testBug36047
 	Added ScannerFailedTest::testBug36475

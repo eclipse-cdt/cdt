@@ -12,6 +12,8 @@ package org.eclipse.cdt.internal.core.parser;
 
 public interface IParserCallback {
 
+	public void setParser( IParser parser );
+	
 	public Object translationUnitBegin();
 	public void translationUnitEnd(Object unit);
 	

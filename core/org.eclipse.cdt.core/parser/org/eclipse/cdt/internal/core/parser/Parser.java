@@ -17,12 +17,17 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Parser {
+public class Parser implements IParser {
 
 	private IParserCallback callback;
 	private boolean quickParse = false;
 	private boolean parsePassed = true;
 	private boolean cppNature = true;
+	
+	protected void failParse()
+	{
+		parsePassed = false;
+	}
 	
 	// TO DO: convert to a real symbol table
 	private Map currRegion = new HashMap();
@@ -83,6 +88,7 @@ c, quick);
 	 * 
 	 */
 	protected void translationUnit() throws Backtrack {
+		try { callback.setParser( this ); } catch( Exception e) {}
 		Object translationUnit = null;
 		try{ translationUnit = callback.translationUnitBegin();} catch( Exception e ) {}
 		Token lastBacktrack = null;
@@ -98,7 +104,7 @@ c, quick);
 				break;
 			} catch (Backtrack b) {
 				// Mark as failure and try to reach a recovery point
-				parsePassed = false;
+				failParse(); 
 				
 				if (lastBacktrack != null && lastBacktrack == LA(1)) {
 					// we haven't progressed from the last backtrack
@@ -109,12 +115,16 @@ c, quick);
 					lastBacktrack = LA(1);
 				}
 			}
+			catch( Exception e )
+			{
+				failParse(); 
+			}
 		}
 		try{ callback.translationUnitEnd(translationUnit);} catch( Exception e ) {}
 	}
 
 	protected void consumeToNextSemicolon() throws EndOfFile {
-		parsePassed = false;
+		failParse();
 		consume();
 		// TODO - we should really check for matching braces too
 		while (LT(1) != Token.tSEMI) {
@@ -2252,6 +2262,12 @@ c, quick);
 	 */
 	public void setCppNature(boolean b) {
 		cppNature = b;
+		if( scanner != null )
+			scanner.setCppNature( b ); 
 	}
 
+	public int getLineNumberForOffset(int offset)
+	{
+		return scanner.getLineNumberForOffset(offset);
+	}
 }

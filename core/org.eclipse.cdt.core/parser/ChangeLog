@@ -1,3 +1,9 @@
+2003-04-15 John Camelon
+	Fixed bug36434 - Broken outline in winbase.h
+	Partial Fix for bug36379 - The parser to set Line informations when scanning.
+	Fixed CModelManager to include header files with .H extension as C++ headers. 
+	Fixed bug36448 - Parser fails for C programs containing C++ keywords as identifiers
+
 2003-04-15 Andrew Niefer
 	Added scanner support to fix Bug36047
 

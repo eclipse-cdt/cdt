@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.cdt.internal.core.parser.ExpressionEvaluator;
+import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.Parser;
 
 public class ExprEvalTest extends TestCase {
@@ -19,7 +20,7 @@ public class ExprEvalTest extends TestCase {
 	
 	public void runTest(String code, int expectedValue) throws Exception {
 		ExpressionEvaluator evaluator = new ExpressionEvaluator();
-		Parser parser = new Parser(code, evaluator);
+		IParser parser = new Parser(code, evaluator);
 		parser.expression(null);
 		assertEquals(expectedValue, ((Integer)evaluator.getResult()).intValue());
 	}

@@ -144,4 +144,34 @@ public class TemplateDeclaration extends Declaration implements IScope, IAccessa
 		else this.visibility.setAccess(visibility);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setTopLine(int)
+	 */
+	public void setTopLine(int lineNumber) {
+		topLine = lineNumber;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#setBottomLine(int)
+	 */
+	public void setBottomLine(int lineNumber) {
+		bottomLine = lineNumber;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getTopLine()
+	 */
+	public int getTopLine() { 
+		return topLine;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.dom.IOffsetable#getBottomLine()
+	 */
+	public int getBottomLine() {
+		return bottomLine;
+	}
+	private int topLine = 0, bottomLine = 0; 
+
+
 }

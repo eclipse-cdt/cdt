@@ -693,4 +693,10 @@ public class ExpressionEvaluator implements IParserCallback {
 	 */
 	public void templateParameterListEnd(Object parameterList) {
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#setParser(org.eclipse.cdt.internal.core.parser.IParser)
+	 */
+	public void setParser(IParser parser) {
+	}
 }

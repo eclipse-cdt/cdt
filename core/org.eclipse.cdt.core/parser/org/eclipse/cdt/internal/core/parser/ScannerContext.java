@@ -104,4 +104,5 @@ public class ScannerContext implements IScannerContext
 		this.kind = kind;
 	}
 
+
 }

@@ -39,6 +39,7 @@ import org.eclipse.cdt.internal.core.dom.TemplateParameter;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.UsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.UsingDirective;
+import org.eclipse.cdt.internal.core.parser.IParser;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.Token;
@@ -57,7 +58,7 @@ public class DOMTests extends TestCase {
 	
 	public TranslationUnit parse(String code, boolean quickParse ) throws Exception {
 		DOMBuilder domBuilder = new DOMBuilder();
-		Parser parser = new Parser(code, domBuilder, quickParse );
+		IParser parser = new Parser(code, domBuilder, quickParse );
 		if( ! parser.parse() ) throw new ParserException( "Parse failure" ); 
 		
 		return domBuilder.getTranslationUnit();

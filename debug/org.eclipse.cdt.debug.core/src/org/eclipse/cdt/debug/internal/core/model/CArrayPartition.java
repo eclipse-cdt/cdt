@@ -41,9 +41,9 @@ public class CArrayPartition extends CVariable
 	 * Constructor for CArrayPartition.
 	 * @param target
 	 */
-	public CArrayPartition( CDebugTarget target, List cdiVariables, int start, int end )
+	public CArrayPartition( CDebugElement parent, List cdiVariables, int start, int end )
 	{
-		super( target );
+		super( parent, null );
 		fStart = start;
 		fEnd = end;
 		fCDIVariables = cdiVariables;

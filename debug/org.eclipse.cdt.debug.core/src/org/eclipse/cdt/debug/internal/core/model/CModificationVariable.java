@@ -8,6 +8,7 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
 
+import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
@@ -31,11 +32,12 @@ public abstract class CModificationVariable extends CVariable
 
 	/**
 	 * Constructor for CModificationVariable.
-	 * @param target
+	 * @param parent
+	 * @param cdiVariable
 	 */
-	public CModificationVariable( CDebugTarget target )
+	public CModificationVariable( CDebugElement parent, ICDIVariable cdiVariable )
 	{
-		super( target );
+		super( parent, cdiVariable );
 	}
 
 	/* (non-Javadoc)
@@ -81,15 +83,17 @@ public abstract class CModificationVariable extends CVariable
 	 */
 	public final void setValue( String expression ) throws DebugException
 	{
+		String newExpression = processExpression( expression );
 		ICDIVariable cdiVariable = getCDIVariable();
 		if ( cdiVariable == null )
 		{
 			logError( "Error in IValueModification#setValue: no cdi variable." );
 			requestFailed( "Unable to set value.", null );
+			return;
 		}
 		try
 		{
-			cdiVariable.setValue( expression );
+			cdiVariable.setValue( newExpression );
 		}
 		catch( CDIException e )
 		{
@@ -100,7 +104,47 @@ public abstract class CModificationVariable extends CVariable
 	/**
 	 * Set this variable's value to the given value
 	 */
-	protected abstract void setValue( ICDIValue value ) throws DebugException;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.CModificationVariable#setValue(ICDIValue)
+	 */
+	protected void setValue( ICDIValue value ) throws DebugException
+	{
+		ICDIVariable cdiVariable = getCDIVariable();
+		if ( cdiVariable == null )
+		{
+			logError( "Error in IValueModification#setValue: no cdi variable." );
+			requestFailed( "Unable to set value.", null );
+			return;
+		}
+		try
+		{
+			cdiVariable.setValue( value );
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}			
+	}
 	
-	protected abstract ICDIVariable getCDIVariable();
+	private String processExpression( String oldExpression ) throws DebugException
+	{
+		CValue value = (CValue)getValue();
+		if ( value == null )
+		{
+			logError( "Error in IValueModification#setValue: no value." );
+			requestFailed( "Unable to set value.", null );
+			return null;
+		}
+		if ( value.getType() == ICValue.TYPE_CHAR )
+		{
+			char[] chars = oldExpression.toCharArray();
+			if ( chars.length != 1 )
+			{
+				requestFailed( MessageFormat.format( "Invalid value: ''{0}''.", new Object[] { oldExpression } ), null );
+				return null;
+			}
+			return Short.toString( (short)chars[0] );
+		}
+		return oldExpression;
+	}
 }

@@ -7,12 +7,17 @@ package org.eclipse.cdt.debug.internal.core.model;
 
 import java.text.MessageFormat;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICValue;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIChangedEvent;
+import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
@@ -26,6 +31,16 @@ public abstract class CVariable extends CDebugElement
 								implements IVariable,
 										   ICDIEventListener
 {
+	/**
+	 * The parent object this variable is contained in.
+	 */
+	private CDebugElement fParent;
+
+	/**
+	 * The underlying CDI variable.
+	 */
+	private ICDIVariable fCDIVariable;
+	
 	/**
 	 * Cache of current value - see #getValue().
 	 */
@@ -49,9 +64,11 @@ public abstract class CVariable extends CDebugElement
 	 * Constructor for CVariable.
 	 * @param target
 	 */
-	public CVariable( CDebugTarget target )
+	public CVariable( CDebugElement parent, ICDIVariable cdiVariable )
 	{
-		super( target );
+		super( (CDebugTarget)parent.getDebugTarget() );
+		fParent = parent;
+		fCDIVariable = cdiVariable;
 		getCDISession().getEventManager().addEventListener( this );
 	}
 
@@ -119,11 +136,6 @@ public abstract class CVariable extends CDebugElement
 	{
 		return false;
 	}
-
-	/**
-	 * Returns this variable's underlying CDI value.
-	 */
-	protected abstract ICDIValue retrieveValue() throws DebugException, CDIException;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
@@ -213,5 +225,108 @@ public abstract class CVariable extends CDebugElement
 				fChanged = changed;
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIEventListener#handleDebugEvent(ICDIEvent)
+	 */
+	public void handleDebugEvent( ICDIEvent event )
+	{
+		ICDIObject source = event.getSource();
+		if (source == null)
+			return;
+
+		if ( source.getTarget().equals( getCDITarget() ) )
+		{
+			if ( event instanceof ICDIChangedEvent )
+			{
+				if ( source instanceof ICDIVariable && source.equals( getCDIVariable() ) )
+				{
+					handleChangedEvent( (ICDIChangedEvent)event );
+				}
+			}
+		}
+	}
+
+	private void handleChangedEvent( ICDIChangedEvent event )
+	{
+		try
+		{
+			//setValue( getCurrentValue() );
+			setChanged( true );
+			getParent().fireChangeEvent( DebugEvent.CONTENT );
+		}
+		catch( DebugException e )
+		{
+			logError( e );
+		}
+	}
+
+	/**
+	 * Returns the stack frame this variable is contained in.
+	 * 
+	 * @return the stack frame
+	 */
+	protected CDebugElement getParent()
+	{
+		return fParent;
+	}
+
+	/**
+	 * Returns the underlying CDI variable.
+	 * 
+	 * @return the underlying CDI variable
+	 */
+	protected ICDIVariable getCDIVariable()
+	{
+		return fCDIVariable;
+	}
+
+	protected void setCDIVariable( ICDIVariable newVar )
+	{
+		fCDIVariable = newVar;
+	}
+
+	/**
+	 * Returns this variable's underlying CDI value.
+	 */
+	protected ICDIValue retrieveValue() throws DebugException, CDIException
+	{
+		return ( ((IDebugTarget)getParent().getDebugTarget()).isSuspended() ) ? 
+						getCDIVariable().getValue() : getLastKnownValue();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IVariable#getName()
+	 */
+	public String getName() throws DebugException
+	{
+		String name = null;
+		try
+		{
+			name = getCDIVariable().getName();
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+		return name;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
+	 */
+	public String getReferenceTypeName() throws DebugException
+	{
+		String type = null;
+		try
+		{
+			type = getCDIVariable().getTypeName();
+		}
+		catch( CDIException e )
+		{
+			targetRequestFailed( e.getMessage(), null );
+		}
+		return type;
 	}
 }

@@ -18,7 +18,7 @@ import org.eclipse.debug.core.DebugException;
  * 
  * @since Sep 9, 2002
  */
-public class CArrayEntryVariable extends CLocalVariable
+public class CArrayEntryVariable extends CModificationVariable
 {	
 	/**
 	 * The index of the variable entry.
@@ -34,9 +34,9 @@ public class CArrayEntryVariable extends CLocalVariable
 	 * Constructor for CArrayEntryVariable.
 	 * @param target
 	 */
-	public CArrayEntryVariable( CDebugTarget target, ICDIVariable cdiVariable, int index )
+	public CArrayEntryVariable( CDebugElement parent, ICDIVariable cdiVariable, int index )
 	{
-		super( target, cdiVariable );
+		super( parent, cdiVariable );
 		fIndex = index;
 	}
 

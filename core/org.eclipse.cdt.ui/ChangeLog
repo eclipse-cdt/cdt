@@ -1,3 +1,24 @@
+2003-01-28 Alain Magloire
+
+	With the help of the 2.1 compiler, fix the warnings when accessiong static
+	fields.
+
+	* src/org/eclipse/cdt/internal/ui/buildconsole/BuildConsoleView.java:
+	* src/org/eclipse/cdt/internal/ui/cview/FilerSelectionAction.java:
+	* src/org/eclipse/cdt/internal/ui/cview/ShowLibrariesAction.java:
+	* src/org/eclipse/cdt/internal/ui/dialogs/AbstractElementListSelection.java:
+	* src/org/eclipse/cdt/internal/ui/dialogs/SelectionList.java:
+	* src/org/eclipse/cdt/internal/ui/editor/BracketPainter.java:
+	* src/org/eclipse/cdt/internal/ui/editor/ContentOulinerPager.java:
+	* src/org/eclipse/cdt/internal/ui/editor/OpenIncludeAction.java:
+	* src/org/eclipse/cdt/internal/ui/editor/OpenOnSelectionAction.java:
+	* src/org/eclipse/cdt/internal/ui/preferences/EditTemplateDialog.java:
+	* src/org/eclipse/cdt/internal/ui/text/CPaintMatcher.java:
+	* src/org/eclipse/cdt/internal/ui/text/CSourceViewerConfiguration.java:
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/DialogField.java:
+	* src/org/eclipse/cdt/internal/ui/wizards/dialogfields/StringButtonDialogField.java:
+	* src/org/eclipse/cdt/internal/ui/wizards/swt/MGridLayout.java:
+
 2003-01-24 Alain Magloire
 
 	* src/org/eclipse/cdt/ui/wizards/SettingsBlock.java (doRung):

@@ -13,10 +13,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.BinaryParserConfig;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorListener;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.model.CModelException;
@@ -47,7 +51,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class CModelManager implements IResourceChangeListener {
+public class CModelManager implements IResourceChangeListener, ICDescriptorListener {
 
 	/**
 	 * Unique handle onto the CModel
@@ -394,11 +398,11 @@ public class CModelManager implements IResourceChangeListener {
 		removeInfo(celement);
 	}
 
-	public IBinaryParser[] getBinaryParser(IProject project) {
+	public BinaryParserConfig[] getBinaryParser(IProject project) {
 		try {
-			IBinaryParser[] parsers =  (IBinaryParser[])binaryParsersMap.get(project);
+			BinaryParserConfig[] parsers =  (BinaryParserConfig[])binaryParsersMap.get(project);
 			if (parsers == null) {
-				parsers = CCorePlugin.getDefault().getBinaryParser(project);
+				parsers = CCorePlugin.getDefault().getBinaryParserConfigs(project);
 			}
 			if (parsers != null) {
 				binaryParsersMap.put(project, parsers);
@@ -406,14 +410,17 @@ public class CModelManager implements IResourceChangeListener {
 			}
 		} catch (CoreException e) {
 		}
-		return new IBinaryParser[] {new NullBinaryParser()};
+		IBinaryParser nullParser = new NullBinaryParser();
+		BinaryParserConfig config = new BinaryParserConfig(nullParser, ""); //$NON-NLS-1$
+		BinaryParserConfig[] configs = new BinaryParserConfig[] {config};
+		return configs;
 	}
 
 	public IBinaryFile createBinaryFile(IFile file) {
-		IBinaryParser[] parsers = getBinaryParser(file.getProject());
+		BinaryParserConfig[] parsers = getBinaryParser(file.getProject());
 		int hints = 0;
 		for (int i = 0; i < parsers.length; i++) {
-			IBinaryParser parser = parsers[i];
+			IBinaryParser  parser = parsers[i].getBinaryParser();
 			if (parser.getHintBufferSize() > hints) {
 				hints = parser.getHintBufferSize();
 			}
@@ -440,7 +447,7 @@ public class CModelManager implements IResourceChangeListener {
 		
 		for (int i = 0; i < parsers.length; i++) {
 			try {
-				IBinaryFile bin = parsers[i].getBinary(bytes, location);
+				IBinaryFile bin = parsers[i].getBinaryParser().getBinary(bytes, location);
 				if (bin != null) {
 					return bin;
 				}
@@ -748,6 +755,37 @@ public class CModelManager implements IResourceChangeListener {
 			}
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
+	 */
+	public void descriptorChanged(CDescriptorEvent event) {
+/*		int flags = event.getFlags();
+		if ((flags & CDescriptorEvent.EXTENSION_CHANGED) != 0) {
+			ICDescriptor cdesc = event.getDescriptor();
+			if (cdesc != null) {
+				IProject project = cdesc.getProject();
+				try {
+					String[] newIds = CCorePlugin.getDefault().getBinaryParserIds(project);
+					BinaryParserConfig[] currentConfigs = getBinaryParser(project);
+					// anything added/removed
+					if (newIds.length != currentConfigs.length) {
+						resetBinaryParser(project);
+					} else { // may reorder
+						for (int i = 0; i < newIds.length; i++) {
+							String id = newIds[i];
+							if (!id.equals(currentConfigs)) {
+								resetBinaryParser(project);
+								break;
+							}
+						}
+					}
+				} catch (CoreException e) {
+					//
+				}
+			}
+		}
+*/	}
 
 	/**
 	 * Fire C Model deltas, flushing them after the fact. 

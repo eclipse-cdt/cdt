@@ -239,7 +239,11 @@ public class CCorePlugin extends Plugin {
 		
 		fDescriptorManager = new CDescriptorManager();
 		fDescriptorManager.startup();
-		
+
+		// Register the Core Model on the Descriptor
+		// Manager, it needs to know about changes.
+		fDescriptorManager.addDescriptorListener(fCoreModel);
+
 		// Set the default for using the structual parse mode to build the CModel
 		getPluginPreferences().setDefault(PREF_USE_STRUCTURAL_PARSE_MODE, false);
 		
@@ -485,6 +489,65 @@ public class CCorePlugin extends Plugin {
 
 	public IConsole getConsole() throws CoreException {
 		return getConsole(null);
+	}
+
+	public BinaryParserConfig[] getBinaryParserConfigs(IProject project) throws CoreException {
+		BinaryParserConfig configs[] = null;
+		if (project != null) {
+			try {
+				ICDescriptor cdesc = getCProjectDescription(project);
+				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
+				if (cextensions.length > 0) {
+					ArrayList list = new ArrayList(cextensions.length);
+					for (int i = 0; i < cextensions.length; i++) {
+						IBinaryParser parser = null;
+						try {
+							parser = (IBinaryParser) cextensions[i].createExtension();
+						} catch (ClassCastException e) {
+							//
+						}
+						if (parser != null) {
+							BinaryParserConfig config = new BinaryParserConfig(parser, cextensions[i].getID());
+							list.add(config);
+						}
+					}
+					configs = new BinaryParserConfig[list.size()];
+					list.toArray(configs);
+				}
+			} catch (CoreException e) {
+			}
+		}
+		if (configs == null) {
+			IBinaryParser parser = getDefaultBinaryParser();
+			if (parser != null) {
+				BinaryParserConfig config = new BinaryParserConfig(parser, DEFAULT_BINARY_PARSER_UNIQ_ID);
+				configs = new BinaryParserConfig[] {config};
+			}
+		}
+		return configs;
+	}
+
+	public String[] getBinaryParserIds(IProject project) throws CoreException {
+		String ids[] = null;
+		if (project != null) {
+			try {
+				ICDescriptor cdesc = getCProjectDescription(project);
+				ICExtensionReference[] cextensions = cdesc.get(BINARY_PARSER_UNIQ_ID, true);
+				if (cextensions.length > 0) {
+					ArrayList list = new ArrayList(cextensions.length);
+					for (int i = 0; i < cextensions.length; i++) {
+						list.add(cextensions[i].getID());
+					}
+					ids = new String[list.size()];
+					list.toArray(ids);
+				}
+			} catch (CoreException e) {
+			}
+		}
+		if (ids == null) {
+			ids = new String[] {DEFAULT_BINARY_PARSER_UNIQ_ID};
+		}
+		return ids;
 	}
 
 	public IBinaryParser[] getBinaryParser(IProject project) throws CoreException {

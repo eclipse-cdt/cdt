@@ -1,3 +1,14 @@
+2002-12-19 Alain Magloire
+
+	* src/org/eclipse/cdt/core/ErrorParserManager.java (findFilePath):
+	The workspace will throw an Exception if the file
+	is not within the workspace, catch it.
+	(getWorkingDirectory): fallback to the location
+	of the project if no working directory.
+
+	* src/org/eclipse/cdt/internal/errorparsers/GCCErrorParser.java (processLine):
+	Ignore errors that does not match the pattern.
+
 2002-12-13 Alain Magloire
 
 	* src/org/eclipse/cdt/core/CommandLauncher.java (waitAndRead):

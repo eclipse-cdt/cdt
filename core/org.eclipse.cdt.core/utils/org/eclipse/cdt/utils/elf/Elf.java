@@ -103,6 +103,7 @@ public class Elf {
 		public final static int EM_H8_300 = 46;
 		public final static int EM_H8_300H = 47;
 		public final static int EM_IA_64 = 50;
+		public final static int EM_X86_64 = 62;		
 		public final static int EM_ST100 = 60;
 		public final static int EM_AVR = 83;
 		public final static int EM_FR30 = 84; /* Fujitsu FR30 */
@@ -805,6 +806,9 @@ public class Elf {
 				break;
 			case Elf.ELFhdr.EM_ST100:
 				attrib.cpu = "st100"; //$NON-NLS-1$
+				break;
+			case Elf.ELFhdr.EM_X86_64:
+				attrib.cpu = "x86_64";
 				break;
 			case Elf.ELFhdr.EM_NONE :
 			default :

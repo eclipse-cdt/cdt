@@ -25,6 +25,7 @@ public interface ICHelpContextIds {
 
 	// Actions
 
+	public static final String ADD_INCLUDE_ON_SELECTION_ACTION = PREFIX + "add_includes_on_selection_action_context"; //$NON-NLS-1$;
 	public static final String FILTER_PUBLIC_ACTION= PREFIX + "filter_public_action"; //$NON-NLS-1$
 	public static final String FILTER_FIELDS_ACTION= PREFIX + "filter_fields_action"; //$NON-NLS-1$
 	public static final String FILTER_STATIC_ACTION= PREFIX + "filter_static_action"; //$NON-NLS-1$
@@ -53,6 +54,7 @@ public interface ICHelpContextIds {
 	public static final String PROJ_CONF_BLOCK = PREFIX + "new_proj_conf_block_context"; //$NON-NLS-1$
 
 	public static final String TODO_TASK_INPUT_DIALOG = PREFIX + "todo_task_input_dialog_context"; //$NON-NLS-1$
+
 	public static final String TODO_TASK_PROPERTY_PAGE = PREFIX + "tasktags_property_page_context"; //$NON-NLS-1$
 	public static final String TODO_TASK_PREFERENCE_PAGE = PREFIX + "tasktags_preference_page_context"; //$NON-NLS-1$
 

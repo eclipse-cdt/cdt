@@ -523,6 +523,7 @@ public class CView extends ViewPart implements ISetSelectionTarget, IPropertyCha
 
 		viewer = createViewer(parent);
 		viewer.setUseHashlookup(true);
+		viewer.setComparer(new CViewElementComparer());
 		initContentProvider(viewer);
 		initLabelProvider(viewer);
 		CUIPlugin.getDefault().getProblemMarkerManager().addListener(viewer);

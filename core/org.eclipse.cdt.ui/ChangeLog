@@ -1,5 +1,14 @@
 2004-02-28 Alain Magloire
 
+	Provide an implementation of CView.selectReveal().
+	The problem was that ITranslationUnit != IWorkingCopy
+
+	* src/org/eclipse/cdt/internal/ui/cview/CView.java
+	* src/org/eclipse/cdt/internal/ui/cview/CViewElementComparer.java
+	* src/org/eclipse/cdt/ui/actions/ShowInCViewAction.java
+
+2004-02-28 Alain Magloire
+
 	Fixing a NPE.
 	java.lang.NullPointerException
         at org.eclipse.cdt.internal.core.model.Parent.getChildren(Parent.java:47)

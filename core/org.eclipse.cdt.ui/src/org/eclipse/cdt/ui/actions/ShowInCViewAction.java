@@ -11,18 +11,16 @@
 
 package org.eclipse.cdt.ui.actions;
 
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.cview.SelectionConverter;
 import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
@@ -90,15 +88,12 @@ public class ShowInCViewAction extends SelectionProviderAction {
 
 	public void run(ITextEditor editor) {
 		if (editor != null) {
-			IEditorInput input = editor.getEditorInput();
-			if (input instanceof IFileEditorInput) {
-				IFileEditorInput fileInput = (IFileEditorInput) input;
-				IFile file = fileInput.getFile();
-				CoreModel factory = CoreModel.getDefault();
-				ICElement celement = factory.create(file);
+			try {
+				ICElement celement = SelectionConverter.getElementAtOffset(editor);
 				if (celement != null) {
 					run(new StructuredSelection(celement));
 				}
+			} catch (CModelException e) {
 			}
 		}
 	}

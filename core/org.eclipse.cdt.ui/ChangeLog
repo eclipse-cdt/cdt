@@ -1,3 +1,7 @@
+2004-04-13 Andrew Niefer
+	fix src/org/eclipse/cdt/internal/corext/template/default-templates.xml to restore changes lost in
+	string externalization (restore for loops to use preincrement) 
+
 2004-04-12 Bogdan Gheorghe
 	Added Indexer Timeout field to Work In Progress Preference page
 	

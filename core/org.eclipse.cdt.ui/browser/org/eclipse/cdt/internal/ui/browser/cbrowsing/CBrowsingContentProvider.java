@@ -12,36 +12,31 @@ package org.eclipse.cdt.internal.ui.browser.cbrowsing;
 
 import java.util.Collection;
 
-import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.browser.AllTypesCache;
+import org.eclipse.cdt.core.browser.ITypeCacheChangedListener;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-public abstract class CBrowsingContentProvider extends BaseCElementContentProvider implements ITreeContentProvider, IElementChangedListener {
+public abstract class CBrowsingContentProvider extends BaseCElementContentProvider
+	implements ITreeContentProvider, ITypeCacheChangedListener {
 	
 	protected StructuredViewer fViewer;
 	protected Object fInput;
 	protected CBrowsingPart fBrowsingPart;
 	protected int fReadsInDisplayThread;
-	protected static final Object[] NO_CHILDREN = new Object[0];
 	
 	public CBrowsingContentProvider(CBrowsingPart browsingPart) {
 		fBrowsingPart= browsingPart;
 		fViewer= fBrowsingPart.getViewer();
-		CoreModel.getDefault().addElementChangedListener(this);
+		AllTypesCache.addTypeCacheChangedListener(this);
 	}
 
 	/* (non-Javadoc)
@@ -63,12 +58,17 @@ public abstract class CBrowsingContentProvider extends BaseCElementContentProvid
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public void dispose() {
-		CoreModel.getDefault().removeElementChangedListener(this);
+		AllTypesCache.removeTypeCacheChangedListener(this);
 	}
 
-	/* (non-Javadoc)
+	public void typeCacheChanged(IProject project) {
+	    ICProject cproject = CoreModel.getDefault().create(project);
+	    postRefresh(cproject);
+	}
+	
+/*	 (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
-	 */
+	 
 	public void elementChanged(ElementChangedEvent event) {
 		try {
 			processDelta(event.getDelta());
@@ -89,11 +89,11 @@ public abstract class CBrowsingContentProvider extends BaseCElementContentProvid
 				(flags & ICElementDelta.F_CHANGED_PATHENTRY_INCLUDE) != 0));
 	}
 
-	/**
+	*//**
 	 * Processes a delta recursively. When more than two children are affected the
 	 * tree is fully refreshed starting at this node. The delta is processed in the
 	 * current thread but the viewer updates are posted to the UI thread.
-	 */
+	 *//*
 	protected void processDelta(ICElementDelta delta) throws CModelException {
 		int kind= delta.getKind();
 		int flags= delta.getFlags();
@@ -132,7 +132,7 @@ public abstract class CBrowsingContentProvider extends BaseCElementContentProvid
 			processDelta(affectedChildren[i]);
 		}
 	}
-
+*/
 	private void postRefresh(final Object element) {
 		//System.out.println("UI refresh:" + root);
 		postRunnable(new Runnable() {
@@ -154,7 +154,7 @@ public abstract class CBrowsingContentProvider extends BaseCElementContentProvid
 		});
 	}
 
-	private void postAdd(final Object parent, final Object element) {
+/*	private void postAdd(final Object parent, final Object element) {
 		//System.out.println("UI add:" + parent + " " + element);
 		postRunnable(new Runnable() {
 			public void run() {
@@ -196,7 +196,7 @@ public abstract class CBrowsingContentProvider extends BaseCElementContentProvid
 			}
 		});
 	}
-
+*/
 	private void postRunnable(final Runnable r) {
 		Control ctrl= fViewer.getControl();
 		if (ctrl != null && !ctrl.isDisposed()) {

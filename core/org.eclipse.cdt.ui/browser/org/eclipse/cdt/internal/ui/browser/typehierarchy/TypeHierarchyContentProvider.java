@@ -193,7 +193,7 @@ public abstract class TypeHierarchyContentProvider implements ITreeContentProvid
 		if (methods != null && methods.length > 0) {
 			for (int i= 0; i < fMemberFilter.length; i++) {
 				IMember member= fMemberFilter[i];
-				if (parent.equals(TypeUtil.getDeclaringType(member))) {
+				if (parent.equals(TypeUtil.getDeclaringClass(member))) {
 					if (!children.contains(member)) {
 						children.add(member);
 					}
@@ -236,7 +236,7 @@ public abstract class TypeHierarchyContentProvider implements ITreeContentProvid
 	    if (methods != null && methods.length > 0) {
 			for (int i= 0; i < fMemberFilter.length; i++) {
 				IMember member= fMemberFilter[i];
-				if (type.equals(TypeUtil.getDeclaringType(member))) {
+				if (type.equals(TypeUtil.getDeclaringClass(member))) {
 					return true;
 				} else if (member instanceof IMethodDeclaration) {
 				    IMethodDeclaration curr= (IMethodDeclaration)member;
@@ -290,7 +290,7 @@ public abstract class TypeHierarchyContentProvider implements ITreeContentProvid
 				if (parents != null && parents.length == 1)
 				    return parents[0];
 			}
-			return TypeUtil.getDeclaringType(member);
+			return TypeUtil.getDeclaringClass(member);
 		}
 		return null;
 	}

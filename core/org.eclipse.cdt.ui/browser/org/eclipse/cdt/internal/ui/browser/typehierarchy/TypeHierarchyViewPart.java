@@ -410,7 +410,7 @@ public class TypeHierarchyViewPart extends ViewPart implements ITypeHierarchyVie
 	public void setInputElement(ICElement element) {
 		if (element != null) {
 		    if (!(element instanceof IStructure)) {
-		        element = TypeUtil.getDeclaringType(element);
+		        element = TypeUtil.getDeclaringClass(element);
 			}
 			if (element == null || !element.exists()) {
 				MessageDialog.openError(getSite().getShell(), TypeHierarchyMessages.getString("TypeHierarchyViewPart.error.title"), TypeHierarchyMessages.getString("TypeHierarchyViewPart.error.message")); //$NON-NLS-1$ //$NON-NLS-2$

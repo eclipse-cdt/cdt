@@ -10,12 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.cbrowsing;
 
+import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IEnumeration;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.IStructure;
+import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -189,6 +194,50 @@ public class ProjectsView extends CBrowsingPart {
 	 * @see org.eclipse.cdt.internal.ui.browser.cbrowsing.CBrowsingPart#findElementToSelect(java.lang.Object)
 	 */
 	protected Object findElementToSelect(Object element) {
-		return getNamespaceInput(element);
+		if (element instanceof ICModel) {
+			return null;
+		}
+
+	    if (element instanceof ICProject || element instanceof ISourceRoot) {
+			if (exists(element))
+				return element;
+			return null;
+		}
+
+		if (element instanceof ITypeInfo) {
+			ITypeInfo info = (ITypeInfo)element;
+			ISourceRoot root = findSourceRoot(info);
+			if (exists(root))
+				return root;
+			ICProject cProject = findCProject(info);
+			if (exists(cProject))
+				return cProject;
+			return null;
+		}
+		
+		if (element instanceof ICElement) {
+			ICElement parent = (ICElement)element;
+			while (parent != null) {
+				if ((parent instanceof IStructure
+				        || parent instanceof IEnumeration
+				        || parent instanceof ITypeDef)
+				        && parent.exists()) {
+				    ITypeInfo info = AllTypesCache.getTypeForElement(parent, true, true, null);
+				    if (info != null) {
+						ISourceRoot root = findSourceRoot(info);
+						if (exists(root))
+							return root;
+						ICProject cProject = findCProject(info);
+						if (exists(cProject))
+							return cProject;
+						return null;
+				    }
+				}
+				parent = parent.getParent();
+			}
+			return null;
+		}
+
+		return null;
 	}
 }

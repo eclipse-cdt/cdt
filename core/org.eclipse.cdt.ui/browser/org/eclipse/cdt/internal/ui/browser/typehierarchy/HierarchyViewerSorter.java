@@ -141,7 +141,7 @@ public class HierarchyViewerSorter extends ViewerSorter {
 	}
 	
 	private ICElement getDefiningType(ITypeHierarchy hierarchy, IMethodDeclaration method) throws CModelException {
-		ICElement declaringType= TypeUtil.getDeclaringType(method);
+		ICElement declaringType= TypeUtil.getDeclaringClass(method);
 		if ((method.getVisibility() == ASTAccessVisibility.PRIVATE) || method.isStatic() || method.isConstructor() || method.isDestructor()) {
 		    return null;
 		}
@@ -150,7 +150,7 @@ public class HierarchyViewerSorter extends ViewerSorter {
 		if (res == null || method.equals(res)) {
 			return null;
 		}
-		return TypeUtil.getDeclaringType(res);
+		return TypeUtil.getDeclaringClass(res);
 	}
 	
 

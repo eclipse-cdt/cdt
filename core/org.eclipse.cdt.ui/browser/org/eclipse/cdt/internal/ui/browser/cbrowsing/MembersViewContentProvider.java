@@ -10,27 +10,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.cbrowsing;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeMessages;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
 
 class MembersViewContentProvider extends CBrowsingContentProvider {
 
@@ -99,7 +89,7 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 				if (info.getCElementType() == ICElement.C_NAMESPACE) {
 					return NO_CHILDREN;		// shouldn't get here...
 				}
-				ICElement elem = getCElement(info);
+				ICElement elem = AllTypesCache.getElementForType(info, true, true, null);
 				if (elem != null && elem instanceof IParent) {
 					return ((IParent)elem).getChildren();
 				}
@@ -122,21 +112,22 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
 	 */
 	public Object getParent(Object element) {
-		if (element == null || (element instanceof ITypeInfo && !((ITypeInfo)element).exists())) {
+	    return fInput;
+/*		if (element instanceof ICModel || element instanceof ICProject || element instanceof ISourceRoot) {
 			return null;
 		}
-
+		
+		if (element instanceof ITypeInfo) {
+		    return null;
+		}
+	    
 		try {
 			startReadInDisplayThread();
 		
-			if (element instanceof ITypeInfo) {
-				ITypeInfo info = (ITypeInfo)element;
-				if (info.isEnclosedType()) {
-					return info.getEnclosingType();
-				} else {
-//					return info.getEnclosingProject();
-					return null;
-				}
+			if (element instanceof ICElement) {
+			    ICElement parent = ((ICElement)element).getParent();
+			    if (parent != null)
+			        return AllTypesCache.getTypeForElement(parent, true, true, null);
 			}
 
 			return null;
@@ -145,7 +136,7 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 		} finally {
 			finishedReadInDisplayThread();
 		}
-	}
+*/	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
@@ -154,48 +145,6 @@ class MembersViewContentProvider extends CBrowsingContentProvider {
 		return getChildren(inputElement);
 	}
 
-	private ICElement getCElement(ITypeInfo info) {
-		ITypeReference location = info.getResolvedReference();
-		if (location == null) {
-			final ITypeInfo[] typesToResolve = new ITypeInfo[] { info };
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					AllTypesCache.resolveTypeLocation(typesToResolve[0], monitor);
-					if (monitor.isCanceled()) {
-						throw new InterruptedException();
-					}
-				}
-			};
-
-			IProgressService service = PlatformUI.getWorkbench().getProgressService();
-			try {
-				service.busyCursorWhile(runnable);
-			} catch (InvocationTargetException e) {
-				String title = OpenTypeMessages.getString("OpenTypeAction.exception.title"); //$NON-NLS-1$
-				String message = OpenTypeMessages.getString("OpenTypeAction.exception.message"); //$NON-NLS-1$
-				ExceptionHandler.handle(e, title, message);
-				return null;
-			} catch (InterruptedException e) {
-				// cancelled by user
-				return null;
-			}
-	
-			location = info.getResolvedReference();
-		}
-	
-		ICElement elem = null;
-		if (location != null)
-			elem = TypeUtil.getElementForType(info);
-
-		if (location == null) {
-			// could not resolve location
-			String title = OpenTypeMessages.getString("OpenTypeAction.errorTitle"); //$NON-NLS-1$
-			String message = OpenTypeMessages.getFormattedString("OpenTypeAction.errorTypeNotFound", info.getQualifiedTypeName().toString()); //$NON-NLS-1$
-			MessageDialog.openError(getShell(), title, message);
-		}
-		return elem;
-	}
-	
 	protected Shell getShell() {
 		return CUIPlugin.getActiveWorkbenchShell();
 	}

@@ -61,7 +61,7 @@ public class MethodsLabelProvider extends StandardCElementLabelProvider //extend
 		if (kind != ICElement.C_METHOD_DECLARATION && kind != ICElement.C_FIELD) {
 			return null;
 		}
-		ICElement declaringType= TypeUtil.getDeclaringType(elem);
+		ICElement declaringType= TypeUtil.getDeclaringClass(elem);
 		if (kind != ICElement.C_METHOD_DECLARATION) {
 			return declaringType;
 		}
@@ -77,7 +77,7 @@ public class MethodsLabelProvider extends StandardCElementLabelProvider //extend
 		if (res == null || method.equals(res)) {
 			return declaringType;
 		}
-		return TypeUtil.getDeclaringType(res);
+		return TypeUtil.getDeclaringClass(res);
 	}
 
 	/* (non-Javadoc)
@@ -119,7 +119,7 @@ public class MethodsLabelProvider extends StandardCElementLabelProvider //extend
 	public Color getForeground(Object element) {
 		if (fMethodsViewer.isShowInheritedMethods() && element instanceof IMethod) {
 			IMethod curr= (IMethod) element;
-			ICElement declaringType= TypeUtil.getDeclaringType(curr);
+			ICElement declaringType= TypeUtil.getDeclaringClass(curr);
 			
 			if (declaringType.equals(fMethodsViewer.getInput())) {
 				if (fResolvedBackground == null) {

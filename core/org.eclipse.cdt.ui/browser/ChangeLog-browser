@@ -1,3 +1,23 @@
+2004-08-31 Chris Wiebe
+
+	Fix for 68883
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingContentProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingElementComparer.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingPart.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/CBrowsingPerspectiveFactory.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/MembersView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/MembersViewContentProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/NamespacesView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/ProjectsView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/cbrowsing/TypesView.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/FocusOnTypeAction.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/HierarchyViewerSorter.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/MethodsLabelProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/OpenTypeHierarchyAction.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/OpenTypeHierarchyUtil.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/TypeHierarchyContentProvider.java
+	* browser/org/eclipse/cdt/internal/ui/browser/typehierarchy/TypeHierarchyViewPart.java
+	
 2004-06-21 Chris Wiebe
 
 	This mini-patch gets rid of unnecessary "could not locate type" error

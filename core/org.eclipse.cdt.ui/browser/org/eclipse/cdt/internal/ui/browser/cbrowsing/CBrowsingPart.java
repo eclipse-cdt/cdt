@@ -20,14 +20,11 @@ import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.ITypeReference;
 import org.eclipse.cdt.core.browser.TypeSearchScope;
-import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementVisitor;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.resources.FileStorage;
@@ -48,7 +45,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -106,10 +102,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 public abstract class CBrowsingPart extends ViewPart implements IMenuListener, ISelectionListener, IViewPartInputProvider {
 
-	private static final String TAG_SELECTED_ELEMENTS= "selectedElements"; //$NON-NLS-1$
-	private static final String TAG_SELECTED_ELEMENT= "selectedElement"; //$NON-NLS-1$
-	private static final String TAG_LOGICAL_PACKAGE= "logicalPackage"; //$NON-NLS-1$
-	private static final String TAG_SELECTED_ELEMENT_PATH= "selectedElementPath"; //$NON-NLS-1$
+//	private static final String TAG_SELECTED_ELEMENTS= "selectedElements"; //$NON-NLS-1$
+//	private static final String TAG_SELECTED_ELEMENT= "selectedElement"; //$NON-NLS-1$
+//	private static final String TAG_LOGICAL_PACKAGE= "logicalPackage"; //$NON-NLS-1$
+//	private static final String TAG_SELECTED_ELEMENT_PATH= "selectedElementPath"; //$NON-NLS-1$
 
 	private LabelProvider fLabelProvider;
 	private ILabelProvider fTitleProvider;
@@ -309,6 +305,8 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		fViewer.setSorter(createTypeInfoSorter());
 		fViewer.setUseHashlookup(true);
 		fTitleProvider= createTitleProvider();
+
+		fViewer.setComparer(new CBrowsingElementComparer());
 		
 		createContextMenu();
 		getSite().setSelectionProvider(fViewer);
@@ -681,160 +679,6 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		return false;
 	}
 	
-	protected Object getNamespaceInput(Object element) {
-		if (element instanceof ICModel) {
-			return null;
-		}
-
-		if (element instanceof ICProject || element instanceof ISourceRoot) {
-			if (exists(element))
-				return element;
-		}
-		
-		if (element instanceof ITypeInfo) {
-			ITypeInfo info = (ITypeInfo)element;
-			ISourceRoot root = findSourceRoot(info);
-			if (exists(root))
-				return root;
-			ICProject cProject = findCProject(info);
-			if (exists(cProject))
-				return cProject;
-		}
-		
-		if (element instanceof ICElement) {
-			ICElement cElem = (ICElement)element;
-			ISourceRoot root = findSourceRoot(cElem);
-			if (exists(root))
-				return root;
-			ICProject cProject = findCProject(cElem);
-			if (exists(cProject))
-				return cProject;
-		}
-		
-		return null;
-	}
-	
-	private static boolean hasChild(final ICElement parent, final ICElement child) {
-		final boolean foundChild[] = { false };
-		final ICElementVisitor visitor = new ICElementVisitor() {
-			public boolean visit(ICElement element) throws CoreException {
-				if (foundChild[0])
-					return false;
-				if (element.equals(child)) {
-					foundChild[0] = true;
-					return false;
-				}
-				return true;
-			}
-		};
-		try {
-			parent.accept(visitor);
-		} catch (CoreException e) {
-		}
-		return foundChild[0];
-	}
-	
-	protected Object getTypesInput(Object element) {
-		if (element instanceof ICModel || element instanceof ICProject || element instanceof ISourceRoot) {
-			return null;
-		}
-
-		if (element instanceof ICElement) {
-			//TODO optimization needed here - how do we get back parent ITypeInfo
-			TypeSearchScope scope = new TypeSearchScope();
-			ICElement cElem = ((ICElement)element).getParent();
-			ISourceRoot root = findSourceRoot(cElem);
-			if (root != null) {
-				scope.add(root);
-			} else {
-				ICProject cProject = findCProject(cElem);
-				if (cProject != null) {
-					scope.add(cProject);
-				}
-			}
-			ITypeInfo[] namespaces = AllTypesCache.getNamespaces(scope, true);
-			if (namespaces != null) {
-				for (int i = 0; i < namespaces.length; ++i) {
-					ITypeInfo[] enclosedTypes = namespaces[i].getEnclosedTypes();
-					for (int j = 0; j < enclosedTypes.length; ++j) {
-						ITypeInfo enclosedType = enclosedTypes[j];
-						if (enclosedType.getResolvedReference() != null) {
-							ICElement typeElem = TypeUtil.getElementForType(enclosedType);
-							if (typeElem != null && (typeElem.equals(cElem) || (typeElem instanceof IParent && hasChild(typeElem, cElem)))) {
-								return namespaces[i];
-							}
-						}
-					}
-				}
-			}
-			return null;
-		}
-
-		if (element instanceof ITypeInfo) {
-			ITypeInfo info = (ITypeInfo) element;
-			if (info.getCElementType() == ICElement.C_NAMESPACE) {
-				if (exists(info))
-					return info;
-			}
-			ITypeInfo namespace = info.getEnclosingType(new int[]{ICElement.C_NAMESPACE});
-			if (namespace == null) {
-				namespace = info.getRootNamespace(true);
-			}
-			if (exists(namespace))
-				return namespace;
-		}
-
-		return null;
-	}
-
-	protected Object getMembersInput(Object element) {
-		if (element instanceof ICModel || element instanceof ICProject || element instanceof ISourceRoot) {
-			return null;
-		}
-
-		if (element instanceof ITypeInfo) {
-			ITypeInfo info = (ITypeInfo) element;
-			if (info.getCElementType() != ICElement.C_NAMESPACE) {
-				if (exists(info))
-					return info;
-			}
-		}
-
-		if (element instanceof ICElement) {
-			//TODO optimization needed here - how do we get back parent ITypeInfo
-			TypeSearchScope scope = new TypeSearchScope();
-			ICElement cElem = ((ICElement)element).getParent();
-			ISourceRoot root = findSourceRoot(cElem);
-			if (root != null) {
-				scope.add(root);
-			} else {
-				ICProject cProject = findCProject(cElem);
-				if (cProject != null) {
-					scope.add(cProject);
-				}
-			}
-			ITypeInfo[] namespaces = AllTypesCache.getNamespaces(scope, true);
-			if (namespaces != null) {
-				for (int i = 0; i < namespaces.length; ++i) {
-					ITypeInfo[] enclosedTypes = namespaces[i].getEnclosedTypes();
-					for (int j = 0; j < enclosedTypes.length; ++j) {
-						ITypeInfo enclosedType = enclosedTypes[j];
-						if (enclosedType.getResolvedReference() != null) {
-							ICElement typeElem = TypeUtil.getElementForType(enclosedType);
-							if (typeElem != null && (typeElem.equals(cElem) || (typeElem instanceof IParent && hasChild(typeElem, cElem)))) {
-								return enclosedType;
-							}
-							
-						}
-					}
-				}
-			}
-			return null;
-		}
-
-		return null;
-	}
-
 	/**
 	 * Answers if the given <code>element</code> is a valid
 	 * element for this part.
@@ -1196,6 +1040,7 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 					} else if (element instanceof ITypeInfo) {
 						openTypeInEditor((ITypeInfo)element);
 					}
+					restoreSelection();
 				}
 //				IAction open= fOpenEditorGroup.getOpenAction();
 //				if (open.isEnabled()) {
@@ -1207,7 +1052,10 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	}
 
 	protected void openTypeInEditor(ITypeInfo info) {
-		if (info == info.getCache().getGlobalNamespace()) {
+	    if (!info.exists())
+	        return;
+
+	    if (info == info.getCache().getGlobalNamespace()) {
 			return; // nothing to open
 		}
 		ITypeReference location = info.getResolvedReference();
@@ -1322,8 +1170,9 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 		Object elementToSelect= getSuitableElement(findElementToSelect(o));
 		Object newInput= findInputForElement(o);
 		Object oldInput= null;
-		if (getInput() instanceof ICElement || getInput() instanceof ITypeInfo)
-			oldInput = getInput();
+		Object viewerInput = getInput();
+		if (viewerInput instanceof ICElement || viewerInput instanceof ITypeInfo)
+			oldInput = viewerInput;
 
 		if (elementToSelect == null && !isValidInput(newInput) && (newInput == null && !isAncestorOf(o, oldInput)))
 			// Clear input
@@ -1360,20 +1209,20 @@ public abstract class CBrowsingPart extends ViewPart implements IMenuListener, I
 	}
 	
 	/**
-	 * Finds the closest Java element which can be used as input for
-	 * this part and has the given Java element as child
+	 * Finds the closest C element which can be used as input for
+	 * this part and has the given C element as child
 	 * 
-	 * @param 	je 	the Java element for which to search the closest input
-	 * @return	the closest Java element used as input for this part
+	 * @param 	element	the C element for which to search the closest input
+	 * @return	the closest C element used as input for this part
 	 */
 	abstract protected Object findInputForElement(Object element);
 	
 	/**
 	 * Finds the element which has to be selected in this part.
 	 * 
-	 * @param je	the Java element which has the focus
+	 * @param element	the C element which has the focus
 	 */
-	abstract protected Object findElementToSelect(Object obj);
+	abstract protected Object findElementToSelect(Object element);
 	
 	/**
 	 * Converts the given Java element to one which is suitable for this

@@ -107,7 +107,7 @@ public class OpenTypeHierarchyUtil {
 //			if (input.getElementType() != ITypeElement.TYPE) {
 		    if (TypeUtil.isClassOrStruct(input)) {
 //				perspectiveInput= ((IMember)input).getDeclaringType();
-		        perspectiveInput= TypeUtil.getDeclaringType(input);
+		        perspectiveInput= TypeUtil.getDeclaringClass(input);
 			} else {
 				perspectiveInput= input;
 			}
@@ -152,7 +152,7 @@ public class OpenTypeHierarchyUtil {
 				case ICElement.C_UNION:
 				case ICElement.C_ENUMERATION:
 				case ICElement.C_TYPEDEF:
-				    return new ICElement[] { TypeUtil.getDeclaringType(elem) };
+				    return new ICElement[] { TypeUtil.getDeclaringClass(elem) };
 				case ICElement.C_CLASS:
 				case ICElement.C_STRUCT:
 					return new ICElement[] { elem };

@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.cbrowsing;
 
+import org.eclipse.cdt.core.browser.AllTypesCache;
 import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.TypeUtil;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICModel;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
@@ -166,16 +167,16 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 		});
 	}
 
-	boolean isInputAWorkingCopy() {
+/*	boolean isInputAWorkingCopy() {
 		Object input= getViewer().getInput();
-//		if (input instanceof ICElement) {
-//			ICompilationUnit cu= (ICompilationUnit)((IJavaElement)input).getAncestor(IJavaElement.COMPILATION_UNIT);
-//			if (cu != null)
-//				return cu.isWorkingCopy();
-//		}
+		if (input instanceof ICElement) {
+			ICompilationUnit cu= (ICompilationUnit)((IJavaElement)input).getAncestor(IJavaElement.COMPILATION_UNIT);
+			if (cu != null)
+				return cu.isWorkingCopy();
+		}
 		return false;
 	}
-
+*/
 	protected void restoreSelection() {
 		IEditorPart editor= getViewSite().getPage().getActiveEditor();
 		if (editor != null)
@@ -214,24 +215,36 @@ public class MembersView extends CBrowsingPart implements IPropertyChangeListene
 	 * @see org.eclipse.cdt.internal.ui.browser.cbrowsing.CBrowsingPart#findInputForElement(java.lang.Object)
 	 */
 	protected Object findInputForElement(Object element) {
-		return getMembersInput(element);
+		if (element instanceof ICModel || element instanceof ICProject || element instanceof ISourceRoot) {
+			return null;
+		}
+
+		if (element instanceof ITypeInfo) {
+		    return element;
+		}
+		
+		if (element instanceof ICElement) {
+		    ICElement parent = TypeUtil.getDeclaringContainerType((ICElement)element);
+		    if (parent != null) {
+		        ITypeInfo info = AllTypesCache.getTypeForElement(parent, true, true, null);
+		        if (info != null)
+		            return info;
+		    }
+			return null;
+		}
+		
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.ui.browser.cbrowsing.CBrowsingPart#findElementToSelect(java.lang.Object)
 	 */
 	protected Object findElementToSelect(Object element) {
-		if (element instanceof ICModel || element instanceof ICProject || element instanceof ISourceRoot) {
-			return null;
-		}
-		
-		if (element instanceof ICElement) {
-			ICElement parent = (ICElement)element;
-			while (parent != null) {
-				if (parent instanceof IMember && exists(parent))
-					return parent;
-				parent = parent.getParent();
-			}
+		if (element instanceof ICElement && TypeUtil.isDeclaredType((ICElement)element)) {
+		    ICElement parent = TypeUtil.getDeclaringContainerType((ICElement)element);
+		    if (parent != null) {
+		        return element;
+		    }
 		}
 
 		return null;

@@ -185,7 +185,7 @@ public class OpenTypeHierarchyAction extends SelectionDispatchAction {
         if (types != null) {
             List elements = new ArrayList(types.length);
             for (int i = 0; i < types.length; ++i) {
-                ICElement e = TypeUtil.getElementForType(types[i], monitor);
+                ICElement e = AllTypesCache.getElementForType(types[i], true, true, monitor);
                 if (e != null && !elements.contains(e))
                     elements.add(e);
             }

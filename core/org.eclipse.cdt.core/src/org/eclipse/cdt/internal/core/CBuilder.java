@@ -5,6 +5,7 @@ package org.eclipse.cdt.internal.core;
  * All Rights Reserved.
  */
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -145,7 +146,13 @@ public class CBuilder extends ACBuilder {
 				OutputStream stdout = epm.getOutputStream();
 				OutputStream stderr = epm.getOutputStream();
 
-				launcher.execute(makepath, userArgs, env, workingDirectory);
+				Process p = launcher.execute(makepath, userArgs, env, workingDirectory);
+				try {
+					// Close the input of the Process explicitely.
+					// We will never write to it.
+					p.getOutputStream().close();
+				} catch (IOException e) {
+				}
 				if (launcher.waitAndRead(stdout, stderr, subMonitor) != CommandLauncher.OK)
 					errMsg = launcher.getErrorMessage();
 

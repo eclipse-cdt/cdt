@@ -76,37 +76,33 @@ public class FriendPattern extends ClassDeclarationPattern {
 		Iterator i = tempNode.getFriends();
 		
 		boolean matchFlag=false;
-		String[] fullName=null;
+
 		while (i.hasNext()){
 			Object friend =  i.next();
-			String[] baseFullyQualifiedName = null;
+			char [][] qualName = null;
 			if (friend instanceof IASTClassSpecifier)
 			{
 				IASTClassSpecifier classSpec = (IASTClassSpecifier) friend;
-				baseFullyQualifiedName = classSpec.getFullyQualifiedName();
+				qualName = classSpec.getFullyQualifiedNameCharArrays();
 	
 				//check name, if simpleName == null, its treated the same as "*"	
-				if( simpleName != null && !matchesName( simpleName, classSpec.getName().toCharArray() ) ){
+				if( simpleName != null && !matchesName( simpleName, classSpec.getNameCharArray() ) ){
 					continue;
 				}
 			}	
 			else if (friend instanceof IASTElaboratedTypeSpecifier ){
 			    IASTElaboratedTypeSpecifier elabType = (IASTElaboratedTypeSpecifier) friend;
-			    baseFullyQualifiedName = elabType.getFullyQualifiedName();
+			    qualName = elabType.getFullyQualifiedNameCharArrays();
 			    
 				//check name, if simpleName == null, its treated the same as "*"	
-				if( simpleName != null && !matchesName( simpleName, elabType.getName().toCharArray() ) ){
+				if( simpleName != null && !matchesName( simpleName, elabType.getNameCharArray() ) ){
 					continue;
 				}
 			}
 			
-			if (baseFullyQualifiedName != null){
-				char [][] qualName = new char [ baseFullyQualifiedName.length - 1 ][];
-				for( int j = 0; j < baseFullyQualifiedName.length - 1; j++ ){
-					qualName[j] = baseFullyQualifiedName[j].toCharArray();
-				}
+			if (qualName!= null){
 				//check containing scopes
-				if( !matchQualifications( qualifications, qualName ) ){
+				if( !matchQualifications( qualifications, qualName, true ) ){
 					continue;
 				}
 				

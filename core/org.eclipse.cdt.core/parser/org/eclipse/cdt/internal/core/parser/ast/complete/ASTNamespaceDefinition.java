@@ -108,6 +108,9 @@ public class ASTNamespaceDefinition
     {
         return qualifiedName.getFullyQualifiedName();
     }
+	public char[][] getFullyQualifiedNameCharArrays(){
+	    return qualifiedName.getFullyQualifiedNameCharArrays();
+	}
 
 	public Iterator getDeclarations()
 	{

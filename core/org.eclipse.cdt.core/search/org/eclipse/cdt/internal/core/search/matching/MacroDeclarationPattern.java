@@ -54,10 +54,10 @@ public class MacroDeclarationPattern extends CSearchPattern {
 			return IMPOSSIBLE_MATCH;
 		}
 		
-		String nodeName = ((IASTOffsetableNamedElement)node).getName();
+		char[] nodeName = ((IASTOffsetableNamedElement)node).getNameCharArray();
 		
 		//check name, if simpleName == null, its treated the same as "*"	
-		if( simpleName != null && !matchesName( simpleName, nodeName.toCharArray() ) ){
+		if( simpleName != null && !matchesName( simpleName, nodeName ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 		

@@ -86,32 +86,27 @@ public class ClassDeclarationPattern extends CSearchPattern {
 		if( ! canAccept( limit ) )
 			return IMPOSSIBLE_MATCH;
 		
-		String nodeName = null;
+		char[] nodeName = null;
 		if (node instanceof IASTElaboratedTypeSpecifier)
 		{
-			nodeName = ((IASTElaboratedTypeSpecifier)node).getName();
+			nodeName = ((IASTElaboratedTypeSpecifier)node).getNameCharArray();
 		}
 		else if( node instanceof IASTOffsetableNamedElement )
 		{
-			nodeName = ((IASTOffsetableNamedElement)node).getName();
+			nodeName = ((IASTOffsetableNamedElement)node).getNameCharArray();
 		} else {
 			return IMPOSSIBLE_MATCH;
 		}
 		
 		//check name, if simpleName == null, its treated the same as "*"	
-		if( simpleName != null && !matchesName( simpleName, nodeName.toCharArray() ) ){
+		if( simpleName != null && !matchesName( simpleName, nodeName ) ){
 			return IMPOSSIBLE_MATCH;
 		}
 
 		if( node instanceof IASTQualifiedNameElement ){
-			//create char[][] out of full name, 
-			String [] fullName = ((IASTQualifiedNameElement) node).getFullyQualifiedName();
-			char [][] qualName = new char [ fullName.length - 1 ][];
-			for( int i = 0; i < fullName.length - 1; i++ ){
-				qualName[i] = fullName[i].toCharArray();
-			}
+			char [][] qualName = ((IASTQualifiedNameElement) node).getFullyQualifiedNameCharArrays();
 			//check containing scopes
-			if( !matchQualifications( qualifications, qualName ) ){
+			if( !matchQualifications( qualifications, qualName, true ) ){
 				return IMPOSSIBLE_MATCH;
 			}
 		}

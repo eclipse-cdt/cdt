@@ -74,6 +74,9 @@ public class ASTNamespaceDefinition extends ASTDeclaration implements IASTNamesp
     {
         return qualifiedNameElement.getFullyQualifiedName();
     }
+	public char[][] getFullyQualifiedNameCharArrays(){
+	    return qualifiedNameElement.getFullyQualifiedNameCharArrays();
+	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#accept(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */

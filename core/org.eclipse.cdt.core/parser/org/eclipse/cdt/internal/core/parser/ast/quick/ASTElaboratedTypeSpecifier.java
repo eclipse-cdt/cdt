@@ -81,6 +81,9 @@ public class ASTElaboratedTypeSpecifier extends ASTNode implements IASTElaborate
     {
         return qualifiedName.getFullyQualifiedName();
     }
+	public char[][] getFullyQualifiedNameCharArrays(){
+	    return qualifiedName.getFullyQualifiedNameCharArrays();
+	}
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ISourceElementCallbackDelegate#acceptElement(org.eclipse.cdt.core.parser.ISourceElementRequestor)
      */

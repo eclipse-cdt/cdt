@@ -11,28 +11,20 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
-import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
  */
 public abstract class Type extends CObject implements ICDIType {
 
-	StackFrame fStackFrame;
 	String typename;
 	String detailName;
 
-	public Type(StackFrame frame, String name) {
-		super((Target)frame.getTarget());
+	public Type(Target target, String name) {
+		super(target);
 		typename = name;
-		fStackFrame = frame;
-	}
-
-	public ICDIStackFrame getStackFrame() {
-		return fStackFrame;
 	}
 
 	/* (non-Javadoc)

@@ -13,7 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
  */
@@ -22,8 +22,8 @@ public class ReferenceType extends DerivedType implements ICDIReferenceType {
 	/**
 	 * @param name
 	 */
-	public ReferenceType(StackFrame frame, String name) {
-		super(frame, name);
+	public ReferenceType(Target target, String name) {
+		super(target, name);
 	}
 
 	/* (non-Javadoc)

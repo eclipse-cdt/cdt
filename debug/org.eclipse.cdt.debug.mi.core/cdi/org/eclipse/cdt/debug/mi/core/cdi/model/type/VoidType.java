@@ -12,16 +12,16 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIVoidType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.StackFrame;
+import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
 
 /**
  */
 public class VoidType extends Type implements ICDIVoidType {
 
-	public VoidType(StackFrame frame) {
-		this(frame, "void"); //$NON-NLS-1$
+	public VoidType(Target target) {
+		this(target, "void"); //$NON-NLS-1$
 	}
-	public VoidType(StackFrame frame, String typename) {
-		super(frame, typename);
+	public VoidType(Target target, String typename) {
+		super(target, typename);
 	}
 }

@@ -170,38 +170,38 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 		if (fType == null) {
 			String nametype = getTypeName();
 			Target target = (Target)getTarget();
-			StackFrame frame = (StackFrame)getStackFrame();
-			if (frame == null) {
-				Thread thread = (Thread)getThread();
-				if (thread != null) {
-					frame = thread.getCurrentStackFrame();
-				} else {
-					frame = ((Thread)target.getCurrentThread()).getCurrentStackFrame();
-				}
-			}
 			Session session = (Session) target.getSession();
 			SourceManager sourceMgr = session.getSourceManager();
 			try {
-				fType = sourceMgr.getType(frame, nametype);
+				fType = sourceMgr.getType(target, nametype);
 			} catch (CDIException e) {
 				// Try with ptype.
 				try {
-					String ptype = sourceMgr.getDetailTypeName(frame, nametype);
-					fType = sourceMgr.getType(frame, ptype);
+					String ptype = sourceMgr.getDetailTypeName(target, nametype);
+					fType = sourceMgr.getType(target, ptype);
 				} catch (CDIException ex) {
-					// Some version of gdb does not work woth the name of the class
+					// Some version of gdb does not work on the name of the class
 					// ex: class data foo --> ptype data --> fails
 					// ex: class data foo --> ptype foo --> succeed
+					StackFrame frame = (StackFrame)getStackFrame();
+					if (frame == null) {
+						Thread thread = (Thread)getThread();
+						if (thread != null) {
+							frame = thread.getCurrentStackFrame();
+						} else {
+							frame = ((Thread)target.getCurrentThread()).getCurrentStackFrame();
+						}
+					}
 					try {
-						String ptype = sourceMgr.getDetailTypeName(frame, getQualifiedName());
-						fType = sourceMgr.getType(frame, ptype);
+						String ptype = sourceMgr.getDetailTypeNameFromVariable(frame, getQualifiedName());
+						fType = sourceMgr.getType(target, ptype);
 					} catch (CDIException e2) {
 						// give up.
 					}
 				}
 			}
 			if (fType == null) {
-				fType = new IncompleteType(frame, nametype);
+				fType = new IncompleteType(target, nametype);
 			}
 		}
 		return fType;
@@ -284,7 +284,7 @@ public abstract class VariableDescriptor extends CObject implements ICDIVariable
 			}
 			Session session = (Session) target.getSession();
 			SourceManager sourceMgr = session.getSourceManager();
-			fTypename = sourceMgr.getTypeName(frame, getQualifiedName());
+			fTypename = sourceMgr.getTypeNameFromVariable(frame, getQualifiedName());
 		}
 		return fTypename;
 	}

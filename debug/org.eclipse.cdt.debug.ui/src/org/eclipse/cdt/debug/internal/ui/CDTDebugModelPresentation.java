@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import org.eclipse.cdt.debug.core.ICAddressBreakpoint;
 import org.eclipse.cdt.debug.core.ICBreakpoint;
+import org.eclipse.cdt.debug.core.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.ICValue;
@@ -164,6 +165,25 @@ public class CDTDebugModelPresentation extends LabelProvider
 	 */
 	public Image getImage( Object element )
 	{
+		if ( element instanceof IDebugTarget )
+		{
+			ICDebugTargetType targetType = (ICDebugTargetType)((IDebugTarget)element).getAdapter( ICDebugTargetType.class );
+			int type = ( targetType != null ) ? targetType.getTargetType() : ICDebugTargetType.TARGET_TYPE_UNKNOWN;
+			if ( type == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP )
+			{
+				return fDebugImageRegistry.get( new CImageDescriptor( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_DEBUG_TARGET_TERMINATED ), 0 ) );
+			}
+		}
+		if ( element instanceof IThread )
+		{
+			ICDebugTargetType targetType = (ICDebugTargetType)((IThread)element).getDebugTarget().getAdapter( ICDebugTargetType.class );
+			int type = ( targetType != null ) ? targetType.getTargetType() : ICDebugTargetType.TARGET_TYPE_UNKNOWN;
+			if ( type == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP )
+			{
+				return fDebugImageRegistry.get( new CImageDescriptor( DebugUITools.getImageDescriptor( IDebugUIConstants.IMG_OBJS_THREAD_TERMINATED ), 0 ) );
+			}
+		}
+		
 		try
 		{
 			if ( element instanceof IMarker ) 
@@ -347,6 +367,12 @@ public class CDTDebugModelPresentation extends LabelProvider
 	
 	protected String getThreadText( IThread thread, boolean qualified ) throws DebugException
 	{
+		ICDebugTargetType targetType = (ICDebugTargetType)thread.getDebugTarget().getAdapter( ICDebugTargetType.class );
+		int type = ( targetType != null ) ? targetType.getTargetType() : ICDebugTargetType.TARGET_TYPE_UNKNOWN;
+		if ( type == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP )
+		{
+			return getFormattedString( "Thread [{0}]", thread.getName() );
+		}
 		if ( thread.isTerminated() )
 		{
 			return getFormattedString( "Thread [{0}] (Terminated)", thread.getName() );

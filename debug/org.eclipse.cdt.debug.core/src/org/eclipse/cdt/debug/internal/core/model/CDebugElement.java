@@ -153,7 +153,7 @@ public class CDebugElement extends PlatformObject
 	/**
 	 * Fires a debug event marking the termination of this element.
 	 */
-	protected void fireTerminateEvent()
+	public void fireTerminateEvent()
 	{
 		fireEvent( new DebugEvent( this, DebugEvent.TERMINATE ) );
 	}

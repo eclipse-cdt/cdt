@@ -12,7 +12,10 @@ import java.util.HashMap;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
+import org.eclipse.cdt.debug.core.cdi.event.ICDISuspendedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
@@ -20,6 +23,7 @@ import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.cdt.debug.internal.core.model.CExpression;
+import org.eclipse.cdt.debug.internal.core.model.CThread;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -29,6 +33,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -37,6 +42,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IThread;
 
 /**
  * 
@@ -83,7 +89,7 @@ public class CDebugModel
 	 *   which will be returned from <code>IDebugTarget.getProcess</code>
 	 * @param allowTerminate whether the target will support termianation
 	 * @param allowDisconnect whether the target will support disconnection
-	 * @param resume whether the target is to be resumed on startup.
+	 * @param stopInMain whether to set a temporary breakpoint in main.
 	 * @return a debug target
 	 */
 	public static IDebugTarget newDebugTarget( final ILaunch launch,
@@ -101,7 +107,8 @@ public class CDebugModel
 		{
 			public void run( IProgressMonitor m )
 			{
-				target[0] = new CDebugTarget( launch, 
+				target[0] = new CDebugTarget( launch,
+											  ICDebugTargetType.TARGET_TYPE_LOCAL_RUN, 
 											  cdiTarget, 
 											  name,
 											  process,
@@ -131,6 +138,108 @@ public class CDebugModel
 		{
 			target[0].resume();
 		}
+
+		return target[0];
+	}
+
+	public static IDebugTarget newAttachDebugTarget( final ILaunch launch,
+													 final ICDITarget cdiTarget,
+													 final String name,
+													 final IProcess process,
+													 final IProject project ) throws DebugException
+	{
+		final IDebugTarget[] target = new IDebugTarget[1];
+
+		IWorkspaceRunnable r = new IWorkspaceRunnable()
+		{
+			public void run( IProgressMonitor m )
+			{
+				target[0] = new CDebugTarget( launch, 
+											  ICDebugTargetType.TARGET_TYPE_LOCAL_ATTACH, 
+											  cdiTarget, 
+											  name,
+											  process,
+											  project,
+											  false,
+											  true );
+			}
+		};
+		try
+		{
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e )
+		{
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+
+		ICDIConfiguration config = cdiTarget.getSession().getConfiguration();
+
+		((CDebugTarget)target[0]).handleDebugEvent( new ICDISuspendedEvent()
+														{
+															public ICDISessionObject getReason()
+															{
+																return null;
+															}
+	
+															public ICDIObject getSource()
+															{
+																return cdiTarget;
+															}
+
+														} );
+
+		return target[0];
+	}
+
+	public static IDebugTarget newCoreFileDebugTarget( final ILaunch launch,
+													   final ICDITarget cdiTarget,
+													   final String name,
+													   final IProcess process,
+													   final IProject project ) throws DebugException
+	{
+		final IDebugTarget[] target = new IDebugTarget[1];
+
+		IWorkspaceRunnable r = new IWorkspaceRunnable()
+		{
+			public void run( IProgressMonitor m )
+			{
+				target[0] = new CDebugTarget( launch, 
+											  ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP, 
+											  cdiTarget, 
+											  name,
+											  process,
+											  project,
+											  true,
+											  false );
+			}
+		};
+		try
+		{
+			ResourcesPlugin.getWorkspace().run( r, null );
+		}
+		catch( CoreException e )
+		{
+			CDebugCorePlugin.log( e );
+			throw new DebugException( e.getStatus() );
+		}
+
+		ICDIConfiguration config = cdiTarget.getSession().getConfiguration();
+
+		((CDebugTarget)target[0]).handleDebugEvent( new ICDISuspendedEvent()
+														{
+															public ICDISessionObject getReason()
+															{
+																return null;
+															}
+	
+															public ICDIObject getSource()
+															{
+																return cdiTarget;
+															}
+
+														} );
 
 		return target[0];
 	}
@@ -174,38 +283,6 @@ public class CDebugModel
 		return null;
 	}
 
-	/**
-	 * Creates and returns a line breakpoint in the file with the
-	 * given name, at the given line number. The marker associated with the
-	 * breakpoint will be created on the specified resource. If a character
-	 * range within the line is known, it may be specified by charStart/charEnd.
-	 * If ignoreCount is > 0, the breakpoint will suspend execution when it is
-	 * "hit" the specified number of times.
-	 * 
-	 * @param resource the resource on which to create the associated breakpoint
-	 *  marker
-	 * @param typeName the fully qualified name of the type the breakpoint is
-	 *  to be installed in. If the breakpoint is to be installed in an inner type,
-	 *  it is sufficient to provide the name of the top level enclosing type.
-	 * 	If an inner class name is specified, it should be formatted as the 
-	 *  associated class file name (i.e. with <code>$</code>). For example,
-	 * 	<code>example.SomeClass$InnerType</code>, could be specified, but
-	 * 	<code>example.SomeClass</code> is sufficient.
-	 * @param lineNumber the lineNumber on which the breakpoint is set - line
-	 *   numbers are 1 based, associated with the source file in which
-	 *   the breakpoint is set
-	 * @param charStart the first character index associated with the breakpoint,
-	 *   or -1 if unspecified, in the source file in which the breakpoint is set
- 	 * @param charEnd the last character index associated with the breakpoint,
-	 *   or -1 if unspecified, in the source file in which the breakpoint is set
-	 * @param hitCount the number of times the breakpoint will be hit before
-	 *   suspending execution - 0 if it should always suspend
-	 * @param register whether to add this breakpoint to the breakpoint manager
-	 * @param attributes a map of client defined attributes that should be assigned
- 	 *  to the underlying breakpoint marker on creation, or <code>null</code> if none.
-	 * @return a line breakpoint
-	 * @exception DebugException If this method fails. Reasons include: 
-	 */
 	public static ICLineBreakpoint createLineBreakpoint( IResource resource, 
 														 int lineNumber, 
 														 boolean enabled,

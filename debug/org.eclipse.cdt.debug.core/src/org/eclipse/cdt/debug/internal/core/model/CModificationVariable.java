@@ -45,6 +45,12 @@ public abstract class CModificationVariable extends CVariable
 	 */
 	public boolean supportsValueModification()
 	{
+		CDebugTarget target = (CDebugTarget)getDebugTarget().getAdapter( CDebugTarget.class );
+		if ( target == null || target.isCoreDumpTarget() )
+		{
+			return false;
+		}
+
 		try
 		{
 			IValue value = getValue();

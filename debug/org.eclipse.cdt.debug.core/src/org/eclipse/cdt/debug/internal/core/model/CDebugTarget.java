@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.CDebugModel;
 import org.eclipse.cdt.debug.core.ICBreakpoint;
+import org.eclipse.cdt.debug.core.ICDebugTargetType;
 import org.eclipse.cdt.debug.core.ICExpressionEvaluator;
 import org.eclipse.cdt.debug.core.ICLineBreakpoint;
 import org.eclipse.cdt.debug.core.ICWatchpoint;
@@ -87,6 +88,7 @@ import org.eclipse.debug.core.model.IThread;
  */
 public class CDebugTarget extends CDebugElement
 						  implements IDebugTarget,
+						  			 ICDebugTargetType,
 						  			 ICDIEventListener,
 						  			 IRestart,
 						  			 IRunToLine,
@@ -97,6 +99,11 @@ public class CDebugTarget extends CDebugElement
 						  			 IExpressionListener,
 						  			 ICExpressionEvaluator
 {
+	/**
+	 * The type of this target.
+	 */
+	private int fTargetType;
+
 	/**
 	 * Threads contained in this debug target. When a thread
 	 * starts it is added to the list. When a thread ends it
@@ -139,11 +146,6 @@ public class CDebugTarget extends CDebugElement
 	 */
 	private boolean fDisconnected;
 
-	/**
-	 * Whether the target should be resumed on startup
-	 */
-	private boolean fResumeOnStartup = false; 
-	
 	/**
 	 * The launch this target is contained in
 	 */
@@ -198,7 +200,8 @@ public class CDebugTarget extends CDebugElement
 	 * Constructor for CDebugTarget.
 	 * @param target
 	 */
-	public CDebugTarget( ILaunch launch, 
+	public CDebugTarget( ILaunch launch,
+						 int targetType, 
 						 ICDITarget cdiTarget, 
 						 String name,
 						 IProcess process,
@@ -208,6 +211,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		super( null );
 		setLaunch( launch );
+		setTargetType( targetType );
 		setDebugTarget( this );
 		setName( name );
 		setProcess( process );
@@ -256,12 +260,7 @@ public class CDebugTarget extends CDebugElement
 			// ignore
 		}
 		for ( int i = 0; i < threads.length; ++i )
-			createRunningThread( threads[i] );
-
-		if ( isResumeOnStartup() )
-		{
-			setSuspended( false );
-		}
+			createThread( threads[i] );
 	}
 
 	/**
@@ -780,11 +779,15 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( adapter.equals( IDebugTarget.class ) )
 			return this;
+		if ( adapter.equals( CDebugTarget.class ) )
+			return this;
 		if ( adapter.equals( ICDITarget.class ) )
 			return fCDITarget;
 		if ( adapter.equals( IState.class ) )
 			return this;
 		if ( adapter.equals( ICExpressionEvaluator.class ) )
+			return this;
+		if ( adapter.equals( ICDebugTargetType.class ) )
 			return this;
 		return super.getAdapter( adapter );
 	}
@@ -989,8 +992,10 @@ public class CDebugTarget extends CDebugElement
 		setTerminating( false );
 		if ( !isTerminated() )
 		{
-			setTerminated( true );
-			setDisconnected( true );
+			if ( !isDisconnected() )
+			{
+				setTerminated( true );
+			}
 			cleanup();
 			fireTerminateEvent();
 		}
@@ -1004,6 +1009,7 @@ public class CDebugTarget extends CDebugElement
 	{
 		if ( !isDisconnected() )
 		{
+			setDisconnected( true );
 			try
 			{
 				getCDISession().terminate();
@@ -1012,7 +1018,6 @@ public class CDebugTarget extends CDebugElement
 			{
 				logError( e );
 			}
-			setDisconnected( true );
 			cleanup();
 			fireTerminateEvent();
 		}
@@ -1216,26 +1221,6 @@ public class CDebugTarget extends CDebugElement
 		return thread;
 	}
 
-	/**
-	 * Sets whether this target should be resumed on startup.
-	 * 
-	 * @param resume whether this target should be resumed on startup
-	 */
-	private void setResumeOnStartup( boolean resume )
-	{
-		fResumeOnStartup = resume;
-	}
-	
-	/**
-	 * Returns whether this target should be resumed on startup.
-	 * 
-	 * @return whether this target should be resumed on startup
-	 */
-	protected boolean isResumeOnStartup()
-	{
-		return fResumeOnStartup;
-	}
-
 	private void handleSuspendedEvent( ICDISuspendedEvent event )
 	{
 		setSuspended( true );
@@ -1359,8 +1344,6 @@ public class CDebugTarget extends CDebugElement
 
 	private void handleTerminatedEvent( ICDIDestroyedEvent event )
 	{
-//		setCurrentStateId( IState.TERMINATED );
-//		setCurrentStateInfo( null );
 		IProcess process = getProcess();
 		if ( process != null )
 		{
@@ -1867,5 +1850,23 @@ public class CDebugTarget extends CDebugElement
 		{
 			CDebugCorePlugin.log( e );
 		}
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.ICDebugTargetType#getTargetType()
+	 */
+	public int getTargetType()
+	{
+		return fTargetType;
+	}
+	
+	private void setTargetType( int targetType )
+	{
+		fTargetType = targetType;
+	}
+	
+	protected boolean isCoreDumpTarget()
+	{
+		return ( getTargetType() == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP );
 	}
 }

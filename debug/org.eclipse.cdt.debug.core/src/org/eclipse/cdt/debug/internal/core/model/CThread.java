@@ -120,7 +120,8 @@ public class CThread extends CDebugElement
 	protected void initialize()
 	{
 		fStackFrames = Collections.EMPTY_LIST;
-		setRunning( !getCDIThread().isSuspended() );
+		setRunning( false );
+//		setRunning( !getCDIThread().isSuspended() );
 	}
 
 	/* (non-Javadoc)
@@ -432,7 +433,7 @@ public class CThread extends CDebugElement
 	 */
 	public boolean canResume()
 	{
-		return isSuspended();
+		return fConfig.supportsResume() && isSuspended();
 	}
 
 	/* (non-Javadoc)
@@ -440,7 +441,7 @@ public class CThread extends CDebugElement
 	 */
 	public boolean canSuspend()
 	{
-		return !isSuspended();
+		return fConfig.supportsSuspend() && !isSuspended();
 	}
 
 	/* (non-Javadoc)

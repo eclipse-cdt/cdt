@@ -1104,11 +1104,14 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#getCommandLinePattern()
 	 */
 	public String getCommandLinePattern() {
-		if (commandLinePattern != null) {
-			return commandLinePattern;
-		} else {
-			return new String(DEFAULT_PATTERN);  // Default pattern
+		if (commandLinePattern == null) {
+			if (superClass != null) {
+				return superClass.getCommandLinePattern();
+			} else {
+				return new String(DEFAULT_PATTERN);  // Default pattern
+			}
 		}
+		return commandLinePattern;
 	}
 	
 	/* (non-Javadoc)

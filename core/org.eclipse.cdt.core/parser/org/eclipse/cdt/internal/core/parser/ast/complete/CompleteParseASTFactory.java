@@ -3218,7 +3218,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		ISymbol checkSymbol = null;
 		if (!isTemplateId) {
 			try {
-				if (isFriend) {
+				if (isFriend && isForewardDecl) {
 					checkSymbol = ((IDerivableContainerSymbol) currentScopeSymbol)
 							.lookupForFriendship(newSymbolName);
 				} else {
@@ -3257,7 +3257,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					pstType);
 			checkSymbol.setIsForwardDeclaration(true);
 			try {
-				if (isFriend) {
+				if (isFriend && isForewardDecl) {
 					((IDerivableContainerSymbol) originalScope).addFriend(checkSymbol);
 				} else {
 					if (!isTemplateId)
@@ -3278,7 +3278,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 					references, isForewardDecl, filename);
 			attachSymbolExtension(checkSymbol, elab, !isForewardDecl);
 			return elab;
-		} else if (isFriend) {
+		} else if (isFriend && isForewardDecl) {
 			((IDerivableContainerSymbol) originalScope).addFriend(checkSymbol);
 		}
 		if (checkSymbol != null) {

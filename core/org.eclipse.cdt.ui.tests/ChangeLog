@@ -1,3 +1,9 @@
+2004-11-08 Mikhail Voronin
+	New tests for help extension.
+	* ui/org/eclipse/cdt/ui/tests/chelp/CHelpProviderTester.java
+	* ui/org/eclipse/cdt/ui/tests/chelp/CHelpTest.java
+	* ui/org/eclipse/cdt/ui/tests/chelp/CHelpTestInfoProvider.java
+
 2004-11-02 Tanya Wolff
 	added content assist regression tests
 	*ui.tests.text.contentassist/ContentAssistRegressionTests.java

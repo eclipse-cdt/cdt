@@ -21,7 +21,22 @@
       <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.cdt.core"/>
       <import plugin="org.eclipse.cdt.core.tests"/>
+      <import plugin="org.eclipse.help"/>
    </requires>
+
+   <extension
+         point="org.eclipse.cdt.ui.CHelpProvider">
+      <provider
+         class="org.eclipse.cdt.ui.tests.chelp.CHelpTestInfoProvider"
+         id="org.eclipse.cdt.ui.tests.chelp.extension.1"/>
+      <provider
+         class="org.eclipse.cdt.ui.tests.chelp.CHelpTestInfoProvider"
+         id="org.eclipse.cdt.ui.tests.chelp.extension.2"/>
+      <provider
+         class="org.eclipse.cdt.ui.tests.chelp.CHelpTestInfoProvider"
+         id="org.eclipse.cdt.ui.tests.chelp.extension.3"/>
+
+   </extension>
 
 
 </plugin>

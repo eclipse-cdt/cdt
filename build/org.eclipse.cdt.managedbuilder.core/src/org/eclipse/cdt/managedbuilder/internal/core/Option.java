@@ -20,6 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 public class Option extends BuildObject implements IOption {
@@ -178,7 +179,7 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public String[] getDefinedSymbols() throws BuildException {
 		if (valueType != PREPROCESSOR_SYMBOLS) {
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		ArrayList v = (ArrayList)value;
 		if (v == null) {
@@ -202,7 +203,7 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public String[] getIncludePaths() throws BuildException {
 		if (valueType != INCLUDE_PATH) {
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		ArrayList v = (ArrayList)value;
 		if (v == null) {
@@ -218,7 +219,7 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public String[] getLibraries() throws BuildException {
 		if (valueType != LIBRARIES) {
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		ArrayList v = (ArrayList)value;
 		if (v == null) {
@@ -234,7 +235,7 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public String getSelectedEnum() throws BuildException {
 		if (valueType != ENUMERATED) {
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		return defaultEnumName == null ? EMPTY_STRING : defaultEnumName;
 	}
@@ -244,7 +245,7 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public String[] getStringListValue() throws BuildException {
 		if (valueType != STRING_LIST) {
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		ArrayList v = (ArrayList)value;
 		if (v == null) {
@@ -260,7 +261,7 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public String getStringValue() throws BuildException {
 		if (valueType != STRING) {
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		return value == null ? EMPTY_STRING : (String)value;
 	}
@@ -277,7 +278,7 @@ public class Option extends BuildObject implements IOption {
 	 */
 	public String[] getUserObjects() throws BuildException {
 		if (valueType != OBJECTS) {
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 		// This is the right puppy, so return its list value
 		ArrayList v = (ArrayList)value;
@@ -311,7 +312,7 @@ public class Option extends BuildObject implements IOption {
 	{
 		if (valueType != IOption.STRING
 			|| valueType != ENUMERATED)
-			throw new BuildException("Bad value for type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 
 		if (config == null) {
 			this.value = value;
@@ -333,7 +334,7 @@ public class Option extends BuildObject implements IOption {
 			|| valueType != PREPROCESSOR_SYMBOLS
 			|| valueType != LIBRARIES
 			|| valueType != OBJECTS)
-			throw new BuildException("Bad value for type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		
 		if (config == null) {
 			this.value = value;

@@ -50,9 +50,9 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		try {
 			return resourceBundle.getString(key);
 		} catch (MissingResourceException e) {
-			return "!" + key + "!";
+			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (NullPointerException e) {
-			return "#" + key + "#";
+			return "#" + key + "#"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

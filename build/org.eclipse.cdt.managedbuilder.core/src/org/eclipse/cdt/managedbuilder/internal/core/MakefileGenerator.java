@@ -321,7 +321,7 @@ public class MakefileGenerator {
 		// Calculate the new directory relative to the build output
 		IPath moduleRelativePath = module.getProjectRelativePath();
 		String relativePath = moduleRelativePath.toString();
-		relativePath += relativePath.length() == 0 ? "" : SEPARATOR; 
+		relativePath += relativePath.length() == 0 ? "" : SEPARATOR;  //$NON-NLS-1$
 
 		// Create the buffer to hold the output for the module and a dep calculator
 		StringBuffer buffer = new StringBuffer();
@@ -381,13 +381,13 @@ public class MakefileGenerator {
 	 */
 	private String escapeWhitespaces(String path) {
 		// Escape the spaces in the path/filename if it has any
-		String[] segments = path.split("\\s");
+		String[] segments = path.split("\\s"); //$NON-NLS-1$
 		if (segments.length > 1) {
 			StringBuffer escapedPath = new StringBuffer();
 			for (int index = 0; index < segments.length; ++index) {
 				escapedPath.append(segments[index]);
 				if (index + 1 < segments.length) {
-					escapedPath.append("\\ ");
+					escapedPath.append("\\ "); //$NON-NLS-1$
 				}
 			}
 			return escapedPath.toString().trim();
@@ -432,27 +432,27 @@ public class MakefileGenerator {
 		StringBuffer buffer = new StringBuffer();
 		
 		// Add the ROOT macro
-		buffer.append("ROOT := .." + NEWLINE);
+		buffer.append("ROOT := .." + NEWLINE); //$NON-NLS-1$
 		buffer.append(NEWLINE);
 		
 		// include makefile.init supplementary makefile
-		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_INIT + NEWLINE);
+		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_INIT + NEWLINE); //$NON-NLS-1$
 		buffer.append(NEWLINE);
 
 		// Get the clean command from the build model
-		buffer.append("RM := ");
+		buffer.append("RM := "); //$NON-NLS-1$
 		buffer.append(info.getCleanCommand() + NEWLINE);
 		buffer.append(NEWLINE);
 		
 		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(SRC_LISTS) + NEWLINE);
-		buffer.append("C_SRCS := " + NEWLINE);
-		buffer.append("CC_SRCS := " + NEWLINE);
-		buffer.append("CXX_SRCS := " + NEWLINE);
-		buffer.append("CAPC_SRCS := " + NEWLINE);
-		buffer.append("CPP_SRCS := " + NEWLINE + NEWLINE);
+		buffer.append("C_SRCS := " + NEWLINE); //$NON-NLS-1$
+		buffer.append("CC_SRCS := " + NEWLINE); //$NON-NLS-1$
+		buffer.append("CXX_SRCS := " + NEWLINE); //$NON-NLS-1$
+		buffer.append("CAPC_SRCS := " + NEWLINE); //$NON-NLS-1$
+		buffer.append("CPP_SRCS := " + NEWLINE + NEWLINE); //$NON-NLS-1$
 		
 		// Add the libraries this project depends on
-		buffer.append("LIBS := ");
+		buffer.append("LIBS := "); //$NON-NLS-1$
 		String[] libs = info.getLibsForTarget(extension);
 		for (int i = 0; i < libs.length; i++) {
 			String string = libs[i];
@@ -461,7 +461,7 @@ public class MakefileGenerator {
 		buffer.append(NEWLINE + NEWLINE);
 		
 		// Add the extra user-specified objects
-		buffer.append("USER_OBJS := ");
+		buffer.append("USER_OBJS := "); //$NON-NLS-1$
 		String[] userObjs = info.getUserObjectsForTarget(extension);
 		for (int j = 0; j < userObjs.length; j++) {
 			String string = userObjs[j];
@@ -469,7 +469,7 @@ public class MakefileGenerator {
 		}
 		buffer.append(NEWLINE + NEWLINE);
 		
-		buffer.append("OBJS = $(C_SRCS:$(ROOT)/%.c=%.o) $(CC_SRCS:$(ROOT)/%.cc=%.o) $(CXX_SRCS:$(ROOT)/%.cxx=%.o) $(CAPC_SRCS:$(ROOT)/%.C=%.o) $(CPP_SRCS:$(ROOT)/%.cpp=%.o)" + NEWLINE);
+		buffer.append("OBJS = $(C_SRCS:$(ROOT)/%.c=%.o) $(CC_SRCS:$(ROOT)/%.cc=%.o) $(CXX_SRCS:$(ROOT)/%.cxx=%.o) $(CAPC_SRCS:$(ROOT)/%.C=%.o) $(CPP_SRCS:$(ROOT)/%.cpp=%.o)" + NEWLINE); //$NON-NLS-1$
 		return (buffer.append(NEWLINE));
 	}
 
@@ -480,7 +480,7 @@ public class MakefileGenerator {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
 		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(MOD_LIST) + NEWLINE);
-		buffer.append("SUBDIRS := " + LINEBREAK + NEWLINE);
+		buffer.append("SUBDIRS := " + LINEBREAK + NEWLINE); //$NON-NLS-1$
 		
 		// Get all the module names
 		ListIterator iter = getSubdirList().listIterator();
@@ -488,7 +488,7 @@ public class MakefileGenerator {
 			IContainer container = (IContainer) iter.next();
 			// Check the special case where the module is the project root
 			if (container.getFullPath() == project.getFullPath()) {
-				buffer.append("." +  WHITESPACE + LINEBREAK + NEWLINE);
+				buffer.append(DOT + WHITESPACE + LINEBREAK + NEWLINE);
 			} else {
 				IPath path = container.getProjectRelativePath();
 				buffer.append(path.toString() +  WHITESPACE + LINEBREAK + NEWLINE);
@@ -498,11 +498,11 @@ public class MakefileGenerator {
 		// Now add the makefile instruction to include all the subdirectory makefile fragments
 		buffer.append(NEWLINE);
 		buffer.append(COMMENT_SYMBOL +WHITESPACE + ManagedBuilderCorePlugin.getResourceString(MOD_INCL) + NEWLINE);
-		buffer.append("-include ${patsubst %, %/subdir.mk, $(SUBDIRS)}" + NEWLINE);
+		buffer.append("-include ${patsubst %, %/subdir.mk, $(SUBDIRS)}" + NEWLINE); //$NON-NLS-1$
 		buffer.append(NEWLINE);
 		
 		// Include makefile.defs supplemental makefile
-		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_DEFS + NEWLINE);
+		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_DEFS + NEWLINE); //$NON-NLS-1$
 		
 		buffer.append(NEWLINE);
 		return buffer;
@@ -520,20 +520,20 @@ public class MakefileGenerator {
 		// Calculate the new directory relative to the build output
 		IPath moduleRelativePath = module.getProjectRelativePath();
 		String relativePath = moduleRelativePath.toString();
-		relativePath += relativePath.length() == 0 ? "" : SEPARATOR; 
+		relativePath += relativePath.length() == 0 ? "" : SEPARATOR;  //$NON-NLS-1$
 		
 		// String buffers
 		StringBuffer buffer = new StringBuffer();
-		StringBuffer cBuffer = new StringBuffer("C_SRCS += " + LINEBREAK + NEWLINE);
-		cBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
-		StringBuffer ccBuffer = new StringBuffer("CC_SRCS += \\" + NEWLINE);
-		ccBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
-		StringBuffer cxxBuffer = new StringBuffer("CXX_SRCS += \\" + NEWLINE);
-		cxxBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
-		StringBuffer capcBuffer = new StringBuffer("CAPC_SRCS += \\" + NEWLINE);
-		capcBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
-		StringBuffer cppBuffer = new StringBuffer("CPP_SRCS += \\" + NEWLINE);
-		cppBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
+		StringBuffer cBuffer = new StringBuffer("C_SRCS += " + LINEBREAK + NEWLINE); //$NON-NLS-1$
+		cBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);  //$NON-NLS-1$//$NON-NLS-2$
+		StringBuffer ccBuffer = new StringBuffer("CC_SRCS += \\" + NEWLINE); //$NON-NLS-1$
+		ccBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);  //$NON-NLS-1$//$NON-NLS-2$
+		StringBuffer cxxBuffer = new StringBuffer("CXX_SRCS += \\" + NEWLINE); //$NON-NLS-1$
+		cxxBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);  //$NON-NLS-1$//$NON-NLS-2$
+		StringBuffer capcBuffer = new StringBuffer("CAPC_SRCS += \\" + NEWLINE); //$NON-NLS-1$
+		capcBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);  //$NON-NLS-1$//$NON-NLS-2$
+		StringBuffer cppBuffer = new StringBuffer("CPP_SRCS += \\" + NEWLINE); //$NON-NLS-1$
+		cppBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);  //$NON-NLS-1$//$NON-NLS-2$
 		StringBuffer ruleBuffer = new StringBuffer(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(MOD_RULES) + NEWLINE);
 
 		// Put the comment in		
@@ -546,13 +546,13 @@ public class MakefileGenerator {
 			if (resource.getType() == IResource.FILE) {
 				String ext = resource.getFileExtension();
 				if (info.buildsFileType(ext)) {
-					if (new String("c").equals(ext)) {
+					if (new String("c").equals(ext)) { //$NON-NLS-1$
 						cBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
-					} else if (new String("cc").equalsIgnoreCase(ext)) {
+					} else if (new String("cc").equalsIgnoreCase(ext)) { //$NON-NLS-1$
 						ccBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
-					} else if (new String("cxx").equalsIgnoreCase(ext)) {
+					} else if (new String("cxx").equalsIgnoreCase(ext)) { //$NON-NLS-1$
 						cxxBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
-					} else if (new String("C").equals(ext)) {
+					} else if (new String("C").equals(ext)) { //$NON-NLS-1$
 						capcBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
 					} else {
 						cppBuffer.append(resource.getName() + WHITESPACE + LINEBREAK + NEWLINE);
@@ -565,11 +565,11 @@ public class MakefileGenerator {
 		}
 
 		// Finish the commands in the buffers
-		buffer.append(cBuffer.append("}" + NEWLINE + NEWLINE));
-		buffer.append(ccBuffer.append("}" + NEWLINE + NEWLINE));
-		buffer.append(cxxBuffer.append("}" + NEWLINE + NEWLINE));
-		buffer.append(capcBuffer.append("}" + NEWLINE + NEWLINE));
-		buffer.append(cppBuffer.append("}" + NEWLINE + NEWLINE));
+		buffer.append(cBuffer.append("}" + NEWLINE + NEWLINE)); //$NON-NLS-1$
+		buffer.append(ccBuffer.append("}" + NEWLINE + NEWLINE)); //$NON-NLS-1$
+		buffer.append(cxxBuffer.append("}" + NEWLINE + NEWLINE)); //$NON-NLS-1$
+		buffer.append(capcBuffer.append("}" + NEWLINE + NEWLINE)); //$NON-NLS-1$
+		buffer.append(cppBuffer.append("}" + NEWLINE + NEWLINE)); //$NON-NLS-1$
 
 		return buffer.append(ruleBuffer + NEWLINE);
 	}
@@ -588,7 +588,7 @@ public class MakefileGenerator {
 		String flags = info.getFlagsForTarget(extension);
 		String outflag = info.getOutputFlag(extension);
 		String outputPrefix = info.getOutputPrefix(extension);
-		String targets = rebuild ? "clean all" : "all";
+		String targets = rebuild ? "clean all" : "all"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Get all the projects the build target depends on
 		IProject[] deps = null;
@@ -601,9 +601,9 @@ public class MakefileGenerator {
 
 		// Write out the all target first in case someone just runs make
 		// 	all: targ_<target_name> [deps] 
-		String defaultTarget = "all:";
+		String defaultTarget = "all:"; //$NON-NLS-1$
 		if (deps.length > 0) {
-			defaultTarget += WHITESPACE + "deps";
+			defaultTarget += WHITESPACE + "deps"; //$NON-NLS-1$
 		}
 		buffer.append(defaultTarget + WHITESPACE + outputPrefix + target);
 		if (extension.length() > 0) {
@@ -619,7 +619,7 @@ public class MakefileGenerator {
 		 */
 		List managedProjectOutputs = new ArrayList();
 		if (deps.length > 0) { 
-			buffer.append("deps:" + NEWLINE);
+			buffer.append("deps:" + NEWLINE); //$NON-NLS-1$
 			if (deps != null) {
 				for (int i = 0; i < deps.length; i++) {
 					IProject dep = deps[i];
@@ -635,7 +635,7 @@ public class MakefileGenerator {
 						String depExt = depInfo.getBuildArtifactExtension();
 						String depPrefix = depInfo.getOutputPrefix(depExt);
 						if (depInfo.isDirty()) {
-							depTargets = "clean all";
+							depTargets = "clean all"; //$NON-NLS-1$
 						}
 						String dependency = buildDir + SEPARATOR + depPrefix + depTarget;
 						if (depExt.length() > 0) {
@@ -643,7 +643,7 @@ public class MakefileGenerator {
 						}
 						managedProjectOutputs.add(dependency);
 					}
-					buffer.append(TAB + "-cd" + WHITESPACE + buildDir + WHITESPACE + LOGICAL_AND + WHITESPACE + "$(MAKE) " + depTargets + NEWLINE);
+					buffer.append(TAB + "-cd" + WHITESPACE + buildDir + WHITESPACE + LOGICAL_AND + WHITESPACE + "$(MAKE) " + depTargets + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			buffer.append(NEWLINE);
@@ -658,27 +658,27 @@ public class MakefileGenerator {
 		if (extension.length() > 0) {
 			buffer.append(DOT + extension);
 		}
-		buffer.append(COLON + WHITESPACE + "$(OBJS)");
+		buffer.append(COLON + WHITESPACE + "$(OBJS)"); //$NON-NLS-1$
 		Iterator iter = managedProjectOutputs.listIterator();
 		while (iter.hasNext()) {
 			buffer.append(WHITESPACE + (String)iter.next());
 		}
 		buffer.append(NEWLINE);
-		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + "$@" + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)");
+		buffer.append(TAB + cmd + WHITESPACE + flags + WHITESPACE + outflag + WHITESPACE + "$@" + WHITESPACE + "$(OBJS) $(USER_OBJS) $(LIBS)"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append(NEWLINE + NEWLINE);
 
 		// Always add a clean target
-		buffer.append("clean:" + NEWLINE);
-		buffer.append(TAB + "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + outputPrefix + target + NEWLINE + NEWLINE);
+		buffer.append("clean:" + NEWLINE); //$NON-NLS-1$
+		buffer.append(TAB + "-$(RM)" + WHITESPACE + "$(OBJS)" + WHITESPACE + outputPrefix + target + NEWLINE + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		buffer.append(".PHONY: all clean deps" + NEWLINE + NEWLINE);
+		buffer.append(".PHONY: all clean deps" + NEWLINE + NEWLINE); //$NON-NLS-1$
 		
 		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(DEP_INCL) + NEWLINE);
-		buffer.append("-include ${patsubst %, %/subdir.dep, $(SUBDIRS)}" + NEWLINE);
+		buffer.append("-include ${patsubst %, %/subdir.dep, $(SUBDIRS)}" + NEWLINE); //$NON-NLS-1$
 		buffer.append(NEWLINE);
 		
 		// Include makefile.targets supplemental makefile
-		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_TARGETS + NEWLINE);
+		buffer.append("-include $(ROOT)" + SEPARATOR + MAKEFILE_TARGETS + NEWLINE); //$NON-NLS-1$
 
 		return buffer;
 	}
@@ -717,7 +717,7 @@ public class MakefileGenerator {
 			 * source1/%.o: $(ROOT)/source1/%.cpp
 			 * 		g++ -g -O2 -c -I/cygdrive/c/eclipse/workspace/Project/headers -o $@ $<
 			 */ 
-			rule = relativePath + WILDCARD + DOT + outputExtension + COLON + WHITESPACE + "$(ROOT)" + SEPARATOR + relativePath + WILDCARD + DOT + inputExtension;
+			rule = relativePath + WILDCARD + DOT + outputExtension + COLON + WHITESPACE + "$(ROOT)" + SEPARATOR + relativePath + WILDCARD + DOT + inputExtension; //$NON-NLS-1$
 		}
 
 		// Check if the rule is listed as something we already generated in the makefile
@@ -731,7 +731,7 @@ public class MakefileGenerator {
 			buildFlags = info.getFlagsForSource(inputExtension);
 			outflag = info.getOutputFlag(outputExtension);
 			outputPrefix = info.getOutputPrefix(outputExtension);
-			buffer.append(TAB + cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + "$@" + WHITESPACE + "$<" + NEWLINE + NEWLINE);
+			buffer.append(TAB + cmd + WHITESPACE + buildFlags + WHITESPACE + outflag + WHITESPACE + outputPrefix + "$@" + WHITESPACE + "$<" + NEWLINE + NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

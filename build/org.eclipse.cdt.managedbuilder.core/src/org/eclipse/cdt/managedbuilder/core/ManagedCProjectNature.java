@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Plugin;
 
 public class ManagedCProjectNature implements IProjectNature {
 	public static final String BUILDER_NAME = "genmakebuilder";
-	public static final String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + BUILDER_NAME;
+	public static final String BUILDER_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + BUILDER_NAME; //$NON-NLS-1$
 	private static final String MNG_NATURE_ID = ManagedBuilderCorePlugin.getUniqueIdentifier() + ".managedBuildNature"; 
 	private IProject project;
 
@@ -50,7 +50,7 @@ public class ManagedCProjectNature implements IProjectNature {
 		// TODO Remove this when the new StandardBuild nature adds the cbuilder
 		for (int i = 0; i < commands.length; i++) {
 			ICommand command = commands[i];
-			if (command.getBuilderName().equals("org.eclipse.cdt.core.cbuilder")) {
+			if (command.getBuilderName().equals("org.eclipse.cdt.core.cbuilder")) { //$NON-NLS-1$
 				// Remove the command
 				Vector vec = new Vector(Arrays.asList(commands));
 				vec.removeElementAt(i);
@@ -112,7 +112,7 @@ public class ManagedCProjectNature implements IProjectNature {
 		Plugin plugin = (Plugin)ManagedBuilderCorePlugin.getDefault();
 		IPluginDescriptor descriptor = plugin.getDescriptor();
 		if (descriptor.getExtension(BUILDER_NAME) != null) {
-			return descriptor.getUniqueIdentifier() + "." + BUILDER_NAME;
+			return descriptor.getUniqueIdentifier() + "." + BUILDER_NAME; //$NON-NLS-1$
 		}
 		return BUILDER_ID;
 	}

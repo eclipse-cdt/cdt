@@ -83,7 +83,7 @@ public class Target extends BuildObject implements ITarget {
 		if (id < 0) {
 			id *= -1;
 		}
-		setId(owner.getName() + "." + parent.getId() + "." + id);		
+		setId(owner.getName() + "." + parent.getId() + "." + id);		 //$NON-NLS-1$ //$NON-NLS-2$
 		setName(parent.getName());
 		this.artifactName = parent.getArtifactName();
 		this.binaryParserId = parent.getBinaryParserId();
@@ -133,10 +133,10 @@ public class Target extends BuildObject implements ITarget {
 		}
 
 		// isAbstract
-		isAbstract = ("true".equals(element.getAttribute(IS_ABSTRACT)));
+		isAbstract = ("true".equals(element.getAttribute(IS_ABSTRACT))); //$NON-NLS-1$
 
 		// Is this a test target
-		isTest = ("true".equals(element.getAttribute(IS_TEST)));
+		isTest = ("true".equals(element.getAttribute(IS_TEST))); //$NON-NLS-1$
 		
 		// Get the clean command
 		cleanCommand = element.getAttribute(CLEAN_COMMAND);
@@ -148,7 +148,7 @@ public class Target extends BuildObject implements ITarget {
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
 			targetOSList = new ArrayList();
-			StringTokenizer tokens = new StringTokenizer(os, ",");
+			StringTokenizer tokens = new StringTokenizer(os, ","); //$NON-NLS-1$
 			while (tokens.hasMoreTokens()) {
 				targetOSList.add(tokens.nextToken().trim());
 			}
@@ -204,11 +204,11 @@ public class Target extends BuildObject implements ITarget {
 			parent = ManagedBuildManager.getTarget(null, parentId);
 
 		// isAbstract
-		if ("true".equals(element.getAttribute(IS_ABSTRACT)))
+		if ("true".equals(element.getAttribute(IS_ABSTRACT))) //$NON-NLS-1$
 			isAbstract = true;
 			
 		// Is this a test target
-		isTest = ("true".equals(element.getAttribute(IS_TEST)));
+		isTest = ("true".equals(element.getAttribute(IS_TEST))); //$NON-NLS-1$
 		
 		// Get the clean command
 		cleanCommand = element.getAttribute(CLEAN_COMMAND);
@@ -265,12 +265,12 @@ public class Target extends BuildObject implements ITarget {
 		element.setAttribute(NAME, getName());
 		if (parent != null)
 			element.setAttribute(PARENT, parent.getId());
-		element.setAttribute(IS_ABSTRACT, isAbstract ? "true" : "false");
+		element.setAttribute(IS_ABSTRACT, isAbstract ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute(ARTIFACT_NAME, getArtifactName());
 		if (extension != null) {
 			element.setAttribute(EXTENSION, extension);
 		}
-		element.setAttribute(IS_TEST, isTest ? "true" : "false");
+		element.setAttribute(IS_TEST, isTest ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		element.setAttribute(CLEAN_COMMAND, getCleanCommand());
 		if (makeCommand != null) {
 			element.setAttribute(MAKE_COMMAND, makeCommand);
@@ -312,7 +312,7 @@ public class Target extends BuildObject implements ITarget {
 				return parent.getMakeArguments();
 			} else { 
 				// No parent and no user setting
-				return new String("");
+				return new String(""); //$NON-NLS-1$
 			}
 		}
 		return makeArguments;
@@ -329,7 +329,7 @@ public class Target extends BuildObject implements ITarget {
 				return parent.getMakeCommand();
 			} else {
 				// The user has forgotten to specify a command in the plugin manifets.
-				return new String("make");
+				return new String("make"); //$NON-NLS-1$
 			}
 		} else {
 			return makeCommand;
@@ -534,10 +534,10 @@ public class Target extends BuildObject implements ITarget {
 				return parent.getCleanCommand();
 			} else {
 				// User forgot to specify it. Guess based on OS.
-				if (BootLoader.getOS().equals("OS_WIN32")) {
-					return new String("del");
+				if (BootLoader.getOS().equals("OS_WIN32")) { //$NON-NLS-1$
+					return new String("del"); //$NON-NLS-1$
 				} else {
-					return new String("rm");
+					return new String("rm"); //$NON-NLS-1$
 				}
 			}
 		} else {

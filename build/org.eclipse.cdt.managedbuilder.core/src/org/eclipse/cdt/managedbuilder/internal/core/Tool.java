@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  */
 public class Tool extends BuildObject implements ITool, IOptionCategory {
 
-	private static final String DEFAULT_SEPARATOR = ",";
+	private static final String DEFAULT_SEPARATOR = ","; //$NON-NLS-1$
 	private static final IOptionCategory[] EMPTY_CATEGORIES = new IOptionCategory[0];
 	private static final IOption[] EMPTY_OPTIONS = new IOption[0];
 
@@ -337,11 +337,11 @@ public class Tool extends BuildObject implements ITool, IOptionCategory {
 		
 		// Get the nature filter
 		String nature = element.getAttribute(NATURE);
-		if (nature == null || "both".equals(nature)) {
+		if (nature == null || "both".equals(nature)) {	//$NON-NLS-1$
 			natureFilter = FILTER_BOTH;
-		} else if ("cnature".equals(nature)) {
+		} else if ("cnature".equals(nature)) {	//$NON-NLS-1$
 			natureFilter = FILTER_C;
-		} else if ("ccnature".equals(nature)) {
+		} else if ("ccnature".equals(nature)) {	//$NON-NLS-1$
 			natureFilter = FILTER_CC;
 		} else {
 			natureFilter = FILTER_BOTH;

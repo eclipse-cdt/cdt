@@ -34,6 +34,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.core.resources.IFile;
@@ -55,7 +56,7 @@ import org.w3c.dom.Node;
  */
 public class ManagedBuildManager extends AbstractCExtension implements IScannerInfoProvider {
 
-	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "managedBuildInfo");
+	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.getUniqueIdentifier(), "managedBuildInfo");	//$NON-NLS-1$
 	private static final String ROOT_ELEM_NAME = "ManagedProjectBuildInfo";	//$NON-NLS-1$
 	private static final String FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
@@ -63,7 +64,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	public static final String EXTENSION_POINT_ID = "ManagedBuildInfo";		//$NON-NLS-1$
 	
 	// This is the version of the manifest and project files that
-	private static final String buildInfoVersion = "2.0.0";
+	private static final String buildInfoVersion = "2.0.0"; //$NON-NLS-1$
 	private static boolean extensionTargetsLoaded = false;
 	private static Map extensionTargetMap;
 	private static List extensionTargets;
@@ -298,7 +299,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		String xml = null;
 		try {
 			Serializer serializer
-				= SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format);
+				= SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(new OutputStreamWriter(s, "UTF8"), format); //$NON-NLS-1$
 			serializer.asDOMSerializer().serialize(doc);
 			xml = s.toString("UTF8"); //$NON-NLS-1$		
 			IFile rscFile = project.getFile(FILE_NAME);
@@ -405,13 +406,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		if (resource instanceof IProject) {
 			// Must be an extension target (why?)
 			if (owner != null)
-				throw new BuildException("addTarget: owner not null");
+				throw new BuildException(ManagedBuilderCorePlugin.getResourceString("ManagedBuildManager.error.owner_not_null")); //$NON-NLS-1$
 		} else {
 			// Owner must be owned by the project containing this resource
 			if (owner == null)
-				throw new BuildException("addTarget: null owner");
+				throw new BuildException(ManagedBuilderCorePlugin.getResourceString("ManagedBuildManager.error.null_owner")); //$NON-NLS-1$
 			if (!owner.equals(resource.getProject()))
-				throw new BuildException("addTarget: owner not project");
+				throw new BuildException(ManagedBuilderCorePlugin.getResourceString("ManagedBuildManager.error.owner_not_project")); //$NON-NLS-1$
 		}
 		
 		// Passed validation

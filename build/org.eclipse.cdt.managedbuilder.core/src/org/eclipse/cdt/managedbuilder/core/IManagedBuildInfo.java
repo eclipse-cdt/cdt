@@ -14,6 +14,8 @@ package org.eclipse.cdt.managedbuilder.core;
 import java.util.List;
 
 public interface IManagedBuildInfo {
+	public static final String DEFAULT_TARGET = "defaultTarget";	//$NON-NLS-1$
+	public static final String DEFAULT_CONFIGURATION = "defaultConfig";	//$NON-NLS-1$
 
 	/**
 	 * Add a new target to the build information for the receiver

@@ -1,3 +1,21 @@
+2004-03-02 James Ciesielski
+	Marked those strings that are non-translatable as such and externalized 
+	those strings that can be translated.  There is still work to be done in
+	this area for this plugin.
+
+	* src/org/eclipse/cdt/managedbuilder/core/ManagedBuilderCorePlugin.java
+	* src/org/eclipse/cdt/managedbuilder/core/ManagedBuilderManager.java
+	* src/org/eclipse/cdt/managedbuilder/core/ManagedCProjectNature.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Configuration.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/GeneratedMakefileBuilder.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ManagedBuildInfo.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Option.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/OptionReference.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/PluginResources.properties
+
 2004-03-02 Sean Evoy
 	Work to support feature C1, "Set Tool Command in Project". 
 	Now it is possible to store an overridden tool command in a tool 

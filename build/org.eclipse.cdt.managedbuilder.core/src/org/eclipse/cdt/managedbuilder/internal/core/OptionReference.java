@@ -19,6 +19,7 @@ import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -190,7 +191,7 @@ public class OptionReference implements IOption {
 				while (iter.hasNext()) {
 					Element valueElement = doc.createElement(LIST_VALUE);
 					valueElement.setAttribute(LIST_ITEM_VALUE, (String)iter.next());
-					valueElement.setAttribute(LIST_ITEM_BUILTIN, "false");
+					valueElement.setAttribute(LIST_ITEM_BUILTIN, "false"); //$NON-NLS-1$
 					element.appendChild(valueElement);
 				}
 				// Serialize the built-ins that have been overridden
@@ -199,7 +200,7 @@ public class OptionReference implements IOption {
 					while (iter.hasNext()) {
 						Element valueElement = doc.createElement(LIST_VALUE);
 						valueElement.setAttribute(LIST_ITEM_VALUE, (String)iter.next());
-						valueElement.setAttribute(LIST_ITEM_BUILTIN, "true");
+						valueElement.setAttribute(LIST_ITEM_BUILTIN, "true"); //$NON-NLS-1$
 						element.appendChild(valueElement);
 					}
 				}
@@ -239,7 +240,7 @@ public class OptionReference implements IOption {
 			return (String[]) list.toArray(new String[list.size()]);
 		}
 		else
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -268,7 +269,7 @@ public class OptionReference implements IOption {
 			return (String[]) list.toArray(new String[list.size()]);
 		}
 		else
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -282,7 +283,7 @@ public class OptionReference implements IOption {
 			return (String[]) list.toArray(new String[list.size()]);
 		}
 		else
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -304,7 +305,7 @@ public class OptionReference implements IOption {
 			Boolean bool = (Boolean) value;
 			return bool.booleanValue();
 		} else {
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
 	
@@ -334,7 +335,7 @@ public class OptionReference implements IOption {
 			// Value will contain the human-readable name of the enum 
 			return (String) value;
 		} else {
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 		}
 	}
 
@@ -349,7 +350,7 @@ public class OptionReference implements IOption {
 			return (String[]) list.toArray(new String[list.size()]);
 		}
 		else
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -361,7 +362,7 @@ public class OptionReference implements IOption {
 		else if (getValueType() == STRING)
 			return (String)value;
 		else
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -391,7 +392,7 @@ public class OptionReference implements IOption {
 			return (String[]) list.toArray(new String[list.size()]);
 		}
 		else
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -433,7 +434,7 @@ public class OptionReference implements IOption {
 		if (getValueType() == BOOLEAN)
 			this.value = new Boolean(value);
 		else
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
 	/**
@@ -444,7 +445,7 @@ public class OptionReference implements IOption {
 		if (getValueType() == STRING || getValueType() == ENUMERATED)
 			this.value = value;
 		else
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -463,7 +464,7 @@ public class OptionReference implements IOption {
 			this.value = new ArrayList(Arrays.asList(value));
 		}
 		else
-			throw new BuildException("bad value type");
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
 	}
 
 }

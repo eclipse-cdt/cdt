@@ -74,13 +74,13 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		String defaultTargetId = null;
 		List configIds = new ArrayList();
 		while (child != null) {
-			if (child.getNodeName().equals("target")) {
+			if (child.getNodeName().equals(ITarget.TARGET_ELEMENT_NAME)) {
 				new Target(this, (Element)child);
-			} else if (child.getNodeName().equals("defaultConfig")) {
+			} else if (child.getNodeName().equals(DEFAULT_CONFIGURATION)) {
 				// We may not have read the config in yet, so just cache it
-				configIds.add(((Element)child).getAttribute("id"));
-			} else if (child.getNodeName().equals("defaultTarget")) {
-				defaultTargetId = ((Element)child).getAttribute("id");
+				configIds.add(((Element)child).getAttribute(IConfiguration.ID));
+			} else if (child.getNodeName().equals(DEFAULT_TARGET)) {
+				defaultTargetId = ((Element)child).getAttribute(ITarget.ID);
 			}
 			child = child.getNextSibling();
 		}
@@ -280,7 +280,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 							}
 							String key = new String();
 							String value = new String();
-							int index = symbol.indexOf("=");
+							int index = symbol.indexOf("="); //$NON-NLS-1$
 							if (index != -1) {
 								key = symbol.substring(0, index).trim();
 								value = symbol.substring(index + 1).trim();
@@ -392,7 +392,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		IPath location = owner.getLocation();
 		// If the build info is out of date this might be null
 		if (location == null) {
-			location = new Path(".");
+			location = new Path("."); //$NON-NLS-1$
 		}
 		IPath root = location.addTrailingSeparator().append(config.getName());
 		ITool[] tools = config.getTools();
@@ -824,21 +824,21 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	public void serialize(Document doc, Element element) {
 		// Write out each target and their default config
 		for (int i = 0; i < targets.size(); ++i) {
-			Element targetElement = doc.createElement("target");
+			Element targetElement = doc.createElement(ITarget.TARGET_ELEMENT_NAME);
 			element.appendChild(targetElement);
 			((Target)targets.get(i)).serialize(doc, targetElement);
 			IConfiguration config = getDefaultConfiguration((ITarget)targets.get(i));
 			if (config != null) {
-				Element configEl = doc.createElement("defaultConfig");
+				Element configEl = doc.createElement(DEFAULT_CONFIGURATION);
 				element.appendChild(configEl);
-				configEl.setAttribute("id", config.getId());
+				configEl.setAttribute(IConfiguration.ID, config.getId());
 			}
 		}
 		// Persist the default target
 		if (getDefaultTarget() != null){
-			Element targEl = doc.createElement("defaultTarget");
+			Element targEl = doc.createElement(DEFAULT_TARGET);
 			element.appendChild(targEl);
-			targEl.setAttribute("id", getDefaultTarget().getId());
+			targEl.setAttribute(ITarget.ID, getDefaultTarget().getId());
 		}
 	}
 

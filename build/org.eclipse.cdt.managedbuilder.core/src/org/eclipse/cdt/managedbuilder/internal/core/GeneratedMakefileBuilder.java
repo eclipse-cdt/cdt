@@ -206,9 +206,9 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 	protected String[] getMakeTargets(boolean fullBuild) {
 		List args = new ArrayList();
 		if (fullBuild) {
-			args.add("clean");
+			args.add("clean"); //$NON-NLS-1$
 		}
-		args.add("all");
+		args.add("all"); //$NON-NLS-1$
 		return (String[])args.toArray(new String[args.size()]);
 	}
 	
@@ -337,7 +337,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				ArrayList makeArgs = new ArrayList();
 				String arg = info.getMakeArguments();
 				if (arg.length() > 0) {
-					String[] args = arg.split("\\s");
+					String[] args = arg.split("\\s"); //$NON-NLS-1$
 					for (int i = 0; i < args.length; ++i) {
 						makeArgs.add(args[i]);
 					}
@@ -406,13 +406,13 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				if (errMsg != null && errMsg.length() > 0) {
 					String errorDesc = ManagedBuilderCorePlugin.getResourceString(BUILD_ERROR);
 					buf.append(errorDesc);
-					buf.append(System.getProperty("line.separator", "\n"));
-					buf.append("(").append(errMsg).append(")");
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-2$
+					buf.append("(").append(errMsg).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					// Report a successful build
 					String successMsg = ManagedBuilderCorePlugin.getFormattedString(BUILD_FINISHED, currentProject.getName());
 					buf.append(successMsg);
-					buf.append(System.getProperty("line.separator", "\n"));
+					buf.append(System.getProperty("line.separator", "\n")); //$NON-NLS-2$
 				}
 
 				// Write message on the console
@@ -421,7 +421,7 @@ public class GeneratedMakefileBuilder extends ACBuilder {
 				stdout.close();
 				stderr.close();				
 
-				monitor.subTask(ManagedBuilderCorePlugin.getResourceString(MARKERS)); //$NON-NLS-1$
+				monitor.subTask(ManagedBuilderCorePlugin.getResourceString(MARKERS));
 				epm.reportProblems();
 			}
 		} catch (Exception e) {

@@ -134,7 +134,6 @@ public class RxThread extends Thread {
 				// Clear the accumulate oobList on each new Result Command
 				// response.
 				MIOOBRecord[] oobRecords = (MIOOBRecord[]) oobList.toArray(new MIOOBRecord[0]);
-				oobList.clear();
 
 				// Check if the state changed.
 				String state = rr.getResultClass();
@@ -163,7 +162,7 @@ public class RxThread extends Thread {
 					}
 					session.getMIInferior().setRunning();
 					MIEvent event = new MIRunningEvent(id, type);
-					session.fireEvent(event);
+					list.add(event);
 				} else if ("exit".equals(state)) { //$NON-NLS-1$
 					// No need to do anything, terminate() will.
 					session.getMIInferior().setTerminated();
@@ -173,8 +172,14 @@ public class RxThread extends Thread {
 					if (session.getMIInferior().isRunning()) {
 						session.getMIInferior().setSuspended();
 						MIEvent event = new MIErrorEvent(rr, oobRecords);
-						session.fireEvent(event);
+						list.add(event);
 					}
+				} else if ("done".equals(state)) { //$NON-NLS-1$
+					// Done usually mean that gdb returns after some CLI command
+					// Some result record contains informaton specific to oob.
+					// This will happen when CLI-Command is use, for example
+					// doing "run" will block and return a breakpointhit
+					processMIOOBRecord(rr, list);
 				}
 
 				// Notify the waiting command.
@@ -186,10 +191,9 @@ public class RxThread extends Thread {
 						cmd.notifyAll();
 					}
 				}
-				// Some result record contains informaton specific to oob.
-				// This will happen when CLI-Command is use, for example
-				// doing "run" will block and return a breakpointhit
-				processMIOOBRecord(rr, list);
+
+				// Clear the accumulate oobList on each new Result Command response.
+				oobList.clear();
 
 			} else {
 
@@ -223,7 +227,6 @@ public class RxThread extends Thread {
 			// Change of state.
 			String state = exec.getAsyncClass();
 			if ("stopped".equals(state)) { //$NON-NLS-1$
-				MIEvent e = null;
 				MIResult[] results = exec.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
@@ -231,7 +234,7 @@ public class RxThread extends Thread {
 					if (var.equals("reason")) { //$NON-NLS-1$
 						if (val instanceof MIConst) {
 							String reason = ((MIConst) val).getString();
-							e = createEvent(reason, exec);
+							MIEvent e = createEvent(reason, exec);
 							if (e != null) {
 								list.add(e);
 							}
@@ -247,21 +250,23 @@ public class RxThread extends Thread {
 				//
 				// Althought it is a _real_ bad idea to do this, we do not have
 				// any other alternatives.
-				String[] logs = getStreamRecords();
-				for (int i = 0; i < logs.length; i++) {
-					if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) { //$NON-NLS-1$
-						session.getMIInferior().setSuspended();
-						e = new MISharedLibEvent(exec);
-						list.add(e);
+				if (list.isEmpty()) {
+					String[] logs = getStreamRecords();
+					for (int i = 0; i < logs.length; i++) {
+						if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) { //$NON-NLS-1$
+							session.getMIInferior().setSuspended();
+							MIEvent e = new MISharedLibEvent(exec);
+							list.add(e);
+						}
 					}
 				}
 
 				// We were stopped for some unknown reason, for example
 				// GDB for temporary breakpoints will not send the
 				// "reason" ??? still fire a stopped event.
-				if (e == null) {
+				if (list.isEmpty()) {
 					session.getMIInferior().setSuspended();
-					e = new MIStoppedEvent(exec);
+					MIEvent e = new MIStoppedEvent(exec);
 					list.add(e);
 				}
 			}
@@ -323,7 +328,7 @@ public class RxThread extends Thread {
 	}
 
 	/**
-	 * Dispatch a thread to deal with the listeners.
+	 * Check for any info that we can gather form the console.
 	 */
 	void processMIOOBRecord(MIResultRecord rr, List list) {
 		MIResult[] results = rr.getMIResults();
@@ -338,6 +343,34 @@ public class RxThread extends Thread {
 						list.add(event);
 					}
 				}
+			}
+		}
+		// GDB does not have reason when stopping on shared, hopefully
+		// this will be fix in newer version meanwhile, we will use a hack
+		// to cope.  On most platform we can detect this state by looking at the
+		// console stream for the phrase:
+		// 	~"Stopped due to shared library event\n"
+		//
+		// Althought it is a _real_ bad idea to do this, we do not have
+		// any other alternatives.
+		if (list.isEmpty()) {
+			String[] logs = getStreamRecords();
+			for (int i = 0; i < logs.length; i++) {
+				if (logs[i].equalsIgnoreCase("Stopped due to shared library event")) { //$NON-NLS-1$
+					session.getMIInferior().setSuspended();
+					MIEvent e = new MISharedLibEvent(rr);
+					list.add(e);
+				}
+			}
+		}
+		// We were stopped for some unknown reason, for example
+		// GDB for temporary breakpoints will not send the
+		// "reason" ??? still fire a stopped event.
+		if (list.isEmpty()) {
+			if (session.getMIInferior().isRunning()) {
+				session.getMIInferior().setSuspended();
+				MIEvent event = new MIStoppedEvent(rr);
+				session.fireEvent(event);
 			}
 		}
 	}

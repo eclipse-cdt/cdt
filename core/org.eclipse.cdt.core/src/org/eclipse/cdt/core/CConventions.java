@@ -326,6 +326,8 @@ public class CConventions {
 			return false;
 		}
 
+		//TODO we need platform-independent validation, see bug#24152
+		
 		int len = name.length();
 //		if (Character.isWhitespace(name.charAt(0)) || Character.isWhitespace(name.charAt(len - 1))) {
 //			return false;
@@ -358,7 +360,9 @@ public class CConventions {
 			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.filename.nullName"), null); //$NON-NLS-1$
 		}
 		if (!isLegalFilename(name)) {
-			return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.filename.invalid"), null); //$NON-NLS-1$
+			//TODO we need platform-independent validation, see bug#24152
+			//return new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.filename.invalid"), null); //$NON-NLS-1$
+			return new Status(IStatus.WARNING, CCorePlugin.PLUGIN_ID, -1, Util.bind("convention.filename.possiblyInvalid"), null); //$NON-NLS-1$
 		}
 
 		String trimmed = name.trim();

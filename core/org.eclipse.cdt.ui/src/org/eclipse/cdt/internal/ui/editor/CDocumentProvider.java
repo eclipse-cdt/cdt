@@ -87,7 +87,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		/** 
 		 * The layer in which task problem annotations are located.
 		 */
-		private static final int TASK_LAYER;
+		//private static final int TASK_LAYER;
 		/** 
 		 * The layer in which info problem annotations are located.
 		 */
@@ -103,7 +103,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		
 		static {
 			AnnotationPreferenceLookup lookup= EditorsUI.getAnnotationPreferenceLookup();
-			TASK_LAYER= computeLayer("org.eclipse.ui.workbench.texteditor.task", lookup); //$NON-NLS-1$
+			//TASK_LAYER= computeLayer("org.eclipse.ui.workbench.texteditor.task", lookup); //$NON-NLS-1$
 			INFO_LAYER= computeLayer("org.eclipse.cdt.ui.info", lookup); //$NON-NLS-1$
 			WARNING_LAYER= computeLayer("org.eclipse.cdt.ui.warning", lookup); //$NON-NLS-1$
 			ERROR_LAYER= computeLayer("org.eclipse.cdt.ui.error", lookup); //$NON-NLS-1$
@@ -114,8 +114,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 			AnnotationPreference preference= lookup.getAnnotationPreference(annotation);
 			if (preference != null)
 				return preference.getPresentationLayer() + 1;
-			else
-				return IAnnotationAccessExtension.DEFAULT_LAYER + 1;
+			return IAnnotationAccessExtension.DEFAULT_LAYER + 1;
 		}
 		
 		private static Image fgQuickFixImage;
@@ -870,7 +869,7 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 		IResource resource= info.fCopy.getResource();
 		
 		//Assert.isTrue(resource instanceof IFile);
-		if (resource != null && !resource.exists()) {
+		if (resource instanceof IFile && !resource.exists()) {
 			// underlying resource has been deleted, just recreate file, ignore the rest
 			createFileFromDocument(monitor, (IFile) resource, document);
 			return;
@@ -927,10 +926,9 @@ public class CDocumentProvider extends TextFileDocumentProvider {
 						IResourceRuleFactory ruleFactory= ResourcesPlugin.getWorkspace().getRuleFactory();
 						if (file == null || !file.exists())
 							return ruleFactory.createRule(file);
-						else
-							return ruleFactory.modifyRule(file);
-					} else
-						return null;
+						return ruleFactory.modifyRule(file);
+					}
+					return null;
 				}
 			};
 		}

@@ -1407,6 +1407,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
                 }
             }
         } 
+        
+        // x = y; // default to int
+        // valid @ Translation Unit scope
+        // but not valid as a statement in a function body
         if( ds.getDeclaration() instanceof IASTSimpleDeclaration && 
         	((IASTSimpleDeclaration)ds.getDeclaration()).getDeclSpecifier() instanceof IASTSimpleDeclSpecifier &&
         	((IASTSimpleDeclSpecifier)((IASTSimpleDeclaration)ds.getDeclaration()).getDeclSpecifier() ).getType() == IASTSimpleDeclSpecifier.t_unspecified)

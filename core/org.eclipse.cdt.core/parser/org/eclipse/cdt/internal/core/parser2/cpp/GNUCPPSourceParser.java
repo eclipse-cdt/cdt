@@ -3425,6 +3425,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
                             try {
                                 try {
                                     name();
+                                    //TODO - we need to lookup/resolve this name
+                                    //see if its a type ... 
+                                    //if it is a type, failed = false
+                                    //else failed = true
                                     failed = false;
                                 } catch (Exception e) {
                                     int endOffset = (lastToken != null) ? lastToken

@@ -2648,26 +2648,19 @@ abstract class BaseScanner implements IScanner {
       }
       
       CodeReader reader = null;
-	  File parentFile = null;
+	  File currentDirectory = null;
 	  if (local || include_next) {
-			// we need to know what the current directory is!
+			// if the include is eclosed in quotes OR we are in an include_next then we need to know what the current directory is!
 			File file = new File(String.valueOf(getCurrentFilename()));
-			parentFile = file.getParentFile();
+			currentDirectory = file.getParentFile();
 	  }
+	  
 
 	  if (local && !include_next) {
-			// create an include path reconciled to the current directory
-
-			if (parentFile != null) {
-				String absolutePath = parentFile.getAbsolutePath();
-				String finalPath = ScannerUtility.createReconciledPath(
-						absolutePath, filename);
-				reader = (CodeReader) fileCache.get(finalPath.toCharArray());
-				if (reader == null) {
-					reader = createReaderDuple(finalPath);
-					if (reader != null && reader.filename != null)
-						fileCache.put(reader.filename, reader);
-				}
+			// Check to see if we find a match in the current directory
+			if (currentDirectory != null) {
+				String absolutePath = currentDirectory.getAbsolutePath();
+				reader = createReader(absolutePath, filename);
 				if (reader != null) {
 					pushContext(reader.buffer, new InclusionData(reader,
 							createInclusionConstruct(fileNameArray,
@@ -2680,33 +2673,15 @@ abstract class BaseScanner implements IScanner {
 			}
 		}
 
-         // iterate through the include paths
-         // foundme has odd logic but if we're not include_next, then we are
-         // looking for the
-         // first occurance, otherwise, we're looking for the one after the
-			// current directory
-         boolean foundme = !include_next;
-         if (includePaths != null)
-            for (int i = 0; i < includePaths.length; ++i) {
-				if (!foundme) {
-					try {
-						String path = new File(includePaths[i])
-								.getCanonicalPath();
-						String parent = parentFile.getCanonicalPath();
-						if (path.equals(parent))
-							foundme = true;
-					} catch (IOException e) {
-					}
-					continue;
-				}
-				String finalPath = ScannerUtility.createReconciledPath(
-						includePaths[i], filename);
-				reader = (CodeReader) fileCache.get(finalPath.toCharArray());
-				if (reader == null) {
-					reader = createReaderDuple(finalPath);
-					if (reader != null && reader.filename != null)
-						fileCache.put(reader.filename, reader);
-				}
+         // if we're not include_next, then we are looking for the
+         // first occurance of the file, otherwise, we ignore all the paths before the 
+		 // current directory
+         if (includePaths != null) {
+    	  	int startpos = 0;
+    	  	if (include_next)
+    	  		startpos = findIncludePos(includePaths, currentDirectory) + 1;
+            for (int i = startpos; i < includePaths.length; ++i) {
+            	reader = createReader(includePaths[i], filename);
 				if (reader != null) {
 					pushContext(reader.buffer, new InclusionData(reader,
 							createInclusionConstruct(fileNameArray,
@@ -2717,12 +2692,42 @@ abstract class BaseScanner implements IScanner {
 					return;
 				}
 			}
+         }
+        
+        handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND, startOffset, fileNameArray);
+   }
+   
+   private CodeReader createReader(String path, String fileName)
+   {
+   	String finalPath = ScannerUtility.createReconciledPath(path, fileName);
+   	CodeReader reader = (CodeReader) fileCache.get(finalPath.toCharArray());
+	if (reader != null) 
+		return reader;  // found the file in the cache
 
-         if (reader == null)
-            handleProblem(IProblem.PREPROCESSOR_INCLUSION_NOT_FOUND,
-                  startOffset, fileNameArray);
+	// create a new reader on this file (if the file does not exist we will get null)
+	reader = createReaderDuple(finalPath);
+	if (reader == null) 
+		return null;  // the file was not found
+	
+	if (reader.filename != null)
+		fileCache.put(reader.filename, reader);
+	
+	return reader;
    }
 
+   private int findIncludePos( String[] paths, File currentDirectory)
+   {
+   		for (int i = 0; i < paths.length; ++i)
+			try {
+				String path = new File(paths[i]).getCanonicalPath();
+				String parent = currentDirectory.getCanonicalPath();
+				if (path.equals(parent))
+					return i;
+			} catch (IOException e) {
+			}
+
+		return -1;
+   }
    /**
 	 * @param finalPath
 	 * @return

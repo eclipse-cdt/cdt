@@ -1,4 +1,8 @@
 2003-03-25 Mikhail Khodjaiants
+	Fix for bug 35092.
+	* CDebugImages.java
+
+2003-03-25 Mikhail Khodjaiants
 	Added the 'logErrorMessage' static method to the 'CDebugUIPlugin' class.
 	* CDebugUIPlugin.java
 

@@ -7,6 +7,8 @@ package org.eclipse.cdt.debug.internal.ui;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.jface.action.IAction;
@@ -41,7 +43,8 @@ public class CDebugImages
 	}
 
 	// The plugin registry
-	private final static ImageRegistry IMAGE_REGISTRY = new ImageRegistry( CDebugUIPlugin.getStandardDisplay() );
+	private static ImageRegistry fgImageRegistry = null;
+	private static HashMap fgAvoidSWTErrorMap = null;
 
 	/*
 	 * Available cached Images in the C/C++ debug plug-in image registry.
@@ -133,7 +136,7 @@ public class CDebugImages
 	 */ 
 	public static Image get( String key )
 	{
-		return IMAGE_REGISTRY.get( key );
+		return getImageRegistry().get( key );
 	}
 
 	/**
@@ -157,10 +160,19 @@ public class CDebugImages
 	/*
 	 * Helper method to access the image registry from the JDIDebugUIPlugin class.
 	 */
-	/* package */
-	static ImageRegistry getImageRegistry()
+	/* package */ static ImageRegistry getImageRegistry()
 	{
-		return IMAGE_REGISTRY;
+		if ( fgImageRegistry == null )
+		{
+			fgImageRegistry = new ImageRegistry();
+			for ( Iterator iter = fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext(); )
+			{
+				String key = (String)iter.next();
+				fgImageRegistry.put( key, (ImageDescriptor)fgAvoidSWTErrorMap.get( key ) );
+			}
+			fgAvoidSWTErrorMap = null;
+		}
+		return fgImageRegistry;
 	}
 
 	//---- Helper methods to access icons on the file system --------------------------------------
@@ -198,7 +210,15 @@ public class CDebugImages
 		try
 		{
 			ImageDescriptor result = ImageDescriptor.createFromURL( makeIconFileURL( prefix, name.substring( NAME_PREFIX_LENGTH ) ) );
-			IMAGE_REGISTRY.put( name, result );
+			if ( fgAvoidSWTErrorMap == null )
+			{
+				fgAvoidSWTErrorMap = new HashMap();
+			}
+			fgAvoidSWTErrorMap.put( name, result );
+			if ( fgImageRegistry != null )
+			{
+				CDebugUIPlugin.logErrorMessage( "Internal Error: Image registry already defined" ); //$NON-NLS-1$
+			}
 			return result;
 		}
 		catch( MalformedURLException e )

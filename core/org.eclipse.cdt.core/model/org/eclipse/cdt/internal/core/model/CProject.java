@@ -435,14 +435,41 @@ public class CProject extends Openable implements ICProject {
 	 * @throws CModelException
 	 */
 	public ISourceRoot[] getAllSourceRoots() throws CModelException {
-		return computeSourceRoots();
+		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(this);
+		ISourceRoot[] roots = null;
+		if (pinfo != null) {
+			if (pinfo.sourceRoots != null) {
+				roots = pinfo.sourceRoots;
+			} else {
+				roots = pinfo.sourceRoots = computeSourceRoots();				
+			}
+		} else {
+			roots = computeSourceRoots();
+		}
+		return roots;
+	}
+
+	public IOutputEntry[] getOutputEntries() throws CModelException {
+		CProjectInfo pinfo = (CProjectInfo)CModelManager.getDefault().peekAtInfo(this);
+		IOutputEntry[] outs = null;
+		if (pinfo != null) {
+			if (pinfo.outputEntries != null) {
+				outs = pinfo.outputEntries;
+			} else {
+				IPathEntry[] entries = getResolvedPathEntries();
+				outs = pinfo.outputEntries = getOutputEntries(entries);				
+			}
+		} else {
+			IPathEntry[] entries = getResolvedPathEntries();
+			outs = getOutputEntries(entries);
+		}
+		return outs;		
 	}
 
 	/**
 	 * 
 	 */
-	public IOutputEntry[] getOutputEntries() throws CModelException {
-		IPathEntry[] entries = getResolvedPathEntries();
+	public IOutputEntry[] getOutputEntries(IPathEntry[] entries) throws CModelException {
 		ArrayList list = new ArrayList(entries.length);
 		for (int i = 0; i < entries.length; i++) {
 			if (entries[i].getEntryKind() == IPathEntry .CDT_OUTPUT) {

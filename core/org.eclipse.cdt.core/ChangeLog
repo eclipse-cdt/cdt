@@ -1,5 +1,14 @@
 2004-04-06 Alain Magloire
 
+	Cache the values in the info.
+
+	* model/org/eclipse/cdt/internal/core/model/CElement.java
+	* model/org/eclipse/cdt/internal/core/model/CProject.java
+	* model/org/eclipse/cdt/internal/core/model/CProjectInfo.java
+	* model/org/eclipse/cdt//core/model/CoreModel.java
+	
+2004-04-06 Alain Magloire
+
 	Patch from Chris Wiebe.
 	This patch provides some improvements to the Open Type action, such as
 	per-file type caching (much faster now) and extra filtering options in

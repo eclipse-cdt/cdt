@@ -13,6 +13,7 @@ import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.core.model.ILibraryReference;
+import org.eclipse.cdt.core.model.IOutputEntry;
 import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -29,6 +30,8 @@ class CProjectInfo extends OpenableInfo {
 	ArchiveContainer vLib;
 	ILibraryReference[] libReferences;
 	IIncludeReference[] incReferences;
+	ISourceRoot[] sourceRoots;
+	IOutputEntry[] outputEntries;
 
 	Object[] nonCResources = null;
 
@@ -146,6 +149,9 @@ class CProjectInfo extends OpenableInfo {
 				}
 			}
 		}
+		sourceRoots = null;
+		outputEntries = null;
+		setNonCResources(null);
 	}
 
 }

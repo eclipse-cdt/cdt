@@ -302,18 +302,6 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 * @throws CModelException
 	 */
 	public void close() throws CModelException {
-		//Object info = CModelManager.getDefault().peekAtInfo(this);
-		//if (info != null) {
-		//	if (this instanceof IParent) {
-		//		ICElement[] children = ((CElementInfo) info).getChildren();
-		//		for (int i = 0, size = children.length; i < size; ++i) {
-		//			CElement child = (CElement) children[i];
-		//			child.close();
-		//		}
-		//	}
-		//	closing(info);
-		//	CModelManager.getDefault().removeInfo(this);
-		//}
 		CModelManager.getDefault().releaseCElement(this);
 	}
 

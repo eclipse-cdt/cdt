@@ -1,0 +1,7 @@
+2002-10-11 Mikhail Khodjaiants
+	* SwitchToDisassemblyActionDelegate.java: Implementation of the 'Switch to disassembly mode' action.
+	* plugin.properties: Action label and tooltip.
+	* plugin.xml: Contribution to the 'Launch View'.
+	* icons/full/clcl16/disassembly.gif: Hover icon.
+	* icons/full/dlcl16/disassembly.gif: Disabled icon.
+	* icons/full/elcl16/disassembly.gif: Enabled icon.

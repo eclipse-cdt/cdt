@@ -222,6 +222,21 @@
                </pluginState>
             </enablement>
          </action>
+         <action
+               label="%SwitchToDisassemblyAction.label"
+               icon="icons/full/clcl16/disassembly.gif"
+               helpContextId="switch_to_disassembly_action_context"
+               class="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate"
+               menubarPath="renderGroup"
+               enablesFor="1"
+               id="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate">
+            <enablement>
+               <pluginState
+                     value="activated"
+                     id="org.eclipse.cdt.debug.ui">
+               </pluginState>
+            </enablement>
+         </action>
       </viewerContribution>
       <viewerContribution
             targetID="#CEditorRulerContext"
@@ -339,20 +354,28 @@
                label="%RestartAction.label"
                tooltip="%RestartAction.tooltip">
          </action>
-      </viewContribution>
-      <viewContribution
-            targetID="org.eclipse.debug.ui.DebugView"
-            id="org.eclipse.cdt.debug.ui.debugview.toolbar">
          <action
-               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               label="%ShowFullPathsAction.label"
                toolbarPath="renderGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
+               disabledIcon="icons/full/dlcl16/show_paths.gif"
                hoverIcon="icons/full/clcl16/show_paths.gif"
                class="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction"
-               disabledIcon="icons/full/dlcl16/show_paths.gif"
                icon="icons/full/elcl16/show_parents.gif"
                helpContextId="show_full_paths_action_context"
-               label="%ShowFullPathsAction.label"
                tooltip="%ShowFullPathsAction.tooltip">
+         </action>
+         <action
+               toolbarPath="renderGroup"
+               id="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate"
+               hoverIcon="icons/full/clcl16/disassembly.gif"
+               class="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate"
+               disabledIcon="icons/full/dlcl16/disassembly.gif"
+               enablesFor="1"
+               icon="icons/full/elcl16/disassembly.gif"
+               helpContextId="switch_to_disassembly_action_context"
+               label="%SwitchToDisassemblyAction.label"
+               tooltip="%SwitchToDisassemblyAction.tooltip">
          </action>
       </viewContribution>
       <viewContribution
@@ -433,6 +456,9 @@
          </action>
          <action
                id="org.eclipse.cdt.debug.internal.ui.actions.ShowFullPathsAction">
+         </action>
+         <action
+               id="org.eclipse.cdt.debug.internal.ui.actions.SwitchToDisassemblyActionDelegate">
          </action>
       </debugActionGroup>
    </extension>

@@ -2743,7 +2743,6 @@ public class Parser implements IParser
                         secondExpression,
                         null,
                         null,
-                        null,
                         "", null);
             }
             catch (ASTSemanticException e)
@@ -2827,7 +2826,6 @@ public class Parser implements IParser
                 null,
                 null,
                 null,
-                null,
                 "", null);
         }
         catch (ASTSemanticException e)
@@ -2858,7 +2856,6 @@ public class Parser implements IParser
                 scope,
                 IASTExpression.Kind.THROWEXPRESSION,
                 throwExpression,
-                null,
                 null,
                 null,
                 null,
@@ -2894,7 +2891,6 @@ public class Parser implements IParser
                     secondExpression,
                     thirdExpression,
                     null,
-                    null,
                     "", null);
             }
             catch (ASTSemanticException e)
@@ -2929,7 +2925,6 @@ public class Parser implements IParser
                         secondExpression,
                         null,
                         null,
-                        null,
                         "", null);
             }
             catch (ASTSemanticException e)
@@ -2960,7 +2955,6 @@ public class Parser implements IParser
                         IASTExpression.Kind.LOGICALANDEXPRESSION,
                         firstExpression,
                         secondExpression,
-                        null,
                         null,
                         null,
                         "", null);
@@ -2996,7 +2990,6 @@ public class Parser implements IParser
                         secondExpression,
                         null,
                         null,
-                        null,
                         "", null);
             }
             catch (ASTSemanticException e)
@@ -3030,7 +3023,6 @@ public class Parser implements IParser
                         secondExpression,
                         null,
                         null,
-                        null,
                         "", null);
             }
             catch (ASTSemanticException e)
@@ -3061,7 +3053,6 @@ public class Parser implements IParser
                         IASTExpression.Kind.ANDEXPRESSION,
                         firstExpression,
                         secondExpression,
-                        null,
                         null,
                         null,
                         "", null);
@@ -3102,7 +3093,6 @@ public class Parser implements IParser
                                     : IASTExpression.Kind.EQUALITY_NOTEQUALS,
                                 firstExpression,
                                 secondExpression,
-                                null,
                                 null,
                                 null,
                                 "", null);
@@ -3181,7 +3171,6 @@ public class Parser implements IParser
                                     secondExpression,
                                     null,
                                     null,
-                                    null,
                                     "", null);
                         }
                         catch (ASTSemanticException e)
@@ -3225,7 +3214,6 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                null,
                                 "", null);
                     }
                     catch (ASTSemanticException e)
@@ -3266,7 +3254,6 @@ public class Parser implements IParser
                                     : IASTExpression.Kind.ADDITIVE_MINUS),
                                 firstExpression,
                                 secondExpression,
-                                null,
                                 null,
                                 null,
                                 "", null);
@@ -3322,7 +3309,6 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                null,
                                 "", null);
                     }
                     catch (ASTSemanticException e)
@@ -3362,7 +3348,6 @@ public class Parser implements IParser
                                     : IASTExpression.Kind.PM_ARROWSTAR),
                                 firstExpression,
                                 secondExpression,
-                                null,
                                 null,
                                 null,
                                 "", null);
@@ -3411,7 +3396,6 @@ public class Parser implements IParser
                         scope,
                         IASTExpression.Kind.CASTEXPRESSION,
                         castExpression,
-                        null,
                         null,
                         null,
                         duple,
@@ -3524,7 +3508,6 @@ public class Parser implements IParser
                     ? IASTExpression.Kind.DELETE_VECTORCASTEXPRESSION
                     : IASTExpression.Kind.DELETE_CASTEXPRESSION),
                 castExpression,
-                null,
                 null,
                 null,
                 null,
@@ -3660,7 +3643,7 @@ public class Parser implements IParser
 							{
 							return astFactory.createExpression(
 								scope, IASTExpression.Kind.NEW_TYPEID, 
-								null, null,	null, null, typeId, "", 
+								null, null, null, typeId, "", 
 								astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
 							}
 							catch (ASTSemanticException e)
@@ -3705,7 +3688,7 @@ public class Parser implements IParser
 		{
         return astFactory.createExpression(
         	scope, IASTExpression.Kind.NEW_TYPEID, 
-			null, null,	null, null, typeId, "", 
+			null, null, null, typeId, "", 
 			astFactory.createNewDescriptor(newPlacementExpressions, newTypeIdExpressions, newInitializerExpressions));
 		}
 		catch (ASTSemanticException e)
@@ -3726,7 +3709,6 @@ public class Parser implements IParser
                 scope,
                 kind,
                 castExpression,
-                null,
                 null,
                 null,
                 null,
@@ -3811,7 +3793,6 @@ public class Parser implements IParser
                             null,
                             null,
                             null,
-                            null,
                             d,
                             "", null);
                     }
@@ -3827,7 +3808,6 @@ public class Parser implements IParser
                             scope,
                             IASTExpression.Kind.UNARY_SIZEOF_UNARYEXPRESSION,
                             unaryExpression,
-                            null,
                             null,
                             null,
                             null,
@@ -3970,7 +3950,6 @@ public class Parser implements IParser
                             lhs,
                             null,
                             null,
-                            null,
                             typeId,
                             "", null);
                 }
@@ -4002,7 +3981,6 @@ public class Parser implements IParser
                                 firstExpression,
                                 secondExpression,
                                 null,
-                        		null,
                                 null,
                                 "", null);
                     }
@@ -4027,7 +4005,6 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                null,
                                 "", null);
                     }
                     catch (ASTSemanticException e3)
@@ -4048,7 +4025,6 @@ public class Parser implements IParser
                                 null,
                                 null,
                                 null,
-                                null,
                                 "", null);
                     }
                     catch (ASTSemanticException e1)
@@ -4066,7 +4042,6 @@ public class Parser implements IParser
                                 scope,
                                 IASTExpression.Kind.POSTFIX_DECREMENT,
                                 firstExpression,
-                                null,
                                 null,
                                 null,
                                 null,
@@ -4099,7 +4074,6 @@ public class Parser implements IParser
                                 secondExpression,
                                 null,
                                 null,
-                                null,
                                 "", null);
                     }
                     catch (ASTSemanticException e5)
@@ -4127,7 +4101,6 @@ public class Parser implements IParser
                                     : IASTExpression.Kind.POSTFIX_ARROW_IDEXPRESSION),
                                 firstExpression,
                                 secondExpression,
-                                null,
                                 null,
                                 null,
                                 "", null);
@@ -4163,7 +4136,6 @@ public class Parser implements IParser
                 null,
                 null,
                 null,
-                null,
                 "", null);
         }
         catch (ASTSemanticException e)
@@ -4186,7 +4158,6 @@ public class Parser implements IParser
                 scope,
                 type,
                 inside,
-                null,
                 null,
                 null,
                 null,
@@ -4220,7 +4191,6 @@ public class Parser implements IParser
                         null,
                         null,
                         null,
-                        null,
                         t.getImage(), null);
                 }
                 catch (ASTSemanticException e1)
@@ -4239,7 +4209,6 @@ public class Parser implements IParser
                         null,
                         null,
                         null,
-                        null,
                         t.getImage(), null);
                 }
                 catch (ASTSemanticException e2)
@@ -4252,7 +4221,7 @@ public class Parser implements IParser
 				t = consume();
 				try
                 {
-                    return astFactory.createExpression( scope, IASTExpression.Kind.PRIMARY_STRING_LITERAL, null, null, null, null, null, t.getImage(), null );
+                    return astFactory.createExpression( scope, IASTExpression.Kind.PRIMARY_STRING_LITERAL, null, null, null, null, t.getImage(), null );
                 }
                 catch (ASTSemanticException e5)
                 {
@@ -4268,7 +4237,6 @@ public class Parser implements IParser
                     return astFactory.createExpression(
                         scope,
                         IASTExpression.Kind.PRIMARY_BOOLEAN_LITERAL,
-                        null,
                         null,
                         null,
                     	null,
@@ -4294,7 +4262,6 @@ public class Parser implements IParser
                         null,
                         null,
                         null,
-                        null,
                         t.getImage(), null);
                 }
                 catch (ASTSemanticException e4)
@@ -4310,7 +4277,6 @@ public class Parser implements IParser
                     return astFactory.createExpression(
                         scope,
                         IASTExpression.Kind.PRIMARY_THIS,
-                        null,
                         null,
                         null,
                         null,
@@ -4334,7 +4300,6 @@ public class Parser implements IParser
                         lhs,
                         null,
                         null,
-                    	null,
                         null,
                         "", null);
                 }
@@ -4353,7 +4318,6 @@ public class Parser implements IParser
                         IASTExpression.Kind.ID_EXPRESSION,
                         null,
                         null,
-                        null,
                     	null,
 						duple,
                         "", null);
@@ -4369,7 +4333,6 @@ public class Parser implements IParser
                     return astFactory.createExpression(
                         scope,
                         IASTExpression.Kind.PRIMARY_EMPTY,
-                        null,
                         null,
                         null,
                     	null,

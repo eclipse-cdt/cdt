@@ -119,7 +119,7 @@ public interface IASTExpression extends ISourceElementCallbackDelegate
         {
             super(enumValue);
         }
-		
+        		
 	}
 	
 	public interface IASTNewExpressionDescriptor
@@ -136,8 +136,7 @@ public interface IASTExpression extends ISourceElementCallbackDelegate
 	public IASTExpression getRHSExpression();
 	public IASTExpression getThirdExpression();
 	public String getLiteralString(); 
-	public String getTypeId(); 	
-	public String getId();
+	public String getTypeIdString(); 	
 	public IASTNewExpressionDescriptor getNewExpressionDescriptor(); 
 	
 	public int evaluateExpression() throws ExpressionEvaluationException;

@@ -1429,7 +1429,7 @@ public class QuickParseASTTests extends BaseASTTest
 		assertFalse( enumerators.hasNext() );
 		assertEquals( enumerator.getName(), "isPointer");
 		assertEquals( enumerator.getInitialValue().getExpressionKind(), IASTExpression.Kind.ID_EXPRESSION ); 
-		assertEquals( enumerator.getInitialValue().getTypeId(), "PointerTraits<T>::result");
+		assertEquals( enumerator.getInitialValue().getTypeIdString(), "PointerTraits<T>::result");
 	}
 
 	public void testBug36690() throws Exception {

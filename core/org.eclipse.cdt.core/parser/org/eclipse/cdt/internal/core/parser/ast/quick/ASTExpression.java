@@ -22,7 +22,7 @@ public class ASTExpression implements IASTExpression {
 
 	private final Kind kind; 
 	private final IASTExpression lhs, rhs, third; 
-	private final String id, typeId, literal; 
+	private final String typeId, literal; 
 	private final IASTNewExpressionDescriptor newDescriptor;
 
 	/**
@@ -33,13 +33,12 @@ public class ASTExpression implements IASTExpression {
 	 * @param typeId
 	 * @param literal
 	 */
-	public ASTExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression third, String id, String typeId, String literal, IASTNewExpressionDescriptor newDescriptor) {
+	public ASTExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression third, String typeId, String literal, IASTNewExpressionDescriptor newDescriptor) {
 		this.kind = kind; 
 		this.lhs =lhs; 
 		this.rhs = rhs; 
 		this.third = third;
 		this.typeId = typeId; 
-		this.id = id; 
 		this.literal = literal;
 		this.newDescriptor = newDescriptor;
 	}
@@ -75,15 +74,8 @@ public class ASTExpression implements IASTExpression {
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getTypeId()
 	 */
-	public String getTypeId() {
+	public String getTypeIdString() {
 		return typeId;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getId()
-	 */
-	public String getId() {
-		return id;
 	}
 
 	/* (non-Javadoc)

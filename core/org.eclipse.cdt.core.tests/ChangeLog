@@ -1,3 +1,6 @@
+2003-09-04 Hoda Amer
+	Call to ASTExpression getTypeId() changed to getTypeIdString().
+	
 2003-09-03 Andrew Niefer
 	Modified ParserSymbolTableTest.testConstructors to test > 2 constructors
 

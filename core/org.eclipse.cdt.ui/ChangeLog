@@ -6,6 +6,9 @@
 	* src/org/eclipse/cdt/internal/ui/search/CSearchOperation.java
 	* src/org/eclipse/cdt/internal/ui/search/CSearchMessages.properties
 
+2003-09-04 Hoda Amer
+	- Solution to bug#42414 :Extraneous semi-colons in generated class methods
+	
 2003-09-03 David Inglis
 	Fixed parser block to save ids properly.
 	Use shared preference key for error parsers.

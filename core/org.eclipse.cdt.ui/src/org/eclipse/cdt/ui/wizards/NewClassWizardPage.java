@@ -811,7 +811,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		text.append(getNewClassName());
 		text.append("()");
 		if(isInline()){
-			text.append(" {};");
+			text.append(" {}");
 			text.append(lineDelimiter);						
 		}else {
 			text.append(";");
@@ -827,7 +827,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		text.append(getNewClassName());
 		text.append("()");
 		if(isInline()){
-			text.append(" {};");
+			text.append(" {}");
 			text.append(lineDelimiter);						
 		}else {
 			text.append(";");
@@ -864,7 +864,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		text.append(getNewClassName());
 		text.append("()");
 		text.append(lineDelimiter);			
-		text.append("{};");
+		text.append("{}");
 		text.append(lineDelimiter);			
 		
 		// destructor
@@ -873,7 +873,7 @@ public class NewClassWizardPage extends WizardPage implements Listener {
 		text.append(getNewClassName());
 		text.append("()"); 
 		text.append(lineDelimiter);			
-		text.append("{};"); 
+		text.append("{}"); 
 		text.append(lineDelimiter);				
 		return text.toString();
 	}

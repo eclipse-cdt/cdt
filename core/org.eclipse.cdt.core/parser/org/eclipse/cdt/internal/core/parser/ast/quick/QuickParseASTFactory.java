@@ -149,8 +149,8 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.ExpressionKind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IToken id, ITokenDuple typeId, String literal, IASTNewExpressionDescriptor newDescriptor) {
-		return new ASTExpression( kind, lhs, rhs, thirdExpression, id == null ? "" : id.getImage(), typeId == null ? "" : typeId.toString(), literal, newDescriptor );
+	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, ITokenDuple typeId, String literal, IASTNewExpressionDescriptor newDescriptor) {
+		return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId == null ? "" : typeId.toString(), literal, newDescriptor );
 	}
 
 	/* (non-Javadoc)

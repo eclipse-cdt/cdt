@@ -10,9 +10,11 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.ast.complete;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
+import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 
@@ -27,15 +29,15 @@ public class ASTExpression implements IASTExpression
     private final IASTExpression rhs;
     private final IASTExpression thirdExpression;
     private final String literal;
-    private final String typeId;
-    private final String id;
+    private final ITokenDuple typeId;
     private final IASTNewExpressionDescriptor newDescriptor;
     private final List references; 
+    private List resultType;
     /**
      * 
      */
     public ASTExpression( Kind kind, IASTExpression lhs, IASTExpression rhs, 
-		IASTExpression thirdExpression, String literal, String typeId, String id, IASTNewExpressionDescriptor newDescriptor, List references )
+		IASTExpression thirdExpression, ITokenDuple typeId, String literal, IASTNewExpressionDescriptor newDescriptor, List references )
     {
     	this.kind = kind; 
     	this.lhs = lhs;
@@ -43,9 +45,9 @@ public class ASTExpression implements IASTExpression
     	this.thirdExpression = thirdExpression;
     	this.literal = literal;
     	this.typeId = typeId;
-    	this.id = id; 
     	this.newDescriptor = newDescriptor;
     	this.references = references;
+    	resultType = new ArrayList();
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getExpressionKind()
@@ -85,16 +87,16 @@ public class ASTExpression implements IASTExpression
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getTypeId()
      */
-    public String getTypeId()
+    public String getTypeIdString()
     {
-        return typeId;
+        return typeId == null ? "" : typeId.toString();
     }
-    /* (non-Javadoc)
-     * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getId()
+    /*
+     * returns the type id token
      */
-    public String getId()
+    public ITokenDuple getTypeId()
     {
-        return id;
+    	return typeId;
     }
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.parser.ast.IASTExpression#getNewExpressionDescriptor()
@@ -139,4 +141,18 @@ public class ASTExpression implements IASTExpression
     {
     }
  
+	/**
+	 * @return
+	 */
+	public List getResultType() {
+		return resultType;
+	}
+
+	/**
+	 * @param i
+	 */
+	public void setResultType(List i) {
+		resultType = i;
+	}
+
 }

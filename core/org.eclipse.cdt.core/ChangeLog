@@ -1,3 +1,11 @@
+2003-09-04 Hoda Amer
+	- Changed the ASTExpression of the complete package to store the
+	whole ITOkenDuple for the typeId instead of just the string.
+	- Changed the ASTExpression in both quick and complete packages and
+	deleted the "id" parameter.
+	- Added partial solution to bug #42453: Exception result types not computed.
+	Now they are computed for simple types only.
+	
 2003-09-03 David Inglis
 	Added shared preference key for error parsers
 	

@@ -36,7 +36,7 @@ public abstract class TabFolderOptionBlock {
 	private Composite composite;
 	private boolean bShowMessageArea;
 	private String fErrorMessage;
-	private boolean bIsValid;
+	private boolean bIsValid = true;
 
 	private Label messageLabel;
 	private ArrayList pages;

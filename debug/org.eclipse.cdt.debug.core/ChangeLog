@@ -1,4 +1,8 @@
 2003-07-28 Mikhail Khodjaiants
+	Cleanup. Removed the unused 'getNumberOfChildren' method from the 'CValue' class.
+	* CValue.java
+
+2003-07-28 Mikhail Khodjaiants
 	Cleanup. Removed the 'reset' and 'getQualifiedName' methods from the 'ICVaraible' interface.
 	* ICVariable.java
 	* CVariable.java

@@ -207,21 +207,7 @@ public class CValue extends CDebugElement implements ICValue
 		}
 		return Arrays.asList( vars );
 	}
-	
-	protected int getNumberOfChildren() throws DebugException
-	{
-		int result = 0;
-		try
-		{
-			result = getUnderlyingValue().getChildrenNumber();
-		}
-		catch( CDIException e )
-		{
-			targetRequestFailed( e.getMessage(), null );
-		}
-		return result;
-	}
-	
+
 	protected String processCDIValue( String cdiValue )
 	{
 		String result = null;

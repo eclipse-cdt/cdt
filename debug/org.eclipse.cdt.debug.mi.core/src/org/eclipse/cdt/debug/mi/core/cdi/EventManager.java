@@ -44,6 +44,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIDetachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIGDBExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIInferiorSignalExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryChangedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIMemoryCreatedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRegisterChangedEvent;
@@ -139,6 +140,8 @@ public class EventManager extends SessionObject implements ICDIEventManager, Obs
 		} else if (miEvent instanceof MIDestroyedEvent) {
 			if (miEvent instanceof MIThreadExitEvent) {
 				cdiList.add(new DestroyedEvent(session,(MIThreadExitEvent)miEvent)); 
+			} else if (miEvent instanceof MIInferiorSignalExitEvent) {
+				cdiList.add(new ExitedEvent(session, (MIInferiorSignalExitEvent)miEvent));
 			} else if (miEvent instanceof MIInferiorExitEvent) {
 				cdiList.add(new ExitedEvent(session, (MIInferiorExitEvent)miEvent));
 			} else if (miEvent instanceof MIGDBExitEvent) {

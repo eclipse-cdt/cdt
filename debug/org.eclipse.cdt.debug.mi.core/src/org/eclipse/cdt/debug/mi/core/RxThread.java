@@ -23,6 +23,7 @@ import org.eclipse.cdt.debug.mi.core.event.MIErrorEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIFunctionFinishedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIInferiorSignalExitEvent;
 import org.eclipse.cdt.debug.mi.core.event.MILocationReachedEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIRunningEvent;
 import org.eclipse.cdt.debug.mi.core.event.MISignalEvent;
@@ -374,12 +375,18 @@ public class RxThread extends Thread {
 			}
 			session.getMIInferior().setSuspended();
 		} else if ("exited-normally".equals(reason) ||
-			"exited-signalled".equals(reason) ||
 			"exited".equals(reason)) {
 			if (exec != null) {
 				event = new MIInferiorExitEvent(exec);
 			} else if (rr != null) {
 				event = new MIInferiorExitEvent(rr);
+			}
+			session.getMIInferior().setTerminated();
+		} else if ("exited-signalled".equals(reason)) {
+			if (exec != null) {
+				event = new MIInferiorSignalExitEvent(exec);
+			} else if (rr != null) {
+				event = new MIInferiorSignalExitEvent(rr);
 			}
 			session.getMIInferior().setTerminated();
 		}

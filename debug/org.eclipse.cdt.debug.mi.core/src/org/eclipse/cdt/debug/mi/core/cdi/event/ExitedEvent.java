@@ -5,21 +5,29 @@
  */
 package org.eclipse.cdt.debug.mi.core.cdi.event;
 
-import org.eclipse.cdt.debug.core.cdi.ICDIExitInfo;
+import org.eclipse.cdt.debug.core.cdi.ICDISessionObject;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIObject;
-import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.ExitInfo;
+import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.SignalExitInfo;
+import org.eclipse.cdt.debug.mi.core.event.MIEvent;
 import org.eclipse.cdt.debug.mi.core.event.MIInferiorExitEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIInferiorSignalExitEvent;
 
 /**
  */
 public class ExitedEvent implements ICDIExitedEvent {
 
-	MIInferiorExitEvent event;
+	MIEvent event;
 	Session session;
 	
 	public ExitedEvent(Session s, MIInferiorExitEvent e) {
+		session = s;
+		event = e;
+	}
+
+	public ExitedEvent(Session s, MIInferiorSignalExitEvent e) {
 		session = s;
 		event = e;
 	}
@@ -27,8 +35,13 @@ public class ExitedEvent implements ICDIExitedEvent {
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.event.ICDIExitedEvent#getExitInfo()
 	 */
-	public ICDIExitInfo getExitInfo() {
-		return new ExitInfo(session, event);
+	public ICDISessionObject getReason() {
+		if (event instanceof MIInferiorExitEvent) {
+			return new ExitInfo(session, (MIInferiorExitEvent)event);
+		} else if (event instanceof MIInferiorSignalExitEvent) {
+			return new SignalExitInfo(session, (MIInferiorSignalExitEvent)event);
+		}
+		return session;
 	}
 
 	/**

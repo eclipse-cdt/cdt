@@ -53,6 +53,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -73,7 +74,7 @@ public class ManagedBuildTests extends TestCase {
 	private static final String stringVal = "-c -Wall";
 	private static final String anotherStringVal = "thevalue";
 	private static final String subExt = "bus";
-
+		
 	public ManagedBuildTests(String name) {
 		super(name);
 	}
@@ -440,6 +441,12 @@ public class ManagedBuildTests extends TestCase {
 			project = createProject(projectName);
 			// Now associate the builder with the project
 			addManagedBuildNature(project);
+			IProjectDescription description = project.getDescription();
+			// Make sure it has a managed nature
+			if (description != null) {
+				assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+			}
+
 		} catch (CoreException e) {
 			fail("Test failed on project creation: " + e.getLocalizedMessage());
 		}
@@ -637,18 +644,24 @@ public class ManagedBuildTests extends TestCase {
 		// Add the managed build nature
 		try {
 			ManagedCProjectNature.addManagedNature(project, new NullProgressMonitor());
+			ManagedCProjectNature.addManagedBuilder(project, new NullProgressMonitor());
 		} catch (CoreException e) {
-			fail("Test failed on adding managed build nature: " + e.getLocalizedMessage());
+			fail("Test failed on adding managed build nature or builder: " + e.getLocalizedMessage());
 		}
 
 		// Associate the project with the managed builder so the clients can get proper information
+		ICDescriptor desc = null;
 		try {
-			ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(project);
+			desc = CCorePlugin.getDefault().getCProjectDescription(project);
 			desc.remove(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID);
 			desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
 		} catch (CoreException e) {
 			fail("Test failed on adding managed builder as scanner info provider: " + e.getLocalizedMessage());
 		}
+		try {
+			desc.saveProjectData();
+		} catch (CoreException e) {
+			fail("Test failed on saving the ICDescriptor data: " + e.getLocalizedMessage());		}
 	}
 
 	/**
@@ -936,13 +949,17 @@ public class ManagedBuildTests extends TestCase {
 		topCategory = tools[0].getTopOptionCategory();
 		options = topCategory.getOptions(configs[2]);
 		assertEquals(2, options.length);
-		// Check that there's an empty string list and a true boolean (commands should not have changed)
+		// Check that there's an string list with totally new values 
 		assertTrue(options[0] instanceof OptionReference);
 		assertEquals("List Option in Top", options[0].getName());
 		assertEquals(IOption.STRING_LIST, options[0].getValueType());
 		valueList = options[0].getStringListValue();
-		assertTrue(valueList.length == 0);
+		assertTrue(valueList.length == 3);
+		assertEquals("d", valueList[0]);
+		assertEquals("e", valueList[1]);
+		assertEquals("f", valueList[2]);		
 		assertEquals("-L", options[0].getCommand());
+		// and a true boolean (commands should not have changed)
 		assertEquals("Boolean Option in Top", options[1].getName());
 		assertTrue(options[1] instanceof OptionReference);
 		assertEquals("Boolean Option in Top", options[1].getName());
@@ -970,7 +987,7 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(IOption.BOOLEAN, options[3].getValueType());
 		assertEquals(true, options[3].getBooleanValue());
 		tool = tools[0];
-		assertEquals("-b overridden -stralsooverridden", tool.getToolFlags());
+		assertEquals("-Ld -Le -Lf -b overridden -stralsooverridden", tool.getToolFlags());
 	}
 
 	/*
@@ -1111,6 +1128,8 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(1, builtInPaths.length);
 		assertEquals("/usr/gnu/include", builtInPaths[0]);
 		assertEquals("-I", subOpts[0].getCommand());
+		assertEquals(IOption.BROWSE_DIR, subOpts[0].getBrowseType());
+				
 		// There are no user-defined preprocessor symbols
 		assertEquals("Defined Symbols", subOpts[1].getName());
 		assertEquals(IOption.PREPROCESSOR_SYMBOLS, subOpts[1].getValueType());
@@ -1121,12 +1140,17 @@ public class ManagedBuildTests extends TestCase {
 		String[] builtInSymbols = subOpts[1].getBuiltIns();
 		assertEquals(1, builtInSymbols.length);
 		assertEquals("BUILTIN", builtInSymbols[0]);
+		// Broswe type should be none
+		assertEquals(IOption.BROWSE_NONE, subOpts[1].getBrowseType());
+
 		assertEquals("More Includes", subOpts[2].getName());
 		assertEquals(IOption.INCLUDE_PATH, subOpts[2].getValueType());
 		String[] moreIncPath = subOpts[2].getIncludePaths();
 		assertEquals(2, moreIncPath.length);
 		assertEquals("C:\\home\\tester/include", moreIncPath[0]);
 		assertEquals("-I", subOpts[2].getCommand());
+		assertEquals(IOption.BROWSE_DIR, subOpts[2].getBrowseType());
+		
 		// Check the user object option
 		assertEquals("User Objects", subOpts[3].getName());
 		assertEquals(IOption.OBJECTS, subOpts[3].getValueType());
@@ -1134,6 +1158,7 @@ public class ManagedBuildTests extends TestCase {
 		assertEquals(2, objs.length);
 		assertEquals("obj1.o", objs[0]);
 		assertEquals("obj2.o", objs[1]);
+		assertEquals(IOption.BROWSE_FILE, subOpts[3].getBrowseType());
 		
 		// Get the configs for this target; it should inherit all the configs defined for the parent
 		IConfiguration[] configs = target.getConfigurations();
@@ -1214,7 +1239,7 @@ public class ManagedBuildTests extends TestCase {
 		removeProject(projectName);
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * Create a new project named <code>name</code> or return the project in 
 	 * the workspace of the same name if it exists.
 	 * 
@@ -1229,6 +1254,9 @@ public class ManagedBuildTests extends TestCase {
 		
 		if (!newProjectHandle.exists()) {
 			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			IWorkspaceDescription workspaceDesc = workspace.getDescription();
+			workspaceDesc.setAutoBuilding(false);
+			workspace.setDescription(workspaceDesc);
 			IProjectDescription description = workspace.newProjectDescription(newProjectHandle.getName());
 			//description.setLocation(root.getLocation());
 			project = CCorePlugin.getDefault().createCProject(description, newProjectHandle, new NullProgressMonitor(), MakeCorePlugin.MAKE_PROJECT_ID);
@@ -1237,10 +1265,11 @@ public class ManagedBuildTests extends TestCase {
 			project = newProjectHandle;
 		}
         
+		// Open the project if we have to
 		if (!project.isOpen()) {
-			project.open(null);
+			project.open(new NullProgressMonitor());
 		}
-		
+				
 		return project;	
 	}
 	
@@ -1255,7 +1284,7 @@ public class ManagedBuildTests extends TestCase {
 		IProject project = root.getProject(name);
 		if (project.exists()) {
 			try {
-				project.delete(true, false, null);
+				project.delete(true, true, null);
 			} catch (CoreException e) {
 				assertTrue(false);
 			}

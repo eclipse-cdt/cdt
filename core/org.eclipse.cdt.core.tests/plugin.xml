@@ -32,12 +32,12 @@
          point="org.eclipse.cdt.managedbuilder.core.ManagedBuildInfo">
       <tool
             natureFilter="both"
-            sources="rc"
             name="Target Independent Tool"
+            sources="rc"
             headerExtensions="h"
             outputFlag="/fo"
-            outputs="free"
             command="RC.EXE"
+            outputs="free"
             id="target.independent.tool">
          <optionCategory
                owner="target.independent.tool"
@@ -125,8 +125,8 @@
                   name="Another String Option in Category"
                   category="category"
                   command="-str"
-                  valueType="string"
-                  id="another.string.option">
+                  id="another.string.option"
+                  valueType="string">
             </option>
             <option
                   name="Enumerated Option in Category"
@@ -149,8 +149,8 @@
                   commandFalse="-nob"
                   name="Boolean Option in Category"
                   category="category"
-                  valueType="boolean"
-                  id="boolean.false.option">
+                  id="boolean.false.option"
+                  valueType="boolean">
             </option>
          </tool>
          <configuration
@@ -199,6 +199,15 @@
                </optionReference>
                <optionReference
                      id="list.option">
+                  <listOptionValue
+                        value="d">
+                  </listOptionValue>
+                  <listOptionValue
+                        value="e">
+                  </listOptionValue>
+                  <listOptionValue
+                        value="f">
+                  </listOptionValue>
                </optionReference>
             </toolReference>
          </configuration>
@@ -229,6 +238,7 @@
             <option
                   name="Include Paths"
                   command="-I"
+                  browseType="directory"
                   valueType="includePath"
                   id="sub.tool.opt.inc.paths">
                <listOptionValue
@@ -255,6 +265,7 @@
             <option
                   name="More Includes"
                   command="-I"
+                  browseType="directory"
                   valueType="includePath"
                   id="sub.tool.opts.inc.paths.more">
                <listOptionValue
@@ -268,6 +279,7 @@
             </option>
             <option
                   name="User Objects"
+                  browseType="file"
                   valueType="userObjs"
                   id="sub.tool.opt.objs">
                <listOptionValue
@@ -311,8 +323,8 @@
             isTest="true"
             osList="win32,solaris,linux"
             name="Forward Child"
-            parent="test.forward.parent.target"
             binaryParser="org.eclipse.cdt.core.tests.target2"
+            parent="test.forward.parent.target"
             id="test.forward.child.target">
          <toolReference
                id="test.forward.tool">

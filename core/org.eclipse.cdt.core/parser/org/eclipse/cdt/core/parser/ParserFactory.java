@@ -13,12 +13,15 @@ package org.eclipse.cdt.core.parser;
 import java.io.Reader;
 
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
+import org.eclipse.cdt.core.parser.extension.ExtensionDialect;
+import org.eclipse.cdt.core.parser.extension.IParserExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.CompleteParser;
 import org.eclipse.cdt.internal.core.parser.ContextualParser;
+import org.eclipse.cdt.internal.core.parser.ParserExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.QuickParseCallback;
 import org.eclipse.cdt.internal.core.parser.QuickParser;
-import org.eclipse.cdt.internal.core.parser.StructuralParser;
 import org.eclipse.cdt.internal.core.parser.StructuralParseCallback;
+import org.eclipse.cdt.internal.core.parser.StructuralParser;
 import org.eclipse.cdt.internal.core.parser.ast.complete.CompleteParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.ast.quick.QuickParseASTFactory;
 import org.eclipse.cdt.internal.core.parser.scanner.LineOffsetReconciler;
@@ -32,12 +35,14 @@ import org.eclipse.cdt.internal.core.parser.scanner.Scanner;
  */
 public class ParserFactory {
 
+	private static IParserExtensionFactory extensionFactory = new ParserExtensionFactory( ExtensionDialect.GCC );
+	
 	public static IASTFactory createASTFactory( ParserMode mode, ParserLanguage language )
 	{
 		if( mode == ParserMode.QUICK_PARSE )
-			return new QuickParseASTFactory(); 
+			return new QuickParseASTFactory( extensionFactory.createASTExtensionFactory( ParserMode.QUICK_PARSE ) ); 
 		else
-			return new CompleteParseASTFactory( language, mode ); 
+			return new CompleteParseASTFactory( language, mode, extensionFactory.createASTExtensionFactory( ParserMode.COMPLETE_PARSE ) ); 
 	}
 	
     public static IParser createParser( IScanner scanner, ISourceElementRequestor callback, ParserMode mode, ParserLanguage language, IParserLogService log ) throws ParserFactoryError
@@ -68,7 +73,7 @@ public class ParserFactory {
     	IParserLogService logService = ( log == null ) ? createDefaultLogService() : log;
 		ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
 		ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-		IScanner s = new Scanner( input, fileName, config, ourRequestor, ourMode, language, logService );
+		IScanner s = new Scanner( input, fileName, config, ourRequestor, ourMode, language, logService, extensionFactory.createScannerExtension() );
 		return s; 
     }
     
@@ -81,7 +86,7 @@ public class ParserFactory {
     	IParserLogService log = ( logService == null ) ? createDefaultLogService() : logService;
     	ParserMode ourMode = ( (mode == null )? ParserMode.COMPLETE_PARSE : mode );
     	ISourceElementRequestor ourRequestor = (( requestor == null) ? new NullSourceElementRequestor() : requestor ); 
-    	IPreprocessor s = new Preprocessor( input, fileName, info, ourRequestor, ourMode, language, log );
+    	IPreprocessor s = new Preprocessor( input, fileName, info, ourRequestor, ourMode, language, log, extensionFactory.createScannerExtension() );
 		return s;
     }
 	

@@ -1,3 +1,9 @@
+2004-01-28 John Camelon
+	Updated Scanner to add ANSI built-in defined macros for C and C++.
+	Updated GCCScannerExtension to add GCC specific defined macros for C++.
+	Added factory infrastructure to allow for C/C++ dialect extensions to be added and contained.
+	Added IASTExpressionExtension w/implementation to allow for GCC specific leniency on evaluating expressions.
+
 2004-01-28 Andrew Niefer
 	Fixed bug#50729: Visibility is incorrectly decided in inheritance
 	

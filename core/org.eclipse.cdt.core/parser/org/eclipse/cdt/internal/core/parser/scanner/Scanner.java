@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -33,7 +34,6 @@ import org.eclipse.cdt.core.parser.IParser;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IScanner;
-import org.eclipse.cdt.core.parser.IScannerExtension;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.IToken;
@@ -52,6 +52,7 @@ import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTFactory;
 import org.eclipse.cdt.core.parser.ast.IASTInclusion;
+import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 import org.eclipse.cdt.internal.core.parser.problem.IProblemFactory;
 import org.eclipse.cdt.internal.core.parser.token.Token;
 
@@ -96,7 +97,7 @@ public class Scanner implements IScanner {
 			throw new ScannerException( problem );
 	}
 
-    public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log ) {
+    public Scanner(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode parserMode, ParserLanguage language, IParserLogService log, IScannerExtension extension ) {
     	this.log = log;
 		this.requestor = requestor;
 		this.mode = parserMode;
@@ -104,8 +105,9 @@ public class Scanner implements IScanner {
 		this.reader = reader;
 		this.language = language;
 
-		//support GNU by default for now 
-		scannerExtension = new GCCScannerExtension(); 
+		 
+		scannerExtension = extension;
+		scannerExtension.setScanner( this ); 
 		astFactory = ParserFactory.createASTFactory( mode, language );
 		contextStack = new ContextStack( log );
 		try {
@@ -162,10 +164,111 @@ public class Scanner implements IScanner {
 		else 
 			log.traceLog("\t\tNo include paths specified.");
 		
-
+		setupBuiltInMacros();
     }
 
-    private void setupInitialContext()
+    /**
+	 * 
+	 */
+	protected void setupBuiltInMacros() {
+		
+		scannerExtension.setupBuiltInMacros(language);
+		if( getDefinition(__STDC__) == null )
+			addDefinition( __STDC__, new ObjectMacroDescriptor( __STDC__,  "1") );
+		
+		if( language == ParserLanguage.C )
+		{
+			if( getDefinition(__STDC_HOSTED__) == null )
+				addDefinition( __STDC_HOSTED__, new ObjectMacroDescriptor( __STDC_HOSTED__, "0"));
+			if( getDefinition( __STDC_VERSION__) == null )
+				addDefinition( __STDC_VERSION__, new ObjectMacroDescriptor( __STDC_VERSION__, "199001L"));
+		}
+		else
+			if( getDefinition( __CPLUSPLUS ) == null )
+					addDefinition( __CPLUSPLUS, new ObjectMacroDescriptor( __CPLUSPLUS, "199711L"));
+		
+		if( getDefinition(__FILE__) == null )
+			addDefinition(  __FILE__, 
+					new DynamicMacroDescriptor( __FILE__, new DynamicMacroEvaluator() {
+						public String execute() {
+							return contextStack.getMostRelevantFileContext().getFilename();
+						}				
+					} ) );
+		
+		if( getDefinition( __LINE__) == null )
+			addDefinition(  __LINE__, 
+					new DynamicMacroDescriptor( __LINE__, new DynamicMacroEvaluator() {
+						public String execute() {
+							return new Integer( contextStack.getCurrentLineNumber() ).toString();
+						}				
+			} ) );
+		
+		
+		if( getDefinition(  __DATE__ ) == null )
+			addDefinition(  __DATE__, 
+					new DynamicMacroDescriptor( __DATE__, new DynamicMacroEvaluator() {
+						
+						public String getMonth()
+						{
+							if( Calendar.MONTH == Calendar.JANUARY ) return  "Jan" ;
+							if( Calendar.MONTH == Calendar.FEBRUARY) return "Feb";
+							if( Calendar.MONTH == Calendar.MARCH) return "Mar";
+							if( Calendar.MONTH == Calendar.APRIL) return "Apr";
+							if( Calendar.MONTH == Calendar.MAY) return "May";
+							if( Calendar.MONTH == Calendar.JUNE) return "Jun";
+							if( Calendar.MONTH ==  Calendar.JULY) return "Jul";
+							if( Calendar.MONTH == Calendar.AUGUST) return "Aug";
+							if( Calendar.MONTH ==  Calendar.SEPTEMBER) return "Sep";
+							if( Calendar.MONTH ==  Calendar.OCTOBER) return "Oct";
+							if( Calendar.MONTH ==  Calendar.NOVEMBER) return "Nov";
+							if( Calendar.MONTH ==  Calendar.DECEMBER) return "Dec";
+							return "";
+						}
+						
+						public String execute() {
+							StringBuffer result = new StringBuffer();
+							result.append( getMonth() );
+							result.append(" ");
+							if( Calendar.DAY_OF_MONTH < 10 )
+								result.append(" ");
+							result.append(Calendar.DAY_OF_MONTH);
+							result.append(" ");
+							result.append( Calendar.YEAR );
+							return result.toString();
+						}				
+					} ) );
+		
+		if( getDefinition( __TIME__) == null )
+			addDefinition(  __TIME__, 
+					new DynamicMacroDescriptor( __TIME__, new DynamicMacroEvaluator() {
+						
+						
+						public String execute() {
+							StringBuffer result = new StringBuffer();
+							if( Calendar.AM_PM == Calendar.PM )
+								result.append( Calendar.HOUR + 12 );
+							else
+							{	
+								if( Calendar.HOUR < 10 )
+									result.append( '0');
+								result.append(Calendar.HOUR);
+							}
+							result.append(':');
+							if( Calendar.MINUTE < 10 )
+								result.append( '0');
+							result.append(Calendar.MINUTE);
+							result.append(':');
+							if( Calendar.SECOND < 10 )
+								result.append( '0');
+							result.append(Calendar.SECOND);
+							return result.toString();
+						}				
+					} ) );
+		
+		
+	}
+
+	private void setupInitialContext()
     {
     	String resolvedFilename = filename == null ? TEXT : filename;
     	IScannerContext context = null;
@@ -2158,7 +2261,7 @@ public class Scanner implements IScanner {
 										new ScannerInfo(definitions, originalConfig.getIncludePaths()), 
 										new NullSourceElementRequestor(),
 										mode,
-										language, nullLogService );
+										language, nullLogService, (IScannerExtension)(scannerExtension.clone()) );
 			helperScanner.setForInclusion( true );
 			IToken t = null;
 			
@@ -2563,7 +2666,7 @@ public class Scanner implements IScanner {
 
 	protected Vector getMacroParameters (String params, boolean forStringizing) throws ScannerException {
         
-        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), new NullSourceElementRequestor(), mode, language, nullLogService );
+        Scanner tokenizer  = new Scanner(new StringReader(params), TEXT, new ScannerInfo( definitions, originalConfig.getIncludePaths() ), new NullSourceElementRequestor(), mode, language, nullLogService, (IScannerExtension)scannerExtension.clone() );
         tokenizer.setThrowExceptionOnBadCharacterRead(false);
         Vector parameterValues = new Vector();
         Token t = null;
@@ -2646,7 +2749,7 @@ public class Scanner implements IScanner {
     {
         // All the tokens generated by the macro expansion 
         // will have dimensions (offset and length) equal to the expanding symbol.
-		if ( expansion.getMacroType() == MacroType.OBJECT_LIKE ) {
+		if ( expansion.getMacroType() == MacroType.OBJECT_LIKE || expansion.getMacroType() == MacroType.INTERNAL_LIKE ) {
 			String replacementValue = expansion.getExpansionSignature();
 			try
 			{
@@ -2814,7 +2917,8 @@ public class Scanner implements IScanner {
 				return;
 			}			
 
-		} else {
+		} 
+		else {
 			StringBuffer logMessage = new StringBuffer( "Unexpected type of MacroDescriptor stored in definitions table: " );
 			logMessage.append( expansion.getMacroType()  );
 			log.traceLog( logMessage.toString() ); 

@@ -7,18 +7,16 @@
 package org.eclipse.cdt.internal.core.parser.ast.quick;
 
 import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ast.IASTTypeId;
+import org.eclipse.cdt.core.parser.ast.extension.IASTExpressionExtension;
 
 
 
 /**
  * @author jcamelon
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class ASTExpression implements IASTExpression {
 
@@ -27,6 +25,7 @@ public class ASTExpression implements IASTExpression {
 	private final IASTTypeId typeId;
 	private final String literal, idExpression; 
 	private final IASTNewExpressionDescriptor newDescriptor;
+	private final IASTExpressionExtension extension;
 
 	/**
 	 * @param kind
@@ -36,7 +35,7 @@ public class ASTExpression implements IASTExpression {
 	 * @param typeId
 	 * @param literal
 	 */
-	public ASTExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression third, IASTTypeId typeId, String idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {
+	public ASTExpression(Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression third, IASTTypeId typeId, String idExpression, String literal, IASTNewExpressionDescriptor newDescriptor, IASTExpressionExtension extension) {
 		this.kind = kind; 
 		this.lhs =lhs; 
 		this.rhs = rhs; 
@@ -45,6 +44,8 @@ public class ASTExpression implements IASTExpression {
 		this.literal = literal;
 		this.newDescriptor = newDescriptor;
 		this.idExpression = idExpression;
+		this.extension = extension;
+		this.extension.setExpression(this);
 	}
 
 	/* (non-Javadoc)
@@ -118,6 +119,7 @@ public class ASTExpression implements IASTExpression {
 				throw new ASTExpressionEvaluationException();
 			}
 		}	
+		
 		if( getExpressionKind() == IASTExpression.Kind.PRIMARY_BRACKETED_EXPRESSION ) 
 			return getLHSExpression().evaluateExpression();
 		// unary not 
@@ -171,7 +173,7 @@ public class ASTExpression implements IASTExpression {
 		if( getExpressionKind() == IASTExpression.Kind.LOGICALOREXPRESSION )
 			return( ( getLHSExpression().evaluateExpression() != 0 ) || ( getRHSExpression().evaluateExpression() != 0 ) ) ? 1 : 0 ;	 
 
-		throw new ASTExpressionEvaluationException();  
+		return extension.evaluateExpression();  
 	}
 
     /* (non-Javadoc)

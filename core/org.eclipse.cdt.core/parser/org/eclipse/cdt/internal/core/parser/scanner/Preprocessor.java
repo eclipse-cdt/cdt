@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.parser.ISourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerException;
+import org.eclipse.cdt.core.parser.extension.IScannerExtension;
 
 
 /**
@@ -33,8 +34,8 @@ public class Preprocessor extends Scanner implements IPreprocessor {
 	 * @param filename
 	 * @param defns
 	 */
-	public Preprocessor(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService logService ) {
-        super(reader, filename, info, requestor, mode, language, logService  );
+	public Preprocessor(Reader reader, String filename, IScannerInfo info, ISourceElementRequestor requestor, ParserMode mode, ParserLanguage language, IParserLogService logService, IScannerExtension scannerExtension  ) {
+        super(reader, filename, info, requestor, mode, language, logService, scannerExtension  );
     }
 
 	public void process()

@@ -68,6 +68,7 @@ import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescripto
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter.ParamKind;
+import org.eclipse.cdt.core.parser.ast.extension.IASTExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 import org.eclipse.cdt.internal.core.parser.pst.ForewardDeclaredSymbolExtension;
 import org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol;
@@ -99,6 +100,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
      */
     
     private final static List SUBSCRIPT;
+	private final IASTExtensionFactory extensionFactory;
+	
     static 
     {
     	SUBSCRIPT = new ArrayList();
@@ -117,11 +120,11 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		}
     }
     
-    public CompleteParseASTFactory( ParserLanguage language, ParserMode mode )
+    public CompleteParseASTFactory( ParserLanguage language, ParserMode mode, IASTExtensionFactory factory )
     {
         super();
-        
 		pst = new ParserSymbolTable( language, mode );
+		extensionFactory = factory;
     }
 
 	/*

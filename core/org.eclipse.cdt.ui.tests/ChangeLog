@@ -1,3 +1,6 @@
+2004-01-28 John Camelon
+	Updated CompletionTest_SingleName_NoPrefix to include internal macro definitions.
+
 2004-01-27 John Camelon
 	Updated COMPLETION_PARSE clients to use SINGLE_NAME_REFERENCE rather than STATEMENT_START.  
 	Renamed and updated CompletionTest_StatementStart_NoPrefix to CompletionTest_SingleName_Method_NoPrefix.

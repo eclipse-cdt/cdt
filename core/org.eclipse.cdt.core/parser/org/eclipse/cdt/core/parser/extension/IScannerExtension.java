@@ -8,12 +8,23 @@
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.core.parser;
+package org.eclipse.cdt.core.parser.extension;
+
+import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 
 /**
  * @author jcamelon
  */
-public interface IScannerExtension {
+public interface IScannerExtension extends Cloneable {
+	
+	public void setScanner( IScanner scanner );
+	public Object clone( );
 
 	public String initializeMacroValue( String original );
+
+	/**
+	 * 
+	 */
+	public void setupBuiltInMacros(ParserLanguage language);
 }

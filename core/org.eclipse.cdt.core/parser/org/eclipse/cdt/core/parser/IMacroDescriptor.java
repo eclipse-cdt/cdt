@@ -27,6 +27,8 @@ public interface IMacroDescriptor {
 		// function like - #define SYMBOL( parm1, parm2 ) TOKENS USING parms
 		public static final MacroType FUNCTION_LIKE = new MacroType( 2 );
 		
+		// built in internal macro who's value is dynamic
+		public static final MacroType INTERNAL_LIKE = new MacroType(3);
 		/**
 		 * @param enumValue
 		 */

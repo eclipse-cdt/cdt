@@ -25,6 +25,14 @@ public class ObjectMacroDescriptor implements IMacroDescriptor {
 	private final String name;
 	private final List tokenizedExpansion;
 
+	public ObjectMacroDescriptor( String name, String expansionSignature )
+	{
+		this.name = name;
+		this.expansionSignature = expansionSignature;
+		fullSignature = "#define " + name + " " + expansionSignature;
+		tokenizedExpansion = EMPTY_LIST;
+	}
+	
 	public ObjectMacroDescriptor( String name, String signature, List tokenizedExpansion, String expansionSignature )
 	{
 		this.name = name;

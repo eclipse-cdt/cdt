@@ -23,6 +23,7 @@ public class ParserFactoryError extends Error {
 		public static final Kind NULL_CONFIG			= new Kind( 3 );
 		public static final Kind NULL_LANGUAGE	= new Kind( 4 );
 		public static final Kind NULL_SCANNER		= new Kind( 5 );
+		public static final Kind BAD_DIALECT            = new Kind( 6 );
 		
 		protected Kind( int arg )
 		{

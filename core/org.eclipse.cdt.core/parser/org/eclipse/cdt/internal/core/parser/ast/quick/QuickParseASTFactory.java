@@ -15,6 +15,8 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.ITokenDuple;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
+import org.eclipse.cdt.core.parser.ast.ASTExpressionEvaluationException;
+import org.eclipse.cdt.core.parser.ast.ASTNotImplementedException;
 import org.eclipse.cdt.core.parser.ast.ASTPointerOperator;
 import org.eclipse.cdt.core.parser.ast.IASTASMDefinition;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractDeclaration;
@@ -56,6 +58,8 @@ import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier.ClassNameType;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.IASTNewExpressionDescriptor;
 import org.eclipse.cdt.core.parser.ast.IASTExpression.Kind;
 import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier.Type;
+import org.eclipse.cdt.core.parser.ast.extension.IASTExpressionExtension;
+import org.eclipse.cdt.core.parser.ast.extension.IASTExtensionFactory;
 import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
 
 /**
@@ -65,6 +69,14 @@ import org.eclipse.cdt.internal.core.parser.ast.BaseASTFactory;
  */
 public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory {
 
+	private final IASTExtensionFactory extensionFactory;
+
+	public QuickParseASTFactory( IASTExtensionFactory extensionFactory )
+	{
+		super();
+		this.extensionFactory = extensionFactory;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.ast.IASTFactory#createUsingDirective(org.eclipse.cdt.internal.core.parser.ast.IASTScope, org.eclipse.cdt.internal.core.parser.TokenDuple)
 	 */
@@ -147,7 +159,18 @@ public class QuickParseASTFactory extends BaseASTFactory implements IASTFactory 
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#createExpression(org.eclipse.cdt.core.parser.ast.IASTExpression.ExpressionKind, org.eclipse.cdt.core.parser.ast.IASTExpression, org.eclipse.cdt.core.parser.ast.IASTExpression, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public IASTExpression createExpression(IASTScope scope, Kind kind, IASTExpression lhs, IASTExpression rhs, IASTExpression thirdExpression, IASTTypeId typeId, ITokenDuple idExpression, String literal, IASTNewExpressionDescriptor newDescriptor) {
-		return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor );
+		try {
+			return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, extensionFactory.createExpressionExtension() );
+		} catch (ASTNotImplementedException e) {
+			return new ASTExpression( kind, lhs, rhs, thirdExpression, typeId, idExpression == null ? "" : idExpression.toString(), literal, newDescriptor, new IASTExpressionExtension() {
+
+				public void setExpression(IASTExpression expression) {
+				}
+
+				public int evaluateExpression() throws ASTExpressionEvaluationException {
+					throw new ASTExpressionEvaluationException();
+				} } );
+		}
 	}
 
 	/* (non-Javadoc)

@@ -15,6 +15,8 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -50,7 +52,14 @@ public class CPPBaseClause implements ICPPBase {
      * @see org.eclipse.cdt.core.dom.ast.cpp.ICPPBase#getBaseClass()
      */
     public ICPPClassType getBaseClass() {
-        return (ICPPClassType) base.getName().resolveBinding();
+    	IBinding baseClass = base.getName().resolveBinding();
+    	if( baseClass instanceof ICPPClassType )
+    		return (ICPPClassType) baseClass;
+    	else if( baseClass instanceof IProblemBinding ){
+    		return new CPPClassType.CPPClassTypeProblem( ((IProblemBinding)baseClass).getID(), base.getName().toCharArray() );
+    	}
+    	
+        return new CPPClassType.CPPClassTypeProblem( IProblemBinding.SEMANTIC_NAME_NOT_FOUND, base.getName().toCharArray() );
     }
 
     /* (non-Javadoc)

@@ -430,11 +430,14 @@ public class CUIPlugin extends AbstractUIPlugin {
 		configurePluginDebugOptions();
 		
 		registerAdapters();
-		AllTypesCache.initialize(new IWorkingCopyProvider() {
+		IWorkingCopyProvider workingCopyProvider = new IWorkingCopyProvider() {
 			public IWorkingCopy[] getWorkingCopies() {
 				return CUIPlugin.getSharedWorkingCopies();
 			}
-		});
+		};
+        AllTypesCache.initialize(workingCopyProvider);
+		CCorePlugin.getDefault().getDOM().setWorkingCopyProvider(workingCopyProvider);
+		
 	}
 
 	/* (non-Javadoc)

@@ -9,9 +9,12 @@
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.cdt.core.dom;
+import org.eclipse.cdt.core.browser.IWorkingCopyProvider;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.InternalASTServiceProvider;
+import org.eclipse.cdt.internal.core.dom.PartialWorkingCopyCodeReaderFactory;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
+import org.eclipse.cdt.internal.core.dom.WorkingCopyCodeReaderFactory;
 import org.eclipse.core.resources.IFile;
 
 /**
@@ -36,6 +39,12 @@ public class CDOM implements IASTServiceProvider {
 
     
     public IASTServiceProvider getASTService() {
+        //CDOM itself is not so much "the" AST service as it acts as a proxy 
+        //to different AST services
+        //Should we see the need to provide an extension point for this
+        //rather than purely proxying the calls to IASTServiceProvider#*
+        //we would have to do some discovery and co-ordination on behalf of the 
+        //client
         return this;
     }
     
@@ -43,17 +52,20 @@ public class CDOM implements IASTServiceProvider {
     public static final int PARSE_SAVED_RESOURCES = 0; 
     public static final int PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS = 1;
     public static final int PARSE_WORKING_COPY_WHENEVER_POSSIBLE = 2;
+    private IWorkingCopyProvider provider;
     
     public ICodeReaderFactory getCodeReaderFactory( int key )
     {
+        //TODO - eventually these factories will need to hook into the 
+        //CodeReader caches
         switch( key )
         {
         	case PARSE_SAVED_RESOURCES: 
         	    return SavedCodeReaderFactory.getInstance();
         	case PARSE_WORKING_COPY_WITH_SAVED_INCLUSIONS:
-        	    return null; //TODO
+        	    return new PartialWorkingCopyCodeReaderFactory( provider );
         	case PARSE_WORKING_COPY_WHENEVER_POSSIBLE:
-        	    return null; //TODO
+        	    return new WorkingCopyCodeReaderFactory( provider );
         }
         return null;
     }
@@ -77,6 +89,13 @@ public class CDOM implements IASTServiceProvider {
      */
     public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator, IParserConfiguration configuration) throws UnsupportedDialectException {
         return defaultService.getTranslationUnit(fileToParse, fileCreator, configuration );
+    }
+
+    /**
+     * @param workingCopyProvider
+     */
+    public void setWorkingCopyProvider(IWorkingCopyProvider workingCopyProvider) {
+        this.provider = workingCopyProvider;
     }
 
 }

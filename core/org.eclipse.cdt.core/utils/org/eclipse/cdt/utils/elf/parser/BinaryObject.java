@@ -57,14 +57,18 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 	public ISymbol getSymbol(long addr) {
 		ISymbol[] syms = getSymbols();
 		int insertion = Arrays.binarySearch(syms, new Long(addr));
-		if (insertion > 0) {
+		if (insertion >= 0) {
 			return syms[insertion];
 		}
 		if (insertion == -1) {
 			return null;
 		}
 		insertion = -insertion - 1;
-		return syms[insertion - 1];
+		ISymbol symbol =  syms[insertion - 1];
+		if (addr < (symbol.getAddress() + symbol.getSize())) {
+			return syms[insertion - 1];
+		}
+		return null;
 	}
 
 	/**
@@ -273,6 +277,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 				}
 			}
 			sym.addr = array[i].st_value;
+			sym.size = array[i].st_size;
 			sym.filename = null;
 			sym.startLine =  0;
 			sym.endLine = sym.startLine;
@@ -282,7 +287,7 @@ public class BinaryObject extends BinaryFile implements IBinaryObject {
 					// Addr2line returns the funny "??" when it can not find the file.
 					sym.filename = (filename != null && !filename.equals("??")) ? new Path(filename) : null;
 					sym.startLine = addr2line.getLineNumber(sym.addr);
-					sym.endLine = addr2line.getLineNumber(sym.addr + array[i].st_size - 1);
+					sym.endLine = addr2line.getLineNumber(sym.addr + sym.size - 1);
 				} catch (IOException e) {
 				}
 			}

@@ -607,8 +607,13 @@ public class Elf {
 		public static final int ELF_TYPE_OBJ   = 3;
 		public static final int ELF_TYPE_CORE  = 4;
 
+		public static final int DEBUG_TYPE_NONE = 0;
+		public static final int DEBUG_TYPE_STABS = 1;
+		public static final int DEBUG_TYPE_DWARF = 2;
+
 		String cpu;
 		int type;
+		int debugType;
 		boolean bDebug;
 		boolean isle;
 
@@ -621,9 +626,13 @@ public class Elf {
 		}
 		
 		public boolean hasDebug() {
-			return bDebug;
+			return debugType != DEBUG_TYPE_NONE;
 		}
 
+		public int getDebugType() {
+			return debugType;
+		}
+	
 		public boolean isLittleEndian() {
 			return isle;
 		}
@@ -691,8 +700,11 @@ public class Elf {
 		Section [] sec = getSections();
 		for (int i = 0; i < sec.length; i++) {
 			String s = sec[i].toString();
-			attrib.bDebug = (s.startsWith(".debug") || s. equals(".stab"));
-			if (attrib.bDebug) {
+			if (s.equals(".debug_info")) {
+				attrib.debugType = Attribute.DEBUG_TYPE_DWARF; 
+				break;
+			} else if (s.equals(".stab")) {
+				attrib.debugType = Attribute.DEBUG_TYPE_STABS;
 				break;
 			}
 		}

@@ -2,6 +2,10 @@
 	Begin implementation of functions for template specializations: deduceTemplateArgument,
 	classTemplateSpecializationToFunctionTemplate, transformFunctionTemplateForOrdering
 	
+2003-06-07 Victor Mozgin
+	Fixes for templated constructor/destructor/operator declarations.
+	This fixed PR 36766, 36767, 36769 (STL parsing problems).
+
 2003-06-06 Victor Mozgin
 	Fixed Bug 38065 - Scanner skipped backslashes inside the code
 

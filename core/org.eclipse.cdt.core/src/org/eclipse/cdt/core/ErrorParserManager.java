@@ -28,7 +28,8 @@ public class ErrorParserManager extends OutputStream {
 
 	private int nOpens;
 
-	private static String PREF_ERROR_PARSER = "errorOutputParser";
+	private final static String OLD_PREF_ERROR_PARSER = "errorOutputParser"; // $NON-NLS-1$
+	public final static String PREF_ERROR_PARSER = CCorePlugin.PLUGIN_ID + ".errorOutputParser"; // $NON-NLS-1$
 
 	private IProject fProject;
 	private IMarkerGenerator fMarkerGenerator;
@@ -138,7 +139,7 @@ public class ErrorParserManager extends OutputStream {
 		}
 		if (fErrorParsers.size() == 0) {
 			initErrorParsersMap();
-			CCorePlugin.getDefault().getPluginPreferences().setValue(PREF_ERROR_PARSER, ""); // remove old prefs
+			CCorePlugin.getDefault().getPluginPreferences().setValue(OLD_PREF_ERROR_PARSER, ""); // remove old prefs
 		}
 	}
 

@@ -2486,6 +2486,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
       CPPASTQualifiedName result = new CPPASTQualifiedName();
       result.setOffsetAndLength(duple.getStartOffset(), duple.getEndOffset()
             - duple.getStartOffset());
+      result.setValue( duple.toString() );
       ITokenDuple[] segments = duple.getSegments();
       int startingValue = 0;
       if(   segments.length > 0 && 

@@ -101,7 +101,7 @@ public class BasicTokenDuple implements ITokenDuple {
 		for( ;; ){
 		    if( token == last )
 		        break;
-		    if( startOfSegment == last.getNext() )
+		    if( startOfSegment == last.getNext() && startOfSegment.getType() != IToken.tEOC ) // for the EOC token, next points to itself
 		    {
 		    	startOfSegment = null;
 		    	break;

@@ -1,5 +1,27 @@
 2002-10-21 Alain Magloire
 
+	Framework for having a gdb console.  The idea is to reuse
+	the eclipse console and save a lot of work.  We "adapt"
+	the gdb Process to what eclipse debug LaunchView wants(IProcess).
+	So when this fake "gdb process" is selected we can grab the
+	input/output of the console and redirect everything to raw gdb.
+
+	* src/.../core/GDBProcess.java: New file, it implements Eclipse
+	debug class IProcess.
+	* src/.../core/GDBStreamMonitor: New file, it implements Eclipse
+	debug class IStreamMonitor.
+	* src/.../core/GDBStreamsProxy: New file, it implements Eclipse
+	debug class IStreamsProxy.
+	* src/../core/MISession.java (getMIConsoleStream): New method
+	to return the mi console stream output that we get from gdb/mi.
+	(getMILogStream): New method, to return the mi log stream output
+	that we get from gdb/mi.
+	(terminate): close the fake MI Console and Log streams. 
+	* src/../core/RxThread.java (processMIOOBRecord): Redirect the
+	console and the log stream to a buffer pipe.
+
+2002-10-21 Alain Magloire
+
 	* src/.../core/cdi/EventManager.java (update): Only
 	fire the event for MemoryChangedEvent if the block was
 	not frozen.

@@ -864,7 +864,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
 	 */
 	public IScannerInfo getScannerInformation(IResource resource) {
-		return (IScannerInfo) getBuildInfo(resource, false);
+		return (IScannerInfo) getBuildInfo(resource.getProject(), false);
 	}
 
 	/* (non-Javadoc)

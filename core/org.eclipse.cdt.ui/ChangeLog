@@ -1,3 +1,14 @@
+2002-10-25 Judy N. Green
+	Removed a redundant "Eclipse Platform" from the plugin.properties file.
+	It was resulting in weird looking titles.
+	
+	/plugin.properties
+	
+	perspective.name=C/C++ Development - Eclipse Platform
+	changed to
+	perspective.name=C/C++ Development
+	
+
 2002-10-23 Judy N. Green
 	CView overwrite files dialog text changed 
 	so that it is the same in the CView as in the Navigator

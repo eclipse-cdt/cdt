@@ -36,6 +36,7 @@ public class AllCoreTests {
         suite.addTest(ArchiveTests.suite());
         suite.addTest(TranslationUnitTests.suite());
 		suite.addTest(DeclaratorsTests.suite());
+		suite.addTest(CPathEntryTest.suite());
 
         return suite;
 

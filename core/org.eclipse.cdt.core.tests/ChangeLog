@@ -1,3 +1,8 @@
+2004-02-25 Alain Magloire
+	Added the PathEntry in the AllCoreTests suite
+
+	* model/org/eclipse/cdt/core/model/tests/AllCoreTests.java
+
 2004-02-24 Andrew Niefer
 	work for Bug 51485: Template Explicit Specializations
 	added ParserSymbolTableTemplateTests.test_14_7_3__5_ExplicitSpecialization

@@ -1153,10 +1153,10 @@ public class QuickParseASTTests extends BaseASTTest
 		}
 	}
 	
-	public void testPreprocessor() throws Exception
-	{
-		Writer code = new StringWriter(); 
-		code.write( "#include <stdio.h>\n#define DEF VALUE\n"); //$NON-NLS-1$
+	public void testPreprocessor() throws Exception {
+		
+		String code = "#include <stdio.h>\n#define DEF VALUE\n"; //$NON-NLS-1$
+		
 		IASTCompilationUnit tu = parse( code.toString()  );
 		assertFalse( tu.getDeclarations().hasNext());
 		Iterator inclusions = quickParseCallback.getInclusions();
@@ -1173,9 +1173,9 @@ public class QuickParseASTTests extends BaseASTTest
 		
 		IASTMacro m = (IASTMacro)macros.next();
 		assertEquals( m.getName(), "DEF" );  //$NON-NLS-1$
-		assertEquals( m.getStartingOffset(), 19 );
-		assertEquals( m.getNameOffset(), 27 );
-		assertEquals( m.getEndingOffset(), 18 + 19);
+		assertEquals( m.getStartingOffset(), code.indexOf("#define") ); //$NON-NLS-1$
+		assertEquals( m.getNameOffset(), code.indexOf("DEF") );
+		assertEquals( m.getEndingOffset(), code.indexOf("VALUE") + 5);
 	}
 	
 	public void testTemplateDeclarationOfFunction() throws Exception

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 IBM Rational Software and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -168,8 +168,8 @@ public class GCCScannerExtension implements IScannerExtension {
 			if( context == null || context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
 				return;
 			
-			String fullInclusionPath = context.getFilename();
-			IASTInclusion inclusion = context.getExtension();
+			String fullInclusionPath = context.getContextName();
+			IASTInclusion inclusion = ((ScannerContextInclusion)context).getExtension();
 			
 			Iterator iter = scannerData.getIncludePathNames().iterator();
 			
@@ -199,7 +199,7 @@ public class GCCScannerExtension implements IScannerExtension {
 			{
 				try			
 				{
-					scannerData.getContextStack().updateContext(duple.getUnderlyingReader(), duple.getFilename(), ScannerContext.ContextKind.INCLUSION, inclusion, scannerData.getClientRequestor() );
+					scannerData.getContextStack().updateInclusionContext(duple.getUnderlyingReader(), duple.getFilename(), inclusion, scannerData.getClientRequestor() );
 					TraceUtil.outputTrace( scannerData.getLogService(), "GCCScannerExtension handling #include_next directive successfully pushed on new include file" ); //$NON-NLS-1$
 				}
 				catch (ContextException e1)

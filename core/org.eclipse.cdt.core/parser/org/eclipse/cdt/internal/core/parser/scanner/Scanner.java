@@ -1,17 +1,17 @@
 /*******************************************************************************
- * Copyright (c) 2001 Rational Software Corp. and others.
+ * Copyright (c) 2001, 2004 IBM Rational Software and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v05.html
  * 
  * Contributors:
- *     Rational Software - initial implementation
+ *     IBM - Rational Software
  ******************************************************************************/
+
 package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -202,7 +202,7 @@ public class Scanner implements IScanner {
 			addDefinition(  __FILE__, 
 					new DynamicMacroDescriptor( __FILE__, new DynamicMacroEvaluator() {
 						public String execute() {
-							return scannerData.getContextStack().getMostRelevantFileContext().getFilename();
+							return scannerData.getContextStack().getMostRelevantFileContext().getContextName();
 						}				
 					} ) );
 		
@@ -286,10 +286,10 @@ public class Scanner implements IScanner {
     	try
     	{
     		if( offsetLimit == NO_OFFSET_LIMIT )
-    			context = new ScannerContext(scannerData.getInitialReader(), resolvedFilename, ScannerContext.ContextKind.TOP, null, 0 );
+    			context = new ScannerContextTop(scannerData.getInitialReader(), resolvedFilename);
     		else
-    			context = new LimitedScannerContext( this, scannerData.getInitialReader(), resolvedFilename, ScannerContext.ContextKind.TOP, offsetLimit, 0 );
-    		scannerData.getContextStack().push( context, scannerData.getClientRequestor() ); 
+    			context = new LimitedScannerContext( this, scannerData.getInitialReader(), resolvedFilename, offsetLimit, 0 );
+    		scannerData.getContextStack().pushInitialContext( context ); 
     	} catch( ContextException  ce )
     	{
     		handleInternalError();
@@ -534,7 +534,7 @@ public class Scanner implements IScanner {
 			}
 			else // local inclusion
 			{
-				duple = ScannerUtility.createReaderDuple( new File( currentContext.getFilename() ).getParentFile().getAbsolutePath(), fileName, scannerData.getClientRequestor(), scannerData.getWorkingCopies() );
+				duple = ScannerUtility.createReaderDuple( new File( currentContext.getContextName() ).getParentFile().getAbsolutePath(), fileName, scannerData.getClientRequestor(), scannerData.getWorkingCopies() );
 				if( duple != null )
 					break totalLoop;
 				useIncludePaths = true;
@@ -563,10 +563,9 @@ public class Scanner implements IScanner {
 			
 			try
 			{
-				scannerData.getContextStack().updateContext(
+				scannerData.getContextStack().updateInclusionContext(
 					duple.getUnderlyingReader(), 
-					duple.getFilename(), 
-					ScannerContext.ContextKind.INCLUSION, 
+					duple.getFilename(),
 					inclusion, 
 					scannerData.getClientRequestor() );
 			}
@@ -715,11 +714,8 @@ public class Scanner implements IScanner {
 		if (lastContext.getKind() == IScannerContext.ContextKind.SENTINEL)
 			// past the end of file
 			return c;
-
-       	if (lastContext.undoStackSize() != 0 )
-    		c = lastContext.popUndo();
-    	else
-    		c = readFromStream();
+		
+    	c = readFromStream();
 		
 		if (enableTrigraphReplacement && (!insideString || enableTrigraphReplacementInStrings)) {
 			// Trigraph processing
@@ -730,39 +726,39 @@ public class Scanner implements IScanner {
 					c = getChar(insideString);
 					switch (c) {
 						case '(':
-							expandDefinition("??(", "[", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??(", "[", lastContext.getOffset() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case ')':
-							expandDefinition("??)", "]", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??)", "]", lastContext.getOffset() - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '<':
-							expandDefinition("??<", "{", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??<", "{", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '>':
-							expandDefinition("??>", "}", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??>", "}", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '=':
-							expandDefinition("??=", "#", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??=", "#", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '/':
-							expandDefinition("??/", "\\", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??/", "\\", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '\'':
-							expandDefinition("??\'", "^", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??\'", "^", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '!':
-							expandDefinition("??!", "|", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??!", "|", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						case '-':
-							expandDefinition("??-", "~", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+							expandDefinition("??-", "~", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 							c = getChar(insideString);
 							break;
 						default:
@@ -788,10 +784,10 @@ public class Scanner implements IScanner {
 				if (c == '<') {
 					c = getChar(false);
 					if (c == '%') {
-						expandDefinition("<%", "{", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+						expandDefinition("<%", "{", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else if (c == ':') {
-						expandDefinition("<:", "[", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+						expandDefinition("<:", "[", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else {
 						// Not a digraph
@@ -801,7 +797,7 @@ public class Scanner implements IScanner {
 				} else if (c == ':') {
 					c = getChar(false);
 					if (c == '>') {
-						expandDefinition(":>", "]", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+						expandDefinition(":>", "]", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else {
 						// Not a digraph
@@ -811,10 +807,10 @@ public class Scanner implements IScanner {
 				} else if (c == '%') {
 					c = getChar(false);
 					if (c == '>') {
-						expandDefinition("%>", "}", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+						expandDefinition("%>", "}", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else if (c == ':') {
-						expandDefinition("%:", "#", lastContext.getOffset() - lastContext.undoStackSize() - 1); //$NON-NLS-1$ //$NON-NLS-2$
+						expandDefinition("%:", "#", lastContext.getOffset()  - 1); //$NON-NLS-1$ //$NON-NLS-2$
 						c = getChar(false);
 					} else {
 						// Not a digraph
@@ -830,13 +826,7 @@ public class Scanner implements IScanner {
 
     protected int readFromStream()
     {
-    	int c;
-    	try {
-    		c = currentContext.read();
-    	}
-    	catch (IOException e) {
-    		c = NOCHAR;
-    	}
+    	int c = currentContext.getChar();
     	
     	if (c != NOCHAR)
     		return c;
@@ -844,16 +834,13 @@ public class Scanner implements IScanner {
     	if (scannerData.getContextStack().rollbackContext(scannerData.getClientRequestor()) == false)
     		return NOCHAR;
     	
-    	if (currentContext.undoStackSize() != 0 )
-    		return currentContext.popUndo();
-    	
     	return readFromStream();
     }
 
-	final void ungetChar(int c) throws ScannerException{
-		currentContext.pushUndo(c);
-		scannerData.getContextStack().undoRollback( lastContext, scannerData.getClientRequestor() );
-
+	final void ungetChar(int c) {
+		currentContext.ungetChar(c);
+		if( lastContext != currentContext)
+			scannerData.getContextStack().undoRollback( lastContext, scannerData.getClientRequestor() );
 	}
 
 	protected boolean lookAheadForTokenPasting() throws ScannerException
@@ -905,16 +892,14 @@ public class Scanner implements IScanner {
 			storageBuffer.append( buff.toString() );
 			try
 			{
-				scannerData.getContextStack().updateContext( 
-					new StringReader( storageBuffer.toString()), 
-					PASTING, 
-					IScannerContext.ContextKind.MACROEXPANSION, 
-					null, 
-					scannerData.getClientRequestor() );
+				scannerData.getContextStack().updateMacroContext( 
+					storageBuffer.toString(), 
+					PASTING,
+					scannerData.getClientRequestor(), -1, -1 );
 			}
 			catch (ContextException e)
 			{
-				handleProblem( e.getId(), currentContext.getFilename(), getCurrentOffset(), false, true  );
+				handleProblem( e.getId(), currentContext.getContextName(), getCurrentOffset(), false, true  );
 			}
 			storageBuffer = null; 
 			return true;
@@ -1482,7 +1467,7 @@ public class Scanner implements IScanner {
 
 	protected IToken processKeywordOrIdentifier(StringBuffer buff, boolean pasting) throws ScannerException, EndOfFileException
 	{ 
-        int baseOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
+        int baseOffset = lastContext.getOffset() - 1;
 				
 		// String buffer is slow, we need a better way such as memory mapped files
 		int c = getChar();				
@@ -1917,6 +1902,68 @@ public class Scanner implements IScanner {
 						continue;
 					}
 					return token;
+				case 'a':
+				case 'b':
+				case 'c':
+				case 'd':
+				case 'e':
+				case 'f':
+				case 'g':
+				case 'h':
+				case 'i':
+				case 'j':
+				case 'k':
+				case 'l':
+				case 'm':
+				case 'n':
+				case 'o':
+				case 'p':
+				case 'q':
+				case 'r':
+				case 's':
+				case 't':
+				case 'u':
+				case 'v':
+				case 'w':
+				case 'x':
+				case 'y':
+				case 'z':
+				case 'A':
+				case 'B':
+				case 'C':
+				case 'D':
+				case 'E':
+				case 'F':
+				case 'G':
+				case 'H':
+				case 'I':
+				case 'J':
+				case 'K':
+					// 'L' is handled elsewhere
+				case 'M':
+				case 'N':
+				case 'O':
+				case 'P':
+				case 'Q':
+				case 'R':
+				case 'S':
+				case 'T':
+				case 'U':
+				case 'V':
+				case 'W':
+				case 'X':
+				case 'Y':
+				case 'Z':
+				case '_':
+					StringBuffer sBuffer = new StringBuffer( );
+					sBuffer.append( (char) c );
+					token = processKeywordOrIdentifier(sBuffer, pasting);
+					if (token == null) 
+					{
+						c = getChar();
+						continue;
+					}
+					return token;
 				case '"' :
 					token = processStringLiteral(false);
 					if (token == null) 
@@ -2030,9 +2077,9 @@ public class Scanner implements IScanner {
 		int completionPoint = expression.length() + 2;
 		IASTCompletionNode.CompletionKind kind = IASTCompletionNode.CompletionKind.MACRO_REFERENCE;
 		
-		String prefix = ""; //$NON-NLS-1$
+		String prefix = EMPTY_STRING;
 		
-		if( ! expression.trim().equals("")) //$NON-NLS-1$
+		if( ! expression.trim().equals(EMPTY_STRING))
 		{	
 			IScanner subScanner = new Scanner( 
 					new StringReader(expression), 
@@ -2149,7 +2196,7 @@ public class Scanner implements IScanner {
 
     protected String getCurrentFile()
 	{
-		return scannerData.getContextStack().getMostRelevantFileContext() != null ? scannerData.getContextStack().getMostRelevantFileContext().getFilename() : ""; //$NON-NLS-1$
+		return scannerData.getContextStack().getMostRelevantFileContext() != null ? scannerData.getContextStack().getMostRelevantFileContext().getContextName() : ""; //$NON-NLS-1$
 	}
 
 
@@ -2530,7 +2577,7 @@ public class Scanner implements IScanner {
 
 	protected void poundInclude( int beginningOffset, int startLine ) throws ScannerException, EndOfFileException {
 		skipOverWhitespace();				
-		int baseOffset = lastContext.getOffset() - lastContext.undoStackSize();
+		int baseOffset = lastContext.getOffset() ;
 		int nameLine = scannerData.getContextStack().getCurrentLineNumber();
 		String includeLine = getRestOfPreprocessorLine();
 		if( isLimitReached() )
@@ -2693,7 +2740,7 @@ public class Scanner implements IScanner {
 	protected void poundDefine(int beginning, int beginningLine ) throws ScannerException, EndOfFileException {
 		// definition 
 		String key = getNextIdentifier();
-		int offset = currentContext.getOffset() - key.length() - currentContext.undoStackSize();
+		int offset = currentContext.getOffset() - key.length();
 		int nameLine = scannerData.getContextStack().getCurrentLineNumber();
 
 		// store the previous definition to check against later
@@ -2968,17 +3015,16 @@ public class Scanner implements IScanner {
 			String replacementValue = expansion.getExpansionSignature();
 			try
 			{
-				scannerData.getContextStack().updateContext( 
-					new StringReader(replacementValue), 
-					symbol, ScannerContext.ContextKind.MACROEXPANSION, 
-					null, 
+				scannerData.getContextStack().updateMacroContext( 
+					replacementValue, 
+					symbol,
 					scannerData.getClientRequestor(), 
 					symbolOffset, 
 					symbol.length());
 			}
 			catch (ContextException e)
 			{
-				handleProblem( e.getId(), currentContext.getFilename(), getCurrentOffset(), false, true );
+				handleProblem( e.getId(), currentContext.getContextName(), getCurrentOffset(), false, true );
 				consumeUntilOutOfMacroExpansion();
 				return;
 			}
@@ -3004,7 +3050,7 @@ public class Scanner implements IScanner {
 				}
                 
                 // Position of the closing ')'
-                int endMacroOffset = lastContext.getOffset() - lastContext.undoStackSize() - 1;
+                int endMacroOffset = lastContext.getOffset()  - 1;
 				
 				String betweenTheBrackets = buffer.toString().trim();
                 
@@ -3119,18 +3165,16 @@ public class Scanner implements IScanner {
 				String finalString = buffer.toString();
 				try
 				{
-					scannerData.getContextStack().updateContext(
-						new StringReader(finalString),
-						expansion.getName(), 
-						ScannerContext.ContextKind.MACROEXPANSION, 
-						null, 
+					scannerData.getContextStack().updateMacroContext(
+						finalString,
+						expansion.getName(),
 						scannerData.getClientRequestor(), 
 						symbolOffset, 
 						endMacroOffset - symbolOffset + 1 );
 				}
 				catch (ContextException e)
 				{
-					handleProblem( e.getId(), currentContext.getFilename(), getCurrentOffset(), false, true );
+					handleProblem( e.getId(), currentContext.getContextName(), getCurrentOffset(), false, true );
 					consumeUntilOutOfMacroExpansion();
 					return;
 				}
@@ -3247,10 +3291,8 @@ public class Scanner implements IScanner {
 	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getCurrentFileIndex()
 	 */
 	public int getCurrentFileIndex() {
-		IScannerContext mostRelevantFileContext = scannerData.getContextStack().getMostRelevantFileContext();
-		return (( mostRelevantFileContext == null ) ? -1 : 	mostRelevantFileContext.getFilenameIndex() );
-	}
-
+		return scannerData.getContextStack().getMostRelevantFileContextIndex();
+}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IFilenameProvider#getFilenameForIndex(int)
 	 */

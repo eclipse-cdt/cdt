@@ -1,23 +1,23 @@
-/**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+/*******************************************************************************
+ * Copyright (c) 2002, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v0.5 
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/cpl-v05.html
  * 
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
 ***********************************************************************/
+
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-import java.io.IOException;
 import java.io.Reader;
 
 /**
  * @author jcamelon
  */
 public class LimitedScannerContext
-	extends ScannerContext
+	extends ScannerContextInclusion
 	implements IScannerContext {
 
 	private final int limit;
@@ -30,8 +30,8 @@ public class LimitedScannerContext
 	 * @param object
 	 * @param offsetLimit
 	 */
-	public LimitedScannerContext(Scanner scanner, Reader reader, String string, int kind, int offsetLimit, int index ) {
-		super( reader, string, kind, null, index );
+	public LimitedScannerContext(Scanner scanner, Reader reader, String string, int offsetLimit, int index ) {
+		super( reader, string, null, index );
 		this.scanner = scanner;
 		limit = offsetLimit;
 	}
@@ -41,13 +41,16 @@ public class LimitedScannerContext
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IScannerContext#read()
 	 */
-	public int read() throws IOException {
+	public int getChar()  {
 		if( getOffset() == limit )
 		{
 			scanner.setOffsetLimitReached(true);
-			throw new IOException();
+			return -1;
 		}
-		return super.read();
+		return super.getChar();
 	}
 
+	public int getKind() {
+		return ScannerContextInclusion.ContextKind.TOP;
+	}
 }

@@ -55,7 +55,7 @@ public class ImagedToken extends SimpleToken {
 	 */
 	protected void setOffsetAndLength(IScannerContext context) {
 		if( getImage() == null ) return;
-		offset = context.getOffset() - getImage().length() - context.undoStackSize();		
+		offset = context.getOffset() - getImage().length();		
 		if( getType() == tSTRING || getType() == tCHAR )
 			offset--;
 		else if( getType() == tLSTRING || getType() == tLCHAR )

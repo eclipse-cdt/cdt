@@ -11,6 +11,7 @@
 package org.eclipse.cdt.internal.core.parser.token;
 
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.core.parser.scanner.IScannerContext;
 import org.eclipse.cdt.internal.core.parser.scanner.IScannerData;
 
 /**
@@ -22,7 +23,7 @@ public class TokenFactory {
 	{
 		if( value.length() > 15 )
 			return createUniquelyImagedToken( IToken.tINTEGER, value, scannerData );
-		if( scannerData.getContextStack().getCurrentContext().getMacroOffset() >= 0 )
+		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
 			return new IntegerExpansionToken( IToken.tINTEGER, Integer.parseInt(value ), scannerData.getContextStack() );
 			
 		return new IntegerToken( IToken.tINTEGER, Integer.parseInt( value ), scannerData.getContextStack() );		
@@ -33,7 +34,7 @@ public class TokenFactory {
 		if( value.length() > 15 )
 			return createUniquelyImagedToken( IToken.tHEXINT, value, scannerData );
 		
-		if( scannerData.getContextStack().getCurrentContext().getMacroOffset() >= 0 )
+		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
 			return new HexIntegerExpansionToken( IToken.tHEXINT, value, scannerData.getContextStack() );
 			
 		return new HexIntegerToken( IToken.tHEXINT, value, scannerData.getContextStack() );		
@@ -43,7 +44,7 @@ public class TokenFactory {
 	
 	public static IToken createToken( int tokenType, IScannerData scannerData )
 	{
-		if( scannerData.getContextStack().getCurrentContext().getMacroOffset() >= 0 )
+		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
 			return new SimpleExpansionToken( tokenType, scannerData.getContextStack() );
 		
 		return new SimpleToken(	tokenType, scannerData.getContextStack() );
@@ -56,7 +57,7 @@ public class TokenFactory {
 	 * @return
 	 */
 	public static IToken createUniquelyImagedToken(int type, String image, IScannerData scannerData) {
-		if( scannerData.getContextStack().getCurrentContext().getMacroOffset() >= 0 )
+		if( scannerData.getContextStack().getCurrentContext().getKind() == IScannerContext.ContextKind.MACROEXPANSION )
 			return new ImagedExpansionToken( type, scannerData.getContextStack(), image );
 
 		return new ImagedToken(type, scannerData.getContextStack(), image );

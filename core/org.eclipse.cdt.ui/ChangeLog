@@ -2,7 +2,7 @@
 
 	Fix the drag & drop.
 
-	* src/org/eclipse/cdt/internal/ui/cview/CViewSorter.java:
+	* src/org/eclipse/cdt/internal/ui/cview/CViewDragAdapter.java:
 
 2003-04-07 Alain Magloire
 

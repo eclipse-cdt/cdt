@@ -28,11 +28,18 @@ public interface ICDIConfiguration
 	boolean supportsDisconnect();
 
 	/**
-	 * Returns whether this session supports suspend/resume.
+	 * Returns whether this session supports suspend.
 	 * 
-	 * @return whether this session supports suspend/resume
+	 * @return whether this session supports suspend.
 	 */
-	boolean supportsSuspendResume();
+	boolean supportsSuspend();
+	
+	/**
+	 * Returns whether this session supports Resume.
+	 * 
+	 * @return whether this session supports Resume.
+	 */
+	boolean supportsResume();
 
 	/**
 	 * Returns whether this session supports restarting.

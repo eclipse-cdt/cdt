@@ -108,4 +108,18 @@ public class Configuration implements ICDIConfiguration {
 		return fAttached ? false : true;
 		
 	}
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsResume()
+	 */
+	public boolean supportsResume() {
+		return true;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.ICDIConfiguration#supportsSuspend()
+	 */
+	public boolean supportsSuspend() {
+		return false;
+	}
+
 }

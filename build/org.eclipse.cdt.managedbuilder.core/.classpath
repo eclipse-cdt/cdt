@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+    <classpathentry kind="src" path="src/"/>
     <classpathentry kind="src" path="/org.apache.xerces"/>
     <classpathentry kind="src" path="/org.eclipse.cdt.core"/>
     <classpathentry kind="src" path="/org.eclipse.cdt.core.linux"/>
@@ -10,6 +11,5 @@
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
     <classpathentry kind="src" path="/org.eclipse.core.boot"/>
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry kind="src" path="src"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>

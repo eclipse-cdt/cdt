@@ -1,3 +1,6 @@
+2004-02-04 John Camelon
+	Added preliminary (crude) SelectionParser IParser implementation for SELECTION_PARSE clients.  
+
 2004-02-01 John Camelon
 	Added CompletionKind.UNREACHABLE_CODE to IASTCompletionNode.  
 	Updated Scanner to handle unreachable code scenarios in content assist.  

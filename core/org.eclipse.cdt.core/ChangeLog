@@ -1,4 +1,10 @@
 2004-03-25 David Inglis
+	
+	Added util class for core model
+	
+	* src/org/eclipse/cdt/core/model/CoreModelUtil.java
+	
+2004-03-25 David Inglis
 
 	Update to allow non-owned projects and added better recovery of deleted .cdtprojects via nature id
 	

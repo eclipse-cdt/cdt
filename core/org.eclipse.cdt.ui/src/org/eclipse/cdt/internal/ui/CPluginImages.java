@@ -150,9 +150,11 @@ public class CPluginImages {
 	//for search
 	public static final String IMG_OBJS_SEARCH_REF  = NAME_PREFIX + "search_ref_obj.gif";
 	public static final String IMG_OBJS_SEARCH_DECL = NAME_PREFIX + "search_decl_obj.gif";
+	public static final String IMG_OBJS_CSEARCH     = NAME_PREFIX + "csearch_obj.gif";
 	
 	public static final ImageDescriptor DESC_OBJS_SEARCH_DECL = createManaged(T_OBJ, IMG_OBJS_SEARCH_DECL);
 	public static final ImageDescriptor DESC_OBJS_SEARCH_REF  = createManaged(T_OBJ, IMG_OBJS_SEARCH_REF);
+	public static final ImageDescriptor DESC_OBJS_CSEARCH     = createManaged(T_OBJ, IMG_OBJS_CSEARCH);
 	
 	public static void initialize() {
 		//createManaged(registry, T_OBJ, IMG_OBJS_TUNIT);

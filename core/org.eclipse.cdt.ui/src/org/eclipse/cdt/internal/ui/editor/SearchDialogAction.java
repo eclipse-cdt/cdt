@@ -43,7 +43,7 @@ public class SearchDialogAction extends Action {
 		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip"));
 		
 		if(provider instanceof CContentOutlinePage) {
-			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_OPEN_INCLUDE);
+			setImageDescriptor( CPluginImages.DESC_OBJS_CSEARCH );
 		}
 		
 		fSelectionProvider= provider;
@@ -57,7 +57,7 @@ public class SearchDialogAction extends Action {
 		setToolTipText(CUIPlugin.getResourceString(PREFIX + "tooltip"));
 		
 		if(provider instanceof CContentOutlinePage) {
-			CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, CPluginImages.IMG_MENU_OPEN_INCLUDE);
+			setImageDescriptor( CPluginImages.DESC_OBJS_CSEARCH );
 		}
 		
 		fSelectionProvider= provider;
@@ -168,7 +168,9 @@ public class SearchDialogAction extends Action {
 			if (descriptor != null) {
 				return descriptor.getId();
 			} else {
-				return registry.getDefaultEditor().getId();
+				//getDefaultEditor is deprecated, The system external editor is the default editor
+				return IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID;
+
 			}
 		}
 		return null;

@@ -65,8 +65,7 @@ public class CModelBuilder {
 	}
 	
 	protected void generateModelElements(TranslationUnit tu){
-		List offsetables = tu.getOffsetables();
-		Iterator i = offsetables.iterator();
+		Iterator i = tu.iterateOffsetableElements();
 		while (i.hasNext()){
 			IOffsetable offsetable = (IOffsetable)i.next();
 			if(offsetable instanceof Inclusion){

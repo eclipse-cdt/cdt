@@ -5,7 +5,10 @@
  */
 package org.eclipse.cdt.debug.mi.core.event;
 
+
+
 /**
+ * Gdb Session terminated.
  */
-public abstract class MIEvent {
+public class MIGDBExitEvent extends MIEvent {
 }

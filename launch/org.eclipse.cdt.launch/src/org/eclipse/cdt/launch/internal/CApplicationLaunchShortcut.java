@@ -319,10 +319,11 @@ public class CApplicationLaunchShortcut implements ILaunchShortcut {
 			}
 			if (results.size() == 0) {
 				MessageDialog.openError(getShell(), "C Application Launcher", "Launch failed no binaries"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			IBinary bin = chooseBinary(results, mode);
-			if (bin != null) {
-				launch(bin, mode);
+			} else {
+				IBinary bin = chooseBinary(results, mode);
+				if (bin != null) {
+					launch(bin, mode);
+				}
 			}
 		}
 	}

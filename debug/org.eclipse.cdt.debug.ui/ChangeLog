@@ -1,3 +1,7 @@
+2004-05-24 Mikhail Khodjaiants
+	Fix for bug 63612: Debugger Pages are not displayed.
+	* CDebugUIPlugin.java
+
 2004-05-21 Mikhail Khodjaiants
 	Removed dependencies on the compatibility plugin and replaced deprecated classes and methods.
 	Warning cleanup.

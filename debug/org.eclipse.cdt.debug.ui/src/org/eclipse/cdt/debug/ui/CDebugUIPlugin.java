@@ -229,14 +229,13 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	}
 	
 	protected void initializeDebuggerPageMap() {
-		fDebuggerPageMap = new HashMap(10);
-
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint("CDebuggerPage"); //$NON-NLS-1$
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-		for (int i = 0; i < infos.length; i++) {
-			String id = infos[i].getAttribute("debuggerID"); //$NON-NLS-1$
-			fDebuggerPageMap.put(id, infos[i]);
-		}		
+		fDebuggerPageMap = new HashMap( 10 );
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint( PLUGIN_ID, "CDebuggerPage" ); //$NON-NLS-1$
+		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
+		for( int i = 0; i < infos.length; i++ ) {
+			String id = infos[i].getAttribute( "debuggerID" ); //$NON-NLS-1$
+			fDebuggerPageMap.put( id, infos[i] );
+		}
 	}
 
 	public static void errorDialog( String message, IStatus status )

@@ -71,4 +71,43 @@
          version="1.0.0">
    </plugin>
 
+   <plugin
+         id="org.eclipse.cdt.core.linux"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         fragment="true">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.core.qnx"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         fragment="true">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.core.solaris"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         fragment="true">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.core.win32"
+         download-size="0"
+         install-size="0"
+         version="1.0.0"
+         fragment="true">
+   </plugin>
+
+   <plugin
+         id="org.eclipse.cdt.debug.mi.ui"
+         download-size="0"
+         install-size="0"
+         version="1.0.0">
+   </plugin>
+
 </feature>

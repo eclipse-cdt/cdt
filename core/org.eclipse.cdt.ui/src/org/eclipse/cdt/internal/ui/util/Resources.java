@@ -102,7 +102,7 @@ public class Resources {
 			IResource resource= resources[i];
 			if (resource.getType() == IResource.FILE) {
 				ResourceAttributes attributes = resource.getResourceAttributes();
-				if (attributes.isReadOnly()) {	
+				if (attributes != null && attributes.isReadOnly()) {	
 					readOnlyFiles.add(resource);
 				}
 			}

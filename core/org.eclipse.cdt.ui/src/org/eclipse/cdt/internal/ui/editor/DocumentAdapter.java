@@ -364,7 +364,9 @@ public class DocumentAdapter implements IBuffer, IDocumentListener {
 		IResource resource= getUnderlyingResource();
 		if (resource != null) {
 			ResourceAttributes attributes = resource.getResourceAttributes();
-			return attributes.isReadOnly();
+			if (attributes != null) {
+				return attributes.isReadOnly();
+			}
 		}
 		return false;		
 	}

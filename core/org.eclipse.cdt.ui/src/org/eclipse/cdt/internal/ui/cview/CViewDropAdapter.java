@@ -141,10 +141,14 @@ class CViewDropAdapter extends PluginDropAdapter implements IOverwriteQuery {
 					//Apples to apples...
 					IResource resourceCurrentContainer = currentContainer.getResource();
 					ResourceAttributes attributes = tempResource.getResourceAttributes();
+					boolean isReadOnly = true;
+					if (attributes != null) {
+						isReadOnly = attributes.isReadOnly();
+					}
 					if (tempResourceParent.equals(resourceCurrentContainer) ||
 						tempResource.equals(resourceCurrentContainer) ||
 						tempResource.equals(resourceCurrentContainer.getParent()) ||
-						attributes.isReadOnly()){
+						isReadOnly){
 						event.detail = DND.DROP_NONE;
 						break;
 					}

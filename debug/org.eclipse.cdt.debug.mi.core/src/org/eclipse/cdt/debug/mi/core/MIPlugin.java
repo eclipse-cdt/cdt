@@ -8,8 +8,8 @@ import java.io.IOException;
 
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CSession;
+import org.eclipse.cdt.debug.mi.core.command.CLICommand;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
-import org.eclipse.cdt.debug.mi.core.command.MIGDBSet;
 import org.eclipse.cdt.debug.mi.core.command.MITargetAttach;
 import org.eclipse.cdt.debug.mi.core.command.MITargetSelect;
 import org.eclipse.cdt.debug.mi.core.output.MIInfo;
@@ -113,19 +113,20 @@ public class MIPlugin extends Plugin {
 
 		Process pgdb = ProcessFactory.getFactory().exec(args);
 		MISession session = createMISession(pgdb, pty, MISession.PROGRAM);
-		// For windows we need to start the inferior in a new console window
-		// to separate the Inferior std{in,out,err} from gdb std{in,out,err}
+		// Try to detect if we have been attach via "target remote localhost:port"
+		// and set the state to be suspended.
 		try {
-			CommandFactory factory = session.getCommandFactory();
-			MIGDBSet set = factory.createMIGDBSet(new String[]{"new-console"});
-			session.postCommand(set);
-			MIInfo info = set.getMIInfo();
+			CLICommand cmd = new CLICommand("info remote-process");
+			session.postCommand(cmd);
+			MIInfo info = cmd.getMIInfo();
 			if (info == null) {
 				throw new MIException("No answer");
 			}
+			//@@@ We have to manually set the suspended state when we attach
+			session.getMIInferior().setSuspended();
 		} catch (MIException e) {
-			// We ignore this exception, for example
-			// on GNU/Linux the new-console is an error.
+			// If an exception is thrown that means ok
+			// we did not attach to any target.
 		}
 		return new CSession(session, false);
 	}

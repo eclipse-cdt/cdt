@@ -20,7 +20,9 @@ import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRuntimeOptions;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISignal;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
@@ -37,6 +39,7 @@ import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.RegisterManager;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
 import org.eclipse.cdt.debug.mi.core.cdi.SignalManager;
+import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
 import org.eclipse.cdt.debug.mi.core.cdi.VariableManager;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIDataEvaluateExpression;
@@ -812,6 +815,70 @@ public class Target  implements ICDITarget {
 	public ICDISignal[] getSignals() throws CDIException {
 		SignalManager sigMgr = ((Session)getSession()).getSignalManager();
 		return sigMgr.getSignals(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISourceManagement#addSourcePaths(java.lang.String[])
+	 */
+	public void addSourcePaths(String[] srcPaths) throws CDIException {
+		SourceManager srcMgr = ((Session)getSession()).getSourceManager();
+		srcMgr.addSourcePaths(this, srcPaths);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISourceManagement#getSourcePaths()
+	 */
+	public String[] getSourcePaths() throws CDIException {
+		SourceManager srcMgr = ((Session)getSession()).getSourceManager();
+		return srcMgr.getSourcePaths(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISourceManagement#getInstructions(java.math.BigInteger, java.math.BigInteger)
+	 */
+	public ICDIInstruction[] getInstructions(BigInteger startAddress, BigInteger endAddress) throws CDIException {
+		SourceManager srcMgr = ((Session)getSession()).getSourceManager();
+		return srcMgr.getInstructions(this, startAddress, endAddress);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISourceManagement#getInstructions(java.lang.String, int)
+	 */
+	public ICDIInstruction[] getInstructions(String filename, int linenum) throws CDIException {
+		SourceManager srcMgr = ((Session)getSession()).getSourceManager();
+		return srcMgr.getInstructions(this, filename, linenum);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISourceManagement#getInstructions(java.lang.String, int, int)
+	 */
+	public ICDIInstruction[] getInstructions(String filename, int linenum, int lines) throws CDIException {
+		SourceManager srcMgr = ((Session)getSession()).getSourceManager();
+		return srcMgr.getInstructions(this, filename, linenum, lines);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISourceManagement#getMixedInstructions(java.math.BigInteger, java.math.BigInteger)
+	 */
+	public ICDIMixedInstruction[] getMixedInstructions(BigInteger startAddress, BigInteger endAddress) throws CDIException {
+		SourceManager srcMgr = ((Session)getSession()).getSourceManager();
+		return srcMgr.getMixedInstructions(this, startAddress, endAddress);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISourceManagement#getMixedInstructions(java.lang.String, int)
+	 */
+	public ICDIMixedInstruction[] getMixedInstructions(String filename, int linenum) throws CDIException {
+		SourceManager srcMgr = ((Session)getSession()).getSourceManager();
+		return srcMgr.getMixedInstructions(this, filename, linenum);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDISourceManagement#getMixedInstructions(java.lang.String, int, int)
+	 */
+	public ICDIMixedInstruction[] getMixedInstructions(String filename, int linenum, int lines) throws CDIException {
+		SourceManager srcMgr = ((Session)getSession()).getSourceManager();
+		return srcMgr.getMixedInstructions(this, filename, linenum, lines);
 	}
 
 }

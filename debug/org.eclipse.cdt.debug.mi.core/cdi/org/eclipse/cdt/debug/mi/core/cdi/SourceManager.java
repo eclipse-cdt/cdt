@@ -14,7 +14,6 @@ import java.math.BigInteger;
 import java.util.StringTokenizer;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDISourceManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMixedInstruction;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
@@ -62,7 +61,7 @@ import org.eclipse.cdt.debug.mi.core.output.MIWhatisInfo;
 
 /**
  */
-public class SourceManager extends Manager implements ICDISourceManager {
+public class SourceManager extends Manager {
 
 	GDBTypeParser gdbTypeParser;
 
@@ -71,14 +70,6 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		gdbTypeParser = new GDBTypeParser();
 	}
 
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#addSourcePaths(String[])
-	 */
-	public void addSourcePaths(String[] dirs) throws CDIException {
-		Target target = ((Session)getSession()).getCurrentTarget();
-		addSourcePaths(target, dirs);
-	}
 	public void addSourcePaths(Target target, String[] dirs) throws CDIException {
 		Session session = (Session)getSession();
 		MISession mi = target.getMISession();
@@ -92,14 +83,6 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		}
 	}
 
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getSourcePaths()
-	 */
-	public String[] getSourcePaths() throws CDIException {
-		Target target = ((Session)getSession()).getCurrentTarget();
-		return getSourcePaths(target);
-	}
 	public String[] getSourcePaths(Target target) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -113,14 +96,10 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		}
 	}
 
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(String, int, int)
-	 */
-	public ICDIInstruction[] getInstructions(String filename, int linenum, int lines) throws CDIException {
-		Target target = ((Session)getSession()).getCurrentTarget();
-		return getInstructions(target, filename, linenum, lines);
+	public ICDIInstruction[] getInstructions(Target target, String filename, int linenum) throws CDIException {
+		return getInstructions(target, filename, linenum, -1);
 	}
+
 	public ICDIInstruction[] getInstructions(Target target, String filename, int linenum, int lines) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -139,21 +118,6 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(String, int)
-	 */
-	public ICDIInstruction[] getInstructions(String filename, int linenum) throws CDIException {
-		return getInstructions(filename, linenum, -1);
-	}
-
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getInstructions(long, long)
-	 */
-	public ICDIInstruction[] getInstructions(BigInteger start, BigInteger end) throws CDIException {
-		Target target = ((Session)getSession()).getCurrentTarget();
-		return getInstructions(target, start, end);
-	}
 	public ICDIInstruction[] getInstructions(Target target, BigInteger start, BigInteger end) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -175,14 +139,10 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		}
 	}
 
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getMixedInstructions(String, int, int)
-	 */
-	public ICDIMixedInstruction[] getMixedInstructions(String filename, int linenum, int lines) throws CDIException {
-		Target target = ((Session)getSession()).getCurrentTarget();
-		return getMixedInstructions(target, filename, linenum, lines);
+	public ICDIMixedInstruction[] getMixedInstructions(Target target, String filename, int linenum) throws CDIException {
+		return getMixedInstructions(target, filename, linenum, -1);
 	}
+
 	public ICDIMixedInstruction[] getMixedInstructions(Target target, String filename, int linenum, int lines) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
@@ -201,21 +161,6 @@ public class SourceManager extends Manager implements ICDISourceManager {
 		}
 	}
 
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getMixedInstructions(String, int)
-	 */
-	public ICDIMixedInstruction[] getMixedInstructions(String filename, int linenum) throws CDIException {
-		return getMixedInstructions(filename, linenum, -1);
-	}
-	/**
-	 * @deprecated
-	 * @see org.eclipse.cdt.debug.core.cdi.ICDISourceManager#getMixedInstructions(long, long)
-	 */
-	public ICDIMixedInstruction[] getMixedInstructions(BigInteger start, BigInteger end) throws CDIException {	
-		Target target = ((Session)getSession()).getCurrentTarget();
-		return getMixedInstructions(target, start, end);
-	}
 	public ICDIMixedInstruction[] getMixedInstructions(Target target, BigInteger start, BigInteger end) throws CDIException {
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();

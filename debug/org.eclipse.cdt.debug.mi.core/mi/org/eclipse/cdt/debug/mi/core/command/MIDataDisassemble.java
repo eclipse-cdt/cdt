@@ -107,4 +107,16 @@ public class MIDataDisassemble extends MICommand
 		}
 		return info;
 	}
+
+	/*
+	 * GDB the -data-disassemble uses "--" as a separator wit only the MODE
+	 * So override the MICommand
+	 */
+	protected String parametersToString() {
+		if (parameters != null && parameters.length > 0) {
+			return "-- " + parameters[0]; //$NON-NLS-1$
+		}
+		return new String();
+	}
+
 }

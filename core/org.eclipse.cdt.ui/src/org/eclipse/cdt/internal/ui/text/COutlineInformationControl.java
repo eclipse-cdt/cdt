@@ -1,7 +1,7 @@
 /*
  * COutlineInformationControl.java 2004-12-14 / 08:17:41
 
- * $Revision: 1.2 $ $Date: 2004/12/23 19:38:20 $
+ * $Revision: 1.3 $ $Date: 2005/01/20 22:10:45 $
  *
  * @author P.Tomaszewski
  */
@@ -21,6 +21,7 @@ import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.IInformationControl;
@@ -90,6 +91,8 @@ public class COutlineInformationControl implements IInformationControl,
     private static final String STORE_RESTORE_SIZE= "ENABLE_RESTORE_SIZE"; //$NON-NLS-1$
     /** If this option is set, size is not restore. */
     private static final String STORE_RESTORE_LOCATION= "ENABLE_RESTORE_LOCATION"; //$NON-NLS-1$
+    /** If this option is set, sort is done. */
+    private static final String STORE_SORT_ENABLED = "ENABLE_SORT"; //$NON-NLS-1$
 
     /** Border thickness in pixels. */
     private static final int BORDER = 1;
@@ -112,7 +115,7 @@ public class COutlineInformationControl implements IInformationControl,
     IContentProvider fTreeContentProvider;
 
     /** Sorter for tree viewer. */
-    private OutlineSorter fSorter;
+    OutlineSorter fSorter;
 
     /** Control bounds. */
     Rectangle fBounds;
@@ -355,6 +358,8 @@ public class COutlineInformationControl implements IInformationControl,
     MenuManager getViewMenuManager() {
         if (fViewMenuManager == null) {
             fViewMenuManager= new MenuManager();
+            fViewMenuManager.add(new SortAction());
+            fViewMenuManager.add(new Separator());
             fViewMenuManager.add(new RememberBoundsAction());
             fViewMenuManager.add(new MoveAction());
         }
@@ -408,7 +413,9 @@ public class COutlineInformationControl implements IInformationControl,
         fTreeContentProvider = new CContentOutlinerProvider(fTreeViewer);
         fSorter = new OutlineSorter();
         fTreeViewer.setContentProvider(fTreeContentProvider);
-        fTreeViewer.setSorter(fSorter);
+        if (getSettings().getBoolean(STORE_SORT_ENABLED)) {
+            fTreeViewer.setSorter(fSorter);
+        }
         fTreeViewer.setLabelProvider(new DecoratingCLabelProvider(
                 new StandardCElementLabelProvider(), true));
         fTreeViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
@@ -967,6 +974,37 @@ public class COutlineInformationControl implements IInformationControl,
             if (tracker.open()) {
                 fShell.setBounds(tracker.getRectangles()[0]);
             }
+        }
+    }
+
+    /**
+     * 
+     * The view menu's Sort action.
+     *
+     * @author P.Tomaszewski
+     */
+    private class SortAction extends Action {
+
+        /**
+         * Creates new action.
+         */
+        SortAction() {
+            super(ActionMessages.getString("COutlineInformationControl.viewMenu.sort.label"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
+            setChecked(getSettings().getBoolean(STORE_SORT_ENABLED));
+        }
+
+        /**
+         * @see org.eclipse.jface.action.Action#run()
+         */
+        public void run() {
+            final boolean newValue = isChecked();
+            if (newValue) {
+                fTreeViewer.setSorter(fSorter);
+            } else {
+                fTreeViewer.setSorter(null);
+            }
+            getSettings().put(STORE_SORT_ENABLED, newValue);
+            fIsDeactivationActive = true;
         }
     }
     

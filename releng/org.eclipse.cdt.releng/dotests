@@ -14,7 +14,7 @@ for i in $PLUGINS
 do
 	./eclipse -nosplash -application org.eclipse.ant.core.antRunner \
 		-f plugins/$i*/test.xml -Declipse-home=`pwd` \
-		-Dorg.eclipse.test=org.eclipse.test_2.1.0\
+		-Dorg.eclipse.test=org.eclipse.test_2.1.0 \
 		-Dos=linux -Dws=gtk -Darch=x86
 	mv $i*.xml $RESULTS
 done

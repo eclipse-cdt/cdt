@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -54,7 +53,6 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.IStringButtonAdapter;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogFieldGroup;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.Separator;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringButtonDialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
@@ -1053,7 +1051,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 	    return status;
 	}
 
-	private IStatus enclosingClassChanged() {
+/*	private IStatus enclosingClassChanged() {
 	    StatusInfo status = new StatusInfo();
 
 		// must not be empty
@@ -1105,7 +1103,7 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 
 	    return status;
 	}
-
+*/
 	/**
 	 * Hook method that gets called when the class name has changed. The method validates the 
 	 * class name and returns the status of the validation.
@@ -1294,56 +1292,41 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			return status;
 		}
 		
-		boolean fileExists = false;
-
-		// make sure header is inside source folder
-		IPath folderPath = getSourceFolderFullPath();
-		if (folderPath != null) {
-		    if (!folderPath.isPrefixOf(path)) {
-				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.HeaderFileNotInSourceFolder")); //$NON-NLS-1$
-				return status;
-		    }
+		IPath sourceFolderPath = getSourceFolderFullPath();
+		if (sourceFolderPath == null || !sourceFolderPath.isPrefixOf(path)) {
+			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.HeaderFileNotInSourceFolder")); //$NON-NLS-1$
+			return status;
+		}
 		
-			IPath workspacePath = fWorkspaceRoot.getLocation();
-		    File file = workspacePath.append(path).toFile();
-		    if (file != null && file.exists()) {
-		        if (file.isFile()) {
-		            fileExists = true;
+		boolean fileExists = false;
+		// check if file already exists
+		IResource file = getWorkspaceRoot().findMember(path);
+		if (file != null && file.exists()) {
+	    	if (file.getType() == IResource.FILE) {
+				IProject proj = file.getProject();
+				if (!proj.isOpen()) {
+					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", path)); //$NON-NLS-1$
+					return status;
+				}
+
+				fileExists = true;
+			    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+					status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
+				} else {
 				    status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.HeaderFileExists")); //$NON-NLS-1$
-		        } else {
-					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", path)); //$NON-NLS-1$
-					return status;
-		        }
-			} else if (path.segmentCount() > 1) {
-				IPath parentFolderPath = workspacePath.append(path).removeLastSegments(1);
-				File folder = parentFolderPath.toFile();
-				if (folder != null && folder.exists() && folder.isDirectory()) {
-				    // folder exists
-				} else {
-					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.FolderDoesNotExist", PathUtil.getWorkspaceRelativePath(parentFolderPath))); //$NON-NLS-1$
-					return status;
 				}
-			}
-			IResource res = fWorkspaceRoot.findMember(path);
-			if (res != null && res.exists()) {
-				int resType = res.getType();
-				if (resType == IResource.FILE) {
-					IProject proj = res.getProject();
-					if (!proj.isOpen()) {
-						status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", path)); //$NON-NLS-1$
-						return status;
-					}
-				    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
-						status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
-					} else {
-					    fileExists = true;
-					    status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.HeaderFileExists")); //$NON-NLS-1$
-					}
-				} else {
-					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", path)); //$NON-NLS-1$
-					return status;
-				}
-			}
+	    	} else {
+	    		status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NotAFile")); //$NON-NLS-1$
+	    		return status;
+	    	}
+		}
+		
+		// check if folder exists
+		IPath folderPath = path.removeLastSegments(1).makeRelative();
+		IResource folder = getWorkspaceRoot().findMember(folderPath);
+		if (folder == null || !folder.exists() || (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
+			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.FolderDoesNotExist", folderPath)); //$NON-NLS-1$
+			return status;
 		}
 
 		if (!fileExists) {
@@ -1378,56 +1361,41 @@ public class NewClassCreationWizardPage extends NewElementWizardPage {
 			return status;
 		}
 		
-		boolean fileExists = false;
-
-		// make sure header is inside source folder
-		IPath folderPath = getSourceFolderFullPath();
-		if (folderPath != null) {
-		    if (!folderPath.isPrefixOf(path)) {
-				status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.SourceFileNotInSourceFolder")); //$NON-NLS-1$
-				return status;
-		    }
+		IPath sourceFolderPath = getSourceFolderFullPath();
+		if (sourceFolderPath == null || !sourceFolderPath.isPrefixOf(path)) {
+			status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.SourceFileNotInSourceFolder")); //$NON-NLS-1$
+			return status;
+		}
 		
-			IPath workspacePath = fWorkspaceRoot.getLocation();
-		    File file = workspacePath.append(path).toFile();
-		    if (file != null && file.exists()) {
-		        if (file.isFile()) {
-		            fileExists = true;
+		boolean fileExists = false;
+		// check if file already exists
+		IResource file = getWorkspaceRoot().findMember(path);
+		if (file != null && file.exists()) {
+	    	if (file.getType() == IResource.FILE) {
+				IProject proj = file.getProject();
+				if (!proj.isOpen()) {
+					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", path)); //$NON-NLS-1$
+					return status;
+				}
+
+				fileExists = true;
+			    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
+					status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
+				} else {
 				    status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.SourceFileExists")); //$NON-NLS-1$
-		        } else {
-					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", path)); //$NON-NLS-1$
-					return status;
-		        }
-			} else if (path.segmentCount() > 1) {
-				IPath parentFolderPath = workspacePath.append(path).removeLastSegments(1);
-				File folder = parentFolderPath.toFile();
-				if (folder != null && folder.exists() && folder.isDirectory()) {
-				    // folder exists
-				} else {
-					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.FolderDoesNotExist", PathUtil.getWorkspaceRelativePath(parentFolderPath))); //$NON-NLS-1$
-					return status;
 				}
-			}
-			IResource res = fWorkspaceRoot.findMember(path);
-			if (res != null && res.exists()) {
-				int resType = res.getType();
-				if (resType == IResource.FILE) {
-					IProject proj = res.getProject();
-					if (!proj.isOpen()) {
-						status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", path)); //$NON-NLS-1$
-						return status;
-					}
-				    if (!CoreModel.hasCCNature(proj) && !CoreModel.hasCNature(proj)) {
-						status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.NotInACProject")); //$NON-NLS-1$
-					} else {
-					    fileExists = true;
-					    status.setWarning(NewClassWizardMessages.getString("NewClassCreationWizardPage.warning.SourceFileExists")); //$NON-NLS-1$
-					}
-				} else {
-					status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.NotAFile", path)); //$NON-NLS-1$
-					return status;
-				}
-			}
+	    	} else {
+	    		status.setError(NewClassWizardMessages.getString("NewClassCreationWizardPage.error.NotAFile")); //$NON-NLS-1$
+	    		return status;
+	    	}
+		}
+		
+		// check if folder exists
+		IPath folderPath = path.removeLastSegments(1).makeRelative();
+		IResource folder = getWorkspaceRoot().findMember(folderPath);
+		if (folder == null || !folder.exists() || (folder.getType() != IResource.PROJECT && folder.getType() != IResource.FOLDER)) {
+			status.setError(NewClassWizardMessages.getFormattedString("NewClassCreationWizardPage.error.FolderDoesNotExist", folderPath)); //$NON-NLS-1$
+			return status;
 		}
 
 		if (!fileExists) {

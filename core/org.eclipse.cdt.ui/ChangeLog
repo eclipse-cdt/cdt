@@ -1,5 +1,10 @@
 2004-11-10 Chris Wiebe
 
+	additional case for 78200
+	* src/org/eclipse/cdt/internal/ui/wizards/classwizard/NewClassCreationWizardPage.java
+
+2004-11-10 Chris Wiebe
+
 	Fix for 78200
 	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewFileWizardMessages.properties
 	* src/org/eclipse/cdt/internal/ui/wizards/filewizard/NewHeaderFileCreationWizardPage.java

@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDICatchEvent;
-import org.eclipse.cdt.debug.core.cdi.ICDICatchpoint;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
-import org.eclipse.cdt.debug.core.cdi.ICDILocationBreakpoint;
-import org.eclipse.cdt.debug.core.cdi.ICDIWatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDICatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIWatchpoint;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIBreakAfter;

@@ -9,11 +9,11 @@ package org.eclipse.cdt.debug.core;
 import java.text.MessageFormat;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
-import org.eclipse.cdt.debug.core.cdi.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
-import org.eclipse.cdt.debug.internal.core.CDebugElement;
-import org.eclipse.cdt.debug.internal.core.CDebugTarget;
+import org.eclipse.cdt.debug.internal.core.model.CDebugElement;
+import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;

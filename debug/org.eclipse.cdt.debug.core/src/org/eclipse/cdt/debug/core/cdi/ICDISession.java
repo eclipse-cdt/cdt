@@ -94,7 +94,7 @@ public interface ICDISession {
 	 * 
 	 * @return the configuration description
 	 */
-	ICDIDebugConfiguration getConfiguration();
+	ICDIConfiguration getConfiguration();
 
 	/**
 	 * Returns the Runtime options for this debug session.

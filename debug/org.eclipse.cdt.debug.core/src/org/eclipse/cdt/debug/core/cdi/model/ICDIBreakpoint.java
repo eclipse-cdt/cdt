@@ -4,7 +4,10 @@
  * 
  */
 
-package org.eclipse.cdt.debug.core.cdi;
+package org.eclipse.cdt.debug.core.cdi.model;
+
+import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 
 /**
  * 
@@ -19,7 +22,7 @@ package org.eclipse.cdt.debug.core.cdi;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIBreakpoint extends ICDISessionObject
+public interface ICDIBreakpoint extends ICDIObject
 {
 	final static public int REGULAR = 0x0;
 	final static public int TEMPORARY = 0x1;

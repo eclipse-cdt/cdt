@@ -7,7 +7,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
-import org.eclipse.cdt.debug.core.cdi.ICDILocationBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDILocationBreakpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
 
 /**

@@ -5,6 +5,8 @@
 
 package org.eclipse.cdt.debug.core.cdi;
 
+import org.eclipse.cdt.debug.core.cdi.model.*;
+
 /**
  * 
  * The breakpoint manager manages the collection of breakpoints 

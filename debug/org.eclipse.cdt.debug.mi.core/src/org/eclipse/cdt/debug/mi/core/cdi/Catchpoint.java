@@ -6,7 +6,7 @@ package org.eclipse.cdt.debug.mi.core.cdi;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDICatchEvent;
-import org.eclipse.cdt.debug.core.cdi.ICDICatchpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDICatchpoint;
 import org.eclipse.cdt.debug.mi.core.output.MIBreakPoint;
 
 /**

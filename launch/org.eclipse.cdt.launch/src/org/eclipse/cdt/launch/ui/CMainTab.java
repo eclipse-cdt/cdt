@@ -18,9 +18,13 @@ import org.eclipse.cdt.launch.internal.ui.LaunchImages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
 import org.eclipse.cdt.ui.CElementLabelProvider;
 import org.eclipse.core.boot.BootLoader;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -40,8 +44,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
+import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchContentProvider;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * A launch configuration tab that displays and edits project and
@@ -120,7 +128,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 
 		Composite mainComp = new Composite(comp, SWT.NONE);
 		GridLayout mainLayout = new GridLayout();
-		mainLayout.numColumns = 2;
+		mainLayout.numColumns = 3;
 		mainLayout.marginHeight = 0;
 		mainLayout.marginWidth = 0;
 		mainComp.setLayout(mainLayout);
@@ -129,7 +137,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 		fProgLabel = new Label(mainComp, SWT.NONE);
 		fProgLabel.setText("C/C++ Application:");
 		gd = new GridData();
-		gd.horizontalSpan = 2;
+		gd.horizontalSpan = 3;
 		fProgLabel.setLayoutData(gd);
 		fProgText = new Text(mainComp, SWT.SINGLE | SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -139,6 +147,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+
 		fSearchButton = createPushButton(mainComp, "Searc&h...", null);
 		fSearchButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -146,6 +155,16 @@ public class CMainTab extends CLaunchConfigurationTab {
 				updateLaunchConfigurationDialog();
 			}
 		});
+
+		Button fBrowseForBinaryButton;
+		fBrowseForBinaryButton = createPushButton(mainComp, "B&rowse...", null);
+		fBrowseForBinaryButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleBinaryBrowseButtonSelected();
+				updateLaunchConfigurationDialog();
+			}
+		});
+
 		LaunchUIPlugin.setDialogShell(parent.getShell());
 	}
 
@@ -238,7 +257,67 @@ public class CMainTab extends CLaunchConfigurationTab {
 			fProgText.setText(binary.getResource().getProjectRelativePath().toString());
 		}
 
+		
 	}
+
+	/**
+	 * Show a dialog that lets the user select a project.  This in turn provides
+	 * context for the main type, allowing the user to key a main type name, or
+	 * constraining the search for main types to the specified project.
+	 */
+	protected void handleBinaryBrowseButtonSelected() {
+		final ICProject cproject = getCProject();
+		if(cproject == null) {
+			MessageDialog.openInformation(
+				getShell(),
+				"Project required",
+				"Project must first be entered before browsing for a program");
+			return;
+		}
+
+		ElementTreeSelectionDialog dialog;
+		WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
+		WorkbenchContentProvider contentProvider = new WorkbenchContentProvider();
+		dialog = new ElementTreeSelectionDialog(getShell(), labelProvider, contentProvider);
+		dialog.setTitle("Program selection");
+		dialog.setMessage("Choose a program to run from " + cproject.getResource().getName() + ":");
+		dialog.setBlockOnOpen(true);
+		dialog.setAllowMultiple(false);
+		dialog.setInput(cproject.getResource());
+		dialog.setValidator(new ISelectionStatusValidator() {
+			public IStatus validate(Object [] selection) {
+				if(selection.length == 0 || !(selection[0] instanceof IFile)) {
+					return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, "Selection must be a file", null);
+				} else {
+					try {
+						ICElement celement = cproject.findElement(((IFile)selection[0]).getProjectRelativePath());
+						if(celement == null ||
+						   (celement.getElementType() != ICElement.C_BINARY && celement.getElementType() != ICElement.C_ARCHIVE)) {
+							return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, "Selection must be a binary file", null);
+					   }
+					
+						return new Status(IStatus.OK, LaunchUIPlugin.PLUGIN_ID, IStatus.OK, celement.getResource().getName(), null);
+					} catch(Exception ex) {
+						return new Status(IStatus.ERROR, LaunchUIPlugin.PLUGIN_ID, 1, "Selection must be a binary file", null);
+					}
+				}
+			}
+		});
+		
+		if(dialog.open() == ElementTreeSelectionDialog.CANCEL) {
+			return;
+		}
+
+		Object [] results = (Object [])dialog.getResult();
+		
+		try {
+			fProgText.setText(((IResource)results[0]).getProjectRelativePath().toString());
+		} catch(Exception ex) {
+			/* Make sure it is a file */
+		}
+		
+	}
+
 
 	/**
 	 * Iterate through and suck up all of the executable files that

@@ -14,11 +14,13 @@ package org.eclipse.cdt.internal.core.search;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.search.ICSearchScope;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -82,6 +84,53 @@ public class CSearchScope implements ICSearchScope {
 				}	
 			}
 		  }
+   }
+   /**
+	* @param project
+	* @param b
+	* @param set
+	*/
+   public void add(IProject project, boolean includesPrereqProjects, HashSet visitedProjects) {
+	
+		if (!project.isAccessible() || !visitedProjects.add(project)) return;
+		
+		IProjectDescription projDesc = null;
+		try {
+			projDesc = project.getDescription();
+		} catch (CoreException e) {}
+		
+		if (projDesc == null)
+			return;
+			
+		String[] natures = projDesc.getNatureIds();
+		
+		boolean flag = false;
+		for (int i=0; i< natures.length; i++){
+			if (natures[i].equals(CProjectNature.C_NATURE_ID)){	
+			  flag=true;
+			  break;
+			} 
+		}
+		
+		if (!flag)
+		 //CNature not found; not a CDT project
+		 return;
+		 
+		this.addEnclosingProject(project.getFullPath());
+	
+		if (includesPrereqProjects){
+			IProject[] refProjects=null;
+			try {
+				refProjects = project.getReferencedProjects();
+			} catch (CoreException e) {
+			}
+			for (int i=0; i<refProjects.length; i++){
+				ICProject cProj= (ICProject)refProjects[i].getAdapter(ICElement.class);
+				if (cProj != null){
+					this.add(cProj, true, visitedProjects);
+				}	
+			}
+		 }  
    }
    /**
     * Adds the given path to this search scope. Remember if subfolders need to be included as well.

@@ -13,10 +13,10 @@ package org.eclipse.cdt.internal.core.search;
 
 import java.util.HashSet;
 
-import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 public class CWorkspaceScope extends CSearchScope {
@@ -24,10 +24,16 @@ public class CWorkspaceScope extends CSearchScope {
 	protected boolean needsInitialize;
 
 	public boolean encloses(String resourcePath) {
+		//Workspace scope encloses all elements in the workspace -
+		//as long as we add the proper projects to enclosingProjects,
+		//we  can return true for all paths
 		return true;
 	}
 
 	public boolean encloses(ICElement element) {
+		//Workspace scope encloses all elements in the workspace -
+		//as long as we add the proper projects to enclosingProjects,
+		//we  can return true for all paths
 		return true;
 	}
 
@@ -40,7 +46,7 @@ public class CWorkspaceScope extends CSearchScope {
 	
 	public void initialize() {
 		super.initialize();
-		ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects(); //  ModelManager ;//.getJavaModelManager().getJavaModel().getJavaProjects();
+		IProject[] projects = CCorePlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0, length = projects.length; i < length; i++)
 				this.add(projects[i], false, new HashSet(2));
 		this.needsInitialize = false;

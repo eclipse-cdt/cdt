@@ -72,7 +72,7 @@ public class GNUMakefileUtil extends PosixMakefileUtil {
 
 	public static boolean isIfndef(String line) {
 		line = line.trim();
-		return line.startsWith("ifndef") && line.length() > 5 && Character.isWhitespace(line.charAt(5));
+		return line.startsWith("ifndef") && line.length() > 6 && Character.isWhitespace(line.charAt(6));
 	}
 
 	public static boolean isElse(String line) {

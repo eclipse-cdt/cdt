@@ -1,3 +1,9 @@
+2004-05-18 Andrew Niefer
+	bug 62651 - indexer job hangs if project deleted from workspace
+	When we discard jobs, we must downtick the indexing job as well.
+	 * search/org/eclipse/cdt/internal/core/search/processing/IndexingJob.java
+	 * search/org/eclipse/cdt/internal/core/search/processing/JobManager.java
+
 2004-05-17 Bogdan Gheorghe
 	Added matching routine to IncludePattern
 	

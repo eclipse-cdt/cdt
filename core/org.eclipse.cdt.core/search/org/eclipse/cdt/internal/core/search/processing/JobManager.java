@@ -142,6 +142,12 @@ public abstract class JobManager implements Runnable {
 						if (VERBOSE)
 							JobManager.verbose("-> discarding background job  - " + currentJob); //$NON-NLS-1$
 						currentJob.cancel();
+						if( indexJob != null ){
+							if( indexJob.tickDown( null ) == 0 ){
+								indexJob.done( OK_STATUS );
+								indexJob = null;
+							}
+						}
 					}
 				}
 				jobStart = 0;

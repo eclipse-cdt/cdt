@@ -80,6 +80,12 @@ public class DOMCompletionContributor implements ICompletionContributor {
 						if (macros[i].getName().toString().startsWith(prefix))
 							handleMacro(macros[i], completionNode, offset, viewer, proposals);
 			}
+			
+			// Check for the keywords
+			if (prefix.length() > 0)
+				for (int i = 0; i < keywords.length; ++i)
+					if (keywords[i].startsWith(prefix))
+						handleKeyword(keywords[i], completionNode, offset, viewer, proposals);
 		}
 	}
 
@@ -191,6 +197,13 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			proposals.add(createProposal(macroName, macroName, image, completionNode, offset, viewer));
 	}
 	
+	private void handleKeyword(String keyword, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
+		// TODO we should really check the context to make sure
+		// it is valid for the keyword to appear here
+		Image image = getImage(CElementImageProvider.getKeywordImageDescriptor());
+		proposals.add(createProposal(keyword, keyword, image, completionNode, offset, viewer));
+	}
+	
 	private CCompletionProposal createProposal(String repString, String dispString, Image image, ASTCompletionNode completionNode, int offset, ITextViewer viewer) {
 		int repLength = completionNode.getLength();
 		int repOffset = offset - repLength;
@@ -240,5 +253,43 @@ public class DOMCompletionContributor implements ICompletionContributor {
 			? CUIPlugin.getImageDescriptorRegistry().get( imageDescriptor )
 			: null;
 	}
-	
+
+	// These are the keywords we complete
+	// We only do the ones that are > 5 characters long
+	private static String [] keywords = {
+		"const_cast",
+		"continue",
+		"default",
+		"delete",
+		"double",
+		"dynamic_cast",
+		"explicit",
+		"export",
+		"extern",
+		"friend",
+		"inline",
+		"mutable",
+		"namespace",
+		"operator",
+		"private",
+		"protected",
+		"register",
+		"reinterpret_cast",
+		"return",
+		"signed",
+		"sizeof",
+		"static",
+		"static_cast",
+		"struct",
+		"switch",
+		"template",
+		"typedef",
+		"typeid",
+		"typename",
+		"unsigned",
+		"virtual",
+		"volatile",
+		"wchar_t"
+	};
+
 }

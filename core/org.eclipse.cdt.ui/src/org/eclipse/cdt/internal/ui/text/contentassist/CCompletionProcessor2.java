@@ -17,6 +17,7 @@ import org.eclipse.cdt.core.dom.CDOM;
 import org.eclipse.cdt.core.dom.IASTServiceProvider.UnsupportedDialectException;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.cdt.internal.ui.text.CParameterListValidator;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
@@ -40,6 +41,10 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 	private IEditorPart editor;
 	private String errorMessage;
 	
+	// Property names
+	private String assistPrefix = "CEditor.contentassist";
+	private String noCompletions = assistPrefix + ".noCompletions";
+	private String parseError = assistPrefix + ".parseError";
 	
 	public CCompletionProcessor2(IEditorPart editor) {
 		this.editor = editor;
@@ -51,8 +56,6 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 	public ICompletionProposal[] computeCompletionProposals(final ITextViewer viewer,
 			int offset) {
 		try {
-			errorMessage = "No completions found";
-			
 			long startTime = System.currentTimeMillis();
 			IWorkingCopy workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(editor.getEditorInput());
 			ASTCompletionNode completionNode = CDOM.getInstance().getCompletionNode(
@@ -61,6 +64,8 @@ public class CCompletionProcessor2 implements IContentAssistProcessor {
 				CDOM.getInstance().getCodeReaderFactory(CDOM.PARSE_WORKING_COPY_WHENEVER_POSSIBLE));
 			long stopTime = System.currentTimeMillis();
 
+			errorMessage = CUIMessages.getString(noCompletions);
+			
 			List proposals = new ArrayList();
 			
 			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID, "completionContributors"); //$NON-NLS-1$

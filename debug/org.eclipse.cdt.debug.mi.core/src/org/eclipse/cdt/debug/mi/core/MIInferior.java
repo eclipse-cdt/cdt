@@ -191,7 +191,7 @@ public class MIInferior extends Process {
 				} catch (InterruptedException e) {
 				}
 			}
-			if (isRunning() && inferiorPid != 0) {
+			if (isRunning() && inferiorPid > 0) {
 				// lets try something else.
 				gdbSpawner.raise(inferiorPid, gdbSpawner.INT);
 			}
@@ -275,7 +275,7 @@ public class MIInferior extends Process {
 		if (pty != null) {
 			if (in != null) {
 				try {
-						in.close();
+					in.close();
 				} catch (IOException e) {
 					//e.printStackTrace();
 				}
@@ -310,15 +310,22 @@ public class MIInferior extends Process {
 
 	public void update() {
 		if (inferiorPid == 0) {
-			// Try to discover the pid
-			CommandFactory factory = session.getCommandFactory();
-			MIInfoProgram prog = factory.createMIInfoProgram();
-			try {
-				session.postCommand(prog);
-				MIInfoProgramInfo info = prog.getMIInfoProgramInfo();
-				inferiorPid = info.getPID();
-			} catch (MIException e) {
-				// no rethrown.
+			// Do not try this on attach session.
+			if (!isConnected()) {
+				// Try to discover the pid
+				CommandFactory factory = session.getCommandFactory();
+				MIInfoProgram prog = factory.createMIInfoProgram();
+				try {
+					session.postCommand(prog);
+					MIInfoProgramInfo info = prog.getMIInfoProgramInfo();
+					inferiorPid = info.getPID();
+				} catch (MIException e) {
+					// no rethrown.
+				}
+			}
+			// We fail permantely.
+			if (inferiorPid == 0) {
+				inferiorPid = -1;
 			}
 		}
 	}

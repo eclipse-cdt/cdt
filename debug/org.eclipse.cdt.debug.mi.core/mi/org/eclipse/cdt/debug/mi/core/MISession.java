@@ -175,7 +175,7 @@ public class MISession extends Observable {
 			MIGDBShowInfo infoPrompt = prompt.getMIGDBShowInfo();
 			String value = infoPrompt.getValue();
 			if (value != null && value.length() > 0) {
-				parser.primaryPrompt = value.trim();
+				parser.cliPrompt = value.trim();
 			}
 		} catch (MIException exc) {
 			// Kill the Transmition thread.

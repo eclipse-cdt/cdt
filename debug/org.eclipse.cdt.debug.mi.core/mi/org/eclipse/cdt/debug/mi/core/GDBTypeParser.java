@@ -301,13 +301,34 @@ public class GDBTypeParser {
 		//char character = (char) c;
 
 		if (c == '(') {
-			if ((c = getch()) == ')') {
+			c = getch();
+			if (c == ')') {
 				token = "()"; //$NON-NLS-1$
+				tokenType = PARENS;
+			} else if (isCIdentifierStart(c)) {
+				int i = 0;
+				token += (char)c;
+				while (i == 0 && c != ')') {
+					if (c == EOF) {
+						// Unbalanced parantheses.
+						break;
+					}
+					c = getch();
+					token += (char)c;
+					if (c == '(') {
+						++i;
+					} else if (c == ')') {
+						--i;
+					}
+				}
 				tokenType = PARENS;
 			} else {
 				ungetch();
 				tokenType = '(';
 			}
+			
+			
+
 		} else if (c == '[') {
 			while ((c = getch()) != ']' && c != EOF) {
 				token += (char) c;
@@ -372,8 +393,9 @@ public class GDBTypeParser {
 
 		if (tokenType == '(') {
 			dcl();
-			if (tokenType != ')') {
-				// FIXME: Do we throw an exception ? not terminate parenthese
+			if (tokenType != ')' /*&& name.length() > 0*/) {
+				// Do we throw an exception on unterminated parentheses
+				// It should have been handle by getToken()
 				return;
 			}
 		} else if (tokenType == NAME) {
@@ -396,12 +418,9 @@ public class GDBTypeParser {
 		}
 
 		while ((type = getToken()) == PARENS || type == BRACKETS) {
-			if (type == EOF) {
-				return;
-			}
 			if (type == PARENS) {
 				insertingChild(GDBType.FUNCTION);
-			} else {
+			} else { /* BRACKETS */
 				int len = 0;
 				if (token.length() > 0) {
 					try {
@@ -483,5 +502,30 @@ public class GDBTypeParser {
 		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
 		System.out.println(parser.getGDBType().verbose());
 		System.out.println();
+
+		System.out.println("int (int, char **)"); //$NON-NLS-1$
+		parser.parse("int (int, char **)"); //$NON-NLS-1$
+		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
+		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
+
+		System.out.println("int (int)"); //$NON-NLS-1$
+		parser.parse("int (int)"); //$NON-NLS-1$
+		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
+		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
+
+		System.out.println("int (void)"); //$NON-NLS-1$
+		parser.parse("int (void)"); //$NON-NLS-1$
+		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
+		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
+
+		System.out.println("int ()"); //$NON-NLS-1$
+		parser.parse("int ()"); //$NON-NLS-1$
+		System.out.println(GDBTypeParser.unParse(parser.getGDBType()));
+		System.out.println(parser.getGDBType().verbose());
+		System.out.println();
+
 	}
 }

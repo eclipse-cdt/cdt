@@ -12,8 +12,6 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIMemoryBlock;
@@ -117,18 +115,26 @@ public class MemoryBlock extends CObject implements ICDIMemoryBlock {
 	 * 
 	 */
 	private byte[] getBytes(MIDataReadMemoryInfo m) {
-		MIMemory[] miMem = m.getMemories();
-		List aList = new ArrayList();
-		for (int i = 0; i < miMem.length; i++) {
-			long[] data = miMem[i].getData();
-			for (int j = 0; j < data.length; j++) {
-					aList.add(new Long(data[j]));
-			}
+		byte[] bytes = new byte[0];
+
+		// sanity.
+		if (m == null) {
+			return bytes;
 		}
-		byte[] bytes = new byte[aList.size()];
-		for (int i = 0; i < aList.size(); i++) {
-			Long l = (Long)aList.get(i);
-			bytes[i] = l.byteValue();
+
+		// collect the data
+		MIMemory[] miMem = m.getMemories();
+		for (int i = 0; i < miMem.length; ++i) {
+			long[] data = miMem[i].getData();
+			if (data.length > 0) {
+				int blen = bytes.length;
+				byte[] newBytes = new byte[blen + data.length];
+				System.arraycopy(bytes, 0, newBytes, 0, blen);
+				for (int j = 0; j < data.length; ++j, ++blen) {
+					newBytes[blen] = (byte)data[j];
+				}
+				bytes = newBytes;
+			}
 		}
 		return bytes;
 	}

@@ -91,6 +91,7 @@ import java.util.StringTokenizer;
 public class MIParser {
 
 	public String primaryPrompt = "(gdb)"; //$NON-NLS-1$
+	public String cliPrompt = primaryPrompt;
 	public String secondaryPrompt = ">"; //$NON-NLS-1$
 
 	/**
@@ -130,7 +131,7 @@ public class MIParser {
 				if (token.charAt(0) == '^') {
 					token.deleteCharAt(0);
 					rr = processMIResultRecord(token, id);
-				} else if (token.toString().startsWith(primaryPrompt)) {
+				} else if (startsWith(token, primaryPrompt)) {
 					//break; // Do nothing.
 				} else {
 					MIOOBRecord band = processMIOOBRecord(token, id);
@@ -413,6 +414,29 @@ public class MIParser {
 		buffer.delete(0, index);
 		return sb.toString();
 	}
+
+    /**
+     * Tests if this string starts with the specified prefix beginning
+     * a specified index.
+     *
+     * @param   value   the string.
+     * @param   prefix  the prefix.
+     * @return  <code>true</code> if prefix starts value.
+     */
+    public boolean startsWith(StringBuffer value, String prefix) {
+    	int vlen = value.length();
+    	int plen = prefix.length();
+    	
+    	if (vlen < plen) {
+    		return false;
+    	}
+    	for (int i = 0; i < plen; i++) {
+    		if (value.charAt(i) != prefix.charAt(i)) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
 
 	/** 
 	 * Fast String Buffer class. MIParser does a lot

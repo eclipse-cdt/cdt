@@ -1374,4 +1374,20 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertFalse( j.hasNext() );
 		assertEquals( data.getName(), "data" );
 	}
+	
+	public void testBug54029() throws Exception
+	{
+		Iterator i = parse( "typedef int T; T i;" ).getDeclarations();
+		IASTTypedefDeclaration typedef = (IASTTypedefDeclaration) i.next();
+		assertEquals( typedef.getName(), "T");
+		assertTrue( typedef.getAbstractDeclarator().getTypeSpecifier() instanceof IASTSimpleTypeSpecifier );
+		assertEquals( ((IASTSimpleTypeSpecifier)typedef.getAbstractDeclarator().getTypeSpecifier()).getType(), IASTSimpleTypeSpecifier.Type.INT );
+		IASTVariable variable = (IASTVariable) i.next();
+		assertFalse( i.hasNext() );
+		assertEquals( variable.getName(), "i");
+		assertEquals( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).getTypename(), "T" );
+		assertNotNull( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier() );
+		assertEquals( ((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).getTypeSpecifier(), typedef );
+	}
+
 }

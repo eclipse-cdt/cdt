@@ -8,13 +8,11 @@ package org.eclipse.cdt.debug.core.sourcelookup;
 
 import java.util.ArrayList;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.IStackFrameInfo;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -31,13 +29,6 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 * The array of source locations associated with this locator.
 	 */
 	private ICSourceLocation[] fSourceLocations;
-
-	/**
-	 * The source presentation mode.
-	 */
-	private int fMode = ICSourceLocator.MODE_SOURCE;
-
-	private int fInternalMode = MODE_SOURCE;
 
 	/**
 	 * Constructor for CSourceLocator.
@@ -68,19 +59,11 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 */
 	public Object getSourceElement( IStackFrame stackFrame )
 	{
-		Object result = null;
 		if ( stackFrame != null && stackFrame.getAdapter( IStackFrameInfo.class ) != null )
 		{
-			try
-			{
-				result = getInput( (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class ) );
-			}
-			catch( DebugException e )
-			{
-				CDebugCorePlugin.log( e );
-			}
+			return getInput( (IStackFrameInfo)stackFrame.getAdapter( IStackFrameInfo.class ) );
 		}
-		return result;
+		return null;
 	}
 	
 	/* (non-Javadoc)
@@ -88,58 +71,14 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 	 */
 	public int getLineNumber( IStackFrameInfo frameInfo )
 	{
-		int result = 0;
-		if ( getMode() == MODE_SOURCE )
-			result = frameInfo.getFrameLineNumber();
-		return result;
+		return ( frameInfo != null ) ? frameInfo.getFrameLineNumber() : 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getMode()
-	 */
-	public int getMode()
-	{
-		return fMode;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#setMode(int)
-	 */
-	public void setMode( int mode )
-	{
-	}
-
-	protected void setInternalMode( int mode ) 
-	{
-		fInternalMode = mode;
-	}
-
-	protected Object getInput( IStackFrameInfo frameInfo ) throws DebugException
-	{
-		Object result = null;
-		switch( getMode() )
-		{
-			case ICSourceLocator.MODE_SOURCE:
-				result = getSourceInput( frameInfo );
-				break;
-/*
-			case ICSourceLocator.MODE_DISASSEMBLY:
-				result = getDisassemblyInput( frameInfo );
-				break;
-			case ICSourceLocator.MODE_MIXED:
-				result = getMixedInput( frameInfo );
-				break;
-*/
-		}
-		return result;
-	}
-
-	private Object getSourceInput( IStackFrameInfo info )
+	protected Object getInput( IStackFrameInfo info )
 	{
 		Object result = null;
 		if ( info != null )
 		{
-			setInternalMode( ICSourceLocator.MODE_SOURCE );
 			String fileName = info.getFile();
 			if ( fileName != null && fileName.length() > 0 )
 			{
@@ -159,11 +98,6 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 				}
 			}
 		}		
-		// switch to assembly mode if source file not found	
-/*
-		if ( result == null )
-			result = getDisassemblyInput( info );
-*/
 		return result;
 	}
 
@@ -191,22 +125,6 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			}
 		}
 		return result;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getSourceElementForAddress(long)
-	 */
-	public Object getSourceElementForAddress( long address )
-	{
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICSourceLocator#getSourceElementForFunction(String)
-	 */
-	public Object getSourceElementForFunction( String function )
-	{
-		return null;
 	}
 
 	/* (non-Javadoc)

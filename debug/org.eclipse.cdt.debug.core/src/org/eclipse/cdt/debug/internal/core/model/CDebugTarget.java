@@ -217,8 +217,7 @@ public class CDebugTarget extends CDebugElement
 		setCDITarget( cdiTarget );
 		setBreakpoints( new HashMap( 5 ) );
 		setTemporaryBreakpoints( new ArrayList() );
-		if ( getLaunch().getSourceLocator() == null )
-			getLaunch().setSourceLocator( createSourceLocator( project ) );
+		getLaunch().setSourceLocator( createSourceLocator( project ) );
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		fSupportsTerminate = allowsTerminate & getConfiguration().supportsTerminate();
 		fSupportsDisconnect = allowsDisconnect & getConfiguration().supportsDisconnect();
@@ -353,9 +352,9 @@ public class CDebugTarget extends CDebugElement
 		if ( breakpoint instanceof ICBreakpoint )
 		{
 			ISourceLocator sl =  getSourceLocator();
-			if ( sl != null && sl instanceof CSourceLocator )
+			if ( sl != null && sl instanceof ICSourceLocator )
 			{
-				return ((CSourceLocator)sl).contains( breakpoint.getMarker().getResource() );
+				return ((ICSourceLocator)sl).contains( breakpoint.getMarker().getResource() );
 			}
 			return true;
 		}
@@ -1803,7 +1802,7 @@ public class CDebugTarget extends CDebugElement
 	
 	protected ISourceLocator createSourceLocator( IProject project )
 	{
-		return new CSourceLocator( project );
+		return ( getLaunch().getSourceLocator() != null ) ? getLaunch().getSourceLocator() : new CSourceLocator( project );
 	}
 	
 	protected void setSourceSearchPath()

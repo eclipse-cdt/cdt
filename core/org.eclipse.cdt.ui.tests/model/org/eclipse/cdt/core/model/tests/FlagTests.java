@@ -10,8 +10,9 @@ package org.eclipse.cdt.core.model.tests;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.cdt.core.model.*;
-import org.eclipse.cdt.internal.core.model.*;
+import org.eclipse.cdt.core.model.Flags;
+import org.eclipse.cdt.internal.core.model.IConstants;
+
 /**
  * @author Peter Graves
  *

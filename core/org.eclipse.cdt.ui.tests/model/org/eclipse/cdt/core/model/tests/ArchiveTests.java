@@ -16,7 +16,7 @@ import org.eclipse.cdt.testplugin.util.*;
 import org.eclipse.cdt.core.model.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.cdt.internal.core.model.*;
+
 
 
 /**
@@ -131,109 +131,9 @@ public class ArchiveTests extends TestCase {
     }
 
 
-    /***
-     * This is a simple test to make sure we can not create an Archive with
-     * a non-archive Ifile/IPath
-      * Note: This test is of questionable merit, as people should always be 
-     * getting their binaries from the project, not creating them themselves
-
-     */
-    public void testArchive() throws CoreException {
-        Archive myArchive;
-        boolean caught;
-
-        myArchive=null;
-        caught=false;
-        try {
-            myArchive=new Archive(testProject, cfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("PR:23601  Created an archive with a C file", caught);
-        myArchive=null;
-        caught=false;
-        try {
-            myArchive=new Archive(testProject, cpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an archive with a C file", caught);
-
-        myArchive=null;
-        caught=false;
-        try {
-            myArchive=new Archive(testProject, objfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an archive with a .o file", caught);
-        myArchive=null;
-        caught=false;
-        try {
-            myArchive=new Archive(testProject, objpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an archive with a .o file", caught);
-
-        myArchive=null;
-        caught=false;
-        try {
-            myArchive=new Archive(testProject, exefile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an archive with a exe file", caught);
-        myArchive=null;
-        caught=false;
-        try {
-            myArchive=new Archive(testProject, exepath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an archive with a exe file", caught);
-
-        myArchive=null;
-        caught=false;
-        try {
-            myArchive=new Archive(testProject, libfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an archive with a .so file", caught);
-        myArchive=null;
-        caught=false;
-        try {
-            myArchive=new Archive(testProject, libpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an archive with a .so file", caught);
-
-        myArchive=null;
-        caught=false;
-        try {
-            myArchive=new Archive(testProject, archfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an archive with a .a file", !caught);
-        myArchive=null;
-        caught=false;
-        try {
-            myArchive=new Archive(testProject, archpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an archive with a .a file", !caught);
-            
-
-    }
-
-
         
     public void testGetBinaries() throws CoreException,FileNotFoundException {
-        Archive myArchive;
+        IArchive myArchive;
         IBinary[] bins;
         ICElement[] elements;
         ExpectedStrings expBin, expObj[];
@@ -287,7 +187,7 @@ public class ArchiveTests extends TestCase {
      *  
      */
     public void testIsArchive() throws CoreException,FileNotFoundException {
-           Archive myArchive;
+        IArchive myArchive;
         myArchive=CProjectHelper.findArchive(testProject, "libtestlib_g.a");
 
         assertTrue("A archive", myArchive.isArchive());

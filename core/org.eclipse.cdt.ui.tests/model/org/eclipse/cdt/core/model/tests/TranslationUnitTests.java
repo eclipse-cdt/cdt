@@ -8,7 +8,6 @@ package org.eclipse.cdt.core.model.tests;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Stack;
 
 import junit.framework.TestCase;
@@ -18,7 +17,7 @@ import org.eclipse.cdt.testplugin.util.*;
 import org.eclipse.cdt.core.model.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.cdt.internal.core.model.*;
+
 
 
 /**
@@ -155,101 +154,6 @@ public class TranslationUnitTests extends TestCase {
     }
 
 
-    /***
-     * This is a simple test to make sure we can not create an TranslationUnit with
-     * a non-TranslationUnit Ifile/IPath
-     */
-    public void testTranslationUnit() throws CoreException {
-        TranslationUnit myTranslationUnit;
-        boolean caught;
-
-        myTranslationUnit=null;
-        caught=false;
-        try {
-            myTranslationUnit=new TranslationUnit(testProject, cfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an TranslationUnit with a C file", !caught);
-        myTranslationUnit=null;
-        caught=false;
-        try {
-            myTranslationUnit=new TranslationUnit(testProject, cpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an TranslationUnit with a C file", !caught);
-
-        myTranslationUnit=null;
-        caught=false;
-        try {
-            myTranslationUnit=new TranslationUnit(testProject, objfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("PR:23601  Created an TranslationUnit with a .o file", caught);
-        myTranslationUnit=null;
-        caught=false;
-        try {
-            myTranslationUnit=new TranslationUnit(testProject, objpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an TranslationUnit with a .o file", caught);
-
-        myTranslationUnit=null;
-        caught=false;
-        try {
-            myTranslationUnit=new TranslationUnit(testProject, exefile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an TranslationUnit with a exe file", caught);
-        myTranslationUnit=null;
-        caught=false;
-        try {
-            myTranslationUnit=new TranslationUnit(testProject, exepath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an TranslationUnit with a exe file", caught);
-
-        myTranslationUnit=null;
-        caught=false;
-        try {
-            myTranslationUnit=new TranslationUnit(testProject, libfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an TranslationUnit with a .so file", caught);
-        myTranslationUnit=null;
-        caught=false;
-        try {
-            myTranslationUnit=new TranslationUnit(testProject, libpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an TranslationUnit with a .so file", caught);
-
-        myTranslationUnit=null;
-        caught=false;
-        try {
-            myTranslationUnit=new TranslationUnit(testProject, archfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an TranslationUnit with a .a file", caught);
-        myTranslationUnit=null;
-        caught=false;
-        try {
-            myTranslationUnit=new TranslationUnit(testProject, archpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an TranslationUnit with a .a file", caught);
-            
-
-    }
 
 
     /***
@@ -257,7 +161,7 @@ public class TranslationUnitTests extends TestCase {
      *  
      */
    public void testIsTranslationUnit() throws CoreException,FileNotFoundException {
-        TranslationUnit myTranslationUnit;
+        ITranslationUnit myTranslationUnit;
     
         myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
         assertTrue("A TranslationUnit", myTranslationUnit.isTranslationUnit());
@@ -269,7 +173,7 @@ public class TranslationUnitTests extends TestCase {
      * basicly work 
      */
     public void testGetChildern() {
-        TranslationUnit myTranslationUnit;
+        ITranslationUnit myTranslationUnit;
         ICElement[] elements;
         int x;
 
@@ -292,8 +196,8 @@ public class TranslationUnitTests extends TestCase {
     /***
      * Simple sanity tests for the getElement() call
      */
-    public void testGetElement() {
-        TranslationUnit myTranslationUnit;
+    public void testGetElement() throws CModelException {
+        ITranslationUnit myTranslationUnit;
         ICElement myElement;
         Stack missing=new Stack();
         int x;
@@ -321,7 +225,7 @@ public class TranslationUnitTests extends TestCase {
      * Simple sanity tests for the getElementAtLine() call
      */
     public void testGetElementAtLine() throws CoreException {
-        TranslationUnit myTranslationUnit;
+        ITranslationUnit myTranslationUnit;
         ICElement myElement;
         Stack missing=new Stack();
         int x;
@@ -355,13 +259,13 @@ public class TranslationUnitTests extends TestCase {
      * Simple sanity tests for the getInclude call
      */
     public void testGetInclude() {
-        Include myInclude;
+        IInclude myInclude;
         int x;
         String includes[]={"stdio.h", "unistd.h"};
-        TranslationUnit myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
+        ITranslationUnit myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
                 
         for (x=0;x<includes.length;x++) {
-            myInclude=(Include)myTranslationUnit.getInclude(includes[x]);
+            myInclude=myTranslationUnit.getInclude(includes[x]);
             if (myInclude==null)
                 fail("Unable to get include: " + includes[x]);
             else
@@ -378,7 +282,7 @@ public class TranslationUnitTests extends TestCase {
         String includes[]={"stdio.h", "unistd.h"};
         ExpectedStrings myExp= new ExpectedStrings(includes);
         int x;
-        TranslationUnit myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
+        ITranslationUnit myTranslationUnit=CProjectHelper.findTranslationUnit(testProject,"exetest.c");
         fail("PR:23478 Unable to test because we can't get the name of an include file"); 
                 
         myIncludes=myTranslationUnit.getIncludes();

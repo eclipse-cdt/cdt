@@ -16,7 +16,7 @@ import org.eclipse.cdt.testplugin.util.*;
 import org.eclipse.cdt.core.model.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.cdt.internal.core.model.*;
+
 
 
 /**
@@ -176,112 +176,12 @@ public class BinaryTests extends TestCase {
     }
 
 
-    /***
-     * This is a simple test to make sure we can not create a Binary with
-     * a non-binary Ifile/IPath
-     * Note: This test is of questionable merit, as people should always be 
-     * getting their archives from the project, not creating them themselves
-     */
-    public void testBinary() throws CoreException {
-        Binary myBinary;
-        boolean caught;
-
-        myBinary=null;
-        caught=false;
-        try {
-            myBinary=new Binary(testProject, cfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("PR:23601  Created an Binary with a C file", caught);
-        myBinary=null;
-        caught=false;
-        try {
-            myBinary=new Binary(testProject, cpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an Binary with a C file", caught);
-
-        myBinary=null;
-        caught=false;
-        try {
-            myBinary=new Binary(testProject, objfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-
-        assertTrue("Created an Binary with a .o file", !caught);
-        myBinary=null;
-        caught=false;
-        try {
-            myBinary=new Binary(testProject, objpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an Binary with a .o file", !caught);
-
-        myBinary=null;
-        caught=false;
-        try {
-            myBinary=new Binary(testProject, exefile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an Binary with a exe file", !caught);
-        myBinary=null;
-        caught=false;
-        try {
-            myBinary=new Binary(testProject, exepath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an Binary with a exe file", !caught);
-
-        myBinary=null;
-        caught=false;
-        try {
-            myBinary=new Binary(testProject, libfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an Binary with a .so file", caught);
-        myBinary=null;
-        caught=false;
-        try {
-            myBinary=new Binary(testProject, libpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an Binary with a .so file", caught);
-        
-        myBinary=null;
-        caught=false;
-        try {
-            myBinary=new Binary(testProject, archfile);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an Binary with a .a file", !caught);
-        myBinary=null;
-        caught=false;
-        try {
-            myBinary=new Binary(testProject, archpath);
-        } catch  (IllegalArgumentException e) {
-            caught=true;
-        }
-        assertTrue("Created an Binary with a .a file", !caught);
-
-            
-
-    }
-
 
     /****
      * Simple tests to make sure we can get all of a binarys children
      */
     public void testGetChildren() throws CoreException,FileNotFoundException {
-        Binary myBinary;
+        IBinary myBinary;
         ICElement[] elements;
         ExpectedStrings expSyms;
         String[] myStrings = {"atexit", "exit", "_init_libc", "printf", "_fini",
@@ -290,7 +190,7 @@ public class BinaryTests extends TestCase {
         expSyms=new ExpectedStrings(myStrings);
 
         /***
-         * Grab the Binary we want to test, and find all the elements in all 
+         * Grab the IBinary we want to test, and find all the elements in all 
          * the binarie and make sure we get everything we expect.
          */
         myBinary=CProjectHelper.findBinary(testProject, "test_g");
@@ -307,7 +207,7 @@ public class BinaryTests extends TestCase {
      * A quick check to make sure the getBSS function works as expected.
      */
     public void testGetBss(){
-        Binary bigBinary,littleBinary;
+        IBinary bigBinary,littleBinary;
         bigBinary=CProjectHelper.findBinary(testProject, "exebig_g");
         littleBinary=CProjectHelper.findBinary(testProject, "test_g");
 
@@ -318,7 +218,7 @@ public class BinaryTests extends TestCase {
      * A quick check to make sure the getBSS function works as expected.
      */
     public void testGetData(){
-        Binary bigBinary,littleBinary;
+        IBinary bigBinary,littleBinary;
         bigBinary=CProjectHelper.findBinary(testProject, "exebig_g");
         littleBinary=CProjectHelper.findBinary(testProject, "test_g");
         if (false) {
@@ -340,11 +240,11 @@ public class BinaryTests extends TestCase {
      * This is not a in depth test at all.
      */
     public void testGetCpu() {
-        Binary myBinary;
+        IBinary myBinary;
         myBinary=CProjectHelper.findBinary(testProject, "exebig_g");
 
         assertTrue("Expected: x86  Got: " + myBinary.getCPU(),myBinary.getCPU().equals("x86"));
-        myBinary=new Binary(testProject, ppcexefile);
+        myBinary=CProjectHelper.findBinary(testProject, ppcexefile.toString());
         assertTrue("Expected: ppcbe  Got: " + myBinary.getCPU(),myBinary.getCPU().equals("ppcbe"));
 
     }
@@ -353,7 +253,7 @@ public class BinaryTests extends TestCase {
      * A set of simple tests to make sute getNeededSharedLibs seems to be sane
      */
     public void testGetNeededSharedLibs() {
-        Binary myBinary;
+        IBinary myBinary;
         String[] exelibs={"libsocket.so.2", "libc.so.2"};
         String[] bigexelibs={"libc.so.2"};
         String[] gotlibs;
@@ -393,7 +293,7 @@ public class BinaryTests extends TestCase {
      * Simple tests for the getSoname method;
      */
     public void testGetSoname() {
-        Binary myBinary;
+        IBinary myBinary;
         String name;
         myBinary=CProjectHelper.findBinary(testProject, "test_g");
         assertTrue(myBinary.getSoname().equals(""));
@@ -410,9 +310,9 @@ public class BinaryTests extends TestCase {
      * Simple tests for getText
      */
     public void testGetText() {
-        Binary bigBinary,littleBinary;
-        bigBinary=new Binary(testProject, bigexe);
-        littleBinary=new Binary(testProject, exefile);
+        IBinary bigBinary,littleBinary;
+        bigBinary=CProjectHelper.findBinary(testProject, bigexe.toString());
+        littleBinary=CProjectHelper.findBinary(testProject, exefile.toString());
         if (false) {
             /****
              * Since there is no comment on this function, I have no idea what 
@@ -431,7 +331,7 @@ public class BinaryTests extends TestCase {
      * Simple tests for the hadDebug call
      */
     public void testHasDebug() {
-        Binary myBinary;
+        IBinary myBinary;
         myBinary = CProjectHelper.findBinary(testProject, "test_g");
         assertTrue(myBinary.hasDebug());
         myBinary = CProjectHelper.findBinary(testProject, "libtestlib_g.so");
@@ -444,7 +344,7 @@ public class BinaryTests extends TestCase {
      * Sanity - isBinary and isReadonly should always return true;
      */
     public void testisBinRead() {
-        Binary myBinary;
+        IBinary myBinary;
         myBinary =CProjectHelper.findBinary(testProject, "test_g");
         assertTrue(myBinary.isBinary());
         assertTrue(myBinary.isReadOnly());
@@ -455,7 +355,7 @@ public class BinaryTests extends TestCase {
      * Quick tests to make sure isObject works as expected.
      */
     public void testIsObject() {
-        Binary myBinary;
+        IBinary myBinary;
         myBinary=CProjectHelper.findObject(testProject, "exetest.o");
         assertTrue(myBinary.isObject());
 
@@ -475,7 +375,7 @@ public class BinaryTests extends TestCase {
      * Quick tests to make sure isSharedLib works as expected.
      */
     public void testIsSharedLib() {
-        Binary myBinary;
+        IBinary myBinary;
 
         myBinary=CProjectHelper.findObject(testProject, "exetest.o");
         assertTrue(!myBinary.isSharedLib());
@@ -496,7 +396,7 @@ public class BinaryTests extends TestCase {
      * Quick tests to make sure isExecutable works as expected.
      */
     public void testIsExecutable() throws InterruptedException {
-        Binary myBinary;
+        IBinary myBinary;
         myBinary=CProjectHelper.findObject(testProject, "exetest.o");
         assertTrue(!myBinary.isExecutable());
         
@@ -517,7 +417,7 @@ public class BinaryTests extends TestCase {
      *  
      */
     public void testIsBinary() throws CoreException,FileNotFoundException,Exception {
-        Binary myBinary;
+        IBinary myBinary;
 
         myBinary=CProjectHelper.findBinary(testProject, "exebig_g");
         assertTrue("A Binary", myBinary.isBinary());

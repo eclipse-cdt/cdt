@@ -1,5 +1,13 @@
 2004-08-19 Alain Magloire
 
+	Match the changing API of the Resolver Model.
+
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferenceBlock.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPreferencePage.java
+	* src/org/eclipse/cdt/internal/ui/preferences/CFileTypesPropertyPage.java
+
+2004-08-19 Alain Magloire
+
 	Show the right icons for non-C-Resources.
 	* src/org/eclipse/cdt/internal/ui/CElementImageProvider.java
 

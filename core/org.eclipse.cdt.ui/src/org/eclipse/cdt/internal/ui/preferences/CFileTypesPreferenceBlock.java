@@ -55,7 +55,7 @@ public class CFileTypesPreferenceBlock {
 	private static final int 	COL_DESCRIPTION	= 1;
 	private static final int 	COL_LANGUAGE	= 2;
 	
-	private ICFileTypeResolver	fResolver;
+	private ICFileTypeResolver	fResolverWorkingCopy;
 	private ArrayList			fAddAssoc;
 	private ArrayList			fRemoveAssoc;
 	private boolean				fDirty = false;
@@ -260,7 +260,7 @@ public class CFileTypesPreferenceBlock {
 		fAssocViewer.setSorter(new AssocSorter());
 		fAssocViewer.setContentProvider(new AssocContentProvider());
 		fAssocViewer.setLabelProvider(new AssocLabelProvider());
-		fAssocViewer.setInput(getResolver().getFileTypeAssociations());
+		fAssocViewer.setInput(getResolverWorkingCopy().getFileTypeAssociations());
 
 		fAssocViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -283,15 +283,15 @@ public class CFileTypesPreferenceBlock {
 	public void setResolver(ICFileTypeResolver resolver) {
 		fAddAssoc.clear();
 		fRemoveAssoc.clear();
-		fResolver = resolver.createWorkingCopy();
+		fResolverWorkingCopy = resolver.createWorkingCopy();
 		if (null != fAssocViewer) {
-			fAssocViewer.setInput(fResolver.getFileTypeAssociations());
+			fAssocViewer.setInput(fResolverWorkingCopy.getFileTypeAssociations());
 		}
 		setDirty(true);
 	}
 
-	public ICFileTypeResolver getResolver() {
-		return fResolver;
+	public ICFileTypeResolver getResolverWorkingCopy() {
+		return fResolverWorkingCopy;
 	}
 	
 	public void setDirty(boolean dirty) {
@@ -309,7 +309,7 @@ public class CFileTypesPreferenceBlock {
 			ICFileTypeAssociation[] add = (ICFileTypeAssociation[]) fAddAssoc.toArray(new ICFileTypeAssociation[fAddAssoc.size()]);
 			ICFileTypeAssociation[] rem = (ICFileTypeAssociation[]) fRemoveAssoc.toArray(new ICFileTypeAssociation[fRemoveAssoc.size()]);
 			
-			fResolver.adjustAssociations(add, rem);
+			changed = fResolverWorkingCopy.adjustAssociations(add, rem);
 	
 			fAddAssoc.clear();
 			fRemoveAssoc.clear();

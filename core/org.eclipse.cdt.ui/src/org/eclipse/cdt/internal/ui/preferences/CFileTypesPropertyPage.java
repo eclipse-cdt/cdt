@@ -10,7 +10,12 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.filetype.ICFileTypeAssociation;
 import org.eclipse.cdt.core.filetype.ICFileTypeResolver;
 import org.eclipse.cdt.core.filetype.IResolverModel;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
@@ -34,7 +39,8 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	
 	private Button fUseWorkspace;
 	private Button fUseProject;
-	private CFileTypesPreferenceBlock fPrefsBlock;
+	protected ICFileTypeResolver fResolver;
+	protected CFileTypesPreferenceBlock fPrefsBlock;
 	
 	public CFileTypesPropertyPage(){
 		super();
@@ -60,6 +66,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		fUseWorkspace.setText(PreferencesMessages.getString("CFileTypesPropertyPage.useWorkspaceSettings")); //$NON-NLS-1$
 		fUseWorkspace.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
+				fPrefsBlock.setResolver(getResolverModel().getResolver());
 				fPrefsBlock.setEnabled(false);
 			}
 		});
@@ -68,6 +75,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		fUseProject.setText(PreferencesMessages.getString("CFileTypesPropertyPage.useProjectSettings")); //$NON-NLS-1$
 		fUseProject.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
+				fPrefsBlock.setResolver(fResolver);
 				fPrefsBlock.setEnabled(true);
 			}
 		});
@@ -75,23 +83,23 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		// Resolver block
 
 		IProject			project		= getProject(); 
-		ICFileTypeResolver	resolver	= CCorePlugin.getDefault().getFileTypeResolver(project); 
-		IResolverModel		model		= CCorePlugin.getDefault().getResolverModel();
-		boolean				custom		= model.getResolver() != model.getResolver(project);
+		IResolverModel		model		= getResolverModel();
+		fResolver	= model.getResolver(project); 
+		boolean				custom		= model.hasCustomResolver(project);
 		
 		Composite blockPane = new Composite(topPane, SWT.NONE);
 
 		blockPane.setLayout(new GridLayout());
 		blockPane.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		fPrefsBlock = new CFileTypesPreferenceBlock(resolver);
-		
+		fPrefsBlock = new CFileTypesPreferenceBlock(fResolver);
+
 		fPrefsBlock.createControl(blockPane);
 		
 		fUseWorkspace.setSelection(!custom);
 		fUseProject.setSelection(custom);
 		fPrefsBlock.setEnabled(custom);
-		
+	
 		WorkbenchHelp.setHelp( topPane, ICHelpContextIds.FILE_TYPES_STD_PAGE );
 		return topPane;
 	}
@@ -102,6 +110,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	protected void performDefaults() {
 		fUseWorkspace.setSelection(true);
 		fUseProject.setSelection(false);
+		fPrefsBlock.setResolver(getResolverModel().getResolver());
 		fPrefsBlock.setEnabled(false);
 		super.performDefaults();
 	}
@@ -110,16 +119,48 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
-		IResolverModel model = getResolverModel();
 		
 		if (fUseProject.getSelection()) {
-			if (fPrefsBlock.performOk()) {
-				model.setResolver(getProject(), fPrefsBlock.getResolver());
+			IProject project = getProject();
+			IResolverModel model = getResolverModel();
+			ICFileTypeResolver workingCopy = fPrefsBlock.getResolverWorkingCopy();
+			if (!model.hasCustomResolver(project)) {
+				model.createCustomResolver(project, workingCopy);
+			} else {
+				if (fPrefsBlock.performOk()) {
+					ICFileTypeAssociation[] oldAssocs = fResolver.getFileTypeAssociations();
+					
+					ICFileTypeAssociation[] newAssocs = workingCopy.getFileTypeAssociations();
+					
+					// compare
+					List delList = new ArrayList();
+					List addList = new ArrayList();
+					
+					for (int i = 0; i < oldAssocs.length; i++) {
+						if (Arrays.binarySearch(newAssocs, oldAssocs[i], ICFileTypeAssociation.Comparator) < 0) {
+							delList.add(oldAssocs[i]);
+						}
+					}
+					
+					for (int i = 0; i < newAssocs.length; i++) {
+						if (Arrays.binarySearch(oldAssocs, newAssocs[i], ICFileTypeAssociation.Comparator) < 0) {
+							addList.add(newAssocs[i]);
+						}
+					}
+					
+					ICFileTypeAssociation[] addAssocs = (ICFileTypeAssociation[]) addList.toArray(new ICFileTypeAssociation[addList.size()]);
+					ICFileTypeAssociation[] delAssocs = (ICFileTypeAssociation[]) delList.toArray(new ICFileTypeAssociation[delList.size()]);
+					
+					fResolver.adjustAssociations(addAssocs, delAssocs);
+				}
 			}
-		} else {
-			model.setResolver(getProject(), null);
+		} else if (fUseWorkspace.getSelection()) {
+			IProject project = getProject();
+			IResolverModel model = getResolverModel();
+			if (model.hasCustomResolver(project)) {
+				model.removeCustomResolver(project);
+			}
 		}
-
 		return super.performOk();
 	}
 	
@@ -134,7 +175,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 		return project;
 	}
 
-	private IResolverModel getResolverModel() {
+	protected IResolverModel getResolverModel() {
 		return CCorePlugin.getDefault().getResolverModel();
 	}
 	

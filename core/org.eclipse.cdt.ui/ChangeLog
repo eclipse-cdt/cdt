@@ -1,3 +1,14 @@
+2003-04-10 Alain Magloire
+
+	* src/org/eclipse/cdt/internal/ui/editor/CEditorActionContributor.java:
+	Cleanup to be more Eclipse-2.1
+	* src/org/eclipse/cdt/internal/ui/editor/GotoErrorAction.java:
+	Was using the wrong bundle.
+	* src/org/eclipse/cdt/internal/ui/CPluginImage.java:
+	New imange for code assist.
+	* plugin.xml:
+	added "hpp" in the list of possible source C/C++ file.
+
 2003-04-08 Alain Magloire
 
 	* src/org/eclipse/cdt/ui/CElementLabelProvider.java:

@@ -38,4 +38,15 @@ div.revision { border-left-style: solid; border-left-width: thin;
 				   border-left-color: #7B68EE; padding-left:5 }
 th	     { font-weight: bold }
 
+/* Mike Behm's addition to the style sheet */
+.userinput { font-family: monospace; }
+.guitab, .important, .guibutton, .selectblue, .guimenu, .guilabel, 
+.notetitle  {
+     color: #000000;
+     font-family: helvetica, arial, sans-serif;
+     font-weight: bold;
+     }
+div.linux  {display:none;}
+.firsterm {font-style:italic;}
+
 

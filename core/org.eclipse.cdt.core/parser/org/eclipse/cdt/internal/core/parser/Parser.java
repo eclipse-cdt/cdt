@@ -141,7 +141,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 			return;
 		}
 		
-        IToken lastBacktrack = null;
+        int lastBacktrack = -1;
         
         while (true)
         {
@@ -163,7 +163,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                 {
                     // Mark as failure and try to reach a recovery point
                     failParse();
-                    if (lastBacktrack != null && lastBacktrack == LA(1))
+                    if (lastBacktrack != -1 && lastBacktrack == LA(1).hashCode())
                     {
                         // we haven't progressed from the last backtrack
                         // try and find tne next definition
@@ -172,7 +172,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     else
                     {
                         // start again from here
-                        lastBacktrack = LA(1);
+                        lastBacktrack = LA(1).hashCode();
                     }
                 }
                 catch (EndOfFileException e)

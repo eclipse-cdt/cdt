@@ -1,3 +1,7 @@
+2004-11-25 Alain Magloire
+	Fix PR 79076
+	* utils/org/eclipse/cdt/utils/elf/Elf.java
+
 2004-11-16 Alain Magloire
 	FIX for 27663
 	* utils/org/eclipse/cdt/utils/pty/PTY.java

@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -446,7 +446,11 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 			// Get the build output name
 			String newBuildOutput = manageDialog.getBuildArtifactName();
 			if (!selectedTarget.getArtifactName().equals(newBuildOutput)) {
-				selectedTarget.setBuildArtifact(newBuildOutput);
+				selectedTarget.setArtifactName(newBuildOutput);
+			}
+			String newBuildExt = manageDialog.getBuildArtifaceExtension();
+			if (!selectedTarget.getArtifactExtension().equals(newBuildExt)) {
+				selectedTarget.setArtifactExtension(newBuildExt);
 			}
 			
 			// Get the new make command

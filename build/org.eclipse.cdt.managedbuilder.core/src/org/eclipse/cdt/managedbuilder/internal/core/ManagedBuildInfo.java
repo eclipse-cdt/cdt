@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -74,7 +74,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		}
 		// All the available targets have been read in
 		defaultTarget = (ITarget) targetMap.get(defaultTargetId);
-		// Now we have a misserable O(N^2) operation (oh well, the data sets are small)
+		// Now we have a miserable O(N^2) operation (oh well, the data sets are small)
 		ListIterator stringIter = configIds.listIterator();
 		while (stringIter.hasNext()){
 			String confId = (String) stringIter.next();
@@ -134,12 +134,28 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo#getBuildArtifactExtension()
+	 */
+	public String getBuildArtifactExtension() {
+		String ext = new String();
+		ITarget target = getDefaultTarget();
+		if (target != null) {
+			ext = target.getArtifactExtension();
+		} 
+		return ext;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getBuildArtifactName()
 	 */
 	public String getBuildArtifactName() {
 		// Get the default target and use its value
-		String name = getDefaultTarget().getArtifactName();
-		return name == null ? new String() : name;
+		String name = new String();
+		ITarget target = getDefaultTarget();
+		if (target != null) {
+			name = target.getArtifactName();
+		}
+		return name;
 	}
 
 	/* (non-Javadoc)
@@ -149,7 +165,9 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// Get from the model
 		String command = new String();
 		ITarget target = getDefaultTarget();
-		command = target.getCleanCommand();
+		if (target != null) {
+			command = target.getCleanCommand();
+		}
 		return command;
 	}
 
@@ -359,7 +377,12 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		// Return the include paths for the default configuration
 		ArrayList paths = new ArrayList();
 		IConfiguration config = getDefaultConfiguration(getDefaultTarget());
-		IPath root = owner.getLocation().addTrailingSeparator().append(config.getName());
+		IPath location = owner.getLocation();
+		// If the build info is out of date this might be null
+		if (location == null) {
+			location = new Path(".");
+		}
+		IPath root = location.addTrailingSeparator().append(config.getName());
 		ITool[] tools = config.getTools();
 		for (int i = 0; i < tools.length; i++) {
 			ITool tool = tools[i];
@@ -865,6 +888,24 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	public void setDirty(boolean isDirty) {
 		this.isDirty = isDirty;
+	}
+
+	/**
+	 * @param resource
+	 */
+	public void updateOwner(IResource resource) {
+		// Check to see if the owner is the same as the argument
+		if (resource != null) {
+			if (!owner.equals(resource)) {
+				owner = resource;
+				// Do the same for the targets
+				Iterator iter = targets.listIterator();
+				while(iter.hasNext()) {
+					ITarget target = (ITarget) iter.next();
+					target.updateOwner(resource);
+				}
+			}
+		}
 	}
 
 }

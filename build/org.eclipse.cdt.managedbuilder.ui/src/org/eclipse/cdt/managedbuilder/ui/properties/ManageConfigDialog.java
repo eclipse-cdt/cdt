@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITarget;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -29,6 +28,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -50,14 +50,16 @@ public class ManageConfigDialog extends Dialog {
 	private static final String GROUP = LABEL + ".makecmdgroup";	//$NON-NLS-1$
 	private static final String DEF_BTN = LABEL + ".makecmddef";	//$NON-NLS-1$
 	private static final String OUTPUT_GROUP = LABEL + ".output.group";	//$NON-NLS-1$
-	private static final String OUTPUT_LABEL = LABEL + ".output.label";	//$NON-NLS-1$
+	private static final String OUTPUT_EXT = LABEL + ".output.extension";	//$NON-NLS-1$
+	private static final String OUTPUT_NAME = LABEL + ".output.name";	//$NON-NLS-1$
 	private static final String CONFIGS = LABEL + ".configs";	//$NON-NLS-1$
 	private static final String CURRENT_CONFIGS = CONFIGS + ".current";	//$NON-NLS-1$
 	private static final String DELETED_CONFIGS = CONFIGS + ".deleted";	//$NON-NLS-1$
 	private static final String CONF_DLG = LABEL + ".new.config.dialog";	//$NON-NLS-1$
 
 	// The name of the build artifact
-	private String buildArtifact;
+	private String artifactExt;
+	private String artifactName;
 	// The list of configurations to delete
 	private SortedMap deletedConfigs;
 	// Map of configuration names and ids
@@ -74,7 +76,8 @@ public class ManageConfigDialog extends Dialog {
 	private boolean useDefaultMake;
 	
 	// Widgets
-	protected Text buildArtifactEntry;
+	protected Text buildArtifactExt;
+	protected Text buildArtifactName;
 	protected List currentConfigList;
 	protected List deletedConfigList;
 	protected Button makeCommandDefault;
@@ -96,7 +99,8 @@ public class ManageConfigDialog extends Dialog {
 		makeCommand = managedTarget.getMakeCommand();
 		
 		// Get the name of the build artifact
-		buildArtifact = managedTarget.getArtifactName();
+		artifactExt = managedTarget.getArtifactExtension();
+		artifactName = managedTarget.getArtifactName();
 		
 		// Get the defined configurations from the target
 		getExistingConfigs().clear();
@@ -117,16 +121,17 @@ public class ManageConfigDialog extends Dialog {
 		if (buttonId == IDialogConstants.OK_ID) {
 			useDefaultMake = makeCommandDefault.getSelection();
 			makeCommand = makeCommandEntry.getText().trim();
-			buildArtifact = buildArtifactEntry.getText().trim();
+			artifactName = buildArtifactName.getText().trim();
+			artifactExt = buildArtifactExt.getText().trim();
 		} else {
 			useDefaultMake = true;
-			buildArtifact = managedTarget.getArtifactName();
+			artifactName = managedTarget.getArtifactName();
 		}
 		super.buttonPressed(buttonId);
 	}
 
 	/* (non-Javadoc)
-	 * Method declared in Window.
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
@@ -134,6 +139,65 @@ public class ManageConfigDialog extends Dialog {
 			shell.setText(title);
 	}
 
+	/* (non-Javadoc)
+	 * Creates the group that contains the build artifact name controls.
+	 */
+	private void createBuildArtifactGroup(Composite parent) {
+		final Group outputGroup = new Group(parent, SWT.NONE);
+		outputGroup.setFont(parent.getFont());
+		outputGroup.setText(ManagedBuilderUIPlugin.getResourceString(OUTPUT_GROUP));
+		outputGroup.setLayout(new GridLayout(3, false));
+		outputGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL)); 
+
+		// Three labels
+		final Label nameLabel = new Label(outputGroup, SWT.LEFT);
+		nameLabel.setFont(outputGroup.getFont());
+		nameLabel.setText(ManagedBuilderUIPlugin.getResourceString(OUTPUT_NAME));
+		nameLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		final Label placeHolder = new Label(outputGroup, SWT.CENTER);
+		placeHolder.setText(new String());
+		placeHolder.setLayoutData(new GridData());
+		
+		final Label extLabel = new Label(outputGroup, SWT.LEFT);
+		extLabel.setFont(outputGroup.getFont());
+		extLabel.setText(ManagedBuilderUIPlugin.getResourceString(OUTPUT_EXT));
+		extLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		// Now we need two text widgets separated by a label
+		buildArtifactName = new Text(outputGroup, SWT.SINGLE | SWT.BORDER);
+		buildArtifactName.setFont(outputGroup.getFont());
+		buildArtifactName.setText(artifactName);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		buildArtifactName.setLayoutData(data);
+		buildArtifactName.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				buildArtifactName = null;
+			}
+		});
+		
+		final Label dotLabel = new Label(outputGroup, SWT.CENTER);
+		dotLabel.setFont(outputGroup.getFont());
+		dotLabel.setText(new String("."));
+		dotLabel.setLayoutData(new GridData());
+
+		buildArtifactExt = new Text(outputGroup, SWT.SINGLE | SWT.BORDER);
+		buildArtifactExt.setFont(outputGroup.getFont());
+		buildArtifactExt.setText(artifactExt);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		buildArtifactExt.setLayoutData(data);
+		buildArtifactExt.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				buildArtifactExt = null;
+			}
+		});
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Cancel buttons by default
 		okBtn = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
@@ -142,71 +206,40 @@ public class ManageConfigDialog extends Dialog {
 		updateButtons();
 	}
 
-	protected Control createDialogArea(Composite parent) {
-		Composite comp = ControlFactory.createComposite(parent, 1);
-		
-		// Create a group for the build output
-		Group outputGroup = ControlFactory.createGroup(comp, ManagedBuilderUIPlugin.getResourceString(OUTPUT_GROUP), 1);
-		outputGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
-		Label outputLabel = ControlFactory.createLabel(outputGroup, ManagedBuilderUIPlugin.getResourceString(OUTPUT_LABEL));
-		outputLabel.setLayoutData(new GridData());
-		buildArtifactEntry = ControlFactory.createTextField(outputGroup);
-		buildArtifactEntry.setText(buildArtifact);
-		buildArtifactEntry.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent event) {
-				buildArtifactEntry = null;
-			}
-		});
-
-		// Create the make command group area
-		Group makeCommandGroup = ControlFactory.createGroup(comp, ManagedBuilderUIPlugin.getResourceString(GROUP), 1);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		makeCommandGroup.setLayoutData(gd);
-		makeCommandDefault = ControlFactory.createCheckBox(makeCommandGroup, ManagedBuilderUIPlugin.getResourceString(DEF_BTN));
-		setButtonLayoutData(makeCommandDefault);
-		makeCommandDefault.setSelection(!managedTarget.hasOverridenMakeCommand());
-		makeCommandDefault.addSelectionListener(new SelectionAdapter () {
-			public void widgetSelected(SelectionEvent e) {
-				handleUseDefaultPressed();
-			}
-		});
-		makeCommandDefault.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent event) {
-				makeCommandDefault = null;
-			}
-		});
-		makeCommandEntry = ControlFactory.createTextField(makeCommandGroup);
-		makeCommandEntry.setEditable(!makeCommandDefault.getSelection());
-		makeCommandEntry.setText(makeCommand);
-		makeCommandEntry.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent event) {
-				makeCommandEntry = null;
-			}
-		});
-		
-		
+	/* (non-Javadoc)
+	 * Create and lays out the group with the configuration edit controls
+	 */
+	private void createConfigListGroup(Composite parent) {
 		// Create the config list group area
-		Group configListGroup = ControlFactory.createGroup(comp, ManagedBuilderUIPlugin.getResourceString(CONFIGS), 3);
-		gd = new GridData(GridData.FILL_BOTH);
-		configListGroup.setLayoutData(gd);
+		final Group configListGroup = new Group(parent, SWT.NONE);
+		configListGroup.setFont(parent.getFont());
+		configListGroup.setText(ManagedBuilderUIPlugin.getResourceString(CONFIGS));
+		configListGroup.setLayout(new GridLayout(3, false));
+		configListGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Create the 2 labels first to align the buttons and list controls
-		Label currentConfigLabel = ControlFactory.createLabel(configListGroup, ManagedBuilderUIPlugin.getResourceString(CURRENT_CONFIGS));
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		currentConfigLabel.setLayoutData(gd);
-		Label deletedConfigLabel = ControlFactory.createLabel(configListGroup, ManagedBuilderUIPlugin.getResourceString(DELETED_CONFIGS));
+		final Label currentConfigLabel = new Label(configListGroup, SWT.LEFT);
+		currentConfigLabel.setFont(configListGroup.getFont());
+		currentConfigLabel.setText(ManagedBuilderUIPlugin.getResourceString(CURRENT_CONFIGS));
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		currentConfigLabel.setLayoutData(data);
+		final Label deletedConfigLabel = new Label(configListGroup, SWT.LEFT);
+		deletedConfigLabel.setFont(configListGroup.getFont());
+		deletedConfigLabel.setText(ManagedBuilderUIPlugin.getResourceString(DELETED_CONFIGS));
 		deletedConfigLabel.setLayoutData(new GridData());
 		
 		// Create the current config list
-		Composite currentComp = ControlFactory.createComposite(configListGroup, 1);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 1;
-		currentComp.setLayoutData(gd);
+		final Composite currentComp = new Composite(configListGroup, SWT.NULL);
+		currentComp.setFont(configListGroup.getFont());
+		currentComp.setLayout(new GridLayout(1, true));
+		currentComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		currentConfigList = new List(currentComp, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 100;
-		currentConfigList.setLayoutData(gd);
+		currentConfigList.setFont(currentComp.getFont());
+		data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		currentConfigList.setLayoutData(data);
 		currentConfigList.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				currentConfigList = null;
@@ -214,10 +247,14 @@ public class ManageConfigDialog extends Dialog {
 		});
 		
 		// Create a composite for the buttons		
-		Composite buttonBar = ControlFactory.createComposite(configListGroup, 1);
-		buttonBar.setLayoutData(new GridData());
+		final Composite buttonBar = new Composite(configListGroup, SWT.NULL);
+		buttonBar.setFont(configListGroup.getFont());
+		buttonBar.setLayout(new GridLayout(1, true));
+		buttonBar.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 
-		newBtn = ControlFactory.createPushButton(buttonBar, ManagedBuilderUIPlugin.getResourceString(NEW));
+		newBtn = new Button(buttonBar, SWT.PUSH);
+		newBtn.setFont(buttonBar.getFont());
+		newBtn.setText(ManagedBuilderUIPlugin.getResourceString(NEW));
 		setButtonLayoutData(newBtn);
 		newBtn.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
@@ -229,7 +266,10 @@ public class ManageConfigDialog extends Dialog {
 				newBtn = null;				
 			}
 		});
-		removeBtn = ControlFactory.createPushButton(buttonBar, ManagedBuilderUIPlugin.getResourceString(REMOVE));
+		
+		removeBtn = new Button(buttonBar, SWT.PUSH);
+		removeBtn.setFont(buttonBar.getFont());
+		removeBtn.setText(ManagedBuilderUIPlugin.getResourceString(REMOVE));
 		setButtonLayoutData(removeBtn);
 		removeBtn.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
@@ -241,7 +281,10 @@ public class ManageConfigDialog extends Dialog {
 				removeBtn = null;				
 			}
 		});
-		restoreBtn = ControlFactory.createPushButton(buttonBar, ManagedBuilderUIPlugin.getResourceString(RESTORE));
+
+		restoreBtn = new Button(buttonBar, SWT.PUSH);
+		restoreBtn.setFont(buttonBar.getFont());
+		restoreBtn.setText(ManagedBuilderUIPlugin.getResourceString(RESTORE));
 		setButtonLayoutData(restoreBtn);
 		restoreBtn.addSelectionListener(new SelectionAdapter () {
 			public void widgetSelected(SelectionEvent e) {
@@ -255,42 +298,104 @@ public class ManageConfigDialog extends Dialog {
 		});
 
 		// Create the deleted config list
-		Composite deletedComp = ControlFactory.createComposite(configListGroup, 1);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 1;
-		deletedComp.setLayoutData(gd);
+		final Composite deletedComp = new Composite(configListGroup, SWT.NULL);
+		deletedComp.setFont(configListGroup.getFont());
+		deletedComp.setLayout(new GridLayout(1, true));
+		deletedComp.setLayoutData(new GridData(GridData.FILL_BOTH));
+
 		deletedConfigList = new List(deletedComp, SWT.SINGLE|SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 100;
-		deletedConfigList.setLayoutData(gd);
+		deletedConfigList.setFont(deletedComp.getFont());
+		data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		deletedConfigList.setLayoutData(data);
 		deletedConfigList.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				deletedConfigList = null;
 			}
 		});
-
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createDialogArea(Composite parent) {
+		Composite comp = new Composite(parent, SWT.NULL);
+		comp.setFont(parent.getFont());
+		comp.setLayout(new GridLayout(1, true));
+		comp.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		// Create a group for the build output
+		createBuildArtifactGroup(comp);
+	
+		// Create the make command group area
+		createMakeCommandGroup(comp);
+		
+		// Make the configuration management area
+		createConfigListGroup(comp);
+		
 		// Do the final widget prep
 		currentConfigList.setItems(getConfigurationNames());
 		currentConfigList.select(0);
 		newBtn.setFocus();
 		return comp;
 	}
+
+	/* (non-Javadoc)
+	 * Creates the group control for the make command
+	 * @param parent
+	 */
+	private void createMakeCommandGroup(Composite parent) {
+		final Group makeCommandGroup = new Group(parent, SWT.NONE);
+		makeCommandGroup.setFont(parent.getFont());
+		makeCommandGroup.setText(ManagedBuilderUIPlugin.getResourceString(GROUP));
+		makeCommandGroup.setLayout(new GridLayout(1, true));
+		makeCommandGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		makeCommandDefault = new Button(makeCommandGroup, SWT.CHECK | SWT.LEFT);
+		makeCommandDefault.setFont(makeCommandGroup.getFont());
+		makeCommandDefault.setText(ManagedBuilderUIPlugin.getResourceString(DEF_BTN));
+		setButtonLayoutData(makeCommandDefault);
+		makeCommandDefault.setBackground(makeCommandGroup.getBackground());
+		makeCommandDefault.setForeground(makeCommandGroup.getForeground());
+		makeCommandDefault.setSelection(!managedTarget.hasOverridenMakeCommand());
+		makeCommandDefault.addSelectionListener(new SelectionAdapter () {
+			public void widgetSelected(SelectionEvent e) {
+				handleUseDefaultPressed();
+			}
+		});
+		makeCommandDefault.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				makeCommandDefault = null;
+			}
+		});
+		
+		makeCommandEntry = new Text(makeCommandGroup, SWT.SINGLE | SWT.BORDER);
+		makeCommandEntry.setFont(makeCommandGroup.getFont());
+		makeCommandEntry.setEditable(!makeCommandDefault.getSelection());
+		makeCommandEntry.setText(makeCommand);
+		makeCommandEntry.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		makeCommandEntry.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent event) {
+				makeCommandEntry = null;
+			}
+		});
+	}
 	
 	/**
-	 * 
+	 * Answers the extension for the build artifact.
+	 * @return
 	 */
-	protected void handleUseDefaultPressed() {
-		// If the state of the button is unchecked, then we want to enable the edit widget
-		makeCommandEntry.setEditable(!makeCommandDefault.getSelection());
+	public String getBuildArtifaceExtension() {
+		return artifactExt;
 	}
-
+	
 	/**
 	 * Answers the value in the build artifact entry widget.
 	 * 
 	 * @return
 	 */
 	public String getBuildArtifactName() {
-		return buildArtifact;
+		return artifactName;
 	}
 
 	private String [] getConfigurationNames() {
@@ -453,6 +558,14 @@ public class ManageConfigDialog extends Dialog {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * Event handler for the use default check box in the make command group
+	 */
+	protected void handleUseDefaultPressed() {
+		// If the state of the button is unchecked, then we want to enable the edit widget
+		makeCommandEntry.setEditable(!makeCommandDefault.getSelection());
+	}
+
 	private void updateButtons() {
 		// Disable the remove button if there is only 1 configuration
 		removeBtn.setEnabled(currentConfigList.getItemCount() > 1);
@@ -460,6 +573,10 @@ public class ManageConfigDialog extends Dialog {
 		restoreBtn.setEnabled(deletedConfigList.getItemCount() > 0);
 	}
 
+	/**
+	 * Answers <code>true</code> if the user has left the use default check box selected.
+	 * @return
+	 */
 	public boolean useDefaultMakeCommand () {
 		return useDefaultMake;
 	}

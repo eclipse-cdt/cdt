@@ -1,9 +1,7 @@
 package org.eclipse.cdt.managedbuilder.core;
 
-import java.util.List;
-
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2003,2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -11,7 +9,9 @@ import java.util.List;
  * 
  * Contributors: 
  * IBM Rational Software - Initial API and implementation
-***********************************************************************/
+ ***********************************************************************/
+
+import java.util.List;
 
 public interface IManagedBuildInfo {
 
@@ -31,6 +31,14 @@ public interface IManagedBuildInfo {
 	 */
 	public boolean buildsFileType(String srcExt);
 
+	
+	/**
+	 * Answers the file extension for the receivers build goal.
+	 * 
+	 * @return
+	 */
+	public String getBuildArtifactExtension();
+	
 	/**
 	 * Returns the name of the artifact to build for the receiver.
 	 * 

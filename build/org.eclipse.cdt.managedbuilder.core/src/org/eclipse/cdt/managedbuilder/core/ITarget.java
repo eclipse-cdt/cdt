@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003,2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ public interface ITarget extends IBuildObject {
 	public static final String BINARY_PARSER = "binaryParser";	//$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "cleanCommand";	//$NON-NLS-1$
 	public static final String DEFAULT_EXTENSION = "defaultExtension";	//$NON-NLS-1$
+	public static final String EXTENSION = "extension";	//$NON-NLS-1$
 	public static final String IS_ABSTRACT = "isAbstract";	//$NON-NLS-1$
 	public static final String IS_TEST = "isTest";	//$NON-NLS-1$
 	public static final String MAKE_COMMAND = "makeCommand";	//$NON-NLS-1$
@@ -49,6 +50,14 @@ public interface ITarget extends IBuildObject {
 	 */
 	public IConfiguration createConfiguration(String id);
 	
+	/**
+	 * Answers the extension that should be applied to build artifacts created by 
+	 * this target.
+	 * 
+	 * @return String
+	 */
+	public String getArtifactExtension();	
+
 	/**
 	 * Get the name of the final build artifact.
 	 * 
@@ -82,6 +91,7 @@ public interface ITarget extends IBuildObject {
 	 * created by this target.
 	 * 
 	 * @return String
+	 * @deprecated
 	 */
 	public String getDefaultExtension();	
 
@@ -166,6 +176,14 @@ public interface ITarget extends IBuildObject {
 	 * 
 	 */
 	public void resetMakeCommand();
+	
+	/**
+	 * Set (override) the extension that should be appended to the build artifact
+	 * for the receiver.
+	 *  
+	 * @param extension
+	 */
+	public void setArtifactExtension(String extension);
 
 	/**
 	 * Set the name of the artifact that will be produced when the receiver
@@ -173,7 +191,7 @@ public interface ITarget extends IBuildObject {
 	 * 
 	 * @param name
 	 */
-	public void setBuildArtifact(String name);
+	public void setArtifactName(String name);
 
 	/**
 	 * Sets the make command for the receiver to the value in the argument.
@@ -181,5 +199,12 @@ public interface ITarget extends IBuildObject {
 	 * @param command
 	 */
 	public void setMakeCommand(String command);
+
+	/**
+	 * Sets the resource that owns the receiver.
+	 * 
+	 * @param resource
+	 */
+	public void updateOwner(IResource resource);
 
 }

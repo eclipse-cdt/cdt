@@ -29,7 +29,9 @@ import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.Serializer;
 import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.cdt.core.AbstractCExtension;
-import org.eclipse.cdt.core.parser.*;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.Target;
@@ -64,8 +66,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static Map extensionTargetMap;
 
 	// Listeners interested in build model changes
-	private static Map buildModelListeners; 
-
+	private static Map buildModelListeners;
+	
 	/**
 	 * Returns the list of targets that are defined by this project,
 	 * projects referenced by this project, and by the extensions. 
@@ -99,10 +101,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return targets;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @return
 	 */
-	public static Map getExtensionTargetMap() {
+	protected static Map getExtensionTargetMap() {
 		if (extensionTargetMap == null) {
 			extensionTargetMap = new HashMap();
 		}
@@ -202,7 +204,8 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 	
-	/**
+	/* (non-Javadoc)
+	 * 
 	 * @param config
 	 * @param option
 	 */
@@ -368,8 +371,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		}
 	}
 	
-	// Private stuff
 
+	/**
+	 * @param target
+	 */
 	public static void addExtensionTarget(Target target) {
 		if (extensionTargets == null) {
 			extensionTargets = new ArrayList();
@@ -379,6 +384,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		getExtensionTargetMap().put(target.getId(), target);
 	}
 		
+	// Private stuff
 	private static ManagedBuildInfo loadBuildInfo(IProject project) {
 		ManagedBuildInfo buildInfo = null;
 		IFile file = project.getFile(FILE_NAME);
@@ -401,6 +407,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return buildInfo;
 	}
 
+	/* (non-Javadoc)
+	 * Since the class does not have a constructor, but all public methods
+	 * call this method first, it is effectively a startup method
+	 */
 	private static void loadExtensions() {
 		if (extensionTargetsLoaded)
 			return;
@@ -459,6 +469,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		ManagedBuildInfo buildInfo = null;
 		try {
 			buildInfo = (ManagedBuildInfo)resource.getSessionProperty(buildInfoProperty);
+			// Make sure that if a project has build info, that the info is not corrupted
+			if (buildInfo != null) {
+				buildInfo.updateOwner(resource);
+			}
 		} catch (CoreException e) {
 			return buildInfo;
 		}
@@ -479,10 +493,27 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 		return buildInfo;
 	}
 	
+	/**
+	 * Answers the build information for the <code>IResource</code> in the
+	 * argument. If the <code>create</code> is true, then a new build information
+	 * repository will be created for the resource. 
+	 * 
+	 * @param resource
+	 * @param create
+	 * @return IManagedBuildInfo
+	 */
 	public static IManagedBuildInfo getBuildInfo(IResource resource, boolean create) {
 		return (IManagedBuildInfo) findBuildInfo(resource, create);
 	}
 
+	/**
+	 * Answers, but does not create, the managed build information for the 
+	 * argument.
+	 * 
+	 * @see ManagedBuildManager#getBuildInfo(IResource, boolean)
+	 * @param resource
+	 * @return IManagedBuildInfo
+	 */
 	public static IManagedBuildInfo getBuildInfo(IResource resource) {
 		return (IManagedBuildInfo) findBuildInfo(resource, false);
 	}
@@ -551,5 +582,4 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			map.put(project, list);
 		}
 	}
-
 }

@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003,2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class Target extends BuildObject implements ITarget {
 	private Map configMap;
 	private List configurations;
 	private String defaultExtension;
+	private String extension;
 	private boolean isAbstract = false;
 	private boolean isTest = false;
 	private String makeCommand;
@@ -77,7 +78,7 @@ public class Target extends BuildObject implements ITarget {
 		setName(parent.getName());
 		this.artifactName = parent.getArtifactName();
 		this.binaryParserId = parent.getBinaryParserId();
-		this.defaultExtension = parent.getDefaultExtension();
+		this.defaultExtension = parent.getArtifactExtension();
 		this.isTest = parent.isTestTarget();
 		this.cleanCommand = parent.getCleanCommand();
 
@@ -193,8 +194,10 @@ public class Target extends BuildObject implements ITarget {
 		// contain what the user entered in the UI).
 		artifactName = element.getAttribute(ARTIFACT_NAME);
 
-		// Get the default extension
-		defaultExtension = element.getAttribute(DEFAULT_EXTENSION);
+		// Get the overridden extension
+		if (element.hasAttribute(EXTENSION)) {
+			extension = element.getAttribute(EXTENSION);
+		}
 
 		// parent
 		String parentId = element.getAttribute(PARENT);
@@ -261,7 +264,9 @@ public class Target extends BuildObject implements ITarget {
 			element.setAttribute(PARENT, parent.getId());
 		element.setAttribute(IS_ABSTRACT, isAbstract ? "true" : "false");
 		element.setAttribute(ARTIFACT_NAME, getArtifactName());
-		element.setAttribute(DEFAULT_EXTENSION, getDefaultExtension());
+		if (extension != null) {
+			element.setAttribute(EXTENSION, extension);
+		}
 		element.setAttribute(IS_TEST, isTest ? "true" : "false");
 		element.setAttribute(CLEAN_COMMAND, getCleanCommand());
 		if (makeCommand != null) {
@@ -410,8 +415,9 @@ public class Target extends BuildObject implements ITarget {
 			return emptyConfigs;
 	}
 
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITarget#getDefaultExtension()
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getDefaultExtension()
 	 */
 	public String getDefaultExtension() {
 		return defaultExtension == null ? EMPTY_STRING : defaultExtension;
@@ -439,6 +445,28 @@ public class Target extends BuildObject implements ITarget {
 			}
 		} else {
 			return artifactName;
+		}
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#getArtifactExtension()
+	 */
+	public String getArtifactExtension() {
+		// Has the user changed the extension for this target
+		if (extension != null) {
+			return extension;
+		}
+		// If not, then go through the default extension lookup
+		if (defaultExtension == null) {
+			// Ask my parent first
+			if (parent != null) {
+				return parent.getArtifactExtension();
+			} else {
+				return EMPTY_STRING;
+			}
+		} else {
+			return defaultExtension;
 		}
 	}
 
@@ -476,7 +504,7 @@ public class Target extends BuildObject implements ITarget {
 		configurations.add(configuration);
 		configMap.put(configuration.getId(), configuration);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.build.managed.ITarget#isAbstract()
 	 */
@@ -506,9 +534,18 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.build.managed.ITarget#setBuildArtifact(java.lang.String)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#setArtifactExtension(java.lang.String)
 	 */
-	public void setBuildArtifact(String name) {
+	public void setArtifactExtension(String extension) {
+		if (extension != null) {
+			this.extension = extension;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.build.managed.ITarget#setArtifactName(java.lang.String)
+	 */
+	public void setArtifactName(String name) {
 		if (name != null) {
 			artifactName = name;		
 		}
@@ -520,6 +557,16 @@ public class Target extends BuildObject implements ITarget {
 	public void setMakeCommand(String command) {
 		if (command != null && !getMakeCommand().equals(command)) {
 			makeCommand = command;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.ITarget#updateOwner(org.eclipse.core.resources.IResource)
+	 */
+	public void updateOwner(IResource resource) {
+		if (!resource.equals(owner)) {
+			// Set the owner correctly
+			owner = resource;
 		}
 	}
 

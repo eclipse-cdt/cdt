@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.internal.core;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2003,2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -61,18 +61,19 @@ public class MakefileGenerator {
 	private static final String AUTO_DEP = COMMENT + ".autodeps";	//$NON-NLS-1$
 
 	// String constants for makefile contents
-	protected static final String COLON = ":";
+	protected static final String COLON = ":";	//$NON-NLS-1$
 	protected static final String DEPFILE_NAME = "subdir.dep";	//$NON-NLS-1$
-	protected static final String DOT = ".";
+	protected static final String DOT = ".";	//$NON-NLS-1$
 	protected static final String MAKEFILE_NAME = "makefile";	//$NON-NLS-1$
 	protected static final String MODFILE_NAME = "subdir.mk";	//$NON-NLS-1$
-	protected static final String LINEBREAK = "\\";
-	protected static final String NEWLINE = System.getProperty("line.separator");
-	protected static final String LOGICAL_AND = "&&";
-	protected static final String SEPARATOR = "/";
-	protected static final String TAB = "\t";	
-	protected static final String WHITESPACE = " ";
-	protected static final String WILDCARD = "%";
+	protected static final String LINEBREAK = "\\";	//$NON-NLS-1$
+	protected static final String NEWLINE = System.getProperty("line.separator");	//$NON-NLS-1$
+	protected static final String LOGICAL_AND = "&&";	//$NON-NLS-1$
+	protected static final String SEPARATOR = "/";	//$NON-NLS-1$
+	protected static final String TAB = "\t";	//$NON-NLS-1$
+	protected static final String WHITESPACE = " ";	//$NON-NLS-1$
+	protected static final String WILDCARD = "%";	//$NON-NLS-1$
+	protected static final String COMMENT_SYMBOL = "#";	//$NON-NLS-1$
 
 	// Local variables needed by generator
 	protected IManagedBuildInfo info;
@@ -294,7 +295,7 @@ public class MakefileGenerator {
 		// Get the name of the build target
 		target = info.getBuildArtifactName();
 		// Get its extension
-		extension = (new Path(target)).getFileExtension();
+		extension = info.getBuildArtifactExtension();
 		if (extension == null) {
 			extension = new String();
 		}
@@ -316,7 +317,7 @@ public class MakefileGenerator {
 
 		// Create the buffer to hold the output for the module and a dep calculator
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(ManagedBuilderCorePlugin.getResourceString(AUTO_DEP) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(AUTO_DEP) + NEWLINE);
 		IndexManager indexManager = CCorePlugin.getDefault().getCoreModel().getIndexManager();
 
 		/*
@@ -374,7 +375,7 @@ public class MakefileGenerator {
 		buffer.append("RM := ");
 		buffer.append(info.getCleanCommand() + NEWLINE + NEWLINE);
 		
-		buffer.append(ManagedBuilderCorePlugin.getResourceString(SRC_LISTS) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(SRC_LISTS) + NEWLINE);
 		buffer.append("C_SRCS := " + NEWLINE);
 		buffer.append("CC_SRCS := " + NEWLINE);
 		buffer.append("CXX_SRCS := " + NEWLINE);
@@ -409,7 +410,7 @@ public class MakefileGenerator {
 	protected StringBuffer addSubdirectories() {
 		StringBuffer buffer = new StringBuffer();
 		// Add the comment
-		buffer.append(ManagedBuilderCorePlugin.getResourceString(MOD_LIST) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(MOD_LIST) + NEWLINE);
 		buffer.append("SUBDIRS := " + LINEBREAK + NEWLINE);
 		
 		// Get all the module names
@@ -427,7 +428,7 @@ public class MakefileGenerator {
 
 		// Now add the makefile instruction to include all the subdirectory makefile fragments
 		buffer.append(NEWLINE);
-		buffer.append(ManagedBuilderCorePlugin.getResourceString(MOD_INCL) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL +WHITESPACE + ManagedBuilderCorePlugin.getResourceString(MOD_INCL) + NEWLINE);
 		buffer.append("-include ${patsubst %, %/subdir.mk, $(SUBDIRS)}" + NEWLINE);
 
 		buffer.append(NEWLINE + NEWLINE);
@@ -460,10 +461,10 @@ public class MakefileGenerator {
 		capcBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
 		StringBuffer cppBuffer = new StringBuffer("CPP_SRCS += \\" + NEWLINE);
 		cppBuffer.append("${addprefix $(ROOT)/" + relativePath + "," + LINEBREAK + NEWLINE);
-		StringBuffer ruleBuffer = new StringBuffer(ManagedBuilderCorePlugin.getResourceString(MOD_RULES) + NEWLINE);
+		StringBuffer ruleBuffer = new StringBuffer(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(MOD_RULES) + NEWLINE);
 
 		// Put the comment in		
-		buffer.append(ManagedBuilderCorePlugin.getResourceString(SRC_LISTS) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(SRC_LISTS) + NEWLINE);
 
 		// Visit the resources in this folder
 		IResource[] resources = module.members();
@@ -531,8 +532,11 @@ public class MakefileGenerator {
 		if (deps.length > 0) {
 			defaultTarget += WHITESPACE + "deps";
 		}
-		buffer.append(defaultTarget + WHITESPACE + outputPrefix + target + NEWLINE);
-		buffer.append(NEWLINE);
+		buffer.append(defaultTarget + WHITESPACE + outputPrefix + target);
+		if (extension.length() > 0) {
+			buffer.append(DOT + extension);
+		}
+		buffer.append(NEWLINE + NEWLINE);
 
 		/*
 		 * The build target may depend on other projects in the workspace. These are
@@ -555,12 +559,16 @@ public class MakefileGenerator {
 					
 						// Extract the build artifact to add to the dependency list
 						String depTarget = depInfo.getBuildArtifactName();
-						String depExt = (new Path(depTarget)).getFileExtension();
+						String depExt = depInfo.getBuildArtifactExtension();
 						String depPrefix = depInfo.getOutputPrefix(depExt);
 						if (depInfo.isDirty()) {
 							depTargets = "clean all";
 						}
-						managedProjectOutputs.add(buildDir + SEPARATOR + depPrefix + depTarget);
+						String dependency = buildDir + SEPARATOR + depPrefix + depTarget;
+						if (depExt.length() > 0) {
+							dependency += DOT + depExt;
+						}
+						managedProjectOutputs.add(dependency);
 					}
 					buffer.append(TAB + "-cd" + WHITESPACE + buildDir + WHITESPACE + LOGICAL_AND + WHITESPACE + "$(MAKE) " + depTargets + NEWLINE);
 				}
@@ -573,7 +581,11 @@ public class MakefileGenerator {
 		 * targ_<prefix><target>.<extension>: $(OBJS) [<dep_proj_1_output> ... <dep_proj_n_output>]
 		 * 		$(BUILD_TOOL) $(FLAGS) $(OUTPUT_FLAG) $@ $(OBJS) $(USER_OBJS) $(LIB_DEPS)
 		 */
-		buffer.append(outputPrefix + target + COLON + WHITESPACE + "$(OBJS)");
+		buffer.append(outputPrefix + target);
+		if (extension.length() > 0) {
+			buffer.append(DOT + extension);
+		}
+		buffer.append(COLON + WHITESPACE + "$(OBJS)");
 		Iterator iter = managedProjectOutputs.listIterator();
 		while (iter.hasNext()) {
 			buffer.append(WHITESPACE + (String)iter.next());
@@ -588,7 +600,7 @@ public class MakefileGenerator {
 		
 		buffer.append(".PHONY: all clean deps" + NEWLINE + NEWLINE);
 		
-		buffer.append(ManagedBuilderCorePlugin.getResourceString(DEP_INCL) + NEWLINE);
+		buffer.append(COMMENT_SYMBOL + WHITESPACE + ManagedBuilderCorePlugin.getResourceString(DEP_INCL) + NEWLINE);
 		buffer.append("-include ${patsubst %, %/subdir.dep, $(SUBDIRS)}" + NEWLINE);
 		return buffer;
 	}

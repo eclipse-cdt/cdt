@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.ui.properties;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -43,13 +43,6 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	private static final String DOWN = "BuildPropertyCommon.label.down"; //$NON-NLS-1$
 	private static final String EDIT = "BuildPropertyCommon.label.editVar"; //$NON-NLS-1$
 	
-	// UI constants
-	private static final int VERTICAL_DIALOG_UNITS_PER_CHAR = 8;
-	private static final int HORIZONTAL_DIALOG_UNITS_PER_CHAR = 4;
-	private static final int LIST_HEIGHT_IN_CHARS = 10;
-	private static final int LIST_HEIGHT_IN_DLUS = 
-		LIST_HEIGHT_IN_CHARS * VERTICAL_DIALOG_UNITS_PER_CHAR;
-
 	// The top-level control for the field editor.
 	private Composite top;
 	// The list of tags.
@@ -171,14 +164,6 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 
 		// Make the list
 		list = new List(controlGroup, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-	
-		// Create a grid data that takes up the extra space in the dialog and spans one column.
-		GridData listData = new GridData(GridData.FILL_HORIZONTAL);
-		listData.heightHint = 
-			convertVerticalDLUsToPixels(list, LIST_HEIGHT_IN_DLUS);
-		listData.horizontalSpan = 1;
-		
-		list.setLayoutData(listData);
 		list.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				selectionChanged();
@@ -222,6 +207,12 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	
 		// Create the buttons
 		createButtons(buttonGroup);
+
+		// Create a grid data that takes up the extra space in the dialog and spans one column.
+		GridData listData = new GridData(GridData.FILL_HORIZONTAL);
+		listData.heightHint = buttonGroup.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		listData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		list.setLayoutData(listData);
 	}
 
 	/* (non-Javadoc)
@@ -329,9 +320,11 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 	protected String getNewInputObject() {
 		// Create a dialog to prompt for a new symbol or path
 		InputDialog dialog = new InputDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(TITLE), fieldName, new String(), null);
+//		BrowseEntryDialog dialog = new BrowseEntryDialog(getShell(), ManagedBuilderUIPlugin.getResourceString(TITLE), fieldName, new String());
 		String input = new String();
 		if (dialog.open() == InputDialog.OK) {
-			input = dialog.getValue();
+//		if (dialog.open() == BrowseEntryDialog.OK) {
+				input = dialog.getValue();
 		}
 		return input;
 	}

@@ -1,3 +1,28 @@
+2004-2-17 Sean Evoy
+	Fixes for 51640
+	Externalized strings for the target names. 
+	* plugin.properties
+	* plugin.xml
+	
+	Fixes for bug 49590:
+	The system now makes a distinction between the name of the output and its extension. 
+	The UI for managing the name of the build output now has a field for entering the 
+	extension. The new project wizard does not automatically append the extension to the 
+	name of the build output.
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildPropertyPage.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/ManageConfigDialog.java
+	* src/org/eclipse/cdt/managedbuilder/ui/wizards/NewManagedProjectWizard.java
+	
+	Some ground work for C11:
+	Added a browse button and an area for selecting a path variable to the browse
+	dialog. However, this is still turned off since it is not fully functional.
+	* src/org/eclipse/cdt/managedbuilder/internal/ui/PluginResources.properties
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BrowseEntryDialog.java
+	* src/org/eclipse/cdt/managedbuilder/ui/properties/BuildOptionListFieldEditor.java
+	
+	Changed the order of the configurations in the manifest so that debug configurations are the default for every project.
+	* plugin.xml
+
 2003-11-10 Tanya Wolff
 
 	I18N-Externalized strings from plugin.xml.

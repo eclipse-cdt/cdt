@@ -1,7 +1,7 @@
 package org.eclipse.cdt.managedbuilder.ui.wizards;
 
 /**********************************************************************
- * Copyright (c) 2002,2003 Rational Software Corporation and others.
+ * Copyright (c) 2002,2004 Rational Software Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -111,8 +111,7 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 			newTarget = ManagedBuildManager.createTarget(newProject, parent);
 			if (newTarget != null) {
 				String artifactName = newProject.getName();
-				artifactName +=  parent.getDefaultExtension().length() == 0 ? "" : "." + parent.getDefaultExtension();
-				newTarget.setBuildArtifact(artifactName);
+				newTarget.setArtifactName(artifactName);
 				IConfiguration [] selectedConfigs = targetConfigurationPage.getSelectedConfigurations();
 				Random r = new Random();
 				r.setSeed(System.currentTimeMillis());

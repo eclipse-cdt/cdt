@@ -1,3 +1,39 @@
+2004-02-17 Sean Evoy
+	Fix for critical bug 44163.
+	The managed build info would become confused when the project it was associated
+	with was renamed. The project still stored the build information in its session 
+	data, but the internal reference to the owner project was not updated in the 
+	build info. Now, when the build info is retrieved from a project, the manager 
+	asks the info to do a sanity test to check the identity of the true owner against 
+	the owner the it thinks it has. If they differ, the build information updates its 
+	owner and the owner of all the targets it maintains for the project.
+	* src/org/eclipse/cdt/managedbuilder/core/ManagedBuildManager.java	
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ManagedBuildInfo.java
+	* src/org/eclipse/cdt/managedbuilder/core/ITarget.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+
+
+	Fixes for 51646
+	Moved the makefile comment character out of the hard-coded strings and into 
+	the makefile generator.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/PluginResources.properties
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+	
+	Fixes for bug 49590:
+	The target maintains the default extension and the overridden extension. There 
+	is an interface to get and set the extension, but the method to get the default 
+	extension is deprecated.
+	* src/org/eclipse/cdt/managedbuilder/core/ITarget.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/Target.java
+	
+	The build information now has a method to get at the extension
+	* src/org/eclipse/cdt/managedbuilder/core/IManagedBuildInfo.java
+	* src/org/eclipse/cdt/managedbuilder/internal/core/ManagedBuildInfo.java
+	
+	The makefile generator now asks for both the name and the extension when 
+	generating targets and dependencies.
+	* src/org/eclipse/cdt/managedbuilder/internal/core/MakefileGenerator.java
+
 2003-10-23 Bogdan Gheorghe
 	Updated the indexManager.perfomConcurrentJob call in MakefileGenerator
 	

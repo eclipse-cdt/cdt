@@ -158,7 +158,7 @@ public class CPathIncludeSymbolEntryPage extends CPathBasePage {
 		super(CPathEntryMessages.getString("IncludeSymbolEntryPage.title")); //$NON-NLS-1$
 		fCPathList = cPathList;
 		IncludeSymbolAdapter adapter = new IncludeSymbolAdapter();
-		fIncludeSymPathsList = new TreeListDialogField(adapter, buttonLabel, new CPElementLabelProvider(true, true)) {
+		fIncludeSymPathsList = new TreeListDialogField(adapter, buttonLabel, new CPElementLabelProvider(true, false)) {
 
 			protected int getTreeStyle() {
 				return super.getTreeStyle() & ~SWT.MULTI;

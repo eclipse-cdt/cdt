@@ -1,3 +1,7 @@
+2004-06-08 Mikhail Khodjaiants
+	Warning clean-up.
+	* DebugTextHover.java
+
 2004-06-03 Mikhail Khodjaiants
 	Added new images for the "Auto-Refresh" and "Refresh" actions.
 	* icons/full/dlcl16/auto_refresh_co.gif

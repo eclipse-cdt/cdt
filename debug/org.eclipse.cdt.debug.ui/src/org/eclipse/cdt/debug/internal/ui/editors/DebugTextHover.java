@@ -33,7 +33,6 @@ import org.eclipse.ui.IEditorPart;
 public class DebugTextHover implements ICEditorTextHover
 {
 	static final private int MAX_HOVER_INFO_SIZE = 100;
-	private IEditorPart fEditor;
 
 	/**
 	 * Constructor for DebugTextHover.
@@ -210,6 +209,5 @@ public class DebugTextHover implements ICEditorTextHover
 	 * @see org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover#setEditor(org.eclipse.ui.IEditorPart)
 	 */
 	public void setEditor(IEditorPart editor) {
-		fEditor = editor;
 	}
 }

@@ -634,6 +634,13 @@ public class Scanner2 implements IScanner, IScannerData {
 				++len;
 				continue;
 			}
+			else if( c == '\\' && bufferPos[bufferStackPos] + 1 < buffer.length && buffer[ bufferPos[bufferStackPos] + 1 ] == '\n')
+			{
+				// escaped newline
+				++bufferPos[bufferStackPos];
+				len += 2;
+				continue;
+			}
 			break;
 		}
 
@@ -671,8 +678,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 		
 		int tokenType = keywords.get(buffer, start, len);
+		char [] result = removedEscapedNewline( CharArrayUtils.extract( buffer, start, len ) );
 		if (tokenType == keywords.undefined)
-			return new ImagedToken(IToken.tIDENTIFIER, new String(buffer, start, len));
+			return new ImagedToken(IToken.tIDENTIFIER, new String( result));
 		return new SimpleToken(tokenType);
 	}
 	
@@ -1188,8 +1196,7 @@ public class Scanner2 implements IScanner, IScannerData {
 		
 		if( encounteredMultilineComment )
 			text = removeMultilineCommentFromBuffer( text );
-		if( CharArrayUtils.indexOf( '\n', text ) != -1 )
-			text = removedEscapedNewline( text );
+		text = removedEscapedNewline( text );
 			
 		// Throw it in
 		definitions.put(name,
@@ -1198,11 +1205,14 @@ public class Scanner2 implements IScanner, IScannerData {
 				: new FunctionStyleMacro(name, text, arglist));
 	}
 	
+	
 	/**
 	 * @param text
 	 * @return
 	 */
 	private char[] removedEscapedNewline(char[] text) {
+		if( CharArrayUtils.indexOf( '\n', text ) == -1 )
+			return text;
 		char [] result = new char[ text.length ];
 		Arrays.fill( result, ' ');
 		int counter = 0;

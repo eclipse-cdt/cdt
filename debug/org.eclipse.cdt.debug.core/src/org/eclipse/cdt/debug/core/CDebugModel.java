@@ -12,6 +12,7 @@ import java.util.HashMap;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIBreakpoint;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITarget;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint;
@@ -24,12 +25,15 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IProcess;
 
 /**
@@ -274,5 +278,25 @@ public class CDebugModel
 		attributes.put( ICWatchpoint.READ, new Boolean( readAccess ) );
 		attributes.put( ICWatchpoint.WRITE, new Boolean( writeAccess ) );
 		return new CWatchpoint( resource, attributes, add );
+	}
+	
+	public static IExpression createExpression( IDebugTarget target, String text ) throws DebugException
+	{
+		if ( target != null && target instanceof CDebugTarget )
+		{
+			try
+			{
+				ICDIExpression cdiExpression = ((CDebugTarget)target).getCDISession().getExpressionManager().createExpression( text );
+			}
+			catch( CDIException e )
+			{
+				throw new DebugException( new Status( IStatus.ERROR, 
+													  getPluginIdentifier(),
+													  DebugException.TARGET_REQUEST_FAILED, 
+													  "Create expression failed.", 
+													  e ) );
+			}
+		}
+		return null;
 	}
 }

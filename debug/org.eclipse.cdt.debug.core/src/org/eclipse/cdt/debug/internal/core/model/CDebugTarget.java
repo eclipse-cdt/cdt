@@ -59,10 +59,12 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IRegisterGroup;
@@ -81,6 +83,7 @@ public class CDebugTarget extends CDebugElement
 						  			 IFormattedMemoryRetrieval,
 						  			 IState,
 						  			 ILaunchListener,
+						  			 IExpressionListener,
 						  			 ICExpressionEvaluator
 {
 	/**
@@ -1655,5 +1658,26 @@ public class CDebugTarget extends CDebugElement
 		{
 			((CRegisterGroup)it.next()).preserve();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionListener#expressionAdded(IExpression)
+	 */
+	public void expressionAdded( IExpression expression )
+	{
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionListener#expressionChanged(IExpression)
+	 */
+	public void expressionChanged( IExpression expression )
+	{
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.IExpressionListener#expressionRemoved(IExpression)
+	 */
+	public void expressionRemoved( IExpression expression )
+	{
 	}
 }

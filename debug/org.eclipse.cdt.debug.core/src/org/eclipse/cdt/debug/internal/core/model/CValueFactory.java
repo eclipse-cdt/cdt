@@ -12,16 +12,12 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  *
- * Generates variable values.
+ * Generates values for variable and expressions.
  * 
  * @since Sep 9, 2002
  */
 public class CValueFactory
 {
-	/**
-	 * Creates the appropriate kind of value, or <code>null</code>.
-	 * 
-	 */
 	static public ICValue createValue( CVariable parent, ICDIValue cdiValue ) throws DebugException
 	{
 		return new CValue( parent, cdiValue );

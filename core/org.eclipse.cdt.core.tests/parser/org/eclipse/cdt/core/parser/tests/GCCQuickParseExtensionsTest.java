@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ast.ASTClassKind;
 import org.eclipse.cdt.core.parser.ast.IASTAbstractTypeSpecifierDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTClassSpecifier;
@@ -89,4 +90,19 @@ public class GCCQuickParseExtensionsTest extends BaseASTTest {
     	parse("int c = a >? b;"); //$NON-NLS-1$
     }
 
+	public void testBug39554() throws Exception
+	{
+		 parse("_Pragma(\"foobar\")", true, true, ParserLanguage.C ); //$NON-NLS-1$
+	}
+
+    public void testBug39704B() throws Exception
+    {
+		IASTVariable d = (IASTVariable)assertSoleDeclaration("extern int (* import) (void) __attribute__((dllimport));"); //$NON-NLS-1$
+		assertEquals( d.getName(), "import"); // false assertion  //$NON-NLS-1$
+    }
+    public void testBug39704C() throws Exception
+    {
+ 		IASTFunction f = (IASTFunction)assertSoleDeclaration("int func2 (void) __attribute__((dllexport));"); //$NON-NLS-1$
+		assertEquals( f.getName(), "func2"); //$NON-NLS-1$
+    }
 }

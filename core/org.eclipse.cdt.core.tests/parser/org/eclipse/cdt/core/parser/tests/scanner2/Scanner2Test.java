@@ -399,7 +399,7 @@ public class Scanner2Test extends BaseScanner2Test
 			validateEOF();
 
 			initializeScanner("#ifndef DEFINED\n#define DEFINED 100\n#endif\nint count = DEFINED;"); //$NON-NLS-1$
-			scanner.addDefinition("DEFINED", "101"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("DEFINED", "101"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("DEFINED", "101"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateToken(IToken.t_int);
 			validateIdentifier("count"); //$NON-NLS-1$
@@ -417,6 +417,15 @@ public class Scanner2Test extends BaseScanner2Test
 			fail(EXCEPTION_THROWN + e.toString());
 		}
 	}
+
+	/**
+	 * @param string
+	 * @param string2
+	 */
+	private void addDefinition(String string, String string2) {
+		scanner.addDefinition( string.toCharArray(), string2.toCharArray() );
+	}
+
 
 	public void testMultipleLines() throws Exception
 	{
@@ -456,7 +465,7 @@ public class Scanner2Test extends BaseScanner2Test
 			validateToken(IToken.tSEMI);
 			validateEOF();
 			initializeScanner("#ifndef ONE\n#define ONE 1\n#ifdef TWO\n#define THREE ONE + TWO\n#endif\n#endif\nint three(THREE);"); //$NON-NLS-1$
-			scanner.addDefinition("TWO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("TWO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateToken(IToken.t_int);
 			validateDefinition("ONE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("TWO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -475,7 +484,7 @@ public class Scanner2Test extends BaseScanner2Test
 			validateDefinition("FOO", "4"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			initializeScanner("#ifndef FOO\n#define FOO 4\n#else\n#undef FOO\n#define FOO 6\n#endif"); //$NON-NLS-1$
-			scanner.addDefinition("FOO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("FOO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
 			validateDefinition("FOO", "6"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -502,20 +511,20 @@ public class Scanner2Test extends BaseScanner2Test
 					"#   endif\n" +  //$NON-NLS-1$
 					"#endif\n"); //$NON-NLS-1$" +
 
-			scanner.addDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
 			validateDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("TWO", "ONE + ONE"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			initializeScanner("#ifndef ONE\n#   define ONE 1\n#   ifndef TWO\n#       define TWO ONE + ONE \n#   else\n#       undef TWO\n#       define TWO 2 \n#   endif\n#else\n#   ifndef TWO\n#      define TWO ONE + ONE \n#   else\n#       undef TWO\n#       define TWO 2 \n#   endif\n#endif\n"); //$NON-NLS-1$
-			scanner.addDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
-			scanner.addDefinition("TWO", "two"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("TWO", "two"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
 			validateDefinition("ONE", "one"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("TWO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			initializeScanner("#ifndef ONE\n#   define ONE 1\n#   ifndef TWO\n#       define TWO ONE + ONE \n#   else\n#       undef TWO\n#       define TWO 2 \n#   endif\n#else\n#   ifndef TWO\n#      define TWO ONE + ONE \n#   else\n#       undef TWO\n#       define TWO 2 \n#   endif\n#endif\n"); //$NON-NLS-1$
-			scanner.addDefinition("TWO", "two"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("TWO", "two"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
 			validateDefinition("ONE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("TWO", "2"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -540,9 +549,9 @@ public class Scanner2Test extends BaseScanner2Test
 			validateDefinition("Z", "X + Y"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			initializeScanner("#if T < 20\n#define Z T + 1\n#endif"); //$NON-NLS-1$
-			scanner.addDefinition("X", "5"); //$NON-NLS-1$ //$NON-NLS-2$
-			scanner.addDefinition("Y", "7"); //$NON-NLS-1$ //$NON-NLS-2$
-			scanner.addDefinition("T", "X + Y"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("X", "5"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("Y", "7"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("T", "X + Y"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateEOF();
 			validateDefinition("X", "5"); //$NON-NLS-1$ //$NON-NLS-2$
 			validateDefinition("Y", "7"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -577,7 +586,7 @@ public class Scanner2Test extends BaseScanner2Test
 				"#define MISTAKE 1\n" + //$NON-NLS-1$
 				"#error Five does not equal 10\n" + //$NON-NLS-1$
 				"#endif\n", ParserMode.QUICK_PARSE, callback); //$NON-NLS-1$
-		scanner.addDefinition("FIVE", "55"); //$NON-NLS-1$ //$NON-NLS-2$
+		addDefinition("FIVE", "55"); //$NON-NLS-1$ //$NON-NLS-2$
 		validateEOF();
 		validateDefinition("FIVE", "55"); //$NON-NLS-1$ //$NON-NLS-2$
 		validateDefinition("TEN", "2 * FIVE"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -588,11 +597,11 @@ public class Scanner2Test extends BaseScanner2Test
 		{
 			initializeScanner("#if ((( FOUR / TWO ) * THREE )< FIVE )\n#error 6 is not less than 5 \n#endif\n#if ( ( FIVE * ONE ) != (( (FOUR) + ONE ) * ONE ) )\n#error 5 should equal 5\n#endif \n"); //$NON-NLS-1$
 
-			scanner.addDefinition("ONE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
-			scanner.addDefinition("TWO", "(ONE + ONE)"); //$NON-NLS-1$ //$NON-NLS-2$
-			scanner.addDefinition("THREE", "(TWO + ONE)"); //$NON-NLS-1$ //$NON-NLS-2$
-			scanner.addDefinition("FOUR", "(TWO * TWO)"); //$NON-NLS-1$ //$NON-NLS-2$
-			scanner.addDefinition("FIVE", "(THREE + TWO)"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("ONE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("TWO", "(ONE + ONE)"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("THREE", "(TWO + ONE)"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("FOUR", "(TWO * TWO)"); //$NON-NLS-1$ //$NON-NLS-2$
+			addDefinition("FIVE", "(THREE + TWO)"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			validateEOF();
 			validateDefinition("ONE", "1"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -922,18 +931,18 @@ public class Scanner2Test extends BaseScanner2Test
 				switch( i )
 				{
 					case 0:
-						scanner.addDefinition( "THIS", "1"); //$NON-NLS-1$ //$NON-NLS-2$
-						scanner.addDefinition( "THAT", "1" );   //$NON-NLS-1$ //$NON-NLS-2$
+						addDefinition( "THIS", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+						addDefinition( "THAT", "1" );   //$NON-NLS-1$ //$NON-NLS-2$
 						break; 
 					case 1:
-						scanner.addDefinition( "THIS", "1"); //$NON-NLS-1$ //$NON-NLS-2$
-						scanner.addDefinition( "THAT", "0" );   //$NON-NLS-1$ //$NON-NLS-2$
+						addDefinition( "THIS", "1"); //$NON-NLS-1$ //$NON-NLS-2$
+						addDefinition( "THAT", "0" );   //$NON-NLS-1$ //$NON-NLS-2$
 						break; 						
 					case 2:
-						scanner.addDefinition( "THAT", "1" ); //$NON-NLS-1$ //$NON-NLS-2$
+						addDefinition( "THAT", "1" ); //$NON-NLS-1$ //$NON-NLS-2$
 						break; 
 					case 3: 
-						scanner.addDefinition( "THAT", "0" ); //$NON-NLS-1$ //$NON-NLS-2$
+						addDefinition( "THAT", "0" ); //$NON-NLS-1$ //$NON-NLS-2$
 						break;
 				}
 					
@@ -1595,13 +1604,7 @@ public class Scanner2Test extends BaseScanner2Test
 		validateEOF();
 	}
     
-    public void test__attribute__() throws Exception {
-    	initializeScanner(
-    			"#define __cdecl __attribute__((cdecl))\n" + //$NON-NLS-1$
-				"__cdecl;"); //$NON-NLS-1$
-    	validateToken(IToken.tSEMI);
-    	validateEOF();
-	}
+
     
     public void testUndef() throws Exception {
     	initializeScanner(
@@ -1739,5 +1742,34 @@ public class Scanner2Test extends BaseScanner2Test
 		writer.write( "}\n" ); //$NON-NLS-1$
 		initializeScanner( writer.toString() );
 		fullyTokenize();
+	}
+    
+    public void testBug72997() throws Exception
+	{
+    	initializeScanner( "'\\\\'"); //$NON-NLS-1$
+    	validateChar( "\\\\"); //$NON-NLS-1$
+    	validateEOF();
+	}
+    
+    public void testBug72725() throws Exception
+	{
+    	for( int i = 0; i < 2; ++i )
+    	{
+	    	StringBuffer buffer = new StringBuffer();
+	    	buffer.append( "#define a \\" ); //$NON-NLS-1$
+	    	if( i == 0 )
+	    		buffer.append( "\r"); //$NON-NLS-1$
+	    	buffer.append( "\n"); //$NON-NLS-1$
+	        buffer.append( "long macro stuff" ); //$NON-NLS-1$
+	    	if( i == 0 )
+	    		buffer.append( "\r"); //$NON-NLS-1$
+	    	buffer.append( "\n"); //$NON-NLS-1$
+
+	        Callback callback = new Callback(ParserMode.COMPLETE_PARSE);
+	        initializeScanner( buffer.toString(), ParserMode.COMPLETE_PARSE, callback );
+	        validateEOF();
+	        assertTrue( callback.problems.isEmpty() );
+    	}
+        
 	}
 }

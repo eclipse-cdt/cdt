@@ -26,7 +26,8 @@ public class GCCParserExtensionTestSuite extends TestCase {
 		TestSuite suite= new TestSuite(GCCParserExtensionTestSuite.class.getName());
 		suite.addTestSuite( GCCScannerExtensionsTest.class );
 		suite.addTestSuite( GCCQuickParseExtensionsTest.class );
-		suite.addTestSuite( GCCCompleteExtensionsParseTest.class );
+		suite.addTestSuite( GCCCompleteParseExtensionsTest.class );
+		suite.addTestSuite( GCCSelectionParseExtensionsTest.class);
 		return suite;
 	}
 	

@@ -143,18 +143,6 @@ public class FailedCompleteParseASTTest extends CompleteParseBaseTest
 //		assertAllReferences( 4 /*should be 5 */, createTaskList( new Task( cl /* , 2 */ ), new Task( a), new Task( pm), new Task( f2)));
 	}
 	
-	public void testPredefinedSymbol_bug69791() throws Exception {
-		// GNU builtin type __builtin_va_list
-		try {
-			parse("typedef __builtin_va_list __gnuc_va_list; \n");//$NON-NLS-1$
-			fail();
-		} catch ( ParserException e ){
-			assertTrue( e.getMessage().equals( "FAILURE" ) ); //$NON-NLS-1$
-		}
-//		Iterator i = parse("typedef unsigned char byte; \n").getDeclarations();;//$NON-NLS-1$
-//		IASTTypedefDeclaration td = (IASTTypedefDeclaration) i.next();
-//		assertFalse(i.hasNext());
-	}
 	
 	public void testUsingOverloadedName_bug71317() throws Exception {
 		// using a globaly defined function overloaded in a namespace

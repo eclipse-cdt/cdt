@@ -804,10 +804,6 @@ public class QuickParseASTTests extends BaseASTTest
 	}
 	
 	
-	public void testBug39554() throws Exception
-	{
-		 parse("_Pragma(\"foobar\")", true, true, ParserLanguage.C ); //$NON-NLS-1$
-	}
 	
 	public void testBug36702() throws Exception
 	{
@@ -2130,16 +2126,7 @@ public class QuickParseASTTests extends BaseASTTest
     
 
 
-    public void testBug39704B() throws Exception
-    {
-		IASTVariable d = (IASTVariable)assertSoleDeclaration("extern int (* import) (void) __attribute__((dllimport));"); //$NON-NLS-1$
-		assertEquals( d.getName(), "import"); // false assertion  //$NON-NLS-1$
-    }
-    public void testBug39704C() throws Exception
-    {
- 		IASTFunction f = (IASTFunction)assertSoleDeclaration("int func2 (void) __attribute__((dllexport));"); //$NON-NLS-1$
-		assertEquals( f.getName(), "func2"); //$NON-NLS-1$
-    }
+
     
 
     

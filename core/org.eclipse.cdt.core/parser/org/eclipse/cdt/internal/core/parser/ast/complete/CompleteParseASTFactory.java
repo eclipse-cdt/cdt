@@ -625,6 +625,7 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
     	ISymbol symbol = pst.getCompilationUnit();
     	ASTCompilationUnit compilationUnit = new ASTCompilationUnit( symbol );
         attachSymbolExtension(symbol, compilationUnit, true );
+        extension.initialize( this, compilationUnit );
     	return compilationUnit; 
     }
     

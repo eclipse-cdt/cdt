@@ -45,7 +45,7 @@ import org.eclipse.cdt.internal.core.parser.pst.TypeInfoProvider;
  */
 public abstract class GCCASTExtension implements IASTFactoryExtension {
 	protected final ParserMode mode;
-	protected static final char[] EMPTY_STRING = new char[0]; //$NON-NLS-1$
+	protected static final char[] EMPTY_STRING = "".toCharArray(); //$NON-NLS-1$
 	/**
 	 * @param mode
 	 */

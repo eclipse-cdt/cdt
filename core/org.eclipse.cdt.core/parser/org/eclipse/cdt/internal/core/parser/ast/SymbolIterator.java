@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.core.parser.ast;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.eclipse.cdt.core.parser.ast.IASTOffsetableElement;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.pst.IExtensibleSymbol;
 
 /**
@@ -26,6 +28,8 @@ public class SymbolIterator implements Iterator {
 	Iterator interalIterator;
 	
 	IExtensibleSymbol next = null;
+
+	private static final char[] EMPTY_CHAR_ARRAY = "".toCharArray(); //$NON-NLS-1$
 	
 	public SymbolIterator( Iterator iter ){
 		interalIterator = iter;
@@ -40,7 +44,12 @@ public class SymbolIterator implements Iterator {
 		
 		while( interalIterator.hasNext() ){
 			IExtensibleSymbol symbol = (IExtensibleSymbol) interalIterator.next();
+			
 			if( symbol.getASTExtension() != null ){
+				if( symbol.getASTExtension().getPrimaryDeclaration() instanceof IASTOffsetableElement && 
+						CharArrayUtils.equals(((IASTOffsetableElement)symbol.getASTExtension().getPrimaryDeclaration()).getFilename(), EMPTY_CHAR_ARRAY ) )
+					continue;
+
 				next = symbol;
 				return true;
 			}
@@ -59,7 +68,12 @@ public class SymbolIterator implements Iterator {
 		}
 		while( interalIterator.hasNext() ){
 			temp = (IExtensibleSymbol) interalIterator.next();
+
 			if( temp.getASTExtension() != null ){
+				if( temp.getASTExtension().getPrimaryDeclaration() instanceof IASTOffsetableElement && 
+						CharArrayUtils.equals(((IASTOffsetableElement)temp.getASTExtension().getPrimaryDeclaration()).getFilename(), EMPTY_CHAR_ARRAY  ) )
+					continue;
+
 				return temp.getASTExtension().getPrimaryDeclaration();
 			}
 				

@@ -10,27 +10,20 @@
 ***********************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner2;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.extension.IScannerExtension;
-import org.eclipse.cdt.internal.core.parser.util.TraceUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
+import org.eclipse.cdt.internal.core.parser.token.ImagedToken;
 
 /**
  * @author jcamelon
  */
 public class GCCScannerExtension implements IScannerExtension {
 	
-//	protected static final ObjectMacroDescriptor STDC_VERSION_MACRO = new ObjectMacroDescriptor( IScanner.__STDC_VERSION__, "199001L"); //$NON-NLS-1$
-//	protected static final ObjectMacroDescriptor STDC_HOSTED_MACRO = new ObjectMacroDescriptor( IScanner.__STDC_HOSTED__, "0"); //$NON-NLS-1$
-//	protected static final ObjectMacroDescriptor CPLUSPLUS_MACRO = new ObjectMacroDescriptor( IScanner.__CPLUSPLUS, "1"); //$NON-NLS-1$
 	private static final String [] simpleIdentifiersDeclSpec;
 	private static final String [] simpleIdentifiersAttribute;
 	static
@@ -42,176 +35,78 @@ public class GCCScannerExtension implements IScannerExtension {
 		simpleIdentifiersAttribute[0] = "xyz"; //$NON-NLS-1$
 	}
 
-
-	protected static final String POUND_IDENT = "#ident"; //$NON-NLS-1$
-	protected static final String POUND_WARNING = "#warning"; //$NON-NLS-1$
-	protected static final String POUND_INCLUDE_NEXT = "#include_next"; //$NON-NLS-1$
-	
-//	private static final String __CONST__ = "__const__"; //$NON-NLS-1$
-//	protected static final ObjectMacroDescriptor __CONST__MACRO = new ObjectMacroDescriptor( __CONST__, Keywords.CONST );
-//	private static final String __CONST = "__const"; //$NON-NLS-1$
-//	protected static final ObjectMacroDescriptor __CONST_MACRO = new ObjectMacroDescriptor( __CONST, Keywords.CONST );
-//	private static final String __INLINE__ = "__inline__"; //$NON-NLS-1$
-//	protected static final ObjectMacroDescriptor __INLINE__MACRO = new ObjectMacroDescriptor( __INLINE__, Keywords.INLINE );
-//	private static final String __VOLATILE__ = "__volatile__"; //$NON-NLS-1$
-//	protected static final ObjectMacroDescriptor __VOLATILE__MACRO = new ObjectMacroDescriptor( __VOLATILE__, Keywords.VOLATILE );
-//	private static final String __SIGNED__ = "__signed__"; //$NON-NLS-1$
-//	private static final ObjectMacroDescriptor __SIGNED__MACRO = new ObjectMacroDescriptor( __SIGNED__, Keywords.SIGNED );
-//	private static final String __RESTRICT = "__restrict"; //$NON-NLS-1$
-//	private static final String __RESTRICT__ = "__restrict__"; //$NON-NLS-1$
-//	private static final ObjectMacroDescriptor __RESTRICT__MACRO = new ObjectMacroDescriptor( __RESTRICT__, Keywords.RESTRICT );
-//	private static final String __ASM__ = "__asm__"; //$NON-NLS-1$
-//	protected static final ObjectMacroDescriptor __ASM__MACRO = new ObjectMacroDescriptor( __ASM__, Keywords.ASM );
-//	private static final String __TYPEOF__ = "__typeof__"; //$NON-NLS-1$
-//	protected static final ObjectMacroDescriptor __TYPEOF__MACRO = new ObjectMacroDescriptor( __TYPEOF__, GCCKeywords.TYPEOF );
-	
-	
-//	private static final String __ATTRIBUTE__ = "__attribute__";  //$NON-NLS-1$
-//	private static final String __DECLSPEC = "__declspec"; //$NON-NLS-1$
-//	private static final IToken [] EMPTY_TOKEN_ARRAY = new IToken[0];
-//	protected static final FunctionMacroDescriptor DECLSPEC_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersDeclSpec,  EMPTY_TOKEN_ARRAY, "" ); //$NON-NLS-1$
-//	
-//	protected static final FunctionMacroDescriptor ATTRIBUTE_MACRO = new FunctionMacroDescriptor( __ATTRIBUTE__, simpleIdentifiersAttribute,  EMPTY_TOKEN_ARRAY, "" ); //$NON-NLS-1$
-	
-//	private static final String __EXTENSION__ = "__extension__"; //$NON-NLS-1$
-//	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-//	protected static final ObjectMacroDescriptor EXTENSION_MACRO = new ObjectMacroDescriptor( __EXTENSION__, EMPTY_STRING );
-	
+		
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#initializeMacroValue(java.lang.String)
 	 */
-	public String initializeMacroValue(IScannerData scannerData, String original) {
-		if( original == null || original.trim().equals( "") ) //$NON-NLS-1$
-			return "1"; //$NON-NLS-1$
+	public char[] initializeMacroValue(IScannerData scannerData, char[] original) {
+		if( original == null || original.length == 0 ) //$NON-NLS-1$
+			return "1".toCharArray(); //$NON-NLS-1$
 		return original;
 	}
+	private static final char [] emptyCharArray = "".toCharArray(); //$NON-NLS-1$
+	// gcc built-ins
+	private static final ObjectStyleMacro __inline__
+		= new ObjectStyleMacro("__inline__".toCharArray(), "inline".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __extension__
+		= new ObjectStyleMacro("__extension__".toCharArray(), emptyCharArray); //$NON-NLS-1$
+	private static final ObjectStyleMacro __asm__
+		= new ObjectStyleMacro("__asm__".toCharArray(), "asm".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __restrict__
+		= new ObjectStyleMacro("__restrict__".toCharArray(), "restrict".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __restrict
+		= new ObjectStyleMacro("__restrict".toCharArray(), "restrict".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __volatile__
+		= new ObjectStyleMacro("__volatile__".toCharArray(), "volatile".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __const__
+	= new ObjectStyleMacro("__const__".toCharArray(), "const".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __const
+	= new ObjectStyleMacro("__const".toCharArray(), "const".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __signed__
+	= new ObjectStyleMacro("__signed__".toCharArray(), "signed".toCharArray()); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final ObjectStyleMacro __cdecl = new
+		ObjectStyleMacro( "__cdecl".toCharArray(), emptyCharArray ); //$NON-NLS-1$
+	
+	
+	private static final FunctionStyleMacro __attribute__
+		= new FunctionStyleMacro(
+				"__attribute__".toCharArray(), //$NON-NLS-1$
+				emptyCharArray,
+				new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
+	private static final FunctionStyleMacro __declspec
+	= new FunctionStyleMacro(
+			"__declspec".toCharArray(), //$NON-NLS-1$
+			emptyCharArray,
+			new char[][] { "arg".toCharArray() }); //$NON-NLS-1$
+	
+	private static final FunctionStyleMacro _Pragma = new FunctionStyleMacro( 
+			"_Pragma".toCharArray(),  //$NON-NLS-1$
+			emptyCharArray, 
+			new char[][] { "arg".toCharArray() } ); //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.IScannerExtension#setupBuiltInMacros()
 	 */
 	public void setupBuiltInMacros(IScannerData scannerData) {
+		// gcc extensions
+		scannerData.getRealDefinitions().put(__inline__.name, __inline__);
+		scannerData.getRealDefinitions().put(__cdecl.name, __cdecl );
+		scannerData.getRealDefinitions().put( __const__.name, __const__ );
+		scannerData.getRealDefinitions().put( __const.name, __const );
+		scannerData.getRealDefinitions().put(__extension__.name, __extension__);
+		scannerData.getRealDefinitions().put(__attribute__.name, __attribute__);
+		scannerData.getRealDefinitions().put( __declspec.name, __declspec );
+		scannerData.getRealDefinitions().put(__restrict__.name, __restrict__);
+		scannerData.getRealDefinitions().put(__restrict.name, __restrict);
+		scannerData.getRealDefinitions().put(__volatile__.name, __volatile__);
+		scannerData.getRealDefinitions().put(__signed__.name, __signed__ );
+		if( scannerData.getLanguage() == ParserLanguage.CPP )
+			scannerData.getRealDefinitions().put(__asm__.name, __asm__);
+		else
+			scannerData.getRealDefinitions().put(_Pragma.name, _Pragma );
 				
-//		if( scannerData.getLanguage() == ParserLanguage.CPP )
-//			if( scannerData.getScanner().getDefinition( IScanner.__CPLUSPLUS ) == null )
-//				scannerData.getScanner().addDefinition( IScanner.__CPLUSPLUS, CPLUSPLUS_MACRO); 
-//		
-//		if( scannerData.getScanner().getDefinition(IScanner.__STDC_HOSTED__) == null )
-//			scannerData.getScanner().addDefinition(IScanner.__STDC_HOSTED__, STDC_HOSTED_MACRO); 
-//		if( scannerData.getScanner().getDefinition( IScanner.__STDC_VERSION__) == null )
-//			scannerData.getScanner().addDefinition( IScanner.__STDC_VERSION__, STDC_VERSION_MACRO); 
-//		
-//		// add these to private table
-////		if( scannerData.getScanner().getDefinition( __ATTRIBUTE__) == null )
-////			scannerData.getPrivateDefinitions().put( __ATTRIBUTE__, ATTRIBUTE_MACRO); 
-////		
-////		if( scannerData.getScanner().getDefinition( __DECLSPEC) == null )
-////			scannerData.getPrivateDefinitions().put( __DECLSPEC, DECLSPEC_MACRO );
-////
-//		if( scannerData.getScanner().getDefinition( __EXTENSION__ ) == null )
-//			scannerData.getPrivateDefinitions().put( __EXTENSION__, EXTENSION_MACRO);
-//		
-//		if( scannerData.getScanner().getDefinition( __CONST__ ) == null )
-//		scannerData.getPrivateDefinitions().put( __CONST__, __CONST__MACRO);
-//		if( scannerData.getScanner().getDefinition( __CONST ) == null )
-//		scannerData.getPrivateDefinitions().put( __CONST, __CONST_MACRO);
-//		if( scannerData.getScanner().getDefinition( __INLINE__ ) == null )
-//		scannerData.getPrivateDefinitions().put( __INLINE__, __INLINE__MACRO);
-//		if( scannerData.getScanner().getDefinition( __SIGNED__ ) == null )
-//		scannerData.getPrivateDefinitions().put( __SIGNED__, __SIGNED__MACRO);
-//		if( scannerData.getScanner().getDefinition( __VOLATILE__ ) == null )
-//		scannerData.getPrivateDefinitions().put( __VOLATILE__, __VOLATILE__MACRO);
-//		ObjectMacroDescriptor __RESTRICT_MACRO = new ObjectMacroDescriptor( __RESTRICT, Keywords.RESTRICT );
-//		if( scannerData.getScanner().getDefinition( __RESTRICT ) == null )
-//		scannerData.getPrivateDefinitions().put( __RESTRICT, __RESTRICT_MACRO);
-//		if( scannerData.getScanner().getDefinition( __RESTRICT__ ) == null )
-//		scannerData.getPrivateDefinitions().put( __RESTRICT__, __RESTRICT__MACRO);
-//		if( scannerData.getScanner().getDefinition( __TYPEOF__ ) == null )
-//		scannerData.getPrivateDefinitions().put( __TYPEOF__, __TYPEOF__MACRO);
-//		if( scannerData.getLanguage() == ParserLanguage.CPP )
-//			if( scannerData.getScanner().getDefinition( __ASM__ ) == null )
-//			scannerData.getPrivateDefinitions().put( __ASM__, __ASM__MACRO);
-//		
-	}
-
-	private static final Set directives;
-	static
-	{
-		directives = new HashSet();
-		directives.add( POUND_INCLUDE_NEXT );
-		directives.add( POUND_WARNING);
-		directives.add( POUND_IDENT); 
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#canHandlePreprocessorDirective(java.lang.String)
-	 */
-	public boolean canHandlePreprocessorDirective(String directive) {
-		return directives.contains( directive );
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#handlePreprocessorDirective(java.lang.String, java.lang.String)
-	 */
-	public void handlePreprocessorDirective(IScannerData iscanner, String directive, String restOfLine) {
-		if( directive.equals(POUND_INCLUDE_NEXT) ) 
-		{
-			TraceUtil.outputTrace(iscanner.getLogService(), "GCCScannerExtension handling #include_next directive" ); //$NON-NLS-1$
-			// figure out the name of the current file and its path
-//			IScannerContext context = iscanner.getContextStack().getCurrentContext();
-//			if( context == null || context.getKind() != IScannerContext.ContextKind.INCLUSION ) 
-//				return;
-//			
-//			String fullInclusionPath = context.getContextName();
-//			IASTInclusion inclusion = ((ScannerContextInclusion)context).getExtension();
-//			
-//			Iterator iter = iscanner.getIncludePathNames().iterator();
-//			
-//			while (iter.hasNext()) {
-//				String path = (String)iter.next();
-//				String completePath = ScannerUtility.createReconciledPath(path, inclusion.getName() );
-//				if( completePath.equals( fullInclusionPath ) )
-//					break;
-//			}
-//			
-//			ScannerUtility.InclusionDirective parsedDirective = null;
-//			try {
-//				parsedDirective = iscanner.parseInclusionDirective( restOfLine, iscanner.getContextStack().getCurrentContext().getOffset() );
-//			} catch (InclusionParseException e) {
-//				return;
-//			}
-//			CodeReader duple = null;
-//			// search through include paths
-//			while (iter.hasNext()) {	
-//				String path = (String)iter.next();
-//				String finalPath = ScannerUtility.createReconciledPath(path, parsedDirective.getFilename());
-//				duple = (CodeReader)iscanner.getFileCache().get(finalPath);
-//				if (duple == null) {
-//					duple = ScannerUtility.createReaderDuple( finalPath, iscanner.getClientRequestor(), iscanner.getWorkingCopies() );
-//					if (duple != null && duple.isFile())
-//						iscanner.getFileCache().put(duple.filename, duple);
-//				}
-//				if( duple != null )
-//					break;
-//			}
-//
-//			if( duple != null )
-//			{
-//				try			
-//				{
-//					iscanner.getContextStack().updateInclusionContext(duple, inclusion, iscanner.getClientRequestor() );
-//					TraceUtil.outputTrace( iscanner.getLogService(), "GCCScannerExtension handling #include_next directive successfully pushed on new include file" ); //$NON-NLS-1$
-//				}
-//				catch (ContextException e1)
-//				{
-//					return;
-//				}
-//			}
-//			
-		}
-		else if( directive.equals( POUND_WARNING) || directive.equals(POUND_IDENT)) 
-			return; // good enough -- the rest of the line has been consumed
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#offersDifferentIdentifierCharacters()
 	 */
@@ -237,69 +132,71 @@ public class GCCScannerExtension implements IScannerExtension {
 		Character.isUnicodeIdentifierPart( (char)c);
 	}
 
-	private static final Map additionalCPPKeywords;
-	private static final Map additionalCKeywords;
-	private static final Map additionalCPPOperators;
-	private static final Map additionalCOperators;
-	private static final String MAX_OPERATOR = ">?"; //$NON-NLS-1$
-	private static final String MIN_OPERATOR = "<?"; //$NON-NLS-1$
+	private static final CharArrayIntMap additionalCPPKeywords;
+	private static final CharArrayIntMap additionalCKeywords;
+	private static final CharArrayIntMap additionalCPPOperators;
+	private static final CharArrayIntMap additionalCOperators;
+	private static final char [] MAX_OPERATOR = ">?".toCharArray(); //$NON-NLS-1$
+	private static final char [] MIN_OPERATOR = "<?".toCharArray(); //$NON-NLS-1$
 	
 	static
 	{
-		additionalCKeywords = new HashMap();
-		additionalCKeywords.put( GCCKeywords.__ALIGNOF__, new Integer( IGCCToken.t___alignof__ ));
-		additionalCKeywords.put( GCCKeywords.TYPEOF, new Integer( IGCCToken.t_typeof ));
-		additionalCPPKeywords = new HashMap(additionalCKeywords);
-		additionalCPPKeywords.put( Keywords.RESTRICT, new Integer( IToken.t_restrict ));
+		additionalCKeywords = new CharArrayIntMap( 2, -1 );
+		additionalCKeywords.put( GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
+		additionalCKeywords.put( GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );
+		additionalCPPKeywords = new CharArrayIntMap( 4, -1 );
+		additionalCPPKeywords.put( GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__ );
+		additionalCPPKeywords.put( GCCKeywords.cpTYPEOF, IGCCToken.t_typeof );		
+		additionalCPPKeywords.put( Keywords.cRESTRICT, IToken.t_restrict );
 		
-		additionalCOperators = new HashMap();
-		
-		additionalCPPOperators = new HashMap();
-		additionalCPPOperators.put( MAX_OPERATOR, new Integer( IGCCToken.tMAX ) );
-		additionalCPPOperators.put( MIN_OPERATOR, new Integer( IGCCToken.tMIN ) );
+		additionalCOperators = new CharArrayIntMap(2, -1);
+		additionalCPPOperators = new CharArrayIntMap( 2, -1);
+		additionalCPPOperators.put( MAX_OPERATOR, IGCCToken.tMAX );
+		additionalCPPOperators.put( MIN_OPERATOR, IGCCToken.tMIN );
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isExtensionKeyword()
 	 */
-	public boolean isExtensionKeyword(ParserLanguage language, String tokenImage) {
+	public boolean isExtensionKeyword(ParserLanguage language, char[] tokenImage) {
 		if( language == ParserLanguage.CPP )
-			return ( additionalCPPKeywords.get( tokenImage ) != null );
+			return ( additionalCPPKeywords.containsKey( tokenImage ) );
 		else if( language == ParserLanguage.C )
-			return ( additionalCKeywords.get( tokenImage ) != null );
+			return ( additionalCKeywords.containsKey( tokenImage  ) );
 		return false;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#createExtensionToken()
 	 */
-	public IToken createExtensionToken(IScannerData scannerData, String image) {
-		Integer get = null;
+	public IToken createExtensionToken(IScannerData scannerData, char[] image) {
+		int get = -1;
 		if( scannerData.getLanguage() == ParserLanguage.CPP )
 		{
-			get = (Integer) additionalCPPKeywords.get( image );
-			if( get == null )
-				get = (Integer) additionalCPPOperators.get( image );
+			get = additionalCPPKeywords.get( image );
+			if( get == -1 )
+				get = additionalCPPOperators.get( image );
 		}
 		else if( scannerData.getLanguage()  == ParserLanguage.C )
 		{
-			get = (Integer) additionalCKeywords.get( image );
-			if( get == null )
-				get = (Integer) additionalCOperators.get( image );
+			get = additionalCKeywords.get( image );
+			if( get == -1 )
+				get = additionalCOperators.get( image );
 		}
-		if( get == null ) return null;
-		return null; 
-//		return TokenFactory.createUniquelyImagedToken(get.intValue(),image,scannerData);
+		if( get == -1 ) return null;
+		int o = scannerData.getCurrentOffset() + 1;
+		IToken i = new ImagedToken(get, image, o, scannerData.getCurrentFilename(), scannerData.getLineNumber( o ));
+		return i;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.extension.IScannerExtension#isExtensionOperator(java.lang.String)
 	 */
-	public boolean isExtensionOperator(ParserLanguage language, String query) {
+	public boolean isExtensionOperator(ParserLanguage language, char[] query) {
 		if( language == ParserLanguage.CPP )
-			return ( additionalCPPOperators.get( query ) != null );
+			return ( additionalCPPOperators.containsKey( query ) );
 		else if (language == ParserLanguage.C )
-			return ( additionalCOperators.get( query ) != null );
+			return ( additionalCOperators.containsKey( query ));
 		return false;
 	}
 

@@ -24,6 +24,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -217,6 +218,40 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		return proposals;	
 	}
 	
+	private void addProjectCompletions(IProject project, IRegion region, String frag, ArrayList completions) {
+		IndexModel model = IndexModel.getDefault();
+		
+		ITagEntry[] tags= model.query(project, frag+"*", false, false);
+		if(tags != null && tags.length > 0) {
+			// We have some matches!
+			for(int i = 0; i < tags.length; i++) {
+
+				String fname = tags[i].getTagName();
+
+				int kind = tags[i].getKind();
+
+				if(kind == TagFlags.T_FUNCTION || kind == TagFlags.T_PROTOTYPE) {
+					fname = fname + "()";
+				}
+				String proto = fname + " - " + tags[i].getPattern();
+				//System.out.println("tagmatch " + fname + " proto " + proto + " type" + tags[i].getKind());
+				if(tags[i].getKind() != TagFlags.T_MEMBER) {
+					completions.add(
+						new CCompletionProposal(
+						fname,
+						region.getOffset(),
+						region.getLength(),
+						//fname.length() + 1,
+						getTagImage(kind),
+						proto.equals("") ? (fname + "()") : proto,
+						//null,
+						//null));
+						3));
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Evaluate the actual proposals for C
 	 */
@@ -269,7 +304,6 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 		ArrayList completions = new ArrayList();
 
 		// Look in index manager
-		IndexModel model = IndexModel.getDefault();
 		IProject project = null;
 		IEditorInput input = fEditor.getEditorInput();
 		if(input instanceof IFileEditorInput) {
@@ -281,35 +315,19 @@ public class CCompletionProcessor implements IContentAssistProcessor {
 			}
 		}
 		if(project != null) {
-			ITagEntry[] tags= model.query(project, frag+"*", false, false);
-			if(tags != null && tags.length > 0) {
-				// We have some matches!
-				for(int i = 0; i < tags.length; i++) {
-
-					String fname = tags[i].getTagName();
-
-					int kind = tags[i].getKind();
-
-					if(kind == TagFlags.T_FUNCTION || kind == TagFlags.T_PROTOTYPE) {
-						fname = fname + "()";
-					}
-					String proto = fname + " - " + tags[i].getPattern();
-					//System.out.println("tagmatch " + fname + " proto " + proto + " type" + tags[i].getKind());
-					if(tags[i].getKind() != TagFlags.T_MEMBER) {
-						completions.add(
-							new CCompletionProposal(
-							fname,
-							region.getOffset(),
-							region.getLength(),
-							//fname.length() + 1,
-							getTagImage(kind),
-							proto.equals("") ? (fname + "()") : proto,
-							//null,
-							//null));
-							3));
+			addProjectCompletions(project, region, frag, completions);
+			// Now query referenced projects
+			IProject referenced[];
+			try {
+				referenced = project.getReferencedProjects();
+				if(referenced.length > 0) {
+					for (int i = 0; i < referenced.length; i++) {
+						addProjectCompletions(referenced[i], region, frag, completions);
 					}
 				}
+			} catch (CoreException e) {
 			}
+
 		}
 				
 		

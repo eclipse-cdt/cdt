@@ -1,4 +1,10 @@
-2003-03-13 ALain Magloire
+2003-03-13 Alain Magloire
+
+	No longer throw exceptions.
+	* src/org/eclipse/cdt/internal/core/model/CFormattedMemoryBlock.java
+	* src/org/eclipse/cdt/internal/core/model/CVariable.java
+	
+2003-03-13 Alain Magloire
 
 	* src/org/eclipse/cdt/debug/core/cdi/model/ICDIVariable.java:
 	Also extends ICDIVariableObject.

@@ -1,5 +1,10 @@
 2003-03-13 Alain Magloire
 
+	Small bug fix
+	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java
+
+2003-03-13 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/VariableManager.java:
 	New method getLocalVariableObjects() implemented returns all the local.
 	* src/org/eclipse/cdt/debug/mi/core/cdi/model/StackFrame.java

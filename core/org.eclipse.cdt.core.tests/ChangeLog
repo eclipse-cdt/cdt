@@ -1,3 +1,6 @@
+2003-12-31 Hoda Amer
+	Small change to test parameters with initial clause in ITemplateTest
+	
 2003-12-22 Hoda Amer
 	Temporary disabled completion proposal test until a better test is written.
 	

@@ -191,7 +191,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 			//"nonVector"
 			{"T"},
 			//"ArrayOverlay"
-			{"X","Y","int"},
+			{"X","Y","int=16"},
 			//"TemplateContainer::fum"
 			{"Bar"},
 		  	//"TemplateParameter::scrum"
@@ -233,7 +233,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 		String[] myExpectedValues = {
 			"Map<Key, Value, SortAlgorithm>",
 			"nonVector<T>",
-			"ArrayOverlay<X, Y, int>",
+			"ArrayOverlay<X, Y, int=16>",
 			"fum<Bar>(int) : void",
 			"scrum<int>(void) : void", // TODO: deduce the rules of () versus (void), compare below.
 			"nonVector<T>::first<T>() : const T&", // TODO: where should <T> be?

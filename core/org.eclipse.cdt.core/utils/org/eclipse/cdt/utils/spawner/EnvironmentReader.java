@@ -28,9 +28,13 @@ public class EnvironmentReader {
 		rawVars = new Vector(32);
 		String command = "env";
 		InputStream	in = null;
+		boolean check_ready = false;
 		try {
 			if (OS.indexOf("windows 9") > -1) {
 				command = "command.com /c set";
+				//The buffered stream doesn't always like windows 98
+				check_ready = true;
+ 
 			} else if ((OS.indexOf("nt") > -1) || (OS.indexOf("windows 2000") > -1)) {
 				command = "cmd.exe /c set";
 			}
@@ -47,6 +51,9 @@ public class EnvironmentReader {
 					envVars.setProperty(key, value);
 				} else {
 					envVars.setProperty(line, "");
+				}
+				if(check_ready && br.ready() == false) {
+					break;
 				}
 			}
 		} catch (IOException e) {

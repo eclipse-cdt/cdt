@@ -31,13 +31,9 @@ import org.eclipse.cdt.debug.core.model.ICValue;
 import org.eclipse.cdt.debug.core.model.ICVariable;
 import org.eclipse.cdt.debug.core.model.ICWatchpoint;
 import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
-import org.eclipse.cdt.debug.core.model.IExecFileInfo;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.model.IState;
-import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.cdt.debug.internal.ui.editors.CDebugEditor;
-import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.editors.EditorInputDelegate;
 import org.eclipse.cdt.debug.internal.ui.editors.FileNotFoundElement;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
@@ -154,10 +150,6 @@ public class CDTDebugModelPresentation extends LabelProvider
 		{
 			return new FileEditorInput( (IFile)element );
 		}
-		if ( element instanceof ICAddressBreakpoint )
-		{
-			return getDisassemblyEditorInput( (ICAddressBreakpoint)element );
-		}
 		if ( element instanceof ICLineBreakpoint )
 		{
 			IFile file = (IFile)((ICLineBreakpoint)element).getMarker().getResource().getAdapter( IFile.class );
@@ -167,10 +159,6 @@ public class CDTDebugModelPresentation extends LabelProvider
 		if ( element instanceof FileStorage )
 		{
 			return new ExternalEditorInput( (IStorage)element );
-		}
-		if ( element instanceof IDisassemblyStorage )
-		{
-			return new DisassemblyEditorInput( (IStorage)element );
 		}
 		if ( element instanceof FileNotFoundElement )
 		{
@@ -958,37 +946,6 @@ public class CDTDebugModelPresentation extends LabelProvider
 											new ImageDescriptor[] { null, CDebugImages.DESC_OVRS_SYMBOLS, null, null } ) );
 		}
 		return CDebugUIPlugin.getImageDescriptorRegistry().get( CDebugImages.DESC_OBJS_SHARED_LIBRARY );
-	}
-
-	protected DisassemblyEditorInput getDisassemblyEditorInput( ICAddressBreakpoint breakpoint )
-	{
-		IDebugTarget[] targets = DebugPlugin.getDefault().getLaunchManager().getDebugTargets();
-		for ( int i = 0; i < targets.length; ++i )
-		{
-			IResource resource = breakpoint.getMarker().getResource();
-			if ( resource != null && resource instanceof IFile && 
-				 targets[i].getAdapter( IExecFileInfo.class )!= null &&
-				 ((IFile)resource).getLocation().toOSString().equals( ((IExecFileInfo)targets[i].getAdapter( IExecFileInfo.class )).getExecFile().getLocation().toOSString() ) )
-			{
-				if ( targets[i].getAdapter( DisassemblyManager.class ) != null )
-				{
-					try
-					{
-						long address = Long.parseLong( breakpoint.getAddress() );
-						IStorage storage = (IStorage)(((DisassemblyManager)targets[i].getAdapter( DisassemblyManager.class )).getSourceElement( address ) );
-						if ( storage != null )
-							return new DisassemblyEditorInput( storage );
-					}
-					catch( NumberFormatException e )
-					{
-					}
-					catch( CoreException e )
-					{
-					}
-				}
-			}
-		}
-		return null;
 	}
 
 	private String getVariableTypeName( ICType type )

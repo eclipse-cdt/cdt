@@ -19,17 +19,13 @@ import java.util.ResourceBundle;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
 import org.eclipse.cdt.debug.core.model.ISwitchToThread;
-import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.ColorManager;
-import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyDocumentProvider;
-import org.eclipse.cdt.debug.internal.ui.editors.DisassemblyEditorInput;
 import org.eclipse.cdt.debug.internal.ui.preferences.CDebugPreferencePage;
 import org.eclipse.cdt.debug.internal.ui.preferences.MemoryViewPreferencePage;
 import org.eclipse.cdt.debug.ui.sourcelookup.DefaultSourceLocator;
-import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -38,12 +34,8 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
@@ -57,9 +49,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -69,9 +58,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class CDebugUIPlugin extends AbstractUIPlugin 
-							implements ISelectionListener, 
-									   IDebugEventSetListener
+public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListener
 {
 	//The shared instance.
 	private static CDebugUIPlugin plugin;
@@ -81,9 +68,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	protected Map fDebuggerPageMap;
 
 	private CDebugImageDescriptorRegistry fImageDescriptorRegistry;
-
-	// Document provider for disassembly editor	
-	private DisassemblyDocumentProvider fDisassemblyDocumentProvider = null;
 
 	/**
 	 * The constructor.
@@ -338,7 +322,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 	 */
 	public void shutdown() throws CoreException
 	{
-		DebugPlugin.getDefault().removeDebugEventListener( this );
 		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
 		// TODO: PR 52155, this is big hammer approach, but it is ok for
 		// Since the code will be remove when we align ourselves
@@ -372,7 +355,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 			ww.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, this );
 		}
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
-		DebugPlugin.getDefault().addDebugEventListener( this );
 	}
 
 	/* (non-Javadoc)
@@ -424,78 +406,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(DebugEvent[])
-	 */
-	public void handleDebugEvents( DebugEvent[] events )
-	{
-		for ( int i = 0; i < events.length; i++ )
-		{
-			DebugEvent event = events[i];
-			if ( event.getKind() == DebugEvent.TERMINATE )
-			{
-				Object element = event.getSource();
-				if ( element != null && element instanceof IDebugTarget )
-				{
-					closeDisassemblyEditors( (IDebugTarget)element );
-				}
-			}
-		}
-	}
-	
-	private void closeDisassemblyEditors( final IDebugTarget target )
-	{
-		IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
-		for ( int i = 0; i < windows.length; ++i )
-		{
-			IWorkbenchPage[] pages = windows[i].getPages();
-			for ( int j = 0; j < pages.length; ++j )
-			{
-				IEditorReference[] refs = pages[j].getEditorReferences();
-				for ( int k = 0; k < refs.length; ++k )
-				{
-					IEditorPart editor = refs[k].getEditor( false );
-					if ( editor != null )
-					{
-						IEditorInput input = editor.getEditorInput();
-						if ( input != null && input instanceof DisassemblyEditorInput )
-						{
-							try
-							{
-								IStorage storage = ((DisassemblyEditorInput)input).getStorage();
-								if ( storage != null && storage instanceof IDisassemblyStorage && 
-									 target.equals( ((IDisassemblyStorage)storage).getDebugTarget() ) )
-								{
-									Shell shell = windows[i].getShell();
-									if ( shell != null )
-									{
-										Display display = shell.getDisplay();
-										if ( display != null )
-										{
-											final IWorkbenchPage page = pages[j];
-											final IEditorPart editor0 = editor;
-											display.asyncExec( new Runnable()
-																	{
-																		public void run()
-																		{
-																			page.closeEditor( editor0, false );
-																		}
-																	} );
-										}
-									}
-								}
-							}
-							catch( CoreException e )
-							{
-								// ignore
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	
 	private boolean sameThread( IDebugElement element ) throws DebugException
 	{
 		if ( element.getDebugTarget() instanceof ISwitchToThread )
@@ -510,16 +420,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Returns the document provider used for the disassembly editor
-	 */
-	public DisassemblyDocumentProvider getDisassemblyDocumentProvider() 
-	{
-		if ( fDisassemblyDocumentProvider == null )
-			fDisassemblyDocumentProvider = new DisassemblyDocumentProvider();
-		return fDisassemblyDocumentProvider;
 	}
 
 	public static IPersistableSourceLocator createDefaultSourceLocator()

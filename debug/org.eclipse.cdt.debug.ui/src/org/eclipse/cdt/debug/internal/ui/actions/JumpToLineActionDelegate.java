@@ -8,7 +8,6 @@ package org.eclipse.cdt.debug.internal.ui.actions;
 import org.eclipse.cdt.core.resources.FileStorage;
 import org.eclipse.cdt.debug.core.model.IJumpToAddress;
 import org.eclipse.cdt.debug.core.model.IJumpToLine;
-import org.eclipse.cdt.debug.core.sourcelookup.IDisassemblyStorage;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
@@ -103,15 +102,6 @@ public class JumpToLineActionDelegate extends AbstractEditorActionDelegate
 							int lineNumber = selection.getStartLine() + 1;
 							jumpToLine( path.lastSegment(), lineNumber );
 						}
-					}
-					else if ( storage != null && storage.getAdapter( IDisassemblyStorage.class ) != null )
-					{
-						IDisassemblyStorage disassemblyStorage = (IDisassemblyStorage)storage.getAdapter( IDisassemblyStorage.class );
-						ITextSelection selection = (ITextSelection)((ITextEditor)getTargetPart()).getSelectionProvider().getSelection();
-						int lineNumber = selection.getStartLine();
-						long address = disassemblyStorage.getAddress( lineNumber );
-						if ( address > 0 )
-							jumpToAddress( address );
 					}
 				}
 				catch( CoreException e )

@@ -1,4 +1,15 @@
 2004-05-13 Mikhail Khodjaiants
+	Removed old disassembly implementation.
+	* IDisassemblyStorage.java: deleted
+	* ISourceMode.java: deleted
+	* DisassemblyStorage.java: deleted
+	* DisassemblyManager.java: deleted
+	* ICDebugConstants.java
+	* CDebugTarget.java
+	* CThread.java
+	* CSourceManager.java
+	 
+2004-05-13 Mikhail Khodjaiants
 	Support for the instruction stepping mode.
 	* ICDebugTarget.java
 	* ISteppingModeTarget.java: new

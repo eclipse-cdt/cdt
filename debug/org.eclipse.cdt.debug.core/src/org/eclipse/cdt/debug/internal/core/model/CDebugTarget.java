@@ -73,7 +73,6 @@ import org.eclipse.cdt.debug.core.model.IRunToAddress;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
-import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.cdt.debug.internal.core.CBreakpointManager;
 import org.eclipse.cdt.debug.internal.core.CMemoryManager;
 import org.eclipse.cdt.debug.internal.core.CRegisterManager;
@@ -81,7 +80,6 @@ import org.eclipse.cdt.debug.internal.core.CSharedLibraryManager;
 import org.eclipse.cdt.debug.internal.core.CSignalManager;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.DisassemblyManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -232,11 +230,6 @@ public class CDebugTarget extends CDebugElement
 	/**
 	 * A disassembly manager for this target.
 	 */
-	private DisassemblyManager fDisassemblyManager;
-
-	/**
-	 * A disassembly manager for this target.
-	 */
 	private Disassembly fDisassembly;
 
 	/**
@@ -311,7 +304,6 @@ public class CDebugTarget extends CDebugElement
 		setExecFile( file );
 		setConfiguration( cdiTarget.getSession().getConfiguration() );
 		setThreadList( new ArrayList( 5 ) );
-		setDisassemblyManager( new DisassemblyManager( this ) );
 		createDisassembly();
 		setSharedLibraryManager( new CSharedLibraryManager( this ) );
 		setSignalManager( new CSignalManager( this ) );
@@ -986,13 +978,6 @@ public class CDebugTarget extends CDebugElement
 			return this;
 		if ( adapter.equals( ICDebugTargetType.class ) )
 			return this;
-		if ( adapter.equals( ISourceMode.class ) )
-		{
-			if ( getSourceLocator() instanceof IAdaptable )
-			{
-				return ((IAdaptable)getSourceLocator()).getAdapter( ISourceMode.class );
-			}
-		}
 		if ( adapter.equals( ICMemoryManager.class ) )
 			return getMemoryManager();
 		if ( adapter.equals( IDebuggerProcessSupport.class ) )
@@ -1011,8 +996,6 @@ public class CDebugTarget extends CDebugElement
 			return this;
 		if ( adapter.equals( CBreakpointManager.class ) )
 			return getBreakpointManager();
-		if ( adapter.equals( DisassemblyManager.class ) )
-			return getDisassemblyManager();
 		if ( adapter.equals( ICSharedLibraryManager.class ) )
 			return getSharedLibraryManager();
 		if ( adapter.equals( ICSignalManager.class ) )
@@ -1252,7 +1235,6 @@ public class CDebugTarget extends CDebugElement
 		disposeSharedLibraryManager();
 		disposeSignalManager();
 		disposeRegisterManager();
-		disposeDisassemblyManager();
 		disposeDisassembly();
 		disposeSourceManager();
 		disposeBreakpointManager();
@@ -1967,19 +1949,6 @@ public class CDebugTarget extends CDebugElement
 		return ( getTargetType() == ICDebugTargetType.TARGET_TYPE_LOCAL_CORE_DUMP );
 	}
 	
-	protected int getRealSourceMode()
-	{
-		ISourceLocator sl = getSourceLocator();
-		if ( sl != null && 
-			 sl instanceof IAdaptable && 
-			 ((IAdaptable)sl).getAdapter( ICSourceLocator.class ) != null &&
-			 ((IAdaptable)sl).getAdapter( ICSourceLocator.class ) instanceof CSourceManager )
-		{
-			return ((CSourceManager)((IAdaptable)sl).getAdapter( ICSourceLocator.class )).getRealMode();
-		}
-		return ISourceMode.MODE_SOURCE;
-	}
-	
 	protected CMemoryManager getMemoryManager()
 	{
 		return fMemoryManager;
@@ -2084,16 +2053,6 @@ public class CDebugTarget extends CDebugElement
 				  };
 	}
 	
-	protected void setDisassemblyManager( DisassemblyManager dm )
-	{
-		fDisassemblyManager = dm;
-	}
-	
-	protected DisassemblyManager getDisassemblyManager()
-	{
-		return fDisassemblyManager;
-	}
-
 	protected void setSharedLibraryManager( CSharedLibraryManager libman )
 	{
 		fSharedLibraryManager = libman;
@@ -2127,11 +2086,6 @@ public class CDebugTarget extends CDebugElement
 	protected void disposeRegisterManager()
 	{
 		fRegisterManager.dispose();
-	}
-
-	protected void disposeDisassemblyManager()
-	{
-		fDisassemblyManager.dispose();
 	}
 
 	/**

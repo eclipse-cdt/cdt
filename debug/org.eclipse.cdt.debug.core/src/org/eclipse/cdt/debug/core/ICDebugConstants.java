@@ -19,14 +19,6 @@ public interface ICDebugConstants
 	public static final String PLUGIN_ID = CDebugCorePlugin.getDefault().getDescriptor().getUniqueIdentifier();
 
 	/**
-	 * Boolean preference controlling whether the debugger automatically 
-	 * switchs to disassembly mode when can not find the source file . 
-	 * When <code>true</code> the debugger will automatically switch to 
-	 * disassembly mode.
-	 */
-	public static final String PREF_AUTO_DISASSEMBLY = PLUGIN_ID + "cDebug.auto_disassembly"; //$NON-NLS-1$
-
-	/**
 	 * The identifier of the default variable format to use in the variables view
 	 */
 	public static final String PREF_DEFAULT_VARIABLE_FORMAT = PLUGIN_ID + "cDebug.default_variable_format"; //$NON-NLS-1$

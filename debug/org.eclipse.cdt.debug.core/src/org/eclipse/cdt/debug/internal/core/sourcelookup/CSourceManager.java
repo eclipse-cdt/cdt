@@ -9,12 +9,9 @@ package org.eclipse.cdt.debug.internal.core.sourcelookup;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.ICDebugConstants;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
-import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.cdt.debug.internal.core.model.CDebugTarget;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -34,12 +31,9 @@ import org.eclipse.debug.core.model.IStackFrame;
  */
 public class CSourceManager implements ICSourceLocator, 
 									   IPersistableSourceLocator, 
-									   ISourceMode, 
 									   IAdaptable
 {
 	private ISourceLocator fSourceLocator = null;
-	private int fMode = ISourceMode.MODE_SOURCE;
-	private int fRealMode = fMode;
 	private ILaunch fLaunch = null;
 	private CDebugTarget fDebugTarget = null; 
 	
@@ -56,21 +50,14 @@ public class CSourceManager implements ICSourceLocator,
 	 */
 	public int getLineNumber( IStackFrame frame )
 	{
-		if ( getRealMode() == ISourceMode.MODE_SOURCE )
+		if ( getCSourceLocator() != null )
 		{
-			if ( getCSourceLocator() != null )
-			{
-				return getCSourceLocator().getLineNumber( frame );
-			}
-			IStackFrameInfo info = (IStackFrameInfo)frame.getAdapter( IStackFrameInfo.class );
-			if ( info != null )
-			{
-				return info.getFrameLineNumber();
-			}
+			return getCSourceLocator().getLineNumber( frame );
 		}
-		if ( getRealMode() == ISourceMode.MODE_DISASSEMBLY && getDisassemblyManager( frame ) != null )
+		IStackFrameInfo info = (IStackFrameInfo)frame.getAdapter( IStackFrameInfo.class );
+		if ( info != null )
 		{
-			return getDisassemblyManager( frame ).getLineNumber( frame );
+			return info.getFrameLineNumber();
 		}
 		return 0;
 	}
@@ -103,33 +90,6 @@ public class CSourceManager implements ICSourceLocator,
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ISourceMode#getMode()
-	 */
-	public int getMode()
-	{
-		return fMode;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ISourceMode#setMode(int)
-	 */
-	public void setMode( int mode )
-	{
-		fMode = mode;
-		setRealMode( mode );
-	}
-
-	public int getRealMode()
-	{
-		return fRealMode;
-	}
-
-	protected void setRealMode( int mode )
-	{
-		fRealMode = mode;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
 	 */
 	public Object getAdapter( Class adapter )
@@ -137,8 +97,6 @@ public class CSourceManager implements ICSourceLocator,
 		if ( adapter.equals( CSourceManager.class ) )
 			return this;
 		if ( adapter.equals( ICSourceLocator.class ) )
-			return this;
-		if ( adapter.equals( ISourceMode.class ) )
 			return this;
 		if ( adapter.equals( IPersistableSourceLocator.class ) )
 			return this;
@@ -154,21 +112,8 @@ public class CSourceManager implements ICSourceLocator,
 	public Object getSourceElement( IStackFrame stackFrame )
 	{
 		Object result = null;
-		boolean autoDisassembly = CDebugCorePlugin.getDefault().getPluginPreferences().getBoolean( ICDebugConstants.PREF_AUTO_DISASSEMBLY );
-		
-		if ( getMode() == ISourceMode.MODE_SOURCE && getSourceLocator() != null )
+		if ( getSourceLocator() != null )
 			result = getSourceLocator().getSourceElement( stackFrame );
-		if ( result == null && 
-			 ( autoDisassembly || getMode() == ISourceMode.MODE_DISASSEMBLY ) && 
-			 getDisassemblyManager( stackFrame ) != null )
-		{
-			setRealMode( ISourceMode.MODE_DISASSEMBLY );
-			result = getDisassemblyManager( stackFrame ).getSourceElement( stackFrame );
-		}
-		else
-		{
-			setRealMode( ISourceMode.MODE_SOURCE );
-		}
 		return result;
 	}
 
@@ -191,15 +136,6 @@ public class CSourceManager implements ICSourceLocator,
 	protected void setSourceLocator( ISourceLocator sl )
 	{
 		fSourceLocator = sl;
-	}
-	
-	protected DisassemblyManager getDisassemblyManager( IStackFrame stackFrame )
-	{
-		if ( stackFrame != null )
-		{
-			return (DisassemblyManager)stackFrame.getDebugTarget().getAdapter( DisassemblyManager.class );
-		}
-		return null;
 	}
 	
 	public void addSourceLocation( ICSourceLocation location )

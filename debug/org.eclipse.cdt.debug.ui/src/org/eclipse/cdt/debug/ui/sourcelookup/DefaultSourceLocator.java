@@ -22,7 +22,6 @@ import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.model.IStackFrameInfo;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
-import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.cdt.debug.core.sourcelookup.SourceLookupFactory;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
 import org.eclipse.cdt.debug.internal.ui.CDebugImages;
@@ -261,10 +260,6 @@ public class DefaultSourceLocator implements IPersistableSourceLocator, IAdaptab
 				return ((IAdaptable)getCSourceLocator()).getAdapter( adapter );
 			}
 			if ( adapter.equals( IResourceChangeListener.class ) )
-			{
-				return ((IAdaptable)getCSourceLocator()).getAdapter( adapter );
-			}
-			if ( adapter.equals( ISourceMode.class ) )
 			{
 				return ((IAdaptable)getCSourceLocator()).getAdapter( adapter );
 			}

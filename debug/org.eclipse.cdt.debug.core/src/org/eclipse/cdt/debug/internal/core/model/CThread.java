@@ -37,7 +37,6 @@ import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
-import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
@@ -1023,11 +1022,6 @@ public class CThread extends CDebugElement
 		{
 			targetRequestFailed( e.getMessage(), null );
 		}
-	}
-	
-	private int getRealSourceMode()
-	{
-		return ((CDebugTarget)getDebugTarget()).getRealSourceMode();
 	}
 	
 	private void setLastStackFrame( CStackFrame frame )

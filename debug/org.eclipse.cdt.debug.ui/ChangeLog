@@ -1,4 +1,21 @@
 2004-05-13 Mikhail Khodjaiants
+	Removed old disassembly implementation.
+	* SwitchToDisassemblyActionDelegate.java: deleted
+	* src/org/eclipse/cdt/debug/internal/ui/editors/DisassemblyDocumentProvider.java: deleted
+	* src/org/eclipse/cdt/debug/internal/ui/editors/DisassemblyEditor.java: deleted
+	* src/org/eclipse/cdt/debug/internal/ui/editors/DisassemblyEditorInput.java: deleted
+	* src/org/eclipse/cdt/debug/internal/ui/editors/DisassemblyMarkerAnnotation.java: deleted
+	* src/org/eclipse/cdt/debug/internal/ui/editors/DisassemblyMarkerAnnotationModel.java: deleted
+	* src/org/eclipse/cdt/debug/internal/ui/editors/DisassemblySourceViewerConfiguration.java: deleted
+	* CDTDebugModelPresentation.java
+	* JumpToLineActionDelegate.java
+	* CDebugPreferencePage.java
+	* CDebugUIPlugin.java
+	* DefaultSourceLocator.java
+	* plugin.properties
+	* plugin.xml
+
+2004-05-13 Mikhail Khodjaiants
 	Added the "Instruction Stepping Mode" action.
 	* ToggleInstructionStepModeActionDelegate.java
 	* plugin.properties

@@ -284,15 +284,15 @@ public class TypeParser implements ISourceElementRequestor {
 			CodeReader reader = null;
 			Object stackObject = null;
 			
+			IResource resource = null;
 			if (workingCopy != null) {
 				reader = createWorkingCopyReader(workingCopy);
-				IResource resource = workingCopy.getResource();
+				resource = workingCopy.getResource();
 				if (resource != null) {
 					path = resource.getLocation();
 				}
 				stackObject = workingCopy;
 			} else {
-				IResource resource = null;
 				IWorkspace workspace = CCorePlugin.getWorkspace();
 				if (workspace != null) {
 					IWorkspaceRoot wsRoot = workspace.getRoot();
@@ -314,7 +314,7 @@ public class TypeParser implements ISourceElementRequestor {
 				fResourceStack.clear();
 				fScopeStack.clear();
 				fResourceStack.push(stackObject);
-				parseContents(path, project, reader, language, progressMonitor);
+				parseContents(path, resource, project, reader, language, progressMonitor);
 				fResourceStack.pop();
 			}
 		} finally {
@@ -393,7 +393,7 @@ public class TypeParser implements ISourceElementRequestor {
 		return reader;
 	}
 
-	private void parseContents(IPath realPath, IProject project, CodeReader reader, ParserLanguage language, IProgressMonitor progressMonitor) throws InterruptedException {
+	private void parseContents(IPath realPath, IResource resource, IProject project, CodeReader reader, ParserLanguage language, IProgressMonitor progressMonitor) throws InterruptedException {
 		IScannerInfo scanInfo = null;
 
 		if (project != null) {
@@ -401,7 +401,7 @@ public class TypeParser implements ISourceElementRequestor {
 			try {
 				IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 				if (provider != null) {
-					IScannerInfo buildScanInfo = provider.getScannerInformation(project);
+					IScannerInfo buildScanInfo = provider.getScannerInformation(resource != null ? resource : project);
 					if (buildScanInfo != null)
 						scanInfo = new ScannerInfo(buildScanInfo.getDefinedSymbols(), buildScanInfo.getIncludePaths());
 				}

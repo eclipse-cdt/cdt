@@ -146,6 +146,11 @@ public interface ITypeInfo extends Comparable {
 	public ITypeReference getResolvedReference();
 	
 	/**
+	 * Returns the corresponding CElement or <code>null</code> if not found.
+	 */
+	public ICElement getCElement();
+	
+	/**
 	 * Returns true if the type can be substituted.
 	 */
 	public boolean canSubstituteFor(ITypeInfo info);

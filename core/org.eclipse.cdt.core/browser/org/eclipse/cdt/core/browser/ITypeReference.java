@@ -59,9 +59,10 @@ public interface ITypeReference {
 	public int getLength();
 	
 	/**
-	 * Returns the CElement located at the stored offset and length.
+	 * Returns the CElements located at the stored offset and length,
+	 * or <code>null</code> if not found.
 	 */
-	public ICElement getCElement();
+	public ICElement[] getCElements();
 	
 	/**
 	 * Returns a translation unit for this location.

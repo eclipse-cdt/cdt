@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.browser;
 
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.internal.core.browser.cache.ITypeCache;
 import org.eclipse.cdt.internal.core.browser.util.ArrayUtil;
 import org.eclipse.core.resources.IProject;
@@ -24,7 +25,7 @@ public class TypeInfo implements ITypeInfo
 	protected int fSourceRefsCount = 0;
 
 	protected final static int INITIAL_REFS_SIZE = 1;
-	protected final static int REFS_GROW_BY = 10;
+	protected final static int REFS_GROW_BY = 2;
 	protected final static ITypeInfo[] EMPTY_TYPES = new ITypeInfo[0];
 
 	public TypeInfo(int elementType, IQualifiedTypeName typeName) {
@@ -50,6 +51,29 @@ public class TypeInfo implements ITypeInfo
 			ITypeReference[] refs = new ITypeReference[fSourceRefsCount];
 			System.arraycopy(fSourceRefs, 0, refs, 0, fSourceRefsCount);
 			return refs;
+		}
+		return null;
+	}
+	
+	public ICElement getCElement() {
+		ITypeReference ref = getResolvedReference();
+		if (ref != null) {
+			ICElement[] elems = ref.getCElements();
+			if (elems.length > 1) {
+				for (int i = 0; i < elems.length; ++i) {
+					ICElement elem = elems[i];
+					if (elem.getElementType() == fElementType && elem.getElementName().equals(getName())) {
+						//TODO should check fully qualified name
+						return elem;
+					}
+					if (elem instanceof ITypeDef && ((ITypeDef)elem).getTypeName().equals(getName())) {
+						//TODO should check fully qualified name
+						return elem;
+					}
+				}
+			} else if (elems.length == 1) {
+				return elems[0];
+			}
 		}
 		return null;
 	}

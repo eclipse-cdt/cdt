@@ -173,11 +173,11 @@ public class TypeReference implements ITypeReference {
 		return null;
 	}
 
-	public ICElement getCElement() {
+	public ICElement[] getCElements() {
 		ITranslationUnit unit = getTranslationUnit();
 		if (unit != null) {
 			try {
-				return unit.getElementAtOffset(fOffset);
+				return unit.getElementsAtOffset(fOffset);
 			} catch (CModelException e) {
 			}
 		}

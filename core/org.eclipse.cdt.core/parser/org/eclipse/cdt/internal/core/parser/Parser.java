@@ -707,6 +707,7 @@ c, quick);
 	protected void declSpecifierSeq( Object decl, boolean parm ) throws Backtrack {
 		boolean encounteredTypename = false;
 		boolean encounteredRawType = false;
+		boolean modifierEncountered = false;
 		declSpecifiers:		
 		for (;;) {
 			switch (LT(1)) {
@@ -722,6 +723,7 @@ c, quick);
 				case Token.t_friend:
 				case Token.t_const:
 				case Token.t_volatile:
+					modifierEncountered = true;
 					try{ callback.simpleDeclSpecifier(decl, consume());} catch( Exception e ) {}
 					break;
 				case Token.t_signed:
@@ -739,19 +741,20 @@ c, quick);
 					try{ callback.simpleDeclSpecifier(decl, consume());} catch( Exception e ) {}
 					break;
 				case Token.t_typename:
-					consume( Token.t_typename );
+					try{ callback.simpleDeclSpecifier(decl, consume( Token.t_typename ));} catch( Exception e ) {}
 					name();
-					break;
+					try{ callback.simpleDeclSpecifierName( decl );} catch( Exception e ) {}
+					return;
 				case Token.tCOLONCOLON:
 					consume( Token.tCOLONCOLON );
 					// handle nested later:
 				case Token.tIDENTIFIER:
 					// TODO - Kludgy way to handle constructors/destructors
 					// handle nested later:
-					if ((parm && !encounteredRawType) || (!encounteredRawType && LT(2) != Token.tCOLONCOLON && LT(2) != Token.tLPAREN))
+					if ((modifierEncountered && ! encounteredRawType && LT(2) != Token.tLPAREN)|| (parm && !encounteredRawType) || (!encounteredRawType && LT(2) != Token.tCOLONCOLON && LT(2) != Token.tLPAREN))
 					{
 						if( ! encounteredTypename || ( LT(2) == Token.tIDENTIFIER && 
-							( LT(3) == Token.tLPAREN || LT(3) == Token.tASSIGN ) || LT(2) == Token.tSTAR ) )
+							( LT(3) == Token.tLPAREN || LT(3) == Token.tASSIGN ) || LT(2) == Token.tSTAR || LT(2) == Token.tAMPER ) )
 						{
 							try{ callback.simpleDeclSpecifier(decl,LA(1));} catch( Exception e ) {}
 							name(); 
@@ -2010,6 +2013,11 @@ c, quick);
 					callback.nameEnd( end );
 				} catch( Exception e ) {}
 			}
+			else if( LT(1) == Token.t_typename )
+			{
+				consume( Token.t_typename );
+				name(); 
+			}
 			else
 				throw backtrack;
 		}
@@ -2059,10 +2067,19 @@ c, quick);
 				return;
 			case Token.t_sizeof:
 				consume(Token.t_sizeof);
+				Token mark = LA(1);
 				if (LT(1) == Token.tLPAREN) {
-					consume( Token.tLPAREN );	
-					typeId();
-					consume(Token.tRPAREN);
+					try
+					{
+						consume( Token.tLPAREN );	
+						typeId();
+						consume(Token.tRPAREN);
+					}
+					catch( Backtrack bt )
+					{
+						backup( mark );
+						unaryExpression( expression );
+					}
 				} else {
 					unaryExpression( expression );
 				}
@@ -2168,7 +2185,8 @@ c, quick);
 				return;
 			
 			case Token.tIDENTIFIER:
-				try{ callback.expressionTerminal(expression, consume());} catch( Exception e ) {}
+				name(); 
+				try{ callback.expressionName(expression);} catch( Exception e ) {}
 				return;
 			case Token.t_this:
 				consume();

@@ -30,7 +30,12 @@ public class Expression {
 		tokens.add( t ); 
 	}
 
-	public List tokens()
+	public void add( Name t )
+	{
+		tokens.add( t ); 
+	}
+	
+	public List elements()
 	{
 		return Collections.unmodifiableList( tokens );	
 	}

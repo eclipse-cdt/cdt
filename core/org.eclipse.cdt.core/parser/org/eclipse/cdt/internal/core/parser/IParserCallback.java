@@ -72,6 +72,7 @@ public interface IParserCallback {
 	public Object 	expressionBegin( Object container ); 
 	public void 	expressionOperator(Object expression, Token operator);
 	public void 	expressionTerminal(Object expression, Token terminal);
+	public void		expressionName( Object expression );
 	public void     expressionAbort( Object expression ); 
 	public void 	expressionEnd(Object expression );
 	

@@ -37,6 +37,7 @@ import org.eclipse.cdt.internal.core.dom.PointerOperator;
 import org.eclipse.cdt.internal.core.dom.SimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateDeclaration;
 import org.eclipse.cdt.internal.core.dom.TemplateParameter;
+import org.eclipse.cdt.internal.core.dom.TemplateParameterList;
 import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.UsingDeclaration;
 import org.eclipse.cdt.internal.core.dom.UsingDirective;
@@ -371,8 +372,8 @@ public class DOMTests extends TestCase {
 		
 		Expression exp = declarator.getExpression(); 
 		assertNotNull( exp );
-		assertEquals( 1, exp.tokens().size() ); 
-		Token t = (Token)exp.tokens().get(0); 
+		assertEquals( 1, exp.elements().size() ); 
+		Token t = (Token)exp.elements().get(0); 
 		assertEquals( t.getImage(), "5" );
 		assertEquals( t.getType(), Token.tINTEGER);
 	}
@@ -588,10 +589,10 @@ public class DOMTests extends TestCase {
 		Declarator parm1Declarator = (Declarator) parm1Decls.get(0); 
 		assertEquals( "parm1", parm1Declarator.getName().toString() );
 		Expression initialValueParm1 = parm1Declarator.getExpression();
-		assertEquals( initialValueParm1.tokens().size(), 3 );
-		Token t1 = (Token)initialValueParm1.tokens().get( 0 );
-		Token t2 = (Token)initialValueParm1.tokens().get( 1 ); 
-		Token t3 = (Token)initialValueParm1.tokens().get( 2 );
+		assertEquals( initialValueParm1.elements().size(), 3 );
+		Token t1 = (Token)initialValueParm1.elements().get( 0 );
+		Token t2 = (Token)initialValueParm1.elements().get( 1 ); 
+		Token t3 = (Token)initialValueParm1.elements().get( 2 );
 		assertEquals( t1.getType(), Token.tINTEGER );
 		assertEquals( t1.getImage(), "3" ); 
 		assertEquals( t3.getType(), Token.tSTAR ); 
@@ -692,7 +693,7 @@ public class DOMTests extends TestCase {
 		assertEquals( 2, arrayQualifiers.size() ); 
 		ArrayQualifier q1 =(ArrayQualifier)arrayQualifiers.get(0);
 		assertNotNull( q1.getExpression() ); 
-		List tokens = q1.getExpression().tokens();
+		List tokens = q1.getExpression().elements();
 		assertEquals( tokens.size(), 1 ); 
 		ArrayQualifier q2 =(ArrayQualifier)arrayQualifiers.get(1);  
 		assertNull( q2.getExpression() ); 
@@ -802,7 +803,7 @@ public class DOMTests extends TestCase {
 		Declarator declarator1 = (Declarator)decl1.getDeclarators().get( 0 );
 		assertEquals( declarator1.getName().toString(), "x" );
 		Expression initValue1  = declarator1.getExpression();
-		assertEquals( initValue1.tokens().size(), 1 );
+		assertEquals( initValue1.elements().size(), 1 );
 		List ptrOps1 = declarator1.getPointerOperators();
 		assertNotNull( ptrOps1 );
 		assertEquals( 1, ptrOps1.size() );
@@ -811,7 +812,7 @@ public class DOMTests extends TestCase {
 		assertFalse( po1.isConst() );
 		assertFalse( po1.isVolatile() );
 		assertEquals( po1.getType(), PointerOperator.t_pointer );
-		Token t1 = (Token)initValue1.tokens().get(0);
+		Token t1 = (Token)initValue1.elements().get(0);
 		assertEquals( t1.getType(), Token.tINTEGER ); 
 		assertEquals( t1.getImage(), "0");
 
@@ -933,24 +934,22 @@ public class DOMTests extends TestCase {
 		List expressions1_1 = element1_1.getExpressionList();
 		assertEquals( expressions1_1.size(), 2 );
 		ConstructorChainElementExpression expression1_1_1 = (ConstructorChainElementExpression)expressions1_1.get(0);
-		assertEquals( expression1_1_1.getExpression().tokens().size(), 1 ); 
-		Token t1_1_1  = (Token)expression1_1_1.getExpression().tokens().get(0);
+		assertEquals( expression1_1_1.getExpression().elements().size(), 1 ); 
+		Name t1_1_1  = (Name)expression1_1_1.getExpression().elements().get(0);
 		ConstructorChainElementExpression expression1_1_2 = (ConstructorChainElementExpression)expressions1_1.get(1);
-		assertEquals( expression1_1_2.getExpression().tokens().size(), 1 ); 
-		Token t1_1_2 = (Token)expression1_1_2.getExpression().tokens().get(0);
+		assertEquals( expression1_1_2.getExpression().elements().size(), 1 ); 
+		Name t1_1_2 = (Name)expression1_1_2.getExpression().elements().get(0);
 		
-		assertEquals( t1_1_1.getType(), Token.tIDENTIFIER );
-		assertEquals( t1_1_1.getImage(), "rtg_rts");
-		assertEquals( t1_1_2.getType(), Token.tIDENTIFIER );
-		assertEquals( t1_1_2.getImage(), "rtg_ref");
+		assertEquals( t1_1_1.toString(), "rtg_rts");
+		assertEquals( t1_1_2.toString(), "rtg_ref");
 		
 		ConstructorChainElement element1_2 = (ConstructorChainElement) chainElements1.get(1);
 		assertEquals( element1_2.getName().toString(), "myId" );
 		List expressions1_2 = element1_2.getExpressionList();
 		assertEquals( expressions1_2.size(), 1 );
 		ConstructorChainElementExpression expression = (ConstructorChainElementExpression) expressions1_2.get(0);
-		assertEquals( expression.getExpression().tokens().size(), 1 );
-		Token t = (Token)expression.getExpression().tokens().get(0);
+		assertEquals( expression.getExpression().elements().size(), 1 );
+		Token t = (Token)expression.getExpression().elements().get(0);
 		assertEquals( t.getImage(), "0");
 		assertEquals( t.getType(), Token.tINTEGER );
 		
@@ -1340,6 +1339,7 @@ public class DOMTests extends TestCase {
   		code.write( "INLINE_DEF int f ();\n" ); 
 		code.write( "INLINE_DEF A   g ();" ); 
 		code.write( "INLINE_DEF A * h ();" ); 
+		code.write( "INLINE_DEF A & unlock( void );");
 		code.write( "};" );
 		TranslationUnit tu = parse(code.toString());
 		assertEquals( tu.getDeclarations().size(),1 );
@@ -1348,7 +1348,7 @@ public class DOMTests extends TestCase {
 		assertEquals( classDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_type );
 		ClassSpecifier classSpec = (ClassSpecifier)classDeclaration.getTypeSpecifier();
 		PointerOperator po =null;
-		int number = 3;
+		int number = 4;
 		assertEquals( classSpec.getDeclarations().size(), number );
 		for( int i = 0; i < number; ++i )
 		{
@@ -1356,7 +1356,10 @@ public class DOMTests extends TestCase {
 			assertEquals( subDeclaration.getDeclarators().size(), 1 );
 			Declarator functionDeclarator = (Declarator)subDeclaration.getDeclarators().get(0);
 			assertNotNull( functionDeclarator.getParms());
-			assertEquals( 0, functionDeclarator.getParms().getDeclarations().size() );
+			if( i == 3)
+				assertEquals( 1, functionDeclarator.getParms().getDeclarations().size() );
+			else
+				assertEquals( 0, functionDeclarator.getParms().getDeclarations().size() );
 			List pointerOperators = functionDeclarator.getPointerOperators();  
 			switch( i )
 			{
@@ -1381,6 +1384,15 @@ public class DOMTests extends TestCase {
 					assertFalse( po.isVolatile() );
 					assertEquals( po.getType(), PointerOperator.t_pointer );
 					break;
+				case 3:
+					assertEquals( subDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_type );
+					assertEquals( subDeclaration.getDeclSpecifier().getTypeName(), "A");
+					assertEquals( functionDeclarator.getName().toString(), "unlock" );
+					assertEquals( pointerOperators.size(), 1 );
+					po = (PointerOperator)pointerOperators.get(0);
+					assertFalse( po.isConst() ); 
+					assertFalse( po.isVolatile() );
+					assertEquals( po.getType(), PointerOperator.t_reference );					
 				default:
 					break;
 			}
@@ -1460,6 +1472,148 @@ public class DOMTests extends TestCase {
 		LinkageSpecification ls = (LinkageSpecification)tu.getDeclarations().get(0);
 		assertEquals( ls.getDeclarations().size(), 0);
 		assertEquals( ls.getLanguageLinkage(), "C" );		
+	}
+	
+	public void testBug36692() throws Exception  {
+		Writer code = new StringWriter();
+		code.write("template <typename T, typename Destroyer>\n");
+		code.write("void SetLongevity(T* pDynObject, unsigned int longevity,\n");
+		code.write("Destroyer d = Private::Deleter<T>::Delete){}\n");
+
+		TranslationUnit tu = parse(code.toString());
+		assertEquals( tu.getDeclarations().size(), 1 ); 
+		TemplateDeclaration template = (TemplateDeclaration)tu.getDeclarations().get(0);
+		assertFalse( template.isExported() );
+		TemplateParameterList list = template.getTemplateParms();
+		assertEquals( list.getDeclarations().size(), 2 );
+		for( int i = 0; i < 2; ++i )
+		{
+			TemplateParameter parameter = (TemplateParameter)list.getDeclarations().get(i);
+			assertEquals( parameter.getName().toString(), i == 0 ? "T": "Destroyer");
+			assertEquals( parameter.getKind(), TemplateParameter.k_typename );
+		}
+		assertEquals( template.getDeclarations().size(),  1 );
+		SimpleDeclaration method = (SimpleDeclaration)template.getDeclarations().get(0);
+		assertEquals( method.getDeclSpecifier().getType(), DeclSpecifier.t_void );
+		assertEquals( method.getDeclarators().size(), 1 );
+		assertEquals( method.isFunctionDefinition(), true ); 
+		Declarator declarator = (Declarator)method.getDeclarators().get(0);
+		assertEquals( declarator.getName().toString(), "SetLongevity");
+		ParameterDeclarationClause pdc = declarator.getParms();
+		assertEquals( pdc.getDeclarations().size(), 3 ); 
+		for( int i = 0; i < 3; ++i )
+		{
+			ParameterDeclaration parameter = (ParameterDeclaration)pdc.getDeclarations().get(i);
+			assertEquals( parameter.getDeclarators().size(), 1 );
+			Declarator parameterDeclarator = (Declarator)parameter.getDeclarators().get(0);
+			List pointers = parameterDeclarator.getPointerOperators();
+			PointerOperator op = null;  
+			Expression exp = parameterDeclarator.getExpression(); 
+			switch( i )
+			{
+				case 0:
+					assertEquals( parameterDeclarator.getName().toString(), "pDynObject");
+					assertEquals( pointers.size(),  1 );
+					op = (PointerOperator)pointers.get(0);
+					assertFalse( op.isConst());
+					assertFalse( op.isVolatile());
+					assertEquals( op.getType(), PointerOperator.t_pointer);
+					assertNull( exp );
+					break;
+				case 1:
+					assertEquals( parameterDeclarator.getName().toString(), "longevity");
+					assertEquals( pointers.size(),  0 );
+					assertEquals( parameter.getDeclSpecifier().getType(), DeclSpecifier.t_int );
+					assertTrue( parameter.getDeclSpecifier().isUnsigned() );
+					assertNull( exp ); 
+					break;
+				case 2:
+					assertEquals( parameterDeclarator.getName().toString(), "d"); 
+					assertEquals( pointers.size(),  0 );
+					assertNotNull( exp );
+					break;
+				default:
+					break; 
+			}
+		}
+		
+	}
+
+	public void testBug36708() throws Exception {
+		TranslationUnit tu = parse("enum { isPointer = PointerTraits<T>::result };");
+		assertEquals( tu.getDeclarations().size(), 1 );
+		SimpleDeclaration simple = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertEquals( simple.getDeclarators().size(), 0 );
+		EnumerationSpecifier enum = (EnumerationSpecifier)simple.getTypeSpecifier(); 
+		assertNull( enum.getName() );
+		List enumerators = enum.getEnumeratorDefinitions();
+		assertEquals( enumerators.size(), 1 );
+		EnumeratorDefinition enumerator = (EnumeratorDefinition )enumerators.get(0);
+		assertEquals( enumerator.getName().toString(), "isPointer");
+		assertNotNull( enumerator.getExpression() );
+	}
+
+	public void testBug36690() throws Exception {
+		TranslationUnit tu = parse("Functor(const Functor& rhs) : spImpl_(Impl::Clone(rhs.spImpl_.get())){}");
+		assertEquals( tu.getDeclarations().size(), 1 );
+		SimpleDeclaration simple = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertEquals( simple.getDeclarators().size(), 1 );
+		Declarator declarator = (Declarator)simple.getDeclarators().get(0);
+		ParameterDeclarationClause pdc = declarator.getParms();
+		assertEquals( pdc.getDeclarations().size(), 1 );
+		ConstructorChain chain = declarator.getCtorChain();
+		assertEquals( chain.getChainElements().size(), 1 );
+	}
+
+	public void testBug36703() throws Exception {
+		TranslationUnit tu = parse("const std::type_info& Get() const;");
+		assertEquals( tu.getDeclarations().size(), 1 );
+		SimpleDeclaration simple = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertEquals( simple.getDeclSpecifier().isConst(), true );
+		assertEquals( simple.getDeclSpecifier().getType(), DeclSpecifier.t_type);
+		assertEquals( simple.getDeclSpecifier().getTypeName(), "std::type_info");
+		assertEquals( simple.getDeclarators().size(), 1 );
+		Declarator declarator = (Declarator)simple.getDeclarators().get(0);
+		ParameterDeclarationClause pdc = declarator.getParms();
+		assertTrue( declarator.isConst() );
+		assertEquals( pdc.getDeclarations().size(),  0 );
+		assertEquals( declarator.getName().toString(), "Get");
+		assertEquals( declarator.getPointerOperators().size(), 1 );
+		PointerOperator pointerOperator = (PointerOperator)declarator.getPointerOperators().get(0);
+		assertFalse( pointerOperator.isConst());
+		assertFalse( pointerOperator.isVolatile());
+		assertEquals( pointerOperator.getType(), PointerOperator.t_reference);
+	}
+	
+	public void testBug36689() throws Exception {
+		Writer code = new StringWriter();
+		code.write("template\n");
+		code.write("<\n");
+		code.write("class AbstractFact,\n");
+		code.write(
+			"template <class, class> class Creator = OpNewFactoryUnit,\n");
+		code.write("class TList = typename AbstractFact::ProductList\n");
+		code.write(">\n");
+		code.write("class ConcreteFactory\n");
+		code.write(": public GenLinearHierarchy<\n");
+		code.write(
+			"typename TL::Reverse<TList>::Result, Creator, AbstractFact>\n");
+		code.write("{\n");
+		code.write("public:\n");
+		code.write(
+			"typedef typename AbstractFact::ProductList ProductList;\n");
+		code.write("typedef TList ConcreteProductList;\n");
+		code.write("};\n");
+		TranslationUnit tu = parse(code.toString());
+	}
+	
+	public void testBug36707() throws Exception {
+		TranslationUnit tu =
+			parse("enum { exists = sizeof(typename H::Small) == sizeof((H::Test(H::MakeT()))) };");
+	}
+	
+	public void testBug36717() throws Exception  {
+		TranslationUnit tu = parse("enum { eA = A::b };");
 	}
 }
 

@@ -616,4 +616,10 @@ public class NullParserCallback implements IParserCallback {
 	public void setParser(IParser parser) {
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionName(java.lang.Object)
+	 */
+	public void expressionName(Object expression) {
+	}
+
 }

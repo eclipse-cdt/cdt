@@ -13,6 +13,8 @@ package org.eclipse.cdt.internal.core.parser;
 import java.util.EmptyStackException;
 import java.util.Stack;
 
+import org.eclipse.cdt.internal.core.dom.Name;
+
 public class ExpressionEvaluator implements IParserCallback {
 
 	public class ExpressionException extends Exception {
@@ -20,6 +22,7 @@ public class ExpressionEvaluator implements IParserCallback {
 			super(msg);
 		}
 	}
+
 	
 	private Stack stack = new Stack();
 	
@@ -162,16 +165,6 @@ public class ExpressionEvaluator implements IParserCallback {
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#simpleDeclSpecifier(java.lang.Object, org.eclipse.cdt.internal.core.parser.Token)
 	 */
 	public void simpleDeclSpecifier(Object Container, Token specifier) {
-	}
-	/**
-	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.parser.Token)
-	 */
-	public void nameBegin(Token firstToken) {
-	}
-	/**
-	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.parser.Token)
-	 */
-	public void nameEnd(Token lastToken) {
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#declaratorBegin(java.lang.Object)
@@ -701,4 +694,27 @@ public class ExpressionEvaluator implements IParserCallback {
 	 */
 	public void setParser(IParser parser) {
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionName(java.lang.Object)
+	 */
+	public void expressionName(Object expression) {
+		stack.push( currName );
+	}
+	
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameBegin(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void nameBegin(Token firstToken) {
+		currName = new Name(firstToken);
+	}
+
+	/**
+	 * @see org.eclipse.cdt.internal.core.newparser.IParserCallback#nameEnd(org.eclipse.cdt.internal.core.newparser.Token)
+	 */
+	public void nameEnd(Token lastToken) {
+		currName.setEnd(lastToken);
+	}
+
+	Name currName = null; 
 }

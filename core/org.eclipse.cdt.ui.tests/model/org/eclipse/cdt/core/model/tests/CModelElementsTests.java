@@ -123,7 +123,6 @@ public class CModelElementsTests extends TestCase {
 		INamespace namespace = (INamespace) tuPackages.get(0);
 		assertEquals(namespace.getElementName(), new String("MyPackage"));
 		checkLineNumbers((CElement)namespace, 8, 121);
-		
 		checkClass(namespace);
 				
 		checkEnums(namespace);	

@@ -10,7 +10,6 @@ import org.eclipse.cdt.internal.core.parser.Token;
  */
 public class DOMBuilder implements IParserCallback 
 {
-
 	protected DOMBuilder()
 	{
 	}
@@ -913,5 +912,11 @@ public class DOMBuilder implements IParserCallback
 	protected Name currName;	
 	protected IParser parser = null;
 	protected TranslationUnit translationUnit;
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#expressionName(java.lang.Object)
+	 */
+	public void expressionName(Object expression) {
+		Expression e = (Expression)expression;
+		e.add( currName );	}
  
 }

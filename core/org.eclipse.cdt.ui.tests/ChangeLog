@@ -1,3 +1,205 @@
+<<<<<<< ChangeLog
+2003-04-21 John Camelon
+	Updated DOMTests::testBug36247(). 
+	Moved testBug36692(), testBug36703(), testBug36708(), testBug36707(), testBug36689()
+	and testBug36690() from DOMFailedTests to DOMTests and updated them. 
+
+2003-04-20 John Camelon
+	Added DOMTests::testBug36551().
+	Adjusted AutomatedTest to turn on line numbering. 
+	Added DOMFailedTests and 11 failed test cases.  
+
+2003-04-17 Andrew Niefer
+	Added ScannerTestCase::testBug36695()
+	Moved ScannerFailedTest::testBug36521 to ScannerTestCase::testBug36521()
+	Moved ScannerFailedTest::testBug36509 to ScannerTestCase::testBug36509()
+	Moved ScannerFailedTest::testBug36475 to ScannerTestCase::testBug36475() 
+	Updated ScannerTestCase::testBug36047
+	Updated ScannerTestCase::testBug36045
+
+2003-04-17 John Camelon
+	Updated DOMTests::testBug36600().
+	Updated LineNumberTest::testDOMLineNos().  
+	Added DOMTests::testBug36559().  
+
+2003-04-17 Andrew Niefer
+	Added AutomatedTest
+	Added resources.cFiles
+	Added resources.cppFiles
+
+2003-04-16 John Camelon
+	Added DOMTests::testBug36532().
+	Added DOMTests::testBug36432(). 
+	Added DOMTests::testBug36594().
+	Added DOMTests::testBug36600(). 
+	Added DOMTests::testArrayOfPointerToFunctions(). 
+
+2003-04-15 John Camelon
+	Added ScannerTestCase::testBug36434().
+	Added ScannerTestCase::testMultipleLines(). 
+	Added ParserTestSuite. 
+	Added LineNumberTest.
+	Updated CModelElementsTests to set the Nature of the C++ project appropriately.
+
+2003-04-15 Andrew Niefer
+	Moved ScannerFailedTest::testBug36047 to ScannerTestCase::testBug36047
+	Added ScannerFailedTest::testBug36475
+
+2003-04-13 John Camelon
+	Added DOMTests::testPointersToFunctions.  
+
+2003-04-11 John Camelon
+	Added DOMTests::testBug36247().  
+
+2003-04-11 Andrew Niefer
+	Moved ScannerFailedTest::testBug36316 to ScannerTestCase::testBug36316
+	Added ScannerFailedTest::testBug36047
+	Added ScannerTestCase::testNestedRecursiveDefines
+
+2003-04-10 John Camelon
+	Added DOMTests::testBug36237().
+
+2003-04-09 John Camelon
+	Removed all the old Code Model Builder source that was no longer being used (NewModelBuilder.java, etc.). 
+	Moved all the files in parser.util directory to the dom.  
+	Organized imports. 
+	Added DOMTests::testTemplateDeclarationOfMethod().
+	Added DOMTests::testBug36250().  
+	Added DOMTests::testBug36240(). 
+	Added DOMTests::testBug36254().
+
+2003-04-09 John Camelon
+	Updated ScannerTest::testBug36045().
+	Added ScannerTest::testBug36287().
+	Added DOMTests::testBug36288(). 
+
+2003-04-06 Andrew Niefer
+	Added ParserSymbolTableTest::testOverloadRanking()
+
+2003-04-04 Alain Magloire
+	* src/org/eclipse/cdt/testplugin/util/VerifyDialog.java:
+	Remove some warnings.
+
+2003-04-03 John Camelon
+	Updated ScannerTest::testSimpleIfdef() for bug36019.  
+	Updated ScannerTest::testNumerics() for bug36020.  
+	Added ScannerTest::testBug36045().  
+	Updated DOMTests::testTemplateDeclaration() for template grammar updates.  
+
+2003-04-01 Andrew Niefer
+	ParserSymbolTableTest. modifications to using declaration tests to reflect changes in the
+	symbol table.  Also added testUserDefinedConversionSequences()
+
+2003-04-01 John Camelon
+	Added testBug35906() to DOMTests.
+
+2003-03-31 John Camelon
+	Added testStruct() to DOMTests.  
+	Added test35892()to ScannerTest. 
+
+2003-03-31 Andrew Niefer
+	In ParserSymbolTableTest, renamed testFunctionResolution_2() to testFunctionResolution_PointersAndBaseClasses(),
+	and modified to reflect changes in function resolution.  
+	Added testFunctionResolution_TypedefsAndPointers().
+	
+2003-03-31 John Camelon
+	Added testWeirdStrings() and testNumerics() to ScannerTestCase. 
+	Added testTemplateSpecialization(), testTemplateDeclaration(), testBug26467(), 
+	  testTypedef() and testTemplateInstantiation() to DOMTests.
+
+2003-03-28 John Camelon
+	Added testConstructorChain() and testASMDefinition() to DOMTests.
+
+2003-03-27 Alain Magloire
+	Changes were done in the Core Model API, the hierarchy is now
+	ICModel
+		ICProject
+			ICContainer
+				ITranslationUnit
+				IArchive
+				IBinary
+	We adjust the tests.
+	* model/org/eclipse/cdt/core/model/tests/ArchiveTests.java
+	* model/org/eclipse/cdt/core/model/tests/BinaryTests.java
+	* model/org/eclipse/cdt/core/model/tests/TranslationUniTests.java
+	* model/org/eclipse/cdt/core/model/tests/WorkingCopyTests.java
+
+2003-03-26 Andrew Niefer
+	In ParserSymbolTableTest : 
+		updated all tests to reflect TypeInfo changes
+		Added testFunctionResolution() & testFunctionResolution_2() in
+
+2003-03-25 John Camelon
+	Added testDeclSpecifier(), testNamespaceDefinition(), testLinkageSpecification(), 
+	testUsingClauses() and testEnumSpecifier() to DOMTests.
+
+2003-03-23 John Camelon
+	Added ptrOperator() test to DOMTests.  
+	Added testFunctionModifiers() test to DOMTests.
+	Added testArrays() test to DOMTests.
+
+2003-03-20 Alain Magloire
+
+	Patch from Amer Hoda, tests for the CElement deltas for Translation Units.
+	* model/org/eclipse/cdt/core/model/tests/ElementDeltaTest.java
+	* model/org/eclipse/cdt/core/model/tests/resource/WorkingCopyTestStart.h
+	
+2003-03-19 Alain Magloire
+	Patch from Amer Hoda, introducing a simple test for the core model.
+	* model/org/eclipse/cdt/core/model/tests/WorkingCopyTests.java
+	* model/org/eclipse/cdt/core/model/tests/resource/WorkingCopyTestStart.h
+
+2003-03-18 John Camelon
+	Updated DOMTests to validate simple case of a function declaration with multiple parameters.  
+	* parser/org/eclipse/cdt/core/parser/tests/DOMTests.java
+
+2003-03-11 John Camelon
+	Updated DOMTests for core.internal.parser change of merging DeclarationSpecifier and DeclSpecifier
+	Organized imports
+	* parser/org/eclipse/cdt/core/parser/tests/DOMTests.java
+	* parser/org/eclipse/cdt/core/parser/tests/ParserSymbolTableTest.java
+
+2003-03-10 John Camelon
+	Added macro pasting tests
+
+2003-03-06 Andrew Niefer
+	Added tests for exercising Namespaces & using directives in new parser's symbol table
+
+2003-03-04 Doug Schaefer
+	This is a pretty big patch, but it is the merge of the NewParser1 branch into the HEAD branch.  lder "parser") 
+	JUnit tests for testing various pieces (source folder "parser" in cdt.ui.tests. 
+
+2003-01-29 Peter Graves
+
+    Fixed the warnings when accessing static methods
+    * src/org/eclipse/cdt/testplugin/util/DialogCheck.java:
+    * src/org/eclipse/cdt/testplugin/CTestPlugin.java
+    * src/org/eclipse/cdt/testplugin/TestWorkbench.java
+    * ChangeLog: make all entries have the same formatting
+
+2002-12-17 Peter Graves
+
+    * plugin.xml,test.xml: Some simple cleanups to remove refrences to the jdt and
+	to move closer to automated running
+    
+2002-11-27 Alain Magloire
+
+	* model/org/eclipse/cdt/core/model/tests/CModelTests.java:
+	Use CoreModel.getDefault().
+
+2002-10-30 Alain Magloire
+
+	* model/org/eclipse/cdt/core/model/tests/CModelTests.java (testGetNatureID):
+	The fields and the methods use in this test was removed from the CoreModel class.
+	(testHasNature): The method use in this case was refactor in the classes
+	CProjectNature and CCProjectNature, fix the test.
+
+2002-10-18 Peter Graves
+
+	src/org/eclipse/cdt/testplugin/CProjectHelper.jada
+    Cleanup of the CProjectHelper file to remove unused imports, commeted out code etc.
+    
+=======
 2003-04-21 Andrew Niefer
 	Added DOMFailedTests::testBug36713()
 	Added DOMFailedTests::testBug36714()
@@ -199,3 +401,4 @@
 	src/org/eclipse/cdt/testplugin/CProjectHelper.jada
     Cleanup of the CProjectHelper file to remove unused imports, commeted out code etc.
     
+>>>>>>> 1.36

@@ -1,3 +1,23 @@
+2002-10-16 Alain Magloire
+
+	Some of the native functions were throwing exceptions
+	particularly on the windows platform and it was not
+	clearly advertise.  Eclipse uses a tool to externalize strings,
+	to prevent this, strings need a comment "//$NON-NLS-1$".
+
+	* utils/../utils/pty/PTYInputStream.java (close0):
+	Advertise that we can throw an IOException.
+	* utils/../utils/pty/PTYOutputStream.java (close): Put
+	the "$NON-NLS-1$" magic.
+	(write0): Advertise we can throw IOException.
+	(close0): Advertise we can throw IOException.
+	* utils/../utils/spawner/ProcessFactory.java: Reformat.
+	* utils/../utils/spawner/Spawner.java (Reaper):
+	The run method when calling exec0 did not catch the exception.
+	And the waitFor() should not be done on a pid == -1; 
+	* utils/../utils/spawner/SpawnerInputStream.java: Reformat.
+	* utils/../utils/spawner/SpawnerOutputStream.java: Reformat.
+
 2002-10-15 Alain Magloire
 	
 	By making the native methods package scope, the

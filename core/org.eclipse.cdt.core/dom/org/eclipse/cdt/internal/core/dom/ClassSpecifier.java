@@ -5,9 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.cdt.internal.core.parser.Token;
-import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
-import org.eclipse.cdt.internal.core.parser.util.ClassKey;
-import org.eclipse.cdt.internal.core.parser.util.Name;
 
 public class ClassSpecifier extends TypeSpecifier implements IScope, IOffsetable {
 

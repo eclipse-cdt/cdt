@@ -9,10 +9,8 @@
  * Rational Software - Initial API and implementation
 ***********************************************************************/
 
-package org.eclipse.cdt.internal.core.parser.util;
+package org.eclipse.cdt.internal.core.parser;
 
-import org.eclipse.cdt.internal.core.parser.Declaration;
-import org.eclipse.cdt.internal.core.parser.ParserSymbolTableException;
 
 /**
  * @author aniefer

@@ -1,4 +1,12 @@
 2003-04-09 John Camelon
+	Removed all the old Code Model Builder source that was no longer being used (NewModelBuilder.java, etc.). 
+	Moved all the files in parser.util directory to the dom.  
+	Organized imports. 
+	Fixed bug36250 Parser ignores functions with default parameters that have no name.
+	Fixed bug36240 Parser incorrectly parses operator= 
+	Fixed bug36254 Parser doesn't recognize unsigned as a type by itself.
+
+2003-04-09 John Camelon
 	Added timing printout for CModelTests.
 	Provided partial fix for bug36255 to get past infinite loop, will leave defect open.
 	Fixed bug36045 (Again).  

@@ -677,10 +677,10 @@ c, quick);
 				case Token.t_friend:
 				case Token.t_const:
 				case Token.t_volatile:
-				case Token.t_signed:
-				case Token.t_unsigned:
 					try{ decl = callback.simpleDeclSpecifier(decl, consume());} catch( Exception e ) {}
 					break;
+				case Token.t_signed:
+				case Token.t_unsigned:					
 				case Token.t_short:					
 				case Token.t_char:
 				case Token.t_wchar_t:
@@ -825,6 +825,7 @@ c, quick);
 		Token first = LA(1);
 		Token last = null;
 		
+		Token mark = mark();
 		try{ callback.nameBegin(first); } catch( Exception e ) {}
 		
 		if (LT(1) == Token.tCOLONCOLON)
@@ -858,6 +859,7 @@ c, quick);
 				}
 				break;
 			default:
+				backup( mark );
 				throw backtrack;
 		}
 
@@ -868,6 +870,9 @@ c, quick);
 				consume();
 				
 			switch (LT(1)) {
+				case Token.t_operator:
+					backup( mark );
+					throw backtrack;
 				case Token.tIDENTIFIER:
 					last = consume();
 					if( LT(1) == Token.tLT )
@@ -998,6 +1003,7 @@ c, quick);
 	 */
 	protected Object declarator( Object container ) throws Backtrack {
 		
+		boolean anonymous = false;
 		do
 		{
 			Object declarator = null;
@@ -1037,7 +1043,7 @@ c, quick);
 					{
 						// operator ()
 						consume( Token.tLPAREN );
-						toSend = toSend = consume( Token.tRPAREN );
+						toSend = consume( Token.tRPAREN );
 					}
 					else if ( LT(1) == Token.tLBRACKET && LT(2) == Token.tRBRACKET )
 					{
@@ -1064,14 +1070,81 @@ c, quick);
 					callback.nameEnd( toSend );
 				} catch( Exception e ) {}
 
-				
+				try{ declarator = callback.declaratorId(declarator);} catch( Exception e ) {}				
 			}
 			else
 			{
-				name();
+				try
+				{
+					name();
+					try{ declarator = callback.declaratorId(declarator);} catch( Exception e ) {}
+				}
+				catch( Backtrack bt )
+				{
+					if( LT(1) == Token.tCOLONCOLON || LT(1) == Token.tIDENTIFIER )
+					{
+						Token start = consume();
+						Token end = null;  
+						while( LT(1) == Token.tCOLONCOLON || LT(1) == Token.tIDENTIFIER )
+						{
+							end = consume(); 
+						}
+
+						if( LT(1) == Token.t_operator )
+						{
+							if( LA(1).isOperator() || LT(1) == Token.tLPAREN || LT(1) == Token.tLBRACKET )
+							{
+								if( (LT(1) == Token.t_new || LT(1) == Token.t_delete ) && 
+										LT(2) == Token.tLBRACKET && LT(3) == Token.tRBRACKET )
+								{
+									consume(); 
+									consume( Token.tLBRACKET );
+									end = consume( Token.tRBRACKET );
+									// vector new and delete operators
+								}
+								else if ( LT(1) == Token.tLPAREN && LT(2) == Token.tRPAREN )
+								{
+									// operator ()
+									consume( Token.tLPAREN );
+									end = consume( Token.tRPAREN );
+								}
+								else if ( LT(1) == Token.tLBRACKET && LT(2) == Token.tRBRACKET )
+								{
+									consume( Token.tLBRACKET );
+									end = consume( Token.tRBRACKET ); 
+								}
+								else if( LA(1).isOperator() )
+									end = consume();
+								else 
+									throw backtrack;
+													
+							}
+							else
+							{
+								// temporary 
+								while( LT(1) != Token.tLPAREN )
+								{
+									end = consume(); 
+								}
+							}
+					
+							try{ 
+								callback.nameBegin( start );
+								callback.nameEnd( end );
+							} catch( Exception e ) {}
+
+							try{ declarator = callback.declaratorId(declarator);} catch( Exception e ) {}
+						}				
+					}
+					else
+					{
+						// anonymous is good 
+						anonymous = true;
+					}
+				}
 			}
 
-			try{ declarator = callback.declaratorId(declarator);} catch( Exception e ) {}			
+			
 			for (;;) {
 				switch (LT(1)) {
 					case Token.tLPAREN:
@@ -1176,8 +1249,10 @@ c, quick);
 							try{ callback.arrayDeclaratorEnd( array );} catch( Exception e ) {}
 						}
 						continue;
+					default:
+						break;
 				}
-				break;
+				break;				
 			}
 			
 			if( LA(1).getType() == Token.tIDENTIFIER )

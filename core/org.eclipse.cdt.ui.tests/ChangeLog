@@ -1,4 +1,13 @@
 2003-04-09 John Camelon
+	Removed all the old Code Model Builder source that was no longer being used (NewModelBuilder.java, etc.). 
+	Moved all the files in parser.util directory to the dom.  
+	Organized imports. 
+	Added DOMTests::testTemplateDeclarationOfMethod().
+	Added DOMTests::testBug36250().  
+	Added DOMTests::testBug36240(). 
+	Added DOMTests::testBug36254().
+
+2003-04-09 John Camelon
 	Updated ScannerTest::testBug36045().
 	Added ScannerTest::testBug36287().
 	Added DOMTests::testBug36288(). 

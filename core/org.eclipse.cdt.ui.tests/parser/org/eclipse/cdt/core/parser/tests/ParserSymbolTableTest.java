@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 import org.eclipse.cdt.internal.core.parser.Declaration;
 import org.eclipse.cdt.internal.core.parser.ParserSymbolTable;
 import org.eclipse.cdt.internal.core.parser.ParserSymbolTableException;
-import org.eclipse.cdt.internal.core.parser.util.TypeInfo;
+import org.eclipse.cdt.internal.core.parser.TypeInfo;
 
 /**
  * @author aniefer

@@ -1,4 +1,4 @@
-package org.eclipse.cdt.internal.core.parser.util;
+package org.eclipse.cdt.internal.core.dom;
 
 import org.eclipse.cdt.internal.core.parser.Token;
 

@@ -20,8 +20,10 @@ import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.dom.ClassKey;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
+import org.eclipse.cdt.internal.core.dom.DeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.Declaration;
 import org.eclipse.cdt.internal.core.dom.Declarator;
 import org.eclipse.cdt.internal.core.dom.ElaboratedTypeSpecifier;
@@ -39,8 +41,6 @@ import org.eclipse.cdt.internal.core.dom.TranslationUnit;
 import org.eclipse.cdt.internal.core.dom.TypeSpecifier;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-import org.eclipse.cdt.internal.core.parser.util.ClassKey;
-import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 
 public class CModelBuilder {
 	

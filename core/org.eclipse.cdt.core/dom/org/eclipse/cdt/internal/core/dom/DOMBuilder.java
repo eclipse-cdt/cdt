@@ -3,10 +3,6 @@ package org.eclipse.cdt.internal.core.dom;
 
 import org.eclipse.cdt.internal.core.parser.IParserCallback;
 import org.eclipse.cdt.internal.core.parser.Token;
-import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
-import org.eclipse.cdt.internal.core.parser.util.ClassKey;
-import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
-import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
  * This is the parser callback that creates objects in the DOM.

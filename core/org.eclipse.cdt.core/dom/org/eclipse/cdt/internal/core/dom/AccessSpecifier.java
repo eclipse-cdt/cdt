@@ -10,7 +10,7 @@
  * Contributors: 
  * Rational Software - Initial API and implementation
 ***********************************************************************/
-package org.eclipse.cdt.internal.core.parser.util;
+package org.eclipse.cdt.internal.core.dom;
 
 /**
  * @author jcamelon

@@ -1,7 +1,5 @@
 package org.eclipse.cdt.internal.core.dom;
 
-import org.eclipse.cdt.internal.core.parser.util.ClassKey;
-import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
  * @author jcamelon

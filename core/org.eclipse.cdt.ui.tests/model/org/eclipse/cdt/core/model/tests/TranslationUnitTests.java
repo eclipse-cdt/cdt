@@ -12,11 +12,22 @@ import java.util.Stack;
 
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.cdt.testplugin.*;
-import org.eclipse.cdt.testplugin.util.*;
-import org.eclipse.cdt.core.model.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.testplugin.CProjectHelper;
+import org.eclipse.cdt.testplugin.util.ExpectedStrings;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 
 

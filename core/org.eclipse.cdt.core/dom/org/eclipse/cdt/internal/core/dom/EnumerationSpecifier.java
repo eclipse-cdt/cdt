@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.cdt.internal.core.parser.Token;
-import org.eclipse.cdt.internal.core.parser.util.Name;
 
 /**
  * @author jcamelon

@@ -8,13 +8,16 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.cdt.internal.core.dom.ASMDefinition;
+import org.eclipse.cdt.internal.core.dom.AccessSpecifier;
 import org.eclipse.cdt.internal.core.dom.ArrayQualifier;
 import org.eclipse.cdt.internal.core.dom.BaseSpecifier;
+import org.eclipse.cdt.internal.core.dom.ClassKey;
 import org.eclipse.cdt.internal.core.dom.ClassSpecifier;
 import org.eclipse.cdt.internal.core.dom.ConstructorChain;
 import org.eclipse.cdt.internal.core.dom.ConstructorChainElement;
 import org.eclipse.cdt.internal.core.dom.ConstructorChainElementExpression;
 import org.eclipse.cdt.internal.core.dom.DOMBuilder;
+import org.eclipse.cdt.internal.core.dom.DeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.Declarator;
 import org.eclipse.cdt.internal.core.dom.ElaboratedTypeSpecifier;
 import org.eclipse.cdt.internal.core.dom.EnumerationSpecifier;
@@ -25,6 +28,7 @@ import org.eclipse.cdt.internal.core.dom.Expression;
 import org.eclipse.cdt.internal.core.dom.Inclusion;
 import org.eclipse.cdt.internal.core.dom.LinkageSpecification;
 import org.eclipse.cdt.internal.core.dom.Macro;
+import org.eclipse.cdt.internal.core.dom.Name;
 import org.eclipse.cdt.internal.core.dom.NamespaceDefinition;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclaration;
 import org.eclipse.cdt.internal.core.dom.ParameterDeclarationClause;
@@ -38,14 +42,7 @@ import org.eclipse.cdt.internal.core.dom.UsingDirective;
 import org.eclipse.cdt.internal.core.parser.Parser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.Token;
-import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
-import org.eclipse.cdt.internal.core.parser.util.ClassKey;
-import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
-import org.eclipse.cdt.internal.core.parser.util.Name;
 
-/**
- * Tests the construction of DOMs for snippets of code
- */
 public class DOMTests extends TestCase {
 
 	public DOMTests( String arg )
@@ -986,7 +983,35 @@ public class DOMTests extends TestCase {
 		}				
 	}
 	
-	public void testTemplateDeclaration() throws Exception {
+	public void testTemplateDeclarationOfMethod() throws Exception
+	{
+		TranslationUnit tu = parse( "template<class A, typename B=C> A aTemplatedFunction( B bInstance );");
+		assertEquals( tu.getDeclarations().size(), 1 );
+		TemplateDeclaration templateDeclaration = (TemplateDeclaration)tu.getDeclarations().get(0);
+		assertEquals( templateDeclaration.getTemplateParms().getDeclarations().size(), 2 );
+		TemplateParameter templateParameter = (TemplateParameter)templateDeclaration.getTemplateParms().getDeclarations().get(0);
+		assertEquals( templateParameter.getKind(), TemplateParameter.k_class );
+		assertEquals( templateParameter.getName().toString(), "A");
+		templateParameter = (TemplateParameter)templateDeclaration.getTemplateParms().getDeclarations().get(1);
+		assertEquals( templateParameter.getKind(), TemplateParameter.k_typename );
+		assertEquals( templateParameter.getName().toString(), "B");
+		assertEquals( templateParameter.getTypeId().toString(), "C");
+		assertEquals( templateDeclaration.getDeclarations().size(), 1 );
+		SimpleDeclaration methodDeclaration = (SimpleDeclaration) templateDeclaration.getDeclarations().get(0);
+		assertEquals( methodDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_type );
+		assertEquals( methodDeclaration.getDeclSpecifier().getTypeName(), "A");
+		assertEquals( methodDeclaration.getDeclarators().size(), 1 );
+		Declarator declarator = (Declarator)methodDeclaration.getDeclarators().get(0);
+		assertEquals( declarator.getName().toString(), "aTemplatedFunction" );
+		assertEquals( declarator.getParms().getDeclarations().size(), 1 );
+		ParameterDeclaration parameterDeclaration = (ParameterDeclaration)declarator.getParms().getDeclarations().get(0);
+		assertEquals( parameterDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_type );
+		assertEquals( parameterDeclaration.getDeclSpecifier().getTypeName(), "B" );
+		assertEquals( parameterDeclaration.getDeclarators().size(), 1 );
+		assertEquals( ((Declarator)parameterDeclaration.getDeclarators().get(0)).getName().toString(), "bInstance");
+	}
+	
+	public void testTemplateDeclarationOfClass() throws Exception {
 		TranslationUnit tu = parse( "template<class T, typename Tibor = junk, class, typename, int x, float y,template <class Y> class, template<class A> class AClass> class myarray { /* ... */ };");
 		assertEquals( tu.getDeclarations().size(), 1 );
 		TemplateDeclaration declaration = (TemplateDeclaration)tu.getDeclarations().get(0);
@@ -1137,6 +1162,68 @@ public class DOMTests extends TestCase {
 		}
 	}
 
+	public void testBug36250() throws Exception
+	{
+		TranslationUnit tu = parse( "int f( int = 0 );");
+		assertEquals( tu.getDeclarations().size(), 1 );
+		SimpleDeclaration functionDeclaration = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertEquals( functionDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_int );
+		assertEquals( functionDeclaration.getDeclarators().size(), 1 );
+		Declarator functionDeclarator = (Declarator)functionDeclaration.getDeclarators().get(0);
+		assertEquals( functionDeclarator.getName().toString(), "f" );
+		assertEquals( functionDeclarator.getParms().getDeclarations().size(), 1 );
+		ParameterDeclaration parameterDeclaration = (ParameterDeclaration)functionDeclarator.getParms().getDeclarations().get(0);
+		assertEquals( parameterDeclaration .getDeclSpecifier().getType(), DeclSpecifier.t_int );
+		assertEquals( parameterDeclaration .getDeclarators().size(), 1 );
+		Declarator parameterDeclarator = (Declarator)parameterDeclaration.getDeclarators().get(0);
+		assertNull( parameterDeclarator.getName() );
+		assertNotNull( parameterDeclarator.getExpression());
+		
+	}
 
+	public void testBug36240() throws Exception
+	{
+		TranslationUnit tu = parse( "A & A::operator=( A ){}");
+		assertEquals( tu.getDeclarations().size(), 1 );
+		SimpleDeclaration functionDeclaration = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertEquals( functionDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_type );
+		assertEquals( functionDeclaration.getDeclSpecifier().getTypeName(), "A" );
+		assertEquals( functionDeclaration.getDeclarators().size(), 1 );
+		Declarator functionDeclarator = (Declarator)functionDeclaration.getDeclarators().get(0);
+		assertEquals( functionDeclarator.getPointerOperators().size(), 1 );
+		PointerOperator po = (PointerOperator)functionDeclarator.getPointerOperators().get(0);
+		assertEquals( po.getType(), PointerOperator.t_reference );
+		assertFalse( po.isConst() || po.isVolatile() );
+		assertEquals( functionDeclarator.getName().toString(), "A::operator=");
+		assertEquals( functionDeclarator.getParms().getDeclarations().size(), 1 );
+		ParameterDeclaration parameterDeclaration = (ParameterDeclaration)functionDeclarator.getParms().getDeclarations().get(0);
+		assertEquals( parameterDeclaration.getDeclSpecifier().getType(), DeclSpecifier.t_type );
+		assertEquals( parameterDeclaration.getDeclSpecifier().getTypeName(), "A");
+		assertEquals( parameterDeclaration .getDeclarators().size(), 1 );
+		Declarator parameterDeclarator = (Declarator)parameterDeclaration.getDeclarators().get(0);
+		assertNull( parameterDeclarator.getName() );
+	}
+	
+	public void testBug36254() throws Exception
+	{
+		TranslationUnit tu = parse( "unsigned i;\nvoid f( unsigned p1 = 0 );");
+		assertEquals( tu.getDeclarations().size(), 2 );
+		SimpleDeclaration declaration = (SimpleDeclaration)tu.getDeclarations().get(0);
+		assertTrue( declaration.getDeclSpecifier().isUnsigned());
+		assertEquals( 1, declaration.getDeclarators().size() );
+		assertEquals( "i", ((Declarator)declaration.getDeclarators().get(0)).getName().toString() );
+		declaration = (SimpleDeclaration)tu.getDeclarations().get(1);
+		assertEquals( declaration.getDeclSpecifier().getType(), DeclSpecifier.t_void );
+		assertEquals( 1, declaration.getDeclarators().size() );
+		Declarator declarator = (Declarator)declaration.getDeclarators().get(0);
+		assertEquals( declarator.getName().toString(), "f" );
+		assertEquals( declarator.getParms().getDeclarations().size(), 1 );
+		ParameterDeclaration parmDecl = (ParameterDeclaration)declarator.getParms().getDeclarations().get(0);
+		assertTrue( parmDecl.getDeclSpecifier().isUnsigned());
+		assertEquals( parmDecl.getDeclarators().size(), 1 );
+		Declarator parmDeclarator = (Declarator) parmDecl.getDeclarators().get(0);
+		assertEquals( parmDeclarator.getName().toString(), "p1");
+		assertNotNull( parmDeclarator.getExpression());
+	}
 }
 

@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.eclipse.cdt.internal.core.parser.util.TypeInfo;
 
 /**
  * @author aniefer

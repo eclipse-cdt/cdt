@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.eclipse.cdt.internal.core.parser.util.TypeInfo;
 
 /**
  * @author aniefer

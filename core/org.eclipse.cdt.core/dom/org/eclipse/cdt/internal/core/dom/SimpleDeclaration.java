@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
-import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 
 public class SimpleDeclaration extends Declaration implements DeclSpecifier.Container, IOffsetable, TypeSpecifier.IOwner {
 

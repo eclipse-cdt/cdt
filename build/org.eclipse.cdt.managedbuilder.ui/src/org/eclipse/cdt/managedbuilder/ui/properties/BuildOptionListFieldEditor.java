@@ -20,6 +20,8 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -180,6 +182,19 @@ public class BuildOptionListFieldEditor extends FieldEditor {
 			public void mouseDoubleClick(MouseEvent e) {
 				// Popup the editor on the selected item from the list
 				editSelection();
+			}
+		});
+		list.addKeyListener(new KeyAdapter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.KeyAdapter#keyPressed(org.eclipse.swt.events.KeyEvent)
+			 */
+			public void keyPressed(KeyEvent e) {
+				// Is this the delete key
+				if (e.keyCode == SWT.DEL) {
+					removePressed();
+				} else {
+					super.keyPressed(e);
+				}
 			}
 		});
 

@@ -448,6 +448,10 @@ public class BuildPropertyPage extends PropertyPage implements IWorkbenchPropert
 		return lastShellSize;
 	}
 
+	/* (non-Javadoc)
+	 * Answers the list of settings pages for the selected configuration 
+	 * @return 
+	 */
 	private List getPagesForConfig() {
 		List pages = (List) configToPageListMap.get(selectedConfiguration.getId());
 		if (pages == null) {

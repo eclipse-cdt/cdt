@@ -14,9 +14,8 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
  * 
  * @since Jul 9, 2002
  */
-public interface ICDIVariableManager extends ICDISessionObject
-{
-	
+public interface ICDIExpressionManager extends ICDISessionObject {
+
 	/**
 	 * Removes the given array of expressions from the expression 
 	 * manager.
@@ -24,15 +23,15 @@ public interface ICDIVariableManager extends ICDISessionObject
 	 * @param expressions - the array of expressions to remove
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	void removeExpressions( ICDIExpression[] expressions ) throws CDIException;
-	
+	void removeExpressions(ICDIExpression[] expressions) throws CDIException;
+
 	/**
 	 * Removes the given expression from the expression manager.
 	 * 
 	 * @param expressions - the expression to remove
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	void removeExpression( ICDIExpression expression ) throws CDIException;
+	void removeExpression(ICDIExpression expression) throws CDIException;
 
 	/**
 	 * Returns an expression specified by the given identifier.
@@ -41,8 +40,8 @@ public interface ICDIVariableManager extends ICDISessionObject
 	 * @return ICDIExpression an expression specified by the given identifier
 	 * @throws CDIException on failure. Reasons include:
 	 */
-	ICDIExpression createExpression( String expressionId ) throws CDIException;
-	
+	ICDIExpression createExpression(String name) throws CDIException;
+
 	/**
 	 * Returns a collection of all registered expressions, possibly empty.
 	 * 
@@ -50,7 +49,7 @@ public interface ICDIVariableManager extends ICDISessionObject
 	 * @throws CDIException on failure. Reasons include:
 	 */
 	ICDIExpression[] getExpressions() throws CDIException;
-	
+
 	/**
 	 * Return a ICDICondition
 	 */

@@ -782,7 +782,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		private static final int KIND_LABEL  = 1;
 		private static final int KIND_OBJ_FN = 2;
 		private static final int KIND_TYPE   = 3;
-		private static final int KIND_NAMEPSACE   = 4;
+		private static final int KIND_NAMESPACE   = 4;
 		
 		
 		public CollectDeclarationsAction( IBinding binding ){
@@ -799,7 +799,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 				kind = KIND_TYPE;
 			}
 			else if( binding instanceof ICPPNamespace) {
-				kind = KIND_NAMEPSACE;
+				kind = KIND_NAMESPACE;
 			} else 
 				kind = KIND_OBJ_FN;
 		}
@@ -846,17 +846,16 @@ public class CPPVisitor implements ICPPASTVisitor {
 						break;
 					}
 					return PROCESS_CONTINUE;
-				case KIND_NAMEPSACE:
-					if( prop == ICPPASTNamespaceDefinition.NAMESPACE_NAME ) 
+				case KIND_NAMESPACE:
+					if( prop == ICPPASTNamespaceDefinition.NAMESPACE_NAME ||
+					    prop == ICPPASTNamespaceAlias.ALIAS_NAME ) 
 					{
 						break;
 					}					
 					return PROCESS_CONTINUE;
 			}
 			
-			if( binding != null &&
-				CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray()) &&
-				name.resolveBinding() == binding )
+			if( binding != null && name.resolveBinding() == binding )
 			{
 				if( decls.length == idx ){
 					IASTName [] temp = new IASTName[ decls.length * 2 ];
@@ -887,7 +886,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 		private static final int KIND_LABEL  = 1;
 		private static final int KIND_OBJ_FN = 2;
 		private static final int KIND_TYPE   = 3;
-		private static final int KIND_NAMEPSACE   = 4;
+		private static final int KIND_NAMESPACE   = 4;
 		
 		
 		public CollectReferencesAction( IBinding binding ){
@@ -904,7 +903,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 				kind = KIND_TYPE;
 			}
 			else if( binding instanceof ICPPNamespace) {
-				kind = KIND_NAMEPSACE;
+				kind = KIND_NAMESPACE;
 			} else 
 				kind = KIND_OBJ_FN;
 		}
@@ -956,7 +955,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 						break;
 					}
 					return PROCESS_CONTINUE;
-				case KIND_NAMEPSACE:
+				case KIND_NAMESPACE:
 					if( prop == ICPPASTUsingDirective.QUALIFIED_NAME ||
 						prop == ICPPASTNamespaceAlias.MAPPING_NAME ||
 						prop == ICPPASTUsingDeclaration.NAME ||
@@ -967,9 +966,7 @@ public class CPPVisitor implements ICPPASTVisitor {
 					return PROCESS_CONTINUE;
 			}
 			
-			if( binding != null &&
-					CharArrayUtils.equals(name.toCharArray(), binding.getNameCharArray()) &&
-					name.resolveBinding() == binding ){
+			if( binding != null && name.resolveBinding() == binding ){
 				if( refs.length == idx ){
 					IASTName [] temp = new IASTName[ refs.length * 2 ];
 					System.arraycopy( refs, 0, temp, 0, refs.length );
@@ -1052,8 +1049,8 @@ public class CPPVisitor implements ICPPASTVisitor {
 			if( !visitName( ((ICPPASTUsingDirective)declaration).getQualifiedName(), action ) ) return false;
 		} else if( declaration instanceof ICPPASTNamespaceAlias ){
 			ICPPASTNamespaceAlias alias = (ICPPASTNamespaceAlias) declaration;
-			if( !visitName( alias.getQualifiedName(), action ) ) return false;
 			if( !visitName( alias.getAlias(), action ) ) return false;
+			if( !visitName( alias.getQualifiedName(), action ) ) return false;
 		} else if( declaration instanceof ICPPASTLinkageSpecification ){
 			IASTDeclaration [] decls = ((ICPPASTLinkageSpecification) declaration).getDeclarations();
 			for( int i = 0; i < decls.length; i++ ){

@@ -2374,5 +2374,30 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, f_ref, 4 );
         assertInstances( col, g_ref, 2 );
     }
+    
+    public void testBug86369() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("namespace Company_with_veryblahblah {}       \n"); //$NON-NLS-1$
+        buffer.append("namespace CWVLN = Company_with_veryblahblah; \n"); //$NON-NLS-1$
+        buffer.append("namespace CWVLN = Company_with_veryblahblah; \n"); //$NON-NLS-1$
+        buffer.append("namespace CWVLN = CWVLN;                     \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        ICPPNamespace ns = (ICPPNamespace) col.getName(0).resolveBinding();
+        IASTName [] refs = tu.getReferences( ns );
+        assertEquals( refs.length, 3 );
+        assertSame( refs[0], col.getName(2) );
+        assertSame( refs[1], col.getName(4) );
+        assertSame( refs[2], col.getName(6) );
+        IASTName [] decls = tu.getDeclarations( ns );
+        assertEquals( decls.length, 4 );
+        assertSame( decls[0], col.getName(0) );
+        assertSame( decls[1], col.getName(1) );
+        assertSame( decls[2], col.getName(3) );
+        assertSame( decls[3], col.getName(5) );
+    }
 }
 

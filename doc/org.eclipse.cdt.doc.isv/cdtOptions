@@ -1,7 +1,7 @@
 -charset "iso-8859-1"
--sourcepath "../org.eclipse.cdt.core/parser"
+-sourcepath "../org.eclipse.cdt.core/parser:../org.eclipse.cdt.debug.core/cdi"
 -d reference/api
--classpath "${bootclasspath}:../org.apache.ant/lib/ant.jar:../org.eclipse.debug.core/dtcore.jar:../org.eclipse.compare/compare.jar:../org.eclipse.help/help.jar:../org.eclipse.help.ui/helpworkbench.jar:../org.eclipse.core.resources/resources.jar:../org.eclipse.core.runtime/runtime.jar:../org.eclipse.core.filebuffers/filebuffers.jar:../org.eclipse.core.expressions/expressions.jar:../org.eclipse.swt.win32/ws/win32/swt.jar:../org.eclipse.swt.motif/ws/motif/swt.jar:../org.eclipse.ui/ui.jar:../org.eclipse.jdt.debug/jdi.jar:../org.eclipse.debug.ui/dtui.jar:../org.eclipse.search/search.jar:../org.eclipse.jface/jface.jar:../org.eclipse.jface.text/jfacetext.jar:../org.eclipse.text/text.jar:../org.eclipse.ui.editors/editors.jar:../org.eclipse.ui.views/views.jar:../org.eclipse.ui.workbench/workbench.jar:../org.eclipse.ui.workbench.texteditor/texteditor.jar:../org.eclipse.core.variables/variables.jar:../org.eclipse.ui.ide/ide.jar:../org.eclipse.jdt.junit/junitsupport.jar:../org.eclipse.osgi/osgi.jar:../org.eclipse.osgi/core.jar:../org.eclipse.osgi/eclipseAdaptor.jar:../org.eclipse.osgi.services/services.jar:../org.eclipse.osgi.util/util.jar"
+-classpath  ${bootclasspath}:../org.apache.ant/lib/ant.jar:../org.eclipse.debug.core/dtcore.jar:../org.eclipse.compare/compare.jar:../org.eclipse.help/help.jar:../org.eclipse.help.ui/helpworkbench.jar:../org.eclipse.core.resources/resources.jar:../org.eclipse.core.runtime/runtime.jar:../org.eclipse.core.filebuffers/filebuffers.jar:../org.eclipse.core.expressions/expressions.jar:../org.eclipse.swt.win32/ws/win32/swt.jar:../org.eclipse.swt.motif/ws/motif/swt.jar:../org.eclipse.ui/ui.jar:../org.eclipse.jdt.debug/jdi.jar:../org.eclipse.debug.ui/dtui.jar:../org.eclipse.search/search.jar:../org.eclipse.jface/jface.jar:../org.eclipse.jface.text/jfacetext.jar:../org.eclipse.text/text.jar:../org.eclipse.ui.editors/editors.jar:../org.eclipse.ui.views/views.jar:../org.eclipse.ui.workbench/workbench.jar:../org.eclipse.ui.workbench.texteditor/texteditor.jar:../org.eclipse.core.variables/variables.jar:../org.eclipse.ui.ide/ide.jar:../org.eclipse.jdt.junit/junitsupport.jar:../org.eclipse.osgi/osgi.jar:../org.eclipse.osgi/core.jar:../org.eclipse.osgi/eclipseAdaptor.jar:../org.eclipse.osgi.services/services.jar:../org.eclipse.osgi.util/util.jar
 -breakiterator
 -use
 -splitIndex
@@ -10,9 +10,14 @@
 -header "<b>Eclipse CDT</b><br>Pre-release 3.0"
 -bottom "Copyright (c) IBM Corp. and others 2004.  All Rights Reserved."
 -group "C/C++ Development Tools Core Plug-in Packages" "org.eclipse.cdt.core:org.eclipse.cdt.core.*"
+-group "C/C++ Development Tools Debug Core Plug-in Packages" "org.eclipse.cdt.debug.core:org.eclipse.cdt.debug.core.*"
 -link http://java.sun.com/j2se/1.4/docs/api
 
 org.eclipse.cdt.core.dom.ast
 org.eclipse.cdt.core.dom.ast.c
 org.eclipse.cdt.core.dom.ast.c.gcc
 org.eclipse.cdt.core.dom.ast.cpp
+org.eclipse.cdt.debug.core.cdi
+org.eclipse.cdt.debug.core.cdi.event
+org.eclipse.cdt.debug.core.cdi.model
+org.eclipse.cdt.debug.core.cdi.model.type

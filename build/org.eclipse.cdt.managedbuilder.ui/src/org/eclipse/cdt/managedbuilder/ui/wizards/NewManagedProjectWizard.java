@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 IBM Corporation and others.
+ * Copyright (c) 2002,2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -13,19 +13,20 @@ package org.eclipse.cdt.managedbuilder.ui.wizards;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
-import org.eclipse.cdt.managedbuilder.core.IProjectType;
-import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
-import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.ITargetPlatform;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
-import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderHelpContextIds;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIMessages;
 import org.eclipse.cdt.managedbuilder.internal.ui.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
+import org.eclipse.cdt.ui.wizards.NewCProjectWizardPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -89,15 +90,21 @@ public class NewManagedProjectWizard extends NewCProjectWizard {
 		
 		IWizardPage [] pages = getPages();
 		
-		if( pages != null && pages.length == 3 ){
-			WorkbenchHelp.setHelp(pages[0].getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_NAME_PAGE);
-	
-			//pages[1] is the CProjectPlatformPage which already has a help id.
-			
-			NewManagedProjectOptionPage optionPage = (NewManagedProjectOptionPage) pages[2];
-			optionPage.setupHelpContextIds();
+		if (pages != null) {
+			for (int i = 0; i < pages.length; i++) {
+				IWizardPage page = pages[i];
+				if (page instanceof NewCProjectWizardPage) {
+					WorkbenchHelp.setHelp(page.getControl(), ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_NAME_PAGE);
+				}
+				else if (page instanceof NewManagedProjectOptionPage) {
+					NewManagedProjectOptionPage optionPage = (NewManagedProjectOptionPage) page;
+					optionPage.setupHelpContextIds();
+				}
+				//  The other built-in page is the CProjectPlatformPage which already has a help id.
+			} 
 		}
 	}
+	
 	public void updateProjectTypeProperties() {
 		//  Update the error parser list
 		optionPage.updateProjectTypeProperties();

@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002,2004 IBM Corporation and others.
+ * Copyright (c) 2002,2005 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -72,10 +72,12 @@ public class NewManagedProjectOptionPage extends NewCProjectWizardOptionPage {
 				ICOptionPage page = (ICOptionPage) iter.next();
 				
 				String id = null;
-				switch( i ){
-					case 0 : id = ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_PROJECTS_TAB;     break;
-					case 1 : id = ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_ERRORPARSERS_TAB; break;
-					case 2 : id = ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_INDEXER_TAB;      break;
+				if (page instanceof ReferenceBlock) {
+					id = ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_PROJECTS_TAB;
+				} else if (page instanceof ErrorParserBlock) {
+					id = ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_ERRORPARSERS_TAB;
+				} else if (page instanceof IndexerBlock) {
+					id = ManagedBuilderHelpContextIds.MAN_PROJ_WIZ_INDEXER_TAB;
 				}
 				WorkbenchHelp.setHelp(page.getControl(), id);	
 				

@@ -45,7 +45,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -61,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.c.ICASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTEnumerationSpecifier;
@@ -70,7 +70,6 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPointerToMember;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTFunctionDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -1410,6 +1409,20 @@ public class AST2Tests extends AST2BaseTest {
     	assertEquals( ((IBasicType)((IFunctionType)((IPointerType)((ITypedef)((IFunctionType)signal3_t).getParameterTypes()[1]).getType()).getType()).getReturnType()).getType(), IBasicType.t_void );
     	assertEquals( ((IBasicType)((IFunctionType)((IPointerType)((ITypedef)((IFunctionType)signal3_t).getParameterTypes()[1]).getType()).getType()).getParameterTypes()[0]).getType(), IBasicType.t_int );
     	
+    }
+    
+    public void testBug80992() throws Exception
+    {
+        StringBuffer buffer =new StringBuffer( "const int x = 10;\n"); //$NON-NLS-1$
+        buffer.append( "int y [ const static x ];"); //$NON-NLS-1$
+        IASTTranslationUnit tu = parse( buffer.toString(), ParserLanguage.C );
+        IASTDeclaration [] declarations = tu.getDeclarations();
+        IASTSimpleDeclaration y = (IASTSimpleDeclaration) declarations[1];
+        ICASTArrayModifier mod = (ICASTArrayModifier) ((IASTArrayDeclarator)y.getDeclarators()[0]).getArrayModifiers()[0];
+        assertTrue( mod.isConst() );
+        assertTrue( mod.isStatic() );
+        assertFalse( mod.isRestrict() );
+        assertFalse( mod.isVolatile() );
     }
 
 }

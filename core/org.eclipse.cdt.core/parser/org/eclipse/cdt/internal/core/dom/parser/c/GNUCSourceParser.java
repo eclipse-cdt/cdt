@@ -1776,16 +1776,29 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             //eat the '['
             int startOffset = consume(IToken.tLBRACKET).getOffset(); 
 
-            int modifier = -1;
+            boolean isStatic = false;
+            boolean isConst = false;
+            boolean isRestrict = false;
+            boolean isVolatile = false;
             
             outerLoop: do {
                 switch (LT(1)) {
                 case IToken.t_static:
+                    isStatic = true;
+                	consume();
+                	break;
                 case IToken.t_const:
+                    isConst = true;
+                	consume();
+                	break;
                 case IToken.t_volatile:
+                    isVolatile = true;
+                	consume();
+                	break;
                 case IToken.t_restrict:
-                    modifier = consume().getType();
-                    continue;
+                    isRestrict = true;
+                	consume();
+                    break;
                 default:
                     break outerLoop;
                 }
@@ -1794,7 +1807,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             IASTExpression exp = null;
 
             if (LT(1) != IToken.tRBRACKET) {
-                if (modifier != -1 )
+                if (!( isStatic || isRestrict || isConst || isVolatile ))
                     exp = assignmentExpression();
                 else
                     exp = constantExpression();
@@ -1802,26 +1815,15 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
             consume(IToken.tRBRACKET);
             
             IASTArrayModifier arrayMod = null;
-            if( modifier == -1 )
+            if(!( isStatic || isRestrict || isConst || isVolatile ))
                 arrayMod = createArrayModifier();
             else
             {
                 ICASTArrayModifier temp = createCArrayModifier();
-                switch( modifier )
-                {
-                	case IToken.t_static:
-                	    temp.setConst( true );
-                		break;
-                	case IToken.t_const:
-                	    temp.setConst( true );
-                		break;
-                	case IToken.t_volatile:
-                	    temp.setVolatile( true );
-                		break;
-                	case IToken.t_restrict:
-                	    temp.setRestrict( true );
-                		break;                	    
-                }
+                temp.setStatic( isStatic );
+                temp.setConst( isConst );
+                temp.setVolatile( isVolatile );
+                temp.setRestrict(isRestrict);
                 arrayMod = temp;
             }
             ((ASTNode)arrayMod).setOffset( startOffset );

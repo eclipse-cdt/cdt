@@ -244,9 +244,12 @@ public class BuildInfoFactory {
 						if (escapeChars.indexOf(envStr.charAt(ndx)) != -1) {
 							if (envStr.charAt(ndx - 1) == escapeChar) { // escaped '|' - remove '\' and continue on.
 								envStr.deleteCharAt(ndx - 1);
-							} else {
-								break;
+								if (ndx == envStr.length()) {
+									break;
+								}
 							}
+							if (envStr.charAt(ndx) == '|')
+								break;
 						}
 						ndx++;
 					}

@@ -40,15 +40,11 @@ public class ParserSymbolTable {
 	public ParserSymbolTable() {
 		super();
 		_compilationUnit = new Declaration("");
-		try{
-			_compilationUnit.setType( TypeInfo.t_namespace );
-		} catch ( ParserSymbolTableException e ){
-			/*shouldn't happen*/
-		}
+		_compilationUnit.setType( TypeInfo.t_namespace );
 	}
 
 	public Declaration getCompilationUnit(){
-			return _compilationUnit;
+		return _compilationUnit;
 	}
 
 	/**
@@ -243,6 +239,22 @@ public class ParserSymbolTable {
 			}
 		}
 
+		if( foundSomething ){
+			return foundSomething;
+		}
+		
+		HashMap parameters = lookIn.getParameterMap();
+		if( parameters != null ){
+			obj = parameters.get( data.name );
+			if( obj != null && ((Declaration)obj).isType( data.type, data.upperType ) ){
+				if( data.foundItems == null ){
+					data.foundItems = new HashSet();
+				}
+				data.foundItems.add( obj );
+				foundSomething = true;
+			}
+		}
+		
 		return foundSomething;
 	}
 	
@@ -583,10 +595,10 @@ public class ParserSymbolTable {
 			currFn = (Declaration) iterFns.next();
 			
 			sourceParams = data.parameters.iterator();
-			targetParams = currFn.getParameters().iterator();
+			targetParams = currFn.getParameterList().iterator();
 			
 			//number of parameters in the current function
-			numTargetParams = currFn.getParameters().size();
+			numTargetParams = currFn.getParameterList().size();
 			
 			//we only need to look at the smaller number of parameters
 			//(a larger number in the Target means default parameters, a larger
@@ -600,8 +612,8 @@ public class ParserSymbolTable {
 			comparison = 0;
 			
 			for( int j = 0; j < numParams; j++ ){
-				source = ( TypeInfo )sourceParams.next();
-				target = ( TypeInfo )targetParams.next();
+				source = (TypeInfo)sourceParams.next();
+				target = ((Declaration)targetParams.next()).getTypeInfo();
 				if( source.equals( target ) ){
 					cost = new Cost( source, target );
 					cost.rank = 0;	//exact match, no cost
@@ -670,7 +682,7 @@ public class ParserSymbolTable {
 		Iterator iter = functions.iterator();
 		while( iter.hasNext() ){
 			function = (Declaration) iter.next();
-			num = ( function.getParameters() == null ) ? 0 : function.getParameters().size();
+			num = ( function.getParameterList() == null ) ? 0 : function.getParameterList().size();
 		
 			//if there are m arguments in the list, all candidate functions having m parameters
 			//are viable	 
@@ -687,10 +699,10 @@ public class ParserSymbolTable {
 			//a candidate function having more than m parameters is viable only if the (m+1)-st
 			//parameter has a default argument
 			else {
-				ListIterator listIter = function.getParameters().listIterator( num );
+				ListIterator listIter = function.getParameterList().listIterator( num );
 				TypeInfo param;
 				for( int i = num; i > ( numParameters - num + 1); i-- ){
-					param = (TypeInfo)listIter.previous();
+					param = ((Declaration)listIter.previous()).getTypeInfo();
 					if( !param.getHasDefault() ){
 						iter.remove();
 						break;
@@ -1150,7 +1162,7 @@ public class ParserSymbolTable {
 	 * The top level TypeInfo represents modifications to the object and the
 	 * remaining TypeInfo's represent the object.
 	 */
-	static private TypeInfo getFlatTypeInfo( TypeInfo topInfo ) throws ParserSymbolTableException {
+	static private TypeInfo getFlatTypeInfo( TypeInfo topInfo ){
 		TypeInfo returnInfo = topInfo;
 		TypeInfo info = null;
 		
@@ -1367,12 +1379,13 @@ public class ParserSymbolTable {
 			copy._parentScopes          = ( _parentScopes != null ) ? (LinkedList) _parentScopes.clone() : null;
 			copy._usingDirectives       = ( _usingDirectives != null ) ? (LinkedList) _usingDirectives.clone() : null; 
 			copy._containedDeclarations = ( _containedDeclarations != null ) ? (HashMap) _containedDeclarations.clone() : null;
-			copy._parameters            = ( _parameters != null ) ? (LinkedList) _parameters.clone() : null;
+			copy._parameterList         = ( _parameterList != null ) ? (LinkedList) _parameterList.clone() : null;
+			copy._parameterHash 		= ( _parameterHash != null ) ? (HashMap) _parameterHash.clone() : null;
 		
 			return copy;	
 		}
 	
-		public void setType(int t) throws ParserSymbolTableException{
+		public void setType(int t){
 			_typeInfo.setType( t );	 
 		}
 	
@@ -1472,28 +1485,52 @@ public class ParserSymbolTable {
 			_returnType = type;
 		}
 	
-		public LinkedList getParameters(){
-			return _parameters;
+		public LinkedList getParameterList(){
+			return _parameterList;
+		}
+		public HashMap getParameterMap(){
+			return _parameterHash;
+		}
+		
+		public void addParameter( Declaration param ){
+			if( _parameterList == null )
+				_parameterList = new LinkedList();
+			
+			_parameterList.addLast( param );
+			String name = param.getName();
+			if( name != null && !name.equals("") )
+			{
+				if( _parameterHash == null )
+					_parameterHash = new HashMap();
+
+				if( !_parameterHash.containsKey( name ) )
+					_parameterHash.put( name, param );
+			}
 		}
 		
 		public void addParameter( Declaration typeDecl, int cvQual, String ptrOperator, boolean hasDefault ){
-			if( _parameters == null ){
-				_parameters = new LinkedList();
-			}
-		
-			TypeInfo info = new TypeInfo( TypeInfo.t_type, typeDecl, cvQual, ptrOperator, hasDefault );
+			Declaration param = new Declaration("");
+			
+			TypeInfo info = param.getTypeInfo();
+			info.setType( TypeInfo.t_type );
+			info.setTypeDeclaration( typeDecl );
+			info.setCVQualifier( cvQual );
+			info.setPtrOperator( ptrOperator );
+			info.setHasDefault( hasDefault );
 				
-			_parameters.add( info );
+			addParameter( param );
 		}
 	
 		public void addParameter( int type, int cvQual, String ptrOperator, boolean hasDefault ){
-			if( _parameters == null ){
-				_parameters = new LinkedList();
-			}
-		
-			TypeInfo info = new TypeInfo(type, null, cvQual, ptrOperator, hasDefault );
+			Declaration param = new Declaration("");
+					
+			TypeInfo info = param.getTypeInfo();
+			info.setTypeInfo( type );
+			info.setCVQualifier( cvQual );
+			info.setPtrOperator( ptrOperator );
+			info.setHasDefault( hasDefault );
 				
-			_parameters.add( info );
+			addParameter( param );
 		}
 	
 		public boolean hasSameParameters( Declaration function ){
@@ -1501,20 +1538,20 @@ public class ParserSymbolTable {
 				return false;	
 			}
 		
-			int size = getParameters().size();
-			if( function.getParameters().size() != size ){
+			int size = getParameterList().size();
+			if( function.getParameterList().size() != size ){
 				return false;
 			}
 		
-			Iterator iter = getParameters().iterator();
-			Iterator fIter = function.getParameters().iterator();
+			Iterator iter = getParameterList().iterator();
+			Iterator fIter = function.getParameterList().iterator();
 		
 			TypeInfo info = null;
 			TypeInfo fInfo = null;
 		
 			for( int i = size; i > 0; i-- ){
-				info = (TypeInfo) iter.next();
-				fInfo = (TypeInfo) fIter.next();
+				info = ((Declaration)iter.next()).getTypeInfo();
+				fInfo = ((Declaration) fIter.next()).getTypeInfo();
 			
 				if( !info.equals( fInfo ) ){
 					return false;
@@ -1997,7 +2034,9 @@ public class ParserSymbolTable {
 		private		LinkedList 	_usingDirectives;		//collection of nominated namespaces
 		private		HashMap 	_containedDeclarations;	//declarations contained by us.
 	
-		private 	LinkedList	_parameters;			//parameter list
+		private 	LinkedList	_parameterList;			//have my cake
+		private 	HashMap		_parameterHash;			//and eat it too
+		
 		private 	int			_returnType;			
 	
 		private		int 		_depth;					//how far down the scope stack we are
@@ -2084,6 +2123,7 @@ public class ParserSymbolTable {
 		private static final String _image[] = {	"", 
 													"", 
 													"namespace", 
+													"template",
 													"class", 
 													"struct", 
 													"union", 
@@ -2121,10 +2161,10 @@ public class ParserSymbolTable {
 			return (_typeInfo & mask) != 0;
 		}	
 		
-		public void setType(int t) throws ParserSymbolTableException{ 
+		public void setType(int t){
 			//sanity check, t must fit in its allocated 5 bits in _typeInfo
 			if( t > typeMask ){
-				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTypeInfo );
+				return;
 			}
 		
 			_typeInfo = _typeInfo & ~typeMask | t; 

@@ -650,14 +650,8 @@ c, quickParse);
 			if( namespaceSymbol == null )
 			{
 				namespaceSymbol = pst.new Declaration( identifier );
-				try
-				{
-					namespaceSymbol.setType( TypeInfo.t_namespace );
-				}
-				catch( ParserSymbolTableException pste )
-				{
-					// should never happen
-				}
+				namespaceSymbol.setType( TypeInfo.t_namespace );
+				
 				try{ namespace = callback.namespaceDefinitionBegin( scope.getCallbackExtension(), firstToken );} catch( Exception e ) {}
 				namespaceSymbol.setCallbackExtension( namespace );
 				try {

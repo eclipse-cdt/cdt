@@ -1,3 +1,11 @@
+2003-05-29 Alain Magloire
+
+	* src/org/eclipse/cdt/debug/core/cdi/model/type/ICDIIntegralValue.java:
+		public long longValue() throws CDIException;
+		public int intValue() throws CDIException;
+		public short shortValue() throws CDIException;
+		public int byteValue() throws CDIException;
+
 2003-05-29 Mikhail Khodjaiants
 	Added new methods to ICVariable to vizualize arrays and structures based 
 	on the new CDI types.

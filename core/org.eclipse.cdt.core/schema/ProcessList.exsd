@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.cdt.core">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.cdt.core" id="ProcessList" name="%ProcessList.name"/>
-   </appInfo>
-   <documentation>
-      [Enter description of this extension point]
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="ProcessList" name="%ProcessList.name"/>
+      </appInfo>
+      <documentation>
+         [Enter description of this extension point]
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -49,6 +49,13 @@
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.IProcessList"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="platform" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

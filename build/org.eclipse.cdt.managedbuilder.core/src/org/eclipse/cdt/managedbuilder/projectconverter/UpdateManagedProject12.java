@@ -371,6 +371,9 @@ class UpdateManagedProject12 {
 						configuration.setOption(tool, newOpt, bool.booleanValue());
 						break;
 					case IOption.STRING:
+						String strVal = (String) optRef.getAttribute(IOption.DEFAULT_VALUE);
+						configuration.setOption(tool, newOpt, strVal);
+						break;
 					case IOption.ENUMERATED:
 						// This is going to be the human readable form of the enumerated value
 						String name = (String) optRef.getAttribute(IOption.DEFAULT_VALUE);

@@ -70,7 +70,9 @@ public Object getInfo(ICElement element) {
 		case ICElement.C_PROJECT:
 			return this.projectAndRootCache.get(element);
 		case ICElement.C_CCONTAINER:
-			return this.folderCache.get(element);		
+			return this.folderCache.get(element);
+		case ICElement.C_ARCHIVE:
+		case ICElement.C_BINARY:		
 		case ICElement.C_UNIT:
 			return this.fileCache.get(element);
 		default:
@@ -89,6 +91,8 @@ protected Object peekAtInfo(ICElement element) {
 			return this.projectAndRootCache.get(element);
 		case ICElement.C_CCONTAINER:
 			return this.folderCache.get(element);
+		case ICElement.C_ARCHIVE:
+		case ICElement.C_BINARY:		
 		case ICElement.C_UNIT:
 			return this.fileCache.peek(element);
 		default:
@@ -108,6 +112,8 @@ protected void putInfo(ICElement element, Object info) {
 		case ICElement.C_CCONTAINER:
 			this.folderCache.put(element, info);
 			break;
+		case ICElement.C_ARCHIVE:
+		case ICElement.C_BINARY:		
 		case ICElement.C_UNIT:
 			this.fileCache.put(element, info);
 			break;
@@ -127,6 +133,8 @@ protected void removeInfo(ICElement element) {
 		case ICElement.C_CCONTAINER:
 			this.folderCache.remove(element);
 			break;
+		case ICElement.C_ARCHIVE:
+		case ICElement.C_BINARY:		
 		case ICElement.C_UNIT:
 			this.fileCache.remove(element);
 			break;

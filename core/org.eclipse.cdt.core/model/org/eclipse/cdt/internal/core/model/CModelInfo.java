@@ -14,11 +14,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 public class CModelInfo extends CContainerInfo {
 
 	/**
-	 * A array with all the non-java projects contained by this model
-	 */
-	Object[] nonCResources;
-
-	/**
 	 * Constructs a new C Model Info 
 	 */
 	protected CModelInfo(CElement element) {
@@ -53,13 +48,10 @@ public class CModelInfo extends CContainerInfo {
 	 * Returns an array of non-C resources contained in the receiver.
 	 */
 	Object[] getNonCResources() {
-
-		Object[] resources = nonCResources;
-		if (resources == null) {
-			resources = computeNonCResources();
-			nonCResources = resources;
+		if (nonCResources == null) {
+			nonCResources = computeNonCResources();
 		}
-		return resources;
+		return nonCResources;
 	}
 
 }

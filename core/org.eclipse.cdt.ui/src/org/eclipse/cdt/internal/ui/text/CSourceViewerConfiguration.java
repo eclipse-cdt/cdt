@@ -27,7 +27,9 @@ import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.Reconciler;
+import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
+import org.eclipse.jface.text.rules.RuleBasedDamagerRepairer;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -37,7 +39,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.cdt.internal.ui.CPlugin;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.CEditorTextHoverDispatcher;
-import org.eclipse.cdt.internal.ui.text.eclipse2.CRuleBasedDamagerRepairer;
 import org.eclipse.cdt.ui.ICDTConstants;
 
 
@@ -134,22 +135,22 @@ public class CSourceViewerConfiguration extends SourceViewerConfiguration {
 			scanner= fTextTools.getCCodeScanner();
 		}
 
-		CRuleBasedDamagerRepairer dr= new CRuleBasedDamagerRepairer(scanner);
+		DefaultDamagerRepairer dr= new DefaultDamagerRepairer(scanner);
 
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
 
 		//TextAttribute attr = new TextAttribute(manager.getColor(ICColorConstants.C_DEFAULT));
 		
-		dr= new CRuleBasedDamagerRepairer(getSinglelineCommentScanner());		
+		dr= new DefaultDamagerRepairer(getSinglelineCommentScanner());		
 		reconciler.setDamager(dr, CPartitionScanner.C_SINGLE_LINE_COMMENT);
 		reconciler.setRepairer(dr, CPartitionScanner.C_SINGLE_LINE_COMMENT);
 		
-		dr= new CRuleBasedDamagerRepairer(getStringScanner());
+		dr= new DefaultDamagerRepairer(getStringScanner());
 		reconciler.setDamager(dr, CPartitionScanner.C_STRING);
 		reconciler.setRepairer(dr, CPartitionScanner.C_STRING);
 		
-		dr= new CRuleBasedDamagerRepairer(getMultilineCommentScanner());		
+		dr= new DefaultDamagerRepairer(getMultilineCommentScanner());		
 		reconciler.setDamager(dr, CPartitionScanner.C_MULTILINE_COMMENT);
 		reconciler.setRepairer(dr, CPartitionScanner.C_MULTILINE_COMMENT);
 

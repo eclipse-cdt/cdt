@@ -1,4 +1,10 @@
 2005-03-30 Alain Magloire
+	Delay the processing/parsing of the WorkingCopy when creating the workingcopy
+	This should speed the opening  of the CEditor.
+	PR 74182
+	* model/org/eclipse/cdt/internal/core/model/CReateWorkingCipyOperation.java
+
+2005-03-30 Alain Magloire
 	PR 88858 implementation.
 	* model/org/eclipse/cdt/core/model/CoreModel.java
 	* model/org/eclipse/cdt/core/model/IIncludeFileEntry.java

@@ -43,7 +43,9 @@ public class CreateWorkingCopyOperation extends CModelOperation {
 
 		WorkingCopy workingCopy = new WorkingCopy(tu.getParent(), (IFile)tu.getResource(), this.factory, this.problemRequestor);
 		// open the working copy now to ensure contents are that of the current state of this element
-		workingCopy.open(this.fMonitor);
+		// Alain: Actually no, delay the parsing 'till it is really needed.  Doing the parsing here
+		// really slows down the opening of the CEditor.
+		//workingCopy.open(this.fMonitor);
 		
 		if (this.perFactoryWorkingCopies != null) {
 			this.perFactoryWorkingCopies.put(tu, workingCopy);

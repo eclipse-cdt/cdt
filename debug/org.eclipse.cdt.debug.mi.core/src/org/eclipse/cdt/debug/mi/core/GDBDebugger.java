@@ -38,7 +38,9 @@ public class GDBDebugger implements ICDebugger {
 	public ICDISession createLaunchSession(ILaunchConfiguration config, IFile exe) throws CDIException {
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-			CSession session = (CSession)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toOSString());
+			String cwd = exe.getProject().getLocation().toOSString();
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
+			CSession session = (CSession)MIPlugin.getDefault().createCSession(cwd, gdbinit, gdb, exe.getLocation().toOSString());
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
@@ -53,7 +55,9 @@ public class GDBDebugger implements ICDebugger {
 	public ICDISession createAttachSession(ILaunchConfiguration config, IFile exe, int pid) throws CDIException {
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-			CSession session = (CSession)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toOSString(), pid, null);
+			String cwd = exe.getProject().getLocation().toOSString();
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
+			CSession session = (CSession)MIPlugin.getDefault().createCSession(cwd, gdbinit, gdb, exe.getLocation().toOSString(), pid, null);
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {
@@ -69,7 +73,9 @@ public class GDBDebugger implements ICDebugger {
 	public ICDISession createCoreSession(ILaunchConfiguration config, IFile exe, IPath corefile) throws CDIException {
 		try {
 			String gdb = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUG_NAME, "gdb");
-			CSession session = (CSession)MIPlugin.getDefault().createCSession(gdb, exe.getLocation().toOSString(), corefile.toOSString());
+			String cwd = exe.getProject().getLocation().toOSString();
+			String gdbinit = config.getAttribute(IMILaunchConfigurationConstants.ATTR_GDB_INIT, ".gdbinit");
+			CSession session = (CSession)MIPlugin.getDefault().createCSession(cwd, gdbinit, gdb, exe.getLocation().toOSString(), corefile.toOSString());
 			initializeLibraries(config, session);
 			return session;
 		} catch (IOException e) {

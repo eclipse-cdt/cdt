@@ -7,7 +7,9 @@
    class="org.eclipse.cdt.make.core.MakeCorePlugin">
 
    <runtime>
-      <library name="cdtmakecore.jar"/>
+      <library name="cdtmakecore.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.resources"/>

@@ -3,8 +3,10 @@ package org.eclipse.cdt.internal.core.model;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.parser.Token;
 import org.eclipse.cdt.internal.core.parser.util.AccessSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.DeclSpecifier;
 import org.eclipse.cdt.internal.core.parser.util.Name;
@@ -19,13 +21,13 @@ import org.eclipse.cdt.internal.core.parser.util.Name;
  */
 public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpecifier.Container, ICElementWrapper {
 
-	private CElement element = null; 
-	private CElement parent = null; 
-	int kind; 
+	private IParent element = null; 
+	private IParent parent = null; 
+
 	private Name name = null;
 	private boolean functionDefinition = false; 
 
-	public SimpleDeclarationWrapper( CElement item )
+	public SimpleDeclarationWrapper( IParent item )
 	{
 		this.element = item; 
 	}
@@ -38,7 +40,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 * Returns the item.
 	 * @return CElement
 	 */
-	public CElement getElement() {
+	public IParent getElement() {
 		return element;
 	}
 
@@ -46,15 +48,15 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 * Sets the item.
 	 * @param item The item to set
 	 */
-	public void setElement (CElement item) {
-		this.element = (CElement)item;
+	public void setElement (IParent item) {
+		this.element = (IParent)item;
 	}
 
 	/**
 	 * Returns the parent.
 	 * @return CElement
 	 */
-	public CElement getParent() {
+	public IParent getParent() {
 		return parent;
 	}
 
@@ -62,7 +64,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	 * Sets the parent.
 	 * @param parent The parent to set
 	 */
-	public void setParent(CElement parent) {
+	public void setParent(IParent parent) {
 		this.parent = parent;
 	}
 	
@@ -71,7 +73,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		// creates the appropriate C Elements 
 		List declaratorList = getDeclarators();
 		Declarator [] declarators = (Declarator []) declaratorList.toArray( new Declarator[ declaratorList.size() ] );
-		CElement parentElement = getParent(); 
+		CElement parentElement = (CElement)getParent(); 
 		
 		for( int i = 0; i < declarators.length; ++i )
 		{
@@ -80,6 +82,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 			
 			// instantiate the right element   
 			List clause =currentDeclarator.getParameterDeclarationClause(); 
+			String declaratorName = ( currentDeclarator.getName() == null ) ? "" : currentDeclarator.getName().toString();
 			if( clause == null && !isTypedef())
 			{ 
 				// TODO - this was to get rid of the NULL pointer we've been seeing
@@ -89,24 +92,23 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 				//	this is an attribute or a varaible
 				if( parentElement instanceof IStructure )
 				{
-					declaration = createField( parentElement, currentDeclarator.getName().toString() ); 
+					declaration = createField( parentElement, declaratorName ); 
 				}
 				else if( parentElement instanceof ITranslationUnit )
 				{
 					if(isExtern())
 					{
-						declaration = createVariableDeclaration( parentElement, currentDeclarator.getName().toString() );
+						declaration = createVariableDeclaration( parentElement, declaratorName );
 					}
 					else
 					{
-						declaration = createVariable( parentElement, currentDeclarator.getName().toString() );						
+						declaration = createVariable( parentElement, declaratorName );						
 					}
 				}
 			}
 			else if( isTypedef() )
 			{
-				// do nothing just yet
-				//TODO : update this -- typedefs do not have a parameterdeclarationclause
+				declaration = createTypedef( parentElement, declaratorName );
 			}
 			else
 			{
@@ -114,7 +116,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 				// this is a function or a method
 				if( parentElement instanceof IStructure )
 				{
-					declaration = createMethodDeclaration( parentElement, currentDeclarator.getName().toString(), parameters ); 
+					declaration = createMethodDeclaration( parentElement, declaratorName, parameters ); 
 		
 				}
 				else if( parentElement instanceof ITranslationUnit )
@@ -124,18 +126,27 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 						// if it belongs to a class, then create a method
 						// else create a function
 						// this will not be known until we have cross reference information
-						declaration = createFunction( parentElement, currentDeclarator.getName().toString(), parameters ); 
+						declaration = createFunction( parentElement, declaratorName, parameters ); 
 					}
 					else
 					{
-						declaration = createFunctionDeclaration( parentElement, currentDeclarator.getName().toString(), parameters ); 
+						declaration = createFunctionDeclaration( parentElement, declaratorName, parameters ); 
 					}
 				}				
 			}
 			
-			// hook up the offsets
-			declaration.setIdPos( currentDeclarator.getName().getStartOffset(), currentDeclarator.getName().toString().length());
-			declaration.setPos( currentDeclarator.getName().getStartOffset(), currentDeclarator.getName().toString().length() );
+			
+			if( currentDeclarator.getName() != null )
+			{
+				// hook up the offsets
+				declaration.setIdPos( currentDeclarator.getName().getStartOffset(), declaratorName.length());
+				declaration.setPos( currentDeclarator.getName().getStartOffset(), declaratorName.length() );
+			}
+			else
+			{
+				declaration.setIdPos( classKind.getOffset(), classKind.getImage().toString().length());
+				declaration.setPos( classKind.getOffset(), classKind.getImage().toString().length());
+			}
 			
 			// add to parent
 			parentElement.addChild( declaration ); 	
@@ -144,6 +155,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 	}
 	
 	List declarators = new LinkedList();
+	String [] myString;
 	
 	public void addDeclarator( Object in )
 	{
@@ -197,21 +209,7 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		this.name = name;
 	}
 
-	/**
-	 * Returns the kind.
-	 * @return int
-	 */
-	public int getKind() {
-		return kind;
-	}
-
-	/**
-	 * Sets the kind.
-	 * @param kind The kind to set
-	 */
-	public void setKind(int kind) {
-		this.kind = kind;
-	}
+	private Token classKind; 
 
 	/**
 	 * Returns the functionDefinition.
@@ -261,6 +259,12 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		newElement.setStatic(isStatic());
 		return newElement;
 	}
+
+	private CElement createTypedef(CElement parent, String name){
+		CElement typedef = new TypeDef( parent, name ); 
+		return typedef;  
+	}
+
 
 	/**
 	 * Creates a Variable and fills its info
@@ -385,6 +389,21 @@ public class SimpleDeclarationWrapper extends DeclSpecifier implements DeclSpeci
 		newElement.setVolatile(isVolatile());
 		newElement.setStatic(isStatic());
 		return newElement;
+	}
+
+	/**
+	 * @return Token
+	 */
+	public Token getClassKind() {
+		return classKind;
+	}
+
+	/**
+	 * Sets the classKind.
+	 * @param classKind The classKind to set
+	 */
+	public void setClassKind(Token classKind) {
+		this.classKind = classKind;
 	}
 
 }

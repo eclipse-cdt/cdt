@@ -175,6 +175,6 @@ public class Token {
 	static public final int tSTRING = 129;
 	static public final int tFLOATINGPT = 130;
 	static public final int tLSTRING = 131;
-	
-	static public final int tLAST = tLSTRING; 
+	static public final int tCHAR = 132;
+	static public final int tLAST = tCHAR; 
 }

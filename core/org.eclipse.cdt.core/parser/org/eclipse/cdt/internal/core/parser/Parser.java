@@ -670,9 +670,9 @@ c, quick);
 				case Token.t_volatile:
 				case Token.t_signed:
 				case Token.t_unsigned:
-				case Token.t_short:
 					try{ callback.simpleDeclSpecifier(decl, consume());} catch( Exception e ) {}
 					break;
+				case Token.t_short:					
 				case Token.t_char:
 				case Token.t_wchar_t:
 				case Token.t_bool:
@@ -1157,10 +1157,8 @@ c, quick);
 	 */
 	protected void enumSpecifier( Object owner ) throws Backtrack
 	{
-		consume( Token.t_enum );
-
 		Object enumSpecifier = null;
-		try{ enumSpecifier = callback.enumSpecifierBegin( owner );} catch( Exception e ) {}
+		try{ enumSpecifier = callback.enumSpecifierBegin( owner, consume( Token.t_enum ) );} catch( Exception e ) {}
 
 		if( LT(1) == Token.tIDENTIFIER )
 		{ 

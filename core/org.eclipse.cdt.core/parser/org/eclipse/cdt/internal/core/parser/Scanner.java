@@ -871,6 +871,14 @@ public class Scanner implements IScanner {
 				}
 			} else {
 				switch (c) {
+					case '\'' :
+						c = getChar(); 
+						int next = getChar(); 
+						if( next == '\'' )
+							return newToken( Token.tCHAR, new Character( (char)c ).toString(), currentContext ); 
+						else
+							if( throwExceptionOnBadCharacterRead )
+								throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + currentContext.getOffset() + " of file " + currentContext.getFilename() );
 					case ':' :
 						c = getChar();
 						switch (c) {
@@ -1185,7 +1193,7 @@ public class Scanner implements IScanner {
 					default :
 						// Bad character
 						if( throwExceptionOnBadCharacterRead )
-							throw new ScannerException( "Invalid character read @ offset " + currentContext.getOffset() + " of file " + currentContext.getFilename() );
+							throw new ScannerException( "Invalid character '" + (char)c + "' read @ offset " + currentContext.getOffset() + " of file " + currentContext.getFilename() );
 						break;
 				}
 

@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.model.IParent;
+
 /**
  * @author jcamelon
  *
@@ -10,6 +12,6 @@ package org.eclipse.cdt.internal.core.model;
  */
 public interface ICElementWrapper {
 
-	public CElement getElement();
-	public void setElement (CElement item);
+	public IParent getElement();
+	public void setElement (IParent item);
 }

@@ -96,7 +96,7 @@ public interface IParserCallback {
 	public void		usingDeclarationAbort( Object declaration );
 	public void		usingDeclarationEnd( Object declaration );
 
-	public Object	enumSpecifierBegin( Object container );
+	public Object	enumSpecifierBegin( Object container, Token enumKey );
 	public void		enumSpecifierId( Object enumSpec );
 	public void		enumSpecifierAbort( Object enumSpec );
 	public void 	enumSpecifierEnd( Object enumSpec );

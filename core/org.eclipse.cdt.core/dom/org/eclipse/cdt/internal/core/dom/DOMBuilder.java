@@ -600,7 +600,7 @@ public class DOMBuilder implements IParserCallback
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.IParserCallback#enumSpecifierBegin(java.lang.Object)
 	 */
-	public Object enumSpecifierBegin(Object container) {
+	public Object enumSpecifierBegin(Object container, Token enumKey) {
 		SimpleDeclaration decl = (SimpleDeclaration)container;
 		EnumerationSpecifier es = new EnumerationSpecifier( decl );
 		decl.setTypeSpecifier(es); 

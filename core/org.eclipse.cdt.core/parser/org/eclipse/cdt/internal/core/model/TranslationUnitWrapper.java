@@ -1,5 +1,7 @@
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.model.IParent;
+
 /**
  * @author jcamelon
  *
@@ -15,13 +17,13 @@ public class TranslationUnitWrapper implements ICElementWrapper {
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IWrapper#getElement()
 	 */
-	public CElement getElement() {
+	public IParent getElement() {
 		return unit;
 	}
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IWrapper#setElement(java.lang.Object)
 	 */
-	public void setElement(CElement item) {
+	public void setElement(IParent item) {
 		unit = (TranslationUnit)item; 
 	}
 	

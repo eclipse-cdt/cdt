@@ -1,3 +1,6 @@
+2004-12-10 Alain Magloire
+	No need for TestBufferTest test, it is now in JFace.
+
 2004-11-16 Andrew Niefer
 	- created package ui/org.eclipse.ui.tests.regression 
 	- moved ContentAssistRegressionTests to it and created a RefactoringRegressionTests

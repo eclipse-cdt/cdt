@@ -47,7 +47,6 @@ import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_N
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_NoPrefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.CompletionTest_VariableType_Prefix;
 import org.eclipse.cdt.ui.tests.text.contentassist.ContentAssistTests;
-import org.eclipse.cdt.ui.tests.textmanipulation.TextBufferTest;
 
 
 
@@ -71,7 +70,6 @@ public class AutomatedSuite extends TestSuite {
 		
 		// Success Tests
 		//addTest(PartitionTokenScannerTest.suite());
-		addTest(TextBufferTest.suite());
 		// completion tests
 		addTest(CompletionTest_FieldType_Prefix.suite());
 		addTest(CompletionTest_FieldType_NoPrefix.suite());

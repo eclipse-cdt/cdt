@@ -399,7 +399,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 				
 				// Save the document
 				IFile projectFile = project.getFile(SETTINGS_FILE_NAME);
-				String utfString = stream.toString("UTF8");
+				String utfString = stream.toString("UTF8");	//$NON-NLS-1$
 				if (projectFile.exists()) {
 					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes()), IResource.FORCE, null);
 				} else {

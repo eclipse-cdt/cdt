@@ -460,7 +460,7 @@ public class Target extends BuildObject implements ITarget {
 				return parent.getTargetOSList();
 			} else {
 				// I have no parent and no defined filter list
-				return new String[] {"all"};
+				return new String[] {"all"};	//$NON-NLS-1$
 			}
 		}
 		return (String[]) targetOSList.toArray(new String[targetOSList.size()]);

@@ -1,3 +1,9 @@
+2004-07-16 Tanya Wolff
+
+	Fix for 70221: unexternalized strings
+	* org.eclipse.cdt.internal.ui/search/CountLabelProvider.java
+	* org.eclipse.cdt.internal.ui/search/CSearchMessages.properties
+
 2004-07-16 Vladimir Hirsl
 	Implementation of HP-UX SOM binary parser page.
  

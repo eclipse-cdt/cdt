@@ -46,13 +46,13 @@ public class CountLabelProvider extends LabelProvider {
 	}
 
 	public String getText(Object element) {
-		int matchCount= fPage.getInput().getMatchCount(element);
+		int c = fPage.getInput().getMatchCount(element);
+		
 		String text= fLabelProvider.getText(element);
-		if (matchCount == 0)
+		if (c == 0)
 			return text;
-		if (matchCount == 1)
-			return fLabelProvider.getText(element)+ " (" + 1 + " match)"; //$NON-NLS-1$ //$NON-NLS-2$
-		return text + " (" + matchCount + " matches)"; //$NON-NLS-1$ //$NON-NLS-2$
+		Integer matchCount= new Integer(c);
+		return fLabelProvider.getText(element) + " "+ CSearchMessages.getFormattedString("CSearchResultCollector.matches", matchCount); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void dispose() {

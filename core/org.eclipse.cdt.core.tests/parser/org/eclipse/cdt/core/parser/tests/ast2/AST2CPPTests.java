@@ -2164,5 +2164,31 @@ public class AST2CPPTests extends AST2BaseTest {
         assertInstances( col, i1, 2 );
         assertInstances( col, i2, 4 );
     }
+    
+    public void testBug86350() throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("class X { int i, j; };           \n"); //$NON-NLS-1$
+        buffer.append("class Y { X x; };                \n"); //$NON-NLS-1$
+        buffer.append("void foo() {                     \n"); //$NON-NLS-1$
+        buffer.append("   const Y y;                    \n"); //$NON-NLS-1$
+        buffer.append("   y.x.i++;                      \n"); //$NON-NLS-1$
+        buffer.append("   y.x.j++;                      \n"); //$NON-NLS-1$
+        buffer.append("   Y* p = const_cast<Y*>(&y);    \n"); //$NON-NLS-1$
+        buffer.append("   p->x.i;                       \n"); //$NON-NLS-1$
+        buffer.append("   p->x.j;                       \n"); //$NON-NLS-1$
+        buffer.append("}                                \n"); //$NON-NLS-1$
+        
+        IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP);
+        CPPNameCollector col = new CPPNameCollector();
+        tu.getVisitor().visitTranslationUnit(col);
+        
+        ICPPField i = (ICPPField) col.getName(1).resolveBinding();
+        ICPPField j = (ICPPField) col.getName(2).resolveBinding();
+        ICPPField x = (ICPPField) col.getName(5).resolveBinding();
+        
+        assertInstances( col, i, 3 );
+        assertInstances( col, j, 3 );
+        assertInstances( col, x, 5 );
+    }
 }
 

@@ -1824,7 +1824,18 @@ public class CPPVisitor implements ICPPASTVisitor {
 			    return new CPPPointerType( type );
 			}
 			return type;
-	    }
+	    } else if( expression instanceof ICPPASTFieldReference ){
+			IASTName name = ((ICPPASTFieldReference)expression).getFieldName();
+			IBinding binding = name.resolveBinding();
+			try {
+			    if( binding instanceof IVariable )
+                    return ((IVariable)binding).getType();
+                else if( binding instanceof IFunction )
+				    return ((IFunction)binding).getType();
+		    } catch ( DOMException e ) {
+		        return e.getProblem();
+            }
+		}
 	    return null;
 	}
 	

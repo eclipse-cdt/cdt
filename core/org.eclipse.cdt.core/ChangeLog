@@ -1,3 +1,6 @@
+2004-07-06 Hoda Amer
+	Fix for PR 68933 : [Content Assist] removes asterisks from parameter prompt
+	
 2004-07-05 Hoda Amer
 	Patch for Keith Campbell, a small fix in CConventions.
 	

@@ -13,12 +13,10 @@
 package org.eclipse.cdt.internal.core.model;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 public abstract class APathEntry extends PathEntry {
 
 	public static IPath[] NO_EXCLUSION_PATTERNS = {};
-	public final static IPath EMPTY_PATH = new Path("");
 	IPath[] exclusionPatterns;
 	IPath basePath;
 	IPath baseRef;

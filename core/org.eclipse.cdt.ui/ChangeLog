@@ -1,3 +1,11 @@
+2003-12-10 Alain Magloire
+
+	A quick fix for PR 47751.  The correct way to deal with this
+	is a rewrite of CDocumentProvider.java  ...
+
+	* src/org/eclipse/cdt/internal/ui/CEditor.java (setInput):
+	Change the DocumentProvider if the file is external.
+
 2003-12-09 Hoda Amer
 	Content Assist work: Modified the project scope user preference
 	Removed the case sensitivily user preference.

@@ -20,8 +20,10 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDISharedLibrary;
 import org.eclipse.cdt.debug.core.cdi.model.ICDITargetConfiguration;
+import org.eclipse.cdt.debug.mi.core.IMIConstants;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MIFormat;
+import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.SharedLibrary;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
@@ -55,6 +57,7 @@ public class SharedLibraryManager extends Manager {
 	public SharedLibraryManager (Session session) {
 		super(session, true);
 		sharedMap = new Hashtable();
+		setAutoUpdate( MIPlugin.getDefault().getPluginPreferences().getBoolean( IMIConstants.PREF_SHARED_LIBRARIES_AUTO_REFRESH ) );
 	}
 
 	synchronized List getSharedList(Target target) {

@@ -52,4 +52,26 @@ public interface IMIConstants
 	 * The maximum value the MI request timeout can have.
 	 */
 	public static final int MAX_REQUEST_TIMEOUT = Integer.MAX_VALUE;
+
+	/**
+	 * Boolean preference controlling whether the shared library manager will be
+	 * refreshed every time when the execution of program stops.
+	 */
+	public static final String PREF_SHARED_LIBRARIES_AUTO_REFRESH = PLUGIN_ID + ".SharedLibraries.auto_refresh"; //$NON-NLS-1$
+
+	/**
+	 * The default value of the for <code>PREF_SHARED_LIBRARIES_AUTO_REFRESH</code> property
+	 */
+	public static final boolean DEF_PREF_SHARED_LIBRARIES_AUTO_REFRESH = true;
+
+	/**
+	 * Boolean preference controlling whether the register manager will be
+	 * refreshed every time when the execution of program stops.
+	 */
+	public static final String PREF_REGISTERS_AUTO_REFRESH = PLUGIN_ID + ".Registers.auto_refresh"; //$NON-NLS-1$
+
+	/**
+	 * The default value of the for <code>PREF_REGISTERS_AUTO_REFRESH</code> property
+	 */
+	public static final boolean DEF_PREF_REGISTERS_AUTO_REFRESH = true;
 }

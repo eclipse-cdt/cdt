@@ -1,3 +1,12 @@
+2004-11-08 Mikhail Khodjaiants
+	Added support for refresh preferences and properties.
+	* IMIConstants.java
+	* MIPlugin.java
+	* MIPreferenceInitializer.java: new
+	* RegisterManager.java
+	* SharedLibraryManager.java
+	* plugin.xml
+
 2004-11-08 Alain Magloire
 	Implement new Interface ICDIFunctionFinished.
 	It returns the return value of the function.

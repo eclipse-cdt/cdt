@@ -19,7 +19,9 @@ import java.util.Map;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterDescriptor;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegisterGroup;
+import org.eclipse.cdt.debug.mi.core.IMIConstants;
 import org.eclipse.cdt.debug.mi.core.MIException;
+import org.eclipse.cdt.debug.mi.core.MIPlugin;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Register;
 import org.eclipse.cdt.debug.mi.core.cdi.model.RegisterDescriptor;
@@ -49,6 +51,7 @@ public class RegisterManager extends Manager {
 	public RegisterManager(Session session) {
 		super(session, true);
 		regsMap = new Hashtable();
+		setAutoUpdate( MIPlugin.getDefault().getPluginPreferences().getBoolean( IMIConstants.PREF_REGISTERS_AUTO_REFRESH ) );
 	}
 
 	synchronized List getRegistersList(Target target) {
@@ -70,7 +73,6 @@ public class RegisterManager extends Manager {
 		return getRegisterDescriptors(target);
 	}
 	public ICDIRegisterDescriptor[] getRegisterDescriptors(Target target) throws CDIException {
-		Session session = (Session)getSession();
 		MISession mi = target.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIDataListRegisterNames registers = factory.createMIDataListRegisterNames();

@@ -48,5 +48,9 @@
             id="org.eclipse.cdt.debug.mi.core.GDBServerCDebugger">
       </debugger>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.debug.mi.core.MIPreferenceInitializer"/>
+   </extension>
 
 </plugin>

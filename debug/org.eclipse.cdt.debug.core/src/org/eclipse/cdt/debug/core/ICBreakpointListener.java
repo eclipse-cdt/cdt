@@ -59,10 +59,10 @@ public interface ICBreakpointListener
 	public void breakpointChanged( IDebugTarget target, IBreakpoint breakpoint, Map attributes );	
 
 	/**
-	 * Notification that the given breakpoint has been removed from the specified target.
+	 * Notification that the given breakpoints have been removed from the specified target.
 	 * 
 	 * @param target debug target
-	 * @param breakpoint breakpoint being removed
+	 * @param breakpoints the breakpoints being removed
 	 */
-	public void breakpointRemoved( IDebugTarget target, IBreakpoint breakpoint );	
+	public void breakpointsRemoved( IDebugTarget target, IBreakpoint[] breakpoints );	
 }

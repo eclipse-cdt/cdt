@@ -739,19 +739,32 @@ int copyTo(char * target, const char * source, int cpyLength, int availSpace)
 	BOOL bSlash = FALSE;
 	int i = 0, j = 0;
 	int totCpyLength = cpyLength;
-	BOOL bQoutedTerm = FALSE;
+
+#define QUOTATION_DO   0
+#define QUOTATION_DONE 1
+#define QUOTATION_NONE 2
+
+	int nQuotationMode = 0;
+
 
 
 	if(availSpace <= cpyLength) // = to reserve space for final '\0'
 		return -1;
 
 	if(('\"' == *source) && ('\"' == *(source + cpyLength - 1)))
-		bQoutedTerm = TRUE; // Already quoted
+		{
+		nQuotationMode = QUOTATION_DONE;
+		}
 	else
 	if(strchr(source, ' ') == NULL)
-		bQoutedTerm = TRUE; // No reason to quotate term becase it doesn't have embedded spaces
+		{
+		// No reason to quotate term becase it doesn't have embedded spaces
+		nQuotationMode = QUOTATION_NONE;
+		}
 	else
 		{
+		// Needs to be quotated
+		nQuotationMode = QUOTATION_DO;
 		*target = '\"';
 		++j;
 		}
@@ -763,7 +776,8 @@ int copyTo(char * target, const char * source, int cpyLength, int availSpace)
 			bSlash = TRUE;
 		else
 			{
-			if(source[i] == '\"' && (!bQoutedTerm || ((i != 0) && (i != (cpyLength - 1))) ) )
+			// Don't escape embracing quotation marks
+			if((source[i] == '\"') && !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))) ) )
 				{
 				if(!bSlash) // If still not escaped
 					{
@@ -781,7 +795,7 @@ int copyTo(char * target, const char * source, int cpyLength, int availSpace)
 		target[j] = source[i];
 		}
 
-	if(!bQoutedTerm)
+	if(nQuotationMode == QUOTATION_DO)
 		{
 		if(j == availSpace)
 			return -1;

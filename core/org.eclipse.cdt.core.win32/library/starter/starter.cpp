@@ -187,29 +187,41 @@ int copyTo(LPTSTR target, LPCTSTR source, int cpyLength, int availSpace)
 	BOOL bSlash = FALSE;
 	int i = 0, j = 0;
 	int totCpyLength = cpyLength;
-	BOOL bQoutedTerm = FALSE;
+
+#define QUOTATION_DO   0
+#define QUOTATION_DONE 1
+#define QUOTATION_NONE 2
+
+	int nQuotationMode = 0;
 	if(availSpace <= cpyLength)  // = to reserve space for '\0'
 		return -1;
 
 	if((_T('\"') == *source) && (_T('\"') == *(source + cpyLength - 1)))
-		bQoutedTerm = TRUE; // Already quoted
+		{
+		// Already done
+		nQuotationMode = QUOTATION_DONE;
+		}
 	else
 	if(_tcschr(source, _T(' ')) == NULL)
-		bQoutedTerm = TRUE; // No reason to quotate term becase it doesn't have embedded spaces
+		{
+		// No reason to quotate term becase it doesn't have embedded spaces
+		nQuotationMode = QUOTATION_NONE;
+		}
 	else
 		{
+		// Needs to be quotated
+		nQuotationMode = QUOTATION_DO;
 		*target = _T('\"');
 		++j;
 		}
-
 
 	for(; i < cpyLength; ++i, ++j) 
 		{
 		if(source[i] == _T('\\'))
 			bSlash = TRUE;
 		else
-		// Escape double quote only if quotation mark is not start or end character
-		if((source[i] == _T('\"')) && (!bQoutedTerm || ((i != 0) && (i != (cpyLength - 1)))) ) 
+		// Don't escape embracing quotation marks
+		if((source[i] == _T('\"')) && !((nQuotationMode == QUOTATION_DONE) && ((i == 0) || (i == (cpyLength - 1))) ) )
 			{
 			if(!bSlash)
 				{
@@ -228,7 +240,7 @@ int copyTo(LPTSTR target, LPCTSTR source, int cpyLength, int availSpace)
 		target[j] = source[i];
 		}
 
-	if(!bQoutedTerm)
+	if(nQuotationMode == QUOTATION_DO)
 		{
 		if(j == availSpace)
 			return -1;

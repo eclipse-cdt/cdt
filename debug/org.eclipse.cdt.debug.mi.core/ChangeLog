@@ -1,5 +1,15 @@
 2003-02-04 Alain Magloire
 
+
+	* src/org/eclipse/cdt/debug/mi/core/cdi/SignalManger.java:
+	Implement signal() method.
+	* src/org/eclipse/cdt/debug/mi/core/command/MISignal.java:
+	New file.
+	* src/org/eclipse/cdt/debug/mi/core/command/CommandFactory.java:
+	(createMISignal): new method.
+
+2003-02-04 Alain Magloire
+
 	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ExitedEvent.java:
 	Catch MIInferiorSignalExitEvent.
 	* src/org/eclipse/cdt/debug/mi/core/cdi/event/ExitedEvent.java:

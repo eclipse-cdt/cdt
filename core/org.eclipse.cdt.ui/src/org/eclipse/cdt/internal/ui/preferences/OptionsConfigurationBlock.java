@@ -17,6 +17,10 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -41,11 +45,17 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.ui.IEditorInput;
+
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.internal.ui.wizards.IStatusChangeListener;
 
 /**
@@ -314,26 +324,27 @@ public abstract class OptionsConfigurationBlock {
 		
 		
 		if (hasChanges) {
-			boolean doBuild= false;
-			String[] strings= getFullBuildDialogStrings(fProject == null);
+			boolean doReParse = false;
+			String[] strings = getFullReParseDialogStrings(fProject == null);
 			if (strings != null) {
-				MessageDialog dialog= new MessageDialog(getShell(), strings[0], null, strings[1], MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 2);
+				MessageDialog dialog = new MessageDialog(getShell(), strings[0], null, strings[1], MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 2);
 				int res= dialog.open();
 				if (res == 0) {
-					doBuild= true;
+					doReParse = true;
 				} else if (res != 1) {
 					return false; // cancel pressed
 				}
 			}
 			setOptions(actualOptions);
-			if (doBuild) {
-				doFullBuild();
+			if (doReParse) {
+				doFullReParse();
 			}
 		}
 		return true;
 	}
 	
 	protected abstract String[] getFullBuildDialogStrings(boolean workspaceSettings);
+	protected abstract String[] getFullReParseDialogStrings(boolean workspaceSettings);
 		
 	protected void doFullBuild() {
 		ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
@@ -363,7 +374,73 @@ public abstract class OptionsConfigurationBlock {
 			String message= PreferencesMessages.getString("OptionsConfigurationBlock.builderror.message"); //$NON-NLS-1$
 			ExceptionHandler.handle(e, getShell(), title, message);
 		}
-	}		
+	}
+	
+	protected void doFullReParse() {
+		ProgressMonitorDialog dialog= new ProgressMonitorDialog(getShell());
+		try {
+			dialog.run(true, true, new IRunnableWithProgress() { 
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					monitor.beginTask("", 1); //$NON-NLS-1$
+					
+					if (fProject != null) {
+						monitor.setTaskName(PreferencesMessages.getFormattedString("OptionsConfigurationBlock.parseproject.taskname", fProject.getElementName())); //$NON-NLS-1$
+						reParseHierarchy(fProject.getResource(), monitor);
+					} else {
+						monitor.setTaskName(PreferencesMessages.getString("OptionsConfigurationBlock.parseall.taskname")); //$NON-NLS-1$
+						reParseHierarchy(CUIPlugin.getWorkspace().getRoot(), monitor);
+					}
+					
+					monitor.done();
+				}
+			});
+		} catch (InterruptedException e) {
+			// cancelled by user
+		} catch (InvocationTargetException e) {
+			String title= PreferencesMessages.getString("OptionsConfigurationBlock.parseerror.title"); //$NON-NLS-1$
+			String message= PreferencesMessages.getString("OptionsConfigurationBlock.parseerror.message"); //$NON-NLS-1$
+			ExceptionHandler.handle(e, getShell(), title, message);
+		}
+	}	
+	
+	protected void reParseHierarchy(IResource root, final IProgressMonitor monitor) {
+		try {
+			root.accept(
+				new IResourceProxyVisitor() {
+					public boolean visit(IResourceProxy proxy) {
+						switch(proxy.getType()) {
+						case IResource.FILE :
+							IFile file = (IFile)proxy.requestResource();
+							CoreModel cModel = CCorePlugin.getDefault().getCoreModel();
+	
+							if (cModel.isTranslationUnit(file)) {
+								ITranslationUnit translationUnit = (ITranslationUnit)cModel.create(file);
+								
+								try {
+									IEditorInput input = EditorUtility.getEditorInput(file);
+									if (input != null) {
+										ITranslationUnit workingCopy = CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(input);
+										if (workingCopy != null) {
+                                            // We have a copy in an editor - use it
+                                            translationUnit = workingCopy;
+                                        } 
+									}
+								
+									translationUnit.makeConsistent(monitor, true /*forced*/);
+								} catch (CModelException e) {
+								}
+							}
+							
+							return false; // Do not look into file's structure 
+						}
+							
+						return true;
+					 }
+				}
+			, IResource.NONE);
+		} catch (CoreException e) {
+		}
+	}
 	
 	public void performDefaults() {
 		fWorkingValues= getDefaultOptions();

@@ -225,7 +225,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		return super.performOk(enabled);
 	}
 
-	
+
 	protected String[] getFullBuildDialogStrings(boolean workspaceSettings) {
 		String title= PreferencesMessages.getString("TodoTaskConfigurationBlock.needsbuild.title"); //$NON-NLS-1$
 		String message;
@@ -233,6 +233,17 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			message= PreferencesMessages.getString("TodoTaskConfigurationBlock.needsfullbuild.message"); //$NON-NLS-1$
 		} else {
 			message= PreferencesMessages.getString("TodoTaskConfigurationBlock.needsprojectbuild.message"); //$NON-NLS-1$
+		}	
+		return new String[] { title, message };
+	}
+	
+	protected String[] getFullReParseDialogStrings(boolean workspaceSettings) {
+		String title= PreferencesMessages.getString("TodoTaskConfigurationBlock.needsparse.title"); //$NON-NLS-1$
+		String message;
+		if (fProject == null) {
+			message= PreferencesMessages.getString("TodoTaskConfigurationBlock.needsfullparse.message"); //$NON-NLS-1$
+		} else {
+			message= PreferencesMessages.getString("TodoTaskConfigurationBlock.needsprojectparse.message"); //$NON-NLS-1$
 		}	
 		return new String[] { title, message };
 	}	

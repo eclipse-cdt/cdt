@@ -48,6 +48,7 @@ public interface IOpenable extends IBufferChangedListener{
 	 * by updating the element's structure and properties as necessary.
 	 */
 	void makeConsistent(IProgressMonitor progress) throws CModelException;
+	void makeConsistent(IProgressMonitor progress, boolean forced) throws CModelException;
 
 	/**
 	 * Opens this element and all parent elements that are not already open.

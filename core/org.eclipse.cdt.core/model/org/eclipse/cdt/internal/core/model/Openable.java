@@ -216,7 +216,11 @@ public abstract class Openable extends Parent implements IOpenable, IBufferChang
 	 * @see org.eclipse.cdt.core.model.IOpenable#makeConsistent(IProgressMonitor)
 	 */
 	public void makeConsistent(IProgressMonitor pm) throws CModelException {
-		if (!isConsistent()) {
+		makeConsistent(pm, false);
+	}
+	
+	public void makeConsistent(IProgressMonitor pm, boolean forced) throws CModelException {
+		if (!isConsistent() || forced) {
 			buildStructure((OpenableInfo)getElementInfo(), pm);
 		}
 	}

@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.internal.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.editor.asm.AsmTextTools;
 import org.eclipse.cdt.internal.ui.IContextMenuConstants;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerConfiguration;
@@ -834,6 +835,15 @@ public class CEditor extends TextEditor implements ISelectionChangedListener {
 	 */
 	protected void initializeKeyBindingScopes() {
 		setKeyBindingScopes(new String [] { "org.eclipse.cdt.ui.cEditorScope" } );
+	}
+
+	/* (non-Javadoc)
+	 * @see AbstractTextEditor#affectsTextPresentation(PropertyChangeEvent)
+	 */
+	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
+		CTextTools textTools = CUIPlugin.getDefault().getTextTools();
+		AsmTextTools asmTools = CUIPlugin.getDefault().getAsmTextTools();
+		return textTools.affectsBehavior(event) || asmTools.affectsBehavior(event);
 	}
 
     /**

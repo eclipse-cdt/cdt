@@ -440,7 +440,10 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 	 * @see org.eclipse.cdt.core.model.IOpenable#makeConsistent(IProgressMonitor)
 	 */
 	public void makeConsistent(IProgressMonitor pm) throws CModelException {
-		if (!isConsistent()) {
+		makeConsistent(pm, false);
+	}
+	public void makeConsistent(IProgressMonitor pm, boolean forced) throws CModelException {
+		if (!isConsistent() || forced) {
 			// create a new info and make it the current info
 			OpenableInfo info = (OpenableInfo) createElementInfo();
 			buildStructure(info, pm);

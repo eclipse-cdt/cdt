@@ -4,6 +4,10 @@
 	the include and defined symbol information for a standard make project.
 	* src/org/eclipse/cdt/ui/wizards/BuildPathInfoBlock.java
 
+2003-07-04 Victor Mozgin
+	Fix for PR 39476: Preference listeners for task tags do not work.
+	Fix for PR 39477: Task tags options dialogs ask for project rebuilds.
+
 2003-06-27 Andrew Niefer
 	Changes for C/C++ Search:
 	Added:

@@ -73,7 +73,7 @@ public class MIPlugin extends Plugin {
 			String ttyName = pty.getSlaveName();
 			args = new String[]{"gdb", "-q", "-nw", "-tty", ttyName, "-i", "mi", program};
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			pty = null;
 			args = new String[]{"gdb", "-q", "-nw", "-i", "mi", program};
 		}
@@ -129,6 +129,10 @@ public class MIPlugin extends Plugin {
 			if (info == null) {
 				throw new IOException("No answer");
 			}
+			//@@@ We have to manually set the suspended state when we attach
+			//(assuming the attach works) as a safeguard since GDB man not
+			//notice the attach (the behaviour in gdb 5.0).
+			session.getMIInferior().setSuspended();
 		} catch (MIException e) {
 			throw new IOException("Failed to attach");
 		}

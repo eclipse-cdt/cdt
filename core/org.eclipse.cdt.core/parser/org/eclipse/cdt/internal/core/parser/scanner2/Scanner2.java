@@ -365,6 +365,9 @@ public class Scanner2 implements IScanner, IScannerData {
 			}
 			catch( Exception e )
 			{
+			    if( e instanceof OffsetLimitReachedException )
+			        throw (OffsetLimitReachedException) e;
+
 			    exception = true;
 				errorHandle();
 			}
@@ -396,6 +399,9 @@ public class Scanner2 implements IScanner, IScannerData {
 		}
 		catch( Exception e )
 		{
+		    if( e instanceof OffsetLimitReachedException )
+		        throw (OffsetLimitReachedException) e;
+		    
 		    nextToken = null;
 		    exception = true;
 			errorHandle();

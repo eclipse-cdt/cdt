@@ -327,11 +327,12 @@ public class ParserSymbolTable {
 		while( name != null ) {
 			if( nameMatches( data, name ) ){
 				obj = ( declarations != null ) ? declarations.get( name ) : null;
-				
-				obj = collectSymbol( data, obj );
-				
-				if( obj != null )
-					found.put( name, obj );
+				if( obj != null ){
+					obj = collectSymbol( data, obj );
+					
+					if( obj != null )
+						found.put( name, obj );
+				}
 			} else {
 				break;
 			}
@@ -847,8 +848,8 @@ public class ParserSymbolTable {
 			while( valid && iter.hasNext() ){
 				symbol = (ISymbol) iter.next();
 				if( symbol.isType( TypeInfo.t_template ) ){
-					IParameterizedSymbol template = (IParameterizedSymbol) symbol;
-					symbol = (ISymbol) template.getContainedSymbols().get( template.getName() );	
+					ITemplateSymbol template = (ITemplateSymbol) symbol;
+					symbol = (ISymbol) template.getTemplatedSymbol();	
 				}
 				valid = ( symbol instanceof IParameterizedSymbol) && isValidFunctionOverload( (IParameterizedSymbol)symbol, (IParameterizedSymbol)newSymbol );
 			}

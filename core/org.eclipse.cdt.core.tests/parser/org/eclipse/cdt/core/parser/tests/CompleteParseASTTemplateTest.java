@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.parser.ast.IASTSimpleTypeSpecifier;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateInstantiation;
 import org.eclipse.cdt.core.parser.ast.IASTTemplateParameter;
-import org.eclipse.cdt.core.parser.ast.IASTTemplatedDeclaration;
+import org.eclipse.cdt.core.parser.ast.IASTTemplateSpecialization;
 import org.eclipse.cdt.core.parser.ast.IASTTypedefDeclaration;
 import org.eclipse.cdt.core.parser.ast.IASTVariable;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -698,5 +698,41 @@ public class CompleteParseASTTemplateTest extends CompleteParseBaseTest {
 		} catch ( ParserException e ){
 			assertTrue( e.getMessage().equals( "FAILURE" ) );
 		}
+	}
+	
+	public void testBug57754() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write("template < class T > class A{                      ");
+		writer.write("   typedef int _type;                              ");
+		writer.write("   void f( _type, T );                             ");
+		writer.write("};                                                 ");
+		writer.write("template < class T > void A< T >::f( _type, T ) {} ");
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTClassSpecifier cls = (IASTClassSpecifier) template.getOwnedDeclaration();
+		
+		i = getDeclarations( cls );
+		IASTTypedefDeclaration _type = (IASTTypedefDeclaration) i.next();
+		
+		assertReferenceTask( new Task( _type, 2 ) );
+	}
+	
+	public void testContructorsAndExplicitSpecialization() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write("template < class T > class A {  ");
+		writer.write("   A();                         ");
+		writer.write("   A( int );                    ");
+		writer.write("   ~A();                        ");
+		writer.write("};                              ");
+		writer.write("template <> A< char >::~A();    ");
+
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTTemplateDeclaration template = (IASTTemplateDeclaration) i.next();
+		IASTTemplateSpecialization spec = (IASTTemplateSpecialization) i.next();
 	}
 }

@@ -667,8 +667,8 @@ public final class TemplateEngine {
 		if( template.getContainedSymbols() == null || template.getContainedSymbols().size() != 1 ){
 			return null;
 		}
-		Iterator iter = template.getContainedSymbols().keySet().iterator();
-		ISymbol templateSymbol = (ISymbol) template.getContainedSymbols().get( iter.next() );
+
+		ISymbol templateSymbol = (ISymbol) template.getTemplatedSymbol();
 		if( !templateSymbol.isType( TypeInfo.t_function ) ){
 			return null;
 		}

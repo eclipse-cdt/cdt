@@ -369,7 +369,10 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 						
 						if( result != null ){
 		                	if( lookup == LookupType.FORPARENTSCOPE && startingScope instanceof ITemplateFactory ){
-		                		((ITemplateFactory)startingScope).pushSymbol( result );
+		                		if( templateArgLists != null && templateArgLists[idx] != null )
+		                			((ITemplateFactory)startingScope).pushTemplateId( result, getTemplateArgList( templateArgLists[idx] ) );
+		                		else 
+		                			((ITemplateFactory)startingScope).pushSymbol( result );
 		                	}
 							addReference( references, createReference( result, image, offset ));
 							if( templateArgLists != null && templateArgLists[idx] != null )
@@ -501,11 +504,15 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
         
         IUsingDeclarationSymbol endResult = null;
         
-        if( name.length() != 1 )
+        if(name.getSegmentCount() > 1)
         {
-        	ITokenDuple duple = name.getSubrange(0,name.length() - 3 );
-        	IContainerSymbol containerSymbol = (IContainerSymbol) lookupQualifiedName( scopeToSymbol(scope), duple, references, true );
-	        
+        	ITokenDuple duple = name.getLeadingSegments();
+        	ISymbol symbol = lookupQualifiedName( scopeToSymbol(scope), duple, references, true );
+        	IContainerSymbol containerSymbol = null;
+        	if( symbol instanceof IContainerSymbol )
+        		containerSymbol = (IContainerSymbol) symbol;
+        	else if ( symbol instanceof IDeferredTemplateInstance )
+        		containerSymbol = ((IDeferredTemplateInstance)symbol).getTemplate().getTemplatedSymbol();
 	        try
 	        {
 	            endResult = scopeToSymbol(scope).addUsingDeclaration( name.getLastToken().getImage(), containerSymbol );
@@ -2993,6 +3000,40 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		return codeScope;
 	}
 
+	public IASTScope getDeclaratorScope(IASTScope scope, ITokenDuple duple){
+		if( duple != null && duple.getSegmentCount() > 1){
+			List refs = new ArrayList();
+			
+			IContainerSymbol ownerScope = scopeToSymbol( scope );
+			ISymbol symbol;
+			
+			try {
+				symbol = lookupQualifiedName( ownerScope, duple.getLeadingSegments(), refs, false, LookupType.FORDEFINITION );
+			} catch (ASTSemanticException e) {
+				return scope;
+			}
+			
+			IContainerSymbol parentScope = null;
+			
+			if( symbol instanceof IContainerSymbol )
+				parentScope = (IContainerSymbol) symbol;
+			else if( symbol instanceof IDeferredTemplateInstance )
+				parentScope = ((IDeferredTemplateInstance) symbol).getTemplate().getTemplatedSymbol();
+			
+			if( parentScope != null && parentScope.getASTExtension() != null ){
+				if( scope instanceof IASTTemplateDeclaration || scope instanceof IASTTemplateSpecialization ){
+					symbol = scopeToSymbol( scope );
+					if( symbol instanceof ITemplateFactory ){
+						symbol.setContainingSymbol( parentScope );
+					}
+					return scope;
+				}
+				return (IASTScope)parentScope.getASTExtension().getPrimaryDeclaration();
+			}
+		}
+		
+		return scope;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#queryIsTypeName(org.eclipse.cdt.core.parser.ITokenDuple)
 	 */
@@ -3010,8 +3051,8 @@ public class CompleteParseASTFactory extends BaseASTFactory implements IASTFacto
 		} 
 		if( lookupSymbol == null ) return false;
 		if( lookupSymbol.isType( TypeInfo.t_type, TypeInfo.t_enumeration ) ||
-			( lookupSymbol.isType( TypeInfo.t_templateParameter ) && 
-			  lookupSymbol.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ) )
+			(lookupSymbol.isType( TypeInfo.t_templateParameter ) && lookupSymbol.getTypeInfo().getTemplateParameterType() == TypeInfo.t_typeName ) ||
+			(lookupSymbol.getASTExtension() != null && lookupSymbol.getASTExtension().getPrimaryDeclaration() instanceof IASTTypedefDeclaration ) )
 		{
 			return true;
 		}

@@ -2043,6 +2043,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                     case IToken.tLPAREN :
                     	
                     	boolean failed = false;
+                    	IASTScope parameterScope = astFactory.getDeclaratorScope( scope, d.getNameDuple() );
                         // temporary fix for initializer/function declaration ambiguity
                         if ( queryLookaheadCapability(2) && !LA(2).looksLikeExpression() && strategy != SimpleDeclarationStrategy.TRY_VARIABLE  )
                         {
@@ -2055,7 +2056,7 @@ public abstract class Parser extends ExpressionParser implements IParser
 	                        	{
 	                        		try
                                     {
-                                        if( ! astFactory.queryIsTypeName( scope, name(scope, CompletionKind.TYPE_REFERENCE ) ) )
+                                        if( ! astFactory.queryIsTypeName( parameterScope, name(parameterScope, CompletionKind.TYPE_REFERENCE ) ) )
                                         	failed = true;
                                     }
                                     catch (Exception e)
@@ -2084,7 +2085,7 @@ public abstract class Parser extends ExpressionParser implements IParser
                                 {
                                     case IToken.tRPAREN :
                                         consume();
-                                        setCompletionValues( scope, CompletionKind.NO_SUCH_KIND, KeywordSets.Key.FUNCTION_MODIFIER );
+                                        setCompletionValues( parameterScope, CompletionKind.NO_SUCH_KIND, KeywordSets.Key.FUNCTION_MODIFIER );
                                         break parameterDeclarationLoop;
                                     case IToken.tELLIPSIS :
                                         consume();
@@ -2092,13 +2093,13 @@ public abstract class Parser extends ExpressionParser implements IParser
                                         break;
                                     case IToken.tCOMMA :
                                         consume();
-                                        setCompletionValues( scope, CompletionKind.ARGUMENT_TYPE, Key.DECL_SPECIFIER_SEQUENCE );            
+                                        setCompletionValues( parameterScope, CompletionKind.ARGUMENT_TYPE, Key.DECL_SPECIFIER_SEQUENCE );            
                                         seenParameter = false;
                                         break;
                                     default :
                                         if (seenParameter)
                                             throw backtrack;
-                                        parameterDeclaration(d, scope);
+                                        parameterDeclaration(d, parameterScope);
                                         seenParameter = true;
                                 }
                             }

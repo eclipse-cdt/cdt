@@ -1,3 +1,11 @@
+2004-04-09 Andrew Niefer
+	fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=57754
+	Fixed problems found after parsing iostream with discovered symbols, once 57754 was fixed:
+  		fixed some problems with explicit specializations
+		handle using declarations of templates
+		handle typedefs in ASTCompleteParseFactory.queryIsTypeName
+		fixed instantiating constructors
+
 2004-04-08 John Camelon
 	Fixed https://bugs.eclipse.org/bugs/show_bug.cgi?id=57800.
 

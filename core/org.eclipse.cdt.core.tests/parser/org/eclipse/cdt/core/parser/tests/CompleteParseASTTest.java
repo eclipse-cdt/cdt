@@ -1412,6 +1412,28 @@ public class CompleteParseASTTest extends CompleteParseBaseTest
 		assertAllReferences( 2, createTaskList( new Task( outerS ), new Task( innerS ) ) );
 	}
 	
+	public void testBug57754() throws Exception
+	{
+		Writer writer = new StringWriter();
+		writer.write( "struct X {          " );
+		writer.write( "   typedef int T;   " );
+		writer.write( "   void f( T );     " );
+		writer.write( "};                  " );
+		writer.write( "void X::f( T ) { }  " );
+		
+		Iterator i = parse( writer.toString() ).getDeclarations();
+		
+		IASTClassSpecifier X = (IASTClassSpecifier) ((IASTAbstractTypeSpecifierDeclaration)i.next()).getTypeSpecifier();
+		IASTMethod f = (IASTMethod) i.next();
+		
+		assertTrue( f.previouslyDeclared() );
+		
+		i = getDeclarations( X );
+		IASTTypedefDeclaration T = (IASTTypedefDeclaration) i.next();
+		
+		assertAllReferences( 3, createTaskList( new Task( X ), new Task( T, 2 ) ) );
+	}	
+	
 	public void testBug57800() throws Exception
 	{
 		Writer writer= new StringWriter();

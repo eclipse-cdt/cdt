@@ -95,6 +95,11 @@ public class DerivableContainerSymbol extends ContainerSymbol implements IDeriva
 		}
 	}
 	
+	protected void collectInstantiatedConstructor( IParameterizedSymbol constructor ){
+		if( constructor.isType( TypeInfo.t_constructor ) )
+			getConstructors().add( constructor );
+	}
+	
 	public void addSymbol(ISymbol symbol) throws ParserSymbolTableException {
 		super.addSymbol( symbol );
 					

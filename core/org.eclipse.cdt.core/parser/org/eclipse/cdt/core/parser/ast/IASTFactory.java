@@ -252,6 +252,13 @@ public interface IASTFactory
 	public void setLogger(IParserLogService log);
 
 	/**
+	 * @param scope
+	 * @param duple
+	 * @return
+	 */
+	public IASTScope getDeclaratorScope(IASTScope scope, ITokenDuple duple);
+
+	/**
 	 * @param scope TODO
 	 * @param expression
 	 * @return

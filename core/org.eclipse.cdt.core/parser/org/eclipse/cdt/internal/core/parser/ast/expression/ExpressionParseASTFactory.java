@@ -922,5 +922,12 @@ public class ExpressionParseASTFactory extends BaseASTFactory implements IASTFac
 		return null;
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.parser.ast.IASTFactory#getDeclaratorScope(org.eclipse.cdt.core.parser.ast.IASTScope, org.eclipse.cdt.core.parser.ITokenDuple)
+	 */
+	public IASTScope getDeclaratorScope(IASTScope scope, ITokenDuple duple) {
+		return scope;
+	}
+
+
 }

@@ -121,22 +121,25 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 					}
 					
 					newSymbol = ((ISymbol)containedSymbol).instantiate( template, instanceMap );
-					
 					newSymbol.setContainingSymbol( newContainer );
 					newContainer._contents.add( newSymbol );
-									
-					if( newContainer.getContainedSymbols().containsKey( newSymbol.getName() ) ){
-						Object obj = newContainer.getContainedSymbols().get( newSymbol.getName() );
-						if( obj instanceof List ){
-							((List) obj).add( obj );
-						} else {
-							List list = new LinkedList();
-							list.add( obj );
-							list.add( newSymbol );
-							newContainer.getContainedSymbols().put( newSymbol.getName(), list );
-						}
+					
+					if( newSymbol instanceof IParameterizedSymbol && newSymbol.isType( TypeInfo.t_constructor ) ){
+						collectInstantiatedConstructor( (IParameterizedSymbol) containedSymbol );	
 					} else {
-						newContainer.getContainedSymbols().put( newSymbol.getName(), newSymbol );
+						if( newContainer.getContainedSymbols().containsKey( newSymbol.getName() ) ){
+							Object obj = newContainer.getContainedSymbols().get( newSymbol.getName() );
+							if( obj instanceof List ){
+								((List) obj).add( obj );
+							} else {
+								List list = new LinkedList();
+								list.add( obj );
+								list.add( newSymbol );
+								newContainer.getContainedSymbols().put( newSymbol.getName(), list );
+							}
+						} else {
+							newContainer.getContainedSymbols().put( newSymbol.getName(), newSymbol );
+						}
 					}
 				}
 			}
@@ -145,6 +148,9 @@ public class ContainerSymbol extends BasicSymbol implements IContainerSymbol {
 		return newContainer;	
 	}
 	
+	protected void collectInstantiatedConstructor( IParameterizedSymbol constructor ){
+		throw new ParserSymbolTableError();
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.internal.core.parser.pst.IContainerSymbol#addSymbol(org.eclipse.cdt.internal.core.parser.pst.ISymbol)
 	 */

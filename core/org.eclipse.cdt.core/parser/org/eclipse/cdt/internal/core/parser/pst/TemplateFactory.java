@@ -106,15 +106,19 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		ListIterator tIter = templates.listIterator();
 		
 		ISymbol sym = null;
+		ISymbol container = null;
+		boolean templateParamState = false;
 		while( iter.hasNext() ){
 			sym = (ISymbol) iter.next();
 			if( !sym.getContainingSymbol().isType( TypeInfo.t_template ) ){
 				iter.remove();
 			} else if( tIter.hasNext() ) {
-//				ITemplateSymbol template = (ITemplateSymbol) tIter.next();
-//				List args = (List) argMap.get( sym );
-//				template = TemplateEngine.selectTemplateOrSpecialization( (ITemplateSymbol) sym.getContainingSymbol(), template.getParameterList(), args );
-//				tIter.set( template );
+				ITemplateSymbol template = (ITemplateSymbol) tIter.next();
+				if( template.getParameterList().size() == 0 ){
+					templateParamState = true;
+					container = sym;
+				} else if( templateParamState )
+					throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
 			} else {
 				throw new ParserSymbolTableException( ParserSymbolTableException.r_BadTemplate );
 			}
@@ -122,6 +126,13 @@ public class TemplateFactory extends ExtensibleSymbol implements ITemplateFactor
 		
 		int numTemplates = templates.size();
 		int numSymbols = symbols.size();
+		
+		if( templateParamState ){
+			ITemplateSymbol template = (ITemplateSymbol) container.getContainingSymbol();
+			List args = (List) argMap.get( container );
+			addExplicitSpecialization( (ITemplateSymbol) container.getContainingSymbol(), symbol, args );
+			return;
+		}
 		
 		if( numTemplates == numSymbols + 1 ){
 			//basic template declaration or Definition

@@ -611,6 +611,8 @@ public class CMainTab extends CLaunchConfigurationTab {
 			if (bins != null && bins.length == 1) {
 				binary = bins[0];
 			}
+		} else if (cElement instanceof IBinary) {
+			binary = (IBinary)cElement;
 		}
 
 		if (binary != null) {
@@ -620,7 +622,7 @@ public class CMainTab extends CLaunchConfigurationTab {
 			String name = binary.getElementName();
 			int index = name.lastIndexOf('.');
 			if (index > 0) {
-				name = name.substring(index + 1);
+				name = name.substring(0, index - 1);
 			}
 			name = getLaunchConfigurationDialog().generateName(name);
 			config.rename(name);

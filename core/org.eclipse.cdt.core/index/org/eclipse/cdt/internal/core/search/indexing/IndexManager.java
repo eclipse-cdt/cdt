@@ -308,6 +308,14 @@ public class IndexManager extends JobManager implements IIndexConstants {
 				project.setSessionProperty(IndexManager.activationKey, indexValue);
 				return indexValue.booleanValue();
 			}
+			
+//			TODO: Indexer Block Place holder for Managed Make - take out
+			indexValue = new Boolean(true);
+			project.setSessionProperty(IndexManager.activationKey, indexValue);
+			return indexValue.booleanValue();
+			
+			
+			
 		} catch (CoreException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

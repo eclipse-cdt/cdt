@@ -141,6 +141,7 @@ public class MIPlugin extends Plugin {
 			}
 			//@@@ We have to manually set the suspended state when we attach
 			session.getMIInferior().setSuspended();
+			session.getMIInferior().update();
 		} catch (MIException e) {
 			// If an exception is thrown that means ok
 			// we did not attach to any target.
@@ -218,6 +219,7 @@ public class MIPlugin extends Plugin {
 		}
 		//@@@ We have to manually set the suspended state when we attach
 		session.getMIInferior().setSuspended();
+		session.getMIInferior().update();
 		return new Session(session, true);
 	}
 

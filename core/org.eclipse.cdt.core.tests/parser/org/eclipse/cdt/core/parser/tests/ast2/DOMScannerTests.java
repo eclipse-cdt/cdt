@@ -10,6 +10,7 @@
  **********************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -24,6 +25,8 @@ public class DOMScannerTests extends AST2BaseTest {
     public void testSimpleLocation() throws ParserException {
         IASTTranslationUnit tu = parse( "int x;", ParserLanguage.C ); //$NON-NLS-1$
         assertEquals( tu.getDeclarations()[0].getNodeLocations().length, 1 );
+        assertTrue( tu.getDeclarations()[0].getNodeLocations()[0] instanceof IASTFileLocation );
+        
     }
     
     

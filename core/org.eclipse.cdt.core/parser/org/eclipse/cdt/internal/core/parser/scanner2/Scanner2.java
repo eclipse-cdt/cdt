@@ -242,10 +242,10 @@ public class Scanner2 extends BaseScanner {
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#handleProblem(int,
      *      int, char[])
      */
-    protected void handleProblem(int id, int startOffset, char[] arg) {
+    protected void handleProblem(int id, int offset, char[] arg) {
         if (parserMode == ParserMode.COMPLETION_PARSE)
             return;
-        IProblem p = spf.createProblem(id, startOffset,
+        IProblem p = spf.createProblem(id, offset,
                 bufferPos[bufferStackPos],
                 getLineNumber(bufferPos[bufferStackPos]), getCurrentFilename(),
                 arg != null ? arg : EMPTY_CHAR_ARRAY, false, true);

@@ -17,8 +17,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
  */
 public interface IScannerPreprocessorLog {
 
-    public void startTranslationUnit();
-
     public void endTranslationUnit(int finalOffset);
 
     public void startInclusion(char[] includePath, int offset);
@@ -54,7 +52,7 @@ public interface IScannerPreprocessorLog {
     public void encounterPoundElse(int startOffset, int endOffset);
 
     public void encounterPoundElif(int startOffset, int endOffset);
-
+    
     public void encounterPoundEndIf(int startOffset, int endOffset);
     
     public void encounterProblem( IASTProblem problem );

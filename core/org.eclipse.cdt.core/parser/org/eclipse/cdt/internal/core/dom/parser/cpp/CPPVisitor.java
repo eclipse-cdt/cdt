@@ -112,8 +112,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTSimpleDeclSpecifier;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CBaseVisitorAction;
-import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor.CollectProblemsAction;
 
 /**
  * @author aniefer

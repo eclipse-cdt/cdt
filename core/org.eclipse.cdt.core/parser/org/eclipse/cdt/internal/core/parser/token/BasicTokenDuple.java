@@ -106,7 +106,7 @@ public class BasicTokenDuple implements ITokenDuple {
 			if( token.getType() == IToken.tLT )
 				token = TokenFactory.consumeTemplateIdArguments( token, last );
 			if( token.getType() == IToken.tCOLONCOLON  ){
-			    ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, prev );
+			    ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, ( prev == null ) ? startOfSegment : prev );
 			    r.add( d );
 			    startOfSegment = token.getNext();
 				continue;

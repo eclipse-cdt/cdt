@@ -28,6 +28,12 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
 
     private List problems = Collections.EMPTY_LIST;
     private static final IASTProblem[] EMPTY_PROBLEMS_ARRAY = new IASTProblem[0];
+    /**
+     * 
+     */
+    public LocationMap() {
+        startTranslationUnit();
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.ILocationResolver#getMacroDefinitions()
@@ -72,9 +78,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.IScannerPreprocessorLog#startTranslationUnit()
      */
-    public void startTranslationUnit() {
-        // TODO Auto-generated method stub
-
+    protected void startTranslationUnit() {
     }
 
     /* (non-Javadoc)

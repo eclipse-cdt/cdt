@@ -155,7 +155,7 @@ public class TemplateTokenDuple extends BasicTokenDuple {
 			        newArgs = new ArrayList( 1 );
 			        newArgs.add( argLists[count]);
 			    }
-			    ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, prev, newArgs );
+			    ITokenDuple d = TokenFactory.createTokenDuple( startOfSegment, prev != null ? prev : startOfSegment, newArgs );
 			    r.add( d );
 			    startOfSegment = token.getNext();
 			    ++count;

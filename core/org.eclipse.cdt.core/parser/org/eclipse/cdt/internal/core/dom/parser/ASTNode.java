@@ -28,14 +28,25 @@ public abstract class ASTNode implements IASTNode {
         return length;
     }
 
-    public void setOffset(int offset) {
+    public void setOffset( int offset )
+    {
         this.offset = offset;
     }
-
-    public void setLength(int length) {
+    
+    public void setLength( int length )
+    {
         this.length = length;
     }
-
+    
+    public void setOffsetAndLength(int offset, int length) {
+        this.offset = offset;
+    }
+    
+    public void setOffsetAndLength( ASTNode node )
+    {
+       setOffsetAndLength( node.getOffset(), node.getLength() );
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.cdt.core.dom.ast.IASTNode#getNodeLocations()
      */

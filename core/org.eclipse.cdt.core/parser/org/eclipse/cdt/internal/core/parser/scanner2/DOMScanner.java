@@ -32,6 +32,7 @@ import org.eclipse.cdt.internal.core.parser.token.SimpleToken;
 public class DOMScanner extends BaseScanner {
 
     private final ICodeReaderFactory codeReaderFactory;
+    private int contextStart = 0;
     
     private static class DOMInclusion
     {
@@ -128,9 +129,11 @@ public class DOMScanner extends BaseScanner {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#popContext()
      */
-    protected void popContext() {
+    protected Object popContext() {
         //TODO calibrate offsets
-        super.popContext();
+        Object result = super.popContext();
+        
+        return result;
     }
 	/**
 	 * @return
@@ -200,9 +203,19 @@ public class DOMScanner extends BaseScanner {
     /* (non-Javadoc)
      * @see org.eclipse.cdt.internal.core.parser.scanner2.BaseScanner#handleProblem(int, int, char[])
      */
-    protected void handleProblem(int id, int startOffset, char[] arg) {
+    protected void handleProblem(int id, int offset, char[] arg) {
         IASTProblem problem = new ScannerASTProblem(id, arg, true, false );
+        int o = resolveOffset( offset );
+        ((ScannerASTProblem)problem).setOffsetAndLength( o, resolveOffset( getCurrentOffset() + 1 ) - o );
         locationMap.encounterProblem(problem); 
+    }
+
+    /**
+     * @param offset
+     * @return
+     */
+    private int resolveOffset(int offset) {
+        return contextStart + offset; 
     }
 
 }

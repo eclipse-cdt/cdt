@@ -95,7 +95,7 @@ abstract class BaseScanner implements IScanner {
 	
 	// The context stack
 	protected static final int bufferInitialSize = 8;
-	int bufferStackPos = -1;
+	protected int bufferStackPos = -1;
 	protected char[][] bufferStack = new char[bufferInitialSize][];
 	protected Object[] bufferData = new Object[bufferInitialSize];
 	protected int[] bufferPos = new int[bufferInitialSize];
@@ -1269,16 +1269,18 @@ abstract class BaseScanner implements IScanner {
         }
     }
 
-    protected void popContext() {
+    protected Object popContext() {
 		bufferStack[bufferStackPos] = null;
 		if( bufferData[bufferStackPos] instanceof InclusionData )
 			popInclusion(((InclusionData)bufferData[bufferStackPos]).inclusion);
 		
+		Object result = bufferData[bufferStackPos];
 		bufferData[bufferStackPos] = null;
 		--bufferStackPos;
 		
 		if( preIncludeFiles.hasNext() )
 			pushForcedInclusion();
+		return result;
 	}
 	
 	/**
@@ -2115,7 +2117,7 @@ abstract class BaseScanner implements IScanner {
 	/**
 	 * @param scanner_bad_character
 	 */
-	protected abstract void handleProblem(int id, int startOffset, char [] arg );
+	protected abstract void handleProblem(int id, int offset, char [] arg );
 
     /**
 	 * @param i

@@ -602,6 +602,6 @@ public class CDebugModel
 	private static IResource getFunctionResource( IFunction function )
 	{
 		ITranslationUnit tu = function.getTranslationUnit();
-		return ( tu != null ) ? tu.getResource() : null;
+		return ( tu != null ) ? tu.getResource() : function.getCProject().getProject();
 	}
 }

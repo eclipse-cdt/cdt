@@ -195,7 +195,7 @@ public class MIPlugin extends Plugin {
 		return getDefault().getDescriptor().getUniqueIdentifier();
 	}
 
-	public static void debugLog(String message) {
+	public void debugLog(String message) {
 		if (getDefault().isDebugging()) {
 			// This is to verbose for a log file, better use the console.
 			//	getDefault().getLog().log(StatusUtil.newStatus(Status.ERROR, message, null));

@@ -128,7 +128,7 @@ public class DebugTests extends TestCase {
 		assertNotNull(cdiTarget);
 		location=cdiTarget.createLocation(null, "func1", 0);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 		session.getCurrentTarget().resume();
 		session.terminate();
 		session=null;

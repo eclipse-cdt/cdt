@@ -178,7 +178,7 @@ public class BreakpointTests extends TestCase {
 
 		location = cdiTarget.createLocation(null, "func1", 0);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 
 		/***********************************************************************
 		 * Create a break point on main
@@ -186,7 +186,7 @@ public class BreakpointTests extends TestCase {
 
 		location = cdiTarget.createLocation(null, "main", 0);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 
 		/***********************************************************************
 		 * Try to create a break point on a function name that does not exist We
@@ -197,7 +197,7 @@ public class BreakpointTests extends TestCase {
 		location = cdiTarget.createLocation(null, "badname", 0);
 		assertNotNull(location);
 		try {
-			cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+			cdiTarget.setLocationBreakpoint(0, location, null, false);
 		} catch (CDIException e) {
 			caught = true;
 		}
@@ -212,7 +212,7 @@ public class BreakpointTests extends TestCase {
 
 		location = cdiTarget.createLocation(null, "func1", 0);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 		targets = session.getTargets();
 		/*
 		 * We better only have one target connected to this session or something
@@ -272,14 +272,14 @@ public class BreakpointTests extends TestCase {
 		 **********************************************************************/
 		location = cdiTarget.createLocation("main.c", null, 7);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 
 		/***********************************************************************
 		 * Create a break point in main
 		 **********************************************************************/
 		location = cdiTarget.createLocation("main.c", null, 18);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 
 		/***********************************************************************
 		 * Try to create a break point on a line that does not exist We expect
@@ -290,7 +290,7 @@ public class BreakpointTests extends TestCase {
 		location = cdiTarget.createLocation("main.c", null, 30);
 		assertNotNull(location);
 		try {
-			cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+			cdiTarget.setLocationBreakpoint(0, location, null, false);
 		} catch (CDIException e) {
 			caught = true;
 		}
@@ -303,7 +303,7 @@ public class BreakpointTests extends TestCase {
 
 		location = cdiTarget.createLocation("main.c", null, 11);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 
 		/***********************************************************************
 		 * Create a break point in a generic function without passing the source
@@ -314,12 +314,12 @@ public class BreakpointTests extends TestCase {
 		 **********************************************************************/
 		location = cdiTarget.createLocation(null, null, 7);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 		caught = false;
 		location = cdiTarget.createLocation(null, null, 30);
 		assertNotNull(location);
 		try {
-			cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+			cdiTarget.setLocationBreakpoint(0, location, null, false);
 		} catch (CDIException e) {
 			caught = true;
 		}
@@ -334,7 +334,7 @@ public class BreakpointTests extends TestCase {
 
 		location = cdiTarget.createLocation(null, null, 7);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 		targets = session.getTargets();
 		/*
 		 * We better only have one target connected to this session or something
@@ -397,7 +397,7 @@ public class BreakpointTests extends TestCase {
 		/* Create a break point on a generic function */
 		location = cdiTarget.createLocation("main.c", "func1", 0);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 
 		breakpoints = cdiTarget.getBreakpoints();
 		assertNotNull(breakpoints);
@@ -417,7 +417,7 @@ public class BreakpointTests extends TestCase {
 		/* Create another break point on main */
 		location = cdiTarget.createLocation("main.c", "main", 0);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, null, false);
 
 		breakpoints = cdiTarget.getBreakpoints();
 		assertNotNull(breakpoints);
@@ -469,7 +469,7 @@ public class BreakpointTests extends TestCase {
 		/* Create a break point on a generic function */
 		location = cdiTarget.createLocation("main.c", "func1", 0);
 		assertNotNull(location);
-		curbreak = cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		curbreak = cdiTarget.setLocationBreakpoint(0, location, null, false);
 		cdiTarget.deleteBreakpoints( new ICDIBreakpoint[] { curbreak } );
 		pause();
 		/**
@@ -488,12 +488,12 @@ public class BreakpointTests extends TestCase {
 		/* Create a break point on a generic function */
 		location = cdiTarget.createLocation("main.c", "func1", 0);
 		assertNotNull(location);
-		curbreak = cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		curbreak = cdiTarget.setLocationBreakpoint(0, location, null, false);
 		savedLocation = curbreak.getLocation();
 
 		location = cdiTarget.createLocation("main.c", "main", 0);
 		assertNotNull(location);
-		curbreak = cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+		curbreak = cdiTarget.setLocationBreakpoint(0, location, null, false);
 		cdiTarget.deleteBreakpoints( new ICDIBreakpoint[] { curbreak } );
 		pause();
 		breakpoints = cdiTarget.getBreakpoints();
@@ -518,7 +518,7 @@ public class BreakpointTests extends TestCase {
 		savedbreakpoints = new ICDIBreakpoint[1];
 		for (int x = 0; x < 10; x++) {
 			location = cdiTarget.createLocation("main.c", null, x + 1);
-			savedbreakpoints[0] = cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+			savedbreakpoints[0] = cdiTarget.setLocationBreakpoint(0, location, null, false);
 			assertNotNull(savedbreakpoints[0]);
 		}
 		cdiTarget.deleteBreakpoints(savedbreakpoints);
@@ -542,7 +542,7 @@ public class BreakpointTests extends TestCase {
 		savedbreakpoints = new ICDIBreakpoint[4];
 		for (int x = 0; x < 10; x++) {
 			location = cdiTarget.createLocation("main.c", null, x + 1);
-			savedbreakpoints[x % 4] = cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+			savedbreakpoints[x % 4] = cdiTarget.setLocationBreakpoint(0, location, null, false);
 			assertNotNull(savedbreakpoints[x % 4]);
 		}
 		cdiTarget.deleteBreakpoints(savedbreakpoints);
@@ -566,7 +566,7 @@ public class BreakpointTests extends TestCase {
 		savedbreakpoints = new ICDIBreakpoint[10];
 		for (int x = 0; x < 10; x++) {
 			location = cdiTarget.createLocation("main.c", null, x + 1);
-			savedbreakpoints[x] = cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+			savedbreakpoints[x] = cdiTarget.setLocationBreakpoint(0, location, null, false);
 			assertNotNull(savedbreakpoints[x]);
 		}
 		cdiTarget.deleteBreakpoints(savedbreakpoints);
@@ -581,7 +581,7 @@ public class BreakpointTests extends TestCase {
 
 		for (int x = 0; x < 10; x++) {
 			location = cdiTarget.createLocation("main.c", null, x + 1);
-			curbreak = cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+			curbreak = cdiTarget.setLocationBreakpoint(0, location, null, false);
 			assertNotNull(curbreak);
 		}
 		cdiTarget.deleteAllBreakpoints();
@@ -613,7 +613,7 @@ public class BreakpointTests extends TestCase {
 		ICDICondition cond = cdiTarget.createCondition(0, "");
 		ICDILocation location = cdiTarget.createLocation(null, "func1", 0);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, cond, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, cond, false);
 
 		/***********************************************************************
 		 * Create a break point on a generic function with an valid condition
@@ -621,7 +621,7 @@ public class BreakpointTests extends TestCase {
 		cond = cdiTarget.createCondition(0, "x<10");
 		location = cdiTarget.createLocation(null, "func1", 0);
 		assertNotNull(location);
-		cdiTarget.setLocationBreakpoint(0, location, cond, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, cond, false);
 
 		/***********************************************************************
 		 * Create a break point on a generic function with an invalid condition
@@ -631,7 +631,7 @@ public class BreakpointTests extends TestCase {
 		location = cdiTarget.createLocation(null, "func1", 0);
 		assertNotNull(location);
 		try {
-			cdiTarget.setLocationBreakpoint(0, location, cond, null, false);
+			cdiTarget.setLocationBreakpoint(0, location, cond, false);
 		} catch (CDIException e) {
 			caught = true;
 		}
@@ -647,7 +647,7 @@ public class BreakpointTests extends TestCase {
 		assertNotNull(location);
 		cond = cdiTarget.createCondition(0, "a>10");
 
-		cdiTarget.setLocationBreakpoint(0, location, cond, null, false);
+		cdiTarget.setLocationBreakpoint(0, location, cond, false);
 		targets = session.getTargets();
 		/*
 		 * We better only have one target connected to this session or something

@@ -144,7 +144,7 @@ public class LocationTests extends TestCase {
          **********************************************************************/
         location=cdiTarget.createLocation("main.c", "func1", 0);
         assertNotNull(location);
-        location2=cdiTarget.setLocationBreakpoint(0, location, null, null, false).getLocation();
+        location2=cdiTarget.setLocationBreakpoint(0, location, null, false).getLocation();
         
         breakpoints=cdiTarget.getBreakpoints();
         assertNotNull(breakpoints);
@@ -163,7 +163,7 @@ public class LocationTests extends TestCase {
          */
         location=cdiTarget.createLocation("main.c", "func1", 0);
         assertNotNull(location);
-        cdiTarget.setLocationBreakpoint(0, location, null, null, false);
+        cdiTarget.setLocationBreakpoint(0, location, null, false);
         
         breakpoints=cdiTarget.getBreakpoints();
         assertNotNull(breakpoints);

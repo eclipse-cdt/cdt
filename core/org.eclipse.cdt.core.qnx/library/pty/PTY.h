@@ -7,12 +7,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+/* Inaccessible static: hasPTY */
 /*
  * Class:     org_eclipse_cdt_utils_pty_PTY
- * Method:    forkpty
- * Signature: ()I
+ * Method:    openMaster
+ * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_forkpty
+JNIEXPORT jstring JNICALL Java_org_eclipse_cdt_utils_pty_PTY_openMaster
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus

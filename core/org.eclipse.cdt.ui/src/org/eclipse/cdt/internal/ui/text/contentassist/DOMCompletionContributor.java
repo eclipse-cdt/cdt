@@ -10,6 +10,7 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -20,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
-import org.eclipse.cdt.core.parser.ast.ASTUtil;
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionContributor;
@@ -54,9 +54,12 @@ public class DOMCompletionContributor implements ICompletionContributor {
 	private void handleFunction(IASTName name, IFunction function, ASTCompletionNode completionNode, int offset, ITextViewer viewer, List proposals) {
 		Image image = getImage(CElementImageProvider.getFunctionImageDescriptor());
 		
-		String repString = new String(name.toCharArray()) + "("; //$NON-NLS-1$
+		StringBuffer repStringBuff = new StringBuffer();
+		repStringBuff.append(function.getName());
+		repStringBuff.append('(');
 		
 		StringBuffer args = new StringBuffer();
+		String returnTypeStr = null;
 		try {
 			IParameter[] params = function.getParameters();
 			if (params != null)
@@ -65,19 +68,33 @@ public class DOMCompletionContributor implements ICompletionContributor {
 					if (i > 0)
 						args.append(',');
 					
-					//args.append(ASTUtil.getType(paramType));
+					args.append(ASTTypeUtil.getType(paramType));
 					String paramName = params[i].getName();
 					if (paramName != null) {
 						args.append(' ');
 						args.append(paramName);
 					}
 				}
+			
+			IType returnType = function.getType().getReturnType();
+			if (returnType != null)
+				returnTypeStr = ASTTypeUtil.getType(returnType);
 		} catch (DOMException e) {
 		}
 		String argString = args.toString();
 		
-		String descString = repString + argString + ")"; //$NON-NLS-1$
-		repString = repString + ")"; //$NON-NLS-1$
+		StringBuffer descStringBuff = new StringBuffer(repStringBuff.toString());
+		descStringBuff.append(argString);
+		descStringBuff.append(')');
+		
+		if (returnTypeStr != null) {
+			descStringBuff.append(' ');
+			descStringBuff.append(returnTypeStr);
+		}
+		
+		repStringBuff.append(')');
+		String repString = repStringBuff.toString();
+		String descString = descStringBuff.toString();
 		
 		CCompletionProposal proposal = createProposal(repString, descString, image, completionNode, offset, viewer);
 		proposal.setCursorPosition(repString.length() - 1);

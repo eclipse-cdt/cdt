@@ -85,10 +85,10 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 		
 		Assert.isTrue((increment != 0 || decrement != 0) && increment != decrement);
 		
-		int nestingLevel= 0;
-		int charCount= 0;
+		int nestingLevel = -1; // Set to -1 to take into account first ( for function call
+		int charCount = 0;
 		while (start < end) {
-			char curr= document.getChar(start++);
+			char curr = document.getChar(start++);
 			switch (curr) {
 				case '/':
 					if (start < end) {

@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVisitor;
  * Created on Nov 5, 2004
  * @author aniefer
  */
-public class CFunction implements IFunction, ICBinding {
+public class CFunction implements IFunction, ICInternalBinding {
 	private IASTStandardFunctionDeclarator [] declarators = null;
 	private IASTFunctionDeclarator definition;
 	

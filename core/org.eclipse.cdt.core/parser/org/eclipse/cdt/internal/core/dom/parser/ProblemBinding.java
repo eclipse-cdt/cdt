@@ -52,6 +52,8 @@ public class ProblemBinding implements IProblemBinding, IType, IScope {
         errorMessages[SEMANTIC_DEFINITION_NOT_FOUND - 1]		= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.definitionNotFound"); //$NON-NLS-1$
         errorMessages[SEMANTIC_KNR_PARAMETER_DECLARATION_NOT_FOUND - 1] = ParserMessages.getString("ASTProblemFactory.error.semantic.dom.knrParameterDeclarationNotFound"); //$NON-NLS-1$
         errorMessages[SEMANTIC_LABEL_STATEMENT_NOT_FOUND - 1]	= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.labelStatementNotFound"); //$NON-NLS-1$
+        errorMessages[SEMANTIC_INVALID_REDEFINITION - 1]		= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.invalidRedefinition"); //$NON-NLS-1$
+        errorMessages[SEMANTIC_INVALID_REDECLARATION - 1]		= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.invalidRedeclaration"); //$NON-NLS-1$
         errorMessages[SEMANTIC_BAD_SCOPE - 1]					= ParserMessages.getString("ASTProblemFactory.error.semantic.dom.badScope"); //$NON-NLS-1$
     }
     

@@ -2960,4 +2960,46 @@ public class AST2Tests extends AST2BaseTest {
         assertEquals( prob.getID(), IProblemBinding.SEMANTIC_INVALID_OVERLOAD );
         assertNotNull( foo );
     }
+    
+    public void testBug88338_CPP() throws Exception {
+    	IASTTranslationUnit tu = parse( "struct A; struct A* a;", ParserLanguage.CPP ); //$NON-NLS-1$
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	assertTrue( col.getName(0).isDeclaration() );
+    	assertFalse( col.getName(0).isReference() );
+    	assertTrue( col.getName(1).isReference() );
+    	assertFalse( col.getName(1).isDeclaration() );
+    	
+    	tu = parse( "struct A* a;", ParserLanguage.CPP ); //$NON-NLS-1$
+    	col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	assertTrue( col.getName(0).isDeclaration() );
+    	assertFalse( col.getName(0).isReference() );
+
+    }
+    
+    public void testBug88338_C() throws Exception {
+    	IASTTranslationUnit tu = parse( "struct A; struct A* a;", ParserLanguage.C ); //$NON-NLS-1$
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	assertTrue( col.getName(0).isDeclaration() );
+    	assertFalse( col.getName(0).isReference() );
+    	assertTrue( col.getName(1).isReference() );
+    	assertFalse( col.getName(1).isDeclaration() );
+    	
+    	tu = parse( "struct A* a; struct A;", ParserLanguage.C ); //$NON-NLS-1$
+    	col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	col.getName(2).resolveBinding();
+    	
+    	assertTrue( col.getName(0).isDeclaration() );
+    	assertFalse( col.getName(0).isReference() );
+
+    	assertTrue( col.getName(2).isDeclaration() );
+    	assertFalse( col.getName(2).isReference() );
+    }
 }

@@ -10,7 +10,12 @@
 package org.eclipse.cdt.internal.core.dom.parser.c;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICASTElaboratedTypeSpecifier;
 
 /**
@@ -66,8 +71,25 @@ public class CASTElaboratedTypeSpecifier extends CASTBaseDeclSpecifier implement
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public int getRoleForName(IASTName n ) {
-		if( this.name == n  )
-			return r_declaration;
-		return r_unclear;
+		if( n != name ) return r_unclear;
+		
+		IASTNode parent = getParent();
+		if( !( parent instanceof IASTDeclaration ) )
+			return r_reference;
+		
+		if( parent instanceof IASTSimpleDeclaration ){
+			IASTDeclarator [] dtors = ((IASTSimpleDeclaration)parent).getDeclarators(); 
+			if( dtors.length == 0 )
+				return r_declaration;
+		}
+		
+		//can't tell, resolve the binding
+		IBinding binding = name.resolveBinding();
+		if( binding instanceof ICInternalBinding ){
+			IASTNode node = ((ICInternalBinding)binding).getPhysicalNode();
+			if( node == this ) 
+				return r_declaration;
+		}
+		return r_reference;
 	}
 }

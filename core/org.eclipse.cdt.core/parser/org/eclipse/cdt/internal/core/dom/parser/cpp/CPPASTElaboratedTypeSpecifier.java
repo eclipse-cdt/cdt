@@ -11,8 +11,14 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 
 /**
  * @author jcamelon
@@ -67,7 +73,25 @@ public class CPPASTElaboratedTypeSpecifier extends CPPASTBaseDeclSpecifier
 	 * @see org.eclipse.cdt.core.dom.ast.IASTNameOwner#getRoleForName(org.eclipse.cdt.core.dom.ast.IASTName)
 	 */
 	public int getRoleForName(IASTName n) {
-		if( n == name )	return r_reference; //TODO is this right?
-		return r_unclear;
+		if( n != name ) return r_unclear;
+		
+		IASTNode parent = getParent();
+		if( !( parent instanceof IASTDeclaration ) )
+			return r_reference;
+		
+		if( parent instanceof IASTSimpleDeclaration ){
+			IASTDeclarator [] dtors = ((IASTSimpleDeclaration)parent).getDeclarators(); 
+			if( dtors.length == 0 )
+				return r_declaration;
+		}
+		
+		//can't tell, resolve the binding
+		IBinding binding = name.resolveBinding();
+		if( binding instanceof ICPPInternalBinding ){
+			IASTNode [] decls = ((ICPPInternalBinding)binding).getDeclarations();
+			if( ArrayUtil.contains( decls, name ) ) 
+				return r_declaration;
+		}
+		return r_reference;
 	}
 }

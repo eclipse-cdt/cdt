@@ -98,5 +98,15 @@ public interface IProblemBinding extends IBinding, IScope, IType {
      */
     public static final int SEMANTIC_BAD_SCOPE = 0x00A;
     
+    /**
+     * invalid redefinition of the name
+     */
+    public static final int SEMANTIC_INVALID_REDEFINITION = 0x00B;
+    
+    /**
+     * invalid redeclaration of the name
+     */
+    public static final int SEMANTIC_INVALID_REDECLARATION = 0x00C;
+    
     public static final int LAST_PROBLEM = SEMANTIC_BAD_SCOPE;
 }

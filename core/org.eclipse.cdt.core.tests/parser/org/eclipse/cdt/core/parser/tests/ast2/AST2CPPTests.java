@@ -3027,6 +3027,45 @@ public class AST2CPPTests extends AST2BaseTest {
         assertEquals( C.getID(), IProblemBinding.SEMANTIC_BAD_SCOPE );
     }
     
+    public void testBug88459() throws Exception {
+    	IASTTranslationUnit tu = parse( "int f(); ", ParserLanguage.CPP ); //$NON-NLS-1$
+    	CPPNameCollector col = new CPPNameCollector();
+    	tu.accept( col );
+    	
+    	IFunction f = (IFunction) col.getName(0).resolveBinding();
+    	assertFalse( f.isStatic() );	
+    }
+    
+    public void testBug88501_1() throws Exception {
+    	IASTTranslationUnit tu = parse( "void f(); void f( int ); struct f;", ParserLanguage.CPP ); //$NON-NLS-1$
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        assertTrue( col.getName(0).resolveBinding() instanceof IFunction );
+        assertTrue( col.getName(1).resolveBinding() instanceof IFunction );
+        assertTrue( col.getName(3).resolveBinding() instanceof ICPPClassType );
+    }
+        
+//    public void testBug8342_1() throws Exception {
+//    	IASTTranslationUnit tu = parse( "int a; int a;", ParserLanguage.CPP ); //$NON-NLS-1$
+//    	CPPNameCollector col = new CPPNameCollector();
+//        tu.accept(col);
+//        
+//        assertTrue( col.getName(0).resolveBinding() instanceof IVariable );
+//        IProblemBinding p = (IProblemBinding) col.getName(1).resolveBinding();
+//        assertEquals( p.getID(), IProblemBinding.SEMANTIC_INVALID_REDEFINITION );
+//    }
+    
+    public void testBug8342_2() throws Exception {
+    	IASTTranslationUnit tu = parse( "extern int a; extern char a;", ParserLanguage.CPP ); //$NON-NLS-1$
+    	CPPNameCollector col = new CPPNameCollector();
+        tu.accept(col);
+        
+        assertTrue( col.getName(0).resolveBinding() instanceof IVariable );
+        IProblemBinding p = (IProblemBinding) col.getName(1).resolveBinding();
+        assertEquals( p.getID(), IProblemBinding.SEMANTIC_INVALID_REDECLARATION );
+    }
+    
     public void testNamespaceAlias_2() throws Exception {
     	StringBuffer buffer = new StringBuffer();
     	buffer.append("namespace A { int i; }      \n"); //$NON-NLS-1$

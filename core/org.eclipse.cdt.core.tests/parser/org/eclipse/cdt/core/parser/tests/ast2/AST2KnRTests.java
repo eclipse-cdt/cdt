@@ -46,7 +46,7 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CParameter;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
-import org.eclipse.cdt.internal.core.dom.parser.c.ICBinding;
+import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
 
 /**
  * @author dsteffle
@@ -453,7 +453,7 @@ public class AST2KnRTests extends AST2BaseTest {
     	IASTName A_struct_name1 = ((IASTCompositeTypeSpecifier)A_struct.getDeclSpecifier()).getName();
     	assertEquals( A_struct_name1.toString(), "A_struct" ); //$NON-NLS-1$
     	ICompositeType A_struct_type1 = (ICompositeType)A_struct_name1.resolveBinding();
-    	assertEquals( ((ICBinding)A_struct_type1).getPhysicalNode(), A_struct.getDeclSpecifier() );
+    	assertEquals( ((ICInternalBinding)A_struct_type1).getPhysicalNode(), A_struct.getDeclSpecifier() );
     	IField[] fields = A_struct_type1.getFields();
     	IField a1 = fields[0];
     	IField c1 = fields[1];
@@ -516,7 +516,7 @@ public class AST2KnRTests extends AST2BaseTest {
     	IASTExpressionStatement stmt1 = (IASTExpressionStatement)f_def_body.getStatements()[0];
     	IASTExpressionStatement stmt2 = (IASTExpressionStatement)f_def_body.getStatements()[1];
     	IASTName a2 = ((IASTFieldReference)((IASTBinaryExpression)stmt1.getExpression()).getOperand1()).getFieldName();
-    	assertEquals( ((IASTName)((ICBinding)a1).getPhysicalNode()).resolveBinding(), a2.resolveBinding() );
+    	assertEquals( ((IASTName)((ICInternalBinding)a1).getPhysicalNode()).resolveBinding(), a2.resolveBinding() );
     	IASTName x3 = ((IASTIdExpression)((IASTFieldReference)((IASTBinaryExpression)stmt1.getExpression()).getOperand1()).getFieldOwner()).getName();
     	assertEquals( x2.resolveBinding(), x3.resolveBinding() );
     	assertEquals( ((IASTBinaryExpression)stmt1.getExpression()).getOperand2().toString(), "0" ); //$NON-NLS-1$
@@ -526,8 +526,8 @@ public class AST2KnRTests extends AST2BaseTest {
     	IASTName x4 = ((IASTIdExpression)((IASTFieldReference)((IASTArraySubscriptExpression)((IASTBinaryExpression)stmt2.getExpression()).getOperand1()).getArrayExpression()).getFieldOwner()).getName();
     	IASTName c3 = ((IASTFieldReference)((IASTArraySubscriptExpression)((IASTBinaryExpression)stmt2.getExpression()).getOperand2()).getArrayExpression()).getFieldName();
     	IASTName x5 = ((IASTIdExpression)((IASTFieldReference)((IASTArraySubscriptExpression)((IASTBinaryExpression)stmt2.getExpression()).getOperand1()).getArrayExpression()).getFieldOwner()).getName();
-    	assertEquals( ((IASTName)((ICBinding)c1).getPhysicalNode()).resolveBinding(), c2.resolveBinding() );
-    	assertEquals( ((IASTName)((ICBinding)c1).getPhysicalNode()).resolveBinding(), c3.resolveBinding() );
+    	assertEquals( ((IASTName)((ICInternalBinding)c1).getPhysicalNode()).resolveBinding(), c2.resolveBinding() );
+    	assertEquals( ((IASTName)((ICInternalBinding)c1).getPhysicalNode()).resolveBinding(), c3.resolveBinding() );
     	assertEquals( x3.resolveBinding(), x4.resolveBinding() );
     	assertEquals( x4.resolveBinding(), x5.resolveBinding() );
     	

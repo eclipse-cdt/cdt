@@ -352,12 +352,14 @@ public class CPPFunction implements ICPPFunction, ICPPInternalBinding {
         int state = ( bits & IS_STATIC ) >> 2;
         if( state > 1 ) return (state % 2 != 0);
         
-        
+        IASTDeclSpecifier declSpec = null;
         IASTFunctionDeclarator dtor = (IASTFunctionDeclarator) getDefinition();
-        IASTDeclSpecifier declSpec = ((IASTFunctionDefinition)dtor.getParent()).getDeclSpecifier();
-        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
-            bits |= 3 << 2;
-            return true;
+        if( dtor != null ){
+	        declSpec = ((IASTFunctionDefinition)dtor.getParent()).getDeclSpecifier();
+	        if( declSpec.getStorageClass() == IASTDeclSpecifier.sc_static ){
+	            bits |= 3 << 2;
+	            return true;
+	        }
         }
         
         IASTFunctionDeclarator[] dtors = (IASTFunctionDeclarator[]) getDeclarations();

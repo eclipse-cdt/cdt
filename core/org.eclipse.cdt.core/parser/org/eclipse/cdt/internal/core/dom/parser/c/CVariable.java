@@ -27,7 +27,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
  * Created on Nov 5, 2004
  * @author aniefer
  */
-public class CVariable implements IVariable, ICBinding {
+public class CVariable implements IVariable, ICInternalBinding {
     public static class CVariableProblem extends ProblemBinding implements IVariable {
         public CVariableProblem( int id, char[] arg ) {
             super( id, arg );

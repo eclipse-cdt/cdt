@@ -294,7 +294,7 @@ public class CPPVisitor {
 		}
         try {
             binding = scope.getBinding( elabType.getName(), false );
-            if( binding == null ){
+            if( binding == null || !(binding instanceof ICPPClassType) ){
     			if( elabType.getKind() != IASTElaboratedTypeSpecifier.k_enum ){
     				binding = new CPPClassType( elabType.getName() );
     				scope.addName( elabType.getName() );
@@ -468,8 +468,12 @@ public class CPPVisitor {
                     } catch ( DOMException e1 ) {
                     }
 			    }
-			    if( t1 != null && t2 != null && t1.equals( t2 ) ){
-			        ((CPPVariable)binding).addDeclaration( declarator.getName() );
+			    if( t1 != null && t2 != null ){
+			    	if( t1.equals( t2 ) ){
+			    		((CPPVariable)binding).addDeclaration( declarator.getName() );
+			    	} else {
+			    		binding = new ProblemBinding( IProblemBinding.SEMANTIC_INVALID_REDECLARATION, declarator.getName().toCharArray() );
+			    	}
 			    } else if( simpleDecl.getParent() instanceof ICPPASTCompositeTypeSpecifier ){
 					binding = new CPPField( declarator.getName() ); 
 			    } else {

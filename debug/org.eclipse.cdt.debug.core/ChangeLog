@@ -1,4 +1,10 @@
 2004-12-21 Mikhail Khodjaiants
+	Fix for bug 75948: Provide "breakpoint type name" for C breakpoints.
+	Applied patch from Jared Burns.
+	* plugin.properties
+	* plugin.xml
+
+2004-12-22 Mikhail Khodjaiants
 	Fix for bug 73168: Use memory view provided by Eclipse platform in CDT.
 	The CMemoryBlockextension is used as an adapter to "IMemoryBlockRetrieval".
 	* CMemoryBlockExtension.java

@@ -118,23 +118,27 @@
    <extension
          point="org.eclipse.debug.core.breakpoints">
       <breakpoint
-            markerType="org.eclipse.cdt.debug.core.cLineBreakpointMarker"
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CLineBreakpoint"
+            name="%cLineBreakpoints.name"
+            markerType="org.eclipse.cdt.debug.core.cLineBreakpointMarker"
             id="cLineBreakpoint">
       </breakpoint>
       <breakpoint
-            markerType="org.eclipse.cdt.debug.core.cAddressBreakpointMarker"
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CAddressBreakpoint"
+            name="%cAddressBreakpoints.name"
+            markerType="org.eclipse.cdt.debug.core.cAddressBreakpointMarker"
             id="cAddressBreakpoint">
       </breakpoint>
       <breakpoint
-            markerType="org.eclipse.cdt.debug.core.cFunctionBreakpointMarker"
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CFunctionBreakpoint"
+            name="%cFunctionBreakpoints.name"
+            markerType="org.eclipse.cdt.debug.core.cFunctionBreakpointMarker"
             id="cFunctionBreakpoint">
       </breakpoint>
       <breakpoint
-            markerType="org.eclipse.cdt.debug.core.cWatchpointMarker"
             class="org.eclipse.cdt.debug.internal.core.breakpoints.CWatchpoint"
+            name="%cWatchpoints.name"
+            markerType="org.eclipse.cdt.debug.core.cWatchpointMarker"
             id="cWatchpoint">
       </breakpoint>
    </extension>

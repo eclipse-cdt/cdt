@@ -106,10 +106,6 @@ public class ASTFailedTests extends BaseASTTest
     {
         assertCodeFailsParse("template C::operator int<float> ();");
     }
-    public void testBug39540() throws Exception
-    {
-        assertCodeFailsParse("class {} const null;");
-    }
     public void testBug39542() throws Exception
     {
         assertCodeFailsParse("void f(int a, struct {int b[a];} c) {}");

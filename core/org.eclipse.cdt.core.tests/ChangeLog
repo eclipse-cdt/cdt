@@ -1,3 +1,6 @@
+2003-07-31 Victor Mozgin
+	Moved testBug39540() from ASTFailedTests.java to QuickParseASTTests.java.
+
 2003-07-30 Hoda Amer
 	The CModelElementsTests has the pointer to function test back in its original place
 	(a variable)

@@ -1757,4 +1757,10 @@ public class QuickParseASTTests extends BaseASTTest
 		parse("class N1::N2::B : public A {};");
 		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
 	}
+	
+	public void testBug39540() throws Exception
+	{
+		parse("class {} const null;");
+		assertTrue( quickParseCallback.getCompilationUnit().getDeclarations().hasNext() );
+	}
 }

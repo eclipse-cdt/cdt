@@ -1,3 +1,6 @@
+2003-07-31 Victor Mozgin
+	Fixed PR 39540 : Parser fails on const qualifier after class specifier.
+
 2003-07-30 Victor Mozgin
 	Fixed PR 39532 : Parser fails on fully-qualified class names.
 

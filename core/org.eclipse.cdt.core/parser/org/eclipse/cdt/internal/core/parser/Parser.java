@@ -1359,7 +1359,7 @@ public class Parser implements IParser
                     ITokenDuple duple = new TokenDuple(first, last);
                     sdw.setTypeName(duple);
       
-                    return;
+                    break;
                 case IToken.tCOLONCOLON :
                     consume(IToken.tCOLONCOLON);
                     // handle nested later:
@@ -1408,7 +1408,8 @@ public class Parser implements IParser
                         try
                         {
                             classSpecifier(sdw);
-                            return;
+							flags.setEncounteredTypename(true);
+                            break;
                         }
                         catch (Backtrack bt)
                         {
@@ -1429,6 +1430,7 @@ public class Parser implements IParser
                         try
                         {
                             enumSpecifier(sdw);
+							flags.setEncounteredTypename(true);
                             break;
                         }
                         catch (Backtrack bt)

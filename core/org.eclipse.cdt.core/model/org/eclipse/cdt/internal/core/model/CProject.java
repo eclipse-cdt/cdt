@@ -45,9 +45,20 @@ public class CProject extends CResource implements ICProject {
 	}
 
 	public ICElement findElement(IPath path) throws CModelException {
-		ICElement celem =  CModelManager.getDefault().create(path);
-		if (celem == null)
-			new CModelStatus(ICModelStatusConstants.INVALID_PATH, path);
+		ICElement celem = null;
+		if (path.isAbsolute()) {
+			celem =  CModelManager.getDefault().create(path);
+		} else {
+			IProject project = getProject();
+			if (project !=  null) {
+				IPath p = project.getFullPath().append(path);
+				celem = CModelManager.getDefault().create(p);
+			}
+		}
+		if (celem == null) {
+			CModelStatus status = new CModelStatus(ICModelStatusConstants.INVALID_PATH, path);
+			throw new CModelException(status);
+		}
 		return celem;
 	}
 

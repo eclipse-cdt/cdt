@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.index.IIndexChangeListener;
+import org.eclipse.cdt.core.index.IIndexDelta;
 import org.eclipse.cdt.core.index.IndexChangeEvent;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.search.BasicSearchResultCollector;
@@ -110,20 +111,19 @@ public class SearchRegressionTests extends BaseTestFramework implements ICSearch
      * @see org.eclipse.cdt.core.index.IIndexChangeListener#indexChanged(org.eclipse.cdt.core.index.IndexChangeEvent)
      */
     public void indexChanged( IndexChangeEvent event ) {
-        indexChanged = true;
+        if( event.getDelta().getDeltaType() == IIndexDelta.MERGE_DELTA ){
+            indexChanged = true;
+        }
     }
     
     protected IFile importFile(String fileName, String contents ) throws Exception{
         indexChanged = false;
         IFile file = super.importFile( fileName, contents );
 	
-        int loops = 0;
-        while( !indexChanged && loops++ < 40){
+        while( !indexChanged ){
             Thread.sleep( 100 );
         }
-        if( loops >= 20 )
-            fail("Timeout waiting for file \"" + fileName + "\" to index." );  //$NON-NLS-1$//$NON-NLS-2$
-        
+       
 		return file;
 	}
     

@@ -1,3 +1,8 @@
+2004-11-16 Andrew Niefer
+	- created package ui/org.eclipse.ui.tests.regression 
+	- moved ContentAssistRegressionTests to it and created a RefactoringRegressionTests
+	- created a RegressionTestUISuite
+
 2004-11-08 Mikhail Voronin
 	New tests for help extension.
 	* ui/org/eclipse/cdt/ui/tests/chelp/CHelpProviderTester.java

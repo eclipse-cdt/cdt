@@ -39,6 +39,7 @@ abstract public class BaseTestFramework extends TestCase {
     static protected NullProgressMonitor	monitor;
     static protected IWorkspace 			workspace;
     static protected IProject 				project;
+    static protected ICProject				cproject;
     static protected FileManager 			fileManager;
     
     {
@@ -48,11 +49,10 @@ abstract public class BaseTestFramework extends TestCase {
 			
 			workspace = ResourcesPlugin.getWorkspace();
 			
-			ICProject cPrj; 
 	        try {
-	            cPrj = CProjectHelper.createCCProject("RegressionTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
+	            cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin"); //$NON-NLS-1$ //$NON-NLS-2$
 	        
-	            project = cPrj.getProject();
+	            project = cproject.getProject();
 	            project.setSessionProperty(IndexManager.activationKey, Boolean.FALSE );
 	        } catch ( CoreException e ) {
 	            /*boo*/

@@ -12,7 +12,7 @@
 /*
  * Created on Oct 4, 2004
  */
-package org.eclipse.cdt.ui.tests.text.contentassist;
+package org.eclipse.cdt.ui.tests.regression;
 
 import java.io.StringWriter;
 

@@ -1,4 +1,8 @@
 2004-08-05 Mikhail Khodjaiants
+	Restrict the "display as array" operation to the pointer types only.
+	* CVariable.java
+
+2004-08-05 Mikhail Khodjaiants
 	Warning cleanup.
 	* CSharedLibraryManager.java
 	* CUpdateManager.java

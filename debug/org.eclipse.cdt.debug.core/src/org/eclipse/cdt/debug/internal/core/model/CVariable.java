@@ -493,11 +493,19 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 
 	/*
 	 * (non-Javadoc)
+	 * Allow this operation only for the pointer types (???).
 	 * 
 	 * @see org.eclipse.cdt.debug.core.model.ICastToArray#canCastToArray()
 	 */
 	public boolean canCastToArray() {
-		return ( getOriginal() != null && isEnabled() );
+		ICType type;
+		try {
+			type = getType();
+			return ( getOriginal() != null && isEnabled() && type.isPointer() );
+		}
+		catch( DebugException e ) {
+		}
+		return false;
 	}
 
 	/*
@@ -506,11 +514,14 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	 * @see org.eclipse.cdt.debug.core.model.ICastToArray#castToArray(int, int)
 	 */
 	public void castToArray( int startIndex, int length ) throws DebugException {
-		InternalVariable newVar = getOriginal().createShadow( startIndex, length );
-		if ( getShadow() != null )
-			getShadow().dispose();
-		setShadow( newVar );
-		fireChangeEvent( DebugEvent.STATE );
+		InternalVariable current = getCurrentInternalVariable();
+		if ( current != null ) {
+			InternalVariable newVar = current.createShadow( startIndex, length );
+			if ( getShadow() != null )
+				getShadow().dispose();
+			setShadow( newVar );
+			fireChangeEvent( DebugEvent.STATE );
+		}
 	}
 
 	/*
@@ -592,11 +603,14 @@ public class CVariable extends AbstractCVariable implements ICDIEventListener {
 	 * @see org.eclipse.cdt.debug.core.model.ICastToType#cast(java.lang.String)
 	 */
 	public void cast( String type ) throws DebugException {
-		InternalVariable newVar = getOriginal().createShadow( type );
-		if ( getShadow() != null )
-			getShadow().dispose();
-		setShadow( newVar );
-		fireChangeEvent( DebugEvent.STATE );
+		InternalVariable current = getCurrentInternalVariable();
+		if ( current != null ) {
+			InternalVariable newVar = current.createShadow( type );
+			if ( getShadow() != null )
+				getShadow().dispose();
+			setShadow( newVar );
+			fireChangeEvent( DebugEvent.STATE );
+		}
 	}
 
 	/*

@@ -29,9 +29,14 @@ import org.eclipse.cdt.debug.mi.core.cdi.model.Variable;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
+import org.eclipse.cdt.debug.mi.core.command.MIVarUpdate;
+import org.eclipse.cdt.debug.mi.core.event.MIEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIVarChangedEvent;
+import org.eclipse.cdt.debug.mi.core.event.MIVarDeletedEvent;
 import org.eclipse.cdt.debug.mi.core.output.MIVar;
 import org.eclipse.cdt.debug.mi.core.output.MIVarChange;
 import org.eclipse.cdt.debug.mi.core.output.MIVarCreateInfo;
+import org.eclipse.cdt.debug.mi.core.output.MIVarUpdateInfo;
 
 /**
  */
@@ -65,6 +70,7 @@ public class ExpressionManager extends Manager {
 		}
 		return varList;
 	}
+
 	/**
 	 * @see org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager#createExpression(String)
 	 */
@@ -102,7 +108,39 @@ public class ExpressionManager extends Manager {
 	}
 
 	public void update(Target target) throws CDIException {
-		deleteAllVariables(target);
+		List eventList = new ArrayList();
+		MISession mi = target.getMISession();
+		CommandFactory factory = mi.getCommandFactory();
+		List varList = getVariableList(target);
+		Variable[] variables = (Variable[]) varList.toArray(new Variable[varList.size()]);
+		for (int i = 0; i < variables.length; i++) {
+			Variable variable = variables[i];
+			String varName = variable.getMIVar().getVarName();
+			MIVarChange[] changes = noChanges;
+			MIVarUpdate update = factory.createMIVarUpdate(varName);
+			try {
+				mi.postCommand(update);
+				MIVarUpdateInfo info = update.getMIVarUpdateInfo();
+				if (info == null) {
+					throw new CDIException(CdiResources.getString("cdi.Common.No_answer")); //$NON-NLS-1$
+				}
+				changes = info.getMIVarChanges();
+			} catch (MIException e) {
+				//throw new MI2CDIException(e);
+				eventList.add(new MIVarDeletedEvent(mi, varName));
+			}
+			for (int j = 0; j < changes.length; j++) {
+				String n = changes[j].getVarName();
+				if (changes[j].isInScope()) {
+					eventList.add(new MIVarChangedEvent(mi, n));
+				} else {
+					deleteVariable(variable);
+					eventList.add(new MIVarDeletedEvent(mi, n));
+				}
+			}
+		}
+		MIEvent[] events = (MIEvent[]) eventList.toArray(new MIEvent[0]);
+		mi.fireEvents(events);
 	}
 
 	/**
@@ -171,7 +209,7 @@ public class ExpressionManager extends Manager {
 			miSession.postCommand(var);
 			var.getMIInfo();
 		} catch (MIException e) {
-			throw new MI2CDIException(e);
+			//throw new MI2CDIException(e);
 		}
 		List varList = getVariableList(target);
 		varList.remove(variable);

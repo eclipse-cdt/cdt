@@ -5,6 +5,7 @@
 package org.eclipse.cdt.debug.mi.core.cdi.model;
 
 import org.eclipse.cdt.debug.core.cdi.CDIException;
+import org.eclipse.cdt.debug.core.cdi.ICDIRegisterManager;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIRegister;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.mi.core.MIException;
@@ -43,7 +44,8 @@ public class Register extends Variable implements ICDIRegister {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#setValue(String)
 	 */
 	public void setValue(String expression) throws CDIException {
-		MISession mi = ((Session)(getTarget().getSession())).getMISession();
+		Session session = (Session)(getTarget().getSession());
+		MISession mi = session.getMISession();
 		CommandFactory factory = mi.getCommandFactory();
 		MIVarAssign var = factory.createMIVarAssign(getMIVar().getVarName(), expression);
 		try {
@@ -56,8 +58,14 @@ public class Register extends Variable implements ICDIRegister {
 			throw new MI2CDIException(e);
 		}
 		// If the assign was succesfull fire a MIVarChangedEvent()
-		MIRegisterChangedEvent change =
-			new MIRegisterChangedEvent(0, getName(), getVariableObject().getPosition());
+		// Note gdb may not fire an event for the change register, do it manually.
+		MIRegisterChangedEvent change =	new MIRegisterChangedEvent(0, getName(), getVariableObject().getPosition());
 		mi.fireEvent(change);
+		// If register was on autoupdate, update all the other registers
+		// assigning may have side effects i.e. affecting other registers.
+		ICDIRegisterManager mgr = session.getRegisterManager();
+		if (mgr.isAutoUpdate()) {
+			mgr.update();
+		}
 	}
 }

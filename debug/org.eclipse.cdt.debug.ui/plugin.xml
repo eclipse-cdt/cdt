@@ -325,5 +325,13 @@
             id="org.eclipse.cdt.debug.internal.ui.editors.DebugTextHover">
       </textHover>
    </extension>
+   <extension
+         point="org.eclipse.debug.core.sourceLocators">
+      <sourceLocator
+            name="Prompting C/C++ Source Locator"
+            class="org.eclipse.cdt.debug.ui.CUISourceLocator"
+            id="org.eclipse.cdt.debug.ui.cSourceLocator">
+      </sourceLocator>
+   </extension>
 
 </plugin>

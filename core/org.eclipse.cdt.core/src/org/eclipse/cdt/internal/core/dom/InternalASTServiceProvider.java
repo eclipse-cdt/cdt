@@ -10,8 +10,6 @@
  **********************************************************************/
 package org.eclipse.cdt.internal.core.dom;
 
-import java.util.Collections;
-
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IASTServiceProvider;
@@ -24,8 +22,6 @@ import org.eclipse.cdt.core.parser.CodeReader;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.core.parser.ISourceElementRequestor;
-import org.eclipse.cdt.core.parser.NullSourceElementRequestor;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
@@ -40,7 +36,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ANSICPPParserExtensionConfig
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
-import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.scanner2.DOMScanner;
 import org.eclipse.cdt.internal.core.parser.scanner2.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.internal.core.parser.scanner2.GPPScannerExtensionConfiguration;
@@ -61,7 +56,6 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
             "C++98",  //$NON-NLS-1$
             "GNUC",  //$NON-NLS-1$
             "GNUC++" };  //$NON-NLS-1$
-    private static final ISourceElementRequestor NULL_REQUESTOR = new NullSourceElementRequestor();
 
 
     /* (non-Javadoc)
@@ -134,14 +128,14 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 		else
 		{
 		    String dialect = configuration.getParserDialect();
-		    if( dialect.equals( dialects[0]) || dialect.equals( dialects[2]))		        
-			    scanner = ParserFactory.createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
-		                ParserLanguage.C, NULL_REQUESTOR,
-		                ParserUtil.getScannerLogService(), Collections.EMPTY_LIST);
+		    if( dialect.equals( dialects[0]) || dialect.equals( dialects[2]))	
+			    scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
+		                ParserLanguage.C, 
+		                ParserUtil.getScannerLogService(), C_GNU_SCANNER_EXTENSION, fileCreator );
 		    else if( dialect.equals( dialects[1] ) || dialect.equals( dialects[3] ))
-			    scanner = ParserFactory.createScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
-			            ParserLanguage.CPP, NULL_REQUESTOR,
-		                ParserUtil.getScannerLogService(), Collections.EMPTY_LIST);
+			    scanner = new DOMScanner(reader, scanInfo, ParserMode.COMPLETE_PARSE,
+			            ParserLanguage.CPP, 
+		                ParserUtil.getScannerLogService(), CPP_GNU_SCANNER_EXTENSION, fileCreator );
 		    else
 		        throw new UnsupportedDialectException();
 		    

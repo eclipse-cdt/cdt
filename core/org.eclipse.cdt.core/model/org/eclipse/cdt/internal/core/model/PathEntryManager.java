@@ -420,12 +420,15 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 						if (affectedProject == null) {
 							continue; // was filtered out
 						}
-						IPathEntry[] newEntries = getResolvedPathEntries(affectedProject);
-						ICElementDelta[] deltas = generatePathEntryDeltas(affectedProject, oldResolvedEntries[i], newEntries);
-						if (deltas.length > 0) {
-							shouldFire = true;
-							for (int j = 0; j < deltas.length; j++) {
-								mgr.registerCModelDelta(deltas[j]);
+						// Only fire deltas if we had previous cache
+						if (oldResolvedEntries[i] != null) {
+							IPathEntry[] newEntries = getResolvedPathEntries(affectedProject);
+							ICElementDelta[] deltas = generatePathEntryDeltas(affectedProject, oldResolvedEntries[i], newEntries);
+							if (deltas.length > 0) {
+								shouldFire = true;
+								for (int j = 0; j < deltas.length; j++) {
+									mgr.registerCModelDelta(deltas[j]);
+								}
 							}
 						}
 					}
@@ -667,10 +670,11 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	public ICElementDelta[] generatePathEntryDeltas(ICProject cproject, IPathEntry[] oldEntries, IPathEntry[] newEntries) {
 		ArrayList list = new ArrayList();
 
-		// Sanity checks
+		// if nothing was known before do not generate any deltas.
 		if (oldEntries == null) {
-			oldEntries = NO_PATHENTRIES;
+			return new ICElementDelta[0];
 		}
+		// Sanity checks
 		if (newEntries == null) {
 			newEntries = NO_PATHENTRIES;
 		}

@@ -23,9 +23,10 @@ import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CSearchResultLabelProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -35,6 +36,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * This action opens a java CEditor on the element represented by text selection of
@@ -42,12 +44,11 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * 
  * Use action from package org.eclipse.jdt.ui.actions
  */
-public class OpenDeclarationsAction extends Action {
+public class OpenDeclarationsAction extends Action implements IUpdate {
 		
 	private String fDialogTitle;
 	private String fDialogMessage;
 	protected CEditor fEditor;
-	BasicSearchResultCollector  resultCollector = null;
 	SearchEngine searchEngine = null;
 	
 	/**
@@ -63,7 +64,6 @@ public class OpenDeclarationsAction extends Action {
 		setDialogMessage(CEditorMessages.getString("OpenDeclarations.dialog.message")); //$NON-NLS-1$
 
 		searchEngine = new SearchEngine();
-		resultCollector = new BasicSearchResultCollector();
 	}
 	
 	/**
@@ -93,66 +93,86 @@ public class OpenDeclarationsAction extends Action {
 	public void setContentEditor(CEditor editor) {	
 		fEditor= editor;
 	}
+
+		 /**
+		  * Return the selected string from the editor
+		  * @return The string currently selected, or null if there is no valid selection
+		  */
+		 protected String getSelectedStringFromEditor() {
+		 		 if (fEditor.getSelectionProvider() == null) {
+		 		 		 return null;
+		 		 }
+
+		 		 try {
+		 		 		 ITextSelection selection= (ITextSelection) fEditor.getSelectionProvider().getSelection();
+		 		 		 String sel = selection.getText();
+		 		 		 if (sel.equals(""))
+		 		 		 {
+		 		 		 		 int selStart =  selection.getOffset();
+		 		 		 
+		 		 		 		 IDocumentProvider prov = fEditor.getDocumentProvider();
+		 		 		 		 IDocument doc = prov.getDocument(fEditor.getEditorInput());
+		 		 		 		 sel = getSelection(doc, selStart);
+		 		 		 }
+		 		 		 return sel;
+		 		 } catch(Exception x) {
+		 		 		 return null;
+		 		 }
+		 }
 	
 	/**
 	 * @see IAction#actionPerformed
 	 */
 	public void run() {
-		
-		IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
-		ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
-		 
-		if (fEditor.getSelectionProvider() != null) {
-			ITextSelection selection= (ITextSelection) fEditor.getSelectionProvider().getSelection();
-			try {
-				ArrayList elementsFound = new ArrayList();
-				String sel = selection.getText();
-				if (sel.equals(""))
-				{
-					int selStart =  selection.getOffset();
-					
-					IDocumentProvider prov = fEditor.getDocumentProvider();
-					IDocument doc = prov.getDocument(fEditor.getEditorInput());
-					sel = getSelection(doc, selStart);
-				}
-				
-				IFile file = fEditor.getInputFile();
-				if(file == null)
-					return;
-				IProject project = file.getProject();
-				if(project == null)
-					return;
-				
+		 		 final String selectedText = getSelectedStringFromEditor();
+
+		 		 if(selectedText == null) {
+		 		 		 return;
+		 		 }
+
+		 		 final ArrayList elementsFound = new ArrayList();
+
+		 		 IRunnableWithProgress runnable = new IRunnableWithProgress() {
+		 		 		 public void run(IProgressMonitor monitor) {
+		 		 		 		 BasicSearchResultCollector  resultCollector =  new BasicSearchResultCollector(monitor);
+		 		 		 		 IWorkingCopyManager fManager = CUIPlugin.getDefault().getWorkingCopyManager();
+		 		 		 		 ITranslationUnit unit = fManager.getWorkingCopy(fEditor.getEditorInput());
+
 				ICElement[] projectScopeElement = new ICElement[1];
 				projectScopeElement[0] = unit.getCProject();//(ICElement)currentScope.getCProject();
 				ICSearchScope scope = SearchEngine.createCSearchScope(projectScopeElement, true);
 				OrPattern orPattern = new OrPattern();
 				// search for global variables, functions, classes, structs, unions, enums and macros
-				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, true ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, true ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.METHOD, ICSearchConstants.DECLARATIONS, true ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, true ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, true ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.FIELD, ICSearchConstants.DECLARATIONS, true ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, true ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, true ));
-				orPattern.addPattern(SearchEngine.createSearchPattern( sel, ICSearchConstants.TYPEDEF, ICSearchConstants.DECLARATIONS, true ));
+		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.VAR, ICSearchConstants.DECLARATIONS, true ));
+		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.FUNCTION, ICSearchConstants.DECLARATIONS, true ));
+		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.METHOD, ICSearchConstants.DECLARATIONS, true ));
+		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.TYPE, ICSearchConstants.DECLARATIONS, true ));
+		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.ENUM, ICSearchConstants.DECLARATIONS, true ));
+		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.FIELD, ICSearchConstants.DECLARATIONS, true ));
+		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.NAMESPACE, ICSearchConstants.DECLARATIONS, true ));
+		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.MACRO, ICSearchConstants.DECLARATIONS, true ));
+		 		 		 		 orPattern.addPattern(SearchEngine.createSearchPattern( selectedText, ICSearchConstants.TYPEDEF, ICSearchConstants.DECLARATIONS, true ));
 				searchEngine.search(CUIPlugin.getWorkspace(), orPattern, scope, resultCollector, true);
-				elementsFound.addAll(resultCollector.getSearchResults());
-				
-				if (elementsFound.isEmpty() == false) {
-					IMatch selected= selectCElement(elementsFound, getShell(), fDialogTitle, fDialogMessage);
-					if (selected != null) {
-						open(selected);
-						return;
-					}
-				}
-			} catch	 (Exception x) {
-				CUIPlugin.getDefault().log(x);
+		 		 		 		 elementsFound.addAll(resultCollector.getSearchResults());		 
 			}
-		}
+		 		 };
 
-		getShell().getDisplay().beep();		
+		 		 try {
+		 		 		 ProgressMonitorDialog progressMonitor = new ProgressMonitorDialog(getShell());
+		 		 		 progressMonitor.run(true, true, runnable);
+
+		 		 		 if (elementsFound.isEmpty() == true) {
+		 		 		 		 return;
+		 		 		 }
+
+		 		 		 IMatch selected= selectCElement(elementsFound, getShell(), fDialogTitle, fDialogMessage);
+		 		 		 if (selected != null) {
+		 		 		 		 open(selected);
+		 		 		 		 return;
+		 		 		 }
+		 		 } catch(Exception x) {
+		 		 		 CUIPlugin.getDefault().log(x);
+		 		 }
 	}
 
 	protected Shell getShell() {
@@ -247,5 +267,13 @@ public class OpenDeclarationsAction extends Action {
 	
 		return selectedWord;		
 	}
+		 		 
+		 /* (non-Javadoc)
+		  * @see org.eclipse.ui.texteditor.IUpdate#update()
+		  */
+		 public void update() {
+		 		 setEnabled(getSelectedStringFromEditor() != null);
+		 }
+
 }
 

@@ -611,16 +611,26 @@ public class ParserSymbolTable {
 					while( iter.hasNext() ){
 						key = iter.next();
 						if( symbol.containsKey( key ) ){
-							ISymbol sym = (ISymbol) symbol.get( key );
-							if( !checkAmbiguity( sym, temp.get( key ) ) ){
-								if( data.mode == LookupMode.PREFIX ){
-									if( data.ambiguities == null ){
-										data.ambiguities = new HashSet();
-									}
-									data.ambiguities.add( sym.getName() );
+							Object obj = symbol.get( key );
+							Iterator objIter = ( obj instanceof List ) ? ((List)obj).iterator() : null;
+							ISymbol sym = (ISymbol) (( objIter != null && objIter.hasNext() ) ? objIter.next() : obj);
+							while( sym != null ){
+								if( !checkAmbiguity( sym, temp.get( key ) ) ){
+									if( data.mode == LookupMode.PREFIX ){
+										if( data.ambiguities == null ){
+											data.ambiguities = new HashSet();
+										}
+										data.ambiguities.add( sym.getName() );
+									} else {
+										throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
+									} 								
+								}
+								
+								if( objIter != null && objIter.hasNext() ){
+									sym = (ISymbol) objIter.next();
 								} else {
-									throw new ParserSymbolTableException( ParserSymbolTableException.r_Ambiguous );
-								} 								
+									sym = null;
+								}
 							}
 						} else {
 							symbol.put( key, temp.get( key ) );

@@ -601,4 +601,42 @@ public class CompletionParseTest extends CompleteParseBaseTest {
 		IASTField field = (IASTField) result.getNodes().next();
 		assertEquals( field.getName(), "aPrivate" );
 	}
+	
+	public void testBug51260() throws Exception{
+		StringWriter writer = new StringWriter();
+		writer.write( " class A { public: void a(); }; " );
+		writer.write( " class B : public virtual A { public: void b(); };" );
+		writer.write( " class C : public virtual A { public: void c(); };" );
+		writer.write( " class D : public B, C { public: void d(); };" );
+		
+		writer.write( " void A::a(){} ");
+		writer.write( " void B::b(){} ");
+		writer.write( " void C::c(){} ");
+		writer.write( " void D::d(){ SP }" );
+		
+		String code = writer.toString();
+		int index = code.indexOf( "SP" );
+		IASTCompletionNode node = parse( code, index );
+		
+		ILookupResult result = node.getCompletionScope().lookup( node.getCompletionPrefix(), 
+		                                                         new IASTNode.LookupKind[]{ IASTNode.LookupKind.THIS },
+																 node.getCompletionContext() );
+		
+		assertEquals( result.getResultsSize(), 4 );
+		
+		Iterator iter = result.getNodes();
+		IASTMethod d = (IASTMethod) iter.next();
+		IASTMethod b = (IASTMethod) iter.next();
+		IASTMethod a = (IASTMethod) iter.next();
+		IASTMethod c = (IASTMethod) iter.next();
+		
+		assertFalse( iter.hasNext() );
+		
+		assertEquals( a.getName(), "a" );
+		assertEquals( b.getName(), "b" );
+		assertEquals( c.getName(), "c" );
+		assertEquals( d.getName(), "d" );
+		
+	}
+	
 }

@@ -99,10 +99,14 @@ public class ASTNode implements IASTNode {
 		if(lookupResults == null)
 			return null;
 		
+		//filter out things that are not visible and things that don't have AST nodes attached
 		ListIterator iter = lookupResults.listIterator();
 		while( iter.hasNext() ){
 			ISymbol s = (ISymbol) iter.next();
-			if( !thisContainer.isVisible( s, qualification ) ){
+			if( !thisContainer.isVisible( s, qualification ) ||
+			    s.getASTExtension() == null ||
+				s.getASTExtension().getPrimaryDeclaration() == null )
+			{
 				iter.remove();
 			}
 		}

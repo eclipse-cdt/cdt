@@ -5,6 +5,9 @@
 	Moved testErrorHandling_1() from failed tests to CompleteParseASTTest.  
 	Moved testBug44340() from failed tests to CompleteParseASTTest.
 
+2004-02-06 Andrew Niefer
+	Added CompletionParseTest.testBug51260
+
 2004-02-04 John Camelon
 	Added preliminary SelectionParseTests to test SELECTION_PARSE clients. 
 	Added SelectionParseTests to ParserTestSuite.  

@@ -3,6 +3,10 @@
 	Fixed Bug 44340 - Inline functions fail to resolve references 
 	Fixed Bug 51243 - Content Assist in an empty document causes a NPE 
 
+2004-02-06 Andrew Niefer
+	fixed bug51260 - Content Assist: Completion inside a class method silently fails with a ClassCastException
+	filter symbols without attached AST nodes out of the completion results so the iterator doesn't sometimes return null.
+
 2004-02-04 John Camelon
 	Added preliminary (crude) bSelectionParser IParser implementation for SELECTION_PARSE clients.  
 

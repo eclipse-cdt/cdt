@@ -102,11 +102,6 @@ public interface ICDTLaunchConfigurationConstants {
 //	public static final String ATTR_DEBUGGER_DEFERRED_BREAKPOINTS = CDT_LAUNCH_ID + ".DEFERRED_BREAKPOINTS"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute key. The value is a List (array of String) directories for the search path of shared libraries.
-	 */
-	public static final String ATTR_DEBUGGER_SOLIB_PATH = CDT_LAUNCH_ID + ".SOLIB_PATH"; //$NON-NLS-1$
-
-	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_START_MODE.
 	 * Startup debugger running the program.
 	 */

@@ -1,3 +1,7 @@
+2003-11-10 Mikhail Khodjaiants
+	Moving the shared library search paths block to mi UI.
+	* SolibSearchPathBlock.java: moved to mi UI.
+
 2003-09-09 Mikhail Khodjaiants
 	New class - SolibSearchPathBlock. Implements the UI control block to set the shared library search path.
 	* SolibSearchPathBlock.java

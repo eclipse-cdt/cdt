@@ -1,7 +1,10 @@
+2003-11-10 Mikhail Khodjaiants
+	Moving the shared library search paths block to mi UI.
+	* IMILaunchConfigurationConstants.java: added the 'ATTR_DEBUGGER_SOLIB_PATH' attribute.
 
 2003-09-11 Alain Magloire
 
-	Fix to inf shared parsing.
+	Fix to info shared parsing.
 
 	* src/org/eclipse/cdt/debug/mi/core/outpu/MIInfoSharedLibary.java
 

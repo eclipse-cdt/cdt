@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.ICDebugger;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.ICDISession;
@@ -37,7 +36,7 @@ public class GDBDebugger implements ICDebugger {
 					// it seems to be a real problem on many gdb platform
 				}
 			}
-			List p = config.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
+			List p = config.getAttribute(IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST);
 			if (p.size() > 0) {
 				String[] oldPaths = mgr.getSharedLibraryPaths();
 				String[] paths = new String[oldPaths.length + p.size()];

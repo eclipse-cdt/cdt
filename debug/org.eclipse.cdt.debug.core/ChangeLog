@@ -1,3 +1,7 @@
+2003-11-10 Mikhail Khodjaiants
+	Moving the shared library search paths block to mi UI.
+	* ICDTLaunchConfigurationConstants.java: moved the 'ATTR_DEBUGGER_SOLIB_PATH' attribute to mi.
+
 2003-09-10 Mikhail Khodjaiants
 	If breakpoint is a line breakpoint check if source locator contains this file 
 	instead of container project.

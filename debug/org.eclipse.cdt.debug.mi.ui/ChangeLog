@@ -1,3 +1,8 @@
+2003-11-10 Mikhail Khodjaiants
+	Moving the shared library search paths block to mi UI.
+	* SolibSearchPathBlock.java: new
+	* GDBSolibBlock.java
+
 2003-09-11 Mikhail Khodjaiants
 	Added the 'org.eclipse.cdt.debug.mi.internal.ui.dialogfields' package.
 	* CheckedListDialogField.java: new

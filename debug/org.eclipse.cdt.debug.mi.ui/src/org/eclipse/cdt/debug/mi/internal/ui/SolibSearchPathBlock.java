@@ -4,18 +4,18 @@
  * 
  */
 
-package org.eclipse.cdt.debug.ui;
+package org.eclipse.cdt.debug.mi.internal.ui;
 
 import java.util.Collections;
 import java.util.Observable;
 
-import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.ui.PixelConverter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.IListAdapter;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.LayoutUtil;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.ListDialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.Separator;
+import org.eclipse.cdt.debug.mi.core.IMILaunchConfigurationConstants;
 import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -117,7 +117,7 @@ public class SolibSearchPathBlock extends Observable
 		{
 			try
 			{
-				fDirList.addElements( configuration.getAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST ) );
+				fDirList.addElements( configuration.getAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST ) );
 			}
 			catch( CoreException e )
 			{
@@ -127,14 +127,14 @@ public class SolibSearchPathBlock extends Observable
 
 	public void setDefaults( ILaunchConfigurationWorkingCopy configuration )
 	{
-		configuration.setAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST );
+		configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, Collections.EMPTY_LIST );
 	}
 
 	public void performApply( ILaunchConfigurationWorkingCopy configuration )
 	{
 		if ( fDirList != null )
 		{
-			configuration.setAttribute( ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, fDirList.getElements() );
+			configuration.setAttribute( IMILaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, fDirList.getElements() );
 		}
 	}
 

@@ -39,7 +39,6 @@ import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTGotoStatement;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
@@ -60,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -835,9 +835,7 @@ public class CPPVisitor {
 			ICPPASTFunctionDeclarator fdtor = (ICPPASTFunctionDeclarator) declarator;
 		    IASTParameterDeclaration [] list = fdtor.getParameters();
 			for( int i = 0; i < list.length; i++ ){
-				IASTParameterDeclaration param = list[i];
-				if( !visitDeclSpecifier( param.getDeclSpecifier(), action ) ) return false;
-				if( !visitDeclarator( param.getDeclarator(), action ) ) return false;
+			    if( !visitParameterDeclaration( list[i], action ) ) return false;
 			}
 			ICPPASTConstructorChainInitializer [] ctorChain = fdtor.getConstructorChain();
 			for( int i = 0; i < ctorChain.length; i++ ){
@@ -1091,6 +1089,20 @@ public class CPPVisitor {
 	    return true;
 	}
 
+	public static boolean visitParameterDeclaration( IASTParameterDeclaration parameterDeclaration, CPPBaseVisitorAction action ){
+	    if( action.processParameterDeclarations ){
+	    	switch( action.processParameterDeclaration( parameterDeclaration ) ){
+		        case CPPBaseVisitorAction.PROCESS_ABORT : return false;
+		        case CPPBaseVisitorAction.PROCESS_SKIP  : return true;
+		        default : break;
+		    }
+	    }
+	    
+	    if( !visitDeclSpecifier( parameterDeclaration.getDeclSpecifier(), action ) ) return false;
+	    if( !visitDeclarator( parameterDeclaration.getDeclarator(), action ) ) return false;
+	    return true;
+	}
+	
 	/**
 	 * @param parameter
 	 * @param action

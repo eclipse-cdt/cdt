@@ -150,12 +150,13 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 		_isTemplateMember = isMember;
 	}
 	public boolean isTemplateInstance(){
-		return ( _symbolDef != null );
+		return ( _isTemplateInstance && _symbolDef != null );
 	}
 	public ISymbol getInstantiatedSymbol(){
 		return _symbolDef;
 	}
 	public void setInstantiatedSymbol( ISymbol symbol ){
+	    _isTemplateInstance = true;
 		_symbolDef = symbol;
 	}
 	
@@ -171,9 +172,9 @@ public class BasicSymbol extends ExtensibleSymbol implements ISymbol
 	private		int 				_depth;					//how far down the scope stack we are
 	
 	private 	boolean				_isInvisible = false;	//used by friend declarations (11.4-9)
-	
 	private		boolean				_isTemplateMember = false;
 	private		boolean				_isForwardDeclaration = false;
+	private     boolean 			_isTemplateInstance = false;
 	private		ISymbol				_symbolDef = null;		//used for forward declarations and template instantiations
 	
 	

@@ -194,6 +194,8 @@ public class UpdateManagedProjectAction implements IWorkbenchWindowActionDelegat
 		}
 		// Create the new configuration
 		newConfig = newTarget.createConfiguration(newParentConfig, defId + ID_SEPARATOR + randomElement);
+		String configName = oldConfig.getAttribute(IConfiguration.NAME);
+		newConfig.setName(configName);
 		
 		// Convert the tool references
 		NodeList toolRefNodes = oldConfig.getElementsByTagName(IConfiguration.TOOLREF_ELEMENT_NAME);

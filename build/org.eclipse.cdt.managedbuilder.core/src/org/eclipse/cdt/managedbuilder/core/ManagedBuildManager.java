@@ -559,25 +559,18 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 			}
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (FactoryConfigurationError e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (TransformerConfigurationException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		} catch (TransformerFactoryConfigurationError e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		} catch (TransformerException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// The save failed
-			e.printStackTrace();
 		} catch (CoreException e) {
 			// Save to IFile failed
-			e.printStackTrace();
 		}
 	}
 
@@ -810,7 +803,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * Since the class does not have a constructor but all public methods
 	 * call this method first, it is effectively a startup method
 	 */
-	private static void loadExtensions() throws BuildException {
+	synchronized private static void loadExtensions() throws BuildException {
 		if (extensionTargetsLoaded)
 			return;
 		

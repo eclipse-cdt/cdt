@@ -1,3 +1,7 @@
+2003-06-18 Mikhail Khodjaiants
+	Incorrect casting in the 'setChanged' method of CVariable.
+	* CVariable.java
+
 2003-06-11 Mikhail Khodjaiants
 	The unused 'getUnderlyingValueString' method has been removed from ICValue and CValue.
 	The methods 'setChanged' and 'getUnderlyingValue' are only for internal usage and

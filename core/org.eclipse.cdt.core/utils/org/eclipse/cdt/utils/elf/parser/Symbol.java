@@ -28,6 +28,7 @@ public class Symbol implements ISymbol, Comparable {
 	public long addr;
 	public String name;
 	public int type;
+	public long size;
 
 	public Symbol(BinaryObject bin) {
 		binary = bin;
@@ -87,6 +88,13 @@ public class Symbol implements ISymbol, Comparable {
 		} catch (IOException e) {		
 		}
 		return line;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getSize()
+	 */
+	public long getSize() {
+		return size;
 	}
 
 	public int compareTo(Object obj) {

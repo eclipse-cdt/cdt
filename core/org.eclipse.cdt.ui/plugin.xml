@@ -205,6 +205,27 @@
          </description>
       </wizard>
    </extension>
+  
+<!-- Define the document provider and partitionner for the CEditor -->
+   <extension
+         id="org.eclipse.cdt.ui.CDocumentSetupParticipant"
+         name="%cDocumentSetupParticipant"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            extensions="c, cc, cpp, cxx, h, hh, hpp"
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant">
+      </participant>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.ui.CDocumentFactory"
+         name="%cDocumentFactory"
+         point="org.eclipse.core.filebuffers.documentCreation">
+      <factory
+            extensions="c, cc, cpp, cxx, h, hh, hpp"
+            class="org.eclipse.cdt.internal.ui.editor.CDocumentFactory">
+      </factory>
+   </extension>
+
    <extension
          id="org.eclipse.cdt.ui.ceditor"
          point="org.eclipse.ui.editors">
@@ -623,7 +644,7 @@
             id="org.eclipse.cdt.ui.CSearchResultPage">
       </viewPage>
    </extension>
-<!--
+-->
    <extension
          point="org.eclipse.ui.propertyPages">
       <page

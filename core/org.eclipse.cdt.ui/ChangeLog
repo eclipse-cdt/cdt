@@ -1,3 +1,15 @@
+2004-04-20 Alain Magloire
+
+	In Eclipse-3.0 things changes to set partition scanner
+	on the Document Provider, it is now an extension point.
+	Implement "documentCreation" and "documentSetup" extension points.
+
+	* plugin.xml
+	* plugin.properties
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentFactory.java
+	* src/org/eclipse/cdt/internal/ui/editor/CDocumentSetupParticipant.java
+	* src/org/eclipse/cdt/internal/ui/editor/PartiallySynchronizedDocument.java
+	
 2004-04-20 David Inglis
 
 	Work in progress CPath UI changes

@@ -324,7 +324,7 @@ public abstract class CVariable extends CDebugElement
 	/**
 	 * The full name of this variable.
 	 */
-	private String fQualifiedName = null;
+	protected String fQualifiedName = null;
 
 	/**
 	 * Change flag.

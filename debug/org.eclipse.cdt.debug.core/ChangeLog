@@ -1,3 +1,8 @@
+2003-08-19 Mikhail Khodjaiants
+	Create ICDIVariableObject for each array partition to compute a detail panel's value. 
+	* CArrayPartition.java
+	* CVariable.java
+
 2003-08-18 Alain Magloire
 
 	ICDISharedLibraryEvent.java:

@@ -13,6 +13,7 @@ import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.event.ICDIEvent;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.ICDIVariableObject;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIArrayValue;
 import org.eclipse.cdt.debug.core.model.ICType;
 import org.eclipse.debug.core.DebugException;
@@ -30,6 +31,7 @@ public class CArrayPartition extends CVariable
 
 	private int fStart;
 	private int fEnd;
+	private ICDIVariableObject fCDIVariableObject;
 	private ICDIVariable fCDIVariable;
 	private ICType fType = null;
 
@@ -185,5 +187,36 @@ public class CArrayPartition extends CVariable
 	public boolean hasChildren()
 	{
 		return true;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.internal.core.model.CVariable#getQualifiedName()
+	 */
+	protected String getQualifiedName() throws DebugException
+	{
+		if ( fQualifiedName == null )
+		{
+			try
+			{
+				if ( getVariableObject() != null )
+				{
+					fQualifiedName = getVariableObject().getQualifiedName();
+				}
+			}
+			catch( CDIException e )
+			{
+				requestFailed( "Qualified name is not available.", e );
+			}
+		}
+		return fQualifiedName;
+	}
+
+	private ICDIVariableObject getVariableObject() throws CDIException
+	{
+		if ( fCDIVariableObject == null )
+		{
+			fCDIVariableObject = getCDISession().getVariableManager().getVariableObjectAsArray( fCDIVariable, getStart(), getEnd() - getStart() + 1 );
+		}
+		return fCDIVariableObject;
 	}
 }

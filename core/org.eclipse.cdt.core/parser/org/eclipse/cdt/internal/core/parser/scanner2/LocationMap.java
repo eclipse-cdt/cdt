@@ -589,6 +589,7 @@ public class LocationMap implements ILocationResolver, IScannerPreprocessorLog {
       IASTName name = new ScannerASTName(d.name);
       name.setPropertyInParent(IASTPreprocessorMacroDefinition.MACRO_NAME);
       name.setParent(r);
+      ((ScannerASTNode)name).setOffsetAndLength( d.nameOffset, d.name.length );
       r.setName(name);
       r.setExpansion(new String(d.expansion));
       ((ScannerASTNode) r).setOffsetAndLength(d.context_directive_start,

@@ -102,7 +102,6 @@ public class CStackFrame extends CDebugElement implements ICStackFrame, IRestart
 	protected synchronized List getVariables0() throws DebugException {
 		CThread thread = (CThread)getThread();
 		if ( thread.isSuspended() ) {
-			thread.switchToFrame( this );
 			if ( fVariables == null ) {			
 				List vars = getAllCDIVariableObjects();
 				fVariables = new ArrayList( vars.size() );

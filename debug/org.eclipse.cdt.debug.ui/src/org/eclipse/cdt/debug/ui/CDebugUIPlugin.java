@@ -13,8 +13,6 @@ package org.eclipse.cdt.debug.ui;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
-import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
-import org.eclipse.cdt.debug.core.model.ISwitchToThread;
 import org.eclipse.cdt.debug.internal.ui.CBreakpointUpdater;
 import org.eclipse.cdt.debug.internal.ui.CDTDebugModelPresentation;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
@@ -28,24 +26,14 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
-import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -53,7 +41,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The main plugin class to be used in the desktop.
  */
-public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListener {
+public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * The plug-in identifier (value <code>"org.eclipse.cdt.debug.ui"</code>).
@@ -235,56 +223,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 		return getDefault().fImageDescriptorRegistry;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
-	 */
-	public void selectionChanged( IWorkbenchPart part, ISelection selection ) {
-		if ( selection != null && selection instanceof IStructuredSelection ) {
-			if ( ((IStructuredSelection)selection).size() == 1 ) {
-				Object element = ((IStructuredSelection)selection).getFirstElement();
-				if ( element != null && element instanceof IThread ) {
-					if ( ((IThread)element).getDebugTarget() instanceof ISwitchToThread ) {
-						try {
-							if ( !sameThread( (IDebugElement)element ) ) {
-								((ISwitchToThread)((IThread)element).getDebugTarget()).setCurrentThread( (IThread)element );
-							}
-						}
-						catch( DebugException e ) {
-							errorDialog( e.getMessage(), e );
-						}
-					}
-				}
-				else if ( element != null && element instanceof IStackFrame ) {
-					if ( ((IStackFrame)element).getThread() instanceof ISwitchToFrame ) {
-						try {
-							if ( !sameThread( (IDebugElement)element ) ) {
-								((ISwitchToThread)((IStackFrame)element).getDebugTarget()).setCurrentThread( ((IStackFrame)element).getThread() );
-							}
-							((ISwitchToFrame)((IStackFrame)element).getThread()).switchToFrame( (IStackFrame)element );
-						}
-						catch( DebugException e ) {
-							//							errorDialog( "Switch to stack frame failed.", e );
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private boolean sameThread( IDebugElement element ) throws DebugException {
-		if ( element.getDebugTarget() instanceof ISwitchToThread ) {
-			if ( element instanceof IThread ) {
-				return ((IThread)element).equals( ((ISwitchToThread)element.getDebugTarget()).getCurrentThread() );
-			}
-			if ( element instanceof IStackFrame ) {
-				return ((IStackFrame)element).getThread().equals( ((ISwitchToThread)element.getDebugTarget()).getCurrentThread() );
-			}
-		}
-		return false;
-	}
-
 	public static IPersistableSourceLocator createDefaultSourceLocator() {
 		return new DefaultSourceLocator();
 	}
@@ -307,7 +245,6 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	 */
 	public void start( BundleContext context ) throws Exception {
 		super.start( context );
-		listenSelection( true, this );
 		CDebugCorePlugin.getDefault().addCBreakpointListener( CBreakpointUpdater.getInstance() );
 	}
 
@@ -318,33 +255,9 @@ public class CDebugUIPlugin extends AbstractUIPlugin implements ISelectionListen
 	 */
 	public void stop( BundleContext context ) throws Exception {
 		CDebugCorePlugin.getDefault().removeCBreakpointListener( CBreakpointUpdater.getInstance() );
-		try {
-			listenSelection( false, this );
-		} 
-		catch (SWTException e) {
-		}
 		if ( fImageDescriptorRegistry != null ) {
 			fImageDescriptorRegistry.dispose();
 		}
 		super.stop( context );
-	}
-
-	void listenSelection( final boolean enable, final ISelectionListener listener ) {
-		Display display = getWorkbench().getDisplay();
-		if ( display == null || display.isDisposed() )
-			return;
-		Runnable r = new Runnable() {
-			
-			public void run() {
-				IWorkbenchWindow ww = getActiveWorkbenchWindow();
-				if ( ww != null ) {
-					if ( enable )
-						ww.getSelectionService().addSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, listener );
-					else
-						ww.getSelectionService().removeSelectionListener( IDebugUIConstants.ID_DEBUG_VIEW, listener );
-				}
-			}
-		};
-		display.asyncExec( r );
 	}
 }

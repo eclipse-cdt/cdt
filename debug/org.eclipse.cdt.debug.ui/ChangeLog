@@ -1,3 +1,7 @@
+2004-09-15 Mikhail Khodjaiants
+	Removed the "ISwitchToThread" and "ISwitchToFrame" interfaces.
+	* CDebugUIPlugin.java
+
 2004-09-13 Mikhail Khodjaiants
 	Fix for bug 72555: "Toggle breakpoint" action doesn't remove function breakpoints from editor.
 	* DisassemblyEditorInput.java

@@ -1377,30 +1377,7 @@ public class CDebugTarget extends CDebugElement implements ICDebugTarget, ICDIEv
 		runToLine( file.getLocation().lastSegment(), lineNumber, skipBreakpoints );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ISwitchToThread#setCurrentThread(org.eclipse.debug.core.model.IThread)
-	 */
-	public void setCurrentThread( IThread thread ) throws DebugException {
-		if ( !isSuspended() || !isAvailable() || !(thread instanceof CThread) )
-			return;
-		try {
-			CThread oldThread = (CThread)getCurrentThread();
-			if ( !thread.equals( oldThread ) ) {
-				getCDITarget().setCurrentThread( ((CThread)thread).getCDIThread() );
-				if ( oldThread != null )
-					oldThread.setCurrent( false );
-				((CThread)thread).setCurrent( true );
-			}
-		}
-		catch( CDIException e ) {
-			targetRequestFailed( e.getMessage(), null );
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ISwitchToThread#getCurrentThread()
-	 */
-	public IThread getCurrentThread() throws DebugException {
+	protected IThread getCurrentThread() throws DebugException {
 		IThread[] threads = getThreads();
 		for( int i = 0; i < threads.length; ++i ) {
 			if ( ((CThread)threads[i]).isCurrent() )

@@ -42,7 +42,6 @@ import org.eclipse.cdt.debug.core.model.IDummyStackFrame;
 import org.eclipse.cdt.debug.core.model.IRestart;
 import org.eclipse.cdt.debug.core.model.IResumeWithoutSignal;
 import org.eclipse.cdt.debug.core.model.IRunToLine;
-import org.eclipse.cdt.debug.core.model.ISwitchToFrame;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -57,7 +56,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 /**
  * A thread in a C/C++ debug model.
  */
-public class CThread extends CDebugElement implements ICThread, IRestart, IResumeWithoutSignal, ISwitchToFrame, ICDIEventListener {
+public class CThread extends CDebugElement implements ICThread, IRestart, IResumeWithoutSignal, ICDIEventListener {
 
 	private final static int MAX_STACK_DEPTH = 100;
 
@@ -85,11 +84,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 * Whether this thread is current.
 	 */
 	private boolean fIsCurrent = false;
-
-	/**
-	 * The last selected frame in this thread, <code>null</code> if thread is not suspended.
-	 */
-	private CStackFrame fLastStackFrame = null;
 
 	/**
 	 * The depth of the current stack.  
@@ -224,7 +218,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	 */
 	protected ICDIStackFrame[] getCDIStackFrames( int lowFrame, int highFrame ) throws DebugException {
 		try {
-			((CDebugTarget)getDebugTarget()).setCurrentThread( this );
 			return getCDIThread().getStackFrames( lowFrame, highFrame );
 		}
 		catch( CDIException e ) {
@@ -710,7 +703,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	}
 
 	private void handleResumedEvent( ICDIResumedEvent event ) {
-		setLastStackFrame( null );
 		CDebugElementState state = CDebugElementState.RESUMED;
 		int detail = DebugEvent.RESUME;
 		if ( isCurrent() && event.getType() != ICDIResumedEvent.CONTINUE ) {
@@ -807,34 +799,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 		fIsCurrent = current;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.model.ISwitchToFrame#switchToFrame(org.eclipse.debug.core.model.IStackFrame)
-	 */
-	public void switchToFrame( IStackFrame frame ) throws DebugException {
-		if ( frame == null || !(frame instanceof CStackFrame) /* || frame.equals( getLastStackFrame() ) */) {
-			return;
-		}
-		try {
-			((CDebugTarget)getDebugTarget()).setCurrentThread( this );
-			if ( getLastStackFrame() != null ) {
-				((CDebugTarget)getDebugTarget()).resetRegisters();
-				getCDIThread().setCurrentStackFrame( ((CStackFrame)frame).getCDIStackFrame() );
-			}
-			setLastStackFrame( (CStackFrame)frame );
-		}
-		catch( CDIException e ) {
-			targetRequestFailed( e.getMessage(), null );
-		}
-	}
-
-	private void setLastStackFrame( CStackFrame frame ) {
-		fLastStackFrame = frame;
-	}
-
-	private CStackFrame getLastStackFrame() {
-		return fLastStackFrame;
-	}
-
 	protected int getStackDepth() throws DebugException {
 		int depth = 0;
 		try {
@@ -908,7 +872,6 @@ public class CThread extends CDebugElement implements ICThread, IRestart, IResum
 	}
 
 	protected void resumedByTarget( int detail, List events ) {
-		setLastStackFrame( null );
 		if ( isCurrent() && detail != DebugEvent.CLIENT_REQUEST && detail != DebugEvent.UNSPECIFIED ) {
 			setState( CDebugElementState.STEPPED );
 			preserveStackFrames();

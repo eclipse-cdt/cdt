@@ -1,3 +1,12 @@
+2004-09-15 Mikhail Khodjaiants
+	Removed the "ISwitchToThread" and "ISwitchToFrame" interfaces.
+	* ICDebugTarget.java
+	* ISwitchToThread.java: removed
+	* ISwitchToFrame.java: removed
+	* CDebugTarget.java
+	* CStackFrame.java
+	* CThread.java
+
 2004-09-13 Mikhail Khodjaiants
 	Moved to the new CDI interfaces.
 	* CDebugTarget.java

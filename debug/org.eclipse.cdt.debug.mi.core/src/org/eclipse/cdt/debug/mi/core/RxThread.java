@@ -147,8 +147,13 @@ public class RxThread extends Thread {
 					session.fireEvent(event);
 				} else if ("exit".equals(state)) {
 					// No need to do anything, terminate() will.
+					session.getMIInferior().setTerminated();
 				} else if ("connected".equals(state)) {
 					session.getMIInferior().setConnected();
+				} else if ("error".equals(state)) {
+					if (session.getMIInferior().isRunning()) {
+						session.getMIInferior().setSuspended();
+					}
 				}
 
 				// Clear the accumulate oobList on each new Result Command
@@ -203,7 +208,6 @@ public class RxThread extends Thread {
 			String state = exec.getAsyncClass();
 			if ("stopped".equals(state)) {
 				MIEvent e = null;
-				session.getMIInferior().setSuspended();
 				MIResult[] results = exec.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
@@ -219,14 +223,13 @@ public class RxThread extends Thread {
 					}
 				}
 			
-				// HACK: GDB for temporary breakpoints will not send the
-				// "reason" ???  Fake this as breakpoint-hit 
+				// We were stopped for some unknown reason, for example
+				// GDB for temporary breakpoints will not send the
+				// "reason" ??? still fire a stopped event.
 				if (e == null) {
-					//e = createEvent("breakpoint-hit", exec);
+					session.getMIInferior().setSuspended();
 					e = new MIStoppedEvent();
-					if (e != null) {
-						list.add(e);
-					}
+					list.add(e);
 				}
 			}
 		} else if (async instanceof MIStatusAsyncOutput) {
@@ -319,52 +322,59 @@ public class RxThread extends Thread {
 			} else if (rr != null) {
 				event = new MIBreakpointEvent(rr);
 			}
+			session.getMIInferior().setSuspended();
 		} else if ("watchpoint-trigger".equals(reason)) {
 			if (exec != null) {
 				event = new MIWatchpointTriggerEvent(exec);
 			} else if (rr != null) {
 				event = new MIWatchpointTriggerEvent(rr);
 			}
+			session.getMIInferior().setSuspended();
 		} else if ("watchpoint-scope".equals(reason)) {
 			if (exec != null) {
 				event = new MIWatchpointScopeEvent(exec);
 			} else if (rr != null) {
 				event = new MIWatchpointScopeEvent(rr);
 			}
+			session.getMIInferior().setSuspended();
 		} else if ("end-stepping-range".equals(reason)) {
 			if (exec != null) {
 				event = new MISteppingRangeEvent(exec);
 			} else if (rr != null) {
 				event = new MISteppingRangeEvent(rr);
 			}
+			session.getMIInferior().setSuspended();
 		} else if ("signal-received".equals(reason)) {
 			if (exec != null) {
 				event = new MISignalEvent(exec);
 			} else if (rr != null) {
 				event = new MISignalEvent(rr);
 			}
+			session.getMIInferior().setSuspended();
 		} else if ("location-reached".equals(reason)) {
 			if (exec != null) {
 				event = new MILocationReachedEvent(exec);
 			} else if (rr != null) {
 				event = new MILocationReachedEvent(rr);
 			}
+			session.getMIInferior().setSuspended();
 		} else if ("function-finished".equals(reason)) {
 			if (exec != null) {
 				event = new MIFunctionFinishedEvent(exec);
 			} else if (rr != null) {
 				event = new MIFunctionFinishedEvent(rr);
 			}
+			session.getMIInferior().setSuspended();
 		} else if ("exited-normally".equals(reason) ||
 			"exited-signalled".equals(reason) ||
 			"exited-signalled".equals(reason) ||
 			"exited".equals(reason)) {
-			session.getMIInferior().setTerminated();
 			if (exec != null) {
 				event = new MIInferiorExitEvent(exec);
 			} else if (rr != null) {
 				event = new MIInferiorExitEvent(rr);
 			}
+			session.getMIInferior().setTerminated();
 		}
 		return event;
 	}

@@ -1,34 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.cdt.doc.user"
+   name="C/C++ Development User Guide"
+   version="1.2.0"
+   provider-name="eclipse.org">
 
-<!-- ================================================= -->
-<!-- This is the plugin for declaring the help         -->
-<!-- contributions of a doc component plugin.          -->
-<!-- ================================================= -->
+   <runtime>
+   </runtime>
 
-<plugin 
+<!-- Configure the help contribution for this plugin -->
+<!-- This part should be in a documentation plugin -->
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="toc.xml"
+            primary="true">
+      </toc>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts_CDT.xml"
+            plugin="org.eclipse.cdt.ui">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts_CDT_DEBUGGER.xml"
+            plugin="org.eclipse.cdt.debug.ui">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts_CDT_DEBUGGER_MI.xml"
+            plugin="org.eclipse.cdt.debug.mi.ui">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts_CDT_make.xml"
+            plugin="org.eclipse.cdt.make.ui">
+      </contexts>
+   </extension>
+   <extension
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="contexts_CDT_LAUNCH.xml"
+            plugin="org.eclipse.cdt.launch">
+      </contexts>
+   </extension>
 
-   name = "C/C++ Development User Guide"
-   id = "org.eclipse.cdt.doc.user"
-   version = "1.2.0.57"
-  provider-name = "Rational Software: IBM Software Group">
-   <!-- Configure the help contribution for this plugin --> 
-   <!-- This part should be in a documentation plugin -->
-   <extension point="org.eclipse.help.toc">
-       <toc file="toc.xml" primary="true" /> 
-   </extension>
-   <extension point="org.eclipse.help.contexts">
-       <contexts file="contexts_CDT.xml" plugin="org.eclipse.cdt.ui"/> 
-   </extension>
-   <extension point="org.eclipse.help.contexts">
-       <contexts file="contexts_CDT_DEBUGGER.xml" plugin="org.eclipse.cdt.debug.ui"/> 
-   </extension>
-   <extension point="org.eclipse.help.contexts">
-       <contexts file="contexts_CDT_DEBUGGER_MI.xml" plugin="org.eclipse.cdt.debug.mi.ui"/> 
-   </extension>
-   <extension point="org.eclipse.help.contexts">
-       <contexts file="contexts_CDT_make.xml" plugin="org.eclipse.cdt.make.ui"/> 
-   </extension>
-   <extension point="org.eclipse.help.contexts">
-       <contexts file="contexts_CDT_LAUNCH.xml" plugin="org.eclipse.cdt.launch"/> 
-   </extension>
 </plugin>

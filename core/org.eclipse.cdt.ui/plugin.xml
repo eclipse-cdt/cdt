@@ -2,7 +2,7 @@
 <plugin
    id="org.eclipse.cdt.ui"
    name="%pluginName"
-   version="1.1.0"
+   version="1.2.0"
    provider-name="%providerName"
    class="org.eclipse.cdt.ui.CUIPlugin">
 
@@ -27,9 +27,9 @@
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
    <extension-point id="BinaryParserPage" name="Binary Parser Page"/>
 <!-- =========================================================================== -->
-<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
-<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
 <!-- Extension Implementation: must implement org.eclipse.jface.text.ITextHover  -->
+<!-- Purpose: Provide a perspective specific text hovering for CEditor files     -->
+<!-- Extension point: org.eclipse.cdt.ui.textHovers                        -->
 <!-- =========================================================================== -->
    <extension-point id="textHovers" name="%textHoversName"/>
 
@@ -130,8 +130,8 @@
             id="org.eclipse.cdt.ui.CView">
       </view>
    </extension>
-<!-- For C Wizards -->
 <!-- The wizards -->
+<!-- For C Wizards -->
    <extension
          point="org.eclipse.ui.newWizards">
       <category
@@ -406,8 +406,8 @@
       <page
             showScopeSection="true"
             label="%CSearchPage.label"
-            extensions="c:90,cpp:90, cxx:90, cc:90, h:90, hh:90, hpp:90"
             icon="icons/full/obj16/csearch_obj.gif"
+            extensions="c:90,cpp:90, cxx:90, cc:90, h:90, hh:90, hpp:90"
             class="org.eclipse.cdt.internal.ui.search.CSearchPage"
             sizeHint="460, 160"
             id="org.eclipse.cdt.ui.CSearchPage">

@@ -312,6 +312,16 @@ public class Configuration extends BuildObject implements IConfiguration {
 	 * @see org.eclipse.cdt.managedbuilder.core.IConfiguration#isDirty()
 	 */
 	public boolean isDirty() {
+		// If I need saving, just say yes
+		if (isDirty) return true;
+		
+		// Otherwise see if any tool references need saving
+		Iterator iter = getLocalToolReferences().listIterator();
+		while (iter.hasNext()) {
+			IToolReference ref = (IToolReference) iter.next();
+			if (ref.isDirty()) return true;
+		}
+		
 		return isDirty;
 	}
 

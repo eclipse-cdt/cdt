@@ -51,6 +51,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.QualifiedName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,10 +68,10 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	private static final String FILE_NAME = ".cdtbuild";	//$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
 	public static final String INTERFACE_IDENTITY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "." + "ManagedBuildManager";	//$NON-NLS-1$ //$NON-NLS-2$
-	public static final String EXTENSION_POINT_ID = "ManagedBuildInfo";		//$NON-NLS-1$
+	public static final String EXTENSION_POINT_ID = "ManagedBuildInfo";	//$NON-NLS-1$
 	
 	// This is the version of the manifest and project files that
-	private static final String buildInfoVersion = "2.0.0"; //$NON-NLS-1$
+	private static final PluginVersionIdentifier buildInfoVersion = new PluginVersionIdentifier("2.0.0"); //$NON-NLS-1$
 	private static boolean extensionTargetsLoaded = false;
 	private static Map extensionTargetMap;
 	private static List extensionTargets;
@@ -88,8 +89,13 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * @return
 	 */
 	public static ITarget[] getDefinedTargets(IProject project) {
-		// Make sure the extensions are loaded
-		loadExtensions();
+		try {
+			// Make sure the extensions are loaded
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Get the targets for this project and all referenced projects
 		List definedTargets = null;
@@ -379,7 +385,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 */
 	public static void resetConfiguration(IProject project, IConfiguration configuration) {
 		// Make sure the extensions are loaded
-		loadExtensions();
+		try {
+			loadExtensions();
+		} catch (BuildException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Find out the parent of the configuration
 		IConfiguration parentConfig = configuration.getParent();
@@ -474,18 +485,21 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	 * Since the class does not have a constructor but all public methods
 	 * call this method first, it is effectively a startup method
 	 */
-	private static void loadExtensions() {
+	private static void loadExtensions() throws BuildException {
 		if (extensionTargetsLoaded)
 			return;
 		
 		// Get those extensions
 		IPluginDescriptor descriptor = ManagedBuilderCorePlugin.getDefault().getDescriptor();
+		
 		// Get the version of the manifest
-/*		PluginVersionIdentifier version = descriptor.getVersionIdentifier();
-		if (version.isGreaterThan(new PluginVersionIdentifier(buildInfoVersion))) {
-			//TODO: The version of the Plug-in is greater than what the manager thinks it understands
+		PluginVersionIdentifier version = descriptor.getVersionIdentifier();
+		if (version.isGreaterThan(buildInfoVersion)) {
+			//The version of the Plug-in is greater than what the manager thinks it understands
+			throw new BuildException(ManagedBuilderCorePlugin.getResourceString("ManagedBuildManager.error.version.higher"));	//$NON-NLS-1$
 		}
-*/		// We can read the manifest
+		
+		// We can read the manifest
 		IExtensionPoint extensionPoint = descriptor.getExtensionPoint(EXTENSION_POINT_ID);
 		IExtension[] extensions = extensionPoint.getExtensions();
 		// First call the constructors
@@ -588,7 +602,12 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 
 	private static ManagedBuildInfo findBuildInfo(IResource resource, boolean create) {
 		// Make sure the extension information is loaded first
-		loadExtensions();
+		try {
+			loadExtensions();
+		} catch (BuildException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		ManagedBuildInfo buildInfo = null;
 		try {
 			buildInfo = (ManagedBuildInfo)resource.getSessionProperty(buildInfoProperty);
@@ -644,7 +663,7 @@ public class ManagedBuildManager extends AbstractCExtension implements IScannerI
 	}
 
 	public static String getBuildInfoVersion() {
-		return buildInfoVersion;
+		return buildInfoVersion.toString();
 	}
 
 	/*

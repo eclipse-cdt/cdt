@@ -41,6 +41,13 @@ public interface IToolReference extends ITool {
 	public ITool getTool();
 
 	/**
+	 * Answers <code>true</code> if the receiver ahs been modified in any way.
+	 * 
+	 * @return boolean
+	 */
+	public boolean isDirty();
+	
+	/**
 	 * Answers <code>true</code> if the reference is a reference to the 
 	 * tool specified in the argument.
 	 * 

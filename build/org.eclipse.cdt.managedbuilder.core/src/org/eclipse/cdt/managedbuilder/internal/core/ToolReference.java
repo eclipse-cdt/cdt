@@ -30,6 +30,7 @@ import org.w3c.dom.NodeList;
 
 public class ToolReference implements IToolReference {
 	private String command;
+	private boolean isDirty = false;
 	private List optionReferences;
 	private IBuildObject owner;
 	protected ITool parent;
@@ -434,6 +435,13 @@ public class ToolReference implements IToolReference {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#isDirty()
+	 */
+	public boolean isDirty() {
+		return isDirty;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.ITool#isHeaderFile(java.lang.String)
 	 */
 	public boolean isHeaderFile(String ext) {
@@ -477,14 +485,18 @@ public class ToolReference implements IToolReference {
 			element.appendChild(optionRefElement);
 			optionRef.serialize(doc, optionRefElement);
 		}
+		
+		// Set the reference to clean
+		isDirty = false;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.managedbuilder.core.IToolReference#setToolCommand(java.lang.String)
 	 */
 	public boolean setToolCommand(String cmd) {
 		if (cmd != null && !cmd.equals(command)) {
 			command = cmd;
+			isDirty = true;
 			return true;
 		} else {
 			return false;

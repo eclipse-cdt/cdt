@@ -131,7 +131,7 @@ public class CDescriptorTests extends TestCase {
 				CCorePlugin.getDefault().mapCProjectOwner(fProject, projectId, false);
 			}
 		}, null);
-		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject);
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 
 		Assert.assertNotNull(fLastEvent);
 		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
@@ -144,7 +144,7 @@ public class CDescriptorTests extends TestCase {
 	}
 
 	public void testDescriptorOwner() throws Exception {
-		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject);
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICOwnerInfo owner = desc.getProjectOwner();
 		Assert.assertEquals(projectId, owner.getID());
 		Assert.assertEquals("*", owner.getPlatform());
@@ -156,7 +156,7 @@ public class CDescriptorTests extends TestCase {
 	}
 
 	public void testExtensionCreation() throws Exception {
-		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject);
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICExtensionReference extRef = desc.create("org.eclipse.cdt.testextension", "org.eclipse.cdt.testextensionID");
 
 		Assert.assertNotNull(fLastEvent);
@@ -170,7 +170,7 @@ public class CDescriptorTests extends TestCase {
 	}
 
 	public void testExtensionGet() throws Exception {
-		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject);
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICExtensionReference extRef[] = desc.get("org.eclipse.cdt.testextension");
 
 		Assert.assertEquals("org.eclipse.cdt.testextension", extRef[0].getExtension());
@@ -178,7 +178,7 @@ public class CDescriptorTests extends TestCase {
 	}
 
 	public void testExtensionData() throws Exception {
-		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject);
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICExtensionReference extRef[] = desc.get("org.eclipse.cdt.testextension");
 		extRef[0].setExtensionData("testKey", "testValue");
 
@@ -194,7 +194,7 @@ public class CDescriptorTests extends TestCase {
 	}
 
 	public void testExtensionRemove() throws Exception {
-		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject);
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICExtensionReference extRef[] = desc.get("org.eclipse.cdt.testextension");
 		desc.remove(extRef[0]);
 
@@ -207,7 +207,7 @@ public class CDescriptorTests extends TestCase {
 	}
 
 	public void testProjectDataCreate() throws Exception {
-		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject);
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		Element data = desc.getProjectData("testElement");
 		data.appendChild(data.getOwnerDocument().createElement("test"));
 		desc.saveProjectData();
@@ -220,7 +220,7 @@ public class CDescriptorTests extends TestCase {
 	}
 
 	public void testProjectDataDelete() throws Exception {
-		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject);
+		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		Element data = desc.getProjectData("testElement");
 		NodeList list = data.getElementsByTagName("test");
 		Assert.assertEquals(1, list.getLength());

@@ -119,6 +119,7 @@ import org.eclipse.ui.views.framelist.ForwardAction;
 import org.eclipse.ui.views.framelist.FrameList;
 import org.eclipse.ui.views.framelist.GoIntoAction;
 import org.eclipse.ui.views.framelist.UpAction;
+import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 
 
@@ -358,8 +359,12 @@ public class CView extends ViewPart implements IMenuListener, ISetSelectionTarge
 	 */
 	void initDragAndDrop() {
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] transfers = new Transfer[] {ResourceTransfer.getInstance(),
-		FileTransfer.getInstance(), PluginTransfer.getInstance()};
+		Transfer[] transfers = new Transfer[] {
+			ResourceTransfer.getInstance(),
+			FileTransfer.getInstance(),
+			LocalSelectionTransfer.getInstance(),
+			PluginTransfer.getInstance() };
+
 		viewer.addDragSupport(ops, transfers, new CViewDragAdapter((ISelectionProvider)viewer));
 		viewer.addDropSupport(ops, transfers, new CViewDropAdapter(viewer));
 	}

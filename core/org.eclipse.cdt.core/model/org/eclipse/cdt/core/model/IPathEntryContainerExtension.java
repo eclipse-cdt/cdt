@@ -18,24 +18,26 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface IPathEntryContainerExtension extends IPathEntryContainer {
 
-	/**
-	 * Returns the set of include entries associated with the resource
-	 * and empty array if none.
-	 *
-	 * @param path Workspace relative path.
-	 * @return IIncludeEntry[] - the entries or empty set if none
-	 * @see IPathEntry
-	 */
-	IIncludeEntry[] getIncludeEntries(IPath path);
+	IPathEntry[] getPathEntries(IPath path, int typesMask);
 
-	/**
-	 * Returns the set of macro entries associated with the resource
-	 * and empty array if none.
-	 * 
-	 * @param path Workspace relative path.
-	 * @return IMacroEntry[] - the entries or empty set if none
-	 * @see IPathEntry
-	 */
-	IMacroEntry[] getMacroEntries(IPath path);
-
+//	/**
+//	 * Returns the set of include entries associated with the resource
+//	 * and empty array if none.
+//	 *
+//	 * @param path Workspace relative path.
+//	 * @return IIncludeEntry[] - the entries or empty set if none
+//	 * @see IPathEntry
+//	 */
+//	IIncludeEntry[] getIncludeEntries(IPath path);
+//
+//	/**
+//	 * Returns the set of macro entries associated with the resource
+//	 * and empty array if none.
+//	 * 
+//	 * @param path Workspace relative path.
+//	 * @return IMacroEntry[] - the entries or empty set if none
+//	 * @see IPathEntry
+//	 */
+//	IMacroEntry[] getMacroEntries(IPath path);
+//
 }

@@ -23,7 +23,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICElementDelta;
 import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IIncludeEntry;
+import org.eclipse.cdt.core.model.IIncludeFileEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
+import org.eclipse.cdt.core.model.IMacroFileEntry;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.parser.IScannerInfoProvider;
@@ -84,21 +86,51 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		IPath resPath = resource.getFullPath();
 
 		try {
+			// get the includes
 			IIncludeEntry[] includeEntries = CoreModel.getIncludeEntries(resPath);
-			String[] includes = new String[includeEntries.length];
-			for (int i = 0; i < includes.length; ++i) {
-				includes[i] = includeEntries[i].getFullIncludePath().toOSString();
+			int localCount = 0, systemCount = 0;
+			for (int i = 0; i < includeEntries.length; ++i) {
+				if (includeEntries[i].isSystemInclude()) {
+					++systemCount;
+				} else {
+					++localCount;
+				}
 			}
+			String[] localIncludes = new String[localCount];
+			String[] systemIncludes = new String[systemCount]; 
+			for (int i = 0; i < includeEntries.length; ++i) {
+				if (includeEntries[i].isSystemInclude()) {
+					systemIncludes[i] = includeEntries[i].getFullIncludePath().toOSString();					
+				} else {
+					localIncludes[i] = includeEntries[i].getFullIncludePath().toOSString();
+				}
+			}
+
+			// get the includeFile
+			IIncludeFileEntry[] includeFileEntries = CoreModel.getIncludeFileEntries(resPath);
+			String[] includeFiles = new String[includeFileEntries.length];
+			for (int i = 0; i < includeFiles.length; ++i) {
+				includeFiles[i] = includeFileEntries[i].getFullIncludeFilePath().toOSString();
+			}
+
+			// get the macros
 			IMacroEntry[] macros = CoreModel.getMacroEntries(resPath);
 			Map symbolMap = new HashMap();
 			for (int i = 0; i < macros.length; ++i) {
 				symbolMap.put(macros[i].getMacroName(), macros[i].getMacroValue());
 			}
-			return new ScannerInfo(includes, symbolMap);
+
+			// get the macro files
+			IMacroFileEntry[] macroFileEntries = CoreModel.getMacroFileEntries(resPath);
+			String[] macroFiles = new String[macroFileEntries.length];
+			for (int i = 0; i < macroFiles.length; ++i) {
+				macroFiles[i] = macroFileEntries[i].getFullMacroFilePath().toOSString();
+			}
+			return new ScannerInfo(systemIncludes, localIncludes, includeFiles, symbolMap, macroFiles);
 		} catch (CModelException e) {
 			//
 		}
-		return new ScannerInfo(null, null);
+		return new ScannerInfo(null, null, null, null, null);
 	}
 
 	/*

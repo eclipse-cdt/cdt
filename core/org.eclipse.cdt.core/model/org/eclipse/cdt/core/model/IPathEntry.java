@@ -26,39 +26,54 @@ public interface IPathEntry {
 	 * Entry kind constant describing a path entry identifying a
 	 * required project.
 	 */
-	int CDT_PROJECT = 2;
+	int CDT_PROJECT = 1 << 2;
 
 	/**
 	 * Entry kind constant describing a path entry identifying a
 	 * folder containing source code to be compiled.
 	 */
-	int CDT_SOURCE = 3;
+	int CDT_SOURCE = 1 << 3;
 
 	/**
 	 * Entry kind constant describing a path entry identifying a
 	 * include path.
 	 */
-	int CDT_INCLUDE = 4;
+	int CDT_INCLUDE = 1 << 4;
 	
 	/**
 	 * Entry kind constant describing a path entry representing
 	 * a container id.
 	 *
 	 */
-	int CDT_CONTAINER = 5;
+	int CDT_CONTAINER = 1 << 5;
 
 	/**
 	 * Entry kind constant describing a path entry representing
 	 * a macro definition.
 	 *
 	 */
-	int CDT_MACRO = 6;
+	int CDT_MACRO = 1 << 6;
 
 	/**
 	 * Entry kind constant describing output location
 	 *
 	 */
-	int CDT_OUTPUT = 7;
+	int CDT_OUTPUT = 1 << 7;
+
+	/**
+	 * Entry kind constant describing a path entry representing
+	 * a file that will be process file as if "#include "file"" appeared as
+	 * the first line of the source file.
+	 */
+	int CDT_INCLUDE_FILE = 1 << 8;
+
+	/**
+	 * Entry kind constant describing a path entry representing
+	 * a file that will be process file as if "#include "file"" appeared as
+	 * the first line of the source file but only the macro definitions are kept.
+	 * 
+	 */
+	int CDT_MACRO_FILE = 1 << 9;
 
 	/**
 	 * Returns the kind of this path entry.
@@ -72,6 +87,8 @@ public interface IPathEntry {
 	 * <li><code>CDT_MACRO</code> - this entry describes a macro definition
 	 * <li><code>CDT_CONTAINER</code> - this entry describes a container id
 	 * <li><code>CDT_OUTPUT</code> - this entry describes output location
+	 * <li><code>CDT_INCLUDE_FILE</code> - this entry describes a file to be process as an include
+	 * <li><code>CDT_MACRO_FILE</code> - this entry describes a file containing macro definitions
 	 */
 	int getEntryKind();
 

@@ -22,8 +22,10 @@ import org.eclipse.cdt.internal.core.model.CModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.ContainerEntry;
 import org.eclipse.cdt.internal.core.model.IncludeEntry;
+import org.eclipse.cdt.internal.core.model.IncludeFileEntry;
 import org.eclipse.cdt.internal.core.model.LibraryEntry;
 import org.eclipse.cdt.internal.core.model.MacroEntry;
+import org.eclipse.cdt.internal.core.model.MacroFileEntry;
 import org.eclipse.cdt.internal.core.model.OutputEntry;
 import org.eclipse.cdt.internal.core.model.PathEntryManager;
 import org.eclipse.cdt.internal.core.model.ProjectEntry;
@@ -531,6 +533,37 @@ public class CoreModel {
 	}
 
 	/**
+	 * Creates a new entry of kind <code>CDT_INCLUDE_FILE</code>
+	 * 
+	 * @param resourcePath
+	 * @param includeFile
+	 * @return
+	 */
+	public static IIncludeFileEntry newIncludeFileEntry(IPath resourcePath, IPath includeFile) {
+		return newIncludeFileEntry(resourcePath, null, null, includeFile, null, false);
+	}
+
+	/**
+	 * Creates and returns a new entry of kind <code>CDT_INCLUDE_FILE</code>
+	 * 
+	 * @param resourcePath
+	 *            the affected project-relative resource path
+	 * @param basePath
+	 *            the base path of the include
+	 * @param includeFilePath
+	 *            the path of the include
+	 * @param exclusionPatterns
+	 *            exclusion patterns in the resource if a container
+	 * @param isExported
+	 *            if the entry ix exported to reference projects
+	 * @return IIincludeEntry
+	 */
+	public static IIncludeFileEntry newIncludeFileEntry(IPath resourcePath, IPath baseRef, IPath basePath, IPath includeFilePath,
+			 IPath[] exclusionPatterns, boolean isExported) {
+		return new IncludeFileEntry(resourcePath, basePath, baseRef, includeFilePath, exclusionPatterns, isExported);
+	}
+
+	/**
 	 * Creates and returns an entry kind <code>CDT_MACRO</code>
 	 * 
 	 * @param path
@@ -539,7 +572,7 @@ public class CoreModel {
 	 *            the name of the macro
 	 * @param macroValue
 	 *            the value of the macro
-	 * @return
+	 * @return IMacroEntry
 	 */
 	public static IMacroEntry newMacroEntry(IPath resourcePath, String macroName, String macroValue) {
 		return newMacroEntry(resourcePath, macroName, macroValue, APathEntry.NO_EXCLUSION_PATTERNS);
@@ -588,11 +621,40 @@ public class CoreModel {
 	 *        the base reference path
 	 * @param macroName
 	 *            the name of the macro
-	 * @return
+	 * @return IMacroEntry
 	 */
 	public static IMacroEntry newMacroRefEntry(IPath resourcePath, IPath baseRef, String macroName) {
 		return new MacroEntry(resourcePath, baseRef, macroName, null, APathEntry.NO_EXCLUSION_PATTERNS, false);
 	}
+
+	/**
+	 * Creates an entry kind <code>CDT_MACRO_FILE</code>
+	 * 
+	 * @param resourcePath
+	 * @param macroFile
+	 * @return
+	 */
+	public static IMacroFileEntry newMacroFileEntry(IPath resourcePath, IPath macroFile) {
+		return newMacroFileEntry(resourcePath, null, null, macroFile, null, false);
+	}
+
+	/**
+	 * Creates and returns an entry kind <code>CDT_MACRO_FILE</code>
+	 * 
+	 * @param resourcePath
+	 *            the affected workspace-relative resource path
+	 * @param basePath
+	 *            the base path
+	 * @param macroFilePath
+	 *            the file path where the macros are define
+	 * @param exclusionPatterns
+	 *            exclusion patterns in the resource if a container
+	 * @return
+	 */
+	public static IMacroFileEntry newMacroFileEntry(IPath resourcePath, IPath basePath, IPath baseRef, IPath macroFilePath, IPath[] exclusionPatterns, boolean isExported) {
+		return new MacroFileEntry(resourcePath, basePath, baseRef, macroFilePath, exclusionPatterns, isExported);
+	}
+
 
 	/**
 	 * Answers the project specific value for a given container. In case this
@@ -741,7 +803,7 @@ public class CoreModel {
 
 	/**
 	 * This method returns the include entries associated with a translation unit
-	 * if the path does not refer to a valid translation unit an empty is return.
+	 * if the path does not refer to a valid translation unit an empty array is return.
 	 * <p>
 	 * The resulting resolved entries are accurate for the given point in time.
 	 * If the project's raw entries are later modified they can become out of
@@ -749,12 +811,30 @@ public class CoreModel {
 	 * recommended.
 	 * </p>
 	 * 
-	 * @return the resolved entries for the project
+	 * @return the include entries for the translation unit
 	 * @exception CModelException
 	 * @see IPathEntry
 	 */
 	public static IIncludeEntry[] getIncludeEntries(IPath path) throws CModelException {
 		return pathEntryManager.getIncludeEntries(path);
+	}
+
+	/**
+	 * This method returns the include file entries associated with a translation unit
+	 * if the path does not refer to a valid translation unit an empty array is return.
+	 * <p>
+	 * The resulting resolved entries are accurate for the given point in time.
+	 * If the project's raw entries are later modified they can become out of
+	 * date. Because of this, hanging on resolved pathentries is not
+	 * recommended.
+	 * </p>
+	 * 
+	 * @return the include file entries for the translation unit
+	 * @exception CModelException
+	 * @see IPathEntry
+	 */
+	public static IIncludeFileEntry[] getIncludeFileEntries(IPath path) throws CModelException {
+		return pathEntryManager.getIncludeFileEntries(path);
 	}
 
 	/**
@@ -773,6 +853,24 @@ public class CoreModel {
 	 */
 	public static IMacroEntry[] getMacroEntries(IPath path) throws CModelException {
 		return pathEntryManager.getMacroEntries(path);
+	}
+
+	/**
+	 * This method returns the macro file entries associated with a translation unit
+	 * if the path does not refer to a valid translation unit an empty array is return.
+	 * <p>
+	 * The resulting resolved entries are accurate for the given point in time.
+	 * If the project's raw entries are later modified they can become out of
+	 * date. Because of this, hanging on resolved pathentries is not
+	 * recommended.
+	 * </p>
+	 * 
+	 * @return the macro file entries for the translation unit
+	 * @exception CModelException
+	 * @see IPathEntry
+	 */
+	public static IMacroFileEntry[] getMacroFileEntries(IPath path) throws CModelException {
+		return pathEntryManager.getMacroFileEntries(path);
 	}
 
 	/**

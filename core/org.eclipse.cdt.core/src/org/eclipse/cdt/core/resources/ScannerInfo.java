@@ -13,17 +13,24 @@ package org.eclipse.cdt.core.resources;
 import java.util.Collections;
 import java.util.Map;
 
-import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 
-public class ScannerInfo implements IScannerInfo {
+public class ScannerInfo implements IExtendedScannerInfo {
 
-	private final Map macroMap;
-	private final String[] includePaths;
+	private final Map fMacroMap;
+	private final String[] fSystemIncludePaths;
+	private final String[] fMacroFiles;
+	private final String[] fIncludeFiles;
+	private final String[] fLocalIncludePaths;
 	final static String[] EMPTY_ARRAY_STRING = new String[0];
 
-	protected ScannerInfo(String[] includePaths, Map macroMap) {
-		this.includePaths = includePaths;
-		this.macroMap = macroMap;
+	protected ScannerInfo(String[] systemIncludePaths, String[] localIncludePaths, String[] includeFiles,
+			Map macroMap, String[] macroFiles) {
+		fSystemIncludePaths = (systemIncludePaths == null) ? EMPTY_ARRAY_STRING : systemIncludePaths;
+		fLocalIncludePaths = (localIncludePaths == null) ? EMPTY_ARRAY_STRING : localIncludePaths;
+		fIncludeFiles = (includeFiles == null) ? EMPTY_ARRAY_STRING : includeFiles;
+		fMacroFiles = (macroFiles == null) ? EMPTY_ARRAY_STRING : macroFiles;
+		fMacroMap = (macroMap == null) ? Collections.EMPTY_MAP : macroMap;
 	}
 
 	/*
@@ -32,10 +39,7 @@ public class ScannerInfo implements IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
 	public synchronized String[] getIncludePaths() {
-		if (includePaths == null) {
-			return EMPTY_ARRAY_STRING;
-		}
-		return includePaths;
+		return fSystemIncludePaths;
 	}
 
 	/*
@@ -44,10 +48,19 @@ public class ScannerInfo implements IScannerInfo {
 	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
 	 */
 	public synchronized Map getDefinedSymbols() {
-		if (macroMap == null) {
-			return Collections.EMPTY_MAP;
-		}
-		return macroMap;
+		return fMacroMap;
+	}
+
+	public String[] getMacroFiles() {
+		return fMacroFiles;
+	}
+
+	public String[] getIncludeFiles() {
+		return fIncludeFiles;
+	}
+
+	public String[] getLocalIncludePath() {
+		return fLocalIncludePaths;
 	}
 
 }

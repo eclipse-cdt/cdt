@@ -25,8 +25,10 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.cdt.core.model.IIncludeEntry;
+import org.eclipse.cdt.core.model.IIncludeFileEntry;
 import org.eclipse.cdt.core.model.ILibraryEntry;
 import org.eclipse.cdt.core.model.IMacroEntry;
+import org.eclipse.cdt.core.model.IMacroFileEntry;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
@@ -59,10 +61,12 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 	static String ATTRIBUTE_PREFIXMAPPING = "prefixmapping"; //$NON-NLS-1$
 	static String ATTRIBUTE_EXCLUDING = "excluding"; //$NON-NLS-1$
 	static String ATTRIBUTE_INCLUDE = "include"; //$NON-NLS-1$
+	static String ATTRIBUTE_INCLUDE_FILE= "include-file"; //$NON-NLS-1$
 	static String ATTRIBUTE_LIBRARY = "library"; //$NON-NLS-1$
 	static String ATTRIBUTE_SYSTEM = "system"; //$NON-NLS-1$
 	static String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
 	static String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
+	static String ATTRIBUTE_MACRO_FILE = "macro-file"; //$NON-NLS-1$
 	static String VALUE_TRUE = "true"; //$NON-NLS-1$
 
 	static final IPathEntry[] NO_PATHENTRIES = new IPathEntry[0];
@@ -213,6 +217,11 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 				}
 				return CoreModel.newIncludeEntry(path, basePath, includePath, isSystemInclude, exclusionPatterns, isExported);
 			}
+			case IPathEntry.CDT_INCLUDE_FILE: {
+				// include path info
+				IPath includeFilePath = new Path(element.getAttribute(ATTRIBUTE_INCLUDE_FILE));
+				return CoreModel.newIncludeFileEntry(path, basePath, baseRef, includeFilePath, exclusionPatterns, isExported);				
+			}
 			case IPathEntry.CDT_MACRO : {
 				String macroName = element.getAttribute(ATTRIBUTE_NAME);
 				String macroValue = element.getAttribute(ATTRIBUTE_VALUE);
@@ -220,6 +229,10 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 					return CoreModel.newMacroRefEntry(path, baseRef, macroName);
 				}
 				return CoreModel.newMacroEntry(path, macroName, macroValue, exclusionPatterns, isExported);
+			}
+			case IPathEntry.CDT_MACRO_FILE : {
+				IPath macroFilePath = new Path(element.getAttribute(ATTRIBUTE_MACRO_FILE));
+				return CoreModel.newMacroFileEntry(path, basePath, baseRef, macroFilePath, exclusionPatterns, isExported);
 			}
 			case IPathEntry.CDT_CONTAINER : {
 				IPath id = new Path(element.getAttribute(ATTRIBUTE_PATH));
@@ -303,10 +316,21 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 					}
 					break;
 				}
+				case IPathEntry.CDT_INCLUDE_FILE: {
+					IIncludeFileEntry include = (IIncludeFileEntry) entries[i];
+					IPath includeFilePath = include.getIncludeFilePath();
+					element.setAttribute(ATTRIBUTE_INCLUDE_FILE, includeFilePath.toString());
+					break;
+				}
 				case IPathEntry.CDT_MACRO: {
 					IMacroEntry macro = (IMacroEntry) entries[i];
 					element.setAttribute(ATTRIBUTE_NAME, macro.getMacroName());
 					element.setAttribute(ATTRIBUTE_VALUE, macro.getMacroValue());
+					break;
+				}
+				case IPathEntry.CDT_MACRO_FILE: {
+					IMacroFileEntry macro = (IMacroFileEntry) entries[i];
+					element.setAttribute(ATTRIBUTE_MACRO_FILE, macro.getMacroFilePath().toString());
 					break;
 				}
 			}

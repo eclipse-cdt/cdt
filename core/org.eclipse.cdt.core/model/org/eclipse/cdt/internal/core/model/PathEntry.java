@@ -83,8 +83,12 @@ public class PathEntry implements IPathEntry {
 			return IPathEntry.CDT_LIBRARY;
 		if (kindStr.equalsIgnoreCase("inc")) //$NON-NLS-1$
 			return IPathEntry.CDT_INCLUDE;
+		if (kindStr.equalsIgnoreCase("incfile")) //$NON-NLS-1$
+			return IPathEntry.CDT_INCLUDE_FILE;
 		if (kindStr.equalsIgnoreCase("mac")) //$NON-NLS-1$
 			return IPathEntry.CDT_MACRO;
+		if (kindStr.equalsIgnoreCase("macfile")) //$NON-NLS-1$
+			return IPathEntry.CDT_MACRO_FILE;
 		if (kindStr.equalsIgnoreCase("con")) //$NON-NLS-1$
 			return IPathEntry.CDT_CONTAINER;
 		if (kindStr.equalsIgnoreCase("out")) //$NON-NLS-1$
@@ -106,8 +110,12 @@ public class PathEntry implements IPathEntry {
 				return "lib"; //$NON-NLS-1$
 			case IPathEntry.CDT_INCLUDE :
 				return "inc"; //$NON-NLS-1$
+			case IPathEntry.CDT_INCLUDE_FILE:
+				return "incfile"; //$NON-NLS-1$
 			case IPathEntry.CDT_MACRO :
 				return "mac"; //$NON-NLS-1$
+			case IPathEntry.CDT_MACRO_FILE:
+				return "macfile"; //$NON-NLS-1$
 			case IPathEntry.CDT_CONTAINER :
 				return "con"; //$NON-NLS-1$
 			case IPathEntry.CDT_OUTPUT :
@@ -143,8 +151,12 @@ public class PathEntry implements IPathEntry {
 				return ("Output path"); //$NON-NLS-1$
 			case IPathEntry.CDT_INCLUDE :
 				return ("Include path"); //$NON-NLS-1$
+			case IPathEntry.CDT_INCLUDE_FILE :
+				return ("Include-file path"); //$NON-NLS-1$
 			case IPathEntry.CDT_MACRO :
 				return ("Symbol definition"); //$NON-NLS-1$
+			case IPathEntry.CDT_MACRO_FILE :
+				return ("Symbol-file definition"); //$NON-NLS-1$
 			case IPathEntry.CDT_CONTAINER :
 				return ("Contributed paths"); //$NON-NLS-1$
 		}

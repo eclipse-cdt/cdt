@@ -1,3 +1,7 @@
+2003-10-28 Mikhail Khodjaiants
+	Changed name of source lookup preference page.
+	* plugin.properties
+
 2003-10-27 Mikhail Khodjaiants
 	Added support of the old launch configurations.
 	* plugin.xml

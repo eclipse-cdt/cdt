@@ -419,7 +419,7 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean canResume()
 	{
-		return isSuspended() && isAvailable();
+		return getConfiguration().supportsResume() && isSuspended() && isAvailable();
 	}
 
 	/* (non-Javadoc)
@@ -427,6 +427,8 @@ public class CDebugTarget extends CDebugElement
 	 */
 	public boolean canSuspend()
 	{
+		if ( !getConfiguration().supportsSuspend() )
+			return false; 
 		if ( !isSuspended() && isAvailable() )
 		{
 			// only allow suspend if no threads are currently suspended

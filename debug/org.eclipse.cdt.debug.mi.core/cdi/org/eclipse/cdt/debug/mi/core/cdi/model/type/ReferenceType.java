@@ -11,9 +11,9 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIReferenceType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -22,8 +22,8 @@ public class ReferenceType extends DerivedType implements ICDIReferenceType {
 	/**
 	 * @param name
 	 */
-	public ReferenceType(VariableObject vo, String name) {
-		super(vo, name);
+	public ReferenceType(ICDIStackFrame frame, String name) {
+		super(frame, name);
 	}
 
 	/* (non-Javadoc)

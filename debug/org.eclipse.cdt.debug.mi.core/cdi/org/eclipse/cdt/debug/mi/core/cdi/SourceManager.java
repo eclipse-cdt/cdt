@@ -185,7 +185,7 @@ public class SourceManager extends Manager {
 	public void update(Target target) throws CDIException {
 	}
 
-	public Type getType(VariableObject vo, String name) throws CDIException {
+	public Type getType(ICDIStackFrame frame, String name) throws CDIException {
 		if (name == null) {
 			name = new String();
 		}
@@ -203,21 +203,21 @@ public class SourceManager extends Manager {
 				switch(gdbType.getType()) {
 					case GDBType.ARRAY:
 						int d = ((GDBDerivedType)gdbType).getDimension();
-						aType = new ArrayType(vo, gdbType.toString(), d);
+						aType = new ArrayType(frame, gdbType.toString(), d);
 					break;
 					case GDBType.FUNCTION:
-						aType = new FunctionType(vo, gdbType.toString());
+						aType = new FunctionType(frame, gdbType.toString());
 					break;
 					case GDBType.POINTER:
-						aType = new PointerType(vo, gdbType.toString());
+						aType = new PointerType(frame, gdbType.toString());
 					break;
 					case GDBType.REFERENCE:
-						aType = new ReferenceType(vo, gdbType.toString());
+						aType = new ReferenceType(frame, gdbType.toString());
 					break;
 				}
 				gdbType = ((GDBDerivedType)gdbType).getChild();
 			} else {
-				aType = toCDIType(vo, gdbType.toString());
+				aType = toCDIType(frame, gdbType.toString());
 				gdbType = null;
 			}
 			if (type instanceof DerivedType) {
@@ -235,7 +235,7 @@ public class SourceManager extends Manager {
 		throw new CDIException(CdiResources.getString("cdi.SourceManager.Unknown_type")); //$NON-NLS-1$
 	}
 	
-	Type toCDIType(VariableObject vo, String name) throws CDIException {
+	Type toCDIType(ICDIStackFrame frame, String name) throws CDIException {
 		// Check the derived types and agregate types
 		if (name == null) {
 			name = new String();
@@ -244,50 +244,50 @@ public class SourceManager extends Manager {
 
 		// Check the primitives.
 		if (typename.equals("char")) { //$NON-NLS-1$
-			return new CharType(vo, typename);
+			return new CharType(frame, typename);
 		} else if (typename.equals("wchar_t")) { //$NON-NLS-1$
-			return new WCharType(vo, typename);
+			return new WCharType(frame, typename);
 		} else if (typename.equals("short")) { //$NON-NLS-1$
-			return new ShortType(vo, typename);
+			return new ShortType(frame, typename);
 		} else if (typename.equals("int")) { //$NON-NLS-1$
-			return new IntType(vo, typename);
+			return new IntType(frame, typename);
 		} else if (typename.equals("long")) { //$NON-NLS-1$
-			return new LongType(vo, typename);
+			return new LongType(frame, typename);
 		} else if (typename.equals("unsigned")) { //$NON-NLS-1$
-			return new IntType(vo, typename, true);
+			return new IntType(frame, typename, true);
 		} else if (typename.equals("signed")) { //$NON-NLS-1$
-			return new IntType(vo, typename);
+			return new IntType(frame, typename);
 		} else if (typename.equals("bool")) { //$NON-NLS-1$
-			return new BoolType(vo, typename);
+			return new BoolType(frame, typename);
 		} else if (typename.equals("_Bool")) { //$NON-NLS-1$
-			return new BoolType(vo, typename);
+			return new BoolType(frame, typename);
 		} else if (typename.equals("float")) { //$NON-NLS-1$
-			return new FloatType(vo, typename);
+			return new FloatType(frame, typename);
 		} else if (typename.equals("double")) { //$NON-NLS-1$
-			return new DoubleType(vo, typename);
+			return new DoubleType(frame, typename);
 		} else if (typename.equals("void")) { //$NON-NLS-1$
-			return new VoidType(vo, typename);
+			return new VoidType(frame, typename);
 		} else if (typename.equals("enum")) { //$NON-NLS-1$
-			return new EnumType(vo, typename);
+			return new EnumType(frame, typename);
 		} else if (typename.equals("union")) { //$NON-NLS-1$
-			return new StructType(vo, typename);
+			return new StructType(frame, typename);
 		} else if (typename.equals("struct")) { //$NON-NLS-1$
-			return new StructType(vo, typename);
+			return new StructType(frame, typename);
 		} else if (typename.equals("class")) { //$NON-NLS-1$
-			return new StructType(vo, typename);
+			return new StructType(frame, typename);
 		}
 
 		// GDB has some special types for int
 		if (typename.equals("int8_t")) { //$NON-NLS-1$
-			return new CharType(vo, typename);
+			return new CharType(frame, typename);
 		} else if (typename.equals("int16_t")) { //$NON-NLS-1$
-			return new ShortType(vo, typename);
+			return new ShortType(frame, typename);
 		} else if (typename.equals("int32_t")) { //$NON-NLS-1$
-			return new LongType(vo, typename);
+			return new LongType(frame, typename);
 		} else if (typename.equals("int64_t")) { //$NON-NLS-1$
-			return new LongLongType(vo, typename);
+			return new LongLongType(frame, typename);
 		} else if (typename.equals("int128_t")) { //$NON-NLS-1$
-			return new IntType(vo, typename);
+			return new IntType(frame, typename); // ????
 		}
 
 
@@ -320,27 +320,27 @@ public class SourceManager extends Manager {
 			boolean isEnum =       first.equals("enum"); //$NON-NLS-1$
 
 			if (isChar && (isSigned || isUnsigned)) {
-				return new CharType(vo, typename, isUnsigned);
+				return new CharType(frame, typename, isUnsigned);
 			} else if (isShort && (isSigned || isUnsigned)) {
-				return new ShortType(vo, typename, isUnsigned);
+				return new ShortType(frame, typename, isUnsigned);
 			} else if (isInt && (isSigned || isUnsigned)) {
-				return new IntType(vo, typename, isUnsigned);
+				return new IntType(frame, typename, isUnsigned);
 			} else if (isLong && (isInt || isSigned || isUnsigned)) {
-				return new LongType(vo, typename, isUnsigned);
+				return new LongType(frame, typename, isUnsigned);
 			} else if (isLongLong) {
-				return new LongLongType(vo, typename);
+				return new LongLongType(frame, typename);
 			} else if (isDouble && (isLong || isComplex || isImaginery)) {
-				return new DoubleType(vo, typename, isComplex, isImaginery, isLong);
+				return new DoubleType(frame, typename, isComplex, isImaginery, isLong);
 			} else if (isFloat && (isComplex || isImaginery)) {
-				return new FloatType(vo, typename, isComplex, isImaginery);
+				return new FloatType(frame, typename, isComplex, isImaginery);
 			} else if (isStruct) {
-				return new StructType(vo, typename);
+				return new StructType(frame, typename);
 			} else if (isClass) {
-				return new StructType(vo, typename);
+				return new StructType(frame, typename);
 			} else if (isUnion) {
-				return new StructType(vo, typename);
+				return new StructType(frame, typename);
 			} else if (isEnum) {
-				return new EnumType(vo, typename);
+				return new EnumType(frame, typename);
 			}
 		} else if (count == 3) {
 			// ISOC allows permutation. replace short by: long or short
@@ -368,13 +368,13 @@ public class SourceManager extends Manager {
 
 
 			if (isShort && isInt && (isSigned || unSigned)) {
-				return new ShortType(vo, typename, unSigned);
+				return new ShortType(frame, typename, unSigned);
 			} else if (isLong && isInt && (isSigned || unSigned)) {
-				return new LongType(vo, typename, unSigned);
+				return new LongType(frame, typename, unSigned);
 			} else if (isLongLong && (isSigned || unSigned)) {
-				return new LongLongType(vo, typename, unSigned);
+				return new LongLongType(frame, typename, unSigned);
 			} else if (isDouble && isLong && (isComplex || isImaginery)) {
-				return new DoubleType(vo, typename, isComplex, isImaginery, isLong);
+				return new DoubleType(frame, typename, isComplex, isImaginery, isLong);
 			}
 		} else if (count == 4) {
 			// ISOC allows permutation:
@@ -394,7 +394,7 @@ public class SourceManager extends Manager {
 				|| (third.equals("long") && fourth.equals("long")); //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (isLongLong && isInt && (isSigned || unSigned)) {
-				return new LongLongType(vo, typename, unSigned);
+				return new LongLongType(frame, typename, unSigned);
 			}
 		}
 		throw new CDIException(CdiResources.getString("cdi.SourceManager.Unknown_type")); //$NON-NLS-1$
@@ -425,10 +425,9 @@ public class SourceManager extends Manager {
 		}
 	}
 
-	public String getTypeName(VariableObject vo, String variable) throws CDIException {
+	public String getTypeName(ICDIStackFrame frame, String variable) throws CDIException {
 		Session session = (Session)getSession();
-		ICDIStackFrame frame = vo.getStackFrame();
-		Target target = (Target)vo.getTarget();
+		Target target = (Target)frame.getTarget();
 		ICDIThread currentThread = null;
 		ICDIStackFrame currentFrame = null;
 		if (frame != null) {

@@ -13,6 +13,7 @@ package org.eclipse.cdt.debug.mi.core.cdi.model;
 import org.eclipse.cdt.debug.core.cdi.CDIException;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIVariable;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
@@ -97,6 +98,13 @@ public class Value extends CObject implements ICDIValue {
 	 */
 	public ICDIVariable[] getVariables() throws CDIException {
 		return variable.getChildren();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIValue#getType()
+	 */
+	public ICDIType getType() throws CDIException {
+		return variable.getType();
 	}
 
 }

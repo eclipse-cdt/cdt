@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIBoolType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -21,12 +21,12 @@ public class BoolType extends IntegralType implements ICDIBoolType {
 	/**
 	 * @param typename
 	 */
-	public BoolType(VariableObject vo, String typename) {
-		this(vo, typename, false);
+	public BoolType(ICDIStackFrame frame, String typename) {
+		this(frame, typename, false);
 	}
 
-	public BoolType(VariableObject vo, String typename, boolean usigned) {
-		super(vo, typename, usigned);
+	public BoolType(ICDIStackFrame frame, String typename, boolean usigned) {
+		super(frame, typename, usigned);
 	}
 
 }

@@ -11,27 +11,27 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.cdi.model.CObject;
 import org.eclipse.cdt.debug.mi.core.cdi.model.Target;
-import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
 public abstract class Type extends CObject implements ICDIType {
 
-	VariableObject fVariableObject;
+	ICDIStackFrame fStackFrame;
 	String typename;
 	String detailName;
 
-	public Type(VariableObject vo, String name) {
-		super((Target)vo.getTarget());
+	public Type(ICDIStackFrame frame, String name) {
+		super((Target)frame.getTarget());
 		typename = name;
-		fVariableObject = vo;
+		fStackFrame = frame;
 	}
 
-	public VariableObject getVariableObject() {
-		return fVariableObject;
+	public ICDIStackFrame getStackFrame() {
+		return fStackFrame;
 	}
 
 	/* (non-Javadoc)

@@ -11,16 +11,16 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIPointerType;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
 public class PointerType extends DerivedType implements ICDIPointerType {
 
-	public PointerType(VariableObject vo, String typename) {
-		super(vo, typename);
+	public PointerType(ICDIStackFrame frame, String typename) {
+		super(frame, typename);
 	}
 
 	/* (non-Javadoc)

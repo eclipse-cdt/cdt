@@ -1,3 +1,6 @@
+2004-10-28 Alain Magloire
+	Add ICDIValue.getType() and ICDIExpression.geType() new methods.
+
 2004-10-26 Alain Magloire
 	Remove ICDIMemoryManager in CDI
 	* cdi/org/eclipse/cdt/debug/mi/core/cdi/Session.java

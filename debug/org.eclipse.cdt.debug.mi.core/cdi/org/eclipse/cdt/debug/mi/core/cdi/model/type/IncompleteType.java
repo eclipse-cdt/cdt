@@ -11,9 +11,7 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
-import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
-
-
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 
 /**
  */
@@ -22,8 +20,8 @@ public class IncompleteType extends Type {
 	/**
 	 * @param name
 	 */
-	public IncompleteType(VariableObject vo, String name) {
-		super(vo, name);
+	public IncompleteType(ICDIStackFrame frame, String name) {
+		super(frame, name);
 	}
 
 }

@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIEnumType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -21,11 +21,11 @@ public class EnumType extends IntegralType implements ICDIEnumType {
 	/**
 	 * @param typename
 	 */
-	public EnumType(VariableObject vo, String typename) {
-		this(vo, typename, false);
+	public EnumType(ICDIStackFrame frame, String typename) {
+		this(frame, typename, false);
 	}
 
-	public EnumType(VariableObject vo, String typename, boolean usigned) {
-		super(vo, typename, usigned);
+	public EnumType(ICDIStackFrame frame, String typename, boolean usigned) {
+		super(frame, typename, usigned);
 	}
 }

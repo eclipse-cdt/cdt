@@ -11,8 +11,8 @@
 
 package org.eclipse.cdt.debug.mi.core.cdi.model.type;
 
+import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.type.ICDIFloatType;
-import org.eclipse.cdt.debug.mi.core.cdi.model.VariableObject;
 
 /**
  */
@@ -21,11 +21,11 @@ public class FloatType extends FloatingPointType implements ICDIFloatType {
 	/**
 	 * @param typename
 	 */
-	public FloatType(VariableObject vo, String typename) {
-		this(vo, typename, false, false);
+	public FloatType(ICDIStackFrame frame, String typename) {
+		this(frame, typename, false, false);
 	}
 
-	public FloatType(VariableObject vo, String typename, boolean isComplex, boolean isImg) {
-		super(vo, typename, isComplex, isImg, false);
+	public FloatType(ICDIStackFrame frame, String typename, boolean isComplex, boolean isImg) {
+		super(frame, typename, isComplex, isImg, false);
 	}
 }

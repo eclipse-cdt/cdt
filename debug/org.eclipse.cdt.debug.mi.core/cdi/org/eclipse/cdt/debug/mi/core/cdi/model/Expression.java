@@ -15,11 +15,15 @@ import org.eclipse.cdt.debug.core.cdi.model.ICDIExpression;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIStackFrame;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIThread;
 import org.eclipse.cdt.debug.core.cdi.model.ICDIValue;
+import org.eclipse.cdt.debug.core.cdi.model.type.ICDIType;
 import org.eclipse.cdt.debug.mi.core.MIException;
 import org.eclipse.cdt.debug.mi.core.MISession;
 import org.eclipse.cdt.debug.mi.core.cdi.CdiResources;
 import org.eclipse.cdt.debug.mi.core.cdi.MI2CDIException;
 import org.eclipse.cdt.debug.mi.core.cdi.Session;
+import org.eclipse.cdt.debug.mi.core.cdi.SourceManager;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.IncompleteType;
+import org.eclipse.cdt.debug.mi.core.cdi.model.type.Type;
 import org.eclipse.cdt.debug.mi.core.command.CommandFactory;
 import org.eclipse.cdt.debug.mi.core.command.MIVarCreate;
 import org.eclipse.cdt.debug.mi.core.command.MIVarDelete;
@@ -35,6 +39,7 @@ public class Expression extends CObject implements ICDIExpression {
 	private int id;
 	String fExpression;
 	Variable fVariable;
+	Type fType;
 	
 	public Expression(Target target, String ex) {
 		super(target);
@@ -58,6 +63,41 @@ public class Expression extends CObject implements ICDIExpression {
 			return other.id == id;
 		}
 		return false;
+	}
+
+	/**
+	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIVariable#getType()
+	 */
+	public ICDIType getType(ICDIStackFrame frame) throws CDIException {
+		Type type = null;
+		Target target = (Target)getTarget();
+		Session session = (Session) (target.getSession());
+		SourceManager sourceMgr = session.getSourceManager();
+		String nametype = sourceMgr.getTypeName(frame, getExpressionText());
+		try {
+			type = sourceMgr.getType(frame, nametype);
+		} catch (CDIException e) {
+			// Try with ptype.
+			try {
+				String ptype = sourceMgr.getDetailTypeName(frame, nametype);
+				type = sourceMgr.getType(frame, ptype);
+			} catch (CDIException ex) {
+				// Some version of gdb does not work with the name of the class
+				// ex: class data foo --> ptype data --> fails
+				// ex: class data foo --> ptype foo --> succeed
+				try {
+					String ptype = sourceMgr.getDetailTypeName(frame, getExpressionText());
+					type = sourceMgr.getType(frame, ptype);
+				} catch (CDIException e2) {
+					// give up.
+				}
+			}
+		}
+		if (type == null) {
+			type = new IncompleteType(frame, nametype);
+		}
+
+		return type;
 	}
 
 	/* (non-Javadoc)

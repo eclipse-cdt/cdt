@@ -254,6 +254,9 @@ public class Thread extends CObject implements ICDIThread {
 	 * @see org.eclipse.cdt.debug.core.cdi.model.ICDIThread#setCurrentStackFrame(ICDIStackFrame, boolean)
 	 */
 	public void setCurrentStackFrame(ICDIStackFrame stackframe, boolean doUpdate) throws CDIException {
+		
+		// Assert we should assert that the stackframe is one of our frames.
+
 		int frameLevel = 0;
 		if (stackframe != null) {
 			frameLevel = stackframe.getLevel();

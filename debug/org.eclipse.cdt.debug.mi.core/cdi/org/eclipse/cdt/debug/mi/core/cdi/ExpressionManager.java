@@ -134,6 +134,7 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 		Target target = (Target)frame.getTarget();
 		ICDIThread currentThread = target.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = target.getMISession();
@@ -151,6 +152,7 @@ public class ExpressionManager extends Manager implements ICDIExpressionManager{
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
+			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
 		return expression;

@@ -153,6 +153,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 			Target target = (Target)frame.getTarget();
 			ICDIThread currentThread = target.getCurrentThread();
 			ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+			target.setCurrentThread(frame.getThread(), false);
 			frame.getThread().setCurrentStackFrame(frame, false);
 			try {
 				MISession miSession = target.getMISession();
@@ -166,6 +167,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 			} catch (MIException e) {
 				throw new MI2CDIException(e);
 			} finally {
+				target.setCurrentThread(currentThread, false);
 				currentThread.setCurrentStackFrame(currentFrame, false);
 			}
 		} else {
@@ -233,6 +235,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 				if (stack != null) {
 					currentThread = target.getCurrentThread();
 					currentFrame = currentThread.getCurrentStackFrame();
+					target.setCurrentThread(stack.getThread(), false);
 					stack.getThread().setCurrentStackFrame(stack, false);
 				}
 				try {
@@ -251,6 +254,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 					throw new MI2CDIException(e);
 				} finally {
 					if (currentThread != null) {
+						target.setCurrentThread(currentThread, false);
 						currentThread.setCurrentStackFrame(currentFrame, false);
 					}
 				}
@@ -269,6 +273,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 		Target target = (Target)frame.getTarget();
 		ICDIThread currentThread = target.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = target.getMISession();
@@ -297,7 +302,8 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
-			currentThread.setCurrentStackFrame(currentFrame);
+			target.setCurrentThread(currentThread, false);
+			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
 		return (ICDIArgumentObject[]) argObjects.toArray(new ICDIArgumentObject[0]);
 	}
@@ -394,6 +400,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 		Target target = (Target)frame.getTarget();
 		ICDIThread currentThread = target.getCurrentThread();
 		ICDIStackFrame currentFrame = currentThread.getCurrentStackFrame();
+		target.setCurrentThread(frame.getThread(), false);
 		frame.getThread().setCurrentStackFrame(frame, false);
 		try {
 			MISession mi = target.getMISession();
@@ -416,6 +423,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 		} catch (MIException e) {
 			throw new MI2CDIException(e);
 		} finally {
+			target.setCurrentThread(currentThread, false);
 			currentThread.setCurrentStackFrame(currentFrame, false);
 		}
 		return (ICDIVariableObject[]) varObjects.toArray(new ICDIVariableObject[0]);
@@ -453,6 +461,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 				if (stack != null) {
 					currentThread = target.getCurrentThread();
 					currentFrame = currentThread.getCurrentStackFrame();
+					target.setCurrentThread(stack.getThread(), false);
 					stack.getThread().setCurrentStackFrame(stack, false);
 				}
 				try {
@@ -471,6 +480,7 @@ public class VariableManager extends Manager implements ICDIVariableManager {
 					throw new MI2CDIException(e);
 				} finally {
 					if (currentThread != null) {
+						target.setCurrentThread(currentThread, false);
 						currentThread.setCurrentStackFrame(currentFrame, false);
 					}
 				}

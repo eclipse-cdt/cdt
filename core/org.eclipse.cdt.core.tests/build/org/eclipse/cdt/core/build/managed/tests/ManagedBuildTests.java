@@ -155,7 +155,8 @@ public class ManagedBuildTests extends TestCase {
 	public void testScannerInfoInterface(){
 		// These are the expected path settings
 		final String[] expectedPaths = new String[4];
-		expectedPaths[0] = (new Path("/usr/gnu/include")).toOSString();
+		// This first path is a built-in, so it will not be manipulated by build manager
+		expectedPaths[0] = "/usr/gnu/include";
 		expectedPaths[1] = (new Path("/usr/include")).toOSString();
 		expectedPaths[2] = (new Path("/opt/gnome/include")).toOSString();
 		expectedPaths[3] = (new Path("C:\\home\\tester/include")).toOSString();

@@ -24,6 +24,7 @@ import org.eclipse.cdt.debug.core.cdi.ICDIBreakpointManager;
 import org.eclipse.cdt.debug.core.cdi.ICDICondition;
 import org.eclipse.cdt.debug.core.cdi.ICDIConfiguration;
 import org.eclipse.cdt.debug.core.cdi.ICDIEndSteppingRange;
+import org.eclipse.cdt.debug.core.cdi.ICDIErrorInfo;
 import org.eclipse.cdt.debug.core.cdi.ICDIExpressionManager;
 import org.eclipse.cdt.debug.core.cdi.ICDILocation;
 import org.eclipse.cdt.debug.core.cdi.ICDIRegisterObject;
@@ -62,7 +63,9 @@ import org.eclipse.cdt.debug.core.model.IState;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.ISourceMode;
+import org.eclipse.cdt.debug.internal.core.CDebugUtils;
 import org.eclipse.cdt.debug.internal.core.CMemoryManager;
+import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceLocator;
 import org.eclipse.cdt.debug.internal.core.sourcelookup.CSourceManager;
@@ -73,6 +76,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -1264,6 +1270,10 @@ public class CDebugTarget extends CDebugElement
 		{
 			handleWatchpointScope( (ICDIWatchpointScope)reason );
 		}
+		else if ( reason instanceof ICDIErrorInfo )
+		{
+			handleErrorInfo( (ICDIErrorInfo)reason );
+		}
 	}
 
 	private void handleResumedEvent( ICDIResumedEvent event )
@@ -1327,6 +1337,23 @@ public class CDebugTarget extends CDebugElement
 		fireSuspendEvent( DebugEvent.UNSPECIFIED );
 	}
 
+	private void handleErrorInfo( ICDIErrorInfo info )
+	{
+		if ( info != null )
+		{
+			MultiStatus status = new MultiStatus( CDebugCorePlugin.getUniqueIdentifier(),
+												  ICDebugInternalConstants.STATUS_CODE_ERROR,
+												  "The execution of program is suspended because of error.",
+												  null );
+			status.add( new Status( IStatus.ERROR, 
+									status.getPlugin(), 
+									ICDebugInternalConstants.STATUS_CODE_ERROR,
+									info.getDetailMessage(),
+									null ) ); 
+			CDebugUtils.error( status, this );
+		}
+	}
+
 	private void handleExitedEvent( ICDIExitedEvent event )
 	{
 		removeAllThreads();
@@ -1339,7 +1366,7 @@ public class CDebugTarget extends CDebugElement
 		}
 		catch( DebugException e )
 		{
-				CDebugCorePlugin.log( e.getStatus() );
+			CDebugCorePlugin.log( e.getStatus() );
 		}
 	}
 

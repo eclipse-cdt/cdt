@@ -1,3 +1,7 @@
+2002-12-08 Mikhail Khodjaiants
+	Display the error message with details when program is suspended because of ICDIErrorInfo.
+	* CDebugTarget.java
+
 2002-12-05 Alain Magloire
 
 	Some debuggers like gdb/mi can provide detail information, for example
